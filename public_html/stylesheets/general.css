@@ -1,0 +1,38 @@
+.Title1 {
+	font-family: Verdana, Geneva, Arial, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+}
+.Text1 {
+	font-family: Helvetica, Geneva, Arial, sans-serif;
+	font-size: 12px;
+}
+.HeaderMenu {
+	font-family: Helvetica, Geneva, Arial, sans-serif;
+	font-size: 12px;
+	color:#000000;	
+}
+
+.HeaderLinks {
+	font-family: Helvetica, Geneva, Arial, sans-serif;
+	font-size: 12px;
+	font-weight:500;
+	color:#93969A;
+}
+
+.AZTop { border: 0px coral solid;  border-top-width: 1px; }
+.AZLeft { border: 0px coral solid;  height: 14px; border-top-width: 1px; border-left-width: 1px; color: coral; padding-left: 5px; font-family: Arial, Geneva, Helvetica, sans-serif; }
+
+.AZEntry { height: 30px; }
+
+.AZJump { height: 30px; }
+
+.calendarweek { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FFCC99; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; }
+.calendarweekselect { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FF0000; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0;}
+.weekviewweek { width: 90px; height: 100%; vertical-align: top; text-align: center; background-color: #FFFF66; padding-top: 3px;}
+.weekviewweektitle { width: 90px; height: 40px; vertical-align: top; text-align: center; background-color: #FFFF66; }
+
+.weekviewentry { width: 85px; height: 60px; vertical-align: top; text-align: left; background-color: #FFFFFF; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-left: 3px; padding-right: 3px; cursor: pointer;}
+
+.calendarchannels { height: 100; width: 150; overflow: auto; vertical-align: top; text-align: left; background-color: #FFFFFF; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 10px;}
+.calendarchannel { vertical-align:middle; text-align: left; background-color: #FFFFFF; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 10px;}
