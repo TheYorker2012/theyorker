@@ -6,7 +6,7 @@
  * \author Nick Evans
  */
 class Prototype extends Controller {
-
+	$this->output->cache(5); // TODO see if this locks output
 	/**
 	* This function displays the specified view inside the student frame
 	* \param selected_directory Is the directory where the specifed view is stored
