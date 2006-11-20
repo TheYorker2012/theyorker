@@ -6,7 +6,7 @@
  * \author Nick Evans
  */
 class Prototype extends Controller {
-	$this->output->cache(5); // TODO see if this locks output
+	
 	/**
 	* This function displays the specified view inside the student frame
 	* \param selected_directory Is the directory where the specifed view is stored
@@ -16,6 +16,7 @@ class Prototype extends Controller {
 	*/
 	function sframe($selected_directory = 'general',$selected_view = 'home',$selected_subdirectory = '',$selected_subview = '')
 	{
+		$this->output->cache(5); // TODO see if this locks output
 		$data = array(
 			'content_view' => $selected_directory . '/' . $selected_view,
 			'subcontent_view' => ($selected_subview == '' ? '' : $selected_directory . '/' . $selected_subdirectory . '/' . $selected_subview),
