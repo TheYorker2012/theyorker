@@ -1,0 +1,21 @@
+Doxygen
+
+To create doxygen documentation, execute the command "doxygen"
+in this directory. This will create some folders such as:
+  html/
+  latex/
+in which the documentation is stored in different formats.
+
+E.g. to see html documentation see:
+  html/index.html
+
+n.b. Do not add these folders to the repository as they are
+temporary and can easily be recreated.
+
+Other formats of documentation can be enabled by editing the
+file Doxyfile in this directory.
+
+See http://www.stack.nl/~dimitri/doxygen/config.html for more
+information about the configuration file.
+
+jh559
