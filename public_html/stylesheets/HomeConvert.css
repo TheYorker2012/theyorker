@@ -1,0 +1,7 @@
+body { background-color: #CED8D9; margin: 5px;}
+.WholePage { background-color: #ffffff; }
+.HeaderMenu { text-align: right; }
+.HeaderBanner { text-align: right; background-image: url("/images/prototype/header/homepage_bk.gif"); background-repeat: repeat-x; height:108px;}
+.HeaderSearch { color: #2DC6D7; }
+.HeaderSearchBox { font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px; }
+.footer { text-align: center; }
