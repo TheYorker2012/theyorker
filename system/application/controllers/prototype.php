@@ -47,7 +47,7 @@ class Prototype extends Controller {
 	function index()
 	{
 		$data = array(
-			'content_view' => 'home',
+			'content_view' => 'general/home',
 			'subcontent_view' => ''
 		);
 		$this->load->view('frames/student_frame',$data);
