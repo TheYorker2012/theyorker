@@ -21,9 +21,9 @@ function preloader()
 
      // set image list
      images = new Array();
-     images[0]="/images/header2_Layer-4.gif";
-     images[1]="/images/header2_Layer-3.gif";
-     images[2]="/images/header2_Layer-2.gif";
+     images[0]="/images/prototype/header/header2_Layer-4.gif";
+     images[1]="/images/prototype/header/header2_Layer-3.gif";
+     images[2]="/images/prototype/header/header2_Layer-2.gif";
 
      // start preloading
      for(i=0; i<=3; i++)
@@ -56,23 +56,23 @@ function preloader()
 	</tr>
 	<tr>
 		<td bgcolor="#ffffff" height="108" >
-			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-image:url(/images/homepage_bk.gif); background-repeat:repeat-x; height:108;">
+			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108;">
 				<tr>
 					<td>
-						<img src="/images/header_Layer-1.gif" width="275" height="108" alt="" border="0"></td>
+						<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0"></td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/news/news_main')?>" onMouseOut="document.img01.src='/images/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/header2_Layer-4.gif';">
-						<img name="img01" src="/images/header_Layer-4.gif" width="107" height="108" alt="News" border="0" ></a></td>
+						<a href="<?php echo site_url('/prototype/sframe/news/news_main')?>" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
+						<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" ></a></td>
 					<td style="width: 40;">
 						</td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/listings/listings_main')?>" onMouseOut="document.img02.src='/images/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/header2_Layer-3.gif';">
-						<img name="img02" src="/images/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" ></a></td>
+						<a href="<?php echo site_url('/prototype/sframe/listings/listings_main')?>" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
+						<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" ></a></td>
 					<td style="width: 33;">
 						</td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/reviews/reviews_main')?>" onMouseOut="document.img03.src='/images/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/header2_Layer-2.gif';">
-						<img name="img03" src="/images/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" ></a></td>
+						<a href="<?php echo site_url('/prototype/sframe/reviews/reviews_main')?>" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
+						<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" ></a></td>
 					<td>
 					</td>
 				</tr>

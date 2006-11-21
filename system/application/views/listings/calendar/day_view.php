@@ -4,21 +4,21 @@
   <TR>
     <TD width="130"> 12:30pm - 1:15pm </TD>
     <TD width="296"> <b>Yorker Introductory Meeting</b> </TD>
-    <TD width="20" align="center"> <img src="/images/flag.gif"> </TD>
-    <TD width="20" align="center"> <img src="/images/todo.gif"> </TD>
-    <TD width="47" align="center"> <img src="/images/rsvp.gif"> </TD>
-    <TD width="22" align="center"> <img src="/images/email.jpg" width="19" height="19"> </TD>
-    <TD width="22" align="center">  <a href="http://www.theyorker.co.uk/"> <img src="/images/link.png" border="0"> </a></TD>
-    <TD width="73" align="center"> <img src="/images/subscribe.jpg"></TD>
+    <TD width="20" align="center"> <img src="/images/prototype/listings/flag.gif"> </TD>
+    <TD width="20" align="center"> <img src="/images/prototype/listings/todo.gif"> </TD>
+    <TD width="47" align="center"> <img src="/images/prototype/listings/rsvp.gif"> </TD>
+    <TD width="22" align="center"> <img src="/images/prototype/listings/email.jpg" width="19" height="19"> </TD>
+    <TD width="22" align="center">  <a href="http://www.theyorker.co.uk/"> <img src="/images/prototype/listings/link.png" border="0"> </a></TD>
+    <TD width="73" align="center"> <img src="/images/prototype/listings/subscribe.jpg"></TD>
   </TR>
   <TR>
     <TD colspan="8">
 	<TABLE border="0" width="100%">
         <TR>
-          <TD valign="middle" width="50"> <img src="/images/map.jpg"> </TD> <TD> A/EW/105 </TD>
+          <TD valign="middle" width="50"> <img src="/images/prototype/listings/map.jpg"> </TD> <TD> A/EW/105 </TD>
           <TD> Organisation: <a href="#">The Yorker</a> </TD>
           <TD> Section: <a href="#">Media </a> </TD>
-		  <TD width="60" style="cursor:pointer; " onClick="showEventMore('event',2);"> <img src="/images/more.gif"></TD>
+		  <TD width="60" style="cursor:pointer; " onClick="showEventMore('event',2);"> <img src="/images/prototype/listings/more.gif"></TD>
         </TR>
       </TABLE>
 	 </TD>
@@ -38,21 +38,21 @@
   <TR>
     <TD width="130"> 1:15pm - 2:15pm </TD>
     <TD width="296"> <b>TOC</b> </TD>
-    <TD width="20" align="center"> <img src="/images/flag.gif"> </TD>
-    <TD width="20" align="center"> <img src="/images/todo.gif"> </TD>
-    <TD width="47" align="center"> <img src="/images/rsvp.gif"> </TD>
-    <TD width="22" align="center"> <img src="/images/email.jpg" width="19" height="19"> </TD>
-    <TD width="22" align="center">  <a href="http://www.theyorker.co.uk/"> <img src="/images/link.png" border="0"> </a></TD>
-    <TD width="73" align="center"> <img src="/images/subscribe.jpg"></TD>
+    <TD width="20" align="center"> <img src="/images/prototype/listings/flag.gif"> </TD>
+    <TD width="20" align="center"> <img src="/images/prototype/listings/todo.gif"> </TD>
+    <TD width="47" align="center"> <img src="/images/prototype/listings/rsvp.gif"> </TD>
+    <TD width="22" align="center"> <img src="/images/prototype/listings/email.jpg" width="19" height="19"> </TD>
+    <TD width="22" align="center">  <a href="http://www.theyorker.co.uk/"> <img src="/images/prototype/listings/link.png" border="0"> </a></TD>
+    <TD width="73" align="center"> <img src="/images/prototype/listings/subscribe.jpg"></TD>
   </TR>
   <TR>
     <TD colspan="8">
 	<TABLE border="0" width="100%">
         <TR>
-          <TD valign="middle" width="50"> <img src="/images/map.jpg"> </TD> <TD> P/L/001 </TD>
+          <TD valign="middle" width="50"> <img src="/images/prototype/listings/map.jpg"> </TD> <TD> P/L/001 </TD>
           <TD> Organisation: <a href="#">Computer Science</a> </TD>
           <TD> Section: <a href="#">Academic </a> </TD>
-		  <TD width="60" style="cursor:pointer; " onClick="showEventMore('event',1);"> <img src="/images/more.gif"></TD>
+		  <TD width="60" style="cursor:pointer; " onClick="showEventMore('event',1);"> <img src="/images/prototype/listings/more.gif"></TD>
         </TR>
       </TABLE>
 	 </TD>
