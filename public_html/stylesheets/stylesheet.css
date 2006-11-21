@@ -1,0 +1,26 @@
+/* Default Paramaters for entire page */
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+/* Headers */
+/* Yorker alt text */
+h1.YorkerHeader {
+    color: #FF9933;
+}
+/* Page Title */
+h1 {
+	font-weight: bold;
+	font-size: xx-large;
+}
+/* Page Sub-Title */
+h2 {
+    font-size: x-large;
+}
+/* Dynamic Text Title (for WikiText) */
+h3 {
+    font-size: large;
+}
+/* Replace this with > image */
+li {
+    list-style-type: disc
+}
