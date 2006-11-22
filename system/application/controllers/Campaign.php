@@ -3,7 +3,8 @@ class Campaign extends Controller {
 	function index()
 	{
 		$subdata = array(
-			'content_view' => 'asdf',
+			'Title' => 'This Is The Title',
+			'Blurb' => '<b>testing blurb</b> and it <i>works!</i> Yay!'
 		);
 		$data = array(
 			'content_view' => 'campaign/CampaignSelection',
