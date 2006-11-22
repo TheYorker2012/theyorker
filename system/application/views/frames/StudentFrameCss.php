@@ -46,7 +46,7 @@
         <a href="#"><img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';"></a>
     </div>
     <div class="SubView">
-        <?php $this->load->view($content_view); ?>
+        <?php $this->load->view($content_view,$subdata); ?>
     </div>
 </div>
 <div class="footer">
