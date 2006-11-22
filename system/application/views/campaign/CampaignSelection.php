@@ -1,0 +1,1 @@
+<small>Page rendered in <?php echo $content_view; ?> seconds</small>
