@@ -2,7 +2,10 @@
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
-/* Headers */
+/** 
+	* Headers - a section for headers
+*/
+
 /* Yorker alt text */
 h1.YorkerHeader {
     color: #FF9933;
@@ -21,29 +24,55 @@ h2 {
 h3 {
     font-size: large;
 }
-
+/* get rid of image borders - mainly for links*/
 img {
 	border: none;
 }
-
+/* generic page title bar */
 #TitleBar {
 	background-color: Teal;
 }
 
-#ReviewSetBlock {
+/**
+	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
+*/
 
-}
-div.ReviewSet {
+/* Review div for lining up boxes to same size */
+#ReviewSetBlock {
 	background-color: Olive;
+	width = 100%;
+}
+/* Review mainpage sections E.g. food, reviews, culture */
+div.ReviewSet {
 	float: left;
 	text-align: center;
 	width: 33%;
-	height: auto;
+
 }
+/*Why not try boxes on reviews*/
 div.WhyNotTry {
-	width: 33%;
-	background-color: Grey;
-	display: block;
+	text-align: left;
+	margin: 2em;
+	padding: 2em;
+	float: left;
+	background-color: #875523;
+	color: White;
+	border-color: #E5BC8F;
+	border-style: solid;
+	border-width: thick;
+}
+
+/**
+	* Generic use
+*/
+/* Use for starting a new line of divs. e.g. <div class="clear">&nbsp;</div> */
+.clear {
+	clear:both;
+	display:block;
+	height:1em;
+	overflow:hidden;
+	margin: 0;
+	padding: 0;
 }
 /* Replace this with > image */
 li {
