@@ -5,4 +5,10 @@ body { background-color: #CED8D9; margin: 5px;}
 .HeaderSearch { color: #2DC6D7; }
 .HeaderSearchBox { font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px; }
 .footer { text-align: center; }
-.Title { font-size:14pt; font-weight: bold; text-decoration: underline; }
+
+.Title { font-size:28pt; font-weight: bold; text-decoration: underline; }
+.Blurb {}
+.Subtitle { font-size:18pt; font-weight: bold; text-decoration: underline; }
+.SubText {}
+.HalfBox { float: left; width:50%; border-style:solid; border-color:#99FF00; }
+.ResultsList { border-style:solid; border-color:#66FFCC; }
