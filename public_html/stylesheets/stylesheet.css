@@ -11,6 +11,7 @@ h1.YorkerHeader {
 h1 {
 	font-weight: bold;
 	font-size: xx-large;
+	color: White;
 }
 /* Page Sub-Title */
 h2 {
@@ -19,6 +20,30 @@ h2 {
 /* Dynamic Text Title (for WikiText) */
 h3 {
     font-size: large;
+}
+
+img {
+	border: none;
+}
+
+#TitleBar {
+	background-color: Teal;
+}
+
+#ReviewSetBlock {
+
+}
+div.ReviewSet {
+	background-color: Olive;
+	float: left;
+	text-align: center;
+	width: 33%;
+	height: auto;
+}
+div.WhyNotTry {
+	width: 33%;
+	background-color: Grey;
+	display: block;
 }
 /* Replace this with > image */
 li {
