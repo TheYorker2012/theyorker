@@ -2,8 +2,8 @@
 <head>
 <title><?=$title?></title>
 <!-- Load up scriptaculous (and prototype upon which it is based) for eyecandy -->
-<script src="/public_html/js/prototype.js" type="text/javascript"></script>
-<script src="/public_html/js/scriptaculous.js" type="text/javascript"></script>
+<script src="/js/prototype.js" type="text/javascript"></script>
+<script src="/js/scriptaculous.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 /* 
@@ -129,7 +129,7 @@ body {
 	border-right: 1px solid #dddddd;
 }
 .calHeadingCell {
-	width: 100px;
+	width: 300px;
 	text-align: center;
 	font-weight: bold;
 	font-size: 11px;
@@ -332,23 +332,23 @@ body {
 					</div>
 					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
-				<td class="calEventsCell">
-					&nbsp;
+				<td class="calEventsCell">&nbsp;
+					
 				</td>
 				
 			</tr>
