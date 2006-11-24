@@ -42,19 +42,20 @@ img {
 	background-color: Olive;
 	width = 100%;
 }
+
 /* Review mainpage sections E.g. food, reviews, culture */
 div.ReviewSet {
 	float: left;
 	text-align: center;
 	width: 33%;
-
 }
+
 /*Why not try boxes on reviews*/
 div.WhyNotTry {
 	text-align: left;
-	margin: 2em;
-	padding: 2em;
-	float: left;
+	margin: 1em;
+	padding: 1em;
+	float: center;
 	background-color: #875523;
 	color: White;
 	border-color: #E5BC8F;
