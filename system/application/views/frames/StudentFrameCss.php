@@ -2,8 +2,7 @@
 <head>
 <title>The Yorker</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="/stylesheets/general.css" rel="stylesheet" type="text/css">
-<link href="/stylesheets/StudentFrame.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
 </head>
 
 <body onLoad="preloader()">
