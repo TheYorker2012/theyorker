@@ -1,6 +1,6 @@
 /* Default Paramaters for entire page */
 body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #CED8D9; margin: 5px;
 }
 /** 
 	* Headers - a section for headers
@@ -14,7 +14,6 @@ h1.YorkerHeader {
 h1 {
 	font-weight: bold;
 	font-size: xx-large;
-	color: White;
 }
 /* Page Sub-Title */
 h2 {
@@ -79,3 +78,19 @@ div.WhyNotTry {
 li {
     list-style-type: disc
 }
+
+
+/* For the student frame */
+.WholePage { background-color: #ffffff; }
+.HeaderMenu { text-align: right; }
+.HeaderBanner { text-align: right; background-image: url("/images/prototype/header/homepage_bk.gif"); background-repeat: repeat-x; height:108px;}
+.HeaderSearch { color: #2DC6D7; }
+.HeaderSearchBox { font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px; }
+.footer { text-align: center; }
+
+
+/* Made for the campaign pages */
+.Blurb {}
+.SubText {}
+.HalfBox { float: left; width:50%; border-style:solid; border-color:#99FF00; }
+.ResultsList { border-style:solid; border-color:#66FFCC; }
