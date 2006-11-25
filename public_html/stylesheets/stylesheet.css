@@ -94,3 +94,32 @@ li {
 .SubText {}
 .HalfBox { float: left; width:50%; border-style:solid; border-color:#99FF00; }
 .ResultsList { border-style:solid; border-color:#66FFCC; }
+
+/*Style Fox Box Stye Subheader With Related Links Option for an image.*/
+/*Look on the wiki page for html code, converts a list into a related links box*/
+#pageheader{
+    background-color: lightblue;
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+#titleheader{
+    margin: 5px;
+}
+#pagelinks{
+    background-color: grey;
+    width: 100%;
+}
+
+#pagelinks ul {
+    text-align: left;
+    margin-left: 0;
+    padding-left: 0;
+    border-bottom: 1px solid white
+}
+
+#pagelinks li {
+    list-style-type: none;
+    padding: 0.25em 1em;
+    display: inline
+}
+/*End Of Subheader With Related Links*/
