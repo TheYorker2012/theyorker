@@ -123,3 +123,148 @@ li {
     display: inline
 }
 /*End Of Subheader With Related Links*/
+
+
+
+/* -- 	BEGIN LISTINGS CALENDAR VIEW CLASSES -- */
+/* These are used by the listings system. It would probably be a bad idea to use these for anything outside of that subsystem. */
+
+#calviewLeftBar {
+	position: absolute;
+	padding: 5px;
+	margin: 0px;
+	top: 5px;
+	left: 5px;
+	width: 200px;
+	background-color: #dddddd;
+	border: 1px solid #cccccc;
+}
+
+#calviewCalendarWindow {
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	top: 5px;
+	left: 220px;
+	width: 700px;
+	background-color: #dedede;
+	
+}
+
+#calviewCalTable {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+	border: none;
+	background-color: #ffffff;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #cccccc;
+}
+
+#calviewCalTable td {
+	margin: 0px;
+	padding: 2px;
+	border-bottom: 1px solid #cccccc;
+	border-right: 1px solid #dddddd;
+}
+.calviewCalHeadingCell {
+	width: 100px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 11px;
+	height: 20px;
+	background-color: #f9f9f9;
+	border-bottom: 1px solid #cccccc;
+	margin: 0px;
+}
+.calviewCalEventsCell {
+	height: 500px;
+	vertical-align: top;
+	background-color: #f0f0f0;
+	border-bottom: 1px solid #cccccc;
+	margin: 0px;
+}
+.calviewIndEventBox {
+	border: 2px solid #99bb99;
+	background-color: #dddddd;
+	padding: 2px;
+	font-size: 9px;
+	margin: 1px;
+
+}
+
+.calviewIndEventBoxHL {
+	border: 2px solid #bb3300;
+	background-color: #ffffff;
+	padding: 2px;
+	font-size: 9px;
+	margin: 1px;
+
+}
+.calviewIndEventBox .closeButton {
+	margin-top: -2px;
+	margin-right: -2px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	float: right;
+	background-color: #bb0000;
+	color: #ffffff;
+	padding: 2px;
+	font-weight: bold;
+}
+.calviewIndEventBox .expandButton {
+	margin-top: -2px;
+	margin-right: -2px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	float: right;
+	background-color: #00bb00;
+	color: #ffffff;
+	padding: 2px;
+	display: block;
+	font-weight: bold;
+}
+.calviewIndEventBox .menuButton {
+	margin-top: -2px;
+	margin-right: -2px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	float: right;
+	background-color: #ddbb00;
+	color: #ffffff;
+	padding: 2px;
+	font-weight: bold;
+}
+
+#calviewEventMenu {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	z-index: 100;
+	width: 150px;
+	background-color: #f7f7f7;
+	border: 1px solid #000000;
+}
+
+#calviewEventMenu ul {
+	display: block;
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+#calviewEventMenu ul li:hover {
+	background-color: #009900;
+}
+#calviewEventMenu ul li a {
+	display: block;
+	text-decoration: none;
+	font-size: 11px;
+	color: #00bb00;
+	padding: 2px;
+}
+#calviewEventMenu ul li a:hover {
+	color: #ffffff;
+}
+
+
+/* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
