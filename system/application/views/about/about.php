@@ -16,7 +16,7 @@
 			<div id='pagelinks'>
 				<ul>
 					<li>About Us</li>
-					<li><a href='#'>Contact Us</a></li>
+					<li><a href='/contact/'>Contact Us</a></li>
 					<li><a href='#'>Our Campaign</a></li>
 				</ul>
 			</div>
