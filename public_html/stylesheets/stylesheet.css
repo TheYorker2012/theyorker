@@ -98,7 +98,7 @@ li {
 /*Style Fox Box Stye Subheader With Related Links Option for an image.*/
 /*Look on the wiki page for html code, converts a list into a related links box*/
 #pageheader{
-    background-color: lightblue;
+    background-color: #00CCFF;
     background-repeat: no-repeat;
     background-position: right top;
 }
@@ -106,7 +106,7 @@ li {
     margin: 5px;
 }
 #pagelinks{
-    background-color: grey;
+    background-color: #999999;
     width: 100%;
 }
 
@@ -265,6 +265,46 @@ li {
 #calviewEventMenu ul li a:hover {
 	color: #ffffff;
 }
-
-
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
+
+/* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo*/
+#columnText {
+	margin-left: 5px;
+	width: 59%;
+	float: left;
+}
+#columnPhoto {
+	width: 39%;
+	text-align: center;
+	float: right;
+}
+#columnPhoto a {
+	color: darkgrey;
+	text-decoration: none;
+}
+
+/*InfoBoxes*/
+#Infobox {
+	text-align: left;
+	margin-left: 20px;
+	margin-right: 20px;
+	background-color: #C4C4E1;
+	border-color: #0099FF;
+	border-style: solid;
+	border-width: thin;
+}
+#InfoboxText {
+	margin-left: 5px;
+	width: 59%;
+	float: left;
+}
+#InfoboxPhoto {
+	width: 39%;
+	text-align: center;
+	float: right;
+}
+#InfoboxPhoto a {
+	color: grey;
+	text-decoration: none;
+}
+ 
