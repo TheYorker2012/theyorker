@@ -80,20 +80,167 @@ li {
 }
 
 
-/* For the student frame */
-.WholePage { background-color: #ffffff; }
-.HeaderMenu { text-align: right; }
-.HeaderBanner { text-align: right; background-image: url("/images/prototype/header/homepage_bk.gif"); background-repeat: repeat-x; height:108px;}
-.HeaderSearch { color: #2DC6D7; }
-.HeaderSearchBox { font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px; }
-.footer { text-align: center; }
+/* For the fluid student frame */
+.WholePage {
+	background-color: #ffffff;
+	width: 780px;
+}
+.HeaderMenu {
+	text-align: right;
+}
+.HeaderBanner {
+	text-align: right;
+	background-image: url("/images/prototype/header/homepage_bk.gif");
+	background-repeat: repeat-x;
+	height:108px;
+}
+.HeaderSearch {
+	color: #2DC6D7;
+}
+.HeaderSearchBox {
+	font-size:10px;
+	height: 19px;
+	border-style:solid;
+	border-color:#2DC6D7;
+	border-width: 2px;
+}
+.footer {
+	text-align: center;
+}
+/* End the fluid student frame */
 
-
-/* Made for the campaign pages */
-.HalfBox { float: left; width:50%; border-style:solid; border-color:#99FF00; }
-.ResultsList { border-style:solid; border-color:#66FFCC; }
-.SignVoteForm { float: left ;border-style:solid; border-color:#2DC6D7;}
-.breaker { clear:both; }
+/* For the campaign pages */
+/* Remove Me Begin */
+.wholepage2 { 
+	width:720px;
+	margin-left: 30px;
+}
+.title{
+	font-size: 35px;
+	font-weight: bold;
+	color: #ffffff;
+	background-color: FF6A00;
+	padding-left: 3px;
+	padding-bottom: 3px;
+}
+.subtitle {
+	font-size: large;
+	font-weight: bold;
+	color: #ffffff;
+	background-color: FF6A00;
+	padding-left: 3px;
+	padding-bottom: 3px;
+}
+/* Remove Me End */
+.HalfBox {
+	float: left;
+	width:49%;
+	//width: 50%;
+	padding: 5px;
+}
+.ResultsList {
+	border-style:solid;
+	border-color:#66FFCC;
+}
+.SignVoteForm {
+	float: left;
+	border-style: solid;
+	border-color: FF6A00;
+	font-size: large;
+	font-weight: bold;
+}
+.breaker {
+	clear:both;
+}
+.ProgressItemText {
+	padding-left: 55px;
+	vertical-align: top;
+	font-size: 10px; /* FixMe */
+}
+.subheader {
+	font-size: large;
+	background-color: FF6A00;
+	padding-bottom: 8px;
+	padding-left: 3px;
+	margin-bottom: 5px;
+	font-weight: bold;
+	color: #ffffff;
+}
+.signit{
+	float: left;
+	background-color: FF6A00;
+	padding: 3px;
+	font-size: 25px;
+	font-weight: bold;
+	padding-bottom: 8px;
+}
+.sendbox{
+	font-weight: bold;
+	background-color: FF6A00;
+	padding: 0px;
+	margin: 5px;
+	width: 100%;
+	margin-left: 150px;
+}
+.signbox {
+	padding-top: 10px;
+	width: 100%;
+}
+.Blurb {
+	padding: 15px;
+	padding-top: 5px;
+	font-size: 10px; /* FixMe */
+}
+.SubText {
+	font-size: 30px;
+	font-weight: bold;
+}
+.subsubtitle {
+	font-size: 15px;
+	font-weight: bold;
+	color: FF6A00;
+	padding-left: 4px;
+}
+.funnybox {
+	font-size: large;
+	font-weight: bold;
+	background-color: FF6A00;
+	padding-left: 3px;
+	margin-top: 10px;
+}
+.funnyboxpt1{
+	position: relative;
+	top: -12px;
+	display: inline;
+}
+.funnyboxpt2{
+	position: relative;
+	top: -5px;
+	display: inline;
+	color: #ffffff;
+}
+.funnyboxpt3{
+	position: relative;
+	top: -5px;
+	display: inline;
+	color: #ffffff;
+	left: 15%;
+}
+.funnyboxpt4{
+	position: relative;
+	top: -5px;
+	display: inline;
+	color: #ffffff;
+	left: 30%;
+}
+.votebar {
+	background-image: url("/images/prototype/campaign/bar.jpg");
+	background-repeat: repeat-x;
+	display: inline;
+	margin-right:10px;
+	margin-top:3px;
+}
+/* End the campaign pages */
 
 /*Style Fox Box Stye Subheader With Related Links Option for an image.*/
 /*Look on the wiki page for html code, converts a list into a related links box*/
