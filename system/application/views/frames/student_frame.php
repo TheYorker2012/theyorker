@@ -3,6 +3,7 @@
 <title>The Yorker</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
 </head>
 
 <body bgcolor="#CED8D9" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
