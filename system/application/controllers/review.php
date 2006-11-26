@@ -12,7 +12,10 @@ class Review extends Controller {
 	*/
 	function index()
 	{
-		$this->load->view('reviews/review_frame');
+		$data = array(
+			'content_view' => 'reviews/index',
+		);
+		$this->load->view('frames/student_frame',$data);
 	}
 
 }
