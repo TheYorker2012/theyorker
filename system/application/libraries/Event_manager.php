@@ -2,11 +2,12 @@
 
 /**
  * @file Event_manager.php
- * @brief Event Manager Library
+ * @brief Event Manager Library.
  * @author James Hogan (jh559@cs.york.ac.uk)
  */
 
 /**
+ * @brief Event Manager Library.
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * Provides an interface between the controller classes and the model classes.
@@ -16,16 +17,17 @@
 class Event_manager {
 	
 	/**
+	 * @brief Get the next timestamp at a particular time of day.
 	 * @author James Hogan (jh559@cs.york.ac.uk)
 	 *
-	 * Get the next timestamp after @a Time that is @a SliceTime minutes past
+	 * Get the next timestamp after @a $Time that is @a $SliceTime minutes past
 	 * midnight.
 	 *
-	 * @param Time Timestamp.
-	 * @param SliceTime Number of minutes past midnight to slices.
-	 * @pre 0 <= @a SliceTime < 24*60
+	 * @param $Time Timestamp.
+	 * @param $SliceTime Number of minutes past midnight to slices.
+	 * @pre 0 <= @a $SliceTime < 24*60
 	 *
-	 * @return Timestamp of the next time after @a Time that is @a SliceTime
+	 * @return Timestamp of the next time after @a $Time that is @a $SliceTime
 	 *	minutes past midnight.
 	 */
 	function GetNextSlice($Time, $SliceTime)
@@ -47,32 +49,29 @@ class Event_manager {
 	}
 	
 	/**
+	 * @brief Slice up event occurrences at a particular time of day.
 	 * @author James Hogan (jh559@cs.york.ac.uk)
 	 *
-	 * Slice up each occurrence in a set of occurrences at a certain time of the
+	 * Slice up each occurrence in a set of occurrences at a particular time of
 	 * day.
 	 *
-	 * @param OccurrencesArray Array of occurrences with the following fields:
-	 *	- ['start']: timestamp start time
-	 *	- ['end']: timestamp end time
-	 *
-	 * @param SliceTime The time that events are sliced (measured in minutes
-	 *	past midnight)
-	 * @pre 0 <= @a SliceTime < 24*60
+	 * @param $OccurrencesArray Array of occurrences.
+	 * @param $SliceTime The time that events are sliced (measured in minutes
+	 *	past midnight).
 	 *
 	 * @return Array of occurrence slices, structured similarly to
-	 *	@a OccurrencesArray with the following changes:
-	 *	- slice start time and slice end time are added
-	 *	- (extra field for previous slice index (internal array index))
-	 *	- (extra field for next slice index (internal array index))
+	 *	@a $OccurrencesArray with the following changes:
+	 *	- Field ['slice_start'] added with start time of slice (timestamp).
+	 *	- Field ['slice_end'] added with end time of slice (timestamp).
+	 *
+	 * @pre Every occurrence in @a $OccurrenceArray must contain these fields:
+	 *	- ['start']: Start time of occurrence (timestamp).
+	 *	- ['end']: End time of occurrence (timestamp).
+	 *
+	 * @pre 0 <= @a $SliceTime < 24*60.
 	 */
 	function SliceOccurrences($OccurrencesArray, $SliceTime)
 	{
-		/**
-		 * @todo jh559: Set next/previous slice index?
-		 *	Probably not really required as slices are next to one another in
-		 *	the output array.
-		 */
 		// Prepare a return array
 		$return_array = array();
 		$next_return_array_index = 0;
