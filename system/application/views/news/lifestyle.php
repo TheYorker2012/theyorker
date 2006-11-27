@@ -1,5 +1,5 @@
-	<div id='navcontainer'>
-		<ul id='navlist'>
+	<div id='newsnav'>
+		<ul id='newsnavlist'>
 		<li><a href='<?php echo site_url('news/'); ?>'><img src='<?php echo site_url('images/prototype/news/uk.png'); ?>' alt='News' title='News' /> News</a></li>
 		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='<?php echo site_url('images/prototype/news/earth.png'); ?>' alt='National' title='National' /> National</a></li>
 		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Feature' title='Feature' /> Features</a></li>
