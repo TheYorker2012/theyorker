@@ -1,5 +1,5 @@
 /* Default Paramaters for entire page */
-body {
+html {
 	font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #CED8D9; margin: 5px;
 }
 /** 
@@ -12,7 +12,7 @@ h1.YorkerHeader {
 }
 /* Page Title */
 h1 {
-	font-weight: bold;
+	font-weight: bolder;
 	font-size: xx-large;
 }
 /* Page Sub-Title */
@@ -49,6 +49,24 @@ div.ReviewSet {
 	width: 33%;
 }
 
+div.FoodSet {
+	float: left;
+	width: 20%;
+}
+
+div.BarCrawls {
+	color: white;
+	background-color: Black;
+	float: left;
+	width: 60%;
+}
+
+div.CollegeLeagues {
+	background-color: Grey;
+	float: right;
+	width: 40%;
+}
+
 /*Why not try boxes on reviews*/
 div.WhyNotTry {
 	text-align: left;
@@ -76,19 +94,41 @@ div.featureTitle {
 	width: 50%;
 }
 
-div.featureByLine {
-	float: right;
-	text-align: right;
-	width: 50%;
-}
-
 div.featureArticle {
 	text-align: left;
 	float: left;
 }
 
-div.featurePicture {
+div.featureArticle img {
 	float: right;
+}
+
+div.ReviewInfo {
+	width: 100%;
+}
+
+div.ReviewInfoLeft {
+	width: 47%;
+	float: left;
+	text-align: justify;
+}
+
+div.ReviewInfoRight {
+	width: 47%;
+	float: right;
+}
+
+div.AuthorReview {
+	border: medium solid Black;
+}
+
+div.AuthorReviewContent {
+	padding: 1em;
+}
+
+div.AuthorReviewByline {
+	padding: 1em;
+	border: thick solid Black;
 }
 
 /**

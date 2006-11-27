@@ -24,6 +24,26 @@ class Review extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
-
+	function drink()
+	{
+		$data = array(
+			'content_view' => 'reviews/drink',
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
+	function culture()
+	{
+		$data = array(
+			'content_view' => 'reviews/culture',
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
+	function foodreview()
+	{
+		$data = array(
+			'content_view' => 'reviews/foodreview',
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
 }
 ?>
