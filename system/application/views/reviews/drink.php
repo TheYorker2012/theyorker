@@ -1,12 +1,12 @@
 <div id='pageheader' style='background-image: url(/images/subheadericons/pageicon_pagename.gif);'>
 	<div id='titleheader'>
-		<h1>Food</h1>
+		<h1>Drink</h1>
 	</div>
 	<p>&nbsp;&nbsp;Related Pages :</p>
 	<div id='pagelinks'>
 		<ul>
 			<li><a href='/review'>Reviews</a></li>
-			<li><a href='/review/drink'>Drink</a></li>
+			<li><a href='/review/food'>Food</a></li>
 			<li><a href='/review/culture'>Culture</a></li>
 		</ul>
 	</div>
@@ -28,7 +28,7 @@ There are millions of bombers on the loose There are millions of bombers on the 
 <div class="clear">&nbsp;</div>
 </div>
 <div id="ReviewSetBlock">
-	<div class="FoodSet"><h3>The Best for Italian</h3>
+	<div class="FoodSet"><h3>The Best for Nights out</h3>
 		<ul>
 			<li> Fat
 			<li> Fat
@@ -38,7 +38,7 @@ There are millions of bombers on the loose There are millions of bombers on the 
 			<li> Fat
 		</ul>
 	</div>
-	<div class="FoodSet"><h3>The Best for Indian</h3>
+	<div class="FoodSet"><h3>For Getting Wasted</h3>
 		<ul>
 			<li> Fat
 			<li> Fat
@@ -48,7 +48,7 @@ There are millions of bombers on the loose There are millions of bombers on the 
 			<li> Fat
 		</ul>
 	</div>
-	<div class="FoodSet"><h3>The Best for Take Away</h3>
+	<div class="FoodSet"><h3>The Best for Pulling</h3>
 		<ul>
 			<li> Fat
 			<li> Fat
@@ -58,7 +58,7 @@ There are millions of bombers on the loose There are millions of bombers on the 
 			<li> Fat
 		</ul>
 	</div>
-	<div class="FoodSet"><h3>The Best for Pie</h3>
+	<div class="FoodSet"><h3>The Best for Cake</h3>
 		<ul>
 			<li> Fat
 			<li> Fat

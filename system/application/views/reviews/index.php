@@ -6,14 +6,14 @@
 	<div id='pagelinks'>
 		<ul>
 			<li><a href='/review/food'>Food</a></li>
-			<li><a href='/review/food'>Drink</a></li>
+			<li><a href='/review/drink'>Drink</a></li>
 			<li><a href='/review/culture'>Culture</a></li>
 		</ul>
 	</div>
 </div>
 <div id="ReviewSetBlock">
 	<div class="ReviewSet">
-		<h2>Food</h2>
+		<a href="/review/food"><h2>FOOD</h2></a>
 		<img alt="Food" src="/images/prototype/reviews/reviews_07.jpg" />
 		<br />
 		Some silly text about food
