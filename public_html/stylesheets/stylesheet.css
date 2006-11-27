@@ -484,3 +484,202 @@ li {
 	text-decoration: none;
 }
  
+/*
+*	Start styles for News Section
+*/
+
+#newsnav ul {
+	padding-left: 0;
+	margin-left: 0;
+	background-color: #08c0ef;
+	color: White;
+	float: left;
+	width: 100%;
+	font-family: arial, helvetica, sans-serif;
+}
+
+#newsnav ul li {
+	display: inline;
+}
+
+#newsnav ul li a {
+	padding: 0.2em 1em;
+	background-color: #08c0ef;
+	color: White;
+	text-decoration: none;
+	float: left;
+	border-right: 1px solid #fff;
+}
+
+#newsnav ul li a:hover	{
+	background-color: #06a5cd;
+	color: #fff;
+}
+
+#newsnav ul li #current {
+	font-weight: bold;
+ 	background-color: #06a5cd;
+}
+
+#SearchForm {
+	margin-left: 5px;
+ 	margin-right: 5px;
+}
+#SearchForm p {
+	padding-bottom: 0;
+ 	margin-top: 2px;
+	margin-bottom: 3px;
+}
+#SearchForm label {
+	width: 5em;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block
+}
+
+.ArticleColumn {
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.ArticleColumn p {
+	text-align: justify;
+ 	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.ArticleColumn .SubLinks, .ArticleColumn .SubLinks a {
+	text-align: right;
+	color: #ff6a00;
+	text-decoration: none;
+	font-size: small;
+}
+
+.ArticleColumn .SubLinks a:hover {
+	text-decoration: underline;
+}
+
+.ArticleColumn h3 {
+	padding-left: 5px;
+	padding-right: 5px;
+	color: #ff6a00;
+ }
+ 
+ .ArticleColumn .photo {
+ 	font-size: small;
+    text-align: center;
+}
+
+.ArticleColumn #Byline {
+	padding: 0 5px 0 5px;
+	border: 2px solid #000000;
+	text-align: right;
+ }
+ 
+.ArticleColumn #Byline .name {
+ 	font-weight: bold;
+    font-size: large;
+}
+
+.ArticleColumn #Byline .links a {
+	color: #08c0ef;
+	text-decoration: none;
+ 	font-size: small;
+}
+
+.ArticleColumn #Byline .links a:hover {
+	text-decoration: underline;
+}
+
+.ArticleColumn #Byline img {
+	display: block;
+	float: left;
+}
+
+#QuotesCol {
+	width: 20%;
+}
+
+#QuotesCol .quote {
+	font-size: small;
+	text-align: center;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#QuotesCol .quote .author {
+	color: #08c0ef;
+}
+
+.ArticleFacts {
+	margin-left: 1em;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: small;
+}
+
+.NewsPreview {
+	margin: 0 10px 10px 10px;
+	padding: 0 0 5px 0;
+}
+
+.NewsPreview img {
+	float: right;
+	margin: 0 0 10px 10px;
+}
+
+.NewsPreview p {
+	text-align: justify;
+	padding: 0;
+	margin: 0;
+}
+
+.NewsPreview .More, .NewsPreview .More a {
+	text-align: right;
+	color: #ff6a00;
+	text-decoration: none;
+}
+
+.NewsPreview a:hover {
+	text-decoration: underline;
+}
+
+.NewsPreview h3 {
+	margin-top: 0;
+}
+
+.LifestyleBoxes {
+	border: 1px solid #000000;
+ 	float: left;
+  	width: 30%;
+	background-color: #DDDDDD;
+	padding: 5px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+.LifestyleBoxes p {
+	font-size: small;
+}
+
+.LifestyleBoxes h3 {
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+.LifestyleBoxes .More, .LifestyleBoxes .More a {
+	text-align: right;
+	color: #06a5cd;
+	text-decoration: none;
+}
+
+.LifestyleBoxes a:hover {
+	text-decoration: underline;
+}
+ 	
+/*
+*	End styles for News Section
+*/
