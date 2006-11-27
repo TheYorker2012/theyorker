@@ -1,6 +1,6 @@
 <div class="ReviewInfo">
 	<div class="ReviewInfoLeft">
-		<h1>The Blue Bicycle</h1>
+	<h1 class="reviewHeader">The Blue Bicycle</h1><br />
 		<a href="food">&lt;Back to Food</a><br />
 	</div>
 	<div class="ReviewInfoRight">

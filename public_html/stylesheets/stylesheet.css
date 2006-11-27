@@ -2,6 +2,14 @@
 html {
 	font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #CED8D9; margin: 5px;
 }
+
+a {
+	color: #FFFFF0;
+}
+
+a:hover {
+	color: #E6E6FA;
+}
 /** 
 	* Headers - a section for headers
 */
@@ -14,6 +22,10 @@ h1.YorkerHeader {
 h1 {
 	font-weight: bolder;
 	font-size: xx-large;
+}
+
+h1.reviewHeader {
+	display: inline;
 }
 /* Page Sub-Title */
 h2 {
@@ -317,9 +329,11 @@ li {
     background-color: #00CCFF;
     background-repeat: no-repeat;
     background-position: right top;
+	 background-image: url('/images/subheadericons/pageicon_pagename.gif');
 }
 #titleheader{
     margin: 5px;
+	 color: white;
 }
 #pagelinks{
     background-color: #999999;

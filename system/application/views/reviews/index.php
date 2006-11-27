@@ -1,8 +1,8 @@
-<div id='pageheader' style='background-image: url(/images/subheadericons/pageicon_pagename.gif);'>
+<div id='pageheader'>
 	<div id='titleheader'>
 		<h1>Reviews</h1>
 	</div>
-	<p>&nbsp;&nbsp;Related Pages :</p>
+	<p>&nbsp;&nbsp;Related Pages:</p>
 	<div id='pagelinks'>
 		<ul>
 			<li><a href='/review/food'>Food</a></li>
@@ -20,7 +20,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li>Chicken
+			<li><a href="review/foodreview">Chicken</a>
 			<li>Beef
 			<li>Duck
 			<li>Tuna
