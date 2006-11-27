@@ -45,11 +45,11 @@ function preloader()
 <table id="Table_01" width="780" height="581" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
 	<tr>
 		<td height="22" style="padding-right:10px;" align="right" class="HeaderMenu">
-			<a class="HeaderLinks" href="<?php echo site_url('/prototype/sframe/general/home')?>">home</a> | 
-			<a class="HeaderLinks" href="<?php echo site_url('/prototype/sframe/general/logon')?>">log in</a> | 
+			<a class="HeaderLinks" href="/home/">home</a> | 
+			<a class="HeaderLinks" href="/logon/">log in</a> | 
 			<a class="HeaderLinks" href="http://yorkipedia.theyorker.co.uk/">yorkipedia</a> | 
-			<a class="HeaderLinks" href="#">contact us</a> | 
-			<a class="HeaderLinks" href="#">about</a> | 
+			<a class="HeaderLinks" href="/contact/">contact us</a> | 
+			<a class="HeaderLinks" href="/about/">about</a> | 
 			<span style="color: #2DC6D7;">
 			search <input type="text" style="font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px;">
 			</span>
@@ -60,19 +60,19 @@ function preloader()
 			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108;">
 				<tr>
 					<td>
-						<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0"></td>
+						<a href="/home/"><img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0"></a></td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/news/news_main')?>" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
+						<a href="/news/" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
 						<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" ></a></td>
 					<td style="width: 40;">
 						</td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/listings/listings_main')?>" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
+						<a href="/listings/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
 						<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" ></a></td>
 					<td style="width: 33;">
 						</td>
 					<td>
-						<a href="<?php echo site_url('/prototype/sframe/reviews/reviews_main')?>" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
+						<a href="/review/" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
 						<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" ></a></td>
 					<td>
 					</td>
