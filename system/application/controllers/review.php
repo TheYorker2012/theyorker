@@ -17,6 +17,13 @@ class Review extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
+	function food()
+	{
+		$data = array(
+			'content_view' => 'reviews/food',
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
 
 }
 ?>

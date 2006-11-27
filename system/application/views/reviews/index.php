@@ -6,7 +6,7 @@
 	<div id='pagelinks'>
 		<ul>
 			<li><a href='/review/food'>Food</a></li>
-			<li><a href='/review/drink'>Drink</a></li>
+			<li><a href='/review/food'>Drink</a></li>
 			<li><a href='/review/culture'>Culture</a></li>
 		</ul>
 	</div>
