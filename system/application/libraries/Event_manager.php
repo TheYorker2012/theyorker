@@ -25,10 +25,11 @@ class Event_manager {
 	 *
 	 * @param $Time Timestamp.
 	 * @param $SliceTime Number of minutes past midnight to slices.
-	 * @pre 0 <= @a $SliceTime < 24*60
 	 *
 	 * @return Timestamp of the next time after @a $Time that is @a $SliceTime
 	 *	minutes past midnight.
+	 *
+	 * @pre 0 <= @a $SliceTime < 24*60
 	 */
 	function GetNextSlice($Time, $SliceTime)
 	{
