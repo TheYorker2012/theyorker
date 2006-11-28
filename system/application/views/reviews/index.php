@@ -20,7 +20,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/foodreview">Chicken</a>
+			<li><a href="foodreview">Chicken</a>
 			<li>Beef
 			<li>Duck
 			<li>Tuna
@@ -36,7 +36,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/foodreview">Coke</a>
+			<li><a href="foodreview">Coke</a>
 			<li>Hob Goblin Ale
 			<li>Liquified Cake
 			<li>Anal Rape
@@ -52,7 +52,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/culturereview">Budgie-Jumping</a>
+			<li><a href="culturereview">Budgie-Jumping</a>
 			<li>Parrot-Shooting
 			<li>Hen-Gliding
 		</ul>
