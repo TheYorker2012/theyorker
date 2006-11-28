@@ -29,14 +29,14 @@
 		</div>
 	</div>
 	<div class="ReviewSet">
-		<h2>Drink</h2>
+		<a href="/review/drink"><h2>DRINK</h2></a>
 		<img alt="Drink" src="/images/prototype/reviews/reviews_07.jpg" />
 		<br />
 		Some silly text about drink
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li>Coke
+			<li><a href="review/foodreview">Coke</a>
 			<li>Hob Goblin Ale
 			<li>Liquified Cake
 			<li>Anal Rape
@@ -45,14 +45,14 @@
 		</div>
 	</div>
 	<div class="ReviewSet">
-		<h2>Culture</h2>
+		<a href="/review/culture"><h2>CULTURE</h2></a>
 		<img alt="Culture" src="/images/prototype/reviews/reviews_07.jpg" />
 		<br />
 		Some silly text about culture
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li>Budgie-Jumping
+			<li><a href="review/culturereview">Budgie-Jumping</a>
 			<li>Parrot-Shooting
 			<li>Hen-Gliding
 		</ul>

@@ -3,13 +3,6 @@ html {
 	font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #CED8D9; margin: 5px;
 }
 
-a {
-	color: #FFFFF0;
-}
-
-a:hover {
-	color: #E6E6FA;
-}
 /** 
 	* Headers - a section for headers
 */

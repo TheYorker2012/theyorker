@@ -30,7 +30,7 @@ There are millions of bombers on the loose There are millions of bombers on the 
 <div id="ReviewSetBlock">
 	<div class="FoodSet"><h3>Top 50 Things to do</h3>
 		<ul>
-			<li> Get wasted
+			<li> <a href="culturereview">Get wasted</a>
 			<li> Watch anime
 			<li> Have a paddy fit
 			<li> Throw things out the fridge

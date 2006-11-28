@@ -45,5 +45,12 @@ class Review extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
+	function culturereview()
+	{
+		$data = array(
+			'content_view' => 'reviews/culturereview',
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
 }
 ?>
