@@ -491,23 +491,23 @@ li {
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
 
 /* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo*/
-#columnText {
+.columnText {
 	margin-left: 5px;
 	width: 59%;
 	float: left;
 }
-#columnPhoto {
+.columnPhoto {
 	width: 39%;
 	text-align: center;
 	float: right;
 }
-#columnPhoto a {
+.columnPhoto a {
 	color: darkgrey;
 	text-decoration: none;
 }
 
 /*InfoBoxes*/
-#Infobox {
+.Infobox {
 	text-align: left;
 	margin-left: 20px;
 	margin-right: 20px;
@@ -516,19 +516,38 @@ li {
 	border-style: solid;
 	border-width: thin;
 }
-#InfoboxText {
+.InfoboxText {
 	margin-left: 5px;
 	width: 59%;
 	float: left;
 }
-#InfoboxPhoto {
+.InfoboxPhoto {
 	width: 39%;
 	text-align: center;
 	float: right;
 }
-#InfoboxPhoto a {
+.InfoboxPhoto a {
 	color: grey;
 	text-decoration: none;
+}
+
+/*MemberBoxes*/
+.Memberbox {
+	text-align: left;
+	background-color: #C4C4E1;
+	border-color: #0099FF;
+	border-style: solid;
+	border-width: thin;
+}
+.MemberboxText {
+	margin-left: 5px;
+	width: 59%;
+	float: left;
+}
+.MemberboxPhoto {
+	width: 39%;
+	text-align: center;
+	float: right;
 }
  
 /*

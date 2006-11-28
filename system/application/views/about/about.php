@@ -41,26 +41,26 @@
 <div>
 	<h2>The Team</h2>
 	<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Phasellus enim leo, varius eu, sodales non, egestas nec, urna.</p>
-	<div id='Infobox'>
-		<div id='InfoboxText'>
+	<div class='Infobox'>
+		<div class='InfoboxText'>
 			<h2>Nick Evans</h2>
 			<h3>Technical Director</h3>
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Phasellus enim leo, varius eu, sodales non, egestas nec, urna.</p>
 		</div>
-		<div id='InfoboxPhoto'>
+		<div class='InfoboxPhoto'>
 			<a href='#'><img src='/images/prototype/reviews/reviews_07.jpg' /></a>
 			<a href='#'><h5>Image Information</h5></a>
 		</div>
 		<div class="clear">&nbsp;</div>
 		&nbsp;
 	</div>
-	<div id='Infobox'>
-		<div id='InfoboxText'>
+	<div class='Infobox'>
+		<div class='InfoboxText'>
 			<h2>Matthew Tole</h2>
 			<h3>Functional Specifier</h3>
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Phasellus enim leo, varius eu, sodales non, egestas nec, urna.</p>
 		</div>
-		<div id='InfoboxPhoto'>
+		<div class='InfoboxPhoto'>
 			<a href='#'><img src='/images/prototype/reviews/reviews_07.jpg' /></a>
 			<a href='#'><h5>Image Information</h5></a>
 		</div>
