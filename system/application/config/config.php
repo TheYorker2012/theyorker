@@ -11,7 +11,7 @@
 |	http://www.your-site.com/
 |
 */
-$config['base_url']	= "/";
+$config['base_url']	= "http://theyorker.gmghosting.com/";
 
 /*
 |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ $config['uri_protocol']	= "AUTO";
 | http://www.codeigniter.com/user_guide/general/urls.html
 */
 
-$config['url_suffix'] = ".htm";
+$config['url_suffix'] = "";
 
 /*
 |--------------------------------------------------------------------------
