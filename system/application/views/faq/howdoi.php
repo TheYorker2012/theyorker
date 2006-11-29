@@ -1,16 +1,16 @@
     <div id='pageheader' style='background-image: url(/images/subheadericons/pageicon_pagename.gif);'>
         <div id='titleheader'>
-            <h1>FAQ</h1>
+            <h1>How Do I?</h1>
 	  </div>
         <p>&nbsp;&nbsp;Related Pages :</p>
         <div id='pagelinks'>
             <ul>
-                <li>FAQ</li>
-                <li><a href='/faq/howdoi'>How Do I?</a></li>
+                <li><a href="/faq">FAQ</a></li>
+                <li>How Do I?</li>
             </ul>
         </div>
     </div>
-    <h2>Frequently Asked Questions</h2>
+    <h2>How Do I?</h2>
     <ul>
         <li><a href='#'>Something here</a></li>
         <li><a href='#'>Something here</a></li>
