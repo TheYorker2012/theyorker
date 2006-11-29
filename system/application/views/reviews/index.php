@@ -14,47 +14,49 @@
 <div id="ReviewSetBlock">
 	<div class="ReviewSet">
 		<a href="/review/food"><h2>FOOD</h2></a>
-		<img alt="Food" src="/images/prototype/reviews/reviews_07.jpg" />
+		<img alt="Food" src="<?php echo $food_image ?>" />
 		<br />
-		Some silly text about food
+		<?php echo $food_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="foodreview">Chicken</a>
-			<li>Beef
-			<li>Duck
-			<li>Tuna
-			<li>Pork
+			<li><a href="review/fooddrinkreview/<?php echo $food_try_1_id ?>"><?php echo $food_try1 ?></a>
+			<li><?php echo $food_try2 ?>
+			<li><?php echo $food_try3 ?>
+			<li><?php echo $food_try4 ?>
+			<li><?php echo $food_try5 ?>
 		</ul>
 		</div>
 	</div>
 	<div class="ReviewSet">
 		<a href="/review/drink"><h2>DRINK</h2></a>
-		<img alt="Drink" src="/images/prototype/reviews/reviews_07.jpg" />
+		<img alt="Drink" src="<?php echo $drink_image ?>" />
 		<br />
-		Some silly text about drink
+		<?php echo $drink_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="foodreview">Coke</a>
-			<li>Hob Goblin Ale
-			<li>Liquified Cake
-			<li>Anal Rape
-			<li>Warm Milk
+			<li><a href="review/fooddrinkreview/<?php echo $drink_try_1_id ?>"><?php echo $drink_try1 ?></a>
+			<li><?php echo $drink_try2 ?>
+			<li><?php echo $drink_try3 ?>
+			<li><?php echo $drink_try4 ?>
+			<li><?php echo $drink_try5 ?>
 		</ul>
 		</div>
 	</div>
 	<div class="ReviewSet">
 		<a href="/review/culture"><h2>CULTURE</h2></a>
-		<img alt="Culture" src="/images/prototype/reviews/reviews_07.jpg" />
+		<img alt="Culture" src="<?php echo $culture_image ?>" />
 		<br />
-		Some silly text about culture
+		<?php echo $culture_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="culturereview">Budgie-Jumping</a>
-			<li>Parrot-Shooting
-			<li>Hen-Gliding
+			<li><a href="review/culturereview/<?php echo $culture_try_1_id ?>"><?php echo $culture_try1 ?></a>
+			<li><?php echo $culture_try2 ?>
+			<li><?php echo $culture_try3 ?>
+			<li><?php echo $culture_try4 ?>
+			<li><?php echo $culture_try5 ?>
 		</ul>
 		</div>
 	</div>

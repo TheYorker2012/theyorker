@@ -32,38 +32,62 @@ class Review extends Controller {
 		// This will be removed when the setting is removed
 		
 		$data['title_image'] = base_url().'images/reviews/contentpage/title_image.gif';
-		$data['food_image'] = base_url().'images/reviews/contentpage/food_image.gif';
-		$data['drink_image'] = base_url().'images/reviews/contentpage/drink_image.gif';
-		$data['culture_image'] = base_url().'images/reviews/contentpage/culture_image.gif';
+		$data['food_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';
+		$data['drink_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';
+		$data['culture_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';
 		
 		$data['food_title'] = base_url().'images/reviews/contentpage/food_title.gif';
 		$data['drink_title'] = base_url().'images/reviews/contentpage/drink_title.gif';
 		$data['culture_title'] = base_url().'images/reviews/contentpage/culture_title.gif';
 		
 		//Links to the other pages / functions provided by review
-		$data['food_link'] = base_url('reviews/food');
-		$data['drink_link'] = base_url('reviews/drink');
-		$data['culture_link'] = base_url('reviews/culture');
+		//Second thoughts these are static
+//		$data['food_link'] = base_url('review/food');
+//		$data['drink_link'] = base_url('review/drink');
+//		$data['culture_link'] = base_url('review/culture');
 		
 		$data['food_text'] = 'Food. This links to the food section of the website.
-								hmmmmm................................. Food';
+								yuummmm........ Pizza and Food';
 		$data['drink_text'] = 'Drink. This links to the drink section of the website.
 								Strawberry milkshakes taste really nice';
 		$data['culture_text'] = 'Culture. This links to the culture section of the website.
-								Sometimes you need to eat pizza with a knife and folk not your hands';
+								The home of fine wines and errr stuff';
 		
 		//Example tries
 		$data['food_try1'] = 'pizza';
 		$data['food_try2'] = 'hot dogs';
 		$data['food_try3'] = 'north staffs oatcakes'; //They are really nice :)
+		$data['food_try4'] = 'north staffs oatcakes'; //They are really nice :)
+		$data['food_try5'] = 'north staffs oatcakes'; //They are really nice :)
 		
 		$data['drink_try1'] = 'cola';
 		$data['drink_try2'] = 'fanta';
 		$data['drink_try3'] = 'fresh orange juice';
+		$data['drink_try4'] = 'toffs';
+		$data['drink_try5'] = 'the oldmans pub';
 			
 		$data['culture_try1'] = 'fine dining';
 		$data['culture_try2'] = 'absailing';
 		$data['culture_try3'] = 'random housecalling';
+		$data['culture_try4'] = 'watching paint try';
+		$data['culture_try5'] = 'drinking wine by the bottleful';
+	
+		//Send return ids for the try suggestions
+		$data['food_try_1_id'] = '1';
+		$data['food_try_2_id'] = '2';
+		$data['food_try_3_id'] = '3';
+		$data['food_try_4_id'] = '4';
+		$data['food_try_5_id'] = '5';
+		$data['drink_try_1_id'] = '6';
+		$data['drink_try_2_id'] = '7';
+		$data['drink_try_3_id'] = '8';
+		$data['drink_try_4_id'] = '9';
+		$data['drink_try_5_id'] = '10';
+		$data['culture_try_1_id'] = '1';
+		$data['culture_try_2_id'] = '2';
+		$data['culture_try_3_id'] = '3';
+		$data['culture_try_4_id'] = '4';
+		$data['cultrue_try_5_id'] = '5';
 	
 		//Load View Page
 		$data['content_view'] = 'reviews/index';
@@ -95,17 +119,17 @@ class Review extends Controller {
 	}
 	
 	//Food Review
-	function foodreview()
+	function fooddrinkreview()
 	{
-		$data['content_view'] = 'reviews/foodreview';
-		$this->load->view('frames/student_frame',$data);
+		//hmmm view needs to send context here
 	}
 	
 	//Culture Review
 	function culturereview()
 	{
-		$data['content_view'] = 'reviews/culturereview';
-		$this->load->view('frames/student_frame',$data);
+		//hmmm view needs to send context here
 	}
 	
 }
+
+?>
