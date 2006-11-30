@@ -293,7 +293,6 @@ class Academic_calendar {
 				'+' . ($Hour) . 'hour' .
 				'+' . ($Minute) . 'min' .
 				'+' . ($Second) . 'sec',$start_of_term));
-		return new YkrTime($start_of_term);
 	}
 	
 	/**
@@ -302,24 +301,52 @@ class Academic_calendar {
 	 * @param $Term Term of the year integer [0..5].
 	 * @return Timestamp of midnight on the morning of the first monday of the
 	 *	specified term.
+	 * @pre 0 <= @a $Term < 6.
 	 */
 	private function StartOfAcademicTerm($AcademicYear, $Term)
 	{
 		/// @todo Implement StartOfAcademicTerm using academic term data.
-		if ($Term === 0)
-			return mktime(0,0,0,10,9,$AcademicYear);
-		elseif ($Term === 1)
-			return mktime(0,0,0,12,20,$AcademicYear);
-		elseif ($Term === 2)
-			return mktime(0,0,0,1,1,$AcademicYear+1);
-		elseif ($Term === 3)
-			return mktime(0,0,0,2,20,$AcademicYear+1);
-		elseif ($Term === 4)
-			return mktime(0,0,0,4,1,$AcademicYear+1);
-		elseif ($Term === 5)
-			return mktime(0,0,0,6,1,$AcademicYear+1);
-		else
+		$academic_year_data = $this->GetAcademicYearData($AcademicYear);
+		if ($academic_year_data === FALSE) {
+			$error_message = 'Unknown academic year: ' . $AcademicYear;
+			throw new Exception($error_message);
+		} elseif (array_key_exists($Term, $academic_year_data['term_starts'])) {
+			return $academic_year_data['term_starts'][$Term];
+		} else {
+			$error_message = 'Invalid $Term: ' .
+					$Term .
+					'provided to Academic_calendar::StartOfAcademicTerm';
+			throw new Exception($error_message);
+		}
+	}
+	
+	private function GetAcademicYearData($AcademicYear)
+	{
+		/// @todo Implement GetAcademicYearData using data from db
+		if ($AcademicYear == 2006) {
+			// Fill out array
+			$return_array = array(
+					'year' => $AcademicYear,
+					'term_starts' => array(
+							0 => mktime(0,0,0, 10, 9, 2006),
+							2 => mktime(0,0,0,  1, 1, 2007),
+							4 => mktime(0,0,0,  4, 1, 2007)),
+					'term_weeks' => array(
+							0 => 10,
+							1 => 10,
+							2 => 10));
+			
+			// Calculate holiday start dates
+			for ($term_counter = 0; $term_counter < 3; ++$term_counter) {
+				$return_array['term_starts'][$term_counter*2 + 1] = strtotime(
+						'+' . $return_array['term_weeks'][$term_counter],
+						$return_array['term_starts'][$term_counter*2]);
+			}
+			
+			return $return_array;
+		} else {
 			return FALSE;
+		}
 	}
 	
 	// THE FOLLOWING IS STILL BEING WORKED ON
