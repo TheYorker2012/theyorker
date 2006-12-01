@@ -1,16 +1,33 @@
 <?php
 
+/**
+ * @brief Controller for event manager.
+ * @author David Harker (dhh500@york.ac.uk)
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ */
 class Listings extends Controller {
 
+	/**
+	 * @brief Default constructor.
+	 */
 	function Listings()
 	{
-		parent::Controller();	
+		parent::Controller();
+		
+		// Used for processing the events
+		$this->load->library('event_manager');
+		
+		// Used for producing friendly date strings
+		$this->load->library('academic_calendar');
 	}
 	
-	// default function
+	/**
+	 * @brief Default function.
+	 */
 	function index()
 	{
-		// This array get sent to the view listings_view.php
+		
+		// This array gets sent to the view listings_view.php
 		$data = Array ();
 		
 		// I don't trust users to set their clocks properly
@@ -24,6 +41,8 @@ class Listings extends Controller {
 			array (
 				'ref_id' => '1',
 				'name' => 'House Party',
+				'start' => mktime(18,30,0, 10,28,6),
+				'end'   => mktime( 4,30,0, 10,29,6),
 				'date' => '2006-11-24',
 				'starttime' => '2100',
 				'endtime' => '0000',
@@ -36,6 +55,8 @@ class Listings extends Controller {
 			array (
 				'ref_id' => '2',
 				'name' => 'boring lecture about vegetables',
+				'start' => mktime(12,30,0, 10,29,6),
+				'end'   => mktime(17,30,0, 10,29,6),
 				'date' => '2006-11-21',
 				'starttime' => '1245',
 				'endtime' => '1500',
@@ -47,6 +68,26 @@ class Listings extends Controller {
 			)
 		);
 		
+		// Slice up the events at 4:00am
+		$data['dummies'] = $this->event_manager->SliceOccurrences(
+				$data['dummies'], 4*60);
+		
+		/*
+		 * $data['dummies'] is an array of event occurrences:
+		 *  'start':       timestamp of start of occurrence
+		 *  'end':         timestamp of end of occurrence
+		 *  'slice_start': timestamp of start of slice
+		 *  'slice_end':   timestamp of end of slice
+		 */
+		
+		// Turn times into Academic_times for max flexibility.
+		// When stringified, the timestamps emerge.
+		foreach ($data['dummies'] as $slice_data) {
+			$slice_data['start'] = new Academic_time($slice_data['start']);
+			$slice_data['end'] = new Academic_time($slice_data['end']);
+			$slice_data['slice_start'] = new Academic_time($slice_data['slice_start']);
+			$slice_data['slice_end'] = new Academic_time($slice_data['slice_end']);
+		}
 		
 		$this->load->view('listings_view',$data);
 	}
