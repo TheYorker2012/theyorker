@@ -42,6 +42,11 @@
 $route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
-
+// 'directory' needs to map to 'yorkerdirectory'
+// (the php class Directory is reserved)
+// Additionally the second segment should get sent to view
+$route['directory/([a-z]+)'] = "yorkerdirectory/view/$1";
+$route['yorkerdirectory/([a-z]+)'] = "yorkerdirectory/view/$1";
+$route['directory'] = "yorkerdirectory";
 
 ?>

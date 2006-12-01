@@ -17,7 +17,7 @@
 	<table width='100%'>
 		<tr>
 			<td>
-				<a href='/yorkerdirectory/theyorker'>FragSoc</a>
+				<a href='/directory/theyorker'>FragSoc</a>
 			</td>
 			<td>
 				Society
@@ -28,7 +28,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/yorkerdirectory/theyorker'>TheYorker</a>
+				<a href='/directory/theyorker'>TheYorker</a>
 			</td>
 			<td>
 				Organisation
@@ -39,7 +39,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/yorkerdirectory/theyorker'>Toffs</a>
+				<a href='/directory/theyorker'>Toffs</a>
 			</td>
 			<td>
 				Organisation
