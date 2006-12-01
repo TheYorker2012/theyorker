@@ -87,7 +87,7 @@ class Academic_time
 	 * @brief Construct a time object from a timestamp.
 	 * @param $Timestamp Timestamp to initialise time object to.
 	 */
-	function Academic_time($Timestamp)
+	function __construct($Timestamp)
 	{
 		$this->mTimestamp = $Timestamp;
 	}
@@ -601,7 +601,7 @@ class Academic_calendar {
 	/**
 	 * @brief Default constructor.
 	 */
-	function Academic_calendar()
+	function __construct()
 	{
 		// Nothing to do yet
 	}
