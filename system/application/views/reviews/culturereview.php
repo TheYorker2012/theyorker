@@ -2,6 +2,7 @@
 	<div class="ReviewInfoLeft">
 	<h1 class="reviewHeader">Getting Wasted</h1><br />
 		<a href="culture">&lt;Back to Culture</a><br />
+		<a href="/review">&lt;Back to Reviews</a><br />
 	</div>
 	<div class="ReviewInfoRight">
 		<br />3 Stars
@@ -26,6 +27,7 @@
 		Yo momma.
 		
 	</div>
+<div class="Clear">&nbsp;</div>
 <h2>Author Reviews</h2>
 </div>
 <div class="ReviewInfo">

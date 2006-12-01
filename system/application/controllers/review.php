@@ -119,15 +119,24 @@ class Review extends Controller {
 	}
 	
 	//Food Review
-	function fooddrinkreview()
+	function foodreview()
 	{
-		//hmmm view needs to send context here
+		$data['content_view'] = 'reviews/foodreview';
+		$this->load->view('frames/student_frame',$data);
 	}
 	
 	//Culture Review
 	function culturereview()
 	{
-		//hmmm view needs to send context here
+		$data['content_view'] = 'reviews/culturereview';
+		$this->load->view('frames/student_frame',$data);
+	}
+
+	//Bar Crawl Page
+	function barcrawl()
+	{
+		$data['content_view'] = 'reviews/barcrawl';
+		$this->load->view('frames/student_frame',$data);
 	}
 	
 }

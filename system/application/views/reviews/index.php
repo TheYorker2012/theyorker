@@ -20,7 +20,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/fooddrinkreview/<?php echo $food_try_1_id ?>"><?php echo $food_try1 ?></a>
+			<li><a href="review/foodreview"><?php echo $food_try1 ?></a>
 			<li><?php echo $food_try2 ?>
 			<li><?php echo $food_try3 ?>
 			<li><?php echo $food_try4 ?>
@@ -36,7 +36,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/fooddrinkreview/<?php echo $drink_try_1_id ?>"><?php echo $drink_try1 ?></a>
+			<li><a href="review/foodreview"><?php echo $drink_try1 ?></a>
 			<li><?php echo $drink_try2 ?>
 			<li><?php echo $drink_try3 ?>
 			<li><?php echo $drink_try4 ?>
@@ -52,7 +52,7 @@
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
 		<ul>
-			<li><a href="review/culturereview/<?php echo $culture_try_1_id ?>"><?php echo $culture_try1 ?></a>
+			<li><a href="review/culturereview"><?php echo $culture_try1 ?></a>
 			<li><?php echo $culture_try2 ?>
 			<li><?php echo $culture_try3 ?>
 			<li><?php echo $culture_try4 ?>
