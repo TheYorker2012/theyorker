@@ -271,6 +271,25 @@ class Wikiparser {
 
 	}
 	
+	/**
+	 * @brief Add emphasis to certain text matches
+	 * @author James Hogan (jh559@cs.york.ac.uk)
+	 * @see Wikiparser::parse_line in char_regexes['addemphasis']
+	 *
+	 * This function determines how to format words such as 'the yorker'.
+	 * At the moment it does emphasis, bold, orange (feel free to change)!
+	 */
+	function handle_addemphasis($matches) {
+		$output = '';
+		$output .= '<em><B><FONT color="#FF6000">'; // Orange emphasis
+		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		$output .= $matches[0];                     // Actual text
+		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		$output .= '</FONT></B></em>';              // Orange emphasis
+		return $output;
+
+	}
+	
 	function emphasize_off() {
 		$output = "";
 		if (isset($this->emphasis)) {
@@ -332,6 +351,7 @@ class Wikiparser {
 			'emphasize'=>'(\'{2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
 			'variable'=>'('. '\{\{' . '([^\}]*?)' . '\}\}' . ')',
+			'addemphasis'=>'(the yorker)',
 		);
 				
 		$this->stop = false;
