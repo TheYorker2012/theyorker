@@ -22,16 +22,16 @@ class Wikitext extends Controller {
 	function index()
 	{
 		// No POST data? just set wikitext to default string
-		if (!array_key_exists('wikitext',$_POST)) {
-			$_POST['wikitext'] =
-					'==This is the yorker wikitext parser==' . "\n" .
-					'Enter wikitext here:';
+		$wikitext = $this->input->post('wikitext');
+		if ($wikitext === FALSE) {
+			$wikitext  = '==This is the yorker wikitext parser==' . "\n";
+			$wikitext .= 'Enter wikitext here:';
 		}
 		
 		echo '<HTML><HEAD><TITLE>Wikitext preview</TITLE></HEAD><BODY>';
 		
 		// Put a preview at the top
-		echo $this->wikiparser->parse($_POST['wikitext'],'wiki test');
+		echo $this->wikiparser->parse($wikitext . "\n",'wiki test');
 		
 		// Then have a form for changing the wikitext
 		echo form_open('test/wikitext');
@@ -39,7 +39,7 @@ class Wikitext extends Controller {
 		$textarea_data = array(
 				'name'        => 'wikitext',
 				'id'          => 'wikitext',
-				'value'       => $_POST['wikitext'],
+				'value'       => $wikitext,
 				'rows'        => '10',
 				'cols'        => '80',
 				'style'       => 'width:80%',
