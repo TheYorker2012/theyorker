@@ -1,21 +1,21 @@
 	<br>
 	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
-	<div class="title">Campaign: <?php echo $Title; ?></div>
-	<div class="Blurb"><img src="<?php echo $Picture; ?>"><br><br><?php echo $Description; ?></div>
+	<div class="title">Campaign: <?php echo $subdata['Title']; ?></div>
+	<div class="Blurb"><img src="<?php echo $subdata['Picture']; ?>"><br><br><?php echo $subdata['Description']; ?></div>
 	<div class="funnybox">
 	<div class="funnyboxpt1">Find out more</div><br>
 	<div class="funnyboxpt2">Contact</div>
-	<div class="funnyboxpt3">><?php echo $Author; ?></div>
-	<div class="funnyboxpt4"><?php echo $Society; ?></div>
+	<div class="funnyboxpt3">><?php echo $subdata['Author']; ?></div>
+	<div class="funnyboxpt4"><?php echo $subdata['Society']; ?></div>
 	</div>
 	<div class="Container">
 	<div class="HalfBox">
 	<div style="font-weight: bold; font-size: 20px;">RELATED NEWS STORIES</div>
-	<div style="font-weight: bold; font-size: 12px;">>BOY CAN FLY</div>
+	<div style="font-weight: bold; font-size: 12px;">BOY CAN FLY</div>
 	</div>
 	<div class="HalfBox">
 	<div style="font-weight: bold; font-size: 20px;">EXTERNAL LINKS</div>
-	<div style="font-weight: bold; font-size: 12px;">>BOY CAN FLY</div>
+	<div style="font-weight: bold; font-size: 12px;">BOY CAN FLY</div>
 	</div>
 	</div>
 	<BR><BR>

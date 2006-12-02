@@ -1,17 +1,17 @@
 	<br>
 	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
 	<div class="title">CAMPAIGN</div>
-	<div class="Blurb"><img src="<?php echo $Picture; ?>"><br><br><?php echo $Summery; ?></div>
+	<div class="Blurb"><img src="<?php echo $subdata['Picture']; ?>"><br><br><?php echo $subdata['Summary']; ?></div>
 	<div class="subtitle">PETITION</div>
-	<div class="SubText">NUNBER OF SIGNATURES: <?php echo $NumOfSignatures; ?></div>
+	<div class="SubText">NUNBER OF SIGNATURES: <?php echo $subdata['NumOfSignatures']; ?></div>
 	<div class="SignBox">
 	<div class="signit">SIGN PETITION</div>
-	<div class="SignVoteForm">&nbsp;&nbsp;&nbsp;NAME: &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="font-size:17px; height: 29px; border-style:solid; border-width: 2px;" value="<?php echo $Username; ?>"><BR><div class="sendbox">SEND</div></div>
+	<div class="SignVoteForm">&nbsp;&nbsp;&nbsp;NAME: &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="font-size:17px; height: 29px; border-style:solid; border-width: 2px;" value="<?php echo $subdata['Username']; ?>"><BR><div class="sendbox">SEND</div></div>
 	</div>
 	<div class="Container">
 	<div class="HalfBox"><div class="subheader">PROGRESS REPORT</div>
 	<?php
-		foreach ($ProgressItems as $ProgressItem) {
+		foreach ($subdata['ProgressItems'] as $ProgressItem) {
 			echo '<div class="ProgressItem">';
 			if ($ProgressItem['good'] == 'y'){
 				echo '<img style="float: left" src="http://localhost/images/prototype/campaign/tick.jpg">'; //change from localhost
