@@ -12,6 +12,7 @@ class Home extends Controller {
 	*/
 	function index()
 	{
+		$this->output->enable_profiler(TRUE);
 		$data = array(
 			'test' => 'I set this variable from the controller!',
 			'content_view' => 'general/home'
