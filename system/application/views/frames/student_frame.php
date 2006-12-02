@@ -92,7 +92,7 @@ function preloader()
 		<?php $this->load->view($content_view); ?>
 		</td>
 		<td align="left" valign="top" width="120"  bgcolor="white">
-		  <img src="/images/adverts/sun.gif">
+		  <img src="/images/adverts/skyscraper.jpg">
         </td>
 	</tr>
 </table>
