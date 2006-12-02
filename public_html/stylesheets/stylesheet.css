@@ -157,7 +157,7 @@ li {
 /* For the fluid student frame */
 .WholePage {
 	background-color: #ffffff;
-	width: 780px;
+	padding: 1.5em;
 }
 .HeaderMenu {
 	text-align: right;
@@ -215,8 +215,7 @@ div.breaker {
 
 /* For the campaign pages */
 .wholepage2 { /* Remove Me Begin */
-	width:720px;
-	margin-left: 30px;
+
 }
 .title{
 	font-size: 35px;
