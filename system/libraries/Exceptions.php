@@ -54,6 +54,7 @@ class CI_Exceptions {
 	function CI_Exceptions()
 	{
 		// Note:  Do not log messages from this constructor.
+		$this->ob_level = ob_get_level();
 	}
   	
 	// --------------------------------------------------------------------
@@ -115,7 +116,7 @@ class CI_Exceptions {
 	{
 		$message = '<p>'.implode('</p><p>', ( ! is_array($message)) ? array($message) : $message).'</p>';
 
-		if (ob_get_level() > 1)
+		if (ob_get_level() > $this->ob_level + 1)
 		{
 			ob_end_flush();	
 		}
@@ -151,7 +152,7 @@ class CI_Exceptions {
 			$filepath = $x[count($x)-2].'/'.end($x);
 		}
 		
-		if (ob_get_level() > 1)
+		if (ob_get_level() > $this->ob_level + 1)
 		{
 			ob_end_flush();	
 		}
