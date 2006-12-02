@@ -7,7 +7,7 @@
 		<ul>
 			<li><a href='/about/'>About Us</a></li>
 			<li>Contact Us</li>
-			<li><a href='#'>Sponsered Charity</a></li>
+			<li><a href='/charity/'>Sponsered Charity</a></li>
 		</ul>
 	</div>
 </div>

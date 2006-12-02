@@ -1,9 +1,9 @@
 <div id='pageheader' style='background-image: url(/images/subheadericons/pageicon_pagename.gif);'>
 	<div id='titleheader'>
-		<h1>The Yorker Directory</h1>
+		<h1>Edit: The Yorker Directory</h1>
 	</div>
 	<div style='margin-left: 10px;'>
-		<form id='form1' name='form1' action='/directory/' method='POST'>
+		<form id='form1' name='form1' action='/admin/yorkerdirectory/' method='POST'>
 			<strong>Show:</strong> 
 			Venues<input type='checkbox' name='searchrange' value="venues" checked>
 			Societies<input type='checkbox' name='searchrange' value="socs" checked>
@@ -19,7 +19,7 @@
 	<table width='100%'>
 		<tr>
 			<td>
-				<a href='/directory/fragsoc'>FragSoc</a>
+				<a href='/admin/yorkerdirectoryview/fragsoc'>FragSoc</a>
 			</td>
 			<td>
 				Society
@@ -30,7 +30,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/directory/theyorker'>TheYorker</a>
+				<a href='/admin/yorkerdirectoryview/theyorker'>TheYorker</a>
 			</td>
 			<td>
 				Organisation
@@ -41,7 +41,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/directory/toffs'>Toffs</a>
+				<a href='/admin/yorkerdirectoryview/toffs'>Toffs</a>
 			</td>
 			<td>
 				Venue
@@ -52,7 +52,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/directory/poledancing'>Pole Dancing</a>
+				<a href='/admin/yorkerdirectoryview/poledancing'>Pole Dancing</a>
 			</td>
 			<td>
 				Athletics Union
@@ -63,6 +63,21 @@
 		</tr>
 	</table>
 	<div align='center'>
-		<h5>Showing 50 results, containing Venues, Societies & The Athletics Union</h5>
+		<h5>Showing 50 results, containing Organisations & Societies</h5>
 	</div>
+</div>
+<div>
+	<h2>Add an organisation</h2>
+		<p>This will add an organisation to the directory and email the login password to the address provided.</p>
+		<form id='addorgform' name='addorgform' action='/admin/directory/' method='POST'>
+			Name :<input type='text' name='name'><br />
+			Email :<input type='text' name='email'><br />
+			Organisation type :
+			<select name="orgtype">
+				<option value="soc" selected>Society</option>
+				<option value="venue">Venue</option>
+				<option value="venue">Athletics Union</option>
+			</select><br />
+			<input type='submit' name='Add' value='Add'>
+		</form>
 </div>

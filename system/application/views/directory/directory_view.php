@@ -3,7 +3,7 @@
 		<h1>The Yorker Directory</h1>
 	</div>
 	<div style='margin-left: 10px;'>
-		<form id='form1' name='form1' action='#' method='POST'>
+		<form id='form1' name='form1' action='/directory/' method='POST'>
 			<strong>Show:</strong> 
 			Venues<input type='checkbox' name='searchrange' value="venues" checked>
 			Societies<input type='checkbox' name='searchrange' value="socs" checked>
