@@ -34,7 +34,7 @@ class Wikitext extends Controller {
 		echo $this->wikiparser->parse($_POST['wikitext'],'wiki test');
 		
 		// Then have a form for changing the wikitext
-		echo form_open('wikitext');
+		echo form_open('test/wikitext');
 		
 		$textarea_data = array(
 				'name'        => 'wikitext',
