@@ -183,9 +183,38 @@ li {
 }
 /* End the fluid student frame */
 
+/*General Usefull Css Layouts */
+/* For a duel colum layout use a container div enclosing two halfbox divs and a empty breaker div. */
+div.Container{
+	width:100%;
+}
+div.ContainerHalf{
+	width:50%;
+}
+div.HalfBox { 
+	float: left;
+	width:49%;
+	//width: 50%;
+	padding: 5px;
+}
+div.ThirdBox { 
+	float: left;
+	width:33%;
+	padding: 5px;
+}
+div.QuaterBox { 
+	float: left;
+	width:24%;
+	//width: 25%;
+	padding: 5px;
+}
+div.breaker {
+	clear:both;
+}
+/* End Usefull Css Layouts */
+
 /* For the campaign pages */
-/* Remove Me Begin */
-.wholepage2 { 
+.wholepage2 { /* Remove Me Begin */
 	width:720px;
 	margin-left: 30px;
 }
@@ -204,14 +233,7 @@ li {
 	background-color: FF6A00;
 	padding-left: 3px;
 	padding-bottom: 3px;
-}
-/* Remove Me End */
-.HalfBox {
-	float: left;
-	width:49%;
-	//width: 50%;
-	padding: 5px;
-}
+}/* Remove Me End */
 .ResultsList {
 	border-style:solid;
 	border-color:#66FFCC;
@@ -222,9 +244,6 @@ li {
 	border-color: FF6A00;
 	font-size: large;
 	font-weight: bold;
-}
-.breaker {
-	clear:both;
 }
 .ProgressItemText {
 	padding-left: 55px;
@@ -316,10 +335,58 @@ li {
 }
 /* End the campaign pages */
 
+/*For the charity page */
+div.FloatRightHalf {
+	float: right;
+	width:49%;
+	//width: 50%;
+	padding: 5px;
+}
+div.CharitySubText {
+	font-size: 3em;
+	font-weight: bold;
+	color: FF6A00;
+}
+div.CharityRelated {
+	float: left;
+	width:24%;
+	//width: 49%;
+	padding: 5px;
+}
+div.BlackBox {
+	color: #ffffff;
+	background-color: #000000;
+	padding: 0.5em;
+}
+div.WhiteBox {
+	color: #000000;
+	background-color: #ffffff;
+	padding: 0.2em;	
+	font-size: 4em;
+	font-weight: bold;
+}
+div.WhiteFullBox {
+	color: #000000;
+	background-color: #ffffff;
+	margin-left: -0.5em;
+	margin-right: -0.5em;
+	padding: 0.5em;	
+}
+div.BlackBoxTitle {
+	font-size: 2.5em;
+	font-weight: bold;
+}
+div.BlackBoxSubTitle {
+	font-size: 2em;
+	font-weight: bold;
+}
+/* End the charity pages */
+
+
 /*Style Fox Box Stye Subheader With Related Links Option for an image.*/
 /*Look on the wiki page for html code, converts a list into a related links box*/
 #pageheader{
-    background-color: #00CCFF;
+
     background-repeat: no-repeat;
     background-position: right top;
 	 background-image: url('/images/subheadericons/pageicon_pagename.gif');
