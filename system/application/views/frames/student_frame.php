@@ -6,7 +6,7 @@
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
 </head>
 
-<body bgcolor="#CED8D9" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
 
 <script src="/javascript/jumpto.js" type="text/javascript"></script>
 
@@ -37,26 +37,30 @@ function preloader()
 
 </script>
 
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%">
+  <table bgcolor="#CED8D9" border="0" cellpadding="0" cellspacing="0" width="100%" height="100%">
   <tr>
-		<td align="middle" valign="center">
+  <td align="right" valign="top">
+	&nbsp;
+  </td>
+
+<td align="middle" valign="center" width="">
 
 
-<table id="Table_01" width="780" height="581" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+<table id="Table_01" width="" height="581" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
 	<tr>
-		<td height="22" style="padding-right:10px;" align="right" class="HeaderMenu">
-			<a class="HeaderLinks" href="/home/">home</a> | 
-			<a class="HeaderLinks" href="/logon/">log in</a> | 
-			<a class="HeaderLinks" href="http://yorkipedia.theyorker.co.uk/">yorkipedia</a> | 
-			<a class="HeaderLinks" href="/contact/">contact us</a> | 
-			<a class="HeaderLinks" href="/about/">about</a> | 
+		<td height="22" colspan="3" style="padding-right:10px;" align="right" class="HeaderMenu">
+			<a class="HeaderLinks" href="/home/">home</a> |
+			<a class="HeaderLinks" href="/logon/">log in</a> |
+			<a class="HeaderLinks" href="http://yorkipedia.theyorker.co.uk/">yorkipedia</a> |
+			<a class="HeaderLinks" href="/contact/">contact us</a> |
+			<a class="HeaderLinks" href="/about/">about</a> |
 			<span style="color: #2DC6D7;">
 			search <input type="text" style="font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px;">
 			</span>
 		</td>
 	</tr>
 	<tr>
-		<td bgcolor="#ffffff" height="108" >
+		<td bgcolor="#ffffff" height="108" colspan="3">
 			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108;">
 				<tr>
 					<td>
@@ -81,24 +85,34 @@ function preloader()
 		</td>
 	</tr>
 	<tr bgcolor="#ffffff">
+		<td align="right" valign="top" width="120" bgcolor="white">
+		  <img src="/images/adverts/3-120x600.gif">
+		</td>
 		<td width="780" valign="top">
 		<?php $this->load->view($content_view); ?>
 		</td>
+		<td align="left" valign="top" width="120"  bgcolor="white">
+		  <img src="/images/adverts/sun.gif">
+        </td>
 	</tr>
 </table>
 <small>Page rendered in {elapsed_time} seconds</small>
 
 
   </td>
+
+  <td align="right" valign="top">
+   &nbsp;
+  </td>
   </tr>
   </table>
 
 <!-- Start of StatCounter Code -->
 <script type="text/javascript" language="javascript">
-var sc_project=1998064; 
-var sc_invisible=1; 
-var sc_partition=18; 
-var sc_security="7146b8cd"; 
+var sc_project=1998064;
+var sc_invisible=1;
+var sc_partition=18;
+var sc_security="7146b8cd";
 </script>
 
 <script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c19.statcounter.com/counter.php?sc_project=1998064&amp;java=0&amp;security=7146b8cd&amp;invisible=1" alt="free web site hit counter" border="0"></a> </noscript>
