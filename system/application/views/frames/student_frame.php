@@ -54,6 +54,7 @@ function preloader()
 			<a class="HeaderLinks" href="http://yorkipedia.theyorker.co.uk/">yorkipedia</a> |
 			<a class="HeaderLinks" href="/contact/">contact us</a> |
 			<a class="HeaderLinks" href="/about/">about</a> |
+			<a class="HeaderLinks" href="/directory/">directory</a> |
 			<span style="color: #2DC6D7;">
 			search <input type="text" style="font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px;">
 			</span>
