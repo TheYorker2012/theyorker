@@ -38,5 +38,38 @@ class Admin extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
+
+	/**
+	 * @admin page to add entry to faq.
+	 */
+	function addfaq()
+	{
+		$data = array(
+			'content_view' => 'faq/addfaq'
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
+
+	/**
+	 * @admin page to add entry to howdoi
+	 */
+	function addhowdoi()
+	{
+		$data = array(
+			'content_view' => 'faq/addhowdoi'
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
+
+	/**
+	 * @admin page to edit entry in faq
+	 */
+	function editfaq()
+	{
+		$data = array(
+			'content_view' => 'faq/editfaq'
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
 }
 ?>
