@@ -17,50 +17,19 @@
 <div>
 <div style='width: 90%;margin-left: auto;margin-right: auto;'>
 	<table width='100%'>
+		<?php foreach ($organisations as $organisation) { ?>
 		<tr>
 			<td>
-				<a href='/directory/fragsoc'>FragSoc</a>
+				<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\'>' . $organisation['name']; ?></a>
 			</td>
 			<td>
-				Society
+				<?php echo $organisation['type']; ?>
 			</td>
 			<td>
-				A computer gaming society
+				<?php echo $organisation['description']; ?>
 			</td>
 		</tr>
-		<tr>
-			<td>
-				<a href='/directory/theyorker'>TheYorker</a>
-			</td>
-			<td>
-				Organisation
-			</td>
-			<td>
-				The people who run this website
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<a href='/directory/toffs'>Toffs</a>
-			</td>
-			<td>
-				Venue
-			</td>
-			<td>
-				A nightclub in york
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<a href='/directory/poledancing'>Pole Dancing</a>
-			</td>
-			<td>
-				Athletics Union
-			</td>
-			<td>
-				A fitness club
-			</td>
-		</tr>
+		<?php } ?>
 	</table>
 	<div align='center'>
 		<h5>Showing 50 results, containing Venues, Societies & The Athletics Union</h5>

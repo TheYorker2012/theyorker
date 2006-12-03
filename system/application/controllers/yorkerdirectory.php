@@ -17,7 +17,39 @@ class Yorkerdirectory extends Controller {
 	function index()
 	{
 		$data = array(
-			'content_view' => 'directory/directory'
+			'content_view' => 'directory/directory',
+			'organisations' => array(
+				array(
+					'shortname'   => 'fragsoc',
+					'name'        => 'FragSoc',
+					'description' => 'A computer gaming society',
+					'type'        => 'Society',
+				),
+				array(
+					'shortname'   => 'theyorker',
+					'name'        => 'The Yorker',
+					'description' => 'The people who run this website',
+					'type'        => 'Organisation',
+				),
+				array(
+					'shortname'   => 'toffs',
+					'name'        => 'Toffs',
+					'description' => 'A nightclub in york',
+					'type'        => 'Venue',
+				),
+				array(
+					'shortname'   => 'poledancing',
+					'name'        => 'Pole Dancing',
+					'description' => 'A fitness club',
+					'type'        => 'Athletics Union',
+				),
+				array(
+					'shortname'   => 'cookiesoc',
+					'name'        => 'Cookie Soc',
+					'description' => 'Eat cookies',
+					'type'        => 'Society',
+				),
+			),
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
@@ -28,7 +60,36 @@ class Yorkerdirectory extends Controller {
 	function view($organisation)
 	{
 		$data = array(
-			'content_view' => 'directory/directory_view'
+			'content_view' => 'directory/directory_view',
+			'organisation' => array(
+				'shortname'   => 'theyorker',
+				'name'        => 'The Yorker',
+				'description' => 'The people who run this website',
+				'type'        => 'Organisation',
+				'cards'       => array(
+					array(
+						'name' => 'Daniel Ashby',
+						'title' => 'Editor',
+						'course' => 'Politics and Philosophy',
+						'blurb' => 'The guy in charge',
+						'email' => 'editor@theyorker.co.uk',
+						'phone_mobile' => '07777 777777',
+						'phone_internal' => '01904 444444',
+						'phone_external' => '01904 555555',
+						'postal_address' => '',
+					),
+					array(
+						'name' => 'Nick Evans',
+						'title' => 'Technical Director',
+						'course' => 'Computer Science',
+						'blurb' => 'The other guy',
+						'email' => 'webmaster@theyorker.co.uk',
+						'phone_internal' => '07788 888888',
+						'phone_external' => '01904 333333',
+						'postal_address' => '01904 666666',
+					),
+				),
+			),
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
