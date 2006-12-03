@@ -221,6 +221,10 @@ div.QuaterBox {
 div.breaker {
 	clear:both;
 }
+div.GalleryPicture {
+	float: left;
+	padding: 10px;
+}
 /* End Usefull Css Layouts */
 
 /* For the campaign pages */
