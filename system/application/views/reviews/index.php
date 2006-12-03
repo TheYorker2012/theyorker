@@ -1,12 +1,5 @@
-<div id='pageheader'>
+<div id="ReviewTitle">
 	<h1><img alt="Reviews" src="<?php echo $title_image ?>" /></h1>
-	<div id='pagelinks'>
-		<ul>
-			<li><a href='/review/food'>Food</a></li>
-			<li><a href='/review/drink'>Drink</a></li>
-			<li><a href='/review/culture'>Culture</a></li>
-		</ul>
-	</div>
 </div>
 <table class="ReviewSetBlock">
 	<tr>

@@ -54,6 +54,10 @@ table.ReviewSet{
 	margin: 1em;
 }
 
+#ReviewTitle {
+	text-align: center;
+}
+
 div.ReviewSetHeader {
 	width: 100%;
 	text-align: center;
@@ -89,7 +93,11 @@ div.WhyNotTry {
 }
 
 #feature {
-	width: 100%;
+	width: 90%;
+	border: medium solid;
+	margin: 1em;
+	padding: 1em;
+	border-color: #2dc6d7;
 }
 
 div.featureHeading {
@@ -390,14 +398,13 @@ div.BlackBoxSubTitle {
 	background-color: 00CCFF;
     background-repeat: no-repeat;
     background-position: right top;
-	 background-image: url('/images/subheadericons/pageicon_pagename.gif');
 }
 #titleheader{
     margin: 5px;
 	 color: white;
 }
 #pagelinks{
-    background-color: #999999;
+    background-color: #1E90FF;
     width: 100%;
 }
 
