@@ -817,3 +817,59 @@ div.BlackBoxSubTitle {
 /*
 *	End styles for News Section
 */
+
+/*
+*     Styles for search page
+*/
+
+#minibox {
+  float: left;
+  width: 170px;
+  padding: 5px;
+  margin: 10px 0px 0px 10px;
+  border: 1px solid #000000;
+}
+
+#minibox #title {
+  display: block;
+  padding: 3px;
+  margin: -5px -5px 8px -5px;
+  background-color: #C0C0C0;
+}
+
+#minibox a {
+  display: block;
+  text-decoration: none;
+  margin: 3px 0px 3px 0px;
+}
+
+#minibox a i {
+  font-size: 12px;
+  color: #7F7F7F;
+}
+
+#searchresults {
+  padding: 0px 0px 0px 190px;
+}
+
+#searchresults #a_search_form {
+  text-align: center;
+}
+
+#searchresults li a {
+  display: block;
+  margin: 0px 0px 8px 0px;
+}
+
+#searchresults li {
+  list-style-type: decimal;
+  margin: 0px 0px 20px 0px;
+}
+
+.searchfield {
+  width: 200px;
+}
+
+/*
+*     End Styles for search page
+*/
