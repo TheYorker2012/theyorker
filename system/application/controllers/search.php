@@ -36,5 +36,14 @@ class Search extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
+
+
+      // temp function that links to the layout of the search page
+      function layout() {
+		$data = array(
+			'content_view' => 'search/search'
+		);
+		$this->load->view('frames/student_frame',$data);
+      }
 }
 ?>
