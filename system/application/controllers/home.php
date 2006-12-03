@@ -13,6 +13,15 @@ class Home extends Controller {
 	{
 		$data = array(
 			'test' => 'I set this variable from the controller!',
+			'content_view' => 'general/list'
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
+
+	function main()
+	{
+		$data = array(
+			'test' => 'I set this variable from the controller!',
 			'content_view' => 'general/home'
 		);
 		$this->load->view('frames/student_frame',$data);
