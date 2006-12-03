@@ -385,7 +385,7 @@ div.BlackBoxSubTitle {
 /*Style Fox Box Stye Subheader With Related Links Option for an image.*/
 /*Look on the wiki page for html code, converts a list into a related links box*/
 #pageheader{
-
+	background-color: 00CCFF;
     background-repeat: no-repeat;
     background-position: right top;
 	 background-image: url('/images/subheadericons/pageicon_pagename.gif');
