@@ -31,7 +31,7 @@ class Review extends Controller {
 		// This is due to someone (I WILL FIND YOU!!) adding .htm setting in config.php!!!
 		// This will be removed when the setting is removed
 		
-		$data['title_image'] = base_url().'images/reviews/contentpage/title_image.gif';
+		$data['title_image'] = base_url().'images/prototype/reviews/reviews_01.gif';
 		$data['food_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';
 		$data['drink_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';
 		$data['culture_image'] = base_url().'/images/prototype/reviews/reviews_07.jpg';

@@ -42,16 +42,21 @@ img {
 */
 
 /* Review div for lining up boxes to same size */
-#ReviewSetBlock {
-	background-color: Olive;
+table.ReviewSetBlock td{
 	width = 100%;
+	vertical-align: top;
 }
 
 /* Review mainpage sections E.g. food, reviews, culture */
-div.ReviewSet {
-	float: left;
+table.ReviewSet{
+	border: thin solid;
+	border-color: #2dc6d7;
+	margin: 1em;
+}
+
+div.ReviewSetHeader {
+	width: 100%;
 	text-align: center;
-	width: 33%;
 }
 
 div.FoodSet {
@@ -78,9 +83,7 @@ div.WhyNotTry {
 	margin: 1em;
 	padding: 1em;
 	float: center;
-	background-color: #875523;
-	color: White;
-	border-color: #E5BC8F;
+	border-color: #2dc6d7;
 	border-style: solid;
 	border-width: thick;
 }
@@ -152,7 +155,6 @@ div.AuthorReviewByline {
 li {
     list-style-type: disc
 }
-
 
 /* For the fluid student frame */
 .WholePage {

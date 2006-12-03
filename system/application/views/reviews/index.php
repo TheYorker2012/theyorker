@@ -1,8 +1,5 @@
 <div id='pageheader'>
-	<div id='titleheader'>
-		<h1>Reviews</h1>
-	</div>
-	<p>&nbsp;&nbsp;Related Pages:</p>
+	<h1><img alt="Reviews" src="<?php echo $title_image ?>" /></h1>
 	<div id='pagelinks'>
 		<ul>
 			<li><a href='/review/food'>Food</a></li>
@@ -11,11 +8,13 @@
 		</ul>
 	</div>
 </div>
-<div id="ReviewSetBlock">
-	<div class="ReviewSet">
-		<a href="/review/food"><h2>FOOD</h2></a>
+<table class="ReviewSetBlock">
+	<tr>
+	<td>
+		<table class="ReviewSet">
+		<tr><td>
+		<div class="ReviewSetHeader"><h2><a href="/review/food">FOOD</a></h2></div>
 		<img alt="Food" src="<?php echo $food_image ?>" />
-		<br />
 		<?php echo $food_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
@@ -27,11 +26,14 @@
 			<li><?php echo $food_try5 ?>
 		</ul>
 		</div>
-	</div>
-	<div class="ReviewSet">
-		<a href="/review/drink"><h2>DRINK</h2></a>
+		</td></tr>
+		</table>
+	</td>
+	<td>
+		<table class="ReviewSet">
+		<tr><td>
+		<div class="ReviewSetHeader"><h2><a href="/review/drink">DRINK</a></h2></div>
 		<img alt="Drink" src="<?php echo $drink_image ?>" />
-		<br />
 		<?php echo $drink_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
@@ -43,11 +45,14 @@
 			<li><?php echo $drink_try5 ?>
 		</ul>
 		</div>
-	</div>
-	<div class="ReviewSet">
-		<a href="/review/culture"><h2>CULTURE</h2></a>
+		</td></tr>
+		</table>
+	</td>
+	<td>
+		<table class="ReviewSet">
+		<tr><td>
+		<div class="ReviewSetHeader"><h2><a href="/review/culture">CULTURE</a></h2></div>
 		<img alt="Culture" src="<?php echo $culture_image ?>" />
-		<br />
 		<?php echo $culture_text ?>
 		<div class="WhyNotTry">
 		<h3>Why Not Try?</h3>
@@ -59,7 +64,9 @@
 			<li><?php echo $culture_try5 ?>
 		</ul>
 		</div>
-	</div>
-	<div class="clear">&nbsp;</div>
-</div>
+		</td></tr>
+		</table>
+	</td>
+	</tr>
+</table>
 
