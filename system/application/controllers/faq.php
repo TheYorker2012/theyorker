@@ -12,8 +12,14 @@ class Faq extends Controller {
 
     function howdoi()
     {
+        if($this->uri->segment(3) == '') {
+          $page = 'faq/howdoi';
+        } else {
+          $page = 'faq/howdoidata';
+        }
+
         $data = array(
-            'content_view' => 'faq/howdoi'
+            'content_view' => $page
         );
         $this->load->view('frames/student_frame',$data);
     }
