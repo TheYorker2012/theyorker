@@ -3,7 +3,7 @@
 		<div class="title">Edit Campaign Details: <?php echo $CampaignTitle; ?></div>
 		Title: <br/>
 		<input type="text" style="width: 100%;" value="<?php echo $CampaignTitle; ?>" />
-		Detials: <br/>
+		Details: <br/>
 		<textarea style="width: 100%; height: 500px;"></textarea>
 		Author: <input type="text" style="width: 40%;" /> Society: <input type="text" style="width: 40%;" /><br/>
 		External Links: <input type="text" style="width: 80%;" /><br/><br/>
