@@ -846,7 +846,7 @@ div.BlackBoxSubTitle {
 
 #minibox {
   float: left;
-  width: 170px;
+  width: 140px;
   padding: 5px;
   margin: 10px 0px 0px 10px;
   border: 1px solid #000000;
@@ -871,7 +871,7 @@ div.BlackBoxSubTitle {
 }
 
 #searchresults {
-  padding: 0px 0px 0px 190px;
+  padding: 0px 0px 0px 150px;
 }
 
 #searchresults #a_search_form {
