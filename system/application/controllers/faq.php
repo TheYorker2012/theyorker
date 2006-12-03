@@ -24,20 +24,5 @@ class Faq extends Controller {
         $this->load->view('frames/student_frame',$data);
     }
 
-    function addfaq()
-    {
-        $data = array(
-            'content_view' => 'faq/addfaq'
-        );
-        $this->load->view('frames/student_frame',$data);
-    }
-
-    function addhowdoi()
-    {
-        $data = array(
-            'content_view' => 'faq/addhowdoi'
-        );
-        $this->load->view('frames/student_frame',$data);
-    }
 }
 ?>
