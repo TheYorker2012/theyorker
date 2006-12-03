@@ -18,7 +18,7 @@ class Campaign extends Controller {
 	function Details($SelectedCampaign = 'Pie Eating')
 	{
 		$data = array(
-			'content_view' => 'campaign/CampaignDetials',
+			'content_view' => 'campaign/CampaignDetails',
 			'Title' => $SelectedCampaign,
 			'Description' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
 			'Author' => 'Mr Jones',
@@ -56,7 +56,7 @@ class Campaign extends Controller {
 			$this->load->view('frames/student_frame',$data);
 		} else {
 			$data = array(
-				'content_view' => 'campaign/CampaignsEditDetials',
+				'content_view' => 'campaign/CampaignsEditDetails',
 				'CampaignTitle' => $SelectedCampaign
 			);
 			$this->load->view('frames/student_frame',$data);
