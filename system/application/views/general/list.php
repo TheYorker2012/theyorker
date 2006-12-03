@@ -69,8 +69,6 @@ FAQ
 <ul>
 	<li><a href="/faq/">/faq/</a></li>
 	<li><a href="/faq/howdoi/">/faq/howdoi/</a></li>
-	<li><a href="/faq/addfaq/">/faq/addfaq/</a></li>
-	<li><a href="/faq/addhowdoi/">/faq/addhowdoi/</a></li>
 </ul>
 
 
