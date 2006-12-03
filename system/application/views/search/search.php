@@ -1,7 +1,6 @@
 
 <!-- a_search_form defined twice, remember to recreate into class !! :) //-->
 
-
 <div id='minibox'>
     <div id='title'>Categorys</div>
     <a href='#'><b>All results</b> <i>(112)</i></a>
@@ -53,6 +52,15 @@
             adipiscing nisi.
         </li>
     </ol>
+    <div id="numbers">
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a>
+        <a href="#">-></a>
+    </div>
     <form name='a_search_form' id='a_search_form' action='<?php echo site_url('search/search'); ?>' method='post'>
         <p>Search: <input type='text' name='search' id='search' value='' class='searchfield' />
         <input type='submit' name='submit' id='submit' value='Search' /></p>
