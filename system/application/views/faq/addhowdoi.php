@@ -1,3 +1,4 @@
+        <br />
         <form name='a_search_form' id='a_search_form' action='<?php echo site_url('faq/addhowdoi'); ?>' method='post'>
             <fieldset id='SearchForm' title='Add new how do I'>
                 <legend>Add new how do I</legend>
