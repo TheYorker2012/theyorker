@@ -71,6 +71,12 @@ FAQ
 	<li><a href="/faq/howdoi/">/faq/howdoi/</a></li>
 </ul>
 
+Search
+<ul>
+	<li><a href="/search/">/search/</a></li>
+	<li><a href="/search/layout/">/search/layout/</a></li>
+</ul>
+
 
 
 
