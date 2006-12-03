@@ -9,4 +9,8 @@ For the moment lets just have links to the current admin pages, add yours as you
 
 <a href='/admin/yorkerdirectory/'>Edit the directory</a><br>
 <a href='/admin/yorkerdirectoryview/'>Edit entry in the directory</a>
+<br />
+<a href="/admin/addfaq/">Add faq</a></li>
+<a href="/admin/addhowdoi/">Add to how do I</a></li>
+<a href="/admin/editfaq/">Edit FAQ entry</a></li>
 </div>
