@@ -70,6 +70,25 @@ class Wikiparser {
 		return $this->emphasize_off() . "<br /><br />";
 	}
 	
+	/**
+	 * Used by handle_list.
+	 * @param string $containee
+	 * @param string $container
+	 * @return bool Whether @a $container starts with the string @a $containee.
+	 * @author James Hogan (jh559@cs.york.ac.uk)
+	 */
+	function string_contained($containee, $container)
+	{
+		$len_containee = strlen($containee);
+		$len_container = strlen($container);
+		return ($len_containee <= $len_container and
+				$containee == substr($container,0,$len_containee));
+	}
+	
+	/**
+	 * @note Modified by James Hogan (jh559@cs.york.ac.uk) to fix bullet
+	 *	mixing problem.
+	 */
 	function handle_list($matches,$close=false) {
 		$listtypes = array(
 			'0'=>'dummie value',
@@ -77,29 +96,52 @@ class Wikiparser {
 			'#'=>'ol',
 		);
 		
-		$output = "";
+		$output = '';
 		
 		$newlevel = ($close) ? 0 : strlen($matches[1]);
 		
-		while ($this->list_level!=$newlevel) {
-			$listchar = substr($matches[1],-1);
+		$new_list = false;
+		
+		// While the new list types aren't compatible with the old
+		// close the last list
+		while (!$this->string_contained($this->list_level_chars, $matches[1])) {
+			// Get the last list type
+			$listchar = substr($this->list_level_chars,-1);
 			$listtype = $listtypes[$listchar];
 			
-			//$output .= "[".$this->list_level."->".$newlevel."]";
-			
-			if ($this->list_level>$newlevel) {
-				$listtype = '/'.array_pop($this->list_level_types);
-				$this->list_level--;
-			} else {
-				$this->list_level++;
-				array_push($this->list_level_types,$listtype);
-			}
-			$output .= "\n<{$listtype}>\n";
+			// and close it
+			$output .= '</li></'.$listtype.'>'."\n";
+			$this->list_level_chars = substr($this->list_level_chars,0,-1);
+			$this->list_level--;
 		}
 		
+		// Remember the list types string
+		$this->list_level_chars = $matches[1];
+		// and if we're closing all lists, don't bother continuing
 		if ($close) return $output;
 		
-		$output .= "<li>".$matches[2]."</li>\n";
+		// While theres more lists in the new set of lists
+		// open new lists
+		while ($this->list_level<$newlevel) {
+			// Get the next new list type
+			$listchar = substr($matches[1],$this->list_level,1);
+			$listtype = $listtypes[$listchar];
+			
+			// and open it
+			++$this->list_level;
+			$output .= "\n".'<'.$listtype.'><li>';
+			
+			// We've opened a new list so we don't need to start a new list list
+			// item in a few moments.
+			$new_list = true;
+		}
+		
+		// close and open a new list item if the current list hasn't just
+		// been created.
+		if (!$new_list) {
+			$output .= "\n".'</li><li>';
+		}
+		$output .= $matches[2]."\n";
 		
 		return $output;
 	}
