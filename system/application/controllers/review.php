@@ -139,6 +139,26 @@ class Review extends Controller {
 		$this->load->view('frames/student_frame',$data);
 	}
 	
+	/**
+	* These are all the edit pages for the admin panel
+	* Additional controllers will be required
+	*/
+	function edit()
+	{
+		$data['title_image'] = base_url().'images/prototype/reviews/reviews_01.gif';
+		$data['content_view'] = 'reviews/mainedit';
+		$this->load->view('frames/student_frame',$data);
+	}
+	function editsection()
+	{
+		$data['content_view'] = 'reviews/sectionedit';
+		$this->load->view('frames/student_frame',$data);
+	}
+	function editreview()
+	{
+		$data['content_view'] = 'reviews/reviewedit';
+		$this->load->view('frames/student_frame',$data);
+	}
 }
 
 ?>

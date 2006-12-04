@@ -26,8 +26,9 @@
 		8
 		
 	</div>
-<h2>Author Reviews</h2>
 </div>
+<div class="Clear">&nbsp</div>
+<h2>Author Reviews</h2>
 <div class="ReviewInfo">
 	<div class="AuthorReview">
 		<div class="AuthorReviewByline">		
