@@ -41,7 +41,7 @@
 
 class Wikiparser {
 	
-	function WikiParser() {
+	function Wikiparser() {
 		$this->reference_wiki = '';
 		$this->image_uri = 'images';
 		$this->ignore_images = false;
