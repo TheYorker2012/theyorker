@@ -7,8 +7,8 @@
 </div>
 <div id='clear'>&nbsp;</div>
 
-<script src='/js/prototype.js' type='text/javascript'></script>
-<script src='/js/scriptaculous.js' type='text/javascript'></script>
+<script src='/javascript/prototype.js' type='text/javascript'></script>
+<script src='/javascript/scriptaculous.js' type='text/javascript'></script>
 <script type='text/javascript'>
 function AddComment () {
     Effect.BlindUp('new_comment');
