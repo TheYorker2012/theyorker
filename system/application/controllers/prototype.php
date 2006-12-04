@@ -16,7 +16,7 @@ class Prototype extends Controller {
 	*/
 	function sframe($selected_directory = 'general',$selected_view = 'home',$selected_subdirectory = '',$selected_subview = '')
 	{
-		$this->output->cache(1);
+//		$this->output->cache(1);
 		$data = array(
 			'content_view' => $selected_directory . '/' . $selected_view,
 			'subcontent_view' => ($selected_subview == '' ? '' : $selected_directory . '/' . $selected_subdirectory . '/' . $selected_subview),
@@ -31,7 +31,7 @@ class Prototype extends Controller {
 	*/
 	function mframe($selected_directory = 'general',$selected_view = 'home')
 	{
-		$this->output->cache(1);
+//		$this->output->cache(1);
 		$data = array(
 			'content_view' => $selected_directory . '/' . $selected_view,
 			'subcontent_view' => ''

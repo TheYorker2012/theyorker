@@ -49,5 +49,13 @@ class News extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
+
+	function test()
+	{
+		$data = array(
+			  'content_view' => 'news/test.php'
+		);
+		$this->load->view('frames/student_frame',$data);
+	}
 }
 ?>

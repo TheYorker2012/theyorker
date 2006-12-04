@@ -9,7 +9,7 @@
  * Each admin page will be a function of this controler, so the pages will be /admin/pagename
  */
 class Admin extends Controller {
-	
+
 	/**
 	 * @brief Admin menu index page.
 	 */
@@ -36,6 +36,29 @@ class Admin extends Controller {
 		$data = array(
 			'content_view' => 'directory/admin_directory_view'
 		);
+		$this->load->view('frames/student_frame',$data);
+	}
+	
+	/**
+	* @admin pages for news system
+	*/
+	function news()
+	{
+		switch ($this->uri->segment(3)) {
+			case "request":
+				switch ($this->uri->segment(4)) {
+					case "view":
+						$data = array('content_view' => 'news/admin_request_view');
+						break;
+					default:
+						$data = array('content_view' => 'news/admin_request_new');
+						break;
+				}
+				break;
+			default:
+				$data = array('content_view' => 'news/admin_news');
+				break;
+		}
 		$this->load->view('frames/student_frame',$data);
 	}
 
