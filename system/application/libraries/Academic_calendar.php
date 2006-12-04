@@ -29,9 +29,6 @@
  * This class is intended to allow views to choose what format to
  *	represent dates and times.
  *
- * @todo jh559: Academic term validation functions (requires capability for
- *	terms starting on wednesdays etc).
- *
  */
 class Academic_time
 {
@@ -799,10 +796,11 @@ class Academic_calendar {
 				for ($week_counter = 1; $term_day < $term_days; ++$week_counter) {
 					// Go through every day in the week
 					for ($dow_counter = $dow_counter; $dow_counter <= 7 && $term_day < $term_days; ++$dow_counter) {
-						// Create an date object from academic year/term/week/day
+						// Create a date object from academic year/term/week/day_of_week
 						$actime = $this->Academic(
 								$year, $term_counter,
 								$week_counter, $dow_counter);
+						// Create a date object from academic year/term/day_of_term
 						$actime2= $this->AcademicDayOfTerm(
 								$year, $term_counter,
 								$term_day);

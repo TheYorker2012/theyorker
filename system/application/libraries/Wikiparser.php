@@ -503,7 +503,7 @@ Done.
 		$this->redirect = false;
 		
 		$this->nowikis = array();
-		$this->list_level_types = array();
+		$this->list_level_chars = '';
 		$this->list_level = 0;
 		
 		$this->deflist = false;
