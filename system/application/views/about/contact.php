@@ -1,15 +1,9 @@
-<div id='pageheader' style='background-image: url(/images/subheadericons/pageicon_pagename.gif);'>
-	<div id='titleheader'>
-		<h1>Contact Us</h1>
-	</div>
-	<p>&nbsp;&nbsp;Related Pages :</p>
-	<div id='pagelinks'>
-		<ul>
-			<li><a href='/about/'>About Us</a></li>
-			<li>Contact Us</li>
-			<li><a href='/charity/'>Sponsered Charity</a></li>
-		</ul>
-	</div>
+<div id='newsnav'>
+	<ul id='newsnavlist'>
+	<li><a href='/about/'><img src='/images/prototype/news/uk.png' alt='About Us' title='About Us' /> About Us</a></li>
+	<li><a href='/contact/' id='current'><img src='/images/prototype/news/feature.gif' alt='Contact Us' title='Contact Us' /> Contact Us</a></li>
+	<li><a href='/charity/'><img src='/images/prototype/news/earth.png' alt='Sponsered Charity' title='Sponsered Charity' /> Sponsered Charity</a></li>
+	</ul>
 </div>
 <div>
 	<h2>Who to contact</h2>
