@@ -18,6 +18,10 @@ class Wikitext extends Controller {
 	
 	/**
 	 * @brief Wikitest test page.
+	 * 
+	 * @todo Fix that it escapes single quotes.
+	 *
+	 * @todo Make a view to avoid binary garbage at end of file.
 	 */
 	function index()
 	{
