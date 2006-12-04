@@ -43,7 +43,7 @@ function preloader()
 	&nbsp;
   </td>
 
-<td align="middle" valign="center" width="">
+<td align="middle" valign="center" width="780">
 
 
 <table id="Table_01" width="" height="581" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
@@ -86,15 +86,9 @@ function preloader()
 		</td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td align="right" valign="top" width="120" bgcolor="white">
-		  <img src="/images/adverts/3-120x600.gif">
-		</td>
 		<td width="780" valign="top">
 		<?php $this->load->view($content_view); ?>
 		</td>
-		<td align="left" valign="top" width="120"  bgcolor="white">
-		  <img src="/images/adverts/skyscraper.jpg">
-        </td>
 	</tr>
 </table>
 <small>Page rendered in {elapsed_time} seconds</small>
