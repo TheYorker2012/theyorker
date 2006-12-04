@@ -281,11 +281,11 @@ class Wikiparser {
 	 */
 	function handle_addemphasis($matches) {
 		$output = '';
-		$output .= '<em><B><FONT color="#FF6000">'; // Orange emphasis
-		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		//$output .= '<em><B><FONT color="#FF6A00">'; // Orange emphasis
+		$output .= $this->emphasize(2);             // Normal ''x'' emphasis
 		$output .= $matches[0];                     // Actual text
-		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
-		$output .= '</FONT></B></em>';              // Orange emphasis
+		$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		//$output .= '</FONT></B></em>';              // Orange emphasis
 		return $output;
 
 	}
