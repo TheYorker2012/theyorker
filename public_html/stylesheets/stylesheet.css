@@ -1,6 +1,9 @@
 /* Default Paramaters for entire page */
 html {
-	font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #CED8D9; margin: 5px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #CED8D9;
+	margin: 5px;
+	font-size: 10px;
 }
 
 /** 
