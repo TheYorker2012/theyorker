@@ -75,6 +75,10 @@ div.BarCrawls {
 	width: 60%;
 }
 
+div.BarCrawls a {
+	color: white;
+}
+
 div.CollegeLeagues {
 	background-color: Grey;
 	float: right;
