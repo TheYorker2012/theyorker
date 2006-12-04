@@ -677,23 +677,6 @@ div.BlackBoxSubTitle {
  	background-color: #06a5cd;
 }
 
-#SearchForm {
-	margin-left: 5px;
- 	margin-right: 5px;
-}
-#SearchForm p {
-	padding-bottom: 0;
- 	margin-top: 2px;
-	margin-bottom: 3px;
-}
-#SearchForm label {
-	width: 5em;
-	float: left;
-	text-align: right;
-	margin-right: 0.5em;
-	display: block
-}
-
 .ArticleColumn {
 	margin: 0;
 	padding: 0;
@@ -728,45 +711,20 @@ div.BlackBoxSubTitle {
     text-align: center;
 }
 
-.ArticleColumn #Byline {
-	padding: 0 5px 0 5px;
-	border: 2px solid #000000;
-	text-align: right;
- }
- 
-.ArticleColumn #Byline .name {
- 	font-weight: bold;
-    font-size: large;
-}
-
-.ArticleColumn #Byline .links a {
-	color: #08c0ef;
-	text-decoration: none;
- 	font-size: small;
-}
-
-.ArticleColumn #Byline .links a:hover {
-	text-decoration: underline;
-}
-
-.ArticleColumn #Byline img {
-	display: block;
-	float: left;
-}
-
 #QuotesCol {
 	width: 20%;
 }
 
-#QuotesCol .quote {
+.quote {
 	font-size: small;
 	text-align: center;
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
-#QuotesCol .quote .author {
+.quote .author {
 	color: #08c0ef;
+	margin: 0;
 }
 
 .ArticleFacts {
@@ -835,7 +793,200 @@ div.BlackBoxSubTitle {
 .LifestyleBoxes a:hover {
 	text-decoration: underline;
 }
- 	
+
+.RoundBoxBL {
+	background: url('/images/prototype/news/bl.gif') 0 100% no-repeat;
+	height: 100%;
+}
+
+.RoundBoxBR {
+	background: url('/images/prototype/news/br.gif') 100% 100% no-repeat;
+	height: 100%;
+}
+
+.RoundBoxTL {
+	background: url('/images/prototype/news/tl.gif') 0 0 no-repeat;
+	height: 100%;
+}
+
+.RoundBoxTR {
+	background: url('/images/prototype/news/tr.gif') 100% 0 no-repeat;
+	height: 100%;
+}
+
+.ArticleColumn #Byline {
+	background-position: left bottom;
+	background-repeat: no-repeat;
+	height: 100%;
+}
+
+.ArticleColumn #Byline {
+	text-align: right;
+ }
+ 
+.ArticleColumn #Byline .name {
+ 	font-weight: bold;
+	font-size: large;
+	color: #ff6a00;
+}
+
+.ArticleColumn #Byline .links a {
+	color: #08c0ef;
+	text-decoration: none;
+ 	font-size: small;
+}
+
+.ArticleColumn #Byline .links a:hover {
+	text-decoration: underline;
+}
+
+.ArticleColumn #Byline #BylineText {
+	padding: 0 10px;
+}
+
+/* --- News : Admin Section --- */
+
+.form {
+    margin: 0;
+	padding: 0 5px;
+  	min-width: 500px;
+  	max-width: 600px;
+	width: 560px;
+}
+.form fieldset {
+    border-color: #ff6a00;
+	border-width: 1px 0 0 0;
+ 	border-style: solid none none none;
+ 	padding: 10px;
+ 	margin: 0;
+}
+.form fieldset legend {
+    color: #08c0ef;
+	font-weight: bold;
+ 	margin: 0;
+ 	padding: 0 5px;
+}
+.form fieldset label {
+	display: block;
+	font-size: small;
+	float: left;
+	width: 110px;
+	padding: 0;
+	margin: 5px 0 0 0;
+	text-align: right;
+}
+.form fieldset i {
+    margin: 0 0 0 120px;
+	display: block;
+	font-size: x-small;
+	float: left;
+    padding: 0;
+}
+.form fieldset br {
+    clear:left;
+}
+.form fieldset span {
+    width: auto;
+	margin: 5px 0 0 120px;
+	padding: 0;
+	font-size: small;
+	display: block;
+}
+.form fieldset input, .form fieldset textarea, .form fieldset select {
+    width: auto;
+	margin: 5px 0 0 10px;
+	padding: 1px 0 0 3px;
+	background-image: url('/images/prototype/news/input.gif');
+	border: 1px #000000 solid;
+}
+.form fieldset .button {
+    background-image: url('/images/prototype/news/yorker-button.jpg');
+	background-position: center left;
+    background-repeat: no-repeat;
+    background-color: #ff6a00;
+    padding: 0 10px 0 20px;
+    color: #000000;
+	border-top : 1px solid #eaedf4;
+	border-left : 1px solid #eaedf4;
+ 	border-bottom : 1px solid #224059;
+	border-right : 1px solid #224059;
+}
+.form fieldset .button:hover {
+	border-top : 1px #31557f solid;
+	border-left : 1px #31557f solid;
+	border-bottom : 1px #f8f9fb solid;
+	border-right : 1px #f8f9fb solid;
+}
+.form fieldset div.comment {
+    border: 1px #000000 solid;
+    margin-bottom: 5px;
+}
+.form fieldset div.comment div.date {
+    font-size: x-small;
+    background-color: #DDDDDD;
+    color: #000000;
+}
+.form fieldset div.comment div.name {
+    font-size: small;
+    color: #000000;
+    font-weight: bold;
+}
+.form fieldset div.comment div.text {
+    font-size: small;
+}
+.form fieldset div.link_right {
+    float: right;
+    font-size: small;
+}
+.form fieldset div.link_right a {
+    color: ff6a00;
+    text-decoration: none;
+    cursor: pointer;
+}
+.form fieldset div.link_right a:hover {
+    text-decoration: underline;
+}
+#ArticleBox {
+    padding: 0;
+    border: 0;
+    margin: 0;
+    border-spacing: 0;
+    width: 100%;
+    border-collapse: collapse;
+}
+#ArticleBox tr {
+    font-size: small;
+}
+#ArticleBox .tr2 {
+    background-color: #eeeeee;
+}
+#ArticleBox th {
+    border-bottom: 2px #000000 solid;
+    text-align: left;
+}
+#ArticleBox td {
+    padding-right: 1.5em;
+    border-bottom: 1px #000000 solid;
+}
+#ArticleBox td a {
+    color: #08c0ef;
+    text-decoration: none;
+}
+#ArticleBox td a:hover {
+    text-decoration: underline;
+}
+#TaskList li {
+    list-style-image: url('/images/prototype/news/yorker-button.jpg');
+    font-size: small;
+}
+#TaskList li a {
+    color: #ff6a00;
+    text-decoration: none;
+}
+#TaskList li a:hover {
+    text-decoration: underline;
+}
+
 /*
 *	End styles for News Section
 */
