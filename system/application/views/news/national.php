@@ -1,15 +1,15 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>'><img src='<?php echo site_url('images/prototype/news/uk.png'); ?>' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>' id='current'><img src='<?php echo site_url('images/prototype/news/earth.png'); ?>' alt='National' title='National' /> National</a></li>
-		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Feature' title='Feature' /> Features</a></li>
-		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='<?php echo site_url('images/prototype/news/archive.png'); ?>' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='<?php echo site_url('news/'); ?>'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
+		<li><a href='<?php echo site_url('news/national/'); ?>' id='current'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
+		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
+		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
+		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
 
 	<div class='NewsPreview' style='border-bottom: 1px solid #93969a;'>
-		 <img src='<?php echo site_url('images/prototype/news/bbc_news.gif'); ?>' alt='Taken from BBC News' title='Taken from BBC News' />
+		 <img src='/images/prototype/news/bbc_news.gif' alt='Taken from BBC News' title='Taken from BBC News' />
 		 <h1>Ex-spy death inquiry stepped up</h1>
          <p>
 		 Police step up inquiries into the death of Russian ex-spy Alexander Litvinenko, with officers due to fly to Moscow.
@@ -18,7 +18,7 @@
 	</div>
 
 	<div class='NewsPreview' style='width: 47%; float: left;'>
-		 <img src='<?php echo site_url('images/prototype/news/bbc_news.gif'); ?>' alt='Taken from BBC News' title='Taken from BBC News' />
+		 <img src='/images/prototype/news/bbc_news.gif' alt='Taken from BBC News' title='Taken from BBC News' />
  		 <h3>Olympics audio surveillance row</h3>
          <p>
 		 A police plan to use high-powered microphones to help the Olympics 2012 security is opposed by David Blunkett.
@@ -26,7 +26,7 @@
  		 <p class='More'><?php echo anchor('http://news.bbc.co.uk/go/rss/-/1/hi/uk_politics/6186348.stm', 'Read more...', array('target' => '_blank')); ?></p>
 	</div>
 	<div class='NewsPreview' style='width: 47%; float: right;'>
-		 <img src='<?php echo site_url('images/prototype/news/bbc_news.gif'); ?>' alt='Taken from BBC News' title='Taken from BBC News' />
+		 <img src='/images/prototype/news/bbc_news.gif' alt='Taken from BBC News' title='Taken from BBC News' />
  		 <h3>Missing boy search scaled down</h3>
          <p>
 		 The search for a boy who is missing after the rowing boat he stole with a friend capsized is scaled down overnight.

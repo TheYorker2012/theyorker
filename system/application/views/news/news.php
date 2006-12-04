@@ -1,15 +1,15 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='<?php echo site_url('images/prototype/news/uk.png'); ?>' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='<?php echo site_url('images/prototype/news/earth.png'); ?>' alt='National' title='National' /> National</a></li>
-		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Feature' title='Feature' /> Features</a></li>
-		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='<?php echo site_url('images/prototype/news/archive.png'); ?>' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
+		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
+		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
+		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
+		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
 
 	<div class='NewsPreview' style='border-bottom: 1px solid #93969a;'>
-		 <img src='<?php echo site_url('images/prototype/news/thumb1.jpg'); ?>' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' />
+		 <img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' />
 		 <h1>Israel vows ceasefire 'patience'</h1>
          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
 		    elementum arcu non risus. Vestibulum arcu enim, placerat nec,
@@ -28,7 +28,7 @@
 	</div>
 
 	<div class='NewsPreview' style='width: 47%; float: left;'>
-		 <img src='<?php echo site_url('images/prototype/news/thumb2.jpg'); ?>' alt='Tony Blair' title='Tony Blair' />
+		 <img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' />
  		 <h3>Blair 'sorrow' over slave trade</h3>
          <p>
 		 Prime Minister Tony Blair has said he feels "deep sorrow" for
@@ -40,7 +40,7 @@
  		 <p class='More'><?php echo anchor('news/article/2', 'Read more...'); ?></p>
 	</div>
 	<div class='NewsPreview' style='width: 47%; float: right;'>
-		 <img src='<?php echo site_url('images/prototype/news/thumb3.jpg'); ?>' alt='Some Spy' title='Some Spy' />
+		 <img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' />
  		 <h3>Advice sought after ex-spy death</h3>
          <p>
 		 Hundreds of people have called the NHS Direct hotline following the

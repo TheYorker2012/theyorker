@@ -1,10 +1,10 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='<?php echo site_url('images/prototype/news/uk.png'); ?>' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='<?php echo site_url('images/prototype/news/earth.png'); ?>' alt='National' title='National' /> National</a></li>
-		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Feature' title='Feature' /> Features</a></li>
-		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='<?php echo site_url('images/prototype/news/feature.gif'); ?>' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='<?php echo site_url('images/prototype/news/archive.png'); ?>' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
+		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
+		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
+		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
+		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
 
@@ -32,13 +32,30 @@
  		 </ul>
 	</div>
 	<div class='ArticleColumn' style='width: 60%;'>
-		 <div id='Byline'>
-		 	  <img src='<?php echo site_url('images/prototype/news/benest.png'); ?>' alt='Ian Benest' title='Ian Benest' />
-		 	  Written by<br />
-		 	  <span class='name'>IAN BENEST</span><br />
-              <span class='links'><?php echo anchor('directory/', 'Directory Entry'); ?><br />
-              <?php echo anchor('news/archive/reporter/2/', 'See more articles by this reporter'); ?></span>
-		 </div>
+
+
+		<div class='clear'>&nbsp;</div>
+		<div style='background-color: #DDDDDD;'>
+			<div id='Byline' style="background-image: url('/images/prototype/news/benest.png');">
+				<div class='RoundBoxBL'>
+					<div class='RoundBoxBR'>
+						<div class='RoundBoxTL'>
+							<div class='RoundBoxTR'>
+								<div id='BylineText'>
+									Written by<br />
+									<span class='name'>IAN BENEST</span><br />
+									<span class='links'>
+										<?php echo anchor('directory/', 'Directory Entry'); ?><br />
+										<?php echo anchor('news/archive/reporter/2/', 'See more articles by this reporter'); ?>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
 		    elementum arcu non risus. <i>The Yorker</i> Vestibulum arcu enim, placerat nec,
 		    malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
@@ -49,7 +66,7 @@
 	     <h3>Heading</h3>
  		 <p>Nulla a nibh et tortor dapibus auctor. Morbi semper libero. Pellentesque volutpat, velit consequat hendrerit blandit, tellus orci imperdiet nisl, sit amet sodales risus augue aliquet turpis. Aliquam a sapien. In hac habitasse platea dictumst. Nulla elit. Nulla facilisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc ac odio ac nisi malesuada varius. Morbi convallis vestibulum nisl. Morbi in risus et augue varius dapibus. Nulla pulvinar libero et dui. Aenean semper. Ut fermentum, ligula nec iaculis bibendum, sem mi rutrum lorem, nec vestibulum urna velit vel ante. Cras tempus enim sed dolor. Maecenas elementum. Morbi faucibus malesuada risus. Donec condimentum facilisis nibh.
 		 </p>
-		 <p class='photo'><img src='<?php echo site_url('images/prototype/news/CompSci.jpg'); ?>' alt='CompSci @ Night' title='CompSci @ Night' />
+		 <p class='photo'><img src='/images/prototype/news/CompSci.jpg' alt='CompSci @ Night' title='CompSci @ Night' />
 			<br />CompSci @ Night - Copied without permission from york.ac.uk</p>
 	     <h3>Some Other Heading</h3>
 	     <p>Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
@@ -76,16 +93,16 @@
 	<div id='QuotesCol' class='ArticleColumn'>
 		 <br /><br /><br /><br /><br />
 		 <div class='quote'>
-		     <img src='<?php echo site_url('images/prototype/news/quote_open.png'); ?>' alt='Quote' title='Quote' />
+		     <img src='/images/prototype/news/quote_open.png' alt='Quote' title='Quote' />
 			 Clearly there is a possibility that for one reason or another he is on land and has not come to our notice
-		 	 <img src='<?php echo site_url('images/prototype/news/quote_close.png'); ?>' alt='Quote' title='Quote' />
+		 	 <img src='/images/prototype/news/quote_close.png' alt='Quote' title='Quote' />
 		 	 <br /><span class='author'>Supt Darren Curtis</span>
 	 	 </div>
 	 	 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 		 <div class='quote'>
-		     <img src='<?php echo site_url('images/prototype/news/quote_open.png'); ?>' alt='Quote' title='Quote' />
+		     <img src='/images/prototype/news/quote_open.png' alt='Quote' title='Quote' />
 			 We got back in at three o'clock in the morning with no explanation
-		 	 <img src='<?php echo site_url('images/prototype/news/quote_close.png'); ?>' alt='Quote' title='Quote' />
+		 	 <img src='/images/prototype/news/quote_close.png' alt='Quote' title='Quote' />
 		 	 <br /><span class='author'>John Houston - Buchanan View Resident</span>
 	 	 </div>
 	</div>
