@@ -489,7 +489,7 @@ div.BlackBoxSubTitle {
 #calviewCalTable td {
 	width: 100px;
 	margin: 0px;
-	padding: 2px;
+	padding: 0px;
 	border-bottom: 1px solid #cccccc;
 	border-right: 1px solid #dddddd;
 }
