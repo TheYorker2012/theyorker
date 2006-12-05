@@ -69,7 +69,19 @@ div.ReviewCategoryImg {
 	padding-right: 5px;
 }
 
+div.ReviewCategoryImg2 {
+	padding-left: 5px;
+	float: right;
+}
+
+div.ReviewCategoryText2 {
+}
+
 div.ReviewCategoryText h3 {
+	display: inline;
+}
+
+div.ReviewCategoryText2 h3 {
 	display: inline;
 }
 
@@ -111,7 +123,8 @@ div.WhyNotTry {
 	border-color: #2dc6d7;
 	border-style: solid;
 	border-width: thin;
-	margin: 5px;
+	margin: 10px;
+	padding: 3px;
 }
 
 #feature {

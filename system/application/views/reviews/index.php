@@ -30,13 +30,38 @@
 <div class='ArticleColumn' style='width: 50%;'>
 	<div class="ReviewCatetory">
 		<div class="ReviewCategoryImg">
-			<a href="/review/food/"><img src="/images/prototype/news/thumb1.jpg" alt="Food Image" title="Food" /></a>
+			<a href="/review/food/"><img src="/images/prototype/news/thumb1.jpg" alt="Food Image" title="Food" /></a><br />
+			<a href="/atoz/directory">&gt;Food A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top For Food</a>
 		</div>
 		<div class="ReviewCategoryText">
 			<a href="/review/food/"><h3>Food</h3><br /></a>
 			View our selection of reviews about food venues. See the top 5 places to eat, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
 		</div>
 	</div>
+	<div class="Clear">&nbsp;</div>
+	<div class="ReviewCatetory">
+		<div class="ReviewCategoryImg2">
+			<a href="/review/drink/"><img src="/images/prototype/news/thumb1.jpg" alt="Drink Image" title="Drink" /></a><br />
+			<a href="/atoz/directory">&gt;Drink A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top Places to Drink</a>
+		</div>
+		<div class="ReviewCategoryText2">
+			<a href="/review/drink/"><h3>Drink</h3><br /></a>
+			View our selection of reviews at drink venues. See the top 5 places to get pissed, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
+		</div>
+		<br />
+	</div>
+	<div class="Clear">&nbsp;</div>
+	<div class="ReviewCatetory">
+		<div class="ReviewCategoryImg">
+			<a href="/review/cultured/"><img src="/images/prototype/news/thumb1.jpg" alt="Culture Image" title="Culture" /></a><br />
+			<a href="/atoz/directory">&gt;Culture A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Best to Go</a>
+		</div>
+		<div class="ReviewCategoryText">
+			<a href="/review/culture/"><h3>Culture</h3><br /></a>
+			View our selection of reviews on cultural places. See the top 5 places to do stuff, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
+		</div>
+	</div>
+	<div class="Clear">&nbsp;</div>
 </div>
 <div class="ArticleColumn" style="width: 25%;">
 	<div class="WhyNotTry">
