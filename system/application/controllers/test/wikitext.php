@@ -20,8 +20,6 @@ class Wikitext extends Controller {
 	 * @brief Wikitest test page.
 	 * 
 	 * @todo Fix that it escapes single quotes.
-	 *
-	 * @todo Make a view to avoid binary garbage at end of file.
 	 */
 	function index()
 	{
@@ -32,28 +30,12 @@ class Wikitext extends Controller {
 			$wikitext .= 'Enter wikitext here:';
 		}
 		
-		echo '<HTML><HEAD><TITLE>Wikitext preview</TITLE></HEAD><BODY>';
-		
-		// Put a preview at the top
-		echo $this->wikiparser->parse($wikitext . "\n",'wiki test');
-		
-		// Then have a form for changing the wikitext
-		echo form_open('test/wikitext');
-		
-		$textarea_data = array(
-				'name'        => 'wikitext',
-				'id'          => 'wikitext',
-				'value'       => $wikitext,
-				'rows'        => '10',
-				'cols'        => '80',
-				'style'       => 'width:80%',
+		$data = array(
+				'parsed_wikitext' => $this->wikiparser->parse($wikitext."\n",'wiki test'),
+				'wikitext' => $wikitext,
 			);
-		echo form_textarea($textarea_data) . '<br/>';
-		echo form_submit('submit', 'Preview') . '<br/>';
-		echo form_close('') . '<br/>';
 		
-		
-		echo '</BODY></HTML>';
+		$this->load->view('test/wikitext.php',$data);
 	}
 }
 ?>
