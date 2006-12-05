@@ -111,7 +111,8 @@ class Listings extends Controller {
 		/// @todo compensate if not in a valid academic term.
 		return array(
 				'academic_year' => $Start->AcademicYearName(),
-				'academic_term' => $Start->AcademicTermName().' '.$Start->AcademicTermTypeName(),
+				'academic_term' => $Start->AcademicTermName() . ' ' .
+						$Start->AcademicTermTypeName(),
 				'academic_week' => $Start->AcademicWeek(),
 				'prev' => $this->_GenerateWeekUri($Start->Adjust('-1week')),
 				'next' => $this->_GenerateWeekUri($Start->Adjust('+1week')),
@@ -154,12 +155,26 @@ EXTRAHEAD;
 		
 		// this is temporary for testing only
 		$data['days'] = array();
+		$data['dayinfo'] = array();
 		$daycalc = array();
 		for ($day_offset = 0; $day_offset < $Days; ++$day_offset) {
-			$day_ts = $StartTime->Adjust('+'.$day_offset." day");
+			$day_time = $StartTime->Adjust('+'.$day_offset.' day');
 			
-			$data['days'][] = $day_ts->Format("jS M");
-			$daycalc[] = $day_ts->Format('d#m#y');
+			$data['days'][] = $day_time->Format('jS M');
+			$daycalc[] = $day_time->Format('d#m#y');
+			
+			// testing:
+			$data['dayinfo'][] = array(
+					'is_holiday'     => $day_time->IsHoliday(),
+					'is_weekend'     => $day_time->DayOfWeek() > 5,
+					'year'           => $day_time->AcademicYear(),
+					'date_and_month' => $day_time->Format('jS M'),
+					'day_of_week'    => $day_time->Format('l'),
+					'academic_year'  => $day_time->AcademicYearName(2),
+					'academic_term'  => $day_time->AcademicTermName() . ' ' .
+										$day_time->AcademicTermTypeName(),
+					'academic_week'  => $day_time->AcademicWeek(),
+				);
 		}
 		
 		// define some dummy events with a rough schema until we have access
