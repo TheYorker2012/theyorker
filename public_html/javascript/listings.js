@@ -3,7 +3,6 @@ function eventMenu (e) {
 	// handles IE vs. Everyone else event handling differences
 	if (!e) e = window.event; // and we're in IE apparently
 	
-
 	
 	// get the mouse position from the event object
 	var posX = e.clientX;
@@ -18,5 +17,17 @@ function eventMenu (e) {
 	
 }
 function hideEventMenu () {
+	// fade out the menu. not an event handler
 	new Effect.Fade ('calviewEventMenu',{duration:0.2});
+}
+
+function removeEvent (arrid) {
+
+}
+
+function expandEvent (arrid) {
+	new Effect.Appear ('ev_es_'+arrid,{duration:0.2});
+}
+function collapseEvent (arrid) {
+	new Effect.Fade ('ev_es_'+arrid,{duration:0.2});	
 }

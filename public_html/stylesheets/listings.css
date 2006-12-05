@@ -4,6 +4,7 @@
 
 #calviewContainer {
 	background-color: #ffffff;
+	padding: 5px;
 }
 
 #calviewLeftBar {
@@ -16,7 +17,7 @@
 }
 
 #calviewCalendarWindow {
-	width: 710px;
+	width: 720px;
 	padding: 0px;
 	margin: 0px;	background-color: #ffffff;	
 }

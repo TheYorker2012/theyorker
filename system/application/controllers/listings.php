@@ -80,6 +80,19 @@ EXTRAHEAD;
 				'blurb' => 'this will be well good i promise',
 				'shortloc' => 'L/049',
 				'type' => 'academic'
+			),
+			array (
+				'ref_id' => '2',
+				'name' => 'Better than vegetables',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-8',$daycalc),
+				'starttime' => '1800',
+				'endtime' => '2000',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => 'Just a few pints',
+				'shortloc' => 'McQ\'s',
+				'type' => 'social'
 			)
 		);
 		

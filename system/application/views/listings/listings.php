@@ -40,7 +40,7 @@ foreach ($dummies as $events_array_index => $event) {
 	$snippets_dir = $mypath['dirname'] . "/snippets";
 	@$eventBoxCode[$event['day']] .= apinc ($snippets_dir . "/calviewEventBox.inc",$replace);
 	
-	@$eventHandlerJS .= "Event.observe($('ev_mb_".$events_array_index."'), \"click\",  eventMenu(e));\n";
+	//@$eventHandlerJS .= "Event.observe($('ev_mb_".$events_array_index."'), \"click\",  eventMenu(e));\n";
 	
 	
 	
@@ -58,19 +58,23 @@ foreach ($dummies as $events_array_index => $event) {
 			<ul>
 				<li>
 					<a href="#"	onclick="hideEventMenu(); 
-					eventSetHighlight()">Highlight</a>
+					eventSetHighlight();return false;">Highlight</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu()">View Full Details</a>
+					<a href="#" onclick="hideEventMenu();
+					return false;">View Full Details</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu()">Display Options</a>
+					<a href="#" onclick="hideEventMenu()
+					return false;">Display Options</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu()">Hide Event</a>
+					<a href="#" onclick="hideEventMenu()
+					removeEvent;return false;">Hide Event</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu()">List Similar Events</a>
+					<a href="#" onclick="hideEventMenu()
+					return false;">List Similar Events</a>
 				</li>
 				<li>
 					<a href="#" onclick="hideEventMenu();return false;"
