@@ -40,7 +40,7 @@ if (0) { // maybe do it a different way rather than drawing it locally.
 		echo "\n";
 	}
 }
-// echo time () - (5*7*24*60*60);
+
 foreach ($dummies as $events_array_index => $event) {
 	
 	$replace = array (
