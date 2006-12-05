@@ -4,6 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css">
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
+<!-- BEGIN 'head' tag items from controlling script -->
+<?php echo @$extra_head; ?>
+<!-- END 'head' tag items from controlling script -->
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
@@ -87,7 +90,7 @@ function preloader()
 	</tr>
 	<tr bgcolor="#ffffff">
 		<td width="780" valign="top">
-		<?php $this->load->view($content_view); ?>
+		<?php $this->load->view($content_view,$subdata); ?>
 		</td>
 	</tr>
 </table>
