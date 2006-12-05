@@ -5,8 +5,8 @@ function eventMenu (e) {
 	
 	
 	// get the mouse position from the event object
-	var posX = e.clientX;
-	var posY = e.clientY;
+	var posX = e.pageX;
+	var posY = e.pageY;
 	
 	// set the position of the <div> containing the event context menu
 	$('calviewEventMenu').style.top = posY;
@@ -22,9 +22,7 @@ function hideEventMenu () {
 }
 
 function removeEvent (arrid) {
-	var event = $('ev_'+arrid);
-	event.style.position = 'relative';
-	event.style.bottom = '10px';
+	new Effect.Fade ('ev_'+arrid);
 }
 
 function expandEvent (arrid) {

@@ -57,28 +57,39 @@ for ($i = 0;$i < 6;$i++) {
 		<div id="calviewEventMenu" style="display: none">
 			<ul>
 				<li>
+					<div class="calviewEMBP">
 					<a href="#"	onclick="hideEventMenu(); 
 					eventSetHighlight();return false;">Highlight</a>
+					</div>
 				</li>
 				<li>
+					<div class="calviewEMBP">
 					<a href="#" onclick="hideEventMenu();
 					return false;">View Full Details</a>
+					</div>
 				</li>
 				<li>
+					<div class="calviewEMBP">
 					<a href="#" onclick="hideEventMenu()
 					return false;">Display Options</a>
+					</div>
 				</li>
 				<li>
+					<div class="calviewEMBP">
 					<a href="#" onclick="hideEventMenu()
 					removeEvent;return false;">Hide Event</a>
+					</div>
 				</li>
 				<li>
+					<div class="calviewEMBP">
 					<a href="#" onclick="hideEventMenu()
 					return false;">List Similar Events</a>
+					</div>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu();return false;"
-					style="border-bottom: none">Cancel</a>
+					<div class="calviewEMBP" style="border-bottom: none">
+					<a href="#" onclick="hideEventMenu();return false;">Cancel</a>
+					</div>
 				</li>
 			</ul>
 		</div>

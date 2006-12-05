@@ -116,7 +116,7 @@
 	top: 100px;
 	left: 100px;
 	z-index: 100;
-	width: 150px;
+	width: 154px;
 	background-color: #ffffff;
 	border: 1px solid #000000;
 }
@@ -131,18 +131,23 @@
 	list-style-type: none;
 	padding: 0px;
 }
+#calviewEventMenu ul .calviewEMBP {
+	border-bottom: 1px solid #ffaa60;
+}
 #calviewEventMenu ul li:hover {
-	background-color: #ff6a00;
+
 }
 #calviewEventMenu ul li a {
 	display: block;
-	border-bottom: 1px solid #ff9a40;
 	text-decoration: none;
 	font-size: 11px;
 	color: #ff6a00;
+	background-color: #ffff;
 	padding: 2px;
+	margin: 2px;
 }
 #calviewEventMenu ul li a:hover {
 	color: #ffffff;
+	background-color: #ff6a00;
 }
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
