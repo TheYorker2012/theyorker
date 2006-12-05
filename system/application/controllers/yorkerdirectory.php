@@ -49,6 +49,12 @@ class Yorkerdirectory extends Controller {
 					'description' => 'Eat cookies',
 					'type'        => 'Society',
 				),
+				array(
+					'shortname'   => 'costcutter',
+					'name'        => 'Costcutter',
+					'description' => 'Campus shop',
+					'type'        => 'College & Campus',
+				),
 			),
 		);
 		$this->load->view('frames/student_frame',$data);

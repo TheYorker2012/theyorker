@@ -8,6 +8,8 @@
 			Venues<input type='checkbox' name='searchrange' value="venues" checked>
 			Societies<input type='checkbox' name='searchrange' value="socs" checked>
 			Athletics Union<input type='checkbox' name='searchrange' value="au" checked>
+			Organisation<input type='checkbox' name='searchrange' value="org" checked>
+			College &#038; Campus<input type='checkbox' name='searchrange' value="campus" checked>
 			<br />
 			<input type='text' name='search'>
 			<input type='submit' name='Submit' value='Search'>
@@ -32,6 +34,6 @@
 		<?php } ?>
 	</table>
 	<div align='center'>
-		<h5>Showing 50 results, containing Venues, Societies & The Athletics Union</h5>
+		<h5>Showing 50 results, containing Venues, Societies, Athletics Union, Organisation and College &#038; Campus</h5>
 	</div>
 </div>
