@@ -1,9 +1,8 @@
 /* Default Paramaters for entire page */
 html {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	background-color: #CED8D9;
 	margin: 5px;
-	font-size: 10px;
 }
 
 /** 
@@ -54,7 +53,6 @@ table.ReviewSetBlock td{
 table.ReviewSet{
 	border: thin solid;
 	border-color: #2dc6d7;
-	margin: 1em;
 }
 
 #ReviewTitle {
@@ -91,8 +89,6 @@ div.CollegeLeagues {
 /*Why not try boxes on reviews*/
 div.WhyNotTry {
 	text-align: left;
-	margin: 1em;
-	padding: 1em;
 	float: center;
 	border-color: #2dc6d7;
 	border-style: solid;
@@ -526,7 +522,6 @@ div.BlackBoxSubTitle {
 	color: White;
 	float: left;
 	width: 100%;
-	font-family: arial, helvetica, sans-serif;
 	vertical-align: middle;
 }
 
@@ -615,6 +610,7 @@ div.BlackBoxSubTitle {
 .NewsPreview {
 	margin: 0px 10px 10px 10px;
 	padding: 0 0 5px 0;
+	font-size: small;
 }
 
 .NewsPreview img {
@@ -626,7 +622,6 @@ div.BlackBoxSubTitle {
 	text-align: justify;
 	padding: 0;
 	margin: 0;
-	font-size: small;
 }
 
 .NewsPreview .More, .NewsPreview .More a {
