@@ -90,7 +90,11 @@ function preloader()
 	</tr>
 	<tr bgcolor="#ffffff">
 		<td width="780" valign="top">
-		<?php $this->load->view($content_view,$subdata); ?>
+		<?php
+	if (!isset ($subdata)) 
+	$subdata = array ();
+ $this->load->view($content_view,$subdata); 
+ ?>
 		</td>
 	</tr>
 </table>

@@ -88,7 +88,7 @@ EXTRAHEAD;
 		$pass_data['extra_head'] = $extra_head;
 		$pass_data['content_view'] = "listings/listings";
 		// load crazy frame deely		
-		$this->load->view('frames/StudentFrameCss',$pass_data);
+		$this->load->view('frames/student_frame',$pass_data);
 		
 		//$this->load->view('listings_view',$data);
 	}
