@@ -5,11 +5,11 @@
 	<div style='margin-left: 10px;'>
 		<form id='form1' name='form1' action='/directory/' method='POST'>
 			<strong>Show:</strong> 
-			Venues<input type='checkbox' name='searchrange' value="venues" checked>
-			Societies<input type='checkbox' name='searchrange' value="socs" checked>
-			Athletics Union<input type='checkbox' name='searchrange' value="au" checked>
-			Organisation<input type='checkbox' name='searchrange' value="org" checked>
-			College &#038; Campus<input type='checkbox' name='searchrange' value="campus" checked>
+			Venues<input type='checkbox' name='searchrange' value='venues' checked>
+			Societies<input type='checkbox' name='searchrange' value='socs' checked>
+			Athletics Union<input type='checkbox' name='searchrange' value='au' checked>
+			Organisation<input type='checkbox' name='searchrange' value='org' checked>
+			College &#038; Campus<input type='checkbox' name='searchrange' value='campus' checked>
 			<br />
 			<input type='text' name='search'>
 			<input type='submit' name='Submit' value='Search'>
@@ -65,21 +65,29 @@
 		</tr>
 	</table>
 	<div align='center'>
-		<h5>Showing 50 results, containing Venues, Societies, Athletics Union, Organisation and College &#038; Campus</h5>
+		<h5>50 results showing: Athletics Union, College &#038; Campus, Organisation, Societies and Venue</h5>
 	</div>
 </div>
-<div>
-	<h2>Add an organisation</h2>
-		<p>This will add an organisation to the directory and email the login password to the address provided.</p>
-		<form id='addorgform' name='addorgform' action='/admin/directory/' method='POST'>
-			Name :<input type='text' name='name'><br />
-			Email :<input type='text' name='email'><br />
-			Organisation type :
-			<select name="orgtype">
-				<option value="soc" selected>Society</option>
-				<option value="venue">Venue</option>
-				<option value="venue">Athletics Union</option>
-			</select><br />
-			<input type='submit' name='Add' value='Add'>
-		</form>
-</div>
+<form id='addorgform' name='addorgform' action='/admin/directory/' method='POST' class='form'>
+	<fieldset>
+		<legend>Add an organisation</legend>
+		<label for='addorgform_name'>Name:</label>
+		<input name='addorgform_name' type='text' name='name' />
+		<br />
+		<label for='addorgform_email'>Email:</label>
+		<input name='addorgform_email' type='text' name='email' />
+		<br />
+		<label for='addorgform_orgtype'>Organisation type:</label>
+		<select name='addorgform_orgtype'>
+			<option value='au' selected>Athletics Union</option>
+			<option value='college'>College &#038; Campus</option>
+			<option value='orgs'>Organisation</option>
+			<option value='socs'>Societies</option>
+			<option value='venue'>Venue</option>
+		</select>
+	</fieldset>
+	<fieldset>
+		<label for='addorgform_addbutton'></label>
+		<input type='submit' name='addorgform_addbutton' value='Add' class='button' />
+	</fieldset>
+</form>
