@@ -457,26 +457,23 @@ div.BlackBoxSubTitle {
 /* -- 	BEGIN LISTINGS CALENDAR VIEW CLASSES -- */
 /* These are used by the listings system. It would probably be a bad idea to use these for anything outside of that subsystem. */
 
+#calviewContainer {
+	background-color: #ffffff;
+}
+
 #calviewLeftBar {
-	position: absolute;
+	display: none;
 	padding: 5px;
 	margin: 0px;
-	top: 5px;
-	left: 5px;
 	width: 200px;
 	background-color: #dddddd;
 	border: 1px solid #cccccc;
 }
 
 #calviewCalendarWindow {
-	position: absolute;
+	width: 710px;
 	padding: 0px;
-	margin: 0px;
-	top: 5px;
-	left: 220px;
-	width: 700px;
-	background-color: #dedede;
-	
+	margin: 0px;	background-color: #ffffff;	
 }
 
 #calviewCalTable {
@@ -490,13 +487,13 @@ div.BlackBoxSubTitle {
 }
 
 #calviewCalTable td {
+	width: 100px;
 	margin: 0px;
 	padding: 2px;
 	border-bottom: 1px solid #cccccc;
 	border-right: 1px solid #dddddd;
 }
 .calviewCalHeadingCell {
-	width: 100px;
 	text-align: center;
 	font-weight: bold;
 	font-size: 11px;
@@ -511,13 +508,17 @@ div.BlackBoxSubTitle {
 	background-color: #f0f0f0;
 	border-bottom: 1px solid #cccccc;
 	margin: 0px;
+	padding: 0px;
 }
 .calviewIndEventBox {
-	border: 2px solid #99bb99;
+	border-top: 2px solid #99bb99;
+	border-bottom: 2px solid #99bb99;
 	background-color: #dddddd;
-	padding: 2px;
+	padding: 5px;
+	width: 100px;
 	font-size: 9px;
-	margin: 1px;
+	margin: 0px;
+	
 
 }
 
@@ -529,7 +530,7 @@ div.BlackBoxSubTitle {
 	margin: 1px;
 
 }
-.calviewIndEventBox .closeButton {
+.calviewIndEventBox .calviewCloseButton {
 	margin-top: -2px;
 	margin-right: -2px;
 	margin-bottom: 2px;
@@ -540,7 +541,7 @@ div.BlackBoxSubTitle {
 	padding: 2px;
 	font-weight: bold;
 }
-.calviewIndEventBox .expandButton {
+.calviewIndEventBox .calviewExpandButton {
 	margin-top: -2px;
 	margin-right: -2px;
 	margin-bottom: 2px;
@@ -552,7 +553,7 @@ div.BlackBoxSubTitle {
 	display: block;
 	font-weight: bold;
 }
-.calviewIndEventBox .menuButton {
+.calviewIndEventBox .calviewMenuButton {
 	margin-top: -2px;
 	margin-right: -2px;
 	margin-bottom: 2px;
@@ -579,6 +580,9 @@ div.BlackBoxSubTitle {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;
+}
+#calviewEventMenu ul li {
+	list-style-type: none;
 }
 #calviewEventMenu ul li:hover {
 	background-color: #009900;

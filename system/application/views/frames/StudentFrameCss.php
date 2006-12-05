@@ -3,6 +3,9 @@
 <title>The Yorker</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
+<!-- BEGIN 'head' tag items from controlling script -->
+<?php echo @$extra_head; ?>
+<!-- END 'head' tag items from controlling script -->
 </head>
 
 <body onLoad="preloader()">

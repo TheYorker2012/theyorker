@@ -1,23 +1,3 @@
-<html>
-<head>
-<title><?=$title?></title>
-<!-- Load up scriptaculous (and prototype upon which it is based) for eyecandy -->
-<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
-<script src="/javascript/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-/* 
-	TODO
-	backompat comments round script block/externalise
-	"upgrade your browser you shit" message
-	get coffee
-
-*/
-
-
-var myEvents=new Array()
-
 <?php
 
 // The below block takes the $dummies (current dummy event data) array from
@@ -57,80 +37,43 @@ foreach ($dummies as $events_array_index => $event) {
 	);
 	
 	$mypath = pathinfo(__FILE__);
-	$snippets_dir = $mypath['dirname'] . "/listings/snippets";
+	$snippets_dir = $mypath['dirname'] . "/snippets";
 	@$eventBoxCode[$event['day']] .= apinc ($snippets_dir . "/calviewEventBox.inc",$replace);
 	
-	@$eventHandlerJS .= "Event.observe($('ev_mb_".$events_array_index."'), \"click\", function (e) { eventMenu(e); });\n";
+	@$eventHandlerJS .= "Event.observe($('ev_mb_".$events_array_index."'), \"click\",  eventMenu(e));\n";
 	
 	
 	
 }
+
+
+
 
 ?>
-
-
-function eventMenu(e) {
-	if (1) { //($(Event.element(e)) == 'ev_1') {
-		var xPos = Event.pointerX(e);
-		var yPos = Event.pointerY(e);
-		
-		$('calviewEventMenu').style.top=yPos;
-		$('calviewEventMenu').style.left=xPos;
-		
-		new Effect.Appear ('calviewEventMenu', {duration:0.2});
-	}	
-}
-
-function eventSetHighlight () {
-	//$('ev_1').class="indEventBoxHL";
-	$('ev_1').style.color="#ff0000";
-}
-
-function hideEventMenu (e) {
-	new Effect.Fade ('calviewEventMenu',{duration:0.2});
-}
-
-function eventCreate(date,time,sid,title,loc,blurb) {
-	
-}
-
-function hideEvent (idn) {
-	new Effect.Puff ('ev_'+idn,{duration:0.5});
-}
-
-function expandEvent (idn) {
-	new Effect.Appear ('ev_es_'+idn,{duration:0.2});
-}
-
-function collapseEvent (idn) {
-	new Effect.Fade ('ev_es_'+idn,{duration:0.2});
-}
-
-</script>
 
 </head>
 <body>
 
 		<div id="calviewEventMenu" style="display: none">
-			<ul id="calviewEventMenuUl">
+			<ul>
 				<li>
-					<a href="#"	onclick="hideEventMenu(this); 
-					eventSetHighlight(this)">Highlight</a>
+					<a href="#"	onclick="hideEventMenu(); 
+					eventSetHighlight()">Highlight</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu(this)">View Full Details</a>
+					<a href="#" onclick="hideEventMenu()">View Full Details</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu(this)">Display Options</a>
+					<a href="#" onclick="hideEventMenu()">Display Options</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu(this)">Hide Event</a>
+					<a href="#" onclick="hideEventMenu()">Hide Event</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu(this)">List Similar Events</a>
+					<a href="#" onclick="hideEventMenu()">List Similar Events</a>
 				</li>
 				<li>
-					<a href="#" onclick="hideEventMenu(this)"
+					<a href="#" onclick="hideEventMenu();return false;"
 					style="background-color: #ff8855; color: #ffffff">Cancel</a>
 				</li>
 			</ul>
@@ -139,7 +82,7 @@ function collapseEvent (idn) {
 
 <!-- Container div; contains everything
 	will make it easier to shove in a template later! -->
-<div id="calviewSumContainer">
+<div id="calviewContainer">
 	
 	<!-- Holds left hand menu -->
 	<div id="calviewLeftBar">
@@ -255,7 +198,3 @@ function collapseEvent (idn) {
 <?php echo $eventHandlerJS ?>
 //Event.observe(document, "onmouseover", function (e) { hideEventMenu(e); });
 </script>
-
-
-</body>
-</html>
