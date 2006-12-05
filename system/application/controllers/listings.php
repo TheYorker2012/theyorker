@@ -70,6 +70,58 @@ EXTRAHEAD;
 			),
 			array (
 				'ref_id' => '2',
+				'name' => 'Boring lecture about vegetables',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-8',$daycalc),
+				'starttime' => '1245',
+				'endtime' => '1500',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => 'this will be well good i promise',
+				'shortloc' => 'L/049',
+				'type' => 'academic'
+			),
+			array (
+				'ref_id' => '3',
+				'name' => 'Social Gathering',
+				'date' => '2006-12-4',
+				'day' => $this->get_dow_offset ('2006-12-4',$daycalc),
+				'starttime' => '2100',
+				'endtime' => '0000',
+				'system_update_ts' => '3',
+				'user_update_ts' => '2',
+				'blurb' => 'Bangin\' house party in my house!',
+				'shortloc' => 'my house',
+				'type' => 'social'
+			),
+			array (
+				'ref_id' => '4',
+				'name' => 'Mince Pies and Punch',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-8',$daycalc),
+				'starttime' => '1245',
+				'endtime' => '1500',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => 'this will be well good i promise',
+				'shortloc' => 'L/049',
+				'type' => 'academic'
+			),
+			array (
+				'ref_id' => '5',
+				'name' => 'International talk-like-a-pirate day',
+				'date' => '2006-12-4',
+				'day' => $this->get_dow_offset ('2006-12-5',$daycalc),
+				'starttime' => '2100',
+				'endtime' => '0000',
+				'system_update_ts' => '3',
+				'user_update_ts' => '2',
+				'blurb' => 'Bangin\' house party in my house!',
+				'shortloc' => 'my house',
+				'type' => 'social'
+			),
+			array (
+				'ref_id' => '2',
 				'name' => 'boring lecture about vegetables',
 				'date' => '2006-12-8',
 				'day' => $this->get_dow_offset ('2006-12-8',$daycalc),
@@ -82,10 +134,81 @@ EXTRAHEAD;
 				'type' => 'academic'
 			),
 			array (
+				'ref_id' => '1',
+				'name' => 'House Party',
+				'date' => '2006-12-4',
+				'day' => $this->get_dow_offset ('2006-12-4',$daycalc),
+				'starttime' => '2100',
+				'endtime' => '0000',
+				'system_update_ts' => '3',
+				'user_update_ts' => '2',
+				'blurb' => 'Bangin\' house party in my house!',
+				'shortloc' => 'my house',
+				'type' => 'social'
+			),
+			array (
+				'ref_id' => '1',
+				'name' => 'House Party',
+				'date' => '2006-12-4',
+				'day' => $this->get_dow_offset ('2006-12-5',$daycalc),
+				'starttime' => '2100',
+				'endtime' => '0000',
+				'system_update_ts' => '3',
+				'user_update_ts' => '2',
+				'blurb' => 'Bangin\' house party in my house!',
+				'shortloc' => 'my house',
+				'type' => 'social'
+			),
+			array (
+				'ref_id' => '2',
+				'name' => 'boring lecture about vegetables',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-6',$daycalc),
+				'starttime' => '1245',
+				'endtime' => '1500',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => 'this will be well good i promise',
+				'shortloc' => 'L/049',
+				'type' => 'academic'
+			),
+			array (
+				'ref_id' => '2',
+				'name' => 'MARATHON Noodle eating contest',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-6',$daycalc),
+				'starttime' => '1245',
+				'endtime' => '1500',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => 'Noodleishous!',
+				'shortloc' => 'L/049',
+				'type' => 'academic'
+			),
+			array (
+				'ref_id' => '2',
+				'name' => 'Regional \'Pong\' championships, semi final',
+				'date' => '2006-12-8',
+				'day' => $this->get_dow_offset ('2006-12-6',$daycalc),
+				'starttime' => '1245',
+				'endtime' => '1500',
+				'system_update_ts' => '1',
+				'user_update_ts' => '1',
+				'blurb' => '|&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;|<br />
+							|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;|<br />
+							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />
+							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
+							|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.|<br />
+							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
+							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />etc.',
+				'shortloc' => 'L/049',
+				'type' => 'academic'
+			),
+			array (
 				'ref_id' => '2',
 				'name' => 'Better than vegetables',
 				'date' => '2006-12-8',
-				'day' => $this->get_dow_offset ('2006-12-8',$daycalc),
+				'day' => $this->get_dow_offset ('2006-12-7',$daycalc),
 				'starttime' => '1800',
 				'endtime' => '2000',
 				'system_update_ts' => '1',

@@ -25,7 +25,7 @@
 						
 						<div class="calviewExpandedSmall" id="ev_es_%%arrid%%" style="display: none">
 						<div>
-							%%starttime%% to %%endtime%%<br />At: %%location%%<br /><i>%%blurb%%</i>
+							%%starttime%% to %%endtime%%<br />At: %%shortloc%%<br /><i>%%blurb%%</i>
 						</div>
 						</div>
 						

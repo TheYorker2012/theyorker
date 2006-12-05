@@ -42,10 +42,9 @@ foreach ($dummies as $events_array_index => $event) {
 	
 }
 
-// put &nbsp; into any empty day
-for ($i = 0;$i < 6;$i++) {
-	if (!isset ($eventBoxCode[$i]))
-		$eventBoxCode[$i] = '&nbsp;';
+// put &nbsp; onto end of all days
+for ($i = 0;$i < 7;$i++) {
+	@$eventBoxCode[$i] .= '&nbsp;';
 }
 
 
