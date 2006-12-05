@@ -1,6 +1,49 @@
-<div id="ReviewTitle">
-	<h1><img alt="Reviews" src="<?php echo $title_image ?>" /></h1>
+<div id='newsnav'>
+	<ul id='newsnavlist'>
+	<li><a href='/review/' id='current'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
+	<li><a href='/review/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
+	<li><a href='/review/food/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
+	<li><a href='/review/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
+	<li><a href='/atoz/directory/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
+	</ul>
 </div>
+<div class="ArticleColumn" style="width: 25%;">
+	<div class="WhyNotTry">
+		Highlights:
+		<ul>
+			<li><a href="review/foodreview"><?php echo $food_try1 ?></a>
+			<li><?php echo $food_try2 ?>
+			<li><?php echo $food_try3 ?>
+			<li><?php echo $food_try4 ?>
+			<li><?php echo $food_try5 ?>
+		</ul>
+	</div>
+	<div class="WhyNotTry">
+		<ul>
+			<li><a href=#>Top 10 Places to Eat</a>
+			<li><a href=#>Top 10 Places to Drink</a>
+			<li><a href=#>Best value for Money</a>
+			<li><a href=#>Your favourites</a>
+		</ul>
+	</div>
+</div>
+<div class='ArticleColumn' style='width: 50%;'>
+	<div class="ReviewCatetory">
+		<div class="ReviewCategoryImg">
+			<a href="/review/food/"><img src="/images/prototype/news/thumb1.jpg" alt="Food Image" title="Food" /></a>
+		</div>
+		<div class="ReviewCategoryText">
+			<a href="/review/food/"><h3>Food</h3><br /></a>
+			View our selection of reviews about food venues. See the top 5 places to eat, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
+		</div>
+	</div>
+</div>
+<div class="ArticleColumn" style="width: 25%;">
+	<div class="WhyNotTry">
+		Advertisement<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />Ads By Goooooooogle<br />
+	</div>
+</div>
+<!--
 <table class="ReviewSetBlock">
 	<tr>
 	<td>
@@ -62,4 +105,4 @@
 	</td>
 	</tr>
 </table>
-
+-->

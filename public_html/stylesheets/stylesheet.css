@@ -5,6 +5,10 @@ html {
 	margin: 5px;
 }
 
+body {
+	font-size: small;
+}
+
 /** 
 	* Headers - a section for headers
 */
@@ -55,6 +59,20 @@ table.ReviewSet{
 	border-color: #2dc6d7;
 }
 
+div.ReviewCatetory {
+	padding: 5px;
+	width: 100%;
+}
+
+div.ReviewCategoryImg {
+	float: left;
+	padding-right: 5px;
+}
+
+div.ReviewCategoryText h3 {
+	display: inline;
+}
+
 #ReviewTitle {
 	text-align: center;
 }
@@ -92,7 +110,8 @@ div.WhyNotTry {
 	float: center;
 	border-color: #2dc6d7;
 	border-style: solid;
-	border-width: thick;
+	border-width: thin;
+	margin: 5px;
 }
 
 #feature {
@@ -553,6 +572,7 @@ div.BlackBoxSubTitle {
 	margin: 0;
 	padding: 0;
 	float: left;
+	font-size: small;
 }
 
 .ArticleColumn p {
