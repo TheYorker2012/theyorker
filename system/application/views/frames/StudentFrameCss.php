@@ -1,8 +1,8 @@
 <html>
 <head>
 <title>The Yorker</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
 <!-- BEGIN 'head' tag items from controlling script -->
 <?php echo @$extra_head; ?>
 <!-- END 'head' tag items from controlling script -->
@@ -48,12 +48,7 @@
 		<span style="float: right; margin-right: 5%;"><a href="#"><img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';"></a></span>
 	</div>
 	<div class="SubView">
-	
-<?php
-if (!isset ($subdata)) 
-	$subdata = array ();
- $this->load->view($content_view,$subdata); 
- ?>
+<?php $this->load->view($content_view,$subdata); ?>
 
 	</div>
 </div>

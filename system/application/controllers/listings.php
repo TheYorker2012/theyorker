@@ -16,6 +16,7 @@ class Listings extends Controller {
 			<script src="/javascript/prototype.js" type="text/javascript"></script>
 			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
 			<script src="/javascript/listings.js" type="text/javascript"></script>
+			<link href="/stylesheets/listings.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
 		
 		
