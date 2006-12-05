@@ -52,7 +52,10 @@ for ($i = 0;$i < 7;$i++) {
 
 </head>
 <body>
-
+		<?php
+echo '<a href="'.$prev.'">Previous Week</a><br/>';
+echo '<a href="'.$next.'">Next Week</a><br/>';
+		?>
 		<div id="calviewEventMenu" style="display: none">
 			<ul>
 				<li>
