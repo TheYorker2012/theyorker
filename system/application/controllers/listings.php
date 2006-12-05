@@ -67,10 +67,8 @@ class Listings extends Controller {
 							$AcademicWeek);
 					
 					$this->_ShowCalendar(
-						$start_date, 7, // days
-						$this->_GenerateWeekUri($start_date->Adjust('-1week')),
-						$this->_GenerateWeekUri($start_date->Adjust('+1week'))
-					);
+							$start_date, 7,
+							$this->_GenerateWeekPresentation($start_date));
 					return;
 				}
 			}
@@ -82,8 +80,7 @@ class Listings extends Controller {
 		
 		$this->_ShowCalendar(
 				$monday, 7,
-				$this->_GenerateWeekUri($monday->Adjust('-1week')),
-				$this->_GenerateWeekUri($monday->Adjust('+1week')));
+				$this->_GenerateWeekPresentation($monday));
 	}
 	
 	/**
@@ -94,15 +91,37 @@ class Listings extends Controller {
 	function _GenerateWeekUri($Start)
 	{
 		/// @todo compensate if not in a valid academic term.
-		return 'listings/week/' . $Start->AcademicYear() .
-				'/' . $Start->AcademicTermName() .
+		return '/listings/week/' . $Start->AcademicYear() .
+				'/' . $Start->AcademicTermNameUnique() .
 				'/' . $Start->AcademicWeek();
+	}
+	
+	/**
+	 * @brief Generate a presentation array for a week display.
+	 * @param Academic_time $Start.
+	 * @return Presentation array:
+	 *	- 'academic_year': e.g. 2006/2007
+	 *	- 'academic_term': e.g. christmas holiday
+	 *	- 'academic_week': e.g. 8
+	 *	- 'prev': e.g. listings/week/2006/xmas/2
+	 *	- 'next': e.g. listings/week/2006/autumn/10
+	 */
+	function _GenerateWeekPresentation($Start)
+	{
+		/// @todo compensate if not in a valid academic term.
+		return array(
+				'academic_year' => $Start->AcademicYearName(),
+				'academic_term' => $Start->AcademicTermName().' '.$Start->AcademicTermTypeName(),
+				'academic_week' => $Start->AcademicWeek(),
+				'prev' => $this->_GenerateWeekUri($Start->Adjust('-1week')),
+				'next' => $this->_GenerateWeekUri($Start->Adjust('+1week')),
+			);
 	}
 	
 	/**
 	 * @brief Show the calendar between certain Academic_times.
 	 */
-	function _ShowCalendar($StartTime, $Days, $PreviousUri, $NextUri)
+	function _ShowCalendar($StartTime, $Days, $Presentation)
 	{
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
@@ -129,8 +148,9 @@ EXTRAHEAD;
 		$data['title'] = 'Listing viewer prototype';
 		
 		// next and previous uri
-		$data['next'] = site_url($NextUri);
-		$data['prev'] = site_url($PreviousUri);
+		foreach ($Presentation as $index => $value) {
+			$data[$index] = $value;
+		}
 		
 		// this is temporary for testing only
 		$data['days'] = array();
