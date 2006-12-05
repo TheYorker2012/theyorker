@@ -40,13 +40,13 @@ foreach ($dummies as $events_array_index => $event) {
 	$snippets_dir = $mypath['dirname'] . "/snippets";
 	@$eventBoxCode[$event['day']] .= apinc ($snippets_dir . "/calviewEventBox.inc",$replace);
 	
-	//@$eventHandlerJS .= "Event.observe($('ev_mb_".$events_array_index."'), \"click\",  eventMenu(e));\n";
-	
-	
-	
 }
 
-
+// put &nbsp; into any empty day
+for ($i = 0;$i < 6;$i++) {
+	if (!isset ($eventBoxCode[$i]))
+		$eventBoxCode[$i] = '&nbsp;';
+}
 
 
 ?>
@@ -139,49 +139,42 @@ foreach ($dummies as $events_array_index => $event) {
 			<!-- cells to contain javascript-fu -->
 			<tr>
 				<td class="calviewCalEventsCell" id="calviewMonday">
-					&nbsp;
 					<?php 
 						// echo all of Monday's events
 						echo @$eventBoxCode[0];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewTuesday">
-					&nbsp;
 					<?php 
 						// echo all of Tuesday's events
 						echo @$eventBoxCode[1];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewWednesday">
-					&nbsp;
 					<?php 
 						// echo all of Wednesday's events
 						echo @$eventBoxCode[2];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewThursday">
-					&nbsp;
 					<?php 
 						// echo all of Thursday's events
 						echo @$eventBoxCode[3];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewFriday">
-					&nbsp;
 					<?php 
 						// echo all of Friday's events
 						echo @$eventBoxCode[4];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewSaturday">
-					&nbsp;
 					<?php 
 						// echo all of Saturday's events
 						echo @$eventBoxCode[5];
 					?>
 				</td>
 				<td class="calviewCalEventsCell" id="calviewSunday">
-					&nbsp;
 					<?php 
 						// echo all of Sunday's events
 						echo @$eventBoxCode[6];

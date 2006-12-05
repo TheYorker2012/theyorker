@@ -22,7 +22,9 @@ function hideEventMenu () {
 }
 
 function removeEvent (arrid) {
-
+	var event = $('ev_'+arrid);
+	event.style.position = 'relative';
+	event.style.bottom = '10px';
 }
 
 function expandEvent (arrid) {
