@@ -74,7 +74,7 @@ foreach ($dummies as $events_array_index => $event) {
 				</li>
 				<li>
 					<a href="#" onclick="hideEventMenu();return false;"
-					style="background-color: #ff8855; color: #ffffff">Cancel</a>
+					style="border-bottom: none">Cancel</a>
 				</li>
 			</ul>
 		</div>
