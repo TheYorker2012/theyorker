@@ -267,10 +267,20 @@ class Wikiparser {
 	
 	function handle_externallink($matches) {
 		$href = $matches[2];
-		if (!isset($matches[3])) {
+		if (array_key_exists(6,$matches)) {
+			// implicit mailto
+			$href = 'Mailto:'.$matches[6];
+			$title= $matches[6];
+		} else if (array_key_exists(4,$matches)) {
+			// implicit url
+			$href = $matches[4];
+			$title= $matches[4];
+		} else if (!isset($matches[3])) {
+			// explicit unamed
 			$this->linknumber++;
 			$title = "[{$this->linknumber}]";
 		} else {
+			// explicit named
 			$title = $matches[3];
 		}
 		$newwindow = true;
@@ -385,10 +395,14 @@ class Wikiparser {
 				'([a-z]+)?'. // any suffixes
 				')',
 			'externallink'=>'('.
-				'\['.
-					'([^\]]*?)'.
-					'(\s+[^\]]*?)?'.
+				'\['. // explicit with [ and ]
+					'([^\]]*?)'. // href
+					'(\s+[^\]]*?)?'. // with optional title
 				'\]'.
+				'|'. // or
+				'((https?):\/\/[\S]*)'. // implicit url
+				'|'. // or
+				'([^\s,@]+@[^\s,@]+)'. // implicit email address
 				')',
 			'emphasize'=>'(\'{2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
