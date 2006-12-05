@@ -19,12 +19,90 @@ class Listings extends Controller {
 		
 		// Used for producing friendly date strings
 		$this->load->library('academic_calendar');
+		
+		date_default_timezone_set(Academic_time::InternalTimezone());
 	}
 	
 	/**
 	 * @brief Default function.
 	 */
 	function index()
+	{
+		$this->week();
+	}
+	
+	/**
+	 * @brief Show the calendar between certain dates.
+	 * @param $AcademicYear Academic year of week to show (e.g. 2006).
+	 * @param $AcademicTerm Academic term value
+	 *	(accepted by Academic_time::TranslateAcademicTermName):
+	 *	- Either an integer 0 <= @a $AcademicTerm < 6.
+	 *	- Or a string such as 'au', 'xmas', 'spring.
+	 * @param $AcademicWeek Academic week of week to show.
+	 */
+	function week($AcademicYear = false, $AcademicTerm = 0, $AcademicWeek = 1)
+	{
+		// Translate the term name
+		$AcademicTerm = Academic_time::TranslateAcademicTermName($AcademicTerm);
+		
+		// Check the parameters are valid integers
+		if (is_numeric($AcademicYear) &&
+			is_numeric($AcademicTerm) &&
+			is_numeric($AcademicWeek)) {
+			
+			$AcademicYear = (int)$AcademicYear;
+			$AcademicTerm = (int)$AcademicTerm;
+			$AcademicWeek = (int)$AcademicWeek;
+			
+			if ($AcademicYear >= 2006 &&
+				$AcademicTerm >= 0 &&
+				$AcademicWeek >= 1) {
+				
+				// And check that the term in question exists
+				if (Academic_time::ValidateAcademicTerm($AcademicYear, $AcademicTerm)) {
+					// Slow the week specified
+					$start_date = $this->academic_calendar->Academic(
+							$AcademicYear,
+							$AcademicTerm,
+							$AcademicWeek);
+					
+					$this->_ShowCalendar(
+						$start_date, 7, // days
+						$this->_GenerateWeekUri($start_date->Adjust('-1week')),
+						$this->_GenerateWeekUri($start_date->Adjust('+1week'))
+					);
+					return;
+				}
+			}
+		}
+		
+		// Invalid so just show the next week
+		$now = new Academic_time(time());
+		$monday = $now->Adjust('-'.($now->DayOfWeek()-1).'day')->Midnight();
+		
+		$this->_ShowCalendar(
+				$monday, 7,
+				$this->_GenerateWeekUri($monday->Adjust('-1week')),
+				$this->_GenerateWeekUri($monday->Adjust('+1week')));
+	}
+	
+	/**
+	 * @brief Generate a URI path for a week view of a Academic_time.
+	 * @param Academic_time $Start.
+	 * @return Something in the format "listings/week/$year/$term/$week"
+	 */
+	function _GenerateWeekUri($Start)
+	{
+		/// @todo compensate if not in a valid academic term.
+		return 'listings/week/' . $Start->AcademicYear() .
+				'/' . $Start->AcademicTermName() .
+				'/' . $Start->AcademicWeek();
+	}
+	
+	/**
+	 * @brief Show the calendar between certain Academic_times.
+	 */
+	function _ShowCalendar($StartTime, $Days, $PreviousUri, $NextUri)
 	{
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
@@ -50,16 +128,18 @@ EXTRAHEAD;
 		// Set title and other such
 		$data['title'] = 'Listing viewer prototype';
 		
+		// next and previous uri
+		$data['next'] = site_url($NextUri);
+		$data['prev'] = site_url($PreviousUri);
+		
 		// this is temporary for testing only
 		$data['days'] = array();
 		$daycalc = array();
-		$dayofweek = date('N',time ()) - 1;
-		$monday = strtotime('-'.$dayofweek.'day', time());
-		for ($dayoffset = 0; $dayoffset < 7; $dayoffset++) {
-			$day_ts = strtotime('+'.$dayoffset." day",$monday);
+		for ($day_offset = 0; $day_offset < $Days; ++$day_offset) {
+			$day_ts = $StartTime->Adjust('+'.$day_offset." day");
 			
-			$data['days'][] = date ("jS M", $day_ts);
-			$daycalc[] = date ('d#m#y',$day_ts);
+			$data['days'][] = $day_ts->Format("jS M");
+			$daycalc[] = $day_ts->Format('d#m#y');
 		}
 		
 		// define some dummy events with a rough schema until we have access
@@ -68,8 +148,8 @@ EXTRAHEAD;
 			array (
 				'ref_id' => '1',
 				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 12, 4,2006),
-				'end'   => mktime( 0, 0,0, 12, 5,2006),
+				'start' => mktime(21, 0,0, 11, 28,2006),
+				'end'   => mktime( 0, 0,0, 11, 29,2006),
 				'system_update_ts' => '3',
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
@@ -253,8 +333,10 @@ EXTRAHEAD;
 			$event_data['starttime'] = $event_data['start']->Time();
 			$event_data['endtime'] = $event_data['end']->Time();
 			
-			// Add to the return array
-			$return_array[] = $event_data;
+			// Add to the return array if in range
+			if ($event_data['day'] >= 0) {
+				$return_array[] = $event_data;
+			}
 		}
 		return $return_array;
 	}
