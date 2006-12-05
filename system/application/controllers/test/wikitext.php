@@ -18,8 +18,6 @@ class Wikitext extends Controller {
 	
 	/**
 	 * @brief Wikitest test page.
-	 * 
-	 * @todo Fix that it escapes single quotes.
 	 */
 	function index()
 	{
@@ -28,6 +26,8 @@ class Wikitext extends Controller {
 		if ($wikitext === FALSE) {
 			$wikitext  = '==This is the yorker wikitext parser==' . "\n";
 			$wikitext .= 'Enter wikitext here:';
+		} else if (get_magic_quotes_gpc()) {
+			$wikitext = stripslashes($wikitext);
 		}
 		
 		$data = array(
