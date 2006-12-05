@@ -73,8 +73,23 @@ class Academic_time
 	private static $sTermNames = array(
 		0 => 'autumn', 1 => 'christmas',
 		2 => 'spring', 3 => 'easter',
+		4 => 'summer', 5 => 'summer',
+	);
+	
+	/**
+	 * @brief Short names of terms.
+	 */
+	private static $sUniqueTermNames = array(
+		0 => 'autumn', 1 => 'christmas',
+		2 => 'spring', 3 => 'easter',
 		4 => 'summer', 5 => 'holiday',
 	);
+	
+	/**
+	 * @brief Names of term types.
+	 */
+	private static $sTermTypeNames = array(
+		0 => 'term',   1 => 'holiday');
 	
 	/**
 	 * @brief Term name to term number translation array.
@@ -102,12 +117,6 @@ class Academic_time
 		5           => 5,
 		'holiday'   => 5,
 	);
-	
-	/**
-	 * @brief Names of term types.
-	 */
-	private static $sTermTypeNames = array(
-		0 => 'term',   1 => 'holiday');
 	
 	/**
 	 * @brief Construct a time object from a timestamp.
@@ -377,12 +386,30 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Get the unique name associated with the academic term.
+	 * @return String containing term name.
+	 */
+	function AcademicTermNameUnique()
+	{
+		return self::$sUniqueTermNames[$this->AcademicTerm()];
+	}
+	
+	/**
 	 * @brief Get the name associated with the academic term.
 	 * @return String containing term name.
 	 */
 	function AcademicTermName()
 	{
 		return self::$sTermNames[$this->AcademicTerm()];
+	}
+	
+	/**
+	 * @brief Get the name associated with the term type.
+	 * @return String containing term type name.
+	 */
+	function AcademicTermTypeName()
+	{
+		return self::$sTermTypeNames[$this->AcademicTerm() % 2];
 	}
 	
 	/**
