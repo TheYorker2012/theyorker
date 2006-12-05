@@ -73,7 +73,35 @@ class Academic_time
 	private static $sTermNames = array(
 		0 => 'autumn', 1 => 'christmas',
 		2 => 'spring', 3 => 'easter',
-		4 => 'summer', 5 => 'summer');
+		4 => 'summer', 5 => 'holiday',
+	);
+	
+	/**
+	 * @brief Term name to term number translation array.
+	 */
+	private static $sTermTranslation = array(
+		0           => 0,
+		'autumn'    => 0,
+		'au'        => 0,
+		
+		1           => 1,
+		'christmas' => 1,
+		'xmas'      => 1,
+		
+		2           => 2,
+		'spring'    => 2,
+		'sp'        => 2,
+		
+		3           => 3,
+		'easter'    => 3,
+		
+		4           => 4,
+		'summer'    => 4,
+		'su'        => 4,
+		
+		5           => 5,
+		'holiday'   => 5,
+	);
 	
 	/**
 	 * @brief Names of term types.
@@ -91,6 +119,24 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Create a time object set to midnight this morning.
+	 * @return academic_time Midnight this morning.
+	 */
+	static function NewToday()
+	{
+		return new Academic_time(strtotime(date('d M Y',time())));
+	}
+	
+	/**
+	 * @brief Create a time object set to midnight of the same day.
+	 * @return academic_time Midnight of same day as the timestamp.
+	 */
+	function Midnight()
+	{
+		return new Academic_time(strtotime(date('d M Y',$this->mTimestamp)));
+	}
+	
+	/**
 	 * @brief Format the timestamp using the php date function.
 	 * @param $Format Formatting string to use in the php date function.
 	 * @return The formatted time string.
@@ -98,6 +144,16 @@ class Academic_time
 	function Format($Format)
 	{
 		return date($Format, $this->mTimestamp);
+	}
+	
+	/**
+	 * @brief Adjust the timestamp using php strtotime.
+	 * @param $Difference Time difference text.
+	 * @return Academic_time initialised with strtotime(@a $Difference, @a this).
+	 */
+	function Adjust($Difference)
+	{
+		return new Academic_time(strtotime($Difference,$this->mTimestamp));
 	}
 	
 	/**
@@ -330,6 +386,19 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Translate a string term name.
+	 * @return integer Term index or FALSE if unknown.
+	 * @see Academic_time::$sTermTranslation
+	 */
+	static function TranslateAcademicTermName($Term)
+	{
+		if (array_key_exists($Term, self::$sTermTranslation)) {
+			return self::$sTermTranslation[$Term];
+		}
+		return false;
+	}
+	
+	/**
 	 * @brief Find out whether the time is in term time.
 	 * @return Boolean whether in term time.
 	 */
@@ -542,6 +611,26 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Find whether an academic term is valid (or known about).
+	 * @param $AcademicYear Year at start of academic year integer [2006..].
+	 * @param $Term Term of the year integer [0..5].
+	 * @return bool Whether the specified academic term is valid.
+	 * @pre 0 <= @a $Term < 6.
+	 */
+	static function ValidateAcademicTerm($AcademicYear, $Term = 0)
+	{
+		$academic_year_data = self::GetAcademicYearData($AcademicYear);
+		if ($academic_year_data === FALSE) {
+			return FALSE;
+			
+		} elseif (array_key_exists($Term, $academic_year_data['term_days'])) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/**
 	 * @brief Get the term dates of an academic year.
 	 * @param $AcademicYear integer Year of start of academic year.
 	 * @return FALSE if @a $AcademicYear is unknown,
@@ -737,6 +826,10 @@ class Academic_calendar {
 	 *
 	 * @note Inputs are considered to be in the internal timezone
 	 *	(as returned by Academic_time::InternalTimezone).
+	 *
+	 * @todo allow negative @a $Week.
+	 *
+	 * @todo allow negative @a $DayOfWeek.
 	 */
 	function Academic($AcademicYear, $Term = 0, $Week = 1, $DayOfWeek = 1, $Hour = 0, $Minute = 0, $Second = 0)
 	{
@@ -761,6 +854,8 @@ class Academic_calendar {
 	 *
 	 * @note Inputs are considered to be in the internal timezone
 	 *	(as returned by Academic_time::InternalTimezone).
+	 *
+	 * @todo allow negative @a $DayOfTerm.
 	 */
 	function AcademicDayOfTerm($AcademicYear, $Term = 0, $DayOfTerm = 0, $Hour = 0, $Minute = 0, $Second = 0)
 	{
