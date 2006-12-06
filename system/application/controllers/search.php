@@ -45,5 +45,12 @@ class Search extends Controller {
 		);
 		$this->load->view('frames/student_frame',$data);
       }
+
+      function layout2() {
+		$data = array(
+			'content_view' => 'search/search2'
+		);
+		$this->load->view('frames/student_frame',$data);
+      }
 }
 ?>
