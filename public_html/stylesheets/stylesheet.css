@@ -156,6 +156,10 @@ div.ReviewInfoLeft {
 	float: left;
 }
 
+div.ReviewInfoLeftImg {
+	text-align: center;
+}
+
 div.ReviewInfoRight {
 	width: 50%;
 	float: right;
@@ -183,19 +187,51 @@ span.Quote {
 	font-size: x-large;
 }
 
-span.AverageRating {
-	float: right;
+table.ReviewDetails {
+	width: 100%;
 }
 
-span.AverageRatingScore {
-	font-size: x-large;
+table.ReviewDetails td {
+	vertical-align: top;
+}
+
+td.ReviewDetailsTitle {
 	color: #ff6a00;
+	font-weight: bold;
+}
+
+div.RateReview {
+	float: left;
+	margin: 0.5em;
+}
+
+div.MakeComment{
+	float: left;
+}
+
+div.AverageRating {
+	width: 100%;
+	text-align: right;
+}
+
+span.AverageRatingSpan {
+	font-size: x-large;
+	font-weight: bold;
+	color: #ff6a00;
+}
+
+span.SmallSpanText {
+	font-size: x-small;
 }
 
 div.YourComments {
 	background-color: #ff6a00;
 	color: white;
 	width: 100%;
+}
+
+div.YourComments h2 {
+	display: inline;
 }
 
 /**
