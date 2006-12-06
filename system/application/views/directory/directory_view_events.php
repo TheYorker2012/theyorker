@@ -16,25 +16,25 @@
                     <td align="center" height="40" valign="middle"><h2>Frag Soc</h2>
                     </td>
                 </tr>                <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=4';">Week 4</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week4/';">Week 4</td>
                 </tr>
                 <tr>
-                    <td class="calendarweekselect" onClick="location.href='index.php?page=listing.php&week=5';">Week 5</td>
+                    <td class="calendarweekselect" onClick="location.href='/directory/fragsoc/events/week5/';">Week 5</td>
                 </tr>
                 <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=6';">Week 6</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week6/';">Week 6</td>
                 </tr>
                 <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=7';">Week 7</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week7/';">Week 7</td>
                 </tr>
                 <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=8';">Week 8</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week8/';">Week 8</td>
                 </tr>
                 <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=9';">Week 9</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week9/';">Week 9</td>
                 </tr>
                 <tr>
-                    <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=10';">Week 10</td>
+                    <td class="calendarweek" onClick="location.href='/directory/fragsoc/events/week10/';">Week 10</td>
                 </tr>
                 <tr>
                     <td align="center" height="40" valign="middle"><a href="#">&lt;&lt;</a> Autumn Term <a href="#">&gt;&gt;</a> </td>

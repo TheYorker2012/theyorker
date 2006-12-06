@@ -57,7 +57,10 @@ Reviews
 Directory
 <ul>
 	<li><a href="/directory/">/directory/</a></li>
-	<li><a href="/directory/view/">/directory/view/</a></li>
+	<li><a href="/directory/fragsoc/">/directory/example/</a></li>
+	<li><a href="/directory/fragsoc/members/">/directory/example/members/</a></li>
+	<li><a href="/directory/fragsoc/reviews/">/directory/example/reviews/</a></li>
+	<li><a href="/directory/fragsoc/events/">/directory/example/events/</a></li>
 </ul>
 
 Listings
