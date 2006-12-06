@@ -1,13 +1,13 @@
 
 <div id='newsnav'>
 	<ul id='newsnavlist'>
-	<li><a href='/directory/fragsoc/'><img src='/images/prototype/news/uk.png' alt='Frag Soc' title='Frag Soc' /> Frag Soc</a></li>
+	<li><a href='/directory/fragsoc/'><img src='/images/prototype/news/uk.png' alt='About' title='About' /> About</a></li>
 	<li><a href='/directory/fragsoc/events/'><img src='/images/prototype/news/feature.gif' alt='Events' title='Events' /> Events</a></li>
 	<li><a href='/directory/fragsoc/members/' id='current'><img src='/images/prototype/news/feature.gif' alt='Members' title='Members' /> Members</a></li>
 	<li><a href='/directory/fragsoc/reviews/'><img src='/images/prototype/news/feature.gif' alt='Reviews' title='Reviews' /> Reviews</a></li>
 	</ul>
 </div>
-<h2>Members:</h2>
+<h2>FragSoc</h2>
 <div class='Memberbox'>
 	<div class='MemberboxText'>
 		<h3>Editor - Matthew Tole</h3>
