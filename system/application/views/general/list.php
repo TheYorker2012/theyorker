@@ -1,3 +1,4 @@
+<div class="padding">
 This is just a basic list to all the pages that are made so far. I have probably missed some out so can you add links  to them please :)<br /><br />
 
 Home (takes you to the normal home page)
@@ -71,7 +72,11 @@ Listings
 FAQ
 <ul>
 	<li><a href="/faq/">/faq/</a></li>
-	<li><a href="/faq/howdoi/">/faq/howdoi/</a></li>
+</ul>
+
+How Do I?
+<ul>
+	<li><a href="/howdoi/">/howdoi/</a></li>
 </ul>
 
 Search
@@ -79,13 +84,4 @@ Search
 	<li><a href="/search/">/search/</a></li>
 	<li><a href="/search/layout/">/search/layout/</a></li>
 </ul>
-
-
-
-
-
-
-
-
-
-
+</div>
