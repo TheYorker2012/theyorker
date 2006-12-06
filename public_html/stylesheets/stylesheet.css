@@ -47,6 +47,16 @@ img {
 #TitleBar {
 	background-color: Teal;
 }
+/* gives the 5px padding around simple pages */
+.padding {
+  padding: 5px;
+}
+/* removes link styling*/
+.nolinkstyle {
+  text-decorations: none;
+  color: #000000;
+}
+
 
 /**
 	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
