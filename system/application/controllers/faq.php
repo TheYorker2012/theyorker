@@ -9,20 +9,5 @@ class Faq extends Controller {
         );
         $this->load->view('frames/student_frame',$data);
     }
-
-    function howdoi()
-    {
-        if($this->uri->segment(3) == '') {
-          $page = 'faq/howdoi';
-        } else {
-          $page = 'faq/howdoidata';
-        }
-
-        $data = array(
-            'content_view' => $page
-        );
-        $this->load->view('frames/student_frame',$data);
-    }
-
 }
 ?>
