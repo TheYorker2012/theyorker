@@ -65,14 +65,14 @@ class Yorkerdirectory extends Controller {
 	 */
 	function view($organisation,$subpage='index')
 	{
-	if($subpage=='events'||$subpage=='reviews'||$subpage=='members')
-	{
-		$subpageview='directory/directory_view_'.$subpage;
-	}
-	else
-	{
-		$subpageview='directory/directory_view';
-	}
+		if($subpage=='events'||$subpage=='reviews'||$subpage=='members')
+		{
+			$subpageview='directory/directory_view_'.$subpage;
+		}
+		else
+		{
+			$subpageview='directory/directory_view';
+		}
 		$data = array(
 			'content_view' => $subpageview,
 			'organisation' => array(
