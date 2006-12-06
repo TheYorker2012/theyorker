@@ -9,10 +9,10 @@
 	</div>
 
 	<div class='NewsPreview'>
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
-		<h1><?php echo anchor('news/article/1', 'Israel vows ceasefire \'patience\''); ?></h1>
+		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+		<h1><?php echo anchor('news/article/1', 'Have your cake, and eat it!'); ?></h1>
 		<p class='Writer'>
-			<a href='/directory/view/1'>Matthew Tole</a>
+			<a href='/directory/view/1'>Charlie Morley</a>
 		</p>
 		<p class='Date'>5th December 2006</p>
 		<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
@@ -21,15 +21,7 @@
 		    elementum arcu non risus. Vestibulum arcu enim, placerat nec,
 		    malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
 			Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae
-			magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque
-			non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed
-			sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
-			ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam
-			congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque
-			a, mattis a, interdum porta, ante. Nulla diam. Fusce nisl sapien,
-			mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae
-			neque. Praesent libero metus, aliquet vel, lobortis eget, porta et,
-			justo.
+			magna. Morbi mollis consequat diam.
 		</p>
 		<br style='clear: both;'/>
 	</div>
