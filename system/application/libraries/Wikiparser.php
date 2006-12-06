@@ -59,7 +59,28 @@ class Wikiparser {
 		
 		$this->stop = true;
 		// avoid accidental run-on emphasis
-		return $this->emphasize_off() . "\n\n<h{$level}>{$content}</h{$level}>\n\n";
+		return $this->end_paragraph() . "\n\n<h{$level}>{$content}</h{$level}>\n\n";
+	}
+	
+	function handle_startparagraph($matches)
+	{
+		$this->stop = true;
+		if (!$this->in_paragraph) {
+			$this->in_paragraph = true;
+			return '<p>'.$matches[0];
+		} else {
+			return "\n".$matches[0];
+		}
+	}
+	
+	function end_paragraph()
+	{
+		if ($this->in_paragraph) {
+			$this->in_paragraph = false;
+			return $this->emphasize_off()."</p>\n";
+		} else {
+			return $this->emphasize_off();
+		}
 	}
 	
 	function handle_newline($matches) {
@@ -67,7 +88,7 @@ class Wikiparser {
 		
 		$this->stop = true;
 		// avoid accidental run-on emphasis
-		return $this->emphasize_off() . "<br /><br />";
+		return $this->end_paragraph();
 	}
 	
 	/**
@@ -143,7 +164,7 @@ class Wikiparser {
 		}
 		$output .= $matches[2]."\n";
 		
-		return $output;
+		return $this->end_paragraph().$output;
 	}
 	
 	function handle_definitionlist($matches,$close=false) {
@@ -175,7 +196,7 @@ class Wikiparser {
 				break;
 		}
 		
-		return $output;
+		return $this->end_paragraph().$output;
 	}
 	
 	function handle_preformat($matches,$close=false) {
@@ -187,16 +208,16 @@ class Wikiparser {
 		$this->stop_all = true;
 
 		$output = "";
-		if (!isset($this->preformat) or !$this->preformat) $output .= "<pre>";
+		if (!isset($this->preformat) or !$this->preformat) $output .= '<pre>';
 		$this->preformat = true;
 		
 		$output .= $matches[1];
 		
-		return $output."\n";
+		return $this->end_paragraph().$output."\n";
 	}
 	
 	function handle_horizontalrule($matches) {
-		return "<hr />";
+		return $this->end_paragraph().'<hr />';
 	}
 	
 	function handle_image($href,$title,$options) {
@@ -333,11 +354,11 @@ class Wikiparser {
 	 */
 	function handle_addemphasis($matches) {
 		$output = '';
-		//$output .= '<em><B><FONT color="#FF6A00">'; // Orange emphasis
-		$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		$output .= '<em><strong><FONT color="#FF6A00">'; // Orange emphasis
+		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
 		$output .= $matches[0];                     // Actual text
-		$output .= $this->emphasize(2);             // Normal ''x'' emphasis
-		//$output .= '</FONT></B></em>';              // Orange emphasis
+		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
+		$output .= '</FONT></strong></em>';              // Orange emphasis
 		return $output;
 
 	}
@@ -377,6 +398,7 @@ class Wikiparser {
 	
 	function parse_line($line) {
 		$line_regexes = array(
+			'startparagraph'=>'^([^\s\*\#;\:=-].*?)$',
 			'preformat'=>'^\s(.*?)$',
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
@@ -400,9 +422,9 @@ class Wikiparser {
 					'(\s+[^\]]*?)?'. // with optional title
 				'\]'.
 				'|'. // or
-				'((https?):\/\/[\S]*)'. // implicit url
+				'((https?):\/\/[\S]*[^\s\.\,])'. // implicit url
 				'|'. // or
-				'([^\s,@]+@[^\s,@]+)'. // implicit email address
+				'([^\s,@]+@([^\s,@\.]+\.)*[^\s,@\.]+)'. // implicit email address
 				')',
 			'emphasize'=>'(\'{2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
@@ -523,6 +545,7 @@ Done.
 		$this->deflist = false;
 		$this->linknumber = 0;
 		$this->suppress_linebreaks = false;
+		$this->in_paragraph = false;
 		
 		$this->page_title = $title;
 
