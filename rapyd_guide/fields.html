@@ -1,0 +1,372 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Rapyd Components - User Guide</title>
+<link rel="stylesheet" type="text/css" media="all" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/syntax.css" />
+<script type="text/javascript" src="js/nav.js"></script>
+<script class="javascript" src="js/syntax.js"></script>
+<script class="javascript" src="js/syntax_php.js"></script>
+</head>
+<body onload="dp.SyntaxHighlighter.HighlightAll('code');">
+
+	<div id="content">
+  
+		<div class="line"></div>
+  
+
+<!-- begin header -->
+<script type="text/javascript">header();</script>
+<!-- end header -->
+
+
+
+    <div class="left">
+
+<!-- begin sidebar -->
+<script type="text/javascript">sidebar();</script>
+<!-- end sidebar -->
+
+
+
+    </div>
+    
+    
+		<div class="right">
+
+
+
+  <div>
+
+    <h2>Fields</h2>
+    <p>
+Fields are a set of classes that can be used in DataForm (and extended DataEdit &amp; DataFilter).
+		</p>
+
+    <p>
+    Fiels are a collection of classes to manage single items of a form
+    <ul>
+      <li><a href="#inputField">input</a></li>
+      <li><a href="#passwordField">password</a></li>
+      <li><a href="#dropdownField">dropdown</a></li>
+      <li><a href="#textareaField">textarea</a></li>
+      <li><a href="#checkboxField">checkbox</a></li>
+      <li><a href="#dateField">datetime</a></li>
+      <li><a href="#editorField">editor</a></li>
+      <li><a href="#autoUpdateField">autoupdate</a></li>
+      <li><a href="#buttons">submit, reset &amp; button</a></li>
+      <li><a href="#uploadField">upload</a></li>
+      <li><a href="#freeField">free</a></li>
+      <li><a href="#containerField">container</a></li>
+      <li><a href="#iframeField">iframe</a></li>
+      <li><a href="#colorpickerField">colorpicker</a></li>
+      <li><a href="#htmlField">html</a></li>      
+    <ul>
+    </p>
+    
+  </div>
+  
+  
+<div class="line_under"></div>
+
+<a name="inputField"> </a>
+<h3>inputField</h3>
+<p>
+An Input.<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname.<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong> build(), when($status).
+</p>
+
+
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $input = new inputField("Nome", "name");
+  $input->append("This is an extra text for the field");
+  $input->build(); 
+  </textarea>
+  
+
+<div class="line_under"></div>
+
+<a name="passwordField"> </a>
+<h3>passwordField</h3>
+<p>
+An Input, where type = password, with possibility to encrypt data, hide value in view state, and empty value in modify state.<br />
+contributed by Nick Crossland.<br />
+
+<strong>params:</strong> string $label, string $fieldname.<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group.<br />
+encrypt (bool),<br />
+show_null, show_empty, show_mask_encrypted, show_mask_hidden (strings)<br />
+<strong>methods:</strong> build(), when($status).
+</p>
+
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+    $pass = new passwordField("Password", "pass");
+    $pass->encrypt = false;
+    $pass->rule = "required|min_length[5]";
+    $pass->build();
+  </textarea>
+
+<div class="line_under"></div>
+
+<a name="dropdownField"> </a>
+<h3>dropdownField</h3>
+<p>
+A Select.<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname, [$values_arr].<br />
+<strong>properties:</strong> onchange, insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong> option($value, $label), append($extra_text), build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="10" cols="100">
+  $staticdd = new dropdownField("Pubblico", "public");
+  $staticdd->option("y","Si");
+  $staticdd->option("n","No");
+  $staticdd->rule = "required";    
+  $staticdd->build();
+
+  $dynamicdd = new dropdownField("Categoria", "category_id");
+  $dynamicdd->option("","");
+  $dynamicdd->options("SELECT category_id, label FROM categories ");
+  $dynamicdd->onchange = "a_custom_javascript_function();";
+  $dynamicdd->build(); 
+  </textarea>
+
+<div class="line_under"></div>
+
+<a name="textareaField"> </a>
+<h3>textareaField</h3>
+<p>
+A Textarea.<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname.<br />
+<strong>properties:</strong> cols, rows, insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="10" cols="100">
+  $textarea = new textareaField("Abstract", "abstract");
+  $textarea->cols = 70;
+  $textarea->rows = 4;
+  $textarea->rule = "required";
+  $textarea->group = "Contenuti";
+  $textarea->build();
+  </textarea>
+  
+  
+<div class="line_under"></div>
+
+<a name="checkboxField"> </a>
+<h3>checkboxField</h3>
+<p>
+A Checkbox.<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname, mixed $checkedValue , mixed $uncheckedValue.<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $checkbox = new checkboxField("Public", "public", "y","n"); 
+  $checkbox->build();
+  </textarea>
+  
+  
+<div class="line_under"></div>
+
+<a name="dateField"> </a>
+<h3>dateField</h3>
+<p>
+A Date-Picker DHTML calendar based on jscalendar (rapyd 3th party library).<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname, string $format ("eu" for european timestamp: dd/mm/yyyy, or "us" for US format: mm/dd/yyyy)<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $datetime = new dateField("Data Creazione", "created","eu");
+  $datetime->insertValue = date("Y-m-d H:i:s");
+  $datetime->build();
+  </textarea>
+  
+  
+<div class="line_under"></div>
+
+<a name="editorField"> </a>
+<h3>editorField</h3>
+<p>
+A wysiwyg DHTML editor (like a small Word application), derived from TinyMCE, and TinyFCK<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname, string $format ("eu" for european timestamp: dd/mm/yyyy, or "us" for US format: mm/dd/yyyy)<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $wysiwyg = new editorField("Descrizione", "description");
+  $wysiwyg->cols = 70;
+  $wysiwyg->rows = 20;
+  $wysiwyg->build();
+  </textarea>
+
+
+<div class="line_under"></div>
+
+<a name="autoUpdateField"> </a>
+<h3>autoUpdateField</h3>
+<p>
+Not properly a hidden field, it can store &amp; update "code-passed" values (instead of POSTs).<br />
+In the sample it is used to store (widhout output) a datetime, "last record update"<br />
+<br />
+<strong>params:</strong> string $fieldname, mixed $insertValue , mixed $updateValue.<br />
+<strong>properties:</strong> mode, rule, group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $autohidden  = new autoUpdateField("modified",  date("Y-m-d"), date("Y-m-d")); 
+  </textarea>
+  
+<div class="line_under"></div>
+
+<a name="buttons"> </a>
+<h3>resetField  submitField &amp; buttonField</h3>
+<p>
+Buttons,  to exec actions.<br />
+<br />
+<strong>params:</strong> string $fieldname, mixed $insertValue , mixed $updateValue.<br />
+<strong>properties:</strong> group.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $submit = new submitField("Ok", "submitbtn");
+  $reset = new resetField("Cancel", "resetbtn");
+  $button = new buttonField("Bottone", "normalbtn");
+  </textarea>
+
+
+<div class="line_under"></div>
+
+<a name="uploadField"> </a>
+<h3>uploadField</h3>
+<p>
+A Input (file type), to upload files. It is based upon CI Upload library.<br />
+In the sample, the "thumb" property is used to make a resized thumbnail (max 63x91 pixels), using CI image_lib (image manipulation class)<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname<br />
+<strong>properties:</strong> cols, rows, insertValue, updateValue, mode, rule, group<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $upload  = new uploadField("Image", "image");
+  $upload->upload_path = "/uploads/images/";
+  $upload->allowed_types = "jpg|gif";
+  $upload->thumb = array (63,91);
+  $upload->build();
+  </textarea>
+
+<div class="line_under"></div>
+
+<a name="freeField"> </a>
+<h3>freeField</h3>
+<p>
+A empty field, it can contain a passed html string, basic scope is to enable, inside forms (DataForm/DataEdit) a custom area to display complex/custom fields.<br />
+<br />
+<strong>params:</strong> string $uniqueName, string $html_to_print<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $free = new freeField("Free Field","free","this is a custom field"); 
+  </textarea>
+  
+<div class="line_under"></div>
+
+<a name="containerField"> </a>
+<h3>containerField</h3>
+<p>
+A div, it can contain a passed html string, basic scope is to enable, inside forms (DataForm/DataEdit) a custom area to display messages, custom and static fields.. etc.<br />
+<br />
+<strong>params:</strong> string $uniqueName, string $html_to_print<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $container = new containerField("alert","this is an alert text, it appears
+ when field status is 'show'");
+  $container->when = array("show");
+  </textarea>
+
+
+<div class="line_under"></div>
+
+<a name="iframeField"> </a>
+<h3>iframeField</h3>
+<p>
+An iframe, basic scope is to enable master-detail editing (..see advenced tips).<br />
+<br />
+<strong>params:</strong> string $uniqueName, string $uri, string $iframe_height (pixels)<br />
+<strong>properties:</strong> insertValue, updateValue, mode, rule, group<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $iframe = new iframeField("related", "controller/method/parameter","210");
+  $iframe->when = array("show","modify");
+  $iframe->group = "Articoli Consigliati";
+  $iframe->build(); 
+  </textarea>
+
+
+<div class="line_under"></div>
+
+<a name="colorpickerField"> </a>
+<h3>colorpickerField</h3>
+<p>
+A Color-Picker DHTML, based on colorpicker (rapyd 3th party library).<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname<br />
+<strong>properties:</strong> cols, rows, insertValue, updateValue, mode, rule, group<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+$color = new colorpickerField("Colore Menu", "color"); 
+  </textarea>
+
+
+<div class="line_under"></div>
+
+<a name="htmlField"> </a>
+<h3>htmlField</h3>
+<p>
+Same of Textarea but in "show" status it has a better output layout, and in "create/modify" status a smaller font.<br />
+<br />
+<strong>params:</strong> string $label, string $fieldname<br />
+<strong>properties:</strong> sames of  textarea.<br />
+<strong>methods:</strong>  build(), when($status).
+</p>
+  <textarea name="code" class="php:nogutter" rows="5" cols="100">
+  $html = new htmlField("Codice HTML", "html");
+  $html->cols = 70;
+  $html->rows = 10;
+  </textarea>
+
+<div class="line"></div>
+
+
+		
+	 </div>
+		
+</div>
+    
+<div class="line"></div>
+    
+<!-- begin footer -->
+<script type="text/javascript">footer();</script>
+<!-- end footer -->
+
+    
+	</div>
+
+  
+</body>
+</html>

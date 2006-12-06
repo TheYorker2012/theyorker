@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Rapyd Components - User Guide</title>
+<link rel="stylesheet" type="text/css" media="all" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/syntax.css" />
+<script type="text/javascript" src="js/nav.js"></script>
+<script class="javascript" src="js/syntax.js"></script>
+<script class="javascript" src="js/syntax_php.js"></script>
+</head>
+<body onload="dp.SyntaxHighlighter.HighlightAll('code');">
+
+	<div id="content">
+  
+		<div class="line"></div>
+  
+
+<!-- begin header -->
+<script type="text/javascript">header();</script>
+<!-- end header -->
+
+
+
+    <div class="left">
+
+<!-- begin sidebar -->
+<script type="text/javascript">sidebar();</script>
+<!-- end sidebar -->
+
+
+
+    </div>
+    
+    
+		<div class="right">
+
+
+
+    <div>
+  
+      <h2>DataObject</h2>
+      <p>
+  DataObject is an impl. of Active Record (classic.. work with "one" record, have getters and setters and save method) based on CI Active record.
+  DataObject can be used stand alone.. but it's the base for others editing components (<a href="dataform.html">DataForm</a>, <a href="dataedit.html">DataEdit</a>) 
+  
+      </p>
+  
+  <div class="line"></div>
+  
+  <h3>Sample:</h3>
+  
+  <textarea name="code" class="php:nogutter" rows="15" cols="100">
+  
+    $do = new DataObject("articles");
+    $do->load(1);
+    $title = $do->get("title");
+    
+   </textarea>
+  
+  <div class="line"></div>
+  
+      <h3>constructor:</h3>
+      <p>
+      <var>DataObject($tablename)</var><br/>
+      param: string $tablename a db table name<br/><br/>
+      </p>
+
+  <div class="line_under"></div>
+  
+      <h3>main properties:</h3>
+      <p>
+      <var>loaded</var><br/>
+      return a boolean: record is loaded<br/>
+      </p>
+  
+      
+  <div class="line_under"></div>
+  
+      <h3>main methods:</h3>
+      <p>
+      <var>load($pk_value)</var><br/>
+      load a record, where primary key = $pk_value, (on fails return false)<br/>
+      if the table has multi-field pk  you must pass an associative array:<br/>
+      load(array("pk1_name"=>"pk1_value", "pk2_name"=>"pk2_value")).<br/>
+      <br/>
+      <var>load_where($field_name, $field_value)</var><br/>
+      load a record, where $field_name = $field_value, (on fails return false)<br/>
+      <br/>
+      <var>get($field_name)</var><br/>
+      get field value<br/>
+      <br/>
+      <var>set($field_name, $field_value)</var><br/>
+      set field value <br/>
+      <br/>
+      <var>get_all()</var><br/>
+      get an associative array (all field values)<br/>
+      <br/>
+      <var>save()</var><br/>
+      exec query (an update if record is loaded, or an insert). (on fails return false)<br/>
+      <br/>
+      <var>delete()</var><br/>
+      delete current loaded record. (on fails return false)<br/>
+      </p>
+  
+     <div class="line_under"></div>
+      
+      <h3>relations:</h3>
+      <p>
+      <em>only a convenient way to join tables and get related data.<br/>
+      Non the exect porting of RoR ARR pattern.<br/>
+      <br/>
+      <strong>one-to-one</strong>: "get the only record related with current one, in the table.."<br/>
+      <strong>one-to-many</strong>: "get all records related with current one, in the table.."<br/>
+      <strong>many-to-many</strong>: "get all records of the many-to-many relation, between current table and another, using.."<br/>
+      </em><br/>
+      
+      <var>rel_one_to_one($id, $table, $field_fk, $field)</var><br/>
+      Get the only record related with current one, in the table: $table, using as foreign key: $field_fk<br/>
+      (if the fk has not the same name of other table pk, you can specify the pk by $field)<br/>
+      the $id param, will be used as the array-key of the related record data (see sample: /rapyd/datam/dataobject).<br/>
+
+  <textarea name="code" class="php:nogutter" rows="15" cols="100">
+      $do = new DataObject("articles");
+      $do->rel_one_to_one("author", "authors","author_id");
+      $do->load(1);
+      $art_one = $do->get_all();
+      
+      //if set, it will contain all data of related record:
+      $art_one["author"];
+   </textarea>
+
+
+  <div class="line"></div>
+      
+      <var>rel_one_to_many($id, $table, $field)</var><br/>
+      Get all records related with current one, in the table: $table, using as foreign key (of related table) $field.<br/>
+      (if $field param is omitted, by default DO assume it is the current PK field name)<br/>
+      the $id param, will be used as the array-key of related records (see sample: /rapyd/datam/dataobject).<br/>
+
+  <textarea name="code" class="php:nogutter" rows="15" cols="100">
+      $do = new DataObject("articles");
+      $do->rel_one_to_many("comments", "entries");
+      $do->load(2);
+      $art_two = $do->get_all();
+      
+      //if set, it will contain all "comments" stored in the 
+      //"entries" table, where article_id = 2
+      $art_two["comments"];
+   </textarea>
+   
+   
+  <div class="line"></div>
+      
+      <var>rel_many_to_many($id, $table, $rel_table, $field) </var><br/>
+      Get all records of the many-to-many relation, between current DO table and $table,<br/>
+      using the support table: $rel_table.<br/>
+      ($field param is the pk name of $table).<br/>
+
+  <textarea name="code" class="php:nogutter" rows="15" cols="100">
+      $do = new DataObject("articles");
+      $do->rel_many_to_many("cat", "categories", "art_rel_cat", "category_id"); 
+      $do->load(3);
+      $art_three = $do->get_all();
+      
+      //if set, it will contain all records stored in the table "categories",
+      //joininig by support table: "articles_rel_categories".
+      //where article_id = 3
+      $art_three["cat"];
+   </textarea>
+<script class="javascript">
+
+</script>
+
+  </div>
+      
+
+      
+
+
+</div>
+
+<div class="line"></div>
+    
+<!-- begin footer -->
+<script type="text/javascript">footer();</script>
+<!-- end footer -->
+
+    
+	</div>
+
+  
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Rapyd Components - User Guide</title>
+<link rel="stylesheet" type="text/css" media="all" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/syntax.css" />
+<script type="text/javascript" src="js/nav.js"></script>
+<script class="javascript" src="js/syntax.js"></script>
+<script class="javascript" src="js/syntax_php.js"></script>
+</head>
+<body onload="dp.SyntaxHighlighter.HighlightAll('code');">
+
+	<div id="content">
+  
+		<div class="line"></div>
+  
+
+<!-- begin header -->
+<script type="text/javascript">header();</script>
+<!-- end header -->
+
+
+
+    <div class="left">
+
+<!-- begin sidebar -->
+<script type="text/javascript">sidebar();</script>
+<!-- end sidebar -->
+
+
+
+    </div>
+    
+    
+	<div class="right">
+
+
+
+  	<h2>General Concepts</h2>
+
+    
+		<h4>Load Rapyd</h4>
+		<p>
+    Rapyd is a CI library.<br/>
+		To load rapyd components library (where you prefer, in the controller or in a model) call:
+		</p>
+			
+  <textarea name="code" class="php:nogutter" rows="2" cols="100">
+$this->load->library("rapyd"); 
+   </textarea>
+   
+
+
+		<p>
+		Then you have included basic functionalities (some support functions), and the main 
+		rapyd object in the CI base class.
+		</p>
+    
+		<p>
+		You can load components/classes in rapyd "like" CI load libraries:
+		</p>
+
+  <textarea name="code" class="php:nogutter" rows="2" cols="100">
+$this->rapyd->load("datafilter","datagrid"); 
+   </textarea>
+
+		<p>
+		Unlike CI libraries &amp; models, you must instantiate classes before use:
+		</p>
+
+  <textarea name="code" class="php:nogutter" rows="3" cols="100">
+  $grid = new DataGrid("Article List", "articles");
+  $grid->per_page = 5;
+  ... 
+   </textarea>
+    
+    
+<div class="line_under"></div>
+    
+    <a name="datasource">&nbsp;</a>
+		<h4>Data Source</h4>
+    Rapyd components works with CI Active Record library, but associative arrays are supported (limited functionalities).
+    So when in this guide you see <var>$datasource</var> as parameter, it can be probably:<br/><br/>
+    
+    <ul>
+    <li>a NULL value (means: "use current Active Record preset")</li>
+    <li>a tablename (means: "use all records of this table")</li>
+    <li>a sql query (SELECT, or a partial SELECT query)</li>
+    <li>a multidimensional associative array (only supported by DataGrid and DataTable)</li>
+    </ul>
+    
+<div class="line_under"></div>
+  
+    <a name="pattern">&nbsp;</a>
+		<h4>Functions/Fields Pattern</h4>
+		<p>
+		The pattern concept is: in many components, you can (in some cases you "must") pass a "field pattern" instead a "field name":
+		</p>
+    
+   <textarea name="code" class="php:nogutter" rows="4" cols="100">
+    ...
+    $grid->column("Body","body");  //field name
+    $grid->column("Body", "<substr><#body#>|0|20</substr>..");  //field pattern
+    ... 
+   </textarea>
+
+    
+    
+    
+Field pattern concurs to format output by a php function (built-in or user-defined), to concatenate more than one field.. etc.<br/>
+the pattern syntax is: <br/>
+
+   <textarea name="code" class="php:nogutter" rows="4" cols="100">
+<lowercasefuctionname>
+<#fieldname#>|param2|param3|<#otherfieldname#>
+</lowercasefuctionname>
+   </textarea>
+   
+<br/>
+Before you can use a function you must declare it to the component by the method: <var>$component->use_function("lowercasefuctionname")</var><br/>
+You can preset accepted functions inside <em>/system/application/config/rapyd.php</em><br/>
+in the <var>$rpd['replace_functions']</var> array.<br/>
+You can nest functions, as you see the parameter separator is a "|" pipe.
+
+		
+<div class="line_under"></div>
+		
+		<h4>All components have</h4>
+		<p>
+		a <var>build()</var> method, that [exec queries] and prepare html output, normally you can take the output by <var>$component->output</var> property.
+		</p>
+		
+<div class="line_under"></div>
+	
+		<h4>Many components have</h4>
+		<p>
+		 a <var>title</var> method to set a title string, and can have <var>buttons</var> (system-buttons and custom).
+		</p>
+		
+  <div class="line"></div>
+	
+
+
+	</div>
+	
+  <div class="line"></div>
+    
+<!-- begin footer -->
+<script type="text/javascript">footer();</script>
+<!-- end footer -->
+
+    
+	</div>
+
+  
+</body>
+</html>
