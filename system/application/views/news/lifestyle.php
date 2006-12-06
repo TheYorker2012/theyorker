@@ -56,11 +56,11 @@
 			<p>This week we look at using weights and other heavy stuff</p>
 			</a>
 		</div>
-		<div class='LifestylePuffer' style='background-color: #a38b69;'>
+		<div class='LifestylePuffer' style='background-color: #ef7f94;'>
 			<a href='/news/article/1'>
-			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
-	 	    <h3>Cooking</h3>
-			<p>This week an awesome recipe for a chocolate cake</p>
+			<img src='/images/prototype/news/puffer4.jpg' alt='Love' title='Love' />
+	 	    <h3>Romance</h3>
+			<p>This week we review what is the best valentine day's present</p>
 			</a>
 		</div>
 		<div class='LifestylePuffer' style='background-color: #000;'>
@@ -70,11 +70,11 @@
 			<p>This week we look at using weights and other heavy stuff</p>
 			</a>
 		</div>
-		<div class='LifestylePuffer' style='background-color: #04669c;'>
+		<div class='LifestylePuffer' style='background-color: #a38b69;'>
 			<a href='/news/article/1'>
-			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
-	 	    <h3>Ashes</h3>
-			<p>Aussie press marvels as England suffer last-day disaster</p>
+			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
+	 	    <h3>Cooking</h3>
+			<p>This week an awesome recipe for a chocolate cake</p>
 			</a>
 		</div>
 	</div>
