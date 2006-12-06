@@ -337,10 +337,10 @@ div.GalleryPicture {
 
 }
 .title{
-	font-size: 35px;
+	font-size: 25px;
 	font-weight: bold;
 	color: #ffffff;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding-left: 3px;
 	padding-bottom: 3px;
 }
@@ -348,7 +348,7 @@ div.GalleryPicture {
 	font-size: large;
 	font-weight: bold;
 	color: #ffffff;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding-left: 3px;
 	padding-bottom: 3px;
 }/* Remove Me End */
@@ -362,6 +362,7 @@ div.GalleryPicture {
 	border-color: FF6A00;
 	font-size: large;
 	font-weight: bold;
+	width: 68%;
 }
 .ProgressItemText {
 	padding-left: 55px;
@@ -390,7 +391,7 @@ div.GalleryPicture {
 	background-color: FF6A00;
 	padding: 0px;
 	margin: 5px;
-	width: 100%;
+	width: 50%;
 	margin-left: 150px;
 }
 .signbox {
@@ -408,37 +409,34 @@ div.GalleryPicture {
 .subsubtitle {
 	font-size: 15px;
 	font-weight: bold;
-	color: FF6A00;
 	padding-left: 4px;
+	color: #FF6A00;
 }
 .funnybox {
 	font-size: large;
 	font-weight: bold;
 	background-color: FF6A00;
 	padding-left: 3px;
+	padding-bottom: 3px;
 	margin-top: 10px;
 }
 .funnyboxpt1{
 	position: relative;
-	top: -12px;
 	display: inline;
 }
 .funnyboxpt2{
 	position: relative;
-	top: -5px;
 	display: inline;
 	color: #ffffff;
 }
 .funnyboxpt3{
 	position: relative;
-	top: -5px;
 	display: inline;
 	color: #ffffff;
 	left: 15%;
 }
 .funnyboxpt4{
 	position: relative;
-	top: -5px;
 	display: inline;
 	color: #ffffff;
 	left: 30%;
@@ -446,9 +444,9 @@ div.GalleryPicture {
 .votebar {
 	background-image: url("/images/prototype/campaign/bar.jpg");
 	background-repeat: repeat-x;
-	display: inline;
 	margin-right:10px;
 	margin-top:3px;
+	display: inline;
 }
 
 div.FactBox {
@@ -459,7 +457,7 @@ div.FactBox {
 	padding-right: 1em;
 }
 div.FactBoxTitle {
-	font-size: 2.3em;
+	font-size: 1.8em;
 	font-weight: bold;
 }
 /* End the campaign pages */
@@ -472,14 +470,14 @@ div.FloatRightHalf {
 	padding: 5px;
 }
 div.CharitySubText {
-	font-size: 3em;
+	font-size: 1.7em;
 	font-weight: bold;
 	color: FF6A00;
 }
 div.CharityRelated {
 	float: left;
-	width:24%;
-	//width: 49%;
+	width:48%;
+	//width: 48%;
 	padding: 5px;
 }
 div.BlackBox {
@@ -491,7 +489,7 @@ div.WhiteBox {
 	color: #000000;
 	background-color: #ffffff;
 	padding: 0.2em;	
-	font-size: 4em;
+	font-size: 3em;
 	font-weight: bold;
 }
 div.WhiteFullBox {
@@ -502,11 +500,11 @@ div.WhiteFullBox {
 	padding: 0.5em;	
 }
 div.BlackBoxTitle {
-	font-size: 2.5em;
+	font-size: 1.5em;
 	font-weight: bold;
 }
 div.BlackBoxSubTitle {
-	font-size: 2em;
+	font-size: 1.5em;
 	font-weight: bold;
 }
 /* End the charity pages */
