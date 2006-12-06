@@ -1,6 +1,6 @@
 <div id='newsnav'>
 	<ul id='newsnavlist'>
-	<li><a href='/directory/fragsoc/'><img src='/images/prototype/news/uk.png' alt='Frag Soc' title='Frag Soc' /> Frag Soc</a></li>
+	<li><a href='/directory/fragsoc/'><img src='/images/prototype/news/uk.png' alt='About' title='About' /> About</a></li>
 	<li><a href='/directory/fragsoc/events/' id='current'><img src='/images/prototype/news/feature.gif' alt='Events' title='Events' /> Events</a></li>
 	<li><a href='/directory/fragsoc/members/'><img src='/images/prototype/news/feature.gif' alt='Members' title='Members' /> Members</a></li>
 	<li><a href='/directory/fragsoc/reviews/'><img src='/images/prototype/news/feature.gif' alt='Reviews' title='Reviews' /> Reviews</a></li>
@@ -9,9 +9,13 @@
 <br>
 <div style="float: left;">
 <table width="780" border="0" cellspacing="0" cellpadding="0">
+
     <tr>
         <td align="center" width="150" valign="top"><table width="150">
                 <tr>
+                    <td align="center" height="40" valign="middle"><h2>Frag Soc</h2>
+                    </td>
+                </tr>                <tr>
                     <td class="calendarweek" onClick="location.href='index.php?page=listing.php&week=4';">Week 4</td>
                 </tr>
                 <tr>
@@ -109,4 +113,5 @@
             </DIV></td>
     </tr>
 </table>
+<br>
 </div>

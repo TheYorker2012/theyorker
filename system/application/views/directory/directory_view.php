@@ -17,6 +17,7 @@
 	Goodricke College
 	<h5>Opening Times:</h5>
 	Every Other Weekend
+	<br><br>
 </div>
 <div class='columnPhoto'>
 	<a href='#'><img src='/images/prototype/directory/fragsoc.jpg' /></a></div>
