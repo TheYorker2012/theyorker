@@ -1,7 +1,7 @@
 	<br>
 	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
 	<div class="title">Our Charity</div>
-	<div class="Blurb"><img src="<?php echo $Picture; ?>"><br><br>
+	<div class="Blurb"><img src="/images/prototype/campaign/field.jpg"><br><br>
 	
 	<div class="Container">
 	<div class="HalfBox">
@@ -22,7 +22,7 @@
 	
 	</div>
 		<div class="CharitySubText">Why We Chose Cancer Research</div>
-		Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text
+		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque a, mattis a, interdum porta, ante. Nulla diam. Fusce nisl sapien, mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae neque. Praesent libero metus, aliquet vel, lobortis eget, porta et, justo.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque a, mattis a, interdum porta, ante. Nulla diam. Fusce nisl sapien, mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae neque. Praesent libero metus, aliquet vel, lobortis eget, porta et, justo.
 		<div class="FloatRightHalf"><div class="subheader">Progress Report</div>
 		<?php
 			foreach ($ProgressItems as $ProgressItem) {
@@ -37,15 +37,15 @@
 		?> 
 		</div>	
 		<div class="CharitySubText">What You Can Do To Help</div>
-		Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text, Descriptive Text
-		<div class="ContainerHalf">
+		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque a, mattis a, interdum porta, ante. Nulla diam. Fusce nisl sapien, mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae neque. Praesent libero metus, aliquet vel, lobortis eget, porta et, justo.
+		<div class="Container">
 			<div class="CharityRelated">
-				<div style="font-weight: bold; font-size: 11px;">Related News Stories</div>
-				<div style="font-weight: bold; font-size: 9px;">>Boy Can Fly</div>
+				<div style="font-weight: bold; font-size: 20px;">Related News Stories</div>
+				<div style="font-weight: bold; font-size: 13px;">> Boy Can Fly</div>
 			</div>
 			<div class="CharityRelated">
-				<div style="font-weight: bold; font-size: 11px;">External Links</div>
-				<div style="font-weight: bold; font-size: 9px;">>Boy Can Fly</div>
+				<div style="font-weight: bold; font-size: 20px;">External Links</div>
+				<div style="font-weight: bold; font-size: 13px;">> Boy Can Fly</div>
 			</div>
 		</div>
 	</div>

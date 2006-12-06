@@ -1,17 +1,16 @@
+	<a href="<?php echo site_url('Campaign/test'); ?>">Campaign page 2 (once campaign has been selected)</a><Br>
 	<br>
 	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
 	<div class="title">CAMPAIGN</div>
-	<div class="Blurb"><img src="<?php echo $Picture; ?>"><br><br><?php echo $Description; ?></div>
+	<div class="Blurb"><img src="/images/prototype/campaign/field.jpg"><br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.</div>
 	<div class="subtitle">CHOOSE YOUR CAMPAIGN</div>
-	<div class="subsubtitle">CLICK ON THE CANPAIGN TO FIND OUT MORE</div><Br>
+	<div class="subsubtitle">CLICK ON THE CAMPAIGN TO FIND OUT MORE</div><Br>
 	<div class="Container">
 	<div class="HalfBox">
-		<ul>
-			<li style="font-weight: bold;">>SWIMMING POOL</li>
-			<li style="font-weight: bold;">>ANTI-ARMS</li>
-			<li style="font-weight: bold;">>KILL ALL ANTS</li>
-			<li style="font-weight: bold;">>BUDDHIST CAMPUS</li>
-		</ul>
+<b>			<a href="<?php echo site_url('Campaign/Details/Swimming Pool'); ?>">> SWIMMING POOL</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Anti-Arms'); ?>">> ANTI-ARMS</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Kill All Ants'); ?>">> KILL ALL ANTS</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Buddhist Campus'); ?>">> BUDDHIST CAMPUS</a></b>
 	</div>
 	<div class="HalfBox">
 		<div style="text-align:center;font-weight: bold;font-size: 18px;">OR VOTE NOW</div>
@@ -29,14 +28,12 @@
 	<div class="subtitle">CURRENT RESULTS</div>
 	<div class="subsubtitle">CHOISE DEADLINE FOR STUDENTS IS <?php echo $DeadLine; ?></div><br>
 	<div style="float: left;">
-		<ul>
-			<li style="font-weight: bold;margin-top:3px;">>SWIMMING POOL</li>
-			<li style="font-weight: bold;margin-top:3px;">>ANTI-ARMS</li>
-			<li style="font-weight: bold;margin-top:3px;">>KILL ALL ANTS</li>
-			<li style="font-weight: bold;margin-top:3px;">>BUDDHIST CAMPUS</li>
-		</ul>
+<b>			<a href="<?php echo site_url('Campaign/Details/Swimming Pool'); ?>">> SWIMMING POOL</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Anti-Arms'); ?>">> ANTI-ARMS</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Kill All Ants'); ?>">> KILL ALL ANTS</a><Br>
+			<a href="<?php echo site_url('Campaign/Details/Buddhist Campus'); ?>">> BUDDHIST CAMPUS</a></b>
 	</div>
-	<div style="padding-left: 30px;float: left;"><div class="votebar" style="width: 50px;"></div>92<br><div class="votebar" style="width: 198px;"></div>198<br><div class="votebar" style="width: 213px;"></div>213<br><div class="votebar" style="width: 92px;"></div>92</div>
+	<div style="float: left; padding-left: 30px;"><div class="votebar" style="width: 50px;"></div>92<br><div class="votebar" style="width: 198px;"></div>198<br><div class="votebar" style="width: 213px;"></div>213<br><div class="votebar" style="width: 92px;"></div>92</div>
 	<div class="breaker"></div> <!-- Remove This Hack Sometime -->
 	</div>
 	</div>
