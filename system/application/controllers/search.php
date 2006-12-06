@@ -5,13 +5,18 @@ class Search extends Controller {
 	function index()
 	{
 		$data = array(
+			'title'        => 'Search'
 			'content_view' => 'search/minibox'
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
 	
-	function submit() {
-		//TODO ajax submit
+	function submit($fd) {
+		$objResponse = new xajaxResponse();
+		if ($this->input->post('search')) {
+			//TODO mysql queries
+			//TODO ajax submit
+		}
 	}
 	
 	function get() {
@@ -31,8 +36,13 @@ class Search extends Controller {
 		$this->load->library('session');
 		//TODO do mysql query on details stored in session
 		//TODO display results
+		$subdata = array(
+			'result' => $result
+		)
 		$data = array(
-			'content_view' => 'search/results'
+			'title'        => 'Search Results'
+			'content_view' => 'search/results',
+			'subdata'      => $subdata
 		);
 		$this->load->view('frames/student_frame',$data);
 	}
@@ -41,6 +51,7 @@ class Search extends Controller {
       // temp function that links to the layout of the search page
       function layout() {
 		$data = array(
+			'title'        => 'Search Results',
 			'content_view' => 'search/search'
 		);
 		$this->load->view('frames/student_frame',$data);
