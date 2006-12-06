@@ -20,4 +20,5 @@
 	<br><br>
 </div>
 <div class='columnPhoto'>
-	<a href='#'><img src='/images/prototype/directory/fragsoc.jpg' /></a></div>
+	<a href='#'><img src='/images/prototype/homepage/homepage_09.gif' /></a>
+</div>
