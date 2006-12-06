@@ -5,7 +5,7 @@ class Search extends Controller {
 	function index()
 	{
 		$data = array(
-			'title'        => 'Search'
+			'title'        => 'Search',
 			'content_view' => 'search/minibox'
 		);
 		$this->load->view('frames/student_frame',$data);
