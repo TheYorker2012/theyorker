@@ -1,7 +1,7 @@
 <br>
 <div id='newsnav'>
 	<ul id='newsnavlist'>
-	<li><a href='/directory/fragsoc/' id='current'><img src='/images/prototype/news/uk.png' alt='Frag Soc' title='Frag Soc' /> Frag Soc</a></li>
+	<li><a href='/directory/fragsoc/' id='current'><img src='/images/prototype/news/uk.png' alt='Frag Soc' title='About' /> About</a></li>
 	<li><a href='/directory/fragsoc/events/'><img src='/images/prototype/news/feature.gif' alt='Events' title='Events' /> Events</a></li>
 	<li><a href='/directory/fragsoc/members/'><img src='/images/prototype/news/feature.gif' alt='Members' title='Members' /> Members</a></li>
 	<li><a href='/directory/fragsoc/reviews/'><img src='/images/prototype/news/feature.gif' alt='Reviews' title='Reviews' /> Reviews</a></li>
@@ -19,6 +19,4 @@
 	Every Other Weekend
 </div>
 <div class='columnPhoto'>
-	<a href='#'><img src='/images/prototype/reviews/reviews_07.jpg' /></a>
-	<a href='#'><h5>Image Information</h5></a>
-</div>
+	<a href='#'><img src='/images/prototype/directory/fragsoc.jpg' /></a></div>

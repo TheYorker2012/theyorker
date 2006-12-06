@@ -27,10 +27,10 @@
 
 .AZJump { height: 30px; }
 
-.calendarweek { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FFCC99; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; }
-.calendarweekselect { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FF0000; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0;}
-.weekviewweek { width: 90px; height: 100%; vertical-align: top; text-align: center; background-color: #FFFF66; padding-top: 3px;}
-.weekviewweektitle { width: 90px; height: 40px; vertical-align: top; text-align: center; background-color: #FFFF66; }
+.calendarweek { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FFCC99; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; font-weight: bold; color: #ffffff; }
+.calendarweekselect { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FF6A00; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; font-weight: bold; color: #ffffff;}
+.weekviewweek { width: 90px; height: 100%; vertical-align: top; text-align: center; background-color: #FF6A00; padding-top: 3px;}
+.weekviewweektitle { width: 90px; height: 40px; vertical-align: top; text-align: center; background-color: #FF6A00; }
 
 .weekviewentry { width: 85px; height: 60px; vertical-align: top; text-align: left; background-color: #FFFFFF; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-left: 3px; padding-right: 3px; cursor: pointer;}
 
