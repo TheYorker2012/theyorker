@@ -31,7 +31,7 @@
 <div id="ReviewSetBlock">
 	<div class="FoodSet"><h3>The Best for Italian</h3>
 		<ul>
-			<li> <a href="foodreview">The Blue Bicycle</a>
+			<li> <a href="/review/foodreview">The Blue Bicycle</a>
 			<li> Fat
 			<li> Fat
 			<li> Fat

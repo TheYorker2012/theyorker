@@ -31,7 +31,7 @@
 <div id="ReviewSetBlock">
 	<div class="FoodSet"><h3>The Best for Nights out</h3>
 		<ul>
-			<li> <a href="foodreview">Fat</a>
+			<li> <a href="/review/foodreview">Fat</a>
 			<li> Fat
 			<li> Fat
 			<li> Fat
