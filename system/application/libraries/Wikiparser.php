@@ -241,12 +241,20 @@ class Wikiparser {
 						$imagetag,
 						$title
 					);
+					if ($this->in_paragraph) {
+						// divs aren't allows in paragraphs, so close and reopen
+						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+					}
 					break;
 				case 'centre':
 					$imagetag = sprintf(
 						'<div style="text-align: center;">%s</div>',
 						$imagetag
 					);
+					if ($this->in_paragraph) {
+						// divs aren't allows in paragraphs, so close and reopen
+						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+					}
 					break;
 			}
 		}
@@ -304,7 +312,7 @@ class Wikiparser {
 			// explicit named
 			$title = $matches[3];
 		}
-		$newwindow = true;
+		$newwindow = false;
 		
 		return sprintf(
 			'<a href="%s"%s>%s</a>',
@@ -354,11 +362,11 @@ class Wikiparser {
 	 */
 	function handle_addemphasis($matches) {
 		$output = '';
-		$output .= '<em><strong><FONT color="#FF6A00">'; // Orange emphasis
+		$output .= '<em><strong><span style="color : #FF6A00;">'; // Orange emphasis
 		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
 		$output .= $matches[0];                     // Actual text
 		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
-		$output .= '</FONT></strong></em>';              // Orange emphasis
+		$output .= '</span></strong></em>';              // Orange emphasis
 		return $output;
 
 	}
@@ -393,6 +401,20 @@ class Wikiparser {
 			case 'NAMESPACE': return 'None';
 			case 'SITENAME': return $_SERVER['HTTP_HOST'];
 			default: return '';	
+		}
+	}
+	
+	function handle_symbols($matches)
+	{
+		//echo var_dump($matches);
+		if ($matches[1] == '&') {
+			return '&amp;';
+		} elseif ($matches[0] == '<') {
+			return '&lt;';
+		} elseif ($matches[0] == '>') {
+			return '&gt;';
+		} else {
+			return $matches[0];
 		}
 	}
 	
@@ -438,7 +460,10 @@ class Wikiparser {
 		$called = array();
 		
 		$line = rtrim($line);
-				
+		
+		// escape some symbols
+		$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
+		
 		foreach ($line_regexes as $func=>$regex) {
 			if (preg_match("/$regex/i",$line,$matches)) {
 				$called[$func] = true;
@@ -551,7 +576,7 @@ Done.
 
 		$output = "";
 		
-		$text = preg_replace_callback('/<nowiki>([\s\S]*)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
+		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
 
 		$lines = explode("\n",$text);
 		
@@ -564,7 +589,8 @@ Done.
 			$output .= $line;
 		}
 
-		$output = preg_replace_callback('/<nowiki><\/nowiki>/i',array(&$this,"handle_restore_nowiki"),$output);
+		$this->nextnowiki = 0;
+		$output = preg_replace_callback('/&lt;nowiki&gt;&lt;\/nowiki&gt;/i',array(&$this,"handle_restore_nowiki"),$output);
 
 		return $output;
 	}
@@ -575,7 +601,7 @@ Done.
 	}
 	
 	function handle_restore_nowiki($matches) {
-		return array_pop($this->nowikis);
+		return $this->nowikis[$this->nextnowiki++];
 	}
 }
 ?>
