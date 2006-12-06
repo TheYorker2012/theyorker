@@ -38,9 +38,9 @@ class Search extends Controller {
 		//TODO display results
 		$subdata = array(
 			'result' => $result
-		)
+		);
 		$data = array(
-			'title'        => 'Search Results'
+			'title'        => 'Search Results',
 			'content_view' => 'search/results',
 			'subdata'      => $subdata
 		);
