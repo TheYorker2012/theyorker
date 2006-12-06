@@ -5,10 +5,6 @@ html {
 	margin: 5px;
 }
 
-body {
-	font-size: small;
-}
-
 a {
 	text-decoration: none;
 	color: #93969a;
@@ -56,18 +52,6 @@ img {
 	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
 */
 
-/* Review div for lining up boxes to same size */
-table.ReviewSetBlock td{
-	width = 100%;
-	vertical-align: top;
-}
-
-/* Review mainpage sections E.g. food, reviews, culture */
-table.ReviewSet{
-	border: thin solid;
-	border-color: #2dc6d7;
-}
-
 div.ReviewCatetory {
 	padding: 5px;
 	width: 100%;
@@ -75,22 +59,25 @@ div.ReviewCatetory {
 
 div.ReviewCategoryImg {
 	float: left;
-	padding-right: 5px;
 }
 
-div.ReviewCategoryImg2 {
+div.ReviewCategoryImgAlt {
 	padding-left: 5px;
 	float: right;
-}
-
-div.ReviewCategoryText2 {
 }
 
 div.ReviewCategoryText h3 {
 	display: inline;
 }
 
-div.ReviewCategoryText2 h3 {
+div.ReviewCategoryText img {
+	padding-bottom: 3px;
+}
+
+div.ReviewCategoryTextAlt {
+}
+
+div.ReviewCategoryTextAlt h3 {
 	display: inline;
 }
 
@@ -163,32 +150,52 @@ div.featureArticle img {
 	float: right;
 }
 
-div.ReviewInfo {
-	width: 100%;
-}
-
 div.ReviewInfoLeft {
-	width: 47%;
+	padding-left: 0.5em;
+	width: 48%;
 	float: left;
-	text-align: justify;
 }
 
 div.ReviewInfoRight {
-	width: 47%;
+	width: 50%;
 	float: right;
 }
 
-div.AuthorReview {
-	border: medium solid Black;
+div.ReviewInfoQuater {
+	width: 45%;
+	float: left;
+	margin-top: 1em;
+	margin-right: 0.5em;
 }
 
-div.AuthorReviewContent {
-	padding: 1em;
+div.ReviewInfoQuater h3 {
+	color: #ff6a00;
+	display: inline;
 }
 
-div.AuthorReviewByline {
-	padding: 1em;
-	border: thick solid Black;
+span.ReviewSubLine {
+	font-size: large;
+}
+
+span.Quote {
+	color: #ff6a00;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-large;
+}
+
+span.AverageRating {
+	float: right;
+}
+
+span.AverageRatingScore {
+	font-size: x-large;
+	color: #ff6a00;
+}
+
+div.YourComments {
+	background-color: #ff6a00;
+	color: white;
+	width: 100%;
 }
 
 /**

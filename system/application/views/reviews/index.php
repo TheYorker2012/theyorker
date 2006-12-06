@@ -11,7 +11,7 @@
 	<div class="WhyNotTry">
 		Highlights:
 		<ul>
-			<li><a href="review/foodreview"><?php echo $food_try1 ?></a>
+			<li><a href="foodreview"><?php echo $food_try1 ?></a>
 			<li><?php echo $food_try2 ?>
 			<li><?php echo $food_try3 ?>
 			<li><?php echo $food_try4 ?>
@@ -30,21 +30,21 @@
 <div class='ArticleColumn' style='width: 50%;'>
 	<div class="ReviewCatetory">
 		<div class="ReviewCategoryImg">
-			<a href="/review/food/"><img src="/images/prototype/news/thumb1.jpg" alt="Food Image" title="Food" /></a><br />
+			<a href="/review/food/"><img src="/images/prototype/reviews/review_category_1.png" alt="Food Image" title="Food" /></a><br />
 			<a href="/atoz/directory">&gt;Food A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top For Food</a>
 		</div>
 		<div class="ReviewCategoryText">
-			<a href="/review/food/"><h3>Food</h3><br /></a>
+			<a href="/review/food/"><img src="/images/prototype/reviews/review_category_2.png" alt="Food Image" title="Food" /></a><br />
 			View our selection of reviews about food venues. See the top 5 places to eat, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
 		</div>
 	</div>
 	<div class="Clear">&nbsp;</div>
 	<div class="ReviewCatetory">
-		<div class="ReviewCategoryImg2">
+		<div class="ReviewCategoryImgAlt">
 			<a href="/review/drink/"><img src="/images/prototype/news/thumb1.jpg" alt="Drink Image" title="Drink" /></a><br />
 			<a href="/atoz/directory">&gt;Drink A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top Places to Drink</a>
 		</div>
-		<div class="ReviewCategoryText2">
+		<div class="ReviewCategoryTextAlt">
 			<a href="/review/drink/"><h3>Drink</h3><br /></a>
 			View our selection of reviews at drink venues. See the top 5 places to get pissed, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
 		</div>
