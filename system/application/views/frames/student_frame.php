@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>The Yorker</title>
+<title>The Yorker - <?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css">
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
