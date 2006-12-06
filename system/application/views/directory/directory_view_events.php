@@ -115,3 +115,5 @@
 </table>
 <br>
 </div>
+<div class="clear">&nbsp;</div>
+<a href='/directory/'>Back to the directory</a>

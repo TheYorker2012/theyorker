@@ -62,3 +62,5 @@
 	</div>
 	Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. <br />
 </div>
+<div class="clear">&nbsp;</div>
+<a href='/directory/'>Back to the directory</a>

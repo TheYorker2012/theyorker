@@ -20,3 +20,5 @@
 <div class='columnPhoto'>
 	<a href='#'><img src='/images/prototype/homepage/homepage_09.gif' /></a>
 </div>
+<div class="clear">&nbsp;</div>
+<a href='/directory/'>Back to the directory</a>
