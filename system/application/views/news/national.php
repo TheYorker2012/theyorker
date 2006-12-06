@@ -1,10 +1,10 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>' id='current'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
-		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
-		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='/news/'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
+		<li><a href='/news/national/' id='current'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
+		<li><a href='/news/features/'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
+		<li><a href='/news/lifestyle/'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
+		<li class='right'><a href='/news/archive/'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
 

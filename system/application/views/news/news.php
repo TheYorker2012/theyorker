@@ -1,54 +1,101 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
-		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
-		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='/news/' id='current'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
+		<li><a href='/news/national/'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
+		<li><a href='/news/features/'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
+		<li><a href='/news/lifestyle/'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
+		<li class='right'><a href='/news/archive/'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
 
 	<div class='NewsPreview' style='border-bottom: 1px solid #93969a;'>
-		 <img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' />
-		 <h1>Israel vows ceasefire 'patience'</h1>
-         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
+		<a href='/news/article/1'><img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+		<h1><?php echo anchor('news/article/1', 'Israel vows ceasefire \'patience\''); ?></h1>
+		<p class='Writer'>
+			<a href='/directory/view/1'>Matthew Tole</a>
+		</p>
+		<p class='Date'>5th December 2006</p>
+		<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
+        <p>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
 		    elementum arcu non risus. Vestibulum arcu enim, placerat nec,
 		    malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
-			Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae
-			magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque
-			non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed
-			sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
-			ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam
-			congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque
-			a, mattis a, interdum porta, ante. Nulla diam. Fusce nisl sapien,
-			mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae
-			neque. Praesent libero metus, aliquet vel, lobortis eget, porta et,
-			justo.</p>
-		 <p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
+		</p>
+		<br style='clear: both;'/>
 	</div>
 
-	<div class='NewsPreview' style='width: 47%; float: left;'>
-		 <img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' />
- 		 <h3>Blair 'sorrow' over slave trade</h3>
-         <p>
-		 Prime Minister Tony Blair has said he feels "deep sorrow" for
-		 Britain's role in the slave trade. In an article for the New Nation
-		 newspaper, the prime minister said it had been "profoundly shameful".
-		 But Mr Blair stopped short of issuing a full apology, which some
-		 commentators have demanded.
- 		 </p>
- 		 <p class='More'><?php echo anchor('news/article/2', 'Read more...'); ?></p>
+	<div class='NewsPreview' style='border-bottom: 1px solid #93969a; width: 47%; float: left; '>
+		<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' /></a>
+ 		<h3><?php echo anchor('news/article/2', 'Blair \'sorrow\' over slave trade'); ?></h3>
+ 		<p class='Writer'>
+			<a href='/directory/view/1'>Jo Shelley</a>
+		</p>
+		<p class='Date'>4th December 2006</p>
+ 		<p class='More'><?php echo anchor('news/article/2', 'Read more...'); ?></p>
+        <p>
+			Prime Minister Tony Blair has said he feels "deep sorrow" for
+			Britain's role in the slave trade. In an article for the New Nation
+			newspaper, the prime minister said it had been "profoundly shameful".
+ 		</p>
 	</div>
+
 	<div class='NewsPreview' style='width: 47%; float: right;'>
-		 <img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' />
- 		 <h3>Advice sought after ex-spy death</h3>
-         <p>
-		 Hundreds of people have called the NHS Direct hotline following the
-		 death of Russian ex-spy Alexander Litvinenko. The Health Protection
-		 Agency has urged anyone else who visited the same London hotel or sushi
-		 bar on 1 November, when he met his contacts, to get in touch. Mr
-		 Litvinenko's death has been linked to the presence of a "major dose" of
-		 radioactive polonium-210 in his body.
- 		 </p>
- 		 <p class='More'><?php echo anchor('news/article/3', 'Read more...'); ?></p>
+		<a href='/news/article/3'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+ 		<h3><?php echo anchor('news/article/3', 'Advice sought after ex-spy death'); ?></h3>
+ 		<p class='Writer'>
+			<a href='/directory/view/1'>Dan Ashby</a>
+		</p>
+		<p class='Date'>3rd December 2006</p>
+ 		<p class='More'><?php echo anchor('news/article/3', 'Read more...'); ?></p>
+        <p>
+			Hundreds of people have called the NHS Direct hotline following the
+			death of Russian ex-spy Alexander Litvinenko.
+ 		</p>
 	</div>
+
+	<div class='NewsOther' style='width: 47%;'>
+		<h3></h3>
+		<p>
+			<a href='/news/article/1'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+			<p class='Headline'><a href='/news/article/1'>Ex-spy death inquiry stepped up.</a></p>
+			<p class='Writer'><a href='/directory/view/1'>Jo Shelley</a></p>
+			<p class='Date'>2nd December 2006</p>
+			<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
+		</p>
+
+		<p>
+			<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
+			<p class='Headline'><a href='/news/article/2'>Blair 'sorrow' over slave trade.</a></p>
+			<p class='Writer'><a href='/directory/view/1'>Jo Shelley</a></p>
+			<p class='Date'>1st December 2006</p>
+			<p class='More'><?php echo anchor('news/article/2', 'Read more...'); ?></p>
+		</p>
+		
+		<p>
+			<a href='/news/article/3'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+			<p class='Headline'><a href='/news/article/3'>Israel vows ceasefire 'patience'.</a></p>
+			<p class='Writer'><a href='/directory/view/1'>Owen Jones</a></p>
+			<p class='Date'>30th November 2006</p>
+			<p class='More'><?php echo anchor('news/article/3', 'Read more...'); ?></p>
+		</p>
+
+		<p>
+			<a href='/news/article/4'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
+			<p class='Headline'><a href='/news/article/4'>Ex-spy death inquiry stepped up.</a></p>
+			<p class='Writer'><a href='/directory/view/1'>Owen Jones</a></p>
+			<p class='Date'>29th November 2006</p>
+			<p class='More'><?php echo anchor('news/article/4', 'Read more...'); ?></p>
+		</p>
+
+		<p>
+			<a href='/news/article/5'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+			<p class='Headline'><a href='/news/article/5'>Ex-spy death inquiry stepped up.</a></p>
+			<p class='Writer'><a href='/directory/view/1'>Owen Jones</a></p>
+			<p class='Date'>28th November 2006</p>
+			<p class='More'><?php echo anchor('news/article/5', 'Read more...'); ?></p>
+		</p>
+		<p class='More' style='text-align:right;'>
+			<a href='/news/archive'>View News Archive...</a>
+		</p>
+	</div>
+	<div class='Advert'><img src='/images/adverts/boxad.jpg' /></div>

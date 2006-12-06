@@ -1,7 +1,7 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='/images/prototype/news/uk.png' alt='News' title='News' /> News</a></li>
-		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='/images/prototype/news/earth.png' alt='National' title='National' /> National</a></li>
+		<li><a href='<?php echo site_url('news/'); ?>' id='current'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
+		<li><a href='<?php echo site_url('news/national/'); ?>'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
 		<li><a href='<?php echo site_url('news/features/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Feature' title='Feature' /> Features</a></li>
 		<li><a href='<?php echo site_url('news/lifestyle/'); ?>'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
 		<li><a href='<?php echo site_url('news/archive/'); ?>'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
@@ -9,7 +9,7 @@
 	</div>
 
 	<div align='center'>
-		 <h1>REPORT SHOWS THAT STUDENTS ARE 90% HUNGRY</h1>
+		 <h1>REPORT SHOWS THAT STUDENTS ARE&nbsp;90%&nbsp;HUNGRY</h1>
 		 <h2>He's been shagging girls for years</h2>
 	</div>
 
