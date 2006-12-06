@@ -83,5 +83,7 @@ Search
 <ul>
 	<li><a href="/search/">/search/</a></li>
 	<li><a href="/search/layout/">/search/layout/</a></li>
+	<li><a href="/search/layout2/">/search/layout2/</a> - This just has box moved to other side just to see what people think</li>
+
 </ul>
 </div>
