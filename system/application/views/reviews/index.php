@@ -9,13 +9,30 @@
 </div>
 <div class="ArticleColumn" style="width: 25%;">
 	<div class="WhyNotTry">
-		Highlights:
+		<h3 style="display: inline;">Highlights</h3><br /><br />
+		Food:
 		<ul>
-			<li><a href="foodreview"><?php echo $food_try1 ?></a>
+			<li><a href="/review/foodreview"><?php echo $food_try1 ?></a>
 			<li><?php echo $food_try2 ?>
 			<li><?php echo $food_try3 ?>
 			<li><?php echo $food_try4 ?>
 			<li><?php echo $food_try5 ?>
+		</ul>
+		Drink:
+		<ul>
+			<li><a href="/review/foodreview"><?php echo $drink_try1 ?></a>
+			<li><?php echo $drink_try2 ?>
+			<li><?php echo $drink_try3 ?>
+			<li><?php echo $drink_try4 ?>
+			<li><?php echo $drink_try5 ?>
+		</ul>
+		Culture:
+		<ul>
+			<li><a href="/review/culturereview"><?php echo $culture_try1 ?></a>
+			<li><?php echo $culture_try2 ?>
+			<li><?php echo $culture_try3 ?>
+			<li><?php echo $culture_try4 ?>
+			<li><?php echo $culture_try5 ?>
 		</ul>
 	</div>
 	<div class="WhyNotTry">

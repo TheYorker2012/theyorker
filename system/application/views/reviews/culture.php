@@ -8,8 +8,8 @@
 	</ul>
 </div>
 	<div class='NewsPreview'>
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
-		<h1><?php echo anchor('news/article/1', 'Israel vows ceasefire \'patience\''); ?></h1>
+		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+		<h1><?php echo anchor('news/article/1', 'Ever tried cake in the bath?'); ?></h1>
 		<p class='Writer'>
 			<a href='/directory/view/1'>Matthew Tole</a>
 		</p>
@@ -79,15 +79,15 @@
 	</div>
 <div class="clear">&nbsp;</div>
 </div>
-<div class="BarCrawls">
+<div class="WhyNotTry" style="width: 45%; float: left; padding: 0.5em;">
 	<h3>BAR CRAWLS</h3>Click on a link to see more about it
 	<ul>
-		<li><a href="barcrawl">Bobs Bar Craw</a>
+		<li><a href="/review/barcrawl">Bobs Bar Craw</a>
 		<li>Sids Death Line
 		<li>Garys Green Mile
 	</ul>
 </div>
-<div class="CollegeLeagues">
+<div class="WhyNotTry" style="width: 45%; float: right; padding: 0.5em;">
 	<h3>COLLEGE LEAGUES</h3>Current Positions
 	<ol>
 		<li>Halifax

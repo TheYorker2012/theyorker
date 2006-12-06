@@ -9,8 +9,8 @@
 </div>
 
 	<div class='NewsPreview'>
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb1.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
-		<h1><?php echo anchor('news/article/1', 'Israel vows ceasefire \'patience\''); ?></h1>
+		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+		<h1><?php echo anchor('news/article/1', 'Cake tastes nice'); ?></h1>
 		<p class='Writer'>
 			<a href='/directory/view/1'>Matthew Tole</a>
 		</p>
