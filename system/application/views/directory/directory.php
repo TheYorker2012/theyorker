@@ -16,6 +16,7 @@
 		</form>
 	</div>
 </div>
+<p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
 <div>
 <div style='width: 90%;margin-left: auto;margin-right: auto;'>
 	<table width='100%'>
