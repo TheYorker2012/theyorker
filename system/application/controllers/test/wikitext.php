@@ -28,7 +28,12 @@ class Wikitext extends Controller {
 		$wikitext = $this->input->post('wikitext');
 		if ($wikitext === FALSE) {
 			$wikitext  = '==This is the yorker wikitext parser==' . "\n";
-			$wikitext .= 'Enter wikitext here:';
+			$wikitext .= '*This is an unordered list' . "\n";
+			$wikitext .= '*Item number 2' . "\n";
+			$wikitext .= "\n";
+			$wikitext .= '#This is an ordered list' . "\n";
+			$wikitext .= '#Item number 2' . "\n";
+			$wikitext .= 'Enter wikitext here:' . "\n";
 		} else if (get_magic_quotes_gpc()) {
 			$wikitext = stripslashes($wikitext);
 		}
