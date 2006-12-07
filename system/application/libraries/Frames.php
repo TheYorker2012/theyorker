@@ -144,11 +144,11 @@ class FramesFrame extends FramesView
 	 *	Although this defaults to 0, it doesn't have to be an integer.
 	 * @return FramesView The newly created view.
 	 */
-	function SetContentSimple($SubView, $Data = array(), $Index = 0)
+	function &SetContentSimple($SubView, $Data = array(), $Index = 0)
 	{
 		$new_view = new FramesView($SubView, $Data);
-		$this->mDataArray['content'][$Index] = $new_view
-		return &$new_view;
+		$this->mDataArray['content'][$Index] = $new_view;
+		return $new_view;
 	}
 }
 
