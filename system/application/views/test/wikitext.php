@@ -1,8 +1,3 @@
-<HTML>
- <HEAD>
-  <TITLE>Wikitext preview</TITLE>
- </HEAD>
- <BODY>
 <?php
 
 echo $parsed_wikitext.'<br/>';
@@ -24,6 +19,3 @@ echo form_submit('submit', 'Preview') . '<br/>';
 echo form_close('') . '<br/>';
 
 ?>
-
- </BODY>
-</HTML>
