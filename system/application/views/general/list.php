@@ -64,11 +64,6 @@ Directory
 	<li><a href="/directory/fragsoc/events/">/directory/example/events/</a></li>
 </ul>
 
-Listings
-<ul>
-	<li><a href="/listings/">/listings/</a></li>
-</ul>
-
 FAQ
 <ul>
 	<li><a href="/faq/">/faq/</a></li>
