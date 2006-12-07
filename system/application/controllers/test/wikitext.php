@@ -38,7 +38,7 @@ class Wikitext extends Controller {
 				'wikitext' => $wikitext,
 			);
 		
-		 // Set up the subview
+		// Set up the subview
 		$wikitext_test_view = $this->frames->view('test/wikitext.php', $data);
 		
 		// Set up the public frame
