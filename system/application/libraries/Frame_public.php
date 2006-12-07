@@ -31,6 +31,7 @@ $CI->load->library('frames');
  *	$listings_view = $this->frames->view('listings/listings', $data);
  *	
  *	// Set up the public frame
+ *	$this->frame_public->SetTitle($page_title);
  *	$this->frame_public->SetExtraHead($extra_head);
  *	$this->frame_public->SetContent($listings_view);
  *	
@@ -46,6 +47,15 @@ class Frame_public extends FramesFrame
 	function __construct()
 	{
 		parent::__construct('frames/public_frame.php');
+	}
+	
+	/**
+	 * @brief Set the page title.
+	 * @param $Title string Page title.
+	 */
+	function SetTitle($Title)
+	{
+		$this->SetData('title', $Title);
 	}
 	
 	/**
