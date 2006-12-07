@@ -15,6 +15,8 @@ class Review extends Controller {
 		$this->load->helper('url');
 		$this->load->helper('form');
 		
+		// Load the public frame
+		$this->load->library('frame_public');
 	}
 
 
@@ -89,9 +91,12 @@ class Review extends Controller {
 		$data['culture_try_4_id'] = '4';
 		$data['cultrue_try_5_id'] = '5';
 	
-		//Load View Page
-		$data['content_view'] = 'reviews/index';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Reviews');
+		$this->frame_public->SetContentSimple('reviews/index', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 		
 	}
 
@@ -99,44 +104,67 @@ class Review extends Controller {
 	//Food Link
 	function food()
 	{
-		//Load View Page
-		$data['content_view'] = 'reviews/food';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Food');
+		$this->frame_public->SetContentSimple('reviews/food');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	//Drink Link
 	function drink()
 	{
-		$data['content_view'] = 'reviews/drink';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Drink');
+		$this->frame_public->SetContentSimple('reviews/drink');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	//Culture Link
 	function culture()
 	{
-		$data['content_view'] = 'reviews/culture';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Culture');
+		$this->frame_public->SetContentSimple('reviews/culture');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	//Food Review
 	function foodreview()
 	{
-		$data['content_view'] = 'reviews/foodreview';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Food Review');
+		$this->frame_public->SetContentSimple('reviews/foodreview');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	//Culture Review
 	function culturereview()
 	{
-		$data['content_view'] = 'reviews/culturereview';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Culture Review');
+		$this->frame_public->SetContentSimple('reviews/culturereview');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	//Bar Crawl Page
 	function barcrawl()
 	{
-		$data['content_view'] = 'reviews/barcrawl';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Barcrawl');
+		$this->frame_public->SetContentSimple('reviews/barcrawl');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	/**
@@ -146,18 +174,31 @@ class Review extends Controller {
 	function edit()
 	{
 		$data['title_image'] = base_url().'images/prototype/reviews/reviews_01.gif';
-		$data['content_view'] = 'reviews/mainedit';
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Edit');
+		$this->frame_public->SetContentSimple('reviews/mainedit', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	function editsection()
 	{
-		$data['content_view'] = 'reviews/sectionedit';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Edit Section');
+		$this->frame_public->SetContentSimple('reviews/sectionedit');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	function editreview()
 	{
-		$data['content_view'] = 'reviews/reviewedit';
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Edit Review');
+		$this->frame_public->SetContentSimple('reviews/reviewedit');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 }
 

@@ -6,6 +6,17 @@
  */
 class News extends Controller {
     
+	/**
+	 * @brief Default Constructor.
+	 */
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+	
     /// The Campus News section (default).
 	function index()
 	{
@@ -56,7 +67,7 @@ class News extends Controller {
                 'id' => '4',
                 'image' => '/images/prototype/news/thumb2.jpg',
                 'image_description' => 'Tony Blair',
-                'headline' => 'Tony Blair finds £10, keeps it.',
+                'headline' => 'Tony Blair finds 10, keeps it.',
                 'writer' => 'Jo Shelley',
                 'date' => '1st December 2006'
             ),
@@ -88,20 +99,27 @@ class News extends Controller {
         
     	/// The data passed to the view will come from the database once it is available.
 		$data = array(
-			'content_view' => 'news/news.php',
 			'news_previews' => $preview_data,
 			'news_others' => $other_data
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Campus News');
+		$this->frame_public->SetContentSimple('news/news', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/// The National News section.
 	function national()
 	{
-		$data = array(
-			'content_view' => 'news/national.php'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('National News');
+		$this->frame_public->SetContentSimple('news/national');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/// The Features section.
@@ -113,28 +131,34 @@ class News extends Controller {
 	/// The Lifestyle section.
 	function lifestyle()
 	{
-		$data = array(
-			'content_view' => 'news/lifestyle.php'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Lifestyle');
+		$this->frame_public->SetContentSimple('news/lifestyle');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/// General controller for all news articles.
 	function article()
 	{
-		$data = array(
-			'content_view' => 'news/article.php'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Article');
+		$this->frame_public->SetContentSimple('news/article');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	/// The Archive section.
 	function archive()
 	{
-		$data = array(
-			  'content_view' => 'news/archive.php'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Archive');
+		$this->frame_public->SetContentSimple('news/archive');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 }
 ?>

@@ -6,6 +6,18 @@
  * \author Nick Evans
  */
 class Home extends Controller {
+
+	/**
+	 * @brief Default Constructor.
+	 */
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+	
 	/**
 	* Displays prototype homepage, in the prototype student frame
 	*/
@@ -13,18 +25,28 @@ class Home extends Controller {
 	{
 		$data = array(
 			'test' => 'I set this variable from the controller!',
-			'content_view' => 'general/list'
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('List');
+		$this->frame_public->SetContentSimple('general/list', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	function main()
 	{
 		$data = array(
 			'test' => 'I set this variable from the controller!',
-			'content_view' => 'general/home'
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Home');
+		$this->frame_public->SetContentSimple('general/home', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 }

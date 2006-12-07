@@ -2,13 +2,22 @@
 //TODO Write comments
 class Search extends Controller {
 
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+	
 	function index()
 	{
-		$data = array(
-			'title'        => 'Search',
-			'content_view' => 'search/minibox'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Search');
+		$this->frame_public->SetContentSimple('search/minibox');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	function submit($fd) {
@@ -39,29 +48,33 @@ class Search extends Controller {
 		$subdata = array(
 			'result' => $result
 		);
-		$data = array(
-			'title'        => 'Search Results',
-			'content_view' => 'search/results',
-			'subdata'      => $subdata
-		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Search Results');
+		$this->frame_public->SetContentSimple('search/results', $subdata);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 
       // temp function that links to the layout of the search page
       function layout() {
-		$data = array(
-			'title'        => 'Search Results',
-			'content_view' => 'search/search'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Search Results');
+		$this->frame_public->SetContentSimple('search/search');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
       }
 
       function layout2() {
-		$data = array(
-			'content_view' => 'search/search2'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Search Results');
+		$this->frame_public->SetContentSimple('search/search2');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
       }
 }
 ?>

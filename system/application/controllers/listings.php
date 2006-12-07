@@ -323,13 +323,10 @@ EXTRAHEAD;
 		
 		$data['dummies'] = $this->_ProcessEvents($events, $daycalc);
 		
-		// Set up the listings view
-		$listings_view = $this->frames->view('listings/listings', $data);
-		
 		// Set up the public frame to use the listings view
 		$this->frame_public->SetTitle('Listing viewer prototype');
 		$this->frame_public->SetExtraHead($extra_head);
-		$this->frame_public->SetContent($listings_view);
+		$this->frame_public->SetContentSimple('listings/listings', $data);
 		
 		// Load the public frame view
 		$this->frame_public->Load();
