@@ -129,11 +129,26 @@ class FramesFrame extends FramesView
 	 * @brief Set a specific content slot to a view.
 	 * @param $SubView FramesView The view to set as content.
 	 * @param $Index The index of the content slot to set.
-	 *	Although this default to 0, it doesn't have to be an integer.
+	 *	Although this defaults to 0, it doesn't have to be an integer.
 	 */
 	function SetContent(&$SubView, $Index = 0)
 	{
 		$this->mDataArray['content'][$Index] = $SubView;
+	}
+	
+	/**
+	 * @brief Set a specific content slot to a simple view.
+	 * @param $ViewPath string The path of a CI view of the view.
+	 * @param $Data array The initial data array.
+	 * @param $Index The index of the content slot to set.
+	 *	Although this defaults to 0, it doesn't have to be an integer.
+	 * @return FramesView The newly created view.
+	 */
+	function SetContentSimple($SubView, $Data = array(), $Index = 0)
+	{
+		$new_view = new FramesView($SubView, $Data);
+		$this->mDataArray['content'][$Index] = $new_view
+		return &$new_view;
 	}
 }
 
