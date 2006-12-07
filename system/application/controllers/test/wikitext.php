@@ -14,6 +14,9 @@ class Wikitext extends Controller {
 		parent::Controller();
 		$this->load->helper('form');
 		$this->load->library('wikiparser');
+		
+		// Load the public frame
+		$this->load->library('frame_public');
 	}
 	
 	/**
@@ -35,7 +38,14 @@ class Wikitext extends Controller {
 				'wikitext' => $wikitext,
 			);
 		
-		$this->load->view('test/wikitext.php',$data);
+		 // Set up the subview
+		$wikitext_test_view = $this->frames->view('test/wikitext.php', $data);
+		
+		// Set up the public frame
+		$this->frame_public->SetContent($wikitext_test_view);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 }
 ?>
