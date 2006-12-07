@@ -21,6 +21,9 @@ class Listings extends Controller {
 		$this->load->library('academic_calendar');
 		
 		date_default_timezone_set(Academic_time::InternalTimezone());
+		
+		// Make use of the public frame
+		$this->load->library('frame_public');
 	}
 	
 	/**
@@ -322,13 +325,15 @@ EXTRAHEAD;
 		
 		$data['dummies'] = $this->_ProcessEvents($events, $daycalc);
 		
-		$pass_data['subdata'] = $data;
-		$pass_data['extra_head'] = $extra_head;
-		$pass_data['content_view'] = "listings/listings";
-		// load crazy frame deely		
-		$this->load->view('frames/student_frame',$pass_data);
+		// Set up the listings view
+		$listings_view = $this->frames->view('listings/listings', $data);
 		
-		//$this->load->view('listings_view',$data);
+		// Set up the public frame to use the listings view
+		$this->frame_public->SetExtraHead($extra_head);
+		$this->frame_public->SetContent($listings_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
 	}
 	
 	/**
