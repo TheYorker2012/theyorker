@@ -39,8 +39,14 @@
  *
  */
 
+/**
+ * @brief Wikitext parsing library.
+ */
 class Wikiparser {
 	
+	/**
+	 * @brief Default constructor.
+	 */
 	function Wikiparser() {
 		$this->reference_wiki = '';
 		$this->image_uri = 'images';
@@ -493,6 +499,10 @@ class Wikiparser {
 		return $line;
 	}
 	
+	/**
+	 * @brief Perform a stress test.
+	 * @return string Processed wikitext (HTML).
+	 */
 	function test() {
 		$text = "WikiParser stress tester. <br /> Testing...
 __TOC__		
@@ -560,6 +570,12 @@ Done.
 		return $this->parse($text);
 	}
 	
+	/**
+	 * @brief Parse a piece wikitext.
+	 * @param $text string Wikitext to parse.
+	 * @param $title string Title.
+	 * @return string HTML processed wikitext.
+	 */
 	function parse($text,$title="") {
 		$this->redirect = false;
 		
