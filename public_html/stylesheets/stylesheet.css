@@ -257,7 +257,7 @@ div.YourComments h2 {
 	padding: 0;
 }
 /* Replace this with > image */
-li {
+ul li {
     list-style-type: disc
 }
 
