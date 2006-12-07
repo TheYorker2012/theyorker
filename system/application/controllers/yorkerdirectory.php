@@ -12,12 +12,22 @@
 class Yorkerdirectory extends Controller {
 	
 	/**
+	 * @brief Default constructor.
+	 */
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Make use of the public frame
+		$this->load->library('frame_public');
+	}
+	
+	/**
 	 * @brief Directory index page.
 	 */
 	function index()
 	{
 		$data = array(
-			'content_view' => 'directory/directory',
 			'organisations' => array(
 				array(
 					'shortname'   => 'fragsoc',
@@ -57,7 +67,16 @@ class Yorkerdirectory extends Controller {
 				),
 			),
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view('directory/directory', $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
 	}
 	
 	/**
@@ -72,9 +91,9 @@ class Yorkerdirectory extends Controller {
 		else
 		{
 			$subpageview='directory/directory_view';
+			$subpage = 'index';
 		}
 		$data = array(
-			'content_view' => $subpageview,
 			'organisation' => array(
 				'shortname'   => 'theyorker',
 				'name'        => 'The Yorker',
@@ -105,7 +124,16 @@ class Yorkerdirectory extends Controller {
 				),
 			),
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view($subpageview, $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
 	}
 }
 ?>
