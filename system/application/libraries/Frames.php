@@ -1,0 +1,193 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * @file Frames.php
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ * @brief Library for managing frames and views nicely.
+ */
+
+/**
+ * @brief Quite simply represents a view
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ * Initialise with a view path and use the data functions to set data to send to
+ *	the view. Finally call Load() to load the view.
+ * @code
+ *	// Set up the view for some simple page.
+ *	$simple_view = $this->frames->view('simple/view');
+ *	$simple_view->AddData($data);
+ *	
+ *	// Load the view
+ *	$simple_view->Load();
+ * @endcode
+ *
+ * @see FramesFrame for handling subviews.
+ */
+class FramesView
+{
+	/// @brief array The data array to send to the view.
+	protected $mDataArray;
+	/// @brief string The view to load when the time comes.
+	protected $mViewPath;
+	
+	/**
+	 * @brief Primary constructor.
+	 * @param $ViewPath string The path of a CI view.
+	 * @param $Data array The initial data array.
+	 */
+	function __construct($ViewPath, $Data = array())
+	{
+		$this->mDataArray = $Data;
+		$this->mViewPath = $ViewPath;
+	}
+	
+	/**
+	 * @brief Get the value of a specific data field.
+	 * @param $Index integer The index of the data.
+	 * @return The data associated with @a $Index in the data array.
+	 */
+	function GetData($Index)
+	{
+		return $this->mDataArray[$Index];
+	}
+	
+	/**
+	 * @brief Set the value of a specific data field.
+	 * @param $Index integer The index of the data.
+	 * @param $Value The value to set to the data element @a Index.
+	 */
+	function SetData($Index, $Value)
+	{
+		$this->mDataArray[$Index] = $Value;
+	}
+	
+	/**
+	 * @brief Merge a data array with that already in the data array.
+	 * @param $Data array Data to merge.
+	 */
+	function AddData($Data)
+	{
+		$this->mDataArray = array_merge($this->mDataArray, $Data);
+	}
+	
+	/**
+	 * @brief Use code igniter to load the view.
+	 *
+	 * If the specified view is empty, then nothing happens.
+	 */
+	function Load()
+	{
+		if (!empty($this->mViewPath)) {
+			$CI = &get_instance();
+			$CI->load->view($this->mViewPath, $this->mDataArray);
+		}
+	}
+}
+
+/**
+ * @brief Represents a view with subviews
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ * Initialise with a view path and use the data functions to set data, as well
+ *	as SetContent() to set subviews. Finally call Load() to load the frame:
+ * @code
+ *	// Set up the subview for listings.
+ *	$listings_view = $this->frames->view('listings/listings');
+ *	$listings_view->AddData($data);
+ *	
+ *	// Set up the master frame.
+ *	$main_frame = $this->frames->frame('frames/student_frame');
+ *	$main_frame->SetData('extra_head', $extra_head);
+ *	$main_frame->SetContent($listings_view);
+ *	
+ *	// Load the master frame (this should in turn load the listings view)
+ *	$main_frame->Load();
+ * @endcode
+ *
+ * To load the content in a slot from the view, use the following code:
+ * @code
+ *	<?php
+ *		// Load a subview.
+ *		$content[$slot_index]->Load();
+ *	?>
+ * @endcode
+ */
+class FramesFrame extends FramesView
+{
+	/**
+	 * @brief Primary constructor.
+	 * @param $ViewPath string The path of a CI view of the frame.
+	 * @param $Data array The initial data array.
+	 */
+	function __construct($ViewPath, $Data = array())
+	{
+		parent::__construct($ViewPath, $Data);
+		$this->mDataArray['content'] = array(0 => new FramesView(''));
+	}
+	
+	/**
+	 * @brief Set a specific content slot to a view.
+	 * @param $SubView FramesView The view to set as content.
+	 * @param $Index The index of the content slot to set.
+	 *	Although this default to 0, it doesn't have to be an integer.
+	 */
+	function SetContent(&$SubView, $Index = 0)
+	{
+		$this->mDataArray['content'][$Index] = $SubView;
+	}
+}
+
+/**
+ * @brief Frames library.
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ * At the moment this is simply shortcuts for constructing views and frames.
+ *
+ * It would be quite possible to put shortcuts to specific frames in here.
+ *
+ * For example:
+ * @code
+ *	function StudentFrame($ExtraHead, $Content)
+ *	{
+ *		$student_frame = new FramesFrame('frames/student_frame');
+ *		$student_frame->SetData('extra_head', $ExtraHead);
+ *		$student_frame->SetContent($Content);
+ *		return $student_frame;
+ *	}
+ * @endcode
+ *
+ * So it would be possible to use the student frame almost as before:
+ * @code
+ *	$data = array(...);
+ *	$this->frames->StudentFrame(
+ *			$extra_head,
+ *			$this->frames->View('listings/listings',$data)
+ *		)->Load();
+ * @endcode
+ */
+class Frames
+{
+	/**
+	 * @brief Shortcut to construct a bog standard view (FramesView).
+	 * @param $ViewPath string The path of a CI view of the view.
+	 * @param $Data array The initial data array.
+	 * @return FramesView The new view object.
+	 */
+	function View($ViewPath, $Data = array())
+	{
+		return new FramesView($ViewPath, $Data);
+	}
+	
+	/**
+	 * @brief Shortcut to construct a frame (FramesFrame).
+	 * @param $ViewPath string The path of a CI view of the frame.
+	 * @param $Data array The initial data array.
+	 * @return FramesFrame The new frame object.
+	 */
+	function Frame($ViewPath, $Data = array())
+	{
+		return new FramesFrame($ViewPath, $Data);
+	}
+}
+
+?>
