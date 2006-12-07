@@ -147,9 +147,7 @@ EXTRAHEAD;
 		$data = Array();
 		
 		// I don't trust users to set their clocks properly
-		$data['server_dt'] = time(); 
-		// Set title and other such
-		$data['title'] = 'Listing viewer prototype';
+		$data['server_dt'] = time();
 		
 		// next and previous uri
 		foreach ($Presentation as $index => $value) {
@@ -329,6 +327,7 @@ EXTRAHEAD;
 		$listings_view = $this->frames->view('listings/listings', $data);
 		
 		// Set up the public frame to use the listings view
+		$this->frame_public->SetTitle('Listing viewer prototype');
 		$this->frame_public->SetExtraHead($extra_head);
 		$this->frame_public->SetContent($listings_view);
 		
