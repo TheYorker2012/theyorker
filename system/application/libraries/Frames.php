@@ -142,28 +142,6 @@ class FramesFrame extends FramesView
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * At the moment this is simply shortcuts for constructing views and frames.
- *
- * It would be quite possible to put shortcuts to specific frames in here.
- *
- * For example:
- * @code
- *	function StudentFrame($ExtraHead, $Content)
- *	{
- *		$student_frame = new FramesFrame('frames/student_frame');
- *		$student_frame->SetData('extra_head', $ExtraHead);
- *		$student_frame->SetContent($Content);
- *		return $student_frame;
- *	}
- * @endcode
- *
- * So it would be possible to use the student frame almost as before:
- * @code
- *	$data = array(...);
- *	$this->frames->StudentFrame(
- *			$extra_head,
- *			$this->frames->View('listings/listings',$data)
- *		)->Load();
- * @endcode
  */
 class Frames
 {
