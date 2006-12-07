@@ -1,15 +1,29 @@
 <?php
 class Campaign extends Controller {
+
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+	
 	function index()
 	{
 		if(1==1){ // change to if deadline not passed then...
 			$data = array(
-				'content_view' => 'campaign/CampaignSelection',
 				'Description' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
 				'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
 				'DeadLine' => '23 May 2019'
 			);
-			$this->load->view('frames/student_frame',$data);
+			
+			// Set up the public frame
+			$this->frame_public->SetTitle('Campaign');
+			$this->frame_public->SetContentSimple('campaign/CampaignSelection', $data);
+			
+			// Load the public frame view (which will load the content view)
+			$this->frame_public->Load();
 		} else { // Campaign is chosen
 			//curently the test fuction
 		}
@@ -18,7 +32,6 @@ class Campaign extends Controller {
 	function Details($SelectedCampaign = 'Pie Eating')
 	{
 		$data = array(
-			'content_view' => 'campaign/CampaignDetails',
 			'Title' => $SelectedCampaign,
 			'Description' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
 			'Author' => 'Mr Jones',
@@ -26,14 +39,19 @@ class Campaign extends Controller {
 			'Links' => 'www.ThisIsALink.com',
 			'Picture' => 'http://localhost/images/prototype/campaign/field.jpg'
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Campaign - '.$SelectedCampaign);
+		$this->frame_public->SetContentSimple('campaign/CampaignDetails', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	function Test($SelectedCampaign = 'Pie Eating')
 	{
 		$data = array(
-			'content_view' => 'campaign/CampaignVote',
-			'Title' => 'Pie Eating',
+			'Title' => $SelectedCampaign,
 			'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
 			'Summery' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
 			'NumOfSignatures' => '89546',
@@ -44,23 +62,31 @@ class Campaign extends Controller {
 				array('good'=>'n','details'=>'Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3.')
 				)
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Campaign - '.$SelectedCampaign);
+		$this->frame_public->SetContentSimple('campaign/CampaignVote', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	function Edit($SelectedCampaign = '')
 	{
 		if($SelectedCampaign == ''){
-			$data = array(
-				'content_view' => 'campaign/CampaignsEditSelect'
-			);
-			$this->load->view('frames/student_frame',$data);
+			$this->frame_public->SetContentSimple('campaign/CampaignsEditSelect');
 		} else {
 			$data = array(
-				'content_view' => 'campaign/CampaignsEditDetails',
 				'CampaignTitle' => $SelectedCampaign
 			);
-			$this->load->view('frames/student_frame',$data);
+			$this->frame_public->SetContentSimple('campaign/CampaignsEditDetails',$data);
 		}
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Campaign Edit');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 }

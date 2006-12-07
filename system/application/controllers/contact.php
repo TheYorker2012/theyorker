@@ -2,13 +2,26 @@
 
 class Contact extends Controller {
 
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+	
 	function index()
 	{
 		$data = array(
 			'test' => 'I set this variable from the controller!',
-			'content_view' => 'about/contact'
 		);
-		$this->load->view('frames/student_frame',$data);
+		
+		// Set up the public frame
+		$this->frame_public->SetTitle('Contact us');
+		$this->frame_public->SetContentSimple('about/contact', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 }
 ?>

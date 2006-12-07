@@ -11,14 +11,27 @@
 class Admin extends Controller {
 
 	/**
+	 * @brief Default constructor.
+	 */
+	function __construct()
+	{
+		parent::Controller();
+		
+		// Load the public frame
+		$this->load->library('frame_public');
+	}
+
+	/**
 	 * @brief Admin menu index page.
 	 */
 	function index()
 	{
-		$data = array(
-			'content_view' => 'admin/admin'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Admin');
+		$this->frame_public->SetContentSimple('admin/admin');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	/**
@@ -26,40 +39,49 @@ class Admin extends Controller {
 	 */
 	function yorkerdirectory()
 	{
-		$data = array(
-			'content_view' => 'directory/admin_directory'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Directory Admin');
+		$this->frame_public->SetContentSimple('directory/admin_directory');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	function yorkerdirectoryview()
 	{
-		$data = array(
-			'content_view' => 'directory/admin_directory_view'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('Directory Admin');
+		$this->frame_public->SetContentSimple('directory/admin_directory_view');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 	
 	/**
 	* @admin pages for news system
 	*/
-	function news()
+	function news($Segment3 = '', $Segment4 = '')
 	{
-		switch ($this->uri->segment(3)) {
-			case "request":
-				switch ($this->uri->segment(4)) {
-					case "view":
-						$data = array('content_view' => 'news/admin_request_view');
+		switch ($Segment3) {
+			case 'request':
+				switch ($Segment4) {
+					case 'view':
+						$admin_view_name = 'news/admin_request_view';
 						break;
 					default:
-						$data = array('content_view' => 'news/admin_request_new');
+						$admin_view_name = 'news/admin_request_new';
 						break;
 				}
 				break;
 			default:
-				$data = array('content_view' => 'news/admin_news');
+				$admin_view_name = 'news/admin_news';
 				break;
 		}
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('News Admin');
+		$this->frame_public->SetContentSimple($admin_view_name);
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/**
@@ -67,10 +89,12 @@ class Admin extends Controller {
 	 */
 	function addfaq()
 	{
-		$data = array(
-			'content_view' => 'faq/addfaq'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('FAQ Admin');
+		$this->frame_public->SetContentSimple('faq/addfaq');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/**
@@ -78,10 +102,12 @@ class Admin extends Controller {
 	 */
 	function addhowdoi()
 	{
-		$data = array(
-			'content_view' => 'faq/addhowdoi'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('How Do I? Admin');
+		$this->frame_public->SetContentSimple('faq/addhowdoi');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 
 	/**
@@ -89,10 +115,12 @@ class Admin extends Controller {
 	 */
 	function editfaq()
 	{
-		$data = array(
-			'content_view' => 'faq/editfaq'
-		);
-		$this->load->view('frames/student_frame',$data);
+		// Set up the public frame
+		$this->frame_public->SetTitle('FAQ Admin');
+		$this->frame_public->SetContentSimple('faq/editfaq');
+		
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 	}
 }
 ?>

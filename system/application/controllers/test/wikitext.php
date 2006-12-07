@@ -43,12 +43,9 @@ class Wikitext extends Controller {
 				'wikitext' => $wikitext,
 			);
 		
-		// Set up the subview
-		$wikitext_test_view = $this->frames->View('test/wikitext', $data);
-		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Wikitext Preview');
-		$this->frame_public->SetContent($wikitext_test_view);
+		$this->frame_public->SetContentSimple('test/wikitext', $data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
