@@ -49,7 +49,7 @@ class Wikiparser {
 	 */
 	function Wikiparser() {
 		$this->reference_wiki = '';
-		$this->image_uri = 'images';
+		$this->image_uri = '/images/prototype/';
 		$this->ignore_images = false;
 		$this->emphasis[1] = "";
 		$this->emphasis[2] = "";

@@ -39,14 +39,14 @@
         
         ?>
 		<a href='/news/article/<?php echo $news_previews[$preview_number]['id']; ?>'><img src='<?php echo $news_previews[$preview_number]['image']; ?>' alt='<?php echo $news_previews[$preview_number]['image_description']; ?>' title='<?php echo $news_previews[$preview_number]['image_description']; ?>' /></a>
-		<h<?php echo $heading_size; ?>><?php echo anchor('news/article/'.$news_previews[$preview_number]['id'], $news_previews[$preview_number]['headline']); ?></h1>
+		<h<?php echo $heading_size; ?>><?php echo anchor('news/article/'.$news_previews[$preview_number]['id'], $news_previews[$preview_number]['headline']); ?></h<?php echo $heading_size; ?>>
 		<p class='Writer'>
 			<a href='/directory/view/1'><?php echo $news_previews[$preview_number]['writer']; ?></a>
 		</p>
 		<p class='Date'><?php echo $news_previews[$preview_number]['date']; ?></p>
 		<p class='More'><?php echo anchor('news/article/'.$news_previews[$preview_number]['id'], 'Read more...'); ?></p>
         <p>
-            <?php echo $news_previews[$preview_number]['blurb']; ?>
+            <?php echo $news_previews[$preview_number]['subtext']; ?>
 		</p>
 		<br style='clear: both;'/>
 	</div>
