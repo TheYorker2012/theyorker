@@ -58,8 +58,7 @@ class Listings extends Controller {
 			$AcademicWeek = (int)$AcademicWeek;
 			
 			if ($AcademicYear >= 2006 &&
-				$AcademicTerm >= 0 &&
-				$AcademicWeek >= 1) {
+				$AcademicTerm >= 0) {
 				
 				// And check that the term in question exists
 				if (Academic_time::ValidateAcademicTerm($AcademicYear, $AcademicTerm)) {
