@@ -35,6 +35,9 @@ $CI->load->library('academic_calendar');
  *
  * @note This started off as a bit of a hack so feel free to make suggestions
  *	regarding the behaviour or patterns that it should support.
+ *
+ * FindTimes() is the most useful function, producing a set of dates which
+ *	match the rule.
  */
 class RecurrenceRule
 {
@@ -472,7 +475,7 @@ class RecurrenceRule
 		
 		// produce and return array of matching dates
 		$results = array();
-		if ($end >= $start) {
+		if ($End >= $Start) {
 			// Find the years that the date could occur on
 			$years = $this->FilterYears((int)date('Y',$Start)-1, (int)date('Y',$End));
 			// Find the bases in the year
@@ -506,7 +509,7 @@ class RecurrenceRule
 	 * @param $End integer End year (e.g. 2007).
 	 * @return array of integers, each representing a year in the interval.
 	 */
-	function FilterYears($start, $end)
+	private function FilterYears($start, $end)
 	{
 		// year = start-offset mod interval
 		$year = ($start - $this->mYearOffset) % $this->mYearInterval;
@@ -536,7 +539,7 @@ class RecurrenceRule
 	 * Adds an element to @a $Results for each base with a timestamp index and
 	 *	the value TRUE.
 	 */
-	function ProduceFirstRoundDates($Year, &$Results)
+	private function ProduceFirstRoundDates($Year, &$Results)
 	{
 		// Depends on date method
 		switch ($this->mDateMethod)
@@ -591,7 +594,7 @@ class RecurrenceRule
 	 * For each day of week thats set, the n'th of that day after @a $Date is
 	 *	added to @a $Result, where n is the week offset (@a $mDayDays).
 	 */
-	function ProduceSecondRoundDates($Date, &$Results)
+	private function ProduceSecondRoundDates($Date, &$Results)
 	{
 		$month = (int)date('n',$Date);
 		$year = (int)date('Y',$Date);
@@ -622,7 +625,7 @@ class RecurrenceRule
 	 * @param $Date timestsamp Input date.
 	 * @return @a $Date + @a $this->mOffsetDays days + @a $this->mOffsetMins minutes.
 	 */
-	function OffsetDate($Date)
+	private function OffsetDate($Date)
 	{
 		return strtotime($this->mOffsetDays.'day'.$this->mOffsetMins.'min', $Date);
 	}
