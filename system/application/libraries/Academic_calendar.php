@@ -242,7 +242,7 @@ class Academic_time
 			// get the term data for the $this->AcademicYear()
 			// go through to find out which term we're in
 			$academic_year_data = self::GetAcademicYearData($this->AcademicYear());
-			if ($academic_year_data === FALSE) {
+			if (FALSE === $academic_year_data) {
 				// No records about the specified academic year exist!
 				$error_message = 'Unknown academic year: ' .
 						$AcademicYear .
@@ -431,7 +431,7 @@ class Academic_time
 	 */
 	function IsTermTime()
 	{
-		return ($this->AcademicTerm() % 2) === 0;
+		return 0 === ($this->AcademicTerm() % 2);
 	}
 	
 	/**
@@ -440,7 +440,7 @@ class Academic_time
 	 */
 	function IsHoliday()
 	{
-		return ($this->AcademicTerm() % 2) === 1;
+		return 1 === ($this->AcademicTerm() % 2);
 	}
 	
 	
@@ -525,7 +525,7 @@ class Academic_time
 	static function StartOfAcademicTerm($AcademicYear, $Term = 0)
 	{
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
-		if ($academic_year_data === FALSE) {
+		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
 			$error_message = 'Unknown academic year: ' .
 					$AcademicYear .
@@ -555,7 +555,7 @@ class Academic_time
 	static function DayOfStartOfAcademicTerm($AcademicYear, $Term = 0)
 	{
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
-		if ($academic_year_data === FALSE) {
+		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
 			$error_message = 'Unknown academic year: ' .
 					$AcademicYear .
@@ -587,7 +587,7 @@ class Academic_time
 	static function MondayWeek1OfAcademicTerm($AcademicYear, $Term = 0)
 	{
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
-		if ($academic_year_data === FALSE) {
+		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
 			$error_message = 'Unknown academic year: ' .
 					$AcademicYear .
@@ -617,7 +617,7 @@ class Academic_time
 	static function LengthOfAcademicTerm($AcademicYear, $Term = 0)
 	{
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
-		if ($academic_year_data === FALSE) {
+		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
 			$error_message = 'Unknown academic year: ' .
 					$AcademicYear .
@@ -647,7 +647,7 @@ class Academic_time
 	static function ValidateAcademicTerm($AcademicYear, $Term = 0)
 	{
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
-		if ($academic_year_data === FALSE) {
+		if (FALSE === $academic_year_data) {
 			return FALSE;
 			
 		} elseif (array_key_exists($Term, $academic_year_data['term_days'])) {
@@ -707,50 +707,50 @@ class Academic_time
 			$prev_tz = date_default_timezone_get();
 			date_default_timezone_set(self::InternalTimezone());
 			// Hardwire the term dates:
-			if ($AcademicYear == 2004) {
+			if (2004 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,11, 2004),
 						2 => mktime(0,0,0,  1,10, 2005),
 						4 => mktime(0,0,0,  4,25, 2005));
-			} elseif ($AcademicYear == 2005) {
+			} elseif (2005 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,10, 2005),
 						2 => mktime(0,0,0,  1, 9, 2006),
 						4 => mktime(0,0,0,  4,24, 2006));
-			} elseif ($AcademicYear == 2006) {
+			} elseif (2006 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10, 9, 2006),
 						2 => mktime(0,0,0,  1, 8, 2007),
 						4 => mktime(0,0,0,  4,23, 2007));
-			} elseif ($AcademicYear == 2007) {
+			} elseif (2007 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10, 8, 2007),
 						2 => mktime(0,0,0,  1, 7, 2008),
 						4 => mktime(0,0,0,  4,21, 2008));
 				$year_data['term_days'][5] = 15*7; // Slightly longer summer
-			} elseif ($AcademicYear == 2008) {
+			} elseif (2008 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,13, 2008),
 						2 => mktime(0,0,0,  1,12, 2009),
 						4 => mktime(0,0,0,  4,27, 2009));
-			} elseif ($AcademicYear == 2009) {
+			} elseif (2009 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,12, 2009),
 						2 => mktime(0,0,0,  1,11, 2010),
 						4 => mktime(0,0,0,  4,26, 2010));
-			} elseif ($AcademicYear == 2010) {
+			} elseif (2010 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,11, 2010),
 						2 => mktime(0,0,0,  1,10, 2011),
 						4 => mktime(0,0,0,  4,27, 2011));
 				$year_data['term_days'][3] += 2; // Slightly longer easter
 				$year_data['term_days'][4] -= 2; // Slightly shorter summer term
-			} elseif ($AcademicYear == 2011) {
+			} elseif (2011 == $AcademicYear) {
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10,10, 2011),
 						2 => mktime(0,0,0,  1, 9, 2012),
 						4 => mktime(0,0,0,  4,23, 2012));
-			} elseif ($AcademicYear == 2012) {
+			} elseif (2012 == $AcademicYear) {
 				// Mostly unknown:
 				$year_data['term_start'] = array(
 						0 => mktime(0,0,0, 10, 8, 2012),
@@ -853,20 +853,16 @@ class Academic_calendar {
 	 *
 	 * @note Inputs are considered to be in the internal timezone
 	 *	(as returned by Academic_time::InternalTimezone).
-	 *
-	 * @todo allow negative @a $Week.
-	 *
-	 * @todo allow negative @a $DayOfWeek.
 	 */
 	function Academic($AcademicYear, $Term = 0, $Week = 1, $DayOfWeek = 1, $Hour = 0, $Minute = 0, $Second = 0)
 	{
 		$start_of_term = Academic_time::MondayWeek1OfAcademicTerm($AcademicYear, $Term);
 		return new Academic_time(Academic_time::InternalStrToTime(
-				'+' . ($Week-1) . ' week ' .
-				'+' . ($DayOfWeek-1) . 'day' .
-				'+' . ($Hour) . 'hour' .
-				'+' . ($Minute) . 'min' .
-				'+' . ($Second) . 'sec',$start_of_term));
+				($Week-1) . 'week' .
+				($DayOfWeek-1) . 'day' .
+				($Hour) . 'hour' .
+				($Minute) . 'min' .
+				($Second) . 'sec',$start_of_term));
 	}
 	
 	/**
@@ -881,17 +877,15 @@ class Academic_calendar {
 	 *
 	 * @note Inputs are considered to be in the internal timezone
 	 *	(as returned by Academic_time::InternalTimezone).
-	 *
-	 * @todo allow negative @a $DayOfTerm.
 	 */
 	function AcademicDayOfTerm($AcademicYear, $Term = 0, $DayOfTerm = 0, $Hour = 0, $Minute = 0, $Second = 0)
 	{
 		$monday_week1 = Academic_time::StartOfAcademicTerm($AcademicYear, $Term);
 		return new Academic_time(Academic_time::InternalStrToTime(
-				'+' . ($DayOfTerm) . 'day' .
-				'+' . ($Hour) . 'hour' .
-				'+' . ($Minute) . 'min' .
-				'+' . ($Second) . 'sec',$monday_week1));
+				($DayOfTerm) . 'day' .
+				($Hour) . 'hour' .
+				($Minute) . 'min' .
+				($Second) . 'sec',$monday_week1));
 	}
 	
 	/**
@@ -935,10 +929,10 @@ class Academic_calendar {
 							$error_detected = TRUE;
 						}
 						// Has more than one day elapsed?
-						if ($prev_date !== 0 &&
-								Academic_time::DaysBetweenTimestamps(
+						if (0 !== $prev_date &&
+							1 !== Academic_time::DaysBetweenTimestamps(
 									$prev_date->Timestamp(),
-									$actime->Timestamp()) !== 1) {
+									$actime->Timestamp())) {
 							echo '!!days not consecutive!!<br/>';
 							++$errors;
 							$error_detected = TRUE;
@@ -963,7 +957,7 @@ class Academic_calendar {
 						}
 						if ($error_detected) {
 							// an error has been detected so print date information
-							if ($prev_date !== 0) {
+							if (0 !== $prev_date) {
 								// starting with previous date
 								echo '&nbsp;&nbsp;prev date: ' .
 									$prev_date->Format(DATE_RFC822) . '<br/>'; //*/
