@@ -228,7 +228,7 @@ class RecurrenceRule
 	 * - Sets @a $Date as the base day of the month.
 	 * - Clears day offset and days of week (so result is straight base).
 	 */
-	function MonthDate($Month, $Date = 0)
+	function MonthDate($Month, $Date = 1)
 	{
 		$this->mDateMethod = 0; // DayMonth
 		$this->ClearMonths();
@@ -655,7 +655,7 @@ class Recurrence
 	{
 		// monday after easter sunday
 		$rule = $this->EasterSunday();
-		$rule->SetOffsetDays(+1);
+		$rule->OffsetDays(+1);
 		return $rule;
 	}
 	
@@ -664,7 +664,44 @@ class Recurrence
 	{
 		// friday before easter sunday
 		$rule = $this->EasterSunday();
-		$rule->SetOffsetDays(-2);
+		$rule->OffsetDays(-2);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for mothering sunday.
+	function MotheringSunday()
+	{
+		// 3 weeks before easter
+		$rule = $this->EasterSunday();
+		$rule->OffsetDays(-3*7);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for fathers day.
+	function FathersDay()
+	{
+		$rule = new RecurrenceRule();
+		// 3rd week in june
+		$rule->MonthDate(6);
+		$rule->DayOfWeek(0,2);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for ash wednesday.
+	function AshWednesday()
+	{
+		// beginning of lent (39 days before easter)
+		$rule = $this->EasterSunday();
+		$rule->OffsetDays(-39);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for shrove tuesday.
+	function ShroveTuesday()
+	{
+		// day before ash wednesday
+		$rule = $this->AshWednesday();
+		$rule->OffsetDays(-1);
 		return $rule;
 	}
 	
@@ -674,6 +711,51 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// 25th december
 		$rule->MonthDate(12,25);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for christmas eve.
+	function ChristmasEve()
+	{
+		$rule = new RecurrenceRule();
+		// 24th december
+		$rule->MonthDate(12,24);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for boxing day.
+	function BoxingDay()
+	{
+		$rule = new RecurrenceRule();
+		// 24th december
+		$rule->MonthDate(12,26);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for new years eve.
+	function NewYearsEve()
+	{
+		$rule = new RecurrenceRule();
+		// 24th december
+		$rule->MonthDate(12,31);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for new years day.
+	function NewYearsDay()
+	{
+		$rule = new RecurrenceRule();
+		// 24th december
+		$rule->MonthDate(1,1);
+		return $rule;
+	}
+	
+	/// Return the RecurrenceRule for St. George's day.
+	function StGeorgesDay()
+	{
+		$rule = new RecurrenceRule();
+		// normally 23th april
+		$rule->MonthDate(4,23);
 		return $rule;
 	}
 	
@@ -711,6 +793,113 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// 29th february
 		$rule->MonthDate(2,29);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for valentines day.
+	function ValentinesDay()
+	{
+		$rule = new RecurrenceRule();
+		// 14th february
+		$rule->MonthDate(2,14);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for april fools day.
+	function AprilFoolsDay()
+	{
+		$rule = new RecurrenceRule();
+		// 1st April
+		$rule->MonthDate(4,1);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for halloween.
+	function Halloween()
+	{
+		$rule = new RecurrenceRule();
+		// 31st October
+		$rule->MonthDate(10,31);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for bonfire night.
+	function BonfireNight()
+	{
+		$rule = new RecurrenceRule();
+		// 5th november
+		$rule->MonthDate(11,5);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for remembrance day.
+	function RemembranceDay()
+	{
+		$rule = new RecurrenceRule();
+		// 11th november
+		$rule->MonthDate(11,11);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for remembrance day.
+	function RemembranceSunday()
+	{
+		$rule = new RecurrenceRule();
+		// nearest sunday to 11th november
+		$rule->MonthDate(11,8);
+		$rule->DayOfWeek(0);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for spring bank holiday.
+	function EarlyMayBankHoliday()
+	{
+		$rule = new RecurrenceRule();
+		// first monday in may
+		$rule->MonthDate(5);
+		$rule->DayOfWeek(1,0);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for spring bank holiday.
+	function SpringBankHoliday()
+	{
+		$rule = new RecurrenceRule();
+		// last monday in may
+		$rule->MonthDate(6);
+		$rule->DayOfWeek(1,-1);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for summer bank holiday.
+	function SummerBankHoliday()
+	{
+		$rule = new RecurrenceRule();
+		// last monday in august
+		$rule->MonthDate(9);
+		$rule->DayOfWeek(1,-1);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for changing clocks forward.
+	function BstBegins()
+	{
+		$rule = new RecurrenceRule();
+		// last sunday in april
+		$rule->MonthDate(5);
+		$rule->DayOfWeek(0,-1);
+		$rule->Time(2);
+		return $rule;
+	}
+	
+	/// Returns the RecurrenceRule for changing clocks back.
+	function BstEnds()
+	{
+		$rule = new RecurrenceRule();
+		// last sunday in october
+		$rule->MonthDate(11);
+		$rule->DayOfWeek(0,-1);
+		$rule->Time(2);
 		return $rule;
 	}
 
