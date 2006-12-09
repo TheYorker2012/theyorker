@@ -235,7 +235,8 @@ EXTRAHEAD;
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
 				'shortloc' => 'my house',
-				'type' => 'social'
+				'type' => 'social',
+				'state' => 'published',
 			),
 			array (
 				'ref_id' => '2',
@@ -246,7 +247,8 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'this will be well good i promise',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'academic',
+				'state' => 'published',
 			),
 			array (
 				'ref_id' => '3',
@@ -257,7 +259,8 @@ EXTRAHEAD;
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
 				'shortloc' => 'my house',
-				'type' => 'social'
+				'type' => 'social',
+				'state' => 'postponed',
 			),
 			array (
 				'ref_id' => '4',
@@ -268,7 +271,8 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'this will be well good i promise',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'academic',
+				'state' => 'published',
 			),
 			array (
 				'ref_id' => '5',
@@ -279,10 +283,11 @@ EXTRAHEAD;
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
 				'shortloc' => 'my house',
-				'type' => 'social'
+				'type' => 'athletic',
+				'state' => 'published',
 			),
 			array (
-				'ref_id' => '2',
+				'ref_id' => '6',
 				'name' => 'boring lecture about vegetables',
 				'start' => mktime(12,45,0, 12, 8,2006),
 				'end'   => mktime(15, 0,0, 12, 8,2006),
@@ -290,10 +295,11 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'this will be well good i promise',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'party',
+				'state' => 'cancelled',
 			),
 			array (
-				'ref_id' => '1',
+				'ref_id' => '7',
 				'name' => 'House Party',
 				'start' => mktime(21, 0,0, 12, 4,2006),
 				'end'   => mktime( 0, 0,0, 12, 5,2006),
@@ -301,10 +307,11 @@ EXTRAHEAD;
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
 				'shortloc' => 'my house',
-				'type' => 'social'
+				'type' => 'social',
+				'state' => 'published',
 			),
 			array (
-				'ref_id' => '1',
+				'ref_id' => '8',
 				'name' => 'House Party',
 				'start' => mktime(21, 0,0, 12, 5,2006),
 				'end'   => mktime( 6, 0,0, 12, 6,2006),
@@ -312,10 +319,11 @@ EXTRAHEAD;
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
 				'shortloc' => 'my house',
-				'type' => 'social'
+				'type' => 'social',
+				'state' => 'published',
 			),
 			array (
-				'ref_id' => '2',
+				'ref_id' => '9',
 				'name' => 'boring lecture about vegetables',
 				'start' => mktime(12,45,0, 12, 6,2006),
 				'end'   => mktime(15, 0,0, 12, 6,2006),
@@ -323,10 +331,11 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'this will be well good i promise',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'academic',
+				'state' => 'published',
 			),
 			array (
-				'ref_id' => '2',
+				'ref_id' => '10',
 				'name' => 'MARATHON Noodle eating contest',
 				'start' => mktime(12,45,0, 12, 6,2006),
 				'end'   => mktime(15, 0,0, 12, 6,2006),
@@ -334,10 +343,11 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'Noodleishous!',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'academic',
+				'state' => 'draft',
 			),
 			array (
-				'ref_id' => '2',
+				'ref_id' => '11',
 				'name' => 'Regional \'Pong\' championships, semi final',
 				'start' => mktime(12,45,0, 12, 6,2006),
 				'end'   => mktime(15, 0,0, 12, 6,2006),
@@ -351,10 +361,11 @@ EXTRAHEAD;
 							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
 							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />etc.',
 				'shortloc' => 'L/049',
-				'type' => 'academic'
+				'type' => 'academic',
+				'state' => 'published',
 			),
 			array (
-				'ref_id' => '2',
+				'ref_id' => '12',
 				'name' => 'Better than vegetables',
 				'start' => mktime(18, 0,0, 12, 7,2006),
 				'end'   => mktime(20, 0,0, 12, 7,2006),
@@ -362,11 +373,12 @@ EXTRAHEAD;
 				'user_update_ts' => '1',
 				'blurb' => 'Just a few pints',
 				'shortloc' => 'McQ\'s',
-				'type' => 'social'
+				'type' => 'social',
+				'state' => 'published',
 			)
 		);
 		
-		$data['dummies'] = $this->_ProcessEvents($events, $daycalc);
+		$data['events'] = $this->_ProcessEvents($events, $daycalc);
 		
 		// Set up the public frame to use the listings view
 		$this->frame_public->SetTitle('Listing viewer prototype');

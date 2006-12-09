@@ -21,7 +21,7 @@ if (0) { // maybe do it a different way rather than drawing it locally.
 	}
 }
 
-foreach ($dummies as $events_array_index => $event) {
+foreach ($events as $events_array_index => $event) {
 	
 	$replace = array (
 		'%%arrid%%' => $events_array_index, 
@@ -33,7 +33,7 @@ foreach ($dummies as $events_array_index => $event) {
 		'%%endtime%%' => $event['endtime'],
 		'%%blurb%%' => $event['blurb'],
 		'%%shortloc%%' => $event['shortloc'],
-		'%%type%%' => $event['type']
+		'%%type%%' => $event['type'],
 	);
 	
 	$mypath = pathinfo(__FILE__);
