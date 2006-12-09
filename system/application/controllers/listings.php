@@ -24,6 +24,7 @@ class Listings extends Controller {
 		
 		// Make use of the public frame
 		$this->load->library('frame_public');
+		$this->load->library('recurrence');
 	}
 	
 	/**
@@ -57,7 +58,7 @@ class Listings extends Controller {
 			$AcademicTerm = (int)$AcademicTerm;
 			$AcademicWeek = (int)$AcademicWeek;
 			
-			if ($AcademicYear >= 2006 &&
+			if ($AcademicYear >= 2004 &&
 				$AcademicTerm >= 0) {
 				
 				// And check that the term in question exists
@@ -156,6 +157,7 @@ EXTRAHEAD;
 		// this is temporary for testing only
 		$data['days'] = array();
 		$data['dayinfo'] = array();
+		$data['any_day_events'] = FALSE;
 		$daycalc = array();
 		for ($day_offset = 0; $day_offset < $Days; ++$day_offset) {
 			$day_time = $StartTime->Adjust('+'.$day_offset.' day');
@@ -165,6 +167,7 @@ EXTRAHEAD;
 			
 			// testing:
 			$data['dayinfo'][] = array(
+					'day_events'     => array(),
 					'is_holiday'     => $day_time->IsHoliday(),
 					'is_weekend'     => $day_time->DayOfWeek() > 5,
 					'year'           => $day_time->AcademicYear(),
@@ -176,6 +179,49 @@ EXTRAHEAD;
 					'academic_week'  => $day_time->AcademicWeek(),
 				);
 		}
+		
+		$calendar_events = array();
+		$calendar_events['Easter Sunday'] = $this->recurrence->EasterSunday();
+		$calendar_events['Easter Monday Bank Holiday'] = $this->recurrence->EasterMonday();
+		$calendar_events['Good Friday (Bank Holiday)'] = $this->recurrence->GoodFriday();
+		$calendar_events['Mothering Sunday'] = $this->recurrence->MotheringSunday();
+		$calendar_events['Fathers Day'] = $this->recurrence->FathersDay();
+		$calendar_events['Ash Wednesday'] = $this->recurrence->AshWednesday();
+		$calendar_events['Shrove Tuesday'] = $this->recurrence->ShroveTuesday();
+		$calendar_events['Christmas Day'] = $this->recurrence->ChristmasDay();
+		$calendar_events['Christmas Eve'] = $this->recurrence->ChristmasEve();
+		$calendar_events['Boxing Day'] = $this->recurrence->BoxingDay();
+		$calendar_events['New Years Eve'] = $this->recurrence->NewYearsEve();
+		$calendar_events['New Years Day'] = $this->recurrence->NewYearsDay();
+		$calendar_events['St. Patricks Day'] = $this->recurrence->StPatricksDay();
+		$calendar_events['St. Georges Day'] = $this->recurrence->StGeorgesDay();
+		$calendar_events['British Summer Time Ends'] = $this->recurrence->BstEnds();
+		$calendar_events['British Summer Time Begins'] = $this->recurrence->BstBegins();
+		$calendar_events['Valentines Day'] = $this->recurrence->ValentinesDay();
+		$calendar_events['April Fools Day'] = $this->recurrence->AprilFoolsDay();
+		$calendar_events['Halloween'] = $this->recurrence->Halloween();
+		$calendar_events['Bonfire Night'] = $this->recurrence->BonfireNight();
+		$calendar_events['Early May Bank Holiday'] = $this->recurrence->EarlyMayBankHoliday();
+		$calendar_events['Spring Bank Holiday'] = $this->recurrence->SpringBankHoliday();
+		$calendar_events['Summer Bank Holiday'] = $this->recurrence->SummerBankHoliday();
+		$calendar_events['Remembrance Day'] = $this->recurrence->RemembranceDay();
+		$calendar_events['Remembrance Sunday'] = $this->recurrence->RemembranceSunday();
+		
+		$end_time = $StartTime->Adjust($Days.'day');
+		
+		$day_events = array();
+		foreach ($calendar_events as $name=>$rule) {
+			$rule->Time(0,30);
+			$matches = $rule->FindTimes($StartTime->Timestamp(), $end_time->Timestamp());
+			foreach ($matches as $date=>$enable) {
+				if ($enable) {
+					$data['dayinfo'][$this->_GetDowOffset($date,$daycalc)]['day_events'][] = $name;
+					$data['any_day_events'] = TRUE;
+				}
+			}
+		}
+		
+		
 		
 		// define some dummy events with a rough schema until we have access
 		// to some real data to play with
