@@ -149,6 +149,20 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 				</td>
 			</tr>
 			
+			<?php
+			if ($any_day_events) {
+				echo '<tr>';
+				foreach ($dayinfo as $id => $info) { 
+					echo '<td class="calviewCalHeadingCell"><small>';
+					foreach ($info['day_events'] as $name) {
+						echo $name.'<br/>';
+					}
+					echo '</small></td>';
+				}
+				echo '</tr>';
+			}
+			?>
+			
 			<!-- cells to contain javascript-fu -->
 			<tr>
 				<td class="calviewCalEventsCell" id="calviewMonday">
