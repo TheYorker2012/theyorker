@@ -151,15 +151,16 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 			
 			<?php
 			if ($any_day_events) {
-				echo '<tr>';
+//				echo '<tr>';
 				foreach ($dayinfo as $id => $info) { 
-					echo '<td class="calviewCalHeadingCell"><small>';
+//					echo '<td class="calviewCalHeadingCell"><small>';
 					foreach ($info['day_events'] as $name) {
-						echo $name.'<br/>';
+						//echo $name.'<br/>';
+						$eventBoxCode[$id] = "<div class=\"calviewEBCSpecialDayHeading\">$name</div>" . $eventBoxCode[$id];
 					}
-					echo '</small></td>';
+//					echo '</small></td>';
 				}
-				echo '</tr>';
+//				echo '</tr>';
 			}
 			?>
 			

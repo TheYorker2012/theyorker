@@ -150,4 +150,13 @@
 	color: #ffffff;
 	background-color: #ff6a00;
 }
+
+.calviewEBCSpecialDayHeading {
+	text-align: center;
+	font-size: 10px;
+	background-color: #f9f9f9;
+	border-bottom: 1px solid #cccccc;
+	margin: 0px;
+	padding: 2px;
+}
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
