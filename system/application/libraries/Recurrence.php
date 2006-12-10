@@ -133,6 +133,18 @@ class RecurrenceRule
 	
 	
 	// Day Filter
+	/// Method to use when calculating days from base.
+	/**
+	 * Values:
+	 *	- 0 (Next enabled day on or after base. 1 result per base).
+	 *	- 1 (Next enabled days on and after base. |mDayDays| results per base).
+	 *	- 2 (Closest enabled day to base. 1 result per base).
+	 *	- 3 (Closest enabled days to base. |mDayDays| results per base).
+	 *
+	 * @note Default value is 1 (Next enabled days on and after base).
+	 */
+	private $mDayMethod;
+	
 	/// Which days of the week to use near the base.
 	/**
 	 * Array of bools indexed 0..6 (sunday = 0 etc.)
@@ -140,11 +152,11 @@ class RecurrenceRule
 	 *	- FALSE (Don't use this day near the base).
 	 *
 	 * This can be stored in a bitvector (integer) in the database.
-	 * @note Defaults to all FALSE.
+	 * @note Defaults to all TRUE.
 	 */
 	private $mDayDays;
 	
-	/// If exactly one day is set, the number of weeks past the base to use.
+	/// The number of weeks past the base to use.
 	/**
 	 * For example:
 	 *	- If @a $mDayDays [ THURSDAY ] = TRUE and @a $mDayWeek = 0, the results
@@ -192,7 +204,9 @@ class RecurrenceRule
 		
 		/// - No days of the week (straight base).
 		$this->mDayDays = array();
-		$this->DayOfWeek();
+		$this->UseNextEnabledDays();
+		$this->AnyDayOfWeek();
+		$this->SetWeekOffset();
 		
 		/// - No offset.
 		$this->SetOffsetDays();
@@ -234,7 +248,8 @@ class RecurrenceRule
 		$this->ClearMonths();
 		$this->AddMonth($Month);
 		$this->DayOfMonth($Date);
-		$this->ClearDaysOfWeek();
+		$this->UseNextEnabledDay();
+		$this->AnyDayOfWeek();
 		$this->SetOffsetDays();
 	}
 	
@@ -337,48 +352,100 @@ class RecurrenceRule
 	/// Set to easter sunday (a base).
 	/**
 	 * - Sets the base mode to Easter.
-	 * - Clears the days of week near base (result is straight base).
+	 * - Set to use next enabled day.
+	 * - Enables all days (although really it'll be sunday).
 	 * - Resets the offset days.
 	 */
 	function EasterSunday()
 	{
 		$this->mDateMethod = 2; // Easter
-		$this->ClearDaysOfWeek();
+		$this->UseNextEnabledDay();
+		$this->AnyDayOfWeek();
 		$this->SetOffsetDays();
 	}
 	
-	/// Clear the days of the week near base (result is straight base).
+	/// Set the day filter to use the next enabled day after each base.
 	/**
-	 * - Clears the array.
-	 * - Sets the week number to 0;
+	 * - Sets the day method to 0
 	 */
-	function ClearDaysOfWeek()
+	function UseNextEnabledDay()
 	{
-		for ($day_counter = 0; $day_counter < 7; ++$day_counter) {
-			$this->mDayDays[$day_counter] = FALSE;
-		}
-		$this->mDayWeek = 0;
+		$this->mDayMethod = 0;
 	}
 	
-	/// Set a particular day of the week to result near each base.
+	/// Set the day filter to use the next enabled days after each base.
+	/**
+	 * - Sets the day method to 1
+	 */
+	function UseNextEnabledDays()
+	{
+		$this->mDayMethod = 1;
+	}
+	
+	/// Set the day filter to use the closest enabled day to each base.
+	/**
+	 * - Sets the day method to 2
+	 */
+	function UseClosestEnabledDay()
+	{
+		$this->mDayMethod = 2;
+	}
+	
+	/// Set the day filter to use the closest enabled days to each base.
+	/**
+	 * - Sets the day method to 3
+	 */
+	function UseClosestEnabledDays()
+	{
+		$this->mDayMethod = 3;
+	}
+	
+	/// Enable all days of the week near base.
+	/**
+	 * - Clears the array to TRUE.
+	 */
+	function AnyDayOfWeek()
+	{
+		for ($day_counter = 0; $day_counter < 7; ++$day_counter) {
+			$this->mDayDays[$day_counter] = TRUE;
+		}
+	}
+	
+	/// Enable a particular day of the week to result near each base.
 	/**
 	 * @param $Day integer Day of the week (0 = sunday).
 	 */
-	function AddDayOfWeek($Day)
+	function EnableDayOfWeek($Day)
 	{
 		$this->mDayDays[$Day] = TRUE;
 	}
 	
-	/// Set a particular day of the week as the only and the week number.
+	/// Disable a particular day of the week from resulting near each base.
 	/**
 	 * @param $Day integer Day of the week (0 = sunday).
-	 * @param $Week integer The number of weeks past the base to use the @a $Day.
 	 */
-	function DayOfWeek($Day = -1, $Week = 0)
+	function DisableDayOfWeek($Day)
+	{
+		$this->mDayDays[$Day] = FALSE;
+	}
+	
+	/// Set a particular day of the week as the only day.
+	/**
+	 * @param $Day integer Day of the week (0 = sunday).
+	 */
+	function OnlyDayOfWeek($Day = -1)
 	{
 		for ($day_counter = 0; $day_counter < 7; ++$day_counter) {
 			$this->mDayDays[$day_counter] = ($day_counter == $Day);
 		}
+	}
+	
+	/// Set the number of weeks to offset the day filter results.
+	/**
+	 * @param $Week integer Number of weeks to offset the day filter results.
+	 */
+	function SetWeekOffset($Week = 0)
+	{
 		$this->mDayWeek = $Week;
 	}
 	
@@ -596,27 +663,40 @@ class RecurrenceRule
 	 */
 	private function ProduceSecondRoundDates($Date, &$Results)
 	{
-		$month = (int)date('n',$Date);
-		$year = (int)date('Y',$Date);
-		$first_day_of_next_month = mktime(
-				0,0,0,
-				$month%12 + 1, 1, $year + (int)($month/12));
-		$day_of_week = (int)date('N',$Date);
-		$day_found = 0;
-		foreach ($this->mDayDays as $day => $enable) {
-			if ($enable) {
-				++$day_found;
-				$next_day = ($day - $day_of_week + 7) % 7
-						+ $this->mDayWeek*7;
-				$transformed = strtotime($next_day.'day', $Date);
-				if ($this->mDayWeek === 0 ||
-					$transformed < $first_day_of_next_month) {
+		$day_of_week = (int)date('w',$Date); // 0-6
+		$results_limit = 1 + ($this->mDayMethod%2)*6;
+		if ($this->mDayMethod < 2) {
+			// Next enabled day(s) on or after base.
+			$day_order = array( 0, 1, 2, 3, 4, 5, 6);
+		} else {
+			 // Closest enabled day(s) to base.
+			$day_order = array( 0, 1,-1, 2,-2, 3,-3);
+		}
+		// Decide whether to limit to the same month
+		if (0 === $this->mDateMethod &&
+				1 === $this->mDateDmDate &&
+				4 < $this->mDayWeek) {
+			$only_same_month = TRUE;
+			$month = (int)date('n',$Date);
+		} else {
+			$only_same_month = FALSE;
+		}
+		// Go through days after base.
+		foreach ($day_order as $days_after_base) {
+			// If that day of the week is accepted, add a result.
+			if ($this->mDayDays[(7+$day_of_week+$days_after_base)%7]) {
+				$with_week_offset = $days_after_base + $this->mDayWeek*7;
+				$transformed = strtotime($with_week_offset.'day', $Date);
+				// If we need to check in same month, do so now
+				if (!$only_same_month || $month === (int)date('n',$transformed)) {
+					// Add to results and check if we can get any more results
+					// from this base.
 					$Results[$transformed] = TRUE;
+					if (--$results_limit <= 0) {
+						break;
+					}
 				}
 			}
-		}
-		if (0 === $day_found) {
-			$Results[$Date] = TRUE;
 		}
 	}
 	
@@ -683,7 +763,8 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// 3rd week in june
 		$rule->MonthDate(6);
-		$rule->DayOfWeek(0,2);
+		$rule->OnlyDayOfWeek(0);
+		$rule->SetWeekOffset(2);
 		return $rule;
 	}
 	
@@ -774,7 +855,7 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// first sunday in july with double figures
 		$rule->MonthDate(7,10);
-		$rule->DayOfWeek(0);
+		$rule->OnlyDayOfWeek(0);
 		return $rule;
 	}
 	
@@ -846,8 +927,9 @@ class Recurrence
 	{
 		$rule = new RecurrenceRule();
 		// nearest sunday to 11th november
-		$rule->MonthDate(11,8);
-		$rule->DayOfWeek(0);
+		$rule->MonthDate(11,11);
+		$rule->UseClosestEnabledDay();
+		$rule->OnlyDayOfWeek(0);
 		return $rule;
 	}
 	
@@ -857,7 +939,7 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// first monday in may
 		$rule->MonthDate(5);
-		$rule->DayOfWeek(1,0);
+		$rule->OnlyDayOfWeek(1);
 		return $rule;
 	}
 	
@@ -867,7 +949,8 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// last monday in may
 		$rule->MonthDate(6);
-		$rule->DayOfWeek(1,-1);
+		$rule->OnlyDayOfWeek(1);
+		$rule->SetWeekOffset(-1);
 		return $rule;
 	}
 	
@@ -877,7 +960,8 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// last monday in august
 		$rule->MonthDate(9);
-		$rule->DayOfWeek(1,-1);
+		$rule->OnlyDayOfWeek(1);
+		$rule->SetWeekOffset(-1);
 		return $rule;
 	}
 	
@@ -887,7 +971,8 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// last sunday in april
 		$rule->MonthDate(5);
-		$rule->DayOfWeek(0,-1);
+		$rule->OnlyDayOfWeek(0);
+		$rule->SetWeekOffset(-1);
 		$rule->Time(2);
 		return $rule;
 	}
@@ -898,7 +983,8 @@ class Recurrence
 		$rule = new RecurrenceRule();
 		// last sunday in october
 		$rule->MonthDate(11);
-		$rule->DayOfWeek(0,-1);
+		$rule->OnlyDayOfWeek(0);
+		$rule->SetWeekOffset(-1);
 		$rule->Time(2);
 		return $rule;
 	}
