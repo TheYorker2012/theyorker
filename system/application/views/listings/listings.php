@@ -9,7 +9,7 @@
 // used as this is supplied by the controller and is a value which can be used 
 // to find the correct data again server side.
 if (0) { // maybe do it a different way rather than drawing it locally.
-	foreach ($dummies as $events_array_index => $event) {
+	foreach ($events as $events_array_index => $event) {
 		// Create a subarray for each event
 		echo "myEvents[$events_array_index] = new Array()\n";
 		
@@ -21,6 +21,16 @@ if (0) { // maybe do it a different way rather than drawing it locally.
 	}
 }
 
+// Put special headings at top
+foreach ($dayinfo as $id => $info) {
+	$eventBoxCode[$id] = '';
+	foreach ($info['special_headings'] as $name) {
+		$eventBoxCode[$id] .= '<div class="calviewEBCSpecialDayHeading">' .
+				$name . '</div>';
+	}
+}
+
+// Then events
 foreach ($events as $events_array_index => $event) {
 	
 	$replace = array (
@@ -148,21 +158,6 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 					<div style="text-align: center"><?php echo $days[6] ?></div>
 				</td>
 			</tr>
-			
-			<?php
-			if ($any_day_events) {
-//				echo '<tr>';
-				foreach ($dayinfo as $id => $info) { 
-//					echo '<td class="calviewCalHeadingCell"><small>';
-					foreach ($info['day_events'] as $name) {
-						//echo $name.'<br/>';
-						$eventBoxCode[$id] = "<div class=\"calviewEBCSpecialDayHeading\">$name</div>" . $eventBoxCode[$id];
-					}
-//					echo '</small></td>';
-				}
-//				echo '</tr>';
-			}
-			?>
 			
 			<!-- cells to contain javascript-fu -->
 			<tr>

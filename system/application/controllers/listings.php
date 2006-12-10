@@ -167,45 +167,45 @@ EXTRAHEAD;
 			
 			// testing:
 			$data['dayinfo'][] = array(
-					'day_events'     => array(),
-					'is_holiday'     => $day_time->IsHoliday(),
-					'is_weekend'     => $day_time->DayOfWeek() > 5,
-					'year'           => $day_time->AcademicYear(),
-					'date_and_month' => $day_time->Format('jS M'),
-					'day_of_week'    => $day_time->Format('l'),
-					'academic_year'  => $day_time->AcademicYearName(2),
-					'academic_term'  => $day_time->AcademicTermName() . ' ' .
-										$day_time->AcademicTermTypeName(),
-					'academic_week'  => $day_time->AcademicWeek(),
+					'special_headings' => array(),
+					'is_holiday'       => $day_time->IsHoliday(),
+					'is_weekend'       => $day_time->DayOfWeek() > 5,
+					'year'             => $day_time->AcademicYear(),
+					'date_and_month'   => $day_time->Format('jS M'),
+					'day_of_week'      => $day_time->Format('l'),
+					'academic_year'    => $day_time->AcademicYearName(2),
+					'academic_term'    => $day_time->AcademicTermName() . ' ' .
+							$day_time->AcademicTermTypeName(),
+					'academic_week'    => $day_time->AcademicWeek(),
 				);
 		}
 		
 		$calendar_events = array();
+		$calendar_events['New Years Day'] = $this->recurrence->NewYearsDay();
+		$calendar_events['Valentines Day'] = $this->recurrence->ValentinesDay();
+		$calendar_events['St. Patricks Day'] = $this->recurrence->StPatricksDay();
+		$calendar_events['Shrove Tuesday'] = $this->recurrence->ShroveTuesday();
+		$calendar_events['Ash Wednesday'] = $this->recurrence->AshWednesday();
+		$calendar_events['Mothering Sunday'] = $this->recurrence->MotheringSunday();
+		$calendar_events['April Fools Day'] = $this->recurrence->AprilFoolsDay();
+		$calendar_events['Good Friday (Bank Holiday)'] = $this->recurrence->GoodFriday();
 		$calendar_events['Easter Sunday'] = $this->recurrence->EasterSunday();
 		$calendar_events['Easter Monday Bank Holiday'] = $this->recurrence->EasterMonday();
-		$calendar_events['Good Friday (Bank Holiday)'] = $this->recurrence->GoodFriday();
-		$calendar_events['Mothering Sunday'] = $this->recurrence->MotheringSunday();
+		$calendar_events['British Summer Time Begins'] = $this->recurrence->BstBegins();
 		$calendar_events['Fathers Day'] = $this->recurrence->FathersDay();
-		$calendar_events['Ash Wednesday'] = $this->recurrence->AshWednesday();
-		$calendar_events['Shrove Tuesday'] = $this->recurrence->ShroveTuesday();
-		$calendar_events['Christmas Day'] = $this->recurrence->ChristmasDay();
-		$calendar_events['Christmas Eve'] = $this->recurrence->ChristmasEve();
-		$calendar_events['Boxing Day'] = $this->recurrence->BoxingDay();
-		$calendar_events['New Years Eve'] = $this->recurrence->NewYearsEve();
-		$calendar_events['New Years Day'] = $this->recurrence->NewYearsDay();
-		$calendar_events['St. Patricks Day'] = $this->recurrence->StPatricksDay();
 		$calendar_events['St. Georges Day'] = $this->recurrence->StGeorgesDay();
 		$calendar_events['British Summer Time Ends'] = $this->recurrence->BstEnds();
-		$calendar_events['British Summer Time Begins'] = $this->recurrence->BstBegins();
-		$calendar_events['Valentines Day'] = $this->recurrence->ValentinesDay();
-		$calendar_events['April Fools Day'] = $this->recurrence->AprilFoolsDay();
-		$calendar_events['Halloween'] = $this->recurrence->Halloween();
-		$calendar_events['Bonfire Night'] = $this->recurrence->BonfireNight();
 		$calendar_events['Early May Bank Holiday'] = $this->recurrence->EarlyMayBankHoliday();
 		$calendar_events['Spring Bank Holiday'] = $this->recurrence->SpringBankHoliday();
 		$calendar_events['Summer Bank Holiday'] = $this->recurrence->SummerBankHoliday();
+		$calendar_events['Halloween'] = $this->recurrence->Halloween();
+		$calendar_events['Bonfire Night'] = $this->recurrence->BonfireNight();
 		$calendar_events['Remembrance Day'] = $this->recurrence->RemembranceDay();
 		$calendar_events['Remembrance Sunday'] = $this->recurrence->RemembranceSunday();
+		$calendar_events['Christmas Eve'] = $this->recurrence->ChristmasEve();
+		$calendar_events['Christmas Day'] = $this->recurrence->ChristmasDay();
+		$calendar_events['Boxing Day'] = $this->recurrence->BoxingDay();
+		$calendar_events['New Years Eve'] = $this->recurrence->NewYearsEve();
 		
 		$end_time = $StartTime->Adjust($Days.'day');
 		
@@ -215,8 +215,7 @@ EXTRAHEAD;
 			$matches = $rule->FindTimes($StartTime->Timestamp(), $end_time->Timestamp());
 			foreach ($matches as $date=>$enable) {
 				if ($enable) {
-					$data['dayinfo'][$this->_GetDowOffset($date,$daycalc)]['day_events'][] = $name;
-					$data['any_day_events'] = TRUE;
+					$data['dayinfo'][$this->_GetDowOffset($date,$daycalc)]['special_headings'][] = $name;
 				}
 			}
 		}
@@ -228,9 +227,9 @@ EXTRAHEAD;
 		$events = array (
 			array (
 				'ref_id' => '1',
-				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 11, 28,2006),
-				'end'   => mktime( 0, 0,0, 11, 29,2006),
+				'name' => 'Xmas Party',
+				'start' => mktime(21, 0,0, 12, 24,2006),
+				'end'   => mktime( 0, 0,0, 12, 25,2006),
 				'system_update_ts' => '3',
 				'user_update_ts' => '2',
 				'blurb' => 'Bangin\' house party in my house!',
