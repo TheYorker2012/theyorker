@@ -559,46 +559,19 @@ div.BlackBoxSubTitle {
 	text-decoration: none;
 }
 
-/*InfoBoxes*/
-.Infobox {
-	text-align: left;
-	margin-left: 20px;
-	margin-right: 20px;
-	background-color: #C4C4E1;
-	border-color: #0099FF;
-	border-style: solid;
-	border-width: thin;
-}
-.InfoboxText {
-	margin-left: 5px;
-	width: 59%;
-	float: left;
-}
-.InfoboxPhoto {
-	width: 39%;
-	text-align: center;
-	float: right;
-}
-.InfoboxPhoto a {
-	color: grey;
-	text-decoration: none;
-}
-
 /*MemberBoxes*/
 .Memberbox {
 	text-align: left;
-	background-color: #C4C4E1;
+	padding-top: 5px;
+	padding-left: 5px;
+	width: 90%;
 	border-color: #0099FF;
 	border-style: solid;
 	border-width: thin;
-}
-.MemberboxText {
-	margin-left: 5px;
-	width: 59%;
-	float: left;
+	height: 200px;
 }
 .MemberboxPhoto {
-	width: 39%;
+	width: 40%;
 	text-align: center;
 	float: right;
 }
