@@ -1,5 +1,28 @@
 <?php
 
+/// Abstract filter class for filtering event occurrences.
+/**
+ * The purpose of this class is to allow classes which provide a layer of
+ *	abstraction over the model (e.g. View_listings_days) to provide a consistent
+ *	filtering interface.
+ *
+ * Will have functions for creating MySQL queries or using CI db (although these
+ *	could be in the Events_model class.
+ *
+ * @todo data about filtering by occurrence state/publicity level.
+ *
+ * @todo data about filtering by owner
+ */
+class EventOccurrenceFilter
+{
+	
+	/// Default constructor
+	function __construct()
+	{
+		
+	}
+}
+
 /// Model for access to events.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
@@ -16,6 +39,8 @@ class Events_model extends Model
 	private $mDayInformation;
 	private $mOccurrences;
 	
+	protected $mOccurrenceFilter;
+	
 	/// Default constructor
 	function __construct()
 	{
@@ -24,6 +49,7 @@ class Events_model extends Model
 		$this->mStates = array();
 		$this->mDayInformation = FALSE;
 		$this->mOccurrences = FALSE;
+		$this->SetOccurrenceFilter();
 		
 		$this->load->library('academic_calendar');
 	}
@@ -62,6 +88,16 @@ class Events_model extends Model
 		$this->SetEnabled('occurrences-all', $Enabled);
 	}
 	
+	/// Set the event occurrence filter to use.
+	/**
+	 * @param $Filter EventOccurrenceFilter Event filter object
+	 *	(A value of FALSE means use a default filter)
+	 */
+	function SetOccurrenceFilter($Filter = FALSE)
+	{
+		$this->mOccurrenceFilter = $Filter;
+	}
+	
 	/// Retrieve the specified data between certain dates.
 	/**
 	 * @param $StartTime Academic_time Start time.
@@ -70,6 +106,8 @@ class Events_model extends Model
 	 * @return bool Success state:
 	 *	- TRUE (Success).
 	 *	- FALSE (Failure).
+	 *
+	 * @todo Retrieve event data from the database instead of hardcoded.
 	 */
 	function Retrieve($StartTime, $EndTime)
 	{
