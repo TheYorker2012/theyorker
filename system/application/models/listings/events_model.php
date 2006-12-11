@@ -28,16 +28,10 @@ class Events_model extends Model
 		$this->load->library('academic_calendar');
 	}
 	
-	/// Enable some data to be retrieved.
-	function Enable($StateName)
+	/// Set whether some option is enabled
+	function SetEnabled($StateName, $Enabled = TRUE)
 	{
-		$this->mStates[$StateName] = TRUE;
-	}
-	
-	/// Disable some data from being retrieved.
-	function Disable($StateName)
-	{
-		$this->mStates[$StateName] = FALSE;
+		$this->mStates[$StateName] = $Enabled;
 	}
 	
 	/// Find if some data is enabled to be retrieved.
@@ -50,16 +44,22 @@ class Events_model extends Model
 		}
 	}
 	
-	/// Enable day information.
-	function EnableDayInformation()
+	/// Set whether day information is enabled.
+	function IncludeDayInformation($Enabled)
 	{
-		$this->Enable('day-info');
+		$this->SetEnabled('day-info', $Enabled);
 	}
 	
-	/// Enable event occurrences.
-	function EnableOccurrences()
+	/// Set whether special day headings are enabled.
+	function IncludeDayInformationSpecial($Enabled)
 	{
-		$this->Enable('occurrences-all');
+		$this->SetEnabled('day-info-special', $Enabled);
+	}
+	
+	/// Set whether event occurrences are enabled.
+	function IncludeOccurrences($Enabled)
+	{
+		$this->SetEnabled('occurrences-all', $Enabled);
 	}
 	
 	/// Retrieve the specified data between certain dates.
@@ -98,18 +98,20 @@ class Events_model extends Model
 				++$current_index;
 			}
 			
-			// For now just calculate from the rules every time!
-			$special_days = $this->RuleCollectionStdEngland();
-			foreach ($special_days as $special_day) {
-				$name = $special_day[0];
-				$rule = $special_day[1];
-				$matches = $rule->FindTimes($StartTime->Timestamp(), $EndTime->Timestamp());
-				foreach ($matches as $date=>$enable) {
-					if ($enable) {
-						// For each one, put it in the apropriate day info item
-						$day_time = $this->academic_calendar->Timestamp($date);
-						$day_time = $day_time->Midnight()->Timestamp();
-						$this->mDayInformation[$day_time]['special_headings'][] = $name;
+			if ($this->IsEnabled('day-info-special', TRUE)) {
+				// For now just calculate from the rules every time!
+				$special_days = $this->RuleCollectionStdEngland();
+				foreach ($special_days as $special_day) {
+					$name = $special_day[0];
+					$rule = $special_day[1];
+					$matches = $rule->FindTimes($StartTime->Timestamp(), $EndTime->Timestamp());
+					foreach ($matches as $date=>$enable) {
+						if ($enable) {
+							// For each one, put it in the apropriate day info item
+							$day_time = $this->academic_calendar->Timestamp($date);
+							$day_time = $day_time->Midnight()->Timestamp();
+							$this->mDayInformation[$day_time]['special_headings'][] = $name;
+						}
 					}
 				}
 			}
