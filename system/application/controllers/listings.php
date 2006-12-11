@@ -24,7 +24,8 @@ class Listings extends Controller {
 		
 		// Make use of the public frame
 		$this->load->library('frame_public');
-		$this->load->library('recurrence');
+		
+		$this->load->model('listings/events_model');
 	}
 	
 	/**
@@ -154,230 +155,39 @@ EXTRAHEAD;
 			$data[$index] = $value;
 		}
 		
-		// this is temporary for testing only
-		$data['days'] = array();
-		$data['dayinfo'] = array();
-		$data['any_day_events'] = FALSE;
-		$daycalc = array();
-		for ($day_offset = 0; $day_offset < $Days; ++$day_offset) {
-			$day_time = $StartTime->Adjust('+'.$day_offset.' day');
-			
-			$data['days'][] = $day_time->Format('jS M');
-			$daycalc[] = $day_time->Format('d#m#y');
-			
-			// testing:
-			$data['dayinfo'][] = array(
-					'special_headings' => array(),
-					'is_holiday'       => $day_time->IsHoliday(),
-					'is_weekend'       => $day_time->DayOfWeek() > 5,
-					'year'             => $day_time->AcademicYear(),
-					'date_and_month'   => $day_time->Format('jS M'),
-					'day_of_week'      => $day_time->Format('l'),
-					'academic_year'    => $day_time->AcademicYearName(2),
-					'academic_term'    => $day_time->AcademicTermName() . ' ' .
-							$day_time->AcademicTermTypeName(),
-					'academic_week'    => $day_time->AcademicWeek(),
-				);
-		}
-		
-		$calendar_events = array();
-		$calendar_events['New Years Day'] = $this->recurrence->NewYearsDay();
-		$calendar_events['Valentines Day'] = $this->recurrence->ValentinesDay();
-		$calendar_events['St. Patricks Day'] = $this->recurrence->StPatricksDay();
-		$calendar_events['Shrove Tuesday'] = $this->recurrence->ShroveTuesday();
-		$calendar_events['Ash Wednesday'] = $this->recurrence->AshWednesday();
-		$calendar_events['Mothering Sunday'] = $this->recurrence->MotheringSunday();
-		$calendar_events['April Fools Day'] = $this->recurrence->AprilFoolsDay();
-		$calendar_events['Good Friday (Bank Holiday)'] = $this->recurrence->GoodFriday();
-		$calendar_events['Easter Sunday'] = $this->recurrence->EasterSunday();
-		$calendar_events['Easter Monday Bank Holiday'] = $this->recurrence->EasterMonday();
-		$calendar_events['British Summer Time Begins'] = $this->recurrence->BstBegins();
-		$calendar_events['Fathers Day'] = $this->recurrence->FathersDay();
-		$calendar_events['St. Georges Day'] = $this->recurrence->StGeorgesDay();
-		$calendar_events['British Summer Time Ends'] = $this->recurrence->BstEnds();
-		$calendar_events['Early May Bank Holiday'] = $this->recurrence->EarlyMayBankHoliday();
-		$calendar_events['Spring Bank Holiday'] = $this->recurrence->SpringBankHoliday();
-		$calendar_events['Summer Bank Holiday'] = $this->recurrence->SummerBankHoliday();
-		$calendar_events['Halloween'] = $this->recurrence->Halloween();
-		$calendar_events['Bonfire Night'] = $this->recurrence->BonfireNight();
-		$calendar_events['Remembrance Day'] = $this->recurrence->RemembranceDay();
-		$calendar_events['Remembrance Sunday'] = $this->recurrence->RemembranceSunday();
-		$calendar_events['Christmas Eve'] = $this->recurrence->ChristmasEve();
-		$calendar_events['Christmas Day'] = $this->recurrence->ChristmasDay();
-		$calendar_events['Boxing Day'] = $this->recurrence->BoxingDay();
-		$calendar_events['New Years Eve'] = $this->recurrence->NewYearsEve();
-		
 		$end_time = $StartTime->Adjust($Days.'day');
 		
-		$day_events = array();
-		foreach ($calendar_events as $name=>$rule) {
-			$rule->Time(0,30);
-			$matches = $rule->FindTimes($StartTime->Timestamp(), $end_time->Timestamp());
-			foreach ($matches as $date=>$enable) {
-				if ($enable) {
-					$data['dayinfo'][$this->_GetDowOffset($date,$daycalc)]['special_headings'][] = $name;
-				}
-			}
+		// Get data from the database
+		$this->events_model->EnableDayInformation();
+		$this->events_model->EnableOccurrences();
+		$this->events_model->Retrieve($StartTime, $end_time);
+		
+		// Day information
+		$days_information = $this->events_model->GetDayInformation();
+		
+		// this is temporary for testing only
+		$data['days'] = array();
+		$data['any_day_events'] = FALSE;
+		$daycalc = array();
+		foreach ($days_information as $day_info) {
+			$day_time = $day_info['date'];
+			$data['days'][$day_info['index']] = $day_time->Format('jS M');
+			
+			$day_info['is_holiday'    ] = $day_time->IsHoliday();
+			$day_info['is_weekend'    ] = $day_time->DayOfWeek() > 5;
+			$day_info['year'          ] = $day_time->AcademicYear();
+			$day_info['date_and_month'] = $day_time->Format('jS M');
+			$day_info['day_of_week'   ] = $day_time->Format('l');
+			$day_info['academic_year' ] = $day_time->AcademicYearName(2);
+			$day_info['academic_term' ] = $day_time->AcademicTermName().' '.$day_time->AcademicTermTypeName();
+			$day_info['academic_week' ] = $day_time->AcademicWeek();
+			
+			$data['dayinfo'][$day_info['index']] = $day_info;
 		}
 		
-		
-		
-		// define some dummy events with a rough schema until we have access
-		// to some real data to play with
-		$events = array (
-			array (
-				'ref_id' => '1',
-				'name' => 'Xmas Party',
-				'start' => mktime(21, 0,0, 12, 24,2006),
-				'end'   => mktime( 0, 0,0, 12, 25,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '2',
-				'name' => 'Boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12, 8,2006),
-				'end'   => mktime(15, 0,0, 12, 8,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '3',
-				'name' => 'Social Gathering',
-				'start' => mktime(21, 0,0, 12, 4,2006),
-				'end'   => mktime( 0, 0,0, 12, 5,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'postponed',
-			),
-			array (
-				'ref_id' => '4',
-				'name' => 'Mince Pies and Punch',
-				'start' => mktime(12,45,0, 12, 8,2006),
-				'end'   => mktime(15, 0,0, 12, 8,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '5',
-				'name' => 'International talk-like-a-pirate day',
-				'start' => mktime(21, 0,0, 12, 5,2006),
-				'end'   => mktime( 0, 0,0, 12, 6,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'athletic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '6',
-				'name' => 'boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12, 8,2006),
-				'end'   => mktime(15, 0,0, 12, 8,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'party',
-				'state' => 'cancelled',
-			),
-			array (
-				'ref_id' => '7',
-				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 12, 4,2006),
-				'end'   => mktime( 0, 0,0, 12, 5,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '8',
-				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 12, 5,2006),
-				'end'   => mktime( 6, 0,0, 12, 6,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '9',
-				'name' => 'boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12, 6,2006),
-				'end'   => mktime(15, 0,0, 12, 6,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '10',
-				'name' => 'MARATHON Noodle eating contest',
-				'start' => mktime(12,45,0, 12, 6,2006),
-				'end'   => mktime(15, 0,0, 12, 6,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'Noodleishous!',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'draft',
-			),
-			array (
-				'ref_id' => '11',
-				'name' => 'Regional \'Pong\' championships, semi final',
-				'start' => mktime(12,45,0, 12, 6,2006),
-				'end'   => mktime(15, 0,0, 12, 6,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => '|&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />etc.',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '12',
-				'name' => 'Better than vegetables',
-				'start' => mktime(18, 0,0, 12, 7,2006),
-				'end'   => mktime(20, 0,0, 12, 7,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'Just a few pints',
-				'shortloc' => 'McQ\'s',
-				'type' => 'social',
-				'state' => 'published',
-			)
-		);
-		
-		$data['events'] = $this->_ProcessEvents($events, $daycalc);
+		// Event occurrences
+		$occurrences = $this->events_model->GetOccurrences();
+		$data['events'] = $this->_ProcessEvents($occurrences, $days_information);
 		
 		// Set up the public frame to use the listings view
 		$this->frame_public->SetTitle('Listing viewer prototype');
@@ -391,14 +201,14 @@ EXTRAHEAD;
 	/**
 	 * @brief Process events ready for the view.
 	 * @param array $Occurrences Array of event occurrences (using timestamps).
-	 * @param array $DayCalc Visible calendar information.
+	 * @param array $DaysInfo Information about days on the calendar.
 	 * @return array similar to @a $Occurrences with the following extra fields:
 	 *	- 'date' (the date of the start of the slice formatted as 'Y-m-d').
 	 *	- 'day' (the day index on the visible calendar (using @a $DayCalc).
 	 *	- 'starttime' (the start time of the occurrence using user preferences to format).
 	 *	- 'endtime' (the end time of the occurrence using user preferences to format).
 	 */
-	function _ProcessEvents($Occurrences, $DayCalc)
+	function _ProcessEvents($Occurrences, $DaysInfo)
 	{
 		// Slice up the events
 		$event_occurrences = $this->event_manager->SliceOccurrences($Occurrences, 4*60);
@@ -412,46 +222,24 @@ EXTRAHEAD;
 			$event_data['slice_start'] = new Academic_time($event_data['slice_start']);
 			$event_data['slice_end']   = new Academic_time($event_data['slice_end']);
 			
-			// Produce and new 'date' field with string date
-			$event_data['date'] = $event_data['slice_start']->Format('Y-m-d');
+			// Which day of the current view? (must be valid)
+			$midnight_time = $event_data['slice_start']->Midnight()->Timestamp();
+			if (array_key_exists($midnight_time, $DaysInfo)) {
+				$event_data['day'] = $DaysInfo[$midnight_time]['index'];
 			
-			// Which day of the current view?
-			$event_data['day'] = $this->_GetDowOffset(
-					$event_data['slice_start']->Timestamp(),
-					$DayCalc);
+				// Produce and new 'date' field with string date
+				$event_data['date'] = $event_data['slice_start']->Format('Y-m-d');
 			
-			// Start and end time (use slice start/end for the moment)
-			// It should be made obvious when a slice is only part of an event
-			$event_data['starttime'] = $event_data['start']->Time();
-			$event_data['endtime'] = $event_data['end']->Time();
-			
-			// Add to the return array if in range
-			if ($event_data['day'] >= 0) {
+				// Start and end time (use slice start/end for the moment)
+				// It should be made obvious when a slice is only part of an event
+				$event_data['starttime'] = $event_data['start']->Time();
+				$event_data['endtime'] = $event_data['end']->Time();
+	
 				$return_array[] = $event_data;
 			}
 		}
 		return $return_array;
 	}
 	
-	/**
-	 * @brief Find which day of the visible calendar a timestamp lies in.
-	 * @param timestamp $Timestamp Timestamp to find.
-	 * @param array $DayCalc Visible calendar information.
-	 * @return Array index:
-	 *	- Index of a day in @a $DayCalc that matches @a $Timestamp.
-	 *	- -1 if no matches are found.
-	 *
-	 * Returns the day of the week that a date falls on if
-	 *	that date is within the range of the current calendar
-	 */
-	function _GetDowOffset($Timestamp, $DayCalc) {
-		$formatted_time = date('d#m#y',$Timestamp);
-		foreach ($DayCalc as $offset => $calendar_date) {
-			if ($formatted_time == $calendar_date) {
-				return $offset;
-			}
-		}
-		return -1;
-	}
 }
 ?>
