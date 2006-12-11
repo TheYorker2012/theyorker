@@ -6,10 +6,6 @@
  * @brief Shortcut library for using the public frame.
  */
 
-// Load the Frames library
-$CI = &get_instance();
-$CI->load->library('frames');
-
 /**
  * @brief Main public frame library class.
  *
@@ -47,6 +43,10 @@ class Frame_public extends FramesFrame
 	function __construct()
 	{
 		parent::__construct('frames/public_frame.php');
+		
+		// Load the Frames library
+		$CI = &get_instance();
+		$CI->load->library('frames');
 	}
 	
 	/**
