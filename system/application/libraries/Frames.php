@@ -6,8 +6,8 @@
  * @brief Library for managing frames and views nicely.
  */
 
+/// Quite simply represents a view.
 /**
- * @brief Quite simply represents a view
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * Initialise with a view path and use the data functions to set data to send to
@@ -25,13 +25,13 @@
  */
 class FramesView
 {
-	/// @brief array The data array to send to the view.
+	/// array The data array to send to the view.
 	protected $mDataArray;
-	/// @brief string The view to load when the time comes.
+	/// string The view to load when the time comes.
 	protected $mViewPath;
 	
+	/// Primary constructor.
 	/**
-	 * @brief Primary constructor.
 	 * @param $ViewPath string The path of a CI view.
 	 * @param $Data array The initial data array.
 	 */
@@ -41,8 +41,8 @@ class FramesView
 		$this->mViewPath = $ViewPath;
 	}
 	
+	/// Get the value of a specific data field.
 	/**
-	 * @brief Get the value of a specific data field.
 	 * @param $Index integer The index of the data.
 	 * @return The data associated with @a $Index in the data array.
 	 */
@@ -51,8 +51,8 @@ class FramesView
 		return $this->mDataArray[$Index];
 	}
 	
+	/// Set the value of a specific data field.
 	/**
-	 * @brief Set the value of a specific data field.
 	 * @param $Index integer The index of the data.
 	 * @param $Value The value to set to the data element @a Index.
 	 */
@@ -61,8 +61,8 @@ class FramesView
 		$this->mDataArray[$Index] = $Value;
 	}
 	
+	/// Merge a data array with that already in the data array.
 	/**
-	 * @brief Merge a data array with that already in the data array.
 	 * @param $Data array Data to merge.
 	 */
 	function AddData($Data)
@@ -70,8 +70,8 @@ class FramesView
 		$this->mDataArray = array_merge($this->mDataArray, $Data);
 	}
 	
+	/// Use code igniter to load the view.
 	/**
-	 * @brief Use code igniter to load the view.
 	 *
 	 * If the specified view is empty, then nothing happens.
 	 */
@@ -84,8 +84,8 @@ class FramesView
 	}
 }
 
+/// Represents a view with subviews
 /**
- * @brief Represents a view with subviews
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * Initialise with a view path and use the data functions to set data, as well
@@ -114,8 +114,8 @@ class FramesView
  */
 class FramesFrame extends FramesView
 {
+	/// Primary constructor.
 	/**
-	 * @brief Primary constructor.
 	 * @param $ViewPath string The path of a CI view of the frame.
 	 * @param $Data array The initial data array.
 	 */
@@ -125,8 +125,8 @@ class FramesFrame extends FramesView
 		$this->mDataArray['content'] = array(0 => new FramesView(''));
 	}
 	
+	/// Set a specific content slot to a view.
 	/**
-	 * @brief Set a specific content slot to a view.
 	 * @param $SubView FramesView The view to set as content.
 	 * @param $Index The index of the content slot to set.
 	 *	Although this defaults to 0, it doesn't have to be an integer.
@@ -136,8 +136,8 @@ class FramesFrame extends FramesView
 		$this->mDataArray['content'][$Index] = $SubView;
 	}
 	
+	/// Set a specific content slot to a simple view.
 	/**
-	 * @brief Set a specific content slot to a simple view.
 	 * @param $ViewPath string The path of a CI view of the view.
 	 * @param $Data array The initial data array.
 	 * @param $Index The index of the content slot to set.
@@ -152,16 +152,16 @@ class FramesFrame extends FramesView
 	}
 }
 
+/// Frames library.
 /**
- * @brief Frames library.
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * At the moment this is simply shortcuts for constructing views and frames.
  */
 class Frames
 {
+	/// Shortcut to construct a bog standard view (FramesView).
 	/**
-	 * @brief Shortcut to construct a bog standard view (FramesView).
 	 * @param $ViewPath string The path of a CI view of the view.
 	 * @param $Data array The initial data array.
 	 * @return FramesView The new view object.
@@ -171,8 +171,8 @@ class Frames
 		return new FramesView($ViewPath, $Data);
 	}
 	
+	/// Shortcut to construct a frame (FramesFrame).
 	/**
-	 * @brief Shortcut to construct a frame (FramesFrame).
 	 * @param $ViewPath string The path of a CI view of the frame.
 	 * @param $Data array The initial data array.
 	 * @return FramesFrame The new frame object.
