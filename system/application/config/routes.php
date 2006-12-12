@@ -44,11 +44,17 @@ $route['scaffolding_trigger'] = "";
 
 // 'directory' needs to map to 'yorkerdirectory'
 // (the php class Directory is reserved)
-// Additionally the second segment should get sent to view
-$route['directory/([a-z]+)/([a-z]+)'] = "yorkerdirectory/$2/$1";
-$route['yorkerdirectory/([a-z]+)/([a-z]+)'] = "yorkerdirectory/$2/$1";
-$route['directory/([a-z]+)'] = "yorkerdirectory/view/$1";
-$route['yorkerdirectory/([a-z]+)'] = "yorkerdirectory/view/$1";
-$route['directory'] = "yorkerdirectory";
+$route['directory'] = 'yorkerdirectory';
+// If 2 segments, seg2 ($1) should get sent to view function
+$route['directory/([a-z]+)'] = 'yorkerdirectory/view/$1';
+// If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
+$route['directory/([a-z]+)/([a-z]+)'] = 'yorkerdirectory/$2/$1';
+// If >3 segments, same as for 3 and any extra segments ($3) appended.
+$route['directory/([a-z]+)/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
+
+// Invalidate yorkerdirectory as its ugly and shouldn't be used
+// jh559: this is just my opinion, feel free to comment these out if you disagree
+$route['yorkerdirectory'] = 'not_yorkerdirectory';
+$route['yorkerdirectory/(.+)'] = 'not_yorkerdirectory';
 
 ?>
