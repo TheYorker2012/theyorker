@@ -1,19 +1,20 @@
 <?php
 
+/// Yorker directory.
 /**
- * @brief Yorker directory.
  * @author Owen Jones (oj502@york.ac.uk)
  * @author James Hogan (jh559@cs.york.ac.uk)
  * 
  * The URI /directory maps to this controller (see config/routes.php).
  *
  * Any 2nd URI segment is sent to Yorkerdirectory::view (see config/routes.php).
+ *
+ * Any 3rd URI segment (e.g. events) is sent to the function with the same value.
+ *	(see config/routes.php).
  */
 class Yorkerdirectory extends Controller {
 	
-	/**
-	 * @brief Default constructor.
-	 */
+	/// Default constructor.
 	function __construct()
 	{
 		parent::Controller();
@@ -22,9 +23,7 @@ class Yorkerdirectory extends Controller {
 		$this->load->library('frame_public');
 	}
 	
-	/**
-	 * @brief Directory index page.
-	 */
+	/// Directory index page.
 	function index()
 	{
 		$data = array(
@@ -79,20 +78,77 @@ class Yorkerdirectory extends Controller {
 		$this->frame_public->Load();
 	}
 	
-	/**
-	 * @brief Directory organisation page.
-	 */
-	function view($organisation,$subpage='index')
+	/// Directory organisation page.
+	function view($organisation)
 	{
-		if($subpage=='events'||$subpage=='reviews'||$subpage=='members')
-		{
-			$subpageview='directory/directory_view_'.$subpage;
-		}
-		else
-		{
-			$subpageview='directory/directory_view';
-			$subpage = 'index';
-		}
+		$data = $this->_GetOrgData($organisation);
+		$subpageview='directory/directory_view';
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view($subpageview, $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	
+	/// Directory events page.
+	function events($organisation)
+	{
+		$data = $this->_GetOrgData($organisation);
+		$subpageview='directory/directory_view_events';
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view($subpageview, $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	
+	/// Directory reviews page.
+	function reviews($organisation)
+	{
+		$data = $this->_GetOrgData($organisation);
+		$subpageview='directory/directory_view_reviews';
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view($subpageview, $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	
+	/// Directory members page.
+	function members($organisation)
+	{
+		$data = $this->_GetOrgData($organisation);
+		$subpageview='directory/directory_view_members';
+		
+		// Set up the directory view
+		$directory_view = $this->frames->view($subpageview, $data);
+		
+		// Set up the public frame to use the directory view
+		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetContent($directory_view);
+		
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	
+	/// Temporary function get organisation data.
+	private function _GetOrgData($organisation)
+	{
 		$data = array(
 			'organisation' => array(
 				'shortname'   => 'theyorker',
@@ -124,16 +180,7 @@ class Yorkerdirectory extends Controller {
 				),
 			),
 		);
-		
-		// Set up the directory view
-		$directory_view = $this->frames->view($subpageview, $data);
-		
-		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle('Directory');
-		$this->frame_public->SetContent($directory_view);
-		
-		// Load the public frame view
-		$this->frame_public->Load();
+		return $data;
 	}
 }
 ?>
