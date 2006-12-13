@@ -9,6 +9,7 @@
 // Load the Frames library
 $CI = &get_instance();
 $CI->load->library('frames');
+$CI->load->library('academic_calendar');
 
 /// Abstract listings view class.
 /**
@@ -27,9 +28,9 @@ abstract class ViewListings extends FramesView
 	protected $mOccurrenceFilter;
 	
 	/// Academic_time Start time of view.
-	private $mStartTime;
+	protected $mStartTime;
 	/// Academic_time End time of view.
-	private $mEndTime;
+	protected $mEndTime;
 	
 	/// Primary constructor.
 	/**
