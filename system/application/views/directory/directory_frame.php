@@ -12,4 +12,5 @@
 </div>
 <h2><?php echo $organisation['name']; ?></h2>
 <?php $content[0]->Load(); ?>
+<div class="clear">&nbsp;</div>
 <a href='/directory/'>Back to the directory</a>

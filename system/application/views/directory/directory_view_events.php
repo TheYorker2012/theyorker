@@ -11,4 +11,3 @@
 </table>
 <br/>
 </div>
-<div class="clear">&nbsp;</div>

@@ -81,15 +81,22 @@ class Yorkerdirectory extends Controller {
 	/// Directory organisation page.
 	function view($organisation)
 	{
+		$this->load->library('frame_directory');
+		
 		$data = $this->_GetOrgData($organisation);
 		$subpageview='directory/directory_view';
 		
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 		
+		// Set up the directory frame to use the directory events view
+		$this->frame_directory->SetPage('');
+		$this->frame_directory->SetOrganisation($data['organisation']);
+		$this->frame_directory->SetContent($directory_view);
+		
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitle('Directory');
-		$this->frame_public->SetContent($directory_view);
+		$this->frame_public->SetContent($this->frame_directory);
 		
 		// Load the public frame view
 		$this->frame_public->Load();
@@ -98,9 +105,9 @@ class Yorkerdirectory extends Controller {
 	/// Directory events page.
 	function events($organisation)
 	{
+		$this->load->library('frame_directory');
 		$this->load->library('view_listings_select_week');
 		$this->load->library('view_listings_list');
-		$this->load->library('frame_directory');
 	
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
@@ -152,15 +159,22 @@ EXTRAHEAD;
 	/// Directory reviews page.
 	function reviews($organisation)
 	{
+		$this->load->library('frame_directory');
+		
 		$data = $this->_GetOrgData($organisation);
 		$subpageview='directory/directory_view_reviews';
 		
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 		
+		// Set up the directory frame to use the directory events view
+		$this->frame_directory->SetPage('reviews');
+		$this->frame_directory->SetOrganisation($data['organisation']);
+		$this->frame_directory->SetContent($directory_view);
+		
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitle('Directory');
-		$this->frame_public->SetContent($directory_view);
+		$this->frame_public->SetContent($this->frame_directory);
 		
 		// Load the public frame view
 		$this->frame_public->Load();
@@ -169,15 +183,22 @@ EXTRAHEAD;
 	/// Directory members page.
 	function members($organisation)
 	{
+		$this->load->library('frame_directory');
+		
 		$data = $this->_GetOrgData($organisation);
 		$subpageview='directory/directory_view_members';
 		
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 		
+		// Set up the directory frame to use the directory events view
+		$this->frame_directory->SetPage('members');
+		$this->frame_directory->SetOrganisation($data['organisation']);
+		$this->frame_directory->SetContent($directory_view);
+		
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitle('Directory');
-		$this->frame_public->SetContent($directory_view);
+		$this->frame_public->SetContent($this->frame_directory);
 		
 		// Load the public frame view
 		$this->frame_public->Load();

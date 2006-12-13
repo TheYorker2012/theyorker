@@ -1,12 +1,3 @@
-
-<div id='newsnav'>
-	<ul id='newsnavlist'>
-	<li><a href='/directory/fragsoc/'><img src='/images/prototype/news/uk.png' alt='About' title='About' />About</a></li>
-	<li><a href='/directory/fragsoc/events/'><img src='/images/prototype/news/feature.gif' alt='Events' title='Events' /> Events</a></li>
-	<li><a href='/directory/fragsoc/members/'><img src='/images/prototype/news/feature.gif' alt='Members' title='Members' /> Members</a></li>
-	<li><a href='/directory/fragsoc/reviews/' id='current'><img src='/images/prototype/news/feature.gif' alt='Reviews' title='Reviews' /> Reviews</a></li>
-	</ul>
-</div>
 <h2>Recent reviews:</h2>
 <div class="WhyNotTry">
 	<div class="ArticleColumn" style="width: 100%;">
@@ -62,5 +53,3 @@
 	</div>
 	Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. <br />
 </div>
-<div class="clear">&nbsp;</div>
-<a href='/directory/'>Back to the directory</a>
