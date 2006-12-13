@@ -25,8 +25,6 @@ class Listings extends Controller {
 		// Make use of the public frame
 		$this->load->library('frame_public');
 		$this->load->library('view_listings_days');
-		
-		$this->load->model('listings/events_model');
 	}
 	
 	/**
