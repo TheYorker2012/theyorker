@@ -67,12 +67,13 @@ class Frame_directory extends FramesFrame
 	}
 	
 	/**
-	 * @brief Set the organisation name.
-	 * @param $Name string Organisation name.
+	 * @brief Set the organisation data.
+	 * @param $OrganisationData array Organisation data with the following fields:
+	 *	- 'name'
 	 */
-	function SetOrganisation($Name)
+	function SetOrganisation($OrganisationData)
 	{
-		$this->SetData('organisation', array('name' => $Name));
+		$this->SetData('organisation', $OrganisationData);
 	}
 }
 
