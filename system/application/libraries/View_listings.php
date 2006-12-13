@@ -133,7 +133,9 @@ abstract class ViewListings extends FramesView
 			$day_info['is_holiday'    ] = $day_time->IsHoliday();
 			$day_info['is_weekend'    ] = $day_time->DayOfWeek() > 5;
 			$day_info['year'          ] = $day_time->AcademicYear();
-			$day_info['date_and_month'] = $day_time->Format('jS M');
+			$day_info['date'          ] = $day_time->Format('jS');
+			$day_info['month_short'   ] = $day_time->Format('M');
+			$day_info['month_long'   ] = $day_time->Format('F');
 			$day_info['day_of_week'   ] = $day_time->Format('l');
 			$day_info['academic_year' ] = $day_time->AcademicYearName(2);
 			$day_info['academic_term' ] = $day_time->AcademicTermName().' '.$day_time->AcademicTermTypeName();
