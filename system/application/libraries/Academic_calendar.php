@@ -151,7 +151,7 @@ class Academic_time
 	 */
 	function BackToMonday()
 	{
-		return $this->Midnight()->Adjust((-($this->mDayOfWeek)+1).'day');
+		return $this->Midnight()->Adjust((-($this->DayOfWeek())+1).'day');
 	}
 	
 	/**
