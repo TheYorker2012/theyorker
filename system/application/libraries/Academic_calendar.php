@@ -146,6 +146,15 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Create a time object set to midnight on monday (backwards).
+	 * @return academic_time Midnight of monday as the timestamp.
+	 */
+	function BackToMonday()
+	{
+		return $this->Midnight()->Adjust((-($this->mDayOfWeek)+1).'day');
+	}
+	
+	/**
 	 * @brief Format the timestamp using the php date function.
 	 * @param $Format Formatting string to use in the php date function.
 	 * @return The formatted time string.
