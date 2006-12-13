@@ -18,13 +18,18 @@ $CI->load->library('frames');
  *
  * Abstract base class of listings view.
  */
-class ViewListings extends FramesView
+abstract class ViewListings extends FramesView
 {
 	/// Whether to include special day headings.
 	protected $mIncludeSpecials;
 	
 	/// EventOccurrenceFilter Occurrence filter.
 	protected $mOccurrenceFilter;
+	
+	/// Academic_time Start time of view.
+	private $mStartTime;
+	/// Academic_time End time of view.
+	private $mEndTime;
 	
 	/// Primary constructor.
 	/**
@@ -76,12 +81,29 @@ class ViewListings extends FramesView
 		$this->mOccurrenceFilter = $Filter;
 	}
 	
-	/// Set the range to display and retrieve the relevent data.
+	/// Set the range to display (user function).
+	/**
+	 * @param $StartTime Academic_time Start time of calendar.
+	 * @param $Duration integer Number of time units to display.
+	 */
+	abstract function SetRange($StartTime, $Duration);
+	
+	/// Set the range to display (internal function).
 	/**
 	 * @param $StartTime Academic_time Start time of calendar.
 	 * @param $EndTime Academic_time End time of calendar.
 	 */
-	protected function SetRange($StartTime, $EndTime)
+	protected function _SetRange($StartTime, $EndTime)
+	{
+		$this->mStartTime = $StartTime;
+		$this->mEndTime = $EndTime;
+	}
+	
+	/// Retrieve the relevent data, ready for the view.
+	/**
+	 * @pre SetRange() must have already been called.
+	 */
+	function Retrieve()
 	{
 		$CI = &get_instance();
 	
@@ -91,7 +113,12 @@ class ViewListings extends FramesView
 		$CI->events_model->IncludeDayInformationSpecial($this->mIncludeSpecials);
 		$CI->events_model->IncludeOccurrences(TRUE);
 		$CI->events_model->SetOccurrenceFilter($this->mOccurrenceFilter);
-		$CI->events_model->Retrieve($StartTime, $EndTime);
+		$error = $CI->events_model->Retrieve($this->mStartTime, $this->mEndTime);
+		
+		if (FALSE === $error) {
+			throw new Exception('Events model retrieval failed');
+			//return FALSE;
+		}
 		
 		// Day information
 		$days_information = $CI->events_model->GetDayInformation();

@@ -83,7 +83,7 @@ class Listings extends Controller {
 		
 		// Invalid so just show the next week
 		$now = new Academic_time(time());
-		$monday = $now->Adjust('-'.($now->DayOfWeek()-1).'day')->Midnight();
+		$monday = $now->BackToMonday();
 		
 		$this->_ShowCalendar(
 				$monday, 7,
@@ -132,15 +132,19 @@ class Listings extends Controller {
 			<script src="/javascript/listings.js" type="text/javascript"></script>
 			<link href="/stylesheets/listings.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
-
-		$this->view_listings_days->SetPrevUrl($Presentation['prev']);
-		$this->view_listings_days->SetNextUrl($Presentation['next']);
-		$this->view_listings_days->SetDayRange($StartTime, $Days);
+		
+		// Set up the days view
+		$view_listings_days = new ViewListingsDays();
+		$view_listings_days->SetPrevUrl($Presentation['prev']);
+		$view_listings_days->SetNextUrl($Presentation['next']);
+		$view_listings_days->SetRange($StartTime, $Days);
+		// Get the data from the db, then we're ready to load
+		$view_listings_days->Retrieve();
 		
 		// Set up the public frame to use the listings view
 		$this->frame_public->SetTitle('Listing viewer prototype');
 		$this->frame_public->SetExtraHead($extra_head);
-		$this->frame_public->SetContent($this->view_listings_days);
+		$this->frame_public->SetContent($view_listings_days);
 		
 		// Load the public frame view
 		$this->frame_public->Load();
