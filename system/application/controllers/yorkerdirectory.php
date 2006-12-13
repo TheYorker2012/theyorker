@@ -98,15 +98,52 @@ class Yorkerdirectory extends Controller {
 	/// Directory events page.
 	function events($organisation)
 	{
+		$this->load->library('view_listings_select_week');
+		$this->load->library('view_listings_list');
+		$this->load->library('frame_directory');
+	
+		// Sorry about the clutter, this will be moved in a bit but it isn't
+		// practical to put it in the view
+		$extra_head = <<<EXTRAHEAD
+			<script src="/javascript/prototype.js" type="text/javascript"></script>
+			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+			<script src="/javascript/listings.js" type="text/javascript"></script>
+			<link href="/stylesheets/listings.css" rel="stylesheet" type="text/css" />
+EXTRAHEAD;
+	
 		$data = $this->_GetOrgData($organisation);
-		$subpageview='directory/directory_view_events';
 		
-		// Set up the directory view
-		$directory_view = $this->frames->view($subpageview, $data);
+		$monday = new Academic_time(time());
+		$monday = $monday->BackToMonday();
 		
-		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle('Directory');
-		$this->frame_public->SetContent($directory_view);
+		$selected_week = $monday;//->Adjust('1week');
+		
+		// Set up the week select view
+		$week_select = new ViewListingsSelectWeek();
+		$week_select->SetRange($monday, 10);
+		$week_select->SetSelectedWeek($selected_week);
+		$week_select->Retrieve();
+		
+		// Set up the events list
+		$events_list = new ViewListingsList();
+		$events_list->SetRange($selected_week, 7);
+		$events_list->Retrieve();
+		
+		// Set up the directory events view to contain the week select and
+		// events list
+		$directory_events = new FramesFrame('directory/directory_view_events',$data);
+		$directory_events->SetContent($week_select,'week_select');
+		$directory_events->SetContent($events_list,'events_list');
+		
+		// Set up the directory frame to use the directory events view
+		$this->frame_directory->SetPage('events');
+		$this->frame_directory->SetOrganisation($data['organisation']);
+		$this->frame_directory->SetContent($directory_events);
+		
+		// Set up the public frame to use the directory frame
+		$this->frame_public->SetTitle('Directory Events');
+		$this->frame_public->SetExtraHead($extra_head);
+		$this->frame_public->SetContent($this->frame_directory);
 		
 		// Load the public frame view
 		$this->frame_public->Load();
