@@ -152,6 +152,37 @@ class FramesFrame extends FramesView
 	}
 }
 
+/// An abstract frame which simply loads its content.
+/**
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ * The purpose is that a class can extend this class and choose which view class
+ *	to show dynamically.
+ */
+class FramesFrameEcho extends FramesFrame
+{
+	/// Default constructor.
+	function __construct()
+	{
+		parent::__construct('');
+	}
+	
+	/// Get the content.
+	/**
+	 * @return Reference to the content class.
+	 */
+	function &GetContent()
+	{
+		return $this->mDataArray['content'][0];
+	}
+	
+	/// Use code igniter to load the content view.
+	function Load()
+	{
+		$this->mDataArray['content'][0]->Load();
+	}
+}
+
 /// Frames library.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
