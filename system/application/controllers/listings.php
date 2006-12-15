@@ -20,8 +20,6 @@ class Listings extends Controller {
 		$this->load->library('date_uri');           // Nice date uri segments
 		$this->load->library('frame_public');       // Main public frame
 		$this->load->library('view_listings_days'); // Days listings view
-		
-		date_default_timezone_set(Academic_time::InternalTimezone());
 	}
 	
 	/**

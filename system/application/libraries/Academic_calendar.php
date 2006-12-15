@@ -13,11 +13,6 @@
  *
  * The Academic_calendar class is the main library which can be loaded by a controller.
  *
- * Academic calendaring calculations are performed in an internal timezone,
- *	(currently set to 'Europe/London'), externally however all dates are
- *	represented in the default timezone (see php date_default_timezone_get()).
- * This is mostly only significant because of the clocks changing in april and
- *	october.
  */
  
 /**
@@ -58,14 +53,6 @@ class Academic_time
 	 * @see GetAcademicYearData
 	 */
 	private static $sAcademicYears = array();
-	
-	/**
-	 * @brief Internal timezone for use in academic term calculation.
-	 *
-	 * E.g. when calculating day of term, uses day of year which depends on
-	 * timezone.
-	 */
-	private static $sInternalTimezone = 'Europe/London';
 	
 	/**
 	 * @brief Names of terms.
@@ -133,7 +120,7 @@ class Academic_time
 	 */
 	static function NewToday()
 	{
-		return new Academic_time(strtotime(date('d M Y',time())));
+		return new Academic_time(strtotime(date('d M Y')));
 	}
 	
 	/**
@@ -142,7 +129,7 @@ class Academic_time
 	 */
 	function Midnight()
 	{
-		return new Academic_time(strtotime(date('d M Y',$this->mTimestamp)));
+		return new Academic_time(strtotime($this->Format('d M Y')));
 	}
 	
 	/**
@@ -454,36 +441,6 @@ class Academic_time
 	
 	
 	// Static
-	/**
-	 * @brief Get the internal timezone.
-	 * @return The internal timezone in which academic calendar calculations are
-	 *	performed.
-	 */
-	static function InternalTimezone()
-	{
-		return self::$sInternalTimezone;
-	}
-	
-	/**
-	 * @brief Performs php strtotime as internal timezone.
-	 * @param $time The string to parse, according to the GNU Date Input
-	 *	Formats syntax.
-	 * @param $now The timestamp used to calculate the returned value.
-	 * @return Returns a timestamp on success, FALSE otherwise.
-	 * @see @link http://uk2.php.net/manual/en/function.strtotime.php
-	 */
-	static function InternalStrToTime($time, $now)
-	{
-		// Change to local timezone for this calculation
-		$prev_tz = date_default_timezone_get();
-		date_default_timezone_set(self::InternalTimezone());
-		
-		$result = strtotime($time,$now);
-		
-		// Reset timezone before returning
-		date_default_timezone_set($prev_tz);
-		return $result;
-	}
 	
 	/**
 	 * @brief Find the number of days between close timestamps.
@@ -496,9 +453,6 @@ class Academic_time
 	 */
 	static function DaysBetweenTimestamps($FirstTimestamp, $SecondTimestamp)
 	{
-		// Change to local timezone for this calculation
-		$prev_tz = date_default_timezone_get();
-		date_default_timezone_set(self::InternalTimezone());
 		// Find difference in day of year.
 		$day_of_year_of_first = (int)date('z',$FirstTimestamp);
 		$day_of_year_of_second = (int)date('z',$SecondTimestamp);
@@ -509,8 +463,6 @@ class Academic_time
 			// dif = dif + diy(1)
 			$difference += 365 + (int)date('L',$FirstTimestamp);
 		}
-		// Reset timezone before returning
-		date_default_timezone_set($prev_tz);
 		return $difference;
 	}
 	
@@ -713,8 +665,6 @@ class Academic_time
 					'term_start_day' => array(),
 					'term_monday_week1' => array(),
 					);
-			$prev_tz = date_default_timezone_get();
-			date_default_timezone_set(self::InternalTimezone());
 			// Hardwire the term dates:
 			if (2004 == $AcademicYear) {
 				$year_data['term_start'] = array(
@@ -768,7 +718,6 @@ class Academic_time
 			} else {
 				// The year in question is invalid
 				// (cause it ain't yet implemented)
-				date_default_timezone_set($prev_tz);
 				return FALSE;
 			}
 			// Calculate holiday start dates
@@ -787,7 +736,6 @@ class Academic_time
 						strtotime((-$year_data['term_start_day'][$term_counter]) . 'days',
 								  $year_data['term_start'][$term_counter]);
 			}
-			date_default_timezone_set($prev_tz);
 			// Cache the result
 			self::$sAcademicYears[$AcademicYear] = $year_data;
 			
@@ -817,7 +765,7 @@ class Academic_calendar {
 	 */
 	function __construct()
 	{
-		// Nothing to do yet
+		date_default_timezone_set('Europe/London');
 	}
 
 
@@ -841,8 +789,6 @@ class Academic_calendar {
 	 * @param $Second Second of minute.
 	 * @param $IsDst Is the time in daylight saving time.
 	 * @return Academic_time object set using php mktime function.
-	 *
-	 * @note Inputs are considered to be in the current default timezone.
 	 */
 	function Gregorian($Year,$Month,$Day,$Hour = 0,$Minute = 0,$Second = 0,$IsDst = -1)
 	{
@@ -859,14 +805,11 @@ class Academic_calendar {
 	 * @param $Minute Minute of the hour integer [0..59].
 	 * @param $Second Second of the minute integer [0..59].
 	 * @return Academic_time object set with academic term data.
-	 *
-	 * @note Inputs are considered to be in the internal timezone
-	 *	(as returned by Academic_time::InternalTimezone).
 	 */
 	function Academic($AcademicYear, $Term = 0, $Week = 1, $DayOfWeek = 1, $Hour = 0, $Minute = 0, $Second = 0)
 	{
 		$start_of_term = Academic_time::MondayWeek1OfAcademicTerm($AcademicYear, $Term);
-		return new Academic_time(Academic_time::InternalStrToTime(
+		return new Academic_time(strtotime(
 				($Week-1) . 'week' .
 				($DayOfWeek-1) . 'day' .
 				($Hour) . 'hour' .
@@ -883,14 +826,11 @@ class Academic_calendar {
 	 * @param $Minute Minute of the hour integer [0..59].
 	 * @param $Second Second of the minute integer [0..59].
 	 * @return Academic_time object set with academic term data.
-	 *
-	 * @note Inputs are considered to be in the internal timezone
-	 *	(as returned by Academic_time::InternalTimezone).
 	 */
 	function AcademicDayOfTerm($AcademicYear, $Term = 0, $DayOfTerm = 0, $Hour = 0, $Minute = 0, $Second = 0)
 	{
 		$monday_week1 = Academic_time::StartOfAcademicTerm($AcademicYear, $Term);
-		return new Academic_time(Academic_time::InternalStrToTime(
+		return new Academic_time(strtotime(
 				($DayOfTerm) . 'day' .
 				($Hour) . 'hour' .
 				($Minute) . 'min' .
