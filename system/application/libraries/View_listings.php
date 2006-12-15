@@ -10,6 +10,7 @@
 $CI = &get_instance();
 $CI->load->library('frames');
 $CI->load->library('academic_calendar');
+$CI->load->library('date_uri');
 
 /// Abstract listings view class.
 /**
@@ -32,6 +33,11 @@ abstract class ViewListings extends FramesView
 	/// Academic_time End time of view.
 	protected $mEndTime;
 	
+	/// URI format (see Date_uri)
+	protected $mUriFormat;
+	/// URI base address (with trailing slash)
+	protected $mUriBase;
+	
 	/// Primary constructor.
 	/**
 	 * @param $ViewPath string The path of a CI view.
@@ -42,31 +48,45 @@ abstract class ViewListings extends FramesView
 		parent::__construct($ViewPath, $Data);
 		
 		// Initialise data
-		$this->SetPrevUrl('');
-		$this->SetNextUrl('');
 		$this->IncludeSpecialHeadings(TRUE);
 		$this->SetOccurrenceFilter();
+		$this->mUriFormat = Date_uri::DefaultFormat();
+		$this->mUriBase = '';
 	}
 	
-	/// Set the url for the previous period of days.
+	/// Set the base uri on which to base links.
 	/**
-	 * @param $PrevUrl string URL of previous period of days.
+	 * @param $UriBase string URL of previous period of days.
 	 */
-	function SetPrevUrl($PrevUrl = '')
+	function SetUriBase($UriBase)
 	{
-		$this->SetData('prev', $PrevUrl);
+		$this->mUriBase = $UriBase;
 	}
 	
-	/// Set the URL for the next period of days.
+	/// Set the uri format.
 	/**
-	 * @param $NextUrl string URL of next period of days.
+	 * @param $Format string Formatting string as used by Date_uri.
 	 */
-	function SetNextUrl($NextUrl = '')
+	function SetUriFormat($Format)
 	{
-		$this->SetData('next', $NextUrl);
+		$this->mUriFormat = $Format;
 	}
 	
-	/// Set whether to display special headings.
+	/// Use date_uri to produce a valid uri for a date
+	/**
+	 * @param $Date Academic_time Time to encode in a URI.
+	 * @return string Full site url with encoded date.
+	 */
+	function GenerateUri($Date)
+	{
+		$CI = &get_instance();
+		return site_url($this->mUriBase . $CI->date_uri->GenerateUri($Date, $this->mUriFormat));
+	}
+	
+	/// Set whether to display special day headings.
+	/**
+	 * @param $Display bool Whether to display special day headings.
+	 */
 	function IncludeSpecialHeadings($Display)
 	{
 		$this->mIncludeSpecials = ($Display === TRUE);

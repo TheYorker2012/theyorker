@@ -85,7 +85,7 @@ class ViewListingsSelectWeek extends ViewListings
 		     $week->Timestamp() < $this->mEndTime->Timestamp();
 		     $week = $week->Adjust('1week')) {
 			$weeks[] = array(
-				'link' => 'unknown',
+				'link' => $this->GenerateUri($week),
 				'name' => 'Week '.$week->AcademicWeek(),
 				'events' => 0,
 				'select' => ($this->mSelectedWeek === $week->Timestamp()),

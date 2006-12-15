@@ -108,6 +108,7 @@ class Yorkerdirectory extends Controller {
 		$this->load->library('frame_directory');
 		$this->load->library('view_listings_select_week');
 		$this->load->library('view_listings_list');
+		$this->load->library('date_uri');
 	
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
@@ -120,19 +121,32 @@ EXTRAHEAD;
 	
 		$data = $this->_GetOrgData($organisation);
 		
+		$uri_result = $this->date_uri->ReadUri(4);
+		if ($uri_result['valid']) {
+			$base_time = $uri_result['date'];
+			$format = $uri_result['format'];
+		} else {
+			$base_time = new Academic_time(time());
+			$format = 'academic-multiple';
+		}
+		
 		$monday = new Academic_time(time());
 		$monday = $monday->BackToMonday();
 		
-		$selected_week = $monday;//->Adjust('1week');
+		$selected_week = $base_time->BackToMonday();
 		
 		// Set up the week select view
 		$week_select = new ViewListingsSelectWeek();
+		$week_select->SetUriBase('directory/'.$organisation.'/events/');
+		$week_select->SetUriFormat($format);
 		$week_select->SetRange($monday, 10);
 		$week_select->SetSelectedWeek($selected_week);
 		$week_select->Retrieve();
 		
 		// Set up the events list
 		$events_list = new ViewListingsList();
+		$events_list->SetUriBase('directory/'.$organisation.'/events/');
+		$events_list->SetUriFormat($format);
 		$events_list->SetRange($selected_week, 7);
 		$events_list->Retrieve();
 		

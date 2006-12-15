@@ -44,10 +44,16 @@ $CI->load->library('view_listings');
  */
 class ViewListingsDays extends ViewListings
 {
+	/// Number of days to display
+	private $mNumDays;
+	
 	/// Default constructor.
 	function __construct()
 	{
 		parent::__construct('listings/listings');
+		
+		$this->SetData('eventHandlerJS','');
+		$this->mNumDays = 7;
 	}
 	
 	/// Set the day range to display.
@@ -70,6 +76,7 @@ class ViewListingsDays extends ViewListings
 		// Don't trust users to set their clocks properly
 		$this->SetData('server_dt', time());
 		
+		$this->mNumDays = $NumDays;
 		
 		// Make sure that the time is rounded back to midnight
 		$StartTime = $StartTime->Midnight();
@@ -84,6 +91,19 @@ class ViewListingsDays extends ViewListings
 		
 		// Get the stuff from the db
 		$this->_SetRange($StartTime, $end_time);
+	}
+	
+	
+	/// Retrieve the relevent data, ready for the view.
+	/**
+	 * @pre SetRange() must have already been called.
+	 */
+	function Retrieve()
+	{
+		parent::Retrieve();
+		
+		$this->SetData('prev', $this->GenerateUri($this->mStartTime->Adjust((-$this->mNumDays).'day')));
+		$this->SetData('next', $this->GenerateUri($this->mEndTime));
 	}
 	
 }

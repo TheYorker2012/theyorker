@@ -14,17 +14,14 @@ class Listings extends Controller {
 	{
 		parent::Controller();
 		
-		// Used for processing the events
-		$this->load->library('event_manager');
-		
-		// Used for producing friendly date strings
-		$this->load->library('academic_calendar');
+		// Load libraries
+		$this->load->library('event_manager');      // Processing events
+		$this->load->library('academic_calendar');  // Using academic calendar
+		$this->load->library('date_uri');           // Nice date uri segments
+		$this->load->library('frame_public');       // Main public frame
+		$this->load->library('view_listings_days'); // Days listings view
 		
 		date_default_timezone_set(Academic_time::InternalTimezone());
-		
-		// Make use of the public frame
-		$this->load->library('frame_public');
-		$this->load->library('view_listings_days');
 	}
 	
 	/**
@@ -37,90 +34,50 @@ class Listings extends Controller {
 	
 	/**
 	 * @brief Show the calendar between certain dates.
-	 * @param $AcademicYear Academic year of week to show (e.g. 2006).
-	 * @param $AcademicTerm Academic term value
-	 *	(accepted by Academic_time::TranslateAcademicTermName):
-	 *	- Either an integer 0 <= @a $AcademicTerm < 6.
-	 *	- Or a string such as 'au', 'xmas', 'spring.
-	 * @param $AcademicWeek Academic week of week to show.
+	 *
+	 * Will look for a date in the uri using Date_uri.
 	 */
-	function week($AcademicYear = false, $AcademicTerm = 0, $AcademicWeek = 1)
+	function week()
 	{
-		/// @todo Generalise parameters for calendars into a function so that the same style of arguments can be used from multiple controllers (including _GenerateWeekUri()).
+		// Read the uri
+		$uri_result = $this->date_uri->ReadUri(3);
 		
-		// Translate the term name
-		$AcademicTerm = Academic_time::TranslateAcademicTermName($AcademicTerm);
+		if ($uri_result['valid']) {
+			// Valid
+			$base_time = $uri_result['date'];
+			$format = $uri_result['format'];
+			
+			$monday = $base_time->BackToMonday();
+			
+			$this->_ShowCalendar(
+					$monday, 7,
+					'listings/week/', $format
+				);
+			return;
+			
+		} else {
+			// Invalid
+			$format = 'academic-multiple';
+			$base_time = new Academic_time(time());
+			
+			$monday = $base_time->BackToMonday();
 		
-		// Check the parameters are valid integers
-		if (is_numeric($AcademicYear) &&
-			is_numeric($AcademicTerm) &&
-			is_numeric($AcademicWeek)) {
-			
-			$AcademicYear = (int)$AcademicYear;
-			$AcademicTerm = (int)$AcademicTerm;
-			$AcademicWeek = (int)$AcademicWeek;
-			
-			if ($AcademicYear >= 2004 &&
-				$AcademicTerm >= 0) {
-				
-				// And check that the term in question exists
-				if (Academic_time::ValidateAcademicTerm($AcademicYear, $AcademicTerm)) {
-					// Slow the week specified
-					$start_date = $this->academic_calendar->Academic(
-							$AcademicYear,
-							$AcademicTerm,
-							$AcademicWeek);
-					
-					$this->_ShowCalendar(
-							$start_date, 7,
-							$this->_GenerateWeekPresentation($start_date));
-					return;
-				}
-			}
+			$this->_ShowCalendar(
+					$monday, 7,
+					'listings/week/', $format
+				);
 		}
-		
-		// Invalid so just show the next week
-		$now = new Academic_time(time());
-		$monday = $now->BackToMonday();
-		
-		$this->_ShowCalendar(
-				$monday, 7,
-				$this->_GenerateWeekPresentation($monday));
-	}
-	
-	/**
-	 * @brief Generate a URI path for a week view of a Academic_time.
-	 * @param Academic_time $Start.
-	 * @return Something in the format "listings/week/$year/$term/$week"
-	 */
-	function _GenerateWeekUri($Start)
-	{
-		/// @todo compensate if not in a valid academic term.
-		return '/listings/week/' . $Start->AcademicYear() .
-				'/' . $Start->AcademicTermNameUnique() .
-				'/' . $Start->AcademicWeek();
-	}
-	
-	/**
-	 * @brief Generate a presentation array for a week display.
-	 * @param Academic_time $Start.
-	 * @return Presentation array:
-	 *	- 'prev': e.g. listings/week/2006/xmas/2
-	 *	- 'next': e.g. listings/week/2006/autumn/10
-	 */
-	function _GenerateWeekPresentation($Start)
-	{
-		/// @todo compensate if not in a valid academic term.
-		return array(
-				'prev' => $this->_GenerateWeekUri($Start->Adjust('-1week')),
-				'next' => $this->_GenerateWeekUri($Start->Adjust('+1week')),
-			);
 	}
 	
 	/**
 	 * @brief Show the calendar between certain Academic_times.
+	 * @param $StartTime Academic_time Start date.
+	 * @param $Days integer Number of days to display.
+	 * @param $UriBase string The base of the uri on which to build links,
+	 *	e.g. 'listings/week/'
+	 * @param $UriFormat string Uri date format identifier as used in Date_uri.
 	 */
-	function _ShowCalendar($StartTime, $Days, $Presentation)
+	function _ShowCalendar($StartTime, $Days, $UriBase, $UriFormat)
 	{
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
@@ -133,8 +90,8 @@ EXTRAHEAD;
 		
 		// Set up the days view
 		$view_listings_days = new ViewListingsDays();
-		$view_listings_days->SetPrevUrl($Presentation['prev']);
-		$view_listings_days->SetNextUrl($Presentation['next']);
+		$view_listings_days->SetUriBase($UriBase);
+		$view_listings_days->SetUriFormat($UriFormat);
 		$view_listings_days->SetRange($StartTime, $Days);
 		// Get the data from the db, then we're ready to load
 		$view_listings_days->Retrieve();
