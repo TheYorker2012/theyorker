@@ -1,4 +1,4 @@
-<table width="630" style="border-width: 1; border-style:solid; border-color: #06a5cd;">
+<TABLE width="630" style="border-width: 1; border-style:solid; border-color: #06a5cd;">
 	<TR>
 		<TD width="130"> %%starttime%% - %%endtime%% </TD>
 		<TD width="296"><b>%%name%%</b> </TD>
@@ -27,7 +27,7 @@
 	</TR>
 </TABLE>
 <DIV id="event%%arrid%%" style="display: none;">
-	<table width="630" height="100" style="border-width: 1; border-top-width: 0; border-style: dashed;  border-color: #06a5cd;">
+	<TABLE width="630" height="100" style="border-width: 1; border-top-width: 0; border-style: dashed;  border-color: #06a5cd;">
 		<TR>
 			<TD valign="top">%%blurb%%</TD>
 		</TR>
