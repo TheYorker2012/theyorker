@@ -16,7 +16,7 @@
 		</p>
 		<p class='Date'>5th December 2006</p>
 		<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
-        <p>
+	        <p>
 			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
 			elementum arcu non risus. Vestibulum arcu enim, placerat nec,
 			malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
@@ -25,59 +25,66 @@
 			non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed
 			sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
 		</p>
-		<br style='clear: both;'/>
 	</div>
+	<div class="HalfBox">
+		<div class='LifestylePuffer' style='background-color: #04669c; width: 350px;'>
+			<a href='/news/article/1'>
+			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
+	 	    <h3>Awesome Food</h3>
+			<p>This guy is happy becuase he has visited our top ten best all time foods places</p>
+			</a>
+		</div>
+		<div class='LifestylePuffer' style='background-color: #a38b69; width: 350px;'>
+			<a href='/news/article/1'>
+			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
+	 	    <h3>Desert</h3>
+			<p>We've been all around York trying chocolate cakes, see what we have to say about them all!</p>
+			</a>
+		</div>
+		<div class='LifestylePuffer' style='background-color: #000000; width: 350px;'>
+			<a href='/news/article/1'>
+			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
+	 	    <h3>Lbs of Meat!</h3>
+			<p>Want an all you can eat? Be sure to head on over to our ten best all you can eats.</p>
+			</a>
+		</div>
+		<div class='LifestylePuffer' style='background-color: #ef7f94; width: 350px;'>
+			<a href='/news/article/1'>
+			<img src='/images/prototype/news/puffer4.jpg' alt='Love' title='Love' />
+	 	    <h3>Romance</h3>
+			<p>Want some more romance in your life? View our special hand picked list of the ten best places for romance.</p>
+			</a>
+		</div>
+		<div class='LifestylePuffer' style='background-color: #000000; width: 350px;'>
+			<a href='/news/article/1'>
+			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
+	 	    <h3>Beefcake</h3>
+			<p>I tried this once and became a lard. Lots and lots of lard</p>
+			</a>
+		</div>	
+	</div>
+	<div class="HalfRightBorder">
+		Click on the links below to get a list of all resturants that fits the category.<hr>
+		<div class="HalfBox">
+			<h3>Food Type</h3><br /><br />
+			Italian<br />
+			Indian<br />
+			Pub<br />
+			Rape<br />
+			Thai<br />
+			Chinese<br /><br />
+		</div>
+		<div class="HalfBox2" style="width: 40%;">
+			<h3>Price</h3><br /><br />
+			Dirt Cheap<br />
+			Super Cheap<br />
+			Kinda Cheap<br />
+			Meh<br />
+			Mega Expensive<br />
+		</div>
+	</div>
+	&lt;&lt;&lt;
+	What do you think? Big puffers or 2 small ones side by side?
 
-<div id="ReviewSetBlock">
-	<div class="FoodSet"><h3>The Best for Italian</h3>
-		<ul>
-			<li> <a href="/review/foodreview">The Blue Bicycle</a>
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-		</ul>
-	</div>
-	<div class="FoodSet"><h3>The Best for Indian</h3>
-		<ul>
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-		</ul>
-	</div>
-	<div class="FoodSet"><h3>The Best for Take Away</h3>
-		<ul>
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-		</ul>
-	</div>
-	<div class="FoodSet"><h3>The Best for Pie</h3>
-		<ul>
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-		</ul>
-	</div>
-	<div class="FoodSet"><h3>Top View Rated</h3>
-		<ul>
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-			<li> Fat
-		</ul>
-	</div>
 <div class="clear">&nbsp;</div>
 </div>

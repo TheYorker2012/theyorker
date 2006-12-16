@@ -127,39 +127,11 @@ div.CollegeLeagues {
 /*Why not try boxes on reviews*/
 div.WhyNotTry {
 	text-align: left;
-	float: center;
 	border-color: #2dc6d7;
 	border-style: solid;
 	border-width: thin;
 	margin: 10px;
 	padding: 3px;
-}
-
-#feature {
-	width: 90%;
-	border: medium solid;
-	margin: 1em;
-	padding: 1em;
-	border-color: #2dc6d7;
-}
-
-div.featureHeading {
-	width: 100%;
-	float:left;
-}
-
-div.featureTitle {
-	float: left;
-	width: 50%;
-}
-
-div.featureArticle {
-	text-align: left;
-	float: left;
-}
-
-div.featureArticle img {
-	float: right;
 }
 
 div.ReviewInfoLeft {
@@ -303,16 +275,29 @@ div.ContainerHalf{
 div.HalfBox {
 	float: left;
 	width:48%;
-	//width: 50%;
+	/*width: 50%;*/
 	padding: 5px;
 }
 
 div.HalfBox2 {
 	float: right;
-	width:48%;
+	width: 48%;
 	padding: 5px;
 }
 
+div.HalfRightBorder {
+	border-color: #2dc6d7;
+	border-width: thin;
+	border-style: solid;
+	margin-right: 10px;
+	padding: 5px;
+	float: right;
+	width: 45%;
+}
+/* If anyone hates this please feel free to delete */
+div.HalfRightBorder h3 {
+	display: inline;
+}
 
 div.ThirdBox {
 	float: left;
@@ -322,7 +307,7 @@ div.ThirdBox {
 div.QuaterBox { 
 	float: left;
 	width:24%;
-	//width: 25%;
+	/*width: 25%;*/
 	padding: 5px;
 }
 div.breaker {
