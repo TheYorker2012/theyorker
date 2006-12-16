@@ -8,7 +8,8 @@
 		</ul>
 	</div>
 	<div class="ReviewInfoLeft">
-		<h1 class="reviewHeader">The Blue Bicycle</h1><br /><br />
+		<h1 class="reviewHeader">The Blue Bicycle</h1><br />
+		also does <a href="#">&gt;Food</a>&nbsp;&nbsp;<a href="#">&gt;Drink</a><br />
 		<img src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" /><br />
 		<span class="ReviewSubLine"><img src="/images/prototype/news/quote_open.png" alt="''">An unholy resturant which defies the laws the gravity and other such stuffs<img src="/images/prototype/news/quote_close.png" alt="''"></span><br />
 		<table class="ReviewDetails">
@@ -31,6 +32,10 @@
 			<tr>
 				<td class="ReviewDetailsTitle">Email</td>
 				<td><a href=#>bob@thebluebicycle.co.uk</a></td>
+			</tr>
+			<tr>
+				<td class="ReviewDetailsTitle">Book Online</td>
+				<td><a href=#>Click Here/Not Available</a></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Telephone</td>
@@ -59,6 +64,57 @@
 				<td colspan="2"><hr /></td>
 			</tr>
 		</table>
+		<div class="YourComments">
+			<h2>Your Comments</h2>
+		</div>
+		<div class="RateReview">
+			Rate this: 
+			<select name="Rating">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+			<input type="Submit" value="Vote" />			
+		</div>
+		<div class="AverageRating">
+			Average Rating: <span class="AverageRatingSpan">5.7</span>/10<br /><span class="SmallSpanText">(based on 16 votes)</span>
+		</div>
+		<div class="WhyNotTry">
+			<b>Serious Girl-san</b> | 16:09 12/12/07<br />
+			Score: 9<br />
+			This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.
+		</div>
+		<div class="WhyNotTry">
+			<b>Becky DoomFace</b> | 14:56 12/12/07<br />
+			Score: 4<br />
+			Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!
+		</div>
+		<div class="WhyNotTry">
+			<b>Teddy BranVan</b> | 14:51 12/12/07<br />
+			Score: 5<br />
+			I thought it sucked<br /><br />
+		</div>
+		<div>
+		<div class="MakeComment">
+			<a href=#>Review this Place</a><br />
+		</div>
+		<div class="AverageRating">
+			<a href=#>View All Comments</a><br />
+		</div>
+		</div>
+	</div>
+
+
+	<div class="ReviewInfoLeft">
+		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/reviews_07.jpg" /></div><br />
+		The Blue Bicycle was founded in 1953 by the roman empire. They discovered a large patch of land covered in blue objects, at the time they did not know of what these objects were. It wasn't until the late 90's that the romans realised these framed objects with strange spherical rubbery things were infact bicycles. Blue bicycles. This was a shock to the romans so they built a time machine and erased history using the time machine built by the great roman god Dudeadeus. This is probably why no one knows what I am talking about.<br /><br /> 
 		<div class="YourComments">
 			<h2>Author Reviews</h2>
 		</div>
@@ -115,56 +171,5 @@
 				</div>
 			</div>
 			Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. <br />
-		</div>
-	</div>
-
-
-	<div class="ReviewInfoLeft">
-		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/reviews_07.jpg" /></div><br />
-		The Blue Bicycle was founded in 1953 by the roman empire. They discovered a large patch of land covered in blue objects, at the time they did not know of what these objects were. It wasn't until the late 90's that the romans realised these framed objects with strange spherical rubbery things were infact bicycles. Blue bicycles. This was a shock to the romans so they built a time machine and erased history using the time machine built by the great roman god Dudeadeus. This is probably why no one knows what I am talking about.<br /><br /> 
-		<div class="YourComments">
-			<h2>Your Comments</h2>
-		</div>
-		<div class="RateReview">
-			Rate this: 
-			<select name="Rating">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-			</select>
-			<input type="Submit" value="Vote" />			
-		</div>
-		<div class="AverageRating">
-			Average Rating: <span class="AverageRatingSpan">5.7</span>/10<br /><span class="SmallSpanText">(based on 16 votes)</span>
-		</div>
-		<div class="WhyNotTry">
-			<b>Serious Girl-san</b> | 16:09 12/12/07<br />
-			Score: 9<br />
-			This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.
-		</div>
-		<div class="WhyNotTry">
-			<b>Becky DoomFace</b> | 14:56 12/12/07<br />
-			Score: 4<br />
-			Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!
-		</div>
-		<div class="WhyNotTry">
-			<b>Teddy BranVan</b> | 14:51 12/12/07<br />
-			Score: 5<br />
-			I thought it sucked<br /><br />
-		</div>
-		<div>
-		<div class="MakeComment">
-			<a href=#>Review this Place</a><br />
-		</div>
-		<div class="AverageRating">
-			<a href=#>View All Comments</a><br />
-		</div>
 		</div>
 	</div>

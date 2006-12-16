@@ -208,7 +208,8 @@
 		</ul>
 	</div>
 	<div class="ReviewInfoLeft">
-		<h1 class="reviewHeader">Getting Wasted</h1><br /><br />
+		<h1 class="reviewHeader">Getting Wasted</h1><br />
+		also does: <a href="#">&gt;Food</a><br />
 		<img src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" /><br />
 		<span class="ReviewSubLine"><img src="/images/prototype/news/quote_open.png" alt="''">Personally I think it is the best thing since sliced bread<img src="/images/prototype/news/quote_close.png" alt="''"></span><br />
 		<table class="ReviewDetails">
@@ -231,6 +232,10 @@
 			<tr>
 				<td class="ReviewDetailsTitle">Email</td>
 				<td><a href=#>bob@thebluebicycle.co.uk</a></td>
+			</tr>
+			<tr>
+				<td class="ReviewDetailsTitle">Book Online</td>
+				<td>Not Available</td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Telephone</td>
@@ -259,6 +264,58 @@
 				<td colspan="2"><hr /></td>
 			</tr>
 		</table>
+		<div class="YourComments">
+			<h2>Your Comments</h2>
+		</div>
+		<div class="RateReview">
+			Rate this: 
+			<select name="Rating">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+			<input type="Submit" value="Vote" />			
+		</div>
+		<div class="AverageRating">
+			Average Rating: <span class="AverageRatingSpan">5.7</span>/10<br /><span class="SmallSpanText">(based on 16 votes)</span>
+		</div>
+		<div class="WhyNotTry">
+			<b>Serious Girl-san</b> | 16:09 12/12/07<br />
+			Score: 9<br />
+			This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.
+		</div>
+		<div class="WhyNotTry">
+			<b>Becky DoomFace</b> | 14:56 12/12/07<br />
+			Score: 4<br />
+			Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!
+		</div>
+		<div class="WhyNotTry">
+			<b>Teddy BranVan</b> | 14:51 12/12/07<br />
+			Score: 5<br />
+			I thought it sucked<br /><br />
+		</div>
+		<div>
+		<div class="MakeComment">
+			<a href=#>Review this Place</a><br />
+		</div>
+		<div class="AverageRating">
+			<a href=#>View All Comments</a><br />
+		</div>
+		</div>
+
+	</div>
+
+
+	<div class="ReviewInfoLeft">
+		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/review_thumb_1.jpg" /></div><br />
+		We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition..<br /><br /> 
 		<div class="YourComments">
 			<h2>Author Reviews</h2>
 		</div>
@@ -315,57 +372,6 @@
 				</div>
 			</div>
 			Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. <br />
-		</div>
-	</div>
-
-
-	<div class="ReviewInfoLeft">
-		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/review_thumb_1.jpg" /></div><br />
-		We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition. We are building a religion, we are building it bigger. We are widening the corridoors and adding more lanes. We are building a religion, unlimited edition..<br /><br /> 
-		<div class="YourComments">
-			<h2>Your Comments</h2>
-		</div>
-		<div class="RateReview">
-			Rate this: 
-			<select name="Rating">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-			</select>
-			<input type="Submit" value="Vote" />			
-		</div>
-		<div class="AverageRating">
-			Average Rating: <span class="AverageRatingSpan">5.7</span>/10<br /><span class="SmallSpanText">(based on 16 votes)</span>
-		</div>
-		<div class="WhyNotTry">
-			<b>Serious Girl-san</b> | 16:09 12/12/07<br />
-			Score: 9<br />
-			This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.
-		</div>
-		<div class="WhyNotTry">
-			<b>Becky DoomFace</b> | 14:56 12/12/07<br />
-			Score: 4<br />
-			Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!
-		</div>
-		<div class="WhyNotTry">
-			<b>Teddy BranVan</b> | 14:51 12/12/07<br />
-			Score: 5<br />
-			I thought it sucked<br /><br />
-		</div>
-		<div>
-		<div class="MakeComment">
-			<a href=#>Review this Place</a><br />
-		</div>
-		<div class="AverageRating">
-			<a href=#>View All Comments</a><br />
-		</div>
 		</div>
 	</div>
 

@@ -49,12 +49,12 @@ img {
 }
 /* gives the 5px padding around simple pages */
 .padding {
-  padding: 5px;
+	padding: 5px;
 }
 /* removes link styling*/
 .nolinkstyle {
-  text-decorations: none;
-  color: #000000;
+	text-decoration: : none;
+	color: #000000;
 }
 
 
@@ -67,28 +67,30 @@ div.ReviewCatetory {
 	width: 100%;
 }
 
-div.ReviewCategoryImg {
+div.ReviewCatetory2 {
+	padding: 5px;
+	width: 100%;
+	text-align: right;
+}
+
+div.ReviewCategoryLeft {
 	float: left;
+	margin-right: 0.5em;
 }
 
-div.ReviewCategoryImgAlt {
-	padding-left: 5px;
+div.ReviewCategoryRight {
 	float: right;
+	margin-left: 0.5em;
+	text-align: left;
 }
 
-div.ReviewCategoryText h3 {
-	display: inline;
+div.ReviewCategoryText {
+	padding-top: 0.5em;
 }
 
-div.ReviewCategoryText img {
-	padding-bottom: 3px;
-}
-
-div.ReviewCategoryTextAlt {
-}
-
-div.ReviewCategoryTextAlt h3 {
-	display: inline;
+div.ReviewCategoryText2 {
+	padding-top: 0.5em;
+	text-align: left;
 }
 
 #ReviewTitle {

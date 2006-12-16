@@ -46,36 +46,36 @@
 </div>
 <div class='ArticleColumn' style='width: 50%;'>
 	<div class="ReviewCatetory">
-		<div class="ReviewCategoryImg">
-			<a href="/review/food/"><img src="/images/prototype/reviews/review_category_1.png" alt="Food Image" title="Food" /></a><br />
-			<a href="/atoz/directory">&gt;Food A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top For Food</a>
+		<a href="/review/food/"><img src="/images/prototype/reviews/review_food_cat_top.png" alt="Food Reviews" title="Check out our food reviews" /></a>
+		<div class="ReviewCategoryLeft">
+			<a href="/review/food/"><img src="/images/prototype/reviews/review_food_cat_bottom.png" alt="Food Image" title="Food" /></a><br />
+			<a href="/atoz/directory">&gt;Food A-Z</a>&nbsp;<a href="/atoz/directory/">&gt;Top For Food</a>
 		</div>
 		<div class="ReviewCategoryText">
-			<a href="/review/food/"><img src="/images/prototype/reviews/review_category_2.png" alt="Food Image" title="Food" /></a><br />
-			View our selection of reviews about food venues. See the top 5 places to eat, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
+			View our selection of reviews about food venues. See the top 5 places to eat, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york. You can also buy comedians and their mothers from this place too.
 		</div>
 	</div>
 	<div class="Clear">&nbsp;</div>
-	<div class="ReviewCatetory">
-		<div class="ReviewCategoryImgAlt">
-			<a href="/review/drink/"><img src="/images/prototype/news/thumb1.jpg" alt="Drink Image" title="Drink" /></a><br />
-			<a href="/atoz/directory">&gt;Drink A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Top Places to Drink</a>
+	<div class="ReviewCatetory2">
+		<a href="/review/drink/"><img src="/images/prototype/reviews/review_drink_cat_top.png" alt="Drink Reviews" title="Check out our drink reviews" /></a>
+		<div class="ReviewCategoryRight">
+			<a href="/review/drink/"><img src="/images/prototype/reviews/review_drink_cat_bottom.png" alt="Drink Image" title="Drink" /></a><br />
+			<a href="/atoz/directory">&gt;Drink A-Z</a>&nbsp;<a href="/atoz/directory/">&gt;Top Places to Drink</a>
 		</div>
-		<div class="ReviewCategoryTextAlt">
-			<a href="/review/drink/"><h3>Drink</h3><br /></a>
+		<div class="ReviewCategoryText2">
 			View our selection of reviews at drink venues. See the top 5 places to get pissed, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
 		</div>
 		<br />
 	</div>
 	<div class="Clear">&nbsp;</div>
 	<div class="ReviewCatetory">
-		<div class="ReviewCategoryImg">
-			<a href="/review/cultured/"><img src="/images/prototype/news/thumb1.jpg" alt="Culture Image" title="Culture" /></a><br />
-			<a href="/atoz/directory">&gt;Culture A-Z</a>&nbsp;&nbsp;&nbsp;<a href="/atoz/directory/">&gt;Best to Go</a>
+		<a href="/review/culture/"><img src="/images/prototype/reviews/review_culture_cat_top.png" alt="Culture Reviews" title="Check out our culture reviews" /></a>
+		<div class="ReviewCategoryLeft">
+			<a href="/review/culture/"><img src="/images/prototype/reviews/review_culture_cat_bottom.png" alt="Culture Image" title="Culture" /></a><br />
+			<a href="/atoz/directory">&gt;Culture A-Z</a>&nbsp;<a href="/atoz/directory/">&gt;Best to Go</a>
 		</div>
 		<div class="ReviewCategoryText">
-			<a href="/review/culture/"><h3>Culture</h3><br /></a>
-			View our selection of reviews on cultural places. See the top 5 places to do stuff, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york.
+			View our selection of reviews on cultural places. See the top 5 places to do stuff, plus various other features. Read our author reviews plus check out what other people have to say. Choose from a selection of over 2 million resturants in york. If you want to get pissed or just have a nice snowboard, check this place out.
 		</div>
 	</div>
 	<div class="Clear">&nbsp;</div>
