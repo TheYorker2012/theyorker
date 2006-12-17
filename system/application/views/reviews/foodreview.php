@@ -1,9 +1,9 @@
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='/review/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-		<li><a href='/review/food/' id='current'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-		<li><a href='/review/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-		<li><a href='/review/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
+		<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
+		<li><a href='/reviews/food/' id='current'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
+		<li><a href='/reviews/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
+		<li><a href='/reviews/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
 		<li><a href='/atoz/directory/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
 		</ul>
 	</div>

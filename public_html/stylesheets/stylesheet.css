@@ -204,8 +204,16 @@ span.AverageRatingSpan {
 	color: #ff6a00;
 }
 
-span.SmallSpanText {
+span.XSmallText {
 	font-size: x-small;
+}
+
+span.SmallText {
+	font-size: small;
+}
+
+span.FaintText {
+	color: #666666;
 }
 
 div.YourComments {
@@ -216,6 +224,55 @@ div.YourComments {
 
 div.YourComments h2 {
 	display: inline;
+}
+
+table.ReviewList {
+	width: 100%;
+	font-size: small;
+	border-collapse: collapse;
+}
+
+table.ReviewList tr td img {
+	float: left;
+	padding: 3px;
+}
+
+table.ReviewList tr td h3 {
+	display: inline;
+}
+
+table.ReviewList tr td {
+	padding: 5px;
+	border-right: thin solid;
+	border-left: thin solid;
+	border-color: #08C0EF;
+}
+
+tr.ReviewListTop td {
+	border-bottom: thin solid;
+	border-top: thin solid;
+}
+
+tr.ReviewListTop td a {
+	font-weight: bold;
+	color: #333333;
+}
+
+tr.ReviewElement1 td {
+	background-color: #FDFDFD;
+}
+
+tr.ReviewElement2 td {
+	background-color: #EEEEEE;
+}
+
+tr.ReviewElementEnd td {
+	border-top: thin solid;
+	border-bottom: thin solid;
+}
+
+span.SortedBy {
+	text-decoration: underline;
 }
 
 /**
@@ -272,6 +329,12 @@ div.Container{
 div.ContainerHalf{
 	width:50%;
 }
+div.WholeContainer{
+	/*Width=PageWidth - 10px*/
+	width: 760px;
+	padding: 5px;
+	margin: 5px;
+}
 div.HalfBox {
 	float: left;
 	width:48%;
@@ -293,10 +356,6 @@ div.HalfRightBorder {
 	padding: 5px;
 	float: right;
 	width: 45%;
-}
-/* If anyone hates this please feel free to delete */
-div.HalfRightBorder h3 {
-	display: inline;
 }
 
 div.ThirdBox {

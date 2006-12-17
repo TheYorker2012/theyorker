@@ -2,7 +2,7 @@
 	<div class="ReviewInfoLeft">
 	<h1 class="reviewHeader">The Great Piss Up</h1><br />
 		<a href="culture">&lt;Back to Culture</a><br />
-		<a href="/review">&lt;Back to Reviews</a><br />
+		<a href="/reviews">&lt;Back to Reviews</a><br />
 	</div>
 	<div class="ReviewInfoRight">
 		<br />5 SKULLS!

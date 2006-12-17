@@ -1,10 +1,10 @@
 <div id='newsnav'>
 	<ul id='newsnavlist'>
-	<li><a href='/review/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-	<li><a href='/review/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-	<li><a href='/review/drink/' id='current'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-	<li><a href='/review/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
-	<li><a href='/atoz/directory/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
+	<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
+	<li><a href='/reviews/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
+	<li><a href='/reviews/drink/' id='current'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
+	<li><a href='/reviews/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
+	<li><a href='/reviews/table/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
 	</ul>
 </div>
 
@@ -66,7 +66,7 @@
 	<div class="HalfRightBorder">
 		Click on the links below to get a list of all resturants that fits the category.<hr>
 		<div class="HalfBox1" style="padding: 5px;">
-			<h3>Price</h3><br /><br />
+			<h3 style="display: inline;">Price</h3><br /><br />
 			Dirt Cheap<br />
 			Super Cheap<br />
 			Kinda Cheap<br />

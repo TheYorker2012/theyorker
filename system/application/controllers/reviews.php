@@ -1,11 +1,11 @@
 <?php
 // Review Controller by Frank Burton
 
-class Review extends Controller {
+class Reviews extends Controller {
 
 	//Page Constructor
 	//Loads each time page is called
-	function Review()
+	function Reviews()
 	{
 		//Needed for code igniter to work
 		parent::Controller();
@@ -19,8 +19,7 @@ class Review extends Controller {
 		$this->load->library('frame_public');
 	}
 
-
-	//Normal Call to Page i.e. http://real.theyorker.co.uk/review
+	//Normal Call to Page i.e. http://real.theyorker.co.uk/reviews
 	//Therefore load up review content page
 	function index()
 	{
@@ -44,9 +43,9 @@ class Review extends Controller {
 		
 		//Links to the other pages / functions provided by review
 		//Second thoughts these are static
-//		$data['food_link'] = base_url('review/food');
-//		$data['drink_link'] = base_url('review/drink');
-//		$data['culture_link'] = base_url('review/culture');
+//		$data['food_link'] = base_url('reviews/food');
+//		$data['drink_link'] = base_url('reviews/drink');
+//		$data['culture_link'] = base_url('reviews/culture');
 		
 		$data['food_text'] = 'Food. This links to the food section of the website.
 								yuummmm........ Pizza and Food';
@@ -111,7 +110,14 @@ class Review extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
-	
+
+	function table()
+	{
+		$this->frame_public->SetTitle('Food');
+		$this->frame_public->SetContentSimple('reviews/table');
+		$this->frame_public->Load();
+	}
+
 	//Drink Link
 	function drink()
 	{

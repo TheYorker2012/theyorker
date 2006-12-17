@@ -3,7 +3,7 @@
 	<div class="ReviewInfoLeft">
 	<h1 class="reviewHeader">Getting Wasted</h1><br />
 		<a href="culture">&lt;Back to Culture</a><br />
-		<a href="/review">&lt;Back to Reviews</a><br />
+		<a href="/reviews">&lt;Back to Reviews</a><br />
 	</div>
 	<div class="ReviewInfoRight">
 		<br />3 Stars
@@ -13,10 +13,10 @@
 		<img alt="Wasted Man" src="/images/prototype/reviews/reviews_07.jpg" /><br />
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='/review/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-		<li><a href='/review/food/' id='current'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-		<li><a href='/review/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-		<li><a href='/review/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
+		<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
+		<li><a href='/reviews/food/' id='current'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
+		<li><a href='/reviews/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
+		<li><a href='/reviews/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
 		<li><a href='/atoz/directory/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
 		</ul>
 	</div>
@@ -200,10 +200,10 @@
 
 	<div id='newsnav'>
 		<ul id='newsnavlist'>
-		<li><a href='/review/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-		<li><a href='/review/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-		<li><a href='/review/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-		<li><a href='/review/culture/' id='current'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
+		<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
+		<li><a href='/reviews/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
+		<li><a href='/reviews/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
+		<li><a href='/reviews/culture/' id='current'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
 		<li><a href='/atoz/directory/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
 		</ul>
 	</div>
