@@ -111,13 +111,6 @@ class Reviews extends Controller {
 		$this->frame_public->Load();
 	}
 
-	function table()
-	{
-		$this->frame_public->SetTitle('Food');
-		$this->frame_public->SetContentSimple('reviews/table');
-		$this->frame_public->Load();
-	}
-
 	//Drink Link
 	function drink()
 	{
@@ -170,6 +163,22 @@ class Reviews extends Controller {
 		$this->frame_public->SetContentSimple('reviews/barcrawl');
 		
 		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
+	}
+
+	//Display tables for review lists
+	function table()
+	{
+		$this->frame_public->SetTitle('Reivews');
+		$this->frame_public->SetContentSimple('reviews/table');
+		$this->frame_public->Load();
+	}
+
+	//Display tables for review leagues (from puffers)
+	function leagues()
+	{
+		$this->frame_public->SetTitle('Leagues');
+		$this->frame_public->SetContentSimple('reviews/leagues');
 		$this->frame_public->Load();
 	}
 	

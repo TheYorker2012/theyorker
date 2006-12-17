@@ -258,6 +258,18 @@ tr.ReviewListTop td a {
 	color: #333333;
 }
 
+div.ReviewElement {
+	font-size: small;
+	border: thin solid;
+	border-color: #08C0EF;
+	padding: 5px;
+}
+
+div.ReviewElement img {
+	float: left;
+	padding-right: 7px;
+}
+
 tr.ReviewElement1 td {
 	background-color: #FDFDFD;
 }
