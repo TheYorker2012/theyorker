@@ -155,7 +155,7 @@ EXTRAHEAD;
 		
 		$monday = Academic_time::NewToday()->BackToMonday();
 		
-		$weeks_start = $start_time->Adjust('-5week')->BackToMonday();
+		$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
 		if ($weeks_start->Timestamp() < $monday->Timestamp()) {
 			$weeks_start = $monday;
 		}

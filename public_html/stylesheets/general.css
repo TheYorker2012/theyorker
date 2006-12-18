@@ -29,6 +29,7 @@
 
 .calendarweek { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FFCC99; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; font-weight: bold; color: #ffffff; }
 .calendarweekselect { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FF6A00; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; font-weight: bold; color: #ffffff;}
+.calendarweekheading { height: 23px; width: 100%; vertical-align: middle; text-align: center; background-color: #FF9B33; cursor: pointer; font-family:Geneva, Arial, Helvetica, sans-serif; font-size: 13px; padding: 0; font-weight: bold; color: #ffffff;}
 .weekviewweek { width: 90px; height: 100%; vertical-align: top; text-align: center; background-color: #FF6A00; padding-top: 3px;}
 .weekviewweektitle { width: 90px; height: 40px; vertical-align: top; text-align: center; background-color: #FF6A00; }
 

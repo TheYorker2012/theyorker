@@ -270,7 +270,7 @@ class Date_uri
 						break;
 					case 'term':
 						$end = $CI->academic_calendar->Academic(
-							$results['ac_year'] + (int)($results['ac_term'] / 6),
+							$results['ac_year'] + (int)(($results['ac_term']+1) / 6),
 							($results['ac_term'] + 1)%6, 1, 1);
 						break;
 					case 'week':
@@ -377,7 +377,7 @@ class Date_uri
 						break;
 					case 'term':
 						$end = $CI->academic_calendar->Academic(
-							$results['end_ac_year'] + (int)($results['end_ac_term'] / 6),
+							$results['end_ac_year'] + (int)(($results['end_ac_term']+1) / 6),
 							($results['end_ac_term'] + 1)%6, 1, 1);
 						break;
 					case 'week':
@@ -494,7 +494,7 @@ class Date_uri
 			$valid = TRUE;
 		} else if ($start_format === 'ac') {
 			$result = $Start->AcademicYear();
-			$result .= '-'.$Start->AcademicTermName();
+			$result .= '-'.$Start->AcademicTermNameUnique();
 			$result .= '-'.$Start->AcademicWeek();
 			$put_end = ($end_format === 'ac');
 			$dow = $Start->Format('D');
@@ -505,7 +505,7 @@ class Date_uri
 			}
 			if ($put_end) {
 				$result .= ':'.$End->AcademicYear();
-				$result .= '-'.$End->AcademicTermName();
+				$result .= '-'.$End->AcademicTermNameUnique();
 				$result .= '-'.$End->AcademicWeek();
 				$result .= '-'.$End->Format('D');
 			}

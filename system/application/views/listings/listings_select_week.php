@@ -24,19 +24,27 @@ jh559: I reckon a bit of AJAX (or AJA*) would go well here for updating the
 */ ?>
 <table width="150">
 
+<?php foreach ($weeks as $week) { ?>
+	<tr>
+		<td class="<?php
+		if ($week['heading'])
+			echo 'calendarweekheading';
+		else if ($week['select'])
+			echo 'calendarweekselect';
+		else
+			echo 'calendarweek';
+		?>" onclick = "location.href='<?php echo $week['link']?>';">
+			<?php echo $week['name'].
+			(empty($week['start_date'])?'':' ('.$week['start_date'].')'); ?>
+		</td>
+	</tr>
+<?php } ?>
+
 	<tr>
 		<td align="center" height="40" valign="middle">
 			<a href="<?php echo $links['prev_term']; ?>">&lt;&lt;</a>
 			<a href="<?php echo $links['this_term']; ?>"><?php echo $term['name']; ?></a>
 			<a href="<?php echo $links['next_term']; ?>">&gt;&gt;</a> </td>
 	</tr>
-
-<?php foreach ($weeks as $week) { ?>
-	<tr>
-		<td class="calendarweek<?php if ($week['select']) echo 'select'; ?>" onclick = "location.href='<?php echo $week['link']?>';">
-			<?php echo $week['name'].' ('.$week['start_date'].')'; ?>
-		</td>
-	</tr>
-<?php } ?>
 	
 </table>

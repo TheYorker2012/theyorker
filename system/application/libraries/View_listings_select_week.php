@@ -90,24 +90,43 @@ class ViewListingsSelectWeek extends ViewListings
 			));
 		$this->SetData('term',
 			array(
-				'name' => $this->mSelectedWeekStart->AcademicTermName(),
+				'name' => $this->mSelectedWeekStart->AcademicTermNameUnique(),
 			));
 		
 		$weeks = array();
-		
+		$last_term = -1;
 		for ($week = $this->mStartTime;
 		     $week->Timestamp() < $this->mEndTime->Timestamp();
 		     $week = $next_week) {
 			$next_week = $week->Adjust('1week');
+			if ($last_term !== $week->AcademicTerm()) {
+				$weeks[] = array(
+					'link' => site_url(
+							$this->mUriBase . $week->AcademicYear() . '-' .
+							$week->AcademicTermNameUnique()
+						),
+					'name' => strtoupper(
+							$week->AcademicTermName() . ' ' .
+							$week->AcademicTermTypeName() . ' ' .
+							$week->AcademicYearName()
+						),
+					'events' => 0,
+					'select' => FALSE,
+					'heading' => TRUE,
+					'start_date' => '',
+				);
+				$last_term = $week->AcademicTerm();
+			}
 			$selected = ( // Selected iff the week is contained in the selection.
 					$this->mSelectedWeekStart->Timestamp() <= $week->Timestamp() &&
 					$this->mSelectedWeekEnd->Timestamp() >= $next_week->Timestamp()
 				);
 			$weeks[] = array(
 				'link' => $this->GenerateUri($week,$next_week),
-				'name' => $week->AcademicTermNameUnique().' '.$week->AcademicWeek(),
+				'name' => 'Week '.$week->AcademicWeek(),
 				'events' => 0,
 				'select' => $selected,
+				'heading' => FALSE,
 				'start_date' => $week->Format('M jS'),
 			);
 		}
