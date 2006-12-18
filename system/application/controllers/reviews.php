@@ -169,7 +169,7 @@ class Reviews extends Controller {
 	//Display tables for review lists
 	function table()
 	{
-		$this->frame_public->SetTitle('Reivews');
+		$this->frame_public->SetTitle('Reviews');
 		$this->frame_public->SetContentSimple('reviews/table');
 		$this->frame_public->Load();
 	}
