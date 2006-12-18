@@ -18,8 +18,10 @@ $CI->load->library('view_listings');
  */
 class ViewListingsSelectWeek extends ViewListings
 {
-	/// timestamp Time of beginning of selected week.
-	private $mSelectedWeek;
+	/// Academic_time Time of beginning of selected week.
+	private $mSelectedWeekStart;
+	/// Academic_time Time of end of selected week.
+	private $mSelectedWeekEnd;
 	
 	/// Default constructor.
 	function __construct()
@@ -32,19 +34,21 @@ class ViewListingsSelectWeek extends ViewListings
 	
 	/// Set the week which is currently selected
 	/**
-	 * @param $Time Academic_time Time in selected week.
+	 * @param $StartTime Academic_time Time of start of selected week.
+	 * @param $EndTime Academic_time Time of end of selected week.
 	 */
-	function SetSelectedWeek($Time)
+	function SetSelectedWeek($StartTime, $EndTime)
 	{
-		$this->mSelectedWeek = $Time->BackToMonday()->Timestamp();
+		$this->mSelectedWeekStart = $StartTime;
+		$this->mSelectedWeekEnd = $EndTime;
 	}
 	
 	/// Set the week range to display.
 	/**
 	 * @param $StartTime Academic_time Start time of calendar.
-	 * @param $NumWeeks integer Number of weeks to display.
+	 * @param $EndTime Academic_time End time of calendar.
 	 */
-	function SetRange($StartTime, $NumWeeks)
+	function SetRange($StartTime, $EndTime)
 	{
 		// Make sure that the time is rounded back to midnight on monday
 		$StartTime = $StartTime->BackToMonday();
@@ -55,10 +59,8 @@ class ViewListingsSelectWeek extends ViewListings
 		$this->SetData('academic_term', $StartTime->AcademicTermName() . ' ' . $StartTime->AcademicTermTypeName());
 		$this->SetData('academic_week', $StartTime->AcademicWeek());
 		
-		$end_time = $StartTime->Adjust($NumWeeks.'week');
-		
 		// Get the stuff from the db
-		$this->_SetRange($StartTime, $end_time);
+		$this->_SetRange($StartTime, $EndTime);
 	}
 	
 	
@@ -69,26 +71,43 @@ class ViewListingsSelectWeek extends ViewListings
 	function Retrieve()
 	{
 		//parent::Retrieve();
+		// Calculate links to next, previous, and this whole term
+		$prev_term =
+				($this->mSelectedWeekStart->AcademicYear() - ($this->mSelectedWeekStart->AcademicTerm()==0 ? 1 : 0)) . '-' .
+				Academic_time::GetAcademicTermNameUnique(($this->mSelectedWeekStart->AcademicTerm()+5)%6);
+		$this_term =
+				$this->mSelectedWeekStart->AcademicYear() . '-' .
+				$this->mSelectedWeekStart->AcademicTermNameUnique();
+		$next_term =
+				($this->mSelectedWeekStart->AcademicYear() + ($this->mSelectedWeekStart->AcademicTerm()==5 ? 1 : 0)) . '-' .
+				Academic_time::GetAcademicTermNameUnique(($this->mSelectedWeekStart->AcademicTerm()+1)%6);
+		
 		$this->SetData('links',
 			array(
-				'prev_term' => 'PREV',
-				'next_term' => 'NEXT',
+				'prev_term' => site_url($this->mUriBase.$prev_term),
+				'this_term' => site_url($this->mUriBase.$this_term),
+				'next_term' => site_url($this->mUriBase.$next_term),
 			));
 		$this->SetData('term',
 			array(
-				'name' => $this->mStartTime->AcademicTermName().' '.$this->mStartTime->AcademicTermTypeName(),
+				'name' => $this->mSelectedWeekStart->AcademicTermName(),
 			));
 		
 		$weeks = array();
 		
 		for ($week = $this->mStartTime;
 		     $week->Timestamp() < $this->mEndTime->Timestamp();
-		     $week = $week->Adjust('1week')) {
+		     $week = $next_week) {
+			$next_week = $week->Adjust('1week');
+			$selected = ( // Selected iff the week is contained in the selection.
+					$this->mSelectedWeekStart->Timestamp() <= $week->Timestamp() &&
+					$this->mSelectedWeekEnd->Timestamp() >= $next_week->Timestamp()
+				);
 			$weeks[] = array(
-				'link' => $this->GenerateUri($week),
-				'name' => 'Week '.$week->AcademicWeek(),
+				'link' => $this->GenerateUri($week,$next_week),
+				'name' => $week->AcademicTermNameUnique().' '.$week->AcademicWeek(),
 				'events' => 0,
-				'select' => ($this->mSelectedWeek === $week->Timestamp()),
+				'select' => $selected,
 				'start_date' => $week->Format('M jS'),
 			);
 		}

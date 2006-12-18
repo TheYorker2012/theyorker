@@ -13,35 +13,48 @@
  *
  * Basically reads and generates dates in URI's.
  *
- * The URI's can be of four formats:
+ * The URI segment can be in several formats:
+ *	- SEGMENT => START
+ *	- SEGMENT => START ":" END (only when $AllowRange === TRUE)
  *
- * 'gregorian-single':
- *	- /2006-apr-15
- *	- /2006-september-15
+ * Where:
+ *	- START  => ACADEMIC | GREGORIAN | RELATIVE
+ *	- END    => ACADEMIC | GREGORIAN | RELATIVE
  *
- * 'gregorian-multiple':
- *	- /2006/apr/15
- *	- /2006/september/15
+ *	- ACADEMIC => [AC_YEAR "-"] AC_TERM ["-" AC_WEEK ["-" DAY]]
+ *	- GREGORIAN => [YEAR "-"] MONTH ["-" DATE]
+ *	- RELATIVE => "today" | "tomorrow" | "yesterday" | NUMBER OFFSET_UNIT ["s"]
  *
- * 'academic-single':
- *	- /2006-xmas-2
- *	- /2006-spring-1-monday
- *	- /2006-au-5-wed
+ *	- OFFSET_UNIT => "day" | "week" | "month" | "year"
+ *	- MONTH  => "jan" ["uary"] | "feb" ["ruary"] | "mar" ["ch"] | "apr" ["il"] | "may" | "jun" ["e"]
+ *	- MONTH  => "jul" ["y"] | "aug" ["ust"] | "sep" ["tember"] | "oct" ["ober"] | "nov" ["ember"] | "dec" ["ember"]
+ *	- AC_TERM => "au" ["tumn"] | "ch" ["ristmas"] | "xmas" | "sp" ["ring"]
+ *	- AC_TERM => "ea" ["ster"] | "su" ["mmer"] | "hol" ["iday"]
  *
- * 'academic-multiple':
- *	- /2006-2007/xmas/2
- *	- /2006-2007/spring/1/monday
- *	- /2006-2007/au/5/wed
+ *	- AC_YEAR => YEAR
+ *	- AC_WEEK=> digit {1,2}
+ *	- YEAR => digit {4}
+ *	- DATE => digit | "1" digit | "2" digit | "30" | "31"
  *
- * @todo Possible to choose whether to include the day for academic URI generation.
- *	- This may mean splitting the academic formats into with/without day.
+ * For example, the following are valid dates (which have implicit ranges):
+ *	- "xmas"
+ *	- "xmas-2-tuesday"
+ *	- "jan-5"
+ *	- "tomorrow"
+ *
+ * And the following are valid ranges:
+ *	- "xmas:sp"
+ *	- "tomorrow:dec-25"
+ *	- "5weeks:1month"
+ *	- "today:2weeks"
+ *	- "2006-dec-25:4days"
  *
  * @todo Test fully with invalid URIs.
  */
 class Date_uri
 {
 	/// Default URI formatting mode.
-	private static $sDefaultFormat = 'academic-multiple';
+	private static $sDefaultFormat = 'ac-re';
 	
 	/// Get the default URI formatting mode.
 	/**
@@ -52,64 +65,17 @@ class Date_uri
 		return self::$sDefaultFormat;
 	}
 	
-	/// Generate a URI from a date in a particular format.
-	/**
-	 * @param $Date Academic_time Date to generate URI for.
-	 * @param $Format Format string like part of return value of ReadUri().
-	 * @return string (empty on failure):
-	 *	- URI string from date without leading or trailing '/'.
-	 */
-	function GenerateUri($Date, $Format)
+	/// Array of accepted months mapping onto month numbers.
+	private $mMonths;
+	/// Array of accepted terms mapping onto term numbers.
+	private $mTerms;
+	/// Array of accepted days mapping onto day numbers (1-7, mon-sun).
+	private $mDays;
+	
+	/// Default constructor
+	function __construct()
 	{
-		switch ($Format) {
-			case 'gregorian-single':
-				return strtolower($Date->Format('Y-M-j'));
-				
-			case 'gregorian-multiple':
-				return strtolower($Date->Format('Y/M/j'));
-				
-			case 'academic-single':
-				return
-					$Date->AcademicYear().'-'.
-					$Date->AcademicTermNameUnique().'-'.
-					$Date->AcademicWeek().'-'.
-					strtolower($Date->Format('D'));
-				
-			case 'academic-multiple':
-				return
-					$Date->AcademicYear().'-'.
-					(1+$Date->AcademicYear()).'/'.
-					$Date->AcademicTermNameUnique().'/'.
-					$Date->AcademicWeek().'/'.
-					strtolower($Date->Format('D'));
-				
-			default:
-				return '';
-		}
-	}
-
-	/**
-	 * @param $FirstSegment integer Number of first segment.
-	 * @return array Return structure:
-	 *	- 'valid' (bool Whether successful)
-	 *	- 'date' (Academic_time Date of URI)
-	 *	- 'format' (string Format of URI)
-	 *
-	 * Format strings:
-	 *	- 'gregorian-single' (e.g. 2006-aug-8)
-	 *	- 'gregorian-multiple' (e.g. 2006/aug/8)
-	 *	- 'academic-single' (e.g. 2006-xmas-2[-monday])
-	 *	- 'academic-multiple' (e.g. 2006-2007/xmas/2[/mon])
-	 */
-	function ReadUri($FirstSegment)
-	{
-		$CI = &get_instance();
-		$uri = &$CI->uri;
-		
-		// Load the Academic_calendar library
-		$CI->load->library('frames');
-		
-		static $months = array(
+		$this->mMonths = array(
 				'jan'=>1, 'feb'=>2, 'mar'=>3,
 				'apr'=>4, 'may'=>5, 'jun'=>6,
 				'jul'=>7, 'aug'=>8, 'sep'=>9,
@@ -119,132 +85,440 @@ class Date_uri
 				'july'=>7,     'august'=>8,    'september'=>9,
 				'october'=>10, 'november'=>11, 'december'=>12,
 			);
-		static $terms = array(
+		$this->mTerms = array(
 				'au'=>0, 'ch'=>1, 'sp'=>2, 'ea'=>3, 'su'=>4, 'hol'=>5,
 				'autumn'=>0, 'christmas'=>1, 'xmas'   =>1, 'spring'=>2,
 				'easter'=>3, 'summer'   =>4, 'holiday'=>5,
 			);
-		static $days = array(
+		$this->mDays = array(
 				'mon'=>1, 'tue'=>2, 'wed'=>3, 'thu'=>4,
 				'fri'=>5, 'sat'=>6, 'sun'=>7,
 				'monday'=>1, 'tuesday'=>2,  'wednesday'=>3, 'thursday'=>4,
 				'friday'=>5, 'saturday'=>6, 'sunday'=>7,
 			);
-		
-		$regexes = array(
-				'gregorian-multiple' => '(\d{4})',
-				'academic-multiple' => '(\d{4})-(\d{4})',
-				'gregorian-single' => '(\d{4})-('.implode('|',array_keys($months)).')-(\d{1,2})',
-				'academic-single' => '(\d{4})-('.implode('|',array_keys($terms)).')-(\d{1,2})(-('.implode('|',array_keys($days)).'))?',
-			);
+	}
+	
+	/// Get the regular expression to read the date range
+	/**
+	 * @param $AllowRange bool Whether to allow a range of dates.
+	 */
+	private function GetRegex($AllowRange = TRUE)
+	{
+		// Set to true when editing the regex (not using cached regex)
+		if (FALSE) {
+			// months: keys of $this->mMonths
+			// terms: keys of $this->mTerms
+			// days: keys of $this->mDays
 			
-		$segments = array(0 => $uri->segment($FirstSegment));
-		$format = '';
-		$valid = FALSE;
-		foreach ($regexes as $dateformat => $regex) {
-			preg_match('/^'.$regex.'$/i', $segments[0], $matches);
-			if (!empty($matches)) {
-				$format = $dateformat;
-				$valid = TRUE;
-				break;
+			$re_months = implode('|',array_keys($this->mMonths));
+			$re_terms = implode('|',array_keys($this->mTerms));
+			$re_days = implode('|',array_keys($this->mDays));
+			
+			// relative_bases: today, tomorrow etc.
+			// duration_units: days, weeks, months, years
+			
+			$re_relative_bases = 'now|today|yesterday|tomorrow';
+			$re_duration_units = 'days?|weeks?|months?|years?';
+			
+			// dayofmonth: 1-31
+			// year: 4 digits
+			// week: 2 digits
+			
+			$re_dayofmonth = '[1-9]|1\d|2\d|3[01]';
+			$re_year = '\d{4}';
+			$re_week = '\d\d?';
+			
+			// academic:  [(year)-](term)[-(week)[-(day)]]
+			// gregorian: [(year)-](month)[-(date)]
+			// relative:  (base)|[(num)(unit)]
+			
+			$re_start_ac = '((?P<ac_year>'.$re_year.')-)?'.
+					'(?P<ac_term>'.$re_terms.')'.
+					'(-(?P<week>'.$re_week.')(-(?P<day>'.$re_days.'))?)?';
+			$re_start_greg = '((?P<year>'.$re_year.')-)?'.
+					'(?P<month>'.$re_months.')'.
+					'(-?(?P<dom>'.$re_dayofmonth.'))?';
+			$re_start_rel = '(?P<base>'.$re_relative_bases.')|'.
+					'((?P<offset>-?\d+)(?P<offset_unit>'.$re_duration_units.'))';
+			
+			$re_end_ac = '((?P<end_ac_year>' . $re_year . ')-)?'.
+					'(?P<end_ac_term>' . $re_terms . ')'.
+					'(-(?P<end_week>' . $re_week . ')(-(?P<end_day>' . $re_days . '))?)?';
+			$re_end_greg = '((?P<end_year>' . $re_year . ')-)?'.
+					'(?P<end_month>' . $re_months . ')'.
+					'(-?(?P<end_dom>' . $re_dayofmonth . '))?';
+			$re_end_rel = '(?P<end_base>'.$re_relative_bases.')|'.
+					'((?P<end_offset>-?\d+)(?P<end_offset_unit>'.$re_duration_units.'))';
+			
+			// start, end: academic, gregorian, relative
+			
+			$re_start =
+					'(?P<start_ac>'.$re_start_ac.')|'.
+					'(?P<start_greg>'.$re_start_greg.')|'.
+					'(?P<start_rel>'.$re_start_rel.')';
+			$re_end =
+					'(?P<end_ac>'.$re_end_ac.')|'.
+					'(?P<end_greg>'.$re_end_greg.')|'.
+					'(?P<end_rel>'.$re_end_rel.')';
+			
+			// single date regex: ^start$
+			// multiple date range: ^(start[(:(end)]$
+			
+			$single_regex   = '/^('.$re_start.')$/i';
+			$multiple_regex = '/^('.$re_start.')(:('.$re_end.'))?$/i';
+			
+			if (TRUE) {
+				// Echo the regular expression
+				echo 'Debug output (not html formatted, see source):'."\n\n";
+				echo '			if ($AllowRange) {'."\n";
+				echo '				return \''.$multiple_regex."';\n";
+				echo '			} else {'."\n";
+				echo '				return \''.$single_regex."';\n";
+				echo '			}'."\n\n";
+				echo 'End of Debug output'."\n\n";
+			}
+			
+			return ($AllowRange
+					? $multiple_regex
+					: $single_regex);
+			
+		} else {
+			if ($AllowRange) {
+				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<week>\d\d?)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))(:((?P<end_ac>((?P<end_ac_year>\d{4})-)?(?P<end_ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<end_week>\d\d?)(-(?P<end_day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<end_greg>((?P<end_year>\d{4})-)?(?P<end_month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<end_dom>[1-9]|1\d|2\d|3[01]))?)|(?P<end_rel>(?P<end_base>now|today|yesterday|tomorrow)|((?P<end_offset>-?\d+)(?P<end_offset_unit>days?|weeks?|months?|years?)))))?$/i';
+			} else {
+				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<week>\d\d?)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))$/i';
 			}
 		}
+	}
+
+	/**
+	 * @param $UriSegment string URI segment.
+	 * @param $AllowRange bool Whether to allow date ranges (using ':' in between).
+	 * @return array Return structure:
+	 *	- 'valid' (bool Whether successful)
+	 *	- 'start' (Academic_time Start of range specified by @a $UriSegment)
+	 *	- 'end'  (Academic_time End of range specified by @a $UriSegment)
+	 *	- 'format' (string Format string which can be passed to GenerateUri())
+	 */
+	function ReadUri($UriSegment, $AllowRange = TRUE)
+	{
+		// Use GenerateRegex to get regex
+		$regex = $this->GetRegex($AllowRange);
+		
+		$format = self::DefaultFormat();
+		$valid = (preg_match($regex,$UriSegment, $results) > 0);
 		if ($valid) {
-			switch ($format) {
-				case 'gregorian-multiple':
-					$year = (int)$matches[1];
-					
-					$month = strtolower($uri->segment($FirstSegment+1));
-					$day_of_month = $uri->segment($FirstSegment+2);
-					if (!is_numeric($day_of_month) ||
-						!array_key_exists($month,$months)) {
-						$valid = FALSE;
-						$format = '';
+			$CI = &get_instance();
+			
+			if (FALSE) {
+				echo '<br/><br/>Result of regular expression process:<br/>'.
+					str_replace("\n","<br/>\n",var_export($results,true));
+			}
+			
+			
+			// Initial information extraction
+			$start_academic = !empty($results['start_ac']);
+			$start_gregorian = !empty($results['start_greg']);
+			$start_relative = !empty($results['start_rel']);
+			$end_academic = !empty($results['end_ac']);
+			$end_gregorian = !empty($results['end_greg']);
+			$end_relative = !empty($results['end_rel']);
+			
+			$has_start = ($start_academic || $start_gregorian || $start_relative);
+			$has_end   = ($end_academic   || $end_gregorian   || $end_relative);
+			
+			$start = Academic_time::NewToday();
+			$end = $start;
+			
+			// Find the start
+			if ($start_academic) {
+				$format = 'ac';
+				if ($end_academic) {
+					$format .= ':ac';
+				}
+				if (empty($results['ac_year'])) {
+					$results['ac_year'] = $start->AcademicYear();
+				} else {
+					$duration = 'year';
+				}
+				if (empty($results['ac_term'])) {
+					$results['ac_term'] = 0;
+				} else {
+					$results['ac_term'] = $this->mTerms[strtolower($results['ac_term'])];
+					$duration = 'term';
+				}
+				if (empty($results['week'])) {
+					$results['week'] = 1;
+				} else {
+					$duration = 'week';
+				}
+				if (empty($results['day'])) {
+					$results['day'] = 1;
+				} else {
+					$results['day'] = $this->mDays[strtolower($results['day'])];
+					$duration = 'day';
+				}
+				$start = $CI->academic_calendar->Academic(
+						$results['ac_year'],
+						$results['ac_term'],
+						$results['week'],
+						$results['day']);
+				switch ($duration) {
+					case 'year':
+						$end = $CI->academic_calendar->Academic(
+							$results['ac_year']+1, 0, 1, 1);
+						break;
+					case 'term':
+						$end = $CI->academic_calendar->Academic(
+							$results['ac_year'] + (int)($results['ac_term'] / 6),
+							($results['ac_term'] + 1)%6, 1, 1);
+						break;
+					case 'week':
+					case 'day':
+						$end = $start->Adjust('1'.$duration);
+						break;
+				}
+				
+			} else if ($start_gregorian) {
+				$format = 'gr';
+				if ($end_gregorian) {
+					$format .= ':gr';
+				}
+				if (!empty($results['year'])) {
+					$duration = 'year';
+				}
+				if (empty($results['month'])) {
+					$results['month'] = $start->Month();
+				} else {
+					$results['month'] = $this->mMonths[strtolower($results['month'])];
+					$duration = 'month';
+				}
+				if (empty($results['year'])) {
+					if (empty($results['month']) ||
+							$results['month'] >= $start->Month()) {
+						$results['year'] = $start->Year();
 					} else {
-						$month = $months[$month];
-						$day_of_month = (int)$day_of_month;
-						$date = $CI->academic_calendar->Gregorian($year,$month,$day_of_month);
+						$results['year'] = $start->Year()+1;
 					}
-					break;
-					
-				case 'academic-multiple':
-					$year = (int)$matches[1];
-					
-					$term = strtolower($uri->segment($FirstSegment+1));
-					if (array_key_exists($term, $terms)) {
-						$term = $terms[$term];
-						
-						// And check that the term in question exists
-						if (!Academic_time::ValidateAcademicTerm($year, $term)) {
-							$valid = FALSE;
-							$format = '';
+				}
+				if (empty($results['dom'])) {
+					$results['dom'] = 1;
+				} else {
+					$duration = 'day';
+				}
+				$start = $CI->academic_calendar->Gregorian(
+						$results['year'],
+						$results['month'],
+						$results['dom']);
+				$end = $start->Adjust('1'.$duration);
+				
+			} else if ($start_relative) {
+				$format = 'gr';
+				if ($end_gregorian) {
+					$format .= ':gr';
+				}
+				$offset = '';
+				if (!empty($results['base'])) {
+					switch ($results['base']) {
+						case 'yesterday':
+							$offset = '-1day';
 							break;
-						}
-					} else {
-						$valid = FALSE;
-						$format = '';
-						break;
-					}
-					$week = $uri->segment($FirstSegment+2);
-					if (is_numeric($week)) {
-						$week = (int)$week;
-					} else {
-						$valid = FALSE;
-						$format = '';
-						break;
-					}
-					
-					$day_of_week = $uri->segment($FirstSegment+3);
-					if ($day_of_week !== FALSE) {
-						$day_of_week = strtolower($day_of_week);
-						if (array_key_exists($day_of_week, $days)) {
-							$day_of_week = $days[$day_of_week];
-						} else {
-							$valid = FALSE;
-							$format = '';
+						case 'tomorrow':
+							$offset = '1day';
 							break;
-						}
-					} else {
-						$day_of_week = 1;
 					}
-					
-					$date = $CI->academic_calendar->Academic($year,$term,$week,$day_of_week);
-					break;
-					
-				case 'gregorian-single':
-					$year = (int)$matches[1];
-					$month = $months[strtolower($matches[2])];
-					$day_of_month = (int)$matches[3];
-					$date = $CI->academic_calendar->Gregorian($year,$month,$day_of_month);
-					break;
-					
-				case 'academic-single':
-					$year = (int)$matches[1];
-					$term = $terms[strtolower($matches[2])];
-						
-					// And check that the term in question exists
-					if (!Academic_time::ValidateAcademicTerm($year, $term)) {
-						$valid = FALSE;
-						$format = '';
+				}
+				if (!empty($results['offset'])) {
+					if (!empty($results['offset_unit'])) {
+						$offset .= $results['offset'].$results['offset_unit'];
+					} else {
+						$offset .= $results['offset'].'day';
+					}
+				}
+				if (!empty($offset)) {
+					$start = $start->Adjust($offset);
+				}
+				$end = $start->Adjust('1day');
+			}
+			
+			if ($end_academic) {
+				if (empty($results['end_ac_year'])) {
+					$results['end_ac_year'] = $start->AcademicYear();
+				} else {
+					$duration = 'year';
+				}
+				if (empty($results['end_ac_term'])) {
+					$results['end_ac_term'] = $start->AcademicTerm();
+				} else {
+					$duration = 'term';
+					$results['end_ac_term'] = $this->mTerms[strtolower($results['end_ac_term'])];
+				}
+				if (empty($results['end_week'])) {
+					$results['end_week'] = $start->AcademicWeek();
+				} else {
+					$duration = 'week';
+				}
+				if (empty($results['end_day'])) {
+					$results['end_day'] = $start->DayOfWeek();
+				} else {
+					$duration = 'day';
+					$results['end_day'] = $this->mDays[strtolower($results['end_day'])];
+				}
+				$end = $CI->academic_calendar->Academic(
+						$results['end_ac_year'],
+						$results['end_ac_term'],
+						$results['end_week'],
+						$results['end_day']);
+				
+				switch ($duration) {
+					case 'year':
+						$end = $CI->academic_calendar->Academic(
+							$results['end_ac_year']+1, 0, 1, 1);
 						break;
-					}
-					
-					$week = (int)$matches[3];
-					if (array_key_exists(5,$matches)) {
-						$day_of_week = $days[strtolower($matches[5])];
+					case 'term':
+						$end = $CI->academic_calendar->Academic(
+							$results['end_ac_year'] + (int)($results['end_ac_term'] / 6),
+							($results['end_ac_term'] + 1)%6, 1, 1);
+						break;
+					case 'week':
+					case 'day':
+						$end = $end->Adjust('1'.$duration);
+						break;
+				}
+				
+			} else if ($end_gregorian) {
+				
+				if (!empty($results['end_year'])) {
+					$duration = 'year';
+				}
+				if (empty($results['end_month'])) {
+					$results['end_month'] = $start->Month();
+				} else {
+					$results['end_month'] = $this->mMonths[strtolower($results['end_month'])];
+					$duration = 'month';
+				}
+				if (empty($results['end_year'])) {
+					if (empty($results['end_month']) ||
+							$results['end_month'] >= $start->Month()) {
+						$results['end_year'] = $start->Year();
 					} else {
-						$day_of_week = 1;
+						$results['end_year'] = $start->Year()+1;
 					}
-					$date = $CI->academic_calendar->Academic($year,$term,$week,$day_of_week);
-					break;
+				}
+				if (empty($results['end_dom'])) {
+					$results['end_dom'] = 1;
+				} else {
+					$duration = 'day';
+				}
+				$end = $CI->academic_calendar->Gregorian(
+						$results['end_year'],
+						$results['end_month'],
+						$results['end_dom'])->Adjust('1'.$duration);
+				
+			} else if ($end_relative) {
+				$format .= ':re';
+				$end = $start;
+				$offset = '';
+				if (!empty($results['end_base'])) {
+					$end = Academic_time::NewToday()->Adjust('1day');
+					switch ($results['end_base']) {
+						case 'yesterday':
+							$offset .= '-1day';
+							break;
+						case 'tomorrow':
+							$offset .= '1day';
+							break;
+					}
+				}
+				if (!empty($results['end_offset'])) {
+					if (!empty($results['end_offset_unit'])) {
+						$offset .= $results['end_offset'].$results['end_offset_unit'];
+					} else {
+						$offset .= $results['end_offset'].'day';
+					}
+				}
+				if (!empty($offset)) {
+					$end = $start->Adjust($offset);
+				}
+			}
+			if ($start->Timestamp() >= $end->Timestamp()) {
+				$end = $start->Adjust('1day');
 			}
 		}
+		
 		return array(
-				'valid' => $valid,
-				'format' => $format,
-				'date' => $valid ? $date : NULL,
+				'valid'    => $valid,
+				'format'   => $format,
+				'start'    => $valid ? $start : NULL,
+				'end'      => $valid ? $end   : NULL,
 			);
 		
+	}
+	
+	
+	
+	/// Generate a URI from a date in a particular format.
+	/**
+	 * @param $Date Academic_time Date to generate URI for.
+	 * @param $Format Format string like part of return value of ReadUri().
+	 *	- 'gr'	YEAR-MON-DD
+	 *	- 'gr:gr'	YEAR-MON-DD:YEAR-MON-DD
+	 *	- 'gr:re'	YEAR-MON-DD:XXUNIT
+	 *	- 'ac'	YEAR-TERM-WW[-DAY]
+	 *	- 'ac:ac'	YEAR-TERM-WW[-DAY]:YEAR-TERM-WW[-DAY]
+	 *	- 'ac:re'	YEAR-TERM-WW[-DAY]:XXUNIT
+	 * @return string (empty on failure):
+	 *	- URI string from date without leading or trailing '/'.
+	 */
+	function GenerateUri($Format, $Start, $End = FALSE)
+	{
+		$start_format = substr($Format,0,2);
+		if (FALSE === $End) {
+			$end_format = '';
+		} else {
+			$end_format = substr($Format,3,2);
+		}
+		
+		$days = (int)(($End->Timestamp()-$Start->Timestamp() + 12*60*60)/(24*60*60));
+		$unit = 'day';
+		if ($days % 7 === 0) {
+			$days /= 7;
+			$unit = 'week';
+		}
+		
+		if ($start_format === 'gr') {
+			$result = $Start->Format('Y-M-j');
+			if ($end_format === 'gr') {
+				$result .= ':'.$End->Format('Y-M-j');
+			}
+			$valid = TRUE;
+		} else if ($start_format === 'ac') {
+			$result = $Start->AcademicYear();
+			$result .= '-'.$Start->AcademicTermName();
+			$result .= '-'.$Start->AcademicWeek();
+			$put_end = ($end_format === 'ac');
+			$dow = $Start->Format('D');
+			if ($dow == 1 && $unit !== 'day') {
+				$result .= '-'.$dow;
+			} else {
+				$put_end = FALSE;
+			}
+			if ($put_end) {
+				$result .= ':'.$End->AcademicYear();
+				$result .= '-'.$End->AcademicTermName();
+				$result .= '-'.$End->AcademicWeek();
+				$result .= '-'.$End->Format('D');
+			}
+			$valid = TRUE;
+		} else {
+			$result = '';
+			$valid = FALSE;
+		}
+		
+		if ($valid && $end_format === 're') {
+			$result .= ':'.$days.$unit;
+		}
+		return $result;
 	}
 }
 

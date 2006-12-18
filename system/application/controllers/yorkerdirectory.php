@@ -103,7 +103,7 @@ class Yorkerdirectory extends Controller {
 	}
 	
 	/// Directory events page.
-	function events($organisation)
+	function events($organisation, $range = '')
 	{
 		$this->load->library('frame_directory');
 		$this->load->library('view_listings_select_week');
@@ -121,33 +121,48 @@ EXTRAHEAD;
 	
 		$data = $this->_GetOrgData($organisation);
 		
-		$uri_result = $this->date_uri->ReadUri(4);
-		if ($uri_result['valid']) {
-			$base_time = $uri_result['date'];
-			$format = $uri_result['format'];
+		if (empty($range)) {
+			$start_time = Academic_time::NewToday();
+			$end_time = $start_time->Adjust('1week');
+			$format = 'ac';
 		} else {
-			$base_time = new Academic_time(time());
-			$format = 'academic-multiple';
+			$uri_result = $this->date_uri->ReadUri($range);
+			if ($uri_result['valid']) {
+				// valid
+				$start_time = $uri_result['start'];
+				$end_time = $uri_result['end'];
+				$format = $uri_result['format'];
+			} else {
+				// invalid
+				redirect('directory/'.$organisation.'/events');
+			}
 		}
 		
-		$monday = new Academic_time(time());
-		$monday = $monday->BackToMonday();
+		$monday = Academic_time::NewToday()->BackToMonday();
 		
-		$selected_week = $base_time->BackToMonday();
+		$weeks_start = $start_time->Adjust('-5week')->BackToMonday();
+		if ($weeks_start->Timestamp() < $monday->Timestamp()) {
+			$weeks_start = $monday;
+		}
+		
+		$weeks_end = $end_time->Adjust('5week')->BackToMonday();
+		if ($weeks_end->Timestamp() < $monday->Timestamp()) {
+			$weeks_end = $monday->Adjust('5week');
+		}
 		
 		// Set up the week select view
 		$week_select = new ViewListingsSelectWeek();
 		$week_select->SetUriBase('directory/'.$organisation.'/events/');
 		$week_select->SetUriFormat($format);
-		$week_select->SetRange($monday, 10);
-		$week_select->SetSelectedWeek($selected_week);
+		$week_select->SetRange($weeks_start, $weeks_end);
+		$week_select->SetSelectedWeek($start_time, $end_time);
 		$week_select->Retrieve();
 		
 		// Set up the events list
 		$events_list = new ViewListingsList();
 		$events_list->SetUriBase('directory/'.$organisation.'/events/');
 		$events_list->SetUriFormat($format);
-		$events_list->SetRange($selected_week, 7);
+		$events_list->SetRange($start_time, $end_time);
 		$events_list->Retrieve();
 		
 		// Set up the directory events view to contain the week select and

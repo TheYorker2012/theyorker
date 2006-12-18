@@ -77,10 +77,10 @@ abstract class ViewListings extends FramesView
 	 * @param $Date Academic_time Time to encode in a URI.
 	 * @return string Full site url with encoded date.
 	 */
-	function GenerateUri($Date)
+	function GenerateUri($Start, $End = FALSE)
 	{
 		$CI = &get_instance();
-		return site_url($this->mUriBase . $CI->date_uri->GenerateUri($Date, $this->mUriFormat));
+		return site_url($this->mUriBase . $CI->date_uri->GenerateUri($this->mUriFormat, $Start, $End));
 	}
 	
 	/// Set whether to display special day headings.

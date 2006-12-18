@@ -102,8 +102,8 @@ class ViewListingsDays extends ViewListings
 	{
 		parent::Retrieve();
 		
-		$this->SetData('prev', $this->GenerateUri($this->mStartTime->Adjust((-$this->mNumDays).'day')));
-		$this->SetData('next', $this->GenerateUri($this->mEndTime));
+		$this->SetData('prev', $this->GenerateUri($this->mStartTime->Adjust((-$this->mNumDays).'day'),$this->mStartTime));
+		$this->SetData('next', $this->GenerateUri($this->mEndTime,$this->mEndTime->Adjust($this->mNumDays.'day')));
 	}
 	
 }

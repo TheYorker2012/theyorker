@@ -391,6 +391,16 @@ class Academic_time
 	}
 	
 	/**
+	 * @brief Get the unique name associated a term.
+	 * @param $Term integer Term index [0,5].
+	 * @return String containing term name.
+	 */
+	static function GetAcademicTermNameUnique($Term)
+	{
+		return self::$sUniqueTermNames[$Term];
+	}
+	
+	/**
 	 * @brief Get the name associated with the academic term.
 	 * @return String containing term name.
 	 */

@@ -50,11 +50,11 @@ class ViewListingsList extends ViewListings
 	/// Set the day range to display.
 	/**
 	 * @param $StartTime Academic_time Start time of calendar.
-	 * @param $NumDays integer Number of days to display.
+	 * @param $EndTime Academic_time End time of calendar.
 	 *
 	 * @todo The first 3 statements don't really belong here. Move elsewhere.
 	 */
-	function SetRange($StartTime, $NumDays)
+	function SetRange($StartTime, $EndTime)
 	{
 		$CI = &get_instance();
 		
@@ -77,10 +77,8 @@ class ViewListingsList extends ViewListings
 		$this->SetData('academic_term', $StartTime->AcademicTermName() . ' ' . $StartTime->AcademicTermTypeName());
 		$this->SetData('academic_week', $StartTime->AcademicWeek());
 		
-		$end_time = $StartTime->Adjust($NumDays.'day');
-		
 		// Get the stuff from the db
-		$this->_SetRange($StartTime, $end_time);
+		$this->_SetRange($StartTime, $EndTime);
 	}
 	
 }

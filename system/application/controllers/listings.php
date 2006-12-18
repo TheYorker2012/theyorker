@@ -32,30 +32,15 @@ class Listings extends Controller {
 	
 	/**
 	 * @brief Show the calendar between certain dates.
-	 *
-	 * Will look for a date in the uri using Date_uri.
+	 * @param $DateRange string Single date accepted by Date_uri.
 	 */
-	function week()
+	function week($DateRange = '')
 	{
-		// Read the uri
-		$uri_result = $this->date_uri->ReadUri(3);
-		
-		if ($uri_result['valid']) {
-			// Valid
-			$base_time = $uri_result['date'];
-			$format = $uri_result['format'];
+		if (empty($DateRange)) {
+			// $DateRange Empty
 			
-			$monday = $base_time->BackToMonday();
-			
-			$this->_ShowCalendar(
-					$monday, 7,
-					'listings/week/', $format
-				);
-			return;
-			
-		} else {
-			// Invalid
-			$format = 'academic-multiple';
+			// Default to this week
+			$format = 'ac';
 			$base_time = new Academic_time(time());
 			
 			$monday = $base_time->BackToMonday();
@@ -64,6 +49,33 @@ class Listings extends Controller {
 					$monday, 7,
 					'listings/week/', $format
 				);
+				
+		} else {
+			// $DateRange Not empty
+			
+			// Read the date, only allowing a single date (no range data)
+			$uri_result = $this->date_uri->ReadUri($DateRange, FALSE);
+			
+			if ($uri_result['valid']) {
+				// $DateRange Valid
+				$start_time = $uri_result['start'];
+				$start_time = $start_time->BackToMonday();
+				$format = $uri_result['format']; // Use the format in all links
+				$days = 7;
+				
+				$this->_ShowCalendar(
+						$start_time, $days,
+						'listings/week/', $format
+					);
+				return;
+				
+			} else {
+				// $DateRange Invalid
+				// This should make it obvious that the date was invalid
+				// A better alternative is to have an optional error message
+				// at the top of the listings view and giving a warning
+				redirect('listings');
+			}
 		}
 	}
 	
