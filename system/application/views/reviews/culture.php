@@ -27,21 +27,21 @@
 	</div>
 	<div class="HalfBox">
 		<div class='LifestylePuffer' style='background-color: #04669c; width: 350px;'>
-			<a href='/news/article/1'>
+			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
 	 	    <h3>Awesome Food</h3>
 			<p>This guy is happy becuase he has visited our top ten best all time foods places</p>
 			</a>
 		</div>
 		<div class='LifestylePuffer' style='background-color: #a38b69; width: 350px;'>
-			<a href='/news/article/1'>
+			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
 	 	    <h3>Desert</h3>
 			<p>We've been all around York trying chocolate cakes, see what we have to say about them all!</p>
 			</a>
 		</div>
 		<div class='LifestylePuffer' style='background-color: #000000; width: 350px;'>
-			<a href='/news/article/1'>
+			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
 	 	    <h3>Lbs of Meat!</h3>
 			<p>Want an all you can eat? Be sure to head on over to our ten best all you can eats.</p>

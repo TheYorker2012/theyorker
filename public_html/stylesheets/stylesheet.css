@@ -270,6 +270,15 @@ div.ReviewElement img {
 	padding-right: 7px;
 }
 
+div.ReviewElementNumber {
+	float: right;
+}
+
+div.ReviewElementNumber h3 {
+	display: inline;
+}
+
+
 tr.ReviewElement1 td {
 	background-color: #FDFDFD;
 }

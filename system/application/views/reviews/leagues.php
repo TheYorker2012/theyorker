@@ -34,9 +34,9 @@
 	We've been all around York and found the top ten places for a nice romantic meal. Check it!<br /><br />
 	<?php
 		for($i=1;$i<=10;$i++) {
-			echo '	<h3 style="display: inline;">'.$i.'</h3>';
 			echo '	<div class="ReviewElement">';
 			echo '		<img src="/images/prototype/news/thumb9.jpg" alt="#" />';
+			echo '		<div class="ReviewElementNumber"><h3>'.$i.'</h3></div>';
 			echo '		<h3 style="display: inline;"><a href="/reviews/foodreview/">'.$i.'Name'.$i.'</a></h3><br />';
 			echo '		<a href="http://www.website.co.uk">www.website.co.uk</a><br />';
 			echo '		Average user rating: <a href=#>'.$i.'/10</a><br />';
