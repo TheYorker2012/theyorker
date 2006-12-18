@@ -19,6 +19,7 @@ class Listings extends Controller {
 		$this->load->library('academic_calendar');  // Using academic calendar
 		$this->load->library('date_uri');           // Nice date uri segments
 		$this->load->library('frame_public');       // Main public frame
+		$this->load->library('frame_messages');     // Messages frame
 		$this->load->library('view_listings_days'); // Days listings view
 	}
 	
@@ -36,32 +37,17 @@ class Listings extends Controller {
 	 */
 	function week($DateRange = '')
 	{
-		if (empty($DateRange)) {
-			// $DateRange Empty
-			
-			// Default to this week
-			$format = 'ac';
-			$base_time = new Academic_time(time());
-			
-			$monday = $base_time->BackToMonday();
-		
-			$this->_ShowCalendar(
-					$monday, 7,
-					'listings/week/', $format
-				);
-				
-		} else {
+		if (!empty($DateRange)) {
 			// $DateRange Not empty
 			
 			// Read the date, only allowing a single date (no range data)
 			$uri_result = $this->date_uri->ReadUri($DateRange, FALSE);
-			
 			if ($uri_result['valid']) {
 				// $DateRange Valid
 				$start_time = $uri_result['start'];
 				$start_time = $start_time->BackToMonday();
 				$format = $uri_result['format']; // Use the format in all links
-				$days = 7;
+				$days = 7; // force 7 days until view can handle different values.
 				
 				$this->_ShowCalendar(
 						$start_time, $days,
@@ -71,12 +57,22 @@ class Listings extends Controller {
 				
 			} else {
 				// $DateRange Invalid
-				// This should make it obvious that the date was invalid
-				// A better alternative is to have an optional error message
-				// at the top of the listings view and giving a warning
-				redirect('listings');
+				$this->frame_messages->AddMessage(
+						'Unrecognised date: "'.$DateRange.'"'
+					);
 			}
 		}
+		
+		// Default to this week
+		$format = 'ac';
+		$base_time = new Academic_time(time());
+		
+		$monday = $base_time->BackToMonday();
+	
+		$this->_ShowCalendar(
+				$monday, 7,
+				'listings/week/', $format
+			);
 	}
 	
 	/**
@@ -106,10 +102,13 @@ EXTRAHEAD;
 		// Get the data from the db, then we're ready to load
 		$view_listings_days->Retrieve();
 		
-		// Set up the public frame to use the listings view
+		// Set up the messages frame to use the listings view
+		$this->frame_messages->SetContent($view_listings_days);
+		
+		// Set up the public frame to use the messages frame
 		$this->frame_public->SetTitle('Listing viewer prototype');
 		$this->frame_public->SetExtraHead($extra_head);
-		$this->frame_public->SetContent($view_listings_days);
+		$this->frame_public->SetContent($this->frame_messages);
 		
 		// Load the public frame view
 		$this->frame_public->Load();

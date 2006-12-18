@@ -103,9 +103,10 @@ class Yorkerdirectory extends Controller {
 	}
 	
 	/// Directory events page.
-	function events($organisation, $range = '')
+	function events($organisation, $DateRange = '')
 	{
 		$this->load->library('frame_directory');
+		$this->load->library('frame_messages');
 		$this->load->library('view_listings_select_week');
 		$this->load->library('view_listings_list');
 		$this->load->library('date_uri');
@@ -121,22 +122,36 @@ EXTRAHEAD;
 	
 		$data = $this->_GetOrgData($organisation);
 		
-		if (empty($range)) {
-			$start_time = Academic_time::NewToday();
-			$end_time = $start_time->Adjust('1week');
-			$format = 'ac';
+		$use_default_range = FALSE;
+		if (empty($DateRange)) {
+			// $DateRange Empty
+			$use_default_range = TRUE;
+			
 		} else {
-			$uri_result = $this->date_uri->ReadUri($range);
+			$uri_result = $this->date_uri->ReadUri($DateRange);
 			if ($uri_result['valid']) {
 				// valid
 				$start_time = $uri_result['start'];
 				$end_time = $uri_result['end'];
 				$format = $uri_result['format'];
+				
 			} else {
 				// invalid
-				redirect('directory/'.$organisation.'/events');
+				$this->frame_messages->AddMessage(
+						'Unrecognised date range: "'.$DateRange.'"'
+					);
+				$use_default_range = TRUE;
 			}
 		}
+		
+		if ($use_default_range) {
+			// Default to this week
+			$start_time = Academic_time::NewToday();
+			$end_time = $start_time->Adjust('1week');
+			$format = 'ac';
+		}
+		
+		// Use the start time, end time, and format to set up views
 		
 		$monday = Academic_time::NewToday()->BackToMonday();
 		
@@ -171,10 +186,13 @@ EXTRAHEAD;
 		$directory_events->SetContent($week_select,'week_select');
 		$directory_events->SetContent($events_list,'events_list');
 		
-		// Set up the directory frame to use the directory events view
+		// Set up the messages frame to use the directory events view
+		$this->frame_messages->SetContent($directory_events);
+		
+		// Set up the directory frame to use the messages frame
 		$this->frame_directory->SetPage('events');
 		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($directory_events);
+		$this->frame_directory->SetContent($this->frame_messages);
 		
 		// Set up the public frame to use the directory frame
 		$this->frame_public->SetTitle('Directory Events');
