@@ -5,6 +5,10 @@ html {
 	margin: 5px;
 }
 
+body {
+	margin: 0;
+}
+
 a {
 	text-decoration: none;
 	color: #93969a;
@@ -57,6 +61,43 @@ img {
 	color: #000000;
 }
 
+/*
+*	Blue Navbar Styles
+*/
+
+div#navbar ul {
+	padding-left: 0;
+	margin-left: 0;
+	background-color: #08c0ef;
+	color: White;
+	float: left;
+	width: 100%;
+	vertical-align: middle;
+}
+
+div#navbar ul li {
+	display: inline;
+	font-size: 14px;
+}
+
+div#navbar ul li a {
+	padding: 0.2em 1em;
+	background-color: #08c0ef;
+	color: White;
+	text-decoration: none;
+	float: left;
+	border-right: 1px solid #fff;
+}
+
+div#navbar ul li a:hover	{
+	background-color: #06a5cd;
+	color: #fff;
+}
+
+div#navbar ul li .current {
+	font-weight: bold;
+ 	background-color: #06a5cd;
+}
 
 /**
 	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
@@ -647,7 +688,12 @@ div.BlackBoxSubTitle {
 *	Start styles for News Section
 */
 
-#newsnav ul {
+/*	REMOVE SECTION
+*	This is only left here until all pages using the newsnav id
+*	rename to navbar as specified in the general section
+*/
+
+div#newsnav ul {
 	padding-left: 0;
 	margin-left: 0;
 	background-color: #08c0ef;
@@ -657,12 +703,12 @@ div.BlackBoxSubTitle {
 	vertical-align: middle;
 }
 
-#newsnav ul li {
+div#newsnav ul li {
 	display: inline;
 	font-size: 14px;
 }
 
-#newsnav ul li a {
+div#newsnav ul li a {
 	padding: 0.2em 1em;
 	background-color: #08c0ef;
 	color: White;
@@ -671,70 +717,114 @@ div.BlackBoxSubTitle {
 	border-right: 1px solid #fff;
 }
 
-#newsnav ul li a:hover	{
+div#newsnav ul li a:hover	{
 	background-color: #06a5cd;
 	color: #fff;
 }
 
-#newsnav ul .right a {
+div#newsnav ul .right a {
 	float: right;
 	border-left: 1px solid #fff;
 	border-right: 0px;
 }
 
-#newsnav ul li #current {
+div#newsnav ul li #current {
 	font-weight: bold;
  	background-color: #06a5cd;
 }
 
-.ArticleColumn {
-	margin: 0;
-	padding: 0;
+/*	END REMOVE SECTION	*/
+
+
+div.ArticleColumn {
 	float: left;
-	font-size: small;
+	width: 520px;
+	font-size: 13px;
+	line-height: 15px;
 }
 
-.ArticleColumn p {
+div.ArticleColumn h1, div.ArticleColumn h2 {
+	text-align: center;
+	margin: 0;
+	line-height: normal;
+}
+
+div.ArticleColumn p {
 	text-align: justify;
- 	padding-left: 5px;
-	padding-right: 5px;
-	font-size: 11px;
+	font-size: 13px;
+	line-height: 15px;
 }
 
-.ArticleColumn .SubLinks, .ArticleColumn .SubLinks a {
-	text-align: right;
+div.ArticleColumn ul li {
+	font-size: 13px;
+	line-height: 15px;
+	text-align: left;
+}
+
+div.ArticleColumn h3 {
 	color: #ff6a00;
-	text-decoration: none;
-	font-size: small;
+	text-align: left;
+ }
+
+div.ArticleColumn .ArticleBox {
+	width: 120px;
+	border: 1px solid #ff6a00;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
-.ArticleColumn .SubLinks a:hover {
+div.ArticleColumn .ArticleBox .Header {
+	background-color: #ff6a00;
+	color: #fff;
+	font-weight: bold;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-align: center;
+}
+
+div.ArticleColumn .ArticleBox .Content {
+	margin: 0;
+	text-align: left;
+	padding-left: 1.5em;
+	list-style-image: url(/images/prototype/news/list-blue.gif);
+}
+
+.ArticleColumn #Byline {
+	background-position: left bottom;
+	background-repeat: no-repeat;
+	height: 100%;
+}
+
+.ArticleColumn #Byline {
+	text-align: right;
+ }
+ 
+.ArticleColumn #Byline .name {
+ 	font-weight: bold;
+	color: #ff6a00;
+}
+
+.ArticleColumn #Byline .links a {
+	color: #08c0ef;
+	text-decoration: none;
+ 	font-size: small;
+}
+
+.ArticleColumn #Byline .links a:hover {
 	text-decoration: underline;
 }
 
-.ArticleColumn h3 {
-	padding-left: 5px;
-	padding-right: 5px;
-	color: #ff6a00;
- }
- 
- .ArticleColumn .photo {
- 	font-size: small;
-    text-align: center;
+.ArticleColumn #Byline #BylineText {
+	padding: 0 10px;
 }
 
-#QuotesCol {
-	width: 20%;
-}
-
-.quote {
-	font-size: small;
+.ArticleColumn .quote {
 	text-align: center;
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
-.quote .author {
+.ArticleColumn .quote .author {
 	color: #08c0ef;
 	margin: 0;
 }
@@ -743,32 +833,53 @@ div.BlackBoxSubTitle {
 	margin-left: 1em;
 	padding-left: 5px;
 	padding-right: 5px;
-	font-size: small;
 }
 
+.RoundBoxBL {
+	background: url('/images/prototype/news/bl.gif') 0 100% no-repeat;
+	height: 100%;
+}
 
-/* ---------------------------------------------------------------------------- */
+.RoundBoxBR {
+	background: url('/images/prototype/news/br.gif') 100% 100% no-repeat;
+	height: 100%;
+}
+
+.RoundBoxTL {
+	background: url('/images/prototype/news/tl.gif') 0 0 no-repeat;
+	height: 100%;
+}
+
+.RoundBoxTR {
+	background: url('/images/prototype/news/tr.gif') 100% 0 no-repeat;
+	height: 100%;
+}
 
 .NewsPreview {
-	margin: 0px 10px 10px 10px;
-	padding: 0 0 5px 0;
-	font-size: small;
+	text-align: justify;
+	font-size: 13px;
+	line-height: 15px;
+	margin-bottom: 5px;
+	float: left;
 }
 
 .NewsPreview h1 {
+	text-align: left;
 	font-size: 18px;
-	margin-bottom: 0px;
+	line-height: normal;
+	margin: 0;
+}
+
+.NewsPreview h3 {
+	text-align: left;
+	margin: 0;
+	font-size: 15px;
+	line-height: normal;
 }
 
 .NewsPreview h1 a, .NewsPreview h3 a {
 	color: #000;
 	text-decoration: none;
-}
-
-.NewsPreview h3 {
-	margin-top: 0;
-	margin-bottom: 0px;
-	font-size: 15px;
 }
 
 .NewsPreview img {
@@ -777,62 +888,49 @@ div.BlackBoxSubTitle {
 }
 
 .NewsPreview p {
-	text-align: justify;
 	padding: 0;
-	margin: 0 0 10px 0;
+	margin: 0;
 }
 
 .NewsPreview .Writer, .NewsPreview .Writer a {
-	text-align: left;
 	color: #000;
 	text-decoration: none;
 	margin-top: 10px;
-	margin-bottom: 0px;
-	font-size: x-small;
+	font-size: 11px;
+	line-height: normal;
 	font-weight: bold;
 }
 
 .NewsPreview .Date {
-	text-align: left;
 	color: #000;
 	text-decoration: none;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	font-size: x-small;
+	font-size: 11px;
+	line-height: normal;
 }
 
 .NewsPreview .More, .NewsPreview .More a {
-	text-align: left;
 	color: #ff6a00;
 	text-decoration: none;
-	margin-top: 0px;
-	margin-bottom: 4px;
-	font-size: x-small;
+	margin-bottom: 5px;
+	font-size: 11px;
+	line-height: normal;
 }
 
 .NewsPreview a:hover {
-	text-decoration: underline;
+	text-decoration: underline
 }
 
-
-
 .NewsOther {
-	margin: 0px 10px 10px 10px;
-	padding: 0px 0 5px 0;
-	clear: both;
-	vertical-align: middle;
+	font-size: 11px;
+	line-height: 13px;
 	float: left;
 }
 
-.NewsOther h3 {
-	text-align: center;
-	font-size: 15px;
-}
-
 .NewsOther p {
-	font-size: small;;
-	margin: 0px 5px 10px 0px;
+	margin: 0;
+	padding: 0;
 	clear: both;
+	text-align: left;
 }
 
 .NewsOther img {
@@ -840,67 +938,58 @@ div.BlackBoxSubTitle {
 	float: left;
 }
 
-.NewsOther .More, .NewsOther .More a {
-	text-align: left;
-	color: #ff6a00;
-	text-decoration: none;
-	margin-top: 0px;
-	margin-bottom: 10px;
-	font-size: x-small;
-	clear: none;
-}
-
 .NewsOther .Headline, .NewsOther .Headline a {
 	clear: none;
-	margin-bottom: 0px;
 	text-decoration: none;
 	color: #000;
+	padding: 0;
+	margin: 0;
+	font-size: 13px;
+	line-height: 15px;
+	font-weight: bold;
 }
 
 .NewsOther .Writer, .NewsOther .Writer a {
-	text-align: left;
+	padding: 0;
+	margin: 0;
 	color: #000;
 	text-decoration: none;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	font-size: x-small;
-	font-weight: bold;
 	clear: none;
 }
 
 .NewsOther .Date {
-	text-align: left;
 	color: #000;
 	text-decoration: none;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	font-size: x-small;
 	clear: none;
+	margin-bottom: 5px;
 }
 
 .NewsOther a:hover {
 	text-decoration: underline;
 }
 
-.Advert {
-	float: right;
-	padding: 10px;
+.NewsOther h3 {
+	font-size: 15px;
 }
 
-/* ---------------------------------------------------------------------------- */
+.NewsOther ul {
+	padding: 0;
+	list-style-position: inside;
+	list-style-image: url('/images/prototype/news/list-blue.gif');
+	text-align: left;
+}
 
 #LifestyleContainer {
-	width: 100%;
-	padding-right: 12px;
+	width:255px;
+	float: left;
 }
 
 .LifestylePuffer {
 	border: 1px #000 solid;
-	width: 244px;
-	margin-left: 10px;
+	width: 255px;
 	margin-bottom: 10px;
-	float: left;
 	padding: 0;
+	float: left;
 }
 
 .LifestylePuffer a:hover {
@@ -927,95 +1016,6 @@ div.BlackBoxSubTitle {
 	color: #fff;
 }
 
-
-
-.LifestyleBoxes {
-	border: 1px solid #000000;
- 	float: left;
-  	width: 30%;
-	background-color: #DDDDDD;
-	padding: 5px;
-	margin-left: 10px;
-	margin-bottom: 10px;
-}
-
-.LifestyleBoxes p {
-	font-size: 11px;
-	margin-bottom: 0px;
-	margin-top: 0px;
-}
-
-.LifestyleBoxes h3 {
-	text-align: center;
-	margin: 0;
-	padding: 0;
-	font-size: 15px;
-}
-
-.LifestyleBoxes a {
-	color: #06a5cd;
-	text-decoration: none;
-}
-
-.LifestyleBoxes .More, .LifestyleBoxes .More a {
-	text-align: right;
-	color: #06a5cd;
-	text-decoration: none;
-	font-size: 10px;
-}
-
-
-
-.RoundBoxBL {
-	background: url('/images/prototype/news/bl.gif') 0 100% no-repeat;
-	height: 100%;
-}
-
-.RoundBoxBR {
-	background: url('/images/prototype/news/br.gif') 100% 100% no-repeat;
-	height: 100%;
-}
-
-.RoundBoxTL {
-	background: url('/images/prototype/news/tl.gif') 0 0 no-repeat;
-	height: 100%;
-}
-
-.RoundBoxTR {
-	background: url('/images/prototype/news/tr.gif') 100% 0 no-repeat;
-	height: 100%;
-}
-
-.ArticleColumn #Byline {
-	background-position: left bottom;
-	background-repeat: no-repeat;
-	height: 100%;
-}
-
-.ArticleColumn #Byline {
-	text-align: right;
- }
- 
-.ArticleColumn #Byline .name {
- 	font-weight: bold;
-/*	font-size:*/
-	color: #ff6a00;
-}
-
-.ArticleColumn #Byline .links a {
-	color: #08c0ef;
-	text-decoration: none;
- 	font-size: small;
-}
-
-.ArticleColumn #Byline .links a:hover {
-	text-decoration: underline;
-}
-
-.ArticleColumn #Byline #BylineText {
-	padding: 0 10px;
-}
-
 /* --- News : Admin Section --- */
 
 .form {
@@ -1031,6 +1031,7 @@ div.BlackBoxSubTitle {
  	border-style: solid none none none;
  	padding: 10px;
  	margin: 0;
+	text-align: left;
 }
 .form fieldset legend {
     color: #08c0ef;

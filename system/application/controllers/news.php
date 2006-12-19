@@ -25,7 +25,7 @@ class News extends Controller {
 			'news_previews' => array_slice(self::$news_data, 0, 3),
 			'news_others' => array_slice(self::$news_data, 3)
 		);
-		
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('Campus News');
 		$this->frame_public->SetContentSimple('news/news', $data);
@@ -37,9 +37,14 @@ class News extends Controller {
 	/// The National News section.
 	function national()
 	{
+		$data = array(
+			'news_previews' => self::$national_data,
+			'news_others' => array_slice(self::$news_data, 3)
+		);
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('National News');
-		$this->frame_public->SetContentSimple('news/national');
+		$this->frame_public->SetContentSimple('news/national', $data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
@@ -56,7 +61,7 @@ class News extends Controller {
     	
 		// Set up the public frame
 		$this->frame_public->SetTitle('Features');
-		$this->frame_public->SetContentSimple('news/news', $data);
+		$this->frame_public->SetContentSimple('news/features', $data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
@@ -91,8 +96,13 @@ class News extends Controller {
         }
     	
     	/// Format the relevant text with wikiparser
-    	$data['headline'] = $this->wikiparser->parse($data['headline']);
-    	$data['subheading'] = $this->wikiparser->parse($data['subheading']);
+		/*	The following two lines are commented out as when they are parsed they
+			get a <p> prefixed to them which causes them to ignore central alignment
+			and justify instead... do they actually need to be parsed?
+
+				$data['headline'] = $this->wikiparser->parse($data['headline']);
+    			$data['subheading'] = $this->wikiparser->parse($data['subheading']);
+		*/
     	$data['body'] = $this->wikiparser->parse($data['body']);
     	
 		// Set up the public frame
@@ -113,8 +123,59 @@ class News extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
-	
-    /// test data for use until we can use the database (latest 8 stories)
+
+	/// RSS Feed Generation
+	function rss()
+	{
+		$data['rss_title'] = 'Campus News';
+		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
+		$data['rss_desc'] = 'All the news you need to know about from York University\'s Campus!';
+		$data['rss_category'] = 'News';
+		$data['rss_pubdate'] = 'Thu, 14 Dec 2006 00:00:01 GMT';
+		$data['rss_lastbuild'] = 'Tue, 10 Jun 2003 09:41:01 GMT';
+		$data['rss_image'] = 'http://localhost/images/prototype/news/rss-campus.jpg';
+		$data['rss_width'] = '274';
+		$data['rss_height'] = '108';
+		$data['rss_email_ed'] = 'news@theyorker.co.uk';
+		$data['rss_email_web'] = 'webmaster@theyorker.co.uk';
+		$data['rss_items'] = self::$news_data;
+
+		$this->load->view('news/rss', $data);
+	}
+
+
+    /// test data for use until we can use the database (example national news)
+	private static $national_data = array(
+		array(
+			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/uk/6186194.stm',
+            'image' => '/images/prototype/news/bbc_news.gif',
+            'image_description' => 'Taken from BBC News',
+            'headline' => 'Ex-spy death inquiry stepped up',
+            'writer' => 'Google',
+            'date' => '5th December 2006',
+            'subtext' => 'Police step up inquiries into the death of Russian ex-spy Alexander Litvinenko, with officers due to fly to Moscow.'
+		),
+		array(
+			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/uk_politics/6186348.stm',
+            'image' => '/images/prototype/news/bbc_news.gif',
+            'image_description' => 'Taken from BBC News',
+            'headline' => 'Olympics audio surveillance row',
+            'writer' => 'Google',
+            'date' => '5th December 2006',
+            'subtext' => 'A police plan to use high-powered microphones to help the Olympics 2012 security is opposed by David Blunkett.'
+		),
+		array(
+			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/england/dorset/6186284.stm',
+            'image' => '/images/prototype/news/bbc_news.gif',
+            'image_description' => 'Taken from BBC News',
+            'headline' => 'Missing boy search scaled down',
+            'writer' => 'Google',
+            'date' => '5th December 2006',
+            'subtext' => 'The search for a boy who is missing after the rowing boat he stole with a friend capsized is scaled down overnight.'
+		),
+	);
+
+    /// test data for use until we can use the database (latest 9 stories)
     private static $news_data = array(
         array(
             'id' => '8',
@@ -148,7 +209,7 @@ class News extends Controller {
             'id' => '5',
             'image' => '/images/prototype/news/thumb3.jpg',
             'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up.',
+            'headline' => 'Ex-spy death inquiry stepped up',
             'writer' => 'Jo Shelley',
             'date' => '2nd December 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
@@ -157,7 +218,7 @@ class News extends Controller {
             'id' => '4',
             'image' => '/images/prototype/news/thumb2.jpg',
             'image_description' => 'Tony Blair',
-            'headline' => 'Tony Blair finds 10 items, keeps them all.',
+            'headline' => 'Tony Blair finds 10 items, keeps them all',
             'writer' => 'Jo Shelley',
             'date' => '1st December 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
@@ -166,7 +227,7 @@ class News extends Controller {
             'id' => '3',
             'image' => '/images/prototype/news/thumb9.jpg',
             'image_description' => 'Man in a wig',
-            'headline' => 'Mass panic as world ends twice in one day.',
+            'headline' => 'Mass panic as world ends twice in one day',
             'writer' => 'Neil Brehon',
             'date' => '30th November 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
@@ -175,7 +236,7 @@ class News extends Controller {
             'id' => '2',
             'image' => '/images/prototype/news/thumb3.jpg',
             'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up again.',
+            'headline' => 'Ex-spy death inquiry stepped up again',
             'writer' => 'Owen Jones',
             'date' => '29th November 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
@@ -184,7 +245,16 @@ class News extends Controller {
             'id' => '1',
             'image' => '/images/prototype/news/thumb2.jpg',
             'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up.',
+            'headline' => 'Ex-spy death inquiry stepped up',
+            'writer' => 'Owen Jones',
+            'date' => '28th November 2006',
+            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
+        ),
+        array(
+            'id' => '1',
+            'image' => '/images/prototype/news/thumb2.jpg',
+            'image_description' => 'Some Spy',
+            'headline' => 'Ex-spy death inquiry stepped up',
             'writer' => 'Owen Jones',
             'date' => '28th November 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
@@ -211,6 +281,28 @@ class News extends Controller {
                 'text' => 'We got back in at three o\'clock in the morning with no explanation'
             )
         ),
+		'related_articles' => array(
+			array(
+				'id' => '1',
+				'headline' => 'Israel vows ceasefire \'patience\''
+			),
+			array(
+				'id' => '2',
+				'headline' => 'Blair \'sorrow\' over slave trade'
+			),
+			array(
+				'id' => '3',
+				'headline' => 'Ex-spy death inquiry stepped up'
+			),
+			array(
+				'id' => '4',
+				'headline' => 'Mass panic as world ends twice in one day'
+			),
+			array(
+				'id' => '5',
+				'headline' => 'Tony Blair finds 10 items, keeps them all'
+			)
+		),
         'factbox_title' => 'UK Facts',
         'factbox_contents' => '<ul class=\'ArticleFacts\'>
 		 <li><b>Full name:</b> United Kingdom of Great Britain and Northern Ireland</li>

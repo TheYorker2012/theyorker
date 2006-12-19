@@ -2,6 +2,8 @@
 <head>
 <title>The Yorker - <?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel='shortcut icon' href='/images/yorker.ico'>
+<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss'>
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css">
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css">
 <!-- BEGIN 'head' tag items from controlling script -->
@@ -59,7 +61,7 @@ function preloader()
 			<a class="HeaderLinks" href="/about/">about</a> |
 			<a class="HeaderLinks" href="/directory/">directory</a> |
 			<span style="color: #2DC6D7;">
-			search <input type="text" style="font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px;">
+			search <form name='site_search' action='/search/layout' method='post' style='display:inline'><input type="text" style="font-size:10px; height: 19px; border-style:solid; border-color:#2DC6D7; border-width: 2px;"></form>
 			</span>
 		</td>
 	</tr>

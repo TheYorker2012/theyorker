@@ -4,10 +4,10 @@
 		<li><a href='/news/national/'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
 		<li><a href='/news/features/'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
 		<li><a href='/news/lifestyle/'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li class='right'><a href='/news/archive/' id='current'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
+		<li><a href='/news/archive/' id='current'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
 		</ul>
 	</div>
-	<div id='clear'>&nbsp;</div>
+	<div class='clear'>&nbsp;</div>
 
 	<form name='archive_search' id='archive_search' action='<?php echo site_url('news/archive/'); ?>' method='post' class='form'>
 	    <fieldset>
