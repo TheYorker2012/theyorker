@@ -134,6 +134,7 @@ EXTRAHEAD;
 				$start_time = $uri_result['start'];
 				$end_time = $uri_result['end'];
 				$format = $uri_result['format'];
+				$range_description = $uri_result['description'];
 				
 			} else {
 				// invalid
@@ -149,6 +150,7 @@ EXTRAHEAD;
 			$start_time = Academic_time::NewToday();
 			$end_time = $start_time->Adjust('1week');
 			$format = 'ac';
+			$range_description = 'From today for 1 week';
 		}
 		
 		// Use the start time, end time, and format to set up views
@@ -185,6 +187,7 @@ EXTRAHEAD;
 		$directory_events = new FramesFrame('directory/directory_view_events',$data);
 		$directory_events->SetContent($week_select,'week_select');
 		$directory_events->SetContent($events_list,'events_list');
+		$directory_events->SetData('date_range_description', $range_description);
 		
 		// Set up the messages frame to use the directory events view
 		$this->frame_messages->SetContent($directory_events);
