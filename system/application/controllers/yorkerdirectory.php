@@ -150,7 +150,7 @@ EXTRAHEAD;
 			$start_time = Academic_time::NewToday();
 			$end_time = $start_time->Adjust('1week');
 			$format = 'ac';
-			$range_description = 'From today for 1 week';
+			$range_description = 'from today for 1 week';
 		}
 		
 		// Use the start time, end time, and format to set up views

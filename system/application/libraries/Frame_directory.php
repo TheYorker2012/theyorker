@@ -10,9 +10,8 @@
 $CI = &get_instance();
 $CI->load->library('frames');
 
+/// Directory frame library class.
 /**
- * @brief Directory frame library class.
- *
  * Automatically loads the Frames library.
  *
  * Load the library from the controller constructor (you'll probably want to
@@ -49,16 +48,14 @@ $CI->load->library('frames');
  */
 class Frame_directory extends FramesFrame
 {
-	/**
-	 * @brief Default constructor.
-	 */
+	/// Default constructor.
 	function __construct()
 	{
 		parent::__construct('directory/directory_frame.php');
 	}
 	
+	/// Set the page in use (determines the navigation bar highlighting).
 	/**
-	 * @brief Set the page in use (determines the navigation bar highlighting).
 	 * @param $Page string Page name.
 	 */
 	function SetPage($Page)
@@ -66,8 +63,8 @@ class Frame_directory extends FramesFrame
 		$this->SetData('page', $Page);
 	}
 	
+	/// Set the organisation data.
 	/**
-	 * @brief Set the organisation data.
 	 * @param $OrganisationData array Organisation data with the following fields:
 	 *	- 'name'
 	 */

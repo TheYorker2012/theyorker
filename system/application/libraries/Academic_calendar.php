@@ -660,11 +660,9 @@ class Academic_time
 			/**
 			 * @todo jh559: Implement GetAcademicYearData using data from db.
 			 * The academic term data needs to be stored in the database:
- 			 *	DB Structure:
+			 *	DB Structure:
 			 *	- AcademicYear
-			 *		- start_term_[1-6] -- could be timestamp or week number
-			 *			(since this must be midnight on a monday morning)
-			 *		- num_term_weeks_[1-6]
+			 *		- start_term_[0-5] -- timestamps (not necessarily monday)
 			 */
 			$year_data = array(
 					'year' => $AcademicYear,
