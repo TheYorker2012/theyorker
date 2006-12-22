@@ -6,6 +6,16 @@
  * @brief Library for managing frames and views nicely.
  */
 
+/// Abstract class that outputs something when Load() is called
+/**
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ */
+abstract class Outputter
+{
+	/// Outputs some sort of data, such as HTML, XML or whatever.
+	abstract function Load();
+}
+
 /// Quite simply represents a view.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
@@ -23,7 +33,7 @@
  *
  * @see FramesFrame for handling subviews.
  */
-class FramesView
+class FramesView extends Outputter
 {
 	/// array The data array to send to the view.
 	protected $mDataArray;
@@ -72,7 +82,6 @@ class FramesView
 	
 	/// Use code igniter to load the view.
 	/**
-	 *
 	 * If the specified view is empty, then nothing happens.
 	 */
 	function Load()
