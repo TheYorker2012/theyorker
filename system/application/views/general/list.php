@@ -46,13 +46,13 @@ A to Z
 
 Reviews
 <ul>
-	<li><a href="/review/">/review/</a></li>
-	<li><a href="/review/food/">/review/food/</a></li>
-	<li><a href="/review/drink/">/review/drink/</a></li>
-	<li><a href="/review/culture/">/review/culture/</a></li>
-	<li><a href="/review/foodreview/">/review/foodreview/</a></li>
-	<li><a href="/review/culturereview/">/review/culturereview/</a></li>
-	<li><a href="/review/barcrawl/">/review/barcrawl/</a></li>
+	<li><a href="/reviews/">/reviews/</a></li>
+	<li><a href="/reviews/food/">/reviews/food/</a></li>
+	<li><a href="/reviews/drink/">/reviews/drink/</a></li>
+	<li><a href="/reviews/culture/">/reviews/culture/</a></li>
+	<li><a href="/reviews/foodreview/">/reviews/foodreview/</a></li>
+	<li><a href="/reviews/culturereview/">/reviews/culturereview/</a></li>
+	<li><a href="/reviews/barcrawl/">/reviews/barcrawl/</a></li>
 </ul>
 
 Directory

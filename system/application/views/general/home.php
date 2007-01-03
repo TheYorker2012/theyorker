@@ -71,7 +71,7 @@
 	</tr>
 	<tr>
 		<td colspan="4" rowspan="2">
-			<a href='/review/food/'><img src="/images/prototype/homepage/homepage_26.gif" width="259" height="27" alt=""></a></td>
+			<a href='/reviews/food/'><img src="/images/prototype/homepage/homepage_26.gif" width="259" height="27" alt=""></a></td>
 		<td>
 			<img src="/images/prototype/homepage/spacer.gif" width="1" height="22" alt=""></td>
 	</tr>
@@ -87,13 +87,13 @@
 	</tr>
 	<tr>
 		<td colspan="4">
-			<a href='/review/drink/'><img src="/images/prototype/homepage/homepage_30.gif" width="259" height="30" alt=""></a></td>
+			<a href='/reviews/drink/'><img src="/images/prototype/homepage/homepage_30.gif" width="259" height="30" alt=""></a></td>
 		<td>
 			<img src="/images/prototype/homepage/spacer.gif" width="1" height="30" alt=""></td>
 	</tr>
 	<tr>
 		<td colspan="4" rowspan="2">
-			<a href='/review/culture/'><img src="/images/prototype/homepage/homepage_31.gif" width="259" height="33" alt=""></a></td>
+			<a href='/reviews/culture/'><img src="/images/prototype/homepage/homepage_31.gif" width="259" height="33" alt=""></a></td>
 		<td>
 			<img src="/images/prototype/homepage/spacer.gif" width="1" height="24" alt=""></td>
 	</tr>
