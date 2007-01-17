@@ -5,327 +5,331 @@
 ----------------------------------------------------------------
 
 CREATE TABLE entities (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	username	VARCHAR(255)	NULL,
-	password	CHAR(32)	NULL,
-	entity_type_id	INTEGER		NOT NULL,
-	deleted		BOOL		NOT NULL	FALSE,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+	entity_id	INTEGER		NOT NULL	AUTO_INCREMENT,
+	entity_username	VARCHAR(255)	NULL,
+	entity_password	CHAR(32)	NULL,
+	entity_entity_type_id	INTEGER		NOT NULL,
+	entity_deleted		BOOL		NOT NULL	FALSE,
+	entity_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
 
-	PRIMARY KEY(id)
+	PRIMARY KEY(entity_id)
 );
 
 -- This table stores both organisations and parts of organisations (e.g. sports
 --  teams)
 CREATE TABLE organisations (
-	entity_id	INTEGER		NOT NULL,
-	organisation_type_id INTEGER	NOT NULL,
-	organisation_id_parent INTEGER	NULL,
-	name		VARCHAR(255)	NOT NULL,
-	description	TEXT		NULL,
-	location	VARCHAR(15)	NULL,
-	address		VARCHAR(255)	NULL,
-	postcode	VARCHAR(15)	NULL,
-	url		VARCHAR(255)	NULL,
-	opening_hours	VARCHAR(255)	NULL,
-	directory	BOOL		NOT NULL,
-	events		BOOL		NOT NULL,
-	yorkipedia_entry VARCHAR(255)	NULL,
-	hits		INTEGER		NOT NULL,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+	organisation_entity_id	INTEGER		NOT NULL,
+	organisation_organisation_type_id INTEGER	NOT NULL,
+	organisation_organisation_entity_id_parent INTEGER	NULL,
+	organisation_name		VARCHAR(255)	NOT NULL,
+	organisation_description	TEXT		NULL,
+	organisation_location	VARCHAR(15)	NULL,
+	organisation_address		VARCHAR(255)	NULL,
+	organisation_postcode	VARCHAR(15)	NULL,
+	organisation_url		VARCHAR(255)	NULL,
+	organisation_opening_hours	VARCHAR(255)	NULL,
+	organisation_directory	BOOL		NOT NULL,
+	organisation_events		BOOL		NOT NULL,
+	organisation_yorkipedia_entry VARCHAR(255)	NULL,
+	organisation_hits		INTEGER		NOT NULL,
+	organisation_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
 	
-	PRIMARY KEY(id),
+	PRIMARY KEY(organisation_entity_id),
 );
 
 -- Stores the type of organisations e.g. an on campus society, an AU club, an
 --  external organisation.  If directory is set to false, this type of
 --  organisation does not appear in the directory.  
 CREATE TABLE organisation_types (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	name		VARCHAR(255)	NOT NULL,
-	directory	BOOL		NOT NULL,
+	organisation_type_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	organisation_type_name		VARCHAR(255)	NOT NULL,
+	organisation_type_directory	BOOL		NOT NULL,
 
-	PRIMARY KEY(id)
+	PRIMARY KEY(organisation_type_id)
 );
 
 CREATE TABLE organisation_slideshows (
-	organisation_id INTEGER		NOT NULL,
-	photo_id	INTEGER		NOT NULL,
-	order		INTEGER		NULL,
+	organisation_slideshows_organisation_entity_id INTEGER		NOT NULL,
+	organisation_slideshows_photo_id	INTEGER		NOT NULL,
+	organisation_slideshows_order		INTEGER		NULL,
 
-	PRIMARY KEY(organisation_id, photo_id),
+	PRIMARY KEY(organisation_entity_id, photo_id),
 );
 
 -- Organisations can be taged to create lists of related organisations etc.
 CREATE TABLE organisation_tags (
-	organisation_id	INTEGER		NOT NULL,
-	tag_id		INTEGER		NOT NULL,
+	organisation_tag_organisation_entity_id	INTEGER		NOT NULL,
+	organisation_tag_tag_id		INTEGER		NOT NULL,
 
-	PRIMARY KEY(organisation_id, tag_id),
+	PRIMARY KEY(organisation_tag_organisation_entity_id, organisation_tag_tag_id),
 );
 
 -- Stores users of the yorker.	These must be members of the university.	
 CREATE TABLE users (
- 	entity_id	INTEGER		NOT NULL,
-	college_id	INTEGER		NULL,
-	image_id	INTEGER		NULL,
-	firstname	VARCHAR(255)	NOT NULL,
-	surname		VARCHAR(255)	NOT NULL,
-	email		VARCHAR(255)	NOT NULL,
-	nickname	VARCHAR(255)	NULL,
-	gender		ENUM('m','f')	NULL,
-	enrolled_year	INTEGER		NULL,
-	store_password	BOOL		NOT NULL,
-	permission	INTEGER		NOT NULL,
-	office_password	CHAR(32)	NULL,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+ 	user_entity_id	INTEGER		NOT NULL,
+	user_college_id	INTEGER		NULL,
+	user_image_id	INTEGER		NULL,
+	user_firstname	VARCHAR(255)	NOT NULL,
+	user_surname		VARCHAR(255)	NOT NULL,
+	user_email		VARCHAR(255)	NOT NULL,
+	user_nickname	VARCHAR(255)	NULL,
+	user_gender		ENUM('m','f')	NULL,
+	user_enrolled_year	INTEGER		NULL,
+	user_store_password	BOOL		NOT NULL,
+	user_permission	INTEGER		NOT NULL,
+	user_office_password	CHAR(32)	NULL,
+	user_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
 
-	PRIMARY KEY(user_id),
+	PRIMARY KEY(user_entity_id),
 );
 
 -- The types of articles a user can write - reviews, features, news etc.
 CREATE TABLE users_article_types (
-	user_id		INTEGER		NOT NULL,
-	article_type_id	INTEGER		NOT NULL,
+	users_article_type_user_id		INTEGER		NOT NULL,
+	users_article_type_article_type_id	INTEGER		NOT NULL,
 
-	PRIMARY KEY(user_id, article_type_id),
+	PRIMARY KEY(users_article_type_user_id, users_article_type_article_type_id),
 );
 
 -- Organisation can request to see properties of members.  
 CREATE TABLE organisation_request_properties (
-	organisation_id	INTEGER		NOT NULL,
-	user_property_id INTEGER	NOT NULL,
-	preferred	BOOL		NOT NULL,
+	organisation_request_properties_organisation_entity_id	INTEGER		NOT NULL,
+	organisation_request_properties_user_property_id INTEGER	NOT NULL,
+	organisation_request_properties_preferred	BOOL		NOT NULL,
 
-	PRIMARY KEY(organisation_id, user_property_id),
+	PRIMARY KEY(organisation_request_properties_organisation_entity_id, organisation_request_properties_user_property_id),
 );
 
 -- TODO: possibly work out a nice way of doing this.  
 CREATE TABLE user_has_properties (
-	user_id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	property_id	INTEGER		NOT NULL,
-	text		TEXT		NULL,
-	photo_id	INTEGER		NULL,
-	date		TIMESTAMP	NULL,
-	bool		BOOL		NULL,
-	number		FLOAT		NULL,
+	user_has_properties_user_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	user_has_properties_property_id	INTEGER		NOT NULL,
+	user_has_properties_text		TEXT		NULL,
+	user_has_properties_photo_id	INTEGER		NULL,
+	user_has_properties_date		TIMESTAMP	NULL,
+	user_has_properties_bool		BOOL		NULL,
+	user_has_properties_number		FLOAT		NULL,
 
-	PRIMARY KEY(user_id, property_id),
+	PRIMARY KEY(user_has_properties_user_id, user_has_properties_property_id),
 );
 
 -- Properties which users can associate with themselves.  
 CREATE TABLE user_properties (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	property_type_id INTEGER	NULL,
-	name		TEXT		NULL,
+	user_property_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	user_property_property_type_id INTEGER	NULL,
+	user_property_name		TEXT		NULL,
 
-	PRIMARY KEY(id),
+	PRIMARY KEY(user_property_id),
 );
 
 -- TODO: make this nice :)
 CREATE TABLE property_types (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	name		VARCHAR(255)	NOT NULL,
-	is_user_prop	BOOL		NOT NULL,
-	text		BOOL		NOT NULL,
-	photo		BOOL		NOT NULL,
-	image		BOOL		NOT NULL,
-	date		BOOL		NOT NULL,
-	bool		BOOL		NOT NULL,
-	number		BOOL		NOT NULL,
+	property_type_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	property_type_name		VARCHAR(255)	NOT NULL,
+	property_type_is_user_prop	BOOL		NOT NULL,
+	property_type_text		BOOL		NOT NULL,
+	property_type_photo		BOOL		NOT NULL,
+	property_type_image		BOOL		NOT NULL,
+	property_type_date		BOOL		NOT NULL,
+	property_type_bool		BOOL		NOT NULL,
+	property_type_number		BOOL		NOT NULL,
 	
-	PRIMARY KEY(id)
+	PRIMARY KEY(property_type_id)
 );
 
 -- Links that can appear on the homepage
 CREATE TABLE links (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	image_id	INTEGER		NOT NULL,
-	url		VARCHAR(255)	NOT NULL,
-	name		VARCHAR(255)	NOT NULL,
+	link_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	link_image_id	INTEGER		NOT NULL,
+	link_url		VARCHAR(255)	NOT NULL,
+	link_name		VARCHAR(255)	NOT NULL,
 	
-	PRIMARY KEY(id),
+	PRIMARY KEY(link_id),
 );
 
 -- Stores either association between user and predifined links or custom links.
 CREATE TABLE user_links (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	user_id		INTEGER		NOT NULL,
-	link_id		INTEGER		NULL,
-	image_id	INTEGER		NULL,
-	url		VARCHAR(255)	NULL,
-	name		VARCHAR(255)	NULL,
-	request		BOOL		NULL,
-	order		INTEGER		NULL,
+	user_link_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	user_link_user_id		INTEGER		NOT NULL,
+	user_link_link_id		INTEGER		NULL,
+	user_link_image_id	INTEGER		NULL,
+	user_link_url		VARCHAR(255)	NULL,
+	user_link_name		VARCHAR(255)	NULL,
+		-- True to make a request to put a user link into predifined links.  
+	user_link_request	BOOL		NULL,
+	user_link_order		INTEGER		NOT NULL,
 	
-	PRIMARY KEY(id),
+	PRIMARY KEY(user_link_id),
 );
 
 -- What organisations can see a users properties.  
 CREATE TABLE user_subscription_properties (
-	organisation_id	INTEGER		NOT NULL,
-	property_id	INTEGER		NOT NULL,
-	user_id		INTEGER		NOT NULL,
+	user_subscription_property_organisation_entity_id	INTEGER		NOT NULL,
+	user_subscription_property_property_id	INTEGER		NOT NULL,
+	user_subscription_property_user_id		INTEGER		NOT NULL,
 
-	PRIMARY KEY(organisation_id, property_id, user_id),
+	PRIMARY KEY(user_subscription_property_organisation_entity_id, user_subscription_property_property_id, user_subscription_property_user_id),
 );
 
 CREATE TABLE departments (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	name		VARCHAR(255)	NOT NULL,
+	department_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	department_name		VARCHAR(255)	NOT NULL,
 
-	PRIMARY KEY(id)
+	PRIMARY KEY(department_id)
 );
 
 CREATE TABLE department_modules (
-	department_id	INTEGER		NOT NULL,
+	department_module_department_id	INTEGER		NOT NULL,
 		-- The module is an entity
-	entity_id	INTEGER		NOT NULL,
-	PRIMARY KEY(department_id, entity_id),
+	department_module_entity_id	INTEGER		NOT NULL,
+
+	PRIMARY KEY(department_module_department_id, department_module_entity_id),
 );
 
 ----------------------------------------------------------------
 -- Subscription and business card related tables              --
 ----------------------------------------------------------------
 CREATE TABLE business_cards (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	organisation_id	INTEGER		NOT NULL,
-	user_id		INTEGER		NOT NULL,
-	name		VARCHAR(255)	NOT NULL,
-	title		VARCHAR(255)	NOT NULL,
-	blurb		TEXT		NULL,
-	business_card_type_id INTEGER	NOT NULL,
-	email		VARCHAR(255)	NOT NULL,
-	mobile		VARCHAR(31)	NULL,
-	phone_internal	VARCHAR(31)	NULL,
-	phone_external	VARCHAR(31)	NULL,
-	postal_address	VARCHAR(255)	NULL,
-	business_card_colour_id INTEGER	NOT NULL,
-	deleted		BOOL		NOT NULL,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+	business_card_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	business_card_organisation_entity_id	INTEGER		NOT NULL,
+	business_card_user_id		INTEGER		NOT NULL,
+	business_card_name		VARCHAR(255)	NOT NULL,
+	business_card_title		VARCHAR(255)	NOT NULL,
+	business_card_blurb		TEXT		NULL,
+	business_card_business_card_type_id INTEGER	NOT NULL,
+	business_card_email		VARCHAR(255)	NULL,
+	business_card_mobile		VARCHAR(31)	NULL,
+	business_card_phone_internal	VARCHAR(31)	NULL,
+	business_card_phone_external	VARCHAR(31)	NULL,
+	business_card_postal_address	VARCHAR(255)	NULL,
+	business_card_business_card_colour_id INTEGER	NOT NULL,
+	business_card_deleted		BOOL		NOT NULL,
+	business_card_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
 
-	PRIMARY KEY(id),
+	PRIMARY KEY(business_card_id),
 );
 
 CREATE TABLE business_card_colours (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	name		VARCHAR(255)	NOT NULL,
-	background	CHAR(6)		NOT NULL,
-	foreground	CHAR(6)		NOT NULL,
+	business_card_colour_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	business_card_colour_name		VARCHAR(255)	NOT NULL,
+	business_card_colour_background	CHAR(6)		NOT NULL,
+	business_card_colour_foreground	CHAR(6)		NOT NULL,
 
-	PRIMARY KEY(id)
+	PRIMARY KEY(business_card_colour_id)
 );
 
 -- Title on buisiness card, may well not be related to "teams" etc.
+-- TODO: discrepancy between this and design
 CREATE TABLE business_card_types (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	name		VARCHAR(255)	NOT NULL,
+	business_card_type_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	business_card_type_name		VARCHAR(255)	NOT NULL,
+	business_card_type_organisation_entity_id INTEGER NULL,
 	
-	PRIMARY KEY(id),
+	PRIMARY KEY(business_card_type_id),
 );
 
 CREATE TABLE subscriptions (
-	subscription_organisation_id INTEGER NOT NULL,
-	subscription_user_id INTEGER NOT NULL,
+	subscription_organisation_entity_id INTEGER NOT NULL,
+	subscription_user_entity_id INTEGER NOT NULL,
 		-- Are the events on the calendar
-	subscription_interested BOOL NULL,
-	subscription_member BOOL NULL,
-	subscription_paid BOOL NULL,
+	subscription_interested BOOL NOT NULL,
+	subscription_member BOOL NOT NULL,
+	subscription_paid BOOL NOT NULL,
 		-- Does the organisation have access to e-mail address
-	subscription_email BOOL NULL,
-	subscription_admin BOOL NULL,
-	subscription_user_confirmed BOOL NULL,
-	subscription_deleted BOOL NULL,
-	subscription_timestamp TIMESTAMP NULL,
-	PRIMARY KEY(subscription_organisation_id, subscription_user_id),
+	subscription_email BOOL NOT NULL,
+	subscription_admin BOOL NOT NULL,
+	subscription_user_confirmed BOOL NOT NULL,
+	subscription_deleted BOOL NOT NULL,
+	subscription_timestamp TIMESTAMP NOT NULL CURRENT_TIMESTAMP,
+	PRIMARY KEY(subscription_organisation_entity_id, subscription_user_entity_id),
 );
 
 ----------------------------------------------------------------
 -- Article related tables                                     --
 ----------------------------------------------------------------
 CREATE TABLE articles (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	article_type_id	INTEGER		NOT NULL,
-	last_editor_user_id INTEGER	NULL,
-	created		TIMESTAMP	NOT NULL,
-	publish_date	TIMESTAMP	NOT NULL,
-	initial_editor_user_id INTEGER	NULL,
-	location	VARCHAR(15)	NULL,
-	breaking	BOOL		NOT NULL	FALSE,
-	pulled		BOOL		NOT NULL	FALSE,
-	hits		INTEGER		NOT NULL	0,
-	deleted		BOOL		NOT NULL	FALSE,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
-	current_article_content_id INTEGER NULL,
+	article_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	article_article_type_id	INTEGER		NOT NULL,
+	article_last_editor_user_id INTEGER	NULL,
+	article_created		TIMESTAMP	NOT NULL,
+	article_publish_date	TIMESTAMP	NULL,
+	article_initial_editor_user_id INTEGER	NULL,
+	article_location	VARCHAR(15)	NULL,
+	article_breaking	BOOL		NOT NULL	FALSE,
+	article_pulled		BOOL		NOT NULL	FALSE,
+	article_hits		INTEGER		NOT NULL	0,
+	article_deleted		BOOL		NOT NULL	FALSE,
+	article_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+	article_current_article_content_id INTEGER NULL,
 
 	PRIMARY KEY(article_id),
 );
 
 -- An article can have a number of contents (i.e. revisions) written.  Only 1
 --  is live at a time.  
-CREATE TABLE article_content (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	article_id	INTEGER		NOT NULL,
-	heading		VARCHAR(255)	NOT NULL,
-	subheading	TEXT		NULL,
-	subtext		TEXT		NULL,
-	text		TEXT		NOT NULL,
-	blurb		TEXT		NOT NULL,
+CREATE TABLE article_contents (
+	article_content_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	article_content_article_id	INTEGER		NOT NULL,
+	article_content_heading		VARCHAR(255)	NOT NULL,
+	article_content_subheading	TEXT		NULL,
+	article_content_subtext		TEXT		NULL,
+	article_content_text		TEXT		NOT NULL,
+	article_content_blurb		TEXT		NULL,
 	
 	PRIMARY KEY(article_content_id),
 );
 
 -- Articles about events are linked to the events.  
 CREATE TABLE article_events (
-	article_id	INTEGER		NOT NULL,
-	event_id	INTEGER		NOT NULL,
+	article_event_article_id	INTEGER		NOT NULL,
+	article_event_event_id	INTEGER		NOT NULL,
 	
-	PRIMARY KEY(article_id, event_id), 
+	PRIMARY KEY(article_event_article_id, article_event_event_id), 
 );
 
 CREATE TABLE article_links (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	article_id	INTEGER		NOT NULL,
-	name		VARCHAR(255)	NOT NULL,
-	url		VARCHAR(255)	NOT NULL,
-	deleted		BOOL		NOT NULL	FALSE,
-	timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
+	article_link_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	article_link_article_id	INTEGER		NOT NULL,
+	article_link_name		VARCHAR(255)	NOT NULL,
+	article_link_url		VARCHAR(255)	NOT NULL,
+	article_link_deleted		BOOL		NOT NULL	FALSE,
+	article_link_timestamp	TIMESTAMP	NOT NULL	CURRENT_TIMESTAMP,
 	
 	PRIMARY KEY(article_link_id),
 );
 
 -- Photos that may appear in the wikitext.  
 CREATE TABLE article_photos (
-	article_id	INTEGER		NOT NULL,
-	photo_id	INTEGER		NOT NULL,
-	number		INTEGER		NOT NULL,
+	article_photo_article_id	INTEGER		NOT NULL,
+	article_photo_photo_id	INTEGER		NOT NULL,
+	article_photo_number		INTEGER		NOT NULL,
 
-	PRIMARY KEY(article_id, photo_id),
+	PRIMARY KEY(article_photo_article_id, article_photo_photo_id),
 );
 
 CREATE TABLE article_tags (
-	article_id	INTEGER		NOT NULL,
-	tag_id		INTEGER		NOT NULL,
+	article_tag_article_id	INTEGER		NOT NULL,
+	article_tag_tag_id		INTEGER		NOT NULL,
 	
-	PRIMARY KEY(article_id, tag_id),
+	PRIMARY KEY(article_tag_article_id, article_tag_tag_id),
 );
 
 -- News, reviews features, lifstyle etc..  Can be in a hierachy.  
 CREATE TABLE article_types (
-	id		INTEGER		NOT NULL	AUTO_INCREMENT,
-	parent_article_type_id INTEGER	NULL,
-	name		VARCHAR(255)	NOT NULL,
-	archive		BOOL		NOT NULL,
+	article_type_id		INTEGER		NOT NULL	AUTO_INCREMENT,
+	article_type_parent_article_type_id INTEGER	NULL,
+	article_type_name		VARCHAR(255)	NOT NULL,
+	article_type_archive		BOOL		NOT NULL,
 	
-	PRIMARY KEY(id),
+	PRIMARY KEY(article_type_id),
 );
 
 -- Links the authors of a revision of an article.  
 CREATE TABLE article_writers (
-	user_id		INTEGER		NOT NULL,
-	article_content_id INTEGER	NOT NULL,
+	article_writer_user_id		INTEGER		NOT NULL,
+	article_writer_article_content_id INTEGER	NOT NULL,
 	
-	PRIMARY KEY(user_id, article_content_id),
+	PRIMARY KEY(article_writer_user_id, article_writer_article_content_id),
 );
 
 CREATE TABLE fact_boxes (
@@ -365,7 +369,7 @@ CREATE TABLE requests (
 	request_article_id INTEGER NOT NULL,
 	request_type_id INTEGER NOT NULL,
 	request_article_type_id INTEGER NOT NULL,
-	request_organisation_id INTEGER NULL,
+	request_organisation_entity_id INTEGER NULL,
 	request_text TEXT NOT NULL,
 	request_deadline TIMESTAMP NOT NULL,
 	request_accepted BOOL NOT NULL,
@@ -516,7 +520,7 @@ CREATE TABLE years (
 CREATE TABLE reviews (
 	review_id INTEGER NOT NULL AUTO_INCREMENT,
 	rto_review_type_id INTEGER NOT NULL,
-	rto_organisation_id INTEGER NOT NULL,
+	rto_organisation_entity_id INTEGER NOT NULL,
 	review_article_id INTEGER NULL,
 	PRIMARY KEY(review_id),
 );
@@ -534,20 +538,20 @@ CREATE TABLE review_types (
 -- Information about an organisation in a specific category (e.g. evil eye for
 --  food)
 CREATE TABLE review_type_organisations (
-	rto_organisation_id INTEGER NOT NULL,
+	rto_organisation_entity_id INTEGER NOT NULL,
 	rto_review_type_id INTEGER NOT NULL,
 	rto_live_content_id INTEGER NOT NULL,
 	rto_user_rate_count INTEGER NULL,
 	rto_average_user_rating FLOAT NULL,
 	rto_deleted BOOL NULL,
 	rto_timestamp TIMESTAMP NULL,
-	PRIMARY KEY(rto_organisation_id, rto_review_type_id),
+	PRIMARY KEY(rto_organisation_entity_id, rto_review_type_id),
 );
 
 -- RTO content is like article content.  
 CREATE TABLE rto_content (
 	rto_content_id INTEGER NOT NULL AUTO_INCREMENT,
-	rto_content_organisation_id INTEGER NOT NULL,
+	rto_content_organisation_entity_id INTEGER NOT NULL,
 	rto_content_review_type_id INTEGER NOT NULL,
 	rto_content_cost_id INTEGER NULL,
 	rto_content_blurb TEXT NULL,
@@ -563,9 +567,9 @@ CREATE TABLE rto_content (
 
 CREATE TABLE rto_tags (
 	rto_tag_tag_id INTEGER NOT NULL,
-	rto_organisation_id INTEGER NOT NULL,
+	rto_organisation_entity_id INTEGER NOT NULL,
 	rto_review_type_id INTEGER NOT NULL,
-	PRIMARY KEY(rto_tag_tag_id, rto_organisation_id, rto_review_type_id),
+	PRIMARY KEY(rto_tag_tag_id, rto_organisation_entity_id, rto_review_type_id),
 );
 
 CREATE TABLE rto_costs (
@@ -576,18 +580,18 @@ CREATE TABLE rto_costs (
 
 CREATE TABLE reviews_slideshow (
 	slideshow_review_rto_review_type_id INTEGER NOT NULL,
-	slideshow_review_rto_organisation_id INTEGER NOT NULL,
+	slideshow_review_rto_organisation_entity_id INTEGER NOT NULL,
 	slideshow_review_photo_id INTEGER NOT NULL,
 );
 
 
 CREATE TABLE bar_crawl_organisations (
 	bar_crawl_organisation_bar_crawl_id INTEGER NOT NULL,
-	bar_crawl_organisation_organisation_id INTEGER NOT NULL,
+	bar_crawl_organisation_organisation_entity_id INTEGER NOT NULL,
 	bar_crawl_organisation_order INTEGER NULL,
 	bar_crawl_organisation_recommend TEXT NULL,
 	bar_crawl_organisation_recommend_price FLOAT NULL,
-	PRIMARY KEY(bar_crawl_organisation_organisation_id),
+	PRIMARY KEY(bar_crawl_organisation_organisation_entity_id),
 );
 
 
@@ -602,9 +606,9 @@ CREATE TABLE leagues (
 
 CREATE TABLE league_entries (
 	league_entry_league_id INTEGER NOT NULL AUTO_INCREMENT,
-	rto_organisation_id INTEGER NOT NULL,
+	rto_organisation_entity_id INTEGER NOT NULL,
 	league_entry_position INTEGER NULL,
-	PRIMARY KEY(league_entry_league_id, rto_organisation_id, rto_review_type_id),
+	PRIMARY KEY(league_entry_league_id, rto_organisation_entity_id, rto_review_type_id),
 );
 
 ----------------------------------------------------------------
@@ -654,7 +658,7 @@ CREATE TABLE charity_donors (
 	charity_donor_id INTEGER NOT NULL AUTO_INCREMENT,
 	charity_donor_charity_id INTEGER NULL,
 	charity_donor_name TEXT NULL,
-	charity_donor_organisation_id INTEGER NULL,
+	charity_donor_organisation_entity_id INTEGER NULL,
 	charity_donor_amount INTEGER NULL,
 	charity_donor_timestamp TIMESTAMP NULL,
 	PRIMARY KEY(charity_donor_id),
@@ -807,7 +811,7 @@ CREATE TABLE photo_tags (
 ----------------------------------------------------------------
 CREATE TABLE adverts (
 	advert_id INTEGER NOT NULL AUTO_INCREMENT,
-	advert_organisation_id INTEGER NOT NULL,
+	advert_organisation_entity_id INTEGER NOT NULL,
 	advert_name TEXT NULL,
 	advert_description TEXT NULL,
 	advert_url TEXT NULL,
@@ -819,7 +823,7 @@ CREATE TABLE adverts (
 
 CREATE TABLE advert_bills (
 	advert_bill_id INTEGER NOT NULL AUTO_INCREMENT,
-	advert_bill_organisation_id INTEGER NOT NULL,
+	advert_bill_organisation_entity_id INTEGER NOT NULL,
 	advert_bill_total INTEGER NULL,
 	advert_bill_date TIMESTAMP NULL,
 	advert_bill_paid BOOL NULL,
@@ -859,8 +863,8 @@ CREATE TABLE advert_related_articles (
 
 CREATE TABLE advert_related_organisations (
 	advert_related_organisation_advert_id INTEGER NOT NULL,
-	advert_related_organisation_organisation_id INTEGER NOT NULL,
-	PRIMARY KEY(advert_related_organisation_advert_id, advert_related_organisation_organisation_id),
+	advert_related_organisation_organisation_entity_id INTEGER NOT NULL,
+	PRIMARY KEY(advert_related_organisation_advert_id, advert_related_organisation_organisation_entity_id),
 );
 
 CREATE TABLE page_space_types (
