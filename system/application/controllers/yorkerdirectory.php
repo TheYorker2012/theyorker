@@ -289,8 +289,12 @@ EXTRAHEAD;
 		$data = array(
 			'organisation' => array(
 				'shortname'   => $OrganisationShortName,
-				'name'        => $OrganisationShortName,
+				'name'        => 'FragSoc',
 				'description' => 'The people who run this website',
+				'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+				'website'     => 'http://www.fragsoc.com',
+				'location'    => 'Goodricke College',
+				'open_times'  => 'Every Other Weekend',
 				'type'        => 'Organisation',
 				'cards'       => array(
 					array(
@@ -313,6 +317,18 @@ EXTRAHEAD;
 						'phone_internal' => '07788 888888',
 						'phone_external' => '01904 333333',
 						'postal_address' => '01904 666666',
+					),
+				),
+				'reviews'     => array(
+					array(
+						'author' => 'Ian Benest',
+						'publish_date' => '4/12/2006',
+						'description' => 'I didn\'t like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn\'t like dan. He doesn\'t know dan. Dan doesn\'t know the farmer. Barry Scott sells cillit bang.',
+					),
+					array(
+						'author' => 'Detlef Plump',
+						'publish_date' => '5/12/2006',
+						'description' => 'Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here.',
 					),
 				),
 			),
