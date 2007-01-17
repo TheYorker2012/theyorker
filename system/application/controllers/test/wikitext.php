@@ -29,11 +29,12 @@ class Wikitext extends Controller {
 		if ($wikitext === FALSE) {
 			$wikitext  = '==This is the yorker wikitext parser==' . "\n";
 			$wikitext .= '*This is an unordered list' . "\n";
-			$wikitext .= '*Item number 2' . "\n";
+			$wikitext .= '*#With an ordered list within' . "\n";
+			$wikitext .= '*#And another item' . "\n";
 			$wikitext .= "\n";
 			$wikitext .= '#This is an ordered list' . "\n";
-			$wikitext .= '#Item number 2' . "\n";
-			$wikitext .= 'Enter wikitext here:' . "\n";
+			$wikitext .= '#*With an unordered list within' . "\n";
+			$wikitext .= '#*And another item' . "\n";
 		} else if (get_magic_quotes_gpc()) {
 			$wikitext = stripslashes($wikitext);
 		}
