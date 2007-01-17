@@ -43,89 +43,67 @@ function preloader()
 
 </script>
 
-  <table bgcolor="#CED8D9" border="0" cellpadding="0" cellspacing="0" width="100%">
-  <tr>
-  <td align="right" valign="top">
-	&nbsp;
-  </td>
-
-<td align="center" valign="middle" width="780">
-
-
-<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
-	<tr>
-		<td height="22" colspan="3" style="padding-right:10px;" align="right" class="HeaderMenu">
-			<a class="HeaderLinks" href="/home/">home</a> |
-			<a class="HeaderLinks" href="/logon/">log in</a> |
-			<a class="HeaderLinks" href="http://yorkipedia.theyorker.co.uk/">yorkipedia</a> |
-			<a class="HeaderLinks" href="/contact/">contact us</a> |
-			<a class="HeaderLinks" href="/about/">about</a> |
-			<a class="HeaderLinks" href="/directory/">directory</a> |
-			<span style="color: #2DC6D7;">
-			search </span><form name='site_search' action='/search/layout' method='post' style='display:inline'><input type="text" style="font-size:10px; border-style:solid; border-color:#2DC6D7; border-width: 2px;" /></form>
-		</td>
-	</tr>
-	<tr>
-		<td bgcolor="#ffffff" height="108" colspan="3">
-			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108;">
-				<tr>
-					<td>
-						<a href="/home/"><img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" /></a></td>
-					<td>
-						<a href="/news/" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
-						<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" /></a></td>
-					<td style="width: 40;">
-						</td>
-					<td>
-						<a href="/listings/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
-						<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" /></a></td>
-					<td style="width: 33;">
-						</td>
-					<td>
-						<a href="/reviews/" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
-						<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" /></a></td>
-					<td>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr bgcolor="#ffffff">
-		<td width="780" valign="top">
-		<?php $content[0]->Load(); ?>
-		</td>
-	</tr>
-</table>
+<div style="width: 100%;" align="center">
+<div style="width: 780px; text-align: left; background-color: #fff;">
+	<div style="height: 22px; padding-right:10px; text-align: right;" class="HeaderMenu">
+		<a class="HeaderLinks" href="/home/">home</a> |
+		<a class="HeaderLinks" href="/about/">about us</a> |
+		<a class="HeaderLinks" href="/contact/">contact us</a> |
+		<a class="HeaderLinks" href="/faq/">FAQs</a> |
+		<a class="HeaderLinks" href="/logon/">log in</a>
+	</div>
+	<div style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
+		<div style="float: left;">
+			<a href="/home/">
+				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
+			</a>
+		</div>
+		<div style="float: right;">
+			<a href="/news/" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
+				<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" />
+			</a>
+			&nbsp;
+			<a href="/listings/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
+				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" />
+			</a>
+			&nbsp;
+			<a href="/reviews/" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
+				<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" />
+			</a>
+			&nbsp;
+		</div>
+	</div>
+	<div style="background-color: #fff;">
+		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
+		<input type="text" style="float: left; width: 135px; font-size: 10px; border: solid 1px #2DC6D7; color: #2DC6D7; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px; " value=" &gt; Search" />
+		</form>
+		<div style="float: right; width: 630px; margin-bottom: 8px; background-color: #2DC6D7; padding: 3px 0px 3px 5px; color: #fff; font-size: large; " >
+				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
+		</div>
+	</div>
+	<br style="clear: both;" />
+	<div style="float: left; width: 140px; margin-right: 5px; background-color: #fff;">
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Uni News</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">UK & World News</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Features</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Lifestyle</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Listings</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Reviews</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Yorkipedia</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">How Do I</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Games Zone</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Our Campaign</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Our Charity</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Archive</div>
+	</div>
+	<div style="float: right; width: 630px; margin-left: 5px; background-color: #fff;">
+	<?php $content[0]->Load(); ?>
+	</div>
+</div>
+</div>
+<br style="clear: both;" />
+<div style="text-align: center; width: 100%;">
 <small>Page rendered in {elapsed_time} seconds</small>
-
-
-  </td>
-
-  <td align="right" valign="top">
-   &nbsp;
-  </td>
-  </tr>
-  </table>
-
-<!-- Start of StatCounter Code -->
-<script type="text/javascript" language="javascript">
-var sc_project=1998064;
-var sc_invisible=1;
-var sc_partition=18;
-var sc_security="7146b8cd";
-</script>
-
-<script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c19.statcounter.com/counter.php?sc_project=1998064&amp;java=0&amp;security=7146b8cd&amp;invisible=1" alt="free web site hit counter" border="0" /></a> </noscript>
-<!-- End of StatCounter Code -->
-
-<!-- Start of Google Analytics -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-</script>
-<script type="text/javascript">
-_uacct = "UA-864229-1";
-urchinTracker();
-</script>
-<!-- End of Google Analytics -->
-
+</div>
 </body>
 </html>
