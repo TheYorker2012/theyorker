@@ -1119,6 +1119,11 @@ div.ArticleColumn .ArticleBox .Content {
 .form fieldset div.link_right a:hover {
     text-decoration: underline;
 }
+.form ul li{
+	display: inline;
+	font-size: 12px;
+}
+
 #ArticleBox {
     padding: 0;
     border: 0;
