@@ -12,8 +12,8 @@
  * Any 3rd URI segment (e.g. events) is sent to the function with the same value.
  *	(see config/routes.php).
  */
-class Yorkerdirectory extends Controller {
-	
+class Yorkerdirectory extends Controller
+{
 	/// Default constructor.
 	function __construct()
 	{
@@ -21,6 +21,31 @@ class Yorkerdirectory extends Controller {
 		
 		// Make use of the public frame
 		$this->load->library('frame_public');
+	}
+	
+	/// Set up the directory frame
+	/**
+	 * @param $OrganisationData Organisation data array.
+	 * @pre @a $OrganisationData is valid organisation array.
+	 * @post Frame_directory frame is loaded and ready to use.
+	 */
+	private function _SetupOrganisationFrame($OrganisationData)
+	{
+		$this->load->library('frame_directory');
+		
+		$navbar = $this->frame_directory->GetNavbar();
+		$navbar->AddItem('about', 'About',
+				'/images/prototype/news/uk.png',
+				'/directory/'.$OrganisationData['shortname']);
+		$navbar->AddItem('events', 'Events',
+				'/images/prototype/news/feature.gif',
+				'/directory/'.$OrganisationData['shortname'].'/events');
+		$navbar->AddItem('members', 'Members',
+				'/images/prototype/news/feature.gif',
+				'/directory/'.$OrganisationData['shortname'].'/members');
+		$navbar->AddItem('reviews', 'Reviews',
+				'/images/prototype/news/feature.gif',
+				'/directory/'.$OrganisationData['shortname'].'/reviews');
 	}
 	
 	/// Directory index page.
@@ -81,16 +106,16 @@ class Yorkerdirectory extends Controller {
 	/// Directory organisation page.
 	function view($organisation)
 	{
-		$this->load->library('frame_directory');
-		
 		$data = $this->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($data['organisation']);
+		
 		$subpageview='directory/directory_view';
 		
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 		
 		// Set up the directory frame to use the directory events view
-		$this->frame_directory->SetPage('');
+		$this->frame_directory->SetPage('about');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 		
@@ -105,7 +130,9 @@ class Yorkerdirectory extends Controller {
 	/// Directory events page.
 	function events($organisation, $DateRange = '')
 	{
-		$this->load->library('frame_directory');
+		$data = $this->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($data['organisation']);
+		
 		$this->load->library('frame_messages');
 		$this->load->library('view_listings_select_week');
 		$this->load->library('view_listings_list');
@@ -119,8 +146,6 @@ class Yorkerdirectory extends Controller {
 			<script src="/javascript/listings.js" type="text/javascript"></script>
 			<link href="/stylesheets/listings.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
-	
-		$data = $this->_GetOrgData($organisation);
 		
 		$use_default_range = FALSE;
 		if (empty($DateRange)) {
@@ -209,9 +234,9 @@ EXTRAHEAD;
 	/// Directory reviews page.
 	function reviews($organisation)
 	{
-		$this->load->library('frame_directory');
-		
 		$data = $this->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($data['organisation']);
+		
 		$subpageview='directory/directory_view_reviews';
 		
 		// Set up the directory view
@@ -233,9 +258,9 @@ EXTRAHEAD;
 	/// Directory members page.
 	function members($organisation)
 	{
-		$this->load->library('frame_directory');
-		
 		$data = $this->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($data['organisation']);
+		
 		$subpageview='directory/directory_view_members';
 		
 		// Set up the directory view
@@ -255,12 +280,16 @@ EXTRAHEAD;
 	}
 	
 	/// Temporary function get organisation data.
-	private function _GetOrgData($organisation)
+	/**
+	 * @param $OrganisationShortName Short name of organisation.
+	 * @return Organisation data relating to specified organisation or FALSE.
+	 */
+	private function _GetOrgData($OrganisationShortName)
 	{
 		$data = array(
 			'organisation' => array(
-				'shortname'   => 'theyorker',
-				'name'        => 'The Yorker',
+				'shortname'   => $OrganisationShortName,
+				'name'        => $OrganisationShortName,
 				'description' => 'The people who run this website',
 				'type'        => 'Organisation',
 				'cards'       => array(

@@ -8,16 +8,16 @@
 
 // Load the Frames library
 $CI = &get_instance();
-$CI->load->library('frames');
+$CI->load->library('frame_navbar');
 
 /// Directory frame library class.
 /**
- * Automatically loads the Frames library.
+ * Automatically loads the Frame_navbar library.
  *
  * Load the library from the controller constructor (you'll probably want to
- *	load frame_public as well:
+ *	load frame_public as well):
  * @code
- *	// Load the public frame
+ *	// Load the directory frame
  *	$this->load->library('frame_directory');
  * @endcode
  *
@@ -31,6 +31,10 @@ $CI->load->library('frames');
  *	// Set up the directory view
  *	$directory_view = $this->frames->view('directory/directory', $data);
  *	
+ *	// Set up the navigation bar
+ *	$navbar = $this->frame_directory->GetNavbar();
+ *	// Navigation_bar setup code
+ *
  *	// Set up the directory frame
  *	$this->frame_directory->SetPage('members');
  *	$this->frame_directory->SetOrganisation('The Yorker');
@@ -46,21 +50,12 @@ $CI->load->library('frames');
  *	$this->frame_public->Load();
  * @endcode
  */
-class Frame_directory extends FramesFrame
+class Frame_directory extends FrameNavbar
 {
 	/// Default constructor.
 	function __construct()
 	{
 		parent::__construct('directory/directory_frame.php');
-	}
-	
-	/// Set the page in use (determines the navigation bar highlighting).
-	/**
-	 * @param $Page string Page name.
-	 */
-	function SetPage($Page)
-	{
-		$this->SetData('page', $Page);
 	}
 	
 	/// Set the organisation data.
