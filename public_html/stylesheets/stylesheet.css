@@ -350,8 +350,12 @@ span.SortedBy {
 	padding: 0;
 }
 /* Replace this with > image */
-ul li {
-    list-style-type: disc
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
 }
 
 /* For the fluid student frame */
