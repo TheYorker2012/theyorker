@@ -83,18 +83,42 @@ function preloader()
 	</div>
 	<br style="clear: both;" />
 	<div style="float: left; width: 140px; margin-right: 5px; background-color: #fff;">
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Uni News</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">UK & World News</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Features</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Lifestyle</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Listings</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Reviews</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Yorkipedia</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">How Do I</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Games Zone</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Our Campaign</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Our Charity</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">Archive</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/'>Uni News</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/national/'>UK & World News</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/features/'>Features</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/lifestyle/'>Lifestyle</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/listings/'>Listings</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/reviews/'>Reviews</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='#'>Yorkipedia</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/howdoi/'>How Do I</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='#'>Games Zone</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/campaign/'>Our Campaign</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/charity/'>Our Charity</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/archive/'>News Archive</a>
+		</div>
 	</div>
 	<div style="float: right; width: 630px; margin-left: 5px; background-color: #fff;">
 	<?php $content[0]->Load(); ?>
