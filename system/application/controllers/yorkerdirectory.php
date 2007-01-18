@@ -49,48 +49,20 @@ class Yorkerdirectory extends Controller
 	}
 	
 	/// Directory index page.
+	/**
+	 * @note POST data:
+	 *	- 'search' (search pattern, optional)
+	 */
 	function index()
 	{
-		$data = array(
-			'organisations' => array(
-				array(
-					'shortname'   => 'fragsoc',
-					'name'        => 'FragSoc',
-					'description' => 'A computer gaming society',
-					'type'        => 'Society',
-				),
-				array(
-					'shortname'   => 'theyorker',
-					'name'        => 'The Yorker',
-					'description' => 'The people who run this website',
-					'type'        => 'Organisation',
-				),
-				array(
-					'shortname'   => 'toffs',
-					'name'        => 'Toffs',
-					'description' => 'A nightclub in york',
-					'type'        => 'Venue',
-				),
-				array(
-					'shortname'   => 'poledancing',
-					'name'        => 'Pole Dancing',
-					'description' => 'A fitness club',
-					'type'        => 'Athletics Union',
-				),
-				array(
-					'shortname'   => 'cookiesoc',
-					'name'        => 'Cookie Soc',
-					'description' => 'Eat cookies',
-					'type'        => 'Society',
-				),
-				array(
-					'shortname'   => 'costcutter',
-					'name'        => 'Costcutter',
-					'description' => 'Campus shop',
-					'type'        => 'College & Campus',
-				),
-			),
-		);
+		$data = array();
+		
+		// Get the search pattern from POST (optional)
+		$search_pattern = $this->input->post('search', TRUE);
+		// Get the organisations matching the search and pass the search pattern
+		// to the view as well
+		$data['organisations'] = $this->_GetOrgs($search_pattern);
+		$data['search'] = $search_pattern;
 		
 		// Set up the directory view
 		$directory_view = $this->frames->view('directory/directory', $data);
@@ -277,6 +249,70 @@ EXTRAHEAD;
 		
 		// Load the public frame view
 		$this->frame_public->Load();
+	}
+	
+	/// Temporary function get organisations.
+	/**
+	 * @param $Pattern string/bool Search pattern or FALSE if all.
+	 * @return array of organisations matching pattern.
+	 */
+	private function _GetOrgs($Pattern)
+	{
+		$organisations = array(
+			array(
+				'shortname'   => 'fragsoc',
+				'name'        => 'FragSoc',
+				'description' => 'A computer gaming society',
+				'type'        => 'Society',
+			),
+			array(
+				'shortname'   => 'theyorker',
+				'name'        => 'The Yorker',
+				'description' => 'The people who run this website',
+				'type'        => 'Organisation',
+			),
+			array(
+				'shortname'   => 'toffs',
+				'name'        => 'Toffs',
+				'description' => 'A nightclub in york',
+				'type'        => 'Venue',
+			),
+			array(
+				'shortname'   => 'poledancing',
+				'name'        => 'Pole Dancing',
+				'description' => 'A fitness club',
+				'type'        => 'Athletics Union',
+			),
+			array(
+				'shortname'   => 'cookiesoc',
+				'name'        => 'Cookie Soc',
+				'description' => 'Eat cookies',
+				'type'        => 'Society',
+			),
+			array(
+				'shortname'   => 'costcutter',
+				'name'        => 'Costcutter',
+				'description' => 'Campus shop',
+				'type'        => 'College & Campus',
+			),
+		);
+		if ($Pattern !== FALSE) {
+			$organisations = array(
+				array(
+					'shortname'   => 'poledancing',
+					'name'        => 'Pole Dancing',
+					'description' => 'A fitness club',
+					'type'        => 'Athletics Union',
+				),
+				array(
+					'shortname'   => 'costcutter',
+					'name'        => 'Costcutter',
+					'description' => 'Campus shop',
+					'type'        => 'College & Campus',
+				),
+			);
+		}
+		return $organisations;
 	}
 	
 	/// Temporary function get organisation data.
