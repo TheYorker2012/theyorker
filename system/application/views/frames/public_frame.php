@@ -50,7 +50,7 @@ function preloader()
 		<a class="HeaderLinks" href="/about/">about us</a> |
 		<a class="HeaderLinks" href="/contact/">contact us</a> |
 		<a class="HeaderLinks" href="/faq/">FAQs</a> |
-		<a class="HeaderLinks" href="/logon/">log in</a>
+		<a class="HeaderLinks" href="/login/">log in</a>
 	</div>
 	<div style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
 		<div style="float: left;">
