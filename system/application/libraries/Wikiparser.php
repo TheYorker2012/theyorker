@@ -49,6 +49,10 @@ class Wikiparser {
 	 */
 	function Wikiparser() {
 		$this->reference_wiki = '';
+		$this->external_wikis = array(
+			'wikipedia' => array('http://en.wikipedia.org/wiki/', ''),
+			'yorkipedia' => array('http://yorkipedia.theyorker.co.uk/wiki/', ''),
+		);
 		$this->image_uri = '/images/prototype/';
 		$this->ignore_images = false;
 		$this->emphasis[1] = "";
@@ -279,13 +283,20 @@ class Wikiparser {
 			$options = explode('|',$title);
 			$title = array_pop($options);
 			return $this->handle_image($href,$title,$options);
-		}		
+		}
+		if (array_key_exists($namespace, $this->external_wikis)) {
+			$reference_wiki = $this->external_wikis[$namespace][0];
+			$namespace = '';
+			$href = str_replace(' ','_',$href);
+		} else {
+			$reference_wiki = $this->reference_wiki;
+		}
 		
 		$title = preg_replace('/\(.*?\)/','',$title);
 		$title = preg_replace('/^.*?\:/','',$title);
 		
-		if ($this->reference_wiki) {
-			$href = $this->reference_wiki.($namespace?$namespace.':':'').$href;
+		if ($reference_wiki) {
+			$href = $reference_wiki.($namespace?$namespace.':':'').$href;
 		} else {
 			$nolink = true;
 		}
@@ -293,7 +304,7 @@ class Wikiparser {
 		if ($nolink) return $title;
 		
 		return sprintf(
-			'<a href="%s">%s</a>%s',
+			'[%s %s]%s',
 			$href,
 			$title,
 			(isset($matches[7]) ? $matches[7] : "")
