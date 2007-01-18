@@ -102,7 +102,7 @@ function preloader()
 			<a href='/reviews/'>Reviews</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='#'>Yorkipedia</a>
+			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/howdoi/'>How Do I</a>
