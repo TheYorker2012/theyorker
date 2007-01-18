@@ -15,5 +15,6 @@
 		</fieldset>
 		<fieldset>
 		</fieldset>
+		<h5>Error : This is a login error example.</h5>
 	</form>
 </div>

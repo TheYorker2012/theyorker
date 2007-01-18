@@ -1029,6 +1029,11 @@ div.ArticleColumn .ArticleBox .Content {
   	max-width: 600px;
 	width: 560px;
 }
+.form h5 {
+	/* Use this for error messages in forms*/
+	font-size: small;
+	color: red;
+}
 .form fieldset {
     border-color: #ff6a00;
 	border-width: 1px 0 0 0;
