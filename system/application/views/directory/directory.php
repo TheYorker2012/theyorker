@@ -1,50 +1,41 @@
 
 
 <p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
-
-<form name='search_directory' action='/directory/' method='POST' class='form'>
-	<fieldset>
-		<legend>Search</legend>
-		<ul>
-			<li>
-				Venues <input type='checkbox' name='venues' value="checked" >
-			</li>
-			<li>
-				Societies <input type='checkbox' name='societies' value="checked">
-			</li>
-			<li>
-				Athletics Union <input type='checkbox' name='athletics_union' value="checked">
-			</li>
-			<li>
-				Organisation <input type='checkbox' name='organisation' value="checked">
-			</li>
-			<li>
-			College &#038; Campus <input type='checkbox' name='college_campus' value="checked">
-			</li>
-		</ul>
-		<input id="searchText" name="search" onKeyUp="searchPage('searchText','Letter');">
-		<input type='submit' name='Submit' value='Search'>
-		Searching <?php echo count($organisations); ?> results.
-	</fieldset>
-	<fieldset>
-	</fieldset>
-</form>
-
-<div id='searchresults' style="padding:0px 0px 0px 0px">
-
-<div align='center'>
-	<script language="javascript">
-	insertJumpers('Jumper','Anchor');
-
-	function onLoad() {
-		searchPage('searchText','Letter');
-	}
-	</script>
+<div id='minibox' style="float:right;margin-right:5px">
+    <div id='title'>Filters</div>
+    <input type='checkbox' name='venues' value="checked" checked><span style="font-size:small">Venues</span><br />
+    <input type='checkbox' name='societies' value="checked" checked><span style="font-size:small">Societies</span><br />
+    <input type='checkbox' name='athletics_union' value="checked" checked><span style="font-size:small">Athletics Union</span><br />
+    <input type='checkbox' name='organisation' value="checked" checked><span style="font-size:small">Organisations</span><br />
+    <input type='checkbox' name='college_campus' value="checked" checked><span style="font-size:small">College &#038; Campus</span>
 </div>
+<div  style="padding:0px 150px 0px 0px">
+	<form name='search_directory' action='/directory/' method='POST' class='form'>
+		<fieldset>
+			<legend>Search</legend>
+			<input id="searchText" name="search" onKeyUp="searchPage('searchText','Letter');">
+			<input type='submit' name='Submit' value='Search'>
+		</fieldset>
+	</form>
+	<div align='center'>
+		<script language="javascript">
+		insertJumpers('Jumper','Anchor');
 
+		function onLoad() {
+			searchPage('searchText','Letter');
+		}
+		</script>
+		<br />
+		Browsing <?php echo count($organisations); ?> results.
+	</div>
+</div>
+<div class="clear">&nbsp;</div>
+<!-- Start showing results -->
+<div id='searchresults' style="padding:0px 0px 0px 0px">
 <div id="NotFound" style="display: none;">
-<center><br>
-<b> No match was found	 </b>
+<center>
+<b>No entries found</b><br />
+<div style="text-size:small">Try a simpler search, different keywords or include more filters.</div>
 </center>
 </div>
 
@@ -52,12 +43,8 @@
 <table width="780" border="0" cellspacing="0" cellpadding="0">
   <tr height="14">
 	<td rowspan="2" class="AZTop">
-	<div>
-
 	<?php
-
 	$last_letter = "";
-
 	$current_letter_index = 0;
 
 	foreach ($organisations as $organisation) {
@@ -109,7 +96,6 @@
 				<td width="80" height="14" valign="top"><div class="AZLeft">&nbsp;</div></td>
 				<td rowspan="2" valign="top">
 				<div class="AZTop">
-
 		<?php
 		}
 		$last_letter = "0";
@@ -123,15 +109,11 @@
 
 </div>
 <?php
-
-
 }
 ?>
-
 	</div>
 	</td>
   </tr>
 </table>
-
 </div>
-
+</div>
