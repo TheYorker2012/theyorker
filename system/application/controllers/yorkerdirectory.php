@@ -21,6 +21,10 @@ class Yorkerdirectory extends Controller
 		
 		// Make use of the public frame
 		$this->load->library('frame_public');
+		
+		$this->load->model('directory_model');
+		
+		$this->load->helper('text');
 	}
 	
 	/// Set up the directory frame
@@ -258,48 +262,22 @@ EXTRAHEAD;
 	 */
 	private function _GetOrgs($Pattern)
 	{
-		$organisations = array(
-			array(
-				'shortname'   => 'fragsoc',
-				'name'        => 'FragSoc',
-				'description' => 'A computer gaming society',
-				'type'        => 'Society',
-			),
-			array(
-				'shortname'   => 'theyorker',
-				'name'        => 'The Yorker',
-				'description' => 'The people who run this website',
-				'type'        => 'Organisation',
-			),
-			array(
-				'shortname'   => 'toffs',
-				'name'        => 'Toffs',
-				'description' => 'A nightclub in york',
-				'type'        => 'Venue',
-			),
-			array(
-				'shortname'   => 'poledancing',
-				'name'        => 'Pole Dancing',
-				'description' => 'A fitness club',
-				'type'        => 'Athletics Union',
-			),
-			array(
-				'shortname'   => 'cookiesoc',
-				'name'        => 'Cookie Soc',
-				'description' => 'Eat cookies',
-				'type'        => 'Society',
-			),
-			array(
-				'shortname'   => 'costcutter',
-				'name'        => 'Costcutter',
-				'description' => 'Campus shop',
-				'type'        => 'College & Campus',
-			),
-		);
+		$orgs = $this->directory_model->GetDirectoryOrganisations();
+		$organisations = array();
+		foreach ($orgs as $org) {
+			$organisations[] = array(
+				'name' => $org['organisation_name'],
+				'shortname' => $this->directory_model->ShortenOrganisationName(
+						$org['organisation_name']
+					),
+				'description' => word_limiter($org['organisation_description'],20),
+				'type' => $org['organisation_type_name'],
+			);
+		}
 		if ($Pattern !== FALSE) {
 			$organisations = array(
 				array(
-					'shortname'   => 'poledancing',
+					'shortname'   => 'pole_dancing',
 					'name'        => 'Pole Dancing',
 					'description' => 'A fitness club',
 					'type'        => 'Athletics Union',
