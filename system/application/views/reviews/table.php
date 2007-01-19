@@ -2,10 +2,10 @@
 	<span class="SmallText"><span class="FaintText">Showing</span> 18 <span class="FaintText">entries from</span> Italian Food <span class="FaintText">ordered by</span> Star Rating<br /><br />
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
-			<td><a href="/reviews/table/name" name="top"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Name</a></td>
+			<td><a href="/reviews/table/name" name="top">Name</a></td>
 			<td><a href="/reviews/table/star"><span class="SortedBy"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
-			<td><a href="/reviews/table/price"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Price Rating</a></td>
-			<td><a href="/reviews/table/rating"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> User Rating</a></td>
+			<td><a href="/reviews/table/price">Price Rating</a></td>
+			<td><a href="/reviews/table/rating">User Rating</a></td>
 		</tr>
 		<tr class="ReviewElement1">
 			<td>
