@@ -51,7 +51,7 @@ class Calendar extends Controller {
 				
 				$this->_ShowCalendar(
 						$start_time, $days,
-						'listings/week/', $format
+						'/calendar/week/', $format
 					);
 				return;
 				
@@ -71,7 +71,7 @@ class Calendar extends Controller {
 	
 		$this->_ShowCalendar(
 				$monday, 7,
-				'listings/week/', $format
+				'/calendar/week/', $format
 			);
 	}
 	
@@ -80,7 +80,7 @@ class Calendar extends Controller {
 	 * @param $StartTime Academic_time Start date.
 	 * @param $Days integer Number of days to display.
 	 * @param $UriBase string The base of the uri on which to build links,
-	 *	e.g. 'listings/week/'
+	 *	e.g. '/calendar/week/'
 	 * @param $UriFormat string Uri date format identifier as used in Date_uri.
 	 */
 	function _ShowCalendar($StartTime, $Days, $UriBase, $UriFormat)
@@ -106,7 +106,7 @@ EXTRAHEAD;
 		$this->frame_messages->SetContent($view_listings_days);
 		
 		// Set up the public frame to use the messages frame
-		$this->frame_public->SetTitle('Listing viewer prototype');
+		$this->frame_public->SetTitle('Personal Calendar');
 		$this->frame_public->SetExtraHead($extra_head);
 		$this->frame_public->SetContent($this->frame_messages);
 		
