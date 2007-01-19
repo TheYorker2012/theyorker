@@ -62,7 +62,7 @@ class Yorkerdirectory extends Controller
 		$data = array();
 		
 		// Get the search pattern from POST (optional)
-		$search_pattern = $this->input->post('search', TRUE);
+		$search_pattern = $this->input->post('search_directory', TRUE);
 		// Get the organisations matching the search and pass the search pattern
 		// to the view as well
 		$data['organisations'] = $this->_GetOrgs($search_pattern);

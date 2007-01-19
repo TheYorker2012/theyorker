@@ -5,7 +5,8 @@
 	<?php
 	foreach ($organisations as $organisation) { ?>
 		<li>
-			<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\'>' . $organisation['name']; ?> (<?php echo $organisation['type']; ?>)</a>
+			<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\' style="display: inline;">' . $organisation['name']; ?></a>
+			<span style='font-size: 12px'>(<?php echo $organisation['type']; ?>)</span><br />
 			<?php echo $organisation['description']; ?>
 		</li>
 	<?php } ?>
@@ -14,24 +15,24 @@
 <div align='center'>
 	<h5>Showing <?php echo count($organisations); ?> results.</h5>
 </div>
-<form id='form1' name='form1' action='/directory/' method='POST' class='form'>
+<form name='search_directory' action='/directory/' method='POST' class='form'>
 	<fieldset>
 		<legend>Search</legend>
 		<ul>
 			<li>
-				Venues <input type='checkbox' name='searchrange' id="chkbox1" value="venues" checked>
+				Venues <input type='checkbox' name='venues' value="checked" >
 			</li>
 			<li>
-				Societies <input type='checkbox' name='searchrange' id="chkbox2" value="socs" checked>
+				Societies <input type='checkbox' name='societies' value="checked">
 			</li>
 			<li>
-				Athletics Union <input type='checkbox' name='searchrange' id="chkbox3" value="au" checked>
+				Athletics Union <input type='checkbox' name='athletics_union' value="checked">
 			</li>
 			<li>
-				Organisation <input type='checkbox' name='searchrange' id="chkbox4" value="org" checked>
+				Organisation <input type='checkbox' name='organisation' value="checked">
 			</li>
 			<li>
-			College &#038; Campus <input type='checkbox' name='searchrange' id="chkbox5" value="campus" checked>
+			College &#038; Campus <input type='checkbox' name='college_campus' value="checked">
 			</li>
 		</ul>
 		<input type='text' name='search'>
