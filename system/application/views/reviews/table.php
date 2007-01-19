@@ -1,21 +1,11 @@
-<div id='newsnav'>
-	<ul id='newsnavlist'>
-	<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-	<li><a href='/reviews/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-	<li><a href='/reviews/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-	<li><a href='/reviews/culture/'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
-	<li><a href='/reviews/table/' id="current"><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' id='current'/> A to Z</a></li>
-	</ul>
-</div>
 <div class="WholeContainer">
-	<span class="SmallText"><span class="FaintText">Showing</span> 18 <span class="FaintText">entries from</span> Italian Food <span class="FaintText">ordered by</span> Star Rating<br />
-	<a href="/reviews/food">&gt;Back to Food</a></span><br /><br />
+	<span class="SmallText"><span class="FaintText">Showing</span> 18 <span class="FaintText">entries from</span> Italian Food <span class="FaintText">ordered by</span> Star Rating<br /><br />
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
-			<td><a href="/reviews/table/name" name="top">Name</a></td>
-			<td><a href="/reviews/table/star"><span class="SortedBy">Star Rating</span></a></td>
-			<td><a href="/reviews/table/price">Price Rating</a></td>
-			<td><a href="/reviews/table/rating">User Rating</a></td>
+			<td><a href="/reviews/table/name" name="top"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Name</a></td>
+			<td><a href="/reviews/table/star"><span class="SortedBy"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
+			<td><a href="/reviews/table/price"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Price Rating</a></td>
+			<td><a href="/reviews/table/rating"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> User Rating</a></td>
 		</tr>
 		<tr class="ReviewElement1">
 			<td>

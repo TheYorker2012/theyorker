@@ -1,12 +1,4 @@
-<div id='newsnav'>
-	<ul id='newsnavlist'>
-	<li><a href='/reviews/'><img src='/images/prototype/news/uk.png' alt='Reviews' title='Reviews' /> Reviews</a></li>
-	<li><a href='/reviews/food/'><img src='/images/prototype/news/feature.gif' alt='Food' title='Food' /> Food</a></li>
-	<li><a href='/reviews/drink/'><img src='/images/prototype/news/earth.png' alt='Drink' title='Drink' /> Drink</a></li>
-	<li><a href='/reviews/culture/' id='current'><img src='/images/prototype/news/archive.png' alt='Culture' title='Culture' /> Culture</a></li>
-	<li><a href='/reviews/table/'><img src='/images/prototype/news/archive.png' alt='A to Z' title='A to Z' /> A to Z</a></li>
-	</ul>
-</div>
+<div class="WholeColumn">
 	<div class='NewsPreview'>
 		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
 		<h1><?php echo anchor('news/article/1', 'Ever tried cake in the bath?'); ?></h1>
@@ -25,63 +17,59 @@
 			sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
 		</p>
 	</div>
-	<div class="HalfBox">
-		<div class='LifestylePuffer' style='background-color: #04669c; width: 350px;'>
+	<hr>
+</div>
+	<div class="RightColumn">
+		<div class='LifestylePuffer' style='background-color: #04669c;'>
 			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
 	 	    <h3>Awesome Food</h3>
 			<p>This guy is happy becuase he has visited our top ten best all time foods places</p>
 			</a>
 		</div>
-		<div class='LifestylePuffer' style='background-color: #a38b69; width: 350px;'>
+		<div class='LifestylePuffer' style='background-color: #a38b69;'>
 			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
 	 	    <h3>Desert</h3>
 			<p>We've been all around York trying chocolate cakes, see what we have to say about them all!</p>
 			</a>
 		</div>
-		<div class='LifestylePuffer' style='background-color: #000000; width: 350px;'>
+		<div class='LifestylePuffer' style='background-color: #000000;'>
 			<a href='/reviews/leagues'>
 			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
 	 	    <h3>Lbs of Meat!</h3>
 			<p>Want an all you can eat? Be sure to head on over to our ten best all you can eats.</p>
 			</a>
 		</div>
+		<h3>COLLEGE LEAGUES</h3>Current Positions
+		<ol>
+			<li>Halifax
+			<li>Derwent
+			<li>Langwith
+		</ol>
 	</div>
-	<div class="HalfRightBorder">
-		Click on the links below to get a list of all places that fits the category.<hr>
-		<div class="HalfBox">
+	<div class="LeftColumn">
+		Click on the links below to get a list of all places that fits the category.<br />
+		<div>
 			<h3 style="display: inline;">Price</h3><br /><br />
 			Dirt Cheap<br />
 			Super Cheap<br />
 			Kinda Cheap<br />
 			Meh<br />
 			Mega Expensive<br />
-		</div>
-		<div class="HalfBox2" style="width: 40%;">
+		</div><br />
+		<div>
 			<h3 style="display: inline;">Location</h3><br /><br />
 			York<br />
 			France<br />
 			Germany<br />
 			Brunswick<br />
 			Poppleton<br />
-		</div>
+		</div><br />
+		<hr>
+		<h3>BAR CRAWLS</h3>
+		We also have a list of bar crawls which you can browse through<br /><br />
+			<a href="/reviews/barcrawl">Bob Bastards Bar Craw</a><br />
+			Sids Death Line<br />
+			Garys Green Mile<br />
 	</div>
-<div class="clear">&nbsp;</div>
-</div>
-<div class="WhyNotTry" style="width: 45%; float: left; padding: 0.5em;">
-	<h3>BAR CRAWLS</h3>Click on a link to see more about it
-	<ul>
-		<li><a href="/reviews/barcrawl">Bobs Bar Craw</a>
-		<li>Sids Death Line
-		<li>Garys Green Mile
-	</ul>
-</div>
-<div class="WhyNotTry" style="width: 45%; float: right; padding: 0.5em;">
-	<h3>COLLEGE LEAGUES</h3>Current Positions
-	<ol>
-		<li>Halifax
-		<li>Derwent
-		<li>Langwith
-	</ol>
-</div>

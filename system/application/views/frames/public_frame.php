@@ -45,12 +45,11 @@ function preloader()
 
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
-	<div style="height: 22px; padding-right:10px; text-align: right;" class="HeaderMenu">
-		<a class="HeaderLinks" href="/home/">home</a> |
+	<div style="height: 22px; text-align: right;" class="HeaderMenu">
+		<a class="HeaderLinks" href="/login/">log in</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |
 		<a class="HeaderLinks" href="/contact/">contact us</a> |
-		<a class="HeaderLinks" href="/faq/">FAQs</a> |
-		<a class="HeaderLinks" href="/login/">log in</a>
+		<a class="HeaderLinks" href="/faq/">FAQs</a>
 	</div>
 	<div style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
 		<div style="float: left;">
@@ -75,9 +74,10 @@ function preloader()
 	</div>
 	<div style="background-color: #fff;">
 		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
-		<input type="text" style="float: left; width: 135px; font-size: 10px; border: solid 1px #2DC6D7; color: #2DC6D7; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px; " value=" &gt; Search" />
+		<input type="text" style="float: left; width: 130px; font-size: 10px; border: solid 1px #20c1f0; color: #20c1f0; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px; " value=" &gt; Search" onFocus="if (this.value==this.defaultValue) this.value=''" />
 		</form>
-		<div style="float: right; width: 630px; margin-bottom: 8px; background-color: #2DC6D7; padding: 3px 0px 3px 5px; color: #fff; font-size: large; " >
+		<div style="float: right; width: 630px; margin-bottom: 8px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: large; " >
+				<div style="float: right"><a href="javascript:history.go(-1)"><img src="/images/prototype/header/backarrow.gif" alt="Back" /></a>&nbsp;</div>
 				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
 		</div>
 	</div>
@@ -89,7 +89,7 @@ function preloader()
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/calendar/'>Calendar</a>
 		</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+		<div style="color: #aaa; font-size: small;  padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/directory/'>Directory</a>
 		</div>
 		<hr/>
@@ -117,7 +117,7 @@ function preloader()
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/campaign/'>Campaigns</a>
 		</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+		<div style="color: #aaa; font-size: small; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/news/archive/'>News Archive</a>
 		</div>
 		<hr/>
