@@ -29,7 +29,8 @@ class Directory_model extends Model {
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
 			'ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
-			'WHERE organisations.organisation_directory=1 '.
+			'WHERE organisations.organisation_directory=1'.
+			' AND organisation_types.organisation_type_directory=1'.
 			'ORDER BY organisation_name';
 
 		$query = $this->db->query($sql);
@@ -52,6 +53,7 @@ class Directory_model extends Model {
 				'INNER JOIN organisation_types '.
 				'ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
 				'WHERE organisations.organisation_directory=1'.
+				' AND organisation_types.organisation_type_directory=1'.
 				' AND organisations.organisation_name LIKE "'.$OrganisationName.'" '.
 				'ORDER BY organisation_name';
 	
