@@ -9,7 +9,6 @@ CREATE TABLE entities (
 	entity_id					INTEGER		NOT NULL	AUTO_INCREMENT,
 	entity_username					VARCHAR(255)	NULL,
 	entity_password					CHAR(32)	NULL,
-	entity_entity_type_id				INTEGER		NOT NULL,
 	entity_deleted					BOOL		NOT NULL	DEFAULT FALSE,
 	entity_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
@@ -73,7 +72,7 @@ CREATE TABLE organisation_tags (
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
  	user_entity_id					INTEGER		NOT NULL,
-	user_college_id					INTEGER		NULL,
+	user_college_organisation_entity_id		INTEGER		NULL,
 	user_image_id					INTEGER		NULL,
 	user_firstname					VARCHAR(255)	NOT NULL,
 	user_surname					VARCHAR(255)	NOT NULL,
@@ -775,17 +774,17 @@ CREATE TABLE tags (
 
 DROP TABLE IF EXISTS colleges;
 CREATE TABLE colleges (
-	college_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	college_organisation_entity_id			INTEGER 	NOT NULL 	AUTO_INCREMENT,
 	college_name 					VARCHAR(255) 	NOT NULL,
 	college_ranking 				INTEGER 	NOT NULL,
 	
-	PRIMARY KEY(college_id)
+	PRIMARY KEY(college_organisation_entity_id)
 );
 
 DROP TABLE IF EXISTS college_rankings;
 CREATE TABLE college_rankings (
 	college_ranking_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	college_ranking_college_id 			INTEGER 	NOT NULL,
+	college_ranking_college_organisation_entity_id	INTEGER 	NOT NULL,
 		-- Writers ID.  
 	college_ranking_user_entity_id			INTEGER 	NOT NULL,
 	college_ranking_publisher_id 			INTEGER 	NOT NULL,
