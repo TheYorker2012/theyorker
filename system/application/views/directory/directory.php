@@ -1,24 +1,18 @@
 <p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
 <div>
-<div style='width: 90%;margin-left: auto;margin-right: auto;'>
-	<table width='100%'>
-		<?php foreach ($organisations as $organisation) { ?>
-		<tr>
-			<td>
-				<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\'>' . $organisation['name']; ?></a>
-			</td>
-			<td>
-				<?php echo $organisation['type']; ?>
-			</td>
-			<td>
-				<?php echo $organisation['description']; ?>
-			</td>
-		</tr>
-		<?php } ?>
-	</table>
+<div id='searchresults' style="padding:0px 0px 0px 0px">
+    <ul>
+	<?php
+	foreach ($organisations as $organisation) { ?>
+		<li>
+			<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\'>' . $organisation['name']; ?> (<?php echo $organisation['type']; ?>)</a>
+			<?php echo $organisation['description']; ?>
+		</li>
+	<?php } ?>
+	</ul>
 </div>
 <div align='center'>
-	<h5>Showing 50 results, containing Venues, Societies, Athletics Union, Organisation and College &#038; Campus</h5>
+	<h5>Showing <?php echo count($organisations); ?> results.</h5>
 </div>
 <form id='form1' name='form1' action='/directory/' method='POST' class='form'>
 	<fieldset>
