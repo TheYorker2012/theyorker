@@ -22,16 +22,13 @@
 			College &#038; Campus <input type='checkbox' name='college_campus' value="checked">
 			</li>
 		</ul>
-		<input id="searchText" nameonKeyUp="searchPage('searchText','Letter');">
+		<input id="searchText" name="search" onKeyUp="searchPage('searchText','Letter');">
 		<input type='submit' name='Submit' value='Search'>
+		Searching <?php echo count($organisations); ?> results.
 	</fieldset>
 	<fieldset>
 	</fieldset>
 </form>
-
-<div align='center'>
-	<h5>Searching <?php echo count($organisations); ?> results.</h5>
-</div>
 
 <div id='searchresults' style="padding:0px 0px 0px 0px">
 
@@ -85,10 +82,10 @@
 		</div>
 		<a name="Anchor<?php echo $current_letter ?>">
 		<div id="Letter<?php echo $current_letter ?>">
-		<table width="780" border="0" cellspacing="0" cellpadding="0">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr height="14">
 			<td width="20">&nbsp;</td>
-			<td width="338" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
+			<td width="40" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
 			<td rowspan="2" valign="top">
 			<div class="AZTop">
 		<?php
@@ -106,10 +103,10 @@
 		  </tr>
 		</table>
 		<div id="Letter0">
-			<table width="780" border="0" cellspacing="0" cellpadding="0">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			  <tr height="14">
 				<td width="20">&nbsp;</td>
-				<td width="338" height="14" valign="top"><div class="AZLeft">&nbsp;</div></td>
+				<td width="80" height="14" valign="top"><div class="AZLeft">&nbsp;</div></td>
 				<td rowspan="2" valign="top">
 				<div class="AZTop">
 

@@ -23,7 +23,7 @@
 .AZTop { border: 0px coral solid;  border-top-width: 1px; }
 .AZLeft { border: 0px coral solid;  height: 14px; border-top-width: 1px; border-left-width: 1px; color: coral; padding-left: 5px; font-family: Arial, Geneva, Helvetica, sans-serif; }
 
-.AZEntry { height: 30px; }
+.AZEntry { padding-bottom: 12px;}
 
 .AZJump { height: 30px; }
 
