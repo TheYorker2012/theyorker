@@ -35,15 +35,15 @@
 
 <div id='searchresults' style="padding:0px 0px 0px 0px">
 
-<script language="javascript">
+<div align='center'>
+	<script language="javascript">
+	insertJumpers('Jumper','Anchor');
 
-insertJumpers('Jumper','Anchor');
-
-function onLoad() {
-	searchPage('searchText','Letter');
-}
-
-</script>
+	function onLoad() {
+		searchPage('searchText','Letter');
+	}
+	</script>
+</div>
 
 <div id="NotFound" style="display: none;">
 <center><br>

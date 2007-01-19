@@ -27,7 +27,7 @@ function onLoad() {
 			<td rowspan="2" class="AZTop">
 			<div>
 
-<?php 
+<?php
 
 
 
@@ -38,11 +38,11 @@ $current_letter_index = 0;
 foreach ($organisation_array as $organisation) {
 
 	$current_letter_index ++;
-	
+
 	$entry_name = $organisation['name'];
-	
+
 	$current_letter = strtoupper($entry_name{0});
-	
+
 	if($this->character_lib->isalpha($current_letter)) {
 		if ($current_letter!=$last_letter) {
 			$current_letter_index = 1;
@@ -63,7 +63,7 @@ foreach ($organisation_array as $organisation) {
 			<td width="338" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
 			<td rowspan="2" valign="top">
 			<div class="AZTop">
-		<?php	
+		<?php
 		}
 		$last_letter = $current_letter;
 	} else {
@@ -76,7 +76,7 @@ foreach ($organisation_array as $organisation) {
 		  <tr>
 			<td colspan="2">&nbsp;</td>
 		  </tr>
-		</table>		
+		</table>
 		<div id="Letter0">
 			<table width="780" border="0" cellspacing="0" cellpadding="0">
 			  <tr height="14">
@@ -84,17 +84,17 @@ foreach ($organisation_array as $organisation) {
 				<td width="338" height="14" valign="top"><div class="AZLeft">&nbsp;</div></td>
 				<td rowspan="2" valign="top">
 				<div class="AZTop">
-		
+
 		<?php
 		}
 		$last_letter = "0";
-}
-?>
+	}
+	?>
 <div id="Letter<?php echo $last_letter.$current_letter_index ?>" class="AZEntry" name="<?php echo $entry_name ?>"><?php echo $entry_name ?></div>
 <?php
 
 
-	}
+}
 ?>
 			</div>
 			</td>
