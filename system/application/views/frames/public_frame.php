@@ -84,6 +84,16 @@ function preloader()
 	<br style="clear: both;" />
 	<div style="float: left; width: 140px; margin-right: 5px; background-color: #fff;">
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/'>Home</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/listings/'>Calendar</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/directory/'>Directory</a>
+		</div>
+		<hr/>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/news/'>Uni News</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
@@ -96,31 +106,32 @@ function preloader()
 			<a href='/news/lifestyle/'>Lifestyle</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/listings/'>Listings</a>
+			<a href='/reviews/food'>Food</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/reviews/'>Reviews</a>
+			<a href='/reviews/drink'>Drink</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
+			<a href='/reviews/culture'>Culture</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/directory/'>Directory</a>
+			<a href='/campaign/'>Campaigns</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/news/archive/'>News Archive</a>
+		</div>
+		<hr/>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='/charity/'>Our Charity</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/howdoi/'>How Do I</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
+			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
+		</div>
+		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='#'>Games Zone</a>
-		</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/campaign/'>Our Campaign</a>
-		</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/charity/'>Our Charity</a>
-		</div>
-		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/news/archive/'>News Archive</a>
 		</div>
 	</div>
 	<div style="float: right; width: 630px; margin-left: 5px; background-color: #fff;">
