@@ -300,8 +300,64 @@ EXTRAHEAD;
 	 */
 	private function _GetOrgData($OrganisationShortName)
 	{
-		$data = array(
-			'organisation' => array(
+		$data = array();
+		
+		$orgs = $this->directory_model->GetDirectoryOrganisationByName($OrganisationShortName);
+		if (1 === count($orgs)) {
+			foreach ($orgs as $org) {
+				$data['organisation'] = array(
+					'name' => $org['organisation_name'],
+					'shortname' => $this->directory_model->ShortenOrganisationName(
+							$org['organisation_name']
+						),
+					'description' => word_limiter($org['organisation_description'],20),
+					'type' => $org['organisation_type_name'],
+					
+					
+					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+					'website'     => 'http://www.fragsoc.com',
+					'location'    => 'Goodricke College',
+					'open_times'  => 'Every Other Weekend',
+					'type'        => 'Organisation',
+					'cards'       => array(
+						array(
+							'name' => 'Daniel Ashby',
+							'title' => 'Editor',
+							'course' => 'Politics and Philosophy',
+							'blurb' => 'The guy in charge',
+							'email' => 'editor@theyorker.co.uk',
+							'phone_mobile' => '07777 777777',
+							'phone_internal' => '01904 444444',
+							'phone_external' => '01904 555555',
+							'postal_address' => '',
+						),
+						array(
+							'name' => 'Nick Evans',
+							'title' => 'Technical Director',
+							'course' => 'Computer Science',
+							'blurb' => 'The other guy',
+							'email' => 'webmaster@theyorker.co.uk',
+							'phone_internal' => '07788 888888',
+							'phone_external' => '01904 333333',
+							'postal_address' => '01904 666666',
+						),
+					),
+					'reviews'     => array(
+						array(
+							'author' => 'Ian Benest',
+							'publish_date' => '4/12/2006',
+							'description' => 'I didn\'t like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn\'t like dan. He doesn\'t know dan. Dan doesn\'t know the farmer. Barry Scott sells cillit bang.',
+						),
+						array(
+							'author' => 'Detlef Plump',
+							'publish_date' => '5/12/2006',
+							'description' => 'Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here.',
+						),
+					),
+				);
+			}
+		} else {
+			$data['organisation'] = array(
 				'shortname'   => $OrganisationShortName,
 				'name'        => 'FragSoc',
 				'description' => 'The people who run this website',
@@ -345,8 +401,8 @@ EXTRAHEAD;
 						'description' => 'Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here.',
 					),
 				),
-			),
-		);
+			);
+		}
 		return $data;
 	}
 }
