@@ -655,39 +655,40 @@ div.BlackBoxSubTitle {
 
 
 
-/* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo*/
-.columnText {
+/* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo (Used In Directory)*/
+div.columnText {
 	margin-left: 5px;
 	width: 59%;
 	float: left;
 }
-.columnPhoto {
+div.columnPhoto {
 	width: 39%;
 	text-align: center;
 	float: right;
 }
-.columnPhoto a {
-	color: darkgrey;
-	text-decoration: none;
+
+/*MemberBoxes (Used in directory)*/
+div.Memberbox {
+	padding: 0px 200px 0px 0px;
+}
+div.MemberboxPhoto {
+	float: right;
+	width: 190px;
+	padding: 5px;
+	border: 1px solid #000000;
+}
+div.MemberboxPhoto p {
+	font-size: 12px;
+}
+div.MemberboxPhoto ul {
+	margin-top: 0px;
+	margin-left: 0px;
+	padding-left: 1.3em;
+}
+div.MemberboxPhoto li {
+	font-size: 12px;
 }
 
-/*MemberBoxes*/
-.Memberbox {
-	text-align: left;
-	padding-top: 5px;
-	padding-left: 5px;
-	width: 90%;
-	border-color: #0099FF;
-	border-style: solid;
-	border-width: thin;
-	height: 200px;
-}
-.MemberboxPhoto {
-	width: 40%;
-	text-align: center;
-	float: right;
-}
- 
 /*
 *	Start styles for News Section
 */
