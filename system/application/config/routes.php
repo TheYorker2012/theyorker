@@ -42,15 +42,17 @@
 $route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
+$org_name_regex = '[a-z_\d]+';
 // 'directory' needs to map to 'yorkerdirectory'
 // (the php class Directory is reserved)
 $route['directory'] = 'yorkerdirectory';
 // If 2 segments, seg2 ($1) should get sent to view function
-$route['directory/([a-z]+)'] = 'yorkerdirectory/view/$1';
+$route['directory/('.$org_name_regex.')'] = 'yorkerdirectory/view/$1';
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
-$route['directory/([a-z]+)/([a-z]+)'] = 'yorkerdirectory/$2/$1';
+$route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 // If >3 segments, same as for 3 and any extra segments ($3) appended.
-$route['directory/([a-z]+)/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
+$route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
+unset($org_name_regex);
 
 // Invalidate yorkerdirectory as its ugly and shouldn't be used
 // jh559: this is just my opinion, feel free to comment these out if you disagree
