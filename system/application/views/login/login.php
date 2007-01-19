@@ -1,5 +1,6 @@
 <div id='login_form' align='center'>
 	<form id='login_form' name='login_form' action='/login/' method='POST' class='form'>
+		<h5>Error : This is a login error example.</h5>
 		<fieldset>
 			<label for='username'>Username:</label>
 			<input id='username' type='text' name='username'>
@@ -12,9 +13,10 @@
 			<br />
 			<label for='login_button'></label>
 			<input type='submit' name='login_button' value='Login'>
+			<input type='button' onclick="/login/register/" name='register_button' value='Register'>
 		</fieldset>
 		<fieldset>
 		</fieldset>
-		<h5>Error : This is a login error example.</h5>
+		<div style='font-size: small;'>If you have forgotten your password, <a href='/login/resetpassword/'>click here</a> to reset it.</div>
 	</form>
 </div>

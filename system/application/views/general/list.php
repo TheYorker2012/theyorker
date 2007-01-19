@@ -6,9 +6,16 @@ Home (takes you to the normal home page)
 	<li><a href="/home/main/">/home/main/</a></li>
 </ul>
 
-Admin (its only just started)
+Admin Pages
 <ul>
 	<li><a href="/admin/">/admin/</a></li>
+</ul>
+
+Login System
+<ul>
+	<li><a href="/login/">/login/</a></li>
+	<li><a href="/login/register/">/login/register/</a> (Not created Yet)</li> 
+	<li><a href="/login/resetpassword/">/login/resetpassword/</a> (Not created Yet)</li>
 </ul>
 
 About
