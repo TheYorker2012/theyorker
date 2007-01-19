@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS organisations;
 CREATE TABLE organisations (
 	organisation_entity_id				INTEGER		NOT NULL,
 	organisation_organisation_type_id	 	INTEGER		NOT NULL,
-	organisation_organisation_entity_id_parent	INTEGER	NULL,
+	organisation_parent_organisation_entity_id	INTEGER		NULL,
 	organisation_name				VARCHAR(255)	NOT NULL,
 	organisation_description			TEXT		NULL,
 	organisation_location				VARCHAR(15)	NULL,
@@ -449,7 +449,7 @@ DROP TABLE IF EXISTS events;
 CREATE TABLE events (
 	event_id                                        INTEGER          NOT NULL,
 	event_image_id                                  INTEGER          NOT NULL,
-	event_parent_id                                 INTEGER          NOT NULL,
+	event_parent_id                                 INTEGER          NULL,
 	event_type_id                                   INTEGER          NOT NULL,
 	event_name                                      TEXT             NULL,
 	event_description                               TEXT             NULL,
@@ -486,7 +486,7 @@ CREATE TABLE event_occurrences (
 	event_occurrence_timestamp                      TIMESTAMP        NOT NULL        DEFAULT CURRENT_TIMESTAMP,
 	event_occurrence_next_id                        INTEGER          NOT NULL,
 	event_occurrence_event_id                       INTEGER          NOT NULL,
-	event_occurrence_state_id                       INTEGER          NOT NULL,
+	event_occurrence_state				ENUM('draft','trashed','published','cancelled','deleted')          NOT NULL,
 	event_occurrence_description                    TEXT             NOT NULL,
 	event_occurrence_location                       VARCHAR(15)      NOT NULL,
 	event_occurrence_postcode                       VARCHAR(15)      NOT NULL,
@@ -496,15 +496,6 @@ CREATE TABLE event_occurrences (
 	event_occurrence_ends_late                      BOOL             NOT NULL,
 	
 	PRIMARY KEY(event_occurrence_id)
-);
-
-DROP TABLE IF EXISTS event_occurrence_states;
-CREATE TABLE event_occurrence_states (
-	event_occurrence_state_id                       INTEGER          NOT NULL        AUTO_INCREMENT,
-	event_occurrence_state_name                     VARCHAR(255)     NOT NULL,
-	event_occurrence_state_published                BOOL             NOT NULL,
-	
-	PRIMARY KEY(event_occurrence_state_id)
 );
 
 -- Types of event (e.g. social, meeting, training etc.).  
