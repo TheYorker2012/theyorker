@@ -1,6 +1,6 @@
 
-/* -- 	BEGIN LISTINGS CALENDAR VIEW CLASSES -- */
-/* These are used by the listings system. It would probably be a bad idea to use these for anything outside of that subsystem. */
+/* -- 	BEGIN CALENDAR VIEW CLASSES -- */
+/* These are used by the calendar system. It would probably be a bad idea to use these for anything outside of that subsystem. */
 
 #calviewContainer {
 	background-color: #ffffff;
@@ -19,7 +19,8 @@
 #calviewCalendarWindow {
 	width: 720px;
 	padding: 0px;
-	margin: 0px;	background-color: #ffffff;	
+	margin: 0px;
+	background-color: #ffffff;	
 }
 
 #calviewCalTable {

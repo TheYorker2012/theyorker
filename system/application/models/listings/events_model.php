@@ -436,7 +436,7 @@ class Events_model extends Model
 	function FathersDay()
 	{
 		$rule = new RecurrenceRule();
-		// 3rd week in june
+		// 3rd sunday in june
 		$rule->MonthDate(6);
 		$rule->OnlyDayOfWeek(0);
 		$rule->SetWeekOffset(2);

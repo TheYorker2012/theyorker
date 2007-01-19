@@ -129,7 +129,7 @@ abstract class ViewListings extends FramesView
 		$CI = &get_instance();
 	
 		// Get data from the database
-		$CI->load->model('listings/events_model');
+		$CI->load->model('calendar/events_model');
 		$CI->events_model->IncludeDayInformation(TRUE);
 		$CI->events_model->IncludeDayInformationSpecial($this->mIncludeSpecials);
 		$CI->events_model->IncludeOccurrences(TRUE);

@@ -25,7 +25,7 @@ Campaign
 
 Listings
 <ul>
-	<li><a href="/listings/">/listings/</a></li>
+	<li><a href="/calendar/">/calendar/</a></li>
 </ul>
 
 News

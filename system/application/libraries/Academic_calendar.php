@@ -845,6 +845,69 @@ class Academic_calendar {
 				($Second) . 'sec',$monday_week1));
 	}
 	
+	/// Read a date from URI segments.
+	/**
+	 * @param $FirstSegment integer Number of first segment.
+	 * @return array Return structure:
+	 *	- 'valid' (bool Whether successful)
+	 *	- 'date' (Academic_time Date of URI)
+	 *	- 'format' (string Format of URI)
+	 *
+	 * Format strings:
+	 *	- 'gregorian-single' (e.g. 2006-aug-8)
+	 *	- 'gregorian-multiple' (e.g. 2006/aug/8)
+	 *	- 'academic-single' (e.g. 2006-xmas-2[-monday])
+	 *	- 'academic-multiple' (e.g. 2006-2007/xmas/2[/mon])
+	 */
+	function ReadUri($FirstSegment, &$CiUri)
+	{
+		$result = array(
+				'valid' => FALSE
+			);
+		$segs = array(
+				0 => $CiUri->Segment($FirstSegment)
+			);
+		$regex = '/(\d{4})-([a-z]{2,})-(\d{1,2})/i';
+		preg_match($regex, $segs[0], $matches);
+		var_dump($matches);
+		
+	}
+	
+	/// Generate a URI from a date in a particular format.
+	/**
+	 * @param $Date Academic_time Date to generate URI for.
+	 * @param $Format Format string like part of return value of ReadUri().
+	 * @return string (empty on failure):
+	 *	- URI string from date without leading or trailing '/'.
+	 */
+	function GenerateUri($Date, $Format = 'academic-multiple')
+	{
+		switch ($Format) {
+			case 'gregorian-single':
+				return strtolower($Date->Format('Y-M-j'));
+				
+			case 'gregorian-multiple':
+				return strtolower($Date->Format('Y/M/j'));
+				
+			case 'academic-single':
+				return
+					$Date->AcademicYear().'-'.
+					$Date->AcademicTermNameUnique().'-'.
+					$Date->AcademicWeek().'-'.
+					strtolower($Date->Format('D'));
+				
+			case 'academic-multiple':
+				return
+					$Date->AcademicYearName().'/'.
+					$Date->AcademicTermNameUnique().'/'.
+					$Date->AcademicWeek().'/'.
+					strtolower($Date->Format('D'));
+				
+			default:
+				return '';
+		}
+	}
+	
 	/**
 	 * @brief Perform tests on the academic calendar functions.
 	 * @return The number of errors detected.

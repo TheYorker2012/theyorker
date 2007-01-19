@@ -28,7 +28,7 @@ $CI->load->library('frames');
  * Example of usage from a controller function:
  * @code
  *	// Set up the subview
- *	$listings_view = $this->frames->view('listings/listings', $data);
+ *	$listings_view = $this->frames->view('calendar/calendar', $data);
  *	
  *	// Set up the public frame
  *	$this->frame_public->SetTitle($page_title);

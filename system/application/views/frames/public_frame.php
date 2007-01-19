@@ -63,7 +63,7 @@ function preloader()
 				<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" />
 			</a>
 			&nbsp;
-			<a href="/listings/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
+			<a href="/calendar/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
 				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" />
 			</a>
 			&nbsp;
@@ -87,7 +87,7 @@ function preloader()
 			<a href='/'>Home</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
-			<a href='/listings/'>Calendar</a>
+			<a href='/calendar/'>Calendar</a>
 		</div>
 		<div style="color: #aaa; font-size: small; border-bottom: 1px solid #ccc; padding: 0px 0px 3px 4px; margin: 0px 0px 3px 0px;">
 			<a href='/directory/'>Directory</a>

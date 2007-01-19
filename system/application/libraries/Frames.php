@@ -101,7 +101,7 @@ class FramesView extends Outputter
  *	as SetContent() to set subviews. Finally call Load() to load the frame:
  * @code
  *	// Set up the subview for listings.
- *	$listings_view = $this->frames->view('listings/listings');
+ *	$listings_view = $this->frames->view('calendar/calendar');
  *	$listings_view->AddData($data);
  *	
  *	// Set up the master frame.

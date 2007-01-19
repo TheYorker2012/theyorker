@@ -5,12 +5,12 @@
  * @author David Harker (dhh500@york.ac.uk)
  * @author James Hogan (jh559@cs.york.ac.uk)
  */
-class Listings extends Controller {
+class Calendar extends Controller {
 
 	/**
 	 * @brief Default constructor.
 	 */
-	function Listings()
+	function __construct()
 	{
 		parent::Controller();
 		
@@ -90,8 +90,8 @@ class Listings extends Controller {
 		$extra_head = <<<EXTRAHEAD
 			<script src="/javascript/prototype.js" type="text/javascript"></script>
 			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-			<script src="/javascript/listings.js" type="text/javascript"></script>
-			<link href="/stylesheets/listings.css" rel="stylesheet" type="text/css" />
+			<script src="/javascript/calendar.js" type="text/javascript"></script>
+			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
 		
 		// Set up the days view
