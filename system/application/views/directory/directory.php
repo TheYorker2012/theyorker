@@ -3,11 +3,11 @@
 <p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
 <div id='minibox' style="float:right;margin-right:5px">
     <div id='title'>Filters</div>
-    <input type='checkbox' name='venues' value="checked" checked><span style="font-size:small">Venues</span><br />
-    <input type='checkbox' name='societies' value="checked" checked><span style="font-size:small">Societies</span><br />
-    <input type='checkbox' name='athletics_union' value="checked" checked><span style="font-size:small">Athletics Union</span><br />
-    <input type='checkbox' name='organisation' value="checked" checked><span style="font-size:small">Organisations</span><br />
-    <input type='checkbox' name='college_campus' value="checked" checked><span style="font-size:small">College &#038; Campus</span>
+    <?php
+		foreach ($organisation_types as $org_type) {
+			echo '<input type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span><br />';
+		}
+    ?>
 </div>
 <div  style="padding:0px 150px 0px 0px">
 	<form name='search_directory' action='/directory/' method='POST' class='form'>

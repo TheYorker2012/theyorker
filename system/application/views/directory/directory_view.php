@@ -1,9 +1,16 @@
 <div class='columnText'>
-	<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+	<p><?php echo $organisation['description']; ?></p>
 	<ul>
-		<li><strong>Website: </strong><a href='http://www.fragsoc.com'>www.fragsoc.com</a></li>
-		<li><strong>Location: </strong>Goodricke College</li>
-		<li><strong>Opening Times: </strong>Every Other Weekend</li>
+		<?php if (!empty($organisation['website'])) {
+			echo '<li><strong>Website: </strong><a href="'.
+				$organisation['website'].'">'.$organisation['website'].'</a></li>';
+		} ?>
+		<?php if (!empty($organisation['location'])) {
+			echo '<li><strong>Location: </strong>'.$organisation['location'].'</li>';
+		} ?>
+		<?php if (!empty($organisation['open_times'])) {
+			echo '<li><strong>Opening Times: </strong>'.$organisation['open_times'].'</li>';
+		} ?>
 	</ul>
 </div>
 <div class='columnPhoto'>

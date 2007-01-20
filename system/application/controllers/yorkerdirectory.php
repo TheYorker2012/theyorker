@@ -67,6 +67,9 @@ class Yorkerdirectory extends Controller
 		// to the view as well
 		$data['organisations'] = $this->_GetOrgs($search_pattern);
 		$data['search'] = $search_pattern;
+		
+		// Get organisation types
+		$data['organisation_types'] = $this->_GetOrganisationTypes($data['organisations']);
 
 		//Libary for AtoZ system
 		$this->load->library('character_lib'); //This character libary is used by the view, so load it here
@@ -258,6 +261,27 @@ EXTRAHEAD;
 		$this->frame_public->Load();
 	}
 
+	/// Get organisation types from organisations.
+	/**
+	 * @param $Organisations array Organisations as returned by _GetOrgs.
+	 * @return array of organisation types.
+	 */
+	private function _GetOrganisationTypes($Organisations)
+	{
+		$types = array();
+		foreach ($Organisations as $organisation) {
+			$types[$organisation['type']] = TRUE;
+		}
+		$result = array();
+		foreach ($types as $type => $enabled) {
+			$result[] = array(
+				'id' => $type,
+				'name' => $type,
+			);
+		}
+		return $result;
+	}
+
 	/// Temporary function get organisations.
 	/**
 	 * @param $Pattern string/bool Search pattern or FALSE if all.
@@ -307,16 +331,16 @@ EXTRAHEAD;
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$data['organisation'] = array(
-					'name' => $org['organisation_name'],
-					'shortname' => $org['organisation_directory_entry_name'],
+					'name'        => $org['organisation_name'],
+					'shortname'   => $org['organisation_directory_entry_name'],
 					'description' => $org['organisation_description'],
-					'type' => $org['organisation_type_name'],
+					'type'        => $org['organisation_type_name'],
+					'website'     => $org['organisation_url'],
+					'location'    => $org['organisation_location'],
+					'open_times'  => $org['organisation_opening_hours'],
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-					'website'     => 'http://www.fragsoc.com',
-					'location'    => 'Goodricke College',
-					'open_times'  => 'Every Other Weekend',
 					'type'        => 'Organisation',
 					'cards'       => array(
 						array(

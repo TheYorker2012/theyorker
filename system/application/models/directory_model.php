@@ -49,6 +49,9 @@ class Directory_model extends Model {
 			' organisations.organisation_name,'.
 			' organisations.organisation_directory_entry_name,'.
 			' organisations.organisation_description,'.
+			' organisations.organisation_url,'.
+			' organisations.organisation_location,'.
+			' organisations.organisation_opening_hours,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
