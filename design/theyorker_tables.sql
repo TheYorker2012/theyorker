@@ -1,7 +1,5 @@
 ----------------------------------------------------------------
--- Tables about entities                                      --
--- An entity is anything which may be able to log in or has   --
---	an entry in the directory                             --
+-- Tables about entities				      --
 ----------------------------------------------------------------
 
 DROP TABLE IF EXISTS entities;
@@ -13,10 +11,8 @@ CREATE TABLE entities (
 	entity_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(entity_id)
-);
+) COMMENT='An entity is anything which may be able to log in or has an entry in the directory.';
 
--- This table stores both organisations and parts of organisations (e.g. sports
---  teams)
 DROP TABLE IF EXISTS organisations;
 CREATE TABLE organisations (
 	organisation_entity_id				INTEGER		NOT NULL,
@@ -29,26 +25,23 @@ CREATE TABLE organisations (
 	organisation_postcode				VARCHAR(15)	NULL,
 	organisation_url				VARCHAR(255)	NULL,
 	organisation_opening_hours			VARCHAR(255)	NULL,
-	organisation_directory				BOOL		NOT NULL,
+	organisation_directory_entry_name		VARCHAR(30)	NOT NULL,
 	organisation_events				BOOL		NOT NULL,
 	organisation_yorkipedia_entry 			VARCHAR(255)	NULL,
-	organisation_hits				INTEGER		NOT NULL,
+	organisation_hits				INTEGER		NOT NULL	DEFAULT 0,
 	organisation_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-	
-	PRIMARY KEY(organisation_entity_id)
-);
 
--- Stores the type of organisations e.g. an on campus society, an AU club, an
---  external organisation.  If directory is set to false, this type of
---  organisation does not appear in the directory.  
+	PRIMARY KEY(organisation_entity_id)
+) COMMENT='This table stores both organisations and parts of organisations (e.g. sports teams).';
+
 DROP TABLE IF EXISTS organisation_types;
 CREATE TABLE organisation_types (
 	organisation_type_id				INTEGER		NOT NULL	AUTO_INCREMENT,
 	organisation_type_name				VARCHAR(255)	NOT NULL,
-	organisation_type_directory			BOOL		NOT NULL,
+	organisation_type_directory			BOOL		NOT NULL	COMMENT='If false this type of organisation does not appear in the directory.',
 
 	PRIMARY KEY(organisation_type_id)
-);
+) COMMENT='Stores the type of organisations (e.g. an on campus society, an AU club, an external organisation).';
 
 DROP TABLE IF EXISTS organisation_slideshows;
 CREATE TABLE organisation_slideshows (
@@ -57,18 +50,16 @@ CREATE TABLE organisation_slideshows (
 	organisation_slideshow_order			INTEGER		NOT NULL,
 
 	PRIMARY KEY(organisation_slideshow_organisation_entity_id, organisation_slideshow_photo_id)
-);
+) COMMENT='Each organisation can have a single slideshow in which photos are displayed in the order as specified by organisation_slideshow_order.';
 
--- Organisations can be taged to create lists of related organisations etc.
 DROP TABLE IF EXISTS organisation_tags;
 CREATE TABLE organisation_tags (
 	organisation_tag_organisation_entity_id		INTEGER		NOT NULL,
 	organisation_tag_tag_id				INTEGER		NOT NULL,
 
 	PRIMARY KEY(organisation_tag_organisation_entity_id, organisation_tag_tag_id)
-);
+) COMMENT='Organisations can be tagged to create lists of related organisations etc.';
 
--- Stores users of the yorker.	These must be members of the university.	
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
  	user_entity_id					INTEGER		NOT NULL,
@@ -86,28 +77,26 @@ CREATE TABLE users (
 	user_timestamp					TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(user_entity_id)
-);
+) COMMENT='Stores users of the yorker. These must be members of the university.';
 
--- The types of articles a user can write - reviews, features, news etc.
 DROP TABLE IF EXISTS users_article_types;
 CREATE TABLE users_article_types (
 	users_article_type_user_entity_id		INTEGER		NOT NULL,
 	users_article_type_article_type_id		INTEGER		NOT NULL,
 
 	PRIMARY KEY(users_article_type_user_entity_id, users_article_type_article_type_id)
-);
+) COMMENT='The types of articles a user can write (eg. Reviews, Features, News etc).';
 
--- Organisation can request to see properties of members.  
 DROP TABLE IF EXISTS organisation_request_properties;
 CREATE TABLE organisation_request_properties (
 	organisation_request_properties_organisation_entity_id INTEGER	NOT NULL,
 	organisation_request_properties_user_property_id INTEGER	NOT NULL,
-	organisation_request_properties_preferred	BOOL		NOT NULL,
+	organisation_request_properties_preferred	BOOL		NOT NULL	COMMENT='True if the organisation would prefer have this over other user information.',
 
 	PRIMARY KEY(organisation_request_properties_organisation_entity_id, organisation_request_properties_user_property_id)
-);
+) COMMENT='Organisation can request to see particular properties (eg. phone number) of their users.';
 
--- TODO: possibly work out a nice way of doing this. 
+-- TODO: possibly work out a nice way of doing this.
 DROP TABLE IF EXISTS user_has_properties;
 CREATE TABLE user_has_properties (
 	user_has_properties_user_entity_id		INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -119,9 +108,8 @@ CREATE TABLE user_has_properties (
 	user_has_properties_number			FLOAT		NULL,
 
 	PRIMARY KEY(user_has_properties_user_entity_id, user_has_properties_property_id)
-);
+) COMMENT='Links specific property data to a user.';
 
--- Properties which users can associate with themselves.  
 DROP TABLE IF EXISTS user_properties;
 CREATE TABLE user_properties (
 	user_property_id				INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -129,7 +117,7 @@ CREATE TABLE user_properties (
 	user_property_name				TEXT		NULL,
 
 	PRIMARY KEY(user_property_id)
-);
+) COMMENT='Provides a link between the property data and its type.';
 
 -- TODO: make this nice :)
 DROP TABLE IF EXISTS property_types;
@@ -145,9 +133,8 @@ CREATE TABLE property_types (
 	property_type_number				BOOL		NOT NULL,
 	
 	PRIMARY KEY(property_type_id)
-);
+) COMMENT='Specifies which type the property data is of.';
 
--- Links that can appear on the homepage
 DROP TABLE IF EXISTS links;
 CREATE TABLE links (
 	link_id						INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -156,9 +143,8 @@ CREATE TABLE links (
 	link_name					VARCHAR(255)	NOT NULL,
 	
 	PRIMARY KEY(link_id)
-);
+) COMMENT='Links that can appear on the homepage.';
 
--- Stores either association between user and predifined links or custom links.  
 DROP TABLE IF EXISTS user_links;
 CREATE TABLE user_links (
 	user_link_id					INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -167,22 +153,21 @@ CREATE TABLE user_links (
 	user_link_image_id				INTEGER		NULL,
 	user_link_url					VARCHAR(255)	NULL,
 	user_link_name					VARCHAR(255)	NULL,
-		-- True to make a request to put a user link into predifined links.  
-	user_link_request				BOOL		NULL,
+	user_link_request				BOOL		NULL		COMMENT='True to make a request to put a user link into predefined links.',
 	user_link_order					INTEGER		NOT NULL,
 	
 	PRIMARY KEY(user_link_id)
-);
+) COMMENT='Stores associations between user and either predifined links or custom links.';
 
 -- What organisations can see a users properties.  
 DROP TABLE IF EXISTS user_subscription_properties;
 CREATE TABLE user_subscription_properties (
 	user_subscription_property_organisation_entity_id INTEGER	NOT NULL,
-	user_subscription_property_property_id		INTEGER		NOT NULL,
+	user_subscription_property_user_property_id	INTEGER		NOT NULL,
 	user_subscription_property_user_entity_id	INTEGER		NOT NULL,
 
 	PRIMARY KEY(user_subscription_property_organisation_entity_id, user_subscription_property_property_id, user_subscription_property_user_entity_id)
-);
+) COMMENT='Stores the organisations that can see certain user properties.';
 
 DROP TABLE IF EXISTS departments;
 CREATE TABLE departments (
@@ -190,24 +175,23 @@ CREATE TABLE departments (
 	department_name					VARCHAR(255)	NOT NULL,
 
 	PRIMARY KEY(department_id)
-);
+) COMMENT='Contains a list of all departments in the university.';
 
 DROP TABLE IF EXISTS department_modules;
 CREATE TABLE department_modules (
 	department_module_department_id			INTEGER		NOT NULL,
-		-- The module is an entity
-	department_module_entity_id			INTEGER		NOT NULL,
+	department_module_entity_id			INTEGER		NOT NULL	COMMENT='The module is an entity.',
 
 	PRIMARY KEY(department_module_department_id, department_module_entity_id)
-);
+) COMMENT='Stores associations between modules and departments.';
 
 ----------------------------------------------------------------
--- Subscription and business card related tables              --
+-- Subscription and business card related tables	      --
 ----------------------------------------------------------------
+
 DROP TABLE IF EXISTS business_cards;
 CREATE TABLE business_cards (
 	business_card_id				INTEGER		NOT NULL	AUTO_INCREMENT,
-	business_card_organisation_entity_id		INTEGER		NOT NULL,
 	business_card_user_entity_id			INTEGER		NOT NULL,
 	business_card_name				VARCHAR(255)	NOT NULL,
 	business_card_title				VARCHAR(255)	NOT NULL,
@@ -223,7 +207,7 @@ CREATE TABLE business_cards (
 	business_card_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(business_card_id)
-);
+) COMMENT='Provides contact information for specified members of an organisation.';
 
 DROP TABLE IF EXISTS business_card_colours;
 CREATE TABLE business_card_colours (
@@ -233,40 +217,38 @@ CREATE TABLE business_card_colours (
 	business_card_colour_foreground			CHAR(6)		NOT NULL,
 
 	PRIMARY KEY(business_card_colour_id)
-);
+) COMMENT='Stores the variety of different colour schemes for the business cards.';
 
--- Title on buisiness card, may well not be related to "teams" etc.
 -- TODO: discrepancy between this and design
 DROP TABLE IF EXISTS business_card_types;
 CREATE TABLE business_card_types (
 	business_card_type_id				INTEGER		NOT NULL	AUTO_INCREMENT,
 	business_card_type_name				VARCHAR(255)	NOT NULL,
 	business_card_type_organisation_entity_id 	INTEGER		NULL,
-	
+
 	PRIMARY KEY(business_card_type_id)
-);
+) COMMENT='Each organisation can define their structure here, so business cards can be given one of the organisations types (eg. Editor, Writer).';
 
 DROP TABLE IF EXISTS subscriptions;
 CREATE TABLE subscriptions (
 	subscription_organisation_entity_id		INTEGER		NOT NULL,
 	subscription_user_entity_id			INTEGER		NOT NULL,
-		-- Are the events on the calendar
-	subscription_interested				BOOL		NOT NULL,
+	subscription_interested				BOOL		NOT NULL	COMMENT='True if the events are on the calendar.',
 	subscription_member				BOOL		NOT NULL,
 	subscription_paid				BOOL		NOT NULL,
-		-- Does the organisation have access to e-mail address
-	subscription_email				BOOL		NOT NULL,
+	subscription_email				BOOL		NOT NULL	COMMENT='Does the organisation have access to the users e-mail address.',
 	subscription_admin				BOOL		NOT NULL,
 	subscription_user_confirmed			BOOL		NOT NULL,
 	subscription_deleted				BOOL		NOT NULL,
 	subscription_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	
 	PRIMARY KEY(subscription_organisation_entity_id, subscription_user_entity_id)
-);
+) COMMENT='Stores the links between users and organisations. User can be interested (see events on calender), be a member or paid member (organisation can see them) and the organisation can request membership from the user.';
 
 ----------------------------------------------------------------
--- Article related tables                                     --
+-- Article related tables				      --
 ----------------------------------------------------------------
+
 DROP TABLE IF EXISTS articles;
 CREATE TABLE articles (
 	article_id					INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -284,11 +266,9 @@ CREATE TABLE articles (
 	article_current_article_content_id		INTEGER		NULL,
 
 	PRIMARY KEY(article_id)
-);
+) COMMENT='Stores the information about the articles on the site and the current live version of the article (not the article itself).';
 
 -- TODO: what if someone edits and checks at the same time
--- An article can have a number of contents (i.e. revisions) written.  Only 1
---  is live at a time.  
 DROP TABLE IF EXISTS article_contents;
 CREATE TABLE article_contents (
 	article_content_id				INTEGER		NOT NULL	AUTO_INCREMENT,
@@ -300,16 +280,15 @@ CREATE TABLE article_contents (
 	article_content_blurb				TEXT		NULL,
 	
 	PRIMARY KEY(article_content_id)
-);
+) COMMENT='An article can have a number of contents (i.e. revisions) written. Only 1 is live at a time.';
 
--- Articles about events are linked to the events.  
 DROP TABLE IF EXISTS article_events;
 CREATE TABLE article_events (
 	article_event_article_id			INTEGER		NOT NULL,
 	article_event_event_id				INTEGER		NOT NULL,
 	
 	PRIMARY KEY(article_event_article_id, article_event_event_id)
-);
+) COMMENTS='Articles about events are linked to the events here.';
 
 DROP TABLE IF EXISTS article_links;
 CREATE TABLE article_links (
@@ -319,11 +298,10 @@ CREATE TABLE article_links (
 	article_link_url				VARCHAR(255)	NOT NULL,
 	article_link_deleted				BOOL		NOT NULL	DEFAULT FALSE,
 	article_link_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-	
-	PRIMARY KEY(article_link_id)
-);
 
--- Photos that may appear in the wikitext.  
+	PRIMARY KEY(article_link_id)
+) COMMENT='Articles can have external links related to them.';
+
 DROP TABLE IF EXISTS article_photos;
 CREATE TABLE article_photos (
 	article_photo_article_id			INTEGER		NOT NULL,
@@ -331,131 +309,128 @@ CREATE TABLE article_photos (
 	article_photo_number				INTEGER		NOT NULL,
 
 	PRIMARY KEY(article_photo_article_id, article_photo_photo_id)
-);
+) COMMENT='Photos that may appear in the wikitext.';
 
 DROP TABLE IF EXISTS article_tags;
 CREATE TABLE article_tags (
-	article_tag_article_id	                        INTEGER		NOT NULL,
-	article_tag_tag_id		                INTEGER		NOT NULL,
+	article_tag_article_id				INTEGER		NOT NULL,
+	article_tag_tag_id				INTEGER		NOT NULL,
 
 	PRIMARY KEY(article_tag_article_id, article_tag_tag_id)
-);
+) COMMENT='Adds tags to an article, used in searching.';
 
--- News, reviews features, lifstyle etc..  Can be in a hierachy.
 DROP TABLE IF EXISTS article_types;
 CREATE TABLE article_types (
-	article_type_id		                        INTEGER		NOT NULL	AUTO_INCREMENT,
-	article_type_parent_article_type_id             INTEGER	        NULL,
-	article_type_name		                VARCHAR(255)	NOT NULL,
-	article_type_archive		                BOOL		NOT NULL,
-	article_type_blurb		                TEXT		NOT NULL,
+	article_type_id					INTEGER		NOT NULL	AUTO_INCREMENT,
+	article_type_parent_article_type_id		INTEGER		NULL,
+	article_type_name				VARCHAR(255)	NOT NULL,
+	article_type_archive				BOOL		NOT NULL,
+	article_type_blurb				TEXT		NOT NULL,
 	
 	PRIMARY KEY(article_type_id)
-);
+) COMMENT='Sets the articles type, can be in a hierarchy (eg. News, Reviews, Features etc).';
 
--- Links the authors of a revision of an article.  
 DROP TABLE IF EXISTS article_writers;
 CREATE TABLE article_writers (
-	article_writer_user_entity_id		        INTEGER		NOT NULL,
-	article_writer_article_content_id               INTEGER	        NOT NULL,
+	article_writer_user_entity_id			INTEGER		NOT NULL,
+	article_writer_article_content_id		INTEGER		NOT NULL,
 	
 	PRIMARY KEY(article_writer_user_entity_id, article_writer_article_content_id)
-);
+) COMMENT='Links the authors of a revision of an article to an article.';
 
 DROP TABLE IF EXISTS fact_boxes;
 CREATE TABLE fact_boxes (
-	fact_box_id		                        INTEGER		NOT NULL	AUTO_INCREMENT,
-	fact_box_article_content_id                     INTEGER	        NOT NULL,
-	fact_box_text		                        TEXT		NOT NULL,
-	fact_box_deleted	                        BOOL		NOT NULL	DEFAULT FALSE,
-	fact_box_timestamp	                        TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	fact_box_id					INTEGER		NOT NULL	AUTO_INCREMENT,
+	fact_box_article_content_id			INTEGER		NOT NULL,
+	fact_box_text					TEXT		NOT NULL,
+	fact_box_deleted				BOOL		NOT NULL	DEFAULT FALSE,
+	fact_box_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(fact_box_id)
-);
+) COMMENT='Stores the fact boxes which are linked to revisions of an article.';
 
 DROP TABLE IF EXISTS related_articles;
 CREATE TABLE related_articles (
-	related_article_1_article_id	                INTEGER		NOT NULL,
-	related_article_2_article_id	                INTEGER		NOT NULL,
+	related_article_1_article_id			INTEGER		NOT NULL,
+	related_article_2_article_id			INTEGER		NOT NULL,
 
 	PRIMARY KEY(related_article_1_article_id, related_article_2_article_id)
-);
+) COMMENT='Relates two articles together.';
 
 DROP TABLE IF EXISTS pull_quotes;
 CREATE TABLE pull_quotes (
-	pull_quote_id                                   INTEGER         NOT NULL        AUTO_INCREMENT,
-	pull_quote_article_content_id                   INTEGER         NOT NULL,
-	pull_quote_text                                 TEXT            NOT NULL,
-	pull_quote_person                               VARCHAR(255)    NOT NULL,
-	pull_quote_position                             VARCHAR(255)    NOT NULL,
-	pull_quote_order                                INTEGER         NOT NULL,
-	pull_quote_deleted                              BOOL            NOT NULL,
+	pull_quote_id					INTEGER 	NOT NULL	AUTO_INCREMENT,
+	pull_quote_article_content_id			INTEGER 	NOT NULL,
+	pull_quote_text 				TEXT		NOT NULL,
+	pull_quote_person				VARCHAR(255)	NOT NULL,
+	pull_quote_position				VARCHAR(255)	NOT NULL,
+	pull_quote_order				INTEGER 	NOT NULL,
+	pull_quote_deleted				BOOL		NOT NULL,
 
 	PRIMARY KEY(pull_quote_id)
-);
+) COMMENT='Stores the pull quotes which are linked to revisions of an article.';
 
 DROP TABLE IF EXISTS requests;
 CREATE TABLE requests (
-	request_id                                      INTEGER         NOT NULL        AUTO_INCREMENT,
-	request_timestamp                               TIMESTAMP       NOT NULL        DEFAULT CURRENT_TIMESTAMP,
-		-- Who requested the thing
-	request_entity_id                               INTEGER         NOT NULL,
-		-- An article is created with a request for an article
-	request_article_id                              INTEGER         NOT NULL,
-	request_type_id                                 INTEGER         NOT NULL,
-	request_article_type_id                         INTEGER         NOT NULL,
-	request_organisation_entity_id                  INTEGER         NULL,
-	request_text                                    TEXT            NOT NULL,
-	request_blurb                                   TEXT            NOT NULL,
-	request_deadline                                TIMESTAMP       NOT NULL,
-	request_accepted                                BOOL            NOT NULL,
-	request_deleted                                 BOOL            NOT NULL,
-	
+	request_id					INTEGER 	NOT NULL	AUTO_INCREMENT,
+	request_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	request_entity_id				INTEGER 	NOT NULL	COMMENT='Who requested the thing.',
+	request_article_id				INTEGER 	NOT NULL	COMMENT='An article is created with a request for an article.',
+	request_type_id 				INTEGER 	NOT NULL,
+	request_article_type_id 			INTEGER 	NOT NULL,
+	request_organisation_entity_id			INTEGER 	NULL,
+	request_text					TEXT		NOT NULL,
+	request_blurb					TEXT		NOT NULL,
+	request_deadline				TIMESTAMP	NOT NULL,
+	request_accepted				BOOL		NOT NULL,
+	request_deleted 				BOOL		NOT NULL,
+
 	PRIMARY KEY(request_id)
-);
+) COMMENT='Stores requests of various types (eg. Photo, Article) with a description of the request.';
 
 DROP TABLE IF EXISTS request_photos;
 CREATE TABLE request_photos (
-	request_photo_request_id                        INTEGER         NOT NULL,
-	request_photo_photo_id                          INTEGER         NULL,
-	request_photo_deleted                           BOOL            NOT NULL,
-	request_photo_timestamp                         TIMESTAMP       NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+	request_photo_request_id			INTEGER 	NOT NULL,
+	request_photo_photo_id				INTEGER 	NOT NULL	DEFAULT 0,
+	request_photo_deleted				BOOL		NOT NULL,
+	request_photo_timestamp 			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(request_photo_request_id, request_photo_photo_id)
-);
+) COMMENT='Links photos with photo requests.';
 
--- Request types (e.g. photo, article, suggestion)
 DROP TABLE IF EXISTS request_types;
 CREATE TABLE request_types (
-	request_type_id                                 INTEGER         NOT NULL         AUTO_INCREMENT,
-	request_type_name                               VARCHAR(255)    NOT NULL,
+	request_type_id 				INTEGER 	NOT NULL	 AUTO_INCREMENT,
+	request_type_name				VARCHAR(255)	NOT NULL,
 	
 	PRIMARY KEY(request_type_id)
-);
+) COMMENT='Stores the possible request types (eg. Photo, Article, Suggestion).';
 
 DROP TABLE IF EXISTS request_users;
 CREATE TABLE request_users (
-	request_user_request_id                         INTEGER         NOT NULL,
-	request_user_user_entity_id                     INTEGER         NOT NULL,
-	request_user_accepted                           BOOL            NOT NULL,
-	request_user_rejected                           BOOL            NOT NULL,
+	request_user_request_id 			INTEGER 	NOT NULL,
+	request_user_user_entity_id			INTEGER 	NOT NULL,
+	request_user_accepted				BOOL		NOT NULL,
+	request_user_rejected				BOOL		NOT NULL,
 	
 	PRIMARY KEY(request_user_request_id, request_user_user_entity_id)
-);
+) COMMENT='Stores the users who have had a request made for them and their responses.';
+
 ----------------------------------------------------------------
--- Event and calendar related tables                          --
+-- Event and calendar related tables			      --
 ----------------------------------------------------------------
+
 DROP TABLE IF EXISTS events;
 CREATE TABLE events (
-	event_id                                        INTEGER          NOT NULL,
-	event_image_id                                  INTEGER          NOT NULL,
-	event_parent_id                                 INTEGER          NULL,
-	event_type_id                                   INTEGER          NOT NULL,
-	event_name                                      TEXT             NULL,
-	event_description                               TEXT             NULL,
-	event_blurb                                     TEXT             NULL,
-	event_deleted                                   BOOL             NULL,
-	event_timestamp                                 TIMESTAMP        NULL,
+	event_id					INTEGER 	 NOT NULL,
+	event_image_id					INTEGER 	 NOT NULL,
+	event_parent_id 				INTEGER 	 NULL,
+	event_type_id					INTEGER 	 NOT NULL,
+	event_name					TEXT		 NULL,
+	event_description				TEXT		 NULL,
+	event_blurb					TEXT		 NULL,
+	event_deleted					BOOL		 NULL,
+	event_timestamp 				TIMESTAMP	 NULL,
 	
 	PRIMARY KEY(event_id)
 );
@@ -463,8 +438,8 @@ CREATE TABLE events (
 -- An event can be linked to a number of organisations.  
 DROP TABLE IF EXISTS events_entities;
 CREATE TABLE events_entities (
-	event_entity_entity_id                          INTEGER          NOT NULL,
-	event_entity_event_id                           INTEGER          NOT NULL,
+	event_entity_entity_id				INTEGER 	 NOT NULL,
+	event_entity_event_id				INTEGER 	 NOT NULL,
 	
 	PRIMARY KEY(event_entity_entity_id, event_entity_event_id)
 );
@@ -472,28 +447,28 @@ CREATE TABLE events_entities (
 -- Users can customize ocurrencies on the timetable.  
 DROP TABLE IF EXISTS event_occurrence_users;
 CREATE TABLE event_occurrence_users (
-	event_occurrence_user_user_entity_id            INTEGER          NOT NULL,
-	event_occurrence_user_event_occurrence_id       INTEGER          NOT NULL,
-	event_occurrence_user_hide                      BOOL             NOT NULL,
-	event_occurrence_user_rsvp                      BOOL             NOT NULL,
+	event_occurrence_user_user_entity_id		INTEGER 	 NOT NULL,
+	event_occurrence_user_event_occurrence_id	INTEGER 	 NOT NULL,
+	event_occurrence_user_hide			BOOL		 NOT NULL,
+	event_occurrence_user_rsvp			BOOL		 NOT NULL,
 	
 	PRIMARY KEY(event_occurrence_user_user_entity_id, event_occurrence_user_event_occurrence_id)
 );
 
 DROP TABLE IF EXISTS event_occurrences;
 CREATE TABLE event_occurrences (
-	event_occurrence_id                             INTEGER          NOT NULL,
-	event_occurrence_timestamp                      TIMESTAMP        NOT NULL        DEFAULT CURRENT_TIMESTAMP,
-	event_occurrence_next_id                        INTEGER          NOT NULL,
-	event_occurrence_event_id                       INTEGER          NOT NULL,
-	event_occurrence_state				ENUM('draft','trashed','published','cancelled','deleted')          NOT NULL,
-	event_occurrence_description                    TEXT             NOT NULL,
-	event_occurrence_location                       VARCHAR(15)      NOT NULL,
-	event_occurrence_postcode                       VARCHAR(15)      NOT NULL,
-	event_occurrence_start_time                     TIMESTAMP        NOT NULL,
-	event_occurrence_end_time                       TIMESTAMP        NOT NULL,
-	event_occurrence_all_day                        BOOL             NOT NULL,
-	event_occurrence_ends_late                      BOOL             NOT NULL,
+	event_occurrence_id				INTEGER 	 NOT NULL,
+	event_occurrence_timestamp			TIMESTAMP	 NOT NULL	 DEFAULT CURRENT_TIMESTAMP,
+	event_occurrence_next_id			INTEGER 	 NOT NULL,
+	event_occurrence_event_id			INTEGER 	 NOT NULL,
+	event_occurrence_state				ENUM('draft','trashed','published','cancelled','deleted')	   NOT NULL,
+	event_occurrence_description			TEXT		 NOT NULL,
+	event_occurrence_location			VARCHAR(15)	 NOT NULL,
+	event_occurrence_postcode			VARCHAR(15)	 NOT NULL,
+	event_occurrence_start_time			TIMESTAMP	 NOT NULL,
+	event_occurrence_end_time			TIMESTAMP	 NOT NULL,
+	event_occurrence_all_day			BOOL		 NOT NULL,
+	event_occurrence_ends_late			BOOL		 NOT NULL,
 	
 	PRIMARY KEY(event_occurrence_id)
 );
@@ -501,93 +476,93 @@ CREATE TABLE event_occurrences (
 -- Types of event (e.g. social, meeting, training etc.).  
 DROP TABLE IF EXISTS event_types;
 CREATE TABLE event_types (
-	event_type_id                                   INTEGER          NOT NULL        AUTO_INCREMENT,
-	event_type_name                                 VARCHAR(255)     NOT NULL,
+	event_type_id					INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	event_type_name 				VARCHAR(255)	 NOT NULL,
 	
 	PRIMARY KEY(event_type_id)
 );
 
 DROP TABLE IF EXISTS reminders;
 CREATE TABLE reminders (
-	reminder_id                                     INTEGER          NOT NULL        AUTO_INCREMENT,
-	reminder_user_entity_id                         INTEGER          NOT NULL,
-	reminder_name                                   VARCHAR(255)     NOT NULL,
-	reminder_description                            TEXT             NOT NULL,
-	reminder_timestamp                              TIMESTAMP        NOT NULL        DEFAULT CURRENT_TIMESTAMP,
+	reminder_id					INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	reminder_user_entity_id 			INTEGER 	 NOT NULL,
+	reminder_name					VARCHAR(255)	 NOT NULL,
+	reminder_description				TEXT		 NOT NULL,
+	reminder_timestamp				TIMESTAMP	 NOT NULL	 DEFAULT CURRENT_TIMESTAMP,
 	
 	PRIMARY KEY(reminder_id)
 );
 
 DROP TABLE IF EXISTS anniversaries;
 CREATE TABLE anniversaries (
-	anniversary_id                                  INTEGER          NOT NULL        AUTO_INCREMENT,
-	anniversary_entity_id                           INTEGER          NOT NULL,
-	anniversary_name                                VARCHAR(255)     NOT NULL,
-	anniversary_start_date                          TIMESTAMP        NOT NULL,
+	anniversary_id					INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	anniversary_entity_id				INTEGER 	 NOT NULL,
+	anniversary_name				VARCHAR(255)	 NOT NULL,
+	anniversary_start_date				TIMESTAMP	 NOT NULL,
 	
 	PRIMARY KEY(anniversary_id)
 );
 
 DROP TABLE IF EXISTS todo_list_items;
 CREATE TABLE todo_list_items (
-	todo_list_item_id                               INTEGER          NOT NULL        AUTO_INCREMENT,
-	todo_list_item_event_occurrence_id              INTEGER          NOT NULL,
-	todo_list_item_reminder_id                      INTEGER          NOT NULL,
-	todo_list_item_todo_priority_id                 INTEGER          NOT NULL,
-	todo_list_item_user_entity_id                   INTEGER          NOT NULL,
-	todo_list_item_name                             VARCHAR(255)     NOT NULL,
-	todo_list_item_description                      TEXT             NOT NULL,
-	todo_list_item_done                             BOOL             NOT NULL,
-	todo_list_item_event_occurence_id               INTEGER          NOT NULL,
-	todo_list_item_deadline                         TIMESTAMP        NOT NULL,
+	todo_list_item_id				INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	todo_list_item_event_occurrence_id		INTEGER 	 NOT NULL,
+	todo_list_item_reminder_id			INTEGER 	 NOT NULL,
+	todo_list_item_todo_priority_id 		INTEGER 	 NOT NULL,
+	todo_list_item_user_entity_id			INTEGER 	 NOT NULL,
+	todo_list_item_name				VARCHAR(255)	 NOT NULL,
+	todo_list_item_description			TEXT		 NOT NULL,
+	todo_list_item_done				BOOL		 NOT NULL,
+	todo_list_item_event_occurence_id		INTEGER 	 NOT NULL,
+	todo_list_item_deadline 			TIMESTAMP	 NOT NULL,
 	
 	PRIMARY KEY(todo_list_item_id)
 );
 
 DROP TABLE IF EXISTS todo_priorities;
 CREATE TABLE todo_priorities (
-	todo_priority_id                                INTEGER          NOT NULL        AUTO_INCREMENT,
-	todo_priority_name                              VARCHAR(255)     NOT NULL,
-	todo_priority_order                             INTEGER          NOT NULL,
+	todo_priority_id				INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	todo_priority_name				VARCHAR(255)	 NOT NULL,
+	todo_priority_order				INTEGER 	 NOT NULL,
 	
 	PRIMARY KEY(todo_priority_id)
 );
 
 DROP TABLE IF EXISTS years;
 CREATE TABLE years (
-	year_id                                         INTEGER          NOT NULL,
-	start_autumn                                    TIMESTAMP        NOT NULL,
-	end_autumn                                      TIMESTAMP        NOT NULL,
-	start_spring                                    TIMESTAMP        NOT NULL,
-	end_spring                                      TIMESTAMP        NOT NULL,
-	start_summer                                    TIMESTAMP        NOT NULL,
-	end_summer                                      TIMESTAMP        NOT NULL,
+	year_id 					INTEGER 	 NOT NULL,
+	start_autumn					TIMESTAMP	 NOT NULL,
+	end_autumn					TIMESTAMP	 NOT NULL,
+	start_spring					TIMESTAMP	 NOT NULL,
+	end_spring					TIMESTAMP	 NOT NULL,
+	start_summer					TIMESTAMP	 NOT NULL,
+	end_summer					TIMESTAMP	 NOT NULL,
 	
 	PRIMARY KEY(year_id)
 );
 
 
 ----------------------------------------------------------------
--- Review related tables                                      --
+-- Review related tables				      --
 ----------------------------------------------------------------
 DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
-	review_id                                       INTEGER          NOT NULL        AUTO_INCREMENT,
-	rto_review_type_id                              INTEGER          NOT NULL,
-	rto_organisation_entity_id                      INTEGER          NOT NULL,
-	review_article_id                               INTEGER          NOT NULL,
+	review_id					INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	rto_review_type_id				INTEGER 	 NOT NULL,
+	rto_organisation_entity_id			INTEGER 	 NOT NULL,
+	review_article_id				INTEGER 	 NOT NULL,
 	
 	PRIMARY KEY(review_id)
 );
 
 DROP TABLE IF EXISTS review_types;
 CREATE TABLE review_types (
-	review_type_id                                  INTEGER          NOT NULL        AUTO_INCREMENT,
-	review_type_article_type_id                     INTEGER          NOT NULL,
-	review_type_image_id                            INTEGER          NOT NULL,
-	review_type_name                                VARCHAR(255)     NOT NULL,
-	review_type_blurb                               TEXT             NOT NULL,
-	review_type_blurb_draft                         TEXT             NOT NULL,
+	review_type_id					INTEGER 	 NOT NULL	 AUTO_INCREMENT,
+	review_type_article_type_id			INTEGER 	 NOT NULL,
+	review_type_image_id				INTEGER 	 NOT NULL,
+	review_type_name				VARCHAR(255)	 NOT NULL,
+	review_type_blurb				TEXT		 NOT NULL,
+	review_type_blurb_draft 			TEXT		 NOT NULL,
 	
 	PRIMARY KEY(review_type_id)
 );
@@ -596,13 +571,13 @@ CREATE TABLE review_types (
 --  food)
 DROP TABLE IF EXISTS review_type_organisations;
 CREATE TABLE review_type_organisations (
-	rto_organisation_entity_id                      INTEGER          NOT NULL,
-	rto_review_type_id                              INTEGER          NOT NULL,
-	rto_live_content_id                             INTEGER          NOT NULL,
-	rto_user_rate_count                             INTEGER          NOT NULL,
-	rto_average_user_rating                         INTEGER          NOT NULL,
-	rto_deleted                                     BOOL             NOT NULL,
-	rto_timestamp                                   TIMESTAMP        NOT NULL,
+	rto_organisation_entity_id			INTEGER 	 NOT NULL,
+	rto_review_type_id				INTEGER 	 NOT NULL,
+	rto_live_content_id				INTEGER 	 NOT NULL,
+	rto_user_rate_count				INTEGER 	 NOT NULL,
+	rto_average_user_rating 			INTEGER 	 NOT NULL,
+	rto_deleted					BOOL		 NOT NULL,
+	rto_timestamp					TIMESTAMP	 NOT NULL,
 	
 	PRIMARY KEY(rto_organisation_entity_id, rto_review_type_id)
 );
@@ -687,7 +662,7 @@ CREATE TABLE league_entries (
 );
 
 ----------------------------------------------------------------
--- Random shit related tables                                 --
+-- Random shit related tables				      --
 ----------------------------------------------------------------
 DROP TABLE IF EXISTS campaigns;
 CREATE TABLE campaigns (
@@ -776,7 +751,7 @@ DROP TABLE IF EXISTS college_rankings;
 CREATE TABLE college_rankings (
 	college_ranking_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
 	college_ranking_college_organisation_entity_id	INTEGER 	NOT NULL,
-		-- Writers ID.  
+		-- Writers ID.	
 	college_ranking_user_entity_id			INTEGER 	NOT NULL,
 	college_ranking_publisher_id 			INTEGER 	NOT NULL,
 	college_ranking_text 				TEXT 		NOT NULL,
@@ -827,7 +802,7 @@ CREATE TABLE quiz_winners (
 
 
 ----------------------------------------------------------------
--- Page related tables                                        --
+-- Page related tables					      --
 ----------------------------------------------------------------
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
@@ -847,7 +822,8 @@ CREATE TABLE comments (
 
 DROP TABLE IF EXISTS pages;
 CREATE TABLE pages (
-	page_id 					INTEGER 	NOT NULL AUTO_INCREMENT,
+	page_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	page_code_string				VARCHAR(20)	NOT NULL 	COMMENT='Hard coded string used to identify the page.',
 	page_title 					VARCHAR(255) 	NOT NULL,
 	page_comments 					BOOL 		NOT NULL,
 	page_ratings 					BOOL 		NOT NULL,
@@ -916,7 +892,7 @@ CREATE TABLE photo_tags (
 );
 
 ----------------------------------------------------------------
--- Advert related tables                                      --
+-- Advert related tables				      --
 ----------------------------------------------------------------
 DROP TABLE IF EXISTS adverts;
 CREATE TABLE adverts (
@@ -1009,7 +985,7 @@ CREATE TABLE space_types (
 
 
 ----------------------------------------------------------------
--- Maps stuff                                                 --
+-- Maps stuff						      --
 ----------------------------------------------------------------
 
 DROP TABLE IF EXISTS buildings;
