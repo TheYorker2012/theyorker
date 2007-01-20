@@ -136,12 +136,59 @@ function preloader()
 	</div>
 	<div style="float: right; width: 630px; margin-left: 5px; background-color: #fff;">
 	<?php $content[0]->Load(); ?>
+	
+		<div class='clear'>&nbsp;</div>
+
+		<div id="feedbackdiv" style="width: 100%; display: none;">
+	
+		<form name='feedback_form' id='feedback_form' action='<?php echo site_url('feedback/'); ?>' method='post' class='form'>
+			<fieldset>
+				<legend>Feedback</legend>
+				<label for='a_authorname'>Your Name:</label>
+				<input type='text' name='a_authorname' id='a_authorname' value='' />
+				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>' />
+				<br />
+				<label for='a_authoremail'>Your E-mail:</label>
+				<input type='text' name='a_authoremail' id='a_authorname' value='' />
+				<br />
+				<label for='a_rating'>Your Rating:</label>
+				<select name='a_rating' id='a_rating' size='1'>
+					<option value='' selected='selected'></option>
+					<option value='1'>What's this for?</option>
+					<option value='2'>Good idea - but what does it do?</option>
+					<option value='3'>Useful.. I guess.</option>
+					<option value='4'>Great idea, and easy to use!</option>
+					<option value='5'>Amazing!!</option>
+				</select>
+				<br />
+				<label for='a_feedbacktext'>Your Comments:</label>
+				<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40"></textarea>
+				<br />
+			</fieldset>
+			<fieldset>
+				<label for='r_submit'></label>
+				<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
+				<input type='button' name='r_cancel' id='r_cancel' value='Cancel' class='button' />
+				<br />
+			</fieldset>
+		</form>
+		
+		</div>
+	
 	</div>
 </div>
 </div>
 <br style="clear: both;" />
+
+<div style="width: 100%; text-align: center;" id="feedbackshowdiv">
+	<a href="#" onclick="document.getElementById('feedbackdiv').style.display = 'block'; document.getElementById('feedbackshowdiv').style.display = 'none'; return false;"><span style="color:#ff6a00; font-weight: bold;">Please give Feedback about this page</span></a>
+</div>
+
+<br /><br />
+
 <div style="text-align: center; width: 100%;">
 <small>Page rendered in {elapsed_time} seconds</small>
 </div>
+
 </body>
 </html>
