@@ -168,7 +168,7 @@ function preloader()
 			<fieldset>
 				<label for='r_submit'></label>
 				<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
-				<input type='button' name='r_cancel' id='r_cancel' value='Cancel' class='button' />
+				<input type='reset' name='r_cancel' id='r_cancel' value='Cancel' class='button' onClick="document.getElementById('feedbackshowdiv').style.display = 'block'; document.getElementById('feedbackdiv').style.display = 'none';"/>
 				<br />
 			</fieldset>
 		</form>
