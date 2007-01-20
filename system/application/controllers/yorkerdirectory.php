@@ -270,9 +270,7 @@ EXTRAHEAD;
 		foreach ($orgs as $org) {
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
-				'shortname' => $this->directory_model->ShortenOrganisationName(
-						$org['organisation_name']
-					),
+				'shortname' => $org['organisation_directory_entry_name'],
 				'description' => word_limiter($org['organisation_description'],20),
 				'type' => $org['organisation_type_name'],
 			);
@@ -305,15 +303,13 @@ EXTRAHEAD;
 	{
 		$data = array();
 
-		$orgs = $this->directory_model->GetDirectoryOrganisationByName($OrganisationShortName);
+		$orgs = $this->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$data['organisation'] = array(
 					'name' => $org['organisation_name'],
-					'shortname' => $this->directory_model->ShortenOrganisationName(
-							$org['organisation_name']
-						),
-					'description' => word_limiter($org['organisation_description'],20),
+					'shortname' => $org['organisation_directory_entry_name'],
+					'description' => $org['organisation_description'],
 					'type' => $org['organisation_type_name'],
 
 
