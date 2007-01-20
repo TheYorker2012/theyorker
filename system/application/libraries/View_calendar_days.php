@@ -50,7 +50,7 @@ class ViewCalendarDays extends ViewCalendar
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('calendar/listings');
+		parent::__construct('calendar/calendar');
 		
 		$this->SetData('eventHandlerJS','');
 		$this->mNumDays = 7;

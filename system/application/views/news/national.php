@@ -14,7 +14,7 @@
 		<br /><br /><br />
 		<a href='/news'><img src='/images/prototype/news/icon_campus.jpg' alt='Campus News' title='Campus News' /></a>
 		<br />
-		<a href='/listings'><img src='/images/prototype/news/icon_events.jpg' alt='Events' title='Events' /></a>
+		<a href='/calendar'><img src='/images/prototype/news/icon_events.jpg' alt='Events' title='Events' /></a>
 		<br />
 		<a href='http://www.websudoku.com/'><img src='/images/prototype/news/icon_sudoku.jpg' alt='Play Sudoku' title='Play Sudoku' /></a>
 		<br />

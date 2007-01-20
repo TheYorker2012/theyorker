@@ -3,7 +3,7 @@
 /// Abstract filter class for filtering event occurrences.
 /**
  * The purpose of this class is to allow classes which provide a layer of
- *	abstraction over the model (e.g. View_listings_days) to provide a consistent
+ *	abstraction over the model (e.g. View_calendar_days) to provide a consistent
  *	filtering interface.
  *
  * Will have functions for creating MySQL queries or using CI db (although these

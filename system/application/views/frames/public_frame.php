@@ -63,7 +63,7 @@ function preloader()
 			</a>
 			&nbsp;
 			<a href="/calendar/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
-				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" />
+				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Calendar" border="0" />
 			</a>
 			&nbsp;
 			<a href="/reviews/" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">

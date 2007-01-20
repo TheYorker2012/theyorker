@@ -59,7 +59,7 @@
 	<div style="border: 1px solid #999; padding: 6px; color: #999; font-size: small; margin-bottom: 4px; ">
 	<span style="font-size: x-large; ">welcome</span><br />
 	Welcome to the Yorker experience! On this site you'll find everything you need
-	to make your life a better place. We have news, event listings, reviews and much much more.<br />
+	to make your life a better place. We have news, event calendar, reviews and much much more.<br />
 	Also be sure to check out the Yorkipedia! We give all our money to charity.
 	</div>
 	<img src="/images/adverts/charity.JPG" style="margin-top: 4px; margin-bottom: 4px;"/>

@@ -30,7 +30,7 @@ Campaign
 	<li>(problems linking to other pages)</li>
 </ul>
 
-Listings
+Calendar
 <ul>
 	<li><a href="/calendar/">/calendar/</a></li>
 </ul>

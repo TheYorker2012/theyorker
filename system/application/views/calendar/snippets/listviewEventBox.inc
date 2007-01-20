@@ -2,22 +2,22 @@
 	<TR>
 		<TD width="130"> %%starttime%% - %%endtime%% </TD>
 		<TD width="296"><b>%%name%%</b> </TD>
-		<TD width="20" align="center"><img src="/images/prototype/listings/flag.gif"> </TD>
-		<TD width="20" align="center"><img src="/images/prototype/listings/todo.gif"> </TD>
-		<TD width="47" align="center"><img src="/images/prototype/listings/rsvp.gif"> </TD>
-		<TD width="22" align="center"><img src="/images/prototype/listings/email.jpg" width="19" height="19"> </TD>
-		<TD width="22" align="center"><a href="http://www.theyorker.co.uk/"> <img src="/images/prototype/listings/link.png" border="0"> </a></TD>
-		<TD width="73" align="center"><img src="/images/prototype/listings/subscribe.jpg"></TD>
+		<TD width="20" align="center"><img src="/images/prototype/calendar/flag.gif"> </TD>
+		<TD width="20" align="center"><img src="/images/prototype/calendar/todo.gif"> </TD>
+		<TD width="47" align="center"><img src="/images/prototype/calendar/rsvp.gif"> </TD>
+		<TD width="22" align="center"><img src="/images/prototype/calendar/email.jpg" width="19" height="19"> </TD>
+		<TD width="22" align="center"><a href="http://www.theyorker.co.uk/"> <img src="/images/prototype/calendar/link.png" border="0"> </a></TD>
+		<TD width="73" align="center"><img src="/images/prototype/calendar/subscribe.jpg"></TD>
 	</TR>
 	<TR>
 		<TD colspan="8">
 			<TABLE border="0" width="100%">
 				<TR>
-					<TD valign="middle" width="50"><img src="/images/prototype/listings/map.jpg"> </TD>
+					<TD valign="middle" width="50"><img src="/images/prototype/calendar/map.jpg"> </TD>
 					<TD> %%shortloc%% </TD>
 					<TD> Organisation: <a href="">FragSoc</a> </TD>
 					<TD> Section: <a href="">Speakers </a> </TD>
-					<TD width="60" style="cursor:pointer; " onClick="showEventMore('event',%%arrid%%);"><img src="/images/prototype/listings/more.gif"></TD>
+					<TD width="60" style="cursor:pointer; " onClick="showEventMore('event',%%arrid%%);"><img src="/images/prototype/calendar/more.gif"></TD>
 				</TR>
 				<!--TR>
 					<TD bgcolor="#FF6A00" valign="middle" width="50" align="center"  style="border-top-style: dotted; border-top-width: 1; border-top-color: #FF6A00;"><font color="white"><b>Yorker Preview</b></font></td>

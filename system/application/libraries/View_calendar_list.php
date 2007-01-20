@@ -44,7 +44,7 @@ class ViewCalendarList extends ViewCalendar
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('calendar/listings_list');
+		parent::__construct('calendar/calendar_list');
 	}
 	
 	/// Set the day range to display.

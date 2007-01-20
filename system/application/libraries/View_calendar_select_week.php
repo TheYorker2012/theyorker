@@ -26,7 +26,7 @@ class ViewCalendarSelectWeek extends ViewCalendar
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('calendar/listings_select_week');
+		parent::__construct('calendar/calendar_select_week');
 		
 		$now = new Academic_time(time());
 		$this->mSelectedWeek = $now->BackToMonday()->Timestamp();

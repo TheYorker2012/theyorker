@@ -44,7 +44,7 @@
 	<div class="HeaderBanner">
 		<span style="float: left;"><img name="titleimg" src="http://localhost/images/prototype/header/header_Layer-1.gif"></span>
 		<span style="float: right;"><a href="#"><img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';"></a></span>
-		<span style="float: right; margin-right: 5%;"><a href="#"><img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Listings" border="0" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';"></a></span>
+		<span style="float: right; margin-right: 5%;"><a href="#"><img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Calendar" border="0" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';"></a></span>
 		<span style="float: right; margin-right: 5%;"><a href="#"><img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';"></a></span>
 	</div>
 	<div class="SubView">
