@@ -32,6 +32,7 @@
 <div class="clear">&nbsp;</div>
 <!-- Start showing results -->
 <div id='searchresults' style="padding:0px 0px 0px 0px">
+
 <div id="NotFound" style="display: none;">
 <center>
 <b>No entries found</b><br />
@@ -40,9 +41,10 @@
 </div>
 
 <div>
-<table width="780" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr height="14">
 	<td rowspan="2" class="AZTop">
+	<div>
 	<?php
 	$last_letter = "";
 	$current_letter_index = 0;
@@ -101,11 +103,12 @@
 		$last_letter = "0";
 	}
 	?>
+
 <div id="Letter<?php echo $last_letter.$current_letter_index ?>" class="AZEntry" name="<?php echo $entry_name ?>">
 
-	<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\' style="display: inline;">' . $organisation['name']; ?></a>
+	<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\' style="display: inline;"><span style="color:#08c0ef; font-weight: bold;">' . $organisation['name']; ?></span></a>
 	<span style='font-size: 12px'>(<?php echo $organisation['type']; ?>)</span><br />
-	<?php echo $organisation['description']; ?>
+	<span style='font-size: 12px'><?php echo $organisation['description']; ?></span>
 
 </div>
 <?php
@@ -116,4 +119,5 @@
   </tr>
 </table>
 </div>
+
 </div>
