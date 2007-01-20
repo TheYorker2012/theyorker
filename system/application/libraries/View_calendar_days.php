@@ -1,48 +1,48 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @file View_listings_days.php
+ * @file View_calendar_days.php
  * @author James Hogan (jh559@cs.york.ac.uk)
  * @brief Frame view for multiple days of events.
  */
 
 // Load the Frames library
 $CI = &get_instance();
-$CI->load->library('view_listings');
+$CI->load->library('view_calendar');
 
-/// Listings days view library class.
+/// Calendar days view library class.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
- * Automatically loads the view_listings library.
+ * Automatically loads the view_calendar library.
  *
  * Load the library from the controller constructor:
  * @code
- *	$this->load->library('view_listings_days');
+ *	$this->load->library('view_calendar_days');
  * @endcode
  *
- * You can then refer to it as $this->view_listings_days in order to adjust
+ * You can then refer to it as $this->view_calendar_days in order to adjust
  *	how to display the view.
  * The view can then be loaded using Load().
  *
  * Example of usage from a controller function and within a Frame_public:
  * @code
  *	// Set up the subview
- *	$view_listings_days = new ViewListingsDays();
- *	$view_listings_days->SetPrevUrl($this->_GenUrl($Start, -1));
- *	$view_listings_days->SetNextUrl($this->_GenUrl($Start, +1));
- *	$view_listings_days->SetRange($Start,7);
+ *	$view_calendar_days = new ViewCalendarDays();
+ *	$view_calendar_days->SetPrevUrl($this->_GenUrl($Start, -1));
+ *	$view_calendar_days->SetNextUrl($this->_GenUrl($Start, +1));
+ *	$view_calendar_days->SetRange($Start,7);
  *	// Get the data from the db, then we're ready to load
- *	$view_listings_days->Retrieve();
+ *	$view_calendar_days->Retrieve();
  *	
  *	// Set up the public frame
- *	$this->frame_public->SetContent($view_listings_days);
+ *	$this->frame_public->SetContent($view_calendar_days);
  *	
  *	// Load the public frame view (which will load the content view)
  *	$this->frame_public->Load();
  * @endcode
  */
-class ViewListingsDays extends ViewListings
+class ViewCalendarDays extends ViewCalendar
 {
 	/// Number of days to display
 	private $mNumDays;
@@ -50,7 +50,7 @@ class ViewListingsDays extends ViewListings
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('listings/listings');
+		parent::__construct('calendar/listings');
 		
 		$this->SetData('eventHandlerJS','');
 		$this->mNumDays = 7;
@@ -108,12 +108,12 @@ class ViewListingsDays extends ViewListings
 	
 }
 
-/// View_listings_days Library class.
+/// View_calendar_days Library class.
 /**
- * This exists because we don't want just 1 existance of ViewListingsDays
+ * This exists because we don't want just 1 existance of ViewCalendarDays
  *	necessarily.
  */
-class View_listings_days
+class View_calendar_days
 {
 	
 }

@@ -113,8 +113,8 @@ class Yorkerdirectory extends Controller
 		$this->_SetupOrganisationFrame($data['organisation']);
 
 		$this->load->library('frame_messages');
-		$this->load->library('view_listings_select_week');
-		$this->load->library('view_listings_list');
+		$this->load->library('view_calendar_select_week');
+		$this->load->library('view_calendar_list');
 		$this->load->library('date_uri');
 
 		// Sorry about the clutter, this will be moved in a bit but it isn't
@@ -172,7 +172,7 @@ EXTRAHEAD;
 		}
 
 		// Set up the week select view
-		$week_select = new ViewListingsSelectWeek();
+		$week_select = new ViewCalendarSelectWeek();
 		$week_select->SetUriBase('directory/'.$organisation.'/events/');
 		$week_select->SetUriFormat($format);
 		$week_select->SetRange($weeks_start, $weeks_end);
@@ -180,7 +180,7 @@ EXTRAHEAD;
 		$week_select->Retrieve();
 
 		// Set up the events list
-		$events_list = new ViewListingsList();
+		$events_list = new ViewCalendarList();
 		$events_list->SetUriBase('directory/'.$organisation.'/events/');
 		$events_list->SetUriFormat($format);
 		$events_list->SetRange($start_time, $end_time);

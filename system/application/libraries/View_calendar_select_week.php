@@ -1,22 +1,22 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @file View_listings_select_week.php
+ * @file View_calendar_select_week.php
  * @author James Hogan (jh559@cs.york.ac.uk)
  * @brief Frame view for a simple academic week selector.
  */
 
 // Load the Frames library
 $CI = &get_instance();
-$CI->load->library('view_listings');
+$CI->load->library('view_calendar');
 
-/// Listings list view library class.
+/// Calendar list view library class.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
- * Automatically loads the view_listings library.
+ * Automatically loads the view_calendar library.
  */
-class ViewListingsSelectWeek extends ViewListings
+class ViewCalendarSelectWeek extends ViewCalendar
 {
 	/// Academic_time Time of beginning of selected week.
 	private $mSelectedWeekStart;
@@ -26,7 +26,7 @@ class ViewListingsSelectWeek extends ViewListings
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('listings/listings_select_week');
+		parent::__construct('calendar/listings_select_week');
 		
 		$now = new Academic_time(time());
 		$this->mSelectedWeek = $now->BackToMonday()->Timestamp();
@@ -136,12 +136,12 @@ class ViewListingsSelectWeek extends ViewListings
 	
 }
 
-/// View_listings_select_week Library class.
+/// View_calendar_select_week Library class.
 /**
- * This exists because we don't want just 1 existance of ViewListingsList
+ * This exists because we don't want just 1 existance of ViewCalendarList
  *	necessarily.
  */
-class View_listings_select_week
+class View_calendar_select_week
 {
 	
 }

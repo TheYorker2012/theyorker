@@ -20,7 +20,7 @@ class Calendar extends Controller {
 		$this->load->library('date_uri');           // Nice date uri segments
 		$this->load->library('frame_public');       // Main public frame
 		$this->load->library('frame_messages');     // Messages frame
-		$this->load->library('view_listings_days'); // Days listings view
+		$this->load->library('view_calendar_days'); // Days calendar view
 	}
 	
 	/**
@@ -95,15 +95,15 @@ class Calendar extends Controller {
 EXTRAHEAD;
 		
 		// Set up the days view
-		$view_listings_days = new ViewListingsDays();
-		$view_listings_days->SetUriBase($UriBase);
-		$view_listings_days->SetUriFormat($UriFormat);
-		$view_listings_days->SetRange($StartTime, $Days);
+		$view_calendar_days = new ViewCalendarDays();
+		$view_calendar_days->SetUriBase($UriBase);
+		$view_calendar_days->SetUriFormat($UriFormat);
+		$view_calendar_days->SetRange($StartTime, $Days);
 		// Get the data from the db, then we're ready to load
-		$view_listings_days->Retrieve();
+		$view_calendar_days->Retrieve();
 		
-		// Set up the messages frame to use the listings view
-		$this->frame_messages->SetContent($view_listings_days);
+		// Set up the messages frame to use the calendar view
+		$this->frame_messages->SetContent($view_calendar_days);
 		
 		// Set up the public frame to use the messages frame
 		$this->frame_public->SetTitle('Personal Calendar');

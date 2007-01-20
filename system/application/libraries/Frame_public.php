@@ -28,12 +28,12 @@ $CI->load->library('frames');
  * Example of usage from a controller function:
  * @code
  *	// Set up the subview
- *	$listings_view = $this->frames->view('calendar/calendar', $data);
+ *	$calendar_view = $this->frames->view('calendar/calendar', $data);
  *	
  *	// Set up the public frame
  *	$this->frame_public->SetTitle($page_title);
  *	$this->frame_public->SetExtraHead($extra_head);
- *	$this->frame_public->SetContent($listings_view);
+ *	$this->frame_public->SetContent($calendar_view);
  *	
  *	// Load the public frame view (which will load the content view)
  *	$this->frame_public->Load();

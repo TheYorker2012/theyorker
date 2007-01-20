@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @file View_listings.php
+ * @file View_calendar.php
  * @author James Hogan (jh559@cs.york.ac.uk)
  * @brief Frame view for any calendar events view.
  */
@@ -12,15 +12,15 @@ $CI->load->library('frames');
 $CI->load->library('academic_calendar');
 $CI->load->library('date_uri');
 
-/// Abstract listings view class.
+/// Abstract calendar view class.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * Automatically loads the Frames library.
  *
- * Abstract base class of listings view.
+ * Abstract base class of calendar view.
  */
-abstract class ViewListings extends FramesView
+abstract class ViewCalendar extends FramesView
 {
 	/// Whether to include special day headings.
 	protected $mIncludeSpecials;
@@ -217,12 +217,12 @@ abstract class ViewListings extends FramesView
 	}
 }
 
-/// View_listings Library class.
+/// View_calendar Library class.
 /**
- * This exists because ViewListings is abstract and so shouldn't be created
+ * This exists because ViewCalendar is abstract and so shouldn't be created
  *	automatically as it would be if it was the CI library class.
  */
-class View_listings
+class View_calendar
 {
 	
 }

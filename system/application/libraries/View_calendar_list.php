@@ -1,50 +1,50 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @file View_listings_list.php
+ * @file View_calendar_list.php
  * @author James Hogan (jh559@cs.york.ac.uk)
  * @brief Frame view for a simple list of days and events.
  */
 
 // Load the Frames library
 $CI = &get_instance();
-$CI->load->library('view_listings');
+$CI->load->library('view_calendar');
 
-/// Listings list view library class.
+/// Calendar list view library class.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
- * Automatically loads the view_listings library.
+ * Automatically loads the view_calendar library.
  *
  * Load the library from the controller constructor:
  * @code
- *	$this->load->library('view_listings_list');
+ *	$this->load->library('view_calendar_list');
  * @endcode
  *
- * You can then refer to it as $this->view_listings_list in order to adjust
+ * You can then refer to it as $this->view_calendar_list in order to adjust
  *	how to display the view.
  * The view can then be loaded using Load().
  *
  * Example of usage from a controller function and within a Frame_public:
  * @code
  *	// Set up the subview
- *	$this->view_listings_list->SetPrevUrl($this->_GenUrl($Start, -14));
- *	$this->view_listings_list->SetNextUrl($this->_GenUrl($Start, +14));
- *	$this->view_listings_list->SetDayRange($Start, 14);
+ *	$this->view_calendar_list->SetPrevUrl($this->_GenUrl($Start, -14));
+ *	$this->view_calendar_list->SetNextUrl($this->_GenUrl($Start, +14));
+ *	$this->view_calendar_list->SetDayRange($Start, 14);
  *	
  *	// Set up the public frame
- *	$this->frame_public->SetContent($this->view_listings_list);
+ *	$this->frame_public->SetContent($this->view_calendar_list);
  *	
  *	// Load the public frame view (which will load the content view)
  *	$this->frame_public->Load();
  * @endcode
  */
-class ViewListingsList extends ViewListings
+class ViewCalendarList extends ViewCalendar
 {
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('listings/listings_list');
+		parent::__construct('calendar/listings_list');
 	}
 	
 	/// Set the day range to display.
@@ -83,12 +83,12 @@ class ViewListingsList extends ViewListings
 	
 }
 
-/// View_listings_list Library class.
+/// View_calendar_list Library class.
 /**
- * This exists because we don't want just 1 existance of ViewListingsList
+ * This exists because we don't want just 1 existance of ViewCalendarList
  *	necessarily.
  */
-class View_listings_list
+class View_calendar_list
 {
 	
 }
