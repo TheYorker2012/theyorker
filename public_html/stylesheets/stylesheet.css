@@ -692,9 +692,7 @@ div.BlackBoxSubTitle {
 
 /* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo (Used In Directory)*/
 div.columnText {
-	margin-left: 5px;
-	width: 59%;
-	float: left;
+	padding: 5px;
 }
 div.columnPhoto {
 	width: 39%;
@@ -710,7 +708,9 @@ div.MemberboxPhoto {
 	float: right;
 	width: 190px;
 	padding: 5px;
-	border: 1px solid #000000;
+	border-color: #2dc6d7;
+	border-style: solid;
+	border-width: thin;
 }
 div.MemberboxPhoto p {
 	font-size: 12px;

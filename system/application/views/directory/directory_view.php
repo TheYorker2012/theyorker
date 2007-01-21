@@ -1,5 +1,10 @@
+<div class='columnPhoto'>
+	<a href='#'><img src='/images/prototype/directory/about/178327854723856.jpg' /></a>
+</div>
 <div class='columnText'>
 	<p><?php echo $organisation['description']; ?></p>
+</div>
+<div>
 	<ul>
 		<?php if (!empty($organisation['website'])) {
 			echo '<li><strong>Website: </strong><a href="'.
@@ -12,7 +17,4 @@
 			echo '<li><strong>Opening Times: </strong>'.$organisation['open_times'].'</li>';
 		} ?>
 	</ul>
-</div>
-<div class='columnPhoto'>
-	<a href='#'><img src='/images/prototype/homepage/homepage_09.gif' /></a>
 </div>

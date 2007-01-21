@@ -1,5 +1,7 @@
 <div class='MemberboxPhoto'>
-		<img src='/images/prototype/reviews/reviews_07.jpg' width='190'/>
+		<div style='text-align:center;'>
+			<img src='/images/prototype/directory/members/1562876378523.jpg'/>
+		</div>
 		<p>
 			Studying: Computer Science<br />
 			E-mail: <a href='mailto:editor@theyorker.co.uk'>editor@theyorker.co.uk</a><br />
@@ -18,7 +20,9 @@
 </div>
 <div class="clear">&nbsp;</div>
 <div class='MemberboxPhoto'>
-		<img src='/images/prototype/reviews/reviews_07.jpg' width='190'/>
+		<div style='text-align:center;'>
+			<img src='/images/prototype/directory/members/1562876378523.jpg'/>
+		</div>
 		<p>
 			Studying: Computer Science<br />
 			E-mail: <a href='mailto:editor@theyorker.co.uk'>editor@theyorker.co.uk</a><br />
