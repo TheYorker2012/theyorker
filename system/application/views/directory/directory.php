@@ -1,5 +1,3 @@
-
-
 <p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
 <div id='minibox' style="float:right;margin-right:5px">
     <div id='title'>Filters</div>
@@ -77,6 +75,7 @@
 			<td width="40" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
 			<td rowspan="2" valign="top">
 			<div class="AZTop">
+			<a href='#top' style="font-size:12px;">Back to top.</a>
 		<?php
 		}
 		$last_letter = $current_letter;
@@ -102,7 +101,6 @@
 		}
 		$last_letter = "0";
 	}
-	
 	/*
 	 * $organisation['description'] is the description of the organisation
 	 * $organisation['shortdescription'] is cut to a finite number of words
@@ -114,7 +112,6 @@
 	<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\' style="display: inline;"><span style="color:#08c0ef; font-weight: bold;">' . $organisation['name']; ?></span></a>
 	<span style='font-size: 12px'>(<?php echo $organisation['type']; ?>)</span><br />
 	<span style='font-size: 12px'><?php echo $organisation['description']; ?></span>
-
 </div>
 <?php
 }
@@ -124,5 +121,4 @@
   </tr>
 </table>
 </div>
-
 </div>
