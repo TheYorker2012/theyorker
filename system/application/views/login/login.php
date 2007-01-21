@@ -1,4 +1,4 @@
-<div id='login_form' align='center'>
+<div id='login' align='center'>
 	<form id='login_form' name='login_form' action='/login/' method='POST' class='form'>
 		<h5>Error : This is a login error example.</h5>
 		<fieldset>
@@ -13,7 +13,7 @@
 			<br />
 			<label for='login_button'></label>
 			<input type='submit' name='login_button' value='Login'>
-			<input type='button' onclick="/login/register/" name='register_button' value='Register'>
+			<input type='button' onClick="parent.location='/login/register'" name='register_button' value='Register'>
 		</fieldset>
 		<fieldset>
 		</fieldset>
