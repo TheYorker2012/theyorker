@@ -155,30 +155,37 @@ EXTRAHEAD;
 		if ($use_default_range) {
 			// Default to this week
 			$start_time = Academic_time::NewToday();
+			$start_time = $start_time->BackToMonday();
 			$end_time = $start_time->Adjust('1week');
 			$format = 'ac';
-			$range_description = 'from today for 1 week';
+			//$range_description = 'from today for 1 week';
+			$range_description = 'this week';
 		}
 
 		// Use the start time, end time, and format to set up views
 
-		$monday = Academic_time::NewToday()->BackToMonday();
-
-		$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
-		if ($weeks_start->Timestamp() < $monday->Timestamp()) {
+		//$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
+		$weeks_start = $this->academic_calendar->AcademicDayOfTerm(
+				$start_time->AcademicYear(),
+				$start_time->AcademicTerm(),
+				1,
+				0,0,0
+			);
+		/*if ($weeks_start->Timestamp() < $monday->Timestamp()) {
 			$weeks_start = $monday;
-		}
+		}*/
 
-		$weeks_end = $end_time->Adjust('5week')->BackToMonday();
+		/*$weeks_end = $end_time->Adjust('5week')->BackToMonday();
 		if ($weeks_end->Timestamp() < $monday->Timestamp()) {
 			$weeks_end = $monday->Adjust('5week');
-		}
+		}*/
 
 		// Set up the week select view
 		$week_select = new ViewCalendarSelectWeek();
 		$week_select->SetUriBase('directory/'.$organisation.'/events/');
 		$week_select->SetUriFormat($format);
-		$week_select->SetRange($weeks_start, $weeks_end);
+		//$week_select->SetRange($weeks_start, $weeks_end);
+		$week_select->SetAcademicTerm($weeks_start->AcademicYear(), $weeks_start->AcademicTerm());
 		$week_select->SetSelectedWeek($start_time, $end_time);
 		$week_select->Retrieve();
 

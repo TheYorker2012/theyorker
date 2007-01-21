@@ -495,6 +495,9 @@ class Academic_time
 	 */
 	static function StartOfAcademicTerm($AcademicYear, $Term = 0)
 	{
+		$years_offset = (int)floor($Term/6);
+		$AcademicYear += $years_offset;
+		$Term -= 6*$years_offset;
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
 		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
@@ -525,6 +528,9 @@ class Academic_time
 	 */
 	static function DayOfStartOfAcademicTerm($AcademicYear, $Term = 0)
 	{
+		$years_offset = (int)floor($Term/6);
+		$AcademicYear += $years_offset;
+		$Term -= 6*$years_offset;
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
 		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
@@ -557,6 +563,9 @@ class Academic_time
 	 */
 	static function MondayWeek1OfAcademicTerm($AcademicYear, $Term = 0)
 	{
+		$years_offset = (int)floor($Term/6);
+		$AcademicYear += $years_offset;
+		$Term -= 6*$years_offset;
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
 		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
@@ -587,6 +596,9 @@ class Academic_time
 	 */
 	static function LengthOfAcademicTerm($AcademicYear, $Term = 0)
 	{
+		$years_offset = (int)floor($Term/6);
+		$AcademicYear += $years_offset;
+		$Term -= 6*$years_offset;
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
 		if (FALSE === $academic_year_data) {
 			// No records about the specified academic year exist!
@@ -617,6 +629,9 @@ class Academic_time
 	 */
 	static function ValidateAcademicTerm($AcademicYear, $Term = 0)
 	{
+		$years_offset = (int)floor($Term/6);
+		$AcademicYear += $years_offset;
+		$Term -= 6*$years_offset;
 		$academic_year_data = self::GetAcademicYearData($AcademicYear);
 		if (FALSE === $academic_year_data) {
 			return FALSE;

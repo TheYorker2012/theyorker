@@ -13,38 +13,45 @@ input:
 					'link' => url to link to
 					'name' => e.g. Week 1
 					'events' => e.g. 12
-					'select' => TRUE/FALSE
+					'old' => TRUE/FALSE (in the past?)
+					'select' => TRUE/FALSE (part of current selection?)
 					'start_date' => e.g. 'Jan 5th'
 				]
 				...
 			]
-
-jh559: I reckon a bit of AJAX (or AJA*) would go well here for updating the
-	weeks when the next term link is clicked.
 */ ?>
 <table width="150">
+
+	<tr>
+		<td align="center" height="40" valign="middle">
+			<a href="<?php echo $links['prev_term']; ?>">&lt;&lt;</a>
+			<?php
+				if (!empty($links['this_term']))
+					echo '<a href="'.$links['this_term'].'">'.$term['name'].'</a>';
+				else
+					echo $term['name'];
+			?>
+			<a href="<?php echo $links['next_term']; ?>">&gt;&gt;</a>
+		</td>
+	</tr>
 
 <?php foreach ($weeks as $week) { ?>
 	<tr>
 		<td class="<?php
-		if ($week['heading'])
+		if ($week['heading']) {
 			echo 'calendarweekheading';
-		else if ($week['select'])
-			echo 'calendarweekselect';
-		else
+		} else {
 			echo 'calendarweek';
+			if ($week['select'])
+				echo 'select';
+			if ($week['old'])
+				echo 'old';
+		}
 		?>" onclick = "location.href='<?php echo $week['link']?>';">
 			<?php echo $week['name'].
 			(empty($week['start_date'])?'':' ('.$week['start_date'].')'); ?>
 		</td>
 	</tr>
 <?php } ?>
-
-	<tr>
-		<td align="center" height="40" valign="middle">
-			<a href="<?php echo $links['prev_term']; ?>">&lt;&lt;</a>
-			<a href="<?php echo $links['this_term']; ?>"><?php echo $term['name']; ?></a>
-			<a href="<?php echo $links['next_term']; ?>">&gt;&gt;</a> </td>
-	</tr>
 	
 </table>
