@@ -59,4 +59,8 @@ unset($org_name_regex);
 $route['yorkerdirectory'] = 'not_yorkerdirectory';
 $route['yorkerdirectory/(.+)'] = 'not_yorkerdirectory';
 
+//The contact us page is now the members entry for the yorker in the directory
+//This is to route /contact to that. oj502
+$route['contact'] = 'yorkerdirectory/view/theyorker/members';
+
 ?>
