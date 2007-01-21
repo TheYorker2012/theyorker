@@ -135,7 +135,15 @@ function preloader()
 		</div>
 	</div>
 	<div style="float: right; width: 630px; margin-left: 5px; background-color: #fff;">
-	<?php $content[0]->Load(); ?>
+	<?php
+		// Display each message
+		foreach ($messages as $message) {
+			// Display the message
+			$message->Load();
+		}
+		// Display the main content
+		$content[0]->Load();
+	?>
 	
 		<div class='clear'>&nbsp;</div>
 

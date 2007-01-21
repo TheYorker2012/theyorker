@@ -9,6 +9,7 @@
 // Load the Frames library
 $CI = &get_instance();
 $CI->load->library('frames');
+$CI->load->library('messages');
 
 /**
  * @brief Main public frame library class.
@@ -47,6 +48,8 @@ class Frame_public extends FramesFrame
 	function __construct()
 	{
 		parent::__construct('frames/public_frame.php');
+		
+		$this->mDataArray['messages'] = array();
 	}
 	
 	/**
@@ -65,6 +68,21 @@ class Frame_public extends FramesFrame
 	function SetExtraHead($ExtraHead)
 	{
 		$this->SetData('extra_head', $ExtraHead);
+	}
+	
+	/// Add a message to the page.
+	/**
+	 * @param $Message FramesView Message class (see Messages.php library).
+	 */
+	function AddMessage($Message)
+	{
+		$this->mDataArray['messages'][] = $Message;
+	}
+	
+	/// Get the number of messages.
+	function NumMessages()
+	{
+		return count($this->mDataArray['messages']);
 	}
 }
 
