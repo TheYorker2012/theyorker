@@ -102,6 +102,11 @@
 		}
 		$last_letter = "0";
 	}
+	
+	/*
+	 * $organisation['description'] is the description of the organisation
+	 * $organisation['shortdescription'] is cut to a finite number of words
+	 */
 	?>
 
 <div id="Letter<?php echo $last_letter.$current_letter_index ?>" class="AZEntry" name="<?php echo $entry_name ?>">
