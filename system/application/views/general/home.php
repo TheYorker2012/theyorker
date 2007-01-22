@@ -64,7 +64,7 @@
 	</div>
 	<img src="/images/adverts/charity.JPG" style="margin-top: 4px; margin-bottom: 4px;"/>
 	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #2DC6D7; ">featured news</span><br />
+	<span style="font-size: x-large;  color: #2DC6D7; ">today's news</span><br />
 	<div class="NewsPreview" style="margin: 5px;">
 		<p style="color: #999; font-size: x-small;">UK & World</p>
 		<a href='/news/article/7'><img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' /></a>
