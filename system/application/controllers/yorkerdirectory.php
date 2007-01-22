@@ -97,6 +97,8 @@ class Yorkerdirectory extends Controller
 	/// Directory organisation page.
 	function view($organisation)
 	{
+		$this->pages_model->SetPageCode('directory_view');
+		
 		$data = $this->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($data['organisation']);
 
@@ -111,7 +113,8 @@ class Yorkerdirectory extends Controller
 		$this->frame_directory->SetContent($directory_view);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle('About '.$data['organisation']['name']);
+		$this->frame_public->SetTitleParameters(
+				array('organisation' => $data['organisation']['name']);
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
@@ -121,6 +124,8 @@ class Yorkerdirectory extends Controller
 	/// Directory events page.
 	function events($organisation, $DateRange = '')
 	{
+		$this->pages_model->SetPageCode('directory_events');
+		
 		$data = $this->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($data['organisation']);
 
@@ -221,7 +226,8 @@ EXTRAHEAD;
 		$this->frame_directory->SetContent($this->frame_messages);
 
 		// Set up the public frame to use the directory frame
-		$this->frame_public->SetTitle($data['organisation']['name'].' Events');
+		$this->frame_public->SetTitleParameters(
+				array('organisation' => $data['organisation']['name']);
 		$this->frame_public->SetExtraHead($extra_head);
 		$this->frame_public->SetContent($this->frame_directory);
 
@@ -232,6 +238,8 @@ EXTRAHEAD;
 	/// Directory reviews page.
 	function reviews($organisation)
 	{
+		$this->pages_model->SetPageCode('directory_reviews');
+		
 		$data = $this->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($data['organisation']);
 
@@ -246,7 +254,8 @@ EXTRAHEAD;
 		$this->frame_directory->SetContent($directory_view);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle($data['organisation']['name'].' Reviews');
+		$this->frame_public->SetTitleParameters(
+				array('organisation' => $data['organisation']['name']);
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
@@ -256,6 +265,8 @@ EXTRAHEAD;
 	/// Directory members page.
 	function members($organisation)
 	{
+		$this->pages_model->SetPageCode('directory_members');
+		
 		$data = $this->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($data['organisation']);
 
@@ -270,7 +281,8 @@ EXTRAHEAD;
 		$this->frame_directory->SetContent($directory_view);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle($data['organisation']['name'].' Members');
+		$this->frame_public->SetTitleParameters(
+				array('organisation' => $data['organisation']['name']);
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
