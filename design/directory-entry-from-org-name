@@ -1,0 +1,20 @@
+#!/bin/bash
+
+name="$1"
+max_directory_entry_name=30
+
+# spaces to underscores
+directory_entry=`echo "$name" | sed "s/ /_/g"`
+# upper case to lower case
+directory_entry=`echo "$directory_entry" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
+# remove anything other than digits, alphanumeric symbols and underscore
+directory_entry=`echo "$directory_entry" | sed "s/[^\da-z_]//g"`
+# remove any duplicate underscores
+directory_entry=`echo "$directory_entry" | sed "s/__/_/g"`
+# limit length to max_directory_entry_name
+directory_entry=${directory_entry:0:max_directory_entry_name}
+
+# echo the result to stdout
+echo $directory_entry
+
+exit 0
