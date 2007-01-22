@@ -59,7 +59,28 @@ class Yorkerdirectory extends Controller
 	 */
 	function index()
 	{
+		$this->load->model('pages_model');
+		$this->pages_model->SetPageCode('directory_index');
+		
 		$data = array();
+		
+		$maintext = $this->pages_model->GetProperty('maintext');
+		if (FALSE === $maintext) {
+			$maintext = '';
+		} else {
+			if ($maintext->TypeExists('text')) {
+				$maintext = $maintext->GetPropertyType('text')->GetText();
+			}
+		}
+		$maintext = $this->pages_model->GetProperty('maintext');
+		if (FALSE === $maintext) {
+			$maintext = '';
+		} else {
+			if ($maintext->TypeExists('text')) {
+				$maintext = $maintext->GetPropertyType('text')->GetText();
+			}
+		}
+		$data['maintext'] = $maintext;
 
 		// Get the search pattern from POST (optional)
 		$search_pattern = $this->input->post('search_directory', TRUE);

@@ -1,4 +1,4 @@
-<p>The Directory contains many different organisations. Every page has useful information about each organisation such as its contact details, reviews, events and members</p>
+<p><?php echo $maintext; ?></p>
 <div id='minibox' style="float:right;margin-right:5px">
     <div id='title'>Filters</div>
     <?php
