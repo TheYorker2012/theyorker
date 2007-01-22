@@ -103,15 +103,21 @@ class Pages_model extends Model
 	/// Get a specific property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
-	 * @return PageProperty/FALSE if property doesn't exist.
+	 * @param $PropertyTypeName string Property type name.
+	 * @return PagePropertyType/FALSE if property doesn't exist.
 	 */
-	function GetProperty($PropertyLabel)
+	function GetProperty($PropertyLabel, $PropertyTypeName)
 	{
 		if (FALSE === $this->mPageProperties) {
 			$this->GetProperties();
 		}
 		if (array_key_exists($PropertyLabel, $this->mPageProperties)) {
-			return $this->mPageProperties[$PropertyLabel];
+			$property = $this->mPageProperties[$PropertyLabel];
+			if ($property->TypeExists($PropertyTypeName)) {
+				return $property->GetPropertyType($PropertyTypeName);
+			} else {
+				return FALSE;
+			}
 		} else {
 			return FALSE;
 		}
