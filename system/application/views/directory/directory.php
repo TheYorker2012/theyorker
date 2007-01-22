@@ -67,7 +67,7 @@
 		  </tr>
 		</table>
 		</div>
-		<a name="Anchor<?php echo $current_letter ?>">
+		<a name="Anchor<?php echo $current_letter ?>"></a>
 		<div id="Letter<?php echo $current_letter ?>">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr height="14">
