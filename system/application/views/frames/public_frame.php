@@ -13,7 +13,7 @@
 </head>
 
 <body onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
-<a name="top">
+<a name="top"></a>
 <script src="/javascript/jumpto.js" type="text/javascript"></script>
 
 <script language="JavaScript" type="text/javascript">
