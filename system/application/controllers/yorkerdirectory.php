@@ -114,7 +114,7 @@ class Yorkerdirectory extends Controller
 
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']);
+				array('organisation' => $data['organisation']['name']));
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
@@ -227,7 +227,7 @@ EXTRAHEAD;
 
 		// Set up the public frame to use the directory frame
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']);
+				array('organisation' => $data['organisation']['name']));
 		$this->frame_public->SetExtraHead($extra_head);
 		$this->frame_public->SetContent($this->frame_directory);
 
@@ -255,7 +255,7 @@ EXTRAHEAD;
 
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']);
+				array('organisation' => $data['organisation']['name']));
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
@@ -282,7 +282,7 @@ EXTRAHEAD;
 
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']);
+				array('organisation' => $data['organisation']['name']));
 		$this->frame_public->SetContent($this->frame_directory);
 
 		// Load the public frame view
