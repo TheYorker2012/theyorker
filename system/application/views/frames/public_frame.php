@@ -74,7 +74,7 @@ function preloader()
 	</div>
 	<div style="background-color: #fff;">
 		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
-		<input type="text" style="float: left; width: 130px; font-size: 10px; border: solid 1px #20c1f0; color: #20c1f0; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px; height: 18px; " 
+		<input type="text" style="float: left; width: 130px; font-size: 10px; border: solid 1px #20c1f0; color: #20c1f0; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px;" 
 value=" &gt; Search" onFocus="if (this.value==this.defaultValue) this.value=''" />
 		</form>
 		<div style="float: right; width: 630px; margin-bottom: 8px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
