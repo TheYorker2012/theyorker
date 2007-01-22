@@ -81,6 +81,9 @@ class Pages_model extends Model
 	/// string The code string identifying the page.
 	protected $mPageCode;
 	
+	/// string The title string of the page.
+	protected $mPageTitle;
+	
 	/// array[string=>PageProperty] Array of PageProperty's indexed by label.
 	protected $mPageProperties;
 	
@@ -88,6 +91,7 @@ class Pages_model extends Model
 	function __construct()
 	{
 		$this->mPageCode = '';
+		$this->mPageTitle = FALSE;
 		$this->mPageProperties = FALSE;
 	}
 	
@@ -135,7 +139,24 @@ class Pages_model extends Model
 	 */
 	function GetTitle($Parameters)
 	{
-		$title_string = "Some page %%page%%";
+		if (FALSE === $this->mPageTitle) {
+			$sql = 'SELECT `page_title` FROM `pages` WHERE `page_code_string`=?';
+			$query = $this->db->query($sql, $this->mPageCode);
+			$results = $query->result_array();
+			if (0 === count($results)) {
+				return '';
+			} else {
+				foreach ($results as $data) {
+					$this->mPageTitle = $data['page_title'];
+				}
+			}
+		}
+		$keys = array_keys($Parameters);
+		foreach ($keys as $id => $key) {
+			$keys[$id] = '%%'.$key.'%%';
+		}
+		$values = array_values($Parameters);
+		return str_replace($keys, $values, $this->mPageTitle);
 	}
 	
 	

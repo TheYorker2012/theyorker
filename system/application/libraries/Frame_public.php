@@ -10,6 +10,7 @@
 $CI = &get_instance();
 $CI->load->library('frames');
 $CI->load->library('messages');
+$CI->load->model('pages_model');
 
 /**
  * @brief Main public frame library class.
@@ -59,6 +60,17 @@ class Frame_public extends FramesFrame
 	function SetTitle($Title)
 	{
 		$this->SetData('title', $Title);
+	}
+	
+	/**
+	 * @brief Set the page title parameters.
+	 * @param $Parameters array[string=>string] Array of parameters to be
+	 *	replaced.
+	 */
+	function SetTitleParameters($Parameters = array())
+	{
+		$CI = &get_instance();
+		$this->SetData('title', $CI->pages_model->GetTitle($Parameters));
 	}
 	
 	/**

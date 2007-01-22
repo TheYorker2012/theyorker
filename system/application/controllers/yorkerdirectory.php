@@ -59,7 +59,6 @@ class Yorkerdirectory extends Controller
 	 */
 	function index()
 	{
-		$this->load->model('pages_model');
 		$this->pages_model->SetPageCode('directory_index');
 		
 		$data = array();
@@ -88,7 +87,7 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view('directory/directory', $data);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitle('Directory');
+		$this->frame_public->SetTitleParameters();
 		$this->frame_public->SetContent($directory_view);
 
 		// Load the public frame view
