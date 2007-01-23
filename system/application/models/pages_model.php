@@ -90,7 +90,7 @@ class Pages_model extends Model
 	/// Primary constructor.
 	function __construct()
 	{
-		$this->mPageCode = '';
+		$this->mPageCode = FALSE;
 		$this->mPageTitle = FALSE;
 		$this->mPageProperties = FALSE;
 	}
@@ -104,11 +104,21 @@ class Pages_model extends Model
 		$this->mPageCode = $PageCode;
 	}
 	
+	/// Has the page code been set?
+	/**
+	 * @return Whether SetPageCode has been called yet.
+	 */
+	function PageCodeSet()
+	{
+		return (FALSE !== $this->mPageCode);
+	}
+	
 	/// Get a specific property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
 	 * @param $PropertyTypeName string Property type name.
 	 * @return PagePropertyType/FALSE if property doesn't exist.
+	 * @pre PageCodeSet() === TRUE
 	 */
 	function GetProperty($PropertyLabel, $PropertyTypeName)
 	{
@@ -132,6 +142,7 @@ class Pages_model extends Model
 	 * @param $Parameters array[string=>string] Array of parameters.
 	 *	Each parameter can be referred to in the database and is replaced here.
 	 * @return string Page title with parameters substituted.
+	 * @pre PageCodeSet() === TRUE
 	 *
 	 * For example if the title in the db is: 'Events for %%organisation%%',
 	 *	and @a $Parameters is array('organisation'=>'The Yorker'),
@@ -162,6 +173,9 @@ class Pages_model extends Model
 	
 	
 	/// Get the properties associated with the page.
+	/**
+	 * @pre PageCodeSet() === TRUE
+	 */
 	protected function GetProperties()
 	{
 		$sql = 'SELECT'.

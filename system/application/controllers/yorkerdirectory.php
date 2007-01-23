@@ -87,7 +87,6 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view('directory/directory', $data);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitleParameters();
 		$this->frame_public->SetContent($directory_view);
 
 		// Load the public frame view

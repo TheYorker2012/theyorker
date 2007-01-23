@@ -43,6 +43,9 @@ $CI->load->model('pages_model');
  */
 class Frame_public extends FramesFrame
 {
+	/// Has the title been set yet
+	private $mTitleSet;
+	
 	/**
 	 * @brief Default constructor.
 	 */
@@ -51,6 +54,7 @@ class Frame_public extends FramesFrame
 		parent::__construct('frames/public_frame.php');
 		
 		$this->mDataArray['messages'] = array();
+		$this->mTitleSet = FALSE;
 	}
 	
 	/**
@@ -60,6 +64,7 @@ class Frame_public extends FramesFrame
 	function SetTitle($Title)
 	{
 		$this->SetData('title', $Title);
+		$this->mTitleSet = TRUE;
 	}
 	
 	/**
@@ -71,6 +76,7 @@ class Frame_public extends FramesFrame
 	{
 		$CI = &get_instance();
 		$this->SetData('title', $CI->pages_model->GetTitle($Parameters));
+		$this->mTitleSet = TRUE;
 	}
 	
 	/**
@@ -95,6 +101,16 @@ class Frame_public extends FramesFrame
 	function NumMessages()
 	{
 		return count($this->mDataArray['messages']);
+	}
+	
+	/// Load the frame.
+	function Load()
+	{
+		$CI = &get_instance();
+		if ($CI->pages_model->PageCodeSet() && !$this->mTitleSet) {
+			$this->SetTitleParameters();
+		}
+		parent::Load();
 	}
 }
 
