@@ -6,7 +6,7 @@
 			echo '	<div class="ReviewElement" >';
 			echo '		<img src="'.$reviews['review_image'][$topten].'" alt="#" />';
 			echo '		<div class="ReviewElementNumber"><h3>'.($topten+1).'</h3></div>';
-			echo '		<h3 style="display: inline;"><a href='.$review_link[$topten].'">'.($topten+1).$reviews['review_title'][$topten].'</a></h3><br />';
+			echo '		<h3 style="display: inline;"><a href="/reviews/foodreview">'.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<a href="'.$reviews['review_website'][$topten].'">www.website.co.uk</a><br />';
 			echo '		Average user rating: <a href=#>'.$reviews['review_rating'][$topten].'/10</a><br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';
