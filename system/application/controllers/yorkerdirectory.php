@@ -399,11 +399,17 @@ EXTRAHEAD;
 							'author' => 'Ian Benest',
 							'publish_date' => '4/12/2006',
 							'description' => 'I didn\'t like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn\'t like dan. He doesn\'t know dan. Dan doesn\'t know the farmer. Barry Scott sells cillit bang.',
+							'image' => '/images/prototype/news/benest.png',
+							'email' => 'fred@fred.com',
+							'link' => 'news/archive/reporter/2/',
 						),
 						array(
 							'author' => 'Detlef Plump',
 							'publish_date' => '5/12/2006',
 							'description' => 'Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here. Another review here. Here be another review. It be here really. Yarr, tharr be reviews here.',
+							'image' => '/images/prototype/news/benest.png',
+							'email' => 'fred@fred.com',
+							'link' => 'news/archive/reporter/2/',
 						),
 					),
 				);
