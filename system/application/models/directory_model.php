@@ -94,7 +94,7 @@ class Directory_model extends Model {
 			'INNER JOIN organisations '.
 			' ON organisations.organisation_entity_id = business_card_types.business_card_type_organisation_entity_id '.
 			'INNER JOIN organisation_types '.
-			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
+			' ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id '.
 			'WHERE business_cards.business_card_deleted = 0 '.
 			' AND organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 '.
@@ -103,6 +103,66 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 	
 		return $query->result_array();
+	}
+	
+	/// Get an organisation's reviews.
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return array[review].
+	 */
+	function GetDirectoryOrganisationReviewsByEntryName($DirectoryEntryName)
+	{
+		$sql =
+			'SELECT'.
+			' reviews.review_id,'.
+			' articles.article_publish_date,'.
+			' article_contents.article_content_blurb,'.
+			' users.user_firstname,'.
+			' users.user_surname,'.
+			' users.user_email '.
+			//' users.user_image_id '.
+			'FROM reviews '.
+			'INNER JOIN organisations '.
+			' ON organisations.organisation_entity_id = reviews.rto_organisation_entity_id '.
+			'INNER JOIN organisation_types '.
+			' ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id '.
+			'INNER JOIN articles '.
+			' ON reviews.review_article_id = articles.article_id '.
+			'INNER JOIN article_contents '.
+			' ON articles.article_current_article_content_id = article_contents.article_content_id '.
+			'INNER JOIN article_writers '.
+			' ON article_contents.article_content_id = article_writers.article_writer_article_content_id '.
+			'INNER JOIN users '.
+			' ON article_writers.article_writer_user_entity_id = users.user_entity_id '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
+			' AND organisation_types.organisation_type_directory=1 ';
+	
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$authors = $query->result_array();
+		$reviews = array();
+		// Go through all authors, each will have the rest
+		foreach ($authors as $data) {
+			// If the review isn't there, get the main data
+			if (!array_key_exists($data['review_id'], $reviews)) {
+				$reviews[$data['review_id']] = array(
+					'publish_date' => $data['article_publish_date'],
+					'content' => array(
+						'blurb' => $data['article_content_blurb'],
+					),
+					/// @todo Where is this link supposed to point?
+					'link' => '/news/archive/reporter/2',
+					'authors' => array(),
+				);
+			}
+			// Now add the author
+			$reviews[$data['review_id']]['authors'][] = array(
+				'name' => $data['user_firstname'].' '.$data['user_surname'],
+				'email' => $data['user_email'],
+			);
+		}
+		
+		// Return the full array of reviews
+		return $reviews;
 	}
 
 }
