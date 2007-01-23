@@ -1,4 +1,11 @@
 <?php
+if(empty($organisation['cards'])) {
+?>
+<div align="center" style='padding: 100px 0px 50px 0px;'>
+	<b>This organisation has not listed any of its members.</b>
+</div>
+<?php
+}
 foreach ($organisation['cards'] as $member) {
 ?>
 <div class='MemberboxPhoto'>

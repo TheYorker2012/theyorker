@@ -1,5 +1,11 @@
-<h2>Recent reviews:</h2>
 <?php
+if(empty($organisation['reviews'])) {
+?>
+<div align="center" style='padding: 100px 0px 50px 0px;'>
+	<b>This organisation has not been reviewed yet.</b>
+</div>
+<?php
+}
 foreach ($organisation['reviews'] as $review) {
 	$author_links = array();
 	foreach ($review['authors'] as $author) {
