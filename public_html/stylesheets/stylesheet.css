@@ -35,6 +35,23 @@ h1 {
 h1.reviewHeader {
 	display: inline;
 }
+/*
+*Navigation Menu Style (public_frame.php)
+*/
+div.navigationmenu_item {
+	color: #aaa;
+	font-size: small;
+	border-bottom: 1px solid #ccc;
+	padding: 0px 0px 3px 4px;
+	margin: 0px 0px 3px 0px;
+}
+div.navigationmenu_item_noborder {
+	color: #aaa;
+	font-size: small;
+	padding: 0px 0px 3px 4px;
+	margin: 0px 0px 3px 0px;
+}
+
 /* Page Sub-Title */
 h2 {
     font-size: x-large;
