@@ -1,7 +1,7 @@
 var jumperPrefix = "";
 var anchorPrefix = "";
-
-function searchPage(searchTextElement,prefix) {
+		
+function searchPage(searchTextElement,prefix,filterPrefix) {
 	eval("var eSearchTextElement = document.getElementById('" + searchTextElement + "');");
 	
 	if (eSearchTextElement == null) {
@@ -13,6 +13,21 @@ function searchPage(searchTextElement,prefix) {
 	var Letters = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	
 	var SectionsShown = 0;
+	
+	var filterString = "";
+	
+	var i = 1;
+	while (true) {
+		var ItemElementId = filterPrefix + i;
+		eval("var eItemElement = document.getElementById('" + ItemElementId + "');");
+		if (eItemElement == null) {
+			break;
+		} else if (eItemElement.checked) {
+			filterString += '(' + eItemElement.getAttribute("name").toUpperCase() + ')';
+		}
+		i++;
+	}
+
 	
 	for (var j=0; j<Letters.length ; j++) {
 		var CurrentLetter = Letters.charAt(j);
@@ -29,14 +44,11 @@ function searchPage(searchTextElement,prefix) {
 				if (eItemElement == null) {
 					break;
 				} else {
-					if (eItemElement.innerHTML.toUpperCase().indexOf(SearchText.toUpperCase()) < 0) {
-						eItemElement.style.display = "none";
-						//Effect.BlindUp(ItemElementId);
-					} else {
+					if ((filterString.indexOf('(' + eItemElement.getAttribute("name").toUpperCase() + ')') >= 0) && (eItemElement.innerHTML.toUpperCase().indexOf(SearchText.toUpperCase()) >= 0)) {
 						eItemElement.style.display = "block";
-						//Effect.BlindDown(ItemElementId);
-						
 						NumberShown++;
+					} else {
+						eItemElement.style.display = "none";
 					}
 				}
 				i++;
