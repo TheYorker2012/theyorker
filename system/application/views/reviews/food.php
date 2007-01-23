@@ -1,20 +1,14 @@
 <div class='WholeColumn'>
 	<div class="NewsPreview">
 		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
-		<h1><?php echo anchor('news/article/1', 'Cake tastes nice'); ?></h1>
+		<h1><?php echo anchor($article_link, $article_title); ?></h1>
 		<p class='Writer'>
-			<a href='/directory/view/1'>Matthew Tole</a>
+			<?php echo "<a href='".$article_author_link."'>".$article_author."</a>"; ?>
 		</p>
-		<p class='Date'>5th December 2006</p>
-		<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
+		<p class='Date'><?php echo $article_date ?></p>
+		<p class='More'><?php echo anchor($article_link, 'Read more...'); ?></p>
 	        <p>
-			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
-			elementum arcu non risus. Vestibulum arcu enim, placerat nec,
-			malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
-			Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae
-			magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque
-			non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed
-			sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
+			<?php echo $article_content; ?>
 		</p>
 	</div>
 	<hr>
@@ -59,20 +53,16 @@
 <div class="LeftColumn">
 		Search our expansive list of food reviews<br /><br />
 			<h3 style="display: inline;">Food Type</h3><br /><br />
-			<a href="/reviews/table">Italian</a><br />
-			<a href="/reviews/table">Indian</a><br />
-			<a href="/reviews/table">Pub Dinners</a><br />
-			<a href="/reviews/table">Take Away Resturants</a><br />
-			<a href="/reviews/table">Thai</a><br />
-			<a href="/reviews/table">Chinese</a><br />
-			<a href="/reviews/table">All Types</a><br /><br />
+<?php
+	for ($restauranttype = 0; $restauranttype < count($type_array['name']); $restauranttype++)
+		echo anchor($type_array['link'][$restauranttype],$type_array['name'][$restauranttype]).'<br />';
+?>
 			<h3 style="display: inline;">Price</h3><br /><br />
-			Dirt Cheap<br />
-			Super Cheap<br />
-			Kinda Cheap<br />
-			Meh<br />
-			Mega Expensive<br />
-			All Prices<br /><br />
+
+<?php
+	for ($pricetype = 0; $pricetype < count($price_array['name']); $pricetype++)
+		echo anchor($price_array['link'][$pricetype],$price_array['name'][$pricetype]).'<br />';;
+?>
 </div>
 
 
