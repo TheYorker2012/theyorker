@@ -1,5 +1,5 @@
 <?php
-foreach ($members as $member) {
+foreach ($organisation['cards'] as $member) {
 ?>
 <div class='MemberboxPhoto'>
 		<div style='text-align:center;'>
@@ -7,33 +7,33 @@ foreach ($members as $member) {
 		</div>
 		<p>
 			<?php
-			if (!empty($member['study'])) {
+			if (!empty($member['course'])) {
 			?>
-			Studying: <?php echo $member['study']; ?><br />
+			Studying: <?php echo $member['course']; ?><br />
 			<?php
 			}
-			if (!empty($member['business_card_email'])) {
+			if (!empty($member['email'])) {
 			?>
-			E-mail: <a href='mailto:<?php echo $member['business_card_email']; ?>'><?php echo $member['business_card_email']; ?></a><br />
+			E-mail: <a href='mailto:<?php echo $member['email']; ?>'><?php echo $member['email']; ?></a><br />
 			<?php
 			}
-			if (!empty($member['business_card_postal_address'])) {
+			if (!empty($member['postal_address'])) {
 			?>
-			Address: <?php echo $member['business_card_postal_address']; ?><br />
+			Address: <?php echo $member['postal_address']; ?><br />
 			<?php
 			}
-			if (!empty($member['business_card_phone_internal']) or !empty($member['business_card_phone_external']) or !empty($member['business_card_mobile'])) {
+			if (!empty($member['phone_internal']) or !empty($member['phone_external']) or !empty($member['phone_mobile'])) {
 			?>
 			Phone numbers:
 			<ul>
-				<?php if (!empty($member['business_card_phone_internal'])) {
-				echo '<li>Internal: '.$member['business_card_phone_internal'].'</li>';
+				<?php if (!empty($member['phone_internal'])) {
+				echo '<li>Internal: '.$member['phone_internal'].'</li>';
 				} ?>
-				<?php if (!empty($member['business_card_phone_external'])) {
-				echo '<li>External: '.$member['business_card_phone_external'].'</li>';
+				<?php if (!empty($member['phone_external'])) {
+				echo '<li>External: '.$member['phone_external'].'</li>';
 				} ?>
-				<?php if (!empty($member['business_card_mobile'])) {
-				echo '<li>Mobile: '.$member['business_card_mobile'].'</li>';
+				<?php if (!empty($member['phone_mobile'])) {
+				echo '<li>Mobile: '.$member['phone_mobile'].'</li>';
 				} ?>
 			</ul>
 			<?php
@@ -42,9 +42,9 @@ foreach ($members as $member) {
 		</p>
 </div>
 <div class='Memberbox'>
-	<h2><?php echo $member['business_card_name']; ?></h2>
-	<h3><?php echo $member['business_card_title']; ?></h3>
-	<p><?php echo $member['business_card_blurb']; ?></p>
+	<h2><?php echo $member['name']; ?></h2>
+	<h3><?php echo $member['title']; ?></h3>
+	<p><?php echo $member['blurb']; ?></p>
 </div>
 <div class="clear">&nbsp;</div>
 <?php
