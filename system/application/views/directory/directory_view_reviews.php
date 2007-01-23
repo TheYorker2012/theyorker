@@ -1,10 +1,11 @@
 <h2>Recent reviews:</h2>
 <?php
 foreach ($organisation['reviews'] as $review) {
-	$authors = '';
+	$author_links = array();
 	foreach ($review['authors'] as $author) {
-		$authors .= '<a href="mailto:'.$author['email'].'">'.$author['name'].'</a> ';
+		$author_links[] = '<a href="mailto:'.$author['email'].'">'.$author['name'].'</a>';
 	}
+	$authors = implode(', ', $author_links);
 ?>
 	<div class="WhyNotTry">
 		<div class="ArticleColumn" style="width: 100%;">
