@@ -33,23 +33,23 @@ class Yorkerdirectory extends Controller
 	 * @pre @a $OrganisationData is valid organisation array.
 	 * @post Frame_directory frame is loaded and ready to use.
 	 */
-	private function _SetupOrganisationFrame($OrganisationData)
+	private function _SetupOrganisationFrame($DirectoryEntry)
 	{
 		$this->load->library('frame_directory');
 
 		$navbar = $this->frame_directory->GetNavbar();
 		$navbar->AddItem('about', 'About',
 				'/images/prototype/news/uk.png',
-				'/directory/'.$OrganisationData['shortname']);
+				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('events', 'Events',
 				'/images/prototype/news/feature.gif',
-				'/directory/'.$OrganisationData['shortname'].'/events');
+				'/directory/'.$DirectoryEntry.'/events');
 		$navbar->AddItem('members', 'Members',
 				'/images/prototype/news/feature.gif',
-				'/directory/'.$OrganisationData['shortname'].'/members');
+				'/directory/'.$DirectoryEntry.'/members');
 		$navbar->AddItem('reviews', 'Reviews',
 				'/images/prototype/news/feature.gif',
-				'/directory/'.$OrganisationData['shortname'].'/reviews');
+				'/directory/'.$DirectoryEntry.'/reviews');
 	}
 
 	/// Directory index page.
@@ -100,7 +100,7 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('directory_view');
 		
 		$data = $this->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($data['organisation']);
+		$this->_SetupOrganisationFrame($organisation);
 
 		$subpageview='directory/directory_view';
 
@@ -127,7 +127,7 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('directory_events');
 		
 		$data = $this->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($data['organisation']);
+		$this->_SetupOrganisationFrame($organisation);
 
 		$this->load->library('frame_messages');
 		$this->load->library('view_calendar_select_week');
@@ -241,7 +241,7 @@ EXTRAHEAD;
 		$this->pages_model->SetPageCode('directory_reviews');
 		
 		$data = $this->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($data['organisation']);
+		$this->_SetupOrganisationFrame($organisation);
 
 		$subpageview='directory/directory_view_reviews';
 
@@ -266,14 +266,36 @@ EXTRAHEAD;
 	function members($organisation)
 	{
 		$this->pages_model->SetPageCode('directory_members');
+		$this->_SetupOrganisationFrame($organisation);
 		
+		// Normal organisation data
 		$data = $this->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($data['organisation']);
-
-		$subpageview='directory/directory_view_members';
+		
+		// Members data
+		$members = $this->directory_model->GetDirectoryOrganisationCardsByEntryName($organisation);
+		// translate into nice names for view
+		$data['organisation']['cards'] = array();
+		foreach ($members as $member) {
+			$data['organisation']['cards'][] = array(
+				'name' => $member['business_card_name'],
+				'title' => $member['business_card_title'],
+				#'course' => $member['business_card_course'],
+				'blurb' => $member['business_card_blurb'],
+				'email' => $member['business_card_email'],
+				'phone_mobile' => $member['business_card_mobile'],
+				'phone_internal' => $member['business_card_phone_internal'],
+				'phone_external' => $member['business_card_phone_external'],
+				'postal_address' => $member['business_card_postal_address'],
+				'colours' => array(
+					'background' => $member['business_card_colour_background'],
+					'foreground' => $member['business_card_colour_foreground'],
+				),
+				'type' => $member['business_card_type_name'],
+			);
+		}
 		
 		// Set up the directory view
-		$directory_view = $this->frames->view($subpageview, $data);
+		$directory_view = $this->frames->view('directory/directory_view_members', $data);
 
 		// Set up the directory frame to use the directory events view
 		$this->frame_directory->SetPage('members');
@@ -370,30 +392,6 @@ EXTRAHEAD;
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-					'type'        => 'Organisation',
-					'cards'       => array(
-						array(
-							'name' => 'Daniel Ashby',
-							'title' => 'Editor',
-							'course' => 'Politics and Philosophy',
-							'blurb' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos.',
-							'email' => 'editor@theyorker.co.uk',
-							'phone_mobile' => '07777 777777',
-							'phone_internal' => '01904 444444',
-							'phone_external' => '01904 555555',
-							'postal_address' => '',
-						),
-						array(
-							'name' => 'Nick Evans',
-							'title' => 'Technical Director',
-							'course' => 'Computer Science',
-							'blurb' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos.',
-							'email' => 'webmaster@theyorker.co.uk',
-							'phone_internal' => '07788 888888',
-							'phone_external' => '01904 333333',
-							'postal_address' => '01904 666666',
-						),
-					),
 					'reviews'     => array(
 						array(
 							'author' => 'Ian Benest',

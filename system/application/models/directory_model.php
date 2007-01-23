@@ -41,6 +41,7 @@ class Directory_model extends Model {
 	
 	/// Get an organisation by name.
 	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 */
 	function GetDirectoryOrganisationByEntryName($DirectoryEntryName)
 	{
@@ -55,8 +56,8 @@ class Directory_model extends Model {
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
-			'ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
-			'WHERE organisations.organisation_directory_entry_name=?'.
+			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_name';
 	
@@ -65,19 +66,43 @@ class Directory_model extends Model {
 		return $query->result_array();
 	}
 	
-	/// Alter an organisation name so it can be used in a URI.
+	/// Get an organisation's business cards.
 	/**
-	 * This function will replace spaces with underscores and change upper
-	 *	case letters to lower case.
-	 * @param $OrganisationName string Name of organisation.
-	 * @return string Altered name.
-	 * @note This technically won't actually be any shorter!
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return array[business_card].
 	 */
-	function ShortenOrganisationName($OrganisationName)
+	function GetDirectoryOrganisationCardsByEntryName($DirectoryEntryName)
 	{
-		$OrganisationName = strtolower($OrganisationName);
-		$OrganisationName = str_replace(' ','_',$OrganisationName);
-		return $OrganisationName;
+		$sql =
+			'SELECT'.
+			' business_cards.business_card_name,'.
+			' business_cards.business_card_title,'.
+			' business_cards.business_card_blurb,'.
+			' business_cards.business_card_email,'.
+			' business_cards.business_card_mobile,'.
+			' business_cards.business_card_phone_internal,'.
+			' business_cards.business_card_phone_external,'.
+			' business_cards.business_card_postal_address,'.
+			' business_card_colours.business_card_colour_background,'.
+			' business_card_colours.business_card_colour_foreground,'.
+			' business_card_types.business_card_type_name '.
+			'FROM business_cards '.
+			'INNER JOIN business_card_colours '.
+			' ON business_card_colours.business_card_colour_id = business_cards.business_card_business_card_colour_id '.
+			'INNER JOIN business_card_types '.
+			' ON business_card_types.business_card_type_id = business_cards.business_card_business_card_type_id '.
+			'INNER JOIN organisations '.
+			' ON organisations.organisation_entity_id = business_card_types.business_card_type_organisation_entity_id '.
+			'INNER JOIN organisation_types '.
+			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
+			'WHERE business_cards.business_card_deleted = 0 '.
+			' AND organisations.organisation_directory_entry_name=? '.
+			' AND organisation_types.organisation_type_directory=1 '.
+			'ORDER BY business_cards.business_card_name';
+	
+		$query = $this->db->query($sql, $DirectoryEntryName);
+	
+		return $query->result_array();
 	}
 
 }
