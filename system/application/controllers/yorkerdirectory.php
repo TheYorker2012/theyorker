@@ -271,9 +271,32 @@ EXTRAHEAD;
 		$this->_SetupOrganisationFrame($data['organisation']);
 
 		$subpageview='directory/directory_view_members';
-
+		//Just some demo data, remove this later on.
+		$demodataarray = array(
+			array(
+				'business_card_name'   => 'Matthew Tole',
+				'business_card_title'        => 'Editor',
+				'business_card_blurb' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos.',
+				'business_card_email'        => 'editor@theyorker.co.uk',
+				'business_card_mobile'        => '07788448472',
+				'business_card_phone_internal'        => '718844',
+				'business_card_phone_external'        => '01248999999',
+				'business_card_postal_address'        => '666 Death Row, Texas, USA',
+				'study'        => 'Computer Science',
+			),
+			array(
+				'business_card_name'   => 'Someone Else',
+				'business_card_title'        => 'Not Editor',
+				'business_card_blurb' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos.',
+				'business_card_email'        => 'noteditor@theyorker.co.uk',
+				'business_card_phone_internal'        => '718844',
+				'business_card_phone_external'        => '01248999999',
+				'study'        => 'World Domination',
+			),
+		);
+		$demodata['members'] = $demodataarray;
 		// Set up the directory view
-		$directory_view = $this->frames->view($subpageview, $data);
+		$directory_view = $this->frames->view($subpageview, $demodata);
 
 		// Set up the directory frame to use the directory events view
 		$this->frame_directory->SetPage('members');
