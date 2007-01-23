@@ -36,6 +36,6 @@ foreach ($organisation['reviews'] as $review) {
 				</div>
 			</div>
 		</div>
-		<?php echo $review['content']['blurb']; ?><br />
+		<?php echo $review['content']; ?><br />
 	</div>
 <?php } ?>

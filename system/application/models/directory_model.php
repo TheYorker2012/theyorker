@@ -116,7 +116,7 @@ class Directory_model extends Model {
 			'SELECT'.
 			' reviews.review_id,'.
 			' articles.article_publish_date,'.
-			' article_contents.article_content_blurb,'.
+			' article_contents.article_content_text,'.
 			' users.user_firstname,'.
 			' users.user_surname,'.
 			' users.user_email '.
@@ -136,7 +136,7 @@ class Directory_model extends Model {
 			' ON article_writers.article_writer_user_entity_id = users.user_entity_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 '.
-			' AND reviews.rto_review_type_id IS NULL ';
+			' AND reviews.rto_content_type_id IS NULL ';
 	
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$authors = $query->result_array();
@@ -147,9 +147,7 @@ class Directory_model extends Model {
 			if (!array_key_exists($data['review_id'], $reviews)) {
 				$reviews[$data['review_id']] = array(
 					'publish_date' => $data['article_publish_date'],
-					'content' => array(
-						'blurb' => $data['article_content_blurb'],
-					),
+					'content' => $data['article_content_text'],
 					/// @todo Where is this link supposed to point?
 					'link' => '/news/archive/reporter/2',
 					'authors' => array(),
