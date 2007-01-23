@@ -135,7 +135,8 @@ class Directory_model extends Model {
 			'INNER JOIN users '.
 			' ON article_writers.article_writer_user_entity_id = users.user_entity_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
-			' AND organisation_types.organisation_type_directory=1 ';
+			' AND organisation_types.organisation_type_directory=1 '.
+			' AND reviews.rto_review_type_id IS NULL ';
 	
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$authors = $query->result_array();
