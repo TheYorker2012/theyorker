@@ -14,14 +14,16 @@ Admin Pages
 Login System
 <ul>
 	<li><a href="/login/">/login/</a></li>
-	<li><a href="/login/register/">/login/register/</a> (Not created Yet)</li> 
-	<li><a href="/login/resetpassword/">/login/resetpassword/</a> (Not created Yet)</li>
+	<li><a href="/login/register/">/login/register/</a></li> 
+	<li><a href="/login/resetpassword/">/login/resetpassword/</a></li>
 </ul>
 
 About
 <ul>
 	<li><a href="/about/">/about/</a></li>
-	<li><a href="/contact/">/contact/</a></li>
+	<li><a href="/contact/">/contact/</a>(redirect to theyorker directory entry)</li>
+	<li><a href="/policy/">/policy/</a></li>
+	<li><a href="/charity/">/charity/</a></li>
 </ul>
 
 Campaign
