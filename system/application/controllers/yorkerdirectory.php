@@ -242,7 +242,8 @@ EXTRAHEAD;
 		
 		$data = $this->_GetOrgData($organisation);
 		
-		$reviews = $this->directory_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
+		$this->load->model('articles_model');
+		$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
 		$data['organisation']['reviews'] = $reviews;
 
 		// Set up the directory view
