@@ -6,8 +6,9 @@ DROP TABLE IF EXISTS entities;
 CREATE TABLE entities (
 	entity_id					INTEGER		NOT NULL	AUTO_INCREMENT,
 	entity_username					VARCHAR(255)	NULL,
-	entity_password					CHAR(32)	NULL,
-	entity_deleted					BOOL		NOT NULL	DEFAULT FALSE,
+	entity_password					CHAR(40)	NULL,
+	entity_salt					CHAR(32)	NULL,
+	entity_deleted					BOOL		NOT NULL	DEFAULT 0,
 	entity_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(entity_id)
@@ -243,6 +244,7 @@ CREATE TABLE articles (
 	article_id					INTEGER		NOT NULL	AUTO_INCREMENT,
 	article_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	article_content_type_id				INTEGER		NULL		COMMENT='If null, assume the article is not displayed in the standard format.',
+	article_organisation_entity_id			INTEGER		NULL		COMMENT='If not null, assume the article is a review of the type specified in content_type_id, or a directory review if that is null.',
 	article_last_editor_user_entity_id 		INTEGER		NULL,
 	article_created					TIMESTAMP	NOT NULL,
 	article_publish_date				TIMESTAMP	NULL,
@@ -252,7 +254,7 @@ CREATE TABLE articles (
 	article_pulled					BOOL		NOT NULL	DEFAULT FALSE,
 	article_hits					INTEGER		NOT NULL	DEFAULT 0,
 	article_deleted					BOOL		NOT NULL	DEFAULT FALSE,
-	article_current_article_content_id		INTEGER		NULL,
+	article_live_content_id				INTEGER		NULL,
 
 	PRIMARY KEY(article_id)
 ) COMMENT='Stores the information about the articles on the site and the current live version of the article (not the article itself).';
@@ -265,7 +267,8 @@ CREATE TABLE article_contents (
 	article_content_heading				VARCHAR(255)	NOT NULL,
 	article_content_subheading			TEXT		NULL,
 	article_content_subtext				TEXT		NULL,
-	article_content_text				TEXT		NOT NULL,
+	article_content_wikitext			TEXT		NOT NULL,
+	article_content_wikitext_cache			TEXT		NULL,
 	article_content_blurb				TEXT		NULL,
 	
 	PRIMARY KEY(article_content_id)
@@ -532,72 +535,53 @@ CREATE TABLE years (
 -- Review related tables				      --
 ----------------------------------------------------------------
 
-DROP TABLE IF EXISTS reviews;
-CREATE TABLE reviews (
-	review_id					INTEGER 	NOT NULL	 AUTO_INCREMENT,
-	rto_content_type_id				INTEGER 	NOT NULL,
-	rto_organisation_entity_id			INTEGER 	NOT NULL,
-	review_article_id				INTEGER 	NOT NULL,
-
-	PRIMARY KEY(review_id)
-) COMMENT='';
-
-DROP TABLE IF EXISTS review_type_organisations;
-CREATE TABLE review_type_organisations (
-	rto_organisation_entity_id			INTEGER 	NOT NULL,
-	rto_content_type_id				INTEGER 	NOT NULL,
-	rto_live_content_id				INTEGER 	NOT NULL,
-	rto_user_rate_count				INTEGER 	NOT NULL,
-	rto_average_user_rating 			INTEGER 	NOT NULL,
-	rto_deleted					BOOL		NOT NULL,
-	rto_timestamp					TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+DROP TABLE IF EXISTS review_contexts;
+CREATE TABLE review_contexts (
+	review_context_organisation_entity_id		INTEGER 	NOT NULL,
+	review_context_content_type_id			INTEGER 	NOT NULL,
+	review_context_live_content_id			INTEGER 	NOT NULL,
+	review_context_user_rate_count			INTEGER 	NOT NULL,
+	review_context_average_user_rating 		INTEGER 	NOT NULL,
+	review_context_deleted				BOOL		NOT NULL,
+	review_context_timestamp			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	
-	PRIMARY KEY(rto_organisation_entity_id, rto_review_type_id)
+	PRIMARY KEY(review_context_organisation_entity_id, review_context_content_type_id)
 ) COMMENT='Information about an organisation in a specific category (e.g. evil eye for food).';
 
-DROP TABLE IF EXISTS rto_content;
-CREATE TABLE rto_content (
-	rto_content_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	rto_content_organisation_entity_id 		INTEGER 	NOT NULL,
-	rto_content_review_type_id			INTEGER 	NOT NULL,
-	rto_content_cost_id 				INTEGER 	NOT NULL,
-	rto_content_blurb 				TEXT		NOT NULL,
-	rto_content_recommend_item_price		INTEGER 	NOT NULL,
-	rto_content_recommend_item			TEXT		NOT NULL,
-	rto_content_average_price_upper 		INTEGER 	NOT NULL,
-	rto_content_average_price_lower 		INTEGER 	NOT NULL,
-	rto_content_rating 				INTEGER		NOT NULL,
-	rto_content_directions 				TEXT		NOT NULL,
-	rto_content_book_online 			BOOL		NOT NULL,
+DROP TABLE IF EXISTS review_context_contents;
+CREATE TABLE review_context_contents (
+	review_context_content_id 			INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	review_context_content_organisation_entity_id 	INTEGER 	NOT NULL,
+	review_context_content_content_type_id		INTEGER 	NOT NULL,
+	review_context_content_blurb 			TEXT		NOT NULL,
+	review_context_content_recommend_item_price	INTEGER 	NULL,
+	review_context_content_recommend_item		TEXT		NULL,
+	review_context_content_average_price_upper 	INTEGER 	NULL,
+	review_context_content_average_price_lower 	INTEGER 	NULL,
+	review_context_content_rating 			INTEGER		NOT NULL,
+	review_context_content_directions 		TEXT		NULL,
+	review_context_content_book_online 		BOOL		NOT NULL,
 	
-	PRIMARY KEY(rto_content_id)
+	PRIMARY KEY(review_context_content_id)
 ) COMMENT='Similar to article content, but contains specific information for review type organisations.';
 
-DROP TABLE IF EXISTS rto_tags;
-CREATE TABLE rto_tags (
-	rto_tag_tag_id 					INTEGER 	NOT NULL,
-	rto_organisation_entity_id 			INTEGER 	NOT NULL,
-	rto_content_type_id 				INTEGER 	NOT NULL,
+DROP TABLE IF EXISTS review_context_tags;
+CREATE TABLE review_context_tags (
+	review_context_tag_tag_id 			INTEGER 	NOT NULL,
+	review_context_organisation_entity_id 		INTEGER 	NOT NULL,
+	review_context_content_type_id 			INTEGER 	NOT NULL,
 
-	PRIMARY KEY(rto_tag_tag_id, rto_organisation_entity_id, rto_content_type_id)
+	PRIMARY KEY(review_context_tag_tag_id, review_context_organisation_entity_id, review_context_content_type_id)
 ) COMMENT='Allows the tagging of a category of a specific organisaion for use in searching.';
 
-DROP TABLE IF EXISTS rto_costs;
-CREATE TABLE rto_costs (
-	rto_cost_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	rto_cost_name 					VARCHAR(255) 	NOT NULL	COMMENT='Cheap, Very Cheap, Expensive, etc...',
-
-	PRIMARY KEY(rto_cost_id)
-) COMMENT='The different types of general expense for the food/drink (eg. Cheap, Expensive).';
-
-DROP TABLE IF EXISTS review_slideshows;
-CREATE TABLE review_slideshows (
-	review_slideshow_rto_content_type_id 		INTEGER 	NOT NULL,
-	review_slideshow_rto_organisation_entity_id 	INTEGER 	NOT NULL,
-	review_slideshow_photo_id 			INTEGER 	NOT NULL,
-	review_slideshow_order 				INTEGER 	NOT NULL,
+DROP TABLE IF EXISTS review_context_slideshows;
+CREATE TABLE review_context_slideshows (
+	review_context_slideshow_review_context_content_type_id	INTEGER 	NOT NULL,
+	review_context_slideshow_review_context_organisation_entity_id	INTEGER 	NOT NULL,
+	review_context_slideshow_photo_id 		INTEGER 	NOT NULL,
+	review_context_slideshow_order 			INTEGER 	NOT NULL,
 	
-	PRIMARY KEY(review_slideshow_rto_content_type_id, review_slideshow_rto_organisation_entity_id, review_slideshow_order)
+	PRIMARY KEY(review_context_slideshow_review_context_content_type_id, review_context_slideshow_review_context_organisation_entity_id, review_context_slideshow_order)
 ) COMMENT='Each review type organisation can have a single slideshow in which photos are displayed in the order as specified by review_slideshow_order.';
 
 
@@ -620,6 +604,7 @@ CREATE TABLE leagues (
 	league_content_type_id 				INTEGER 	NOT NULL,
 	league_name 					VARCHAR(255) 	NOT NULL,
 	league_size 					INTEGER 	NOT NULL,
+	league_autogenerated				BOOL		NOT NULL	DEFAULT 0	COMMENT='If true, this league is automatically generated from user opinion.',
 	
 	PRIMARY KEY(league_id)
 ) COMMENT='top 10 for food - blah rewrite me. NOTE: league_content_type_id';
@@ -627,11 +612,11 @@ CREATE TABLE leagues (
 DROP TABLE IF EXISTS league_entries;
 CREATE TABLE league_entries (
 	league_entry_league_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	league_entry_rto_organisation_entity_id 	INTEGER 	NOT NULL,
+	league_entry_organisation_entity_id		INTEGER 	NOT NULL,
 	league_entry_position 				INTEGER 	NOT NULL,
 
-	PRIMARY KEY(league_entry_league_id, league_entry_rto_organisation_entity_id)
-) COMMENT='NOTE: league_entry_rto_organisation_entity_id';
+	PRIMARY KEY(league_entry_league_id, league_entry_review_context_organisation_entity_id)
+) COMMENT='NOTE: league_entry_review_context_organisation_entity_id';
 
 ----------------------------------------------------------------
 -- Random shit related tables				      --
@@ -702,15 +687,26 @@ DROP TABLE IF EXISTS tags;
 CREATE TABLE tags (
 	tag_id 						INTEGER 	NOT NULL 	AUTO_INCREMENT,
 	tag_name 					VARCHAR(255) 	NOT NULL,
-	tag_type					ENUM('article','photo')	NOT NULL,
-	tag_banner_name 				VARCHAR(255) 	NOT NULL,
+	tag_type					ENUM('article','photo','grouped')	NOT NULL,
+	tag_tag_group_id				INTEGER		NULL		COMMENT='If tag_type=grouped then this must be set to the group of the tag.',
+	tag_order					INTEGER		NULL		COMMENT='If the tag group is ordered, this must be non-null.',
+	tag_banner_name 				VARCHAR(255) 	NULL		COMMENT='Used for article tags such as Exclusive, where the tag will enable code related to the tag.',
 	tag_archive 					BOOL 		NOT NULL 	DEFAULT 0,
 	tag_deleted 					BOOL 		NOT NULL,
 	
 	PRIMARY KEY(tag_id)
 ) COMMENT='List of tags that are used in searching.';
 
-
+DROP TABLE IF EXISTS tag_groups;
+CREATE TABLE tag_groups (
+	tag_group_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	tag_group_name					VARCHAR(255)	NOT NULL,
+	tag_group_content_type_id			INTEGER		NULL		COMMENT='Allows groups to be specific to content_types, if null the group is general.',
+	tag_group_ordered				BOOL		NOT NULL	COMMENT='For example, the 'Price' group can be ordered.',
+	
+	PRIMARY KEY(tag_group_id)
+) COMMENT='Groups a set of tags that have similar types (eg. Food, Drink).';
+	
 DROP TABLE IF EXISTS colleges;
 CREATE TABLE colleges (
 	college_organisation_entity_id			INTEGER 	NOT NULL 	AUTO_INCREMENT,
@@ -865,7 +861,7 @@ CREATE TABLE adverts (
 	advert_max_total 				INTEGER 	NOT NULL,
 	
 	PRIMARY KEY(advert_id)
-);
+) COMMENT='All adverts currently displayed on the site are stored here.';
 
 DROP TABLE IF EXISTS advert_bills;
 CREATE TABLE advert_bills (
@@ -876,7 +872,7 @@ CREATE TABLE advert_bills (
 	advert_bill_paid 				BOOL 		NOT NULL,
 	
 	PRIMARY KEY(advert_bill_id)
-);
+) COMMENT='Bill the advert companies for the amount generated by their adverts.';
 
 DROP TABLE IF EXISTS advert_bill_items;
 CREATE TABLE advert_bill_items (
@@ -889,7 +885,7 @@ CREATE TABLE advert_bill_items (
 	advert_bill_item_made_date 			INTEGER 	NOT NULL,
 	
 	PRIMARY KEY(advert_bill_item_id)
-);
+) COMMENT='Keeps track of the number of adverts owned by a company and the number of clicks since last billing.';
 
 DROP TABLE IF EXISTS advert_instances;
 CREATE TABLE advert_instances (
@@ -904,7 +900,7 @@ CREATE TABLE advert_instances (
 	advert_instance_deleted 			BOOL 		NOT NULL,
 
 	PRIMARY KEY(advert_instance_id)
-);
+) COMMENT='';
 
 DROP TABLE IF EXISTS advert_related_articles;
 CREATE TABLE advert_related_articles (
