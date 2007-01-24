@@ -15,6 +15,10 @@ class Login extends Controller
 
 	function index()
 	{
+		$data = array(
+			'previous_username' => '',
+		);
+		
 		// Use post data to log in
 		$username = $this->input->post('username');
 		$password = $this->input->post('password');
@@ -31,14 +35,12 @@ class Login extends Controller
 				);
 				//redirect('');
 			} catch (Exception $e) {
+				$data['previous_username'] = $username;
 				$this->frame_public->AddMessage(
 					new ErrorMsg('Login error', $e->getMessage())
 				);
 			}
 		}
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Log in');
