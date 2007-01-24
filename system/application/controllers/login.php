@@ -9,12 +9,16 @@ class Login extends Controller
 		
 		// Load the public frame
 		$this->load->library('frame_public');
+		//$this->load->library('user_auth');
 	}
 
 	function index()
 	{
+		$logindata = $this->input->post('login_form', TRUE);
 		$data = array(
-			'test' => 'I set this variable from the controller!',
+			'login_username' => 'root',
+			'login_password' => 'password',
+			'keep_login' => '1',
 		);
 		
 		// Set up the public frame

@@ -1,15 +1,14 @@
-<div id='login' align='center'>
-	<form id='login_form' name='login_form' action='/login/' method='POST' class='form'>
-		<h5>Error : This is a login error example.</h5>
+<div align='center'>
+	<form name='login_form' action='/login/' method='POST' class='form'>
 		<fieldset>
-			<label for='username'>Username:</label>
-			<input id='username' type='text' name='username'>
+			<label for='login_username'>Username:</label>
+			<input type='text' name='login_username' value='<?php echo $login_username; ?>'>
 			<br />
-			<label for='password'>Password:</label>
-			<input id='password' type='password' name='username'>
+			<label for='login_password'>Password:</label>
+			<input type='password' name='login_password'>
 			<br />
 			<label for='keep_login'>Remember me</label>
-			<input type='checkbox' name='keep_login' id="keep_login" value="1">
+			<input type='checkbox' name='keep_login' value="1" <?php if(!empty($keep_login)){echo "checked";} ?>>
 			<br />
 			<label for='login_button'></label>
 			<input type='submit' name='login_button' value='Login'>
