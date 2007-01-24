@@ -31,13 +31,13 @@ class Login extends Controller
 			try {
 				$this->user_auth->login($username,$password,$keeplogin);
 				$this->frame_public->AddMessage(
-					new InformationMsg('Login successfully', 'You are now successfully logged in.')
+					new InformationMsg('You are now successfully logged in.')
 				);
 				//redirect('');
 			} catch (Exception $e) {
 				$data['previous_username'] = $username;
 				$this->frame_public->AddMessage(
-					new ErrorMsg('Login error', $e->getMessage())
+					new ErrorMsg('Login error, '.$e->getMessage())
 				);
 			}
 		}
