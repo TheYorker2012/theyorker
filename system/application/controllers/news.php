@@ -22,14 +22,18 @@ class News extends Controller {
 	{
     	/// The data passed to the view will come from the database once it is available.
 		$data = array(
+       	    'main_article' => self::$article_data,
 			'news_previews' => array_slice(self::$news_data, 0, 3),
 			'news_others' => array_slice(self::$news_data, 3)
 		);
 
+		$this->load->library('wikiparser');
+		$data['main_article']['body'] = $this->wikiparser->parse($data['main_article']['body']);
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('Campus News');
 		$this->frame_public->SetContentSimple('news/news', $data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -45,7 +49,7 @@ class News extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('National News');
 		$this->frame_public->SetContentSimple('news/national', $data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -62,7 +66,7 @@ class News extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('Features');
 		$this->frame_public->SetContentSimple('news/features', $data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -73,7 +77,7 @@ class News extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('Lifestyle');
 		$this->frame_public->SetContentSimple('news/lifestyle');
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -108,7 +112,7 @@ class News extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('Article');
 		$this->frame_public->SetContentSimple('news/article', $data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -119,7 +123,7 @@ class News extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('Archive');
 		$this->frame_public->SetContentSimple('news/archive');
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -185,7 +189,7 @@ class News extends Controller {
             'writer_id' => '2',
             'writer' => 'Matthew Tole',
             'date' => '5th December 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
+            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.<br /><br />Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla consequat, orci vel iaculis sagittis, felis elit malesuada massa, vel scelerisque dui erat vel ipsum. Etiam nec massa. Suspendisse risus nunc, tincidunt vel, porttitor at, molestie rhoncus, odio. In hac habitasse platea dictumst. In enim nibh, scelerisque sit amet, posuere ut, sagittis a, ipsum. <blockquote>Testing new quotey thing to see how sexual it is, 1337 roflmao n00bz0r!</blockquote> Mauris vulputate. Cras neque enim, sagittis vel, varius vel, congue ac, purus. Duis imperdiet, purus eu aliquet posuere, turpis diam nonummy nulla, non ultricies lectus lacus id urna. Sed suscipit, libero id pretium dapibus, turpis enim elementum ligula, eu tempus turpis turpis a elit.<br /><br />Pellentesque posuere mauris et ante tempus cursus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis egestas facilisis nibh. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Sed egestas nulla ac lorem. Aliquam nunc. Maecenas tincidunt venenatis sem. Nunc sit amet risus. Aliquam ultrices rhoncus sem. Praesent cursus. Ut hendrerit nunc. Curabitur congue rutrum felis. Nunc nisi leo, porta in, vulputate vitae, fringilla id, enim. Integer mollis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce volutpat lacinia ante. Vestibulum semper ipsum vel nibh. Mauris luctus, nulla non hendrerit euismod, lectus nunc accumsan odio, ut laoreet orci ligula nec felis. Vestibulum lectus.<br /><br />Nulla facilisi. Sed erat eros, gravida at, interdum et, tincidunt vitae, nunc. Vivamus mattis justo in massa. Vivamus malesuada erat vel pede. Nulla molestie mauris vitae ipsum. Nam mauris sem, consectetuer vitae, iaculis sed, aliquam laoreet, risus. Nunc auctor. Nullam auctor. Vestibulum id diam in pede lobortis aliquet. Suspendisse sit amet ante eget diam aliquet tincidunt. Phasellus ut lacus ut augue egestas semper. Morbi urna. Nulla purus ipsum, facilisis in, blandit in, gravida non, justo.'
         ),
         array(
             'id' => '7',
@@ -264,7 +268,7 @@ class News extends Controller {
     /// test data for use until we can use the database (article)
     private static $article_data = array(
         'id' => '1',
-        'timestamp' => '1165538071',
+        'date' => '23rd January 2007',
         'headline' => 'REPORT SHOWS THAT STUDENTS ARE 90% HUNGRY',
         'subheading' => 'He\'s been shagging girls for years',
         'subtext' => 'Hundreds of people have called the NHS Direct hotline following the death of Russian ex-spy Alexander Litvinenko.',

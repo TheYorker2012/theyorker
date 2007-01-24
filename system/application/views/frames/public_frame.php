@@ -74,8 +74,10 @@ function preloader()
 	</div>
 	<div style="background-color: #fff;">
 		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
-		<input type="text" style="float: left; width: 130px; font-size: 10px; border: solid 1px #20c1f0; color: #20c1f0; padding: 2px 0px 2px 2px; margin: 5px; margin-left: 0px;" 
-value=" &gt; Search" onFocus="if (this.value==this.defaultValue) this.value=''" />
+		<div style='float: left; width: 130px; font-size: 10px; border: solid 1px #20c1f0; padding-left: 2px; margin: 5px; margin-left: 0px;'>
+			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' /><input
+			type="text" style="float: right; color: #20c1f0; font-size: 10px; width: 112px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
+		</div>
 		</form>
 		<div style="float: right; width: 630px; margin-bottom: 8px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
 				<div style="float: right"><a href="javascript:history.go(-1)"><img src="/images/prototype/header/backarrow.gif" alt="Back" /></a>&nbsp;</div>
@@ -98,7 +100,7 @@ value=" &gt; Search" onFocus="if (this.value==this.defaultValue) this.value=''" 
 			<a href='/news/'>Uni News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/news/national/'>UK & World News</a>
+			<a href='/news/national/'>UK &amp; World News</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='/news/features/'>Features</a>

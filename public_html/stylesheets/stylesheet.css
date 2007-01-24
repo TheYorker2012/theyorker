@@ -74,7 +74,7 @@ img {
 }
 /* removes link styling*/
 .nolinkstyle {
-	text-decoration: : none;
+	text-decoration: none;
 	color: #000000;
 }
 
@@ -149,7 +149,6 @@ div#navbar ul li .current {
 	font-weight: bold;
  	background-color: #06a5cd;
 }
-
 
 /**
 	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
@@ -523,7 +522,7 @@ div.GalleryPicture {
 .SignVoteForm {
 	float: left;
 	border-style: solid;
-	border-color: FF6A00;
+	border-color: #FF6A00;
 	font-size: large;
 	font-weight: bold;
 	width: 68%;
@@ -535,7 +534,7 @@ div.GalleryPicture {
 }
 .subheader {
 	font-size: large;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding-bottom: 8px;
 	padding-left: 3px;
 	margin-bottom: 5px;
@@ -544,7 +543,7 @@ div.GalleryPicture {
 }
 .signit{
 	float: left;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding: 3px;
 	font-size: 25px;
 	font-weight: bold;
@@ -552,7 +551,7 @@ div.GalleryPicture {
 }
 .sendbox{
 	font-weight: bold;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding: 0px;
 	margin: 5px;
 	width: 50%;
@@ -579,7 +578,7 @@ div.GalleryPicture {
 .funnybox {
 	font-size: large;
 	font-weight: bold;
-	background-color: FF6A00;
+	background-color: #FF6A00;
 	padding-left: 3px;
 	padding-bottom: 3px;
 	margin-top: 10px;
@@ -614,7 +613,7 @@ div.GalleryPicture {
 }
 
 div.FactBox {
-	background-color: FFAC47;
+	background-color: #FFAC47;
 	margin: 1.5em;
 	padding-left: 1em;
 	padding-bottom: 1em;
@@ -630,18 +629,18 @@ div.FactBoxTitle {
 div.FloatRightHalf {
 	float: right;
 	width:49%;
-	//width: 50%;
+	/*width: 50%;*/
 	padding: 5px;
 }
 div.CharitySubText {
 	font-size: 1.7em;
 	font-weight: bold;
-	color: FF6A00;
+	color: #FF6A00;
 }
 div.CharityRelated {
 	float: left;
 	width:48%;
-	//width: 48%;
+	/*width: 48%;*/
 	padding: 5px;
 }
 div.BlackBox {
@@ -677,7 +676,7 @@ div.BlackBoxSubTitle {
 /*Style Fox Box Stye Subheader With Related Links Option for an image.*/
 /*Look on the wiki page for html code, converts a list into a related links box*/
 #pageheader{
-	background-color: 00CCFF;
+	background-color: #00CCFF;
     background-repeat: no-repeat;
     background-position: right top;
 }
@@ -741,61 +740,13 @@ div.MemberboxPhoto li {
 	font-size: 12px;
 }
 
+ 
 /*
 *	Start styles for News Section
 */
 
-/*	REMOVE SECTION
-*	This is only left here until all pages using the newsnav id
-*	rename to navbar as specified in the general section
-*/
-
-div#newsnav ul {
-	padding-left: 0;
-	margin-left: 0;
-	background-color: #08c0ef;
-	color: White;
-	float: left;
-	width: 100%;
-	vertical-align: middle;
-}
-
-div#newsnav ul li {
-	display: inline;
-	font-size: 14px;
-}
-
-div#newsnav ul li a {
-	padding: 0.2em 1em;
-	background-color: #08c0ef;
-	color: White;
-	text-decoration: none;
-	float: left;
-	border-right: 1px solid #fff;
-}
-
-div#newsnav ul li a:hover	{
-	background-color: #06a5cd;
-	color: #fff;
-}
-
-div#newsnav ul .right a {
-	float: right;
-	border-left: 1px solid #fff;
-	border-right: 0px;
-}
-
-div#newsnav ul li #current {
-	font-weight: bold;
- 	background-color: #06a5cd;
-}
-
-/*	END REMOVE SECTION	*/
-
-
 div.ArticleColumn {
-	float: left;
-	width: 520px;
+	text-align: justify;
 	font-size: 13px;
 	line-height: 15px;
 }
@@ -805,6 +756,44 @@ div.ArticleColumn h1, div.ArticleColumn h2 {
 	margin: 0;
 	line-height: normal;
 }
+
+div.ArticleColumn h1 {
+	font-size: 26px;
+	color: #000;
+}
+
+div.ArticleColumn div.byline img {
+	float: right;
+}
+
+div.ArticleColumn div.text {
+	padding-top: 5px;
+	padding-left: 5px;
+	background-image: url('/images/prototype/news/byline.jpg');
+	background-repeat: repeat-x;
+	font-size: large;
+	color: #acaeb1;
+	font-weight: bold;
+}
+
+div.ArticleColumn div.role {
+	padding: 1px 5px;
+	background-color: #000;
+	color: #fff;
+	clear: both;
+	font-size: 12px;
+}
+
+.ArticleFacts {
+	margin-left: 1em;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+
+
 
 div.ArticleColumn p {
 	text-align: justify;
@@ -846,35 +835,6 @@ div.ArticleColumn .ArticleBox .Content {
 	list-style-image: url(/images/prototype/news/list-blue.gif);
 }
 
-.ArticleColumn #Byline {
-	background-position: left bottom;
-	background-repeat: no-repeat;
-	height: 100%;
-}
-
-.ArticleColumn #Byline {
-	text-align: right;
- }
- 
-.ArticleColumn #Byline .name {
- 	font-weight: bold;
-	color: #ff6a00;
-}
-
-.ArticleColumn #Byline .links a {
-	color: #08c0ef;
-	text-decoration: none;
- 	font-size: small;
-}
-
-.ArticleColumn #Byline .links a:hover {
-	text-decoration: underline;
-}
-
-.ArticleColumn #Byline #BylineText {
-	padding: 0 10px;
-}
-
 .ArticleColumn .quote {
 	text-align: center;
 	padding-left: 5px;
@@ -886,39 +846,15 @@ div.ArticleColumn .ArticleBox .Content {
 	margin: 0;
 }
 
-.ArticleFacts {
-	margin-left: 1em;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-.RoundBoxBL {
-	background: url('/images/prototype/news/bl.gif') 0 100% no-repeat;
-	height: 100%;
-}
-
-.RoundBoxBR {
-	background: url('/images/prototype/news/br.gif') 100% 100% no-repeat;
-	height: 100%;
-}
-
-.RoundBoxTL {
-	background: url('/images/prototype/news/tl.gif') 0 0 no-repeat;
-	height: 100%;
-}
-
-.RoundBoxTR {
-	background: url('/images/prototype/news/tr.gif') 100% 0 no-repeat;
-	height: 100%;
-}
 
 .NewsPreview {
 	text-align: justify;
 	font-size: 13px;
 	line-height: 15px;
-	margin-bottom: 5px;
-	/*float: left;*/
 }
+
+.NewsPreview blockquote { border: 1px #FF6A00 solid; float: right; display: inline; width: 150px; margin: 5px 5px 5px 10px; background: #F7952D; }
+.NewsPreview blockquote { padding: 5px; text-align: center }
 
 .NewsPreview h1 {
 	text-align: left;
@@ -1075,24 +1011,86 @@ div.ArticleColumn .ArticleBox .Content {
 
 /* --- News : Admin Section --- */
 
-.form {
+div.ajax_loading {
+	text-align: center;
+	border-top: 1px #000000 solid;
+	border-bottom: 1px #ff6a00 solid;
+	padding: 4px;
+	background-image: url('/images/prototype/prefs/yorker-bg.png');
+	background-position: center left;
+	background-repeat: no-repeat;
+}
+
+div.table-box {
+	padding: 4px;
+	background-color: #f9f9f9;
+	border: 1px #08c0ef solid;
+}
+
+div.table-box table {
+    padding: 0;
+    border: 0;
     margin: 0;
-	padding: 0 5px;
-  	min-width: 500px;
-  	max-width: 600px;
-	width: 560px;
+    border-spacing: 0;
+    width: 100%;
+    border-collapse: collapse;
 }
 .form h5 {
 	/* Use this for error messages in forms*/
 	font-size: small;
 	color: red;
 }
+
+div.table-box table tr {
+	background-color: #fff;
+}
+div.table-box table .tr2 {
+    background-color: #efefef;
+}
+div.table-box table th {
+	background-color: #d2d2d2;
+    border-bottom: 1px #000000 solid;
+    text-align: left;
+	padding: 2px 1.5em 2px 4px;
+	font-size: 11px;
+}
+div.table-box table td {
+	padding: 2px 1.5em 2px 4px;
+    border-bottom: 1px #93969a solid;
+}
+div.table-box table td a {
+    color: #08c0ef;
+    text-decoration: none;
+}
+div.table-box table td a:hover {
+    text-decoration: underline;
+}
+
+h4 {
+	background-color: #08c0ef;
+	color: #fff;
+	margin: 0;
+	padding: 5px 5px 5px 10px;
+	font-size: 14px;
+	margin-bottom: 5px;
+}
+
+h5 {
+	background-color: #94979b;
+	border-bottom: 1px #000 solid;
+	color: #fff;
+	margin: 0;
+	padding: 3px 3px 3px 10px;
+	font-size: 12px;
+}
+
 .form fieldset {
     border-color: #ff6a00;
 	border-width: 1px 0 0 0;
  	border-style: solid none none none;
  	padding: 10px;
  	margin: 0;
+	border-width: 0;
 	text-align: left;
 }
 .form fieldset legend {
@@ -1174,7 +1172,7 @@ div.ArticleColumn .ArticleBox .Content {
     font-size: small;
 }
 .form fieldset div.link_right a {
-    color: ff6a00;
+    color: #ff6a00;
     text-decoration: none;
     cursor: pointer;
 }
@@ -1290,7 +1288,6 @@ div.ArticleColumn .ArticleBox .Content {
 
 /*
 *     End Styles for search page
-*/
 */
 
 .OfficeBoxes {
