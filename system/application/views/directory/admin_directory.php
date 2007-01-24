@@ -21,7 +21,7 @@
 	<table width='100%'>
 		<tr>
 			<td>
-				<a href='/admin/yorkerdirectoryview/fragsoc'>FragSoc</a>
+				<a href='/admin/directory/view/fragsoc'>FragSoc</a>
 			</td>
 			<td>
 				Society
@@ -32,7 +32,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/admin/yorkerdirectoryview/theyorker'>TheYorker</a>
+				<a href='/admin/directory/view/theyorker'>TheYorker</a>
 			</td>
 			<td>
 				Organisation
@@ -43,7 +43,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/admin/yorkerdirectoryview/toffs'>Toffs</a>
+				<a href='/admin/directory/view/toffs'>Toffs</a>
 			</td>
 			<td>
 				Venue
@@ -54,7 +54,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='/admin/yorkerdirectoryview/poledancing'>Pole Dancing</a>
+				<a href='/admin/directory/view/poledancing'>Pole Dancing</a>
 			</td>
 			<td>
 				Athletics Union

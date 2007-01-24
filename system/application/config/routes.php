@@ -54,6 +54,14 @@ $route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 $route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
 unset($org_name_regex);
 
+// The default admin page is index
+$route['admin'] = 'admin/index';
+
+// 'admin/directory' needs to map to 'admin/yorkerdirectory'
+// (the php class Directory is reserved)
+$route['admin/directory'] = 'admin/yorkerdirectory';
+$route['admin/directory/(.+)'] = 'admin/yorkerdirectory/$1';
+
 // Invalidate yorkerdirectory as its ugly and shouldn't be used
 // jh559: this is just my opinion, feel free to comment these out if you disagree
 $route['yorkerdirectory'] = 'not_yorkerdirectory';
