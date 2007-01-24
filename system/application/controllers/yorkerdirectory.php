@@ -239,7 +239,21 @@ EXTRAHEAD;
 		
 		$this->load->model('articles_model');
 		$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
-		$data['organisation']['reviews'] = $reviews;
+		// sort into types
+		$directory_reviews = array();
+		$review_types = array();
+		foreach ($reviews as $review) {
+			if (NULL === $review['type']) {
+				$directory_reviews[] = $review;
+			} else {
+				if (!array_key_exists($review['type'], $review_types)) {
+					$review_types[$review['type']] = array();
+				}
+				$review_types[$review['type']][] = $review;
+			}
+		}
+		$data['organisation']['reviews_untyped'] = $directory_reviews;
+		$data['organisation']['reviews_by_type'] = $review_types;
 
 		// Set up the directory view
 		$directory_view = $this->frames->view('directory/directory_view_reviews', $data);

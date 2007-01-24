@@ -49,6 +49,9 @@ class Articles_model extends Model {
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 * @return array[review].
+	 *
+	 * Perhaps this is in the wrong place.
+	 * It is used by yorkerdirectory.reviews()
 	 */
 	function GetDirectoryOrganisationReviewsByEntryName($DirectoryEntryName)
 	{
@@ -56,6 +59,7 @@ class Articles_model extends Model {
 			'SELECT'.
 			' articles.article_id,'.
 			' articles.article_publish_date,'.
+			' content_types.content_type_name,'.
 			' article_contents.article_content_id,'.
 			' article_contents.article_content_wikitext,'.
 			' article_contents.article_content_wikitext_cache,'.
@@ -70,6 +74,8 @@ class Articles_model extends Model {
 			' ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id '.
 			'INNER JOIN article_contents '.
 			' ON articles.article_live_content_id = article_contents.article_content_id '.
+			'LEFT JOIN content_types '.
+			' ON articles.article_content_type_id = content_types.content_type_id '.
 			'INNER JOIN article_writers '.
 			' ON article_contents.article_content_id = article_writers.article_writer_article_content_id '.
 			'INNER JOIN users '.
@@ -86,6 +92,7 @@ class Articles_model extends Model {
 			// If the review isn't there, get the main data
 			if (!array_key_exists($data['article_id'], $reviews)) {
 				$reviews[$data['article_id']] = array(
+					'type' => $data['content_type_name'],
 					'publish_date' => $data['article_publish_date'],
 					'content' => $this->UpdateArticleWikitextCache($data),
 					/// @todo Where is this link supposed to point?
