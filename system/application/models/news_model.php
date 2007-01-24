@@ -28,7 +28,7 @@ class News_model extends Model
 	//Odered by 'most recent'.
 	{
 		$sql = "SELECT articles.article_id FROM articles
-				WHERE (articles.article_article_type_id =".$type."
+				WHERE (articles.article_content_type_id =".$type."
 				AND	articles.article_publish_date < CURRENT_TIMESTAMP)
 				ORDER BY articles.article_publish_date 
 				LIMIT 0,".$number;
