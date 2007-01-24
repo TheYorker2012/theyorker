@@ -63,12 +63,7 @@ class Yorkerdirectory extends Controller
 		
 		$data = array();
 		
-		$maintext = $this->pages_model->GetProperty('maintext', 'text');
-		if (FALSE === $maintext) {
-			$data['maintext'] = '';
-		} else {
-			$data['maintext'] = $maintext->GetText();
-		}
+		$data['maintext'] = $this->pages_model->GetPropertyText('maintext');
 
 		// Get the search pattern from POST (optional)
 		$search_pattern = $this->input->post('search_directory', TRUE);

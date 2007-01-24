@@ -27,6 +27,15 @@ class PagePropertyType
 		return $this->mText;
 	}
 	
+	/// Set the text value
+	/**
+	 * @param $Text string The text value of the property.
+	 */
+	function SetText($Text)
+	{
+		$this->mText = $Text;
+	}
+	
 }
 
 /// Represents a single page property.
@@ -137,6 +146,54 @@ class Pages_model extends Model
 		}
 	}
 	
+	
+	/// Get a specific text property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $Default string Default string.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetPropertyText($PropertyLabel, $Default = '')
+	{
+		$value = $this->pages_model->GetProperty($PropertyLabel, 'text');
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			return $value->GetText();
+		}
+	}
+	
+	/// Get a specific text property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $Default string Default string.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetPropertyWikitext($PropertyLabel, $Default = '')
+	{
+		$cache = $this->pages_model->GetProperty($PropertyLabel, 'wikitext_cache');
+		if (FALSE === $cache) {
+			// No cache, see if the wikitext is there
+			$wikitext = $this->pages_model->GetProperty($PropertyLabel, 'wikitext');
+			if (FALSE === $wikitext) {
+				return $Default;
+			} else {
+				// Build the cache
+				$this->load->library('wikiparser');
+				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText());
+				// Save the cache back to the database
+				$cache = new PagePropertyType(array('text' => $cached_wikitext));
+				$this->InsertProperty($cache, $PropertyLabel, 'wikitext_cache');
+				return $cached_wikitext;
+			}
+		} else {
+			// Use the cache
+			return $cache->GetText();
+		}
+	}
+	
 	/// Get the page title given certain parameters.
 	/**
 	 * @param $Parameters array[string=>string] Array of parameters.
@@ -212,6 +269,16 @@ class Pages_model extends Model
 		}
 		
 		$this->mPageProperties =  $property_objects;
+	}
+	
+	/// Insert a property
+	/**
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function InsertProperty($Property, $PropertyLabel, $PropertyType)
+	{
+		/// @todo Implement
+		// Doesn't do anything yet!!
 	}
 }
 

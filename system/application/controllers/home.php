@@ -37,12 +37,14 @@ class Home extends Controller {
 
 	function main()
 	{
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
+		$this->pages_model->SetPageCode('home_main');
+		
+		$data = array();
+		
+		$data['welcome_title'] = $this->pages_model->GetPropertyText('welcome_title');
+		$data['welcome_text']  = $this->pages_model->GetPropertyWikitext('welcome_text');
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Home');
 		$this->frame_public->SetContentSimple('general/home', $data);
 		
 		// Load the public frame view (which will load the content view)
