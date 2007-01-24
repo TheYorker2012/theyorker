@@ -194,15 +194,17 @@ function preloader()
 </div>
 <br style="clear: both;" />
 
-<div style="width: 100%; text-align: center;" id="feedbackshowdiv">
+<div align='center'>
+<div style="width: 780px; text-align: center;" id="feedbackshowdiv">
 	<a href="#" onclick="document.getElementById('feedbackdiv').style.display = 'block'; document.getElementById('feedbackshowdiv').style.display = 'none'; return false;"><span style="color:#ff6a00; font-weight: bold;">Please give Feedback about this page</span></a>
 </div>
 
-<br /><br />
+<br />
+<br />
 
-<div style="text-align: center; width: 100%;">
-<small>Page rendered in {elapsed_time} seconds</small>
+<div style="text-align: center; width: 780px;">
+	<small>Copyright © 2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#useragreement'>User Agreement</a> and <a href='/policy/#privacypolicy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
 </div>
-
+</div>
 </body>
 </html>
