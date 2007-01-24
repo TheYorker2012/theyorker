@@ -8,10 +8,31 @@
 		</ul>
 	</div>
 	<div class="ReviewInfoLeft">
-		<h1 class="reviewHeader">The Blue Bicycle</h1><br />
-		also does <a href="#">&gt;Food</a>&nbsp;&nbsp;<a href="#">&gt;Drink</a><br />
+		<h1 class="reviewHeader"><?php echo $article_title; ?></h1><br />
+		also does
+<?php 
+	//Display the correct also menu depending on the value of $also_does_state
+	if ($also_does_state >= 4)
+		{
+		echo '<a href="#">&gt;Food</a>&nbsp;'; //Food - 4
+		$also_does_state -= 4;
+		}
+
+	if ($also_does_state >= 2)	
+		{
+		echo '&nbsp;<a href="#">&gt;Drink</a><br />'; //Drink - 2
+		$also_does_state -= 2;
+		}
+
+	if ($also_does_state == 1)
+		{
+		echo '&nbsp;<a href="#">&gt;Culture</a><br />'; //Culture - 1
+		}
+
+?>
+
 		<img src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" /><br />
-		<span class="ReviewSubLine"><img src="/images/prototype/news/quote_open.png" alt="''">An unholy resturant which defies the laws the gravity and other such stuffs<img src="/images/prototype/news/quote_close.png" alt="''"></span><br />
+		<span class="ReviewSubLine"><img src="/images/prototype/news/quote_open.png" alt="''"><?php echo $article_blurb; ?><img src="/images/prototype/news/quote_close.png" alt="''"></span><br />
 		<table class="ReviewDetails">
 			<tr>
 				<td colspan="2"><hr /></td>
@@ -19,19 +40,19 @@
 			<tr>
 				<td class="ReviewDetailsTitle">Address</td>
 				<td>
-					21 Blue Road,<br />
-					Fulford<br />
-					York<br />
-					YO10 5PP
+					<?php echo $address_line_1; ?><br />
+					<?php echo $address_line_2; ?><br />
+					<?php echo $address_line_3; ?><br />
+					<?php echo $address_postcode; ?>
 				</td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Website</td>
-				<td><a href=#>www.thebluebicycle.co.uk</a></td>
+				<td><a href=<?php echo $website; ?>><?php echo $website; ?></a></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Email</td>
-				<td><a href=#>bob@thebluebicycle.co.uk</a></td>
+				<td><a href=><?php echo $email; ?></a></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Book Online</td>
@@ -39,26 +60,26 @@
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Telephone</td>
-				<td>0194 729572</td>
+				<td><?php echo $telephone; ?></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Opening Times</td>
-				<td>MON-FRI 9:00 - Late</td>
+				<td><?php echo $opening_times; ?></td>
 			</tr>
 			<tr>
 				<td colspan="2"><hr /></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Yorker Recommends</td>
-				<td>Duck on Your Face</td>
+				<td><?php echo $yorker_recommendation; ?></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Average Drink Price</td>
-				<td>£2.50</td>
+				<td><?php echo $average_price; ?></td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Expense Rating</td>
-				<td>Dirt Cheap</td>
+				<td><?php echo $price_rating; ?></td>
 			</tr>
 			<tr>
 				<td colspan="2"><hr /></td>
@@ -86,21 +107,15 @@
 		<div class="AverageRating">
 			Average Rating: <span class="AverageRatingSpan">5.7</span>/10<br /><span class="SmallSpanText">(based on 16 votes)</span>
 		</div>
-		<div class="WhyNotTry">
-			<b>Serious Girl-san</b> | 16:09 12/12/07<br />
-			Score: 9<br />
-			This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.
-		</div>
-		<div class="WhyNotTry">
-			<b>Becky DoomFace</b> | 14:56 12/12/07<br />
-			Score: 4<br />
-			Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!
-		</div>
-		<div class="WhyNotTry">
-			<b>Teddy BranVan</b> | 14:51 12/12/07<br />
-			Score: 5<br />
-			I thought it sucked<br /><br />
-		</div>
+<?php
+	for ($commentno = 0; $commentno < count($comments['comment_date']); $commentno++)
+		{
+		echo '<div class="WhyNotTry"><b>'.$comments['comment_author'][$commentno].
+			 '</b> | '.$comments['comment_date'][$commentno].'<br /> Score: '
+			.$comments['comment_score'][$commentno].'<br />'.$comments['comment_content'][$commentno].
+			'</div>';
+		}
+?>
 		<div>
 		<div class="MakeComment">
 			<a href=#>Review this Place</a><br />
@@ -114,7 +129,8 @@
 
 	<div class="ReviewInfoLeft">
 		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/reviews_07.jpg" /></div><br />
-		The Blue Bicycle was founded in 1953 by the roman empire. They discovered a large patch of land covered in blue objects, at the time they did not know of what these objects were. It wasn't until the late 90's that the romans realised these framed objects with strange spherical rubbery things were infact bicycles. Blue bicycles. This was a shock to the romans so they built a time machine and erased history using the time machine built by the great roman god Dudeadeus. This is probably why no one knows what I am talking about.<br /><br /> 
+		<?php echo $article_content; ?>
+<br /><br /> 
 		<div class="YourComments">
 			<h2>Author Reviews</h2>
 		</div>
