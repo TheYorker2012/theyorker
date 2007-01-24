@@ -1,7 +1,7 @@
 <?php 
  
 class User_auth {
-	public $isLoggedIn
+	public $isLoggedIn;
 	public $username;
 	public $entityId;
 	private $salt;
@@ -17,20 +17,21 @@ class User_auth {
 
 	public function __construct() {
 		session_start();
-		$this->isLoggedIn = isset[$_SESSION['username'];
+		$this->isLoggedIn = isset($_SESSION['username']);
 
 		if ($this->isLoggedIn) {
 			$this->username = $_SESSION['username'];
-			$this->entityId = $_SESSION['entityId']
+			$this->entityId = $_SESSION['entityId'];
 		} elseif (isset($_COOKIE['SavedLogin'])) {
-			try {
+			//try {
 				$details = explode(':$:', $_COOKIE['SavedLogin']);
 				if (count($details) == 2) {
 					loginByHash($details[0], $details[1], true);
 				} elseif (count($details) == 1) {
-					$this->$username = details[0];
+					$this->$username = $details[0];
 				}
-			}
+			//} catch (Exception $e) {
+			//}
 		}
 	}
 
@@ -57,20 +58,21 @@ class User_auth {
 		$_SESSION['entityId'] = $entityId;
 
 		if ($savelogin) {
-			setcookie('SavedLogin', implode(':$:', $username, $hash);
+			setcookie('SavedLogin', implode(':$:', array($username/*, $hash*/)));
 		}
 
 		if ($this->isLoggedIn) {
 			$sql = 'SELECT user_firstname, user_surname, user_permission FROM users WHERE user_entity_id = ?';
-			$query = $this->object->db->query($sql, array($this->entityId));
+			$CI = &get_instance();
+			$query = $CI->db->query($sql, array($this->entityId));
 
 			if ($query->num_rows() > 0) {
-				$this->isUser = true
+				$this->isUser = true;
 				$row = $query->row();
 				
 				$this->firstname = $row->user_firstname;
 				$this->surname = $row->user_surname;
-				$this->permissions = $row->permissions;
+				$this->permissions = $row->user_permission;
 			} else {
 				$this->isUser = false;
 				$sql = 'SELECT organisation_name FROM organisations WHERE organisation_entity_id = ?';
@@ -82,15 +84,16 @@ class User_auth {
 	}
 
 	public function login($username, $password, $savelogin) {
+		$CI = &get_instance();
 		$sql = 'SELECT entity_id, entity_username, entity_password, entity_salt FROM entities WHERE entity_username = ? AND entity_deleted = FALSE';
-		$query = $this->object->db->query($sql, array($username));
+		$query = $CI->db->query($sql, array($username));
 		
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
 			$this->salt = $row->entity_salt;
 			$hash = sha1($row->entity_salt.$password);
 			if ($hash == $row->entity_password) {
-				loginAuthed($username, $row->entity_id, $savelogin);
+				$this->loginAuthed($username, $row->entity_id, $savelogin);
 			} else {
 				throw new Exception('Invalid password');
 			}
