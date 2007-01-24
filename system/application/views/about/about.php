@@ -1,6 +1,7 @@
 <?php
 foreach ($aboutdata as $about) {
 ?>
+<a name='<?php echo $about['shorttitle']; ?>'></a>
 <h2><?php echo $about['title']; ?></h2>
 <div class='columnPhoto'>
 	<a href='<?php echo $about['image']; ?>'><img src='<?php echo $about['image']; ?>' alt='<?php echo $about['image_description']; ?>'/></a>
