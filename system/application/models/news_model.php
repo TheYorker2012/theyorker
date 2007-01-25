@@ -170,7 +170,7 @@ class News_model extends Model
 	
 	/**
 	 * Get array containing all data needed to display a full news article.
-	 * -Currently does not return related articles-
+	 * -Currently does not return related articles and only returns photo_id-
 	 * @param $id is the article_id of the article data to return
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'text','blurb','authors','fact_boxes','pull_quotes','photos'
@@ -217,27 +217,35 @@ class News_model extends Model
 
 		$sql = 'SELECT fact_boxes.fact_box_wikitext
 				FROM fact_boxes
-				WHERE (fact_boxes.fact_box_article_content_id = '.$content_id.')
+				WHERE (fact_boxes.fact_box_article_content_id = '.$content_id.'
+				AND fact_boxes.fact_box_deleted != 1)
 				LIMIT 0,10';
 		$query = $this->db->query($sql);		
 
 		$fact_boxes = array();
 		foreach ($query->result() as $row)
 		{
-			$fact_boxes[] = $row->fact_box_id;
+			$fact_boxes[] = $row->fact_box_wikitext;
 		}
 		$result['fact_boxes'] = $fact_boxes;
 		
-		$sql = 'SELECT pull_quotes.pull_quote_id
+		$sql = 'SELECT pull_quotes.pull_quote_text, pull_quotes.pull_quote_person,
+				pull_quotes.pull_quote_position, pull_quotes.pull_quote_order
 				FROM pull_quotes
-				WHERE (pull_quotes.pull_quote_article_content_id = '.$content_id.')
+				WHERE (pull_quotes.pull_quote_article_content_id = '.$content_id.'
+				AND pull_quotes.pull_quote_deleted != 1)
 				LIMIT 0,10';
 		$query = $this->db->query($sql);		
 
 		$pull_quotes = array();
+		$quote = array();
 		foreach ($query->result() as $row)
 		{
-			$pull_quotes[] = $row->pull_quote_id;
+			$quote['text'] = $row->pull_quote_text;
+			$quote['person'] = $row->pull_quote_person;
+			$quote['position'] = $row->pull_quote_position;
+			$quote['order'] = $row->pull_quote_order;
+			$pull_quotes[] = $quote;
 		}
 		$result['pull_quotes'] = $pull_quotes;
 		
