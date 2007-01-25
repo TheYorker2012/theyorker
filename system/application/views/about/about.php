@@ -5,7 +5,7 @@ foreach ($aboutdata as $about) {
 <h2><?php echo $about['title']; ?></h2>
 <div class='columnPhoto'>
 	<a href='<?php echo $about['image']; ?>'><img src='<?php echo $about['image']; ?>' alt='<?php echo $about['image_description']; ?>'/></a>
-	<a href='<?php echo $about['image']; ?>'><h5><?php echo $about['image_description']; ?></h5></a>
+	<a href='<?php echo $about['image']; ?>'><small><?php echo $about['image_description']; ?></small></a>
 </div>
 <div class='columnText'>
 	<p><?php echo $about['blurb']; ?></p>

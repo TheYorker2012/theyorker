@@ -47,6 +47,7 @@ function preloader()
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
 		<a class="HeaderLinks" href="/login/">log in</a> |
+		<a class="HeaderLinks" href="/register/">register</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |
 		<a class="HeaderLinks" href="/contact/">contact us</a> |
 		<a class="HeaderLinks" href="/faq/">FAQs</a>

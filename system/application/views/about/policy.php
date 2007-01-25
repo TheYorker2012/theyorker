@@ -5,7 +5,7 @@ foreach ($policydata as $policy) {
 <h2><?php echo $policy['title']; ?></h2>
 <div class='columnPhoto'>
 	<a href='<?php echo $policy['image']; ?>'><img src='<?php echo $policy['image']; ?>' alt='<?php echo $policy['image_description']; ?>'/></a>
-	<a href='<?php echo $policy['image']; ?>'><h5><?php echo $policy['image_description']; ?></h5></a>
+	<a href='<?php echo $policy['image']; ?>'><small><?php echo $policy['image_description']; ?></small></a>
 </div>
 <div class='columnText'>
 	<p><?php echo $policy['blurb']; ?></p>

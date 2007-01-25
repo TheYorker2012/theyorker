@@ -23,7 +23,7 @@ class About extends Controller
 				),
 				array(
 					'title'   => 'Our Aims',
-					'title'   => 'ouraims',
+					'shorttitle'   => 'ouraims',
 					'blurb'        => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Phasellus enim leo, varius eu, sodales non, egestas nec, urna. Etiam lacus orci, molestie ac, malesuada at, ullamcorper eu, tortor. Phasellus fermentum, mauris a ullamcorper porta, dui erat tincidunt arcu, ac lacinia mauris lorem ac est. Sed nunc justo, feugiat sed, ultricies nec, vehicula eget, massa. Nam eget massa ut elit pretium tincidunt. Fusce sollicitudin vulputate tellus. Aliquam erat volutpat. Pellentesque turpis risus, bibendum vel, lobortis eget, facilisis non, risus.',
 					'image' => '/images/prototype/reviews/reviews_07.jpg',
 					'image_description'        => 'Image Description',
