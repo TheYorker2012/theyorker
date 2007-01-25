@@ -12,17 +12,17 @@ class Reviews extends Controller {
 		
 		//Load Helper Functions so we can return dynamic url's
 		//And possible forms later on for the admin pages
-		$this->load->helper('url');
 		$this->load->helper('form');
+		$this->load->helper('url');
 		
 		// Load the public frame
 		$this->load->library('frame_public');
+
+		//Load reviews model
+		$this->load->model('Review_model');
 	}
 
-	//Normal Call to Page
-	//No idea what is happening with this any more, no one has told me...
-	//I was working on this page linked to the model
-	//however I think I'll wait and find out before continuing
+	//Normal Call to Page - Doesn't do anything anymore....
 
 	function index()
 	{	
@@ -135,33 +135,35 @@ class Reviews extends Controller {
 		$data['yorker_recommendation']= 'Duck on Your Face';
 		$data['price_rating']= 'Dirt Cheap';
 
-		//User Comments
-		
-		$data['comments'] = Reviews::comments(1); //Calls function comments with Page No
-		
 		// Set up the public frame
 
 		switch($type)
 		{
 		case 0:
+			$data['page_id'] = 101;
+			$data['comments'] = $this->Review_model->GetComments(101); //User comments
 			$this->frame_public->SetTitle('Food Review');
 			$this->frame_public->SetContentSimple('reviews/foodreview',$data);
 		break;
 
 		case 1:
+			$data['page_id'] = 102;
+			$data['comments'] = $this->Review_model->GetComments(102); //User comments
 			$this->frame_public->SetTitle('Drink Review');
 			$this->frame_public->SetContentSimple('reviews/foodreview',$data);
 		break;
 
 		case 2:
+			$data['page_id'] = 103;
+			$data['comments'] = $this->Review_model->GetComments(103); //User comments
 			$this->frame_public->SetTitle('Culture Review');
 			$this->frame_public->SetContentSimple('reviews/foodreview',$data);
 		break;
 		
 		}
 
-			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
 
 	}
 	
@@ -179,6 +181,19 @@ class Reviews extends Controller {
 	function culturereview()
 	{
 		Reviews::mainreview(2); //Same again
+	}
+
+	function addcomment() //Layer violation but who cares?, frb501
+	{
+	$comment['comment_page_id'] = $_POST['comment_page_id'];
+	$comment['comment_subject_id'] = $_POST['comment_subject_id'];
+	$comment['comment_user_entity_id'] = $_POST['comment_user_entity_id'];
+	$comment['comment_author_name'] = $_POST['comment_author_name'];
+	$comment['comment_author_email'] = $_POST['comment_author_email'];
+	$comment['comment_text'] = $_POST['comment_text'];
+	$this->db->insert('comments',$comment); //Add users comment to database
+
+	redirect($_POST['return_page']); //Send user back to previous page
 	}
 
 	//Bar Crawl Page
@@ -204,7 +219,7 @@ class Reviews extends Controller {
 			'/images/prototype/news/thumb3.jpg',
 			'/images/prototype/news/thumb3.jpg',
 			'/images/prototype/news/thumb3.jpg',
-			'/images/prototype/news/thumb3jpg',
+			'/images/prototype/news/thumb3.jpg',
 			'/images/prototype/news/thumb3.jpg',
 			'/images/prototype/news/thumb3.jpg',
 			'/images/prototype/news/thumb3.jpg');
@@ -259,27 +274,6 @@ class Reviews extends Controller {
 		$this->frame_public->SetTitle('tables');
 		$this->frame_public->SetContentSimple('reviews/table',$data);
 		$this->frame_public->Load();
-	}
-
-	function comments($pageno)
-	{
-		$comments['comment_author'][0] = 'Serious Girl San';
-		$comments['comment_score'][0] = '9';
-		$comments['comment_date'][0] = '16:09 12/12/07';
-		$comments['comment_content'][0] = 'This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.';
-
-		$comments['comment_author'][1] = 'Becky DoomFace';
-		$comments['comment_score'][1] = '4';
-		$comments['comment_date'][1] = '14:56 12/12/07';
-		$comments['comment_content'][1] = 'Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!';
-
-		$comments['comment_author'][2] = 'Teddy BranVan';
-		$comments['comment_score'][2] = '5';
-		$comments['comment_date'][2] = '14:51 12/12/07';
-		$comments['comment_content'][2] = 'I thought it sucked';
-
-		return $comments;
-
 	}
 
 	function leagues()
