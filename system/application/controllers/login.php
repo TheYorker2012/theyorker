@@ -9,38 +9,12 @@ class Login extends Controller
 		
 		// Load the public frame
 		$this->load->library('frame_public');
-		
 		$this->load->library('User_auth');
 	}
 
 	function index()
 	{
-		$data = array(
-			'previous_username' => '',
-		);
-		
-		// Use post data to log in
-		$username = $this->input->post('username');
-		$password = $this->input->post('password');
-		$keeplogin = $this->input->post('keep_login');
-		
-		if (FALSE !== $username &&
-			FALSE !== $password &&
-			is_bool($keeplogin))
-		{
-			try {
-				$this->user_auth->login($username,$password,$keeplogin);
-				$this->frame_public->AddMessage(
-					new InformationMsg('You are now successfully logged in.')
-				);
-				//redirect('');
-			} catch (Exception $e) {
-				$data['previous_username'] = $username;
-				$this->frame_public->AddMessage(
-					new ErrorMsg('Login error, '.$e->getMessage())
-				);
-			}
-		}
+		$data = array();
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Log in');
@@ -49,12 +23,14 @@ class Login extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
-	
+
+	function loginsubmit() {
+		$this->user_auth->login($this->input->post('username'), $this->input->post('password'), false);
+	}
+
 	function resetpassword()
 	{
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
+		$data = array();
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Reset My Password');
@@ -63,12 +39,10 @@ class Login extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
-	
+
 	function register()
 	{
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
+		$data = array();
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Register An Account');

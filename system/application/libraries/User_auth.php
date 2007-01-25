@@ -23,15 +23,15 @@ class User_auth {
 			$this->username = $_SESSION['username'];
 			$this->entityId = $_SESSION['entityId'];
 		} elseif (isset($_COOKIE['SavedLogin'])) {
-			//try {
+			try {
 				$details = explode(':$:', $_COOKIE['SavedLogin']);
 				if (count($details) == 2) {
 					loginByHash($details[0], $details[1], true);
 				} elseif (count($details) == 1) {
 					$this->$username = $details[0];
 				}
-			//} catch (Exception $e) {
-			//}
+			} catch (Exception $e) {
+			}
 		}
 	}
 
@@ -43,13 +43,13 @@ class User_auth {
 			$row = $query->row();
 			
 			$this->salt = $row->entity_salt;
-			loginAuthed($username, $row->entity_id, $savelogin);
+			loginAuthed($username, $row->entity_id, $savelogin, $hash);
 		} else {
 			throw new Exception('Invalid username or password');
 		}
 	}
 
-	private function loginAuthed($username, $entityId, $savelogin) {
+	private function loginAuthed($username, $entityId, $savelogin, $hash) {
 		$this->isLoggedIn = true;
 		$this->username = $username;
 		$this->entityId = $entityId;
@@ -58,7 +58,7 @@ class User_auth {
 		$_SESSION['entityId'] = $entityId;
 
 		if ($savelogin) {
-			setcookie('SavedLogin', implode(':$:', array($username/*, $hash*/)));
+			setcookie('SavedLogin', implode(':$:', array($username, $hash)));
 		}
 
 		if ($this->isLoggedIn) {
@@ -93,7 +93,7 @@ class User_auth {
 			$this->salt = $row->entity_salt;
 			$hash = sha1($row->entity_salt.$password);
 			if ($hash == $row->entity_password) {
-				$this->loginAuthed($username, $row->entity_id, $savelogin);
+				$this->loginAuthed($username, $row->entity_id, $savelogin, $hash);
 			} else {
 				throw new Exception('Invalid password');
 			}
