@@ -190,7 +190,7 @@ class News_model extends Model
 		$result['date'] = $row->article_timestamp;
 		$content_id = $row->article_content_id;
 		$sql = "SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
-				article_contents.article_content_subtext, article_contents.article_content_text,
+				article_contents.article_content_subtext, article_contents.article_content_wikitext,
 				article_contents.article_content_blurb
 				FROM article_contents
 				WHERE (article_contents.article_content_id = ".$content_id.")
@@ -200,7 +200,7 @@ class News_model extends Model
 		$result['heading'] = $row->article_content_heading;
 		$result['subheading'] = $row->article_content_subheading;
 		$result['subtext'] = $row->article_content_subtext;
-		$result['text'] = $row->article_content_text;
+		$result['text'] = $row->article_content_wikitext;
 		$result['blurb'] = $row->article_content_blurb;
 
 		$sql = "SELECT article_writers.article_writer_user_entity_id

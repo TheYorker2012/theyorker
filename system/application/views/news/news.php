@@ -5,7 +5,7 @@
 			<img src='<?php echo $main_article['image']; ?>' alt='<?php echo $main_article['image_description']; ?>' title='<?php echo $main_article['image_description']; ?>' />
 			-->
 			</a>
-			<h1><?php echo $main_article['headline']; ?></h1>
+			<h1><?php echo $main_article['heading']; ?></h1>
 			<div class='byline'>
 				<img src='/images/prototype/news/benest.png' alt='' title='' />
 				<div class='text'>
@@ -16,7 +16,7 @@
 				<div class='role'><span style='float: right;'>News Reporter</span>test@theyorker.co.uk</div>
 			</div>
 
-	        <p><?php echo $main_article['body']; ?></p>
+	        <p><?php echo $main_article['text']; ?></p>
 			<br style='clear: both;' />
 		</div>
 	</div>
@@ -26,14 +26,15 @@
 				More Headlines
 			</div>
 		</div>
-		<?php for ($preview_number = 1; $preview_number <= 2; $preview_number++) { ?>
+		<?php foreach ($news_previews as $preview)
+		{ ?>
 		<div class='NewsPreview' style='border-left: 1px #93969A solid; padding-left: 10px;'>
-			<a href='/news/article/<?php echo $news_previews[$preview_number]['id']; ?>'><img src='<?php echo $news_previews[$preview_number]['image']; ?>' alt='<?php echo $news_previews[$preview_number]['image_description']; ?>' title='<?php echo $news_previews[$preview_number]['image_description']; ?>' /></a>
-			<h3><?php echo anchor('news/article/'.$news_previews[$preview_number]['id'], $news_previews[$preview_number]['headline']); ?></h3>
-			<p class='Writer'><a href='/directory/view/1'><?php echo $news_previews[$preview_number]['writer']; ?></a></p>
-			<p class='Date'><?php echo $news_previews[$preview_number]['date']; ?></p>
-			<p class='More'><?php echo anchor('news/article/'.$news_previews[$preview_number]['id'], 'Read more...'); ?></p>
-		    <p><?php echo $news_previews[$preview_number]['subtext']; ?></p>
+			<a href='/news/article/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
+			<h3><?php echo anchor('news/article/'.$preview['id'], $preview['heading']); ?></h3>
+			<p class='Writer'><a href='/directory/view/1'><?php echo $preview['writer']; ?></a></p>
+			<p class='Date'><?php echo $preview['date']; ?></p>
+			<p class='More'><?php echo anchor('news/article/'.$preview['id'], 'Read more...'); ?></p>
+		    <p><?php echo $preview['blurb']; ?></p>
 			<br style='clear: both;' />
 		</div>
 		<?php } ?>
@@ -42,17 +43,22 @@
 				Other News
 			</div>
 		</div>
-	   	<?php for ($i = 0; $i < 6; $i++) { ?>
+	   	<?php foreach ($news_others as $other)
+	   	{ ?>
 		<div class='NewsOther' style='border-left: 1px #93969A solid; padding-left: 10px;'>
-			<a href='/news/article/<?php echo $news_others[$i]['id']; ?>'><img src='<?php echo $news_others[$i]['image']; ?>' alt='<?php echo $news_others[$i]['image_description']; ?>' title='<?php echo $news_others[$i]['image_description']; ?>' /></a>
-		    <p class='Headline'><a href='/news/article/<?php echo $news_others[$i]['id']; ?>'><?php echo $news_others[$i]['headline']; ?></a></p>
-			<p class='Writer'><a href='/directory/view/1'><?php echo $news_others[$i]['writer']; ?></a></p>
-			<p class='Date'><?php echo $news_others[$i]['date']; ?></p>
+			<a href='/news/article/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
+		    <p class='Headline'><a href='/news/article/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
+			<p class='Writer'><a href='/directory/view/1'><?php echo $other['writer']; ?></a></p>
+			<p class='Date'><?php echo $other['date']; ?></p>
 		</div>
    		<?php } ?>
 		<div style='clear: both; border: 1px #93969A solid; border-left: 0; padding-left: 10px;'>
-			<h3 style='color: #ff6a00; text-align: left;'><?php echo $main_article['factbox_title']; ?></h3>
-			<?php echo $main_article['factbox_contents']; ?>
+			<?php
+			foreach ($main_article['fact_boxes'] as $fact_box)
+			{
+    			echo '<h3 style=\'color: #ff6a00; text-align: left;\'>Fact Box</h3>'.$fact_box['factbox_text'];
+			}
+			?>
 		</div>
 	</div>
 	<div id='clear' style='clear: both;'>&nbsp;</div>

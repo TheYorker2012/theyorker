@@ -15,20 +15,61 @@ class News extends Controller {
 		
 		// Load the public frame
 		$this->load->library('frame_public');
+		$this->load->model('News_model');
 	}
 	
     /// The Campus News section (default).
 	function index()
 	{
-    	/// The data passed to the view will come from the database once it is available.
+    	/// Get the latest article ids from the model.
+    	$latest_article_ids = $this->News_model->GetLatestId(1,9);
+    	
+    	/// Get all of the latest article
+    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+    	
+    	/// Get some of the 2nd- and 3rd-latest articles
+    	$news_previews = array();
+    	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++)
+    	{
+        	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
+    	}
+    	
+    	/// Get less of the next 6 newest articles
+    	$news_others = array();
+    	for ($index = 3; $index < count($latest_article_ids); $index++)
+    	{
+        	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
+    	}
+    	
+    	/// Gather all the data into an array to be passed to the view
 		$data = array(
-       	    'main_article' => self::$article_data,
-			'news_previews' => array_slice(self::$news_data, 0, 3),
-			'news_others' => array_slice(self::$news_data, 3)
+       	    'main_article' => $main_article,
+			'news_previews' => $news_previews,
+			'news_others' => $news_others
 		);
 
+		/// Wikiparse the article's body text
 		$this->load->library('wikiparser');
-		$data['main_article']['body'] = $this->wikiparser->parse($data['main_article']['body']);
+		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
+		
+		/// Temporarily fill in a few gaps in the model data
+		$data['main_article']['image'] = '/images/prototype/news/thumb1.jpg';
+		$data['main_article']['image_description'] = 'temp image';
+		$data['main_article']['writer'] = 'Temp Name';
+		
+		for ($i = 0; $i < count($data['news_previews']); $i++)
+		{
+    		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
+    		$data['news_previews'][$i]['image_description'] = 'temp image';
+    		$data['news_previews'][$i]['writer'] = 'Temp Name';
+		}
+		
+		for ($i = 0; $i < count($data['news_others']); $i++)
+		{
+    		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
+    		$data['news_others'][$i]['image_description'] = 'temp image';
+    		$data['news_others'][$i]['writer'] = 'Temp Name';
+		}
 
 		// Set up the public frame
 		$this->frame_public->SetTitle('Campus News');
