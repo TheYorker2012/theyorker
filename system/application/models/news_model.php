@@ -7,6 +7,8 @@
  */
  
 //TODO - prevent erros if no data present
+//		 convert to use bind
+//		 article_beaking?
  
 class News_model extends Model
 {
@@ -53,7 +55,7 @@ class News_model extends Model
 	function GetSimpleArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_timestamp
+		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id = 
@@ -64,7 +66,7 @@ class News_model extends Model
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
-		    $result['date'] = $row->article_timestamp;
+		    $result['date'] = $row->article_publish_date;
 		    $content_id = $row->article_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading
@@ -114,7 +116,7 @@ class News_model extends Model
 	function GetSummaryArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_timestamp
+		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id = 
@@ -125,7 +127,7 @@ class News_model extends Model
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
-		    $result['date'] = $row->article_timestamp;
+		    $result['date'] = $row->article_publish_date;
 		    $content_id = $row->article_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading,
@@ -178,7 +180,7 @@ class News_model extends Model
 	function GetFullArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_timestamp
+		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id = 
@@ -187,7 +189,7 @@ class News_model extends Model
 				LIMIT 0,1';
 		$query = $this->db->query($sql);		
 		$row = $query->row();
-		$result['date'] = $row->article_timestamp;
+		$result['date'] = $row->article_publish_date;
 		$content_id = $row->article_content_id;
 		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
 				article_contents.article_content_subtext, article_contents.article_content_wikitext,
