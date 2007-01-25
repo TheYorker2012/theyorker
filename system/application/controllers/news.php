@@ -129,26 +129,16 @@ class News extends Controller {
     	/// Load the library for parsing wikitext
     	$this->load->library('wikiparser');
     	
-    	/// The data passed to the view will come from the database once it is available.
-    	switch ($this->uri->segment(3))
-    	{
-        	case '3':
-        	    $data = self::$article3_data;
-        	    break;
-        	default:
-        	    $data = self::$article_data;
-        	    break;
-        }
+    	/// Fetch the requested article from the model
+    	$data = $this->News_model->GetFullArticle($this->uri->segment(3));
     	
     	/// Format the relevant text with wikiparser
-		/*	The following two lines are commented out as when they are parsed they
-			get a <p> prefixed to them which causes them to ignore central alignment
-			and justify instead... do they actually need to be parsed?
-
-				$data['headline'] = $this->wikiparser->parse($data['headline']);
-    			$data['subheading'] = $this->wikiparser->parse($data['subheading']);
-		*/
-    	$data['body'] = $this->wikiparser->parse($data['body']);
+    	$data['text'] = $this->wikiparser->parse($data['text']);
+    	
+    	/// Temporarily fill in a few gaps in the model data
+    	$data['writer_id'] = 1;
+		$data['writer_name'] = 'Temp Name';
+		$data['related_articles'] = array();
     	
 		// Set up the public frame
 		$this->frame_public->SetTitle('Article');
@@ -304,138 +294,6 @@ class News extends Controller {
             'date' => '28th November 2006',
             'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
         ),
-    );
-    
-    /// test data for use until we can use the database (article)
-    private static $article_data = array(
-        'id' => '1',
-        'date' => '23rd January 2007',
-        'headline' => 'REPORT SHOWS THAT STUDENTS ARE 90% HUNGRY',
-        'subheading' => 'He\'s been shagging girls for years',
-        'subtext' => 'Hundreds of people have called the NHS Direct hotline following the death of Russian ex-spy Alexander Litvinenko.',
-        'writer_id' => '2',
-        'writer_name' => 'IAN BENEST',
-        'writer_image' => '/images/prototype/news/benest.png',
-        'pull_quotes' => array(
-            array(
-                'name' => 'Supt Darren Curtis',
-                'text' => 'Clearly there is a possibility that for one reason or another he is on land and has not come to our notice'
-            ),
-            array(
-                'name' => 'John Houston - Buchanan View Resident',
-                'text' => 'We got back in at three o\'clock in the morning with no explanation'
-            )
-        ),
-		'related_articles' => array(
-			array(
-				'id' => '1',
-				'headline' => 'Israel vows ceasefire \'patience\''
-			),
-			array(
-				'id' => '2',
-				'headline' => 'Blair \'sorrow\' over slave trade'
-			),
-			array(
-				'id' => '3',
-				'headline' => 'Ex-spy death inquiry stepped up'
-			),
-			array(
-				'id' => '4',
-				'headline' => 'Mass panic as world ends twice in one day'
-			),
-			array(
-				'id' => '5',
-				'headline' => 'Tony Blair finds 10 items, keeps them all'
-			)
-		),
-        'factbox_title' => 'UK Facts',
-        'factbox_contents' => '<ul class=\'ArticleFacts\'>
-		 <li><b>Full name:</b> United Kingdom of Great Britain and Northern Ireland</li>
-		 <li><b>Population:</b> 60.2 million (National Statistics, 2005)</li>
-		 <li><b>Capital:</b> London</li>
-		 <li><b>Area:</b> 242,514 sq km (93,638 sq miles)</li>
-		 <li><b>Major language:</b> English</li>
-		 <li><b>Major religion:</b> Christianity</li>
-		 <li><b>Life expectancy:</b> 76 years (men), 81 years (women) (UN)</li>
-		 <li><b>Monetary unit:</b> 1 pound sterling = 100 pence</li>
-		 <li><b>Main exports:</b> Manufactured goods, chemicals, foodstuffs</li>
-		 <li><b>GNI per capita:</b> US $37,600 (World Bank, 2006)</li>
-		 <li><b>Internet domain:</b> .uk</li>
-		 <li><b>International dialling code:</b> +44</li>
- 		 </ul>',
-        'body' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
-elementum arcu non risus. The Yorker Vestibulum arcu enim, placerat nec,
-malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
-Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae
-magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque
-non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla.
-
-===Heading===
-Nulla a nibh et tortor dapibus auctor. Morbi semper libero. Pellentesque volutpat, velit consequat hendrerit blandit, tellus orci imperdiet nisl, sit amet sodales risus augue aliquet turpis. Aliquam a sapien. In hac habitasse platea dictumst. Nulla elit. Nulla facilisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc ac odio ac nisi malesuada varius. Morbi convallis vestibulum nisl. Morbi in risus et augue varius dapibus. Nulla pulvinar libero et dui. Aenean semper. Ut fermentum, ligula nec iaculis bibendum, sem mi rutrum lorem, nec vestibulum urna velit vel ante. Cras tempus enim sed dolor. Maecenas elementum. Morbi faucibus malesuada risus. Donec condimentum facilisis nibh.
-
-[[Image:news/CompSci.jpg]]
-
-===Some Other Heading===
-Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin
-ante nibh, convallis non, rutrum vel, pretium vel, lectus. Aliquam
-congue malesuada augue. Duis tellus. Integer arcu odio, scelerisque
-a, mattis a, interdum porta, ante. The Yorker Nulla diam. Fusce nisl sapien,
-mattis quis, sagittis in, auctor id, sem. Etiam congue dolor vitae
-neque. Praesent libero metus, aliquet vel, lobortis eget, porta et,
-justo.
-
-*Donec elementum lectus venenatis odio.
-*Cras eget ante et urna vehicula pulvinar.
-*Nam dapibus justo et nunc.
-*Aenean et arcu nec tortor aliquam consectetuer.
-
-Aenean volutpat convallis leo. Nunc varius laoreet justo. Duis vel dolor quis tortor porttitor volutpat. Proin id orci sed augue dignissim tempor. Donec diam lacus, mattis a, aliquet at, sodales vel, libero. Proin aliquam nulla id enim. In elit dui, egestas et, elementum ut, consectetuer nec, dui. Suspendisse id velit. Quisque varius lectus. Proin eget nibh. Duis consequat, augue id porttitor feugiat, erat mi aliquet nunc, dapibus dictum lectus elit at odio. Praesent nec est a quam sollicitudin consectetuer. Pellentesque porttitor turpis commodo ipsum. In ac sem. Nulla facilisi. Pellentesque tempus diam ac elit. Sed laoreet molestie nibh. Donec in sem eget ante porta aliquet.
-
-===Another Heading===
-Nulla a nibh et tortor dapibus auctor. Morbi semper libero. Pellentesque volutpat, velit consequat hendrerit blandit, tellus orci imperdiet nisl, sit amet sodales risus augue aliquet turpis. Aliquam a sapien. In hac habitasse platea dictumst. Nulla elit. Nulla facilisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc ac odio ac nisi malesuada varius. Morbi convallis vestibulum nisl. Morbi in risus et augue varius dapibus. Nulla pulvinar libero et dui. Aenean semper. Ut fermentum, ligula nec iaculis bibendum, sem mi rutrum lorem, nec vestibulum urna velit vel ante. Cras tempus enim sed dolor. Maecenas elementum. Morbi faucibus malesuada risus. Donec condimentum facilisis nibh.
-'
-    );
-    
-    /// article-specific test data (article 3)
-    private static $article3_data = array(
-        'id' => '3',
-        'timestamp' => '1165538070',
-        'headline' => 'MASS PANIC AS WORLD ENDS TWICE IN ONE DAY',
-        'subheading' => 'The contents of this article are different to others.',
-        'subtext' => 'Politicians attempt to restore peace in the aftermath of the latest string of total destructions of the human race.',
-        'writer_id' => '2',
-        'writer_name' => 'IAN BENEST',
-        'writer_image' => '/images/prototype/news/benest.png',
-        'pull_quotes' => array(
-            array(
-                'name' => 'Some Guy',
-                'text' => 'Hey, man. What\'s up?'
-            ),
-            array(
-                'name' => 'Some Other Guy',
-                'text' => 'Not much, really. You know how it is.'
-            ),
-            array(
-                'name' => 'First Guy',
-                'text' => 'Yeah.'
-            )
-        ),
-        'factbox_title' => 'World Facts',
-        'factbox_contents' => '<ul class=\'ArticleFacts\'>
-		 <li><b>Full name:</b> Earth</li>
-		 <li><b>Population:</b> 0</li>
-		 <li><b>Capital:</b> E</li>
-		 <li><b>Area:</b> Unknown (too many little bits)</li>
-		 <li><b>Major language:</b> None</li>
-		 <li><b>Major religion:</b> None</li>
-		 <li><b>Life expectancy:</b> Not really</li>
-		 <li><b>Monetary unit:</b> None</li>
-		 <li><b>Main exports:</b> Chunks of rock</li>
- 		 </ul>',
-        'body' => 'The entire human race was destroyed a total of two times yesterday. There were no survivors.
-
-===Calm in a crisis===
-The team of writers here at The Yorker are dedicated to bringing you the latest headlines, even in spite of the fact that they are dead.'
     );
 }
 ?>

@@ -21,11 +21,15 @@
 				<?php } ?>
 			</ul>
 		</div>
-		<h3><?php echo $factbox_title; ?></h3>
-		<?php echo $factbox_contents; ?>
+		<?php
+		foreach ($fact_boxes as $fact_box)
+		{
+		    echo '<h3>Fact Box</h3>'.$fact_box['fact_box_text'];
+	    }
+	    ?>
 	</div>
 	<div class='ArticleColumn'>
-		<h1><?php echo $headline; ?></h1>
+		<h1><?php echo $heading; ?></h1>
 		<h2><?php echo $subheading; ?></h2>
 		<div class='clear'>&nbsp;</div>
 		<div style='background-color: #DDDDDD;'>
@@ -50,7 +54,7 @@
 			</div>
 		</div>
 
-		<?php echo $body; ?>
+		<?php echo $text; ?>
 		<div class='clear'>&nbsp;</div>
 		<div style='width:130px; float: left; text-align:center;'>
 			<a href='/news/rss'><img src='/images/prototype/news/icon_rss.jpg' alt='Subscribe to RSS Feed' title='Subscribe to RSS Feed' /></a>
