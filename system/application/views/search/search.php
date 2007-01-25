@@ -10,7 +10,7 @@
 		    <ol>
 				<?php foreach ($search_results as $result):?>
 		        <li>
-		            <a href="<?=$result['link']?>"><?=$result->['title']?></a>
+		            <a href="<?=$result['link']?>"><?=$result['title']?></a>
 					<?=$result['blurb']?>
 		        </li>
 				<?php endforeach;?>
