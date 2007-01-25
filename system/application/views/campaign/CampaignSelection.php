@@ -1,56 +1,71 @@
-	<a href="<?php echo site_url('campaign/test'); ?>">Campaign page 2 (once campaign has been selected)</a><Br>
-	<br>
-	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
-	<div class="title">CAMPAIGN</div>
-	<div class="Blurb"><img src="/images/prototype/campaign/field.jpg"><br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.</div>
-	<div class="subtitle">CHOOSE YOUR CAMPAIGN</div>
-	<div class="subsubtitle">CLICK ON THE CAMPAIGN TO FIND OUT MORE</div><Br>
-	<div class="Container">
-	<div class="HalfBox">
-		<b>
+<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	About Campaigns
+	</div>
+	<p>
+		<div style="float: right; ">
+		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+		</div>
+		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">What are these about?</p>
+		<p style="margin-top: 0px; font-size: x-small; ">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+	</p>
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	What now?
+	</div>
+	<p>
+		<div style="float: right; ">
+		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
+		</div>
+		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">What do I do now?</p>
+		<p style="margin-top: 0px; font-size: x-small; ">Well my friend, you wait and wait then see the results. This page will change to something else because you smell.</p>
+	</p>
+</div>
+
+<div style="width: 400px; margin: 0px; padding-right: 3px; ">
+	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
+	<span style="font-size: x-large;  color: #2DC6D7; ">current campaigns</span><br />
+		This is a list of our current campaigns. Click through the links to check more information on a particular campaign. A bigger blurb could be written here maybe with some snazzy image of a form of students voting and having a really fun time doing it. Like everyone does<br /><br />
+		<table width="100%">
 			<?php
+			$total_votes = 0;
                         foreach ($data['vars']['Campaign_List'] as $campaigns)
-                        {
-				echo '<a href="'.site_url('campaign/details/').'/'.$campaigns['id'].'">'.$campaigns['name'].'</a><br/>';
+			{
+				$total_votes += $campaigns['votes'];
+			}
+                        foreach ($data['vars']['Campaign_List'] as $campaigns)
+			{
+				$percentage = $campaigns['votes']/$total_votes*100;
+				echo '<tr>
+					<td>
+					<b><a href="'.site_url('campaign/details/').'/'.$campaigns['id'].'">'.$campaigns['name'].'</a></b>
+					</td><td style="width:40%; border: thin solid teal;">
+					<div style="float: left; width: '.$percentage.'%; background-color: teal;">&nbsp</div>
+					<div stlye="float: right;">&nbsp;'.round($percentage).'%</div>
+					</td>
+					</tr>';
 			}
 			?>
-		</b>
+		</table>
+		<br />
+		The deadline for the voting is the 23th of May. The winner will be officially announced on the 90th of June.
+	
 	</div>
-	<div class="HalfBox">
-		<div style="text-align:center;font-weight: bold;font-size: 18px;">OR VOTE NOW</div>
-		<div style="padding-left:80px;">
-		<form style="display: inline;">
-		<?php
-                foreach ($data['vars']['Campaign_List'] as $campaigns)
-                {
-			echo '<input type="radio" value="'.$campaigns['id'].'" name="vote">'.$campaigns['name'].'<br/>';
-		}
-		?>
-		<input style="width: 75%;" type="submit" value="Vote">
+
+	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">
+	<span style="font-size: x-large;  color: #BBBBBB; ">vote now</span><br />
+		If you think you have decided on which campaign you wish to support, you can place your vote now. Remember, you will be able to change your vote later (but only before the deadline)
+		<form id='form1' name='form1' action='#' method='POST'>
 		</form>
-	</div></div>
-	<div class="breaker"></div> <!-- Remove This Hack Sometime -->
-	</div>
-	<div class="subtitle">CURRENT RESULTS</div>
-	<div class="subsubtitle">CHOISE DEADLINE FOR STUDENTS IS <?php echo $DeadLine; ?></div><br>
-	<div style="float: left;">
-		<b>
-			<?php
-                        foreach ($data['vars']['Campaign_List'] as $campaigns)
-                        {
-				echo '<a href="'.site_url('campaign/details/').'/'.$campaigns['id'].'">'.$campaigns['name'].'</a><br/>';
-			}
-			?>
-		</b>
-	</div>
-	<div style="float: left; padding-left: 30px;">
+		<form id='form1' name='form1' action='#' method='POST' class='form'>
+		<table width="80%">
 		<?php
                 foreach ($data['vars']['Campaign_List'] as $campaigns)
                 {
-			echo '<div class="votebar" style="width: 50px;"></div>'.$campaigns['votes'].'<br/>';
+			echo '<tr><td style="text-align: right;">'.$campaigns['name'];
+			echo '</td><td><fieldset style="display: inline;"><input type="submit" name="addorgform_addbutton" value="Add" class="button" /></fieldset><br /></td></tr>';
 		}
 		?>
+		</table>
+		</form>
 	</div>
-	<div class="breaker"></div> <!-- Remove This Hack Sometime -->
-	</div>
-	</div>
+</div>
