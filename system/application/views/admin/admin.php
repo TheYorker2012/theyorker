@@ -1,10 +1,10 @@
 <div>
 <h1>Admin Menu</h1>
 <p>
-This is just a placeholder page at the moment, this will be the menu for all logged in admins.
-This will need to show differant content depending on which admin control panels the person has access to.
+This is just a placeholder page at the moment, this will be the menu for all logged in root admins.
+This will be used by everyone for the charley launch, but is only inteneded for root admins in the long run.
 
-For the moment lets just have links to the current admin pages, add yours as you make it:
+For the moment lets just have links to the current admin pages:
 </p>
 
 <a href="/admin/directory">Edit the directory</a><br />

@@ -9,11 +9,11 @@
     ?>
 </div>
 <div  style="padding:0px 150px 0px 0px">
-	<form name='search_directory' action='/directory/' method='POST' class='form'>
+	<form name='search_directory' action='' method='POST' class='form'>
 		<fieldset>
 			<legend>Search</legend>
 			<input id="searchText" name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');">
-			<input type='submit' name='Submit' value='Search'>
+			<input type='submit' class='button' name='Submit' value='Search'>
 		</fieldset>
 	</form>
 	<div align='center'>
@@ -110,7 +110,7 @@
 
 <div id="Letter<?php echo $last_letter.$current_letter_index ?>" class="AZEntry" name="<?php echo $organisation['type']; ?>">
 
-	<?php echo '<a href=\'/directory/' . $organisation['shortname'] . '\' style="display: inline;"><span style="color:#08c0ef; font-weight: bold;">' . $organisation['name']; ?></span></a>
+	<?php echo '<a href=\'/' . $organisation['link'] . '\' style="display: inline;"><span style="color:#08c0ef; font-weight: bold;">' . $organisation['name']; ?></span></a>
 	<span style='font-size: 12px'>(<?php echo $organisation['type']; ?>)</span><br />
 	<span style='font-size: 12px'><?php echo $organisation['description']; ?></span>
 </div>

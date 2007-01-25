@@ -355,6 +355,7 @@ EXTRAHEAD;
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
 				'shortname' => $org['organisation_directory_entry_name'],
+				'link' => 'directory/'.$org['organisation_directory_entry_name'],
 				'description' => $org['organisation_description'],
 				'shortdescription' => word_limiter($org['organisation_description'],30),
 				'type' => $org['organisation_type_name'],
