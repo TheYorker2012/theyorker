@@ -438,7 +438,7 @@ class Wikiparser {
 	function parse_line($line) {
 		$line_regexes = array(
 			'startparagraph'=>'^([^\s\*\#;\:=-].*?)$',
-			'preformat'=>'^\s(.*?)$',
+			//'preformat'=>'^\s(.*?)$',
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
 			'list'=>'^([\*\#]+)(.*?)$',
