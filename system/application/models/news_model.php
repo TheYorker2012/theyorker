@@ -30,7 +30,7 @@ class News_model extends Model
 		$sql = "SELECT articles.article_id FROM articles
 				WHERE (articles.article_content_type_id =".$type."
 				AND	articles.article_publish_date < CURRENT_TIMESTAMP)
-				ORDER BY articles.article_publish_date 
+				ORDER BY articles.article_publish_date DESC 
 				LIMIT 0,".$number;
 		$query = $this->db->query($sql);
 		$result = array();
