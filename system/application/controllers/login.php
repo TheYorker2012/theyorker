@@ -14,7 +14,10 @@ class Login extends Controller
 
 	function index()
 	{
-		$data = array();
+		$data = array(
+			'username' => array('name' => 'username', 'id' => 'username'),
+			'password' => array('name' => 'password', 'id' => 'password')
+		);
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Log in');
