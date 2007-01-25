@@ -28,7 +28,7 @@ class Reviews extends Controller {
 	{	
 		// Set up the public frame
 		$this->frame_public->SetTitle('Reviews');
-		$this->frame_public->SetContentSimple('reviews/index', $data);
+		$this->frame_public->SetContentSimple('reviews/index');
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
