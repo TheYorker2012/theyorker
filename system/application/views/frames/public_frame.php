@@ -86,7 +86,7 @@ function preloader()
 		</div>
 	</div>
 	<br style="clear: both;" />
-	<div style="float: left; width: 140px; margin-right: 5px; background-color: #fff;">
+	<div style="float: left; width: 120px; margin-right: 5px; background-color: #fff;">
 		<div class='navigationmenu_item'>
 			<a href='/'>Home</a>
 		</div>
@@ -151,11 +151,11 @@ function preloader()
 		// Display the main content
 		$content[0]->Load();
 	?>
-	
+
 		<div class='clear'>&nbsp;</div>
 
 		<div id="feedbackdiv" style="width: 100%; display: none;">
-	
+
 		<form name='feedback_form' id='feedback_form' action='<?php echo site_url('feedback/'); ?>' method='post' class='form'>
 			<fieldset>
 				<legend>Feedback</legend>
@@ -187,9 +187,9 @@ function preloader()
 				<br />
 			</fieldset>
 		</form>
-		
+
 		</div>
-	
+
 	</div>
 </div>
 </div>
