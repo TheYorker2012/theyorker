@@ -9,5 +9,10 @@ class Dev extends Controller {
 		echo 'Info dumps follow:\n';
 		echo system('svn info');
 	}
+	
+	function phpinfo()
+	{
+		phpinfo();
+	}
 }
 ?>
