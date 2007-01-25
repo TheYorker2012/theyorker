@@ -15,7 +15,7 @@ class Search extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('Search');
 		
-		$data = array ('searchform' => 'TODO Searchform again');
+		$data = array ('search_form' => 'TODO Searchform again');
 		
 		$this->frame_public->SetContentSimple('search/search', $data);
 		
@@ -56,7 +56,7 @@ class Search extends Controller {
 		                   'title' => 'TODO',
 		                   'blurb' => 'TODO');
 		
-		$data = array('searchform' => 'TODO Searchform again',
+		$data = array('search_form' => 'TODO Searchform again',
 		              'search_numbering' => '101',
 		              'search_all' => '101',
 		              'search_news' => '101',
