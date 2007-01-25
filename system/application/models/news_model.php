@@ -9,6 +9,7 @@
 //TODO - prevent erros if no data present
 //		 convert to use bind
 //		 article_beaking?
+//		 optimisation
  
 class News_model extends Model
 {
