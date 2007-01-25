@@ -1,71 +1,43 @@
 
 <!-- a_search_form defined twice, remember to recreate into class !! :) //-->
-<!-- Why is no one using CSS!!! //-->
+<!-- Why is no one using CSS!!!//-->
 
 <div style="float: right; width: 630px; margin-left: 5px; background-color: rgb(255, 255, 255);">
 	<div style="border-style: solid none solid solid; border-color: rgb(147, 150, 154) -moz-use-text-color rgb(147, 150, 154) rgb(147, 150, 154); border-width: 1px 0pt 1px 1px; padding: 5px; width: 380px; float: left;">
 		<div class="ArticleColumn">
-			<form name='a_search_form' id='a_search_form' action='<?php echo site_url('search/search'); ?>' method='post'>
-		        <p>Search: <input type='text' name='search' id='search' value='' class='searchfield' />
-		        <input type='submit' name='submit' id='submit' value='Search' /></p>
-		    </form>
+			<?=$search_form?>
+<?php if (isset($search_results)) { ?>
 		    <ol>
+				<?php foreach ($search_results as $result):?>
 		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
+		            <a href="<?=$result['link']?>"><?=$result->['title']?></a>
+					<?=$result['blurb']?>
 		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
-		        <li>
-		            <a href="#">Some search results</a>
-		            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse at nibh quis purus laoreet imperdiet. Pellentesque feugiat metus 
-		            adipiscing nisi.
-		        </li>
+				<?php endforeach;?>
 		    </ol>
-		<p>[page numbers]</p>
-		<div style="width: 239px; float: right;">
-			<div style="border-left: 1px solid rgb(147, 150, 154); padding-left: 5px; padding-bottom: 10px;">
-				<div style="margin: 0pt; padding: 3px 3px 3px 5px; background-color: rgb(148, 151, 155); color: rgb(255, 255, 255); font-size: 12px; font-weight: bold;">
-					Show
-				</div>
-				<ul>
-					<li>All results <i>(117)</i></li>
-					<li>News <i>(42)</i></li>
-					<li>Reviews <i>(24)</i></li>
-					<li>Features <i>(42)</i></li>
-					<li>Events <i>(24)</i></li>
-					<li>How do I <i>(42)</i></li>
-					<li>Yorkipedia <i>(24)</i></li>
-				</ul>
-			</div>
-			<div style="border-style: solid solid solid none; border-color: rgb(147, 150, 154) rgb(147, 150, 154) rgb(147, 150, 154) -moz-use-text-color; border-width: 1px 1px 1px 0pt; clear: both; padding-left: 10px;">
-				<p>Sort by Relevancy</p>
-				<p>Sort by Date</p>
-			</div>
-		</div>
+			<p><?=$search_numbering?></p>
 	</div>
+</div>
+<div style="width: 239px; float: right;">
+	<div style="border-left: 1px solid rgb(147, 150, 154); padding-left: 5px; padding-bottom: 10px;">
+		<div style="margin: 0pt; padding: 3px 3px 3px 5px; background-color: rgb(148, 151, 155); color: rgb(255, 255, 255); font-size: 12px; font-weight: bold;">
+			Refine
+		</div>
+		<ul>
+			<li>All results <i>(<?=$search_all?>)</i></li>
+			<li>News <i>(<?=$search_news?>)</i></li>
+			<li>Reviews <i>(<?=$search_reviews?>)</i></li>
+			<li>Features <i>(<?=$search_features?>)</i></li>
+			<li>Events <i>(<?=$search_events?>)</i></li>
+			<li>How do I <i>(<?=$search_how?>)</i></li>
+			<li>Yorkipedia <i>(<?=$search_york?>)</i></li>
+		</ul>
+	</div>
+	<div style="border-style: solid solid solid none; border-color: rgb(147, 150, 154) rgb(147, 150, 154) rgb(147, 150, 154) -moz-use-text-color; border-width: 1px 1px 1px 0pt; clear: both; padding-left: 10px;">
+		<ul>
+			<li>Sort by Relevancy</li>
+			<li>Sort by Date</li>
+		</ul>
+	</div>
+<?php } ?>
 </div>
