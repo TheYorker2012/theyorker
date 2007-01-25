@@ -185,7 +185,7 @@ class Pages_model extends Model
 				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText());
 				// Save the cache back to the database
 				$cache = new PagePropertyType(array('text' => $cached_wikitext));
-				$this->InsertProperty($cache, $PropertyLabel, 'wikitext_cache');
+				$this->InsertProperty($this->mPageCode, $PropertyLabel, 'wikitext_cache', $cache);
 				return $cached_wikitext;
 			}
 		} else {
@@ -273,12 +273,40 @@ class Pages_model extends Model
 	
 	/// Insert a property
 	/**
+	 * @param $PageCode string Page code of page to set property of.
+	 * @param $PropertyLabel string Label of property.
+	 * @param $PropertyType string Name of the property type.
+	 * @param $Property PagePropertyType Property object.
 	 * @pre PageCodeSet() === TRUE
 	 */
-	function InsertProperty($Property, $PropertyLabel, $PropertyType)
+	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
 	{
-		/// @todo Implement
-		// Doesn't do anything yet!!
+		$sql =
+			'INSERT INTO page_properties ('.
+			' page_property_property_type_id, '.
+			' page_property_page_id, '.
+			' page_property_label, '.
+			' page_property_text) '.
+			'SELECT'.
+			' property_types.property_type_id, '.// AS page_property_property_type_id,'.
+			' pages.page_id, '.// AS page_property_page_id,'.
+			' ?,'.
+			' ? '.
+			'FROM pages, property_types '.
+			'WHERE pages.page_code_string=? '.
+			' AND property_types.property_type_name=? '.
+			'ON DUPLICATE KEY UPDATE page_property_text=?';
+			;
+		
+		$text = $Property->GetText();
+		if (get_magic_quotes_gpc()) {
+			// If magic quotes are on, code igniter doesn't escape
+			$text = addslashes($text);
+		}
+		$query = $this->db->query($sql,
+				array($PropertyLabel, $text, $PageCode, $PropertyType, $text)
+			);
+		return ($this->db->affected_rows() > 0);
 	}
 }
 
