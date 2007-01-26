@@ -14,22 +14,17 @@ class Campaign extends Controller {
 		if(1==1){ // change to if deadline not passed then...
 
 			$this->load->model('campaign_model','campaign');
+			$this->pages_model->SetPageCode('campaign_selection');
 			$get_campaign_list = $this->campaign->GetCampaignNamesAndVotes();
-			$data['Description'] = 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.';
-			$data['Picture'] = 'http://localhost/images/prototype/campaign/field.jpg';
-			$data['DeadLine'] = '23 May 2019';
 			$data['Campaign_List'] = $get_campaign_list;
-
-			/*
-			$data = array(
-				'Description' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
-				'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
-				'DeadLine' => '23 May 2019'
-			);
-			*/
+			$data['sections'] = array (
+						'current_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_list_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_list_text'),'deadline_text'=>$this->pages_model->GetPropertyWikitext('campaign_list_deadline_text')),
+						'vote_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_vote_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_vote_text'))
+						);
+				//$this->pages_model->GetPropertyText('campaign_list_title');
 
 			// Set up the public frame
-			$this->frame_public->SetTitle('Campaign');
+			$this->frame_public->SetTitle($this->pages_model->GetTitle(array()));
 			$this->frame_public->SetContentSimple('campaign/CampaignSelection', $data);
 			
 			// Load the public frame view (which will load the content view)

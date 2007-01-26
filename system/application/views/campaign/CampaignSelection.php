@@ -23,8 +23,8 @@
 
 <div style="width: 400px; margin: 0px; padding-right: 3px; ">
 	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #2DC6D7; ">current campaigns</span><br />
-		This is a list of our current campaigns. Click through the links to check more information on a particular campaign. A bigger blurb could be written here maybe with some snazzy image of a form of students voting and having a really fun time doing it. Like everyone does<br /><br />
+	<span style="font-size: x-large;  color: #2DC6D7; "><?php echo $sections['current_campaigns']['title']; ?></span><br />
+		<?php echo $sections['current_campaigns']['blurb']; ?><br /><br />
 		<table width="100%">
 			<?php
 			$total_votes = 0;
@@ -47,13 +47,13 @@
 			?>
 		</table>
 		<br />
-		The deadline for the voting is the 23th of May. The winner will be officially announced on the 90th of June.
+		<?php echo $sections['current_campaigns']['deadline_text']; ?>
 	
 	</div>
 
 	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #BBBBBB; ">vote now</span><br />
-		If you think you have decided on which campaign you wish to support, you can place your vote now. Remember, you will be able to change your vote later (but only before the deadline)
+	<span style="font-size: x-large;  color: #BBBBBB; "><?php echo $sections['vote_campaigns']['title']; ?></span><br />
+		<?php echo $sections['vote_campaigns']['blurb']; ?>
 		<form id='form1' name='form1' action='#' method='POST'>
 		</form>
 		<form id='form1' name='form1' action='#' method='POST' class='form'>
@@ -62,7 +62,7 @@
                 foreach ($data['vars']['Campaign_List'] as $campaigns)
                 {
 			echo '<tr><td style="text-align: right;">'.$campaigns['name'];
-			echo '</td><td><fieldset style="display: inline;"><input type="submit" name="addorgform_addbutton" value="Add" class="button" /></fieldset><br /></td></tr>';
+			echo '</td><td><fieldset style="display: inline;"><input type="submit" name="addorgform_addbutton" value="Vote" class="button" /></fieldset><br /></td></tr>';
 		}
 		?>
 		</table>
