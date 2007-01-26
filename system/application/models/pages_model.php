@@ -208,7 +208,7 @@ class Pages_model extends Model
 	function GetTitle($Parameters)
 	{
 		if (FALSE === $this->mPageTitle) {
-			$sql = 'SELECT `page_title` FROM `pages` WHERE `page_code_string`=?';
+			$sql = 'SELECT `page_title` FROM `pages` WHERE `page_codename`=?';
 			$query = $this->db->query($sql, $this->mPageCode);
 			$results = $query->result_array();
 			if (0 === count($results)) {
@@ -245,7 +245,7 @@ class Pages_model extends Model
 			'INNER JOIN `property_types`'.
 			' ON `property_types`.`property_type_id`'.
 			' =`page_properties`.`page_property_property_type_id` '.
-			'WHERE `pages`.`page_code_string`=?';
+			'WHERE `pages`.`page_codename`=?';
 		
 		$query = $this->db->query($sql, $this->mPageCode);
 		
@@ -293,7 +293,7 @@ class Pages_model extends Model
 			' ?,'.
 			' ? '.
 			'FROM pages, property_types '.
-			'WHERE pages.page_code_string=? '.
+			'WHERE pages.page_codename=? '.
 			' AND property_types.property_type_name=? '.
 			'ON DUPLICATE KEY UPDATE page_property_text=?';
 			;
