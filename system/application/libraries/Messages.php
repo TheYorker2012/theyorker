@@ -106,9 +106,9 @@ class PermissionDeniedMsg extends ErrorMsg
 {
 	function __construct()
 	{
-		parent::__construct();
+		parent::__construct($Message = 'You don\'t have permission to use this page.');
 		$this->SetMessageType('Permission denied');
-		$this->SetMessageDescription('You don\'t have permission to use this page.');
+		$this->SetMessageDescription($Message);
 	}
 }
 
