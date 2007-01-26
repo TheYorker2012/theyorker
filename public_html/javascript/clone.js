@@ -16,6 +16,6 @@ function AddClones() {
 			newField[i].name = newField[i].name + count;
 	}
 	var Spawn = document.getElementById('destination');
-	Spawn.value = Spawn.value++;
+	Spawn.value = count;
 	Spawn.parentNode.insertBefore(newClone, Spawn);
 }

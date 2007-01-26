@@ -4,8 +4,10 @@
 
 <?=form_open_multipart('upload/do_upload'); ?>
 Basic test script
-
-<input type="hidden" id="destination" value="0" />
+<div>
+	<input type="file" name="userfile1" size="20" />
+</div>
+<input type="hidden" id="destination" value="1" />
 
 <input type="button" onClick="AddClones()" value="Another"/>
 <input type="submit" value="upload" />
