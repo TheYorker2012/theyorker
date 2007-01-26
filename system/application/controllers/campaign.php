@@ -24,7 +24,6 @@ class Campaign extends Controller {
 				//$this->pages_model->GetPropertyText('campaign_list_title');
 
 			// Set up the public frame
-			$this->frame_public->SetTitle($this->pages_model->GetTitle(array()));
 			$this->frame_public->SetContentSimple('campaign/CampaignSelection', $data);
 			
 			// Load the public frame view (which will load the content view)
