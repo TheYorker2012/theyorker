@@ -408,9 +408,9 @@ EXTRAHEAD;
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
 				);
 				if (NULL === $org['organisation_yorkipedia_entry']) {
-					$data['yorkipedia'] = NULL;
+					$data['organisation']['yorkipedia'] = NULL;
 				} else {
-					$data['yorkipedia'] = array(
+					$data['organisation']['yorkipedia'] = array(
 							'url'   => 'http://yorkipedia.theyorker.co.uk',
 							'title' => $org['organisation_yorkipedia_entry'],
 						);
