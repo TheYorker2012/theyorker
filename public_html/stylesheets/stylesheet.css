@@ -511,7 +511,15 @@ font-weight: bold;
 }
 div.RightToolbar p {
 	margin-top: 0px;
-	font-size: x-small;
+	font-size: small;
+}
+div.RightToolbar ul {
+	padding: 0px;
+	list-style-position: inside;
+}
+div.RightToolbar li {
+	margin-left: 0px;
+	font-size: small;
 }
 
 /* For the campaign pages */
