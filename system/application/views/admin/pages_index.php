@@ -1,0 +1,37 @@
+<h2>Custom pages</h2>
+
+
+<?php if ($permissions['custom_new']) { ?>
+<a href="/admin/pages/newcustom">Create a new custom page</a><br /><br />
+<?php } ?>
+
+<?php
+foreach ($custom as $page) {
+	echo '<a href="/admin/pages/custom/'.$page['codename'].'">'.
+		$page['codename'].'</a>';
+	echo ' (<a href="/pages/'.$page['codename'].'">preview</a>';
+	if ($permissions['custom_delete']) {
+		echo ', <a href="/admin/pages/deletecustom/'.$page['codename'].'">delete</a>';
+	}
+	echo ')';
+	echo '<br />';
+}
+?>
+
+<h2>Pages</h2>
+
+<?php if ($permissions['page_new']) { ?>
+<a href="/admin/pages/newpage">Create a new page</a><br /><br />
+<?php } ?>
+
+<?php
+foreach ($pages as $page) {
+	echo '<a href="/admin/pages/page/'.$page['codename'].'">'.
+		$page['codename'].'</a>';
+	if ($permissions['page_delete']) {
+		echo ' (<a href="/admin/pages/deletepage/'.$page['codename'].'">delete</a>)';
+	}
+	echo '<br />';
+}
+
+?>
