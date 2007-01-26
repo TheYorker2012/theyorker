@@ -58,8 +58,16 @@ $route['admin'] = 'admin/index';
 
 // 'admin/directory' needs to map to 'admin/yorkerdirectory'
 // (the php class Directory is reserved)
+/**
+ * @NOTE Due to a bug in code ignitor, routing doesn't send the correct
+ *	parameters to the controller function. These are got around by having an
+ *	extra slash before the parameters to shift them forward a segment - jh559
+ */
 $route['admin/directory'] = 'admin/yorkerdirectory';
-$route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view/$1';
+// If 2 segments, seg2 ($1) should get sent to view function
+$route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
+// If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
+$route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
 unset($org_name_regex);
 
 // Invalidate yorkerdirectory as its ugly and shouldn't be used
