@@ -12,14 +12,16 @@
 
 define("ORDER_RELEVANCE", 	1);
 define("ORDER_EARLY", 		2);
-define("ORDER_LATE", 		2);
+define("ORDER_LATE", 		3);
 
 define("FILTER_ALL", 		0b1111111111111111);
 define("FILTER_NEWS", 		0b0000000000000001);
-define("FILTER_REVIEWS", 	0b0000000000000010);
-define("FILTER_EVENTS", 	0b0000000000000100);
-define("FILTER_HOW", 		0b0000000000001000);
-define("FILTER_YORK", 		0b0000000000010000);
+define("FILTER_FEATURES", 	0b0000000000000010);
+define("FILTER_LIFESTYLE", 	0b0000000000000100);
+define("FILTER_FOOD",		0b0000000000001000);
+define("FILTER_DRINK", 		0b0000000000010000);
+define("FILTER_CULTURE",	0b0000000000100000);
+define("FILTER_YORK",		0b0000000001000000);
 
 class Search extends Model
 {
@@ -38,40 +40,40 @@ class Search extends Model
 	 * @param $filter integer Filtering of the search, if defined.
 	 */
 	function full($string, $ordering = ORDER_RELEVANCE, $filter =FILTER_ALL) {
-		function ordering_addition($ordering) {
+		function ordering_addition($ordering, &$query) {
 			switch($ordering) {
-				case ORDER_RELEVANCE: $this->db->orderby('something','desc');
+				case ORDER_RELEVANCE: return $this->db->orderby('something','desc');
 				break;
-				case ORDER_EARLY: $this->db->orderby('something', 'asc')
+				case ORDER_EARLY: return $this->db->orderby('something', 'asc')
 				break;
-				case ORDER_LATE: $this->db->orderby('something', 'desc')
+				case ORDER_LATE: return $this->db->orderby('something', 'desc')
+				break;
+				default: return false;
 				break;
 			}
 		}
 		
 		$result = array();
 		
+		//TODO replace pseudocode
+		$query = $this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')
+		
 		if ($filter & FILTER_NEWS) {
-			//TODO replace pseudocode
-			$this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')->where('stuff', 'stuff')
-			ordering_addition($ordering);
 		}
-		if ($filter & FILTER_REVIEWS) {
-			$this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')->where('stuff', 'stuff')
-			ordering_addition($ordering);
+		if ($filter & FILTER_FEATURES) {
 		}
-		if ($filter & FILTER_EVENTS) {
-			$this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')->where('stuff', 'stuff')
-			ordering_addition($ordering);
+		if ($filter & FILTER_LIFESTYLE) {
 		}
-		if ($filter & FILTER_HOW) {
-			$this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')->where('stuff', 'stuff')
-			ordering_addition($ordering);
+		if ($filter & FILTER_FOOD) {
+		}
+		if ($filter & FILTER_DRINK) {
+		}
+		if ($filter & FILTER_CULTURE) {
 		}
 		if ($filter & FILTER_YORK) {
-			$this->db->select('news title, text')->from('twelveteen tables')->join('table', 'conditions')->where('stuff', 'stuff')
-			ordering_addition($ordering);
 		}
+		$query = ordering_addition($ordering, $query);
+		...
 		return $result;
 	}
 
