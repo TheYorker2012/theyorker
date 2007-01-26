@@ -288,8 +288,8 @@ class Pages_model extends Model
 			' page_property_label, '.
 			' page_property_text) '.
 			'SELECT'.
-			' property_types.property_type_id, '.// AS page_property_property_type_id,'.
-			' pages.page_id, '.// AS page_property_page_id,'.
+			' property_types.property_type_id, '.
+			' pages.page_id, '.
 			' ?,'.
 			' ? '.
 			'FROM pages, property_types '.
