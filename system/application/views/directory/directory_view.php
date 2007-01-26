@@ -25,29 +25,31 @@
 	<div class='RightToolbarHeader'>
 	Reviews
 	</div>
-	<ul>
-		<li><a href='#'>Static Data1</a></li>
-		<li><a href='#'>Static Data2</a></li>
-		<li><a href='#'>Static Data3</a></li>
-		<li><a href='#'>Static Data4</a></li>
-	</ul>
-	<div class='RightToolbarHeader'>
-	Related Articles
+	<div style='padding: 10px 5px 10px 5px;'>
+		<p>
+			<a href='#'>Food review by Nick Evans</a><br />
+			<a href='#'>Culture review by Nick Evans</a><br />
+			<a href='#'>Drink review by Nick Evans</a><br />
+		</p>
 	</div>
-	<ul>
-		<li><a href='#'>Static Data1</a></li>
-		<li><a href='#'>Static Data2</a></li>
-		<li><a href='#'>Static Data3</a></li>
-		<li><a href='#'>Static Data4</a></li>
-	</ul>
+	<div class='RightToolbarHeader'>
+	Related articles
+	</div>
+	<div style='padding: 10px 5px 10px 5px;'>
+		<p>
+			<a href='#'>Article title 1</a><br />
+			<a href='#'>Article title 2</a><br />
+			<a href='#'>Article title 3</a>
+		</p>
+	</div>
 </div>
 <div style="width: 400px; margin: 0px; padding-right: 3px; ">
 	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #2DC6D7; ">About Us</span>
+		<span style="font-size: x-large;  color: #2DC6D7; ">About us</span>
 		<p><?php echo $organisation['description']; ?></p>
 	</div>
 	<div style="border: 1px solid #BBBBBB; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #BBBBBB; ">Finding Us</span>
+		<span style="font-size: x-large;  color: #BBBBBB; ">Finding us</span>
 		<p>
 		<img width='390' src='/images/prototype/directory/about/gmapwhereamI.png' />
 		</p>
