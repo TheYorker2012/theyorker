@@ -6,7 +6,7 @@
 var count = 0;
 
 function init() {
-	document.getElementById('AddClones').onclick = AddClones;
+	document.getElementById('AddClone').onclick = AddClones;
 	AddClones();
 }
 
