@@ -12,15 +12,15 @@ class Review_model extends Model {
 	//Gets comments from database, frb501
 	function GetComments($page_no)
 	{
-		$sql = "SELECT comment_author_name, comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_page_id = ?";
+		$sql = "SELECT comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_content_type_id = ?";
 		$query = $this->db->query($sql,$page_no);
-		
+
 		if ($query->num_rows() > 0)
 		{
 			$commentno = 0;
 			foreach ($query->result() as $row)
 			{
-			$comments['comment_author'][$commentno] = $row->comment_author_name;
+			$comments['comment_author'][$commentno] = 'nothing';
 			$comments['comment_rating'][$commentno] = $row->comment_rating;
 			$comments['comment_date'][$commentno] = $row->comment_timestamp;
 			$comments['comment_content'][$commentno] = $row->comment_text;
@@ -28,7 +28,7 @@ class Review_model extends Model {
 			}
 
 			return $comments;
-		}	
+		}
 		else
 		{
 		$nocomments = 'empty';
@@ -82,7 +82,7 @@ class Review_model extends Model {
 //		$returndata['article_content'] = $reviewdata->rto_content_blurb;
 //		$returndata['yorker_recommendation'] = $reviewdata->rto_content_recommend;
 //		$returndata['website_booking'] = $reviewdata->rto_content_book_online;
-		
+
 		//Get data about the organisation
 //		$sql = "SELECT organisations.organisation_name,organisations_address,organisations.organisation_postcode,organisations.organisation_url,organisations.organisation_opening_hours FROM organisations, rto_content WHERE organisation_entity_id = ? AND (organisations.organisation_entity_id = rto_content.rto_content_organisation_entity_id)";
 //		$query = $this->db->query($sql,$reviewdata->rto_content_organisation_entity_id);
