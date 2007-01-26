@@ -1,14 +1,9 @@
 /* AddClones will take a element of name 'source' and copy it to a
  * 'destination' appending a counter to the names of the child
- * elements
+ * elements. It relies
  */
 
-var count = 0;
-
-function init() {
-	document.getElementById('AddClone').onclick = AddClones;
-	AddClones();
-}
+var count = 1;
 
 function AddClones() {
 	count++;
@@ -24,5 +19,3 @@ function AddClones() {
 	Spawn.value = Spawn.value++;
 	Spawn.parentNode.insertBefore(newClone, Spawn);
 }
-
-window.onload = init;

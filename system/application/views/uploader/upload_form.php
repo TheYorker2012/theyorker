@@ -7,5 +7,5 @@ Basic test script
 
 <input type="hidden" id="destination" value="0" />
 
-<input type="button" id="AddClone" value="Another"/>
+<input type="button" onClick="AddClones()" value="Another"/>
 <input type="submit" value="upload" />
