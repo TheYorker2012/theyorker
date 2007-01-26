@@ -6,9 +6,9 @@ if (empty($organisation['reviews_untyped']) && empty($organisation['reviews_by_t
 		<b>This organisation has not been reviewed yet.</b>
 	</div>
 <?php
-}else{}
-if (empty($organisation['reviews_untyped'])) {
-}else{
+}
+
+if (!empty($organisation['reviews_untyped'])) {
 	foreach ($organisation['reviews_untyped'] as $review) {
 		$author_links = array();
 		foreach ($review['authors'] as $author) {
@@ -54,11 +54,9 @@ if (empty($organisation['reviews_untyped'])) {
  *	]
  * ]
  */
-if (empty($organisation['reviews_by_type'])) {
-} else {
+if (!empty($organisation['reviews_by_type'])) {
 	foreach ($organisation['reviews_by_type'] as $review_type_name => $reviews) {
-		echo "<h2>".$review_type_name." reviews:</h2>
-		<ul>";
+		echo '<h2>'.$review_type_name.' reviews:</h2><ul>';
 		// $review_type_name: name of review type e.g. food, drink...
 		foreach ($reviews as $review) {
 			/*
@@ -69,15 +67,15 @@ if (empty($organisation['reviews_by_type'])) {
 			 *	link - where to link (not sure where this is supposed to link
 			 *	authors - array of authors, each with:
 			 */
-			echo "<li><a href='".$link."'> Reviewed by ";
-			foreach ($authors as $author) {
+			echo '<li><a href="'.$review['link'].'"> Reviewed by ';
+			foreach ($review['authors'] as $author) {
 				/* $author is made up of:
 				 *	name
 				 *	email
 				 */
-				echo $author.", ";
+				echo $author['name'].', ';
 			}
-			echo "on ".$publish_date.".</a></li></ul>";
+			echo 'on '.$review['publish_date'].'</a></li></ul>';
 		}
 	}
 }
