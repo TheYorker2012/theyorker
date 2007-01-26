@@ -7,7 +7,7 @@
 </div>
 <div id='clear'>&nbsp;</div>
 
-<form name='' id='' action='' method='' class='form'>
+<form name='' id='' action='' method='post' class='form'>
     <fieldset>
         <legend>Request Details</legend>
 		<label for='r_title'>Title:</label>
