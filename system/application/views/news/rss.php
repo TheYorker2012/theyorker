@@ -24,10 +24,10 @@ echo '<?xml version=\'1.0\' ?>
 
 foreach ($rss_items as $item) {
 	echo '<item>
-		<title>' . $item['headline'] . '</title>
+		<title>' . $item['heading'] . '</title>
 		<author>' . $item['writer'] . '</author>
 		<link>http://www.theyorker.co.uk/news/article/' . $item['id'] . '</link>
-		<description>' . $item['subtext'] . '</description>
+		<description>' . $item['blurb'] . '</description>
 		<pubDate>' . $item['date'] . '</pubDate>
 		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/article/' . $item['id'] . '</guid>
 		</item>';

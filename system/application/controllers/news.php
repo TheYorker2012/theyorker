@@ -83,8 +83,7 @@ class News extends Controller {
 	function national()
 	{
 		$data = array(
-			'news_previews' => self::$national_data,
-			'news_others' => array_slice(self::$news_data, 3)
+			'news_previews' => self::$national_data
 		);
 
 		// Set up the public frame
@@ -98,11 +97,55 @@ class News extends Controller {
 	/// The Features section.
 	function features()
 	{
+    	/// Get the latest article ids from the model.
+    	$latest_article_ids = $this->News_model->GetLatestId(2,9);
+    	
+    	/// Get all of the latest article
+    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+    	
+    	/// Get some of the 2nd- and 3rd-latest articles
+    	$news_previews = array();
+    	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++)
+    	{
+        	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
+    	}
+    	
+    	/// Get less of the next 6 newest articles
+    	$news_others = array();
+    	for ($index = 3; $index < count($latest_article_ids); $index++)
+    	{
+        	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
+    	}
+    	
     	/// The data passed to the view will come from the database once it is available.
 		$data = array(
-			'news_previews' => array_slice(self::$news_data, 0, 3),
-			'news_others' => array_slice(self::$news_data, 3)
+		    'main_article' => $main_article,
+			'news_previews' => $news_previews,
+			'news_others' => $news_others
 		);
+		
+		/// Wikiparse the article's body text
+		$this->load->library('wikiparser');
+		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
+		
+		/// Temporarily fill in a few gaps in the model data
+		$data['main_article']['image'] = '/images/prototype/news/thumb1.jpg';
+		$data['main_article']['image_description'] = 'temp image';
+		$data['main_article']['writer'] = 'Temp Name';
+		
+		for ($i = 0; $i < count($data['news_previews']); $i++)
+		{
+    		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
+    		$data['news_previews'][$i]['image_description'] = 'temp image';
+    		$data['news_previews'][$i]['writer'] = 'Temp Name';
+		}
+		
+		for ($i = 0; $i < count($data['news_others']); $i++)
+		{
+    		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
+    		$data['news_others'][$i]['image_description'] = 'temp image';
+    		$data['news_others'][$i]['writer'] = 'Temp Name';
+		}
     	
 		// Set up the public frame
 		$this->frame_public->SetTitle('Features');
@@ -173,7 +216,16 @@ class News extends Controller {
 		$data['rss_height'] = '108';
 		$data['rss_email_ed'] = 'news@theyorker.co.uk';
 		$data['rss_email_web'] = 'webmaster@theyorker.co.uk';
-		$data['rss_items'] = self::$news_data;
+		
+		/// Get latest article ids
+		$latest_article_ids = $this->News_model->GetLatestId(1,9);
+		
+		/// Get preview data for articles
+		$data['rss_items'] = array();
+		foreach ($latest_article_ids as $id)
+		{
+    		array_push($data['rss_items'], $this->News_model->GetSummaryArticle($id));
+		}
 
 		$this->load->view('news/rss', $data);
 	}
@@ -209,91 +261,5 @@ class News extends Controller {
             'subtext' => 'The search for a boy who is missing after the rowing boat he stole with a friend capsized is scaled down overnight.'
 		),
 	);
-
-    /// test data for use until we can use the database (latest 9 stories)
-    private static $news_data = array(
-        array(
-            'id' => '8',
-            'image' => '/images/prototype/news/thumb1.jpg',
-            'image_description' => 'Soldier about to get run over by a tank',
-            'headline' => 'Israel vows ceasefire \'patience\'',
-            'writer_id' => '2',
-            'writer' => 'Matthew Tole',
-            'date' => '5th December 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.<br /><br />Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla consequat, orci vel iaculis sagittis, felis elit malesuada massa, vel scelerisque dui erat vel ipsum. Etiam nec massa. Suspendisse risus nunc, tincidunt vel, porttitor at, molestie rhoncus, odio. In hac habitasse platea dictumst. In enim nibh, scelerisque sit amet, posuere ut, sagittis a, ipsum. <blockquote>Testing new quotey thing to see how sexual it is, 1337 roflmao n00bz0r!</blockquote> Mauris vulputate. Cras neque enim, sagittis vel, varius vel, congue ac, purus. Duis imperdiet, purus eu aliquet posuere, turpis diam nonummy nulla, non ultricies lectus lacus id urna. Sed suscipit, libero id pretium dapibus, turpis enim elementum ligula, eu tempus turpis turpis a elit.<br /><br />Pellentesque posuere mauris et ante tempus cursus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis egestas facilisis nibh. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Sed egestas nulla ac lorem. Aliquam nunc. Maecenas tincidunt venenatis sem. Nunc sit amet risus. Aliquam ultrices rhoncus sem. Praesent cursus. Ut hendrerit nunc. Curabitur congue rutrum felis. Nunc nisi leo, porta in, vulputate vitae, fringilla id, enim. Integer mollis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce volutpat lacinia ante. Vestibulum semper ipsum vel nibh. Mauris luctus, nulla non hendrerit euismod, lectus nunc accumsan odio, ut laoreet orci ligula nec felis. Vestibulum lectus.<br /><br />Nulla facilisi. Sed erat eros, gravida at, interdum et, tincidunt vitae, nunc. Vivamus mattis justo in massa. Vivamus malesuada erat vel pede. Nulla molestie mauris vitae ipsum. Nam mauris sem, consectetuer vitae, iaculis sed, aliquam laoreet, risus. Nunc auctor. Nullam auctor. Vestibulum id diam in pede lobortis aliquet. Suspendisse sit amet ante eget diam aliquet tincidunt. Phasellus ut lacus ut augue egestas semper. Morbi urna. Nulla purus ipsum, facilisis in, blandit in, gravida non, justo.'
-        ),
-        array(
-            'id' => '7',
-            'image' => '/images/prototype/news/thumb2.jpg',
-            'image_description' => 'Tony Blair',
-            'headline' => 'Blair \'sorrow\' over slave trade',
-            'writer' => 'Jo Shelley',
-            'date' => '4th December 2006',
-            'subtext' => 'Prime Minister Tony Blair has said he feels "deep sorrow" for Britain\'s role in the slave trade. In an article for the New Nation newspaper, the prime minister said it had been "profoundly shameful".'
-        ),
-        array(
-            'id' => '6',
-            'image' => '/images/prototype/news/thumb3.jpg',
-            'image_description' => 'Some Spy',
-            'headline' => 'Advice sought after ex-spy death',
-            'writer' => 'Dan Ashby',
-            'date' => '3rd December 2006',
-            'subtext' => 'Hundreds of people have called the NHS Direct hotline following the death of Russian ex-spy Alexander Litvinenko.'
-        ),
-        array(
-            'id' => '5',
-            'image' => '/images/prototype/news/thumb3.jpg',
-            'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up',
-            'writer' => 'Jo Shelley',
-            'date' => '2nd December 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-        array(
-            'id' => '4',
-            'image' => '/images/prototype/news/thumb2.jpg',
-            'image_description' => 'Tony Blair',
-            'headline' => 'Tony Blair finds 10 items, keeps them all',
-            'writer' => 'Jo Shelley',
-            'date' => '1st December 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-        array(
-            'id' => '3',
-            'image' => '/images/prototype/news/thumb9.jpg',
-            'image_description' => 'Man in a wig',
-            'headline' => 'Mass panic as world ends twice in one day',
-            'writer' => 'Neil Brehon',
-            'date' => '30th November 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-        array(
-            'id' => '2',
-            'image' => '/images/prototype/news/thumb3.jpg',
-            'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up again',
-            'writer' => 'Owen Jones',
-            'date' => '29th November 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-        array(
-            'id' => '1',
-            'image' => '/images/prototype/news/thumb2.jpg',
-            'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up',
-            'writer' => 'Owen Jones',
-            'date' => '28th November 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-        array(
-            'id' => '1',
-            'image' => '/images/prototype/news/thumb2.jpg',
-            'image_description' => 'Some Spy',
-            'headline' => 'Ex-spy death inquiry stepped up',
-            'writer' => 'Owen Jones',
-            'date' => '28th November 2006',
-            'subtext' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.'
-        ),
-    );
 }
 ?>
