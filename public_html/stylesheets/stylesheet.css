@@ -495,6 +495,25 @@ div.GalleryPicture {
 }
 /* End Usefull Css Layouts */
 
+/*Grey Boxes used on home page and many others*/
+div.RightToolbar {
+	width: 220px;
+	margin: 0;
+	padding-left: 3px;
+	float: right;
+}
+div.RightToolbarHeader {
+padding: 5px;
+background-color: #999;
+color: #fff;
+font-size: small;
+font-weight: bold;
+}
+div.RightToolbar p {
+	margin-top: 0px;
+	font-size: x-small;
+}
+
 /* For the campaign pages */
 .wholepage2 { /* Remove Me Begin */
 
@@ -672,40 +691,6 @@ div.BlackBoxSubTitle {
 }
 /* End the charity pages */
 
-
-/*Style Fox Box Stye Subheader With Related Links Option for an image.*/
-/*Look on the wiki page for html code, converts a list into a related links box*/
-#pageheader{
-	background-color: #00CCFF;
-    background-repeat: no-repeat;
-    background-position: right top;
-}
-#titleheader{
-    margin: 5px;
-	 color: white;
-}
-#pagelinks{
-    background-color: #1E90FF;
-    width: 100%;
-}
-
-#pagelinks ul {
-    text-align: left;
-    margin-left: 0;
-    padding-left: 0;
-    border-bottom: 1px solid white
-}
-
-#pagelinks li {
-    list-style-type: none;
-    padding: 0.25em 1em;
-    display: inline
-}
-/*End Of Subheader With Related Links*/
-
-
-
-
 /* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo (Used In Directory)*/
 div.columnText {
 	padding: 5px;
@@ -739,7 +724,6 @@ div.MemberboxPhoto ul {
 div.MemberboxPhoto li {
 	font-size: 12px;
 }
-
  
 /*
 *	Start styles for News Section
