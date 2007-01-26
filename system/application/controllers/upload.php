@@ -11,7 +11,7 @@ class Upload extends Controller {
 	function index() {
 		$this->frame_public->SetTitle('Upload Form');
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$this->frame_public->SetContentSimple('upload_form');
+		$this->frame_public->SetContentSimple('uploader/upload_form');
 		$this->frame_public->Load();
 	}
 
