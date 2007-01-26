@@ -189,7 +189,11 @@ class Pages_model extends Model
 		if (FALSE === $value) {
 			return $Default;
 		} else {
-			return $value->GetInteger();
+			$int = $value->GetInteger();
+			if (NULL === $int)
+				return $Default;
+			else
+				return $int;
 		}
 	}
 	
