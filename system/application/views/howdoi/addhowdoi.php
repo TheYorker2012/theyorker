@@ -1,9 +1,17 @@
-        <br />
-        <form name='a_search_form' id='a_search_form' action='<?php echo site_url('faq/addhowdoi'); ?>' method='post'>
-            <fieldset id='SearchForm' title='Add new how do I'>
-                <legend>Add new how do I</legend>
-                <p><br /><label for='question'>Question:</label> <input type='text' name='question' id='question' value='' /></p>
-                <p><label for='answer'>Answer:</label> <textarea name='answer' id='answer' rows='8' cols='50'></textarea></p>
-                <p><label for='submit'>&nbsp;</label><input type='submit' name='submit' id='submit' value='Add' class='submit' /></p>
-            </fieldset>
-        </form>
+<form name='' id='' action='' method='post' class='form'>
+  <fieldset>
+    <legend>Add How Do I</legend>
+    <label for='q_question'>Question:</label>
+    <input type='text' name='q_question' id='q_question' value='' size='30' />
+    <br />
+    <label for='q_answer'>Answer:</label>
+    <textarea name='q_answer' id='q_answer' cols='40' rows='5'></textarea>
+    <br />
+  </fieldset>
+  <fieldset>
+    <label for='q_submit'></label>
+    <input type='submit' name='q_submit' id='q_submit' value='Submit' class='button' />
+    <input type='reset' name='q_clear' id='q_clear' value='Clear' class='button' />
+    <br />
+  </fieldset>
+</form>
