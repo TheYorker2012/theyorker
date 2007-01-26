@@ -45,11 +45,11 @@
 </div>
 <div style="width: 400px; margin: 0px; padding-right: 3px; ">
 	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #2DC6D7; ">About us</span>
+		<span style="font-size: x-large;  color: #2DC6D7; ">about us</span>
 		<p><?php echo $organisation['description']; ?></p>
 	</div>
 	<div style="border: 1px solid #BBBBBB; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #BBBBBB; ">Finding us</span>
+		<span style="font-size: x-large;  color: #BBBBBB; ">finding us</span>
 		<p>
 		<img width='390' src='/images/prototype/directory/about/gmapwhereamI.png' />
 		</p>
