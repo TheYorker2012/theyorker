@@ -27,6 +27,18 @@ class PagePropertyType
 		return $this->mText;
 	}
 	
+	/// Get the integer value
+	/**
+	 * @return integer/NULL The integer value of the property.
+	 */
+	function GetInteger()
+	{
+		if (is_numeric($this->mText))
+			return (int)$this->mText;
+		else
+			return NULL;
+	}
+	
 	/// Set the text value
 	/**
 	 * @param $Text string The text value of the property.
@@ -161,6 +173,23 @@ class Pages_model extends Model
 			return $Default;
 		} else {
 			return $value->GetText();
+		}
+	}
+	
+	/// Get a specific integer property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $Default string Default number.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetPropertyInteger($PropertyLabel, $Default = -1)
+	{
+		$value = $this->pages_model->GetProperty($PropertyLabel, 'integer');
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			return $value->GetInteger();
 		}
 	}
 	
@@ -307,6 +336,29 @@ class Pages_model extends Model
 				array($PropertyLabel, $text, $PageCode, $PropertyType, $text)
 			);
 		return ($this->db->affected_rows() > 0);
+	}
+	
+	
+	/// Get all pages
+	/**
+	 */
+	function GetAllPages()
+	{
+		$sql =
+			'SELECT'.
+			' pages.page_id,'.
+			' pages.page_codename,'.
+			' pages.page_title,'.
+			' pages.page_description,'.
+			' pages.page_keywords,'.
+			' pages.page_comments,'.
+			' pages.page_ratings '.
+			'FROM pages '.
+			'ORDER BY pages.page_codename';
+			;
+		
+		$query = $this->db->query($sql);
+		return $query->result_array();
 	}
 }
 

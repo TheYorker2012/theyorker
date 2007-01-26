@@ -349,6 +349,8 @@ EXTRAHEAD;
 	 */
 	private function _GetOrgs($Pattern)
 	{
+		$org_description_words = $this->pages_model->GetPropertyInteger('org_description_words', 5);
+		
 		$orgs = $this->directory_model->GetDirectoryOrganisations();
 		$organisations = array();
 		foreach ($orgs as $org) {
@@ -357,7 +359,8 @@ EXTRAHEAD;
 				'shortname' => $org['organisation_directory_entry_name'],
 				'link' => 'directory/'.$org['organisation_directory_entry_name'],
 				'description' => $org['organisation_description'],
-				'shortdescription' => word_limiter($org['organisation_description'],30),
+				'shortdescription' => word_limiter(
+					$org['organisation_description'], $org_description_words),
 				'type' => $org['organisation_type_name'],
 			);
 		}
