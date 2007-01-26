@@ -17,4 +17,6 @@ For the moment lets just have links to the current admin pages:
 <a href="/admin/news/">(Editor/Writer/Photographer) News Home</a><br />
 <a href="/admin/news/request/add/">Add News Article Request</a><br />
 <a href="/admin/news/request/view/">View Article Request</a><br />
+<br />
+<a href="/admin/user/">Administrate User Settings</a><br />
 </div>
