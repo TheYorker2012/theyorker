@@ -90,7 +90,7 @@ foreach($data as $d) {
 				this.curCrop.reset();
 			}
 			$( 'uploadedImage' ).src = imgSrc;
-			$( 'imgCrop_testImage' ).src = imgSrc;
+			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
 		}
