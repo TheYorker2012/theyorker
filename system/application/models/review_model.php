@@ -91,20 +91,27 @@ class Review_model extends Model {
 	
 	}
 	
-	function GetLeague($league_codename) {
+	function GetLeague($league_codename,$order='ASC',$sortby='league_entries.league_entry_position') {
+		# make sortby **MUCH** more user friendly!
 		# organisation image?
 		$sql = '
 				SELECT 
 				organisations.organisation_name,
 				organisations.organisation_url,
 				league_entries.league_entry_position,
-				leagues.league_name
-				FROM organisations
+				leagues.league_name,
+				content_types.content_type_name
+				FROM content_types
+				INNER JOIN review_context_contents
+				ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
+				INNER JOIN organisations
+				ON organisations.organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 				INNER JOIN league_entries
 				ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
 				INNER JOIN leagues
 				ON leagues.league_id = league_entries.league_entry_league_id
 				WHERE leagues.league_codename = "'.$league_codename.'"
+				ORDER BY '.$sortby.' '.$order.'
 				';
 	$query = $this->db->query($sql);
 	$tmpleague = array();
@@ -116,6 +123,7 @@ class Review_model extends Model {
 		$tmpleague['organisation_url']         = $row->organisation_url;
 		$tmpleague['league_entry_position']    = $row->league_entry_position;
 		$tmpleague['league_name']              = $row->league_name;
+		$tmpleague['content_type_name']		   = $row->content_type_name;
 		$league[]                              = $tmpleague;
 	}
 	
