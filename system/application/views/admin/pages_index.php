@@ -11,7 +11,7 @@ foreach ($custom as $page) {
 		$page['codename'].'</a>';
 	//echo ' (<a href="/pages/'.$page['codename'].'">preview</a>';
 	if ($permissions['custom_delete']) {
-		echo ', <a href="/admin/pages/deletecustom/'.$page['codename'].'">delete</a>';
+		echo ', <a href="/admin/pages/custom/delete/'.$page['codename'].'">delete</a>';
 	}
 	echo ')';
 	echo '<br />';
@@ -26,10 +26,10 @@ foreach ($custom as $page) {
 
 <?php
 foreach ($pages as $page) {
-	echo '<a href="/admin/pages/page/'.$page['codename'].'">'.
+	echo '<a href="/admin/pages/page/edit/'.$page['codename'].'">'.
 		$page['codename'].'</a>';
 	if ($permissions['page_delete']) {
-		echo ' (<a href="/admin/pages/deletepage/'.$page['codename'].'">delete</a>)';
+		echo ' (<a href="/admin/pages/page/delete/'.$page['codename'].'">delete</a>)';
 	}
 	echo '<br />';
 }

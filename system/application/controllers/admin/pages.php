@@ -109,7 +109,15 @@ class Pages extends Controller
 						$data['keywords'] = $page_info['keywords'];
 						$data['comments'] = $page_info['comments'];
 						$data['ratings'] = $page_info['ratings'];
-						$data['properties'] = $page_info['properties'];
+						$data['properties'] = array();
+						foreach ($page_info['properties'] as $property) {
+							$data['properties'][] = array(
+									'id'    => 'prop'.$property['id'],
+									'label' => $property['label'],
+									'text'  => $property['text'],
+									'type'  => $property['type'],
+								);
+						}
 					}
 					break;
 				default:
@@ -147,7 +155,7 @@ class Pages extends Controller
 						$data['comments'] = $page_info['comments'];
 						$data['ratings'] = $page_info['ratings'];
 						$main_property = FALSE;
-						foreach ($page_info['properties'] as $key => $property) {
+						foreach ($page_info['properties'] as $property) {
 							if ($property['label'] === 'main' &&
 									$property['type'] === 'wikitext') {
 								$main_property = $property;
@@ -156,7 +164,7 @@ class Pages extends Controller
 						$data['properties'] = array();
 						if (FALSE === $main_property) {
 							$data['properties'][] = array(
-									'id'    => 'newmain',
+									'id'    => 'propnew',
 									'label' => 'main',
 									'text'  => '',
 									'type'  => 'wikitext',
