@@ -2,11 +2,11 @@
 <?php
 if(empty($organisation['cards'])) {
 ?>
-<div align="center" style='padding: 100px 0px 50px 0px;'>
+<div align="center" style='padding: 50px 0px 50px 0px;'>
 	<b>This organisation has not listed any of its members.</b>
 </div>
 <?php
-}
+} else {
 ?>
 <div class='RightToolbar'>
 	<div class='RightToolbarHeader'>
@@ -33,7 +33,7 @@ if(empty($organisation['cards'])) {
 		</p>
 	</div>
 </div>
-<div style="width: 400px; margin: 0px; padding-right: 3px; ">
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
 <?php
 foreach ($organisation['cards'] as $member) {
 ?>
@@ -47,7 +47,7 @@ foreach ($organisation['cards'] as $member) {
 <?php
 if (!empty($member['course'])) {
 ?>
-Studying: <?php echo $member['course']; ?><br />
+<img alt="Course" name="Course" src="/images/prototype/directory/scroll.gif" /> <?php echo $member['course']; ?><br />
 <?php
 }
 if (!empty($member['email'])) {
@@ -57,7 +57,7 @@ if (!empty($member['email'])) {
 }
 if (!empty($member['postal_address'])) {
 ?>
-<img alt="Address" name="Address" src="/images/prototype/directory/flag.gif" /> <?php echo $member['postal_address']; ?><br />
+<img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> <?php echo $member['postal_address']; ?><br />
 <?php
 }
 ?>
@@ -77,3 +77,6 @@ echo $member['phone_mobile'].", ";
 }
 ?>
 </div>
+<?php
+}
+?>
