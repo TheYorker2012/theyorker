@@ -65,34 +65,34 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
-			$( 'testImage' ).src = imgSrc;
+			if (imgTypeNew == 0) {
+				$( 'previewArea-1').display = 'none';
+				if (this.curCrop != null) this.curCrop.remove();
+				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
+					minWidth: 200,
+					minHeight: 120,
+					ratioDim: { x: 200, y: 120 },
+					displayOnInit: true, 
+					onEndCrop: onEndCrop,
+					previewWrap: 'previewArea-0'} );
+				this.curCrop.reset();
+			}
+			if (imgTypeNew == 1) {
+				$( 'previewArea-0').display = 'none';
+				if (this.curCrop != null) this.curCrop.remove();
+				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
+					minWidth: 100,
+					minHeight: 120,
+					ratioDim: { x: 100, y: 120 },
+					displayOnInit: true, 
+					onEndCrop: onEndCrop,
+					previewWrap: 'previewArea-1'} );
+				this.curCrop.reset();
+			}
+			$( 'uploadedImage' ).src = imgSrc;
 			$( 'imgCrop_testImage' ).src = imgSrc;
-			$( 'testImage' ).width = w;
-			$( 'testImage' ).height = h;
-				if (imgTypeNew == 0) {
-					$( 'previewArea-1').display = 'none';
-					this.curCrop.remove();
-					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
-						minWidth: 200,
-						minHeight: 120,
-						ratioDim: { x: 200, y: 120 },
-						displayOnInit: true, 
-						onEndCrop: onEndCrop,
-						previewWrap: 'previewArea-0'} );
-					this.curCrop.reset();
-				}
-				if (imgTypeNew == 1) {
-					$( 'previewArea-0').display = 'none';
-					this.curCrop.remove();
-					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
-						minWidth: 100,
-						minHeight: 120,
-						ratioDim: { x: 100, y: 120 },
-						displayOnInit: true, 
-						onEndCrop: onEndCrop,
-						previewWrap: 'previewArea-1'} );
-					this.curCrop.reset();
-				}
+			$( 'uploadedImage' ).width = w;
+			$( 'uploadedImage' ).height = h;
 		}
 	};
 	
@@ -118,8 +118,8 @@ foreach($data as $d) {
 	);
 	
 </script>
-<div id="testWrap">
-	<img src="images/photos/1.jpg" alt="test image" id="testImage" />
+<div id="uploadedWrap">
+	<img src="images/photos/1.jpg" alt="Uploaded image" id="uploadedImage" />
 </div>
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>
