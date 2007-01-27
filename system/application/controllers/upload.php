@@ -50,7 +50,7 @@ class Upload extends Controller {
 			}
 		}
 		$this->frame_public->SetTitle('Photo Cropper');
-		$this->frame_public->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').'
+		$this->frame_public->SetExtraHead('
 <script src="javascript/prototype.js" type="text/javascript"></script>	
 <script src="javascript/scriptaculous.js?load=builder,dragdrop" type="text/javascript"></script>
 <script src="javascript/cropper.js" type="text/javascript"></script>
