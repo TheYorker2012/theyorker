@@ -94,16 +94,6 @@ foreach($data as $d) {
 					this.curCrop.reset();
 				}
 		}
-		
-		/**
-		 * Resets the cropper, either re-setting or re-applying
-		 *
-		 * @access public
-		 * @return void
-		 */
-		resetCropper: function() {
-			this.curCrop.reset();
-		}
 	};
 	
 	
