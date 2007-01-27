@@ -6,28 +6,28 @@
 		<div style="float: right; ">
 		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
 		</div>
-		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">How Do I?</p>
+		<p style="color: color: rgb(255, 106, 0);; font-weight: bold; margin-bottom: 0px;">How Do I?</p>
 		<p style="margin-top: 0px; font-size: x-small; ">Everything you wanted to know about York</p>
 	</p>
 	<p>
 		<div style="float: right; ">
 		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
 		</div>
-		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">Yorkipedia</p>
+		<p style="color: color: rgb(255, 106, 0);; font-weight: bold; margin-bottom: 0px;">Yorkipedia</p>
 		<p style="margin-top: 0px; font-size: x-small; ">A lovely rip-off of Wikipedia by our man Nick Evans.</p>
 	</p>
 	<p>
 		<div style="float: right; ">
 		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
 		</div>
-		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">Game Zone</p>
+		<p style="color: color: rgb(255, 106, 0);; font-weight: bold; margin-bottom: 0px;">Game Zone</p>
 		<p style="margin-top: 0px; font-size: x-small; ">Some games for all you board people.</p>
 	</p>
 	<p>
 		<div style="float: right; ">
 		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
 		</div>
-		<p style="color: #FF9933; font-weight: bold; margin-bottom: 0px;">Campaigns</p>
+		<p style="color: color: rgb(255, 106, 0);; font-weight: bold; margin-bottom: 0px;">Campaigns</p>
 		<p style="margin-top: 0px; font-size: x-small; ">These are our campaigns so check them out.</p>
 	</p>
 	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
