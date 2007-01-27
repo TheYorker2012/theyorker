@@ -403,6 +403,9 @@ EXTRAHEAD;
 					'website'     => $org['organisation_url'],
 					'location'    => $org['organisation_location'],
 					'open_times'  => $org['organisation_opening_hours'],
+					'email_address'   => $org['organisation_email_address'],
+					'postal_address'  => $org['organisation_postal_address'],
+					'postcode'    => $org['organisation_postcode'],
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
