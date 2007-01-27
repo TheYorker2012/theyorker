@@ -60,17 +60,22 @@ if (!empty($member['postal_address'])) {
 <img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> <?php echo $member['postal_address']; ?><br />
 <?php
 }
+if(!empty($member['phone_internal']) or !empty($member['phone_external']) or !empty($member['phone_mobile'])){
 ?>
 <img alt="Phone" name="Phone" src="/images/prototype/directory/phone.gif" /> 
-<?php if (!empty($member['phone_internal'])) {
-echo $member['phone_internal'].", ";
-}
-if (!empty($member['phone_external'])) {
-echo $member['phone_external'].", ";
-}
-if (!empty($member['phone_mobile'])) {
-echo $member['phone_mobile'].", ";
-} ?>
+<?php
+	if (!empty($member['phone_internal'])) {
+	echo $member['phone_internal'].", ";
+	}
+	if (!empty($member['phone_external'])) {
+	echo $member['phone_external'].", ";
+	}
+	if (!empty($member['phone_mobile'])) {
+	echo $member['phone_mobile'].", ";
+	}
+	echo "<br />";
+}else{}
+?>
 </p>
 </div>
 <?php

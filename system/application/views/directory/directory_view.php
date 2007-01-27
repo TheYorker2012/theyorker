@@ -14,8 +14,22 @@
 		<?php if (!empty($organisation['email_address'])) {
 			echo '<img alt="Email" name="Email" src="/images/prototype/directory/email.gif" /> '.$organisation['email_address'].'<br />';
 		} ?>
-		<?php if (!empty($organisation['location'])) {
-			echo '<img alt="Location" name="Location" src="/images/prototype/directory/flag.gif" /> '.$organisation['location'].'<br />';
+		<?php if (!empty($organisation['phone_external']) or !empty($organisation['phone_internal']) or !empty($organisation['fax_number'])) {
+			echo '<img alt="Phone Number" name="Phone Number" src="/images/prototype/directory/phone.gif" /> ';
+			if (!empty($organisation['phone_external'])) {
+				echo $organisation['phone_external'].', ';
+			}
+			if (!empty($organisation['phone_internal'])) {
+				echo $organisation['phone_internal'].', ';
+			}
+			if (!empty($organisation['fax_number'])) {
+				echo $organisation['fax_number'].', ';
+			}
+			echo "<br />";
+		}
+		?>
+		<?php if (!empty($organisation['location']) && !empty($organisation['postcode'])) {
+			echo '<img alt="Location" name="Location" src="/images/prototype/directory/flag.gif" /> '.$organisation['location'].','.$organisation['postcode'].'<br />';
 		} ?>
 		<?php if (!empty($organisation['open_times'])) {
 			echo '<img alt="Opening Times" name="Opening Times" src="/images/prototype/directory/clock.gif" /> '.$organisation['open_times'].'<br />';
