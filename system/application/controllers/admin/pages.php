@@ -105,8 +105,20 @@ class Pages extends Controller
 		
 	}
 	
-	function custom($CustomPageCode)
+	function custom($CustomPageCode, $Operation='')
 	{
+		switch ($Operation) {
+			case '':
+				break;
+			case 'save':
+				$inpage = $this->input->post('main');
+				var_dump($inpage);
+				break;
+			case 'preview':
+				break;
+			default:
+				show_404($Operation);
+		}
 		$this->pages_model->SetPageCode('admin_pages_custom');
 		if ($this->_CheckViewPermissions('custom_edit')) {
 			$this->frame_public->SetTitleParameters( array(
@@ -114,6 +126,15 @@ class Pages extends Controller
 				) );
 			
 			$data = array();
+			$data['page'] = array(
+					'codename'    => $CustomPageCode,
+					'title'       => 'title',
+					'description' => 'description',
+					'keywords'    => 'description',
+					'comments'    => '0',
+					'ratings'     => '0',
+					'main'        => 'main',
+				);
 			$data['permissions'] = $this->mPermissions;
 			$this->frame_public->SetContentSimple('admin/pages_custom_edit.php', $data);
 		}
