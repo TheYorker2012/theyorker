@@ -412,10 +412,10 @@ class Pages_model extends Model
 				$data['properties'] = array();
 				foreach ($property_results as $property) {
 					$data['properties'][] = array(
-							'id'    => $properties['page_property_id'],
-							'label' => $properties['page_property_label'],
-							'text'  => $properties['page_property_text'],
-							'type'  => $properties['property_type_name'],
+							'id'    => $property['page_property_id'],
+							'label' => $property['page_property_label'],
+							'text'  => $property['page_property_text'],
+							'type'  => $property['property_type_name'],
 						);
 				}
 			}
