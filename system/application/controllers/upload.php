@@ -50,8 +50,7 @@ class Upload extends Controller {
 			}
 		}
 		$this->frame_public->SetTitle('Photo Cropper');
-		$this->frame_public->SetExtraHead('
-<script src="javascript/prototype.js" type="text/javascript"></script>	
+		$head = '<script src="javascript/prototype.js" type="text/javascript"></script>	
 <script src="javascript/scriptaculous.js?load=builder,dragdrop" type="text/javascript"></script>
 <script src="javascript/cropper.js" type="text/javascript"></script>
 <script type="text/javascript" charset="utf-8">
@@ -198,7 +197,8 @@ class Upload extends Controller {
 		}
 	);
 	
-</script>');
+</script>';
+		$this->frame_public->SetExtraHead($head);
 		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data));
 		$this->frame_public->Load();
 	}
