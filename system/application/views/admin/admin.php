@@ -7,8 +7,8 @@ This will be used by everyone for the charley launch, but is only inteneded for 
 For the moment lets just have links to the current admin pages:
 </p>
 
-<a href="/admin/directory">Edit the directory</a><br />
-<a href="/admin/directory/view">Edit entry in the directory</a><br />
+<a href="/admin/directory">Directory (With Admin Links)</a><br />
+<a href="/admin/directory/theyorker">Edit a directory entry (example theyorker)</a><br />
 <br />
 <a href="/admin/faq/add">Add faq</a><br />
 <a href="/admin/howdoi/add">Add to how do I</a><br />
