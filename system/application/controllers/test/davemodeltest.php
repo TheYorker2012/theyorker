@@ -26,7 +26,7 @@ class DaveModelTest extends Controller {
 		$reviews['league'] = $this->review->GetLeague('splashing_out');
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('I am going to cry if I can\'t make this work!');
+		$this->frame_public->SetTitle('Reviews...');
 		$this->frame_public->SetContentSimple('test/davemodeltest',$reviews);
 
 		// Load the public frame view (which will load the content view)
