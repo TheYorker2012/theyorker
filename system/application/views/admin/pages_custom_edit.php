@@ -19,16 +19,14 @@
 			<label for='ratings'>Ratings</label>
 			<input type='checkbox' name='ratings' id="ratings" value="<?php echo $page['ratings']; ?>">
 			<br />
-			
-			<textarea name="main" cols="80" rows="10" id="main" style="width:100%" ><?php echo $page['main']; ?></textarea>
-			
-			<br />
-			
-			<label for='save_button'></label>
-			<input type='submit' class='button' name='save_button' value='Save'>
+			<label for='main'>Main Text</label>
+			<textarea name="main" cols="60" rows="10" id="main" style="" ><?php echo $page['main']; ?></textarea>
 			<br />
 			<label for='preview_button'></label>
 			<input type='submit' class='button' name='preview_button' value='Preview'>
+			&nbsp;
+			<input type='submit' class='button' name='save_button' value='Save'>
 		</fieldset>
 	</form>
+	<a href='/admin/pages'>Back to Pages Administration</a>
 </div>
