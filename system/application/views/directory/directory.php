@@ -88,9 +88,8 @@
 <div id="Letter<?php echo $current_letter ?>">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="14">
-            <td width="5">&nbsp;</td>
             <td width="30" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
-            <td rowspan="2" valign="top"><div class="AZTop"> <a href='#top' style="font-size:12px;">Back to top.</a>
+            <td rowspan="2" valign="top"><div class="AZTop"> <a href='#top' style="font-size:x-small; padding-bottom: 6px;">Back to top</a>
                     <?php
 		}
 		$last_letter = $current_letter;
