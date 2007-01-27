@@ -39,16 +39,12 @@ class Yorkerdirectory extends Controller
 
 		$navbar = $this->frame_directory->GetNavbar();
 		$navbar->AddItem('about', 'About',
-				'/images/prototype/news/uk.png',
 				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('events', 'Events',
-				'/images/prototype/news/feature.gif',
 				'/directory/'.$DirectoryEntry.'/events');
 		$navbar->AddItem('members', 'Members',
-				'/images/prototype/news/feature.gif',
 				'/directory/'.$DirectoryEntry.'/members');
 		$navbar->AddItem('reviews', 'Reviews',
-				'/images/prototype/news/feature.gif',
 				'/directory/'.$DirectoryEntry.'/reviews');
 	}
 

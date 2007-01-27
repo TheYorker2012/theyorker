@@ -115,15 +115,13 @@ class NavigationBar extends XmlOutputter
 	/**
 	 * @param $Key string Unique name of item.
 	 * @param $Title string Title to be displayed.
-	 * @param $Icon string Image path of icon.
 	 * @param $Link string URL to link to.
 	 * @param $Class string Class name.
 	 */
-	function AddItem($Key, $Title, $Icon, $Link, $Class = '')
+	function AddItem($Key, $Title, $Link, $Class = '')
 	{
 		$this->mItems[$Key] = array(
 				'title' => $Title,
-				'icon' => array('src' => $Icon /*, 'alt' => $Title, 'title' => $Title*/),
 				'link' => $Link,
 				'class' => $Class,
 			);
@@ -151,9 +149,6 @@ class NavigationBar extends XmlOutputter
 			
 			echo $this->OpenTag('li');
 			echo $this->OpenTag('a',$link_attributes);
-			if (!empty($item->icon)) {
-				echo $this->Tag('img', $item['icon']);
-			}
 			echo $item['title'];
 			echo $this->CloseTag();
 			echo $this->CloseTag()."\n";
@@ -169,7 +164,6 @@ class Navigation_bar
 	/**
 	 * @param $Items array of items, each with the following fields:
 	 *	- 'title' (string Title of the item).
-	 *	- 'icon' (optional string Path to the icon).
 	 *	- 'link' (string URL to link to).
 	 *	- 'class' (optional string Class name).
 	 */
@@ -181,7 +175,6 @@ class Navigation_bar
 			$result->AddItem(
 					$key,
 					$item['title'],
-					array_key_exists('icon',$item) ? $item['icon'] : '',
 					$item['link'],
 					array_key_exists('class',$item) ? $item['class'] : ''
 				);
