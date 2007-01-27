@@ -1,8 +1,9 @@
 <div id="source" style="display:none">
-	<p><input type="file" name="userfile" size="20" /></p>
+	<input type="file" name="userfile" size="20" />
 </div>
 
 <?=form_open_multipart('upload/do_upload'); ?>
+errors:<?=$error?>
 Basic test script
 <div>
 	<input type="file" name="userfile1" size="20" />
