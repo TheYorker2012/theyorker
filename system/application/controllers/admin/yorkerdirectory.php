@@ -36,20 +36,6 @@ class Yorkerdirectory extends Controller
 	private function _SetupOrganisationFrame($DirectoryEntry)
 	{
 		$this->load->library('frame_directory');
-
-		$navbar = $this->frame_directory->GetNavbar();
-		$navbar->AddItem('about', 'About',
-				'/images/prototype/news/uk.png',
-				'/directory/'.$DirectoryEntry);
-		$navbar->AddItem('events', 'Events',
-				'/images/prototype/news/feature.gif',
-				'/directory/'.$DirectoryEntry.'/events');
-		$navbar->AddItem('members', 'Members',
-				'/images/prototype/news/feature.gif',
-				'/directory/'.$DirectoryEntry.'/members');
-		$navbar->AddItem('reviews', 'Reviews',
-				'/images/prototype/news/feature.gif',
-				'/directory/'.$DirectoryEntry.'/reviews');
 	}
 
 	/// Directory index page.
@@ -144,15 +130,18 @@ class Yorkerdirectory extends Controller
 	 */
 	private function _GetOrgs($Pattern)
 	{
+		$org_description_words = $this->pages_model->GetPropertyInteger('org_description_words', 5);
+		
 		$orgs = $this->directory_model->GetDirectoryOrganisations();
 		$organisations = array();
 		foreach ($orgs as $org) {
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
-				'shortname' => 'admin/directory/'.$org['organisation_directory_entry_name'],
+				'shortname' => $org['organisation_directory_entry_name'],
 				'link' => 'admin/directory/'.$org['organisation_directory_entry_name'],
 				'description' => $org['organisation_description'],
-				'shortdescription' => word_limiter($org['organisation_description'],30),
+				'shortdescription' => word_limiter(
+					$org['organisation_description'], $org_description_words),
 				'type' => $org['organisation_type_name'],
 			);
 		}
@@ -183,10 +172,12 @@ class Yorkerdirectory extends Controller
 	private function _GetOrgData($OrganisationShortName)
 	{
 		$data = array();
+
 		$orgs = $this->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$data['organisation'] = array(
+					'id'          => $org['organisation_entity_id'],
 					'name'        => $org['organisation_name'],
 					'shortname'   => $org['organisation_directory_entry_name'],
 					'description' => $org['organisation_description'],
@@ -194,8 +185,24 @@ class Yorkerdirectory extends Controller
 					'website'     => $org['organisation_url'],
 					'location'    => $org['organisation_location'],
 					'open_times'  => $org['organisation_opening_hours'],
+					'email_address'   => $org['organisation_email_address'],
+					'postal_address'  => $org['organisation_postal_address'],
+					'postcode'    => $org['organisation_postcode'],
+					'phone_internal'  => $org['organisation_phone_internal'],
+					'phone_external'  => $org['organisation_phone_external'],
+					'fax_number'  => $org['organisation_fax_number'],
+
+
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
 				);
+				if (NULL === $org['organisation_yorkipedia_entry']) {
+					$data['organisation']['yorkipedia'] = NULL;
+				} else {
+					$data['organisation']['yorkipedia'] = array(
+							'url'   => 'http://yorkipedia.theyorker.co.uk',
+							'title' => $org['organisation_yorkipedia_entry'],
+						);
+				}
 			}
 		} else {
 			$data['organisation'] = array(
