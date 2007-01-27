@@ -30,14 +30,10 @@ class Upload extends Controller {
 		$config['max_height']  = '768';
 		
 		$this->load->library('upload', $config);
-		$data = array();
-		var_dump($_POST);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
-				var_dump($this->upload->display_errors());
 				$data[] = $this->upload->display_errors();
 			} else {
-				var_dump($this->upload->data());
 				$data[] = $this->upload->data();
 				if ($data[$x - 1]['file_ext'] == '.zip') {
 					// TODO Zip support
@@ -46,12 +42,11 @@ class Upload extends Controller {
 					$data[$x - 1] = _processImage($data[$x - 1]);
 				}
 			}
-			echo "loop";
 		}
-//		$this->frame_public->SetTitle('Photo Cropper');
-//		$this->frame_public->SetExtraHead('');
-//		$this->frame_public->SetContentSimple('uploader/upload_form', $data);
-//		$this->frame_public->Load();
+		$this->frame_public->SetTitle('Photo Cropper');
+		$this->frame_public->SetExtraHead('');
+		$this->frame_public->SetContentSimple('uploader/upload_form', $data);
+		$this->frame_public->Load();
 	}
 	
 	function process_form_data($form_data) {
@@ -65,7 +60,7 @@ class Upload extends Controller {
 	}
 	
 	function _processImage($data) {
-		echo 'duh';
+		return 'duh\n';
 	}
 }
 ?>
