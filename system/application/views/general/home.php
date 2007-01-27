@@ -55,7 +55,7 @@
 	<br />
 	<br />
 </div>
-<div style="width: 400px; margin: 0px; padding-right: 3px; ">
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
 	<div style="border: 1px solid #999; padding: 6px; color: #999; font-size: small; margin-bottom: 4px; ">
 	<span style="font-size: x-large; "><?php echo $welcome_title; ?></span><br />
 	<?php echo $welcome_text; ?>
