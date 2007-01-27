@@ -47,6 +47,7 @@ class Directory_model extends Model {
 	{
 		$sql =
 			'SELECT'.
+			' organisations.organisation_entity_id,'.
 			' organisations.organisation_name,'.
 			' organisations.organisation_directory_entry_name,'.
 			' organisations.organisation_description,'.
@@ -57,6 +58,8 @@ class Directory_model extends Model {
 			' organisations.organisation_postal_address,'.
 			' organisations.organisation_email_address,'.
 			' organisations.organisation_postcode,'.
+			' organisations.organisation_phone_internal,'.
+			' organisations.organisation_phone_external,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.

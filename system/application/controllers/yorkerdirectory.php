@@ -396,6 +396,7 @@ EXTRAHEAD;
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$data['organisation'] = array(
+					'id'          => $org['organisation_entity_id'],
 					'name'        => $org['organisation_name'],
 					'shortname'   => $org['organisation_directory_entry_name'],
 					'description' => $org['organisation_description'],
@@ -406,6 +407,8 @@ EXTRAHEAD;
 					'email_address'   => $org['organisation_email_address'],
 					'postal_address'  => $org['organisation_postal_address'],
 					'postcode'    => $org['organisation_postcode'],
+					'phone_internal'  => $org['organisation_phone_internal'],
+					'phone_external'  => $org['organisation_phone_external'],
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
