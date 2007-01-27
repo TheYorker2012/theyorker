@@ -71,7 +71,7 @@ foreach($data as $d) {
 			$( 'testImage' ).height = h;
 				if (imgTypeNew == 0) {
 					$( 'previewArea-1').display = none
-					this.curCrop.remove();
+					this.removeCropper();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 200,
 						minHeight: 120,
@@ -79,11 +79,11 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-0'} );
-					this.curCrop.reset();
+					this.attachCropper();
 				}
 				if (imgTypeNew == 1) {
 					$( 'previewArea-0').display = none
-					this.curCrop.remove();
+					this.removeCropper();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 100,
 						minHeight: 120,
@@ -91,8 +91,25 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-1'} );
-					this.curCrop.reset();
+					this.attachCropper();
 				}
+		},
+		
+		/** 
+		 * Attaches/resets the image cropper
+		 *
+		 * @access private
+		 * @return void
+		 */
+		attachCropper: function() {
+			if( this.curCrop == null ) this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
+				minWidth: 200,
+				minHeight: 120,
+				ratioDim: { x: 200, y: 120 },
+				displayOnInit: true, 
+				onEndCrop: onEndCrop,
+				previewWrap: 'previewArea-0'} );
+			else this.curCrop.reset();
 		}
 	};
 	
@@ -126,7 +143,7 @@ foreach($data as $d) {
 		<label for="imageChoice">image:</label>
 		<select name="imageChoice" id="imageChoice">
 			<option value="images/photos/1.jpg|380|235|0">Castle0</option>
-			<option value="castle.jpg|500|333|1">Castle1</option>
+			<option value="images/photos/1.jpg|380|235|1">Castle1</option>
 			<option value="poppy.jpg|311|466|0">Flower0</option>
 		</select>
 	</p>
