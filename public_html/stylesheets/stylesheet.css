@@ -49,6 +49,7 @@ div.navigationmenu_item {
 div.navigationmenu_item_noborder {
 	color: #999;
 	font-size: small;
+	border-bottom: 1px solid #999;
 	padding: 0px 0px 3px 4px;
 	margin: 0px 0px 3px 0px;
 }
