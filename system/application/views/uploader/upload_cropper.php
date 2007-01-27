@@ -39,7 +39,7 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		init: function() {
-			this.attachCropper();
+			this.setImage('images/photos/1.jpg', 380, 235, 1);
 		},
 		
 		/**
@@ -93,23 +93,6 @@ foreach($data as $d) {
 						previewWrap: 'previewArea-1'} );
 					this.curCrop.reset();
 				}
-		},
-		
-		/** 
-		 * Attaches/resets the image cropper
-		 *
-		 * @access private
-		 * @return void
-		 */
-		attachCropper: function() {
-			if( this.curCrop == null ) this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
-				minWidth: 200,
-				minHeight: 120,
-				ratioDim: { x: 200, y: 120 },
-				displayOnInit: true, 
-				onEndCrop: onEndCrop,
-				previewWrap: 'previewArea-0'} );
-			else this.curCrop.reset();
 		}
 	};
 	
