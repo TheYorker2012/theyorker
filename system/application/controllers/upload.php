@@ -30,7 +30,9 @@ class Upload extends Controller {
 		$config['max_height']  = '768';
 		
 		$data = array();
-		$data[] = realpath("./public_html/tmp/uploads/");
+		$data[] = realpath("./tmp/uploads/");
+		$data[] = $_SERVER['DOCUMENT_ROOT'];
+		$data[] = $_SERVER['PHP_SELF'];
 		$this->load->library('upload', $config);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
