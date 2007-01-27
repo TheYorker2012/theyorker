@@ -60,6 +60,7 @@ class Directory_model extends Model {
 			' organisations.organisation_postcode,'.
 			' organisations.organisation_phone_internal,'.
 			' organisations.organisation_phone_external,'.
+			' organisations.organisation_fax_number,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.

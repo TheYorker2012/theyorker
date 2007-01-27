@@ -409,6 +409,7 @@ EXTRAHEAD;
 					'postcode'    => $org['organisation_postcode'],
 					'phone_internal'  => $org['organisation_phone_internal'],
 					'phone_external'  => $org['organisation_phone_external'],
+					'fax_number'  => $org['organisation_fax_number'],
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
