@@ -45,21 +45,20 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-					$data[$x - 1] = _processImage($data[$x - 1]);
+					$data[$x - 1] = $this->_processImage($data[$x - 1]);
 				}
 			}
 		}
 		$this->frame_public->SetTitle('Photo Cropper');
-		$this->frame_public->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').
-<<<EOF
+		$this->frame_public->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').'
 <script src="javascript/prototype.js" type="text/javascript"></script>	
 <script src="javascript/scriptaculous.js?load=builder,dragdrop" type="text/javascript"></script>
 <script src="javascript/cropper.js" type="text/javascript"></script>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
-		xajax.$('submitButton').disabled=true;
-		xajax.$('submitButton').value="Saving...";
+		xajax.$(\'submitButton\').disabled=true;
+		xajax.$(\'submitButton\').value="Saving...";
 		xajax_process_form_data(xajax.getFormValues("pictureCrop"));
 		return false;
 	}
@@ -108,30 +107,30 @@ class Upload extends Controller {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
-			$( 'testImage' ).src = imgSrc;
-			$( 'imgCrop_testImage' ).src = imgSrc;
-			$( 'testImage' ).width = w;
-			$( 'testImage' ).height = h;
+			$( \'testImage\' ).src = imgSrc;
+			$( \'imgCrop_testImage\' ).src = imgSrc;
+			$( \'testImage\' ).width = w;
+			$( \'testImage\' ).height = h;
 				if (imgTypeNew == 0) {
 					this.removeCropper();
-					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
+					this.curCrop = new Cropper.ImgWithPreview( \'testImage\', {
 						minWidth: 200,
 						minHeight: 120,
 						ratioDim: { x: 200, y: 120 },
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
-						previewWrap: 'previewArea-0'} );
+						previewWrap: \'previewArea-0\'} );
 					this.attachCropper();
 				}
 				if (imgTypeNew == 1) {
 					this.removeCropper();
-					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
+					this.curCrop = new Cropper.ImgWithPreview( \'testImage\', {
 						minWidth: 100,
 						minHeight: 120,
 						ratioDim: { x: 100, y: 120 },
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
-						previewWrap: 'previewArea-1'} );
+						previewWrap: \'previewArea-1\'} );
 					this.attachCropper();
 				}
 		},
@@ -143,13 +142,13 @@ class Upload extends Controller {
 		 * @return void
 		 */
 		attachCropper: function() {
-			if( this.curCrop == null ) this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
+			if( this.curCrop == null ) this.curCrop = new Cropper.ImgWithPreview( \'testImage\', {
 				minWidth: 200,
 				minHeight: 120,
 				ratioDim: { x: 200, y: 120 },
 				displayOnInit: true, 
 				onEndCrop: onEndCrop,
-				previewWrap: 'previewArea-0'} );
+				previewWrap: \'previewArea-0\'} );
 			else this.curCrop.reset();
 		},
 		
@@ -179,29 +178,27 @@ class Upload extends Controller {
 	
 	// setup the callback function
 	function onEndCrop( coords, dimensions ) {
-		$( 'x1' ).value = coords.x1;
-		$( 'y1' ).value = coords.y1;
-		$( 'x2' ).value = coords.x2;
-		$( 'y2' ).value = coords.y2;
-		$( 'width' ).value = dimensions.width;
-		$( 'height' ).value = dimensions.height;
+		$( \'x1\' ).value = coords.x1;
+		$( \'y1\' ).value = coords.y1;
+		$( \'x2\' ).value = coords.x2;
+		$( \'y2\' ).value = coords.y2;
+		$( \'width\' ).value = dimensions.width;
+		$( \'height\' ).value = dimensions.height;
 	}
 	
 	// basic example
 	Event.observe( 
 		window, 
-		'load', 
+		\'load\', 
 		function() { 
 			CropImageManager.init();
-			Event.observe( $('removeCropper'), 'click', CropImageManager.removeCropper.bindAsEventListener( CropImageManager ), false );
-			Event.observe( $('resetCropper'), 'click', CropImageManager.resetCropper.bindAsEventListener( CropImageManager ), false );
-			Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
+			Event.observe( $(\'removeCropper\'), \'click\', CropImageManager.removeCropper.bindAsEventListener( CropImageManager ), false );
+			Event.observe( $(\'resetCropper\'), \'click\', CropImageManager.resetCropper.bindAsEventListener( CropImageManager ), false );
+			Event.observe( $(\'imageChoice\'), \'change\', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
 		}
 	);
 	
-</script>
-EOF
-);
+</script>');
 		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data));
 		$this->frame_public->Load();
 	}
