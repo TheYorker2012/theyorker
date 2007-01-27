@@ -68,8 +68,8 @@
 		<span style="font-size: x-large;  color: #2DC6D7; ">about us</span>
 		<p><?php echo $organisation['description']; ?></p>
 	</div>
-	<div style="border: 1px solid #BBBBBB; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #BBBBBB; ">finding us</span>
+	<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
+		<span style="font-size: x-large;  color: #999; ">finding us</span>
 		<p>
 		<img width='390' src='/images/prototype/directory/about/gmapwhereamI.png' />
 		</p>
