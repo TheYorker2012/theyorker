@@ -167,6 +167,14 @@ class Pages extends Controller
 		$this->frame_public->Load();
 	}
 	
+	function pagesadmin()
+	{
+		$data = array();
+		$data['permissions'] = $this->mPermissions;
+		$this->frame_public->SetContentSimple('admin/pages_neweditpreview.php', $data);
+		$this->frame_public->Load();
+	}
+	
 	function deletepage($PageCode)
 	{
 		//echo 'are you sure you want to permanently delete the page '.$PageCode;
