@@ -37,7 +37,7 @@ if(empty($organisation['cards'])) {
 <?php
 foreach ($organisation['cards'] as $member) {
 ?>
-<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
+<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
 <div style='float:right;'>
 	<img src='/images/prototype/news/benest.png'/>
 </div>
@@ -62,7 +62,7 @@ if (!empty($member['postal_address'])) {
 }
 if(!empty($member['phone_internal']) or !empty($member['phone_external']) or !empty($member['phone_mobile'])){
 ?>
-<img alt="Phone" name="Phone" src="/images/prototype/directory/phone.gif" /> 
+<img alt="Phone" name="Phone" src="/images/prototype/directory/phone.gif" />
 <?php
 	if (!empty($member['phone_internal'])) {
 	echo $member['phone_internal'].", ";
