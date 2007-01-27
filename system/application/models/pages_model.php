@@ -215,7 +215,7 @@ class Pages_model extends Model
 			} else {
 				// Build the cache
 				$this->load->library('wikiparser');
-				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText());
+				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText()."\n");
 				// Save the cache back to the database
 				$cache = new PagePropertyType(array('text' => $cached_wikitext));
 				$this->InsertProperty($this->mPageCode, $PropertyLabel, 'wikitext_cache', $cache);
