@@ -38,6 +38,7 @@ class Review_model extends Model {
 	
 	function GetReview($organisation_directory_entry_name,$content_type_codename) {
 	
+	#dgh500
 	# need organisation type?
 	# need organisation fileas - what IS this?? all null in DB
 	$sql = '
@@ -80,6 +81,28 @@ class Review_model extends Model {
 	
 	return $reviews;
 	
+	}
+	
+	function GetLeague($league_codename) {
+		# organisation image?
+		$sql = '
+				SELECT 
+				organisations.organisation_name,
+				organisations.organisation_url,
+				organisations.organisation_description,
+				league_entries.league_entry_position,
+				leagues.league_name
+				FROM organisations
+				INNER JOIN league_entries
+				ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
+				INNER JOIN leagues
+				ON leagues.league_id = league_entries.league_entry_league_id
+				WHERE leagues.league_codename = "'.$league_codename.'"
+				';
+	$result = $query = $this->db->query($sql);
+	$league = $query->result_array();
+	
+	return $league;
 	}
 
 
