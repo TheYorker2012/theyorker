@@ -24,7 +24,7 @@ class DaveModelTest extends Controller {
 		$reviews = $this->review->GetReview('boxing_club','lifestyle');
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('FOR FUCKS SAKE');
+		$this->frame_public->SetTitle('Review...');
 		$this->frame_public->SetContentSimple('test/davemodeltest',$reviews);
 		
 		// Load the public frame view (which will load the content view)
