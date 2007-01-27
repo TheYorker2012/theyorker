@@ -22,9 +22,10 @@ class DaveModelTest extends Controller {
 		
 		//Load data from model
 		$reviews = $this->review->GetReview('boxing_club','lifestyle');
+		$league  = $this->review->GetLeague('romance');
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Review...');
+		$this->frame_public->SetTitle('I am going to cry if I can\'t make this work!');
 		$this->frame_public->SetContentSimple('test/davemodeltest',$reviews);
 		
 		// Load the public frame view (which will load the content view)
