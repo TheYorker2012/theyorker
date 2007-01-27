@@ -1,20 +1,22 @@
-<p><?php echo $maintext; ?></p>
-<div id='minibox' style="float:right;margin-right:5px">
-    <div id='title'>Filters</div>
-    <?php
-    	$idPostfix = 1;
-		foreach ($organisation_types as $org_type) {
-			echo '<input id="filterCheck'.$idPostfix++.'" onChange="searchPage(\'searchText\',\'Letter\',\'filterCheck\');" type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span><br />';
-		}
-    ?>
+<div class='RightToolbar'>
+	<div class='RightToolbarHeader'>
+		Filters
+	</div>
+	<div style='padding: 10px 5px 10px 5px;'>
+	    <?php
+	    	$idPostfix = 1;
+			foreach ($organisation_types as $org_type) {
+				echo '<input id="filterCheck'.$idPostfix++.'" onChange="searchPage(\'searchText\',\'Letter\',\'filterCheck\');" type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span><br />';
+			}
+	    ?>
+	</div>
 </div>
-<div  style="padding:0px 150px 0px 0px">
+<div  style="padding:0px 0px 0px 0px; width: 400px; margin: 0px;">
+	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
+	<span style="font-size: large;  color: #2DC6D7; ">Search</span>
+	<p><?php echo $maintext; ?></p>
 	<form name='search_directory' action='' method='POST' class='form'>
-		<fieldset>
-			<legend>Search</legend>
-			<input id="searchText" name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');">
-			<input type='submit' class='button' name='Submit' value='Search'>
-		</fieldset>
+			<div align='center'><input id="searchText" width='300' name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"></div>
 	</form>
 	<div align='center'>
 		<script language="javascript">
@@ -26,6 +28,7 @@
 		</script>
 		<br />
 		Browsing <?php echo count($organisations); ?> results.
+		</div>
 	</div>
 </div>
 <div class="clear">&nbsp;</div>
