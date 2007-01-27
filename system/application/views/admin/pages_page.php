@@ -26,7 +26,7 @@
 	</fieldset>
 </form>
 <h2>Edit properties</h2>
-<form name='property_edit_form' action='#' method='POST' class='form'>
+<form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
 			<?php
 			foreach ($properties as $property) {
@@ -45,7 +45,7 @@
 	</fieldset>
 </form>
 <h2>Add a page property</h2>
-<form name='property_form' action='#' method='POST' class='form'>
+<form name='property_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
 		<label for='properties_name'>Property name</label>
 		<input size='35' name='properties_name'>
