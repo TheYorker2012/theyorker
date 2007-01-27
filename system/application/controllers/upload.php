@@ -46,7 +46,7 @@ class Upload extends Controller {
 					$data[$x - 1] = _processImage($data[$x - 1]);
 				}
 			}
-			echo "loop"
+			echo "loop";
 		}
 //		$this->frame_public->SetTitle('Photo Cropper');
 //		$this->frame_public->SetExtraHead('');
