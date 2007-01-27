@@ -18,7 +18,7 @@
 		echo '<tr class="ReviewElement'.$flip.'">
 				<td>
 				<a href="'.$review_link[$list].'"><img src="'.$reviews['review_image'][$list].'" alt="#" /></a>
-				<h3><a href="foodreview/">'.$reviews['review_title'][$list].'</a></h3><br />
+				<h3><a href="/context/evil_eye_lounge/food">'.$reviews['review_title'][$list].'</a></h3><br />
 				<a href="'.$reviews['review_website'][$list].'">'.$reviews['review_website'][$list].'</a><br />
 				<a href="#">&gt;Food</a>&nbsp;&nbsp;<a href="#">&gt;Drink</a><br />
 			</td>
@@ -27,8 +27,8 @@
 			<td>'.$reviews['review_user_rating'][$list].'/10</td>
 		</tr>';
 	}
-?>	
-	
+?>
+
 		<tr class="ReviewElementEnd">
 			<td colspan="4">
 				<a href="#top">&gt;Go back to top</a>&nbsp;&nbsp;<a href="food">&gt;Go back to food</a>
