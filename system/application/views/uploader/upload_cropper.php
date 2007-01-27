@@ -71,7 +71,7 @@ foreach($data as $d) {
 			$( 'testImage' ).height = h;
 				if (imgTypeNew == 0) {
 					$( 'previewArea-1').display = 'none';
-					this.removeCropper();
+					this.curCrop.remove();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 200,
 						minHeight: 120,
@@ -79,11 +79,11 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-0'} );
-					this.attachCropper();
+					this.curCrop.reset();
 				}
 				if (imgTypeNew == 1) {
 					$( 'previewArea-0').display = 'none';
-					this.removeCropper();
+					this.curCrop.remove();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 100,
 						minHeight: 120,
@@ -91,7 +91,7 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-1'} );
-					this.attachCropper();
+					this.curCrop.reset();
 				}
 		},
 		
