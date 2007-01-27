@@ -89,6 +89,42 @@ class Pages extends Controller
 		$this->frame_public->Load();
 	}
 	
+	function page($Operation, $PageCode='')
+	{
+		$this->pages_model->SetPageCode('admin_pages_page');
+		if ($this->_CheckViewPermissions('page_edit')) {
+			$data = array();
+			$data['permissions'] = $this->mPermissions;
+			switch ($Operation) {
+				case 'edit':
+					// Find the custom page code
+					$page_info = $this->pages_model->GetSpecificPage($PageCode, TRUE);
+					if (FALSE === $page_info) {
+						show_404($Operation.'/'.$PageCode);
+					} else {
+						$data['target'] = '/admin/pages/page/'.$Operation.'/'.$PageCode;
+						$data['codename'] = $page_info['codename'];
+						$data['title'] = $page_info['title'];
+						$data['description'] = $page_info['description'];
+						$data['keywords'] = $page_info['keywords'];
+						$data['comments'] = $page_info['comments'];
+						$data['ratings'] = $page_info['ratings'];
+						$data['properties'] = $page_info['properties'];
+					}
+					break;
+				default:
+					show_404($Operation);
+					return;
+			}
+			$this->frame_public->SetTitleParameters( array(
+					'codename' => $PageCode,
+				) );
+			
+			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+		}
+		$this->frame_public->Load();
+	}
+	
 	function custom($Operation, $CustomPageCode='')
 	{
 		$this->pages_model->SetPageCode('admin_pages_custom');
@@ -97,19 +133,37 @@ class Pages extends Controller
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
 				case 'edit':
+					$PageCode = 'custom:'.$CustomPageCode;
 					// Find the custom page code
-					$page_info = $this->pages_model->GetSpecificPage($CustomPageCode, TRUE);
+					$page_info = $this->pages_model->GetSpecificPage($PageCode, TRUE);
 					if (FALSE === $page_info) {
-						show_404($Operation.'/'.$CustomPageCode);
+						show_404($Operation.'/'.$PageCode);
 					} else {
 						$data['target'] = '/admin/pages/custom/'.$Operation.'/'.$CustomPageCode;
-						$data['codename'] = $page_info['codename'];
+						$data['codename'] = $CustomPageCode;
 						$data['title'] = $page_info['title'];
 						$data['description'] = $page_info['description'];
 						$data['keywords'] = $page_info['keywords'];
 						$data['comments'] = $page_info['comments'];
 						$data['ratings'] = $page_info['ratings'];
-						$data['properties'] = $page_info['properties'];
+						$main_property = FALSE;
+						foreach ($page_info['properties'] as $key => $property) {
+							if ($property['label'] === 'main' &&
+									$property['type'] === 'wikitext') {
+								$main_property = $property;
+							}
+						}
+						$data['properties'] = array();
+						if (FALSE === $main_property) {
+							$data['properties'][] = array(
+									'id'    => 'newmain',
+									'label' => 'main',
+									'text'  => '',
+									'type'  => 'wikitext',
+								);
+						} else {
+							$data['properties'][] = $main_property;
+						}
 					}
 					break;
 				default:
