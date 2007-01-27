@@ -31,6 +31,7 @@ class Upload extends Controller {
 		
 		$this->load->library('upload', $config);
 		$data = array();
+		echo "loop";
 		echo $this->input->post('destination');
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
