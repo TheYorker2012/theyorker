@@ -29,6 +29,8 @@ class Upload extends Controller {
 		$config['max_width']  = '1024';
 		$config['max_height']  = '768';
 		
+		$data = array();
+		
 		$this->load->library('upload', $config);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
