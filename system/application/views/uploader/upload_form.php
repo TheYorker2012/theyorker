@@ -12,3 +12,4 @@ Basic test script
 
 <input type="button" onClick="AddClones()" value="Another"/>
 <input type="submit" value="upload" />
+</form>
