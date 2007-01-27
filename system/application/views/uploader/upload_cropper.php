@@ -136,7 +136,7 @@ foreach($data as $d) {
 	
 </script>
 <div id="testWrap">
-	<img src="images/photos/1.jpg" alt="test image" id="testImage" width="500" height="333" />
+	<img src="images/photos/1.jpg" alt="test image" id="testImage" />
 </div>
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>
