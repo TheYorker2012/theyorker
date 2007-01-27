@@ -23,7 +23,7 @@ class Upload extends Controller {
 		
 		//get data about thumbnails
 		
-		$config['upload_path'] = './public_html/tmp/uploads/';
+		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'gif|jpg|png|zip';
 		$config['max_size']	= '2048';
 		$config['max_width']  = '1024';
