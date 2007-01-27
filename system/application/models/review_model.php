@@ -35,6 +35,53 @@ class Review_model extends Model {
 		return $nocomments;
 		}
 	}
+	
+	function GetReview($organisation_directory_entry_name,$content_type_codename) {
+	
+	# need organisation type?
+	# need organisation fileas - what IS this?? all null in DB
+	$sql = '
+			SELECT 
+			organisations.organisation_name,
+			organisations.organisation_fileas,
+			organisations.organisation_description,
+			organisations.organisation_location,
+			organisations.organisation_postal_address,
+			organisations.organisation_postcode,
+			organisations.organisation_phone_external,
+			organisations.organisation_phone_internal,
+			organisations.organisation_fax_number,
+			organisations.organisation_email_address,
+			organisations.organisation_url,
+			organisations.organisation_opening_hours,
+			organisations.organisation_events,
+			organisations.organisation_hits,
+			organisations.organisation_timestamp,
+			organisations.organisation_yorkipedia_entry,
+			review_context_contents.review_context_content_blurb,
+			review_context_contents.review_context_content_recommend_item_price,
+			review_context_contents.review_context_content_recommend_item,
+			review_context_contents.review_context_content_average_price_upper,
+			review_context_contents.review_context_content_average_price_lower,
+			review_context_contents.review_context_content_rating,
+			review_context_contents.review_context_content_directions,
+			review_context_contents.review_context_content_book_online
+			  FROM content_types 
+			  INNER JOIN review_context_contents
+			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id 
+			  INNER JOIN organisations
+			  ON review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
+			  WHERE content_types.content_type_codename = "'.$content_type_codename.'" 
+			  AND organisations.organisation_directory_entry_name = "'.$organisation_directory_entry_name.'"
+			';
+	
+	$result = $query = $this->db->query($sql);
+	$reviews = $query->result_array();
+	
+	return $reviews;
+	
+	}
+
 
 
 // ** frb501 - Whole Section Below is outdated, Messy and needs to be redone to the new database *****
