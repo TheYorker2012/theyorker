@@ -31,6 +31,7 @@ class Upload extends Controller {
 		
 		$this->load->library('upload', $config);
 		$data = array();
+		echo $this->input->post('destination');
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
 				var_dump($this->upload->display_errors());
@@ -45,6 +46,7 @@ class Upload extends Controller {
 					$data[$x - 1] = _processImage($data[$x - 1]);
 				}
 			}
+			echo "loop"
 		}
 //		$this->frame_public->SetTitle('Photo Cropper');
 //		$this->frame_public->SetExtraHead('');
