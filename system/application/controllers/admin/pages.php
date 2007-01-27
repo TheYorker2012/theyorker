@@ -89,120 +89,40 @@ class Pages extends Controller
 		$this->frame_public->Load();
 	}
 	
-	function page($PageCode)
+	function custom($Operation, $CustomPageCode='')
 	{
-		$this->pages_model->SetPageCode('admin_pages_page');
-		if ($this->_CheckViewPermissions('page_edit')) {
-			$this->frame_public->SetTitleParameters( array(
-					'codename' => $PageCode,
-				) );
-			
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_page_edit.php', $data);
-		}
-		$this->frame_public->Load();
-		
-	}
-	
-	function custom($CustomPageCode, $Operation='')
-	{
-		switch ($Operation) {
-			case '':
-				break;
-			case 'save':
-				$inpage = $this->input->post('main');
-				var_dump($inpage);
-				break;
-			case 'preview':
-				break;
-			default:
-				show_404($Operation);
-		}
 		$this->pages_model->SetPageCode('admin_pages_custom');
 		if ($this->_CheckViewPermissions('custom_edit')) {
+			$data = array();
+			$data['permissions'] = $this->mPermissions;
+			switch ($Operation) {
+				case 'edit':
+					$data['target'] = '/admin/pages/custom/'.$Operation.'/'.$CustomPageCode;
+					$data['codename'] = $CustomPageCode;
+					$data['title'] = 'About The Yorker';
+					$data['description'] = 'about the yorker and all that';
+					$data['keywords'] = 'key,word,hippo';
+					$data['comments'] = '1';
+					$data['ratings'] = '0';
+					$data['save_uri'] = '/admin/pages/save/custom/about';
+					$data['properties'] = array(
+							array(
+								'id'    => 'prop1',
+								'label' => 'main',
+								'type'  => 'wikitext',
+								'value' => '==about the yorker==',
+							)
+						);
+					break;
+				default:
+					show_404($Operation);
+					return;
+			}
 			$this->frame_public->SetTitleParameters( array(
 					'codename' => $CustomPageCode,
 				) );
 			
-			$data = array();
-			$data['page'] = array(
-					'codename'    => $CustomPageCode,
-					'title'       => 'title',
-					'description' => 'description',
-					'keywords'    => 'description',
-					'comments'    => '0',
-					'ratings'     => '0',
-					'main'        => 'main',
-				);
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_custom_edit.php', $data);
-		}
-		$this->frame_public->Load();
-	}
-	
-	function newpage()
-	{
-		//echo 'create a new page';
-		$this->pages_model->SetPageCode('admin_pages_new_page');
-		if ($this->_CheckViewPermissions('page_new')) {
-			
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_page_new.php', $data);
-		}
-		$this->frame_public->Load();
-	}
-	
-	function newcustom()
-	{
-		//echo 'create a new custom page';
-		$this->pages_model->SetPageCode('admin_pages_new_custom');
-		if ($this->_CheckViewPermissions('custom_new')) {
-			
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_custom_new.php', $data);
-		}
-		$this->frame_public->Load();
-	}
-	
-	function pagesadmin()
-	{
-		$data = array();
-		$data['permissions'] = $this->mPermissions;
-		$this->frame_public->SetContentSimple('admin/pages_neweditpreview.php', $data);
-		$this->frame_public->Load();
-	}
-	
-	function deletepage($PageCode)
-	{
-		//echo 'are you sure you want to permanently delete the page '.$PageCode;
-		$this->pages_model->SetPageCode('admin_pages_delete_page');
-		if ($this->_CheckViewPermissions('page_delete')) {
-			$this->frame_public->SetTitleParameters( array(
-					'codename' => $PageCode,
-				) );
-			
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
-		}
-		$this->frame_public->Load();
-	}
-	
-	function deletecustom($CustomPageCode)
-	{
-		//echo 'are you sure you want to permanently delete the custom page '.$CustomPageCode;
-		$this->pages_model->SetPageCode('admin_pages_delete_custom');
-		if ($this->_CheckViewPermissions('custom_delete')) {
-			$this->frame_public->SetTitleParameters( array(
-					'codename' => $CustomPageCode,
-				) );
-			
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
+			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
 		}
 		$this->frame_public->Load();
 	}
