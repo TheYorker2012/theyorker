@@ -7,6 +7,15 @@
 **  Does: Gets the data for review page, and leagues
 **  Todo: Make the 'return' values properly formatted (not just result arrays)
 **        Do the /table/x/y function. NOTE: where does the 'star' 'price' and 'user' ratings come from - price is a tag group? /confused!
+**		  : Should probably be something like GetTagGroup($tag_group_id,$order_by (enum 'star','price','user'?],$order_direction)
+**		  : If tag_group_ordered is 1 for a tag group then order by tag_order, otherwise by tag_name
+**		  : 'star' and 'price' are names of tags, ordered by tag_order and tag_name respectively
+**		  : user rating comes from a join like this (left join in case the the organisation is unrated):
+**				LEFT JOIN comment_summary_cache
+**				ON comment_summary_cache.comment_summary_cache_content_type_id = tag_groups.tag_group_content_type_id
+**				   AND comment_summary_cache.comment_summary_cache_organisation_entity_id = organisations.organisation_entity_id
+**				   AND comment_summary_cache.comment_summary_cache_article_id IS NULL
+**		  : I've added this in to your GetLeague function :-)
 **		  Get some sleep
 */
 
@@ -104,9 +113,12 @@ class Review_model extends Model {
 				SELECT
 				organisations.organisation_name,
 				organisations.organisation_url,
+				organisations.organisation_description,
 				league_entries.league_entry_position,
 				leagues.league_name,
-				content_types.content_type_name
+				content_types.content_type_name,
+				content_types.content_type_codename,
+				comment_summary_cache.comment_summary_cache_average_rating
 				FROM content_types
 				INNER JOIN review_context_contents
 				ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
@@ -115,7 +127,11 @@ class Review_model extends Model {
 				INNER JOIN league_entries
 				ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
 				INNER JOIN leagues
-				ON leagues.league_id = league_entries.league_entry_league_id
+				ON leagues.league_id = league_entries.league_entry_league_id AND content_types.content_type_id = leagues.league_content_type_id
+				LEFT JOIN comment_summary_cache
+				ON comment_summary_cache.comment_summary_cache_content_type_id = content_types.content_type_id
+				   AND comment_summary_cache.comment_summary_cache_organisation_entity_id = organisations.organisation_entity_id
+				   AND comment_summary_cache.comment_summary_cache_article_id IS NULL
 				WHERE leagues.league_codename = "'.$league_codename.'"
 				ORDER BY '.$sortby.' '.$order.'
 				';
@@ -127,9 +143,12 @@ class Review_model extends Model {
 	foreach($query->result() as $row) {
 		$tmpleague['organisation_name']        = $row->organisation_name;
 		$tmpleague['organisation_url']         = $row->organisation_url;
+		$tmpleague['organisation_description']         = $row->organisation_description;
 		$tmpleague['league_entry_position']    = $row->league_entry_position;
 		$tmpleague['league_name']              = $row->league_name;
 		$tmpleague['content_type_name']		   = $row->content_type_name;
+		$tmpleague['content_type_codename']	   = $row->content_type_codename;
+		$tmpleague['average_user_rating']	   = $row->comment_summary_cache_average_rating;
 		$league[]                              = $tmpleague;
 	}
 
