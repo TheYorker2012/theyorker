@@ -2,7 +2,7 @@
 
 
 <?php if ($permissions['custom_new']) { ?>
-<a href="/admin/pages/newcustom">Create a new custom page</a><br /><br />
+<a href="/admin/pages/custom/new">Create a new custom page</a><br /><br />
 <?php } ?>
 
 <?php
@@ -21,7 +21,7 @@ foreach ($custom as $page) {
 <h2>Pages</h2>
 
 <?php if ($permissions['page_new']) { ?>
-<a href="/admin/pages/newpage">Create a new page</a><br /><br />
+<a href="/admin/pages/page/new">Create a new page</a><br /><br />
 <?php } ?>
 
 <?php

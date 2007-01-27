@@ -96,6 +96,16 @@ class Pages extends Controller
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
+				case 'new':
+					$data['target'] = '/admin/pages/page/'.$Operation;
+					$data['codename'] = '';
+					$data['title'] = '';
+					$data['description'] = '';
+					$data['keywords'] = '';
+					$data['comments'] = 0;
+					$data['ratings'] = 0;
+					$data['properties'] = array();
+					break;
 				case 'edit':
 					// Find the custom page code
 					$page_info = $this->pages_model->GetSpecificPage($PageCode, TRUE);
@@ -140,6 +150,23 @@ class Pages extends Controller
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
+				case 'new':
+					$data['target'] = '/admin/pages/custom/'.$Operation;
+					$data['codename'] = '';
+					$data['title'] = '';
+					$data['description'] = '';
+					$data['keywords'] = '';
+					$data['comments'] = 0;
+					$data['ratings'] = 0;
+					$data['properties'] = array(
+							array(
+									'id'    => 'propnew',
+									'label' => 'main',
+									'text'  => '',
+									'type'  => 'wikitext',
+								),
+						);
+					break;
 				case 'edit':
 					$PageCode = 'custom:'.$CustomPageCode;
 					// Find the custom page code
