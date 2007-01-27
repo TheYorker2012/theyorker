@@ -121,7 +121,6 @@ div.HighlightedBox {
 div#navbar ul {
 	padding-left: 0;
 	margin-left: 0;
-	background-color: #08c0ef;
 	color: White;
 	float: left;
 	width: 100%;
@@ -134,22 +133,31 @@ div#navbar ul li {
 }
 
 div#navbar ul li a {
+	spacing: 0.2em 0.2em;
 	padding: 0.2em 1em;
-	background-color: #08c0ef;
-	color: White;
+	color: #08c0ef;
 	text-decoration: none;
 	float: left;
-	border-right: 1px solid #fff;
+	border-right: 1px solid #08c0ef;
+	border-left: 1px solid #08c0ef;
+	border-bottom: 1px solid #08c0ef;
 }
 
 div#navbar ul li a:hover	{
-	background-color: #06a5cd;
-	color: #fff;
+	color: #06a5cd;
+	border-right: 1px solid #06a5cd;
+	border-left: 1px solid #06a5cd;
+	border-bottom: 1px solid #06a5cd;
+
 }
 
 div#navbar ul li .current {
 	font-weight: bold;
- 	background-color: #06a5cd;
+ 	color: #06a5cd;
+	border-right: 1px solid #06a5cd;
+	border-left: 1px solid #06a5cd;
+	border-bottom: 1px solid #06a5cd;
+
 }
 
 /**
