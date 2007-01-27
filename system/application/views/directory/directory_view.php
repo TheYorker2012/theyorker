@@ -4,7 +4,7 @@
 	Information
 	</div>
 	<div style='text-align:center; padding: 10px 5px 10px 5px;'>
-	<img width='220' src='/images/prototype/directory/about/178327854723856.jpg' />
+	<img width='200' src='/images/prototype/directory/about/178327854723856.jpg' />
 	</div>
 	<p>
 		<?php if (!empty($organisation['website'])) {

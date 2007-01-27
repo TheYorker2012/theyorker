@@ -38,14 +38,14 @@ class Yorkerdirectory extends Controller
 		$this->load->library('frame_directory');
 
 		$navbar = $this->frame_directory->GetNavbar();
-		$navbar->AddItem('about', 'About',
-				'/directory/'.$DirectoryEntry);
-		$navbar->AddItem('events', 'Events',
-				'/directory/'.$DirectoryEntry.'/events');
-		$navbar->AddItem('members', 'Members',
-				'/directory/'.$DirectoryEntry.'/members');
 		$navbar->AddItem('reviews', 'Reviews',
 				'/directory/'.$DirectoryEntry.'/reviews');
+		$navbar->AddItem('members', 'Members',
+				'/directory/'.$DirectoryEntry.'/members');
+		$navbar->AddItem('events', 'Events',
+				'/directory/'.$DirectoryEntry.'/events');
+		$navbar->AddItem('about', 'About',
+				'/directory/'.$DirectoryEntry);
 	}
 
 	/// Directory index page.
