@@ -1,7 +1,3 @@
-<h2>Preview</h2>
-<div id="preview" style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px;">
-	preview goes here
-</div>
 <h2>Page Details:</h2>
 <form name='page_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
@@ -32,17 +28,19 @@
 <h2>Edit properties</h2>
 <form name='property_edit_form' action='#' method='POST' class='form'>
 	<fieldset>
+			<?php
+			foreach ($properties as $property) {
+			?>
 			<p style='font-size:small;'>
-				<b>Property Name :</b> property_name
-				<b>Property Type :</b> property_type <a href='#'>(del)</a>
+				<b>Property Name : </b><?php echo $property['label'];?><br />
+				<b>Property Type : </b><?php echo $property['type'];?><br />
+				<a href='/admin/pages/property/delete/<?php echo $property['id'];?>'>Delete this property</a>
 			</p>
-			<textarea name="property_name_property" cols="60" rows="10">property_value</textarea>
-			<p style='font-size:small;'>
-				<b>Property Name :</b> property_name
-				<b>Property Type :</b> property_type <a href='#'>(del)</a>
-			</p>
-			<textarea name="property_name_property" cols="60" rows="10">property_value</textarea>
+			<textarea name="property<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
 			<br />
+			<?php
+			}
+			?>
 		<input type='submit' class='button' name='property_edit_button' value='Update'>
 	</fieldset>
 </form>
