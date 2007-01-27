@@ -70,7 +70,7 @@ foreach($data as $d) {
 			$( 'testImage' ).width = w;
 			$( 'testImage' ).height = h;
 				if (imgTypeNew == 0) {
-					$( 'previewArea-1').display = none
+					$( 'previewArea-1').display = 'none';
 					this.removeCropper();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 200,
@@ -82,7 +82,7 @@ foreach($data as $d) {
 					this.attachCropper();
 				}
 				if (imgTypeNew == 1) {
-					$( 'previewArea-0').display = none
+					$( 'previewArea-0').display = 'none';
 					this.removeCropper();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 100,
