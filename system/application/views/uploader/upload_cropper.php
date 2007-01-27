@@ -39,7 +39,7 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/1.jpg', 380, 235, 1);
+			this.setImage('images/photos/1.jpg', 380, 235, 0);
 		},
 		
 		/**
