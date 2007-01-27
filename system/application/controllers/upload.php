@@ -46,10 +46,10 @@ class Upload extends Controller {
 				}
 			}
 		}
-		$this->frame_public->SetTitle('Photo Cropper');
-		$this->frame_public->SetExtraHead('');
-		$this->frame_public->SetContentSimple('uploader/upload_form', $data);
-		$this->frame_public->Load();
+//		$this->frame_public->SetTitle('Photo Cropper');
+//		$this->frame_public->SetExtraHead('');
+//		$this->frame_public->SetContentSimple('uploader/upload_form', $data);
+//		$this->frame_public->Load();
 	}
 	
 	function process_form_data($form_data) {
