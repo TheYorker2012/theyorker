@@ -1,7 +1,15 @@
 <?php
 
 // Review Model
-
+/*  
+**  Author: Dave Huscroft
+**  dgh500
+**  Does: Gets the data for review page, and leagues
+**  Todo: Make the 'return' values properly formatted (not just result arrays)
+**        Do the /table/x/y function. NOTE: where does the 'star' 'price' and 'user' ratings come from - price is a tag group? /confused!
+**		  Get some sleep
+*/  
+ 
 class Review_model extends Model {
 
 	function Review_Model()
