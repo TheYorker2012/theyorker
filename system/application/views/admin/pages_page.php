@@ -25,6 +25,9 @@
 		<input type='submit' class='button' name='save_button' value='Save'>
 	</fieldset>
 </form>
+ <?php
+ if (!empty($properties)){
+ ?>
 <h2>Edit properties</h2>
 <form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
@@ -34,7 +37,7 @@
 			<p style='font-size:small;'>
 				<b>Property Name : </b><?php echo $property['label'];?><br />
 				<b>Property Type : </b><?php echo $property['type'];?><br />
-				<a href='/admin/pages/property/delete/<?php echo $property['id'];?>'>Delete this property</a>
+				<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
 			</p>
 			<textarea name="property<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
 			<br />
@@ -44,6 +47,9 @@
 		<input type='submit' class='button' name='property_edit_button' value='Update'>
 	</fieldset>
 </form>
+<?php
+}
+?>
 <h2>Add a page property</h2>
 <form name='property_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
