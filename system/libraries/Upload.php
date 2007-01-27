@@ -601,6 +601,7 @@ class CI_Upload {
 		if ($this->upload_path == '')
 		{
 			$this->set_error('upload_no_filepath');
+			die('wierd');
 			return FALSE;
 		}
 		
@@ -612,6 +613,7 @@ class CI_Upload {
 		if ( ! @is_dir($this->upload_path))
 		{
 			$this->set_error('upload_no_filepath');
+			die('also wierd');
 			return FALSE;
 		}
 
