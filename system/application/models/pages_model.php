@@ -359,10 +359,70 @@ class Pages_model extends Model
 			' pages.page_ratings '.
 			'FROM pages '.
 			'ORDER BY pages.page_codename';
-			;
 		
 		$query = $this->db->query($sql);
 		return $query->result_array();
+	}
+	
+	/// Get a specific page
+	/**
+	 * @param $PageCode string Codename of page.
+	 * @param $Properties bool Whether to retrieve properties as well.
+	 * @return array of information about the page or FALSE on failure.
+	 */
+	function GetSpecificPage($PageCode, $Properties = FALSE)
+	{
+		$sql =
+			'SELECT'.
+			' pages.page_id,'.
+			' pages.page_codename,'.
+			' pages.page_title,'.
+			' pages.page_description,'.
+			' pages.page_keywords,'.
+			' pages.page_comments,'.
+			' pages.page_ratings '.
+			'FROM pages '.
+			'WHERE pages.page_codename=?';
+		
+		$query = $this->db->query($sql,$PageCode);
+		$results = $query->result_array();
+		if (count($results) == 1) {
+			$result = $results[0];
+			$data = array();
+			$data['page_id']          = $result['page_id'];
+			$data['codename']    = $result['page_codename'];
+			$data['title']       = $result['page_title'];
+			$data['description'] = $result['page_description'];
+			$data['keywords']    = $result['page_keywords'];
+			$data['comments']    = $result['page_comments'];
+			$data['ratings']     = $result['page_ratings'];
+			if ($Properties) {
+				$sql =
+					'SELECT'.
+					' page_properties.page_property_id,'.
+					' page_properties.page_property_label,'.
+					' page_properties.page_property_text,'.
+					' property_types.property_type_name '.
+					'FROM page_properties '.
+					'INNER JOIN property_types '.
+					' ON page_properties.page_property_property_type_id = property_types.property_type_id '.
+					'WHERE page_properties.page_property_page_id=?';
+				$query = $this->db->query($sql,$data['page_id']);
+				$property_results = $query->result_array();
+				$data['properties'] = array();
+				foreach ($property_results as $property) {
+					$data['properties'][] = array(
+							'id'    => $properties['page_property_id'],
+							'label' => $properties['page_property_label'],
+							'text'  => $properties['page_property_text'],
+							'type'  => $properties['property_type_name'],
+						);
+				}
+			}
+		} else {
+			$data = FALSE;
+		}
+		return $data;
 	}
 }
 

@@ -97,22 +97,20 @@ class Pages extends Controller
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
 				case 'edit':
-					$data['target'] = '/admin/pages/custom/'.$Operation.'/'.$CustomPageCode;
-					$data['codename'] = $CustomPageCode;
-					$data['title'] = 'About The Yorker';
-					$data['description'] = 'about the yorker and all that';
-					$data['keywords'] = 'key,word,hippo';
-					$data['comments'] = '1';
-					$data['ratings'] = '0';
-					$data['save_uri'] = '/admin/pages/save/custom/about';
-					$data['properties'] = array(
-							array(
-								'id'    => 'prop1',
-								'label' => 'main',
-								'type'  => 'wikitext',
-								'value' => '==about the yorker==',
-							)
-						);
+					// Find the custom page code
+					$page_info = $this->pages_model->GetSpecificPage($CustomPageCode, TRUE);
+					if (FALSE === $page_info) {
+						show_404($Operation.'/'.$CustomPageCode);
+					} else {
+						$data['target'] = '/admin/pages/custom/'.$Operation.'/'.$CustomPageCode;
+						$data['codename'] = $page_info['codename'];
+						$data['title'] = $page_info['title'];
+						$data['description'] = $page_info['description'];
+						$data['keywords'] = $page_info['keywords'];
+						$data['comments'] = $page_info['comments'];
+						$data['ratings'] = $page_info['ratings'];
+						$data['properties'] = $page_info['properties'];
+					}
 					break;
 				default:
 					show_404($Operation);
