@@ -23,7 +23,7 @@ class DaveModelTest extends Controller {
 		//Load data from model
 
 		$reviews['areview'] = $this->review->GetReview('evil_eye_lounge','food');
-		$reviews['league'] = $this->review->GetLeague('romance');
+		$reviews['league'] = $this->review->GetLeague('splashing_out');
 
 		// Set up the public frame
 		$this->frame_public->SetTitle('I am going to cry if I can\'t make this work!');
