@@ -10,7 +10,7 @@
 	<div class="ReviewInfoLeft">
 		<h1 class="reviewHeader"><?php echo $article_title; ?></h1><br />
 		also does
-<?php 
+<?php
 	//Display the correct also menu depending on the value of $also_does_state
 	if ($also_does_state >= 4)
 		{
@@ -18,7 +18,7 @@
 		$also_does_state -= 4;
 		}
 
-	if ($also_does_state >= 2)	
+	if ($also_does_state >= 2)
 		{
 		echo '&nbsp;<a href="#">&gt;Drink</a><br />'; //Drink - 2
 		$also_does_state -= 2;
@@ -113,7 +113,7 @@
 ?>
 		<div>
 		<div class="RateReview">
-			Rate this: 
+			Rate this:
 			<select name="comment_rating">
 				<option value="1">1</option>
 				<option value="2">2</option>
@@ -126,32 +126,27 @@
 				<option value="9">9</option>
 				<option value="10">10</option>
 			</select>
-			<input type="Submit" value="Vote" />			
+			<input type="Submit" value="Vote" />
 
 		</div>
 
 		<div>
 		<div class="MakeComment">
 <?php
-	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
-	echo form_open('reviews/addcomment');
-	echo form_hidden('comment_page_id',$page_id);
-	echo form_hidden('comment_subject_id',1);
 // Needs to be integereated with login hence psudo code for now...
 //if $user = 'logged in' then
-	//	echo form_hidden('comment_user_entity_id',$userid)
-	//	echo form_hidden('comment_author_name',null);
-	//	echo form_hidden('comment_author_email',null);
-// else
-	echo form_hidden('comment_user_entity_id',null);
-	echo '<br />Author Name: <input type="text" name="comment_author_name"><br />';
-	echo 'Author Email: <input type="text" name="comment_author_email"><br />Comment: <br />';
-// end if
+	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
+	echo form_open('reviews/addcomment');
+	echo form_hidden('comment_organisation_entity_id',379);
+	echo form_hidden('comment_content_type_id',7);
+	echo form_hidden('comment_user_entity_id',1);
 	echo form_hidden('return_page',$this->uri->uri_string());
 	echo '<textarea name="comment_text" rows="5"></textarea><br />';
 	echo '<input type="submit" value="Add Comment"><br />';
-
-?>	
+// else
+	//please log in to post a comment
+// end if
+?>
 			<a href=#>Review this Place</a><br />
 		</div>
 		<div class="AverageRating">
@@ -164,7 +159,7 @@
 	<div class="ReviewInfoLeft">
 		<div class="ReviewInfoLeftImg"><img alt="The Blue Bicycle Image" src="/images/prototype/reviews/reviews_07.jpg" /></div><br />
 		<?php echo $article_content; ?>
-<br /><br /> 
+<br /><br />
 		<div class="YourComments">
 			<h2>Author Reviews</h2>
 		</div>
@@ -181,8 +176,8 @@
 											<span class='name'>IAN BENEST</span><br />
 											4/12/2006<br />
 											<span class='links'>
-												<?php echo anchor('directory/', 'Directory Entry'); ?> | 
-												<?php echo anchor('mailto:fred@fred.com', 'Email'); ?> | 
+												<?php echo anchor('directory/', 'Directory Entry'); ?> |
+												<?php echo anchor('mailto:fred@fred.com', 'Email'); ?> |
 												<?php echo anchor('news/archive/reporter/2/', 'See more...'); ?>
 											</span>
 										</div>
@@ -208,8 +203,8 @@
 											<span class='name'>DETLEF PLUMP</span><br />
 											5/12/2006<br />
 											<span class='links'>
-												<?php echo anchor('directory/', 'Directory Entry'); ?> | 
-												<?php echo anchor('mailto:fred@fred.com', 'Email'); ?> | 
+												<?php echo anchor('directory/', 'Directory Entry'); ?> |
+												<?php echo anchor('mailto:fred@fred.com', 'Email'); ?> |
 												<?php echo anchor('news/archive/reporter/2/', 'See more...'); ?>
 											</span>
 										</div>

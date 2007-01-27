@@ -1,15 +1,15 @@
 <?php
 
 // Review Model
-/*  
+/*
 **  Author: Dave Huscroft
 **  dgh500
 **  Does: Gets the data for review page, and leagues
 **  Todo: Make the 'return' values properly formatted (not just result arrays)
 **        Do the /table/x/y function. NOTE: where does the 'star' 'price' and 'user' ratings come from - price is a tag group? /confused!
 **		  Get some sleep
-*/  
- 
+*/
+
 class Review_model extends Model {
 
 	function Review_Model()
@@ -18,10 +18,16 @@ class Review_model extends Model {
 	}
 
 	//Gets comments from database, frb501
-	function GetComments($page_no)
+	function GetComments($organisation_directory_entry_name, $content_type_codename)
 	{
-		$sql = "SELECT comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_content_type_id = ?";
-		$query = $this->db->query($sql,$page_no);
+		$sql = "SELECT comment_text, comment_timestamp, comment_rating
+				FROM comments
+				LEFT JOIN (
+				content_types, organisations
+				) ON ( comments.comment_content_type_id = content_types.content_type_id
+				AND comments.comment_organisation_entity_id = organisations.organisation_entity_id )
+				WHERE content_types.content_type_codename = ? AND organisations.organisation_directory_entry_name = ?";
+		$query = $this->db->query($sql,array($content_type_codename, $organisation_directory_entry_name));
 
 		if ($query->num_rows() > 0)
 		{
@@ -43,14 +49,14 @@ class Review_model extends Model {
 		return $nocomments;
 		}
 	}
-	
+
 	function GetReview($organisation_directory_entry_name,$content_type_codename) {
-	
+
 	#dgh500
 	# need organisation type?
 	# need organisation fileas - what IS this?? all null in DB
 	$sql = '
-			SELECT 
+			SELECT
 			organisations.organisation_name,
 			organisations.organisation_fileas,
 			organisations.organisation_description,
@@ -75,27 +81,27 @@ class Review_model extends Model {
 			review_context_contents.review_context_content_rating,
 			review_context_contents.review_context_content_directions,
 			review_context_contents.review_context_content_book_online
-			  FROM content_types 
+			  FROM content_types
 			  INNER JOIN review_context_contents
-			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id 
+			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id
 			  INNER JOIN organisations
 			  ON review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
-			  WHERE content_types.content_type_codename = "'.$content_type_codename.'" 
+			  WHERE content_types.content_type_codename = "'.$content_type_codename.'"
 			  AND organisations.organisation_directory_entry_name = "'.$organisation_directory_entry_name.'"
 			';
-	
+
 	$result = $query = $this->db->query($sql);
 	$reviews = $query->result_array();
-	
+
 	return $reviews;
-	
+
 	}
-	
+
 	function GetLeague($league_codename,$order='ASC',$sortby='league_entries.league_entry_position') {
 		# make sortby **MUCH** more user friendly!
 		# organisation image?
 		$sql = '
-				SELECT 
+				SELECT
 				organisations.organisation_name,
 				organisations.organisation_url,
 				league_entries.league_entry_position,
@@ -116,7 +122,7 @@ class Review_model extends Model {
 	$query = $this->db->query($sql);
 	$tmpleague = array();
 	$league    = array();
-	
+
 	// Assign nice names to the result
 	foreach($query->result() as $row) {
 		$tmpleague['organisation_name']        = $row->organisation_name;
@@ -126,7 +132,7 @@ class Review_model extends Model {
 		$tmpleague['content_type_name']		   = $row->content_type_name;
 		$league[]                              = $tmpleague;
 	}
-	
+
 	return $league;
 	}
 
