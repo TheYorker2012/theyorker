@@ -17,9 +17,9 @@ class Upload extends Controller {
 
 	function do_upload() {
 		$this->load->library('upload');
-		$this->load->library('xajax');
-		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
-		$this->xajax->processRequests();
+//		$this->load->library('xajax');
+//		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+//		$this->xajax->processRequests();
 		
 		//get data about thumbnails
 		
