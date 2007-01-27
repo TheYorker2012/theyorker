@@ -149,7 +149,7 @@ class Pages extends Controller
 			
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_custom_new.php', $data);
+			$this->frame_public->SetContentSimple('admin/pages_page_new.php', $data);
 		}
 		$this->frame_public->Load();
 	}
@@ -162,7 +162,7 @@ class Pages extends Controller
 			
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_page_new.php', $data);
+			$this->frame_public->SetContentSimple('admin/pages_custom_new.php', $data);
 		}
 		$this->frame_public->Load();
 	}
