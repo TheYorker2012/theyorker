@@ -33,8 +33,10 @@ class Upload extends Controller {
 		$data = array();
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
+				var_dump($this->upload->display_errors());
 				$data[] = $this->upload->display_errors();
 			} else {
+				var_dump($this->upload->data());
 				$data[] = $this->upload->data();
 				if ($data[$x - 1]['file_ext'] == '.zip') {
 					// TODO Zip support
