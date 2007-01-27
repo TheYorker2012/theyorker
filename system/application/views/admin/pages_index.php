@@ -7,9 +7,9 @@
 
 <?php
 foreach ($custom as $page) {
-	echo '<a href="/admin/pages/custom/'.$page['codename'].'">'.
+	echo '<a href="/admin/pages/custom/edit/'.$page['codename'].'">'.
 		$page['codename'].'</a>';
-	echo ' (<a href="/pages/'.$page['codename'].'">preview</a>';
+	//echo ' (<a href="/pages/'.$page['codename'].'">preview</a>';
 	if ($permissions['custom_delete']) {
 		echo ', <a href="/admin/pages/deletecustom/'.$page['codename'].'">delete</a>';
 	}
