@@ -3,7 +3,7 @@
 	preview goes here
 </div>
 <h2>Create/edit a page:</h2>
-<form name='custom_page_form' action='/admin/pages/newcustom/save' method='POST' class='form'>
+<form name='page_form' action='/admin/pages/adminpages/addpage' method='POST' class='form'>
 	<fieldset>
 		<label for='codename'>Codename:</label>
 		<input name='codename'>
@@ -32,7 +32,7 @@
 	</fieldset>
 </form>
 <h2>Page properties</h2>
-<form name='custom_page_form' action='/admin/pages/newcustom/save' method='POST' class='form'>
+<form name='property_form' action='/admin/pages/adminpages/addproperty' method='POST' class='form'>
 	<fieldset>
 		<label for='properties_name'>Property name</label>
 		<input name='properties_name'>
