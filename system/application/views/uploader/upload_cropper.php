@@ -71,7 +71,7 @@ foreach($data as $d) {
 			$( 'testImage' ).height = h;
 				if (imgTypeNew == 0) {
 					$( 'previewArea-1').display = none
-					this.removeCropper();
+					this.curCrop.remove();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 200,
 						minHeight: 120,
@@ -79,11 +79,11 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-0'} );
-					this.attachCropper();
+					this.curCrop.reset();
 				}
 				if (imgTypeNew == 1) {
 					$( 'previewArea-0').display = none
-					this.removeCropper();
+					this.curCrop.remove();
 					this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
 						minWidth: 100,
 						minHeight: 120,
@@ -91,38 +91,9 @@ foreach($data as $d) {
 						displayOnInit: true, 
 						onEndCrop: onEndCrop,
 						previewWrap: 'previewArea-1'} );
-					this.attachCropper();
+					this.curCrop.reset();
 				}
-		},
-		
-		/** 
-		 * Attaches/resets the image cropper
-		 *
-		 * @access private
-		 * @return void
-		 */
-		attachCropper: function() {
-			if( this.curCrop == null ) this.curCrop = new Cropper.ImgWithPreview( 'testImage', {
-				minWidth: 200,
-				minHeight: 120,
-				ratioDim: { x: 200, y: 120 },
-				displayOnInit: true, 
-				onEndCrop: onEndCrop,
-				previewWrap: 'previewArea-0'} );
-			else this.curCrop.reset();
-		},
-		
-		/**
-		 * Removes the cropper
-		 *
-		 * @access public
-		 * @return void
-		 */
-		removeCropper: function() {
-			if( this.curCrop != null ) {
-				this.curCrop.remove();
-			}
-		},
+		}
 		
 		/**
 		 * Resets the cropper, either re-setting or re-applying
@@ -131,7 +102,7 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		resetCropper: function() {
-			this.attachCropper();
+			this.curCrop.reset();
 		}
 	};
 	
@@ -152,8 +123,6 @@ foreach($data as $d) {
 		'load', 
 		function() { 
 			CropImageManager.init();
-			Event.observe( $('removeCropper'), 'click', CropImageManager.removeCropper.bindAsEventListener( CropImageManager ), false );
-			Event.observe( $('resetCropper'), 'click', CropImageManager.resetCropper.bindAsEventListener( CropImageManager ), false );
 			Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
 		}
 	);
@@ -173,8 +142,6 @@ foreach($data as $d) {
 	</p>
 
 	<p>
-		<input type="button" id="removeCropper" value="Remove Cropper" />
-		<input type="button" id="resetCropper" value="Reset Cropper" />
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
 
