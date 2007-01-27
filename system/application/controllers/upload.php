@@ -23,16 +23,14 @@ class Upload extends Controller {
 		
 		//get data about thumbnails
 		
-		$config['upload_path'] = './tmp/uploads/';
+		$config['upload_path'] = './tmp/uploads';
 		$config['allowed_types'] = 'gif|jpg|png|zip';
 		$config['max_size']	= '2048';
 		$config['max_width']  = '1024';
 		$config['max_height']  = '768';
 		
 		$data = array();
-		$data[] = realpath("./tmp/uploads/");
-		$data[] = $_SERVER['DOCUMENT_ROOT'];
-		$data[] = $_SERVER['PHP_SELF'];
+		$data[] = realpath("./tmp/uploads");
 		$this->load->library('upload', $config);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
