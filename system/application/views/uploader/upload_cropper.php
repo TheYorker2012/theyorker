@@ -164,7 +164,7 @@ foreach($data as $d) {
 	<p>
 		<label for="imageChoice">image:</label>
 		<select name="imageChoice" id="imageChoice">
-			<option value="castle.jpg|500|333|0">Castle0</option>
+			<option value="images/photos/1.jpg|380|235|0">Castle0</option>
 			<option value="castle.jpg|500|333|1">Castle1</option>
 			<option value="poppy.jpg|311|466|0">Flower0</option>
 		</select>
