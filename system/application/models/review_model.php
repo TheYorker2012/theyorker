@@ -97,7 +97,6 @@ class Review_model extends Model {
 				SELECT 
 				organisations.organisation_name,
 				organisations.organisation_url,
-				organisations.organisation_description,
 				league_entries.league_entry_position,
 				leagues.league_name
 				FROM organisations
@@ -107,8 +106,18 @@ class Review_model extends Model {
 				ON leagues.league_id = league_entries.league_entry_league_id
 				WHERE leagues.league_codename = "'.$league_codename.'"
 				';
-	$result = $query = $this->db->query($sql);
-	$league = $query->result_array();
+	$query = $this->db->query($sql);
+	$tmpleague = array();
+	$league    = array();
+	
+	// Assign nice names to the result
+	foreach($query->result() as $row) {
+		$tmpleague['organisation_name']        = $row->organisation_name;
+		$tmpleague['organisation_url']         = $row->organisation_url;
+		$tmpleague['league_entry_position']    = $row->league_entry_position;
+		$tmpleague['league_name']              = $row->league_name;
+		$league[]                              = $tmpleague;
+	}
 	
 	return $league;
 	}
