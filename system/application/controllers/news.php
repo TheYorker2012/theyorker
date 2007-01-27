@@ -5,42 +5,42 @@
  * @author Chris Travis, Neil Brehon
  */
 class News extends Controller {
-    
+
 	/**
 	 * @brief Default Constructor.
 	 */
 	function __construct()
 	{
 		parent::Controller();
-		
+
 		// Load the public frame
 		$this->load->library('frame_public');
 		$this->load->model('News_model');
 	}
-	
+
     /// The Campus News section (default).
 	function index()
 	{
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId(1,9);
-    	
+
     	/// Get all of the latest article
     	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
-    	
+
     	/// Get some of the 2nd- and 3rd-latest articles
     	$news_previews = array();
     	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++)
     	{
         	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
     	}
-    	
+
     	/// Get less of the next 6 newest articles
     	$news_others = array();
     	for ($index = 3; $index < count($latest_article_ids); $index++)
     	{
         	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
     	}
-    	
+
     	/// Gather all the data into an array to be passed to the view
 		$data = array(
        	    'main_article' => $main_article,
@@ -48,22 +48,27 @@ class News extends Controller {
 			'news_others' => $news_others
 		);
 
-		/// Wikiparse the article's body text
+		/// Wikiparse the article's body text and fact boxes
 		$this->load->library('wikiparser');
 		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
-		
+
+		foreach ($data['main_article']['fact_boxes'] as &$fact_box)
+		{
+			$fact_box = $this->wikiparser->parse($fact_box);
+		}
+
 		/// Temporarily fill in a few gaps in the model data
 		$data['main_article']['image'] = '/images/prototype/news/thumb1.jpg';
 		$data['main_article']['image_description'] = 'temp image';
 		$data['main_article']['writer'] = 'Temp Name';
-		
+
 		for ($i = 0; $i < count($data['news_previews']); $i++)
 		{
     		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
     		$data['news_previews'][$i]['image_description'] = 'temp image';
     		$data['news_previews'][$i]['writer'] = 'Temp Name';
 		}
-		
+
 		for ($i = 0; $i < count($data['news_others']); $i++)
 		{
     		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
@@ -99,54 +104,54 @@ class News extends Controller {
 	{
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId(2,9);
-    	
+
     	/// Get all of the latest article
     	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
-    	
+
     	/// Get some of the 2nd- and 3rd-latest articles
     	$news_previews = array();
     	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++)
     	{
         	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
     	}
-    	
+
     	/// Get less of the next 6 newest articles
     	$news_others = array();
     	for ($index = 3; $index < count($latest_article_ids); $index++)
     	{
         	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
     	}
-    	
+
     	/// The data passed to the view will come from the database once it is available.
 		$data = array(
 		    'main_article' => $main_article,
 			'news_previews' => $news_previews,
 			'news_others' => $news_others
 		);
-		
+
 		/// Wikiparse the article's body text
 		$this->load->library('wikiparser');
 		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
-		
+
 		/// Temporarily fill in a few gaps in the model data
 		$data['main_article']['image'] = '/images/prototype/news/thumb1.jpg';
 		$data['main_article']['image_description'] = 'temp image';
 		$data['main_article']['writer'] = 'Temp Name';
-		
+
 		for ($i = 0; $i < count($data['news_previews']); $i++)
 		{
     		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
     		$data['news_previews'][$i]['image_description'] = 'temp image';
     		$data['news_previews'][$i]['writer'] = 'Temp Name';
 		}
-		
+
 		for ($i = 0; $i < count($data['news_others']); $i++)
 		{
     		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
     		$data['news_others'][$i]['image_description'] = 'temp image';
     		$data['news_others'][$i]['writer'] = 'Temp Name';
 		}
-    	
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('Features');
 		$this->frame_public->SetContentSimple('news/features', $data);
@@ -171,18 +176,18 @@ class News extends Controller {
 	{
     	/// Load the library for parsing wikitext
     	$this->load->library('wikiparser');
-    	
+
     	/// Fetch the requested article from the model
     	$data = $this->News_model->GetFullArticle($this->uri->segment(3));
-    	
+
     	/// Format the relevant text with wikiparser
     	$data['text'] = $this->wikiparser->parse($data['text']);
-    	
+
     	/// Temporarily fill in a few gaps in the model data
     	$data['writer_id'] = 1;
 		$data['writer_name'] = 'Temp Name';
 		$data['related_articles'] = array();
-    	
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('Article');
 		$this->frame_public->SetContentSimple('news/article', $data);
@@ -190,7 +195,7 @@ class News extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
-	
+
 	/// The Archive section.
 	function archive()
 	{
@@ -216,10 +221,10 @@ class News extends Controller {
 		$data['rss_height'] = '108';
 		$data['rss_email_ed'] = 'news@theyorker.co.uk';
 		$data['rss_email_web'] = 'webmaster@theyorker.co.uk';
-		
+
 		/// Get latest article ids
 		$latest_article_ids = $this->News_model->GetLatestId(1,9);
-		
+
 		/// Get preview data for articles
 		$data['rss_items'] = array();
 		foreach ($latest_article_ids as $id)

@@ -21,7 +21,7 @@
 	</p>
 </div>
 
-<div style="width: 400px; margin: 0px; padding-right: 3px; ">
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
 	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
 	<span style="font-size: x-large;  color: #2DC6D7; "><?php echo $sections['current_campaigns']['title']; ?></span><br />
 		<?php echo $sections['current_campaigns']['blurb']; ?><br /><br />
@@ -48,7 +48,7 @@
 		</table>
 		<br />
 		<?php echo $sections['current_campaigns']['deadline_text']; ?>
-	
+
 	</div>
 
 	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">

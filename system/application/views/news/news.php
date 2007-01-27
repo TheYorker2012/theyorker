@@ -1,4 +1,4 @@
-	<div style='width: 380px; float: left; border: 1px #93969A solid; border-right: 0; padding: 5px;'>
+	<div style='width: 420px; float: left; border: 1px #93969A solid; border-right: 0; padding: 5px;'>
 		<div class='ArticleColumn'>
 			<a href='/news/article/<?php echo $main_article['id']; ?>'>
 			<!--
@@ -20,7 +20,7 @@
 			<br style='clear: both;' />
 		</div>
 	</div>
-	<div style='width: 239px; float: right;'>
+	<div style='width: 219px; float: right;'>
 		<div style='border-left: 1px #93969A solid; padding-left: 5px; padding-bottom: 10px;'>
 			<div style='background-color: #94979b; color: #fff; margin: 0; padding: 3px 3px 3px 5px; font-size: 12px; font-weight: bold;'>
 				More Headlines
@@ -52,13 +52,19 @@
 			<p class='Date'><?php echo $other['date']; ?></p>
 		</div>
    		<?php } ?>
-		<div style='clear: both; border: 1px #93969A solid; border-left: 0; padding-left: 10px;'>
+   		<div style='clear: both; border-left: 1px #93969A solid; padding-left: 5px; padding-bottom: 10px; height: 200px'>
+
+		</div>
+		<div style='clear: both; border: 1px #93969A solid; border-left: 0; padding-left: 10px; width: 75%'>
 			<?php
 			foreach ($main_article['fact_boxes'] as $fact_box)
 			{
-    			echo '<h3 style=\'color: #ff6a00; text-align: left;\'>Fact Box</h3>'.$fact_box['factbox_text'];
+    			echo '<h3 style=\'color: #ff6a00; text-align: left;\'>Fact Box</h3>'.$fact_box;
 			}
 			?>
+		</div>
+		<div style='clear: both; border-left: 1px #93969A solid; padding-left: 5px; padding-bottom: 10px; height: 100%'>
+
 		</div>
 	</div>
 	<div id='clear' style='clear: both;'>&nbsp;</div>
