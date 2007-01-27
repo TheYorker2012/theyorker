@@ -96,7 +96,7 @@ function preloader()
 		<div class='navigationmenu_item_noborder'>
 			<a href='/directory/'>Directory</a>
 		</div>
-		<hr/>
+
 		<div class='navigationmenu_item'>
 			<a href='/news/'>Uni News</a>
 		</div>
@@ -124,7 +124,7 @@ function preloader()
 		<div class='navigationmenu_item_noborder'>
 			<a href='/news/archive/'>News Archive</a>
 		</div>
-		<hr/>
+
 		<div class='navigationmenu_item'>
 			<a href='/charity/'>Our Charity</a>
 		</div>
