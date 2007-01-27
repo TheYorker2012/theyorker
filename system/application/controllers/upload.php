@@ -47,7 +47,7 @@ class Upload extends Controller {
 		}
 		$this->frame_public->SetTitle('Photo Cropper');
 		$this->frame_public->SetExtraHead('');
-		$this->frame_public->SetContentSimple('uploader/upload_form', $data);
+		$this->frame_public->SetContentSimple('uploader/upload_cropper', $data);
 		$this->frame_public->Load();
 	}
 	
@@ -62,7 +62,7 @@ class Upload extends Controller {
 	}
 	
 	function _processImage($data) {
-		return 'duh\n';
+		return 'Image uploaded, now we must load the cropper, and also the details about the sizes to crop to.';
 	}
 }
 ?>
