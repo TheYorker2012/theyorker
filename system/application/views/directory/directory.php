@@ -5,7 +5,8 @@
 		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
 			<form name='search_directory' action='' method='POST' class='form'>
 				Enter a keyword below:<br />
-				<div style='padding: 5px; width: 100%;'><input id="searchText" width='300' name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"><div id="loadingdiv" style="display: none;"> <image src="/images/prototype/prefs/loading.gif" width="16" height="16" />  </div> </div>
+				<div id="loadingdiv"style="padding: 5px; display: none; float:right;"> <image src="/images/prototype/prefs/loading.gif" width="16" height="16" /></div>
+				<div style='padding: 5px;'><input id="searchText" width='300' name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"> </div>
 				e.g. football
 
 			</form>
