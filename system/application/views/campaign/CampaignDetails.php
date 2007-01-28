@@ -1,51 +1,52 @@
-	<br>
-	<div class="wholepage2"> <!-- Remove This Hack Sometime -->
-	<div class="title">Campaign: <?php echo $Title; ?></div>
-	<div class="Blurb"><img src="/images/prototype/campaign/field.jpg"><br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. </div>
-		<div class="FactBox">
-			<div class="FactBoxTitle">Fact Box - Why Pool?</div>
-			<div class="FactBoxBullets">
-				<ul>
-					<li style="font-weight: bold; margin-top:3px;">First Important Fact</li>
-					<li style="font-weight: bold; margin-top:3px;">Second Important Fact</li>
-				</ul>
-			</div>
-			<div class="FactBoxBlurb">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. </div>
-		</div>
-	<div class="funnybox">
-		<div class="funnyboxpt1">Find out more</div><br>
-		<div class="funnyboxpt2">Contact</div>
-		<div class="funnyboxpt3">> <?php echo $Author; ?></div>
-		<div class="funnyboxpt4"><?php echo $Society; ?></div>
+	<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	Sign
 	</div>
-	<div class="Container">
-		<div class="HalfBox">
-			<div style="font-weight: bold; font-size: 20px;">RELATED NEWS STORIES</div>
-			<div style="font-weight: bold; font-size: 12px;">> BOY CAN FLY</div>
-		</div>
-		<div class="HalfBox">
-			<div style="font-weight: bold; font-size: 20px;">EXTERNAL LINKS</div>
-			<div style="font-weight: bold; font-size: 12px;">> BOY CAN FLY</div>
-		</div>
+	<p style="margin-top: 0px; padding: 8px;">I, <b>John Smith</b>, think that this The Yorker should campaign for this cause.<br><br>#TODO</p>
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	Other Campaigns
 	</div>
-	<BR><BR><BR>
-	<div class="">
-		<div class="subheader">Comments</div>
-		<div style="padding-top:10px;">
-			<div style="float: left;font-weight: bold;">John Doe</div><div style="float: right;font-weight: bold;">Mon Nov 6:05</div><div class="breaker"></div>
-			<div style="float: left;font-weight: bold;color: FF6A00;">No Place For Swimmers</div>
-			<div style="float: left; width: 85%;">Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.</div>
-		</div><div class="breaker"></div>
-		<div style="padding-top:10px;">
-			<div style="float: left;font-weight: bold;">John Doe</div><div style="float: right;font-weight: bold;">Mon Nov 6:05</div><div class="breaker"></div>
-			<div style="float: left;font-weight: bold;color: FF6A00;">No Place For Swimmers</div>
-			<br><div style="float: left; width: 85%;">Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.</div>
-		</div><div class="breaker"></div>
-		<div style="padding-top:10px;">
-			<div style="float: left;font-weight: bold;">John Doe</div><div style="float: right;font-weight: bold;">Mon Nov 6:05</div><div class="breaker"></div>
-			<div style="float: left;font-weight: bold;color: FF6A00;">No Place For Swimmers</div>
-			<br><div style="float: left; width: 85%;">Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.</div>
-		</div>
+	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	Find out more
 	</div>
+	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	Related Stories
 	</div>
-	<br>
+	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	External Links
+	</div>
+	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	
+	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
+	Comments
+	</div>
+	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	</div>
+
+	 
+	
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
+
+	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">
+	<span style="font-size: x-large;  color: #BBBBBB; ">why ban cake?</span><br /><br />
+		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
+	</div>
+
+	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
+	<span style="font-size: x-large;  color: #2DC6D7; ">facts</span><br />
+		<ul style="padding-left: 15px; margin-top: 5px; margin-bottom: 0px;">
+		<li style="padding-bottom: 15px;">Counting only the economic value of fisheries, tourism, and shoreline protection, the costs of destroying 1km of coral reef ranges between US$137,000-1,200,000 over a 25-year period.</li>
+		<li style="padding-bottom: 15px;">Properly managed coral reefs can yield an average of 15 tonnes of fish and other seafood per square kilometre each year.</li>
+		<li style="padding-bottom: 15px;">Cake is a made up drug.</li>
+		</ul>
+	</div>
+	
+</div>
