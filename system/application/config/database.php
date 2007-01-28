@@ -33,7 +33,7 @@
 
 $active_group = "default";
 
-$db['default']['hostname'] = "mysql19.servage.net";
+$db['default']['hostname'] = "";
 $db['default']['username'] = "yorkerremote";
 $db['default']['password'] = "df97nvc02d90dg";
 $db['default']['database'] = "yorkerremote";

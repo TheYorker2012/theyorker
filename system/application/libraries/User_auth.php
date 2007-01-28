@@ -28,7 +28,7 @@ class User_auth {
 				if (count($details) == 2) {
 					loginByHash($details[0], $details[1], true);
 				} elseif (count($details) == 1) {
-					$this->$username = $details[0];
+					$this->username = $details[0];
 				}
 			} catch (Exception $e) {
 			}
