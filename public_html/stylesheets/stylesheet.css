@@ -119,8 +119,8 @@ div.HighlightedBox {
 */
 
 div#navbar ul {
-	padding-left: 0;
-	margin-left: 0;
+	padding: 0px;
+	margin: 0px;
 	color: White;
 	float: right;
 	width: 100%;
@@ -141,10 +141,13 @@ div#navbar ul li a {
 	border-right: 1px solid #08c0ef;
 	border-left: 1px solid #08c0ef;
 	border-bottom: 1px solid #08c0ef;
+	width: 60px;
+	text-align: center;
 }
 
 div#navbar ul li a:hover	{
 	color: #06a5cd;
+	font-weight: bold;
 	border-right: 1px solid #06a5cd;
 	border-left: 1px solid #06a5cd;
 	border-bottom: 1px solid #06a5cd;
@@ -158,6 +161,14 @@ div#navbar ul li .current {
 	border-left: 1px solid #06a5cd;
 	border-bottom: 1px solid #06a5cd;
 
+}
+
+div#navbar ul li .thin {
+	spacing: 0px 1px;
+	padding: 0px;
+	color: #ffffff;
+	text-decoration: none;
+	float: right;
 }
 
 /**

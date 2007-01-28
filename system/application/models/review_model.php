@@ -7,7 +7,13 @@
 **  Does: Gets the data for review page, and leagues
 **  Todo: Make the 'return' values properly formatted (not just result arrays)
 **        Do the /table/x/y function. NOTE: where does the 'star' 'price' and 'user' ratings come from - price is a tag group? /confused!
-**		  : Should probably be something like GetTagGroup($tag_group_id,$order_by (enum 'star','price','user'?],$order_direction)
+**		  : Should probably be something like GetTagGroup($tag_group_id,$order_by (tag_group_id, 0 = user rating ?),$order_direction)
+**
+**		  : If you want to be really clever, you could:
+**			 - join the tag_group to the content_type determine content_type
+			 - find all other tag groups in content_type
+
+
 **		  : If tag_group_ordered is 1 for a tag group then order by tag_order, otherwise by tag_name
 **		  : 'star' and 'price' are names of tags, ordered by tag_order and tag_name respectively
 **		  : user rating comes from a join like this (left join in case the the organisation is unrated):

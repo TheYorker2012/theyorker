@@ -59,34 +59,33 @@ function preloader()
 			</a>
 		</div>
 		<div style="float: right;">
-			<a href="/news/" onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
+			<span onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
 				<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" />
-			</a>
+			</span>
 			&nbsp;
-			<a href="/calendar/" onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
+			<span onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
 				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Calendar" border="0" />
-			</a>
+			</span>
 			&nbsp;
-			<a href="/reviews/" onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
+			<span onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
 				<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" />
-			</a>
+			</span>
 			&nbsp;
 		</div>
 	</div>
 	<div style="background-color: #fff;">
 		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
-		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding-left: 2px; margin: 5px; margin-left: 0px;'>
-			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' /><input
-			type="text" style="float: right; color: #20c1f0; font-size: 10px; width: 100px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
+		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding: 2px; margin: 0px; margin-left: 0px;'>
+			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' />
+			<input type="text" style="float: right; color: #20c1f0; font-size: 12px; width: 100px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
 		</div>
 		</form>
-		<div style="float: right; width: 645px; margin-bottom: 8px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
-				<div style="float: right"><a href="javascript:history.go(-1)"><img src="/images/prototype/header/backarrow.gif" alt="Back" /></a>&nbsp;</div>
+		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
 				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
 		</div>
 	</div>
 	<br style="clear: both;" />
-	<div style="float: left; width: 120px; margin-right: 5px; background-color: #fff;">
+	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
 		<div class='navigationmenu_item'>
 			<a href='/'>Home</a>
 		</div>
@@ -141,21 +140,29 @@ function preloader()
 			<img src='/images/adverts/3-120x600.gif' />
 		</div>
 	</div>
-	<div style="float: right; width: 650px; margin-left: 5px; background-color: #fff;">
+	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
 		// Navigation bar
 		if (isset($content['navbar']))
 			$content['navbar']->Load();
-		
+
 		// Display each message
 		foreach ($messages as $message) {
 			// Display the message
 			$message->Load();
 		}
-		// Display the main content
-		$content[0]->Load();
 	?>
 
+	</div>
+	<div style="float: right; width: 650px; padding: 0px; margin-top: 8px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
+		<?php
+			// Display the main content
+			$content[0]->Load();
+		?>
+	</div>
+</div>
+
+	<div style="float: right; width: 650px; margin-top: 8px; margin-left: 5px; background-color: #fff;">
 		<div class='clear'>&nbsp;</div>
 
 		<div id="feedbackdiv" style="width: 100%; display: none;">
@@ -195,7 +202,8 @@ function preloader()
 		</div>
 
 	</div>
-</div>
+
+
 </div>
 <br style="clear: both;" />
 

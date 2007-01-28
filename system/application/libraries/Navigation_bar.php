@@ -19,13 +19,13 @@ abstract class XmlOutputter extends Outputter
 {
 	/// Stack of tag names currently open.
 	protected $mTags;
-	
+
 	/// Default constructor.
 	function __construct()
 	{
 		$this->mTags = array();
 	}
-	
+
 	/// Produce a tag with the specified attributes.
 	/**
 	 * @param $TagName string Name of the tag.
@@ -47,7 +47,7 @@ abstract class XmlOutputter extends Outputter
 		$result .= '>';
 		return $result;
 	}
-	
+
 	/// Open a tag with the specified attributes.
 	/**
 	 * @param $TagName string Name of the tag.
@@ -58,7 +58,7 @@ abstract class XmlOutputter extends Outputter
 	{
 		return $this->Tag($TagName, $Attributes, FALSE);
 	}
-	
+
 	/// Close the last opened tag.
 	/**
 	 * @return string XML closing tag.
@@ -68,7 +68,7 @@ abstract class XmlOutputter extends Outputter
 		$tag_name = array_pop($this->mTags);
 		return '</'.$tag_name.'>';
 	}
-	
+
 	/// Close all open tags.
 	/**
 	 * @return string XML closing tags.
@@ -81,7 +81,7 @@ abstract class XmlOutputter extends Outputter
 		}
 		return $result;
 	}
-	
+
 }
 
 /// Navigation bar outputter.
@@ -96,7 +96,7 @@ class NavigationBar extends XmlOutputter
 	protected $mItems;
 	/// string Key of selected item.
 	protected $mSelected;
-	
+
 	/// Primary constructor.
 	/**
 	 * @param $Style string Style of navbar to use.
@@ -104,13 +104,13 @@ class NavigationBar extends XmlOutputter
 	function __construct($Style = 'navbar')
 	{
 		parent::__construct();
-		
+
 		$this->mStyle = $Style;
 		$this->mItems = array();
 		$this->mSelected = '';
-		
+
 	}
-	
+
 	/// Add an item to the nav bar.
 	/**
 	 * @param $Key string Unique name of item.
@@ -126,7 +126,7 @@ class NavigationBar extends XmlOutputter
 				'class' => $Class,
 			);
 	}
-	
+
 	/// Set the key of the item to select.
 	/**
 	 * @param $Key string Unique name of item to select.
@@ -135,7 +135,7 @@ class NavigationBar extends XmlOutputter
 	{
 		$this->mSelected = $Key;
 	}
-	
+
 	/// Echo the HTML for the nav bar.
 	function Load()
 	{
@@ -146,10 +146,18 @@ class NavigationBar extends XmlOutputter
 			if ($key === $this->mSelected) {
 				$link_attributes['class'] = 'current';
 			}
-			
+
 			echo $this->OpenTag('li');
 			echo $this->OpenTag('a',$link_attributes);
 			echo $item['title'];
+			echo $this->CloseTag();
+			echo $this->CloseTag()."\n";
+
+			$link_attributes = array('class' => 'thin');
+
+			echo $this->OpenTag('li');
+			echo $this->OpenTag('div',$link_attributes);
+			echo "&nbsp;";
 			echo $this->CloseTag();
 			echo $this->CloseTag()."\n";
 		}
@@ -170,7 +178,7 @@ class Navigation_bar
 	function &Create($Items = array())
 	{
 		$result = new NavigationBar();
-		
+
 		foreach ($Items as $key => $item) {
 			$result->AddItem(
 					$key,
@@ -179,7 +187,7 @@ class Navigation_bar
 					array_key_exists('class',$item) ? $item['class'] : ''
 				);
 		}
-		
+
 		return $result;
 	}
 }

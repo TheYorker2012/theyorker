@@ -35,7 +35,7 @@
 
 </div>
 
-<div  style="padding:0px 0px 0px 0px; width: 420px; margin: 0px;">
+<div  style="padding:0px; width: 420px; margin: 0px;">
 <div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px;">
 <p></p>
 

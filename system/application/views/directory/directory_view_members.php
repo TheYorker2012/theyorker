@@ -1,4 +1,3 @@
-<div class="clear">&nbsp;</div>
 <?php
 if(empty($organisation['cards'])) {
 ?>

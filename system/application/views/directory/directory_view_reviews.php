@@ -1,4 +1,3 @@
-<div class="clear">&nbsp;</div>
 <?php
 if (empty($organisation['reviews_untyped']) && empty($organisation['reviews_by_type'])) {
 ?>

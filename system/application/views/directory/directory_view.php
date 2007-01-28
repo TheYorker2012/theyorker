@@ -1,4 +1,3 @@
-<div class="clear">&nbsp;</div>
 <div class='RightToolbar'>
 	<div class='RightToolbarHeader'>
 	Information
@@ -62,8 +61,8 @@
 			<a href='#'>Article title 3</a>
 		</p>
 	</div>
-</div>
-<div style="width: 420px; margin: 0px; padding-right: 3px; ">
+</div><div  style="padding:0px 0px 0px 0px; width: 420px; margin: 0px;">
+<div style="padding:0px 3px 0px 0px; width: 420px; margin: 0px;">
 	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
 		<span style="font-size: x-large;  color: rgb(32, 193, 240); ">about us</span>
 		<p><?php echo $organisation['description']; ?></p>
