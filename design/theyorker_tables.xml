@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes" ?>
 <DBMODEL Version="4.0">
 <SETTINGS>
-<GLOBALSETTINGS ModelName="theyorker" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="80.00" XPos="0" YPos="0" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="\\http://hercules.cs.york.ac.uk:631\pp02s" HPageCount="1.978743961352657" PageAspectRatio="1.42647490460816" PageOrientation="0" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="1" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="1" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Tahoma" CanvasWidth="4096" CanvasHeight="2842" />
+<GLOBALSETTINGS ModelName="theyorker" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="80.00" XPos="84" YPos="788" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="\\http://hercules.cs.york.ac.uk:631\pp02s" HPageCount="1.978743961352657" PageAspectRatio="1.42647490460816" PageOrientation="0" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="1" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="1" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Tahoma" CanvasWidth="4096" CanvasHeight="2842" />
 <DATATYPEGROUPS>
 <DATATYPEGROUP Name="Numeric Types" Icon="1" />
 <DATATYPEGROUP Name="Date and Time Types" Icon="2" />
@@ -1069,7 +1069,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2383" ColName="article_timestamp" PrevColName="" Pos="11" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
+<COLUMN ID="2383" ColName="article_updated" PrevColName="article_timestamp" Pos="11" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -1091,7 +1091,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="4344" ColName="article_created" PrevColName="" Pos="17" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="4344" ColName="article_created" PrevColName="" Pos="17" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -1233,7 +1233,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="1217" ColName="fact_box_text" PrevColName="Text" Pos="0" idDatatype="28" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="1217" ColName="fact_box_wikitext" PrevColName="Text" Pos="0" idDatatype="28" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -1593,7 +1593,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="4906" ColName="photo_homepage" PrevColName="" Pos="9" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="4906" ColName="photo_homepage" PrevColName="" Pos="9" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="0" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -2307,6 +2307,12 @@
 </OPTIONSELECTED>
 </COLUMN>
 <COLUMN ID="1869" ColName="college_ranking" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6300" ColName="college_image_id" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
@@ -4014,15 +4020,15 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="4337" Tablename="review_slideshows" PrevTableName="Table_82" XPos="546" YPos="1865" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="Each review type organisation can have a single slideshow in which photos are displayed in the order as specified by review_slideshow_order." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="191" >
+<TABLE ID="4337" Tablename="review_context_slideshows" PrevTableName="Table_82" XPos="546" YPos="1865" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="Each review type organisation can have a single slideshow in which photos are displayed in the order as specified by review_slideshow_order." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="191" >
 <COLUMNS>
-<COLUMN ID="6250" ColName="review_context_slideshow_review_context_content_type_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<COLUMN ID="6303" ColName="review_context_slideshow_organisation_entity_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="6248" ColName="review_context_slideshow_review_context_organisation_entity_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<COLUMN ID="6302" ColName="review_context_slideshow_content_type_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
@@ -4049,8 +4055,8 @@
 <INDICES>
 <INDEX ID="5511" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="6250" LengthParam="0" />
-<INDEXCOLUMN idColumn="6248" LengthParam="0" />
+<INDEXCOLUMN idColumn="6303" LengthParam="0" />
+<INDEXCOLUMN idColumn="6302" LengthParam="0" />
 <INDEXCOLUMN idColumn="5505" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
@@ -4066,7 +4072,12 @@
 </INDEX>
 <INDEX ID="6140" IndexName="review_slideshows_FKIndex3" IndexKind="1" FKRefDef_Obj_id="6138">
 <INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="6250" LengthParam="0" />
+<INDEXCOLUMN idColumn="6302" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6294" IndexName="review_slideshows_FKIndex3" IndexKind="1" FKRefDef_Obj_id="4372">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6303" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>
@@ -4199,6 +4210,11 @@
 <INDEX ID="6135" IndexName="rto_tags_FKIndex3" IndexKind="1" FKRefDef_Obj_id="6133">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="6263" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6295" IndexName="review_context_tags_FKIndex3" IndexKind="1" FKRefDef_Obj_id="4442">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6240" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>
@@ -4341,6 +4357,11 @@
 <INDEX ID="6190" IndexName="rto_content_FKIndex2" IndexKind="1" FKRefDef_Obj_id="6188">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="6258" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6296" IndexName="review_context_contents_FKIndex2" IndexKind="1" FKRefDef_Obj_id="4509">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6257" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>
@@ -4854,7 +4875,7 @@
 <RELATION ID="2302" RelationName="Request" Kind="2" SrcTable="1549" DestTable="2294" FKFields="request_id=request_photo_request_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="105" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2304" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="127" />
 <RELATION ID="2312" RelationName="Exist" Kind="2" SrcTable="2141" DestTable="2150" FKFields="advert_id=advert_instance_advert_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-32" CaptionOffsetY="-23" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2970" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="125" />
 <RELATION ID="2315" RelationName="In Space" Kind="2" SrcTable="2157" DestTable="2150" FKFields="space_type_id=advert_instance_space_type_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-3" CaptionOffsetY="-50" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2317" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="127" />
-<RELATION ID="2326" RelationName="Related To" Kind="1" SrcTable="2141" DestTable="2321" FKFields="advert_id=advert_related_organisation_advert_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-10" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-47" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2328" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="129" />
+<RELATION ID="2326" RelationName="Related To" Kind="1" SrcTable="2141" DestTable="2321" FKFields="advert_id=advert_related_organisation_advert_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-34" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-47" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2328" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="129" />
 <RELATION ID="2329" RelationName="Related To" Kind="1" SrcTable="1017" DestTable="2321" FKFields="organisation_entity_id=advert_related_organisation_organisation_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-35" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-46" CaptionOffsetY="-23" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5650" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="130" />
 <RELATION ID="2348" RelationName="Has" Kind="2" SrcTable="1050" DestTable="2339" FKFields="user_entity_id=todo_list_item_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="74" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-29" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5422" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="132" />
 <RELATION ID="2385" RelationName="Edits" Kind="2" SrcTable="1050" DestTable="1187" FKFields="user_entity_id=article_last_editor_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-57" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-28" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5405" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="133" />
@@ -4897,17 +4918,17 @@
 <RELATION ID="4300" RelationName="Has" Kind="2" SrcTable="4277" DestTable="4295" FKFields="user_has_properties_user_entity_id=user_subscription_property_user_entity_id\nuser_has_properties_property_id=user_subscription_property_user_property_id\n" FKFieldsComments="\n\n" relDirection="2" MidOffset="126" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-30" CaptionOffsetY="-23" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5844" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="201" />
 <RELATION ID="4360" RelationName="Links" Kind="2" SrcTable="1187" DestTable="4349" FKFields="article_id=article_link_article_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-77" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-47" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4362" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="207" />
 <RELATION ID="4367" RelationName="Contains" Kind="2" SrcTable="1442" DestTable="4337" FKFields="photo_id=review_context_slideshow_photo_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="279" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-39" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4369" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="208" />
-<RELATION ID="4372" RelationName="Belongs To" Kind="2" SrcTable="2220" DestTable="4337" FKFields="review_context_organisation_entity_id=review_context_slideshow_review_context_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-28" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="56" CaptionOffsetY="-26" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4375" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
+<RELATION ID="4372" RelationName="Belongs To" Kind="2" SrcTable="2220" DestTable="4337" FKFields="review_context_organisation_entity_id=review_context_slideshow_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-28" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="56" CaptionOffsetY="-26" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6294" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
 <RELATION ID="4385" RelationName="Belongs To" Kind="2" SrcTable="1017" DestTable="4333" FKFields="organisation_entity_id=organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="21" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-5" CaptionOffsetY="-47" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5654" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="210" />
 <RELATION ID="4389" RelationName="Contains" Kind="2" SrcTable="1442" DestTable="4333" FKFields="photo_id=organisation_slideshow_photo_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-367" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-3" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4391" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="211" />
 <RELATION ID="4424" RelationName="Makes Request" Kind="2" SrcTable="1001" DestTable="1549" FKFields="entity_id=request_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="821" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="53" CaptionOffsetY="-37" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4426" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="211" />
 <RELATION ID="4430" RelationName="Request About" Kind="2" SrcTable="1017" DestTable="1549" FKFields="organisation_entity_id=request_organisation_entity_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-512" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-41" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5643" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="212" />
 <RELATION ID="4439" RelationName="Rto" Kind="1" SrcTable="1465" DestTable="4435" FKFields="tag_id=review_context_tag_tag_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="-497" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-33" CaptionOffsetY="-27" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4441" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="211" />
-<RELATION ID="4442" RelationName="Tag" Kind="1" SrcTable="2220" DestTable="4435" FKFields="review_context_organisation_entity_id=review_context_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="85" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="-2" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4445" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="212" />
+<RELATION ID="4442" RelationName="Tag" Kind="1" SrcTable="2220" DestTable="4435" FKFields="review_context_organisation_entity_id=review_context_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="85" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="-2" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6295" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="212" />
 <RELATION ID="4468" RelationName="Belongs To" Kind="2" SrcTable="1187" DestTable="4450" FKFields="article_id=article_content_article_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-50" CaptionOffsetY="-21" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4470" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="216" />
 <RELATION ID="4475" RelationName="Includes" Kind="2" SrcTable="4450" DestTable="1215" FKFields="article_content_id=fact_box_article_content_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-42" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="2" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4477" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
 <RELATION ID="4478" RelationName="Includes" Kind="2" SrcTable="4450" DestTable="1536" FKFields="article_content_id=article_content_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="260" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="5" CaptionOffsetY="6" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4480" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
-<RELATION ID="4509" RelationName="Contents" Kind="2" SrcTable="2220" DestTable="4493" FKFields="review_context_organisation_entity_id=review_context_content_organisation_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="12" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-34" CaptionOffsetY="-1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4512" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
+<RELATION ID="4509" RelationName="Contents" Kind="2" SrcTable="2220" DestTable="4493" FKFields="review_context_organisation_entity_id=review_context_content_organisation_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="12" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-34" CaptionOffsetY="-1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6296" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="209" />
 <RELATION ID="4568" RelationName="In" Kind="2" SrcTable="4548" DestTable="4547" FKFields="building_id=room_building_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4570" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="216" />
 <RELATION ID="4571" RelationName="Of Type" Kind="2" SrcTable="4549" DestTable="4547" FKFields="room_type_id=room_type_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-36" CaptionOffsetY="-25" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4572" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="217" />
 <RELATION ID="4596" RelationName="Donates To" Kind="2" SrcTable="4577" DestTable="4587" FKFields="charity_id=charity_donor_charity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-2" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4598" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="220" />
@@ -4928,7 +4949,7 @@
 <RELATION ID="6115" RelationName="Has Parent" Kind="2" SrcTable="1225" DestTable="1225" FKFields="content_type_id=content_type_parent_content_type_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-15" CaptionOffsetY="-46" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6117" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="210" />
 <RELATION ID="6126" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="2220" FKFields="content_type_id=review_context_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6128" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="212" />
 <RELATION ID="6133" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="4435" FKFields="content_type_id=review_context_content_type_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6135" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="213" />
-<RELATION ID="6138" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="4337" FKFields="content_type_id=review_context_slideshow_review_context_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="70" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6140" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="214" />
+<RELATION ID="6138" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="4337" FKFields="content_type_id=review_context_slideshow_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="70" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6140" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="214" />
 <RELATION ID="6143" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="1383" FKFields="content_type_id=league_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6145" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="215" />
 <RELATION ID="6165" RelationName="By User" Kind="2" SrcTable="1050" DestTable="1412" FKFields="user_entity_id=comment_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="-8" StartIntervalOffsetY="-26" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6167" Splitted="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="216" />
 <RELATION ID="6188" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="4493" FKFields="content_type_id=review_context_content_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="198" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6190" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="214" />
@@ -4945,8 +4966,7 @@
 <PLUGINDATARECORDS>
 <PLUGINDATARECORD PluginName="HTMLReport" Obj_id="-1" DataValue="nil">
 <PLUGINDATAPARAMS>
-<PLUGINDATAPARAM Value="SelectedTables=entities;organisations;organisation_types;users;subscriptions;business_cards;events;events_entities;event_types;event_occurrences;anniversaries;articles;article_writers;fact_boxes;article_types;leagues;league_entries;pages;comments;photos;tags;article_tags;photo_tags;article_photos;pull_quotes;requests;request_users;request_types;campaigns;progress_reports;campaign_users;review_types;bar_crawl_organisations;related_articles;event_occurence_users;colleges;college_rankings;packages;user_packages;package_events;adverts;advert_instances;space_types;business_card_types;review_type_organisations;reviews;costs;request_photos;advert_related_organisations;todo_list_items;departments;modules;department_modules;module_events;users_article_types;user_links;links;advert_related_articles;page_space_types;advert_bill_items;advert_bills;todo_priorities;event_occurrence_states;page_properties;years;interfaces;images;image_types;reminders;tag_banners;use!
- !   r_properties;property_types;organisation_request_properties;user_has_properties;user_subscription_properties;organisation_slideshows;slideshow_reviews;article_links;article_events;rto_tags;article_content;rto_content;rooms;buildings;room_types;charities;charity_donors;business_card_colours;quiz_questions;quiz_results;quiz_winners;" />
+<PLUGINDATAPARAM Value="SelectedTables=entities;organisations;organisation_types;users;subscriptions;business_cards;events;events_entities;event_types;event_occurrences;anniversaries;articles;article_writers;fact_boxes;article_types;leagues;league_entries;pages;comments;photos;tags;article_tags;photo_tags;article_photos;pull_quotes;requests;request_users;request_types;campaigns;progress_reports;campaign_users;review_types;bar_crawl_organisations;related_articles;event_occurence_users;colleges;college_rankings;packages;user_packages;package_events;adverts;advert_instances;space_types;business_card_types;review_type_organisations;reviews;costs;request_photos;advert_related_organisations;todo_list_items;departments;modules;department_modules;module_events;users_article_types;user_links;links;advert_related_articles;page_space_types;advert_bill_items;advert_bills;todo_priorities;event_occurrence_states;page_properties;years;interfaces;images;image_types;reminders;tag_banners;use!   !   r_properties;property_types;organisation_request_properties;user_has_properties;user_subscription_properties;organisation_slideshows;slideshow_reviews;article_links;article_events;rto_tags;article_content;rto_content;rooms;buildings;room_types;charities;charity_donors;business_card_colours;quiz_questions;quiz_results;quiz_winners;" />
 </PLUGINDATAPARAMS>
 </PLUGINDATARECORD>
 </PLUGINDATARECORDS>

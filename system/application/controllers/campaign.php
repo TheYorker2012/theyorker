@@ -15,7 +15,7 @@ class Campaign extends Controller {
 
 			$this->load->model('campaign_model','campaign');
 			$this->pages_model->SetPageCode('campaign_selection');
-			$get_campaign_list = $this->campaign->GetCampaignNamesAndVotes();
+			$get_campaign_list = $this->campaign->GetCampaignList();
 			$data['Campaign_List'] = $get_campaign_list;
 			$data['sections'] = array (
 						'current_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_list_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_list_text'),'deadline_text'=>$this->pages_model->GetPropertyWikitext('campaign_list_deadline_text')),

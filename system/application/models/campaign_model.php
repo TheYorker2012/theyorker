@@ -19,13 +19,10 @@ class Campaign_model extends Model
 	/**
 	 * Returns an array of the Campaigns that are currently being voted on
 	 * in ascending order of name.
-	 * @return An array containing arrays with names and votes.
+	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetCampaignNamesAndVotes()
+	function GetCampaignList()
 	{
-		//foreach($collection as $key => $value) {
-		//}
-
 		$sql = "SELECT campaign_name, campaign_votes, campaign_id
 			FROM campaigns
 			WHERE campaign_deleted = false

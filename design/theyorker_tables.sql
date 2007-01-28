@@ -242,11 +242,11 @@ CREATE TABLE subscriptions (
 DROP TABLE IF EXISTS articles;
 CREATE TABLE articles (
 	article_id					INTEGER		NOT NULL	AUTO_INCREMENT,
-	article_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	article_updated					TIMESTAMP	NOT NULL,
 	article_content_type_id				INTEGER		NULL		COMMENT='If null, assume the article is not displayed in the standard format.',
 	article_organisation_entity_id			INTEGER		NULL		COMMENT='If not null, assume the article is a review of the type specified in content_type_id, or a directory review if that is null.',
 	article_last_editor_user_entity_id 		INTEGER		NULL,
-	article_created					TIMESTAMP	NOT NULL,
+	article_created					TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	article_publish_date				TIMESTAMP	NULL,
 	article_initial_editor_user_entity_id		INTEGER		NULL,
 	article_location				VARCHAR(15)	NULL,
@@ -323,7 +323,7 @@ DROP TABLE IF EXISTS fact_boxes;
 CREATE TABLE fact_boxes (
 	fact_box_id					INTEGER		NOT NULL	AUTO_INCREMENT,
 	fact_box_article_content_id			INTEGER		NOT NULL,
-	fact_box_text					TEXT		NOT NULL,
+	fact_box_wikitext				TEXT		NOT NULL,
 	fact_box_deleted				BOOL		NOT NULL	DEFAULT FALSE,
 	fact_box_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
@@ -576,8 +576,8 @@ CREATE TABLE review_context_tags (
 
 DROP TABLE IF EXISTS review_context_slideshows;
 CREATE TABLE review_context_slideshows (
-	review_context_slideshow_review_context_content_type_id	INTEGER 	NOT NULL,
-	review_context_slideshow_review_context_organisation_entity_id	INTEGER 	NOT NULL,
+	review_context_slideshow_organisation_entity_id	INTEGER 	NOT NULL,
+	review_context_slideshow_content_type_id	INTEGER 	NOT NULL,
 	review_context_slideshow_photo_id 		INTEGER 	NOT NULL,
 	review_context_slideshow_order 			INTEGER 	NOT NULL,
 	
@@ -712,6 +712,7 @@ CREATE TABLE colleges (
 	college_organisation_entity_id			INTEGER 	NOT NULL 	AUTO_INCREMENT,
 	college_name 					VARCHAR(255) 	NOT NULL,
 	college_ranking 				INTEGER 	NOT NULL,
+	college_image_id				INTEGER		NOT NULL,
 	
 	PRIMARY KEY(college_organisation_entity_id)
 ) COMMENT='The colleges and their rankings (a college is an organisation).';
@@ -832,7 +833,7 @@ CREATE TABLE photos (
 	photo_width 					INTEGER 	NOT NULL,
 	photo_height 					INTEGER 	NOT NULL,
 	photo_gallery 					BOOL 		NOT NULL,
-	photo_homepage 					TIMESTAMP 	NOT NULL,
+	photo_homepage 					TIMESTAMP 	NULL,
 	photo_deleted 					BOOL 		NOT NULL,
 
 	PRIMARY KEY(photo_id)
