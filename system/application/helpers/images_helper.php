@@ -64,7 +64,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
 		foreach ($query->result() as $onerow) {
 			$fetched_type = $onerow->image_image_type_id;
 		}
-		$query->free_result()
+		$query->free_result();
 		if ($fetched_type) {
 			$location = 'images/images/'.$fetched_type.'/'.($id % IMAGE_HASH).'/'.$id.$extension;
 			if ($repeat || is_file($location)) {
