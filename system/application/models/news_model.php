@@ -13,6 +13,10 @@
 
 class News_model extends Model
 {
+
+	private static $NewsDateFormat = '%W, %D %M %Y';
+	private static $NewsDateFormatShort = '%a, %D %b %y';
+
 	function NewsModel()
 	{
 		//Call the Model Constructor
@@ -56,7 +60,7 @@ class News_model extends Model
 	function GetSimpleArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
+		$sql = 'SELECT article_contents.article_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormatShort . '\') AS article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id =
@@ -117,7 +121,7 @@ class News_model extends Model
 	function GetSummaryArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
+		$sql = 'SELECT article_contents.article_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormatShort . '\') AS article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id =
@@ -181,7 +185,7 @@ class News_model extends Model
 	function GetFullArticle($id)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, articles.article_publish_date
+		$sql = 'SELECT article_contents.article_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormat . '\') AS article_publish_date
 				FROM articles
 				LEFT JOIN article_contents
 				ON articles.article_id =

@@ -1,7 +1,7 @@
 <div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
 
 	<div class='RightToolbar'>
-		<div class='RightToolbarHeader'> Search </div>
+		<h4>Search</h4>
 		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
 			<form name='search_directory' action='' method='POST' class='form'>
 				Enter a keyword below:<br />
@@ -14,7 +14,7 @@
 	</div>
 
 	<div class='RightToolbar'>
-		<div class='RightToolbarHeader'> Filters </div>
+		<h4>Filters</h4>
 		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
 			<?php
 				$idPostfix = 1;
@@ -26,7 +26,7 @@
 	</div>
 
 	<div class='RightToolbar'>
-		<div class='RightToolbarHeader'> What's this? </div>
+		<h4>What's this? </h4>
 		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
 			<p><?php echo $maintext; ?></p>
 			<p>The directory currently has <?php echo count($organisations); ?> entries.</p>

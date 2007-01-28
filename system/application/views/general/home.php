@@ -1,73 +1,53 @@
-<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Features
+<div class='RightToolbar'>
+	<h4>Features</h4>
+	<div class='Entry'>
+		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy'/></a>
+		<h5>How Do I?</h5>
+		<p>Everything you wanted to know about York</p>
 	</div>
-	<p>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<p style="color: rgb(255, 106, 0); margin-bottom: 0px;">How Do I?</p>
-		<p style="margin-top: 0px; font-size: x-small; ">Everything you wanted to know about York</p>
-	</p>
-	<p>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<p style="color: rgb(255, 106, 0); margin-bottom: 0px;">Yorkipedia</p>
-		<p style="margin-top: 0px; font-size: x-small; ">A lovely rip-off of Wikipedia by our man Nick Evans.</p>
-	</p>
-	<p>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<p style="color: rgb(255, 106, 0); margin-bottom: 0px;">Game Zone</p>
-		<p style="margin-top: 0px; font-size: x-small; ">Some games for all you board people.</p>
-	</p>
-	<p>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<p style="color: rgb(255, 106, 0); margin-bottom: 0px;">Campaigns</p>
-		<p style="margin-top: 0px; font-size: x-small; ">These are our campaigns so check them out.</p>
-	</p>
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Today's Events
+	<div class='Entry'>
+		<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
+		<h5>Yorkipedia</h5>
+		<p>A lovely rip-off of Wikipedia by our man Nick Evans.</p>
 	</div>
-	<br />
-	<br />
-	<br />
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Weather
+	<div class='Entry'>
+		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+		<h5>Game Zone</h5>
+		<p>Some games for all you board people.</p>
 	</div>
-	<br />
-	<br />
-	<br />
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Quote of the Day
+	<div class='Entry'>
+		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+		<h5>Campaigns</h5>
+		<p>These are our campaigns so check them out.</p>
 	</div>
+	<h4>Today's Events</h4>
 	<br />
 	<br />
 	<br />
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Links
-	</div>
+	<h4>Weather</h4>
+	<br />
+	<br />
+	<br />
+	<h4>Quote of the Day</h4>
+	<br />
+	<br />
+	<br />
+	<h4>Links</h4>
 	<br />
 	<br />
 	<br />
 </div>
-<div style="width: 420px; margin: 0px; padding-right: 3px; ">
-	<div style="border: 1px solid #999; padding: 6px; color: #999; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: 1.5em; "><?php echo $welcome_title; ?></span><br />
+<div class='grey_box'>
+	<h2><?php echo $welcome_title; ?></h2>
 	<?php echo $welcome_text; ?>
-	</div>
-	<img src="/images/adverts/charity.JPG" style="margin-top: 4px; margin-bottom: 4px;"/>
-	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: 1.5em;  color: #2DC6D7; ">today's news</span><br />
+</div>
+<img src="/images/adverts/charity.jpg" alt='Charity Banner' title='Chartity Banner' style='margin-left: 11px; margin-bottom: 5px;' />
+<div class='blue_box'>
+	<h2>today's news</h2>
 	<div class="NewsPreview" style="margin: 5px;">
-		<p style="color: #999; font-size: x-small;">UK & World</p>
+		<p style="color: #999; font-size: x-small;">UK &amp; World</p>
 		<a href='/news/article/7'><img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' /></a>
 		<h3><a href="http://theyorker.gmghosting.com/news/article/7" title="Blair 'sorrow' over slave trade">Blair 'sorrow' over slave trade</a></h3>
-
 		<p class='Writer'><a href='/directory/view/1'>Jo Shelley</a></p>
 		<p class='Date'>4th December 2006</p>
 		<p class='More'><a href="http://theyorker.gmghosting.com/news/article/7" title="Read more...">Read more...</a></p>
@@ -75,7 +55,7 @@
 	</div>
 	<br />
 	<div class="NewsPreview" style="margin: 5px;">
-		<p style="color: #999; font-size: x-small;">UK & World</p>
+		<p style="color: #999; font-size: x-small;">UK &amp; World</p>
 		<a href='/news/article/6'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
 		<h3><a href="http://theyorker.gmghosting.com/news/article/6" title="Advice sought after ex-spy death">Advice sought after ex-spy death</a></h3>
 		<p class='Writer'><a href='/directory/view/1'>Dan Ashby</a></p>

@@ -137,7 +137,7 @@ function preloader()
 			<a href='#'>Games Zone</a>
 		</div>
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
-			<img src='/images/adverts/3-120x600.gif' />
+			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
 		</div>
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
@@ -175,7 +175,7 @@ function preloader()
 				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>' />
 				<br />
 				<label for='a_authoremail'>Your E-mail:</label>
-				<input type='text' name='a_authoremail' id='a_authorname' value='' />
+				<input type='text' name='a_authoremail' id='a_authoremail' value='' />
 				<br />
 				<label for='a_rating'>Your Rating:</label>
 				<select name='a_rating' id='a_rating' size='1'>

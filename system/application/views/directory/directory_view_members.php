@@ -8,9 +8,7 @@ if(empty($organisation['cards'])) {
 } else {
 ?>
 <div class='RightToolbar'>
-	<div class='RightToolbarHeader'>
-	Teams
-	</div>
+	<h4>Teams</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
 			<a href='#'>All (6)</a><br />
@@ -19,9 +17,7 @@ if(empty($organisation['cards'])) {
 			<a href='#'>Team 3 (1)</a>
 		</p>
 	</div>
-	<div class='RightToolbarHeader'>
-	Facts
-	</div>
+	<h4>Facts</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
 			Number of members : 1337<br />

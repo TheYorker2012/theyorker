@@ -1,7 +1,5 @@
 <div class='RightToolbar'>
-	<div class='RightToolbarHeader'>
-	Information
-	</div>
+	<h4>Information</h4>
 	<div style='text-align:center; padding: 10px 5px 10px 5px;'>
 	<img width='200' src='/images/prototype/directory/about/178327854723856.jpg' />
 	</div>
@@ -41,9 +39,7 @@
 		}
 		?>
 	</p>
-	<div class='RightToolbarHeader'>
-	Reviews
-	</div>
+	<h4>Reviews</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
 			<a href='#'>Food review by Nick Evans</a><br />
@@ -51,9 +47,7 @@
 			<a href='#'>Drink review by Nick Evans</a><br />
 		</p>
 	</div>
-	<div class='RightToolbarHeader'>
-	Related articles
-	</div>
+	<h4>Related articles</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
 			<a href='#'>Article title 1</a><br />

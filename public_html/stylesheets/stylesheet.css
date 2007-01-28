@@ -1,10 +1,14 @@
-/* Default Paramaters for entire page */
+/**
+ *	---------------------
+ *	GLOBAL TYPE SELECTORS
+ *	---------------------
+ */
+
 html {
 	font-family: Arial, Helvetica, sans-serif;
 	background-color: #fff;
 	margin: 5px;
 }
-
 
 body {
 	margin: 0;
@@ -19,70 +23,148 @@ a:hover {
 	text-decoration: underline;
 }
 
-/** 
-	* Headers - a section for headers
-*/
+img {
+	border: none;
+}
+
+/* Replace this with > image */
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+
+/**
+ *	Headers
+ */
+
+/* Page Title Bar */
+h1 {
+	margin-bottom: 8px;
+	background-color: #20c1f0;
+	padding: 3px 0px 3px 5px;
+	color: #fff;
+	font-size: medium;
+	font-weight: bold;
+	height: 18px;
+}
 
 /* Yorker alt text */
 h1.YorkerHeader {
     color: #FF9933;
 }
-/* Page Title */
-h1 {
-	font-weight: bolder;
-	font-size: xx-large;
-}
 
-h1.reviewHeader {
-	display: inline;
-}
-/*
-*Navigation Menu Style (public_frame.php)
-*/
-div.navigationmenu_item {
-	color: #999;
-	font-size: small;
-	border-bottom: 1px solid #ccc;
-	padding: 0px 0px 3px 4px;
-	margin: 0px 0px 3px 0px;
-}
-div.navigationmenu_item_noborder {
-	color: #999;
-	font-size: small;
-	border-bottom: 1px solid #999;
-	padding: 0px 0px 3px 4px;
-	margin: 0px 0px 3px 0px;
-}
-
-/* Page Sub-Title */
+/* Content Boxes Headings */
 h2 {
-    font-size: x-large;
+    font-size: 1.5em;
+	margin-top: 0;
 }
+
 /* Dynamic Text Title (for WikiText) */
 h3 {
     font-size: large;
 }
-/* get rid of image borders - mainly for links*/
-img {
-	border: none;
+
+/* Grey header bar used in right columns */
+h4 {
+	background-color: #999;
+	color: #fff;
+	margin: 0 0 5px 0;
+	padding: 3px 3px 3px 5px;
+	font-size: small;
+	font-weight: bold;
 }
-/* generic page title bar */
-#TitleBar {
-	background-color: Teal;
+
+/* Orange Titles in Right Toolbar */
+h5 {
+	color: #FF6A00;
+	font-size: small;
+	margin: 0;
+	font-weight: normal;
 }
-/* gives the 5px padding around simple pages */
-.padding {
-	padding: 5px;
-}
+
+/**
+ *	----------------------
+ *	GLOBAL CLASS SELECTORS
+ *	----------------------
+ */
+
 /* removes link styling*/
 .nolinkstyle {
 	text-decoration: none;
 	color: #000000;
 }
 
-/*
-* New Style Layout Divs
-*/
+/* Use for starting a new line of divs. e.g. <div class="clear">&nbsp;</div> */
+.clear {
+	clear:both;
+	display:block;
+	height:1em;
+	overflow:hidden;
+	margin: 0;
+	padding: 0;
+}
+
+div.ajax_loading {
+	text-align: center;
+	font-size: small;
+	border-top: 1px #000000 solid;
+	border-bottom: 1px #ff6a00 solid;
+	padding: 4px;
+	background-image: url('/images/prototype/prefs/yorker-bg.png');
+	background-position: center left;
+	background-repeat: no-repeat;
+}
+
+/**
+ *	----------------------
+ *	    GLOBAL LAYOUTS
+ *	----------------------
+ */
+
+/* Grey Main Content Box */
+div.grey_box {
+	width: 410px;
+	border: 1px #999 solid;
+	padding: 5px;
+	color: #999;
+	font-size: small;
+	margin-bottom: 5px;
+}
+
+div.grey_box h2 {
+	color: #999;
+}
+
+/* Blue Main Content Box */
+div.blue_box {
+	width: 410px;
+	border: 1px #20C1F0 solid;
+	padding: 5px;
+	color: #000;
+	font-size: small;
+	margin-bottom: 5px;
+}
+
+div.blue_box h2 {
+	color: #20C1F0;
+}
+
+/* Orange Content Box - Used in right menu for factbox in news section */
+div.orange_box {
+	border: 1px #ff6a00 solid;
+	padding: 5px;
+	color: #000;
+	font-size: small;
+	margin-bottom: 5px;
+}
+
+div.orange_box h2 {
+	color: #ff6a00;
+}
 
 div.RightColumn {
 	width: 40%;
@@ -114,9 +196,70 @@ div.HighlightedBox {
 	width: 52%;
 } /* Set the width yourself - default 100% */
 
-/*
-*	Blue Navbar Styles
-*/
+
+/**
+ *	Right Toolbar containing content with grey headers
+ */
+
+div.RightToolbar {
+	width: 220px;
+	margin: 0;
+	float: right;
+	font-size: small;
+}
+
+div.RightToolbar div.Entry {
+	margin-bottom: 5px;
+}
+
+div.RightToolbar div.Entry img {
+	float: right;
+}
+
+div.RightToolbar div.Entry p {
+	font-size: x-small;
+	margin-top: 0;
+}
+
+div.RightToolbar p {
+	margin-top: 0px;
+	font-size: small;
+}
+
+div.RightToolbar ul {
+	padding: 0px;
+	list-style-position: inside;
+}
+
+div.RightToolbar li {
+	margin-left: 0px;
+	font-size: small;
+}
+
+/**
+ *	Navigation Menu Style (public_frame)
+ */
+
+div.navigationmenu_item {
+	color: #999;
+	font-size: small;
+	border-bottom: 1px solid #ccc;
+	padding: 0px 0px 3px 4px;
+	margin: 0px 0px 3px 0px;
+}
+
+div.navigationmenu_item_noborder {
+	color: #999;
+	font-size: small;
+	border-bottom: 1px solid #999;
+	padding: 0px 0px 3px 4px;
+	margin: 0px 0px 3px 0px;
+}
+
+
+/**
+ *	Horizontal Navbar Styles (frame_navbar)
+ */
 
 div#navbar ul {
 	padding: 0px;
@@ -172,8 +315,10 @@ div#navbar ul li .thin {
 }
 
 /**
-	* Review (exclusive) use - if you find a use for it elsewhere, feel free to put it into generic use
-*/
+ *	---------------------
+ *	       REVIEWS
+ *	---------------------
+ */
 
 div.ReviewCatetory {
 	padding: 5px;
@@ -409,144 +554,13 @@ span.SortedBy {
 	text-decoration: underline;
 }
 
+
 /**
-	* Generic use
-*/
-/* Use for starting a new line of divs. e.g. <div class="clear">&nbsp;</div> */
-.clear {
-	clear:both;
-	display:block;
-	height:1em;
-	overflow:hidden;
-	margin: 0;
-	padding: 0;
-}
-/* Replace this with > image */
-ul {
-    list-style-type: disc;
-}
+ *	---------------------
+ *	      CAMPAIGNS
+ *	---------------------
+ */
 
-ol {
-    list-style-type: decimal;
-}
-
-/* For the fluid student frame */
-.WholePage {
-	background-color: #ffffff;
-	padding: 1.5em;
-}
-.HeaderMenu {
-	text-align: right;
-}
-.HeaderBanner {
-	text-align: right;
-	background-image: url("/images/prototype/header/homepage_bk.gif");
-	background-repeat: repeat-x;
-	height:108px;
-}
-.HeaderSearch {
-	color: #2DC6D7;
-}
-.HeaderSearchBox {
-	font-size:10px;
-	height: 19px;
-	border-style:solid;
-	border-color:#2DC6D7;
-	border-width: 2px;
-}
-.footer {
-	text-align: center;
-}
-/* End the fluid student frame */
-
-/*General Usefull Css Layouts */
-/* For a duel colum layout use a container div enclosing two halfbox divs and a empty breaker div. */
-div.Container{
-	width:100%;
-}
-div.ContainerHalf{
-	width:50%;
-}
-div.WholeContainer{
-	/*Width=PageWidth - 10px*/
-	width: 760px;
-	padding: 5px;
-	margin: 5px;
-}
-div.HalfBox {
-	float: left;
-	width:48%;
-	/*width: 50%;*/
-	padding: 5px;
-}
-
-div.HalfBox2 {
-	float: right;
-	width: 48%;
-	padding: 5px;
-}
-
-div.HalfRightBorder {
-	border-color: #2dc6d7;
-	border-width: thin;
-	border-style: solid;
-	margin-right: 10px;
-	padding: 5px;
-	float: right;
-	width: 45%;
-}
-
-div.ThirdBox {
-	float: left;
-	width:33%;
-	padding: 5px;
-}
-div.QuaterBox { 
-	float: left;
-	width:24%;
-	/*width: 25%;*/
-	padding: 5px;
-}
-div.breaker {
-	clear:both;
-}
-div.GalleryPicture {
-	float: left;
-	padding: 10px;
-}
-/* End Usefull Css Layouts */
-
-/*Grey Boxes used on home page and many others*/
-div.RightToolbar {
-	width: 220px;
-	margin: 0;
-	padding-left: 3px;
-	float: right;
-}
-div.RightToolbarHeader {
-padding: 5px;
-background-color: #999;
-color: #fff;
-font-size: small;
-font-weight: bold;
-}
-div.RightToolbar p {
-	margin-top: 0px;
-	font-size: small;
-}
-div.RightToolbar ul {
-	padding: 0px;
-	list-style-position: inside;
-}
-div.RightToolbar li {
-	margin-left: 0px;
-	font-size: small;
-}
-
-/* For the campaign pages */
-.wholepage2 { /* Remove Me Begin */
-
-}
 .title{
 	font-size: 25px;
 	font-weight: bold;
@@ -671,9 +685,14 @@ div.FactBoxTitle {
 	font-size: 1.8em;
 	font-weight: bold;
 }
-/* End the campaign pages */
 
-/*For the charity page */
+
+/**
+ *	---------------------
+ *	       CHARITY
+ *	---------------------
+ */
+
 div.FloatRightHalf {
 	float: right;
 	width:49%;
@@ -718,7 +737,13 @@ div.BlackBoxSubTitle {
 	font-size: 1.5em;
 	font-weight: bold;
 }
-/* End the charity pages */
+
+
+/**
+ *	---------------------
+ *	      DIRECTORY
+ *	---------------------
+ */
 
 /* Column Text And ColumnPhoto are two simple styles for a column of text next to a photo (Used In Directory)*/
 div.columnText {
@@ -753,60 +778,31 @@ div.MemberboxPhoto ul {
 div.MemberboxPhoto li {
 	font-size: 12px;
 }
- 
-/*
-*	Start styles for News Section
-*/
+
+
+/**
+ *	---------------------
+ *	        NEWS
+ *	---------------------
+ */
 
 div.ArticleColumn {
 	text-align: justify;
 	font-size: 13px;
 	line-height: 15px;
-}
-
-div.ArticleColumn h1, div.ArticleColumn h2 {
-	text-align: center;
-	margin: 0;
-	line-height: normal;
-}
-
-div.ArticleColumn h1 {
-	font-size: 26px;
 	color: #000;
 }
 
-div.ArticleColumn div.byline img {
-	float: right;
+div.ArticleColumn h1 {
+	color: #000;
+	background-color: #fff;
+	text-align: center;
+	font-size: 26px;
+	line-height: normal;
+	margin: 0 0 1em 0;
+	padding: 0;
+	height: 100%;
 }
-
-div.ArticleColumn div.text {
-	padding-top: 5px;
-	padding-left: 5px;
-	background-image: url('/images/prototype/news/byline.jpg');
-	background-repeat: repeat-x;
-	font-size: large;
-	color: #acaeb1;
-	font-weight: bold;
-}
-
-div.ArticleColumn div.role {
-	padding: 1px 5px;
-	background-color: #000;
-	color: #fff;
-	clear: both;
-	font-size: 12px;
-}
-
-.ArticleFacts {
-	margin-left: 1em;
-	padding-left: 5px;
-	padding-right: 5px;
-	font-size: 13px;
-	line-height: 15px;
-}
-
-
-
 
 div.ArticleColumn p {
 	text-align: justify;
@@ -814,7 +810,7 @@ div.ArticleColumn p {
 	line-height: 15px;
 }
 
-div.ArticleColumn ul li {
+div.ArticleColumn ul {
 	font-size: 13px;
 	line-height: 15px;
 	text-align: left;
@@ -823,41 +819,20 @@ div.ArticleColumn ul li {
 div.ArticleColumn h3 {
 	color: #ff6a00;
 	text-align: left;
- }
-
-div.ArticleColumn .ArticleBox {
-	width: 120px;
-	border: 1px solid #ff6a00;
-	margin-left: 5px;
-	margin-right: 5px;
 }
 
-div.ArticleColumn .ArticleBox .Header {
-	background-color: #ff6a00;
-	color: #fff;
-	font-weight: bold;
-	padding-top: 3px;
-	padding-bottom: 3px;
+div.ArticleColumn blockquote {
+	float: right;
+	display: inline;
+	width: 150px;
+	padding: 5px;
+	margin: 5px 5px 5px 10px;
+	border: 1px #FF6A00 solid;
+	background: #F7952D;
 	text-align: center;
 }
 
-div.ArticleColumn .ArticleBox .Content {
-	margin: 0;
-	text-align: left;
-	padding-left: 1.5em;
-	list-style-image: url(/images/prototype/news/list-blue.gif);
-}
 
-.ArticleColumn .quote {
-	text-align: center;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-.ArticleColumn .quote .author {
-	color: #08c0ef;
-	margin: 0;
-}
 
 
 .NewsPreview {
@@ -866,14 +841,17 @@ div.ArticleColumn .ArticleBox .Content {
 	line-height: 15px;
 }
 
-.NewsPreview blockquote { border: 1px #FF6A00 solid; float: right; display: inline; width: 150px; margin: 5px 5px 5px 10px; background: #F7952D; }
-.NewsPreview blockquote { padding: 5px; text-align: center }
+
 
 .NewsPreview h1 {
+	color: #000;
+	background-color: #fff;
 	text-align: left;
 	font-size: 18px;
 	line-height: normal;
-	margin: 0;
+	margin: 0 0 1em 0;
+	padding: 0;
+	height: 100%;
 }
 
 .NewsPreview h3 {
@@ -942,6 +920,7 @@ div.ArticleColumn .ArticleBox .Content {
 .NewsOther img {
 	margin-right: 5px;
 	float: left;
+	padding-bottom: 10px;
 }
 
 .NewsOther .Headline, .NewsOther .Headline a {
@@ -1024,16 +1003,6 @@ div.ArticleColumn .ArticleBox .Content {
 
 /* --- News : Admin Section --- */
 
-div.ajax_loading {
-	text-align: center;
-	border-top: 1px #000000 solid;
-	border-bottom: 1px #ff6a00 solid;
-	padding: 4px;
-	background-image: url('/images/prototype/prefs/yorker-bg.png');
-	background-position: center left;
-	background-repeat: no-repeat;
-}
-
 div.table-box {
 	padding: 4px;
 	background-color: #f9f9f9;
@@ -1077,24 +1046,6 @@ div.table-box table td a {
 }
 div.table-box table td a:hover {
     text-decoration: underline;
-}
-
-h4 {
-	background-color: #08c0ef;
-	color: #fff;
-	margin: 0;
-	padding: 5px 5px 5px 10px;
-	font-size: 14px;
-	margin-bottom: 5px;
-}
-
-h5 {
-	background-color: #94979b;
-	border-bottom: 1px #000 solid;
-	color: #fff;
-	margin: 0;
-	padding: 3px 3px 3px 10px;
-	font-size: 12px;
 }
 
 .form fieldset {
@@ -1157,7 +1108,7 @@ h5 {
  	border-bottom : 1px solid #224059;
 	border-right : 1px solid #224059;
 }
-.form fieldset .button:hover {
+.form fieldset .button:active {
 	border-top : 1px #31557f solid;
 	border-left : 1px #31557f solid;
 	border-bottom : 1px #f8f9fb solid;
@@ -1238,13 +1189,12 @@ h5 {
     text-decoration: underline;
 }
 
-/*
-*	End styles for News Section
-*/
 
-/*
-*     Styles for search page
-*/
+/**
+ *	---------------------
+ *	       SEARCH
+ *	---------------------
+ */
 
 #minibox {
   float: left;
@@ -1299,9 +1249,12 @@ h5 {
   width: 200px;
 }
 
-/*
-*     End Styles for search page
-*/
+
+/**
+ *	---------------------
+ *	  YORKER OFFICE ???
+ *	---------------------
+ */
 
 .OfficeBoxes {
 	border: 1px solid #000000;
