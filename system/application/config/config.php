@@ -11,7 +11,7 @@
 |	http://www.your-site.com/
 |
 */
-$config['base_url']	= "http://ado.is-a-geek.net:81/";
+$config['base_url']	= "/";
 
 /*
 |--------------------------------------------------------------------------
