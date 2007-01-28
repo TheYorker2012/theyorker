@@ -832,16 +832,11 @@ div.ArticleColumn blockquote {
 	text-align: center;
 }
 
-
-
-
 .NewsPreview {
 	text-align: justify;
 	font-size: 13px;
 	line-height: 15px;
 }
-
-
 
 .NewsPreview h1 {
 	color: #000;
@@ -964,40 +959,34 @@ div.ArticleColumn blockquote {
 	text-align: left;
 }
 
-#LifestyleContainer {
-	width:255px;
-	float: left;
-}
-
-.LifestylePuffer {
+div.RightToolbar div.LifestylePuffer {
 	border: 1px #000 solid;
-	width: 255px;
+	width: 220px;
 	margin-bottom: 10px;
 	padding: 0;
-	float: left;
 }
 
-.LifestylePuffer a:hover {
+div.RightToolbar div.LifestylePuffer a:hover {
 	text-decoration: none;
 }
 
-.LifestylePuffer img {
+div.RightToolbar div.LifestylePuffer img {
 	float: left;
 }
 
-.LifestylePuffer h3 {
+div.RightToolbar div.LifestylePuffer h3 {
 	text-align: center;
-	margin: 0 0 0 123px;
+	margin: 0 0 0 100px;
 	padding: 0;
-	font-size: 15px;
+	font-size: small;
 	color: #fff;
 }
 
-.LifestylePuffer p {
+div.RightToolbar div.LifestylePuffer p {
 	text-align: center;
-	margin: 0 0 0 123px;
+	margin: 0 0 0 100px;
 	padding: 0;
-	font-size: 11px;
+	font-size: x-small;
 	color: #fff;
 }
 

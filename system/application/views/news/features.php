@@ -1,54 +1,43 @@
-	<div id='newsnav'>
-		<ul id='newsnavlist'>
-		<li><a href='/news/'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
-		<li><a href='/news/national/'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
-		<li><a href='/news/features/' id='current'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
-		<li><a href='/news/lifestyle/'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='/news/archive/'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
-		</ul>
-	</div>
-	<div class='clear'>&nbsp;</div>
-
-	<div class='NewsPreview' style='width:380px; margin-right: 10px; margin-left: 5px;'>
-		<a href='/news/article/<?php echo $main_article['id']; ?>'><img src='<?php echo $main_article['image']; ?>' alt='<?php echo $main_article['image_description']; ?>' title='<?php echo $main_article['image_description']; ?>' /></a>
-		<h1><?php echo anchor('news/article/'.$main_article['id'], $main_article['heading']); ?></h1>
-		<p class='Writer'><a href='/directory/view/1'><?php echo $main_article['writer']; ?></a></p>
-		<p class='Date'><?php echo $main_article['date']; ?></p>
-		<p class='More'><?php echo anchor('news/article/'.$main_article['id'], 'Read more...'); ?></p>
-        <?php echo $main_article['text']; ?>
-		<br style='clear: both;' />
-	</div>
-	
-	<div style='width:255px; float: left;'>
-
-    <?php
-	foreach ($news_previews as $preview)
-	{ ?>
-		<div class='NewsPreview' style='width:255px;'>
+	<div class='RightToolbar'>
+		<h4>More Features</h4>
+		<?php foreach ($news_previews as $preview) { ?>
+		<div class='NewsPreview'>
 			<a href='/news/article/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
-			<h<?php echo $heading_size; ?>><?php echo anchor('news/article/'.$preview['id'], $preview['heading']); ?></h<?php echo $heading_size; ?>>
+			<h3><?php echo anchor('news/article/'.$preview['id'], $preview['heading']); ?></h3>
 			<p class='Writer'><a href='/directory/view/1'><?php echo $preview['writer']; ?></a></p>
 			<p class='Date'><?php echo $preview['date']; ?></p>
 			<p class='More'><?php echo anchor('news/article/'.$preview['id'], 'Read more...'); ?></p>
-	        <p><?php echo $preview['subtext']; ?></p>
+		    <p><?php echo $preview['blurb']; ?></p>
 			<br style='clear: both;' />
 		</div>
-    <?php } ?>
-
-		<div class='NewsOther' style='width:255px;'>
-	    	<?php
-	    	foreach ($news_others as $other)
-	    	{ ?>
-			<p>
-				<a href='/news/article/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
-			    <p class='Headline'><a href='/news/article/<?php echo $other['id']; ?>'><?php echo $other['headline']; ?></a></p>
-				<p class='Writer'><a href='/directory/view/1'><?php echo $other['writer']; ?></a></p>
-				<p class='Date'><?php echo $other['date']; ?></p>
-			</p>
-    		<?php } ?>
+		<?php } ?>
+		<h4>Other Features</h4>
+	   	<?php foreach ($news_others as $other) { ?>
+		<div class='NewsOther'>
+			<a href='/news/article/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
+		    <p class='Headline'><a href='/news/article/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
+			<p class='Writer'><a href='/directory/view/1'><?php echo $other['writer']; ?></a></p>
+			<p class='Date'><?php echo $other['date']; ?></p>
+		</div>
+   		<?php } ?>
+		<div style='padding-bottom: 150px;'>&nbsp;</div>
+		<?php foreach ($main_article['fact_boxes'] as $fact_box) {
+			echo '<div class=\'orange_box\'>';
+   			echo '<h2>facts</h2>'.$fact_box;
+			echo '</div>';
+		} ?>
+	</div>
+	<div class='blue_box'>
+		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
+		<h2 style='margin-bottom: 5px;'>reported by...</h2>
+		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
+		<?php echo $main_article['date']; ?><br />
+		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
+	</div>
+	<div class='grey_box'>
+		<div class='ArticleColumn'>
+			<h1><?php echo $main_article['heading']; ?></h1>
+	        <p><?php echo $main_article['text']; ?></p>
+			<br style='clear: both;' />
 		</div>
 	</div>
-	<div style='width:130px; float: left; text-align: center;'>
-		<a href='' target='_blank'><img src='/images/adverts/3-120x600.gif' alt='Advert' title='Advert' /></a>
-    </div>
-	<div id='clear' style='clear: both;'>&nbsp;</div>

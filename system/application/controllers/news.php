@@ -2,7 +2,8 @@
 /**
  * This is the controller for the news section.
  *
- * @author Chris Travis, Neil Brehon
+ * @author Chris Travis	(cdt502 - ctravis@gmail.com)
+ * @author Neil Brehon	(nb525)
  */
 class News extends Controller {
 
@@ -210,13 +211,13 @@ class News extends Controller {
 	/// RSS Feed Generation
 	function rss()
 	{
-		$data['rss_title'] = 'Campus News';
+		$data['rss_title'] = 'York Uni Campus News';
 		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
 		$data['rss_desc'] = 'All the news you need to know about from York University\'s Campus!';
 		$data['rss_category'] = 'News';
 		$data['rss_pubdate'] = 'Thu, 14 Dec 2006 00:00:01 GMT';
 		$data['rss_lastbuild'] = 'Tue, 10 Jun 2003 09:41:01 GMT';
-		$data['rss_image'] = 'http://localhost/images/prototype/news/rss-campus.jpg';
+		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-campus.jpg';
 		$data['rss_width'] = '274';
 		$data['rss_height'] = '108';
 		$data['rss_email_ed'] = 'news@theyorker.co.uk';

@@ -1,30 +1,5 @@
-	<div id='newsnav'>
-		<ul id='newsnavlist'>
-		<li><a href='/news/'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
-		<li><a href='/news/national/'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
-		<li><a href='/news/features/'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
-		<li><a href='/news/lifestyle/' id='current'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='/news/archive/'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
-		</ul>
-	</div>
-	<div class='clear'>&nbsp;</div>
-
-	<div class='NewsPreview' style='width: 380px; margin-right: 10px; margin-left: 5px;'>
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='A yummy cake' title='A yummy cake' /></a>
-		<h1><?php echo anchor('news/article/1', 'Have your cake, and eat it!'); ?></h1>
-		<p class='Writer'><a href='/directory/view/1'>Charlie Morley</a></p>
-		<p class='Date'>5th December 2006</p>
-		<p class='More'><?php echo anchor('news/article/1', 'Read more...'); ?></p>
-        <p>
-			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
-		    elementum arcu non risus. Vestibulum arcu enim, placerat nec,
-		    malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
-			Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae
-			magna. Morbi mollis consequat diam.
-		</p>
-		<br style='clear: both;'/>
-	</div>
-	<div id='LifestyleContainer'>
+	<div class='RightToolbar'>
+		<h4>More Features</h4>
 		<div class='LifestylePuffer' style='background-color: #04669c;'>
 			<a href='/news/article/1'>
 			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
@@ -73,8 +48,24 @@
 			</a>
 			<div style='clear:both'></div>
 		</div>
+		<div style='padding-bottom: 150px;'>&nbsp;</div>
+		<?php foreach ($main_article['fact_boxes'] as $fact_box) {
+			echo '<div class=\'orange_box\'>';
+   			echo '<h2>facts</h2>'.$fact_box;
+			echo '</div>';
+		} ?>
 	</div>
-	<div style='width:130px; float: left; text-align: center;'>
-		<a href='' target='_blank'><img src='/images/adverts/3-120x600.gif' alt='Advert' title='Advert' /></a>
-    </div>
-	<div id='clear' style='clear: both;'>&nbsp;</div>
+	<div class='blue_box'>
+		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
+		<h2 style='margin-bottom: 5px;'>reported by...</h2>
+		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
+		<?php echo $main_article['date']; ?><br />
+		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
+	</div>
+	<div class='grey_box'>
+		<div class='ArticleColumn'>
+			<h1><?php echo $main_article['heading']; ?></h1>
+	        <p><?php echo $main_article['text']; ?></p>
+			<br style='clear: both;' />
+		</div>
+	</div>
