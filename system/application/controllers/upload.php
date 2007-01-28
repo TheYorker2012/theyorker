@@ -19,12 +19,12 @@ class Upload extends Controller {
 		
 		$this->image_lib->initialize($config);
 		if (!$this->image_lib->resize()) {
-			$output. = $this->image_lib->display_errors();
+			$output.= $this->image_lib->display_errors();
 			return $output;
 		}
 		$newDetails = getimagesize($data['full_path']);
 
-		$row_values = array ('photo_author_user_entity_id' => '',
+		$row_values = array ('photo_author_user_entity_id' => '1',
 		                     'photo_title' => $this->input->post('title'.$form_value),
 		                     'photo_width' => $newDetails[0],
 		                     'photo_height' => $newDetails[1],
@@ -32,17 +32,11 @@ class Upload extends Controller {
 		$this->db->insert('photos', $row_values);
 		$query = $this->db->select('photo_id')->getwhere('photos', $row_values, 1);
 		
-		$oneRow = $query->row;
-		Array
-		(
-		    [file_name]    => mypic.jpg
-		    [file_type]    => image/jpeg
-		    [file_path]    => /path/to/your/upload/
-		    [full_path]    => /path/to/your/upload/jpg.jpg
-		    [image_size_str] => width="800" height="200"
-		)
-		//Create entry in database, then move to given id 
-		return 'Image uploaded, now we must load the cropper, and also the details about the sizes to crop to.';
+		$oneRow = $query->row();
+		createImageLocation($oneRow->photo_id);
+		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
+		
+		return $output.'Image uploaded, now we must load the cropper, and also the details about the sizes to crop to.';
 	}
 	
 	function index() {

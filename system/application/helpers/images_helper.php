@@ -22,7 +22,7 @@ define ("IMAGE_HASH", 2000);
  * @param	boolean
  * @return	string
  */	
-function photoLocation($id, $extension = '.jpg' $repeat = FALSE) {
+function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
 	$location = 'images/photos/'.($id % IMAGE_HASH).'/'.$id.$extension;
 	if ($repeat || is_file($location)) {
 		return $location;
