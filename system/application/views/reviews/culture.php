@@ -1,6 +1,6 @@
 <div class="WholeColumn">
 	<div class='NewsPreview'>
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+		<?php echo '<a href="'.$article_link.'">'; ?><img src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
 		<h1><?php echo anchor($article_link, $article_title); ?></h1>
 		<p class='Writer'>
 			<?php echo "<a href='".$article_author_link."'>".$article_author."</a>"; ?>

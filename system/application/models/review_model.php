@@ -159,7 +159,7 @@ class Review_model extends Model {
 	//Gets comments from database, frb501
 	function GetComments($page_no, $subject)
 	{
-		$sql = "SELECT comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_content_type_id = ? AND comment_subject_id = ?";
+		$sql = "SELECT comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_content_type_id = ? AND comment_article_id = ?";
 		$query = $this->db->query($sql,array($page_no,$subject));
 
 		if ($query->num_rows() > 0)
@@ -187,7 +187,7 @@ class Review_model extends Model {
 	function SetComment($post_data)
 	{
 		$comment['comment_content_type_id'] = $post_data['comment_page_id'];
-		$comment['comment_subject_id'] = $post_data['comment_subject_id'];
+		$comment['comment_article_id'] = $post_data['comment_article_id'];
 		$comment['comment_user_entity_id'] = $post_data['comment_user_entity_id'];
 		$comment['comment_text'] = $post_data['comment_text'];
 		$this->db->insert('comments',$comment); //Add users comment to database
