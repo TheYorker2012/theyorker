@@ -463,11 +463,9 @@ class Pages_model extends Model
 				$save_data[$translation[$key]] = $value;
 			}
 		}
-		$queries = 0;
 		$save_data = array_values($save_data);
-		$sql = '';
 		if (count($save_data) > 0) {
-			$sql .= 'UPDATE pages SET ';
+			$sql = 'UPDATE pages SET ';
 			$assignments = array();
 			foreach ($save_data as $key => $value) {
 				$assignments[] = $key.'=?';
@@ -476,34 +474,49 @@ class Pages_model extends Model
 			$sql .= ' WHERE page_codename=? ';
 			$sql .= 'LIMIT 1;';
 			$save_data[] = $PageCode;
-			++$queries;
+			
+			$this->db->query($sql,$save_data);
 		}
+		$save_data = array();
 		if (array_key_exists('properties',$Data)) {
 			foreach ($Data['properties'] as $property) {
-				$sql .= '
-						UPDATE page_properties
-						INNER JOIN pages
-							ON page_properties.page_property_page_id=pages.page_id
-						SET page_properties.page_property_text=?
-						WHERE page_properties.page_property_id=?
-							AND pages.page_codename=?;';
+				$sql = '
+UPDATE page_properties
+INNER JOIN pages
+	ON page_properties.page_property_page_id=pages.page_id
+SET page_properties.page_property_text=?
+WHERE page_properties.page_property_id=?
+	AND pages.page_codename=?;';
 				$save_data[] = $property['text'];
 				$save_data[] = $property['id'];
 				$save_data[] = $PageCode;
-				++$queries;
+				
+				$this->db->query($sql,$save_data);
+				$save_data = array();
+			}
+		}
+		if (array_key_exists('property_remove',$Data)) {
+			foreach ($Data['property_remove'] as $property_type => $labels) {
+				foreach ($labels as $label) {
+					$sql = '
+DELETE FROM page_properties
+USING page_properties, pages, property_types
+WHERE page_properties.page_property_property_type_id=property_types.property_type_id
+	AND page_properties.page_property_page_id=pages.page_id
+	AND property_types.property_type_name=?
+	AND page_properties.page_property_label=?
+	AND pages.page_codename=?;';
+					$save_data[] = $property_type;
+					$save_data[] = $label;
+					$save_data[] = $PageCode;
+				
+					$this->db->query($sql,$save_data);
+					$save_data = array();
+				}
 			}
 		}
 		
-		if ($queries > 0) {
-			if ($queries > 1) {
-				$sql = 'START TRANSACTION;' . $sql . 'COMMIT;';
-			}
-			
-			$query = $this->db->query($sql,$save_data);
-			return ($this->db->affected_rows() > 0);
-		} else {
-			return TRUE;
-		}
+		return TRUE;
 	}
 }
 

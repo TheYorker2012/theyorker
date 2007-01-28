@@ -121,12 +121,14 @@ class Pages extends Controller
 						$data['ratings'] = $page_info['ratings'];
 						$data['properties'] = array();
 						foreach ($page_info['properties'] as $property) {
-							$data['properties'][$property['id']] = array(
-									'id'    => $property['id'],
-									'label' => $property['label'],
-									'text'  => $property['text'],
-									'type'  => $property['type'],
-								);
+							if ($property['type'] !== 'wikitext_cache') {
+								$data['properties'][$property['id']] = array(
+										'id'    => $property['id'],
+										'label' => $property['label'],
+										'text'  => $property['text'],
+										'type'  => $property['type'],
+									);
+							}
 						}
 						
 						$input['codename']    = $this->input->post('codename',    FALSE);
@@ -175,6 +177,7 @@ class Pages extends Controller
 						if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
 							$input = array();
 							$input['properties'] = array();
+							$input['property_remove'] = array('wikitext_cache' => array());
 							foreach ($_POST as $key => $value) {
 								if (preg_match('/^property(\d+)$/',$key,$matches)) {
 									$property_id = (int)$matches[1];
@@ -185,6 +188,9 @@ class Pages extends Controller
 													'text' => $value,
 												);
 											$data['properties'][$property_id]['text'] = $value;
+											if ($data['properties'][$property_id]['type'] === 'wikitext') {
+												$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+											}
 										}
 									}
 								}
@@ -262,13 +268,13 @@ class Pages extends Controller
 						$data['properties'] = array();
 						if (FALSE === $main_property) {
 							$data['properties'][] = array(
-									'id'    => 'propnew',
+									'id'    => 'new',
 									'label' => 'main',
 									'text'  => '',
 									'type'  => 'wikitext',
 								);
 						} else {
-							$data['properties'][] = $main_property;
+							$data['properties'][$main_property['id']] = $main_property;
 						}
 						
 						
@@ -312,6 +318,38 @@ class Pages extends Controller
 									if ($data['codename'] != $PageCode) {
 										redirect('/admin/pages/custom/edit/'.$data['codename']);
 									}
+								} else {
+									$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The custom page could not be saved as an internal error occurred'));
+								}
+							}
+						}
+						if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
+							$input = array();
+							$input['properties'] = array();
+							$input['property_remove'] = array('wikitext_cache' => array());
+							foreach ($_POST as $key => $value) {
+								if (preg_match('/^property(\d+)$/',$key,$matches)) {
+									$property_id = (int)$matches[1];
+									if (array_key_exists($property_id, $data['properties'])) {
+										if ($data['properties'][$property_id]['text'] != $value) {
+											// property has been changed
+											$input['properties'][] = array(
+													'id' => $property_id,
+													'text' => $value,
+												);
+											$data['properties'][$property_id]['text'] = $value;
+											if ($data['properties'][$property_id]['type'] === 'wikitext') {
+												$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+											}
+										}
+									}
+								}
+							}
+							
+							if (count($input['properties']) > 0) {
+								// Try and save to db
+								if ($this->pages_model->SaveSpecificPage($PageCode, $input)) {
+									$this->frame_public->AddMessage(new InformationMsg('Saved', 'The custom page was successfully saved'));
 								} else {
 									$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The custom page could not be saved as an internal error occurred'));
 								}
