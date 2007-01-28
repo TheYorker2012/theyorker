@@ -8,7 +8,40 @@ class Upload extends Controller {
 		$this->load->library('frame_public');
 	}
 	
-	function _processImage($data) {
+	function _processImage($data, $form_value) {
+		$output = 'Image Success:';
+		$config['image_library'] = 'GD2';
+		$config['source_image'] = $data['full_path'];
+		$config['quality'] = 75;
+		$config['master_dim'] = 'width';
+		$config['width'] = 650;
+		$config['height'] = 1000;
+		
+		$this->image_lib->initialize($config);
+		if (!$this->image_lib->resize()) {
+			$output. = $this->image_lib->display_errors();
+			return $output;
+		}
+		$newDetails = getimagesize($data['full_path']);
+
+		$row_values = array ('photo_author_user_entity_id' => '',
+		                     'photo_title' => $this->input->post('title'.$form_value),
+		                     'photo_width' => $newDetails[0],
+		                     'photo_height' => $newDetails[1],
+		                     'photo_gallery' => $this->input->post('gallery'.$form_value));
+		$this->db->insert('photos', $row_values);
+		$query = $this->db->select('photo_id')->getwhere('photos', $row_values, 1);
+		
+		$oneRow = $query->row;
+		Array
+		(
+		    [file_name]    => mypic.jpg
+		    [file_type]    => image/jpeg
+		    [file_path]    => /path/to/your/upload/
+		    [full_path]    => /path/to/your/upload/jpg.jpg
+		    [image_size_str] => width="800" height="200"
+		)
+		//Create entry in database, then move to given id 
 		return 'Image uploaded, now we must load the cropper, and also the details about the sizes to crop to.';
 	}
 	
@@ -20,8 +53,10 @@ class Upload extends Controller {
 	}
 
 	function do_upload() {
+		$this->load->library('image_lib');
 		$this->load->library('upload');
 		$this->load->library('xajax');
+		$this->load->helper('images');
 		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 		$this->xajax->processRequests();
 		
@@ -30,8 +65,6 @@ class Upload extends Controller {
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'gif|jpg|png|zip';
 		$config['max_size']	= '2048';
-		$config['max_width']  = '1024';
-		$config['max_height']  = '768';
 		
 		$data = array();
 		$this->load->library('upload', $config); // this config call is clearly not working!!! I hate it
@@ -45,7 +78,7 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-					$data[$x - 1] = $this->_processImage($data[$x - 1]);
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x-1);
 				}
 			}
 		}
@@ -60,11 +93,10 @@ class Upload extends Controller {
 	function process_form_data($form_data) {
 		// there is no hack protection on this, i'm pretty sure
 		$objResponse = new xajaxResponse();
-
+		//store to imagestable
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 
-		$objResponse->addAssign("div_result", "innerHTML", $result);
 		return $objResponse;
 	}
 	
