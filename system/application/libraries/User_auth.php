@@ -54,6 +54,8 @@ class User_auth {
 		$this->username = $username;
 		$this->entityId = $entityId;
 
+		session_regenerate_id(true);
+
 		$_SESSION['username'] = $username;
 		$_SESSION['entityId'] = $entityId;
 
