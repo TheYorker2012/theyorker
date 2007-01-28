@@ -55,6 +55,8 @@ class Frame_public extends FrameNavbar
 		parent::__construct('frames/public_frame.php');
 		
 		$this->mDataArray['messages'] = array();
+		$this->mDataArray['description'] = '';
+		$this->mDataArray['keywords'] = '';
 		$this->mTitleSet = FALSE;
 	}
 	
@@ -108,8 +110,12 @@ class Frame_public extends FrameNavbar
 	function Load()
 	{
 		$CI = &get_instance();
-		if ($CI->pages_model->PageCodeSet() && !$this->mTitleSet) {
-			$this->SetTitleParameters();
+		if ($CI->pages_model->PageCodeSet()) {
+			if (!$this->mTitleSet) {
+				$this->SetTitleParameters();
+			}
+			$this->mDataArray['description'] = $CI->pages_model->GetDescription();
+			$this->mDataArray['keywords'] = $CI->pages_model->GetKeywords();
 		}
 		parent::Load();
 	}

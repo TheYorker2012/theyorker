@@ -6,6 +6,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>The Yorker - <?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
+<meta name="description" content="<?php echo $description; ?>" />
+<meta name="keywords" content="<?php echo $keywords; ?>" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel='shortcut icon' href='/images/yorker.ico' />
 <link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />

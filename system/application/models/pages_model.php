@@ -102,8 +102,8 @@ class Pages_model extends Model
 	/// string The code string identifying the page.
 	protected $mPageCode;
 	
-	/// string The title string of the page.
-	protected $mPageTitle;
+	/// array Information about the page.
+	protected $mPageInfo;
 	
 	/// array[string=>PageProperty] Array of PageProperty's indexed by label.
 	protected $mPageProperties;
@@ -112,7 +112,7 @@ class Pages_model extends Model
 	function __construct()
 	{
 		$this->mPageCode = FALSE;
-		$this->mPageTitle = FALSE;
+		$this->mPageInfo = FALSE;
 		$this->mPageProperties = FALSE;
 	}
 	
@@ -256,24 +256,41 @@ class Pages_model extends Model
 	 */
 	function GetTitle($Parameters)
 	{
-		if (FALSE === $this->mPageTitle) {
-			$sql = 'SELECT `page_title` FROM `pages` WHERE `page_codename`=?';
-			$query = $this->db->query($sql, $this->mPageCode);
-			$results = $query->result_array();
-			if (0 === count($results)) {
-				return '';
-			} else {
-				foreach ($results as $data) {
-					$this->mPageTitle = $data['page_title'];
-				}
-			}
+		if (FALSE === $this->mPageInfo) {
+			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		$keys = array_keys($Parameters);
 		foreach ($keys as $id => $key) {
 			$keys[$id] = '%%'.$key.'%%';
 		}
 		$values = array_values($Parameters);
-		return str_replace($keys, $values, $this->mPageTitle);
+		return str_replace($keys, $values, $this->mPageInfo['title']);
+	}
+	
+	/// Get the page description.
+	/**
+	 * @return string Page description.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetDescription()
+	{
+		if (FALSE === $this->mPageInfo) {
+			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
+		}
+		return $this->mPageInfo['description'];
+	}
+	
+	/// Get the page keywords.
+	/**
+	 * @return string Page keywords.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetKeywords()
+	{
+		if (FALSE === $this->mPageInfo) {
+			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
+		}
+		return $this->mPageInfo['keywords'];
 	}
 	
 	
