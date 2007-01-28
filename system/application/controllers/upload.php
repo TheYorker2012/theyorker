@@ -18,9 +18,11 @@ class Upload extends Controller {
 		$config['height'] = 1000;
 		
 		$this->image_lib->initialize($config);
-		if (!$this->image_lib->resize()) {
-			$output.= $this->image_lib->display_errors();
-			return $output;
+		if ($data['image_width'] > 650) {
+			if (!$this->image_lib->resize()) {
+				$output.= $this->image_lib->display_errors();
+				return $output;
+			}
 		}
 		$newDetails = getimagesize($data['full_path']);
 
@@ -72,13 +74,13 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-					$data[$x - 1] = $this->_processImage($data[$x - 1], $x-1);
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x);
 				}
 			}
 		}
 		$this->frame_public->SetTitle('Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '	<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->frame_public->SetExtraHead($head);
 		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data));
 		$this->frame_public->Load();

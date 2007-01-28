@@ -1,6 +1,6 @@
 <div id="source" style="display:none">
 	Photo Title: <input type="text" name="title" size="30" />
-	Photo Gallery: <input type="checkbox" name="gallery1" />
+	Photo Gallery: <input type="checkbox" name="gallery" />
 	Photo File: <input type="file" name="userfile" size="30" />
 </div>
 
