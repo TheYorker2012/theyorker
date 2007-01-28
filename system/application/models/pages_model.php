@@ -463,19 +463,47 @@ class Pages_model extends Model
 				$save_data[$translation[$key]] = $value;
 			}
 		}
-		$sql = 'UPDATE pages SET ';
-		$assignments = array();
-		foreach ($save_data as $key => $value) {
-			$assignments[] = $key.'=?';
-		}
-		$sql .= implode(', ', $assignments);
-		$sql .= ' WHERE page_codename=?';
+		$queries = 0;
 		$save_data = array_values($save_data);
-		$save_data[] = $PageCode;
+		$sql = '';
+		if (count($save_data) > 0) {
+			$sql .= 'UPDATE pages SET ';
+			$assignments = array();
+			foreach ($save_data as $key => $value) {
+				$assignments[] = $key.'=?';
+			}
+			$sql .= implode(', ', $assignments);
+			$sql .= ' WHERE page_codename=? ';
+			$sql .= 'LIMIT 1;';
+			$save_data[] = $PageCode;
+			++$queries;
+		}
+		if (array_key_exists('properties',$Data)) {
+			foreach ($Data['properties'] as $property) {
+				$sql .= '
+						UPDATE page_properties
+						INNER JOIN pages
+							ON page_properties.page_property_page_id=pages.page_id
+						SET page_properties.page_property_text=?
+						WHERE page_properties.page_property_id=?
+							AND pages.page_codename=?;';
+				$save_data[] = $property['text'];
+				$save_data[] = $property['id'];
+				$save_data[] = $PageCode;
+				++$queries;
+			}
+		}
 		
-		$query = $this->db->query($sql,$save_data);
-		
-		return ($this->db->affected_rows() > 0);
+		if ($queries > 0) {
+			if ($queries > 1) {
+				$sql = 'START TRANSACTION;' . $sql . 'COMMIT;';
+			}
+			
+			$query = $this->db->query($sql,$save_data);
+			return ($this->db->affected_rows() > 0);
+		} else {
+			return TRUE;
+		}
 	}
 }
 

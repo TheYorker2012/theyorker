@@ -172,6 +172,33 @@ class Pages extends Controller
 								}
 							}
 						}
+						if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
+							$input = array();
+							$input['properties'] = array();
+							foreach ($_POST as $key => $value) {
+								if (preg_match('/^property(\d+)$/',$key,$matches)) {
+									$property_id = (int)$matches[1];
+									if (array_key_exists($property_id, $data['properties'])) {
+										if ($data['properties'][$property_id]['text'] != $value) {
+											$input['properties'][] = array(
+													'id' => $property_id,
+													'text' => $value,
+												);
+											$data['properties'][$property_id]['text'] = $value;
+										}
+									}
+								}
+							}
+							
+							if (count($input['properties']) > 0) {
+								// Try and save to db
+								if ($this->pages_model->SaveSpecificPage($PageCode, $input)) {
+									$this->frame_public->AddMessage(new InformationMsg('Saved', 'The page was successfully saved'));
+								} else {
+									$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The page could not be saved as an internal error occurred'));
+								}
+							}
+						}
 					}
 					break;
 				default:
