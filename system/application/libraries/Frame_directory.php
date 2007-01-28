@@ -8,7 +8,7 @@
 
 // Load the Frames library
 $CI = &get_instance();
-$CI->load->library('frame_navbar');
+$CI->load->library('frames');
 
 /// Directory frame library class.
 /**
@@ -50,7 +50,7 @@ $CI->load->library('frame_navbar');
  *	$this->frame_public->Load();
  * @endcode
  */
-class Frame_directory extends FrameNavbar
+class Frame_directory extends FramesFrame
 {
 	/// Default constructor.
 	function __construct()

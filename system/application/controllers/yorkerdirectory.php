@@ -37,7 +37,7 @@ class Yorkerdirectory extends Controller
 	{
 		$this->load->library('frame_directory');
 
-		$navbar = $this->frame_directory->GetNavbar();
+		$navbar = $this->frame_public->GetNavbar();
 		$navbar->AddItem('reviews', 'Reviews',
 				'/directory/'.$DirectoryEntry.'/reviews');
 		$navbar->AddItem('members', 'Members',
@@ -98,7 +98,7 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view($subpageview, $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_directory->SetPage('about');
+		$this->frame_public->SetPage('about');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 
@@ -211,7 +211,7 @@ EXTRAHEAD;
 		$this->frame_messages->SetContent($directory_events);
 
 		// Set up the directory frame to use the messages frame
-		$this->frame_directory->SetPage('events');
+		$this->frame_public->SetPage('events');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($this->frame_messages);
 
@@ -255,7 +255,7 @@ EXTRAHEAD;
 		$directory_view = $this->frames->view('directory/directory_view_reviews', $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_directory->SetPage('reviews');
+		$this->frame_public->SetPage('reviews');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 
@@ -304,7 +304,7 @@ EXTRAHEAD;
 		$directory_view = $this->frames->view('directory/directory_view_members', $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_directory->SetPage('members');
+		$this->frame_public->SetPage('members');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 

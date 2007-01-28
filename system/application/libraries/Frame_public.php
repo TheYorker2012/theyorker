@@ -10,6 +10,7 @@
 $CI = &get_instance();
 $CI->load->library('frames');
 $CI->load->library('messages');
+$CI->load->library('frame_navbar');
 $CI->load->model('pages_model');
 
 /**
@@ -41,7 +42,7 @@ $CI->load->model('pages_model');
  *	$this->frame_public->Load();
  * @endcode
  */
-class Frame_public extends FramesFrame
+class Frame_public extends FrameNavbar
 {
 	/// Has the title been set yet
 	private $mTitleSet;

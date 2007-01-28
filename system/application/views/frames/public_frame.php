@@ -143,6 +143,10 @@ function preloader()
 	</div>
 	<div style="float: right; width: 650px; margin-left: 5px; background-color: #fff;">
 	<?php
+		// Navigation bar
+		if (isset($content['navbar']))
+			$content['navbar']->Load();
+		
 		// Display each message
 		foreach ($messages as $message) {
 			// Display the message
@@ -204,7 +208,7 @@ function preloader()
 <br />
 
 <div style="text-align: center; width: 780px;">
-	<small>Copyright © 2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#useragreement'>User Agreement</a> and <a href='/policy/#privacypolicy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
+	<small>Copyright  2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#useragreement'>User Agreement</a> and <a href='/policy/#privacypolicy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
 </div>
 </div>
 </body>

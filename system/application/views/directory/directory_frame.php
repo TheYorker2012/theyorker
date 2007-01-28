@@ -1,7 +1,4 @@
 <?php
-	// Navigation bar
-	$content['navbar']->Load();
-	
 	// Page content
 	$content[0]->Load();
 ?>

@@ -21,8 +21,15 @@ class FrameNavbar extends FramesFrame
 	function __construct($ViewFile)
 	{
 		parent::__construct($ViewFile);
-		$navbar = new NavigationBar();
-		$this->SetContent($navbar,'navbar');
+	}
+	
+	/// Ensure that the navbar exists
+	private function CheckNavbar()
+	{
+		if (!isset($this->mDataArray['content']['navbar'])) {
+			$navbar = new NavigationBar();
+			$this->SetContent($navbar,'navbar');
+		}
 	}
 	
 	/// Set the page in use (determines the navigation bar highlighting).
@@ -31,12 +38,14 @@ class FrameNavbar extends FramesFrame
 	 */
 	function SetPage($Page)
 	{
+		$this->CheckNavbar();
 		$this->mDataArray['content']['navbar']->SetSelected($Page);
 	}
 	
 	/// Get the navbar
 	function GetNavbar()
 	{
+		$this->CheckNavbar();
 		return $this->mDataArray['content']['navbar'];
 	}
 }
