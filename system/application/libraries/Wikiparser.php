@@ -226,6 +226,24 @@ class Wikiparser {
 		return $this->end_paragraph().$output."\n";
 	}
 	
+	function handle_blockquote($matches,$close=false) {
+		if ($close) {
+			$this->preformat = false;
+			return "</blockquote>\n";
+		}
+		
+		$this->stop_all = true;
+
+		$output = "";
+		if (!isset($this->preformat) or !$this->preformat) $output .= '<blockquote>';
+		else $output .= '<br />';
+		$this->preformat = true;
+		
+		$output .= $matches[1];
+		
+		return $this->end_paragraph().$output."\n";
+	}
+	
 	function handle_horizontalrule($matches) {
 		return $this->end_paragraph().'<hr />';
 	}
@@ -439,6 +457,7 @@ class Wikiparser {
 		$line_regexes = array(
 			'startparagraph'=>'^([^\s\*\#;\:=-].*?)$',
 			//'preformat'=>'^\s(.*?)$',
+			'blockquote'=>'^\s(.*?)$', // = 'preformat'
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
 			'list'=>'^([\*\#]+)(.*?)$',
@@ -502,7 +521,7 @@ class Wikiparser {
 		// if this wasn't a list item, and we are in a list, close the list tag(s)
 		if (($this->list_level>0) && (!isset($called['list']) or !$called['list'])) $line = $this->handle_list(false,true) . $line;
 		if (isset($this->deflist) and $this->deflist && (!isset($called['definitionlist']) or !$called['definitionlist'])) $line = $this->handle_definitionlist(false,true) . $line;
-		if (isset($this->preformat) and $this->preformat && (!isset($called['preformat']) or !$called['preformat'])) $line = $this->handle_preformat(false,true) . $line;
+		if (isset($this->preformat) and $this->preformat && (!isset($called['blockquote']) or !$called['blockquote'])) $line = $this->handle_blockquote(false,true) . $line;
 		
 		// suppress linebreaks for the next line if we just displayed one; otherwise re-enable them
 		if ($isline) $this->suppress_linebreaks = (isset($called['newline']) || isset($called['sections']));
