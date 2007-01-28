@@ -23,7 +23,7 @@ define ("IMAGE_HASH", 2000);
  * @return	string
  */	
 function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
-	$location = 'images/photos/'.($id % IMAGE_HASH).'/'.$id.$extension;
+	$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 	if ($repeat || is_file($location)) {
 		return $location;
 	} else {
@@ -51,7 +51,7 @@ function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
 
 function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE) {
 	if ($type_codename) {
-		$location = 'images/images/'.$type.'/'.($id % IMAGE_HASH).'/'.$id.$extension;
+		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($repeat || is_file($location)) {
 			return $location;
 		} else {
@@ -66,7 +66,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
 		}
 		$query->free_result();
 		if ($fetched_type) {
-			$location = 'images/images/'.$fetched_type.'/'.($id % IMAGE_HASH).'/'.$id.$extension;
+			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($repeat || is_file($location)) {
 				return $location;
 			} else {
@@ -93,9 +93,9 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
  */	
 function createImageLocation($id, $type = false) {
 	if ($type) {
-		$location = 'images/images/'.$type.'/'.($id % IMAGE_HASH).'/';
+		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/';
 	} else {
-		$location = 'images/photos/'.($id % IMAGE_HASH).'/';
+		$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/';
 	}
 	if (is_dir($location)) {
 		return true;
