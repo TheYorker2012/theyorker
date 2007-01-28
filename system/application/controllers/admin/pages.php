@@ -49,11 +49,11 @@ class Pages extends Controller
 	/**
 	 * @return bool Whether the user has permission.
 	 */
-	function _CheckViewPermissions($permission = 'view')
+	function _CheckViewPermissions($Permission = 'view', $Message = 'You do not have permission to access this page')
 	{	
-		if (!$this->mPermissions[$permission]) {
+		if (!$this->mPermissions[$Permission]) {
 			$this->frame_public->AddMessage(
-					new PermissionDeniedMsg('You do not have permission to access this page')
+					new PermissionDeniedMsg($Message)
 				);
 			return FALSE;
 		} else {
@@ -121,12 +121,56 @@ class Pages extends Controller
 						$data['ratings'] = $page_info['ratings'];
 						$data['properties'] = array();
 						foreach ($page_info['properties'] as $property) {
-							$data['properties'][] = array(
-									'id'    => 'prop'.$property['id'],
+							$data['properties'][$property['id']] = array(
+									'id'    => $property['id'],
 									'label' => $property['label'],
 									'text'  => $property['text'],
 									'type'  => $property['type'],
 								);
+						}
+						
+						$input['codename']    = $this->input->post('codename',    FALSE);
+						if (FALSE !== $input['codename']) {
+							$input['title']       = $this->input->post('title',       FALSE);
+							$input['description'] = $this->input->post('description', FALSE);
+							$input['keywords']    = $this->input->post('keywords',    FALSE);
+							$input['comments']    = $this->input->post('comments',    FALSE);
+							$input['ratings']     = $this->input->post('ratings',     FALSE);
+							$save_failed = FALSE;
+							
+							// Validate and check permissions
+							if ($input['codename'] != $data['codename']) {
+								if ($this->_CheckViewPermissions('page_rename','You do not have permission to rename pages')) {
+									// Check if new codename is in use
+									$data['codename'] = $input['codename'];
+									if (FALSE !== $this->pages_model->PageCodeInUse($input['codename'])) {
+										$this->frame_public->AddMessage(new InformationMsg('Codename in use','A page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
+										$save_failed = TRUE;
+									}
+								} else {
+									$save_failed = TRUE;
+								}
+							}
+							if (FALSE !== $input['title'])
+								$data['title'] = $input['title'];
+							if (FALSE !== $input['description'])
+								$data['description'] = $input['description'];
+							if (FALSE !== $input['keywords'])
+								$data['keywords'] = $input['keywords'];
+							$data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
+							$data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
+							
+							if (FALSE === $save_failed) {
+								// Try and save to db
+								if ($this->pages_model->SaveSpecificPage($PageCode, $input)) {
+									$this->frame_public->AddMessage(new InformationMsg('Saved', 'The page was successfully saved'));
+									if ($data['codename'] != $PageCode) {
+										redirect('/admin/pages/page/edit/'.$data['codename']);
+									}
+								} else {
+									$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The page could not be saved as an internal error occurred'));
+								}
+							}
 						}
 					}
 					break;
@@ -160,7 +204,7 @@ class Pages extends Controller
 					$data['ratings'] = 0;
 					$data['properties'] = array(
 							array(
-									'id'    => 'propnew',
+									'id'    => 'new',
 									'label' => 'main',
 									'text'  => '',
 									'type'  => 'wikitext',
@@ -198,6 +242,53 @@ class Pages extends Controller
 								);
 						} else {
 							$data['properties'][] = $main_property;
+						}
+						
+						
+						
+						$input['codename']    = $this->input->post('codename',    FALSE);
+						if (FALSE !== $input['codename']) {
+							$input['title']       = $this->input->post('title',       FALSE);
+							$input['description'] = $this->input->post('description', FALSE);
+							$input['keywords']    = $this->input->post('keywords',    FALSE);
+							$input['comments']    = $this->input->post('comments',    FALSE);
+							$input['ratings']     = $this->input->post('ratings',     FALSE);
+							$save_failed = FALSE;
+							
+							// Validate and check permissions
+							if ($input['codename'] != $data['codename']) {
+								if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
+									// Check if new codename is in use
+									$data['codename'] = $input['codename'];
+									if (FALSE !== $this->pages_model->PageCodeInUse('custom:'.$input['codename'])) {
+										$this->frame_public->AddMessage(new InformationMsg('Codename in use','A custom page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
+										$save_failed = TRUE;
+									}
+								} else {
+									$save_failed = TRUE;
+								}
+							}
+							if (FALSE !== $input['title'])
+								$data['title'] = $input['title'];
+							if (FALSE !== $input['description'])
+								$data['description'] = $input['description'];
+							if (FALSE !== $input['keywords'])
+								$data['keywords'] = $input['keywords'];
+							$data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
+							$data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
+							
+							if (FALSE === $save_failed) {
+								// Try and save to db
+								$input['codename'] = 'custom:'.$input['codename'];
+								if ($this->pages_model->SaveSpecificPage($PageCode, $input)) {
+									$this->frame_public->AddMessage(new InformationMsg('Saved', 'The custom page was successfully saved'));
+									if ($data['codename'] != $PageCode) {
+										redirect('/admin/pages/custom/edit/'.$data['codename']);
+									}
+								} else {
+									$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The custom page could not be saved as an internal error occurred'));
+								}
+							}
 						}
 					}
 					break;

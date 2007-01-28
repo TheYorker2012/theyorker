@@ -134,6 +134,22 @@ class Pages_model extends Model
 		return (FALSE !== $this->mPageCode);
 	}
 	
+	/// Check if a page code exists.
+	/**
+	 * @param $PageCode string Code identifying the page.
+	 * @return integer/FALSE Page id or FALSE on failure.
+	 */
+	function PageCodeInUse($PageCode)
+	{
+		$sql = 'SELECT pages.page_id FROM pages WHERE pages.page_codename=?';
+		$query = $this->db->query($sql, $PageCode);
+		$results = $query->result_array();
+		if (count($results) >= 1)
+			return $results[0]['page_id'];
+		else
+			return FALSE;
+	}
+	
 	/// Get a specific property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
@@ -423,6 +439,43 @@ class Pages_model extends Model
 			$data = FALSE;
 		}
 		return $data;
+	}
+	
+	/// Save a specific page
+	/**
+	 * @param $PageCode string Codename of page.
+	 * @param $Data array of data in similar format to output of GetSpecificPage.
+	 * @return bool Whether the save was successful.
+	 */
+	function SaveSpecificPage($PageCode, $Data)
+	{
+		$translation = array(
+				'codename'    => 'page_codename',
+				'title'       => 'page_title',
+				'description' => 'page_description',
+				'keywords'    => 'page_keywords',
+				'comments'    => 'page_comments',
+				'ratings'     => 'page_ratings',
+			);
+		$save_data = array();
+		foreach ($Data as $key => $value) {
+			if (array_key_exists($key, $translation)) {
+				$save_data[$translation[$key]] = $value;
+			}
+		}
+		$sql = 'UPDATE pages SET ';
+		$assignments = array();
+		foreach ($save_data as $key => $value) {
+			$assignments[] = $key.'=?';
+		}
+		$sql .= implode(', ', $assignments);
+		$sql .= ' WHERE page_codename=?';
+		$save_data = array_values($save_data);
+		$save_data[] = $PageCode;
+		
+		$query = $this->db->query($sql,$save_data);
+		
+		return ($this->db->affected_rows() > 0);
 	}
 }
 

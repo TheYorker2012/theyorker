@@ -104,9 +104,9 @@ class PageNotFoundMsg extends WarningMsg
 /// Don't have permission.
 class PermissionDeniedMsg extends ErrorMsg
 {
-	function __construct()
+	function __construct($Message = 'You don\'t have permission to use this page.')
 	{
-		parent::__construct($Message = 'You don\'t have permission to use this page.');
+		parent::__construct($Message);
 		$this->SetMessageType('Permission denied');
 		$this->SetMessageDescription($Message);
 	}
