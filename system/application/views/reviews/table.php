@@ -17,8 +17,8 @@
 	if ($flip == 3) $flip = 1;
 		echo '<tr class="ReviewElement'.$flip.'">
 				<td>
-				<a href="'.$review_link[$list].'"><img src="'.$reviews['review_image'][$list].'" alt="#" /></a>
-				<h3><a href="/context/evil_eye_lounge/food">'.$reviews['review_title'][$list].'</a></h3><br />
+				<a href="'.$reviews['review_table_link'][$list].'"><img src="'.$reviews['review_image'][$list].'" alt="#" /></a>
+				<h3><a href="'.$reviews['review_table_link'][$list].'">'.$reviews['review_title'][$list].'</a></h3><br />
 				<a href="'.$reviews['review_website'][$list].'">'.$reviews['review_website'][$list].'</a><br />
 				<a href="#">&gt;Food</a>&nbsp;&nbsp;<a href="#">&gt;Drink</a><br />
 			</td>

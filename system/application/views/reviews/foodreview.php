@@ -40,9 +40,7 @@
 			<tr>
 				<td class="ReviewDetailsTitle">Address</td>
 				<td>
-					<?php echo $address_line_1; ?><br />
-					<?php echo $address_line_2; ?><br />
-					<?php echo $address_line_3; ?><br />
+					<?php echo $address_main; ?><br />
 					<?php echo $address_postcode; ?>
 				</td>
 			</tr>
@@ -133,19 +131,18 @@
 		<div>
 		<div class="MakeComment">
 <?php
-// Needs to be integereated with login hence psudo code for now...
-//if $user = 'logged in' then
 	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
 	echo form_open('reviews/addcomment');
-	echo form_hidden('comment_organisation_entity_id',379);
-	echo form_hidden('comment_content_type_id',7);
-	echo form_hidden('comment_user_entity_id',1);
+	echo form_hidden('comment_page_id',$page_id);
+	echo form_hidden('comment_subject_id',$this->uri->segment(3));
+	$userid = 1337;
+	echo form_hidden('comment_user_entity_id',$userid);
+
+	echo '<br />Comment: <br />';
+
 	echo form_hidden('return_page',$this->uri->uri_string());
 	echo '<textarea name="comment_text" rows="5"></textarea><br />';
 	echo '<input type="submit" value="Add Comment"><br />';
-// else
-	//please log in to post a comment
-// end if
 ?>
 			<a href=#>Review this Place</a><br />
 		</div>
