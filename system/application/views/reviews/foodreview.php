@@ -134,7 +134,7 @@
 	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
 	echo form_open('reviews/addcomment');
 	echo form_hidden('comment_page_id',$page_id);
-	echo form_hidden('comment_subject_id',$this->uri->segment(3));
+	echo form_hidden('comment_article_id',$article_id);
 	$userid = 1337;
 	echo form_hidden('comment_user_entity_id',$userid);
 
