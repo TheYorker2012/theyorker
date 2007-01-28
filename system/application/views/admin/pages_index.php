@@ -7,9 +7,13 @@
 
 <?php
 foreach ($custom as $page) {
-	echo '<a href="/admin/pages/custom/edit/'.$page['codename'].'">'.
-		$page['codename'].'</a>';
-	//echo ' (<a href="/pages/'.$page['codename'].'">preview</a>';
+	echo '<a href="/pages/'.$page['codename'].'">';
+	echo $page['codename'];
+	echo '</a>';
+	echo ' (';
+	echo '<a href="/admin/pages/custom/edit/'.$page['codename'].'">';
+	echo 'edit';
+	echo '</a>';
 	if ($permissions['custom_delete']) {
 		echo ', <a href="/admin/pages/custom/delete/'.$page['codename'].'">delete</a>';
 	}
@@ -26,11 +30,15 @@ foreach ($custom as $page) {
 
 <?php
 foreach ($pages as $page) {
-	echo '<a href="/admin/pages/page/edit/'.$page['codename'].'">'.
-		$page['codename'].'</a>';
+	echo $page['codename'];
+	echo ' (';
+	echo '<a href="/admin/pages/page/edit/'.$page['codename'].'">';
+	echo 'edit';
+	echo '</a>';
 	if ($permissions['page_delete']) {
-		echo ' (<a href="/admin/pages/page/delete/'.$page['codename'].'">delete</a>)';
+		echo ', <a href="/admin/pages/page/delete/'.$page['codename'].'">delete</a>';
 	}
+	echo ')';
 	echo '<br />';
 }
 
