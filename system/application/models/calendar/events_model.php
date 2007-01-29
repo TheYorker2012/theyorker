@@ -8,30 +8,21 @@
  *	abstraction over the model (e.g. View_calendar_days) to provide a consistent
  *	filtering interface.
  *
- * Will have functions for creating MySQL queries or using CI db (although these
- *	could be in the Events_model class.
- *
- * @todo data about filtering by occurrence state/publicity level.
- *
- * @todo data about filtering by owner
+ * always in relation to an entity who is accessing, to determin permission.
+ *	occurrence must belong to an event owned by the entity or which is public
+ *	event must be owned by an entity and have public occurrences
+ *	event must not be deleted
+ * sources
+ *	owned events
+ *	subscribed feeds
+ *	extra feeds
+ * filters
+ *	private? active? inactive?
+ *	hidden events? normal events? rsvpd events?
+ *	date range
  */
 class EventOccurrenceFilter
 {
-	/*
-	always in relation to an entity who is accessing, to determin permission
-		occurrence must belong to an event owned by entity or be public
-		event must be owned by entity and have public occurrences
-		event must not be deleted
-	sources
-		owned events
-		subscribed feeds
-		extra feeds
-	filters
-		private? active? inactive?
-		hidden events? normal events? rsvpd events?
-		date range
-	*/
-	
 	/// array[bool] For enabling/disabling sources of events.
 	protected $mSources;
 	
@@ -68,9 +59,12 @@ class EventOccurrenceFilter
 		$this->mRange = array( time(), time() );
 	}
 	
-	/// Generate the sql to retrieve event occurrences.
+	/// Retrieve specified fields of event occurrences.
 	/**
-	 * @return array Results.
+	 * @param $FieldNames array of select expressions (field names).
+	 *	It is recommended that the format 'field-name AS alias' be used so as to
+	 *	abstract from the actual database row names.
+	 * @return array Results from db query.
 	 */
 	function GenerateOccurrences($FieldNames)
 	{
@@ -83,33 +77,35 @@ class EventOccurrenceFilter
 			/// @todo Default to an entity id with default events
 			$entity_id = 2;
 		}
-	/*
-	owned:
-		occurrence.event.owners.id=me
-	subscribed:
-		occurrence.event.entities.subscribers.id=me
-		subscription.interested & not subscription.deleted
-	inclusions:
-		occurrence.event.entities.id=inclusion
 		
-	own OR (public AND (subscribed OR inclusion))
-	 */
 		// MAIN QUERY ----------------------------------------------------------
+		/*
+			owned:
+				occurrence.event.owners.id=me
+			subscribed:
+				occurrence.event.entities.subscribers.id=me
+				subscription.interested & not subscription.deleted
+			inclusions:
+				occurrence.event.entities.id=inclusion
+				
+			own OR (public AND (subscribed OR inclusion))
+		*/
 		
 		$parameters = array();
 		$sql = '
-SELECT '.implode(',',$FieldNames).' FROM events
-INNER JOIN event_occurrences
-	ON	event_occurrences.event_occurrence_event_id = events.event_id
-LEFT JOIN event_entities
-	ON	event_entities.event_entity_event_id = events.event_id
-LEFT JOIN entities
-	ON	event_entities.event_entity_entity_id = entities.entity_id
-LEFT JOIN subscriptions
-	ON	subscriptions.subscription_organisation_entity_id = entities.entity_id
-LEFT JOIN event_occurrence_users
-	ON	event_occurrence_users.event_occurrence_user_event_occurrence_id = event_occurrences.event_occurrence_id
-	AND	event_occurrence_users.event_occurrence_user_user_entity_id = ?';
+			SELECT '.implode(',',$FieldNames).' FROM events
+			INNER JOIN event_occurrences
+				ON	event_occurrences.event_occurrence_event_id = events.event_id
+			LEFT JOIN event_entities
+				ON	event_entities.event_entity_event_id = events.event_id
+			LEFT JOIN entities
+				ON	event_entities.event_entity_entity_id = entities.entity_id
+			LEFT JOIN subscriptions
+				ON	subscriptions.subscription_organisation_entity_id = entities.entity_id
+			LEFT JOIN event_occurrence_users
+				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
+						= event_occurrences.event_occurrence_id
+				AND	event_occurrence_users.event_occurrence_user_user_entity_id = ?';
 		$parameters[] = $entity_id;
 		
 		// SOURCES -------------------------------------------------------------
