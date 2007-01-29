@@ -8,7 +8,7 @@ class Upload extends Controller {
 		$this->load->library('frame_public');
 	}
 	
-	function _processImage($data, $form_value, $ThumbDetails) {
+	function _processImage($data, $form_value, &$ThumbDetails) {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $data['full_path'];
 		$config['quality'] = 75;
