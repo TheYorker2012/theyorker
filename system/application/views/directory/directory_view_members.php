@@ -13,7 +13,6 @@ if(empty($organisation['cards'])) {
 		<p>	Number of members : 1337 </p>
 		<p>	Member last joined : 5 hours ago</p>
 		<p>	Male to female ratio: 2:1</p>
-		<p> Average number of events per week: 2.3 </p>
 	</div>
 	<h4>Teams</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
