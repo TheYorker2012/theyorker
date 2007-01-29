@@ -58,7 +58,7 @@ function preloader()
 		<a class="HeaderLinks" href="/contact/">contact us</a> |
 		<a class="HeaderLinks" href="/faq/">FAQs</a>
 	</div>
-	<div style="background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
+	<div style="width: 780px; background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
 		<div style="float: left;">
 			<a href="/home/">
 				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
