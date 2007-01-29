@@ -2,6 +2,8 @@
 
 /// Abstract filter class for filtering event occurrences.
 /**
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
  * The purpose of this class is to allow classes which provide a layer of
  *	abstraction over the model (e.g. View_calendar_days) to provide a consistent
  *	filtering interface.
@@ -15,12 +17,277 @@
  */
 class EventOccurrenceFilter
 {
+	/*
+	always in relation to an entity who is accessing, to determin permission
+		occurrence must belong to an event owned by entity or be public
+		event must be owned by entity and have public occurrences
+		event must not be deleted
+	sources
+		owned events
+		subscribed feeds
+		extra feeds
+	filters
+		private? active? inactive?
+		hidden events? normal events? rsvpd events?
+		date range
+	*/
+	
+	/// array[bool] For enabling/disabling sources of events.
+	protected $mSources;
+	
+	/// array[bool] For filtering sources of events.
+	protected $mFilters;
+	
+	/// array[feed] For including additional sources.
+	protected $mInclusions;
+	
+	/// array[2*timestamp] For filtering by time.
+	protected $mRange;
 	
 	/// Default constructor
 	function __construct()
 	{
+		// Initialise sources + filters
+		$this->mSources = array(
+				'owned'      => TRUE,
+				'subscribed' => TRUE,
+				'inclusions' => FALSE,
+			);
+		$this->mFilters = array(
+				'private'    => TRUE,
+				'active'     => TRUE,
+				'inactive'   => TRUE,
+				
+				'hidden'     => FALSE,
+				'normal'     => TRUE,
+				'rsvp'       => TRUE,
+			);
 		
+		$this->mInclusions = array();
+		
+		$this->mRange = array( time(), time() );
 	}
+	
+	/// Generate the sql to retrieve event occurrences.
+	/**
+	 * @return array Results.
+	 */
+	function GenerateOccurrences($FieldNames)
+	{
+	/*
+	owned:
+		occurrence.event.owners.id=me
+	subscribed:
+		occurrence.event.entities.subscribers.id=me
+		subscription.interested & not subscription.deleted
+	inclusions:
+		occurrence.event.entities.id=inclusion
+		
+	own OR (public AND (subscribed OR inclusion))
+	 */
+		$entity_id = 2;
+		$parameters = array();
+		$sql = '
+SELECT '.implode(',',$FieldNames).' FROM events
+INNER JOIN event_occurrences
+	ON	event_occurrences.event_occurrence_event_id = events.event_id
+LEFT JOIN event_entities
+	ON	event_entities.event_entity_event_id = events.event_id
+LEFT JOIN entities
+	ON	event_entities.event_entity_entity_id = entities.entity_id
+LEFT JOIN subscriptions
+	ON	subscriptions.subscription_organisation_entity_id = entities.entity_id
+LEFT JOIN event_occurrence_users
+	ON	event_occurrence_users.event_occurrence_user_event_occurrence_id = event_occurrences.event_occurrence_id
+	AND	event_occurrence_users.event_occurrence_user_user_entity_id = ?';
+		$parameters[] = $entity_id;
+		
+		// SOURCES
+		
+		if ($this->mSources['owned']) {
+			$own =		'(	event_entities.event_entity_entity_id = ?
+						AND	event_entities.event_entity_relationship = \'own\')';
+			$parameters[] = $entity_id;
+		} else {
+			$own = '0';
+		}
+		
+		$public =	'(	event_occurrences.event_occurrence_state = \'published\'
+					OR	event_occurrences.event_occurrence_state = \'cancelled\')';
+		
+		if ($this->mSources['subscribed']) {
+			$subscribed =	'(	subscriptions.subscription_user_entity_id = ?
+							OR	event_entities.event_entity_entity_id = ?)';
+			$parameters[] = $entity_id;
+			$parameters[] = $entity_id;
+		} else {
+			$subscribed = '0';
+		}
+		
+		if ($this->mSources['inclusions'] && count($this->mInclusions) > 0) {
+			$includes = array();
+			foreach ($this->mInclusions as $inclusion) {
+				$includes[] = 'event_entities.event_entity_event_id=?';
+				$parameters[] = $inclusion;
+			}
+			$included = '('.implode(' AND ', $includes).')';
+		} else {
+			$included = '0';
+		}
+		
+		$sources = '('.$own.' OR ('.$public.' AND ('.$subscribed.' OR '.$included.')))';
+		
+		// FILTERS
+		
+		$occurrence_states = array(
+				'private' => array('draft','trashed'),
+				'active' => array('published'),
+				'inactive' => array('cancelled'),
+			);
+		$state_predicates = array();
+		foreach ($occurrence_states as $filter => $states) {
+			if ($this->mFilters[$filter]) {
+				foreach ($states as $state) {
+					$state_predicates[] = 'event_occurrences.event_occurrence_state=\''.$state.'\'';
+				}
+			}
+		}
+		if (count($state_predicates) > 0) {
+			$state = '('.implode(' OR ',$state_predicates).')';
+		} else {
+			$state = '0';
+		}
+		
+		$visibility_predicates = array();
+		if ($this->mFilters['hidden']) {
+			$visibility_predicates[] = 'event_occurrence_users.event_occurrence_user_hide=1';
+		}
+		if ($this->mFilters['normal']) {
+			$visibility_predicates[] =
+			'(		(	event_occurrence_users.event_occurrence_user_hide=0
+					AND event_occurrence_users.event_occurrence_user_rsvp=0)
+				OR	(	event_occurrence_users.event_occurrence_user_hide IS NULL))';
+		}
+		if ($this->mFilters['rsvp']) {
+			$visibility_predicates[] = 'event_occurrence_users.event_occurrence_user_rsvp=1';
+		}
+		if (count($visibility_predicates) > 0) {
+			$visibility = '('.implode(' OR ',$visibility_predicates).')';
+		} else {
+			$visibility = '0';
+		}
+		
+		$filters = '('.$state.' AND '.$visibility.')';
+		
+		// WHERE CLAUSE		
+		$sql .= ' WHERE '.$sources.' AND '.$filters.';';
+
+		// Try it out
+		$CI = &get_instance();
+		$query = $CI->db->query($sql,$parameters);
+		return $query->result_array();
+	}
+	
+	/// Enable a source.
+	/**
+	 * @param $SourceName string Index to $this->mSources.
+	 * @return bool Whether successfully enabled.
+	 */
+	function EnableSource($SourceName)
+	{
+		if (array_key_exists($SourceName, $this->mSources)) {
+			$this->mSources[$SourceName] = TRUE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Disable a source.
+	/**
+	 * @param $SourceName string Index to $this->mSources.
+	 * @return bool Whether successfully disabled.
+	 */
+	function DisableSource($SourceName)
+	{
+		if (array_key_exists($SourceName, $this->mSources)) {
+			$this->mSources[$SourceName] = FALSE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Enable a filter.
+	/**
+	 * @param $FilterName string Index to $this->mFilters.
+	 * @return bool Whether successfully enabled.
+	 */
+	function EnableFilter($FilterName)
+	{
+		if (array_key_exists($FilterName, $this->mFilters)) {
+			$this->mFilters[$FilterName] = TRUE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Disable a filter.
+	/**
+	 * @param $FilterName string Index to $this->mFilters.
+	 * @return bool Whether successfully disabled.
+	 */
+	function DisableFilter($FilterName)
+	{
+		if (array_key_exists($FilterName, $this->mFilters)) {
+			$this->mFilters[$FilterName] = FALSE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Add inclusion.
+	/**
+	 * @param $FeedId integer/array Feed id(s).
+	 * @param $EnableInclusions bool Whether to enable inclusions.
+	 */
+	function AddInclusion($FeedId, $EnableInclusions = FALSE)
+	{
+		if (is_array($FeedId)) {
+			$this->mInclusions = array_merge($this->mInclusions, $FeedId);
+		} else {
+			$this->mInclusions[] = $FeedId;
+		}
+		if ($EnableInclusions) {
+			$this->EnableSource('inclusions');
+		}
+	}
+	
+	/// Clear inclusions.
+	/**
+	 * @param $DisableInclusions bool Whether to disable inclusions.
+	 */
+	function ClearInclusions($DisableInclusions = FALSE)
+	{
+		$this->mInclusions = array();
+		if ($DisableInclusions) {
+			$this->DisableSource('inclusions');
+		}
+	}
+	
+	/// Set the date range.
+	/**
+	 * @param $Start Start time.
+	 * @param $End End time.
+	 */
+	function SetRange($Start, $End)
+	{
+		$this->mRange[0] = $Start;
+		$this->mRange[1] = $End;
+	}
+	
 }
 
 /// Model for access to events.
