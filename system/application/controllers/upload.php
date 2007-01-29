@@ -39,7 +39,7 @@ class Upload extends Controller {
 		createImageLocation($oneRow->photo_id);
 		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
-		$loop = 0
+		$loop = 0;
 		foreach ($ThumbDetails as $Thumb) {
 			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
