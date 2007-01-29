@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
  * I did not write this so I appologise for the crappyness of this code, it will definately
  * require changing to fit into the yorker, Like enabling images and the links. Send stuff
@@ -39,19 +39,28 @@
  *
  */
 
-/**
- * @brief Wikitext parsing library.
- */
+/// Wikitext parsing library.
 class Wikiparser {
 	
-	/**
-	 * @brief Default constructor.
-	 */
+	/// Default constructor.
 	function Wikiparser() {
-		$this->reference_wiki = '';
+		$CI = &new_instance();
+		$CI->load->helper('wikilink');
+		
+		$this->reference_wiki = 'local';
 		$this->external_wikis = array(
-			'wikipedia' => array('http://en.wikipedia.org/wiki/', ''),
-			'yorkipedia' => array('http://yorkipedia.theyorker.co.uk/wiki/', ''),
+			'local'  => array(
+					'base' => '/',
+					'type' => 'local',
+				),
+			'wikipedia'  => array(
+					'base' => 'http://en.wikipedia.org/',
+					'type' => 'mediawiki',
+				),
+			'yorkipedia' => array(
+					'base' => 'http://yorkipedia.theyorker.co.uk/',
+					'type' => 'mediawiki_no_urlrw',
+				),
 		);
 		$this->image_uri = '/images/prototype/';
 		$this->ignore_images = false;
@@ -303,23 +312,23 @@ class Wikiparser {
 			return $this->handle_image($href,$title,$options);
 		}
 		if (array_key_exists($namespace, $this->external_wikis)) {
-			$reference_wiki = $this->external_wikis[$namespace][0];
+			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
-			$href = str_replace(' ','_',$href);
 		} else {
-			$reference_wiki = $this->reference_wiki;
+			$reference_wiki = $this->external_wikis[$this->reference_wiki];
 		}
 		
 		$title = preg_replace('/\(.*?\)/','',$title);
 		$title = preg_replace('/^.*?\:/','',$title);
 		
-		if ($reference_wiki) {
+		/*if ($reference_wiki) {
 			$href = $reference_wiki.($namespace?$namespace.':':'').$href;
 		} else {
 			$nolink = true;
-		}
+		}*/
+		$href = WikiLink($reference_wiki, $href);
 
-		if ($nolink) return $title;
+		//if ($nolink) return $title;
 		
 		return sprintf(
 			'[%s %s]%s',
