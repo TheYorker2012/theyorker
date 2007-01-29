@@ -119,6 +119,8 @@ class Yorkerdirectory extends Controller
 		$data = $this->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($organisation);
 
+		$this->load->model('calendar/events_model');
+		
 		$this->load->library('frame_messages');
 		$this->load->library('view_calendar_select_week');
 		$this->load->library('view_calendar_list');
@@ -193,11 +195,19 @@ EXTRAHEAD;
 		$week_select->SetSelectedWeek($start_time, $end_time);
 		$week_select->Retrieve();
 
+		$occurrence_filter = new EventOccurrenceFilter();
+		$occurrence_filter->EnableSource('all');
+		$occurrence_filter->SetSpecialCondition(
+				'organisations.organisation_directory_entry_name = '.
+				$this->db->escape($organisation)
+			);
+
 		// Set up the events list
 		$events_list = new ViewCalendarList();
 		$events_list->SetUriBase('directory/'.$organisation.'/events/');
 		$events_list->SetUriFormat($format);
 		$events_list->SetRange($start_time, $end_time);
+		$events_list->SetOccurrenceFilter($occurrence_filter);
 		$events_list->Retrieve();
 
 		// Set up the directory events view to contain the week select and

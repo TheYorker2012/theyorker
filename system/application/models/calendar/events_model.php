@@ -35,6 +35,9 @@ class EventOccurrenceFilter
 	/// array[2*timestamp] For filtering by time.
 	protected $mRange;
 	
+	/// string Special mysql condition.
+	protected $mSpecialCondition;
+	
 	/// Default constructor
 	function __construct()
 	{
@@ -43,6 +46,7 @@ class EventOccurrenceFilter
 				'owned'      => TRUE,
 				'subscribed' => TRUE,
 				'inclusions' => FALSE,
+				'all'        => FALSE,
 			);
 		$this->mFilters = array(
 				'private'    => TRUE,
@@ -57,6 +61,8 @@ class EventOccurrenceFilter
 		$this->mInclusions = array();
 		
 		$this->mRange = array( time(), time() );
+		
+		$this->mSpecialCondition = FALSE;
 	}
 	
 	/// Retrieve specified fields of event occurrences.
@@ -142,27 +148,33 @@ class EventOccurrenceFilter
 		$public =	'(	event_occurrences.event_occurrence_state = \'published\'
 					OR	event_occurrences.event_occurrence_state = \'cancelled\')';
 		
-		if ($this->mSources['subscribed']) {
-			$subscribed =	'(	subscriptions.subscription_user_entity_id = ?
-							OR	event_entities.event_entity_entity_id = ?)';
-			$parameters[] = $entity_id;
-			$parameters[] = $entity_id;
+		if ($this->mSources['all']) {
+			$public_sources = '';
 		} else {
-			$subscribed = '0';
-		}
-		
-		if ($this->mSources['inclusions'] && count($this->mInclusions) > 0) {
-			$includes = array();
-			foreach ($this->mInclusions as $inclusion) {
-				$includes[] = 'event_entities.event_entity_event_id=?';
-				$parameters[] = $inclusion;
+			if ($this->mSources['subscribed']) {
+				$subscribed =	'(	subscriptions.subscription_user_entity_id = ?
+								OR	event_entities.event_entity_entity_id = ?)';
+				$parameters[] = $entity_id;
+				$parameters[] = $entity_id;
+			} else {
+				$subscribed = '0';
 			}
-			$included = '('.implode(' AND ', $includes).')';
-		} else {
-			$included = '0';
+			
+			if ($this->mSources['inclusions'] && count($this->mInclusions) > 0) {
+				$includes = array();
+				foreach ($this->mInclusions as $inclusion) {
+					$includes[] = 'event_entities.event_entity_event_id=?';
+					$parameters[] = $inclusion;
+				}
+				$included = '('.implode(' AND ', $includes).')';
+			} else {
+				$included = '0';
+			}
+			
+			$public_sources = ' AND ('.$subscribed.' OR '.$included.')';
 		}
 		
-		$sources = '('.$own.' OR ('.$public.' AND ('.$subscribed.' OR '.$included.')))';
+		$sources = '('.$own.' OR ('.$public.$public_sources.'))';
 		
 		// FILTERS -------------------------------------------------------------
 		
@@ -214,9 +226,17 @@ class EventOccurrenceFilter
 				AND event_occurrences.event_occurrence_start_time <
 										FROM_UNIXTIME('.$this->mRange[1].'))';
 		
+		// SPECIAL CONDITION ---------------------------------------------------
+		
+		$conditions = array($date_range,$sources,$filters);
+		
+		if (FALSE !== $this->mSpecialCondition) {
+			$conditions[] = '('.$this->mSpecialCondition.')';
+		}
+		
 		// WHERE CLAUSE --------------------------------------------------------
 		
-		$sql .= ' WHERE '.implode(' AND ',array($date_range,$sources,$filters)).';';
+		$sql .= ' WHERE '.implode(' AND ',$conditions).';';
 		
 		// Try it out
 		$CI = &get_instance();
@@ -326,6 +346,15 @@ class EventOccurrenceFilter
 			throw new Exception('Events_model::SetRange: parameter End is not a valid timestamp');
 		$this->mRange[0] = $Start;
 		$this->mRange[1] = $End;
+	}
+	
+	/// Set the special condition.
+	/**
+	 * @param $Condition string SQL condition.
+	 */
+	function SetSpecialCondition($Condition = FALSE)
+	{
+		$this->mSpecialCondition = $Condition;
 	}
 	
 }
