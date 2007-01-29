@@ -74,6 +74,15 @@ class EventOccurrenceFilter
 	 */
 	function GenerateOccurrences($FieldNames)
 	{
+		// Get entity id from user_auth library
+		$CI = &get_instance();
+		$CI->load->library('user_auth');
+		if ($CI->user_auth->isLoggedIn) {
+			$entity_id = $CI->user_auth->entityId;
+		} else {
+			/// @todo Default to an entity id with default events
+			$entity_id = 2;
+		}
 	/*
 	owned:
 		occurrence.event.owners.id=me
@@ -85,7 +94,8 @@ class EventOccurrenceFilter
 		
 	own OR (public AND (subscribed OR inclusion))
 	 */
-		$entity_id = 2;
+		// MAIN QUERY ----------------------------------------------------------
+		
 		$parameters = array();
 		$sql = '
 SELECT '.implode(',',$FieldNames).' FROM events
@@ -102,7 +112,7 @@ LEFT JOIN event_occurrence_users
 	AND	event_occurrence_users.event_occurrence_user_user_entity_id = ?';
 		$parameters[] = $entity_id;
 		
-		// SOURCES
+		// SOURCES -------------------------------------------------------------
 		
 		if ($this->mSources['owned']) {
 			$own =		'(	event_entities.event_entity_entity_id = ?
@@ -137,7 +147,7 @@ LEFT JOIN event_occurrence_users
 		
 		$sources = '('.$own.' OR ('.$public.' AND ('.$subscribed.' OR '.$included.')))';
 		
-		// FILTERS
+		// FILTERS -------------------------------------------------------------
 		
 		$occurrence_states = array(
 				'private' => array('draft','trashed'),
@@ -179,9 +189,18 @@ LEFT JOIN event_occurrence_users
 		
 		$filters = '('.$state.' AND '.$visibility.')';
 		
-		// WHERE CLAUSE		
-		$sql .= ' WHERE '.$sources.' AND '.$filters.';';
-
+		// DATE RANGE ----------------------------------------------------------
+		
+		$date_range =
+			'(		event_occurrences.event_occurrence_end_time >
+										FROM_UNIXTIME('.$this->mRange[0].')
+				AND event_occurrences.event_occurrence_start_time <
+										FROM_UNIXTIME('.$this->mRange[1].'))';
+		
+		// WHERE CLAUSE --------------------------------------------------------
+		
+		$sql .= ' WHERE '.implode(' AND ',array($date_range,$sources,$filters)).';';
+		
 		// Try it out
 		$CI = &get_instance();
 		$query = $CI->db->query($sql,$parameters);
@@ -279,11 +298,15 @@ LEFT JOIN event_occurrence_users
 	
 	/// Set the date range.
 	/**
-	 * @param $Start Start time.
-	 * @param $End End time.
+	 * @param $Start timestamp Start time.
+	 * @param $End timestamp End time.
 	 */
 	function SetRange($Start, $End)
 	{
+		if (!is_int($Start))
+			throw new Exception('Events_model::SetRange: parameter Start is not a valid timestamp');
+		if (!is_int($End))
+			throw new Exception('Events_model::SetRange: parameter End is not a valid timestamp');
 		$this->mRange[0] = $Start;
 		$this->mRange[1] = $End;
 	}
