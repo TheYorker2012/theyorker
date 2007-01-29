@@ -81,6 +81,7 @@ class EventOccurrenceFilter
 		/*
 			owned:
 				occurrence.event.owners.id=me
+				OR subscription.admin=1
 			subscribed:
 				occurrence.event.entities.subscribers.id=me
 				subscription.interested & not subscription.deleted
@@ -101,9 +102,10 @@ class EventOccurrenceFilter
 		
 		$parameters = array();
 		$sql = '
-			SELECT '.implode(',',$FieldStrings).' FROM events
-			INNER JOIN event_occurrences
+			SELECT '.implode(',',$FieldStrings).' FROM event_occurrences
+			INNER JOIN events
 				ON	event_occurrences.event_occurrence_event_id = events.event_id
+				AND	events.event_deleted = 0
 			LEFT JOIN event_types
 				ON	events.event_type_id = event_types.event_type_id
 			LEFT JOIN event_entities
@@ -114,17 +116,24 @@ class EventOccurrenceFilter
 			LEFT JOIN subscriptions
 				ON	subscriptions.subscription_organisation_entity_id
 						= event_entities.event_entity_entity_id
+				AND	subscriptions.subscription_user_entity_id	= ?
+				AND	subscriptions.subscription_deleted			= 0
+				AND	subscriptions.subscription_interested		= 1
+				AND	subscriptions.subscription_user_confirmed	= 1
 			LEFT JOIN event_occurrence_users
 				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
-				AND	event_occurrence_users.event_occurrence_user_user_entity_id = ?';
+				AND	event_occurrence_users.event_occurrence_user_user_entity_id
+						= ?';
+		$parameters[] = $entity_id;
 		$parameters[] = $entity_id;
 		
 		// SOURCES -------------------------------------------------------------
 		
 		if ($this->mSources['owned']) {
-			$own =		'(	event_entities.event_entity_entity_id = ?
-						AND	event_entities.event_entity_relationship = \'own\')';
+			$own =	'(	(	event_entities.event_entity_entity_id = ?
+						AND	event_entities.event_entity_relationship = \'own\')
+					 OR	subscriptions.subscription_admin=1)';
 			$parameters[] = $entity_id;
 		} else {
 			$own = '0';
@@ -487,165 +496,6 @@ class Events_model extends Model
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
 	// THE FOLLOWING IS TEMPORARY HARDCODED DATA: //
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-	
-	/// TEMP: Get a bunch of dummy occurrences.
-	private function DummyOccurrences()
-	{
-		// define some dummy events with a rough schema until we have access
-		// to some real data to play with
-		return array (
-			array (
-				'ref_id' => '1',
-				'name' => 'Xmas Party',
-				'start' => mktime(21, 0,0, 12, 24,2006),
-				'end'   => mktime( 0, 0,0, 12, 25,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '2',
-				'name' => 'Boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12,29,2006),
-				'end'   => mktime(15, 0,0, 12,29,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '3',
-				'name' => 'Social Gathering',
-				'start' => mktime(21, 0,0, 12,25,2006),
-				'end'   => mktime( 0, 0,0, 12,26,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'postponed',
-			),
-			array (
-				'ref_id' => '4',
-				'name' => 'Mince Pies and Punch',
-				'start' => mktime(12,45,0, 12,29,2006),
-				'end'   => mktime(15, 0,0, 12,29,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '5',
-				'name' => 'International talk-like-a-pirate day',
-				'start' => mktime(21, 0,0, 12,26,2006),
-				'end'   => mktime( 0, 0,0, 12,27,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'athletic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '6',
-				'name' => 'boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12,29,2006),
-				'end'   => mktime(15, 0,0, 12,29,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'party',
-				'state' => 'cancelled',
-			),
-			array (
-				'ref_id' => '7',
-				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 12,25,2006),
-				'end'   => mktime( 0, 0,0, 12,26,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '8',
-				'name' => 'House Party',
-				'start' => mktime(21, 0,0, 12,26,2006),
-				'end'   => mktime( 6, 0,0, 12,27,2006),
-				'system_update_ts' => '3',
-				'user_update_ts' => '2',
-				'blurb' => 'Bangin\' house party in my house!',
-				'shortloc' => 'my house',
-				'type' => 'social',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '9',
-				'name' => 'boring lecture about vegetables',
-				'start' => mktime(12,45,0, 12,27,2006),
-				'end'   => mktime(15, 0,0, 12,27,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'this will be well good i promise',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '10',
-				'name' => 'MARATHON Noodle eating contest',
-				'start' => mktime(12,45,0, 12,27,2006),
-				'end'   => mktime(15, 0,0, 12,27,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'Noodleishous!',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'draft',
-			),
-			array (
-				'ref_id' => '11',
-				'name' => 'Regional \'Pong\' championships, semi final',
-				'start' => mktime(12,45,0, 12,27,2006),
-				'end'   => mktime(15, 0,0, 12,27,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => '|&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.|<br />
-							|&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;|<br />
-							|&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;|<br />etc.',
-				'shortloc' => 'L/049',
-				'type' => 'academic',
-				'state' => 'published',
-			),
-			array (
-				'ref_id' => '12',
-				'name' => 'Better than vegetables',
-				'start' => mktime(18, 0,0, 12,14,2006),
-				'end'   => mktime(20, 0,0, 12,14,2006),
-				'system_update_ts' => '1',
-				'user_update_ts' => '1',
-				'blurb' => 'Just a few pints',
-				'shortloc' => 'McQ\'s',
-				'type' => 'social',
-				'state' => 'published',
-			)
-		);
-	}
 	
 	/// TEMP: Put the standard england special days into an array.
 	/**
