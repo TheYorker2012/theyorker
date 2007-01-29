@@ -69,7 +69,7 @@ class Upload extends Controller {
 		$config['allowed_types'] = 'gif|jpg|png|zip';
 		$config['max_size']	= '2048';
 		
-		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_length')->getwhere('image_types', array('image_type_photo' => '1'));
+		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo' => '1'));
 		
 		$data = array();
 		$this->load->library('upload', $config); // this config call is clearly not working!!! I hate it
