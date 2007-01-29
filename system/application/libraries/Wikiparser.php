@@ -44,7 +44,7 @@ class Wikiparser {
 	
 	/// Default constructor.
 	function Wikiparser() {
-		$CI = &new_instance();
+		$CI = &get_instance();
 		$CI->load->helper('wikilink');
 		
 		$this->reference_wiki = 'local';
