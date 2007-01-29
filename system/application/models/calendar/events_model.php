@@ -108,12 +108,12 @@ class EventOccurrenceFilter
 				ON	events.event_type_id = event_types.event_type_id
 			LEFT JOIN event_entities
 				ON	event_entities.event_entity_event_id = events.event_id
-			LEFT JOIN entities
-				ON	event_entities.event_entity_entity_id = entities.entity_id
 			LEFT JOIN organisations
-				ON	organisations.organisation_entity_id = entities.entity_id
+				ON	organisations.organisation_entity_id
+						= event_entities.event_entity_entity_id
 			LEFT JOIN subscriptions
-				ON	subscriptions.subscription_organisation_entity_id = entities.entity_id
+				ON	subscriptions.subscription_organisation_entity_id
+						= event_entities.event_entity_entity_id
 			LEFT JOIN event_occurrence_users
 				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
