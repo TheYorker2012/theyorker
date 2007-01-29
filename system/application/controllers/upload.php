@@ -41,9 +41,8 @@ class Upload extends Controller {
 		
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
-			echo var_dump ($Thumb);
-			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
+//			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+//			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
 			$loop++;
 		}
 		return $output;
