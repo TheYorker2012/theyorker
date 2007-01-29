@@ -41,8 +41,8 @@ class Upload extends Controller {
 		
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
-//			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-//			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
+			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
 			$loop++;
 		}
 		return $output;
@@ -83,7 +83,7 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
+//					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
 				}
 			}
 		}
