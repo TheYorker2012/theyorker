@@ -34,11 +34,22 @@ class Campaign_model extends Model
 		{
 			foreach ($query->result() as $row)
 			{
-				$result_item = array('id'=>$row->campaign_id,'name'=>$row->campaign_name,'votes'=>$row->campaign_votes);
-				$result[] = $result_item;
+				//$result_item = array('id'=>$row->campaign_id,'name'=>$row->campaign_name,'votes'=>$row->campaign_votes);
+				//$result[] = $result_item;
+				$result_item = array('name'=>$row->campaign_name,'votes'=>$row->campaign_votes);
+				$result[$row->campaign_id] = $result_item;
 			}
 		}
 		return $result;
+	}
+	
+	/**
+	 * Returns an array of the last $count progress report items.
+	 * @return An array of arrays containing campaign id, names and votes.
+	 */
+	function GetProgressReports($count)
+	{
+		
 	}
 }
 ?>

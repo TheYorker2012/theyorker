@@ -648,14 +648,14 @@ CREATE TABLE campaign_users (
 DROP TABLE IF EXISTS progress_reports;
 CREATE TABLE progress_reports (
 	progress_report_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	progress_report_charity_id 			INTEGER 	NOT NULL,
-	progress_report_campaign_id 			INTEGER 	NOT NULL,
+	progress_report_charity_id 			INTEGER 	NULL		COMMENT='Either this or progress_report_campaign_id cant be null.',
+	progress_report_campaign_id 			INTEGER 	NULL		COMMENT='Either this or progress_report_charity_id cant be null.',
+	progress_report_last_update_user_entity_id	INTEGER		NOT NULL,
 	progress_report_text 				TEXT 		NOT NULL,
-	progress_report_order 				INTEGER 	NOT NULL,
 	progress_report_deleted 			BOOL 		NOT NULL,
-	progress_report_timestamp 			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	progress_report_good_bad 			ENUM('good', 'bad') NOT NULL,
-	
+	progress_report_last_updated 			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	progress_report_publish_date 			TIMESTAMP	NOT NULL,
+
 	PRIMARY KEY(progress_report_id)
 ) COMMENT='Contains updates on how parts of a campaign are going.';
 

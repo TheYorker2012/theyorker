@@ -1,8 +1,17 @@
 <div class='RightToolbar'>
-	<h4>Sign</h4>
-	<p style="margin-top: 0px; padding: 8px;">I, <b>John Smith</b>, think that this The Yorker should campaign for this cause.<br><br>#TODO</p>
-	<h4>Other Campaigns</h4>
-	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
+	<?php $sidebar_vote_blurb = str_replace("%%name%%", "John Smith", $sections['sidebar_vote']['blurb']); ?>
+	<?php echo $sidebar_vote_blurb; ?>#TODO<br /><br />
+	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>
+	<p style="margin-top: 0px; padding: 8px;">
+	<?php
+        foreach ($campaign_list as $key => $campaigns)
+	{
+		if ($key != $selected_campaign)
+			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+	};
+	?>
+	</p>
 	<h4>Find out more</h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
 	<h4>Related Stories</h4>
