@@ -15,7 +15,7 @@
 				<TR>
 					<TD valign="middle" width="50"><img src="/images/prototype/calendar/map.jpg"> </TD>
 					<TD> %%shortloc%% </TD>
-					<TD> Organisation: <a href="">FragSoc</a> </TD>
+					<TD> Organisation: <a href="%%organisation_link%%">%%organisation%%</a> </TD>
 					<TD> Section: <a href="">Speakers </a> </TD>
 					<TD width="60" style="cursor:pointer; " onClick="showEventMore('event',%%arrid%%);"><img src="/images/prototype/calendar/more.gif"></TD>
 				</TR>

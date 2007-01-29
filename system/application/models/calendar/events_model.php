@@ -61,12 +61,11 @@ class EventOccurrenceFilter
 	
 	/// Retrieve specified fields of event occurrences.
 	/**
-	 * @param $FieldNames array of select expressions (field names).
-	 *	It is recommended that the format 'field-name AS alias' be used so as to
-	 *	abstract from the actual database row names.
+	 * @param $Fields array of aliases to select expressions (field names).
+	 *	e.g. array('name' => 'events.event_name')
 	 * @return array Results from db query.
 	 */
-	function GenerateOccurrences($FieldNames)
+	function GenerateOccurrences($Fields)
 	{
 		// Get entity id from user_auth library
 		$CI = &get_instance();
@@ -91,15 +90,28 @@ class EventOccurrenceFilter
 			own OR (public AND (subscribed OR inclusion))
 		*/
 		
+		$FieldStrings = array();
+		foreach ($Fields as $Alias => $Expression) {
+			if (is_string($Alias)) {
+				$FieldStrings[] = $Expression.' AS '.$Alias;
+			} else {
+				$FieldStrings[] = $Expression;
+			}
+		}
+		
 		$parameters = array();
 		$sql = '
-			SELECT '.implode(',',$FieldNames).' FROM events
+			SELECT '.implode(',',$FieldStrings).' FROM events
 			INNER JOIN event_occurrences
 				ON	event_occurrences.event_occurrence_event_id = events.event_id
+			LEFT JOIN event_types
+				ON	events.event_type_id = event_types.event_type_id
 			LEFT JOIN event_entities
 				ON	event_entities.event_entity_event_id = events.event_id
 			LEFT JOIN entities
 				ON	event_entities.event_entity_entity_id = entities.entity_id
+			LEFT JOIN organisations
+				ON	organisations.organisation_entity_id = entities.entity_id
 			LEFT JOIN subscriptions
 				ON	subscriptions.subscription_organisation_entity_id = entities.entity_id
 			LEFT JOIN event_occurrence_users
@@ -309,6 +321,8 @@ class EventOccurrenceFilter
 	
 }
 
+
+
 /// Model for access to events.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
@@ -360,12 +374,6 @@ class Events_model extends Model
 	function IncludeDayInformation($Enabled)
 	{
 		$this->SetEnabled('day-info', $Enabled);
-	}
-	
-	/// Set whether special day headings are enabled.
-	function IncludeDayInformationSpecial($Enabled)
-	{
-		$this->SetEnabled('day-info-special', $Enabled);
 	}
 	
 	/// Set whether event occurrences are enabled.
@@ -421,36 +429,32 @@ class Events_model extends Model
 				$current_time = $current_time->Adjust('1day');
 				++$current_index;
 			}
-			
-			if ($this->IsEnabled('day-info-special', TRUE)) {
-				// For now just calculate from the rules every time!
-				$special_days = $this->RuleCollectionStdEngland();
-				foreach ($special_days as $special_day) {
-					$name = $special_day[0];
-					$rule = $special_day[1];
-					$matches = $rule->FindTimes($StartTime->Timestamp(), $EndTime->Timestamp());
-					foreach ($matches as $date=>$enable) {
-						if ($enable) {
-							// For each one, put it in the apropriate day info item
-							$day_time = $this->academic_calendar->Timestamp($date);
-							$day_time = $day_time->Midnight()->Timestamp();
-							$this->mDayInformation[$day_time]['special_headings'][] = $name;
-						}
-					}
-				}
-			}
 		}
 		
 		// Event occurrences
 		if ($this->IsEnabled('occurrences-all')) {
-			$this->mOccurrences = array();
-			$dummies = $this->DummyOccurrences();
-			foreach ($dummies as $dummy) {
-				if ($dummy['end'] > $StartTime->Timestamp() &&
-					$dummy['start'] < $EndTime->Timestamp()) {
-					$this->mOccurrences[] = $dummy;
-				}
+			$filter = $this->mOccurrenceFilter;
+			if (FALSE === $filter) {
+				$filter = new EventOccurrenceFilter();
 			}
+			$filter->SetRange($StartTime->Timestamp(),$EndTime->Timestamp());
+			
+			$fields = array(
+					'ref_id' => 'event_occurrences.event_occurrence_id',
+					'name'   => 'events.event_name',
+					'start'  => 'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)',
+					'end'    => 'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time)',
+					'system_update_ts' => 'UNIX_TIMESTAMP(events.event_timestamp)',
+					//'user_update_ts'   => 'UNIX_TIMESTAMP(events_occurrence_users.event_occurrence_user_timestamp)',
+					'blurb'    => 'events.event_blurb',
+					'shortloc' => 'event_occurrences.event_occurrence_location',
+					'type'     => 'event_types.event_type_name',
+					'state'    => 'event_occurrences.event_occurrence_state',
+					'organisation' => 'organisations.organisation_name',
+					'organisation_directory' => 'organisations.organisation_directory_entry_name',
+					//'',
+				);
+			$this->mOccurrences = $filter->GenerateOccurrences($fields);
 		}
 		
 		return $success;
@@ -461,7 +465,7 @@ class Events_model extends Model
 	 * @pre IsEnabled('day-info')
 	 * @pre Retrieve has been called successfully.
 	 * @return Array of days with related information, indexed by timestamp of
-	 *	midnight on the morning of the day.
+	 *    midnight on the morning of the day.
 	 */
 	function GetDayInformation()
 	{

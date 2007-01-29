@@ -131,7 +131,7 @@ abstract class ViewCalendar extends FramesView
 		// Get data from the database
 		$CI->load->model('calendar/events_model');
 		$CI->events_model->IncludeDayInformation(TRUE);
-		$CI->events_model->IncludeDayInformationSpecial($this->mIncludeSpecials);
+		//$CI->events_model->IncludeDayInformationSpecial($this->mIncludeSpecials);
 		$CI->events_model->IncludeOccurrences(TRUE);
 		$CI->events_model->SetOccurrenceFilter($this->mOccurrenceFilter);
 		$error = $CI->events_model->Retrieve($this->mStartTime, $this->mEndTime);
@@ -155,7 +155,7 @@ abstract class ViewCalendar extends FramesView
 			$day_info['year'          ] = $day_time->AcademicYear();
 			$day_info['date'          ] = $day_time->Format('jS');
 			$day_info['month_short'   ] = $day_time->Format('M');
-			$day_info['month_long'   ] = $day_time->Format('F');
+			$day_info['month_long'    ] = $day_time->Format('F');
 			$day_info['day_of_week'   ] = $day_time->Format('l');
 			$day_info['academic_year' ] = $day_time->AcademicYearName(2);
 			$day_info['academic_term' ] = $day_time->AcademicTermName().' '.$day_time->AcademicTermTypeName();

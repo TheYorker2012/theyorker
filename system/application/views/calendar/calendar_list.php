@@ -24,6 +24,8 @@ foreach ($events as $events_array_index => $event) {
 		'%%blurb%%' => $event['blurb'],
 		'%%shortloc%%' => $event['shortloc'],
 		'%%type%%' => $event['type'],
+		'%%organisation%%' => $event['organisation'],
+		'%%organisation_link%%' => '/directory/'.$event['organisation_directory'],
 	);
 	
 	$mypath = pathinfo(__FILE__);
