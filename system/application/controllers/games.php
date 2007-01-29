@@ -1,6 +1,6 @@
 <?php
 
-class Contact extends Controller {
+class Games extends Controller {
 
 	function __construct()
 	{
@@ -17,8 +17,8 @@ class Contact extends Controller {
 		);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Contact us');
-		$this->frame_public->SetContentSimple('about/contact', $data);
+		$this->frame_public->SetTitle('Games Zone');
+		$this->frame_public->SetContentSimple('games/games', $data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();

@@ -140,7 +140,7 @@ function preloader()
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='#'>Games Zone</a>
+			<a href='/games/'>Games Zone</a>
 		</div>
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
 			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
