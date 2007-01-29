@@ -1,16 +1,16 @@
 <div class="ReviewInfo">
 	<div class="ReviewInfoLeft">
-	<h1 class="reviewHeader">The Great Piss Up</h1><br />
+	<h1 class="reviewHeader"><?php echo $crawl_title; ?> </h1><br />
 		<a href="culture">&lt;Back to Culture</a><br />
 		<a href="/reviews">&lt;Back to Reviews</a><br />
 	</div>
 	<div class="ReviewInfoRight">
-		<br />5 SKULLS!
-		<h3>A kick ass crawl. So cool I came back home with a dead donkey!</h3>
+		<br /><?php echo $crawl_rating; ?>
+		<h3><?php echo $crawl_blurb; ?></h3>
 	</div>
 	<div class="ReviewInfoLeft">
-		<img alt="Wasted Man" src="/images/prototype/reviews/reviews_07.jpg" /><br />
-		The industry section around this area fart is particularly sexy and it likes nick evans sex The fart industry section around this area is sex particularly sexy and it longwordtastic likes nick evans The industry section longwordtastic around this area is particularly sexy fart and it likes nick evans The industry longwordtastic section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around<br /> 
+		<img alt="Wasted Man" src="<?php echo $crawl_image; ?>" /><br />
+		<?php echo $crawl_content; ?> <br /> 
 		<div class="ReviewInfo">
 			<h2>Author Reviews</h2>
 			<div class="AuthorReview">
@@ -30,12 +30,12 @@
 		£12
 		<h3>List of Pubs</h3>
 		<ul>
-			<li>Kings Head
-			<li>Ducks Head
-			<li>Your Head
+			<li><?php echo $pub_list[0]; ?>
+			<li><?php echo $pub_list[1]; ?>
+			<li><?php echo $pub_list[2]; ?>
 		</ul>
 		<h3>Directions</h3>
-		Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire 
+		<?php echo $crawl_directions; ?>
 		<h3>The Drink Guide</h3>
 		<table width=100%>
 		<tr>
@@ -43,21 +43,19 @@
 		<td><h3>Recommended Drink</h3></td>
 		<td><h3>Cost</h3></td>
 		</tr>
-		<tr>
-		<td>Kings Head<br /></td>
-		<td>Bloody Mary<br /></td>
-		<td>£2<br /></td>
-		</tr>
-		<tr>
-		<td>Ducks Head<br /></td>
-		<td>Eggs Galore<br /></td>
-		<td>£4<br /></td>
-		</tr>
-		<tr>
-		<td>Your Head<br /></td>
-		<td>Ale<br /></td>
-		<td>£5<br /></td>
-		</tr>
+<?php 
+
+	for ($item = 0; $item < count($drink_guide); $item++)
+	{
+		echo '	<tr>
+				<td>'.$drink_guide[$item][0].'<br /></td>
+				<td>'.$drink_guide[$item][1].'<br /></td>
+				<td>'.$drink_guide[$item][2].'<br /></td>
+				</tr>
+			 ';
+	}
+
+?>
 		</table>
 		
 	</div>
@@ -65,13 +63,40 @@
 </div>
 
 <div class="ReviewInfo">
-	<b>Serious Girl-san</b> | 16:09 12/12/07<br />
-	Score: 9.6<br />
-	This resturant is a lovely place. I like to come here with my parents on rainy weekends. I think teddy and very immature and should be reported. Becky is even worse for supporting his stupidity.<br /><br />
-	<b>Becky DoomFace</b> | 14:56 12/12/07<br />
-	Score: 4.6<br />
-	Hah! Teddy is so funny. He is rite tho. LololoCaPITALS!<br /><br />
-	<b>Teddy BranVan</b> | 14:51 12/12/07<br />
-	Score: 5.6<br />
-	I thought it sucked<br /><br />
+<?php
+	//No comments
+	if ($comments == 'empty')
+	{
+		echo '<br /><B>No comments at the moment<br />Why not make one it works<br /></B>';
+	}
+	else
+	{
+	//Display comments by users - Last 3
+
+		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 4); $commentno--)
+			{
+			echo '<div class="WhyNotTry"><b>'.$comments['comment_author'][$commentno].
+				 '</b> | '.$comments['comment_date'][$commentno].'<br /> '.$comments['comment_content'][$commentno].
+				'</div><br />';
+			}
+
+	}
+?>
 </div>
+	<div class="MakeComment">
+<?php
+	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
+	echo form_open('reviews/addcomment');
+	echo form_hidden('comment_page_id',$page_id);
+	echo form_hidden('comment_article_id',$article_id);
+	$userid = 1337;
+	echo form_hidden('comment_user_entity_id',$userid);
+
+	echo '<br />Comment: <br />';
+
+	echo form_hidden('return_page',$this->uri->uri_string());
+	echo '<textarea name="comment_text" rows="5"></textarea><br />';
+	echo '<input type="submit" value="Add Comment"><br />';
+?>
+			<a href=#>Review this Place</a><br />
+	</div>
