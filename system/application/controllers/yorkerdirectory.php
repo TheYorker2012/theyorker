@@ -25,6 +25,7 @@ class Yorkerdirectory extends Controller
 		$this->load->model('directory_model');
 
 		$this->load->helper('text');
+		$this->load->helper('wikilink');
 	}
 
 	/// Set up the directory frame
@@ -424,7 +425,7 @@ EXTRAHEAD;
 					$data['organisation']['yorkipedia'] = NULL;
 				} else {
 					$data['organisation']['yorkipedia'] = array(
-							'url'   => 'http://yorkipedia.theyorker.co.uk',
+							'url'   => WikiLink('yorkipedia', $org['organisation_yorkipedia_entry']),
 							'title' => $org['organisation_yorkipedia_entry'],
 						);
 				}

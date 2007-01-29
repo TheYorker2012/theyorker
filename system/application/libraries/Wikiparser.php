@@ -48,20 +48,7 @@ class Wikiparser {
 		$CI->load->helper('wikilink');
 		
 		$this->reference_wiki = 'local';
-		$this->external_wikis = array(
-			'local'  => array(
-					'base' => '/',
-					'type' => 'local',
-				),
-			'wikipedia'  => array(
-					'base' => 'http://en.wikipedia.org/',
-					'type' => 'mediawiki',
-				),
-			'yorkipedia' => array(
-					'base' => 'http://yorkipedia.theyorker.co.uk/',
-					'type' => 'mediawiki_no_urlrw',
-				),
-		);
+		$this->external_wikis = PresetWikis();
 		$this->image_uri = '/images/prototype/';
 		$this->ignore_images = false;
 		$this->emphasis[1] = "";

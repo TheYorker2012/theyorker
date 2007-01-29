@@ -35,7 +35,7 @@
 					echo '<img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> '.$organisation['postal_address'].'<br />';
 		} ?>
 		<?php if (NULL === $organisation['yorkipedia']){}else{
-		echo '<img alt="Yorkipedia Entry" name="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> <a href="'.$organisation['yorkipedia']['url']."/index.php?title=".$organisation['yorkipedia']['title'].'">'.$organisation['yorkipedia']['title'].'</a>';
+		echo '<img alt="Yorkipedia Entry" name="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> <a href="'.$organisation['yorkipedia']['url'].'">'.$organisation['yorkipedia']['title'].'</a>';
 		}
 		?>
 	</p>
