@@ -8,6 +8,13 @@ if(empty($organisation['cards'])) {
 } else {
 ?>
 <div class='RightToolbar'>
+	<h4>Facts</h4>
+	<div style='padding: 10px 5px 10px 5px;'>
+		<p>	Number of members : 1337 </p>
+		<p>	Member last joined : 5 hours ago</p>
+		<p>	Male to female ratio: 2:1</p>
+		<p> Average number of events per week: 2.3 </p>
+	</div>
 	<h4>Teams</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
@@ -15,16 +22,6 @@ if(empty($organisation['cards'])) {
 			<a href='#'>Team 1 (3)</a><br />
 			<a href='#'>Team 2 (2)</a><br />
 			<a href='#'>Team 3 (1)</a>
-		</p>
-	</div>
-	<h4>Facts</h4>
-	<div style='padding: 10px 5px 10px 5px;'>
-		<p>
-			Number of members : 1337<br />
-			Society Founded : 100 ad<br />
-			Member last joined : 5 hours ago<br />
-			Attempts for world domination : 0
-			Mean weight of members : rather heavy<br />
 		</p>
 	</div>
 </div>
