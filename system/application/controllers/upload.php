@@ -83,7 +83,7 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-//					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 <p>Some useful text should go here:-</p>
 <?php
-foreach ($ThumbDetails as $Single) {
+foreach ($ThumbDetails->result() as $Single) {
 	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>';
 }?>
 <script type="text/javascript" charset="utf-8">
