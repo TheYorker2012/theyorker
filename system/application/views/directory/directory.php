@@ -88,6 +88,7 @@
 <div id="Letter<?php echo $current_letter ?>">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="14">
+            <td width="0" />
             <td width="30" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
             <td rowspan="2" valign="top"><div class="AZTop"> <a href='#top' style="font-size:x-small; margin-bottom: 16px;  margin-top: 16px;">Back to top</a>
                     <?php
