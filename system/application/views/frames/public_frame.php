@@ -222,7 +222,7 @@ function preloader()
 <br />
 
 <div style="text-align: center; width: 780px;">
-	<small>Copyright  2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#useragreement'>User Agreement</a> and <a href='/policy/#privacypolicy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
+	<small>Copyright  2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#user_agreement'>User Agreement</a> and <a href='/policy/#privacy_policy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
 </div>
 </div>
 </body>

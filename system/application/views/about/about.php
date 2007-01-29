@@ -1,14 +1,13 @@
 <?php
-foreach ($aboutdata as $about) {
+foreach ($textblocks as $textblock) {
 ?>
-<a name='<?php echo $about['shorttitle']; ?>'></a>
-<h2><?php echo $about['title']; ?></h2>
-<div class='columnPhoto'>
-	<a href='<?php echo $about['image']; ?>'><img src='<?php echo $about['image']; ?>' alt='<?php echo $about['image_description']; ?>'/></a>
-	<a href='<?php echo $about['image']; ?>'><small><?php echo $about['image_description']; ?></small></a>
+<a name='<?php echo $textblock['shorttitle']; ?>'></a>
+<div class='columnPhoto' style='padding: 25px 0px 0px 0px;'>
+	<a href='<?php echo $textblock['image']; ?>'><img src='<?php echo $textblock['image']; ?>' alt='<?php echo $textblock['image_description']; ?>'/></a>
+	<a href='<?php echo $textblock['image']; ?>'><small><?php echo $textblock['image_description']; ?></small></a>
 </div>
 <div class='columnText'>
-	<p><?php echo $about['blurb']; ?></p>
+	<p><?php echo $textblock['blurb']; ?></p>
 </div>
 <div class="clear">&nbsp;</div>
 <?php
