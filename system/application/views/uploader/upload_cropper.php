@@ -1,17 +1,8 @@
 <p>Some useful text should go here:-</p>
 <?php
-foreach($data as $d) {
-	echo $d;
-}
-?>
-
-<h2>Dynamic image test</h2>
-<p>
-	Test of dynamically changing images or removing & re-applying the cropper
-</p>
-<div id="previewArea-0"></div>
-<div id="previewArea-1"></div>
-
+foreach ($ThumbDetails as $Single) {
+	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>';
+}?>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -39,7 +30,7 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/1.jpg', 380, 235, 0);
+			this.setImage('images/photos/null.jpg', 380, 235, 0);
 		},
 		
 		/**
@@ -65,18 +56,6 @@ foreach($data as $d) {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
-			if (imgTypeNew == 0) {
-				$( 'previewArea-1').display = 'none';
-				if (this.curCrop != null) this.curCrop.remove();
-				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
-					minWidth: 200,
-					minHeight: 120,
-					ratioDim: { x: 200, y: 120 },
-					displayOnInit: true, 
-					onEndCrop: onEndCrop,
-					previewWrap: 'previewArea-0'} );
-				this.curCrop.reset();
-			}
 			if (imgTypeNew == 1) {
 				$( 'previewArea-0').display = 'none';
 				if (this.curCrop != null) this.curCrop.remove();
@@ -125,9 +104,12 @@ foreach($data as $d) {
 	<p>
 		<label for="imageChoice">image:</label>
 		<select name="imageChoice" id="imageChoice">
-			<option value="images/photos/1.jpg|380|235|0">Castle0</option>
-			<option value="images/photos/1.jpg|380|235|1">Castle1</option>
-			<option value="poppy.jpg|311|466|0">Flower0</option>
+			<option value="choose">Please Choose</option>
+			<?php
+			foreach($data as $d) {
+				echo '<option value="'.$d['string'].'">'.$d['title'].'</option>';
+			}
+			?>
 		</select>
 	</p>
 

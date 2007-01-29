@@ -8,8 +8,7 @@ class Upload extends Controller {
 		$this->load->library('frame_public');
 	}
 	
-	function _processImage($data, $form_value) {
-		$output = 'Image Success:';
+	function _processImage($data, $form_value, $ThumbDetails) {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $data['full_path'];
 		$config['quality'] = 75;
@@ -17,10 +16,12 @@ class Upload extends Controller {
 		$config['width'] = 650;
 		$config['height'] = 1000;
 		
+		$output = array();
+		
 		$this->image_lib->initialize($config);
 		if ($data['image_width'] > 650) {
 			if (!$this->image_lib->resize()) {
-				$output.= $this->image_lib->display_errors();
+				$output[]['title']= $this->image_lib->display_errors();
 				return $output;
 			}
 		}
@@ -38,7 +39,13 @@ class Upload extends Controller {
 		createImageLocation($oneRow->photo_id);
 		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
-		return $output.'Image uploaded, now we must load the cropper, and also the details about the sizes to crop to.';
+		$loop = 0
+		foreach ($ThumbDetails as $Thumb) {
+			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
+			$loop++;
+		}
+		return $output;
 	}
 	
 	function index() {
@@ -62,6 +69,8 @@ class Upload extends Controller {
 		$config['allowed_types'] = 'gif|jpg|png|zip';
 		$config['max_size']	= '2048';
 		
+		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_length')->getwhere('image_types', array('image_type_photo' => '1'));
+		
 		$data = array();
 		$this->load->library('upload', $config); // this config call is clearly not working!!! I hate it
 		$this->upload->initialize($config);
@@ -74,7 +83,7 @@ class Upload extends Controller {
 					// TODO Zip support
 					trigger_error("No Zip Support yet...");
 				} else {
-					$data[$x - 1] = $this->_processImage($data[$x - 1], $x);
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $query);
 				}
 			}
 		}
@@ -82,7 +91,7 @@ class Upload extends Controller {
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->frame_public->SetExtraHead($head);
-		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data));
+		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data, 'ThumbDetails' => $query));
 		$this->frame_public->Load();
 	}
 	
