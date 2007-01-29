@@ -28,6 +28,9 @@ echo "$comment DELETE FROM \`entities\`;" >> $output
 echo "$comment DELETE FROM \`organisations\`;" >> $output
 echo "" >> $output
 
+echo "START TRANSACTION;" >> $output
+echo "" >> $output
+
 lastname=""
 duplicates=0
 
@@ -64,6 +67,8 @@ $linecomment VALUES ( LAST_INSERT_ID(), '6', '$name', '$address', '$postcode' , 
 " >> $output
 
 done < $input
+
+echo "COMMIT;" >> $output
 
 echo "$duplicates duplicates need handling manually"
 

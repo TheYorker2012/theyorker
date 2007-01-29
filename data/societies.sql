@@ -6,6 +6,8 @@
 -- DELETE FROM `entities`;
 -- DELETE FROM `organisations`;
 
+START TRANSACTION;
+
 INSERT INTO `entities` (`entity_deleted` )  VALUES ('0');
 INSERT INTO `organisations` (
   `organisation_entity_id` ,
@@ -1278,3 +1280,4 @@ INSERT INTO `organisations` (
   `organisation_hits` )
 VALUES ( LAST_INSERT_ID(), '2', 'Young Greens', 'The youth wing of the Green Party, Young Greens is a new movement harnessing the energy and ideas of young people to change the direction of our society. Our vision is of a fair, democratic and sustainable future. We&#8217;ve realised that if we want to change the way our society works, we need to use our democratic system and put forward a positive alternative. It&#8217;s not enough to campaign on single issues.', 'http://www.younggreens.org.uk/GetInvolved/LocalGroups/YorkshireHumberside/York' , 'young_greens', '1', '0' );
 
+COMMIT;

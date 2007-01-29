@@ -6,6 +6,8 @@
 -- DELETE FROM `entities`;
 -- DELETE FROM `organisations`;
 
+START TRANSACTION;
+
  INSERT INTO `entities` (`entity_deleted` )  VALUES ('0');
  INSERT INTO `organisations` (
    `organisation_entity_id` ,
@@ -1206,3 +1208,4 @@
    `organisation_hits` )
  VALUES ( LAST_INSERT_ID(), '6', 'Willow Restaurant', '37 Coney St, York', 'YO1 9QL' , 'willow_restaurant', '1', '0' );
 
+COMMIT;
