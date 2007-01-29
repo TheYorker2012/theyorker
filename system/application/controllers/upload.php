@@ -8,7 +8,7 @@ class Upload extends Controller {
 		$this->load->library('frame_public');
 	}
 	
-	function _processImage($data, $form_value, &$ThumbDetails) {
+	function _processImage($data, $form_value, $ThumbDetails) {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $data['full_path'];
 		$config['quality'] = 75;
@@ -40,8 +40,7 @@ class Upload extends Controller {
 		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
 		$loop = 0;
-		foreach ($ThumbDetails as $Thumb) {
-			echo var_dump($Thumb);
+		foreach ($ThumbDetails->result() as $Thumb) {
 			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
 			$loop++;
