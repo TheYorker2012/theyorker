@@ -12,13 +12,13 @@
 	};
 	?>
 	</p>
-	<h4>Find out more</h4>
+	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
-	<h4>Related Stories</h4>
+	<h4><?php echo $sections['sidebar_related']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
-	<h4>External Links</h4>
+	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
-    <h4>Comments</h4>
+    	<h4><?php echo $sections['sidebar_comments']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
 </div>
 

@@ -17,8 +17,8 @@ class Campaign extends Controller {
 			$this->pages_model->SetPageCode('campaign_selection');
 			$data['campaign_list'] = $this->campaign->GetCampaignList();
 			$data['sections'] = array (
-						'current_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_list_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_list_text'),'deadline_text'=>$this->pages_model->GetPropertyWikitext('campaign_list_deadline_text')),
-						'vote_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_vote_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_vote_text'))
+						'current_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('section_list_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('section_list_text'),'deadline_text'=>$this->pages_model->GetPropertyWikitext('section_list_deadline_text')),
+						'vote_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('section_vote_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('section_vote_text'))
 						);
 
 			// Set up the public frame
@@ -39,8 +39,12 @@ class Campaign extends Controller {
 		$data['campaign_list'] = $this->campaign->GetCampaignList();
 		$data['selected_campaign'] = $SelectedCampaign;
 		$data['sections'] = array (
-					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('campaign_sidebar_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_sidebar_sign_text')),
-					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_sidebar_other_campaigns_title'))
+					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_text')),
+					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title')),
+					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_more_title')),
+					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title')),
+					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title')),
+					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_comments_title'))
 					);
 		
 		if (isset($data['campaign_list'][$SelectedCampaign]))
