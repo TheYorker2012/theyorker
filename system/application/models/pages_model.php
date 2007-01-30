@@ -512,9 +512,39 @@ WHERE page_properties.page_property_id=?
 				$save_data = array();
 			}
 		}
+		if (array_key_exists('property_add',$Data)) {
+			foreach ($Data['property_add'] as $property) {
+				$sql = '
+			INSERT INTO page_properties (
+				page_property_property_type_id,
+				page_property_page_id,
+				page_property_label,
+				page_property_text)
+			SELECT
+				property_types.property_type_id,
+				pages.page_id,
+				?,
+				?
+			FROM pages, property_types
+			WHERE pages.page_codename=?
+				AND property_types.property_type_name=?
+			ON DUPLICATE KEY UPDATE page_property_text=?';
+				
+				$text = $property['text'];
+				if (get_magic_quotes_gpc()) {
+					// If magic quotes are on, code igniter doesn't escape
+					$text = addslashes($text);
+				}
+				$query = $this->db->query($sql,
+						array($property['label'], $text, $PageCode, $property['type'], $text)
+					);
+				return ($this->db->affected_rows() > 0);
+			}
+		}
 		if (array_key_exists('property_remove',$Data)) {
 			foreach ($Data['property_remove'] as $property_type => $labels) {
 				foreach ($labels as $label) {
+					$save_data = array();
 					$sql = '
 DELETE FROM page_properties
 USING page_properties, pages, property_types
@@ -528,12 +558,46 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 					$save_data[] = $PageCode;
 				
 					$this->db->query($sql,$save_data);
-					$save_data = array();
 				}
 			}
 		}
 		
 		return TRUE;
+	}
+	
+	
+	/// Create a new page
+	/**
+	 * @param $Data array of data in similar format to output of GetSpecificPage.
+	 * @return bool Whether the save was successful.
+	 */
+	function CreatePage($Data)
+	{
+		$translation = array(
+				'codename'    => 'page_codename',
+				'title'       => 'page_title',
+				'description' => 'page_description',
+				'keywords'    => 'page_keywords',
+				'comments'    => 'page_comments',
+				'ratings'     => 'page_ratings',
+			);
+		$save_data = array();
+		foreach ($Data as $key => $value) {
+			if (array_key_exists($key, $translation)) {
+				$save_data[$translation[$key]] = $value;
+			}
+		}
+		if (count($save_data) > 0) {
+			$sql  = 'INSERT INTO pages (';
+			$sql .= implode(',', array_keys($save_data));
+			$sql .= ') VALUES (';
+			$sql .= implode(',', array_fill(1, count($save_data), '?'));
+			$sql .= ');';
+			
+			$this->db->query($sql,array_values($save_data));
+		}
+		
+		return ($this->db->affected_rows() > 0);
 	}
 }
 
