@@ -39,8 +39,8 @@
 				<b>Property Type : </b><?php echo $property['type'];?><br />
 				<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
 			</p>
-			<input type="hidden" name="<?php echo $property['id'];?>label" value="<?php echo $property['label'];?>">
-			<input type="hidden" name="<?php echo $property['id'];?>type" value="<?php echo $property['type'];?>">
+			<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
+			<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
 			<textarea name="<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
 			<br />
 			<?php

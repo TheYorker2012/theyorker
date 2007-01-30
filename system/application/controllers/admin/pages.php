@@ -290,12 +290,14 @@ class Pages extends Controller
 						}
 					}
 					if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
-						if (	array_key_exists($key.'label', $_POST) &&
-								array_key_exists($key.'type' , $_POST)) {
+						$label_key = 'label-'.$key;
+						$type_key = 'type-' .$key;
+						if (	array_key_exists($label_key, $_POST) &&
+								array_key_exists($type_key, $_POST)) {
 							// New property
 							$input['property_add'][] = array(
-									'label'	=> $_POST[$key.'label'],
-									'type'	=> $_POST[$key.'type'],
+									'label'	=> $_POST[$label_key],
+									'type'	=> $_POST[$type_key],
 									'text'	=> $value,
 								);
 						}
