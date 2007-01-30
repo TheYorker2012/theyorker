@@ -26,7 +26,7 @@
 	</fieldset>
 </form>
  <?php
- if (!empty($properties)){
+ //if (!empty($properties)){
  ?>
 <h2>Edit properties</h2>
 <form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
@@ -34,24 +34,38 @@
 			<?php
 			foreach ($properties as $property) {
 			?>
-			<p style='font-size:small;'>
-				<b>Property Name : </b><?php echo $property['label'];?><br />
-				<b>Property Type : </b><?php echo $property['type'];?><br />
-				<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
-			</p>
-			<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
-			<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
-			<textarea name="<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
-			<br />
+				<p style='font-size:small;'>
+					<b>Property Name : </b><?php echo $property['label'];?><br />
+					<b>Property Type : </b><?php echo $property['type'];?><br />
+					<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
+				</p>
+				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
+				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
+				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
+				<br />
 			<?php
 			}
 			?>
-		<input type='submit' class='button' name='property_edit_button' value='Update'>
+			<div id="source" style="display:none">
+				<b>Property Name : </b><input name="label-newprop" value=""><br />
+				<b>Property Type : </b>
+					<SELECT name="type-newprop">
+						<option value ="text">Text</option>
+						<option value ="wikitext">Wikitext</option>
+						<option value ="xhtml">XHTML</option>
+					</SELECT><br />
+				<textarea name="newprop" cols="60" rows="10"></textarea>
+				<br />
+			</div>
+			<input type="hidden" name="destination" id="destination" value="1" />
+		<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
+		<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
 	</fieldset>
 </form>
 <?php
-}
+//}
 ?>
+<?php /*
 <h2>Add a page property</h2>
 <form name='property_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
@@ -69,5 +83,5 @@
 	<fieldset>
 		<input type='submit' class='button' name='property_button' value='Add'>
 	</fieldset>
-</form>
+</form> */ ?>
 <a href='/admin/pages'>Back to Pages Administration</a>

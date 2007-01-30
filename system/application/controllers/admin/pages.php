@@ -322,6 +322,7 @@ class Pages extends Controller
 	
 	function page($Operation, $PageCode='')
 	{
+		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 		$this->pages_model->SetPageCode('admin_pages_page');
 		if ($this->_CheckViewPermissions('page_edit')) {
 			$data = array();
@@ -352,6 +353,7 @@ class Pages extends Controller
 	
 	function custom($Operation, $CustomPageCode='')
 	{
+		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 		$this->pages_model->SetPageCode('admin_pages_custom');
 		if ($this->_CheckViewPermissions('custom_edit')) {
 			$data = array();

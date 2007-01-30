@@ -538,7 +538,6 @@ WHERE page_properties.page_property_id=?
 				$query = $this->db->query($sql,
 						array($property['label'], $text, $PageCode, $property['type'], $text)
 					);
-				return ($this->db->affected_rows() > 0);
 			}
 		}
 		if (array_key_exists('property_remove',$Data)) {
