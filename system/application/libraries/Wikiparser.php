@@ -57,6 +57,15 @@ class Wikiparser {
 		$this->emphasis[4] = "";
 		$this->emphasis[5] = "";
 		$this->emphasis[6] = "";
+		
+		$this->quote_template = 'pull_quote';
+		$this->templates = array(
+				'pull_quote' => '<blockquote>
+<img src="/images/prototype/news/quote_open.png" alt="Quote" title="Quote" />
+{{1}}
+<img src="/images/prototype/news/quote_close.png" alt="Quote" title="Quote" />
+<br /><span class="author">{{2}}</span></blockquote>',
+			);
 	}
 	
 	function handle_sections($matches) {
@@ -418,21 +427,45 @@ class Wikiparser {
 		return "";
 	}
 	
-	function handle_variable($matches) {
-		switch($matches[2]) {
-			case 'CURRENTMONTH': return date('m');
-			case 'CURRENTMONTHNAMEGEN':
-			case 'CURRENTMONTHNAME': return date('F');
-			case 'CURRENTDAY': return date('d');
-			case 'CURRENTDAYNAME': return date('l');
-			case 'CURRENTYEAR': return date('Y');
-			case 'CURRENTTIME': return date('H:i');
-			case 'NUMBEROFARTICLES': return 0;
-			case 'PAGENAME': return $this->page_title;
-			case 'NAMESPACE': return 'None';
-			case 'SITENAME': return $_SERVER['HTTP_HOST'];
-			default: return '';	
+	function handle_special_quote($matches)
+	{
+		return '{{'.$this->quote_template.'|'.$matches[1].'|'.$matches[2].'}}';
+	}
+	
+	function handle_template_parameter($matches) {
+		if (array_key_exists($matches[1],$this->template_elements)) {
+			return $this->template_elements[$matches[1]];
+		} else {
+			return '';
 		}
+	}
+	
+	function handle_variable($matches) {
+		$this->template_elements = explode('|',$matches[2]);
+		if (array_key_exists($this->template_elements[0], $this->templates)) {
+			$replacement = $this->templates[$this->template_elements[0]];
+			$replacement = preg_replace_callback(
+					'/\{\{(\d+)\}\}/i',
+					array(&$this,'handle_template_parameter'),
+					$replacement);
+			return $replacement;
+		} else {
+			switch($this->template_elements[0]) {
+				case 'CURRENTMONTH': return date('m');
+				case 'CURRENTMONTHNAMEGEN':
+				case 'CURRENTMONTHNAME': return date('F');
+				case 'CURRENTDAY': return date('d');
+				case 'CURRENTDAYNAME': return date('l');
+				case 'CURRENTYEAR': return date('Y');
+				case 'CURRENTTIME': return date('H:i');
+				case 'NUMBEROFARTICLES': return 0;
+				case 'PAGENAME': return $this->page_title;
+				case 'NAMESPACE': return 'None';
+				case 'SITENAME': return $_SERVER['HTTP_HOST'];
+				default: return '';	
+			}
+		}
+		unset($this->template_elements);
 	}
 	
 	function handle_symbols($matches)
@@ -451,9 +484,10 @@ class Wikiparser {
 	
 	function parse_line($line) {
 		$line_regexes = array(
-			'startparagraph'=>'^([^\s\*\#;\:=-].*?)$',
+			'special_quote'=>'^"""(.*)"""\s*(.*)$',
+			'startparagraph'=>'^([^\{\s\*\#;\:=-].*?)$',
 			//'preformat'=>'^\s(.*?)$',
-			'blockquote'=>'^\s(.*?)$', // = 'preformat'
+			//'blockquote'=>'^\s(.*?)$', // = 'preformat'
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
 			'list'=>'^([\*\#]+)(.*?)$',
@@ -482,8 +516,8 @@ class Wikiparser {
 				')',
 			'emphasize'=>'(\'{2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
-			'variable'=>'('. '\{\{' . '([^\}]*?)' . '\}\}' . ')',
 			'addemphasis'=>'(the yorker)',
+			'variable'=>'(\{\{([^\}]*?)\}\})',
 		);
 				
 		$this->stop = false;
