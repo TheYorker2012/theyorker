@@ -39,8 +39,8 @@ class Campaign extends Controller {
 		$data['campaign_list'] = $this->campaign->GetCampaignList();
 		$data['selected_campaign'] = $SelectedCampaign;
 		$data['sections'] = array (
-					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('campaign_details_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_details_sign_text')),
-					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_details_other_campaigns_title'))
+					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('campaign_sidebar_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('campaign_sidebar_sign_text')),
+					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('campaign_sidebar_other_campaigns_title'))
 					);
 		
 		if (isset($data['campaign_list'][$SelectedCampaign]))
