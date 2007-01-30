@@ -34,8 +34,8 @@ class ModelTest extends Controller {
 		$this->frame_public->SetContentSimple('test/modeltest', $article);
 
 		//Testing data add
-		$this->article->CommitArticle(1,NULL,2,'CURRENT_TIMESTAMP','Sample Heading','Sample Subheading',
-									'This is subtext', 'the yorker wikitext', 'and some magical blurb');
+//		$this->article->CommitArticle(1,NULL,2,'CURRENT_TIMESTAMP','Sample Heading','Sample Subheading',
+//									'This is subtext', 'the yorker wikitext', 'and some magical blurb');
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
