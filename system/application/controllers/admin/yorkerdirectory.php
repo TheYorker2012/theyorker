@@ -89,7 +89,6 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view($subpageview, $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_directory->SetPage('about');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 
