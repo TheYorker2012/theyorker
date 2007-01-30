@@ -194,40 +194,61 @@ class Review_model extends Model {
 	}
 
 	//Mirrored from GetReview - frb501 - This should return all the rows in a given type
-	function TableReview($content_type_codename) {
-	
-	#dgh500
-	# need organisation type?
-	# need organisation fileas - what IS this?? all null in DB
-	$sql = '
-			SELECT 
-			organisations.organisation_name,
-			organisations.organisation_url,
-			organisations.organisation_opening_hours,
-			organisations.organisation_directory_entry_name,
-			review_context_contents.review_context_content_blurb,
-			review_context_contents.review_context_content_recommend_item_price,
-			review_context_contents.review_context_content_recommend_item,
-			review_context_contents.review_context_content_average_price_upper,
-			review_context_contents.review_context_content_average_price_lower,
-			review_context_contents.review_context_content_rating,
-			review_context_contents.review_context_content_directions,
-			review_context_contents.review_context_content_book_online
-			  FROM content_types 
-			  INNER JOIN review_context_contents
-			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id 
-			  INNER JOIN organisations
-			  ON review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
-			  WHERE content_types.content_type_codename = "'.$content_type_codename.'"';
-	
-	$result = $query = $this->db->query($sql);
-	
-	$reviews = $query->result_array();
-	$reviews['item_count'] = $query->num_rows();
-	
-	return $reviews;
-	
-	}
+	function TableReview($content_type_codename) 
+	{
+		#dgh500
+		# need organisation type?
+		# need organisation fileas - what IS this?? all null in DB
+		$sql = '
+			SELECT o.organisation_entity_id, o.organisation_name, o.organisation_url, o.organisation_directory_entry_name,
+			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
+			FROM content_types AS ct
+			INNER JOIN review_context_contents AS rcc
+			ON ct.content_type_id = rcc.review_context_content_content_type_id
+			INNER JOIN organisations AS o
+			ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
+			LEFT JOIN comment_summary_cache AS csc
+			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
+			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id
+			WHERE ct.content_type_codename = ?';
+		
+		
+		$query = $this->db->query($sql, array($content_type_codename));
+		$reviews = $query->result_array();
 
+		$entity_ids = array();
+		foreach ($reviews as &$review)
+		{
+			$entity_ids[] = $review['organisation_entity_id'];
+			$review['tags'] = array();
+		}
+
+		$sql = '
+			SELECT ot.organisation_tag_organisation_entity_id, t.tag_name, tg.tag_group_name
+			FROM organisation_tags AS ot
+			INNER JOIN tags AS t
+			ON t.tag_id = ot.organisation_tag_tag_id
+			INNER JOIN tag_groups AS tg
+			ON tg.tag_group_id = t.tag_tag_group_id
+			WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
+			ORDER BY ot.organisation_tag_organisation_entity_id ASC';
+
+		$query = $this->db->query($sql);
+		$tags = $query->result_array();
+
+		foreach ($reviews as &$review)
+		{
+			foreach ($tags as $id => $tag)
+			{
+				if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
+				{
+					$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
+					unset($tags[$id]);
+				}
+			}
+		}
+
+		return $reviews;
+	}
 }
 

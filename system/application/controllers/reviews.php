@@ -25,7 +25,8 @@ class Reviews extends Controller {
 	//Normal Call to Page - Doesn't do anything anymore....
 
 	function index()
-	{	
+	{	
+
 		// Set up the public frame
 		$this->frame_public->SetTitle('Reviews');
 		$this->frame_public->SetContentSimple('reviews/index');
@@ -114,58 +115,60 @@ class Reviews extends Controller {
 	}
 	
 	//Review Function for Food/Drink/Culture
-	function mainreview($review_type,$page_code)
+	function mainreview($review_type, $page_code)
 	{
+		
 		// Set up the public frame
 
 		switch($review_type)
 		{
-		case 0:
-			$data['page_id'] = 101;
-			$data['comments'] = $this->Review_model->GetComments(101,strlen($page_code)); //User comments - Article id isn't real will fix... just the db changed on me before a commit and need sleep, frb501
-			$data['article_id'] = strlen($page_code);
-			$database_result = $this->Review_model->GetReview($page_code,'food');
-			$this->frame_public->SetTitle('Food Review');
-		break;
+			case 0:
+				$data['page_id'] 	= 101;
+				$data['comments'] 	= array(); //$this->Review_model->GetComments(101,strlen($page_code)); //User comments - Article id isn't real will fix... just the db changed on me before a commit and need sleep, frb501
+				$data['article_id'] = strlen($page_code);
+				$database_result 	= $this->Review_model->GetReview($page_code,'food');
+				$this->frame_public->SetTitle('Food Review');
+			break;
+	
+			case 1:
+				$data['page_id'] 	= 102;
+				$data['comments'] 	= $this->Review_model->GetComments(102,strlen($page_code)); //User comments
+				$data['article_id'] = strlen($page_code);
+				$database_result 	= $this->Review_model->GetReview($page_code,'drink');
+				$this->frame_public->SetTitle('Drink Review');
+			break;
+	
+			case 2:
+				$data['page_id'] 	= 103;
+				$data['comments'] 	= $this->Review_model->GetComments(103, strlen($page_code)); //User comments
+				$data['article_id'] = strlen($page_code);
 
-		case 1:
-			$data['page_id'] = 102;
-			$data['comments'] = $this->Review_model->GetComments(102,strlen($page_code)); //User comments
-			$data['article_id'] = strlen($page_code);
-			$database_result = $this->Review_model->GetReview($page_code,'drink');
-			$this->frame_public->SetTitle('Drink Review');
-		break;
-
-		case 2:
-			$data['page_id'] = 103;
-			$data['comments'] = $this->Review_model->GetComments(103,strlen($page_code)); //User comments
-			$data['article_id'] = strlen($page_code);
-			$database_result = $this->Review_model->GetReview($page_code,'culture');
-			$this->frame_public->SetTitle('Culture Review');
-		break;
+				$database_result 	= $this->Review_model->GetReview($page_code,'culture');
+				$this->frame_public->SetTitle('Culture Review');
+			break;
 		}
 
 		//N.B There should only be 1 row returned hence [0] as it should be unique
-		$data['article_title']= $database_result[0]['organisation_name'];
-		$data['also_does_state']= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
-		$data['article_blurb']= $database_result[0]['review_context_content_blurb'];
-		$data['article_image']= '/images/prototype/reviews/reviews_07.jpg';
-		$data['article_content']= 'The articles content - Waiting on model<BR>Evil Eye is blah fijsdofijsdofijsdfo djfsdoifjsdoifjsi place to be<BR>JIOJSDIFJSDio dkdk KOJOmk dsfmkdmfklsdf<BR>
-So as you all now know the decline of pirates <BR> is the main factor behind global warming<BR>';
-		$data['email'] = $database_result[0]['organisation_email_address'];
-		$data['address_main']= $database_result[0]['organisation_postal_address'];
-		$data['address_postcode']= $database_result[0]['organisation_postcode'];
-		$data['website']= $database_result[0]['organisation_url'];
-		$data['website_booking']= $database_result[0]['review_context_content_book_online'];
-		$data['telephone']= $database_result[0]['organisation_phone_external'];
-		$data['average_price']= 'Â£'.($database_result[0]['review_context_content_average_price_upper']/100).' to Â£'.($database_result[0]['review_context_content_average_price_upper']/100);
-		$data['opening_times']= $database_result[0]['organisation_opening_hours'];
-		$data['yorker_recommendation']= $database_result[0]['review_context_content_rating'];
-		$data['price_rating']= 'Waiting on Model';
 
+		$data['review_title'] 			= $database_result[0]['organisation_name'];
+		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
+		$data['review_blurb']			= $database_result[0]['review_context_content_blurb'];
+		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
+		$data['review_content']		= '';
+		$data['email'] 					= $database_result[0]['organisation_email_address'];
+		$data['address_main']			= $database_result[0]['organisation_postal_address'];
+		$data['address_postcode']		= $database_result[0]['organisation_postcode'];
+		$data['website']				= $database_result[0]['organisation_url'];
+		$data['website_booking']		= $database_result[0]['review_context_content_book_online'];
+		$data['telephone']				= $database_result[0]['organisation_phone_external'];
+		$data['average_price']			= '£'.($database_result[0]['review_context_content_average_price_upper']/100).' to £'.($database_result[0]['review_context_content_average_price_upper']/100);
+		$data['opening_times']			= $database_result[0]['organisation_opening_hours'];
+		$data['yorker_recommendation']	= $database_result[0]['review_context_content_rating'];
+		$data['price_rating']			= 'Waiting on Model';
+		
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->SetContentSimple('reviews/foodreview',$data);
+		$this->frame_public->SetContentSimple('reviews/foodreview', $data);
 		$this->frame_public->Load();
 
 	}
@@ -204,7 +207,6 @@ So as you all now know the decline of pirates <BR> is the main factor behind glo
 	}
 
 	//Display table for review table (from puffers)
-	//Yet more dummy data for view intill I replace it with data from model
 	function table()
 	{
 		$item_type = $this->uri->segment(3); //Expected food/drink/culture/any
@@ -213,23 +215,30 @@ So as you all now know the decline of pirates <BR> is the main factor behind glo
 //		$where_equal_to = $this->uri->segment(5); //Expected italian/late night/etc..../any
 //		$sorted_by = $this->uri->segment(6); //name/star/price/user/any
 
+		$columns = array(0);
+
 		$database_result = $this->Review_model->TableReview($item_type);
+		$entries = array();
 
-		$reviews['']=''; //This line doesn't make sense to you? Don't touch it then :)
-
-		for ($review_entry = 0; $review_entry < $database_result['item_count']; $review_entry++)
+		foreach($database_result as &$result)
 		{
-			$reviews['review_image'][$review_entry] = '/images/prototype/news/thumb3.jpg';
-			$reviews['review_title'][$review_entry] = $database_result[$review_entry]['organisation_name'];
-			$reviews['review_website'][$review_entry] = $database_result[$review_entry]['organisation_url'];;
-			$reviews['review_rating'][$review_entry] = $database_result[$review_entry]['review_context_content_rating'];
-			$reviews['review_user_rating'][$review_entry] = '???';
-			$reviews['review_cost_type'][$review_entry] = '???';
-			$reviews['review_table_link'][$review_entry] = base_url().'reviews/'.$item_type.'review/'.$database_result[$review_entry]['organisation_directory_entry_name'];
-			$reviews['review_blurb'][$review_entry] = $database_result[$review_entry]['review_context_content_blurb'];
+			$entries[] = array(
+				'review_image' 			=> '/images/prototype/news/thumb3.jpg',
+				'review_title' 			=> $result['organisation_name'],
+				'review_website' 		=> $result['organisation_url'],
+				'review_rating' 		=> $result['review_context_content_rating'],
+				'review_user_rating' 	=> intval($result['comment_summary_cache_average_rating']),
+				'review_cost_type' 		=> isset($result['tags']['Price']) ? $result['tags']['Price'][0] : '',
+				'review_tags'			=> array
+				(
+					'Atmosphere' => isset($result['tags']['Atmosphere']) ? implode("<br />", $result['tags']['Atmosphere']) : '',
+					'Cuisine' => isset($result['tags']['Cuisine']) ? implode("<br />", $result['tags']['Cuisine']) : '',
+				),
+				'review_table_link'		=> base_url().'reviews/'.$item_type.'review/'.$result['organisation_directory_entry_name'],
+			);
 		}
 
-		$data['reviews'] = $reviews;
+		$data['entries'] = $entries;
 
 		$this->frame_public->SetTitle('table');
 		$this->frame_public->SetContentSimple('reviews/table',$data);
