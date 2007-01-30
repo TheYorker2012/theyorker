@@ -878,6 +878,7 @@ div.ArticleColumn blockquote {
 	font-size: 11px;
 	line-height: normal;
 	font-weight: bold;
+	display: inline;
 }
 
 .NewsPreview .Date {
