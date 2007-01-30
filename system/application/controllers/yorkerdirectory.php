@@ -94,6 +94,25 @@ class Yorkerdirectory extends Controller
 		$this->_SetupOrganisationFrame($organisation);
 
 		$subpageview='directory/directory_view';
+		
+		//Reviews
+		$this->load->model('articles_model');
+		$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
+		// sort into types
+		$directory_reviews = array();
+		$review_types = array();
+		foreach ($reviews as $review) {
+			if (NULL === $review['type']) {
+				$directory_reviews[] = $review;
+			} else {
+				if (!array_key_exists($review['type'], $review_types)) {
+					$review_types[$review['type']] = array();
+				}
+				$review_types[$review['type']][] = $review;
+			}
+		}
+		$data['organisation']['reviews_untyped'] = $directory_reviews;
+		$data['organisation']['reviews_by_type'] = $review_types;
 
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
@@ -102,7 +121,7 @@ class Yorkerdirectory extends Controller
 		$this->frame_public->SetPage('about');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
-
+		
 		// Set up the public frame to use the directory view
 		$this->frame_public->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));

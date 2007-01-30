@@ -53,29 +53,4 @@ if (!empty($organisation['reviews_untyped'])) {
  *	]
  * ]
  */
-if (!empty($organisation['reviews_by_type'])) {
-	foreach ($organisation['reviews_by_type'] as $review_type_name => $reviews) {
-		echo '<h2>'.$review_type_name.' reviews:</h2><ul>';
-		// $review_type_name: name of review type e.g. food, drink...
-		foreach ($reviews as $review) {
-			/*
-			 * $review is made up of:
-			 *	type - same as $review_type_name
-			 *	publish_date
-			 *	content - as parsed wikitext (html)
-			 *	link - where to link (not sure where this is supposed to link
-			 *	authors - array of authors, each with:
-			 */
-			echo '<li><a href="'.$review['link'].'"> Reviewed by ';
-			foreach ($review['authors'] as $author) {
-				/* $author is made up of:
-				 *	name
-				 *	email
-				 */
-				echo $author['name'].', ';
-			}
-			echo 'on '.$review['publish_date'].'</a></li></ul>';
-		}
-	}
-}
 ?>

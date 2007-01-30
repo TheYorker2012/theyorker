@@ -39,21 +39,48 @@
 		}
 		?>
 	</p>
+	<?php
+if (!empty($organisation['reviews_by_type'])) {
+?>
 	<h4>Reviews</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
-		<p>
-			<a href='#'>Food review by Nick Evans</a><br />
-			<a href='#'>Culture review by Nick Evans</a><br />
-			<a href='#'>Drink review by Nick Evans</a><br />
-		</p>
-	</div>
+<?php
+	foreach ($organisation['reviews_by_type'] as $review_type_name => $reviews) {
+		echo '<h5>'.$review_type_name.' reviews:</h5>';
+		// $review_type_name: name of review type e.g. food, drink...
+		foreach ($reviews as $review) {
+			/*
+			 * $review is made up of:
+			 *	type - same as $review_type_name
+			 *	publish_date
+			 *	content - as parsed wikitext (html)
+			 *	link - where to link (not sure where this is supposed to link
+			 *	authors - array of authors, each with:
+			 */
+			echo '<a href="'.$review['link'].'">By ';
+			foreach ($review['authors'] as $author) {
+				/* $author is made up of:
+				 *	name
+				 *	email
+				 */
+				echo $author['name'].', ';
+			}
+			echo $review['publish_date'].'</a><br />';
+		}
+	}
+?>
+</div>
+<?php
+}
+?>
 	<h4>Related articles</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
-		<p>
-			<a href='#'>Article title 1</a><br />
-			<a href='#'>Article title 2</a><br />
-			<a href='#'>Article title 3</a>
-		</p>
+			<h5>Article title 1</h5>
+			<a href='#'>A brief description of the article...</a>
+			<h5>Article title 2</h5>
+			<a href='#'>A brief description of the article...</a>
+			<h5>Article title 3</h5>
+			<a href='#'>A brief description of the article...</a>
 	</div>
 </div><div  style="padding:0px 0px 0px 0px; width: 420px; margin: 0px;">
 <div style="padding:0px 3px 0px 0px; width: 420px; margin: 0px;">
