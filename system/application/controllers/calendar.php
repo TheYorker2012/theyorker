@@ -28,6 +28,7 @@ class Calendar extends Controller {
 	 */
 	function index()
 	{
+		$this->pages_model->SetPageCode('calendar_personal');
 		$this->week();
 	}
 	
@@ -37,6 +38,7 @@ class Calendar extends Controller {
 	 */
 	function week($DateRange = '')
 	{
+		$this->pages_model->SetPageCode('calendar_personal');
 		if (!empty($DateRange)) {
 			// $DateRange Not empty
 			
@@ -106,7 +108,6 @@ EXTRAHEAD;
 		$this->frame_messages->SetContent($view_calendar_days);
 		
 		// Set up the public frame to use the messages frame
-		$this->frame_public->SetTitle('Personal Calendar');
 		$this->frame_public->SetExtraHead($extra_head);
 		$this->frame_public->SetContent($this->frame_messages);
 		

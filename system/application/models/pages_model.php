@@ -422,7 +422,7 @@ class Pages_model extends Model
 		if (count($results) == 1) {
 			$result = $results[0];
 			$data = array();
-			$data['page_id']          = $result['page_id'];
+			$data['page_id']     = $result['page_id'];
 			$data['codename']    = $result['page_codename'];
 			$data['title']       = $result['page_title'];
 			$data['description'] = $result['page_description'];
@@ -480,7 +480,6 @@ class Pages_model extends Model
 				$save_data[$translation[$key]] = $value;
 			}
 		}
-		$save_data = array_values($save_data);
 		if (count($save_data) > 0) {
 			$sql = 'UPDATE pages SET ';
 			$assignments = array();
@@ -490,6 +489,7 @@ class Pages_model extends Model
 			$sql .= implode(', ', $assignments);
 			$sql .= ' WHERE page_codename=? ';
 			$sql .= 'LIMIT 1;';
+			$save_data = array_values($save_data);
 			$save_data[] = $PageCode;
 			
 			$this->db->query($sql,$save_data);

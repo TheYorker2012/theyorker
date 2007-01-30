@@ -82,6 +82,30 @@ class Frame_public extends FrameNavbar
 		$this->mTitleSet = TRUE;
 	}
 	
+	/// Add keywords to the page.
+	/**
+	 * @param $Keywords string Comma seperated keywords.
+	 */
+	function AddKeywords($Keywords)
+	{
+		if (!empty($this->mDataArray['keywords'])) {
+			$this->mDataArray['keywords'] .= ',';
+		}
+		$this->mDataArray['keywords'] .= $Keywords;
+	}
+	
+	/// Add description to the page.
+	/**
+	 * @param $Description string Description.
+	 */
+	function AddDescription($Description)
+	{
+		if (!empty($this->mDataArray['description'])) {
+			$this->mDataArray['description'] .= '. ';
+		}
+		$this->mDataArray['description'] .= $Description;
+	}
+	
 	/**
 	 * @brief Set the extra code to go in the page header.
 	 * @param $ExtraHead string Extra code to go in the page header.
@@ -114,8 +138,8 @@ class Frame_public extends FrameNavbar
 			if (!$this->mTitleSet) {
 				$this->SetTitleParameters();
 			}
-			$this->mDataArray['description'] = $CI->pages_model->GetDescription();
-			$this->mDataArray['keywords'] = $CI->pages_model->GetKeywords();
+			$this->AddDescription($CI->pages_model->GetDescription());
+			$this->AddKeywords($CI->pages_model->GetKeywords());
 		}
 		parent::Load();
 	}
