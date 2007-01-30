@@ -46,6 +46,11 @@
 			<?php
 			}
 			?>
+			<?php
+			// This div (source) is cloned into destination by the add property button.
+			// the inputs must be the first level of tags (not within a <p style='font-size:small;'></p>)
+			// See public_html/javascript/clone.js
+			?>
 			<div id="source" style="display:none">
 				<b>Property Name : </b><input name="label-newprop" value=""><br />
 				<b>Property Type : </b>
@@ -57,6 +62,9 @@
 				<textarea name="newprop" cols="60" rows="10"></textarea>
 				<br />
 			</div>
+			<?php
+			// New properties are put here (destionation div)
+			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
 		<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
 		<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
