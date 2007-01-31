@@ -178,7 +178,7 @@ class Review_model extends Model {
 		}
 		else
 		{
-		$nocomments = 'empty';
+		$nocomments = array();
 		return $nocomments;
 		}
 	}
