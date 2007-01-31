@@ -14,9 +14,8 @@ imageObj = new Image();
 imageObj.src = '/images/prototype/prefs/loading.gif';
 </script>
 
-<h4>Account Preferences</h4>
 <form class='form' action='/register/societies/' method='post'>
-<h5 style='color: #fff;'>Academic Module Subscriptions</h5>
+<h4>Academic Module Subscriptions</h4>
 <fieldset>
 	<label for='course'>Course:</label>
 	<select name='course' id='course' size='1' onChange='get_modules(this);'>
@@ -29,7 +28,7 @@ imageObj.src = '/images/prototype/prefs/loading.gif';
 	<div id='module_list' style='width: 100%; float: left; margin-top: 15px;'></div>
 	<br />
 </fieldset>
-<h5 style='color: #fff;'>Current Subscriptions</h5>
+<h4>Current Subscriptions</h4>
 <fieldset>
 	<div id='current_modules' style='width: 100%; float: left; margin-top: 15px;'>
 		<div class='table-box'>

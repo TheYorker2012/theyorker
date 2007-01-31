@@ -192,16 +192,17 @@ class Register extends Controller {
 		{
 			///TODO: Same as above really, SQL injection protection etc.
 			$xajax_response = new xajaxResponse();
-			$dbquery = mysql_query('SELECT organisation_name AS name, organisation_description AS description, organisation_url AS weburl, organisation_postal_address AS address, organisation_postcode AS postcode FROM organisations WHERE organisation_organisation_type_id = 2 AND organisation_entity_id = ' . $soc_id . ' ORDER BY organisation_name ASC');
+			$dbquery = mysql_query('SELECT organisation_description AS description FROM organisations WHERE organisation_organisation_type_id = 2 AND organisation_entity_id = ' . $soc_id . ' ORDER BY organisation_name ASC');
 			$dbres = mysql_fetch_array($dbquery);
+			$info = $dbres['description'];
+			$xajax_response->addAssign('socdesc','innerHTML', $info);
 
-			$info = '<b>Name:</b> ' . $dbres['name'] . '<br />
-				<b>Web:</b> ' . $dbres['weburl'] . '<br />
-				<b>Address:</b> ' . $dbres['address'] . '<br />
-				<b>Post Code:</b> ' . $dbres['postcode'] . '<br />
-				<b>Description:</b> ' . $dbres['description'] . '<br />';
-
-			$xajax_response->addAssign('socinfo','innerHTML', $info);
+			$get_slideshow = mysql_query('SELECT photos.photo_title, photos.photo_id FROM photos, organisation_slideshows AS slideshow WHERE slideshow.organisation_slideshow_organisation_entity_id = ' . $soc_id . ' AND slideshow.organisation_slideshow_photo_id = photos.photo_id ORDER BY slideshow.organisation_slideshow_order ASC');
+			$xajax_response->addScriptCall('ss_reset');
+			while ($dbres = mysql_fetch_array($get_slideshow)) {
+				$xajax_response->addScriptCall('ss_add', '/images/photos/' . $dbres['photo_id'] . '.jpg');
+			}
+			$xajax_response->addScriptCall('ss_load');
 			return $xajax_response;
 		}
 

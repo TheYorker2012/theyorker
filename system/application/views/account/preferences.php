@@ -32,7 +32,7 @@ function collSelect (college) {
 
 .unselected {
 	border: 1px #fff solid;
-	background-color: #ffffff;
+	background-color: #fff;
 	padding: 3px;
 	width: 65px;
 	float: left;
@@ -50,45 +50,40 @@ function collSelect (college) {
 
 .selected {
 	border: 1px #000000 dashed;
-	background-color: #08c0ef;
+	background-color: #20c1f0;
 	padding: 3px;
 	width: 65px;
 	float: left;
 	text-align: center;
 	cursor: pointer;
 }
-</style>
 
+#college_select {
+	float: left;
+	margin-left: 10px;
+}
+</style>
+		<div id='college_select' class='hide'>
 		<?php $college_count = ceil(count($colleges) / 2) - 1;
 		if (!$this->validation->college) {
 			$this->validation->college = 0;
 		}
 		$college_index = 0;
-		$first_college = true;
 		foreach ($colleges as $college) {
 			echo '<div id=\'coll_' . $college['college_id'] . '\' class=\'';
 			if ($this->validation->college != $college['college_id']) {
-			echo 'un';
-		}
-		echo 'selected\'';
-		if ($college_index == 0) {
-			if ($first_college) {
-				echo ' style=\'margin: 0 0 0 10px;\'';
-			} else {
-				echo ' style=\'margin: 0 0 0 120px;\'';
+				echo 'un';
 			}
-		}
-		$first_college = false;
-		echo '>'; ?>
-		<img src='/images/prototype/prefs/college_<?php echo strtolower($college['college_name']); ?>.jpg' alt='<?php echo $college['college_name']; ?>' title='<?php echo $college['college_name']; ?>' onClick="collSelect('<?php echo $college['college_id']; ?>')" /></div>
-		<?php
-		$college_index++;
-		if ($college_index > $college_count) {
-			echo '<br />';
-			$college_index = 0;
-		}
-	} ?>
-		<label></label>
+			echo 'selected\'>';
+			?><img src='/images/prototype/prefs/college_<?php echo strtolower($college['college_name']); ?>.jpg' alt='<?php echo $college['college_name']; ?>' title='<?php echo $college['college_name']; ?>' onClick="collSelect('<?php echo $college['college_id']; ?>')" /></div>
+			<?php
+			$college_index++;
+			if ($college_index > $college_count) {
+				echo '<br />';
+				$college_index = 0;
+			}
+		} ?>
+		</div>
 		<select name='college' id='college' size='1' onChange='collSelect(this.selectedIndex)'>
 		<?php foreach ($colleges as $college) { ?>
 			<option value='<?php echo $college['college_id']; ?>'<?php echo $this->validation->set_select('college', $college['college_id']); ?>><?php echo $college['college_name']; ?></option>
@@ -105,6 +100,7 @@ function collSelect (college) {
 <script type="text/javascript">
 <!--
 document.getElementById('college').className = 'hide';
+document.getElementById('college_select').className = 'show';
 
 function updateTime () {
 	var currentTime = new Date();
@@ -143,7 +139,7 @@ setTimeout('updateTime()',0);
 		</select>
 		<br />
 		<label for='current_time'>Current Time:</label>
-		<div id='current_time' style='float: left; margin: 5px 0 0 10px;'>!!! Javascript Disabled !!!</div>
+		<div id='current_time' style='float: left; margin: 5px 0 0 10px; font-size: small;'>!!! Javascript Disabled !!!</div>
 		<br />
 		</fieldset>
 		<fieldset>
