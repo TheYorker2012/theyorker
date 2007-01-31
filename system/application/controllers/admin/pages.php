@@ -337,10 +337,18 @@ class Pages extends Controller
 			$Data,
 			$InputPageCode,
 			$Target,
-			$Redirect,
 			$Prefix = '')
 	{
-		
+		$data = $Data;
+		$data['target'] = $Target.$InputPageCode;
+		if (FALSE === $this->input->post('confirm_delete',FALSE)) {
+			$data['complete'] = FALSE;
+			// Get information about the page so user is informed before confirming.
+		} else {
+			$data['complete'] = TRUE;
+			// user confirmed, delete the page and its properties.
+		}
+		return $data;
 	}
 	
 	/// Function for administrating pages of the website.
@@ -383,6 +391,8 @@ class Pages extends Controller
 					
 				case 'delete':
 					$this->pages_model->SetPageCode('admin_pages_page_delete');
+					$this_uri = '/admin/pages/page/delete/';
+					$data = $this->_DeletePage($data, $PageCode, $this_uri);
 					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
 					break;
 					
@@ -448,6 +458,8 @@ class Pages extends Controller
 					
 				case 'delete':
 					$this->pages_model->SetPageCode('admin_pages_custom_delete');
+					$this_uri = '/admin/pages/custom/delete/';
+					$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
 					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
 					break;
 					
