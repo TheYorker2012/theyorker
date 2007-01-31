@@ -31,13 +31,13 @@ class Campaign extends Controller {
 		}
 	}
 
-	function Details($SelectedCampaign)
+	function Details($campaign_id)
 	{
 		$this->load->model('campaign_model','campaign');
 		$this->pages_model->SetPageCode('campaign_details');
 
 		$data['campaign_list'] = $this->campaign->GetCampaignList();
-		$data['selected_campaign'] = $SelectedCampaign;
+		$data['selected_campaign'] = $campaign_id;
 		$data['sections'] = array (
 					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_text')),
 					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title')),
@@ -47,10 +47,10 @@ class Campaign extends Controller {
 					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_comments_title'))
 					);
 		
-		if (isset($data['campaign_list'][$SelectedCampaign]))
+		if (isset($data['campaign_list'][$campaign_id]))
 		{
 			// Set up the public frame
-			$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$data['campaign_list'][$SelectedCampaign]['name'])));
+			$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$data['campaign_list'][$campaign_id]['name'])));
 			$this->frame_public->SetContentSimple('campaign/CampaignDetails', $data);
 			
 			// Load the public frame view (which will load the content view)
@@ -62,23 +62,19 @@ class Campaign extends Controller {
 		}
 	}
 	
-	function Test($SelectedCampaign = 'Pie Eating')
+	function Test($campaign_id = 2)
 	{
-		$data = array(
-			'Title' => $SelectedCampaign,
-			'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
-			'Summery' => 'Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text. Descriptive Text.',
-			'NumOfSignatures' => '89546',
-			'Username' => 'Tom Jones',
-			'ProgressItems' => array(
-				array('good'=>'y','details'=>'Progress Report 1, Progress Report 1, Progress Report 1, Progress Report 1, Progress Report 1.'),
-				array('good'=>'n','details'=>'Progress Report 2, Progress Report 2, Progress Report 2, Progress Report 2, Progress Report 2.'),
-				array('good'=>'n','details'=>'Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3.')
-				)
-		);
+		$this->load->model('campaign_model','campaign');
+		$this->pages_model->SetPageCode('campaign_petition');
+		$data['sections'] = array (
+					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_more_title')),
+					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title')),
+					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title')),
+					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_comments_title'))
+					);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Campaign - '.$SelectedCampaign);
+		$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$this->campaign->GetCampaignName($campaign_id))));
 		$this->frame_public->SetContentSimple('campaign/CampaignVote', $data);
 		
 		// Load the public frame view (which will load the content view)

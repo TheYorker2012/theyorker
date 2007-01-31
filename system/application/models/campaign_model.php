@@ -14,7 +14,7 @@ class Campaign_model extends Model
 	{
 		//Call the Model Constructor
 		parent::Model();
-	}          
+	}
 	
 	/**
 	 * Returns an array of the Campaigns that are currently being voted on
@@ -41,6 +41,20 @@ class Campaign_model extends Model
 			}
 		}
 		return $result;
+	}
+	
+	/**
+	 * Returns the name of the given campaign id
+	 * @return the name as a string.
+	 */
+	function GetCampaignName($campaign_id)
+	{
+		$sql = "SELECT campaign_name
+			FROM campaigns
+			WHERE campaign_id = ".$campaign_id;
+		$query = $this->db->query($sql);
+		$row = $query->row();
+		return $row->campaign_name;
 	}
 	
 	/**
