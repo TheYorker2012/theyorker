@@ -1,7 +1,7 @@
 <p>Some useful text should go here:-</p>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
-	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>\n';
+	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>';
 }?>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
@@ -108,7 +108,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			<option value="choose">Please Choose</option>
 			<?php
 			foreach($data as $d) {
-				die('we get this far');
+				echo var_dump($d);
 				echo '<option value="'.$d['string'].'">'.$d['title'].'</option>';
 			}
 			?>
