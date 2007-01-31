@@ -43,6 +43,7 @@
 			echo '		<img style="float: left; padding: 0.5em;" src="'.$reviews['review_image'][$topten].'" alt="#" />';
 			echo '		<h3 style="display: inline;"><a href="/context/evil_eye_lounge/food">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<a href="'.$reviews['review_website'][$topten].'">www.website.co.uk</a><br />';
+			echo '		User rating: 5.7/10<br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';
 			echo '	</div>';
 		}
