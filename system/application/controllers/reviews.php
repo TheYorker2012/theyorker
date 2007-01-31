@@ -123,24 +123,24 @@ class Reviews extends Controller {
 		switch($review_type)
 		{
 			case 0:
-				$data['page_id'] 	= 101;
-				$data['comments'] 	= array(); //$this->Review_model->GetComments(101,strlen($page_code)); //User comments - Article id isn't real will fix... just the db changed on me before a commit and need sleep, frb501
+				$data['page_id'] 	= 20;
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],strlen($page_code)); //User comments - Article id isn't real will fix... just the db changed on me before a commit and need sleep, frb501
 				$data['article_id'] = strlen($page_code);
 				$database_result 	= $this->Review_model->GetReview($page_code,'food');
 				$this->frame_public->SetTitle('Food Review');
 			break;
 	
 			case 1:
-				$data['page_id'] 	= 102;
-				$data['comments'] 	= $this->Review_model->GetComments(102,strlen($page_code)); //User comments
+				$data['page_id'] 	= 21;
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],strlen($page_code)); //User comments
 				$data['article_id'] = strlen($page_code);
 				$database_result 	= $this->Review_model->GetReview($page_code,'drink');
 				$this->frame_public->SetTitle('Drink Review');
 			break;
 	
 			case 2:
-				$data['page_id'] 	= 103;
-				$data['comments'] 	= $this->Review_model->GetComments(103, strlen($page_code)); //User comments
+				$data['page_id'] 	= 22;
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'], strlen($page_code)); //User comments
 				$data['article_id'] = strlen($page_code);
 
 				$database_result 	= $this->Review_model->GetReview($page_code,'culture');

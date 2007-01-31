@@ -11,8 +11,14 @@
 	}
 	else
 	{
+	//Display comments by users - Last 3
+	for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 4); $commentno--)
+		{
+			echo '<div class="WhyNotTry"><b>'.$comments['comment_author'][$commentno].'</b> | '.$comments['comment_date'][$commentno].'<br /> '.$comments['comment_content'][$commentno].'</div><br />';
+		}
 
 	}
+	
 ?>
 		<div>
 <?php
