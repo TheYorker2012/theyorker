@@ -341,6 +341,15 @@ class Pages extends Controller
 	 */
 	function page($Operation, $PageCode='')
 	{
+		// Get url segments after the first (controller).
+		$num_segments = $this->uri->total_segments();
+		$segments = array();
+		for ($counter = 5; $counter <= $num_segments; ++$counter) {
+			$segments[] = $this->uri->segment($counter);
+		}
+		$PageCode = implode('/',$segments);
+		// We now have the page code so we can continue.
+		
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 		$this->pages_model->SetPageCode('admin_pages_page');
 		if ($this->_CheckViewPermissions('page_edit')) {
@@ -380,6 +389,15 @@ class Pages extends Controller
 	 */
 	function custom($Operation, $CustomPageCode='')
 	{
+		// Get url segments after the first (controller).
+		$num_segments = $this->uri->total_segments();
+		$segments = array();
+		for ($counter = 5; $counter <= $num_segments; ++$counter) {
+			$segments[] = $this->uri->segment($counter);
+		}
+		$CustomPageCode = implode('/',$segments);
+		// We now have the page code so we can continue.
+		
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 		$this->pages_model->SetPageCode('admin_pages_custom');
 		if ($this->_CheckViewPermissions('custom_edit')) {
