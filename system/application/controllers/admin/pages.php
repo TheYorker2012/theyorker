@@ -73,17 +73,23 @@ class Pages extends Controller
 			
 			$data = array();
 			
-			$data['pages'] = array();
+			$data['pages'] = array(0 => FALSE);
 			$data['custom'] = array();
 			
 			foreach ($all_pages as $key => $page) {
 				if ('custom:' == substr($page['page_codename'],0,7)) {
 					$page['codename'] = substr($page['page_codename'],7);
 					$data['custom'][] = $page;
-				} else {
+				} elseif ($page['page_id'] != 0) {
 					$page['codename'] = $page['page_codename'];
 					$data['pages'][] = $page;
+				} else {
+					$page['codename'] = $page['page_codename'];
+					$data['pages'][0] = $page;
 				}
+			}
+			if (FALSE === $data['pages'][0]) {
+				unset($data['pages'][0]);
 			}
 			
 			$data['permissions'] = $this->mPermissions;

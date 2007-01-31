@@ -311,7 +311,8 @@ class Pages_model extends Model
 			'INNER JOIN `property_types`'.
 			' ON `property_types`.`property_type_id`'.
 			' =`page_properties`.`page_property_property_type_id` '.
-			'WHERE `pages`.`page_codename`=?';
+			'WHERE `pages`.`page_codename`=?
+				OR `pages`.`page_id`=0';
 		
 		$query = $this->db->query($sql, $this->mPageCode);
 		
