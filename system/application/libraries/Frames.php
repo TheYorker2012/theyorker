@@ -51,6 +51,15 @@ class FramesView extends Outputter
 		$this->mViewPath = $ViewPath;
 	}
 	
+	/// Set the view to use.
+	/**
+	 * @param $ViewPath string The path of a CI view.
+	 */
+	function SetView($ViewPath)
+	{
+		$this->mViewPath = $ViewPath;
+	}
+	
 	/// Get the value of a specific data field.
 	/**
 	 * @param $Index integer The index of the data.
