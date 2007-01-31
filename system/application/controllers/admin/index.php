@@ -11,17 +11,18 @@ class Index extends Controller
 		parent::Controller();
 		
 		// Load the public frame
-		$this->load->library('frame_public');
+		$this->load->library('frame_organisation');
+		$this->main_frame = $this->frame_organisation;
 	}
 	
 	function index()
 	{
 		// Set up the public frame
-		$this->frame_public->SetTitle('Admin');
-		$this->frame_public->SetContentSimple('admin/admin');
+		$this->main_frame->SetTitle('Admin');
+		$this->main_frame->SetContentSimple('admin/admin');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 
