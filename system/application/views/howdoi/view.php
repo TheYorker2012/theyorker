@@ -1,10 +1,54 @@
-	<div id='newsnav'>
-		<ul id='newsnavlist'>
-			<li><a href='/howdoi/' id='current'><img src='/images/prototype/news/uk.png' alt='How Do I?' title='How Do I?' /> Back to questions</a></li>
-		</ul>
-	</div>
-    <div class="padding">
-        <h3>Something here</h3>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam tempus risus in eros. Donec velit turpis, scelerisque eget, euismod vitae, pretium ut, mauris. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam ipsum felis, tincidunt malesuada, accumsan eu, pellentesque tincidunt, lorem. Proin consectetuer, risus quis ultricies scelerisque, justo mauris pretium augue, et vulputate est felis sed dui. Integer eu felis. Integer congue libero sit amet sapien. Sed id eros. Sed commodo lorem in ipsum. In hac habitasse platea dictumst. Morbi pellentesque ligula nec sem. Donec dictum, sapien ultrices facilisis bibendum, diam neque aliquet nibh, non ornare turpis odio in urna. Phasellus elementum. Vivamus lacus felis, posuere a, luctus eget, tristique vel, turpis. Suspendisse non tortor. Maecenas lectus justo, suscipit eu, sodales vitae, sagittis lobortis, metus. Nam vehicula felis ac metus. Pellentesque sit amet lorem et sem rhoncus congue.
-        <br />
-    </div>
+<div class="RightToolbar">
+  <h4>Just Ask ...</h4>
+  Is there a question you reallywant to know the answer to, but just don't know where to start?
+  <br /><br />
+  Give us a challenge
+  <form name='' id='' action='' method='' class='form'>
+    <fieldset>
+      <textarea>How Do I?</textarea>
+      <input type="submit" value="Ask" class="button" />
+    </fieldset>
+  </form>
+  <br />
+  <h4>Question Categories</h4>
+  <a href="#">Opening Times</a><br />
+  <a href="#">Numbers</a><br />
+  <a href="#">Essentials</a><br />
+  <a href="#">Other Info</a><br />
+  <a href="#">The Nearest ...</a><br />
+  <br />
+  <h4>Quick Question Jump</h4>
+  <a href="#">Pharmacy</a><br />
+  <a href="#">Post Office</a><br />
+  <a href="#">Bank</a><br />
+  <a href="#">Cash Point</a><br />
+</div>
+
+<div class="grey_box">
+  <h2>The Nearest ...</h2>
+  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Nunc elementum arcu non risus. Vestibulum arcu enim,
+placerat nec, malesuada eget, pharetra at, mi. Nullam
+rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit.
+</div>
+
+<div class="blue_box">
+  <h2>Pharmacy</h2>
+  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Nunc elementum arcu non risus. Vestibulum arcu enim,
+placerat nec, malesuada eget, pharetra at, mi. Nullam
+rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit.<br /><br />
+  <img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
+</div>
+
+<div class="blue_box">
+  <h2>Post Office</h2>
+  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Nunc elementum arcu non risus. Vestibulum arcu enim,
+placerat nec, malesuada eget, pharetra at, mi. Nullam
+rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit.<br /><br />
+  <img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
+</div>
