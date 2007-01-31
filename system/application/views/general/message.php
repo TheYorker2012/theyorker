@@ -9,11 +9,12 @@ This is very much just a bodge to get something working
 		elseif ($class === 'warning')
 			echo '#FF8000';
 		elseif ($class === 'information')
-			echo '#808080';
+			echo '#FFFF00';
+		elseif ($class === 'success')
+			echo '#00FF00';
 		else
 			echo '#808080';
 	?>
 ">
-<?php echo $type; ?><br/>
 <?php echo $text; ?>
 </TD></TR></TABLE>

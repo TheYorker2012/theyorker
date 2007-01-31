@@ -56,7 +56,7 @@ class Pages extends Controller
 	{	
 		if (!$this->mPermissions[$Permission]) {
 			$this->frame_public->AddMessage(
-					new PermissionDeniedMsg($Message)
+					new Message('error',$Message)
 				);
 			return FALSE;
 		} else {
@@ -132,7 +132,7 @@ class Pages extends Controller
 				// Check if new codename is in use
 				$Data['codename'] = $input['codename'];
 				if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-					$this->frame_public->AddMessage(new InformationMsg('Codename in use','A page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
+					$this->frame_public->AddMessage(new Message('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
 					$save_failed = TRUE;
 				}
 			} else {
@@ -151,12 +151,12 @@ class Pages extends Controller
 				// Try and save to db
 				$input['codename'] = $Prefix.$input['codename'];
 				if ($this->pages_model->CreatePage($input)) {
-					$this->frame_public->AddMessage(new InformationMsg('Saved', 'The page was successfully saved'));
+					$this->frame_public->AddMessage(new Message('success', 'The page was successfully saved'));
 					if ($Data['codename'] != $page_code) {
 						redirect($Redirect.$Data['codename']);
 					}
 				} else {
-					$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The page could not be saved as an internal error occurred'));
+					$this->frame_public->AddMessage(new Message('error', 'The page could not be saved as an internal error occurred'));
 					$save_failed = TRUE;
 				}
 			}
@@ -256,7 +256,7 @@ class Pages extends Controller
 						// Check if new codename is in use
 						$data['codename'] = $input['codename'];
 						if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-							$this->frame_public->AddMessage(new InformationMsg('Codename in use','A page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
+							$this->frame_public->AddMessage(new Message('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.'));
 							$save_failed = TRUE;
 						}
 					} else {
@@ -276,12 +276,12 @@ class Pages extends Controller
 					// Try and save to db
 					$input['codename'] = $Prefix.$input['codename'];
 					if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-						$this->frame_public->AddMessage(new InformationMsg('Saved', 'The page was successfully saved'));
+						$this->frame_public->AddMessage(new Message('success', 'The page was successfully saved'));
 						if ($data['codename'] != $page_code) {
 							redirect($Redirect.$data['codename']);
 						}
 					} else {
-						$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The page could not be saved as an internal error occurred'));
+						$this->frame_public->AddMessage(new Message('error','The page could not be saved as an internal error occurred'));
 					}
 				}
 			}
@@ -325,9 +325,9 @@ class Pages extends Controller
 				if (count($input['properties'])+count($input['property_add'])> 0) {
 					// Try and save to db
 					if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-						$this->frame_public->AddMessage(new InformationMsg('Saved', 'The page was successfully saved'));
+						$this->frame_public->AddMessage(new Message('success', 'The page was successfully saved'));
 					} else {
-						$this->frame_public->AddMessage(new ErrorMsg('Internal Error', 'The page could not be saved as an internal error occurred'));
+						$this->frame_public->AddMessage(new Message('error','The page could not be saved as an internal error occurred'));
 					}
 				}
 				

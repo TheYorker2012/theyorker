@@ -171,7 +171,7 @@ EXTRAHEAD;
 			} else {
 				// invalid
 				$this->frame_public->AddMessage(
-						new ErrorMsg('Unrecognised date range: "'.$DateRange.'"')
+						new Message('error','Unrecognised date range: "'.$DateRange.'"')
 					);
 				$use_default_range = TRUE;
 			}
