@@ -194,11 +194,10 @@ class Review_model extends Model {
 	}
 
 	//Mirrored from GetReview - frb501 - This should return all the rows in a given type
-	function TableReview($content_type_codename) 
+	function TableReview($content_type_codename, $tag_id = -1)
 	{
-		#dgh500
-		# need organisation type?
-		# need organisation fileas - what IS this?? all null in DB
+		$tag_join = ($tag_id == -1) ? '' : ' LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_tag_id = ? AND ot.organisation_tag_organisation_entity_id = o.organisation_entity_id ';
+
 		$sql = '
 			SELECT o.organisation_entity_id, o.organisation_name, o.organisation_url, o.organisation_directory_entry_name,
 			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
@@ -209,41 +208,43 @@ class Review_model extends Model {
 			ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
 			LEFT JOIN comment_summary_cache AS csc
 			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
-			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id
-			WHERE ct.content_type_codename = ?';
+			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id ' . $tag_join . ' WHERE ct.content_type_codename = ?';
+
 		
-		
-		$query = $this->db->query($sql, array($content_type_codename));
+		$query = $this->db->query($sql, array($content_type_codename, $tag_id));
 		$reviews = $query->result_array();
-
-		$entity_ids = array();
-		foreach ($reviews as &$review)
+		
+		if (! empty($reviews))
 		{
-			$entity_ids[] = $review['organisation_entity_id'];
-			$review['tags'] = array();
-		}
-
-		$sql = '
-			SELECT ot.organisation_tag_organisation_entity_id, t.tag_name, tg.tag_group_name
-			FROM organisation_tags AS ot
-			INNER JOIN tags AS t
-			ON t.tag_id = ot.organisation_tag_tag_id
-			INNER JOIN tag_groups AS tg
-			ON tg.tag_group_id = t.tag_tag_group_id
-			WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
-			ORDER BY ot.organisation_tag_organisation_entity_id ASC';
-
-		$query = $this->db->query($sql);
-		$tags = $query->result_array();
-
-		foreach ($reviews as &$review)
-		{
-			foreach ($tags as $id => $tag)
+			$entity_ids = array();
+			foreach ($reviews as &$review)
 			{
-				if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
+				$entity_ids[] = $review['organisation_entity_id'];
+				$review['tags'] = array();
+			}
+	
+			$sql = '
+				SELECT ot.organisation_tag_organisation_entity_id, t.tag_name, tg.tag_group_name
+				FROM organisation_tags AS ot
+				INNER JOIN tags AS t
+				ON t.tag_id = ot.organisation_tag_tag_id
+				INNER JOIN tag_groups AS tg
+				ON tg.tag_group_id = t.tag_tag_group_id
+				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
+				ORDER BY ot.organisation_tag_organisation_entity_id ASC';
+	
+			$query = $this->db->query($sql);
+			$tags = $query->result_array();
+	
+			foreach ($reviews as &$review)
+			{
+				foreach ($tags as $id => $tag)
 				{
-					$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
-					unset($tags[$id]);
+					if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
+					{
+						$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
+						unset($tags[$id]);
+					}
 				}
 			}
 		}

@@ -217,7 +217,7 @@ class Reviews extends Controller {
 
 		$columns = array(0);
 
-		$database_result = $this->Review_model->TableReview($item_type);
+		$database_result = $this->Review_model->TableReview($item_type, 3);
 		$entries = array();
 
 		foreach($database_result as &$result)
