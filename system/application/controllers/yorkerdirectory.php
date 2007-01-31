@@ -141,7 +141,6 @@ class Yorkerdirectory extends Controller
 
 		$this->load->model('calendar/events_model');
 		
-		$this->load->library('frame_messages');
 		$this->load->library('view_calendar_select_week');
 		$this->load->library('view_calendar_list');
 		$this->load->library('date_uri');
@@ -171,8 +170,8 @@ EXTRAHEAD;
 
 			} else {
 				// invalid
-				$this->frame_messages->AddMessage(
-						'Unrecognised date range: "'.$DateRange.'"'
+				$this->frame_public->AddMessage(
+						new ErrorMsg('Unrecognised date range: "'.$DateRange.'"')
 					);
 				$use_default_range = TRUE;
 			}
@@ -237,13 +236,10 @@ EXTRAHEAD;
 		$directory_events->SetContent($events_list,'events_list');
 		$directory_events->SetData('date_range_description', $range_description);
 
-		// Set up the messages frame to use the directory events view
-		$this->frame_messages->SetContent($directory_events);
-
 		// Set up the directory frame to use the messages frame
 		$this->frame_public->SetPage('events');
 		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($this->frame_messages);
+		$this->frame_directory->SetContent($directory_events);
 
 		// Set up the public frame to use the directory frame
 		$this->frame_public->SetTitleParameters(
