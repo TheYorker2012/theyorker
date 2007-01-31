@@ -437,9 +437,13 @@ table.ReviewDetails td {
 	vertical-align: top;
 }
 
-td.ReviewDetailsTitle {
+span.ReviewDetailsTitle {
 	color: #ff6a00;
 	font-weight: bold;
+}
+
+span.ReviewDetailsInfo {
+	color: #999;
 }
 
 div.RateReview {

@@ -1,5 +1,5 @@
 <div class='RightToolbar'>
-	<h4>Features</h4>
+	<h4>Leagues</h4>
 	<div class='Entry'>
 		<div class='LifestylePuffer' style='background-color: #04669c;'>
 			<a href='/reviews/leagues'>

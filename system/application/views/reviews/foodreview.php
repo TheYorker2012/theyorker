@@ -1,26 +1,85 @@
 <div class='RightToolbar'>
-<?php echo '<img src="' . $review_image. '" style="width: 220px; margin-bottom: 3px;" />'; ?>
-		<h4>User Rating</h4>
-		STARS!
-		<h4>User Reviews</h4>
-	<?php
-	//No comments
-	if (empty($comments))
-	{
-		echo '<br /><B>No comments at the moment<br />Why not make one it works<br /></B>';
-	}
-	else
-	{
-	//Display comments by users - Last 3
-	for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 4); $commentno--)
-		{
-			echo '<div class="WhyNotTry"><b>'.$comments['comment_author'][$commentno].'</b> | '.$comments['comment_date'][$commentno].'<br /> '.$comments['comment_content'][$commentno].'</div><br />';
-		}
+	<h4>About</h4>
+	<div class='Entry'>
+		About said review place. Give description about your face
+	</div>
+	<h4>Details</h4>
+	<div class='Entry'>
+		<span class="ReviewDetailsTitle">Address</span><br />
+			<span class="ReviewDetailsInfo"><?php echo $address_main; ?></span><br />
+		<span class="ReviewDetailsTitle">Website</span><br />
+			<span class="ReviewDetailsInfo"><a href="<?php echo $website; ?>" target="_new"><?php echo $website; ?></a></span><br />
+		<span class="ReviewDetailsTitle">Email</span><br />
+				<span class="ReviewDetailsInfo"><a href=><?php echo $email; ?></a></span><br />
+		<span class="ReviewDetailsTitle">Book Online</span><br />
+				<span class="ReviewDetailsInfo"><a href=#>Click Here/Not Available</a></span><br />
+		<span class="ReviewDetailsTitle">Telephone</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $telephone; ?></span><br />
+		<span class="ReviewDetailsTitle">Opening Times</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $opening_times; ?></span><br />
+	</div>
+	<h4>Tips</h4>
+	<div class='Entry'>
+		<span class="ReviewDetailsTitle">Yorker Recommends</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $yorker_recommendation; ?></span><br />
+		<span class="ReviewDetailsTitle">Average Drink Price</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $average_price; ?></span><br />
+		<span class="ReviewDetailsTitle">Expense Rating</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $price_rating; ?></span><br />
+	</div>
+</div>
 
-	}
-	
-?>
-		<div>
+<div class="grey_box">
+	<div style="float: right; width: 60%;">
+		<?php echo '<img width="230px" style="float: right;" src="' . $review_image. '" style="width: 220px; margin-bottom: 3px;" />'; ?>
+	</div>
+	<div style="width:40%">
+		<h2 style='margin-bottom: 5px;'><?php echo $review_title; ?></h2><br />
+		<h5>"<?php echo $review_blurb; ?>"</h5><br />
+		<h4>Rating</h4>
+		<img width="140px" src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" />
+	</div>
+</div>
+<div class="grey_box">
+	<h2>reviews</h2>
+		<span style='font-size: medium;'><b>Gary Oldman</b></span><br />
+		25th March 2007<br />
+		<span style='color: #ff6a00;'>Read more...</span>
+	        <p>
+			A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.
+		</p>
+</div>
+<div class="blue_box">
+	<h2>your comments</h2>
+	User Rating: <h5 style="display:inline;">5.7</h5>/10 (based on 12 votes)
+	<hr>
+	<b>some dousche | 03-01-2007</b><br />
+	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.	<hr>
+	<b>some dousche | 03-01-2007</b><br />
+	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.	<hr>
+	<b>some dousche | 03-01-2007</b><br />
+	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.
+	<hr>
+	<a href=#>View all comments</a><br /><br />
+	<h2>rate this place</h2>
+	I give this place a
+		<form style="display: inline;">
+   			<SELECT name="component-select">
+				<OPTION selected>1</OPTION>
+				<OPTION >2</OPTION>
+				<OPTION>3</OPTION>
+				<OPTION>4</OPTION>
+				<OPTION>5</OPTION>
+				<OPTION>6</OPTION>
+				<OPTION>7</OPTION>
+				<OPTION>8</OPTION>
+				<OPTION>9</OPTION>
+				<OPTION>10</OPTION>
+			</SELECT>
+			<input type="submit" value="Vote" />
+		</form>
+	<br /><br />
+	<h2>add comment</h2>
 <?php
 	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
 	echo form_open('reviews/addcomment');
@@ -28,82 +87,9 @@
 	echo form_hidden('comment_article_id',$article_id);
 	$userid = 1337;
 	echo form_hidden('comment_user_entity_id',$userid);
-
-	echo '<br />Comment: <br />';
-
 	echo form_hidden('return_page',$this->uri->uri_string());
-	echo '<textarea name="comment_text" rows="5" style="width: 220px;"></textarea><br />';
+	echo '<textarea name="comment_text" rows="5" style="width: 95%;"></textarea><br />';
 	echo '<input type="submit" value="Add Comment"><br />';
 ?>
-		</div>
-		<div class="AverageRating">
-			<a href="#">View All Comments</a><br />
-		</div>
-		</div>
-
-<div class='grey_box'>
-			<h2 style='margin-bottom: 5px;'><?php echo $review_title; ?></h2>
-			<img src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" />
-	        <p><?php echo $review_blurb; ?></p>
-		<table class="ReviewDetails">
-			<tr>
-				<td class="ReviewDetailsTitle">Address</td>
-				<td>
-					<?php echo $address_main; ?><br />
-					<?php echo $address_postcode; ?>
-				</td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Website</td>
-				<td><a href="<?php echo $website; ?>" target="_new"><?php echo $website; ?></a></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Email</td>
-				<td><a href=><?php echo $email; ?></a></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Book Online</td>
-				<td><a href=#>Click Here/Not Available</a></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Telephone</td>
-				<td><?php echo $telephone; ?></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Opening Times</td>
-				<td><?php echo $opening_times; ?></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Yorker Recommends</td>
-				<td><?php echo $yorker_recommendation; ?></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Average Drink Price</td>
-				<td><?php echo $average_price; ?></td>
-			</tr>
-			<tr>
-				<td class="ReviewDetailsTitle">Expense Rating</td>
-				<td><?php echo $price_rating; ?></td>
-			</tr>
-		</table>
-
-
-</div>
-<div class='blue_box'>
-		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
-		<h2 style='margin-bottom: 0px; '>Chris Travis</h2>
-		<div style='font-size: x-small; margin-bottom: 2px;'>Thursday, 25th January 2007</div>
-		I didn't like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn't like dan. He doesn't know dan. Dan doesn't know the farmer. Barry Scott sells cillit bang.<br />
-</div>
-<div class='blue_box'>
-		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
-		<h2 style='margin-bottom: 0px; '>Chris Travis</h2>
-		<div style='font-size: x-small; margin-bottom: 2px;'>Thursday, 25th January 2007</div>
-		I didn't like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn't like dan. He doesn't know dan. Dan doesn't know the farmer. Barry Scott sells cillit bang.<br />
-</div>
-<div class='blue_box'>
-		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
-		<h2 style='margin-bottom: 0px; '>Chris Travis</h2>
-		<div style='font-size: x-small; margin-bottom: 2px;'>Thursday, 25th January 2007</div>
-		I didn't like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn't like dan. He doesn't know dan. Dan doesn't know the farmer. Barry Scott sells cillit bang.<br />
+	<br />
 </div>
