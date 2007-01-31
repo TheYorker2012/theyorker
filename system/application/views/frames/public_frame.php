@@ -52,7 +52,18 @@ function preloader()
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
-		<a class="HeaderLinks" href="/login/">log in</a> |
+		<?php
+		if ($login['logged_in']) {
+			echo 'Logged in as '.$login['username'].'.';
+			?>
+			<a class="HeaderLinks" href="/login/">log out</a> |
+			<?php
+		} else {
+			?>
+			<a class="HeaderLinks" href="/login/">log in</a> |
+			<?php
+		}
+		?>
 		<a class="HeaderLinks" href="/register/">register</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |
 		<a class="HeaderLinks" href="/contact/">contact us</a> |

@@ -58,6 +58,16 @@ class Frame_public extends FrameNavbar
 		$this->mDataArray['description'] = '';
 		$this->mDataArray['keywords'] = '';
 		$this->mTitleSet = FALSE;
+		
+		$this->mDataArray['login'] = array(
+				'logged_in' => FALSE,
+			);
+		$CI = &get_instance();
+		$CI->load->library('user_auth');
+		if ($CI->user_auth->isLoggedIn) {
+			$this->mDataArray['login']['logged_in'] = TRUE;
+			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
+		}
 	}
 	
 	/**
