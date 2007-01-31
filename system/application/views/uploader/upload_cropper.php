@@ -1,7 +1,7 @@
 <p>Some useful text should go here:-</p>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
-	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>';
+	echo '<div id="previewArea-'.$Single->image_type_id.'"></div>\n';
 }?>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
@@ -56,18 +56,19 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
-			if (imgTypeNew == 1) {
-				$( 'previewArea-0').display = 'none';
+<?php		foreach ($ThumbDetails->result() as $Single) : ?>
+			if (imgTypeNew == <?=$Single->image_type_id?>) {
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
-					minWidth: 100,
-					minHeight: 120,
-					ratioDim: { x: 100, y: 120 },
+					minWidth: <?=$Single->image_type_width?>,
+					minHeight: <?=$Single->image_type_height?>,
+					ratioDim: { x: <?=$Single->image_type_width?>, y: <?=$Single->image_type_height?> },
 					displayOnInit: true, 
 					onEndCrop: onEndCrop,
-					previewWrap: 'previewArea-1'} );
+					previewWrap: '<?=$Single->image_type_id?>'} );
 				this.curCrop.reset();
 			}
+<?php		endforeach; ?>
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
@@ -107,6 +108,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			<option value="choose">Please Choose</option>
 			<?php
 			foreach($data as $d) {
+				die('we get this far');
 				echo '<option value="'.$d['string'].'">'.$d['title'].'</option>';
 			}
 			?>
