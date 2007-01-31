@@ -85,6 +85,29 @@ class Yorkerdirectory extends Controller
 
 		$subpageview='directory/admin_directory_view';
 
+		// Members data
+		$members = $this->directory_model->GetDirectoryOrganisationCardsByEntryName($organisation);
+		// translate into nice names for view
+		$data['organisation']['cards'] = array();
+		foreach ($members as $member) {
+			$data['organisation']['cards'][] = array(
+				'name' => $member['business_card_name'],
+				'title' => $member['business_card_title'],
+				#'course' => $member['business_card_course'],
+				'blurb' => $member['business_card_blurb'],
+				'email' => $member['business_card_email'],
+				'phone_mobile' => $member['business_card_mobile'],
+				'phone_internal' => $member['business_card_phone_internal'],
+				'phone_external' => $member['business_card_phone_external'],
+				'postal_address' => $member['business_card_postal_address'],
+				'colours' => array(
+					'background' => $member['business_card_colour_background'],
+					'foreground' => $member['business_card_colour_foreground'],
+				),
+				'type' => $member['business_card_type_name'],
+			);
+		}
+
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 

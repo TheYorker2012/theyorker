@@ -1,7 +1,7 @@
 <h2>Organisation Information</h2>
 Organisation name : <strong><?php echo $organisation['name']; ?></strong><br />
 Organisation type : <strong><?php echo $organisation['type']; ?></strong>
-<form id='orgdetails' name='orgdetails' action='/admin/yorkerdirectoryview/theyorker/editdetails' method='POST' class='form'>
+<form id='orgdetails' name='orgdetails' action='/admin/directory/<?php echo $organisation['shortname']; ?>/editinformation' method='POST' class='form'>
 	<fieldset>
 		<legend>Update Information</legend>
 		<label for='orgdetails_image'>Image:</label>
@@ -35,43 +35,15 @@ Organisation type : <strong><?php echo $organisation['type']; ?></strong>
 		<input type='text' name='orgdetails_fax_number' value='<?php echo $organisation['fax_number']; ?>' />
 		<br />
 		<label for='orgdetails_about'>About:</label>
-		<textarea name='orgdetails_about' cols='40' rows='10'><?php echo $organisation['description']; ?></textarea>
-	</fieldset>
-	<fieldset>
+		<textarea name='orgdetails_about' cols='50' rows='10'><?php echo $organisation['description']; ?></textarea>
+		<br />
 		<label for='orgdetails_submitbutton'></label>
 		<input type='submit' name='orgdetails_submitbutton' value='Update' class='button' />
 	</fieldset>
 </form>
-
-<h2>Members</h2>
-The members of your society or organisation you list here will all be shown online but only the members that are givin a title will apear on the main part of the website. Only members with a title will have their full information listed.
-<h3>Full member list</h3>
-<p>This is a complete list of the members of your society/organisation.</p>
-<p>
-	<table width='100%'>
-		<tr>
-			<td><strong>Name</strong></td>
-			<td><strong>Email</strong></td>
-			<td><strong>Paid</strong></td>
-			<td><strong>Delete?</strong></td>
-		</tr>
-		<tr>
-			<td>Leroy Jenkins</td>
-			<td><a href='mailto:lj500@york.ac.uk'>lj500@york.ac.uk</a></td>
-			<td><a href='/admin/yorkerdirectoryview/theyorker/paid/123'>N</a></td>
-			<td><a href='/admin/yorkerdirectoryview/theyorker/delete/123'>X</a></td>
-		</tr>
-		<tr>
-			<td>Brian Peppers</td>
-			<td><a href='mailto:bp500@york.ac.uk'>bp500@york.ac.uk</a></td>
-			<td><a href='/admin/yorkerdirectoryview/theyorker/unpaid/456'>Y</a></td>
-			<td><a href='/admin/yorkerdirectoryview/theyorker/delete/456'>X</a></td>
-		</tr>
-	</table>
-</p>
-<form name='memberadd' method='post' action='/admin/yorkerdirectoryview/theyorker/addmember' class='form'>
+<form name='memberadd' method='post' action='/admin/directory/<?php echo $organisation['shortname']; ?>/addmember' class='form'>
 	<fieldset>
-		<legend>Add member</legend>
+		<legend>Add/Edit member</legend>
 		<label for='memberadd_name'>Name:</label>
 		<input type='text' name='memberadd_name' />
 		<br />
@@ -99,11 +71,13 @@ The members of your society or organisation you list here will all be shown onli
 		<label for='memberadd_phone_external'>Phone External:</label>
 		<input type='text' name='memberadd_phone_external' />
 		<br />
-		<label for='memberadd_paid'>Paid:</label>
-		<input type='checkbox' name='memberadd_paid' value='1' />
-	</fieldset>
-	<fieldset>
 		<label for='memberadd_addbutton'></label>
-		<input name='memberadd_addbutton' type='submit' id='memberadd_addbutton' value='Add' class='button' />
+		<input name='memberadd_addbutton' type='submit' id='memberadd_addbutton' value='Add/Edit' class='button' />
 	</fieldset>
 </form>
+<h3>Current Members</h3>
+<?php
+foreach ($organisation['cards'] as $member) {
+	echo $member['name']." - ".$member['title']." <a href='/admin/directory/".$organisation['shortname']."/edit'>(Edit)</a> <a href='/admin/directory/".$organisation['shortname']."/delete'>(Delete)</a><br />";
+}
+?>
