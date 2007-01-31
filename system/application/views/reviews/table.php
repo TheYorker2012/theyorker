@@ -1,5 +1,5 @@
 <span class="SmallText">
-	<span class="FaintText">Showing</span> <?php echo count($entries); ?>
+	<span class="FaintText">Showing</span> <?php echo count($entries[0]['review_title']); ?>
 	<span class="FaintText">entries from</span> Italian Food 
 	<span class="FaintText">ordered by</span> Star Rating
 	<br />
@@ -17,11 +17,9 @@
 		</tr>
 
 <?php
-	$flip = 0;
+	$flip = 1;
 	foreach ($entries as &$entry)
 	{
-		$flip = ! $flip;
-
 		echo '<tr class="ReviewElement' . $flip . '">
 				<td>
 				<a href="' . $entry['review_table_link'] . '"><img src="' . $entry['review_image'] . '" alt="#" /></a>
@@ -37,6 +35,8 @@
 			<td>'.$entry['review_tags']['Cuisine'] .'</td>
 -->
 		</tr>';
+		if ($flip == 1) $flip = 2;
+		else $flip = 1;
 	}
 ?>
 
