@@ -16,6 +16,7 @@
  */
 class Pages extends Controller
 {
+	/// array Permissions array of bools indexed by permission name.
 	protected $mPermissions;
 	
 	/// Default constructor
@@ -47,6 +48,8 @@ class Pages extends Controller
 	
 	/// Check if the user has permission to view these pages.
 	/**
+	 * @param $Permission string Permission name (key to $this->mPermissions).
+	 * @param $Message string A message to display in the event of failure.
 	 * @return bool Whether the user has permission.
 	 */
 	function _CheckViewPermissions($Permission = 'view', $Message = 'You do not have permission to access this page')
@@ -89,6 +92,14 @@ class Pages extends Controller
 		$this->frame_public->Load();
 	}
 	
+	/// Setup the data array for the view for creating a new page.
+	/**
+	 * @param $Data array Data used for setting up the page.
+	 * @param $Target string Page to send the updated data to.
+	 * @param $Redirect string Page to direct to after successful save.
+	 * @param $Prefix string Prefix to add to codenames.
+	 * @return array Modified @a $Data array ready for view.
+	 */
 	private function _NewPage($Data, $Target, $Redirect, $Prefix = '')
 	{
 		$Data['target'] = $Target;
@@ -148,9 +159,9 @@ class Pages extends Controller
 		return $Data;
 	}
 	
-	///
+	/// Setup the data array for the view for editing a page.
 	/**
-	 * @param $Data &array Data used for setting up the page.
+	 * @param $Data array Data used for setting up the page.
 	 * @param $InputPageCode string Page code from uri.
 	 * @param $Target string Page to send the updated data to.
 	 * @param $Redirect string Page to direct to after successful save.
@@ -160,6 +171,7 @@ class Pages extends Controller
 	 *	- 'type'
 	 *	- 'text'
 	 * @param $Prefix string Prefix to add to codenames.
+	 * @return array Modified @a $Data array ready for view.
 	 */
 	private function _EditPage(
 			$Data,
@@ -320,6 +332,13 @@ class Pages extends Controller
 		return $data;
 	}
 	
+	/// Function for administrating pages of the website.
+	/**
+	 * @param $Operation string An operation to perform:
+	 *	- new
+	 *	- edit (@a $PageCode required)
+	 * @param $PageCode string Page code of page to edit.
+	 */
 	function page($Operation, $PageCode='')
 	{
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
@@ -351,6 +370,14 @@ class Pages extends Controller
 		$this->frame_public->Load();
 	}
 	
+	/// Function for administrating custom pages.
+	/**
+	 * @param $Operation string An operation to perform:
+	 *	- new
+	 *	- edit (@a $PageCode required)
+	 * @param $PageCode string Page code of custom page to edit
+	 *	(without preceeding 'custom:').
+	 */
 	function custom($Operation, $CustomPageCode='')
 	{
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
@@ -392,6 +419,7 @@ class Pages extends Controller
 		}
 		$this->frame_public->Load();
 	}
+	
 }
 
 ?>
