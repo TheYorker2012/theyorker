@@ -511,9 +511,9 @@ class Wikiparser {
 					'(\s+[^\]]*?)?'. // with optional title
 				'\]'.
 				'|'. // or
-				'((https?):\/\/[\S]*[^\s\.\,])'. // implicit url
+				'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url
 				'|'. // or
-				'([^\s,@]+@([^\s,@\.]+\.)*[^\s,@\.]+)'. // implicit email address
+				'([^\s,@\<\>\{\}]+@([^\s,@\.\<\>\{\}]+\.)*[^\s,@\.\<\>\{\}]+)'. // implicit email address
 				')',
 			'emphasize'=>'(\'{2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
