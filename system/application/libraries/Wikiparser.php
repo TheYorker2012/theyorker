@@ -65,6 +65,7 @@ class Wikiparser {
 {{1}}
 <img src="/images/prototype/news/quote_close.png" alt="Quote" title="Quote" />
 <br /><span class="author">{{2}}</span></blockquote>',
+				'br' => '<br />',
 			);
 	}
 	
