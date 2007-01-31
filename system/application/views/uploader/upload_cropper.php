@@ -108,7 +108,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			<option value="choose">Please Choose</option>
 			<?php
 			foreach($data as $d) {
-				echo var_dump($d);
+				die(var_dump($d));
 				echo '<option value="'.$d['string'].'">'.$d['title'].'</option>';
 			}
 			?>
