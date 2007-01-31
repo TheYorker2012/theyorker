@@ -1,10 +1,12 @@
 	<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
-	<h4>Petition</h4>
-	<p style="color: #FF9933; margin-bottom: 10px; font-size:x-large; text-align: center; margin-top: 10px;">239 Signatures</p>
+	<h4><?php echo $sections['sidebar_petition']['title']; ?></h4>
+	<p style="color: #FF9933; margin-bottom: 10px; font-size:x-large; text-align: center; margin-top: 10px;">
+		<?php echo str_replace("%%count%%", $campaign['signatures'], $sections['sidebar_petition']['blurb']); ?>
+	</p>
 	
-	<h4>Sign</h4>
+	<h4><?php echo $sections['sidebar_sign']['title']; ?></h4>
 	<div class='Entry'>
-		<p>I, <b>John Smith</b>, agree to the argument made on this page. Please register my opinion.<br><br>Please re-enter your password to sign: #TODO</p>
+		<?php echo str_replace("%%name%%", "User's Name", $sections['sidebar_sign']['blurb']); ?> #TODO</p>
 	</div>
 	
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
@@ -18,24 +20,12 @@
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">
-	<?php
-        foreach ($campaign_list as $key => $campaigns)
-	{
-		if ($key != $selected_campaign)
-			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
-	};
-	?>
+
 	</p>
 	
 	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
-	<?php
-        foreach ($campaign_list as $key => $campaigns)
-	{
-		if ($key != $selected_campaign)
-			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
-	};
-	?>
+
 	</p>
 	
     	<h4><?php echo $sections['sidebar_comments']['title']; ?></h4>
@@ -79,3 +69,7 @@
 	</div>
 
 </div>
+
+<pre>
+<?php print_r($data) ?>
+</pre>

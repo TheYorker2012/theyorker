@@ -1,6 +1,6 @@
 <div class='RightToolbar'>
 	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
-	<?php $sidebar_vote_blurb = str_replace("%%name%%", "John Smith", $sections['sidebar_vote']['blurb']); ?>
+	<?php $sidebar_vote_blurb = str_replace("%%name%%", "User's Name", $sections['sidebar_vote']['blurb']); ?>
 	<?php echo $sidebar_vote_blurb; ?>#TODO<br /><br /><!--ad padding, and the submit button-->
 	
 	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>

@@ -47,14 +47,14 @@ class Campaign_model extends Model
 	 * Returns the name of the given campaign id
 	 * @return the name as a string.
 	 */
-	function GetCampaignName($campaign_id)
+	function GetPetitionCampaign($campaign_id)
 	{
-		$sql = "SELECT campaign_name
+		$sql = "SELECT campaign_name,  campaign_petition_signatures
 			FROM campaigns
 			WHERE campaign_id = ".$campaign_id;
 		$query = $this->db->query($sql);
 		$row = $query->row();
-		return $row->campaign_name;
+		return array('name'=>$row->campaign_name,'signatures'=>$row->campaign_petition_signatures);
 	}
 	
 	/**
