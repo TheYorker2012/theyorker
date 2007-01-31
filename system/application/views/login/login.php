@@ -1,5 +1,5 @@
 <div id='login' align='center'>
-	<form name='login_form' action='login/loginsubmit' method='POST' class='form'>
+	<form name='login_form' action='/login/loginsubmit' method='POST' class='form'>
 		<fieldset>
 			<label for='username'>Username:</label>
 			<input name='username'>
