@@ -1,33 +1,46 @@
 	<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Petition
-	</div>
+	<h4>Petition</h4>
 	<p style="color: #FF9933; margin-bottom: 10px; font-size:x-large; text-align: center; margin-top: 10px;">239 Signatures</p>
 	
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Sign
+	<h4>Sign</h4>
+	<div class='Entry'>
+		<p>I, <b>John Smith</b>, agree to the argument made on this page. Please register my opinion.<br><br>Please re-enter your password to sign: #TODO</p>
 	</div>
-	<p style="margin-top: 0px; padding: 8px;">I, <b>John Smith</b>, agree to the argument made on this page. Please register my opinion.<br><br>Please re-enter your password to sign: #TODO</p>
 	
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Find out more
-	</div>
+	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
+	<p style="margin-top: 0px; padding: 8px;">
+	Email :<br><span style="color: #999; font-weight: bold;">campaigns@theyorker.co.uk</span><br><!--Could do with centering-->
+	Or Write :<br>
+	<span style="color: #999; font-weight: bold;">The Yorker<br><!--Change to "BoldText" or other thing insted of re-styleing-->
+	University of York<br>
+	YO10 5ND</span>
+	</p>
+	
+	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
+	<p style="margin-top: 0px; padding: 8px;">
+	<?php
+        foreach ($campaign_list as $key => $campaigns)
+	{
+		if ($key != $selected_campaign)
+			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+	};
+	?>
+	</p>
+	
+	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
+	<p style="margin-top: 0px; padding: 8px;">
+	<?php
+        foreach ($campaign_list as $key => $campaigns)
+	{
+		if ($key != $selected_campaign)
+			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+	};
+	?>
+	</p>
+	
+    	<h4><?php echo $sections['sidebar_comments']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
 	
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Related Stories
-	</div>
-	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
-	
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	External Links
-	</div>
-	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
-	
-	<div style="padding: 5px; background-color: #999; color: #fff; font-size: small; font-weight: bold; ">
-	Comments
-	</div>
-	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
 	</div>
 
 	 
