@@ -1,11 +1,9 @@
 <h2>Custom pages</h2>
 
-
 <?php if ($permissions['custom_new']) { ?>
-<a href="/admin/pages/custom/new">Create a new custom page</a><br /><br />
+<p><a href="/admin/pages/custom/new">Create a new custom page</a></p>
 <?php } ?>
-
-<?php
+<p><?php
 foreach ($custom as $page) {
 	echo '<a href="/pages/'.$page['codename'].'">';
 	echo $page['codename'];
@@ -20,15 +18,14 @@ foreach ($custom as $page) {
 	echo ')';
 	echo '<br />';
 }
-?>
-
+?></p>
 <h2>Pages</h2>
 
 <?php if ($permissions['page_new']) { ?>
-<a href="/admin/pages/page/new">Create a new page</a><br /><br />
+<p><a href="/admin/pages/page/new">Create a new page</a></p>
 <?php } ?>
 
-<?php
+<p><?php
 foreach ($pages as $page) {
 	echo $page['codename'];
 	echo ' (';
@@ -41,5 +38,4 @@ foreach ($pages as $page) {
 	echo ')';
 	echo '<br />';
 }
-
-?>
+?></p>

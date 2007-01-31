@@ -332,6 +332,17 @@ class Pages extends Controller
 		return $data;
 	}
 	
+	/// Delete a page.
+	private function _DeletePage(
+			$Data,
+			$InputPageCode,
+			$Target,
+			$Redirect,
+			$Prefix = '')
+	{
+		
+	}
+	
 	/// Function for administrating pages of the website.
 	/**
 	 * @param $Operation string An operation to perform:
@@ -351,20 +362,28 @@ class Pages extends Controller
 		// We now have the page code so we can continue.
 		
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$this->pages_model->SetPageCode('admin_pages_page');
-		if ($this->_CheckViewPermissions('page_edit')) {
+		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
 				case 'new':
+					$this->pages_model->SetPageCode('admin_pages_page_new');
 					$data = $this->_NewPage($data,
 									'/admin/pages/page/new',
 									'/admin/pages/page/edit/');
+					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
 					break;
 					
 				case 'edit':
+					$this->pages_model->SetPageCode('admin_pages_page_edit');
 					$this_uri = '/admin/pages/page/edit/';
 					$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
+					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					break;
+					
+				case 'delete':
+					$this->pages_model->SetPageCode('admin_pages_page_delete');
+					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
 					break;
 					
 				default:
@@ -374,7 +393,6 @@ class Pages extends Controller
 			$this->frame_public->SetTitleParameters( array(
 					'codename' => $PageCode,
 				) );
-			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
 		}
 		$this->frame_public->Load();
 	}
@@ -399,19 +417,21 @@ class Pages extends Controller
 		// We now have the page code so we can continue.
 		
 		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$this->pages_model->SetPageCode('admin_pages_custom');
-		if ($this->_CheckViewPermissions('custom_edit')) {
+		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
 			switch ($Operation) {
 				case 'new':
+					$this->pages_model->SetPageCode('admin_pages_custom_new');
 					$data = $this->_NewPage($data,
 									'/admin/pages/custom/new',
 									'/admin/pages/custom/edit/',
 									'custom:');
+					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
 					break;
 					
 				case 'edit':
+					$this->pages_model->SetPageCode('admin_pages_custom_edit');
 					$this_uri = '/admin/pages/custom/edit/';
 					$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
 							array(
@@ -423,6 +443,12 @@ class Pages extends Controller
 							),
 							'custom:'
 						);
+					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					break;
+					
+				case 'delete':
+					$this->pages_model->SetPageCode('admin_pages_custom_delete');
+					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
 					break;
 					
 				default:
@@ -432,8 +458,6 @@ class Pages extends Controller
 			$this->frame_public->SetTitleParameters( array(
 					'codename' => $CustomPageCode,
 				) );
-			
-			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
 		}
 		$this->frame_public->Load();
 	}
