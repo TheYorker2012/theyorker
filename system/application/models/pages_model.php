@@ -105,15 +105,15 @@ class Pages_model extends Model
 	/// array Information about the page.
 	protected $mPageInfo;
 	
-	/// array[string=>PageProperty] Array of PageProperty's indexed by label.
-	protected $mPageProperties;
+	/// array[string=>PageProperty] Array of PageProperty's indexed by scope then label.
+	protected $mProperties;
 	
 	/// Primary constructor.
 	function __construct()
 	{
 		$this->mPageCode = FALSE;
 		$this->mPageInfo = FALSE;
-		$this->mPageProperties = FALSE;
+		$this->mProperties = FALSE;
 	}
 	
 	/// Set the page code.
@@ -152,18 +152,19 @@ class Pages_model extends Model
 	
 	/// Get a specific property associated with the page.
 	/**
+	 * @param $GlobalScope bool Whether property has global scope.
 	 * @param $PropertyLabel string Label of desired property.
 	 * @param $PropertyTypeName string Property type name.
 	 * @return PagePropertyType/FALSE if property doesn't exist.
 	 * @pre PageCodeSet() === TRUE
 	 */
-	function GetProperty($PropertyLabel, $PropertyTypeName)
+	function GetProperty($GlobalScope, $PropertyLabel, $PropertyTypeName)
 	{
-		if (FALSE === $this->mPageProperties) {
+		if (FALSE === $this->mProperties) {
 			$this->GetProperties();
 		}
-		if (array_key_exists($PropertyLabel, $this->mPageProperties)) {
-			$property = $this->mPageProperties[$PropertyLabel];
+		if (array_key_exists($PropertyLabel, $this->mProperties[$GlobalScope])) {
+			$property = $this->mProperties[$GlobalScope][$PropertyLabel];
 			if ($property->TypeExists($PropertyTypeName)) {
 				return $property->GetPropertyType($PropertyTypeName);
 			} else {
@@ -178,13 +179,14 @@ class Pages_model extends Model
 	/// Get a specific text property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
+	 * @param $GlobalScope bool Whether property has global scope.
 	 * @param $Default string Default string.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre PageCodeSet() === TRUE
 	 */
-	function GetPropertyText($PropertyLabel, $Default = '')
+	function GetPropertyText($PropertyLabel, $GlobalScope = FALSE, $Default = '')
 	{
-		$value = $this->pages_model->GetProperty($PropertyLabel, 'text');
+		$value = $this->GetProperty($GlobalScope, $PropertyLabel, 'text');
 		if (FALSE === $value) {
 			return $Default;
 		} else {
@@ -195,13 +197,14 @@ class Pages_model extends Model
 	/// Get a specific integer property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
+	 * @param $GlobalScope bool Whether property has global scope.
 	 * @param $Default string Default number.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre PageCodeSet() === TRUE
 	 */
-	function GetPropertyInteger($PropertyLabel, $Default = -1)
+	function GetPropertyInteger($PropertyLabel, $GlobalScope = FALSE, $Default = -1)
 	{
-		$value = $this->pages_model->GetProperty($PropertyLabel, 'integer');
+		$value = $this->GetProperty($GlobalScope, $PropertyLabel, 'integer');
 		if (FALSE === $value) {
 			return $Default;
 		} else {
@@ -216,16 +219,17 @@ class Pages_model extends Model
 	/// Get a specific text property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
+	 * @param $GlobalScope bool Whether property has global scope.
 	 * @param $Default string Default string.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre PageCodeSet() === TRUE
 	 */
-	function GetPropertyWikitext($PropertyLabel, $Default = '')
+	function GetPropertyWikitext($PropertyLabel, $GlobalScope = FALSE, $Default = '')
 	{
-		$cache = $this->pages_model->GetProperty($PropertyLabel, 'wikitext_cache');
+		$cache = $this->GetProperty($GlobalScope, $PropertyLabel, 'wikitext_cache');
 		if (FALSE === $cache) {
 			// No cache, see if the wikitext is there
-			$wikitext = $this->pages_model->GetProperty($PropertyLabel, 'wikitext');
+			$wikitext = $this->GetProperty($GlobalScope, $PropertyLabel, 'wikitext');
 			if (FALSE === $wikitext) {
 				return $Default;
 			} else {
@@ -234,7 +238,8 @@ class Pages_model extends Model
 				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText()."\n");
 				// Save the cache back to the database
 				$cache = new PagePropertyType(array('text' => $cached_wikitext));
-				$this->InsertProperty($this->mPageCode, $PropertyLabel, 'wikitext_cache', $cache);
+				$this->InsertProperty($GlobalScope ? FALSE : $this->mPageCode,
+						$PropertyLabel, 'wikitext_cache', $cache);
 				return $cached_wikitext;
 			}
 		} else {
@@ -301,46 +306,57 @@ class Pages_model extends Model
 	 */
 	protected function GetProperties()
 	{
-		$sql = 'SELECT'.
-			' `page_properties`.`page_property_label`,'.
-			' `page_properties`.`page_property_text`,'.
-			' `property_types`.`property_type_name` '.
-			'FROM `page_properties` '.
-			'INNER JOIN `pages`'.
-			' ON `pages`.`page_id`=`page_properties`.`page_property_page_id` '.
-			'INNER JOIN `property_types`'.
-			' ON `property_types`.`property_type_id`'.
-			' =`page_properties`.`page_property_property_type_id` '.
-			'WHERE `pages`.`page_codename`=?
-				OR `pages`.`page_id`=0';
+		$sql =
+			'SELECT
+				page_properties.page_property_page_id,
+				page_properties.page_property_label,
+				page_properties.page_property_text,
+				property_types.property_type_name
+			FROM page_properties
+			LEFT JOIN pages
+				ON pages.page_id = page_properties.page_property_page_id
+			INNER JOIN property_types
+				ON property_types.property_type_id
+						= page_properties.page_property_property_type_id
+			WHERE	page_properties.page_property_page_id IS NULL
+				OR	pages.page_codename=?';
 		
 		$query = $this->db->query($sql, $this->mPageCode);
 		
 		$results = $query->result_array();
-		$property_forms = array();
+		$property_forms = array(
+			FALSE => array(),
+			TRUE => array()
+		);
 		
 		// Go through properties, sorting into $properties by label
 		foreach ($results as $property) {
 			$property_name = $property['page_property_label'];
+			$property_scope = (NULL === $property['page_property_page_id']);
 			if (!array_key_exists($property_name, $property_forms)) {
-				$property_forms[$property_name] = array();
+				$property_forms[$property_scope][$property_name] = array();
 			}
-			$property_forms[$property_name][$property['property_type_name']] = array(
+			$property_forms[$property_scope][$property_name][$property['property_type_name']] = array(
 					'text' => $property['page_property_text'],
 				);
 		}
-		$property_objects = array();
+		$property_objects = array(
+			FALSE => array(),
+			TRUE => array()
+		);
 		// Term property labels into PageProperty objects
-		foreach ($property_forms as $label => $forms) {
-			$property_objects[$label] = new PageProperty($forms);
+		foreach ($property_forms as $property_scope => $properties) {
+			foreach ($properties as $label => $forms) {
+				$property_objects[$property_scope][$label] = new PageProperty($forms);
+			}
 		}
 		
-		$this->mPageProperties =  $property_objects;
+		$this->mProperties = $property_objects;
 	}
 	
 	/// Insert a property
 	/**
-	 * @param $PageCode string Page code of page to set property of.
+	 * @param $PageCode string/bool Page code of page to set property of (FALSE for global).
 	 * @param $PropertyLabel string Label of property.
 	 * @param $PropertyType string Name of the property type.
 	 * @param $Property PagePropertyType Property object.
@@ -348,31 +364,43 @@ class Pages_model extends Model
 	 */
 	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
 	{
-		$sql =
-			'INSERT INTO page_properties ('.
-			' page_property_property_type_id, '.
-			' page_property_page_id, '.
-			' page_property_label, '.
-			' page_property_text) '.
-			'SELECT'.
-			' property_types.property_type_id, '.
-			' pages.page_id, '.
-			' ?,'.
-			' ? '.
-			'FROM pages, property_types '.
-			'WHERE pages.page_codename=? '.
-			' AND property_types.property_type_name=? '.
-			'ON DUPLICATE KEY UPDATE page_property_text=?';
-			;
-		
 		$text = $Property->GetText();
 		if (get_magic_quotes_gpc()) {
 			// If magic quotes are on, code igniter doesn't escape
 			$text = addslashes($text);
 		}
-		$query = $this->db->query($sql,
-				array($PropertyLabel, $text, $PageCode, $PropertyType, $text)
-			);
+		
+		$sql =
+			'INSERT INTO page_properties (
+				page_property_property_type_id,
+				page_property_page_id,
+				page_property_label,
+				page_property_text)
+			SELECT
+				property_types.property_type_id,';
+		if (FALSE === $PageCode) {
+			$sql .= 'NULL,';
+		} else {
+			$sql .= 'pages.page_id,';
+		}
+		$sql .= '?, ? FROM ';
+		$bind_data = array($PropertyLabel, $text);
+		if (FALSE !== $PageCode) {
+			$sql .= 'pages,';
+		}
+		$sql .=
+			'	property_types
+			WHERE ';
+		if (FALSE !== $PageCode) {
+			$sql .= 'pages.page_codename=? AND ';
+			$bind_data[] = $PageCode;
+		}
+		$sql .= 'property_types.property_type_name=?
+			ON DUPLICATE KEY UPDATE page_property_text=?';
+		$bind_data[] = $PropertyType;
+		$bind_data[] = $text;
+		
+		$query = $this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows() > 0);
 	}
 	
