@@ -73,7 +73,7 @@ $route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirector
 
 $route['viparea/directory'] = 'viparea/yorkerdirectory';
 // If 2 segments, seg2 ($1) should get sent to view function
-$route['viparea/directory/('.$org_name_regex.')'] = 'viparea/yorkerdirectory/view//$1';
+$route['viparea/directory/('.$org_name_regex.')'] = 'viparea/yorkerdirectory/information//$1';
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
 $route['viparea/directory/('.$org_name_regex.')/([a-z]+)'] = 'viparea/yorkerdirectory/$2//$1';
 unset($org_name_regex);

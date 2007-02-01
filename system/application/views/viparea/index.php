@@ -19,9 +19,9 @@ Your next event starts in 2 hours<br />
 	<ul>
 		<li>Edit a directory entry</li>
 		<ul>
-			<li><a href='/viparea/directory/example1/'>Example 1</a></li>
-			<li><a href='/viparea/directory/example2/'>Example 2</a></li>
-			<li><a href='/viparea/directory/example3/'>Example 3</a></li>
+			<li><a href='/viparea/directory/theyorker/'>The Yorker</a></li>
+			<li><a href='/viparea/directory/fragsoc/'>FragSoc</a></li>
+			<li><a href='/viparea/directory/evil_eye_lounge/'>Evil Eye Lounge</a></li>
 		</ul>
 		<li><a href='/viparea/calender/'>Manage events</a></li>
 		<li><a href='/viparea/members/'>Manage members</a></li>
