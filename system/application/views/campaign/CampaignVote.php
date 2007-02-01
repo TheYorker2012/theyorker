@@ -1,16 +1,16 @@
 	<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
 	<h4><?php echo $sections['sidebar_petition']['title']; ?></h4>
 	<p style="color: #FF9933; margin-bottom: 10px; font-size:x-large; text-align: center; margin-top: 10px;">
-		<?php echo str_replace("%%count%%", $campaign['signatures'], $sections['sidebar_petition']['blurb']); ?>
+		<?php echo str_replace("%%count%%", $campaign['signatures'], $sections['sidebar_petition']['text']); ?>
 	</p>
 	
 	<h4><?php echo $sections['sidebar_sign']['title']; ?></h4>
 	<div class='Entry'>
-		<?php echo str_replace("%%name%%", "User's Name", $sections['sidebar_sign']['blurb']); ?> #TODO</p>
+		<?php echo str_replace("%%name%%", "User's Name", $sections['sidebar_sign']['text']); ?> #TODO</p>
 	</div>
 	
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
-	<?php echo $sections['sidebar_more']['blurb']; ?>
+	<?php echo $sections['sidebar_more']['text']; ?>
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">

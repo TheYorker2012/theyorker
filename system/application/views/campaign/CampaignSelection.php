@@ -1,21 +1,19 @@
 <div class='RightToolbar'>
-	<h4>About Campaigns</h4>
+	<h4><?php echo $sections['sidebar_about']['title']; ?></h4>
 	<div class='Entry'>
 		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h5>What are these about?</h5>
-		<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+		<?php echo $sections['sidebar_about']['text']; ?>
 	</div>
-	<h4>What now?</h4>
+	<h4><?php echo $sections['sidebar_what_now']['title']; ?></h4>
 	<div class='Entry'>
 		<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h5>What do I do now?</h5>
-		<p>Well my friend, you wait and wait then see the results. This page will change to something else because you smell.</p>
+		<?php echo $sections['sidebar_what_now']['text']; ?>
 	</div>
 </div>
 
 <div class='blue_box'>
 	<h2><?php echo $sections['current_campaigns']['title']; ?></h2>
-	<?php echo $sections['current_campaigns']['blurb']; ?><br /><br />
+	<?php echo $sections['current_campaigns']['text']; ?><br /><br />
 	<table width="100%">
 		<?php
 		$total_votes = 0;
@@ -43,7 +41,7 @@
 
 <div class='grey_box'>
 	<h2><?php echo $sections['vote_campaigns']['title']; ?></h2>
-	<?php echo $sections['vote_campaigns']['blurb']; ?>
+	<?php echo $sections['vote_campaigns']['text']; ?>
 	<form id='form1' name='form1' action='#' method='POST'>
 	</form>
 	<form id='form1' name='form1' action='#' method='POST' class='form'>

@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
 	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
-	<?php $sidebar_vote_blurb = str_replace("%%name%%", "User's Name", $sections['sidebar_vote']['blurb']); ?>
-	<?php echo $sidebar_vote_blurb; ?>#TODO<br /><br /><!--ad padding, and the submit button-->
+	<?php $sidebar_vote_text = str_replace("%%name%%", "User's Name", $sections['sidebar_vote']['text']); ?>
+	<?php echo $sidebar_vote_text; ?>#TODO<br /><br /><!--ad padding, and the submit button-->
 	
 	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
@@ -15,7 +15,7 @@
 	</p>
 	
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
-	<?php echo $sections['sidebar_more']['blurb']; ?>
+	<?php echo $sections['sidebar_more']['text']; ?>
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">
