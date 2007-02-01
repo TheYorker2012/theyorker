@@ -57,9 +57,7 @@ class Calendar extends Controller {
 				
 			} else {
 				// $DateRange Invalid
-				$this->frame_public->AddMessage(
-						new Message('error','Unrecognised date: "'.$DateRange.'"')
-					);
+				$this->frame_public->AddMessage('error','Unrecognised date: "'.$DateRange.'"');
 			}
 		}
 		

@@ -21,18 +21,10 @@ class Msg extends Controller {
 	 */
 	function index()
 	{
-		$this->frame_public->AddMessage(
-			new Message('success','Something has worked')
-		);
-		$this->frame_public->AddMessage(
-			new Message('information','This is the case')
-		);
-		$this->frame_public->AddMessage(
-			new Message('warning','Be careful')
-		);
-		$this->frame_public->AddMessage(
-			new Message('error','You did it wrong or we did it wrong')
-		);
+		$this->frame_public->AddMessage('success','Something has worked');
+		$this->frame_public->AddMessage('information','This is the case');
+		$this->frame_public->AddMessage('warning','Be careful');
+		$this->frame_public->AddMessage('error','You did it wrong or we did it wrong');
 		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Messages test');
