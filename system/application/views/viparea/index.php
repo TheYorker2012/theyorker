@@ -1,35 +1,30 @@
+<div class='RightToolbar'>
+<h4>Suggestions</h4>
+<h5>Advertising</h5>
 <p>
-<?php echo $main_text; ?>
+Use theyorker to advertise your events, its cheap and it helps charity what is there to lose you tight bastards.
 </p>
-
-<h2>My Tasks</h2>
-
-<ul>
-	<li><a href='#'>Edit a directory entry</a></li>
+<h4>Reminders</h4>
+Your next event starts in 2 hours<br />
+1 event has been canceled <a href='#'>Relist?</a><br />
+</div>
+<div class='grey_box'>
+	<h2>welcome</h2>
+	<p>
+		<?php echo $main_text; ?>
+	</p>
+</div>
+<div class='blue_box'>
+	<h2>My Tasks</h2>
 	<ul>
-		<li>Profile</li>
-		<li>Photos</li>
-		<li>Location Map</li>
-		<li>Events</li>
-		<li>Contact Cards</li>
-		<li>Reviews</li>
+		<li>Edit a directory entry</li>
+		<ul>
+			<li><a href='/viparea/directory/example1/'>Example 1</a></li>
+			<li><a href='/viparea/directory/example2/'>Example 2</a></li>
+			<li><a href='/viparea/directory/example3/'>Example 3</a></li>
+		</ul>
+		<li><a href='/viparea/calender/'>Manage events</a></li>
+		<li><a href='/viparea/members/'>Manage members</a></li>
+		<li><a href='/viparea/advertising/'>Advertising</a></li>
 	</ul>
-	<li><a href='#'>Manage events</a></li>
-	<ul>
-		<li>New Event</li>
-		<li>Edit Events</li>
-	</ul>
-	<li><a href='#'>Manage members</a></li>
-	<ul>
-		<li>Add Members</li>
-		<li>Member List</li>
-		<li>E-mail Members</li>
-		<li>Past E-mails</li>
-	</ul>
-	<li><a href='#'>Advertising</a></li>
-	<ul>
-		<li>New Advert</li>
-		<li>Manage Adverts</li>
-		<li>Statistics</li>
-	</ul>
-</ul>
+</div>
