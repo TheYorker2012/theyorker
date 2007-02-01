@@ -402,12 +402,9 @@ class Wikiparser {
 	 * At the moment it does emphasis, bold, orange (feel free to change)!
 	 */
 	function handle_addemphasis($matches) {
-		$output = '';
-		$output .= '<em><strong><span style="color : #FF6A00;">'; // Orange emphasis
-		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
-		$output .= $matches[0];                     // Actual text
-		//$output .= $this->emphasize(2);             // Normal ''x'' emphasis
-		$output .= '</span></strong></em>';              // Orange emphasis
+		$output = '<em><strong><span class="orange">'; // Orange emphasis
+		$output .= $matches[0];                        // Actual text
+		$output .= '</span></strong></em>';            // Orange emphasis
 		return $output;
 
 	}
