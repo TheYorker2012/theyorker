@@ -44,8 +44,8 @@
 </div>
 
 <div class='grey_box'>
-	<h2>why ban cake?</h2><!--Replace with "why #Title#?"-->
-	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<!--Replace with campaign description-->
+	<h2><?php echo $sections['article']['heading']; ?></h2>
+	<?php echo $sections['article']['text']; ?>
 </div>
 
 <div class='blue_box'>
@@ -56,3 +56,11 @@
 		<li style="padding-bottom: 15px;">Cake is a made up drug.</li>
 	</ul>
 </div>
+
+<?php
+/*
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+*/
+?>

@@ -36,11 +36,15 @@ class Campaign extends Controller {
 	function Details($campaign_id)
 	{
 		$this->load->model('campaign_model','campaign');
+		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('campaign_details');
 
 		$data['campaign_list'] = $this->campaign->GetCampaignList();
-		$data['selected_campaign'] = $campaign_id;
-		$data['sections'] = array (
+		if (isset($data['campaign_list'][$campaign_id]))
+		{
+			$data['selected_campaign'] = $campaign_id;
+			$data['sections'] = array (
+					'article'=>$this->news->GetFullArticle($data['campaign_list'][$campaign_id]['article']),
 					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_text')),
 					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title')),
 					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_more_title',TRUE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_more_text',TRUE)),
@@ -48,9 +52,7 @@ class Campaign extends Controller {
 					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE)),
 					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_comments_title',TRUE))
 					);
-		
-		if (isset($data['campaign_list'][$campaign_id]))
-		{
+
 			// Set up the public frame
 			$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$data['campaign_list'][$campaign_id]['name'])));
 			$this->frame_public->SetContentSimple('campaign/CampaignDetails', $data);

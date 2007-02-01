@@ -15,6 +15,10 @@ class Campaign_model extends Model
 		//Call the Model Constructor
 		parent::Model();
 	}
+
+	/*****************************************************
+	*  CAMPAIGNS
+	*****************************************************/
 	
 	/**
 	 * Returns an array of the Campaigns that are currently being voted on
@@ -23,20 +27,18 @@ class Campaign_model extends Model
 	 */
 	function GetCampaignList()
 	{
-		$sql = "SELECT campaign_name, campaign_votes, campaign_id
+		$sql = 'SELECT campaign_name, campaign_votes, campaign_id, campaign_article_id
 			FROM campaigns
 			WHERE campaign_deleted = false
 				AND campaign_timestamp < CURRENT_TIMESTAMP
-			ORDER BY campaign_name ASC";
+			ORDER BY campaign_name ASC';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
 			foreach ($query->result() as $row)
 			{
-				//$result_item = array('id'=>$row->campaign_id,'name'=>$row->campaign_name,'votes'=>$row->campaign_votes);
-				//$result[] = $result_item;
-				$result_item = array('name'=>$row->campaign_name,'votes'=>$row->campaign_votes);
+				$result_item = array('name'=>$row->campaign_name,'votes'=>$row->campaign_votes,'article'=>$row->campaign_article_id);
 				$result[$row->campaign_id] = $result_item;
 			}
 		}
@@ -49,19 +51,23 @@ class Campaign_model extends Model
 	 */
 	function GetPetitionCampaign($campaign_id)
 	{
-		$sql = "SELECT campaign_name,  campaign_petition_signatures
+		$sql = 'SELECT campaign_name,  campaign_petition_signatures
 			FROM campaigns
-			WHERE campaign_id = ".$campaign_id;
+			WHERE campaign_id = '.$campaign_id;
 		$query = $this->db->query($sql);
 		$row = $query->row();
 		return array('name'=>$row->campaign_name,'signatures'=>$row->campaign_petition_signatures);
 	}
+
+	/*****************************************************
+	*  PROGRESS REPORTS
+	*****************************************************/
 	
 	/**
-	 * Returns an array of the last $count progress report items.
+	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetProgressReports($count)
+	function GetProgressReports($charity_id = 1, $campaign_id, $count)
 	{
 		
 	}
