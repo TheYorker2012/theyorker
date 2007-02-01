@@ -55,6 +55,8 @@ $route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1
 
 // The default admin page is index
 $route['admin'] = 'admin/index';
+$route['viparea'] = 'viparea/index';
+$route['office'] = 'office/index';
 
 // 'admin/directory' needs to map to 'admin/yorkerdirectory'
 // (the php class Directory is reserved)
