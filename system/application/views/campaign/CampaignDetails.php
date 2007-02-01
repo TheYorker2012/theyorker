@@ -15,13 +15,7 @@
 	</p>
 	
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">
-	Email :<br><span style="color: #999; font-weight: bold;">campaigns@theyorker.co.uk</span><br><!--Could do with centering-->
-	Or Write :<br>
-	<span style="color: #999; font-weight: bold;">The Yorker<br><!--Change to "BoldText" or other thing insted of re-styleing-->
-	University of York<br>
-	YO10 5ND</span>
-	</p>
+	<?php echo $sections['sidebar_more']['blurb']; ?>
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">

@@ -41,10 +41,10 @@ class Campaign extends Controller {
 		$data['sections'] = array (
 					'sidebar_vote'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_text')),
 					'sidebar_other_campaigns'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title')),
-					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_more_title')),
-					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_related_title')),
-					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_external_title')),
-					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_comments_title'))
+					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_more_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('common:sidebar_more_text')),
+					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_related_title')),
+					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_external_title')),
+					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_comments_title'))
 					);
 		
 		if (isset($data['campaign_list'][$campaign_id]))
@@ -69,10 +69,10 @@ class Campaign extends Controller {
 		$data['sections'] = array (
 					'sidebar_petition'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_petition_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text')),
 					'sidebar_sign'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_text')),
-					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_more_title')),
-					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_related_title')),
-					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_external_title')),
-					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('custom:sidebar_comments_title'))
+					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_more_title'),'blurb'=>$this->pages_model->GetPropertyWikitext('common:sidebar_more_text')),
+					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_related_title')),
+					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_external_title')),
+					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('common:sidebar_comments_title'))
 					);
 		$data['campaign'] = $this->campaign->GetPetitionCampaign($campaign_id);
 
