@@ -9,7 +9,6 @@ class Login extends Controller
 		
 		// Load the public frame
 		$this->load->library('frame_public');
-		$this->load->library('User_auth');
 	}
 
 	function index()
@@ -19,16 +18,29 @@ class Login extends Controller
 			'password' => array('name' => 'password', 'id' => 'password')
 		);
 		
+		$username = $this->input->post('username');
+		$password = $this->input->post('password');
+		$successfully_logged_in = FALSE;
+		if (FALSE !== $username) {
+			try {
+				$this->user_auth->login($username, $password, false);
+				$successfully_logged_in = TRUE;
+				$this->frame_public->AddMessage('success','You have successfully logged in');
+			} catch (Exception $e) {
+				$this->frame_public->AddMessage('error',$e->getMessage());
+			}
+		}
+		
 		// Set up the public frame
 		$this->frame_public->SetTitle('Log in');
-		$this->frame_public->SetContentSimple('login/login', $data);
+		
+		if (!$successfully_logged_in) {
+			$this->frame_public->SetContentSimple('login/login', $data);
+		}
 		
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
-	}
-
-	function loginsubmit() {
-		$this->user_auth->login($this->input->post('username'), $this->input->post('password'), false);
+		
 	}
 
 	function resetpassword()
