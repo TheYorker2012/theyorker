@@ -26,5 +26,6 @@ Your next event starts in 2 hours<br />
 		<li><a href='/viparea/calender/'>Manage events</a></li>
 		<li><a href='/viparea/members/'>Manage members</a></li>
 		<li><a href='/viparea/advertising/'>Advertising</a></li>
+		<li><a href='/viparea/account/'>My Account</a></li>
 	</ul>
 </div>
