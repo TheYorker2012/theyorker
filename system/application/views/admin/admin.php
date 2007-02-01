@@ -1,10 +1,7 @@
 <p>
 This is just a placeholder page at the moment, this will be the menu for all logged in root admins.
 This will be used by everyone for the charley launch, but is only inteneded for root admins in the long run.
-
-For the moment lets just have links to the current admin pages:
 </p>
-
 <a href="/admin/faq/add">Add faq</a><br />
 <a href="/admin/howdoi/add">Add to how do I</a><br />
 <a href="/admin/faq/edit">Edit FAQ entry</a><br />

@@ -1,11 +1,7 @@
 <div class="padding">
-This is just a basic list to all the pages that are made so far. I have probably missed some out so can you add links  to them please :)<br /><br />
-
-Home (takes you to the normal home page)
-<ul>
-	
-</ul>
-
+This is just a basic list to all the pages that are made so far. I have probably missed some out so can you add links to them please :-)
+<br />
+<br />
 Starting Pages
 <ul>
 	<li><a href="/home/main/">/home/main/</a> For everyone (the normal home page)</li>
