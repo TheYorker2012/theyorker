@@ -164,9 +164,7 @@ class Pages extends Controller
 				$input['codename'] = $Prefix.$input['codename'];
 				if ($this->pages_model->CreatePage($input)) {
 					$this->frame_public->AddMessage('success', 'The page was successfully saved');
-					if ($Data['codename'] != $page_code) {
-						redirect($Redirect.$Data['codename']);
-					}
+					redirect($Redirect.$Data['codename']);
 				} else {
 					$this->frame_public->AddMessage('error', 'The page could not be saved as an internal error occurred');
 					$save_failed = TRUE;
