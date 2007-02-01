@@ -35,15 +35,19 @@ class Pages extends Controller
 		// Derived permissions
 		$this->mPermissions['view']          = $this->mPermissions['officer'];
 		
-		$this->mPermissions['page_new']      = $this->mPermissions['administrator'];
-		$this->mPermissions['page_edit']     = $this->mPermissions['officer'];
-		$this->mPermissions['page_rename']   = $this->mPermissions['administrator'];
-		$this->mPermissions['page_delete']   = $this->mPermissions['administrator'];
+		$this->mPermissions['page_new']         = $this->mPermissions['administrator'];
+		$this->mPermissions['page_edit']        = $this->mPermissions['officer'];
+		$this->mPermissions['page_rename']      = $this->mPermissions['administrator'];
+		$this->mPermissions['page_delete']      = $this->mPermissions['administrator'];
+		$this->mPermissions['page_prop_add']    = $this->mPermissions['administrator'];
+		$this->mPermissions['page_prop_delete'] = $this->mPermissions['administrator'];
 		
-		$this->mPermissions['custom_new']    = $this->mPermissions['officer'];
-		$this->mPermissions['custom_edit']   = $this->mPermissions['officer'];
-		$this->mPermissions['custom_rename'] = $this->mPermissions['officer'];
-		$this->mPermissions['custom_delete'] = $this->mPermissions['officer'];
+		$this->mPermissions['custom_new']         = $this->mPermissions['officer'];
+		$this->mPermissions['custom_edit']        = $this->mPermissions['officer'];
+		$this->mPermissions['custom_rename']      = $this->mPermissions['officer'];
+		$this->mPermissions['custom_delete']      = $this->mPermissions['officer'];
+		$this->mPermissions['custom_prop_add']    = $this->mPermissions['administrator'];
+		$this->mPermissions['custom_prop_delete'] = $this->mPermissions['administrator'];
 	}
 	
 	/// Check if the user has permission to view these pages.
@@ -108,6 +112,9 @@ class Pages extends Controller
 	 */
 	private function _NewPage($Data, $Target, $Redirect, $Prefix = '')
 	{
+		$Data['permissions']['prop_add'] = FALSE;
+		$Data['permissions']['rename']   = TRUE;
+		
 		$Data['target'] = $Target;
 		$Data['codename'] = '';
 		$Data['title'] = '';
@@ -366,6 +373,14 @@ class Pages extends Controller
 	 */
 	function page($Operation, $PageCode='')
 	{
+		// Tweak the permissions
+		$this->mPermissions['new']    = $this->mPermissions['page_new'];
+		$this->mPermissions['edit']   = $this->mPermissions['page_edit'];
+		$this->mPermissions['rename'] = $this->mPermissions['page_rename'];
+		$this->mPermissions['delete'] = $this->mPermissions['page_delete'];
+		$this->mPermissions['prop_add'] = $this->mPermissions['page_prop_add'];
+		$this->mPermissions['prop_delete'] = $this->mPermissions['page_prop_delete'];
+		
 		// Get url segments after the first (controller).
 		$num_segments = $this->uri->total_segments();
 		$segments = array();
@@ -382,10 +397,12 @@ class Pages extends Controller
 			switch ($Operation) {
 				case 'new':
 					$this->pages_model->SetPageCode('admin_pages_page_new');
-					$data = $this->_NewPage($data,
-									'/admin/pages/page/new',
-									'/admin/pages/page/edit/');
-					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new page')) {
+						$data = $this->_NewPage($data,
+										'/admin/pages/page/new',
+										'/admin/pages/page/edit/');
+						$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					}
 					break;
 					
 				case 'edit':
@@ -397,9 +414,11 @@ class Pages extends Controller
 					
 				case 'delete':
 					$this->pages_model->SetPageCode('admin_pages_page_delete');
-					$this_uri = '/admin/pages/page/delete/';
-					$data = $this->_DeletePage($data, $PageCode, $this_uri);
-					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
+					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
+						$this_uri = '/admin/pages/page/delete/';
+						$data = $this->_DeletePage($data, $PageCode, $this_uri);
+						$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
+					}
 					break;
 					
 				default:
@@ -423,6 +442,14 @@ class Pages extends Controller
 	 */
 	function custom($Operation, $CustomPageCode='')
 	{
+		// Tweak the permissions
+		$this->mPermissions['new']    = $this->mPermissions['custom_new'];
+		$this->mPermissions['edit']   = $this->mPermissions['custom_edit'];
+		$this->mPermissions['rename'] = $this->mPermissions['custom_rename'];
+		$this->mPermissions['delete'] = $this->mPermissions['custom_delete'];
+		$this->mPermissions['prop_add'] = $this->mPermissions['custom_prop_add'];
+		$this->mPermissions['prop_delete'] = $this->mPermissions['custom_prop_delete'];
+		
 		// Get url segments after the first (controller).
 		$num_segments = $this->uri->total_segments();
 		$segments = array();
@@ -439,11 +466,13 @@ class Pages extends Controller
 			switch ($Operation) {
 				case 'new':
 					$this->pages_model->SetPageCode('admin_pages_custom_new');
-					$data = $this->_NewPage($data,
-									'/admin/pages/custom/new',
-									'/admin/pages/custom/edit/',
-									'custom:');
-					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new custom page')) {
+						$data = $this->_NewPage($data,
+										'/admin/pages/custom/new',
+										'/admin/pages/custom/edit/',
+										'custom:');
+						$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+					}
 					break;
 					
 				case 'edit':
@@ -464,9 +493,11 @@ class Pages extends Controller
 					
 				case 'delete':
 					$this->pages_model->SetPageCode('admin_pages_custom_delete');
-					$this_uri = '/admin/pages/custom/delete/';
-					$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
-					$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
+					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
+						$this_uri = '/admin/pages/custom/delete/';
+						$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
+						$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
+					}
 					break;
 					
 				default:

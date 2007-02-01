@@ -265,6 +265,7 @@ class Pages_model extends Model
 	function GetTitle($Parameters)
 	{
 		if (FALSE === $this->mPageInfo) {
+			Assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		$keys = array_keys($Parameters);
@@ -283,6 +284,7 @@ class Pages_model extends Model
 	function GetDescription()
 	{
 		if (FALSE === $this->mPageInfo) {
+			Assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		return $this->mPageInfo['description'];
@@ -296,6 +298,7 @@ class Pages_model extends Model
 	function GetKeywords()
 	{
 		if (FALSE === $this->mPageInfo) {
+			Assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		return $this->mPageInfo['keywords'];
@@ -448,7 +451,6 @@ class Pages_model extends Model
 			' pages.page_ratings '.
 			'FROM pages '.
 			'WHERE pages.page_codename=?';
-		
 		$query = $this->db->query($sql,$PageCode);
 		$results = $query->result_array();
 		if (count($results) == 1) {

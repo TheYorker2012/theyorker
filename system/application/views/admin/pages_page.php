@@ -2,7 +2,12 @@
 <form name='page_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
 		<label for='codename'>Codename:</label>
-		<input name='codename' size='35' value='<?php if (!empty($codename)) { echo $codename;} ?>'>
+		<input name='codename' size='35' value=<?php
+			echo '"';
+			if (!empty($codename)) { echo $codename; }
+			echo '"';
+			if (!$permissions['rename']) { echo ' READONLY'; }
+			?>>
 		<br />
 		<label for='title'>Title:</label>
 		<input name='title' size='35' value='<?php if (!empty($title)) { echo $title;} ?>'>
@@ -26,7 +31,7 @@
 	</fieldset>
 </form>
  <?php
- //if (!empty($properties)){
+ if (!empty($properties) || $permissions['prop_add']) {
  ?>
 <h2>Edit properties</h2>
 <form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
@@ -37,7 +42,9 @@
 				<p style='font-size:small;'>
 					<b>Property Name : </b><?php echo $property['label'];?><br />
 					<b>Property Type : </b><?php echo $property['type'];?><br />
-					<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
+					<?php if ($permissions['prop_delete']) { ?>
+						<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
+					<?php } ?>
 				</p>
 				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
 				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
@@ -45,6 +52,7 @@
 				<br />
 			<?php
 			}
+			if ($permissions['prop_add']) {
 			?>
 			<?php
 			// This div (source) is cloned into destination by the add property button.
@@ -67,11 +75,12 @@
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
 		<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
+		<?php } ?>
 		<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
 	</fieldset>
 </form>
 <?php
-//}
+}
 ?>
 <?php /*
 <h2>Add a page property</h2>
