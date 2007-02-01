@@ -127,10 +127,16 @@ class Frame_public extends FrameNavbar
 	
 	/// Add a message to the page.
 	/**
-	 * @param $Message FramesView Message class (see Messages.php library).
+	 * @param $Param1 FramesView/string Message class (see Messages.php library) or message type.
+	 * @param $Param2 string Message if @a $Param1 isn't a Message class.
 	 */
-	function AddMessage($Message)
+	function AddMessage($Param1, $Param2 = '')
 	{
+		if (is_string($Param1)) {
+			$Message = new message($Param1, $Param2);
+		} else {
+			$Message = $Param1;
+		}
 		$this->mDataArray['messages'][] = $Message;
 	}
 	

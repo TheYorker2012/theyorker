@@ -163,9 +163,7 @@ class Pages_model extends Model
 		if (FALSE === $this->mProperties) {
 			$this->GetProperties();
 		}
-		if (!is_bool($GlobalScope)) {
-			throw new Exception('Invalid global scope. Are you\' arguments in the correct orger?');
-		}
+		assert('is_bool($GlobalScope)');
 		if (array_key_exists($PropertyLabel, $this->mProperties[$GlobalScope])) {
 			$property = $this->mProperties[$GlobalScope][$PropertyLabel];
 			if ($property->TypeExists($PropertyTypeName)) {
@@ -265,7 +263,7 @@ class Pages_model extends Model
 	function GetTitle($Parameters)
 	{
 		if (FALSE === $this->mPageInfo) {
-			Assert('$this->PageCodeSet()');
+			assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		$keys = array_keys($Parameters);
@@ -284,7 +282,7 @@ class Pages_model extends Model
 	function GetDescription()
 	{
 		if (FALSE === $this->mPageInfo) {
-			Assert('$this->PageCodeSet()');
+			assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		return $this->mPageInfo['description'];
@@ -298,7 +296,7 @@ class Pages_model extends Model
 	function GetKeywords()
 	{
 		if (FALSE === $this->mPageInfo) {
-			Assert('$this->PageCodeSet()');
+			assert('$this->PageCodeSet()');
 			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
 		}
 		return $this->mPageInfo['keywords'];
@@ -631,6 +629,37 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 		}
 		
 		return ($this->db->affected_rows() > 0);
+	}
+	
+	/// Delete a specific page.
+	/**
+	 * @param $PageCode string Codename of page.
+	 * @return bool Whether successful.
+	 */
+	function DeletePage($PageCode)
+	{
+		$sql_delete_properties =
+			'DELETE FROM page_properties
+			USING pages, page_properties
+			WHERE	page_properties.page_property_page_id = pages.page_id
+				AND	pages.page_codename = ?';
+		
+		$sql_delete_page =
+			'DELETE FROM pages
+			WHERE	pages.page_codename = ?';
+		
+		
+		$this->db->trans_start();
+		
+		$this->db->query($sql_delete_properties,$PageCode);
+		$properties_deleted = $this->db->affected_rows();
+		
+		$this->db->query($sql_delete_page,$PageCode);
+		$pages_deleted = $this->db->affected_rows();
+		
+		$this->db->trans_complete();
+		
+		return ($pages_deleted > 0);
 	}
 }
 
