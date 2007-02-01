@@ -7,7 +7,7 @@
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
 			<td><a href="/reviews/table/food/name" name="top">Name</a></td>
-			<td><a href="/reviews/table/food/star"><span class="SortedBy"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
+			<td><a href="/reviews/table/food/star"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
 			<td><a href="/reviews/table/food/price">Price Rating</a></td>
 			<td><a href="/reviews/table/food/rating">User Rating</a></td>
 <!--

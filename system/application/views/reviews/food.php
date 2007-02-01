@@ -40,15 +40,15 @@
 </div>
 <div class='grey_box'>
 	<h2>browse by</h2>
-	<span style="color:#000000;">Looking for a nice italian resturant? Or just searching for a cheap place to get some nosh? Well you came to the right place. Just click on the links below to search around our list of food reviews.</span><br /><br />
-	<div style="width: 40%; padding: 1em; padding-top: 0em; float: right;">
+	<span class="black">Looking for a nice italian resturant? Or just searching for a cheap place to get some nosh? Well you came to the right place. Just click on the links below to search around our list of food reviews.</span><br /><br />
+	<div class="half_right">
 		<h3 style="display: inline;">Price Range</h3><br />
-		<?php
+			<?php
 		for ($pricetype = 0; $pricetype < count($price_array['name']); $pricetype++)
 			echo anchor($price_array['link'][$pricetype],$price_array['name'][$pricetype]).'<br />';
 		?>
 	</div>
-	<div style="width: 40%; padding: 1em; padding-top: 0em;">
+	<div class="half_left">
 		<h3 style="display: inline;">Cuisine</h3><br />
 		<?php
 		for ($restauranttype = 0; $restauranttype < count($type_array['name']); $restauranttype++)
@@ -62,7 +62,7 @@
 		<h3><?php echo anchor($article_link, $article_title); ?></h3>
 		<span style='font-size: medium;'><b><?php echo "<a href='".$article_author_link."'>".$article_author."</a>"; ?></b></span><br />
 		<?php echo $article_date ?><br />
-		<span style='color: #ff6a00;'><?php echo anchor($article_link, 'Read more...'); ?></span>
+		<span class="orange"><?php echo anchor($article_link, 'Read more...', array('class' => 'orange')); ?></span>
 	        <p>
 			<?php echo $article_content; ?>
 		</p>

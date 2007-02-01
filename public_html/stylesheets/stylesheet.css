@@ -19,6 +19,11 @@ a {
 	color: #999;
 }
 
+a.orange {
+	text-decoration: none;
+	color: #ff6a00;
+}
+
 a:hover {
 	text-decoration: underline;
 }
@@ -166,6 +171,19 @@ div.orange_box h2 {
 	color: #ff6a00;
 }
 
+/* Splitting a box in half - specifically used in reviews. Please feel free to move to reviews (or modify a bit) if no one else uses this -rr512*/
+div.half_right, div.half_left {
+	width: 40%;
+	padding: 1em;
+	padding-top: 0em;
+}
+
+div.half_right {
+	float: right;
+}
+
+/* Are these needed anymore? If anyone is using them please uncomment as appropriate (and I appolagise) -rr512
+
 div.RightColumn {
 	width: 40%;
 	float: right;
@@ -188,13 +206,15 @@ div.FaintBox {
 	font: #94979b;
 	width: 100%;
 	padding: 1em;
-} /* Set the width yourself - default 100% */
+}
 
 div.HighlightedBox {
 	border: thin solid #58D1F4;
 	font: #58d1f4;
 	width: 52%;
-} /* Set the width yourself - default 100% */
+}
+
+*/
 
 
 /**
@@ -256,9 +276,30 @@ div.navigationmenu_item_noborder {
 	margin: 0px 0px 3px 0px;
 }
 
+/**
+ * 	Spans with forced colours
+ */
+
+span.black {
+	color: #000;
+}
+
+span.orange {
+	color: #ff6a00;
+}
+
+span.grey {
+	color: #999;
+}
+
+span.blue {
+	color: #20c1f0;
+}
+
 
 /**
  *	Horizontal Navbar Styles (frame_navbar)
+ *	Is this the old nav bar? If so, is it needed? -rr512
  */
 
 div#navbar ul {
@@ -320,123 +361,6 @@ div#navbar ul li .thin {
  *	---------------------
  */
 
-div.ReviewCatetory {
-	padding: 5px;
-	width: 100%;
-}
-
-div.ReviewCatetory2 {
-	padding: 5px;
-	width: 100%;
-	text-align: right;
-}
-
-div.ReviewCategoryLeft {
-	float: left;
-	margin-right: 0.5em;
-}
-
-div.ReviewCategoryRight {
-	float: right;
-	margin-left: 0.5em;
-	text-align: left;
-}
-
-div.ReviewCategoryText {
-	padding-top: 0.5em;
-}
-
-div.ReviewCategoryText2 {
-	padding-top: 0.5em;
-	text-align: left;
-}
-
-#ReviewTitle {
-	text-align: center;
-}
-
-div.ReviewSetHeader {
-	width: 100%;
-	text-align: center;
-}
-
-div.FoodSet {
-	float: left;
-	width: 20%;
-}
-
-div.BarCrawls {
-	color: white;
-	background-color: Black;
-	float: left;
-	width: 60%;
-}
-
-div.BarCrawls a {
-	color: white;
-}
-
-div.CollegeLeagues {
-	background-color: Grey;
-	float: right;
-	width: 40%;
-}
-
-/*Why not try boxes on reviews*/
-div.WhyNotTry {
-	text-align: left;
-	border-color: #2dc6d7;
-	border-style: solid;
-	border-width: thin;
-	margin: 10px;
-	padding: 3px;
-}
-
-div.ReviewInfoLeft {
-	padding-left: 0.5em;
-	width: 48%;
-	float: left;
-}
-
-div.ReviewInfoLeftImg {
-	text-align: center;
-}
-
-div.ReviewInfoRight {
-	width: 50%;
-	float: right;
-}
-
-div.ReviewInfoQuater {
-	width: 45%;
-	float: left;
-	margin-top: 1em;
-	margin-right: 0.5em;
-}
-
-div.ReviewInfoQuater h3 {
-	color: #ff6a00;
-	display: inline;
-}
-
-span.ReviewSubLine {
-	font-size: large;
-}
-
-span.Quote {
-	color: #ff6a00;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size: x-large;
-}
-
-table.ReviewDetails {
-	width: 100%;
-}
-
-table.ReviewDetails td {
-	vertical-align: top;
-}
-
 span.ReviewDetailsTitle {
 	color: #ff6a00;
 	font-weight: bold;
@@ -444,26 +368,6 @@ span.ReviewDetailsTitle {
 
 span.ReviewDetailsInfo {
 	color: #999;
-}
-
-div.RateReview {
-	float: left;
-	margin: 0.5em;
-}
-
-div.MakeComment{
-	float: left;
-}
-
-div.AverageRating {
-	width: 100%;
-	text-align: right;
-}
-
-span.AverageRatingSpan {
-	font-size: x-large;
-	font-weight: bold;
-	color: #ff6a00;
 }
 
 span.XSmallText {
@@ -478,15 +382,7 @@ span.FaintText {
 	color: #666666;
 }
 
-div.YourComments {
-	background-color: #ff6a00;
-	color: white;
-	width: 100%;
-}
-
-div.YourComments h2 {
-	display: inline;
-}
+/* Table properties for table.php - the list of returned venues */
 
 table.ReviewList {
 	width: 620px;
@@ -520,6 +416,26 @@ tr.ReviewListTop td a {
 	color: #333333;
 }
 
+tr.ReviewElement1 td {
+	background-color: #FDFDFD;
+}
+
+tr.ReviewElement2 td {
+	background-color: #EEEEEE;
+}
+
+tr.ReviewElementEnd td {
+	border-top: thin solid;
+	border-bottom: thin solid;
+}
+
+/* A span to underline the title of the column which sorts the list */
+span.sorted_by {
+	text-decoration: underline;
+}
+
+/*I really don't know */
+
 div.ReviewElement {
 	font-size: small;
 	border: thin solid;
@@ -538,24 +454,6 @@ div.ReviewElementNumber {
 
 div.ReviewElementNumber h3 {
 	display: inline;
-}
-
-
-tr.ReviewElement1 td {
-	background-color: #FDFDFD;
-}
-
-tr.ReviewElement2 td {
-	background-color: #EEEEEE;
-}
-
-tr.ReviewElementEnd td {
-	border-top: thin solid;
-	border-bottom: thin solid;
-}
-
-span.SortedBy {
-	text-decoration: underline;
 }
 
 
