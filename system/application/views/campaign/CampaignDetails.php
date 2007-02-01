@@ -49,12 +49,8 @@
 </div>
 
 <div class='blue_box'>
-	<h2>facts</h2>
-	<ul style="padding-left: 15px; margin-top: 5px; margin-bottom: 0px;"><!--Got me an array of facts sir?-->
-		<li style="padding-bottom: 15px;">Counting only the economic value of fisheries, tourism, and shoreline protection, the costs of destroying 1km of coral reef ranges between US$137,000-1,200,000 over a 25-year period.</li>
-		<li style="padding-bottom: 15px;">Properly managed coral reefs can yield an average of 15 tonnes of fish and other seafood per square kilometre each year.</li>
-		<li style="padding-bottom: 15px;">Cake is a made up drug.</li>
-	</ul>
+	<h2><?php echo $sections['article']['fact_boxes']['title']; ?></h2>
+	<?php echo $sections['article']['fact_boxes']['wikitext']; ?>
 </div>
 
 <?php
@@ -62,5 +58,5 @@
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-*/
+  */
 ?>

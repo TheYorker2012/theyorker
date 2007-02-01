@@ -32,17 +32,13 @@
 <div style="width: 420px; margin: 0px; padding-right: 3px; ">
 
 	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #BBBBBB; ">our campaign</span><br />
-		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
+	<span style="font-size: x-large;  color: #BBBBBB; "><?php echo $sections['our_campaign']['title']; ?></span><br />
+		<?php echo $sections['article']['text']; ?>
 	</div>
 
 	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #2DC6D7; ">facts</span><br />
-		<ul style="padding-left: 15px; margin-top: 5px; margin-bottom: 0px;">
-		<li style="padding-bottom: 15px;">Counting only the economic value of fisheries, tourism, and shoreline protection, the costs of destroying 1km of coral reef ranges between US$137,000-1,200,000 over a 25-year period.</li>
-		<li style="padding-bottom: 15px;">Properly managed coral reefs can yield an average of 15 tonnes of fish and other seafood per square kilometre each year.</li>
-		<li style="padding-bottom: 15px;">Cake is a made up drug.</li>
-		</ul>
+	<span style="font-size: x-large;  color: #2DC6D7; "><?php echo $sections['article']['fact_boxes']['title']; ?></span><br />
+		<?php echo $sections['article']['fact_boxes']['wikitext']; ?>
 	</div>
 	
 	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">

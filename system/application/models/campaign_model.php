@@ -23,7 +23,7 @@ class Campaign_model extends Model
 	/**
 	 * Returns an array of the Campaigns that are currently being voted on
 	 * in ascending order of name.
-	 * @return An array of arrays containing campaign id, names and votes.
+	 * @return An array of arrays containing campaign id, names, article id and votes.
 	 */
 	function GetCampaignList()
 	{
@@ -46,17 +46,17 @@ class Campaign_model extends Model
 	}
 	
 	/**
-	 * Returns the name of the given campaign id
+	 * Returns name, signatures and article id of the given campaign id
 	 * @return the name as a string.
 	 */
 	function GetPetitionCampaign($campaign_id)
 	{
-		$sql = 'SELECT campaign_name,  campaign_petition_signatures
+		$sql = 'SELECT campaign_name, campaign_petition_signatures, campaign_article_id
 			FROM campaigns
 			WHERE campaign_id = '.$campaign_id;
 		$query = $this->db->query($sql);
 		$row = $query->row();
-		return array('name'=>$row->campaign_name,'signatures'=>$row->campaign_petition_signatures);
+		return array('name'=>$row->campaign_name,'signatures'=>$row->campaign_petition_signatures,'article'=>$row->campaign_article_id,);
 	}
 
 	/*****************************************************

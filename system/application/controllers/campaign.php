@@ -69,8 +69,12 @@ class Campaign extends Controller {
 	function Test($campaign_id = 2)
 	{
 		$this->load->model('campaign_model','campaign');
+		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('campaign_petition');
+		$data['campaign'] = $this->campaign->GetPetitionCampaign($campaign_id);
 		$data['sections'] = array (
+					'article'=>$this->news->GetFullArticle($data['campaign']['article']),
+					'our_campaign'=>array('title'=>$this->pages_model->GetPropertyText('section_our_campaign_title',FALSE)),
 					'sidebar_petition'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_petition_title'),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text')),
 					'sidebar_sign'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_text')),
 					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_more_title',TRUE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_more_text',TRUE)),
@@ -78,7 +82,6 @@ class Campaign extends Controller {
 					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE)),
 					'sidebar_comments'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_comments_title',TRUE))
 					);
-		$data['campaign'] = $this->campaign->GetPetitionCampaign($campaign_id);
 
 		// Set up the public frame
 		$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$data['campaign']['name'])));
