@@ -37,19 +37,32 @@
 		<h2 style='margin-bottom: 5px;'><?php echo $review_title; ?></h2><br />
 		<h5>"<?php echo $review_blurb; ?>"</h5><br />
 		<h4>Rating</h4>
-		<img width="140px" src="/images/prototype/reviews/review_stars.gif" alt="3.5 Stars" title="3 and a Half Stars" />
+		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+		<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />
+		<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " /><br /><br />
 	</div>
 </div>
-<div class="grey_box">
+<div class="blue_box">
 	<h2>reviews</h2>
-		<span style='font-size: medium;'><b>Gary Oldman</b></span><br />
-		25th March 2007<br />
-		<span style='color: #ff6a00;'>Read more...</span>
+		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
+		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
+		25th March 200<br />
+		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
 	        <p>
-			A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.
+			<span style="color:black;">A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.</span>
+		</p>
+		<hr>
+		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
+		<span style='font-size: medium;'><b>Chris Travis^2</b></span><br />
+		25th March 200<br />
+		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
+	        <p>
+			<span style="color:black;">A stupid whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.</span>
 		</p>
 </div>
-<div class="blue_box">
+<div class="grey_box">
 	<h2>your comments</h2>
 	User Rating: <h5 style="display:inline;">5.7</h5>/10 (based on 12 votes)
 	<hr>
@@ -61,10 +74,17 @@
 	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.
 	<hr>
 	<a href=#>View all comments</a><br /><br />
-	<h2>rate this place</h2>
-	I give this place a
-		<form style="display: inline;">
-   			<SELECT name="component-select">
+	<h2>add comment</h2>
+<?php
+	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
+	echo form_open('reviews/addcomment');
+	echo form_hidden('comment_page_id',$page_id);
+	echo form_hidden('comment_article_id',$article_id);
+	$userid = 1337;
+	echo form_hidden('comment_user_entity_id',$userid);
+	echo form_hidden('return_page',$this->uri->uri_string());
+	echo '<textarea name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
+	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="component-select">
 				<OPTION selected>1</OPTION>
 				<OPTION >2</OPTION>
 				<OPTION>3</OPTION>
@@ -75,20 +95,7 @@
 				<OPTION>8</OPTION>
 				<OPTION>9</OPTION>
 				<OPTION>10</OPTION>
-			</SELECT>
-			<input type="submit" value="Vote" />
-		</form>
-	<br /><br />
-	<h2>add comment</h2>
-<?php
-	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
-	echo form_open('reviews/addcomment');
-	echo form_hidden('comment_page_id',$page_id);
-	echo form_hidden('comment_article_id',$article_id);
-	$userid = 1337;
-	echo form_hidden('comment_user_entity_id',$userid);
-	echo form_hidden('return_page',$this->uri->uri_string());
-	echo '<textarea name="comment_text" rows="5" style="width: 95%;"></textarea><br />';
+			</SELECT>&nbsp;';
 	echo '<input type="submit" value="Add Comment"><br />';
 ?>
 	<br />

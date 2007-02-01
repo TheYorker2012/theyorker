@@ -40,7 +40,7 @@
 </div>
 <div class='grey_box'>
 	<h2>browse by</h2>
-	If you want to search through our extensive list of places to get pissed, or just enjoy a nice sip of wine. Click out here...<br /><br />
+	<span style="color:#000000;">If you want to search through our extensive list of places to get pissed, or just enjoy a nice sip of wine. Click out here...</span><br /><br />
 	<div style="width: 40%; padding: 1em; padding-top: 0em; float: right;">
 		<h3 style="display: inline;">Price Range</h3><br />
 		<?php

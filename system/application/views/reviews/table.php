@@ -1,5 +1,5 @@
 <span class="SmallText">
-	<span class="FaintText">Showing</span> <?php echo count($entries[0]['review_title']); ?>
+	<span class="FaintText">Showing</span> 0
 	<span class="FaintText">entries from</span> Italian Food 
 	<span class="FaintText">ordered by</span> Star Rating
 	<br />

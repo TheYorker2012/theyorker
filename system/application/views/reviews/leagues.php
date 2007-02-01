@@ -39,11 +39,17 @@
 <?php
 		for($topten=0; $topten<10; $topten++) {
 			echo '	<div class="blue_box" >';
-			echo '		<div class="ReviewElementNumber"><h3>*****</h3></div>';
+			echo '		<h3 style="display: inline;"><a style="color: #20c1f0;" href="/context/evil_eye_lounge/food">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
+			echo '		<div class="ReviewElementNumber" style="text-align: right; font-size: x-small; color: #f26a22;">
+						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
+						<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />
+						<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " /><br />
+						User rating: 5/10<br />
+					</div>';
 			echo '		<img style="float: left; padding: 0.5em;" src="'.$reviews['review_image'][$topten].'" alt="#" />';
-			echo '		<h3 style="display: inline;"><a href="/context/evil_eye_lounge/food">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<a href="'.$reviews['review_website'][$topten].'">www.website.co.uk</a><br />';
-			echo '		User rating: 5.7/10<br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';
 			echo '	</div>';
 		}
