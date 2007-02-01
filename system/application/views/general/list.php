@@ -3,12 +3,15 @@ This is just a basic list to all the pages that are made so far. I have probably
 
 Home (takes you to the normal home page)
 <ul>
-	<li><a href="/home/main/">/home/main/</a></li>
+	
 </ul>
 
-Admin Pages
+Starting Pages
 <ul>
-	<li><a href="/admin/">/admin/</a></li>
+	<li><a href="/home/main/">/home/main/</a> For everyone (the normal home page)</li>
+	<li><a href="/office/">/office/</a> For yorker people. (doesnt exist yet)</li>
+	<li><a href="/viparea/">/viparea/</a> For organisations and societys.</li>
+	<li><a href="/admin/">/admin/</a> For root admins.</li>
 </ul>
 
 Login System
