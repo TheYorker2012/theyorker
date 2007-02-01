@@ -30,7 +30,7 @@ class Pages extends Controller
 		// Primitive permissions
 		$this->mPermissions = array(
 				'officer'       => TRUE,
-				'administrator' => FALSE,
+				'administrator' => TRUE,
 			);
 		// Derived permissions
 		$this->mPermissions['view']          = $this->mPermissions['officer'];
