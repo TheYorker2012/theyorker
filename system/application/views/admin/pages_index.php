@@ -21,6 +21,8 @@ foreach ($custom as $page) {
 ?></p>
 <h2>Pages</h2>
 
+<p><a href="/admin/pages/common">Common Properties</a></p>
+
 <?php if ($permissions['page_new']) { ?>
 <p><a href="/admin/pages/page/new">Create a new page</a></p>
 <?php } ?>

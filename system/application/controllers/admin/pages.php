@@ -30,7 +30,7 @@ class Pages extends Controller
 		// Primitive permissions
 		$this->mPermissions = array(
 				'officer'       => TRUE,
-				'administrator' => TRUE,
+				'administrator' => FALSE,
 			);
 		// Derived permissions
 		$this->mPermissions['view']          = $this->mPermissions['officer'];
@@ -40,6 +40,7 @@ class Pages extends Controller
 		$this->mPermissions['page_rename']      = $this->mPermissions['administrator'];
 		$this->mPermissions['page_delete']      = $this->mPermissions['administrator'];
 		$this->mPermissions['page_prop_add']    = $this->mPermissions['administrator'];
+		$this->mPermissions['page_prop_edit']   = $this->mPermissions['officer'];
 		$this->mPermissions['page_prop_delete'] = $this->mPermissions['administrator'];
 		
 		$this->mPermissions['custom_new']         = $this->mPermissions['officer'];
@@ -47,7 +48,12 @@ class Pages extends Controller
 		$this->mPermissions['custom_rename']      = $this->mPermissions['officer'];
 		$this->mPermissions['custom_delete']      = $this->mPermissions['officer'];
 		$this->mPermissions['custom_prop_add']    = $this->mPermissions['administrator'];
+		$this->mPermissions['custom_prop_edit']   = $this->mPermissions['officer'];
 		$this->mPermissions['custom_prop_delete'] = $this->mPermissions['administrator'];
+		
+		$this->mPermissions['common_add']    = $this->mPermissions['administrator'];
+		$this->mPermissions['common_edit']   = $this->mPermissions['officer'];
+		$this->mPermissions['common_delete'] = $this->mPermissions['administrator'];
 	}
 	
 	/// Check if the user has permission to view these pages.
@@ -113,6 +119,8 @@ class Pages extends Controller
 		$Data['permissions']['prop_add'] = FALSE;
 		$Data['permissions']['rename']   = TRUE;
 		
+		$Data['show_details']   = TRUE;
+		
 		$Data['target'] = $Target;
 		$Data['codename'] = '';
 		$Data['title'] = '';
@@ -121,7 +129,6 @@ class Pages extends Controller
 		$Data['comments'] = 0;
 		$Data['ratings'] = 0;
 		$Data['properties'] = array();
-		
 		
 		$input['codename']    = $this->input->post('codename',    FALSE);
 		if (FALSE !== $input['codename']) {
@@ -173,7 +180,7 @@ class Pages extends Controller
 	/// Setup the data array for the view for editing a page.
 	/**
 	 * @param $Data array Data used for setting up the page.
-	 * @param $InputPageCode string Page code from uri.
+	 * @param $InputPageCode string/FALSE Page code from uri or FALSE for common.
 	 * @param $Target string Page to send the updated data to.
 	 * @param $Redirect string Page to direct to after successful save.
 	 * @param $DefaultProperties array Set of properties to create automatically
@@ -193,19 +200,28 @@ class Pages extends Controller
 			$Prefix = '')
 	{
 		$data = $Data;
-		$page_code = $Prefix.$InputPageCode;
+		$global_scope = (FALSE === $InputPageCode);
+		if (!$global_scope)
+			$page_code = $Prefix.$InputPageCode;
+		else
+			$page_code = $InputPageCode;
 		// Find the custom page code
 		$page_info = $this->pages_model->GetSpecificPage($page_code, TRUE);
 		if (FALSE === $page_info) {
 			show_404($InputPageCode);
 		} else {
-			$data['target']      = $Target.$InputPageCode;
-			$data['codename']    = $InputPageCode;
-			$data['title']       = $page_info['title'];
-			$data['description'] = $page_info['description'];
-			$data['keywords']    = $page_info['keywords'];
-			$data['comments']    = $page_info['comments'];
-			$data['ratings']     = $page_info['ratings'];
+			$data['show_details'] = !$global_scope;
+			if (!$global_scope) {
+				$data['target']      = $Target.$InputPageCode;
+				$data['codename']    = $InputPageCode;
+				$data['title']       = $page_info['title'];
+				$data['description'] = $page_info['description'];
+				$data['keywords']    = $page_info['keywords'];
+				$data['comments']    = $page_info['comments'];
+				$data['ratings']     = $page_info['ratings'];
+			} else {
+				$data['target']      = $Target;
+			}
 			
 			// DefaultProperties has default properties (without id's)
 			// page_info['properties'] has current properties (with id's)
@@ -246,98 +262,102 @@ class Pages extends Controller
 					);
 			}
 			
-			$input['codename']    = $this->input->post('codename',    FALSE);
-			if (FALSE !== $input['codename']) {
-				$input['title']       = $this->input->post('title',       FALSE);
-				$input['description'] = $this->input->post('description', FALSE);
-				$input['keywords']    = $this->input->post('keywords',    FALSE);
-				$input['comments']    = $this->input->post('comments',    FALSE);
-				$input['ratings']     = $this->input->post('ratings',     FALSE);
-				$save_failed = FALSE;
-				
-				// Validate and check permissions
-				if ($input['codename'] != $data['codename']) {
-					if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
-						// Check if new codename is in use
-						$data['codename'] = $input['codename'];
-						if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-							$this->frame_public->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+			if (!$global_scope) {
+				$input['codename']    = $this->input->post('codename',    FALSE);
+				if (FALSE !== $input['codename']) {
+					$input['title']       = $this->input->post('title',       FALSE);
+					$input['description'] = $this->input->post('description', FALSE);
+					$input['keywords']    = $this->input->post('keywords',    FALSE);
+					$input['comments']    = $this->input->post('comments',    FALSE);
+					$input['ratings']     = $this->input->post('ratings',     FALSE);
+					$save_failed = FALSE;
+					
+					// Validate and check permissions
+					if ($input['codename'] != $data['codename']) {
+						if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
+							// Check if new codename is in use
+							$data['codename'] = $input['codename'];
+							if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
+								$this->frame_public->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+								$save_failed = TRUE;
+							}
+						} else {
 							$save_failed = TRUE;
 						}
-					} else {
-						$save_failed = TRUE;
 					}
-				}
-				if (FALSE !== $input['title'])
-					$data['title'] = $input['title'];
-				if (FALSE !== $input['description'])
-					$data['description'] = $input['description'];
-				if (FALSE !== $input['keywords'])
-					$data['keywords'] = $input['keywords'];
-				$data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
-				$data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
-				
-				if (FALSE === $save_failed) {
-					// Try and save to db
-					$input['codename'] = $Prefix.$input['codename'];
-					if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-						$this->frame_public->AddMessage('success', 'The page was successfully saved');
-						if ($data['codename'] != $page_code) {
-							redirect($Redirect.$data['codename']);
+					if (FALSE !== $input['title'])
+						$data['title'] = $input['title'];
+					if (FALSE !== $input['description'])
+						$data['description'] = $input['description'];
+					if (FALSE !== $input['keywords'])
+						$data['keywords'] = $input['keywords'];
+					$data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
+					$data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
+					
+					if (FALSE === $save_failed) {
+						// Try and save to db
+						$input['codename'] = $Prefix.$input['codename'];
+						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
+							$this->frame_public->AddMessage('success', 'The page was successfully saved');
+							if ($data['codename'] != $page_code) {
+								redirect($Redirect.$data['codename']);
+							}
+						} else {
+							$this->frame_public->AddMessage('error','The page could not be saved as an internal error occurred');
 						}
-					} else {
-						$this->frame_public->AddMessage('error','The page could not be saved as an internal error occurred');
 					}
 				}
 			}
-			if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
-				$input = array();
-				$input['properties'] = array();
-				$input['property_add'] = array();
-				$input['property_remove'] = array('wikitext_cache' => array());
-				foreach ($_POST as $key => $value) {
-					if (preg_match('/^prop(\d+)$/',$key,$matches)) {
-						$property_id = (int)$matches[1];
-						if (array_key_exists($property_id, $data['properties'])) {
-							if ($data['properties'][$property_id]['text'] != $value) {
-								// property has been changed
-								$input['properties'][] = array(
-										'id' => $property_id,
-										'text' => $value,
-									);
-								$data['properties'][$property_id]['text'] = $value;
-								if ($data['properties'][$property_id]['type'] === 'wikitext') {
-									$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+			if ($Data['permissions']['prop_edit']) {
+				if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
+					$input = array();
+					$input['properties'] = array();
+					$input['property_add'] = array();
+					$input['property_remove'] = array('wikitext_cache' => array());
+					foreach ($_POST as $key => $value) {
+						if (preg_match('/^prop(\d+)$/',$key,$matches)) {
+							$property_id = (int)$matches[1];
+							if (array_key_exists($property_id, $data['properties'])) {
+								if ($data['properties'][$property_id]['text'] != $value) {
+									// property has been changed
+									$input['properties'][] = array(
+											'id' => $property_id,
+											'text' => $value,
+										);
+									$data['properties'][$property_id]['text'] = $value;
+									if ($data['properties'][$property_id]['type'] === 'wikitext') {
+										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+									}
 								}
 							}
 						}
-					}
-					if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
-						$label_key = 'label-'.$key;
-						$type_key = 'type-' .$key;
-						if (	array_key_exists($label_key, $_POST) &&
-								array_key_exists($type_key, $_POST)) {
-							// New property
-							$input['property_add'][] = array(
-									'label'	=> $_POST[$label_key],
-									'type'	=> $_POST[$type_key],
-									'text'	=> $value,
-								);
+						if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
+							$label_key = 'label-'.$key;
+							$type_key = 'type-' .$key;
+							if (	array_key_exists($label_key, $_POST) &&
+									array_key_exists($type_key, $_POST)) {
+								// New property
+								$input['property_add'][] = array(
+										'label'	=> $_POST[$label_key],
+										'type'	=> $_POST[$type_key],
+										'text'	=> $value,
+									);
+							}
 						}
 					}
-				}
-				
-				if (count($input['properties'])+count($input['property_add'])> 0) {
-					// Try and save to db
-					if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-						$this->frame_public->AddMessage('success', 'The page was successfully saved');
-					} else {
-						$this->frame_public->AddMessage('error','The page could not be saved as an internal error occurred');
+					
+					if (count($input['properties'])+count($input['property_add'])> 0) {
+						// Try and save to db
+						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
+							$this->frame_public->AddMessage('success', 'Properties were successfully saved');
+						} else {
+							$this->frame_public->AddMessage('error','Properties could not be saved as an internal error occurred');
+						}
 					}
+					
+					$_POST = array();
+					return $this->_EditPage($Data, $InputPageCode, $Target, $Redirect, $DefaultProperties, $Prefix);
 				}
-				
-				$_POST = array();
-				return $this->_EditPage($Data, $InputPageCode, $Target, $Redirect, $DefaultProperties, $Prefix);
 			}
 		}
 		return $data;
@@ -378,6 +398,34 @@ class Pages extends Controller
 		return $data;
 	}
 	
+	/// Function for administrating common properties (global scope)
+	/**
+	 */
+	function common()
+	{
+		// Tweak the permissions
+		$this->mPermissions['new']    = FALSE;
+		$this->mPermissions['edit']   = FALSE;
+		$this->mPermissions['rename'] = FALSE;
+		$this->mPermissions['delete'] = FALSE;
+		$this->mPermissions['prop_add'] = $this->mPermissions['common_add'];
+		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
+		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
+		
+		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		if ($this->_CheckViewPermissions()) {
+			$data = array();
+			$data['permissions'] = $this->mPermissions;
+			
+			$this->pages_model->SetPageCode('admin_pages_common');
+			$this_uri = '/admin/pages/common';
+			$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
+			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+		}
+		$this->frame_public->Load();
+		
+	}
+	
 	/// Function for administrating pages of the website.
 	/**
 	 * @param $Operation string An operation to perform:
@@ -393,6 +441,7 @@ class Pages extends Controller
 		$this->mPermissions['rename'] = $this->mPermissions['page_rename'];
 		$this->mPermissions['delete'] = $this->mPermissions['page_delete'];
 		$this->mPermissions['prop_add'] = $this->mPermissions['page_prop_add'];
+		$this->mPermissions['prop_edit'] = $this->mPermissions['page_prop_edit'];
 		$this->mPermissions['prop_delete'] = $this->mPermissions['page_prop_delete'];
 		
 		// Get url segments after the first (controller).
@@ -462,6 +511,7 @@ class Pages extends Controller
 		$this->mPermissions['rename'] = $this->mPermissions['custom_rename'];
 		$this->mPermissions['delete'] = $this->mPermissions['custom_delete'];
 		$this->mPermissions['prop_add'] = $this->mPermissions['custom_prop_add'];
+		$this->mPermissions['prop_edit'] = $this->mPermissions['custom_prop_edit'];
 		$this->mPermissions['prop_delete'] = $this->mPermissions['custom_prop_delete'];
 		
 		// Get url segments after the first (controller).

@@ -432,35 +432,43 @@ class Pages_model extends Model
 	
 	/// Get a specific page
 	/**
-	 * @param $PageCode string Codename of page.
+	 * @param $PageCode string/FALSE Codename of page or FALSE for common.
 	 * @param $Properties bool Whether to retrieve properties as well.
 	 * @return array of information about the page or FALSE on failure.
+	 * @post (@a PageCode === FALSE) => (result != FALSE)
 	 */
 	function GetSpecificPage($PageCode, $Properties = FALSE)
 	{
-		$sql =
-			'SELECT'.
-			' pages.page_id,'.
-			' pages.page_codename,'.
-			' pages.page_title,'.
-			' pages.page_description,'.
-			' pages.page_keywords,'.
-			' pages.page_comments,'.
-			' pages.page_ratings '.
-			'FROM pages '.
-			'WHERE pages.page_codename=?';
-		$query = $this->db->query($sql,$PageCode);
-		$results = $query->result_array();
-		if (count($results) == 1) {
-			$result = $results[0];
+		$global_scope = (FALSE === $PageCode);
+		if ($global_scope) {
+			$Properties = TRUE;
+		} else {
+			$sql =
+				'SELECT'.
+				' pages.page_id,'.
+				' pages.page_codename,'.
+				' pages.page_title,'.
+				' pages.page_description,'.
+				' pages.page_keywords,'.
+				' pages.page_comments,'.
+				' pages.page_ratings '.
+				'FROM pages '.
+				'WHERE pages.page_codename=?';
+			$query = $this->db->query($sql,$PageCode);
+			$results = $query->result_array();
+		}
+		if ($global_scope || count($results) == 1) {
 			$data = array();
-			$data['page_id']     = $result['page_id'];
-			$data['codename']    = $result['page_codename'];
-			$data['title']       = $result['page_title'];
-			$data['description'] = $result['page_description'];
-			$data['keywords']    = $result['page_keywords'];
-			$data['comments']    = $result['page_comments'];
-			$data['ratings']     = $result['page_ratings'];
+			if (!$global_scope) {
+				$result = $results[0];
+				$data['page_id']     = $result['page_id'];
+				$data['codename']    = $result['page_codename'];
+				$data['title']       = $result['page_title'];
+				$data['description'] = $result['page_description'];
+				$data['keywords']    = $result['page_keywords'];
+				$data['comments']    = $result['page_comments'];
+				$data['ratings']     = $result['page_ratings'];
+			}
 			if ($Properties) {
 				$sql =
 					'SELECT'.
@@ -471,8 +479,15 @@ class Pages_model extends Model
 					'FROM page_properties '.
 					'INNER JOIN property_types '.
 					' ON page_properties.page_property_property_type_id = property_types.property_type_id '.
-					'WHERE page_properties.page_property_page_id=?';
-				$query = $this->db->query($sql,$data['page_id']);
+					'WHERE page_properties.page_property_page_id';
+				if ($global_scope) {
+					$sql .= ' IS NULL';
+					$query_params = array();
+				} else {
+					$sql .= ' = ?';
+					$query_params = array($data['page_id']);
+				}
+				$query = $this->db->query($sql,$query_params);
 				$property_results = $query->result_array();
 				$data['properties'] = array();
 				foreach ($property_results as $property) {
@@ -492,102 +507,129 @@ class Pages_model extends Model
 	
 	/// Save a specific page
 	/**
-	 * @param $PageCode string Codename of page.
+	 * @param $PageCode string/FALSE Codename of page or FALSE for common.
 	 * @param $Data array of data in similar format to output of GetSpecificPage.
 	 * @return bool Whether the save was successful.
 	 */
 	function SaveSpecificPage($PageCode, $Data)
 	{
-		$translation = array(
-				'codename'    => 'page_codename',
-				'title'       => 'page_title',
-				'description' => 'page_description',
-				'keywords'    => 'page_keywords',
-				'comments'    => 'page_comments',
-				'ratings'     => 'page_ratings',
-			);
-		$save_data = array();
-		foreach ($Data as $key => $value) {
-			if (array_key_exists($key, $translation)) {
-				$save_data[$translation[$key]] = $value;
+		$global_scope = (FALSE === $PageCode);
+		if (!$global_scope) {
+			$translation = array(
+					'codename'    => 'page_codename',
+					'title'       => 'page_title',
+					'description' => 'page_description',
+					'keywords'    => 'page_keywords',
+					'comments'    => 'page_comments',
+					'ratings'     => 'page_ratings',
+				);
+			$save_data = array();
+			foreach ($Data as $key => $value) {
+				if (array_key_exists($key, $translation)) {
+					$save_data[$translation[$key]] = $value;
+				}
 			}
-		}
-		if (count($save_data) > 0) {
-			$sql = 'UPDATE pages SET ';
-			$assignments = array();
-			foreach ($save_data as $key => $value) {
-				$assignments[] = $key.'=?';
-			}
-			$sql .= implode(', ', $assignments);
-			$sql .= ' WHERE page_codename=? ';
-			$sql .= 'LIMIT 1;';
-			$save_data = array_values($save_data);
-			$save_data[] = $PageCode;
-			
-			$this->db->query($sql,$save_data);
-		}
-		$save_data = array();
-		if (array_key_exists('properties',$Data)) {
-			foreach ($Data['properties'] as $property) {
-				$sql = '
-UPDATE page_properties
-INNER JOIN pages
-	ON page_properties.page_property_page_id=pages.page_id
-SET page_properties.page_property_text=?
-WHERE page_properties.page_property_id=?
-	AND pages.page_codename=?;';
-				$save_data[] = $property['text'];
-				$save_data[] = $property['id'];
+			if (count($save_data) > 0) {
+				$sql = 'UPDATE pages SET ';
+				$assignments = array();
+				foreach ($save_data as $key => $value) {
+					$assignments[] = $key.'=?';
+				}
+				$sql .= implode(', ', $assignments);
+				$sql .= ' WHERE page_codename=? ';
+				$sql .= 'LIMIT 1;';
+				$save_data = array_values($save_data);
 				$save_data[] = $PageCode;
 				
 				$this->db->query($sql,$save_data);
+			}
+		}
+		if (array_key_exists('properties',$Data)) {
+			foreach ($Data['properties'] as $property) {
 				$save_data = array();
+				$sql = 'UPDATE page_properties ';
+				if (!$global_scope) {
+					$sql .= 'INNER JOIN pages
+						ON page_properties.page_property_page_id=pages.page_id ';
+				}
+				$sql .= 'SET page_properties.page_property_text=?
+					WHERE page_properties.page_property_id=? AND ';
+				$save_data[] = $property['text'];
+				$save_data[] = $property['id'];
+				if (!$global_scope) {
+					$sql .= 'pages.page_codename=?;';
+					$save_data[] = $PageCode;
+				} else {
+					$sql .= 'page_properties.page_property_page_id IS NULL';
+				}
+				
+				$this->db->query($sql,$save_data);
 			}
 		}
 		if (array_key_exists('property_add',$Data)) {
 			foreach ($Data['property_add'] as $property) {
-				$sql = '
-			INSERT INTO page_properties (
-				page_property_property_type_id,
-				page_property_page_id,
-				page_property_label,
-				page_property_text)
-			SELECT
-				property_types.property_type_id,
-				pages.page_id,
-				?,
-				?
-			FROM pages, property_types
-			WHERE pages.page_codename=?
-				AND property_types.property_type_name=?
-			ON DUPLICATE KEY UPDATE page_property_text=?';
-				
 				$text = $property['text'];
 				if (get_magic_quotes_gpc()) {
 					// If magic quotes are on, code igniter doesn't escape
 					$text = addslashes($text);
 				}
-				$query = $this->db->query($sql,
-						array($property['label'], $text, $PageCode, $property['type'], $text)
-					);
+				
+				$save_data = array();
+				$sql = '
+					INSERT INTO page_properties (
+						page_property_property_type_id,
+						page_property_page_id,
+						page_property_label,
+						page_property_text)
+					SELECT
+						property_types.property_type_id,';
+				if (!$global_scope) {
+					$sql .= 'pages.page_id,';
+				} else {
+					$sql .= 'NULL,';
+				}
+				$sql .= '?,	? FROM ';
+				$save_data[] = $property['label'];
+				$save_data[] = $text;
+				if (!$global_scope)
+					$sql .= 'pages,';
+				$sql .= 'property_types WHERE ';
+				if (!$global_scope) {
+					$sql .= 'pages.page_codename=? AND ';
+					$save_data[] = $PageCode;
+				}
+				$sql .= 'property_types.property_type_name=?
+					ON DUPLICATE KEY UPDATE page_property_text=?';
+				$save_data[] = $property['type'];
+				$save_data[] = $text;
+				
+				$query = $this->db->query($sql, $save_data);
 			}
 		}
 		if (array_key_exists('property_remove',$Data)) {
 			foreach ($Data['property_remove'] as $property_type => $labels) {
 				foreach ($labels as $label) {
 					$save_data = array();
-					$sql = '
-DELETE FROM page_properties
-USING page_properties, pages, property_types
+					$sql = 'DELETE FROM page_properties
+						USING ';
+					if (!$global_scope)
+						$sql .= 'pages, ';
+					$sql .= 'page_properties, property_types
 WHERE page_properties.page_property_property_type_id=property_types.property_type_id
-	AND page_properties.page_property_page_id=pages.page_id
 	AND property_types.property_type_name=?
-	AND page_properties.page_property_label=?
-	AND pages.page_codename=?;';
+	AND page_properties.page_property_label=?';
 					$save_data[] = $property_type;
 					$save_data[] = $label;
-					$save_data[] = $PageCode;
-				
+					if (!$global_scope) {
+						$sql .= '
+	AND page_properties.page_property_page_id=pages.page_id
+	AND pages.page_codename=?';
+						$save_data[] = $PageCode;
+					} else {
+						$sql .= '
+	AND page_properties.page_property_page_id IS NULL';
+					}
+					
 					$this->db->query($sql,$save_data);
 				}
 			}

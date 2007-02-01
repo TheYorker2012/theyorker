@@ -1,3 +1,4 @@
+<?php if ($show_details) { ?>
 <h2>Page Details:</h2>
 <form name='page_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
@@ -30,10 +31,11 @@
 		<input type='submit' class='button' name='save_button' value='Save'>
 	</fieldset>
 </form>
- <?php
- if (!empty($properties) || $permissions['prop_add']) {
- ?>
-<h2>Edit properties</h2>
+<?php
+}
+if (!empty($properties) || $permissions['prop_add']) {
+?>
+<h2>Properties</h2>
 <form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
 			<?php
@@ -48,7 +50,7 @@
 				</p>
 				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
 				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
-				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10"><?php echo $property['text'];?></textarea>
+				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo $property['text'];?></textarea>
 				<br />
 			<?php
 			}
@@ -75,8 +77,11 @@
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
 		<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
+		<?php }
+		if ($permissions['prop_edit']) {
+			?>
+			<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
 		<?php } ?>
-		<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
 	</fieldset>
 </form>
 <?php
