@@ -314,11 +314,18 @@ class Pages extends Controller
 					$input['properties'] = array();
 					$input['property_add'] = array();
 					$input['property_remove'] = array('wikitext_cache' => array());
+					$ignored_new_props = 0;
 					foreach ($_POST as $key => $value) {
 						if (preg_match('/^prop(\d+)$/',$key,$matches)) {
 							$property_id = (int)$matches[1];
 							if (array_key_exists($property_id, $data['properties'])) {
-								if ($data['properties'][$property_id]['text'] != $value) {
+								if (array_key_exists('delete-'.$key, $_POST)) {
+									// Property needs deleting
+									$input['property_remove'][$data['properties'][$property_id]['type']][] = $data['properties'][$property_id]['label'];
+									if ($data['properties'][$property_id]['type'] === 'wikitext') {
+										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+									}
+								} elseif ($data['properties'][$property_id]['text'] != $value) {
 									// property has been changed
 									$input['properties'][] = array(
 											'id' => $property_id,
@@ -336,17 +343,29 @@ class Pages extends Controller
 							$type_key = 'type-' .$key;
 							if (	array_key_exists($label_key, $_POST) &&
 									array_key_exists($type_key, $_POST)) {
-								// New property
-								$input['property_add'][] = array(
-										'label'	=> $_POST[$label_key],
-										'type'	=> $_POST[$type_key],
-										'text'	=> $value,
-									);
+								$label = $_POST[$label_key];
+								$type  = $_POST[$type_key];
+								if (empty($label) && empty($value)) {
+									++$ignored_new_props;
+								} else {
+									// New property
+									$input['property_add'][] = array(
+											'label'	=> $label,
+											'type'	=> $type,
+											'text'	=> $value,
+										);
+								}
 							}
 						}
 					}
 					
-					if (count($input['properties'])+count($input['property_add'])> 0) {
+					if ($ignored_new_props == 1) {
+						$this->frame_public->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
+					} elseif ($ignored_new_props > 1) {
+						$this->frame_public->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
+					}
+					
+					if (count($input['properties'])+count($input['property_add'])+count($input['property_remove'])> 0) {
 						// Try and save to db
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
 							$this->frame_public->AddMessage('success', 'Properties were successfully saved');

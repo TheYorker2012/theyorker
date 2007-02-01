@@ -35,6 +35,7 @@
 }
 if (!empty($properties) || $permissions['prop_add']) {
 ?>
+
 <h2>Properties</h2>
 <form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
 	<fieldset>
@@ -45,7 +46,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 					<b>Property Name : </b><?php echo $property['label'];?><br />
 					<b>Property Type : </b><?php echo $property['type'];?><br />
 					<?php if ($permissions['prop_delete']) { ?>
-						<a href='/admin/pages/delete/property/<?php echo $property['id'];?>'>Delete this property</a>
+						<input type='checkbox' name="delete-<?php echo $property['id'];?>"> Delete this property
 					<?php } ?>
 				</p>
 				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
