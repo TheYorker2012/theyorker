@@ -5,11 +5,19 @@
  * @brief Library for getting organisation information.
  * @author James Hogan (jh559@cs.york.ac.uk)
  */
-$CI = &get_instance();
-$CI->load->library('frame_public');
  
 class Organisations
 {
+	/// Code igniter instance.
+	private $CI;
+	
+	/// Default constructor
+	function __construct()
+	{
+		$this->CI = &get_instance();
+		$this->CI->load->library('frame_public');
+	}
+	
 	/// Get organisation types from organisations.
 	/**
 	 * @param $Organisations array Organisations as returned by _GetOrgs.
@@ -50,7 +58,7 @@ class Organisations
 	{
 		$org_description_words = $this->CI->pages_model->GetPropertyInteger('org_description_words', FALSE, 5);
 		
-		$orgs = $this->directory_model->GetDirectoryOrganisations();
+		$orgs = $this->CI->directory_model->GetDirectoryOrganisations();
 		$organisations = array();
 		foreach ($orgs as $org) {
 			$organisations[] = array(
@@ -91,7 +99,7 @@ class Organisations
 	{
 		$data = array();
 
-		$orgs = $this->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
+		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$data['organisation'] = array(
