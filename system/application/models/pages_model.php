@@ -163,6 +163,9 @@ class Pages_model extends Model
 		if (FALSE === $this->mProperties) {
 			$this->GetProperties();
 		}
+		if (!is_bool($GlobalScope)) {
+			throw new Exception('Invalid global scope. Are you\' arguments in the correct orger?');
+		}
 		if (array_key_exists($PropertyLabel, $this->mProperties[$GlobalScope])) {
 			$property = $this->mProperties[$GlobalScope][$PropertyLabel];
 			if ($property->TypeExists($PropertyTypeName)) {

@@ -70,7 +70,7 @@ class Yorkerdirectory extends Controller
 		$data['search'] = $search_pattern;
 		
 		// Get organisation types
-		$data['organisation_types'] = $this->_GetOrganisationTypes($data['organisations']);
+		$data['organisation_types'] = $this->_GetOrganisationTypes($data['organisations'], TRUE);
 
 		//Libary for AtoZ system
 		$this->load->library('character_lib'); //This character libary is used by the view, so load it here
@@ -346,19 +346,29 @@ EXTRAHEAD;
 	/// Get organisation types from organisations.
 	/**
 	 * @param $Organisations array Organisations as returned by _GetOrgs.
+	 * @param $Sorted array Whether to sort the result by name.
 	 * @return array of organisation types.
 	 */
-	private function _GetOrganisationTypes($Organisations)
+	private function _GetOrganisationTypes($Organisations, $Sorted = FALSE)
 	{
 		$types = array();
 		foreach ($Organisations as $organisation) {
-			$types[$organisation['type']] = TRUE;
+			if (array_key_exists($organisation['type'], $types)) {
+				++$types[$organisation['type']];
+			} else {
+				$types[$organisation['type']] = 1;
+			}
+		}
+		if ($Sorted) {
+			asort($types);
+			$types = array_reverse($types,TRUE);
 		}
 		$result = array();
-		foreach ($types as $type => $enabled) {
+		foreach ($types as $type => $quantity) {
 			$result[] = array(
 				'id' => $type,
 				'name' => $type,
+				'quantity' => $quantity,
 			);
 		}
 		return $result;
@@ -371,7 +381,7 @@ EXTRAHEAD;
 	 */
 	private function _GetOrgs($Pattern)
 	{
-		$org_description_words = $this->pages_model->GetPropertyInteger('org_description_words', 5);
+		$org_description_words = $this->pages_model->GetPropertyInteger('org_description_words', FALSE, 5);
 		
 		$orgs = $this->directory_model->GetDirectoryOrganisations();
 		$organisations = array();
