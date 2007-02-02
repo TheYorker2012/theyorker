@@ -2,12 +2,19 @@
 	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
 	<?php
 	if ($user == TRUE)
+	{
 		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sections['sidebar_vote']['text']);
+		echo '	<form id="form1" name="form1" action="#" method="POST" class="form">
+				<fieldset>
+				<input type="text" />
+				<input type="submit" value="Vote" class="button" />
+				</fieldset>
+			</form>';
+	}
 	else
 		echo $sections['sidebar_vote']['not_logged_in'];
 	?>
-	
-	#TODO<br /><br />
+	<br />
 	<!--ad padding, and the submit button-->
 
 
@@ -51,7 +58,7 @@
 
 <div class='grey_box'>
 	<h2><?php echo $sections['article']['heading']; ?></h2>
-	<?php echo $sections['article']['text']; ?>
+	<span class="black"><?php echo $sections['article']['text']; ?></span>
 </div>
 
 <?php

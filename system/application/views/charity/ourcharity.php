@@ -55,7 +55,7 @@
 				} else {
 					echo '<img style="float: left" src="/images/prototype/campaign/cross.jpg">';
 				}
-				echo '<div class="ProgressItemText">' . $ProgressItem['details'] . '</div></div><div class="breaker"></div>';
+				echo '<div class="ProgressItemText">' . $ProgressItem['details'] . '</div></div><br /><br />';
 			}
 		?> 
 </div>
