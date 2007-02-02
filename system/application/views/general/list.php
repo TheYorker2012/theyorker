@@ -31,7 +31,8 @@ About
 Campaign
 <ul>
 	<li><a href="/campaign/">/campaign/</a></li>
-	<li>(problems linking to other pages)</li>
+	<li><a href="/campaign/details/1">/campaign/details/</a></li>
+	<li><a href="/campaign/test/">/campaign/petition/</a></li>
 </ul>
 
 Calendar
