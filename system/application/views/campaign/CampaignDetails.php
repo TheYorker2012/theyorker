@@ -1,8 +1,16 @@
 <div class='RightToolbar'>
 	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
-	<?php $sidebar_vote_text = str_replace("%%name%%", "User's Name", $sections['sidebar_vote']['text']); ?>
-	<?php echo $sidebar_vote_text; ?>#TODO<br /><br /><!--ad padding, and the submit button-->
+	<?php
+	if ($user == TRUE)
+		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sections['sidebar_vote']['text']);
+	else
+		echo $sections['sidebar_vote']['not_logged_in'];
+	?>
 	
+	#TODO<br /><br />
+	<!--ad padding, and the submit button-->
+
+
 	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php

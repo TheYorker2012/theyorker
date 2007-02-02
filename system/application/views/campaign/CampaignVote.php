@@ -6,7 +6,14 @@
 	
 	<h4><?php echo $sections['sidebar_sign']['title']; ?></h4>
 	<div class='Entry'>
-		<?php echo str_replace("%%name%%", "User's Name", $sections['sidebar_sign']['text']); ?> #TODO</p>
+	<?php
+	if ($user == TRUE)
+		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sections['sidebar_sign']['text']);
+	else
+		echo $sections['sidebar_sign']['not_logged_in'];
+	?>
+	
+	#TODO</p>
 	</div>
 	
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
@@ -14,12 +21,22 @@
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">
-
+	<?php
+        foreach ($sections['article']['related_articles'] as $related_articles)
+	{
+		echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
+	};
+	?>
 	</p>
-
+	
 	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
-
+	<?php
+        foreach ($sections['article']['links'] as $links)
+	{
+		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
+	};
+	?>
 	</p>
 	
     	<h4><?php echo $sections['sidebar_comments']['title']; ?></h4>
@@ -36,26 +53,40 @@
 		<?php echo $sections['article']['text']; ?>
 	</div>
 
-	<div style="border: 1px solid #2DC6D7; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #2DC6D7; "><?php echo $sections['article']['fact_boxes']['title']; ?></span><br />
-		<?php echo $sections['article']['fact_boxes']['wikitext']; ?>
-	</div>
+
+<?php
+	foreach ($sections['article']['fact_boxes'] as $fact_box)
+	{
+		echo '<div class=\'blue_box\'>';
+		echo '<h2>'.$fact_box['title'].'</h2>';
+		echo $fact_box['wikitext'];
+		echo '</div>';
+	}
+?>
 	
 	<div style="border: 1px solid #BBBBBB; padding: 6px; font-size: small; margin-bottom: 4px; ">
-	<span style="font-size: x-large;  color: #BBBBBB; ">progress report</span><br />
-		<br>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<span style="font-size: large;  color: #BBBBBB; ">24/12/2006 3:15PM</span><br />
-		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.
-
-		<br><br>
-		<div style="float: right; ">
-		<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		</div>
-		<span style="font-size: large;  color: #BBBBBB; ">24/12/2006 3:15PM</span><br />
-		Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
+	<span style="font-size: x-large;  color: #BBBBBB; "><?php echo $sections['progress_reports']['title']; ?></span><br />
+	<?php
+		foreach ($sections['progress_reports']['entries'] as $pr_entry)
+		{
+			echo '<br>';
+			/*
+			<div style="float: right; ">
+			<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+			</div>
+			*/
+			echo '<span style="font-size: large;  color: #BBBBBB; ">'.$pr_entry['date'].'</span><br />';
+			echo $pr_entry['text'].'<br />';
+		}
+	?>
 	</div>
 
 </div>
+
+<?php
+/*
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+*/
+?>
