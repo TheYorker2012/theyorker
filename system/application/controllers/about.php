@@ -9,7 +9,7 @@ class About extends Controller
 		
 		// Load the public frame
 		$this->load->library('frame_public');
-		$this->load->helpers('images_helper');
+		$this->load->helpers('images');
 		$this->pages_model->SetPageCode('about_us');
 	}
 
@@ -21,13 +21,13 @@ class About extends Controller
 		$data['textblocks'] = array(
 			array(
 				'shorttitle'   => 'the_website',
-				'blurb'        => $this->pages_model->GetPropertyWikitext('the_website').$the_website_image,
-				'image' => '/images/photos/null.jpg#'.$the_website_image,
+				'blurb'        => $this->pages_model->GetPropertyWikitext('the_website'),
+				'image' => photoLocation($the_website_image),
 			),
 			array(
 				'shorttitle'   => 'our_aims',
 				'blurb'        => $this->pages_model->GetPropertyWikitext('our_aims'),
-				'image' => '/images/photos/null.jpg',//$this->images_helper->photoLocation()
+				'image' => photoLocation($our_aims_image),
 			),
 		);
 		// Set up the public frame
