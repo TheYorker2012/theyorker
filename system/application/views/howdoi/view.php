@@ -1,6 +1,6 @@
 <div class="RightToolbar">
-  <h4>Just Ask ...</h4>
-  Is there a question you reallywant to know the answer to, but just don't know where to start?
+  <h4><?php echo $sections['sidebar_ask']['title']; ?></h4>
+  <?php echo $sections['sidebar_ask']['text']; ?>
   <br /><br />
   Give us a challenge
   <form name='' id='' action='' method='' class='form'>

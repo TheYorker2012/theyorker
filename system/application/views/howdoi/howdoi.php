@@ -1,6 +1,6 @@
 <div class="RightToolbar">
-  <h4>Just Ask ...</h4>
-  Is there a question you reallywant to know the answer to, but just don't know where to start?
+  <h4><?php echo $sections['sidebar_ask']['title']; ?></h4>
+  <?php echo $sections['sidebar_ask']['text']; ?>
   <br /><br />
   Give us a challenge
   <form name='' id='' action='' method='' class='form'>
@@ -19,19 +19,8 @@
 </div>
 
 <div class="grey_box">
-  <h2>How do I?</h2>
-  <b>Click any of the links to see the other page :)</b>
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Nunc elementum arcu non risus. Vestibulum arcu enim,
-placerat nec, malesuada eget, pharetra at, mi. Nullam
-rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit. Nunc elementum arcu non
-risus. Vestibulum arcu enim, placerat nec, malesuada
-eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Lorem
-ipsum dolor sit amet, consectetuer adipiscing elit. Nunc
-elementum arcu non risus. Vestibulum arcu enim, placerat
-nec, malesuada eget, pharetra at, mi. Nullam rhoncus
-porttitor nunc.
+  <h2><?php echo $sections['section_howdoi']['title']; ?></h2>
+  <?php echo $sections['section_howdoi']['text']; ?>
 </div>
 
 <div class="blue_box">
