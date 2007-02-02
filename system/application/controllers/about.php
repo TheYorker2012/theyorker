@@ -15,14 +15,14 @@ class About extends Controller
 
 	function index()
 	{
-		//$the_website_image = $this->pages_model->GetPropertyText('the_website');
-		//$our_aims_image = $this->pages_model->GetPropertyText('our_aims');
+		$the_website_image = $this->pages_model->GetPropertyText('the_website');
+		$our_aims_image = $this->pages_model->GetPropertyText('our_aims');
 		
 		$data['textblocks'] = array(
 			array(
 				'shorttitle'   => 'the_website',
-				'blurb'        => $this->pages_model->GetPropertyWikitext('the_website'),
-				'image' => '/images/photos/null.jpg',
+				'blurb'        => $this->pages_model->GetPropertyWikitext('the_website').$the_website_image,
+				'image' => '/images/photos/null.jpg#'.$the_website_image,
 			),
 			array(
 				'shorttitle'   => 'our_aims',

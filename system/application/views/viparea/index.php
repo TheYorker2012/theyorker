@@ -23,7 +23,7 @@ Your next event starts in 2 hours<br />
 			<li><a href='/viparea/directory/fragsoc/'>FragSoc</a></li>
 			<li><a href='/viparea/directory/evil_eye_lounge/'>Evil Eye Lounge</a></li>
 		</ul>
-		<li><a href='/viparea/calender/'>Manage events</a></li>
+		<li><a href='/viparea/calendar/'>Manage events</a></li>
 		<li><a href='/viparea/members/'>Manage members</a></li>
 		<li><a href='/viparea/advertising/'>Advertising</a></li>
 		<li><a href='/viparea/account/'>My Account</a></li>

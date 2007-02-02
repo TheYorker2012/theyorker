@@ -49,12 +49,6 @@ News
 	<li><a href="/news/archive/">/news/archive/</a></li>
 </ul>
 
-A to Z
-<ul>
-	<li><a href="/atoz/directory/">/atoz/directory</a></li>
-	<li><a href="/atoz/type/">/atoz/type/</a></li>
-</ul>
-
 Reviews
 <ul>
 	<li><a href="/reviews/">/reviews/</a></li>
