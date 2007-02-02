@@ -440,6 +440,8 @@ class Pages_model extends Model
 	 */
 	function GetSpecificPage($PageCode, $Properties = FALSE)
 	{
+		$this->db->trans_start();
+		
 		$global_scope = (FALSE === $PageCode);
 		if ($global_scope) {
 			$Properties = TRUE;
@@ -503,6 +505,8 @@ class Pages_model extends Model
 		} else {
 			$data = FALSE;
 		}
+		$this->db->trans_complete();
+		
 		return $data;
 	}
 	
@@ -514,6 +518,8 @@ class Pages_model extends Model
 	 */
 	function SaveSpecificPage($PageCode, $Data)
 	{
+		$this->db->trans_start();
+		
 		$global_scope = (FALSE === $PageCode);
 		if (!$global_scope) {
 			$translation = array(
@@ -631,8 +637,13 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 				}
 			}
 		}
+		$this->db->trans_complete();
 		
-		return TRUE;
+		if ($this->db->trans_status() === FALSE) {
+			return TRUE;
+		} else {
+			return TRUE;
+		}
 	}
 	
 	

@@ -310,6 +310,7 @@ class Pages extends Controller
 			}
 			if ($Data['permissions']['prop_edit']) {
 				if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
+					$changes = 0;
 					$input = array();
 					$input['properties'] = array();
 					$input['property_add'] = array();
@@ -324,6 +325,7 @@ class Pages extends Controller
 									$input['property_remove'][$data['properties'][$property_id]['type']][] = $data['properties'][$property_id]['label'];
 									if ($data['properties'][$property_id]['type'] === 'wikitext') {
 										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+										++$changes;
 									}
 								} elseif ($data['properties'][$property_id]['text'] != $value) {
 									// property has been changed
@@ -331,9 +333,11 @@ class Pages extends Controller
 											'id' => $property_id,
 											'text' => $value,
 										);
+									++$changes;
 									$data['properties'][$property_id]['text'] = $value;
 									if ($data['properties'][$property_id]['type'] === 'wikitext') {
 										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
+										++$changes;
 									}
 								}
 							}
@@ -354,6 +358,7 @@ class Pages extends Controller
 											'type'	=> $type,
 											'text'	=> $value,
 										);
+									++$changes;
 								}
 							}
 						}
@@ -365,13 +370,15 @@ class Pages extends Controller
 						$this->frame_public->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
 					}
 					
-					if (count($input['properties'])+count($input['property_add'])+count($input['property_remove'])> 0) {
+					if ($changes > 0) {
 						// Try and save to db
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-							$this->frame_public->AddMessage('success', 'Properties were successfully saved');
+							$this->frame_public->AddMessage('success', 'Properties were successfully saved.');
 						} else {
-							$this->frame_public->AddMessage('error','Properties could not be saved as an internal error occurred');
+							$this->frame_public->AddMessage('error','Properties weren\'t save. An internal error occurred.');
 						}
+					} else {
+						$this->frame_public->AddMessage('information', 'No properties have changed');
 					}
 					
 					$_POST = array();
