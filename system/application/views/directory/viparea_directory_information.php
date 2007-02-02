@@ -10,7 +10,7 @@
 </ul>
 </div>
 
-<form id='orgdetails' name='orgdetails' action='/admin/directory/<?php echo $organisation['shortname']; ?>/editinformation' method='POST' class='form'>
+<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/edit' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>about</h2>
 	<p>
@@ -32,7 +32,7 @@
 		<input type='text' name='orgdetails_yorkipedia' style='width: 220px;' value='<?php echo $organisation['yorkipedia']['title']; ?>'/>
 		<br />
 		<label for='orgdetails_website'>Alphabetically List As:</label>
-		<input type='text' name='orgdetails_alphlisting' style='width: 220px;' value='<?php echo $organisation['alphlisting']; ?>'/>
+		<input type='text' name='orgdetails_alphlisting' style='width: 220px;' />
 		<br />
 		<label for='orgdetails_location'>Location:</label>
 		<input type='text' name='orgdetails_location' style='width: 220px;' value='<?php echo $organisation['location']; ?>' />

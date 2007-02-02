@@ -105,7 +105,11 @@ class Yorkerdirectory extends Controller
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupOrganisationFrame($organisation);
-
+		
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
+		
 		// Set up the directory view
 		$the_view = $this->frames->view('directory/viparea_directory_map', $data);
 		
