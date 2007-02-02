@@ -13,11 +13,46 @@
  *	- 'public'
  *	- 'student'
  *	- 'organisation'
- *	- 'office'
+ *	- 'writer'
+ *	- 'editor'
  *	- 'webmaster'
+ * @return bool Whether enough privilages.
  */
 function SetupMainFrame($Permission = 'public')
 {
+	static $access_matrix = array(
+		'public'       => array('public'),
+		'student'      => array('public', 'student'),
+		'organisation' => array('public', 'student', 'organisation'),
+		'writer'       => array('public', 'student',                 'writer'),
+		'editor'       => array('public', 'student',                 'writer', 'editor'),
+		'webmaster'    => array('public', 'student', 'organisation', 'writer', 'editor', 'webmaster'),
+	);
+	
+	$CI = &get_instance();
+	$CI->load->library('user_auth');
+	
+	$user_levels = array('public');
+	if ($CI->user_auth->isLoggedIn) {
+		$user_levels[] = 'student';
+	}
+	if (FALSE) {
+		$user_levels[] = 'organisation';
+	}
+	if (FALSE) {
+		$user_levels[] = 'writer';
+	}
+	if (FALSE) {
+		$user_levels[] = 'editor';
+	}
+	if (FALSE) {
+		$user_levels[] = 'webmaster';
+	}
+	$action_levels = array();
+	foreach ($user_levels as $user_level) {
+		$action_levels = array_merge($action_levels, $access_matrix[$user_level]);
+	}
+	
 	// Choose a frame to use
 	switch($Permission) {
 		case 'public':
@@ -45,9 +80,15 @@ function SetupMainFrame($Permission = 'public')
 	}
 	
 	// Load the corresponding library and create an alias called main_frame
-	$CI = &get_instance();
 	$CI->load->library($frame_library);
 	$CI->main_frame = $CI->$frame_library;
+	
+	if (!array_key_exists($Permission, $action_levels)) {
+		$CI->main_frame->AddMessage('information', '(the mainframe_helper thinks) You do not have '.$Permission.' privilages required to use this page.');
+		return TRUE;
+	} else {
+		return TRUE;
+	}
 }
 
 ?>

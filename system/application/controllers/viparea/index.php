@@ -10,21 +10,23 @@ class Index extends Controller
 	{
 		parent::Controller();
 		
-		// Load the main frame
-		SetupMainFrame('organisation');
-		
-		$this->pages_model->SetPageCode('viparea_index');
+		$this->load->model('pages_model');
 	}
 	
 	function index()
 	{
+		$this->pages_model->SetPageCode('viparea_index');
+		
+		// Load the main frame
+		if (SetupMainFrame('organisation')) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			);
-		// Set up the main frame
-		$this->main_frame->SetContentSimple('viparea/index', $data);
+			// Set up the content
+			$this->main_frame->SetContentSimple('viparea/index', $data);
+		}
 		
-		// Load the main frame view (which will load the content view)
+		// Load the main frame
 		$this->main_frame->Load();
 	}
 }
