@@ -38,9 +38,14 @@ class User_auth {
 
 	// The salt used to generate the password hash
 	private $salt;
+
+	// The code igniter object
+	private $object;
 	
 	// The default constructor
 	public function __construct() {
+		$this->object = &get_instance();
+
 		// Ensure we have a session
 		session_start();
 
