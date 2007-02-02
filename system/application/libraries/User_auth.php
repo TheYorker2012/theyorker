@@ -21,8 +21,11 @@ class User_auth {
 	// True if the user is an actual user rather than an organisation
 	public $isUser;
 	
-	// True if the user has logged into the office
-	public $officeLogin = false;
+	// If the user has an office login
+	public $officeLogin;
+
+	// The current access level to the office
+	public $officeType = 'None';
 	
 	// The firstname of the logged in user
 	public $firstname;
@@ -55,7 +58,8 @@ class User_auth {
 			$this->username = $_SESSION['ua_username'];
 			$this->entityId = $_SESSION['ua_entityId'];
 			$this->isUser = $_SESSION['ua_isuser'];
-			$this->officeLogin = $_SESSION['ua_isoffice'];
+			$this->officeLogin = $_SESSION['ua_hasoffice'];
+			$this->officeType = $_SESSION['ua_officetype'];
 			$this->firstname = $_SESSION['ua_firstname'];
 			$this->surname = $_SESSION['ua_surname'];
 			$this->permissions = $_SESSION['ua_permissions'];
@@ -135,7 +139,7 @@ class User_auth {
 			);
 		}
 		
-		$sql = 'SELECT user_firstname, user_surname, user_permission 
+		$sql = 'SELECT user_firstname, user_surname, user_office_access
 			FROM users 
 			WHERE user_entity_id = ?';
 
@@ -149,7 +153,7 @@ class User_auth {
 			$this->isUser = true;
 			$this->firstname = $row->user_firstname;
 			$this->surname = $row->user_surname;
-			$this->permissions = $row->user_permission;
+			$this->officeAccess = $row->user_office_access;
 		} else {
 			$sql = 'SELECT organisation_name 
 				FROM organisations 
@@ -160,7 +164,7 @@ class User_auth {
 			$this->isUser = false;
 			$this->firstname = $row->organisation_name;
 			$this->surname = '';
-			$this->permissions = 0;
+			$this->officeAccess = false;
 		}
 		
 		// Set session variables to persist information
@@ -176,7 +180,7 @@ class User_auth {
 		
 		$db = $this->object->db;
 		$query = $db->query($sql, array($username));
-		
+
 		// See if we have an entity with this username
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
@@ -232,16 +236,17 @@ class User_auth {
 		//  secondary password
 		$hash = sha1($this->salt.$password);
 
-		$sql = 'SELECT COUNT(*) AS Valid 
+		$sql = 'SELECT user_office_interface_id 
 			FROM users 
 			WHERE user_entity_id = ? AND user_office_password = ?';
 		
 		$db = $this->object->db;
 		$query = $db->query($sql, array($this->entityId, $hash));
-
-		$row = $query->row();
-		if ($row->Valid == 1) {
+		
+		if ($query->num_rows() > 0) {
+			$row = $query->row();
 			$this->officeLogin = true;
+			$this->officeLevel = $row->user_office_interface_id;
 			$this->localToSession();
 		}
 	}
@@ -249,6 +254,7 @@ class User_auth {
 	// Logout of the yorker office
 	public function logoutOffice() {
 		$this->officeLogin = false;
+		$this->officeLevel = 'None';
 		$this->localToSession();
 	}
 
@@ -268,7 +274,8 @@ class User_auth {
 		$_SESSION['ua_username'] = $this->username;
 		$_SESSION['ua_entityId'] = $this->entityId;
 		$_SESSION['ua_isuser'] = $this->isUser;
-		$_SESSION['ua_isoffice'] = $this->officeLogin;
+		$_SESSION['ua_hasoffice'] = $this->officeLogin;
+		$_SESSION['ua_officetype'] = $this->officeAccess;
 		$_SESSION['ua_firstname'] = $this->firstname;
 		$_SESSION['ua_surname'] = $this->surname;
 		$_SESSION['ua_permissions'] = $this->permissions;
