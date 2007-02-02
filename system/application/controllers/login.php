@@ -27,6 +27,7 @@ class Login extends Controller
 				$this->user_auth->login($username, $password, false);
 				$successfully_logged_in = TRUE;
 				$this->frame_public->AddMessage('success','You have successfully logged in');
+				$this->frame_public->DeferMessages();
 			} catch (Exception $e) {
 				$this->frame_public->AddMessage('error',$e->getMessage());
 			}

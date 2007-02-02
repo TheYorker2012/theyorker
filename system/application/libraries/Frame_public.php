@@ -47,6 +47,9 @@ class Frame_public extends FrameNavbar
 	/// Has the title been set yet
 	private $mTitleSet;
 	
+	/// Messages
+	private $mMessages;
+	
 	/**
 	 * @brief Default constructor.
 	 */
@@ -68,6 +71,18 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['logged_in'] = TRUE;
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
+		
+		// Get any deferred messages
+		$this->mMessages = array();
+		// Assume session has already been started by user_auth
+		//session_start();
+		if (array_key_exists('messages',$_SESSION)) {
+			foreach ($_SESSION['messages'] as $message) {
+				$this->AddMessage($message[0], $message[1]);
+			}
+		}
+		unset($_SESSION['messages']);
+		
 	}
 	
 	/**
@@ -127,17 +142,27 @@ class Frame_public extends FrameNavbar
 	
 	/// Add a message to the page.
 	/**
-	 * @param $Param1 FramesView/string Message class (see Messages.php library) or message type.
-	 * @param $Param2 string Message if @a $Param1 isn't a Message class.
+	 * @param $Type string Message type.
+	 * @param $Message string Message.
 	 */
-	function AddMessage($Param1, $Param2 = '')
+	function AddMessage($Type, $Message)
 	{
-		if (is_string($Param1)) {
-			$Message = new message($Param1, $Param2);
-		} else {
-			$Message = $Param1;
+		$this->mMessages[] = array($Type, $Message);
+		$this->mDataArray['messages'][] = new Message($Type,$Message);
+	}
+	
+	/// Defer the current messages to the next page.
+	function DeferMessages()
+	{
+		if (count($this->mMessages) > 0) {
+			// Save it to the session
+			if (!array_key_exists('messages',$_SESSION)) {
+				$_SESSION['messages'] = array();
+			}
+			foreach ($this->mMessages as $message) {
+				$_SESSION['messages'][] = $message;
+			}
 		}
-		$this->mDataArray['messages'][] = $Message;
 	}
 	
 	/// Get the number of messages.
