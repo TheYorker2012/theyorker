@@ -30,6 +30,8 @@ class Login extends Controller
 			} catch (Exception $e) {
 				$this->frame_public->AddMessage('error',$e->getMessage());
 			}
+		} else {
+			$data['initial_username'] = '';
 		}
 		
 		// Set up the public frame
