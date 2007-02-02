@@ -52,7 +52,7 @@ function preloader()
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
-		Organisation mode - 
+		Organisation mode -
 		<a class="HeaderLinks" href="/login/">log in</a> |
 		<a class="HeaderLinks" href="/register/">register</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |
@@ -65,19 +65,9 @@ function preloader()
 				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
 			</a>
 		</div>
-		<div style="float: right;">
-			<span onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
-				<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" />
-			</span>
-			&nbsp;
-			<span onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
-				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Calendar" border="0" />
-			</span>
-			&nbsp;
-			<span onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
-				<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" />
-			</span>
-			&nbsp;
+		<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+			<span style="font-size: 16px; font-weight:bold; ">Joe Bloggs</span><br />
+			<span style="font-size: 16px; font-weight:bold">University of York Conservative and Unionist Association</span>
 		</div>
 	</div>
 	<div style="background-color: #fff;">
