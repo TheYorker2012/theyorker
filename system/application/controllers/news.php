@@ -55,7 +55,7 @@ class News extends Controller {
 
 		foreach ($data['main_article']['fact_boxes'] as &$fact_box)
 		{
-			$fact_box = $this->wikiparser->parse($fact_box);
+			$fact_box = $this->wikiparser->parse($fact_box['wikitext']);
 		}
 
 		/// Temporarily fill in a few gaps in the model data

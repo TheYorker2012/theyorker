@@ -236,7 +236,12 @@ class Pages_model extends Model
 			} else {
 				// Build the cache
 				$this->load->library('wikiparser');
+				
 				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText()."\n");
+				if (get_magic_quotes_gpc()) {
+					// If magic quotes are on, code igniter doesn't escape
+					$cached_wikitext = addslashes($cached_wikitext);
+				}
 				// Save the cache back to the database
 				$cache = new PagePropertyType(array('text' => $cached_wikitext));
 				$this->InsertProperty($GlobalScope ? FALSE : $this->mPageCode,
@@ -369,10 +374,6 @@ class Pages_model extends Model
 	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
 	{
 		$text = $Property->GetText();
-		if (get_magic_quotes_gpc()) {
-			// If magic quotes are on, code igniter doesn't escape
-			$text = addslashes($text);
-		}
 		
 		$sql =
 			'INSERT INTO page_properties (
@@ -569,10 +570,6 @@ class Pages_model extends Model
 		if (array_key_exists('property_add',$Data)) {
 			foreach ($Data['property_add'] as $property) {
 				$text = $property['text'];
-				if (get_magic_quotes_gpc()) {
-					// If magic quotes are on, code igniter doesn't escape
-					$text = addslashes($text);
-				}
 				
 				$save_data = array();
 				$sql = '
