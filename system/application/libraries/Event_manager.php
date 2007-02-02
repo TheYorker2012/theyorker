@@ -33,7 +33,7 @@ class Event_manager {
 	 */
 	function GetNextSlice($Time, $SliceTime)
 	{
-		// Get $SliceTime minutes after midnight on day of $Time
+		// Get $SliceTime minutes after midnight on day after $Time
 		$return_time = mktime(
 			(int)($SliceTime/60), // hours
 			$SliceTime%60,        // minutes
@@ -41,12 +41,7 @@ class Event_manager {
 			date('m', $Time),     // month
 			date('d', $Time),     // day
 			date('Y', $Time));    // year
-		
-		// If before $Time, do the same on the next day
-		if ($return_time <= $Time) {
-			$return_time = strtotime('+1 day', $return_time);
-		}
-		return $return_time;
+		return strtotime('+1 day', $return_time);
 	}
 	
 	/**

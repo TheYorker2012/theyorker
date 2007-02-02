@@ -186,7 +186,7 @@ abstract class ViewCalendar extends FramesView
 		$CI->load->library('event_manager');
 		
 		// Slice up the events
-		$event_occurrences = $CI->event_manager->SliceOccurrences($Occurrences, 0*60);
+		$event_occurrences = $CI->event_manager->SliceOccurrences($Occurrences, 4*60);
 		// Perform date formatting
 		$return_array = array();
 		foreach ($event_occurrences as $event_index => $event_data) {
