@@ -52,6 +52,7 @@ function preloader()
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
+		Organisation mode - 
 		<a class="HeaderLinks" href="/login/">log in</a> |
 		<a class="HeaderLinks" href="/register/">register</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |

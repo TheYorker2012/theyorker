@@ -22,6 +22,7 @@ class Login extends Controller
 		$password = $this->input->post('password');
 		$successfully_logged_in = FALSE;
 		if (FALSE !== $username) {
+			$data['initial_username'] = $username;
 			try {
 				$this->user_auth->login($username, $password, false);
 				$successfully_logged_in = TRUE;

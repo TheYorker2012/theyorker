@@ -2,7 +2,7 @@
 	<form name='login_form' action='/login' method='POST' class='form'>
 		<fieldset>
 			<label for='username'>Username:</label>
-			<input name='username'>
+			<input name='username' value='<?php echo $initial_username; ?>'>
 			<br />
 			<label for='password'>Password:</label>
 			<input type='password' name='password'>

@@ -19,7 +19,30 @@
 function SetupMainFrame($Permission = 'public')
 {
 	// Choose a frame to use
-	$frame_library = 'frame_public';
+	switch($Permission) {
+		case 'public':
+			$frame_library = 'frame_public';
+			break;
+			
+		case 'student':
+			$frame_library = 'frame_public';
+			break;
+			
+		case 'organisation':
+			$frame_library = 'frame_organisation';
+			break;
+			
+		case 'office':
+			$frame_library = 'frame_office';
+			break;
+			
+		case 'webmaster':
+			$frame_library = 'frame_public';
+			break;
+			
+		default:
+			throw Exception('Unknown permission type');
+	}
 	
 	// Load the corresponding library and create an alias called main_frame
 	$CI = &get_instance();
