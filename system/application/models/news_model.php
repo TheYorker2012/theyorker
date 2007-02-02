@@ -230,8 +230,7 @@ class News_model extends Model
 		$fact_boxes = array();
 		foreach ($query->result() as $row)
 		{
-			$fact_boxes['wikitext'] = $row->fact_box_wikitext;
-			$fact_boxes['title'] = $row->fact_box_title;
+			$fact_boxes[] = array('wikitext'=>$row->fact_box_wikitext,'title'=>$row->fact_box_title);
 		}
 		$result['fact_boxes'] = $fact_boxes;
 
@@ -256,23 +255,29 @@ class News_model extends Model
 		$links = array();
 		foreach ($query->result() as $row)
 		{
-			$links['name'] = $row->article_link_name;
-			$links['url'] = $row->article_link_url;
+			$links[] = array('name'=>$row->article_link_name,'url'=>$row->article_link_url);
 		}
 		$result['links'] = $links;
 
-		//Must be a more effiecient way of doing this...		
+		//Must be a more effiecient way of doing this...
 		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
 				FROM	related_articles
 				WHERE	(related_articles.related_article_1_article_id = @id=?
 				OR		related_articles.related_article_2_article_id = @id)
 				LIMIT 0,10';
-		$query = $this->db->query($sql,array($id));
-		$articles = array($id);
+		//slightly modified sql
+		$sql = 'SELECT	related_article_1_article_id, related_article_2_article_id
+				FROM	related_articles
+				WHERE	(related_article_1_article_id = ?
+				OR		related_article_2_article_id = ?)';
+		$query = $this->db->query($sql,array($id, $id));
+		$articles = array();
 		foreach ($query->result() as $row)
 		{
-			$articles[] = $row->related_articles.related_article_1_article_id;
-			$articles[] = $row->related_articles.related_article_2_article_id;
+			if ($row->related_article_1_article_id != $id)
+				$articles[] = $row->related_article_1_article_id;
+			if ($row->related_article_2_article_id != $id)
+				$articles[] = $row->related_article_2_article_id;
 		}
 		$related_articles = array();
 		foreach (array_values(array_unique($articles)) as $related_id)

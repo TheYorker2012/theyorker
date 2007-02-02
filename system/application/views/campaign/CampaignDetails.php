@@ -20,10 +20,9 @@
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
-        foreach ($campaign_list as $key => $campaigns)
+        foreach ($sections['article']['related_articles'] as $related_articles)
 	{
-		if ($key != $selected_campaign)
-			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+		echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
 	};
 	?>
 	</p>
@@ -31,10 +30,9 @@
 	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
-        foreach ($campaign_list as $key => $campaigns)
+        foreach ($sections['article']['links'] as $links)
 	{
-		if ($key != $selected_campaign)
-			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
 	};
 	?>
 	</p>
@@ -48,15 +46,20 @@
 	<?php echo $sections['article']['text']; ?>
 </div>
 
-<div class='blue_box'>
-	<h2><?php echo $sections['article']['fact_boxes']['title']; ?></h2>
-	<?php echo $sections['article']['fact_boxes']['wikitext']; ?>
-</div>
+<?php
+	foreach ($sections['article']['fact_boxes'] as $fact_box)
+	{
+		echo '<div class=\'blue_box\'>';
+		echo '<h2>'.$fact_box['title'].'</h2>';
+		echo $fact_box['wikitext'];
+		echo '</div>';
+	}
+?>
 
 <?php
 /*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-  */
+*/
 ?>
