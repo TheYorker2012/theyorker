@@ -33,6 +33,8 @@ class User_auth {
 	// The permission of the logged in user
 	public $permissions;
 
+	// The organisation (if any) the user has logged into the admin for
+	public $organisationLogin = -1;
 
 	// The salt used to generate the password hash
 	private $salt;
@@ -52,6 +54,7 @@ class User_auth {
 			$this->firstname = $_SESSION['ua_firstname'];
 			$this->surname = $_SESSION['ua_surname'];
 			$this->permissions = $_SESSION['ua_permissions'];
+			$this->organisationLogin = $_SESSION['ua_organisation'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
 
@@ -211,6 +214,7 @@ class User_auth {
 		$this->firstname = '';
 		$this->surname = '';
 		$this->permissions = 0;
+		$this->organisationLogin = -1;
 		$this->salt = '';
 
 		// Save values in session
@@ -219,6 +223,8 @@ class User_auth {
 	
 	// Login to the yorker office
 	public function loginOffice($password) {
+		// TODO: fix for those who have same password, rather than a 
+		//  secondary password
 		$hash = sha1($this->salt.$password);
 
 		$sql = 'SELECT COUNT(*) AS Valid 
@@ -240,6 +246,16 @@ class User_auth {
 		$this->officeLogin = false;
 		$this->localToSession();
 	}
+
+	// Login to an organisations admin interface
+	public function loginOrganisation() {
+		// TODO: implement this :)
+	}
+
+	// Logout of an organisation interface
+	public function logoutOrganisation() {
+		// TODO: implement this :)
+	}
 	
 	// Save all data from this class in the session
 	private function localToSession() {
@@ -251,7 +267,8 @@ class User_auth {
 		$_SESSION['ua_firstname'] = $this->firstname;
 		$_SESSION['ua_surname'] = $this->surname;
 		$_SESSION['ua_permissions'] = $this->permissions;
-		$_SESSION['us_salt'] = $this->salt;
+		$_SESSION['ua_organisation'] = $this->organisationLogin;
+		$_SESSION['ua_salt'] = $this->salt;
 	}
 
 	private function setPassword($password) {
