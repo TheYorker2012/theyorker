@@ -635,6 +635,8 @@ Done.
 	 * @return string HTML processed wikitext.
 	 */
 	function parse($text,$title="") {
+		assert('is_string($text)');
+		
 		$this->redirect = false;
 		
 		$this->nowikis = array();
