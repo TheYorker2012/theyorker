@@ -18,9 +18,10 @@ class Index extends Controller
 	function index()
 	{
 		// Set up the public frame
-		$this->main_frame->SetTitle('Admin');
-		$this->main_frame->SetContentSimple('admin/admin');
-		
+		if (SetupMainFrame('organisation')) {
+			$this->main_frame->SetTitle('Admin');
+			$this->main_frame->SetContentSimple('admin/admin');
+		}
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
