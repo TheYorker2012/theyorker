@@ -64,19 +64,8 @@ function preloader()
 				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
 			</a>
 		</div>
-		<div style="float: right;">
-			<span onMouseOut="document.img01.src='/images/prototype/header/header_Layer-4.gif';" onMouseOver="document.img01.src='/images/prototype/header/header2_Layer-4.gif';">
-				<img name="img01" src="/images/prototype/header/header_Layer-4.gif" width="107" height="108" alt="News" border="0" />
-			</span>
-			&nbsp;
-			<span onMouseOut="document.img02.src='/images/prototype/header/header_Layer-3.gif';" onMouseOver="document.img02.src='/images/prototype/header/header2_Layer-3.gif';">
-				<img name="img02" src="/images/prototype/header/header_Layer-3.gif" width="107" height="108" alt="Calendar" border="0" />
-			</span>
-			&nbsp;
-			<span onMouseOut="document.img03.src='/images/prototype/header/header_Layer-2.gif';" onMouseOver="document.img03.src='/images/prototype/header/header2_Layer-2.gif';">
-				<img name="img03" src="/images/prototype/header/header_Layer-2.gif" width="108" height="108" alt="Reviews" border="0" />
-			</span>
-			&nbsp;
+		<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+			<span style="font-size: 48px; font-weight:bold; ">Office</span>
 		</div>
 	</div>
 	<div style="background-color: #fff;">
