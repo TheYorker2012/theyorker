@@ -337,7 +337,7 @@ class Pages_model extends Model
 		foreach ($results as $property) {
 			$property_name = $property['page_property_label'];
 			$property_scope = (NULL === $property['page_property_page_id']);
-			if (!array_key_exists($property_name, $property_forms)) {
+			if (!array_key_exists($property_name, $property_forms[$property_scope])) {
 				$property_forms[$property_scope][$property_name] = array();
 			}
 			$property_forms[$property_scope][$property_name][$property['property_type_name']] = array(
