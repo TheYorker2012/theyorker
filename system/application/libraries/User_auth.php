@@ -76,7 +76,7 @@ class User_auth {
 				);
 				if (count($details) == 2) {
 					// We have a username and has, login
-					loginByHash(
+					$this->loginByHash(
 						$details[0], 
 						$details[1], 
 						true
@@ -110,7 +110,7 @@ class User_auth {
 			$this->salt = $row->entity_salt;
 
 			// Perform actual login
-			loginAuthed(
+			$this->loginAuthed(
 				$username, 
 				$row->entity_id, 
 				$savelogin, 
