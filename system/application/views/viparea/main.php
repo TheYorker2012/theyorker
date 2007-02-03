@@ -17,15 +17,10 @@ Your next event starts in 2 hours<br />
 <div class='blue_box'>
 	<h2>My Tasks</h2>
 	<ul>
-		<li>Edit a directory entry</li>
-		<ul>
-			<li><a href='/viparea/directory/theyorker/'>The Yorker</a></li>
-			<li><a href='/viparea/directory/fragsoc/'>FragSoc</a></li>
-			<li><a href='/viparea/directory/evil_eye_lounge/'>Evil Eye Lounge</a></li>
-		</ul>
-		<li><a href='/viparea/calendar/'>Manage events</a></li>
-		<li><a href='/viparea/members/'>Manage members</a></li>
-		<li><a href='/viparea/advertising/'>Advertising</a></li>
-		<li><a href='/viparea/account/'>My Account</a></li>
+		<li><a href='/viparea/directory/<?php echo $organisation; ?>/'>Edit the directory entry</a></li>
+		<li><a href='/viparea/calendar/<?php echo $organisation; ?>/'>Manage events</a></li>
+		<li><a href='/viparea/members/<?php echo $organisation; ?>/'>Manage members</a></li>
+		<li><a href='/viparea/advertising/<?php echo $organisation; ?>/'>Advertising</a></li>
+		<li><a href='/viparea/account/<?php echo $organisation; ?>/'>My Account</a></li>
 	</ul>
 </div>

@@ -71,6 +71,8 @@ $route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
 $route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
 
+$route['office/directory'] = 'office/yorkerdirectory';
+
 // /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
 $route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/information//$1';
 // /office/reviews/theyorker/food => /office/reviews/information/theyorker/food/

@@ -21,6 +21,7 @@ class Main extends Controller
 		if (SetupMainFrame('organisation')) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+					'organisation' => 'theyorker', //example for the moment change this to logged in organisation
 			);
 			// Set up the content
 			$this->main_frame->SetContentSimple('viparea/main', $data);

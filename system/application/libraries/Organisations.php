@@ -54,7 +54,7 @@ class Organisations
 	 * @param $Pattern string/bool Search pattern or FALSE if all.
 	 * @return array of organisations matching pattern.
 	 */
-	function _GetOrgs($Pattern)
+	function _GetOrgs($Pattern, $urlpath='directory/')
 	{
 		$org_description_words = $this->CI->pages_model->GetPropertyInteger('org_description_words', FALSE, 5);
 		
@@ -64,7 +64,7 @@ class Organisations
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
 				'shortname' => $org['organisation_directory_entry_name'],
-				'link' => 'directory/'.$org['organisation_directory_entry_name'],
+				'link' => $urlpath.$org['organisation_directory_entry_name'],
 				'description' => $org['organisation_description'],
 				'shortdescription' => word_limiter(
 					$org['organisation_description'], $org_description_words),
