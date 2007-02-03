@@ -64,8 +64,8 @@ function preloader()
 				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
 			</a>
 		</div>
-		<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
-			<span style="font-size: 48px; font-weight:bold; ">Office</span>
+		<div style="float: right; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+			<span style="font-size: 40px; font-weight:bold; ">Office</span>
 		</div>
 	</div>
 	<div style="background-color: #fff;">
