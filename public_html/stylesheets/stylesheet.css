@@ -33,8 +33,8 @@ img {
 }
 
 /* Replace this with > image */
-ul {
-    list-style-type: disc;
+ul{
+	list-style-image: url(/images/prototype/homepage/arrow.png);
 }
 
 ol {
@@ -171,6 +171,48 @@ div.orange_box h2 {
 	color: #ff6a00;
 }
 
+div.information_box {
+	border: 1px #000 solid;
+	padding: 5px;
+	color: #000;
+	font-size: small;
+	margin-bottom: 5px;
+	background-color: #ffffe1;
+	min-height: 30px;
+}
+
+div.information_box a {
+	color: #ff6a00;
+	font-weight: bold;
+}
+
+div.information_box img {
+	float: left;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+
+div.warning_box {
+	border: 1px #000 solid;
+	padding: 5px;
+	color: #ddd;
+	font-size: small;
+	margin-bottom: 5px;
+	background-color: #b44b00;
+	min-height: 30px;
+}
+
+div.warning_box a {
+	color: #fff;
+	font-weight: bold;
+}
+
+div.warning_box img {
+	float: left;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+
 /* Splitting a box in half - specifically used in reviews. Please feel free to move to reviews (or modify a bit) if no one else uses this -rr512*/
 div.half_right, div.half_left {
 	width: 40%;
@@ -299,16 +341,15 @@ span.blue {
 
 /**
  *	Horizontal Navbar Styles (frame_navbar)
- *	Is this the old nav bar? If so, is it needed? -rr512
  */
 
 div#navbar ul {
 	padding: 0px;
 	margin: 0px;
 	color: White;
-	float: right;
+	float: left;
 	width: 100%;
-	vertical-align: middle;
+	vertical-align: middle
 }
 
 div#navbar ul li {

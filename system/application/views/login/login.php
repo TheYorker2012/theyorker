@@ -1,4 +1,15 @@
-<div id='login' align='center'>
+<div class="RightToolbar">
+	<h4>Forgotten your Password</h4>
+	<div class="Entry">
+		If you have forgotten your password <a href="/login/resetpassword/">click here</a> to reset it.
+	</div>
+	<h4>Register</h4>
+	<div class="Entry">
+		If you have not registered with us yet then you probably can't login.<br /><a href="/register/">Click here</a> to register with us and get exclusive access to the best information.
+	</div>
+</div>
+<div class="blue_box">
+	<h2>log in</h2>
 	<form name='login_form' action='/login' method='POST' class='form'>
 		<fieldset>
 			<label for='username'>Username:</label>
@@ -15,6 +26,5 @@
 		</fieldset>
 		<fieldset>
 		</fieldset>
-		<div style='font-size: small;'>If you have forgotten your password, <a href='/login/resetpassword/'>click here</a> to reset it.</div>
 	</form>
 </div>

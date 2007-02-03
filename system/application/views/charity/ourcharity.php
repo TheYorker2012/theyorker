@@ -11,24 +11,24 @@
 	</div>
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
-	<p style="margin-top: 0px; padding: 8px;">
+	<div class="Entry">
 	<?php
         foreach ($sections['article']['related_articles'] as $related_articles)
 	{
 		echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
 	};
 	?>
-	</p>
+	</div>
 
 	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">
+	<div class="Entry">
 	<?php
         foreach ($sections['article']['links'] as $links)
 	{
 		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
 	};
 	?>
-	</p>
+	</div>
 </div>
 
 
@@ -45,20 +45,19 @@
 if (isset($sections['progress_reports']['entries']))
 {
 	echo '<div class="blue_box">';
-	echo '<span style="font-size: x-large;  color: #BBBBBB; ">'.$sections['progress_reports']['title'].'</span><br />';
+	echo '<h2>'.$sections['progress_reports']['title'].'</h2>';
 	foreach ($sections['progress_reports']['entries'] as $pr_entry)
 	{
-		echo '<br>';
-		echo '<span style="font-size: large;  color: #BBBBBB; ">'.$pr_entry['date'].'</span><br />';
-		echo $pr_entry['text'].'<br />';
+		echo '<h3 style="display: inline"><span class="grey">'.$pr_entry['date'].'</span></h3><br />';
+		echo $pr_entry['text'].'<br /><br />';
 	}
 	echo '</div>';
 }
 ?>
 
 <div class='grey_box'>
-	<h2><?php echo $sections['section_help']['text']; ?></h2>
-	<?php echo $sections['section_help']['title']; ?>
+	<h2><?php echo $sections['section_help']['title']; ?></h2>
+	<?php echo $sections['section_help']['text']; ?>
 </div>
 
 <?php

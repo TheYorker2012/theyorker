@@ -1,16 +1,19 @@
 <div class='RightToolbar'>
-<h4>Areas for Attention</h4>
-The following reviews are waiting to be published:
-<ul>
-	<li><a href='#'>Dan Ashby 02/02/2007</a></li>
-	<li><a href='#'>Charlotte Chung 02/02/2007</a></li>
-</ul>
-<p>
-<a href='#'>Information</a> has been updated and is waiting to be published.
-</p>
-<p>
-There are <a href='#'>Comments</a> that have been reported for abuse.
-</p>
+	<h4>Areas for Attention</h4>
+	<div class="Entry">
+		The following reviews are waiting to be published:
+		<ul>
+			<li><a href='#'>Dan Ashby 02/02/2007</a></li>
+			<li><a href='#'>Charlotte Chung 02/02/2007</a></li>
+		</ul>
+		<div class="information_box">
+			<img src="/images/prototype/homepage/infomark.png" />
+			<a href='#'>Information</a> has been updated and is waiting to be published.
+		</div>
+		<div class="information_box">
+			There are <a href='#'>Comments</a> that have been reported for abuse.
+		</div>
+	</div>
 <h4>What's this?</h4>
 	<p>
 		<?php echo 'whats_this'; ?>
@@ -47,7 +50,7 @@ There are <a href='#'>Comments</a> that have been reported for abuse.
 </form>
 <div class="grey_box">
 	<h2>delete review</h2>
-	If you wish to delete this review, click the button to do so...<br />
+	If you wish to delete this review, click the button to do so...<br /><br />
 	<form>
 		<input type="submit" value="Delete" />
 	</form><br />

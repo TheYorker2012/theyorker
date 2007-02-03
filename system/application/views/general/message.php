@@ -1,15 +1,15 @@
-<div style="float: right; width: 100%; text-align: center; font-size: 12px; background-color: 
+<div style="margin-top: 5px;" class=" 
 		<?php
 			if ($class === 'error')
-				echo '#FF0000';
+				echo 'warning_box"><img src="/images/prototype/homepage/warning.png" /';
 			elseif ($class === 'warning')
-				echo '#FF8000';
+				echo 'warning_box"><img src="/images/prototype/homepage/warning.png" /';
 			elseif ($class === 'information')
-				echo '#FFFF00';
+				echo 'information_box"><img src="/images/prototype/homepage/infomark.png" /';
 			elseif ($class === 'success')
-				echo '#00FF00';
+				echo 'information_box"><img src="/images/prototype/homepage/infomark.png" /';
 			else
-				echo '#808080';
+				echo 'warning_box"><img src="/images/prototype/homepage/questionmark.png" /';
 		?>
 	;">
 	<?php echo $text ?>
