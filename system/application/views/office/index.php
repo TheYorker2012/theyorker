@@ -1,12 +1,12 @@
-<div class='RightToolbar'>
-<h4>Suggestions</h4>
-<h5>Advertising</h5>
-<p>
-Use theyorker to advertise your events, its cheap and it helps charity what is there to lose you tight bastards.
-</p>
-<h4>Reminders</h4>
-Your next event starts in 2 hours<br />
-1 event has been canceled <a href='#'>Relist?</a><br />
+<div class="RightToolbar">
+	<h4>Forgotten your Password</h4>
+	<div class="Entry">
+		If you have forgotten your password, get in contact with your editor, and he will reset it.
+	</div>
+	<h4>Get Involved</h4>
+	<div class="Entry">
+		If you would like to get involved in writing for the yorker, click <a href='/office/register/'>here</a>.
+	</div>
 </div>
 <div class='grey_box'>
 	<h2>welcome</h2>
@@ -14,18 +14,16 @@ Your next event starts in 2 hours<br />
 		<?php echo $main_text; ?>
 	</p>
 </div>
-<div class='blue_box'>
-	<h2>My Tasks</h2>
-	<ul>
-		<li>Edit a directory entry</li>
-		<ul>
-			<li><a href='/viparea/directory/theyorker/'>The Yorker</a></li>
-			<li><a href='/viparea/directory/fragsoc/'>FragSoc</a></li>
-			<li><a href='/viparea/directory/evil_eye_lounge/'>Evil Eye Lounge</a></li>
-		</ul>
-		<li><a href='/viparea/calender/'>Manage events</a></li>
-		<li><a href='/viparea/members/'>Manage members</a></li>
-		<li><a href='/viparea/advertising/'>Advertising</a></li>
-		<li><a href='/viparea/account/'>My Account</a></li>
-	</ul>
+<div class="blue_box">
+	<h2>enter our office</h2>
+	Please reenter/enter your [office] password to proceed.
+	<form name='login_form' action='/office/' method='POST' class='form'>
+		<fieldset>
+			<label for='password'>Office Password:</label>
+			<input type='password' name='password'>
+			<br />
+			<label for='login_button'></label>
+			<input type='submit' class='button' name='login_button' value='Enter'>
+		</fieldset>
+	</form>
 </div>
