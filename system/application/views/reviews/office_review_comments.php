@@ -30,7 +30,7 @@ There are <a href='#'>Comments</a> that have been reported for abuse.
 	<a href="#">[remove]</a><br />
 	<hr>
 	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.<br /><br />
+	<span class="orange">The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.</span><br /><br />
 	Reported <span class="orange">7</span> times<br />
 	<a href="#">[remove]</a><br /><hr>
 	<b>some dousche | 03-01-2007</b><br />

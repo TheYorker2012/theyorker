@@ -48,14 +48,15 @@ There are <a href='#'>Comments</a> that have been reported for abuse.
 		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
 		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
 		25th March 200<br />
-		<span class="orange">Edit this review <span class="black">|</span> Delete this review</span>
+		<a href="/office/reviews/theyorker/food/reviewedit/2"><span class="orange">Edit this review</a> <span class="black">|</span> <a href="#">Delete this review</a>
 	        <p>
 		A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.<br /><br />
 
 		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
 		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
 		25th March 200<br />
-		<span class="orange">Edit this review <span class="black">|</span> Delete this review</span>
+		<a href="/office/reviews/theyorker/food/reviewedit/2"><span class="orange">Edit this review</span></a> | <a href="#">Delete this review</a>
 	        <p>
 		A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.
 </div>
+</form>
