@@ -86,7 +86,7 @@ class Campaign extends Controller {
 		$data['sections'] = array (
 					'article'=>$this->news->GetFullArticle($data['campaign']['article']),
 					'our_campaign'=>array('title'=>$this->pages_model->GetPropertyText('section_our_campaign_title',FALSE)),
-					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',FALSE)),
+					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE)),
 					'sidebar_petition'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_petition_title'),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text')),
 					'sidebar_sign'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_text'),'not_logged_in'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_not_logged_in')),
 					'sidebar_more'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_more_title',TRUE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_more_text',TRUE)),
@@ -105,7 +105,7 @@ class Campaign extends Controller {
 			$data['user'] = FALSE;
 		}
 					
-		$pr_temp = $this->campaign->GetProgressReports($campaign_id, 0);
+		$pr_temp = $this->campaign->GetCampaignProgressReports($campaign_id, 0);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)

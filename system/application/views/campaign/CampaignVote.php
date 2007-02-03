@@ -69,23 +69,21 @@
 		echo '</div>';
 	}
 ?>
-	
-<div class="grey_box">
-	<span style="font-size: x-large;  color: #BBBBBB; "><?php echo $sections['progress_reports']['title']; ?></span><br />
-	<?php
+
+<?php
+	if (isset($sections['progress_reports']['entries']))
+	{
+		echo '<div class="grey_box">';
+		echo '<span style="font-size: x-large;  color: #BBBBBB; ">'.$sections['progress_reports']['title'].'</span><br />';
 		foreach ($sections['progress_reports']['entries'] as $pr_entry)
 		{
 			echo '<br>';
-			/*
-			<div style="float: right; ">
-			<a href='/news/oarticle/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-			</div>
-			*/
 			echo '<span style="font-size: large;  color: #BBBBBB; ">'.$pr_entry['date'].'</span><br />';
 			echo $pr_entry['text'].'<br />';
 		}
-	?>
-</div>
+		echo '</div>';
+}
+?>
 
 <?php
 /*

@@ -3,7 +3,7 @@
  * This model retrieves data for the Campaign pages.
  *
  * @author Richard Ingle (ri504)
- * 
+ *
  */
  
 //TODO - prevent erros if no data present
@@ -67,7 +67,7 @@ class Campaign_model extends Model
 	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetProgressReports($campaign_id, $count)
+	function GetCampaignProgressReports($campaign_id, $count)
 	{
 		$sql = 'SELECT 
 			progress_report_articles.progress_report_article_article_id
