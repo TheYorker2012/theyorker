@@ -8,6 +8,8 @@
 			03/02/2007<br />
 		<span class="orange">Photographer</span><br />
 			Ian Cook<br />
+		<span class="orange">Dimensions</span><br />
+			1024 x 769<br />
 		</div>
 	</div>
 	<div class="thumbnail_medium">
@@ -19,6 +21,8 @@
 			03/02/2007<br />
 		<span class="orange">Photographer</span><br />
 			Ian Cook<br />
+		<span class="orange">Dimensions</span><br />
+			1024 x 769<br />
 		</div>
 	</div>
 	<div class="thumbnail_small">
