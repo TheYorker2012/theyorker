@@ -35,19 +35,19 @@ class Reviews extends Controller
 	 * @pre @a $OrganisationData is valid organisation array.
 	 * @post Frame_directory frame is loaded and ready to use.
 	 */
-	private function _SetupOrganisationFrame($DirectoryEntry)
+	private function _SetupOrganisationFrame($DirectoryEntry, $ContextType)
 	{
 		$this->load->library('frame_directory');
 
 		$navbar = $this->frame_public->GetNavbar();
 		$navbar->AddItem('comments', 'Comments',
-				'/office/reviews/'.$DirectoryEntry.'/comments');
-		$navbar->AddItem('reviews', 'Reviews',
-				'/office/reviews/'.$DirectoryEntry.'/reviews');
+				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/comments');
+		$navbar->AddItem('review', 'Reviews',
+				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
 		$navbar->AddItem('photos', 'Photos',
-				'/office/reviews/'.$DirectoryEntry.'/photos');
+				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
 		$navbar->AddItem('information', 'Information',
-				'/office/reviews/'.$DirectoryEntry.'/information');
+				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
 	}
 
 	/// Directory index page.
@@ -57,13 +57,13 @@ class Reviews extends Controller
 	}
 
 	/// Directory organisation page.
-	function information($organisation)
+	function information($ContextType, $organisation)
 	{
 		$this->pages_model->SetPageCode('office_reviews_information');
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -75,92 +75,73 @@ class Reviews extends Controller
 		if (SetupMainFrame('office')) {
 			// Set up the public frame
 			$this->frame_public->SetTitleParameters(
-					array('organisation' => $data['organisation']['name']));
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
 			$this->frame_public->SetContent($the_view);
 		}
 
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
-	function photos($organisation)
+	function photos($ContextType, $organisation)
 	{
-		$this->pages_model->SetPageCode('vip_area_directory_photos');
+		$this->pages_model->SetPageCode('office_review_photos');
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
 
 		// Set up the directory view
 		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
 
 		// Set up the public frame
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
+				array('organisation' => $data['organisation']['name'],
+					  'content_type' => $ContextType));
 		$this->frame_public->SetContent($the_view);
 
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
-	function map($organisation)
+	function review($ContextType, $organisation)
 	{
-		$this->pages_model->SetPageCode('vip_area_directory_map');
+		$this->pages_model->SetPageCode('office_review_reviews');
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
 
 		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_map', $data);
+		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 
 		// Set up the public frame
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
+				array('organisation' => $data['organisation']['name'],
+					  'content_type' => $ContextType));
 		$this->frame_public->SetContent($the_view);
 
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
-	function contacts($organisation)
+	function comments($ContextType, $organisation)
 	{
-		$this->pages_model->SetPageCode('vip_area_directory_contacts');
+		$this->pages_model->SetPageCode('office_review_comments');
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
 
-		// Members data
-		$members = $this->directory_model->GetDirectoryOrganisationCardsByEntryName($organisation);
-		// translate into nice names for view
-		$data['organisation']['cards'] = array();
-		foreach ($members as $member) {
-			$data['organisation']['cards'][] = array(
-				'name' => $member['business_card_name'],
-				'title' => $member['business_card_title'],
-				#'course' => $member['business_card_course'],
-				'blurb' => $member['business_card_blurb'],
-				'email' => $member['business_card_email'],
-				'phone_mobile' => $member['business_card_mobile'],
-				'phone_internal' => $member['business_card_phone_internal'],
-				'phone_external' => $member['business_card_phone_external'],
-				'postal_address' => $member['business_card_postal_address'],
-				'colours' => array(
-					'background' => $member['business_card_colour_background'],
-					'foreground' => $member['business_card_colour_foreground'],
-				),
-				'type' => $member['business_card_type_name'],
-			);
-		}
-
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_contacts', $data);
+		// Set up the review view
+		$the_view = $this->frames->view('reviews/office_review_comments', $data);
 
 		// Set up the public frame
 		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
+				array('organisation' => $data['organisation']['name'],
+					  'content_type' => $ContextType));
 		$this->frame_public->SetContent($the_view);
 
 		// Load the public frame view
