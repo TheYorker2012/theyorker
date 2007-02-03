@@ -27,6 +27,7 @@ There are <a href='#'>Comments</a> that have been reported for abuse.
 	<h2>objective blurb</h2>
 	You are currently editing <span class="orange">Bills Bike Shop</span><br />
 	<textarea name='reviewinfo_about' cols='48' rows='10'><?php echo 'blurb'; ?></textarea>
+	<textarea name='reviewinfo_about' cols='48' rows='4'><?php echo 'rating quote'; ?></textarea>
 </div>
 <div class='grey_box'>
 <h2>details</h2>
