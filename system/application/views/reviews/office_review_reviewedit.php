@@ -1,18 +1,12 @@
 <div class='RightToolbar'>
-	<h4>Areas for Attention</h4>
+<h4>Revisions</h4>
 	<div class="Entry">
-		The following reviews are waiting to be published:
-		<ul>
-			<li><a href='#'>Dan Ashby 02/02/2007</a></li>
-			<li><a href='#'>Charlotte Chung 02/02/2007</a></li>
-		</ul>
-		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
-			<a href='#'>Information</a> has been updated and is waiting to be published.
-		</div>
-		<div class="information_box">
-			There are <a href='#'>Comments</a> that have been reported for abuse.
-		</div>
+		This review has the following revisions:
+		<ol>
+			<li><a href='#'>Dan Ashby 02/02/2007 3:13PM</a></li>
+			<li><a href='#'>Charlotte Chung 03/02/2007 4:13PM</a> (Published)</li>
+			<li><a href='#'>Charlotte Chung 04/02/2007 5:13PM</a></li>
+		</ol>
 	</div>
 <h4>What's this?</h4>
 	<p>
@@ -45,7 +39,7 @@
 		<label for='review'>Review:</label>
 		<textarea name='reviewinfo_about' cols='40' rows='10'><?php echo 'review'; ?></textarea>
 	</fieldset>
-	<input type="submit" value="Submit" />
+	<input type="submit" value="Save Unpublished" /> <input type="submit" value="Publish" />
 </div>
 </form>
 <div class="grey_box">

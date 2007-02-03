@@ -46,6 +46,8 @@ class Reviews extends Controller
 				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
 		$navbar->AddItem('photos', 'Photos',
 				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
+		$navbar->AddItem('tags', 'Tags',
+				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/tags');
 		$navbar->AddItem('information', 'Information',
 				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
 	}
@@ -97,6 +99,33 @@ class Reviews extends Controller
 
 		// Set up the directory view
 		$the_view = $this->frames->view('reviews/office_review_information', $data);
+
+		// Load the main frame
+		if (SetupMainFrame('office')) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
+
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	/// Directory organisation page.
+	function tags($ContextType, $organisation)
+	{
+		$this->pages_model->SetPageCode('office_reviews_tags');
+
+		//Get Data And toolbar
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the directory view
+		$the_view = $this->frames->view('reviews/office_review_tags', $data);
 
 		// Load the main frame
 		if (SetupMainFrame('office')) {
