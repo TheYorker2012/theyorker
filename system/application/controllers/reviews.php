@@ -40,23 +40,27 @@ class Reviews extends Controller {
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
-		$organistion_code_name = $this->Review_model->GetDirectoryName($article_id);
-		$organistion_content_type = 'food'; //This should be a constant...
+		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
+		$organisation_content_type = 'food'; //This should be a constant...
 
 		//Get data from GetReviews
-		$reviews_database_result = $this->Review_model->GetReview($organistion_code_name,$organistion_content_type);
+		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
+
+		//Incase of no data
+		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
 
 		//First row only since it should be unique
 		$reviews_database_result = $reviews_database_result[0];
+
 
 		//Get the article summary
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
 		$data['article_author'] = $article_database_result['authors'][0];
-		$data['article_content'] = $article_database_result['text'];
+		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/foodreview/'.$organistion_code_name;
+		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
 
 		//Dummy Data - Waiting for news_model to finish implementing, I feel like a theif..., frb501
 		$data['article_author'] = 'Matthew Tole';
@@ -83,13 +87,38 @@ class Reviews extends Controller {
 	//Drink Section - Dummy Data intill Model Ready
 	function drink()
 	{
+		//Load news model
+		$this->load->model('News_model');
+
+		//Get the last article_id
+		$article_id = $this->News_model->GetLatestId(8,1); //8 is drink, 1 is the amount of articles
+		$article_id = $article_id[0]; //Only 1 article being retrieved so...
+
+		//Get the directory name of the organistion it's about
+		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
+		$organisation_content_type = 'drink'; //This should be a constant...
+
+		//Get data from GetReviews
+		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
+
+		//Incase of no data
+		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
+
+		//First row only since it should be unique
+		$reviews_database_result = $reviews_database_result[0];
+
+		//Get the article summary
+		$article_database_result = $this->News_model->GetFullArticle($article_id);
+
+		$data['article_title'] = $article_database_result['heading'];
+		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_content'] = $article_database_result['subtext'];
+		$data['article_date'] = $article_database_result['date'];
+		$data['article_link'] = '/reviews/drinkreview/'.$organisation_code_name;
+
 		//Dummy Data
-		$data['article_title'] = 'Liquid cake tastes awful';
 		$data['article_author'] = 'Matthew Tole';
 		$data['article_author_link'] = '/directory/view/1';
-		$data['article_date'] = '5th December 2006';
-		$data['article_link'] = '/reviews/drinkreview/evil_eye_lounge';
-		$data['article_content'] = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin';
 
 		$price_array['name'] = array('Dirt Cheap','Super Cheap','Kinda Cheap','Meh','Mega Expensive','All Prices');
 		$price_array['link'] = array('reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink');
@@ -107,14 +136,37 @@ class Reviews extends Controller {
 	//Culture Section - Dummy Data intill Model Ready
 	function culture()
 	{
-		//Dummy Data
-		$data['article_title'] = 'Ever tried cake in the bath?';
-		$data['article_author'] = 'Matthew Tole';
-		$data['article_author_link'] = '/directory/view/1';
-		$data['article_date'] = '5th December 2006';
-		$data['article_link'] = '/reviews/culturereview/evil_eye_lounge';
-		$data['article_content'] = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin';
+		//Load news model
+		$this->load->model('News_model');
 
+		//Get the last article_id
+		$article_id = $this->News_model->GetLatestId(9,1); //9 is culture, 1 is the amount of articles
+		$article_id = $article_id[0]; //Only 1 article being retrieved so...
+
+		//Get the directory name of the organistion it's about
+		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
+		$organisation_content_type = 'culture'; //This should be a constant...
+
+		//Get data from GetReviews
+		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
+
+		//Incase of no data
+		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
+
+		//First row only since it should be unique
+		$reviews_database_result = $reviews_database_result[0];
+
+		//Get the article summary
+		$article_database_result = $this->News_model->GetFullArticle($article_id);
+
+		$data['article_title'] = $article_database_result['heading'];
+		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_content'] = $article_database_result['subtext'];
+		$data['article_date'] = $article_database_result['date'];
+		$data['article_link'] = '/reviews/culturereview/'.$organisation_code_name;
+		$data['article_author_link'] = '/directory/view/1';
+
+		//Dummy data
 		$location_array['name'] = array('York','Leeds','London','Manchester','Blackpool','All Locations');
 		$location_array['link'] = array('reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture');
 		$data['location_array'] = $location_array;
@@ -134,55 +186,85 @@ class Reviews extends Controller {
 	//Review Function for Food/Drink/Culture
 	function mainreview($review_type, $page_code)
 	{
-		
-		// Set up the public frame
+		//Load news model
+		$this->load->model('News_model');
 
 		switch($review_type)
 		{
 			case 0:
+				//Find our article_id
+				$article_id = $this->Review_model->GetArticleID($page_code,7);
+				$article_comment_id = $article_id[0];
+
 				$data['page_id'] 	= 20;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],strlen($page_code)); //User comments - Article id isn't real will fix... just the db changed on me before a commit and need sleep, frb501
-				$data['article_id'] = strlen($page_code);
-				$database_result 	= $this->Review_model->GetReview($page_code,'food');
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
+				$review_database_result 	= $this->Review_model->GetReview($page_code,'food');
 				$this->frame_public->SetTitle('Food Review');
 			break;
 	
 			case 1:
+				//Find our article_id
+				$article_id = $this->Review_model->GetArticleID($page_code,8);
+				$article_comment_id = $article_id[0];
+
 				$data['page_id'] 	= 21;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],strlen($page_code)); //User comments
-				$data['article_id'] = strlen($page_code);
-				$database_result 	= $this->Review_model->GetReview($page_code,'drink');
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
+
+				$review_database_result 	= $this->Review_model->GetReview($page_code,'drink');
 				$this->frame_public->SetTitle('Drink Review');
 			break;
 	
 			case 2:
-				$data['page_id'] 	= 22;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'], strlen($page_code)); //User comments
-				$data['article_id'] = strlen($page_code);
+				//Find our article_id
+				$article_id = $this->Review_model->GetArticleID($page_code,9);
+				$article_comment_id = $article_id[0];
 
-				$database_result 	= $this->Review_model->GetReview($page_code,'culture');
+				$data['page_id'] 	= 22;
+				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'], $article_comment_id); //User comments
+
+				$review_database_result 	= $this->Review_model->GetReview($page_code,'culture');
 				$this->frame_public->SetTitle('Culture Review');
 			break;
 		}
 
-		//N.B There should only be 1 row returned hence [0] as it should be unique
+		//Get the article for each article on the page
+		for ($article_no = 0; $article_no < count($article_id); $article_no++)
+		{
+			$article_database_result = $this->News_model->GetFullArticle($article_id[$article_no]);
 
-		$data['review_title'] 			= $database_result[0]['organisation_name'];
-		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
-		$data['review_blurb']			= $database_result[0]['review_context_content_blurb'];
-		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
-		$data['review_content']		= '';
-		$data['email'] 					= $database_result[0]['organisation_email_address'];
-		$data['address_main']			= $database_result[0]['organisation_postal_address'];
-		$data['address_postcode']		= $database_result[0]['organisation_postcode'];
-		$data['website']				= $database_result[0]['organisation_url'];
-		$data['website_booking']		= $database_result[0]['review_context_content_book_online'];
-		$data['telephone']				= $database_result[0]['organisation_phone_external'];
-		$data['average_price']			= '£'.($database_result[0]['review_context_content_average_price_upper']/100).' to £'.($database_result[0]['review_context_content_average_price_upper']/100);
-		$data['opening_times']			= $database_result[0]['organisation_opening_hours'];
-		$data['yorker_recommendation']	= $database_result[0]['review_context_content_rating'];
-		$data['price_rating']			= 'Waiting on Model';
+			$article[$article_no]['article_title'] = $article_database_result['heading'];
+	//		$article[$article_no]['article_author'] = $article_database_result['authors'][0];
+			$article[$article_no]['article_content'] = $article_database_result['text'];
+			$article[$article_no]['article_date'] = $article_database_result['date'];
+
+			$article[$article_no]['article_photo'] = '/images/prototype/news/benest.png';
+			$article[$article_no]['article_author'] = 'Ian Benest - Top Yorker Author';
+			$article[$article_no]['article_author_link'] = '/directory/view/1';
+		}
+
+		//Place articles into the data array to be passed along
 		
+		$data['article'] = $article;
+
+		$review_database_result = $review_database_result[0]; //Unique so just first row
+
+		$data['article_id'] = $article_id;
+		$data['review_title'] 			= $review_database_result['organisation_name'];
+		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
+		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
+		$data['email'] 				= $review_database_result['organisation_email_address'];
+		$data['address_main']			= $review_database_result['organisation_postal_address'];
+		$data['address_postcode']		= $review_database_result['organisation_postcode'];
+		$data['website']				= $review_database_result['organisation_url'];
+		$data['website_booking']		= $review_database_result['review_context_content_book_online'];
+		$data['telephone']				= $review_database_result['organisation_phone_external'];
+		$data['average_price']			= '£'.($review_database_result['review_context_content_average_price_lower']/100).' to £'.($review_database_result['review_context_content_average_price_upper']/100);
+		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
+		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
+
+		//Dummy Data
+		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
+		$data['price_rating']			= 'Waiting on Model';
 
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->SetContentSimple('reviews/foodreview', $data);

@@ -126,12 +126,14 @@ class Review_model extends Model {
 
 	//Find the article id's for a review, frb501
 	//This is useful since from this we can call the news_model to get the rest
-	function GetArticleID($organisation_id,$content_type_id)
+	function GetArticleID($organisation_name,$content_type_id)
 	{
-		$sql = "SELECT article_id FROM articles WHERE
-			article_content_type_id = ? AND
-			article_organisation_entity_id = ?";
-		$query = $this->db->query($sql,array($content_type_id,$organisation_id));
+		$sql = "SELECT article_id FROM articles
+		INNER JOIN organisations ON organisations.organisation_entity_id = articles.article_organisation_entity_id
+		WHERE
+			articles.article_content_type_id = ? AND
+			organisations.organisation_directory_entry_name = ?";
+		$query = $this->db->query($sql,array($content_type_id,$organisation_name));
 		if ($query->num_rows() != 0) //If article exists
 		{
 			$resultno = 0;
@@ -146,6 +148,28 @@ class Review_model extends Model {
 		{
 			return array(); //Return a empty array
 		}
+	}
+
+	//Changes between name of type and the id of the type, frb501
+	function TranslateTypeNameToID($type_name)
+	{
+		$sql = "SELECT content_type_id FROM content_types WHERE
+				content_type_name = ?";
+		$query = $this->db->query($sql,$type_name);
+		$result = $query->row_array();
+
+		return $result['content_type_id'];
+	}
+
+	//Changes between a organisation directory name and it's id - This is too reduce problems further on in dev
+	function TranslateDirectoryToID($directory_name)
+	{
+		$sql = "SELECT organisation_entity_id FROM organisations WHERE
+				organisation_directory_entry_name = ?";
+		$query = $this->db->query($sql,$directory_name);
+		$result = $query->row_array();
+
+		return $result['organisation_entity_id'];
 	}
 
 	//The invert of GetArticleID, it takes the article id and says which organisation it's about

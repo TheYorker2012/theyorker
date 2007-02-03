@@ -46,21 +46,26 @@
 </div>
 <div class="blue_box">
 	<h2>reviews</h2>
-		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
-		<span style='font-size: medium;'><b>Chris Travis</b></span><br />
-		25th March 200<br />
+
+<?php
+	//Author's reviews - Loop through and display all of them
+
+	for ($article_no = 0; $article_no < count($article); $article_no++)
+	{
+	echo "
+		<img src='".$article[$article_no]['article_photo']."' alt='Reporter' title='Reporter' style='float: right;' />
+		<span style='font-size: medium;'><b>".$article[$article_no]['article_author']."</b></span><br />
+		".$article[$article_no]['article_date']."<br />
 		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
 	        <p>
-			<span style="color:black;">A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.</span>
+			<span style='color:black;'>".$article[$article_no]['article_content']."</span>
 		</p>
 		<hr>
-		<img src='/images/prototype/news/benest.png' alt='Reporter' title='Reporter' style='float: right;' />
-		<span style='font-size: medium;'><b>Chris Travis^2</b></span><br />
-		25th March 200<br />
-		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
-	        <p>
-			<span style="color:black;">A stupid whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.</span>
-		</p>
+		";
+	}
+
+?>
+
 </div>
 <div class="grey_box">
 	<h2>your comments</h2>
@@ -71,7 +76,7 @@
 	//If not empty
 	if (! empty($comments))
 	{
-		//Show the 5 comments
+		//Show the last 5 comments
 		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 6); $commentno--)
 		{
 		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
@@ -86,7 +91,7 @@
 	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
 	echo form_open('reviews/addcomment');
 	echo form_hidden('comment_page_id',$page_id);
-	echo form_hidden('comment_article_id',$article_id);
+	echo form_hidden('comment_article_id',$article_id[0]);
 	$userid = 1337;
 	echo form_hidden('comment_user_entity_id',$userid);
 	echo form_hidden('return_page',$this->uri->uri_string());
