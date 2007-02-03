@@ -21,12 +21,16 @@ class User_auth {
 	// True if the user is an actual user rather than an organisation
 	public $isUser;
 	
-	// If the user has an office login
+	// If the user has an office login (does not indicate if they are
+	//  logged in)
 	public $officeLogin;
 
-	// The current access level to the office
+	// The current access level to the office (None, Low, High, Admin)
 	public $officeType = 'None';
-	
+
+	// The interface id for the office
+	public $officeInterface = -1;
+
 	// The firstname of the logged in user
 	public $firstname;
 
@@ -60,6 +64,7 @@ class User_auth {
 			$this->isUser = $_SESSION['ua_isuser'];
 			$this->officeLogin = $_SESSION['ua_hasoffice'];
 			$this->officeType = $_SESSION['ua_officetype'];
+			$this->officeInterface = $_SESSION['ua_officeinterface'];
 			$this->firstname = $_SESSION['ua_firstname'];
 			$this->surname = $_SESSION['ua_surname'];
 			$this->permissions = $_SESSION['ua_permissions'];
@@ -153,18 +158,19 @@ class User_auth {
 			$this->isUser = true;
 			$this->firstname = $row->user_firstname;
 			$this->surname = $row->user_surname;
-			$this->officeAccess = $row->user_office_access;
+			$this->officeLogin = $row->user_office_access;
 		} else {
 			$sql = 'SELECT organisation_name 
 				FROM organisations 
 				WHERE organisation_entity_id = ?';
-
+			
 			$query = $db->query($sql, array($this->entityId));
-
+			
 			$this->isUser = false;
 			$this->firstname = $row->organisation_name;
 			$this->surname = '';
-			$this->officeAccess = false;
+			$this->officeLogin = false;
+			$this->organisationLogin = $this->entityId;
 		}
 		
 		// Set session variables to persist information
@@ -220,6 +226,8 @@ class User_auth {
 		$this->isLoggedIn = false;
 		$this->entityId = -1;
 		$this->officeLogin = false;
+		$this->officeType = 'None';
+		$this->officeInterface = -1;
 		$this->firstname = '';
 		$this->surname = '';
 		$this->permissions = 0;
@@ -232,29 +240,60 @@ class User_auth {
 	
 	// Login to the yorker office
 	public function loginOffice($password) {
-		// TODO: fix for those who have same password, rather than a 
-		//  secondary password
-		$hash = sha1($this->salt.$password);
+		// TODO: test (awaiting interface)
+		if (!$this->officeLogin) {
+			throw new Exception('User does not have office access');
+		}
 
-		$sql = 'SELECT user_office_interface_id 
-			FROM users 
-			WHERE user_entity_id = ? AND user_office_password = ?';
+		$hash = sha1($this->salt.$password);
+		
+		$sql = 'SELECT entity_password, user_office_interface_id, 
+				user_office_password, user_admin
+			FROM entities INNER JOIN users ON 
+				entity_id = user_entity_id 
+			WHERE entity_id = ?';
 		
 		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $hash));
+		$query = $db->query($sql, array($this->entityId));
 		
-		if ($query->num_rows() > 0) {
-			$row = $query->row();
-			$this->officeLogin = true;
-			$this->officeLevel = $row->user_office_interface_id;
-			$this->localToSession();
+		// We should always have a result at this stage
+		if ($query->num_rows() == 0) {
+			throw new Exception('Cannot find entity!');
 		}
+
+		$row = $query->row();
+		
+		if ($row->user_office_password == null) {
+			// The user doesn't have a seperate password, this is a
+			//  low level login
+			if ($row->entity_password == $hash) {
+				$this->officeType = 'Low';
+				$this->officeInterface = $row->user_office_interface_id;
+			} else {
+				throw new Exception('Invalid password');
+			}
+		} else {
+			// The user has a seperate password, this is a high
+			//  level or admin login
+			if ($row->user_office_password == $hash) {
+				if ($row->user_admin) {
+					$this->officeType = 'Admin';
+				} else {
+					$this->officeType = 'High';
+				}
+				$this->officeInterface = $row->user_office_interface_id;
+			} else {
+                                throw new Exception('Invalid password');
+                        }
+		}
+
+		$this->localToSession();
 	}
 	
 	// Logout of the yorker office
 	public function logoutOffice() {
-		$this->officeLogin = false;
-		$this->officeLevel = 'None';
+		$this->officeType = 'None';
+		$this->officeInterface = -1;
 		$this->localToSession();
 	}
 
@@ -275,7 +314,8 @@ class User_auth {
 		$_SESSION['ua_entityId'] = $this->entityId;
 		$_SESSION['ua_isuser'] = $this->isUser;
 		$_SESSION['ua_hasoffice'] = $this->officeLogin;
-		$_SESSION['ua_officetype'] = $this->officeAccess;
+		$_SESSION['ua_officetype'] = $this->officeType;
+		$_SESSION['ua_officeinterface'] = $this->officeInterface;
 		$_SESSION['ua_firstname'] = $this->firstname;
 		$_SESSION['ua_surname'] = $this->surname;
 		$_SESSION['ua_permissions'] = $this->permissions;
