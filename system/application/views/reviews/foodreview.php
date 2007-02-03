@@ -64,15 +64,22 @@
 </div>
 <div class="grey_box">
 	<h2>your comments</h2>
+
 	User Rating: <h5 style="display:inline;">5.7</h5>/10 (based on 12 votes)
 	<hr>
-	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.	<hr>
-	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.	<hr>
-	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.
-	<hr>
+<?php
+	//If not empty
+	if (! empty($comments))
+	{
+		//Show the 5 comments
+		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 6); $commentno--)
+		{
+		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
+		}
+	}
+
+?>
+
 	<a href=#>View all comments</a><br /><br />
 	<h2>add comment</h2>
 <?php
@@ -86,7 +93,7 @@
 	echo '<textarea name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
 	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="component-select">
 				<OPTION selected>1</OPTION>
-				<OPTION >2</OPTION>
+				<OPTION>2</OPTION>
 				<OPTION>3</OPTION>
 				<OPTION>4</OPTION>
 				<OPTION>5</OPTION>
