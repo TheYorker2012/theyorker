@@ -2,7 +2,7 @@
 if (empty($organisation['reviews_untyped']) && empty($organisation['reviews_by_type'])) {
 ?>
 	<div align='center'>
-		<b>This organisation has not been reviewed yet.</b>
+		<b>This society has not been reviewed yet.</b>
 	</div>
 <?php
 }

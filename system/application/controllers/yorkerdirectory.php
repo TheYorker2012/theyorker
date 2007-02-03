@@ -38,10 +38,13 @@ class Yorkerdirectory extends Controller
 	private function _SetupOrganisationFrame($DirectoryEntry)
 	{
 		$this->load->library('frame_directory');
-
+		$data = $this->organisations->_GetOrgData($DirectoryEntry);
 		$navbar = $this->frame_public->GetNavbar();
-		$navbar->AddItem('reviews', 'Reviews',
-				'/directory/'.$DirectoryEntry.'/reviews');
+		if($data['organisation']['type'] == 'Societies')
+		{
+			$navbar->AddItem('reviews', 'Reviews',
+					'/directory/'.$DirectoryEntry.'/reviews');
+		}
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
 		$navbar->AddItem('events', 'Events',

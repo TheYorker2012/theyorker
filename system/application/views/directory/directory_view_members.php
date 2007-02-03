@@ -1,7 +1,7 @@
 <?php
 if(empty($organisation['cards'])) {
 ?>
-<div align="center" style='padding: 50px 0px 50px 0px;'>
+<div align="center">
 	<b>This organisation has not listed any of its members.</b>
 </div>
 <?php
