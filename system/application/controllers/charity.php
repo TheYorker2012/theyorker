@@ -13,7 +13,7 @@ class Charity extends Controller {
 	{
 		$this->load->model('news_model','news');
 		$this->load->model('charity_model','charity');
-		$this->pages_model->SetPageCode('howdoi');
+		$this->pages_model->SetPageCode('ourcharity');
 
 		$data['sections'] = array (
 					'article'=>$this->news->GetFullArticle(20),
@@ -34,7 +34,7 @@ class Charity extends Controller {
 		}
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('Our Sponsored Charity');
+		$this->frame_public->SetTitle($this->pages_model->GetTitle(array('name'=>$data['sections']['charity']['name'])));
 		$this->frame_public->SetContentSimple('charity/ourcharity', $data);
 
 		// Load the public frame view (which will load the content view)
