@@ -5,7 +5,7 @@
 	</div>
 </div>
 <div class="blue_box">
-	<h2>log in</h2>
+	<h2>enter vip area</h2>
 	Good afternoon, John. Welcome to the VIP area. Please select the organisation that you wish to represent, and then reenter your university password.
 	<form name='login_form' action='/viparea/main' method='POST' class='form'>
 		<fieldset>
