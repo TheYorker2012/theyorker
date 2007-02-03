@@ -26,40 +26,6 @@ class Review_model extends Model {
 		parent::Model();
 	}
 
-// Notice Commit Clash - Not sure how to handle it properly.... we seem to have done the same work but I'm indexing from comments.comment_page_id and you are indexing from the organisations table. My system is currently in a working state however your's is probility the better way to do it... so I commented out yours temporatly, sorry frb501
-/*	//Gets comments from database, frb501
-	function GetComments($organisation_directory_entry_name, $content_type_codename)
-	{
-		$sql = "SELECT comment_text, comment_timestamp, comment_rating
-				FROM comments
-				LEFT JOIN (
-				content_types, organisations
-				) ON ( comments.comment_content_type_id = content_types.content_type_id
-				AND comments.comment_organisation_entity_id = organisations.organisation_entity_id )
-				WHERE content_types.content_type_codename = ? AND organisations.organisation_directory_entry_name = ?";
-		$query = $this->db->query($sql,array($content_type_codename, $organisation_directory_entry_name));
-
-		if ($query->num_rows() > 0)
-		{
-			$commentno = 0;
-			foreach ($query->result() as $row)
-			{
-			$comments['comment_author'][$commentno] = 'nothing';
-			$comments['comment_rating'][$commentno] = $row->comment_rating;
-			$comments['comment_date'][$commentno] = $row->comment_timestamp;
-			$comments['comment_content'][$commentno] = $row->comment_text;
-			$commentno++;
-			}
-
-			return $comments;
-		}
-		else
-		{
-		$nocomments = 'empty';
-		return $nocomments;
-		}
-	}
-*/
 	function GetReview($organisation_directory_entry_name,$content_type_codename) {
 
 	#dgh500
@@ -67,6 +33,7 @@ class Review_model extends Model {
 	# need organisation fileas - what IS this?? all null in DB
 	$sql = '
 			SELECT
+			organisations.organisation_entity_id,
 			organisations.organisation_name,
 			organisations.organisation_fileas,
 			organisations.organisation_description,
@@ -90,7 +57,8 @@ class Review_model extends Model {
 			review_context_contents.review_context_content_average_price_lower,
 			review_context_contents.review_context_content_rating,
 			review_context_contents.review_context_content_directions,
-			review_context_contents.review_context_content_book_online
+			review_context_contents.review_context_content_book_online,
+			review_context_contents.review_context_content_content_type_id
 			  FROM content_types
 			  INNER JOIN review_context_contents
 			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id
@@ -154,6 +122,48 @@ class Review_model extends Model {
 	}
 
 	return $league;
+	}
+
+	//Find the article id's for a review, frb501
+	//This is useful since from this we can call the news_model to get the rest
+	function GetArticleID($organisation_id,$content_type_id)
+	{
+		$sql = "SELECT article_id FROM articles WHERE
+			article_content_type_id = ? AND
+			article_organisation_entity_id = ?";
+		$query = $this->db->query($sql,array($content_type_id,$organisation_id));
+		if ($query->num_rows() != 0) //If article exists
+		{
+			$resultno = 0;
+			foreach ($query->result() as $row) //Create a array of article_id's used by it
+			{
+				$article_id[$resultno] = $row->article_id;
+				$resultno++;
+			}
+			return $article_id; //And return it
+		}
+		else //If no article
+		{
+			return array(); //Return a empty array
+		}
+	}
+
+	//The invert of GetArticleID, it takes the article id and says which organisation it's about
+	function GetDirectoryName($article_id)
+	{
+		$sql = 'SELECT organisation_directory_entry_name FROM organisations INNER JOIN articles ON articles.article_organisation_entity_id = organisations.organisation_entity_id WHERE articles.article_id = ?';
+		$query = $this->db->query($sql,$article_id);
+
+		if ($query->num_rows() != 0) //If article exists
+		{
+			$row = $query->row_array(); //Only one result
+			return $row['organisation_directory_entry_name'];
+		}
+		else
+		{
+			return array(); //Else return a empty array
+		}
+
 	}
 
 	//Gets comments from database, frb501

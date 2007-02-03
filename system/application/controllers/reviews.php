@@ -26,27 +26,44 @@ class Reviews extends Controller {
 
 	function index()
 	{	
-
-		// Set up the public frame
-		$this->frame_public->SetTitle('Reviews');
-		$this->frame_public->SetContentSimple('reviews/index');
-		
-		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
-		
+		redirect('/reviews/food'); //Send them to the food page instead
 	}
 
-	//Food Section - Dummy Data intill Model Ready
+	//Food Frontpage
 	function food()
 	{
-		//Dummy Data
-		$data['article_title'] = 'Cake tastes nice';
+		//Load news model
+		$this->load->model('News_model');
+
+		//Get the last article_id
+		$article_id = $this->News_model->GetLatestId(7,1); //7 is food, 1 is the amount of articles
+		$article_id = $article_id[0]; //Only 1 article being retrieved so...
+
+		//Get the directory name of the organistion it's about
+		$organistion_code_name = $this->Review_model->GetDirectoryName($article_id);
+		$organistion_content_type = 'food'; //This should be a constant...
+
+		//Get data from GetReviews
+		$reviews_database_result = $this->Review_model->GetReview($organistion_code_name,$organistion_content_type);
+
+		//First row only since it should be unique
+		$reviews_database_result = $reviews_database_result[0];
+
+		//Get the article summary
+		$article_database_result = $this->News_model->GetFullArticle($article_id);
+
+		$data['article_title'] = $article_database_result['heading'];
+		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_content'] = $article_database_result['text'];
+		$data['article_date'] = $article_database_result['date'];
+		$data['article_link'] = '/reviews/foodreview/'.$organistion_code_name;
+
+		//Dummy Data - Waiting for news_model to finish implementing, I feel like a theif..., frb501
 		$data['article_author'] = 'Matthew Tole';
 		$data['article_author_link'] = '/directory/view/1';
-		$data['article_date'] = '5th December 2006';
-		$data['article_link'] = '/reviews/foodreview/evil_eye_lounge';
-		$data['article_content'] = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc elementum arcu non risus. Vestibulum arcu enim, placerat nec, malesuada eget, pharetra at, mi. Nullam rhoncus porttitor nunc. Phasellus semper. Sed lobortis porta purus. Morbi egestas elit vitae magna. Morbi mollis consequat diam. Phasellus mauris. Pellentesque non tortor. Morbi sit amet lorem eu nisl sollicitudin fringilla. Sed sapien magna, vestibulum a, pellentesque id, tempor et, eros. Proin';
+		$data['article_photo'] = '/images/prototype/news/thumb4.jpg';
 
+		//More dummy data as part of the tables page
 		$type_array['name'] = array('Italian','Indian','Pub Dinners','Take Away Resturants','Thai','Chinese','All Types');
 		$type_array['link'] = array('reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food');
 		$data['type_array'] = $type_array;
@@ -54,7 +71,7 @@ class Reviews extends Controller {
 		$price_array['name'] = array('Dirt Cheap','Super Cheap','Kinda Cheap','Meh','Mega Expensive','All Prices');
 		$price_array['link'] = array('reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food/');
 		$data['price_array'] = $price_array;
-		
+			
 		// Set up the public frame
 		$this->frame_public->SetTitle('Food');
 		$this->frame_public->SetContentSimple('reviews/food',$data);
