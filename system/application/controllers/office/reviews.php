@@ -56,6 +56,33 @@ class Reviews extends Controller
 	{
 	}
 
+	/// Organisation Overview Page
+	function overview($organisation)
+	{
+		$this->pages_model->SetPageCode('office_reviews_overview');
+
+		//Get Data And toolbar
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the directory view
+		$the_view = $this->frames->view('reviews/office_review_information', $data);
+
+		// Load the main frame
+		if (SetupMainFrame('office')) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
+
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
 	/// Directory organisation page.
 	function information($ContextType, $organisation)
 	{
@@ -117,6 +144,30 @@ class Reviews extends Controller
 
 		// Set up the directory view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
+
+		// Set up the public frame
+		$this->frame_public->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+					  'content_type' => $ContextType));
+		$this->frame_public->SetContent($the_view);
+
+		// Load the public frame view
+		$this->frame_public->Load();
+	}
+	function reviewedit($ContextType, $organisation, $ArticleId)
+	{
+		$this->pages_model->SetPageCode('office_review_reviewedit');
+
+		//Get Data And toolbar
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupOrganisationFrame($organisation,$ContextType);
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
+
+		// Set up the directory view
+		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
 
 		// Set up the public frame
 		$this->frame_public->SetTitleParameters(
