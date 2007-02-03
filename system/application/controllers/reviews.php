@@ -370,7 +370,27 @@ class Reviews extends Controller {
 
 	function leagues()
 	{
-		
+		//Get leagues from model
+		$leagues = $this->Review_model->GetLeague($this->uri->segment(3));
+
+		//Set name of league
+		$data['league_name'] = $leagues[0]['league_name']; //They should all be from the same league
+
+		//Place remaining data into a array for the view
+		for ($row = 0; $row < count($leagues); $row++)
+		{
+			$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
+			$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
+			$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
+			$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; //This will need the use of a function which returns what a organisition has being reviews on
+			$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
+			$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
+		}
+
+		//Pass over the amount of entries to view
+		$data['max_entries'] = $row;
+
+//Dummy data
 		$reviews['review_image'] = array(
 			'/images/prototype/news/thumb9.jpg',
 			'/images/prototype/news/thumb9.jpg',
@@ -383,47 +403,7 @@ class Reviews extends Controller {
 			'/images/prototype/news/thumb9.jpg',
 			'/images/prototype/news/thumb9.jpg');
 
-		$reviews['review_title'] = array(
-			'Evil Eye',
-			'Gallery',
-			'Toffs',
-			'Nexus',
-			'The Lion Storm',
-			'Toffs',
-			'Nexus',
-			'The Lion Storm',
-			'Ha ha',
-			'The Red Bull');
-		
-		$reviews['review_website'] = array(
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk',
-			'http://www.mywebsite.co.uk');
-
-		$reviews['review_rating'] = array(2,6,2,7,3,8,3,2,8,4);
-
-				$data['review_link'] = array("/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food","/context/evil_eye_lounge/food");
-
-		$reviews['review_blurb'] = array(
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!",
-			"The most romantic place in york is the blue bicycle. A wonderful place to go. I've had some romantic nights in here before. Believe me!");
-
-		$data['reviews'] = $reviews;
+			$data['reviews'] = $reviews;
 
 		$this->frame_public->SetTitle('leagues');
 		$this->frame_public->SetContentSimple('reviews/leagues',$data);

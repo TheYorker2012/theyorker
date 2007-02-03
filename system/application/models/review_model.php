@@ -83,6 +83,7 @@ class Review_model extends Model {
 				organisations.organisation_name,
 				organisations.organisation_url,
 				organisations.organisation_description,
+				organisations.organisation_directory_entry_name,
 				league_entries.league_entry_position,
 				leagues.league_name,
 				content_types.content_type_name,
@@ -101,10 +102,10 @@ class Review_model extends Model {
 				ON comment_summary_cache.comment_summary_cache_content_type_id = content_types.content_type_id
 				   AND comment_summary_cache.comment_summary_cache_organisation_entity_id = organisations.organisation_entity_id
 				   AND comment_summary_cache.comment_summary_cache_article_id IS NULL
-				WHERE leagues.league_codename = "'.$league_codename.'"
-				ORDER BY '.$sortby.' '.$order.'
+				WHERE leagues.league_codename = ?
+				ORDER BY ? ?
 				';
-	$query = $this->db->query($sql);
+	$query = $this->db->query($sql,array($league_codename,$sortby,$order));
 	$tmpleague = array();
 	$league    = array();
 
@@ -118,6 +119,7 @@ class Review_model extends Model {
 		$tmpleague['content_type_name']		   = $row->content_type_name;
 		$tmpleague['content_type_codename']	   = $row->content_type_codename;
 		$tmpleague['average_user_rating']	   = $row->comment_summary_cache_average_rating;
+		$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
 		$league[]                              = $tmpleague;
 	}
 
@@ -227,7 +229,7 @@ class Review_model extends Model {
 		$this->db->insert('comments',$comment); //Add users comment to database
 	}
 
-	//Mirrored from GetReview - frb501 - This should return all the rows in a given type
+	//Mirrored from GetReview - This should return all the rows in a given type
 	function TableReview($content_type_codename, $tag_id = -1)
 	{
 		$tag_join = ($tag_id == -1) ? '' : ' LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_tag_id = ? AND ot.organisation_tag_organisation_entity_id = o.organisation_entity_id ';

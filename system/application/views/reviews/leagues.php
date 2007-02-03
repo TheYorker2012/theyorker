@@ -33,23 +33,32 @@
 </div
 
 <div class='grey_box'>
-	<h2 style="display: inline;">Best for Romance</h2><br />
+	<h2 style="display: inline;"><?php echo $league_name; ?></h2><br />
 	We ve been all around York and found the top ten places for a nice romantic meal. Check it!<br />
 	</div>
 <?php
-		for($topten=0; $topten<10; $topten++) {
+		for($topten=0; ($topten<10) && ($topten < $max_entries); $topten++) {
 			echo '	<div class="blue_box" >';
-			echo '		<h3 style="display: inline;"><a style="color: #20c1f0;" href="/context/evil_eye_lounge/food">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
+			echo '		<h3 style="display: inline;"><a style="color: #20c1f0;" href="'.$reviews['review_link'][$topten].'">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<div class="ReviewElementNumber" style="text-align: right; font-size: x-small; color: #f26a22;">
-						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-						<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />
-						<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " /><br />
-						User rating: 5/10<br />
+';
+			//Star display
+
+			//Display stars
+			for ($stars = 0; ($stars < $reviews['review_rating'][$topten]/2); $stars++)
+				{
+						echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
+				}
+			//Fill in the blanks
+			for ($emptystars = 0; $emptystars < (5 - $stars); $emptystars++)
+				{
+						echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
+				}
+
+			echo 'User rating: '.$reviews['review_rating'][$topten].'/10<br />
 					</div>';
 			echo '		<img style="float: left; padding: 0.5em;" src="'.$reviews['review_image'][$topten].'" alt="#" />';
-			echo '		<a href="'.$reviews['review_website'][$topten].'">www.website.co.uk</a><br />';
+			echo '		<a href="'.$reviews['review_website'][$topten].'">'.$reviews['review_website'][$topten].'</a><br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';
 			echo '	</div>';
 		}
