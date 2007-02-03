@@ -19,9 +19,15 @@ class Charity extends Controller {
 					'article'=>$this->news->GetFullArticle(20),
 					'charity'=>$this->charity->GetCharity($charity_id),
 					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE)),
+					'section_help'=>array('title'=>$this->pages_model->GetPropertyText('section_help_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('section_help_text',FALSE)),
+					'sidebar_goal'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_goal_title',FALSE),'subtitle'=>$this->pages_model->GetPropertyText('sidebar_goal_subtitle',FALSE)),
+					'sidebar_funding'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_funding_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_funding_text',FALSE)),
 					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE)),
 					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE))
 					);
+					
+
+		$data['sections']['sidebar_funding']['text'] = str_replace(array("%%current%%","%%target%%"), array($data['sections']['charity']['current'],$data['sections']['charity']['target']), $data['sections']['sidebar_funding']['text']);
 					
 		//needs a general model as progress reports can be for campaigns and for charities
 		$pr_temp = $this->charity->GetCharityProgressReports($charity_id, 0);

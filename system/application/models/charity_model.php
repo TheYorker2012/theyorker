@@ -26,7 +26,7 @@ class Charity_model extends Model
 			WHERE charity_id = ?';
 		$query = $this->db->query($sql,array($charity_id));
 		$row = $query->row();
-		return array('name'=>$row->charity_name,'article'=>$row->charity_article_id,'goal_text'=>$row->charity_goal_text,'goal'=>$row->charity_goal,'total'=>$row->charity_total);
+		return array('name'=>$row->charity_name,'article'=>$row->charity_article_id,'target_text'=>$row->charity_goal_text,'target'=>$row->charity_goal,'current'=>$row->charity_total);
 	}
 
 	/*****************************************************
