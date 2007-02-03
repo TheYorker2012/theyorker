@@ -297,11 +297,35 @@ class Reviews extends Controller {
 	//Bar Crawl Page
 	function barcrawl()
 	{
-		// Set up the public frame
-		$this->frame_public->SetTitle('Barcrawl');
-		$this->frame_public->SetContentSimple('reviews/barcrawl');
-		
-		// Load the public frame view (which will load the content view)
+	//Start of controller for model
+		$crawl_name = $this->uri->segment(3);
+
+		//Dummy Data - frb501
+		$data['crawl_title']='The Great Piss Up';
+		$data['crawl_blurb']='A kick ass crawl. So cool I came back home with a dead donkey!';
+		$data['crawl_image']='/images/prototype/reviews/reviews_07.jpg';
+		$data['crawl_content']='The industry section around this area fart is particularly sexy and it likes nick evans sex The fart industry section around this area is sex particularly sexy and it longwordtastic likes nick evans The industry section longwordtastic around this area is particularly sexy fart and it likes nick evans The industry longwordtastic section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around
+';
+		$data['crawl_rating'] = '5 skulls!';
+		$data['crawl_directions']='Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire';
+
+		$data['crawl_cost']='£12';
+		$data['pub_list'] = array('Kings Head','Ducks Head','Your Head');
+		$drink_guide[0] = array('Kings Head','Bloody Mary','£2');
+		$drink_guide[1] = array('Ducks Head','Eggs Galore','£4');
+		$drink_guide[2] = array('Your Head','Ale','£5');
+		$data['drink_guide'] = $drink_guide;
+
+		//Comment system
+		$data['page_id'] = 105;
+		$data['comments'] = $this->Review_model->GetComments(105,1);
+		$data['article_id'] = 111;
+
+		// Set up the public frame
+		$this->frame_public->SetTitle('Barcrawl');
+		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
+		
+		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
 
