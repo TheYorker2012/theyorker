@@ -33,7 +33,7 @@ class EventOccurrenceQuery
 		$DataArray[] = $this->mEntityId;
 		return	'(	(	event_entities.event_entity_entity_id = ?
 					AND	event_entities.event_entity_relationship = \'own\')
-				 OR	subscriptions.subscription_admin=1)';
+				 OR	subscriptions.subscription_vip=1)';
 	}
 	
 	/// Produce an SQL expression for all and only subscribed events.
@@ -157,7 +157,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		/*
 			owned:
 				occurrence.event.owners.id=me
-				OR subscription.admin=1
+				OR subscription.vip=1
 			subscribed:
 				occurrence.event.entities.subscribers.id=me
 				subscription.interested & not subscription.deleted
