@@ -1184,7 +1184,7 @@ div.table-box table td a:hover {
 
 /**
  *	---------------------
- *	  YORKER OFFICE ???
+ *	  YORKER OFFICE
  *	---------------------
  */
 
@@ -1242,4 +1242,23 @@ div.table-box table td a:hover {
 .OfficeBoxes .Item a:hover {
 	text-decoration: none;
 	background: #feb;
+}
+
+div.thumbnail_medium {
+	padding: 0.5em;
+	margin: 0.5em;
+	border: 1px solid #999;
+	min-height: 150px;
+}
+
+div.thumbnail_small {
+	padding: 0.5em;
+	margin: 0.5em;
+	border: 1px solid #999;
+	min-height: 50px;
+}
+
+div.thumbnail_small img, div.thumbnail_medium img {
+	float: left;
+	padding-right: 0.5em;
 }
