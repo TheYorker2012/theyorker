@@ -61,7 +61,7 @@
 
 <div class='grey_box'>
 	<h2>browse by</h2>
-	<span style="color:#000000;">Looking for a nice italian resturant? Or just searching for a cheap place to get some nosh? Well you came to the right place. Just click on the links below to search around our list of food reviews.</span><br /><br />
+	<span style="color:#000000;"><?php echo $main_blurb; ?></span><br /><br />
 	<div style="width: 40%; padding: 1em; padding-top: 0em; float: right;">
 		<h3 style="display: inline;">Price Range</h3><br />
 		<?php
