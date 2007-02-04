@@ -30,7 +30,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/null.jpg', 380, 235, 0);
+			this.setImage('images/photos/null.jpg', 380, 235, 1);
 		},
 		
 		/**
@@ -70,7 +70,8 @@ foreach ($ThumbDetails->result() as $Single) {
 			}
 <?php		endforeach; ?>
 			$( 'uploadedImage' ).src = imgSrc;
-			$( 'imgCrop_uploadedImage' ).src = imgSrc;
+//			$( 'imgCrop_uploadedImage' ).src = imgSrc;
+			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
 		}
@@ -99,7 +100,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	
 </script>
 <div id="uploadedWrap">
-	<img src="images/photos/1.jpg" alt="Uploaded image" id="uploadedImage" />
+	<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 </div>
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>
