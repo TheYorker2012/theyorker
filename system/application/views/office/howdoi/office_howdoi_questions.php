@@ -11,11 +11,13 @@
 		</div>
 	</div>
 	<h4>Question Categories</h4>
+	<div class="Entry">
 	<a href="/office/howdoi/editquestion">Opening Times</a><br />
 	<a href="/office/howdoi/editquestion">Numbers</a><br />
 	<a href="/office/howdoi/editquestion">Essentials</a><br />
 	<a href="/office/howdoi/editquestion">Other Info</a><br />
 	<a href="/office/howdoi/editquestion">The Nearest ...</a><br />
+	</div>
 </div>
 
 <div class="grey_box">
