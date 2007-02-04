@@ -1,6 +1,6 @@
 <?php
 
-/// Yorker directory.
+/// Office How Do I Pages.
 /**
  * @author Nick Evans (nse500@cs.york.ac.uk)
  * @author Richard Ingle (ri504@cs.york.ac.uk)
@@ -54,7 +54,7 @@ class Howdoi extends Controller
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
-	/// Directory organisation page.
+
 	function suggestions()
 	{
 		$this->pages_model->SetPageCode('office_howdoi_suggestions');
@@ -79,7 +79,7 @@ class Howdoi extends Controller
 		$this->frame_public->Load();
 	}
 	
-	/// Directory organisation page.
+
 	function categories()
 	{
 		$this->pages_model->SetPageCode('office_howdoi_categories');
@@ -104,7 +104,7 @@ class Howdoi extends Controller
 		$this->frame_public->Load();
 	}
 	
-	/// Directory organisation page.
+
 	function editquestion()
 	{
 		$this->pages_model->SetPageCode('office_howdoi_edit_question');
