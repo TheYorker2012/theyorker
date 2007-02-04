@@ -15,11 +15,15 @@ class Reviews extends Controller {
 		$this->load->helper('form');
 		$this->load->helper('url');
 		
-		// Load the public frame
-		$this->load->library('frame_public');
+		//Set us to show public pages
+		SetupMainFrame('public');
+
+		//Load page model
+		$this->load->model('pages_model');
 
 		//Load reviews model
 		$this->load->model('Review_model');
+
 	}
 
 	//Normal Call to Page - Doesn't do anything anymore....
@@ -32,6 +36,9 @@ class Reviews extends Controller {
 	//Food Frontpage
 	function food()
 	{
+		//Set page code
+		$this->pages_model->SetPageCode('review_food');
+
 		//Load news model
 		$this->load->model('News_model');
 
@@ -62,6 +69,9 @@ class Reviews extends Controller {
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
 
+		//Set Blurb
+		$data['main_blurb'] = $this->pages_model->GetPropertyText('food_blurb');
+
 		//Dummy Data - Waiting for news_model to finish implementing, I feel like a theif..., frb501
 		$data['article_author'] = 'Matthew Tole';
 		$data['article_author_link'] = '/directory/view/1';
@@ -77,7 +87,6 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 			
 		// Set up the public frame
-		$this->frame_public->SetTitle('Food');
 		$this->frame_public->SetContentSimple('reviews/food',$data);
 		
 		// Load the public frame view (which will load the content view)
@@ -87,8 +96,14 @@ class Reviews extends Controller {
 	//Drink Section - Dummy Data intill Model Ready
 	function drink()
 	{
+		//Set page code
+		$this->pages_model->SetPageCode('review_drink');
+
 		//Load news model
 		$this->load->model('News_model');
+
+		//Set Blurb
+		$data['main_blurb'] = $this->pages_model->GetPropertyText('drink_blurb');
 
 		//Get the last article_id
 		$article_id = $this->News_model->GetLatestId(8,1); //8 is drink, 1 is the amount of articles
@@ -125,7 +140,6 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Drink');
 		$this->frame_public->SetContentSimple('reviews/drink',$data);
 		
 		// Load the public frame view (which will load the content view)
@@ -136,8 +150,14 @@ class Reviews extends Controller {
 	//Culture Section - Dummy Data intill Model Ready
 	function culture()
 	{
+		//Set page code
+		$this->pages_model->SetPageCode('review_culture');
+
 		//Load news model
 		$this->load->model('News_model');
+
+		//Set Blurb
+		$data['main_blurb'] = $this->pages_model->GetPropertyText('culture_blurb');
 
 		//Get the last article_id
 		$article_id = $this->News_model->GetLatestId(9,1); //9 is culture, 1 is the amount of articles
@@ -176,7 +196,6 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Culture');
 		$this->frame_public->SetContentSimple('reviews/culture',$data);
 		
 		// Load the public frame view (which will load the content view)
@@ -192,6 +211,9 @@ class Reviews extends Controller {
 		switch($review_type)
 		{
 			case 0:
+				//Set page code
+				$this->pages_model->SetPageCode('review_context_food');
+
 				//Find our article_id
 				$article_id = $this->Review_model->GetArticleID($page_code,7);
 				$article_comment_id = $article_id[0];
@@ -199,10 +221,12 @@ class Reviews extends Controller {
 				$data['page_id'] 	= 20;
 				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
 				$review_database_result 	= $this->Review_model->GetReview($page_code,'food');
-				$this->frame_public->SetTitle('Food Review');
 			break;
 	
 			case 1:
+				//Set page code
+				$this->pages_model->SetPageCode('review_context_drink');
+
 				//Find our article_id
 				$article_id = $this->Review_model->GetArticleID($page_code,8);
 				$article_comment_id = $article_id[0];
@@ -211,10 +235,12 @@ class Reviews extends Controller {
 				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
 
 				$review_database_result 	= $this->Review_model->GetReview($page_code,'drink');
-				$this->frame_public->SetTitle('Drink Review');
 			break;
 	
 			case 2:
+				//Set page code
+				$this->pages_model->SetPageCode('review_context_culture');
+
 				//Find our article_id
 				$article_id = $this->Review_model->GetArticleID($page_code,9);
 				$article_comment_id = $article_id[0];
@@ -223,7 +249,6 @@ class Reviews extends Controller {
 				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'], $article_comment_id); //User comments
 
 				$review_database_result 	= $this->Review_model->GetReview($page_code,'culture');
-				$this->frame_public->SetTitle('Culture Review');
 			break;
 		}
 
@@ -266,6 +291,9 @@ class Reviews extends Controller {
 		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
 		$data['price_rating']			= 'Waiting on Model';
 
+		//Set organisation name in title bar
+		$this->main_frame->SetTitleParameters(array('organisation' => $review_database_result['organisation_name']));
+
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->SetContentSimple('reviews/foodreview', $data);
 		$this->frame_public->Load();
@@ -297,7 +325,10 @@ class Reviews extends Controller {
 	//Bar Crawl Page
 	function barcrawl()
 	{
-	//Start of controller for model
+		//Set page code
+		$this->pages_model->SetPageCode('review_context_barcrawl');
+
+		//Start of controller for model
 		$crawl_name = $this->uri->segment(3);
 
 		//Dummy Data - frb501
@@ -320,9 +351,10 @@ class Reviews extends Controller {
 		$data['page_id'] = 105;
 		$data['comments'] = $this->Review_model->GetComments(105,1);
 		$data['article_id'] = 111;
-
+		$this->main_frame->SetTitleParameters(array('organisation' => 'The Great Piss Up'));
+
 		// Set up the public frame
-		$this->frame_public->SetTitle('Barcrawl');		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
+		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
@@ -330,6 +362,9 @@ class Reviews extends Controller {
 	//Display table for review table (from puffers)
 	function table()
 	{
+		//Set page code
+		$this->pages_model->SetPageCode('review_table');
+
 		$item_type = $this->uri->segment(3); //Expected food/drink/culture/any
 		$sorted_by = $this->uri->segment(4); //Expected name/star/price/user/any
 
@@ -380,13 +415,15 @@ class Reviews extends Controller {
 
 		$data['entries'] = $entries;
 
-		$this->frame_public->SetTitle('table');
 		$this->frame_public->SetContentSimple('reviews/table',$data);
 		$this->frame_public->Load();
 	}
 
 	function leagues()
 	{
+		//Set page code
+		$this->pages_model->SetPageCode('review_league');
+
 		//Get leagues from model
 		$leagues = $this->Review_model->GetLeague($this->uri->segment(3));
 
@@ -422,7 +459,6 @@ class Reviews extends Controller {
 
 			$data['reviews'] = $reviews;
 
-		$this->frame_public->SetTitle('leagues');
 		$this->frame_public->SetContentSimple('reviews/leagues',$data);
 		$this->frame_public->Load();
 	}
