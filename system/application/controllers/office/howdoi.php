@@ -2,8 +2,8 @@
 
 /// Yorker directory.
 /**
- * @author Owen Jones (oj502@york.ac.uk)
- * @author James Hogan (jh559@cs.york.ac.uk)
+ * @author Nick Evans (nse500@cs.york.ac.uk)
+ * @author Richard Ingle (jh559@cs.york.ac.uk)
  *
  * The URI /directory maps to this controller (see config/routes.php).
  *
@@ -48,18 +48,18 @@ class Howdoi extends Controller
 	function index()
 	{
 		$this->pages_model->SetPageCode('office_howdoi_questions');
-
-		//Get Data And toolbar
-		$this->_SetupNavbar();
-
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-
-		// Set up the directory view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
-
-		// Load the main frame
-		if (CheckPermissions(array('student','office'))) {
+		
+		// Check permissions
+		if (CheckPermissions('office')) {
+			//Get toolbar
+			$this->_SetupNavbar();
+	
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+	
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
+			
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -72,17 +72,18 @@ class Howdoi extends Controller
 	{
 		$this->pages_model->SetPageCode('office_howdoi_suggestions');
 
-		//Get Data And toolbar
-		$this->_SetupNavbar();
+		// Check permissions
+		if (CheckPermissions('office')) {
 
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			//Get toolbar
+			$this->_SetupNavbar();
+	
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+	
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
 
-		// Set up the directory view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
-
-		// Load the main frame
-		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -94,19 +95,20 @@ class Howdoi extends Controller
 	/// Directory organisation page.
 	function categories()
 	{
-			$this->pages_model->SetPageCode('office_howdoi_categories');
+		$this->pages_model->SetPageCode('office_howdoi_categories');
 
-		//Get Data And toolbar
-		$this->_SetupNavbar();
+		// Check permissions and load main frame
+		if (CheckPermissions('office')) {
+		
+			//Get toolbar
+			$this->_SetupNavbar();
+	
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+	
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
 
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-
-		// Set up the directory view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
-
-		// Load the main frame
-		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -118,19 +120,20 @@ class Howdoi extends Controller
 	/// Directory organisation page.
 	function editquestion()
 	{
-			$this->pages_model->SetPageCode('office_howdoi_edit_question');
+		$this->pages_model->SetPageCode('office_howdoi_edit_question');
 
-		//Get Data And toolbar
-		$this->_SetupNavbar();
+		// Check permissions
+		if (CheckPermissions('office')) {
+		
+			//Get toolbar
+			$this->_SetupNavbar();
+	
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+	
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
 
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-
-		// Set up the directory view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
-
-		// Load the main frame
-		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
