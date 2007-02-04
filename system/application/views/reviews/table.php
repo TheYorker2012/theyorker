@@ -1,20 +1,20 @@
 <span class="SmallText">
-	<span class="FaintText">Showing</span> 0
-	<span class="FaintText">entries from</span> Italian Food 
-	<span class="FaintText">ordered by</span> Star Rating
+	<span class="FaintText">Showing</span> <?php echo count($entries); ?>
+	<span class="FaintText">entries from</span> <?php echo $this->uri->segment(3); ?>
+	<span class="FaintText">ordered by</span> <?php echo $this->uri->segment(4); ?>
 	<br />
 	<br />
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
 			<td><a href="/reviews/table/food/name" name="top">Name</a></td>
 			<td><a href="/reviews/table/food/star"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
-			<td><a href="/reviews/table/food/rating">User Rating</a></td>
+			<td><a href="/reviews/table/food/user">User Rating</a></td>
 
 <?php
 //Tag names at top of table
 	foreach ($review_tags as &$tag)
 		{
-			echo '<td><a href="/reviews/table/food/price">'.$tag.'</a></td>';
+			echo '<td><a href="/reviews/table/food/any">'.$tag.'</a></td>';
 		}
 ?>
 

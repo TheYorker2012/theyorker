@@ -331,14 +331,14 @@ class Reviews extends Controller {
 	function table()
 	{
 		$item_type = $this->uri->segment(3); //Expected food/drink/culture/any
-//		Implentment/Normailise later
-//		$item_filter_by = $this->uri->segment(4); //Expected price/sub type/etc..../any
-//		$where_equal_to = $this->uri->segment(5); //Expected italian/late night/etc..../any
-//		$sorted_by = $this->uri->segment(6); //name/star/price/user/any
+		$sorted_by = $this->uri->segment(4); //Expected name/star/price/user/any
+
+		$item_filter_by = $this->uri->segment(5); //Expected a valid tag group name or 'any'
+		$where_equal_to = $this->uri->segment(6); //Expected a valid tag name or 'any'
 
 		$columns = array(0);
 
-		$database_result = $this->Review_model->TableReview($item_type, -1);
+		$database_result = $this->Review_model->TableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
 
 		$entries = array();
 

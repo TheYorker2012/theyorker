@@ -214,8 +214,8 @@ class Review_model extends Model {
 		}
 		else
 		{
-		$nocomments = array();
-		return $nocomments;
+			$nocomments = array();
+			return $nocomments;
 		}
 	}
 
@@ -230,9 +230,40 @@ class Review_model extends Model {
 	}
 
 	//Mirrored from GetReview - This should return all the rows in a given type
-	function TableReview($content_type_codename, $tag_id = -1)
+	function TableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')
 	{
-		$tag_join = ($tag_id == -1) ? '' : ' LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_tag_id = ? AND ot.organisation_tag_organisation_entity_id = o.organisation_entity_id ';
+		
+		switch ($sorted_by) //Set sorting query
+		{
+			case 'name':
+				$sort_sql = 'ORDER BY o.organisation_name';
+			break;
+
+			case 'star':
+				$sort_sql = 'ORDER BY rcc.review_context_content_rating DESC';			
+			break;
+
+			case 'user':
+				$sort_sql = 'ORDER BY csc.comment_summary_cache_average_rating DESC';
+			break;
+
+			default:
+				$sort_sql = 'ORDER BY o.organisation_name'; //Lets default to name sorting can be changed later
+			break;
+		}
+
+		if ($item_filter_by == 'any' || $where_equal_to == 'any' || $item_filter_by == '' || $where_equal_to == '') //Set no filter in these cases by tags
+			{
+				$filter_sql = ''; $tag_join = '';
+			}
+			else
+			{
+			//Filtering by tag, link the query to the tag table
+			$tag_join = ' LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
+LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
+
+				$filter_sql = " AND tags.tag_name = '" . $where_equal_to . "' ";
+			}
 
 		$sql = '
 			SELECT o.organisation_entity_id, o.organisation_name, o.organisation_url, o.organisation_directory_entry_name,
@@ -244,10 +275,13 @@ class Review_model extends Model {
 			ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
 			LEFT JOIN comment_summary_cache AS csc
 			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
-			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id ' . $tag_join . ' WHERE ct.content_type_codename = ?';
+			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id
+			'.$tag_join.'
+			WHERE ct.content_type_codename = ? '. $filter_sql . $sort_sql;
 
-		
-		$query = $this->db->query($sql, array($content_type_codename, $tag_id));
+
+
+		$query = $this->db->query($sql, array($content_type_codename));
 		$reviews = $query->result_array();
 		
 		if (! empty($reviews))
