@@ -18,8 +18,9 @@ class Calendar extends Controller {
 		$this->load->library('event_manager');      // Processing events
 		$this->load->library('academic_calendar');  // Using academic calendar
 		$this->load->library('date_uri');           // Nice date uri segments
-		$this->load->library('frame_public');       // Main public frame
 		$this->load->library('view_calendar_days'); // Days calendar view
+		
+		SetupMainFrame('student');
 	}
 	
 	/**
@@ -57,7 +58,7 @@ class Calendar extends Controller {
 				
 			} else {
 				// $DateRange Invalid
-				$this->frame_public->AddMessage('error','Unrecognised date: "'.$DateRange.'"');
+				$this->main_frame->AddMessage('error','Unrecognised date: "'.$DateRange.'"');
 			}
 		}
 		
@@ -101,11 +102,11 @@ EXTRAHEAD;
 		$view_calendar_days->Retrieve();
 		
 		// Set up the public frame to use the messages frame
-		$this->frame_public->SetExtraHead($extra_head);
-		$this->frame_public->SetContent($view_calendar_days);
+		$this->main_frame->SetExtraHead($extra_head);
+		$this->main_frame->SetContent($view_calendar_days);
 		
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	

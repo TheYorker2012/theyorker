@@ -1,6 +1,6 @@
 <?php
 
-/// Main viparea controller.
+/// Main office controller.
 class Index extends Controller
 {
 	/**
@@ -10,7 +10,7 @@ class Index extends Controller
 	{
 		parent::Controller();
 		
-		$this->load->model('pages_model');
+		SetupMainFrame('office');
 	}
 	
 	function index()
@@ -18,7 +18,7 @@ class Index extends Controller
 		$this->pages_model->SetPageCode('office_index');
 		
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			);

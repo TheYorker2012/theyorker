@@ -10,7 +10,7 @@ class Gallery extends Controller
 	{
 		parent::Controller();
 		
-		$this->load->model('pages_model');
+		SetupMainFrame('office');
 	}
 	
 	function index()
@@ -18,7 +18,7 @@ class Gallery extends Controller
 		$this->pages_model->SetPageCode('office_gallery');
 		
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			$data = array(
 				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			);
@@ -49,7 +49,7 @@ class Gallery extends Controller
 		$this->pages_model->SetPageCode('office_gallery');
 		
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			$data = array(
 				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			);

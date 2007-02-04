@@ -10,15 +10,13 @@ class Index extends Controller
 	{
 		parent::Controller();
 		
-		// Load the public frame
-		$this->load->library('frame_organisation');
-		$this->main_frame = $this->frame_organisation;
+		SetupMainFrame('admin');
 	}
 	
 	function index()
 	{
 		// Set up the public frame
-		if (SetupMainFrame('organisation')) {
+		if (CheckPermissions(array('student','admin'))) {
 			$this->main_frame->SetTitle('Admin');
 			$this->main_frame->SetContentSimple('admin/admin');
 		}

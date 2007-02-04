@@ -18,10 +18,9 @@ class Yorkerdirectory extends Controller
 	function __construct()
 	{
 		parent::Controller();
-
-		// Make use of the public frame
-		$this->load->library('frame_organisation');
-		$this->main_frame = $this->frame_organisation;
+		
+		SetupMainFrame('vip');
+		
 		$this->load->library('organisations');
 
 		$this->load->model('directory_model');
@@ -60,7 +59,7 @@ class Yorkerdirectory extends Controller
 	/// Directory organisation page.
 	function information($organisation)
 	{
-		if (SetupMainFrame('organisation')) {
+		if (CheckPermissions('vip')) {
 			$this->pages_model->SetPageCode('vip_area_directory_information');
 			
 			//Get Data And toolbar
@@ -83,7 +82,7 @@ class Yorkerdirectory extends Controller
 	}
 	function photos($organisation)
 	{
-		if (SetupMainFrame('organisation')) {
+		if (CheckPermissions('vip')) {
 			$this->pages_model->SetPageCode('vip_area_directory_photos');
 			
 			//Get Data And toolbar
@@ -106,7 +105,7 @@ class Yorkerdirectory extends Controller
 	}
 	function map($organisation)
 	{
-		if (SetupMainFrame('organisation')) {
+		if (CheckPermissions('vip')) {
 			$this->pages_model->SetPageCode('vip_area_directory_map');
 			
 			//Get Data And toolbar
@@ -131,7 +130,7 @@ class Yorkerdirectory extends Controller
 	}
 	function contacts($organisation)
 	{
-		if (SetupMainFrame('organisation')) {
+		if (CheckPermissions('vip')) {
 			$this->pages_model->SetPageCode('vip_area_directory_contacts');
 			
 			//Get Data And toolbar

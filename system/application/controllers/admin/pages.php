@@ -24,14 +24,20 @@ class Pages extends Controller
 	{
 		parent::Controller();
 		
-		$this->load->model('pages_model');
-		$this->load->library('frame_public');
-		
+		SetupMainFrame('admin');
+	}
+	
+	function _SetPermissions()
+	{
 		// Primitive permissions
 		$this->mPermissions = array(
-				'officer'       => TRUE,
-				'administrator' => TRUE,
+				'officer'       => FALSE,
+				'administrator' => FALSE,
 			);
+		
+		$this->mPermissions['administrator'] = ($this->user_auth->officeType==='Admin');
+		$this->mPermissions['officer'] = $this->mPermissions['administrator'] || ($this->user_auth->officeType==='High');
+		
 		// Derived permissions
 		$this->mPermissions['view']          = $this->mPermissions['officer'];
 		
@@ -65,7 +71,7 @@ class Pages extends Controller
 	function _CheckViewPermissions($Permission = 'view', $Message = 'You do not have permission to access this page')
 	{	
 		if (!$this->mPermissions[$Permission]) {
-			$this->frame_public->AddMessage('error',$Message);
+			$this->main_frame->AddMessage('error',$Message);
 			return FALSE;
 		} else {
 			return TRUE;
@@ -76,34 +82,38 @@ class Pages extends Controller
 	function index()
 	{
 		$this->pages_model->SetPageCode('admin_pages');
-		if ($this->_CheckViewPermissions('view')) {
-			$all_pages = $this->pages_model->GetAllPages();
-			
-			$data = array();
-			
-			$data['pages'] = array(0 => FALSE);
-			$data['custom'] = array();
-			
-			foreach ($all_pages as $key => $page) {
-				if ('custom:' == substr($page['page_codename'],0,7)) {
-					$page['codename'] = substr($page['page_codename'],7);
-					$data['custom'][] = $page;
-				} elseif ($page['page_id'] != 0) {
-					$page['codename'] = $page['page_codename'];
-					$data['pages'][] = $page;
-				} else {
-					$page['codename'] = $page['page_codename'];
-					$data['pages'][0] = $page;
+		
+		if (CheckPermissions(array('student','editor'))) {
+			$this->_SetPermissions();
+			if ($this->_CheckViewPermissions('view')) {
+				$all_pages = $this->pages_model->GetAllPages();
+				
+				$data = array();
+				
+				$data['pages'] = array(0 => FALSE);
+				$data['custom'] = array();
+				
+				foreach ($all_pages as $key => $page) {
+					if ('custom:' == substr($page['page_codename'],0,7)) {
+						$page['codename'] = substr($page['page_codename'],7);
+						$data['custom'][] = $page;
+					} elseif ($page['page_id'] != 0) {
+						$page['codename'] = $page['page_codename'];
+						$data['pages'][] = $page;
+					} else {
+						$page['codename'] = $page['page_codename'];
+						$data['pages'][0] = $page;
+					}
 				}
+				if (FALSE === $data['pages'][0]) {
+					unset($data['pages'][0]);
+				}
+				
+				$data['permissions'] = $this->mPermissions;
+				$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
 			}
-			if (FALSE === $data['pages'][0]) {
-				unset($data['pages'][0]);
-			}
-			
-			$data['permissions'] = $this->mPermissions;
-			$this->frame_public->SetContentSimple('admin/pages_index.php', $data);
 		}
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	/// Setup the data array for the view for creating a new page.
@@ -144,7 +154,7 @@ class Pages extends Controller
 				// Check if new codename is in use
 				$Data['codename'] = $input['codename'];
 				if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-					$this->frame_public->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+					$this->main_frame->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
 					$save_failed = TRUE;
 				}
 			} else {
@@ -163,11 +173,11 @@ class Pages extends Controller
 				// Try and save to db
 				$input['codename'] = $Prefix.$input['codename'];
 				if ($this->pages_model->CreatePage($input)) {
-					$this->frame_public->AddMessage('success', 'The page was successfully saved');
-					$this->frame_public->DeferMessages();
+					$this->main_frame->AddMessage('success', 'The page was successfully saved');
+					$this->main_frame->DeferMessages();
 					redirect($Redirect.$Data['codename']);
 				} else {
-					$this->frame_public->AddMessage('error', 'The page could not be saved as an internal error occurred');
+					$this->main_frame->AddMessage('error', 'The page could not be saved as an internal error occurred');
 					$save_failed = TRUE;
 				}
 			}
@@ -277,7 +287,7 @@ class Pages extends Controller
 							// Check if new codename is in use
 							$data['codename'] = $input['codename'];
 							if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-								$this->frame_public->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+								$this->main_frame->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
 								$save_failed = TRUE;
 							}
 						} else {
@@ -297,13 +307,13 @@ class Pages extends Controller
 						// Try and save to db
 						$input['codename'] = $Prefix.$input['codename'];
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-							$this->frame_public->AddMessage('success', 'The page was successfully saved');
+							$this->main_frame->AddMessage('success', 'The page was successfully saved');
 							if ($data['codename'] != $page_code) {
-								$this->frame_public->DeferMessages();
+								$this->main_frame->DeferMessages();
 								redirect($Redirect.$data['codename']);
 							}
 						} else {
-							$this->frame_public->AddMessage('error','The page could not be saved as an internal error occurred');
+							$this->main_frame->AddMessage('error','The page could not be saved as an internal error occurred');
 						}
 					}
 				}
@@ -365,20 +375,20 @@ class Pages extends Controller
 					}
 					
 					if ($ignored_new_props == 1) {
-						$this->frame_public->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
+						$this->main_frame->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
 					} elseif ($ignored_new_props > 1) {
-						$this->frame_public->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
+						$this->main_frame->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
 					}
 					
 					if ($changes > 0) {
 						// Try and save to db
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-							$this->frame_public->AddMessage('success', 'Properties were successfully saved.');
+							$this->main_frame->AddMessage('success', 'Properties were successfully saved.');
 						} else {
-							$this->frame_public->AddMessage('error','Properties weren\'t save. An internal error occurred.');
+							$this->main_frame->AddMessage('error','Properties weren\'t save. An internal error occurred.');
 						}
 					} else {
-						$this->frame_public->AddMessage('information', 'No properties have changed');
+						$this->main_frame->AddMessage('information', 'No properties have changed');
 					}
 					
 					$_POST = array();
@@ -402,7 +412,7 @@ class Pages extends Controller
 			// Get information about the page so user is informed before confirming.
 			$information = $this->pages_model->GetSpecificPage($Prefix.$InputPageCode, TRUE);
 			if (FALSE === $information) {
-				$this->frame_public->AddMessage('error','Page \'' . $InputPageCode . '\' not found');
+				$this->main_frame->AddMessage('error','Page \'' . $InputPageCode . '\' not found');
 				$data['confirm'] = FALSE;
 			} else {
 				$data['confirm'] = TRUE;
@@ -415,10 +425,10 @@ class Pages extends Controller
 			$result = $this->pages_model->DeletePage($Prefix.$InputPageCode);
 			if ($result) {
 				// Success
-				$this->frame_public->AddMessage('success','The page was successfully deleted.');
+				$this->main_frame->AddMessage('success','The page was successfully deleted.');
 			} else {
 				// Failure
-				$this->frame_public->AddMessage('error','The page could not be deleted.');
+				$this->main_frame->AddMessage('error','The page could not be deleted.');
 			}
 		}
 		return $data;
@@ -429,26 +439,29 @@ class Pages extends Controller
 	 */
 	function common()
 	{
-		// Tweak the permissions
-		$this->mPermissions['new']    = FALSE;
-		$this->mPermissions['edit']   = FALSE;
-		$this->mPermissions['rename'] = FALSE;
-		$this->mPermissions['delete'] = FALSE;
-		$this->mPermissions['prop_add'] = $this->mPermissions['common_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
-		
-		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
+		if (CheckPermissions(array('student','editor'))) {
+			$this->_SetPermissions();
+			// Tweak the permissions
+			$this->mPermissions['new']    = FALSE;
+			$this->mPermissions['edit']   = FALSE;
+			$this->mPermissions['rename'] = FALSE;
+			$this->mPermissions['delete'] = FALSE;
+			$this->mPermissions['prop_add'] = $this->mPermissions['common_add'];
+			$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
+			$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
 			
-			$this->pages_model->SetPageCode('admin_pages_common');
-			$this_uri = '/admin/pages/common';
-			$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
-			$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
+			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			if ($this->_CheckViewPermissions()) {
+				$data = array();
+				$data['permissions'] = $this->mPermissions;
+				
+				$this->pages_model->SetPageCode('admin_pages_common');
+				$this_uri = '/admin/pages/common';
+				$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
+				$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+			}
 		}
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 		
 	}
 	
@@ -461,64 +474,67 @@ class Pages extends Controller
 	 */
 	function page($Operation, $PageCode='')
 	{
-		// Tweak the permissions
-		$this->mPermissions['new']    = $this->mPermissions['page_new'];
-		$this->mPermissions['edit']   = $this->mPermissions['page_edit'];
-		$this->mPermissions['rename'] = $this->mPermissions['page_rename'];
-		$this->mPermissions['delete'] = $this->mPermissions['page_delete'];
-		$this->mPermissions['prop_add'] = $this->mPermissions['page_prop_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['page_prop_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['page_prop_delete'];
-		
-		// Get url segments after the first (controller).
-		$num_segments = $this->uri->total_segments();
-		$segments = array();
-		for ($counter = 5; $counter <= $num_segments; ++$counter) {
-			$segments[] = $this->uri->segment($counter);
-		}
-		$PageCode = implode('/',$segments);
-		// We now have the page code so we can continue.
-		
-		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			switch ($Operation) {
-				case 'new':
-					$this->pages_model->SetPageCode('admin_pages_page_new');
-					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new page')) {
-						$data = $this->_NewPage($data,
-										'/admin/pages/page/new',
-										'/admin/pages/page/edit/');
-						$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
-					}
-					break;
-					
-				case 'edit':
-					$this->pages_model->SetPageCode('admin_pages_page_edit');
-					$this_uri = '/admin/pages/page/edit/';
-					$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
-					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
-					break;
-					
-				case 'delete':
-					$this->pages_model->SetPageCode('admin_pages_page_delete');
-					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
-						$this_uri = '/admin/pages/page/delete/';
-						$data = $this->_DeletePage($data, $PageCode, $this_uri);
-						$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
-					}
-					break;
-					
-				default:
-					show_404($Operation);
-					return;
+		if (CheckPermissions(array('student','editor'))) {
+			$this->_SetPermissions();
+			// Tweak the permissions
+			$this->mPermissions['new']    = $this->mPermissions['page_new'];
+			$this->mPermissions['edit']   = $this->mPermissions['page_edit'];
+			$this->mPermissions['rename'] = $this->mPermissions['page_rename'];
+			$this->mPermissions['delete'] = $this->mPermissions['page_delete'];
+			$this->mPermissions['prop_add'] = $this->mPermissions['page_prop_add'];
+			$this->mPermissions['prop_edit'] = $this->mPermissions['page_prop_edit'];
+			$this->mPermissions['prop_delete'] = $this->mPermissions['page_prop_delete'];
+			
+			// Get url segments after the first (controller).
+			$num_segments = $this->uri->total_segments();
+			$segments = array();
+			for ($counter = 5; $counter <= $num_segments; ++$counter) {
+				$segments[] = $this->uri->segment($counter);
 			}
-			$this->frame_public->SetTitleParameters( array(
-					'codename' => $PageCode,
-				) );
+			$PageCode = implode('/',$segments);
+			// We now have the page code so we can continue.
+			
+			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			if ($this->_CheckViewPermissions()) {
+				$data = array();
+				$data['permissions'] = $this->mPermissions;
+				switch ($Operation) {
+					case 'new':
+						$this->pages_model->SetPageCode('admin_pages_page_new');
+						if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new page')) {
+							$data = $this->_NewPage($data,
+											'/admin/pages/page/new',
+											'/admin/pages/page/edit/');
+							$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						}
+						break;
+						
+					case 'edit':
+						$this->pages_model->SetPageCode('admin_pages_page_edit');
+						$this_uri = '/admin/pages/page/edit/';
+						$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
+						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						break;
+						
+					case 'delete':
+						$this->pages_model->SetPageCode('admin_pages_page_delete');
+						if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
+							$this_uri = '/admin/pages/page/delete/';
+							$data = $this->_DeletePage($data, $PageCode, $this_uri);
+							$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						}
+						break;
+						
+					default:
+						show_404($Operation);
+						return;
+				}
+				$this->main_frame->SetTitleParameters( array(
+						'codename' => $PageCode,
+					) );
+			}
 		}
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	/// Function for administrating custom pages.
@@ -531,74 +547,77 @@ class Pages extends Controller
 	 */
 	function custom($Operation, $CustomPageCode='')
 	{
-		// Tweak the permissions
-		$this->mPermissions['new']    = $this->mPermissions['custom_new'];
-		$this->mPermissions['edit']   = $this->mPermissions['custom_edit'];
-		$this->mPermissions['rename'] = $this->mPermissions['custom_rename'];
-		$this->mPermissions['delete'] = $this->mPermissions['custom_delete'];
-		$this->mPermissions['prop_add'] = $this->mPermissions['custom_prop_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['custom_prop_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['custom_prop_delete'];
-		
-		// Get url segments after the first (controller).
-		$num_segments = $this->uri->total_segments();
-		$segments = array();
-		for ($counter = 5; $counter <= $num_segments; ++$counter) {
-			$segments[] = $this->uri->segment($counter);
-		}
-		$CustomPageCode = implode('/',$segments);
-		// We now have the page code so we can continue.
-		
-		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			switch ($Operation) {
-				case 'new':
-					$this->pages_model->SetPageCode('admin_pages_custom_new');
-					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new custom page')) {
-						$data = $this->_NewPage($data,
-										'/admin/pages/custom/new',
-										'/admin/pages/custom/edit/',
-										'custom:');
-						$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
-					}
-					break;
-					
-				case 'edit':
-					$this->pages_model->SetPageCode('admin_pages_custom_edit');
-					$this_uri = '/admin/pages/custom/edit/';
-					$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
-							array(
-								array(
-									'label' => 'main',
-									'type' => 'wikitext',
-									'text' => 'Your page content goes here.',
-								),
-							),
-							'custom:'
-						);
-					$this->frame_public->SetContentSimple('admin/pages_page.php', $data);
-					break;
-					
-				case 'delete':
-					$this->pages_model->SetPageCode('admin_pages_custom_delete');
-					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
-						$this_uri = '/admin/pages/custom/delete/';
-						$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
-						$this->frame_public->SetContentSimple('admin/pages_delete.php', $data);
-					}
-					break;
-					
-				default:
-					show_404($Operation);
-					return;
+		if (CheckPermissions(array('student','editor'))) {
+			$this->_SetPermissions();
+			// Tweak the permissions
+			$this->mPermissions['new']    = $this->mPermissions['custom_new'];
+			$this->mPermissions['edit']   = $this->mPermissions['custom_edit'];
+			$this->mPermissions['rename'] = $this->mPermissions['custom_rename'];
+			$this->mPermissions['delete'] = $this->mPermissions['custom_delete'];
+			$this->mPermissions['prop_add'] = $this->mPermissions['custom_prop_add'];
+			$this->mPermissions['prop_edit'] = $this->mPermissions['custom_prop_edit'];
+			$this->mPermissions['prop_delete'] = $this->mPermissions['custom_prop_delete'];
+			
+			// Get url segments after the first (controller).
+			$num_segments = $this->uri->total_segments();
+			$segments = array();
+			for ($counter = 5; $counter <= $num_segments; ++$counter) {
+				$segments[] = $this->uri->segment($counter);
 			}
-			$this->frame_public->SetTitleParameters( array(
-					'codename' => $CustomPageCode,
-				) );
+			$CustomPageCode = implode('/',$segments);
+			// We now have the page code so we can continue.
+			
+			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			if ($this->_CheckViewPermissions()) {
+				$data = array();
+				$data['permissions'] = $this->mPermissions;
+				switch ($Operation) {
+					case 'new':
+						$this->pages_model->SetPageCode('admin_pages_custom_new');
+						if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new custom page')) {
+							$data = $this->_NewPage($data,
+											'/admin/pages/custom/new',
+											'/admin/pages/custom/edit/',
+											'custom:');
+							$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						}
+						break;
+						
+					case 'edit':
+						$this->pages_model->SetPageCode('admin_pages_custom_edit');
+						$this_uri = '/admin/pages/custom/edit/';
+						$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
+								array(
+									array(
+										'label' => 'main',
+										'type' => 'wikitext',
+										'text' => 'Your page content goes here.',
+									),
+								),
+								'custom:'
+							);
+						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						break;
+						
+					case 'delete':
+						$this->pages_model->SetPageCode('admin_pages_custom_delete');
+						if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
+							$this_uri = '/admin/pages/custom/delete/';
+							$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
+							$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						}
+						break;
+						
+					default:
+						show_404($Operation);
+						return;
+				}
+				$this->main_frame->SetTitleParameters( array(
+						'codename' => $CustomPageCode,
+					) );
+			}
 		}
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 }

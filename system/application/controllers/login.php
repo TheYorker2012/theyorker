@@ -15,7 +15,8 @@ class Login extends Controller
 	{
 		$data = array(
 			'username' => array('name' => 'username', 'id' => 'username'),
-			'password' => array('name' => 'password', 'id' => 'password')
+			'password' => array('name' => 'password', 'id' => 'password'),
+			'target' => '/login',
 		);
 		
 		$username = $this->input->post('username');
