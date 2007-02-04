@@ -56,7 +56,6 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
-			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
@@ -73,6 +72,7 @@ foreach ($ThumbDetails->result() as $Single) {
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
+			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 		}
 	};
 	
