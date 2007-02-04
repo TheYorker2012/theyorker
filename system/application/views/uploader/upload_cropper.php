@@ -30,13 +30,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
-								minWidth: 200,
-								minHeight: 120,
-								ratioDim: { x: 200, y: 120 },
-								displayOnInit: true, 
-								onEndCrop: onEndCrop,
-								previewWrap: 'previewArea-1'} );
+			this.setImage('images/photos/null.jpg', 200, 200, 1);
 		},
 		
 		/**
@@ -62,6 +56,10 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		setImage: function( imgSrc, w, h, imgTypeNew ) {
+			$( 'imgCrop_uploadedImage' ).src = imgSrc;
+			$( 'uploadedImage' ).src = imgSrc;
+			$( 'uploadedImage' ).width = w;
+			$( 'uploadedImage' ).height = h;
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
 				if (this.curCrop != null) this.curCrop.remove();
@@ -75,10 +73,6 @@ foreach ($ThumbDetails->result() as $Single) {
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
-			$( 'imgCrop_uploadedImage' ).src = imgSrc;
-			$( 'uploadedImage' ).src = imgSrc;
-			$( 'uploadedImage' ).width = w;
-			$( 'uploadedImage' ).height = h;
 		}
 	};
 	
