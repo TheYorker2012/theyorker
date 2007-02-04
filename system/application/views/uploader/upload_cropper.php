@@ -61,6 +61,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).height = h;
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
+				$( 'imgCrop_uploadedImage' ).parentNode.removeChild($( 'imgCrop_uploadedImage' ));
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
 					minWidth: <?=$Single->image_type_width?>,
@@ -72,7 +73,7 @@ foreach ($ThumbDetails->result() as $Single) {
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
-			$( 'imgCrop_uploadedImage' ).src = imgSrc;
+//			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 		}
 	};
 	
