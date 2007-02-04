@@ -22,7 +22,7 @@ class Yorkerdirectory extends Controller
 		SetupMainFrame('vip');
 		
 		$this->load->library('organisations');
-
+		$this->load->helpers('images');
 		$this->load->model('directory_model');
 
 		$this->load->helper('text');
@@ -91,6 +91,22 @@ class Yorkerdirectory extends Controller
 
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			$data['oraganisation'] = $organisation;
+			$data['images'] = array ( //data sent in order
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+							);
 			
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);

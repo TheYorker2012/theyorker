@@ -6,7 +6,7 @@ class Account extends Controller
 	/**
 	 * @brief Default constructor.
 	 */
-	function __construct()
+	function __construct($organisation='theyorker')
 	{
 		parent::Controller();
 		
@@ -21,6 +21,7 @@ class Account extends Controller
 		if (CheckPermissions('vip')) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+					'organisation' => $organisation,
 			);
 			// Set up the content
 			$this->main_frame->SetContentSimple('viparea/account', $data);
