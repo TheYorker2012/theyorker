@@ -31,6 +31,9 @@ foreach ($ThumbDetails->result() as $Single) {
 		 */
 		init: function() {
 			this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
+								minWidth: 200,
+								minHeight: 120,
+								ratioDim: { x: 200, y: 120 },
 								displayOnInit: true, 
 								onEndCrop: onEndCrop,
 								previewWrap: 'previewArea-1'} );
