@@ -1,0 +1,1 @@
+List of categories with rename/remove buttons. add category.
