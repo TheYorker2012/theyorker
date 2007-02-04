@@ -12,8 +12,7 @@ class Howdoi extends Controller
 	{
 		parent::Controller();
 
-		// Make use of the public frame
-		$this->load->library('frame_public');
+		SetupMainFrame('office');
 
 		$this->load->helper('text');
 		$this->load->helper('wikilink');
