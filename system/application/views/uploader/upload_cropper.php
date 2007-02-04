@@ -61,7 +61,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).height = h;
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
-				if ($( 'imgCrop_uploadedImage' )) $( 'imgCrop_uploadedImage' ).parentNode.removeChild($( 'imgCrop_uploadedImage' ));
+				$( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'imgCrop_uploadedImage' ));
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
 					minWidth: <?=$Single->image_type_width?>,
@@ -104,7 +104,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </div>
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>
-		<label for="imageChoice">image:</label>
+		<label for="imageChoice">Thumbnail:</label>
 		<select name="imageChoice" id="imageChoice">
 			<option value="choose">Please Choose</option>
 			<?php
@@ -115,9 +115,6 @@ foreach ($ThumbDetails->result() as $Single) {
 			}
 			?>
 		</select>
-	</p>
-
-	<p>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
 

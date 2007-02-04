@@ -42,7 +42,7 @@ class Upload extends Controller {
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
 			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id;
+			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id;
 			$loop++;
 		}
 		return $output;
@@ -95,10 +95,48 @@ class Upload extends Controller {
 		$this->frame_public->Load();
 	}
 	
-	function process_form_data($form_data) {
-		// there is no hack protection on this, i'm pretty sure
+	function process_form_data($formData) {
+		// TODO there is no hack protection on this, i'm pretty sure
 		$objResponse = new xajaxResponse();
-		//store to imagestable
+		$this->load->library('image_lib');
+		
+		$selectedThumb = explode("|", $formData['imageChoice']);
+		
+		$imageData = array('image_photo_id' => $selectedThumb[4],
+		                   'image_image_type_id' => $selectedThumb[3]);
+		$query = $this->db->select('image_id')->getwhere('images', $imageData);
+		if ($query->num_rows() > 0) {
+			$this->db->delete('images', $imageData);
+		}
+		$this->db->insert('images', $imageData);
+		$query = $this->db->select('image_id')->getwhere('images', $imageData);
+		
+		foreach ($query->result() as $singleRow) {
+			$id = $singleRow->image_id;
+		}
+		
+		if (createImageLocation($id, $selectedThumb[3])) {
+			$objResponse->addAssign("submitButton","value","Error: Location not created");
+			$objResponse->addAssign("submitButton","disabled",false);
+
+			return $objResponse;
+		}
+		
+		$config['image_library'] = 'GD2';
+		$config['source_image'] = $selectedThumb[0];
+		$config['maintain_ratio'] = TRUE;
+		$config['width'] = $formData['width'];
+		$config['height'] = $formData['height'];
+		$config['new_image'] = imageLocation($id, $selectedThumb[3],, TRUE);
+		$config['x_axis'] = $formData['x1'];
+		$config['x_axis'] = $formData['y1'];
+		$this->image_lib->initialize($config);
+
+		if (!$this->image_lib->crop())
+		{
+		    echo $this->image_lib->display_errors();
+		}
+		
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 
