@@ -71,12 +71,11 @@ foreach ($ThumbDetails->result() as $Single) {
 					ratioDim: { x: <?=$Single->image_type_width?>, y: <?=$Single->image_type_height?> },
 					displayOnInit: true, 
 					onEndCrop: onEndCrop,
-					previewWrap: '<?=$Single->image_type_id?>'} );
+					previewWrap: 'previewArea-<?=$Single->image_type_id?>'} );
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
-			$( 'uploadedImage' ).src = imgSrc;
-//			$( 'imgCrop_uploadedImage' ).src = imgSrc;
+			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
