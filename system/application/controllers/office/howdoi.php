@@ -38,8 +38,9 @@ class Howdoi extends Controller
 		
 		// Check permissions
 		if (CheckPermissions('office')) {
-			//Get toolbar
+			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
+			$this->main_frame->SetPage('questions');
 	
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -62,9 +63,10 @@ class Howdoi extends Controller
 		// Check permissions
 		if (CheckPermissions('office')) {
 
-			//Get toolbar
+			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
-	
+			$this->main_frame->SetPage('suggestions');
+			
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 	
@@ -87,8 +89,9 @@ class Howdoi extends Controller
 		// Check permissions and load main frame
 		if (CheckPermissions('office')) {
 		
-			//Get toolbar
+			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
+			$this->main_frame->SetPage('categories');
 	
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -112,8 +115,9 @@ class Howdoi extends Controller
 		// Check permissions
 		if (CheckPermissions('office')) {
 		
-			//Get toolbar
+			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
+			$this->main_frame->SetPage('questions');
 	
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
