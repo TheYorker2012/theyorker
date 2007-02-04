@@ -13,3 +13,4 @@ This will be used by everyone for the charley launch, but is only inteneded for 
 <a href="/admin/useradmin/edit">Edit User Information</a><br />
 <br />
 <a href="/admin/pages">Page properties, custom pages, etc.</a><br />
+<a href="/admin/dev">Webserver information</a><br />

@@ -16,6 +16,28 @@ abstract class Outputter
 	abstract function Load();
 }
 
+/// Simple view buffer.
+class SimpleView extends Outputter
+{
+	/// Raw data to output.
+	protected $mContent;
+	
+	/// Primary constructor.
+	/**
+	 * @param $Content string Data to output.
+	 */
+	function __construct($Content)
+	{
+		$this->mContent = $Content;
+	}
+	
+	/// Echo the content.
+	function Load()
+	{
+		echo $this->mContent;
+	}
+}
+
 /// Quite simply represents a view.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
