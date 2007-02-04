@@ -3,14 +3,7 @@
 /// Yorker directory.
 /**
  * @author Nick Evans (nse500@cs.york.ac.uk)
- * @author Richard Ingle (jh559@cs.york.ac.uk)
- *
- * The URI /directory maps to this controller (see config/routes.php).
- *
- * Any 2nd URI segment is sent to Yorkerdirectory::view (see config/routes.php).
- *
- * Any 3rd URI segment (e.g. events) is sent to the function with the same value.
- *	(see config/routes.php).
+ * @author Richard Ingle (ri504@cs.york.ac.uk)
  */
 class Howdoi extends Controller
 {
@@ -26,12 +19,7 @@ class Howdoi extends Controller
 		$this->load->helper('wikilink');
 	}
 
-	/// Set up the directory frame
-	/**
-	 * @param $OrganisationData Organisation data array.
-	 * @pre @a $OrganisationData is valid organisation array.
-	 * @post Frame_directory frame is loaded and ready to use.
-	 */
+	/// Set up the navigation bar
 	private function _SetupNavbar()
 	{
 		$navbar = $this->frame_public->GetNavbar();
@@ -43,8 +31,7 @@ class Howdoi extends Controller
 				'/office/howdoi');
 	}
 
-	/// Directory index page.
-	// this is blank lol
+	/// index page.
 	function index()
 	{
 		$this->pages_model->SetPageCode('office_howdoi_questions');
