@@ -356,6 +356,9 @@ class Reviews extends Controller {
 			$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
 			$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
 
+			//Change scope of $tagbox
+			$tagbox = array();
+
 			//Tags work as a array within a array, which is just confusing!
 			for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
 			{
