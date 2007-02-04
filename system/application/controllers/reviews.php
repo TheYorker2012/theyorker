@@ -321,11 +321,9 @@ class Reviews extends Controller {
 		$data['comments'] = $this->Review_model->GetComments(105,1);
 		$data['article_id'] = 111;
 
-		// Set up the public frame
-		$this->frame_public->SetTitle('Barcrawl');
-		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
-		
-		// Load the public frame view (which will load the content view)
+		// Set up the public frame
+		$this->frame_public->SetTitle('Barcrawl');		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
+		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
 
@@ -341,24 +339,40 @@ class Reviews extends Controller {
 		$columns = array(0);
 
 		$database_result = $this->Review_model->TableReview($item_type, -1);
+
 		$entries = array();
 
-		foreach($database_result as &$result)
+		//A list of all tags
+		$data['review_tags'] = $database_result[0]['tag_groups'];
+
+		//For each row in the table
+
+		for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 		{
-			$entries[] = array(
-				'review_image' 			=> '/images/prototype/news/thumb3.jpg',
-				'review_title' 			=> $result['organisation_name'],
-				'review_website' 		=> $result['organisation_url'],
-				'review_rating' 		=> $result['review_context_content_rating'],
-				'review_user_rating' 	=> intval($result['comment_summary_cache_average_rating']),
-				'review_cost_type' 		=> isset($result['tags']['Price']) ? $result['tags']['Price'][0] : '',
-				'review_tags'			=> array
-				(
-					'Atmosphere' => isset($result['tags']['Atmosphere']) ? implode("<br />", $result['tags']['Atmosphere']) : '',
-					'Cuisine' => isset($result['tags']['Cuisine']) ? implode("<br />", $result['tags']['Cuisine']) : '',
-				),
-				'review_table_link'		=> base_url().'reviews/'.$item_type.'review/'.$result['organisation_directory_entry_name'],
-			);
+			$entries[$reviewno]['review_image'] = '/images/prototype/news/thumb3.jpg';
+			$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
+			$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_url'];
+			$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
+			$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
+			$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
+
+			//Tags work as a array within a array, which is just confusing!
+			for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
+			{
+				$tag_group_name = $data['review_tags'][$tagno];
+
+				//Pass only if it exists for this organisation
+				if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
+				{
+					$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
+				}
+				else //Else pass a empty array
+				{
+					$tagbox[$data['review_tags'][$tagno]] = array();
+				}
+			}
+
+			$entries[$reviewno]['tagbox'] = $tagbox;
 		}
 
 		$data['entries'] = $entries;

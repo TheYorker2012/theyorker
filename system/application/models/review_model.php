@@ -271,7 +271,11 @@ class Review_model extends Model {
 	
 			$query = $this->db->query($sql);
 			$tags = $query->result_array();
-	
+
+			//This is for forming the array of tag groups
+			$tag_groups = array();
+			$new_tag_group = 0;
+
 			foreach ($reviews as &$review)
 			{
 				foreach ($tags as $id => $tag)
@@ -279,11 +283,20 @@ class Review_model extends Model {
 					if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
 					{
 						$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
-						unset($tags[$id]);
+
+						//Form a list of all the group names used
+						if (in_array($tag['tag_group_name'],$tag_groups) == FALSE)
+						{
+							$tag_groups[$new_tag_group] = $tag['tag_group_name'];
+							$new_tag_group++;
+						}
 					}
 				}
+
 			}
 		}
+
+		$reviews[0]['tag_groups'] = $tag_groups; //Add tag groups to array place 0
 
 		return $reviews;
 	}
