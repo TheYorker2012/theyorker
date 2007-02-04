@@ -5,7 +5,7 @@ class Dev extends Controller {
 	function index()
 	{
 		SetupMainFrame('admin');
-		if (CheckPermissions(array('student','admin'))) {
+		if (CheckPermissions('admin')) {
 			$op  = '<a href="/admin/dev/phpinfo">PHP information</a><br />';
 			$op .= 'If you think this is wrong then email mg512<br />';
 			$op .= 'Info dumps follow:<br /><pre>';
@@ -21,7 +21,7 @@ class Dev extends Controller {
 	
 	function phpinfo()
 	{
-		if (CheckPermissions(array('student','admin'))) {
+		if (CheckPermissions('admin')) {
 			phpinfo();
 		}
 	}

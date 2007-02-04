@@ -125,8 +125,9 @@ function CheckPermissions($Permission = 'public')
 		'public'       => array(
 				'public'		=> TRUE,
 				'student'		=> $student_login_action,
-				'office'		=> FALSE,
-				'editor'		=> FALSE,
+				'office'		=> $student_login_action,
+				'editor'		=> $student_login_action,
+				'admin'			=> $student_login_action,
 				'vip'			=> $vip_login_action,
 			),
 		'student'      => array(

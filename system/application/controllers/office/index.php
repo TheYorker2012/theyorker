@@ -18,7 +18,7 @@ class Index extends Controller
 		$this->pages_model->SetPageCode('office_index');
 		
 		// Load the main frame
-		if (CheckPermissions(array('student','office'))) {
+		if (CheckPermissions('office')) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			);

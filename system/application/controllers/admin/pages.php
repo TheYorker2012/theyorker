@@ -83,7 +83,7 @@ class Pages extends Controller
 	{
 		$this->pages_model->SetPageCode('admin_pages');
 		
-		if (CheckPermissions(array('student','editor'))) {
+		if (CheckPermissions('editor')) {
 			$this->_SetPermissions();
 			if ($this->_CheckViewPermissions('view')) {
 				$all_pages = $this->pages_model->GetAllPages();
@@ -439,7 +439,7 @@ class Pages extends Controller
 	 */
 	function common()
 	{
-		if (CheckPermissions(array('student','editor'))) {
+		if (CheckPermissions('editor')) {
 			$this->_SetPermissions();
 			// Tweak the permissions
 			$this->mPermissions['new']    = FALSE;
@@ -474,7 +474,7 @@ class Pages extends Controller
 	 */
 	function page($Operation, $PageCode='')
 	{
-		if (CheckPermissions(array('student','editor'))) {
+		if (CheckPermissions('editor')) {
 			$this->_SetPermissions();
 			// Tweak the permissions
 			$this->mPermissions['new']    = $this->mPermissions['page_new'];
@@ -547,7 +547,7 @@ class Pages extends Controller
 	 */
 	function custom($Operation, $CustomPageCode='')
 	{
-		if (CheckPermissions(array('student','editor'))) {
+		if (CheckPermissions('editor')) {
 			$this->_SetPermissions();
 			// Tweak the permissions
 			$this->mPermissions['new']    = $this->mPermissions['custom_new'];

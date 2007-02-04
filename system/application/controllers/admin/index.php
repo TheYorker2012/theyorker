@@ -16,7 +16,7 @@ class Index extends Controller
 	function index()
 	{
 		// Set up the public frame
-		if (CheckPermissions(array('student','admin'))) {
+		if (CheckPermissions('admin')) {
 			$this->main_frame->SetTitle('Admin');
 			$this->main_frame->SetContentSimple('admin/admin');
 		}
