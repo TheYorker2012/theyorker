@@ -71,11 +71,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	// Reviews information page
@@ -101,11 +100,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	function tags($ContextType, $organisation)
@@ -130,11 +128,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	function photos($ContextType, $organisation)
@@ -159,11 +156,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 		
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	function review($ContextType, $organisation)
@@ -188,11 +184,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 		
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	function reviewedit($ContextType, $organisation, $ArticleId)
@@ -216,11 +211,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	function comments($ContextType, $organisation)
@@ -244,11 +238,10 @@ class Reviews extends Controller
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 		
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>

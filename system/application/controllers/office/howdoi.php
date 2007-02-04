@@ -49,11 +49,10 @@ class Howdoi extends Controller
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
 			
 			// Set up the public frame
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	function suggestions()
@@ -74,11 +73,10 @@ class Howdoi extends Controller
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 
@@ -100,11 +98,10 @@ class Howdoi extends Controller
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 
@@ -126,11 +123,10 @@ class Howdoi extends Controller
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetContent($the_view);
-		}
+			$this->main_frame->SetContent($the_view);}
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 }

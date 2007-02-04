@@ -1,7 +1,11 @@
 <?php
 
-/// Main viparea controller.
-class Gallery extends Controller
+/// Office Gallery
+/**
+ * @author Nick Evans (nse500@cs.york.ac.uk)
+ *
+ */
+ class Gallery extends Controller
 {
 	/**
 	 * @brief Default constructor.
