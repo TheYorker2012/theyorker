@@ -47,7 +47,7 @@ class Howdoi extends Controller
 	// this is blank lol
 	function index()
 	{
-		$this->pages_model->SetPageCode('howdoi_questions');
+		$this->pages_model->SetPageCode('office_howdoi_questions');
 
 		//Get Data And toolbar
 		$this->_SetupNavbar();
@@ -59,7 +59,7 @@ class Howdoi extends Controller
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -70,7 +70,7 @@ class Howdoi extends Controller
 	/// Directory organisation page.
 	function suggestions()
 	{
-		$this->pages_model->SetPageCode('howdoi_suggestions');
+		$this->pages_model->SetPageCode('office_howdoi_suggestions');
 
 		//Get Data And toolbar
 		$this->_SetupNavbar();
@@ -82,7 +82,7 @@ class Howdoi extends Controller
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -94,7 +94,7 @@ class Howdoi extends Controller
 	/// Directory organisation page.
 	function categories()
 	{
-			$this->pages_model->SetPageCode('howdoi_categories');
+			$this->pages_model->SetPageCode('office_howdoi_categories');
 
 		//Get Data And toolbar
 		$this->_SetupNavbar();
@@ -106,7 +106,7 @@ class Howdoi extends Controller
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}
@@ -118,7 +118,7 @@ class Howdoi extends Controller
 	/// Directory organisation page.
 	function editquestion()
 	{
-			$this->pages_model->SetPageCode('howdoi_edit_question');
+			$this->pages_model->SetPageCode('office_howdoi_edit_question');
 
 		//Get Data And toolbar
 		$this->_SetupNavbar();
@@ -130,7 +130,7 @@ class Howdoi extends Controller
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetContent($the_view);
 		}

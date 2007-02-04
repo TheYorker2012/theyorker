@@ -74,7 +74,7 @@ class Reviews extends Controller
 		$the_view = $this->frames->view('reviews/office_review_information', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
@@ -101,7 +101,7 @@ class Reviews extends Controller
 		$the_view = $this->frames->view('reviews/office_review_information', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
@@ -128,7 +128,7 @@ class Reviews extends Controller
 		$the_view = $this->frames->view('reviews/office_review_tags', $data);
 
 		// Load the main frame
-		if (SetupMainFrame('office')) {
+		if (CheckPermissions(array('student','office'))) {
 			// Set up the public frame
 			$this->frame_public->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
@@ -150,12 +150,15 @@ class Reviews extends Controller
 		// Set up the directory view
 		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
 
-		// Set up the public frame
-		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-					  'content_type' => $ContextType));
-		$this->frame_public->SetContent($the_view);
-
+		// Load the main frame
+		if (CheckPermissions(array('student','office'))) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
+		
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
@@ -173,13 +176,16 @@ class Reviews extends Controller
 
 		// Set up the directory view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
-
-		// Set up the public frame
-		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-					  'content_type' => $ContextType));
-		$this->frame_public->SetContent($the_view);
-
+		
+		// Load the main frame
+		if (CheckPermissions(array('student','office'))) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
+		
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
@@ -198,11 +204,14 @@ class Reviews extends Controller
 		// Set up the directory view
 		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
 
-		// Set up the public frame
-		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-					  'content_type' => $ContextType));
-		$this->frame_public->SetContent($the_view);
+		// Load the main frame
+		if (CheckPermissions(array('student','office'))) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
 
 		// Load the public frame view
 		$this->frame_public->Load();
@@ -218,12 +227,15 @@ class Reviews extends Controller
 		// Set up the review view
 		$the_view = $this->frames->view('reviews/office_review_comments', $data);
 
-		// Set up the public frame
-		$this->frame_public->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-					  'content_type' => $ContextType));
-		$this->frame_public->SetContent($the_view);
-
+		// Load the main frame
+		if (CheckPermissions(array('student','office'))) {
+			// Set up the public frame
+			$this->frame_public->SetTitleParameters(
+					array('organisation' => $data['organisation']['name'],
+						  'content_type' => $ContextType));
+			$this->frame_public->SetContent($the_view);
+		}
+		
 		// Load the public frame view
 		$this->frame_public->Load();
 	}
