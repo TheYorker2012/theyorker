@@ -21,7 +21,7 @@ class Howdoi extends Controller
 	/// Set up the navigation bar
 	private function _SetupNavbar()
 	{
-		$navbar = $this->frame_public->GetNavbar();
+		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('suggestions', 'Suggestions',
 				'/office/howdoi/suggestions');
 		$navbar->AddItem('categories', 'Categories',

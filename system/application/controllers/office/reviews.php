@@ -15,10 +15,9 @@ class Reviews extends Controller
 	{
 		parent::Controller();
 
-		// Make use of the public frame
-		$this->load->library('frame_public');
-		$this->load->library('organisations');
+		SetupMainFrame('office');
 
+		$this->load->library('organisations');
 		$this->load->model('directory_model');
 
 		$this->load->helper('text');
@@ -35,7 +34,7 @@ class Reviews extends Controller
 	{
 		$this->load->library('frame_directory');
 
-		$navbar = $this->frame_public->GetNavbar();
+		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('comments', 'Comments',
 				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/comments');
 		$navbar->AddItem('reviews', 'Reviews',
@@ -68,7 +67,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_overview', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -97,7 +96,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_information', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -125,7 +124,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_tags', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -153,7 +152,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
 	
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -181,7 +180,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 		
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -208,7 +207,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
@@ -235,7 +234,7 @@ class Reviews extends Controller
 			$the_view = $this->frames->view('reviews/office_review_comments', $data);
 
 			// Set up the public frame
-			$this->frame_public->SetTitleParameters(
+			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name'],
 						  'content_type' => $ContextType));
 			$this->main_frame->SetContent($the_view);}
