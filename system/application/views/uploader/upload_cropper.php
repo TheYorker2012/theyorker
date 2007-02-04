@@ -30,7 +30,10 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/null.jpg', 380, 235, 1);
+			this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
+								displayOnInit: true, 
+								onEndCrop: onEndCrop,
+								previewWrap: 'previewArea-1'} );
 		},
 		
 		/**
