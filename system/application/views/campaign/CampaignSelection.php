@@ -23,7 +23,10 @@
 		}
                 foreach ($campaign_list as $key => $campaigns)
 		{
-			$percentage = $campaigns['votes']/$total_votes*100;
+			if ($total_votes == 0)
+				$percentage = 0;
+			else
+				$percentage = $campaigns['votes']/$total_votes*100;
 			echo '<tr>
 				<td>
 				<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b>
@@ -56,3 +59,11 @@
 	</table>
 	</form>
 </div>
+
+<?php
+
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+
+?>
