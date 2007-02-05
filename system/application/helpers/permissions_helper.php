@@ -40,10 +40,9 @@ function login_handler($Data, $Permission)
 		$data['keep_login'] = '0';
 	}
 	$data['login_id'] = $login_id;
-	
-	$input_login_id = $CI->input->post('login_id');
 	$successfully_logged_in = FALSE;
-	if ($input_login_id === $login_id) {
+	if (($CI->input->post('login_button') === 'Login') &&
+		($CI->input->post('login_id') === $login_id)) {
 		if ($login_id === 'student') {
 			$username = $CI->input->post('username');
 		} elseif ($login_id === 'vip') {
@@ -70,7 +69,20 @@ function login_handler($Data, $Permission)
 			}
 			$successfully_logged_in = TRUE;
 			$CI->main_frame->AddMessage('success',$success_msg);
-			unset($_POST);
+			
+			foreach ($_POST as $key => $value) {
+				unset($_POST[$key]);
+			}
+			
+			// Store post data
+			if (array_key_exists('posts',$_SESSION)) {
+				if (array_key_exists($CI->uri->uri_string(),$_SESSION['posts'])) {
+					foreach ($_SESSION['posts'][$CI->uri->uri_string()] as $key => $value) {
+						$_POST[$key] = $value;
+					}
+					unset($_SESSION['posts'][$CI->uri->uri_string()]);
+				}
+			}
 			return CheckPermissions($Permission);
 			//redirect($CI->uri->uri_string());
 		} catch (Exception $e) {
@@ -78,6 +90,14 @@ function login_handler($Data, $Permission)
 		}
 	} else {
 		$data['initial_username'] = '';
+		
+		// Store post data
+		if (!empty($_POST)) {
+			if (!array_key_exists('posts',$_SESSION)) {
+				$_SESSION['posts'] = array();
+			}
+			$_SESSION['posts'][$CI->uri->uri_string()] = $_POST;
+		}
 	}
 	
 	if (!$successfully_logged_in) {
