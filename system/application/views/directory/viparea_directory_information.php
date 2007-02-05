@@ -60,3 +60,4 @@
 	</fieldset>
 </div>
 </form>
+<a href='/viparea/'>Back to the vip area.</a>

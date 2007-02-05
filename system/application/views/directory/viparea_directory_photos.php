@@ -24,3 +24,4 @@
 <input type="submit" value="upload" />
 </form>
 </div>
+<a href='/viparea/'>Back to the vip area.</a>

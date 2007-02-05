@@ -24,6 +24,8 @@ class Account extends Controller
 			$data = $this->organisations->_GetOrgData($organisation);
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['account_maintenance'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
+			$data['account_password'] = $this->pages_model->GetPropertyWikitext('account_password');
+			$data['account_username'] = $this->pages_model->GetPropertyWikitext('account_username');
 			$data['categories'] = array (
 				array(
 					'id' => '1',

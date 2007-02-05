@@ -39,3 +39,4 @@
 		<input type='submit' name='map_submitbutton' value='Save' class='button' />
 </div>
 </form>
+<a href='/viparea/'>Back to the vip area.</a>

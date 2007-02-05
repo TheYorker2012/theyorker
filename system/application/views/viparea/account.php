@@ -38,7 +38,38 @@
 </div>
 <div class='grey_box'>
 <h2>account username</h2>
+	<p>
+		<?php echo $account_username; ?>
+	</p>
+	<form action='/viparea/account/update/<?php echo $organisation['shortname']; ?>/username' class='form' method='POST'>
+	<fieldset>
+		<label for='account_username'>Username :</label>
+		<input type='text' name='account_username' style='width: 150px;' value=''/>
+		<br />
+		<label for='account_button'></label>
+		<input type='submit' name='account_button' value='Update' class='button' />
+	</fieldset>
+	</form>
 </div>
 <div class='grey_box'>
 <h2>account password</h2>
+	<p>
+		<?php echo $account_password; ?>
+	</p>
+	<form action='/viparea/account/update/<?php echo $organisation['shortname']; ?>/password' class='form' method='POST'>
+	<fieldset>
+		<label for='password_old'>Old Password :</label>
+		<input type='password' name='password_old' style='width: 150px;' />
+		<br />
+		<label for='password_new1'>New Password :</label>
+		<input type='password' name='password_new1' style='width: 150px;' />
+		<br />
+		<label for='password_new2'>Repeat New Password :</label>
+		<input type='password' name='password_new2' style='width: 150px;' />
+		<br />
+		<label for='password_button'></label>
+		<input type='submit' name='password_button' value='Change' class='button' />
+	</fieldset>
+	</form>
 </div>
+<a href='/viparea/'>Back to the vip area.</a>

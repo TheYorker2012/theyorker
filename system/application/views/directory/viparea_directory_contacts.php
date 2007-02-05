@@ -41,4 +41,4 @@ foreach ($organisation['cards'] as $member) {
 		<input name='member_addbutton' type='submit' id='member_addbutton' value='Add/Edit' class='button' />
 	</fieldset>
 </form>
-<?php echo $action." - ".$actionid; ?>
+<a href='/viparea/'>Back to the vip area.</a>
