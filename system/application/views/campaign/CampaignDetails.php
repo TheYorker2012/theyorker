@@ -1,9 +1,9 @@
 <div class='RightToolbar'>
-	<h4><?php echo $sections['sidebar_vote']['title']; ?></h4>
+	<h4><?php echo $sidebar_vote['title']; ?></h4>
 	<?php
 	if ($user == TRUE)
 	{
-		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sections['sidebar_vote']['text']);
+		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['text']);
 		echo '	<form id="form1" name="voteform" action="/campaign/vote" method="POST" class="form">
 				<fieldset>
 					<input type="hidden" name="campaignid" value="'.$parameters['campaign'].'" />
@@ -13,11 +13,11 @@
 			</form>';
 	}
 	else
-		echo $sections['sidebar_vote']['not_logged_in'];
+		echo $sidebar_vote['not_logged_in'];
 	?>
 	<br />
 
-	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>
+	<h4><?php echo $sidebar_other_campaigns['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
         foreach ($campaign_list as $key => $campaigns)
@@ -28,40 +28,40 @@
 	?>
 	</p>
 	
-	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
-	<?php echo $sections['sidebar_more']['text']; ?>
+	<h4><?php echo $sidebar_more['title']; ?></h4>
+	<?php echo $sidebar_more['text']; ?>
 	
-	<h4><?php echo $sections['sidebar_related']['title']; ?></h4>
+	<h4><?php echo $sidebar_related['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
-        foreach ($sections['article']['related_articles'] as $related_articles)
+        foreach ($article['related_articles'] as $related_articles)
 	{
 		echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
 	};
 	?>
 	</p>
 
-	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
+	<h4><?php echo $sidebar_external['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
-        foreach ($sections['article']['links'] as $links)
+        foreach ($article['links'] as $links)
 	{
 		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
 	};
 	?>
 	</p>
 	
-    	<h4><?php echo $sections['sidebar_comments']['title']; ?></h4>
+    	<h4><?php echo $sidebar_comments['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
 </div>
 
 <div class='grey_box'>
-	<h2><?php echo $sections['article']['heading']; ?></h2>
-	<span class="black"><?php echo $sections['article']['text']; ?></span>
+	<h2><?php echo $article['heading']; ?></h2>
+	<span class="black"><?php echo $article['text']; ?></span>
 </div>
 
 <?php
-	foreach ($sections['article']['fact_boxes'] as $fact_box)
+	foreach ($article['fact_boxes'] as $fact_box)
 	{
 		echo '<div class=\'blue_box\'>';
 		echo '<h2>'.$fact_box['title'].'</h2>';

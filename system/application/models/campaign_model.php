@@ -38,7 +38,11 @@ class Campaign_model extends Model
 		{
 			foreach ($query->result() as $row)
 			{
-				$result_item = array('name'=>$row->campaign_name,'votes'=>$row->campaign_votes,'article'=>$row->campaign_article_id);
+				$result_item = array(
+					'name'=>$row->campaign_name,
+					'votes'=>$row->campaign_votes,
+					'article'=>$row->campaign_article_id
+					);
 				$result[$row->campaign_id] = $result_item;
 			}
 		}
@@ -56,7 +60,28 @@ class Campaign_model extends Model
 			WHERE campaign_id = ?';
 		$query = $this->db->query($sql,array($campaign_id));
 		$row = $query->row();
-		return array('name'=>$row->campaign_name,'signatures'=>$row->campaign_petition_signatures,'article'=>$row->campaign_article_id,);
+		return array(
+			'name'=>$row->campaign_name,
+			'signatures'=>$row->campaign_petition_signatures,
+			'article'=>$row->campaign_article_id
+			);
+	}
+
+	/**
+	 * Returns the id of the current petition.
+	 * @returns the campaign id of the current petition or FALSE if no campaign is in petition mode.
+	 */
+	function GetPetitionStatus()
+	{
+		$sql = 'SELECT campaign_id
+			FROM campaigns
+			WHERE campaign_petition = true';
+		$query = $this->db->query($sql,array());
+		$row = $query->row();
+		if ($query->num_rows() > 0)
+			return $row->campaign_id;
+		else
+			return FALSE;
 	}
 
 	/*****************************************************

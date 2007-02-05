@@ -1,19 +1,19 @@
 <div class='RightToolbar'>
-	<h4><?php echo $sections['sidebar_about']['title']; ?></h4>
+	<h4><?php echo $sidebar_about['title']; ?></h4>
 	<div class='Entry'>
 		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<?php echo $sections['sidebar_about']['text']; ?>
+		<?php echo $sidebar_about['text']; ?>
 	</div>
-	<h4><?php echo $sections['sidebar_what_now']['title']; ?></h4>
+	<h4><?php echo $sidebar_what_now['title']; ?></h4>
 	<div class='Entry'>
 		<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<?php echo $sections['sidebar_what_now']['text']; ?>
+		<?php echo $sidebar_what_now['text']; ?>
 	</div>
 </div>
 
 <div class='blue_box'>
-	<h2><?php echo $sections['current_campaigns']['title']; ?></h2>
-	<?php echo $sections['current_campaigns']['text']; ?><br /><br />
+	<h2><?php echo $current_campaigns['title']; ?></h2>
+	<?php echo $current_campaigns['text']; ?><br /><br />
 	<table width="100%">
 		<?php
 		$total_votes = 0;
@@ -36,12 +36,12 @@
 		?>
 	</table>
 	<br />
-	<?php echo $sections['current_campaigns']['deadline_text']; ?>
+	<?php echo $current_campaigns['deadline_text']; ?>
 </div>
 
 <div class='grey_box'>
-	<h2><?php echo $sections['vote_campaigns']['title']; ?></h2>
-	<?php echo $sections['vote_campaigns']['text']; ?>
+	<h2><?php echo $vote_campaigns['title']; ?></h2>
+	<?php echo $vote_campaigns['text']; ?>
 	<form id='form1' name='form1' action='#' method='POST'>
 	</form>
 	<form id='form1' name='form1' action='#' method='POST' class='form'>
