@@ -174,7 +174,6 @@ class Pages extends Controller
 				$input['codename'] = $Prefix.$input['codename'];
 				if ($this->pages_model->CreatePage($input)) {
 					$this->main_frame->AddMessage('success', 'The page was successfully saved');
-					$this->main_frame->DeferMessages();
 					redirect($Redirect.$Data['codename']);
 				} else {
 					$this->main_frame->AddMessage('error', 'The page could not be saved as an internal error occurred');
@@ -309,7 +308,6 @@ class Pages extends Controller
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
 							$this->main_frame->AddMessage('success', 'The page was successfully saved');
 							if ($data['codename'] != $page_code) {
-								$this->main_frame->DeferMessages();
 								redirect($Redirect.$data['codename']);
 							}
 						} else {

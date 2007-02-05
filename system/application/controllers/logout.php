@@ -14,7 +14,6 @@ class Logout extends Controller
 	{
 		$this->user_auth->logout();
 		$this->main_frame->AddMessage('success','You have successfully logged out');
-		$this->main_frame->DeferMessages();
 		redirect('');
 	}
 }

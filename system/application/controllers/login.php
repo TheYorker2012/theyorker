@@ -13,7 +13,6 @@ class Login extends Controller
 	function index()
 	{
 		if (CheckPermissions('student')) {
-			$this->frame_public->DeferMessages();
 			redirect('home/main');
 		};
 		

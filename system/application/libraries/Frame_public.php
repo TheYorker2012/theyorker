@@ -47,9 +47,6 @@ class Frame_public extends FrameNavbar
 	/// Has the title been set yet
 	private $mTitleSet;
 	
-	/// Messages
-	private $mMessages;
-	
 	/**
 	 * @brief Default constructor.
 	 */
@@ -72,16 +69,15 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
 		
-		// Get any deferred messages
-		$this->mMessages = array();
 		// Assume session has already been started by user_auth
 		//session_start();
 		if (array_key_exists('messages',$_SESSION)) {
 			foreach ($_SESSION['messages'] as $message) {
-				$this->AddMessage($message[0], $message[1]);
+				$message = new Message($message);
+				$this->mDataArray['messages'][] = $message;
 			}
 		}
-		unset($_SESSION['messages']);
+		// The messages in the session are cleared at load time.
 		
 	}
 	
@@ -142,27 +138,23 @@ class Frame_public extends FrameNavbar
 	
 	/// Add a message to the page.
 	/**
-	 * @param $Type string Message type.
-	 * @param $Message string Message.
+	 * @param $Type string/Message Message type or Message class.
+	 * @param $Message string Message (if $Type isn't Message class).
 	 */
-	function AddMessage($Type, $Message)
+	function AddMessage($Type, $Message = '')
 	{
-		$this->mMessages[] = array($Type, $Message);
-		$this->mDataArray['messages'][] = new Message($Type,$Message);
-	}
-	
-	/// Defer the current messages to the next page.
-	function DeferMessages()
-	{
-		if (count($this->mMessages) > 0) {
-			// Save it to the session
-			if (!array_key_exists('messages',$_SESSION)) {
-				$_SESSION['messages'] = array();
-			}
-			foreach ($this->mMessages as $message) {
-				$_SESSION['messages'][] = $message;
-			}
+		if (is_string($Type)) {
+			$message = new Message($Type,$Message);
+		} else {
+			$message = $Type;
 		}
+		$this->mDataArray['messages'][] = $message;
+		
+		// Also store in session
+		if (!array_key_exists('messages',$_SESSION)) {
+			$_SESSION['messages'] = array();
+		}
+		$_SESSION['messages'][] = $message->ToArray();
 	}
 	
 	/// Get the number of messages.
@@ -183,6 +175,11 @@ class Frame_public extends FrameNavbar
 			$this->AddKeywords($CI->pages_model->GetKeywords());
 		}
 		parent::Load();
+		
+		// Rendered, so clear undisplayed messages
+		if (array_key_exists('messages',$_SESSION)) {
+			unset($_SESSION['messages']);
+		}
 	}
 }
 

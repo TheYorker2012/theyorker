@@ -13,11 +13,21 @@ $CI->load->library('frames');
 /// Message class.
 class Message extends FramesView
 {
-	function __construct($Class, $Message)
+	function __construct($Class, $Message = '')
 	{
+		if (is_array($Class)) {
+			$Message = $Class['text'];
+			$Class = $Class['class'];
+		}
 		parent::__construct('general/message.php');
-		$this->SetData('class', $Class);
-		$this->SetData('text', $Message);
+		$this->mDataArray['class'] = $Class;
+		$this->mDataArray['text'] = $Message;
+	}
+	
+	function ToArray()
+	{
+		return array(	'class' => $this->mDataArray['class'],
+						'text'  => $this->mDataArray['text']);
 	}
 }
 

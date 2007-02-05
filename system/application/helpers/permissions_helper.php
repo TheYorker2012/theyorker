@@ -70,7 +70,6 @@ function login_handler($Data, $Permission)
 			}
 			$successfully_logged_in = TRUE;
 			$CI->main_frame->AddMessage('success',$success_msg);
-			//$CI->main_frame->DeferMessages();
 			unset($_POST);
 			return CheckPermissions($Permission);
 			//redirect('');
@@ -222,7 +221,6 @@ function CheckPermissions($Permission = 'public')
 						if (array_key_exists(2,$action)) {
 							$CI->main_frame->AddMessage($action[2], $action[3]);
 						}
-						$CI->main_frame->DeferMessages();
 						redirect($action[1]);
 						break;
 				}
