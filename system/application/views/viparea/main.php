@@ -2,11 +2,10 @@
 <h4>Suggestions</h4>
 <h5>Advertising</h5>
 <p>
-Use theyorker to advertise your events, its cheap and it helps charity what is there to lose you tight bastards.
+information goes here.
 </p>
 <h4>Reminders</h4>
-Your next event starts in 2 hours<br />
-1 event has been canceled <a href='#'>Relist?</a><br />
+information goes here.
 </div>
 <div class='grey_box'>
 	<h2>welcome</h2>
@@ -21,6 +20,6 @@ Your next event starts in 2 hours<br />
 		<li><a href='/viparea/calendar/<?php echo $organisation; ?>/'>Manage events</a></li>
 		<li><a href='/viparea/members/<?php echo $organisation; ?>/'>Manage members</a></li>
 		<li><a href='/viparea/advertising/<?php echo $organisation; ?>/'>Advertising</a></li>
-		<li><a href='/viparea/account/<?php echo $organisation; ?>/'>My Account</a></li>
+		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>My Account</a></li>
 	</ul>
 </div>
