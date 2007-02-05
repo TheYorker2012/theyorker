@@ -23,6 +23,22 @@ class Account extends Controller
 		if (CheckPermissions('vip')) {
 			$data = $this->organisations->_GetOrgData($organisation);
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['account_maintenance'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
+			$data['categories'] = array (
+				array(
+					'id' => '1',
+					'name' => 'Organisations',
+				),
+				array(
+					'id' => '2',
+					'name' => 'College & Campus',
+				),
+			);
+			$data['maintainer'] = array (
+				'name' => 'John Smith',
+				'email' => 'static@controler.com',
+				'student' => 'yes',
+			);
 			
 			// Set up the content
 			$this->main_frame->SetContentSimple('viparea/account', $data);

@@ -6,6 +6,14 @@
 </div>
 <div class='blue_box'>
 <h2>account maintenance</h2>
+	<p>
+		<?php echo $account_maintenance; ?>
+	</p>
+	<p>
+		<strong>Account Maintainer:</strong> <?php echo $maintainer['name']; ?><br />
+		<strong>Maintainer's Email:</strong> <?php echo $maintainer['email']; ?><br />
+		<strong>Maintainer is Student:</strong> <?php echo $maintainer['student']; ?><br />
+	</p>
 </div>
 <div class='grey_box'>
 <h2>account details</h2>
@@ -18,11 +26,11 @@
 		<input type='text' name='details_shortname' style='width: 150px;'value='<?php echo $organisation['shortname']; ?>'/>
 		<br />
 		<label for='details_org_type'>Category :</label>
-		<select name='details_org_type' size='1'>
-			<option value='' selected='selected'></option>
-			<option value='1'>Societies</option>
-			<option value='2'>Organisations</option>
-		</select>
+		<SELECT name="details_org_type">
+				<?php foreach ($categories as $category) { ?>
+					<OPTION VALUE="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></OPTION>
+				<?php } ?>
+		</SELECT>
 		<label for='details_button'></label>
 		<input type='submit' name='details_button' value='Update' class='button' />
 	</fieldset>
