@@ -275,6 +275,68 @@ class Pages_model extends Model
 		}
 	}
 	
+	/// Get a specific array property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $ArraySpec array Index descriptors, eath with:
+	 *	- ['pre'] - prefix to index
+	 *	- ['post'] - postfix to index (default='')
+	 *	- ['type'] - key type ('int': natural numbers starting at 0,
+	 *				'enum': fields specified in ['enum']
+	 *	- ['enum'] - array of fields: array(name,type)
+	 * @param $GlobalScope bool Whether property has global scope.
+	 * @return array Array page property as specified by @a $ArraySpec.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetPropertyArray($PropertyLabel, $ArraySpec, $GlobalScope = FALSE)
+	{
+		$result = array();
+		foreach($ArraySpec as $key => $indexing) {
+			unset($ArraySpec[$key]);
+			if (!array_key_exists('post',$indexing)) {
+				$indexing['post'] = '';
+			}
+			if ($indexing['type'] === 'enum') {
+				foreach ($indexing['enum'] as $field_info) {
+					$field_name =	$PropertyLabel .
+									$indexing['pre'] .
+									$field_info[0] .
+									$indexing['post'];
+					$value = FALSE;
+					if ($field_info[1] === 'wikitext') {
+						$value = $this->GetPropertyWikitext($field_name, $GlobalScope, FALSE);
+					}
+					if ($field_info[1] === 'text') {
+						$value = $this->GetPropertyText($field_name, $GlobalScope, FALSE);
+					}
+					if (FALSE !== $value) {
+						$result[$field_info[0]] = $value;
+					}
+				}
+			} elseif ($indexing['type'] === 'int') {
+				$index_counter = 0;
+				while (TRUE) {
+					$field_name =	$PropertyLabel .
+									$indexing['pre'] .
+									$index_counter .
+									$indexing['post'];
+					$value = $this->GetPropertyArray($field_name, $ArraySpec, $GlobalScope);
+					if (!empty($value)) {
+						$result[$index_counter] = $value;
+					} else {
+						break;
+					}
+					
+					++$index_counter;
+				}
+			}
+			
+			break;
+		}
+		
+		return $result;
+	}
+	
 	/// Get the page title given certain parameters.
 	/**
 	 * @param $Parameters array[string=>string] Array of parameters.

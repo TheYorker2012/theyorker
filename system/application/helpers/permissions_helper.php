@@ -19,25 +19,25 @@ function login_handler($Data, $Permission)
 	if ($Data[0] === 'office') {
 		$page_code = 'login_office';
 		$login_id = 'office';
+		$success_msg = 'You have successfully entered the office';
 		$data['no_keep_login'] = TRUE;
-		$success_msg = 'you have successfully entered the office';
 		
 	} elseif ($Data[0] === 'vip') {
 		$page_code = 'login_vip';
 		$login_id = 'vip';
+		$success_msg = 'You have successfully entered the VIP area';
 		$data['usernames'] = array();
 		$logins = $CI->user_auth->getOrganisationLogins();
 		foreach ($logins as $login) {
 			$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
 		}
-		$success_msg = 'you have successfully entered the VIP area';
 		
 	} else {
 		$page_code = 'login_public';
 		$login_id = 'student';
+		$success_msg = 'You have successfully logged in';
 		$data['username'] = '';
 		$data['keep_login'] = '0';
-		$success_msg = 'you have successfully logged in';
 	}
 	$data['login_id'] = $login_id;
 	
@@ -102,25 +102,17 @@ function login_handler($Data, $Permission)
 		}
 		
 		// Items in the right bar
-		/// @todo Move cunning array page properties into pages model.
-		$data['rightbar'] = array();
-		$index_counter = 0;
-		while (TRUE) {
-			$title = $CI->pages_model->GetPropertyText(
-					'rightbar['.$index_counter.'].title');
-			if (empty($title)) {
-				break;
-			}
-			$text = $CI->pages_model->GetPropertyWikitext(
-					'rightbar['.$index_counter.'].text');
-			
-			$data['rightbar'][] = array(
-				'title' => $title,
-				'text' => $text,
-			);
-			
-			++$index_counter;
-		}
+		$data['rightbar'] = $CI->pages_model->GetPropertyArray('rightbar', array(
+			// First index is [int]
+			array('pre' => '[', 'post' => ']', 'type' => 'int'),
+			// Second index is [string]
+			array('pre' => '.', 'type' => 'enum',
+				'enum' => array(
+					array('title',	'text'),
+					array('text',	'wikitext'),
+				),
+			),
+		));
 		
 		$CI->main_frame->SetContentSimple('login/login', $data);
 	}
