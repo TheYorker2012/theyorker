@@ -17,7 +17,7 @@
 		<?php echo $intro; ?>
 	</div>
 	<div style='float: left; width: 320px;'>
-		<h4>Societies</h4>
+		<h4>Clubs</h4>
 		<div id='soc_container'>
 			<?php foreach ($societies as $soc) {
 				echo '<div id=\'soc' . $soc['id'] . '\' class=\'';
@@ -26,7 +26,7 @@
 				} else {
 					echo 'unselected';
 				}
-				echo '\'><a href=\'/register/societies/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . $soc['name'] . '</a></div>';
+				echo '\'><a href=\'/register/au/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . $soc['name'] . '</a></div>';
 			} ?>
 		</div>
 		<!--
@@ -49,7 +49,7 @@
 		<div id='socdesc' class='blue_box' style='overflow:auto; height: 80px; width: auto;'></div>
 		<div id='socinfo'></div>
 		<div style='text-align:center;'>
-			<form id='form_subscribe' action='/register/societies/' method='post' class='form' onsubmit='return socSubscribe();'>
+			<form id='form_subscribe' action='/register/au/' method='post' class='form' onsubmit='return socSubscribe();'>
 			<input type='submit' name='soc_subscribe' id='soc_subscribe' value='Subscribe' class='button hide' />
 			<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='sub_loading' class='hide' style='float:right;' />
 			</form>
@@ -59,6 +59,6 @@
 	<form action='/register/au/' method='post' class='form'>
 		<div style='margin-top: 1em;'>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
-			<input type='button' name='back' id='back' value='< Back' class='button' onclick="window.location='/register/academic'" />
+			<input type='button' name='back' id='back' value='< Back' class='button' onclick="window.location='/register/societies'" />
 		</div>
 	</form>

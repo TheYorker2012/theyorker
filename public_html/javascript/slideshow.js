@@ -41,7 +41,7 @@ var Slideshow = {
       eval("this.loadedImages[i].onload = this.checkFinished('" + this.images[i] + "');");
       this.loadedImages[i].src = this.images[i];
     }
-    setTimeout('Slideshow.nextImage()',1000);
+    timer=setTimeout('Slideshow.nextImage()',1000);
   },
   
   checkFinished: function(imgpath){
@@ -85,6 +85,9 @@ var Slideshow = {
     this.showImages = [];
     this.current = 0;
     clearTimeout(timer);
+	document.getElementById('changeme').src = '/images/prototype/prefs/image_load.jpg';
+	document.getElementById('ss').style.background = "url('/images/prototype/prefs/image_load.jpg')";
+	Effect.Appear('changeme', {queue: 'end'});
   }
 
 }

@@ -32,9 +32,8 @@ img {
 	border: none;
 }
 
-/* Replace this with > image */
 ul{
-	list-style-image: url(/images/prototype/homepage/arrow.png);
+	list-style-image: url('/images/prototype/homepage/arrow.png');
 }
 
 ol {
@@ -111,6 +110,14 @@ h5 {
 	overflow:hidden;
 	margin: 0;
 	padding: 0;
+}
+
+.hide {
+	display: none;
+}
+
+.show {
+	display: block;
 }
 
 div.ajax_loading {
@@ -535,6 +542,7 @@ div.ReviewElementNumber h3 {
 .ProgressItemText {
 	padding-left: 55px;
 	vertical-align: top;
+	font-size: 10px; /* FixMe */
 }
 .subheader {
 	font-size: large;
@@ -724,6 +732,82 @@ div.MemberboxPhoto li {
 
 /**
  *	---------------------
+ *	     PREFERENCES
+ *	---------------------
+ */
+
+#college_select {
+	float: left;
+	margin-left: 10px;
+}
+
+div#college_select div.unselected {
+	border: 1px #fff solid;
+	background-color: #fff;
+	padding: 3px;
+	width: 65px;
+	float: left;
+	text-align: center;
+	cursor: pointer;
+}
+
+div#college_select div.selected {
+	border: 1px #000000 dashed;
+	background-color: #20c1f0;
+	padding: 3px;
+	width: 65px;
+	float: left;
+	text-align: center;
+	cursor: pointer;
+}
+
+#ss {
+	height: 165px;
+	width: 220px;
+}
+
+div#soc_container {
+	font-size: small;
+	overflow: auto;
+	border: 1px #999 solid;
+	padding: 5px;
+	height: 400px;
+}
+
+div#soc_container div {
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+div#soc_container div.unselected {
+	background-image: url('/images/prototype/prefs/bullet.gif');
+}
+
+div#soc_container div.viewing {
+	background-image: url('/images/prototype/prefs/arrow.gif');
+}
+
+div#soc_container div.loading {
+	background-image: url('/images/prototype/prefs/loading.gif');
+}
+
+div#soc_container div.selected {
+	background-image: url('/images/prototype/prefs/success.gif');
+}
+
+div#soc_container div a {
+	color: #000;
+}
+
+div#socinfo {
+	font-size: small;
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+/**
+ *	---------------------
  *	        NEWS
  *	---------------------
  */
@@ -770,7 +854,7 @@ div.ArticleColumn blockquote {
 	padding: 5px;
 	margin: 5px 5px 5px 10px;
 	border: 1px #FF6A00 solid;
-	background: #F7952D;
+	background: #999;
 	text-align: center;
 }
 
@@ -935,49 +1019,8 @@ div.RightToolbar div.LifestylePuffer p {
 
 /* --- News : Admin Section --- */
 
-div.table-box {
-	padding: 4px;
-	background-color: #f9f9f9;
-	border: 1px #08c0ef solid;
-}
-
-div.table-box table {
-    padding: 0;
-    border: 0;
-    margin: 0;
-    border-spacing: 0;
-    width: 100%;
-    border-collapse: collapse;
-}
-.form h5 {
-	/* Use this for error messages in forms*/
+.form {
 	font-size: small;
-	color: red;
-}
-
-div.table-box table tr {
-	background-color: #fff;
-}
-div.table-box table .tr2 {
-    background-color: #efefef;
-}
-div.table-box table th {
-	background-color: #d2d2d2;
-    border-bottom: 1px #000000 solid;
-    text-align: left;
-	padding: 2px 1.5em 2px 4px;
-	font-size: 11px;
-}
-div.table-box table td {
-	padding: 2px 1.5em 2px 4px;
-    border-bottom: 1px #93969a solid;
-}
-div.table-box table td a {
-    color: #08c0ef;
-    text-decoration: none;
-}
-div.table-box table td a:hover {
-    text-decoration: underline;
 }
 
 .form fieldset {
@@ -989,20 +1032,16 @@ div.table-box table td a:hover {
 	border-width: 0;
 	text-align: left;
 }
-.form fieldset legend {
-    color: #08c0ef;
-	font-weight: bold;
- 	margin: 0;
- 	padding: 0 5px;
-}
+
 .form fieldset label {
 	display: block;
 	font-size: small;
 	float: left;
-	width: 110px;
+	width: 30%;
 	padding: 0;
 	margin: 5px 0 0 0;
 	text-align: right;
+	font-weight: bold;
 }
 .form fieldset i {
     margin: 0 0 0 120px;
@@ -1022,17 +1061,19 @@ div.table-box table td a:hover {
 	display: block;
 }
 .form fieldset input, .form fieldset textarea, .form fieldset select {
-    width: auto;
 	margin: 5px 0 0 10px;
-	padding: 1px 0 0 3px;
-	background-image: url('/images/prototype/news/input.gif');
-	border: 1px #000000 solid;
+	padding: 2px;
+	border: 1px #999 solid;
 }
-.form fieldset .button {
+.form fieldset input:focus, .form fieldset textarea:focus, .form fieldset select:focus {
+	border: 1px #000 solid;
+}
+.form .button {
     background-image: url('/images/prototype/news/yorker-button.jpg');
 	background-position: center left;
     background-repeat: no-repeat;
     background-color: #ff6a00;
+	float: right;
     padding: 0 10px 0 20px;
     color: #000000;
 	border-top : 1px solid #eaedf4;
@@ -1040,7 +1081,13 @@ div.table-box table td a:hover {
  	border-bottom : 1px solid #224059;
 	border-right : 1px solid #224059;
 }
-.form fieldset .button:active {
+.form .button:focus {
+	border-top : 1px solid #eaedf4;
+	border-left : 1px solid #eaedf4;
+ 	border-bottom : 1px solid #224059;
+	border-right : 1px solid #224059;
+}
+.form .button:active {
 	border-top : 1px #31557f solid;
 	border-left : 1px #31557f solid;
 	border-bottom : 1px #f8f9fb solid;
@@ -1079,6 +1126,10 @@ div.table-box table td a:hover {
 	display: inline;
 	font-size: 12px;
 }
+
+
+
+
 
 #ArticleBox {
     padding: 0;
