@@ -565,8 +565,7 @@ class Pages_model extends Model
 					'FROM page_properties '.
 					'INNER JOIN property_types '.
 					' ON page_properties.page_property_property_type_id = property_types.property_type_id '.
-					'WHERE page_properties.page_property_page_id '.
-					'ORDER BY page_properties.page_property_label ASC';
+					'WHERE page_properties.page_property_page_id ';
 				if ($global_scope) {
 					$sql .= ' IS NULL';
 					$query_params = array();
