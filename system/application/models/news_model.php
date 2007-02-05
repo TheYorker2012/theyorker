@@ -14,19 +14,10 @@
 class News_model extends Model
 {
 
-	private static $NewsDateFormat = '%W, %D %M %Y';
-	private static $NewsDateFormatShort = '%a, %D %b %y';
-
-	function NewsModel()
-	{
-		//Call the Model Constructor
-		parent::Model();
-	}
-
 	/**
 	 * Returns an array of the Article IDs that are of a specified type in
 	 * decending order by publish date.
-	 * @param $type is 'article_type_id' of 'article_id' to return
+	 * @param $type is 'article_type_codename' of 'article_id' to return
 	 * @param $number is the max number of 'article_id' to return
 	 * @return An array of Article IDs in decending order by publish date.
 	 */
@@ -34,12 +25,14 @@ class News_model extends Model
 	//Returns the '$number' most recent article ID of type '$type'
 	//Odered by 'most recent'.
 	{
-		$sql = 'SELECT articles.article_id FROM articles
-				WHERE (articles.article_content_type_id ='.$type.'
-				AND	articles.article_publish_date < CURRENT_TIMESTAMP)
-				ORDER BY articles.article_publish_date DESC
-				LIMIT 0,'.$number;
-		$query = $this->db->query($sql);
+		$sql = 'SELECT articles.article_id FROM articles 
+			LEFT JOIN content_types
+			ON	(content_types.content_type_id = articles.article_content_type_id)
+			WHERE	(content_types.content_type_codename = ?
+			AND	articles.article_publish_date < CURRENT_TIMESTAMP)
+			ORDER BY articles.article_publish_date DESC
+			LIMIT 0, ?';
+		$query = $this->db->query($sql,array($type,$number));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
@@ -54,17 +47,19 @@ class News_model extends Model
 	/**
 	 * Get array containing data needed for 'NewsOther'
 	 * @param $id is the article_id of the article data to return
+	 * @param $dateformat is an optional string containg the format you wish the dates to be returned
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'authors','photo'
 	 */
-	function GetSimpleArticle($id)
+	function GetSimpleArticle($id, $dateformat ='%a, %D %b %y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormatShort . '\') AS article_publish_date
-				FROM articles
-				WHERE (articles.article_id = '.$id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+		$sql = 'SELECT articles.article_live_content_id, 
+			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
+			FROM articles
+			WHERE (articles.article_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql, array($dateformat,$id));
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
@@ -72,20 +67,20 @@ class News_model extends Model
 		    $content_id = $row->article_live_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading
-				FROM article_contents
-				WHERE (article_contents.article_content_id = '.$content_id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+			FROM article_contents
+			WHERE (article_contents.article_content_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql, array($content_id));
         if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['heading'] = $row->article_content_heading;
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
-				FROM article_writers
-				WHERE (article_writers.article_writer_article_content_id = '.$content_id.')
-				LIMIT 0,10';
-		$query = $this->db->query($sql);
+			FROM article_writers
+			WHERE (article_writers.article_writer_article_content_id = ?)
+			LIMIT 0,10';
+		$query = $this->db->query($sql, array($content_id));
 		if ($query->num_rows() > 0)
 		{
 		    $authors = array();
@@ -96,11 +91,11 @@ class News_model extends Model
 			$result['authors'] = $authors;
 		}
 		$sql = 'SELECT article_photos.article_photo_photo_id
-				FROM article_photos
-				WHERE (article_photos.article_photo_article_id = '.$content_id.'
+			FROM article_photos
+				WHERE (article_photos.article_photo_article_id = ?
 				AND article_photos.article_photo_number = 0)
 				LIMIT 0,10';
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql, array($content_id));
 		if ($query->num_rows() > 0)
 		{
 			$row = $query->result();
@@ -115,29 +110,27 @@ class News_model extends Model
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'authors','photo','blurb'
 	 */
-	function GetSummaryArticle($id)
+	function GetSummaryArticle($id, $dateformat='%W, %D %M %Y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormatShort . '\') AS article_publish_date
-				FROM articles
-				LEFT JOIN article_contents
-				ON articles.article_id =
-					article_contents.article_content_article_id
-				WHERE (articles.article_id = '.$id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+		$sql = 'SELECT articles.article_live_content_id, 
+				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
+			FROM articles
+			WHERE (articles.article_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql, array($dateformat,$id));
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
-		    $content_id = $row->article_content_id;
+		    $content_id = $row->article_live_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading,
-				article_contents.article_content_blurb
-				FROM article_contents
-				WHERE (article_contents.article_content_id = '.$content_id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+			article_contents.article_content_blurb
+			FROM article_contents
+			WHERE (article_contents.article_content_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql,array($content_id));
         if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
@@ -145,10 +138,10 @@ class News_model extends Model
 		    $result['blurb'] = $row->article_content_blurb;
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
-				FROM article_writers
-				WHERE (article_writers.article_writer_article_content_id = '.$content_id.')
-				LIMIT 0,10';
-		$query = $this->db->query($sql);
+			FROM article_writers
+			WHERE (article_writers.article_writer_article_content_id = ?)
+			LIMIT 0,10';
+		$query = $this->db->query($sql,array($content_id));
 		if ($query->num_rows() > 0)
 		{
 		    $authors = array();
@@ -160,10 +153,10 @@ class News_model extends Model
 		}
 		$sql = 'SELECT article_photos.article_photo_photo_id
 				FROM article_photos
-				WHERE (article_photos.article_photo_article_id = '.$content_id.'
+				WHERE (article_photos.article_photo_article_id = ?
 				AND article_photos.article_photo_number = 0)
 				LIMIT 0,10';
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql,array($content_id));
 		if ($query->num_rows() > 0)
 		{
 			$row = $query->result();
@@ -180,39 +173,38 @@ class News_model extends Model
 	 * @return 'text','blurb','authors' (just ids atm),'fact_boxes','photos' (just ids atm)
 	 * @return 'links', 'related_articles'
 	 */
-	function GetFullArticle($id)
+	function GetFullArticle($id, $dateformat='%W, %D %M %Y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT article_contents.article_content_id, DATE_FORMAT(articles.article_publish_date, \'' . self::$NewsDateFormat . '\') AS article_publish_date
-				FROM articles
-				LEFT JOIN article_contents
-				ON articles.article_id =
-					article_contents.article_content_article_id
-				WHERE (articles.article_id = '.$id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+		$result['id'] = $id;
+		$sql = 'SELECT articles.article_live_content_id, 
+				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
+			FROM articles
+			WHERE (articles.article_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql, array($dateformat,$id));
 		$row = $query->row();
 		$result['date'] = $row->article_publish_date;
-		$content_id = $row->article_content_id;
+		$content_id = $row->article_live_content_id;
 		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
-				article_contents.article_content_subtext, article_contents.article_content_wikitext,
+				article_contents.article_content_subtext, article_contents.article_content_wikitext_cache,
 				article_contents.article_content_blurb
-				FROM article_contents
-				WHERE (article_contents.article_content_id = '.$content_id.')
-				LIMIT 0,1';
-		$query = $this->db->query($sql);
+			FROM article_contents
+			WHERE (article_contents.article_content_id = ?)
+			LIMIT 0,1';
+		$query = $this->db->query($sql,array($content_id));
 		$row = $query->row();
 		$result['heading'] = $row->article_content_heading;
 		$result['subheading'] = $row->article_content_subheading;
 		$result['subtext'] = $row->article_content_subtext;
-		$result['text'] = $row->article_content_wikitext;
+		$result['text'] = $row->article_content_wikitext_cache;
 		$result['blurb'] = $row->article_content_blurb;
 
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
-				FROM article_writers
-				WHERE (article_writers.article_writer_article_content_id = '.$content_id.')
-				LIMIT 0,10';
-		$query = $this->db->query($sql);
+			FROM article_writers
+			WHERE (article_writers.article_writer_article_content_id = ?)
+			LIMIT 0,10';
+		$query = $this->db->query($sql,array($content_id));
 		$authors = array();
 		foreach ($query->result() as $row)
 		{
@@ -220,25 +212,25 @@ class News_model extends Model
 		}
 		$result['authors'] = $authors;
 
-		$sql = 'SELECT fact_boxes.fact_box_wikitext, fact_boxes.fact_box_title
-				FROM fact_boxes
-				WHERE (fact_boxes.fact_box_article_content_id = '.$content_id.'
-				AND fact_boxes.fact_box_deleted != 1)
-				LIMIT 0,10';
-		$query = $this->db->query($sql);
+		$sql = 'SELECT fact_boxes.fact_box_wikitext_cache, fact_boxes.fact_box_title
+			FROM fact_boxes
+			WHERE (fact_boxes.fact_box_article_content_id = ?
+			AND fact_boxes.fact_box_deleted != 1)
+			LIMIT 0,10';
+		$query = $this->db->query($sql,array($content_id));
 
 		$fact_boxes = array();
 		foreach ($query->result() as $row)
 		{
-			$fact_boxes[] = array('wikitext'=>$row->fact_box_wikitext,'title'=>$row->fact_box_title);
+			$fact_boxes[] = array('wikitext'=>$row->fact_box_wikitext_cache,'title'=>$row->fact_box_title);
 		}
 		$result['fact_boxes'] = $fact_boxes;
 
 		$sql = 'SELECT article_photos.article_photo_photo_id
-				FROM article_photos
-				WHERE (article_photos.article_photo_article_id = '.$content_id.')
-				LIMIT 0,10';
-		$query = $this->db->query($sql);
+			FROM article_photos
+			WHERE (article_photos.article_photo_article_id = ?)
+			LIMIT 0,10';
+		$query = $this->db->query($sql,array($content_id));
 		$photos = array();
 		foreach ($query->result() as $row)
 		{
@@ -247,9 +239,9 @@ class News_model extends Model
 		$result['photos'] = $photos;
 	
 		$sql = 'SELECT	article_links.article_link_name, article_links.article_link_url
-				FROM	article_links
-				WHERE	(article_links.article_link_article_id = ? 
-				AND		article_links.article_link_deleted != 1)
+				FROM article_links
+				WHERE (article_links.article_link_article_id = ? 
+				AND article_links.article_link_deleted != 1)
 				LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
 		$links = array();
@@ -259,17 +251,18 @@ class News_model extends Model
 		}
 		$result['links'] = $links;
 
-		//Must be a more effiecient way of doing this...
+/*		//Must be a more effiecient way of doing this...
+*		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
+*				FROM	related_articles
+*				WHERE	(related_articles.related_article_1_article_id = @id=?
+*				OR		related_articles.related_article_2_article_id = @id)
+*				LIMIT 0,10';
+*		//slightly modified sql
+*/
 		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
 				FROM	related_articles
-				WHERE	(related_articles.related_article_1_article_id = @id=?
-				OR		related_articles.related_article_2_article_id = @id)
-				LIMIT 0,10';
-		//slightly modified sql
-		$sql = 'SELECT	related_article_1_article_id, related_article_2_article_id
-				FROM	related_articles
 				WHERE	(related_article_1_article_id = ?
-				OR		related_article_2_article_id = ?)';
+				OR	related_article_2_article_id = ?)';
 		$query = $this->db->query($sql,array($id, $id));
 		$articles = array();
 		foreach ($query->result() as $row)

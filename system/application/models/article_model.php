@@ -12,6 +12,7 @@ class Article_model extends Model
 	{
 		//Call the Model Constructor
 		parent::Model();
+		$this->load->library('wikiparser');
 	}
 	
 	/**
@@ -26,6 +27,7 @@ class Article_model extends Model
 							$heading, $subheading, $subtext, $wikitext, $blurb)
 	{
 	$this->db->trans_start();
+	$wiki_cache = $this->wikiparser->parse($wikitext);
 	$sql = 'INSERT INTO articles (
 			articles.article_content_type_id,
 			articles.article_organisation_entity_id,
@@ -40,9 +42,10 @@ class Article_model extends Model
 			article_contents.article_content_subheading, 
 			article_contents.article_content_subtext,
 			article_contents.article_content_wikitext, 
+			article_contents.article_content_wikitext_cache, 
 			article_contents.article_content_blurb)
 			VALUES (@article_id:=LAST_INSERT_ID(), ?, ?, ?, ?, ?)';
-	$this->db->query($sql,array($heading, $subheading, $subtext, $wikitext, $blurb));
+	$this->db->query($sql,array($heading, $subheading, $subtext, $wikitext, $wikitext_cache, $blurb));
 	$sql = 'UPDATE articles
 			SET articles.article_live_content_id = LAST_INSERT_ID()
 			WHERE (articles.article_id = @article_id)';
@@ -59,10 +62,12 @@ class Article_model extends Model
 	 */
 	function InsertFactBox($article_content_id, $title, $wikitext)
 	{
+		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'INSERT INTO fact_boxes (
 				fact_box_article_content_id,
 				fact_box_title, 
 				fact_box_wikitext,
+				fact_box_wikitext_cache,
 				fact_box_timestamp)
 			VALUES (?, ?, ?, CURRENT_TIMESTAMP)';
 		$this->db->query($sql, array($article_content_id,$title,$wikitext));
@@ -73,6 +78,7 @@ class Article_model extends Model
 	 */
 	function UpdateFactBox($id, $article_content_id, $title, $wikitext, $deleted)
 	{
+		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'UPDATE fact_boxes
 			SET fact_box_article_content_id = ?,
 				fact_box_title = ?,

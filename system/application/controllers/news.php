@@ -23,7 +23,7 @@ class News extends Controller {
 	function index()
 	{
     	/// Get the latest article ids from the model.
-    	$latest_article_ids = $this->News_model->GetLatestId(1,9);
+    	$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
 
     	/// Get all of the latest article
     	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
@@ -50,12 +50,12 @@ class News extends Controller {
 		);
 
 		/// Wikiparse the article's body text and fact boxes
-		$this->load->library('wikiparser');
-		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
+//		$this->load->library('wikiparser');
+//		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
 
 		foreach ($data['main_article']['fact_boxes'] as &$fact_box)
 		{
-			$fact_box = $this->wikiparser->parse($fact_box['wikitext']);
+			$fact_box = $fact_box['wikitext'];
 		}
 
 		/// Temporarily fill in a few gaps in the model data
@@ -131,8 +131,8 @@ class News extends Controller {
 		);
 
 		/// Wikiparse the article's body text
-		$this->load->library('wikiparser');
-		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
+//		$this->load->library('wikiparser');
+//		$data['main_article']['text'] = $this->wikiparser->parse($data['main_article']['text']);
 
 		/// Temporarily fill in a few gaps in the model data
 		$data['main_article']['image'] = '/images/prototype/news/thumb1.jpg';
@@ -176,13 +176,13 @@ class News extends Controller {
 	function article()
 	{
     	/// Load the library for parsing wikitext
-    	$this->load->library('wikiparser');
+//    	$this->load->library('wikiparser');
 
     	/// Fetch the requested article from the model
     	$data = $this->News_model->GetFullArticle($this->uri->segment(3));
 
-    	/// Format the relevant text with wikiparser
-    	$data['text'] = $this->wikiparser->parse($data['text']);
+  	/// Format the relevant text with wikiparser
+//    	$data['text'] = $this->wikiparser->parse($data['text']);
 
     	/// Temporarily fill in a few gaps in the model data
     	$data['writer_id'] = 1;
