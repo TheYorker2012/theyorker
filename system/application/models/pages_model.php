@@ -504,7 +504,7 @@ class Pages_model extends Model
 			' pages.page_codename,'.
 			' pages.page_title,'.
 			' pages.page_description,'.
-			' pages.page_keywords,'.
+			' pages.page_keywords '.
 			'FROM pages '.
 			'ORDER BY pages.page_codename';
 		
@@ -533,7 +533,7 @@ class Pages_model extends Model
 				' pages.page_codename,'.
 				' pages.page_title,'.
 				' pages.page_description,'.
-				' pages.page_keywords,'.
+				' pages.page_keywords '.
 				'FROM pages '.
 				'WHERE pages.page_codename=?';
 			$query = $this->db->query($sql,$PageCode);
