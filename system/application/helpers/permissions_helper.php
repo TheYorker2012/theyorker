@@ -147,6 +147,13 @@ function CheckPermissions($Permission = 'public')
 			array('office')
 		);
 	
+	$office_door_open_action = array(
+			'message','warning','You\'ve left the office door open', TRUE
+		);
+	$vip_door_open_action = array(
+			'message','warning','You\'ve left the vip door open', TRUE
+		);
+	
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
 	//	<not set>	http error 404
@@ -181,32 +188,32 @@ function CheckPermissions($Permission = 'public')
 			),
 		// Logged in as student and in VIP area
 		'vip' => array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
+				'public'		=> $vip_door_open_action,
+				'student'		=> $vip_door_open_action,
 				'vip'			=> TRUE,
 				'office'		=> $office_login_action,
 				'editor'		=> $office_login_action,
 				'admin'			=> $office_login_action,
 			),
 		'office'       => array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> FALSE,
 				'admin'			=> FALSE,
 			),
 		'editor'       => array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
 				'admin'			=> FALSE,
 			),
 		'admin'    => array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
@@ -264,8 +271,12 @@ function CheckPermissions($Permission = 'public')
 						if (array_key_exists(2,$action)) {
 							$CI->main_frame->AddMessage($action[2], $action[3]);
 						}
-						$CI->main_frame->DeferMessages();
 						redirect($action[1]);
+						break;
+						
+					case 'message':
+						$CI->main_frame->AddMessage($action[1], $action[2]);
+						$access_allowed = $action[3];
 						break;
 				}
 			} else {
