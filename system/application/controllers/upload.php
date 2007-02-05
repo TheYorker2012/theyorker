@@ -128,7 +128,7 @@ class Upload extends Controller {
 		$config['height'] = $formData['height'];
 		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
-		$config['x_axis'] = $formData['y1'];
+		$config['y_axis'] = $formData['y1'];
 		$this->image_lib->initialize($config);
 
 		if (!$this->image_lib->crop())
