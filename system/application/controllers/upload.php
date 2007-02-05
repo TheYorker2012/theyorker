@@ -122,9 +122,8 @@ class Upload extends Controller {
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'imagemagick';
+		$config['image_library'] = 'gd2';
 		$config['source_image'] = $selectedThumb[0];
-		$config['maintain_ratio'] = TRUE;
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
 		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
