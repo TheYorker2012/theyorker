@@ -125,11 +125,11 @@ class Upload extends Controller {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $selectedThumb[0];
 		$config['maintain_ratio'] = TRUE;
-		$config['width'] = $formData['x1'];
-		$config['height'] = $formData['y1'];
+		$config['width'] = $formData['width'];
+		$config['height'] = $formData['height'];
 		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
-		$config['x_axis'] = $formData['x2'];
-		$config['x_axis'] = $formData['y2'];
+		$config['x_axis'] = $formData['x1'];
+		$config['x_axis'] = $formData['y1'];
 		$this->image_lib->initialize($config);
 
 		if (!$this->image_lib->crop())
