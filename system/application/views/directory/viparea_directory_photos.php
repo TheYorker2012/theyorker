@@ -10,7 +10,7 @@
 </div>
 <div class='blue_box'>
 	<?php foreach( $images as $image ) { ?>
-	<img src='<?php echo $image['url']; ?>' alt='<?php echo $organisation." image ".$image['id']; ?>'/>
+	<img src='<?php echo $image['url']; ?>' width='200' alt='<?php echo $organisation." image ".$image['id']; ?>'/>
 	<br />
 	<a href='/viparea/directory/<?php echo $organisation; ?>/photos/move/<?php echo $image['id']; ?>/up'>Move up</a> | <a href='/viparea/directory/<?php echo $organisation; ?>/photos/move/<?php echo $image['id']; ?>/down'>Move down</a> | <a href='/viparea/directory/<?php echo $organisation; ?>/photos/delete/<?php echo $image['id']; ?>'>Delete</a>
 	<br />

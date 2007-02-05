@@ -1,40 +1,43 @@
 <h3>Current Contacts</h3>
 <?php
 foreach ($organisation['cards'] as $member) {
-	echo $member['name']." - ".$member['title']." <a href='/admin/directory/".$organisation['shortname']."/edit'>(Edit)</a> <a href='/admin/directory/".$organisation['shortname']."/delete'>(Delete)</a><br />";
+	echo $member['name']." - ".$member['title']." <a href='/viparea/directory/".$organisation['shortname']."/edit/".$organisation['id']."'>(Edit)</a> <a href='/viparea/directory/".$organisation['shortname']."/delete/".$organisation['id']."'>(Delete)</a><br />";
 }
 ?>
-<form name='memberadd' method='post' action='/admin/directory/<?php echo $organisation['shortname']; ?>/addmember' class='form'>
+<form name='member' method='post' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/contacts/update' class='form'>
 	<fieldset>
 		<legend>Add/Edit member</legend>
-		<label for='memberadd_name'>Name:</label>
-		<input type='text' name='memberadd_name' />
+		<label for='member_name'>Name:</label>
+		<input type='text' name='member_name' />
 		<br />
-		<label for='memberadd_title'>Title:</label>
-		<input type='text' name='memberadd_title' />
+		<label for='member_title'>Title:</label>
+		<input type='text' name='member_title' />
 		<br />
-		<label for='memberadd_course'>Course:</label>
-		<input type='text' name='memberadd_course' />
+		<label for='member_title'>Image:</label>
+		<input type='file' name='member_image' />
 		<br />
-		<label for='memberadd_email'>Email:</label>
-		<input type='text' name='memberadd_email' />
+		<label for='member_course'>Course:</label>
+		<input type='text' name='member_course' />
 		<br />
-		<label for='memberadd_about'>About:</label>
-		<textarea name='memberadd_about' cols='40' rows='5'></textarea>
+		<label for='member_email'>Email:</label>
+		<input type='text' name='member_email' />
 		<br />
-		<label for='memberadd_address'>Postal Address:</label>
-		<textarea name='memberadd_address' cols='20' rows='4'></textarea>
+		<label for='member_about'>About:</label>
+		<textarea name='member_about' cols='40' rows='5'></textarea>
 		<br />
-		<label for='memberadd_phone_mobile'>Phone Mobile:</label>
-		<input type='text' name='memberadd_phone_mobile' />
+		<label for='member_address'>Postal Address:</label>
+		<textarea name='member_address' cols='20' rows='4'></textarea>
 		<br />
-		<label for='memberadd_phone_internal'>Phone Internal:</label>
-		<input type='text' name='memberadd_phone_internal' />
+		<label for='member_phone_mobile'>Phone Mobile:</label>
+		<input type='text' name='member_phone_mobile' />
 		<br />
-		<label for='memberadd_phone_external'>Phone External:</label>
-		<input type='text' name='memberadd_phone_external' />
+		<label for='member_phone_internal'>Phone Internal:</label>
+		<input type='text' name='member_phone_internal' />
 		<br />
-		<label for='memberadd_addbutton'></label>
-		<input name='memberadd_addbutton' type='submit' id='memberadd_addbutton' value='Add/Edit' class='button' />
+		<label for='member_phone_external'>Phone External:</label>
+		<input type='text' name='member_phone_external' />
+		<br />
+		<label for='member_addbutton'></label>
+		<input name='member_addbutton' type='submit' id='member_addbutton' value='Add/Edit' class='button' />
 	</fieldset>
 </form>
