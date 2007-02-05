@@ -125,8 +125,8 @@ class Upload extends Controller {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $selectedThumb[0];
 		$config['maintain_ratio'] = TRUE;
-		$config['width'] = $formData['width'];
-		$config['height'] = $formData['height'];
+		$config['width'] = $formData['x2'];
+		$config['height'] = $formData['y2'];
 		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['x_axis'] = $formData['y1'];
