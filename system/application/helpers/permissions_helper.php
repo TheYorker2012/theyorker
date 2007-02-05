@@ -16,10 +16,7 @@ function login_handler($Data, $Permission)
 	);
 	
 	$login_id = '';
-	if ($Data[0] === 'office' ||
-		$Data[0] === 'editor' ||
-		$Data[0] === 'admin')
-	{
+	if ($Data[0] === 'office') {
 		$page_code = 'login_office';
 		$login_id = 'office';
 		$data['no_keep_login'] = TRUE;
@@ -54,46 +51,57 @@ function login_handler($Data, $Permission)
 		}
 		$password = $CI->input->post('password');
 		try {
-			if ($Data[0] === 'student') {
-				$CI->user_auth->login($username, $password, false);
-			} elseif ($Data[0] === 'vip') {
+			if ($Data[0] === 'vip') {
+				// if office access say have been logged out of vip
+				if ($CI->user_auth->officeType !== 'None') {
+					$CI->user_auth->logoutOffice();
+					$CI->main_frame->AddMessage('information','You have been logged out of the office');
+				}
 				$CI->user_auth->loginOrganisation($password, $entity_id);
 			} elseif ($Data[0] === 'office') {
+				// if vip access say have been logged out of office
+				if ($CI->user_auth->organisationLogin >= 0) {
+					$CI->user_auth->logoutOrganisation();
+					$CI->main_frame->AddMessage('information','You have been logged out of the VIP area');
+				}
 				$CI->user_auth->loginOffice($password);
-			} elseif ($Data[0] === 'editor') {
-				$CI->user_auth->loginOffice($password);
-			} elseif ($Data[0] === 'admin') {
-				$CI->user_auth->loginOffice($password);
+			} else {
+				$CI->user_auth->login($username, $password, false);
 			}
 			$successfully_logged_in = TRUE;
 			$CI->main_frame->AddMessage('success',$success_msg);
-			//$CI->main_frame->DeferMessages();
 			unset($_POST);
 			return CheckPermissions($Permission);
-			//redirect('');
 			//redirect($CI->uri->uri_string());
 		} catch (Exception $e) {
-			$CI->main_frame->AddMessage('information',$Data[1]);
 			$CI->main_frame->AddMessage('error',$e->getMessage());
 		}
 	} else {
 		$data['initial_username'] = '';
-		$CI->main_frame->AddMessage('information',$Data[1]);
 	}
 	
 	if (!$successfully_logged_in) {
+		// Get various page properties used for displaying the login screen
 		$CI->pages_model->SetPageCode($page_code);
 		
-		$login_message = $CI->pages_model->GetPropertyText('login_message');
-		if (!empty($login_message)) {
-			$data['login_message'] = $login_message;
+		$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
+		if (FALSE !== $permission_message) {
+			$CI->main_frame->AddMessage(new Message($permission_message));
 		}
 		
+		// Title of login section of page
 		$section_title = $CI->pages_model->GetPropertyText('section_title');
 		if (!empty($section_title)) {
 			$data['title'] = $section_title;
 		}
 		
+		// Main login message
+		$login_message = $CI->pages_model->GetPropertyText('login_message');
+		if (!empty($login_message)) {
+			$data['login_message'] = $login_message;
+		}
+		
+		// Items in the right bar
 		/// @todo Move cunning array page properties into pages model.
 		$data['rightbar'] = array();
 		$index_counter = 0;
@@ -136,23 +144,15 @@ function CheckPermissions($Permission = 'public')
 {
 	$student_login_action = array(
 			'handle','login_handler',
-			array('student','Please log in to your account')
+			array('public')
 		);
 	$vip_login_action = array(
 			'handle','login_handler',
-			array('vip','Please log in to your VIP account')
+			array('vip')
 		);
 	$office_login_action = array(
 			'handle','login_handler',
-			array('office','Please enter the office')
-		);
-	$editor_login_action = array(
-			'handle','login_handler',
-			array('editor','Please enter the office')
-		);
-	$admin_login_action = array(
-			'handle','login_handler',
-			array('admin','Please enter the office')
+			array('office')
 		);
 	
 	// Matrix indexed by user level, then page level, of behaviour
@@ -175,20 +175,34 @@ function CheckPermissions($Permission = 'public')
 				'student'		=> TRUE,
 				'vip'			=> $vip_login_action,
 				'office'		=> $office_login_action,
-				'editor'		=> $editor_login_action,
-				'admin'			=> $admin_login_action,
+				'editor'		=> $office_login_action,
+				'admin'			=> $office_login_action,
 			),
+		// Logged in from public as organisation
+		'organisation' => array(
+				'public'		=> TRUE,
+				'student'		=> TRUE,
+				'vip'			=> TRUE,
+				'office'		=> FALSE,
+				'editor'		=> FALSE,
+				'admin'			=> FALSE,
+			),
+		// Logged in as student and in VIP area
 		'vip' => array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
 				'vip'			=> TRUE,
+				'office'		=> $office_login_action,
+				'editor'		=> $office_login_action,
+				'admin'			=> $office_login_action,
 			),
 		'office'       => array(
 				'public'		=> TRUE,
-				'vip'			=> $vip_login_action,
 				'student'		=> TRUE,
+				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> FALSE,
+				'admin'			=> FALSE,
 			),
 		'editor'       => array(
 				'public'		=> TRUE,
@@ -196,6 +210,7 @@ function CheckPermissions($Permission = 'public')
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
+				'admin'			=> FALSE,
 			),
 		'admin'    => array(
 				'public'		=> TRUE,
@@ -215,7 +230,11 @@ function CheckPermissions($Permission = 'public')
 		$user_level = 'student';
 	}
 	if ($CI->user_auth->organisationLogin >= 0) {
-		$user_level = 'vip';
+		if ($CI->user_auth->isUser) {
+			$user_level = 'vip';
+		} else {
+			$user_level = 'organisation';
+		}
 	}
 	if ($CI->user_auth->officeType === 'Low') {
 		$user_level = 'office';
@@ -244,6 +263,9 @@ function CheckPermissions($Permission = 'public')
 				switch ($action[0]) {
 					case 'handle':
 						$access_allowed = $action[1]($action[2], $Permission);
+						if (array_key_exists(3,$action)) {
+							$CI->main_frame->AddMessage($action[3], $action[4]);
+						}
 						break;
 						
 					case 'redirect':
@@ -256,7 +278,8 @@ function CheckPermissions($Permission = 'public')
 				}
 			} else {
 				// Access denied
-				$CI->main_frame->AddMessage('warning', 'You do not have '.$permission.' privilages required to use this page.');
+				$CI->main_frame->AddMessage('warning', 'You do not have '.$permission.' privilages required!');
+				redirect('');
 			}
 		}
 		if (!$access_allowed)

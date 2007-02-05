@@ -254,6 +254,27 @@ class Pages_model extends Model
 		}
 	}
 	
+	/// Get a specific message property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $GlobalScope bool Whether property has global scope.
+	 * @param $Default Default value if message doesn't exist.
+	 * @return array Which can be input into constructor of Message.
+	 * @pre PageCodeSet() === TRUE
+	 */
+	function GetPropertyMessage($PropertyLabel, $GlobalScope = FALSE, $DefaultClass = 'information')
+	{
+		$message_text = $this->GetPropertyWikitext($PropertyLabel, $GlobalScope, FALSE);
+		if (FALSE !== $message_text) {
+			return array(
+				'class' => $this->GetPropertyText($PropertyLabel, $GlobalScope, $DefaultClass),
+				'text' => $message_text,
+			);
+		} else {
+			return FALSE;
+		}
+	}
+	
 	/// Get the page title given certain parameters.
 	/**
 	 * @param $Parameters array[string=>string] Array of parameters.
@@ -482,7 +503,8 @@ class Pages_model extends Model
 					'FROM page_properties '.
 					'INNER JOIN property_types '.
 					' ON page_properties.page_property_property_type_id = property_types.property_type_id '.
-					'WHERE page_properties.page_property_page_id';
+					'WHERE page_properties.page_property_page_id '.
+					'ORDER BY page_properties.page_property_label ASC';
 				if ($global_scope) {
 					$sql .= ' IS NULL';
 					$query_params = array();
