@@ -298,13 +298,32 @@ class User_auth {
 	}
 
 	// Login to an organisations admin interface
-	public function loginOrganisation() {
-		// TODO: implement this :)
+	public function loginOrganisation($password, $organisationId) {
+		if (!$this->isLoggedIn | !$this->isUser)
+			throw new Exception('You must be logged in as a student to do this');
+		
+		$hash = sha1($this->salt.$password);
+
+		$sql = 'SELECT COUNT(*) AS valid FROM entities 
+			INNER JOIN subscriptions ON entities.entity_id = subscriptions.subscription_user_entity_id
+			WHERE entities.entity_id = ? AND subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_vip = TRUE';
+		
+		$db = $this->object->db;
+		$query = $db->query($sql, array($this->entityId, $organisationId));
+
+		$row = $query->row();
+		if ($row->valid) {
+			$this->organisationLogin = $organisationId;
+			$this->localToSession();
+		} else {
+			throw new Exception('Invalid organisation or password');
+		}
 	}
 
 	// Logout of an organisation interface
 	public function logoutOrganisation() {
-		// TODO: implement this :)
+		$this->organisationLogin = -1;
+		$this->localToSession();
 	}
 	
 	// Save all data from this class in the session
