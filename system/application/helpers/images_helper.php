@@ -94,18 +94,42 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
  */	
 function createImageLocation($id, $type = false) {
 	if ($type) {
-		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/';
+		$location = 'images/images/'.$type.'/';
+		if (is_dir($location)) {
+			$location.= (floor($id / IMAGE_HASH)).'/';
+			if (is_dir($location)) {
+				return true;
+			} elseif (mkdir($location, 0770)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			if (mkdir($location, 0770)) {
+				$location.= (floor($id / IMAGE_HASH)).'/';
+				if (is_dir($location)) {
+					return true;
+				} elseif (mkdir($location, 0770)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
 	} else {
 		$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/';
-	}
-	if (is_dir($location)) {
-		return true;
-	} else {
-		if (mkdir($location, 0770)) {
+		if (is_dir($location)) {
 			return true;
 		} else {
-			return false;
+			if (mkdir($location, 0770)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
+	
 }
 

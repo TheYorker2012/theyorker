@@ -115,7 +115,7 @@ class Upload extends Controller {
 			$id = $singleRow->image_id;
 		}
 		
-		if (createImageLocation($id, $selectedThumb[3])) {
+		if (!createImageLocation($id, $selectedThumb[3])) {
 			$objResponse->addAssign("submitButton","value","Error: Location not created");
 			$objResponse->addAssign("submitButton","disabled",false);
 

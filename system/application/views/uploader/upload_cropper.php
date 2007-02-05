@@ -73,7 +73,6 @@ foreach ($ThumbDetails->result() as $Single) {
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
-//			$( 'imgCrop_uploadedImage' ).src = imgSrc;
 		}
 	};
 	
