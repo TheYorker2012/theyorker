@@ -152,7 +152,7 @@ class Yorkerdirectory extends Controller
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation);
 			$this->_SetupOrganisationFrame($organisation);
-			
+
 			// Members data
 			$members = $this->directory_model->GetDirectoryOrganisationCardsByEntryName($organisation);
 			// translate into nice names for view
