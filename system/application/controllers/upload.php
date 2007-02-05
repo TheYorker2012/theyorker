@@ -127,7 +127,7 @@ class Upload extends Controller {
 		$config['maintain_ratio'] = TRUE;
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
-		$config['new_image'] = imageLocation($id, $selectedThumb[3],, TRUE);
+		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['x_axis'] = $formData['y1'];
 		$this->image_lib->initialize($config);

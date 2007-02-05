@@ -50,6 +50,7 @@ function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
  */	
 
 function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE) {
+	if (is_null($extension)) $extension = '.jpg';
 	if ($type_codename) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($repeat || is_file($location)) {
