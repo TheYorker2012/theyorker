@@ -1,6 +1,6 @@
 <div class="RightToolbar">
-  <h4><?php echo $sections['sidebar_ask']['title']; ?></h4>
-  <?php echo $sections['sidebar_ask']['text']; ?>
+  <h4><?php echo $sidebar_ask['title']; ?></h4>
+  <?php echo $sidebar_ask['text']; ?>
   <br /><br />
   Give us a challenge
   <form name='' id='' action='' method='' class='form'>
@@ -10,45 +10,43 @@
     </fieldset>
   </form>
   <br />
-  <h4>Question Categories</h4>
-  <a href="#">Opening Times</a><br />
-  <a href="#">Numbers</a><br />
-  <a href="#">Essentials</a><br />
-  <a href="#">Other Info</a><br />
-  <a href="#">The Nearest ...</a><br />
-  <br />
-  <h4>Quick Question Jump</h4>
-  <a href="#">Pharmacy</a><br />
-  <a href="#">Post Office</a><br />
-  <a href="#">Bank</a><br />
-  <a href="#">Cash Point</a><br />
+<?php
+	echo '<h4>Question Categories</h4>';
+	foreach ($categories as $category)
+	{
+		echo '<a href="'.$category['codename'].'">'.$category['name'].'</a><br />';
+	}
+?>
+<?php
+	echo '<h4>Quick Question Jump</h4>';
+	foreach ($categories[$parameters['category']]['articles'] as $questions)
+	{
+		echo '<a href="'.$questions['id'].'">'.$questions['heading'].'</a><br />';
+	}
+?>
 </div>
 
 <div class="grey_box">
-  <h2>The Nearest ...</h2>
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Nunc elementum arcu non risus. Vestibulum arcu enim,
-placerat nec, malesuada eget, pharetra at, mi. Nullam
-rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit.
+	<h2><?php echo $categories[$parameters['category']]['name']; ?></h2>
+	<?php echo $categories[$parameters['category']]['blurb']; ?>
 </div>
 
-<div class="blue_box">
-  <h2>Pharmacy</h2>
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Nunc elementum arcu non risus. Vestibulum arcu enim,
-placerat nec, malesuada eget, pharetra at, mi. Nullam
-rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit.<br /><br />
-  <img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
-</div>
+<?php
+	foreach ($categories[$parameters['category']]['articles'] as $questions)
+	{
+		echo '<div class="blue_box">';
+		echo '<h2>'.$questions['heading'].'</h2>';
+		echo $questions['text'];
+		echo '<br />'; //<br />
+		//<img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
+		echo '</div>';
+	}
+?>
 
-<div class="blue_box">
-  <h2>Post Office</h2>
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Nunc elementum arcu non risus. Vestibulum arcu enim,
-placerat nec, malesuada eget, pharetra at, mi. Nullam
-rhoncus porttitor nunc. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit.<br /><br />
-  <img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
-</div>
+<?php
+/*
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+*/
+?>
