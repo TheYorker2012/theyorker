@@ -43,7 +43,7 @@ class Reviews extends Controller {
 		$this->load->model('News_model');
 
 		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId(7,1); //7 is food, 1 is the amount of articles
+		$article_id = $this->News_model->GetLatestId('food',1); //1 is the amount of articles
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
@@ -106,7 +106,7 @@ class Reviews extends Controller {
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('drink_blurb');
 
 		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId(8,1); //8 is drink, 1 is the amount of articles
+		$article_id = $this->News_model->GetLatestId('drink',1); //1 is the amount of articles
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
@@ -160,7 +160,7 @@ class Reviews extends Controller {
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('culture_blurb');
 
 		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId(9,1); //9 is culture, 1 is the amount of articles
+		$article_id = $this->News_model->GetLatestId('culture',1); //1 is the amount of articles
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
