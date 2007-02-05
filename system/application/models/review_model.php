@@ -218,6 +218,79 @@ class Review_model extends Model {
 		}
 	}
 
+	//For generating table list for front pages, frb501
+
+	//Pre condition: A entry in the content_type table e.g. 'food' or 'drink'
+	//Post condition: A array containing all tags with the key value of the tag_group_name
+	//e.g. array['taggroupname'] = array('cool','splash')
+	//The array also has a special array inside array['tag_group_names']
+	// = array('Splashing out', 'Cool Digs')
+	//Which contains the taggroupnames for all tags used
+	function GetTags($type)
+	{
+		$sql = 'SELECT DISTINCT tag_groups.tag_group_name
+				FROM tag_groups
+				INNER JOIN tags ON tag_groups.tag_group_id = tag_groups.tag_group_id
+				INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
+				INNER JOIN review_contexts ON review_contexts.review_context_organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
+				INNER JOIN content_types ON content_types.content_type_id = review_contexts.review_context_content_type_id WHERE content_types.content_type_codename = ?
+				ORDER BY tag_group_order
+				';
+		$query = $this->db->query($sql,$type);
+		$queryarray = $query->result_array();
+
+		foreach ($queryarray as &$row)
+		{
+			$tag_group_names[] = $row['tag_group_name']; //Extract the names from the array
+		}
+
+		$index = 0; //For indexing
+	
+		foreach ($queryarray as &$row)
+		{
+			$index++;
+			$tag_group_name[$index] = $row['tag_group_name']; //Stores the tag group names
+
+			//First find out if these tags should be ordered by tag value or alphabetly
+			$nsql = 'SELECT tag_groups.tag_group_ordered FROM tag_groups WHERE tag_group_name = ?';
+			$nquery = $this->db->query($nsql,$tag_group_name[$index]);
+			$ordering = $nquery->row_array();
+
+			$ordering = $ordering['tag_group_ordered']; //Ordering says which ordering to use
+
+			//Sub query finds all the tag names in the tag group
+			if ($ordering == TRUE)
+			{								//Order by field tag_order
+			$msql = '
+					 SELECT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_order';
+			}
+			else
+			{								//Order by field tag_name
+			$msql = '						
+					 SELECT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
+			}
+
+			$mquery = $this->db->query($msql,$tag_group_name[$index]); //Do query
+			$marray = $mquery->result_array();
+
+			//Place all of the tags into the return array
+			foreach ($marray as &$mrow)
+			{
+				//Place all tags in to the tag_group array with the key of the tag groups name
+				$tag_group[$tag_group_name[$index]][] = $mrow['tag_name'];
+			}
+		}
+		//Add the special case
+		$tag_group['tag_group_names'] = $tag_group_names;
+
+		//Return the result
+		return $tag_group;
+	}
+
 	//Adds a comment to the database, frb501
 	function SetComment($post_data)
 	{

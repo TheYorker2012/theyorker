@@ -41,20 +41,35 @@
 <div class='grey_box'>
 	<h2>browse by</h2>
 	<span class="black"><?php echo $main_blurb; ?></span><br /><br />
-	<div class="half_right">
-		<h3 style="display: inline;">Price Range</h3><br />
-			<?php
-		for ($pricetype = 0; $pricetype < count($price_array['name']); $pricetype++)
-			echo anchor($price_array['link'][$pricetype],$price_array['name'][$pricetype]).'<br />';
-		?>
-	</div>
-	<div class="half_left">
-		<h3 style="display: inline;">Cuisine</h3><br />
-		<?php
-		for ($restauranttype = 0; $restauranttype < count($type_array['name']); $restauranttype++)
-			echo anchor($type_array['link'][$restauranttype],$type_array['name'][$restauranttype]).'<br />';
-		?>
-	</div>
+
+<?php
+//As far as I can tell we are going to show the first 2 columns only on this page
+//Hence a for loop is probaility not worth it...
+
+echo '<div class="half_left"><h3 style="display: inline;">';
+echo $table_data['tag_group_names'][0];
+echo '</h3><br /><br />';
+
+foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
+{
+	echo anchor('reviews/table/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+}
+
+echo'</div>';
+
+echo '<div class="half_right"><h3 style="display: inline;">';
+echo $table_data['tag_group_names'][1];
+echo '</h3><br /><br />';
+
+foreach($table_data[$table_data['tag_group_names'][1]] as $tag)
+{
+	echo anchor('reviews/table/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
+}
+
+echo'</div>';
+
+?>
+
 </div>
 <div class='blue_box'>
 		<h2>featured article</h2>

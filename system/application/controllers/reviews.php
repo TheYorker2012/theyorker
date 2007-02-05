@@ -77,6 +77,12 @@ class Reviews extends Controller {
 		$data['article_author_link'] = '/directory/view/1';
 		$data['article_photo'] = '/images/prototype/news/thumb4.jpg';
 
+		//Get data for the links to the table page
+		$tabledata = $this->Review_model->GetTags('food');
+
+		//Pass tabledata staight to view it is in the proper format
+		$data['table_data'] = $tabledata;
+
 		//More dummy data as part of the tables page
 		$type_array['name'] = array('Italian','Indian','Pub Dinners','Take Away Resturants','Thai','Chinese','All Types');
 		$type_array['link'] = array('reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food');
