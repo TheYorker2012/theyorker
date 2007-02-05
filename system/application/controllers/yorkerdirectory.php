@@ -24,8 +24,10 @@ class Yorkerdirectory extends Controller
 		$this->load->library('organisations');
 
 		$this->load->model('directory_model');
+		$this->load->model('prefs_model');
 
 		$this->load->helper('text');
+		$this->load->helper('images');
 		$this->load->helper('wikilink');
 	}
 

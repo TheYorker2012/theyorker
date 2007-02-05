@@ -1,7 +1,11 @@
+<script type='text/javascript' src='/javascript/slideshow.js'></script>
+<script type='text/javascript'>
+Slideshow.add(<?php echo "'/".photoLocation(32)."'"; ?>);
+Slideshow.load();
+</script>
 <div class='RightToolbar'>
 	<h4>Information</h4>
-	<div style='text-align:center; padding: 10px 5px 10px 5px;'>
-	<img width='200' src='/images/prototype/directory/about/178327854723856.jpg' />
+	<div id='ss' style='width: 220px' style='text-align:left;'>
 	</div>
 	<p>
 		<?php if (!empty($organisation['website'])) {
