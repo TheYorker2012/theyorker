@@ -19,12 +19,6 @@
 		<label for='keywords'>Keywords</label>
 		<input name='keywords' size='35' value='<?php if (!empty($keywords)) { echo $keywords;} ?>'>
 		<br />
-		<label for='comments'>Comments</label>
-		<input type='checkbox' name='comments' <?php if (!empty($comments)){if ($comments == 1) { echo "checked";}} ?>>
-		<br />
-		<label for='ratings'>Ratings</label>
-		<input type='checkbox' name='ratings' <?php if (!empty($ratings)){if ($ratings == 1) { echo "checked";}} ?>>
-		<br />
 	</fieldset>
 	<fieldset>
 		<label for='save_button'></label>

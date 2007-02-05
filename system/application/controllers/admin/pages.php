@@ -136,8 +136,6 @@ class Pages extends Controller
 		$Data['title'] = '';
 		$Data['description'] = '';
 		$Data['keywords'] = '';
-		$Data['comments'] = 0;
-		$Data['ratings'] = 0;
 		$Data['properties'] = array();
 		
 		$input['codename']    = $this->input->post('codename',    FALSE);
@@ -145,8 +143,6 @@ class Pages extends Controller
 			$input['title']       = $this->input->post('title',       FALSE);
 			$input['description'] = $this->input->post('description', FALSE);
 			$input['keywords']    = $this->input->post('keywords',    FALSE);
-			$input['comments']    = $this->input->post('comments',    FALSE);
-			$input['ratings']     = $this->input->post('ratings',     FALSE);
 			$save_failed = FALSE;
 			
 			// Validate and check permissions
@@ -166,8 +162,6 @@ class Pages extends Controller
 				$Data['description'] = $input['description'];
 			if (FALSE !== $input['keywords'])
 				$Data['keywords'] = $input['keywords'];
-			$Data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
-			$Data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
 			
 			if (FALSE === $save_failed) {
 				// Try and save to db
@@ -225,8 +219,6 @@ class Pages extends Controller
 				$data['title']       = $page_info['title'];
 				$data['description'] = $page_info['description'];
 				$data['keywords']    = $page_info['keywords'];
-				$data['comments']    = $page_info['comments'];
-				$data['ratings']     = $page_info['ratings'];
 			} else {
 				$data['target']      = $Target;
 			}
@@ -276,8 +268,6 @@ class Pages extends Controller
 					$input['title']       = $this->input->post('title',       FALSE);
 					$input['description'] = $this->input->post('description', FALSE);
 					$input['keywords']    = $this->input->post('keywords',    FALSE);
-					$input['comments']    = $this->input->post('comments',    FALSE);
-					$input['ratings']     = $this->input->post('ratings',     FALSE);
 					$save_failed = FALSE;
 					
 					// Validate and check permissions
@@ -299,8 +289,6 @@ class Pages extends Controller
 						$data['description'] = $input['description'];
 					if (FALSE !== $input['keywords'])
 						$data['keywords'] = $input['keywords'];
-					$data['comments'] = $input['comments'] = (($input['comments'] !== FALSE)?1:0);
-					$data['ratings']  = $input['ratings']  = (($input['ratings']  !== FALSE)?1:0);
 					
 					if (FALSE === $save_failed) {
 						// Try and save to db

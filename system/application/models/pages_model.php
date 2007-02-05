@@ -505,8 +505,6 @@ class Pages_model extends Model
 			' pages.page_title,'.
 			' pages.page_description,'.
 			' pages.page_keywords,'.
-			' pages.page_comments,'.
-			' pages.page_ratings '.
 			'FROM pages '.
 			'ORDER BY pages.page_codename';
 		
@@ -536,8 +534,6 @@ class Pages_model extends Model
 				' pages.page_title,'.
 				' pages.page_description,'.
 				' pages.page_keywords,'.
-				' pages.page_comments,'.
-				' pages.page_ratings '.
 				'FROM pages '.
 				'WHERE pages.page_codename=?';
 			$query = $this->db->query($sql,$PageCode);
@@ -552,8 +548,6 @@ class Pages_model extends Model
 				$data['title']       = $result['page_title'];
 				$data['description'] = $result['page_description'];
 				$data['keywords']    = $result['page_keywords'];
-				$data['comments']    = $result['page_comments'];
-				$data['ratings']     = $result['page_ratings'];
 			}
 			if ($Properties) {
 				$sql =
@@ -610,8 +604,6 @@ class Pages_model extends Model
 					'title'       => 'page_title',
 					'description' => 'page_description',
 					'keywords'    => 'page_keywords',
-					'comments'    => 'page_comments',
-					'ratings'     => 'page_ratings',
 				);
 			$save_data = array();
 			foreach ($Data as $key => $value) {
@@ -742,8 +734,6 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 				'title'       => 'page_title',
 				'description' => 'page_description',
 				'keywords'    => 'page_keywords',
-				'comments'    => 'page_comments',
-				'ratings'     => 'page_ratings',
 			);
 		$save_data = array();
 		foreach ($Data as $key => $value) {
