@@ -7,14 +7,15 @@ class Logout extends Controller
 	{
 		parent::Controller();
 		
-		// Load the public frame
-		$this->load->library('frame_public');
+		SetupMainFrame('public');
 	}
 
 	function index()
 	{
 		$this->user_auth->logout();
-		redirect('/');
+		$this->main_frame->AddMessage('success','You have successfully logged out');
+		$this->main_frame->DeferMessages();
+		redirect('');
 	}
 }
 ?>

@@ -21,9 +21,10 @@ class Index extends Controller
 		if (CheckPermissions('vip')) {
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+					'organisation' => 'theyorker', //example for the moment change this to logged in organisation
 			);
 			// Set up the content
-			$this->main_frame->SetContentSimple('viparea/index', $data);
+			$this->main_frame->SetContentSimple('viparea/main', $data);
 		}
 		
 		// Load the main frame

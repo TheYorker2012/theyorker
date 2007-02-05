@@ -12,8 +12,6 @@ function login_handler($Data, $Permission)
 	$CI = &get_instance();
 	
 	$data = array(
-		'username' => array('name' => 'username', 'id' => 'username'),
-		'password' => array('name' => 'password', 'id' => 'password'),
 		'target' => $CI->uri->uri_string(),
 	);
 	
@@ -23,30 +21,46 @@ function login_handler($Data, $Permission)
 		$Data[0] === 'admin')
 	{
 		$login_id = 'office';
-		$data['no_username'] = TRUE;
 		$data['no_keep_login'] = TRUE;
+		$data['title'] = 'enter the office';
+		$data['login_message'] = 'Enter your office password to enter the office';
+		$success_msg = 'you have successfully entered the office';
+		
+	} elseif ($Data[0] === 'vip') {
+		$login_id = 'vip';
+		$data['title'] = 'enter the VIP area';
+		$data['usernames'] = array();
+		$logins = $CI->user_auth->getOrganisationLogins();
+		foreach ($logins as $login) {
+			$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
+		}
+		$data['login_message'] = 'Confirm your password to enter the VIP area';
+		$success_msg = 'you have successfully entered the VIP area';
+		
 	} else {
 		$login_id = 'student';
+		$data['title'] = 'log in';
+		$data['login_message'] = 'Enter your username and password to log in';
+		$data['username'] = '';
+		$data['keep_login'] = '0';
+		$success_msg = 'you have successfully logged in';
 	}
 	$data['login_id'] = $login_id;
 	
 	$input_login_id = $CI->input->post('login_id');
 	$successfully_logged_in = FALSE;
 	if ($input_login_id === $login_id) {
-		if ($login_id !== 'office') {
+		if ($login_id === 'student') {
 			$username = $CI->input->post('username');
-		} else {
-			$username = '';
+		} elseif ($login_id === 'vip') {
+			$entity_id = $CI->input->post('username');
 		}
 		$password = $CI->input->post('password');
-		$data['initial_username'] = $username;
 		try {
 			if ($Data[0] === 'student') {
 				$CI->user_auth->login($username, $password, false);
 			} elseif ($Data[0] === 'vip') {
-				//$CI->user_auth->loginOrganisation($username, $password);
-				//$CI->main_frame->AddMessage('warning','VIP login system hasn\'t been implemented');
-				throw new Exception('VIP login hasn\'t been implemented');
+				$CI->user_auth->loginOrganisation($password, $entity_id);
 			} elseif ($Data[0] === 'office') {
 				$CI->user_auth->loginOffice($password);
 			} elseif ($Data[0] === 'editor') {
@@ -55,7 +69,7 @@ function login_handler($Data, $Permission)
 				$CI->user_auth->loginOffice($password);
 			}
 			$successfully_logged_in = TRUE;
-			$CI->main_frame->AddMessage('success','You have successfully logged in to your '.$login_id.' account');
+			$CI->main_frame->AddMessage('success',$success_msg);
 			//$CI->main_frame->DeferMessages();
 			unset($_POST);
 			return CheckPermissions($Permission);
@@ -71,7 +85,7 @@ function login_handler($Data, $Permission)
 	}
 	
 	if (!$successfully_logged_in) {
-		$CI->main_frame->SetTitle('Log in');
+		$CI->pages_model->SetPageCode('login');
 		$CI->main_frame->SetContentSimple('login/login', $data);
 	}
 	
@@ -94,26 +108,24 @@ function CheckPermissions($Permission = 'public')
 {
 	$student_login_action = array(
 			'handle','login_handler',
-			array('student','You need to log in to your student account to access this page')
+			array('student','Please log in to your account')
 		);
 	$vip_login_action = array(
 			'handle','login_handler',
-			array('vip','You need to log in to your VIP account to access this page')
+			array('vip','Please log in to your VIP account')
 		);
 	$office_login_action = array(
 			'handle','login_handler',
-			array('office','You need to log in to your office account to access this page')
+			array('office','Please enter the office')
 		);
 	$editor_login_action = array(
 			'handle','login_handler',
-			array('editor','You need to log in to your office account to access this page')
+			array('editor','Please enter the office')
 		);
 	$admin_login_action = array(
 			'handle','login_handler',
-			array('admin','You need to log in to your admin account to access this page')
+			array('admin','Please enter the office')
 		);
-	
-	$vip_login_action = TRUE;
 	
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
@@ -125,17 +137,17 @@ function CheckPermissions($Permission = 'public')
 		'public'       => array(
 				'public'		=> TRUE,
 				'student'		=> $student_login_action,
+				'vip'			=> $student_login_action,
 				'office'		=> $student_login_action,
 				'editor'		=> $student_login_action,
 				'admin'			=> $student_login_action,
-				'vip'			=> $vip_login_action,
 			),
 		'student'      => array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
+				'vip'			=> $vip_login_action,
 				'office'		=> $office_login_action,
 				'editor'		=> $editor_login_action,
-				'vip'			=> $vip_login_action,
 				'admin'			=> $admin_login_action,
 			),
 		'vip' => array(
@@ -145,6 +157,7 @@ function CheckPermissions($Permission = 'public')
 			),
 		'office'       => array(
 				'public'		=> TRUE,
+				'vip'			=> $vip_login_action,
 				'student'		=> TRUE,
 				'office'		=> TRUE,
 				'editor'		=> FALSE,
@@ -152,13 +165,14 @@ function CheckPermissions($Permission = 'public')
 		'editor'       => array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
+				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
 			),
 		'admin'    => array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
-				'vip'			=> TRUE,
+				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
 				'admin'			=> TRUE,
@@ -172,7 +186,7 @@ function CheckPermissions($Permission = 'public')
 	if ($CI->user_auth->isLoggedIn) {
 		$user_level = 'student';
 	}
-	if (FALSE) {
+	if ($CI->user_auth->organisationLogin >= 0) {
 		$user_level = 'vip';
 	}
 	if ($CI->user_auth->officeType === 'Low') {
