@@ -11,7 +11,7 @@ class Upload extends Controller {
 	function _processImage($data, $form_value, &$ThumbDetails) {
 		$config['image_library'] = 'GD2';
 		$config['source_image'] = $data['full_path'];
-		$config['quality'] = 75;
+		$config['quality'] = 85;
 		$config['master_dim'] = 'width';
 		$config['width'] = 650;
 		$config['height'] = 1000;
