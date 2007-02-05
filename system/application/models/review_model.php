@@ -292,7 +292,8 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				$entity_ids[] = $review['organisation_entity_id'];
 				$review['tags'] = array();
 			}
-	
+			
+			//Get the tags	
 			$sql = '
 				SELECT ot.organisation_tag_organisation_entity_id, t.tag_name, tg.tag_group_name
 				FROM organisation_tags AS ot
@@ -301,14 +302,37 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
 				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
-				ORDER BY ot.organisation_tag_organisation_entity_id ASC';
+				ORDER BY t.tag_order ASC'; //Default sort by tag_order
 	
 			$query = $this->db->query($sql);
 			$tags = $query->result_array();
 
-			//This is for forming the array of tag groups
-			$tag_groups = array();
+			//Get a sorted list of tag group names
+			//Sort tag_groups by tag_group_order
+			$sql = '
+				SELECT tg.tag_group_name
+				FROM organisation_tags AS ot
+				INNER JOIN tags AS t
+				ON t.tag_id = ot.organisation_tag_tag_id
+				INNER JOIN tag_groups AS tg
+				ON tg.tag_group_id = t.tag_tag_group_id
+				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
+				ORDER BY tg.tag_group_order ASC';
+			$tgquery = $this->db->query($sql);
+			$tg_array = $tgquery->result_array();
+
+			$tag_groups = array(); //Array for holding the tag groups in sorted order
 			$new_tag_group = 0;
+
+			foreach ($tg_array as &$tag_table)
+			{
+				//Form a list of all the group names used
+				if (in_array($tag_table['tag_group_name'],$tag_groups) == FALSE)
+				{
+					$tag_groups[$new_tag_group] = $tag_table['tag_group_name'];
+					$new_tag_group++;
+				}
+			}
 
 			foreach ($reviews as &$review)
 			{
@@ -317,13 +341,21 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 					if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
 					{
 						$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
+					}
+				}
 
-						//Form a list of all the group names used
-						if (in_array($tag['tag_group_name'],$tag_groups) == FALSE)
-						{
-							$tag_groups[$new_tag_group] = $tag['tag_group_name'];
-							$new_tag_group++;
-						}
+				//Sort the sub tags into order (as in tag_name not the tag groups)
+				foreach ($tag_groups as &$group)
+				{
+					//Find if we should sort the tags by tag name or by tag order
+					$msql = "SELECT tag_group_ordered FROM tag_groups WHERE tag_group_name = ?";
+					$mquery = $this->db->query($msql, $group);
+					$mrow = $mquery->row();
+					$msort = $mrow->tag_group_ordered; //If true then we don't need to do anything since it is sorted already by the query
+
+					if ($msort == 0 && isset($review['tags'][$group])) //Sort the tags alphabetally if it isn't null
+					{
+						sort($review['tags'][$group]); //Sort alphabetally
 					}
 				}
 
