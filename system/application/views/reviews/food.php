@@ -46,9 +46,9 @@
 //As far as I can tell we are going to show the first 2 columns only on this page
 //Hence a for loop is probaility not worth it...
 
-echo '<div class="half_left"><h3 style="display: inline;">';
+echo '<div class="half_right"><h3 style="display: inline;">';
 echo $table_data['tag_group_names'][0];
-echo '</h3><br /><br />';
+echo '</h3><br />';
 
 foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
 {
@@ -57,9 +57,9 @@ foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
 
 echo'</div>';
 
-echo '<div class="half_right"><h3 style="display: inline;">';
+echo '<div class="half_left"><h3 style="display: inline;">';
 echo $table_data['tag_group_names'][1];
-echo '</h3><br /><br />';
+echo '</h3><br />';
 
 foreach($table_data[$table_data['tag_group_names'][1]] as $tag)
 {
@@ -71,6 +71,7 @@ echo'</div>';
 ?>
 
 </div>
+
 <div class='blue_box'>
 		<h2>featured article</h2>
 		<?php echo '<a href="'.$article_link.'">'; ?><img style="float: right;" src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
