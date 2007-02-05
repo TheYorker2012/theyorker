@@ -15,9 +15,9 @@ Login System
 	<li><a href="/login/">/login/</a></li>
 	<li><a href="/login/resetpassword/">/login/resetpassword/</a></li>
 	<li><a href="/register/">/register/</a></li>
-	<li><a href="/register/general/">/register/general/</a></li>
 	<li><a href="/register/academic/">/register/academic/</a></li>
 	<li><a href="/register/societies/">/register/societies/</a></li>
+	<li><a href="/register/au/">/register/au/</a></li>
 </ul>
 
 About
