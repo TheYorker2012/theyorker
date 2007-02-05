@@ -12,16 +12,23 @@
   <br />
 <?php
 	echo '<h4>Question Categories</h4>';
-	foreach ($categories as $category)
+	if (count($categories) > 0)
 	{
-		echo '<a href="'.$category['codename'].'">'.$category['name'].'</a><br />';
+		foreach ($categories as $category)
+		{
+			echo '<a href="'.$category['codename'].'">'.$category['name'].'</a><br />';
+		}
 	}
 ?>
+<br />
 <?php
 	echo '<h4>Quick Question Jump</h4>';
-	foreach ($categories[$parameters['category']]['articles'] as $questions)
+	if (isset($categories[$parameters['category']]['articles']))
 	{
-		echo '<a href="'.$questions['id'].'">'.$questions['heading'].'</a><br />';
+		foreach ($categories[$parameters['category']]['articles'] as $questions)
+		{
+			echo '<a href="'.$parameters['codename'].'#'.$questions['id'].'">'.$questions['heading'].'</a><br />';
+		}
 	}
 ?>
 </div>
@@ -32,14 +39,21 @@
 </div>
 
 <?php
-	foreach ($categories[$parameters['category']]['articles'] as $questions)
+//single article thingy
+	if (isset($categories[$parameters['category']]['articles']))
 	{
-		echo '<div class="blue_box">';
-		echo '<h2>'.$questions['heading'].'</h2>';
-		echo $questions['text'];
-		echo '<br />'; //<br />
-		//<img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
-		echo '</div>';
+		foreach ($categories[$parameters['category']]['articles'] as $questions)
+		{
+			if (($parameters['article'] <= 0) OR ($questions['id'] == $parameters['article']))
+			{
+				echo '<a name="'.$questions['id'].'"></a><div class="blue_box">';
+				echo '<h2>'.$questions['heading'].'</h2>';
+				echo $questions['text'];
+				echo '<br />'; //<br />
+				//<img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
+				echo '</div>';
+			}
+		}
 	}
 ?>
 

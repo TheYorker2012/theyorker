@@ -11,10 +11,11 @@ class Howdoi extends Controller {
 		
 		// Load the public frame
 		$this->load->library('frame_public');
+		SetupMainFrame('public');
 	}
 	
-    function index()
-    {
+	function index()
+	{
 		$this->load->model('howdoi_model','howdoi');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('howdoi_list');
@@ -39,10 +40,10 @@ class Howdoi extends Controller {
 
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
-    }
-	
-    function viewcategories($codename, $id)
-    {
+	}
+
+	function viewcategory($codename, $id)
+	{
 		$this->load->model('howdoi_model','howdoi');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('howdoi_view');
@@ -68,8 +69,6 @@ class Howdoi extends Controller {
 			$data['sidebar_ask'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
 							'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
 
-			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
 	
 			// Set up the public frame
@@ -82,6 +81,6 @@ class Howdoi extends Controller {
 		else
 			//needs a new page to show invalid category
 			echo 'invalid category';
-    }
+	}
 }
 ?>

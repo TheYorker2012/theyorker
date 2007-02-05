@@ -98,10 +98,10 @@ $route['yorkerdirectory/(.+)'] = 'not_yorkerdirectory';
 //This is to route /contact to that. oj502
 $route['contact'] = 'yorkerdirectory/members/theyorker';
 
-// /howdoi/category => /howdoi/test1/category (-1 meaning all)
-$route['howdoi/([a-z]+)'] = 'howdoi/viewcategories/$1/-1';
-// /howdoi/category/12 => /howdoi/test1/category/12
-$route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategories/$1/$2';
+// /howdoi/category => /howdoi/viewcategory/category (-1 meaning all)
+$route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
+// /howdoi/category/12 => /howdoi/viewcategory/12
+$route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
 
 ?>
