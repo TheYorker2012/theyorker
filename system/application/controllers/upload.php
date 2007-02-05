@@ -140,8 +140,8 @@ class Upload extends Controller {
 		
 		$config['source_image'] = $config['new_image'];
 		$config['new_image'] = null;
-		$config['width'] = $selectedThumb[4];
-		$config['height'] = $selectedThumb[5];
+		$config['width'] = $selectedThumb[5];
+		$config['height'] = $selectedThumb[6];
 		
 		$this->image_lib->initialize($config);
 		
