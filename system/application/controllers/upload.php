@@ -126,12 +126,26 @@ class Upload extends Controller {
 		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
+		$config['maintain_ratio'] = FALSE;
 		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['y_axis'] = $formData['y1'];
+		
 		$this->image_lib->initialize($config);
 
 		if (!$this->image_lib->crop())
+		{
+		    echo $this->image_lib->display_errors();
+		}
+		
+		$config['source_image'] = $config['new_image'];
+		$config['new_image'] = null;
+		$config['width'] = $selectedThumb[1];
+		$config['height'] = $selectedThumb[2];
+		
+		$this->image_lib->initialize($config);
+		
+		if (!$this->image_lib->resize())
 		{
 		    echo $this->image_lib->display_errors();
 		}
