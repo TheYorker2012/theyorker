@@ -9,7 +9,7 @@
 			</ul>
 		</div>
 		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
+			<img src="/images/prototype/homepage/information.png" />
 			<a href='#'>Information</a> has been updated and is waiting to be published.
 		</div>
 		<div class="information_box">
