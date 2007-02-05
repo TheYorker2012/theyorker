@@ -4,10 +4,11 @@
 	if ($user == TRUE)
 	{
 		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sections['sidebar_vote']['text']);
-		echo '	<form id="form1" name="form1" action="#" method="POST" class="form">
+		echo '	<form id="form1" name="voteform" action="/campaign/vote" method="POST" class="form">
 				<fieldset>
-				<input type="text" />
-				<input type="submit" value="Vote" class="button" />
+					<input type="hidden" name="campaignid" value="'.$parameters['campaign'].'" />
+					<input type="text" name="votename" />
+					<input type="submit" value="Vote" class="button" name="votesubmit" />
 				</fieldset>
 			</form>';
 	}
@@ -41,7 +42,7 @@
 	};
 	?>
 	</p>
-	
+
 	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php

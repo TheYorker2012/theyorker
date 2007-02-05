@@ -62,6 +62,7 @@ class Campaign extends Controller {
 			{
 				$data['user'] = FALSE;
 			}
+			$data['parameters']['campaign'] = $campaign_id;
 
 			// Set up the public frame
 			$this->frame_public->SetTitle($this->pages_model->GetTitle(array('campaign'=>$data['campaign_list'][$campaign_id]['name'])));

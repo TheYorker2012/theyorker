@@ -39,7 +39,6 @@
 </div>
 
 <?php
-//single article thingy
 	if (isset($categories[$parameters['category']]['articles']))
 	{
 		foreach ($categories[$parameters['category']]['articles'] as $questions)
