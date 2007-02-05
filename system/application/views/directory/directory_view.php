@@ -1,11 +1,15 @@
+<script type='text/javascript' src='/javascript/prototype.js'></script>
+<script type='text/javascript' src='/javascript/scriptaculous.js'></script>
 <script type='text/javascript' src='/javascript/slideshow.js'></script>
 <script type='text/javascript'>
-Slideshow.add(<?php echo "'/".photoLocation(32)."'"; ?>);
+Slideshow.add('/images/photos/3.jpg');
+Slideshow.add('/images/photos/4.jpg');
 Slideshow.load();
 </script>
 <div class='RightToolbar'>
 	<h4>Information</h4>
-	<div id='ss' style='width: 220px' style='text-align:left;'>
+	<div id='ss' style='text-align:left;'>
+		<img id='changeme' src='/images/prototype/prefs/image_load.jpg' alt='Directory' title='Directory' />
 	</div>
 	<p>
 		<?php if (!empty($organisation['website'])) {
