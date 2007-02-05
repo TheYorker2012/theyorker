@@ -122,7 +122,7 @@ class Upload extends Controller {
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'GD2';
+		$config['image_library'] = 'imagemagick';
 		$config['source_image'] = $selectedThumb[0];
 		$config['maintain_ratio'] = TRUE;
 		$config['width'] = $formData['width'];
