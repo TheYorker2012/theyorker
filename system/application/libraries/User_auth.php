@@ -297,6 +297,21 @@ class User_auth {
 		$this->localToSession();
 	}
 
+	// Get a list of organisations that the user can login to
+	public function getOrganisationLogins() {
+		if (!$this->isLoggedIn | !$this->isUser)
+			throw new Exception('You must be logged in as a student to do this');
+
+		$sql = 'SELECT organisation_entity_id, organisation_name FROM organisations 
+				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
+			WHERE subscription_user_entity_id = ? AND subscription_vip = TRUE';
+
+		$db = $this->object->db;
+		$query = $db->query($sql, array($this->entityId));
+
+		return $query->result_array();
+	}
+
 	// Login to an organisations admin interface
 	public function loginOrganisation($password, $organisationId) {
 		if (!$this->isLoggedIn | !$this->isUser)
