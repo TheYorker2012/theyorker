@@ -42,7 +42,7 @@ class Upload extends Controller {
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
 			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id;
+			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 			$loop++;
 		}
 		return $output;
@@ -140,8 +140,8 @@ class Upload extends Controller {
 		
 		$config['source_image'] = $config['new_image'];
 		$config['new_image'] = null;
-		$config['width'] = $selectedThumb[1];
-		$config['height'] = $selectedThumb[2];
+		$config['width'] = $selectedThumb[4];
+		$config['height'] = $selectedThumb[5];
 		
 		$this->image_lib->initialize($config);
 		
