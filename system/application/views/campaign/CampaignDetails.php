@@ -16,8 +16,6 @@
 		echo $sections['sidebar_vote']['not_logged_in'];
 	?>
 	<br />
-	<!--ad padding, and the submit button-->
-
 
 	<h4><?php echo $sections['sidebar_other_campaigns']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
@@ -33,7 +31,7 @@
 	<h4><?php echo $sections['sidebar_more']['title']; ?></h4>
 	<?php echo $sections['sidebar_more']['text']; ?>
 	
-	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
+	<h4><?php echo $sections['sidebar_related']['title']; ?></h4>
 	<p style="margin-top: 0px; padding: 8px;">
 	<?php
         foreach ($sections['article']['related_articles'] as $related_articles)

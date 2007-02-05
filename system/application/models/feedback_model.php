@@ -14,7 +14,8 @@ class Feedback_model extends Model
 		parent::Model();
 	}
 
-	function AddNewFeedback($page_name, $author_name, $author_email, $rating, $comment)
+	function AddNewFeedback($page_name, $author_name, $author_email, 
+				$rating, $comment)
 	{
 		$sql = 'INSERT INTO feedback_entries (
 				feedback_entry_page_name,
@@ -24,6 +25,7 @@ class Feedback_model extends Model
 				feedback_entry_comment,
 				feedback_entry_timestamp)
 			VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)';
-		$this->db->query($sql, array($page_name,$author_name,$author_email,$rating,$comment));
+		$this->db->query($sql, array($page_name, $author_name,
+				$author_email, $rating, $comment));
 	}
 }
