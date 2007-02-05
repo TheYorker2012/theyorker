@@ -17,6 +17,12 @@
 				<span class="ReviewDetailsInfo"><?php echo $telephone; ?></span><br />
 		<span class="ReviewDetailsTitle">Opening Times</span><br />
 				<span class="ReviewDetailsInfo"><?php echo $opening_times; ?></span><br />
+		<span class="ReviewDetailsTitle">Serving Times</span><br />
+				<span class="ReviewDetailsInfo"><?php echo $serving_times; ?></span><br />
+<?php
+		if ($deal != NULL)echo '<span class="ReviewDetailsTitle">Current Deal</span><br />
+				<span class="ReviewDetailsInfo">'.$deal.'</span><br />';
+?>
 	</div>
 	<h4>Tips</h4>
 	<div class='Entry'>

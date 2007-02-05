@@ -51,13 +51,12 @@ class Review_model extends Model {
 			organisations.organisation_timestamp,
 			organisations.organisation_yorkipedia_entry,
 			review_context_contents.review_context_content_blurb,
-			review_context_contents.review_context_content_recommend_item_price,
+			review_context_contents.review_context_content_average_price,
 			review_context_contents.review_context_content_recommend_item,
-			review_context_contents.review_context_content_average_price_upper,
-			review_context_contents.review_context_content_average_price_lower,
+			review_context_contents.review_context_content_deal,
+			review_context_contents.review_context_content_deal_expires,
 			review_context_contents.review_context_content_rating,
-			review_context_contents.review_context_content_directions,
-			review_context_contents.review_context_content_book_online,
+			review_context_contents.review_context_content_serving_times,
 			review_context_contents.review_context_content_content_type_id
 			  FROM content_types
 			  INNER JOIN review_context_contents

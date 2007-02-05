@@ -281,11 +281,17 @@ class Reviews extends Controller {
 		$data['address_main']			= $review_database_result['organisation_postal_address'];
 		$data['address_postcode']		= $review_database_result['organisation_postcode'];
 		$data['website']				= $review_database_result['organisation_url'];
-		$data['website_booking']		= $review_database_result['review_context_content_book_online'];
 		$data['telephone']				= $review_database_result['organisation_phone_external'];
-		$data['average_price']			= '£'.($review_database_result['review_context_content_average_price_lower']/100).' to £'.($review_database_result['review_context_content_average_price_upper']/100);
+		$data['average_price']			= '£'.$review_database_result['review_context_content_average_price'];
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
+		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
+
+		//Check the deal isn't expired
+		if ($review_database_result['review_context_content_deal_expires'] < time())
+		{
+			$data['deal'] = $review_database_result['review_context_content_deal'];
+		}
 
 		//Dummy Data
 		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
