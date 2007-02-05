@@ -20,27 +20,24 @@ function login_handler($Data, $Permission)
 		$Data[0] === 'editor' ||
 		$Data[0] === 'admin')
 	{
+		$page_code = 'login_office';
 		$login_id = 'office';
 		$data['no_keep_login'] = TRUE;
-		$data['title'] = 'enter the office';
-		$data['login_message'] = 'Enter your office password to enter the office';
 		$success_msg = 'you have successfully entered the office';
 		
 	} elseif ($Data[0] === 'vip') {
+		$page_code = 'login_vip';
 		$login_id = 'vip';
-		$data['title'] = 'enter the VIP area';
 		$data['usernames'] = array();
 		$logins = $CI->user_auth->getOrganisationLogins();
 		foreach ($logins as $login) {
 			$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
 		}
-		$data['login_message'] = 'Confirm your password to enter the VIP area';
 		$success_msg = 'you have successfully entered the VIP area';
 		
 	} else {
+		$page_code = 'login_public';
 		$login_id = 'student';
-		$data['title'] = 'log in';
-		$data['login_message'] = 'Enter your username and password to log in';
 		$data['username'] = '';
 		$data['keep_login'] = '0';
 		$success_msg = 'you have successfully logged in';
@@ -70,6 +67,7 @@ function login_handler($Data, $Permission)
 			}
 			$successfully_logged_in = TRUE;
 			$CI->main_frame->AddMessage('success',$success_msg);
+			//$CI->main_frame->DeferMessages();
 			unset($_POST);
 			return CheckPermissions($Permission);
 			//redirect('');
@@ -84,7 +82,38 @@ function login_handler($Data, $Permission)
 	}
 	
 	if (!$successfully_logged_in) {
-		$CI->pages_model->SetPageCode('login');
+		$CI->pages_model->SetPageCode($page_code);
+		
+		$login_message = $CI->pages_model->GetPropertyText('login_message');
+		if (!empty($login_message)) {
+			$data['login_message'] = $login_message;
+		}
+		
+		$section_title = $CI->pages_model->GetPropertyText('section_title');
+		if (!empty($section_title)) {
+			$data['title'] = $section_title;
+		}
+		
+		/// @todo Move cunning array page properties into pages model.
+		$data['rightbar'] = array();
+		$index_counter = 0;
+		while (TRUE) {
+			$title = $CI->pages_model->GetPropertyText(
+					'rightbar['.$index_counter.'].title');
+			if (empty($title)) {
+				break;
+			}
+			$text = $CI->pages_model->GetPropertyWikitext(
+					'rightbar['.$index_counter.'].text');
+			
+			$data['rightbar'][] = array(
+				'title' => $title,
+				'text' => $text,
+			);
+			
+			++$index_counter;
+		}
+		
 		$CI->main_frame->SetContentSimple('login/login', $data);
 	}
 	
@@ -221,6 +250,7 @@ function CheckPermissions($Permission = 'public')
 						if (array_key_exists(2,$action)) {
 							$CI->main_frame->AddMessage($action[2], $action[3]);
 						}
+						$CI->main_frame->DeferMessages();
 						redirect($action[1]);
 						break;
 				}

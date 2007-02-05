@@ -1,12 +1,10 @@
 <div class="RightToolbar">
-	<h4>Forgotten your Password</h4>
-	<div class="Entry">
-		If you have forgotten your password <a href="/login/resetpassword/">click here</a> to reset it.
-	</div>
-	<h4>Register</h4>
-	<div class="Entry">
-		If you have not registered with us yet then you probably can't login.<br /><a href="/register/">Click here</a> to register with us and get exclusive access to the best information.
-	</div>
+	<?php
+	foreach ($rightbar as $entry) {
+		echo '<H4>'.$entry['title'].'</H4>';
+		echo '<DIV class="Entry">'.$entry['text'].'</DIV>';
+	}
+	?>
 </div>
 <div class="blue_box">
 	<h2><?php echo $title; ?></h2>
