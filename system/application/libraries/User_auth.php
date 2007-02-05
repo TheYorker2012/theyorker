@@ -321,10 +321,13 @@ class User_auth {
 
 		$sql = 'SELECT COUNT(*) AS valid FROM entities 
 			INNER JOIN subscriptions ON entities.entity_id = subscriptions.subscription_user_entity_id
-			WHERE entities.entity_id = ? AND subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_vip = TRUE';
+			WHERE entities.entity_id = ?
+				AND subscriptions.subscription_organisation_entity_id = ? 
+				AND subscriptions.subscription_vip = TRUE
+				AND entity_password = ?';
 		
 		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $organisationId));
+		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
 
 		$row = $query->row();
 		if ($row->valid) {
