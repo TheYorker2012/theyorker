@@ -193,13 +193,15 @@ class News_model extends Model
 	{
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id, 
-				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
+				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+				articles.article_location
 			FROM articles
 			WHERE (articles.article_id = ?)
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
 		$row = $query->row();
 		$result['date'] = $row->article_publish_date;
+		$result['location'] = $row->article_location;
 		$content_id = $row->article_live_content_id;
 		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
 				article_contents.article_content_subtext, article_contents.article_content_wikitext_cache,
@@ -303,7 +305,7 @@ class News_model extends Model
 			$related_articles[] = self::GetSimpleArticle($related_id);
 		}
 		$result['related_articles'] = $related_articles;
-
+		
 		return $result;
 	}
 

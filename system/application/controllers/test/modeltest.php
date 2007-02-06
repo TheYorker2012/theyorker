@@ -39,6 +39,9 @@ class ModelTest extends Controller {
 
 		//add article wikicache
 //		$this->wiki->UpdateWikicache();
+
+		//add factbox wikicache
+//		$this->wiki->UpdateFactWikicache();
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
