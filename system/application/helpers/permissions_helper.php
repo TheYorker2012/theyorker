@@ -19,13 +19,13 @@ function login_handler($Data, $Permission)
 	if ($Data[0] === 'office') {
 		$page_code = 'login_office';
 		$login_id = 'office';
-		$success_msg = 'You have successfully entered the office';
+		$success_msg = $CI->pages_model->GetPropertyText('login:success_office', TRUE);
 		$data['no_keep_login'] = TRUE;
 		
 	} elseif ($Data[0] === 'vip') {
 		$page_code = 'login_vip';
 		$login_id = 'vip';
-		$success_msg = 'You have successfully entered the VIP area';
+		$success_msg = $CI->pages_model->GetPropertyText('login:success_vip', TRUE);
 		$data['usernames'] = array();
 		$logins = $CI->user_auth->getOrganisationLogins();
 		foreach ($logins as $login) {
@@ -35,7 +35,7 @@ function login_handler($Data, $Permission)
 	} else {
 		$page_code = 'login_public';
 		$login_id = 'student';
-		$success_msg = 'You have successfully logged in';
+		$success_msg = $CI->pages_model->GetPropertyText('login:success_public', TRUE);
 		$data['username'] = '';
 		$data['keep_login'] = '0';
 	}
@@ -187,11 +187,15 @@ function HtmlButtonLink($Link, $Caption)
  *	- 'office'
  *	- 'editor'
  *	- 'admin'
+ * @param $LoadMainFrame bool Whether to load the mainframe if permision hasn't
+ *	 yet been acquired (for the login screen).
  * @return bool Whether enough privilages.
  */
-function CheckPermissions($Permission = 'public')
+function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 {
 	$CI = &get_instance();
+	
+	$CI->load->model('pages_model');
 	
 	$student_login_action = array(
 			'handle','login_handler',
@@ -206,21 +210,6 @@ function CheckPermissions($Permission = 'public')
 			array('office')
 		);
 	
-	$office_door_open_action = array(
-			'message','warning',
-			HtmlButtonLink(site_url('logout/office'.$CI->uri->uri_string()),'Leave Office')
-			. 'You\'ve left the office door open! Spies are everywhere! '
-			. 'If you\'re going to stay out for a while, please shut it.',
-			TRUE
-		);
-	$admin_door_open_action = $office_door_open_action;
-	$vip_door_open_action = array(
-			'message','warning',
-			HtmlButtonLink(site_url('logout/viparea'.$CI->uri->uri_string()),'Leave VIP Area')
-			. 'You haven\'t officially left the VIP area! In the interest of security, '
-			. 'we kindly request that you make your absence known.',
-			TRUE
-		);
 	
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
@@ -228,70 +217,88 @@ function CheckPermissions($Permission = 'public')
 	//	TRUE		allowed
 	//	array		specially handled
 	//	otherwise	access denied
-	$access_matrix = array(
-		'public'       => array(
+	$user_level = GetUserLevel();
+	if ($user_level === 'public') {
+		$action_levels = array(
 				'public'		=> TRUE,
 				'student'		=> $student_login_action,
 				'vip'			=> $student_login_action,
 				'office'		=> $student_login_action,
 				'editor'		=> $student_login_action,
 				'admin'			=> $student_login_action,
-			),
-		'student'      => array(
+			);
+	} elseif ($user_level === 'student') {
+		$action_levels = array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
 				'vip'			=> $vip_login_action,
 				'office'		=> $office_login_action,
 				'editor'		=> $office_login_action,
 				'admin'			=> $office_login_action,
-			),
+			);
+	} elseif ($user_level === 'organisation') {
 		// Logged in from public as organisation
-		'organisation' => array(
+		$action_levels = array(
 				'public'		=> TRUE,
 				'student'		=> TRUE,
 				'vip'			=> TRUE,
 				'office'		=> FALSE,
 				'editor'		=> FALSE,
 				'admin'			=> FALSE,
-			),
+			);
+	} elseif ($user_level === 'vip') {
 		// Logged in as student and in VIP area
-		'vip' => array(
+		$vip_door_open_action = array(
+				'message','warning',
+				HtmlButtonLink(site_url('logout/viparea'.$CI->uri->uri_string()),'Leave VIP Area')
+				. $CI->pages_model->GetPropertyText('login:warn_open_vip', TRUE),
+				TRUE
+			);
+		$action_levels = array(
 				'public'		=> $vip_door_open_action,
 				'student'		=> $vip_door_open_action,
 				'vip'			=> TRUE,
 				'office'		=> $office_login_action,
 				'editor'		=> $office_login_action,
 				'admin'			=> $office_login_action,
-			),
-		'office'       => array(
-				'public'		=> $office_door_open_action,
-				'student'		=> $office_door_open_action,
-				'vip'			=> $vip_login_action,
-				'office'		=> TRUE,
-				'editor'		=> FALSE,
-				'admin'			=> FALSE,
-			),
-		'editor'       => array(
-				'public'		=> $office_door_open_action,
-				'student'		=> $office_door_open_action,
-				'vip'			=> $vip_login_action,
-				'office'		=> TRUE,
-				'editor'		=> TRUE,
-				'admin'			=> FALSE,
-			),
-		'admin'    => array(
-				'public'		=> $admin_door_open_action,
-				'student'		=> $admin_door_open_action,
-				'vip'			=> $vip_login_action,
-				'office'		=> TRUE,
-				'editor'		=> TRUE,
-				'admin'			=> TRUE,
-			),
-	);
-	
-	$user_level = GetUserLevel();
-	$action_levels = $access_matrix[$user_level];
-	
+			);
+	} else {
+		$office_door_open_action = array(
+				'message','warning',
+				HtmlButtonLink(site_url('logout/office'.$CI->uri->uri_string()),'Leave Office')
+				. $CI->pages_model->GetPropertyText('login:warn_open_office', TRUE),
+				TRUE
+			);
+		$admin_door_open_action = $office_door_open_action;
+		if ($user_level === 'office') {
+			$action_levels = array(
+					'public'		=> $office_door_open_action,
+					'student'		=> $office_door_open_action,
+					'vip'			=> $vip_login_action,
+					'office'		=> TRUE,
+					'editor'		=> FALSE,
+					'admin'			=> FALSE,
+				);
+		} elseif ($user_level === 'editor') {
+			$action_levels = array(
+					'public'		=> $office_door_open_action,
+					'student'		=> $office_door_open_action,
+					'vip'			=> $vip_login_action,
+					'office'		=> TRUE,
+					'editor'		=> TRUE,
+					'admin'			=> FALSE,
+				);
+		} elseif ($user_level === 'admin') {
+			$action_levels = array(
+					'public'		=> $admin_door_open_action,
+					'student'		=> $admin_door_open_action,
+					'vip'			=> $vip_login_action,
+					'office'		=> TRUE,
+					'editor'		=> TRUE,
+					'admin'			=> TRUE,
+				);
+		}
+	}
 	
 	$access_allowed = FALSE;
 	
@@ -334,7 +341,7 @@ function CheckPermissions($Permission = 'public')
 		}
 	}
 	
-	if (!$access_allowed) {
+	if (!$access_allowed && $LoadMainFrame) {
 		$CI->main_frame->Load();
 	}
 	

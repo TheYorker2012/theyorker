@@ -1,98 +1,5 @@
 <?php
 
-/// Represents a particular property type of a page property.
-/**
- * @author James Hogan (jh559@cs.york.ac.uk)
- */
-class PagePropertyType
-{
-	/// string Text value
-	protected $mText;
-	
-	/// Primary constructor
-	/**
-	 * @param $Text string Text value.
-	 */
-	function __construct($Data)
-	{
-		$this->mText = $Data['text'];
-	}
-	
-	/// Get the text value
-	/**
-	 * @return string The text value of the property.
-	 */
-	function GetText()
-	{
-		return $this->mText;
-	}
-	
-	/// Get the integer value
-	/**
-	 * @return integer/NULL The integer value of the property.
-	 */
-	function GetInteger()
-	{
-		if (is_numeric($this->mText))
-			return (int)$this->mText;
-		else
-			return NULL;
-	}
-	
-	/// Set the text value
-	/**
-	 * @param $Text string The text value of the property.
-	 */
-	function SetText($Text)
-	{
-		$this->mText = $Text;
-	}
-	
-}
-
-/// Represents a single page property.
-/**
- * @author James Hogan (jh559@cs.york.ac.uk)
- */
-class PageProperty
-{
-	/// array[string=>PagePropertyType] Array of page property types.
-	protected $mTypes;
-	
-	/// Primary constructor
-	/**
-	 * @param $Types array[string=>array[]] array of data arrays indexed by type.
-	 */
-	function __construct($Types)
-	{
-		$this->mTypes = array();
-		foreach ($Types as $property_type_name => $data) {
-			$this->mTypes[$property_type_name] = new PagePropertyType($data);
-		}
-	}
-	
-	/// Find whether a type of the page property exists.
-	/**
-	 * @param $PropertyTypeName string Property type name.
-	 * @return boolean Whether the property has a type of the specified type.
-	 */
-	function TypeExists($PropertyTypeName)
-	{
-		return array_key_exists($PropertyTypeName, $this->mTypes);
-	}
-	
-	/// Get a particular type of the page property.
-	/**
-	 * @param $PropertyTypeName string Property type name.
-	 * @return PagePropertyType or FALSE if the form doesn't exist.
-	 * @pre TypeExists(@a $PropertyTypeName)
-	 */
-	function GetPropertyType($PropertyTypeName)
-	{
-		return $this->mTypes[$PropertyTypeName];
-	}
-}
-
 /// This model retrieves data about pages.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
@@ -102,18 +9,21 @@ class Pages_model extends Model
 	/// string The code string identifying the page.
 	protected $mPageCode;
 	
-	/// array Information about the page.
+	/// array Information about the page indexed by page code.
 	protected $mPageInfo;
 	
-	/// array[string=>PageProperty] Array of PageProperty's indexed by scope then label.
+	/// array[string=>PageProperty] Array of page property's
+	///	indexed by page code (where global scope is FALSE)
+	///	then label
+	///	then type
 	protected $mProperties;
 	
 	/// Primary constructor.
 	function __construct()
 	{
 		$this->mPageCode = FALSE;
-		$this->mPageInfo = FALSE;
-		$this->mProperties = FALSE;
+		$this->mPageInfo = array();
+		$this->mProperties = array();
 	}
 	
 	/// Set the page code.
@@ -131,7 +41,353 @@ class Pages_model extends Model
 	 */
 	function PageCodeSet()
 	{
-		return (FALSE !== $this->mPageCode);
+		return is_string($this->mPageCode);
+	}
+	
+	
+	/// Get a specific text property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyText($PropertyLabel, $PageCode = FALSE, $Default = '')
+	{
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'text');
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			return $value['text'];
+		}
+	}
+	
+	/// Get a specific integer property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default number.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyInteger($PropertyLabel, $PageCode = FALSE, $Default = -1)
+	{
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'integer');
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			if (is_numeric($value['text'])) {
+				return (int)$value['text'];
+			} else {
+				return $Default;
+			}
+		}
+	}
+	
+	/// Get a specific text property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $Default = '')
+	{
+		$cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache');
+		if (FALSE === $cache) {
+			// No cache, see if the wikitext is there
+			$wikitext = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext');
+			if (FALSE === $wikitext) {
+				return $Default;
+			} else {
+				// Build the cache
+				$this->load->library('wikiparser');
+				
+				$cached_wikitext = $this->wikiparser->parse($wikitext['text']."\n");
+				if (get_magic_quotes_gpc()) {
+					// If magic quotes are on, code igniter doesn't escape
+					$cached_wikitext = addslashes($cached_wikitext);
+				}
+				// Save the cache back to the database
+				$cache = array('text' => $cached_wikitext);
+				$this->InsertProperty($PageCode,
+						$PropertyLabel, 'wikitext_cache', $cache);
+				return $cached_wikitext;
+			}
+		} else {
+			// Use the cache
+			return $cache['text'];
+		}
+	}
+	
+	/// Get a specific message property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default Default value if message doesn't exist.
+	 * @return array Which can be input into constructor of Message.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyMessage($PropertyLabel, $PageCode = FALSE, $DefaultClass = 'information')
+	{
+		$message_text = $this->GetPropertyWikitext($PropertyLabel, $PageCode, FALSE);
+		if (FALSE !== $message_text) {
+			return array(
+				'class' => $this->GetPropertyText($PropertyLabel, $PageCode, $DefaultClass),
+				'text' => $message_text,
+			);
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Get a specific array property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $ArraySpec array Index descriptors, eath with:
+	 *	- ['pre'] - prefix to index
+	 *	- ['post'] - postfix to index (default='')
+	 *	- ['type'] - key type ('int': natural numbers starting at 0,
+	 *				'enum': fields specified in ['enum']
+	 *	- ['enum'] - array of fields: array(name,type)
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @return array Array page property as specified by @a $ArraySpec.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyArray($PropertyLabel, $ArraySpec, $PageCode = FALSE)
+	{
+		$result = array();
+		foreach($ArraySpec as $key => $indexing) {
+			unset($ArraySpec[$key]);
+			if (!array_key_exists('post',$indexing)) {
+				$indexing['post'] = '';
+			}
+			if ($indexing['type'] === 'enum') {
+				foreach ($indexing['enum'] as $field_info) {
+					$field_name =	$PropertyLabel .
+									$indexing['pre'] .
+									$field_info[0] .
+									$indexing['post'];
+					$value = FALSE;
+					if ($field_info[1] === 'wikitext') {
+						$value = $this->GetPropertyWikitext($field_name, $PageCode, FALSE);
+					}
+					if ($field_info[1] === 'text') {
+						$value = $this->GetPropertyText($field_name, $PageCode, FALSE);
+					}
+					if (FALSE !== $value) {
+						$result[$field_info[0]] = $value;
+					}
+				}
+			} elseif ($indexing['type'] === 'int') {
+				$index_counter = 0;
+				while (TRUE) {
+					$field_name =	$PropertyLabel .
+									$indexing['pre'] .
+									$index_counter .
+									$indexing['post'];
+					$value = $this->GetPropertyArray($field_name, $ArraySpec, $PageCode);
+					if (!empty($value)) {
+						$result[$index_counter] = $value;
+					} else {
+						break;
+					}
+					
+					++$index_counter;
+				}
+			}
+			
+			break;
+		}
+		
+		return $result;
+	}
+	
+	/// Get a specific property associated with the page.
+	/**
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PropertyTypeName string Property type name.
+	 * @return
+	 *	- array Property information (if property exists)
+	 *	- FALSE (if property doesn't exist)
+	 */
+	function GetRawProperty($PageCode, $PropertyLabel, $PropertyTypeName = FALSE)
+	{
+		// Higher level function, doesn't care about what extra gets fetched
+		
+		// Interpret special page code
+		/// @pre is_bool(@a $PageCode) OR (@a $PageCode)
+		Assert('is_bool($PageCode) || is_string($PageCode)');
+		/// @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+		Assert('$PageCode !== FALSE || $this->PageCodeSet()');
+		if (FALSE === $PageCode) {
+			$PageCode = $this->mPageCode;
+		} elseif (TRUE === $PageCode) {
+			$PageCode = -1;
+		}
+		
+		// Get the properties associated with the page
+		if (!array_key_exists($PageCode, $this->mProperties)) {
+			// Page hasn't got any properties
+			// get them now into $this->mProperties[$PageCode]
+			$this->GetProperties($PageCode, $PropertyLabel);
+		}
+		
+		if (	array_key_exists($PageCode, $this->mProperties) &&
+				array_key_exists($PropertyLabel, $this->mProperties[$PageCode])) {
+			$property = $this->mProperties[$PageCode][$PropertyLabel];
+			if (FALSE === $PropertyTypeName) {
+				return $property;
+			} elseif (array_key_exists($PropertyTypeName, $property)) {
+				return $property[$PropertyTypeName];
+			} else {
+				return FALSE;
+			}
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Get the properties associated with the page.
+	/**
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- -1 Get page property from global properties.
+	 * @param $LabelPattern
+	 *	string label or MySQL string pattern (using '%' and '_' as wildcards)
+	 * @param $MatchLike
+	 *	bool Whether to use SQL LIKE instead of =
+	 */
+	protected function GetProperties($PageCode, $LabelPattern = FALSE, $MatchLike = FALSE)
+	{
+		/// @pre (@a $PageCode === -1) OR (is_string(@a $PageCode)))
+		Assert('$PageCode === -1 || is_string($PageCode)');
+		$sql_where = array();
+		if (is_string($PageCode)) {
+			// Specific page
+			$sql_where[] = 'pages.page_codename=\''.$PageCode.'\'';
+			
+		} else {
+			// Global
+			$sql_where[] = 'page_properties.page_property_page_id IS NULL';
+			
+			/*if ($MatchLike) {
+				$sql_where[] = 'page_properties.page_property_label LIKE \''.$LabelPattern.'\'';
+			} else {
+				$sql_where[] = 'page_properties.page_property_label=\''.$LabelPattern.'\'';
+			}*/
+		}
+		$sql =
+			'SELECT
+				page_properties.page_property_page_id	AS page_id,
+				pages.page_codename						AS page_code,
+				page_properties.page_property_label		AS label,
+				page_properties.page_property_text		AS text,
+				property_types.property_type_name		AS type
+			FROM page_properties
+			LEFT JOIN pages
+				ON pages.page_id = page_properties.page_property_page_id
+			INNER JOIN property_types
+				ON property_types.property_type_id
+						= page_properties.page_property_property_type_id
+			WHERE	'.implode(' AND ',$sql_where);
+		
+		$query = $this->db->query($sql);
+		
+		$results = $query->result_array();
+		
+		// Go through properties, sorting into $this->mProperties by label
+		foreach ($results as $property) {
+			$property_label = $property['label'];
+			if (NULL === $property['page_id']) {
+				$page_code = -1;
+			} else {
+				$page_code = $property['page_code'];
+			}
+			if (!array_key_exists($page_code, $this->mProperties)) {
+				$this->mProperties[$page_code] = array();
+			}
+			if (!array_key_exists($property_label, $this->mProperties[$page_code])) {
+				$this->mProperties[$page_code][$property_label] = array();
+			}
+			$this->mProperties[$page_code][$property_label][$property['type']] = array(
+					'text' => $property['text'],
+				);
+		}
+	}
+	
+	/// Insert a property
+	/**
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $PropertyLabel string Label of property.
+	 * @param $PropertyType string Name of the property type.
+	 * @param $Property array Property object.
+	 */
+	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
+	{
+		// Interpret special page code
+		/// @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+		Assert('$PageCode !== FALSE || $this->PageCodeSet()');
+		if (FALSE === $PageCode) {
+			$PageCode = $this->mPageCode;
+		}
+		
+		$sql =
+			'INSERT INTO page_properties (
+				page_property_property_type_id,
+				page_property_page_id,
+				page_property_label,
+				page_property_text)
+			SELECT
+				property_types.property_type_id,';
+		if (FALSE === $PageCode) {
+			$sql .= 'NULL,';
+		} else {
+			$sql .= 'pages.page_id,';
+		}
+		$sql .= '?, ? FROM ';
+		$bind_data = array($PropertyLabel, $Property['text']);
+		if (FALSE !== $PageCode) {
+			$sql .= 'pages,';
+		}
+		$sql .=
+			'	property_types
+			WHERE ';
+		if (FALSE !== $PageCode) {
+			$sql .= 'pages.page_codename=? AND ';
+			$bind_data[] = $PageCode;
+		}
+		$sql .= 'property_types.property_type_name=?
+			ON DUPLICATE KEY UPDATE page_property_text=?';
+		$bind_data[] = $PropertyType;
+		$bind_data[] = $Property['text'];
+		
+		$query = $this->db->query($sql, $bind_data);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Check if a page code exists.
@@ -150,193 +406,6 @@ class Pages_model extends Model
 			return FALSE;
 	}
 	
-	/// Get a specific property associated with the page.
-	/**
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $PropertyTypeName string Property type name.
-	 * @return PagePropertyType/FALSE if property doesn't exist.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetProperty($GlobalScope, $PropertyLabel, $PropertyTypeName)
-	{
-		if (FALSE === $this->mProperties) {
-			$this->GetProperties();
-		}
-		assert('is_bool($GlobalScope)');
-		if (array_key_exists($PropertyLabel, $this->mProperties[$GlobalScope])) {
-			$property = $this->mProperties[$GlobalScope][$PropertyLabel];
-			if ($property->TypeExists($PropertyTypeName)) {
-				return $property->GetPropertyType($PropertyTypeName);
-			} else {
-				return FALSE;
-			}
-		} else {
-			return FALSE;
-		}
-	}
-	
-	
-	/// Get a specific text property associated with the page.
-	/**
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @param $Default string Default string.
-	 * @return string Property value or $Default if it doesn't exist.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetPropertyText($PropertyLabel, $GlobalScope = FALSE, $Default = '')
-	{
-		$value = $this->GetProperty($GlobalScope, $PropertyLabel, 'text');
-		if (FALSE === $value) {
-			return $Default;
-		} else {
-			return $value->GetText();
-		}
-	}
-	
-	/// Get a specific integer property associated with the page.
-	/**
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @param $Default string Default number.
-	 * @return string Property value or $Default if it doesn't exist.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetPropertyInteger($PropertyLabel, $GlobalScope = FALSE, $Default = -1)
-	{
-		$value = $this->GetProperty($GlobalScope, $PropertyLabel, 'integer');
-		if (FALSE === $value) {
-			return $Default;
-		} else {
-			$int = $value->GetInteger();
-			if (NULL === $int)
-				return $Default;
-			else
-				return $int;
-		}
-	}
-	
-	/// Get a specific text property associated with the page.
-	/**
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @param $Default string Default string.
-	 * @return string Property value or $Default if it doesn't exist.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetPropertyWikitext($PropertyLabel, $GlobalScope = FALSE, $Default = '')
-	{
-		$cache = $this->GetProperty($GlobalScope, $PropertyLabel, 'wikitext_cache');
-		if (FALSE === $cache) {
-			// No cache, see if the wikitext is there
-			$wikitext = $this->GetProperty($GlobalScope, $PropertyLabel, 'wikitext');
-			if (FALSE === $wikitext) {
-				return $Default;
-			} else {
-				// Build the cache
-				$this->load->library('wikiparser');
-				
-				$cached_wikitext = $this->wikiparser->parse($wikitext->GetText()."\n");
-				if (get_magic_quotes_gpc()) {
-					// If magic quotes are on, code igniter doesn't escape
-					$cached_wikitext = addslashes($cached_wikitext);
-				}
-				// Save the cache back to the database
-				$cache = new PagePropertyType(array('text' => $cached_wikitext));
-				$this->InsertProperty($GlobalScope ? FALSE : $this->mPageCode,
-						$PropertyLabel, 'wikitext_cache', $cache);
-				return $cached_wikitext;
-			}
-		} else {
-			// Use the cache
-			return $cache->GetText();
-		}
-	}
-	
-	/// Get a specific message property associated with the page.
-	/**
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @param $Default Default value if message doesn't exist.
-	 * @return array Which can be input into constructor of Message.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetPropertyMessage($PropertyLabel, $GlobalScope = FALSE, $DefaultClass = 'information')
-	{
-		$message_text = $this->GetPropertyWikitext($PropertyLabel, $GlobalScope, FALSE);
-		if (FALSE !== $message_text) {
-			return array(
-				'class' => $this->GetPropertyText($PropertyLabel, $GlobalScope, $DefaultClass),
-				'text' => $message_text,
-			);
-		} else {
-			return FALSE;
-		}
-	}
-	
-	/// Get a specific array property associated with the page.
-	/**
-	 * @param $PropertyLabel string Label of desired property.
-	 * @param $ArraySpec array Index descriptors, eath with:
-	 *	- ['pre'] - prefix to index
-	 *	- ['post'] - postfix to index (default='')
-	 *	- ['type'] - key type ('int': natural numbers starting at 0,
-	 *				'enum': fields specified in ['enum']
-	 *	- ['enum'] - array of fields: array(name,type)
-	 * @param $GlobalScope bool Whether property has global scope.
-	 * @return array Array page property as specified by @a $ArraySpec.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function GetPropertyArray($PropertyLabel, $ArraySpec, $GlobalScope = FALSE)
-	{
-		$result = array();
-		foreach($ArraySpec as $key => $indexing) {
-			unset($ArraySpec[$key]);
-			if (!array_key_exists('post',$indexing)) {
-				$indexing['post'] = '';
-			}
-			if ($indexing['type'] === 'enum') {
-				foreach ($indexing['enum'] as $field_info) {
-					$field_name =	$PropertyLabel .
-									$indexing['pre'] .
-									$field_info[0] .
-									$indexing['post'];
-					$value = FALSE;
-					if ($field_info[1] === 'wikitext') {
-						$value = $this->GetPropertyWikitext($field_name, $GlobalScope, FALSE);
-					}
-					if ($field_info[1] === 'text') {
-						$value = $this->GetPropertyText($field_name, $GlobalScope, FALSE);
-					}
-					if (FALSE !== $value) {
-						$result[$field_info[0]] = $value;
-					}
-				}
-			} elseif ($indexing['type'] === 'int') {
-				$index_counter = 0;
-				while (TRUE) {
-					$field_name =	$PropertyLabel .
-									$indexing['pre'] .
-									$index_counter .
-									$indexing['post'];
-					$value = $this->GetPropertyArray($field_name, $ArraySpec, $GlobalScope);
-					if (!empty($value)) {
-						$result[$index_counter] = $value;
-					} else {
-						break;
-					}
-					
-					++$index_counter;
-				}
-			}
-			
-			break;
-		}
-		
-		return $result;
-	}
-	
 	/// Get the page title given certain parameters.
 	/**
 	 * @param $Parameters array[string=>string] Array of parameters.
@@ -350,16 +419,17 @@ class Pages_model extends Model
 	 */
 	function GetTitle($Parameters)
 	{
-		if (FALSE === $this->mPageInfo) {
+		$PageCode = $this->mPageCode;
+		if (!array_key_exists($PageCode,$this->mPageInfo)) {
 			assert('$this->PageCodeSet()');
-			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
+			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
 		}
 		$keys = array_keys($Parameters);
 		foreach ($keys as $id => $key) {
 			$keys[$id] = '%%'.$key.'%%';
 		}
 		$values = array_values($Parameters);
-		return str_replace($keys, $values, $this->mPageInfo['title']);
+		return str_replace($keys, $values, $this->mPageInfo[$PageCode]['title']);
 	}
 	
 	/// Get the page description.
@@ -369,11 +439,12 @@ class Pages_model extends Model
 	 */
 	function GetDescription()
 	{
-		if (FALSE === $this->mPageInfo) {
+		$PageCode = $this->mPageCode;
+		if (!array_key_exists($PageCode,$this->mPageInfo)) {
 			assert('$this->PageCodeSet()');
-			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
+			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
 		}
-		return $this->mPageInfo['description'];
+		return $this->mPageInfo[$PageCode]['description'];
 	}
 	
 	/// Get the page keywords.
@@ -383,113 +454,12 @@ class Pages_model extends Model
 	 */
 	function GetKeywords()
 	{
-		if (FALSE === $this->mPageInfo) {
+		$PageCode = $this->mPageCode;
+		if (!array_key_exists($PageCode,$this->mPageInfo)) {
 			assert('$this->PageCodeSet()');
-			$this->mPageInfo = $this->GetSpecificPage($this->mPageCode);
+			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
 		}
-		return $this->mPageInfo['keywords'];
-	}
-	
-	
-	
-	/// Get the properties associated with the page.
-	/**
-	 * @pre PageCodeSet() === TRUE
-	 */
-	protected function GetProperties()
-	{
-		$sql =
-			'SELECT
-				page_properties.page_property_page_id,
-				page_properties.page_property_label,
-				page_properties.page_property_text,
-				property_types.property_type_name
-			FROM page_properties
-			LEFT JOIN pages
-				ON pages.page_id = page_properties.page_property_page_id
-			INNER JOIN property_types
-				ON property_types.property_type_id
-						= page_properties.page_property_property_type_id
-			WHERE	page_properties.page_property_page_id IS NULL
-				OR	pages.page_codename=?';
-		
-		$query = $this->db->query($sql, $this->mPageCode);
-		
-		$results = $query->result_array();
-		$property_forms = array(
-			FALSE => array(),
-			TRUE => array()
-		);
-		
-		// Go through properties, sorting into $properties by label
-		foreach ($results as $property) {
-			$property_name = $property['page_property_label'];
-			$property_scope = (NULL === $property['page_property_page_id']);
-			if (!array_key_exists($property_name, $property_forms[$property_scope])) {
-				$property_forms[$property_scope][$property_name] = array();
-			}
-			$property_forms[$property_scope][$property_name][$property['property_type_name']] = array(
-					'text' => $property['page_property_text'],
-				);
-		}
-		$property_objects = array(
-			FALSE => array(),
-			TRUE => array()
-		);
-		// Term property labels into PageProperty objects
-		foreach ($property_forms as $property_scope => $properties) {
-			foreach ($properties as $label => $forms) {
-				$property_objects[$property_scope][$label] = new PageProperty($forms);
-			}
-		}
-		
-		$this->mProperties = $property_objects;
-	}
-	
-	/// Insert a property
-	/**
-	 * @param $PageCode string/bool Page code of page to set property of (FALSE for global).
-	 * @param $PropertyLabel string Label of property.
-	 * @param $PropertyType string Name of the property type.
-	 * @param $Property PagePropertyType Property object.
-	 * @pre PageCodeSet() === TRUE
-	 */
-	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
-	{
-		$text = $Property->GetText();
-		
-		$sql =
-			'INSERT INTO page_properties (
-				page_property_property_type_id,
-				page_property_page_id,
-				page_property_label,
-				page_property_text)
-			SELECT
-				property_types.property_type_id,';
-		if (FALSE === $PageCode) {
-			$sql .= 'NULL,';
-		} else {
-			$sql .= 'pages.page_id,';
-		}
-		$sql .= '?, ? FROM ';
-		$bind_data = array($PropertyLabel, $text);
-		if (FALSE !== $PageCode) {
-			$sql .= 'pages,';
-		}
-		$sql .=
-			'	property_types
-			WHERE ';
-		if (FALSE !== $PageCode) {
-			$sql .= 'pages.page_codename=? AND ';
-			$bind_data[] = $PageCode;
-		}
-		$sql .= 'property_types.property_type_name=?
-			ON DUPLICATE KEY UPDATE page_property_text=?';
-		$bind_data[] = $PropertyType;
-		$bind_data[] = $text;
-		
-		$query = $this->db->query($sql, $bind_data);
-		return ($this->db->affected_rows() > 0);
+		return $this->mPageInfo[$PageCode]['keywords'];
 	}
 	
 	
