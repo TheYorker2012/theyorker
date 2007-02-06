@@ -1,4 +1,4 @@
-<?php 
+<?php
 // User authentication class by Andrew Oakley (ado500)
 
 // TODO: change comment styles to JavaDoc
@@ -309,7 +309,7 @@ class User_auth {
 				AND entity_password = ?';
 
 		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
+		$query = $db->query($sql, array($this->entityId, $hash));
 
 		$row = $query->row();
 		return $row->valid;

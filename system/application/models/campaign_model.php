@@ -193,6 +193,72 @@ class Campaign_model extends Model
 	}
 
 	/*****************************************************
+	*  CAMPAIGN PETITIONING
+	*****************************************************/
+	
+	function GetPetitionID()
+	{
+		$sql = 'SELECT campaign_id
+			FROM campaigns
+			WHERE campaign_deleted = FALSE
+			AND campaign_petition = TRUE';
+		$query = $this->db->query($sql);
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+			return $row->campaign_id;
+		else
+			return FALSE;
+	}
+
+	function StartPetition()
+	{
+		$this->db->trans_start();
+		$sql = 'SELECT max( campaign_votes ) AS max_campaign_votes
+			FROM campaigns';
+		$query = $this->db->query($sql);
+		$row = $query->row();
+		$sql = 'SELECT campaign_id
+			FROM campaigns
+			WHERE campaign_votes = ?
+			AND campaign_deleted = FALSE';
+		$query = $this->db->query($sql,array($row->max_campaign_votes));
+		$row = $query->row();
+		$this->db->trans_complete();
+		if ($query->num_rows() == 1)
+		{
+			$this->db->trans_start();
+                	$sql = 'UPDATE campaigns
+				SET campaign_petition = TRUE,
+					campaign_petition_signatures = 0
+				WHERE campaign_id = ?';
+			$this->db->query($sql,array($row->campaign_id));
+			self::ClearVotes();
+			$this->db->trans_complete();
+			return TRUE;
+		}
+		else
+			return FALSE;
+	}
+
+	/**
+	 * Removes the users current signature.
+	 * @returns nothing.
+	 */
+	function WithdrawSignature($user_id)
+	{
+		$this->db->trans_start();
+		$campaign_id = self::GetUserVote($user_id);
+		$sql = 'UPDATE campaigns
+			SET campaign_petition_signatures = campaign_petition_signatures - 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql, array($campaign_id));
+		$sql = 'DELETE FROM campaign_users
+			WHERE campaign_user_user_entity_id = ?';
+		$this->db->query($sql, array($user_id));
+		$this->db->trans_complete();
+	}
+
+	/*****************************************************
 	*  PROGRESS REPORTS
 	*****************************************************/
 

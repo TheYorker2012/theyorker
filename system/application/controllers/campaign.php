@@ -31,6 +31,17 @@ class Campaign extends Controller {
 					'title'=>$this->pages_model->GetPropertyText('sidebar_campaign_what_now_title'),
 					'text'=>$this->pages_model->GetPropertyWikitext('sidebar_campaign_what_now_text'));
 
+			if ($this->user_auth->isLoggedIn == TRUE)
+			{
+				$data['user']['id'] = $this->user_auth->entityId;
+				$data['user']['firstname'] = $this->user_auth->firstname;
+				$data['user']['surname'] = $this->user_auth->surname;
+			}
+			else
+			{
+				$data['user'] = FALSE;
+			}
+
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('campaign/CampaignSelection', $data);
 			
@@ -68,6 +79,7 @@ class Campaign extends Controller {
 				$data['user']['id'] = $this->user_auth->entityId;
 				$data['user']['firstname'] = $this->user_auth->firstname;
 				$data['user']['surname'] = $this->user_auth->surname;
+				$data['user']['vote_id'] = $this->campaign_model->GetUserVote($data['user']['id']);
 			}
 			else
 			{
@@ -151,18 +163,37 @@ class Campaign extends Controller {
 			//load an invalid campaign page
 		}
 	}
-	
+
 	function castvote()
 	{
 		if (!CheckPermissions('student')) return;
-		
+
 		$this->load->model('campaign_model','campaign_model');
 		$user_id = $this->user_auth->entityId;
 		$this->campaign_model->SetUserVote($_POST['a_campaignid'], $user_id);
                 $this->main_frame->AddMessage('success','Your vote has been cast.');
 		redirect($_POST['r_redirecturl']);
 	}
-	
+
+	function signpetition()
+	{
+		if (!CheckPermissions('student')) return;
+
+		$this->load->model('campaign_model','campaign_model');
+		$user_id = $this->user_auth->entityId;
+		if ($this->user_auth->checkPassword($_POST['a_password']))
+		{
+                        $this->campaign_model->SetUserVote($this->campaign_model->GetPetitionID(), $user_id);
+                	$this->main_frame->AddMessage('success','Your signature has been added to the petition.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else
+		{
+                	$this->main_frame->AddMessage('error','Incorret Password.');
+			redirect($_POST['r_redirecturl']);
+		}
+	}
+
 	function withdrawvote()
 	{
 		if (!CheckPermissions('student')) return;
@@ -171,6 +202,17 @@ class Campaign extends Controller {
 		$user_id = $this->user_auth->entityId;
 		$this->campaign_model->WithdrawVote($user_id);
                 $this->main_frame->AddMessage('success','Your vote has been withdrawn.');
+		redirect($_POST['r_redirecturl']);
+	}
+	
+	function withdrawsignature()
+	{
+		if (!CheckPermissions('student')) return;
+
+		$this->load->model('campaign_model','campaign_model');
+		$user_id = $this->user_auth->entityId;
+		$this->campaign_model->WithdrawSignature($user_id);
+                $this->main_frame->AddMessage('success','Your signature has been withdrawn.');
 		redirect($_POST['r_redirecturl']);
 	}
 	
@@ -193,22 +235,5 @@ class Campaign extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-
-	function modeltest()
-	{
-		if (!CheckPermissions('admin')) return;
-		
-		$this->load->model('campaign_model','campaign');
-		$this->pages_model->SetPageCode('campaign_selection');
-		$get_campaign_list = $this->campaign->GetCampaignList();
-		$data['Campaign_List'] = $get_campaign_list;
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('campaign/test', $data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
 }
 ?>

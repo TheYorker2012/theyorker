@@ -7,14 +7,30 @@
 	<h4><?php echo $sidebar_sign['title']; ?></h4>
 	<div class="Entry">
 		<?php
-		if ($user == TRUE) {
-			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_sign['text']);
-			echo '	<form id="form1" name="form1" action="#" method="POST" class="form">
-					<fieldset>
-					<input type="text" />
-					<input type="submit" value="Vote" class="button" />
-					</fieldset>
-					</form>';
+		if ($user == TRUE) 
+		{
+			if ($user['vote_id'] == FALSE)
+			{
+				echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_sign['text']);
+				echo 'sign';
+				echo '<form name="sign" action="/campaign/signpetition" method="POST" class="form">
+						<fieldset>
+						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+						<input type="password" name="a_password" />
+						<input type="submit" value="Sign" class="button" name="r_sign" />
+						</fieldset>
+						</form>';
+			}
+			else
+			{
+				echo 'withdraw';
+				echo '<form name="sign" action="/campaign/withdrawsignature" method="POST" class="form">
+						<fieldset>
+						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+						<input type="submit" value="Withdraw" class="button" name="r_withdraw" />
+						</fieldset>
+						</form>';
+			}
 		}
 		else
 			echo $sidebar_sign['not_logged_in'];
