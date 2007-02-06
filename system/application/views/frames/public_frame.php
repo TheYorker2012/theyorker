@@ -18,6 +18,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 // An array containing functors for all function to be run on page load
 var onLoadFunctions = new Array();
 
+// An array containing functors for all function to be run on page unload
+var onUnloadFunctions = new Array();
+
 // The function which is run on page load ensuring all functors are run
 function onLoadHandler() {
 	// foreach loop does not work for some reason....
@@ -25,11 +28,54 @@ function onLoadHandler() {
 		onLoadFunctions[i]();
 	}
 }
+// The function which is run on page unload ensuring all functors are run
+function onUnloadHandler() {
+	// foreach loop does not work for some reason....
+	for (i = 0; i < onUnloadFunctions.length; i++) {
+		onUnloadFunctions[i]();
+	}
+}
 </script>
 
 <!-- BEGIN 'head' tag items from controlling script -->
 <?php echo @$extra_head; ?>
 <!-- END 'head' tag items from controlling script -->
+
+<?php 
+if (isset($maps)) {
+?>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=BQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ" type="text/javascript" />
+<script type="text/javascript">
+function loadMaps() {
+	// define a sctucture to store map settings
+	function OMap(element, lat, lng) {
+		this.element = element;
+		this.lat = lat;
+		this.lng = lng;
+	}
+
+	var map;
+	var maps = new Array();
+	<?php
+	// Write code to put each the maps defined in PHP into a Javascript array
+	foreach ($maps as $map) {
+		echo 'maps.push(new OMap('.$map['element'].', '.$map['lat'].', '.$map['lng'].'));';
+	}
+	?>
+
+	// For each map, update the page to actually show the map
+	for (map in maps) {
+		var mapobj = new GMap2(document.getElementById(map.element));
+		mapobj.setCenter(new GLatLng(map.lat, map.lng));
+	}
+}
+
+onLoadFunctions.push(loadMaps);
+onUnloadFunctions.push(GUnload);
+</script>
+<?php
+}
+?>
 
 <script src="/javascript/jumpto.js" type="text/javascript"></script>
 
@@ -61,7 +107,7 @@ onLoadFunctions.push(preloader);
 
 </head>
 
-<body onLoad="onLoadHandler()">
+<body onLoad="onLoadHandler()" onUnload="onUnloadHandler()">
 <a name="top"></a>
 
 
