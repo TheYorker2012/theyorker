@@ -72,7 +72,7 @@ onLoadFunctions.push(preloader);
 		if ($login['logged_in']) {
 			echo 'Logged in as '.$login['username'].'.';
 			?>
-			<a class="HeaderLinks" href="/logout/">log out</a> |
+			<a class="HeaderLinks" href="/logout/main<?php echo $uri; ?>">log out</a> |
 			<?php
 		} else {
 			?>

@@ -13,8 +13,6 @@ class News extends Controller
 	{
 		parent::Controller();
 
-		// Load the office frame
-		SetupMainFrame('office');
 		// Load news model - is this needed for News Office?
 		$this->load->model('news_model');
 		// Load articles admin model
@@ -29,20 +27,18 @@ class News extends Controller
 
 	function request()
 	{
-		// Check user is logged into office
-		if (CheckPermissions('office')) {
+		if (!CheckPermissions('office')) return;
+		
+		// Get changeable page content
+		$this->pages_model->SetPageCode('office_news_request');
 
-			// Get changeable page content
-			$this->pages_model->SetPageCode('office_news_request');
+		// Get page content
+		$data['heading'] = $this->pages_model->GetPropertyText('heading');
+		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
+		//$data['reporters'] = $this->news_model->getReporters();
 
-			// Get page content
-			$data['heading'] = $this->pages_model->GetPropertyText('heading');
-			$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
-			//$data['reporters'] = $this->news_model->getReporters();
-
-			// Set up the main frame
-			$this->main_frame->SetContentSimple('office/news/request', $data);
-		}
+		// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/request', $data);
 
 		// Set page title & load main frame with view
 		$this->main_frame->Load();
@@ -50,18 +46,16 @@ class News extends Controller
 
 	function article()
 	{
-		// Check user is logged into office
-		if (CheckPermissions('office')) {
+		if (!CheckPermissions('office')) return;
+		
+		// Get changeable page content
+		$this->pages_model->SetPageCode('office_news_article');
 
-			// Get changeable page content
-			$this->pages_model->SetPageCode('office_news_article');
+		// Get page content
+		$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
 
-			// Get page content
-			$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
-
-			// Set up the main frame
-			$this->main_frame->SetContentSimple('office/news/article', $data);
-		}
+		// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/article', $data);
 
 		// Set page title & load main frame with view
 		$this->main_frame->SetTitleParameters(
@@ -73,6 +67,8 @@ class News extends Controller
 	// I've left this here (but renamed) just incase you want to use any of it when finishing off the new request function -Chris
 	function request_old($Segment4)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$data = array('message' => '');
 		
 		switch ($Segment4) {

@@ -12,8 +12,6 @@ class Howdoi extends Controller
 	{
 		parent::Controller();
 
-		SetupMainFrame('office');
-
 		$this->load->helper('text');
 		$this->load->helper('wikilink');
 	}
@@ -33,22 +31,22 @@ class Howdoi extends Controller
 	/// index page.
 	function index()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		
-		// Check permissions
-		if (CheckPermissions('office')) {
-			//Get navigation bar and tell it the current page
-			$this->_SetupNavbar();
-			$this->main_frame->SetPage('questions');
-	
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
-			
-			// Set up the public frame
-			$this->main_frame->SetContent($the_view);}
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('questions');
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -56,23 +54,22 @@ class Howdoi extends Controller
 
 	function suggestions()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_howdoi_suggestions');
 
-		// Check permissions
-		if (CheckPermissions('office')) {
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('suggestions');
+		
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
-			//Get navigation bar and tell it the current page
-			$this->_SetupNavbar();
-			$this->main_frame->SetPage('suggestions');
-			
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
+		// Set up the view
+		$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
 
-			// Set up the public frame
-			$this->main_frame->SetContent($the_view);}
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -81,23 +78,22 @@ class Howdoi extends Controller
 
 	function categories()
 	{
-		$this->pages_model->SetPageCode('office_howdoi_categories');
-
-		// Check permissions and load main frame
-		if (CheckPermissions('office')) {
+		if (!CheckPermissions('office')) return;
 		
-			//Get navigation bar and tell it the current page
-			$this->_SetupNavbar();
-			$this->main_frame->SetPage('categories');
-	
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
+		$this->pages_model->SetPageCode('office_howdoi_categories');
+		
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('categories');
 
-			// Set up the public frame
-			$this->main_frame->SetContent($the_view);}
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -106,23 +102,22 @@ class Howdoi extends Controller
 
 	function editquestion()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_howdoi_edit_question');
 
-		// Check permissions
-		if (CheckPermissions('office')) {
-		
-			//Get navigation bar and tell it the current page
-			$this->_SetupNavbar();
-			$this->main_frame->SetPage('questions');
-	
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('questions');
 
-			// Set up the public frame
-			$this->main_frame->SetContent($the_view);}
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();

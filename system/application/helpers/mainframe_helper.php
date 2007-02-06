@@ -18,24 +18,34 @@
  *	- 'editor'
  *	- 'admin'
  */
-function SetupMainFrame($Frame='public')
+function SetupMainFrame($Frame=FALSE)
 {
+	/*if ($Frame !== FALSE) {
+		Assert('\'SetupMainFrame should now only be called by CheckPermissions\'===FALSE');
+	}*/
+	
 	static $frames = array(
 		'public'  => 'frame_public',
 		'student' => 'frame_public',
 		'vip'     => 'frame_organisation',
+		'organisation' => 'frame_organisation',
 		'office'  => 'frame_office',
 		'editor'  => 'frame_office',
 		'admin'   => 'frame_office',
 	);
 	
+	$user_level = GetUserLevel();
+	$Frame = $user_level;
+	
 	assert('array_key_exists($Frame,$frames)');
 	$frame_library = $frames[$Frame];
-	
-	// Load the corresponding library and create an alias called main_frame
-	$CI = &get_instance();
-	$CI->load->library($frame_library);
-	$CI->main_frame = $CI->$frame_library;
+	if (!isset($CI->$frame_library)) {
+		
+		// Load the corresponding library and create an alias called main_frame
+		$CI = &get_instance();
+		$CI->load->library($frame_library);
+		$CI->main_frame = $CI->$frame_library;
+	}
 }
 
 ?>

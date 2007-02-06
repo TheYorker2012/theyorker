@@ -15,8 +15,6 @@ class Reviews extends Controller
 	{
 		parent::Controller();
 
-		SetupMainFrame('office');
-
 		$this->load->library('organisations');
 		$this->load->model('directory_model');
 
@@ -55,22 +53,21 @@ class Reviews extends Controller
 	/// Reviews Overview Page
 	function overview($organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_reviews_overview');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_overview', $data);
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_overview', $data);
 
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -79,27 +76,26 @@ class Reviews extends Controller
 	// Reviews information page
 	function information($ContextType, $organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_reviews_information');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('information');
 
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('information');
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_information', $data);
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_information', $data);
 
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -107,27 +103,26 @@ class Reviews extends Controller
 
 	function tags($ContextType, $organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_reviews_tags');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('tags');
+		
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('tags');
-			
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_tags', $data);
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_tags', $data);
 
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -135,27 +130,26 @@ class Reviews extends Controller
 	
 	function photos($ContextType, $organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_review_photos');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('photos');
 
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('photos');
-	
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
-	
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -163,27 +157,26 @@ class Reviews extends Controller
 	
 	function review($ContextType, $organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_review_reviews');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('reviews');
 
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('reviews');
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 	
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_reviews', $data);
-		
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -191,26 +184,26 @@ class Reviews extends Controller
 	
 	function reviewedit($ContextType, $organisation, $ArticleId)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_review_reviewedit');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('reviews');
-	
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-	
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('reviews');
 
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -218,26 +211,26 @@ class Reviews extends Controller
 	
 	function comments($ContextType, $organisation)
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_review_comments');
 
-		// Check the user has logged into the office
-		if (CheckPermissions('office')) {
-			//Get navigation bar and tell it the current page
-			$data = $this->organisations->_GetOrgData($organisation);
-			$this->_SetupNavbar($organisation,$ContextType);
-			$this->main_frame->SetPage('comments');
-	
-			// Insert main text from pages information (sample)
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('comments');
 
-			// Set up the view
-			$the_view = $this->frames->view('reviews/office_review_comments', $data);
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name'],
-						  'content_type' => $ContextType));
-			$this->main_frame->SetContent($the_view);}
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_comments', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
 		$this->main_frame->Load();

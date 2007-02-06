@@ -68,6 +68,7 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['logged_in'] = TRUE;
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
+		$this->mDataArray['uri'] = $CI->uri->uri_string();
 		
 		// Assume session has already been started by user_auth
 		//session_start();

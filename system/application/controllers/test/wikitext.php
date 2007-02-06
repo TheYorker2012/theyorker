@@ -14,9 +14,6 @@ class Wikitext extends Controller {
 		parent::Controller();
 		$this->load->helper('form');
 		$this->load->library('wikiparser');
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	/**
@@ -24,6 +21,8 @@ class Wikitext extends Controller {
 	 */
 	function index()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		// No POST data? just set wikitext to default string
 		$wikitext = $this->input->post('wikitext');
 		if ($wikitext === FALSE) {
@@ -45,11 +44,11 @@ class Wikitext extends Controller {
 			);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Wikitext Preview');
-		$this->frame_public->SetContentSimple('test/wikitext', $data);
+		$this->main_frame->SetTitle('Wikitext Preview');
+		$this->main_frame->SetContentSimple('test/wikitext', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>

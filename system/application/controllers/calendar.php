@@ -19,8 +19,6 @@ class Calendar extends Controller {
 		$this->load->library('academic_calendar');  // Using academic calendar
 		$this->load->library('date_uri');           // Nice date uri segments
 		$this->load->library('view_calendar_days'); // Days calendar view
-		
-		SetupMainFrame('student');
 	}
 	
 	/**
@@ -37,6 +35,8 @@ class Calendar extends Controller {
 	 */
 	function week($DateRange = '')
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('calendar_personal');
 		if (!empty($DateRange)) {
 			// $DateRange Not empty

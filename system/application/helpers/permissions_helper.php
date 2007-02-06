@@ -68,6 +68,7 @@ function login_handler($Data, $Permission)
 				$CI->user_auth->login($username, $password, false);
 			}
 			$successfully_logged_in = TRUE;
+			SetupMainFrame();
 			$CI->main_frame->AddMessage('success',$success_msg);
 			
 			foreach ($_POST as $key => $value) {
@@ -140,6 +141,33 @@ function login_handler($Data, $Permission)
 	return $successfully_logged_in;
 }
 
+/// Get the user level as a string
+function GetUserLevel()
+{
+	$CI = &get_instance();
+	$CI->load->library('user_auth');
+	
+	$user_level = 'public';
+	if ($CI->user_auth->isLoggedIn) {
+		$user_level = 'student';
+	}
+	if ($CI->user_auth->organisationLogin >= 0) {
+		if ($CI->user_auth->isUser) {
+			$user_level = 'vip';
+		} else {
+			$user_level = 'organisation';
+		}
+	}
+	if ($CI->user_auth->officeType === 'Low') {
+		$user_level = 'office';
+	} elseif ($CI->user_auth->officeType === 'High') {
+		$user_level = 'editor';
+	} elseif ($CI->user_auth->officeType === 'Admin') {
+		$user_level = 'admin';
+	}
+	return $user_level;
+}
+
 /// Check the access permissions.
 /**
  * @param $Permission string or array of the following levels (in the order that
@@ -154,6 +182,8 @@ function login_handler($Data, $Permission)
  */
 function CheckPermissions($Permission = 'public')
 {
+	$CI = &get_instance();
+	
 	$student_login_action = array(
 			'handle','login_handler',
 			array('public')
@@ -168,10 +198,13 @@ function CheckPermissions($Permission = 'public')
 		);
 	
 	$office_door_open_action = array(
-			'message','warning','You\'ve left the office door open', TRUE
+			'message','warning','You\'ve left the office door open! Spies are everywhere! If you\'re going to stay out for a while, please shut it. <a href="'.site_url('logout/office'.$CI->uri->uri_string()).'">[Leave Office]</a>', TRUE
+		);
+	$admin_door_open_action = array(
+			'message','warning','You\'re still logged in as "admin". Look behind you. <a href="'.site_url('logout/office'.$CI->uri->uri_string()).'">[Loose Admin Status]</a>', TRUE
 		);
 	$vip_door_open_action = array(
-			'message','warning','You\'ve left the vip door open', TRUE
+			'message','warning','You haven\'t officially left the VIP area! In the interest of security, we kindly request that you make your absence known. <a href="'.site_url('logout/viparea'.$CI->uri->uri_string()).'">[Leave VIP Area]</a>', TRUE
 		);
 	
 	// Matrix indexed by user level, then page level, of behaviour
@@ -232,8 +265,8 @@ function CheckPermissions($Permission = 'public')
 				'admin'			=> FALSE,
 			),
 		'admin'    => array(
-				'public'		=> $office_door_open_action,
-				'student'		=> $office_door_open_action,
+				'public'		=> $admin_door_open_action,
+				'student'		=> $admin_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
 				'editor'		=> TRUE,
@@ -241,72 +274,53 @@ function CheckPermissions($Permission = 'public')
 			),
 	);
 	
-	$CI = &get_instance();
-	$CI->load->library('user_auth');
-	
-	$user_level = 'public';
-	if ($CI->user_auth->isLoggedIn) {
-		$user_level = 'student';
-	}
-	if ($CI->user_auth->organisationLogin >= 0) {
-		if ($CI->user_auth->isUser) {
-			$user_level = 'vip';
-		} else {
-			$user_level = 'organisation';
-		}
-	}
-	if ($CI->user_auth->officeType === 'Low') {
-		$user_level = 'office';
-	} elseif ($CI->user_auth->officeType === 'High') {
-		$user_level = 'editor';
-	} elseif ($CI->user_auth->officeType === 'Admin') {
-		$user_level = 'admin';
-	}
+	$user_level = GetUserLevel();
 	$action_levels = $access_matrix[$user_level];
-	
-	if (!is_array($Permission)) {
-		$Permission = array($Permission);
-	}
 	
 	
 	$access_allowed = FALSE;
 	
-	foreach ($Permission as $permission) {
-		if (!array_key_exists($permission, $action_levels)) {
-			show_404();
-		} else {
-			$action = $action_levels[$permission];
-			if (TRUE === $action) {
-				$access_allowed = TRUE;
-			} elseif (is_array($action)) {
-				switch ($action[0]) {
-					case 'handle':
-						$access_allowed = $action[1]($action[2], $Permission);
-						if (array_key_exists(3,$action)) {
-							$CI->main_frame->AddMessage($action[3], $action[4]);
-						}
-						break;
-						
-					case 'redirect':
-						if (array_key_exists(2,$action)) {
-							$CI->main_frame->AddMessage($action[2], $action[3]);
-						}
-						redirect($action[1]);
-						break;
-						
-					case 'message':
-						$CI->main_frame->AddMessage($action[1], $action[2]);
-						$access_allowed = $action[3];
-						break;
-				}
-			} else {
-				// Access denied
-				$CI->main_frame->AddMessage('warning', 'You do not have '.$permission.' privilages required!');
-				redirect('');
+	if (!array_key_exists($Permission, $action_levels)) {
+		return show_404();
+	} else {
+		SetupMainFrame();
+		
+		$action = $action_levels[$Permission];
+		if (TRUE === $action) {
+			$access_allowed = TRUE;
+		} elseif (is_array($action)) {
+			switch ($action[0]) {
+				case 'handle':
+					$access_allowed = $action[1]($action[2], $Permission);
+					if (array_key_exists(3,$action)) {
+						$CI->main_frame->AddMessage($action[3], $action[4]);
+					}
+					break;
+					
+				case 'redirect':
+					if (array_key_exists(2,$action)) {
+						$CI->main_frame->AddMessage($action[2], $action[3]);
+					}
+					redirect($action[1]);
+					break;
+					
+				case 'message':
+					$CI->main_frame->AddMessage($action[1], $action[2]);
+					$access_allowed = $action[3];
+					break;
+					
+				default:
+					break;
 			}
+		} else {
+			// Access denied
+			$CI->main_frame->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
+			redirect('');
 		}
-		if (!$access_allowed)
-			break;
+	}
+	
+	if (!$access_allowed) {
+		$CI->main_frame->Load();
 	}
 	
 	return $access_allowed;

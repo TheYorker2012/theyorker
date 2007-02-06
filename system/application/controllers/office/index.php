@@ -9,22 +9,19 @@ class Index extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		SetupMainFrame('office');
 	}
 	
 	function index()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_index');
 		
-		// Load the main frame
-		if (CheckPermissions('office')) {
-			$data = array(
-					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			);
-			// Set up the content
-			$this->main_frame->SetContentSimple('office/index', $data);
-		}
+		$data = array(
+				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+		);
+		// Set up the content
+		$this->main_frame->SetContentSimple('office/index', $data);
 		
 		// Load the main frame
 		$this->main_frame->Load();
