@@ -305,7 +305,7 @@ function CheckPermissions($Permission = 'public')
 					break;
 					
 				case 'message':
-					$CI->main_frame->AddMessage($action[1], $action[2]);
+					$CI->main_frame->AddMessage($action[1], $action[2], FALSE);
 					$access_allowed = $action[3];
 					break;
 					

@@ -141,8 +141,10 @@ class Frame_public extends FrameNavbar
 	/**
 	 * @param $Type string/Message Message type or Message class.
 	 * @param $Message string Message (if $Type isn't Message class).
+	 * @param $Persistent bool Whether the message should be shown on the next
+	 *	page if this page is never displayed.
 	 */
-	function AddMessage($Type, $Message = '')
+	function AddMessage($Type, $Message = '', $Persistent = TRUE)
 	{
 		if (is_string($Type)) {
 			$message = new Message($Type,$Message);
@@ -151,11 +153,13 @@ class Frame_public extends FrameNavbar
 		}
 		$this->mDataArray['messages'][] = $message;
 		
-		// Also store in session
-		if (!array_key_exists('messages',$_SESSION)) {
-			$_SESSION['messages'] = array();
+		if ($Persistent) {
+			// Also store in session
+			if (!array_key_exists('messages',$_SESSION)) {
+				$_SESSION['messages'] = array();
+			}
+			$_SESSION['messages'][] = $message->ToArray();
 		}
-		$_SESSION['messages'][] = $message->ToArray();
 	}
 	
 	/// Get the number of messages.
