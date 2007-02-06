@@ -14,6 +14,7 @@ class Organisations
 	/// Default constructor
 	function __construct()
 	{
+		$this->CI = &get_instance();
 	}
 	
 	/// Get organisation types from organisations.
