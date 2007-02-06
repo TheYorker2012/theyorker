@@ -32,8 +32,7 @@
 <a href="/admin/howdoi/add">Add to how do I</a><br />
 <a href="/admin/faq/edit">Edit FAQ entry</a><br />
 <br />
-<a href="/admin/news/">(Editor/Writer/Photographer) News Home</a><br />
-<a href="/admin/news/request/add/">Add News Article Request</a><br />
-<a href="/admin/news/request/view/">View Article Request</a><br />
+<a href="/office/news/request">Make new article request</a><br />
+<a href="/office/news/article">View/Edit Article</a><br />
 <br />
 <a href="/admin/pages">Page properties, custom pages, etc.</a><br />

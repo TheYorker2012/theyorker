@@ -1043,6 +1043,12 @@ div.RightToolbar div.LifestylePuffer p {
 	text-align: right;
 	font-weight: bold;
 }
+
+.form fieldset label.full {
+	width: 410px;
+	text-align: center;
+}
+
 .form fieldset i {
     margin: 0 0 0 120px;
 	display: block;
@@ -1059,6 +1065,10 @@ div.RightToolbar div.LifestylePuffer p {
 	padding: 0;
 	font-size: small;
 	display: block;
+}
+.form fieldset textarea {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
 }
 .form fieldset input, .form fieldset textarea, .form fieldset select {
 	margin: 5px 0 0 10px;

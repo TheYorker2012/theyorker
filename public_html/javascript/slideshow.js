@@ -1,14 +1,33 @@
-/*------------------------------------------------------------------------------------
-	Preloader
-	A very simple image preloader object
- 	Usage:
-    Preloader.add(path);
-    Preloader.onFinish(func);
-    Preloader.load();
-      path: 		A string or array of strings of image paths to preload
-      func:     A function or array of functions to be called after images are loaded
-      load():   Start the preloader
-------------------------------------------------------------------------------------*/
+/**
+ *	Creates a slideshow of organisation's photos
+ *	--------------------------------------------
+ *	@author Chris Travis (cdt502 - ctravis@gmail.com)
+ *
+ *	Pages used:	- /register/societies
+ *				- /register/au
+ *				- /directory/#org_name#
+ *	Requires:	- Scriptaculous.js
+ *				- Prototype.js
+ *				- div	:id = 'ss'
+ *				- img	:id = 'change_me'
+ *						:parent = 'ss'
+ *				- all slideshow images to have dimensions 220px x 165px
+ *	Usage:		<script type='text/javascript' src='/javascript/prototype.js'></script>
+ *				<script type='text/javascript' src='/javascript/scriptaculous.js'></script>
+ *				<script type='text/javascript' src='/javascript/slideshow.js'></script>
+ *				<script type='text/javascript'>
+ *				Slideshow.add('##IMAGE_URL_1##');
+ *				Slideshow.add('##IMAGE_URL_2##');
+ *				... etc ...
+ *				Slideshow.load();
+ *				</script>
+ *				<div id='ss' style='text-align:left;'>
+ *					<img id='changeme' src='/images/prototype/prefs/image_load.jpg' alt='Society Image' title='Society Image' />
+ *				</div>
+ *
+ *	Makes use of a simple image preloader copied from:
+ *		http://warpspire.com/journal/interface-scripting/image-preloading-revisited/
+ */
 
 var Slideshow = {
   callbacks: [],

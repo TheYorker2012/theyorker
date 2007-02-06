@@ -1,30 +1,77 @@
 <?php
 
-/// News admin controller.
+/**
+ *	Provides the Yorker Office - News Functionality
+ *
+ *	@author Chris Travis (cdt502 - ctravis@gmail.com)
+ */
+
 class News extends Controller
 {
 	/// Default constructor.
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
+
+		// Load the office frame
+		SetupMainFrame('office');
+		// Load news model - is this needed for News Office?
+		$this->load->model('news_model');
+		// Load articles admin model
+		$this->load->model('article_model');
 	}
-	
+
 	function index()
 	{
-		$admin_view_name = 'news/admin_news';
-		
-		// Set up the public frame
-		$this->frame_public->SetTitle('News Admin');
-		$this->frame_public->SetContentSimple($admin_view_name);
-		
-		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		// Nothing is here for the moment
+		redirect('/office');
 	}
-	
-	function request($Segment4)
+
+	function request()
+	{
+		// Check user is logged into office
+		if (CheckPermissions('office')) {
+
+			// Get changeable page content
+			$this->pages_model->SetPageCode('office_news_request');
+
+			// Get page content
+			$data['heading'] = $this->pages_model->GetPropertyText('heading');
+			$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
+			//$data['reporters'] = $this->news_model->getReporters();
+
+			// Set up the main frame
+			$this->main_frame->SetContentSimple('office/news/request', $data);
+		}
+
+		// Set page title & load main frame with view
+		$this->main_frame->Load();
+	}
+
+	function article()
+	{
+		// Check user is logged into office
+		if (CheckPermissions('office')) {
+
+			// Get changeable page content
+			$this->pages_model->SetPageCode('office_news_article');
+
+			// Get page content
+			$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
+
+			// Set up the main frame
+			$this->main_frame->SetContentSimple('office/news/article', $data);
+		}
+
+		// Set page title & load main frame with view
+		$this->main_frame->SetTitleParameters(
+			array('title' => 'REQUEST/ARTICLE HEADLINE')
+		);
+		$this->main_frame->Load();
+	}
+
+	// I've left this here (but renamed) just incase you want to use any of it when finishing off the new request function -Chris
+	function request_old($Segment4)
 	{
 		$data = array('message' => '');
 		
