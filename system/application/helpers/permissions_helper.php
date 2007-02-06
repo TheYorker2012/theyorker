@@ -168,6 +168,15 @@ function GetUserLevel()
 	return $user_level;
 }
 
+/// Return an html button link
+function HtmlButtonLink($Link, $Caption)
+{
+	return '
+<form action="'.$Link.'" method="link" class="form">
+	<input type="submit" class="button" value="'.$Caption.'" />
+</form>';
+}
+
 /// Check the access permissions.
 /**
  * @param $Permission string or array of the following levels (in the order that
@@ -198,13 +207,19 @@ function CheckPermissions($Permission = 'public')
 		);
 	
 	$office_door_open_action = array(
-			'message','warning','You\'ve left the office door open! Spies are everywhere! If you\'re going to stay out for a while, please shut it. <a href="'.site_url('logout/office'.$CI->uri->uri_string()).'">[Leave Office]</a>', TRUE
+			'message','warning',
+			HtmlButtonLink(site_url('logout/office'.$CI->uri->uri_string()),'Leave Office')
+			. 'You\'ve left the office door open! Spies are everywhere! '
+			. 'If you\'re going to stay out for a while, please shut it.',
+			TRUE
 		);
-	$admin_door_open_action = array(
-			'message','warning','You\'re still logged in as "admin". Look behind you. <a href="'.site_url('logout/office'.$CI->uri->uri_string()).'">[Loose Admin Status]</a>', TRUE
-		);
+	$admin_door_open_action = $office_door_open_action;
 	$vip_door_open_action = array(
-			'message','warning','You haven\'t officially left the VIP area! In the interest of security, we kindly request that you make your absence known. <a href="'.site_url('logout/viparea'.$CI->uri->uri_string()).'">[Leave VIP Area]</a>', TRUE
+			'message','warning',
+			HtmlButtonLink(site_url('logout/viparea'.$CI->uri->uri_string()),'Leave VIP Area')
+			. 'You haven\'t officially left the VIP area! In the interest of security, '
+			. 'we kindly request that you make your absence known.',
+			TRUE
 		);
 	
 	// Matrix indexed by user level, then page level, of behaviour
