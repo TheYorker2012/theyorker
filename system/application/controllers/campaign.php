@@ -154,7 +154,7 @@ class Campaign extends Controller {
 			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 				'campaign'=>$data['campaign_list'][$campaign_id]['name']))
 				);
-			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data['hasmap']);
+			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data);
 			
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
@@ -223,9 +223,20 @@ class Campaign extends Controller {
 
 		$this->load->model('campaign_model','campaign_model');
 		$user_id = $this->user_auth->entityId;
-		$this->campaign_model->WithdrawSignature($user_id);
-                $this->main_frame->AddMessage('success','Your signature has been withdrawn.');
-		redirect($_POST['r_redirecturl']);
+		$cur_campaign_id = $this->campaign_model->GetUserVoteSignature($user_id);
+		if ($cur_campaign_id == FALSE)
+		{
+			//no vote, can't withdraw
+	                $this->main_frame->AddMessage('error','You have not signed, therefore can\'t withdraw your signature.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else
+		{
+			//has vote, can withdraw
+			$this->campaign_model->WithdrawSignature($user_id);
+	                $this->main_frame->AddMessage('success','Your signature has been withdrawn.');
+			redirect($_POST['r_redirecturl']);
+		}
 	}
 	
 	function Edit($SelectedCampaign = '')
