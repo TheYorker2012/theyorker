@@ -235,7 +235,8 @@ class Yorkerdirectory extends Controller
 			foreach ($groups as $group) {
 				$data['business_card']['groups'][] = array(
 					'name' => $group['business_card_group_name'],
-					'id' => $group['business_card_group_id']
+					'id' => $group['business_card_group_id'],
+					'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id']
 				);
 			}
 			
