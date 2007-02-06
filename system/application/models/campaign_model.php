@@ -87,25 +87,12 @@ class Campaign_model extends Model
 	/*****************************************************
 	*  CAMPAIGN VOTING
 	*****************************************************/
-
-	/**
-	 * Sets the users vote in the vote table.
-	 * @returns nothing.
-	 */
-	function SetUserVote($campaign_id, $user_id)
-	{
-		$cur_campaign_id = self::GetUserVote($user_id);
-		if ($cur_campaign_id == FALSE)
-			self::AddNewVote($campaign_id, $user_id);
-		else
-			self::UpdateUserVote($cur_campaign_id, $campaign_id, $user_id);
-	}
 	
 	/**
 	 * Returns the id of the current users vote.
 	 * @returns the campaign id of the current users vore or FALSE if no vote has been cast.
 	 */
-	function GetUserVote($user_id)
+	function GetUserVoteSignature($user_id)
 	{
         	$sql = 'SELECT campaign_user_campaign_id
 			FROM campaign_users
@@ -116,6 +103,19 @@ class Campaign_model extends Model
 			return $row->campaign_user_campaign_id;
 		else
 			return FALSE;
+	}
+
+	/**
+	 * Sets the users vote in the vote table.
+	 * @returns nothing.
+	 */
+	function SetUserVote($campaign_id, $user_id)
+	{
+		$cur_campaign_id = self::GetUserVoteSignature($user_id);
+		if ($cur_campaign_id == FALSE)
+			self::AddNewVote($campaign_id, $user_id);
+		else
+			self::UpdateUserVote($cur_campaign_id, $campaign_id, $user_id);
 	}
 	
 	/**
@@ -166,7 +166,7 @@ class Campaign_model extends Model
 	function WithdrawVote($user_id)
 	{
 		$this->db->trans_start();
-		$campaign_id = self::GetUserVote($user_id);
+		$campaign_id = self::GetUserVoteSignature($user_id);
 		$sql = 'UPDATE campaigns
 			SET campaign_votes = campaign_votes - 1
 			WHERE campaign_id = ?';
@@ -195,6 +195,60 @@ class Campaign_model extends Model
 	/*****************************************************
 	*  CAMPAIGN PETITIONING
 	*****************************************************/
+
+	/**
+	 * Sets the users signature in the signature table.
+	 * @returns nothing.
+	 */
+	function SetUserSignature($campaign_id, $user_id)
+	{
+		$cur_campaign_id = self::GetUserVoteSignature($user_id);
+		if ($cur_campaign_id == FALSE)
+			self::AddNewSignature($campaign_id, $user_id);
+		else
+			self::UpdateUserSignature($cur_campaign_id, $campaign_id, $user_id);
+	}
+	
+	/**
+	 * Updates the users signature to be for a different campaign.
+	 * @returns nothing.
+	 */
+	function UpdateUserSignature($cur_campaign_id, $campaign_id, $user_id)
+	{
+		$this->db->trans_start();
+		$sql = 'UPDATE campaign_users
+			SET campaign_user_campaign_id = ?
+			WHERE campaign_user_user_entity_id = ?';
+		$this->db->query($sql,array($campaign_id, $user_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_petition_signatures = campaign_petition_signatures + 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($campaign_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_petition_signatures = campaign_petition_signatures - 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($cur_campaign_id));
+		$this->db->trans_complete();
+	}
+
+	/**
+	 * Inserts a new signature into the database.
+	 * @returns nothing.
+	 */
+	function AddNewSignature($campaign_id, $user_id)
+	{
+		$this->db->trans_start();
+		$sql = 'INSERT INTO campaign_users (
+				campaign_user_campaign_id,
+				campaign_user_user_entity_id)
+			VALUES (?, ?)';
+		$this->db->query($sql,array($campaign_id, $user_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_petition_signatures = campaign_petition_signatures + 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($campaign_id));
+		$this->db->trans_complete();
+	}
 	
 	function GetPetitionID()
 	{
@@ -247,7 +301,7 @@ class Campaign_model extends Model
 	function WithdrawSignature($user_id)
 	{
 		$this->db->trans_start();
-		$campaign_id = self::GetUserVote($user_id);
+		$campaign_id = self::GetUserVoteSignature($user_id);
 		$sql = 'UPDATE campaigns
 			SET campaign_petition_signatures = campaign_petition_signatures - 1
 			WHERE campaign_id = ?';

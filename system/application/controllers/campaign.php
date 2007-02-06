@@ -36,6 +36,7 @@ class Campaign extends Controller {
 				$data['user']['id'] = $this->user_auth->entityId;
 				$data['user']['firstname'] = $this->user_auth->firstname;
 				$data['user']['surname'] = $this->user_auth->surname;
+				$data['user']['vote_id'] = $this->campaign_model->GetUserVoteSignature($data['user']['id']);
 			}
 			else
 			{
@@ -79,7 +80,7 @@ class Campaign extends Controller {
 				$data['user']['id'] = $this->user_auth->entityId;
 				$data['user']['firstname'] = $this->user_auth->firstname;
 				$data['user']['surname'] = $this->user_auth->surname;
-				$data['user']['vote_id'] = $this->campaign_model->GetUserVote($data['user']['id']);
+				$data['user']['vote_id'] = $this->campaign_model->GetUserVoteSignature($data['user']['id']);
 			}
 			else
 			{
@@ -141,7 +142,7 @@ class Campaign extends Controller {
 				$data['user']['id'] = $this->user_auth->entityId;
 				$data['user']['firstname'] = $this->user_auth->firstname;
 				$data['user']['surname'] = $this->user_auth->surname;
-				$data['user']['vote_id'] = $this->campaign->GetUserVote($data['user']['id']);
+				$data['user']['vote_id'] = $this->campaign->GetUserVoteSignature($data['user']['id']);
 			}
 			else
 			{
@@ -153,7 +154,7 @@ class Campaign extends Controller {
 			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 				'campaign'=>$data['campaign_list'][$campaign_id]['name']))
 				);
-			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data);
+			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data['hasmap']);
 			
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
@@ -183,7 +184,7 @@ class Campaign extends Controller {
 		$user_id = $this->user_auth->entityId;
 		if ($this->user_auth->checkPassword($_POST['a_password']))
 		{
-                        $this->campaign_model->SetUserVote($this->campaign_model->GetPetitionID(), $user_id);
+                        $this->campaign_model->SetUserSignature($this->campaign_model->GetPetitionID(), $user_id);
                 	$this->main_frame->AddMessage('success','Your signature has been added to the petition.');
 			redirect($_POST['r_redirecturl']);
 		}
@@ -200,9 +201,20 @@ class Campaign extends Controller {
 		
 		$this->load->model('campaign_model','campaign_model');
 		$user_id = $this->user_auth->entityId;
-		$this->campaign_model->WithdrawVote($user_id);
-                $this->main_frame->AddMessage('success','Your vote has been withdrawn.');
-		redirect($_POST['r_redirecturl']);
+		$cur_campaign_id = $this->campaign_model->GetUserVoteSignature($user_id);
+		if ($cur_campaign_id == FALSE)
+		{
+			//no vote, can't withdraw
+	                $this->main_frame->AddMessage('error','You have not voted, therefore can\'t withdraw your vote.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else
+		{
+			//has vote, can withdraw
+			$this->campaign_model->WithdrawVote($user_id);
+	                $this->main_frame->AddMessage('success','Your vote has been withdrawn.');
+			redirect($_POST['r_redirecturl']);
+		}
 	}
 	
 	function withdrawsignature()

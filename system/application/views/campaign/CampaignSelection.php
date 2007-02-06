@@ -50,11 +50,48 @@
 	<form id='form1' name='form1' action='#' method='POST' class='form'>
 	<table width="80%">
 	<?php
+	/*
                 foreach ($campaign_list as $campaigns)
                 {
 		echo '<tr><td style="text-align: right;">'.$campaigns['name'];
 		echo '</td><td><fieldset style="display: inline;"><input type="submit" name="addorgform_addbutton" value="Vote" class="button" /></fieldset><br /></td></tr>';
 	}
+	*/
+	?>
+	<br />
+	<?php
+                foreach ($campaign_list as $key => $campaigns)
+                {
+			//echo '<tr><td style="text-align: right;">'.$campaigns['name'];
+			if ($user == TRUE)
+			{
+				if ($user['vote_id'] == $key)
+				{
+					echo '<form name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
+							<fieldset>
+								<input type="hidden" name="a_campaignid" value="'.$key.'" />
+								<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+								<label for="campaignname">'.$campaigns['name'].':</label>
+								<input type="submit" value="Withdraw Vote" class="button" name="r_withdrawvote" />
+							</fieldset>
+						</form>';
+				}
+				else
+				{
+					echo '<form name="voteform" action="/campaign/castvote" method="POST" class="form">
+							<fieldset>
+								<input type="hidden" name="a_campaignid" value="'.$key.'" />
+								<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+								<label for="campaignname">'.$campaigns['name'].':</label>
+								<input type="submit" value="Vote" class="button" name="r_castvote" />
+							</fieldset>
+						</form>';
+				}
+			echo '<br /><br />';
+			}
+			//else
+			//	echo $sidebar_vote['not_logged_in'];
+		}
 	?>
 	</table>
 	</form>
