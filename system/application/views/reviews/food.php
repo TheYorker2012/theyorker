@@ -77,7 +77,7 @@ echo '</h3><br />';
 
 foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
 {
-	echo anchor('reviews/table/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+	echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
 }
 
 echo'</div>';
