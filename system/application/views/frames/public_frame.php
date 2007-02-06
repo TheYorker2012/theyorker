@@ -13,17 +13,27 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+// An array containing functors for all function to be run on page load
+var onLoadFunctions = new Array();
+
+// The function which is run on page load ensuring all functors are run
+function onLoadHandler() {
+	// foreach loop does not work for some reason....
+	for (i = 0; i < onLoadFunctions.length; i++) {
+		onLoadFunctions[i]();
+	}
+}
+</script>
+
 <!-- BEGIN 'head' tag items from controlling script -->
 <?php echo @$extra_head; ?>
 <!-- END 'head' tag items from controlling script -->
-</head>
 
-<body onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
-<a name="top"></a>
 <script src="/javascript/jumpto.js" type="text/javascript"></script>
 
-<script language="JavaScript" type="text/javascript">
-
+<script type="text/javascript">
 function preloader()
 {
      // counter
@@ -43,11 +53,17 @@ function preloader()
      {
      	imageObj.src=images[i];
      }
-
 }
 
-
+// Add the preloader to the functions to be run on page load
+onLoadFunctions.push(preloader);
 </script>
+
+</head>
+
+<body onLoad="onLoadHandler()">
+<a name="top"></a>
+
 
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">

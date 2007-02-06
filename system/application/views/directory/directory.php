@@ -46,6 +46,8 @@
 		function onLoad() {
 			searchPage('searchText','Letter','filterCheck');
 		}
+
+		onLoadFunctions.push(onLoad);
 	</script>
 </div>
 <div id="NotFound" style="display: none;">
