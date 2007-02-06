@@ -1,5 +1,5 @@
 <div class="padding">
-This is just a basic list to all the pages that are made so far. I have probably missed some out so can you add links to them please :-)
+<em>Happy 1000th Revision!</em>
 <br />
 <br />
 Starting Pages
