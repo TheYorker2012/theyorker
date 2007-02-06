@@ -18,7 +18,9 @@ information goes here.
 	<ul>
 		<li><a href='/viparea/directory/<?php echo $organisation; ?>/'>Edit the directory entry</a></li>
 		<li><a href='/viparea/calendar/<?php echo $organisation; ?>/'>Manage events</a></li>
-		<li><a href='/viparea/members/<?php echo $organisation; ?>/'>Manage members</a></li>
+		<?php if($enable_members == TRUE){?>
+		<li><a href='/viparea/members/view/<?php echo $organisation; ?>'>Manage members</a></li>
+		<?php }?>
 		<li><a href='/viparea/advertising/<?php echo $organisation; ?>/'>Advertising</a></li>
 		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>My Account</a></li>
 	</ul>

@@ -22,6 +22,7 @@ class Index extends Controller
 			$data = array(
 					'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 					'organisation' => 'theyorker', //example for the moment change this to logged in organisation
+					'enable_members' => TRUE, //example for the moment change this to logged in organisation
 			);
 			// Set up the content
 			$this->main_frame->SetContentSimple('viparea/main', $data);
