@@ -14,9 +14,6 @@ class Reviews extends Controller {
 		//And possible forms later on for the admin pages
 		$this->load->helper('form');
 		$this->load->helper('url');
-		
-		//Set us to show public pages
-		SetupMainFrame('public');
 
 		//Load page model
 		$this->load->model('pages_model');
@@ -36,6 +33,8 @@ class Reviews extends Controller {
 	//Food Frontpage
 	function food()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_food');
 
@@ -93,15 +92,17 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 			
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('reviews/food',$data);
+		$this->main_frame->SetContentSimple('reviews/food',$data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	//Drink Section - Dummy Data intill Model Ready
 	function drink()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_drink');
 
@@ -146,16 +147,18 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 		
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('reviews/drink',$data);
+		$this->main_frame->SetContentSimple('reviews/drink',$data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	
 	//Culture Section - Dummy Data intill Model Ready
 	function culture()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_culture');
 
@@ -202,15 +205,17 @@ class Reviews extends Controller {
 		$data['price_array'] = $price_array;
 		
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('reviews/culture',$data);
+		$this->main_frame->SetContentSimple('reviews/culture',$data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	//Review Function for Food/Drink/Culture
 	function mainreview($review_type, $page_code)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Load news model
 		$this->load->model('News_model');
 
@@ -288,7 +293,7 @@ class Reviews extends Controller {
 		$data['address_postcode']		= $review_database_result['organisation_postcode'];
 		$data['website']				= $review_database_result['organisation_url'];
 		$data['telephone']				= $review_database_result['organisation_phone_external'];
-		$data['average_price']			= '£'.$review_database_result['review_context_content_average_price'];
+		$data['average_price']			= ''.$review_database_result['review_context_content_average_price'];
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
@@ -307,8 +312,8 @@ class Reviews extends Controller {
 		$this->main_frame->SetTitleParameters(array('organisation' => $review_database_result['organisation_name']));
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->SetContentSimple('reviews/foodreview', $data);
-		$this->frame_public->Load();
+		$this->main_frame->SetContentSimple('reviews/foodreview', $data);
+		$this->main_frame->Load();
 
 	}
 	
@@ -337,6 +342,8 @@ class Reviews extends Controller {
 	//Bar Crawl Page
 	function barcrawl()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_context_barcrawl');
 
@@ -352,28 +359,32 @@ class Reviews extends Controller {
 		$data['crawl_rating'] = '5 skulls!';
 		$data['crawl_directions']='Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire';
 
-		$data['crawl_cost']='£12';
+		$data['crawl_cost']='12';
 		$data['pub_list'] = array('Kings Head','Ducks Head','Your Head');
-		$drink_guide[0] = array('Kings Head','Bloody Mary','£2');
-		$drink_guide[1] = array('Ducks Head','Eggs Galore','£4');
-		$drink_guide[2] = array('Your Head','Ale','£5');
+		$drink_guide[0] = array('Kings Head','Bloody Mary','2');
+		$drink_guide[1] = array('Ducks Head','Eggs Galore','4');
+		$drink_guide[2] = array('Your Head','Ale','5');
 		$data['drink_guide'] = $drink_guide;
 
 		//Comment system
 		$data['page_id'] = 105;
 		$data['comments'] = $this->Review_model->GetComments(105,1);
 		$data['article_id'] = 111;
-		$this->main_frame->SetTitleParameters(array('organisation' => 'The Great Piss Up'));
+
+		$this->main_frame->SetTitleParameters(array('organisation' => 'The Great Piss Up'));
 
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('reviews/barcrawl',$data);
+		$this->main_frame->SetContentSimple('reviews/barcrawl',$data);
+
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	//Display table for review table (from puffers)
 	function table()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_table');
 
@@ -427,12 +438,14 @@ class Reviews extends Controller {
 
 		$data['entries'] = $entries;
 
-		$this->frame_public->SetContentSimple('reviews/table',$data);
-		$this->frame_public->Load();
+		$this->main_frame->SetContentSimple('reviews/table',$data);
+		$this->main_frame->Load();
 	}
 
 	function leagues()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
 
@@ -471,8 +484,8 @@ class Reviews extends Controller {
 
 			$data['reviews'] = $reviews;
 
-		$this->frame_public->SetContentSimple('reviews/leagues',$data);
-		$this->frame_public->Load();
+		$this->main_frame->SetContentSimple('reviews/leagues',$data);
+		$this->main_frame->Load();
 	}
 	
 	/**
@@ -481,32 +494,38 @@ class Reviews extends Controller {
 	*/
 	function edit()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$data['title_image'] = 'images/prototype/reviews/reviews_01.gif';
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Edit');
-		$this->frame_public->SetContentSimple('reviews/mainedit', $data);
+		$this->main_frame->SetTitle('Edit');
+		$this->main_frame->SetContentSimple('reviews/mainedit', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	function editsection()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Edit Section');
-		$this->frame_public->SetContentSimple('reviews/sectionedit');
+		$this->main_frame->SetTitle('Edit Section');
+		$this->main_frame->SetContentSimple('reviews/sectionedit');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	function editreview()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Edit Review');
-		$this->frame_public->SetContentSimple('reviews/reviewedit');
+		$this->main_frame->SetTitle('Edit Review');
+		$this->main_frame->SetContentSimple('reviews/reviewedit');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 

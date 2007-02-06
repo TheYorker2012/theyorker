@@ -5,19 +5,18 @@ class Faq extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
-    function index()
-    {
+	function index()
+	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Frequently Asked Questions');
-		$this->frame_public->SetContentSimple('faq/faq');
+		$this->main_frame->SetTitle('Frequently Asked Questions');
+		$this->main_frame->SetContentSimple('faq/faq');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
     }
 }
 ?>

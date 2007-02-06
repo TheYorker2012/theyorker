@@ -8,39 +8,42 @@ class Request extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
     function index()
     {
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Request');
-		$this->frame_public->SetContentSimple('request/request');
+		$this->main_frame->SetTitle('Request');
+		$this->main_frame->SetContentSimple('request/request');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
     }
 
     function upload()
     {
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Upload');
-		$this->frame_public->SetContentSimple('request/upload');
+		$this->main_frame->SetTitle('Upload');
+		$this->main_frame->SetContentSimple('request/upload');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
     }
 
     function crop()
     {
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Crop');
-		$this->frame_public->SetContentSimple('request/crop');
+		$this->main_frame->SetTitle('Crop');
+		$this->main_frame->SetContentSimple('request/crop');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
     }
 
 }

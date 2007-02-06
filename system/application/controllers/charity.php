@@ -4,13 +4,12 @@ class Charity extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	function index($charity_id = 1)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('news_model','news');
 		$this->load->model('charity_model','charity');
 		$this->pages_model->SetPageCode('ourcharity');
@@ -40,14 +39,16 @@ class Charity extends Controller {
 		}
 
 		// Set up the public frame
-		$this->frame_public->SetTitle($this->pages_model->GetTitle(array('name'=>$data['sections']['charity']['name'])));
-		$this->frame_public->SetContentSimple('charity/ourcharity', $data);
+		$this->main_frame->SetTitle($this->pages_model->GetTitle(array('name'=>$data['sections']['charity']['name'])));
+		$this->main_frame->SetContentSimple('charity/ourcharity', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	function edit()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$data = array(
 			'Description' => '<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!',
 			'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
@@ -59,11 +60,11 @@ class Charity extends Controller {
 		);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Our Sponsored Charity');
-		$this->frame_public->SetContentSimple('charity/charityedit', $data);
+		$this->main_frame->SetTitle('Our Sponsored Charity');
+		$this->main_frame->SetContentSimple('charity/charityedit', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>

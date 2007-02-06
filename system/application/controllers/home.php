@@ -13,9 +13,6 @@ class Home extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	/**
@@ -23,20 +20,24 @@ class Home extends Controller {
 	*/
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$data = array(
 			'test' => 'I set this variable from the controller!',
 		);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('List');
-		$this->frame_public->SetContentSimple('general/list', $data);
+		$this->main_frame->SetTitle('List');
+		$this->main_frame->SetContentSimple('general/list', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	function main()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('home_main');
 		
 		$data = array();
@@ -45,10 +46,10 @@ class Home extends Controller {
 		$data['welcome_text']  = $this->pages_model->GetPropertyWikitext('welcome_text');
 		
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('general/home', $data);
+		$this->main_frame->SetContentSimple('general/home', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 }

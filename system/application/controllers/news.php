@@ -14,14 +14,14 @@ class News extends Controller {
 	{
 		parent::Controller();
 
-		// Load the public frame
-		$this->load->library('frame_public');
 		$this->load->model('News_model');
 	}
 
     /// The Campus News section (default).
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
 
@@ -78,31 +78,35 @@ class News extends Controller {
 		}
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('Campus News');
-		$this->frame_public->SetContentSimple('news/news', $data);
+		$this->main_frame->SetTitle('Campus News');
+		$this->main_frame->SetContentSimple('news/news', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// The National News section.
 	function national()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$data = array(
 			'news_previews' => self::$national_data
 		);
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('National News');
-		$this->frame_public->SetContentSimple('news/national', $data);
+		$this->main_frame->SetTitle('National News');
+		$this->main_frame->SetContentSimple('news/national', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// The Features section.
 	function features()
 	{
+		if (!CheckPermissions('public')) return;
+		
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId(2,9);
 
@@ -154,27 +158,31 @@ class News extends Controller {
 		}
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('Features');
-		$this->frame_public->SetContentSimple('news/features', $data);
+		$this->main_frame->SetTitle('Features');
+		$this->main_frame->SetContentSimple('news/features', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// The Lifestyle section.
 	function lifestyle()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Lifestyle');
-		$this->frame_public->SetContentSimple('news/lifestyle');
+		$this->main_frame->SetTitle('Lifestyle');
+		$this->main_frame->SetContentSimple('news/lifestyle');
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// General controller for all news articles.
 	function article()
 	{
+		if (!CheckPermissions('public')) return;
+		
     	/// Load the library for parsing wikitext
 //    	$this->load->library('wikiparser');
 
@@ -190,22 +198,24 @@ class News extends Controller {
 		$data['related_articles'] = array();
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('Article');
-		$this->frame_public->SetContentSimple('news/article', $data);
+		$this->main_frame->SetTitle('Article');
+		$this->main_frame->SetContentSimple('news/article', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// The Archive section.
 	function archive()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Archive');
-		$this->frame_public->SetContentSimple('news/archive');
+		$this->main_frame->SetTitle('Archive');
+		$this->main_frame->SetContentSimple('news/archive');
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// RSS Feed Generation

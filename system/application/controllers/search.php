@@ -5,22 +5,21 @@ class Search extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Search');
+		$this->main_frame->SetTitle('Search');
 		
 		$data = array ('search_form' => 'TODO Searchform again');
 		
-		$this->frame_public->SetContentSimple('search/search', $data);
+		$this->main_frame->SetContentSimple('search/search', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	function reply($fd) {
@@ -45,12 +44,14 @@ class Search extends Controller {
 //	}
 	
 	function results() {
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->library('session');
 		//TODO do mysql queries through model
 		//TODO display results
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Search Results');
+		$this->main_frame->SetTitle('Search Results');
 		
 		$results[] = array('link' => 'TODO',
 		                   'title' => 'TODO',
@@ -67,10 +68,10 @@ class Search extends Controller {
 		              'search_york' => '101',
 		              'search_results' => $results);
 		
-		$this->frame_public->SetContentSimple('search/results', $data);
+		$this->main_frame->SetContentSimple('search/results', $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 }

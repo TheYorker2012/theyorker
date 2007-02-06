@@ -8,13 +8,14 @@ class Policy extends Controller
 		parent::Controller();
 		
 		// Load the public frame
-		$this->load->library('frame_public');
 		$this->load->helpers('images');
 		$this->pages_model->SetPageCode('our_policy');
 	}
 
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$statement_of_policy_image = $this->pages_model->GetPropertyText('statement_of_policy');
 		$privacy_policy_image = $this->pages_model->GetPropertyText('privacy_policy');
 		$user_agreement = $this->pages_model->GetPropertyText('user_agreement');
@@ -36,8 +37,8 @@ class Policy extends Controller
 				),
 			);
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('about/about', $data);
-		$this->frame_public->Load();
+		$this->main_frame->SetContentSimple('about/about', $data);
+		$this->main_frame->Load();
 	}
 }
 ?>

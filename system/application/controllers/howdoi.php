@@ -8,14 +8,12 @@ class Howdoi extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
-		SetupMainFrame('public');
 	}
 	
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('howdoi_model','howdoi');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('howdoi_list');
@@ -36,14 +34,16 @@ class Howdoi extends Controller {
 		}
 
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('howdoi/howdoi', $data);
+		$this->main_frame->SetContentSimple('howdoi/howdoi', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	function viewcategory($codename, $id)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('howdoi_model','howdoi');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('howdoi_view');
@@ -72,11 +72,11 @@ class Howdoi extends Controller {
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
 	
 			// Set up the public frame
-			$this->frame_public->SetTitle($this->pages_model->GetTitle(array('category'=>$data['categories'][$view_category_id]['name'])));
-			$this->frame_public->SetContentSimple('howdoi/view', $data);
+			$this->main_frame->SetTitle($this->pages_model->GetTitle(array('category'=>$data['categories'][$view_category_id]['name'])));
+			$this->main_frame->SetContentSimple('howdoi/view', $data);
 	
 			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
+			$this->main_frame->Load();
 		}
 		else
 			//needs a new page to show invalid category

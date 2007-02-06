@@ -4,12 +4,12 @@ class Campaign extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		SetupMainFrame('public');
 	}
 
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news');
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
@@ -32,10 +32,10 @@ class Campaign extends Controller {
 					'text'=>$this->pages_model->GetPropertyWikitext('sidebar_campaign_what_now_text'));
 
 			// Set up the public frame
-			$this->frame_public->SetContentSimple('campaign/CampaignSelection', $data);
+			$this->main_frame->SetContentSimple('campaign/CampaignSelection', $data);
 			
 			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
+			$this->main_frame->Load();
 		} 
 		else 
 		{
@@ -84,18 +84,20 @@ class Campaign extends Controller {
 			}
 	
 			// Set up the public frame
-			$this->frame_public->SetTitle($this->pages_model->GetTitle(array(
+			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 				'campaign'=>$data['campaign']['name']))
 				);
-			$this->frame_public->SetContentSimple('campaign/CampaignVote', $data);
+			$this->main_frame->SetContentSimple('campaign/CampaignVote', $data);
 	
 			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
+			$this->main_frame->Load();
 		}
 	}
 
 	function details($campaign_id)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('campaign_model','campaign');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('campaign_details');
@@ -136,13 +138,13 @@ class Campaign extends Controller {
 			$data['parameters']['campaign'] = $campaign_id;
 
 			// Set up the public frame
-			$this->frame_public->SetTitle($this->pages_model->GetTitle(array(
+			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 				'campaign'=>$data['campaign_list'][$campaign_id]['name']))
 				);
-			$this->frame_public->SetContentSimple('campaign/CampaignDetails', $data);
+			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data);
 			
 			// Load the public frame view (which will load the content view)
-			$this->frame_public->Load();
+			$this->main_frame->Load();
 		}
 		else
 		{
@@ -152,6 +154,8 @@ class Campaign extends Controller {
 	
 	function castvote()
 	{
+		if (!CheckPermissions('student')) return;
+		
 		$this->load->model('campaign_model','campaign_model');
 		$user_id = $this->user_auth->entityId;
 		$this->campaign_model->SetUserVote($_POST['a_campaignid'], $user_id);
@@ -161,6 +165,8 @@ class Campaign extends Controller {
 	
 	function withdrawvote()
 	{
+		if (!CheckPermissions('student')) return;
+		
 		$this->load->model('campaign_model','campaign_model');
 		$user_id = $this->user_auth->entityId;
 		$this->campaign_model->WithdrawVote($user_id);
@@ -170,35 +176,38 @@ class Campaign extends Controller {
 	
 	function Edit($SelectedCampaign = '')
 	{
+		if (!CheckPermissions('office')) return;
+		
 		if($SelectedCampaign == ''){
-			$this->frame_public->SetContentSimple('campaign/CampaignsEditSelect');
+			$this->main_frame->SetContentSimple('campaign/CampaignsEditSelect');
 		} else {
 			$data = array(
 				'CampaignTitle' => $SelectedCampaign
 			);
-			$this->frame_public->SetContentSimple('campaign/CampaignsEditDetails',$data);
+			$this->main_frame->SetContentSimple('campaign/CampaignsEditDetails',$data);
 		}
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Campaign Edit');
+		$this->main_frame->SetTitle('Campaign Edit');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	function modeltest()
 	{
-
+		if (!CheckPermissions('admin')) return;
+		
 		$this->load->model('campaign_model','campaign');
 		$this->pages_model->SetPageCode('campaign_selection');
 		$get_campaign_list = $this->campaign->GetCampaignList();
 		$data['Campaign_List'] = $get_campaign_list;
 
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('campaign/test', $data);
+		$this->main_frame->SetContentSimple('campaign/test', $data);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 }

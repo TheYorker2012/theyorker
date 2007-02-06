@@ -5,7 +5,6 @@ class Upload extends Controller {
 	function Upload() {
 		parent::Controller();
 		$this->load->helper(array('form', 'url'));
-		$this->load->library('frame_public');
 	}
 	
 	function _processImage($data, $form_value, &$ThumbDetails) {
@@ -49,13 +48,17 @@ class Upload extends Controller {
 	}
 	
 	function index() {
-		$this->frame_public->SetTitle('Upload Form');
-		$this->frame_public->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$this->frame_public->SetContentSimple('uploader/upload_form');
-		$this->frame_public->Load();
+		if (!CheckPermissions('public')) return;
+		
+		$this->main_frame->SetTitle('Upload Form');
+		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->SetContentSimple('uploader/upload_form');
+		$this->main_frame->Load();
 	}
 
 	function do_upload() {
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->library('image_lib');
 		$this->load->library('upload');
 		$this->load->library('xajax');
@@ -87,12 +90,12 @@ class Upload extends Controller {
 				}
 			}
 		}
-		$this->frame_public->SetTitle('Photo Cropper');
+		$this->main_frame->SetTitle('Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
-		$this->frame_public->SetExtraHead($head);
-		$this->frame_public->SetContentSimple('uploader/upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
-		$this->frame_public->Load();
+		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->SetContentSimple('uploader/upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
+		$this->main_frame->Load();
 	}
 	
 	function process_form_data($formData) {

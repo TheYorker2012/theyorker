@@ -6,21 +6,19 @@ class Login extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		SetupMainFrame('public');
 	}
 
 	function index()
 	{
-		if (CheckPermissions('student')) {
-			redirect('home/main');
-		};
+		if (!CheckPermissions('student')) return;
 		
-		$this->main_frame->Load();
+		redirect('home/main');
 	}
 
 	function resetpassword()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$data = array();
 		
 		// Set up the public frame

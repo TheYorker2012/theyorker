@@ -7,8 +7,6 @@ class Pages extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		$this->load->library('frame_public');
 	}
 
 	/// Takes all input
@@ -17,6 +15,8 @@ class Pages extends Controller
 	 */
 	function _remap($DummyRequired)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		// Get url segments after the first (controller).
 		$num_segments = $this->uri->total_segments();
 		$segments = array();
@@ -36,14 +36,14 @@ class Pages extends Controller
 			return;
 		}
 		
-		// Setup frame_public
+		// Setup main_frame
 		$data = array(
 				'parsed_wikitext' => $content,
 			);
-		$this->frame_public->SetContentSimple('pages/custom_page',$data);
+		$this->main_frame->SetContentSimple('pages/custom_page',$data);
 		
 		// Load the frame
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 

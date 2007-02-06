@@ -11,7 +11,7 @@ class Logout extends Controller
 	{
 		parent::Controller();
 		
-		SetupMainFrame('public');
+		SetupMainFrame();
 	}
 	
 	/// Redirect to the uri given after the initial logout/.../

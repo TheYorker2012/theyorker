@@ -7,14 +7,15 @@ class About extends Controller
 	{
 		parent::Controller();
 		
-		// Load the public frame
-		$this->load->library('frame_public');
 		$this->load->helpers('images');
-		$this->pages_model->SetPageCode('about_us');
 	}
 
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
+		$this->pages_model->SetPageCode('about_us');
+		
 		$the_website_image = $this->pages_model->GetPropertyText('the_website');
 		$our_aims_image = $this->pages_model->GetPropertyText('our_aims');
 		
@@ -31,8 +32,8 @@ class About extends Controller
 			),
 		);
 		// Set up the public frame
-		$this->frame_public->SetContentSimple('about/about', $data);
-		$this->frame_public->Load();
+		$this->main_frame->SetContentSimple('about/about', $data);
+		$this->main_frame->Load();
 	}
 }
 ?>

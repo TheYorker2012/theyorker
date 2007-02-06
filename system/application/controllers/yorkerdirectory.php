@@ -19,8 +19,6 @@ class Yorkerdirectory extends Controller
 	{
 		parent::Controller();
 
-		// Make use of the public frame
-		$this->load->library('frame_public');
 		$this->load->library('organisations');
 
 		$this->load->model('directory_model');
@@ -41,7 +39,7 @@ class Yorkerdirectory extends Controller
 	{
 		$this->load->library('frame_directory');
 		$data = $this->organisations->_GetOrgData($DirectoryEntry);
-		$navbar = $this->frame_public->GetNavbar();
+		$navbar = $this->main_frame->GetNavbar();
 		if($data['organisation']['type'] == 'Societies')
 		{
 			$navbar->AddItem('reviews', 'Reviews',
@@ -62,6 +60,8 @@ class Yorkerdirectory extends Controller
 	 */
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('directory_index');
 		
 		$data = array();
@@ -85,15 +85,17 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view('directory/directory', $data);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetContent($directory_view);
+		$this->main_frame->SetContent($directory_view);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// Directory organisation page.
 	function view($organisation)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('directory_view');
 		
 		$data = $this->organisations->_GetOrgData($organisation);
@@ -124,22 +126,24 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view($subpageview, $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_public->SetPage('about');
+		$this->main_frame->SetPage('about');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 		
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitleParameters(
+		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));
-		$this->frame_public->SetContent($this->frame_directory);
+		$this->main_frame->SetContent($this->frame_directory);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// Directory events page.
 	function events($organisation, $DateRange = '')
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('directory_events');
 		
 		$data = $this->organisations->_GetOrgData($organisation);
@@ -176,7 +180,7 @@ EXTRAHEAD;
 
 			} else {
 				// invalid
-				$this->frame_public->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
+				$this->main_frame->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
 				$use_default_range = TRUE;
 			}
 		}
@@ -241,23 +245,25 @@ EXTRAHEAD;
 		$directory_events->SetData('date_range_description', $range_description);
 
 		// Set up the directory frame to use the messages frame
-		$this->frame_public->SetPage('events');
+		$this->main_frame->SetPage('events');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_events);
 
 		// Set up the public frame to use the directory frame
-		$this->frame_public->SetTitleParameters(
+		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));
-		$this->frame_public->SetExtraHead($extra_head);
-		$this->frame_public->SetContent($this->frame_directory);
+		$this->main_frame->SetExtraHead($extra_head);
+		$this->main_frame->SetContent($this->frame_directory);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// Directory reviews page.
 	function reviews($organisation)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('directory_reviews');
 		$this->_SetupOrganisationFrame($organisation);
 		
@@ -285,22 +291,24 @@ EXTRAHEAD;
 		$directory_view = $this->frames->view('directory/directory_view_reviews', $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_public->SetPage('reviews');
+		$this->main_frame->SetPage('reviews');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitleParameters(
+		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));
-		$this->frame_public->SetContent($this->frame_directory);
+		$this->main_frame->SetContent($this->frame_directory);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 
 	/// Directory members page.
 	function members($organisation,$business_card_group=-1)
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->pages_model->SetPageCode('directory_members');
 		$this->_SetupOrganisationFrame($organisation);
 		
@@ -342,17 +350,17 @@ EXTRAHEAD;
 		$directory_view = $this->frames->view('directory/directory_view_members', $data);
 
 		// Set up the directory frame to use the directory events view
-		$this->frame_public->SetPage('members');
+		$this->main_frame->SetPage('members');
 		$this->frame_directory->SetOrganisation($data['organisation']);
 		$this->frame_directory->SetContent($directory_view);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetTitleParameters(
+		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));
-		$this->frame_public->SetContent($this->frame_directory);
+		$this->main_frame->SetContent($this->frame_directory);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>
