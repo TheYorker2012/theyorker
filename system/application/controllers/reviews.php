@@ -63,7 +63,7 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0];
+//		$data['article_author'] = $article_database_result['authors'][0];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
