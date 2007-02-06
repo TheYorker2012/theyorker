@@ -296,6 +296,24 @@ class User_auth {
 		$this->officeInterface = -1;
 		$this->localToSession();
 	}
+	
+	// Checks if the current users password matches $password (returns true or false)
+	public function checkPassword($password) {
+		if (!$this->isLoggedIn | !$this->isUser)
+			throw new Exception('You must be logged in as a student to do this');
+
+		$hash = sha1($this->salt.$password);
+
+		$sql = 'SELECT COUNT(*) AS valid FROM entities
+			WHERE entities.entity_id = ?
+				AND entity_password = ?';
+
+		$db = $this->object->db;
+		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
+
+		$row = $query->row();
+		return $row->valid;
+	}
 
 	// Get a list of organisations that the user can login to
 	public function getOrganisationLogins() {
