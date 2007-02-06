@@ -71,7 +71,6 @@ class Review_model extends Model {
 	$reviews = $query->result_array();
 
 	return $reviews;
-
 	}
 
 	function GetLeague($league_codename,$order='ASC',$sortby='league_entries.league_entry_position') {
@@ -123,6 +122,23 @@ class Review_model extends Model {
 	}
 
 	return $league;
+	}
+
+	//Gets the league details for the front pages /reviews/food, /reviews/drink etc...
+	//Call with type 'food' 'drink' etc...
+	//Returns a 2d array 0-> leagues.... 1-> leagues... etc...
+	function GetLeagueDetails($type)
+	{
+		$sql = "SELECT leagues.league_image_id, leagues.league_image_id,
+				leagues.league_name, leagues.league_size,
+				leagues.league_codename
+				FROM leagues
+				INNER JOIN content_types ON
+				content_types.content_type_id = leagues.league_content_type_id
+				WHERE content_types.content_type_name = ?";
+		$query = $this->db->query($sql,$type);
+		return $query->result_array();
+
 	}
 
 	//Find the article id's for a review, frb501
@@ -226,6 +242,8 @@ class Review_model extends Model {
 	//The array also has a special array inside array['tag_group_names']
 	// = array('Splashing out', 'Cool Digs')
 	//Which contains the taggroupnames for all tags used
+
+	//This function is expensive with queries however for the ordering it seems the best way
 	function GetTags($type)
 	{
 		$sql = 'SELECT DISTINCT tag_groups.tag_group_name
@@ -259,11 +277,13 @@ class Review_model extends Model {
 			$ordering = $ordering['tag_group_ordered']; //Ordering says which ordering to use
 
 			//Sub query finds all the tag names in the tag group
+			//INNER JOIN with organisation_tags removes unused tags from the front page
 			if ($ordering == TRUE)
 			{								//Order by field tag_order
 			$msql = '
 					 SELECT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_order';
 			}
 			else
@@ -271,6 +291,7 @@ class Review_model extends Model {
 			$msql = '						
 					 SELECT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
 			}
 
@@ -434,7 +455,14 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 			}
 		}
 
-		$reviews[0]['tag_groups'] = $tag_groups; //Add tag groups to array place 0
+		if (isset($tag_groups)) //Incase the tag list is empty
+		{
+			$reviews[0]['tag_groups'] = $tag_groups; //Add tag groups to array place 0
+		}
+		else
+		{
+			$reviews[0]['tag_groups'] = 'empty';
+		}
 
 		return $reviews;
 	}

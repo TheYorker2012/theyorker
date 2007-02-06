@@ -77,20 +77,17 @@ class Reviews extends Controller {
 		$data['article_photo'] = '/images/prototype/news/thumb4.jpg';
 
 		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('food');
+		$tabledata = $this->Review_model->GetTags('culture');
 
-		//Pass tabledata staight to view it is in the proper format
+		//Pass tabledata straight to view it is in the proper format
 		$data['table_data'] = $tabledata;
 
-		//More dummy data as part of the tables page
-		$type_array['name'] = array('Italian','Indian','Pub Dinners','Take Away Resturants','Thai','Chinese','All Types');
-		$type_array['link'] = array('reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food');
-		$data['type_array'] = $type_array;
+		//Get league data
+		$league_data = $this->Review_model->GetLeagueDetails('food');
 
-		$price_array['name'] = array('Dirt Cheap','Super Cheap','Kinda Cheap','Meh','Mega Expensive','All Prices');
-		$price_array['link'] = array('reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food','reviews/table/food/');
-		$data['price_array'] = $price_array;
-			
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $league_data;
+
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/food',$data);
 		
@@ -133,18 +130,19 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0];
+//		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_author'] = 'Matthew Tole';
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/drinkreview/'.$organisation_code_name;
 
-		//Dummy Data
-		$data['article_author'] = 'Matthew Tole';
 		$data['article_author_link'] = '/directory/view/1';
 
-		$price_array['name'] = array('Dirt Cheap','Super Cheap','Kinda Cheap','Meh','Mega Expensive','All Prices');
-		$price_array['link'] = array('reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink','reviews/table/drink');
-		$data['price_array'] = $price_array;
+		//Get data for the links to the table page
+		$tabledata = $this->Review_model->GetTags('drink');
+
+		//Pass tabledata staight to view it is in the proper format
+		$data['table_data'] = $tabledata;
 		
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/drink',$data);
@@ -189,21 +187,19 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0];
+//		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_author'] = 'Matthew Tole';
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/culturereview/'.$organisation_code_name;
 		$data['article_author_link'] = '/directory/view/1';
 
-		//Dummy data
-		$location_array['name'] = array('York','Leeds','London','Manchester','Blackpool','All Locations');
-		$location_array['link'] = array('reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture');
-		$data['location_array'] = $location_array;
+		//Get data for the links to the table page
+		$tabledata = $this->Review_model->GetTags('food');
 
-		$price_array['name'] = array('Dirt Cheap','Super Cheap','Kinda Cheap','Meh','Mega Expensive','All Prices');
-		$price_array['link'] = array('reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture','reviews/table/culture');
-		$data['price_array'] = $price_array;
-		
+		//Pass tabledata staight to view it is in the proper format
+		$data['table_data'] = $tabledata;
+
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/culture',$data);
 		
@@ -400,6 +396,12 @@ class Reviews extends Controller {
 
 		$entries = array();
 
+		//Incase of null result
+		if ($database_result[0]['tag_groups'] == 'empty')
+		{
+			redirect('/reviews/food'); //Send them back - Quick Hack... Should be fixed with a error page of some kind.
+		}
+
 		//A list of all tags
 		$data['review_tags'] = $database_result[0]['tag_groups'];
 
@@ -448,6 +450,9 @@ class Reviews extends Controller {
 		
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
+
+		//Check we have being passed a league to view otherwise the query returns badly...
+		if ($this->uri->segment(3) == NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
 
 		//Get leagues from model
 		$leagues = $this->Review_model->GetLeague($this->uri->segment(3));
