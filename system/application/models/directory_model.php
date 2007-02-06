@@ -98,7 +98,7 @@ class Directory_model extends Model {
 			'INNER JOIN business_card_groups '.
 			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
 			'WHERE business_cards.business_card_deleted = 0 '.
-			'AND business_card_groups.business_card_group_id = ?'.
+			'AND business_card_groups.business_card_group_id = ? '.
 			'ORDER BY business_cards.business_card_order';
 	
 		$query = $this->db->query($sql, $BusinessCardGroupId);
