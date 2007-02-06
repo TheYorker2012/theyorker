@@ -160,7 +160,7 @@ class Yorkerdirectory extends Controller
 			foreach ($groups as $group) {
 				$data['organisation']['groups'][] = array(
 					'name' => $group['business_card_group_name'],
-					'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id'],
+					'href' => '/viparea/directory/'.$organisation.'/contacts/'.$group['business_card_group_id'],
 					'id' => $group['business_card_group_id']
 				);
 				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
@@ -237,7 +237,7 @@ class Yorkerdirectory extends Controller
 				$data['business_card']['groups'][] = array(
 					'name' => $group['business_card_group_name'],
 					'id' => $group['business_card_group_id'],
-					'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id']
+					'href' => '/viparea/directory/'.$organisation.'/contacts/'.$group['business_card_group_id']
 				);
 			}
 			
