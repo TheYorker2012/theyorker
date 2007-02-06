@@ -18,11 +18,10 @@
  *	- 'editor'
  *	- 'admin'
  */
-function SetupMainFrame($Frame=FALSE)
+function SetupMainFrame($Frame='public')
 {
-	/*if ($Frame !== FALSE) {
-		Assert('\'SetupMainFrame should now only be called by CheckPermissions\'===FALSE');
-	}*/
+	// User level doesn't matter
+	//$user_level = GetUserLevel();
 	
 	static $frames = array(
 		'public'  => 'frame_public',
@@ -33,9 +32,6 @@ function SetupMainFrame($Frame=FALSE)
 		'editor'  => 'frame_office',
 		'admin'   => 'frame_office',
 	);
-	
-	$user_level = GetUserLevel();
-	$Frame = $user_level;
 	
 	assert('array_key_exists($Frame,$frames)');
 	$frame_library = $frames[$Frame];

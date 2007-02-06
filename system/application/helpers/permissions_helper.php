@@ -68,7 +68,7 @@ function login_handler($Data, $Permission)
 				$CI->user_auth->login($username, $password, false);
 			}
 			$successfully_logged_in = TRUE;
-			SetupMainFrame();
+			SetupMainFrame($Permission);
 			$CI->main_frame->AddMessage('success',$success_msg);
 			
 			foreach ($_POST as $key => $value) {
@@ -305,7 +305,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 	if (!array_key_exists($Permission, $action_levels)) {
 		return show_404();
 	} else {
-		SetupMainFrame();
+		SetupMainFrame($Permission);
 		
 		$action = $action_levels[$Permission];
 		if (TRUE === $action) {
