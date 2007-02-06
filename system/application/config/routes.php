@@ -87,6 +87,7 @@ $route['viparea/directory'] = 'viparea/yorkerdirectory';
 $route['viparea/directory/('.$org_name_regex.')'] = 'viparea/yorkerdirectory/information//$1';
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
 $route['viparea/directory/('.$org_name_regex.')/([a-z]+)'] = 'viparea/yorkerdirectory/$2//$1';
+$route['viparea/directory/('.$org_name_regex.')/([a-z]+)/([0-9]+)'] = 'viparea/yorkerdirectory/$2//$1/$3';
 unset($org_name_regex);
 
 // Invalidate yorkerdirectory as its ugly and shouldn't be used

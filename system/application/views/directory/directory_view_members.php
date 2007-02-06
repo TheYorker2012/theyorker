@@ -14,13 +14,18 @@ if(empty($organisation['cards'])) {
 		<p>	Member last joined : 5 hours ago</p>
 		<p>	Male to female ratio: 2:1</p>
 	</div>
-	<h4>Teams</h4>
+	<h4>Groups</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
-			<a href='#'>All (6)</a><br />
-			<a href='#'>Team 1 (3)</a><br />
-			<a href='#'>Team 2 (2)</a><br />
-			<a href='#'>Team 3 (1)</a>
+			<?php
+			foreach ($organisation['groups'] as $group) {
+			?>
+
+			<a href='<?php echo $group['href'] ?>'><?php echo $group['name'] ?></a><br />
+
+			<?php
+			}
+			?>
 		</p>
 	</div>
 </div>
@@ -67,6 +72,15 @@ if(!empty($member['phone_internal']) or !empty($member['phone_external']) or !em
 	echo "<br />";
 }else{}
 ?>
+<?php
+if ($organisation['editmode']) {
+?>
+<form name='member' method='post' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/editcontact/<?php echo $member['id']; ?>' class='form'>
+<input name='member_edit_button' type='submit' id='member_edit_button' value='Edit' class='button' /><br />
+</form>
+<?php
+}
+?>
 </p>
 </div>
 <?php
@@ -76,3 +90,6 @@ if(!empty($member['phone_internal']) or !empty($member['phone_external']) or !em
 <?php
 }
 ?>
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
+Add a new member to this group [Add]
+</div>

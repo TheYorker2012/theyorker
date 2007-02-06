@@ -299,7 +299,7 @@ EXTRAHEAD;
 	}
 
 	/// Directory members page.
-	function members($organisation)
+	function members($organisation,$business_card_group=-1)
 	{
 		$this->pages_model->SetPageCode('directory_members');
 		$this->_SetupOrganisationFrame($organisation);
@@ -307,26 +307,33 @@ EXTRAHEAD;
 		// Normal organisation data
 		$data = $this->organisations->_GetOrgData($organisation);
 		
+		// Business Card Groups
+		$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
+		// translate into nice names for view
+		$data['organisation']['groups'] = array();
+		foreach ($groups as $group) {
+			$data['organisation']['groups'][] = array(
+				'name' => $group['business_card_group_name'],
+				'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id'],
+			);
+			if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
+		}
+				
 		// Members data
-		$members = $this->directory_model->GetDirectoryOrganisationCardsByEntryName($organisation);
+		$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
 		// translate into nice names for view
 		$data['organisation']['cards'] = array();
 		foreach ($members as $member) {
 			$data['organisation']['cards'][] = array(
 				'name' => $member['business_card_name'],
 				'title' => $member['business_card_title'],
-				#'course' => $member['business_card_course'],
+				'course' => $member['business_card_course'],
 				'blurb' => $member['business_card_blurb'],
 				'email' => $member['business_card_email'],
 				'phone_mobile' => $member['business_card_mobile'],
 				'phone_internal' => $member['business_card_phone_internal'],
 				'phone_external' => $member['business_card_phone_external'],
-				'postal_address' => $member['business_card_postal_address'],
-				'colours' => array(
-					'background' => $member['business_card_colour_background'],
-					'foreground' => $member['business_card_colour_foreground'],
-				),
-				'type' => $member['business_card_type_name'],
+				'postal_address' => $member['business_card_postal_address']
 			);
 		}
 		

@@ -166,9 +166,17 @@ onLoadFunctions.push(preloader);
 		<div class='navigationmenu_item'>
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='navigationmenu_item_noborder'>
 			<a href='/games/'>Games Zone</a>
 		</div>
+
+		<div class='navigationmenu_item'>
+			<a href='/viparea/'>Enter VIP Area</a>
+		</div>
+		<div class='navigationmenu_item'>
+			<a href='/office/'>Enter Office</a>
+		</div>
+
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
 			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
 		</div>

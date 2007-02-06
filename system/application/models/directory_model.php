@@ -74,45 +74,91 @@ class Directory_model extends Model {
 		return $query->result_array();
 	}
 	
-	/// Get an organisation's business cards.
+	/// Get an organisation's business cards, for a business card group.
 	/**
-	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @param $BusinessCardGroupId optional
+	 * @param $BusinessCardGroupId business card group to return
 	 * @return array[business_card].
 	 */
-	function GetDirectoryOrganisationCardsByEntryName($DirectoryEntryName,$BusinessCardGroupId)
+	function GetDirectoryOrganisationCardsByGroupId($BusinessCardGroupId)
 	{
 		$sql =
 			'SELECT'.
+			' business_cards.business_card_id,'.
 			' business_cards.business_card_name,'.
 			' business_cards.business_card_title,'.
+			' business_cards.business_card_course,'.
 			' business_cards.business_card_blurb,'.
 			' business_cards.business_card_email,'.
 			' business_cards.business_card_mobile,'.
 			' business_cards.business_card_phone_internal,'.
 			' business_cards.business_card_phone_external,'.
 			' business_cards.business_card_postal_address,'.
-			' business_card_colours.business_card_colour_background,'.
-			' business_card_colours.business_card_colour_foreground,'.
 			' business_card_groups.business_card_group_name '.
 			'FROM business_cards '.
-			'INNER JOIN business_card_colours '.
-			' ON business_card_colours.business_card_colour_id = business_cards.business_card_business_card_colour_id '.
+			'INNER JOIN business_card_groups '.
+			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
+			'WHERE business_cards.business_card_deleted = 0 '.
+			'AND business_card_groups.business_card_group_id = ?'.
+			'ORDER BY business_cards.business_card_order';
+	
+		$query = $this->db->query($sql, $BusinessCardGroupId);
+	
+		return $query->result_array();
+	}
+
+	/// Get an individual business card
+	/**
+	 * @param $BusinessCardId business card to return
+	 * @return array[business_card].
+	 */
+	function GetDirectoryOrganisationCardsById($BusinessCardId)
+	{
+		$sql =
+			'SELECT'.
+			' business_cards.business_card_id,'.
+			' business_cards.business_card_name,'.
+			' business_cards.business_card_title,'.
+			' business_cards.business_card_course,'.
+			' business_cards.business_card_business_card_group_id,'.
+			' business_cards.business_card_blurb,'.
+			' business_cards.business_card_email,'.
+			' business_cards.business_card_mobile,'.
+			' business_cards.business_card_phone_internal,'.
+			' business_cards.business_card_phone_external,'.
+			' business_cards.business_card_postal_address,'.
+			' organisations.organisation_directory_entry_name '.
+			'FROM business_cards '.
 			'INNER JOIN business_card_groups '.
 			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
 			'INNER JOIN organisations '.
-			' ON organisations.organisation_entity_id = business_card_groups.business_card_group_organisation_entity_id '.
-			'INNER JOIN organisation_types '.
-			' ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id '.
+			' ON business_card_groups.business_card_group_organisation_entity_id = organisations.organisation_entity_id '.
 			'WHERE business_cards.business_card_deleted = 0 '.
-			' AND organisations.organisation_directory_entry_name=? '.
-			(isset($BusinessCardGroupId)? 
-				'AND business_card_groups.business_card_group_id = ?' : 
-				'AND business_card_groups.business_card_group_order = 1').
-			' AND organisation_types.organisation_type_directory=1 '.
-			'ORDER BY business_cards.business_card_order';
+			'AND business_cards.business_card_id = ? '.
+			'LIMIT 1';
 	
-		$query = $this->db->query($sql, array($DirectoryEntryName, $BusinessCardGroupId));
+		$query = $this->db->query($sql, $BusinessCardId);
+	
+		return $query->result_array();
+	}
+	
+	/// Get an organisation's business card groups.
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return array[business_card_group].
+	 */
+	function GetDirectoryOrganisationCardGroups($DirectoryEntryName)
+	{
+		$sql =
+			'SELECT'.
+			' business_card_groups.business_card_group_name, '.
+			' business_card_groups.business_card_group_id '.
+			'FROM business_card_groups '.
+			'INNER JOIN organisations '.
+			' ON organisations.organisation_entity_id = business_card_groups.business_card_group_organisation_entity_id '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
+			'ORDER BY business_card_groups.business_card_group_order';
+	
+		$query = $this->db->query($sql, $DirectoryEntryName);
 	
 		return $query->result_array();
 	}
