@@ -5,8 +5,7 @@ class Campaign extends Controller {
 	{
 		parent::Controller();
 		
-		// Load the public frame
-		$this->load->library('frame_public');
+		SetupMainFrame('public');
 	}
 
 	function index()
@@ -95,7 +94,7 @@ class Campaign extends Controller {
 		}
 	}
 
-	function Details($campaign_id)
+	function details($campaign_id)
 	{
 		$this->load->model('campaign_model','campaign');
 		$this->load->model('news_model','news');
@@ -108,7 +107,9 @@ class Campaign extends Controller {
 			$data['article'] = $this->news->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
 			$data['sidebar_vote'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),
-				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_text'),
+				'newvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_new_text'),
+				'changevote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_change_text'),
+				'withdrawvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_withdraw_text'),
 				'not_logged_in'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_not_logged_in'));
 			$data['sidebar_other_campaigns'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title'));
@@ -126,6 +127,7 @@ class Campaign extends Controller {
 				$data['user']['id'] = $this->user_auth->entityId;
 				$data['user']['firstname'] = $this->user_auth->firstname;
 				$data['user']['surname'] = $this->user_auth->surname;
+				$data['user']['vote_id'] = $this->campaign->GetUserVote($data['user']['id']);
 			}
 			else
 			{
@@ -146,6 +148,24 @@ class Campaign extends Controller {
 		{
 			//load an invalid campaign page
 		}
+	}
+	
+	function castvote()
+	{
+		$this->load->model('campaign_model','campaign_model');
+		$user_id = $this->user_auth->entityId;
+		$this->campaign_model->SetUserVote($_POST['a_campaignid'], $user_id);
+                $this->main_frame->AddMessage('success','Your vote has been cast.');
+		redirect($_POST['r_redirecturl']);
+	}
+	
+	function withdrawvote()
+	{
+		$this->load->model('campaign_model','campaign_model');
+		$user_id = $this->user_auth->entityId;
+		$this->campaign_model->WithdrawVote($user_id);
+                $this->main_frame->AddMessage('success','Your vote has been withdrawn.');
+		redirect($_POST['r_redirecturl']);
 	}
 	
 	function Edit($SelectedCampaign = '')

@@ -3,14 +3,38 @@
 	<?php
 	if ($user == TRUE)
 	{
-		echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['text']);
-		echo '	<form id="form1" name="voteform" action="/campaign/vote" method="POST" class="form">
-				<fieldset>
-					<input type="hidden" name="campaignid" value="'.$parameters['campaign'].'" />
-					<input type="text" name="votename" />
-					<input type="submit" value="Vote" class="button" name="votesubmit" />
-				</fieldset>
-			</form>';
+		if ($user['vote_id'] == FALSE)
+		{
+			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['newvote']);
+			echo '	<form id="form1" name="voteform" action="/campaign/castvote" method="POST" class="form">
+					<fieldset>
+						<input type="hidden" name="a_campaignid" value="'.$parameters['campaign'].'" />
+						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="submit" value="Vote" class="button" name="r_castvote" />
+					</fieldset>
+				</form>';
+		}
+		else if ($user['vote_id'] == $parameters['campaign'])
+		{
+			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['withdrawvote']);
+			echo '	<form id="form1" name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
+					<fieldset>
+						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="submit" value="Withdraw" class="button" name="r_withdrawvote" />
+					</fieldset>
+				</form>';
+		}
+		else
+		{
+			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['changevote']);
+			echo '	<form id="form1" name="voteform" action="/campaign/castvote" method="POST" class="form">
+					<fieldset>
+						<input type="hidden" name="a_campaignid" value="'.$parameters['campaign'].'" />
+						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="submit" value="Vote" class="button" name="r_changevote" />
+					</fieldset>
+				</form>';
+		}
 	}
 	else
 		echo $sidebar_vote['not_logged_in'];

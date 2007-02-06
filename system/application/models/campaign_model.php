@@ -85,9 +85,117 @@ class Campaign_model extends Model
 	}
 
 	/*****************************************************
+	*  CAMPAIGN VOTING
+	*****************************************************/
+
+	/**
+	 * Sets the users vote in the vote table.
+	 * @returns nothing.
+	 */
+	function SetUserVote($campaign_id, $user_id)
+	{
+		$cur_campaign_id = self::GetUserVote($user_id);
+		if ($cur_campaign_id == FALSE)
+			self::AddNewVote($campaign_id, $user_id);
+		else
+			self::UpdateUserVote($cur_campaign_id, $campaign_id, $user_id);
+	}
+	
+	/**
+	 * Returns the id of the current users vote.
+	 * @returns the campaign id of the current users vore or FALSE if no vote has been cast.
+	 */
+	function GetUserVote($user_id)
+	{
+        	$sql = 'SELECT campaign_user_campaign_id
+			FROM campaign_users
+			WHERE campaign_user_user_entity_id = ?';
+		$query = $this->db->query($sql,array($user_id));
+		$row = $query->row();
+		if ($query->num_rows() > 0)
+			return $row->campaign_user_campaign_id;
+		else
+			return FALSE;
+	}
+	
+	/**
+	 * Updates the users vote to be for a different campaign.
+	 * @returns nothing.
+	 */
+	function UpdateUserVote($cur_campaign_id, $campaign_id, $user_id)
+	{
+		$this->db->trans_start();
+		$sql = 'UPDATE campaign_users
+			SET campaign_user_campaign_id = ?
+			WHERE campaign_user_user_entity_id = ?';
+		$this->db->query($sql,array($campaign_id, $user_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_votes = campaign_votes + 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($campaign_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_votes = campaign_votes - 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($cur_campaign_id));
+		$this->db->trans_complete();
+	}
+
+	/**
+	 * Inserts a new vote into the database.
+	 * @returns nothing.
+	 */
+	function AddNewVote($campaign_id, $user_id)
+	{
+		$this->db->trans_start();
+		$sql = 'INSERT INTO campaign_users (
+				campaign_user_campaign_id,
+				campaign_user_user_entity_id)
+			VALUES (?, ?)';
+		$this->db->query($sql,array($campaign_id, $user_id));
+		$sql = 'UPDATE campaigns
+			SET campaign_votes = campaign_votes + 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql,array($campaign_id));
+		$this->db->trans_complete();
+	}
+
+	/**
+	 * Removes the users current vote.
+	 * @returns nothing.
+	 */
+	function WithdrawVote($user_id)
+	{
+		$this->db->trans_start();
+		$campaign_id = self::GetUserVote($user_id);
+		$sql = 'UPDATE campaigns
+			SET campaign_votes = campaign_votes - 1
+			WHERE campaign_id = ?';
+		$this->db->query($sql, array($campaign_id));
+		$sql = 'DELETE FROM campaign_users
+			WHERE campaign_user_user_entity_id = ?';
+		$this->db->query($sql, array($user_id));
+		$this->db->trans_complete();
+	}
+
+	/**
+	 * Wipes the votes table.
+	 * @returns nothing.
+	 */
+	function ClearVotes()
+	{
+		$this->db->trans_start();
+		$sql = 'DELETE FROM campaign_users';
+		$this->db->query($sql);
+		$sql = 'UPDATE campaigns
+			SET campaign_votes = 0';
+		$this->db->query($sql);
+		$this->db->trans_complete();
+	}
+
+	/*****************************************************
 	*  PROGRESS REPORTS
 	*****************************************************/
-	
+
 	/**
 	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
