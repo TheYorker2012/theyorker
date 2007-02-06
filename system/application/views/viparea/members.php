@@ -48,6 +48,8 @@
 <h2>edit member</h2>
 <form action='/viparea/members/view/<?php echo $organisation; ?>/edit' class='form' method='POST'>
 	<fieldset>
+		<a href='/viparea/members/view/<?php echo $organisation; ?>/delete/<?php if(!empty($editmember['id'])){echo $editmember['id'];} ?>'>Delete Member</a>
+		<br />
 		<label for='member_name'>Name:</label>
 		<input type='text' name='member_name' value='<?php if(!empty($editmember['name'])){echo $editmember['name'];} ?>'/>
 		<br />
