@@ -168,7 +168,7 @@ function preloader()
 				<label for='a_authorname'>Your Name:</label>
 				<input type='text' name='a_authorname' id='a_authorname' value='' />
 				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>' />
-				<input type='hidden' name='r_redirecturl' id='r_redirecturl' value='<?php echo str_replace("/index.php/", "", $_SERVER['PHP_SELF']); ?>' />
+				<input type='hidden' name='r_redirecturl' id='r_redirecturl' value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 				<br />
 				<label for='a_authoremail'>Your E-mail:</label>
 				<input type='text' name='a_authoremail' id='a_authoremail' value='' />

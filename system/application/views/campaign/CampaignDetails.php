@@ -9,7 +9,7 @@
 			echo '	<form id="form1" name="voteform" action="/campaign/castvote" method="POST" class="form">
 					<fieldset>
 						<input type="hidden" name="a_campaignid" value="'.$parameters['campaign'].'" />
-						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<input type="submit" value="Vote" class="button" name="r_castvote" />
 					</fieldset>
 				</form>';
@@ -19,7 +19,7 @@
 			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['withdrawvote']);
 			echo '	<form id="form1" name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
 					<fieldset>
-						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<input type="submit" value="Withdraw" class="button" name="r_withdrawvote" />
 					</fieldset>
 				</form>';
@@ -30,7 +30,7 @@
 			echo '	<form id="form1" name="voteform" action="/campaign/castvote" method="POST" class="form">
 					<fieldset>
 						<input type="hidden" name="a_campaignid" value="'.$parameters['campaign'].'" />
-						<input type="hidden" name="r_redirecturl" value="'.str_replace("/index.php/", "", $_SERVER['PHP_SELF']).'" />
+						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<input type="submit" value="Vote" class="button" name="r_changevote" />
 					</fieldset>
 				</form>';
