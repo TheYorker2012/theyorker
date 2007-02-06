@@ -163,8 +163,9 @@ class User_auth {
 			$sql = 'SELECT organisation_name 
 				FROM organisations 
 				WHERE organisation_entity_id = ?';
-			
+
 			$query = $db->query($sql, array($this->entityId));
+			$row = $query->row();
 			
 			$this->isUser = false;
 			$this->firstname = $row->organisation_name;

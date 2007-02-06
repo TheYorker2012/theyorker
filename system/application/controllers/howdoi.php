@@ -80,7 +80,7 @@ class Howdoi extends Controller {
 		}
 		else
 			//needs a new page to show invalid category
-			echo 'invalid category';
+			redirect('/howdoi');
 	}
 }
 ?>

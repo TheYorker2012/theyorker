@@ -19,6 +19,7 @@
 			echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_vote['withdrawvote']);
 			echo '	<form id="form1" name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
 					<fieldset>
+						<input type="hidden" name="a_campaignid" value="'.$parameters['campaign'].'" />
 						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<input type="submit" value="Withdraw" class="button" name="r_withdrawvote" />
 					</fieldset>

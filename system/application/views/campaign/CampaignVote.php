@@ -11,8 +11,7 @@
 		{
 			if ($user['vote_id'] == FALSE)
 			{
-				echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_sign['text']);
-				echo 'sign';
+				echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_sign['new_text']);
 				echo '<form name="sign" action="/campaign/signpetition" method="POST" class="form">
 						<fieldset>
 						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
@@ -23,7 +22,7 @@
 			}
 			else
 			{
-				echo 'withdraw';
+				echo str_replace("%%name%%", $user['firstname'].' '.$user['surname'], $sidebar_sign['withdraw_text']);
 				echo '<form name="sign" action="/campaign/withdrawsignature" method="POST" class="form">
 						<fieldset>
 						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
