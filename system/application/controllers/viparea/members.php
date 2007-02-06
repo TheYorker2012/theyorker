@@ -22,6 +22,43 @@ class Members extends Controller
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+			'organisation' => $organisation,
+			'teams' => array(
+						array(
+							'id' => '1',
+							'name' => 'Team 1',
+						),
+						array(
+							'id' => '2',
+							'name' => 'Team 2',
+						),
+						array(
+							'id' => '3',
+							'name' => 'Team 3',
+						),
+					),
+			'members' => array(
+							array(
+								'id' => '1',
+								'forename' => 'Example',
+								'sirname' => 'Example',
+								'email' => 'oj502@york.ac.uk',
+								'paid' => 'Y',
+								'mailing' => 'Y',
+								'awaiting_reply' => 'Y',
+								'vip' => 'N',
+							),
+							array(
+								'id' => '2',
+								'forename' => 'Example',
+								'sirname' => 'Example',
+								'email' => 'oj502@york.ac.uk',
+								'paid' => 'Y',
+								'mailing' => 'Y',
+								'awaiting_reply' => 'Y',
+								'vip' => 'N',
+							),
+						),
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/members', $data);
