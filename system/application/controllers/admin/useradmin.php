@@ -7,21 +7,19 @@ class Useradmin extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	/// admin page to edit user information
 	function edit()
 	{
-	
+		if (!CheckPermissions('admin')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Administrate User');
-		$this->frame_public->SetContentSimple('login/user');
+		$this->main_frame->SetTitle('Administrate User');
+		$this->main_frame->SetContentSimple('login/user');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 

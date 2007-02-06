@@ -12,9 +12,6 @@ class ModelTest extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-	
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	/**
@@ -22,6 +19,8 @@ class ModelTest extends Controller {
 	 */
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('news_model','news');
 		$this->load->model('article_model','article');
 		$this->load->model('wikicache_model','wiki');
@@ -31,8 +30,8 @@ class ModelTest extends Controller {
 		$id = $this->news->GetLatestId(1,2);
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('Bio');
-		$this->frame_public->SetContentSimple('test/modeltest', $article);
+		$this->main_frame->SetTitle('Bio');
+		$this->main_frame->SetContentSimple('test/modeltest', $article);
 
 		//Testing data add
 //		$this->article->CommitArticle(1,NULL,2,NULL,'Sample Heading','Sample Subheading',
@@ -42,7 +41,7 @@ class ModelTest extends Controller {
 //		$this->wiki->UpdateWikicache();
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>

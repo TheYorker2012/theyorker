@@ -14,8 +14,6 @@ class Organisations
 	/// Default constructor
 	function __construct()
 	{
-		$this->CI = &get_instance();
-		$this->CI->load->library('frame_public');
 	}
 	
 	/// Get organisation types from organisations.

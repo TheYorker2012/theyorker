@@ -8,9 +8,6 @@ class DaveModelTest extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 
 	/**
@@ -18,6 +15,8 @@ class DaveModelTest extends Controller {
 	 */
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('review_model','review');
 
 		//Load data from model
@@ -26,11 +25,11 @@ class DaveModelTest extends Controller {
 		$reviews['league'] = $this->review->GetLeague('splashing_out');
 
 		// Set up the public frame
-		$this->frame_public->SetTitle('Reviews...');
-		$this->frame_public->SetContentSimple('test/davemodeltest',$reviews);
+		$this->main_frame->SetTitle('Reviews...');
+		$this->main_frame->SetContentSimple('test/davemodeltest',$reviews);
 
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 
 	}
 }

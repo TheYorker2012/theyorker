@@ -19,8 +19,6 @@ class Yorkerdirectory extends Controller
 	{
 		parent::Controller();
 
-		// Make use of the public frame
-		$this->load->library('frame_public');
 		$this->load->library('organisations');
 
 		$this->load->model('directory_model');
@@ -36,6 +34,8 @@ class Yorkerdirectory extends Controller
 	 */
 	function index()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_directory_index');
 		
 		$data = array();
@@ -59,10 +59,10 @@ class Yorkerdirectory extends Controller
 		$directory_view = $this->frames->view('directory/directory', $data);
 
 		// Set up the public frame to use the directory view
-		$this->frame_public->SetContent($directory_view);
+		$this->main_frame->SetContent($directory_view);
 
 		// Load the public frame view
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 ?>

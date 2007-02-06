@@ -15,7 +15,7 @@ $CI->load->library('frames');
  * Automatically loads the Frame_navbar library.
  *
  * Load the library from the controller constructor (you'll probably want to
- *	load frame_public as well):
+ *	load main_frame as well):
  * @code
  *	// Load the directory frame
  *	$this->load->library('frame_directory');
@@ -24,7 +24,7 @@ $CI->load->library('frames');
  * You can then refer to it as $this->frame_directory in order to SetContent().
  * The view can then be loaded using Load() (including the content view
  *	specified using SetContent()) or by setting it as content in another frame
- *	such as frame_public and loading that.
+ *	such as main_frame and loading that.
  *
  * Example of usage from a controller function:
  * @code
@@ -41,13 +41,13 @@ $CI->load->library('frames');
  *	$this->frame_directory->SetContent($directory_view);
  *	
  *	// Set up the public frame
- *	$this->frame_public->SetTitle($page_title);
- *	$this->frame_public->SetExtraHead($extra_head);
- *	$this->frame_public->SetContent($this->frame_directory);
+ *	$this->main_frame->SetTitle($page_title);
+ *	$this->main_frame->SetExtraHead($extra_head);
+ *	$this->main_frame->SetContent($this->frame_directory);
  *	
  *	// Load the public frame view (which will load the directory frame which
  *	// will load the contents)
- *	$this->frame_public->Load();
+ *	$this->main_frame->Load();
  * @endcode
  */
 class Frame_directory extends FramesFrame

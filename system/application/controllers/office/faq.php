@@ -7,31 +7,31 @@ class Faq extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
-		$this->load->library('frame_public');
 	}
 	
 	function add()
 	{
+		if (!CheckPermissions('office')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('FAQ Admin');
-		$this->frame_public->SetContentSimple('faq/addfaq');
+		$this->main_frame->SetTitle('FAQ Admin');
+		$this->main_frame->SetContentSimple('faq/addfaq');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 	
 	/// admin page to edit entry in faq
 	function edit()
 	{
-	
+		if (!CheckPermissions('office')) return;
+		
 		// Set up the public frame
-		$this->frame_public->SetTitle('FAQ Admin');
-		$this->frame_public->SetContentSimple('faq/editfaq');
+		$this->main_frame->SetTitle('FAQ Admin');
+		$this->main_frame->SetContentSimple('faq/editfaq');
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 

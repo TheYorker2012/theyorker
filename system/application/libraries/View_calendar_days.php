@@ -25,7 +25,7 @@ $CI->load->library('view_calendar');
  *	how to display the view.
  * The view can then be loaded using Load().
  *
- * Example of usage from a controller function and within a Frame_public:
+ * Example of usage from a controller function and within a main_frame:
  * @code
  *	// Set up the subview
  *	$view_calendar_days = new ViewCalendarDays();
@@ -36,10 +36,10 @@ $CI->load->library('view_calendar');
  *	$view_calendar_days->Retrieve();
  *	
  *	// Set up the public frame
- *	$this->frame_public->SetContent($view_calendar_days);
+ *	$this->main_frame->SetContent($view_calendar_days);
  *	
  *	// Load the public frame view (which will load the content view)
- *	$this->frame_public->Load();
+ *	$this->main_frame->Load();
  * @endcode
  */
 class ViewCalendarDays extends ViewCalendar

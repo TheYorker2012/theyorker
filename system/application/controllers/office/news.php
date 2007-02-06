@@ -115,11 +115,11 @@ class News extends Controller
 		}
 		
 		// Set up the public frame
-		$this->frame_public->SetTitle('News Admin');
-		$this->frame_public->SetContentSimple($admin_view_name, $data);
+		$this->main_frame->SetTitle('News Admin');
+		$this->main_frame->SetContentSimple($admin_view_name, $data);
 		
 		// Load the public frame view (which will load the content view)
-		$this->frame_public->Load();
+		$this->main_frame->Load();
 	}
 }
 

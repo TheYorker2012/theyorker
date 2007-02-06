@@ -28,9 +28,9 @@
 	</form>
 </div>
 
-<a href="/admin/faq/add">Add faq</a><br />
-<a href="/admin/howdoi/add">Add to how do I</a><br />
-<a href="/admin/faq/edit">Edit FAQ entry</a><br />
+<a href="/office/faq/add">Add faq</a><br />
+<a href="/office/howdoi/add">Add to how do I</a><br />
+<a href="/office/faq/edit">Edit FAQ entry</a><br />
 <br />
 <a href="/office/news/request">Make new article request</a><br />
 <a href="/office/news/article">View/Edit Article</a><br />
