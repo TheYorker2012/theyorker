@@ -77,9 +77,10 @@ class Directory_model extends Model {
 	/// Get an organisation's business cards.
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @param $BusinessCardGroupId optional
 	 * @return array[business_card].
 	 */
-	function GetDirectoryOrganisationCardsByEntryName($DirectoryEntryName)
+	function GetDirectoryOrganisationCardsByEntryName($DirectoryEntryName,$BusinessCardGroupId)
 	{
 		$sql =
 			'SELECT'.
@@ -93,22 +94,25 @@ class Directory_model extends Model {
 			' business_cards.business_card_postal_address,'.
 			' business_card_colours.business_card_colour_background,'.
 			' business_card_colours.business_card_colour_foreground,'.
-			' business_card_types.business_card_type_name '.
+			' business_card_groups.business_card_group_name '.
 			'FROM business_cards '.
 			'INNER JOIN business_card_colours '.
 			' ON business_card_colours.business_card_colour_id = business_cards.business_card_business_card_colour_id '.
-			'INNER JOIN business_card_types '.
-			' ON business_card_types.business_card_type_id = business_cards.business_card_business_card_type_id '.
+			'INNER JOIN business_card_groups '.
+			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
 			'INNER JOIN organisations '.
-			' ON organisations.organisation_entity_id = business_card_types.business_card_type_organisation_entity_id '.
+			' ON organisations.organisation_entity_id = business_card_groups.business_card_group_organisation_entity_id '.
 			'INNER JOIN organisation_types '.
 			' ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id '.
 			'WHERE business_cards.business_card_deleted = 0 '.
 			' AND organisations.organisation_directory_entry_name=? '.
+			(isset($BusinessCardGroupId)? 
+				'AND business_card_groups.business_card_group_id = ?' : 
+				'AND business_card_groups.business_card_group_order = 1').
 			' AND organisation_types.organisation_type_directory=1 '.
-			'ORDER BY business_cards.business_card_name';
+			'ORDER BY business_cards.business_card_order';
 	
-		$query = $this->db->query($sql, $DirectoryEntryName);
+		$query = $this->db->query($sql, array($DirectoryEntryName, $BusinessCardGroupId));
 	
 		return $query->result_array();
 	}
