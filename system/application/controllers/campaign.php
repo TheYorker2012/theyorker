@@ -19,8 +19,7 @@ class Campaign extends Controller {
 			$data['campaign_list'] = $this->campaign_model->GetCampaignList();
 			$data['current_campaigns'] = array(
 					'title'=>$this->pages_model->GetPropertyText('section_list_title'),
-					'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'),
-					'deadline_text'=>$this->pages_model->GetPropertyWikitext('section_list_deadline_text'));
+					'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'));
 			$data['vote_campaigns'] = array(
 					'title'=>$this->pages_model->GetPropertyText('section_vote_title'),
 					'text'=>$this->pages_model->GetPropertyWikitext('section_vote_text'));
@@ -155,7 +154,7 @@ class Campaign extends Controller {
 				'campaign'=>$data['campaign_list'][$campaign_id]['name']))
 				);
 			$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data);
-			
+
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
 		}
