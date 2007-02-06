@@ -6,8 +6,8 @@
  *
  */
 
-//TODO - prevent errors if no data present
-//		 convert to use bind
+//TODO - prevent errors if no data present -> DONE?
+//		 comment correctly
 //		 article_breaking?
 //		 optimisation
 
@@ -85,8 +85,16 @@ class News_model extends Model
 		{
 		    $authors = array();
 		    foreach ($query->result() as $row)
-			{
-				$authors[] = $row->article_writer_user_entity_id;
+			{			
+				$sql = 'SELECT business_cards.business_card_name
+					FROM business_cards
+					WHERE (business_cards.business_card_user_entity_id = ?)';
+				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
+				if ($author_query->num_rows() > 0)
+				{
+					$author_row = $author_query->row();
+					$authors[] = $author_row->business_card_name;
+				}
 			}
 			$result['authors'] = $authors;
 		}
@@ -146,8 +154,16 @@ class News_model extends Model
 		{
 		    $authors = array();
 		    foreach ($query->result() as $row)
-			{
-				$authors[] = $row->article_writer_user_entity_id;
+			{			
+				$sql = 'SELECT business_cards.business_card_name
+						FROM business_cards
+						WHERE (business_cards.business_card_user_entity_id = ?)';
+				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
+				if ($author_query->num_rows() > 0)
+				{
+					$author_row = $author_query->row();
+					$authors[] = $author_row->business_card_name;
+				}
 			}
 			$result['authors'] = $authors;
 		}
@@ -175,7 +191,6 @@ class News_model extends Model
 	 */
 	function GetFullArticle($id, $dateformat='%W, %D %M %Y')
 	{
-		$result['id'] = $id;
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id, 
 				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
@@ -205,10 +220,28 @@ class News_model extends Model
 			WHERE (article_writers.article_writer_article_content_id = ?)
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($content_id));
-		$authors = array();
-		foreach ($query->result() as $row)
-		{
-			$authors[] = $row->article_writer_user_entity_id;
+	    $authors = array();
+		
+	    foreach ($query->result() as $row)
+		{			
+			$sql = 'SELECT business_cards.business_card_name
+					FROM business_cards
+					WHERE (business_cards.business_card_user_entity_id = ?)';
+			$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
+			if ($author_query->num_rows() > 0)
+			{
+				$author_row = $author_query->row();
+				$name = $author_row->business_card_name;
+			}
+			$sql = 'SELECT user_has_properties.user_has_properties_photo_id
+					FROM user_has_properties
+					WHERE (user_has_properties.user_has_properties_user_entity_id = ?)';
+			$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
+			if ($author_query->num_rows() > 0)
+			{
+				$author_row = $author_query->row();
+				$authors[] = array('photo'=>$author_row->user_has_properties_photo_id,'name'=>$name);
+			}
 		}
 		$result['authors'] = $authors;
 
@@ -250,15 +283,7 @@ class News_model extends Model
 			$links[] = array('name'=>$row->article_link_name,'url'=>$row->article_link_url);
 		}
 		$result['links'] = $links;
-
-/*		//Must be a more effiecient way of doing this...
-*		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
-*				FROM	related_articles
-*				WHERE	(related_articles.related_article_1_article_id = @id=?
-*				OR		related_articles.related_article_2_article_id = @id)
-*				LIMIT 0,10';
-*		//slightly modified sql
-*/
+	
 		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
 				FROM	related_articles
 				WHERE	(related_article_1_article_id = ?
