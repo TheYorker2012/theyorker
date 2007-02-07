@@ -5,6 +5,7 @@ class Upload extends Controller {
 	function Upload() {
 		parent::Controller();
 		$this->load->helper(array('form', 'url'));
+		if (!CheckPermissions('admin')) return; // block access
 	}
 	
 	function _processImage($data, $form_value, &$ThumbDetails) {
@@ -29,8 +30,7 @@ class Upload extends Controller {
 		$row_values = array ('photo_author_user_entity_id' => '1',
 		                     'photo_title' => $this->input->post('title'.$form_value),
 		                     'photo_width' => $newDetails[0],
-		                     'photo_height' => $newDetails[1],
-		                     'photo_gallery' => $this->input->post('gallery'.$form_value));
+		                     'photo_height' => $newDetails[1]);
 		$this->db->insert('photos', $row_values);
 		$query = $this->db->select('photo_id')->getwhere('photos', $row_values, 1);
 		

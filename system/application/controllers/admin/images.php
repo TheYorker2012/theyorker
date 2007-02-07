@@ -26,11 +26,10 @@ class images extends Controller {
 		}
 		$newDetails = getimagesize($data['full_path']);
 
-		$row_values = array ('photo_author_user_entity_id' => '1',
+		$row_values = array ('photo_author_user_entity_id' => $this->user_auth->entityId,
 		                     'photo_title' => $this->input->post('title'.$form_value),
 		                     'photo_width' => $newDetails[0],
-		                     'photo_height' => $newDetails[1],
-		                     'photo_gallery' => $this->input->post('gallery'.$form_value));
+		                     'photo_height' => $newDetails[1]);
 		$this->db->insert('photos', $row_values);
 		$query = $this->db->select('photo_id')->getwhere('photos', $row_values, 1);
 		
