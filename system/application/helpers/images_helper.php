@@ -22,12 +22,12 @@ define ("IMAGE_HASH", 2000);
  * @param	boolean
  * @return	string
  */	
-function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
+function photoLocation($id, $extension = '.jpg', $force = FALSE) {
 	$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-	if ($repeat || is_file($location)) {
+	if ($force || is_file($location)) {
 		return $location;
 	} else {
-		return photoLocation('1', '.jpg', true);
+		return 'images/photos/null.jpg';
 	}
 }
 
@@ -41,6 +41,9 @@ function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
  * type_codename parameter greatly speeds up the function my removing the 
  * need to query the database.
  *
+ * If a type is not specified, then it will assume that it exists in the
+ * database and fetch a type.
+ *
  * @access	public
  * @param	integer
  * @param	integer
@@ -49,14 +52,14 @@ function photoLocation($id, $extension = '.jpg', $repeat = FALSE) {
  * @return	string
  */	
 
-function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE) {
+function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) {
 	if (is_null($extension)) $extension = '.jpg';
 	if ($type) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-		if ($repeat || is_file($location)) {
+		if ($force || is_file($location)) {
 			return $location;
 		} else {
-			return imageLocation('1', false, '.jpg', true);
+			return 'images/photos/null.jpg';
 		}
 	} else {
 		$CI =& get_instance();
@@ -68,13 +71,13 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
 		$query->free_result();
 		if ($fetched_type) {
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-			if ($repeat || is_file($location)) {
+			if ($force || is_file($location)) {
 				return $location;
 			} else {
 				return ''; //run the risk of recursion if this is set
 			}
 		} else {
-			return imageLocation('1', false, '.jpg', true);
+			return 'images/photos/null.jpg';
 		}
 	}
 }
@@ -85,7 +88,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $repeat = FALSE)
  * Location Constructor
  *
  * When Given an ID, this will create the location of an Image or photo 
- * if required.
+ * if no type is specified.
  *
  * @access	public
  * @param	integer

@@ -41,6 +41,8 @@ class image extends Controller {
 		createImageLocation($oneRow->photo_id);
 		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
+		$_SESSION['img_list'][] = $oneRow->photo_id;
+		
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
 			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
@@ -88,6 +90,8 @@ class image extends Controller {
 
 	function upload() {
 		if (!CheckPermissions('admin')) return;
+		
+		$_SESSION['img_list'] = array();
 		
 		$this->main_frame->SetTitle('Admins\'s Photo Uploader');
 		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
