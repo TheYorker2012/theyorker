@@ -1,5 +1,9 @@
 <?php
 
+define('PHOTOS_PERPAGE', 18);
+define('PHOTOS_PERROW', 3);
+define('VIEW_WIDTH', 650)
+
 class images extends Controller {
 
 	function images() {
@@ -12,7 +16,7 @@ class images extends Controller {
 		$config['source_image'] = $data['full_path'];
 		$config['quality'] = 85;
 		$config['master_dim'] = 'width';
-		$config['width'] = 650;
+		$config['width'] = VIEW_WIDTH;
 		$config['height'] = 1000;
 		
 		$output = array();
@@ -47,6 +51,39 @@ class images extends Controller {
 	}
 
 	function index() {
+		if (!CheckPermissions('admin')) return;
+		$this->load->library('pagination');
+		$this->load->helper('images');
+		
+		$config['base_url'] = site_url('admin/images/');
+		
+		$data = array();
+		
+		$allPhotos = $this->db->getwhere('photos', array('photo_deleted' => 0));
+		$totalPhotos = $allPhotos->num_rows();
+		
+		$image_type = $this->db->get('image_type', 1)->where('image_type_width <=', VIEW_WIDTH/3)->orderby('image_type_width', 'desc');
+		$data['imageType'] = &$image_type->row();
+		
+		if ($totalPhotos > PHOTOS_PERPAGE) {
+			$data['shownPhotos'] = $this->db->getwhere('photos', array('photo_deleted' => 0), PHOTOS_PERPAGE, $this->uri->segment(3, 0) * PHOTOS_PERPAGE);
+			
+			$config['total_rows'] = $totalPhotos;
+			$config['per_page'] = PHOTOS_PERPAGE;
+			$this->pagination->initialize($config);
+			
+			$data['pages'] = $this->pagination->create_links();
+		} else {
+			$data['shownPhotos'] = &$totalPhotos;
+			$data['pages'] = '';
+		}
+		
+		$this->main_frame->SetTitle('Admins\'s Photo Management System');
+		$this->main_frame->SetContentSimple('admin/images_index', $data);
+		$this->main_frame->Load();
+	}
+
+	function upload() {
 		if (!CheckPermissions('admin')) return;
 		
 		$this->main_frame->SetTitle('Admins\'s Photo Uploader');
@@ -84,7 +121,7 @@ class images extends Controller {
 				$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
 			}
 		}
-		$this->main_frame->SetTitle('Photo Cropper');
+		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
