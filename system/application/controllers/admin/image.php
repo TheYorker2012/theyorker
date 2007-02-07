@@ -59,11 +59,11 @@ class image extends Controller {
 		
 		$data = array();
 		
-		$allPhotos = $this->db->getwhere('photos', array('photo_deleted' => '0'));
-		$totalPhotos = $allPhotos->num_rows();
-		
 		$image_type = $this->db->where('image_type_width <=', VIEW_WIDTH/3)->orderby('image_type_width', 'desc')->get('image_types', 1);
 		$data['imageType'] = $image_type->row();
+		
+		$allPhotos = $this->db->getwhere('photos', array('photo_deleted' => '0'));
+		$totalPhotos = $allPhotos->num_rows();
 		
 		if ($totalPhotos > PHOTOS_PERPAGE) {
 			$data['shownPhotos'] = $this->db->getwhere('photos', array('photo_deleted' => 0), PHOTOS_PERPAGE, $this->uri->segment(3, 0) * PHOTOS_PERPAGE);
