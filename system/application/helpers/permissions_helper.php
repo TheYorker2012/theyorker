@@ -11,18 +11,18 @@ function login_handler($Data, $Permission)
 {
 	$CI = &get_instance();
 	$CI->load->library('messages');
-	
+
 	$data = array(
 		'target' => $CI->uri->uri_string(),
 	);
-	
+
 	$login_id = '';
 	if ($Data[0] === 'office') {
 		$page_code = 'login_office';
 		$login_id = 'office';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_office', TRUE);
 		$data['no_keep_login'] = TRUE;
-		
+
 	} elseif ($Data[0] === 'vip') {
 		$page_code = 'login_vip';
 		$login_id = 'vip';
@@ -32,7 +32,7 @@ function login_handler($Data, $Permission)
 		foreach ($logins as $login) {
 			$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
 		}
-		
+
 	} else {
 		$page_code = 'login_public';
 		$login_id = 'student';
@@ -69,13 +69,13 @@ function login_handler($Data, $Permission)
 				$CI->user_auth->login($username, $password, false);
 			}
 			$successfully_logged_in = TRUE;
-			
+
 			$CI->messages->AddMessage('success',$success_msg);
-			
+
 			foreach ($_POST as $key => $value) {
 				unset($_POST[$key]);
 			}
-			
+
 			// Store post data
 			if (array_key_exists('posts',$_SESSION)) {
 				if (array_key_exists($CI->uri->uri_string(),$_SESSION['posts'])) {
@@ -92,7 +92,7 @@ function login_handler($Data, $Permission)
 		}
 	} else {
 		$data['initial_username'] = '';
-		
+
 		// Store post data
 		if (!empty($_POST)) {
 			if (!array_key_exists('posts',$_SESSION)) {
@@ -101,27 +101,27 @@ function login_handler($Data, $Permission)
 			$_SESSION['posts'][$CI->uri->uri_string()] = $_POST;
 		}
 	}
-	
+
 	// Get various page properties used for displaying the login screen
 	$CI->pages_model->SetPageCode($page_code);
-	
+
 	$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
 	if (FALSE !== $permission_message) {
 		$CI->messages->AddMessage(new Message($permission_message), FALSE);
 	}
-	
+
 	// Title of login section of page
 	$section_title = $CI->pages_model->GetPropertyText('section_title');
 	if (!empty($section_title)) {
 		$data['title'] = $section_title;
 	}
-	
+
 	// Main login message
 	$login_message = $CI->pages_model->GetPropertyText('login_message');
 	if (!empty($login_message)) {
 		$data['login_message'] = $login_message;
 	}
-	
+
 	// Items in the right bar
 	$data['rightbar'] = $CI->pages_model->GetPropertyArray('rightbar', array(
 		// First index is [int]
@@ -134,11 +134,11 @@ function login_handler($Data, $Permission)
 			),
 		),
 	));
-	
+
 	SetupMainFrame(GetUserLevel(), FALSE);
-	
+
 	$CI->main_frame->SetContentSimple('login/login', $data);
-	
+
 	return $successfully_logged_in;
 }
 
@@ -147,7 +147,7 @@ function GetUserLevel()
 {
 	$CI = &get_instance();
 	$CI->load->library('user_auth');
-	
+
 	$user_level = 'public';
 	if ($CI->user_auth->isLoggedIn) {
 		$user_level = 'student';
@@ -195,9 +195,11 @@ function HtmlButtonLink($Link, $Caption)
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 {
 	$CI = &get_instance();
-	
+
 	$CI->load->model('pages_model');
-	
+
+	$CI->load->library('messages');
+
 	$student_login_action = array(
 			'handle','login_handler',
 			array('public')
@@ -210,8 +212,8 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 			'handle','login_handler',
 			array('office')
 		);
-	
-	
+
+
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
 	//	<not set>	http error 404
@@ -300,13 +302,13 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 				);
 		}
 	}
-	
+
 	$access_allowed = FALSE;
-	
+
 	if (!array_key_exists($Permission, $action_levels)) {
 		return show_404();
 	} else {
-		
+
 		$action = $action_levels[$Permission];
 		if (TRUE === $action) {
 			$access_allowed = TRUE;
@@ -318,19 +320,19 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 						$CI->messages->AddMessage($action[3], $action[4], FALSE);
 					}
 					break;
-					
+
 				case 'redirect':
 					if (array_key_exists(2,$action)) {
 						$CI->messages->AddMessage($action[2], $action[3]);
 					}
 					redirect($action[1]);
 					break;
-					
+
 				case 'message':
 					$CI->messages->AddMessage($action[1], $action[2], FALSE);
 					$access_allowed = $action[3];
 					break;
-					
+
 				default:
 					break;
 			}
@@ -340,13 +342,13 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 			//redirect('');
 		}
 	}
-	
+
 	SetupMainFrame($Permission, FALSE);
-	
+
 	if (!$access_allowed && $LoadMainFrame) {
 		$CI->main_frame->Load();
 	}
-	
+
 	return $access_allowed;
 }
 
