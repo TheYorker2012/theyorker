@@ -205,8 +205,9 @@ div.warning_box {
 	color: #ddd;
 	font-size: small;
 	margin-bottom: 5px;
-	background-color: #b44b00;
+	background-color: #ff6a00;
 	min-height: 30px;
+	font-weight: bold;
 }
 
 div.warning_box a {
