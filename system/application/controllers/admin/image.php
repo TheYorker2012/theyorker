@@ -78,11 +78,11 @@ class image extends Controller {
 			$data['pages'] = '';
 		} else {
 			$data['pages'] = '';
-			$data['shownPhotos'] = &$this->db->getwhere('photos', array('photo_deleted' => 0));
+			$data['shownPhotos'] = $this->db->getwhere('photos', array('photo_deleted' => 0));
 		}
 		
 		$this->main_frame->SetTitle('Admins\'s Photo Management System');
-		$this->main_frame->SetContentSimple('admin/images_index', $data);
+		$this->main_frame->SetContentSimple('admin/images_index', &$data);
 		$this->main_frame->Load();
 	}
 
