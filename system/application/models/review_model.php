@@ -84,6 +84,7 @@ class Review_model extends Model {
 				organisations.organisation_directory_entry_name,
 				league_entries.league_entry_position,
 				leagues.league_name,
+				leagues.league_image_id,
 				content_types.content_type_name,
 				content_types.content_type_codename,
 				comment_summary_cache.comment_summary_cache_average_rating

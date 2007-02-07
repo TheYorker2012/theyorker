@@ -14,6 +14,7 @@ class Reviews extends Controller {
 		//And possible forms later on for the admin pages
 		$this->load->helper('form');
 		$this->load->helper('url');
+		$this->load->helper('images');
 
 		//Load page model
 		$this->load->model('pages_model');
@@ -143,6 +144,12 @@ class Reviews extends Controller {
 
 		//Pass tabledata staight to view it is in the proper format
 		$data['table_data'] = $tabledata;
+
+		//Get league data
+		$league_data = $this->Review_model->GetLeagueDetails('drink');
+
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $league_data;
 		
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/drink',$data);
@@ -199,6 +206,12 @@ class Reviews extends Controller {
 
 		//Pass tabledata staight to view it is in the proper format
 		$data['table_data'] = $tabledata;
+
+		//Get league data
+		$league_data = $this->Review_model->GetLeagueDetails('culture');
+
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $league_data;
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/culture',$data);
@@ -399,8 +412,10 @@ class Reviews extends Controller {
 		//Incase of null result
 		if ($database_result[0]['tag_groups'] == 'empty')
 		{
-			redirect('/reviews/food'); //Send them back - Quick Hack... Should be fixed with a error page of some kind.
+			$data['entries'] = array();
 		}
+		else
+		{ //Normal Case
 
 		//A list of all tags
 		$data['review_tags'] = $database_result[0]['tag_groups'];
@@ -429,9 +444,9 @@ class Reviews extends Controller {
 				{
 					$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
 				}
-				else //Else pass a empty array
+				else //Else pass a empty array - Changed a array containing 'n/a'
 				{
-					$tagbox[$data['review_tags'][$tagno]] = array();
+					$tagbox[$data['review_tags'][$tagno]] = array('n/a');
 				}
 			}
 
@@ -439,6 +454,8 @@ class Reviews extends Controller {
 		}
 
 		$data['entries'] = $entries;
+
+		}
 
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();
@@ -457,22 +474,31 @@ class Reviews extends Controller {
 		//Get leagues from model
 		$leagues = $this->Review_model->GetLeague($this->uri->segment(3));
 
-		//Set name of league
-		$data['league_name'] = $leagues[0]['league_name']; //They should all be from the same league
-
-		//Place remaining data into a array for the view
-		for ($row = 0; $row < count($leagues); $row++)
+		//Check for if zero
+		if (isset($leagues[0]['league_name']) == 1)
 		{
-			$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
-			$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
-			$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
-			$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; //This will need the use of a function which returns what a organisition has being reviews on
-			$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
-			$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
-		}
-
+			//Set name of league
+			$data['league_name'] = $leagues[0]['league_name']; //They should all be from the same league
+			//Place remaining data into a array for the view
+			for ($row = 0; $row < count($leagues); $row++)
+			{
+				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
+				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
+				$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
+				$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; //This will need the use of a function which returns what a organisition has being reviews on
+				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
+				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
+			}
+		
 		//Pass over the amount of entries to view
 		$data['max_entries'] = $row;
+
+		//Get league data
+		$league_data = $this->Review_model->GetLeagueDetails('food');
+
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $league_data;
+
 
 //Dummy data
 		$reviews['review_image'] = array(
@@ -488,6 +514,12 @@ class Reviews extends Controller {
 			'/images/prototype/news/thumb9.jpg');
 
 			$data['reviews'] = $reviews;
+		}
+		else
+		{	//No rows returned
+		$data['max_entries'] = 0;
+		}
+
 
 		$this->main_frame->SetContentSimple('reviews/leagues',$data);
 		$this->main_frame->Load();

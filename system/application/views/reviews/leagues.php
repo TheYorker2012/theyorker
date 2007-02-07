@@ -1,45 +1,39 @@
 <div class='RightToolbar'>
 	<h4>Other Leagues</h4>
 	<div class='Entry'>
-		<div class='LifestylePuffer' style='background-color: #04669c;'>
-			<a href='/reviews/leagues'>
-			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
-			<h3>Awesome Food</h3>
-			<p>This guy is happy becuase he has visited our top ten foods places</p>
-			</a>
+<?php
+//Display leagues
+
+if (isset($league_data) == 1)
+{
+	foreach ($league_data as $league_entry)
+	{
+		if ($league_entry['league_image_id'] != 0) //Don't display if no image otherwise alt text floods out
+		{
+		echo
+		"
+		<div class='LifestylePuffer'>
+		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
+		<img src='/images/images/".$league_entry['league_image_id'].".gif' alt='".$league_entry['league_name']."' />
+		</a>
 		</div>
-			<div class='LifestylePuffer' style='background-color: #a38b69;'>
-			<a href='/reviews/leagues'>
-			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
-			<h3>Desert</h3>
-			<p>We've been all around York trying chocolate cakes...</p>
-			</a>
-		</div>
-		<div class='LifestylePuffer' style='background-color: #000000;'>
-			<a href='/reviews/leagues'>
-			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-			<h3>Lbs of Meat!</h3>
-			<p>Want an all you can eat? Be sure to head on over to our ten best all you can eats.</p>
-			</a>
-		</div>
-		<div class='LifestylePuffer' style='background-color: #000000;'>
-			<a href='/reviews/leagues'>
-			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-			<h3>Beefcake</h3>
-			<p>I tried this once and became a lard. Lots and lots of lard</p>
-			</a>
-		</div>
+		";
+		}
+	}
+}
+?>
+
 	</div>
 </div
 
 <div class='grey_box'>
-	<h2 style="display: inline;"><?php echo $league_name; ?></h2><br />
-	We ve been all around York and found the top ten places for a nice romantic meal. Check it!<br />
+	<h2 style="display: inline;"><?php if (isset($league_name) == 1) echo $league_name; ?></h2><br />
+	Read our latest reviews from all around york! <br />
 	</div>
 <?php
 		for($topten=0; ($topten<10) && ($topten < $max_entries); $topten++) {
-			echo '	<div class="blue_box" >';
-			echo '		<h3 style="display: inline;"><a style="color: #20c1f0;" href="'.$reviews['review_link'][$topten].'">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
+			echo '<div class="blue_box" >';
+			echo '<h3 style="display: inline;"><a style="color: #20c1f0;" href="'.$reviews['review_link'][$topten].'">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<div class="ReviewElementNumber" style="text-align: right; font-size: x-small; color: #f26a22;">
 ';
 			//Star display

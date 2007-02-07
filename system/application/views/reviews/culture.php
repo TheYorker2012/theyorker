@@ -1,41 +1,30 @@
 <div class='RightToolbar'>
 	<h4>Leagues</h4>
 	<div class='Entry'>
-		<div class='LifestylePuffer' style='background-color: #04669c;'>
-			<a href='/reviews/leagues/big_group_eats'>
-			<img src='/images/prototype/news/puffer1.jpg' alt='Ashes' title='Ashes' />
-			<h3>Awesome Food</h3>
-			<p>This guy is happy becuase he has visited our top ten foods places</p>
-			</a>
+	<?php
+//Display leagues - Not implemented correctly since all of these should be pictures
+//And nothing to do with div classes
+//Placed freeze on this temp
+
+if (isset($league_data) == 1)
+{
+	foreach ($league_data as $league_entry)
+	{
+		if ($league_entry['league_image_id'] != 0) //Don't display if no image otherwise alt text floods out
+		{
+		echo
+		"
+		<div class='LifestylePuffer'>
+		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
+		<img src='/images/images/".$league_entry['league_image_id'].".gif' alt='".$league_entry['league_name']."' />
+		</a>
 		</div>
-			<div class='LifestylePuffer' style='background-color: #a38b69;'>
-			<a href='/reviews/leagues/splashing_out'>
-			<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
-			<h3>Desert</h3>
-			<p>We've been all around York trying chocolate cakes...</p>
-			</a>
-		</div>
-		<div class='LifestylePuffer' style='background-color: #000000;'>
-			<a href='/reviews/leagues/splashing_out'>
-			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-			<h3>Lbs of Meat!</h3>
-			<p>Want an all you can eat? Be sure to head on over to our ten best all you can eats.</p>
-			</a>
-		</div>
-		<div class='LifestylePuffer' style='background-color: #ef7f94;'>
-			<a href='/reviews/leagues/big_group_eats'>
-			<img src='/images/prototype/news/puffer4.jpg' alt='Love' title='Love' />
-			<h3>Romance</h3>
-			<p>Want some more romance in your life? Eat some lard!</p>
-			</a>
-		</div>
-		<div class='LifestylePuffer' style='background-color: #000000;'>
-			<a href='/reviews/leagues/splashing_out'>
-			<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-			<h3>Beefcake</h3>
-			<p>I tried this once and became a lard. Lots and lots of lard</p>
-			</a>
-		</div>
+		";
+		}
+	}
+}
+?>
+
 	</div>
 	<h4>College Leagues</h4>
 	<div class='Entry'>
@@ -67,24 +56,42 @@
 //Hence a for loop is probaility not worth it...
 
 echo '<div class="half_right"><h3 style="display: inline;">';
+
+//Check that it exists before trying to display
+if (isset($table_data[$table_data['tag_group_names'][1]]) == 1)
+{
+	echo $table_data['tag_group_names'][1];
+	echo '</h3><br />';
+
+	foreach($table_data[$table_data['tag_group_names'][1]] as $tag)
+	{
+		echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
+	}
+
+}
+
+//All types
+echo anchor('reviews/table/food/name','All types');
+
+echo'</div>';
+
+echo '<div class="half_left"><h3 style="display: inline;">';
+
+//Check that it exists before trying to display
+if (isset($table_data[$table_data['tag_group_names'][0]]) == 1)
+{
+
 echo $table_data['tag_group_names'][0];
 echo '</h3><br />';
 
 foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
 {
-	echo anchor('reviews/table/culture/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+	echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+}
 }
 
-echo'</div>';
-
-echo '<div class="half_left"><h3 style="display: inline;">';
-echo $table_data['tag_group_names'][1];
-echo '</h3><br />';
-
-foreach($table_data[$table_data['tag_group_names'][1]] as $tag)
-{
-	echo anchor('reviews/table/culture/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
-}
+//All types
+echo anchor('reviews/table/culture/name','All types');
 
 echo'</div>';
 

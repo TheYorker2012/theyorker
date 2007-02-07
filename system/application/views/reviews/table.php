@@ -12,10 +12,13 @@
 
 <?php
 //Tag names at top of table
+if (isset($review_tags))
+{
 	foreach ($review_tags as &$tag)
 		{
 			echo '<td><a href="/reviews/table/food/any">'.$tag.'</a></td>';
 		}
+}
 ?>
 
 		</tr>
