@@ -9,12 +9,13 @@ class Policy extends Controller
 		
 		// Load the public frame
 		$this->load->helpers('images');
-		$this->pages_model->SetPageCode('our_policy');
 	}
 
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
+		
+		$this->pages_model->SetPageCode('our_policy');
 		
 		$statement_of_policy_image = $this->pages_model->GetPropertyText('statement_of_policy');
 		$privacy_policy_image = $this->pages_model->GetPropertyText('privacy_policy');
