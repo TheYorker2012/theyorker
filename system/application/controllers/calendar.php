@@ -26,7 +26,13 @@ class Calendar extends Controller {
 	 */
 	function index()
 	{
-		$this->week();
+		// If the request is after confirmation of the completion of an action
+		// (e.g. hide event on personal calendar) use ajaxCalUpdate
+		// otherwise let the default calendar code run
+		if ($this->uri->segment(2) == 'ajaxCalUpdate')
+			$this->ajaxCalUpdate();
+		else
+			$this->week();
 	}
 	
 	/**
@@ -87,10 +93,12 @@ class Calendar extends Controller {
 		// Sorry about the clutter, this will be moved in a bit but it isn't
 		// practical to put it in the view
 		$extra_head = <<<EXTRAHEAD
+		
 			<script src="/javascript/prototype.js" type="text/javascript"></script>
 			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
 			<script src="/javascript/calendar.js" type="text/javascript"></script>
 			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+			
 EXTRAHEAD;
 		
 		// Set up the days view
@@ -109,6 +117,30 @@ EXTRAHEAD;
 		$this->main_frame->Load();
 	}
 	
+	/**
+	 * @brief Save any change made at UI to DB and report success or failure
+	 */
+	function ajaxCalUpdate () {
+		// this is the value that should be passed with each event to allow
+		// it to be uniquely identified back at your end here.
+		$refid == $this->uri->segment(3);
+		
+		// The operation that is being carried out
+		// Will be HIDE or SHOW at the moment
+		// "Phase 2" might see this include operations like SUBSCRIBE etc.
+		// however response will be XML, and this doesn't need doing in that
+		// way for basic functioning.
+		$op == $this->uri->segment(4);
+		
+		/*
+		Code to save the data from the script based on the above to variables
+		and echo OK|message or FAIL|message depending on the outcome
+		examples:
+			OK|Event $title hidden from your calendar
+			FAIL|You are not logged in
+		*/
+		
+	}
 	
 }
 ?>
