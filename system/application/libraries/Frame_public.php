@@ -54,7 +54,6 @@ class Frame_public extends FrameNavbar
 	{
 		parent::__construct('frames/public_frame.php');
 		
-		$this->mDataArray['messages'] = array();
 		$this->mDataArray['description'] = '';
 		$this->mDataArray['keywords'] = '';
 		$this->mTitleSet = FALSE;
@@ -69,17 +68,6 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
 		$this->mDataArray['uri'] = $CI->uri->uri_string();
-		
-		// Assume session has already been started by user_auth
-		//session_start();
-		if (array_key_exists('messages',$_SESSION)) {
-			foreach ($_SESSION['messages'] as $message) {
-				$message = new Message($message);
-				$this->mDataArray['messages'][] = $message;
-			}
-		}
-		// The messages in the session are cleared at load time.
-		
 	}
 	
 	/**
@@ -146,26 +134,8 @@ class Frame_public extends FrameNavbar
 	 */
 	function AddMessage($Type, $Message = '', $Persistent = TRUE)
 	{
-		if (is_string($Type)) {
-			$message = new Message($Type,$Message);
-		} else {
-			$message = $Type;
-		}
-		$this->mDataArray['messages'][] = $message;
-		
-		if ($Persistent) {
-			// Also store in session
-			if (!array_key_exists('messages',$_SESSION)) {
-				$_SESSION['messages'] = array();
-			}
-			$_SESSION['messages'][] = $message->ToArray();
-		}
-	}
-	
-	/// Get the number of messages.
-	function NumMessages()
-	{
-		return count($this->mDataArray['messages']);
+		$CI = &get_instance();
+		$CI->messages->AddMessage($Type, $Message, $Persistent);
 	}
 	
 	/// Load the frame.
@@ -179,12 +149,11 @@ class Frame_public extends FrameNavbar
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());
 		}
-		parent::Load();
 		
-		// Rendered, so clear undisplayed messages
-		if (array_key_exists('messages',$_SESSION)) {
-			unset($_SESSION['messages']);
-		}
+		$this->mDataArray['messages'] = $CI->messages->GetMessages();
+		parent::Load();
+		unset($this->mDataArray['messages']);
+		$CI->messages->ClearQueue();
 	}
 }
 
