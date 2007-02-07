@@ -26,13 +26,7 @@ class Calendar extends Controller {
 	 */
 	function index()
 	{
-		// If the request is after confirmation of the completion of an action
-		// (e.g. hide event on personal calendar) use ajaxCalUpdate
-		// otherwise let the default calendar code run
-		if ($this->uri->segment(2) == 'ajaxCalUpdate')
-			$this->ajaxCalUpdate();
-		else
-			$this->week();
+		$this->week();
 	}
 	
 	/**

@@ -7,7 +7,7 @@
 								style="text-decoration: none; color: #ffffff;">X</a>
 							</div>
 							
-    						<div class="calviewMenuButton" id="ev_mb_%%refid%%" onclick="eventMenu">
+    						<div class="calviewMenuButton" id="ev_mb_%%refid%%" onclick="eventMenu()">
 								<a href="#" onclick="return false"
 								style="text-decoration: none; color: #ffffff;">&gt;</a>
 							</div>
