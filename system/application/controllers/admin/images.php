@@ -74,7 +74,7 @@ class images extends Controller {
 			
 			$data['pages'] = $this->pagination->create_links();
 		} else {
-			$data['shownPhotos'] = &$totalPhotos;
+			$data['shownPhotos'] = &$allPhotos;
 			$data['pages'] = '';
 		}
 		
