@@ -66,7 +66,7 @@ class images extends Controller {
 		$data['imageType'] = &$image_type->row();
 		
 		if ($totalPhotos > PHOTOS_PERPAGE) {
-			$data['shownPhotos'] = $this->db->getwhere('photos', array('photo_deleted' => 0), PHOTOS_PERPAGE, $this->uri->segment(3, 0) * PHOTOS_PERPAGE);
+			$data['shownPhotos'] = &$this->db->getwhere('photos', array('photo_deleted' => 0), PHOTOS_PERPAGE, $this->uri->segment(3, 0) * PHOTOS_PERPAGE);
 			
 			$config['total_rows'] = $totalPhotos;
 			$config['per_page'] = PHOTOS_PERPAGE;
