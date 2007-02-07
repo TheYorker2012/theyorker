@@ -2,7 +2,7 @@
 
 define('PHOTOS_PERPAGE', 18);
 define('PHOTOS_PERROW', 3);
-define('VIEW_WIDTH', 650)
+define('VIEW_WIDTH', 650);
 
 class images extends Controller {
 
