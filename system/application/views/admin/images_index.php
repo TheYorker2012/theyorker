@@ -3,6 +3,7 @@ TODO Gallery system to view and edit photos and associated images
 <p>
 <?php
 $column = 0;
+echo var_dump($shownPhotos);
 if ($shownPhotos) foreach($shownPhotos->result() as $photo) {
 	if ($column = PHOTOS_PERROW) {
 		$column = 0;
