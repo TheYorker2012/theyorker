@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes" ?>
 <DBMODEL Version="4.0">
 <SETTINGS>
-<GLOBALSETTINGS ModelName="theyorker" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="80.00" XPos="877" YPos="456" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="\\http://hercules.cs.york.ac.uk:631\pp02s" HPageCount="1.978743961352657" PageAspectRatio="1.42647490460816" PageOrientation="0" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="1" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="1" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Tahoma" CanvasWidth="4096" CanvasHeight="2842" />
+<GLOBALSETTINGS ModelName="theyorker" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="80.00" XPos="1363" YPos="251" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="\\http://hercules.cs.york.ac.uk:631\pp02s" HPageCount="1.978743961352657" PageAspectRatio="1.42647490460816" PageOrientation="0" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="1" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="1" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Tahoma" CanvasWidth="4096" CanvasHeight="2842" />
 <DATATYPEGROUPS>
 <DATATYPEGROUP Name="Numeric Types" Icon="1" />
 <DATATYPEGROUP Name="Date and Time Types" Icon="2" />
@@ -296,7 +296,6 @@
 <RELATION_START ID="1019" />
 <RELATION_START ID="1055" />
 <RELATION_START ID="1106" />
-<RELATION_START ID="3936" />
 <RELATION_START ID="4424" />
 <RELATION_START ID="4924" />
 </RELATIONS_START>
@@ -558,18 +557,30 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="3791" ColName="user_permission" PrevColName="" Pos="10" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="6428" ColName="user_office_interface_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="The primary office interface that will be used.">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="3793" ColName="user_office_password" PrevColName="user_password_2" Pos="11" idDatatype="19" DatatypeParams="(32)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="0" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="3793" ColName="user_office_password" PrevColName="user_password_2" Pos="11" idDatatype="19" DatatypeParams="(32)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="0" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="Second level password for the office (high level access only).">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
+<COLUMN ID="3791" ColName="user_office_access" PrevColName="user_permission" Pos="10" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="Whether the user has access to the office (at any level).">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6423" ColName="user_admin" PrevColName="" Pos="13" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="User is a root admin.">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
 <COLUMN ID="3015" ColName="user_timestamp" PrevColName="" Pos="10" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6434" ColName="user_time_format" PrevColName="" Pos="15" idDatatype="31" DatatypeParams="(\a12\a, \a24\a)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -598,6 +609,7 @@
 <RELATION_END ID="1055" />
 <RELATION_END ID="1899" />
 <RELATION_END ID="3909" />
+<RELATION_END ID="6424" />
 </RELATIONS_END>
 <INDICES>
 <INDEX ID="5258" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
@@ -618,6 +630,11 @@
 <INDEX ID="5640" IndexName="users_FKIndex3" IndexKind="1" FKRefDef_Obj_id="1899">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="5667" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6426" IndexName="users_FKIndex4" IndexKind="1" FKRefDef_Obj_id="6424">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6428" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>
@@ -652,7 +669,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2086" ColName="subscription_admin" PrevColName="" Pos="5" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2086" ColName="subscription_vip" PrevColName="subscription_admin" Pos="5" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -838,7 +855,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="3808" ColName="event_deleted" PrevColName="" Pos="6" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="0" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="3808" ColName="event_deleted" PrevColName="" Pos="6" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
@@ -893,6 +910,14 @@
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6391" ColName="event_entity_relationship" PrevColName="" Pos="2" idDatatype="31" DatatypeParams="(\aown\a,\asubscribe\a)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="subscribe" Comments="">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6392" ColName="event_entity_confirmed" PrevColName="" Pos="3" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
@@ -1038,46 +1063,6 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1167" Tablename="anniversaries" PrevTableName="Table_13" XPos="2921" YPos="1386" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="User defined yearly events." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="16" >
-<COLUMNS>
-<COLUMN ID="1821" ColName="anniversary_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="1" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3940" ColName="anniversary_entity_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1828" ColName="anniversary_name" PrevColName="" Pos="2" idDatatype="20" DatatypeParams="(255)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1829" ColName="anniversary_start_date" PrevColName="anniversary_date" Pos="3" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="Attributes: ON UPDATE CURRENT_TIMESTAMP">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-</COLUMNS>
-<RELATIONS_END>
-<RELATION_END ID="3936" />
-</RELATIONS_END>
-<INDICES>
-<INDEX ID="3233" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1821" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3938" IndexName="anniversaries_FKIndex1" IndexKind="1" FKRefDef_Obj_id="3936">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="3940" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-</INDICES>
-</TABLE>
 <TABLE ID="1187" Tablename="articles" PrevTableName="Table_12" XPos="1316" YPos="1086" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="Stores the information about the articles on the site and the current live version of the article (not the article itself)." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="17" >
 <COLUMNS>
 <COLUMN ID="1189" ColName="article_id" PrevColName="Article_ID" Pos="0" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="1" IsForeignKey="0" DefaultValue="" Comments="">
@@ -1165,6 +1150,7 @@
 <RELATION_START ID="4921" />
 <RELATION_START ID="6337" />
 <RELATION_START ID="6356" />
+<RELATION_START ID="6406" />
 </RELATIONS_START>
 <RELATIONS_END>
 <RELATION_END ID="1230" />
@@ -2134,8 +2120,8 @@
 </COLUMN>
 </COLUMNS>
 <RELATIONS_START>
-<RELATION_START ID="1610" />
 <RELATION_START ID="5528" />
+<RELATION_START ID="6400" />
 </RELATIONS_START>
 <RELATIONS_END>
 <RELATION_END ID="1615" />
@@ -2149,71 +2135,6 @@
 <INDEX ID="1617" IndexName="campaigns_FKIndex1" IndexKind="1" FKRefDef_Obj_id="1615">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="1602" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-</INDICES>
-</TABLE>
-<TABLE ID="1603" Tablename="progress_reports" PrevTableName="Table_33" XPos="1640" YPos="15" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="Contains updates on how parts of a campaign are going." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="161" >
-<COLUMNS>
-<COLUMN ID="1605" ColName="progress_report_id" PrevColName="" Pos="0" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="1" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="4630" ColName="progress_report_charity_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1609" ColName="progress_report_campaign_id" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1607" ColName="progress_report_text" PrevColName="" Pos="1" idDatatype="28" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3009" ColName="progress_report_ordering" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="1" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3010" ColName="progress_report_deleted" PrevColName="" Pos="4" idDatatype="22" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3011" ColName="progress_report_timestamp" PrevColName="" Pos="5" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="Attributes: ON UPDATE CURRENT_TIMESTAMP">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="5540" ColName="progress_report_good_bad" PrevColName="" Pos="7" idDatatype="31" DatatypeParams="(\agood\a, \abad\a)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-</COLUMNS>
-<RELATIONS_END>
-<RELATION_END ID="1610" />
-<RELATION_END ID="4627" />
-</RELATIONS_END>
-<INDICES>
-<INDEX ID="1606" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1605" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="1612" IndexName="progress_reports_FKIndex1" IndexKind="1" FKRefDef_Obj_id="1610">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1609" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="4629" IndexName="progress_reports_FKIndex2" IndexKind="1" FKRefDef_Obj_id="4627">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="4630" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>
@@ -2838,10 +2759,6 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="3018" ColName="review_context_timestamp" PrevColName="review_type_organisation_timestamp" Pos="12" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="Attributes: ON UPDATE CURRENT_TIMESTAMP">
-<OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
 </COLUMNS>
 <RELATIONS_START>
 <RELATION_START ID="4372" />
@@ -3045,7 +2962,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="2468" Tablename="user_article_types" PrevTableName="Table_64" XPos="1590" YPos="780" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="The types of articles a user can write (eg. Reviews, Features, News etc)." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="219" >
+<TABLE ID="2468" Tablename="user_article_types" PrevTableName="Table_64" XPos="1600" YPos="778" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="The types of articles a user can write (eg. Reviews, Features, News etc)." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="219" >
 <COLUMNS>
 <COLUMN ID="6367" ColName="user_article_type_content_type_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -3474,7 +3391,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2994" ColName="page_property_page_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<COLUMN ID="2994" ColName="page_property_page_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="0" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="1" />
 <OPTIONSELECT Value="0" />
@@ -4561,7 +4478,7 @@
 </COLUMNS>
 <RELATIONS_START>
 <RELATION_START ID="4596" />
-<RELATION_START ID="4627" />
+<RELATION_START ID="6403" />
 </RELATIONS_START>
 <INDICES>
 <INDEX ID="4580" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
@@ -4937,13 +4854,126 @@
 </INDEX>
 </INDICES>
 </TABLE>
+<TABLE ID="6382" Tablename="quotes" PrevTableName="Table_86" XPos="3790" YPos="248" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="221" >
+<COLUMNS>
+<COLUMN ID="6384" ColName="quote_id" PrevColName="" Pos="0" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="1" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6386" ColName="quote_text" PrevColName="" Pos="1" idDatatype="28" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6387" ColName="quote_author" PrevColName="" Pos="2" idDatatype="20" DatatypeParams="(255)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6388" ColName="quote_last_displayed" PrevColName="" Pos="3" idDatatype="16" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+</OPTIONSELECTED>
+</COLUMN>
+</COLUMNS>
+<INDICES>
+<INDEX ID="6385" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6384" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+</INDICES>
+</TABLE>
+<TABLE ID="6393" Tablename="progress_report_articles" PrevTableName="Table_87" XPos="1580" YPos="56" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="Stores who has voted for a campaign." Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="217" >
+<COLUMNS>
+<COLUMN ID="6412" ColName="progress_report_article_article_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6410" ColName="progress_report_article_campaign_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6411" ColName="progress_report_article_charity_id" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+</COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="6400" />
+<RELATION_END ID="6403" />
+<RELATION_END ID="6406" />
+</RELATIONS_END>
+<INDICES>
+<INDEX ID="6415" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6412" LengthParam="0" />
+<INDEXCOLUMN idColumn="6410" LengthParam="0" />
+<INDEXCOLUMN idColumn="6411" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6402" IndexName="progress_report_articles_FKIndex1" IndexKind="1" FKRefDef_Obj_id="6400">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6410" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6405" IndexName="progress_report_articles_FKIndex2" IndexKind="1" FKRefDef_Obj_id="6403">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6411" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6408" IndexName="progress_report_articles_FKIndex3" IndexKind="1" FKRefDef_Obj_id="6406">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6412" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+<INDEX ID="6414" IndexName="PRIMARY" IndexKind="1" FKRefDef_Obj_id="-1">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6412" LengthParam="0" />
+<INDEXCOLUMN idColumn="6411" LengthParam="0" />
+<INDEXCOLUMN idColumn="6410" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+</INDICES>
+</TABLE>
+<TABLE ID="6417" Tablename="office_interfaces" PrevTableName="Table_88" XPos="2720" YPos="1066" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="221" >
+<COLUMNS>
+<COLUMN ID="6419" ColName="office_interface_id" PrevColName="" Pos="0" idDatatype="5" DatatypeParams="" Width="-1" Prec="-1" PrimaryKey="1" NotNull="1" AutoInc="1" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="1" />
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+<COLUMN ID="6421" ColName="office_interface_codename" PrevColName="" Pos="1" idDatatype="20" DatatypeParams="(30)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<OPTIONSELECTED>
+<OPTIONSELECT Value="0" />
+</OPTIONSELECTED>
+</COLUMN>
+</COLUMNS>
+<RELATIONS_START>
+<RELATION_START ID="6424" />
+</RELATIONS_START>
+<INDICES>
+<INDEX ID="6420" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
+<INDEXCOLUMNS>
+<INDEXCOLUMN idColumn="6419" LengthParam="0" />
+</INDEXCOLUMNS>
+</INDEX>
+</INDICES>
+</TABLE>
 </TABLES>
 <RELATIONS>
 <RELATION ID="1019" RelationName="Rel_02" Kind="4" SrcTable="1001" DestTable="1017" FKFields="entity_id=organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="478" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=0\nOnUpdate=0\n" Comments="" FKRefDefIndex_Obj_id="1451" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="6" />
 <RELATION ID="1046" RelationName="Of Type" Kind="2" SrcTable="1038" DestTable="1017" FKFields="organisation_type_id=organisation_type_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="64" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="11" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1452" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="8" />
 <RELATION ID="1055" RelationName="Rel_05" Kind="4" SrcTable="1001" DestTable="1050" FKFields="entity_id=user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="372" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=0\nOnUpdate=0\n" Comments="" FKRefDefIndex_Obj_id="1454" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="10" />
 <RELATION ID="1078" RelationName="Part Of" Kind="2" SrcTable="1017" DestTable="1017" FKFields="organisation_entity_id=organisation_parent_organisation_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="1" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-39" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5639" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="13" />
-<RELATION ID="1081" RelationName="Subscribes" Kind="2" SrcTable="1050" DestTable="1059" FKFields="user_entity_id=subscription_user_entity_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="9" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-35" CaptionOffsetY="1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5400" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="11" />
+<RELATION ID="1081" RelationName="Subscribes" Kind="2" SrcTable="1050" DestTable="1059" FKFields="user_entity_id=subscription_user_entity_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="-16" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-35" CaptionOffsetY="1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5400" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="11" />
 <RELATION ID="1084" RelationName="To" Kind="2" SrcTable="1017" DestTable="1059" FKFields="organisation_entity_id=subscription_user_organisation_entity_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-77" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-24" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5641" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="12" />
 <RELATION ID="1094" RelationName="Has" Kind="2" SrcTable="1050" DestTable="1089" FKFields="user_entity_id=business_card_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="54" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-16" CaptionOffsetY="-41" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5402" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="14" />
 <RELATION ID="1106" RelationName="Ownership" Kind="1" SrcTable="1001" DestTable="1105" FKFields="entity_id=event_entity_entity_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="1" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-46" CaptionOffsetY="-16" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1460" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="18" />
@@ -4964,10 +4994,9 @@
 <RELATION ID="1569" RelationName="Requested" Kind="1" SrcTable="1050" DestTable="1559" FKFields="user_entity_id=request_user_user_entity_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-27" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-46" CaptionOffsetY="-11" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5409" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="66" />
 <RELATION ID="1572" RelationName="Requested" Kind="1" SrcTable="1549" DestTable="1559" FKFields="request_id=request_user_request_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="51" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1574" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="67" />
 <RELATION ID="1585" RelationName="Of Type" Kind="2" SrcTable="1580" DestTable="1549" FKFields="request_type_id=request_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-41" CaptionOffsetY="-25" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1587" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="69" />
-<RELATION ID="1610" RelationName="About" Kind="2" SrcTable="1597" DestTable="1603" FKFields="campaign_id=progress_report_campaign_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-35" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1612" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="72" />
 <RELATION ID="1615" RelationName="About" Kind="2" SrcTable="1187" DestTable="1597" FKFields="article_id=campaign_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-141" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-28" CaptionOffsetY="-6" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1617" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="72" />
 <RELATION ID="1796" RelationName="Related 1" Kind="1" SrcTable="1187" DestTable="1791" FKFields="article_id=related_article_1_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-36" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-6" CaptionOffsetY="-44" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1798" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="87" />
-<RELATION ID="1799" RelationName="Related 2" Kind="1" SrcTable="1187" DestTable="1791" FKFields="article_id=related_article_2_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-36" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-4" CaptionOffsetY="-42" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1800" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="88" />
+<RELATION ID="1799" RelationName="Related 2" Kind="1" SrcTable="1187" DestTable="1791" FKFields="article_id=related_article_2_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-116" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-4" CaptionOffsetY="-42" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1800" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="88" />
 <RELATION ID="1810" RelationName="Ownership" Kind="1" SrcTable="1050" DestTable="1803" FKFields="user_entity_id=event_occurrence_user_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="502" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-52" CaptionOffsetY="-20" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5413" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="90" />
 <RELATION ID="1813" RelationName="Ownership" Kind="1" SrcTable="1155" DestTable="1803" FKFields="event_occurrence_id=event_occurrence_user_event_occurrence_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-157" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-34" CaptionOffsetY="-2" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1815" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="91" />
 <RELATION ID="1858" RelationName="Turned Into" Kind="2" SrcTable="1187" DestTable="1549" FKFields="article_id=request_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-154" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-44" CaptionOffsetY="-6" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="1860" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="93" />
@@ -4991,7 +5020,7 @@
 <RELATION ID="2348" RelationName="Has" Kind="2" SrcTable="1050" DestTable="2339" FKFields="user_entity_id=todo_list_item_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="74" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-29" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5422" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="132" />
 <RELATION ID="2385" RelationName="Edits" Kind="2" SrcTable="1050" DestTable="1187" FKFields="user_entity_id=article_last_editor_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-57" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-28" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5405" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="133" />
 <RELATION ID="2473" RelationName="Works On" Kind="1" SrcTable="1225" DestTable="2468" FKFields="content_type_id=user_article_type_content_type_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-48" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-46" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6186" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="145" />
-<RELATION ID="2476" RelationName="Works On" Kind="1" SrcTable="1050" DestTable="2468" FKFields="user_entity_id=user_article_type_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-26" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-38" CaptionOffsetY="-5" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5423" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="146" />
+<RELATION ID="2476" RelationName="Works On" Kind="1" SrcTable="1050" DestTable="2468" FKFields="user_entity_id=user_article_type_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-38" CaptionOffsetY="-5" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5423" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="146" />
 <RELATION ID="2694" RelationName="Has Links" Kind="2" SrcTable="1050" DestTable="2675" FKFields="user_entity_id=user_link_user_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-462" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="50" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5424" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="154" />
 <RELATION ID="2715" RelationName="Has Link" Kind="2" SrcTable="2683" DestTable="2675" FKFields="link_id=user_link_link_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="22" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="3" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="2717" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="155" />
 <RELATION ID="2772" RelationName="Bar Crawl" Kind="2" SrcTable="1017" DestTable="1668" FKFields="organisation_entity_id=bar_crawl_organisation_organisation_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="167" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-5" CaptionOffsetY="-1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5644" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="158" />
@@ -5016,7 +5045,6 @@
 <RELATION ID="3909" RelationName="Photo Of" Kind="2" SrcTable="3848" DestTable="1050" FKFields="image_id=user_image_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="844" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-42" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3911" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="183" />
 <RELATION ID="3925" RelationName="Remind About" Kind="2" SrcTable="3915" DestTable="2339" FKFields="reminder_id=todo_list_item_reminder_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-4" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="3" CaptionOffsetY="13" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3927" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="185" />
 <RELATION ID="3931" RelationName="Has" Kind="2" SrcTable="1050" DestTable="3915" FKFields="user_entity_id=reminder_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="10" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-25" CaptionOffsetY="-23" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5426" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="186" />
-<RELATION ID="3936" RelationName="Belongs To" Kind="2" SrcTable="1001" DestTable="1167" FKFields="entity_id=anniversary_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-38" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="44" CaptionOffsetY="5" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3938" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="186" />
 <RELATION ID="3967" RelationName="Banner" Kind="5" SrcTable="1465" DestTable="3961" FKFields="tag_id=tag_banner_tag_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="-45" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-44" CaptionOffsetY="-24" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3969" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="188" />
 <RELATION ID="3995" RelationName="Is Requested" Kind="2" SrcTable="1017" DestTable="3986" FKFields="organisation_entity_id=organisation_request_properties_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-52" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-57" CaptionOffsetY="-22" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5652" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="192" />
 <RELATION ID="4004" RelationName="Requested By" Kind="2" SrcTable="3970" DestTable="3986" FKFields="user_property_id=organisation_request_properties_user_property_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-3" CaptionOffsetY="1" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4006" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="193" />
@@ -5044,7 +5072,6 @@
 <RELATION ID="4571" RelationName="Of Type" Kind="2" SrcTable="4549" DestTable="4547" FKFields="room_type_id=room_type_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-36" CaptionOffsetY="-25" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4572" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="217" />
 <RELATION ID="4596" RelationName="Donates To" Kind="2" SrcTable="4577" DestTable="4587" FKFields="charity_id=charity_donor_charity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-2" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4598" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="220" />
 <RELATION ID="4623" RelationName="Has Colour" Kind="2" SrcTable="4613" DestTable="1089" FKFields="business_card_colour_id=business_card_business_card_colour_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-46" CaptionOffsetY="-4" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5404" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="222" />
-<RELATION ID="4627" RelationName="About" Kind="2" SrcTable="4577" DestTable="1603" FKFields="charity_id=progress_report_charity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="6" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="9" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4629" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="223" />
 <RELATION ID="4665" RelationName="Enters" Kind="2" SrcTable="1050" DestTable="4645" FKFields="user_entity_id=quiz_result_user_entity_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-11" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="42" CaptionOffsetY="-20" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5432" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="228" />
 <RELATION ID="4894" RelationName="Tag" Kind="1" SrcTable="1017" DestTable="4889" FKFields="organisation_entity_id=organisation_tag_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="-28" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="1" CaptionOffsetY="-49" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="5655" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="230" />
 <RELATION ID="4897" RelationName="Org" Kind="1" SrcTable="1465" DestTable="4889" FKFields="tag_id=organisation_tag_tag_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="-181" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="4899" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="231" />
@@ -5072,6 +5099,10 @@
 <RELATION ID="6351" RelationName="Of Type" Kind="2" SrcTable="1225" DestTable="1412" FKFields="content_type_id=comment_content_type_id\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6353" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="218" />
 <RELATION ID="6356" RelationName="For" Kind="2" SrcTable="1187" DestTable="1412" FKFields="article_id=comment_article_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6358" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="219" />
 <RELATION ID="6360" RelationName="About" Kind="2" SrcTable="1017" DestTable="1412" FKFields="organisation_entity_id=comment_organisation_entity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6362" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="220" />
+<RELATION ID="6400" RelationName="About" Kind="2" SrcTable="1597" DestTable="6393" FKFields="campaign_id=progress_report_article_campaign_id\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6402" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="218" />
+<RELATION ID="6403" RelationName="About" Kind="2" SrcTable="4577" DestTable="6393" FKFields="charity_id=progress_report_article_charity_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6405" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="219" />
+<RELATION ID="6406" RelationName="Info" Kind="2" SrcTable="1187" DestTable="6393" FKFields="article_id=progress_report_article_article_id\n" FKFieldsComments="\n" relDirection="1" MidOffset="115" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6408" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="220" />
+<RELATION ID="6424" RelationName="Permissions" Kind="2" SrcTable="6417" DestTable="1050" FKFields="office_interface_id=user_office_interface_id\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="6426" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="222" />
 </RELATIONS>
 <NOTES>
 <NOTE ID="6281" NoteName="Note_01" XPos="4" YPos="795" NoteText="There is a link between tags.tag_tag_group_id\n and  tag_groups.tag_group_id but due to\n dbdesigner not being able to deal with the keys\n correctly it is not specified.\n" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="214" />

@@ -36,6 +36,7 @@ class Howdoi extends Controller
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
 		
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
@@ -45,6 +46,7 @@ class Howdoi extends Controller
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
 		//do shabazz
+		$data['articleheader'] = $this->article_model->GetArticleHeader(13);
 		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
 		foreach ($data['categories'] as $category_id => $category)
 		{

@@ -54,6 +54,37 @@ class Article_model extends Model
 	}
 	
 	/*****************************************************
+	*  PINGU HOW DO I
+	*****************************************************/
+	
+	function GetArticleHeader($article_id)
+	{
+        	$sql = 'SELECT article_content_type_id,
+				article_organisation_entity_id,
+				article_created,
+				article_publish_date,
+				article_location,
+				article_live_content_id
+			FROM articles
+			WHERE article_id = ?';
+		$query = $this->db->query($sql, array($article_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return array(
+				'content_type'=>$row->article_content_type_id,
+				'organisation'=>$row->article_organisation_entity_id,
+				'created'=>$row->article_created,
+				'publish_date'=>$row->article_publish_date,
+				'location'=>$row->article_location,
+				'live_content'=>$row->article_live_content_id
+				);
+		}
+		else
+			return FALSE;
+	}
+
+	/*****************************************************
 	*  FACT BOXES
 	*****************************************************/
 

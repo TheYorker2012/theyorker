@@ -80,9 +80,12 @@ CREATE TABLE users (
 	user_nickname					VARCHAR(255)	NULL,
 	user_gender					ENUM('m','f')	NULL,
 	user_enrolled_year				INTEGER		NULL,
+	user_time_format				ENUM('12', '24')	NOT NULL,
 	user_store_password				BOOL		NOT NULL,
-	user_permission					INTEGER		NOT NULL,
-	user_office_password				CHAR(32)	NULL,
+  	user_office_interface_id			INTEGER		NULL		COMMENT='The primary office interface that will be used.',
+  	user_office_password				VARCHAR(40)	NULL		COMMENT='Second level password for the office (high level access only).',
+  	user_office_access				BOOL		NOT NULL	COMMENT='Whether the user has access to the office (at any level).',
+  	user_admin					BOOL		NOT NULL	COMMENT='User is a root admin.',
 	user_timestamp					TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(user_entity_id)
@@ -225,7 +228,7 @@ CREATE TABLE subscriptions (
 	subscription_member				BOOL		NOT NULL,
 	subscription_paid				BOOL		NOT NULL,
 	subscription_email				BOOL		NOT NULL	COMMENT='Does the organisation have access to the users e-mail address.',
-	subscription_admin				BOOL		NOT NULL,
+	subscription_vip				BOOL		NOT NULL,
 	subscription_user_confirmed			BOOL		NOT NULL,
 	subscription_deleted				BOOL		NOT NULL,
 	subscription_timestamp				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
@@ -423,7 +426,7 @@ CREATE TABLE events (
 	event_name					TEXT		NULL,
 	event_description				TEXT		NULL,
 	event_blurb					TEXT		NULL,
-	event_deleted					BOOL		NULL,
+	event_deleted					BOOL		NOT NULL,
 	event_timestamp 				TIMESTAMP	NULL,
 	
 	PRIMARY KEY(event_id)
@@ -433,6 +436,8 @@ DROP TABLE IF EXISTS event_entities;
 CREATE TABLE event_entities (
 	event_entity_entity_id				INTEGER 	NOT NULL,
 	event_entity_event_id				INTEGER 	NOT NULL,
+	event_entity_relationship			ENUM('own','subscribe') NOT NULL	DEFAULT 'subscribe',
+  	event_entity_confirmed				BOOL		NOT NULL,
 	
 	PRIMARY KEY(event_entity_entity_id, event_entity_event_id)
 ) COMMENT='An event can be linked to a number of organisations.';
@@ -484,16 +489,6 @@ CREATE TABLE reminders (
 	PRIMARY KEY(reminder_id)
 ) COMMENT='';
 
-DROP TABLE IF EXISTS anniversaries;
-CREATE TABLE anniversaries (
-	anniversary_id					INTEGER 	NOT NULL	AUTO_INCREMENT,
-	anniversary_entity_id				INTEGER 	NOT NULL,
-	anniversary_name				VARCHAR(255)	NOT NULL,
-	anniversary_start_date				TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	
-	PRIMARY KEY(anniversary_id)
-) COMMENT='User defined yearly events.';
-
 DROP TABLE IF EXISTS todo_list_items;
 CREATE TABLE todo_list_items (
 	todo_list_item_id				INTEGER 	NOT NULL	AUTO_INCREMENT,
@@ -543,7 +538,6 @@ CREATE TABLE review_contexts (
 	review_context_content_type_id			INTEGER 	NOT NULL,
 	review_context_live_content_id			INTEGER 	NOT NULL,
 	review_context_deleted				BOOL		NOT NULL,
-	review_context_timestamp			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	
 	PRIMARY KEY(review_context_organisation_entity_id, review_context_content_type_id)
 ) COMMENT='Information about an organisation in a specific category (e.g. evil eye for food).';
@@ -645,19 +639,14 @@ CREATE TABLE campaign_users (
 	PRIMARY KEY(campaign_user_campaign_id, campaign_user_user_entity_id)
 ) COMMENT='Stores who has voted for a campaign.';
 
-DROP TABLE IF EXISTS progress_reports;
-CREATE TABLE progress_reports (
-	progress_report_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
-	progress_report_charity_id 			INTEGER 	NULL		COMMENT='Either this or progress_report_campaign_id cant be null.',
-	progress_report_campaign_id 			INTEGER 	NULL		COMMENT='Either this or progress_report_charity_id cant be null.',
-	progress_report_last_update_user_entity_id	INTEGER		NOT NULL,
-	progress_report_text 				TEXT 		NOT NULL,
-	progress_report_deleted 			BOOL 		NOT NULL,
-	progress_report_last_updated 			TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	progress_report_publish_date 			TIMESTAMP	NOT NULL,
+DROP TABLE IF EXISTS progress_report_articles;
+CREATE TABLE progress_report_articles (
+	progress_report_article_article_id		INTEGER 	NOT NULL,
+	progress_report_article_campaign_id		INTEGER 	NOT NULL,
+	progress_report_article_charity_id		INTEGER 	NOT NULL,
 
-	PRIMARY KEY(progress_report_id)
-) COMMENT='Contains updates on how parts of a campaign are going.';
+	PRIMARY KEY(progress_report_article_article_id, progress_report_article_campaign_id, progress_report_article_charity_id)
+) COMMENT='Stores who has voted for a campaign.';
 
 DROP TABLE IF EXISTS charities;
 CREATE TABLE charities (
@@ -808,7 +797,7 @@ DROP TABLE IF EXISTS page_properties;
 CREATE TABLE page_properties (
 	page_property_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
 	page_property_property_type_id 			INTEGER 	NOT NULL,
-	page_property_page_id 				INTEGER 	NOT NULL,
+	page_property_page_id 				INTEGER 	NULL,
 	page_property_photo_id 				INTEGER 	NULL,
 	page_property_image_id 				INTEGER 	NULL,
 	page_property_label 				VARCHAR(255) 	NOT NULL,
@@ -990,6 +979,25 @@ CREATE TABLE room_types (
 	PRIMARY KEY(room_type_id)
 ) COMMENT='The possible types of room (eg. )';
 
+----------------------------------------------------------------
+-- Extras						      --
+----------------------------------------------------------------
 
+DROP TABLE IF EXISTS quotes;
+CREATE TABLE quotes (
+	quote_id 					INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	quote_text					TEXT		NOT NULL,
+	quote_author 					VARCHAR(255) 	NOT NULL,
+	quote_last_displayed				TIMESTAMP	NOT NULL,
 
+	PRIMARY KEY(quote_id)
+) COMMENT='';
+
+DROP TABLE IF EXISTS office_interfaces;
+CREATE TABLE office_interfaces (
+	office_interface_id 				INTEGER 	NOT NULL 	AUTO_INCREMENT,
+	office_interface_codename 			VARCHAR(30) 	NOT NULL,
+
+	PRIMARY KEY(office_interface_id)
+) COMMENT='';
 

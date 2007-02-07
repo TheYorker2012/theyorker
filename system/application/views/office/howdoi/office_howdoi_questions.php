@@ -59,3 +59,11 @@
   <a href="/office/howdoi/editquestion">Costcutter</a><br />
   <a href="/office/howdoi/editquestion">Costcutter</a><br />
 </div>
+
+<?php
+
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+
+?>
