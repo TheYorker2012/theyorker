@@ -120,6 +120,8 @@
 	width: 154px;
 	background-color: #ffffff;
 	border: 1px solid #000000;
+	padding: 2px;
+	list-style-type: none;
 }
 
 #calviewEventMenu ul {
@@ -134,6 +136,7 @@
 }
 #calviewEventMenu ul .calviewEMBP {
 	border-bottom: 1px solid #ffaa60;
+		list-style-type: none;
 }
 #calviewEventMenu ul li:hover {
 
