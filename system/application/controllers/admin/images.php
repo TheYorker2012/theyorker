@@ -62,7 +62,7 @@ class images extends Controller {
 		$allPhotos = $this->db->getwhere('photos', array('photo_deleted' => 0));
 		$totalPhotos = $allPhotos->num_rows();
 		
-		$image_type = $this->db->get('image_type', 1)->where('image_type_width <=', VIEW_WIDTH/3)->orderby('image_type_width', 'desc');
+		$image_type = $this->db->get('image_types', 1)->where('image_type_width <=', VIEW_WIDTH/3)->orderby('image_type_width', 'desc');
 		$data['imageType'] = &$image_type->row();
 		
 		if ($totalPhotos > PHOTOS_PERPAGE) {
