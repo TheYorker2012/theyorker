@@ -7,12 +7,25 @@ class Login extends Controller
 	{
 		parent::Controller();
 	}
+	
+	/// Redirect to the uri given after the initial logout/.../
+	/**
+	 * @note Duplicated from logout
+	 */
+	function _redirect($FirstSegment = 3)
+	{
+		$uri_target = '';
+		for ($segment_counter = $FirstSegment; $segment_counter <= $this->uri->total_segments(); ++$segment_counter) {
+			$uri_target .= $this->uri->slash_segment($segment_counter);
+		}
+		redirect($uri_target);
+	}
 
-	function index()
+	function main()
 	{
 		if (!CheckPermissions('student')) return;
 		
-		redirect('home/main');
+		$this->_redirect();
 	}
 
 	function resetpassword()

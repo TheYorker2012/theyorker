@@ -15,6 +15,9 @@ class Logout extends Controller
 	}
 	
 	/// Redirect to the uri given after the initial logout/.../
+	/**
+	 * @note Duplicated from login
+	 */
 	function _redirect($FirstSegment = 3)
 	{
 		$uri_target = '';
@@ -27,8 +30,12 @@ class Logout extends Controller
 	/// Logout from main account
 	function main()
 	{
-		$this->user_auth->logout();
-		$this->main_frame->AddMessage('success','You have successfully logged out');
+		try {
+			$this->user_auth->logout();
+			$this->main_frame->AddMessage('success','You have successfully logged out');
+		} catch (Exception $e) {
+			$CI->main_frame->AddMessage('error',$e->getMessage());
+		}
 		
 		$this->_redirect();
 	}
@@ -36,8 +43,12 @@ class Logout extends Controller
 	/// Logout from office
 	function office()
 	{
-		$this->user_auth->logoutOffice();
-		$this->main_frame->AddMessage('success','You have successfully left the office');
+		try {
+			$this->user_auth->logoutOffice();
+			$this->main_frame->AddMessage('success','You have successfully left the office');
+		} catch (Exception $e) {
+			$CI->main_frame->AddMessage('error',$e->getMessage());
+		}
 		
 		$this->_redirect();
 	}
@@ -45,8 +56,12 @@ class Logout extends Controller
 	/// Logout from vip area
 	function viparea()
 	{
-		$this->user_auth->logoutOrganisation();
-		$this->main_frame->AddMessage('success','You have successfully left the VIP area');
+		try {
+			$this->user_auth->logoutOrganisation();
+			$this->main_frame->AddMessage('success','You have successfully left the VIP area');
+		} catch (Exception $e) {
+			$CI->main_frame->AddMessage('error',$e->getMessage());
+		}
 		
 		$this->_redirect();
 	}

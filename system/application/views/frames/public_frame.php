@@ -122,7 +122,7 @@ onLoadFunctions.push(preloader);
 			<?php
 		} else {
 			?>
-			<a class="HeaderLinks" href="/login/">log in</a> |
+			<a class="HeaderLinks" href="/login/main<?php echo $uri; ?>">log in</a> |
 			<?php
 		}
 		?>
