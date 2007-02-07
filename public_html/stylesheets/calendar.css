@@ -113,16 +113,15 @@
 }
 
 #calviewEventMenu {
+	display: none;
 	position: absolute;
-	top: 100px;
-	left: 100px;
+	top: 20px;
+	left: 20px;
 	z-index: 100;
 	width: 154px;
 	background-color: #ffffff;
 	border: 1px solid #000000;
-	padding: 2px;
-	list-style-type: none;
-}
+	padding: 1px;}
 
 #calviewEventMenu ul {
 	display: block;
@@ -131,12 +130,10 @@
 	margin: 0px;
 }
 #calviewEventMenu ul li {
-	list-style-type: none;
 	padding: 0px;
 }
 #calviewEventMenu ul .calviewEMBP {
 	border-bottom: 1px solid #ffaa60;
-		list-style-type: none;
 }
 #calviewEventMenu ul li:hover {
 

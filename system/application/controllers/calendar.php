@@ -136,9 +136,10 @@ EXTRAHEAD;
 		Code to save the data from the script based on the above to variables
 		and echo OK|message or FAIL|message depending on the outcome
 		examples:
-			OK|Event $title hidden from your calendar
+			OK|Event <b>$title</b> has been hidden from your calendar
 			FAIL|You are not logged in
 		*/
+		echo "OK|Dummy message!";
 		
 	}
 	

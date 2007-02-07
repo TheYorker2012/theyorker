@@ -63,46 +63,11 @@ for ($i = 0;$i < 7;$i++) {
 		<?php
 echo '<a href="'.$prev.'">Previous Week</a><br/>';
 echo '<a href="'.$next.'">Next Week</a><br/>';
+
+echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
+
 		?>
-		<div id="calviewEventMenu" style="display: none">
-			<ul>
-				<li>
-					<div class="calviewEMBP">
-					<a href="#"	onclick="hideEventMenu(); 
-					eventSetHighlight();return false;">Highlight</a>
-					</div>
-				</li>
-				<li>
-					<div class="calviewEMBP">
-					<a href="#" onclick="hideEventMenu();
-					return false;">View Full Details</a>
-					</div>
-				</li>
-				<li>
-					<div class="calviewEMBP">
-					<a href="#" onclick="hideEventMenu()
-					return false;">Display Options</a>
-					</div>
-				</li>
-				<li>
-					<div class="calviewEMBP">
-					<a href="#" onclick="hideEventMenu()
-					removeEvent;return false;">Hide Event</a>
-					</div>
-				</li>
-				<li>
-					<div class="calviewEMBP">
-					<a href="#" onclick="hideEventMenu()
-					return false;">List Similar Events</a>
-					</div>
-				</li>
-				<li>
-					<div class="calviewEMBP" style="border-bottom: none">
-					<a href="#" onclick="hideEventMenu();return false;">Cancel</a>
-					</div>
-				</li>
-			</ul>
-		</div>
+
 		
 
 <!-- Container div; contains everything
@@ -214,5 +179,7 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 </div>
 <script type="text/javascript">
 <?php echo $eventHandlerJS ?>
+	document.getElementById('calviewEventMenu').style.top = 344;
+	$('calviewEventMenu').style.left = 253;
 //Event.observe(document, "onmouseover", function (e) { hideEventMenu(e); });
 </script>
