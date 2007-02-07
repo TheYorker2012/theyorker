@@ -17,8 +17,9 @@
  *	- 'office'
  *	- 'editor'
  *	- 'admin'
+ * @param $Override bool Override any previous calls to SetupMainFrame.
  */
-function SetupMainFrame($Frame='public')
+function SetupMainFrame($Frame='public', $Override=TRUE)
 {
 	// User level doesn't matter
 	//$user_level = GetUserLevel();
@@ -35,12 +36,13 @@ function SetupMainFrame($Frame='public')
 	
 	assert('array_key_exists($Frame,$frames)');
 	$frame_library = $frames[$Frame];
+	$CI = &get_instance();
 	if (!isset($CI->$frame_library)) {
-		
-		// Load the corresponding library and create an alias called main_frame
-		$CI = &get_instance();
-		$CI->load->library($frame_library);
-		$CI->main_frame = $CI->$frame_library;
+		if (!isset($CI->main_frame) || $Override) {
+			// Load the corresponding library and create an alias called main_frame
+			$CI->load->library($frame_library);
+			$CI->main_frame = $CI->$frame_library;
+		}
 	}
 }
 

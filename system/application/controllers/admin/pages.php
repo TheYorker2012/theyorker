@@ -22,6 +22,8 @@ class Pages extends Controller
 	function __construct()
 	{
 		parent::Controller();
+		
+		$this->load->library('messages');
 	}
 	
 	function _SetPermissions()
@@ -68,7 +70,7 @@ class Pages extends Controller
 	function _CheckViewPermissions($Permission = 'view', $Message = 'You do not have permission to access this page')
 	{	
 		if (!$this->mPermissions[$Permission]) {
-			$this->main_frame->AddMessage('error',$Message);
+			$this->messages->AddMessage('error',$Message);
 			return FALSE;
 		} else {
 			return TRUE;
@@ -147,7 +149,7 @@ class Pages extends Controller
 				// Check if new codename is in use
 				$Data['codename'] = $input['codename'];
 				if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-					$this->main_frame->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+					$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
 					$save_failed = TRUE;
 				}
 			} else {
@@ -164,10 +166,10 @@ class Pages extends Controller
 				// Try and save to db
 				$input['codename'] = $Prefix.$input['codename'];
 				if ($this->pages_model->CreatePage($input)) {
-					$this->main_frame->AddMessage('success', 'The page was successfully saved');
+					$this->messages->AddMessage('success', 'The page was successfully saved');
 					redirect($Redirect.$Data['codename']);
 				} else {
-					$this->main_frame->AddMessage('error', 'The page could not be saved as an internal error occurred');
+					$this->messages->AddMessage('error', 'The page could not be saved as an internal error occurred');
 					$save_failed = TRUE;
 				}
 			}
@@ -273,7 +275,7 @@ class Pages extends Controller
 							// Check if new codename is in use
 							$data['codename'] = $input['codename'];
 							if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-								$this->main_frame->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+								$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
 								$save_failed = TRUE;
 							}
 						} else {
@@ -291,12 +293,12 @@ class Pages extends Controller
 						// Try and save to db
 						$input['codename'] = $Prefix.$input['codename'];
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-							$this->main_frame->AddMessage('success', 'The page was successfully saved');
+							$this->messages->AddMessage('success', 'The page was successfully saved');
 							if ($data['codename'] != $page_code) {
 								redirect($Redirect.$data['codename']);
 							}
 						} else {
-							$this->main_frame->AddMessage('error','The page could not be saved as an internal error occurred');
+							$this->messages->AddMessage('error','The page could not be saved as an internal error occurred');
 						}
 					}
 				}
@@ -320,6 +322,7 @@ class Pages extends Controller
 										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
 										++$changes;
 									}
+									++$changes;
 								} elseif ($data['properties'][$property_id]['text'] != $value) {
 									// property has been changed
 									$input['properties'][] = array(
@@ -358,20 +361,20 @@ class Pages extends Controller
 					}
 					
 					if ($ignored_new_props == 1) {
-						$this->main_frame->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
+						$this->messages->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
 					} elseif ($ignored_new_props > 1) {
-						$this->main_frame->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
+						$this->messages->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
 					}
 					
 					if ($changes > 0) {
 						// Try and save to db
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
-							$this->main_frame->AddMessage('success', 'Properties were successfully saved.');
+							$this->messages->AddMessage('success', 'Properties were successfully saved.');
 						} else {
-							$this->main_frame->AddMessage('error','Properties weren\'t save. An internal error occurred.');
+							$this->messages->AddMessage('error','Properties weren\'t save. An internal error occurred.');
 						}
 					} else {
-						$this->main_frame->AddMessage('information', 'No properties have changed');
+						$this->messages->AddMessage('information', 'No properties have changed');
 					}
 					
 					$_POST = array();
@@ -395,7 +398,7 @@ class Pages extends Controller
 			// Get information about the page so user is informed before confirming.
 			$information = $this->pages_model->GetSpecificPage($Prefix.$InputPageCode, TRUE);
 			if (FALSE === $information) {
-				$this->main_frame->AddMessage('error','Page \'' . $InputPageCode . '\' not found');
+				$this->messages->AddMessage('error','Page \'' . $InputPageCode . '\' not found');
 				$data['confirm'] = FALSE;
 			} else {
 				$data['confirm'] = TRUE;
@@ -408,10 +411,12 @@ class Pages extends Controller
 			$result = $this->pages_model->DeletePage($Prefix.$InputPageCode);
 			if ($result) {
 				// Success
-				$this->main_frame->AddMessage('success','The page was successfully deleted.');
+				$this->messages->AddMessage('success','The page was successfully deleted.');
+				redirect('admin/pages');
 			} else {
 				// Failure
-				$this->main_frame->AddMessage('error','The page could not be deleted.');
+				$this->messages->AddMessage('error','The page could not be deleted.');
+				redirect('admin/pages');
 			}
 		}
 		return $data;

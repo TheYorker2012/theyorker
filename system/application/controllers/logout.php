@@ -11,7 +11,8 @@ class Logout extends Controller
 	{
 		parent::Controller();
 		
-		SetupMainFrame();
+		$this->load->library('messages');
+		$this->load->library('user_auth');
 	}
 	
 	/// Redirect to the uri given after the initial logout/.../
@@ -32,9 +33,9 @@ class Logout extends Controller
 	{
 		try {
 			$this->user_auth->logout();
-			$this->main_frame->AddMessage('success','You have successfully logged out');
+			$this->messages->AddMessage('success','You have successfully logged out');
 		} catch (Exception $e) {
-			$CI->main_frame->AddMessage('error',$e->getMessage());
+			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
 		$this->_redirect();
@@ -45,9 +46,9 @@ class Logout extends Controller
 	{
 		try {
 			$this->user_auth->logoutOffice();
-			$this->main_frame->AddMessage('success','You have successfully left the office');
+			$this->messages->AddMessage('success','You have successfully left the office');
 		} catch (Exception $e) {
-			$CI->main_frame->AddMessage('error',$e->getMessage());
+			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
 		$this->_redirect();
@@ -58,9 +59,9 @@ class Logout extends Controller
 	{
 		try {
 			$this->user_auth->logoutOrganisation();
-			$this->main_frame->AddMessage('success','You have successfully left the VIP area');
+			$this->messages->AddMessage('success','You have successfully left the VIP area');
 		} catch (Exception $e) {
-			$CI->main_frame->AddMessage('error',$e->getMessage());
+			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
 		$this->_redirect();

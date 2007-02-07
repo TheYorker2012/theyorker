@@ -9,9 +9,8 @@
 
 function login_handler($Data, $Permission)
 {
-	SetupMainFrame(GetUserLevel());
-	
 	$CI = &get_instance();
+	$CI->load->library('messages');
 	
 	$data = array(
 		'target' => $CI->uri->uri_string(),
@@ -56,22 +55,22 @@ function login_handler($Data, $Permission)
 				// if office access say have been logged out of vip
 				if ($CI->user_auth->officeType !== 'None') {
 					$CI->user_auth->logoutOffice();
-					$CI->main_frame->AddMessage('information','You have been logged out of the office');
+					$CI->messages->AddMessage('information','You have been logged out of the office');
 				}
 				$CI->user_auth->loginOrganisation($password, $entity_id);
 			} elseif ($Data[0] === 'office') {
 				// if vip access say have been logged out of office
 				if ($CI->user_auth->organisationLogin >= 0) {
 					$CI->user_auth->logoutOrganisation();
-					$CI->main_frame->AddMessage('information','You have been logged out of the VIP area');
+					$CI->messages->AddMessage('information','You have been logged out of the VIP area');
 				}
 				$CI->user_auth->loginOffice($password);
 			} else {
 				$CI->user_auth->login($username, $password, false);
 			}
 			$successfully_logged_in = TRUE;
-			SetupMainFrame($Permission);
-			$CI->main_frame->AddMessage('success',$success_msg);
+			
+			$CI->messages->AddMessage('success',$success_msg);
 			
 			foreach ($_POST as $key => $value) {
 				unset($_POST[$key]);
@@ -89,7 +88,7 @@ function login_handler($Data, $Permission)
 			return CheckPermissions($Permission);
 			//redirect($CI->uri->uri_string());
 		} catch (Exception $e) {
-			$CI->main_frame->AddMessage('error',$e->getMessage());
+			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 	} else {
 		$data['initial_username'] = '';
@@ -103,42 +102,42 @@ function login_handler($Data, $Permission)
 		}
 	}
 	
-	if (!$successfully_logged_in) {
-		// Get various page properties used for displaying the login screen
-		$CI->pages_model->SetPageCode($page_code);
-		
-		$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
-		if (FALSE !== $permission_message) {
-			$CI->main_frame->AddMessage(new Message($permission_message));
-		}
-		
-		// Title of login section of page
-		$section_title = $CI->pages_model->GetPropertyText('section_title');
-		if (!empty($section_title)) {
-			$data['title'] = $section_title;
-		}
-		
-		// Main login message
-		$login_message = $CI->pages_model->GetPropertyText('login_message');
-		if (!empty($login_message)) {
-			$data['login_message'] = $login_message;
-		}
-		
-		// Items in the right bar
-		$data['rightbar'] = $CI->pages_model->GetPropertyArray('rightbar', array(
-			// First index is [int]
-			array('pre' => '[', 'post' => ']', 'type' => 'int'),
-			// Second index is [string]
-			array('pre' => '.', 'type' => 'enum',
-				'enum' => array(
-					array('title',	'text'),
-					array('text',	'wikitext'),
-				),
-			),
-		));
-		
-		$CI->main_frame->SetContentSimple('login/login', $data);
+	// Get various page properties used for displaying the login screen
+	$CI->pages_model->SetPageCode($page_code);
+	
+	$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
+	if (FALSE !== $permission_message) {
+		$CI->messages->AddMessage(new Message($permission_message), FALSE);
 	}
+	
+	// Title of login section of page
+	$section_title = $CI->pages_model->GetPropertyText('section_title');
+	if (!empty($section_title)) {
+		$data['title'] = $section_title;
+	}
+	
+	// Main login message
+	$login_message = $CI->pages_model->GetPropertyText('login_message');
+	if (!empty($login_message)) {
+		$data['login_message'] = $login_message;
+	}
+	
+	// Items in the right bar
+	$data['rightbar'] = $CI->pages_model->GetPropertyArray('rightbar', array(
+		// First index is [int]
+		array('pre' => '[', 'post' => ']', 'type' => 'int'),
+		// Second index is [string]
+		array('pre' => '.', 'type' => 'enum',
+			'enum' => array(
+				array('title',	'text'),
+				array('text',	'wikitext'),
+			),
+		),
+	));
+	
+	SetupMainFrame(GetUserLevel(), FALSE);
+	
+	$CI->main_frame->SetContentSimple('login/login', $data);
 	
 	return $successfully_logged_in;
 }
@@ -307,7 +306,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 	if (!array_key_exists($Permission, $action_levels)) {
 		return show_404();
 	} else {
-		SetupMainFrame($Permission);
 		
 		$action = $action_levels[$Permission];
 		if (TRUE === $action) {
@@ -317,19 +315,19 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 				case 'handle':
 					$access_allowed = $action[1]($action[2], $Permission);
 					if (array_key_exists(3,$action)) {
-						$CI->main_frame->AddMessage($action[3], $action[4]);
+						$CI->messages->AddMessage($action[3], $action[4], FALSE);
 					}
 					break;
 					
 				case 'redirect':
 					if (array_key_exists(2,$action)) {
-						$CI->main_frame->AddMessage($action[2], $action[3]);
+						$CI->messages->AddMessage($action[2], $action[3]);
 					}
 					redirect($action[1]);
 					break;
 					
 				case 'message':
-					$CI->main_frame->AddMessage($action[1], $action[2], FALSE);
+					$CI->messages->AddMessage($action[1], $action[2], FALSE);
 					$access_allowed = $action[3];
 					break;
 					
@@ -338,10 +336,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 			}
 		} else {
 			// Access denied
-			$CI->main_frame->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
-			redirect('');
+			$CI->messages->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
+			//redirect('');
 		}
 	}
+	
+	SetupMainFrame($Permission, FALSE);
 	
 	if (!$access_allowed && $LoadMainFrame) {
 		$CI->main_frame->Load();
