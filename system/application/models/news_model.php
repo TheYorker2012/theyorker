@@ -54,7 +54,7 @@ class News_model extends Model
 	function GetSimpleArticle($id, $dateformat ='%a, %D %b %y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id, 
+		$sql = 'SELECT articles.article_live_content_id,
 			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
 			FROM articles
 			WHERE (articles.article_id = ?)
@@ -93,7 +93,10 @@ class News_model extends Model
 				if ($author_query->num_rows() > 0)
 				{
 					$author_row = $author_query->row();
-					$authors[] = $author_row->business_card_name;
+					$authors[] = array(
+						'name' => $author_row->business_card_name,
+						'id' => $row->article_writer_user_entity_id
+					);
 				}
 			}
 			$result['authors'] = $authors;
@@ -162,7 +165,10 @@ class News_model extends Model
 				if ($author_query->num_rows() > 0)
 				{
 					$author_row = $author_query->row();
-					$authors[] = $author_row->business_card_name;
+					$authors[] = array(
+						'name' => $author_row->business_card_name,
+						'id' => $row->article_writer_user_entity_id
+					);
 				}
 			}
 			$result['authors'] = $authors;
@@ -242,7 +248,7 @@ class News_model extends Model
 			if ($author_query->num_rows() > 0)
 			{
 				$author_row = $author_query->row();
-				$authors[] = array('photo'=>$author_row->user_has_properties_photo_id,'name'=>$name);
+				$authors[] = array('photo'=>$author_row->user_has_properties_photo_id,'name'=>$name,'id'=>$row->article_writer_user_entity_id);
 			}
 		}
 		$result['authors'] = $authors;

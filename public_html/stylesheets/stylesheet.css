@@ -830,6 +830,12 @@ div.ArticleColumn h1 {
 	height: 100%;
 }
 
+div.ArticleColumn h2 {
+	line-height: normal;
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
 div.ArticleColumn p {
 	text-align: justify;
 	font-size: 13px;
@@ -853,8 +859,8 @@ div.ArticleColumn blockquote {
 	width: 150px;
 	padding: 5px;
 	margin: 5px 5px 5px 10px;
-	border: 1px #FF6A00 solid;
-	background: #999;
+	border: 1px #999 solid;
+	background: #eee;
 	text-align: center;
 }
 

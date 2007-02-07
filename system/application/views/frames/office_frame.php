@@ -106,13 +106,13 @@ function preloader()
 			<a href='/news/'>Uni News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/news/national/'>UK &amp; World News</a>
+			<a href='/national/'>UK &amp; World News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/news/features/'>Features</a>
+			<a href='/features/'>Features</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/news/lifestyle/'>Lifestyle</a>
+			<a href='/lifestyle/'>Lifestyle</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='/reviews/food'>Food</a>
