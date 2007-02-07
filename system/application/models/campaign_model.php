@@ -20,6 +20,11 @@ class Campaign_model extends Model
 	*  CAMPAIGNS
 	*****************************************************/
 	
+	function AddNewCampaign()
+	{
+		
+	}	
+	
 	/**
 	 * Returns an array of the Campaigns that are currently being voted on
 	 * in ascending order of name.

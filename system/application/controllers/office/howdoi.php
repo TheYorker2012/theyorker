@@ -32,8 +32,10 @@ class Howdoi extends Controller
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_howdoi_questions');
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('news_model','news_model');
 		
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
@@ -41,6 +43,17 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		//do shabazz
+		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
+		foreach ($data['categories'] as $category_id => $category)
+		{
+			$data['categories'][$category_id]['articles'] = $this->howdoi_model->GetOfficeCategoryArticleIDs($category_id);
+			foreach ($data['categories'][$category_id]['articles'] as $article_id => $category_article)
+			{
+                        	$data['categories'][$category_id]['articles'][$article_id] = $this->news_model->GetSimpleArticle($category_article);
+			}
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_questions', $data);

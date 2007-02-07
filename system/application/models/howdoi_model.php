@@ -49,9 +49,36 @@ class Howdoi_model extends Model
 
 	/**
 	 * Returns an array of the article ids for the category.
+	 * Doesn't return unpublished articles
 	 * @return An array of article ids.
 	 */
 	function GetCategoryArticleIDs($content_type_id)
+	{
+		$sql = 'SELECT article_id
+			FROM articles
+			INNER JOIN article_contents
+			ON article_content_id = article_id
+			WHERE article_content_type_id = ? AND
+				article_live_content_id IS NOT NULL
+			ORDER BY article_content_heading ASC';
+		$query = $this->db->query($sql,array($content_type_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = $row->article_id;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Returns an array of the article ids for the category.
+	 * Returns all articles
+	 * @return An array of article ids.
+	 */
+	function GetOfficeCategoryArticleIDs($content_type_id)
 	{
 		$sql = 'SELECT article_id
 			FROM articles

@@ -14,8 +14,8 @@ class Howdoi extends Controller {
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->load->model('howdoi_model','howdoi');
-		$this->load->model('news_model','news');
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('news_model','news_model');
 		$this->pages_model->SetPageCode('howdoi_list');
 
 		$data['sidebar_ask'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
@@ -23,13 +23,13 @@ class Howdoi extends Controller {
 		$data['section_howdoi'] = array('title'=>$this->pages_model->GetPropertyText('section_howdoi_title',FALSE),
 						'text'=>$this->pages_model->GetPropertyWikitext('section_howdoi_text',FALSE));
 
-		$data['categories'] = $this->howdoi->GetContentCategories(10);
+		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
 		foreach ($data['categories'] as $category_id => $category)
 		{
-			$data['categories'][$category_id]['articles'] = $this->howdoi->GetCategoryArticleIDs($category_id);
+			$data['categories'][$category_id]['articles'] = $this->howdoi_model->GetCategoryArticleIDs($category_id);
 			foreach ($data['categories'][$category_id]['articles'] as $article_id => $category_article)
 			{
-                        	$data['categories'][$category_id]['articles'][$article_id] = $this->news->GetSimpleArticle($category_article);
+                        	$data['categories'][$category_id]['articles'][$article_id] = $this->news_model->GetSimpleArticle($category_article);
 			}
 		}
 
@@ -81,6 +81,20 @@ class Howdoi extends Controller {
 		else
 			//needs a new page to show invalid category
 			redirect('/howdoi');
+	}
+
+	function addhowdoi()
+	{
+		if (!CheckPermissions('public')) return;
+
+		$this->pages_model->SetPageCode('howdoi_view');
+	
+		// Set up the public frame
+		$this->main_frame->SetTitle('cheese');
+		$this->main_frame->SetContentSimple('howdoi/addhowdoi', $data);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
 	}
 }
 ?>
