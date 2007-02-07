@@ -56,7 +56,7 @@
 		</div>
 	</div>
 	<br style='clear: both;' />
-	<form action='/register/au/' method='post' class='form'>
+	<form action='/register/end/' method='post' class='form'>
 		<div style='margin-top: 1em;'>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
 			<input type='button' name='back' id='back' value='< Back' class='button' onclick="window.location='/register/societies'" />

@@ -423,12 +423,19 @@ class Register extends Controller {
 
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		$this->main_frame->SetContentSimple('account/au', $data);
-		
+
 		$this->main_frame->SetTitleParameters(
 			array('section' => 'Athletic Union Clubs')
 		);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
+	}
+
+	function end()
+	{
+		if (!CheckPermissions('student')) return;
+		$this->main_frame->AddMessage('success','Thank you for completing the preferences wizard and welcome to The Yorker.');
+		redirect('/home');
 	}
 }
 ?>
