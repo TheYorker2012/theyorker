@@ -26,7 +26,7 @@ class Faq extends Controller {
 				),
 			),
 		));
-		if (FALSE === $data['faq') {
+		if (FALSE === $data['faq']) {
 			$data['faq'] = array();
 		}
 		
