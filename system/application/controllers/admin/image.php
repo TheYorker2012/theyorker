@@ -61,6 +61,7 @@ class image extends Controller {
 		
 		$allPhotos = $this->db->getwhere('photos', array('photo_deleted' => 0));
 		$totalPhotos = $allPhotos->num_rows();
+		$data['shownPhotos'] = $allPhotos;
 		
 		$image_type = $this->db->where('image_type_width <=', VIEW_WIDTH/3)->orderby('image_type_width', 'desc')->get('image_types', 1);
 		$data['imageType'] = $image_type->row();
@@ -73,8 +74,10 @@ class image extends Controller {
 			$this->pagination->initialize($config);
 			
 			$data['pages'] = $this->pagination->create_links();
+		} elseif ($totalPhotos == 0) {
+			$data['shownPhotos'] = false;
+			$data['pages'] = '';
 		} else {
-			$data['shownPhotos'] = $allPhotos;
 			$data['pages'] = '';
 		}
 		
