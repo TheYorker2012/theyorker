@@ -6,4 +6,4 @@ This will be used by everyone for the charley launch, but is only inteneded for 
 <br />
 <a href="/admin/pages">Page properties, custom pages, etc.</a><br />
 <a href="/admin/dev">Webserver information</a><br />
-<a href="/admin/images">Image Management</a><br />
+<a href="/admin/image">Image Management</a><br />

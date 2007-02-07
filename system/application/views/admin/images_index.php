@@ -1,5 +1,5 @@
 TODO Gallery system to view and edit photos and associated images
-<?=anchor('admin/images/upload', 'Upload new photos')?>
+<?=anchor('admin/image/upload', 'Upload new photos')?>
 <p>
 <?php
 $column = 0;
