@@ -9,6 +9,8 @@
 
 function login_handler($Data, $Permission)
 {
+	SetupMainFrame(GetUserLevel());
+	
 	$CI = &get_instance();
 	
 	$data = array(
