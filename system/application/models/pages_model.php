@@ -537,6 +537,7 @@ class Pages_model extends Model
 					$sql .= ' = ?';
 					$query_params = array($data['page_id']);
 				}
+				$sql .= ' ORDER BY page_properties.page_property_label, page_properties.page_property_label';
 				$query = $this->db->query($sql,$query_params);
 				$property_results = $query->result_array();
 				$data['properties'] = array();
