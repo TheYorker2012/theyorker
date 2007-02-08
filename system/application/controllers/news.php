@@ -27,19 +27,22 @@ class News extends Controller {
 			case 'uninews':
 				$this->pages_model->SetPageCode('news_campus');
 				$data['rss_feed_title'] = $this->pages_model->GetPropertyText('rss_feed_title');
+				$data['link'] = 'news';
 				break;
 			case 'features':
 				$this->pages_model->SetPageCode('news_features');
+				$data['link'] = 'features';
 				break;
 			case 'lifestyle':
 				$this->pages_model->SetPageCode('news_lifestyle');
-
+				$data['link'] = 'lifestyle';
 				$this->main_frame->SetTitleParameters(array('section' => ''));
 				break;
 			default:
 				$this->pages_model->SetPageCode('news_campus');
 				$data['rss_feed_title'] = $this->pages_model->GetPropertyText('rss_feed_title');
 				$article_type = 'uninews';
+				$data['link'] = 'news';
 				break;
 		}
 		// Get variable content based on article type
