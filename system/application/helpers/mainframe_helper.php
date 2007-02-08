@@ -65,7 +65,9 @@ function GenerateToplinks($Permission)
 	$log_out = array('log out', site_url('logout/main'.$CI->uri->uri_string()));
 	$username = $CI->user_auth->username;
 	$enter_office = array('enter office',site_url('office'));
+	$go_office = array('office',site_url('office'));
 	$enter_vip = array('enter VIP area',site_url('viparea'));
+	$go_vip = array('VIP area',site_url('viparea'));
 	
 	switch ($UserLevel) {
 		case 'public':
@@ -88,7 +90,7 @@ function GenerateToplinks($Permission)
 		case 'vip':
 			$top_links[] = 'logged in as ' . $username;
 			if ($Permission === 'public' || $Permission === 'student') {
-				$top_links[] = $enter_vip;
+				$top_links[] = $go_vip;
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
 							site_url('logout/viparea'.$CI->uri->uri_string()));
@@ -108,7 +110,7 @@ function GenerateToplinks($Permission)
 		case 'admin':
 			if ($Permission === 'public' || $Permission === 'student') {
 				$top_links[] = 'logged in as ' . $username;
-				$top_links[] = $enter_office;
+				$top_links[] = $go_office;
 				$top_links[] = array('leave office',
 						site_url('logout/office'.$CI->uri->uri_string()));
 			} elseif (	$Permission === 'office' ||
