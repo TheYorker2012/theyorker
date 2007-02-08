@@ -14,6 +14,37 @@
 class News_model extends Model
 {
 
+	function News_Model()
+	{
+		parent::Model();
+	}
+
+	/**
+	*Determines wheter the proveded ID is of specified type.
+	*@param $id is an article_id
+	*@param $type is a content_type_codename
+	*@return BOOLEAN
+	**/	
+		
+	function IdIsOfType($id,$type)
+	{
+		$sql = 'SELECT content_type_codename
+			FROM content_types
+			LEFT JOIN articles
+			WHERE (article_content_type_id = content_type_id
+			AND article_id = ?
+			AND content_type_codename = ?)';
+		$query = $this->db->query($sql,array($id,$type));
+		if ($query->num_rows() == 1)
+		{
+			//If more than one is returned, something has gone wrong.
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
 	/**
 	 * Returns an array of the Article IDs that are of a specified type in
 	 * decending order by publish date.
@@ -29,7 +60,9 @@ class News_model extends Model
 			LEFT JOIN content_types
 			ON	(content_types.content_type_id = articles.article_content_type_id)
 			WHERE	(content_types.content_type_codename = ?
-			AND	articles.article_publish_date < CURRENT_TIMESTAMP)
+			AND	articles.article_publish_date < CURRENT_TIMESTAMP
+			AND 	articles.article_live_content_id IS NOT NULL
+			AND	articles.article_editor_approved_user_entity_id IS NOT NULL)
 			ORDER BY articles.article_publish_date DESC
 			LIMIT 0, ?';
 		$query = $this->db->query($sql,array($type,$number));
@@ -40,8 +73,12 @@ class News_model extends Model
 			{
 				$result[] = $row->article_id;
 			}
+			return $result;
+		}else
+		{
+			return FALSE;
 		}
-		return $result;
+		
 	}
 
 	/**
@@ -78,9 +115,9 @@ class News_model extends Model
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
 			FROM article_writers
-			WHERE (article_writers.article_writer_article_content_id = ?)
+			WHERE (article_writers.article_writer_article_id = ?)
 			LIMIT 0,10';
-		$query = $this->db->query($sql, array($content_id));
+		$query = $this->db->query($sql, array($id));
 		if ($query->num_rows() > 0)
 		{
 		    $authors = array();
@@ -150,9 +187,9 @@ class News_model extends Model
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
 			FROM article_writers
-			WHERE (article_writers.article_writer_article_content_id = ?)
+			WHERE (article_writers.article_writer_article_id = ?)
 			LIMIT 0,10';
-		$query = $this->db->query($sql,array($content_id));
+		$query = $this->db->query($sql,array($id));
 		if ($query->num_rows() > 0)
 		{
 		    $authors = array();
@@ -225,9 +262,11 @@ class News_model extends Model
 
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
 			FROM article_writers
-			WHERE (article_writers.article_writer_article_content_id = ?)
+			WHERE (article_writers.article_writer_article_id = ?
+			AND article_writers.article_writer_accepted = 1
+			AND article_writers.article_writer_editor_accepted = 1)
 			LIMIT 0,10';
-		$query = $this->db->query($sql,array($content_id));
+		$query = $this->db->query($sql,array($id));
 	    $authors = array();
 		
 	    foreach ($query->result() as $row)
