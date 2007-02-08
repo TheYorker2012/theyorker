@@ -50,6 +50,7 @@ class Wikiparser {
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
 		$this->image_uri = '/images/prototype/';
+		$this->image_overrides = array();
 		$this->ignore_images = false;
 		$this->emphasis[1] = "";
 		$this->emphasis[2] = "";
@@ -257,12 +258,15 @@ class Wikiparser {
 	function handle_image($href,$title,$options) {
 		if ($this->ignore_images) return "";
 		if (!$this->image_uri) return $title;
-		$href = $this->image_uri . $href;
+		if (array_key_exists($href,$this->image_overrides)) {
+			$href = $this->image_overrides[$href];
+		} else {
+			$href = $this->image_uri . $href;
+		}
 		
 		$imagetag = sprintf(
-			'<img src="%s" alt="%s" />',
-			$href,
-			$title
+			'<img src="%s" />',
+			$href
 		);
 		foreach ($options as $k=>$option) {
 			switch($option) {
@@ -303,7 +307,7 @@ class Wikiparser {
 		$title = (isset($matches[6]) and $matches[6]) ? $matches[6] : $matches[4];
 		$namespace = $matches[3];
 
-		if ($namespace=='Image') {
+		if ($namespace=='image') {
 			$options = explode('|',$title);
 			$title = array_pop($options);
 			return $this->handle_image($href,$title,$options);
