@@ -124,4 +124,4 @@ foreach ($ThumbDetails->result() as $Single) {
 		<input type="hidden" name="width" id="width" />
 		<input type="hidden" name="height" id="height" />
 </form>
-<p><?=anchor('admin/images', 'Return')?></p>
+<p><?=anchor('admin/image', 'Return')?></p>
