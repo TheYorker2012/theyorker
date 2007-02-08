@@ -359,7 +359,7 @@ class User_auth {
 
 		$row = $query->row();
 		$this->organisationLogin = $organisationId;
-		$this->organisationName = $organisation_name;
+		$this->organisationName = $row->organisation_name;
 		$this->localToSession();
 	}
 

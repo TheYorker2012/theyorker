@@ -53,18 +53,17 @@ function preloader()
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
 		<?php
-		if ($login['logged_in']) {
-			echo 'In VIP area as '.$login['username'].'.';
-			?>
-			<a class="HeaderLinks" href="/logout/viparea<?php echo $uri; ?>">leave VIP area</a> |
-			<?php
-		} else {
-			?>
-			<a class="HeaderLinks" href="/viparea/">enter VIP area</a> |
-			<?php
+		// Set by GenerateToplinks in mainframe_helper
+		if (isset($toplinks)) {
+			foreach ($toplinks as $link) {
+				if (is_string($link)) {
+					echo $link.' | ';
+				} elseif (is_array($link)) {
+					echo '<a class="HeaderLinks" href="'.$link[1].'">'.$link[0].'</a> | ';
+				}
+			}
 		}
 		?>
-		<a class="HeaderLinks" href="/register/">register</a> |
 		<a class="HeaderLinks" href="/about/">about us</a> |
 		<a class="HeaderLinks" href="/contact/">contact us</a> |
 		<a class="HeaderLinks" href="/faq/">FAQs</a>

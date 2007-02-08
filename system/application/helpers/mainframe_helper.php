@@ -42,8 +42,96 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 			// Load the corresponding library and create an alias called main_frame
 			$CI->load->library($frame_library);
 			$CI->main_frame = $CI->$frame_library;
+			
+			$CI->main_frame->SetData('toplinks',
+					GenerateToplinks($Frame)
+				);
 		}
 	}
+}
+
+/// Generate array of top links to go in the main frame.
+/**
+ * @param $Permission string Permission level of page
+ * @pre user_auth library loaded.
+ */
+function GenerateToplinks($Permission)
+{
+	$CI = &get_instance();
+	$UserLevel = GetUserLevel();
+
+	$top_links = array();
+	
+	$log_out = array('log out', site_url('logout/main'.$CI->uri->uri_string()));
+	$username = $CI->user_auth->username;
+	$enter_office = array('enter office',site_url('office'));
+	$enter_vip = array('enter VIP area',site_url('viparea'));
+	
+	switch ($UserLevel) {
+		case 'public':
+			$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
+			$top_links[] = array('register',site_url('register'));
+			break;
+		
+		case 'student':
+			$top_links[] = 'logged in as ' . $username;
+			if ($CI->user_auth->officeLogin) {
+				$top_links[] = $enter_office;
+			}
+			if ($CI->user_auth->officeLogin) {
+				$top_links[] = $enter_vip;
+			}
+			$top_links[] = $log_out;
+			break;
+		
+		case 'organisation':
+		case 'vip':
+			$top_links[] = 'logged in as ' . $username;
+			if ($Permission === 'public' || $Permission === 'student') {
+				$top_links[] = $enter_vip;
+				if ($UserLevel === 'vip') {
+					$top_links[] = array('leave VIP area',
+							site_url('logout/viparea'.$CI->uri->uri_string()));
+				}
+			} elseif ($Permission === 'vip') {
+				$top_links[] = 'in VIP area as ' . $CI->user_auth->organisationName;
+				if ($UserLevel === 'vip') {
+					$top_links[] = array('leave VIP area',
+							site_url('logout/viparea'));
+				}
+			}
+			$top_links[] = $log_out;
+			break;
+		
+		case 'office':
+		case 'editor':
+		case 'admin':
+			if ($Permission === 'public' || $Permission === 'student') {
+				$top_links[] = 'logged in as ' . $username;
+				$top_links[] = $enter_office;
+				$top_links[] = array('leave office',
+						site_url('logout/office'.$CI->uri->uri_string()));
+			} elseif (	$Permission === 'office' ||
+						$Permission === 'editor' ||
+						$Permission === 'admin') {
+				$top_links[] = 'in office as ' . $username;
+				$top_links[] = array('leave office',
+						site_url('logout/office'));
+			}
+			$top_links[] = $log_out;
+			break;
+	}
+	
+	return $top_links;
+/*
+	office | editor | admin
+		[public | student]
+			>enter office
+			if (office)
+				!you're still in office
+		'in office as %%username%%'
+		>leave office
+*/
 }
 
 ?>
