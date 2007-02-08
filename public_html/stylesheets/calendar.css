@@ -187,4 +187,17 @@
 	text-align: center;
 	color: #005500;
 }
+.calviewTimeSpacerGrey {
+	padding: 2px;
+	margin: 0px;
+	margin-left: 2px;
+	margin-right: 2px;
+	border: none;
+	border-top: 1px solid #9a9a9a;
+	border-bottom: 1px solid #9a9a9a;
+	background-color: #ffffff;
+	font-size: 9px;	
+	text-align: center;
+	color: #444444;
+}
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */

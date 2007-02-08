@@ -35,12 +35,16 @@ function confirmRemoveEvent (confResponse) {
 		revokeRefids.push(opo[1]);
 		draw_calendar (calevents);
 	}
+	else {
+		alert ("Couldn't remove event, sorry!\nError: "+opo[3]);
+		draw_calendar (calevents);
+	}
 	
 }
 function removeEvent (arrid) {
 	// new Effect.Fade ('ev_'+arrid);
 
-	$('ev_'+arrid).innerHTML = "removing from your calendar..."
+	$('ev_'+arrid).innerHTML = "removing from your calendar...<br />\n<img src=\"/images/waitcounter.gif\" title=\"Please wait\" alt=\"Billy\" />"
 	
 	var url = '/calendar/ajaxCalUpdate/-1/'+arrid+'/HIDE';
 	var myAjax = new Ajax.Request(
@@ -114,7 +118,7 @@ function draw_calendar (events) {
 	var event_arrid = 0;
 	var debug = '';
 	var i = 0;
-	var cpd = [0,0,0,0,0,0];
+	var cpd = [0,0,0,0,0,0,0];
 	var lastime = '';
 	var evc = [];
 	var evl = [];
@@ -168,7 +172,7 @@ function draw_calendar (events) {
 				 	if (clash) {
 					 	hdif = evc[0] - evl[0]; // difference in hours
 					 	mdif = evc[1] - evl[1]; // difference in minutes
-					 	mdif = (mdif < 0) ? (60-mdif) : (mdif);
+					 	mdif = (mdif < 0) ? (60-mdif*-1) : (mdif);
 					 	cdifstr = 'CLASH!<br />\n'+hdif+':'+minuteslamatron(mdif)+' overlap!';
 					 	colcho = 'R';
 				 	}
@@ -177,7 +181,10 @@ function draw_calendar (events) {
 				 	}
 				 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],cdifstr,colcho);
 				 }
-				 lastime = events[day][event_index]['endtime'];
+//				 if (!clash) {
+				 	// this clashes up like... the whole day \o/
+				 	lastime = events[day][event_index]['endtime'];
+//				 }
 				 	
 				 draw_calendar_event (events[day][event_index]);
 				 cpd[day]++
@@ -186,7 +193,18 @@ function draw_calendar (events) {
 
 
 		}
-	 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],"Day ends: "+lastime,'G');
+		if (cpd[day] > 0) {
+		 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],"Day ends: "+lastime,'G');
+		}
+
+	}
+	
+	for (i = 0;i<=7;i++) {
+	
+		if (cpd[i] == 0) {
+		 	draw_calendar_timeSpacer (daysDiv[parseInt (i)],"FREE DAY!",'Grey');
+		}
+	
 	}
 	
 	//alert (debug);

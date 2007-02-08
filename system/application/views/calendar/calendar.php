@@ -1,26 +1,5 @@
 <?php
 
-// The below block takes the $dummies (current dummy event data) array from
-// the $data var passed from the controller and parses it out into a load of
-// JS array values in the format x[i][key]['val']
-// where i is an arbitrary iterator which will be used to reference the local
-// (i.e. client side) copy of the data while it is being displayed and edited.
-// When sending a request to upadte the db to the server, the "ref_id" field is
-// used as this is supplied by the controller and is a value which can be used 
-// to find the correct data again server side.
-if (0) { // maybe do it a different way rather than drawing it locally.
-	foreach ($events as $events_array_index => $event) {
-		// Create a subarray for each event
-		echo "myEvents[$events_array_index] = new Array()\n";
-		
-		// Iterate through each field and populate the relevant subarray
-		foreach ($event as $event_key => $event_val) {
-			echo "myEvents[$events_array_index][\"$event_key\"] = \"$event_val\"\n";
-		}
-		echo "\n";
-	}
-}
-
 // Put special headings at top
 foreach ($dayinfo as $id => $info) {
 	$eventBoxCode[$id] = '';
@@ -66,7 +45,7 @@ for ($i = 0;$i < 7;$i++) {
 
 $mypath = pathinfo(__FILE__);
 $snippets_dir = $mypath['dirname'] . "/snippets";
-$day_JSON = array ();
+$days_JSON = array ();
 
 foreach ($events as $events_array_index => $event) {
 	
@@ -97,7 +76,7 @@ foreach ($events as $events_array_index => $event) {
 
 $ops = "";
 foreach ($days_JSON as $did => $JSD) {
-	if ($did < 6)
+	if (strlen ($JSD) == 0)
 		$ccom = '';
 	else
 		$ccom = ',';
@@ -105,8 +84,10 @@ foreach ($days_JSON as $did => $JSD) {
 	$ops .= "\n\t'$did': {\n{$days_JSON[$did]}\n\t}$ccom\n";
 }
 
+$ops = trim ($ops);
+$ops = substr ($ops,0,strlen ($ops) -1);
 
-$js_ops = "\ncalevents = ({ \n$ops\n})";
+$js_ops = "\ncalevents = ({ \n\t$ops\n})";
 
 ?>
 
@@ -126,7 +107,7 @@ var calevents = {};
 
 // this is to store events hidden in future.
 var revokeRefids = [];
-var daysDiv = ['calviewMonday','calviewTuesday','calviewWednesday','calviewThursday','calviewFriday','calviewSaturday'];
+var daysDiv = ['calviewMonday','calviewTuesday','calviewWednesday','calviewThursday','calviewFriday','calviewSaturday','calviewSunday'];
 
 function init_calendar () {
 	draw_calendar (calevents);
