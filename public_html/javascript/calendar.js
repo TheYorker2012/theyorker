@@ -173,7 +173,7 @@ function draw_calendar_event (indEvent) {
 	outHtml = outHtml.replace (/%%blurb%%/g,indEvent.blurb);
 
 	$(daysDiv[parseInt (indEvent.day)]).innerHTML += outHtml;	
-	draw_calendar_timeSpacer (daysDiv[parseInt (indEvent.day)],'123124','G');
+	draw_calendar_timeSpacer (daysDiv[parseInt (indEvent.day)],'123124','R');
 
 }
 
