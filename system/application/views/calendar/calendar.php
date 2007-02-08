@@ -30,6 +30,7 @@ foreach ($dayinfo as $id => $info) {
 	}
 }
 
+/*
 // Then events
 foreach ($events as $events_array_index => $event) {
 	
@@ -56,7 +57,42 @@ foreach ($events as $events_array_index => $event) {
 for ($i = 0;$i < 7;$i++) {
 	@$eventBoxCode[$i] .= '&nbsp;';
 }
+*/
 
+// as JS array instead
+
+$js_arr = "
+    var calevents = new Object ();
+    calevents[0] = new Object (); // Monday
+    calevents[1] = new Object ();
+    calevents[2] = new Object ();
+    calevents[3] = new Object ();
+    calevents[4] = new Object ();
+    calevents[5] = new Object ();
+    calevents[6] = new Object (); // Sunday
+    ";
+
+
+$mypath = pathinfo(__FILE__);
+$snippets_dir = $mypath['dirname'] . "/snippets";
+
+foreach ($events as $events_array_index => $event) {
+	
+	$replace = array (
+		'%%arrid%%' => $events_array_index, 
+		'%%refid%%' => $event['ref_id'],
+		'%%name%%' => htmlspecialchars ($event['name']),
+		'%%date%%' => $event['date'],
+		'%%day%%' =>  $event['day'],
+		'%%starttime%%' => $event['starttime'],
+		'%%endtime%%' => $event['endtime'],
+		'%%blurb%%' => htmlspecialchars ($event['blurb']),
+		'%%shortloc%%' => htmlspecialchars ($event['shortloc']),
+		'%%type%%' => htmlspecialchars ($event['type']),
+	);
+	
+	$js_arr .= apinc ($snippets_dir . "/singleEventJSArr.inc",$replace);
+}
 
 ?>
 
@@ -64,11 +100,21 @@ for ($i = 0;$i < 7;$i++) {
 echo '<a href="'.$prev.'">Previous Week</a><br/>';
 echo '<a href="'.$next.'">Next Week</a><br/>';
 
-echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
+//$mypath = pathinfo(__FILE__);
+//$snippets_dir = $mypath['dirname'] . "/snippets";
+//echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
 
 		?>
 
-		
+<script type="text/javascript">
+function init_calendar () {
+	<?php echo $js_arr ?>
+	
+	draw_calendar (calevents);
+	
+}
+</script>
+
 
 <!-- Container div; contains everything
 	will make it easier to shove in a template later! -->
@@ -169,7 +215,12 @@ echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
 				
 			</tr>
 			
+			<script type="text/javascript">
+				
+				// Calendar is loaded now so safe to render (provided browser isn't smoking crack)
+				init_calendar ();
 			
+			</script>
 			
 		</table>
 	
@@ -177,8 +228,3 @@ echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
 	
 	
 </div>
-<script type="text/javascript">
-<?php echo $eventHandlerJS ?>
-
-Event.observe(document, "onmouseover", function () { hideEventMenu(); });
-</script>

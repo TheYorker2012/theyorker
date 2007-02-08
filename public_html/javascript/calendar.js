@@ -54,3 +54,54 @@ function expandEvent (arrid) {
 function collapseEvent (arrid) {
 	new Effect.Fade ('ev_es_'+arrid,{duration:0.2});	
 }
+
+function sortByStartTime(a, b) {
+    var w = a.starttime.split(':')[0]
+    var x = b.starttime.split(':')[0]
+    var y = a.starttime.split(':')[1]
+    var z = b.starttime.split(':')[1]
+    return ((w < x) ? -1 : ((w > x) ? 1 : ((y < z) ? -1 : (y > z) ? 1 : 0) ));
+}
+
+function draw_calendar (events) {
+
+	var day = 0;
+	var event = new Array ();
+	
+	// loop through each day
+	for (day in events) {
+		
+		// sort the events into chronological order
+//		events[day] = events[day].sort(sortByStartTime);
+
+
+	
+	}
+	
+	day = 0;
+	var event_arrid = 0;
+	var debug = '';
+	var i = 0;
+	
+	for (day in events) {
+		
+		debug += '\nday='+day+'\n';
+		
+		for (event_index in events[day]) {
+			
+			debug += ' event_index='+event_index+'\n';
+			
+			//
+			if (i > 100)
+				break;
+			else
+				i++;
+		}
+	}
+	
+	alert (debug);
+	
+}
+
+
+
