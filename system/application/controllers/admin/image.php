@@ -144,20 +144,7 @@ class image extends Controller {
 		
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		
-		$imageData = array('image_photo_id' => $selectedThumb[4],
-		                   'image_image_type_id' => $selectedThumb[3]);
-		$query = $this->db->select('image_id')->getwhere('images', $imageData);
-		if ($query->num_rows() > 0) {
-			$this->db->delete('images', $imageData);
-		}
-		$this->db->insert('images', $imageData);
-		$query = $this->db->select('image_id')->getwhere('images', $imageData);
-		
-		foreach ($query->result() as $singleRow) {
-			$id = $singleRow->image_id;
-		}
-		
-		if (!createImageLocation($id, $selectedThumb[3])) {
+		if (!createImageLocation($selectedThumb[4], $selectedThumb[3])) {
 			$objResponse->addAssign("submitButton","value","Error: Location not created");
 			$objResponse->addAssign("submitButton","disabled",false);
 
@@ -169,7 +156,7 @@ class image extends Controller {
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
 		$config['maintain_ratio'] = FALSE;
-		$config['new_image'] = imageLocation($id, $selectedThumb[3], null, TRUE);
+		$config['new_image'] = imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['y_axis'] = $formData['y1'];
 		
