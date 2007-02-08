@@ -152,7 +152,7 @@ class image extends Controller {
 		}
 		
 		$config['image_library'] = 'netpbm';
-		$config['library_path'] = '/usr/bin/'
+		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
