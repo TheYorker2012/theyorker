@@ -179,7 +179,6 @@ echo apinc ($snippets_dir . "/calviewEventMenu.inc",array ());
 </div>
 <script type="text/javascript">
 <?php echo $eventHandlerJS ?>
-	document.getElementById('calviewEventMenu').style.top = 344;
-	$('calviewEventMenu').style.left = 253;
-//Event.observe(document, "onmouseover", function (e) { hideEventMenu(e); });
+
+Event.observe(document, "onmouseover", function () { hideEventMenu(); });
 </script>
