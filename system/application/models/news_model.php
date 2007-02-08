@@ -115,7 +115,10 @@ class News_model extends Model
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
 			FROM article_writers
-			WHERE (article_writers.article_writer_article_id = ?)
+			WHERE (article_writers.article_writer_article_id = ?
+			AND article_writers.article_writer_accepted = 1
+			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
+			
 			LIMIT 0,10';
 		$query = $this->db->query($sql, array($id));
 		if ($query->num_rows() > 0)
@@ -187,7 +190,9 @@ class News_model extends Model
 		}
 		$sql = 'SELECT article_writers.article_writer_user_entity_id
 			FROM article_writers
-			WHERE (article_writers.article_writer_article_id = ?)
+			WHERE (article_writers.article_writer_article_id = ?
+			AND article_writers.article_writer_accepted = 1
+			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
 		if ($query->num_rows() > 0)
@@ -264,7 +269,7 @@ class News_model extends Model
 			FROM article_writers
 			WHERE (article_writers.article_writer_article_id = ?
 			AND article_writers.article_writer_accepted = 1
-			AND article_writers.article_writer_editor_accepted = 1)
+			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
 	    $authors = array();
