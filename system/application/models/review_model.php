@@ -252,7 +252,7 @@ class Review_model extends Model {
 				INNER JOIN tags ON tag_groups.tag_group_id = tag_groups.tag_group_id
 				INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 				INNER JOIN review_contexts ON review_contexts.review_context_organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
-				INNER JOIN content_types ON content_types.content_type_id = review_contexts.review_context_content_type_id WHERE content_types.content_type_codename = ?
+				INNER JOIN content_types ON content_types.content_type_id = tag_groups.tag_group_content_type_id WHERE content_types.content_type_name = ?
 				ORDER BY tag_group_order
 				';
 		$query = $this->db->query($sql,$type);
@@ -395,10 +395,11 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				ON t.tag_id = ot.organisation_tag_tag_id
 				INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
-				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
+				INNER JOIN content_types ON content_types.content_type_id = 				tg.tag_group_content_type_id
+				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . ' && content_types.content_type_name = ?
 				ORDER BY t.tag_order ASC'; //Default sort by tag_order
 	
-			$query = $this->db->query($sql);
+			$query = $this->db->query($sql,$content_type_codename);
 			$tags = $query->result_array();
 
 			//Get a sorted list of tag group names
@@ -410,9 +411,10 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				ON t.tag_id = ot.organisation_tag_tag_id
 				INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
-				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . '
+				INNER JOIN content_types ON content_types.content_type_id = 						tg.tag_group_content_type_id
+				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . ' && content_types.content_type_name = ?
 				ORDER BY tg.tag_group_order ASC';
-			$tgquery = $this->db->query($sql);
+			$tgquery = $this->db->query($sql,$content_type_codename);
 			$tg_array = $tgquery->result_array();
 
 			$tag_groups = array(); //Array for holding the tag groups in sorted order

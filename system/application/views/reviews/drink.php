@@ -44,13 +44,13 @@ if (isset($table_data[$table_data['tag_group_names'][1]]) == 1)
 
 	foreach($table_data[$table_data['tag_group_names'][1]] as $tag)
 	{
-		echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
+		echo anchor('reviews/table/drink/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
 	}
 
 }
 
 //All types
-echo anchor('reviews/table/food/name','All types');
+echo anchor('reviews/table/drink/name','All types');
 
 echo'</div>';
 
@@ -65,7 +65,7 @@ echo '</h3><br />';
 
 foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
 {
-	echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+	echo anchor('reviews/table/drink/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
 }
 }
 

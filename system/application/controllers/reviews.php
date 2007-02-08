@@ -78,7 +78,7 @@ class Reviews extends Controller {
 		$data['article_photo'] = '/images/prototype/news/thumb4.jpg';
 
 		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('culture');
+		$tabledata = $this->Review_model->GetTags('food');
 
 		//Pass tabledata straight to view it is in the proper format
 		$data['table_data'] = $tabledata;
@@ -202,7 +202,7 @@ class Reviews extends Controller {
 		$data['article_author_link'] = '/directory/view/1';
 
 		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('food');
+		$tabledata = $this->Review_model->GetTags('culture');
 
 		//Pass tabledata staight to view it is in the proper format
 		$data['table_data'] = $tabledata;
