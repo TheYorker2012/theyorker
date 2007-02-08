@@ -61,23 +61,24 @@ for ($i = 0;$i < 7;$i++) {
 
 // as JS array instead
 
-$js_arr = "
-    var calevents = new Object ();
-    calevents[0] = new Object (); // Monday
-    calevents[1] = new Object ();
-    calevents[2] = new Object ();
-    calevents[3] = new Object ();
-    calevents[4] = new Object ();
-    calevents[5] = new Object ();
-    calevents[6] = new Object (); // Sunday
-    ";
+
 
 
 $mypath = pathinfo(__FILE__);
 $snippets_dir = $mypath['dirname'] . "/snippets";
+$day_JSON = array ();
 
 foreach ($events as $events_array_index => $event) {
 	
+	if (isset ($days_JSON[$event['day']]))
+		$days_JSON[$event['day']] .= ",\n";
+	
+		
+	/* ($events_array_index <= (count ($events) - 1))
+		$fcom = '';
+	else
+		$fcom = ',';*/
+		
 	$replace = array (
 		'%%arrid%%' => $events_array_index, 
 		'%%refid%%' => $event['ref_id'],
@@ -88,11 +89,24 @@ foreach ($events as $events_array_index => $event) {
 		'%%endtime%%' => $event['endtime'],
 		'%%blurb%%' => htmlspecialchars ($event['blurb']),
 		'%%shortloc%%' => htmlspecialchars ($event['shortloc']),
-		'%%type%%' => htmlspecialchars ($event['type']),
+		'%%type%%' => htmlspecialchars ($event['type'])
 	);
 	
-	$js_arr .= apinc ($snippets_dir . "/singleEventJSArr.inc",$replace);
+	@$days_JSON[$event['day']] .= apinc ($snippets_dir . "/singleEventJSArr.inc",$replace);
 }
+
+$ops = "";
+foreach ($days_JSON as $did => $JSD) {
+	if ($did < 6)
+		$ccom = '';
+	else
+		$ccom = ',';
+		
+	$ops .= "\n\t'$did': {\n{$days_JSON[$did]}\n\t}$ccom\n";
+}
+
+
+$js_ops = "\ncalevents = ({ \n$ops\n})";
 
 ?>
 
@@ -108,7 +122,7 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 
 <script type="text/javascript">
 function init_calendar () {
-	<?php echo $js_arr ?>
+	<?php echo $js_ops ?>
 	
 	draw_calendar (calevents);
 	
