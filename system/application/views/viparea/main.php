@@ -17,7 +17,7 @@ information goes here.
 	<h2>My Tasks</h2>
 	<ul>
 		<li><a href='/viparea/directory/<?php echo $organisation; ?>/'>Edit the directory entry</a></li>
-		<li><a href='/viparea/calendar/<?php echo $organisation; ?>/'>Manage events</a></li>
+		<li><a href='/viparea/calendar/'>Manage events</a></li>
 		<?php if($enable_members == TRUE){?>
 		<li><a href='/viparea/members/view/<?php echo $organisation; ?>'>Manage members</a></li>
 		<?php }?>

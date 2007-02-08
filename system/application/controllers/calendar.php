@@ -13,12 +13,6 @@ class Calendar extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load libraries
-		$this->load->library('event_manager');      // Processing events
-		$this->load->library('academic_calendar');  // Using academic calendar
-		$this->load->library('date_uri');           // Nice date uri segments
-		$this->load->library('view_calendar_days'); // Days calendar view
 	}
 	
 	/**
@@ -36,6 +30,12 @@ class Calendar extends Controller {
 	function week($DateRange = '')
 	{
 		if (!CheckPermissions('public')) return;
+		
+		// Load libraries
+		$this->load->library('event_manager');      // Processing events
+		$this->load->library('academic_calendar');  // Using academic calendar
+		$this->load->library('date_uri');           // Nice date uri segments
+		$this->load->library('view_calendar_days'); // Days calendar view
 		
 		$this->pages_model->SetPageCode('calendar_personal');
 		if (!empty($DateRange)) {
@@ -137,8 +137,43 @@ EXTRAHEAD;
 			75|OK|Event <b>$title</b> has been hidden from your calendar
 			75|FAIL|You are not logged in
 		*/
+		$success = FALSE;
+		$message = '';
 		
-		$this->load->view('calendar_blank',array ("replyString" => "$day|$refid|OK|Dummy message"));
+		// Load the model
+		$this->load->model('calendar/events_model');
+		
+		// Perform the operation putting status in $success and filling $message
+		if ($op === 'HIDE') {
+			$success = $this->events_model->OccurrenceHide();
+			if ($success) {
+				$message = 'Event hidden from your calendar';
+			} else {
+				$message = 'Could not hide event from your calendar';
+			}
+			
+		} elseif ($op === 'SHOW') {
+			$success = $this->events_model->OccurrenceShow();
+			if ($success) {
+				$message = 'Event shown in your calendar';
+			} else {
+				$message = 'Could not show event in your calendar';
+			}
+			
+		} elseif ($op === 'RSVP') {
+			$success = $this->events_model->OccurrenceRsvp();
+			if ($success) {
+				$message = 'RSVP\'d event';
+			} else {
+				$message = 'Could not RSVP event';
+			}
+		}
+		
+		$status = ($success?'OK':'FAIL');
+		// Send the data back to the js
+		$this->load->view('calendar_blank',
+				array ('replyString' => $day.'|'.$refid.'|'.$status.'|'.$message)
+			);
 		
 	}
 	

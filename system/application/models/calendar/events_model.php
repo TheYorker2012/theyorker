@@ -9,15 +9,8 @@ class EventOccurrenceQuery
 	/// Default constructor
 	function __construct()
 	{
-		// Get entity id from user_auth library
 		$CI = &get_instance();
-		$CI->load->library('user_auth');
-		if ($CI->user_auth->isLoggedIn) {
-			$this->mEntityId = $CI->user_auth->entityId;
-		} else {
-			/// @todo Default to an entity id with default events
-			$this->mEntityId = 2;
-		}
+		$this->mEntityId = $CI->events_model->GetActiveEntityId();
 	}
 	
 	/// Produce an SQL expression for all and only public events.
@@ -32,6 +25,7 @@ class EventOccurrenceQuery
 	{
 		$DataArray[] = $this->mEntityId;
 		return	'(	(	event_entities.event_entity_entity_id = ?
+					AND	event_entities.event_entity_confirmed = 1
 					AND	event_entities.event_entity_relationship = \'own\')
 				 OR	subscriptions.subscription_vip=1)';
 	}
@@ -41,28 +35,30 @@ class EventOccurrenceQuery
 	{
 		$DataArray[] = $this->mEntityId;
 		$DataArray[] = $this->mEntityId;
-		return	'(	subscriptions.subscription_user_entity_id = ?
-				OR	event_entities.event_entity_entity_id = ?)';
+		return	'(	(	event_entities.event_entity_entity_id = ?
+					AND	event_entities.event_entity_confirmed = 1
+					AND	(	event_entities.event_entity_relationship = \'own\'
+						OR	event_entities.event_entity_relationship = \'subscribe\'))
+				OR	subscriptions.subscription_user_entity_id = ?)';
 	}
 	
 	/// Produce an SQL expression for all and only rsvp'd events.
 	function ExpressionVisibilityRsvp(&$DataArray)
 	{
-		return	'event_occurrence_users.event_occurrence_user_rsvp=1';
+		return	'event_occurrence_users.event_occurrence_user_state=\'rsvp\'';
 	}
 	
 	/// Produce an SQL expression for all and only hidden events.
 	function ExpressionVisibilityHidden(&$DataArray)
 	{
-		return	'event_occurrence_users.event_occurrence_user_hide=1';
+		return	'event_occurrence_users.event_occurrence_user_state=\'hide\'';
 	}
 	
 	/// Produce an SQL expression for all and only normal visibility events.
 	function ExpressionVisibilityNormal(&$DataArray)
 	{
-		return	'(		(	event_occurrence_users.event_occurrence_user_hide=0
-						AND event_occurrence_users.event_occurrence_user_rsvp=0)
-					OR	(	event_occurrence_users.event_occurrence_user_hide IS NULL))';
+		return	'(		event_occurrence_users.event_occurrence_user_state=\'show\'
+					OR	event_occurrence_users.event_occurrence_user_state IS NULL)';
 	}
 	
 	/// Produce an SQL expression for all and only occurrences in a range of time.
@@ -133,8 +129,8 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				'active'     => TRUE,
 				'inactive'   => TRUE,
 				
-				'hidden'     => FALSE,
-				'normal'     => TRUE,
+				'hide'       => FALSE,
+				'show'       => TRUE,
 				'rsvp'       => TRUE,
 			);
 		
@@ -176,6 +172,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 			}
 		}
 		
+		/// @todo Optimise main event query to avoid left joins amap
 		$parameters = array();
 		$sql = '
 			SELECT '.implode(',',$FieldStrings).' FROM event_occurrences
@@ -197,7 +194,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				AND	subscriptions.subscription_interested		= 1
 				AND	subscriptions.subscription_user_confirmed	= 1
 			LEFT JOIN event_occurrence_users
-				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
+				ON event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
 				AND	event_occurrence_users.event_occurrence_user_user_entity_id
 						= ?';
@@ -223,7 +220,8 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				$subscribed = '0';
 			}
 			
-			if ($this->mSources['inclusions'] && count($this->mInclusions) > 0) {
+			if ($this->mSources['inclusions'] && count($this->mInclusions) > 0)
+{
 				$includes = array();
 				foreach ($this->mInclusions as $inclusion) {
 					$includes[] = 'event_entities.event_entity_event_id=?';
@@ -261,10 +259,10 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		}
 		
 		$visibility_predicates = array();
-		if ($this->mFilters['hidden']) {
+		if ($this->mFilters['hide']) {
 			$visibility_predicates[] = $this->ExpressionVisibilityHidden($parameters);
 		}
-		if ($this->mFilters['normal']) {
+		if ($this->mFilters['show']) {
 			$visibility_predicates[] = $this->ExpressionVisibilityNormal($parameters);
 		}
 		if ($this->mFilters['rsvp']) {
@@ -445,10 +443,44 @@ class Events_model extends Model
 	
 	protected $mOccurrenceFilter;
 	
+	/// Entity id of user/organisation.
+	protected $mActiveEntityId;
+	
+	/// Type of acting entity.
+	protected $mActiveEntityType;
+	
+	/// Whether the user is in read only mode.
+	protected $mReadOnly;
+	
+	/// Message to give to the exception when a user in read only mode tries to write.
+	protected static $cReadOnlyMessage = 'Public calendar is read-only. Please log in.';
+	
+	protected static $cEntityPublic = 0; ///< $mActiveEntityType, indicates not logged in.
+	protected static $cEntityUser   = 1; ///< $mActiveEntityType, indicates logged in.
+	protected static $cEntityVip    = 2; ///< $mActiveEntityType, indicates in viparea.
+	
 	/// Default constructor
 	function __construct()
 	{
 		parent::Model();
+		
+		// Get entity id from user_auth library
+		$CI = &get_instance();
+		$CI->load->library('user_auth');
+		if ($CI->user_auth->isLoggedIn) {
+			$this->mReadOnly = FALSE;
+			if ($CI->user_auth->organisationLogin >= 0) {
+				$this->mActiveEntityId = $CI->user_auth->organisationLogin;
+				$this->mActiveEntityId = self::$cEntityVip;
+			} else {
+				$this->mActiveEntityId = $CI->user_auth->entityId;
+				$this->mActiveEntityId = self::$cEntityUser;
+			}
+		} else {
+			// Default to an entity id with default events
+			$this->mReadOnly = TRUE;
+			$this->mActiveEntityId = self::$cEntityPublic;
+		}
 		
 		$this->mStates = array();
 		$this->mDayInformation = FALSE;
@@ -456,6 +488,12 @@ class Events_model extends Model
 		$this->SetOccurrenceFilter();
 		
 		$this->load->library('academic_calendar');
+	}
+	
+	/// Get the entity id of the active entity.
+	function GetActiveEntityId()
+	{
+		return $this->mActiveEntityId;
 	}
 	
 	/// Set whether some option is enabled
@@ -599,7 +637,10 @@ class Events_model extends Model
 	 *	- Array of rsvp's to occurrences of event
 	 * @pre Own occurrence
 	 */
-	function GetEventRsvp($EventId) {}
+	function GetEventRsvp($EventId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Get information about the RSVP's to an occurrence
 	/**
@@ -609,12 +650,16 @@ class Events_model extends Model
 	 *	- Array of rsvp's
 	 * @pre Own occurrence
 	 */
-	function GetOccurrenceRsvp($OccurrenceId) {}
+	function GetOccurrenceRsvp($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	// subscriber
 	/// Get the information relating to a notice type.
 	/**
-	 * @param $NoticeType string Notice type as ['type'] in return of GetNotices.
+	 * @param $NoticeType string Notice type as ['type'] in return of
+	 *	GetNotices.
 	 * @return array Notice type information including:
 	 *	- 'actions' array of action names.
 	 */
@@ -632,7 +677,7 @@ class Events_model extends Model
 				'description' => 'You have been invited to join the specified organisation as a member.',
 				'actions' => array(
 					'Interested' => 'Accept the membership and subscribe to events',
-					'Not interested' => 'Accept the membership but don\' subscribe to events',
+					'Not interested' => 'Accept the membership but don\'t subscribe to events',
 					'Reject' => 'Reject the membership',
 				),
 			),
@@ -642,20 +687,28 @@ class Events_model extends Model
 	
 	/// Get notices relating to a user's calendar.
 	/**
-	 * Get all pending subscriptions/memberships.
+	 * Get all pending
+	 *	- subscriptions/memberships.
+	 *	- event ownerships/event feed inclusions
 	 * Moved RSVP'd events.
 	 * @return array Array of notice information including:
 	 *	- 'type' (e.g. requested_subscription, requested_membership)
 	 *	- 'subscription_id' (if type == requested_subscription)
 	 */
-	function GetNotices() {}
+	function GetNotices()
+	{
+		/// @todo Implement.
+	}
 	
 	/// Get an occurrence's active occurrence.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return array Information about the active occurrence.
 	 */
-	function GetOccurrenceActiveOccurrence($OccurrenceId) {}
+	function GetOccurrenceActiveOccurrence($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	// TRANSACTIONS
 	// organiser
@@ -668,42 +721,147 @@ class Events_model extends Model
 	 * @post Each user in @a $User without an existing subscription will have
 	 *	one set up without user confirmation yet.
 	 */
-	function FeedSubscribeUsers($EntityId, $Users) {}
+	function FeedSubscribeUsers($EntityId, $Users)
+	{
+		/// @todo Implement.
+	}
 	
 	
 	/// Create a new event.
 	/**
 	 * @param $EventData array Event data.
+	 * @return array(
+	 *	'event_id' => new event id,
+	 *	'occurrences' => occurrences added)
+	 * @exception Exception The event could not be created.
 	 */
 	function EventCreate($EventData)
 	{
-		/*
-		$EventData = array(
-			image
-			parent
-			type
-			name
-			description
-			blurb
-			occurrences
-				extra description
-				location
-				postcode
-				start time
-				end time
-				all day?
-				ends late?
-			extra_owners
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
+		static $translation = array(
+			'name'			=> 'events.event_name',
+			'description'	=> 'events.event_description',
+			'parent'		=> 'events.event_parent_id',
 		);
-		insert events
-		insert occurrences
-		insert event_entity for user + every extra_owner
-		*/
+		$fields = array();
+		$bind_data = array();
+		foreach ($translation as $input_name => $field_name) {
+			if (array_key_exists($input_name, $EventData)) {
+				$fields[] = $field_name.'=?';
+				$bind_data[] = $EventData[$input_name];
+			}
+		}
+		
+		// create new event
+		$sql = 'INSERT INTO events SET '.implode(',',$fields);
+		$query = $this->db->query($sql, $bind_data);
+		$affected_rows = $this->db->affected_rows();
+		if ($affected_rows == 0) {
+			throw new Exception('Event could not be created (1)');
+		}
+		$event_id = $this->db->insert_id();
+		
+		// link event to creater
+		$sql = 'INSERT INTO event_entities (
+				event_entity_entity_id,
+				event_entity_event_id,
+				event_entity_relationship,
+				event_entity_confirmed)
+			VALUES';
+		$sql .= ' ('.$this->mActiveEntityId.','.$event_id.',\'own\',1)';
+		$query = $this->db->query($sql);
+		$affected_rows = $this->db->affected_rows();
+		if ($affected_rows == 0) {
+			// Should now delete event since couldn't bind to entity
+			$sql = 'DELETE FROM events WHERE events.event_id='.$event_id;
+			$query = $this->db->query($sql);
+			$affected_rows = $this->db->affected_rows();
+			// Throw error message
+			$message = 'Event could not be created (';
+			if ($affected_rows == 1) {
+				$message .= '2-clean)';
+			} else {
+				$message .= '2-unclean)';
+			}
+			throw new Exception($message);
+		}
+		
+		if (array_key_exists('occurrences',$EventData)) {
+			static $translation2 = array(
+				'description',
+				'location',
+				'postcode',
+				'all_day',
+				'ends_late',
+			);
+			// create each occurrences
+			$sql = 'INSERT INTO event_occurrences (
+					event_occurrence_event_id,
+					event_occurrence_description,
+					event_occurrence_location,
+					event_occurrence_postcode,
+					event_occurrence_start_time,
+					event_occurrence_end_time,
+					event_occurrence_all_day,
+					event_occurrence_ends_late)
+				VALUES';
+			$first = TRUE;
+			foreach ($EventData['occurrences'] as $occurrence) {
+				$values = array_fill(0, count($translation2)-1, 'DEFAULT');
+				foreach ($translation2 as $field_name => $input_name) {
+					if (array_key_exists($input_name, $occurrence)) {
+						$values[$field_name] = $this->db->escape($occurrence[$input_name]);
+					}
+				}
+				if (!$first)
+					$sql .= ',';
+				$sql .=	' ('.$event_id.
+						','.$values[0].		// description
+						','.$values[1].		// location
+						','.$values[2];		// postcode
+				// start time
+				if (array_key_exists('start', $occurrence))
+					$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
+				else
+					$sql .= ',DEFAULT';
+				// end time
+				if (array_key_exists('end', $occurrence))
+					$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
+				else
+					$sql .= ',DEFAULT';
+				
+				$sql .=	','.$values[3].		// all_day
+						','.$values[4].')'; // ends_late
+				
+				$first = FALSE;
+			}
+			$query = $this->db->query($sql);
+			$num_occurrences = $this->db->affected_rows();
+		} else {
+			$num_occurrences = 0;
+		}
+		
+		// Return some information about the created event.
+		return array(
+			'event_id'		=> $event_id,
+			'occurrences'	=> $num_occurrences,
+		);
 	}
-	function EventPublish($EventId) {}
+	function EventPublish($EventId)
+	{
+		/// @todo Implement.
+	}
 	
-	function OccurrenceAdd($EventId, $OccurrenceData) {}
-	function OccurrenceAlter($OccurrenceId, $OccurrenceData) {}
+	function OccurrenceAdd($EventId, $OccurrenceData)
+	{
+		/// @todo Implement.
+	}
+	function OccurrenceAlter($OccurrenceId, $OccurrenceData)
+	{
+		/// @todo Implement.
+	}
 	
 	
 	/// Publish a draft occurrence to the feed.
@@ -714,7 +872,10 @@ class Events_model extends Model
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
 	 */
-	function OccurrenceDraftPublish($OccurrenceId) {}
+	function OccurrenceDraftPublish($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Trash a draft occurrence.
 	/**
@@ -723,7 +884,10 @@ class Events_model extends Model
 	 * @pre 'draft'
 	 * @post 'trashed'
 	 */
-	function OccurrenceDraftTrash($OccurrenceId) {}
+	function OccurrenceDraftTrash($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Restore a trashed occurrence.
 	/**
@@ -732,7 +896,10 @@ class Events_model extends Model
 	 * @pre 'trashed'
 	 * @post 'draft'
 	 */
-	function OccurrenceTrashedRestore($OccurrenceId) {}
+	function OccurrenceTrashedRestore($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Cancel a published occurrence.
 	/**
@@ -741,7 +908,10 @@ class Events_model extends Model
 	 * @pre 'published'
 	 * @post 'cancelled'
 	 */
-	function OccurrencePublishedCancel($OccurrenceId) {}
+	function OccurrencePublishedCancel($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Move a published occurrence.
 	/**
@@ -751,7 +921,10 @@ class Events_model extends Model
 	 * @post 'cancelled' linking to new occurrence
 	 * @post new occurrence created in 'draft' at new position
 	 */
-	function OccurrencePublishedMove($OccurrenceId, $Data) {} // to draft_moved
+	function OccurrencePublishedMove($OccurrenceId, $Data)
+	{
+		/// @todo Implement.
+	} // to draft_moved
 	
 	/// Delete an occurrence
 	/**
@@ -760,47 +933,111 @@ class Events_model extends Model
 	 * @pre 'draft' | 'trashed' | in past
 	 * @post 'deleted'
 	 */
-	function OccurrenceDelete($OccurrenceId) {}
+	function OccurrenceDelete($OccurrenceId)
+	{
+		/// @todo Implement.
+	}
 	
 	
 	// subscriber
+	/// Set user-occurrence link.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @param $NewState string new db state:
+	 *	- 'show' (show the event normally).
+	 *	- 'hide' (hide the event).
+	 *	- 'rsvp' (rsvp the event).
+	 * @return bool True on success, False on failure.
+	 * @pre Occurrence is visible to user.
+	 * @post Occurrence is RSVP'd to user.
+	 */
+	protected function SetOccurrenceUserState($OccurrenceId, $NewState)
+	{
+		/// @pre $mActiveEntityId === $sEntityUser
+		assert('$this->mActiveEntityId === self::$cEntityUser');
+		
+		$occurrence_query = new EventOccurrenceQuery();
+		
+		$sql = '
+			INSERT INTO event_occurrence_users (
+				event_occurrence_users.event_occurrence_user_user_entity_id,
+				event_occurrence_users.event_occurrence_user_event_occurrence_id,
+				event_occurrence_users.event_occurrence_user_state)
+			SELECT	'.$this->mActiveEntityId.', '.$OccurrenceId.', ?
+			FROM	event_occurrences
+			WHERE	(	event_occurrences.event_occurrence_id = '.$OccurrenceId.'
+					AND	'.$occurrence_query->ExpressionPublic().')
+			ON DUPLICATE KEY UPDATE
+				event_occurrence_users.event_occurrence_user_state = ?';
+		$bind_data = array(
+				$NewState,
+				$NewState,
+			);
+		$query = $this->db->query($sql, $bind_data);
+		return ($this->db->affected_rows > 0);
+	}
+	
 	/// Set user-occurrence link to RSVP.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre Occurrence is visible to user.
+	 * @pre $mActiveEntityId === $sEntityUser
 	 * @post Occurrence is RSVP'd to user.
 	 */
-	function OccurrenceRsvp($OccurrenceId) {}
+	function OccurrenceRsvp($OccurrenceId)
+	{
+		return $this->SetOccurrenceUserState($OccurrenceId, 'rsvp');
+	}
 	
-	/// Set user-occurrence link to Hidden.
+	/// Set user-occurrence link to Hide.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre Occurrence is visible to user.
+	 * @pre $mActiveEntityId === $sEntityUser
 	 * @post Occurrence is hidden to user.
 	 */
-	function OccurrenceHide($OccurrenceId) {}
+	function OccurrenceHide($OccurrenceId)
+	{
+		return $this->SetOccurrenceUserState($OccurrenceId, 'hide');
+	}
 	
-	/// Set user-occurrence link to Normal.
+	/// Set user-occurrence link to Show.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre Occurrence is visible to user.
+	 * @pre $mActiveEntityId === $sEntityUser
 	 * @post Occurrence is neither RSVP'd or hidden to user.
 	 */
-	function OccurrenceRestore($OccurrenceId) {}
+	function OccurrenceShow($OccurrenceId)
+	{
+		return $this->SetOccurrenceUserState($OccurrenceId, 'show');
+	}
 	
 	
 	/// Create subscription event-entity link
-	function EventSubscribe($EventId) {}
+	function EventSubscribe($EventId)
+	{
+		/// @todo Implement.
+	}
 	/// Remove subscription event-entity link
-	function EventUnsubscribe($EventId) {}
+	function EventUnsubscribe($EventId)
+	{
+		/// @todo Implement.
+	}
 	
 	/// Create subscription to @a $EntityId
-	function FeedSubscribe($EntityId, $Data) {}
+	function FeedSubscribe($EntityId, $Data)
+	{
+		/// @todo Implement.
+	}
 	/// Remove subscription to @a $EntityId
-	function FeedUnsubscribe($EntityId) {}
+	function FeedUnsubscribe($EntityId)
+	{
+		/// @todo Implement.
+	}
 	
 	
 	
