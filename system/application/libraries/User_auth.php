@@ -43,6 +43,9 @@ class User_auth {
 	// The organisation (if any) the user has logged into the admin for
 	public $organisationLogin = -1;
 
+	// The name of the organisation that has been logged in to (if any)
+	public $organisationName = '';
+
 	// The salt used to generate the password hash
 	private $salt;
 
@@ -69,6 +72,7 @@ class User_auth {
 			$this->surname = $_SESSION['ua_surname'];
 			$this->permissions = $_SESSION['ua_permissions'];
 			$this->organisationLogin = $_SESSION['ua_organisation'];
+			$this->organisationName = $_SESSION['ua_organisationname'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
 
@@ -168,7 +172,7 @@ class User_auth {
 			$row = $query->row();
 			
 			$this->isUser = false;
-			$this->firstname = $row->organisation_name;
+			$this->organisationName = $row->organisation_name;
 			$this->surname = '';
 			$this->officeLogin = false;
 			$this->organisationLogin = $this->entityId;
@@ -338,8 +342,9 @@ class User_auth {
 		
 		$hash = sha1($this->salt.$password);
 
-		$sql = 'SELECT COUNT(*) AS valid FROM entities 
+		$sql = 'SELECT organisation_name FROM entities 
 			INNER JOIN subscriptions ON entities.entity_id = subscriptions.subscription_user_entity_id
+			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
 				AND subscriptions.subscription_organisation_entity_id = ? 
 				AND subscriptions.subscription_vip = TRUE
@@ -348,18 +353,20 @@ class User_auth {
 		$db = $this->object->db;
 		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
 
-		$row = $query->row();
-		if ($row->valid) {
-			$this->organisationLogin = $organisationId;
-			$this->localToSession();
-		} else {
+		if ($query->num_rows() == 0) {
 			throw new Exception('Invalid organisation or password');
 		}
+
+		$row = $query->row();
+		$this->organisationLogin = $organisationId;
+		$this->organisationName = $organisation_name;
+		$this->localToSession();
 	}
 
 	// Logout of an organisation interface
 	public function logoutOrganisation() {
 		$this->organisationLogin = -1;
+		$this->organisationName = '';
 		$this->localToSession();
 	}
 	
@@ -376,6 +383,7 @@ class User_auth {
 		$_SESSION['ua_surname'] = $this->surname;
 		$_SESSION['ua_permissions'] = $this->permissions;
 		$_SESSION['ua_organisation'] = $this->organisationLogin;
+		$_SESSION['ua_organisationname'] = $this->organisationName;
 		$_SESSION['ua_salt'] = $this->salt;
 	}
 
