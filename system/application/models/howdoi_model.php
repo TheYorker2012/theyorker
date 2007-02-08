@@ -92,7 +92,7 @@ class Howdoi_model extends Model
 		{
 			foreach ($query->result() as $row)
 			{
-				$result[] = $row->article_id;
+				$result[$row->article_id] = array();
 			}
 		}
 		return $result;

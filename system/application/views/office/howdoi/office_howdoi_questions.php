@@ -10,60 +10,38 @@
 			There are <b>3</b> <a href='#'>Suggestions</a> that require attention.
 		</div>
 	</div>
-	<h4>Question Categories</h4>
-	<div class="Entry">
-	<a href="/office/howdoi/editquestion">Opening Times</a><br />
-	<a href="/office/howdoi/editquestion">Numbers</a><br />
-	<a href="/office/howdoi/editquestion">Essentials</a><br />
-	<a href="/office/howdoi/editquestion">Other Info</a><br />
-	<a href="/office/howdoi/editquestion">The Nearest ...</a><br />
-	</div>
-</div>
-
-<div class="grey_box">
-  <h2>Questions Awaiting Publishing</h2>
-  <a href="/office/howdoi/editquestion">Costcutter</a> (from Opening Times)<br />
-</div>
-<div class="blue_box">
-  <h2>All Questions</h2>
-  <h5>Opening Times</h5><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a> (Awaiting Publishing)<br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <br /><h5>Numbers</h5><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <br /><h5>Essentials</h5><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <br /><h5>Other Info</h5><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
-  <a href="/office/howdoi/editquestion">Costcutter</a><br />
 </div>
 
 <?php
+	echo '<div class="blue_box">';
+  	echo '<h2>All Questions</h2>';
+	if (count($categories) > 0)
+	{
+		foreach ($categories as $category)
+		{
+			echo '<h5>'.$category['name'].'</h5>';
+			if (count($category['questions']) > 0)
+			{
+				foreach ($category['questions'] as $question)
+				{
+					$publish_time = strtotime($question['heading']['publish_date']);
+					echo $question['revision'][0]['heading'];
+					if ($question['heading']['status'] == 1)
+						echo ' <b>(Awaiting Publishing)</b>';
+					else if ($question['heading']['status'] == 2)
+						echo ' <i>(To be published on '.date('F jS Y', $publish_time).' at '.date('g.i A', $publish_time).')</i>';
+					echo '<br />';
+				}
+			}
+		}
+	}
+	echo '</div>';
+?>
 
+<?php
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

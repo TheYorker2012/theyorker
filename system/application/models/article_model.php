@@ -57,6 +57,10 @@ class Article_model extends Model
 	*  PINGU HOW DO I
 	*****************************************************/
 	
+        /**
+	 * Gets the header information of the specified article id,
+	 * if the article doesn't exist returns FALSE.
+	 */
 	function GetArticleHeader($article_id)
 	{
         	$sql = 'SELECT article_content_type_id,
@@ -82,6 +86,48 @@ class Article_model extends Model
 		}
 		else
 			return FALSE;
+	}
+
+	function GetArticleRevisions($article_id, $get_blurb = FALSE, $limit_count = 10)
+	{
+		if ($get_blurb == TRUE)
+		{
+			$sql = 'SELECT article_content_id,
+					article_content_last_author_timestamp,
+					article_content_heading,
+					article_content_wikitext
+				FROM article_contents
+				WHERE article_content_article_id = ?
+				ORDER BY article_content_last_author_timestamp DESC
+				LIMIT 0, ?';
+		}
+		else
+		{
+			$sql = 'SELECT article_content_id,
+					article_content_last_author_timestamp,
+					article_content_heading
+				FROM article_contents
+				WHERE article_content_article_id = ?
+				ORDER BY article_content_last_author_timestamp DESC
+				LIMIT 0, ?';
+		}
+		$query = $this->db->query($sql, array($article_id, $limit_count));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'id'=>$row->article_content_id,
+					'timestamp'=>$row->article_content_last_author_timestamp,
+					'heading'=>$row->article_content_heading
+					);
+				if ($get_blurb == TRUE)
+					$result_item['wikitext'] = $row->article_content_wikitext;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
 	}
 
 	/*****************************************************

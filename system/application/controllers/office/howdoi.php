@@ -44,16 +44,39 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
+		$data['status_count'] = array('awaiting_publication'=>0,
+						'set_for_publication'=>0,
+						'published'=>0
+						);
+
 		//do shabazz
-		$data['articleheader'] = $this->article_model->GetArticleHeader(13);
+		$data['questionheader'] = $this->article_model->GetArticleHeader(13);
 		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
-		foreach ($data['categories'] as $category_id => $category)
+		foreach ($data['categories'] as $category_id => &$category)
 		{
-			$data['categories'][$category_id]['articles'] = $this->howdoi_model->GetOfficeCategoryArticleIDs($category_id);
-			foreach ($data['categories'][$category_id]['articles'] as $article_id => $category_article)
+			$category['questions'] = $this->howdoi_model->GetOfficeCategoryArticleIDs($category_id);
+			foreach ($category['questions'] as $article_content_id => &$category_article)
 			{
-                        	$data['categories'][$category_id]['articles'][$article_id] = $this->news_model->GetSimpleArticle($category_article);
+				$category_article['heading'] = $this->article_model->GetArticleHeader($article_content_id);
+				$category_article['revision'] = $this->article_model->GetArticleRevisions($article_content_id, FALSE, 1);
+				//question status
+				//0=published, 1=awaiting publication, 2=set for release (waiting for publish date)
+				$publish_time = strtotime($category_article['heading']['publish_date']);
+				if (is_null($category_article['heading']['live_content']))
+				{
+					$data['status_count']['awaiting_publication'] = $data['status_count']['awaiting_publication'] + 1;
+					$category_article['heading']['status'] = 1;
+				}
+				else if ($publish_time > time())
+				{
+					$data['status_count']['set_for_publication'] = $data['status_count']['set_for_publication'] + 1;
+					$category_article['heading']['status'] = 2;
+				}	
+				else
+				{
+					$data['status_count']['published'] = $data['status_count']['published'] + 1;
+					$category_article['heading']['status'] = 0;
+				}
 			}
 		}
 
