@@ -121,11 +121,15 @@ echo '<a href="'.$next.'">Next Week</a><br/>';
 		?>
 
 <script type="text/javascript">
+var calevents = {};
+<?php echo $js_ops ?>
+
+// this is to store events hidden in future.
+var revokeRefids = [];
+var daysDiv = ['calviewMonday','calviewTuesday','calviewWednesday','calviewThursday','calviewFriday','calviewSaturday'];
+
 function init_calendar () {
-	<?php echo $js_ops ?>
-	
 	draw_calendar (calevents);
-	
 }
 </script>
 

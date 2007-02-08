@@ -27,26 +27,30 @@ function hideEventMenu () {
 
 
 
+function confirmRemoveEvent (confResponse) {
+	var opo = confResponse.responseText.split('|');
+	if (opo[2] == 'OK') {
+		// hide the event as it's confirmed in the db
+		new Effect.Fade ('ev_'+opo[1]);
+		revokeRefids.push(opo[1]);
+		draw_calendar (calevents);
+	}
+	
+}
 function removeEvent (arrid) {
 	// new Effect.Fade ('ev_'+arrid);
 
-	$('ev_es_'+arrid).innterHTML = "removing from your calendar..."
+	$('ev_'+arrid).innerHTML = "removing from your calendar..."
 	
-	var params = 1;
-	var url = 1;
+	var url = '/calendar/ajaxCalUpdate/-1/'+arrid+'/HIDE';
 	var myAjax = new Ajax.Request(
 	url, 
 	{
 		method: 'get', 
-		parameters: params, 
 		onComplete: confirmRemoveEvent
 	});
-
 }
 
-function confirmRemoveEvent () {
-
-}
 
 function expandEvent (arrid) {
 	new Effect.Appear ('ev_es_'+arrid,{duration:0.2});
@@ -93,6 +97,8 @@ function compareDayStartTimes (a,b) {
 
 function draw_calendar (events) {
 
+	clear_calendar ();
+
 	var day = 0;
 	var event = new Array ();
 	
@@ -108,6 +114,15 @@ function draw_calendar (events) {
 	var event_arrid = 0;
 	var debug = '';
 	var i = 0;
+	var cpd = [0,0,0,0,0,0];
+	var lastime = '';
+	var evc = [];
+	var evl = [];
+	var hdif = 0;
+	var mdif = 0;
+	var clash = false;
+	var cdifstr = '';
+	var colcho = 'G';
 	
 	for (day in events) {
 		
@@ -117,28 +132,86 @@ function draw_calendar (events) {
 			
 			debug += ' event_index='+event_index+'\n';
 			debug += '  start time='+events[day][event_index]['starttime']+'\n';
+			if (revokeRefids.indexOf(events[day][event_index]['ref_id']) == -1) {
+				 if (cpd[day] == 0) {
+				 	// first event of the day
+				 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],"Day starts: "+events[day][event_index]['starttime'],'G');
+				 }
+				 else {
+				 	// subsequent event in the day
+				 	evc = events[day][event_index]['starttime'].split(':');
+				 	evl = lastime.split(':');
+				 	hdif = evc[0] - evl[0]; // difference in hours
+				 	mdif = evc[1] - evl[1]; // difference in minutes
+				 	clash = false; // for now >:)
+				 	if (hdif <= 0) {
+				 		if (mdif > 0) {
+				 			cdifstr = minuteslamatron(mdif)+' mins free';
+				 		}
+				 		else {
+				 			clash = true;
+				 		}
+				 	}
+				 	else {
+				 		if (mdif < 0) {
+				 			hdif--;
+				 			mdif = 60 - (mdif*-1);
+				 		}
+				 		
+				 		if (hdif > 0) {
+				 			cdifstr = hdif+':'+minuteslamatron(mdif)+' free';
+				 		}
+				 		else {
+				 			cdifstr = minuteslamatron(mdif)+' mins free';
+				 		}
+				 	}
+				 	if (clash) {
+					 	hdif = evc[0] - evl[0]; // difference in hours
+					 	mdif = evc[1] - evl[1]; // difference in minutes
+					 	mdif = (mdif < 0) ? (60-mdif) : (mdif);
+					 	cdifstr = 'CLASH!<br />\n'+hdif+':'+minuteslamatron(mdif)+' overlap!';
+					 	colcho = 'R';
+				 	}
+				 	else {
+				 		colcho = 'G';
+				 	}
+				 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],cdifstr,colcho);
+				 }
+				 lastime = events[day][event_index]['endtime'];
+				 	
+				 draw_calendar_event (events[day][event_index]);
+				 cpd[day]++
+			}
 			
-			draw_calendar_event (events[day][event_index]);
+
 
 		}
+	 	draw_calendar_timeSpacer (daysDiv[parseInt (day)],"Day ends: "+lastime,'G');
 	}
 	
 	//alert (debug);
 	
 }
 
+function minuteslamatron (mins) {
+	mins = ''+mins+'';
+	while (mins.length < 2) {
+		mins = '0'+mins;
+	}
+	return mins;
+}
+
 // takes the name of the day and an object with a single event in it
 // appends the relevant code into the relevant day div
 function draw_calendar_event (indEvent) {
-	
-	var daysDiv = ['calviewMonday','calviewTuesday','calviewWednesday','calviewThursday','calviewFriday','calviewSaturday'];
+
 	var outHtml = '\n';
 	
 	outHtml += '					<div id=\"ev_%%refid%%\" class=\"calviewIndEventBox\">\n';
 	outHtml += '					<div>\n';
 	outHtml += '						<div id=\"calviewIECtrlButtonBLBound\">\n';
 	outHtml += '						\n';
-	outHtml += '							<div class=\"calviewCloseButton\" onclick=\"removeEvent(%%refid%%);hideEventMenu()\">\n';
+	outHtml += '							<div class=\"calviewCloseButton\" onclick=\"removeEvent(%%refid%%)\">\n';
 	outHtml += '								<a href=\"#\" onclick=\"return false\"\n';
 	outHtml += '								style=\"text-decoration: none; color: #ffffff;\">X</a>\n';
 	outHtml += '							</div>\n';
@@ -167,13 +240,16 @@ function draw_calendar_event (indEvent) {
 	
 	outHtml = outHtml.replace (/%%refid%%/g,indEvent[0]);
 	outHtml = outHtml.replace (/%%name%%/g,indEvent.name);
+	outHtml = outHtml.replace (/%%day%%/g,indEvent.day);
 	outHtml = outHtml.replace (/%%starttime%%/g,indEvent.starttime);
 	outHtml = outHtml.replace (/%%endtime%%/g,indEvent.endtime);
 	outHtml = outHtml.replace (/%%shortloc%%/g,indEvent.shortloc);
 	outHtml = outHtml.replace (/%%blurb%%/g,indEvent.blurb);
 
+
+
 	$(daysDiv[parseInt (indEvent.day)]).innerHTML += outHtml;	
-	draw_calendar_timeSpacer (daysDiv[parseInt (indEvent.day)],'123124','R');
+
 
 }
 
@@ -194,5 +270,11 @@ function draw_calendar_timeSpacer (dayDivName,text,goodbad) {
 
 }
 
+function clear_calendar () {
 
+	for (i in daysDiv) {
+		$(daysDiv[i]).innerHTML = '&nbsp;';
+	}
+	
+}
 

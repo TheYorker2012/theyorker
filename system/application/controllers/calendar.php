@@ -115,26 +115,30 @@ EXTRAHEAD;
 	 * @brief Save any change made at UI to DB and report success or failure
 	 */
 	function ajaxCalUpdate () {
+		// the 0-6 (mon-sun) day code
+		$day = $this->uri->segment(3);
+
 		// this is the value that should be passed with each event to allow
 		// it to be uniquely identified back at your end here.
-		$refid = $this->uri->segment(3);
+		$refid = $this->uri->segment(4);
+
 		
 		// The operation that is being carried out
 		// Will be HIDE or SHOW at the moment
 		// "Phase 2" might see this include operations like SUBSCRIBE etc.
 		// however response will be XML, and this doesn't need doing in that
 		// way for basic functioning.
-		$op = $this->uri->segment(4);
+		$op = $this->uri->segment(5);
 		
 		/*
 		Code to save the data from the script based on the above to variables
-		and echo OK|message or FAIL|message depending on the outcome
+		and echo $refid|OK|message or $refid|FAIL|message depending on the outcome
 		examples:
-			OK|Event <b>$title</b> has been hidden from your calendar
-			FAIL|You are not logged in
+			75|OK|Event <b>$title</b> has been hidden from your calendar
+			75|FAIL|You are not logged in
 		*/
 		
-		$this->load->view('calendar_blank',array ("replyString" => "OK|Dummy message"));
+		$this->load->view('calendar_blank',array ("replyString" => "$day|$refid|OK|Dummy message"));
 		
 	}
 	
