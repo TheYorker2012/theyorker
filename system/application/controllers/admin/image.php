@@ -12,7 +12,7 @@ class image extends Controller {
 	}
 
 	function _processImage($data, $form_value, &$ThumbDetails) {
-		$config['image_library'] = 'GD2';
+		$config['image_library'] = 'GD';
 		$config['source_image'] = $data['full_path'];
 		$config['quality'] = 85;
 		$config['master_dim'] = 'width';
@@ -151,7 +151,7 @@ class image extends Controller {
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'gd2';
+		$config['image_library'] = 'gd';
 		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
