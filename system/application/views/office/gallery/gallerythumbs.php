@@ -12,19 +12,6 @@
 			1024 x 769<br />
 		</div>
 	</div>
-	<div class="thumbnail_medium">
-		<a href="/office/gallery/show"><img src="/images/prototype/news/thumb1.jpg" alt="CompSci.jpg" /></a>
-		<div>
-		<span class="orange">Image Title</span><br />
-			BBC News Icon<br />
-		<span class="orange">Date</span><br />
-			03/02/2007<br />
-		<span class="orange">Photographer</span><br />
-			Ian Cook<br />
-		<span class="orange">Dimensions</span><br />
-			1024 x 769<br />
-		</div>
-	</div>
 -->
 <?php foreach ($photos->result() as $thumbnail) { ?>
 	<div class="thumbnail_small">

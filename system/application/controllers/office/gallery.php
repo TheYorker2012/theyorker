@@ -14,7 +14,7 @@ define('PHOTOS_PERPAGE', 12);
 	 */
 	function __construct() {
 		parent::Controller();
-		$this->load->helper('url');
+		$this->load->helper(array('url', 'photos'));
 	}
 	
 	function index() {
@@ -26,9 +26,6 @@ define('PHOTOS_PERPAGE', 12);
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)
 		);
-//		$extra_head = array(
-//			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-//		);
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
@@ -41,6 +38,7 @@ define('PHOTOS_PERPAGE', 12);
 
 		// Set up the master frame.
 		$this->main_frame->SetContent($gallery_frame);
+		$this->main_frame->SetTitle('Photo Gallery');
 	
 		// Load the main frame
 		$this->main_frame->Load();
@@ -55,10 +53,6 @@ define('PHOTOS_PERPAGE', 12);
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 		);
-
-		$extra_head = array(
-			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-		);
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/galleryimage');
@@ -71,6 +65,7 @@ define('PHOTOS_PERPAGE', 12);
 
 		// Set up the master frame.
 		$this->main_frame->SetContent($gallery_frame);
+		$this->main_frame->SetTitle('Photo Details');
 	
 		// Load the main frame
 		$this->main_frame->Load();
