@@ -24,10 +24,9 @@ class EventOccurrenceQuery
 	function ExpressionOwned(&$DataArray)
 	{
 		$DataArray[] = $this->mEntityId;
-		return	'(	(	event_entities.event_entity_entity_id = ?
-					AND	event_entities.event_entity_confirmed = 1
-					AND	event_entities.event_entity_relationship = \'own\')
-				 OR	subscriptions.subscription_vip=1)';
+		return	'(	event_entities.event_entity_entity_id = ?
+				AND	event_entities.event_entity_confirmed = 1
+				AND	event_entities.event_entity_relationship = \'own\')';
 	}
 	
 	/// Produce an SQL expression for all and only subscribed events.
@@ -471,15 +470,16 @@ class Events_model extends Model
 			$this->mReadOnly = FALSE;
 			if ($CI->user_auth->organisationLogin >= 0) {
 				$this->mActiveEntityId = $CI->user_auth->organisationLogin;
-				$this->mActiveEntityId = self::$cEntityVip;
+				$this->mActiveEntityType = self::$cEntityVip;
 			} else {
 				$this->mActiveEntityId = $CI->user_auth->entityId;
-				$this->mActiveEntityId = self::$cEntityUser;
+				$this->mActiveEntityType = self::$cEntityUser;
 			}
 		} else {
 			// Default to an entity id with default events
 			$this->mReadOnly = TRUE;
-			$this->mActiveEntityId = self::$cEntityPublic;
+			$this->mActiveEntityId = 0;
+			$this->mActiveEntityType = self::$cEntityPublic;
 		}
 		
 		$this->mStates = array();
