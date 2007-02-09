@@ -115,7 +115,13 @@ class Calendar extends controller
 				$filter->SetRange(strtotime('-1year'),strtotime('+1year'));
 				$filter->SetSpecialCondition($special_condition);
 				
-				$result = $filter->GenerateOccurrences(array('*'));
+				$result = $filter->GenerateOccurrences(array(
+					'*',
+					'status'=>$filter->ExpressionPublicState(),
+					'cancelled'=>$filter->ExpressionPublicCancelled(),
+					'postponed'=>$filter->ExpressionPublicPostponed(),
+					'rescheduled'=>$filter->ExpressionPublicRescheduled(),
+					));
 				
 				$rsvps = $this->events_model->GetOccurrenceRsvp($OccurrenceId);
 				

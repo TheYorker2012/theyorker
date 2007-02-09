@@ -14,54 +14,51 @@ class EventOccurrenceQuery
 	}
 	
 	/// Produce an SQL expression for all and only public events.
-	function ExpressionPublic(&$DataArray)
+	function ExpressionPublic()
 	{
 		return	'(	event_occurrences.event_occurrence_state = \'published\'
 				OR	event_occurrences.event_occurrence_state = \'cancelled\')';
 	}
 	
 	/// Produce an SQL expression for all and only owned events.
-	function ExpressionOwned(&$DataArray)
+	function ExpressionOwned()
 	{
-		$DataArray[] = $this->mEntityId;
-		return	'(	event_entities.event_entity_entity_id = ?
+		return	'(	event_entities.event_entity_entity_id = ' . $this->mEntityId . '
 				AND	event_entities.event_entity_confirmed = 1
 				AND	event_entities.event_entity_relationship = \'own\')';
 	}
 	
 	/// Produce an SQL expression for all and only subscribed events.
-	function ExpressionSubscribed(&$DataArray)
+	function ExpressionSubscribed()
 	{
-		$DataArray[] = $this->mEntityId;
-		$DataArray[] = $this->mEntityId;
-		return	'(	(	event_entities.event_entity_entity_id = ?
+		return	'(	(	event_entities.event_entity_entity_id = ' . $this->mEntityId . '
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship = \'own\'
 						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	subscriptions.subscription_user_entity_id = ?)';
+				OR	subscriptions.subscription_user_entity_id = ' . $this->mEntityId . ')';
 	}
 	
 	/// Produce an SQL expression for all and only rsvp'd events.
-	function ExpressionVisibilityRsvp(&$DataArray)
+	function ExpressionVisibilityRsvp()
 	{
 		return	'event_occurrence_users.event_occurrence_user_state=\'rsvp\'';
 	}
 	
 	/// Produce an SQL expression for all and only hidden events.
-	function ExpressionVisibilityHidden(&$DataArray)
+	function ExpressionVisibilityHidden()
 	{
 		return	'event_occurrence_users.event_occurrence_user_state=\'hide\'';
 	}
 	
 	/// Produce an SQL expression for all and only normal visibility events.
-	function ExpressionVisibilityNormal(&$DataArray)
+	function ExpressionVisibilityNormal()
 	{
 		return	'(		event_occurrence_users.event_occurrence_user_state=\'show\'
 					OR	event_occurrence_users.event_occurrence_user_state IS NULL)';
 	}
 	
 	/// Produce an SQL expression for all and only occurrences in a range of time.
-	function ExpressionDateRange(&$DataArray, $Range)
+	function ExpressionDateRange($Range)
 	{
 		assert('is_array($Range)');
 		assert('is_int($Range[0])');
@@ -69,7 +66,72 @@ class EventOccurrenceQuery
 		return	'(		event_occurrences.event_occurrence_end_time >
 								FROM_UNIXTIME('.$Range[0].')
 					AND	event_occurrences.event_occurrence_start_time <
-								FROM_UNIXTIME('.$Range[1].'))';;
+								FROM_UNIXTIME('.$Range[1].'))';
+	}
+	
+	/*
+		cancelled?
+			active_id?
+				active.state=published?
+					>rescheduled
+				else
+					>postponed
+			else
+				>cancelled
+		else
+			>$state
+	 */
+	
+	/// Produce an SQL expression for whether the object is cancelled.cancelled.
+	/**
+	 * @param $OccurrenceAlias string Alias of occurrence to check state of.
+	 * @return string SQL boolean expression.
+	 */
+	function ExpressionPublicCancelled($OccurrenceAlias = 'event_occurrences')
+	{
+		return '('.$OccurrenceAlias.'.event_occurrence_state = \'cancelled\' ' .
+				'AND '.$OccurrenceAlias.'.event_occurrence_active_occurrence_id IS NULL)';
+	}
+	
+	/// Produce an SQL expression for whether the object is cancelled.postponed.
+	/**
+	 * @param $ActiveAlias string Alias of active occurrence used in check.
+	 * @return string SQL boolean expression.
+	 */
+	function ExpressionPublicPostponed($ActiveAlias = 'active_occurrence')
+	{
+		return '(event_occurrences.event_occurrence_state = \'cancelled\' ' .
+				'AND event_occurrences.event_occurrence_active_occurrence_id IS NOT NULL '.
+				'AND '.$ActiveAlias.'.event_occurrence_state != \'published\')';
+	}
+	
+	/// Produce an SQL expression for whether the object is cancelled.rescheduled.
+	/**
+	 * @param $ActiveAlias string Alias of active occurrence used in check.
+	 * @return string SQL boolean expression.
+	 */
+	function ExpressionPublicRescheduled($ActiveAlias = 'active_occurrence')
+	{
+		return '(event_occurrences.event_occurrence_state = \'cancelled\' ' .
+				'AND event_occurrences.event_occurrence_active_occurrence_id IS NOT NULL '.
+				'AND '.$ActiveAlias.'.event_occurrence_state = \'published\')';
+	}
+	
+	/// Produce an SQL expression for the public state of an object.
+	/**
+	 * @param $ActiveAlias string Alias of active occurrence used in expression.
+	 * @return string SQL string expression.
+	 */
+	function ExpressionPublicState($ActiveAlias = 'active_occurrence')
+	{
+		return
+		'IF(event_occurrences.event_occurrence_state = \'cancelled\',' .
+			'IF(event_occurrences.event_occurrence_active_occurrence_id IS NULL,' .
+				'\'cancelled\',' .
+				'IF('.$ActiveAlias.'.event_occurrence_state = \'published\',' .
+					'\'rescheduled\',' .
+					'\'postponed\')),' .
+			'event_occurrences.event_occurrence_state)';
 	}
 }
 
@@ -193,28 +255,31 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				AND	subscriptions.subscription_interested		= 1
 				AND	subscriptions.subscription_user_confirmed	= 1
 			LEFT JOIN event_occurrence_users
-				ON event_occurrence_users.event_occurrence_user_event_occurrence_id
+				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
 				AND	event_occurrence_users.event_occurrence_user_user_entity_id
-						= ?';
+						= ?
+			LEFT JOIN event_occurrences AS active_occurrence
+				ON	event_occurrences.event_occurrence_active_occurrence_id
+						= active_occurrence.event_occurrence_id';
 		$parameters[] = $this->mEntityId;
 		$parameters[] = $this->mEntityId;
 		
 		// SOURCES -------------------------------------------------------------
 		
 		if ($this->mSources['owned']) {
-			$own = $this->ExpressionOwned($parameters);
+			$own = $this->ExpressionOwned();
 		} else {
 			$own = '0';
 		}
 		
-		$public = $this->ExpressionPublic($parameters);
+		$public = $this->ExpressionPublic();
 		
 		if ($this->mSources['all']) {
 			$public_sources = '';
 		} else {
 			if ($this->mSources['subscribed']) {
-				$subscribed = $this->ExpressionSubscribed($parameters);
+				$subscribed = $this->ExpressionSubscribed();
 			} else {
 				$subscribed = '0';
 			}
@@ -238,8 +303,8 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		// FILTERS -------------------------------------------------------------
 		
-		$occurrence_states = array(
-				'private' => array('draft','trashed'),
+		static $occurrence_states = array(
+				'private' => array('draft','movedraft','trashed'),
 				'active' => array('published'),
 				'inactive' => array('cancelled'),
 			);
@@ -259,13 +324,13 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		$visibility_predicates = array();
 		if ($this->mFilters['hide']) {
-			$visibility_predicates[] = $this->ExpressionVisibilityHidden($parameters);
+			$visibility_predicates[] = $this->ExpressionVisibilityHidden();
 		}
 		if ($this->mFilters['show']) {
-			$visibility_predicates[] = $this->ExpressionVisibilityNormal($parameters);
+			$visibility_predicates[] = $this->ExpressionVisibilityNormal();
 		}
 		if ($this->mFilters['rsvp']) {
-			$visibility_predicates[] = $this->ExpressionVisibilityRsvp($parameters);
+			$visibility_predicates[] = $this->ExpressionVisibilityRsvp();
 		}
 		if (count($visibility_predicates) > 0) {
 			$visibility = '('.implode(' OR ',$visibility_predicates).')';
@@ -277,7 +342,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		// DATE RANGE ----------------------------------------------------------
 		
-		$date_range = $this->ExpressionDateRange($parameters, $this->mRange);
+		$date_range = $this->ExpressionDateRange($this->mRange);
 		
 		// SPECIAL CONDITION ---------------------------------------------------
 		
@@ -632,29 +697,82 @@ class Events_model extends Model
 	/// Get information about the RSVP's to the occurrences of an event
 	/**
 	 * @param $EventId integer Id of event.
-	 * @return array/bool
-	 *	- False on failure.
-	 *	- Array of rsvp's to occurrences of event
-	 * @pre Own occurrence
+	 * @return array Rsvp's to occurrences of event.
+	 * @pre Organisation owns the event
 	 */
 	function GetEventRsvp($EventId)
 	{
-		/// @todo Implement.
-		return array();
+		$occurrence_query = new EventOccurrenceQuery();
+		
+		$sql = 'SELECT
+			event_occurrence_users.event_occurrence_user_event_occurrence_id
+									AS occurrence_id,
+			users.user_firstname	AS firstname,
+			users.user_surname		AS surname,
+			users.user_nickname		AS nickname,
+			IF(subscriptions.subscription_email = 1, users.user_email, NULL)
+									AS email
+		FROM	event_occurrence_users
+		INNER JOIN event_occurrences
+			ON	event_occurrences.event_occurrence_id
+				= event_occurrence_users.event_occurrence_user_event_occurrence_id
+			AND	event_occurrences.event_occurrence_event_id = ' . $EventId . '
+		INNER JOIN users
+			On	users.user_entity_id
+				= event_occurrence_users.event_occurrence_user_user_entity_id
+		INNER JOIN event_entities
+			ON	event_entities.event_entity_event_id = ' . $EventId . '
+			AND ' . $occurrence_query->ExpressionOwned() . '
+		LEFT JOIN subscriptions
+			ON	subscriptions.subscription_user_entity_id
+				= event_occurrence_users.event_occurrence_user_user_entity_id
+			AND	subscriptions.subscription_organisation_entity_id
+				= ' . $this->mActiveEntityId . '
+		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
+		
+		$query = $this->db->query($sql);
+		
+		return $query->result_array();
 	}
 	
 	/// Get information about the RSVP's to an occurrence
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return array/bool
-	 *	- False on failure.
-	 *	- Array of rsvp's
-	 * @pre Own occurrence
+	 * @return array Rsvp's to occurrence.
+	 * @pre Organisation owns the occurrence
 	 */
 	function GetOccurrenceRsvp($OccurrenceId)
 	{
-		/// @todo Implement.
-		return array();
+		$occurrence_query = new EventOccurrenceQuery();
+		
+		$sql = 'SELECT
+			event_occurrence_users.event_occurrence_user_event_occurrence_id
+									AS occurrence_id,
+			users.user_firstname	AS firstname,
+			users.user_surname		AS surname,
+			users.user_nickname		AS nickname,
+			IF(subscriptions.subscription_email = 1, users.user_email, NULL)
+									AS email
+		FROM	event_occurrence_users
+		INNER JOIN event_occurrences
+			ON	event_occurrences.event_occurrence_id = ' . $OccurrenceId . '
+		INNER JOIN users
+			On	users.user_entity_id
+				= event_occurrence_users.event_occurrence_user_user_entity_id
+		INNER JOIN event_entities
+			ON	event_entities.event_entity_event_id
+				= event_occurrences.event_occurrence_event_id
+			AND ' . $occurrence_query->ExpressionOwned() . '
+		LEFT JOIN subscriptions
+			ON	subscriptions.subscription_user_entity_id
+				= event_occurrence_users.event_occurrence_user_user_entity_id
+			AND	subscriptions.subscription_organisation_entity_id
+				= ' . $this->mActiveEntityId . '
+		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
+		
+		$query = $this->db->query($sql);
+		
+		return $query->result_array();
 	}
 	
 	// subscriber
@@ -698,16 +816,6 @@ class Events_model extends Model
 	 *	- 'subscription_id' (if type == requested_subscription)
 	 */
 	function GetNotices()
-	{
-		/// @todo Implement.
-	}
-	
-	/// Get an occurrence's active occurrence.
-	/**
-	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return array Information about the active occurrence.
-	 */
-	function GetOccurrenceActiveOccurrence($OccurrenceId)
 	{
 		/// @todo Implement.
 	}
@@ -1041,322 +1149,6 @@ class Events_model extends Model
 		/// @todo Implement.
 	}
 	
-	
-	
-	
-	
-	
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-	// THE FOLLOWING IS TEMPORARY HARDCODED DATA: //
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-	
-	/// TEMP: Put the standard england special days into an array.
-	/**
-	 * @return array of recurrence rules, each in this form:
-	 *	- element 0: Name.
-	 *	- element 1: RecurrenceRule describing when it takes place.
-	 */
-	private function RuleCollectionStdEngland()
-	{
-		$this->load->library('recurrence');
-		
-		$result = array();
-		$result[] = array('New Years Day',$this->NewYearsDay());
-		$result[] = array('Valentines Day',$this->ValentinesDay());
-		$result[] = array('St. Patricks Day',$this->StPatricksDay());
-		$result[] = array('Shrove Tuesday',$this->ShroveTuesday());
-		$result[] = array('Ash Wednesday',$this->AshWednesday());
-		$result[] = array('Mothering Sunday',$this->MotheringSunday());
-		$result[] = array('April Fools Day',$this->AprilFoolsDay());
-		$result[] = array('Good Friday',$this->GoodFriday());
-		$result[] = array('Bank Holiday',$this->GoodFriday());
-		$result[] = array('Easter Sunday',$this->EasterSunday());
-		$result[] = array('Bank Holiday',$this->EasterMonday());
-		$result[] = array('British Summer Time Begins',$this->BstBegins());
-		$result[] = array('Fathers Day',$this->FathersDay());
-		$result[] = array('St. Georges Day',$this->StGeorgesDay());
-		$result[] = array('British Summer Time Ends',$this->BstEnds());
-		$result[] = array('Early May Bank Holiday',$this->EarlyMayBankHoliday());
-		$result[] = array('Spring Bank Holiday',$this->SpringBankHoliday());
-		$result[] = array('Summer Bank Holiday',$this->SummerBankHoliday());
-		$result[] = array('Halloween',$this->Halloween());
-		$result[] = array('Bonfire Night',$this->BonfireNight());
-		$result[] = array('Remembrance Day',$this->RemembranceDay());
-		$result[] = array('Remembrance Sunday',$this->RemembranceSunday());
-		$result[] = array('Christmas Eve',$this->ChristmasEve());
-		$result[] = array('Christmas Day',$this->ChristmasDay());
-		$result[] = array('Boxing Day',$this->BoxingDay());
-		$result[] = array('New Years Eve',$this->NewYearsEve());
-		return $result;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for easter sunday.
-	function EasterSunday()
-	{
-		$rule = new RecurrenceRule();
-		$rule->EasterSunday();
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for easter monday.
-	function EasterMonday()
-	{
-		// monday after easter sunday
-		$rule = $this->EasterSunday();
-		$rule->OffsetDays(+1);
-		return $rule;
-	}
-	
-	/// TEMP:  the RecurrenceRule for good friday.
-	function GoodFriday()
-	{
-		// friday before easter sunday
-		$rule = $this->EasterSunday();
-		$rule->OffsetDays(-2);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for mothering sunday.
-	function MotheringSunday()
-	{
-		// 3 weeks before easter
-		$rule = $this->EasterSunday();
-		$rule->OffsetDays(-3*7);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for fathers day.
-	function FathersDay()
-	{
-		$rule = new RecurrenceRule();
-		// 3rd sunday in june
-		$rule->MonthDate(6);
-		$rule->OnlyDayOfWeek(0);
-		$rule->SetWeekOffset(2);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for ash wednesday.
-	function AshWednesday()
-	{
-		// beginning of lent (39 days before easter)
-		$rule = $this->EasterSunday();
-		$rule->OffsetDays(-39);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for shrove tuesday.
-	function ShroveTuesday()
-	{
-		// day before ash wednesday
-		$rule = $this->AshWednesday();
-		$rule->OffsetDays(-1);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for christmas day.
-	function ChristmasDay()
-	{
-		$rule = new RecurrenceRule();
-		// 25th december
-		$rule->MonthDate(12,25);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for christmas eve.
-	function ChristmasEve()
-	{
-		$rule = new RecurrenceRule();
-		// 24th december
-		$rule->MonthDate(12,24);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for boxing day.
-	function BoxingDay()
-	{
-		$rule = new RecurrenceRule();
-		// 24th december
-		$rule->MonthDate(12,26);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for new years eve.
-	function NewYearsEve()
-	{
-		$rule = new RecurrenceRule();
-		// 24th december
-		$rule->MonthDate(12,31);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for new years day.
-	function NewYearsDay()
-	{
-		$rule = new RecurrenceRule();
-		// 24th december
-		$rule->MonthDate(1,1);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for St. George's day.
-	function StGeorgesDay()
-	{
-		$rule = new RecurrenceRule();
-		// normally 23th april
-		$rule->MonthDate(4,23);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for St. Patrick's day.
-	function StPatricksDay()
-	{
-		$rule = new RecurrenceRule();
-		// normally 17th march (my mum's birthday)
-		$rule->MonthDate(3,17);
-		return $rule;
-	}
-	
-	/// TEMP: Return the RecurrenceRule for St. Stythian's day.
-	function StStythiansFeastDay()
-	{
-		$rule = new RecurrenceRule();
-		// first sunday in july with double figures
-		$rule->MonthDate(7,10);
-		$rule->OnlyDayOfWeek(0);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for Stithians show day.
-	function StithiansShowDay()
-	{
-		// monday after St. Stythian's day
-		$rule = $this->StStythiansFeastDay();
-		$rule->OffsetDays(+1);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for the leap day in the gregorian calendar.
-	function LeapDay()
-	{
-		$rule = new RecurrenceRule();
-		// 29th february
-		$rule->MonthDate(2,29);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for valentines day.
-	function ValentinesDay()
-	{
-		$rule = new RecurrenceRule();
-		// 14th february
-		$rule->MonthDate(2,14);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for april fools day.
-	function AprilFoolsDay()
-	{
-		$rule = new RecurrenceRule();
-		// 1st April
-		$rule->MonthDate(4,1);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for halloween.
-	function Halloween()
-	{
-		$rule = new RecurrenceRule();
-		// 31st October
-		$rule->MonthDate(10,31);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for bonfire night.
-	function BonfireNight()
-	{
-		$rule = new RecurrenceRule();
-		// 5th november
-		$rule->MonthDate(11,5);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for remembrance day.
-	function RemembranceDay()
-	{
-		$rule = new RecurrenceRule();
-		// 11th november
-		$rule->MonthDate(11,11);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for remembrance day.
-	function RemembranceSunday()
-	{
-		$rule = new RecurrenceRule();
-		// nearest sunday to 11th november
-		$rule->MonthDate(11,11);
-		$rule->UseClosestEnabledDay();
-		$rule->OnlyDayOfWeek(0);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for spring bank holiday.
-	function EarlyMayBankHoliday()
-	{
-		$rule = new RecurrenceRule();
-		// first monday in may
-		$rule->MonthDate(5);
-		$rule->OnlyDayOfWeek(1);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for spring bank holiday.
-	function SpringBankHoliday()
-	{
-		$rule = new RecurrenceRule();
-		// last monday in may
-		$rule->MonthDate(6);
-		$rule->OnlyDayOfWeek(1);
-		$rule->SetWeekOffset(-1);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for summer bank holiday.
-	function SummerBankHoliday()
-	{
-		$rule = new RecurrenceRule();
-		// last monday in august
-		$rule->MonthDate(9);
-		$rule->OnlyDayOfWeek(1);
-		$rule->SetWeekOffset(-1);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for changing clocks forward.
-	function BstBegins()
-	{
-		$rule = new RecurrenceRule();
-		// last sunday in april
-		$rule->MonthDate(5);
-		$rule->OnlyDayOfWeek(0);
-		$rule->SetWeekOffset(-1);
-		$rule->Time(2);
-		return $rule;
-	}
-	
-	/// TEMP: Returns the RecurrenceRule for changing clocks back.
-	function BstEnds()
-	{
-		$rule = new RecurrenceRule();
-		// last sunday in october
-		$rule->MonthDate(11);
-		$rule->OnlyDayOfWeek(0);
-		$rule->SetWeekOffset(-1);
-		$rule->Time(2);
-		return $rule;
-	}
-
 }
 
 ?>
