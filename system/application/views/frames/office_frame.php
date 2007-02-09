@@ -74,7 +74,12 @@ function preloader()
 				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
 			</a>
 		</div>
-		<div style="float: right; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+		<a href="/logout/office">
+		<div style="float: right; width: 100px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+			<span style="font-size: 18px; font-weight:bold; ">Leave<br />Office</span>
+		</div>
+		</a>
+		<div style="float: right; width: 400px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
 			<span style="font-size: 40px; font-weight:bold; ">Office</span>
 		</div>
 	</div>
@@ -92,55 +97,72 @@ function preloader()
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
 		<div class='navigationmenu_item'>
-			<a href='/'>Home</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/calendar/'>Calendar</a>
+			<a href='/office/'>Office Home</a>
 		</div>
 		<div class='navigationmenu_item_noborder'>
-			<a href='/directory/'>Directory</a>
+			<a href='/logout/office'>Leave Office</a>
+		</div>
+		
+		<div class='navigationmenu_item'>
+			<a href='/office/packages/'>Packages</a>
+		</div>
+		<div class='navigationmenu_item'>
+			<a href='/office/gallery/'>Gallery</a>
+		</div>
+		<div class='navigationmenu_item_noborder'>
+			<a href='/office/directory/'>Directory</a>
 		</div>
 
 		<div class='navigationmenu_item'>
-			<a href='/news/'>Uni News</a>
+			<a href='/office/news/uninews/'>Uni News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/national/'>UK &amp; World News</a>
+			<a href='/office/news/national/'>UK &amp; World News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/features/'>Features</a>
+			<a href='/office/news/features/'>Features</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/lifestyle/'>Lifestyle</a>
+			<a href='/office/news/lifestyle/'>Lifestyle</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/reviews/food'>Food</a>
+			<a href='/office/news/food/'>Food</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/reviews/drink'>Drink</a>
+			<a href='/office/news/drink/'>Drink</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/reviews/culture'>Culture</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/campaign/'>Campaigns</a>
+			<a href='/office/news/culture/'>Culture</a>
 		</div>
 		<div class='navigationmenu_item_noborder'>
-			<a href='/news/archive/'>News Archive</a>
+			<a href='/office/news/archive/'>News Archive</a>
 		</div>
 
 		<div class='navigationmenu_item'>
-			<a href='/charity/'>Our Charity</a>
+			<a href='/office/reviews/food'>Food</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/howdoi/'>How Do I</a>
+			<a href='/office/reviews/drink'>Drink</a>
 		</div>
+		<div class='navigationmenu_item_noborder'>
+			<a href='/office/reviews/culture'>Culture</a>
+		</div>
+
+
+		<div class='navigationmenu_item'>
+			<a href='/office/charity/'>Our Charity</a>
+		</div>
+		<div class='navigationmenu_item'>
+			<a href='/office/howdoi/'>How Do I</a>
+		</div>
+		<div class='navigationmenu_item'>
+			<a href='/office/games/'>Games Zone</a>
+		</div>
+
 		<div class='navigationmenu_item'>
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
 		</div>
-		<div class='navigationmenu_item'>
-			<a href='/games/'>Games Zone</a>
-		</div>
+
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
 			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
 		</div>
