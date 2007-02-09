@@ -96,6 +96,9 @@ function preloader()
 	</div>
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
+		<div class='navigationmenu_item_noborder'>
+			Office
+		</div>
 		<div class='navigationmenu_item'>
 			<a href='/office/'>Office Home</a>
 		</div>
@@ -103,14 +106,19 @@ function preloader()
 			<a href='/logout/office'>Leave Office</a>
 		</div>
 		
+		<div class='navigationmenu_item_noborder'>
+			Calendar
+		</div>
+		
 		<div class='navigationmenu_item'>
 			<a href='/office/packages/'>Packages</a>
 		</div>
-		<div class='navigationmenu_item'>
-			<a href='/office/gallery/'>Gallery</a>
-		</div>
 		<div class='navigationmenu_item_noborder'>
 			<a href='/office/directory/'>Directory</a>
+		</div>
+		
+		<div class='navigationmenu_item_noborder'>
+			Boxes
 		</div>
 
 		<div class='navigationmenu_item'>
@@ -138,6 +146,24 @@ function preloader()
 			<a href='/office/news/archive/'>News Archive</a>
 		</div>
 
+		<div class='navigationmenu_item_noborder'>
+			Photographers
+		</div>
+
+		<div class='navigationmenu_item'>
+			<a href='/office/image/requests/'>Requests</a>
+		</div>
+		<div class='navigationmenu_item'>
+			<a href='/office/gallery/'>Gallery</a>
+		</div>
+		<div class='navigationmenu_item_noborder'>
+			<a href='/office/photographers'>Manage Photographers</a>
+		</div>
+
+		<div class='navigationmenu_item_noborder'>
+			Reviews
+		</div>
+
 		<div class='navigationmenu_item'>
 			<a href='/office/reviews/food'>Food</a>
 		</div>
@@ -148,6 +174,9 @@ function preloader()
 			<a href='/office/reviews/culture'>Culture</a>
 		</div>
 
+		<div class='navigationmenu_item_noborder'>
+			Other Features
+		</div>
 
 		<div class='navigationmenu_item'>
 			<a href='/office/charity/'>Our Charity</a>
@@ -159,9 +188,6 @@ function preloader()
 			<a href='/office/games/'>Games Zone</a>
 		</div>
 
-		<div class='navigationmenu_item'>
-			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
-		</div>
 
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
 			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
