@@ -23,11 +23,11 @@
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+			'photos' => $this->db->get('photos')
 		);
-
-		$extra_head = array(
-			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-		);
+//		$extra_head = array(
+//			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+//		);
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
