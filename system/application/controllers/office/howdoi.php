@@ -97,9 +97,10 @@ class Howdoi extends Controller
 		if (!CheckPermissions('office')) return;
 
 		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('requests_model','requests_model');
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
-		$this->pages_model->SetPageCode('office_howdoi_suggestions');
+		$this->pages_model->SetPageCode('office_howdoi_suggestion');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
@@ -107,8 +108,18 @@ class Howdoi extends Controller
 		
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
 		$data['categoryparentid'] = $howdoi_type_id;
 		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
+		$data['categories'][$howdoi_type_id] = array(
+					'codename'=>'unassigned',
+					'name'=>'Unassigned',
+					'suggestions'=>$this->requests_model->GetSuggestedArticles($howdoi_type_id)
+					);
+		foreach ($data['categories'] as $category_id => $category)
+		{
+			$data['categories'][$category_id]['suggestions'] = $this->requests_model->GetSuggestedArticles($category_id);
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
