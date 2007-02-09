@@ -14,7 +14,7 @@
 	echo '<h4>Question Categories</h4>';
 	foreach ($categories as $category)
 	{
-		echo '<a href="'.$category['codename'].'">'.$category['name'].'</a><br />';
+		echo '<a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a><br />';
 	}
 ?>
 </div>
@@ -33,7 +33,7 @@
 		echo '<h5>'.$category['name'].'</h5>';
 		foreach ($categories[$key]['articles'] as $articles)
 		{
-			echo '<a href="'.$category['codename'].'#'.$articles['id'].'">'.$articles['heading'].'</a><br />';
+			echo '<a href="/howdoi/'.$category['codename'].'#'.$articles['id'].'">'.$articles['heading'].'</a><br />';
 		}
 	}
 ?>

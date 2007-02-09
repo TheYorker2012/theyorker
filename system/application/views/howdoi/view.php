@@ -16,7 +16,7 @@
 	{
 		foreach ($categories as $category)
 		{
-			echo '<a href="'.$category['codename'].'">'.$category['name'].'</a><br />';
+			echo '<a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a><br />';
 		}
 	}
 ?>

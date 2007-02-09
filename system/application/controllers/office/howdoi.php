@@ -169,34 +169,76 @@ class Howdoi extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function categorymodify()
 	{
 		if (!CheckPermissions('office')) return;
 
 		$this->load->model('howdoi_model','howdoi_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
-		// NEW PAGE CATEGORY NEEDED
-		$this->pages_model->SetPageCode('office_howdoi_categories');
-		
-		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('categories');
-
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
-		//do shabazz
-
-		// Set up the view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_category', $data);
-
-		// Set up the public frame
-		$this->main_frame->SetContent($the_view);
-
-		// Load the public frame view
-		$this->main_frame->Load();
+		if (isset($_POST['r_submit_edit']))
+		{
+			// NEW PAGE CATEGORY NEEDED
+			$this->pages_model->SetPageCode('office_howdoi_edit_category');
+			
+			//Get navigation bar and tell it the current page
+			$this->_SetupNavbar();
+			$this->main_frame->SetPage('categories');
+	
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			
+			//do shabazz
+			$data['category'] = $this->howdoi_model->GetContentCategory($_POST['r_categoryid']);
+			$data['category']['id'] = $_POST['r_categoryid'];
+	
+			// Set up the view
+			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
+						'category'=>$data['category']['name']))
+						);
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_category', $data);
+	
+			// Set up the public frame
+			$this->main_frame->SetContent($the_view);
+	
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		else if (isset($_POST['r_submit_delete']))
+		{
+			$this->howdoi_model->DeleteCategory($_POST['r_categoryid']);
+                	$this->main_frame->AddMessage('success','Category deleted.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_save']))
+		{
+			$this->howdoi_model->UpdateCategory($_POST['r_categoryid'],
+						$_POST['a_name'],
+						$_POST['a_codename'],
+						$_POST['a_blurb']
+						);
+                	$this->main_frame->AddMessage('success',$_POST['a_name'].' has been updated.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_add']))
+		{
+			$this->howdoi_model->AddNewCategory($_POST['a_categoryname'], $howdoi_type_id);
+                	$this->main_frame->AddMessage('success',$_POST['a_categoryname'].' has been added to the category list.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_up']))
+		{
+			$this->howdoi_model->SwapCategoryOrder($_POST['r_sectionorder'], $_POST['r_sectionorder'] - 1);
+                	$this->main_frame->AddMessage('success','Category moved up.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_down']))
+		{
+			$this->howdoi_model->SwapCategoryOrder($_POST['r_sectionorder'], $_POST['r_sectionorder'] + 1);
+                	$this->main_frame->AddMessage('success','Category moved down.');
+			redirect($_POST['r_redirecturl']);
+		}
 	}
-
 }
 ?>

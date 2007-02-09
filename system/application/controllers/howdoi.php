@@ -45,14 +45,14 @@ class Howdoi extends Controller {
 	function viewcategory($codename, $id)
 	{
 		if (!CheckPermissions('public')) return;
-
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
-		$this->load->model('howdoi_model','howdoi');
-		$this->load->model('news_model','news');
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('news_model','news_model');
 		$this->pages_model->SetPageCode('howdoi_view');
 
-		$data['categories'] = $this->howdoi->GetContentCategories($howdoi_type_id);
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
 		$view_category_id = -1;
 		foreach ($data['categories'] as $category_id => $category)
 		{
@@ -63,10 +63,10 @@ class Howdoi extends Controller {
 		if ($view_category_id >= 0)
 		{
 			// Gets the articles for the categories article ids
-			$article_temp = $this->howdoi->GetCategoryArticleIDs($view_category_id);
+			$article_temp = $this->howdoi_model->GetCategoryArticleIDs($view_category_id);
 			foreach ($article_temp as $category_article)
 			{
-	                        $data['categories'][$view_category_id]['articles'][] = $this->news->GetFullArticle($category_article);
+	                        $data['categories'][$view_category_id]['articles'][] = $this->news_model->GetFullArticle($category_article);
 			}
 
 			// Gets the sidebar page_properties
@@ -74,7 +74,7 @@ class Howdoi extends Controller {
 							'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
 
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
-	
+
 			// Set up the public frame
 			$this->main_frame->SetTitle($this->pages_model->GetTitle(array('category'=>$data['categories'][$view_category_id]['name'])));
 			$this->main_frame->SetContentSimple('howdoi/view', $data);

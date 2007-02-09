@@ -17,26 +17,11 @@
 	<?php
 	foreach ($categories as $category_id => $category)
 	{
-		/*
-		echo '<form class="form" action="/office/howdoi/categoryadd" method="post" ><fieldset>';
-		echo '<tr>';
-//		echo '<input type="hidden" name="a_categoryid" id="a_categoryid" value="'.$category_id.'" />';
-		echo '<td width="50%" align="right" style="padding: 0px 5px 0px 0px">';
-		echo $category['name'];
-		echo '</td>';
-		echo '<td width="50%" align="left" style="padding: 0px 0px 0px 5px">';
-		//echo '<a href="/office/howdoi/categoryedit/'.$category_id.'">[edit]</a>'.' ';
-		echo '<a href="/office/howdoi/categorydelete/'.$category_id.'">[delete]</a>';
-		//echo '<input type="submit" name="r_submit_edit" id="r_submit_edit" value="Edit" class="button" />';
-		echo '</td>';
-		echo '</tr>';
-		echo '</fieldset></form>';
-		//echo '<input type="text" name="name" value="'.$category['name'].'" /> <a href="'.$category['codename'].'">[delete]</a><br />';
-		*/
 		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
 			<fieldset>
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 				<label for="r_submit_edit">'.$category['name'].'</label>
-				<input type="hidden" name="a_categoryid" id="a_categoryid" value="'.$category_id.'" />
+				<input type="hidden" name="r_categoryid" id="r_categoryid" value="'.$category_id.'" />
 				<input type="submit" name="r_submit_delete" id="r_submit_delete" value="Delete" class="button" />
 				<input type="submit" name="r_submit_edit" id="r_submit_edit" value="Edit" class="button" />
 			</fieldset>
@@ -46,15 +31,42 @@
 	?>
 
 </div>
-<div class="blue_box">
+<?php
+echo '<div class="blue_box">
 	<h2>add category</h2>
-	<form class="form" action="/office/howdoi/categoryadd" method="post" >
+	<form class="form" action="/office/howdoi/categorymodify" method="post" >
 		<fieldset>
+			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 			<label for="title">Name: </label>
-			<input type="text" name="title" />
-			<input type="submit" class="button" value="Create" />
+			<input type="text" name="a_categoryname" />
+			<input type="submit" name="r_submit_add" id="r_submit_add" class="button" value="Create" />
 		</fieldset>
 	</form>
+</div>';
+?>
+
+<div class="grey_box">
+	<h2>sort categories</h2>
+	Move the categories up and down into the order you want them in.
+	<?php
+	$category_count = count($categories);
+	foreach ($categories as $category_id => $category)
+	{
+		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
+			<fieldset>
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+				<label for="r_submit_edit">'.$category['name'].'</label>
+				<input type="hidden" name="r_sectionorder" id="r_sectionorder" value="'.$category['section_order'].'" />';
+				if ($category['section_order'] != 1)
+					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />';
+				if ($category['section_order'] != $category_count)
+					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="button" />';
+			echo '</fieldset>
+			</form>
+			<br />';
+	}
+	?>
+
 </div>
 
 <?php
