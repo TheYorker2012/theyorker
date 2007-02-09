@@ -60,7 +60,7 @@ class Yorkerdirectory extends Controller
 	function information($organisation)
 	{
 		if (CheckPermissions('vip')) {
-			$this->pages_model->SetPageCode('vip_area_directory_information');
+			$this->pages_model->SetPageCode('viparea_directory_information');
 			
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation);
@@ -83,7 +83,7 @@ class Yorkerdirectory extends Controller
 	function photos($organisation)
 	{
 		if (CheckPermissions('vip')) {
-			$this->pages_model->SetPageCode('vip_area_directory_photos');
+			$this->pages_model->SetPageCode('viparea_directory_photos');
 			
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation);
@@ -122,7 +122,7 @@ class Yorkerdirectory extends Controller
 	function map($organisation)
 	{
 		if (CheckPermissions('vip')) {
-			$this->pages_model->SetPageCode('vip_area_directory_map');
+			$this->pages_model->SetPageCode('viparea_directory_map');
 			
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation);
@@ -147,7 +147,7 @@ class Yorkerdirectory extends Controller
 	function contacts($organisation,$business_card_group=-1)
 	{
 		if (CheckPermissions('vip')) {
-			$this->pages_model->SetPageCode('vip_area_directory_contacts');
+			$this->pages_model->SetPageCode('viparea_directory_contacts');
 			
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation);
@@ -202,7 +202,7 @@ class Yorkerdirectory extends Controller
 	function editcontact($organisation,$business_card)
 	{
 		if (CheckPermissions('vip')) {
-			$this->pages_model->SetPageCode('vip_area_directory_editcontact');
+			$this->pages_model->SetPageCode('viparea_directory_editcontact');
 				
 			$organisation = ''; // Throw this away and retrieve it from the $business_card instead for security
 			
