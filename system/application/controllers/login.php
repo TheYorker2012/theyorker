@@ -32,10 +32,11 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
+		$this->pages_model->SetPageCode('reset_password');
+		
 		$data = array();
 		
 		// Set up the public frame
-		$this->main_frame->SetTitle('Reset My Password');
 		$this->main_frame->SetContentSimple('login/resetpassword', $data);
 		
 		// Load the public frame view (which will load the content view)

@@ -14,8 +14,9 @@ class Useradmin extends Controller
 	{
 		if (!CheckPermissions('admin')) return;
 		
+		$this->pages_model->SetPageCode('admin_users');
+		
 		// Set up the public frame
-		$this->main_frame->SetTitle('Administrate User');
 		$this->main_frame->SetContentSimple('login/user');
 		
 		// Load the public frame view (which will load the content view)

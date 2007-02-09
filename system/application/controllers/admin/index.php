@@ -12,7 +12,8 @@ class Index extends Controller
 	{
 		if (!CheckPermissions('admin')) return;
 		
-		$this->main_frame->SetTitle('Admin');
+		$this->pages_model->SetPageCode('admin_index');
+		
 		$this->main_frame->SetContentSimple('admin/admin');
 			
 		// Load the public frame view (which will load the content view)
