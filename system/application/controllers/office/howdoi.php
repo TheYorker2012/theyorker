@@ -95,6 +95,9 @@ class Howdoi extends Controller
 	function suggestions()
 	{
 		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
 		$this->pages_model->SetPageCode('office_howdoi_suggestions');
 
@@ -104,6 +107,8 @@ class Howdoi extends Controller
 		
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['categoryparentid'] = $howdoi_type_id;
+		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
@@ -194,9 +199,7 @@ class Howdoi extends Controller
 			$data['category']['id'] = $_POST['r_categoryid'];
 	
 			// Set up the view
-			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
-						'category'=>$data['category']['name']))
-						);
+			$this->main_frame->SetTitleParameters(array('category'=>$data['category']['name']));
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_category', $data);
 	
 			// Set up the public frame
@@ -223,7 +226,7 @@ class Howdoi extends Controller
 		}
 		else if (isset($_POST['r_submit_add']))
 		{
-			$this->howdoi_model->AddNewCategory($_POST['a_categoryname'], $howdoi_type_id);
+			$this->howdoi_model->AddNewCategory($_POST['a_categoryname']);
                 	$this->main_frame->AddMessage('success',$_POST['a_categoryname'].' has been added to the category list.');
 			redirect($_POST['r_redirecturl']);
 		}
@@ -237,6 +240,28 @@ class Howdoi extends Controller
 		{
 			$this->howdoi_model->SwapCategoryOrder($_POST['r_sectionorder'], $_POST['r_sectionorder'] + 1);
                 	$this->main_frame->AddMessage('success','Category moved down.');
+			redirect($_POST['r_redirecturl']);
+		}
+	}
+
+	function suggestionmodify()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('requests_model','requests_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+		
+		if (isset($_POST['r_submit_ask']))
+		{
+                	$article_header_id = $this->requests_model->CreateRequest(
+						'suggestion', 
+						$_POST['a_category'],
+						$_POST['a_question'], 
+						$_POST['a_description'], 
+						$this->user_auth->entityId
+						);
+	                $this->main_frame->AddMessage('success',$article_header_id.' - Suggestion Created.');
 			redirect($_POST['r_redirecturl']);
 		}
 	}

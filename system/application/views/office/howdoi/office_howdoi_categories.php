@@ -60,11 +60,11 @@ echo '<div class="blue_box">
 				if ($category['section_order'] != 1)
 					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />';
 				else
-					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="class="disabled_button" disabled />';
+					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="disabled_button" disabled />';
 				if ($category['section_order'] != $category_count)
 					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="button" />';
 				else
-					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="class="disabled_button" disabled />';
+					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="disabled_button" disabled />';
 			echo '</fieldset>
 			</form>
 			<br />';

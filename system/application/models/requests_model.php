@@ -22,10 +22,10 @@ class	Requests_Model extends Model
 					article_created,
 					article_request_title,
 					article_request_description,
-					article_request_accepted,
+					article_suggestion_accepted,
 					article_request_entity_id)
 				VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
-			$query = $this->db->query($sql,array($type_id,$title,$description,$user));
+			$query = $this->db->query($sql,array($type,$title,$description,$user));
 			$sql = 'SELECT 	article_id 
 				FROM	articles
 				WHERE	(article_id=LAST_INSERT_ID())';
@@ -33,7 +33,7 @@ class	Requests_Model extends Model
 			$id = $query->row()->article_id;
 			$this->db->trans_complete();
 			
-			return $id
+			return $id;
 		}
 		elseif ($status == 'request')
 		{
@@ -43,11 +43,11 @@ class	Requests_Model extends Model
 					article_created,
 					article_request_title,
 					article_request_description,
-					article_request_accepted,
+					article_suggestion_accepted,
 					article_request_entity_id
 					article_editor_approved_user_etity_id)
 				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?)';
-			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user));
+			$query = $this->db->query($sql,array($type,$title,$description,$user,$user));
 			$sql = 'SELECT 	article_id 
 				FROM	articles
 				WHERE	(article_id=LAST_INSERT_ID())';
@@ -55,42 +55,42 @@ class	Requests_Model extends Model
 			$id = $query->row()->article_id;
 			$this->db->trans_complete();
 			
-			return $id
+			return $id;
 		}
 		else
 		{
-			return FALSE
+			return FALSE;
 		}
 	}
 	
 	function UpdateRequest($id,$data)
 	//Make a change to a request status in the article table
 	{
-		return $status
+		return $status;
 	}	
 	
 	function GetPublishedArticles($type)
 	{
 		$ids = array();
-		return $ids
+		return $ids;
 	}
 
 	function GetUnpublishedArticles($type)
 	{
 		$ids = array();
-		return $ids
+		return $ids;
 	}	
 	
 	function GetRequestedArticles($type)
 	{
 		$ids = array();
-		return $ids
+		return $ids;
 	}
 	
 	function GetSuggestedArticles($type)
 	{
 		$ids = array();
-		return $ids
+		return $ids;
 	} 
 
 	function AddUserToRequest($id,$user)

@@ -28,19 +28,25 @@
 <div class="grey_box">
 
 	<h2>make a suggestion</h2>
-	<form class="form">
+	<?php
+	echo '<form class="form" action="/office/howdoi/suggestionmodify" method="post" >
 		<fieldset>
+			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 			<label for="a_question">Question: </label>
 			<input type="text" name="a_question" />
-			<label for="a_answer">Answer (if applicable): </label>
-			<textarea name="a_answer" cols="30" rows="5"></textarea>
+			<label for="a_description">Description: </label>
+			<textarea name="a_description" cols="30" rows="5"></textarea>
 			<label for="a_category">Category: </label>
 			<select name="a_category">
-				<option>General</option>
-				<option>Opening times</option>
-			</select>
-			<input type="submit" class="button" value="Ask" />
+			<option value="'.$categoryparentid.'">Unassigned</option>';
+			foreach ($categories as $category_id => $category)
+			{
+				echo '<option value="'.$category_id.'">'.$category['name'].'</option>';
+			}
+			echo '</select>
+			<input type="submit" class="button" value="Ask" name="r_submit_ask" />
 		</fieldset>
-	</form>	
+	</form>';
+	?>
 
 </div>

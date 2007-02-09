@@ -172,35 +172,56 @@ class Howdoi_model extends Model
 	
 	function DeleteCategory($category_id)
 	{
-		$this->load->model('howdoi_model','howdoi_model');
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+		$howdoi_type_id = self::GetHowdoiTypeID();
+
 		$this->db->trans_start();
-		$sql = 'UPDATE content_types
-			SET content_type_parent_content_type_id = ?
-			WHERE content_type_parent_content_type_id = ?';
-		$query = $this->db->query($sql,array($howdoi_type_id, $category_id));
-		$sql = 'DELETE FROM content_types
-			WHERE content_type_id = ?';
+
+		$sql = 'SELECT	content_type_section_order
+			FROM	content_types
+			WHERE	content_type_id = ?';
 		$query = $this->db->query($sql,array($category_id));
+		$row = $query->row();
+		$delete_section_order = $row->content_type_section_order;
+
+		$sql = 'SELECT	MAX(content_type_section_order) as max_section_order
+			FROM	content_types
+			WHERE	content_type_parent_content_type_id = ?';
+		$query = $this->db->query($sql,array($howdoi_type_id));
+		$row = $query->row();
+		$max_section_order = $row->max_section_order;
+
+		for($i = $delete_section_order; $i < $max_section_order; $i++)
+		{
+			self::SwapCategoryOrder($i, $i + 1);
+		}
+		
+		//update questions to have parent content type id
+
+		$sql = 'DELETE FROM content_types
+			WHERE	content_type_id = ?';
+		$query = $this->db->query($sql,array($category_id));
+
 		$this->db->trans_complete();
 	}
 
 	function UpdateCategory($category_id, $name, $codename, $blurb)
 	{
-		$sql = 'UPDATE content_types
-			SET content_type_name = ?,
+		$sql = 'UPDATE	content_types
+			SET	content_type_name = ?,
 				content_type_codename = ?,
 				content_type_blurb = ?
-			WHERE content_type_id = ?';
+			WHERE	content_type_id = ?';
 		$query = $this->db->query($sql,array($name, $codename, $blurb, $category_id));
 	}
 
-	function AddNewCategory($name, $parent_id, $section = 'hardcoded')
+	function AddNewCategory($name, $section = 'hardcoded')
 	{
-		$sql = 'SELECT MAX(content_type_section_order) as max_section_order
-			FROM content_types
-			WHERE content_type_parent_content_type_id = ?';
-		$query = $this->db->query($sql,array($parent_id));
+		$howdoi_type_id = self::GetHowdoiTypeID();
+
+		$sql = 'SELECT	MAX(content_type_section_order) as max_section_order
+			FROM	content_types
+			WHERE	content_type_parent_content_type_id = ?';
+		$query = $this->db->query($sql,array($howdoi_type_id));
 		$row = $query->row();
 		$section_order = $row->max_section_order + 1;
 		$codename = strtolower(ereg_replace("[^A-Za-z0-9]", "", $name));
@@ -211,38 +232,38 @@ class Howdoi_model extends Model
 				content_type_section,
 				content_type_section_order)
 			VALUES (?, ?, ?, ?, ?)';
-		$query = $this->db->query($sql,array($parent_id, $name, $codename, $section, $section_order));
+		$query = $this->db->query($sql,array($howdoi_type_id, $name, $codename, $section, $section_order));
 	}
 
 	function SwapCategoryOrder($category_id_1, $category_id_2)
 	{
 		$this->db->trans_start();
-		$sql = 'SELECT content_type_id
-			FROM content_types
-			WHERE content_type_section_order = ?
-				AND content_type_parent_content_type_id = ?';
+		$sql = 'SELECT	content_type_id
+			FROM	content_types
+			WHERE	content_type_section_order = ?
+			AND	content_type_parent_content_type_id = ?';
 		$query = $this->db->query($sql,array($category_id_1, self::GetHowdoiTypeID()));
 		$row = $query->row();
 		$content_type_id_1 = $row->content_type_id;
 
-		$sql = 'SELECT content_type_id
-			FROM content_types
-			WHERE content_type_section_order = ?
-				AND content_type_parent_content_type_id = ?';
+		$sql = 'SELECT	content_type_id
+			FROM	content_types
+			WHERE	content_type_section_order = ?
+			AND	content_type_parent_content_type_id = ?';
 		$query = $this->db->query($sql,array($category_id_2, self::GetHowdoiTypeID()));
 		$row = $query->row();
 		$content_type_id_2 = $row->content_type_id;
 
-		$sql = 'UPDATE content_types
-			SET content_type_section_order = ?
-			WHERE content_type_section_order = ?
-				AND content_type_id = ?';
+		$sql = 'UPDATE	content_types
+			SET	content_type_section_order = ?
+			WHERE	content_type_section_order = ?
+			AND	content_type_id = ?';
 		$query = $this->db->query($sql,array($category_id_2, $category_id_1, $content_type_id_1));
 
-		$sql = 'UPDATE content_types
-			SET content_type_section_order = ?
-			WHERE content_type_section_order = ?
-				AND content_type_id = ?';
+		$sql = 'UPDATE	content_types
+			SET	content_type_section_order = ?
+			WHERE	content_type_section_order = ?
+			AND	content_type_id = ?';
 		$query = $this->db->query($sql,array($category_id_1, $category_id_2, $content_type_id_2));
 		$this->db->trans_complete();
 	}

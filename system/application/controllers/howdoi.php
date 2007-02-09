@@ -76,7 +76,7 @@ class Howdoi extends Controller {
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
 
 			// Set up the public frame
-			$this->main_frame->SetTitle($this->pages_model->GetTitle(array('category'=>$data['categories'][$view_category_id]['name'])));
+			$this->main_frame->SetTitleParameters(array('category'=>$data['categories'][$view_category_id]['name']));
 			$this->main_frame->SetContentSimple('howdoi/view', $data);
 	
 			// Load the public frame view (which will load the content view)
@@ -85,20 +85,6 @@ class Howdoi extends Controller {
 		else
 			//needs a new page to show invalid category
 			redirect('/howdoi');
-	}
-
-	function addhowdoi()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$this->pages_model->SetPageCode('howdoi_view');
-	
-		// Set up the public frame
-		$this->main_frame->SetTitle('cheese');
-		$this->main_frame->SetContentSimple('howdoi/addhowdoi', $data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
 	}
 }
 ?>
