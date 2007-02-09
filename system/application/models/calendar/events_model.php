@@ -640,6 +640,7 @@ class Events_model extends Model
 	function GetEventRsvp($EventId)
 	{
 		/// @todo Implement.
+		return array();
 	}
 	
 	/// Get information about the RSVP's to an occurrence
@@ -653,6 +654,7 @@ class Events_model extends Model
 	function GetOccurrenceRsvp($OccurrenceId)
 	{
 		/// @todo Implement.
+		return array();
 	}
 	
 	// subscriber
