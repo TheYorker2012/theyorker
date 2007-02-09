@@ -31,10 +31,10 @@ echo '<div class="grey_box">
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($_POST);
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

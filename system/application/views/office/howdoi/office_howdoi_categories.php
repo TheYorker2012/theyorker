@@ -59,8 +59,12 @@ echo '<div class="blue_box">
 				<input type="hidden" name="r_sectionorder" id="r_sectionorder" value="'.$category['section_order'].'" />';
 				if ($category['section_order'] != 1)
 					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />';
+				else
+					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="class="disabled_button" disabled />';
 				if ($category['section_order'] != $category_count)
 					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="button" />';
+				else
+					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="class="disabled_button" disabled />';
 			echo '</fieldset>
 			</form>
 			<br />';
@@ -70,9 +74,9 @@ echo '<div class="blue_box">
 </div>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>
