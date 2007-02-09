@@ -58,17 +58,17 @@ class Reviews extends Controller
 		
 		$this->pages_model->SetPageCode('office_reviews_overview');
 
+		$data = $this->organisations->_GetOrgData($organisation);
+
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		$data['this_organisation'] = $organisation;
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_overview', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+				array('organisation' => $data['organisation']['name']));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view

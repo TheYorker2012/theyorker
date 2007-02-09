@@ -177,7 +177,9 @@ function preloader()
 		<div class='officenavigation_title'>
 			Other Features
 		</div>
-
+		<div class='officenavigation_item'>
+			<a href='/office/campaign/'>Campaigns</a>
+		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/charity/'>Our Charity</a>
 		</div>
