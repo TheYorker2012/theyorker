@@ -327,6 +327,26 @@ div.navigationmenu_item_noborder {
 }
 
 /**
+ * 	Navigation Menu Style (office_frame)
+ */
+
+div.officenavigation_title {
+	color: #999;
+	font-size: x-small;
+	border-bottom: 1px solid #999;
+	padding-top: 5px;
+}
+
+div.officenavigation_item {
+	color: #999;
+	font-size: small;
+	border-left: 1px solid #999;
+	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-left: 3px;
+}
+
+/**
  * 	Spans with forced colours
  */
 

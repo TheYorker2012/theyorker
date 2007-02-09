@@ -96,95 +96,95 @@ function preloader()
 	</div>
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Office
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/'>Office Home</a>
 		</div>
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_item'>
 			<a href='/logout/office'>Leave Office</a>
 		</div>
 		
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Calendar
 		</div>
 		
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/packages/'>Packages</a>
 		</div>
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_item'>
 			<a href='/office/directory/'>Directory</a>
 		</div>
 		
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Boxes
 		</div>
 
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/uninews/'>Uni News</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/national/'>UK &amp; World News</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/features/'>Features</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/lifestyle/'>Lifestyle</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/food/'>Food</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/drink/'>Drink</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/culture/'>Culture</a>
 		</div>
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_item'>
 			<a href='/office/news/archive/'>News Archive</a>
 		</div>
 
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Photographers
 		</div>
 
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/image/requests/'>Requests</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/gallery/'>Gallery</a>
 		</div>
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_item'>
 			<a href='/office/photographers'>Manage Photographers</a>
 		</div>
 
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Reviews
 		</div>
 
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/reviews/food'>Food</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/reviews/drink'>Drink</a>
 		</div>
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_item'>
 			<a href='/office/reviews/culture'>Culture</a>
 		</div>
 
-		<div class='navigationmenu_item_noborder'>
+		<div class='officenavigation_title'>
 			Other Features
 		</div>
 
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/charity/'>Our Charity</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
-		<div class='navigationmenu_item'>
+		<div class='officenavigation_item'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
 
