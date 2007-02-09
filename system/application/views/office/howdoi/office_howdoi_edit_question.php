@@ -22,8 +22,8 @@
 	</div>
 </div>
 
-<div class="blue_box">
-	<h2>Edit Question</h2>
+<div class="grey_box">
+	<h2>edit question</h2>
 	<form class="form">
 		<fieldset>
 			<label for="question">Question:</label>
@@ -44,9 +44,22 @@
 			</select><br />
 			<label for="answer">Answer:</label>
 			<textarea name="answer" rows="5" cols="30" />value="Same times as your mum is open</textarea><br />
-			<label for="answer">Save the Changes:</label>
-			<input type="submit" value="Save" class="button" /><br />	
-			<label for="answer">or Publish this:</label>
-			<input type="submit" value="Publish" class="button" />
+			<input type="submit" value="Save" class="button" />
 		</fieldset>
 	</form>
+</div>
+<div class="blue_box">
+	<h2>publish options</h2>
+	<form class="form">
+	To publish the question now, click publish now
+		<fieldset>
+			<input type="submit" value="Publish Now" class="button" />
+		</fieldset>
+	Or to publish at a later date...
+		<fieldset>
+			<label for"a_publishdate">Publish On (dd/mm/yyyy):</label>
+			<input type="text" name="a_publishdate" />
+			<input type="submit" value="Publish Then" class="button" />
+		</fieldset>
+	</form>
+

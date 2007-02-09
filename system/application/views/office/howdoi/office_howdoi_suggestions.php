@@ -10,33 +10,35 @@
 			There are <b>3</b> <a href='#'>Suggestions</a> that require attention.
 		</div>
 	</div>
-	<h4>Question Categories</h4>
-	<div class="Entry">
-	<a href="/office/howdoi/editquestion">Opening Times</a><br />
-	<a href="/office/howdoi/editquestion">Numbers</a><br />
-	<a href="/office/howdoi/editquestion">Essentials</a><br />
-	<a href="/office/howdoi/editquestion">Other Info</a><br />
-	<a href="/office/howdoi/editquestion">The Nearest ...</a><br />
-	</div>
 </div>
 <div class="blue_box">
-	<h2>answer questions</h2>
+	<h2>suggestions</h2>
 	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	<a href="#">> Answer this question</a><br />
+	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
+	<a href="#">[edit]</a> <a href="#">[remove]</a>
 	<hr />
 	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	<a href="#">> Answer this question</a><br />
+	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
+	<a href="#">[edit]</a> <a href="#">[remove]</a>
 	<hr />
 	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	<a href="#">> Answer this question</a><br />
+	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
+	<a href="#">[edit]</a> <a href="#">[remove]</a>
 </div>
 <div class="grey_box">
 
-	<h2>ask a question</h2>
+	<h2>make a suggestion</h2>
 	<form class="form">
 		<fieldset>
-			<label for="question">Question: </label>
-			<input type="text" name="question" />
+			<label for="a_question">Question: </label>
+			<input type="text" name="a_question" />
+			<label for="a_answer">Answer (if applicable): </label>
+			<textarea name="a_answer" cols="30" rows="5"></textarea>
+			<label for="a_category">Category: </label>
+			<select name="a_category">
+				<option>General</option>
+				<option>Opening times</option>
+			</select>
 			<input type="submit" class="button" value="Ask" />
 		</fieldset>
 	</form>	
