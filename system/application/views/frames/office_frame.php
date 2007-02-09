@@ -184,7 +184,7 @@ function preloader()
 		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
-		<div class='officenavigation_item'>
+		<div class='officenavigation_item<F5>'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
 

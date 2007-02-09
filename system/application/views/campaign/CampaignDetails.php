@@ -1,5 +1,6 @@
 <div class='RightToolbar'>
 	<h4><?php echo $sidebar_vote['title']; ?></h4>
+	<div class="Entry">
 	<?php
 	if ($user == TRUE)
 	{
@@ -40,44 +41,48 @@
 	else
 		echo $sidebar_vote['not_logged_in'];
 	?>
-	<br />
+	</div>
 
 	<h4><?php echo $sidebar_other_campaigns['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">
+	<div class="Entry">
 	<?php
         foreach ($campaign_list as $key => $campaigns)
 	{
 		if ($key != $selected_campaign)
-			echo '<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b><br />';
+			echo '<a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a><br />';
 	};
-	?>
-	</p>
+	?><br />
+	</div>
 	
 	<h4><?php echo $sidebar_more['title']; ?></h4>
+	<div class="Entry">
 	<?php echo $sidebar_more['text']; ?>
-	
+	</div>
+
 	<h4><?php echo $sidebar_related['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">
+	<div class="Entry">
 	<?php
         foreach ($article['related_articles'] as $related_articles)
 	{
 		echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
 	};
 	?>
-	</p>
+	</div>
 
 	<h4><?php echo $sidebar_external['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">
+	<div class="Entry">
 	<?php
         foreach ($article['links'] as $links)
 	{
 		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
 	};
 	?>
-	</p>
+	</div>
 	
     	<h4><?php echo $sidebar_comments['title']; ?></h4>
-	<p style="margin-top: 0px; padding: 8px;">#TODO</p>
+	<div class="Entry">
+	#TODO#
+	</div>
 </div>
 
 <div class='grey_box'>
