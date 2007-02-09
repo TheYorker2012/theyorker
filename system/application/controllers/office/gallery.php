@@ -5,25 +5,26 @@
  * @author Nick Evans (nse500@cs.york.ac.uk)
  *
  */
+define('PHOTOS_PERPAGE', 12);
+
  class Gallery extends Controller
 {
 	/**
 	 * @brief Default constructor.
 	 */
-	function __construct()
-	{
+	function __construct() {
 		parent::Controller();
+		$this->load->helper('url')
 	}
 	
-	function index()
-	{
+	function index() {
 		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_gallery');
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'photos' => $this->db->get('photos')
+			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)
 		);
 //		$extra_head = array(
 //			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),

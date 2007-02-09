@@ -26,7 +26,7 @@
 		</div>
 	</div>
 -->
-<?php foreach ($photos as $thumbnail) { ?>
+<?php foreach ($photos->result() as $thumbnail) { ?>
 	<div class="thumbnail_small">
 		<a href="/office/gallery/show/<?=$thumbnail->photo_id?>"><img src="<?=photoLocation($thumbnail->photo_id)?>" alt="<?=$thumbnail->photo_title?>" /></a>
 		<div>
