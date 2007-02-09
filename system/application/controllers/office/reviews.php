@@ -60,6 +60,7 @@ class Reviews extends Controller
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['this_organisation'] = $organisation;
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_overview', $data);

@@ -44,22 +44,22 @@
     <table cellspacing="0" cellpadding="0">
         <tr>
             <td width="83"><p align="center"> Directory </p></td>
-            <td width="78"><p align="center"><b> Edit </b></p></td>
+            <td width="78"><p align="center"><b><a href="/viparea/directory/$this_organisation">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm<b></b></p></td>
         </tr>
         <tr>
             <td width="83"><p align="center"> Food </p></td>
-            <td width="78"><p align="center"><b> Edit</b></p></td>
+            <td width="78"><p align="center"><b><a href="/office/reviews/$this_organisation/food">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm </p></td>
         </tr>
         <tr>
             <td width="83"><p align="center"> Drink </p></td>
-            <td width="78"><p align="center"><b> Edit</b></p></td>
+            <td width="78"><p align="center"><b><a href="/office/reviews/$this_organisation/drink">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm </p></td>
         </tr>
         <tr>
             <td width="83"><p align="center"> Culture </p></td>
-            <td width="78"><p align="center"><b> Add</b></p></td>
+            <td width="78"><p align="center"><b><a href="/office/reviews/$this_organisation/culture">Edit</a></b></p></td>
             <td width="168"><p align="center"> - </p></td>
         </tr>
     </table>	
