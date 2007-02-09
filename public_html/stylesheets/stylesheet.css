@@ -1104,14 +1104,14 @@ div.RightToolbar div.LifestylePuffer p {
 .form fieldset input:focus, .form fieldset textarea:focus, .form fieldset select:focus {
 	border: 1px #000 solid;
 }
-.form .button {
-    background-image: url('/images/prototype/news/yorker-button.jpg');
+.form .button, .form fieldset .disabled_button {
+	background-image: url('/images/prototype/news/yorker-button.jpg');
 	background-position: center left;
-    background-repeat: no-repeat;
-    background-color: #ff6a00;
+	background-repeat: no-repeat;
+ 	background-color: #ff6a00;
 	float: right;
-    padding: 0 10px 0 20px;
-    color: #000000;
+	padding: 0 10px 0 20px;
+	color: #000000;
 	border-top : 1px solid #eaedf4;
 	border-left : 1px solid #eaedf4;
  	border-bottom : 1px solid #224059;
@@ -1128,6 +1128,10 @@ div.RightToolbar div.LifestylePuffer p {
 	border-left : 1px #31557f solid;
 	border-bottom : 1px #f8f9fb solid;
 	border-right : 1px #f8f9fb solid;
+}
+.form fieldset .disabled_button {
+	background-color: #ccc;
+	background-image: url('/images/prototype/news/yorker-disabled-button.jpg');
 }
 .form fieldset div.comment {
     border: 1px #000000 solid;

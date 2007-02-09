@@ -1,17 +1,20 @@
 <div class="RightToolbar">
 	<h4>Search by...</h4>
 	<div class="Entry">
-		<form id="form">
+		<form class="form">
+			<fieldset>
 			<input type="radio" name="searchcriteria" />Title<br />
 			<input type="radio" name="searchcriteria" />Tag<br />
 			<input type="radio" name="searchcriteria" />Photographer<br /><br />
 			Search Criteria:<input type="text" />
-			<input type="submit" class="buttom" value="Search" />
+			<input type="submit" class="button" value="Search" />
+			</fieldset>
 		</form>
 	</div>
 	<h4>Advanced</h4>
 	<div class="Entry">
-		<form id="form">
+		<form class="form">
+			<fieldset>
 			Order by:<br />
 			<input type="radio" name="order" />Title<br />
 			<input type="radio" name="order" />Date<br />
@@ -30,7 +33,8 @@
 				<option selected value="pope">Bob</option>
 				<option value="pope">Gary</option>
 			</select><br /><br />
-			<input type="submit" class="buttom" value="Display" />
+			<input type="submit" value="Display" />
+			</fieldset>
 		</form>
 	</div>
 </div>
