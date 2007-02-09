@@ -76,7 +76,7 @@ $route['admin/images/([0-9]+)'] = 'admin/images';
 $route['office/directory'] = 'office/yorkerdirectory';
 
 // /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
-$route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/information//$1';
+$route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview//$1';
 // /office/reviews/theyorker/food => /office/reviews/information/theyorker/food/
 $route['office/reviews/('.$org_name_regex.')/([a-z]+)'] = 'office/reviews/information//$2/$1';
 // /office/reviews/theyorker/food/comments => /office/reviews/comments/theyorker/food/
