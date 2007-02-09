@@ -184,14 +184,10 @@ function preloader()
 		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
-		<div class='officenavigation_item<F5>'>
+		<div class='officenavigation_item'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
-
-
-		<div style='padding: 20px 0px 0px 0px;' align='center'>
-			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
-		</div>
+	
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php

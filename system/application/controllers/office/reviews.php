@@ -48,6 +48,7 @@ class Reviews extends Controller
 	// this is blank 
 	function index()
 	{
+	
 	}
 
 	/// Reviews Overview Page
