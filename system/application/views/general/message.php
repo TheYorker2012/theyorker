@@ -1,4 +1,4 @@
-<div style="margin-top: 5px;" class="
+<div style="margin-top: 5px; float: left; width: 638px;" class="
 		<?php
 			if ($class === 'error')
 				echo 'warning_box"><img src="/images/prototype/homepage/error.png" alt="Error" title="Error"';
