@@ -14,7 +14,7 @@ define('PHOTOS_PERPAGE', 12);
 	 */
 	function __construct() {
 		parent::Controller();
-		$this->load->helper('url')
+		$this->load->helper('url');
 	}
 	
 	function index() {
