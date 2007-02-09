@@ -4,7 +4,7 @@
  *
  * @author Alex Fargus (agf501)
  * @author Richard Ingle (ri504)
- * 
+ *
  */
 class Article_model extends Model
 {
@@ -14,16 +14,16 @@ class Article_model extends Model
 		parent::Model();
 		$this->load->library('wikiparser');
 	}
-	
+
 	/**
 	 * Adds an article to the database
 	 * @param 'content_type_id' 'organisation_entity_id' 'initial_editor' /
 	 * 'publish_date' 'heading' 'subheading' 'subtext' 'wikitext' 'blurb'
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	
-	function CommitArticle($content_type_id, $organisation_entity_id, $initial_editor, $publish_date, 
+
+	function CommitArticle($content_type_id, $organisation_entity_id, $initial_editor, $publish_date,
 							$heading, $subheading, $subtext, $wikitext, $blurb)
 	{
 	$this->db->trans_start();
@@ -39,10 +39,10 @@ class Article_model extends Model
 	$sql = 'INSERT INTO article_contents (
 			article_contents.article_content_article_id,
 			article_contents.article_content_heading,
-			article_contents.article_content_subheading, 
+			article_contents.article_content_subheading,
 			article_contents.article_content_subtext,
-			article_contents.article_content_wikitext, 
-			article_contents.article_content_wikitext_cache, 
+			article_contents.article_content_wikitext,
+			article_contents.article_content_wikitext_cache,
 			article_contents.article_content_blurb)
 			VALUES (@article_id:=LAST_INSERT_ID(), ?, ?, ?, ?, ?)';
 	$this->db->query($sql,array($heading, $subheading, $subtext, $wikitext, $wikitext_cache, $blurb));
@@ -52,11 +52,11 @@ class Article_model extends Model
 	$this->db->query($sql);
 	$this->db->trans_complete();
 	}
-	
+
 	/*****************************************************
 	*  PINGU HOW DO I
 	*****************************************************/
-	
+
         /**
 	 * Gets the header information of the specified article id,
 	 * if the article doesn't exist returns FALSE.
@@ -142,7 +142,7 @@ class Article_model extends Model
 		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'INSERT INTO fact_boxes (
 				fact_box_article_content_id,
-				fact_box_title, 
+				fact_box_title,
 				fact_box_wikitext,
 				fact_box_wikitext_cache,
 				fact_box_timestamp)
@@ -164,11 +164,11 @@ class Article_model extends Model
 			WHERE fact_box_id = ?';
 		$this->db->query($sql, array($article_content_id,$title,$wikitext,$deleted,$id));
 	}
-	
+
 	/*****************************************************
 	*  ARTICLE LINKS
-	*****************************************************/   
-	
+	*****************************************************/
+
 	/**
 	 * Inserts a new article link into the database.
 	 */
@@ -196,11 +196,11 @@ class Article_model extends Model
 			WHERE article_link_id = ?';
 		$this->db->query($sql, array($article_id,$name,$url,$deleted,$id));
 	}
-	
+
 	/*****************************************************
 	*  RELATED ARTICLES
 	*****************************************************/
-	
+
 	/**
 	 * Inserts a new related article into the database.
 	 */
@@ -235,7 +235,7 @@ class Article_model extends Model
 				related_article_2_article_id = ?';
 		$this->db->query($sql, array($article_id_1,$article_id_2));
 	}
-	
+
 	/*****************************************************
 	*  ARTICLE WRITERS
 	*****************************************************/
@@ -243,26 +243,26 @@ class Article_model extends Model
 	/**
 	 * Inserts a new article writer into the database.
 	 */
-	function InsertArticleWriter($user_entity_id, $article_content_id)
+	function InsertArticleWriter($user_entity_id, $article_id)
 	{
 		$sql = 'INSERT INTO article_writers (
 				article_writer_user_entity_id,
-				article_writer_article_content_id)
+				article_writer_article_id)
 			VALUES (?, ?)';
-		$this->db->query($sql, array($user_entity_id,$article_content_id));
+		$this->db->query($sql, array($user_entity_id,$article_id));
 	}
 
 	/**
 	 * Deletes the article writer with the given id.
 	 */
-	function DeleteArticleWriter($user_entity_id, $article_content_id)
+	function DeleteArticleWriter($user_entity_id, $article_id)
 	{
 		$sql = 'DELETE FROM article_writers
 			WHERE article_writer_user_entity_id = ? AND
-				article_writer_article_content_id = ?';
-		$this->db->query($sql, array($user_entity_id,$article_content_id));
+				article_writer_article_id = ?';
+		$this->db->query($sql, array($user_entity_id,$article_id));
 	}
-	
+
 	/*****************************************************
 	*  ARTICLE EVENTS
 	*****************************************************/
@@ -289,7 +289,7 @@ class Article_model extends Model
 				article_event_event_id = ?';
 		$this->db->query($sql, array($article_id,$event_id));
 	}
-	
+
 	/*****************************************************
 	*  ARTICLE TAGS
 	*****************************************************/
@@ -316,7 +316,7 @@ class Article_model extends Model
 				article_tag_tag_id = ?';
 		$this->db->query($sql, array($article_id,$tag_id));
 	}
-	
+
 	/*****************************************************
 	*  ARTICLE PHOTOS
 	*****************************************************/
@@ -348,7 +348,7 @@ class Article_model extends Model
 			WHERE article_photo_id = ?';
 		$this->db->query($sql, array($article_id,$photo_id,$number,$image_type,$id));
 	}
-	
+
         /**
 	 * Deletes the article photo with the given id.
 	 */

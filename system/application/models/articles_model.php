@@ -12,7 +12,7 @@ class Articles_model extends Model {
 		// Call the Model constructor
 		parent::Model();
 	}
-	
+
 	/// Update an article's wikitext cache if it needs updating
 	/**
 	 * @param $Data data from database.
@@ -44,7 +44,7 @@ class Articles_model extends Model {
 		}
 		return $Data['article_content_wikitext_cache'];
 	}
-	
+
 	/// Get an organisation's reviews.
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -77,13 +77,13 @@ class Articles_model extends Model {
 			'LEFT JOIN content_types '.
 			' ON articles.article_content_type_id = content_types.content_type_id '.
 			'INNER JOIN article_writers '.
-			' ON article_contents.article_content_id = article_writers.article_writer_article_content_id '.
+			' ON articles.article_id = article_writers.article_writer_article_id '.
 			'INNER JOIN users '.
 			' ON article_writers.article_writer_user_entity_id = users.user_entity_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 ';
 			//' AND reviews.rto_content_type_id IS NULL ';
-	
+
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$authors = $query->result_array();
 		$reviews = array();
@@ -106,7 +106,7 @@ class Articles_model extends Model {
 				'email' => $data['user_email'],
 			);
 		}
-		
+
 		// Return the full array of reviews
 		return $reviews;
 	}
