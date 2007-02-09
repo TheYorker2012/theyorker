@@ -18,12 +18,14 @@ class Howdoi extends Controller {
 		$this->load->model('news_model','news_model');
 		$this->pages_model->SetPageCode('howdoi_list');
 
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
 		$data['sidebar_ask'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
 						'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
 		$data['section_howdoi'] = array('title'=>$this->pages_model->GetPropertyText('section_howdoi_title',FALSE),
 						'text'=>$this->pages_model->GetPropertyWikitext('section_howdoi_text',FALSE));
 
-		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
+		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
 		foreach ($data['categories'] as $category_id => $category)
 		{
 			$data['categories'][$category_id]['articles'] = $this->howdoi_model->GetCategoryArticleIDs($category_id);
@@ -43,12 +45,14 @@ class Howdoi extends Controller {
 	function viewcategory($codename, $id)
 	{
 		if (!CheckPermissions('public')) return;
+
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
 		$this->load->model('howdoi_model','howdoi');
 		$this->load->model('news_model','news');
 		$this->pages_model->SetPageCode('howdoi_view');
 
-		$data['categories'] = $this->howdoi->GetContentCategories(10);
+		$data['categories'] = $this->howdoi->GetContentCategories($howdoi_type_id);
 		$view_category_id = -1;
 		foreach ($data['categories'] as $category_id => $category)
 		{

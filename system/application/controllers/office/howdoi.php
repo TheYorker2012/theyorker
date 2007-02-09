@@ -50,8 +50,10 @@ class Howdoi extends Controller
 						);
 
 		//do shabazz
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
 		$data['questionheader'] = $this->article_model->GetArticleHeader(13);
-		$data['categories'] = $this->howdoi_model->GetContentCategories(10);
+		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
 		foreach ($data['categories'] as $category_id => &$category)
 		{
 			$category['questions'] = $this->howdoi_model->GetOfficeCategoryArticleIDs($category_id);
@@ -71,7 +73,7 @@ class Howdoi extends Controller
 				{
 					$data['status_count']['set_for_publication'] = $data['status_count']['set_for_publication'] + 1;
 					$category_article['heading']['status'] = 2;
-				}	
+				}
 				else
 				{
 					$data['status_count']['published'] = $data['status_count']['published'] + 1;
@@ -117,7 +119,9 @@ class Howdoi extends Controller
 	function categories()
 	{
 		if (!CheckPermissions('office')) return;
-		
+
+		$this->load->model('howdoi_model','howdoi_model');
+
 		$this->pages_model->SetPageCode('office_howdoi_categories');
 		
 		//Get navigation bar and tell it the current page
@@ -126,6 +130,11 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		//do shabazz
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
@@ -153,6 +162,34 @@ class Howdoi extends Controller
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function categorymodify()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+
+		// NEW PAGE CATEGORY NEEDED
+		$this->pages_model->SetPageCode('office_howdoi_categories');
+		
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('categories');
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		//do shabazz
+
+		// Set up the view
+		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_category', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetContent($the_view);

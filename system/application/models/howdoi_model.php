@@ -15,7 +15,25 @@ class Howdoi_model extends Model
 		//Call the Model Constructor
 		parent::Model();
 	}
-	
+
+	/**
+	 * Returns the content id of the how do i section.
+	 * @return An array of arrays containing id, codename and name in the specified order.
+	 */
+	function GetHowdoiTypeID()
+	{
+		$sql = 'SELECT content_type_id
+			FROM content_types
+			WHERE content_type_codename = "howdoi"';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->content_type_id;
+		}
+		else
+			return FALSE;
+	}
 
 	/**
 	 * Returns an array of the different category types in the how do i section.
@@ -41,6 +59,34 @@ class Howdoi_model extends Model
 					'codename'=>$row->content_type_codename,
 					'name'=>$row->content_type_name,
 					'blurb'=>$row->content_type_blurb
+					);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Returns an array of the different categories in the how do i section.
+	 * @return An array of arrays containing ids, codename and name in the specified order.
+	 */
+	function GetCategoryNames($parent_id)
+	{
+		$sql = 'SELECT content_type_id,
+				content_type_codename,
+				content_type_name
+			FROM content_types
+			WHERE content_type_parent_content_type_id = ?
+			ORDER BY content_type_section_order';
+		$query = $this->db->query($sql,array($parent_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[$row->content_type_id] = array(
+					//'id'=>$row->content_type_id,
+					'codename'=>$row->content_type_codename,
+					'name'=>$row->content_type_name
 					);
 			}
 		}
