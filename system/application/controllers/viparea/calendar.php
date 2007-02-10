@@ -199,7 +199,7 @@ class Calendar extends controller
 					}
 					$op .= '<LI>'.$occurrence['status'].' <A HREF="' . site_url('viparea/calendar/events/' . $EventId . '/' . $occurrence['occurrence_id']) . '">' .
 						$occurrence['start'] . ' -> ' . $occurrence['end'] . '</A> '.
-						$occurrence['description'].' ('.implode(',',$links).') </LI>';
+						$occurrence['description'].' ('.implode(', ',$links).') </LI>';
 				}
 				$op .= '</OL>';
 				
@@ -226,9 +226,13 @@ class Calendar extends controller
 					'description' => 'event_occurrences.event_occurrence_description',
 					'start' => 'event_occurrences.event_occurrence_start_time',
 					'end' => 'event_occurrences.event_occurrence_end_time',
+					'active_id' => 'event_occurrences.event_occurrence_active_occurrence_id',
 					'rescheduled_start' => 'active_occurrence.event_occurrence_start_time',
 					'rescheduled_end' => 'active_occurrence.event_occurrence_end_time',
 					'status'=>$filter->ExpressionPublicState(),
+					'cancelled'=>$filter->ExpressionPublicCancelled(),
+					'postponed'=>$filter->ExpressionPublicPostponed(),
+					'rescheduled'=>$filter->ExpressionPublicRescheduled(),
 					));
 				
 				$rsvps = $this->events_model->GetOccurrenceRsvp($OccurrenceId);

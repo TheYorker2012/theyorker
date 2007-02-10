@@ -74,6 +74,8 @@ class EventOccurrenceQuery
 			active_id?
 				active.state=published?
 					>rescheduled
+				active.state=cancelled
+					>cancelled
 				else
 					>postponed
 			else
@@ -84,13 +86,14 @@ class EventOccurrenceQuery
 	
 	/// Produce an SQL expression for whether the object is cancelled.cancelled.
 	/**
-	 * @param $OccurrenceAlias string Alias of occurrence to check state of.
+	 * @param $ActiveAlias string Alias of active occurrence used in check.
 	 * @return string SQL boolean expression.
 	 */
-	function ExpressionPublicCancelled($OccurrenceAlias = 'event_occurrences')
+	function ExpressionPublicCancelled($ActiveAlias = 'active_occurrence')
 	{
-		return '('.$OccurrenceAlias.'.event_occurrence_state = \'cancelled\' ' .
-				'AND '.$OccurrenceAlias.'.event_occurrence_active_occurrence_id IS NULL)';
+		return '(event_occurrences.event_occurrence_state = \'cancelled\' ' .
+				'AND (event_occurrences.event_occurrence_active_occurrence_id IS NULL
+					OR '.$ActiveAlias.'.event_occurrence_state = \'cancelled\'))';
 	}
 	
 	/// Produce an SQL expression for whether the object is cancelled.postponed.
@@ -102,7 +105,8 @@ class EventOccurrenceQuery
 	{
 		return '(event_occurrences.event_occurrence_state = \'cancelled\' ' .
 				'AND event_occurrences.event_occurrence_active_occurrence_id IS NOT NULL '.
-				'AND '.$ActiveAlias.'.event_occurrence_state != \'published\')';
+				'AND '.$ActiveAlias.'.event_occurrence_state != \'published\''.
+				'AND '.$ActiveAlias.'.event_occurrence_state != \'cancelled\')';
 	}
 	
 	/// Produce an SQL expression for whether the object is cancelled.rescheduled.
@@ -130,7 +134,9 @@ class EventOccurrenceQuery
 				'\'cancelled\',' .
 				'IF('.$ActiveAlias.'.event_occurrence_state = \'published\',' .
 					'\'rescheduled\',' .
-					'\'postponed\')),' .
+					'IF('.$ActiveAlias.'.event_occurrence_state = \'cancelled\',' .
+						'\'cancelled\',' .
+						'\'postponed\'))),' .
 			'event_occurrences.event_occurrence_state)';
 	}
 }
@@ -1086,16 +1092,61 @@ class Events_model extends Model
 		return $this->OccurrenceChangeState(0,$OccurrenceId, 'published','cancelled');
 	}
 	
+	/// Activate an occurrence.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return int Number of altered rows.
+	 * @pre occurrence.active.state = 'cancelled'
+	 * @pre occurrence.active.active IS NULL
+	 * @post occurrence.active IS NULL
+	 */
+	function OccurrenceCancelledActivate($OccurrenceId)
+	{
+		// Make this occurrence the active occurrence.
+		// update new_active
+		// on sibling (same active occurrence)
+		// or is active occurrence
+		// set active=(sibling is active ? NULL : active)
+		// where new active is this
+		//	and where new active.active is cancelled and active
+		$sql_activate = 'UPDATE event_occurrences AS new_active
+			LEFT JOIN event_occurrences AS old_active
+				ON	old_active.event_occurrence_id
+						= new_active.event_occurrence_active_occurrence_id
+			INNER JOIN event_occurrences AS sibling
+				ON	sibling.event_occurrence_active_occurrence_id
+						= new_active.event_occurrence_active_occurrence_id
+				OR	sibling.event_occurrence_id
+						= new_active.event_occurrence_active_occurrence_id
+			SET	sibling.event_occurrence_active_occurrence_id
+					= IF(sibling.event_occurrence_id = new_active.event_occurrence_id,
+						NULL,
+						new_active.event_occurrence_id)
+			WHERE new_active.event_occurrence_id = ?
+				AND (	old_active.event_occurrence_state IS NULL
+					OR	(	old_active.event_occurrence_state = \'cancelled\'
+						AND	old_active.event_occurrence_active_occurrence_id IS NULL))';
+		
+		$query = $this->db->query($sql_activate, $OccurrenceId);
+		return $this->db->affected_rows();
+	}
+	
 	/// Restore a cancelled occurrence.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
-	 * @pre 'published'
-	 * @post 'cancelled'
+	 * @pre 'cancelled'
+	 * @pre occurrence.active IS 'cancelled'
+	 * @post 'published'
 	 */
 	function OccurrenceCancelledRestore($OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'cancelled','published');
+		$this->OccurrenceCancelledActivate($OccurrenceId);
+		// This occurrence should now be active
+		
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'cancelled','published',
+			array(	'event_occurrences.event_occurrence_active_occurrence_id IS NULL',
+			));
 	}
 	
 	/// Move a published occurrence.
