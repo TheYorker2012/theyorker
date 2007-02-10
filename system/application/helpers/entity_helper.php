@@ -21,7 +21,8 @@
  * @return	string
  */	
 function fullname($id) {
-	$query = $this->db->getwhere('users', array('user_entity_id'), 1);
+	$CI =& get_instance();
+	$query = $CI->db->getwhere('users', array('user_entity_id'), 1);
 	if ($query->num_rows() == 1) {
 		$result = $query->row();
 		return $result->user_firstname.' '.$result->user_surname;
