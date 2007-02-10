@@ -32,31 +32,29 @@ class Dev extends Controller {
 		$this->load->helper('url');
 		$bulk = 'Valid logs are log/web and log/irc.';
 		$segments = $this->uri->segment_array();
-		if (isset($segments[4])) {
-			switch ($segments[4]) {
-				case "web":
-					$web = dir('../log');
-					while (false !== ($entry = $web->read())) {
-						if ($entry != '.' or $entry != '..') {
-							$bulk.= '<p>'.anchor('admin/dev/log/web/'.$entry, $entry).'</p>';
-						}
+		switch ($this->uri->segment(4)) {
+			case "web":
+				$web = dir('../log');
+				while (false !== ($entry = $web->read())) {
+					if ($entry != '.' or $entry != '..') {
+						$bulk.= '<p>'.anchor('admin/dev/log/web/'.$entry, $entry).'</p>';
 					}
-					if (isset($segments[5])) {
-						$bulk.= nl2br(file_get_contents('../log/'.$this->uri->segment(4)));
+				}
+				if ($this->uri->segment(5)) {
+					$bulk.= nl2br(file_get_contents('../log/'.$this->uri->segment(5)));
+				}
+			break;
+			case "irc":
+				$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
+				while (false !== ($entry = $irc->read())) {
+					if ($entry != '.' or $entry != '..') {
+						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
 					}
-				break;
-				case "irc":
-					$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
-					while (false !== ($entry = $irc->read())) {
-						if ($entry != '.' or $entry != '..') {
-							$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
-						}
-					}
-					if (isset($segments[5])) {
-						$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(4)));
-					}
-				break;
-			}
+				}
+				if ($this->uri->segment(5)) {
+					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(5)));
+				}
+			break;
 		}
 		$this->main_frame->SetContent(new SimpleView($bulk));
 		$this->main_frame->SetTitle('Log Viewer');
