@@ -30,7 +30,7 @@ class Dev extends Controller {
 		if (!CheckPermissions('admin')) return;
 		
 		$this->load->helper('url');
-		$bulk = 'Valid logs are log/web and log/irc.';
+		$bulk = 'Valid logs are '.anchor('admin/dev/log/web/', 'log/web').' and '.anchor('admin/dev/log/irc/', 'log/irc').'.';
 		$segments = $this->uri->segment_array();
 		switch ($this->uri->segment(4)) {
 			case "web":
