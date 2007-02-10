@@ -21,13 +21,13 @@
 			<input type="radio" name="order" value="photographer"/>Photographer<br /><br />
 			Show only tag:<br />
 			<select name="tag">
-				<?php foreach($tags as $tag):?>
+				<?php if ($tags->num_rows() > 0) foreach($tags->result() as $tag):?>
 				<option value="<?=$tag->tag_id?>"><?=$tag->name?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			Show only photographers:<br />
 			<select name="tag">
-				<?php foreach($photographer as $person):?>
+				<?php if ($protographer->num_rows() > 0) foreach($photographer->result() as $person):?>
 				<option value="<?=$person->user_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
 				<?php endforeach;?>
 			</select><br /><br />
@@ -39,8 +39,8 @@
 <div class="blue_box">
 	<?php
 		// Load a subview.
-//		$content[0]->Load();
-		echo $test;
+		$content[0]->Load();
+
 		echo $pageNumbers;
 	?>
 </div>

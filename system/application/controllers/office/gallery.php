@@ -73,17 +73,17 @@ define('PHOTOS_PERPAGE', 12);
 				'main_text' => $this->pages_model->GetPropertyWikitext('photo_view'),
 				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->row(),
 				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
-				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get()->result(),
-				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result()
+				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
+				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
 			);
 		}
 		
-		$test = $this->load->view('office/gallery/galleryimage', $data, true);
-		$data2 = array('pageNumbers' => '', 'test' => $test);
-		$this->load->view('office/gallery/galleryframe', $data2);
+//		$test = $this->load->view('office/gallery/galleryimage', $data, true);
+//		$data2 = array('pageNumbers' => '', 'test' => $test);
+//		$this->load->view('office/gallery/galleryframe', $data2);
 		
 		// Set up the center div for the gallery.
-		/*$gallery_div = $this->frames->view('office/gallery/galleryimage');
+		$gallery_div = $this->frames->view('office/gallery/galleryimage');
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
@@ -98,7 +98,7 @@ define('PHOTOS_PERPAGE', 12);
 		$this->main_frame->SetTitle('Photo Details');
 	
 		// Load the main frame
-		$this->main_frame->Load(); */
+		$this->main_frame->Load();
 	}
 }
 
