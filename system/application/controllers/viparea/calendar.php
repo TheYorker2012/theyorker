@@ -70,7 +70,7 @@ class Calendar extends controller
 				$failure_message = 'Could not postpone';
 				break;
 				
-			case 'publicmove':
+			case 'publishmove':
 				$model_function = 'OccurrenceMovedraftPublish';
 				$success_message = 'Successfully published movement';
 				$failure_message = 'Could not publish movement';

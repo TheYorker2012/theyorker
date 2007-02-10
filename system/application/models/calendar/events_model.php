@@ -1005,14 +1005,15 @@ class Events_model extends Model
 		// change the state to $NewState
 		// where the state was $OldState
 		$sql = 'UPDATE event_occurrences
-			SET		event_occurrences.event_occurrence_state=\''.$NewState.'\'
-			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
-			AND		event_occurrences.event_occurrence_state=\''.$OldState.'\'';
+			SET		event_occurrences.event_occurrence_state=?
+			WHERE	event_occurrences.event_occurrence_id=?
+			AND		event_occurrences.event_occurrence_state=?';
+		$bind_data = array($NewState, $OccurrenceId, $OldState);
 		foreach ($ExtraConditions as $ExtraCondition) {
 			$sql .= ' AND ('.$ExtraCondition.')';
 		}
 		/// @todo check user has permission + optionally confirm event id
-		$this->db->query($sql);
+		$this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows() > 0);
 	}
 	
@@ -1028,22 +1029,6 @@ class Events_model extends Model
 	function OccurrenceDraftPublish($OccurrenceId)
 	{
 		return $this->OccurrenceChangeState(0,$OccurrenceId, 'draft','published',
-			array(	'event_occurrences.event_occurrence_start_time != 0',
-					'event_occurrences.event_occurrence_end_time != 0'));
-	}
-	
-	
-	/// Publish a draft occurrence to the feed.
-	/**
-	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
-	 * @pre 'draft'
-	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
-	 * @post 'published'
-	 */
-	function OccurrenceMovedraftPublish($OccurrenceId)
-	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'movedraft','published',
 			array(	'event_occurrences.event_occurrence_start_time != 0',
 					'event_occurrences.event_occurrence_end_time != 0'));
 	}
@@ -1070,6 +1055,21 @@ class Events_model extends Model
 	function OccurrenceTrashedRestore($OccurrenceId)
 	{
 		return $this->OccurrenceChangeState(0,$OccurrenceId, 'trashed','draft');
+	}
+	
+	/// Publish a draft occurrence to the feed.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'draft'
+	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
+	 * @post 'published'
+	 */
+	function OccurrenceMovedraftPublish($OccurrenceId)
+	{
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'movedraft','published',
+			array(	'event_occurrences.event_occurrence_start_time != 0',
+					'event_occurrences.event_occurrence_end_time != 0'));
 	}
 	
 	/// Cancel a published occurrence.
@@ -1108,10 +1108,59 @@ class Events_model extends Model
 	 */
 	function OccurrencePublishedPostpone($OccurrenceId)
 	{
-		return FALSE;
-		/// @todo Implement.
 		// create new movedraft
-		// set $occurrenceid's children pointing to new occurrence
+		$sql_insert = 'INSERT INTO event_occurrences (
+				event_occurrence_event_id,
+				event_occurrence_state,
+				event_occurrence_description,
+				event_occurrence_location,
+				event_occurrence_postcode,
+				event_occurrence_start_time,
+				event_occurrence_end_time,
+				event_occurrence_all_day,
+				event_occurrence_ends_late)
+			SELECT
+				event_occurrences.event_occurrence_event_id,
+				\'movedraft\',
+				event_occurrences.event_occurrence_description,
+				event_occurrences.event_occurrence_location,
+				event_occurrences.event_occurrence_postcode,
+				event_occurrences.event_occurrence_start_time,
+				event_occurrences.event_occurrence_end_time,
+				event_occurrences.event_occurrence_all_day,
+				event_occurrences.event_occurrence_ends_late
+			FROM event_occurrences
+			WHERE event_occurrences.event_occurrence_id = ?';
+		$query = $this->db->query($sql_insert,$OccurrenceId);
+		
+		if ($this->db->affected_rows() > 0) {
+			$new_id = $this->db->insert_id();
+			
+			// set all children cancelled
+			// set $occurrenceid pointing to new occurrence
+			// set $occurrenceid's children pointing to new occurrence
+			$sql_update = 'UPDATE event_occurrences
+				SET		event_occurrences.event_occurrence_active_occurrence_id
+							= ?,
+						event_occurrences.event_occurrence_state
+							= \'cancelled\'
+				WHERE	event_occurrences.event_occurrence_id
+							= ?
+					OR	event_occurrences.event_occurrence_active_occurrence_id
+							= ?';
+			$query = $this->db->query($sql_update,array($new_id, $OccurrenceId, $OccurrenceId));
+			
+			if ($this->db->affected_rows() > 0) {
+				return TRUE;
+			} else {
+				$sql_delete = 'DELETE FROM event_occurrences
+					WHERE event_occurrences.event_occurrence_id=?';
+				$query = $this->db->query($sql_delete, $new_id);
+				return FALSE;
+			}
+		} else {
+			return FALSE;
+		}
 	}
 	
 	/// Delete an occurrence
@@ -1153,14 +1202,16 @@ class Events_model extends Model
 				event_occurrence_users.event_occurrence_user_user_entity_id,
 				event_occurrence_users.event_occurrence_user_event_occurrence_id,
 				event_occurrence_users.event_occurrence_user_state)
-			SELECT	'.$this->mActiveEntityId.', '.$OccurrenceId.', ?
+			SELECT	'.$this->mActiveEntityId.', ?, ?
 			FROM	event_occurrences
-			WHERE	(	event_occurrences.event_occurrence_id = '.$OccurrenceId.'
+			WHERE	(	event_occurrences.event_occurrence_id = ?
 					AND	'.$occurrence_query->ExpressionPublic().')
 			ON DUPLICATE KEY UPDATE
 				event_occurrence_users.event_occurrence_user_state = ?';
 		$bind_data = array(
+				$OccurrenceId,
 				$NewState,
+				$OccurrenceId,
 				$NewState,
 			);
 		$query = $this->db->query($sql, $bind_data);
