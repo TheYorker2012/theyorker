@@ -30,20 +30,16 @@
 			<input type="text" name="question" value="What time does cocksucker open?" /><br />
 			<label for="category">Category:</label>
 			<select name="category">
-				<option selected>Opening Times</option>
-				<option>Gay Bums</option>
-				<option>Uni Rooms</option>
-				<option>Library</option>
-			</select><br />
-			<label for="author">Author:</label>
-			<select name="author">
-				<option selected>Tom Shits</option>
-				<option selected>Gay Bums</option>
-				<option selected>Bum Love</option>
-				<option selected>Ass Sex</option>
+				<?php
+					foreach ($categories as $category_id => $category)
+					{
+					echo '<option value="'.$category_id.'">'.$category['name'].'</option>';
+					//echo '<option selected>Opening Times</option>';
+					}
+				?>
 			</select><br />
 			<label for="answer">Answer:</label>
-			<textarea name="answer" rows="5" cols="30" />value="Same times as your mum is open</textarea><br />
+			<textarea name="answer" rows="5" cols="30" />Same times as your mum is open</textarea><br />
 			<input type="submit" value="Save" class="button" />
 		</fieldset>
 	</form>
@@ -62,4 +58,14 @@
 			<input type="submit" value="Publish Then" class="button" />
 		</fieldset>
 	</form>
+</div>
+
+<?php
+
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+
+?>
+
 

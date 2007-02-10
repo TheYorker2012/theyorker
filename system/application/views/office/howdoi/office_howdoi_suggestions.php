@@ -3,7 +3,7 @@
 	<div class="Entry">
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Questions</a> that are waiting to be published.
+			There are <b>?</b> <a href='#'>Questions</a> that are waiting to be published.
 		</div>
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
@@ -49,8 +49,7 @@
 			<label for="a_description">Description: </label>
 			<textarea name="a_description" cols="30" rows="5"></textarea>
 			<label for="a_category">Category: </label>
-			<select name="a_category">
-			<option value="'.$categoryparentid.'">Unassigned</option>';
+			<select name="a_category">';
 			foreach ($categories as $category_id => $category)
 			{
 				echo '<option value="'.$category_id.'">'.$category['name'].'</option>';

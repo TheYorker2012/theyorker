@@ -37,7 +37,7 @@
 				{
 					echo '<br /><span class="orange">'.$suggestion['title'].'</span>
 						<span class="grey">(asked by '.$suggestion['username'].')</span>
-						<a href="#">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a> <a href="#">[remove]</a>';
 				}
 			}
 			if (count($category['requests']) > 0)
@@ -54,7 +54,41 @@
 					echo '<br /><span class="orange">'.$request['title'].'</span>
 						<span class="grey">(approved by '.$request['editorname'].')</span>
 						<br />deadline: '.$deadlineformat.'
-						<a href="#">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a> <a href="#">[remove]</a>';
+				}
+			}
+			if (count($category['unpublished']) > 0)
+			{
+				if ($br_first == FALSE)
+					$br_first = TRUE;
+				else
+					echo '<br />';
+				echo '<b>Unpublished</b>';
+				foreach ($category['unpublished'] as $unpublished)
+				{
+					$publish = strtotime($unpublished['publish']);
+					$publishformat = date('F jS Y', $publish).' at '.date('g.i A', $publish);
+					echo '<br /><span class="orange">'.$unpublished['heading'].'</span>
+						<span class="grey">(published by '.$unpublished['editorname'].')</span>
+						<br />being published on: '.$publishformat.'
+						<a href="/office/howdoi/editquestion/'.$unpublished['id'].'">[edit]</a> <a href="#">[remove]</a>';
+				}
+			}
+			if (count($category['published']) > 0)
+			{
+				if ($br_first == FALSE)
+					$br_first = TRUE;
+				else
+					echo '<br />';
+				echo '<b>Published</b>';
+				foreach ($category['published'] as $published)
+				{
+					$publish = strtotime($published['publish']);
+					$publishformat = date('F jS Y', $publish).' at '.date('g.i A', $publish);
+					echo '<br /><span class="orange">'.$published['heading'].'</span>
+						<span class="grey">(published by '.$published['editorname'].')</span>
+						<br />published on: '.$publishformat.'
+						<a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a> <a href="#">[remove]</a>';
 				}
 			}
 		}

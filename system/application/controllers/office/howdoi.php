@@ -56,36 +56,6 @@ class Howdoi extends Controller
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
-		/*
-		foreach ($data['categories'] as $category_id => &$category)
-		{
-			$category['questions'] = $this->howdoi_model->GetOfficeCategoryArticleIDs($category_id);
-			foreach ($category['questions'] as $article_content_id => &$category_article)
-			{
-				$category_article['heading'] = $this->article_model->GetArticleHeader($article_content_id);
-				$category_article['revision'] = $this->article_model->GetArticleRevisions($article_content_id, FALSE, 1);
-				//question status
-				//0=published, 1=awaiting publication, 2=set for release (waiting for publish date)
-				$publish_time = strtotime($category_article['heading']['publish_date']);
-				if (is_null($category_article['heading']['live_content']))
-				{
-					$data['status_count']['awaiting_publication'] = $data['status_count']['awaiting_publication'] + 1;
-					$category_article['heading']['status'] = 1;
-				}
-				else if ($publish_time > time())
-				{
-					$data['status_count']['set_for_publication'] = $data['status_count']['set_for_publication'] + 1;
-					$category_article['heading']['status'] = 2;
-				}
-				else
-				{
-					$data['status_count']['published'] = $data['status_count']['published'] + 1;
-					$category_article['heading']['status'] = 0;
-				}
-			}
-		}
-		*/
-
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
@@ -99,22 +69,12 @@ class Howdoi extends Controller
 			//requests
 			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category_id);
 			$data['status_count']['requests'] = $data['status_count']['requests'] + count($data['categories'][$category_id]['requests']);
+			//unpublished
+			$data['categories'][$category_id]['unpublished'] = $this->requests_model->GetPublishedArticles($category_id, FALSE);
+			$data['status_count']['unpublished'] = $data['status_count']['unpublished'] + count($data['categories'][$category_id]['unpublished']);
 			//published
-			$data['categories'][$category_id]['published'] = $this->requests_model->GetPublishedArticles($category_id);
-			foreach ($data['categories'][$category_id]['published'] as $key => $published_article)
-			{
-				$publish_time = strtotime($published_article['publish']);
-				if ($publish_time < time())
-				{
-					$data['status_count']['unpublished'] = $data['status_count']['unpublished'] + 1;
-					$data['categories'][$category_id]['published'][$key]['ispublished'] = 0;
-				}
-				else
-				{
-					$data['status_count']['published'] = $data['status_count']['published'] + 1;
-					$data['categories'][$category_id]['published'][$key]['ispublished'] = 1;
-				}
-			}
+			$data['categories'][$category_id]['published'] = $this->requests_model->GetPublishedArticles($category_id, TRUE);
+			$data['status_count']['published'] = $data['status_count']['published'] + count($data['categories'][$category_id]['published']);
 		}
 
 		// Set up the view
@@ -200,9 +160,13 @@ class Howdoi extends Controller
 	}
 	
 
-	function editquestion()
+	function editquestion($article_id)
 	{
 		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('requests_model','requests_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
 		$this->pages_model->SetPageCode('office_howdoi_edit_question');
 
@@ -212,6 +176,13 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+		$data['categories'][$howdoi_type_id] = array(
+					'codename'=>'unassigned',
+					'name'=>'Unassigned',
+					);
+		$data['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);

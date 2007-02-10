@@ -74,7 +74,7 @@ class Requests_Model extends Model
 
 	}
 	
-	function GetPublishedArticles($type_id)
+	function GetPublishedArticles($type_id, $is_published)
 	{
 		$sql = 'SELECT	article_id,
 				article_publish_date,
@@ -99,6 +99,10 @@ class Requests_Model extends Model
 			AND	article_live_content_id IS NOT NULL
 			AND	article_deleted = 0
 			AND	article_pulled = 0';
+		if ($is_published == TRUE)
+			$sql = $sql.' AND	article_publish_date <= CURRENT_TIMESTAMP';
+		else
+			$sql = $sql.' AND	article_publish_date > CURRENT_TIMESTAMP';
 		$query = $this->db->query($sql,array($type_id));
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -204,6 +208,39 @@ class Requests_Model extends Model
 
 		return $result;
 	} 
+	
+	function GetArticleRevisions($article_id)
+	{
+		$sql = 'SELECT	article_content_id,
+				article_content_heading,
+				article_content_last_author_user_entity_id,
+				article_content_last_author_timestamp,
+				user_firstname,
+				user_surname
+			FROM	article_contents
+			JOIN	users
+			ON      user_entity_id = article_content_last_author_user_entity_id
+			WHERE	article_content_article_id = ?
+			ORDER BY	article_content_last_author_timestamp DESC';
+		$query = $this->db->query($sql,array($article_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'id'=>$row->article_content_id,
+					'title'=>$row->article_content_heading,
+					'updated'=>$row->article_content_last_author_timestamp,
+					'userid'=>$row->article_content_last_author_user_entity_id,
+					'username'=>$row->user_firstname.' '.$row->user_surname
+					);
+				$result[] = $result_item;
+			}
+		}
+
+		return $result;
+	}
 
 	function AddUserToRequest($article_id,$user_id)
 	{
