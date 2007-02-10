@@ -47,12 +47,11 @@ class Dev extends Controller {
 			case "irc":
 				$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
 				while (false !== ($entry = $irc->read())) {
-					if ($entry != '.' or $entry != '..') {
+						$entry = trim($entry, '#');
 						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
-					}
 				}
 				if ($this->uri->segment(5)) {
-					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(5)));
+					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/#'.$this->uri->segment(5)));
 				}
 			break;
 		}
