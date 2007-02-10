@@ -36,16 +36,18 @@ class Review_model extends Model {
 			organisations.organisation_entity_id,
 			organisations.organisation_name,
 			organisations.organisation_fileas,
-			organisations.organisation_description,
-			organisations.organisation_location,
-			organisations.organisation_postal_address,
-			organisations.organisation_postcode,
-			organisations.organisation_phone_external,
-			organisations.organisation_phone_internal,
-			organisations.organisation_fax_number,
-			organisations.organisation_email_address,
-			organisations.organisation_url,
-			organisations.organisation_opening_hours,
+
+			organisation_contents.organisation_content_description as organisation_description,
+			organisation_contents.organisation_content_location as organisation_location,
+			organisation_contents.organisation_content_postal_address as organisation_postal_address,
+			organisation_contents.organisation_content_postcode as organisation_postcode,
+			organisation_contents.organisation_content_phone_external as organisation_phone_external,
+			organisation_contents.organisation_content_phone_internal as organisation_phone_internal,
+			organisation_contents.organisation_content_fax_number as organisation_fax_number,
+			organisation_contents.organisation_content_email_address as organisation_email_address,
+			organisation_contents.organisation_content_url as organisation_url,
+			organisation_contents.organisation_content_opening_hours as organisation_opening_hours,
+			
 			organisations.organisation_events,
 			organisations.organisation_hits,
 			organisations.organisation_timestamp,
@@ -63,6 +65,8 @@ class Review_model extends Model {
 			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id
 			  INNER JOIN organisations
 			  ON review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
+			  INNER JOIN organisation_contents 
+			  ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
 			  WHERE content_types.content_type_codename = "'.$content_type_codename.'"
 			  AND organisations.organisation_directory_entry_name = "'.$organisation_directory_entry_name.'"
 			';
@@ -79,8 +83,8 @@ class Review_model extends Model {
 		$sql = '
 				SELECT
 				organisations.organisation_name,
-				organisations.organisation_url,
-				organisations.organisation_description,
+				organisation_contents.organisation_content_url,
+				review_context_contents.review_context_content_blurb as organisation_description,
 				organisations.organisation_directory_entry_name,
 				league_entries.league_entry_position,
 				leagues.league_name,
@@ -93,6 +97,8 @@ class Review_model extends Model {
 				ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
 				INNER JOIN organisations
 				ON organisations.organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
+			    INNER JOIN organisation_contents 
+			    ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
 				INNER JOIN league_entries
 				ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
 				INNER JOIN leagues

@@ -25,11 +25,13 @@ class Directory_model extends Model {
 			'SELECT'.
 			' organisations.organisation_name,'.
 			' organisations.organisation_directory_entry_name,'.
-			' organisations.organisation_description,'.
+			' organisations_contents.organisation_content_description as organisation_description,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
 			'ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
+			'INNER JOIN organisation_contents '.
+			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisations.organisation_directory_entry_name IS NOT NULL'.
 			' AND organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_name';
@@ -50,21 +52,23 @@ class Directory_model extends Model {
 			' organisations.organisation_entity_id,'.
 			' organisations.organisation_name,'.
 			' organisations.organisation_directory_entry_name,'.
-			' organisations.organisation_description,'.
-			' organisations.organisation_url,'.
-			' organisations.organisation_location,'.
-			' organisations.organisation_opening_hours,'.
+			' organisation_contents.organisation_content_description as organisation_description,'.
+			' organisation_contents.organisation_content_url as organisation_url,'.
+			' organisation_contents.organisation_content_location as organisation_location,'.
+			' organisation_contents.organisation_content_opening_hours as organisation_opening_hours,'.
+			' organisation_contents.organisation_content_postal_address as organisation_postal_address,'.
+			' organisation_contents.organisation_content_email_address as organisation_email_address,'.
+			' organisation_contents.organisation_content_postcode as organisation_postcode,'.
+			' organisation_contents.organisation_content_phone_internal as organisation_phone_internal,'.
+			' organisation_contents.organisation_content_phone_external as organisation_phone_external,'.
+			' organisation_contents.organisation_content_fax_number as organisation_fax_number,'.
 			' organisations.organisation_yorkipedia_entry,'.
-			' organisations.organisation_postal_address,'.
-			' organisations.organisation_email_address,'.
-			' organisations.organisation_postcode,'.
-			' organisations.organisation_phone_internal,'.
-			' organisations.organisation_phone_external,'.
-			' organisations.organisation_fax_number,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
 			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
+			'INNER JOIN organisation_contents '.
+			' ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_name';

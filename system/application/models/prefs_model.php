@@ -118,8 +118,10 @@ class Prefs_model extends Model {
 	{
 		$sql =
 			'SELECT'.
-			' organisation_description AS description '.
+			' organisation_content_description AS description '.
 			'FROM organisations '.
+			'INNER JOIN organisation_contents '.
+			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisation_entity_id = '.$org_id;
 		$query = $this->db->query($sql);
 		return $query->row_array();

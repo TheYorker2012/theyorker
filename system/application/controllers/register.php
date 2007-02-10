@@ -351,7 +351,7 @@ class Register extends Controller {
 			if ((!is_numeric($soc_id)) || (!isAUClub($soc_id))) {
 				$xajax_response->addAlert('Invalid athletic union club selected, please try again.');
 			} else {
-				$dbquery = mysql_query('SELECT organisation_description AS description FROM organisations WHERE organisation_organisation_type_id = 3 AND organisation_entity_id = ' . $soc_id . ' ORDER BY organisation_name ASC');
+				$dbquery = mysql_query('SELECT organisation_content_description AS description FROM organisations INNER JOIN organisation_contents ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id WHERE organisation_organisation_type_id = 3 AND organisation_entity_id = ' . $soc_id . ' ORDER BY organisation_name ASC');
 				$dbres = mysql_fetch_array($dbquery);
 				$info = $dbres['description'];
 				$xajax_response->addAssign('socdesc','innerHTML', $info);
