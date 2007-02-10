@@ -31,7 +31,7 @@ class Dev extends Controller {
 		
 		$this->load->helper('url');
 		$bulk = '';
-		switch ($this->uri->segment(4, 0)) {
+		switch ($this->uri->rsegment(4, 0)) {
 			case 0:
 				$bulk = 'valid logs are: log/web and log/irc';
 			break;
@@ -42,7 +42,7 @@ class Dev extends Controller {
 						$bulk.= '<p>'.anchor('admin/dev/log/web/'.$entry, $entry).'</p>';
 					}
 				}
-				if ($this->uri->segment(4, FALSE)) {
+				if ($this->uri->rsegment(5, FALSE)) {
 					$bulk.= nl2br(file_get_contents('../log/'.$this->uri->segment(4)));
 				}
 			break;
@@ -53,7 +53,7 @@ class Dev extends Controller {
 						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
 					}
 				}
-				if ($this->uri->segment(4, FALSE)) {
+				if ($this->uri->rsegment(5, FALSE)) {
 					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(4)));
 				}
 			break;
