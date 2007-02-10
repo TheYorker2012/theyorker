@@ -24,7 +24,7 @@ define('PHOTOS_PERPAGE', 12);
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)
+			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)->result()
 		);
 		
 		// Set up the center div for the gallery.
