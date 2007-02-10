@@ -27,9 +27,9 @@ define('PHOTOS_PERPAGE', 12);
 			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)->result()
 		);
 		
-		$this->load->view('office/gallery/gallerythumbs', $data);
+		//$this->load->view('office/gallery/gallerythumbs', $data);
 		
-/*		// Set up the center div for the gallery.
+		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
 		$gallery_div->AddData($data);
 
@@ -43,7 +43,7 @@ define('PHOTOS_PERPAGE', 12);
 		$this->main_frame->SetTitle('Photo Gallery');
 	
 		// Load the main frame
-		$this->main_frame->Load(); */
+		$this->main_frame->Load();
 	}
 	
 	function show()

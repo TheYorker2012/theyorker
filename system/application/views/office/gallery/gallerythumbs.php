@@ -19,7 +19,7 @@
 		<div>
 		<span class="orange">Image Title: </span><?=$thumbnail->photo_title?><br />
 		<span class="orange">Date: </span><?=$thumbnail->photo_timestamp?><br />
-		<span class="orange">Photographer: </span><?=$thumbnail-photo_author_user_entity_id?><br />
+		<span class="orange">Photographer: </span><?=$thumbnail->photo_author_user_entity_id?><br />
 		</div>
 	</div>
 <?php } ?>
