@@ -7,13 +7,13 @@
 				<input type="date" name="date" value="<?=$photoDetails->photo_timestamp?>" /><br />
 			<label for="photographer">Photographer: </label>
 				<select name="photographer">
-					<?php foreach($photographer as $person): ?>
+					<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person): ?>
 					<option value="<?=$person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?=$person->user_firstname.' '.$person->user_surname?></option>
 					<?php endforeach;?>
 				</select><br />
 			<label for="tags">Tags: </label>
 				<select multiple size="8" name="tags">
-					<?php foreach ($photoTag->result as $tag):?>
+					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
 					<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
 					<?php endforeach;?>
 				</select><br />

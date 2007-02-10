@@ -49,6 +49,7 @@ define('PHOTOS_PERPAGE', 12);
 		
 		// Set up the subview for gallery.
 		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result(),
+		                   'tags' => $this->db->get('tags'),
 		                   'pageNumbers' => $pageNumbers);
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
@@ -88,7 +89,8 @@ define('PHOTOS_PERPAGE', 12);
 
 		// Set up the subview for gallery.
 		$frameData = array('photographer' => $data['photographer'],
-		                   'tags' => $this->db->get('tags')->result());
+		                   'tags' => $this->db->get('tags'),
+		                   'pageNumbers' => '');
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
