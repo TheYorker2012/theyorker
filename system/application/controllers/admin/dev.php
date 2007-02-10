@@ -27,17 +27,27 @@ class Dev extends Controller {
 	}
 	
 	function log() {
+		if (!CheckPermissions('admin')) return;
+		
 		$this->load->helper('url');
+		$bulk = '';
 		switch ($this->uri->segment(4, 0)) {
 			case 0:
 				$bulk = 'valid logs are: log/web and log/irc';
 			break;
 			case 'web':
-				$bulk = nl2br(file_get_contents('../log/lighttpd-access.log'));
+				$web = dir('../log');
+				while (false !== ($entry = $web->read())) {
+					if ($entry != '.' or $entry != '..') {
+						$bulk.= '<p>'.anchor('admin/dev/log/web/'.$entry, $entry).'</p>';
+					}
+				}
+				if ($this->uri->segment(4, FALSE)) {
+					$bulk.= nl2br(file_get_contents('../log/'.$this->uri->segment(4)));
+				}
 			break;
 			case 'irc':
 				$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
-				$bulk = '';
 				while (false !== ($entry = $irc->read())) {
 					if ($entry != '.' or $entry != '..') {
 						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
