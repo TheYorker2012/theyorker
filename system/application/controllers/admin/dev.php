@@ -31,30 +31,30 @@ class Dev extends Controller {
 		
 		$this->load->helper('url');
 		$bulk = '';
-		echo var_dump ($this->uri->segment_array());
-		switch ($this->uri->rsegment(4, 0)) {
+		$segments = $this->uri->segment_array();
+		switch ($segments[4]) {
 			case 0:
 				$bulk = 'valid logs are: log/web and log/irc';
 			break;
-			case 'web':
+			case "web":
 				$web = dir('../log');
 				while (false !== ($entry = $web->read())) {
 					if ($entry != '.' or $entry != '..') {
 						$bulk.= '<p>'.anchor('admin/dev/log/web/'.$entry, $entry).'</p>';
 					}
 				}
-				if ($this->uri->rsegment(5, FALSE)) {
+				if ($segments[5]) {
 					$bulk.= nl2br(file_get_contents('../log/'.$this->uri->segment(4)));
 				}
 			break;
-			case 'irc':
+			case "irc":
 				$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
 				while (false !== ($entry = $irc->read())) {
 					if ($entry != '.' or $entry != '..') {
 						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
 					}
 				}
-				if ($this->uri->rsegment(5, FALSE)) {
+				if ($segments[5]) {
 					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(4)));
 				}
 			break;
