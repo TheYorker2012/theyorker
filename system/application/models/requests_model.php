@@ -73,7 +73,8 @@ class Requests_Model extends Model
 	{
 
 	}
-	
+
+	//Should this be get completed articles?
 	function GetPublishedArticles($type_id, $is_published)
 	{
 		$sql = 'SELECT	article_id,
@@ -83,17 +84,17 @@ class Requests_Model extends Model
 				article_content_heading,
                                 article_content_last_author_user_entity_id,
 				article_editor_approved_user_entity_id,
-				editor_user.user_firstname as editor_user_firstname,
-				editor_user.user_surname as editor_user_surname,
-				author_user.user_firstname as author_user_firstname,
-				author_user.user_surname as author_user_surname
+				author_user.business_card_name as author_name
+				editor_user.business_card_name as editor_name
 			FROM	articles
 			JOIN	article_contents
 			ON      article_content_id = article_live_content_id
-			JOIN	users as editor_user
-			ON	editor_user.user_entity_id = article_editor_approved_user_entity_id
-			JOIN	users as author_user
-			ON	author_user.user_entity_id = article_content_last_author_user_entity_id
+
+			JOIN	business_cards as editor_user
+			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
+			JOIN	business_cards as author_user
+			ON	author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+
 			WHERE	article_suggestion_accepted = 1
 			AND	article_content_type_id = ?
 			AND	article_live_content_id IS NOT NULL
@@ -115,9 +116,9 @@ class Requests_Model extends Model
 					'publish'=>$row->article_publish_date,
 					'lastedit'=>$row->article_content_last_author_timestamp,
 					'editorid'=>$row->article_editor_approved_user_entity_id,
-					'editorname'=>$row->editor_user_firstname.' '.$row->editor_user_surname,
+					'editorname'=>$row->editor_name,
 					'authorid'=>$row->article_content_last_author_user_entity_id,
-					'authorname'=>$row->author_user_firstname.' '.$row->author_user_surname
+					'authorname'=>$row->author_name
 					);
 				$result[] = $result_item;
 			}
@@ -135,15 +136,15 @@ class Requests_Model extends Model
 				article_publish_date,
 				article_request_entity_id,
 				article_editor_approved_user_entity_id,
-				request_user.user_firstname as request_user_firstname,
-				request_user.user_surname as request_user_surname,
-				editor_user.user_firstname as editor_user_firstname,
-				editor_user.user_surname as editor_user_surname
+				suggestion_user.business_card_name as suggestion_name
+				editor_user.business_card_name as editor_name
 			FROM	articles
-			JOIN	users as request_user
-			ON	request_user.user_entity_id = article_request_entity_id
-			JOIN	users as editor_user
-			ON	editor_user.user_entity_id = article_editor_approved_user_entity_id
+
+			JOIN	business_cards as editor_user
+			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
+			JOIN	business_cards as suggestion_user
+			ON	suggestion_user.business_card_user_entity_id = article_request_entity_id
+			
 			WHERE	article_suggestion_accepted = 1
 			AND	article_content_type_id = ?
 			AND	article_live_content_id IS NULL
@@ -160,10 +161,10 @@ class Requests_Model extends Model
 					'title'=>$row->article_request_title,
 					'description'=>$row->article_request_description,
 					'deadline'=>$row->article_publish_date,
-					'requestuserid'=>$row->article_request_entity_id,
-					'requestusername'=>$row->request_user_firstname.' '.$row->request_user_surname,
+					'suggestionuserid'=>$row->article_request_entity_id,
+					'suggestionusername'=>$row->suggestion_user,
 					'editorid'=>$row->article_editor_approved_user_entity_id,
-					'editorname'=>$row->editor_user_firstname.' '.$row->editor_user_surname
+					'editorname'=>$row->editor_user
 					);
 				$result[] = $result_item;
 			}
@@ -179,11 +180,10 @@ class Requests_Model extends Model
 				article_request_description,
 				article_created,
 				article_request_entity_id,
-				user_firstname,
-				user_surname
+				business_card_name
 			FROM	articles
-			JOIN	users
-			ON	user_entity_id = article_request_entity_id
+			JOIN	business_cards
+			ON	business_card_user_entity_id = article_request_entity_id
 			WHERE	article_suggestion_accepted = 0
 			AND	article_content_type_id = ?
 			AND	article_deleted = 0
@@ -199,7 +199,7 @@ class Requests_Model extends Model
 					'title'=>$row->article_request_title,
 					'description'=>$row->article_request_description,
 					'userid'=>$row->article_request_entity_id,
-					'username'=>$row->user_firstname.' '.$row->user_surname,
+					'username'=>$row->business_card_name,
 					'created'=>$row->article_created
 					);
 				$result[] = $result_item;
@@ -215,11 +215,10 @@ class Requests_Model extends Model
 				article_content_heading,
 				article_content_last_author_user_entity_id,
 				article_content_last_author_timestamp,
-				user_firstname,
-				user_surname
+				business_card_name
 			FROM	article_contents
-			JOIN	users
-			ON      user_entity_id = article_content_last_author_user_entity_id
+			JOIN	business_cards
+			ON      business_card_user_entity_id = article_content_last_author_user_entity_id
 			WHERE	article_content_article_id = ?
 			ORDER BY	article_content_last_author_timestamp DESC';
 		$query = $this->db->query($sql,array($article_id));
@@ -233,7 +232,7 @@ class Requests_Model extends Model
 					'title'=>$row->article_content_heading,
 					'updated'=>$row->article_content_last_author_timestamp,
 					'userid'=>$row->article_content_last_author_user_entity_id,
-					'username'=>$row->user_firstname.' '.$row->user_surname
+					'username'=>$row->business_card_name
 					);
 				$result[] = $result_item;
 			}
@@ -244,12 +243,18 @@ class Requests_Model extends Model
 
 	function AddUserToRequest($article_id,$user_id)
 	{
-	
+		$sql = 'INSERT	INTO article_writers(
+				article_writer_user_entity_id
+				article_writer_article_id)
+			VALUES	(?,?)';
+		$query = $this->db->query($sql,array($user_id,$article_id));
+
 	}	
 	
 	function RemoveUserFromRequest($article_id,$user_id)
 	{
-	
+		$sql = 'DELETE FROM article_writers WHERE (artice_writer_article_id = ?
+			AND article_writer_user_entiy_id = ?)
 	}
 	
 	function RequestPhoto($article_id,$user_id)
@@ -261,5 +266,15 @@ class Requests_Model extends Model
 	{
 	
 	}
+	
+	function AcceptRequest($id, $user)
+	{
+	
+	}
+	
+	function DeclineRequest($id,$user)
+	{
+	
+	} 
 }
 ?>
