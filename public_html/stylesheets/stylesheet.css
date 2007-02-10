@@ -287,7 +287,7 @@ div.RightToolbar div.Entry img {
 }
 
 div.RightToolbar div.Entry p {
-	margin-top: 0;
+	margin-top: 0px;
 }
 
 div.RightToolbar p {
@@ -436,18 +436,6 @@ span.ReviewDetailsTitle {
 
 span.ReviewDetailsInfo {
 	color: #999;
-}
-
-span.XSmallText {
-	font-size: x-small;
-}
-
-span.SmallText {
-	font-size: small;
-}
-
-span.FaintText {
-	color: #666666;
 }
 
 /* Table properties for table.php - the list of returned venues */
@@ -654,6 +642,12 @@ div.FactBox {
 div.FactBoxTitle {
 	font-size: 1.8em;
 	font-weight: bold;
+}
+
+/* Use on the campaign selection page */
+div.CampaignVoteAlign {
+	padding-left: 75px;
+	width: 100%;
 }
 
 

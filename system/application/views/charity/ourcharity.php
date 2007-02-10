@@ -2,12 +2,12 @@
 	<h4><?php echo $sections['sidebar_goal']['title']; ?></h4>
 	<div class='Entry'>
 		<h5><?php echo $sections['sidebar_goal']['subtitle']; ?></h5>
-		<p><?php echo $sections['charity']['target_text']; ?></p>
+		<?php echo $sections['charity']['target_text']; ?>
 	</div>
 	
 	<h4><?php echo $sections['sidebar_funding']['title']; ?></h4>
 	<div class='Entry'>
-		<h5><?php echo $sections['sidebar_funding']['text']; ?></h5>
+		<?php echo $sections['sidebar_funding']['text']; ?>
 	</div>
 	
 	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->

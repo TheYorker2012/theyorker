@@ -1,13 +1,11 @@
-<span class="SmallText">
-	<span class="FaintText">Showing</span> <?php echo count($entries); ?>
-	<span class="FaintText">entries from</span> <?php echo $this->uri->segment(3); ?>
-	<span class="FaintText">ordered by</span> <?php echo $this->uri->segment(4); ?>
-	<br />
-	<br />
+	<span class="grey">Showing</span> <?php echo count($entries); ?>
+	<span class="grey">entries from</span> <?php echo $this->uri->segment(3); ?>
+	<span class="grey">ordered by</span> <?php echo $this->uri->segment(4); ?>
+	<br /><br />
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
-			<td><a href="/reviews/table/food/name" name="top">Name</a></td>
-			<td><a href="/reviews/table/food/star"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="Ascending Order" /> Star Rating</span></a></td>
+			<td><a href="/reviews/table/food/name" name="tabletop">Name</a></td>
+			<td><a href="/reviews/table/food/star"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="v" /> Star Rating</span></a></td>
 			<td><a href="/reviews/table/food/user">User Rating</a></td>
 
 <?php
@@ -20,15 +18,15 @@ if (isset($review_tags))
 		}
 }
 ?>
-
 		</tr>
 
 <?php
-
 	//For each row in the table
+	$flip=1;
 	foreach ($entries as &$entry)
 	{
-		echo '<tr class="ReviewElement1">
+
+		echo '<tr class="ReviewElement'.$flip.'">
 				<td>
 				<a href="' . $entry['review_table_link'] . '"><img src="' . $entry['review_image'] . '" alt="#" /></a>
 				<h3><a href="'.$entry['review_table_link'].'">'.$entry['review_title'].'</a></h3><br />
@@ -49,12 +47,14 @@ if (isset($review_tags))
 	}
 
 		echo '</tr>'; //End of table
+		if ($flip == 1) $flip=2;
+		else $flip=1;
 	}
 ?>
 
 		<tr class="ReviewElementEnd">
 			<td colspan="6">
-				<a href="#top">&gt;Go back to top</a>&nbsp;&nbsp;<a href="food">&gt;Go back to food</a>
+				<a href="#tabletop">&gt;Go back to top</a>&nbsp;&nbsp;<a href="food">&gt;Go back to food</a>
 			</td>
 		</tr>
 	</table>

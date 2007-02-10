@@ -33,7 +33,7 @@
 				<option selected value="pope">Bob</option>
 				<option value="pope">Gary</option>
 			</select><br /><br />
-			<input type="submit" value="Display" />
+			<input type="submit" class="button" value="Display" />
 			</fieldset>
 		</form>
 	</div>

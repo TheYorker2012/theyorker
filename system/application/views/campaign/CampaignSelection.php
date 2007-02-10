@@ -23,13 +23,18 @@
 		{
 			if ($total_votes == 0)
 				$percentage = 0;
-			else
+			else {
 				$percentage = $campaigns['votes']/$total_votes*100;
+				$divpercentage = $percentage*0.76;
+				/* If anyone has a better idea so the div doesn't go off the end feel free to change it.
+				 * But I believe this works fine. --rr512
+				 */
+			}
 			echo '<tr>
 				<td>
 				<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b>
 				</td><td style="width:40%; border: thin solid teal;">
-				<div style="float: left; width: '.$percentage.'%; background-color: teal;">&nbsp</div>
+				<div style="float: left; width: '.$divpercentage.'%; background-color: teal;">&nbsp</div>
 				<div stlye="float: right;">&nbsp;'.round($percentage).'%</div>
 				</td>
 				</tr>';
@@ -46,20 +51,18 @@ if ($user == TRUE)
 	echo '<div class="grey_box">';
 	echo '<h2>'.$vote_campaigns['title'].'</h2>';
 	echo $vote_campaigns['text'];
-	echo '<form id="form1" name="form1" action="#" method="POST">';
-	echo '</form>';
-	echo '<form id="form1" name="form1" action="#" method="POST" class="form">';
-	echo '<table width="80%">';
+	echo '<div class="CampaignVoteAlign">';
+	echo '<form class="form">';
         foreach ($campaign_list as $key => $campaigns)
-        {
+	{
 		if ($user['vote_id'] == $key)
 		{
-			echo '<form id="form1" name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
+			echo '<form name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
 					<fieldset>
 						<input type="hidden" name="a_campaignid" value="'.$key.'" />
 						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<label for="campaignname">'.$campaigns['name'].':</label>
-						<input type="submit" value="Withdraw Vote" class="button" name="r_withdrawvote" />
+						<input type="submit" value="Withdraw Vote" class="button" style="float: left" name="r_withdrawvote" />
 					</fieldset>
 				</form>';
 		}
@@ -70,14 +73,13 @@ if ($user == TRUE)
 						<input type="hidden" name="a_campaignid" value="'.$key.'" />
 						<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 						<label for="campaignname">'.$campaigns['name'].':</label>
-						<input type="submit" value="Vote" class="button" name="r_castvote" />
+						<input type="submit" value="Vote" class="button" style="float: left" name="r_castvote" />
 					</fieldset>
 				</form>';
 		}
-		echo '<br /><br />';
 	}
-	echo '</table>';
 	echo '</form>';
+	echo '</div>';
 	echo '</div>';
 
 }
