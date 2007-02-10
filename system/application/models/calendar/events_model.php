@@ -710,7 +710,7 @@ class Events_model extends Model
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_email = 1, users.user_email, NULL)
+			IF(subscriptions.subscription_member = 1, users.user_email, NULL)
 									AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
@@ -751,7 +751,7 @@ class Events_model extends Model
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_email = 1, users.user_email, NULL)
+			IF(subscriptions.subscription_member = 1, users.user_email, NULL)
 									AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
@@ -959,15 +959,31 @@ class Events_model extends Model
 			'occurrences'	=> $num_occurrences,
 		);
 	}
+	
+	/// Publish an entire event.
+	/**
+	 * @param $EventId int ID of event to publish.
+	 */
 	function EventPublish($EventId)
 	{
 		/// @todo Implement.
 	}
 	
+	/// Add an occurrence to an event.
+	/**
+	 * @param $EventId int ID of event to add occurrence to.
+	 * @param $OccurrenceData array Occurrence Data.
+	 */
 	function OccurrenceAdd($EventId, $OccurrenceData)
 	{
 		/// @todo Implement.
 	}
+	
+	/// Edit an existing occurrence.
+	/**
+	 * @param $OccurrenceId int ID of occurrence to alter.
+	 * @param $OccurrenceData array Occurrence Data.
+	 */
 	function OccurrenceAlter($OccurrenceId, $OccurrenceData)
 	{
 		/// @todo Implement.
@@ -984,7 +1000,18 @@ class Events_model extends Model
 	 */
 	function OccurrenceDraftPublish($OccurrenceId)
 	{
-		/// @todo Implement.
+		// change the state to published
+		// where the state was draft
+		// and the start and end time are set
+		$sql = 'UPDATE event_occurrences
+			SET		event_occurrences.event_occurrence_state=\'published\'
+			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
+			AND		event_occurrences.event_occurrence_state=\'draft\'
+			AND		event_occurrences.event_occurrence_start_time != 0
+			AND		event_occurrences.event_occurrence_end_time != 0';
+		/// @todo check user has permission + optionally confirm event id
+		$this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Trash a draft occurrence.
@@ -996,7 +1023,15 @@ class Events_model extends Model
 	 */
 	function OccurrenceDraftTrash($OccurrenceId)
 	{
-		/// @todo Implement.
+		// change the state to trashed
+		// where the state was draft
+		$sql = 'UPDATE event_occurrences
+			SET		event_occurrences.event_occurrence_state=\'trashed\'
+			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
+			AND		event_occurrences.event_occurrence_state=\'draft\'';
+		/// @todo check user has permission + optionally confirm event id
+		$this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Restore a trashed occurrence.
@@ -1008,7 +1043,15 @@ class Events_model extends Model
 	 */
 	function OccurrenceTrashedRestore($OccurrenceId)
 	{
-		/// @todo Implement.
+		// change the state to trashed
+		// where the state was draft
+		$sql = 'UPDATE event_occurrences
+			SET		event_occurrences.event_occurrence_state=\'draft\'
+			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
+			AND		event_occurrences.event_occurrence_state=\'trashed\'';
+		/// @todo check user has permission + optionally confirm event id
+		$this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Cancel a published occurrence.
@@ -1020,7 +1063,15 @@ class Events_model extends Model
 	 */
 	function OccurrencePublishedCancel($OccurrenceId)
 	{
-		/// @todo Implement.
+		// change the state to trashed
+		// where the state was draft
+		$sql = 'UPDATE event_occurrences
+			SET		event_occurrences.event_occurrence_state=\'cancelled\'
+			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
+			AND		event_occurrences.event_occurrence_state=\'published\'';
+		/// @todo check user has permission + optionally confirm event id
+		$this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Move a published occurrence.
@@ -1029,12 +1080,14 @@ class Events_model extends Model
 	 * @return bool True on success, False on failure.
 	 * @pre 'published' | ('cancelled' & active)
 	 * @post 'cancelled' linking to new occurrence
-	 * @post new occurrence created in 'draft' at new position
+	 * @post new occurrence created in 'movedraft' at new position
 	 */
 	function OccurrencePublishedMove($OccurrenceId, $Data)
 	{
 		/// @todo Implement.
-	} // to draft_moved
+		// create new movedraft
+		// set $occurrenceid's children pointing to new occurrence
+	}
 	
 	/// Delete an occurrence
 	/**
@@ -1042,6 +1095,7 @@ class Events_model extends Model
 	 * @return bool True on success, False on failure.
 	 * @pre 'draft' | 'trashed' | in past
 	 * @post 'deleted'
+	 * @post any associated event_occurrence_users rows deleted
 	 */
 	function OccurrenceDelete($OccurrenceId)
 	{

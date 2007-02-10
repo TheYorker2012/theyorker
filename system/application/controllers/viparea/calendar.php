@@ -19,6 +19,32 @@ class Calendar extends controller
 		$this->main_frame->Load();
 	}
 	
+	function publish($EventId, $OccurrenceId = FALSE)
+	{
+		if (!is_numeric($EventId)) {
+			show_404();
+		}
+		if (FALSE!==$OccurrenceId && !is_numeric($OccurrenceId)) {
+			show_404();
+		}
+		
+		if (!CheckPermissions('vip')) return;
+		
+		$this->load->model('calendar/events_model');
+		
+		if (FALSE === $OccurrenceId) {
+			$result = $this->events_model->EventPublish($EventId);
+		} else {
+			$result = $this->events_model->OccurrenceDraftPublish($OccurrenceId);
+		}
+		if ($result) {
+			$this->messages->AddMessage('success','Successfully published');
+		} else {
+			$this->messages->AddMessage('error','Could not publish');
+		}
+		redirect('viparea/calendar/events/'.$EventId);
+	}
+	
 	function events($EventId = FALSE, $OccurrenceId=FALSE)
 	{
 		if (FALSE!==$EventId && !is_numeric($EventId)) {
@@ -69,17 +95,18 @@ class Calendar extends controller
 			
 			$special_condition = 'events.event_id='.$EventId;
 			if (FALSE === $OccurrenceId) {
+				$filter = new EventOccurrenceFilter();
+				$filter->DisableSource('subscribed');
+				$filter->SetRange(strtotime('-1year'),strtotime('+1year'));
+				$filter->SetSpecialCondition($special_condition);
+				
 				$fields = array(
 						'occurrence_id' => 'event_occurrences.event_occurrence_id',
 						'description' => 'event_occurrences.event_occurrence_description',
 						'start' => 'event_occurrences.event_occurrence_start_time',
 						'end' => 'event_occurrences.event_occurrence_end_time',
+						'status'=>$filter->ExpressionPublicState(),
 					);
-				
-				$filter = new EventOccurrenceFilter();
-				$filter->DisableSource('subscribed');
-				$filter->SetRange(strtotime('-1year'),strtotime('+1year'));
-				$filter->SetSpecialCondition($special_condition);
 				
 				$results = $filter->GenerateOccurrences($fields);
 				
@@ -92,8 +119,12 @@ class Calendar extends controller
 				
 				$op = '<OL>';
 				foreach ($occurrences as $occurrence) {
-					$op .= '<LI><A HREF="'.site_url('viparea/calendar/events/'.$EventId.'/'.$occurrence['occurrence_id']).'">'.$occurrence['start'].' -> '.$occurrence['end'].'</A> '.
-						$occurrence['description'].' </LI>';
+					$links = array();
+					if ($occurrence['status'] === 'draft') {
+						$links[] = '<A HREF="'.site_url('viparea/calendar/publish/'.$EventId.'/'.$occurrence['occurrence_id']).'">publish</A>';
+					}
+					$op .= '<LI>'.$occurrence['status'].' <Aevent_occurrences HREF="'.site_url('viparea/calendar/events/'.$EventId.'/'.$occurrence['occurrence_id']).'">'.$occurrence['start'].' -> '.$occurrence['end'].'</A> '.
+						$occurrence['description'].' ('.implode(',',$links).') </LI>';
 				}
 				$op .= '</OL>';
 				
@@ -116,11 +147,13 @@ class Calendar extends controller
 				$filter->SetSpecialCondition($special_condition);
 				
 				$result = $filter->GenerateOccurrences(array(
-					'*',
+					'occurrence_id' => 'event_occurrences.event_occurrence_id',
+					'description' => 'event_occurrences.event_occurrence_description',
+					'start' => 'event_occurrences.event_occurrence_start_time',
+					'end' => 'event_occurrences.event_occurrence_end_time',
+					'rescheduled_start' => 'active_occurrence.event_occurrence_start_time',
+					'rescheduled_end' => 'active_occurrence.event_occurrence_end_time',
 					'status'=>$filter->ExpressionPublicState(),
-					'cancelled'=>$filter->ExpressionPublicCancelled(),
-					'postponed'=>$filter->ExpressionPublicPostponed(),
-					'rescheduled'=>$filter->ExpressionPublicRescheduled(),
 					));
 				
 				$rsvps = $this->events_model->GetOccurrenceRsvp($OccurrenceId);
