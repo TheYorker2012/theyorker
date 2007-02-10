@@ -77,7 +77,8 @@ define('PHOTOS_PERPAGE', 12);
 				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result()
 			);
 		}
-		
+		$this->load->view('office/gallery/galleryimage', $data);
+		/*
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/galleryimage');
 		$gallery_div->AddData($data);
@@ -93,6 +94,7 @@ define('PHOTOS_PERPAGE', 12);
 	
 		// Load the main frame
 		$this->main_frame->Load();
+		*/
 	}
 }
 
