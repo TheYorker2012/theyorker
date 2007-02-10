@@ -43,8 +43,12 @@ function onUnloadHandler() {
 
 <?php 
 if (isset($maps)) {
+// The google maps API key will need to be changed whenever we change server
+// There is a google account to do this:
+//   username - theyorkermaps
+//   password - same as the database
 ?>
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=BQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ" type="text/javascript" />
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q" type="text/javascript"></script>
 <script type="text/javascript">
 function loadMaps() {
 	// define a sctucture to store map settings
@@ -59,14 +63,16 @@ function loadMaps() {
 	<?php
 	// Write code to put each the maps defined in PHP into a Javascript array
 	foreach ($maps as $map) {
-		echo 'maps.push(new OMap('.$map['element'].', '.$map['lat'].', '.$map['lng'].'));';
+		echo 'maps.push(new OMap("'.$map['element'].'", '.$map['lat'].', '.$map['lng'].'));';
 	}
 	?>
 
 	// For each map, update the page to actually show the map
-	for (map in maps) {
-		var mapobj = new GMap2(document.getElementById(map.element));
-		mapobj.setCenter(new GLatLng(map.lat, map.lng));
+	for (i = 0; i < maps.length; i++) {
+		var mapobj = new GMap2(document.getElementById(maps[i].element));
+		mapobj.setCenter(new GLatLng(maps[i].lat, maps[i].lng), 13);
+		mapobj.enableDoubleClickZoom();
+		mapobj.enableContinuousZoom();
 	}
 }
 

@@ -90,16 +90,14 @@ if (!empty($organisation['reviews_by_type'])) {
 			<h5>Article title 3</h5>
 			<a href='#'>A brief description of the article...</a>
 	</div>
-</div><div  style="padding:0px 0px 0px 0px; width: 420px; margin: 0px;">
+</div>
 <div style="padding:0px 3px 0px 0px; width: 420px; margin: 0px;">
 	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
 		<span style="font-size: x-large;  color: rgb(32, 193, 240); ">about us</span>
 		<p><?php echo $organisation['description']; ?></p>
 	</div>
 	<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
-		<span style="font-size: x-large;  color: #999; ">finding us</span>
-		<p>
-		<img width='390' src='/images/prototype/directory/about/gmapwhereamI.png' />
-		</p>
+		<h2>finding us</h2>
+		<div id="googlemaps" style="width: 100%; height: 300px"></div>
 	</div>
 </div>

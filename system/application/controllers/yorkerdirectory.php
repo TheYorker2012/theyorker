@@ -122,6 +122,9 @@ class Yorkerdirectory extends Controller
 		$data['organisation']['reviews_untyped'] = $directory_reviews;
 		$data['organisation']['reviews_by_type'] = $review_types;
 
+		//Set $maps
+		$this->main_frame->SetData('maps', array(array('element' => 'googlemaps', 'lat' => '37.4419', 'lng' => '-122.1419')));
+
 		// Set up the directory view
 		$directory_view = $this->frames->view($subpageview, $data);
 
