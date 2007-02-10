@@ -19,7 +19,7 @@ class Calendar extends controller
 		$this->main_frame->Load();
 	}
 	
-	function publish($EventId, $OccurrenceId = FALSE)
+	function occop($Operation, $EventId, $OccurrenceId)
 	{
 		if (!is_numeric($EventId)) {
 			show_404();
@@ -32,15 +32,70 @@ class Calendar extends controller
 		
 		$this->load->model('calendar/events_model');
 		
-		if (FALSE === $OccurrenceId) {
-			$result = $this->events_model->EventPublish($EventId);
-		} else {
-			$result = $this->events_model->OccurrenceDraftPublish($OccurrenceId);
-		}
-		if ($result) {
-			$this->messages->AddMessage('success','Successfully published');
-		} else {
-			$this->messages->AddMessage('error','Could not publish');
+		$valid = TRUE;
+		switch ($Operation) {
+			case 'trash':
+				$model_function = 'OccurrenceDraftTrash';
+				$success_message = 'Successfully trashed';
+				$failure_message = 'Could not trash';
+				break;
+				
+			case 'untrash':
+				$model_function = 'OccurrenceTrashedRestore';
+				$success_message = 'Successfully restored';
+				$failure_message = 'Could not restore';
+				break;
+				
+			case 'publish':
+				$model_function = 'OccurrenceDraftPublish';
+				$success_message = 'Successfully published';
+				$failure_message = 'Could not publish';
+				break;
+				
+			case 'cancel':
+				$model_function = 'OccurrencePublishedCancel';
+				$success_message = 'Successfully cancelled';
+				$failure_message = 'Could not cancel';
+				break;
+				
+			case 'uncancel':
+				$model_function = 'OccurrenceCancelledRestore';
+				$success_message = 'Successfully restored';
+				$failure_message = 'Could not restore';
+				break;
+				
+			case 'postpone':
+				$model_function = 'OccurrencePublishedPostpone';
+				$success_message = 'Successfully postponed';
+				$failure_message = 'Could not postpone';
+				break;
+				
+			case 'publicmove':
+				$model_function = 'OccurrenceMovedraftPublish';
+				$success_message = 'Successfully published movement';
+				$failure_message = 'Could not publish movement';
+				break;
+				
+			case 'delete':
+				$model_function = 'OccurrenceDelete';
+				$success_message = 'Successfully deleted';
+				$failure_message = 'Could not delete';
+				break;
+				
+			default:
+				$this->messages->AddMessage('error','Unknown operation: '.$Operation);
+				$valid = FALSE;
+				break;
+		};
+		
+		if ($valid) {
+			$result = $this->events_model->$model_function($OccurrenceId);
+			
+			if ($result) {
+				$this->messages->AddMessage('success',$success_message);
+			} else {
+				$this->messages->AddMessage('error',$failure_message);
+			}
 		}
 		redirect('viparea/calendar/events/'.$EventId);
 	}
@@ -119,11 +174,31 @@ class Calendar extends controller
 				
 				$op = '<OL>';
 				foreach ($occurrences as $occurrence) {
-					$links = array();
+					$operations = array();
 					if ($occurrence['status'] === 'draft') {
-						$links[] = '<A HREF="'.site_url('viparea/calendar/publish/'.$EventId.'/'.$occurrence['occurrence_id']).'">publish</A>';
+						$operations[] = 'publish';
+						$operations[] = 'trash';
 					}
-					$op .= '<LI>'.$occurrence['status'].' <Aevent_occurrences HREF="'.site_url('viparea/calendar/events/'.$EventId.'/'.$occurrence['occurrence_id']).'">'.$occurrence['start'].' -> '.$occurrence['end'].'</A> '.
+					if ($occurrence['status'] === 'movedraft') {
+						$operations[] = 'publishmove';
+					}
+					if ($occurrence['status'] === 'trashed') {
+						$operations[] = 'untrash';
+					}
+					if ($occurrence['status'] === 'published') {
+						$operations[] = 'cancel';
+						$operations[] = 'postpone';
+					}
+					if ($occurrence['status'] === 'cancelled') {
+						$operations[] = 'uncancel';
+					}
+					$links = array();
+					foreach ($operations as $operation) {
+						$links[] = '<A HREF="' . site_url('viparea/calendar/occop/'.$operation.'/' . $EventId . '/' . $occurrence['occurrence_id']) .
+							'">'.$operation.'</A>';
+					}
+					$op .= '<LI>'.$occurrence['status'].' <A HREF="' . site_url('viparea/calendar/events/' . $EventId . '/' . $occurrence['occurrence_id']) . '">' .
+						$occurrence['start'] . ' -> ' . $occurrence['end'] . '</A> '.
 						$occurrence['description'].' ('.implode(',',$links).') </LI>';
 				}
 				$op .= '</OL>';

@@ -755,7 +755,9 @@ class Events_model extends Model
 									AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
-			ON	event_occurrences.event_occurrence_id = ' . $OccurrenceId . '
+			ON	event_occurrences.event_occurrence_id
+				= event_occurrence_users.event_occurrence_user_event_occurrence_id
+			AND	event_occurrences.event_occurrence_id = ' . $OccurrenceId . '
 		INNER JOIN users
 			On	users.user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
@@ -990,6 +992,31 @@ class Events_model extends Model
 	}
 	
 	
+	/// Change the state of an occurrence explicitly.
+	/**
+	 * @param $EventId integer Id of event occurrence belongs to.
+	 * @param $OccurrenceId integer Id of occurrence to change the state of.
+	 * @param $OldState string Previous private state.
+	 * @param $NewState string New private state.
+	 * @return bool True on success, False on failure.
+	 */
+	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
+	{
+		// change the state to $NewState
+		// where the state was $OldState
+		$sql = 'UPDATE event_occurrences
+			SET		event_occurrences.event_occurrence_state=\''.$NewState.'\'
+			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
+			AND		event_occurrences.event_occurrence_state=\''.$OldState.'\'';
+		foreach ($ExtraConditions as $ExtraCondition) {
+			$sql .= ' AND ('.$ExtraCondition.')';
+		}
+		/// @todo check user has permission + optionally confirm event id
+		$this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
+	}
+	
+	
 	/// Publish a draft occurrence to the feed.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
@@ -1000,18 +1027,25 @@ class Events_model extends Model
 	 */
 	function OccurrenceDraftPublish($OccurrenceId)
 	{
-		// change the state to published
-		// where the state was draft
-		// and the start and end time are set
-		$sql = 'UPDATE event_occurrences
-			SET		event_occurrences.event_occurrence_state=\'published\'
-			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
-			AND		event_occurrences.event_occurrence_state=\'draft\'
-			AND		event_occurrences.event_occurrence_start_time != 0
-			AND		event_occurrences.event_occurrence_end_time != 0';
-		/// @todo check user has permission + optionally confirm event id
-		$this->db->query($sql);
-		return ($this->db->affected_rows() > 0);
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'draft','published',
+			array(	'event_occurrences.event_occurrence_start_time != 0',
+					'event_occurrences.event_occurrence_end_time != 0'));
+	}
+	
+	
+	/// Publish a draft occurrence to the feed.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'draft'
+	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
+	 * @post 'published'
+	 */
+	function OccurrenceMovedraftPublish($OccurrenceId)
+	{
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'movedraft','published',
+			array(	'event_occurrences.event_occurrence_start_time != 0',
+					'event_occurrences.event_occurrence_end_time != 0'));
 	}
 	
 	/// Trash a draft occurrence.
@@ -1023,15 +1057,7 @@ class Events_model extends Model
 	 */
 	function OccurrenceDraftTrash($OccurrenceId)
 	{
-		// change the state to trashed
-		// where the state was draft
-		$sql = 'UPDATE event_occurrences
-			SET		event_occurrences.event_occurrence_state=\'trashed\'
-			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
-			AND		event_occurrences.event_occurrence_state=\'draft\'';
-		/// @todo check user has permission + optionally confirm event id
-		$this->db->query($sql);
-		return ($this->db->affected_rows() > 0);
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'draft','trashed');
 	}
 	
 	/// Restore a trashed occurrence.
@@ -1043,15 +1069,7 @@ class Events_model extends Model
 	 */
 	function OccurrenceTrashedRestore($OccurrenceId)
 	{
-		// change the state to trashed
-		// where the state was draft
-		$sql = 'UPDATE event_occurrences
-			SET		event_occurrences.event_occurrence_state=\'draft\'
-			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
-			AND		event_occurrences.event_occurrence_state=\'trashed\'';
-		/// @todo check user has permission + optionally confirm event id
-		$this->db->query($sql);
-		return ($this->db->affected_rows() > 0);
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'trashed','draft');
 	}
 	
 	/// Cancel a published occurrence.
@@ -1063,27 +1081,34 @@ class Events_model extends Model
 	 */
 	function OccurrencePublishedCancel($OccurrenceId)
 	{
-		// change the state to trashed
-		// where the state was draft
-		$sql = 'UPDATE event_occurrences
-			SET		event_occurrences.event_occurrence_state=\'cancelled\'
-			WHERE	event_occurrences.event_occurrence_id='.$OccurrenceId.'
-			AND		event_occurrences.event_occurrence_state=\'published\'';
-		/// @todo check user has permission + optionally confirm event id
-		$this->db->query($sql);
-		return ($this->db->affected_rows() > 0);
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'published','cancelled');
+	}
+	
+	/// Restore a cancelled occurrence.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'published'
+	 * @post 'cancelled'
+	 */
+	function OccurrenceCancelledRestore($OccurrenceId)
+	{
+		return $this->OccurrenceChangeState(0,$OccurrenceId, 'cancelled','published');
 	}
 	
 	/// Move a published occurrence.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return
+	 *	- FALSE failure.
+	 *	- int success New occurrence id.
 	 * @pre 'published' | ('cancelled' & active)
 	 * @post 'cancelled' linking to new occurrence
 	 * @post new occurrence created in 'movedraft' at new position
 	 */
-	function OccurrencePublishedMove($OccurrenceId, $Data)
+	function OccurrencePublishedPostpone($OccurrenceId)
 	{
+		return FALSE;
 		/// @todo Implement.
 		// create new movedraft
 		// set $occurrenceid's children pointing to new occurrence
@@ -1099,6 +1124,7 @@ class Events_model extends Model
 	 */
 	function OccurrenceDelete($OccurrenceId)
 	{
+		return FALSE;
 		/// @todo Implement.
 	}
 	
