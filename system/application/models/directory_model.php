@@ -25,7 +25,7 @@ class Directory_model extends Model {
 			'SELECT'.
 			' organisations.organisation_name,'.
 			' organisations.organisation_directory_entry_name,'.
-			' organisations_contents.organisation_content_description as organisation_description,'.
+			' organisation_contents.organisation_content_description as organisation_description,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
