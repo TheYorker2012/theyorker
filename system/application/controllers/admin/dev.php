@@ -31,6 +31,7 @@ class Dev extends Controller {
 		
 		$this->load->helper('url');
 		$bulk = '';
+		echo var_dump ($this->uri->segment_array());
 		switch ($this->uri->rsegment(4, 0)) {
 			case 0:
 				$bulk = 'valid logs are: log/web and log/irc';
