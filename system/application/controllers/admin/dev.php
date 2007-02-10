@@ -25,5 +25,33 @@ class Dev extends Controller {
 		
 		phpinfo();
 	}
+	
+	function log() {
+		$this->load->helper('url');
+		switch ($this->uri->segment(4, 0)) {
+			case 0:
+				$bulk = 'valid logs are: log/web and log/irc';
+			break;
+			case 'web':
+				$bulk = nl2br(file_get_contents('../log/lighttpd-access.log'));
+			break;
+			case 'irc':
+				$irc = dir('../supybot/logs/ChannelLogger/afsmg/#theyorker');
+				$bulk = '';
+				while (false !== ($entry = $irc->read())) {
+					if ($entry != '.' or $entry != '..') {
+						$bulk.= '<p>'.anchor('admin/dev/log/irc/'.$entry, $entry).'</p>';
+					}
+				}
+				if ($this->uri->segment(4, FALSE)) {
+					$bulk.= nl2br(file_get_contents('../supybot/logs/ChannelLogger/afsmg/#theyorker/'.$this->uri->segment(4)));
+				}
+			break;
+		}
+		$this->main_frame->SetContent(new SimpleView($bulk));
+		$this->main_frame->SetTitle('Log Viewer');
+		$this->main_frame->Load();
+	}
+	
 }
 ?>
