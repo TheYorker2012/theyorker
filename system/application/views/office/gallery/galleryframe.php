@@ -13,25 +13,23 @@
 	</div>
 	<h4>Advanced</h4>
 	<div class="Entry">
-		<form class="form">
+		<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 			<fieldset>
 			Order by:<br />
-			<input type="radio" name="order" />Title<br />
-			<input type="radio" name="order" />Date<br />
-			<input type="radio" name="order" />Photographer<br /><br />
-			Show only tags:<br />
+			<input type="radio" name="order" value="title"/>Title<br />
+			<input type="radio" name="order" value="date"/>Date<br />
+			<input type="radio" name="order" value="photographer"/>Photographer<br /><br />
+			Show only tag:<br />
 			<select name="tag">
-				<option value="pope">Pope</option>
-				<option value="pope">Students</option>
-				<option value="pope">Bob</option>
-				<option value="pope">Gary</option>
+				<?php foreach($tags as $tag):?>
+				<option value="<?=$tag->tag_id?>"><?=$tag->name?></option>
+				<?php endforeach;?>
 			</select><br /><br />
 			Show only photographers:<br />
 			<select name="tag">
-				<option value="pope">Pope</option>
-				<option value="pope">Students</option>
-				<option selected value="pope">Bob</option>
-				<option value="pope">Gary</option>
+				<?php foreach($photographer as $person):?>
+				<option value="<?=$person->user_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
+				<?php endforeach;?>
 			</select><br /><br />
 			<input type="submit" class="button" value="Display" />
 			</fieldset>

@@ -33,9 +33,9 @@
 	<h2>previews</h2>
 	<?php foreach($type as $image):?>
 	<?=$image->image_type_name?> (<?=$image->image_type_width?>x<?=$image->image_type_height?>)<br />
-	<img src="<?=baseurl(imageLocation($photoDetails->photo_id, $image->image_type_id))?>" /><br /><br />
+	<img src="<?=site_url(imageLocation($photoDetails->photo_id, $image->image_type_id))?>" /><br /><br />
 	<?php endforeach;?>
 	Full Size<br />
-	<a href="<?=baseurl(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
+	<a href="<?=site_url(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
 	Not happy with these thumbnails? <a href="<?=$photoDetails->photo_id?>/edit">Click here</a> to re-thumbnail.
 </div>

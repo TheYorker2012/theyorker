@@ -50,6 +50,7 @@ define('PHOTOS_PERPAGE', 12);
 		$frameData = array('pageNumbers' => $pageNumbers);
 
 		// Set up the subview for gallery.
+		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result());
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
@@ -82,8 +83,10 @@ define('PHOTOS_PERPAGE', 12);
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
+		$frameData = array('photographer' => $data['photographer'],
+		                   'tags' => $this->db->get('tags')->result());
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
-		$gallery_frame->AddData($data);
+		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
