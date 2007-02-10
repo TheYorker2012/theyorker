@@ -39,8 +39,8 @@
 <div class="blue_box">
 	<?php
 		// Load a subview.
-		$content[0]->Load();
-		
+//		$content[0]->Load();
+		echo $test;
 		echo $pageNumbers;
 	?>
 </div>

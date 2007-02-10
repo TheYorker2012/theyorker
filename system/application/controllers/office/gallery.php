@@ -47,10 +47,9 @@ define('PHOTOS_PERPAGE', 12);
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
 		$gallery_div->AddData($data);
 		
-		$frameData = array('pageNumbers' => $pageNumbers);
-
 		// Set up the subview for gallery.
-		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result());
+		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result(),
+		                   'pageNumbers' => $pageNumbers);
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
@@ -78,8 +77,13 @@ define('PHOTOS_PERPAGE', 12);
 				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result()
 			);
 		}
+		
+		$test = $this->load->view('office/gallery/galleryimage', $data, true);
+		$data2 = array('pageNumbers' => '', 'test' => $test);
+		$this->load->view('office/gallery/galleryframe', $data2);
+		
 		// Set up the center div for the gallery.
-		$gallery_div = $this->frames->view('office/gallery/galleryimage');
+		/*$gallery_div = $this->frames->view('office/gallery/galleryimage');
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
@@ -94,7 +98,7 @@ define('PHOTOS_PERPAGE', 12);
 		$this->main_frame->SetTitle('Photo Details');
 	
 		// Load the main frame
-		$this->main_frame->Load();
+		$this->main_frame->Load(); */
 	}
 }
 
