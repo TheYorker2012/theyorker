@@ -14,7 +14,7 @@ define('PHOTOS_PERPAGE', 12);
 	 */
 	function __construct() {
 		parent::Controller();
-		$this->load->helper(array('url', 'images'));
+		$this->load->helper(array('url', 'images', 'entity'));
 	}
 	
 	function index() {
@@ -46,10 +46,12 @@ define('PHOTOS_PERPAGE', 12);
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
 		$gallery_div->AddData($data);
+		
+		$frameData = array('pageNumbers' => $pageNumbers);
 
 		// Set up the subview for gallery.
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
-		$gallery_frame->AddData($data);
+		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
@@ -65,10 +67,16 @@ define('PHOTOS_PERPAGE', 12);
 		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_gallery');
-		
-		$data = array(
-			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-		);
+		$id = $this->uri->segment(4);
+		if ($id) {
+			$data = array(
+				'main_text' => $this->pages_model->GetPropertyWikitext('photo_view'),
+				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->result(),
+				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
+				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tag.photo_tag_photo_id', $id)->result(),
+				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))->result()
+			);
+		}
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/galleryimage');

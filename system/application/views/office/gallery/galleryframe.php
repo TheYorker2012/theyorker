@@ -42,5 +42,7 @@
 	<?php
 		// Load a subview.
 		$content[0]->Load();
+		
+		echo $pageNumbers;
 	?>
 </div>
