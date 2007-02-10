@@ -7,24 +7,36 @@
 		</div>
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Suggestions</a> that require attention.
+			There are <b><?php echo $counts['suggestions']; ?></b> <a href='#'>Suggestions</a> that require attention.
 		</div>
 	</div>
 </div>
 <div class="blue_box">
 	<h2>suggestions</h2>
-	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
-	<a href="#">[edit]</a> <a href="#">[remove]</a>
-	<hr />
-	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
-	<a href="#">[edit]</a> <a href="#">[remove]</a>
-	<hr />
-	<span class="orange">Q: How do I eat pie?</span> <span class="grey">(asked by Rob van Dam)</span><br />
-	A: A lengthy description describing how one can move ones jaw up and down with pie inside the death trap to perform what is commonly known as a chewing action. One can then follow this with a swallowing action to complete the conscious process of eating the pie.<br />
-	<a href="#">[edit]</a> <a href="#">[remove]</a>
+<?php
+	$first = FALSE;
+	foreach ($categories as $category_id => $category)
+	{
+		if (count($category['suggestions']) > 0)
+		{
+			if ($first == FALSE)
+				$first = TRUE;
+			else
+				echo '<hr />';
+			echo '<h5>'.$category['name'].'</h5>';
+			foreach ($category['suggestions'] as $suggestion)
+			{
+				echo '<br /><span class="orange">'.$suggestion['title'].'</span>
+					<span class="grey">(asked by '.$suggestion['username'].')</span><br />
+					'.$suggestion['description'].'<br />
+					<a href="#">[edit]</a> <a href="#">[remove]</a>
+					<br />';
+			}
+		}
+	}
+?>
 </div>
+
 <div class="grey_box">
 
 	<h2>make a suggestion</h2>
