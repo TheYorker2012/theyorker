@@ -1,5 +1,5 @@
 	<h2>information</h2>
-	<form class="form" method="post" action="save">
+	<form class="form" method="post" action="<?=$photoDetails->photo_id?>/save">
 		<fieldset>
 			<label for="title">Title: </label>
 				<input type="text" name="title" value="<?=$photoDetails->photo_title?>" /><br />
@@ -33,9 +33,9 @@
 	<h2>previews</h2>
 	<?php foreach($type as $image):?>
 	<?=$image->image_type_name?> (<?=$image->image_type_width?>x<?=$image->image_type_height?>)<br />
-	<img src="<?=imageLocation($photoDetails->photo_id, $image->image_type_id)?>" /><br /><br />
+	<img src="<?=baseurl(imageLocation($photoDetails->photo_id, $image->image_type_id))?>" /><br /><br />
 	<?php endforeach;?>
 	Full Size<br />
-	<a href="<?=photoLocation($photoDetails->photo_id)?>">Click here to view</a><br /><br />
-	Not happy with these thumbnails? <a href="edit">Click here</a> to re-thumbnail.
+	<a href="<?=baseurl(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
+	Not happy with these thumbnails? <a href="<?=$photoDetails->photo_id?>/edit">Click here</a> to re-thumbnail.
 </div>
