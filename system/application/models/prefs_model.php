@@ -261,12 +261,15 @@ class Prefs_model extends Model {
 		$sql =
 			'SELECT'.
 			' organisation_entity_id AS id,'.
-			' organisation_url AS url,'.
+			' organisation_contents.organisation_content_url AS url,'.
 			' organisation_directory_entry_name AS directory,'.
 			' organisation_name AS name '.
 			'FROM organisations '.
+			'INNER JOIN organisation_contents '.
+			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisation_organisation_type_id = 3 '.
 			'ORDER BY name ASC';
+
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
