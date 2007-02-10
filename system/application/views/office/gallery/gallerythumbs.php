@@ -15,7 +15,7 @@
 -->
 <?php foreach ($photos as $thumbnail) { ?>
 	<div class="thumbnail_small">
-		<a href="/office/gallery/show/<?=$thumbnail->photo_id?>"><img src="<?=photoLocation($thumbnail->photo_id)?>" alt="<?=$thumbnail->photo_title?>" /></a>
+		<a href="/office/gallery/show/<?=$thumbnail->photo_id?>"><img src="<?=imageLocation($thumbnail->photo_id, 2)?>" alt="<?=$thumbnail->photo_title?>" /></a>
 		<div>
 		<span class="orange">Image Title: </span><?=$thumbnail->photo_title?><br />
 		<span class="orange">Date: </span><?=$thumbnail->photo_timestamp?><br />
