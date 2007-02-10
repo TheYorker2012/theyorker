@@ -21,13 +21,27 @@ define('PHOTOS_PERPAGE', 12);
 		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_gallery');
+		$count = $this->db->get('photos')->num_rows();
+		if ($count > PHOTOS_PERPAGE) {
+			$this->load->library('pagination');
+			
+			$config['base_url'] = site_url('office/gallery/');
+			$config['total_rows'] = $count;
+			$config['per_page'] = PHOTOS_PERPAGE;
+			$config['uri_segment'] = 3;
+			
+			$this->pagination->initialize($config);
+			$pageNumbers = $this->pagination->create_links();
+		} else {
+			$pageNumbers = '';
+		}
+		$page = $this->uri->segment(3, 0);
+		$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE);
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'photos' => $this->db->get('photos', PHOTOS_PERPAGE)->result()
+			'photos' => $photos->result()
 		);
-		
-		//$this->load->view('office/gallery/gallerythumbs', $data);
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
