@@ -354,7 +354,9 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		// WHERE CLAUSE --------------------------------------------------------
 		
-		$sql .= ' WHERE '.implode(' AND ',$conditions).';';
+		$sql .= ' WHERE '.implode(' AND ',$conditions).'';
+		
+		$sql .= ' ORDER BY event_occurrences.event_occurrence_start_time';
 		
 		// Try it out
 		$CI = &get_instance();
