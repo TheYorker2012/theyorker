@@ -118,7 +118,7 @@ function preloader()
 		</div>
 		
 		<div class='officenavigation_title'>
-			Boxes
+			Sections
 		</div>
 
 		<div class='officenavigation_item'>
@@ -145,13 +145,16 @@ function preloader()
 		<div class='officenavigation_item'>
 			<a href='/office/news/archive/'>News Archive</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/news/archive/'>Manage Writer</a>
+		</div>
 
 		<div class='officenavigation_title'>
 			Photographers
 		</div>
 
 		<div class='officenavigation_item'>
-			<a href='/office/image/requests/'>Requests</a>
+			<a href='/office/image/requests/'>Photos</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/gallery/'>Gallery</a>

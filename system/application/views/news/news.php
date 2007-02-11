@@ -99,23 +99,29 @@
 		</div>
 		<?php } ?>
 	</div>
-	<div class='blue_box'>
-		<?php foreach ($main_article['authors'] as $reporter) { ?>
-		<img src='<?php echo $main_article['writerimg']; ?>' alt='<?php echo $reporter['name']; ?>' title='<?php echo $reporter['name']; ?>' style='float: right;' />
-		<?php } ?>
-		<h2 style='margin-bottom: 5px;'><?php echo $byline_heading; ?></h2>
-		<?php foreach ($main_article['authors'] as $reporter) { ?>
-		<span style='font-size: medium;'><b><?php echo $reporter['name']; ?></b></span><br />
-		<?php } ?>
-		<?php echo $main_article['date']; ?><br />
-		<a href='/archive'><span style='color: #ff6a00;'><?php echo $byline_more; ?></span></a>
-	</div>
 	<div class='grey_box'>
 		<div class='ArticleColumn'>
-			<h1><?php echo $main_article['heading']; ?></h1>
+			<h1 style="text-align:left; margin: 2px 0px 2px 0px;"><?php echo $main_article['heading']; ?></h1>
 			<?php if ($main_article['subheading'] != '') { ?>
-			<h2><?php echo $main_article['subheading']; ?></h2>
+			<h2 style="margin: 0px 0px 2px 0px; "><?php echo $main_article['subheading']; ?></h2>
 			<?php } ?>
+			<?php if ($main_article['subtext'] != '') { ?>
+			<big><div style="margin: 10px 0px 10px 0px; color:#ff6a00;"><?php echo $main_article['subtext']; ?></div></big>
+			<?php } ?>
+		</div>
+
+		<div class='blue_box' style="border-width: 1px 0px 1px 0px;  overflow:hidden; height: 50px; width: 400px;">
+			<?php foreach ($main_article['authors'] as $reporter) { ?>
+			<img src='<?php echo $main_article['writerimg']; ?>' alt='<?php echo $reporter['name']; ?>' title='<?php echo $reporter['name']; ?>' style='float: right; top: -20px; position:relative;' width="80" height="100"/>
+			<?php } ?>
+			<?php foreach ($main_article['authors'] as $reporter) { ?>
+			<span style='font-size: medium;'><b><?php echo $reporter['name']; ?></b></span><br />
+			<?php } ?>
+			<?php echo $main_article['date']; ?><br />
+			<a href='/archive'><span style='color: #ff6a00;'><?php echo $byline_more; ?></span></a>
+		</div>
+
+		<div class='ArticleColumn'>
 	        <p><?php echo $main_article['text']; ?></p>
 			<br style='clear: both;' />
 		</div>

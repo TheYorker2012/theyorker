@@ -56,7 +56,7 @@ class Yorkerdirectory extends Controller
 		$this->load->library('character_lib'); //This character libary is used by the view, so load it here
 
 		// Set up the directory view
-		$directory_view = $this->frames->view('directory/directory', $data);
+		$directory_view = $this->frames->view('directory/viparea_directory', $data);
 
 		// Set up the public frame to use the directory view
 		$this->main_frame->SetContent($directory_view);
