@@ -65,7 +65,7 @@ class Calendar extends controller
 				break;
 				
 			case 'postpone':
-				$model_function = 'OccurrencePublishedPostpone';
+				$model_function = 'OccurrencePostpone';
 				$success_message = 'Successfully postponed';
 				$failure_message = 'Could not postpone';
 				break;
@@ -205,6 +205,7 @@ class Calendar extends controller
 					}
 					if ($occurrence['status'] === 'cancelled') {
 						$operations[] = 'uncancel';
+						$operations[] = 'postpone';
 					}
 					$links = array();
 					foreach ($operations as $operation) {

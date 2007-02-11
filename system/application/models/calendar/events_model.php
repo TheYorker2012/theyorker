@@ -1230,7 +1230,7 @@ class Events_model extends Model
 			));
 	}
 	
-	/// Move a published occurrence.
+	/// Move a public occurrence.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return
@@ -1240,8 +1240,10 @@ class Events_model extends Model
 	 * @post 'cancelled' linking to new occurrence
 	 * @post new occurrence created in 'movedraft' at new position
 	 */
-	function OccurrencePublishedPostpone($OccurrenceId)
+	function OccurrencePostpone($OccurrenceId)
 	{
+		$this->OccurrenceCancelledActivate($OccurrenceId);
+		
 		// create new movedraft
 		$sql_insert = 'INSERT INTO event_occurrences (
 				event_occurrence_event_id,
