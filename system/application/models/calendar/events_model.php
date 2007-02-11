@@ -829,6 +829,27 @@ class Events_model extends Model
 	function GetNotices()
 	{
 		/// @todo Implement.
+		/*
+		 * UNCONFIRMED SUBSCRIPTIONS
+		 * select
+		 *     from subscriptions
+		 *     where user = me
+		 *       and user_confirmed = 0
+		 *
+		 * RSVP'd CHANGED EVENTS
+		 * select public_state
+		 *     from event_occurrence_users
+		 *     inner join event_occurrences
+		 *     where user = me
+		 *       and rsvp
+		 *       and state isn't published
+		 *
+		 * UNCONFIRMED OWNERSHIPS
+		 * select
+		 *     from event_entities
+		 *     where user = me
+		 *       and confirmed = 0
+		 */
 	}
 	
 	// TRANSACTIONS
@@ -910,56 +931,7 @@ class Events_model extends Model
 		}
 		
 		if (array_key_exists('occurrences',$EventData)) {
-			static $translation2 = array(
-				'description',
-				'location',
-				'postcode',
-				'all_day',
-				'ends_late',
-			);
-			// create each occurrences
-			$sql = 'INSERT INTO event_occurrences (
-					event_occurrence_event_id,
-					event_occurrence_description,
-					event_occurrence_location,
-					event_occurrence_postcode,
-					event_occurrence_start_time,
-					event_occurrence_end_time,
-					event_occurrence_all_day,
-					event_occurrence_ends_late)
-				VALUES';
-			$first = TRUE;
-			foreach ($EventData['occurrences'] as $occurrence) {
-				$values = array_fill(0, count($translation2)-1, 'DEFAULT');
-				foreach ($translation2 as $field_name => $input_name) {
-					if (array_key_exists($input_name, $occurrence)) {
-						$values[$field_name] = $this->db->escape($occurrence[$input_name]);
-					}
-				}
-				if (!$first)
-					$sql .= ',';
-				$sql .=	' ('.$event_id.
-						','.$values[0].		// description
-						','.$values[1].		// location
-						','.$values[2];		// postcode
-				// start time
-				if (array_key_exists('start', $occurrence))
-					$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
-				else
-					$sql .= ',DEFAULT';
-				// end time
-				if (array_key_exists('end', $occurrence))
-					$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
-				else
-					$sql .= ',DEFAULT';
-				
-				$sql .=	','.$values[3].		// all_day
-						','.$values[4].')'; // ends_late
-				
-				$first = FALSE;
-			}
-			$query = $this->db->query($sql);
-			$num_occurrences = $this->db->affected_rows();
+			$num_occurrences = $this->OccurrencesAdd($event_id, $EventData['occurrences']);
 		} else {
 			$num_occurrences = 0;
 		}
@@ -971,23 +943,64 @@ class Events_model extends Model
 		);
 	}
 	
-	/// Publish an entire event.
-	/**
-	 * @param $EventId int ID of event to publish.
-	 */
-	function EventPublish($EventId)
-	{
-		$this->OccurrenceDraftPublish($EventId, FALSE);
-	}
-	
-	/// Add an occurrence to an event.
+	/// Add occurrences to an event.
 	/**
 	 * @param $EventId int ID of event to add occurrence to.
-	 * @param $OccurrenceData array Occurrence Data.
+	 * @param $OccurrenceData array Array of Occurrence Data arrays.
+	 * @return integer Number of occurrences added.
 	 */
-	function OccurrenceAdd($EventId, $OccurrenceData)
+	function OccurrencesAdd($EventId, $OccurrenceData)
 	{
-		/// @todo Implement.
+		static $translation2 = array(
+			'description',
+			'location',
+			'postcode',
+			'all_day',
+			'ends_late',
+		);
+		// create each occurrences
+		$sql = 'INSERT INTO event_occurrences (
+				event_occurrence_event_id,
+				event_occurrence_description,
+				event_occurrence_location,
+				event_occurrence_postcode,
+				event_occurrence_start_time,
+				event_occurrence_end_time,
+				event_occurrence_all_day,
+				event_occurrence_ends_late)
+			VALUES';
+		$first = TRUE;
+		foreach ($OccurrenceData as $occurrence) {
+			$values = array_fill(0, count($translation2)-1, 'DEFAULT');
+			foreach ($translation2 as $field_name => $input_name) {
+				if (array_key_exists($input_name, $occurrence)) {
+					$values[$field_name] = $this->db->escape($occurrence[$input_name]);
+				}
+			}
+			if (!$first)
+				$sql .= ',';
+			$sql .=	' ('.$EventId.
+					','.$values[0].		// description
+					','.$values[1].		// location
+					','.$values[2];		// postcode
+			// start time
+			if (array_key_exists('start', $occurrence))
+				$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
+			else
+				$sql .= ',DEFAULT';
+			// end time
+			if (array_key_exists('end', $occurrence))
+				$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
+			else
+				$sql .= ',DEFAULT';
+			
+			$sql .=	','.$values[3].		// all_day
+					','.$values[4].')'; // ends_late
+			
+			$first = FALSE;
+		}
+		$query = $this->db->query($sql);
+		return $this->db->affected_rows();
 	}
 	
 	/// Edit an existing occurrence.
@@ -995,7 +1008,7 @@ class Events_model extends Model
 	 * @param $OccurrenceId int ID of occurrence to alter.
 	 * @param $OccurrenceData array Occurrence Data.
 	 */
-	function OccurrenceAlter($OccurrenceId, $OccurrenceData)
+	function OccurrencesAlter($OccurrenceId, $OccurrenceData)
 	{
 		/// @todo Implement.
 	}
@@ -1007,7 +1020,7 @@ class Events_model extends Model
 	 * @param $OccurrenceId integer Id of occurrence to change the state of.
 	 * @param $OldState string Previous private state.
 	 * @param $NewState string New private state.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 */
 	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
 	{
@@ -1035,7 +1048,7 @@ class Events_model extends Model
 			$sql .= ' AND ('.$ExtraCondition.')';
 		}
 		$this->db->query($sql, $bind_data);
-		return ($this->db->affected_rows() > 0);
+		return $this->db->affected_rows();
 	}
 	
 	
@@ -1043,7 +1056,7 @@ class Events_model extends Model
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'draft'
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
@@ -1055,11 +1068,21 @@ class Events_model extends Model
 					'event_occurrences.event_occurrence_end_time != 0'));
 	}
 	
+	/// Publish an entire event.
+	/**
+	 * @param $EventId int ID of event to publish.
+	 * @return integer Number of changed occurrences.
+	 */
+	function EventPublish($EventId)
+	{
+		return $this->OccurrenceDraftPublish($EventId, FALSE);
+	}
+	
 	/// Trash a draft occurrence.
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'draft'
 	 * @post 'trashed'
 	 */
@@ -1072,7 +1095,7 @@ class Events_model extends Model
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'trashed'
 	 * @post 'draft'
 	 */
@@ -1085,7 +1108,7 @@ class Events_model extends Model
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'movedraft'
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
@@ -1102,7 +1125,7 @@ class Events_model extends Model
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @param $ActivationState string Private state to set postponed occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'movedraft'
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is set to @a $ActivationState.
@@ -1165,14 +1188,14 @@ END';
 		}
 		
 		// Something should have changed
-		return ($this->db->affected_rows() > 0);
+		return $this->db->affected_rows();
 	}
 	
 	/// Restore the postponed occurrence of a move draft.
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'movedraft'
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is restored
@@ -1186,7 +1209,7 @@ END';
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'movedraft'
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is cancelled
@@ -1200,7 +1223,7 @@ END';
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'published'
 	 * @post 'cancelled'
 	 */
@@ -1259,7 +1282,7 @@ END';
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'cancelled'
 	 * @pre occurrence.active IS 'cancelled'
 	 * @post 'published'
@@ -1346,7 +1369,7 @@ END';
 					array($new_id, $OccurrenceId, $OccurrenceId, $OccurrenceId));
 			
 			if ($this->db->affected_rows() > 0) {
-				return TRUE;
+				return $new_id;
 			} else {
 				$sql_delete = 'DELETE FROM event_occurrences
 					WHERE event_occurrences.event_occurrence_id=?';
@@ -1362,14 +1385,14 @@ END';
 	/**
 	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @return bool True on success, False on failure.
+	 * @return integer Number of changed occurrences.
 	 * @pre 'draft' | 'trashed' | in past
 	 * @post 'deleted'
 	 * @post any associated event_occurrence_users rows deleted
 	 */
 	function OccurrenceDelete($EventId,$OccurrenceId)
 	{
-		return FALSE;
+		return 0;
 		/// @todo Implement.
 		// cleanup after anything linking to occurrences
 		//	- event_occurrence_users (leave to get detected when user logs in)
