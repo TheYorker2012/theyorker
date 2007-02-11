@@ -21,9 +21,12 @@ class EventOccurrenceQuery
 	}
 	
 	/// Produce an SQL expression for all and only owned events.
-	function ExpressionOwned()
+	function ExpressionOwned($EntityId = FALSE)
 	{
-		return	'(	event_entities.event_entity_entity_id = ' . $this->mEntityId . '
+		if (FALSE === $EntityId) {
+			$EntityId = $this->mEntityId;
+		}
+		return	'(	event_entities.event_entity_entity_id = ' . $EntityId . '
 				AND	event_entities.event_entity_confirmed = 1
 				AND	event_entities.event_entity_relationship = \'own\')';
 	}
@@ -615,8 +618,6 @@ class Events_model extends Model
 	 * @return bool Success state:
 	 *	- TRUE (Success).
 	 *	- FALSE (Failure).
-	 *
-	 * @todo Retrieve event data from the database instead of hardcoded.
 	 */
 	function Retrieve($StartTime, $EndTime)
 	{
@@ -1010,9 +1011,15 @@ class Events_model extends Model
 	 */
 	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
 	{
+		$occurrence_query = new EventOccurrenceQuery();
+		
 		// change the state to $NewState
 		// where the state was $OldState
 		$sql = 'UPDATE event_occurrences
+			INNER JOIN event_entities
+				ON	event_entities.event_entity_event_id
+						= event_occurrences.event_occurrence_event_id
+				AND ' . $occurrence_query->ExpressionOwned() . '
 			SET		event_occurrences.event_occurrence_state=?
 			WHERE	event_occurrences.event_occurrence_id=?
 			AND		event_occurrences.event_occurrence_state=?';
@@ -1020,7 +1027,7 @@ class Events_model extends Model
 		foreach ($ExtraConditions as $ExtraCondition) {
 			$sql .= ' AND ('.$ExtraCondition.')';
 		}
-		/// @todo check user has permission + optionally confirm event id
+		/// @todo optionally confirm event id
 		$this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows() > 0);
 	}
@@ -1098,37 +1105,51 @@ class Events_model extends Model
 		
 		if (FALSE) {
 			// Recreate the procedure!
-			/// @todo Add security
+			$occurrence_query = new EventOccurrenceQuery();
 			$sql_event_occurrence_movedraft_delete = '
-				CREATE PROCEDURE event_occurrence_movedraft_delete(occurrence_id INT, activation_state VARCHAR(10))
-				BEGIN
-					DECLARE preactive_id INT;
-					SELECT preactive.event_occurrence_id INTO preactive_id
-						FROM event_occurrences AS preactive
-						WHERE preactive.event_occurrence_active_occurrence_id = occurrence_id
-						ORDER BY preactive.event_occurrence_timestamp DESC
-						LIMIT 1;
-					UPDATE	event_occurrences
-						SET		event_occurrences.event_occurrence_active_occurrence_id
-									= IF(event_occurrences.event_occurrence_id = preactive_id,
-										NULL,
-										preactive_id),
-								event_occurrences.event_occurrence_state
-									= IF(event_occurrences.event_occurrence_id = preactive_id,
-										activation_state,
-										event_occurrences.event_occurrence_state)
-						WHERE	event_occurrences.event_occurrence_active_occurrence_id = occurrence_id;
-					DELETE FROM event_occurrences
-						WHERE	event_occurrences.event_occurrence_id = occurrence_id;
-				END';
+CREATE PROCEDURE event_occurrence_movedraft_delete(
+	entity_id			INT,
+	occurrence_id		INT,
+	activation_state	VARCHAR(10) )
+BEGIN
+	DECLARE owned INT;
+	DECLARE preactive_id INT;
+	SELECT COUNT(*) INTO owned
+		FROM event_occurrences
+		INNER JOIN event_entities
+			ON	event_entities.event_entity_event_id
+					= event_occurrences.event_occurrence_event_id
+			AND ' . $occurrence_query->ExpressionOwned('entity_id') . '
+		WHERE
+			event_occurrences.event_occurrence_id = occurrence_id;
+	IF owned THEN
+		SELECT preactive.event_occurrence_id INTO preactive_id
+			FROM event_occurrences AS preactive
+			WHERE preactive.event_occurrence_active_occurrence_id = occurrence_id
+			ORDER BY preactive.event_occurrence_timestamp DESC
+			LIMIT 1;
+		UPDATE	event_occurrences
+			SET		event_occurrences.event_occurrence_active_occurrence_id
+						= IF(event_occurrences.event_occurrence_id = preactive_id,
+							NULL,
+							preactive_id),
+					event_occurrences.event_occurrence_state
+						= IF(event_occurrences.event_occurrence_id = preactive_id,
+							activation_state,
+							event_occurrences.event_occurrence_state)
+			WHERE	event_occurrences.event_occurrence_active_occurrence_id = occurrence_id;
+		DELETE FROM event_occurrences
+			WHERE	event_occurrences.event_occurrence_id = occurrence_id;
+	END IF;
+END';
 			// Drop and create
 			$this->db->query('DROP PROCEDURE event_occurrence_movedraft_delete');
 			$this->db->query($sql_event_occurrence_movedraft_delete);
 			
 		} else {
 			// Call the procedure
-			$this->db->query('CALL event_occurrence_movedraft_delete(?,?)',
-				array($OccurrenceId, $ActivationState));
+			$this->db->query('CALL event_occurrence_movedraft_delete(?,?,?)',
+				array($this->mActiveEntityId, $OccurrenceId, $ActivationState));
 		}
 		
 		// Something should have changed
@@ -1183,6 +1204,7 @@ class Events_model extends Model
 	 */
 	function OccurrenceCancelledActivate($OccurrenceId)
 	{
+		/// @todo Add security
 		// Make this occurrence the active occurrence.
 		// update new_active
 		// on sibling (same active occurrence)
@@ -1242,6 +1264,7 @@ class Events_model extends Model
 	 */
 	function OccurrencePostpone($OccurrenceId)
 	{
+		/// @todo Add security
 		$this->OccurrenceCancelledActivate($OccurrenceId);
 		
 		// create new movedraft
@@ -1337,7 +1360,7 @@ class Events_model extends Model
 		assert('$this->mActiveEntityId === self::$cEntityUser');
 		
 		$occurrence_query = new EventOccurrenceQuery();
-		
+		/// @todo Add security
 		$sql = '
 			INSERT INTO event_occurrence_users (
 				event_occurrence_users.event_occurrence_user_user_entity_id,
