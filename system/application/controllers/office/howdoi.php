@@ -160,7 +160,7 @@ class Howdoi extends Controller
 	}
 	
 
-	function editquestion($article_id, $revision_id)
+	function questionedit($article_id, $revision_id)
 	{
 		if (!CheckPermissions('office')) return;
 

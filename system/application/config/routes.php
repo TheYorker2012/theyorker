@@ -117,8 +117,8 @@ $route['lifestyle/:num'] = 'news/index/lifestyle';
 $route['news/rss'] = 'news/rss';
 
 // /office/howdoi/editquestion/questionno/defaultrevision
-$route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/editquestion//$1/-1';
+$route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/questionedit//$1/-1';
 // /office/howdoi/editquestion/questionno/revisionno
-$route['office/howdoi/editquestion/([0-9]+)/([0-9]+)'] = 'office/howdoi/editquestion/$1/$2';
+$route['office/howdoi/editquestion/([0-9]+)/([0-9]+)'] = 'office/howdoi/questionedit/$1/$2';
 
 ?>
