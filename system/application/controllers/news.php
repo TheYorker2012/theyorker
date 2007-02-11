@@ -60,8 +60,9 @@ class News extends Controller {
 
 		/// Get requested article id if submitted
 		$url_article_id = $this->uri->segment(2);
-		/// TODO: && ($this->news_model->isArticle($article_type,$url_article_id))
-		if (($url_article_id !== FALSE) && (is_numeric($url_article_id))) {
+		// Check if an article id was requested, if so check that the type of article it corresponds
+		// to is correct for the current news view else ignore it
+		if (($url_article_id !== FALSE) && (is_numeric($url_article_id)) && ($this->News_model->IdIsOfType($url_article_id,$article_type))) {
 			/// Check if requested article is already one of the IDs returned
 			$found_article = array_search($url_article_id, $latest_article_ids);
 			if ($found_article !== FALSE) {

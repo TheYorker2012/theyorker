@@ -31,9 +31,9 @@ class News_model extends Model
 		$sql = 'SELECT content_type_codename
 			FROM content_types
 			LEFT JOIN articles
-			WHERE (article_content_type_id = content_type_id
-			AND article_id = ?
-			AND content_type_codename = ?)';
+			ON (article_content_type_id = content_type_id)
+			WHERE article_id = ?
+			AND content_type_codename = ?';
 		$query = $this->db->query($sql,array($id,$type));
 		if ($query->num_rows() == 1)
 		{
