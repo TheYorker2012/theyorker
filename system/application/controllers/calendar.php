@@ -37,6 +37,33 @@ class Calendar extends Controller {
 		$this->load->library('date_uri');           // Nice date uri segments
 		$this->load->library('view_calendar_days'); // Days calendar view
 		
+		
+		// Show change events
+		$this->load->model('calendar/events_model');
+		$ChangedEvents = new EventOccurrenceFilter();
+		$ChangedEvents->DisableFilter('private');
+		$ChangedEvents->DisableFilter('active');
+		$ChangedEvents->DisableFilter('show');
+		$ChangedEvents->SetSpecialCondition(
+			'event_occurrence_users.event_occurrence_user_timestamp <
+					event_occurrences.event_occurrence_timestamp');
+		$notices = $ChangedEvents->GenerateOccurrences(array(
+				'state'			=> $ChangedEvents->ExpressionPublicState(),
+				'name'			=> 'events.event_name',
+				'organisation'	=> 'organisations.organisation_name',
+				'start'			=> 'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)',
+			));
+		foreach ($notices as $notice) {
+			$date = new Academic_time($notice['start']);
+			$start = $date->Format('l') . ' of week ' . $date->AcademicWeek() .
+				' of the ' . $date->AcademicTermName() . ' ' . $date->AcademicTermTypeName();
+			
+			$message = 'The event ' . $notice['name'] . ' from ' .
+				$notice['organisation'] . ' (' . $start . ') has been ' . $notice['state'];
+			$this->messages->AddMessage('information', $message, FALSE);
+		}
+		
+		
 		$this->pages_model->SetPageCode('calendar_personal');
 		if (!empty($DateRange)) {
 			// $DateRange Not empty

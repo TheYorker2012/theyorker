@@ -64,12 +64,23 @@ class EventOccurrenceQuery
 	function ExpressionDateRange($Range)
 	{
 		assert('is_array($Range)');
-		assert('is_int($Range[0])');
-		assert('is_int($Range[1])');
-		return	'(		event_occurrences.event_occurrence_end_time >
-								FROM_UNIXTIME('.$Range[0].')
-					AND	event_occurrences.event_occurrence_start_time <
-								FROM_UNIXTIME('.$Range[1].'))';
+		assert('is_int($Range[0]) || FALSE === $Range[0]');
+		assert('is_int($Range[1]) || FALSE === $Range[1]');
+		
+		$conditions = array();
+		if (FALSE !== $Range[0]) {
+			$conditions[] = 'event_occurrences.event_occurrence_end_time >
+								FROM_UNIXTIME('.$Range[0].')';
+		}
+		if (FALSE !== $Range[1]) {
+			$conditions[] = 'event_occurrences.event_occurrence_start_time <
+								FROM_UNIXTIME('.$Range[1].')';
+		}
+		if (empty($conditions)) {
+			return 'TRUE';
+		} else {
+			return '('.implode(' AND ',$conditions).')';
+		}
 	}
 	
 	/*
@@ -206,7 +217,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		$this->mInclusions = array();
 		
-		$this->mRange = array( time(), time() );
+		$this->mRange = array( FALSE, FALSE );
 		
 		$this->mSpecialCondition = FALSE;
 	}
@@ -469,10 +480,8 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 	 */
 	function SetRange($Start, $End)
 	{
-		if (!is_int($Start))
-			throw new Exception('Events_model::SetRange: parameter Start is not a valid timestamp');
-		if (!is_int($End))
-			throw new Exception('Events_model::SetRange: parameter End is not a valid timestamp');
+		assert('is_int($Start) || FALSE === $Start');
+		assert('is_int($End)   || FALSE === $End');
 		$this->mRange[0] = $Start;
 		$this->mRange[1] = $End;
 	}
@@ -1033,7 +1042,8 @@ class Events_model extends Model
 				ON	event_entities.event_entity_event_id
 						= event_occurrences.event_occurrence_event_id
 				AND ' . $occurrence_query->ExpressionOwned() . '
-			SET		event_occurrences.event_occurrence_state=?
+			SET		event_occurrences.event_occurrence_state=?,
+					event_occurrences.event_occurrence_timestamp=CURRENT_TIMESTAMP()
 			WHERE	event_occurrences.event_occurrence_event_id=?';
 		$bind_data = array($NewState, $EventId);
 		if (FALSE !== $OccurrenceId) {
