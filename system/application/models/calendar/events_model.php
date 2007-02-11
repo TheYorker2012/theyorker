@@ -977,7 +977,7 @@ class Events_model extends Model
 	 */
 	function EventPublish($EventId)
 	{
-		/// @todo Implement.
+		$this->OccurrenceDraftPublish($EventId, FALSE);
 	}
 	
 	/// Add an occurrence to an event.
@@ -1021,13 +1021,19 @@ class Events_model extends Model
 						= event_occurrences.event_occurrence_event_id
 				AND ' . $occurrence_query->ExpressionOwned() . '
 			SET		event_occurrences.event_occurrence_state=?
-			WHERE	event_occurrences.event_occurrence_id=?
-			AND		event_occurrences.event_occurrence_state=?';
-		$bind_data = array($NewState, $OccurrenceId, $OldState);
+			WHERE	event_occurrences.event_occurrence_event_id=?';
+		$bind_data = array($NewState, $EventId);
+		if (FALSE !== $OccurrenceId) {
+			$sql .= ' AND	event_occurrences.event_occurrence_id=?';
+			$bind_data[] = $OccurrenceId;
+		}
+		if (is_string($OldState)) {
+			$sql .= ' AND		event_occurrences.event_occurrence_state=?';
+			$bind_data[] = $OldState;
+		}
 		foreach ($ExtraConditions as $ExtraCondition) {
 			$sql .= ' AND ('.$ExtraCondition.')';
 		}
-		/// @todo optionally confirm event id
 		$this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows() > 0);
 	}
@@ -1035,60 +1041,65 @@ class Events_model extends Model
 	
 	/// Publish a draft occurrence to the feed.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'draft'
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
 	 */
-	function OccurrenceDraftPublish($OccurrenceId)
+	function OccurrenceDraftPublish($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'draft','published',
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, 'draft','published',
 			array(	'event_occurrences.event_occurrence_start_time != 0',
 					'event_occurrences.event_occurrence_end_time != 0'));
 	}
 	
 	/// Trash a draft occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'draft'
 	 * @post 'trashed'
 	 */
-	function OccurrenceDraftTrash($OccurrenceId)
+	function OccurrenceDraftTrash($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'draft','trashed');
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, 'draft','trashed');
 	}
 	
 	/// Restore a trashed occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'trashed'
 	 * @post 'draft'
 	 */
-	function OccurrenceTrashedRestore($OccurrenceId)
+	function OccurrenceTrashedRestore($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'trashed','draft');
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, 'trashed','draft');
 	}
 	
 	/// Publish a draft occurrence to the feed.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'movedraft'
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
 	 */
-	function OccurrenceMovedraftPublish($OccurrenceId)
+	function OccurrenceMovedraftPublish($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'movedraft','published',
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, 'movedraft','published',
 			array(	'event_occurrences.event_occurrence_start_time != 0',
 					'event_occurrences.event_occurrence_end_time != 0'));
 	}
 	
 	/// Delete a move draft occurrence, cleaning up after inactive occurrences.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @param $ActivationState string Private state to set postponed occurrence.
 	 * @return bool True on success, False on failure.
@@ -1096,7 +1107,7 @@ class Events_model extends Model
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is set to @a $ActivationState.
 	 */
-	protected function OccurrenceMovedraftDelete($OccurrenceId, $ActivationState)
+	protected function OccurrenceMovedraftDelete($EventId, $OccurrenceId, $ActivationState)
 	{
 		// find recently changed occurrence
 		// change all others pointing to $OccurrenceId to point to it, and it to null
@@ -1109,6 +1120,7 @@ class Events_model extends Model
 			$sql_event_occurrence_movedraft_delete = '
 CREATE PROCEDURE event_occurrence_movedraft_delete(
 	entity_id			INT,
+	event_id			INT,
 	occurrence_id		INT,
 	activation_state	VARCHAR(10) )
 BEGIN
@@ -1120,8 +1132,8 @@ BEGIN
 			ON	event_entities.event_entity_event_id
 					= event_occurrences.event_occurrence_event_id
 			AND ' . $occurrence_query->ExpressionOwned('entity_id') . '
-		WHERE
-			event_occurrences.event_occurrence_id = occurrence_id;
+		WHERE	event_occurrences.event_occurrence_id = occurrence_id
+			AND	event_occurrences.event_occurrence_event_id = event_id;
 	IF owned THEN
 		SELECT preactive.event_occurrence_id INTO preactive_id
 			FROM event_occurrences AS preactive
@@ -1148,8 +1160,8 @@ END';
 			
 		} else {
 			// Call the procedure
-			$this->db->query('CALL event_occurrence_movedraft_delete(?,?,?)',
-				array($this->mActiveEntityId, $OccurrenceId, $ActivationState));
+			$this->db->query('CALL event_occurrence_movedraft_delete(?,?,?,?)',
+				array($this->mActiveEntityId, $EventId, $OccurrenceId, $ActivationState));
 		}
 		
 		// Something should have changed
@@ -1158,51 +1170,55 @@ END';
 	
 	/// Restore the postponed occurrence of a move draft.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'movedraft'
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is restored
 	 */
-	function OccurrenceMovedraftRestore($OccurrenceId)
+	function OccurrenceMovedraftRestore($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceMovedraftDelete($OccurrenceId, 'published');
+		return $this->OccurrenceMovedraftDelete($EventId, $OccurrenceId, 'published');
 	}
 	
 	/// Cancel the postponed occurrences of a move draft.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'movedraft'
 	 * @post deleted
 	 * @post Inactive occurrence which was postponed is cancelled
 	 */
-	function OccurrenceMovedraftCancel($OccurrenceId)
+	function OccurrenceMovedraftCancel($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceMovedraftDelete($OccurrenceId, 'cancelled');
+		return $this->OccurrenceMovedraftDelete($EventId, $OccurrenceId, 'cancelled');
 	}
 	
 	/// Cancel a published occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'published'
 	 * @post 'cancelled'
 	 */
-	function OccurrencePublishedCancel($OccurrenceId)
+	function OccurrencePublishedCancel($EventId, $OccurrenceId)
 	{
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'published','cancelled');
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, 'published','cancelled');
 	}
 	
 	/// Activate an occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return int Number of altered rows.
 	 * @pre occurrence.active.state = 'cancelled'
 	 * @pre occurrence.active.active IS NULL
 	 * @post occurrence.active IS NULL
 	 */
-	function OccurrenceCancelledActivate($OccurrenceId)
+	function OccurrenceCancelledActivate($EventId, $OccurrenceId)
 	{
 		// Make this occurrence the active occurrence.
 		// update new_active
@@ -1229,35 +1245,38 @@ END';
 					= IF(sibling.event_occurrence_id = new_active.event_occurrence_id,
 						NULL,
 						new_active.event_occurrence_id)
-			WHERE new_active.event_occurrence_id = ?
-				AND (	old_active.event_occurrence_state IS NULL
+			WHERE	new_active.event_occurrence_id = ?
+				AND	new_active.event_occurrence_event_id = ?
+				AND	(	old_active.event_occurrence_state IS NULL
 					OR	(	old_active.event_occurrence_state = \'cancelled\'
 						AND	old_active.event_occurrence_active_occurrence_id IS NULL))';
 		
-		$query = $this->db->query($sql_activate, $OccurrenceId);
+		$query = $this->db->query($sql_activate, array($OccurrenceId, $EventId));
 		return $this->db->affected_rows();
 	}
 	
 	/// Restore a cancelled occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'cancelled'
 	 * @pre occurrence.active IS 'cancelled'
 	 * @post 'published'
 	 */
-	function OccurrenceCancelledRestore($OccurrenceId)
+	function OccurrenceCancelledRestore($EventId, $OccurrenceId)
 	{
-		$this->OccurrenceCancelledActivate($OccurrenceId);
+		$this->OccurrenceCancelledActivate($EventId, $OccurrenceId);
 		// This occurrence should now be active
 		
-		return $this->OccurrenceChangeState(0,$OccurrenceId, 'cancelled','published',
+		return $this->OccurrenceChangeState($EventId, $OccurrenceId, 'cancelled','published',
 			array(	'event_occurrences.event_occurrence_active_occurrence_id IS NULL',
 			));
 	}
 	
 	/// Move a public occurrence.
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return
 	 *	- FALSE failure.
@@ -1266,9 +1285,9 @@ END';
 	 * @post 'cancelled' linking to new occurrence
 	 * @post new occurrence created in 'movedraft' at new position
 	 */
-	function OccurrencePostpone($OccurrenceId)
+	function OccurrencePostpone($EventId, $OccurrenceId)
 	{
-		$this->OccurrenceCancelledActivate($OccurrenceId);
+		$this->OccurrenceCancelledActivate($EventId, $OccurrenceId);
 		
 		$occurrence_query = new EventOccurrenceQuery();
 		
@@ -1298,8 +1317,9 @@ END';
 				ON	event_entities.event_entity_event_id
 						= event_occurrences.event_occurrence_event_id
 				AND ' . $occurrence_query->ExpressionOwned() . '
-			WHERE event_occurrences.event_occurrence_id = ?';
-		$query = $this->db->query($sql_insert,$OccurrenceId);
+			WHERE	event_occurrences.event_occurrence_id = ?
+				AND	event_occurrences.event_occurrence_event_id = ?';
+		$query = $this->db->query($sql_insert,array($OccurrenceId, $EventId));
 		
 		// If not owner, then no movedraft will have been created
 		// so we can assume ownership from now on
@@ -1340,16 +1360,22 @@ END';
 	
 	/// Delete an occurrence
 	/**
+	 * @param $EventId integer Id of event.
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
 	 * @pre 'draft' | 'trashed' | in past
 	 * @post 'deleted'
 	 * @post any associated event_occurrence_users rows deleted
 	 */
-	function OccurrenceDelete($OccurrenceId)
+	function OccurrenceDelete($EventId,$OccurrenceId)
 	{
 		return FALSE;
 		/// @todo Implement.
+		// cleanup after anything linking to occurrences
+		//	- event_occurrence_users (leave to get detected when user logs in)
+		//	- child events (reactivate another, unlink this)
+		// mark the occurrence as deleted
+		return $this->OccurrenceChangeState($EventId,$OccurrenceId, FALSE, 'deleted');
 	}
 	
 	

@@ -101,7 +101,7 @@ class Calendar extends controller
 		};
 		
 		if ($valid) {
-			$result = $this->events_model->$model_function($OccurrenceId);
+			$result = $this->events_model->$model_function($EventId, $OccurrenceId);
 			
 			if ($result) {
 				$this->messages->AddMessage('success',$success_message);
