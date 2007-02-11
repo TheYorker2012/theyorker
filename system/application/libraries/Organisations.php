@@ -95,9 +95,10 @@ class Organisations
 	 * @return Organisation data relating to specified organisation or FALSE.
 	 */
 	 
-	//TODO: Must include the 		$this->load->helper('images'); somewhere, as this is required by this function now...
 	function _GetOrgData($OrganisationShortName)
 	{
+		$this->CI->load->helper('images');
+		
 		$data = array();
 
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
