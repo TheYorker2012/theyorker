@@ -217,8 +217,10 @@ class Requests_Model extends Model
 				article_content_last_author_timestamp,
 				business_card_name
 			FROM	article_contents
+
 			JOIN	business_cards
 			ON      business_card_user_entity_id = article_content_last_author_user_entity_id
+
 			WHERE	article_content_article_id = ?
 			ORDER BY	article_content_last_author_timestamp DESC';
 		$query = $this->db->query($sql,array($article_id));
@@ -254,7 +256,7 @@ class Requests_Model extends Model
 	function RemoveUserFromRequest($article_id,$user_id)
 	{
 		$sql = 'DELETE FROM article_writers WHERE (artice_writer_article_id = ?
-			AND article_writer_user_entiy_id = ?)
+			AND article_writer_user_entiy_id = ?)';
 	}
 	
 	function RequestPhoto($article_id,$user_id)

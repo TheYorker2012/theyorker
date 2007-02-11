@@ -60,17 +60,22 @@ class Article_model extends Model
         /**
 	 * Gets the header information of the specified article id,
 	 * if the article doesn't exist returns FALSE.
+	 * returns the fields to work out its status (suggested, requested
+	 * published, etc)
 	 */
 	function GetArticleHeader($article_id)
 	{
-        	$sql = 'SELECT article_content_type_id,
+        	$sql = 'SELECT	article_content_type_id,
 				article_organisation_entity_id,
 				article_created,
 				article_publish_date,
 				article_location,
-				article_live_content_id
-			FROM articles
-			WHERE article_id = ?';
+				article_live_content_id,
+				article_suggestion_accepted,
+				article_pulled
+			FROM	articles
+			WHERE	article_id = ?
+			AND	article_deleted = FALSE';
 		$query = $this->db->query($sql, array($article_id));
 		if ($query->num_rows() == 1)
 		{
@@ -81,53 +86,55 @@ class Article_model extends Model
 				'created'=>$row->article_created,
 				'publish_date'=>$row->article_publish_date,
 				'location'=>$row->article_location,
-				'live_content'=>$row->article_live_content_id
+				'live_content'=>$row->article_live_content_id,
+				'suggestion_accepted'=>$row->article_suggestion_accepted,
+				'pulled'=>$row->article_pulled
 				);
 		}
 		else
 			return FALSE;
 	}
 
-	function GetArticleRevisions($article_id, $get_blurb = FALSE, $limit_count = 10)
+	/**
+	 * Gets the the content data for a specific revision,
+	 * if the revisions doesn't exist returns FALSE.
+	 * NOTE: doesn't yet return extras such as fact boxes
+	 */
+	function GetRevisionContent($revision_id)
 	{
-		if ($get_blurb == TRUE)
+        	$sql = 'SELECT	article_content_article_id,
+				article_content_last_author_user_entity_id,
+				article_content_last_author_timestamp,
+				article_content_heading,
+				article_content_subheading,
+				article_content_subtext,
+				article_content_wikitext,
+				article_content_blurb,
+				editor_user.business_card_name as editor_name
+			FROM article_contents
+
+			JOIN	business_cards as editor_user
+			ON	editor_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+
+			WHERE article_content_id = ?';
+		$query = $this->db->query($sql, array($revision_id));
+		if ($query->num_rows() == 1)
 		{
-			$sql = 'SELECT article_content_id,
-					article_content_last_author_timestamp,
-					article_content_heading,
-					article_content_wikitext
-				FROM article_contents
-				WHERE article_content_article_id = ?
-				ORDER BY article_content_last_author_timestamp DESC
-				LIMIT 0, ?';
+			$row = $query->row();
+			return array(
+				'article'=>$row->article_content_article_id,
+				'lasteditid'=>$row->article_content_last_author_user_entity_id,
+				'lasteditname'=>$row->editor_name,
+				'updated'=>$row->article_content_last_author_timestamp,
+				'heading'=>$row->article_content_heading,
+				'subheading'=>$row->article_content_subheading,
+				'subtext'=>$row->article_content_subtext,
+				'wikitext'=>$row->article_content_wikitext,
+				'blurb'=>$row->article_content_blurb
+				);
 		}
 		else
-		{
-			$sql = 'SELECT article_content_id,
-					article_content_last_author_timestamp,
-					article_content_heading
-				FROM article_contents
-				WHERE article_content_article_id = ?
-				ORDER BY article_content_last_author_timestamp DESC
-				LIMIT 0, ?';
-		}
-		$query = $this->db->query($sql, array($article_id, $limit_count));
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result() as $row)
-			{
-				$result_item = array(
-					'id'=>$row->article_content_id,
-					'timestamp'=>$row->article_content_last_author_timestamp,
-					'heading'=>$row->article_content_heading
-					);
-				if ($get_blurb == TRUE)
-					$result_item['wikitext'] = $row->article_content_wikitext;
-				$result[] = $result_item;
-			}
-		}
-		return $result;
+			return FALSE;
 	}
 
 	/*****************************************************

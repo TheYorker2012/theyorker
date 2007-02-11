@@ -26,21 +26,34 @@
 	<h2>edit question</h2>
 	<form class="form">
 		<fieldset>
-			<label for="question">Question:</label>
-			<input type="text" name="question" value="What time does cocksucker open?" /><br />
-			<label for="category">Category:</label>
-			<select name="category">
+		<?php
+			echo '<label for="a_question">Question:</label>
+			<input type="text" name="a_question" value="';
+			if ($article['displayrevision'] != FALSE)
+				echo $article['displayrevision']['heading'];
+			echo '" /><br />
+			<label for="a_category">Category:</label>';
+		?>
+			<select name="a_category">
 				<?php
 					foreach ($categories as $category_id => $category)
 					{
-					echo '<option value="'.$category_id.'">'.$category['name'].'</option>';
+					echo '<option value="'.$category_id.'"';
+					if ($category_id == $article['header']['content_type'])
+						echo ' selected';
+					echo '>'.$category['name'].'</option>';
 					//echo '<option selected>Opening Times</option>';
 					}
 				?>
 			</select><br />
-			<label for="answer">Answer:</label>
-			<textarea name="answer" rows="5" cols="30" />Same times as your mum is open</textarea><br />
-			<input type="submit" value="Save" class="button" />
+			<label for="a_answer">Answer:</label>
+			<?php
+				if ($article['displayrevision'] != FALSE)
+					echo '<textarea name="a_answer" rows="5" cols="30" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
+				else
+					echo '<textarea name="a_answer" rows="5" cols="30" /></textarea><br />'
+			?>
+			<input type="submit" value="Save" class="button" name="r_submit_save" />
 		</fieldset>
 	</form>
 </div>

@@ -160,12 +160,13 @@ class Howdoi extends Controller
 	}
 	
 
-	function editquestion($article_id)
+	function editquestion($article_id, $revision_id)
 	{
 		if (!CheckPermissions('office')) return;
 
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
+		$this->load->model('article_model','article_model');
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 		
 		$this->pages_model->SetPageCode('office_howdoi_edit_question');
@@ -175,6 +176,10 @@ class Howdoi extends Controller
 		$this->main_frame->SetPage('questions');
 
 		// Insert main text from pages information
+
+		$data['parameters']['article_id'] = $article_id;
+		$data['parameters']['revision_id'] = $revision_id;
+
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
                 $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
@@ -182,7 +187,33 @@ class Howdoi extends Controller
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					);
-		$data['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+		$data['article']['displayrevision'] = FALSE;
+		//suggestions have no contents associated with them
+		if ($data['article']['header']['suggestion_accepted'] == 1)
+		{
+			if ($revision_id == -1) //pick default revision
+			{
+				if ($data['article']['header']['live_content'] != FALSE) //request
+				{
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['article']['header']['live_content']);
+				}
+				else
+				{
+					if (isset($data['article']['revisions'][0]))
+						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['article']['revisions'][0]['id']);
+				}
+			}
+			else //pick selected revision
+			{
+				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($revision_id);
+				if ($data['article']['displayrevision'] != FALSE)
+					if ($data['article']['displayrevision']['article'] != $article_id)
+						//the content id given is for another article
+						$data['article']['displayrevision'] = FALSE;
+			}
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
