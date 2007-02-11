@@ -23,6 +23,7 @@ class Yorkerdirectory extends Controller
 
 		$this->load->model('directory_model');
 
+		$this->load->helper('images');
 		$this->load->helper('text');
 		$this->load->helper('wikilink');
 	}

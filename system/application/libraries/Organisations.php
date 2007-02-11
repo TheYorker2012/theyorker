@@ -94,6 +94,8 @@ class Organisations
 	 * @param $OrganisationShortName Short name of organisation.
 	 * @return Organisation data relating to specified organisation or FALSE.
 	 */
+	 
+	//TODO: Must include the 		$this->load->helper('images'); somewhere, as this is required by this function now...
 	function _GetOrgData($OrganisationShortName)
 	{
 		$data = array();
