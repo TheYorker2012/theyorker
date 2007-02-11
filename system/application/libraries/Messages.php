@@ -94,6 +94,17 @@ class Messages
 			$_SESSION['messages'][] = $message->ToArray();
 		}
 	}
+	
+	/// Add a variable dump in a message to the queue.
+	/**
+	 * @param $Name string Name of variable.
+	 * @param $Variable var Variable to dump.
+	 */
+	function AddDumpMessage($Name,$Variable)
+	{
+		$this->AddMessage('information', '<H4>Variable: ' . $Name . '</H4>'.
+			'<pre>'.ascii_to_entities(var_export($Variable,true)).'</pre>');
+	}
 
 	/// Clear the queue of persistent messages.
 	function ClearQueue()

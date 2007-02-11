@@ -1069,7 +1069,7 @@ class Events_model extends Model
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
 	 * @return bool True on success, False on failure.
-	 * @pre 'draft'
+	 * @pre 'movedraft'
 	 * @pre Occurrence.start NOT NULL and Occurrence.end NOT NULL
 	 * @post 'published'
 	 */
@@ -1078,6 +1078,87 @@ class Events_model extends Model
 		return $this->OccurrenceChangeState(0,$OccurrenceId, 'movedraft','published',
 			array(	'event_occurrences.event_occurrence_start_time != 0',
 					'event_occurrences.event_occurrence_end_time != 0'));
+	}
+	
+	/// Delete a move draft occurrence, cleaning up after inactive occurrences.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @param $ActivationState string Private state to set postponed occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'movedraft'
+	 * @post deleted
+	 * @post Inactive occurrence which was postponed is set to @a $ActivationState.
+	 */
+	protected function OccurrenceMovedraftDelete($OccurrenceId, $ActivationState)
+	{
+		// find recently changed occurrence
+		// change all others pointing to $OccurrenceId to point to it, and it to null
+		// change state to $ActivationState
+		// delete occurrence
+		
+		if (FALSE) {
+			// Recreate the procedure!
+			/// @todo Add security
+			$sql_event_occurrence_movedraft_delete = '
+				CREATE PROCEDURE event_occurrence_movedraft_delete(occurrence_id INT, activation_state VARCHAR(10))
+				BEGIN
+					DECLARE preactive_id INT;
+					SELECT preactive.event_occurrence_id INTO preactive_id
+						FROM event_occurrences AS preactive
+						WHERE preactive.event_occurrence_active_occurrence_id = occurrence_id
+						ORDER BY preactive.event_occurrence_timestamp DESC
+						LIMIT 1;
+					UPDATE	event_occurrences
+						SET		event_occurrences.event_occurrence_active_occurrence_id
+									= IF(event_occurrences.event_occurrence_id = preactive_id,
+										NULL,
+										preactive_id),
+								event_occurrences.event_occurrence_state
+									= IF(event_occurrences.event_occurrence_id = preactive_id,
+										activation_state,
+										event_occurrences.event_occurrence_state)
+						WHERE	event_occurrences.event_occurrence_active_occurrence_id = occurrence_id;
+					DELETE FROM event_occurrences
+						WHERE	event_occurrences.event_occurrence_id = occurrence_id;
+				END';
+			// Drop and create
+			$this->db->query('DROP PROCEDURE event_occurrence_movedraft_delete');
+			$this->db->query($sql_event_occurrence_movedraft_delete);
+			
+		} else {
+			// Call the procedure
+			$this->db->query('CALL event_occurrence_movedraft_delete(?,?)',
+				array($OccurrenceId, $ActivationState));
+		}
+		
+		// Something should have changed
+		return ($this->db->affected_rows() > 0);
+	}
+	
+	/// Restore the postponed occurrence of a move draft.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'movedraft'
+	 * @post deleted
+	 * @post Inactive occurrence which was postponed is restored
+	 */
+	function OccurrenceMovedraftRestore($OccurrenceId)
+	{
+		return $this->OccurrenceMovedraftDelete($OccurrenceId, 'published');
+	}
+	
+	/// Cancel the postponed occurrences of a move draft.
+	/**
+	 * @param $OccurrenceId integer Id of occurrence.
+	 * @return bool True on success, False on failure.
+	 * @pre 'movedraft'
+	 * @post deleted
+	 * @post Inactive occurrence which was postponed is cancelled
+	 */
+	function OccurrenceMovedraftCancel($OccurrenceId)
+	{
+		return $this->OccurrenceMovedraftDelete($OccurrenceId, 'cancelled');
 	}
 	
 	/// Cancel a published occurrence.
@@ -1192,16 +1273,21 @@ class Events_model extends Model
 			// set all children cancelled
 			// set $occurrenceid pointing to new occurrence
 			// set $occurrenceid's children pointing to new occurrence
+			// update timestamp of previous active
 			$sql_update = 'UPDATE event_occurrences
 				SET		event_occurrences.event_occurrence_active_occurrence_id
 							= ?,
 						event_occurrences.event_occurrence_state
-							= \'cancelled\'
-				WHERE	event_occurrences.event_occurrence_id
-							= ?
-					OR	event_occurrences.event_occurrence_active_occurrence_id
-							= ?';
-			$query = $this->db->query($sql_update,array($new_id, $OccurrenceId, $OccurrenceId));
+							= \'cancelled\',
+						event_occurrences.event_occurrence_timestamp
+							= IF(event_occurrences.event_occurrence_id = ?,
+								CURRENT_TIMESTAMP(),
+								event_occurrences.event_occurrence_timestamp)
+				WHERE	event_occurrences.event_occurrence_id = ?
+					OR	event_occurrences.event_occurrence_active_occurrence_id = ?';
+					
+			$query = $this->db->query($sql_update,
+					array($new_id, $OccurrenceId, $OccurrenceId, $OccurrenceId));
 			
 			if ($this->db->affected_rows() > 0) {
 				return TRUE;

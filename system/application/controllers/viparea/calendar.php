@@ -76,6 +76,18 @@ class Calendar extends controller
 				$failure_message = 'Could not publish movement';
 				break;
 				
+			case 'restoremove':
+				$model_function = 'OccurrenceMovedraftRestore';
+				$success_message = 'Successfully restored movement';
+				$failure_message = 'Could not restore movement';
+				break;
+				
+			case 'cancelmove':
+				$model_function = 'OccurrenceMovedraftCancel';
+				$success_message = 'Successfully cancelled movement';
+				$failure_message = 'Could not cancel movement';
+				break;
+				
 			case 'delete':
 				$model_function = 'OccurrenceDelete';
 				$success_message = 'Successfully deleted';
@@ -181,6 +193,8 @@ class Calendar extends controller
 					}
 					if ($occurrence['status'] === 'movedraft') {
 						$operations[] = 'publishmove';
+						$operations[] = 'restoremove';
+						$operations[] = 'cancelmove';
 					}
 					if ($occurrence['status'] === 'trashed') {
 						$operations[] = 'untrash';
@@ -233,6 +247,7 @@ class Calendar extends controller
 					'cancelled'=>$filter->ExpressionPublicCancelled(),
 					'postponed'=>$filter->ExpressionPublicPostponed(),
 					'rescheduled'=>$filter->ExpressionPublicRescheduled(),
+					'ts' => 'event_occurrences.event_occurrence_timestamp',
 					));
 				
 				$rsvps = $this->events_model->GetOccurrenceRsvp($OccurrenceId);
