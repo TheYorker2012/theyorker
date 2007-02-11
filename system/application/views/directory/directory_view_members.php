@@ -1,21 +1,4 @@
-
-
-<?php
-if(empty($organisation['cards'])) {
-?>
-<div align="center">
-	<b>This organisation has not listed any of its members.</b>
-</div>
-<?php
-} else {
-?>
 <div class='RightToolbar'>
-	<h4>Facts</h4>
-	<div style='padding: 10px 5px 10px 5px;'>
-		<p>	Number of members : 1337 </p>
-		<p>	Member last joined : 5 hours ago</p>
-		<p>	Male to female ratio: 2:1</p>
-	</div>
 	<h4>Groups</h4>
 	<div style='padding: 10px 5px 10px 5px;'>
 		<p>
@@ -30,14 +13,27 @@ if(empty($organisation['cards'])) {
 			?>
 		</p>
 	</div>
+	<h4>Facts</h4>
+	<div style='padding: 10px 5px 10px 5px;'>
+		<p>	Number of members : 1337 </p>
+		<p>	Member last joined : 5 hours ago</p>
+		<p>	Male to female ratio: 2:1</p>
+	</div>
 </div>
 <div style="width: 420px; margin: 0px; padding-right: 3px; ">
 <?php
+if(empty($organisation['cards'])) {
+?>
+<div align="center">
+	<b>This organisation has not listed any members in this team.</b>
+</div>
+<?php
+} else {
 foreach ($organisation['cards'] as $member) {
 ?>
 <div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
 <div style='float:right;'>
-	<img src='/images/prototype/news/benest.png'/>
+	<img src='<?php echo $member['image']; ?>' alt='<?php echo $member['name']; ?>' />
 </div>
 <span style="font-size: large;  color: #2DC6D7; "><?php echo $member['name']."<br />".$member['title']; ?></span>
 <p style='font-size:small;'><?php echo $member['blurb']; ?></p>
@@ -88,10 +84,7 @@ if (!empty($organisation['editmode'])) {
 <?php
 }
 ?>
-</div>
 <?php
 }
 ?>
-<div style="width: 420px; margin: 0px; padding-right: 3px; ">
-Add a new member to this group [Add]
 </div>

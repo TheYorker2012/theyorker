@@ -336,9 +336,16 @@ EXTRAHEAD;
 		// translate into nice names for view
 		$data['organisation']['cards'] = array();
 		foreach ($members as $member) {
+			if($member['business_card_image_id'] == NULL)
+			{
+				$image = '/images/prototype/directory/members/no_image.png';
+			}else {
+				$image = photoLocation($member['business_card_image_id']);
+			}
 			$data['organisation']['cards'][] = array(
 				'name' => $member['business_card_name'],
 				'title' => $member['business_card_title'],
+				'image' => $image,
 				'course' => $member['business_card_course'],
 				'blurb' => $member['business_card_blurb'],
 				'email' => $member['business_card_email'],
