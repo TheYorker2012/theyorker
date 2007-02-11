@@ -1204,7 +1204,6 @@ END';
 	 */
 	function OccurrenceCancelledActivate($OccurrenceId)
 	{
-		/// @todo Add security
 		// Make this occurrence the active occurrence.
 		// update new_active
 		// on sibling (same active occurrence)
@@ -1212,7 +1211,12 @@ END';
 		// set active=(sibling is active ? NULL : active)
 		// where new active is this
 		//	and where new active.active is cancelled and active
+		$occurrence_query = new EventOccurrenceQuery();
 		$sql_activate = 'UPDATE event_occurrences AS new_active
+			INNER JOIN event_entities
+				ON	event_entities.event_entity_event_id
+						= new_active.event_occurrence_event_id
+				AND ' . $occurrence_query->ExpressionOwned() . '
 			LEFT JOIN event_occurrences AS old_active
 				ON	old_active.event_occurrence_id
 						= new_active.event_occurrence_active_occurrence_id
@@ -1264,8 +1268,9 @@ END';
 	 */
 	function OccurrencePostpone($OccurrenceId)
 	{
-		/// @todo Add security
 		$this->OccurrenceCancelledActivate($OccurrenceId);
+		
+		$occurrence_query = new EventOccurrenceQuery();
 		
 		// create new movedraft
 		$sql_insert = 'INSERT INTO event_occurrences (
@@ -1289,9 +1294,15 @@ END';
 				event_occurrences.event_occurrence_all_day,
 				event_occurrences.event_occurrence_ends_late
 			FROM event_occurrences
+			INNER JOIN event_entities
+				ON	event_entities.event_entity_event_id
+						= event_occurrences.event_occurrence_event_id
+				AND ' . $occurrence_query->ExpressionOwned() . '
 			WHERE event_occurrences.event_occurrence_id = ?';
 		$query = $this->db->query($sql_insert,$OccurrenceId);
 		
+		// If not owner, then no movedraft will have been created
+		// so we can assume ownership from now on
 		if ($this->db->affected_rows() > 0) {
 			$new_id = $this->db->insert_id();
 			
@@ -1360,7 +1371,7 @@ END';
 		assert('$this->mActiveEntityId === self::$cEntityUser');
 		
 		$occurrence_query = new EventOccurrenceQuery();
-		/// @todo Add security
+		
 		$sql = '
 			INSERT INTO event_occurrence_users (
 				event_occurrence_users.event_occurrence_user_user_entity_id,
