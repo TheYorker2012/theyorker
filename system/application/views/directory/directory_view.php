@@ -2,8 +2,9 @@
 <script type='text/javascript' src='/javascript/scriptaculous.js'></script>
 <script type='text/javascript' src='/javascript/slideshow.js'></script>
 <script type='text/javascript'>
-Slideshow.add('/images/photos/3.jpg');
-Slideshow.add('/images/photos/4.jpg');
+<?php foreach ($organisation['slideshow'] as $slideshow_image){ ?>
+Slideshow.add('<?php echo $slideshow_image['id']; ?>');
+<?php } ?>
 Slideshow.load();
 </script>
 <div class='RightToolbar'>

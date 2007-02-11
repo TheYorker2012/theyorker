@@ -101,9 +101,21 @@ class Organisations
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
+				$slideshow = array(
+								array(
+								'id' => photoLocation('80'),
+								),
+								array(
+								'id' => photoLocation('81'),
+								),
+								array(
+								'id' => photoLocation('77'),
+								),
+							);
 				$data['organisation'] = array(
 					'id'          => $org['organisation_entity_id'],
 					'name'        => $org['organisation_name'],
+					'slideshow'   => $slideshow,
 					'shortname'   => $org['organisation_directory_entry_name'],
 					'description' => $org['organisation_description'],
 					'type'        => $org['organisation_type_name'],
