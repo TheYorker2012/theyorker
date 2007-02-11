@@ -100,9 +100,9 @@ class Article_model extends Model
 	 * if the revisions doesn't exist returns FALSE.
 	 * NOTE: doesn't yet return extras such as fact boxes
 	 */
-	function GetRevisionContent($revision_id)
+	function GetRevisionContent($article_id, $revision_id)
 	{
-        	$sql = 'SELECT	article_content_article_id,
+        	$sql = 'SELECT	article_content_id,
 				article_content_last_author_user_entity_id,
 				article_content_last_author_timestamp,
 				article_content_heading,
@@ -111,18 +111,19 @@ class Article_model extends Model
 				article_content_wikitext,
 				article_content_blurb,
 				editor_user.business_card_name as editor_name
-			FROM article_contents
+			FROM	article_contents
 
 			JOIN	business_cards as editor_user
 			ON	editor_user.business_card_user_entity_id = article_content_last_author_user_entity_id
 
-			WHERE article_content_id = ?';
-		$query = $this->db->query($sql, array($revision_id));
+			WHERE	article_content_id = ?
+			AND	article_content_article_id = ?';
+		$query = $this->db->query($sql, array($revision_id, $article_id));
 		if ($query->num_rows() == 1)
 		{
 			$row = $query->row();
 			return array(
-				'article'=>$row->article_content_article_id,
+				'id'=>$row->article_content_id,
 				'lasteditid'=>$row->article_content_last_author_user_entity_id,
 				'lasteditname'=>$row->editor_name,
 				'updated'=>$row->article_content_last_author_timestamp,

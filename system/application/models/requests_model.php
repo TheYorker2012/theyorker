@@ -84,7 +84,7 @@ class Requests_Model extends Model
 				article_content_heading,
                                 article_content_last_author_user_entity_id,
 				article_editor_approved_user_entity_id,
-				author_user.business_card_name as author_name
+				author_user.business_card_name as author_name,
 				editor_user.business_card_name as editor_name
 			FROM	articles
 			JOIN	article_contents
@@ -136,7 +136,7 @@ class Requests_Model extends Model
 				article_publish_date,
 				article_request_entity_id,
 				article_editor_approved_user_entity_id,
-				suggestion_user.business_card_name as suggestion_name
+				suggestion_user.business_card_name as suggestion_name,
 				editor_user.business_card_name as editor_name
 			FROM	articles
 
@@ -162,9 +162,9 @@ class Requests_Model extends Model
 					'description'=>$row->article_request_description,
 					'deadline'=>$row->article_publish_date,
 					'suggestionuserid'=>$row->article_request_entity_id,
-					'suggestionusername'=>$row->suggestion_user,
+					'suggestionusername'=>$row->suggestion_name,
 					'editorid'=>$row->article_editor_approved_user_entity_id,
-					'editorname'=>$row->editor_user
+					'editorname'=>$row->editor_name
 					);
 				$result[] = $result_item;
 			}

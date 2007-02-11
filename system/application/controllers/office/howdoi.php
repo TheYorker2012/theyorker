@@ -188,41 +188,57 @@ class Howdoi extends Controller
 					'name'=>'Unassigned',
 					);
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
-		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
-		$data['article']['displayrevision'] = FALSE;
-		//suggestions have no contents associated with them
-		if ($data['article']['header']['suggestion_accepted'] == 1)
+		$correct_content_type = FALSE;
+		foreach ($data['categories'] as $category_id => $category)
 		{
-			if ($revision_id == -1) //pick default revision
-			{
-				if ($data['article']['header']['live_content'] != FALSE) //request
-				{
-					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['article']['header']['live_content']);
-				}
-				else
-				{
-					if (isset($data['article']['revisions'][0]))
-						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['article']['revisions'][0]['id']);
-				}
-			}
-			else //pick selected revision
-			{
-				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($revision_id);
-				if ($data['article']['displayrevision'] != FALSE)
-					if ($data['article']['displayrevision']['article'] != $article_id)
-						//the content id given is for another article
-						$data['article']['displayrevision'] = FALSE;
-			}
+                	if ($data['article']['header']['content_type'] == $category_id)
+			$correct_content_type = TRUE;
 		}
+		//echo $correct_content_type;
+		if ($correct_content_type == TRUE)
+		{
+			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+			$data['article']['displayrevision'] = FALSE;
+			//suggestions have no contents associated with them
+			if ($data['article']['header']['suggestion_accepted'] == 1)
+			{
+				if ($revision_id == -1) //pick default revision
+				{
+					if ($data['article']['header']['live_content'] != FALSE) //request
+					{
+						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
+					}
+					else
+					{
+						if (isset($data['article']['revisions'][0]))
+							$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
+					}
+				}
+				else //pick selected revision
+				{
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
+					if ($data['article']['displayrevision'] == FALSE)
+					{
+	                			$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this question. Default selected.');
+	                			redirect('/office/howdoi/editquestion/'.$article_id.'/');
+	    				}
+				}
+			}
+	
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
 
-		// Set up the view
-		$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
-
-		// Set up the public frame
-		$this->main_frame->SetContent($the_view);
-
-		// Load the public frame view
-		$this->main_frame->Load();
+			// Set up the public frame
+			$this->main_frame->SetContent($the_view);
+	
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		else
+		{
+                	$this->main_frame->AddMessage('error','Specified article is not a How Do I question.');
+                	redirect('/office/howdoi/');
+		}
 	}
 
 	function categorymodify()

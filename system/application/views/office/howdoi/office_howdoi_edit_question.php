@@ -3,22 +3,43 @@
 	<div class="Entry">
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Questions</a> that are waiting to be published.
+			There are <b>?</b> <a href='#'>Questions</a> that are waiting to be published.
 		</div>
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Suggestions</a> that require attention.
+			There are <b>?</b> <a href='#'>Suggestions</a> that require attention.
 		</div>
 	</div>
-	<h4>Revisions</h4>
+	<h4>Revisions (Latest First)</h4>
 	<div class="Entry">
-		<ol>
-			<li>Dan Ashby 04/02/2007 3:39PM
-			<li>Nick Evans 04/02/2007 3:20PM <span class="orange">(Published)</span>
-			<li>Dan Ashby 03/02/2007 3:11PM 
-			<li>John Smith 03/02/2007 3:11PM 
-			<li>Rich Rout 02/02/2007 1:11AM 
-		</ol>
+		<?php
+		if (count($article['revisions']) > 0)
+		{
+			$first_hr = FALSE;
+			foreach ($article['revisions'] as $revision)
+			{
+				if ($first_hr == FALSE)
+					$first_hr = TRUE;
+				else
+					echo '<hr>';
+				$revisiontime = strtotime($revision['updated']);
+				$revisiontimeformat = date('F jS Y', $revisiontime).' at '.date('g.i A', $revisiontime);
+				echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>';
+				if ($revision['id'] == $article['header']['live_content'])
+				{
+					echo '<br /><span class="orange">(Published';
+					if ($revision['id'] == $article['displayrevision']['id'])
+						echo ', Displayed';
+					echo ')</span>';
+				}
+				elseif ($revision['id'] == $article['displayrevision']['id'])
+					echo '<br /><span class="orange">(Displayed)</span>';
+				echo '<br />by '.$revision['username'].'<br />on '.$revisiontimeformat;
+			}
+		}
+		else
+			echo 'No Revisions Yet.';
+		?>
 	</div>
 </div>
 
@@ -38,11 +59,11 @@
 				<?php
 					foreach ($categories as $category_id => $category)
 					{
-					echo '<option value="'.$category_id.'"';
-					if ($category_id == $article['header']['content_type'])
-						echo ' selected';
-					echo '>'.$category['name'].'</option>';
-					//echo '<option selected>Opening Times</option>';
+						echo '<option value="'.$category_id.'"';
+						if ($category_id == $article['header']['content_type'])
+							echo ' selected';
+						echo '>'.$category['name'].'</option>';
+						//echo '<option selected>Opening Times</option>';
 					}
 				?>
 			</select><br />
