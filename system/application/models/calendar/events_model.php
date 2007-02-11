@@ -1014,14 +1014,55 @@ class Events_model extends Model
 	
 	/// Edit an existing occurrence.
 	/**
-	 * @param $OccurrenceId int ID of occurrence to alter.
-	 * @param $OccurrenceData array Occurrence Data.
+	 * @param $EventId int ID of event to add occurrence to.
+	 * @param $OccurrenceData array Array of Occurrence Data arrays.
+	 * @return Number of occurrences changed.
+	 *
+	 * Each occurrence must have an 'id' element.
 	 */
-	function OccurrencesAlter($OccurrenceId, $OccurrenceData)
+	function OccurrencesAlter($EventId, $OccurrenceData)
 	{
-		/// @todo Implement.
+		static $translation = array(
+			'description'	=> 'event_occurrences.event_occurrence_description',
+			'location'		=> 'event_occurrences.event_occurrence_location',
+			'postcode'		=> 'event_occurrences.event_occurrence_postcode',
+			'all_day'		=> 'event_occurrences.event_occurrence_all_day',
+		);
+		$result = 0;
+		foreach ($OccurrenceData as $occurrence) {
+			$bind_data = array();
+			$sets = array();
+			foreach ($occurrence as $key => $value) {
+				if (array_key_exists($key, $translation)) {
+					$sets[] = $translation[$key] . '=?';
+					$bind_data[] = $value;
+				}
+			}
+			// start time
+			if (array_key_exists('start', $occurrence)) {
+				$sets[] = 'event_occurrences.event_occurrence_start_time = FROM_UNIXTIME(?)';
+				$bind_data[] = $occurrence['start'];
+			}
+			// end time
+			if (array_key_exists('end', $occurrence)) {
+				$sets[] = 'event_occurrences.event_occurrence_end_time = FROM_UNIXTIME(?)';
+				$bind_data[] = $occurrence['end'];
+			}
+			
+			if (!empty($sets)) {
+				$sql = 'UPDATE event_occurrences SET ';
+				$sql .= implode(', ', $sets);
+				$sql .= ' WHERE	event_occurrences.event_occurrence_id = ?
+						AND	event_occurrences.event_occurrence_event_id = ?';
+				$bind_data[] = $occurrence['id'];
+				$bind_data[] = $EventId;
+				
+				$query = $this->db->query($sql, $bind_data);
+				$result += $this->db->affected_rows();
+			}
+		}
+		return $result;
 	}
-	
 	
 	/// Change the state of an occurrence explicitly.
 	/**
