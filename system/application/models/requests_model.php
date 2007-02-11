@@ -1,6 +1,6 @@
 <?php
 /**
- *Template for request_model, not complete
+ *Template for request_model,  still to be tested
  *@author Alex Fargus (agf501)
  **/
 
@@ -12,7 +12,7 @@ class Requests_Model extends Model
 	}
 
 	//Add a  new request to the article table
-	function CreateRequest($status,$type_id,$title,$description,$user)
+	function CreateRequest($status,$type_id,$title,$description,$user,$date)
 	{
 		if ($status == 'suggestion')
 		{
@@ -44,10 +44,11 @@ class Requests_Model extends Model
 					article_request_title,
 					article_request_description,
 					article_suggestion_accepted,
-					article_request_entity_id
-					article_editor_approved_user_etity_id)
-				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?)';
-			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user));
+					article_request_entity_id,
+					article_editor_approved_user_etity_id,
+					article_publish_date)
+				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
+			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
 			$sql = 'SELECT 	article_id 
 				FROM	articles
 				WHERE	(article_id=LAST_INSERT_ID())';
@@ -64,14 +65,49 @@ class Requests_Model extends Model
 	}
 
 	//Make a change to a request status in the article table
-	function UpdateRequest($article_id,$data)
+	function UpdateRequestStatus($article_id,$status,$data)
 	{
+		if ($status == 'request')
+		{
+			$sql = 'UPDATE 	articles
+				SET	article_suggestion_accepted = 1,
+					article_editor_approved_user_entity_id = ?,
+					article_publish_date = ?,
+					article_request_title = ?,
+					article_request_description = ?
+				WHERE	(article_id = ?)';
+			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$article_id));
+		}elseif ($status == 'publish')
+		{
+			$sql = 'UPDATE 	articles
+				SET	article_live_content_id = ?,
+					article_publish_date = ?,
+					article_editor_approved_user_entity_id = ?
+				WHERE	(article_id = ?)';
+			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
+		}
+
 		return $status;
 	}
 
 	function GetPulledArticles($type_id)
 	{
-
+		$sql = 'SELECT	article_id 
+			FROM	articles
+			LEFT JOIN content_types
+			ON 	article_content_type_id = content_type_id
+			WHERE	(content_type_codename = ?
+			AND	article_pulled = 1)
+			ORDER BY article_publish_date DESC';
+		$query = $this->db->query($sql,array($type_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = $row->article_id;
+			}
+		}
 	}
 
 	//Should this be get completed articles?
@@ -205,7 +241,6 @@ class Requests_Model extends Model
 				$result[] = $result_item;
 			}
 		}
-
 		return $result;
 	} 
 	
@@ -239,44 +274,85 @@ class Requests_Model extends Model
 				$result[] = $result_item;
 			}
 		}
-
 		return $result;
 	}
 
 	function AddUserToRequest($article_id,$user_id)
 	{
 		$sql = 'INSERT	INTO article_writers(
-				article_writer_user_entity_id
+				article_writer_user_entity_id,
 				article_writer_article_id)
 			VALUES	(?,?)';
 		$query = $this->db->query($sql,array($user_id,$article_id));
-
 	}	
 	
 	function RemoveUserFromRequest($article_id,$user_id)
 	{
-		$sql = 'DELETE FROM article_writers WHERE (artice_writer_article_id = ?
-			AND article_writer_user_entiy_id = ?)';
+		$sql = 'DELETE FROM article_writers WHERE (article_writer_article_id = ?
+			AND article_writer_user_entity_id = ?)';
+		$query = $this->db->query($sql,array($article_id,$user_id));
 	}
 	
 	function RequestPhoto($article_id,$user_id)
 	{
-	
+		$sql = 'INSERT INTO ';
 	}
 	
 	function AcceptPhoto($article_id,$photo_id)
 	{
-	
+		$sql = '';
 	}
 	
 	function AcceptRequest($id, $user)
 	{
-	
+		$sql = 'UPDATE 	article_writers
+			SET	article_writer_status = "accepted"
+			WHERE	(article_writer_user_entity_id = ?
+			AND	article_writer_article_id = ?)';
+		$query = $this->db->query($sql,array($user,$id));
 	}
 	
 	function DeclineRequest($id,$user)
 	{
 	
+		$sql = 'UPDATE 	article_writers
+			SET	article_writer_status = "declined"
+			WHERE	(article_writer_user_entity_id = ?
+			AND	article_writer_article_id = ?)';
+		$query = $this->db->query($sql,array($user,$id));
 	} 
+
+	function CreateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
+	{
+		$this->load->library('wikiparser');
+		$cache = $this->wikiparser->parse($wikitext);
+		$sql = 'INSERT	INTO article_contents(
+				article_content_article_id,
+				article_content_last_author_user_entity_id,
+				article_content_heading,
+				article_content_subheading,
+				article_content_subtext,
+				article_content_wikitext,
+				article_content_wikitext_cache,
+				article_content_blurb)
+			VALUES	(?,?,?,?,?,?,?,?)';
+		$query = $this->db->query($sql,array($id,$user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb));
+	}
+
+	function UpdateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
+	{
+		$this->load->library('wikiparser');
+                $cache = $this->wikiparser->parse($wikitext);
+		$sql = 'UPDATE	article_contents
+			SET	article_content_last_author_user_entity_id = ?,
+				article_content_heading = ?,
+				article_content_subheading = ?,
+				article_content_subtext = ?,
+				article_content_wikitext = ?,
+				article_content_wikitext_cache = ?,
+				article_content_blurb = ?
+			WHERE	(article_content_id = ?)';
+		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
+	}	
 }
 ?>
