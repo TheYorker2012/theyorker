@@ -42,7 +42,7 @@ class Calendar extends Controller {
 		$this->load->model('calendar/events_model');
 		$ChangedEvents = new EventOccurrenceFilter();
 		$ChangedEvents->DisableFilter('private');
-		$ChangedEvents->DisableFilter('active');
+		//$ChangedEvents->DisableFilter('active');
 		$ChangedEvents->DisableFilter('show');
 		$ChangedEvents->SetSpecialCondition(
 			'event_occurrence_users.event_occurrence_user_timestamp <
