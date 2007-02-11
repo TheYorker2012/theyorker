@@ -22,8 +22,14 @@
 		<label for='details_name'>Organistaion name :</label>
 		<input type='text' name='details_name' style='width: 150px;'value='<?php echo $organisation['name']; ?>'/>
 		<br />
+		<label for='details_fileas'>Alphabetically List As:</label>
+		<input type='text' name='orgdetails_alphlisting' style='width: 220px;' />
+		<br />
 		<label for='details_shortname'>Short name :</label>
 		<input type='text' name='details_shortname' style='width: 150px;'value='<?php echo $organisation['shortname']; ?>'/>
+		<br />
+		<label for='details_yorkipedia'>Yorkipedia Entry:</label>
+		<input type='text' name='orgdetails_yorkipedia' style='width: 220px;' value='<?php echo $organisation['yorkipedia']['title']; ?>'/>
 		<br />
 		<label for='details_org_type'>Category :</label>
 		<SELECT name="details_org_type">

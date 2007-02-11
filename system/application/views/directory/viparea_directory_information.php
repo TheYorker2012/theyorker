@@ -1,13 +1,25 @@
 <div class='RightToolbar'>
 <h4>What's this?</h4>
-	<p>
+	<div class="Entry">
 		<?php echo $main_text; ?>
-	</p>
+	</div>
 <h4>Other tasks</h4>
-<ul>
-	<li><a href='#'>Maintain my account</a></li>
-	<li><a href='#'>Remove this directory entry</a></li>
-</ul>
+	<div class="Entry">
+	<ul>
+		<li><a href='#'>Maintain my account</a></li>
+		<li><a href='#'>Remove this directory entry</a></li>
+	</ul>
+	</div>
+	<h4>Revisions</h4>
+	<div class="Entry">
+		<ol>
+			<li>Dan Ashby 04/02/2007 3:39PM
+			<li>Nick Evans 04/02/2007 3:20PM <span class="orange">(Published)</span>
+			<li>Dan Ashby 03/02/2007 3:11PM 
+			<li>John Smith 03/02/2007 3:11PM 
+			<li>Rich Rout 02/02/2007 1:11AM 
+		</ol>
+	</div>
 </div>
 
 <form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/edit' method='POST' class='form'>
@@ -27,12 +39,6 @@
 		<br />
 		<label for='orgdetails_website'>Website:</label>
 		<input type='text' name='orgdetails_website' style='width: 220px;' value='<?php echo $organisation['website']; ?>'/>
-		<br />
-		<label for='orgdetails_website'>Yorkipedia Entry:</label>
-		<input type='text' name='orgdetails_yorkipedia' style='width: 220px;' value='<?php echo $organisation['yorkipedia']['title']; ?>'/>
-		<br />
-		<label for='orgdetails_website'>Alphabetically List As:</label>
-		<input type='text' name='orgdetails_alphlisting' style='width: 220px;' />
 		<br />
 		<label for='orgdetails_location'>Location:</label>
 		<input type='text' name='orgdetails_location' style='width: 220px;' value='<?php echo $organisation['location']; ?>' />
