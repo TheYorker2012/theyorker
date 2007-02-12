@@ -354,5 +354,13 @@ class Requests_Model extends Model
 			WHERE	(article_content_id = ?)';
 		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
 	}	
+
+	function RejectSuggestion($id)
+	{
+		$sql = 'UPDATE	articles
+			SET	article_deleted = 1
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($id));
+	}
 }
 ?>

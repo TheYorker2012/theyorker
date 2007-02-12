@@ -366,5 +366,13 @@ class Article_model extends Model
 			WHERE article_photo_id = ?';
 		$this->db->query($sql, array($id));
 	}
+
+	function PullArticle($id)
+	{
+		$sql = 'UPDATE	articles
+			SET	article_pulled = 1
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($id));
+	}
 }
 ?>
