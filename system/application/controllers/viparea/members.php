@@ -52,6 +52,24 @@ class Members extends Controller
 		// Load the main frame
 		$this->main_frame->Load();
 	}
+	
+	function add()
+	{
+		if (!CheckPermissions('vip')) return;
+		
+		$this->pages_model->SetPageCode('viparea_members');	
+			
+		$data = array(
+			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'organisation' => $this->members_model->GetAllMemberDetails($this->user_auth->organisationLogin)
+		);
+		// Set up the content
+		$this->main_frame->SetContentSimple('viparea/addmembers', $data);
+		
+		// Load the main frame
+		$this->main_frame->Load();
+	}	
+	
 }
 
 ?>
