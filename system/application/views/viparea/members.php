@@ -19,16 +19,16 @@
 <div class='blue_box'>
 	<h2>members</h2>
 	<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/add'>Add a member.</a>
-	<table border="1">
-	<tr>
-		<td><strong>Forename</strong></td>
-		<td><strong>Surname</strong></td>
-		<td><strong>Email</strong></td>
-		<td><strong>Paid</strong></td>
-		<td><strong>E?</strong></td>
-		<td><strong>Conf</strong></td>
-		<td><strong>VIP</strong></td>
-		<td><strong>Edit</strong></td>
+	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
+	<tr style="background-color: #eee">
+		<th>Forename</th>
+		<th>Surname</th>
+		<th>Email</th>
+		<th>Paid</th>
+		<th>E?</th>
+		<th>Conf</th>
+		<th>VIP</th>
+		<th>Edit</th>
 	</tr>
 	<?php for($i=0;$i<count($organisation);$i++) {?>
 	<tr>
