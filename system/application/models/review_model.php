@@ -69,7 +69,7 @@ class Review_model extends Model {
 		$sql =
 			'
 			SELECT
-			 review_context_contents.review_context_content_last_author_timestamp as timestamp,
+			 unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
 			 business_cards.business_card_name as name,
 			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
 			 review_context_contents.review_context_content_id as context_content_id,
