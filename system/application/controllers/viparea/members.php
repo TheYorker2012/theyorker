@@ -22,48 +22,32 @@ class Members extends Controller
 		$this->pages_model->SetPageCode('viparea_members');		
 		
 		$data = array(
-			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'organisation' => $this->members_model->GetMemberDetails($this->user_auth->organisationLogin),
-			'team' => $this->members_model->GetTeams($this->user_auth->organisationLogin)
-				/*		array(
-						array(
-							'id' => '1',
-							'name' => 'Team 1',
-						),
-						array(
-							'id' => '2',
-							'name' => 'Team 2',
-						),
-						array(
-							'id' => '3',
-							'name' => 'Team 3',
-						),
-					),
-			'members' => array(
-							array(
-								'id' => '1',
-								'forename' => 'Example',
-								'sirname' => 'Example',
-								'email' => 'oj502@york.ac.uk',
-								'paid' => 'Y',
-								'mailing' => 'Y',
-								'awaiting_reply' => 'Y',
-								'vip' => 'N',
-							),
-							array(
-								'id' => '2',
-								'forename' => 'Example',
-								'sirname' => 'Example',
-								'email' => 'oj502@york.ac.uk',
-								'paid' => 'Y',
-								'mailing' => 'Y',
-								'awaiting_reply' => 'Y',
-								'vip' => 'N',
-							),
-						),*/
+			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'user'         => $this->user_auth->entityId,
+			'organisation' => $this->members_model->GetAllMemberDetails($this->user_auth->organisationLogin),
+			'team'         => $this->members_model->GetTeams($this->user_auth->organisationLogin)
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/members', $data);
+		
+		// Load the main frame
+		$this->main_frame->Load();
+	}
+	
+	function edit($member_id)
+	{
+		if (!CheckPermissions('vip')) return;
+		
+		$this->pages_model->SetPageCode('viparea_members');	
+			
+		$data = array(
+			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'organisation' => $this->members_model->GetAllMemberDetails($this->user_auth->organisationLogin),
+			'member'       => $this->members_model->GetMemberDetails($member_id)
+
+		);
+		// Set up the content
+		$this->main_frame->SetContentSimple('viparea/editmembers', $data);
 		
 		// Load the main frame
 		$this->main_frame->Load();
