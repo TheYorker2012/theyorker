@@ -3,8 +3,9 @@
 	<form class="form" method="post" name="clearform" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<input type="hidden" name="clear" value="clear" />
+			<a href="<?=site_url('office')?>">Return to the Office</a><br />
 			<?php if($this->uri->segment(4)) {
-				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a>';
+				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a><br />';
 			}?>
 			<a href="javascript:document.clearform.submit()">Start a new Search</a>
 		</div>
