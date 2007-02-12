@@ -4,7 +4,7 @@
 		<div class="Entry">
 			<input type="hidden" name="clear" value="clear" />
 			<?php if($this->uri->segment(4)) {
-				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a>'
+				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a>';
 			}?>
 			<a href="javascript:document.clearform.submit()">Start a new Search</a>
 		</div>
