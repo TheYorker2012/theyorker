@@ -1,10 +1,12 @@
 <div class="RightToolbar">
 	<h4>Actions</h4>
-	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+	<form class="form" method="post" name="clearform" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
-			<fieldset>
-				<input type="submit" class="button" name="submit" value="Clear" />
-			</fieldset>
+			<input type="hidden" name="clear" value="clear" />
+			<?php if($this->uri->segment(4)) {
+				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a>'
+			}?>
+			<a href="javascript:document.clearform.submit()">Start a new Search</a>
 		</div>
 	</form>
 	<h4>Search by...</h4>

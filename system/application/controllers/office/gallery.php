@@ -36,6 +36,7 @@ define('PHOTOS_PERPAGE', 12);
 			$pageNumbers = '';
 		}
 		$page = $this->uri->segment(3, 0);
+		
 		if ($this->input->post('submit') == 'Clear') {
 			$_SESSION['img_search'] = false;
 		} elseif ($this->input->post('submit')) {
