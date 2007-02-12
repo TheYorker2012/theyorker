@@ -53,7 +53,6 @@ class Review_model extends Model {
 			INNER JOIN review_context_contents 
 			ON review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id 
 			WHERE 1
-			ORDER BY organisation_name
 			';
 
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
