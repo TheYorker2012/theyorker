@@ -71,7 +71,8 @@ class Review_model extends Model {
 			SELECT
 			 review_context_contents.review_context_content_last_author_timestamp as timestamp,
 			 business_cards.business_card_name as name,
-			 review_context_contents.review_context_content_id
+			 review_context_contents.review_context_content_id as context_content_id,
+			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
