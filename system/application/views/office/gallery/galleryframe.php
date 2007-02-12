@@ -1,4 +1,12 @@
 <div class="RightToolbar">
+	<h4>Actions</h4>
+	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+		<div class="Entry">
+			<fieldset>
+				<input type="submit" class="button" name="submit" value="Clear" />
+			</fieldset>
+		</div>
+	</form>
 	<h4>Search by...</h4>
 	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
