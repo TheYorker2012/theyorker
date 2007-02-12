@@ -18,27 +18,25 @@
 </div>
 <div class='blue_box'>
 	<h2>members</h2>
-	<a href='/viparea/members/view/<?php echo $organisation; ?>/add'>Add a member.</a>
-	<table>
+	<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/add'>Add a member.</a>
+	<table border="1">
 	<tr>
 		<td><strong>Forename</strong></td>
 		<td><strong>Surname</strong></td>
 		<td><strong>Email</strong></td>
-		<td><strong>£</strong></td>
-		<td><strong>@</strong></td>
-		<td><strong>R</strong></td>
-		<td><strong>V</strong></td>
+		<td><strong>Paid</strong></td>
+		<td><strong>Email?</strong></td>
+		<td><strong>VIP</strong></td>
 		<td><strong>Edit</strong></td>
 	</tr>
-	<?php foreach ($members as $member) {?>
+	<?php for($i=0;$i<count($organisation);$i++) {?>
 	<tr>
-		<td><?php echo $member['forename']; ?></td>
-		<td><?php echo $member['sirname']; ?></td>
-		<td><a href='mailto:<?php echo $member['email']; ?>'><?php echo $member['email']; ?></a></td>
-		<td><?php echo $member['paid']; ?></td>
-		<td><?php echo $member['mailing']; ?></td>
-		<td><?php echo $member['awaiting_reply']; ?></td>
-		<td><?php echo $member['vip']; ?></td>
+		<td><?php echo $organisation[$i]['firstname']; ?></td>
+		<td><?php echo $organisation[$i]['firstname']; ?></td>
+		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
+		<td><?php echo $organisation[$i]['paid']; ?></td>
+		<td><?php echo $organisation[$i]['if_email']; ?></td>
+		<td><?php echo $organisation[$i]['vip']; ?></td>
 		<td><a href='/viparea/members/view/<?php echo $organisation; ?>/edit/<?php echo $member['id']; ?>'>E</a></td>
 	</tr>
 	<?php } ?>
@@ -46,19 +44,19 @@
 </div>
 <div class='grey_box'>
 <h2>edit member</h2>
-<form action='/viparea/members/view/<?php echo $organisation; ?>/edit' class='form' method='POST'>
+<form action='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/edit' class='form' method='POST'>
 	<fieldset>
-		<a href='/viparea/members/view/<?php echo $organisation; ?>/delete/<?php if(!empty($editmember['id'])){echo $editmember['id'];} ?>'>Delete Member</a>
+		<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/delete/<?php if(!empty($editmember['id'])){echo $editmember['id'];} ?>'>Delete Member</a>
 		<br />
 		<label for='member_name'>Name:</label>
-		<input type='text' name='member_name' value='<?php if(!empty($editmember['name'])){echo $editmember['name'];} ?>'/>
+		<input type='text' name='member_name' value='foo'/>
 		<br />
 		<label for='member_group'>Group:</label>
 		<select name='member_group'>
 		<?php
-		foreach ($teams as $team) {
+		for($i=0;$i<count($team);$i++) {
 		?>
-		<option value='<?php echo $team['id'] ?>' <?php if(!empty($editmember['team_id'])){if ($team['id']==$editmember['team_id']) echo 'SELECTED';}?>><?php echo $team['name'] ?></option>
+		<option value='<?php echo $team[$i]['organisation_id'] ?>' <?php if(!empty($editmember['team_id'])){if ($team['id']==$editmember['team_id']) echo 'SELECTED';}?>><?php echo $team[$i]['organisation_name'] ?></option>
 		<?php
 		}
 		?>
