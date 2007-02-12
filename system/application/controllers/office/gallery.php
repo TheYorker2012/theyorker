@@ -49,7 +49,7 @@ define('PHOTOS_PERPAGE', 12);
 		if (isset($_SESSION['img_search']) and $_SESSION['img_search']) {
 			$photos = $this->db->select('*')->from('photos');
 			if ($_SESSION['img_search']) {
-				switch($_SESSION['search_by']) {
+				switch($_SESSION['img_search_by']) {
 					case "date":
 						$photos = $photos->like('photo_timestamp', $_SESSION['img_search']);
 					break;
@@ -81,7 +81,7 @@ define('PHOTOS_PERPAGE', 12);
 					break;
 				}
 			}
-			$photo = $photo->limit(PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE)->get();
+			$photos = $photos->limit(PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE)->get();
 		} else {
 			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE);
 		}
