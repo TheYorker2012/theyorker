@@ -254,7 +254,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		}
 		
 		/// @todo Optimise main event query to avoid left joins amap
-		$parameters = array();
+		$bind_data = array();
 		$sql = '
 			SELECT '.implode(',',$FieldStrings).' FROM event_occurrences
 			INNER JOIN events
@@ -282,8 +282,8 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 			LEFT JOIN event_occurrences AS active_occurrence
 				ON	event_occurrences.event_occurrence_active_occurrence_id
 						= active_occurrence.event_occurrence_id';
-		$parameters[] = $this->mEntityId;
-		$parameters[] = $this->mEntityId;
+		$bind_data[] = $this->mEntityId;
+		$bind_data[] = $this->mEntityId;
 		
 		// SOURCES -------------------------------------------------------------
 		
@@ -309,7 +309,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				$includes = array();
 				foreach ($this->mInclusions as $inclusion) {
 					$includes[] = 'event_entities.event_entity_event_id=?';
-					$parameters[] = $inclusion;
+					$bind_data[] = $inclusion;
 				}
 				$included = '('.implode(' AND ', $includes).')';
 			} else {
@@ -380,7 +380,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		
 		// Try it out
 		$CI = &get_instance();
-		$query = $CI->db->query($sql,$parameters);
+		$query = $CI->db->query($sql,$bind_data);
 		return $query->result_array();
 	}
 	
@@ -547,6 +547,8 @@ class Events_model extends Model
 	function __construct()
 	{
 		parent::Model();
+		
+		$this->load->model('calendar/recurrence_model');
 		
 		// Get entity id from user_auth library
 		$CI = &get_instance();
@@ -878,6 +880,67 @@ class Events_model extends Model
 	}
 	
 	
+	/// Get an existing event.
+	/**
+	 * @param $EventId integer Event id.
+	 * @param $Fields array of aliases to select expressions (field names).
+	 *	e.g. array('name' => 'events.event_name')
+	 * @param $RecurrenceRule bool Whether to get recurrence rule.
+	 * @return
+	 *	- array Event data.
+	 *	- FALSE on failure.
+	 */
+	function EventGet($EventId, $Fields, $RecurrenceRule)
+	{
+		if ($RecurrenceRule) {
+			$Fields[] = $this->recurrence_model->SqlSelectRecurrenceRule();
+		}
+		
+		$FieldStrings = array();
+		foreach ($Fields as $Alias => $Expression) {
+			if (is_string($Alias)) {
+				$FieldStrings[] = $Expression.' AS '.$Alias;
+			} else {
+				$FieldStrings[] = $Expression;
+			}
+		}
+		
+		$occurrence_query = new EventOccurrenceQuery();
+		
+		$bind_data = array();
+		$sql = '
+			SELECT '.implode(',',$FieldStrings).' FROM events
+			LEFT JOIN event_types
+				ON	events.event_type_id = event_types.event_type_id
+			INNER JOIN event_entities
+				ON	event_entities.event_entity_event_id = events.event_id
+				AND	' . $occurrence_query->ExpressionOwned();
+		if ($RecurrenceRule) {
+			$sql .= '
+			LEFT JOIN recurrence_rules
+				ON events.event_recurrence_rule_id
+					= recurrence_rules.recurrence_rule_id';
+		}
+		$sql .= '
+			WHERE events.event_id = ?';
+		$bind_data[] = $EventId;
+		
+		$query = $this->db->query($sql, $bind_data);
+		if ($query->num_rows() === 1) {
+			$result = $query->result_array();
+			$result = $result[0];
+			if ($RecurrenceRule) {
+				if (NULL !== $result['recurrence_rule_id']) {
+					$result['event_recurrence_rule'] = new RecurrenceRule($result);
+				}
+			}
+			return $result;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	
 	/// Create a new event.
 	/**
 	 * @param $EventData array Event data.
@@ -895,6 +958,7 @@ class Events_model extends Model
 			'name'			=> 'events.event_name',
 			'description'	=> 'events.event_description',
 			'parent'		=> 'events.event_parent_id',
+			'recurrence_rule_id'	=> 'events.event_recurrence_rule_id',
 		);
 		$fields = array();
 		$bind_data = array();
@@ -958,11 +1022,11 @@ class Events_model extends Model
 	 * @return array(
 	 *	'events' => events changed,
 	 *	'occurrences' => occurrences changed)
-	 * @pre Each event must have an 'id' element.
 	 * @exception Exception The event could not be created.
 	 */
 	function EventsAlter($EventData)
 	{
+		/// @pre Each event must have an 'id' element.
 		assert('array_key_exists(\'id\',$EventData) && is_int($EventData[\'id\'])');
 		if ($this->mReadOnly) {
 			throw new Exception(self::$cReadOnlyMessage);
@@ -971,8 +1035,9 @@ class Events_model extends Model
 		$event_id = $EventData['id'];
 		
 		static $translation = array(
-			'name'			=> 'events.event_name',
-			'description'	=> 'events.event_description',
+			'name'					=> 'events.event_name',
+			'description'			=> 'events.event_description',
+			'recurrence_rule_id'	=> 'events.event_recurrence_rule_id',
 		);
 		$fields = array();
 		$bind_data = array();

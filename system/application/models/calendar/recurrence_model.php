@@ -1,14 +1,10 @@
 <?php
 
 /**
- * @file Recurrence.php
- * @brief Date Recurrence Library.
+ * @file recurrence_model.php
+ * @brief Date Recurrence Rule model.
  * @author James Hogan (jh559@cs.york.ac.uk)
  */
-
-// Load the academic calendar library
-$CI = &get_instance();
-$CI->load->library('academic_calendar');
 
 /// Represents a rule for a set of dates following a common pattern.
 /**
@@ -183,34 +179,154 @@ class RecurrenceRule
 	/// Default constructor.
 	/**
 	 * Initialises the recurrence rule to no dates.
+	 * @param $ArrayData array Initialisation data.
 	 */
-	function __construct()
+	function __construct($ArrayData = FALSE)
 	{
-		/// - No min or max.
-		$this->mMinDate = $this->mMaxDate = FALSE;
+		if (is_array($ArrayData)) {
+			$translation = array(
+					'DayMonth' => 0,
+					'Academic' => 1,
+					'Easter' => 2,
+				);
+			/// @pre ArrayData['recurrence_rule_date_method'] in {'DayMonth','Academic','Easter'}
+			assert('array_key_exists($ArrayData[\'recurrence_rule_date_method\'], $translation)');
+			
+			$this->mMinDate	= (NULL === $ArrayData['recurrence_rule_min_date'])
+							? FALSE
+							: $$ArrayData['recurrence_rule_min_date'];
+			$this->mMaxDate	= (NULL === $ArrayData['recurrence_rule_max_date'])
+							? FALSE
+							: $$ArrayData['recurrence_rule_max_date'];
+			$this->mYearInterval	= $ArrayData['recurrence_rule_year_interval'];
+			$this->mYearOffset		= $ArrayData['recurrence_rule_year_offset'];
+			$this->mDateMethod		= $translation[$ArrayData['recurrence_rule_date_method']];
+			
+			$months				= $ArrayData['recurrence_rule_daymonth_months'];
+			$this->mDateDmMonths = array();
+			for ($bit_number = 0; $bit_number < 12; ++$bit_number) {
+				$this->mDataDmMonths[$bit_number] = (($months % 2) != 0);
+				$months = (int)($months / 2);
+			}
+			
+			$this->mDateDmDate	= $ArrayData['recurrence_rule_daymonth_date'];
+			$this->mDateAcTerm	= $ArrayData['recurrence_rule_academic_term'];
+			
+			$weeks = $ArrayData['recurrence_rule_academic_weeks'];
+			$this->mDateAcWeeks	= array();
+			for ($bit_number = -15; $bit_number <= 16; ++$bit_number) {
+				$this->mDateAcWeeks[$bit_number] = (($weeks % 2) != 0);
+				$weeks = (int)($weeks / 2);
+			}
+			
+			$this->mDayMethod	= $ArrayData['recurrence_rule_day_method'];
+			
+			$days = $ArrayData['recurrence_rule_day_days'];
+			$this->mDayDays = array();
+			for ($bit_number = 0; $bit_number < 7; ++$bit_number) {
+				$this->mDayDays[$bit_number] = (($days % 2) != 0);
+				$days = (int)($days / 2);
+			}
+			
+			$this->mDayWeek		= $ArrayData['recurrence_rule_day_week'];
+			$this->mOffsetDays	= $ArrayData['recurrence_rule_offset_days'];
+			$this->mOffsetMins	= $ArrayData['recurrence_rule_offset_minutes'];
+			
+			
+		} else {
+			/// - No min or max.
+			$this->mMinDate = $this->mMaxDate = FALSE;
+			
+			/// - Every year.
+			$this->mYearInterval = 1;
+			$this->mYearOffset = 0;
+			
+			/// - First day of no months.
+			$this->mDateMethod = 0;
+			$this->mDateDmMonths = array();
+			$this->ClearMonths();
+			$this->DayOfMonth(1);
+			/// - No weeks of the autumn term.
+			$this->mDateAcTerm = 0;
+			$this->mDateAcWeeks = array();
+			$this->ClearAcademicWeeks();
+			
+			/// - No days of the week (straight base).
+			$this->mDayDays = array();
+			$this->UseNextEnabledDays();
+			$this->AnyDayOfWeek();
+			$this->SetWeekOffset();
+			
+			/// - No offset.
+			$this->SetOffsetDays();
+			$this->Time();
+		}
+	}
+	
+	/// Generate an array from the rule.
+	/**
+	 * @return array Data as inputtable into the default constructor.
+	 */
+	function ToArray()
+	{
+		$ArrayData = array();
 		
-		/// - Every year.
-		$this->mYearInterval = 1;
-		$this->mYearOffset = 0;
+		$translation = array(
+				0 => 'DayMonth',
+				1 => 'Academic',
+				2 => 'Easter',
+			);
+		/// @pre ArrayData['recurrence_rule_date_method'] in {'DayMonth','Academic','Easter'}
+		assert('array_key_exists($this->mDateMethod, $translation)');
 		
-		/// - First day of no months.
-		$this->mDateMethod = 0;
-		$this->mDateDmMonths = array();
-		$this->ClearMonths();
-		$this->DayOfMonth(1);
-		/// - No weeks of the autumn term.
-		$this->mDateAcWeeks = array();
-		$this->ClearAcademicWeeks();
+		$ArrayData['recurrence_rule_min_date']	= (FALSE === $this->mMinDate)
+												? NULL
+												: $this->mMinDate;
+		$ArrayData['recurrence_rule_max_date']	= (FALSE === $this->mMaxDate)
+												? NULL
+												: $this->mMaxDate;
+		$ArrayData['recurrence_rule_year_interval']		= $this->mYearInterval;
+		$ArrayData['recurrence_rule_year_offset']		= $this->mYearOffset;
 		
-		/// - No days of the week (straight base).
-		$this->mDayDays = array();
-		$this->UseNextEnabledDays();
-		$this->AnyDayOfWeek();
-		$this->SetWeekOffset();
+		$ArrayData['recurrence_rule_date_method']		= $translation[$this->mDateMethod];
 		
-		/// - No offset.
-		$this->SetOffsetDays();
-		$this->Time();
+		$ArrayData['recurrence_rule_daymonth_months']	= 0;
+		$factor = 1;
+		for ($bit_number = 1; $bit_number <= 12; ++$bit_number) {
+			if ($this->mDateDmMonths[$bit_number]) {
+				$ArrayData['recurrence_rule_daymonth_months'] |= $factor;
+			}
+			$factor *= 2;
+		}
+		
+		$ArrayData['recurrence_rule_daymonth_date']		= $this->mDateDmDate;
+		$ArrayData['recurrence_rule_academic_term']		= $this->mDateAcTerm;
+		
+		$ArrayData['recurrence_rule_academic_weeks']	= 0;
+		$factor = 1;
+		for ($bit_number = -15; $bit_number <= 16; ++$bit_number) {
+			if ($this->mDateAcWeeks[$bit_number]) {
+				$ArrayData['recurrence_rule_academic_weeks'] |= $factor;
+			}
+			$factor *= 2;
+		}
+		
+		$ArrayData['recurrence_rule_day_method']		= $this->mDayMethod;
+		
+		$ArrayData['recurrence_rule_day_days']			= 0;
+		$factor = 1;
+		for ($bit_number = 0; $bit_number < 7; ++$bit_number) {
+			if ($this->mDayDays[$bit_number]) {
+				$ArrayData['recurrence_rule_day_days'] |= $factor;
+			}
+			$factor *= 2;
+		}
+		
+		$ArrayData['recurrence_rule_day_week']			= $this->mDayWeek;
+		$ArrayData['recurrence_rule_offset_days']		= $this->mOffsetDays;
+		$ArrayData['recurrence_rule_offset_minutes']	= $this->mOffsetMins;
+		
+		return $ArrayData;
 	}
 	
 	/// Set the minimum date.
@@ -673,7 +789,7 @@ class RecurrenceRule
 			$day_order = array( 0, 1,-1, 2,-2, 3,-3);
 		}
 		// Decide whether to limit to the same month
-		if (0 === $this->mDateMethod &&
+		if (	0 === $this->mDateMethod &&
 				1 === $this->mDateDmDate &&
 				4 < $this->mDayWeek) {
 			$only_same_month = TRUE;
@@ -710,17 +826,137 @@ class RecurrenceRule
 		return strtotime($this->mOffsetDays.'day'.$this->mOffsetMins.'min', $Date);
 	}
 	
-		
 }
 
-
-/// Main recurrence library class
+/// Main recurrence model class
 /**
- * Not sure what needs to go in here yet, if anything.
- * Perhaps just a shortcut to the RecurrenceRule constructor.
+ *
+ * @author James Hogan (jh559@cs.york.ac.uk)
  */
-class Recurrence
+class Recurrence_model extends Model
 {
+	/// Default constructor
+	function __construct()
+	{
+		parent::Model();
+		
+		// Load the academic calendar library
+		$this->load->library('academic_calendar');
+	}
+	
+	/// Get comma separated list of fields to get.
+	/**
+	 * @param $EventAlias string Alias of events table.
+	 */
+	function SqlSelectRecurrenceRule($RuleAlias = 'recurrence_rules')
+	{
+		return
+			$RuleAlias.'.recurrence_rule_id,'.
+			'UNIX_TIMESTAMP('.$RuleAlias.'.recurrence_rule_min_date) AS recurrence_rule_min_date,'.
+			'UNIX_TIMESTAMP('.$RuleAlias.'.recurrence_rule_max_date) AS recurrence_rule_max_date,'.
+			$RuleAlias.'.recurrence_rule_year_interval,'.
+			$RuleAlias.'.recurrence_rule_year_offset,'.
+			$RuleAlias.'.recurrence_rule_date_method,'.
+			$RuleAlias.'.recurrence_rule_daymonth_months,'.
+			$RuleAlias.'.recurrence_rule_daymonth_date,'.
+			$RuleAlias.'.recurrence_rule_academic_term,'.
+			$RuleAlias.'.recurrence_rule_academic_weeks,'.
+			$RuleAlias.'.recurrence_rule_day_method,'.
+			$RuleAlias.'.recurrence_rule_day_days,'.
+			$RuleAlias.'.recurrence_rule_day_week,'.
+			$RuleAlias.'.recurrence_rule_offset_days,'.
+			$RuleAlias.'.recurrence_rule_offset_minutes';
+	}
+	
+	/// Run a save query on a recurrence rule.
+	/**
+	 * @param $RecurrenceRule RecurrenceRule RecurrenceRule to save.
+	 * @param $Operation string SQL operation (e.g. 'UPDATE','INSERT INTO').
+	 * @param $Condition string SQL condition.
+	 * @param $ConditionBind array Variables to bind in the condition.
+	 * @return string Number of affected rows.
+	 */
+	private function RunSaveQuery($RecurrenceRule, $Operation,
+		$Condition = FALSE, $ConditionBind = array())
+	{
+		$rule_array = $RecurrenceRule->ToArray();
+		$fields = array();
+		$bind_array = array();
+		if (array_key_exists('recurrence_rule_min_date', $rule_array)) {
+			$fields[] = 'recurrence_rule_min_date=FROM_UNIXTIME(?)';
+			$bind_array[] = $rule_array['recurrence_rule_min_date'];
+			unset($rule_array['recurrence_rule_min_date']);
+		}
+		if (array_key_exists('recurrence_rule_max_date', $rule_array)) {
+			$fields[] = 'recurrence_rule_max_date=FROM_UNIXTIME(?)';
+			$bind_array[] = $rule_array['recurrence_rule_max_date'];
+			unset($rule_array['recurrence_rule_max_date']);
+		}
+		foreach ($rule_array as $key => $value) {
+			$fields[] = $key . '=?';
+			$bind_array[] = $value;
+		}
+		$sql =	$Operation . ' recurrence_rules ' .
+				'SET ' . implode(',',$fields);
+		if (is_string($Condition)) {
+			' WHERE ' . $Condition;
+			foreach ($ConditionBind as $value) {
+				$bind_array[] = $value;
+			}
+		}
+		$query = $this->db->query($sql, $bind_array);
+		return ($this->db->affected_rows() > 0);
+	}
+	
+	/// Create a new recurrence rule in the db.
+	/**
+	 * @param $RecurrenceRule RecurrenceRule RecurrenceRule to save.
+	 * @return
+	 *	- int recurrence_rule_id of new rule.
+	 *	- FALSE if the rule could not be saved.
+	 */
+	function AddRule($RecurrenceRule)
+	{
+		if ($this->RunSaveQuery($RecurrenceRule, 'INSERT INTO')) {
+			return $this->db->insert_id();
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Save a recurrence rule in the db.
+	/**
+	 * @param $RecurrenceRuleId int recurrence_rule_id of rule to save.
+	 * @param $RecurrenceRule RecurrenceRule RecurrenceRule to save.
+	 * @return bool Whether the rule was successfully saved.
+	 */
+	function SaveRule($RecurrenceRuleId, $RecurrenceRule)
+	{
+		return $this->RunSaveQuery($RecurrenceRule, 'INSERT INTO',
+			'recurrence_rules.recurrence_rule_id = ?',
+			array($RecurrenceRuleId)
+		);
+	}
+	
+	/// Load a recurrence rule from the db.
+	/**
+	 * @param $RecurrenceRuleId int recurrence_rule_id of rule to get.
+	 * @return
+	 *	- RecurrenceRule rule from database.
+	 *	- FALSE if the rule could not be loaded.
+	 */
+	function GetRule($RecurrenceRuleId)
+	{
+		$sql =	'SELECT	' . $this->SqlSelectRecurrenceRule() .
+				' FROM	recurrence_rules ' .
+				'WHERE	recurrence_rules.recurrence_rule_id = ?';
+		$query = $this->db->query($sql, $RecurrenceRuleId);
+		if ($query->num_rows() === 1) {
+			return new RecurrenceRule($query->result_array());
+		} else {
+			return FALSE;
+		}
+	}
 }
 
 ?>

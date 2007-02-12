@@ -124,9 +124,35 @@ class Calendar extends controller
 		if (!CheckPermissions('vip')) return;
 		
 		$this->load->model('calendar/events_model');
+		$this->load->model('calendar/recurrence_model');
 		$this->load->helper('text');
 		
 		if (FALSE === $EventId) {
+			// Quick thingy to add atandard english calendar rules to current
+			// organisation. Note they aren't created with occurrences.
+			if (FALSE) {
+				$rules = $this->RuleCollectionStdEngland();
+				foreach ($rules as $info) {
+					$name = $info[0];
+					$rule = $info[1];
+					$rule_id = $this->recurrence_model->AddRule($rule);
+					if (FALSE === $rule_id) {
+						$this->messages->AddMessage('warning','RRule named '.$name.' could not be added');
+					} else {
+						$new_event = array(
+							'name' => $name,
+							'recurrence_rule_id' => $rule_id,
+						);
+						try {
+							$result = $this->events_model->EventCreate($new_event);
+							$this->messages->AddMessage('success','added '.$name);
+						} catch (Exception $e) {
+							$this->messages->AddMessage('error','while creating event '.$name.': '.$e->getMessage());
+						}
+					}
+				}
+			}
+			
 			$fields = array(
 					'event_id' => 'events.event_id',
 					'name' => 'events.event_name',
@@ -218,8 +244,12 @@ class Calendar extends controller
 				}
 				$op .= '</OL>';
 				
-				$rsvps = $this->events_model->GetEventRsvp($EventId);
+				$event = $this->events_model->EventGet($EventId, array('events.*'), TRUE);
+				$op .=	'<pre>'.
+							ascii_to_entities(var_export($event,true)).
+						'</pre>';
 				
+				$rsvps = $this->events_model->GetEventRsvp($EventId);
 				$op .=	'<pre>'.
 							ascii_to_entities(var_export($rsvps,true)).
 						'</pre>';
