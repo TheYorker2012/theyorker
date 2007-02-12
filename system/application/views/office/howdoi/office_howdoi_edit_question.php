@@ -61,8 +61,22 @@ if (($article['header']['status'] == 'suggestion') or ($article['header']['statu
 	{
 		echo '<form class="form" action="/office/howdoi/questionmodify" method="post" >
 				<fieldset>
+					<input type="hidden" name="r_status" value="'.$article['header']['status'].'" >
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<label for"a_title">Title:</label>
 					<input type="text" name="a_title" value="'.$article['header']['requesttitle'].'" />
+					<label for="a_category">Category:</label>
+					<select name="a_category">';
+					foreach ($categories as $category_id => $category)
+					{
+						echo '<option value="'.$category_id.'"';
+						if ($category_id == $article['header']['content_type'])
+							echo ' selected';
+						echo '>'.$category['name'].'</option>';
+						//echo '<option selected>Opening Times</option>';
+					}
+					echo '</select><br />
 					<label for"a_description">Description:</label>
 					<textarea name="a_description" rows="5" cols="30" />'.$article['header']['requestdescription'].'</textarea>
 					<input type="submit" value="Modify" class="button" name="r_submit_modify" />
@@ -80,6 +94,8 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 	<h2>edit question</h2>
 	<form class="form" action="/office/howdoi/questionmodify" method="post" >
 		<fieldset>
+			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 			<label for="a_question">Question:</label>
 			<input type="text" name="a_question" value="';
 			if ($article['displayrevision'] != FALSE)
@@ -116,8 +132,27 @@ if ($user['officetype'] != 'Low')
 		echo '<div class="blue_box">
 			<h2>options</h2>
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
-			Please reject or accept the suggestion.
+			Please reject or accept the suggestion (accepting converts this to a request).
 				<fieldset>
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
+					<label for"a_title">Title:</label>
+					<input type="text" name="a_title" />
+					<label for="a_category">Category:</label>
+					<select name="a_category">';
+					foreach ($categories as $category_id => $category)
+					{
+						echo '<option value="'.$category_id.'"';
+						if ($category_id == $article['header']['content_type'])
+							echo ' selected';
+						echo '>'.$category['name'].'</option>';
+						//echo '<option selected>Opening Times</option>';
+					}
+					echo '</select><br />
+					<label for"a_description">Description:</label>
+					<textarea name="a_description" rows="5" cols="30" /></textarea>
+					<label for"a_deadline">Deadline:</label>
+					<input type="text" name="a_deadline" value="'.date('d-m-y H:i').'" />
 					<input type="submit" value="Accept" class="button" name="r_submit_accept" />
 					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
 				</fieldset>
@@ -129,18 +164,22 @@ if ($user['officetype'] != 'Low')
 		echo '<div class="blue_box">
 			<h2>options</h2>
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 			To publish the question now, click publish now
 				<fieldset>
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<input type="submit" value="Publish Now" class="button" name="r_submit_publishnow" />
 				</fieldset>
 			Or to publish at a later date...
 				<fieldset>
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<label for"a_publishdate">Publish On (dd/mm/yyyy):</label>
 					<input type="text" name="a_publishdate" />
 					<input type="submit" value="Publish Then" class="button" name="r_submit_publishon" />
 				</fieldset>
 			Or reject the request
 				<fieldset>
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
 				</fieldset>
 			</form>
@@ -152,6 +191,8 @@ if ($user['officetype'] != 'Low')
 			<h2>options</h2>
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
 				<fieldset>
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<input type="submit" value="Pull Article" class="button" name="r_submit_pull" />
 				</fieldset>
 			</form>

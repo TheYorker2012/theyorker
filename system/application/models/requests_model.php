@@ -50,7 +50,7 @@ class Requests_Model extends Model
 					article_request_entity_id)
 				VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
 			$this->db->query($sql,array($type_id,$title,$description,$user));
-			$sql = 'SELECT 	article_id 
+			$sql = 'SELECT 	article_id
 				FROM	articles
 				WHERE	(article_id=LAST_INSERT_ID())';
 			$query = $this->db->query($sql);
@@ -98,20 +98,33 @@ class Requests_Model extends Model
 					article_editor_approved_user_entity_id = ?,
 					article_publish_date = ?,
 					article_request_title = ?,
-					article_request_description = ?
+					article_request_description = ?,
+					article_content_type_id = ?
 				WHERE	(article_id = ?)';
-			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$article_id));
+			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$data['content_type'],$article_id));
 		}elseif ($status == 'publish')
 		{
 			$sql = 'UPDATE 	articles
 				SET	article_live_content_id = ?,
 					article_publish_date = ?,
-					article_editor_approved_user_entity_id = ?
+					article_editor_approved_user_entity_id = ?,
+					article_content_type_id = ?
 				WHERE	(article_id = ?)';
-			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
+			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$data['content_type'],$article_id));
 		}
 
 		return $status;
+	}
+
+	//Make a change to a request status in the article table
+	function UpdateSuggestion($article_id,$data)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_request_title = ?,
+				article_request_description = ?,
+				article_content_type_id = ?
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($data['title'],$data['description'],$data['content_type'],$article_id));
 	}
 
 	function GetPulledArticles($type_id)

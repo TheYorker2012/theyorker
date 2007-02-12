@@ -327,8 +327,8 @@ class Howdoi extends Controller
 						$_POST['a_category'],
 						$_POST['a_question'], 
 						$_POST['a_description'], 
-						$this->user_auth->entityId
-						);
+						$this->user_auth->entityId,
+						NULL);
 	                $this->main_frame->AddMessage('success','Suggestion Created.');
 			redirect($_POST['r_redirecturl']);
 		}
@@ -354,24 +354,34 @@ class Howdoi extends Controller
 		{
 			if (isset($_POST['r_submit_modify']))
 			{
-				echo '<pre>';
-				echo 'modify';
-				echo print_r($_POST);
-				echo '</pre>';
+				$this->requests_model->UpdateSuggestion(
+					$_POST['r_articleid'], 
+					array('title'=>$_POST['a_title'],
+						'description'=>$_POST['a_description'],
+						'content_type'=>$_POST['a_category'])
+					);
+		                $this->main_frame->AddMessage('success',$_POST['r_status'].' has been modified.');
+				redirect($_POST['r_redirecturl']);
 			}
 			else if (isset($_POST['r_submit_accept']))
 			{
-				echo '<pre>';
-				echo 'accept';
-				echo print_r($_POST);
-				echo '</pre>';
+				$this->requests_model->UpdateRequestStatus(
+					$_POST['r_articleid'],
+					'request',
+					array('editor'=>$this->user_auth->entityId,
+						'publish_date'=>$_POST['a_deadline'],
+						'title'=>$_POST['a_title'],
+						'description'=>$_POST['a_description'],
+						'content_type'=>$_POST['a_category'])
+					);
+		                $this->main_frame->AddMessage('success','Suggestion has been updated to a request.');
+				redirect($_POST['r_redirecturl']);
 			}
 			else if (isset($_POST['r_submit_reject']))
 			{
-				echo '<pre>';
-				echo 'reject';
-				echo print_r($_POST);
-				echo '</pre>';
+				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
+		                $this->main_frame->AddMessage('success','Suggestion has been rejected.');
+				redirect('/office/howdoi');
 			}
 			else if (isset($_POST['r_submit_publishnow']))
 			{
