@@ -13,7 +13,7 @@ class Howdoi extends Controller {
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
 		$this->pages_model->SetPageCode('howdoi_list');

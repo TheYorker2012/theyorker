@@ -102,6 +102,7 @@ class Howdoi_model extends Model
 	 */
 	function GetCategoryArticleIDs($content_type_id)
 	{
+		/*
 		$sql = 'SELECT article_id
 			FROM articles
 			INNER JOIN article_contents
@@ -109,6 +110,14 @@ class Howdoi_model extends Model
 			WHERE article_content_type_id = ? AND
 				article_live_content_id IS NOT NULL
 			ORDER BY article_content_heading ASC';
+		*/
+		$sql = 'SELECT	article_id
+			FROM	articles
+			WHERE	article_suggestion_accepted = 1
+			AND	article_content_type_id = ?
+			AND	article_live_content_id IS NOT NULL
+			AND	article_deleted = 0
+			AND	article_pulled = 0';
 		$query = $this->db->query($sql,array($content_type_id));
 		$result = array();
 		if ($query->num_rows() > 0)

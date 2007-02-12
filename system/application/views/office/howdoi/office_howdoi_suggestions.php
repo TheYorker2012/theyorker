@@ -29,7 +29,7 @@
 				echo '<br /><span class="orange">'.$suggestion['title'].'</span>
 					<span class="grey">(asked by '.$suggestion['username'].')</span><br />
 					'.$suggestion['description'].'<br />
-					<a href="#">[edit]</a> <a href="#">[remove]</a>
+					<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a>
 					<br />';
 			}
 		}
@@ -63,9 +63,9 @@
 </div>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

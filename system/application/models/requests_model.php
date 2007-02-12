@@ -102,21 +102,21 @@ class Requests_Model extends Model
 					article_content_type_id = ?
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$data['content_type'],$article_id));
-		}elseif ($status == 'publish')
+		}
+		else if ($status == 'publish')
 		{
 			$sql = 'UPDATE 	articles
 				SET	article_live_content_id = ?,
 					article_publish_date = ?,
-					article_editor_approved_user_entity_id = ?,
-					article_content_type_id = ?
+					article_editor_approved_user_entity_id = ?
 				WHERE	(article_id = ?)';
-			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$data['content_type'],$article_id));
+			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
 		}
 
 		return $status;
 	}
 
-	//Make a change to a request status in the article table
+	//Make a change to the title, description and content type of a suggestion
 	function UpdateSuggestion($article_id,$data)
 	{
 		$sql = 'UPDATE 	articles
@@ -125,6 +125,15 @@ class Requests_Model extends Model
 				article_content_type_id = ?
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($data['title'],$data['description'],$data['content_type'],$article_id));
+	}
+
+	//Make a change to the content type of an article
+	function UpdateContentType($article_id,$content_type)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_content_type_id = ?
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($content_type,$article_id));
 	}
 
 	function GetPulledArticles($type_id)
@@ -151,14 +160,15 @@ class Requests_Model extends Model
 	function GetPublishedArticles($type_id, $is_published)
 	{
 		$sql = 'SELECT	article_id,
-				article_publish_date,
-				article_live_content_id,
-				article_content_last_author_timestamp,
-				article_content_heading,
+			article_publish_date,
+			article_live_content_id,
+			article_content_last_author_timestamp,
+			article_content_heading,
                                 article_content_last_author_user_entity_id,
-				article_editor_approved_user_entity_id,
-				author_user.business_card_name as author_name,
-				editor_user.business_card_name as editor_name
+			article_editor_approved_user_entity_id,
+			author_user.business_card_name as author_name,
+			editor_user.business_card_name as editor_name
+
 			FROM	articles
 			JOIN	article_contents
 			ON      article_content_id = article_live_content_id
@@ -174,9 +184,9 @@ class Requests_Model extends Model
 			AND	article_deleted = 0
 			AND	article_pulled = 0';
 		if ($is_published == TRUE)
-			$sql = $sql.' AND	article_publish_date <= CURRENT_TIMESTAMP';
+			$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
 		else
-			$sql = $sql.' AND	article_publish_date > CURRENT_TIMESTAMP';
+			$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
 		$query = $this->db->query($sql,array($type_id));
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -374,6 +384,7 @@ class Requests_Model extends Model
 				article_content_blurb)
 			VALUES	(?,?,?,?,?,?,?,?)';
 		$query = $this->db->query($sql,array($id,$user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb));
+		return $this->db->insert_id();
 	}
 
 	function UpdateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)

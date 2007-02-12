@@ -37,7 +37,7 @@
 				{
 					echo '<br /><span class="orange">'.$suggestion['title'].'</span>
 						<span class="grey">(asked by '.$suggestion['username'].')</span>
-						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a>';
 				}
 			}
 			if (count($category['requests']) > 0)
@@ -54,7 +54,7 @@
 					echo '<br /><span class="orange">'.$request['title'].'</span>
 						<span class="grey">(approved by '.$request['editorname'].')</span>
 						<br />deadline: '.$deadlineformat.'
-						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>';
 				}
 			}
 			if (count($category['unpublished']) > 0)
@@ -71,7 +71,7 @@
 					echo '<br /><span class="orange">'.$unpublished['heading'].'</span>
 						<span class="grey">(published by '.$unpublished['editorname'].')</span>
 						<br />being published on: '.$publishformat.'
-						<a href="/office/howdoi/editquestion/'.$unpublished['id'].'">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$unpublished['id'].'">[edit]</a>';
 				}
 			}
 			if (count($category['published']) > 0)
@@ -88,7 +88,7 @@
 					echo '<br /><span class="orange">'.$published['heading'].'</span>
 						<span class="grey">(published by '.$published['editorname'].')</span>
 						<br />published on: '.$publishformat.'
-						<a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a> <a href="#">[remove]</a>';
+						<a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a>';
 				}
 			}
 		}
@@ -97,9 +97,9 @@
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

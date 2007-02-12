@@ -193,7 +193,11 @@ class Howdoi extends Controller
                 	if ($data['article']['header']['content_type'] == $category_id)
 			$correct_content_type = TRUE;
 		}
-		//echo $correct_content_type;
+		//if the article has been pulled then make it go to the article is not a how do i type message.
+		if ($data['article']['header']['pulled'] == 1)
+		{
+                	$correct_content_type = FALSE;
+		}
 		if ($correct_content_type == TRUE)
 		{
 			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
@@ -206,11 +210,15 @@ class Howdoi extends Controller
 					if ($data['article']['header']['live_content'] != FALSE) //request
 					{
 						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
+						$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
 					}
 					else
 					{
 						if (isset($data['article']['revisions'][0]))
+						{
 							$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
+							$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+						}
 					}
 				}
 				else //pick selected revision
@@ -340,14 +348,23 @@ class Howdoi extends Controller
 
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
+		$this->load->model('article_model','article_model');
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		if (isset($_POST['r_submit_save']))
 		{
-			echo '<pre>';
-			echo 'save';
-			echo print_r($_POST);
-			echo '</pre>';
+			$revision_id = $this->requests_model->CreateArticleRevision(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId,
+				$_POST['a_question'],
+				'',
+				'',
+				$_POST['a_answer'],
+				''
+				)
+				;
+	                $this->main_frame->AddMessage('success','New revision created for article.');
+			redirect('/office/howdoi/editquestion/'.$_POST['r_articleid'].'/'.$revision_id.'/');
 		}
 		//for forms that are editor only
 		if ($this->user_auth->officeType != 'Low')
@@ -385,24 +402,41 @@ class Howdoi extends Controller
 			}
 			else if (isset($_POST['r_submit_publishnow']))
 			{
-				echo '<pre>';
-				echo 'publish now';
-				echo print_r($_POST);
-				echo '</pre>';
+				$this->requests_model->UpdateRequestStatus(
+					$_POST['r_articleid'],
+					'publish',
+					array('content_id'=>$_POST['r_revisionid'],
+						'publish_date'=>date('y-m-d H:i:s'),
+						'editor'=>$this->user_auth->entityId)
+					);
+		                $this->main_frame->AddMessage('success','Question had been published.');
+				redirect($_POST['r_redirecturl']);
 			}
 			else if (isset($_POST['r_submit_publishon']))
 			{
-				echo '<pre>';
-				echo 'publish on';
-				echo print_r($_POST);
-				echo '</pre>';
+				$publish = strtotime($_POST['a_publishdate']);
+				$publishformat = date('F jS Y', $publish).' at '.date('g.i A', $publish);
+				$this->requests_model->UpdateRequestStatus(
+					$_POST['r_articleid'],
+					'publish',
+					array('content_id'=>$_POST['r_revisionid'],
+						'publish_date'=>$_POST['a_publishdate'],
+						'editor'=>$this->user_auth->entityId)
+					);
+		                $this->main_frame->AddMessage('success','Question had been set for publication on '.$publishformat.'.');
+				redirect($_POST['r_redirecturl']);
 			}
 			else if (isset($_POST['r_submit_pull']))
 			{
-				echo '<pre>';
-				echo 'pull';
-				echo print_r($_POST);
-				echo '</pre>';
+				$this->article_model->PullArticle($_POST['r_articleid']);
+		                $this->main_frame->AddMessage('success','Question has been pulled from publication.');
+				redirect('/office/howdoi');
+			}
+			else if (isset($_POST['r_submit_category']))
+			{
+				$this->requests_model->UpdateContentType($_POST['r_articleid'], $_POST['a_category']);
+		                $this->main_frame->AddMessage('success','Questions category has been updated.');
+				redirect($_POST['r_redirecturl']);
 			}
 		}
 	}

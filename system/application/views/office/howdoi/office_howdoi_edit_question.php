@@ -101,17 +101,6 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 			if ($article['displayrevision'] != FALSE)
 				echo $article['displayrevision']['heading'];
 			echo '" /><br />
-			<label for="a_category">Category:</label>
-			<select name="a_category">';
-			foreach ($categories as $category_id => $category)
-			{
-				echo '<option value="'.$category_id.'"';
-				if ($category_id == $article['header']['content_type'])
-					echo ' selected';
-				echo '>'.$category['name'].'</option>';
-				//echo '<option selected>Opening Times</option>';
-			}
-			echo '</select><br />
 			<label for="a_answer">Answer:</label>';
 			if ($article['displayrevision'] != FALSE)
 				echo '<textarea name="a_answer" rows="5" cols="30" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
@@ -151,8 +140,8 @@ if ($user['officetype'] != 'Low')
 					echo '</select><br />
 					<label for"a_description">Description:</label>
 					<textarea name="a_description" rows="5" cols="30" /></textarea>
-					<label for"a_deadline">Deadline:</label>
-					<input type="text" name="a_deadline" value="'.date('d-m-y H:i').'" />
+					<label for"a_deadline">Deadline (yy-mm-dd h:m):</label>
+					<input type="text" name="a_deadline" value="'.date('y-m-d H:i').'" />
 					<input type="submit" value="Accept" class="button" name="r_submit_accept" />
 					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
 				</fieldset>
@@ -165,21 +154,20 @@ if ($user['officetype'] != 'Low')
 			<h2>options</h2>
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+				<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />
+				<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 			To publish the question now, click publish now
 				<fieldset>
-					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<input type="submit" value="Publish Now" class="button" name="r_submit_publishnow" />
 				</fieldset>
 			Or to publish at a later date...
 				<fieldset>
-					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
-					<label for"a_publishdate">Publish On (dd/mm/yyyy):</label>
-					<input type="text" name="a_publishdate" />
+					<label for"a_publishdate">Publish On (yy-mm-dd h:m):</label>
+					<input type="text" name="a_publishdate" value="'.date('y-m-d H:i').'" />
 					<input type="submit" value="Publish Then" class="button" name="r_submit_publishon" />
 				</fieldset>
 			Or reject the request
 				<fieldset>
-					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
 				</fieldset>
 			</form>
@@ -190,9 +178,37 @@ if ($user['officetype'] != 'Low')
 		echo '<div class="blue_box">
 			<h2>options</h2>
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+				<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
+				<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />';
+			if ($article['header']['live_content'] != $parameters['revision_id'])
+			{
+			echo 'To publish the question now, click publish now
 				<fieldset>
-					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
+					<input type="submit" value="Publish Now" class="button" name="r_submit_publishnow" />
+				</fieldset>
+			Or to publish at a later date...
+				<fieldset>
+					<label for"a_publishdate">Publish On (yy-mm-dd h:m):</label>
+					<input type="text" name="a_publishdate" value="'.date('y-m-d H:i').'" />
+					<input type="submit" value="Publish Then" class="button" name="r_submit_publishon" />
+				</fieldset>';
+			}
+			echo '<fieldset>
+					<label for="a_category">Category:</label>
+					<select name="a_category">';
+					foreach ($categories as $category_id => $category)
+					{
+						echo '<option value="'.$category_id.'"';
+						if ($category_id == $article['header']['content_type'])
+							echo ' selected';
+						echo '>'.$category['name'].'</option>';
+					}
+					echo '</select><br />
+					<input type="submit" value="Set Category" class="button" name="r_submit_category" />
+				</fieldset>
+				<fieldset>
+					<label for="r_submit_pull">Pull This Question:</label>
 					<input type="submit" value="Pull Article" class="button" name="r_submit_pull" />
 				</fieldset>
 			</form>
@@ -202,11 +218,11 @@ if ($user['officetype'] != 'Low')
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>
 
 
