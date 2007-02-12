@@ -4,8 +4,14 @@
 		<div class="information_box">
 			The following reviews are waiting to be published:
 			<ul>
-				<li><a href='#'>Dan Ashby 02/02/2007</a></li>
-				<li><a href='#'>Charlotte Chung 02/02/2007</a></li>
+			<?php
+			$new = false;
+			for ($i = (count($revisions) - 1); $i >= 0; $i--)
+			{
+    			if ($new) echo '<li><a href=\'\'>'.$revisions[$i]['name'].' '.date('d/m/Y').'</a></li>';
+    			elseif ($revisions[$i]['is_published']) $new = true;
+			}
+			?>
 			</ul>
 		</div>
 		<div class="information_box">

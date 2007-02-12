@@ -91,6 +91,7 @@ class Review_model extends Model {
 			 AND business_card_group_organisation_entity_id =
 			     (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = "theyorker")
 			WHERE 1
+			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
 			';
 
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );

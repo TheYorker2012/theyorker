@@ -96,7 +96,18 @@ class Reviews extends Controller
 		
 		// Get context contents from model
 		$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType);
-		$data = array_merge($data, $context_contents[0]);
+		if (isset($context_contents[0])) $data = array_merge($data, $context_contents[0]);
+		else
+		{
+    		$data['content_blurb'] = '';
+    		$data['content_quote'] = '';
+    		$data['average_price'] = '';
+    		$data['recommended_item'] = '';
+    		$data['content_rating'] = 5;
+    		$data['serving_times'] = '';
+    		$data['deal'] = '';
+    		$data['deal_expires'] = '';
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_information', $data);
