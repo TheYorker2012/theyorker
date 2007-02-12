@@ -72,7 +72,9 @@ class Article_model extends Model
 				article_location,
 				article_live_content_id,
 				article_suggestion_accepted,
-				article_pulled
+				article_pulled,
+				article_request_title,
+				article_request_description
 			FROM	articles
 			WHERE	article_id = ?
 			AND	article_deleted = FALSE';
@@ -80,7 +82,7 @@ class Article_model extends Model
 		if ($query->num_rows() == 1)
 		{
 			$row = $query->row();
-			return array(
+			$returndata = array(
 				'content_type'=>$row->article_content_type_id,
 				'organisation'=>$row->article_organisation_entity_id,
 				'created'=>$row->article_created,
@@ -88,8 +90,18 @@ class Article_model extends Model
 				'location'=>$row->article_location,
 				'live_content'=>$row->article_live_content_id,
 				'suggestion_accepted'=>$row->article_suggestion_accepted,
-				'pulled'=>$row->article_pulled
+				'pulled'=>$row->article_pulled,
+				'requesttitle'=>$row->article_request_title,
+				'requestdescription'=>$row->article_request_description
 				);
+			if ($row->article_suggestion_accepted == FALSE)
+				$returndata['status'] = 'suggestion';
+			else
+				if ($row->article_live_content_id != FALSE)
+					$returndata['status'] = 'published';
+				else
+					$returndata['status'] = 'request';
+			return $returndata;
 		}
 		else
 			return FALSE;

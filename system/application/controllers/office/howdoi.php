@@ -158,7 +158,6 @@ class Howdoi extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
 
 	function questionedit($article_id, $revision_id)
 	{
@@ -224,6 +223,9 @@ class Howdoi extends Controller
 	    				}
 				}
 			}
+
+			$data['user']['id'] = $this->user_auth->entityId;
+			$data['user']['officetype'] = $this->user_auth->officeType;
 	
 			// Set up the view
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
@@ -329,6 +331,69 @@ class Howdoi extends Controller
 						);
 	                $this->main_frame->AddMessage('success','Suggestion Created.');
 			redirect($_POST['r_redirecturl']);
+		}
+	}
+	
+	function questionmodify()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('requests_model','requests_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+		if (isset($_POST['r_submit_save']))
+		{
+			echo '<pre>';
+			echo 'save';
+			echo print_r($_POST);
+			echo '</pre>';
+		}
+		//for forms that are editor only
+		if ($this->user_auth->officeType != 'Low')
+		{
+			if (isset($_POST['r_submit_modify']))
+			{
+				echo '<pre>';
+				echo 'modify';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
+			else if (isset($_POST['r_submit_accept']))
+			{
+				echo '<pre>';
+				echo 'accept';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
+			else if (isset($_POST['r_submit_reject']))
+			{
+				echo '<pre>';
+				echo 'reject';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
+			else if (isset($_POST['r_submit_publishnow']))
+			{
+				echo '<pre>';
+				echo 'publish now';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
+			else if (isset($_POST['r_submit_publishon']))
+			{
+				echo '<pre>';
+				echo 'publish on';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
+			else if (isset($_POST['r_submit_pull']))
+			{
+				echo '<pre>';
+				echo 'pull';
+				echo print_r($_POST);
+				echo '</pre>';
+			}
 		}
 	}
 }

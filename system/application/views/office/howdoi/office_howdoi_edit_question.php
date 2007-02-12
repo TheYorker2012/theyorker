@@ -43,56 +43,122 @@
 	</div>
 </div>
 
-<div class="grey_box">
+<?php
+if (($article['header']['status'] == 'suggestion') or ($article['header']['status'] == 'request'))
+{
+	echo '<div class="blue_box">';
+	if ($article['header']['status'] == 'suggestion')
+		echo '<h2>suggestion info</h2>';
+	else if ($article['header']['status'] == 'request')
+		echo '<h2>request info</h2>';
+	if ($user['officetype'] == 'Low')
+	{
+		echo '<b>Title: </b>'.$article['header']['requesttitle'].'<br />
+			<b>Description: </b>'.$article['header']['requestdescription'].'<br />
+			</div>';
+	}
+	else
+	{
+		echo '<form class="form" action="/office/howdoi/questionmodify" method="post" >
+				<fieldset>
+					<label for"a_title">Title:</label>
+					<input type="text" name="a_title" value="'.$article['header']['requesttitle'].'" />
+					<label for"a_description">Description:</label>
+					<textarea name="a_description" rows="5" cols="30" />'.$article['header']['requestdescription'].'</textarea>
+					<input type="submit" value="Modify" class="button" name="r_submit_modify" />
+				</fieldset>
+			</form>
+		</div>';
+	}
+}
+?>
+
+<?php
+if (($article['header']['status'] == 'request') or ($article['header']['status'] == 'published'))
+{
+	echo '<div class="grey_box">
 	<h2>edit question</h2>
-	<form class="form">
+	<form class="form" action="/office/howdoi/questionmodify" method="post" >
 		<fieldset>
-		<?php
-			echo '<label for="a_question">Question:</label>
+			<label for="a_question">Question:</label>
 			<input type="text" name="a_question" value="';
 			if ($article['displayrevision'] != FALSE)
 				echo $article['displayrevision']['heading'];
 			echo '" /><br />
-			<label for="a_category">Category:</label>';
-		?>
-			<select name="a_category">
-				<?php
-					foreach ($categories as $category_id => $category)
-					{
-						echo '<option value="'.$category_id.'"';
-						if ($category_id == $article['header']['content_type'])
-							echo ' selected';
-						echo '>'.$category['name'].'</option>';
-						//echo '<option selected>Opening Times</option>';
-					}
-				?>
-			</select><br />
-			<label for="a_answer">Answer:</label>
-			<?php
-				if ($article['displayrevision'] != FALSE)
-					echo '<textarea name="a_answer" rows="5" cols="30" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
-				else
-					echo '<textarea name="a_answer" rows="5" cols="30" /></textarea><br />'
-			?>
-			<input type="submit" value="Save" class="button" name="r_submit_save" />
+			<label for="a_category">Category:</label>
+			<select name="a_category">';
+			foreach ($categories as $category_id => $category)
+			{
+				echo '<option value="'.$category_id.'"';
+				if ($category_id == $article['header']['content_type'])
+					echo ' selected';
+				echo '>'.$category['name'].'</option>';
+				//echo '<option selected>Opening Times</option>';
+			}
+			echo '</select><br />
+			<label for="a_answer">Answer:</label>';
+			if ($article['displayrevision'] != FALSE)
+				echo '<textarea name="a_answer" rows="5" cols="30" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
+			else
+				echo '<textarea name="a_answer" rows="5" cols="30" /></textarea><br />';
+			echo '<input type="submit" value="Save" class="button" name="r_submit_save" />
 		</fieldset>
 	</form>
-</div>
-<div class="blue_box">
-	<h2>publish options</h2>
-	<form class="form">
-	To publish the question now, click publish now
-		<fieldset>
-			<input type="submit" value="Publish Now" class="button" />
-		</fieldset>
-	Or to publish at a later date...
-		<fieldset>
-			<label for"a_publishdate">Publish On (dd/mm/yyyy):</label>
-			<input type="text" name="a_publishdate" />
-			<input type="submit" value="Publish Then" class="button" />
-		</fieldset>
-	</form>
-</div>
+</div>';
+}
+?>
+
+<?php
+if ($user['officetype'] != 'Low')
+{
+	if ($article['header']['status'] == 'suggestion')
+	{
+		echo '<div class="blue_box">
+			<h2>options</h2>
+			<form class="form" action="/office/howdoi/questionmodify" method="post" >
+			Please reject or accept the suggestion.
+				<fieldset>
+					<input type="submit" value="Accept" class="button" name="r_submit_accept" />
+					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
+				</fieldset>
+			</form>
+		</div>';
+	}
+	else if ($article['header']['status'] == 'request')
+	{
+		echo '<div class="blue_box">
+			<h2>options</h2>
+			<form class="form" action="/office/howdoi/questionmodify" method="post" >
+			To publish the question now, click publish now
+				<fieldset>
+					<input type="submit" value="Publish Now" class="button" name="r_submit_publishnow" />
+				</fieldset>
+			Or to publish at a later date...
+				<fieldset>
+					<label for"a_publishdate">Publish On (dd/mm/yyyy):</label>
+					<input type="text" name="a_publishdate" />
+					<input type="submit" value="Publish Then" class="button" name="r_submit_publishon" />
+				</fieldset>
+			Or reject the request
+				<fieldset>
+					<input type="submit" value="Reject" class="button" name="r_submit_reject" />
+				</fieldset>
+			</form>
+		</div>';
+	}
+	else if ($article['header']['status'] == 'published')
+	{
+		echo '<div class="blue_box">
+			<h2>options</h2>
+			<form class="form" action="/office/howdoi/questionmodify" method="post" >
+				<fieldset>
+					<input type="submit" value="Pull Article" class="button" name="r_submit_pull" />
+				</fieldset>
+			</form>
+		</div>';
+	}
+}
+?>
 
 <?php
 
