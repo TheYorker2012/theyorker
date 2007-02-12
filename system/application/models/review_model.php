@@ -98,25 +98,21 @@ class Review_model extends Model {
 		return $query->result_array();
 	}
 
-
 	/**
-	 * Adds an article to the database
-	 * @param 'content_type_id' 'organisation_entity_id' 'initial_editor' /
-	 * 'publish_date' 'heading' 'subheading' 'subtext' 'wikitext' 'blurb'
-	 *
+	 * Adds a review content to the db
 	 *
 	 */
 
 	function SetReviewContextContent($organisation_shortname, $content_type_codename, $user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-							$rating, $serving_times, $deal, $deal_expires)
+							$rating, $serving_times, $deal, $deal_expires, $publish = false)
 	{
-			$sql =
+		$sql =
 			'
 			INSERT INTO review_context_contents 
 			(
 			 review_context_content_organisation_entity_id,
 			 review_context_content_content_type_id,
-		 	 review_context_content_last_author_user_entity_id,
+			 review_context_content_last_author_user_entity_id,
 			 review_context_content_blurb,
 			 review_context_content_quote,
 			 review_context_content_average_price,
@@ -126,17 +122,41 @@ class Review_model extends Model {
 			 review_context_content_deal,
 			 review_context_content_deal_expires
 			) 
-			VALUES(
-			 (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?) ,
-			 (SELECT content_type_id FROM context_types WHERE context_types.content_type_codename = ?) ,
-			 ?,?,?,?,?,?,?,?,?
-			);
+			SELECT
+			review_contexts.review_context_organisation_entity_id as organisation_entity_id,
+			review_contexts.review_context_content_type_id as content_type_id,
+			? as user_entity_id,
+			? as blurb,
+			? as quote,
+			? as average_price,
+			? as recommended_item,
+			? as rating,
+			? as serving_times,
+			? as deal,
+			? as deal_expires
+			FROM review_contexts 
+			INNER JOIN organisations 
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			 AND organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types
+			ON review_contexts.review_context_content_type_id=content_types.content_type_id
+			 AND content_types.content_type_codename = ?
+			WHERE 1
+			LIMIT 1
+			;
+			';
+			
+		if ($publish) $sql +=
+			'
+			UPDATE review_contexts
+			SET review_contexts.review_context_live_content_id = LAST_INSERT_ID() 
+			WHERE review_contexts.review_context_organisation_entity_id = (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)
+			 AND review_contexts.review_context_content_type_id = (SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?)
+			;
 			';
 
-		$query = $this->db->query($sql, array($organisation_shortname, $content_type_codename, $user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-							$rating, $serving_times, $deal, $deal_expires) );
-
-		return $query->result_array();
+		$query = $this->db->query($sql, array($user_entity_id, $blurb, $quote, $average_price, $recommended_item,
+							$rating, $serving_times, $deal, $deal_expires, $organisation_shortname, $content_type_codename, $organisation_shortname, $content_type_codename) );
 	}
 
 
