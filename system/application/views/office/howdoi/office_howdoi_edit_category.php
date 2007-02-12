@@ -3,11 +3,11 @@
 	<div class="Entry">
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Questions</a> that are waiting to be published.
+			There are <b>?</b> <a href='#'>Questions</a> that are waiting to be published.
 		</div>
 		<div class="information_box">
 			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>3</b> <a href='#'>Suggestions</a> that require attention.
+			There are <b>?</b> <a href='#'>Suggestions</a> that require attention.
 		</div>
 	</div>
 </div>
