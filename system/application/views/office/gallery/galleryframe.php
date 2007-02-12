@@ -1,19 +1,17 @@
 <div class="RightToolbar">
 	<h4>Search by...</h4>
-	<div class="Entry">
-		<form class="form">
+	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+		<div class="Entry">
 			<fieldset>
-			<input type="radio" name="searchcriteria" />Title<br />
-			<input type="radio" name="searchcriteria" />Tag<br />
-			<input type="radio" name="searchcriteria" />Photographer<br /><br />
-			Search Criteria:<input type="text" />
-			<input type="submit" class="button" value="Search" />
+			<input type="radio" name="searchcriteria" value="title" selected />Title<br />
+			<input type="radio" name="searchcriteria" value="date" />Tag<br />
+			<input type="radio" name="searchcriteria" value="photographer" />Photographer<br /><br />
+			Search Criteria:<input type="text" name="search" />
+			<input type="submit" class="button" name="submit" value="Search" />
 			</fieldset>
-		</form>
-	</div>
-	<h4>Advanced</h4>
-	<div class="Entry">
-		<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+		</div>
+		<h4>Advanced</h4>
+		<div class="Entry">
 			<fieldset>
 			Order by:<br />
 			<input type="radio" name="order" value="title"/>Title<br />
@@ -21,20 +19,21 @@
 			<input type="radio" name="order" value="photographer"/>Photographer<br /><br />
 			Show only tag:<br />
 			<select name="tag">
+				<option value="null" selected></option>
 				<?php if ($tags->num_rows() > 0) foreach($tags->result() as $tag):?>
-				<option value="<?=$tag->tag_id?>"><?=$tag->name?></option>
+				<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			Show only photographers:<br />
-			<select name="tag">
-				<?php if ($protographer->num_rows() > 0) foreach($photographer->result() as $person):?>
+			<select name="photographer">
+				<option value="null" selected></option>
+				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person):?>
 				<option value="<?=$person->user_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
 				<?php endforeach;?>
 			</select><br /><br />
-			<input type="submit" class="button" value="Display" />
 			</fieldset>
-		</form>
-	</div>
+		</div>
+	</form>
 </div>
 <div class="blue_box">
 	<?php

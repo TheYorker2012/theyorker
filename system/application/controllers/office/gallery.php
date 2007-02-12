@@ -36,7 +36,55 @@ define('PHOTOS_PERPAGE', 12);
 			$pageNumbers = '';
 		}
 		$page = $this->uri->segment(3, 0);
-		$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE);
+		if ($this->input->get('clear')) {
+			$_SESSION['img_search'] = false;
+		} elseif ($this->input->post('submit')) {
+			$_SESSION['img_search'] = $this->input->post('search');
+			$_SESSION['img_search_by'] = $this->input->post('searchcriteria');
+			$_SESSION['img_search_order'] = $this->input->post('order');
+			$_SESSION['img_tag'] = $this->input->post('tag');
+			$_SESSION['img_photographer'] = $this->input->post('photographer');
+		}
+		
+		if (isset($_SESSION['img_search']) and $_SESSION['img_search']) {
+			$photos = $this->db->select('*')->from('photos');
+			if ($_SESSION['img_search']) {
+				switch($_SESSION['search_by']) {
+					case "date":
+						$photos = $photos->like('photo_timestamp', $_SESSION['img_search']);
+					break;
+					case "title":
+						$photos = $photos->like('photo_title', $_SESSION['img_search']);
+					break;
+					case "photographer":
+						//not implemented!!!
+						$photos = $photos->like('photo_title', $_SESSION['img_search']);
+					break;
+				}
+			}
+			if ($_SESSION['img_tag'] != 'null') {
+				$photos = $photos->join('photo_tags', 'photo_tags.photo_tag_photo_id = photos.photo_id')->where('photo_tags.photo_tag_tag_id', $_SESSION['img_tag']);
+			}
+			if ($_SESSION['img_photographer'] != 'null') {
+				$photos = $photos->where('photo_author_user_entity_id', $_SESSION['img_photographer']);
+			}
+			if ($_SESSION['img_search_order']) {
+				switch ($_SESSION['img_search_order']) {
+					case "title":
+						$photos = orderby('photo_title', 'desc');
+					break;
+					case "date":
+						$photos = orderby('photo_timestamp', 'desc');
+					break;
+					case "photographer":
+						$photos = orderby('photo_author_user_entity_id', 'desc');
+					break;
+				}
+			}
+			$photo = $photo->limit(PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE)->get();
+		} else {
+			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE);
+		}
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
