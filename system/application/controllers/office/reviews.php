@@ -17,6 +17,7 @@ class Reviews extends Controller
 
 		$this->load->library('organisations');
 		$this->load->model('directory_model');
+		$this->load->model('review_model');
 
 		$this->load->helper('text');
 		$this->load->helper('wikilink');
@@ -89,6 +90,13 @@ class Reviews extends Controller
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		// Get revision data from model
+		$data['revisions'] = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType);
+		
+		// Get context contents from model
+		$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType);
+		$data = array_merge($data, $context_contents[0]);
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_information', $data);
@@ -96,7 +104,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => ucfirst($ContextType)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
