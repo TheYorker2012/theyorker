@@ -37,7 +37,7 @@ class Review_model extends Model {
 			SELECT
 			 review_context_contents.review_context_content_blurb as content_blurb,
 			 review_context_contents.review_context_content_quote as content_quote,
-			 review_context_contents.review_context_content_average_price as recommended_item,
+			 review_context_contents.review_context_content_average_price as average_price,
 			 review_context_contents.review_context_content_recommend_item as recommended_item, 
 			 review_context_contents.review_context_content_rating as content_rating,
 			 review_context_contents.review_context_content_serving_times as serving_times,
@@ -71,6 +71,7 @@ class Review_model extends Model {
 			SELECT
 			 review_context_contents.review_context_content_last_author_timestamp as timestamp,
 			 business_cards.business_card_name as name,
+			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
 			 review_context_contents.review_context_content_id as context_content_id,
 			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published
 			FROM review_contexts 
@@ -97,6 +98,46 @@ class Review_model extends Model {
 		return $query->result_array();
 	}
 
+
+	/**
+	 * Adds an article to the database
+	 * @param 'content_type_id' 'organisation_entity_id' 'initial_editor' /
+	 * 'publish_date' 'heading' 'subheading' 'subtext' 'wikitext' 'blurb'
+	 *
+	 *
+	 */
+
+	function SetReviewContextContent($organisation_shortname, $content_type_codename, $user_entity_id, $blurb, $quote, $average_price, $recommended_item,
+							$rating, $serving_times, $deal, $deal_expires)
+	{
+			$sql =
+			'
+			INSERT INTO review_context_contents 
+			(
+			 review_context_content_organisation_entity_id,
+			 review_context_content_content_type_id,
+		 	 review_context_content_last_author_user_entity_id,
+			 review_context_content_blurb,
+			 review_context_content_quote,
+			 review_context_content_average_price,
+			 review_context_content_recommend_item, 
+			 review_context_content_rating,
+			 review_context_content_serving_times,
+			 review_context_content_deal,
+			 review_context_content_deal_expires
+			) 
+			VALUES(
+			 (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?) ,
+			 (SELECT content_type_id FROM context_types WHERE context_types.content_type_codename = ?) ,
+			 ?,?,?,?,?,?,?,?,?
+			);
+			';
+
+		$query = $this->db->query($sql, array($organisation_shortname, $content_type_codename, $user_entity_id, $blurb, $quote, $average_price, $recommended_item,
+							$rating, $serving_times, $deal, $deal_expires) );
+
+		return $query->result_array();
+	}
 
 
 	function GetReview($organisation_directory_entry_name,$content_type_codename) {
