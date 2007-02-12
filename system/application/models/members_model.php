@@ -22,6 +22,8 @@ class Members_model extends Model {
 				users.user_surname,
 				users.user_email,
 				users.user_entity_id,
+				users.user_gender,
+				users.user_enrolled_year,
 				users.user_nickname
 				FROM 
 				subscriptions
@@ -38,6 +40,8 @@ class Members_model extends Model {
 			$tmpmembers['surname']        = $row->user_surname;
 			$tmpmembers['id']             = $row->user_entity_id;
 			$tmpmembers['email']          = $row->user_email;
+			$tmpmembers['gender']         = $row->user_gender;
+			$tmpmembers['enrol_year']     = $row->user_enrolled_year;
 			$tmpmembers['paid']           = $row->subscription_paid;
 			$tmpmembers['if_email']       = $row->subscription_email;
 			$tmpmembers['vip']            = $row->subscription_vip;
@@ -64,6 +68,8 @@ class Members_model extends Model {
 				users.user_surname,
 				users.user_email,
 				users.user_entity_id,
+				users.user_gender,
+				users.user_enrolled_year,
 				users.user_nickname
 				FROM 
 				subscriptions
@@ -81,6 +87,8 @@ class Members_model extends Model {
 			$tmpmember['surname']        = $row->user_surname;
 			$tmpmember['id']             = $row->user_entity_id;
 			$tmpmember['email']          = $row->user_email;
+			$tmpmember['gender']        = $row->user_gender;
+			$tmpmember['enrol_year']    = $row->user_enrolled_year;			
 			$tmpmember['paid']           = $row->subscription_paid;
 			$tmpmember['if_email']       = $row->subscription_email;
 			$tmpmember['vip']            = $row->subscription_vip;
