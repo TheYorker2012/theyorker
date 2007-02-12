@@ -26,6 +26,47 @@ class Review_model extends Model {
 		parent::Model();
 	}
 
+	///	Find the organisations in the directory.
+	/**
+	 * @return An array of organisations with:
+	 *	- ['organisation_name']        (organisations)
+	 *	- ['organisation_description'] (organisations)
+	 *	- ['organisation_type_name']   (organisation_types)
+	 */
+	function GetReviewContextContents($organisation_shortname,$content_type_codename)
+	{
+		$sql =
+			'
+			SELECT
+			 review_context_contents.review_context_content_blurb as content_blurb,
+			 review_context_contents.review_context_content_quote as content_quote,
+			 review_context_contents.review_context_content_average_price as recommended_item,
+			 review_context_contents.review_context_content_recommend_item as recommended_item, 
+			 review_context_contents.review_context_content_rating as content_rating,
+			 review_context_contents.review_context_content_serving_times as serving_times,
+			 review_context_contents.review_context_content_deal as deal,
+			 review_context_contents.review_context_content_deal_expires as deal_expires
+			FROM review_contexts 
+			INNER JOIN organisations 
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			 AND organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types
+			ON review_contexts.review_context_content_type_id=content_types.content_type_id
+			 AND content_types.content_type_codename = ?
+			INNER JOIN review_context_contents 
+			ON review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id 
+			WHERE 1
+			ORDER BY organisation_name
+			';
+
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
+
+		return $query->result_array();
+	}
+
+
+
+
 	function GetReview($organisation_directory_entry_name,$content_type_codename) {
 
 	#dgh500
