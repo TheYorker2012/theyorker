@@ -952,6 +952,61 @@ class Events_model extends Model
 		);
 	}
 	
+	/// Alter existing events.
+	/**
+	 * @param $EventData array Array of Event data arrays.
+	 * @return array(
+	 *	'events' => events changed,
+	 *	'occurrences' => occurrences changed)
+	 * @pre Each event must have an 'id' element.
+	 * @exception Exception The event could not be created.
+	 */
+	function EventsAlter($EventData)
+	{
+		assert('array_key_exists(\'id\',$EventData) && is_int($EventData[\'id\'])');
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
+		
+		$event_id = $EventData['id'];
+		
+		static $translation = array(
+			'name'			=> 'events.event_name',
+			'description'	=> 'events.event_description',
+		);
+		$fields = array();
+		$bind_data = array();
+		foreach ($translation as $input_name => $field_name) {
+			if (array_key_exists($input_name, $EventData)) {
+				$fields[] = $field_name.'=?';
+				$bind_data[] = $EventData[$input_name];
+			}
+		}
+		
+		$occurrence_query = new EventOccurrenceQuery();
+		
+		// create new event
+		$sql = 'UPDATE events
+				INNER JOIN event_entities
+					ON	event_entities.event_entity_event_id = events.event_id
+					AND ' . $occurrence_query->ExpressionOwned() . '
+				SET ' . implode(',',$fields) . '
+				WHERE events.event_id = ?';
+		$bind_data[] = $event_id;
+		
+		$query = $this->db->query($sql, $bind_data);
+		$num_events = array($this->db->affected_rows());
+		
+		if (array_key_exists('occurrences',$EventData)) {
+			$num_occurrences = $this->OccurrencesAlter($event_id, $EventData['occurrences']);
+		} else {
+			$num_occurrences = 0;
+		}
+		
+		// Return some information about the created event.
+		return array($num_events, $num_occurrences);
+	}
+	
 	/// Add occurrences to an event.
 	/**
 	 * @param $EventId int ID of event to add occurrence to.
@@ -960,6 +1015,8 @@ class Events_model extends Model
 	 */
 	function OccurrencesAdd($EventId, $OccurrenceData)
 	{
+		$occurrence_query = new EventOccurrenceQuery();
+		
 		static $translation2 = array(
 			'description',
 			'location',
@@ -967,61 +1024,74 @@ class Events_model extends Model
 			'all_day',
 			'ends_late',
 		);
-		// create each occurrences
-		$sql = 'INSERT INTO event_occurrences (
-				event_occurrence_event_id,
-				event_occurrence_description,
-				event_occurrence_location,
-				event_occurrence_postcode,
-				event_occurrence_start_time,
-				event_occurrence_end_time,
-				event_occurrence_all_day,
-				event_occurrence_ends_late)
-			VALUES';
-		$first = TRUE;
-		foreach ($OccurrenceData as $occurrence) {
-			$values = array_fill(0, count($translation2)-1, 'DEFAULT');
-			foreach ($translation2 as $field_name => $input_name) {
-				if (array_key_exists($input_name, $occurrence)) {
-					$values[$field_name] = $this->db->escape($occurrence[$input_name]);
+		
+		$sql_owned = 'SELECT COUNT(*) FROM event_entities
+			WHERE event_entities.event_entity_event_id = '.$this->db->escape($EventId).'
+			AND ' . $occurrence_query->ExpressionOwned();
+		$query = $this->db->query($sql_owned);
+		if ($query->num_rows() > 0) {
+		
+			// create each occurrences
+			$sql = 'INSERT INTO event_occurrences (
+					event_occurrence_event_id,
+					event_occurrence_description,
+					event_occurrence_location,
+					event_occurrence_postcode,
+					event_occurrence_start_time,
+					event_occurrence_end_time,
+					event_occurrence_all_day,
+					event_occurrence_ends_late)
+				VALUES';
+			$first = TRUE;
+			foreach ($OccurrenceData as $occurrence) {
+				$values = array_fill(0, count($translation2), 'DEFAULT');
+				foreach ($translation2 as $field_name => $input_name) {
+					if (array_key_exists($input_name, $occurrence)) {
+						$values[$field_name] = $this->db->escape($occurrence[$input_name]);
+					}
 				}
+				if (!$first)
+					$sql .= ',';
+				$sql .=	' ('.$EventId.
+						','.$values[0].		// description
+						','.$values[1].		// location
+						','.$values[2];		// postcode
+				// start time
+				if (array_key_exists('start', $occurrence))
+					$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
+				else
+					$sql .= ',DEFAULT';
+				// end time
+				if (array_key_exists('end', $occurrence))
+					$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
+				else
+					$sql .= ',DEFAULT';
+				
+				$sql .=	','.$values[3].		// all_day
+						','.$values[4].')'; // ends_late
+				
+				$first = FALSE;
 			}
-			if (!$first)
-				$sql .= ',';
-			$sql .=	' ('.$EventId.
-					','.$values[0].		// description
-					','.$values[1].		// location
-					','.$values[2];		// postcode
-			// start time
-			if (array_key_exists('start', $occurrence))
-				$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
-			else
-				$sql .= ',DEFAULT';
-			// end time
-			if (array_key_exists('end', $occurrence))
-				$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
-			else
-				$sql .= ',DEFAULT';
+			$query = $this->db->query($sql);
+			return $this->db->affected_rows();
 			
-			$sql .=	','.$values[3].		// all_day
-					','.$values[4].')'; // ends_late
-			
-			$first = FALSE;
+		} else {
+			return 0;
 		}
-		$query = $this->db->query($sql);
-		return $this->db->affected_rows();
+		
 	}
 	
-	/// Edit an existing occurrence.
+	/// Edit existing occurrences.
 	/**
 	 * @param $EventId int ID of event to add occurrence to.
 	 * @param $OccurrenceData array Array of Occurrence Data arrays.
 	 * @return Number of occurrences changed.
-	 *
-	 * Each occurrence must have an 'id' element.
+	 * @pre Each occurrence must have an 'id' element.
 	 */
 	function OccurrencesAlter($EventId, $OccurrenceData)
 	{
+		$occurrence_query = new EventOccurrenceQuery();
+		
 		static $translation = array(
 			'description'	=> 'event_occurrences.event_occurrence_description',
 			'location'		=> 'event_occurrences.event_occurrence_location',
@@ -1050,9 +1120,13 @@ class Events_model extends Model
 			}
 			
 			if (!empty($sets)) {
-				$sql = 'UPDATE event_occurrences SET ';
-				$sql .= implode(', ', $sets);
-				$sql .= ' WHERE	event_occurrences.event_occurrence_id = ?
+				$sql = 'UPDATE event_occurrences
+					INNER JOIN event_entities
+						ON	event_entities.event_entity_event_id
+							= event_occurrences.event_occurrence_event_id
+						AND ' . $occurrence_query->ExpressionOwned() . '
+					SET ' . implode(', ', $sets) . '
+					WHERE	event_occurrences.event_occurrence_id = ?
 						AND	event_occurrences.event_occurrence_event_id = ?';
 				$bind_data[] = $occurrence['id'];
 				$bind_data[] = $EventId;
