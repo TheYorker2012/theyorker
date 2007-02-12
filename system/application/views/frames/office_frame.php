@@ -122,7 +122,7 @@ function preloader()
 		</div>
 
 		<div class='officenavigation_item'>
-			<a href='/office/news/uninews/'>Uni News</a>
+			<a href='/office/news'>Uni News</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/national/'>UK &amp; World News</a>

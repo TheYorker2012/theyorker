@@ -11,6 +11,30 @@ class Requests_Model extends Model
 		parent::Model();
 	}
 
+	// Retrieve list of all reporters (this includes editors and photographers) that a request can be assigned to
+	function getReporters ()
+	{
+		$sql = 'SELECT user_entity_id AS id, user_firstname AS firstname, user_surname AS surname
+				FROM users
+				WHERE user_office_access = 1
+				AND user_admin = 0
+				ORDER BY user_firstname ASC, user_surname ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	// Retrieve a list of all the boxes a request can be assigned to
+	function getBoxes ($section)
+	{
+		$sql = 'SELECT content_type_name AS name, content_type_codename AS code
+				FROM content_types
+				WHERE content_type_codename IS NOT NULL
+				AND content_type_section = ?
+				ORDER BY content_type_section_order ASC';
+		$query = $this->db->query($sql,array($section));
+		return $query->result_array();
+	}
+
 	//Add a  new request to the article table
 	function CreateRequest($status,$type_id,$title,$description,$user,$date)
 	{
