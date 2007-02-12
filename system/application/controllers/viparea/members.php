@@ -10,20 +10,22 @@ class Members extends Controller
 	{
 		parent::Controller();
 		$this->load->model('directory_model');
+		$this->load->model('members_model');
 		$this->load->library('organisations');
 		$this->load->helper('wikilink');
 	}
 	
-	function view($organisation)
+	function view()
 	{
 		if (!CheckPermissions('vip')) return;
 		
-		$this->pages_model->SetPageCode('viparea_members');
+		$this->pages_model->SetPageCode('viparea_members');		
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'organisation' => $organisation,
-			'teams' => array(
+			'organisation' => $this->members_model->GetMemberDetails($this->user_auth->organisationLogin),
+			'team' => $this->members_model->GetTeams($this->user_auth->organisationLogin)
+				/*		array(
 						array(
 							'id' => '1',
 							'name' => 'Team 1',
@@ -58,7 +60,7 @@ class Members extends Controller
 								'awaiting_reply' => 'Y',
 								'vip' => 'N',
 							),
-						),
+						),*/
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/members', $data);
