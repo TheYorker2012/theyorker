@@ -25,6 +25,9 @@
 		<td><strong>Surname</strong></td>
 		<td><strong>Email</strong></td>
 		<td><strong>Paid</strong></td>
+		<td><strong>E?</strong></td>
+		<td><strong>Conf</strong></td>
+		<td><strong>VIP</strong></td>
 		<td><strong>Edit</strong></td>
 	</tr>
 	<?php for($i=0;$i<count($organisation);$i++) {?>
@@ -33,9 +36,13 @@
 		<td><?php echo $organisation[$i]['firstname']; ?></td>
 		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
 		<td><?php echo $organisation[$i]['paid']; ?></td>
+		<td><?php echo $organisation[$i]['if_email']; ?></td>
+		<td><?php echo $organisation[$i]['confirmed']; ?></td>
+		<td><?php echo $organisation[$i]['vip']; ?></td>
 		<td><a href='/viparea/members/edit/<?php echo $organisation[$i]['id']; ?>'>Edit</a></td>
 	</tr>
 	<?php } ?>
-	</table>
+	</table>	
+
 </div>
 <a href='/viparea/'>Back to the vip area.</a>

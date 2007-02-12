@@ -14,7 +14,8 @@
 		<td><strong>Surname</strong></td>
 		<td><strong>Email</strong></td>
 		<td><strong>Paid</strong></td>
-		<td><strong>Email?</strong></td>
+		<td><strong>E?</strong></td>
+		<td><strong>Conf</strong></td>
 		<td><strong>VIP</strong></td>
 		<td><strong>Edit</strong></td>
 	</tr>
@@ -25,6 +26,7 @@
 		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
 		<td><?php echo $organisation[$i]['paid']; ?></td>
 		<td><?php echo $organisation[$i]['if_email']; ?></td>
+		<td><?php echo $organisation[$i]['confirmed']; ?></td>
 		<td><?php echo $organisation[$i]['vip']; ?></td>
 		<td><a href='/viparea/members/edit/<?php echo $organisation[$i]['id']; ?>'>Edit</a></td>
 	</tr>
@@ -51,10 +53,9 @@
 		<input type='checkbox' name='member_mailing_list' value='1' 
 		<?php if($member[0]['if_email']){echo "checked";} ?>> On Mailing List<br />
 		<input type='checkbox' name='member_reply' value='1' 
-		<?php if($member[0]['paid']){echo "checked";} ?>> Awaiting Reply<br />
+		<?php if(!$member[0]['confirmed']){echo "checked";} ?>> Awaiting Reply<br />
 		<input type='checkbox' name='member_vip' value='1' 
 		<?php if($member[0]['vip']){echo "checked";} ?>> VIP<br />
-		<input type='checkbox' name='member_drive' value='1' <?php if(!empty($editmember['member_drive'])){echo "selected";} ?>> Can Drive<br />
 		<label for='member_update'></label>
 		<input name='member_update' type='submit' value='Update' class='button' />
 	</fieldset>
