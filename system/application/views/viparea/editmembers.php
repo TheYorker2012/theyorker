@@ -45,9 +45,6 @@
 		<label for='member_email'>Email:</label>
 		<input type='text' name='member_email' value='<?php echo $member[0]['email'] ?>'/>
 		<br />
-		<label for='member_phone'>Phone:</label>
-		<input type='text' name='member_phone' value='<?php if(!empty($editmember['phone'])){echo $editmember['phone'];} ?>'/>
-		<br />
 		<input type='checkbox' name='member_paid' value='1' 
 		<?php if($member[0]['paid']){echo "checked";} ?>> Paid<br />
 		<input type='checkbox' name='member_mailing_list' value='1' 
