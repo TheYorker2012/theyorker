@@ -71,7 +71,8 @@ class Review_model extends Model {
 			'
 			SELECT
 			 review_context_contents.review_context_content_last_author_timestamp as timestamp,
-			 business_cards.business_card_name as name
+			 business_cards.business_card_name as name,
+			 review_context_contents.review_context_content_id
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
@@ -80,7 +81,8 @@ class Review_model extends Model {
 			ON review_contexts.review_context_content_type_id=content_types.content_type_id
 			 AND content_types.content_type_codename = ?
 			INNER JOIN review_context_contents 
-			ON review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id 
+			ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
+			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN business_cards 
 			ON business_cards.business_card_user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
 			INNER JOIN business_card_groups
