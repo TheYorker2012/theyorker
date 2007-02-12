@@ -25,8 +25,6 @@
 		<td><strong>Surname</strong></td>
 		<td><strong>Email</strong></td>
 		<td><strong>Paid</strong></td>
-		<td><strong>Email?</strong></td>
-		<td><strong>VIP</strong></td>
 		<td><strong>Edit</strong></td>
 	</tr>
 	<?php for($i=0;$i<count($organisation);$i++) {?>
@@ -35,32 +33,19 @@
 		<td><?php echo $organisation[$i]['firstname']; ?></td>
 		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
 		<td><?php echo $organisation[$i]['paid']; ?></td>
-		<td><?php echo $organisation[$i]['if_email']; ?></td>
-		<td><?php echo $organisation[$i]['vip']; ?></td>
-		<td><a href='/viparea/members/view/<?php echo $organisation; ?>/edit/<?php echo $member['id']; ?>'>E</a></td>
+		<td><a href='/viparea/members/edit/<?php echo $organisation[$i]['id']; ?>'>Edit</a></td>
 	</tr>
 	<?php } ?>
 	</table>
 </div>
 <div class='grey_box'>
-<h2>edit member</h2>
+<div style="text-align: center;"><h2>edit member - <?php echo $user ?></h2></div>
 <form action='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/edit' class='form' method='POST'>
 	<fieldset>
 		<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/delete/<?php if(!empty($editmember['id'])){echo $editmember['id'];} ?>'>Delete Member</a>
 		<br />
 		<label for='member_name'>Name:</label>
 		<input type='text' name='member_name' value='foo'/>
-		<br />
-		<label for='member_group'>Group:</label>
-		<select name='member_group'>
-		<?php
-		for($i=0;$i<count($team);$i++) {
-		?>
-		<option value='<?php echo $team[$i]['organisation_id'] ?>' <?php if(!empty($editmember['team_id'])){if ($team['id']==$editmember['team_id']) echo 'SELECTED';}?>><?php echo $team[$i]['organisation_name'] ?></option>
-		<?php
-		}
-		?>
-		</select>
 		<br />
 		<label for='member_email'>Email:</label>
 		<input type='text' name='member_email' value='<?php if(!empty($editmember['email'])){echo $editmember['email'];} ?>'/>
