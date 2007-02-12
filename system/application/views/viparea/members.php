@@ -38,29 +38,4 @@
 	<?php } ?>
 	</table>
 </div>
-<div class='grey_box'>
-<div style="text-align: center;"><h2>edit member - <?php echo $user ?></h2></div>
-<form action='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/edit' class='form' method='POST'>
-	<fieldset>
-		<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/delete/<?php if(!empty($editmember['id'])){echo $editmember['id'];} ?>'>Delete Member</a>
-		<br />
-		<label for='member_name'>Name:</label>
-		<input type='text' name='member_name' value='foo'/>
-		<br />
-		<label for='member_email'>Email:</label>
-		<input type='text' name='member_email' value='<?php if(!empty($editmember['email'])){echo $editmember['email'];} ?>'/>
-		<br />
-		<label for='member_phone'>Phone:</label>
-		<input type='text' name='member_phone' value='<?php if(!empty($editmember['phone'])){echo $editmember['phone'];} ?>'/>
-		<br />
-		<input type='checkbox' name='member_paid' value='1' <?php if(!empty($editmember['member_paid'])){echo "selected";} ?>> Paid<br />
-		<input type='checkbox' name='member_mailing_list' value='1' <?php if(!empty($editmember['member_mailing_list'])){echo "selected";} ?>> On Mailing List<br />
-		<input type='checkbox' name='member_reply' value='1' <?php if(!empty($editmember['member_reply'])){echo "selected";} ?>> Awaiting Reply<br />
-		<input type='checkbox' name='member_vip' value='1' <?php if(!empty($editmember['member_vip'])){echo "selected";} ?>> VIP<br />
-		<input type='checkbox' name='member_drive' value='1' <?php if(!empty($editmember['member_drive'])){echo "selected";} ?>> Can Drive<br />
-		<label for='member_update'></label>
-		<input name='member_update' type='submit' value='Update' class='button' />
-	</fieldset>
-</form>
-</div>
 <a href='/viparea/'>Back to the vip area.</a>
