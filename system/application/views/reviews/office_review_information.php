@@ -46,7 +46,7 @@
 </ul>
 </div>
 
-<form id='reviewinfo' name='reviewinfo' action='/viparea/reviews/<?php echo 'shortname'; ?>/<?php echo 'content_type'; ?>/edit' method='POST' class='form'>
+<form id='reviewinfo' name='reviewinfo' action='/office/reviews/<?php echo $organisation['shortname']; ?>/<?php echo $context_type; ?>' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>objective blurb</h2>
 	You are currently editing <span class="orange"><?php echo $organisation['name']; ?></span><br />
@@ -56,13 +56,13 @@
 <h2>details</h2>
 	<fieldset>
 		<label for='reviewinfo_rating'>Rating:</label>
-		<select name="rating">
+		<select name="reviewinfo_rating">
 		<?php
 		for ($rating = 0; $rating <= 10; $rating++)
 		{
     		echo '<option';
     		if ($rating == $content_rating) echo ' selected';
-    		echo '>'.($rating / 2).'</option>';
+    		echo ' value="'.$rating.'">'.($rating / 2).'</option>';
 		}
 		?>
 		</select>
@@ -73,13 +73,13 @@
 		<label for='reviewinfo_recommended'>Recommended Item:</label>
 		<input type='text' name='reviewinfo_recommended' style='width: 220px;' value='<?php echo $recommended_item; ?>'/>
 		<br />
-		<label for='reviewinfo_recommended_price'>Average Price:</label>
-		<input type='text' name='reviewinfo_averageprice' style='width: 220px;' value='<?php echo $average_price; ?>'/>
+		<label for='reviewinfo_average_price'>Average Price:</label>
+		<input type='text' name='reviewinfo_average_price' style='width: 220px;' value='<?php echo $average_price; ?>'/>
 		<br />
 		<label for='reviewinfo_serving_hours'>Serving Hours:</label>
 		<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo $serving_times; ?></textarea>
 		<br />
-		<label for='reviewinfo_deals'>Deals:</label>
+		<label for='reviewinfo_deal'>Deals:</label>
 		<textarea name='reviewinfo_deal' cols='25' rows='4'><?php echo $deal; ?></textarea>
 		<br />
 		<label for='reviewinfo_deal_expires'>Deal Expires:</label>
