@@ -194,43 +194,43 @@ class RecurrenceRule
 			
 			$this->mMinDate	= (NULL === $ArrayData['recurrence_rule_min_date'])
 							? FALSE
-							: $$ArrayData['recurrence_rule_min_date'];
+							: (int)$$ArrayData['recurrence_rule_min_date'];
 			$this->mMaxDate	= (NULL === $ArrayData['recurrence_rule_max_date'])
 							? FALSE
-							: $$ArrayData['recurrence_rule_max_date'];
-			$this->mYearInterval	= $ArrayData['recurrence_rule_year_interval'];
-			$this->mYearOffset		= $ArrayData['recurrence_rule_year_offset'];
+							: (int)$$ArrayData['recurrence_rule_max_date'];
+			$this->mYearInterval	= (int)$ArrayData['recurrence_rule_year_interval'];
+			$this->mYearOffset		= (int)$ArrayData['recurrence_rule_year_offset'];
 			$this->mDateMethod		= $translation[$ArrayData['recurrence_rule_date_method']];
 			
-			$months				= $ArrayData['recurrence_rule_daymonth_months'];
+			$months = (int)$ArrayData['recurrence_rule_daymonth_months'];
 			$this->mDateDmMonths = array();
 			for ($bit_number = 1; $bit_number <= 12; ++$bit_number) {
-				$this->mDataDmMonths[$bit_number] = (($months % 2) != 0);
+				$this->mDateDmMonths[$bit_number] = (($months % 2) != 0);
 				$months = (int)($months / 2);
 			}
 			
-			$this->mDateDmDate	= $ArrayData['recurrence_rule_daymonth_date'];
-			$this->mDateAcTerm	= $ArrayData['recurrence_rule_academic_term'];
+			$this->mDateDmDate	= (int)$ArrayData['recurrence_rule_daymonth_date'];
+			$this->mDateAcTerm	= (int)$ArrayData['recurrence_rule_academic_term'];
 			
-			$weeks = $ArrayData['recurrence_rule_academic_weeks'];
+			$weeks = (int)$ArrayData['recurrence_rule_academic_weeks'];
 			$this->mDateAcWeeks	= array();
 			for ($bit_number = -15; $bit_number <= 16; ++$bit_number) {
 				$this->mDateAcWeeks[$bit_number] = (($weeks % 2) != 0);
 				$weeks = (int)($weeks / 2);
 			}
 			
-			$this->mDayMethod	= $ArrayData['recurrence_rule_day_method'];
+			$this->mDayMethod	= (int)$ArrayData['recurrence_rule_day_method'];
 			
-			$days = $ArrayData['recurrence_rule_day_days'];
+			$days = (int)$ArrayData['recurrence_rule_day_days'];
 			$this->mDayDays = array();
 			for ($bit_number = 0; $bit_number < 7; ++$bit_number) {
 				$this->mDayDays[$bit_number] = (($days % 2) != 0);
 				$days = (int)($days / 2);
 			}
 			
-			$this->mDayWeek		= $ArrayData['recurrence_rule_day_week'];
-			$this->mOffsetDays	= $ArrayData['recurrence_rule_offset_days'];
-			$this->mOffsetMins	= $ArrayData['recurrence_rule_offset_minutes'];
+			$this->mDayWeek		= (int)$ArrayData['recurrence_rule_day_week'];
+			$this->mOffsetDays	= (int)$ArrayData['recurrence_rule_offset_days'];
+			$this->mOffsetMins	= (int)$ArrayData['recurrence_rule_offset_minutes'];
 			
 			
 		} else {

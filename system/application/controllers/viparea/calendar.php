@@ -205,7 +205,8 @@ class Calendar extends controller
 					}
 				}
 				
-				$op = '<OL>';
+				$op = '<H4>Existing occurrences</H4>';
+				$op .= '<OL>';
 				foreach ($occurrences as $occurrence) {
 					$operations = array();
 					if ($occurrence['status'] === 'draft') {
@@ -239,11 +240,29 @@ class Calendar extends controller
 				}
 				$op .= '</OL>';
 				
+				// Get event information
 				$events = $this->events_model->EventsGet(array('events.*'), $EventId, TRUE);
+				
+				// If theres a recurrence rule, use it to generate the next two
+				// years occurrences
+				if (isset($events[0]['event_recurrence_rule'])) {
+					$op .= '<H4>Generated occurrences in next 5 years</H4>';
+					$occurrences_calculated = array_keys($events[0]['event_recurrence_rule']->FindTimes(
+						time(), strtotime('+5years')));
+					foreach ($occurrences_calculated as $key => $timestamp) {
+						$occurrences_calculated[$key] = date(DATE_RFC822,$timestamp);
+					}
+					$op .=	'<pre>'.
+								ascii_to_entities(var_export($occurrences_calculated,true)).
+							'</pre>';
+				}
+				
+				$op .= '<H4>Event information</H4>';
 				$op .=	'<pre>'.
 							ascii_to_entities(var_export($events,true)).
 						'</pre>';
 				
+				$op .= '<H4>RSVP list</H4>';
 				$rsvps = $this->events_model->GetEventRsvp($EventId);
 				$op .=	'<pre>'.
 							ascii_to_entities(var_export($rsvps,true)).
