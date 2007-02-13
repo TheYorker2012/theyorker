@@ -69,14 +69,14 @@ class Requests_Model extends Model
 					article_request_description,
 					article_suggestion_accepted,
 					article_request_entity_id,
-					article_editor_approved_user_etity_id,
+					article_editor_approved_user_entity_id,
 					article_publish_date)
 				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
 			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
 			$sql = 'SELECT 	article_id 
 				FROM	articles
 				WHERE	(article_id=LAST_INSERT_ID())';
-			$this->db->query($sql);
+			$query = $this->db->query($sql);
 			$id = $query->row()->article_id;
 			$this->db->trans_complete();
 			

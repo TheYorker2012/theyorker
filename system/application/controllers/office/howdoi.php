@@ -394,18 +394,38 @@ class Howdoi extends Controller
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
-		
+
 		if (isset($_POST['r_submit_ask']))
 		{
                 	$article_header_id = $this->requests_model->CreateRequest(
-						'suggestion', 
+						'suggestion',
 						$_POST['a_category'],
-						$_POST['a_question'], 
-						$_POST['a_description'], 
+						$_POST['a_question'],
+						$_POST['a_description'],
 						$this->user_auth->entityId,
 						NULL);
 	                $this->main_frame->AddMessage('success','Suggestion Created.');
 			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_request']))
+		{
+			if ($this->user_auth->officeType != 'Low')
+			{
+	                	$article_header_id = $this->requests_model->CreateRequest(
+							'request',
+							$_POST['a_category'],
+							$_POST['a_question'],
+							$_POST['a_description'],
+							$this->user_auth->entityId,
+							$_POST['a_deadline']);
+		                $request_id = $this->main_frame->AddMessage('success','Request Created.');
+				redirect('/office/howdoi/editquestion/'.$request_id);
+			}
+			else
+			{
+		                $this->main_frame->AddMessage('error','You don\'t have access to create a request.');
+				redirect('/office/howdoi');
+			}
 		}
 	}
 	
