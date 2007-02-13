@@ -108,12 +108,25 @@ class Requests_Model extends Model
 			$sql = 'UPDATE 	articles
 				SET	article_live_content_id = ?,
 					article_publish_date = ?,
-					article_editor_approved_user_entity_id = ?
+					article_editor_approved_user_entity_id = ?,
+					article_pulled = 0
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
 		}
 
 		return $status;
+	}
+
+	//Make a change to a request status in the article table
+	function UpdatePulledToRequest($article_id, $editor_id)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_pulled = 0,
+				article_editor_approved_user_entity_id = ?,
+				article_publish_date = CURRENT_TIMESTAMP,
+				article_live_content_id = 0
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($editor_id, $article_id));
 	}
 
 	//Make a change to the title, description and content type of a suggestion
@@ -157,7 +170,7 @@ class Requests_Model extends Model
 	}
 
 	//Should this be get completed articles?
-	function GetPublishedArticles($type_id, $is_published)
+	function GetPublishedArticles($type_id, $is_published, $is_pulled = FALSE)
 	{
 		$sql = 'SELECT	article_id,
 			article_publish_date,
@@ -182,12 +195,12 @@ class Requests_Model extends Model
 			AND	article_content_type_id = ?
 			AND	article_live_content_id IS NOT NULL
 			AND	article_deleted = 0
-			AND	article_pulled = 0';
+			AND	article_pulled = ?';
 		if ($is_published == TRUE)
 			$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
 		else
 			$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
-		$query = $this->db->query($sql,array($type_id));
+		$query = $this->db->query($sql,array($type_id, $is_pulled));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{

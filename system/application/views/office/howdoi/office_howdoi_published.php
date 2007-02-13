@@ -67,6 +67,23 @@
 						<br /><a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a>';
 				}
 			}
+			if (count($category['pulled']) > 0)
+			{
+				if ($br_first == FALSE)
+					$br_first = TRUE;
+				else
+					echo '<br />';
+				echo '<b>Pulled</b>';
+				foreach ($category['pulled'] as $pulled)
+				{
+					$pull = strtotime($pulled['publish']);
+					$pullformat = date('F jS Y', $pull).' at '.date('g.i A', $pull);
+					echo '<br /><span class="orange">'.$pulled['heading'].'</span>
+						<span class="grey">(pulled by '.$pulled['editorname'].')</span>
+						<br />pulled on: '.$pullformat.'
+						<br /><a href="/office/howdoi/editquestion/'.$pulled['id'].'">[edit]</a>';
+				}
+			}
 		}
 	}
 	echo '</div>';

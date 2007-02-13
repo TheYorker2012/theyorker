@@ -98,7 +98,11 @@ class Article_model extends Model
 				$returndata['status'] = 'suggestion';
 			else
 				if ($row->article_live_content_id != FALSE)
+				{
 					$returndata['status'] = 'published';
+					if ($row->article_pulled == TRUE)
+						$returndata['status'] = 'pulled';
+				}
 				else
 					$returndata['status'] = 'request';
 			return $returndata;
@@ -379,12 +383,14 @@ class Article_model extends Model
 		$this->db->query($sql, array($id));
 	}
 
-	function PullArticle($id)
+	function PullArticle($id, $editor_id)
 	{
 		$sql = 'UPDATE	articles
-			SET	article_pulled = 1
+			SET	article_pulled = 1,
+				article_editor_approved_user_entity_id = ?,
+				article_publish_date = CURRENT_TIMESTAMP
 			WHERE	(article_id = ?)';
-		$query = $this->db->query($sql,array($id));
+		$query = $this->db->query($sql,array($editor_id, $id));
 	}
 }
 ?>

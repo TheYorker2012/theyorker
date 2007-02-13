@@ -72,11 +72,21 @@ class Howdoi extends Controller
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		if ($page == 'suggestions')
+		{
 			$this->main_frame->SetPage('suggestions');
-		if ($page == 'requests')
+			$this->pages_model->SetPageCode('office_howdoi_suggestions');
+		}
+		else if ($page == 'requests')
+		{
 			$this->main_frame->SetPage('requests');
-		if ($page == 'published')
+			$this->pages_model->SetPageCode('office_howdoi_requests');
+		}
+		else if ($page == 'published')
+		{
 			$this->main_frame->SetPage('published');
+			$this->pages_model->SetPageCode('office_howdoi_published');
+		}
+
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -110,14 +120,17 @@ class Howdoi extends Controller
 			//published
 			$data['categories'][$category_id]['published'] = $this->requests_model->GetPublishedArticles($category_id, TRUE);
 			$data['status_count']['published'] = $data['status_count']['published'] + count($data['categories'][$category_id]['published']);
+			//pulled
+			$data['categories'][$category_id]['pulled'] = $this->requests_model->GetPublishedArticles($category_id, TRUE, TRUE);
+			$data['status_count']['pulled'] = $data['status_count']['pulled'] + count($data['categories'][$category_id]['pulled']);
 		}
 
 		// Set up the view
 		if ($page == 'suggestions')
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
-		if ($page == 'requests')
+		else if ($page == 'requests')
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_requests', $data);
-		if ($page == 'published')
+		else if ($page == 'published')
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_published', $data);
 		
 		// Set up the public frame
@@ -134,7 +147,7 @@ class Howdoi extends Controller
 		$this->load->model('howdoi_model','howdoi_model');
 
 		$this->pages_model->SetPageCode('office_howdoi_categories');
-		
+
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('categories');
@@ -192,10 +205,12 @@ class Howdoi extends Controller
 			$correct_content_type = TRUE;
 		}
 		//if the article has been pulled then make it go to the article is not a how do i type message.
-		if ($data['article']['header']['pulled'] == 1)
+		/*
+		if ($data['article']['header']['suggestion_accepted'] == FALSE)
 		{
                 	$correct_content_type = FALSE;
 		}
+		*/
 		if ($correct_content_type == TRUE)
 		{
 			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
@@ -244,7 +259,61 @@ class Howdoi extends Controller
 		}
 		else
 		{
-                	$this->main_frame->AddMessage('error','Specified article is not a How Do I question.');
+                	$this->main_frame->AddMessage('error','Specified article is not editable.');
+                	redirect('/office/howdoi/');
+		}
+	}
+
+	function editrequest()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('requests_model','requests_model');
+		$this->load->model('article_model','article_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+		
+		$this->pages_model->SetPageCode('office_howdoi_edit_request');
+
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('requests');
+
+		// Insert main text from pages information
+
+		$data['parameters']['article_id'] = $_POST['r_articleid'];
+
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+		$data['categories'][$howdoi_type_id] = array(
+					'codename'=>'unassigned',
+					'name'=>'Unassigned',
+					);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($data['parameters']['article_id']);
+		$correct_content_type = FALSE;
+		foreach ($data['categories'] as $category_id => $category)
+		{
+                	if ($data['article']['header']['content_type'] == $category_id)
+			$correct_content_type = TRUE;
+		}
+		if ($correct_content_type == TRUE)
+		{
+			$data['user']['id'] = $this->user_auth->entityId;
+			$data['user']['officetype'] = $this->user_auth->officeType;
+
+			// Set up the view
+			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_request', $data);
+
+			// Set up the public frame
+			$this->main_frame->SetContent($the_view);
+	
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		else
+		{
+                	$this->main_frame->AddMessage('error','Specified request is not editable.');
                 	redirect('/office/howdoi/');
 		}
 	}
@@ -376,7 +445,7 @@ class Howdoi extends Controller
 						'content_type'=>$_POST['a_category'])
 					);
 		                $this->main_frame->AddMessage('success',$_POST['r_status'].' has been modified.');
-				redirect($_POST['r_redirecturl']);
+				redirect('/office/howdoi/editquestion/'.$_POST['r_articleid']);
 			}
 			else if (isset($_POST['r_submit_accept']))
 			{
@@ -396,7 +465,7 @@ class Howdoi extends Controller
 			{
 				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
 		                $this->main_frame->AddMessage('success','Suggestion has been rejected.');
-				redirect('/office/howdoi');
+				redirect('/office/howdoi/suggestion');
 			}
 			else if (isset($_POST['r_submit_publishnow']))
 			{
@@ -426,15 +495,21 @@ class Howdoi extends Controller
 			}
 			else if (isset($_POST['r_submit_pull']))
 			{
-				$this->article_model->PullArticle($_POST['r_articleid']);
+				$this->article_model->PullArticle($_POST['r_articleid'], $this->user_auth->entityId);
 		                $this->main_frame->AddMessage('success','Question has been pulled from publication.');
-				redirect('/office/howdoi');
+				redirect('/office/howdoi/editquestion/'.$_POST['r_articleid']);
 			}
 			else if (isset($_POST['r_submit_category']))
 			{
 				$this->requests_model->UpdateContentType($_POST['r_articleid'], $_POST['a_category']);
 		                $this->main_frame->AddMessage('success','Questions category has been updated.');
 				redirect($_POST['r_redirecturl']);
+			}
+			else if (isset($_POST['r_submit_makerequest']))
+			{
+				$this->requests_model->UpdatePulledToRequest($_POST['r_articleid'], $this->user_auth->entityId);
+		                $this->main_frame->AddMessage('success','Question has been converted to a request.');
+				redirect('/office/howdoi/editquestion/'.$_POST['r_articleid']);
 			}
 		}
 	}
