@@ -1,15 +1,4 @@
 <div class="RightToolbar">
-	<h4>Areas for Attention</h4>
-	<div class="Entry">
-		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>?</b> <a href='#'>Questions</a> that are waiting to be published.
-		</div>
-		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>?</b> <a href='#'>Suggestions</a> that require attention.
-		</div>
-	</div>
 </div>
 <div class="grey_box">
 	<h2>edit categories</h2>

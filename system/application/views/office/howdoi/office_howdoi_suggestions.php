@@ -1,15 +1,22 @@
 <div class="RightToolbar">
-	<h4>Areas for Attention</h4>
-	<div class="Entry">
-		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b>?</b> <a href='#'>Questions</a> that are waiting to be published.
-		</div>
-		<div class="information_box">
-			<img src="/images/prototype/homepage/infomark.png" />
-			There are <b><?php echo $counts['suggestions']; ?></b> <a href='#'>Suggestions</a> that require attention.
-		</div>
-	</div>
+	<?php
+	echo '<h4>Areas for Attention</h4>
+	<div class="Entry">';
+		if ($status_count['unpublished'] > 0)
+			echo '<div class="information_box">
+			There are <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Questions</a> that are waiting to be published.
+		</div>';
+		if ($status_count['requests'] > 0)
+		echo '<div class="information_box">
+			There are <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> that require answers.
+		</div>';
+		if ($status_count['suggestions'] > 0)
+		echo '<div class="information_box">
+			There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.
+		</div>';
+
+	echo '</div>';
+	?>
 </div>
 <div class="blue_box">
 	<h2>suggestions</h2>
