@@ -125,6 +125,9 @@ class Howdoi extends Controller
 			$data['status_count']['pulled'] = $data['status_count']['pulled'] + count($data['categories'][$category_id]['pulled']);
 		}
 
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
 		// Set up the view
 		if ($page == 'suggestions')
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_suggestions', $data);
