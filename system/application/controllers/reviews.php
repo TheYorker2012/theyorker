@@ -54,7 +54,8 @@ class Reviews extends Controller {
 		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
 
 		//Incase of no data
-		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
+		if (count($reviews_database_result) == 0)
+			echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
 
 		//First row only since it should be unique
 		$reviews_database_result = $reviews_database_result[0];
@@ -426,7 +427,7 @@ class Reviews extends Controller {
 		{
 			$entries[$reviewno]['review_image'] = '/images/prototype/news/thumb3.jpg';
 			$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
-			$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_url'];
+			$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 			$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
 			$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
 			$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 

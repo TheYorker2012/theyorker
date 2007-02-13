@@ -58,14 +58,13 @@ echo '<div class="half_left"><h3 style="display: inline;">';
 //Check that it exists before trying to display
 if (isset($table_data[$table_data['tag_group_names'][0]]) == 1)
 {
+	echo $table_data['tag_group_names'][0];
+	echo '</h3><br />';
 
-echo $table_data['tag_group_names'][0];
-echo '</h3><br />';
-
-foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
-{
-	echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
-}
+	foreach($table_data[$table_data['tag_group_names'][0]] as $tag)
+	{
+		echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][0].'/'.$tag, $tag).'<br />';
+	}
 }
 
 //All types

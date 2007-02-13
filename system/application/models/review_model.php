@@ -252,7 +252,7 @@ class Review_model extends Model {
 	// Assign nice names to the result
 	foreach($query->result() as $row) {
 		$tmpleague['organisation_name']        = $row->organisation_name;
-		$tmpleague['organisation_url']         = $row->organisation_url;
+		$tmpleague['organisation_url']         = $row->organisation_content_url;
 		$tmpleague['organisation_description']         = $row->organisation_description;
 		$tmpleague['league_entry_position']    = $row->league_entry_position;
 		$tmpleague['league_name']              = $row->league_name;
@@ -447,11 +447,20 @@ class Review_model extends Model {
 				$tag_group[$tag_group_name[$index]][] = $mrow['tag_name'];
 			}
 		}
-		//Add the special case
-		$tag_group['tag_group_names'] = $tag_group_names;
 
-		//Return the result
-		return $tag_group;
+		//Incase no tags
+		if (isset($tag_group_names))
+		{
+			//Add the special case
+			$tag_group['tag_group_names'] = $tag_group_names;
+
+			//Return the result
+			return $tag_group;
+		}
+		else
+		{
+			return array(); //Return a empty array
+		}
 	}
 
 	//Adds a comment to the database, frb501
@@ -501,13 +510,15 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 			}
 
 		$sql = '
-			SELECT o.organisation_entity_id, o.organisation_name, o.organisation_url, o.organisation_directory_entry_name,
+			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,
 			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
 			FROM content_types AS ct
 			INNER JOIN review_context_contents AS rcc
 			ON ct.content_type_id = rcc.review_context_content_content_type_id
 			INNER JOIN organisations AS o
 			ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
+			INNER JOIN organisation_contents AS oc
+			ON o.organisation_live_content_id = oc.organisation_content_id
 			LEFT JOIN comment_summary_cache AS csc
 			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
 			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id
