@@ -329,6 +329,172 @@ class RecurrenceRule
 		return $ArrayData;
 	}
 	
+	/// Turn into a human readable string
+	/**
+	 * @return string Human readable description.
+	 */
+	function ToString()
+	{
+		// time , offset, base, years
+		$offset = '';
+		if ($this->mOffsetMins > 60) {
+			$offset .= (int)($this->mOffsetMins/60) . ' hours';
+			if ($this->mOffsetMins%60 > 0) {
+				$offset .= ' and ' . ($this->mOffsetMins%60) . ' minutes';
+			}
+			$offset .= ' past midnight, ';
+		} elseif ($this->mOffsetMins > 0) {
+			$offset .= $this->mOffsetMins . ' minutes past midnight, ';
+		}
+		if ($this->mOffsetDays > 0) {
+			$offset .= $this->mOffsetDays . ' day'.(($this->mOffsetDays > 1)?'s':'').' after ';
+		} elseif ($this->mOffsetDays < 0) {
+			$offset .= (-$this->mOffsetDays) . ' day'.(($this->mOffsetDays < -1)?'s':'').' before ';
+		}
+		$week_offset = '';
+		if ($this->mDayWeek > 0) {
+			$week_offset .= $this->mDayWeek . ' week'.(($this->mDayWeek > 1)?'s':'').' after ';
+		} elseif ($this->mDayWeek < 0) {
+			$week_offset .= (-$this->mDayWeek) . ' week'.(($this->mDayWeek < -1)?'s':'').' before ';
+		}
+		
+		$days_of_week = array();
+		static $week_days = array(
+			0 => 'Sunday',
+			1 => 'Monday',
+			2 => 'Tuesday',
+			3 => 'Wednesday',
+			4 => 'Thurday',
+			5 => 'Friday',
+			6 => 'Saturday',
+		);
+		foreach ($this->mDayDays as $day_number => $enable) {
+			if ($enable) {
+				$days_of_week[] = $week_days[$day_number];
+			}
+		}
+		$all_days = FALSE;
+		if (empty($days_of_week)) {
+			$days_or = $days_and = 'no days of the week';
+		} elseif (count($days_of_week) === 7) {
+			$all_days = TRUE;
+			$days_or = 'day';
+			$days_and = 'days';
+		} else {
+			$days_or = implode(' or ',$days_of_week);
+			$days_and = implode(' and ',$days_of_week);
+		}
+		$next_days = '';
+		switch ($this->mDayMethod) {
+			case 0:	// Next enabled day on or after base. 1 result per base
+				if ($all_days) {
+					$days = '';
+					$next_days = 'day';
+				} else {
+					$days = 'the next '.$days_or.' on or after ';
+					$next_days = $days_or;
+				}
+				break;
+			
+			case 1:	// Next enabled days on and after base. |mDayDays| results per base
+				$days = 'the next '.$days_and.' on or after ';
+				$next_days = $days_or;
+				break;
+			
+			case 2:	// Closest enabled day to base. 1 result per base
+				if ($all_days) {
+					$days = '';
+				} else {
+					$days = 'the closest '.$days_or.' to ';
+				}
+				break;
+			
+			case 3:	// Closest enabled days to base. |mDayDays| results per base
+				$days = 'the closest '.$days_and.' to ';
+				break;
+		}
+		
+		$base = '';
+		if (0 === $this->mDateMethod) {
+			// DayMonth
+			$month_offset = 0;
+			if ($this->mDateDmDate === 1) {
+				if ($this->mDayWeek >= 0) {
+					$base = 'the '.date('jS', mktime(0,0,0,1,($this->mDayWeek+1)))
+							. ' '.$next_days.' of ';
+				} else {
+					if (-1 === $this->mDayWeek) {
+						$ith = '';
+					} else {
+						$ith = date('jS', mktime(0,0,0,1,(-$this->mDayWeek)));
+					}
+					$base = 'the '.$ith.' last '.$next_days.' of ';
+					$month_offset = -1;
+				}
+				// Week offset written here now
+				$week_offset = '';
+				$days = '';
+			} else {
+				$base = 'the '.date('jS', mktime(0,0,0,1,$this->mDateDmDate)).' of ';
+			}
+			$months = array();
+			foreach ($this->mDateDmMonths as $month => $enable) {
+				if ($enable) {
+					$months[] = date('F', mktime(0,0,0,$month_offset + $month));
+				}
+			}
+			if (empty($months)) {
+				$base .= 'no months';
+			} else {
+				$base .= implode(', ',$months);
+			}
+		} elseif (1 === $this->mDateMethod) {
+			// Academic
+			/// @todo Implement stringifier for academic bases
+			// weeks 1,3,5 of the autumn term, xmas holiday, spring term
+			$base = '(Academic base - stringifier not implemented)';
+		} elseif (2 === $this->mDateMethod) {
+			// Easter
+			$base = 'Easter Sunday';
+		}
+		
+		// years
+		$years = '';
+		if (TRUE || 1 !== $this->mYearInterval) {
+			if (1 === $this->mYearInterval) {
+				$ith = '';
+			} elseif (2 === $this->mYearInterval) {
+				$ith = ' other';
+			} else {
+				$ith = date(' jS',mktime(0,0,0,1,$this->mYearInterval));
+			}
+			$years .= ' of every' . $ith . ' year';
+			if (1 !== $this->mYearInterval) {
+				$years .= ' including year ' . $this->mYearOffset;
+			}
+		}
+		
+		$bounds = '';
+		if (FALSE !== $this->mMaxDate) {
+			$upper_limit = date('jS F Y', $this->mMaxDate);
+		}
+		if (FALSE !== $this->mMinDate) {
+			$lower_limit = date('jS F Y', $this->mMinDate);
+			if (FALSE !== $this->mMaxDate) {
+				$bounds .= ' between '.$lower_limit.' and '.$upper_limit;
+			} else {
+				$bounds .= ' after '.$lower_limit;
+			}
+		} else {
+			if (FALSE !== $this->mMaxDate) {
+				$bounds .= ' before '.$upper_limit;
+			}
+		}
+		
+		// Final result
+		return $offset.$week_offset.$days.$base.$years.$bounds;
+	}
+	
 	/// Set the minimum date.
 	/**
 	 * @param $Min timestamp New minimum possible result.

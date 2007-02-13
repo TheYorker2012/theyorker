@@ -158,7 +158,7 @@ class Calendar extends controller
 					'name' => 'events.event_name',
 					'description' => 'events.event_description',
 				);
-			$results = $this->events_model->EventsGet($fields);
+			$results = $this->events_model->EventsGet($fields, FALSE, TRUE);
 			
 			$events = array();
 			foreach ($results as $result) {
@@ -169,6 +169,10 @@ class Calendar extends controller
 			
 			$op = '<OL>';
 			foreach ($events as $event) {
+				if (NULL != $event['event_recurrence_rule']) {
+					$event['description'] = $event['event_recurrence_rule']->ToString() .
+						' - ' . $event['description'];
+				}
 				$op .= '<LI><A HREF="'.site_url('viparea/calendar/events/'.$event['event_id']).'">'.
 					$event['name'].'</A> - '.$event['description'].'</LI>';
 			}
@@ -247,6 +251,7 @@ class Calendar extends controller
 				// years occurrences
 				if (isset($events[0]['event_recurrence_rule'])) {
 					$op .= '<H4>Generated occurrences in next 5 years</H4>';
+					$op .= '<P><em>'.$events[0]['event_recurrence_rule']->ToString().'</em></P>';
 					$occurrences_calculated = array_keys($events[0]['event_recurrence_rule']->FindTimes(
 						time(), strtotime('+5years')));
 					foreach ($occurrences_calculated as $key => $timestamp) {

@@ -1159,7 +1159,6 @@ class Events_model extends Model
 		} else {
 			return 0;
 		}
-		
 	}
 	
 	/// Edit existing occurrences.
