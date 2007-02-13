@@ -204,7 +204,7 @@ class RecurrenceRule
 			
 			$months				= $ArrayData['recurrence_rule_daymonth_months'];
 			$this->mDateDmMonths = array();
-			for ($bit_number = 0; $bit_number < 12; ++$bit_number) {
+			for ($bit_number = 1; $bit_number <= 12; ++$bit_number) {
 				$this->mDataDmMonths[$bit_number] = (($months % 2) != 0);
 				$months = (int)($months / 2);
 			}

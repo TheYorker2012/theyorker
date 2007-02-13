@@ -158,12 +158,7 @@ class Calendar extends controller
 					'name' => 'events.event_name',
 					'description' => 'events.event_description',
 				);
-			
-			$filter = new EventOccurrenceFilter();
-			$filter->DisableSource('subscribed');
-			$filter->SetRange(strtotime('-1year'),strtotime('+1year'));
-			
-			$results = $filter->GenerateOccurrences($fields);
+			$results = $this->events_model->EventsGet($fields);
 			
 			$events = array();
 			foreach ($results as $result) {
@@ -244,9 +239,9 @@ class Calendar extends controller
 				}
 				$op .= '</OL>';
 				
-				$event = $this->events_model->EventGet($EventId, array('events.*'), TRUE);
+				$events = $this->events_model->EventsGet(array('events.*'), $EventId, TRUE);
 				$op .=	'<pre>'.
-							ascii_to_entities(var_export($event,true)).
+							ascii_to_entities(var_export($events,true)).
 						'</pre>';
 				
 				$rsvps = $this->events_model->GetEventRsvp($EventId);

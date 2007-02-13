@@ -882,15 +882,19 @@ class Events_model extends Model
 	
 	/// Get an existing event.
 	/**
-	 * @param $EventId integer Event id.
 	 * @param $Fields array of aliases to select expressions (field names).
 	 *	e.g. array('name' => 'events.event_name')
+	 * @param $EventId
+	 *	- integer Event id.
+	 *	- FALSE all events.
 	 * @param $RecurrenceRule bool Whether to get recurrence rule.
+	 * @param $Filter string SQL filter expression.
+	 * @param $FilterBind array Bind data associated with @a $Filter.
 	 * @return
-	 *	- array Event data.
+	 *	- array of Event data arrays.
 	 *	- FALSE on failure.
 	 */
-	function EventGet($EventId, $Fields, $RecurrenceRule)
+	function EventsGet($Fields, $EventId = FALSE, $RecurrenceRule = FALSE, $Filter = '', $FilterBind = array())
 	{
 		if ($RecurrenceRule) {
 			$Fields[] = $this->recurrence_model->SqlSelectRecurrenceRule();
@@ -907,7 +911,6 @@ class Events_model extends Model
 		
 		$occurrence_query = new EventOccurrenceQuery();
 		
-		$bind_data = array();
 		$sql = '
 			SELECT '.implode(',',$FieldStrings).' FROM events
 			LEFT JOIN event_types
@@ -921,20 +924,33 @@ class Events_model extends Model
 				ON events.event_recurrence_rule_id
 					= recurrence_rules.recurrence_rule_id';
 		}
-		$sql .= '
-			WHERE events.event_id = ?';
-		$bind_data[] = $EventId;
+		
+		$bind_data = array();
+		$conditions = array();
+		if (FALSE !== $EventId) {
+			$conditions[] = 'events.event_id = ?';
+			$bind_data[] = $EventId;
+		}
+		if (!empty($Filter)) {
+			$conditions[] = '('.$Filter.')';
+			$bind_data += $FilterBind;
+		}
+		if (!empty($conditions)) {
+			$sql .= '
+				WHERE ' . implode(' AND ',$conditions);
+		}
 		
 		$query = $this->db->query($sql, $bind_data);
-		if ($query->num_rows() === 1) {
-			$result = $query->result_array();
-			$result = $result[0];
+		if ($query->num_rows() > 0) {
+			$results = $query->result_array();
 			if ($RecurrenceRule) {
-				if (NULL !== $result['recurrence_rule_id']) {
-					$result['event_recurrence_rule'] = new RecurrenceRule($result);
+				foreach ($results as $key => $result) {
+					if (NULL !== $results[$key]['recurrence_rule_id']) {
+						$results[$key]['event_recurrence_rule'] = new RecurrenceRule($result);
+					}
 				}
 			}
-			return $result;
+			return $results;
 		} else {
 			return FALSE;
 		}
