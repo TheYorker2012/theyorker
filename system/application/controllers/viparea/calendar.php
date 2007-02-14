@@ -169,7 +169,8 @@ class Calendar extends controller
 			
 			$op = '<OL>';
 			foreach ($events as $event) {
-				if (NULL != $event['event_recurrence_rule']) {
+				if (array_key_exists('event_recurrence_rule',$event)
+					&& NULL != $event['event_recurrence_rule']) {
 					$event['description'] = $event['event_recurrence_rule']->ToString() .
 						' - ' . $event['description'];
 				}
