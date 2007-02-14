@@ -208,6 +208,15 @@ class Reviews extends Controller
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
 	}
 
+	function delcomment()
+	{
+		$context = $this->uri->segment(4);
+		$organisation = $this->uri->segment(5);
+		$comment_id = $this->uri->segment(6);
+		$this->review_model->DeleteComment($comment_id);
+		redirect('/office/reviews/'.$organisation.'/'.$context.'/comments');
+	}
+
 	function tags($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;

@@ -61,13 +61,13 @@ if ($abuse) echo "There are <a href='#'>Comments</a> that have been reported for
 			{
 				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br /><span class="orange">'.strip_tags($comments['comment_content'][$commentno]).'</span><br /><br />Reported ';
 				echo '<span class="orange">'.$comments['comment_reported_count'][$commentno].'</span>';
-				echo ' times<br /><a href="#">[remove]</a><br /><hr>';
+				echo ' times<br /><a href="/office/reviews/delcomment/'.$this->uri->segment(4).'/'.$this->uri->segment(3).'/'.$comments['comment_id'][$commentno].'">[remove]</a><br /><hr>';
 			}
 			else
 			{
 				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<br /><br />Reported ';
 				echo $comments['comment_reported_count'][$commentno];
-				echo ' times<br /><a href="#">[remove]</a><br /><hr>';
+				echo ' times<br /><a href="/office/reviews/delcomment/'.$this->uri->segment(4).'/'.$this->uri->segment(3).'/'.$comments['comment_id'][$commentno].'">[remove]</a><br /><hr>';
 			}
 		}
 	}

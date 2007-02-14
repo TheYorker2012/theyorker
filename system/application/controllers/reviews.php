@@ -475,6 +475,12 @@ class Reviews extends Controller {
 		$this->main_frame->Load();
 	}
 
+	function reportcomment()
+	{
+		$this->Review_model->ReportComment($this->uri->segment(3));
+		redirect('/reviews/food');
+	}
+
 	function leagues()
 	{
 		if (!CheckPermissions('public')) return;

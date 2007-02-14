@@ -379,10 +379,21 @@ class Review_model extends Model {
 		return $content_id;
 	}
 
+	//Translate user id to name
+	function TranslateUserIDToName($user_id)
+	{
+		$sql = 'SELECT user_firstname,user_surname FROM users WHERE user_entity_id = ?';
+		$query = $this->db->query($sql,$user_id);
+		$query = $query->result_array();
+		if ($query == array()) return 'Unknown User';
+		$user = $query[0]['user_firstname'].' '.$query[0]['user_surname'];
+		return $user;
+	}
+
 	//Gets comments from database, frb501
 	function GetComments($organisation_name, $type, $article_id)
 	{
-		$sql = "SELECT comment_text, comment_timestamp, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ?";
+		$sql = "SELECT comment_id, comment_text, comment_timestamp, comment_user_entity_id, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ? AND comment_deleted = 0";
 		$query = $this->db->query($sql,array($this->FindOrganisationID($organisation_name),$type,$article_id));
 
 		if ($query->num_rows() > 0)
@@ -390,7 +401,8 @@ class Review_model extends Model {
 			$commentno = 0;
 			foreach ($query->result() as $row)
 			{
-			$comments['comment_author'][$commentno] = 'nothing';
+			$comments['comment_author'][$commentno] = $this->TranslateUserIDToName($row->comment_user_entity_id);
+			$comments['comment_id'][$commentno] = $row->comment_id;
 			$comments['comment_rating'][$commentno] = $row->comment_rating;
 			$comments['comment_date'][$commentno] = $row->comment_timestamp;
 			$comments['comment_content'][$commentno] = $row->comment_text;
@@ -435,6 +447,8 @@ class Review_model extends Model {
 		{
 			$tag_group_names[] = $row['tag_group_name']; //Extract the names from the array
 		}
+
+		if (isset($tag_group_names) == 0) return array(); //No data so return empty array
 
 		$index = 0; //For indexing
 	
@@ -484,6 +498,17 @@ class Review_model extends Model {
 
 		//Return the result
 		return $tag_group;
+	}
+
+	function ReportComment($comment_id)
+	{
+		$sql = 'SELECT comment_reported_count FROM comments WHERE comment_id = ?';
+		$query = $this->db->query($sql,$comment_id);
+		$query = $query->result_array();
+		$query = $query[0]['comment_reported_count'];
+		$newcount = $query + 1;
+		$sql = 'UPDATE comments SET comment_reported_count = ? WHERE comment_id = ?';
+		$this->db->query($sql,array($newcount,$comment_id));
 	}
 
 	//For adding tags in the back pages, frb501
@@ -701,6 +726,14 @@ function GetTagOrganisation($type,$organisation)
 		$comment['comment_text'] = $post_data['comment_text'];
 		$this->db->insert('comments',$comment); //Add users comment to database
 	}
+
+	//Logically deletes a comment from the database
+	function DeleteComment($comment_id)
+	{
+		$sql = 'UPDATE comments SET comment_deleted = 1 WHERE comment_id = ?';
+		$this->db->query($sql,$comment_id);
+	}
+
 
 	//Mirrored from GetReview - This should return all the rows in a given type
 	function TableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')

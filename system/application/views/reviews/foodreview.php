@@ -82,25 +82,45 @@
 	//If not empty
 	if (! empty($comments))
 	{
+if ($this->uri->segment(4) != 'all')
+	{
 		//Show the last 5 comments
 		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 6); $commentno--)
+		{
+		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].' | <a href="/reviews/reportcomment/'.$comments['comment_id'][$commentno].'">Report</a></b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
+		}
+	}
+	else
+	{
+		//Show all comments
+		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1); $commentno--)
 		{
 		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
 		}
 	}
+		
+	}
 
 ?>
 
-	<a href=#>View all comments</a><br /><br />
-	<h2>add comment</h2>
 <?php
-	//Allow a user to add a comment - As stolen from the codeigniter video, frb501
+
+//If not already doing so give option for displaying all comments
+if ($this->uri->segment(4) != 'all')
+{
+	echo '<a href='.$this->uri->uri_string().'/all>View all comments</a><br /><br />';
+}
+
+if ($this->user_auth->entityId != -1)
+{
+	echo '<h2>add comment</h2>';
+
+	//Allow a user to add a comment
 	echo form_open('reviews/addcomment');
 	echo form_hidden('comment_type_id',$type_id);
 	echo form_hidden('comment_organisation_id',$organisation_id);
 	echo form_hidden('comment_article_id',$article_id[0]);
-	$userid = 1337;
-	echo form_hidden('comment_user_entity_id',$userid);
+	echo form_hidden('comment_user_entity_id',$this->user_auth->entityId);
 	echo form_hidden('return_page',$this->uri->uri_string());
 	echo '<textarea name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
 	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="component-select">
@@ -116,6 +136,11 @@
 				<OPTION>10</OPTION>
 			</SELECT>&nbsp;';
 	echo '<input type="submit" value="Add Comment"><br />';
+}
+else
+{
+	echo '<I>You can your own comment by logging in</I>';
+}
 ?>
 	<br />
 </div>
