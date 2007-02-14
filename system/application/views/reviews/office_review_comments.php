@@ -24,18 +24,37 @@ There are <a href='#'>Comments</a> that have been reported for abuse.
 
 <div class="blue_box">
 	<h2>user comments</h2>
-	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.<br /><br />
-	Reported 0 times<br />
-	<a href="#">[remove]</a><br />
-	<hr>
-	<b>some dousche | 03-01-2007</b><br />
-	<div class="information_box"><img src="/images/prototype/homepage/infomark.png" alt="!" />This comment has been reported for abuse 7 times. You may wish to consider removing it</div>
-	<span class="orange">The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.</span><br /><br />
-	Reported <span class="orange">7</span> times<br />
-	<a href="#">[remove]</a><br /><hr>
-	<b>some dousche | 03-01-2007</b><br />
-	The guy talks about some shit and someone disagrees with it. Then someone sees this and agrees with it, and argues with the guy who was sad enough to post about disagreeing.<br /><br />
-	Reported 1 times<br />
-	<a href="#">[remove]</a><br />
+
+<?php
+	//If not empty
+	if (! empty($comments))
+	{
+		//Show all comments
+		for ($commentno = count($comments['comment_date']) - 1; $commentno > -1; $commentno--)
+		{
+		//Is reported box
+		if ($comments['comment_reported_count'][$commentno] > 2)
+		{
+		echo '<div class="information_box"><img src="/images/prototype/homepage/infomark.png" alt="!" />This comment has been reported for abuse '.$comments['comment_reported_count'][$commentno].' times. You may wish to consider removing it</div>';
+		}
+
+		//Print Main Comment
+
+		if ($comments['comment_reported_count'][$commentno] > 2)
+			{
+				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br /><span class="orange">'.strip_tags($comments['comment_content'][$commentno]).'</span><br /><br />Reported ';
+				echo '<span class="orange">'.$comments['comment_reported_count'][$commentno].'</span>';
+				echo ' times<br /><a href="#">[remove]</a><br /><hr>';
+			}
+			else
+			{
+				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<br /><br />Reported ';
+				echo $comments['comment_reported_count'][$commentno];
+				echo ' times<br /><a href="#">[remove]</a><br /><hr>';
+			}
+		}
+	}
+
+?>
+	
 </div>

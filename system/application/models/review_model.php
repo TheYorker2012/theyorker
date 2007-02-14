@@ -349,11 +349,31 @@ class Review_model extends Model {
 
 	}
 
-	//Gets comments from database, frb501
-	function GetComments($page_no, $subject)
+	//Translate a organisation name into a organisation id
+	function FindOrganisationID($organisation_name)
 	{
-		$sql = "SELECT comment_text, comment_timestamp, comment_rating FROM comments WHERE comment_content_type_id = ? AND comment_article_id = ?";
-		$query = $this->db->query($sql,array($page_no,$subject));
+		$sql = "SELECT organisation_entity_id FROM organisations WHERE organisation_directory_entry_name = ?";
+		$organisation_id = $this->db->query($sql,$organisation_name);
+		$organisation_id = $organisation_id->result_array();
+		$organisation_id = $organisation_id[0]['organisation_entity_id'];
+		return $organisation_id;
+	}
+
+	//Translate a content type name into a content id
+	function FindContentID($content_name)
+	{
+		$sql = "SELECT content_type_id FROM content_types WHERE content_type_codename = ?";
+		$content_id = $this->db->query($sql,$content_name);
+		$content_id = $content_id->result_array();
+		$content_id = $content_id[0]['content_type_id'];
+		return $content_id;
+	}
+
+	//Gets comments from database, frb501
+	function GetComments($organisation_name, $type, $article_id)
+	{
+		$sql = "SELECT comment_text, comment_timestamp, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ?";
+		$query = $this->db->query($sql,array($this->FindOrganisationID($organisation_name),$type,$article_id));
 
 		if ($query->num_rows() > 0)
 		{
@@ -364,6 +384,7 @@ class Review_model extends Model {
 			$comments['comment_rating'][$commentno] = $row->comment_rating;
 			$comments['comment_date'][$commentno] = $row->comment_timestamp;
 			$comments['comment_content'][$commentno] = $row->comment_text;
+			$comments['comment_reported_count'][$commentno] = $row->comment_reported_count;
 			$commentno++;
 			}
 
@@ -466,7 +487,8 @@ class Review_model extends Model {
 	//Adds a comment to the database, frb501
 	function SetComment($post_data)
 	{
-		$comment['comment_content_type_id'] = $post_data['comment_page_id'];
+		$comment['comment_content_type_id'] = $post_data['comment_type_id'];
+		$comment['comment_organisation_entity_id'] = $post_data['comment_organisation_id'];
 		$comment['comment_article_id'] = $post_data['comment_article_id'];
 		$comment['comment_user_entity_id'] = $post_data['comment_user_entity_id'];
 		$comment['comment_text'] = $post_data['comment_text'];

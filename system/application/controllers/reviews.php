@@ -222,7 +222,7 @@ class Reviews extends Controller {
 	}
 	
 	//Review Function for Food/Drink/Culture
-	function mainreview($review_type, $page_code)
+	function mainreview($review_type, $organisation_name)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -236,12 +236,13 @@ class Reviews extends Controller {
 				$this->pages_model->SetPageCode('review_context_food');
 
 				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($page_code,7);
+				$article_id = $this->Review_model->GetArticleID($organisation_name,7);
 				$article_comment_id = $article_id[0];
 
-				$data['page_id'] 	= 20;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
-				$review_database_result 	= $this->Review_model->GetReview($page_code,'food');
+				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
+				$data['type_id'] 	= 7;
+				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,7,$article_comment_id);//User comments
+				$review_database_result = $this->Review_model->GetReview($organisation_name,'food');
 			break;
 	
 			case 1:
@@ -249,13 +250,14 @@ class Reviews extends Controller {
 				$this->pages_model->SetPageCode('review_context_drink');
 
 				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($page_code,8);
+				$article_id = $this->Review_model->GetArticleID($organisation_name,8);
 				$article_comment_id = $article_id[0];
 
-				$data['page_id'] 	= 21;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'],$article_comment_id);//User comments
+				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
+				$data['type_id'] 	= 8;
+				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,8,$article_comment_id);//User comments
 
-				$review_database_result 	= $this->Review_model->GetReview($page_code,'drink');
+				$review_database_result 	= $this->Review_model->GetReview($organisation_name,'drink');
 			break;
 	
 			case 2:
@@ -263,13 +265,14 @@ class Reviews extends Controller {
 				$this->pages_model->SetPageCode('review_context_culture');
 
 				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($page_code,9);
+				$article_id = $this->Review_model->GetArticleID($organisation_name,9);
 				$article_comment_id = $article_id[0];
 
-				$data['page_id'] 	= 22;
-				$data['comments'] 	= $this->Review_model->GetComments($data['page_id'], $article_comment_id); //User comments
+				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
+				$data['type_id'] 	= 9;
+				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,9,$article_comment_id);//User comments
 
-				$review_database_result 	= $this->Review_model->GetReview($page_code,'culture');
+				$review_database_result 	= $this->Review_model->GetReview($organisation_name,'culture');
 			break;
 		}
 

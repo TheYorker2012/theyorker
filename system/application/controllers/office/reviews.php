@@ -313,6 +313,18 @@ class Reviews extends Controller
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
+		//Find last article id
+		$article_id = $this->review_model->GetArticleID($organisation,$this->review_model->FindContentID($ContextType));
+
+		if (isset($article_id[0])) //Check that a article exists
+		{
+			$article_id = $article_id[0];
+
+			//Get user comments for moderation
+			$data['comments'] 	= $this->review_model->GetComments($organisation,$this->review_model->FindContentID($ContextType),$article_id);
+
+		}
+
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_comments', $data);
 
