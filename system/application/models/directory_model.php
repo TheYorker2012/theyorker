@@ -169,5 +169,40 @@ class Directory_model extends Model {
 		return $query->result_array();
 	}
 
+	/// Get an organisation's business card groups.
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return array[business_card_group].
+	 */
+	function UpdateOrganisationDetails($DirectoryEntryName, $Data)
+	{
+		$sql =
+			'SELECT'.
+			' organisations.organisation_entity_id '.
+			'FROM organisations '.
+			'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$row = $query->row();
+		$id = $row->organisation_entity_id;
+		
+		$sql2 =
+			'UPDATE organisation_contents SET'.
+			' organisation_contents.organisation_content_description=?, '.
+			' organisation_contents.organisation_content_location=?, '.
+			' organisation_contents.organisation_content_postal_address=?, '.
+			' organisation_contents.organisation_content_postcode=?, '.
+			' organisation_contents.organisation_content_phone_external=?, '.
+			' organisation_contents.organisation_content_phone_internal=?, '.
+			' organisation_contents.organisation_content_fax_number=?, '.
+			' organisation_contents.organisation_content_email_address=?, '.
+			' organisation_contents.organisation_content_url=?, '.
+			' organisation_contents.organisation_content_opening_hours=? '.
+			'WHERE organisation_contents.organisation_content_organisation_entity_id=? ';
+	
+		$query2 = $this->db->query($sql2, array($Data['description'], $Data['location'], $Data['postal_address'], $Data['postcode'], $Data['phone_external'], $Data['phone_internal'], $Data['fax_number'], $Data['email_address'], $Data['url'], $Data['opening_hours'], $id));
+	
+		return true;
+	}
+
 }
 ?>

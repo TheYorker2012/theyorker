@@ -22,47 +22,47 @@
 	</div>
 </div>
 
-<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/information/edit' method='POST' class='form'>
+<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/information' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>about</h2>
 	<p>
 		Organisation name : <strong><?php echo $organisation['name']; ?></strong><br />
 		Organisation type : <strong><?php echo $organisation['type']; ?></strong><br />
 	</p>
-	<textarea name='orgdetails_about' cols='48' rows='10'><?php echo $organisation['description']; ?></textarea>
+	<textarea name='description' cols='48' rows='10'><?php echo $organisation['description']; ?></textarea>
 </div>
 <div class='grey_box'>
 <h2>details</h2>
 	<fieldset>
-		<label for='orgdetails_email'>Email Address:</label>
-		<input type='text' name='orgdetails_email' style='width: 220px;' value='<?php echo $organisation['email_address']; ?>'/>
+		<label for='email_address'>Email Address:</label>
+		<input type='text' name='email_address' style='width: 220px;' value='<?php echo $organisation['email_address']; ?>'/>
 		<br />
-		<label for='orgdetails_website'>Website:</label>
-		<input type='text' name='orgdetails_website' style='width: 220px;' value='<?php echo $organisation['website']; ?>'/>
+		<label for='url'>Website:</label>
+		<input type='text' name='url' style='width: 220px;' value='<?php echo $organisation['website']; ?>'/>
 		<br />
-		<label for='orgdetails_location'>Location:</label>
-		<input type='text' name='orgdetails_location' style='width: 220px;' value='<?php echo $organisation['location']; ?>' />
+		<label for='location'>Location:</label>
+		<input type='text' name='location' style='width: 220px;' value='<?php echo $organisation['location']; ?>' />
 		<br />
-		<label for='orgdetails_postal_address'>Postal Address:</label>
-		<textarea type='text' name='orgdetails_postal_address' rows='5' style='width: 220px;'><?php echo $organisation['postal_address']; ?></textarea>
+		<label for='postal_address'>Postal Address:</label>
+		<textarea type='text' name='postal_address' rows='5' style='width: 220px;'><?php echo $organisation['postal_address']; ?></textarea>
 		<br />
-		<label for='orgdetails_postcode'>Postcode:</label>
-		<input type='text' name='orgdetails_postcode' style='width: 150px;' value='<?php echo $organisation['postcode']; ?>'/>
+		<label for='postcode'>Postcode:</label>
+		<input type='text' name='postcode' style='width: 150px;' value='<?php echo $organisation['postcode']; ?>'/>
 		<br />
-		<label for='orgdetails_openingtimes'>Opening Times:</label>
-		<textarea type='text' name='orgdetails_openingtimes' rows='4' style='width: 150px;'><?php echo $organisation['open_times']; ?></textarea>
+		<label for='opening_hours'>Opening Times:</label>
+		<textarea type='text' name='opening_hours' rows='4' style='width: 150px;'><?php echo $organisation['open_times']; ?></textarea>
 		<br />
-		<label for='orgdetails_phone_internal'>Phone Internal:</label>
-		<input type='text' name='orgdetails_phone_internal' style='width: 150px;' value='<?php echo $organisation['phone_internal']; ?>' />
+		<label for='phone_internal'>Phone Internal:</label>
+		<input type='text' name='phone_internal' style='width: 150px;' value='<?php echo $organisation['phone_internal']; ?>' />
 		<br />
-		<label for='orgdetails_phone_external'>Phone External:</label>
-		<input type='text' name='orgdetails_phone_external' style='width: 150px;' value='<?php echo $organisation['phone_external']; ?>' />
+		<label for='phone_external'>Phone External:</label>
+		<input type='text' name='phone_external' style='width: 150px;' value='<?php echo $organisation['phone_external']; ?>' />
 		<br />
-		<label for='orgdetails_fax_number'>Fax Number:</label>
-		<input type='text' name='orgdetails_fax_number' style='width: 150px;' value='<?php echo $organisation['fax_number']; ?>' />
+		<label for='fax_number'>Fax Number:</label>
+		<input type='text' name='fax_number' style='width: 150px;' value='<?php echo $organisation['fax_number']; ?>' />
 		<br />
-		<label for='orgdetails_submitbutton'></label>
-		<input type='submit' name='orgdetails_submitbutton' value='Update' class='button' />
+		<label for='submitbutton'></label>
+		<input type='submit' name='submitbutton' value='Update' class='button' />
 	</fieldset>
 </div>
 </form>

@@ -34,14 +34,18 @@ Slideshow.load();
 			echo "<br />";
 		}
 		?>
-		<?php if (!empty($organisation['location']) && !empty($organisation['postcode'])) {
-			echo '<img alt="Location" name="Location" src="/images/prototype/directory/flag.gif" /> '.$organisation['location'].','.$organisation['postcode'].'<br />';
+		<?php if (!empty($organisation['location'])) {
+			echo '<img alt="Location" name="Location" src="/images/prototype/directory/flag.gif" /> '.$organisation['location'].'<br />';
 		} ?>
 		<?php if (!empty($organisation['open_times'])) {
 			echo '<img alt="Opening Times" name="Opening Times" src="/images/prototype/directory/clock.gif" /> '.$organisation['open_times'].'<br />';
 		} ?>
 		<?php if (!empty($organisation['postal_address'])) {
-					echo '<img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> '.$organisation['postal_address'].'<br />';
+					echo '<img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> '.$organisation['postal_address'];
+					if (!empty($organisation['postcode'])) {
+						echo $organisation['postcode'];
+					}
+					echo '<br />';
 		} ?>
 		<?php if (NULL === $organisation['yorkipedia']){}else{
 		echo '<img alt="Yorkipedia Entry" name="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> <a href="'.$organisation['yorkipedia']['url'].'">'.$organisation['yorkipedia']['title'].'</a>';

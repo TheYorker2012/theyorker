@@ -90,6 +90,15 @@ class Yorkerdirectory extends Controller
 		
 		$this->pages_model->SetPageCode('viparea_directory_information');
 		
+		//Send data if given
+		if(!empty($_POST['submitbutton'])){
+			$this->main_frame->AddMessage('success','Directory entry updated.');
+			if($_POST['description']==null){
+				$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
+			}
+			$this->directory_model->UpdateOrganisationDetails($organisation, $_POST);
+		}
+		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation);
