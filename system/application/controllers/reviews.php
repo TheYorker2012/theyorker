@@ -86,6 +86,16 @@ class Reviews extends Controller {
 
 		//Get league data
 		$league_data = $this->Review_model->GetLeagueDetails('food');
+		$leagues = array();
+		foreach ($league_data as &$league)
+		{
+			$leagues[] = array(
+				'league_image_id'=>(imageLocation($league['league_image_id'], 'puffers')),
+				'league_name'=>$league['league_name'],
+				'league_size'=>$league['league_size'],
+				'league_codename'=>$league['league_codename']
+				);
+		}
 
 		//Pass tabledata straight to view it is in the proper format
 		$data['league_data'] = $league_data;

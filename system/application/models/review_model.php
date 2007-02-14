@@ -271,8 +271,9 @@ class Review_model extends Model {
 	//Returns a 2d array 0-> leagues.... 1-> leagues... etc...
 	function GetLeagueDetails($type)
 	{
-		$sql = "SELECT leagues.league_image_id, leagues.league_image_id,
-				leagues.league_name, leagues.league_size,
+		$sql = "SELECT leagues.league_image_id,
+				leagues.league_name,
+				leagues.league_size,
 				leagues.league_codename
 				FROM leagues
 				INNER JOIN content_types ON
