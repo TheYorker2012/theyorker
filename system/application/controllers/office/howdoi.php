@@ -506,14 +506,20 @@ class Howdoi extends Controller
 			else if (isset($_POST['r_submit_reject']))
 			{
 				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
-		                $this->main_frame->AddMessage('success','Suggestion has been rejected.');
+		                $this->main_frame->AddMessage('success','Suggestion has been deleted.');
 				redirect('/office/howdoi/suggestions');
 			}
 			else if (isset($_POST['r_submit_rejectrequest']))
 			{
 				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
-		                $this->main_frame->AddMessage('success','Request has been rejected.');
+		                $this->main_frame->AddMessage('success','Request has been deleted.');
 				redirect('/office/howdoi/requests');
+			}
+			else if (isset($_POST['r_submit_rejectpulled']))
+			{
+				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
+		                $this->main_frame->AddMessage('success','Pulled article has been deleted.');
+				redirect('/office/howdoi/published');
 			}
 			else if (isset($_POST['r_submit_publishnow']))
 			{

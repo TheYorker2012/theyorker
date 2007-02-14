@@ -441,7 +441,8 @@ class Requests_Model extends Model
 			WHERE	article_writer_user_entity_id = ?
 			AND	article_content_type_id = ?
 			AND	article_writer_status = ?
-			AND	article_live_content_id IS NULL';
+			AND	article_live_content_id IS NULL
+			AND	article_deleted = 0';
 		$query = $this->db->query($sql,array($user_id, $type, $status));
 		$result = array();
 		if ($query->num_rows() > 0)

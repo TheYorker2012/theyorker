@@ -254,7 +254,7 @@ if ($user['officetype'] != 'Low')
 				</fieldset>
    Or delete the question.
 				<fieldset>
-					<input type="submit" value="Delete" class="button" name="r_submit_reject" />
+					<input type="submit" value="Delete" class="button" name="r_submit_rejectpulled" />
 				</fieldset>
 			</form>
 		</div>';
