@@ -869,6 +869,10 @@ div.ArticleColumn blockquote {
 	text-align: center;
 }
 
+div.ArticleColumn blockquote span.author {
+	font-weight: bold;
+}
+
 .NewsPreview {
 	text-align: justify;
 	font-size: 13px;
