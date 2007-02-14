@@ -71,7 +71,7 @@
 				$requestdeadlineformat = date('F jS Y', $requestdeadline).' at '.date('g.i A', $requestdeadline);
 				echo '<br /><span class="orange">'.$request['title'].'</span><br />
 					deadline on: '.$requestdeadlineformat.'<br />
-					<span class="grey">(asked by '.$request['suggestionusername'].', accepted by '.$request['editorname'].')</span>	<br />
+					<span class="grey">(asked by '.$request['suggestionusername'].', approved by '.$request['editorname'].')</span>	<br />
 					'.$request['description'].'<br />
 					<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>
 					<br />';
