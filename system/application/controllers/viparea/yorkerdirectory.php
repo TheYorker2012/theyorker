@@ -106,6 +106,28 @@ class Yorkerdirectory extends Controller
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
+		//Page Revisions
+		$data['revisions'] = array (
+								array(
+									'id' => '1',
+									'author' => 'Dan Ashby',
+									'timestamp' => '04/02/2007 3:39PM',
+									'published' => 'no'
+								),
+								array(
+									'id' => '2',
+									'author' => 'Nick Evans',
+									'timestamp' => '04/02/2007 3:20PM',
+									'published' => 'yes'
+								),
+								array(
+									'id' => '3',
+									'author' => 'Dan Ashby',
+									'timestamp' => '03/02/2007 3:11PM',
+									'published' => 'no'
+								),
+							);
+		
 		// Set up the directory view
 		$the_view = $this->frames->view('directory/viparea_directory_information', $data);
 		

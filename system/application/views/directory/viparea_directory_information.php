@@ -3,21 +3,16 @@
 	<div class="Entry">
 		<?php echo $main_text; ?>
 	</div>
-<h4>Other tasks</h4>
-	<div class="Entry">
-	<ul>
-		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>Maintain my account</a></li>
-		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>Remove this directory entry</a></li>
-	</ul>
-	</div>
 	<h4>Revisions</h4>
 	<div class="Entry">
 		<ol>
-			<li>Dan Ashby 04/02/2007 3:39PM
-			<li>Nick Evans 04/02/2007 3:20PM <span class="orange">(Published)</span>
-			<li>Dan Ashby 03/02/2007 3:11PM 
-			<li>John Smith 03/02/2007 3:11PM 
-			<li>Rich Rout 02/02/2007 1:11AM 
+		<?php foreach($revisions as $revison) {
+			echo '<li>'.$revison['author']." ".$revison['timestamp'];
+			if ($revison['published']=='yes'){
+				echo ' <span class="orange">(Published)</span>';
+			}
+			echo '</li>';
+		}?>
 		</ol>
 	</div>
 </div>
