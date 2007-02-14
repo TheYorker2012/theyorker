@@ -100,7 +100,7 @@ if ($user['officetype'] != 'Low')
 					echo '<option value="'.$category_id.'">'.$category['name'].'</option>';
 				}
 				echo '</select>
-				<label for"a_deadline">Deadline (yy-mm-dd h:m):</label>
+				<label for="a_deadline">Deadline (yy-mm-dd h:m):</label>
 				<input type="text" name="a_deadline" value="'.date('y-m-d H:i').'" />
 				<input type="submit" class="button" value="Ask" name="r_submit_request" />
 			</fieldset>

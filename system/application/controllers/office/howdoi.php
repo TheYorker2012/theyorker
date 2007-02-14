@@ -435,20 +435,20 @@ class Howdoi extends Controller
 		{
 			if ($this->user_auth->officeType != 'Low')
 			{
-	                	$article_header_id = $this->requests_model->CreateRequest(
+	                	$request_id = $this->requests_model->CreateRequest(
 							'request',
 							$_POST['a_category'],
 							$_POST['a_question'],
 							$_POST['a_description'],
 							$this->user_auth->entityId,
 							$_POST['a_deadline']);
-		                $request_id = $this->main_frame->AddMessage('success','Request Created.');
-				redirect('/office/howdoi/editquestion/'.$request_id);
+		                $this->main_frame->AddMessage('success','Request Created.');
+				redirect('/office/howdoi/editrequest/'.$request_id);
 			}
 			else
 			{
 		                $this->main_frame->AddMessage('error','You don\'t have access to create a request.');
-				redirect('/office/howdoi');
+				redirect('/office/howdoi/');
 			}
 		}
 	}
@@ -507,7 +507,13 @@ class Howdoi extends Controller
 			{
 				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
 		                $this->main_frame->AddMessage('success','Suggestion has been rejected.');
-				redirect('/office/howdoi/suggestion');
+				redirect('/office/howdoi/suggestions');
+			}
+			else if (isset($_POST['r_submit_rejectrequest']))
+			{
+				$this->requests_model->RejectSuggestion($_POST['r_articleid']);
+		                $this->main_frame->AddMessage('success','Request has been rejected.');
+				redirect('/office/howdoi/requests');
 			}
 			else if (isset($_POST['r_submit_publishnow']))
 			{
