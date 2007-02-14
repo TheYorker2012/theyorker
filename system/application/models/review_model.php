@@ -716,6 +716,24 @@ function GetTagOrganisation($type,$organisation)
 		$this->db->query($sql,array($organisation_id, $tag_id));
 	}
 
+	//Gets the current average user rating for a article
+	function GetUserRating($article_id)
+	{
+		$sql = 'SELECT comment_rating FROM comments WHERE comment_article_id = ?';
+		$query = $this->db->query($sql,$article_id);
+		if ($query->result_array() == array()) return 0; //Not rated yet
+
+		$num = 0; $sum = 0;
+
+		foreach ($query->result_array() as $row)
+		{
+			$num++;
+			$sum += $row['comment_rating'];
+		}
+
+		return array((ceil($sum / $num)),$num);
+	}
+
 	//Adds a comment to the database, frb501
 	function SetComment($post_data)
 	{
@@ -724,6 +742,7 @@ function GetTagOrganisation($type,$organisation)
 		$comment['comment_article_id'] = $post_data['comment_article_id'];
 		$comment['comment_user_entity_id'] = $post_data['comment_user_entity_id'];
 		$comment['comment_text'] = $post_data['comment_text'];
+		$comment['comment_rating'] = $post_data['comment_rating'];
 		$this->db->insert('comments',$comment); //Add users comment to database
 	}
 

@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
 	<h4>About</h4>
 	<div class='Entry'>
-		About said review place. Give description about your face
+		<?php echo $organisation_description; ?>
 	</div>
 	<h4>Details</h4>
 	<div class='Entry'>
@@ -29,9 +29,7 @@
 		<span class="ReviewDetailsTitle">Yorker Recommends</span><br />
 				<span class="ReviewDetailsInfo"><?php echo $yorker_recommendation; ?></span><br />
 		<span class="ReviewDetailsTitle">Average Drink Price</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $average_price; ?></span><br />
-		<span class="ReviewDetailsTitle">Expense Rating</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $price_rating; ?></span><br />
+				<span class="ReviewDetailsInfo"><?php echo '£'.($average_price/100); ?></span><br />
 	</div>
 </div>
 
@@ -76,7 +74,7 @@
 <div class="grey_box">
 	<h2>your comments</h2>
 
-	User Rating: <h5 style="display:inline;">5.7</h5>/10 (based on 12 votes)
+	User Rating: <h5 style="display:inline;"><?php echo $user_rating; ?></h5>/10 (based on <?php echo $user_based; ?> votes)
 	<hr>
 <?php
 	//If not empty
@@ -123,7 +121,7 @@ if ($this->user_auth->entityId != -1)
 	echo form_hidden('comment_user_entity_id',$this->user_auth->entityId);
 	echo form_hidden('return_page',$this->uri->uri_string());
 	echo '<textarea name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
-	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="component-select">
+	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="comment_rating">
 				<OPTION selected>1</OPTION>
 				<OPTION>2</OPTION>
 				<OPTION>3</OPTION>

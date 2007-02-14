@@ -294,7 +294,7 @@ class Reviews extends Controller {
 				$data['type_id'] 	= 8;
 				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,8,$article_comment_id);//User comments
 
-				$review_database_result 	= $this->Review_model->GetReview($organisation_name,'drink');
+				$review_database_result = $this->Review_model->GetReview($organisation_name,'drink');
 			break;
 	
 			case 2:
@@ -319,18 +319,22 @@ class Reviews extends Controller {
 			$article_database_result = $this->News_model->GetFullArticle($article_id[$article_no]);
 
 			$article[$article_no]['article_title'] = $article_database_result['heading'];
-	//		$article[$article_no]['article_author'] = $article_database_result['authors'][0];
+			$article[$article_no]['article_author'] = $article_database_result['authors'][0]['name'];
 			$article[$article_no]['article_content'] = $article_database_result['text'];
 			$article[$article_no]['article_date'] = $article_database_result['date'];
 
 			$article[$article_no]['article_photo'] = '/images/prototype/news/benest.png';
-			$article[$article_no]['article_author'] = 'Ian Benest - Top Yorker Author';
 			$article[$article_no]['article_author_link'] = '/directory/view/1';
 		}
 
 		//Place articles into the data array to be passed along
-		
 		$data['article'] = $article;
+
+		//Get user rating
+		$data['user_rating'] = $this->Review_model->GetUserRating($article_id);
+		$data['user_rating'] = $data['user_rating'][0];
+		$data['user_based'] = $this->Review_model->GetUserRating($article_id);
+		$data['user_based'] = $data['user_based'][1];
 
 		$review_database_result = $review_database_result[0]; //Unique so just first row
 
@@ -339,6 +343,7 @@ class Reviews extends Controller {
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
 		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
 		$data['email'] 				= $review_database_result['organisation_email_address'];
+		$data['organisation_description'] = $review_database_result['organisation_description'];
 		$data['address_main']			= $review_database_result['organisation_postal_address'];
 		$data['address_postcode']		= $review_database_result['organisation_postcode'];
 		$data['website']				= $review_database_result['organisation_url'];
@@ -356,7 +361,7 @@ class Reviews extends Controller {
 
 		//Dummy Data
 		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
-		$data['price_rating']			= 'Waiting on Model';
+		$data['price_rating']			= 'Good Value';
 
 		//Set organisation name in title bar
 		$this->main_frame->SetTitleParameters(array('organisation' => $review_database_result['organisation_name']));
