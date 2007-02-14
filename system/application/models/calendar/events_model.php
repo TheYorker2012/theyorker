@@ -926,7 +926,9 @@ class Events_model extends Model
 		}
 		
 		$bind_data = array();
-		$conditions = array();
+		$conditions = array(
+			'events.event_deleted = 0'
+		);
 		if (FALSE !== $EventId) {
 			$conditions[] = 'events.event_id = ?';
 			$bind_data[] = $EventId;
@@ -1102,24 +1104,65 @@ class Events_model extends Model
 	 */
 	function EventsGenerateRecurrences($Until, $EventId = FALSE)
 	{
-		// select query
-		// if specific event id
-		//	select from events, recurrences
-		//	where events.event_id = $EventId
-		// if all events
-		//	select from events, recurrences
-		//	where events.recurrence IS NOT NULL and
-		//		events.recurrence_until IS NULL OR < $Until
+		// Initial query to get the events
+		$bind_data = array();
+		$sql_select_events = '
+			SELECT
+				events.event_id,
+				events.event_name,
+				'.$this->recurrence_model->SqlSelectRecurrenceRule().'
+			FROM	events
+			INNER JOIN recurrence_rules
+					ON events.event_recurrence_rule_id
+						= recurrence_rules.recurrence_rule_id
+			WHERE	events.event_deleted = 0
+				AND	(	events.event_recurrence_updated_until
+							< FROM_UNIXTIME(?)
+					OR	events.event_recurrence_updated_until
+							IS NULL)';
+		$bind_data[] = $Until;
+		if (FALSE !== $EventId) {
+			$sql_select_events .= '
+				AND	event.event_id = ?';
+			$bind_data[] = $EventId;
+		}
+		
+		// Perform the query now
+		$query = $this->db->query($sql_select_events, $bind_data);
+		
+		// Return values
+		$occurrences_created = 0;
 		
 		// foreach event
-		//	find recurrences between event.until and $Until
-		//	update timestamp where timestamp hasn't changed
-		//	if timestamp updated ok then:
-		//	save occurrences and update event.until to $Until
-		//		where event.until is old value obtained from db
+		if ($query->num_rows() > 0) {
+			$events = $query->result_array();
+			foreach ($events as $event) {
+				// set the event_recurrence_mutex where it isn't set
+				
+				// if we managed to set the value
+				if ($this->db->affected_rows() > 0) {
+					// get previous update time
+					$previous_update = 0;
+					if ($previous_update < time()) {
+						$previous_update = time();
+					}
+					// find recurrences between event.until and $Until
+					$recurrence_rule = new RecurrenceRule($event);
+					$recurrences = $recurrence_rule->FindTimes($previous_update, $Until);
+					$occurrence_dates = array_keys($recurrences);
+					foreach ($occurrence_dates as $key => $value) {
+						$occurrence_dates[$key] = date(DATE_RFC822, $value);
+					}
+					$this->messages->AddDumpMessage('occurrences for '.$event['event_name'],$occurrence_dates);
+					// update event timestamp
+					// save occurrences and update event.until to $Until
+					// reset events.recurrence_mutex
+					// occurrence state: public or draft?
+				}
+			}
+		}
 		
-		// occurrence state: public or draft?
-		
+		return $occurrences_created;
 	}
 	
 	/// Add occurrences to an event.
