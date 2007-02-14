@@ -124,7 +124,7 @@ class Requests_Model extends Model
 			SET	article_pulled = 0,
 				article_editor_approved_user_entity_id = ?,
 				article_publish_date = CURRENT_TIMESTAMP,
-				article_live_content_id = 0
+				article_live_content_id = NULL
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($editor_id, $article_id));
 	}
@@ -149,6 +149,7 @@ class Requests_Model extends Model
 		$query = $this->db->query($sql,array($content_type,$article_id));
 	}
 
+	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
 	function GetPulledArticles($type_id)
 	{
 		$sql = 'SELECT	article_id 
@@ -336,21 +337,182 @@ class Requests_Model extends Model
 		}
 		return $result;
 	}
+	
+	function GetArticleWriters($article_id)
+	{
+		$sql = 'SELECT	article_writer_user_entity_id
+				business_card_name
+			FROM	article_writers
 
-	function AddUserToRequest($article_id,$user_id)
+			JOIN	business_cards
+			ON	business_card_user_entity_id = article_writer_user_entity_id
+
+			WHERE	article_writer_article_id = ?';
+		$query = $this->db->query($sql,array($article_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = array(
+					'id'=>$row->article_writer_user_entity_id,
+					'name'=>$row->business_card_name
+					);
+			}
+		}
+		return $result;
+	}
+	
+	function GetWritersForType($type)
+	{
+		$sql = 'SELECT	user_entity_id,
+				business_card_name
+			FROM	content_types
+
+			JOIN	organisations
+			ON	organisation_entity_id = content_type_related_organisation_enitity_id
+			
+			JOIN	subscriptions
+			ON	subscription_organisation_entity_id = organisation_entity_id
+			
+			JOIN	users
+			ON	user_entity_id = subscription_user_entity_id
+
+			JOIN	business_cards
+			ON	business_card_user_entity_id = user_entity_id
+
+			WHERE	content_type_id = ?
+			ORDER BY business_card_name ASC';
+		$query = $this->db->query($sql,array($type));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = array(
+					'id'=>$row->user_entity_id,
+					'name'=>$row->business_card_name
+					);
+			}
+		}
+		return $result;
+	}
+	
+	function GetWritersForArticle($article_id)
+	{
+		$sql = 'SELECT	article_writer_user_entity_id,
+				article_writer_status,
+				business_card_name
+			FROM	article_writers
+
+			JOIN	business_cards
+			ON	business_card_user_entity_id = article_writer_user_entity_id
+
+			WHERE	article_writer_article_id = ?
+			ORDER BY business_card_name ASC';
+		$query = $this->db->query($sql,array($article_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = array(
+					'id'=>$row->article_writer_user_entity_id,
+					'name'=>$row->business_card_name,
+					'status'=>$row->article_writer_status
+					);
+			}
+		}
+		return $result;
+	}
+	
+	function GetRequestsForUser($user_id, $type, $status)
+	{
+		$sql = 'SELECT	article_writer_article_id,
+				article_request_title
+			FROM	article_writers
+
+			JOIN	articles
+			ON	article_id = article_writer_article_id
+			
+			JOIN	content_types
+			ON	content_type_id = article_content_type_id
+
+			WHERE	article_writer_user_entity_id = ?
+			AND	article_content_type_id = ?
+			AND	article_writer_status = ?
+			AND	article_live_content_id IS NULL';
+		$query = $this->db->query($sql,array($user_id, $type, $status));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = array(
+					'id'=>$row->article_writer_article_id,
+					'title'=>$row->article_request_title
+					);
+			}
+		}
+		return $result;
+	}
+
+	function AddUserToRequest($article_id, $user_id)
 	{
 		$sql = 'INSERT	INTO article_writers(
 				article_writer_user_entity_id,
 				article_writer_article_id)
 			VALUES	(?,?)';
-		$query = $this->db->query($sql,array($user_id,$article_id));
-	}	
+		$this->db->query($sql,array($user_id, $article_id));
+	}
 	
-	function RemoveUserFromRequest($article_id,$user_id)
+	function RemoveUserFromRequest($article_id, $user_id)
 	{
-		$sql = 'DELETE FROM article_writers WHERE (article_writer_article_id = ?
-			AND article_writer_user_entity_id = ?)';
-		$query = $this->db->query($sql,array($article_id,$user_id));
+		$sql = 'DELETE FROM article_writers
+			WHERE	(article_writer_article_id = ?
+			AND	article_writer_user_entity_id = ?)';
+		$this->db->query($sql,array($article_id, $user_id));
+	}
+	
+	function RemoveAllUsersFromRequest($article_id)
+	{
+		$sql = 'DELETE FROM article_writers
+			WHERE	(article_writer_article_id = ?)';
+		$this->db->query($sql,array($article_id));
+	}
+	
+	function AcceptRequest($article_id, $user_id)
+	{
+		$sql = 'UPDATE 	article_writers
+			SET	article_writer_status = "accepted"
+			WHERE	(article_writer_user_entity_id = ?
+			AND	article_writer_article_id = ?)';
+		$this->db->query($sql,array($user_id,$article_id));
+	}
+	
+	function DeclineRequest($article_id, $user_id)
+	{
+		$sql = 'UPDATE 	article_writers
+			SET	article_writer_status = "declined"
+			WHERE	(article_writer_user_entity_id = ?
+			AND	article_writer_article_id = ?)';
+		$this->db->query($sql,array($user_id, $article_id));
+	}
+	
+	function IsUserRequestedForArticle($article_id, $user_id)
+	{
+		$sql = 'SELECT	article_writer_status
+			FROM	article_writers
+			WHERE	article_writer_user_entity_id = ?
+			AND	article_writer_article_id = ?';
+		$query = $this->db->query($sql,array($user_id, $article_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->article_writer_status;
+		}
+		else
+			return FALSE;
 	}
 	
 	function RequestPhoto($article_id,$user_id)
@@ -362,25 +524,6 @@ class Requests_Model extends Model
 	{
 		$sql = '';
 	}
-	
-	function AcceptRequest($id, $user)
-	{
-		$sql = 'UPDATE 	article_writers
-			SET	article_writer_status = "accepted"
-			WHERE	(article_writer_user_entity_id = ?
-			AND	article_writer_article_id = ?)';
-		$query = $this->db->query($sql,array($user,$id));
-	}
-	
-	function DeclineRequest($id,$user)
-	{
-	
-		$sql = 'UPDATE 	article_writers
-			SET	article_writer_status = "declined"
-			WHERE	(article_writer_user_entity_id = ?
-			AND	article_writer_article_id = ?)';
-		$query = $this->db->query($sql,array($user,$id));
-	} 
 
 	function CreateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
 	{

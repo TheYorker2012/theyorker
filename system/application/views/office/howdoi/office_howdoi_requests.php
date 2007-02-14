@@ -1,5 +1,23 @@
 <div class="RightToolbar">
 	<?php
+	if (count($user['writer']['requested']) > 0)
+	{
+		echo '<h4>Write Requests</h4>';
+		foreach ($user['writer']['requested'] as $requested)
+		{
+			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.$requested['title'].'</a><br />';
+		}
+		echo '<br />';
+	}
+	if (count($user['writer']['accepted']) > 0)
+	{
+		echo '<h4>Accepted Requests</h4>';
+		foreach ($user['writer']['accepted'] as $accepted)
+		{
+			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.$accepted['title'].'</a><br />';
+		}
+		echo '<br />';
+	}
 	echo '<h4>Areas for Attention</h4>
 	<div class="Entry">';
 		if ($status_count['unpublished'] > 0)

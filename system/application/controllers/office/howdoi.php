@@ -20,14 +20,14 @@ class Howdoi extends Controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('suggestions', 'Suggestions',
-				'/office/howdoi/suggestions');
-		$navbar->AddItem('requests', 'Requests',
-				'/office/howdoi/requests');
-		$navbar->AddItem('published', 'Published',
-				'/office/howdoi/published');
 		$navbar->AddItem('categories', 'Categories',
 				'/office/howdoi/categories');
+		$navbar->AddItem('published', 'Published',
+				'/office/howdoi/published');
+		$navbar->AddItem('requests', 'Requests',
+				'/office/howdoi/requests');
+		$navbar->AddItem('suggestions', 'Suggestions',
+				'/office/howdoi/suggestions');
 	}
 	
 	function index()
@@ -106,6 +106,8 @@ class Howdoi extends Controller
 					'name'=>'Unassigned',
 					'suggestions'=>$this->requests_model->GetSuggestedArticles($howdoi_type_id)
 					);
+		$data['user']['writer']['requested'] = array();
+		$data['user']['writer']['accepted'] = array();
 		foreach ($data['categories'] as $category_id => $category)
 		{
 			//suggestions
@@ -123,6 +125,11 @@ class Howdoi extends Controller
 			//pulled
 			$data['categories'][$category_id]['pulled'] = $this->requests_model->GetPublishedArticles($category_id, TRUE, TRUE);
 			$data['status_count']['pulled'] = $data['status_count']['pulled'] + count($data['categories'][$category_id]['pulled']);
+			//article writer requests
+			$temp_array = $this->requests_model->GetRequestsForUser($this->user_auth->entityId, $category_id, 'requested');
+			$data['user']['writer']['requested'] = array_merge($data['user']['writer']['requested'], $temp_array);
+			$temp_array = $this->requests_model->GetRequestsForUser($this->user_auth->entityId, $category_id, 'accepted');
+			$data['user']['writer']['accepted'] = array_merge($data['user']['writer']['accepted'], $temp_array);
 		}
 
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -207,13 +214,6 @@ class Howdoi extends Controller
                 	if ($data['article']['header']['content_type'] == $category_id)
 			$correct_content_type = TRUE;
 		}
-		//if the article has been pulled then make it go to the article is not a how do i type message.
-		/*
-		if ($data['article']['header']['suggestion_accepted'] == FALSE)
-		{
-                	$correct_content_type = FALSE;
-		}
-		*/
 		if ($correct_content_type == TRUE)
 		{
 			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
@@ -250,6 +250,8 @@ class Howdoi extends Controller
 
 			$data['user']['id'] = $this->user_auth->entityId;
 			$data['user']['officetype'] = $this->user_auth->officeType;
+			
+			$data['article']['hasarticlerequest'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
 	
 			// Set up the view
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
@@ -267,7 +269,7 @@ class Howdoi extends Controller
 		}
 	}
 
-	function editrequest()
+	function editrequest($article_id)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -284,7 +286,7 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 
-		$data['parameters']['article_id'] = $_POST['r_articleid'];
+		$data['parameters']['article_id'] = $article_id;
 
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
@@ -293,7 +295,7 @@ class Howdoi extends Controller
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					);
-		$data['article']['header'] = $this->article_model->GetArticleHeader($data['parameters']['article_id']);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
 		$correct_content_type = FALSE;
 		foreach ($data['categories'] as $category_id => $category)
 		{
@@ -304,6 +306,25 @@ class Howdoi extends Controller
 		{
 			$data['user']['id'] = $this->user_auth->entityId;
 			$data['user']['officetype'] = $this->user_auth->officeType;
+
+			$data['writers']['all'] = $this->requests_model->GetWritersForType($howdoi_type_id);
+			$data['writers']['article'] = $this->requests_model->GetWritersForArticle($article_id);
+			$data['writers']['availcount'] = 0;
+			
+			foreach ($data['writers']['all'] as $writer)
+			{
+				$inselection = FALSE;
+				foreach ($data['writers']['article'] as $articlewriter)
+				{
+					if ($articlewriter['id'] == $writer['id'])
+						$inselection = TRUE;
+				}
+				if ($inselection == FALSE)
+				{
+					$data['writers']['available'][] = $writer;
+					$data['writers']['availcount'] = $data['writers']['availcount'] + 1;
+				}
+			}
 
 			// Set up the view
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_request', $data);
@@ -436,10 +457,8 @@ class Howdoi extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		if (isset($_POST['r_submit_save']))
 		{
@@ -531,10 +550,59 @@ class Howdoi extends Controller
 			else if (isset($_POST['r_submit_makerequest']))
 			{
 				$this->requests_model->UpdatePulledToRequest($_POST['r_articleid'], $this->user_auth->entityId);
+				$this->requests_model->RemoveAllUsersFromRequest($_POST['r_articleid']);
 		                $this->main_frame->AddMessage('success','Question has been converted to a request.');
 				redirect('/office/howdoi/editquestion/'.$_POST['r_articleid']);
 			}
 		}
+	}
+	
+	function writermodify()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('requests_model','requests_model');
+
+		if ($this->user_auth->officeType != 'Low')
+		{
+			if (isset($_POST['r_submit_remove']))
+			{
+				$this->requests_model->RemoveUserFromRequest(
+					$_POST['r_articleid'],
+					$_POST['r_userid']
+					);
+		                $this->main_frame->AddMessage('success','User has been removed from writing an answer to this question.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else if (isset($_POST['r_submit_add']))
+			{
+				$this->requests_model->AddUserToRequest(
+					$_POST['r_articleid'],
+					$_POST['a_addwriter']
+					);
+		                $this->main_frame->AddMessage('success','User has been added to write an answer to this question.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else if (isset($_POST['r_submit_accept']))
+			{
+				$this->requests_model->AcceptRequest(
+					$_POST['r_articleid'],
+					$_POST['r_userid']
+					);
+		                $this->main_frame->AddMessage('success','You have accepted the request to write an answer for this article.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else if (isset($_POST['r_submit_decline']))
+			{
+				$this->requests_model->DeclineRequest(
+					$_POST['r_articleid'],
+					$_POST['r_userid']
+					);
+		                $this->main_frame->AddMessage('success','You have declined the request to write an answer for this article.');
+				redirect($_POST['r_redirecturl']);
+			}
+		}
+
 	}
 }
 ?>

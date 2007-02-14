@@ -1,5 +1,32 @@
 <div class="RightToolbar">
 	<?php
+	if ($article['hasarticlerequest'] == 'requested')
+	{
+		echo '<h4>Areas for Attention</h4>
+			You have been requested to answer this question.
+			<form class="form" action="/office/howdoi/writermodify" method="post" >
+				<fieldset>
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
+					<input type="hidden" name="r_userid" id="r_userid" value="'.$user['id'].'" />
+					<input type="submit" value="Accept" class="button" name="r_submit_accept" />
+					<input type="submit" value="Decline" class="button" name="r_submit_decline" />
+				</fieldset>
+			</form>';
+	}
+	if ($article['hasarticlerequest'] == 'accepted')
+	{
+		echo '<h4>Areas for Attention</h4>
+			If you no longer wish to answer this question.
+			<form class="form" action="/office/howdoi/writermodify" method="post" >
+				<fieldset>
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
+					<input type="hidden" name="r_userid" id="r_userid" value="'.$user['id'].'" />
+					<input type="submit" value="Decline" class="button" name="r_submit_decline" />
+				</fieldset>
+			</form>';
+	}
 	if ($article['header']['status'] != 'pulled')
 	{
 		echo '<h4>Revisions (Latest First)</h4>
@@ -55,12 +82,14 @@ if ($article['header']['status'] == 'request')
 		<b>Description: </b>'.$article['header']['requestdescription'].'<br />';
 	if ($user['officetype'] != 'Low')
 	{
-		echo '<form class="form" action="/office/howdoi/editrequest" method="post" >
+		/*
+		echo '<form class="form" action="/office/howdoi/editrequest/'.$parameters['article_id'].'" method="get" >
 				<fieldset>
-					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
-					<input type="submit" value="Modify" class="button" name="r_submit_modify" />
+					<input type="submit" value="Modify" class="button" />
 				</fieldset>
 			</form>';
+		*/
+		echo '<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[Modify]</a>';
 	}
 	echo '</div>';
 }
