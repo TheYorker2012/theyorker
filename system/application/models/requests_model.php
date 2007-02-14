@@ -23,16 +23,71 @@ class Requests_Model extends Model
 		return $query->result_array();
 	}
 
-	// Retrieve a list of all the boxes a request can be assigned to
-	function getBoxes ($section)
+	function reportersExist ($reporter_array)
 	{
-		$sql = 'SELECT content_type_name AS name, content_type_codename AS code
+		$sql = 'SELECT user_entity_id
+				FROM users
+				WHERE user_office_access = 1
+				AND user_admin = 0
+				AND (';
+		for ($i = 1; $i <= count($reporter_array); $i++) {
+			$sql .= 'user_entity_id = ? OR ';
+		}
+		$sql = substr($sql, 0, -4) . ')';
+		$query = $this->db->query($sql, $reporter_array);
+		return $query->num_rows() == count($reporter_array);
+	}
+
+	// Validation check to ensure selected article box exists
+	function isBox ($box_id)
+	{
+		$sql = 'SELECT content_type_id
 				FROM content_types
-				WHERE content_type_codename IS NOT NULL
-				AND content_type_section = ?
+				WHERE content_type_id = ?
+				AND content_type_section != \'hardcoded\'';
+		$query = $this->db->query($sql, array($box_id));
+		return $query->num_rows();
+	}
+
+	// Retrieve a list of all the boxes a request can be assigned to
+	function getBoxes ()
+	{
+		$sql = 'SELECT content_type_id AS id, content_type_name AS name, content_type_codename AS code, content_type_has_children AS subcats
+				FROM content_types
+				WHERE content_type_parent_content_type_id IS NULL
+				AND content_type_section != \'hardcoded\'
 				ORDER BY content_type_section_order ASC';
-		$query = $this->db->query($sql,array($section));
-		return $query->result_array();
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				if ($row->subcats) {
+					$get_sub_cats = '
+						SELECT content_type_id AS id, content_type_name AS name
+						FROM content_types
+						WHERE content_type_parent_content_type_id = ?
+						AND content_type_section != \'hardcoded\'
+						ORDER BY content_type_section_order ASC';
+					$sub_cats = $this->db->query($get_sub_cats, array($row->id));
+					if ($sub_cats->num_rows() > 0) {
+						foreach ($sub_cats->result() as $category) {
+							$result[] = array(
+								'id' => $category->id,
+								'name' => $row->name . ' - ' . $category->name,
+								'code' => $row->code
+							);
+						}
+					}
+				} else {
+					$result[] = array(
+						'id' => $row->id,
+						'name' => $row->name,
+						'code' => $row->code
+					);
+				}
+			}
+		}
+		return $result;
 	}
 
 	//Add a  new request to the article table
@@ -152,7 +207,7 @@ class Requests_Model extends Model
 	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
 	function GetPulledArticles($type_id)
 	{
-		$sql = 'SELECT	article_id 
+		$sql = 'SELECT	article_id
 			FROM	articles
 			LEFT JOIN content_types
 			ON 	article_content_type_id = content_type_id
@@ -223,7 +278,57 @@ class Requests_Model extends Model
 
 		return $result;
 	}
-	
+
+	function GetRequestedArticle($article_id)
+	{
+		$sql = 'SELECT	article_id,
+				article_request_title,
+				article_request_description,
+				article_content_type_id,
+				article_request_entity_id,
+				DATE_FORMAT(article_publish_date, \'%d/%m/%Y %T\') as article_publish_date,
+				article_request_entity_id,
+				article_editor_approved_user_entity_id,
+				suggestion_user.business_card_name as suggestion_name,
+				editor_user.business_card_name as editor_name
+			FROM	articles
+
+			JOIN	business_cards as editor_user
+			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
+			JOIN	business_cards as suggestion_user
+			ON	suggestion_user.business_card_user_entity_id = article_request_entity_id
+			
+			WHERE	article_suggestion_accepted = 1
+			AND	article_id = ?
+			AND	article_live_content_id IS NULL
+			AND	article_deleted = 0
+			AND	article_pulled = 0';
+		$query = $this->db->query($sql,array($article_id));
+		if ($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			$sql = 'SELECT content_type_name
+				FROM content_types
+				WHERE content_type_id = ?';
+			$query = $this->db->query($sql, array($row->article_content_type_id));
+			$row2 = $query->row();
+			$result = array(
+				'id'=>$row->article_id,
+				'title'=>$row->article_request_title,
+				'description'=>$row->article_request_description,
+				'deadline'=>$row->article_publish_date,
+				'box'=>$row->article_content_type_id,
+				'box_name'=>$row2->content_type_name,
+				'suggestionuserid'=>$row->article_request_entity_id,
+				'suggestionusername'=>$row->suggestion_name,
+				'editorid'=>$row->article_editor_approved_user_entity_id,
+				'editorname'=>$row->editor_name
+				);
+		}
+
+		return $result;
+	}
+
 	function GetRequestedArticles($type_id)
 	{
 		$sql = 'SELECT	article_id,
@@ -269,7 +374,46 @@ class Requests_Model extends Model
 
 		return $result;
 	}
-	
+
+	function GetSuggestedArticle($article_id)
+	{
+		$sql = 'SELECT	article_id,
+				article_request_title,
+				article_content_type_id,
+				article_request_description,
+				DATE_FORMAT(article_created, \'%d/%m/%Y %T\') as article_created,
+				article_request_entity_id,
+				business_card_name
+			FROM	articles
+			JOIN	business_cards
+			ON	business_card_user_entity_id = article_request_entity_id
+			WHERE article_suggestion_accepted = 0
+			AND	article_id = ?
+			AND	article_deleted = 0
+			AND	article_pulled = 0';
+		$query = $this->db->query($sql,array($article_id));
+		if ($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			$sql = 'SELECT content_type_name
+				FROM content_types
+				WHERE content_type_id = ?';
+			$query = $this->db->query($sql, array($row->article_content_type_id));
+			$row2 = $query->row();
+			$result = array(
+				'id'=>$row->article_id,
+				'title'=>$row->article_request_title,
+				'description'=>$row->article_request_description,
+				'box'=>$row->article_content_type_id,
+				'box_name'=>$row2->content_type_name,
+				'userid'=>$row->article_request_entity_id,
+				'username'=>$row->business_card_name,
+				'created'=>$row->article_created
+				);
+		}
+		return $result;
+	}
+
 	function GetSuggestedArticles($type_id)
 	{
 		$sql = 'SELECT	article_id,
@@ -474,7 +618,7 @@ class Requests_Model extends Model
 			AND	article_writer_user_entity_id = ?)';
 		$this->db->query($sql,array($article_id, $user_id));
 	}
-	
+
 	function RemoveAllUsersFromRequest($article_id)
 	{
 		$sql = 'DELETE FROM article_writers
