@@ -109,7 +109,7 @@ if ($this->uri->segment(4) != 'all')
 	echo '<a href='.$this->uri->uri_string().'/all>View all comments</a><br /><br />';
 }
 
-if ($this->user_auth->entityId < 1)
+if ($this->user_auth->entityId > 0)
 {
 	echo '<h2>add comment</h2>';
 
