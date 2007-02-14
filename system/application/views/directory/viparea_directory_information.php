@@ -6,8 +6,8 @@
 <h4>Other tasks</h4>
 	<div class="Entry">
 	<ul>
-		<li><a href='#'>Maintain my account</a></li>
-		<li><a href='#'>Remove this directory entry</a></li>
+		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>Maintain my account</a></li>
+		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>Remove this directory entry</a></li>
 	</ul>
 	</div>
 	<h4>Revisions</h4>
@@ -22,7 +22,7 @@
 	</div>
 </div>
 
-<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/edit' method='POST' class='form'>
+<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/information/edit' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>about</h2>
 	<p>
