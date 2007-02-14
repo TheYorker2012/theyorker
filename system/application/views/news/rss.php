@@ -25,11 +25,16 @@ echo '<?xml version=\'1.0\' ?>
 foreach ($rss_items as $item) {
 	echo '<item>
 		<title>' . $item['heading'] . '</title>
-		<author>' . $item['writer'] . '</author>
-		<link>http://www.theyorker.co.uk/news/article/' . $item['id'] . '</link>
+		<author>';
+	$temp_reporters = '';
+	foreach ($authors as $reporter) {
+		$temp_reporters .= $reporter['name'] . ', ';
+	}
+	echo substr($temp_reporters, 0, -2) . '</author>
+		<link>http://www.theyorker.co.uk/news/' . $item['id'] . '</link>
 		<description>' . $item['blurb'] . '</description>
 		<pubDate>' . $item['date'] . '</pubDate>
-		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/article/' . $item['id'] . '</guid>
+		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/' . $item['id'] . '</guid>
 		</item>';
 }
 echo '</channel></rss>';
