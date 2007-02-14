@@ -65,7 +65,19 @@ $route['office'] = 'office/index';
  *	parameters to the controller function. These are got around by having an
  *	extra slash before the parameters to shift them forward a segment - jh559
  */
+$route['admin/directory'] = 'admin/yorkerdirectory';
+// If 2 segments, seg2 ($1) should get sent to view function
+$route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
+// If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
+$route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
+
 $route['admin/images/([0-9]+)'] = 'admin/images';
+
+$route['office/directory'] = 'office/yorkerdirectory';
+
+// send tag adding and deleting to the correct place
+$route['office/reviews/addtag'] = 'office/reviews/addtag';
+$route['office/reviews/deltag'] = 'office/reviews/deltag';
 
 // /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
 $route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview//$1';
@@ -75,10 +87,6 @@ $route['office/reviews/('.$org_name_regex.')/([a-z]+)'] = 'office/reviews/inform
 $route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)'] = 'office/reviews/$3//$2/$1';
 // /office/reviews/theyorker/food/reviewedit/12 => /office/reviews/reviewedit/theyorker/food/12
 $route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'office/reviews/$3//$2/$1/$4';
-
-
-$route['office/directory'] = 'viparea/yorkerdirectory';
-$route['office/directory/(.*)'] = 'viparea/yorkerdirectory/$1';
 
 $route['viparea/directory'] = 'viparea/yorkerdirectory';
 // If 2 segments, seg2 ($1) should get sent to view function

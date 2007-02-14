@@ -9,7 +9,24 @@ The following reviews are waiting to be published:
 <a href='#'>Information</a> has been updated and is waiting to be published.
 </p>
 <p>
-There are <a href='#'>Comments</a> that have been reported for abuse.
+<?php
+$abuse = 0;
+	//If not empty
+	if (! empty($comments))
+	{
+		//For all comments
+		for ($commentno = count($comments['comment_date']) - 1; $commentno > -1; $commentno--)
+		{
+			//Is reported box
+			if ($comments['comment_reported_count'][$commentno] > 2)
+			{
+				$abuse = 1;
+			}
+		}
+	}
+if ($abuse) echo "There are <a href='#'>Comments</a> that have been reported for abuse.";
+?>
+
 </p>
 <h4>What's this?</h4>
 	<p>

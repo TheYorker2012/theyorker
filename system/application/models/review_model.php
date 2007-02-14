@@ -314,11 +314,20 @@ class Review_model extends Model {
 	function TranslateTypeNameToID($type_name)
 	{
 		$sql = "SELECT content_type_id FROM content_types WHERE
-				content_type_name = ?";
+				content_type_codename = ?";
 		$query = $this->db->query($sql,$type_name);
 		$result = $query->row_array();
-
 		return $result['content_type_id'];
+	}
+
+	//Changes between name of a tag and the id of the tag, frb501
+	function TranslateTagNameToID($tag_name)
+	{
+		$sql = "SELECT tag_id FROM tags WHERE
+				tag_name = ?";
+		$query = $this->db->query($sql,$tag_name);
+		$result = $query->row_array();
+		return $result['tag_id'];
 	}
 
 	//Changes between a organisation directory name and it's id - This is too reduce problems further on in dev
@@ -415,7 +424,8 @@ class Review_model extends Model {
 				INNER JOIN tags ON tag_groups.tag_group_id = tag_groups.tag_group_id
 				INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 				INNER JOIN review_contexts ON review_contexts.review_context_organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
-				INNER JOIN content_types ON content_types.content_type_id = tag_groups.tag_group_content_type_id WHERE content_types.content_type_name = ?
+				INNER JOIN content_types ON content_types.content_type_id = tag_groups.tag_group_content_type_id
+				WHERE content_types.content_type_name = ?
 				ORDER BY tag_group_order
 				';
 		$query = $this->db->query($sql,$type);
@@ -445,7 +455,7 @@ class Review_model extends Model {
 			if ($ordering == TRUE)
 			{								//Order by field tag_order
 			$msql = '
-					 SELECT tags.tag_name FROM tags
+					 SELECT DISTINCT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
 					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_order';
@@ -453,13 +463,170 @@ class Review_model extends Model {
 			else
 			{								//Order by field tag_name
 			$msql = '						
-					 SELECT tags.tag_name FROM tags
+					 SELECT DISTINCT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
 					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
 			}
 
 			$mquery = $this->db->query($msql,$tag_group_name[$index]); //Do query
+			$marray = $mquery->result_array();
+
+			//Place all of the tags into the return array
+			foreach ($marray as &$mrow)
+			{
+				//Place all tags in to the tag_group array with the key of the tag groups name
+				$tag_group[$tag_group_name[$index]][] = $mrow['tag_name'];
+			}
+		}
+		//Add the special case
+		$tag_group['tag_group_names'] = $tag_group_names;
+
+		//Return the result
+		return $tag_group;
+	}
+
+	//For adding tags in the back pages, frb501
+
+	//Pre condition: A entry in the content_type table e.g. 'food' or 'drink'
+	//Post condition: A array containing all tags with the key value of the tag_group_name
+	//e.g. array['taggroupname'] = array('cool','splash')
+	//The array also has a special array inside array['tag_group_names']
+	// = array('Splashing out', 'Cool Digs')
+	//Which contains the taggroupnames for all tags used
+
+	//This function is expensive with queries however for the ordering it seems the best way
+	function GetAllTags($type)
+	{
+		$sql = 'SELECT DISTINCT tag_groups.tag_group_name
+				FROM tag_groups
+				INNER JOIN tags ON tag_groups.tag_group_id = tag_groups.tag_group_id
+				INNER JOIN content_types ON content_types.content_type_id = tag_groups.tag_group_content_type_id
+				WHERE content_types.content_type_name = ?
+				ORDER BY tag_group_order
+				';
+		$query = $this->db->query($sql,$type);
+		$queryarray = $query->result_array();
+
+		foreach ($queryarray as &$row)
+		{
+			$tag_group_names[] = $row['tag_group_name']; //Extract the names from the array
+		}
+
+		if (!isset($tag_group_names)) return array(); //No tags in this type
+
+		$index = 0; //For indexing
+	
+		foreach ($queryarray as &$row)
+		{
+			$index++;
+			$tag_group_name[$index] = $row['tag_group_name']; //Stores the tag group names
+
+			//First find out if these tags should be ordered by tag value or alphabetly
+			$nsql = 'SELECT tag_groups.tag_group_ordered FROM tag_groups WHERE tag_group_name = ?';
+			$nquery = $this->db->query($nsql,$tag_group_name[$index]);
+			$ordering = $nquery->row_array();
+
+			$ordering = $ordering['tag_group_ordered']; //Ordering says which ordering to use
+
+			//Sub query finds all the tag names in the tag group
+			//INNER JOIN with organisation_tags removes unused tags from the front page
+			if ($ordering == TRUE)
+			{								//Order by field tag_order
+			$msql = '
+					 SELECT DISTINCT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_order';
+			}
+			else
+			{								//Order by field tag_name
+			$msql = '						
+					 SELECT DISTINCT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
+			}
+
+			$mquery = $this->db->query($msql,$tag_group_name[$index]); //Do query
+			$marray = $mquery->result_array();
+
+			//Place all of the tags into the return array
+			foreach ($marray as &$mrow)
+			{
+				//Place all tags in to the tag_group array with the key of the tag groups name
+				$tag_group[$tag_group_name[$index]][] = $mrow['tag_name'];
+			}
+		}
+		//Add the special case
+		$tag_group['tag_group_names'] = $tag_group_names;
+
+		//Return the result
+		return $tag_group;
+	}
+
+//For backend pages for viewing / deleting existing tags, frb501
+
+	//Pre condition: A entry in the content_type table e.g. 'food' or 'drink'
+	//
+	//Post condition: A array containing all tags with the key value of the tag_group_name
+	//e.g. array['taggroupname'] = array('cool','splash')
+	//The array also has a special array inside array['tag_group_names']
+	// = array('Splashing out', 'Cool Digs')
+	//Which contains the taggroupnames for all tags used
+
+function GetTagOrganisation($type,$organisation)
+{
+		$sql = 'SELECT DISTINCT tag_groups.tag_group_name
+				FROM tag_groups
+				INNER JOIN tags ON tag_groups.tag_group_id = tags.tag_tag_group_id
+				INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
+				INNER JOIN organisations ON organisations.organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
+				INNER JOIN content_types ON content_types.content_type_id = tag_groups.tag_group_content_type_id WHERE (content_types.content_type_name = ? && organisations.organisation_directory_entry_name = ?)
+				ORDER BY tag_group_order
+				';
+		$query = $this->db->query($sql,array($type,$organisation));
+		$queryarray = $query->result_array();
+
+		foreach ($queryarray as &$row)
+		{
+			$tag_group_names[] = $row['tag_group_name']; //Extract the names from the array
+		}
+
+		$index = 0; //For indexing
+	
+		foreach ($queryarray as &$row)
+		{
+			$index++;
+			$tag_group_name[$index] = $row['tag_group_name']; //Stores the tag group names
+
+			//First find out if these tags should be ordered by tag value or alphabetly
+			$nsql = 'SELECT tag_groups.tag_group_ordered FROM tag_groups WHERE tag_group_name = ?';
+			$nquery = $this->db->query($nsql,$tag_group_name[$index]);
+			$ordering = $nquery->row_array();
+
+			$ordering = $ordering['tag_group_ordered']; //Ordering says which ordering to use
+
+			//Sub query finds all the tag names in the tag group
+			//INNER JOIN with organisation_tags removes unused tags from the front page
+			if ($ordering == TRUE)
+			{								//Order by field tag_order
+			$msql = '
+					 SELECT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
+					 INNER JOIN organisations ON organisations.organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
+					 WHERE (tag_groups.tag_group_name = ? && organisations.organisation_directory_entry_name = ?) ORDER BY tags.tag_order';
+			}
+			else
+			{								//Order by field tag_name
+			$msql = '						
+					 SELECT tags.tag_name FROM tags
+					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
+					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
+					 INNER JOIN organisations ON organisations.organisation_entity_id = organisation_tags.organisation_tag_organisation_entity_id
+					 WHERE (tag_groups.tag_group_name = ? && organisations.organisation_directory_entry_name = ?) ORDER BY tags.tag_name';
+			}
+
+			$mquery = $this->db->query($msql,array($tag_group_name[$index],$organisation)); //Do query
 			$marray = $mquery->result_array();
 
 			//Place all of the tags into the return array
@@ -483,6 +650,45 @@ class Review_model extends Model {
 		{
 			return array(); //Return a empty array
 		}
+	}
+
+	//This function returns a array containing all tags which a organisation does not yet have
+	function GetTagWithoutOrganisation($type,$organisation)
+	{
+		//Get all the tags which it does have
+		$currenttags = $this->GetTagOrganisation($type,$organisation);
+		
+		//Get all possible tags
+		$possibletags = $this->GetAllTags($type);
+
+		if ($possibletags == array()) return array(); //In case tags are empty
+
+		//Find the different between the 2 array'ies
+		foreach ($possibletags['tag_group_names'] as $tag_group_name)
+		{
+			if (isset($currenttags[$tag_group_name])) //If the index of the second array doesn't exist we don't need to do anything
+			{
+				$possibletags[$tag_group_name] = array_diff($possibletags[$tag_group_name],$currenttags[$tag_group_name]);
+			}
+		}
+
+		return $possibletags;
+
+	}
+
+	//SetOrganisationTag - takes 2 arguments the organisation id and tag id and adds the row in the link table
+	function SetOrganisationTag($organisation_id, $tag_id)
+	{
+		$insert['organisation_tag_organisation_entity_id'] = $organisation_id;
+		$insert['organisation_tag_tag_id'] = $tag_id;
+		$this->db->insert('organisation_tags',$insert);
+	}
+
+	//SetOrganisationTag - takes 2 arguments the organisation id and tag id and adds the row in the link table
+	function RemoveOrganisationTag($organisation_id, $tag_id)
+	{
+		$sql = 'DELETE FROM organisation_tags WHERE (organisation_tag_organisation_entity_id = ? && organisation_tag_tag_id = ?)';
+		$this->db->query($sql,array($organisation_id, $tag_id));
 	}
 
 	//Adds a comment to the database, frb501

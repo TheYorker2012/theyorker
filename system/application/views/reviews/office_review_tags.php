@@ -27,8 +27,41 @@
 </ul>
 </div>
 
-<form class='form'>
-<div class="blue_box">
-	<h2>list boxes for each tag group</h2>
-</div>
-</form>
+<?php
+
+	echo form_open('office/reviews/addtag');
+	echo form_hidden('organisation_name',$organisation_name);
+	echo form_hidden('context_type',$context_type);
+	echo '<div class="blue_box">';
+	echo '<h2>list boxes for each tag group</h2>';
+	echo '<b>Possible tags</b><br />';
+	echo '<select size=4 name=tag>';
+	foreach ($new_tags['tag_group_names'] as $tag_group_name)
+	{
+		foreach ($new_tags[$tag_group_name] as $tag)
+		{
+			echo '<option value="'.$tag.'">'.$tag_group_name.' -> '.$tag.'</option>';
+		}
+	}
+	echo '</select><br />';
+ 	echo '<input type="submit" value="Add new tag">';
+	echo '</form><br /><br />';
+
+	echo form_open('office/reviews/deltag');
+	echo form_hidden('organisation_name',$organisation_name);
+	echo form_hidden('context_type',$context_type);
+	echo '<b>Current tags</b><br />';
+	echo '<select size=4 name=tag>';
+	foreach ($existing_tags['tag_group_names'] as $tag_group_name)
+	{
+		foreach ($existing_tags[$tag_group_name] as $tag)
+		{
+			echo '<option value="'.$tag.'">'.$tag_group_name.' -> '.$tag.'</option>';
+		}
+	}
+	echo '</select><br />';
+ 	echo '<input type="submit" value="Delete tag">';
+	echo '</div></form>';
+
+?>
+

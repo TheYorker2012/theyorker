@@ -191,6 +191,23 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
+	function addtag()
+	{
+		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
+		$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
+
+		$this->review_model->SetOrganisationTag($organisation_id,$tag_id);
+		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
+	}
+
+	function deltag()
+	{
+		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
+		$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
+		$this->review_model->RemoveOrganisationTag($organisation_id,$tag_id);
+		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
+	}
+
 	function tags($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
@@ -204,6 +221,18 @@ class Reviews extends Controller
 		
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		//Pass organisation name to the page for submitting to add/del tag
+		$data['organisation_name'] = $organisation;
+
+		//Pass content type to the page for redirecting after submitting a tag
+		$data['context_type'] = $ContextType;
+
+		//Get a list of the tags for this organisation
+		$data['existing_tags'] = $this->review_model->GetTagOrganisation($ContextType,$organisation);
+
+		//Get a list of tags which can be added
+		$data['new_tags'] = $this->review_model->GetTagWithoutOrganisation($ContextType,$organisation);
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_tags', $data);
