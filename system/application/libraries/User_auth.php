@@ -320,6 +320,68 @@ class User_auth {
 		return $row->valid;
 	}
 
+	// Sets an entities password (and salt if necessary).  Defaults to the
+	//  logged in entity, otherwise uses the given entity.  
+	public function setPassword($password, $entity = null) {
+		$db = $this->object->db;
+
+		if ($entity == null) {
+			if (!$this->isLoggedIn | !$this->isUser)
+				throw new Exception('You must be logged in as a student to do this');
+			
+			$entity = $this->entityId;
+			$salt = $this->salt;
+		} else {
+			$sql = 'SELECT entity_salt FROM entities
+				WHERE entity_id = ?';
+
+			$query = $db->query($sql, array($entity));
+			$row = $query->row();
+			$salt = $query->entity_salt;
+			
+			// TODO: check that null is returned for no salt
+			if ($salt == null) {
+				for ($i = 0; $i < 32; $i++) {
+					$salt .= chr(rand(65,90));
+				}
+			}
+		}
+			
+		$hash = sha1($salt.$password);
+		$sql = 'UPDATE entities 
+			SET entity_salt = ?, entity_password = ?
+			WHERE entity_id = ?';
+
+		$query = $db->query($sql, array($salt, $hash, $entity));
+	}
+
+	public function setOfficePassword($password, $entity = null) {
+		// We assume the user already has a normal login and salt
+
+		if ($entity == null) {
+			if (!$this->isLoggedIn | !$this->isUser)
+				throw new Exception('You must be logged in as a student to do this');
+			$entity = $this->entityId;
+			$salt = $this->salt;
+		} else {
+			$sql = 'SELECT entity_salt FROM entities
+				WHERE entity_id = ?';
+
+			$query = $db->query($sql, array($entity));
+			$row = $query->row();
+			$salt = $query->entity_salt;
+		}
+
+		$hash = sha1($this->salt.$password);
+		
+		$sql = 'UPDATE users 
+			SET user_office_password = ?
+			WHERE user_entity_id = ?';
+
+		$db = $this->object->db;
+		$query = $db->query($sql, array($hash, $entity));
+	}
+
 	// Get a list of organisations that the user can login to
 	public function getOrganisationLogins() {
 		if (!$this->isLoggedIn | !$this->isUser)
@@ -385,23 +447,6 @@ class User_auth {
 		$_SESSION['ua_organisation'] = $this->organisationLogin;
 		$_SESSION['ua_organisationname'] = $this->organisationName;
 		$_SESSION['ua_salt'] = $this->salt;
-	}
-
-	private function setPassword($password) {
-		if (!$this->isLoggedIn) {
-			$this->salt = '';
-			for ($i = 0; $i < 16; $i++) {
-				$this->salt .= dechex(rand(0, 15));
-			}
-			$hash = sha1($this->salt.$password);
-
-			$sql = 'UPDATE entities
-				SET entity_password = ?, entity_salt = ?
-				WHERE entity_id = ?';
-
-			$db = $this->object->db;
-			$query = $db->query($sql, array($password, $this->salt, $this->entityId));
-		}
 	}
 }
 
