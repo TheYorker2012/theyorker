@@ -165,7 +165,7 @@ class News extends Controller {
 		$data['rss_email_web'] = 'webmaster@theyorker.co.uk';
 
 		/// Get latest article ids
-		$latest_article_ids = $this->News_model->GetLatestId(1,9);
+		$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
 
 		/// Get preview data for articles
 		$data['rss_items'] = array();
