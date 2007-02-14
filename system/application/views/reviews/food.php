@@ -34,11 +34,12 @@ if (isset($league_data) == 1)
 //As far as I can tell we are going to show the first 2 columns only on this page
 //Hence a for loop is probaility not worth it...
 
-echo '<div class="half_right"><h3 style="display: inline;">';
+echo '<div class="half_right">';
 
 //Check that it exists before trying to display
-if (isset($table_data[$table_data['tag_group_names'][1]]) == 1)
+if (isset($table_data['tag_group_names'][1]) && isset($table_data[$table_data['tag_group_names'][1]]))
 {
+	echo '<h3 style="display: inline;">';
 	echo $table_data['tag_group_names'][1];
 	echo '</h3><br />';
 
@@ -47,17 +48,19 @@ if (isset($table_data[$table_data['tag_group_names'][1]]) == 1)
 		echo anchor('reviews/table/food/star/'.$table_data['tag_group_names'][1].'/'.$tag, $tag).'<br />';
 	}
 
+	//All types
+	echo anchor('reviews/table/food/name','All types');
+
 }
-//All types
-echo anchor('reviews/table/food/name','All types');
 
 echo'</div>';
 
-echo '<div class="half_left"><h3 style="display: inline;">';
+echo '<div class="half_left">';
 
 //Check that it exists before trying to display
-if (isset($table_data[$table_data['tag_group_names'][0]]) == 1)
+if (isset($table_data['tag_group_names'][0]) && isset($table_data[$table_data['tag_group_names'][0]]))
 {
+	echo '<h3 style="display: inline;">';
 	echo $table_data['tag_group_names'][0];
 	echo '</h3><br />';
 
@@ -78,7 +81,10 @@ echo'</div>';
 
 <div class='blue_box'>
 		<h2>featured article</h2>
-		<?php echo '<a href="'.$article_link.'">'; ?><img style="float: right;" src='/images/prototype/news/thumb4.jpg' alt='Soldier about to get run over by a tank' title='Soldier about to get run over by a tank' /></a>
+<?php
+echo '<a href="'.$article_link.'">';
+echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" title="'.$article_photo_title.'" /></a>';
+?>
 		<h3><?php echo anchor($article_link, $article_title); ?></h3>
 		<span style='font-size: medium;'><b><?php echo "<a href='".$article_author_link."'>".$article_author."</a>"; ?></b></span><br />
 		<?php echo $article_date ?><br />

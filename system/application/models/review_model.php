@@ -401,13 +401,13 @@ class Review_model extends Model {
 			$commentno = 0;
 			foreach ($query->result() as $row)
 			{
-			$comments['comment_author'][$commentno] = $this->TranslateUserIDToName($row->comment_user_entity_id);
-			$comments['comment_id'][$commentno] = $row->comment_id;
-			$comments['comment_rating'][$commentno] = $row->comment_rating;
-			$comments['comment_date'][$commentno] = $row->comment_timestamp;
-			$comments['comment_content'][$commentno] = $row->comment_text;
-			$comments['comment_reported_count'][$commentno] = $row->comment_reported_count;
-			$commentno++;
+				$comments['comment_author'][$commentno] = $this->TranslateUserIDToName($row->comment_user_entity_id);
+				$comments['comment_id'][$commentno] = $row->comment_id;
+				$comments['comment_rating'][$commentno] = $row->comment_rating;
+				$comments['comment_date'][$commentno] = $row->comment_timestamp;
+				$comments['comment_content'][$commentno] = $row->comment_text;
+				$comments['comment_reported_count'][$commentno] = $row->comment_reported_count;
+				$commentno++;
 			}
 
 			return $comments;

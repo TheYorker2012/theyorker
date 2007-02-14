@@ -65,18 +65,25 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-//		$data['article_author'] = $article_database_result['authors'][0];
+		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
 
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('food_blurb');
+		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
+		if ($article_database_result['photos'] != array())
+		{
+			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
+		}
+		else
+		{
+			$data['article_photo'] = imageLocation(1);
+		}
 
-		//Dummy Data - Waiting for news_model to finish implementing, I feel like a theif..., frb501
-		$data['article_author'] = 'Matthew Tole';
-		$data['article_author_link'] = '/directory/view/1';
-		$data['article_photo'] = '/images/prototype/news/thumb4.jpg';
+		$data['article_photo_alt_text'] = "Article Image";
+		$data['article_photo_title'] = "Recent Title";
 
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags('food');
@@ -142,14 +149,23 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-//		$data['article_author'] = $article_database_result['authors'][0];
-		$data['article_author'] = 'Matthew Tole';
+		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/drinkreview/'.$organisation_code_name;
 
-		$data['article_author_link'] = '/directory/view/1';
+		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
+		if ($article_database_result['photos'] != array())
+		{
+			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
+		}
+		else
+		{
+			$data['article_photo'] = imageLocation(1);
+		}
 
+		$data['article_photo_alt_text'] = "Article Image";
+		$data['article_photo_title'] = "Recent Title";
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags('drink');
 
@@ -205,12 +221,23 @@ class Reviews extends Controller {
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-//		$data['article_author'] = $article_database_result['authors'][0];
-		$data['article_author'] = 'Matthew Tole';
+		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/culturereview/'.$organisation_code_name;
-		$data['article_author_link'] = '/directory/view/1';
+		
+		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
+		if ($article_database_result['photos'] != array())
+		{
+			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
+		}
+		else
+		{
+			$data['article_photo'] = imageLocation(1);
+		}
+
+		$data['article_photo_alt_text'] = "Article Image";
+		$data['article_photo_title'] = "Recent Title";
 
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags('culture');
