@@ -8,7 +8,7 @@
 				<a href='/<?php echo $link; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
 				<h3><?php echo anchor($link.'/'.$preview['id'], $preview['heading']); ?></h3>
 				<?php foreach ($preview['authors'] as $reporter) { ?>
-				<p class='Writer'><a href='/directory/view/<?php echo $reporter['id']; ?>'><?php echo $reporter['name']; ?></a></p>
+				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 				<?php } ?>
 				<p class='Date'><?php echo $preview['date']; ?></p>
 				<p class='More'><?php echo anchor($link.'/'.$preview['id'], 'Read more...'); ?></p>
@@ -67,7 +67,7 @@
 			<a href='/<?php echo $link; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
 		    <p class='Headline'><a href='/<?php echo $link; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
 			<?php foreach ($other['authors'] as $reporter) { ?>
-			<p class='Writer'><a href='/directory/view/<?php echo $reporter['id']; ?>'><?php echo $reporter['name']; ?></a></p>
+			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 			<?php } ?>
 			<p class='Date'><?php echo $other['date']; ?></p>
 		</div>
@@ -80,7 +80,7 @@
 				<a href='/<?php echo $link; ?>/<?php echo $related['id']; ?>'><img src='<?php echo $related['image']; ?>' alt='<?php echo $related['image_description']; ?>' title='<?php echo $related['image_description']; ?>' /></a>
 			    <p class='Headline'><a href='/<?php echo $link; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
 				<?php foreach ($related['authors'] as $reporter) { ?>
-				<p class='Writer'><a href='/directory/view/<?php echo $reporter['id']; ?>'><?php echo $reporter['name']; ?></a></p>
+				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 				<?php } ?>
 				<p class='Date'><?php echo $related['date']; ?></p>
 			</div>
