@@ -9,11 +9,25 @@
 	<p>
 		<?php echo $account_maintenance; ?>
 	</p>
+	<?php if($maintainer['type'] == "yorker"){ ?>
+	<p>
+		This account is being maintained by the yorker staff.
+	</p>
+	<?php }else{ ?>
+	<p>
+		The following person is responisble for this account.
+	</p>
 	<p>
 		<strong>Account Maintainer:</strong> <?php echo $maintainer['name']; ?><br />
 		<strong>Maintainer's Email:</strong> <?php echo $maintainer['email']; ?><br />
 		<strong>Maintainer is Student:</strong> <?php echo $maintainer['student']; ?><br />
 	</p>
+	<?php } ?>
+	<form action="/viparea/account/maintainer/<?php echo $organisation['shortname']; ?>" method="link" class="form">
+	<fieldset>
+		<input type="submit" class="button" value="Change Maintainer" />
+	</fieldset>
+	</form>
 </div>
 <div class='grey_box'>
 <h2>account details</h2>

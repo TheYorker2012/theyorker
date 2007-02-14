@@ -37,6 +37,7 @@ class Account extends Controller
 				),
 			);
 			$data['maintainer'] = array (
+				'type' => 'account',
 				'name' => 'John Smith',
 				'email' => 'static@controler.com',
 				'student' => 'yes',
@@ -44,6 +45,30 @@ class Account extends Controller
 			
 			// Set up the content
 			$this->main_frame->SetContentSimple('viparea/account', $data);
+		}
+		
+		// Load the main frame
+		$this->main_frame->Load();
+	}
+	
+	function maintainer($organisation)
+	{
+		$this->pages_model->SetPageCode('viparea_account_maintainer');
+		
+		// Ensure have permissions
+		if (CheckPermissions('vip')) {
+			$data = $this->organisations->_GetOrgData($organisation);
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['account_maintenance'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
+			$data['maintainer'] = array (
+				'type' => 'account',
+				'name' => 'John Smith',
+				'email' => 'static@controler.com',
+				'student' => 'yes',
+			);
+			
+			// Set up the content
+			$this->main_frame->SetContentSimple('viparea/account_maintainer', $data);
 		}
 		
 		// Load the main frame
