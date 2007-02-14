@@ -1088,6 +1088,40 @@ class Events_model extends Model
 		return array($num_events, $num_occurrences);
 	}
 	
+	/// Generate occurrences for an event or events.
+	/**
+	 * @param $Until timestamp Date to generate occurrences up to.
+	 * @param $EventId
+	 *	- integer Event id.
+	 *	- FALSE all events.
+	 * @return int Number of occurrences created.
+	 *
+	 * This should be called periodically with an increased @a $Until.
+	 *
+	 * This should be called for new recurring events before being published
+	 */
+	function EventsGenerateRecurrences($Until, $EventId = FALSE)
+	{
+		// select query
+		// if specific event id
+		//	select from events, recurrences
+		//	where events.event_id = $EventId
+		// if all events
+		//	select from events, recurrences
+		//	where events.recurrence IS NOT NULL and
+		//		events.recurrence_until IS NULL OR < $Until
+		
+		// foreach event
+		//	find recurrences between event.until and $Until
+		//	update timestamp where timestamp hasn't changed
+		//	if timestamp updated ok then:
+		//	save occurrences and update event.until to $Until
+		//		where event.until is old value obtained from db
+		
+		// occurrence state: public or draft?
+		
+	}
+	
 	/// Add occurrences to an event.
 	/**
 	 * @param $EventId int ID of event to add occurrence to.
