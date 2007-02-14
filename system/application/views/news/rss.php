@@ -27,7 +27,7 @@ foreach ($rss_items as $item) {
 		<title>' . $item['heading'] . '</title>
 		<author>';
 	$temp_reporters = '';
-	foreach ($authors as $reporter) {
+	foreach ($item['authors'] as $reporter) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
 	echo substr($temp_reporters, 0, -2) . '</author>
