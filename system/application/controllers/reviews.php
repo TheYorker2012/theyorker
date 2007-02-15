@@ -105,7 +105,7 @@ class Reviews extends Controller {
 		}
 
 		//Pass tabledata straight to view it is in the proper format
-		$data['league_data'] = $league_data;
+		$data['league_data'] = $leagues;
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/food',$data);
