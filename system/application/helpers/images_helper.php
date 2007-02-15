@@ -61,6 +61,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 			echo 'innm'.$location;
 			return $location;
 		} else {
+			echo "yeeehaww!";
 			return 'images/photos/null.jpg';
 		}
 	} else {
