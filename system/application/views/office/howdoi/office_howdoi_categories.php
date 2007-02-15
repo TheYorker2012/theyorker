@@ -2,7 +2,6 @@
 </div>
 <div class="grey_box">
 	<h2>edit categories</h2>
-	Type in a name next to the category to rename it - otherwise leave it blank.
 	<?php
 	foreach ($categories as $category_id => $category)
 	{

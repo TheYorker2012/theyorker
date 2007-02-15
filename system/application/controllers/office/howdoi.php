@@ -2,8 +2,8 @@
 
 /// Office How Do I Pages.
 /**
- * @author Nick Evans (nse500@cs.york.ac.uk)
  * @author Richard Ingle (ri504@cs.york.ac.uk)
+ * @author Nick Evans (nse500@cs.york.ac.uk)
  */
 class Howdoi extends Controller
 {
