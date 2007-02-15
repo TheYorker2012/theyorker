@@ -56,8 +56,9 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	if (is_null($extension)) $extension = '.jpg';
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+		echo 'beforenm'.$location;
 		if ($force or is_file($location)) {
-			echo $location;
+			echo 'innm'.$location;
 			return $location;
 		} else {
 			return 'images/photos/null.jpg';
@@ -80,7 +81,9 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 				return 'images/photos/null.jpg';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+			echo 'db'.$location;
 			if ($force or is_file($location)) {
+				echo $location;
 				return $location;
 			} else {
 				return 'images/photos/null.jpg';
