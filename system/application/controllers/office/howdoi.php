@@ -520,6 +520,7 @@ class Howdoi extends Controller
     		   - a_codename => the codename used in the address bar
     		   - a_blurb => a general blurb about the category
     		   - r_submit_save => the name of the submit button
+    		   ##TODO: check to see if name/codename already exists
 		*/
 		else if (isset($_POST['r_submit_save']))
 		{
@@ -536,11 +537,11 @@ class Howdoi extends Controller
 		   - r_redirecturl => the url the form submit came from
     		   - a_categoryname => the name of the category to create
     		   - r_submit_add => the name of the submit button
+		   ##TODO: add checking for name exists
 		*/
 		else if (isset($_POST['r_submit_add']))
 		{
-			//##TODO: add checking for name exists
-			if (strlen(trim(a_categoryname)) > 0)
+			if (strlen(trim($_POST['a_categoryname'])) > 0)
 			{
 				$this->howdoi_model->AddNewCategory($_POST['a_categoryname']);
 	                	$this->main_frame->AddMessage('success',$_POST['a_categoryname'].' has been added to the category list.');
