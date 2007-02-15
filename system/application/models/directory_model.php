@@ -3,6 +3,7 @@
  * This model retrieves data from the directory.
  *
  * @author James Hogan (jh559@cs.york.ac.uk)
+  * @author Owen Jones (oj502@cs.york.ac.uk)
  */
 class Directory_model extends Model {
 
@@ -169,10 +170,66 @@ class Directory_model extends Model {
 		return $query->result_array();
 	}
 
-	/// Get an organisation's business card groups.
+	//Get revisons of a directory entry
+	/*
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return An array of revisions with:
+	 *	- ['revision_id']        (number)
+	 *	- ['revision_author']        (string)
+	 *	- ['revision_timestamp']  (timestamp)
+	 *	- ['revision_live']  (boolean)
+	*/
+	function GetRevisonsOfDirectoryEntry($DirectoryEntryName)
+	{
+		$sql =
+			'SELECT'.
+			' organisations.organisation_entity_id, '.
+			' organisations.organisation_live_content_id '.
+			'FROM organisations '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
+			'LIMIT 1';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$row = $query->row();
+		//Get org id to look for and the one that should be live.
+		$id = $row->organisation_entity_id;
+		$liveid = $row->organisation_live_content_id;
+		
+		//Find the differant revisions
+		$sql2 =
+			'SELECT'.
+			' organisation_contents.organisation_content_id, '.
+			' organisation_contents.organisation_content_last_author_timestamp, '.
+			' users.user_firstname, '.
+			' users.user_surname '.
+			'FROM organisation_contents '.
+			'INNER JOIN users '.
+			'ON users.user_entity_id = organisation_contents.organisation_content_last_author_user_entity_id '.
+			'WHERE organisation_contents.organisation_content_organisation_entity_id=? '.
+			'ORDER BY organisation_content_last_author_timestamp';
+		$query2 = $this->db->query($sql2, $id);
+		$query2_array = $query2->result_array();
+		$data = '';
+		foreach ($query2_array as $row){
+			if($row['organisation_content_id']==$liveid){
+				$live = true;
+			}else{
+				$live = false;
+			}
+			$data[] = array(
+				'id'          => $row['organisation_content_id'],
+				'author'          => $row['user_firstname'].' '.$row['user_surname'],
+				'published'        => $live,
+				'timestamp'        => $row['organisation_content_last_author_timestamp']
+			);
+		}
+		return $data;
+	}
+	
+	/// Update an organisations details
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @return array[business_card_group].
+	 * @param $Data array of details to update
+	 * @return true
 	 */
 	function UpdateOrganisationDetails($DirectoryEntryName, $Data)
 	{

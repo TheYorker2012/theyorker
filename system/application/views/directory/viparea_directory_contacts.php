@@ -9,7 +9,7 @@
 
 <h2>Edit <?php if(!empty($editmember['name'])){echo $editmember['name'];} ?></h2>
 
-<form name='member' method='post' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/contacts/update' class='form'>
+<form name='member' method='post' action='/viparea/directory/contacts/' class='form'>
 	<fieldset>
 		<label for='member_name'>Name:</label>
 		<input type='text' name='member_name' value='<?php if(!empty($editmember['name'])){echo $editmember['name'];} ?>'/>

@@ -7,8 +7,8 @@
 	<div class="Entry">
 		<ol>
 		<?php foreach($revisions as $revison) {
-			echo '<li>'.$revison['author']." ".$revison['timestamp'];
-			if ($revison['published']=='yes'){
+			echo '<li><a href="/viparea/directory/information/'.$revison['id'].'">'.$revison['author']." ".$revison['timestamp'].'</a>';
+			if ($revison['published']==true){
 				echo ' <span class="orange">(Published)</span>';
 			}
 			echo '</li>';

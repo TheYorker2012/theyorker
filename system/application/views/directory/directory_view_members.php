@@ -73,7 +73,7 @@ if(!empty($member['phone_internal']) or !empty($member['phone_external']) or !em
 <?php
 if (!empty($organisation['editmode'])) {
 ?>
-<form name='member' method='post' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/editcontact/<?php echo $member['id']; ?>' class='form'>
+<form name='member' method='post' action='/viparea/directory/editcontact/<?php echo $member['id']; ?>' class='form'>
 <input name='member_edit_button' type='submit' id='member_edit_button' value='Edit' class='button' /><br />
 </form>
 <?php
