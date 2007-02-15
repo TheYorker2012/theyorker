@@ -63,13 +63,21 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		}
 	} else {
 		$CI =& get_instance();
-		$query = $CI->db->select('image_type_codename')->getwhere('images', array('image_id' => $id), 1);
+		$query = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $id), 1);
 		$fetched_type = false;
 		foreach ($query->result() as $onerow) {
-			$fetched_type = $onerow->image_type_codename;
+			$fetched_type = $onerow->image_image_type_id;
 		}
 		$query->free_result();
 		if ($fetched_type) {
+			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type));
+			$fetched_type = false;
+			foreach ($query->result() as $onerow) {
+				$fetched_type = $onerow->image_type_codename;
+			}
+			if (!$fetched_type) {
+				return 'images/photos/null.jpg';
+			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force || is_file($location)) {
 				return $location;
