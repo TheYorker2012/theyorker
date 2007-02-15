@@ -467,11 +467,17 @@ class Howdoi extends Controller
 		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
+		/* Loads the category edit page
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - r_categoryid => the category id to edit
+    		   - r_submit_edit => the name of the submit button
+		*/
 		if (isset($_POST['r_submit_edit']))
-		{	
+		{
 			//set the page code
 			$this->pages_model->SetPageCode('office_howdoi_edit_category');
-			
+
 			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
 			$this->main_frame->SetPage('categories');
@@ -494,12 +500,27 @@ class Howdoi extends Controller
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
+		/* Deletes the category with the id passed
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - r_categoryid => the category id to delete
+    		   - r_submit_delete => the name of the submit button
+		*/
 		else if (isset($_POST['r_submit_delete']))
 		{
 			$this->howdoi_model->DeleteCategory($_POST['r_categoryid']);
                 	$this->main_frame->AddMessage('success','Category deleted.');
 			redirect($_POST['r_redirecturl']);
 		}
+		/* Saves the updated data for the given category
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - r_categoryid => the category id to update
+    		   - a_name => the name of the category
+    		   - a_codename => the codename used in the address bar
+    		   - a_blurb => a general blurb about the category
+    		   - r_submit_save => the name of the submit button
+		*/
 		else if (isset($_POST['r_submit_save']))
 		{
 			$this->howdoi_model->UpdateCategory($_POST['r_categoryid'],
@@ -510,18 +531,48 @@ class Howdoi extends Controller
                 	$this->main_frame->AddMessage('success',$_POST['a_name'].' has been updated.');
 			redirect($_POST['r_redirecturl']);
 		}
+		/* Adds a new category
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - a_categoryname => the name of the category to create
+    		   - r_submit_add => the name of the submit button
+		*/
 		else if (isset($_POST['r_submit_add']))
 		{
-			$this->howdoi_model->AddNewCategory($_POST['a_categoryname']);
-                	$this->main_frame->AddMessage('success',$_POST['a_categoryname'].' has been added to the category list.');
-			redirect($_POST['r_redirecturl']);
+			//##TODO: add checking for name exists
+			if (strlen(trim(a_categoryname)) > 0)
+			{
+				$this->howdoi_model->AddNewCategory($_POST['a_categoryname']);
+	                	$this->main_frame->AddMessage('success',$_POST['a_categoryname'].' has been added to the category list.');
+				redirect($_POST['r_redirecturl']);
+			}
+			//if the name is only whitespace then cause an error
+			else
+			{
+	                	$this->main_frame->AddMessage('error','You must enter a name for the category.');
+				redirect($_POST['r_redirecturl']);
+			}
 		}
+		/* Moves a category up one in the category list
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - r_sectionorder => the current position to move up
+    		   - r_submit_up => the name of the submit button
+    		   ##TODO: must pass category id as well, and check to see if it has been moved by someone else
+		*/
 		else if (isset($_POST['r_submit_up']))
 		{
 			$this->howdoi_model->SwapCategoryOrder($_POST['r_sectionorder'], $_POST['r_sectionorder'] - 1);
                 	$this->main_frame->AddMessage('success','Category moved up.');
 			redirect($_POST['r_redirecturl']);
 		}
+		/* Moves a category down one in the category list
+		   $_POST data passed
+		   - r_redirecturl => the url the form submit came from
+    		   - r_sectionorder => the current position to move down
+    		   - r_submit_down => the name of the submit button
+    		   ##TODO: must pass category id as well, and check to see if it has been moved by someone else
+		*/
 		else if (isset($_POST['r_submit_down']))
 		{
 			$this->howdoi_model->SwapCategoryOrder($_POST['r_sectionorder'], $_POST['r_sectionorder'] + 1);
