@@ -252,7 +252,7 @@ class Howdoi extends Controller
 		$data['parameters']['revision_id'] = $revision_id;
 
 		// get the list of howdoi content type categories
-                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+		$data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
 
 		// add the unassigned type
 		$data['categories'][$howdoi_type_id] = array(
@@ -350,48 +350,76 @@ class Howdoi extends Controller
 		}
 	}
 
+	/**
+	 * This allows the editors to modify the request information
+	 * and assign writers to the question
+	 * @param $article_id is the id of the question to edit.
+	 */
 	function editrequest($article_id)
 	{
+		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
 
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_howdoi_edit_request');
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
-		
-		$this->pages_model->SetPageCode('office_howdoi_edit_request');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('requests');
 
+		//get the howdoi parent type id
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
 		// Insert main text from pages information
-
-		$data['parameters']['article_id'] = $article_id;
-
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['article_id'] = $article_id;
+
+		// get the list of howdoi content type categories
                 $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+
+                // add the unassigned type
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					);
+		/** get the article's header for the article id passed to
+	            the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		/** this checks to see if the article id given is for a how
+ 	            do i question or is an article of another type */
 		$correct_content_type = FALSE;
 		foreach ($data['categories'] as $category_id => $category)
 		{
                 	if ($data['article']['header']['content_type'] == $category_id)
 			$correct_content_type = TRUE;
 		}
+
+		//if the article is a how do i question
 		if ($correct_content_type == TRUE)
 		{
+			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;
 			$data['user']['officetype'] = $this->user_auth->officeType;
 
+			//get the how do i writers
 			$data['writers']['all'] = $this->requests_model->GetWritersForType($howdoi_type_id);
+
+			//get writers for the current question
 			$data['writers']['article'] = $this->requests_model->GetWritersForArticle($article_id);
+
+			//set a count for the available writers
 			$data['writers']['availcount'] = 0;
 			
+			/* loop though the possible writers and remove the
+			   writers that are already involved with this
+			   article */
 			foreach ($data['writers']['all'] as $writer)
 			{
 				$inselection = FALSE;
@@ -416,6 +444,7 @@ class Howdoi extends Controller
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
+		//otherwise for an invalid article id
 		else
 		{
                 	$this->main_frame->AddMessage('error','Specified request is not editable.');
@@ -423,16 +452,24 @@ class Howdoi extends Controller
 		}
 	}
 
+	/**
+	 * This function contains all the form submit processing for
+	 * category editing.
+	 */
 	function categorymodify()
 	{
+		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
 
+		//load the required model
 		$this->load->model('howdoi_model','howdoi_model');
+
+		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		if (isset($_POST['r_submit_edit']))
-		{
-			// NEW PAGE CATEGORY NEEDED
+		{	
+			//set the page code
 			$this->pages_model->SetPageCode('office_howdoi_edit_category');
 			
 			//Get navigation bar and tell it the current page
@@ -442,7 +479,8 @@ class Howdoi extends Controller
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			
-			//do shabazz
+			/* get the data for the category provided in the post 
+			   data */
 			$data['category'] = $this->howdoi_model->GetContentCategory($_POST['r_categoryid']);
 			$data['category']['id'] = $_POST['r_categoryid'];
 	
