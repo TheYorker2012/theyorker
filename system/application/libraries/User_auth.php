@@ -46,6 +46,9 @@ class User_auth {
 	// The name of the organisation that has been logged in to (if any)
 	public $organisationName = '';
 
+	// The short name of the organisation that has been logged in to (if any)
+	public $organisationShortName = '';
+
 	// The salt used to generate the password hash
 	private $salt;
 
@@ -73,6 +76,7 @@ class User_auth {
 			$this->permissions = $_SESSION['ua_permissions'];
 			$this->organisationLogin = $_SESSION['ua_organisation'];
 			$this->organisationName = $_SESSION['ua_organisationname'];
+			$this->organisationShortName = $_SESSION['ua_organisationshortname'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
 
@@ -164,7 +168,7 @@ class User_auth {
 			$this->surname = $row->user_surname;
 			$this->officeLogin = $row->user_office_access;
 		} else {
-			$sql = 'SELECT organisation_name 
+			$sql = 'SELECT organisation_name, organisation_directory_entry_name
 				FROM organisations 
 				WHERE organisation_entity_id = ?';
 
@@ -173,6 +177,7 @@ class User_auth {
 			
 			$this->isUser = false;
 			$this->organisationName = $row->organisation_name;
+			$this->organisationShortName = $row->organisation_directory_entry_name;
 			$this->surname = '';
 			$this->officeLogin = false;
 			$this->organisationLogin = $this->entityId;
@@ -404,7 +409,7 @@ class User_auth {
 		
 		$hash = sha1($this->salt.$password);
 
-		$sql = 'SELECT organisation_name FROM entities 
+		$sql = 'SELECT organisation_name, organisation_directory_entry_name FROM entities 
 			INNER JOIN subscriptions ON entities.entity_id = subscriptions.subscription_user_entity_id
 			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
@@ -422,6 +427,7 @@ class User_auth {
 		$row = $query->row();
 		$this->organisationLogin = $organisationId;
 		$this->organisationName = $row->organisation_name;
+		$this->organisationShortName = $row->organisation_directory_entry_name;
 		$this->localToSession();
 	}
 
@@ -429,6 +435,7 @@ class User_auth {
 	public function logoutOrganisation() {
 		$this->organisationLogin = -1;
 		$this->organisationName = '';
+		$this->organisationShortName = '';
 		$this->localToSession();
 	}
 	
@@ -446,6 +453,7 @@ class User_auth {
 		$_SESSION['ua_permissions'] = $this->permissions;
 		$_SESSION['ua_organisation'] = $this->organisationLogin;
 		$_SESSION['ua_organisationname'] = $this->organisationName;
+		$_SESSION['ua_organisationshortname'] = $this->organisationShortName;
 		$_SESSION['ua_salt'] = $this->salt;
 	}
 }
