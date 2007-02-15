@@ -46,7 +46,7 @@ class Directory_model extends Model {
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 */
-	function GetDirectoryOrganisationByEntryName($DirectoryEntryName)
+	function GetDirectoryOrganisationByEntryName($DirectoryEntryName, $revision=false)
 	{
 		$sql =
 			'SELECT'.
@@ -63,18 +63,27 @@ class Directory_model extends Model {
 			' organisation_contents.organisation_content_phone_internal as organisation_phone_internal,'.
 			' organisation_contents.organisation_content_phone_external as organisation_phone_external,'.
 			' organisation_contents.organisation_content_fax_number as organisation_fax_number,'.
+			' organisation_contents.organisation_content_id as organisation_revision_id,'.
 			' organisations.organisation_yorkipedia_entry,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
 			'INNER JOIN organisation_types '.
 			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
-			'INNER JOIN organisation_contents '.
-			' ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
-			'WHERE organisations.organisation_directory_entry_name=? '.
-			' AND organisation_types.organisation_type_directory=1 '.
-			'ORDER BY organisation_name';
-	
-		$query = $this->db->query($sql, $DirectoryEntryName);
+			'INNER JOIN organisation_contents ';
+			if ($revision==false){
+				$sql .= ' ON  organisation_contents.organisation_content_id=organisations.organisation_live_content_id '.
+				'WHERE organisations.organisation_directory_entry_name=? '.
+				' AND organisation_types.organisation_type_directory=1 '.
+				'ORDER BY organisation_name';
+				$query = $this->db->query($sql, $DirectoryEntryName);
+			} else {
+				$sql .= ' ON  organisation_contents.organisation_content_id=? '.
+				'WHERE organisations.organisation_directory_entry_name=? '.
+				' AND organisation_types.organisation_type_directory=1 '.
+				'ORDER BY organisation_name';
+				$query = $this->db->query($sql, array($revision, $DirectoryEntryName));
+			}
+			
 	
 		return $query->result_array();
 	}
@@ -173,11 +182,7 @@ class Directory_model extends Model {
 	//Get revisons of a directory entry
 	/*
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @return An array of revisions with:
-	 *	- ['revision_id']        (number)
-	 *	- ['revision_author']        (string)
-	 *	- ['revision_timestamp']  (timestamp)
-	 *	- ['revision_live']  (boolean)
+	 * @return An array of revisions
 	*/
 	function GetRevisonsOfDirectoryEntry($DirectoryEntryName)
 	{

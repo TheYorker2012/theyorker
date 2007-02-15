@@ -84,7 +84,7 @@ class Yorkerdirectory extends Controller
 	}
 
 	/// Directory organisation page.
-	function information()
+	function information($revision=false)
 	{
 		if (!CheckPermissions('vip')) return;
 		
@@ -101,7 +101,7 @@ class Yorkerdirectory extends Controller
 		}
 		
 		//Get Data And toolbar
-		$data = $this->organisations->_GetOrgData($organisation);
+		$data = $this->organisations->_GetOrgData($organisation, $revision);
 		$this->_SetupNavbar();
 		
 		// Insert main text from pages information

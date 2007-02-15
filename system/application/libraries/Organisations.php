@@ -95,13 +95,13 @@ class Organisations
 	 * @return Organisation data relating to specified organisation or FALSE.
 	 */
 	 
-	function _GetOrgData($OrganisationShortName)
+	function _GetOrgData($OrganisationShortName, $revision_number=false)
 	{
 		$this->CI->load->helper('images');
 		
 		$data = array();
 
-		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName);
+		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName, $revision_number);
 		if (1 === count($orgs)) {
 			foreach ($orgs as $org) {
 				$slideshow = array(
@@ -131,6 +131,7 @@ class Organisations
 					'phone_internal'  => $org['organisation_phone_internal'],
 					'phone_external'  => $org['organisation_phone_external'],
 					'fax_number'  => $org['organisation_fax_number'],
+					'revision_id'  => $org['organisation_revision_id'],
 
 
 					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
