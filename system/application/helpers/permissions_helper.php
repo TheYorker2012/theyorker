@@ -57,16 +57,16 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 	$CI->load->library('messages');
 
 	$student_login_action = array(
-			'handle','login_handler',
-			array('public')
+			'redirect+url','login/main',
+			'post' => TRUE
 		);
 	$vip_login_action = array(
-			'handle','login_handler',
-			array('vip')
+			'redirect+url','login/vip',
+			'post' => TRUE
 		);
 	$office_login_action = array(
-			'handle','login_handler',
-			array('office')
+			'redirect+url','login/office',
+			'post' => TRUE
 		);
 
 
@@ -109,7 +109,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 		// Logged in as student and in VIP area
 		$vip_door_open_action = array(
 				'message','warning',
-				HtmlButtonLink(site_url('logout/viparea'.$CI->uri->uri_string()),'Leave VIP Area')
+				HtmlButtonLink(site_url('logout/vip'.$CI->uri->uri_string()),'Leave VIP Area')
 				. $CI->pages_model->GetPropertyText('login:warn_open_vip', TRUE),
 				TRUE
 			);
@@ -169,6 +169,18 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 		if (TRUE === $action) {
 			$access_allowed = TRUE;
 		} elseif (is_array($action)) {
+			// Store post data
+			if (array_key_exists('post',$action) && $action['post']) {
+				if (!empty($_POST)) {
+					if (!array_key_exists('posts',$_SESSION)) {
+						$_SESSION['posts'] = array();
+					}
+					// save the post data and the time
+					$_SESSION['posts'][$CI->uri->uri_string()] = array(time(), $_POST);
+				}
+			}
+			
+			// Perform action
 			switch ($action[0]) {
 				case 'handle':
 					$access_allowed = $action[1]($action[2], $Permission);
@@ -176,13 +188,15 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 						$CI->messages->AddMessage($action[3], $action[4], FALSE);
 					}
 					break;
-
+					
+				case 'redirect+url':
+					$action[1] .= $CI->uri->uri_string();
 				case 'redirect':
 					if (array_key_exists(2,$action)) {
 						$CI->messages->AddMessage($action[2], $action[3]);
 					}
 					redirect($action[1]);
-					break;
+					return FALSE;
 
 				case 'message':
 					$CI->messages->AddMessage($action[1], $action[2], FALSE);
@@ -196,6 +210,22 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 			// Access denied
 			$CI->messages->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
 			//redirect('');
+		}
+		
+		if (TRUE === $action || is_array($action)) {
+			// Restore post data
+			if (array_key_exists('posts',$_SESSION)) {
+				if (array_key_exists($CI->uri->uri_string(),$_SESSION['posts'])) {
+					$post_data = & $_SESSION['posts'][$CI->uri->uri_string()];
+					// Make the post data timeout after 10 minutes.
+					if ($post_data[0] > time() - 600) {
+						foreach ($post_data[1] as $key => $value) {
+							$_POST[$key] = $value;
+						}
+					}
+					unset($_SESSION['posts'][$CI->uri->uri_string()]);
+				}
+			}
 		}
 	}
 
@@ -217,8 +247,21 @@ function HtmlButtonLink($Link, $Caption)
 </form>';
 }
 
-
-function login_handler($Data, $Permission)
+/// Handles the login view.
+/**
+ * @param $Level string:
+ *	- 'public'
+ *	- 'student'
+ *	- 'organisation'
+ *	- 'vip'
+ *	- 'office'
+ *	- 'editor'
+ *	- 'admin'
+ * @return Whether successfully logged in yet
+ *
+ * @pre CheckPermissions has already been called.
+ */
+function LoginHandler($Level)
 {
 	$CI = &get_instance();
 	$CI->load->library('messages');
@@ -228,13 +271,13 @@ function login_handler($Data, $Permission)
 	);
 
 	$login_id = '';
-	if ($Data[0] === 'office') {
+	if ($Level === 'office') {
 		$page_code = 'login_office';
 		$login_id = 'office';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_office', TRUE);
 		$data['no_keep_login'] = TRUE;
 
-	} elseif ($Data[0] === 'vip') {
+	} elseif ($Level === 'vip') {
 		$page_code = 'login_vip';
 		$login_id = 'vip';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_vip', TRUE);
@@ -252,7 +295,6 @@ function login_handler($Data, $Permission)
 		$data['keep_login'] = '0';
 	}
 	$data['login_id'] = $login_id;
-	$successfully_logged_in = FALSE;
 	if (($CI->input->post('login_button') === 'Login') &&
 		($CI->input->post('login_id') === $login_id)) {
 		if ($login_id === 'student') {
@@ -262,14 +304,14 @@ function login_handler($Data, $Permission)
 		}
 		$password = $CI->input->post('password');
 		try {
-			if ($Data[0] === 'vip') {
+			if ($Level === 'vip') {
 				// if office access say have been logged out of vip
 				if ($CI->user_auth->officeType !== 'None') {
 					$CI->user_auth->logoutOffice();
 					$CI->messages->AddMessage('information','You have been logged out of the office');
 				}
 				$CI->user_auth->loginOrganisation($password, $entity_id);
-			} elseif ($Data[0] === 'office') {
+			} elseif ($Level === 'office') {
 				// if vip access say have been logged out of office
 				if ($CI->user_auth->organisationLogin >= 0) {
 					$CI->user_auth->logoutOrganisation();
@@ -279,38 +321,20 @@ function login_handler($Data, $Permission)
 			} else {
 				$CI->user_auth->login($username, $password, false);
 			}
-			$successfully_logged_in = TRUE;
-
+			
 			$CI->messages->AddMessage('success',$success_msg);
-
+			
 			foreach ($_POST as $key => $value) {
 				unset($_POST[$key]);
 			}
-
-			// Store post data
-			if (array_key_exists('posts',$_SESSION)) {
-				if (array_key_exists($CI->uri->uri_string(),$_SESSION['posts'])) {
-					foreach ($_SESSION['posts'][$CI->uri->uri_string()] as $key => $value) {
-						$_POST[$key] = $value;
-					}
-					unset($_SESSION['posts'][$CI->uri->uri_string()]);
-				}
-			}
-			return CheckPermissions($Permission);
+			
+			return TRUE;
 			//redirect($CI->uri->uri_string());
 		} catch (Exception $e) {
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 	} else {
 		$data['initial_username'] = '';
-
-		// Store post data
-		if (!empty($_POST)) {
-			if (!array_key_exists('posts',$_SESSION)) {
-				$_SESSION['posts'] = array();
-			}
-			$_SESSION['posts'][$CI->uri->uri_string()] = $_POST;
-		}
 	}
 
 	// Get various page properties used for displaying the login screen
@@ -350,7 +374,9 @@ function login_handler($Data, $Permission)
 
 	$CI->main_frame->SetContentSimple('login/login', $data);
 
-	return $successfully_logged_in;
+	$CI->main_frame->Load();
+
+	return FALSE;
 }
 
 

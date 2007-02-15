@@ -1,14 +1,20 @@
 <?php
 
+/// Main login controller.
+/**
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ * 
+ * Used for logging in and related functions.
+ */
 class Login extends Controller
 {
-
+	/// Default constructor
 	function __construct()
 	{
 		parent::Controller();
 	}
 	
-	/// Redirect to the uri given after the initial logout/.../
+	/// Redirect to the uri given after the initial login/.../
 	/**
 	 * @note Duplicated from logout
 	 */
@@ -21,13 +27,49 @@ class Login extends Controller
 		redirect($uri_target);
 	}
 
+	/// Main login screen.
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	successful login.
+	 */
 	function main()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		if (LoginHandler('student')) {
+			$this->_redirect();
+		}
+	}
+
+	/// VIP login screen.
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	successful login.
+	 */
+	function vip()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		if (LoginHandler('vip')) {
+			$this->_redirect();
+		}
+	}
+
+	/// Office login screen.
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	successful login.
+	 */
+	function office()
 	{
 		if (!CheckPermissions('student')) return;
 		
-		$this->_redirect();
+		if (LoginHandler('office')) {
+			$this->_redirect();
+		}
 	}
 
+	/// Page for resetting password.
 	function resetpassword()
 	{
 		if (!CheckPermissions('public')) return;

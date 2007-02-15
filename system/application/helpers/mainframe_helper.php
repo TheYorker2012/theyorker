@@ -93,13 +93,13 @@ function GenerateToplinks($Permission)
 				$top_links[] = $go_vip;
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
-							site_url('logout/viparea'.$CI->uri->uri_string()));
+							site_url('logout/vip'.$CI->uri->uri_string()));
 				}
 			} elseif ($Permission === 'vip') {
 				$top_links[] = 'in VIP area as ' . $CI->user_auth->organisationName;
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
-							site_url('logout/viparea'));
+							site_url('logout/vip'));
 				}
 			}
 			$top_links[] = $log_out;

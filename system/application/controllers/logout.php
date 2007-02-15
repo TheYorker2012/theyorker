@@ -29,6 +29,10 @@ class Logout extends Controller
 	}
 
 	/// Logout from main account
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	logging out.
+	 */
 	function main()
 	{
 		try {
@@ -40,13 +44,17 @@ class Logout extends Controller
 		
 		$this->_redirect();
 	}
-
-	/// Logout from office
-	function office()
+	
+	/// Logout from vip area
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	logging out.
+	 */
+	function vip()
 	{
 		try {
-			$this->user_auth->logoutOffice();
-			$this->messages->AddMessage('success','You have successfully left the office');
+			$this->user_auth->logoutOrganisation();
+			$this->messages->AddMessage('success','You have successfully left the VIP area');
 		} catch (Exception $e) {
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
@@ -54,12 +62,16 @@ class Logout extends Controller
 		$this->_redirect();
 	}
 
-	/// Logout from vip area
-	function viparea()
+	/// Logout from office
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	logging out.
+	 */
+	function office()
 	{
 		try {
-			$this->user_auth->logoutOrganisation();
-			$this->messages->AddMessage('success','You have successfully left the VIP area');
+			$this->user_auth->logoutOffice();
+			$this->messages->AddMessage('success','You have successfully left the office');
 		} catch (Exception $e) {
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
