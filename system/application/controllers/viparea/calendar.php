@@ -190,7 +190,6 @@ class Calendar extends controller
 			if (FALSE === $OccurrenceId) {
 				$filter = new EventOccurrenceFilter();
 				$filter->DisableSource('subscribed');
-				$filter->SetRange(strtotime('-1year'),strtotime('+1year'));
 				$filter->SetSpecialCondition($special_condition);
 				
 				$fields = array(

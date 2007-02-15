@@ -13,9 +13,14 @@ class Calendar extends Controller
 			if (!CheckPermissions('admin')) return;
 			
 			$this->load->model('calendar/events_model');
-			$this->events_model->EventsGenerateRecurrences(
+			$result = $this->events_model->EventsGenerateRecurrences(
 					strtotime('+2years')
 				);
+			
+			$this->messages->AddMessage('information', $result[0].' occurrrences were created');
+			$this->messages->AddMessage('information', $result[1].' events had occurrences generated');
+			$this->messages->AddMessage('information', $result[2].' events were busy');
+			$this->messages->AddMessage('information', $result[3].' event mutexes were stolen');
 			
 			$this->main_frame->Load();
 		} else {

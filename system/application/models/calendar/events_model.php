@@ -1132,37 +1132,109 @@ class Events_model extends Model
 		
 		// Return values
 		$occurrences_created = 0;
+		$events_generated = 0;
+		$events_mutexed = 0;
+		$mutexes_stolen = 0;
 		
 		// foreach event
 		if ($query->num_rows() > 0) {
 			$events = $query->result_array();
 			foreach ($events as $event) {
-				// set the event_recurrence_mutex where it isn't set
+				// Query to set the event recurrence mutex and timestamp
+				// Note that affected_rows will only be 1 if
+				//	the event exists AND
+				//	the mutex isn't already set,
+				//		OR timestamp is NULL,
+				//		OR timestamp is more than an hour in the past
+				// I.E. the mutex is lost after 5 minutes
+				$sql_set_mutex = '
+					UPDATE	events
+					SET		events.event_recurrence_mutex = 1,
+							events.event_timestamp = CURRENT_TIMESTAMP()
+					WHERE	events.event_id = ?
+						AND	(	events.event_recurrence_mutex = 0
+							OR	events.event_timestamp = NULL
+							OR	events.event_timestamp < DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 MINUTE))';
+				$set_mutex_bind_data = array($event['event_id']);
 				
-				// if we managed to set the value
+				// Query to uset the event recurrence mutex
+				// Note that if it is already uset, affected_rows will be 0
+				$sql_unset_mutex_failure = '
+					UPDATE	events
+					SET		events.event_recurrence_mutex = 0
+					WHERE	events.event_id = ?';
+				$unset_mutex_bind_data_fail = array($event['event_id']);
+				$sql_unset_mutex_success = '
+					UPDATE	events
+					SET		events.event_recurrence_mutex = 0,
+							events.event_recurrence_updated_until = FROM_UNIXTIME(?)
+					WHERE	events.event_id = ?';
+				$unset_mutex_bind_data_success = array($Until, $event['event_id']);
+				
+				// Get the mutex
+				$this->db->query($sql_set_mutex, $set_mutex_bind_data);
+				// if we managed to get the mutex
 				if ($this->db->affected_rows() > 0) {
 					// get previous update time
-					$previous_update = 0;
-					if ($previous_update < time()) {
-						$previous_update = time();
+					$sql_get_update = '
+						SELECT	UNIX_TIMESTAMP(events.event_recurrence_updated_until)
+									AS previous_update
+						FROM	events
+						WHERE	events.event_id = ?';
+					$query_get_update = $this->db->query($sql_get_update, $event['event_id']);
+					if ($query_get_update->num_rows() == 1) {
+						$previous_update = $query_get_update->row()->previous_update;
+						if ($previous_update < time()) {
+							$previous_update = time();
+						}
+						
+						// find recurrences between event.until and $Until
+						$event['recurrence_rule_offset_minutes'] = 0;
+						$recurrence_rule = new RecurrenceRule($event);
+						$recurrences = $recurrence_rule->FindTimes($previous_update, $Until);
+						
+						if (count($recurrences) > 0) {
+							// save occurrences and update event.until to $Until
+							$occurrence_data = array();
+							foreach ($recurrences as $when => $value) {
+								$occurrence_data[] = array(
+									'state'			=> 'published',
+									'all_day'		=> TRUE,
+									'ends_late'		=> FALSE,
+									'start'			=> $when,
+									'end'			=> strtotime('+1day',$when),
+								);
+							}
+							//$this->messages->AddDumpMessage('data',$occurrence_data);
+							$occurrences_created += $this->OccurrencesAdd(
+								$event['event_id'],
+								$occurrence_data);
+						}
+						
+						++$events_generated;
+						
+						// Signal the mutex
+						$this->db->query($sql_unset_mutex_success, $unset_mutex_bind_data_success);
+					} else {
+						// Signal the mutex
+						$this->db->query($sql_unset_mutex_failure, $unset_mutex_bind_data_fail);
 					}
-					// find recurrences between event.until and $Until
-					$recurrence_rule = new RecurrenceRule($event);
-					$recurrences = $recurrence_rule->FindTimes($previous_update, $Until);
-					$occurrence_dates = array_keys($recurrences);
-					foreach ($occurrence_dates as $key => $value) {
-						$occurrence_dates[$key] = date(DATE_RFC822, $value);
+					
+					if ($this->db->affected_rows() === 0) {
+						++$mutexes_stolen;
 					}
-					$this->messages->AddDumpMessage('occurrences for '.$event['event_name'],$occurrence_dates);
-					// update event timestamp
-					// save occurrences and update event.until to $Until
-					// reset events.recurrence_mutex
-					// occurrence state: public or draft?
+				} else {
+					++$events_mutexed;
 				}
 			}
 		}
 		
-		return $occurrences_created;
+		return array(
+			$occurrences_created,
+			$events_generated,
+			$events_mutexed,
+			$mutexes_stolen
+		);
 	}
 	
 	/// Add occurrences to an event.
@@ -1176,6 +1248,7 @@ class Events_model extends Model
 		$occurrence_query = new EventOccurrenceQuery();
 		
 		static $translation2 = array(
+			'state',
 			'description',
 			'location',
 			'postcode',
@@ -1192,6 +1265,7 @@ class Events_model extends Model
 			// create each occurrences
 			$sql = 'INSERT INTO event_occurrences (
 					event_occurrence_event_id,
+					event_occurrence_state,
 					event_occurrence_description,
 					event_occurrence_location,
 					event_occurrence_postcode,
@@ -1202,18 +1276,37 @@ class Events_model extends Model
 				VALUES';
 			$first = TRUE;
 			foreach ($OccurrenceData as $occurrence) {
+				// Ensure state is value
+				if (array_key_exists('state', $occurrence)) {
+					switch ($occurrence['state']) {
+						case 'draft':
+						case 'movedraft':
+						case 'trashed':
+						case 'published':
+						case 'cancelled':
+						case 'deleted':
+							break;
+						default:
+							unset($occurrence['state']);
+							break;
+					}
+				}
+				
+				// Get the values from the input
 				$values = array_fill(0, count($translation2), 'DEFAULT');
 				foreach ($translation2 as $field_name => $input_name) {
 					if (array_key_exists($input_name, $occurrence)) {
 						$values[$field_name] = $this->db->escape($occurrence[$input_name]);
 					}
 				}
+				
 				if (!$first)
 					$sql .= ',';
 				$sql .=	' ('.$EventId.
-						','.$values[0].		// description
-						','.$values[1].		// location
-						','.$values[2];		// postcode
+						','.$values[0].		// state
+						','.$values[1].		// description
+						','.$values[2].		// location
+						','.$values[3];		// postcode
 				// start time
 				if (array_key_exists('start', $occurrence))
 					$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
@@ -1225,11 +1318,12 @@ class Events_model extends Model
 				else
 					$sql .= ',DEFAULT';
 				
-				$sql .=	','.$values[3].		// all_day
-						','.$values[4].')'; // ends_late
+				$sql .=	','.$values[4].		// all_day
+						','.$values[5].')'; // ends_late
 				
 				$first = FALSE;
 			}
+			//$this->messages->AddDumpMessage('sql add',$sql);	return 0;
 			$query = $this->db->query($sql);
 			return $this->db->affected_rows();
 			
