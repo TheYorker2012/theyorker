@@ -19,10 +19,13 @@ class Index extends Controller
 		
 		$data = array(
 				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-				'organisation' => 'theyorker', //example for the moment change this to logged in organisation
+				'organisation' => $this->user_auth->organisationShortName,
 				'enable_members' => TRUE, //example for the moment change this to logged in organisation
 		);
 		// Set up the content
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $this->user_auth->organisationName)
+		);
 		$this->main_frame->SetContentSimple('viparea/main', $data);
 		
 		// Load the main frame
