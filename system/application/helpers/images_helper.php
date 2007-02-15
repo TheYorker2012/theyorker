@@ -57,7 +57,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($force || is_file($location)) {
-			echo $location;s
+			echo $location;
 			return $location;
 		} else {
 			return 'images/photos/null.jpg';
