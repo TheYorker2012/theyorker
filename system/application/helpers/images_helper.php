@@ -63,10 +63,10 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		}
 	} else {
 		$CI =& get_instance();
-		$query = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $id), 1);
+		$query = $CI->db->select('image_type_codename')->getwhere('images', array('image_id' => $id), 1);
 		$fetched_type = false;
 		foreach ($query->result() as $onerow) {
-			$fetched_type = $onerow->image_image_type_id;
+			$fetched_type = $onerow->image_type_codename;
 		}
 		$query->free_result();
 		if ($fetched_type) {
