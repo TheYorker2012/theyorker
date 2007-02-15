@@ -55,6 +55,7 @@ function photoLocation($id, $extension = '.jpg', $force = FALSE) {
 function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) {
 	if (is_null($extension)) $extension = '.jpg';
 	if (is_string($type)) {
+		echo "not from db";
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($force || is_file($location)) {
 			return $location;
@@ -62,6 +63,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 			return 'images/photos/null.jpg';
 		}
 	} else {
+		echo "from db is_string is f00bar!";
 		$CI =& get_instance();
 		$query = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $id), 1);
 		$fetched_type = false;
