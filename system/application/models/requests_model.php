@@ -660,14 +660,86 @@ class Requests_Model extends Model
 			return FALSE;
 	}
 	
-	function RequestPhoto($article_id,$user_id)
+	function RequestPhoto($article_id,$user_id,$photo_position,$title,$description,$large_photo=1)
 	{
-		$sql = 'INSERT INTO ';
+		$sql = 'INSERT 	INTO photo_reqests(
+				photo_request_user_entity_id,
+				photo_request_article_id,
+				photo_request_relative_photo_number,
+				photo_request_view_large,
+				photo_request_title,
+				photo_request_description)
+			VALUES	(?,?,?,?,?,?)';
+		$query = $this->db->query($sql,array($user,$article_id,$photo_position,$large_photo,$title,$description));
 	}
 	
-	function AcceptPhoto($article_id,$photo_id)
+	function ApprovePhotoRequest($request_id,$photographer_id,$editor_id)
+	{	//Photo editor must approve the request before it is passed on to the photographer
+		$sql = 'UPDATE	photo_requests
+			SET	photo_request_accepted_user_entity_id = ?
+			WHERE 	(photo_request_id = ?);
+			INSERT	INTO photo_request_users(
+				photo_request_user_photo_request_id,
+				photo_request_user_entity_id)
+			VALUES	(?,?)';
+		$query = $this->db->query($sql,array($editor_id,$request_id,$request_id,$photographer_id));			
+	}
+
+	function AcceptPhotoRequest($request_id,$user_id)
+	{	//Photographer accepts photo request
+		$slq = 'UPDATE 	photo_request_users
+			SET	photo_request_user_status = "accepted"
+			WHERE	(photo_request_user_photo_request_id = ?
+			AND	photo_request_user_user_entity_id = ?)';
+		$query = $this->db->query($sql,array($request_id,$user_id));
+	}
+
+	function RejectPhotoRequest($request_id,$user_id)
+	{	//Photographer declines photo request
+		$slq = 'UPDATE 	photo_request_users
+			SET	photo_request_user_status = "declined"
+			WHERE	(photo_request_user_photo_request_id = ?
+			AND	photo_request_user_user_entity_id = ?)';
+		$query = $this->db->query($sql,array($request_id,$user_id));
+	}
+
+	function SuggestPhoto($request_id,$photo_id,$comment,$recommended = 0)
+	{	//Photographer reccomends a photo to be used
+		$sql = 'INSERT	INTO photo_request_photos(
+				photo_request_photo_photo_request_id,
+				photo_request_photo_photo_id,
+				photo_request_photo_comment,
+				photo_request_photo_recommended)
+			VALUES	(?,?,?,?)';
+		$query = $this->db->query($sql,array($request_id,$photo_id,$comment,$recommended));			
+	}
+
+	function AcceptPhoto($request_id,$user_id,$photo_id)
+	{	//Editor accepts the photo for use
+		$sql = 'UPDATE	photo_requests
+			SET	photo_request_approved_user_entity_id = ?,
+				photo_request_chosen_photo_id = ?
+			WHERE 	(photo_request_id = ?)';
+		$query = $this->db->query($sql,array($user_id,$photo_id,$request_id));			
+	}
+
+	function GetPhotoRequests($id)
+	{	//Return all photo_request ids for a given article
+		$sql = 'SELECT	photo_request_id
+			FROM	photo_requests
+			WHERE	(photo_request_article_id = ?)';
+		$query = $this->db->query($sql,array($id));
+		$request_ids = array();
+		foreach ($query->result() as $row)
+		{
+			$request_ids[] = $row->photo_request_id;
+		}
+		return	$request_ids;
+	}
+
+	function GetPhotoRequestDetails($request_id)
 	{
-		$sql = '';
+		$sql = 'SELECT';	
 	}
 
 	function CreateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
