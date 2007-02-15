@@ -82,7 +82,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 			if ($force || is_file($location)) {
 				return $location;
 			} else {
-				return ''; //run the risk of recursion if this is set
+				return 'images/photos/null.jpg';
 			}
 		} else {
 			return 'images/photos/null.jpg';
