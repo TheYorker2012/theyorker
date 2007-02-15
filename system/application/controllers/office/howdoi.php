@@ -29,7 +29,11 @@ class Howdoi extends Controller
 		$navbar->AddItem('suggestions', 'Suggestions',
 				'/office/howdoi/suggestions');
 	}
-	
+
+	/**
+	 * Loads the default howdoi office page, depending
+	 * on the type of the user.
+	 */
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
@@ -43,30 +47,45 @@ class Howdoi extends Controller
 
 	}
 
+	/**
+	 * Calls the getdata method on suggestions.
+	 */
 	function suggestions()
 	{
 		self::getdata('suggestions');
 	}
 
+	/**
+	 * Calls the getdata method on requests.
+	 */
 	function requests()
 	{
 		self::getdata('requests');
 	}
 
+	/**
+	 * Calls the getdata method on published questions.
+	 */
 	function published()
 	{
 		self::getdata('published');
 	}
 
-	/// index page.
+	/**
+	 * This sets up the view for the 3 types of questions:
+	 * - Suggestions
+	 * - Requests
+	 * - Published (unpublished, published and pulled)
+	 * @param $page is the type of the question to get the data for
+	 */
 	function getdata($page)
 	{
+		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
 
+		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');
-		$this->load->model('news_model','news_model');
-		$this->load->model('article_model','article_model');
 		$this->load->model('requests_model','requests_model');
 		
 		//Get navigation bar and tell it the current page
@@ -90,6 +109,9 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		/** This is added up later on to count the number of questions
+		    which require attention. */
 		$data['status_count'] = array('suggestions'=>0,
 						'requests'=>0,
 						'unpublished'=>0,
@@ -97,17 +119,25 @@ class Howdoi extends Controller
 						'pulled'=>0
 						);
 
-		//do shabazz
+		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
+		// get the list of howdoi content type categories
 		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
+
+		// add the unassigned type
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					'suggestions'=>$this->requests_model->GetSuggestedArticles($howdoi_type_id)
 					);
+
+		//create empty arrays for the user writers status
 		$data['user']['writer']['requested'] = array();
 		$data['user']['writer']['accepted'] = array();
+
+		/** go through all categories and get its data for the 
+		    different question types */
 		foreach ($data['categories'] as $category_id => $category)
 		{
 			//suggestions
@@ -132,6 +162,7 @@ class Howdoi extends Controller
 			$data['user']['writer']['accepted'] = array_merge($data['user']['writer']['accepted'], $temp_array);
 		}
 
+		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
@@ -150,13 +181,18 @@ class Howdoi extends Controller
 		$this->main_frame->Load();
 	}
 
+	/**
+	 * This gets the list of categories from the model, so that they can
+	 * be displayed in the view.
+	 */
 	function categories()
 	{
+		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
 
-		$this->load->model('howdoi_model','howdoi_model');
-
+		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_categories');
+		$this->load->model('howdoi_model','howdoi_model');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
@@ -164,10 +200,11 @@ class Howdoi extends Controller
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
-		//do shabazz
+
+		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
+		// get the list of howdoi content type categories
                 $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
 
 		// Set up the view
@@ -180,56 +217,92 @@ class Howdoi extends Controller
 		$this->main_frame->Load();
 	}
 
+	/**
+	 * This get the question and revision data and finds the status of a
+	 * question so that the different view boxes that are needed can be
+	 * loaded in the view.
+	 * @param $article_id is the id of the question to edit.
+	 * @param $revision_id is the id of the revision to edit, if this is
+	 *        set to -1 then the default revision is loaded.
+	 */
 	function questionedit($article_id, $revision_id)
 	{
+		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
 
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_howdoi_edit_question');
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
+
+		// Insert main text from pages information
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
-		
-		$this->pages_model->SetPageCode('office_howdoi_edit_question');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('questions');
 
-		// Insert main text from pages information
-
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
 		$data['parameters']['article_id'] = $article_id;
 		$data['parameters']['revision_id'] = $revision_id;
 
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-
+		// get the list of howdoi content type categories
                 $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+
+		// add the unassigned type
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					);
+					
+		/** get the article's header for the article id passed to 
+		    the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		/** this checks to see if the article id given is for a how
+		    do i question or is an article of another type */
 		$correct_content_type = FALSE;
 		foreach ($data['categories'] as $category_id => $category)
 		{
                 	if ($data['article']['header']['content_type'] == $category_id)
 			$correct_content_type = TRUE;
 		}
+
+		//if the article is a how do i question
 		if ($correct_content_type == TRUE)
 		{
+			//get the list of current question revisions
 			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+			
+			//set the default revision to false
 			$data['article']['displayrevision'] = FALSE;
-			//suggestions have no contents associated with them
+
+			/** suggestions have no contents associated with them
+			    so don't try to load any, if it is not a
+			    suggestion then load the displayrevision */
 			if ($data['article']['header']['suggestion_accepted'] == 1)
 			{
-				if ($revision_id == -1) //pick default revision
+				//if the revision id is set to the default
+				if ($revision_id == -1)
 				{
-					if ($data['article']['header']['live_content'] != FALSE) //request
+					/* is a published article, therefore
+					   load the live content revision */
+					if ($data['article']['header']['live_content'] != FALSE)
 					{
 						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
 						$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
 					}
+					/* no live content, therefore is a
+					   request, so load the latest
+					   revision as default */
 					else
 					{
+						//make sure a revision exists
 						if (isset($data['article']['revisions'][0]))
 						{
 							$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
@@ -237,9 +310,13 @@ class Howdoi extends Controller
 						}
 					}
 				}
-				else //pick selected revision
+				else
 				{
+					/* load the revision with the given 
+					   revision id */
 					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
+					/* if this revision doesn't exist
+					   then return an error */
 					if ($data['article']['displayrevision'] == FALSE)
 					{
 	                			$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this question. Default selected.');
@@ -248,9 +325,12 @@ class Howdoi extends Controller
 				}
 			}
 
+			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;
 			$data['user']['officetype'] = $this->user_auth->officeType;
 			
+			/* finds whether the current user is requested to
+			   write for this question */
 			$data['article']['hasarticlerequest'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
 	
 			// Set up the view
@@ -262,6 +342,7 @@ class Howdoi extends Controller
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
+		//otherwise for an invalid article id
 		else
 		{
                 	$this->main_frame->AddMessage('error','Specified article is not editable.');

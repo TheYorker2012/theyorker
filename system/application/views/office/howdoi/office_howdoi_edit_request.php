@@ -1,3 +1,10 @@
+<div class="RightToolbar">
+	<h4>Quick Links</h4>
+	<?php
+		echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'">Return to content</a>';
+	?>
+</div>
+
 <?php
 if ($article['header']['status'] == 'request')
 {
