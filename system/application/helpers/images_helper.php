@@ -24,7 +24,7 @@ define ("IMAGE_HASH", 2000);
  */	
 function photoLocation($id, $extension = '.jpg', $force = FALSE) {
 	$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-	if ($force || is_file($location)) {
+	if ($force or is_file($location)) {
 		return $location;
 	} else {
 		return 'images/photos/null.jpg';
@@ -56,7 +56,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	if (is_null($extension)) $extension = '.jpg';
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-		if ($force || is_file($location)) {
+		if ($force or is_file($location)) {
 			echo $location;
 			return $location;
 		} else {
@@ -80,7 +80,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 				return 'images/photos/null.jpg';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-			if ($force || is_file($location)) {
+			if ($force or is_file($location)) {
 				return $location;
 			} else {
 				return 'images/photos/null.jpg';
