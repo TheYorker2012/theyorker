@@ -230,14 +230,20 @@ class Directory_model extends Model {
 		return $data;
 	}
 	
-	/// Update an organisations details
-	/**
-	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @param $Data array of details to update
-	 * @return true
-	 */
-	function UpdateOrganisationDetails($DirectoryEntryName, $Data)
+	function PublishDirectoryEntryRevisionById($DirectoryEntryName, $Id)
 	{
+		$sql =
+		'UPDATE organisations SET'.
+		' organisations.organisation_live_content_id=? '.
+		'FROM organisations '.
+		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, array($Id, $DirectoryEntryName));
+		return true;
+	}
+	
+	function AddDirectoryEntryRevision($DirectoryEntryName, $Data)
+	{
+		//Get Org Id from name
 		$sql =
 			'SELECT'.
 			' organisations.organisation_entity_id '.
@@ -245,26 +251,29 @@ class Directory_model extends Model {
 			'WHERE organisations.organisation_directory_entry_name=? ';
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$row = $query->row();
-		$id = $row->organisation_entity_id;
 		
-		$sql2 =
-			'UPDATE organisation_contents SET'.
-			' organisation_contents.organisation_content_description=?, '.
-			' organisation_contents.organisation_content_location=?, '.
-			' organisation_contents.organisation_content_postal_address=?, '.
-			' organisation_contents.organisation_content_postcode=?, '.
-			' organisation_contents.organisation_content_phone_external=?, '.
-			' organisation_contents.organisation_content_phone_internal=?, '.
-			' organisation_contents.organisation_content_fax_number=?, '.
-			' organisation_contents.organisation_content_email_address=?, '.
-			' organisation_contents.organisation_content_url=?, '.
-			' organisation_contents.organisation_content_opening_hours=? '.
-			'WHERE organisation_contents.organisation_content_organisation_entity_id=? ';
-	
-		$query2 = $this->db->query($sql2, array($Data['description'], $Data['location'], $Data['postal_address'], $Data['postcode'], $Data['phone_external'], $Data['phone_internal'], $Data['fax_number'], $Data['email_address'], $Data['url'], $Data['opening_hours'], $id));
-	
+		$author_id =  $this->user_auth->entityId;
+		$organisation_id = $row->organisation_entity_id;
+		//Add entry now we have all the data
+		$sql = 'INSERT INTO `organisation_contents`'.
+		'(`organisation_content_id`,'.
+		'`organisation_content_last_author_user_entity_id`,'.
+		'`organisation_content_last_author_timestamp`,'.
+		'`organisation_content_organisation_entity_id`,'.
+		'`organisation_content_description`,'.
+		'`organisation_content_location`,'.
+		'`organisation_content_postal_address`,'.
+		'`organisation_content_postcode`,'.
+		'`organisation_content_phone_external`,'.
+		'`organisation_content_phone_internal`,'.
+		'`organisation_content_fax_number`,'.
+		'`organisation_content_email_address`,'.
+		'`organisation_content_url`,'.
+		'`organisation_content_opening_hours`)'.
+		' VALUES '.
+		'(NULL, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+		$query = $this->db->query($sql, array($author_id, $organisation_id, $Data['description'], $Data['location'], $Data['postal_address'], $Data['postcode'], $Data['phone_external'], $Data['phone_internal'], $Data['fax_number'], $Data['email_address'], $Data['url'], $Data['opening_hours']));
 		return true;
 	}
-
 }
 ?>

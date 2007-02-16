@@ -85,7 +85,7 @@ class Yorkerdirectory extends Controller
 			if($_POST['description']==null){
 				$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
 			}
-			$this->directory_model->UpdateOrganisationDetails($organisation, $_POST);
+			$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
 		}
 		
 		//Get Data And toolbar

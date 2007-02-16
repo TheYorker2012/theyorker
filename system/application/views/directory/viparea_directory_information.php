@@ -7,17 +7,23 @@
 	<div class="Entry">
 		<ol>
 		<?php foreach($revisions as $revison) {
-			echo '<li><a href="/viparea/directory/information/'.$revison['id'].'">'.$revison['author']." ".$revison['timestamp'].'</a>';
-			if ($revison['published']==true){
-				echo ' <span class="orange">(Published)</span>';
-			}
+			echo '<li>';
+			echo 'Author : '.$revison['author'].'<br />';
+			echo 'Created : '.$revison['timestamp'].'<br />';
+			echo ' <a href="'.vip_url('directory/information/'.$revison['id']).'">View</a>';
+				if ($revison['published']==true){
+					echo ' <span class="orange">(Published)</span>';
+				} else {
+					echo ' <a href="'.vip_url('directory/information/publish/'.$revison['id']).'">Publish</a>';
+				}
+			echo ' <a href="'.vip_url('directory/information/delete/'.$revison['id']).'">Delete</a>';
 			echo '</li>';
 		}?>
 		</ol>
 	</div>
 </div>
 
-<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/information' method='POST' class='form'>
+<form id='orgdetails' name='orgdetails' action='<?php echo vip_url('directory/information'); ?>' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>about</h2>
 	<p>
@@ -62,4 +68,4 @@
 	</fieldset>
 </div>
 </form>
-<a href='/viparea/'>Back to the vip area.</a>
+<a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>
