@@ -48,7 +48,7 @@ function GetUserLevel()
  *	 yet been acquired (for the login screen).
  * @return bool Whether enough privilages.
  */
-function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
+function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	$CI = &get_instance();
 
@@ -169,17 +169,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 		if (TRUE === $action) {
 			$access_allowed = TRUE;
 		} elseif (is_array($action)) {
-			// Store post data
-			if (array_key_exists('post',$action) && $action['post']) {
-				if (!empty($_POST)) {
-					if (!array_key_exists('posts',$_SESSION)) {
-						$_SESSION['posts'] = array();
-					}
-					// save the post data and the time
-					$_SESSION['posts'][$CI->uri->uri_string()] = array(time(), $_POST);
-				}
-			}
-			
 			// Perform action
 			switch ($action[0]) {
 				case 'handle':
@@ -194,6 +183,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 				case 'redirect':
 					if (array_key_exists(2,$action)) {
 						$CI->messages->AddMessage($action[2], $action[3]);
+					}
+					if (array_key_exists('post',$action) && $action['post']) {
+						// store post data
+						if (!empty($_POST)) {
+							SetRedirectData($action[1], serialize($_POST));
+						}
 					}
 					redirect($action[1]);
 					return FALSE;
@@ -212,18 +207,18 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 			//redirect('');
 		}
 		
-		if (TRUE === $action || is_array($action)) {
+		if ((TRUE === $action || is_array($action)) && !$NoPost) {
 			// Restore post data
-			if (array_key_exists('posts',$_SESSION)) {
-				if (array_key_exists($CI->uri->uri_string(),$_SESSION['posts'])) {
-					$post_data = & $_SESSION['posts'][$CI->uri->uri_string()];
-					// Make the post data timeout after 10 minutes.
-					if ($post_data[0] > time() - 600) {
-						foreach ($post_data[1] as $key => $value) {
-							$_POST[$key] = $value;
-						}
+			$post_data = GetRedirectData();
+			if (NULL !== $post_data) {
+				$post_data = @unserialize($post_data);
+				if (is_array($post_data)) {
+					if (!isset($_POST)) {
+						$_POST = array();
 					}
-					unset($_SESSION['posts'][$CI->uri->uri_string()]);
+					foreach ($post_data as $key => $value) {
+						$_POST[$key] = $value;
+					}
 				}
 			}
 		}
@@ -236,6 +231,54 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE)
 	}
 
 	return $access_allowed;
+}
+
+/// Save the redirect data.
+/**
+ * @param $PageId string Uri to store redirect data for.
+ * @param $Data any data to be retrieved after the redirect with GetRedirectData.
+ */
+function SetRedirectData($PageId, $Data)
+{
+	$PageId = '/'.$PageId;
+	if (!array_key_exists('posts',$_SESSION)) {
+		$_SESSION['posts'] = array();
+	}
+	// save the post data and the time
+	if (!array_key_exists($PageId, $_SESSION['posts'])) {
+		$_SESSION['posts'][$PageId] = array();
+	}
+	array_push($_SESSION['posts'][$PageId], array(time()+600, $Data));
+}
+
+/// Get the redirect data.
+/**
+ * @return Stored data or NULL on failure.
+ */
+function GetRedirectData()
+{
+	$CI = & get_instance();
+	$PageId = $CI->uri->uri_string();
+	static $result = NULL;
+	if (NULL === $result) {
+		if (array_key_exists('posts',$_SESSION)) {
+			if (array_key_exists($PageId,$_SESSION['posts'])) {
+				$found = FALSE;
+				while (!$found && !empty($_SESSION['posts'][$PageId])) {
+					$post_data = array_shift($_SESSION['posts'][$PageId]);
+					// Check not expired
+					if ($post_data[0] > time()) {
+						$result = $post_data[1];
+						$found = TRUE;
+					}
+				}
+				if (empty($_SESSION['posts'][$PageId])) {
+					unset($_SESSION['posts'][$PageId]);
+				}
+			}
+		}
+	}
+	return $result;
 }
 
 /// Return an html button link
@@ -257,11 +300,12 @@ function HtmlButtonLink($Link, $Caption)
  *	- 'office'
  *	- 'editor'
  *	- 'admin'
+ * @param $RedirectDestination string URI to redirect to on success.
  * @return Whether successfully logged in yet
  *
  * @pre CheckPermissions has already been called.
  */
-function LoginHandler($Level)
+function LoginHandler($Level, $RedirectDestination)
 {
 	$CI = &get_instance();
 	$CI->load->library('messages');
@@ -303,6 +347,10 @@ function LoginHandler($Level)
 			$entity_id = $CI->input->post('username');
 		}
 		$password = $CI->input->post('password');
+		$post_data = $CI->input->post('previous_post_data');
+		if (FALSE !== $post_data) {
+			$data['previous_post_data'] = $post_data;
+		}
 		try {
 			if ($Level === 'vip') {
 				// if office access say have been logged out of vip
@@ -324,16 +372,19 @@ function LoginHandler($Level)
 			
 			$CI->messages->AddMessage('success',$success_msg);
 			
-			foreach ($_POST as $key => $value) {
-				unset($_POST[$key]);
+			if (FALSE !== $post_data) {
+				SetRedirectData($RedirectDestination, $post_data);
 			}
-			
+			redirect($RedirectDestination);
 			return TRUE;
-			//redirect($CI->uri->uri_string());
 		} catch (Exception $e) {
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 	} else {
+		$post_data = GetRedirectData();
+		if (NULL !== $post_data) {
+			$data['previous_post_data'] = $post_data;
+		}
 		$data['initial_username'] = '';
 	}
 

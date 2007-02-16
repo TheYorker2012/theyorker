@@ -20,11 +20,12 @@ class Login extends Controller
 	 */
 	function _redirect($FirstSegment = 3)
 	{
-		$uri_target = '';
-		for ($segment_counter = $FirstSegment; $segment_counter <= $this->uri->total_segments(); ++$segment_counter) {
-			$uri_target .= $this->uri->slash_segment($segment_counter);
+		$segments = $this->uri->segment_array();
+		while ($FirstSegment > 1) {
+			array_shift($segments);
+			--$FirstSegment;
 		}
-		redirect($uri_target);
+		return implode('/',$segments);
 	}
 
 	/// Main login screen.
@@ -34,11 +35,9 @@ class Login extends Controller
 	 */
 	function main()
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('public', FALSE, TRUE)) return;
 		
-		if (LoginHandler('student')) {
-			$this->_redirect();
-		}
+		LoginHandler('student', $this->_redirect());
 	}
 
 	/// VIP login screen.
@@ -48,11 +47,9 @@ class Login extends Controller
 	 */
 	function vip()
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('public', FALSE, TRUE)) return;
 		
-		if (LoginHandler('vip')) {
-			$this->_redirect();
-		}
+		LoginHandler('vip', $this->_redirect());
 	}
 
 	/// Office login screen.
@@ -62,11 +59,9 @@ class Login extends Controller
 	 */
 	function office()
 	{
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
-		if (LoginHandler('office')) {
-			$this->_redirect();
-		}
+		LoginHandler('office', $this->_redirect());
 	}
 
 	/// Page for resetting password.

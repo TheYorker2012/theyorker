@@ -11,13 +11,13 @@
 			?>>
 		<br />
 		<label for='title'>Title:</label>
-		<input name='title' size='35' value='<?php if (!empty($title)) { echo $title;} ?>'>
+		<input name='title' size='35' value='<?php if (!empty($title)) { echo htmlentities($title, ENT_QUOTES);} ?>'>
 		<br />
 		<label for='description'>Description</label>
-		<input name='description' size='35' value='<?php if (!empty($description)) { echo $description;} ?>'>
+		<input name='description' size='35' value='<?php if (!empty($description)) { echo htmlentities($description, ENT_QUOTES);} ?>'>
 		<br />
 		<label for='keywords'>Keywords</label>
-		<input name='keywords' size='35' value='<?php if (!empty($keywords)) { echo $keywords;} ?>'>
+		<input name='keywords' size='35' value='<?php if (!empty($keywords)) { echo htmlentities($keywords, ENT_QUOTES);} ?>'>
 		<br />
 	</fieldset>
 	<fieldset>
@@ -37,15 +37,15 @@ if (!empty($properties) || $permissions['prop_add']) {
 			foreach ($properties as $property) {
 			?>
 				<p style='font-size:small;'>
-					<b>Property Name : </b><?php echo $property['label'];?><br />
-					<b>Property Type : </b><?php echo $property['type'];?><br />
+					<b>Property Name : </b><?php echo htmlentities($property['label'], ENT_QUOTES);?><br />
+					<b>Property Type : </b><?php echo htmlentities($property['type'], ENT_QUOTES);?><br />
 					<?php if ($permissions['prop_delete']) { ?>
 						<input type='checkbox' name="delete-<?php echo $property['id'];?>"> Delete this property
 					<?php } ?>
 				</p>
-				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo $property['label'];?>">
-				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo $property['type'];?>">
-				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo $property['text'];?></textarea>
+				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['label'], ENT_QUOTES);?>">
+				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['type'], ENT_QUOTES);?>">
+				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo htmlentities($property['text'], ENT_QUOTES);?></textarea>
 				<br />
 			<?php
 			}
