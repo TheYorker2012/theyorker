@@ -39,7 +39,7 @@
 				<br />
 			<?php }  if (isset($previous_post_data)) { ?>
 				<input type='hidden' name='previous_post_data' id='previous_post_data' value='<? echo htmlentities($previous_post_data, ENT_QUOTES); ?>' />
-			<? } ?>
+			<?php } ?>
 			<input type='submit' class='button' name='login_button' value='Login' />
 		</fieldset>
 	</form>
