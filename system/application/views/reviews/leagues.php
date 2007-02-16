@@ -14,7 +14,7 @@ if (isset($league_data))
 		"
 		<div class='LifestylePuffer'>
 		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
-		<img src='/".$league_entry['league_image_path']."' alt='".$league_entry['league_name']."' />
+		<img src='".$league_entry['league_image_path']."' alt='".$league_entry['league_name']."' />
 		</a>
 		</div>
 		";
