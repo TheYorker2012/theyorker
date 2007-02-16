@@ -70,7 +70,8 @@ class News_model extends Model
 					 content_type_image_id,
 					 content_type_name
 					FROM content_types
-					WHERE content_type_parent_content_type_id = ?';
+					WHERE content_type_parent_content_type_id = ?
+					ORDER BY content_type_section_order ASC';
 			$query = $this->db->query($sql,array($row->content_type_id));
 			if ($query->num_rows() > 0) {
 				foreach ($query->result() as $row) {
