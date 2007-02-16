@@ -247,6 +247,7 @@ class News_model extends Model
 			WHERE (articles.article_id = ?)
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
+		if ( $query->num_rows() == 0 ) return NULL;
 		$row = $query->row();
 		$result['date'] = $row->article_publish_date;
 		$result['location'] = $row->article_location;

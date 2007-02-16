@@ -58,60 +58,64 @@ class News extends Controller {
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
 
-		/// Get requested article id if submitted
-		$url_article_id = $this->uri->segment(2);
-		// Check if an article id was requested, if so check that the type of article it corresponds
-		// to is correct for the current news view else ignore it
-		if (($url_article_id !== FALSE) && (is_numeric($url_article_id)) && ($this->News_model->IdIsOfType($url_article_id,$article_type))) {
-			/// Check if requested article is already one of the IDs returned
-			$found_article = array_search($url_article_id, $latest_article_ids);
-			if ($found_article !== FALSE) {
-				/// If it is, remove it from the list
-				unset($latest_article_ids[$found_article]);
+		/// If $latest_article_ids returns rows
+		if ($latest_article_ids != NULL) {
+
+			/// Get requested article id if submitted
+			$url_article_id = $this->uri->segment(2);
+			// Check if an article id was requested, if so check that the type of article it corresponds
+			// to is correct for the current news view else ignore it
+			if (($url_article_id !== FALSE) && (is_numeric($url_article_id)) && ($this->News_model->IdIsOfType($url_article_id,$article_type))) {
+				/// Check if requested article is already one of the IDs returned
+				$found_article = array_search($url_article_id, $latest_article_ids);
+				if ($found_article !== FALSE) {
+					/// If it is, remove it from the list
+					unset($latest_article_ids[$found_article]);
+				}
+				/// Put request article id onto front of array so that it becomes the main article
+				$latest_article_ids = array_merge(array($url_article_id),$latest_article_ids);
 			}
-			/// Put request article id onto front of array so that it becomes the main article
-			$latest_article_ids = array_merge(array($url_article_id),$latest_article_ids);
+	
+			/// Get all of the latest article
+			$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+	
+			/// Get some of the 2nd- and 3rd-latest articles
+			$news_previews = array();
+			for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
+				array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
+			}
+	
+			/// Get less of the next 3 newest articles
+			$news_others = array();
+			for ($index = 3; $index < count($latest_article_ids); $index++) {
+				array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
+			}
+	
+			/// Gather all the data into an array to be passed to the view
+			$data['main_article'] = $main_article;
+			$data['news_previews'] = $news_previews;
+			$data['news_others'] = $news_others;
+	
+	
+			/// Temporarily fill in a few gaps in the model data
+			$data['main_article']['writerimg'] = '/images/prototype/news/benest.png';
+	
+			foreach ($data['main_article']['related_articles'] as &$related) {
+				$related['image'] = '/images/prototype/news/thumb9.jpg';
+				$related['image_description'] = 'temp image';
+			}
+	
+			for ($i = 0; $i < count($data['news_previews']); $i++) {
+				$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
+				$data['news_previews'][$i]['image_description'] = 'temp image';
+			}
+	
+			for ($i = 0; $i < count($data['news_others']); $i++) {
+				$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
+				$data['news_others'][$i]['image_description'] = 'temp image';
+			}
 		}
-
-    	/// Get all of the latest article
-    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
-
-    	/// Get some of the 2nd- and 3rd-latest articles
-    	$news_previews = array();
-    	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
-        	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
-    	}
-
-    	/// Get less of the next 3 newest articles
-    	$news_others = array();
-    	for ($index = 3; $index < count($latest_article_ids); $index++) {
-        	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
-    	}
-
-    	/// Gather all the data into an array to be passed to the view
-		$data['main_article'] = $main_article;
-		$data['news_previews'] = $news_previews;
-		$data['news_others'] = $news_others;
-
-
-		/// Temporarily fill in a few gaps in the model data
-		$data['main_article']['writerimg'] = '/images/prototype/news/benest.png';
-
-		foreach ($data['main_article']['related_articles'] as &$related) {
-    		$related['image'] = '/images/prototype/news/thumb9.jpg';
-    		$related['image_description'] = 'temp image';
-		}
-
-		for ($i = 0; $i < count($data['news_previews']); $i++) {
-    		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
-    		$data['news_previews'][$i]['image_description'] = 'temp image';
-		}
-
-		for ($i = 0; $i < count($data['news_others']); $i++) {
-    		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
-    		$data['news_others'][$i]['image_description'] = 'temp image';
-		}
-
+		
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('news/news', $data);
 
