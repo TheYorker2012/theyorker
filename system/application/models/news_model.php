@@ -45,6 +45,56 @@ class News_model extends Model
 			return FALSE;
 		}
 	}
+
+	function articleTypeHasChildren ($type)
+	{
+		$sql = 'SELECT content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($type));
+		$row = $query->row();
+		return $row->content_type_has_children;
+	}
+
+	function getSubArticleTypes ($main_type)
+	{
+		$result = array();
+		$sql = 'SELECT content_type_id, content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($main_type));
+		$row = $query->row();
+		if ($row->content_type_has_children) {
+			$sql = 'SELECT content_type_id,
+					 content_type_codename,
+					 content_type_image_id,
+					 content_type_name
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$sql = 'SELECT images.image_title, images.image_file_extension, image_types.image_type_codename
+							FROM images, image_types
+							WHERE images.image_id = ?
+							AND images.image_image_type_id = image_types.image_type_id';
+					$query = $this->db->query($sql,array($row->content_type_image_id));
+					$row2 = $query->row();
+					$result[] = array(
+						'id' => $row->content_type_id,
+						'codename' => $row->content_type_codename,
+						'image' => $row->content_type_image_id,
+						'image_title' => $row2->image_title,
+						'image_extension' => $row2->image_file_extension,
+						'image_codename' => $row2->image_type_codename,
+						'name' => $row->content_type_name
+					);
+				}
+			}
+		}
+		return $result;
+	}
+
 	/**
 	 * Returns an array of the Article IDs that are of a specified type in
 	 * decending order by publish date.
@@ -54,18 +104,44 @@ class News_model extends Model
 	 */
 	function GetLatestId($type, $number)
 	//Returns the '$number' most recent article ID of type '$type'
-	//Odered by 'most recent'.
+	//Ordered by 'most recent'.
 	{
-		$sql = 'SELECT articles.article_id FROM articles 
-			LEFT JOIN content_types
-			ON	(content_types.content_type_id = articles.article_content_type_id)
-			WHERE	(content_types.content_type_codename = ?
-			AND	articles.article_publish_date < CURRENT_TIMESTAMP
-			AND 	articles.article_live_content_id IS NOT NULL
-			AND	articles.article_editor_approved_user_entity_id IS NOT NULL)
-			ORDER BY articles.article_publish_date DESC
-			LIMIT 0, ?';
-		$query = $this->db->query($sql,array($type,$number));
+		$sql = 'SELECT content_type_id, content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($type));
+		$row = $query->row();
+		if ($row->content_type_has_children) {
+			$sql = 'SELECT content_type_codename
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			$types = array();
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$types[] = $row->content_type_codename;
+				}
+			}
+		} else {
+			$types = array($type);
+		}
+
+		$sql = 'SELECT articles.article_id FROM articles
+				LEFT JOIN content_types
+				ON (content_types.content_type_id = articles.article_content_type_id)
+				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
+				AND articles.article_live_content_id IS NOT NULL
+				AND	articles.article_editor_approved_user_entity_id IS NOT NULL
+				AND (';
+		for ($i = 1; $i <= count($types); $i++) {
+			$sql .= 'content_types.content_type_codename = ? OR ';
+		}
+		$sql = substr($sql, 0, -4);
+		$sql .= ')
+				ORDER BY articles.article_publish_date DESC
+				LIMIT 0, ?';
+		$types[] = $number;
+		$query = $this->db->query($sql,$types);
 		$result = array();
 		if ($query->num_rows() > 0)
 		{

@@ -25,9 +25,9 @@ define ("IMAGE_HASH", 2000);
 function photoLocation($id, $extension = '.jpg', $force = FALSE) {
 	$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 	if ($force or is_file($location)) {
-		return $location;
+		return '/'.$location;
 	} else {
-		return 'images/photos/null.jpg';
+		return '/images/photos/null.jpg';
 	}
 }
 
@@ -57,9 +57,9 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($force or is_file($location)) {
-			return $location;
+			return '/'.$location;
 		} else {
-			return 'images/photos/null.jpg';
+			return '/images/photos/null.jpg';
 		}
 	} else {
 		$CI =& get_instance();
@@ -76,16 +76,16 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 				$fetched_type = $onerow->image_type_codename;
 			}
 			if (!$fetched_type) {
-				return 'images/photos/null.jpg';
+				return '/images/photos/null.jpg';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
-				return $location;
+				return '/'.$location;
 			} else {
-				return 'images/photos/null.jpg';
+				return '/images/photos/null.jpg';
 			}
 		} else {
-			return 'images/photos/null.jpg';
+			return '/images/photos/null.jpg';
 		}
 	}
 }
