@@ -1,7 +1,7 @@
 	<div class='RightToolbar'>
 		<h4><?php echo $latest_heading; ?></h4>
 
-		<?php if ($article_type != 'lifestyle') { ?>
+		<?php if (!isset($puffers)) { ?>
 
 			<?php foreach ($news_previews as $preview) { ?>
 			<div class='NewsPreview'>
@@ -19,46 +19,13 @@
 
 		<?php } else { ?>
 
-			<div class='LifestylePuffer' style='background-color: #a38b69;'>
-				<a href='/<?php echo $link; ?>/1'>
-				<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
-		 	    <h3>Cooking</h3>
-				<p>This week an awesome recipe for a chocolate cake</p>
-				</a>
-				<div style='clear:both'></div>
-			</div>
-			<div class='LifestylePuffer' style='background-color: #000;'>
-				<a href='/<?php echo $link; ?>/1'>
-				<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-		 	    <h3>Workout</h3>
-				<p>This week we look at using weights and other heavy stuff</p>
-				</a>
-				<div style='clear:both'></div>
-			</div>
-			<div class='LifestylePuffer' style='background-color: #ef7f94;'>
-				<a href='/<?php echo $link; ?>/1'>
-				<img src='/images/prototype/news/puffer4.jpg' alt='Love' title='Love' />
-		 	    <h3>Romance</h3>
-				<p>This week we review what is the best valentine day's present</p>
-				</a>
-				<div style='clear:both'></div>
-			</div>
-			<div class='LifestylePuffer' style='background-color: #000;'>
-				<a href='/<?php echo $link; ?>/1'>
-				<img src='/images/prototype/news/puffer3.jpg' alt='Workout' title='Workout' />
-		 	    <h3>Workout</h3>
-				<p>This week we look at using weights and other heavy stuff</p>
-				</a>
-				<div style='clear:both'></div>
-			</div>
-			<div class='LifestylePuffer' style='background-color: #a38b69;'>
-				<a href='/<?php echo $link; ?>/1'>
-				<img src='/images/prototype/news/puffer2.jpg' alt='Cooking' title='Cooking' />
-		 	    <h3>Cooking</h3>
-				<p>This week an awesome recipe for a chocolate cake</p>
-				</a>
-				<div style='clear:both'></div>
-			</div>
+			<?php echo '<div class=\'LifestylePuffer\'>';
+			foreach ($puffers as $puffer) {
+				echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
+				echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
+				echo '</a>';
+			}
+			echo '</div>'; ?>
 
 		<?php } ?>
 		<h4><?php echo $other_heading; ?></h4>
