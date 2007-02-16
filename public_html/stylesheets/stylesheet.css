@@ -827,18 +827,45 @@ div.ArticleColumn {
 div.ArticleColumn h1 {
 	color: #000;
 	background-color: #fff;
-	text-align: center;
+	text-align: left;
 	font-size: 26px;
 	line-height: normal;
-	margin: 0 0 1em 0;
+	margin: 2px 0 2px 0;
 	padding: 0;
 	height: 100%;
 }
 
 div.ArticleColumn h2 {
 	line-height: normal;
-	margin: 0 0 1em 0;
+	margin: 0 0 2px 0;
 	padding: 0;
+}
+
+div.ArticleColumn h3 {
+	color: #ff6a00;
+	text-align: left;
+}
+
+div.ArticleColumn div.intro {
+	margin: 10px 0 10px 0;
+	color:#ff6a00;
+	font-size: medium;
+}
+
+div.ArticleColumn div.Byline {
+	border-width: 1px 0 1px 0;
+	overflow: hidden;
+	height: 50px;
+	width: 400px;
+}
+
+div.ArticleColumn div.Byline span.reporter {
+	font-weight: bold;
+	font-size: medium;
+}
+
+div.ArticleColumn div.Byline img {
+	float: right;
 }
 
 div.ArticleColumn p {
@@ -850,11 +877,6 @@ div.ArticleColumn p {
 div.ArticleColumn ul {
 	font-size: 13px;
 	line-height: 15px;
-	text-align: left;
-}
-
-div.ArticleColumn h3 {
-	color: #ff6a00;
 	text-align: left;
 }
 

@@ -286,9 +286,8 @@ onLoadFunctions.push(preloader);
 					<br />
 				</fieldset>
 				<fieldset>
-					<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
 					<input type='reset' name='r_cancel' id='r_cancel' value='Cancel' class='button' onClick="document.getElementById('feedbackshowdiv').style.display = 'block'; document.getElementById('feedbackdiv').style.display = 'none';"/>
-					<br />
+					<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
 				</fieldset>
 			</form>
 		</div>
