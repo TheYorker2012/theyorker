@@ -18,7 +18,7 @@
 </div>
 <div class='blue_box'>
 	<h2>members</h2>
-	<a href='/viparea/members/view/<?php echo $this->user_auth->organisationLogin; ?>/add'>Add a member.</a>
+	<a href='<?php echo vip_url('members/view/'.$this->user_auth->organisationLogin); ?>/add'>Add a member.</a>
 	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 	<tr style="background-color: #eee">
 		<th>Forename</th>
@@ -39,10 +39,10 @@
 		<td><?php echo $organisation[$i]['if_email']; ?></td>
 		<td><?php echo $organisation[$i]['confirmed']; ?></td>
 		<td><?php echo $organisation[$i]['vip']; ?></td>
-		<td><a href='/viparea/members/edit/<?php echo $organisation[$i]['id']; ?>'>Edit</a></td>
+		<td><a href='<?php echo vip_url('members/edit/'.$organisation[$i]['id']); ?>'>Edit</a></td>
 	</tr>
 	<?php } ?>
 	</table>	
 
 </div>
-<a href='/viparea/'>Back to the vip area.</a>
+<a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>

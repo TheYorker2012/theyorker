@@ -34,6 +34,31 @@ function GetUserLevel()
 	return $user_level;
 }
 
+
+/// VIP URL similar to site_url.
+function vip_url($Path = '', $Set = FALSE)
+{
+	static $base = '/viparea/';
+	
+	if ($Set) {
+		$base = $Path;
+	} else {
+		return site_url($base.$Path);
+	}
+}
+
+/// Get the vip organisation.
+function VipOrganisation($SetOrganisation = FALSE)
+{
+	static $organisation = '';
+	
+	if (is_string($SetOrganisation)) {
+		$organisation = $SetOrganisation;
+	}
+	return $organisation;
+}
+
+
 /// Check the access permissions.
 /**
  * @param $Permission string or array of the following levels (in the order that
@@ -41,6 +66,7 @@ function GetUserLevel()
  *	- 'public'
  *	- 'student'
  *	- 'vip'
+ *	- 'vip+office'
  *	- 'office'
  *	- 'editor'
  *	- 'admin'
@@ -51,6 +77,59 @@ function GetUserLevel()
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	$CI = &get_instance();
+	
+	// Check if vip
+	$in_viparea = 	(		($CI->uri->total_segments() >= 2)
+						&&	($CI->uri->segment(1) === 'viparea'));
+	$in_office_vip = (		($CI->uri->total_segments() >= 3)
+						&&	($CI->uri->segment(1) === 'office')
+						&&	($CI->uri->segment(2) === 'vip'));
+	
+	if ($in_office_vip) {
+		// /office/vip/...
+		// $Permission IN {office, vip+office, admin}
+		$office_vip_allowed_permissions = array(
+			'office'		=> 'office',
+			'vip+office'	=> 'office',
+			'admin'			=> 'admin',
+		);
+		if (!array_key_exists($Permission, $office_vip_allowed_permissions)) {
+			// This page isn't even valid
+			show_404();
+			return FALSE;
+		}
+		
+		$Permission = $office_vip_allowed_permissions[$Permission];
+		VipOrganisation($CI->uri->segment(3));
+		vip_url('office/vip/'.$CI->uri->segment(3).'/', TRUE);
+		
+		/// @todo check permissions to access this organisation
+		
+	}
+	
+	if ($in_viparea) {
+		// /viparea/...
+		// $Permission IN {vip, vip+office}
+		$viparea_allowed_permissions = array(
+			'vip'			=> 'vip',
+			'vip+office'	=> 'vip',
+		);
+		if (!array_key_exists($Permission, $viparea_allowed_permissions)) {
+			// This page isn't even valid
+			show_404();
+			return FALSE;
+		}
+		
+		$Permission = $viparea_allowed_permissions[$Permission];
+		
+		if ($CI->uri->total_segments() >= 2) {
+			VipOrganisation($CI->uri->segment(2));
+		}
+		vip_url('viparea/'.$CI->uri->segment(2).'/', TRUE);
+		
+		/// @todo check permissions to access this organisation
+		
+	}
 
 	$CI->load->model('pages_model');
 
@@ -356,14 +435,20 @@ function LoginHandler($Level, $RedirectDestination)
 				// if office access say have been logged out of vip
 				if ($CI->user_auth->officeType !== 'None') {
 					$CI->user_auth->logoutOffice();
-					$CI->messages->AddMessage('information','You have been logged out of the office');
+					$left_office_message = $CI->pages_model->GetPropertyMessage('msg_left_office_message', $page_code);
+					if (FALSE !== $left_office_message) {
+						$CI->messages->AddMessage(new Message($left_office_message));
+					}
 				}
 				$CI->user_auth->loginOrganisation($password, $entity_id);
 			} elseif ($Level === 'office') {
 				// if vip access say have been logged out of office
 				if ($CI->user_auth->organisationLogin >= 0) {
 					$CI->user_auth->logoutOrganisation();
-					$CI->messages->AddMessage('information','You have been logged out of the VIP area');
+					$left_vip_message = $CI->pages_model->GetPropertyMessage('msg_left_vip_message', $page_code);
+					if (FALSE !== $left_vip_message) {
+						$CI->messages->AddMessage(new Message($left_vip_message));
+					}
 				}
 				$CI->user_auth->loginOffice($password);
 			} else {

@@ -1,7 +1,7 @@
 <?php
 
-/// Main viparea controller.
-class Index extends Controller
+/// Main vip index controller.
+class Vipindex extends Controller
 {
 	/**
 	 * @brief Default constructor.
@@ -14,6 +14,13 @@ class Index extends Controller
 	function index()
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		$organisation = VipOrganisation();
+		if (empty($organisation)) {
+			$organisation = $this->user_auth->organisationShortName;
+			redirect('viparea/'.$organisation);
+			return;
+		}
 		
 		$this->pages_model->SetPageCode('viparea_index');
 		

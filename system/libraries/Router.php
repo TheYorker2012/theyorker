@@ -253,7 +253,11 @@ class CI_Router {
 	function _reindex_segments()
 	{
 		// Is the routed segment array different then the main segment array?
-		$diff = (count(array_diff($this->rsegments, $this->segments)) == 0) ? FALSE : TRUE;
+		if (count(array_diff($this->rsegments, $this->segments))==0 AND count(array_diff($this->segments, $this->rsegments))==0){
+			$diff=FALSE;
+		} else {
+			$diff=TRUE;
+		}
 	
 		$i = 1;
 		foreach ($this->segments as $val)

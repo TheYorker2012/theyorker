@@ -9,7 +9,7 @@ class Calendar extends controller
 	
 	function index()
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$this->pages_model->SetPageCode('viparea_calendar');
 		
@@ -28,7 +28,7 @@ class Calendar extends controller
 			show_404();
 		}
 		
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$this->load->model('calendar/events_model');
 		
@@ -109,7 +109,7 @@ class Calendar extends controller
 				$this->messages->AddMessage('error',$failure_message);
 			}
 		}
-		redirect('viparea/calendar/events/'.$EventId);
+		redirect(vip_url('calendar/events/'.$EventId));
 	}
 	
 	function events($EventId = FALSE, $OccurrenceId=FALSE)
@@ -121,7 +121,7 @@ class Calendar extends controller
 			show_404();
 		}
 		
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$this->load->model('calendar/events_model');
 		$this->load->model('calendar/recurrence_model');
@@ -161,9 +161,11 @@ class Calendar extends controller
 			$results = $this->events_model->EventsGet($fields, FALSE, TRUE);
 			
 			$events = array();
-			foreach ($results as $result) {
-				if (!array_key_exists($result['event_id'], $events)) {
-					$events[$result['event_id']] = $result;
+			if (FALSE !== $results) {
+				foreach ($results as $result) {
+					if (!array_key_exists($result['event_id'], $events)) {
+						$events[$result['event_id']] = $result;
+					}
 				}
 			}
 			
@@ -174,7 +176,7 @@ class Calendar extends controller
 					$event['description'] = $event['event_recurrence_rule']->ToString() .
 						' - ' . $event['description'];
 				}
-				$op .= '<LI><A HREF="'.site_url('viparea/calendar/events/'.$event['event_id']).'">'.
+				$op .= '<LI><A HREF="'.vip_url('calendar/events/'.$event['event_id']).'">'.
 					$event['name'].'</A> - '.$event['description'].'</LI>';
 			}
 			$op .= '</OL>';
@@ -235,10 +237,10 @@ class Calendar extends controller
 					}
 					$links = array();
 					foreach ($operations as $operation) {
-						$links[] = '<A HREF="' . site_url('viparea/calendar/occop/'.$operation.'/' . $EventId . '/' . $occurrence['occurrence_id']) .
+						$links[] = '<A HREF="' . vip_url('calendar/occop/'.$operation.'/' . $EventId . '/' . $occurrence['occurrence_id']) .
 							'">'.$operation.'</A>';
 					}
-					$op .= '<LI>'.$occurrence['status'].' <A HREF="' . site_url('viparea/calendar/events/' . $EventId . '/' . $occurrence['occurrence_id']) . '">' .
+					$op .= '<LI>'.$occurrence['status'].' <A HREF="' . vip_url('calendar/events/' . $EventId . '/' . $occurrence['occurrence_id']) . '">' .
 						$occurrence['start'] . ' -> ' . $occurrence['end'] . '</A> '.
 						$occurrence['description'].' ('.implode(', ',$links).') </LI>';
 				}
@@ -307,6 +309,7 @@ class Calendar extends controller
 						'</pre><pre>'.
 							ascii_to_entities(var_export($rsvps,true)).
 						'</pre>';
+				
 				$this->main_frame->SetContent(
 					new SimpleView($op)
 				);
@@ -319,7 +322,7 @@ class Calendar extends controller
 	
 	function view($DateRange='')
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$this->load->library('date_uri');
 		$this->load->library('academic_calendar');
@@ -362,7 +365,7 @@ class Calendar extends controller
 	
 	function createevent()
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$this->pages_model->SetPageCode('viparea_calendar_createevent');
 		

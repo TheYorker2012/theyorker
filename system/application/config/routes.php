@@ -43,6 +43,12 @@ $route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
 $org_name_regex = '[a-z_\d]+';
+
+
+//****************************************************************************//
+// Routing in the main controller directory                                   //
+//****************************************************************************//
+
 // 'directory' needs to map to 'yorkerdirectory'
 // (the php class Directory is reserved)
 $route['directory'] = 'yorkerdirectory';
@@ -52,46 +58,6 @@ $route['directory/('.$org_name_regex.')'] = 'yorkerdirectory/view/$1';
 $route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 // If >3 segments, same as for 3 and any extra segments ($3) appended.
 $route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
-
-// The default admin page is index
-$route['admin'] = 'admin/index';
-$route['viparea'] = 'viparea/index';
-$route['office'] = 'office/index';
-
-// 'admin/directory' needs to map to 'admin/yorkerdirectory'
-// (the php class Directory is reserved)
-/**
- * @NOTE Due to a bug in code ignitor, routing doesn't send the correct
- *	parameters to the controller function. These are got around by having an
- *	extra slash before the parameters to shift them forward a segment - jh559
- */
-$route['admin/directory'] = 'admin/yorkerdirectory';
-// If 2 segments, seg2 ($1) should get sent to view function
-$route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
-// If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
-$route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
-
-$route['admin/images/([0-9]+)'] = 'admin/images';
-
-$route['office/directory'] = 'office/yorkerdirectory';
-
-// send tag adding and deleting to the correct place
-$route['office/reviews/addtag'] = 'office/reviews/addtag';
-$route['office/reviews/deltag'] = 'office/reviews/deltag';
-
-// /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
-$route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview//$1';
-// /office/reviews/theyorker/food => /office/reviews/information/theyorker/food/
-$route['office/reviews/('.$org_name_regex.')/([a-z]+)'] = 'office/reviews/information//$2/$1';
-// /office/reviews/theyorker/food/comments => /office/reviews/comments/theyorker/food/
-$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)'] = 'office/reviews/$3//$2/$1';
-// /office/reviews/theyorker/food/reviewedit/12 => /office/reviews/reviewedit/theyorker/food/12
-$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'office/reviews/$3//$2/$1/$4';
-
-$route['viparea/directory'] = 'viparea/yorkerdirectory';
-$route['viparea/directory/('.$org_name_regex.')'] = 'viparea/yorkerdirectory/$1';
-$route['viparea/directory/('.$org_name_regex.')/([0-9]+)'] = 'viparea/yorkerdirectory/$1//$2';
-unset($org_name_regex);
 
 // Invalidate yorkerdirectory as its ugly and shouldn't be used
 // jh559: this is just my opinion, feel free to comment these out if you disagree
@@ -108,9 +74,78 @@ $route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
 
+//****************************************************************************//
+// Routing to subdirectory index pages                                        //
+//****************************************************************************//
+
+$route['admin'] = 'admin/index';
+$route['office'] = 'office/index';
+$route['viparea'] = 'office/vipindex';
+
+
+//****************************************************************************//
+// VIP routing                                                                //
+//****************************************************************************//
+
+$route['viparea/'.$org_name_regex.'/directory'] = 'office/yorkerdirectory';
+$route['viparea/'.$org_name_regex.'/directory/(.*)'] = 'office/yorkerdirectory/$1';
+$route['viparea/'.$org_name_regex] = 'office/vipindex';
+$route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
+
+
+//****************************************************************************//
+// Office routing                                                             //
+//****************************************************************************//
+
+
+$route['office/vip/'.$org_name_regex.'/directory'] = 'office/yorkerdirectory';
+$route['office/vip/'.$org_name_regex.'/directory/(.*)'] = 'office/yorkerdirectory/$1';
+$route['office/vip/'.$org_name_regex] = 'office/vipindex';
+$route['office/vip/'.$org_name_regex.'/(.*)'] = 'office/$1';
+/*$route['office/vip/'.$org_name_regex.'/([^/]*)'] = 'office/$1';
+$route['office/vip/'.$org_name_regex.'/([^/]*)/([^/]*)'] = 'office/$1/$2';
+$route['office/vip/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2/$3';*/
+
+// send tag adding and deleting to the correct place
+$route['office/reviews/addtag'] = 'office/reviews/addtag';
+$route['office/reviews/deltag'] = 'office/reviews/deltag';
+
+// /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
+$route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview/$1';
+// /office/reviews/theyorker/food => /office/reviews/information/theyorker/food/
+$route['office/reviews/('.$org_name_regex.')/([a-z]+)'] = 'office/reviews/information/$2/$1';
+// /office/reviews/theyorker/food/comments => /office/reviews/comments/theyorker/food/
+$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)'] = 'office/reviews/$3/$2/$1';
+// /office/reviews/theyorker/food/reviewedit/12 => /office/reviews/reviewedit/theyorker/food/12
+$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'office/reviews/$3/$2/$1/$4';
+
+
 // /office/howdoi/editquestion/questionno/defaultrevision
-$route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/questionedit//$1/-1';
+$route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/questionedit/$1/-1';
 // /office/howdoi/editquestion/questionno/revisionno
-$route['office/howdoi/editquestion/([0-9]+)/([0-9]+)'] = 'office/howdoi/questionedit//$1/$2';
+$route['office/howdoi/editquestion/([0-9]+)/([0-9]+)'] = 'office/howdoi/questionedit/$1/$2';
+
+
+
+//****************************************************************************//
+// Admin routing                                                              //
+//****************************************************************************//
+
+// 'admin/directory' needs to map to 'admin/yorkerdirectory'
+// (the php class Directory is reserved)
+/**
+ * @NOTE Due to a bug in code ignitor, routing doesn't send the correct
+ *	parameters to the controller function. These are got around by having an
+ *	extra slash before the parameters to shift them forward a segment - jh559
+ */
+// If 2 segments, seg2 ($1) should get sent to view function
+// If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
+$route['admin/directory'] = 'admin/yorkerdirectory';
+$route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
+$route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
+
+$route['admin/images/([0-9]+)'] = 'admin/images';
+
+unset($org_name_regex);
 
 ?>

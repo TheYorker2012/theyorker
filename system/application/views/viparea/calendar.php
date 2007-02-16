@@ -4,8 +4,8 @@
 <P>Note that at the moment this is just being used for model testing</P>
 
 <UL>
-	<LI><A href="/viparea/calendar/events">Show events</A></LI>
+	<LI><A href="<?php echo vip_url('calendar/events'); ?>">Show events</A></LI>
 </UL>
 <UL>
-	<LI><A href="/viparea/calendar/createevent">Create an event</A></LI>
+	<LI><A href="<?php echo vip_url('calendar/createevent'); ?>">Create an event</A></LI>
 </UL>

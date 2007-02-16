@@ -34,26 +34,14 @@ class Yorkerdirectory extends Controller
 	 */
 	function index()
 	{
-		switch ($this->uri->segment(1)) {
-			case 'office':
-				$this->_office();
-				break;
-				
-			case 'viparea':
-				show_404();
-				break;
-				
-			default:
-				show_404();
-				break;
-		}
+		if (!CheckPermissions('office')) return;
+		
+		$this->_office();
 	}
 	
 	/// office/directory
 	function _office()
 	{
-		if (!CheckPermissions('office')) return;
-		
 		$this->pages_model->SetPageCode('office_directory_index');
 		
 		$data = array();
@@ -86,7 +74,7 @@ class Yorkerdirectory extends Controller
 	/// Directory organisation page.
 	function information($revision=false)
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_information');
@@ -124,7 +112,7 @@ class Yorkerdirectory extends Controller
 	
 	function photos()
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_photos');
@@ -166,7 +154,7 @@ class Yorkerdirectory extends Controller
 	
 	function map()
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_map');
@@ -193,7 +181,7 @@ class Yorkerdirectory extends Controller
 	
 	function contacts($business_card_group=-1)
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
@@ -209,7 +197,7 @@ class Yorkerdirectory extends Controller
 		foreach ($groups as $group) {
 			$data['organisation']['groups'][] = array(
 				'name' => $group['business_card_group_name'],
-				'href' => '/viparea/directory/contacts/'.$group['business_card_group_id'],
+				'href' => vip_url('directory/contacts/'.$group['business_card_group_id']),
 				'id' => $group['business_card_group_id']
 			);
 			if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
@@ -251,7 +239,7 @@ class Yorkerdirectory extends Controller
 	
 	function editcontact($business_card)
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_editcontact');
@@ -289,7 +277,7 @@ class Yorkerdirectory extends Controller
 			$data['business_card']['groups'][] = array(
 				'name' => $group['business_card_group_name'],
 				'id' => $group['business_card_group_id'],
-				'href' => '/viparea/directory/'.$organisation.'/contacts/'.$group['business_card_group_id']
+				'href' => vip_url('directory/'.$organisation.'/contacts/'.$group['business_card_group_id'])
 			);
 		}
 		
@@ -313,13 +301,13 @@ class Yorkerdirectory extends Controller
 	{
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('contacts', 'Contacts',
-				'/viparea/directory/contacts');
+				vip_url('directory/contacts'));
 		$navbar->AddItem('map', 'Map',
-				'/viparea/directory/map');
+				vip_url('directory/map'));
 		$navbar->AddItem('photos', 'Photos',
-				'/viparea/directory/photos');
+				vip_url('directory/photos'));
 		$navbar->AddItem('information', 'Information',
-				'/viparea/directory/information');
+				vip_url('directory/information'));
 	}
 
 }

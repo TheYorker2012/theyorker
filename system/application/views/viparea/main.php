@@ -16,12 +16,12 @@ information goes here.
 <div class='blue_box'>
 	<h2>My Tasks</h2>
 	<ul>
-		<li><a href='/viparea/directory/information'>Edit the directory entry</a></li>
-		<li><a href='/viparea/calendar/'>Manage events</a></li>
+		<li><a href='<?php echo vip_url('directory/information'); ?>'>Edit the directory entry</a></li>
+		<li><a href='<?php echo vip_url('calendar/'); ?>'>Manage events</a></li>
 		<?php if($enable_members == TRUE){?>
-		<li><a href='/viparea/members/view/<?php echo $organisation; ?>'>Manage members</a></li>
+		<li><a href='<?php echo vip_url('members/view'); ?>'>Manage members</a></li>
 		<?php }?>
-		<li><a href='/viparea/advertising/<?php echo $organisation; ?>/'>Advertising</a></li>
-		<li><a href='/viparea/account/update/<?php echo $organisation; ?>/'>My Account</a></li>
+		<li><a href='<?php echo vip_url('advertising'); ?>'>Advertising</a></li>
+		<li><a href='<?php echo vip_url('account/update'); ?>'>My Account</a></li>
 	</ul>
 </div>
