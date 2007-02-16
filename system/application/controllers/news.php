@@ -3,7 +3,6 @@
  * This is the controller for the news section.
  *
  * @author Chris Travis	(cdt502 - ctravis@gmail.com)
- * @author Neil Brehon	(nb525)
  */
 class News extends Controller {
 
@@ -17,58 +16,67 @@ class News extends Controller {
 		$this->load->model('News_model');
 	}
 
-	function index($article_type)
+	function _remap($method)
+	{
+		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
+			$this->index($method);
+		} else {
+			$this->$method();
+		}
+	}
+
+	function index($article_type = 'uninews')
 	{
 		// Load public view
 		if (!CheckPermissions('public')) return;
 
-		// Get individual page content
-		switch ($article_type) {
-			case 'uninews':
-				$this->pages_model->SetPageCode('news_campus');
-				$data['rss_feed_title'] = $this->pages_model->GetPropertyText('rss_feed_title');
-				$data['link'] = 'news';
-				break;
-			case 'features':
-				$this->pages_model->SetPageCode('news_features');
-				$data['link'] = 'features';
-				break;
-			case 'lifestyle':
-				$this->pages_model->SetPageCode('news_lifestyle');
-				$data['link'] = 'lifestyle';
-				$this->main_frame->SetTitleParameters(array('section' => ''));
-				break;
-			default:
-				$this->pages_model->SetPageCode('news_campus');
-				$data['rss_feed_title'] = $this->pages_model->GetPropertyText('rss_feed_title');
-				$article_type = 'uninews';
-				$data['link'] = 'news';
-				break;
+		$type_info = $this->News_model->getArticleTypeInformation($article_type);
+		if (count($type_info) == 0) {
+			$article_type = 'uninews';
+			$type_info = $this->News_model->getArticleTypeInformation($article_type);
 		}
+		if ($type_info['content_type_parent_content_type_id'] != NULL) {
+			$parent = $this->News_model->getArticleTypeCodename($type_info['content_type_parent_content_type_id']);
+			$this->pages_model->SetPageCode('news_' . $parent['content_type_codename']);
+			$this->main_frame->SetTitleParameters(array('section' => ' - ' . $type_info['content_type_name']));
+		} else {
+			$this->pages_model->SetPageCode('news_' . $article_type);
+			if ($type_info['content_type_has_children']) {
+				$this->main_frame->SetTitleParameters(array('section' => ''));
+			}
+		}
+
+		// Get page specific attributes
+		if ($article_type == 'uninews') {
+			$data['rss_feed_title'] = $this->pages_model->GetPropertyText('rss_feed_title');
+		}
+
 		// Get variable content based on article type
+		$data['article_type'] = $article_type;
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['other_heading'] = $this->pages_model->GetPropertyText('other_heading');
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 		// Get common news content
-		$data['article_type'] = $article_type;
 		$data['byline_heading'] = $this->pages_model->GetPropertyText('news:byline_heading', TRUE);
 		$data['byline_more'] = $this->pages_model->GetPropertyText('news:byline_more', TRUE);
 
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
-		if ($this->News_model->articleTypeHasChildren($article_type)) {
+		if (($type_info['content_type_has_children']) || ($type_info['content_type_parent_content_type_id'] != NULL)) {
 			$this->load->helper('images');
-
-			$data['puffers'] = $this->News_model->getSubArticleTypes($article_type);
+			$temp_type = $article_type;
+			if ($type_info['content_type_parent_content_type_id'] != NULL) {
+				$temp_type = $parent['content_type_codename'];
+			}
+			$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
 			foreach ($data['puffers'] as &$puffer) {
 				$puffer['image'] = imageLocation($puffer['image'], $puffer['image_codename'], $puffer['image_extension']);
 			}
 		}
 
-
 		/// Get requested article id if submitted
-		$url_article_id = $this->uri->segment(2);
+		$url_article_id = $this->uri->segment(3);
 		// Check if an article id was requested, if so check that the type of article it corresponds
 		// to is correct for the current news view else ignore it
 		if (($url_article_id !== FALSE) && (is_numeric($url_article_id)) && ($this->News_model->IdIsOfType($url_article_id,$article_type))) {
@@ -128,28 +136,11 @@ class News extends Controller {
 		$this->main_frame->Load();
 	}
 
-	/// The National News section.
-	function national()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$data = array(
-			'news_previews' => self::$national_data
-		);
-
-		// Set up the public frame
-		$this->main_frame->SetTitle('National News');
-		$this->main_frame->SetContentSimple('news/national', $data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
 	/// The Archive section.
 	function archive()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		// Set up the public frame
 		$this->main_frame->SetTitle('Archive');
 		$this->main_frame->SetContentSimple('news/archive');

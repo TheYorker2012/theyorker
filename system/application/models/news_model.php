@@ -46,14 +46,26 @@ class News_model extends Model
 		}
 	}
 
-	function articleTypeHasChildren ($type)
+	function getArticleTypeCodename ($type_id)
 	{
-		$sql = 'SELECT content_type_has_children
+		$sql = 'SELECT content_type_codename
+				FROM content_types
+				WHERE content_type_id = ?';
+		$query = $this->db->query($sql,array($type_id));
+		return $query->row_array();
+	}
+
+	function getArticleTypeInformation ($type)
+	{
+		$sql = 'SELECT content_type_has_children, content_type_parent_content_type_id, content_type_name
 				FROM content_types
 				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type));
-		$row = $query->row();
-		return $row->content_type_has_children;
+		$result = array();
+		if ($query->num_rows() == 1) {
+			$result = $query->row_array();
+		}
+		return $result;
 	}
 
 	function getSubArticleTypes ($main_type)

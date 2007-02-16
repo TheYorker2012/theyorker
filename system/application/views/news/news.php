@@ -5,13 +5,13 @@
 
 			<?php foreach ($news_previews as $preview) { ?>
 			<div class='NewsPreview'>
-				<a href='/<?php echo $link; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
-				<h3><?php echo anchor($link.'/'.$preview['id'], $preview['heading']); ?></h3>
+				<a href='/<?php echo $article_type; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
+				<h3><?php echo anchor($article_type.'/'.$preview['id'], $preview['heading']); ?></h3>
 				<?php foreach ($preview['authors'] as $reporter) { ?>
 				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 				<?php } ?>
 				<p class='Date'><?php echo $preview['date']; ?></p>
-				<p class='More'><?php echo anchor($link.'/'.$preview['id'], 'Read more...'); ?></p>
+				<p class='More'><?php echo anchor($article_type.'/'.$preview['id'], 'Read more...'); ?></p>
 			    <p><?php echo $preview['blurb']; ?></p>
 				<br style='clear: both;' />
 			</div>
@@ -31,8 +31,8 @@
 		<h4><?php echo $other_heading; ?></h4>
 	   	<?php foreach ($news_others as $other) { ?>
 		<div class='NewsOther'>
-			<a href='/<?php echo $link; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
-		    <p class='Headline'><a href='/<?php echo $link; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
+			<a href='/<?php echo $article_type; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
+		    <p class='Headline'><a href='/<?php echo $article_type; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
 			<?php foreach ($other['authors'] as $reporter) { ?>
 			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 			<?php } ?>
@@ -44,8 +44,8 @@
 		<h4><?php echo $related_heading; ?></h4>
 			<?php foreach ($main_article['related_articles'] as $related) { ?>
 			<div class='NewsOther'>
-				<a href='/<?php echo $link; ?>/<?php echo $related['id']; ?>'><img src='<?php echo $related['image']; ?>' alt='<?php echo $related['image_description']; ?>' title='<?php echo $related['image_description']; ?>' /></a>
-			    <p class='Headline'><a href='/<?php echo $link; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
+				<a href='/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src='<?php echo $related['image']; ?>' alt='<?php echo $related['image_description']; ?>' title='<?php echo $related['image_description']; ?>' /></a>
+			    <p class='Headline'><a href='/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
 				<?php foreach ($related['authors'] as $reporter) { ?>
 				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 				<?php } ?>
@@ -91,7 +91,7 @@
 	</div>
 	<?php if (count($main_article['links']) > 0) { ?>
 		<div class='blue_box'>
-			<h2><?php echo $links_heading; ?></h2>
+			<h2><?php echo $link_heading; ?></h2>
 			<ul>
 			<?php foreach ($main_article['links'] as $link) {
 				echo '<li><a href=\'' . $link['url'] . '\'>' . $link['name'] . '</a></li>';

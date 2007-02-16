@@ -181,16 +181,16 @@ onLoadFunctions.push(preloader);
 		</div>
 
 		<div class='navigationmenu_item'>
-			<a href='/news/'>Uni News</a>
+			<a href='/news/uninews/'>Uni News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/national/'>UK &amp; World News</a>
+			<a href='/news/national/'>UK &amp; World News</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/features/'>Features</a>
+			<a href='/news/features/'>Features</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/lifestyle/'>Lifestyle</a>
+			<a href='/news/lifestyle/'>Lifestyle</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='/reviews/food'>Food</a>

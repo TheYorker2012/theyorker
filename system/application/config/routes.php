@@ -107,15 +107,6 @@ $route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 // /howdoi/category/12 => /howdoi/viewcategory/12
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
-$route['news'] = 'news/index/uninews';
-$route['news/:num'] = 'news/index/uninews';
-$route['national'] = 'news/index/national';
-$route['national/:num'] = 'news/index/national';
-$route['features'] = 'news/index/features';
-$route['features/:num'] = 'news/index/features';
-$route['lifestyle'] = 'news/index/lifestyle';
-$route['lifestyle/:num'] = 'news/index/lifestyle';
-$route['news/rss'] = 'news/rss';
 
 // /office/howdoi/editquestion/questionno/defaultrevision
 $route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/questionedit//$1/-1';
