@@ -3,6 +3,7 @@
  * This model inserts data from feedback forms.
  *
  * @author Richard Ingle (ri504)
+ * @author Chris Travis (cdt502 - ctravis@gmail.com)
  *
  */
  
@@ -27,5 +28,35 @@ class Feedback_model extends Model
 			VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)';
 		$this->db->query($sql, array($page_name, $author_name,
 				$author_email, $rating, $comment));
+	}
+
+	/// Get number of outstanding feedback comments
+	function GetFeedbackCount ()
+	{
+		$sql = 'SELECT COUNT(*) AS feedback_count
+				FROM feedback_entries';
+		$query = $this->db->query($sql);
+		$result = $query->row_array();
+		return $result['feedback_count'];
+	}
+
+	/// Get all feedback entries for display in admin area for review
+	function GetAllFeedback ()
+	{
+		$sql = 'SELECT feedback_entry_id AS id,
+				 feedback_entry_page_name AS page,
+				 feedback_entry_author_name AS author,
+				 feedback_entry_author_email AS email,
+				 feedback_entry_rating AS rating,
+				 feedback_entry_comment AS comment,
+				 DATE_FORMAT(feedback_entry_timestamp, \'%a, %D %b %y @ %H:%i\') AS time
+				FROM feedback_entries
+				ORDER BY feedback_entry_timestamp DESC';
+		$query = $this->db->query($sql);
+		$result = array();
+		foreach ($query->result_array() as $row) {
+			$result[] = $row;
+		}
+		return $result;
 	}
 }
