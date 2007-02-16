@@ -30,33 +30,6 @@
 	</form>
 </div>
 <div class='grey_box'>
-<h2>account details</h2>
-	<form action='/viparea/account/update/<?php echo $organisation['shortname']; ?>/updatedetails' class='form' method='POST'>
-	<fieldset>
-		<label for='details_name'>Organistaion name :</label>
-		<input type='text' name='details_name' style='width: 150px;'value='<?php echo $organisation['name']; ?>'/>
-		<br />
-		<label for='details_fileas'>Alphabetically List As:</label>
-		<input type='text' name='orgdetails_alphlisting' style='width: 220px;' />
-		<br />
-		<label for='details_shortname'>Short name :</label>
-		<input type='text' name='details_shortname' style='width: 150px;'value='<?php echo $organisation['shortname']; ?>'/>
-		<br />
-		<label for='details_yorkipedia'>Yorkipedia Entry:</label>
-		<input type='text' name='orgdetails_yorkipedia' style='width: 220px;' value='<?php echo $organisation['yorkipedia']['title']; ?>'/>
-		<br />
-		<label for='details_org_type'>Category :</label>
-		<SELECT name="details_org_type">
-				<?php foreach ($categories as $category) { ?>
-					<OPTION VALUE="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></OPTION>
-				<?php } ?>
-		</SELECT>
-		<label for='details_button'></label>
-		<input type='submit' name='details_button' value='Update' class='button' />
-	</fieldset>
-	</form>
-</div>
-<div class='grey_box'>
 <h2>account username</h2>
 	<p>
 		<?php echo $account_username; ?>

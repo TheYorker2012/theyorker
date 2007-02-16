@@ -1,24 +1,23 @@
+
+
 <div class='RightToolbar'>
 	<h4>Other Leagues</h4>
 	<div class='Entry'>
 <?php
 //Display leagues
 
-if (isset($league_data) == 1)
+if (isset($league_data))
 {
 	foreach ($league_data as $league_entry)
 	{
-		if ($league_entry['league_image_id'] != 0) //Don't display if no image otherwise alt text floods out
-		{
 		echo
 		"
 		<div class='LifestylePuffer'>
 		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
-		<img src='/images/images/".$league_entry['league_image_id'].".gif' alt='".$league_entry['league_name']."' />
+		<img src='/".$league_entry['league_image_path']."' alt='".$league_entry['league_name']."' />
 		</a>
 		</div>
 		";
-		}
 	}
 }
 ?>
@@ -26,7 +25,7 @@ if (isset($league_data) == 1)
 	</div>
 </div
 
-<div class='grey_box'>
+><div class='grey_box'>
 	<h2 style="display: inline;"><?php if (isset($league_name) == 1) echo $league_name; ?></h2><br />
 	Read our latest reviews from all around york! <br />
 	</div>
