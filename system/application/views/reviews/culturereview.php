@@ -62,7 +62,7 @@
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Average Drink Price</td>
-				<td>£2.50</td>
+				<td>2.50</td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Expense Rating</td>
@@ -234,10 +234,6 @@
 				<td><a href=#>bob@thebluebicycle.co.uk</a></td>
 			</tr>
 			<tr>
-				<td class="ReviewDetailsTitle">Book Online</td>
-				<td>Not Available</td>
-			</tr>
-			<tr>
 				<td class="ReviewDetailsTitle">Telephone</td>
 				<td>0194 729572</td>
 			</tr>
@@ -250,7 +246,7 @@
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">Cost</td>
-				<td>£12 - £100</td>
+				<td>12 - 100</td>
 			</tr>
 			<tr>
 				<td class="ReviewDetailsTitle">How to Get There</td>

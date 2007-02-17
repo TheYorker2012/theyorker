@@ -11,8 +11,6 @@
 			<span class="ReviewDetailsInfo"><a href="<?php echo $website; ?>" target="_new"><?php echo $website; ?></a></span><br />
 		<span class="ReviewDetailsTitle">Email</span><br />
 				<span class="ReviewDetailsInfo"><a href=><?php echo $email; ?></a></span><br />
-		<span class="ReviewDetailsTitle">Book Online</span><br />
-				<span class="ReviewDetailsInfo"><a href=#>Click Here/Not Available</a></span><br />
 		<span class="ReviewDetailsTitle">Telephone</span><br />
 				<span class="ReviewDetailsInfo"><?php echo $telephone; ?></span><br />
 		<span class="ReviewDetailsTitle">Opening Times</span><br />
