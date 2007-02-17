@@ -22,6 +22,7 @@
 	<br />
 	<a href="/office/news/request">Make new article request</a><br />
 	<a href="/office/news/article">View/Edit Article</a><br />
+	<a href="/office/gallery">Gallery</a><br />
 	<br />
 	<a href="/admin/pages">Page properties, custom pages, etc.</a><br />
 </div>

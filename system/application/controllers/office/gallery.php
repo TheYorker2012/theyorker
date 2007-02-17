@@ -116,8 +116,27 @@ define('PHOTOS_PERPAGE', 12);
 	{
 		if (!CheckPermissions('office')) return;
 		
-		$this->pages_model->SetPageCode('office_gallery');
 		$id = $this->uri->segment(4);
+		
+		if ($this->uri->segment(5) == 'save'
+		    and !empty($this->input->post('title'))
+		    and !empty($this->input->post('date'))
+		    and !empty($this->input->post('photographer'))) {
+			
+			$new = array('photo_title' => $this->input->post('title'),
+			             'photo_timestamp' => $this->input->post('date'),
+			             'photo_author_user_entity_id' =>  $this->input->post('photographer'),
+			             'photo_deleted' => $this->input->post('hidden'));
+			
+			if ($this->input->post('onfrontpage') == TRUE) {
+				$new['photo_homepage'] = "";
+			} 
+			
+			$this->db->where('photo_id', $id)->update('photos', $new);
+		}
+		
+		$this->pages_model->SetPageCode('office_gallery');
+
 		if ($id) {
 			$data = array(
 				'main_text' => $this->pages_model->GetPropertyWikitext('photo_view'),

@@ -8,6 +8,7 @@
 				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a><br />';
 			}?>
 			<a href="javascript:document.clearform.submit()">Start a new Search</a>
+			<a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a><br />
 		</div>
 	</form>
 	<h4>Search by...</h4>
