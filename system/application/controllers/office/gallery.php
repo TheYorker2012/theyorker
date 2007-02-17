@@ -250,7 +250,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 
 		if (!$this->image_lib->crop())
 		{
-			die('The crop failed.')
+			die('The crop failed.');
 			echo $this->image_lib->display_errors();
 		}
 		
@@ -263,7 +263,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		if (!$this->image_lib->resize())
 		{
-			die('The resize failed.')
+			die('The resize failed.');
 			echo $this->image_lib->display_errors();
 		}
 		
