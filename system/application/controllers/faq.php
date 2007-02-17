@@ -18,7 +18,7 @@ class Faq extends Controller {
 		$data['faq'] = $this->pages_model->GetPropertyArray('faq', array(
 			// First index is [int]
 			array('pre' => '[', 'post' => ']', 'type' => 'int'),
-			// Second index is [string]
+			// Second index is .string
 			array('pre' => '.', 'type' => 'enum',
 				'enum' => array(
 					array('question',	'text'),
