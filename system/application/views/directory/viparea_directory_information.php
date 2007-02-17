@@ -10,7 +10,7 @@
 			echo '<li>';
 			echo 'Author : '.$revison['author'].'<br />';
 			echo 'Created : '.$revison['timestamp'].'<br />';
-			echo ' <a href="'.vip_url('directory/information/'.$revison['id']).'">View</a>';
+			echo ' <a href="'.vip_url('directory/information/view/'.$revison['id']).'">View</a>';
 				if ($revison['published']==true){
 					echo ' <span class="orange">(Published)</span>';
 				} else {

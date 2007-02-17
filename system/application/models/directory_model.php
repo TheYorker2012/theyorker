@@ -234,10 +234,10 @@ class Directory_model extends Model {
 	{
 		$sql =
 		'UPDATE organisations SET'.
-		' organisations.organisation_live_content_id=? '.
+		' organisations.organisation_live_content_id='.$id.' '.
 		'WHERE organisations.organisation_directory_entry_name=? ';
-		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
-		return true;
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		return $sql;
 	}
 	
 	function AddDirectoryEntryRevision($DirectoryEntryName, $Data)

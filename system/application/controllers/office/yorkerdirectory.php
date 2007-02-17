@@ -72,42 +72,63 @@ class Yorkerdirectory extends Controller
 	}
 
 	/// Directory organisation page.
-	function information($revision=false)
+	function information($action='view', $revision=false)
 	{
 		if (!CheckPermissions('vip+office')) return;
-		
-		$organisation = $this->user_auth->organisationShortName;
-		$this->pages_model->SetPageCode('viparea_directory_information');
-		
-		//Send data if given
-		if(!empty($_POST['submitbutton'])){
-			$this->main_frame->AddMessage('success','Directory entry updated.');
-			if($_POST['description']==null){
-				$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
+		if($action=='view'){
+			$organisation = $this->user_auth->organisationShortName;
+			$this->pages_model->SetPageCode('viparea_directory_information');
+			
+			//Send data if given
+			if(!empty($_POST['submitbutton'])){
+				$this->main_frame->AddMessage('success','Directory entry updated.');
+				if($_POST['description']==null){
+					$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
+				}
+				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
 			}
-			$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
+			
+			//Get Data And toolbar
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
+			$this->_SetupNavbar();
+			
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			
+			//Page Revisions
+			$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/viparea_directory_information', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+			
+			// Load the public frame view
+			$this->main_frame->Load();
 		}
-		
-		//Get Data And toolbar
-		$data = $this->organisations->_GetOrgData($organisation, $revision);
-		$this->_SetupNavbar();
-		
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
-		//Page Revisions
-		$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
-		
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_information', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($the_view);
-		
-		// Load the public frame view
-		$this->main_frame->Load();
+		if($action=='publish'){
+			$organisation = $this->user_auth->organisationShortName;
+			$this->pages_model->SetPageCode('viparea_directory_publish');
+			
+			//Get Data And toolbar
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
+			$this->_SetupNavbar();
+			$this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/viparea_directory_publish', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+			
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
 	}
 	
 	function photos()
