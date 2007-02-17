@@ -113,13 +113,35 @@ class Yorkerdirectory extends Controller
 			$organisation = $this->user_auth->organisationShortName;
 			$this->pages_model->SetPageCode('viparea_directory_publish');
 			
-			//Get Data And toolbar
+			//Send and get data
+			$this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			$this->_SetupNavbar();
-			$this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
 			
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_publish', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+			
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		if($action=='delete'){
+			$organisation = $this->user_auth->organisationShortName;
+			$this->pages_model->SetPageCode('viparea_directory_delete');
+			
+			$this->_SetupNavbar();
+			//Delete entry
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
+			$result = $this->directory_model->DeleteEntryRevisionById($organisation, $revision);
+			
+			$data['result']=$result;
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/viparea_directory_delete', $data);
 			
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(

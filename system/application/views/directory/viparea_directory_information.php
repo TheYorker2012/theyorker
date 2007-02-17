@@ -15,8 +15,8 @@
 					echo ' <span class="orange">(Published)</span>';
 				} else {
 					echo ' <a href="'.vip_url('directory/information/publish/'.$revison['id']).'">Publish</a>';
+					echo ' <a href="'.vip_url('directory/information/delete/'.$revison['id']).'">Delete</a>';
 				}
-			echo ' <a href="'.vip_url('directory/information/delete/'.$revison['id']).'">Delete</a>';
 			echo '</li>';
 		}?>
 		</ol>
@@ -64,7 +64,7 @@
 		<input type='text' name='fax_number' style='width: 150px;' value='<?php echo $organisation['fax_number']; ?>' />
 		<br />
 		<label for='submitbutton'></label>
-		<input type='submit' name='submitbutton' value='Update' class='button' />
+		<input type='submit' name='submitbutton' value='Create new revision' class='button' />
 	</fieldset>
 </div>
 </form>

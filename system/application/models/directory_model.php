@@ -237,7 +237,7 @@ class Directory_model extends Model {
 		' organisations.organisation_live_content_id='.$id.' '.
 		'WHERE organisations.organisation_directory_entry_name=? ';
 		$query = $this->db->query($sql, $DirectoryEntryName);
-		return $sql;
+		return true;
 	}
 	
 	function AddDirectoryEntryRevision($DirectoryEntryName, $Data)
@@ -273,6 +273,43 @@ class Directory_model extends Model {
 		'(NULL, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
 		$query = $this->db->query($sql, array($author_id, $organisation_id, $Data['description'], $Data['location'], $Data['postal_address'], $Data['postcode'], $Data['phone_external'], $Data['phone_internal'], $Data['fax_number'], $Data['email_address'], $Data['url'], $Data['opening_hours']));
 		return true;
+	}
+	function IsRevisionPublished($DirectoryEntryName, $id){
+		$sql =
+			'SELECT'.
+			' organisations.organisation_live_content_id '.
+			'FROM organisations '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
+			'LIMIT 1';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$row = $query->row();
+		//Get org id to look for and the one that should be live.
+		$liveid = $row->organisation_live_content_id;
+		
+		if($id==$liveid){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	//Removes a revisons of a directory entry
+	/*
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return $id the id of the revision to remove
+	 * Will return true if removed and false if not removed, will not remove a live revision as it will break the site!!
+	*/
+	function DeleteEntryRevisionById($DirectoryEntryName, $id)
+	{
+		if($this->IsRevisionPublished($DirectoryEntryName, $id)){
+			return false;
+		}else{
+			$sql =
+			'DELETE FROM organisation_contents '.
+			'WHERE organisation_content_id='.$id.' '.
+			'LIMIT 1';
+			$query = $this->db->query($sql);
+			return true;
+		}
 	}
 }
 ?>
