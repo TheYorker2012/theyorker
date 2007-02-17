@@ -58,6 +58,24 @@ function VipOrganisation($SetOrganisation = FALSE)
 	return $organisation;
 }
 
+/// Get the vip mode that the user is in.
+/**
+ * @return string Mode string:
+ *	- 'none' Not in vip mode
+ *	- 'office' VIP mode through office
+ *	- 'viparea' VIP mode through viparea
+ */
+function VipMode($SetMode = FALSE)
+{
+	static $vip_mode = 'none';
+	
+	if (is_string($SetMode)) {
+		$vip_mode = $SetMode;
+	}
+	
+	return $vip_mode;
+}
+
 
 /// Check the access permissions.
 /**
@@ -102,6 +120,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		$Permission = $office_vip_allowed_permissions[$Permission];
 		VipOrganisation($CI->uri->segment(3));
 		vip_url('office/vip/'.$CI->uri->segment(3).'/', TRUE);
+		VipMode('office');
 		
 		/// @todo check permissions to access this organisation
 		
@@ -126,6 +145,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			VipOrganisation($CI->uri->segment(2));
 		}
 		vip_url('viparea/'.$CI->uri->segment(2).'/', TRUE);
+		VipMode('viparea');
 		
 		/// @todo check permissions to access this organisation
 		
