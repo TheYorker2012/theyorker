@@ -47,23 +47,23 @@
 		<a href=''><img src='/images/prototype/homepage/square1.jpg' width="121" height="121" /></a>
 		<h3 style="color: #999999;">University</h3>
 		<ul style="marign-left: 0;  padding-left: 20px">
-		<li><h3><a href="" title="">Campus hip hop star announces single launch data</a></h3></li>
-		<li><h3><a href="" title="">VC remains tight-lipped despite mass petitions on porters</a></h3></li>
-		<li><h3><a href="" title="">Vital Porters to be Cut for Three Months</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">Campus hip hop star announces single launch data</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">VC remains tight-lipped despite mass petitions on porters</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">Vital Porters to be Cut for Three Months</a></h3></li>
 		</ul>
 	</div>
 	<div class="NewsPreview" style="margin: 5px;">
 		<a href=''><img src='/images/prototype/homepage/square2.jpg' width="121" height="121" /></a>
 		<h3 style="color: #999999;">UK &amp; World</h3>
 		<ul style="marign-left: 0; padding-left: 20px;">
-		<li><h3><a href="" title="">Lord's reform caused to set Blair and Straw headaches</a></h3></li>
-		<li><h3><a href="" title="">US promises $100 Billion to Iraq</a></h3></li>
-		<li><h3><a href="" title="">Britney: I did not sleep with 6 men</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">Lord's reform caused to set Blair and Straw headaches</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">US promises $100 Billion to Iraq</a></h3></li>
+		<li><h3 style="font-weight:normal;"><a href="" title="">Britney: I did not sleep with 6 men</a></h3></li>
 		</ul>
 	</div>
 	<br />
 </div>
 <div class='blue_box'>
 	<h2>features</h2>
-	<img src="/images/images/puffer/0/44.jpg"> <img src="/images/images/puffer/0/43.jpg">
+	<img src="/images/images/puffer/0/44.jpg" width="200"> <img src="/images/images/puffer/0/43.jpg" width="200">
 </div>
