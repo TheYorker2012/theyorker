@@ -144,4 +144,35 @@ function createImageLocation($id, $type = false) {
 	
 }
 
+function createImageLocationFromId($id, $type) {
+	$CI =& get_instance();
+	$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $type), 1);
+	$codename = $query->row()->image_type_codename;
+	$location = 'images/images/'.$codename.'/';
+	if (is_dir($location)) {
+		$location.= (floor($id / IMAGE_HASH)).'/';
+		if (is_dir($location)) {
+			return true;
+		} elseif (mkdir($location, 0770)) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		if (mkdir($location, 0770)) {
+			$location.= (floor($id / IMAGE_HASH)).'/';
+			if (is_dir($location)) {
+				return true;
+			} elseif (mkdir($location, 0770)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+}
+
+
 ?>

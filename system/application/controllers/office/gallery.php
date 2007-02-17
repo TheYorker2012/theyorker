@@ -227,7 +227,7 @@ define('PHOTOS_PERPAGE', 12);
 		
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		
-		if (!createImageLocation($selectedThumb[4], $selectedThumb[3])) {
+		if (!createImageLocationFromId($selectedThumb[4], $selectedThumb[3])) {
 			$objResponse->addAssign("submitButton","value","Error: Location not created");
 			$objResponse->addAssign("submitButton","disabled",false);
 
