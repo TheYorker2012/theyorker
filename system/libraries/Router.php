@@ -253,10 +253,10 @@ class CI_Router {
 	function _reindex_segments()
 	{
 		// Is the routed segment array different then the main segment array?
-		if (count(array_diff($this->rsegments, $this->segments))==0 AND count(array_diff($this->segments, $this->rsegments))==0){
-			$diff=FALSE;
+		if (count(array_diff($this->rsegments, $this->segments))==0 AND count(array_diff($this->segments, $this->rsegments))==0){ 
+			$diff = FALSE;
 		} else {
-			$diff=TRUE;
+			$diff = TRUE;
 		}
 	
 		$i = 1;
@@ -411,7 +411,7 @@ class CI_Router {
 		{
 			if ( ! preg_match("|^[".preg_quote($this->config->item('permitted_uri_chars'))."]+$|i", $str))
 			{
-				exit('The URI you submitted has disallowed characters: '.$str);
+				exit('The URI you submitted has disallowed characters.');
 			}
 		}	
 			return $str;

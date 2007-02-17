@@ -187,9 +187,7 @@ define('PHOTOS_PERPAGE', 12);
 	function do_upload() {
 		if (!CheckPermissions('office')) return;
 		
-		$this->load->library('image_lib');
-		$this->load->library('upload');
-		$this->load->library('xajax');
+		$this->load->library(array('image_lib', 'upload', 'xajax'));
 		$this->load->helper('images');
 		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 		$this->xajax->processRequests();
@@ -203,7 +201,7 @@ define('PHOTOS_PERPAGE', 12);
 		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
 		
 		$data = array();
-		$this->load->library('upload', $config); // this config call is clearly not working!!! I hate it
+		$this->load->library('upload');
 		$this->upload->initialize($config);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {

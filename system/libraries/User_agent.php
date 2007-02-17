@@ -24,7 +24,7 @@
  * @subpackage	Libraries
  * @category	User Agent
  * @author		Rick Ellis
- * @link		http://www.codeigniter.com/user_guide/libraries/uri.html
+ * @link		http://www.codeigniter.com/user_guide/libraries/user_agent.html
  */
 class CI_User_agent {
 
@@ -45,7 +45,7 @@ class CI_User_agent {
 	var $platform	= '';
 	var $browser	= '';
 	var $version	= '';
-	var $moble		= '';
+	var $mobile		= '';
 	var $robot		= '';
 	
 	/**
@@ -186,6 +186,7 @@ class CI_User_agent {
 					$this->is_browser = TRUE;
 					$this->version = $match[1];
 					$this->browser = $val;
+					$this->_set_mobile();
 					return TRUE;
 				}
 			}

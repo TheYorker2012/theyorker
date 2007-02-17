@@ -30,6 +30,7 @@ class CI_Exceptions {
 	var $message;
 	var $filename;
 	var $line;
+	var $ob_level;
 
 	var $levels = array(
 						E_ERROR				=>	'Error',
@@ -53,8 +54,8 @@ class CI_Exceptions {
 	 */	
 	function CI_Exceptions()
 	{
-		// Note:  Do not log messages from this constructor.
 		$this->ob_level = ob_get_level();
+		// Note:  Do not log messages from this constructor.
 	}
   	
 	// --------------------------------------------------------------------
@@ -75,7 +76,7 @@ class CI_Exceptions {
 	{	
 		$severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
 		
-		log_message('error', 'Severity: '.$severity.' '.$severity.' --> '.$message. ' '.$filepath.' '.$line, TRUE);
+		log_message('error', 'Severity: '.$severity.'  --> '.$message. ' '.$filepath.' '.$line, TRUE);
 	}
 
 	// --------------------------------------------------------------------

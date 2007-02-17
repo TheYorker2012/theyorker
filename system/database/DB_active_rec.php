@@ -134,7 +134,22 @@ class CI_DB_active_record extends CI_DB_driver {
 				$type .= ' ';
 			}
 		}
-	
+
+		if ($this->dbprefix)
+		{
+			$cond = preg_replace('|([\w\.]+)([\W\s]+)(.+)|', $this->dbprefix . "$1$2" . $this->dbprefix . "$3", $cond);
+		}
+		
+		// If a DB prefix is used we might need to add it to the column names
+		if ($this->dbprefix)
+		{
+			// First we remove any existing prefixes in the condition to avoid duplicates
+			$cond = preg_replace('|('.$this->dbprefix.')([\w\.]+)([\W\s]+)|', "$2$3", $cond);
+			
+			// Next we add the prefixes to the condition
+			$cond = preg_replace('|([\w\.]+)([\W\s]+)(.+)|', $this->dbprefix . "$1$2" . $this->dbprefix . "$3", $cond);
+		}
+		
 		$this->ar_join[] = $type.'JOIN '.$this->dbprefix.$table.' ON '.$cond;
 		return $this;
 	}
@@ -486,8 +501,9 @@ class CI_DB_active_record extends CI_DB_driver {
 			
 		$sql = $this->_compile_select();
 
+		$result = $this->query($sql);
 		$this->_reset_select();
-		return $this->query($sql);		
+		return $result;
 	}
 
 	// --------------------------------------------------------------------
@@ -522,8 +538,9 @@ class CI_DB_active_record extends CI_DB_driver {
 			
 		$sql = $this->_compile_select();
 
+		$result = $this->query($sql);
 		$this->_reset_select();
-		return $this->query($sql);		
+		return $result;
 	}
 	
 	// --------------------------------------------------------------------

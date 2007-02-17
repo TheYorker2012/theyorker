@@ -71,12 +71,25 @@ class CI_Loader {
 	 * @param	mixed	the optional parameters
 	 * @return	void
 	 */	
-	function library($class, $params = NULL)
+	function library($library = '', $params = NULL)
 	{		
-		if ($class == '')
-			return;
-	
-		$this->_ci_load_class($class, $params);
+		if ($library == '')
+		{
+			return FALSE;
+		}
+
+		if (is_array($library))
+		{
+			foreach ($library as $class)
+			{
+				$this->_ci_load_class($class, $params);
+			}
+		}
+		else
+		{
+			$this->_ci_load_class($library, $params);
+		}
+		
 		$this->_ci_assign_to_models();
 	}
 
@@ -133,7 +146,7 @@ class CI_Loader {
 			show_error('Unable to locate the model you have specified: '.$model);
 		}
 				
-		if ($db_conn !== FALSE)
+		if ($db_conn !== FALSE AND ! class_exists('CI_DB'))
 		{
 			if ($db_conn === TRUE)
 				$db_conn = '';
@@ -486,10 +499,10 @@ class CI_Loader {
 	 * @param	string
 	 * @return	void
 	 */
-	function config($file = '')
-	{		
+	function config($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
+	{			
 		$CI =& get_instance();
-		$CI->config->load($file);
+		$CI->config->load($file, $use_sections, $fail_gracefully);
 	}
 
 	// --------------------------------------------------------------------
@@ -513,7 +526,7 @@ class CI_Loader {
 	{		
 		if ($table === FALSE)
 		{
-			show_error('You must include the name of the table you would like access when you initialize scaffolding');
+			show_error('You must include the name of the table you would like to access when you initialize scaffolding');
 		}
 		
 		$CI =& get_instance();
@@ -621,8 +634,7 @@ class CI_Loader {
 		if ($return === TRUE)
 		{		
 			$buffer = ob_get_contents();
-			ob_end_clean();
-			
+			@ob_end_clean();
 			return $buffer;
 		}
 
@@ -645,7 +657,7 @@ class CI_Loader {
 			// PHP 4 requires that we use a global
 			global $OUT;
 			$OUT->set_output(ob_get_contents());
-			ob_end_clean();
+			@ob_end_clean();
 		}
 	}
 
@@ -663,49 +675,54 @@ class CI_Loader {
 	 */
 	function _ci_load_class($class, $params = NULL)
 	{	
-		// Prep the class name
-		$class = ucfirst(strtolower(str_replace(EXT, '', $class)));
+		// Get the class name
+		$class = str_replace(EXT, '', $class);
 
-		// Is this a class extension request?
-		if (file_exists(APPPATH.'libraries/'.config_item('subclass_prefix').$class.EXT))
+		// We'll test for both lowercase and capitalized versions of the file name
+		foreach (array(ucfirst($class), strtolower($class)) as $class)
 		{
-			if ( ! file_exists(BASEPATH.'libraries/'.$class.EXT))
+			// Is this a class extension request?
+			if (file_exists(APPPATH.'libraries/'.config_item('subclass_prefix').$class.EXT))
 			{
-				log_message('error', "Unable to load the requested class: ".$class);
-				show_error("Unable to load the requested class: ".$class);
+				if ( ! file_exists(BASEPATH.'libraries/'.ucfirst($class).EXT))
+				{
+					log_message('error', "Unable to load the requested class: ".$class);
+					show_error("Unable to load the requested class: ".$class);
+				}
+	
+				include(BASEPATH.'libraries/'.ucfirst($class).EXT);
+				include(APPPATH.'libraries/'.config_item('subclass_prefix').$class.EXT);
+	
+				return $this->_ci_init_class($class, config_item('subclass_prefix'), $params);			
 			}
-
-			include(BASEPATH.'libraries/'.ucfirst($class).EXT);
-			include(APPPATH.'libraries/'.config_item('subclass_prefix').$class.EXT);
-
-			return $this->_ci_init_class($class, config_item('subclass_prefix'), $params);			
-		}
-
-		// Lets search for the requested library file and load it.
-		$is_duplicate = FALSE;		
-		for ($i = 1; $i < 3; $i++)
-		{
-			$path = ($i % 2) ? APPPATH : BASEPATH;	
-			$fp = $path.'libraries/'.$class.EXT;
-			
-			// Does the file exist?  No?  Bummer...
-			if ( ! file_exists($fp))
+		
+			// Lets search for the requested library file and load it.
+			$is_duplicate = FALSE;		
+			for ($i = 1; $i < 3; $i++)
 			{
-				continue;
+				$path = ($i % 2) ? APPPATH : BASEPATH;	
+				$fp = $path.'libraries/'.$class.EXT;
+				
+				// Does the file exist?  No?  Bummer...
+				if ( ! file_exists($fp))
+				{
+					continue;
+				}
+				
+				// Safety:  Was the class already loaded by a previous call?
+				if (in_array($fp, $this->_ci_classes))
+				{
+					$is_duplicate = TRUE;
+					log_message('debug', $class." class already loaded. Second attempt ignored.");
+					return;
+				}
+				
+				include($fp);
+				$this->_ci_classes[] = $fp;
+				return $this->_ci_init_class($class, '', $params);
 			}
-			
-			// Safety:  Was the class already loaded by a previous call?
-			if (in_array($fp, $this->_ci_classes))
-			{
-				$is_duplicate = TRUE;
-				continue;
-			}
-			
-			include($fp);
-			$this->_ci_classes[] = $fp;
-			return $this->_ci_init_class($class, '', $params);
-		}
-
+		} // END FOREACH
+		
 		// If we got this far we were unable to find the requested class.
 		// We do not issue errors if the load call failed due to a duplicate request
 		if ($is_duplicate == FALSE)
