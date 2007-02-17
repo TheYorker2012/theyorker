@@ -236,11 +236,14 @@ class Reviews extends Controller
 		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
 		$data['price_rating']			= 'Good Value';
 
-		//Set organisation name in title bar
-		$this->main_frame->SetTitleParameters(array('organisation' => $review_database_result['organisation_name']));
+		//Set title parameters
+		$this->main_frame->SetTitleParameters(array(
+			'content_type' => $content_type,
+			'organisation' => $review_database_result['organisation_name'],
+		));
 
 		// Load the public frame view (which will load the content view)
-		$this->main_frame->SetContentSimple('reviews/foodreview', $data);
+		$this->main_frame->SetContentSimple('reviews/'.$content_type.'review', $data);
 		$this->main_frame->Load();
 
 	}
