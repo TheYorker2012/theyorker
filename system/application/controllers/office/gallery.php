@@ -250,7 +250,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 
 		if (!$this->image_lib->crop())
 		{
-		    echo $this->image_lib->display_errors();
+			die('The crop failed.')
+			echo $this->image_lib->display_errors();
 		}
 		
 		$config['source_image'] = $config['new_image'];
@@ -262,7 +263,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		if (!$this->image_lib->resize())
 		{
-		    echo $this->image_lib->display_errors();
+			die('The resize failed.')
+			echo $this->image_lib->display_errors();
 		}
 		
 		$objResponse->addAssign("submitButton","value","Save");
