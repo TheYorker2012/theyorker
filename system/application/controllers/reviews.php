@@ -4,8 +4,14 @@
 /**
  * @author Frank Burton
  */
-class Reviews extends Controller {
-
+class Reviews extends Controller
+{
+	/// Valid content types
+	protected static $mContentType = array(
+		'food','drink','culture'
+	);
+	
+	
 	/// Default constructor
 	function Reviews()
 	{
@@ -24,18 +30,46 @@ class Reviews extends Controller {
 		$this->load->model('Review_model');
 
 	}
+	
+	/// Remap function ALWAYS CALLED
+	function _remap()
+	{
+		$method			= $this->uri->rsegment(2);
+		$param_start	= 2;
+		
+		if (FALSE === $method) {
+			return $this->index();
+		}
+		
+		if (FALSE !== array_search($method, self::$mContentType)) {
+			$content_type	= $method;
+			$param_start	= 1;
+			
+			// valid content type
+			$organisation_name	= $this->uri->rsegment(3);
+			
+			if (FALSE === $organisation_name) {
+				$method = '_main';
+				
+			} else {
+				$method = '_review';
+			}
+		}
+		
+		call_user_func_array(array(&$this, $method), array_slice($this->uri->rsegment_array(), $param_start));
+	}
 
 	/// Main page
 	/**
 	 * @note This just redirects to food reviews.
 	 */
-	function index()
+	function _index()
 	{	
-		redirect('/reviews/main/food'); //Send them to the food page instead
+		redirect('/reviews/food'); //Send them to the food page instead
 	}
 
 	/// Main context frontpage
-	function main($content_type)
+	function _main($content_type)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -75,7 +109,7 @@ class Reviews extends Controller {
 		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
+		$data['article_link'] = '/reviews/food/'.$organisation_code_name;
 
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
@@ -122,7 +156,7 @@ class Reviews extends Controller {
 	}
 	
 	/// Review page
-	function review($content_type, $organisation_name)
+	function _review($content_type, $organisation_name)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -220,7 +254,7 @@ class Reviews extends Controller {
 	}
 
 	/// Bar Crawl Page
-	function barcrawl($CrawlName = NULL)
+	function barcrawl($CrawlName = FALSE)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -258,10 +292,10 @@ class Reviews extends Controller {
 	}
 
 	/// Display table for review table (from puffers)
-	function table(	$item_type = NULL,
-					$sorted_by = NULL,
-					$item_filter_by = NULL,
-					$where_equal_to = NULL)
+	function table(	$item_type = FALSE,
+					$sorted_by = FALSE,
+					$item_filter_by = FALSE,
+					$where_equal_to = FALSE)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -294,7 +328,7 @@ class Reviews extends Controller {
 				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
 				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
-				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
+				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
 	
 				//Change scope of $tagbox
 				$tagbox = array();
@@ -359,7 +393,7 @@ class Reviews extends Controller {
 				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
 				$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
 				//This will need the use of a function which returns what a organisition has being reviews on
-				$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; 
+				$reviews['review_link'][$row] = '/reviews/food/'.$leagues[$row]['organisation_directory_entry_name']; 
 				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 			}

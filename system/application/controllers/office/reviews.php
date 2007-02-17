@@ -46,7 +46,7 @@ class Reviews extends Controller
 				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
 	}
 
-	// this is blank 
+	/// Main reviews page
 	function index()
 	{
 		if (!CheckPermissions('office')) return;

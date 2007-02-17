@@ -56,8 +56,6 @@ Reviews
 	<li><a href="/reviews/food/">/reviews/food/</a></li>
 	<li><a href="/reviews/drink/">/reviews/drink/</a></li>
 	<li><a href="/reviews/culture/">/reviews/culture/</a></li>
-	<li><a href="/reviews/foodreview/">/reviews/foodreview/</a></li>
-	<li><a href="/reviews/culturereview/">/reviews/culturereview/</a></li>
 	<li><a href="/reviews/barcrawl/">/reviews/barcrawl/</a></li>
 </ul>
 

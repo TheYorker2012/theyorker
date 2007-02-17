@@ -73,11 +73,6 @@ $route['contact'] = 'yorkerdirectory/members/theyorker';
 $route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
-// Main review sections
-$route['reviews/food'] = 'reviews/main/food';
-$route['reviews/drink'] = 'reviews/main/drink';
-$route['reviews/culture'] = 'reviews/main/culture';
-
 
 //****************************************************************************//
 // Routing to subdirectory index pages                                        //
