@@ -7,6 +7,7 @@
  */
 define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
+define('BASE_DIR', '/home/theyorker');
 
  class Gallery extends Controller
 {
@@ -241,7 +242,7 @@ define('VIEW_WIDTH', 650);
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
 		$config['maintain_ratio'] = FALSE;
-		$config['new_image'] = imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
+		$config['new_image'] = BASE_DIR.imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['y_axis'] = $formData['y1'];
 		
@@ -298,7 +299,7 @@ define('VIEW_WIDTH', 650);
 		
 		$oneRow = $query->row();
 		createImageLocation($oneRow->photo_id);
-		rename ($data['full_path'], photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
+		rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
 		$_SESSION['img_list'][] = $oneRow->photo_id;
 		

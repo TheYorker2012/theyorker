@@ -103,7 +103,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
  * @param	integer
  * @return	string
  */	
-function createImageLocation($id, $type = false) {
+function createImageLocation($id, $type = FALSE) {
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/';
 		if (is_dir($location)) {
