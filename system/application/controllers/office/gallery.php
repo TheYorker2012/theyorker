@@ -236,8 +236,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'netpbm';
-		$config['library_path'] = '/usr/bin/';
+		$config['image_library'] = 'gd2';
+//		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
