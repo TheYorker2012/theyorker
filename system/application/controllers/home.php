@@ -18,7 +18,7 @@ class Home extends Controller {
 	/**
 	* Displays prototype homepage, in the prototype student frame
 	*/
-	function index()
+	function pagelist()
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -34,7 +34,7 @@ class Home extends Controller {
 		$this->main_frame->Load();
 	}
 
-	function main()
+	function index()
 	{
 		if (!CheckPermissions('public')) return;
 		

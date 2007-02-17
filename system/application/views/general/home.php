@@ -1,68 +1,69 @@
 <div class='RightToolbar'>
-	<h4>Features</h4>
+	<h4>My Links</h4>
 	<div class='Entry'>
-		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy'/></a>
-		<h5>How Do I?</h5>
-		<p>Everything you wanted to know about York</p>
-	</div>
-	<div class='Entry'>
-		<a href='/news/article/2'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h5>Yorkipedia</h5>
-		<p>A lovely rip-off of Wikipedia by our man Nick Evans.</p>
-	</div>
-	<div class='Entry'>
-		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h5>Game Zone</h5>
-		<p>Some games for all you board people.</p>
-	</div>
-	<div class='Entry'>
-		<a href='/news/article/2'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h5>Campaigns</h5>
-		<p>These are our campaigns so check them out.</p>
+		<div style="float: right; top:-2px; margin: 0px; padding: 0px;"><a href="">Customise</a></div>
+		<div style="clear: both;"></div>
+		<div style="text-align:center; width: 220px;">
+		<a href=''><img src='/images/prototype/homepage/links.jpg' alt='Sample Links' title='Sample Links'/></a>
+		</div>
+		<div style="clear: both;"></div>
 	</div>
 	<h4>Today's Events</h4>
-	<br />
-	<br />
-	<br />
-	<h4>Weather</h4>
-	<br />
-	<br />
-	<br />
+	<div class='Entry'>
+		<div style="float: right; top:-2px; margin: 0px; padding: 0px;"><a href="">Calendar</a></div>
+		<div style="clear: both;"></div>
+		<ul>
+		<li>9:30am &gt; Lecture &gt; Alcuin College</li>
+		<li>10:30am &gt; Badminton &gt; Sports Centre</li>
+		<li>2:30pm &gt; Lecture &gt; P/X/001</li>
+		<li>6.00pm  &gt; The Shuttle Launch &gt; Sports Centre, Main Hall</li>
+		<li>7.30pm  &gt; The Pirates of Penzance &gt; Central Hall</li>
+		</ul>
+	</div>
+	<h4>To Do</h4>
+	<div style="float: right; top:-2px; margin: 0px; padding: 0px;"><a href="">New To Do</a></div>
+	<div style="clear: both;"></div>
+	<div class='Entry' style="padding-top: 0px;">
+		<ul>
+		<li>Oil Bike Chain!</li>
+		</ul>
+	</div>
+	<h4>2 Day Forecast</h4>
+	<div class='Entry'>
+		<ul>
+		<li>Today &gt; Sunny &gt; 19&deg;C</li>
+		<li>Tomorrow &gt; Rainy Spells &gt;  19&deg;C</li>
+		</ul>
+	</div>
 	<h4>Quote of the Day</h4>
-	<br />
-	<br />
-	<br />
-	<h4>Links</h4>
-	<br />
-	<br />
-	<br />
+	<div class='Entry'>
+	"If you're going to kill a man it costs nothing to be polite to him" - <b>Winston Churchill</b>
+	</div>
 </div>
-<div class='grey_box'>
-	<h2><?php echo $welcome_title; ?></h2>
-	<?php echo $welcome_text; ?>
-</div>
-<img src="/images/adverts/charity.jpg" alt='Charity Banner' title='Chartity Banner' style='margin-left: 11px; margin-bottom: 5px;' />
+<img src="/images/prototype/homepage/rowing.jpg" alt='' title='' width="420" height="93" />
 <div class='blue_box'>
 	<h2>today's news</h2>
 	<div class="NewsPreview" style="margin: 5px;">
-		<p style="color: #999; font-size: x-small;">UK &amp; World</p>
-		<a href='/news/article/7'><img src='/images/prototype/news/thumb2.jpg' alt='Tony Blair' title='Tony Blair' /></a>
-		<h3><a href="http://theyorker.gmghosting.com/news/article/7" title="Blair 'sorrow' over slave trade">Blair 'sorrow' over slave trade</a></h3>
-		<p class='Writer'><a href='/directory/view/1'>Jo Shelley</a></p>
-		<p class='Date'>4th December 2006</p>
-		<p class='More'><a href="http://theyorker.gmghosting.com/news/article/7" title="Read more...">Read more...</a></p>
-        <p style="font-size: small;">Prime Minister Tony Blair has said he feels "deep sorrow" for Britain's role in the slave trade. In an article for the New Nation newspaper, the prime minister said it had been "profoundly shameful".</p>
+		<a href=''><img src='/images/prototype/homepage/square1.jpg' width="121" height="121" /></a>
+		<h3 style="color: #999999;">University</h3>
+		<ul style="marign-left: 0;  padding-left: 20px">
+		<li><h3><a href="" title="">Campus hip hop star announces single launch data</a></h3></li>
+		<li><h3><a href="" title="">VC remains tight-lipped despite mass petitions on porters</a></h3></li>
+		<li><h3><a href="" title="">Vital Porters to be Cut for Three Months</a></h3></li>
+		</ul>
+	</div>
+	<div class="NewsPreview" style="margin: 5px;">
+		<a href=''><img src='/images/prototype/homepage/square2.jpg' width="121" height="121" /></a>
+		<h3 style="color: #999999;">UK &amp; World</h3>
+		<ul style="marign-left: 0; padding-left: 20px;">
+		<li><h3><a href="" title="">Lord's reform caused to set Blair and Straw headaches</a></h3></li>
+		<li><h3><a href="" title="">US promises $100 Billion to Iraq</a></h3></li>
+		<li><h3><a href="" title="">Britney: I did not sleep with 6 men</a></h3></li>
+		</ul>
 	</div>
 	<br />
-	<div class="NewsPreview" style="margin: 5px;">
-		<p style="color: #999; font-size: x-small;">UK &amp; World</p>
-		<a href='/news/article/6'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
-		<h3><a href="http://theyorker.gmghosting.com/news/article/6" title="Advice sought after ex-spy death">Advice sought after ex-spy death</a></h3>
-		<p class='Writer'><a href='/directory/view/1'>Dan Ashby</a></p>
-		<p class='Date'>3rd December 2006</p>
-		<p class='More'><a href="http://theyorker.gmghosting.com/news/article/6" title="Read more...">Read more...</a></p>
-        <p>Hundreds of people have called the NHS Direct hotline following the death of Russian ex-spy Alexander Litvinenko.</p>
-		<br style='clear: both;' />
-	</div>
-	</div>
+</div>
+<div class='blue_box'>
+	<h2>features</h2>
+	<img src="/images/images/puffer/0/44.jpg"> <img src="/images/images/puffer/0/43.jpg">
 </div>
