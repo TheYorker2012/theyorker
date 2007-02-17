@@ -49,7 +49,9 @@ class Reviews extends Controller
 	// this is blank 
 	function index()
 	{
-	
+		if (!CheckPermissions('office')) return;
+		
+		$this->main_frame->load();
 	}
 
 	/// Reviews Overview Page
@@ -375,5 +377,45 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
+	
+	
+	// These are all the edit pages for the admin panel
+	// Additional controllers will be required
+	
+	/*function edit()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$data['title_image'] = 'images/prototype/reviews/reviews_01.gif';
+		
+		// Set up the public frame
+		$this->main_frame->SetTitle('Edit');
+		$this->main_frame->SetContentSimple('reviews/mainedit', $data);
+		
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	function editsection()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		// Set up the public frame
+		$this->main_frame->SetTitle('Edit Section');
+		$this->main_frame->SetContentSimple('reviews/sectionedit');
+		
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	function editreview()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		// Set up the public frame
+		$this->main_frame->SetTitle('Edit Review');
+		$this->main_frame->SetContentSimple('reviews/reviewedit');
+		
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}*/
 }
 ?>

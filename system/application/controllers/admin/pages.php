@@ -209,7 +209,8 @@ class Pages extends Controller
 		// Find the custom page code
 		$page_info = $this->pages_model->GetSpecificPage($page_code, TRUE);
 		if (FALSE === $page_info) {
-			show_404($InputPageCode);
+			$this->messages->AddMessage('error', 'The page named "'.$page_code.'" doesn\'t exist');
+			redirect('admin/pages');
 		} else {
 			$data['show_details'] = !$global_scope;
 			if (!$global_scope) {
@@ -515,7 +516,8 @@ class Pages extends Controller
 					break;
 					
 				default:
-					show_404($Operation);
+					$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
+					redirect('admin/pages');
 					return;
 			}
 			$this->main_frame->SetTitleParameters( array(
@@ -598,7 +600,8 @@ class Pages extends Controller
 					break;
 					
 				default:
-					show_404($Operation);
+					$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
+					redirect('admin/pages');
 					return;
 			}
 			$this->main_frame->SetTitleParameters( array(

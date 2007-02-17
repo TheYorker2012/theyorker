@@ -51,12 +51,12 @@ $org_name_regex = '[a-z_\d]+';
 
 // 'directory' needs to map to 'yorkerdirectory'
 // (the php class Directory is reserved)
-$route['directory'] = 'yorkerdirectory';
 // If 2 segments, seg2 ($1) should get sent to view function
-$route['directory/('.$org_name_regex.')'] = 'yorkerdirectory/view/$1';
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
-$route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 // If >3 segments, same as for 3 and any extra segments ($3) appended.
+$route['directory'] = 'yorkerdirectory';
+$route['directory/('.$org_name_regex.')'] = 'yorkerdirectory/view/$1';
+$route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 $route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';
 
 // Invalidate yorkerdirectory as its ugly and shouldn't be used
@@ -69,9 +69,14 @@ $route['yorkerdirectory/(.+)'] = 'not_yorkerdirectory';
 $route['contact'] = 'yorkerdirectory/members/theyorker';
 
 // /howdoi/category => /howdoi/viewcategory/category (-1 meaning all)
-$route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 // /howdoi/category/12 => /howdoi/viewcategory/12
+$route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
+
+// Main review sections
+$route['reviews/food'] = 'reviews/main/food';
+$route['reviews/drink'] = 'reviews/main/drink';
+$route['reviews/culture'] = 'reviews/main/culture';
 
 
 //****************************************************************************//

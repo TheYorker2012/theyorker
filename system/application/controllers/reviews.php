@@ -1,13 +1,14 @@
 <?php
-// Review Controller by Frank Burton
 
+/// Main review controller
+/**
+ * @author Frank Burton
+ */
 class Reviews extends Controller {
 
-	//Page Constructor
-	//Loads each time page is called
+	/// Default constructor
 	function Reviews()
 	{
-		//Needed for code igniter to work
 		parent::Controller();
 		
 		//Load Helper Functions so we can return dynamic url's
@@ -24,38 +25,44 @@ class Reviews extends Controller {
 
 	}
 
-	//Normal Call to Page - Doesn't do anything anymore....
-
+	/// Main page
+	/**
+	 * @note This just redirects to food reviews.
+	 */
 	function index()
 	{	
-		redirect('/reviews/food'); //Send them to the food page instead
+		redirect('/reviews/main/food'); //Send them to the food page instead
 	}
 
-	//Food Frontpage
-	function food()
+	/// Main context frontpage
+	function main($content_type)
 	{
 		if (!CheckPermissions('public')) return;
 		
 		//Set page code
-		$this->pages_model->SetPageCode('review_food');
+		$this->pages_model->SetPageCode('review_main');
+		
+		$this->main_frame->SetTitleParameters(array(
+			'content_type' => $content_type
+		));
 
 		//Load news model
 		$this->load->model('News_model');
 
 		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId('food',1); //1 is the amount of articles
+		$article_id = $this->News_model->GetLatestId($content_type,1); //1 is the amount of articles
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
 		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
-		$organisation_content_type = 'food'; //This should be a constant...
 
 		//Get data from GetReviews
-		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
+		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name, $content_type);
 
 		//Incase of no data
-		if (count($reviews_database_result) == 0)
-			echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
+		if (count($reviews_database_result) == 0) {
+			$this->messages->AddMessage('information', 'No articles could be found', FALSE);
+		}
 
 		//First row only since it should be unique
 		$reviews_database_result = $reviews_database_result[0];
@@ -71,7 +78,7 @@ class Reviews extends Controller {
 		$data['article_link'] = '/reviews/foodreview/'.$organisation_code_name;
 
 		//Set Blurb
-		$data['main_blurb'] = $this->pages_model->GetPropertyText('food_blurb');
+		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
 		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
 		if ($article_database_result['photos'] != array())
 		{
@@ -86,13 +93,13 @@ class Reviews extends Controller {
 		$data['article_photo_title'] = "Recent Title";
 
 		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('food');
+		$tabledata = $this->Review_model->GetTags($content_type);
 
 		//Pass tabledata straight to view it is in the proper format
 		$data['table_data'] = $tabledata;
 
 		//Get league data
-		$league_data = $this->Review_model->GetLeagueDetails('food');
+		$league_data = $this->Review_model->GetLeagueDetails($content_type);
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
@@ -108,210 +115,42 @@ class Reviews extends Controller {
 		$data['league_data'] = $leagues;
 
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/food',$data);
+		$this->main_frame->SetContentSimple('reviews/'.$content_type,$data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-
-	//Drink Section - Dummy Data intill Model Ready
-	function drink()
+	
+	/// Review page
+	function review($content_type, $organisation_name)
 	{
 		if (!CheckPermissions('public')) return;
+		
+		//Load news model
+		$this->load->model('News_model');
 		
 		//Set page code
-		$this->pages_model->SetPageCode('review_drink');
+		$this->pages_model->SetPageCode('review_context');
 
-		//Load news model
-		$this->load->model('News_model');
-
-		//Set Blurb
-		$data['main_blurb'] = $this->pages_model->GetPropertyText('drink_blurb');
-
-		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId('drink',1); //1 is the amount of articles
-		$article_id = $article_id[0]; //Only 1 article being retrieved so...
-
-		//Get the directory name of the organistion it's about
-		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
-		$organisation_content_type = 'drink'; //This should be a constant...
-
-		//Get data from GetReviews
-		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
-
-		//Incase of no data
-		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
-
-		//First row only since it should be unique
-		$reviews_database_result = $reviews_database_result[0];
-
-		//Get the article summary
-		$article_database_result = $this->News_model->GetFullArticle($article_id);
-
-		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0]['name'];
-		$data['article_content'] = $article_database_result['subtext'];
-		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/drinkreview/'.$organisation_code_name;
-
-		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
-		if ($article_database_result['photos'] != array())
-		{
-			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
+		/// @TODO THIS NEEDS REMOVING, HARDCODING = BAD, GET FROM DATABASE
+		$TEMPORARY_hardwired_content_ids = array(
+			'food' => 7,
+			'drink' => 8,
+			'culture' => 9,
+		);
+		if (array_key_exists($content_type, $TEMPORARY_hardwired_content_ids)) {
+			$content_id = $TEMPORARY_hardwired_content_ids[$content_type];
+		} else {
+			$content_id = 7;
 		}
-		else
-		{
-			$data['article_photo'] = imageLocation(1);
-		}
+		//Find our article_id
+		$article_id = $this->Review_model->GetArticleID($organisation_name,$content_id);
+		$article_comment_id = $article_id[0];
 
-		$data['article_photo_alt_text'] = "Article Image";
-		$data['article_photo_title'] = "Recent Title";
-		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('drink');
-
-		//Pass tabledata staight to view it is in the proper format
-		$data['table_data'] = $tabledata;
-
-		//Get league data
-		$league_data = $this->Review_model->GetLeagueDetails('drink');
-
-		//Pass tabledata straight to view it is in the proper format
-		$data['league_data'] = $league_data;
-		
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/drink',$data);
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
-	
-	//Culture Section - Dummy Data intill Model Ready
-	function culture()
-	{
-		if (!CheckPermissions('public')) return;
-		
-		//Set page code
-		$this->pages_model->SetPageCode('review_culture');
-
-		//Load news model
-		$this->load->model('News_model');
-
-		//Set Blurb
-		$data['main_blurb'] = $this->pages_model->GetPropertyText('culture_blurb');
-
-		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId('culture',1); //1 is the amount of articles
-		$article_id = $article_id[0]; //Only 1 article being retrieved so...
-
-		//Get the directory name of the organistion it's about
-		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
-		$organisation_content_type = 'culture'; //This should be a constant...
-
-		//Get data from GetReviews
-		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name,$organisation_content_type);
-
-		//Incase of no data
-		if (count($reviews_database_result) == 0) echo 'There are no articles...<BR> This page doesnt work under these conditions <BR>';
-
-		//First row only since it should be unique
-		$reviews_database_result = $reviews_database_result[0];
-
-		//Get the article summary
-		$article_database_result = $this->News_model->GetFullArticle($article_id);
-
-		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0]['name'];
-		$data['article_content'] = $article_database_result['subtext'];
-		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/culturereview/'.$organisation_code_name;
-		
-		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
-		if ($article_database_result['photos'] != array())
-		{
-			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
-		}
-		else
-		{
-			$data['article_photo'] = imageLocation(1);
-		}
-
-		$data['article_photo_alt_text'] = "Article Image";
-		$data['article_photo_title'] = "Recent Title";
-
-		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags('culture');
-
-		//Pass tabledata staight to view it is in the proper format
-		$data['table_data'] = $tabledata;
-
-		//Get league data
-		$league_data = $this->Review_model->GetLeagueDetails('culture');
-
-		//Pass tabledata straight to view it is in the proper format
-		$data['league_data'] = $league_data;
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/culture',$data);
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	
-	//Review Function for Food/Drink/Culture
-	function mainreview($review_type, $organisation_name)
-	{
-		if (!CheckPermissions('public')) return;
-		
-		//Load news model
-		$this->load->model('News_model');
-
-		switch($review_type)
-		{
-			case 0:
-				//Set page code
-				$this->pages_model->SetPageCode('review_context_food');
-
-				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($organisation_name,7);
-				$article_comment_id = $article_id[0];
-
-				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
-				$data['type_id'] 	= 7;
-				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,7,$article_comment_id);//User comments
-				$review_database_result = $this->Review_model->GetReview($organisation_name,'food');
-			break;
-	
-			case 1:
-				//Set page code
-				$this->pages_model->SetPageCode('review_context_drink');
-
-				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($organisation_name,8);
-				$article_comment_id = $article_id[0];
-
-				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
-				$data['type_id'] 	= 8;
-				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,8,$article_comment_id);//User comments
-
-				$review_database_result = $this->Review_model->GetReview($organisation_name,'drink');
-			break;
-	
-			case 2:
-				//Set page code
-				$this->pages_model->SetPageCode('review_context_culture');
-
-				//Find our article_id
-				$article_id = $this->Review_model->GetArticleID($organisation_name,9);
-				$article_comment_id = $article_id[0];
-
-				$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
-				$data['type_id'] 	= 9;
-				$data['comments'] 	= $this->Review_model->GetComments($organisation_name,9,$article_comment_id);//User comments
-
-				$review_database_result 	= $this->Review_model->GetReview($organisation_name,'culture');
-			break;
-		}
+		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
+		$data['type_id'] 	= $content_id;
+		$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
+		$review_database_result = $this->Review_model->GetReview($organisation_name,$content_type);
 
 		//Get the article for each article on the page
 		for ($article_no = 0; $article_no < count($article_id); $article_no++)
@@ -371,39 +210,22 @@ class Reviews extends Controller {
 		$this->main_frame->Load();
 
 	}
-	
-	function foodreview()
-	{
-		Reviews::mainreview(0,$this->uri->segment(3)); //Both are same format
-	}
 
-	function drinkreview()
-	{
-		Reviews::mainreview(1,$this->uri->segment(3)); //Both are same format
-	}
-	
-	//Culture Review
-	function culturereview()
-	{
-		Reviews::mainreview(2,$this->uri->segment(3)); //Same again
-	}
-
+	/// Add a comment
 	function addcomment()
 	{
+		/// @todo Model shouldn't have to deal with post data.
 		$this->Review_model->SetComment($_POST); //Gives model post data
 		redirect($_POST['return_page']); //Send user back to previous page
 	}
 
-	//Bar Crawl Page
-	function barcrawl()
+	/// Bar Crawl Page
+	function barcrawl($CrawlName = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
 		//Set page code
 		$this->pages_model->SetPageCode('review_context_barcrawl');
-
-		//Start of controller for model
-		$crawl_name = $this->uri->segment(3);
 
 		//Dummy Data - frb501
 		$data['crawl_title']='The Great Piss Up';
@@ -435,24 +257,21 @@ class Reviews extends Controller {
 		$this->main_frame->Load();
 	}
 
-	//Display table for review table (from puffers)
-	function table()
+	/// Display table for review table (from puffers)
+	function table(	$item_type = NULL,
+					$sorted_by = NULL,
+					$item_filter_by = NULL,
+					$where_equal_to = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
 		//Set page code
 		$this->pages_model->SetPageCode('review_table');
 
-		$item_type = $this->uri->segment(3); //Expected food/drink/culture/any
-		$sorted_by = $this->uri->segment(4); //Expected name/star/price/user/any
-
-		$item_filter_by = $this->uri->segment(5); //Expected a valid tag group name or 'any'
-		$where_equal_to = $this->uri->segment(6); //Expected a valid tag name or 'any'
-
-		$columns = array(0);
 
 		$database_result = $this->Review_model->TableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
 
+		$columns = array(0);
 		$entries = array();
 
 		//Incase of null result
@@ -463,43 +282,43 @@ class Reviews extends Controller {
 		else
 		{ //Normal Case
 
-		//A list of all tags
-		$data['review_tags'] = $database_result[0]['tag_groups'];
-
-		//For each row in the table
-
-		for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
-		{
-			$entries[$reviewno]['review_image'] = '/images/prototype/news/thumb3.jpg';
-			$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
-			$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
-			$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
-			$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
-			$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
-
-			//Change scope of $tagbox
-			$tagbox = array();
-
-			//Tags work as a array within a array, which is just confusing!
-			for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
+			//A list of all tags
+			$data['review_tags'] = $database_result[0]['tag_groups'];
+	
+			//For each row in the table
+	
+			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
-				$tag_group_name = $data['review_tags'][$tagno];
-
-				//Pass only if it exists for this organisation
-				if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
+				$entries[$reviewno]['review_image'] = '/images/prototype/news/thumb3.jpg';
+				$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
+				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
+				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
+				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
+				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'review/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
+	
+				//Change scope of $tagbox
+				$tagbox = array();
+	
+				//Tags work as a array within a array, which is just confusing!
+				for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
 				{
-					$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
+					$tag_group_name = $data['review_tags'][$tagno];
+	
+					//Pass only if it exists for this organisation
+					if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
+					{
+						$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
+					}
+					else //Else pass a empty array - Changed a array containing 'n/a'
+					{
+						$tagbox[$data['review_tags'][$tagno]] = array('n/a');
+					}
 				}
-				else //Else pass a empty array - Changed a array containing 'n/a'
-				{
-					$tagbox[$data['review_tags'][$tagno]] = array('n/a');
-				}
+	
+				$entries[$reviewno]['tagbox'] = $tagbox;
 			}
-
-			$entries[$reviewno]['tagbox'] = $tagbox;
-		}
-
-		$data['entries'] = $entries;
+	
+			$data['entries'] = $entries;
 
 		}
 
@@ -507,13 +326,15 @@ class Reviews extends Controller {
 		$this->main_frame->Load();
 	}
 
-	function reportcomment()
+	/// Report a comment
+	function reportcomment($comment_id)
 	{
-		$this->Review_model->ReportComment($this->uri->segment(3));
+		$this->Review_model->ReportComment($comment_id);
 		redirect('/reviews/food');
 	}
 
-	function leagues()
+	/// Leages
+	function leagues($League = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -521,10 +342,10 @@ class Reviews extends Controller {
 		$this->pages_model->SetPageCode('review_league');
 
 		//Check we have being passed a league to view otherwise the query returns badly...
-		if ($this->uri->segment(3) == NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
+		if ($League === NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
 
 		//Get leagues from model
-		$leagues = $this->Review_model->GetLeague($this->uri->segment(3));
+		$leagues = $this->Review_model->GetLeague($League);
 
 		//Check for if zero
 		if (isset($leagues[0]['league_name']) == 1)
@@ -537,7 +358,8 @@ class Reviews extends Controller {
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
 				$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
-				$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; //This will need the use of a function which returns what a organisition has being reviews on
+				//This will need the use of a function which returns what a organisition has being reviews on
+				$reviews['review_link'][$row] = '/reviews/foodreview/'.$leagues[$row]['organisation_directory_entry_name']; 
 				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 			}
@@ -552,7 +374,7 @@ class Reviews extends Controller {
 		$data['league_data'] = $league_data;
 
 
-//Dummy data
+		//Dummy data
 		$reviews['review_image'] = array(
 			'/images/prototype/news/thumb9.jpg',
 			'/images/prototype/news/thumb9.jpg',
@@ -569,51 +391,11 @@ class Reviews extends Controller {
 		}
 		else
 		{	//No rows returned
-		$data['max_entries'] = 0;
+			$data['max_entries'] = 0;
 		}
 
 
 		$this->main_frame->SetContentSimple('reviews/leagues',$data);
-		$this->main_frame->Load();
-	}
-	
-	/**
-	* These are all the edit pages for the admin panel
-	* Additional controllers will be required
-	*/
-	function edit()
-	{
-		if (!CheckPermissions('public')) return;
-		
-		$data['title_image'] = 'images/prototype/reviews/reviews_01.gif';
-		
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit');
-		$this->main_frame->SetContentSimple('reviews/mainedit', $data);
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	function editsection()
-	{
-		if (!CheckPermissions('public')) return;
-		
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit Section');
-		$this->main_frame->SetContentSimple('reviews/sectionedit');
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	function editreview()
-	{
-		if (!CheckPermissions('public')) return;
-		
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit Review');
-		$this->main_frame->SetContentSimple('reviews/reviewedit');
-		
-		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 }
