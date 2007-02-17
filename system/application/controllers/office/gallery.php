@@ -238,7 +238,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		$config['image_library'] = 'netpbm';
 		$config['library_path'] = '/usr/bin/';
-		$config['source_image'] = BASE_DIR.$selectedThumb[0];
+		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
 		$config['maintain_ratio'] = FALSE;
@@ -250,7 +250,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 
 		if (!$this->image_lib->crop())
 		{
-			die('The crop failed.');
+//			die('The crop failed.');
 			echo $this->image_lib->display_errors();
 		}
 		
@@ -263,7 +263,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		if (!$this->image_lib->resize())
 		{
-			die('The resize failed.');
+//			die('The resize failed.');
 			echo $this->image_lib->display_errors();
 		}
 		
