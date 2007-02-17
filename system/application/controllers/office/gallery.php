@@ -119,9 +119,9 @@ define('PHOTOS_PERPAGE', 12);
 		$id = $this->uri->segment(4);
 		
 		if ($this->uri->segment(5) == 'save'
-		    and !empty($this->input->post('title'))
-		    and !empty($this->input->post('date'))
-		    and !empty($this->input->post('photographer'))) {
+		    and !$this->input->post('title')
+		    and !$this->input->post('date')
+		    and !$this->input->post('photographer')) {
 			
 			$new = array('photo_title' => $this->input->post('title'),
 			             'photo_timestamp' => $this->input->post('date'),
