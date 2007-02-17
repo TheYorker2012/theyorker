@@ -254,7 +254,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			echo $this->image_lib->display_errors();
 		}
 		
-		$config['source_image'] = $config['new_image'];
+		$config['source_image'] = imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
 		$config['new_image'] = null;
 		$config['width'] = $selectedThumb[5];
 		$config['height'] = $selectedThumb[6];
