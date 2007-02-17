@@ -230,14 +230,13 @@ class Directory_model extends Model {
 		return $data;
 	}
 	
-	function PublishDirectoryEntryRevisionById($DirectoryEntryName, $Id)
+	function PublishDirectoryEntryRevisionById($DirectoryEntryName, $id)
 	{
 		$sql =
 		'UPDATE organisations SET'.
 		' organisations.organisation_live_content_id=? '.
-		'FROM organisations '.
 		'WHERE organisations.organisation_directory_entry_name=? ';
-		$query = $this->db->query($sql, array($Id, $DirectoryEntryName));
+		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
 		return true;
 	}
 	
