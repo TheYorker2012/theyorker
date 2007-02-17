@@ -236,13 +236,13 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'gd2';
-//		$config['library_path'] = '/usr/bin/';
+		$config['image_library'] = 'netpbm';
+		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = BASE_DIR.$selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
 		$config['maintain_ratio'] = FALSE;
-		$config['new_image'] = imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
+		$config['new_image'] = BASE_DIR.imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
 		$config['x_axis'] = $formData['x1'];
 		$config['y_axis'] = $formData['y1'];
 		
