@@ -84,9 +84,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 					break;
 				}
 			}
-			$photos = $photos->limit(PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE)->get();
+			$photos = $photos->limit(PHOTOS_PERPAGE, $page)->get();
 		} else {
-			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page * PHOTOS_PERPAGE);
+			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page);
 		}
 		
 		$data = array(
