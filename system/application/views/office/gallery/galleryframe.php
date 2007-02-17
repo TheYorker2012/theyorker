@@ -7,7 +7,7 @@
 			<?php if($this->uri->segment(4)) {
 				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a><br />';
 			}?>
-			<a href="javascript:document.clearform.submit()">Start a new Search</a>
+			<a href="javascript:document.clearform.submit()">Start a new Search</a><br />
 			<a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a><br />
 		</div>
 	</form>

@@ -2,7 +2,7 @@
 	<p>Photo Title: <input type="text" name="title" size="30" /></p>
 	<p>Photo File: <input type="file" name="userfile" size="30" /></p>
 </div>
-<?=form_open_multipart('admin/image/do_upload'); ?>
+<?=form_open_multipart($this->uri->segment(1).'/image/do_upload'); ?>
 <p>Photo's should be in jpg format. The upload size limit is 2mb(?).</p><br />
 <div>
 	<p>Photo Title: <input type="text" name="title1" size="30" /></p>
