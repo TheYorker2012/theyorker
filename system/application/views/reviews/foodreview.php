@@ -54,16 +54,16 @@
 
 	for ($article_no = 0; $article_no < count($article); $article_no++)
 	{
-	echo "
-		<img src='".$article[$article_no]['article_photo']."' alt='Reporter' title='Reporter' style='float: right;' />
-		<span style='font-size: medium;'><b>".$article[$article_no]['article_author']."</b></span><br />
-		".$article[$article_no]['article_date']."<br />
-		<span style='color: #ff6a00;'>Read more articles by this reporter</span>
+	echo '
+		<img src="'.$article[$article_no]['article_photo'].'" alt="Reporter" title="Reporter" style="float: right;" />
+		<span style="font-size: medium;"><b>'.$article[$article_no]['article_author'].'</b></span><br />
+		'.$article[$article_no]['article_date'].'<br />
+		<span style="color: #ff6a00;">Read more articles by this reporter</span>
 	        <p>
-			<span style='color:black;'>".$article[$article_no]['article_content']."</span>
+			<span style="color:black;">'.$article[$article_no]['article_content'].'</span>
 		</p>
-		<hr>
-		";
+		';
+		if ($article_no < (count($article) - 1)) { echo '<hr>'; }
 	}
 
 ?>
@@ -71,8 +71,10 @@
 </div>
 <div class="grey_box">
 	<h2>your comments</h2>
-
-	User Rating: <h5 style="display:inline;"><?php echo $user_rating; ?></h5>/10 (based on <?php echo $user_based; ?> votes)
+	<?php
+		if ($user_rating == null) echo 'No one has rated this place yet, you could be the first!';
+		else { echo 'User Rating: <h5 style="display:inline;">'.$user_rating.'</h5>/10 (based on '.$user_based.' votes)';
+	?>
 	<hr>
 <?php
 	//If not empty
@@ -96,6 +98,7 @@ if ($this->uri->segment(4) != 'all')
 	}
 		
 	}
+		
 
 ?>
 
@@ -106,6 +109,9 @@ if ($this->uri->segment(4) != 'all')
 {
 	echo '<a href='.$this->uri->uri_string().'/all>View all comments</a><br /><br />';
 }
+
+}
+echo '<br /><br />';
 
 if ($this->user_auth->entityId > 0)
 {
@@ -118,8 +124,8 @@ if ($this->user_auth->entityId > 0)
 	echo form_hidden('comment_article_id',$article_id[0]);
 	echo form_hidden('comment_user_entity_id',$this->user_auth->entityId);
 	echo form_hidden('return_page',$this->uri->uri_string());
-	echo '<textarea name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
-	echo '&nbsp;&nbsp;&nbsp;Rating:	<SELECT name="comment_rating">
+	echo '<fieldset><textarea class="text" name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
+	echo 'Rating: <SELECT name="comment_rating">
 				<OPTION selected>1</OPTION>
 				<OPTION>2</OPTION>
 				<OPTION>3</OPTION>
@@ -131,11 +137,11 @@ if ($this->user_auth->entityId > 0)
 				<OPTION>9</OPTION>
 				<OPTION>10</OPTION>
 			</SELECT>&nbsp;';
-	echo '<input type="submit" value="Add Comment"><br />';
+	echo '<input type="submit" class="button" value="Add Comment"></fieldset></form>';
 }
 else
 {
-	echo '<I>You can your own comment by logging in</I>';
+	echo '<i>You can your own comment by <a href="/login/main">logging in</a></i>';
 }
 ?>
 	<br />
