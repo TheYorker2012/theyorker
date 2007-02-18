@@ -11,7 +11,7 @@ class Feedback extends Controller {
 
 	function index()
 	{
-		if (!CheckPermissions('admin')) return;
+		if (!CheckPermissions('office')) return;
 
 		$this->load->library('xajax');
 		function deleteEntry ($entry_id)
