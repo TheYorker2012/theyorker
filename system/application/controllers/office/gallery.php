@@ -122,8 +122,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		if ($this->uri->segment(5) == 'save'
 		    and $this->input->post('title')
-		    and $this->input->post('date')
-		    and $this->input->post('photographer')) {
+		    and $this->input->post('date')) {
 			
 			$new = array('photo_title' => $this->input->post('title'),
 			             'photo_timestamp' => $this->input->post('date'),
