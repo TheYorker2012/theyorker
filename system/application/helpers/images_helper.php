@@ -144,7 +144,10 @@ function createImageLocation($id, $type = FALSE) {
 	
 }
 
+
+//Depreciated -- only the gallery should use these :( phase out in later release
 function ImageLocationFromId($id, $type = false, $extension = '.jpg', $force = FALSE) {
+	if (is_null($extension)) $extension = '.jpg';
 	$CI =& get_instance();
 	$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $type), 1);
 	$codename = $query->row()->image_type_codename;
