@@ -61,16 +61,6 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		} else {
 			return '/images/photos/null.jpg';
 		}
-	} elseif (is_int($type)) {
-		$CI =& get_instance();
-		$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $type), 1);
-		$codename = $query->row()->image_type_codename;
-		$location = 'images/images/'.$codename.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-		if ($force or is_file($location)) {
-			return '/'.$location;
-		} else {
-			return '/images/photos/null.jpg';
-		}
 	} else {
 		$CI =& get_instance();
 		$query = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $id), 1);
@@ -152,6 +142,18 @@ function createImageLocation($id, $type = FALSE) {
 		}
 	}
 	
+}
+
+function ImageLocationFromId($id, $type = false, $extension = '.jpg', $force = FALSE) {
+	$CI =& get_instance();
+	$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $type), 1);
+	$codename = $query->row()->image_type_codename;
+	$location = 'images/images/'.$codename.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+	if ($force or is_file($location)) {
+		return '/'.$location;
+	} else {
+		return '/images/photos/null.jpg';
+	}
 }
 
 function createImageLocationFromId($id, $type) {
