@@ -1,5 +1,20 @@
 <?php
 if (isset($maps)) {
+
+switch($_SERVER['SERVER_NAME']) {
+	case 'theyorker.gmghosting.com':
+		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q';
+		break;
+	case 'ado.is-a-geek.net':
+		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
+		break;
+	case 'localhost':
+		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT2yXp_ZAY8_ufC3CFXhHIE1NvwkxS_eaUeRp8y_e74I4oBnTQAPy1jcg';
+		break;
+	case 'default':
+		$key = 'unknown';
+}
+
 // The google maps API key will need to be changed whenever we change server
 // There is a google account to do this:
 //   username - theyorkermaps
@@ -7,7 +22,7 @@ if (isset($maps)) {
 ?>
 
 	<!-- BEGIN map handling code -->
-	<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ" type="text/javascript"></script>
+	<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?php echo($key); ?>" type="text/javascript"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[
