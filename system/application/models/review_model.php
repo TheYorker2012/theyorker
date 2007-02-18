@@ -70,7 +70,7 @@ class Review_model extends Model {
 			'
 			SELECT
 			 unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-			 business_cards.business_card_name as name,
+			 concat(users.user_firstname, " ",users.user_surname) as name,
 			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
 			 review_context_contents.review_context_content_id as context_content_id,
 			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published
@@ -84,12 +84,8 @@ class Review_model extends Model {
 			INNER JOIN review_context_contents 
 			ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
 			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
-			INNER JOIN business_cards 
-			ON business_cards.business_card_user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			INNER JOIN business_card_groups
-			ON business_card_groups.business_card_group_id=business_cards.business_card_business_card_group_id
-			 AND business_card_group_organisation_entity_id =
-			     (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = "theyorker")
+			INNER JOIN users 
+			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
 			WHERE 1
 			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
 			';
