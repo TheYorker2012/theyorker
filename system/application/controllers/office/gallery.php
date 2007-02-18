@@ -121,9 +121,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		$id = $this->uri->segment(4);
 		
 		if ($this->uri->segment(5) == 'save'
-		    and !$this->input->post('title')
-		    and !$this->input->post('date')
-		    and !$this->input->post('photographer')) {
+		    and $this->input->post('title')
+		    and $this->input->post('date')
+		    and $this->input->post('photographer')) {
 			
 			$new = array('photo_title' => $this->input->post('title'),
 			             'photo_timestamp' => $this->input->post('date'),
@@ -136,7 +136,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				$new['photo_homepage'] = "NULL";
 			}
 			
-			$this->db->where('photo_id', $id)->update('photos', $new);
+			$this->db->update('photos', $new, array('photo_id' => $id));
+
 		}
 		
 		$this->pages_model->SetPageCode('office_gallery');
@@ -203,7 +204,6 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
 		
 		$data = array();
-		$this->load->library('upload');
 		$this->upload->initialize($config);
 		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
 			if ( ! $this->upload->do_upload('userfile'.$x)) {
@@ -218,6 +218,42 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
+		$this->main_frame->Load();
+	}
+	
+	function edit() {
+		if (!CheckPermissions('office')) return;
+		
+		$this->load->library(array('image_lib', 'xajax'));
+		$this->load->helper('images');
+		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		$this->xajax->processRequests();
+		
+		$output = array(); // hack to use same view
+		$data = array();
+		
+		$id = $this->uri->segment(4);
+		$_SESSION['img_list'][] = $id;
+		
+		$photoDetails = $this->db->getwhere('photos', array('photo_id' => $id));
+		$thumbDetails = $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
+		
+		$loop = 0;
+		foreach ($photoDetails->result() as $Photo) {
+			foreach ($thumbDetails->result() as $Thumb) {
+				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
+				$output[$loop]['string'] = photoLocation($Photo->photo_id).'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$loop++;
+			}
+		}
+		
+		$data[] = $output
+		
+		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
+		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
+		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$thumbDetails));
 		$this->main_frame->Load();
 	}
 	

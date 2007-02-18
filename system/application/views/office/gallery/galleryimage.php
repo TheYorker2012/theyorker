@@ -37,5 +37,5 @@
 	<?php endforeach;?>
 	Full Size<br />
 	<a href="<?=site_url(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
-	Not happy with these thumbnails? <a href="<?=$photoDetails->photo_id?>/edit">Click here</a> to re-thumbnail.
+	Not happy with these thumbnails? <a href="<?=site_url('office/gallery/edit/'.$photoDetails->photo_id)?>">Click here</a> to re-thumbnail.
 </div>
