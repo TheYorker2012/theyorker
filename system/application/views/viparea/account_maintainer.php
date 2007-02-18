@@ -7,25 +7,33 @@
 <div class='blue_box'>
 <h2>account maintenance</h2>
 	<p>
-		<?php echo $account_maintenance; ?>
+		<?php echo $account_maintenance_text; ?>
 	</p>
-	<form action='/viparea/account/maintainer/<?php echo $organisation['shortname']; ?>/updatedetails' class='form' method='POST'>
+	<form action='<?php echo vip_url('account/update'); ?>' class='form' method='POST'>
 	<fieldset>
-		<label for='maintainer_type'>Maintence by</label>
-		<input type='radio' name='maintainer_type' value='yorker' <?php if($maintainer['type'] == "yorker"){ echo "checked";}?> /> The Yorker
-		<input type='radio' name='maintainer_type' value='account' <?php if($maintainer['type'] == "account"){ echo "checked";}?> /> Organisation member.
-		<label for='maintainer_name'>Account Maintainer:</label>
-		<input type='text' name='maintainer_name' style='width: 150px;' value='<?php echo $maintainer['name']; ?>'/>
-		<br />
-		<label for='maintainer_email'>Maintainer's Email:</label>
-		<input type='text' name='maintainer_email' style='width: 220px;' value='<?php echo $maintainer['email']; ?>'/>
-		<br />
-		<label for='maintainer_student'>Student?</label>
-		<input type='checkbox' name='maintainer_student' value='yes'<?php if($maintainer['student'] == "yes"){ echo "checked";}?>/>
-		<br />
+		<label for='maintainer_type'>Maintence by :</label><br />
+		<input type='radio' name='maintainer_type' value='yorker' <?php if($maintainer['maintained'] == false){ echo "checked";}?> 
+		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> The Yorker<br />
+		
+		<input type='radio' name='maintainer_type' value='student' <?php if(false){ echo "checked";}?>
+		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> Me (<?php echo $user_fullname; ?>)<br />
+		
+		<input type='radio' name='maintainer_type' value='nonstudent' <?php if($maintainer['maintained'] and $maintainer['student'] == false){ echo "checked";}?>
+		onclick="document.getElementById('nonstudent_details').style.display = 'block';" /> Non student member<br />
+		
+		<div id='nonstudent_details' <?php if($maintainer['maintained'] and $maintainer['student'] == false){}else{ echo 'style="display: none;"';}?>>
+			<label for='maintainer_name'>Maintainer's Name:</label>
+			<input type='text' name='maintainer_name' style='width: 150px;' value='<?php echo $maintainer['maintainer_name']; ?>'/>
+			<br />
+			<label for='maintainer_email'>Maintainer's Email:</label>
+			<input type='text' name='maintainer_email' style='width: 220px;' value='<?php echo $maintainer['maintainer_email']; ?>'/>
+			<br />
+		</div>
+		
 		<label for='maintainer_button'></label>
 		<input type='submit' name='maintainer_button' value='Update' class='button' />
 	</fieldset>
 	</form>
 </div>
-<a href='/viparea/account/update/<?php echo $organisation['shortname']; ?>'>Back to my account.</a>
+<a href='<?php echo vip_url('account/update'); ?>'>Back to my viparea account.</a>
+<? echo maintainer; ?>

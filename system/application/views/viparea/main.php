@@ -22,6 +22,6 @@ information goes here.
 		<li><a href='<?php echo vip_url('members/view'); ?>'>Manage members</a></li>
 		<?php }?>
 		<li><a href='<?php echo vip_url('advertising'); ?>'>Advertising</a></li>
-		<li><a href='<?php echo vip_url('account/update'); ?>'>My Account</a></li>
+		<li><a href='<?php echo vip_url('account/update'); ?>'>My Viparea Account</a></li>
 	</ul>
 </div>

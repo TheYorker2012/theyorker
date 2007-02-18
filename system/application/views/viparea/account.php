@@ -7,49 +7,45 @@
 <div class='blue_box'>
 <h2>account maintenance</h2>
 	<p>
-		<?php echo $account_maintenance; ?>
+		<?php echo $account_maintenance_text; ?>
 	</p>
-	<?php if($maintainer['type'] == "yorker"){ ?>
+	<?php
+	if($maintainer['maintained']){
+		if($maintainer['student']){ ?>
+		<p>
+			The following student is responisble for this account.
+		</p>
+		<p>
+			<strong>Account Maintainer:</strong> <?php echo $maintainer['maintainer_firstname']." ".$maintainer['maintainer_surname']; ?><br />
+			<strong>Maintainer's Email:</strong> <?php echo $maintainer['maintainer_email']; ?><br />
+		</p>
+		<?php }else{ ?>
+		<p>
+			The following non-student is responisble for this account.
+		</p>
+		<p>
+			<strong>Account Maintainer:</strong> <?php echo $maintainer['maintainer_name']; ?><br />
+			<strong>Maintainer's Email:</strong> <?php echo $maintainer['maintainer_email']; ?><br />
+		</p>
+		<?php
+		}
+	}else{ ?>
 	<p>
 		This account is being maintained by the yorker staff.
 	</p>
-	<?php }else{ ?>
-	<p>
-		The following person is responisble for this account.
-	</p>
-	<p>
-		<strong>Account Maintainer:</strong> <?php echo $maintainer['name']; ?><br />
-		<strong>Maintainer's Email:</strong> <?php echo $maintainer['email']; ?><br />
-		<strong>Maintainer is Student:</strong> <?php echo $maintainer['student']; ?><br />
-	</p>
 	<?php } ?>
-	<form action="/viparea/account/maintainer/<?php echo $organisation['shortname']; ?>" method="link" class="form">
+	<form action="<?php echo vip_url('account/maintainer'); ?>" method="link" class="form">
 	<fieldset>
 		<input type="submit" class="button" value="Change Maintainer" />
 	</fieldset>
 	</form>
 </div>
 <div class='grey_box'>
-<h2>account username</h2>
-	<p>
-		<?php echo $account_username; ?>
-	</p>
-	<form action='/viparea/account/update/<?php echo $organisation['shortname']; ?>/username' class='form' method='POST'>
-	<fieldset>
-		<label for='account_username'>Username :</label>
-		<input type='text' name='account_username' style='width: 150px;' value=''/>
-		<br />
-		<label for='account_button'></label>
-		<input type='submit' name='account_button' value='Update' class='button' />
-	</fieldset>
-	</form>
-</div>
-<div class='grey_box'>
 <h2>account password</h2>
 	<p>
-		<?php echo $account_password; ?>
+		<?php echo $account_password_text; ?>
 	</p>
-	<form action='/viparea/account/update/<?php echo $organisation['shortname']; ?>/password' class='form' method='POST'>
+	<form action='<?php echo vip_url('account/update/password'); ?>' class='form' method='POST'>
 	<fieldset>
 		<label for='password_old'>Old Password :</label>
 		<input type='password' name='password_old' style='width: 150px;' />
