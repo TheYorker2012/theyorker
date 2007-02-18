@@ -326,7 +326,6 @@ class Reviews extends Controller
 	
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
-				$entries[$reviewno]['review_image'] = '/images/prototype/news/thumb3.jpg';
 				$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
 				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
@@ -410,27 +409,12 @@ class Reviews extends Controller
 		//Pass tabledata straight to view it is in the proper format
 		$data['league_data'] = $league_data;
 
-
-		//Dummy data
-		$reviews['review_image'] = array(
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg',
-			'/images/prototype/news/thumb9.jpg');
-
 			$data['reviews'] = $reviews;
 		}
 		else
 		{	//No rows returned
 			$data['max_entries'] = 0;
 		}
-
 
 		$this->main_frame->SetContentSimple('reviews/leagues',$data);
 		$this->main_frame->Load();
