@@ -48,7 +48,7 @@ if (isset($sections['progress_reports']['entries']))
 	echo '<h2>'.$sections['progress_reports']['title'].'</h2>';
 	foreach ($sections['progress_reports']['entries'] as $pr_entry)
 	{
-		echo '<h3 style="display: inline"><span class="grey">'.$pr_entry['date'].'</span></h3><br />';
+		echo '<h5><span class="orange">'.$pr_entry['date'].'</span></h5>';
 		echo $pr_entry['text'].'<br /><br />';
 	}
 	echo '</div>';
