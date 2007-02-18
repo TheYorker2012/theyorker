@@ -19,6 +19,7 @@
 	</form>
 </div>
 
+<!--
 <div class="grey_box">
 	<h2>writers</h2>
 	<table width="90%" cellpadding="3" align="center">
@@ -47,6 +48,7 @@
 		</fieldset>
 	</form>
 </div>
+-->
 
 
 <?php

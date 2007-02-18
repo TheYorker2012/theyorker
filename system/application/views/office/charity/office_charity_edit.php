@@ -12,7 +12,9 @@
 <div class="blue_box">
 	<h2>charity info</h2>
 	<b>Title:</b> blah<br />
-	<b>Goal Total:</b> 15000<br />
+	<b>Current Total:</b> £1,242<br />
+	<b>Goal Total:</b> £15,000<br />
+	<b>Progress To Goal:</b> 8.3%<br />
 	<b>Goal Text:</b> Cool Runnings is a 1993 comedy film directed b<br />
 	<a href="/office/charity/#">[Modify]</a>
 </div>
@@ -28,6 +30,19 @@
 			<input type="submit" value="Save" class="button" name="r_submit_save" />
 		</fieldset>
 	</form>
+</div>
+
+<div class="blue_box">
+	<h2>latest progress report</h2>
+	<b>Date:</b> Saturday, 3rd February 2007<br />
+	<b>Details:</b> This is a test for a random charity progress report.<br />
+	<a href="/office/charity/#">[Modify]</a>
+</div>
+
+<div class="grey_box">
+	<h2>old progress reports</h2>
+	<b>02/02/2007</b>: Jeff ate a salad at some... <a href="/office/charity/#">[Modify]</a><br />
+	<b>24/01/2007</b>: Our first protest began... <a href="/office/charity/#">[Modify]</a><br />
 </div>
 
 <div class="blue_box">

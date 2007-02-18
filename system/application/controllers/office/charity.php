@@ -99,4 +99,29 @@ class Charity extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
+
+	function progressreports()
+	{
+		if (!CheckPermissions('office')) return;
+
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_charity_charities');
+
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('charities');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
+		// Set up the view
+		$the_view = $this->frames->view('office/charity/office_charity_progress_report', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
 }
