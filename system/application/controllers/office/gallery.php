@@ -255,7 +255,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		}
 		
 		$config['source_image'] = BASE_DIR.imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
-		$config['new_image'] = null;
+		unset($config['new_image']);
 		$config['width'] = $selectedThumb[5];
 		$config['height'] = $selectedThumb[6];
 		
