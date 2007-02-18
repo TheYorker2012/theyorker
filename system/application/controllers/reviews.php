@@ -138,7 +138,7 @@ class Reviews extends Controller
 		foreach ($league_data as &$league)
 		{
 			$leagues[] = array(
-				'league_image_path'=>(imageLocation($league['league_image_id'], 'puffers')),
+				'league_image_path'=>(imageLocation($league['league_image_id'], 'puffer')),
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
