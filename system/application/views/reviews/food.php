@@ -10,13 +10,13 @@ if (isset($league_data))
 	foreach ($league_data as $league_entry)
 	{
 		echo
-		"
-		<div class='LifestylePuffer'>
-		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
-		<img src='".$league_entry['league_image_path']."' alt='".$league_entry['league_name']."' />
+		'
+		<div class="LifestylePuffer">
+		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">
+		<img src="'.$league_entry['league_image_path'].'" alt="'.$league_entry['league_name'].'" />
 		</a>
 		</div>
-		";
+		';
 	}
 }
 ?>

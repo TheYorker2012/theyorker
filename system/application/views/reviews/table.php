@@ -28,7 +28,6 @@ if (isset($review_tags))
 
 		echo '<tr class="ReviewElement'.$flip.'">
 				<td>
-				<a href="' . $entry['review_table_link'] . '"><img src="' . $entry['review_image'] . '" alt="#" /></a>
 				<h3><a href="'.$entry['review_table_link'].'">'.$entry['review_title'].'</a></h3><br />
 				<a href="'.$entry['review_website'].'">'.$entry['review_website'].'</a><br />
 				<a href="#">&gt;Food</a>&nbsp;&nbsp;<a href="#">&gt;Drink</a><br />

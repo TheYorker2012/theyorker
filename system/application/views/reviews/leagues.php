@@ -11,13 +11,13 @@ if (isset($league_data))
 	foreach ($league_data as $league_entry)
 	{
 		echo
-		"
-		<div class='LifestylePuffer'>
-		<a href='/reviews/leagues/".$league_entry['league_codename']."'>
-		<img src='".$league_entry['league_image_path']."' alt='".$league_entry['league_name']."' />
+		'
+		<div class="LifestylePuffer">
+		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">
+		<img src="'.$league_entry['league_image_path'].'" alt="'.$league_entry['league_name'].'" />
 		</a>
 		</div>
-		";
+		';
 	}
 }
 ?>
@@ -50,7 +50,6 @@ if (isset($league_data))
 
 			echo 'User rating: '.$reviews['review_rating'][$topten].'/10<br />
 					</div>';
-			echo '		<img style="float: left; padding: 0.5em;" src="'.$reviews['review_image'][$topten].'" alt="#" />';
 			echo '		<a href="'.$reviews['review_website'][$topten].'">'.$reviews['review_website'][$topten].'</a><br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';
 			echo '	</div>';
