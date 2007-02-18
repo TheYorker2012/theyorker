@@ -1,61 +1,72 @@
 <?php
-// User authentication class by Andrew Oakley (ado500)
 
-// TODO: change comment styles to JavaDoc
+/**
+ * @file User_auth.php
+ */
 
-// This library is automatically loaded and provides the login status of users.
-//  Currently information is avaliable as member variables.  This may be
-//  changed to accessors at some point, but if this happens I will update all
-//  pages in the SVN to use them at the same time.  
+/// User authentication class.
+/**
+ * @author Andrew Oakley (ado500)
+ *
+ * This library is automatically loaded and provides the login status of users.
+ *  Currently information is avaliable as member variables.  This may be
+ *  changed to accessors at some point, but if this happens I will update all
+ *  pages in the SVN to use them at the same time.
+ *
+ * @todo Change User_auth into a model as it accesses the db lots and uses the
+ *  code igniter object which would be simply $this from a model.
+ */
 class User_auth {
 
-	// True if the user is logged in
+	/// bool True if the user is logged in
 	public $isLoggedIn;
 
-	// The username of the logged in user
+	/// string The username of the logged in user
 	public $username;
 
-	// The entityId of the logged in user
+	/// int The entityId of the logged in user
 	public $entityId;
 
-	// True if the user is an actual user rather than an organisation
+	/// bool True if the user is an actual user rather than an organisation
 	public $isUser;
 	
-	// If the user has an office login (does not indicate if they are
-	//  logged in)
+	/// bool If the user has an office login (does not indicate if they are
+	///  logged in)
 	public $officeLogin;
 
-	// The current access level to the office (None, Low, High, Admin)
+	/// string The current access level to the office (None, Low, High, Admin)
 	public $officeType = 'None';
 
-	// The interface id for the office
+	/// int The interface id for the office
 	public $officeInterface = -1;
 
-	// The firstname of the logged in user
+	/// string The firstname of the logged in user
 	public $firstname;
 
-	// The surname of the logged in user
+	/// string The surname of the logged in user
 	public $surname;
 	
-	// The permission of the logged in user
+	/// int The permission of the logged in user
 	public $permissions;
 
-	// The organisation (if any) the user has logged into the admin for
+	/// entity_id The organisation (if any) the user has logged into the admin
+	///  for (-1 if none)
 	public $organisationLogin = -1;
 
-	// The name of the organisation that has been logged in to (if any)
+	/// string The name of the organisation that has been logged in to (if any)
 	public $organisationName = '';
 
-	// The short name of the organisation that has been logged in to (if any)
+	/// string The short name of the organisation that has been logged in to (if
+	///  any)
 	public $organisationShortName = '';
 
-	// The salt used to generate the password hash
+	/// string The salt used to generate the password hash
 	private $salt;
 
-	// The code igniter object
+	/// The code igniter object
 	private $object;
 	
-	// The default constructor
+	/// The default constructor
 	public function __construct() {
 		$this->object = &get_instance();
 
@@ -104,7 +115,7 @@ class User_auth {
 		}
 	}
 	
-	// Attempts to log a user in based on a username and hash
+	/// Attempts to log a user in based on a username and hash.
 	private function loginByHash($username, $hash, $savelogin) {
 		$sql = 'SELECT entity_id, entity_salt 
 			FROM entities 
@@ -134,7 +145,7 @@ class User_auth {
 		}
 	}
 	
-	// Performs the actual login once a user is authenticated
+	/// Performs the actual login once a user is authenticated
 	private function loginAuthed($username, $entityId, $savelogin, $hash) {
 		$this->isLoggedIn = true;
 		$this->username = $username;
@@ -187,7 +198,12 @@ class User_auth {
 		$this->localToSession();
 	}
 	
-	// Login based on username and password
+	/// Login based on username and password.
+	/**
+	 * @param $username string Username.
+	 * @param $password string Password.
+	 * @param $savelogin bool Stay logged in.
+	 */
 	public function login($username, $password, $savelogin) {
 		$sql = 'SELECT entity_id, entity_username, entity_password, 
 				entity_salt 
@@ -217,14 +233,16 @@ class User_auth {
 				);
 
 			} else {
+				/// @throw Exception Invalid password.
 				throw new Exception('Invalid password');
 			}
 		} else {
+			/// @throw Exception User doesn't exist.
 			throw new Exception('User does not exist');
 		}
 	}
 	
-	// Logout of the site
+	/// Logout of the entire site
 	public function logout() {
 		// Change the cookie not to store the password, if present
 		if (isset($_COOKIE['SavedLogin'])) {
@@ -248,9 +266,12 @@ class User_auth {
 		$this->localToSession();
 	}
 	
-	// Login to the yorker office
+	/// Login to the yorker office
+	/**
+	 * @param $password string Password.
+	 */
 	public function loginOffice($password) {
-		// TODO: test (awaiting interface)
+		/// @TODO: test (awaiting interface)
 		if (!$this->officeLogin) {
 			throw new Exception('User does not have office access');
 		}
@@ -268,6 +289,7 @@ class User_auth {
 		
 		// We should always have a result at this stage
 		if ($query->num_rows() == 0) {
+			/// @throw Exception Cannot find entity!
 			throw new Exception('Cannot find entity!');
 		}
 
@@ -280,6 +302,7 @@ class User_auth {
 				$this->officeType = 'Low';
 				$this->officeInterface = $row->user_office_interface_id;
 			} else {
+				/// @throw Exception Invalid password
 				throw new Exception('Invalid password');
 			}
 		} else {
@@ -293,24 +316,30 @@ class User_auth {
 				}
 				$this->officeInterface = $row->user_office_interface_id;
 			} else {
-                                throw new Exception('Invalid password');
-                        }
+				/// @throw Exception Invalid password
+				throw new Exception('Invalid password');
+			}
 		}
 
 		$this->localToSession();
 	}
 	
-	// Logout of the yorker office
+	/// Logout of the yorker office
 	public function logoutOffice() {
 		$this->officeType = 'None';
 		$this->officeInterface = -1;
 		$this->localToSession();
 	}
 	
-	// Checks if the current users password matches $password (returns true or false)
+	/// Checks if the current users password matches $password (returns true or false)
+	/**
+	 * @param $password string Password
+	 */
 	public function checkPassword($password) {
-		if (!$this->isLoggedIn | !$this->isUser)
+		if (!$this->isLoggedIn | !$this->isUser) {
+			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
+		}
 
 		$hash = sha1($this->salt.$password);
 
@@ -325,13 +354,21 @@ class User_auth {
 		return $row->valid;
 	}
 
-	// Sets an entities password (and salt if necessary).  Defaults to the
-	//  logged in entity, otherwise uses the given entity.  
+	/// Sets an entities password (and salt if necessary).
+	/**
+	 * @param $password string Password
+	 * @param $entity defaults to NULL
+	 *	- integer Entity ID to set password for.
+	 *	- NULL Current logged in entity.
+	 *
+	 * Defaults to the logged in entity, otherwise uses @a entity.
+	 */
 	public function setPassword($password, $entity = null) {
 		$db = $this->object->db;
 
 		if ($entity == null) {
 			if (!$this->isLoggedIn | !$this->isUser)
+				/// @throw Exception You must be logged in as a student to do this
 				throw new Exception('You must be logged in as a student to do this');
 			
 			$entity = $this->entityId;
@@ -344,7 +381,7 @@ class User_auth {
 			$row = $query->row();
 			$salt = $query->entity_salt;
 			
-			// TODO: check that null is returned for no salt
+			/// @TODO: check that null is returned for no salt
 			if ($salt == null) {
 				for ($i = 0; $i < 32; $i++) {
 					$salt .= chr(rand(65,90));
@@ -360,11 +397,21 @@ class User_auth {
 		$query = $db->query($sql, array($salt, $hash, $entity));
 	}
 
+	/// Sets an entities office password.
+	/**
+	 * @param $password string Password
+	 * @param $entity defaults to NULL
+	 *	- integer Entity ID to set password for.
+	 *	- NULL Current logged in entity.
+	 *
+	 * Defaults to the logged in entity, otherwise uses @a entity.
+	 */
 	public function setOfficePassword($password, $entity = null) {
-		// We assume the user already has a normal login and salt
+		/// @pre User already has a user record and salt.
 
 		if ($entity == null) {
 			if (!$this->isLoggedIn | !$this->isUser)
+				/// @throw Exception You must be logged in as a student to do this
 				throw new Exception('You must be logged in as a student to do this');
 			$entity = $this->entityId;
 			$salt = $this->salt;
@@ -387,12 +434,19 @@ class User_auth {
 		$query = $db->query($sql, array($hash, $entity));
 	}
 
-	// Get a list of organisations that the user can login to
+	/// Get a list of organisations that the user can login to
+	/**
+	 * @return array of arrays Straight from organisations table with fields:
+	 *	- 'organisation_entity_id'
+	 *	- 'organisation_name'
+	 *	- 'organisation_directory_entry_name'
+	 */
 	public function getOrganisationLogins() {
 		if (!$this->isLoggedIn | !$this->isUser)
+			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
 
-		$sql = 'SELECT organisation_entity_id, organisation_name FROM organisations 
+		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations 
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
 			WHERE subscription_user_entity_id = ? AND subscription_vip = TRUE';
 
@@ -402,9 +456,38 @@ class User_auth {
 		return $query->result_array();
 	}
 
-	// Login to an organisations admin interface
+	/// Get a list of organisations that the user is a PR rep for
+	/**
+	 * @return array of arrays Straight from organisations table with fields:
+	 *	- 'organisation_entity_id'
+	 *	- 'organisation_name'
+	 *	- 'organisation_directory_entry_name'
+	 *
+	 * Does not indicate whether the user is actually in the office or not.
+	 */
+	public function getPrRepOrganisations() {
+		if (!$this->isLoggedIn | ($this->officeType != 'none'))
+			/// @throw Exception You must be logged in as a student to do this
+			throw new Exception('You must be logged in as a student to do this');
+
+		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations 
+				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
+			WHERE subscription_user_entity_id = ? AND subscription_pr_rep = TRUE';
+
+		$db = $this->object->db;
+		$query = $db->query($sql, array($this->entityId));
+
+		return $query->result_array();
+	}
+
+	/// Login to an organisations admin interface
+	/**
+	 * @param $password string Password.
+	 * @param $organisationId enttity_id Organisation entity id.
+	 */
 	public function loginOrganisation($password, $organisationId) {
 		if (!$this->isLoggedIn | !$this->isUser)
+			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
 		
 		$hash = sha1($this->salt.$password);
@@ -421,6 +504,7 @@ class User_auth {
 		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
 
 		if ($query->num_rows() == 0) {
+			/// @throw Exception Invalid organisation or password
 			throw new Exception('Invalid organisation or password');
 		}
 
@@ -431,7 +515,7 @@ class User_auth {
 		$this->localToSession();
 	}
 
-	// Logout of an organisation interface
+	/// Logout of an organisation interface
 	public function logoutOrganisation() {
 		$this->organisationLogin = -1;
 		$this->organisationName = '';
@@ -439,7 +523,7 @@ class User_auth {
 		$this->localToSession();
 	}
 	
-	// Save all data from this class in the session
+	/// Save all data from this class in the session
 	private function localToSession() {
 		$_SESSION['ua_loggedin'] = $this->isLoggedIn;
 		$_SESSION['ua_username'] = $this->username;
