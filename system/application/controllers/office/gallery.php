@@ -100,7 +100,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		// Set up the subview for gallery.
 		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
-		                   'tags' => $this->db->get('tags'),
+		                   'tags' => $this->db->getwhere('tags', array('tag_type' => 'photo')),
 		                   'pageNumbers' => $pageNumbers);
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
@@ -161,7 +161,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 
 		// Set up the subview for gallery.
 		$frameData = array('photographer' => $data['photographer'],
-		                   'tags' => $this->db->get('tags'),
+		                   'tags' => $this->db->getwhere('tags', array('tag_type'=>'photo')),
 		                   'pageNumbers' => '');
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
@@ -236,7 +236,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			return $objResponse;
 		}
 		
-		$config['image_library'] = 'gd';
+		$config['image_library'] = 'gd2';
 //		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = $selectedThumb[0];
 		$config['width'] = $formData['width'];
@@ -254,7 +254,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			echo $this->image_lib->display_errors();
 		}
 		
-		$config['source_image'] = imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
+		$config['source_image'] = BASE_DIR.imageLocation($selectedThumb[4], $selectedThumb[3], null, TRUE);
 		$config['new_image'] = null;
 		$config['width'] = $selectedThumb[5];
 		$config['height'] = $selectedThumb[6];
