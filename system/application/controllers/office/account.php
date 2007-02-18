@@ -31,6 +31,11 @@ class Account extends Controller
 			}else{
 			$maintained = true;
 			}
+			if($row['organisation_maintainer_user_entity_id'] == $this->user_auth->entityId){
+			$is_user = true;
+			}else{
+			$is_user = false;
+			}
 			// Construct array of information
 			$maintainer = array(
 								'entity_id' => $row['organisation_entity_id'],
@@ -39,7 +44,9 @@ class Account extends Controller
 								'maintainer_name' => $row['organisation_maintainer_name'],
 								'maintainer_firstname' => $row['user_firstname'],
 								'maintainer_surname' => $row['user_surname'],
+								'maintainer_student_email' => $row['user_email'],
 								'student' => $student,
+								'is_user' => $is_user,
 								'maintained' => $maintained,
 								);
 		}
@@ -50,8 +57,8 @@ class Account extends Controller
 		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = VipOrganisation();
-		
 		$this->pages_model->SetPageCode('viparea_account');
+		
 		
 		$data = $this->organisations->_GetOrgData($organisation);
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -72,8 +79,47 @@ class Account extends Controller
 		if (!CheckPermissions('vip+office')) return;
 		
 		$organisation = VipOrganisation();
-		
 		$this->pages_model->SetPageCode('viparea_account_maintainer');
+		
+		//Send update if information is given
+		if(!empty($_POST['maintainer_button'])){
+			switch ($_POST['maintainer_type'])
+			{
+			case 'yorker':
+				$Data = array(
+							'maintainer_email' => null,
+							'maintainer_user_entity_id' => null,
+							'maintainer_name' => null
+							);
+				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
+				$this->main_frame->AddMessage('success','Maintainer information updated.');
+			break;  
+			case 'student':
+				$Data = array(
+							'maintainer_email' => null,
+							'maintainer_user_entity_id' => $this->user_auth->entityId,
+							'maintainer_name' => null
+							);
+				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
+				$this->main_frame->AddMessage('success','Maintainer information updated.');
+			break;
+			case 'nonstudent':
+				if (!empty($_POST['maintainer_name']) and !empty($_POST['maintainer_email'])){
+				$Data = array(
+							'maintainer_email' => $_POST['maintainer_email'],
+							'maintainer_user_entity_id' => null,
+							'maintainer_name' => $_POST['maintainer_name']
+							);
+				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
+				$this->main_frame->AddMessage('success','Maintainer information updated.');
+				}else{
+					$this->main_frame->AddMessage('error','Maintainer not updated, the name or email was left blank.');
+				}
+			break;
+			default:
+				$this->main_frame->AddMessage('error','Maintainer not updated, invalid form option submitted.');
+			}
+		}
 		
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		$data['account_maintenance_text'] = $this->pages_model->GetPropertyWikitext('account_maintenance');

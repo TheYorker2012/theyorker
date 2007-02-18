@@ -17,7 +17,7 @@
 		</p>
 		<p>
 			<strong>Account Maintainer:</strong> <?php echo $maintainer['maintainer_firstname']." ".$maintainer['maintainer_surname']; ?><br />
-			<strong>Maintainer's Email:</strong> <?php echo $maintainer['maintainer_email']; ?><br />
+			<strong>Maintainer's Email:</strong> <?php echo $maintainer['maintainer_student_email']; ?><br />
 		</p>
 		<?php }else{ ?>
 		<p>
@@ -34,7 +34,7 @@
 		This account is being maintained by the yorker staff.
 	</p>
 	<?php } ?>
-	<form action="<?php echo vip_url('account/maintainer'); ?>" method="link" class="form">
+	<form action="<?php echo vip_url('account/maintainer/'); ?>" method="link" class="form">
 	<fieldset>
 		<input type="submit" class="button" value="Change Maintainer" />
 	</fieldset>

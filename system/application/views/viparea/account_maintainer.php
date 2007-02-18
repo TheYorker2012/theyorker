@@ -9,13 +9,13 @@
 	<p>
 		<?php echo $account_maintenance_text; ?>
 	</p>
-	<form action='<?php echo vip_url('account/update'); ?>' class='form' method='POST'>
+	<form action='<?php echo vip_url('account/maintainer'); ?>' class='form' method='POST'>
 	<fieldset>
-		<label for='maintainer_type'>Maintence by :</label><br />
+		<label for='maintainer_type'>Maintenance by :</label><br />
 		<input type='radio' name='maintainer_type' value='yorker' <?php if($maintainer['maintained'] == false){ echo "checked";}?> 
 		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> The Yorker<br />
 		
-		<input type='radio' name='maintainer_type' value='student' <?php if(false){ echo "checked";}?>
+		<input type='radio' name='maintainer_type' value='student' <?php if($maintainer['is_user']){ echo "checked";}?>
 		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> Me (<?php echo $user_fullname; ?>)<br />
 		
 		<input type='radio' name='maintainer_type' value='nonstudent' <?php if($maintainer['maintained'] and $maintainer['student'] == false){ echo "checked";}?>
