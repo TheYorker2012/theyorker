@@ -42,7 +42,7 @@ Calendar
 
 News
 <ul>
-	<li><a href="/news/">/news/</a>
+	<li><a href="/news/">/news/</a></li>
 	<li><a href="/news/national/">/news/national/</a></li>
 	<li><a href="/news/features/">/news/features/</a></li>
 	<li><a href="/news/lifestyle/">/news/lifestyle/</a></li>

@@ -1,0 +1,200 @@
+/* This CSS has been written by ADO
+ * I intend to go through much of the website and check it is written using
+ * standard html and with appropriate styles.  Please don't add anything to
+ * this for now.  Page specific styles will be moved into seperate css files
+ * and only included where necessary.  
+ *
+ * My rules:
+ * 	Make sure it validates
+ * 	Use the most appropriate selectors (that are supported in IE6):
+ * 		By ID for elements which only occur once
+ * 		By child selector for elements which are always children of 
+ * 			other elements
+ * 		By class for those which can't be selected any other way
+ * 	Don't use pixels unless there is a good reason, make sure the page
+ * 		scales properly
+ *
+ * Don't break the rules if you edit here, I'm trying to make this nice :)
+ */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS that applies to all elements                            *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+html {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+}
+
+img {
+	border: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #999;
+}
+
+
+/* Form formatting */
+fieldset {
+	border: 0;
+}
+
+label {
+	display: block;
+	clear: both;
+	float: left;
+	width: 30%;
+	text-align: right;
+	margin: 0.3em;
+}
+
+input, select, textarea{
+	float: left;
+	margin: 0.2em;
+}
+
+input.button {
+	float: right;
+}
+
+/* Heading formating */
+h4 {
+	background-color: #999;
+	color: white;
+	padding: 0.5em;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the page frame and overall layout               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Make sure page in in center for IE6 */
+body {
+	text-align: center;
+}
+
+/* Create Header, Body and Footer sections */
+div#Header, div#Page, div#Footer {
+	/* Remove next line for variable width */
+	width: 780px;
+	margin-left: auto;
+	margin-right: auto;
+	clear: both;
+	text-align: left;
+	padding: 0;
+}
+
+/* Create Navigation and Main areas in Body */
+div#NavigationColumn {
+	width: 125px;
+	float: left;
+}
+
+div#MainBodyPane {
+	margin-left: 130px;
+}
+
+/* Formatting for links right at the top of the page */
+div#HeaderMenu {
+	text-align: right;
+}
+
+/* Formatting for the banner at the top of the page */
+div#TopBanner {
+	background-image: url(/images/prototype/header/homepage_bk.gif);
+	background-repeat: repeat-x;
+	float: left;
+	width: 100%;
+}
+
+h1#TopBannerName {
+	float: left;
+	margin: 0;
+
+	/* Required only when other stylesheets are included */
+	padding: 0;
+	background-color: transparent;
+}
+
+div#TopBannerPictures {
+	float: right;
+}
+
+div#TopBannerPictures img {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+/* Formatting for the search box */
+fieldset#SearchBox {
+	display: block;
+	margin: 0em 0em 0.5em 0em;
+	border: solid 1px #20c1f0;
+	background-image: url(/images/prototype/header/search.png);
+	background-repeat: no-repeat;
+	background-position: 3px 3px;
+	padding: 2px 2px 2px 22px;
+}
+
+fieldset#SearchBox input {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	color: #20c1f0;
+	/* Border necessary to remove native border in KHTML browsers */
+	border: 1px solid white;
+}
+
+/* Formatting for the navigation on the left */
+div#NavigationMenu ul {
+	clear: both;
+	display: block;
+	list-style: none;
+	margin: 0 0.5em 0 0;
+	padding: 0;
+	border-top: 1px solid #999;
+}
+
+div#NavigationMenu ul.first {
+	border-top: 0;
+}
+
+div#NavigationMenu ul li {
+	border-top: 1px solid #ccc;
+	padding: 3px 0px 3px 4px;
+}
+
+div#NavigationMenu ul li.first {
+	border-top: 0;
+}
+
+/* Formatting for the page title */
+h1#PageTitle {
+	display: block;
+	color: white;
+	background-color: #20c1f0;
+	margin: 0 0 0.5em 0;
+	padding: 3px 0px 2px 5px;
+	font-size: 13pt;
+
+	/* Required only when other stylesheets are included */
+	height: auto;
+}
+
+/* Formatting for footer text and feedback form */
+div#Footer small {
+	display: block;
+	text-align: center;
+}
+
+a#ShowFeedback {
+	display: none;
+	margin: 1em;
+	text-align: center;
+	font-weight: bold;
+	color: #ff6a00;
+}

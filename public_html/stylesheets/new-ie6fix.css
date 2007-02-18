@@ -1,0 +1,7 @@
+/* This style sheet is for putting fixes for styles in new.css for the gayness
+ * that is known as IE6.  Keep it as small as possible, same rules apply as in
+ * new.css */
+
+fieldset#SearchBox {
+	padding: 1px 2px 0px 22px;
+}
