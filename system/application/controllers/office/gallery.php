@@ -127,15 +127,19 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			
 			$new = array('photo_title' => $this->input->post('title'),
 			             'photo_timestamp' => $this->input->post('date'),
-			             'photo_author_user_entity_id' =>  $this->input->post('photographer'),
-			             'photo_deleted' => $this->input->post('hidden'));
+			             'photo_author_user_entity_id' =>  $this->input->post('photographer'));
 			
-			if ($this->input->post('onfrontpage') == TRUE) {
+			if ($this->input->post('onfrontpage') == 'on') {
 				$new['photo_homepage'] = "";
 			} else {
 				$new['photo_homepage'] = "NULL";
 			}
-			
+			if ($this->input->post('hidden') == 'hide') {
+				$new['photo_deleted'] = "1";
+			} else {
+				$new['photo_deleted'] = "0";
+			}
+			echo $this->input->post('title');
 			$this->db->update('photos', $new, array('photo_id' => $id));
 
 		}

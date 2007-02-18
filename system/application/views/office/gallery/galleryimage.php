@@ -22,9 +22,9 @@
 			<label></label>
 				<a href="#">- Delete Selected Tags</a><br />
 			<label>Home Feature: </label>
-				<input type='checkbox' name='onfrontpage' /><br />
+				<input type='checkbox' name='onfrontpage' value="on" /><br />
 			<label>Hidden: </label>
-				<input type='checkbox' name='hidden' /><br />
+				<input type='checkbox' name='hidden' value="hide" /><br />
 			<input type="submit" class="button" value="Save" />
 		</fieldset>
 	</form>
