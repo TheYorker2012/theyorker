@@ -26,11 +26,60 @@ class Review_model extends Model {
 		parent::Model();
 	}
 
-	///	Return review context.
+	///	Return whether the review content exists
 	/**
 	 * @return A single review context for an organisation
 	 */
-	function GetReviewContextContents($organisation_shortname,$content_type_codename)
+	function GetReviewContextExists($organisation_shortname,$content_type_codename)
+	{
+		$sql =
+			'
+			SELECT
+			   	review_contexts.review_context_live_content_id
+			FROM review_contexts 
+			INNER JOIN organisations 
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			 AND organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types
+			ON review_contexts.review_context_content_type_id=content_types.content_type_id
+			 AND content_types.content_type_codename = ?
+			WHERE 1
+			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
+			';
+
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
+
+		return ($query->num_rows() != 0);
+	}
+
+	/**
+	 * @return A single review context for an organisation
+	 */
+	function CreateReviewContext($organisation_shortname,$content_type_codename)
+	{
+		$sql =
+			'
+			INSERT INTO review_contexts 
+			(
+			 review_context_organisation_entity_id,
+			 review_context_content_type_id
+			) 
+			SELECT
+			(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)  as organisation_entity_id,
+			(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?) as content_type_id
+			;
+
+			';
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
+
+		return ($query->num_rows() != 0);
+	}
+
+	///	Return published review context.
+	/**
+	 * @return A single review context for an organisation
+	 */
+	function GetPublishedReviewContextContents($organisation_shortname,$content_type_codename)
 	{
 		$sql =
 			'
@@ -59,6 +108,52 @@ class Review_model extends Model {
 
 		return $query->result_array();
 	}
+	
+	
+	///	Return revision, or most recent if no specified.
+	/**
+	 * @return A single review context for an organisation
+	 */
+	function GetReviewContextContents($organisation_shortname,$content_type_codename,$context_content_id = -1)
+	{
+		$sql =
+			'
+			SELECT
+			 unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
+			 concat(users.user_firstname, " ",users.user_surname) as name,
+			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
+			 review_context_contents.review_context_content_id as context_content_id,
+			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published,
+			 review_context_contents.review_context_content_blurb as content_blurb,
+			 review_context_contents.review_context_content_quote as content_quote,
+			 review_context_contents.review_context_content_average_price as average_price,
+			 review_context_contents.review_context_content_recommend_item as recommended_item, 
+			 review_context_contents.review_context_content_rating as content_rating,
+			 review_context_contents.review_context_content_serving_times as serving_times,
+			 review_context_contents.review_context_content_deal as deal,
+			 review_context_contents.review_context_content_deal_expires as deal_expires			
+			FROM review_contexts 
+			INNER JOIN organisations 
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			 AND organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types
+			ON review_contexts.review_context_content_type_id=content_types.content_type_id
+			 AND content_types.content_type_codename = ?
+			INNER JOIN review_context_contents 
+			ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
+			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
+			INNER JOIN users 
+			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
+			WHERE '.(($context_content_id==-1) ? '1': 'review_context_contents.review_context_content_id = ?').'
+			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
+			LIMIT 1
+			';
+
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$context_content_id) );
+
+		return $query->result_array();
+	}
+
 
 	///	Return review context revisions, and their author names.
 	/**
