@@ -247,7 +247,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			}
 		}
 		
-		$data[] = $output
+		$data[] = $output;
 		
 		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
