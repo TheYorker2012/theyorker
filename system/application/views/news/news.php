@@ -88,7 +88,7 @@
 
         <p><?php echo $main_article['text']; ?></p>
 
-		<?php if (isset($preview)) { ?>
+		<?php if (isset($office_preview)) { ?>
 			<p class='form'><button class="button" onclick="window.location='/office/news/article/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
 		<?php } ?>
 		<br style='clear: both;' />
