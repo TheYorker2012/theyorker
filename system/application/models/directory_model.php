@@ -228,41 +228,53 @@ class Directory_model extends Model {
 		return true;
 	}
 	
+	/// Add a directory entry revision
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of org.
+	 * @param $Data array Data of revision.
+	 * @return bool Whether a row was successfully added or not.
+	 */
 	function AddDirectoryEntryRevision($DirectoryEntryName, $Data)
 	{
-		//Get Org Id from name
-		$sql =
+		$sql = 'INSERT INTO `organisation_contents` ('.
+			'`organisation_content_last_author_user_entity_id`,'.
+			'`organisation_content_last_author_timestamp`,'.
+			'`organisation_content_organisation_entity_id`,'.
+			'`organisation_content_description`,'.
+			'`organisation_content_location`,'.
+			'`organisation_content_postal_address`,'.
+			'`organisation_content_postcode`,'.
+			'`organisation_content_phone_external`,'.
+			'`organisation_content_phone_internal`,'.
+			'`organisation_content_fax_number`,'.
+			'`organisation_content_email_address`,'.
+			'`organisation_content_url`,'.
+			'`organisation_content_opening_hours`) '.
 			'SELECT'.
-			' organisations.organisation_entity_id '.
+			'	?,'. // author enitity id
+			'	NOW(),'. // timestamp
+			'	organisations.organisation_entity_id,'. // organisation_id
+			'	?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ';
 			'FROM organisations '.
-			'WHERE organisations.organisation_directory_entry_name=? ';
-		$query = $this->db->query($sql, $DirectoryEntryName);
-		$row = $query->row();
-		
-		$author_id =  $this->user_auth->entityId;
-		$organisation_id = $row->organisation_entity_id;
-		//Add entry now we have all the data
-		$sql = 'INSERT INTO `organisation_contents`'.
-		'(`organisation_content_id`,'.
-		'`organisation_content_last_author_user_entity_id`,'.
-		'`organisation_content_last_author_timestamp`,'.
-		'`organisation_content_organisation_entity_id`,'.
-		'`organisation_content_description`,'.
-		'`organisation_content_location`,'.
-		'`organisation_content_postal_address`,'.
-		'`organisation_content_postcode`,'.
-		'`organisation_content_phone_external`,'.
-		'`organisation_content_phone_internal`,'.
-		'`organisation_content_fax_number`,'.
-		'`organisation_content_email_address`,'.
-		'`organisation_content_url`,'.
-		'`organisation_content_opening_hours`)'.
-		' VALUES '.
-		'(NULL, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
-		$query = $this->db->query($sql, array($author_id, $organisation_id, $Data['description'], $Data['location'], $Data['postal_address'], $Data['postcode'], $Data['phone_external'], $Data['phone_internal'], $Data['fax_number'], $Data['email_address'], $Data['url'], $Data['opening_hours']));
-		return true;
+			'WHERE organisations.organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql, array(
+			$this->user_auth->entityId,
+			$Data['description'],
+			$Data['location'],
+			$Data['postal_address'],
+			$Data['postcode'],
+			$Data['phone_external'],
+			$Data['phone_internal'],
+			$Data['fax_number'],
+			$Data['email_address'],
+			$Data['url'],
+			$Data['opening_hours'],
+			$DirectoryEntryName));
+		return ($this->db->affected_rows() > 0);
 	}
-	function IsRevisionPublished($DirectoryEntryName, $id){
+	
+	function IsRevisionPublished($DirectoryEntryName, $id)
+	{
 		$sql =
 			'SELECT'.
 			' organisations.organisation_live_content_id '.
@@ -274,30 +286,31 @@ class Directory_model extends Model {
 		//Get org id to look for and the one that should be live.
 		$liveid = $row->organisation_live_content_id;
 		
-		if($id==$liveid){
-			return true;
-		}else{
-			return false;
-		}
+		return ($id == $liveid);
 	}
-	//Removes a revisons of a directory entry
-	/*
+	
+	/// Removes a revisons of a directory entry
+	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @return $id the id of the revision to remove
-	 * Will return true if removed and false if not removed, will not remove a live revision as it will break the site!!
-	*/
+	 * @param $id the id of the revision to remove
+	 * @return bool Whether any organisation contents were removed.
+	 */
 	function DeleteEntryRevisionById($DirectoryEntryName, $id)
 	{
-		if($this->IsRevisionPublished($DirectoryEntryName, $id)){
-			return false;
-		}else{
-			$sql =
+		/// @todo Remove @a DirectoryEntryName argument as it isn't required any longer.
+		// Remove the organisation content with the given id and which is not live.
+		$sql =
 			'DELETE FROM organisation_contents '.
-			'WHERE organisation_content_id='.$id.' '.
-			'LIMIT 1';
-			$query = $this->db->query($sql);
-			return true;
-		}
+			'USING organisation_contents, organisations '.
+			'WHERE	organisation_contents.organisation_content_id = ? '.
+			// Join to organisations table
+			'	AND	organisation_contents.organisation_content_organisation_entity_id '.
+			'		= organisations.organisation_entity_id '.
+			// Ensure that it ISN'T live
+			'	AND organisations.organisation_live_content_id '.
+			'		!= $organisation_contents.organisation_content_id';
+		$query = $this->db->query($sql, $id);
+		return ($this->db->affected_rows() > 0);
 	}
 }
 ?>
