@@ -78,7 +78,8 @@ class Article_model extends Model
 				FROM comments, business_cards
 				WHERE comments.comment_article_id = ?
 				AND comments.comment_deleted = 0
-				AND comments.comment_user_entity_id = business_cards.business_card_user_entity_id';
+				AND comments.comment_user_entity_id = business_cards.business_card_user_entity_id
+				ORDER BY comments.comment_timestamp DESC';
 		$query = $this->db->query($sql, array($article_id));
 		$result = array();
 		foreach ($query->result_array() as $row) {
