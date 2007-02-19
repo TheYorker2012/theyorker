@@ -157,7 +157,7 @@
 					<label for="subtext" class="full">Introduction Paragraph</label>
 					<textarea name="subtext" id="subtext" class="full" rows="2" onkeyup="articleContentUpdate('Subtext');"><?php echo $revision['subtext']; ?></textarea>
 					<br />
-					<label for="blurb" class="full" onkeyup="articleContentUpdate('blurb');">Blurb</label>
+					<label for="blurb" class="full" onkeyup="articleContentUpdate('Blurb');">Blurb</label>
 					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo $revision['blurb']; ?></textarea>
 					<br />
 					<label for="content" class="full">Main Article Content</label>
