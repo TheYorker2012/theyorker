@@ -21,12 +21,7 @@
 				        <th>Status</th>
 	    		    </tr>
 			    </thead>
-			    <tbody>
-	  			    <tr>
-					    <td><a href='/office/news/test'>He's been shagging girls for years</a></td>
-						<td>Ian Benest<br />Chris Travis</td>
-						<td>Pending<br />Accepted</td>
-	  			    </tr>
+            <tbody>
 	  			    <tr class='tr2'>
 					    <td><a href='/office/news/test'>Girl found murdered</a></td>
 						<td>Unassigned</td>
@@ -53,5 +48,29 @@
 	</div>
 	<div class='grey_box'>
 		<h2><?php echo $section; ?> box...</h2>
-
+		<div id='ArticleBox'>
+			<table>
+			    <thead>
+			        <tr>
+				        <th>Article Title</th>
+				        <th>Reporter</th>
+				        <th>Status</th>
+	    		    </tr>
+			    </thead>
+            <tbody>
+				<?php $row_style = false;
+				foreach ($box_contents as $request) { ?>
+					<tr<?php if ($row_style) { echo ' class=\'tr2\''; }?>>
+						<td><a href='/office/news/article/<?php echo $request['id']; ?>'><?php echo $request['title']; ?></a></td>
+						<td>
+						<?php foreach ($request['reporters'] as $reporter) { echo ($reporter['name'] . '<br />'); } ?>
+						</td>
+						<td>
+						<?php foreach ($request['reporters'] as $reporter) { echo ($reporter['status'] . '<br />'); } ?>
+						</td>
+					</tr>
+				<?php $row_style = !$row_style; } ?>
+			    </tbody>
+			</table>
+		</div>
 	</div>

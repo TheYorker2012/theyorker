@@ -329,30 +329,19 @@ class Requests_Model extends Model
 		return $result;
 	}
 
-	function GetRequestedArticles($type_id)
+	function GetRequestedArticles($type_codename)
 	{
-		$sql = 'SELECT	article_id,
-				article_request_title,
-				article_request_description,
-				article_request_entity_id,
-				article_publish_date,
-				article_request_entity_id,
-				article_editor_approved_user_entity_id,
-				suggestion_user.business_card_name as suggestion_name,
-				editor_user.business_card_name as editor_name
-			FROM	articles
-
-			JOIN	business_cards as editor_user
-			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
-			JOIN	business_cards as suggestion_user
-			ON	suggestion_user.business_card_user_entity_id = article_request_entity_id
-			
-			WHERE	article_suggestion_accepted = 1
-			AND	article_content_type_id = ?
-			AND	article_live_content_id IS NULL
-			AND	article_deleted = 0
-			AND	article_pulled = 0';
-		$query = $this->db->query($sql,array($type_id));
+		$sql = 'SELECT	articles.article_id,
+				UNIX_TIMESTAMP(articles.article_created) AS article_created,
+				articles.article_request_title
+			FROM	articles, content_types
+			WHERE	articles.article_suggestion_accepted = 1
+			AND	content_types.content_type_id = article.article_content_type_id
+			AND	content_types.content_type_codename = ?
+			AND	articles.article_live_content_id IS NULL
+			AND	articles.article_deleted = 0
+			AND	articles.article_pulled = 0';
+		$query = $this->db->query($sql,array($type_codename));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
@@ -360,14 +349,10 @@ class Requests_Model extends Model
 			{
 				$result_item = array(
 					'id'=>$row->article_id,
-					'title'=>$row->article_request_title,
-					'description'=>$row->article_request_description,
-					'deadline'=>$row->article_publish_date,
-					'suggestionuserid'=>$row->article_request_entity_id,
-					'suggestionusername'=>$row->suggestion_name,
-					'editorid'=>$row->article_editor_approved_user_entity_id,
-					'editorname'=>$row->editor_name
+					'created'=>$row->article_created,
+					'title'=>$row->article_request_title
 					);
+				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
 				$result[] = $result_item;
 			}
 		}

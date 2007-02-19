@@ -37,6 +37,7 @@ class News extends Controller
 		$data['mine_heading'] = $this->pages_model->GetPropertyText('news_office:my_jobs_heading', TRUE);
 		$data['section'] = strtolower($section_formatted);
 		$data['link'] = $link;
+		$data['box_contents'] = $this->requests_model->GetRequestedArticles($section);
 
 		// Make it so we only have to worry about two levels of access as admins can do everything editors can
 		$data['user_level'] = GetUserLevel();
