@@ -466,9 +466,9 @@ class User_auth {
 	 * Does not indicate whether the user is actually in the office or not.
 	 */
 	public function getPrRepOrganisations() {
-		if (!$this->isLoggedIn | ($this->officeType != 'none'))
-			/// @throw Exception You must be logged in as a student to do this
-			throw new Exception('You must be logged in as a student to do this');
+		if ($this->officeType == 'None')
+			/// @throw Exception You must be logged in to the office to do this
+			throw new Exception('You must be logged in to the office to do this');
 
 		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations 
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id

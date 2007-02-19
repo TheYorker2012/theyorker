@@ -17,7 +17,7 @@ class Members extends Controller
 	
 	function view()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->pages_model->SetPageCode('viparea_members');		
 		
@@ -36,7 +36,7 @@ class Members extends Controller
 	
 	function edit($member_id)
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->pages_model->SetPageCode('viparea_members');	
 			
@@ -55,7 +55,7 @@ class Members extends Controller
 	
 	function add()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->pages_model->SetPageCode('viparea_members');	
 			

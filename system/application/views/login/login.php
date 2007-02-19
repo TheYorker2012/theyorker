@@ -21,7 +21,7 @@
 				<label for='username'>Select organisation:</label>
 				<select name="username">
 				<?php foreach ($usernames as $id => $name) { ?>
-					<option value="<?php echo $id; ?>"><?php echo $name; ?></option>
+					<option value="<?php echo $id; ?>"<?php if (isset($default_username) && $id==$default_username) { echo ' SELECTED'; } ?>><?php echo $name; ?></option>
 				<?php } ?>
 				</select>
 				<br />

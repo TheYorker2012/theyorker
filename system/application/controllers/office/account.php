@@ -54,7 +54,7 @@ class Account extends Controller
 	}
 	function update()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account');
@@ -76,7 +76,7 @@ class Account extends Controller
 	
 	function maintainer()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account_maintainer');

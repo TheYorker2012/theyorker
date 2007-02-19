@@ -81,13 +81,14 @@ function VipMode($SetMode = FALSE)
 /**
  * @param $Permission string or array of the following levels (in the order that
  *	they are to be obtained:
- *	- 'public'
- *	- 'student'
- *	- 'vip'
- *	- 'vip+office'
- *	- 'office'
- *	- 'editor'
- *	- 'admin'
+ *	- 'public' - anyone
+ *	- 'student' - must be logged on
+ *	- 'vip' - must be logged on as a vip
+ *	- 'vip+pr' - must be logged on as a vip or a pr rep
+ *	- 'office' - must be in the office
+ *	- 'pr' - must be in the office as a pr rep
+ *	- 'editor' - must be in the office as an editor
+ *	- 'admin' - must be in the office as an administrator
  * @param $LoadMainFrame bool Whether to load the mainframe if permision hasn't
  *	 yet been acquired (for the login screen).
  * @return bool Whether enough privilages.
@@ -95,179 +96,223 @@ function VipMode($SetMode = FALSE)
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	$CI = &get_instance();
-	
-	// Check if vip
-	$in_viparea = 	(		($CI->uri->total_segments() >= 2)
-						&&	($CI->uri->segment(1) === 'viparea'));
-	$in_office_vip = (		($CI->uri->total_segments() >= 3)
-						&&	($CI->uri->segment(1) === 'office')
-						&&	($CI->uri->segment(2) === 'vip'));
-	
-	if ($in_office_vip) {
-		// /office/vip/...
-		// $Permission IN {office, vip+office, admin}
-		$office_vip_allowed_permissions = array(
-			'office'		=> 'office',
-			'vip+office'	=> 'office',
-			'admin'			=> 'admin',
-		);
-		if (!array_key_exists($Permission, $office_vip_allowed_permissions)) {
-			// This page isn't even valid
-			show_404();
-			return FALSE;
-		}
-		
-		$Permission = $office_vip_allowed_permissions[$Permission];
-		VipOrganisation($CI->uri->segment(3));
-		vip_url('office/vip/'.$CI->uri->segment(3).'/', TRUE);
-		VipMode('office');
-		
-		/// @todo check permissions to access this organisation
-		
-	}
-	
-	if ($in_viparea) {
-		// /viparea/...
-		// $Permission IN {vip, vip+office}
-		$viparea_allowed_permissions = array(
-			'vip'			=> 'vip',
-			'vip+office'	=> 'vip',
-		);
-		if (!array_key_exists($Permission, $viparea_allowed_permissions)) {
-			// This page isn't even valid
-			show_404();
-			return FALSE;
-		}
-		
-		$Permission = $viparea_allowed_permissions[$Permission];
-		
-		if ($CI->uri->total_segments() >= 2) {
-			VipOrganisation($CI->uri->segment(2));
-		}
-		vip_url('viparea/'.$CI->uri->segment(2).'/', TRUE);
-		VipMode('viparea');
-		
-		/// @todo check permissions to access this organisation
-		
-	}
-
+	$CI->load->library('messages');
 	$CI->load->model('pages_model');
 
-	$CI->load->library('messages');
-
+	$user_level = GetUserLevel(); // loads the user_auth library
+	
+	// Check whether the page is accessed in a special way
+	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
+							&&	($CI->uri->segment(1) === 'viparea'));
+	$thru_office_vip	= 	(	($CI->uri->total_segments() >= 3)
+							&&	($CI->uri->segment(1) === 'office')
+							&&	($CI->uri->segment(2) === 'vip'));
+	
+	if ($thru_viparea) {
+		if ($CI->uri->total_segments() > 1) {
+			$organisation_shortname = $CI->uri->segment(2);
+		}
+		VipOrganisation($organisation_shortname);
+		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
+	} elseif ($thru_office_vip) {
+		$organisation_shortname = $CI->uri->segment(3);
+		VipOrganisation($organisation_shortname);
+		vip_url('office/vip/'.$organisation_shortname.'/', TRUE);
+	}
+	
+	
+	// Login actions for student/vip/office logins
 	$student_login_action = array(
-			'redirect+url','login/main',
+		'redirect+url','login/main',
+		'post' => TRUE
+	);
+	if (isset($organisation_shortname)) {
+		$vip_login_action = array(
+			'redirect+url','login/vipswitch/'.$organisation_shortname,
 			'post' => TRUE
 		);
-	$vip_login_action = array(
+	} else {
+		$vip_login_action = array(
 			'redirect+url','login/vip',
 			'post' => TRUE
 		);
+		// Not set!, if through viparea then set to default, otherwise blank
+		if ($thru_viparea) {
+			$organisation_shortname = $CI->user_auth->organisationShortName;
+		} else {
+			$organisation_shortname = '';
+		}
+	}
 	$office_login_action = array(
-			'redirect+url','login/office',
-			'post' => TRUE
-		);
-
-
+		'redirect+url','login/office',
+		'post' => TRUE
+	);
+	
+	// If vip+pr, use URI to decide which
+	if ($Permission === 'vip+pr') {
+		$Permission =	($thru_viparea		? 'vip'	:
+						 $thru_office_vip	? 'pr'	: '');
+	}
+	// If vip not through viparea or pr not through office, not valid page
+	elseif (	($Permission === 'pr'  && !$thru_office_vip)
+			||	($Permission === 'vip' && !$thru_viparea   )) {
+		$Permission = '';
+	}
+	
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
-	//	<not set>	http error 404
+	//	NULL/notset	http error 404
 	//	TRUE		allowed
 	//	array		specially handled
 	//	otherwise	access denied
-	$user_level = GetUserLevel();
 	if ($user_level === 'public') {
 		$action_levels = array(
-				'public'		=> TRUE,
-				'student'		=> $student_login_action,
-				'vip'			=> $student_login_action,
-				'office'		=> $student_login_action,
-				'editor'		=> $student_login_action,
-				'admin'			=> $student_login_action,
-			);
+			'public'	=> TRUE,
+			'student'	=> $student_login_action,
+			'vip'		=> $student_login_action,
+			'office'	=> $student_login_action,
+			'pr'		=> $student_login_action,
+			'editor'	=> $student_login_action,
+			'admin'		=> $student_login_action,
+		);
 	} elseif ($user_level === 'student') {
 		$action_levels = array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
-				'vip'			=> $vip_login_action,
-				'office'		=> $office_login_action,
-				'editor'		=> $office_login_action,
-				'admin'			=> $office_login_action,
-			);
+			'public'	=> TRUE,
+			'student'	=> TRUE,
+			'vip'		=> $vip_login_action,
+			'office'	=> $office_login_action,
+			'pr'		=> $office_login_action,
+			'editor'	=> $office_login_action,
+			'admin'		=> $office_login_action,
+		);
 	} elseif ($user_level === 'organisation') {
 		// Logged in from public as organisation
 		$action_levels = array(
-				'public'		=> TRUE,
-				'student'		=> TRUE,
-				'vip'			=> TRUE,
-				'office'		=> FALSE,
-				'editor'		=> FALSE,
-				'admin'			=> FALSE,
-			);
+			'public'	=> TRUE,
+			'student'	=> TRUE,
+			'vip'		=> ($CI->user_auth->organisationShortName == $organisation_shortname),
+			'office'	=> FALSE,
+			'pr'		=> FALSE,
+			'editor'	=> FALSE,
+			'admin'		=> FALSE,
+		);
 	} elseif ($user_level === 'vip') {
 		// Logged in as student and in VIP area
 		$vip_door_open_action = array(
-				'message','warning',
-				HtmlButtonLink(site_url('logout/vip'.$CI->uri->uri_string()),'Leave VIP Area')
-				. $CI->pages_model->GetPropertyText('login:warn_open_vip', TRUE),
-				TRUE
-			);
+			'message','warning',
+			HtmlButtonLink(site_url('logout/vip'.$CI->uri->uri_string()),'Leave VIP Area')
+			. $CI->pages_model->GetPropertyText('login:warn_open_vip', TRUE),
+			TRUE
+		);
+		
+		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
+			$vip_accessible = TRUE;
+		} else {
+			// check permissions to access this organisation
+			$vip_organisations = $CI->user_auth->getOrganisationLogins();
+			foreach ($vip_organisations as $organisation) {
+				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
+					$vip_accessible = $vip_login_action;
+					break;
+				}
+			}
+			if (!isset($vip_accessible)) {
+				$vip_accessible = FALSE;
+			}
+		}
+		
 		$action_levels = array(
-				'public'		=> $vip_door_open_action,
-				'student'		=> $vip_door_open_action,
-				'vip'			=> TRUE,
-				'office'		=> $office_login_action,
-				'editor'		=> $office_login_action,
-				'admin'			=> $office_login_action,
-			);
+			'public'	=> $vip_door_open_action,
+			'student'	=> $vip_door_open_action,
+			'vip'		=> $vip_accessible,
+			'office'	=> $office_login_action,
+			'pr'		=> $office_login_action,
+			'editor'	=> $office_login_action,
+			'admin'		=> $office_login_action,
+		);
 	} else {
+		// Office
+		// Door left open actions
 		$office_door_open_action = array(
-				'message','warning',
-				HtmlButtonLink(site_url('logout/office'.$CI->uri->uri_string()),'Leave Office')
-				. $CI->pages_model->GetPropertyText('login:warn_open_office', TRUE),
-				TRUE
-			);
+			'message','warning',
+			HtmlButtonLink(site_url('logout/office'.$CI->uri->uri_string()),'Leave Office')
+			. $CI->pages_model->GetPropertyText('login:warn_open_office', TRUE),
+			TRUE
+		);
 		$admin_door_open_action = $office_door_open_action;
+		
+		// Change an office user to pr if they rep for the organisation
+		if ($user_level === 'office' && $Permission === 'pr') {
+			// Check user is PR Rep for this organisation
+			$rep_organisations = $CI->user_auth->getPrRepOrganisations();
+			foreach ($rep_organisations as $organisation) {
+				if ($organisation['organisation_directory_entry_name']
+						== $organisation_shortname) {
+					// Yes, match, PR Rep, set stuff and change user level to PR
+					$user_level = 'pr';
+					break;
+				}
+			}
+		}
+		
+		// Refine further
 		if ($user_level === 'office') {
 			$action_levels = array(
-					'public'		=> $office_door_open_action,
-					'student'		=> $office_door_open_action,
-					'vip'			=> $vip_login_action,
-					'office'		=> TRUE,
-					'editor'		=> FALSE,
-					'admin'			=> FALSE,
-				);
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
+				'vip'			=> $vip_login_action,
+				'office'		=> TRUE,
+				'pr'			=> FALSE,
+				'editor'		=> FALSE,
+				'admin'			=> FALSE,
+			);
+		} elseif ($user_level === 'pr') {
+			$action_levels = array(
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
+				'vip'			=> $vip_login_action,
+				'office'		=> TRUE,
+				'pr'			=> TRUE,
+				'editor'		=> FALSE,
+				'admin'			=> FALSE,
+			);
 		} elseif ($user_level === 'editor') {
 			$action_levels = array(
-					'public'		=> $office_door_open_action,
-					'student'		=> $office_door_open_action,
-					'vip'			=> $vip_login_action,
-					'office'		=> TRUE,
-					'editor'		=> TRUE,
-					'admin'			=> FALSE,
-				);
+				'public'		=> $office_door_open_action,
+				'student'		=> $office_door_open_action,
+				'vip'			=> $vip_login_action,
+				'office'		=> TRUE,
+				'pr'			=> TRUE,
+				'editor'		=> TRUE,
+				'admin'			=> FALSE,
+			);
 		} elseif ($user_level === 'admin') {
 			$action_levels = array(
-					'public'		=> $admin_door_open_action,
-					'student'		=> $admin_door_open_action,
-					'vip'			=> $vip_login_action,
-					'office'		=> TRUE,
-					'editor'		=> TRUE,
-					'admin'			=> TRUE,
-				);
+				'public'		=> $admin_door_open_action,
+				'student'		=> $admin_door_open_action,
+				'vip'			=> $vip_login_action,
+				'office'		=> TRUE,
+				'pr'			=> TRUE,
+				'editor'		=> TRUE,
+				'admin'			=> TRUE,
+			);
 		}
 	}
 
 	$access_allowed = FALSE;
 
-	if (!array_key_exists($Permission, $action_levels)) {
+	// No permission set or NULL indicates page doesn't exist at this URI
+	if (!array_key_exists($Permission, $action_levels)
+			|| NULL === $action_levels[$Permission]) {
 		return show_404();
 	} else {
-
+		
 		$action = $action_levels[$Permission];
+		// True is allow
 		if (TRUE === $action) {
 			$access_allowed = TRUE;
 		} elseif (is_array($action)) {
+			// Array is special decider
 			// Perform action
 			switch ($action[0]) {
 				case 'handle':
@@ -301,13 +346,13 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 					break;
 			}
 		} else {
-			// Access denied
+			// Anything else is disallow
 			$CI->messages->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
 			//redirect('');
 		}
 		
+		// Restore post data
 		if ((TRUE === $action || is_array($action)) && !$NoPost) {
-			// Restore post data
 			$post_data = GetRedirectData();
 			if (NULL !== $post_data) {
 				$post_data = @unserialize($post_data);
@@ -397,14 +442,16 @@ function HtmlButtonLink($Link, $Caption)
  *	- 'organisation'
  *	- 'vip'
  *	- 'office'
+ *	- 'pr'
  *	- 'editor'
  *	- 'admin'
  * @param $RedirectDestination string URI to redirect to on success.
+ * @param $Organisation string Organisation codename to force.
  * @return Whether successfully logged in yet
  *
  * @pre CheckPermissions has already been called.
  */
-function LoginHandler($Level, $RedirectDestination)
+function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 {
 	$CI = &get_instance();
 	$CI->load->library('messages');
@@ -426,8 +473,19 @@ function LoginHandler($Level, $RedirectDestination)
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_vip', TRUE);
 		$data['usernames'] = array();
 		$logins = $CI->user_auth->getOrganisationLogins();
-		foreach ($logins as $login) {
-			$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
+		if (is_string($Organisation)) {
+			// Default organisation is $Organisation
+			foreach ($logins as $login) {
+				$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
+				if ($login['organisation_directory_entry_name'] === $Organisation) {
+					$data['default_username'] = $login['organisation_entity_id'];
+				}
+			}
+		} else {
+			// Don't specify a default
+			foreach ($logins as $login) {
+				$data['usernames'][$login['organisation_entity_id']] = $login['organisation_name'];
+			}
 		}
 
 	} else {

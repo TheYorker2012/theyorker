@@ -20,7 +20,7 @@ class Login extends Controller
 	 */
 	function _redirect($FirstSegment = 3)
 	{
-		$segments = $this->uri->segment_array();
+		$segments = $this->uri->rsegment_array();
 		while ($FirstSegment > 1) {
 			array_shift($segments);
 			--$FirstSegment;
@@ -47,9 +47,23 @@ class Login extends Controller
 	 */
 	function vip()
 	{
-		if (!CheckPermissions('public', FALSE, TRUE)) return;
+		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
 		LoginHandler('vip', $this->_redirect());
+	}
+
+	/// VIP login screen for specific organisation.
+	/**
+	 * @param $Organisation string Organisation code.
+	 *
+	 * Any additional uri segments are used as the redirect address after
+	 *	successful login.
+	 */
+	function vipswitch($Organisation)
+	{
+		if (!CheckPermissions('student', FALSE, TRUE)) return;
+		
+		LoginHandler('vip', $this->_redirect(4), $Organisation);
 	}
 
 	/// Office login screen.

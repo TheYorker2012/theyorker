@@ -98,6 +98,7 @@ $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 //****************************************************************************//
 
 
+$route['office/directory'] = 'office/yorkerdirectory';
 $route['office/vip/'.$org_name_regex.'/directory'] = 'office/yorkerdirectory';
 $route['office/vip/'.$org_name_regex.'/directory/(.*)'] = 'office/yorkerdirectory/$1';
 $route['office/vip/'.$org_name_regex] = 'office/vipindex';

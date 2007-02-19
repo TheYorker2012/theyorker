@@ -9,7 +9,7 @@ class Calendar extends controller
 	
 	function index()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->pages_model->SetPageCode('viparea_calendar');
 		
@@ -28,7 +28,7 @@ class Calendar extends controller
 			show_404();
 		}
 		
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->model('calendar/events_model');
 		
@@ -121,7 +121,7 @@ class Calendar extends controller
 			show_404();
 		}
 		
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->model('calendar/events_model');
 		$this->load->model('calendar/recurrence_model');
@@ -322,7 +322,7 @@ class Calendar extends controller
 	
 	function view($DateRange='')
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->library('date_uri');
 		$this->load->library('academic_calendar');
@@ -365,7 +365,7 @@ class Calendar extends controller
 	
 	function createevent()
 	{
-		if (!CheckPermissions('vip+office')) return;
+		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->pages_model->SetPageCode('viparea_calendar_createevent');
 		

@@ -15,6 +15,7 @@
  *	- 'student'
  *	- 'vip'
  *	- 'office'
+ *	- 'pr'
  *	- 'editor'
  *	- 'admin'
  * @param $Override bool Override any previous calls to SetupMainFrame.
@@ -25,13 +26,14 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 	//$user_level = GetUserLevel();
 	
 	static $frames = array(
-		'public'  => 'frame_public',
-		'student' => 'frame_public',
-		'vip'     => 'frame_organisation',
-		'organisation' => 'frame_organisation',
-		'office'  => 'frame_office',
-		'editor'  => 'frame_office',
-		'admin'   => 'frame_office',
+		'public'		=> 'frame_public',
+		'student'		=> 'frame_public',
+		'vip'			=> 'frame_organisation',
+		'organisation'	=> 'frame_organisation',
+		'office'		=> 'frame_office',
+		'pr'			=> 'frame_office',
+		'editor'		=> 'frame_office',
+		'admin'			=> 'frame_office',
 	);
 	
 	assert('array_key_exists($Frame,$frames)');
