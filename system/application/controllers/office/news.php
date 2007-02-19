@@ -367,7 +367,7 @@ class News extends Controller
 				$revision = $this->article_model->GetLatestRevision($article_id);
 				if (!$revision) {
 					// There is no revision for this article yet... so create one
-					$revision = $this->article_model->CreateFirstRevision($article_id, $this->user_auth->entityId);
+					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
 				}
 				// Get latest revision's data
 				$data['revision'] = $this->article_model->GetRevisionData($revision);
