@@ -43,7 +43,7 @@ class Campaign extends Controller {
 			}
 
 			// Set up the public frame
-			$this->main_frame->SetContentSimple('campaign/CampaignSelection', $data);
+			$this->main_frame->SetContentSimple('campaign/campaign_list', $data);
 			
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
@@ -95,12 +95,12 @@ class Campaign extends Controller {
 					$data['sections']['progress_reports']['entries'][$row] = $this->news->GetFullArticle($row);
 				}
 			}
-	
+
 			// Set up the public frame
 			$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 				'campaign'=>$data['campaign']['name']))
 				);
-			$this->main_frame->SetContentSimple('campaign/CampaignVote', $data);
+			$this->main_frame->SetContentSimple('campaign/campaign_petition', $data);
 	
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
@@ -157,7 +157,7 @@ class Campaign extends Controller {
 				$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
 					'campaign'=>$data['campaign_list'][$campaign_id]['name']))
 					);
-				$this->main_frame->SetContentSimple('campaign/CampaignDetails', $data);
+				$this->main_frame->SetContentSimple('campaign/campaign_details', $data);
 	
 				// Load the public frame view (which will load the content view)
 				$this->main_frame->Load();
