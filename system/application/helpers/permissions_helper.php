@@ -108,15 +108,23 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							&&	($CI->uri->segment(1) === 'office')
 							&&	($CI->uri->segment(2) === 'vip'));
 	
+	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
 			$organisation_shortname = $CI->uri->segment(2);
+			$organisation_specified = TRUE;
+		} else {
+			$organisation_shortname = $CI->user_auth->organisationShortName;
 		}
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
 	} elseif ($thru_office_vip) {
 		$organisation_shortname = $CI->uri->segment(3);
+		$organisation_specified = TRUE;
 		vip_url('office/vip/'.$organisation_shortname.'/', TRUE);
+	} else {
+		$organisation_shortname = '';
 	}
+	VipOrganisation($organisation_shortname);
 	
 	
 	// Login actions for student/vip/office logins
@@ -124,7 +132,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		'redirect+url','login/main',
 		'post' => TRUE
 	);
-	if (isset($organisation_shortname)) {
+	if ($organisation_specified) {
 		$vip_login_action = array(
 			'redirect+url','login/vipswitch/'.$organisation_shortname,
 			'post' => TRUE
@@ -134,14 +142,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'redirect+url','login/vip',
 			'post' => TRUE
 		);
-		// Not set!, if through viparea then set to default, otherwise blank
-		if ($thru_viparea) {
-			$organisation_shortname = $CI->user_auth->organisationShortName;
-		} else {
-			$organisation_shortname = '';
-		}
 	}
-	VipOrganisation($organisation_shortname);
 	$office_login_action = array(
 		'redirect+url','login/office',
 		'post' => TRUE
