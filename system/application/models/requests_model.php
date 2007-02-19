@@ -366,7 +366,7 @@ class Requests_Model extends Model
 				 UNIX_TIMESTAMP(articles.article_created) AS article_created,
 				 articles.article_request_title,
 				 content_types.content_type_name AS box_name
-				FROM article_writers, articles
+				FROM article_writers, articles, content_types
 				WHERE article_writers.article_writer_user_entity_id = ?
 				AND article_writers.article_writer_article_id = articles.article_id
 				AND articles.article_suggestion_accepted = 1
