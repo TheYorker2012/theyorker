@@ -297,7 +297,6 @@ class Directory_model extends Model {
 	 */
 	function DeleteEntryRevisionById($DirectoryEntryName, $id)
 	{
-		/// @todo Remove @a DirectoryEntryName argument as it isn't required any longer.
 		// Remove the organisation content with the given id and which is not live.
 		$sql =
 			'DELETE FROM organisation_contents '.
@@ -308,8 +307,10 @@ class Directory_model extends Model {
 			'		= organisations.organisation_entity_id '.
 			// Ensure that it ISN'T live
 			'	AND organisations.organisation_live_content_id '.
-			'		!= $organisation_contents.organisation_content_id';
-		$query = $this->db->query($sql, $id);
+			'		!= $organisation_contents.organisation_content_id '.
+			// And that the directory entry name actually matches
+			'	AND organisations.organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
 	}
 }
