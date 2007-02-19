@@ -153,9 +153,11 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		$Permission =	($thru_viparea		? 'vip'	:
 						($thru_office_vip	? 'pr'	: ''));
 	}
-	// If vip not through viparea or pr not through office, not valid page
-	elseif (	($Permission === 'pr'  && !$thru_office_vip)
-			||	($Permission === 'vip' && !$thru_viparea   )) {
+	// Ensure that:
+	//	$thru_office_vip => 'pr'
+	//	$thru_viparea => 'vip'
+	elseif (	($thru_office_vip	&& $Permission !== 'pr')
+			||	($thru_viparea		&& $Permission !== 'vip')) {
 		$Permission = '';
 	}
 	
