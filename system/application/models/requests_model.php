@@ -336,7 +336,7 @@ class Requests_Model extends Model
 				articles.article_request_title
 			FROM	articles, content_types
 			WHERE	articles.article_suggestion_accepted = 1
-			AND	content_types.content_type_id = article.article_content_type_id
+			AND	content_types.content_type_id = articles.article_content_type_id
 			AND	content_types.content_type_codename = ?
 			AND	articles.article_live_content_id IS NULL
 			AND	articles.article_deleted = 0
