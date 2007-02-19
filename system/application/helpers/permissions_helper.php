@@ -112,11 +112,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		if ($CI->uri->total_segments() > 1) {
 			$organisation_shortname = $CI->uri->segment(2);
 		}
-		VipOrganisation($organisation_shortname);
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
 	} elseif ($thru_office_vip) {
 		$organisation_shortname = $CI->uri->segment(3);
-		VipOrganisation($organisation_shortname);
 		vip_url('office/vip/'.$organisation_shortname.'/', TRUE);
 	}
 	
@@ -143,6 +141,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			$organisation_shortname = '';
 		}
 	}
+	VipOrganisation($organisation_shortname);
 	$office_login_action = array(
 		'redirect+url','login/office',
 		'post' => TRUE
