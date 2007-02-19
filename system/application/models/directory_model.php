@@ -186,36 +186,28 @@ class Directory_model extends Model {
 	*/
 	function GetRevisonsOfDirectoryEntry($DirectoryEntryName)
 	{
+		//Find the differant revisions
 		$sql =
 			'SELECT'.
-			' organisations.organisation_entity_id, '.
-			' organisations.organisation_live_content_id '.
-			'FROM organisations '.
-			'WHERE organisations.organisation_directory_entry_name=? '.
-			'LIMIT 1';
-		$query = $this->db->query($sql, $DirectoryEntryName);
-		$row = $query->row();
-		//Get org id to look for and the one that should be live.
-		$id = $row->organisation_entity_id;
-		$liveid = $row->organisation_live_content_id;
-		
-		//Find the differant revisions
-		$sql2 =
-			'SELECT'.
-			' organisation_contents.organisation_content_id, '.
-			' organisation_contents.organisation_content_last_author_timestamp, '.
-			' users.user_firstname, '.
-			' users.user_surname '.
-			'FROM organisation_contents '.
+			'	organisations.organisation_live_content_id, '.
+			'	organisation_contents.organisation_content_id, '.
+			'	organisation_contents.organisation_content_last_author_timestamp, '.
+			'	users.user_firstname, '.
+			'	users.user_surname '.
+			'FROM	organisations '.
+			'INNER JOIN organisation_contents '.
+			'	ON	organisation_contents.organisation_content_organisation_entity_id '.
+			'	=	organisations.organisation_entity_id '.
 			'INNER JOIN users '.
-			'ON users.user_entity_id = organisation_contents.organisation_content_last_author_user_entity_id '.
-			'WHERE organisation_contents.organisation_content_organisation_entity_id=? '.
+			'	ON	users.user_entity_id '.
+			'	=	organisation_contents.organisation_content_last_author_user_entity_id '.
+			'WHERE	organisations.organisation_directory_entry_name=? '.
 			'ORDER BY organisation_content_last_author_timestamp';
-		$query2 = $this->db->query($sql2, $id);
-		$query2_array = $query2->result_array();
-		$data = '';
-		foreach ($query2_array as $row){
-			if($row['organisation_content_id']==$liveid){
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$query_array = $query->result_array();
+		$data = array();
+		foreach ($query_array as $row){
+			if($row['organisation_content_id'] == $row['organisation_live_content_id'){
 				$live = true;
 			}else{
 				$live = false;
