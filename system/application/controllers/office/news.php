@@ -38,6 +38,7 @@ class News extends Controller
 		$data['section'] = strtolower($section_formatted);
 		$data['link'] = $link;
 		$data['box_contents'] = $this->requests_model->GetRequestedArticles($section);
+		$data['my_requests'] = $this->requests_model->GetRequestsForUser($this->user_auth->entityId);
 
 		// Make it so we only have to worry about two levels of access as admins can do everything editors can
 		$data['user_level'] = GetUserLevel();

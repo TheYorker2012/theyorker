@@ -359,6 +359,40 @@ class Requests_Model extends Model
 
 		return $result;
 	}
+	
+	function GetRequestsForUser($user_id)
+	{
+		$sql = 'SELECT articles.article_id,
+				 UNIX_TIMESTAMP(articles.article_created) AS article_created,
+				 articles.article_request_title,
+				 content_types.content_type_name AS box_name
+				FROM article_writers, articles
+				WHERE article_writers.article_writer_user_entity_id = ?
+				AND article_writers.article_writer_article_id = articles.article_id
+				AND articles.article_suggestion_accepted = 1
+				AND	content_types.content_type_id = articles.article_content_type_id
+				AND	articles.article_live_content_id IS NULL
+				AND	articles.article_deleted = 0
+				AND	articles.article_pulled = 0
+				ORDER BY content_types.content_type_name ASC, articles.article_created ASC';				
+		$query = $this->db->query($sql,array($user_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'id'=>$row->article_id,
+					'created'=>$row->article_created,
+					'title'=>$row->article_request_title,
+					'box'=>$row->box_name
+					);
+				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
 
 	function GetSuggestedArticle($article_id)
 	{
@@ -555,38 +589,6 @@ class Requests_Model extends Model
 		return $result;
 	}
 	
-	function GetRequestsForUser($user_id, $type, $status)
-	{
-		$sql = 'SELECT	article_writer_article_id,
-				article_request_title
-			FROM	article_writers
-
-			JOIN	articles
-			ON	article_id = article_writer_article_id
-			
-			JOIN	content_types
-			ON	content_type_id = article_content_type_id
-
-			WHERE	article_writer_user_entity_id = ?
-			AND	article_content_type_id = ?
-			AND	article_writer_status = ?
-			AND	article_live_content_id IS NULL
-			AND	article_deleted = 0';
-		$query = $this->db->query($sql,array($user_id, $type, $status));
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result() as $row)
-			{
-				$result[] = array(
-					'id'=>$row->article_writer_article_id,
-					'title'=>$row->article_request_title
-					);
-			}
-		}
-		return $result;
-	}
-
 	function AddUserToRequest($article_id, $user_id)
 	{
 		$sql = 'INSERT	INTO article_writers(
