@@ -15,20 +15,37 @@ class Campaign extends Controller {
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
 		if ($campaign_id == FALSE)
 		{
-			$this->pages_model->SetPageCode('campaign_selection');
+			$this->pages_model->SetPageCode('campaign_list');
 			$data['campaign_list'] = $this->campaign_model->GetCampaignList();
 			$data['current_campaigns'] = array(
-					'title'=>$this->pages_model->GetPropertyText('section_list_title'),
-					'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'));
+				'title'=>$this->pages_model->GetPropertyText('section_list_title'),
+				'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'));
 			$data['vote_campaigns'] = array(
-					'title'=>$this->pages_model->GetPropertyText('section_vote_title'),
-					'text'=>$this->pages_model->GetPropertyWikitext('section_vote_text'));
+				'title'=>$this->pages_model->GetPropertyText('section_vote_title'),
+				'text'=>$this->pages_model->GetPropertyWikitext('section_vote_text'));
+			$data['votes'] = array(
+				'title'=>$this->pages_model->GetPropertyText('section_current_votes_title'),
+				'text'=>$this->pages_model->GetPropertyWikitext('section_current_votes_text'));
 			$data['sidebar_about'] = array(
-					'title'=>$this->pages_model->GetPropertyText('sidebar_campaign_about_title'),
-					'text'=>$this->pages_model->GetPropertyWikitext('sidebar_campaign_about_text'));
-			$data['sidebar_what_now'] = array(
-					'title'=>$this->pages_model->GetPropertyText('sidebar_campaign_what_now_title'),
-					'text'=>$this->pages_model->GetPropertyWikitext('sidebar_campaign_what_now_text'));
+				'title'=>$this->pages_model->GetPropertyText('sidebar_campaign_about_title'),
+				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_campaign_about_text'));
+			$data['sidebar_how'] = array(
+				'title'=>$this->pages_model->GetPropertyText('sidebar_how_title'),
+				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_how_text'));
+
+			$total_votes = 0;
+	                foreach ($data['campaign_list'] as $campaigns)
+			{
+				$total_votes += $campaigns['votes'];
+			}
+	                foreach ($data['campaign_list'] as $key => $campaigns)
+			{
+				if ($total_votes == 0)
+					$data['campaign_list'][$key]['percentage'] = 0;
+				else {
+					$data['campaign_list'][$key]['percentage'] = $campaigns['votes'] / $total_votes * 100;
+				}
+			}
 
 			if ($this->user_auth->isLoggedIn == TRUE)
 			{

@@ -42,17 +42,6 @@
 		echo $sidebar_vote['not_logged_in'];
 	?>
 	</div>
-
-	<h4><?php echo $sidebar_other_campaigns['title']; ?></h4>
-	<div class="Entry">
-	<?php
-        foreach ($campaign_list as $key => $campaigns)
-	{
-		if ($key != $selected_campaign)
-			echo '<a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a><br />';
-	};
-	?><br />
-	</div>
 	
 	<h4><?php echo $sidebar_more['title']; ?></h4>
 	<div class="Entry">
@@ -77,6 +66,17 @@
 		echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
 	};
 	?>
+	</div>
+
+	<h4><?php echo $sidebar_other_campaigns['title']; ?></h4>
+	<div class="Entry">
+	<?php
+        foreach ($campaign_list as $key => $campaigns)
+	{
+		if ($key != $selected_campaign)
+			echo '<a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a><br />';
+	};
+	?><br />
 	</div>
 	
     	<h4><?php echo $sidebar_comments['title']; ?></h4>
