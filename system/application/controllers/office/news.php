@@ -327,24 +327,115 @@ class News extends Controller
 		$this->main_frame->Load();
 	}
 
-	function article()
+	function preview($article_id,$codename,$revision_id)
 	{
 		if (!CheckPermissions('office')) return;
 
-		// Get changeable page content
-		$this->pages_model->SetPageCode('office_news_article');
+		$_SESSION['office_news_preview'] = $revision_id;
+		redirect('/news/' . $codename . '/' . $article_id);
+	}
 
-		// Get page content
-		$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
+	function article($article_id)
+	{
+		if (!CheckPermissions('office')) return;
 
-		// Set up the main frame
-		$this->main_frame->SetContentSimple('office/news/article', $data);
+		if (is_numeric($article_id)) {
+			$data['article'] = $this->article_model->GetArticleDetails($article_id);
+			if (count($data['article']) > 0) {
+				// Setup XAJAX functions
+				$this->load->library('xajax');
+		        $this->xajax->registerFunction(array('_addComment', &$this, '_addComment'));
+		        $this->xajax->registerFunction(array('_updateHeadlines', &$this, '_updateHeadlines'));
+		        $this->xajax->processRequests();
 
-		// Set page title & load main frame with view
-		$this->main_frame->SetTitleParameters(
-			array('title' => 'REQUEST/ARTICLE HEADLINE')
-		);
-		$this->main_frame->Load();
+				// Create menu
+				$navbar = $this->main_frame->GetNavbar();
+				$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
+				$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
+				$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
+				$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
+				$navbar->AddItem('request', 'request', 'javascript:tabs(\'request\');');
+				$navbar->SetSelected('request');
+
+				// Get page content
+				$this->pages_model->SetPageCode('office_news_article');
+				$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
+
+				$data['comments'] = $this->article_model->GetArticleComments($article_id);
+				$data['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+				$revision = $this->article_model->GetLatestRevision($article_id);
+				if (!$revision) {
+					// There is no revision for this article yet... so create one
+					$revision = $this->article_model->CreateFirstRevision($article_id, $this->user_auth->entityId);
+				}
+				// Get latest revision's data
+				$data['revision'] = $this->article_model->GetRevisionData($revision);
+
+
+				// Set up the main frame
+				$this->main_frame->SetContentSimple('office/news/article', $data);
+				$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+				// Set page title & load main frame with view
+				$this->main_frame->SetTitleParameters(
+					array('title' => $data['article']['request_title'])
+				);
+				$this->main_frame->Load();
+			} else {
+				redirect('/office/news');
+			}
+		} else {
+			redirect('/office/news');
+		}
+	}
+
+	function _updateHeadlines($revision,$headline,$subheadline,$subtext,$blurb,$wiki,$create_cache)
+	{
+		$xajax_response = new xajaxResponse();
+		$article_id = $this->uri->segment(4);
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+		if (($data['user_level'] == 'editor') || ($this->article_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
+			if (is_numeric($revision)) {
+				$headline = addslashes($this->input->xss_clean($headline));
+				$subheadline = addslashes($this->input->xss_clean($subheadline));
+				$subtext = addslashes($this->input->xss_clean($subtext));
+				$blurb = addslashes($this->input->xss_clean($blurb));
+				$wiki = addslashes($this->input->xss_clean($wiki));
+				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
+				$wiki_cache = '';
+				if ($create_cache) {
+					$this->load->library('wikiparser');
+					$wiki_cache = $this->wikiparser->parse($wiki);
+				}
+				if ($revision == 0) {
+					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, $headline, $subheadline, $subtext, $blurb, $wiki, $wiki_cache);
+				} else {
+					$this->article_model->UpdateRevision($revision,$headline,$subheadline,$subtext,$blurb,$wiki,$wiki_cache);
+				}
+				$xajax_response->addScriptCall('headlinesUpdates',$revision,date('H:i:s'));
+			 } else {
+				$xajax_response->addAlert('Invalid revision number, please try reloading the page.');
+			 }
+		} else {
+			$xajax_response->addAlert('You do not have the permissions required to edit the details for this article!');
+		}
+		return $xajax_response;
+	}
+
+	function _addComment($comment_text)
+	{
+		$xajax_response = new xajaxResponse();
+		if ($comment_text == '') {
+			$xajax_response->addAlert('Please enter a comment to submit.');
+			$xajax_response->addScriptCall('commentAdded','','','');
+		} else {
+			$new_comment = $this->article_model->InsertArticleComment($this->uri->segment(4), $this->user_auth->entityId, $comment_text);
+			$xajax_response->addScriptCall('commentAdded',date('D jS F Y @ H:i',$new_comment['time']),$new_comment['name'],nl2br($comment_text));
+		}
+		return $xajax_response;
 	}
 
 }

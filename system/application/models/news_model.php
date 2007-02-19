@@ -326,21 +326,27 @@ class News_model extends Model
 	 * @return 'text','blurb','authors' (just ids atm),'fact_boxes','photos' (just ids atm)
 	 * @return 'links', 'related_articles'
 	 */
-	function GetFullArticle($id, $dateformat='%W, %D %M %Y')
+	function GetFullArticle($id, $dateformat='%W, %D %M %Y', $preview = 0)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id, 
-				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-				articles.article_location
-			FROM articles
-			WHERE (articles.article_id = ?)
-			LIMIT 0,1';
-		$query = $this->db->query($sql, array($dateformat,$id));
-		if ( $query->num_rows() == 0 ) return NULL;
-		$row = $query->row();
-		$result['date'] = $row->article_publish_date;
-		$result['location'] = $row->article_location;
-		$content_id = $row->article_live_content_id;
+		if ($preview == 0) {
+			$sql = 'SELECT articles.article_live_content_id,
+					DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+					articles.article_location
+				FROM articles
+				WHERE (articles.article_id = ?)
+				LIMIT 0,1';
+			$query = $this->db->query($sql, array($dateformat,$id));
+			if ( $query->num_rows() == 0 ) return NULL;
+			$row = $query->row();
+			$result['date'] = $row->article_publish_date;
+			$result['location'] = $row->article_location;
+			$content_id = $row->article_live_content_id;
+		} else {
+			$result['date'] = date('l, jS F Y');
+			$result['location'] = 0;
+			$content_id = $preview;
+		}
 		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
 				article_contents.article_content_subtext, article_contents.article_content_wikitext_cache,
 				article_contents.article_content_blurb

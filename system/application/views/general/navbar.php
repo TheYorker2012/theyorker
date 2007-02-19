@@ -1,5 +1,5 @@
-<DIV id="<?php echo $style; ?>">
-	<UL>
+<div id="<?php echo $style; ?>">
+	<ul>
 <?php
 	foreach ($items as $key => $item) {
 		$link_attributes = 'href="'.$item['link'].'"';
@@ -7,8 +7,8 @@
 			$link_attributes .= ' class="current"';
 		}
 ?>
-		<LI><A <?php echo $link_attributes; ?>><?php echo $item['title']; ?></A></LI>
-		<LI><DIV class="thin">&nbsp;</DIV></LI>
+		<li><a id='navbar_<?php echo $key; ?>' <?php echo $link_attributes; ?>><?php echo $item['title']; ?></a></li>
+		<li><div class="thin">&nbsp;</div></li>
 <?php
 		}
 ?>

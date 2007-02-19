@@ -839,6 +839,7 @@ div.ArticleColumn h2 {
 	line-height: normal;
 	margin: 0 0 2px 0;
 	padding: 0;
+	color: #000;
 }
 
 div.ArticleColumn h3 {
@@ -889,6 +890,7 @@ div.ArticleColumn blockquote {
 	border: 1px #999 solid;
 	background: #eee;
 	text-align: center;
+	font-size: small;
 }
 
 div.ArticleColumn blockquote span.author {
@@ -1037,10 +1039,7 @@ div.RightToolbar div.LifestylePuffer {
 }
 
 .form fieldset {
-    border-color: #ff6a00;
-	border-width: 1px 0 0 0;
- 	border-style: solid none none none;
- 	padding: 10px;
+	padding: 0;
  	margin: 0;
 	border-width: 0;
 	text-align: left;
@@ -1057,9 +1056,19 @@ div.RightToolbar div.LifestylePuffer {
 	font-weight: bold;
 }
 
+.form fieldset div.info {
+	float: left;
+	margin: 5px 10px;
+}
+
 .form fieldset label.full {
-	width: 410px;
+	width: 100%;
 	text-align: center;
+}
+
+.form fieldset textarea.full {
+	margin: 0;
+	width: 400px;
 }
 
 .form fieldset i {
@@ -1098,7 +1107,7 @@ div.RightToolbar div.LifestylePuffer {
  	background-color: #ff6a00;
 	float: right;
 	padding: 0 10px 0 20px;
-	color: #000000;
+	color: #fff;
 	border-top : 1px solid #eaedf4;
 	border-left : 1px solid #eaedf4;
  	border-bottom : 1px solid #224059;
@@ -1348,6 +1357,18 @@ div.feedback div.main {
 	text-align: justify;
 }
 
-div.feedback div.top span.page {
+div.feedback div.top span.bold {
 	font-weight: bold;
+}
+
+div.feedback div.top span.right, div#revision_container div.revision span.right {
+	float: right;
+	text-align: right;
+}
+
+/* Revisions */
+div#revision_container div.revision {
+	font-size: small;
+	border-bottom: 1px #999 solid;
+	margin: 0;
 }

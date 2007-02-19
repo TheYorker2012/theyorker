@@ -454,7 +454,7 @@ class Requests_Model extends Model
 		$sql = 'SELECT	article_content_id,
 				article_content_heading,
 				article_content_last_author_user_entity_id,
-				article_content_last_author_timestamp,
+				UNIX_TIMESTAMP(article_content_last_author_timestamp) AS article_content_last_author_timestamp,
 				business_card_name
 			FROM	article_contents
 
