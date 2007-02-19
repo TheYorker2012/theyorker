@@ -150,11 +150,8 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	
 	// If vip+pr, use URI to decide which
 	if ($Permission === 'vip+pr') {
-		$CI->messages->AddDumpMessage('$thru_viparea',$thru_viparea);
-		$CI->messages->AddDumpMessage('$thru_office_vip',$thru_office_vip);
 		$Permission =	($thru_viparea		? 'vip'	:
-						 $thru_office_vip	? 'pr'	: '');
-		$CI->messages->AddDumpMessage('$Permission',$Permission);
+						($thru_office_vip	? 'pr'	: ''));
 	}
 	// If vip not through viparea or pr not through office, not valid page
 	elseif (	($Permission === 'pr'  && !$thru_office_vip)
