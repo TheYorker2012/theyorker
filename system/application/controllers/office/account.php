@@ -59,6 +59,27 @@ class Account extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account');
 		
+		//Do password checks before updating
+		if(!empty($_POST["password_button"])){
+			if($_POST["password_new1"]==$_POST["password_new2"]){
+				if($this->user_auth->checkPassword($_POST["password_old"])){
+					if(strlen($_POST["password_new1"]) >= 5){
+						$this->user_auth->setPassword($_POST["password_new1"]);
+						$this->main_frame->AddMessage('success','You have successfully changed your VipArea password.');
+					}else{
+					//password must be at least five characters long!
+					$this->main_frame->AddMessage('error','The new password must be at least five characters long.');
+					}
+				}else{
+				//not same password error
+				$this->main_frame->AddMessage('error','The original password you entered was not correct.');
+				}
+			}else{
+			//different new passwords error
+			$this->main_frame->AddMessage('error','The new password you entered was not the same in both fields.');
+			}
+		}
+		
 		
 		$data = $this->organisations->_GetOrgData($organisation);
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');

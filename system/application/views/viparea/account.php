@@ -45,7 +45,7 @@
 	<p>
 		<?php echo $account_password_text; ?>
 	</p>
-	<form action='<?php echo vip_url('account/update/password'); ?>' class='form' method='POST'>
+	<form action='<?php echo vip_url('account/update'); ?>' class='form' method='POST'>
 	<fieldset>
 		<label for='password_old'>Old Password :</label>
 		<input type='password' name='password_old' style='width: 150px;' />
