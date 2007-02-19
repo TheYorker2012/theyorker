@@ -207,16 +207,12 @@ class Directory_model extends Model {
 		$query_array = $query->result_array();
 		$data = array();
 		foreach ($query_array as $row){
-			if($row['organisation_content_id'] == $row['organisation_live_content_id'){
-				$live = true;
-			}else{
-				$live = false;
-			}
+			$live = ($row['organisation_content_id'] == $row['organisation_live_content_id']);
 			$data[] = array(
-				'id'          => $row['organisation_content_id'],
-				'author'          => $row['user_firstname'].' '.$row['user_surname'],
-				'published'        => $live,
-				'timestamp'        => $row['organisation_content_last_author_timestamp']
+				'id'		=> $row['organisation_content_id'],
+				'author'	=> $row['user_firstname'].' '.$row['user_surname'],
+				'published'	=> $live,
+				'timestamp'	=> $row['organisation_content_last_author_timestamp']
 			);
 		}
 		return $data;
