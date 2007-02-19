@@ -42,6 +42,7 @@
 
 
 <?php
+
 if (isset($sections['progress_reports']['entries']))
 {
 	echo '<div class="blue_box">';
@@ -53,6 +54,7 @@ if (isset($sections['progress_reports']['entries']))
 	}
 	echo '</div>';
 }
+
 ?>
 
 <div class='grey_box'>
