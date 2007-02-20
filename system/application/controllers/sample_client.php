@@ -79,7 +79,7 @@ class Sample_client extends controller
 			$uid = $session_info['uid'];
 			
 			// Get the entire user profile.
-			$user_profile = $client->users_getInfo($uid, $profile_field_array);
+			$user_profile = $client->users_getInfo($uid, Facebook_model::$profile_field_array);
 			$user_name = $user_profile[0]['name'];
 			
 			// Get five of the user's friends.
@@ -99,7 +99,7 @@ class Sample_client extends controller
 			}
 			
 			// Get the profiles of users' five friends.
-			$friend_profiles = $client->users_getInfo($friends_array, $profile_field_array);
+			$friend_profiles = $client->users_getInfo($friends_array, Facebook_model::$profile_field_array);
 			
 			
 			// Get events for the next few weeks.
@@ -135,7 +135,7 @@ class Sample_client extends controller
 			$this->main_frame->SetContent('calendar/facebooksample',$data);
 			
 		} catch (FacebookRestClientException $ex) {
-			if (!isset($uid) && $ex->getCode() == API_EC_PARAM) {
+			if (!isset($uid) && $ex->getCode() == 100) {
 				// This will happen if auth_getSession fails, which generally means you
 				// just hit "reload" on the page with an already-used up auth_token
 				// parameter.  Bounce back to facebook to get a fresh auth_token.
