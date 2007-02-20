@@ -1,17 +1,16 @@
 <div class="RightToolbar">
-  <h4><?php echo $sidebar_ask['title']; ?></h4>
-  <?php echo $sidebar_ask['text']; ?>
-  <br /><br />
-  Give us a challenge
-  <form name='' id='' action='' method='' class='form'>
-    <fieldset>
-      <textarea>How Do I?</textarea>
-      <input type="submit" value="Ask" class="button" />
-    </fieldset>
-  </form>
-  <br />
+	<h4><?php echo $sidebar_ask['title']; ?></h4>
+	<?php echo $sidebar_ask['text']; ?>
+	<form class="form" action="/howdoi/ask" method="post" >
+		<fieldset>
+			<?php echo '<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'; ?>
+			<textarea name="a_question" cols="24" rows="5">How Do I?</textarea>
+			<input type="submit" class="button" value="Ask" name="r_submit_ask" />
+		</fieldset>
+	</form>
+	<br />
+	<h4><?php echo $sidebar_question_categories['title']; ?></h4>
 <?php
-	echo '<h4>Question Categories</h4>';
 	foreach ($categories as $category)
 	{
 		echo '<a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a><br />';
@@ -26,7 +25,7 @@
 
 <div class="blue_box">
 <?php
-	echo '<h2>Question Categories</h2>';
+	echo '<h2>'.$question_categories['title'].'</h2>';
 	foreach ($categories as $key => $category)
 	{
 		//echo '<h5><a href="'.$category['codename'].'/">'.$category['name'].'</a><br /></h5>';

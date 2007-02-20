@@ -70,6 +70,7 @@ $route['contact'] = 'yorkerdirectory/members/theyorker';
 
 // /howdoi/category => /howdoi/viewcategory/category (-1 meaning all)
 // /howdoi/category/12 => /howdoi/viewcategory/12
+$route['howdoi/ask'] = 'howdoi/makesuggestion';
 $route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 

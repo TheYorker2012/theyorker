@@ -20,10 +20,16 @@ class Howdoi extends Controller {
 
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
-		$data['sidebar_ask'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
-						'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
-		$data['section_howdoi'] = array('title'=>$this->pages_model->GetPropertyText('section_howdoi_title',FALSE),
-						'text'=>$this->pages_model->GetPropertyWikitext('section_howdoi_text',FALSE));
+		$data['sidebar_ask'] = array(
+			'title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
+			'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
+		$data['question_categories'] = array(
+			'title'=>$this->pages_model->GetPropertyText('section_question_categories_title',FALSE));
+		$data['section_howdoi'] = array(
+			'title'=>$this->pages_model->GetPropertyText('section_howdoi_title',FALSE),
+			'text'=>$this->pages_model->GetPropertyWikitext('section_howdoi_text',FALSE));
+		$data['sidebar_question_categories'] = array(
+			'title'=>$this->pages_model->GetPropertyText('sidebar_question_categories_title',TRUE));
 
 		$data['categories'] = $this->howdoi_model->GetContentCategories($howdoi_type_id);
 		foreach ($data['categories'] as $category_id => $category)
@@ -70,8 +76,13 @@ class Howdoi extends Controller {
 			}
 
 			// Gets the sidebar page_properties
-			$data['sidebar_ask'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
-							'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
+			$data['question_jump'] = array(
+				'title'=>$this->pages_model->GetPropertyText('section_question_jump_title'));
+			$data['sidebar_ask'] = array(
+				'title'=>$this->pages_model->GetPropertyText('sidebar_ask_title',TRUE),
+				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_ask_text',TRUE));
+			$data['sidebar_question_categories'] = array(
+				'title'=>$this->pages_model->GetPropertyText('sidebar_question_categories_title',TRUE));
 
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
 
@@ -85,6 +96,30 @@ class Howdoi extends Controller {
 		else
 			//needs a new page to show invalid category
 			redirect('/howdoi');
+	}
+	
+	/* ##TODO: write a proper description
+	Array
+		(
+		    [r_redirecturl] =>
+		    [a_question] => How Do I?
+		    [r_submit_ask] => Ask
+		)
+	*/
+	function makesuggestion()
+	{
+		if (!CheckPermissions('public')) return;
+
+		$this->load->model('requests_model','requests_model');
+		$this->load->model('howdoi_model','howdoi_model');
+		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+		if (isset($_POST['r_submit_ask']))
+		{
+			$this->requests_model->CreateRequest('suggestion', $howdoi_type_id, $_POST['a_question'], '', $this->user_auth->entityId, '');
+			$this->main_frame->AddMessage('success','Your question has been added and the editors notified.');
+			redirect($_POST['r_redirecturl']);
+		}
 	}
 }
 ?>
