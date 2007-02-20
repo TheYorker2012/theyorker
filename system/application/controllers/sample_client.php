@@ -44,9 +44,11 @@ class Sample_client extends controller
 		$this->load->helper('facebookapi');
 	}
 	
-	function index()
+	function index($auth_token = NULL)
 	{
 		if (!CheckPermissions('student')) return;
+		
+		$this->messages->AddDumpMessage('_GET',$_GET);
 		
 		$config = array(
 			'api_server_base_url' => $this->config->item('api_server_base_url'),
@@ -59,11 +61,10 @@ class Sample_client extends controller
 			'debug' => $this->config->item('debug'),
 		);
 		
-		if (!array_key_exists('auth_token',$_REQUEST)) {
+		if (!is_string($auth_token)) {
 			header('Location: '.$config['login_url']);
 			exit;
 		}
-		$auth_token = $_REQUEST['auth_token'];
 		
 		try {
 			// Create our client object.  
