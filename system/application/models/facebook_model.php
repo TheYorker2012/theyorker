@@ -36,7 +36,7 @@
  * @author ari
  * @author dave
  */
-class FacebookRestClient {
+class Facebook_model extends model {
   public $secret;
   public $session_key;
   public $api_key;
@@ -44,6 +44,12 @@ class FacebookRestClient {
   public $desktop;
   public $session_secret; // not used for server apps, for desktop apps this will get set in auth_getSession
 
+  public function __construct()
+  {
+  	parent::model();
+  	$this->config->load('facebook');
+  }
+  
   /**
    * Create the client.
    * @param string $session_key if you haven't gotten a session key yet, leave 
@@ -52,7 +58,7 @@ class FacebookRestClient {
    *                            variable.
    * @param bool   $desktop     set to true if you are a desktop client
    */
-  public function __construct($server_addr, $api_key, $secret, $session_key=null, $desktop=false, $throw_errors=true) {
+  public function Init($server_addr, $api_key, $secret, $session_key=null, $desktop=false, $throw_errors=true) {
     $this->server_addr  = $server_addr;
     $this->secret       = $secret;
     $this->session_key  = $session_key;
@@ -61,7 +67,7 @@ class FacebookRestClient {
     $this->throw_errors = $throw_errors;
     $this->last_call_success = true;
     $this->last_error = array();
-    if ($GLOBALS['config']['debug']) {
+    if ($this->config->item('debug', 'facebook')) {
       $this->cur_id = 0;
       ?>
 <script type="text/javascript">
@@ -296,7 +302,7 @@ function toggleDisplay(id, type) {
     $xml = $this->post_request($method, $params);
     $sxml = simplexml_load_string($xml);
     $result = self::convert_simplexml_to_array($sxml);
-    if ($GLOBALS['config']['debug']) {
+    if ($this->config->item('debug', 'facebook')) {
       // output the raw xml and its corresponding php object, for debugging:
       print '<div style="margin: 10px 30px; padding: 5px; border: 2px solid black; background: gray; color: white; font-size: 12px; font-weight: bold;">';
       $this->cur_id++;
@@ -463,4 +469,5 @@ $profile_field_array = array(
     'tv',
     'wall_count', 
     'work_history');
+
 ?>

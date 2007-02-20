@@ -40,25 +40,26 @@ class Sample_client extends controller
 	{
 		parent::controller();
 		
-		$this->config->load('facebook');
-		$this->load->helper('facebookapi');
+		$this->config->load('facebook', TRUE);
 	}
 	
 	function index($auth_token = NULL)
 	{
 		if (!CheckPermissions('student')) return;
 		
+		$this->load->model('facebook_model');
+		
 		$this->messages->AddDumpMessage('_GET',$_GET);
 		
 		$config = array(
-			'api_server_base_url' => $this->config->item('api_server_base_url'),
-			'login_server_base_url' => $this->config->item('login_server_base_url'),
-			'rest_server_addr' => $this->config->item('rest_server_addr'),
-			'api_key' => $this->config->item('api_key'),
-			'secret' => $this->config->item('secret'),
-			'next' => $this->config->item('next'),
-			'login_url' => $this->config->item('login_url'),
-			'debug' => $this->config->item('debug'),
+			'api_server_base_url' => $this->config->item('api_server_base_url', 'facebook'),
+			'login_server_base_url' => $this->config->item('login_server_base_url', 'facebook'),
+			'rest_server_addr' => $this->config->item('rest_server_addr', 'facebook'),
+			'api_key' => $this->config->item('api_key', 'facebook'),
+			'secret' => $this->config->item('secret', 'facebook'),
+			'next' => $this->config->item('next', 'facebook'),
+			'login_url' => $this->config->item('login_url', 'facebook'),
+			'debug' => $this->config->item('debug', 'facebook'),
 		);
 		
 		if (!is_string($auth_token)) {
@@ -69,7 +70,8 @@ class Sample_client extends controller
 		try {
 			// Create our client object.  
 			// This is a container for all of our static information.
-			$client = new FacebookRestClient($config['rest_server_addr'], $config['api_key'], $config['secret'], null, false);
+			$client = &$this->Facebook_model;
+			$client->Init($config['rest_server_addr'], $config['api_key'], $config['secret'], null, false);
 			
 			// The required call: Establish session 
 			// The session key is saved in the client lib for the whole PHP instance.
