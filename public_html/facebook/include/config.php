@@ -14,11 +14,8 @@ $config['rest_server_addr'] = $config['api_server_base_url']."/restserver.php";
 // http://developers.facebook.com/account.php
 
 // GMG Hosting
-//$config['api_key'] = '0cf1a44ba0268cdb731e26e0741c779d';
-//$config['secret'] = 'f215e962f9cd2538cdad0ac1eb2a22e9';
-// GMG Hosting (james' key)
-$config['api_key'] = '597db20867cef43f60e7ebc9574361fe';
-$config['secret'] = 'cfda20b9edd910f0b2907a3208453c87';
+$config['api_key'] = '0cf1a44ba0268cdb731e26e0741c779d';
+$config['secret'] = 'f215e962f9cd2538cdad0ac1eb2a22e9';
 
 // This assumes your registered callback URL is, say, http://www.myapplication.com/
 // The page which would serve as an after-login entrypoint into your app would 
@@ -29,6 +26,6 @@ $config['next'] = urlencode('facebook/sample_client.php');
 $config['login_url'] = $config['login_server_base_url'].'/login.php?v=1.0' .
                        '&next=' . $config['next'] . '&api_key=' . $config['api_key'];
 
-$config['debug'] = 1; // TURN this on for XML input spew
+$config['debug'] = 0; // TURN this on for XML input spew
 
 ?>

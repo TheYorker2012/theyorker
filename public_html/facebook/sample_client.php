@@ -50,8 +50,7 @@ try {
 
 	// The required call: Establish session 
 	// The session key is saved in the client lib for the whole PHP instance.
-	$session_info = $client->auth_getSession
-	var_dump($session_info);($auth_token);
+	$session_info = $client->auth_getSession($auth_token);
 	$uid = $session_info['uid'];
 
 	// Get the entire user profile.
@@ -98,7 +97,7 @@ try {
 	$groups = array_slice($client->groups_get($uid, null), 0, 5);
 
 } catch (FacebookRestClientException $ex) {
-	if (!isset($uid) && $ex->getCode() == API_EC_PARAM) {
+	if (!isset($uid) && $ex->getCode() == 100/*API_EC_PARAM*/) {
 		// This will happen if auth_getSession fails, which generally means you
 		// just hit "reload" on the page with an already-used up auth_token
 		// parameter.	Bounce back to facebook to get a fresh auth_token.
