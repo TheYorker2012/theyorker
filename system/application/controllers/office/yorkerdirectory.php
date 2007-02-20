@@ -94,6 +94,7 @@ class Yorkerdirectory extends Controller
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
 			if (!empty($data)) {
+				$this->messages->AddDumpMessage('data',$data);
 				// Insert main text from pages information
 				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 				
@@ -108,7 +109,7 @@ class Yorkerdirectory extends Controller
 						array('organisation' => $data['organisation']['name']));
 				$this->main_frame->SetContent($the_view);
 			} else {
-				$this->messages->AddMessage('error','Unknown organisation labelled '.$organisation);
+				$this->messages->AddMessage('error','Unknown revision '.$revision.' for '.$organisation);
 			}
 			
 			// Load the public frame view
