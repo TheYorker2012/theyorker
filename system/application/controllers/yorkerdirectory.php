@@ -99,47 +99,51 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('directory_view');
 		
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		if (!empty($data)) {
+			$this->_SetupOrganisationFrame($organisation);
 
-		$subpageview='directory/directory_view';
-		
-		//Reviews
-		$this->load->model('articles_model');
-		$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
-		// sort into types
-		$directory_reviews = array();
-		$review_types = array();
-		foreach ($reviews as $review) {
-			if (NULL === $review['type']) {
-				$directory_reviews[] = $review;
-			} else {
-				if (!array_key_exists($review['type'], $review_types)) {
-					$review_types[$review['type']] = array();
+			$subpageview='directory/directory_view';
+			
+			//Reviews
+			$this->load->model('articles_model');
+			$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
+			// sort into types
+			$directory_reviews = array();
+			$review_types = array();
+			foreach ($reviews as $review) {
+				if (NULL === $review['type']) {
+					$directory_reviews[] = $review;
+				} else {
+					if (!array_key_exists($review['type'], $review_types)) {
+						$review_types[$review['type']] = array();
+					}
+					$review_types[$review['type']][] = $review;
 				}
-				$review_types[$review['type']][] = $review;
 			}
+			$data['organisation']['reviews_untyped'] = $directory_reviews;
+			$data['organisation']['reviews_by_type'] = $review_types;
+
+			$this->load->library('maps');
+			$map = &$this->maps->CreateMap('Location', 'googlemaps');
+			$this->maps->SendMapData();
+
+			// Set up the directory view
+			$directory_view = $this->frames->view($subpageview, $data);
+
+			// Set up the directory frame to use the directory events view
+			$this->main_frame->SetPage('about');
+			$this->frame_directory->SetOrganisation($data['organisation']);
+			$this->frame_directory->SetContent($directory_view);
+			
+			// Set up the public frame to use the directory view
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($this->frame_directory);
+
+			// Load the public frame view
+		} else {
+			$this->messages->AddMessage('error','Unknown organisation');
 		}
-		$data['organisation']['reviews_untyped'] = $directory_reviews;
-		$data['organisation']['reviews_by_type'] = $review_types;
-
-		$this->load->library('maps');
-		$map = &$this->maps->CreateMap('Location', 'googlemaps');
-		$this->maps->SendMapData();
-
-		// Set up the directory view
-		$directory_view = $this->frames->view($subpageview, $data);
-
-		// Set up the directory frame to use the directory events view
-		$this->main_frame->SetPage('about');
-		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($directory_view);
-		
-		// Set up the public frame to use the directory view
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($this->frame_directory);
-
-		// Load the public frame view
 		$this->main_frame->Load();
 	}
 
@@ -151,114 +155,118 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('directory_events');
 		
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupOrganisationFrame($organisation);
+		if (!empty($data)) {
+			$this->_SetupOrganisationFrame($organisation);
 
-		$this->load->model('calendar/events_model');
-		
-		$this->load->library('view_calendar_select_week');
-		$this->load->library('view_calendar_list');
-		$this->load->library('date_uri');
+			$this->load->model('calendar/events_model');
+			
+			$this->load->library('view_calendar_select_week');
+			$this->load->library('view_calendar_list');
+			$this->load->library('date_uri');
 
-		// Sorry about the clutter, this will be moved in a bit but it isn't
-		// practical to put it in the view
-		$extra_head = <<<EXTRAHEAD
-			<script src="/javascript/prototype.js" type="text/javascript"></script>
-			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-			<script src="/javascript/calendar.js" type="text/javascript"></script>
-			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+			// Sorry about the clutter, this will be moved in a bit but it isn't
+			// practical to put it in the view
+			$extra_head = <<<EXTRAHEAD
+				<script src="/javascript/prototype.js" type="text/javascript"></script>
+				<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+				<script src="/javascript/calendar.js" type="text/javascript"></script>
+				<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
 
-		$use_default_range = FALSE;
-		if (empty($DateRange)) {
-			// $DateRange Empty
-			$use_default_range = TRUE;
-
-		} else {
-			$uri_result = $this->date_uri->ReadUri($DateRange);
-			if ($uri_result['valid']) {
-				// valid
-				$start_time = $uri_result['start'];
-				$end_time = $uri_result['end'];
-				$format = $uri_result['format'];
-				$range_description = $uri_result['description'];
+			$use_default_range = FALSE;
+			if (empty($DateRange)) {
+				// $DateRange Empty
+				$use_default_range = TRUE;
 
 			} else {
-				// invalid
-				$this->main_frame->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
-				$use_default_range = TRUE;
+				$uri_result = $this->date_uri->ReadUri($DateRange);
+				if ($uri_result['valid']) {
+					// valid
+					$start_time = $uri_result['start'];
+					$end_time = $uri_result['end'];
+					$format = $uri_result['format'];
+					$range_description = $uri_result['description'];
+
+				} else {
+					// invalid
+					$this->main_frame->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
+					$use_default_range = TRUE;
+				}
 			}
+
+			if ($use_default_range) {
+				// Default to this week
+				$start_time = Academic_time::NewToday();
+				$start_time = $start_time->BackToMonday();
+				$end_time = $start_time->Adjust('1week');
+				$format = 'ac';
+				//$range_description = 'from today for 1 week';
+				$range_description = 'this week';
+			}
+
+			// Use the start time, end time, and format to set up views
+
+			//$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
+			$weeks_start = $this->academic_calendar->AcademicDayOfTerm(
+					$start_time->AcademicYear(),
+					$start_time->AcademicTerm(),
+					1,
+					0,0,0
+				);
+			/*if ($weeks_start->Timestamp() < $monday->Timestamp()) {
+				$weeks_start = $monday;
+			}*/
+
+			/*$weeks_end = $end_time->Adjust('5week')->BackToMonday();
+			if ($weeks_end->Timestamp() < $monday->Timestamp()) {
+				$weeks_end = $monday->Adjust('5week');
+			}*/
+
+			// Set up the week select view
+			$week_select = new ViewCalendarSelectWeek();
+			$week_select->SetUriBase('directory/'.$organisation.'/events/');
+			$week_select->SetUriFormat($format);
+			//$week_select->SetRange($weeks_start, $weeks_end);
+			$week_select->SetAcademicTerm($weeks_start->AcademicYear(), $weeks_start->AcademicTerm());
+			$week_select->SetSelectedWeek($start_time, $end_time);
+			$week_select->Retrieve();
+
+			$occurrence_filter = new EventOccurrenceFilter();
+			$occurrence_filter->EnableSource('all');
+			$occurrence_filter->SetSpecialCondition(
+					'organisations.organisation_directory_entry_name = '.
+					$this->db->escape($organisation)
+				);
+
+			// Set up the events list
+			$events_list = new ViewCalendarList();
+			$events_list->SetUriBase('directory/'.$organisation.'/events/');
+			$events_list->SetUriFormat($format);
+			$events_list->SetRange($start_time, $end_time);
+			$events_list->SetOccurrenceFilter($occurrence_filter);
+			$events_list->Retrieve();
+
+			// Set up the directory events view to contain the week select and
+			// events list
+			$directory_events = new FramesFrame('directory/directory_view_events',$data);
+			$directory_events->SetContent($week_select,'week_select');
+			$directory_events->SetContent($events_list,'events_list');
+			$directory_events->SetData('date_range_description', $range_description);
+
+			// Set up the directory frame to use the messages frame
+			$this->main_frame->SetPage('events');
+			$this->frame_directory->SetOrganisation($data['organisation']);
+			$this->frame_directory->SetContent($directory_events);
+
+			// Set up the public frame to use the directory frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetExtraHead($extra_head);
+			$this->main_frame->SetContent($this->frame_directory);
+
+		} else {
+			$this->messages->AddMessage('error','Unknown organisation');
 		}
-
-		if ($use_default_range) {
-			// Default to this week
-			$start_time = Academic_time::NewToday();
-			$start_time = $start_time->BackToMonday();
-			$end_time = $start_time->Adjust('1week');
-			$format = 'ac';
-			//$range_description = 'from today for 1 week';
-			$range_description = 'this week';
-		}
-
-		// Use the start time, end time, and format to set up views
-
-		//$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
-		$weeks_start = $this->academic_calendar->AcademicDayOfTerm(
-				$start_time->AcademicYear(),
-				$start_time->AcademicTerm(),
-				1,
-				0,0,0
-			);
-		/*if ($weeks_start->Timestamp() < $monday->Timestamp()) {
-			$weeks_start = $monday;
-		}*/
-
-		/*$weeks_end = $end_time->Adjust('5week')->BackToMonday();
-		if ($weeks_end->Timestamp() < $monday->Timestamp()) {
-			$weeks_end = $monday->Adjust('5week');
-		}*/
-
-		// Set up the week select view
-		$week_select = new ViewCalendarSelectWeek();
-		$week_select->SetUriBase('directory/'.$organisation.'/events/');
-		$week_select->SetUriFormat($format);
-		//$week_select->SetRange($weeks_start, $weeks_end);
-		$week_select->SetAcademicTerm($weeks_start->AcademicYear(), $weeks_start->AcademicTerm());
-		$week_select->SetSelectedWeek($start_time, $end_time);
-		$week_select->Retrieve();
-
-		$occurrence_filter = new EventOccurrenceFilter();
-		$occurrence_filter->EnableSource('all');
-		$occurrence_filter->SetSpecialCondition(
-				'organisations.organisation_directory_entry_name = '.
-				$this->db->escape($organisation)
-			);
-
-		// Set up the events list
-		$events_list = new ViewCalendarList();
-		$events_list->SetUriBase('directory/'.$organisation.'/events/');
-		$events_list->SetUriFormat($format);
-		$events_list->SetRange($start_time, $end_time);
-		$events_list->SetOccurrenceFilter($occurrence_filter);
-		$events_list->Retrieve();
-
-		// Set up the directory events view to contain the week select and
-		// events list
-		$directory_events = new FramesFrame('directory/directory_view_events',$data);
-		$directory_events->SetContent($week_select,'week_select');
-		$directory_events->SetContent($events_list,'events_list');
-		$directory_events->SetData('date_range_description', $range_description);
-
-		// Set up the directory frame to use the messages frame
-		$this->main_frame->SetPage('events');
-		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($directory_events);
-
-		// Set up the public frame to use the directory frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetExtraHead($extra_head);
-		$this->main_frame->SetContent($this->frame_directory);
-
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
@@ -272,38 +280,41 @@ EXTRAHEAD;
 		$this->_SetupOrganisationFrame($organisation);
 		
 		$data = $this->organisations->_GetOrgData($organisation);
-		
-		$this->load->model('articles_model');
-		$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
-		// sort into types
-		$directory_reviews = array();
-		$review_types = array();
-		foreach ($reviews as $review) {
-			if (NULL === $review['type']) {
-				$directory_reviews[] = $review;
-			} else {
-				if (!array_key_exists($review['type'], $review_types)) {
-					$review_types[$review['type']] = array();
+		if (!empty($data)) {
+			$this->load->model('articles_model');
+			$reviews = $this->articles_model->GetDirectoryOrganisationReviewsByEntryName($organisation);
+			// sort into types
+			$directory_reviews = array();
+			$review_types = array();
+			foreach ($reviews as $review) {
+				if (NULL === $review['type']) {
+					$directory_reviews[] = $review;
+				} else {
+					if (!array_key_exists($review['type'], $review_types)) {
+						$review_types[$review['type']] = array();
+					}
+					$review_types[$review['type']][] = $review;
 				}
-				$review_types[$review['type']][] = $review;
 			}
+			$data['organisation']['reviews_untyped'] = $directory_reviews;
+			$data['organisation']['reviews_by_type'] = $review_types;
+
+			// Set up the directory view
+			$directory_view = $this->frames->view('directory/directory_view_reviews', $data);
+
+			// Set up the directory frame to use the directory events view
+			$this->main_frame->SetPage('reviews');
+			$this->frame_directory->SetOrganisation($data['organisation']);
+			$this->frame_directory->SetContent($directory_view);
+
+			// Set up the public frame to use the directory view
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($this->frame_directory);
+
+		} else {
+			$this->messages->AddMessage('error','Unknown organisation');
 		}
-		$data['organisation']['reviews_untyped'] = $directory_reviews;
-		$data['organisation']['reviews_by_type'] = $review_types;
-
-		// Set up the directory view
-		$directory_view = $this->frames->view('directory/directory_view_reviews', $data);
-
-		// Set up the directory frame to use the directory events view
-		$this->main_frame->SetPage('reviews');
-		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($directory_view);
-
-		// Set up the public frame to use the directory view
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($this->frame_directory);
-
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
@@ -318,58 +329,62 @@ EXTRAHEAD;
 		
 		// Normal organisation data
 		$data = $this->organisations->_GetOrgData($organisation);
-		
-		// Business Card Groups
-		$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
-		// translate into nice names for view
-		$data['organisation']['groups'] = array();
-		foreach ($groups as $group) {
-			$data['organisation']['groups'][] = array(
-				'name' => $group['business_card_group_name'],
-				'id' => $group['business_card_group_id'],
-				'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id'],
-			);
-			if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
-		}
-				
-		// Members data
-		$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
-		// translate into nice names for view
-		$data['organisation']['cards'] = array();
-		foreach ($members as $member) {
-			if($member['business_card_image_id'] == NULL)
-			{
-				$image = '/images/prototype/directory/members/no_image.png';
-			}else {
-				$image = photoLocation($member['business_card_image_id']);
+		if (!empty($data)) {
+			
+			// Business Card Groups
+			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
+			// translate into nice names for view
+			$data['organisation']['groups'] = array();
+			foreach ($groups as $group) {
+				$data['organisation']['groups'][] = array(
+					'name' => $group['business_card_group_name'],
+					'id' => $group['business_card_group_id'],
+					'href' => '/directory/'.$organisation.'/members/'.$group['business_card_group_id'],
+				);
+				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
 			}
-			$data['organisation']['cards'][] = array(
-				'name' => $member['business_card_name'],
-				'title' => $member['business_card_title'],
-				'image' => $image,
-				'course' => $member['business_card_course'],
-				'blurb' => $member['business_card_blurb'],
-				'email' => $member['business_card_email'],
-				'phone_mobile' => $member['business_card_mobile'],
-				'phone_internal' => $member['business_card_phone_internal'],
-				'phone_external' => $member['business_card_phone_external'],
-				'postal_address' => $member['business_card_postal_address']
-			);
+					
+			// Members data
+			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			// translate into nice names for view
+			$data['organisation']['cards'] = array();
+			foreach ($members as $member) {
+				if($member['business_card_image_id'] == NULL)
+				{
+					$image = '/images/prototype/directory/members/no_image.png';
+				}else {
+					$image = photoLocation($member['business_card_image_id']);
+				}
+				$data['organisation']['cards'][] = array(
+					'name' => $member['business_card_name'],
+					'title' => $member['business_card_title'],
+					'image' => $image,
+					'course' => $member['business_card_course'],
+					'blurb' => $member['business_card_blurb'],
+					'email' => $member['business_card_email'],
+					'phone_mobile' => $member['business_card_mobile'],
+					'phone_internal' => $member['business_card_phone_internal'],
+					'phone_external' => $member['business_card_phone_external'],
+					'postal_address' => $member['business_card_postal_address']
+				);
+			}
+			
+			// Set up the directory view
+			$directory_view = $this->frames->view('directory/directory_view_members', $data);
+
+			// Set up the directory frame to use the directory events view
+			$this->main_frame->SetPage('members');
+			$this->frame_directory->SetOrganisation($data['organisation']);
+			$this->frame_directory->SetContent($directory_view);
+
+			// Set up the public frame to use the directory view
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($this->frame_directory);
+
+		} else {
+			$this->messages->AddMessage('error','Unknown organisation');
 		}
-		
-		// Set up the directory view
-		$directory_view = $this->frames->view('directory/directory_view_members', $data);
-
-		// Set up the directory frame to use the directory events view
-		$this->main_frame->SetPage('members');
-		$this->frame_directory->SetOrganisation($data['organisation']);
-		$this->frame_directory->SetContent($directory_view);
-
-		// Set up the public frame to use the directory view
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($this->frame_directory);
-
 		// Load the public frame view
 		$this->main_frame->Load();
 	}

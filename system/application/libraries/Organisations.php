@@ -70,22 +70,6 @@ class Organisations
 				'type' => $org['organisation_type_name'],
 			);
 		}
-		if ($Pattern !== FALSE) {
-			$organisations = array(
-				array(
-					'shortname'   => 'pole_dancing',
-					'name'        => 'Pole Dancing',
-					'description' => 'A fitness club',
-					'type'        => 'Athletics Union',
-				),
-				array(
-					'shortname'   => 'costcutter',
-					'name'        => 'Costcutter',
-					'description' => 'Campus shop',
-					'type'        => 'College & Campus',
-				),
-			);
-		}
 		return $organisations;
 	}
 
@@ -102,60 +86,44 @@ class Organisations
 		$data = array();
 
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName, $revision_number);
-		if (1 === count($orgs)) {
-			foreach ($orgs as $org) {
-				$slideshow = array(
-								array(
-								'id' => photoLocation('80'),
-								),
-								array(
-								'id' => photoLocation('81'),
-								),
-								array(
-								'id' => photoLocation('77'),
-								),
-							);
-				$data['organisation'] = array(
-					'id'          => $org['organisation_entity_id'],
-					'name'        => $org['organisation_name'],
-					'slideshow'   => $slideshow,
-					'shortname'   => $org['organisation_directory_entry_name'],
-					'description' => $org['organisation_description'],
-					'type'        => $org['organisation_type_name'],
-					'website'     => $org['organisation_url'],
-					'location'    => $org['organisation_location'],
-					'open_times'  => $org['organisation_opening_hours'],
-					'email_address'   => $org['organisation_email_address'],
-					'postal_address'  => $org['organisation_postal_address'],
-					'postcode'    => $org['organisation_postcode'],
-					'phone_internal'  => $org['organisation_phone_internal'],
-					'phone_external'  => $org['organisation_phone_external'],
-					'fax_number'  => $org['organisation_fax_number'],
-					'revision_id'  => $org['organisation_revision_id'],
-
-
-					'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-				);
-				if (NULL === $org['organisation_yorkipedia_entry']) {
-					$data['organisation']['yorkipedia'] = NULL;
-				} else {
-					$data['organisation']['yorkipedia'] = array(
-							'url'   => WikiLink('yorkipedia', $org['organisation_yorkipedia_entry']),
-							'title' => $org['organisation_yorkipedia_entry'],
+		foreach ($orgs as $org) {
+			$slideshow = array(
+							array(
+							'id' => photoLocation('80'),
+							),
+							array(
+							'id' => photoLocation('81'),
+							),
+							array(
+							'id' => photoLocation('77'),
+							),
 						);
-				}
-			}
-		} else {
 			$data['organisation'] = array(
-				'shortname'   => $OrganisationShortName,
-				'name'        => 'FragSoc',
-				'description' => 'The people who run this website',
-				'type'        => 'Organisation',
-				'blurb'       => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lorem magna, tincidunt sed, feugiat nec, consectetuer vitae, nisl. Vestibulum gravida ipsum non justo. Vivamus sem. Quisque ut sem vitae elit luctus lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-				'website'     => 'http://www.fragsoc.com',
-				'location'    => 'Goodricke College',
-				'open_times'  => 'Every Other Weekend',
+				'id'          => $org['organisation_entity_id'],
+				'name'        => $org['organisation_name'],
+				'slideshow'   => $slideshow,
+				'shortname'   => $org['organisation_directory_entry_name'],
+				'description' => $org['organisation_description'],
+				'type'        => $org['organisation_type_name'],
+				'website'     => $org['organisation_url'],
+				'location'    => $org['organisation_location'],
+				'open_times'  => $org['organisation_opening_hours'],
+				'email_address'   => $org['organisation_email_address'],
+				'postal_address'  => $org['organisation_postal_address'],
+				'postcode'    => $org['organisation_postcode'],
+				'phone_internal'  => $org['organisation_phone_internal'],
+				'phone_external'  => $org['organisation_phone_external'],
+				'fax_number'  => $org['organisation_fax_number'],
+				'revision_id'  => $org['organisation_revision_id'],
 			);
+			if (NULL === $org['organisation_yorkipedia_entry']) {
+				$data['organisation']['yorkipedia'] = NULL;
+			} else {
+				$data['organisation']['yorkipedia'] = array(
+						'url'   => WikiLink('yorkipedia', $org['organisation_yorkipedia_entry']),
+						'title' => $org['organisation_yorkipedia_entry'],
+					);
+			}
 		}
 		return $data;
 	}
