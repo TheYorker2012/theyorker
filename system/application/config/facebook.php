@@ -24,7 +24,7 @@ $config['secret'] = 'cfda20b9edd910f0b2907a3208453c87';
 // The page which would serve as an after-login entrypoint into your app would 
 // be the "next" parameter passed to login (below, "login_url"), appended to
 // your callback URL.  So the full address would be http://www.myapplication.com/facebook/sample_client.php
-$config['next'] = urlencode('sample_client/index/');
+$config['next'] = urlencode('sample_client/index/?s=facebook');
 
 $config['login_url'] = $config['login_server_base_url'].'/login.php?v=1.0' .
                        '&next=' . $config['next'] . '&api_key=' . $config['api_key'];

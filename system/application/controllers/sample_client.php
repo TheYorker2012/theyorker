@@ -43,13 +43,11 @@ class Sample_client extends controller
 		$this->config->load('facebook', TRUE);
 	}
 	
-	function index($auth_token = NULL)
+	function index()
 	{
 		if (!CheckPermissions('student')) return;
 		
 		$this->load->model('facebook_model');
-		
-		$this->messages->AddDumpMessage('_GET',$_GET);
 		
 		$config = array(
 			'api_server_base_url' => $this->config->item('api_server_base_url', 'facebook'),
@@ -62,10 +60,12 @@ class Sample_client extends controller
 			'debug' => $this->config->item('debug', 'facebook'),
 		);
 		
-		if (!is_string($auth_token)) {
+		global $RTR;
+		if (!isset($RTR->old_get['auth_token'])) {
 			header('Location: '.$config['login_url']);
 			exit;
 		}
+		$auth_token = $RTR->old_get['auth_token'];
 		
 		try {
 			// Create our client object.  
@@ -131,8 +131,9 @@ class Sample_client extends controller
 				'photos' => $photos,
 				'notifications' => $notifications,
 				'groups' => $groups,
+				'friend_info' => $friend_info,
 			);
-			$this->main_frame->SetContent('calendar/facebooksample',$data);
+			$this->main_frame->SetContentSimple('calendar/facebooksample',$data);
 			
 		} catch (FacebookRestClientException $ex) {
 			if (!isset($uid) && $ex->getCode() == 100) {

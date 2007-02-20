@@ -40,6 +40,7 @@ class CI_Router {
 	var $uri_protocol 	= 'auto';
 	var $default_controller;
 	var $scaffolding_request = FALSE; // Must be set to FALSE
+	var $old_get		= array();
 	
 	/**
 	 * Constructor
@@ -48,6 +49,7 @@ class CI_Router {
 	 */
 	function CI_Router()
 	{
+		$this->old_get = $_GET;
 		$this->config =& load_class('Config');
 		$this->_set_route_mapping();
 		log_message('debug', "Router Class Initialized");
