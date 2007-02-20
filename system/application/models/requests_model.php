@@ -6,7 +6,7 @@
 
 class Requests_Model extends Model
 {
-	function RequestsModel()
+	function Requests_Model()
 	{
 		parent::Model();
 	}
@@ -15,10 +15,10 @@ class Requests_Model extends Model
 	function getReporters ()
 	{
 		$sql = 'SELECT user_entity_id AS id, user_firstname AS firstname, user_surname AS surname
-				FROM users
-				WHERE user_office_access = 1
-				AND user_admin = 0
-				ORDER BY user_firstname ASC, user_surname ASC';
+			FROM users
+			WHERE user_office_access = 1
+			AND user_admin = 0
+			ORDER BY user_firstname ASC, user_surname ASC';
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
@@ -26,10 +26,10 @@ class Requests_Model extends Model
 	function reportersExist ($reporter_array)
 	{
 		$sql = 'SELECT user_entity_id
-				FROM users
-				WHERE user_office_access = 1
-				AND user_admin = 0
-				AND (';
+			FROM users
+			WHERE user_office_access = 1
+			AND user_admin = 0
+			AND (';
 		for ($i = 1; $i <= count($reporter_array); $i++) {
 			$sql .= 'user_entity_id = ? OR ';
 		}
@@ -42,9 +42,9 @@ class Requests_Model extends Model
 	function isBox ($box_id)
 	{
 		$sql = 'SELECT content_type_id
-				FROM content_types
-				WHERE content_type_id = ?
-				AND content_type_section != \'hardcoded\'';
+			FROM content_types
+			WHERE content_type_id = ?
+			AND content_type_section != \'hardcoded\'';
 		$query = $this->db->query($sql, array($box_id));
 		return $query->num_rows();
 	}
@@ -53,10 +53,10 @@ class Requests_Model extends Model
 	function getBoxes ()
 	{
 		$sql = 'SELECT content_type_id AS id, content_type_name AS name, content_type_codename AS code, content_type_has_children AS subcats
-				FROM content_types
-				WHERE content_type_parent_content_type_id IS NULL
-				AND content_type_section != \'hardcoded\'
-				ORDER BY content_type_section_order ASC';
+			FROM content_types
+			WHERE content_type_parent_content_type_id IS NULL
+			AND content_type_section != \'hardcoded\'
+			ORDER BY content_type_section_order ASC';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0) {
@@ -91,8 +91,13 @@ class Requests_Model extends Model
 	}
 
 	//Add a  new request to the article table
-	function CreateRequest($status,$type_id,$title,$description,$user,$date)
+	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
 	{
+		$sql = 'SELECT 	content_type_id
+			FROM	content_types
+			WHERE	(content_type_codename = ?)';
+		$query = $this->db->query($sql,array($type_codename));
+		$type_id = $query->row()->content_type_id;
 		if ($status == 'suggestion')
 		{
 			$this->db->trans_start();
@@ -226,8 +231,13 @@ class Requests_Model extends Model
 	}
 
 	//Should this be get completed articles?
-	function GetPublishedArticles($type_id, $is_published, $is_pulled = FALSE)
+	function GetPublishedArticles($type_codename, $is_published, $is_pulled = FALSE)
 	{
+		$sql = 'SELECT 	content_type_id
+			FROM	content_types
+			WHERE	(content_type_codename = ?)';
+		$query = $this->db->query($sql,array($type_codename));
+		$type_id = $query->row()->content_type_id;
 		$sql = 'SELECT	article_id,
 			article_publish_date,
 			article_live_content_id,
@@ -433,8 +443,13 @@ class Requests_Model extends Model
 		return $result;
 	}
 
-	function GetSuggestedArticles($type_id)
+	function GetSuggestedArticles($type_codename)
 	{
+		$sql = 'SELECT 	content_type_id
+			FROM	content_types
+			WHERE	(content_type_codename = ?)';
+		$query = $this->db->query($sql,array($type_codename));
+		$type_id = $query->row()->content_type_id;
 		$sql = 'SELECT	article_id,
 				article_request_title,
 				article_request_description,
@@ -526,8 +541,13 @@ class Requests_Model extends Model
 		return $result;
 	}
 	
-	function GetWritersForType($type)
+	function GetWritersForType($type_codename)
 	{
+		$sql = 'SELECT 	content_type_id
+			FROM	content_types
+			WHERE	(content_type_codename = ?)';
+		$query = $this->db->query($sql,array($type_codename));
+		$type_id = $query->row()->content_type_id;
 		$sql = 'SELECT	user_entity_id,
 				business_card_name
 			FROM	content_types
@@ -546,7 +566,7 @@ class Requests_Model extends Model
 
 			WHERE	content_type_id = ?
 			ORDER BY business_card_name ASC';
-		$query = $this->db->query($sql,array($type));
+		$query = $this->db->query($sql,array($type_id));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
