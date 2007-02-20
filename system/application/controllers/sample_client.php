@@ -59,11 +59,11 @@ class Sample_client extends controller
 			'debug' => $this->config->item('debug'),
 		);
 		
-		$auth_token = $_REQUEST['auth_token'];
-		if (!$auth_token) {
+		if (!array_key_exists('auth_token',$_REQUEST)) {
 			header('Location: '.$config['login_url']);
 			exit;
 		}
+		$auth_token = $_REQUEST['auth_token'];
 		
 		try {
 			// Create our client object.  
