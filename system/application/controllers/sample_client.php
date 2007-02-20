@@ -70,7 +70,7 @@ class Sample_client extends controller
 		try {
 			// Create our client object.  
 			// This is a container for all of our static information.
-			$client = &$this->Facebook_model;
+			$client = &$this->facebook_model;
 			$client->Init($config['rest_server_addr'], $config['api_key'], $config['secret'], null, false);
 			
 			// The required call: Establish session 

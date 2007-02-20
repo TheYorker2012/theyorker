@@ -410,6 +410,43 @@ function toggleDisplay(id, type) {
       return (string)$sxml;
     } 
   }
+  
+  
+	public static $profile_field_array = array(
+		'about_me',
+		'activities',
+		'affiliations',
+		'birthday',
+		'books',
+		'current_location',
+		'education_history',
+		'first_name',
+		'hometown_location',
+		'hs_info',
+		'interests',
+		'last_name',
+		'meeting_for',
+		'meeting_sex',
+		'movies',
+		'music',
+		'name',
+		'notes_count',
+		'pic',
+		'pic_big',
+		'pic_small',
+		'political',
+		'profile_update_time',
+		'quotes',
+		'relationship_status',
+		'religion',
+		'sex', 
+		'significant_other_id',
+		'status',
+		'timezone',
+		'tv',
+		'wall_count', 
+		'work_history'
+	);
 }
 
 class FacebookRestClientException extends Exception {
@@ -435,39 +472,5 @@ function api_generate_sig($params_array, $secret) {
   return md5($str);
 }
 
-$profile_field_array = array(
-    'about_me',
-    'activities',
-    'affiliations',
-    'birthday',
-    'books',
-    'current_location',
-    'education_history',
-    'first_name',
-    'hometown_location',
-    'hs_info',
-    'interests',
-    'last_name',
-    'meeting_for',
-    'meeting_sex',
-    'movies',
-    'music',
-    'name',
-    'notes_count',
-    'pic',
-    'pic_big',
-    'pic_small',
-    'political',
-    'profile_update_time',
-    'quotes',
-    'relationship_status',
-    'religion',
-    'sex', 
-    'significant_other_id',
-    'status',
-    'timezone',
-    'tv',
-    'wall_count', 
-    'work_history');
 
 ?>
