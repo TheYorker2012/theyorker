@@ -75,7 +75,7 @@ class Yorkerdirectory extends Controller
 	function information($action='view', $revision=false)
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		if($action=='view'){
+		if ($action=='view'){
 			$organisation = $this->user_auth->organisationShortName;
 			$this->pages_model->SetPageCode('viparea_directory_information');
 			
@@ -88,23 +88,28 @@ class Yorkerdirectory extends Controller
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
 			}
 			
-			//Get Data And toolbar
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			$this->_SetupNavbar();
 			
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			//Get Data And toolbar
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
-			//Page Revisions
-			$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
-			
-			// Set up the directory view
-			$the_view = $this->frames->view('directory/viparea_directory_information', $data);
-			
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name']));
-			$this->main_frame->SetContent($the_view);
+			if (!empty($data)) {
+				// Insert main text from pages information
+				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+				
+				//Page Revisions
+				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
+				
+				// Set up the directory view
+				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
+				
+				// Set up the public frame
+				$this->main_frame->SetTitleParameters(
+						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetContent($the_view);
+			} else {
+				$this->messages->AddMessage('error','Unknown organisation labelled '.$organisation);
+			}
 			
 			// Load the public frame view
 			$this->main_frame->Load();
