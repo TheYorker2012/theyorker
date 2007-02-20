@@ -29,6 +29,6 @@ $config['next'] = urlencode('sample_client/index/');
 $config['login_url'] = $config['login_server_base_url'].'/login.php?v=1.0' .
                        '&next=' . $config['next'] . '&api_key=' . $config['api_key'];
 
-$config['debug'] = 1; // TURN this on for XML input spew
+$config['debug'] = 0; // TURN this on for XML input spew
 
 ?>
