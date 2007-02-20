@@ -36,7 +36,7 @@
  * @author ari
  * @author dave
  */
-class Facebook_model extends model {
+class FacebookRestClient {
   public $secret;
   public $session_key;
   public $api_key;
@@ -44,12 +44,6 @@ class Facebook_model extends model {
   public $desktop;
   public $session_secret; // not used for server apps, for desktop apps this will get set in auth_getSession
 
-  public function __construct()
-  {
-  	parent::model();
-  	$this->config->load('facebook');
-  }
-  
   /**
    * Create the client.
    * @param string $session_key if you haven't gotten a session key yet, leave 
@@ -58,7 +52,7 @@ class Facebook_model extends model {
    *                            variable.
    * @param bool   $desktop     set to true if you are a desktop client
    */
-  public function Init($server_addr, $api_key, $secret, $session_key=null, $desktop=false, $throw_errors=true) {
+  public function __construct($server_addr, $api_key, $secret, $session_key=null, $desktop=false, $throw_errors=true) {
     $this->server_addr  = $server_addr;
     $this->secret       = $secret;
     $this->session_key  = $session_key;
@@ -67,7 +61,7 @@ class Facebook_model extends model {
     $this->throw_errors = $throw_errors;
     $this->last_call_success = true;
     $this->last_error = array();
-    if ($this->config->item('debug', 'facebook')) {
+    if ($GLOBALS['config']['debug']) {
       $this->cur_id = 0;
       ?>
 <script type="text/javascript">
@@ -302,7 +296,7 @@ function toggleDisplay(id, type) {
     $xml = $this->post_request($method, $params);
     $sxml = simplexml_load_string($xml);
     $result = self::convert_simplexml_to_array($sxml);
-    if ($this->config->item('debug', 'facebook')) {
+    if ($GLOBALS['config']['debug']) {
       // output the raw xml and its corresponding php object, for debugging:
       print '<div style="margin: 10px 30px; padding: 5px; border: 2px solid black; background: gray; color: white; font-size: 12px; font-weight: bold;">';
       $this->cur_id++;
@@ -410,43 +404,6 @@ function toggleDisplay(id, type) {
       return (string)$sxml;
     } 
   }
-  
-  
-	public static $profile_field_array = array(
-		'about_me',
-		'activities',
-		'affiliations',
-		'birthday',
-		'books',
-		'current_location',
-		'education_history',
-		'first_name',
-		'hometown_location',
-		'hs_info',
-		'interests',
-		'last_name',
-		'meeting_for',
-		'meeting_sex',
-		'movies',
-		'music',
-		'name',
-		'notes_count',
-		'pic',
-		'pic_big',
-		'pic_small',
-		'political',
-		'profile_update_time',
-		'quotes',
-		'relationship_status',
-		'religion',
-		'sex', 
-		'significant_other_id',
-		'status',
-		'timezone',
-		'tv',
-		'wall_count', 
-		'work_history'
-	);
 }
 
 class FacebookRestClientException extends Exception {
@@ -472,5 +429,38 @@ function api_generate_sig($params_array, $secret) {
   return md5($str);
 }
 
-
+$profile_field_array = array(
+    'about_me',
+    'activities',
+    'affiliations',
+    'birthday',
+    'books',
+    'current_location',
+    'education_history',
+    'first_name',
+    'hometown_location',
+    'hs_info',
+    'interests',
+    'last_name',
+    'meeting_for',
+    'meeting_sex',
+    'movies',
+    'music',
+    'name',
+    'notes_count',
+    'pic',
+    'pic_big',
+    'pic_small',
+    'political',
+    'profile_update_time',
+    'quotes',
+    'relationship_status',
+    'religion',
+    'sex', 
+    'significant_other_id',
+    'status',
+    'timezone',
+    'tv',
+    'wall_count', 
+    'work_history');
 ?>
