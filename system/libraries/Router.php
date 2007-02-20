@@ -40,7 +40,6 @@ class CI_Router {
 	var $uri_protocol 	= 'auto';
 	var $default_controller;
 	var $scaffolding_request = FALSE; // Must be set to FALSE
-	var $old_get		= array();
 	
 	/**
 	 * Constructor
@@ -49,7 +48,6 @@ class CI_Router {
 	 */
 	function CI_Router()
 	{
-		$this->old_get = $_GET;
 		$this->config =& load_class('Config');
 		$this->_set_route_mapping();
 		log_message('debug', "Router Class Initialized");
@@ -413,7 +411,7 @@ class CI_Router {
 		{
 			if ( ! preg_match("|^[".preg_quote($this->config->item('permitted_uri_chars'))."]+$|i", $str))
 			{
-				exit('The URI you submitted has disallowed characters: "'.$str.'"');
+				exit('The URI you submitted has disallowed characters.');
 			}
 		}	
 			return $str;

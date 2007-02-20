@@ -45,7 +45,7 @@ class Sample_client extends controller
 	
 	function index()
 	{
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('admin')) return;
 		
 		$this->load->model('facebook_model');
 		
