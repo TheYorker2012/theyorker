@@ -845,44 +845,46 @@ function GetTagOrganisation($type,$organisation)
 	}
 
 
-	//Mirrored from GetReview - This should return all the rows in a given type
-	function TableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')
+	//Gets a table review for a section which is sorted depending on parameters
+	function GetTableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')
 	{
-		
+	
 		switch ($sorted_by) //Set sorting query
 		{
 			case 'name':
-				$sort_sql = 'ORDER BY o.organisation_name';
+				$sort_sql = 'ORDER BY o.organisation_name, ';
 			break;
 
 			case 'star':
-				$sort_sql = 'ORDER BY rcc.review_context_content_rating DESC';			
+				$sort_sql = 'ORDER BY rcc.review_context_content_rating DESC, ';
 			break;
 
 			case 'user':
-				$sort_sql = 'ORDER BY csc.comment_summary_cache_average_rating DESC';
+				$sort_sql = 'ORDER BY csc.comment_summary_cache_average_rating DESC, ';
+			break;
+
+			case 'any':
+				$sort_sql = 'ORDER BY o.organisation_name, '; //Lets default to name sorting can be changed later
 			break;
 
 			default:
-				$sort_sql = 'ORDER BY o.organisation_name'; //Lets default to name sorting can be changed later
+				$sort_sql = 'ORDER BY ';
 			break;
 		}
 
 		if ($item_filter_by == 'any' || $where_equal_to == 'any' || $item_filter_by == '' || $where_equal_to == '') //Set no filter in these cases by tags
 			{
-				$filter_sql = ''; $tag_join = '';
+				$filter_sql = '';
 			}
 			else
 			{
 			//Filtering by tag, link the query to the tag table
-			$tag_join = ' LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
-LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
-
 				$filter_sql = " AND tags.tag_name = '" . $where_equal_to . "' ";
 			}
 
+
 		$sql = '
-			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,
+			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,tg.tag_group_name,t.tag_name,
 			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
 			FROM content_types AS ct
 			INNER JOIN review_context_contents AS rcc
@@ -893,39 +895,44 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 			ON o.organisation_live_content_id = oc.organisation_content_id
 			LEFT JOIN comment_summary_cache AS csc
 			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
-			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id
-			'.$tag_join.'
-			WHERE ct.content_type_codename = ? '. $filter_sql . $sort_sql;
-
-
+			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id 
+			LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
+			INNER JOIN tags AS t
+			ON t.tag_id = ot.organisation_tag_tag_id
+			INNER JOIN tag_groups AS tg
+			ON tg.tag_group_id = t.tag_tag_group_id
+			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id 
+			WHERE ct.content_type_codename = ? '.$filter_sql.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
 		$query = $this->db->query($sql, array($content_type_codename));
-		$reviews = $query->result_array();
-		
-		if (! empty($reviews))
-		{
-			$entity_ids = array();
-			foreach ($reviews as &$review)
-			{
-				$entity_ids[] = $review['organisation_entity_id'];
-				$review['tags'] = array();
-			}
-			
-			//Get the tags	
-			$sql = '
-				SELECT ot.organisation_tag_organisation_entity_id, t.tag_name, tg.tag_group_name
-				FROM organisation_tags AS ot
-				INNER JOIN tags AS t
-				ON t.tag_id = ot.organisation_tag_tag_id
-				INNER JOIN tag_groups AS tg
-				ON tg.tag_group_id = t.tag_tag_group_id
-				INNER JOIN content_types ON content_types.content_type_id = 				tg.tag_group_content_type_id
-				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . ' && content_types.content_type_name = ?
-				ORDER BY t.tag_order ASC'; //Default sort by tag_order
-	
-			$query = $this->db->query($sql,$content_type_codename);
-			$tags = $query->result_array();
+		$raw_reviews = $query->result_array();
 
+		//Ok now we need to rearrange this into a useful format (Since a lot of duplicated data currently exists)
+		$reviews = array(); //Make array scope for rest of function
+
+		foreach ($raw_reviews as $single_review)
+		{
+			//Check to see if the information is already in the array
+			$exists = -1;
+			for ($row = 0; $row < count($reviews); $row++)
+			{
+				if ($single_review['organisation_entity_id'] == $reviews[$row]['organisation_entity_id'])
+				{
+					$exists = $row;
+					break;
+				}
+			}
+
+			if ($exists != -1) //Add tag information to entry
+			{
+				$reviews[$row]['tags'][$single_review['tag_group_name']][] = $single_review['tag_name'];
+			}
+			else //New entry
+			{
+				$reviews[] = $single_review;
+			}
+		}
+		
 			//Get a sorted list of tag group names
 			//Sort tag_groups by tag_group_order
 			$sql = '
@@ -936,34 +943,24 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
 				INNER JOIN content_types ON content_types.content_type_id = 						tg.tag_group_content_type_id
-				WHERE ot.organisation_tag_organisation_entity_id=' . implode(" OR ", $entity_ids) . ' && content_types.content_type_name = ?
+				WHERE content_types.content_type_name = ?
 				ORDER BY tg.tag_group_order ASC';
 			$tgquery = $this->db->query($sql,$content_type_codename);
 			$tg_array = $tgquery->result_array();
 
 			$tag_groups = array(); //Array for holding the tag groups in sorted order
-			$new_tag_group = 0;
 
 			foreach ($tg_array as &$tag_table)
 			{
 				//Form a list of all the group names used
 				if (in_array($tag_table['tag_group_name'],$tag_groups) == FALSE)
 				{
-					$tag_groups[$new_tag_group] = $tag_table['tag_group_name'];
-					$new_tag_group++;
+					$tag_groups[] = $tag_table['tag_group_name'];
 				}
 			}
 
 			foreach ($reviews as &$review)
 			{
-				foreach ($tags as $id => $tag)
-				{
-					if ($tag['organisation_tag_organisation_entity_id'] == $review['organisation_entity_id'])
-					{
-						$review['tags'][$tag['tag_group_name']][] = $tag['tag_name'];
-					}
-				}
-
 				//Sort the sub tags into order (as in tag_name not the tag groups)
 				foreach ($tag_groups as &$group)
 				{
@@ -980,7 +977,7 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 				}
 
 			}
-		}
+
 
 		if (isset($tag_groups)) //Incase the tag list is empty
 		{
@@ -994,4 +991,5 @@ LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id ';
 		return $reviews;
 	}
 }
+
 

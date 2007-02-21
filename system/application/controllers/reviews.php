@@ -306,7 +306,7 @@ class Reviews extends Controller
 		$this->pages_model->SetPageCode('review_table');
 
 
-		$database_result = $this->Review_model->TableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
+		$database_result = $this->Review_model->GetTableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
 
 		$columns = array(0);
 		$entries = array();
