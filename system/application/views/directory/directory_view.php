@@ -3,7 +3,7 @@
 <script type='text/javascript' src='/javascript/slideshow.js'></script>
 <script type='text/javascript'>
 <?php foreach ($organisation['slideshow'] as $slideshow_image){ ?>
-Slideshow.add('<?php echo $slideshow_image['id']; ?>');
+Slideshow.add('<?php echo $slideshow_image['url']; ?>');
 <?php } ?>
 Slideshow.load();
 </script>

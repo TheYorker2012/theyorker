@@ -15,6 +15,7 @@ class Organisations
 	function __construct()
 	{
 		$this->CI = &get_instance();
+		$this->CI->load->model('slideshow_model');
 	}
 	
 	/// Get organisation types from organisations.
@@ -87,17 +88,15 @@ class Organisations
 
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName, $revision_number);
 		foreach ($orgs as $org) {
-			$slideshow = array(
-							array(
-							'id' => photoLocation('80'),
-							),
-							array(
-							'id' => photoLocation('81'),
-							),
-							array(
-							'id' => photoLocation('77'),
-							),
-						);
+		
+		$slideshow_array = $this->CI->slideshow_model->getSlideshowImages($org['organisation_entity_id']);
+		foreach ($slideshow_array as $slide){
+			$slideshow[] = array(
+				'title' => $slide["photo_title"],
+				'id' => $slide["photo_id"],
+				'url' => imageLocation($slide["photo_id"], "slideshow"),
+			);
+		}
 			$data['organisation'] = array(
 				'id'          => $org['organisation_entity_id'],
 				'name'        => $org['organisation_name'],
