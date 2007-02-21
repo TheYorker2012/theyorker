@@ -88,13 +88,12 @@ class Yorkerdirectory extends Controller
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
 			}
 			
-			$this->_SetupNavbar();
-			
 			//Get Data And toolbar
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
 			if (!empty($data)) {
-				$this->messages->AddDumpMessage('data',$data);
+				$this->_SetupNavbar();
+				
 				// Insert main text from pages information
 				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 				
@@ -109,7 +108,8 @@ class Yorkerdirectory extends Controller
 						array('organisation' => $data['organisation']['name']));
 				$this->main_frame->SetContent($the_view);
 			} else {
-				$this->messages->AddMessage('error','Unknown revision '.$revision.' for '.$organisation);
+				$this->load->library('custom_pages');
+				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 			}
 			
 			// Load the public frame view
@@ -121,16 +121,23 @@ class Yorkerdirectory extends Controller
 			
 			//Send and get data
 			$this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
+			
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
-			$this->_SetupNavbar();
 			
-			// Set up the directory view
-			$the_view = $this->frames->view('directory/viparea_directory_publish', $data);
-			
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name']));
-			$this->main_frame->SetContent($the_view);
+			if (!empty($data)) {
+				$this->_SetupNavbar();
+				
+				// Set up the directory view
+				$the_view = $this->frames->view('directory/viparea_directory_publish', $data);
+				
+				// Set up the public frame
+				$this->main_frame->SetTitleParameters(
+						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetContent($the_view);
+			} else {
+				$this->load->library('custom_pages');
+				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+			}
 			
 			// Load the public frame view
 			$this->main_frame->Load();
@@ -139,20 +146,27 @@ class Yorkerdirectory extends Controller
 			$organisation = $this->user_auth->organisationShortName;
 			$this->pages_model->SetPageCode('viparea_directory_delete');
 			
-			$this->_SetupNavbar();
-			//Delete entry
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			$result = $this->directory_model->DeleteEntryRevisionById($organisation, $revision);
 			
-			$data['result']=$result;
+			//Delete entry
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
-			// Set up the directory view
-			$the_view = $this->frames->view('directory/viparea_directory_delete', $data);
+			if (!empty($data)) {
+			$this->_SetupNavbar();
 			
-			// Set up the public frame
-			$this->main_frame->SetTitleParameters(
-					array('organisation' => $data['organisation']['name']));
-			$this->main_frame->SetContent($the_view);
+				$data['result']=$result;
+				
+				// Set up the directory view
+				$the_view = $this->frames->view('directory/viparea_directory_delete', $data);
+				
+				// Set up the public frame
+				$this->main_frame->SetTitleParameters(
+						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetContent($the_view);
+			} else {
+				$this->load->library('custom_pages');
+				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+			}
 			
 			// Load the public frame view
 			$this->main_frame->Load();
@@ -168,34 +182,40 @@ class Yorkerdirectory extends Controller
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar();
 
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
-		$data['oraganisation'] = $organisation;
-		$data['images'] = array ( //data sent in order
-							array(
-								'id' => 32,
-								'url' => photoLocation(32),
-							),
-							array(
-								'id' => 32,
-								'url' => photoLocation(32),
-							),
-							array(
-								'id' => 32,
-								'url' => photoLocation(32),
-							),
-						);
-		
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($the_view);
+		if (!empty($data)) {
+			$this->_SetupNavbar();
+			
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			$data['oraganisation'] = $organisation;
+			$data['images'] = array ( //data sent in order
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+								array(
+									'id' => 32,
+									'url' => photoLocation(32),
+								),
+							);
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+		}
 		
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -210,19 +230,25 @@ class Yorkerdirectory extends Controller
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar();
 		
-		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
-		
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_map', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($the_view);
+		if (!empty($data)) {
+			$this->_SetupNavbar();
+			
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/viparea_directory_map', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+		}
 		
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -237,50 +263,56 @@ class Yorkerdirectory extends Controller
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar();
-
-		// Business Card Groups
-		$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
-		// translate into nice names for view
-		$data['organisation']['groups'] = array();
-		foreach ($groups as $group) {
-			$data['organisation']['groups'][] = array(
-				'name' => $group['business_card_group_name'],
-				'href' => vip_url('directory/contacts/'.$group['business_card_group_id']),
-				'id' => $group['business_card_group_id']
-			);
-			if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
+		
+		if (!empty($data)) {
+			$this->_SetupNavbar();
+			
+			// Business Card Groups
+			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
+			// translate into nice names for view
+			$data['organisation']['groups'] = array();
+			foreach ($groups as $group) {
+				$data['organisation']['groups'][] = array(
+					'name' => $group['business_card_group_name'],
+					'href' => vip_url('directory/contacts/'.$group['business_card_group_id']),
+					'id' => $group['business_card_group_id']
+				);
+				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
+			}
+					
+			// Members data
+			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			// translate into nice names for view
+			$data['organisation']['cards'] = array();
+			foreach ($members as $member) {
+				$data['organisation']['cards'][] = array(
+					'id' => $member['business_card_id'],
+					'name' => $member['business_card_name'],
+					'title' => $member['business_card_title'],
+					'course' => $member['business_card_course'],
+					'blurb' => $member['business_card_blurb'],
+					'email' => $member['business_card_email'],
+					'phone_mobile' => $member['business_card_mobile'],
+					'phone_internal' => $member['business_card_phone_internal'],
+					'phone_external' => $member['business_card_phone_external'],
+					'postal_address' => $member['business_card_postal_address']
+				);
+			}
+			
+			//Put the view in edit mode
+			$data['organisation']['editmode'] = true;
+			
+			// Set up the directory view
+			$the_view = $this->frames->view('directory/directory_view_members', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetContent($the_view);
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 		}
-				
-		// Members data
-		$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
-		// translate into nice names for view
-		$data['organisation']['cards'] = array();
-		foreach ($members as $member) {
-			$data['organisation']['cards'][] = array(
-				'id' => $member['business_card_id'],
-				'name' => $member['business_card_name'],
-				'title' => $member['business_card_title'],
-				'course' => $member['business_card_course'],
-				'blurb' => $member['business_card_blurb'],
-				'email' => $member['business_card_email'],
-				'phone_mobile' => $member['business_card_mobile'],
-				'phone_internal' => $member['business_card_phone_internal'],
-				'phone_external' => $member['business_card_phone_external'],
-				'postal_address' => $member['business_card_postal_address']
-			);
-		}
-		
-		//Put the view in edit mode
-		$data['organisation']['editmode'] = true;
-		
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/directory_view_members', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
 		$this->main_frame->Load();

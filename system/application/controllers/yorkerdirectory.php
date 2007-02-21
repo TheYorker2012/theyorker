@@ -96,10 +96,10 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->pages_model->SetPageCode('directory_view');
-		
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
+			$this->pages_model->SetPageCode('directory_view');
+			
 			$this->_SetupOrganisationFrame($organisation);
 
 			$subpageview='directory/directory_view';

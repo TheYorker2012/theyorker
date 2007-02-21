@@ -45,8 +45,12 @@ class Directory_model extends Model {
 	/// Get an organisation by name.
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @param $RevisionNumber integer Revision number to display (Default to false).
+	 *
+	 * Returns the organisation left joined with the directory content.
+	 * This means the directory content is optional and may be set to NULL.
 	 */
-	function GetDirectoryOrganisationByEntryName($DirectoryEntryName, $revision=false)
+	function GetDirectoryOrganisationByEntryName($DirectoryEntryName, $RevisionNumber=false)
 	{
 		$sql =
 			'SELECT'.
@@ -67,24 +71,27 @@ class Directory_model extends Model {
 			' organisations.organisation_yorkipedia_entry,'.
 			' organisation_types.organisation_type_name '.
 			'FROM organisations '.
+			// Get organisation type, but make sure the type allows directory entries.
 			'INNER JOIN organisation_types '.
-			' ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
-			'INNER JOIN organisation_contents ';
-			if ($revision==false){
-				$sql .= ' ON  organisation_contents.organisation_content_id=organisations.organisation_live_content_id '.
-				'WHERE organisations.organisation_directory_entry_name=? '.
-				' AND organisation_types.organisation_type_directory=1 '.
-				'ORDER BY organisation_name';
-				$query = $this->db->query($sql, $DirectoryEntryName);
-			} else {
-				$sql .= ' ON  organisation_contents.organisation_content_id=? '.
-				'WHERE organisations.organisation_directory_entry_name=? '.
-				' AND organisation_types.organisation_type_directory=1 '.
-				'ORDER BY organisation_name';
-				$query = $this->db->query($sql, array($revision, $DirectoryEntryName));
-			}
-			
-	
+			' ON	organisations.organisation_organisation_type_id '.
+			'			= organisation_types.organisation_type_id '.
+			// Optionally get any matching content as well.
+			'LEFT JOIN organisation_contents '.
+			' ON	organisation_contents.organisation_content_organisation_entity_id '.
+			'			= organisations.organisation_entity_id '.
+			' AND	organisation_contents.organisation_content_id=';
+		$bind_data = array();
+		if ($RevisionNumber === false){
+			$sql .= 'organisations.organisation_live_content_id';
+		} else {
+			$sql .= '?';
+			$bind_data[] = $RevisionNumber;
+		}
+		$sql .= ' WHERE organisations.organisation_directory_entry_name=? '.
+			' AND organisation_types.organisation_type_directory=1 '.
+			'ORDER BY organisation_name';
+		$bind_data[] = $DirectoryEntryName;
+		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
 	
