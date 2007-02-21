@@ -468,6 +468,11 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$login_id = 'office';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_office', TRUE);
 		$data['no_keep_login'] = TRUE;
+		// Find whether to fail
+		$data['failure'] = !$CI->user_auth->officeLogin;
+		if ($data['failure']) {
+			$data['failure_text'] = $CI->pages_model->GetPropertyWikitext('nooffice_text', $page_code);
+		}
 
 	} elseif ($Level === 'vip') {
 		$page_code = 'login_vip';
@@ -475,6 +480,12 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_vip', TRUE);
 		$data['usernames'] = array();
 		$logins = $CI->user_auth->getOrganisationLogins();
+		// Find whether to fail
+		$data['failure'] = empty($logins);
+		if ($data['failure']) {
+			$data['failure_text'] = $CI->pages_model->GetPropertyWikitext('novip_text', $page_code);
+		}
+		// Default to an organisation?
 		if (is_string($Organisation)) {
 			// Default organisation is $Organisation
 			foreach ($logins as $login) {
@@ -496,6 +507,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_public', TRUE);
 		$data['username'] = '';
 		$data['keep_login'] = '0';
+		$data['failure'] = false;
 	}
 	$data['login_id'] = $login_id;
 	if (($CI->input->post('login_button') === 'Login') &&
@@ -556,9 +568,12 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 	// Get various page properties used for displaying the login screen
 	$CI->pages_model->SetPageCode($page_code);
 
-	$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
-	if (FALSE !== $permission_message) {
-		$CI->messages->AddMessage(new Message($permission_message), FALSE);
+	// Show "please log in" message if not failed
+	if (!$data['failure']) {
+		$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
+		if (FALSE !== $permission_message) {
+			$CI->messages->AddMessage(new Message($permission_message), FALSE);
+		}
 	}
 
 	// Title of login section of page

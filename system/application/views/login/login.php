@@ -9,6 +9,9 @@
 <div class="blue_box">
 	<h2><?php echo $title; ?></h2>
 	<?php
+	if (isset($failure) && $failure) {
+		echo $failure_text;
+	} else {
 		if (isset($login_message)) {
 			echo '<P>'.$login_message.'</P>';
 		}
@@ -18,7 +21,7 @@
 			<?php if (isset($login_id)) { ?>
 				<input type='hidden' name='login_id' value='<?php echo $login_id; ?>' />
 			<?php } if (isset($usernames)) { ?>
-				<label for='username'>Select organisation:</label>
+				<label for='username'>Select Organisation:</label>
 				<select name="username">
 				<?php foreach ($usernames as $id => $name) { ?>
 					<option value="<?php echo $id; ?>"<?php if (isset($default_username) && $id==$default_username) { echo ' SELECTED'; } ?>><?php echo $name; ?></option>
@@ -53,4 +56,5 @@
 		element.focus();
 	}
 	</script>
+	<?php } ?>
 </div>
