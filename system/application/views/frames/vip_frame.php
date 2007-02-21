@@ -75,8 +75,8 @@ function preloader()
 			</a>
 		</div>
 		<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
-			<span style="font-size: 16px; font-weight:bold; ">Joe Bloggs</span><br />
-			<span style="font-size: 16px; font-weight:bold">University of York Conservative and Unionist Association</span>
+			<span style="font-size: 16px; font-weight:bold; "><?php echo $vipinfo['name']; ?></span><br />
+			<span style="font-size: 16px; font-weight:bold"><?php echo $vipinfo['organisation']; ?></span>
 		</div>
 	</div>
 	<div style="background-color: #fff;">

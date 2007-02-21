@@ -28,8 +28,8 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 	static $frames = array(
 		'public'		=> 'frame_public',
 		'student'		=> 'frame_public',
-		'vip'			=> 'frame_organisation',
-		'organisation'	=> 'frame_organisation',
+		'vip'			=> 'frame_vip',
+		'organisation'	=> 'frame_vip',
 		'office'		=> 'frame_office',
 		'pr'			=> 'frame_office',
 		'editor'		=> 'frame_office',

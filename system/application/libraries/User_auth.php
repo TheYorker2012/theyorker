@@ -41,10 +41,10 @@ class User_auth {
 	public $officeInterface = -1;
 
 	/// string The firstname of the logged in user
-	public $firstname;
+	public $firstname = '';
 
 	/// string The surname of the logged in user
-	public $surname;
+	public $surname = '';
 	
 	/// int The permission of the logged in user
 	public $permissions;
