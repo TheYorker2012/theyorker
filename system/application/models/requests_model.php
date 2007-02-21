@@ -237,56 +237,58 @@ class Requests_Model extends Model
 			FROM	content_types
 			WHERE	(content_type_codename = ?)';
 		$query = $this->db->query($sql,array($type_codename));
-		$type_id = $query->row()->content_type_id;
-		$sql = 'SELECT	article_id,
-			article_publish_date,
-			article_live_content_id,
-			article_content_last_author_timestamp,
-			article_content_heading,
-                                article_content_last_author_user_entity_id,
-			article_editor_approved_user_entity_id,
-			author_user.business_card_name as author_name,
-			editor_user.business_card_name as editor_name
-
-			FROM	articles
-			JOIN	article_contents
-			ON      article_content_id = article_live_content_id
-
-			JOIN	business_cards as editor_user
-			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
-			JOIN	business_cards as author_user
-			ON	author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
-
-			WHERE	article_suggestion_accepted = 1
-			AND	article_content_type_id = ?
-			AND	article_live_content_id IS NOT NULL
-			AND	article_deleted = 0
-			AND	article_pulled = ?';
-		if ($is_published == TRUE)
-			$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
-		else
-			$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
-		$query = $this->db->query($sql,array($type_id, $is_pulled));
-		$result = array();
-		if ($query->num_rows() > 0)
+		if ($query->num_rows() == 1)
 		{
-			foreach ($query->result() as $row)
+			$type_id = $query->row()->content_type_id;
+			$sql = 'SELECT	article_id,
+				article_publish_date,
+				article_live_content_id,
+				article_content_last_author_timestamp,
+				article_content_heading,
+	                                article_content_last_author_user_entity_id,
+				article_editor_approved_user_entity_id,
+				author_user.business_card_name as author_name,
+				editor_user.business_card_name as editor_name
+	
+				FROM	articles
+				JOIN	article_contents
+				ON      article_content_id = article_live_content_id
+	
+				JOIN	business_cards as editor_user
+				ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
+				JOIN	business_cards as author_user
+				ON	author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+	
+				WHERE	article_suggestion_accepted = 1
+				AND	article_content_type_id = ?
+				AND	article_live_content_id IS NOT NULL
+				AND	article_deleted = 0
+				AND	article_pulled = ?';
+			if ($is_published == TRUE)
+				$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
+			else
+				$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
+			$query = $this->db->query($sql,array($type_id, $is_pulled));
+			$result = array();
+			if ($query->num_rows() > 0)
 			{
-				$result_item = array(
-					'id'=>$row->article_id,
-					'heading'=>$row->article_content_heading,
-					'publish'=>$row->article_publish_date,
-					'lastedit'=>$row->article_content_last_author_timestamp,
-					'editorid'=>$row->article_editor_approved_user_entity_id,
-					'editorname'=>$row->editor_name,
-					'authorid'=>$row->article_content_last_author_user_entity_id,
-					'authorname'=>$row->author_name
-					);
-				$result[] = $result_item;
+				foreach ($query->result() as $row)
+				{
+					$result_item = array(
+						'id'=>$row->article_id,
+						'heading'=>$row->article_content_heading,
+						'publish'=>$row->article_publish_date,
+						'lastedit'=>$row->article_content_last_author_timestamp,
+						'editorid'=>$row->article_editor_approved_user_entity_id,
+						'editorname'=>$row->editor_name,
+						'authorid'=>$row->article_content_last_author_user_entity_id,
+						'authorname'=>$row->author_name
+						);
+					$result[] = $result_item;
+				}
 			}
+			return $result;
 		}
-
-		return $result;
 	}
 
 	function GetRequestedArticle($article_id)
@@ -449,38 +451,41 @@ class Requests_Model extends Model
 			FROM	content_types
 			WHERE	(content_type_codename = ?)';
 		$query = $this->db->query($sql,array($type_codename));
-		$type_id = $query->row()->content_type_id;
-		$sql = 'SELECT	article_id,
-				article_request_title,
-				article_request_description,
-				article_created,
-				article_request_entity_id,
-				business_card_name
-			FROM	articles
-			JOIN	business_cards
-			ON	business_card_user_entity_id = article_request_entity_id
-			WHERE	article_suggestion_accepted = 0
-			AND	article_content_type_id = ?
-			AND	article_deleted = 0
-			AND	article_pulled = 0';
-		$query = $this->db->query($sql,array($type_id));
-		$result = array();
-		if ($query->num_rows() > 0)
+		if ($query->num_rows() == 1)
 		{
-			foreach ($query->result() as $row)
+			$type_id = $query->row()->content_type_id;
+			$sql = 'SELECT	article_id,
+					article_request_title,
+					article_request_description,
+					article_created,
+					article_request_entity_id,
+					business_card_name
+				FROM	articles
+				JOIN	business_cards
+				ON	business_card_user_entity_id = article_request_entity_id
+				WHERE	article_suggestion_accepted = 0
+				AND	article_content_type_id = ?
+				AND	article_deleted = 0
+				AND	article_pulled = 0';
+			$query = $this->db->query($sql,array($type_id));
+			$result = array();
+			if ($query->num_rows() > 0)
 			{
-				$result_item = array(
-					'id'=>$row->article_id,
-					'title'=>$row->article_request_title,
-					'description'=>$row->article_request_description,
-					'userid'=>$row->article_request_entity_id,
-					'username'=>$row->business_card_name,
-					'created'=>$row->article_created
-					);
-				$result[] = $result_item;
+				foreach ($query->result() as $row)
+				{
+					$result_item = array(
+						'id'=>$row->article_id,
+						'title'=>$row->article_request_title,
+						'description'=>$row->article_request_description,
+						'userid'=>$row->article_request_entity_id,
+						'username'=>$row->business_card_name,
+						'created'=>$row->article_created
+						);
+					$result[] = $result_item;
+				}
 			}
+			return $result;
 		}
-		return $result;
 	} 
 	
 	function GetArticleRevisions($article_id)

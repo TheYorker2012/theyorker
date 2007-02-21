@@ -34,31 +34,34 @@
 	?>
 </div>
 
-<div class="blue_box">
-	<h2>suggestions</h2>
 <?php
-	$first = FALSE;
-	foreach ($categories as $category_id => $category)
+	if ($status_count['suggestions'] > 0)
 	{
-		if (count($category['suggestions']) > 0)
+		echo '<div class="blue_box">
+			<h2>suggestions</h2>';
+		$first = FALSE;
+		foreach ($categories as $category_id => $category)
 		{
-			if ($first == FALSE)
-				$first = TRUE;
-			else
-				echo '<hr />';
-			echo '<h5>'.$category['name'].'</h5>';
-			foreach ($category['suggestions'] as $suggestion)
+			if (count($category['suggestions']) > 0)
 			{
-				echo '<br /><span class="orange">'.$suggestion['title'].'</span>
-					<span class="grey">(asked by '.$suggestion['username'].')</span><br />
-					'.$suggestion['description'].'<br />
-					<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a>
-					<br />';
+				if ($first == FALSE)
+					$first = TRUE;
+				else
+					echo '<hr />';
+				echo '<h5>'.$category['name'].'</h5>';
+				foreach ($category['suggestions'] as $suggestion)
+				{
+					echo '<br /><span class="orange">'.$suggestion['title'].'</span>
+						<span class="grey">(asked by '.$suggestion['username'].')</span><br />
+						'.$suggestion['description'].'<br />
+						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a>
+						<br />';
+				}
 			}
 		}
+		echo '</div>';
 	}
 ?>
-</div>
 
 <div class="grey_box">
 
@@ -86,9 +89,9 @@
 </div>
 
 <?php
-/*
+
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-*/
+
 ?>

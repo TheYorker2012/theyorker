@@ -52,34 +52,38 @@
 	?>
 </div>
 
-<div class="blue_box">
-	<h2>requests</h2>
 <?php
-	$first = FALSE;
-	foreach ($categories as $category_id => $category)
-	{
-		if (count($category['requests']) > 0)
+	echo $status_count['requests'];
+	//if ($status_count['requests'] > 0)
+	//{
+		echo '<div class="blue_box">
+			<h2>requests</h2>';
+		$first = FALSE;
+		foreach ($categories as $category_id => $category)
 		{
-			if ($first == FALSE)
-				$first = TRUE;
-			else
-				echo '<hr />';
-			echo '<h5>'.$category['name'].'</h5>';
-			foreach ($category['requests'] as $request)
+			if (count($category['requests']) > 0)
 			{
-				$requestdeadline = strtotime($request['deadline']);
-				$requestdeadlineformat = date('F jS Y', $requestdeadline).' at '.date('g.i A', $requestdeadline);
-				echo '<br /><span class="orange">'.$request['title'].'</span><br />
-					deadline on: '.$requestdeadlineformat.'<br />
-					<span class="grey">(asked by '.$request['suggestionusername'].', approved by '.$request['editorname'].')</span>	<br />
-					'.$request['description'].'<br />
-					<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>
-					<br />';
+				if ($first == FALSE)
+					$first = TRUE;
+				else
+					echo '<hr />';
+				echo '<h5>'.$category['name'].'</h5>';
+				foreach ($category['requests'] as $request)
+				{
+					$requestdeadline = strtotime($request['deadline']);
+					$requestdeadlineformat = date('F jS Y', $requestdeadline).' at '.date('g.i A', $requestdeadline);
+					echo '<br /><span class="orange">'.$request['title'].'</span><br />
+						deadline on: '.$requestdeadlineformat.'<br />
+						<span class="grey">(asked by '.$request['suggestionusername'].', approved by '.$request['editorname'].')</span>	<br />
+						'.$request['description'].'<br />
+						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>
+						<br />';
+				}
 			}
 		}
-	}
+		echo '</div>';
+	//}
 ?>
-</div>
 
 <?php
 if ($user['officetype'] != 'Low')
@@ -110,9 +114,9 @@ if ($user['officetype'] != 'Low')
 ?>
 
 <?php
-/*
+
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-*/
+
 ?>

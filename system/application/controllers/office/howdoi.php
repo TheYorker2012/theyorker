@@ -22,9 +22,9 @@ class Howdoi extends Controller
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('categories', 'Categories',
 				'/office/howdoi/categories');
-		$navbar->AddItem('published', 'Published',
+		$navbar->AddItem('published', 'Live',
 				'/office/howdoi/published');
-		$navbar->AddItem('requests', 'Requests',
+		$navbar->AddItem('requests', 'Articles',
 				'/office/howdoi/requests');
 		$navbar->AddItem('suggestions', 'Suggestions',
 				'/office/howdoi/suggestions');
@@ -136,24 +136,24 @@ class Howdoi extends Controller
 		$data['user']['writer']['requested'] = array();
 		$data['user']['writer']['accepted'] = array();
 
-		/** go through all categories and get its data for the 
+		/** go through all categories and get its data for the
 		    different question types */
 		foreach ($data['categories'] as $category_id => $category)
 		{
 			//suggestions
-			$data['categories'][$category_id]['suggestions'] = $this->requests_model->GetSuggestedArticles($category_id);
+			$data['categories'][$category_id]['suggestions'] = $this->requests_model->GetSuggestedArticles($category['codename']);
 			$data['status_count']['suggestions'] = $data['status_count']['suggestions'] + count($data['categories'][$category_id]['suggestions']);
 			//requests
-			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category_id);
+			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category['codename']);
 			$data['status_count']['requests'] = $data['status_count']['requests'] + count($data['categories'][$category_id]['requests']);
 			//unpublished
-			$data['categories'][$category_id]['unpublished'] = $this->requests_model->GetPublishedArticles($category_id, FALSE);
+			$data['categories'][$category_id]['unpublished'] = $this->requests_model->GetPublishedArticles($category['codename'], FALSE);
 			$data['status_count']['unpublished'] = $data['status_count']['unpublished'] + count($data['categories'][$category_id]['unpublished']);
 			//published
-			$data['categories'][$category_id]['published'] = $this->requests_model->GetPublishedArticles($category_id, TRUE);
+			$data['categories'][$category_id]['published'] = $this->requests_model->GetPublishedArticles($category['codename'], TRUE);
 			$data['status_count']['published'] = $data['status_count']['published'] + count($data['categories'][$category_id]['published']);
 			//pulled
-			$data['categories'][$category_id]['pulled'] = $this->requests_model->GetPublishedArticles($category_id, TRUE, TRUE);
+			$data['categories'][$category_id]['pulled'] = $this->requests_model->GetPublishedArticles($category['codename'], TRUE, TRUE);
 			$data['status_count']['pulled'] = $data['status_count']['pulled'] + count($data['categories'][$category_id]['pulled']);
 			//article writer requests
 			$temp_array = $this->requests_model->GetRequestsForUser($this->user_auth->entityId, $category_id, 'requested');
