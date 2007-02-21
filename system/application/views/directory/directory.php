@@ -4,11 +4,13 @@
 		<h4>Search</h4>
 		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
 			<form name='search_directory' action='' method='POST' class='form'>
+				<fieldset>
 				Enter a keyword below:<br />
 				<div id="loadingdiv"style="padding: 5px; display: none; float:right;"> <img src="/images/prototype/prefs/loading.gif" width="16" height="16" /></div>
-				<div style='padding: 5px;'><input id="searchText" width='300' name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"> </div>
+				<div style='padding: 5px;'><input width='300' id="searchText" name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"></div>
+				<br />
 				e.g. football
-
+				</fieldset>
 			</form>
 		</div>
 	</div>
