@@ -90,6 +90,7 @@ class Organisations
 		foreach ($orgs as $org) {
 		
 		$slideshow_array = $this->CI->slideshow_model->getSlideshowImages($org['organisation_entity_id']);
+		$slideshow = array();
 		foreach ($slideshow_array as $slide){
 			$slideshow[] = array(
 				'title' => $slide["photo_title"],
