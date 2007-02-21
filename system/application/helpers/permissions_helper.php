@@ -336,6 +336,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							SetRedirectData($action[1], serialize($_POST));
 						}
 					}
+					// Before redirecting, forward on the redirected post data
+					$post_data = GetRedirectData();
+					if (NULL !== $post_data) {
+						SetRedirectData($action[1], $post_data);
+					}
+					// Do the redirect
 					redirect($action[1]);
 					return FALSE;
 
@@ -360,6 +366,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				$post_data = @unserialize($post_data);
 				if (is_array($post_data)) {
 					if (!isset($_POST)) {
+						global $_POST;
 						$_POST = array();
 					}
 					foreach ($post_data as $key => $value) {
