@@ -872,17 +872,6 @@ function GetTagOrganisation($type,$organisation)
 			break;
 		}
 
-		if ($item_filter_by == 'any' || $where_equal_to == 'any' || $item_filter_by == '' || $where_equal_to == '') //Set no filter in these cases by tags
-			{
-				$filter_sql = '';
-			}
-			else
-			{
-			//Filtering by tag, link the query to the tag table
-				$filter_sql = " AND tags.tag_name = '" . $where_equal_to . "' ";
-			}
-
-
 		$sql = '
 			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,tg.tag_group_name,t.tag_name,
 			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
@@ -902,13 +891,14 @@ function GetTagOrganisation($type,$organisation)
 			INNER JOIN tag_groups AS tg
 			ON tg.tag_group_id = t.tag_tag_group_id
 			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id 
-			WHERE ct.content_type_codename = ? '.$filter_sql.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
+			WHERE ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
 		$query = $this->db->query($sql, array($content_type_codename));
 		$raw_reviews = $query->result_array();
 
 		//Ok now we need to rearrange this into a useful format (Since a lot of duplicated data currently exists)
 		$reviews = array(); //Make array scope for rest of function
+		$data_present = 0;
 
 		foreach ($raw_reviews as $single_review)
 		{
@@ -916,21 +906,54 @@ function GetTagOrganisation($type,$organisation)
 			$exists = -1;
 			for ($row = 0; $row < count($reviews); $row++)
 			{
-				if ($single_review['organisation_entity_id'] == $reviews[$row]['organisation_entity_id'])
+				if ($data_present)
 				{
-					$exists = $row;
-					break;
+					if ($single_review['organisation_entity_id'] == $reviews[$row]['organisation_entity_id'])
+					{
+						$exists = $row;
+						break;
+					}
 				}
 			}
 
-			if ($exists != -1) //Add tag information to entry
+			if ($exists == -1) //New entry
 			{
+			$display = FALSE;
+
+				//Before allowing new entry make sure it is not filtered out by tag name
+				if ($item_filter_by == 'any' || $where_equal_to == 'any' || $item_filter_by == '' || $where_equal_to == '')
+				{
+					//No filter
+					$display = TRUE;
+				}
+				else
+				{
+					//Filter
+					foreach ($raw_reviews as $search_review)
+					{
+						if ($search_review['tag_name'] == $where_equal_to && $search_review['tag_group_name'] == $item_filter_by && $search_review['organisation_entity_id'] == $single_review['organisation_entity_id'])
+						{
+							$display = TRUE;
+						}
+					}
+
+				}
+
+				if ($display)
+				{
+					$reviews[] = $single_review;
+					$data_present = 1;
+					//Add tag information to entry
+					$reviews[$row]['tags'][$single_review['tag_group_name']][] = $single_review['tag_name'];
+				}
+
+			}
+			else
+			{
+				//Add tag information to entry
 				$reviews[$row]['tags'][$single_review['tag_group_name']][] = $single_review['tag_name'];
 			}
-			else //New entry
-			{
-				$reviews[] = $single_review;
-			}
+
 		}
 		
 			//Get a sorted list of tag group names
