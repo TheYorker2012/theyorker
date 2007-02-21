@@ -140,10 +140,11 @@ class Yorkerdirectory extends Controller
 					array('organisation' => $data['organisation']['name']));
 			$this->main_frame->SetContent($this->frame_directory);
 
-			// Load the public frame view
 		} else {
-			$this->messages->AddMessage('error','Unknown organisation');
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
 		}
+		// Load the main frame view
 		$this->main_frame->Load();
 	}
 
@@ -265,7 +266,8 @@ EXTRAHEAD;
 			$this->main_frame->SetContent($this->frame_directory);
 
 		} else {
-			$this->messages->AddMessage('error','Unknown organisation');
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
 		}
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -313,7 +315,8 @@ EXTRAHEAD;
 			$this->main_frame->SetContent($this->frame_directory);
 
 		} else {
-			$this->messages->AddMessage('error','Unknown organisation');
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
 		}
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -383,7 +386,8 @@ EXTRAHEAD;
 			$this->main_frame->SetContent($this->frame_directory);
 
 		} else {
-			$this->messages->AddMessage('error','Unknown organisation');
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
 		}
 		// Load the public frame view
 		$this->main_frame->Load();
