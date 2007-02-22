@@ -53,9 +53,8 @@
 </div>
 
 <?php
-	echo $status_count['requests'];
-	//if ($status_count['requests'] > 0)
-	//{
+	if ($status_count['requests'] > 0)
+	{
 		echo '<div class="blue_box">
 			<h2>requests</h2>';
 		$first = FALSE;
@@ -82,7 +81,7 @@
 			}
 		}
 		echo '</div>';
-	//}
+	}
 ?>
 
 <?php

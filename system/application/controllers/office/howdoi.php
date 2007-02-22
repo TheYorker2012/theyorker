@@ -3,8 +3,13 @@
 /// Office How Do I Pages.
 /**
  * @author Richard Ingle (ri504@cs.york.ac.uk)
- * @author Nick Evans (nse500@cs.york.ac.uk)
  */
+
+/* TODO
+
+	*can't publish a request with no revisions
+
+*/
 class Howdoi extends Controller
 {
 	/// Default constructor.
@@ -146,6 +151,11 @@ class Howdoi extends Controller
 			//requests
 			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category['codename']);
 			$data['status_count']['requests'] = $data['status_count']['requests'] + count($data['categories'][$category_id]['requests']);
+			//due to the change in requests model must now get each article header in full
+			foreach ($data['categories'][$category_id]['requests'] as &$request)
+			{
+				$request = $this->requests_model->GetRequestedArticle($request['id']);
+			}
 			//unpublished
 			$data['categories'][$category_id]['unpublished'] = $this->requests_model->GetPublishedArticles($category['codename'], FALSE);
 			$data['status_count']['unpublished'] = $data['status_count']['unpublished'] + count($data['categories'][$category_id]['unpublished']);
