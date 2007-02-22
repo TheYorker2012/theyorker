@@ -31,7 +31,6 @@ class Pingu extends Controller {
 		*/
 
 		// Setup XAJAX functions
-
 		$this->load->library('xajax');
 	        $this->xajax->registerFunction(array('_xajaxTest', &$this, '_xajaxTest'));
 	        $this->xajax->processRequests();

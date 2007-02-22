@@ -111,6 +111,10 @@ class Howdoi extends Controller
 			$this->pages_model->SetPageCode('office_howdoi_published');
 		}
 
+		// Setup XAJAX functions
+		$this->load->library('xajax');
+	        $this->xajax->registerFunction(array('_addSuggestion', &$this, '_addSuggestion'));
+	        $this->xajax->processRequests();
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -183,9 +187,10 @@ class Howdoi extends Controller
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_requests', $data);
 		else if ($page == 'published')
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_published', $data);
-		
+
 		// Set up the public frame
 		$this->main_frame->SetContent($the_view);
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -590,6 +595,29 @@ class Howdoi extends Controller
                 	$this->main_frame->AddMessage('success','Category moved down.');
 			redirect($_POST['r_redirecturl']);
 		}
+	}
+
+	function _addSuggestion($question, $description, $category)
+	{
+		$this->load->model('requests_model','requests_model');
+		$article_header_id = $this->requests_model->CreateRequest(
+						'suggestion',
+						$category,
+						$question,
+						$description,
+						$this->user_auth->entityId,
+						NULL);
+		$xajax_response = new xajaxResponse();
+		//since its a suggestion get the name from users table
+		$username = $this->requests_model->GetNameFromUsers($this->user_auth->entityId);
+		$xajax_response->addScriptCall('suggestionAdded',
+						$category,
+						$question,
+						$username,
+						$question,
+						$this->user_auth->entityId,
+						$article_header_id);
+		return $xajax_response;
 	}
 
 	function suggestionmodify()

@@ -97,50 +97,57 @@ class Requests_Model extends Model
 			FROM	content_types
 			WHERE	(content_type_codename = ?)';
 		$query = $this->db->query($sql,array($type_codename));
-		$type_id = $query->row()->content_type_id;
-		if ($status == 'suggestion')
+		if ($query->num_rows() == 1)
 		{
-			$this->db->trans_start();
-			$sql = 'INSERT INTO articles(
-					article_content_type_id,
-					article_created,
-					article_request_title,
-					article_request_description,
-					article_suggestion_accepted,
-					article_request_entity_id)
-				VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
-			$this->db->query($sql,array($type_id,$title,$description,$user));
-			$sql = 'SELECT 	article_id
-				FROM	articles
-				WHERE	(article_id=LAST_INSERT_ID())';
-			$query = $this->db->query($sql);
-			$id = $query->row()->article_id;
-			$this->db->trans_complete();
-			
-			return $id;
-		}
-		elseif ($status == 'request')
-		{
-			$this->db->trans_start();
-			$sql = 'INSERT INTO articles(
-					article_content_type_id,
-					article_created,
-					article_request_title,
-					article_request_description,
-					article_suggestion_accepted,
-					article_request_entity_id,
-					article_editor_approved_user_entity_id,
-					article_publish_date)
-				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
-			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
-			$sql = 'SELECT 	article_id 
-				FROM	articles
-				WHERE	(article_id=LAST_INSERT_ID())';
-			$query = $this->db->query($sql);
-			$id = $query->row()->article_id;
-			$this->db->trans_complete();
-			
-			return $id;
+			$type_id = $query->row()->content_type_id;
+			if ($status == 'suggestion')
+			{
+				$this->db->trans_start();
+				$sql = 'INSERT INTO articles(
+						article_content_type_id,
+						article_created,
+						article_request_title,
+						article_request_description,
+						article_suggestion_accepted,
+						article_request_entity_id)
+					VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
+				$this->db->query($sql,array($type_id,$title,$description,$user));
+				$sql = 'SELECT 	article_id
+					FROM	articles
+					WHERE	(article_id=LAST_INSERT_ID())';
+				$query = $this->db->query($sql);
+				$id = $query->row()->article_id;
+				$this->db->trans_complete();
+				
+				return $id;
+			}
+			elseif ($status == 'request')
+			{
+				$this->db->trans_start();
+				$sql = 'INSERT INTO articles(
+						article_content_type_id,
+						article_created,
+						article_request_title,
+						article_request_description,
+						article_suggestion_accepted,
+						article_request_entity_id,
+						article_editor_approved_user_entity_id,
+						article_publish_date)
+					VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
+				$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
+				$sql = 'SELECT 	article_id 
+					FROM	articles
+					WHERE	(article_id=LAST_INSERT_ID())';
+				$query = $this->db->query($sql);
+				$id = $query->row()->article_id;
+				$this->db->trans_complete();
+				
+				return $id;
+			}
+			else
+			{
+				return FALSE;
+			}
 		}
 		else
 		{
@@ -794,6 +801,37 @@ class Requests_Model extends Model
 			SET	article_deleted = 1
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($id));
+	}
+	
+	function GetNameFromUsers($user_id)
+	{
+		$sql = 'SELECT	user_firstname,
+				user_surname
+			FROM	users
+			WHERE	user_entity_id = ?';
+		$query = $this->db->query($sql,array($user_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->user_firstname.' '.$row->user_surname;
+		}
+		else
+			return FALSE;
+	}
+	
+	function GetNameFromBusinessCards($user_id)
+	{
+		$sql = 'SELECT	business_card_name
+			FROM	business_cards
+			WHERE	business_card_user_entity_id = ?';
+		$query = $this->db->query($sql,array($user_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->business_card_name;
+		}
+		else
+			return FALSE;
 	}
 }
 ?>

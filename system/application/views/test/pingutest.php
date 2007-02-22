@@ -27,7 +27,7 @@
 		<div id="xajaxTest_load" class="ajax_loading hide">
 			<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Saving new xajaxTest...
 		</div>
-		<fieldset id="xajaxTest_form">
+		<fieldset id="xajaxTest_form" class="form">
 			<label for="new_xajaxTest" class="full">Add New xajaxTest</label>
 			<textarea name="new_xajaxTest" id="new_xajaxTest" class="full"></textarea>
 			<br />
