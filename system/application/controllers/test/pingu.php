@@ -39,6 +39,7 @@ class Pingu extends Controller {
 		// Set up the public frame
 		$this->frame_public->SetTitle('test page');
 		$this->frame_public->SetContentSimple('test/pingutest', $data);
+		$this->frame_public->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
