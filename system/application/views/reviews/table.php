@@ -36,10 +36,8 @@ if (isset($review_tags))
 			    <td>'.$entry['review_rating'].' Stars</td>
 			    <td>'.$entry['review_user_rating'].'/10</td>';
 	//Tag handing
-	$colnumber = 3; //3 starting columns Name/Star/User
 	foreach ($entry['tagbox'] as &$taglist)
 	{
-	$colnumber++; //For ending tag to be correct
 		echo '<td>';
 		foreach ($taglist as &$tag)
 			{
@@ -52,7 +50,7 @@ if (isset($review_tags))
 	}
 
 echo	'<tr class="ReviewElementEnd">
-			<td colspan="'.$colnumber.'">
+			<td colspan="0">
 				<a href="#tabletop">&gt;Go back to top</a>&nbsp;&nbsp;<a href="/reviews/'.$this->uri->segment(3).'">&gt;Go back to '.$this->uri->segment(3).'</a>
 			</td>
 		</tr>
