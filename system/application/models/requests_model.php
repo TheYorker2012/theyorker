@@ -241,11 +241,11 @@ class Requests_Model extends Model
 		{
 			$type_id = $query->row()->content_type_id;
 			$sql = 'SELECT	article_id,
-				article_publish_date,
+				UNIX_TIMESTAMP(article_publish_date) as article_publish_date,
 				article_live_content_id,
-				article_content_last_author_timestamp,
+				UNIX_TIMESTAMP(article_content_last_author_timestamp) as article_content_last_author_timestamp,
 				article_content_heading,
-	                                article_content_last_author_user_entity_id,
+	                        article_content_last_author_user_entity_id,
 				article_editor_approved_user_entity_id,
 				author_user.business_card_name as author_name,
 				editor_user.business_card_name as editor_name
@@ -298,7 +298,7 @@ class Requests_Model extends Model
 				article_request_description,
 				article_content_type_id,
 				article_request_entity_id,
-				DATE_FORMAT(article_publish_date, \'%d/%m/%Y %T\') as article_publish_date,
+				UNIX_TIMESTAMP(article_publish_date) as article_publish_date,
 				article_request_entity_id,
 				article_editor_approved_user_entity_id,
 				suggestion_user.business_card_name as suggestion_name,
@@ -412,7 +412,7 @@ class Requests_Model extends Model
 				article_request_title,
 				article_content_type_id,
 				article_request_description,
-				DATE_FORMAT(article_created, \'%d/%m/%Y %T\') as article_created,
+				UNIX_TIMESTAMP(article_created) as article_created,
 				article_request_entity_id,
 				business_card_name
 			FROM	articles
@@ -457,7 +457,7 @@ class Requests_Model extends Model
 			$sql = 'SELECT	article_id,
 					article_request_title,
 					article_request_description,
-					article_created,
+					UNIX_TIMESTAMP(article_created) as article_created,
 					article_request_entity_id,
 					business_card_name
 				FROM	articles

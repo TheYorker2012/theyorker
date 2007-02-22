@@ -48,7 +48,7 @@ class Pingu extends Controller {
 	function _xajaxTest($test)
 	{
 		$xajax_response = new xajaxResponse();
-		$xajax_response->addAlert('Please enter an xajaxTest to submit.');
+		//$xajax_response->addAlert('Please enter an xajaxTest to submit.');
 		$xajax_response->addScriptCall('doxajaxTest');
 		return $xajax_response;
 	}

@@ -16,10 +16,8 @@
 		document.getElementById('new_xajaxTest').value = '';
 		document.getElementById('xajaxTest_form').className = 'show';
 		document.getElementById('xajaxTest_load').className = 'ajax_loading hide';
-		if (text != '') {
-			var container = document.getElementById('xajaxTest_container');
-			container.innerHTML = '<div class="feedback"><div class="top"><span class="right">dntyn</span>dyftujd</div><div class="main">fghjfgh</div></div>' + container.innerHTML;
-		}
+		var container = document.getElementById('xajaxTest_container');
+		container.innerHTML = '<div class="feedback"><div class="top"><span class="right">dntyn</span>dyftujd</div><div class="main">fghjfgh</div></div>' + container.innerHTML;
 	}
 
 </script>
