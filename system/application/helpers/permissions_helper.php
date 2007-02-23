@@ -58,6 +58,17 @@ function VipOrganisation($SetOrganisation = FALSE)
 	return $organisation;
 }
 
+/// Get the vip organisation id.
+function VipOrganisationId($SetOrganisation = FALSE)
+{
+	static $organisation_id = FALSE;
+	
+	if (is_string($SetOrganisation)) {
+		$organisation_id = $SetOrganisation;
+	}
+	return $organisation_id;
+}
+
 /// Get the vip mode that the user is in.
 /**
  * @return string Mode string:
@@ -209,12 +220,14 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		
 		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
 			$vip_accessible = TRUE;
+			VipOrganisationId($CI->user_auth->organisationLogin);
 		} else {
 			// check permissions to access this organisation
 			$vip_organisations = $CI->user_auth->getOrganisationLogins();
 			foreach ($vip_organisations as $organisation) {
 				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
 					$vip_accessible = $vip_login_action;
+					VipOrganisationId($organisation['organisation_entity_id']);
 					break;
 				}
 			}
@@ -251,6 +264,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				if ($organisation['organisation_directory_entry_name']
 						== $organisation_shortname) {
 					// Yes, match, PR Rep, set stuff and change user level to PR
+					VipOrganisationId($organisation['organisation_entity_id']);
 					$user_level = 'pr';
 					break;
 				}

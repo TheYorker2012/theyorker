@@ -19,7 +19,7 @@ information goes here.
 		<li><a href='<?php echo vip_url('directory/information'); ?>'>Edit the directory entry</a></li>
 		<li><a href='<?php echo vip_url('calendar/'); ?>'>Manage events</a></li>
 		<?php if($enable_members == TRUE){?>
-		<li><a href='<?php echo vip_url('members/view'); ?>'>Manage members</a></li>
+		<li><a href='<?php echo vip_url('members'); ?>'>Manage members</a></li>
 		<?php }?>
 		<li><a href='<?php echo vip_url('advertising'); ?>'>Advertising</a></li>
 		<li><a href='<?php echo vip_url('account/update'); ?>'>My Viparea Account</a></li>

@@ -18,7 +18,7 @@
 </div>
 <div class='blue_box'>
 	<h2>members</h2>
-	<a href='<?php echo vip_url('members/view/'.$this->user_auth->organisationLogin); ?>/add'>Add a member.</a>
+	<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a>.
 	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 	<tr style="background-color: #eee">
 		<th>Forename</th>
@@ -33,13 +33,13 @@
 	<?php for($i=0;$i<count($organisation);$i++) {?>
 	<tr>
 		<td><?php echo $organisation[$i]['firstname']; ?></td>
-		<td><?php echo $organisation[$i]['firstname']; ?></td>
+		<td><?php echo $organisation[$i]['surname']; ?></td>
 		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
 		<td><?php echo $organisation[$i]['paid']; ?></td>
 		<td><?php echo $organisation[$i]['if_email']; ?></td>
 		<td><?php echo $organisation[$i]['confirmed']; ?></td>
 		<td><?php echo $organisation[$i]['vip']; ?></td>
-		<td><a href='<?php echo vip_url('members/edit/'.$organisation[$i]['id']); ?>'>Edit</a></td>
+		<td><a href='<?php echo vip_url('members/info/'.$organisation[$i]['id']); ?>'>Edit</a></td>
 	</tr>
 	<?php } ?>
 	</table>	
