@@ -124,7 +124,7 @@ class News_model extends Model
 				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type));
 		$row = $query->row();
-		if ($query->num_rows>0 && $row->content_type_has_children) {
+		if (($query->num_rows() > 0) && ($row->content_type_has_children)) {
 			$sql = 'SELECT content_type_codename
 					FROM content_types
 					WHERE content_type_parent_content_type_id = ?';

@@ -119,7 +119,6 @@ class News extends Controller {
 
 		/// Temporarily fill in a few gaps in the model data
 		$data['main_article']['writerimg'] = '/images/prototype/news/benest.png';
-
 		foreach ($data['main_article']['related_articles'] as &$related) {
     		$related['image'] = '/images/prototype/news/thumb9.jpg';
     		$related['image_description'] = 'temp image';
