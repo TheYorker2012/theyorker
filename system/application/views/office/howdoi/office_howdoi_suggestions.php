@@ -26,6 +26,15 @@
 		document.getElementById('category_' + category + '_load').className = 'show';
 		var container = document.getElementById('category_' + category + '_load');
 		container.innerHTML = container.innerHTML + '<br /><span class="orange">' + title + '</span><span class="grey"> (asked by ' + username + ')</span><br />' + description + '<br /><a href="/office/howdoi/editquestion/' + articleid + '">[edit]</a><br />';
+
+		//document.getElementById('info_suggestion').className = 'show';
+		//var container = document.getElementById('info_suggestion');
+		//int count = document.getElementById('suggestion_count').value + 1;
+		//document.getElementById('suggestion_count').value = count;
+		//if (count == 1)
+		//	container.innerHTML = '<div class="information_box" id="info_suggestion">There is <b>' + count + '</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.</div>';
+		//else
+		//	container.innerHTML = '<div class="information_box" id="info_suggestion">There are <b>' + count + '</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.</div>';
 	}
 
 </script>
@@ -52,15 +61,17 @@
 				echo 'There are <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> that require answers.';
 			echo '</div>';
 		}
+		echo '<input type="hidden" id="suggestion_count" value="'.$status_count['suggestions'].'">';
 		if ($status_count['suggestions'] > 0)
-		{
-			echo '<div class="information_box">';
+			echo '<div class="information_box" id="info_suggestion">';
+		else
+			echo '<div class="information_box" id="info_suggestion" class="ajax_loading hide">';
+
 			if ($status_count['suggestions'] == 1)
 				echo 'There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.';
 			else
 				echo 'There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.';
 			echo '</div>';
-		}
 
 	echo '</div>';
 	?>
@@ -113,7 +124,7 @@
 	//echo '<form class="form" action="/office/howdoi/suggestionmodify" method="post" >';
 	//echo '</form>';
 
-	echo '
+	echo '<form class="form" action="/office/howdoi/suggestionmodify" method="post" >
 		<fieldset id="suggestion_form" class="form">
 			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 			<label for="a_question">Question: </label>
@@ -127,16 +138,18 @@
 				echo '<option value="'.$category['codename'].'">'.$category['name'].'</option>';
 			}
 			echo '</select>
-			<input type="submit" class="button" value="Ask" name="r_submit_ask" id="r_submit_ask" onclick="addSuggestion();" />
-		</fieldset>';
+			<input type="submit" class="button" value="Ask" name="r_submit_ask" id="r_submit_ask" />
+		</fieldset>
+	</form>';
+	//<input type="submit" class="button" value="Ask" name="r_submit_ask" id="r_submit_ask" onclick="addSuggestion();" />
 	?>
 
 </div>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

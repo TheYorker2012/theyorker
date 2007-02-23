@@ -69,14 +69,15 @@
 				echo '<h5>'.$category['name'].'</h5>';
 				foreach ($category['requests'] as $request)
 				{
-					$requestdeadline = strtotime($request['deadline']);
-					$requestdeadlineformat = date('F jS Y', $requestdeadline).' at '.date('g.i A', $requestdeadline);
+					$dateformatted = date('F jS Y', $request['deadline']).' at '.date('g.i A', $request['deadline']);
 					echo '<br /><span class="orange">'.$request['title'].'</span><br />
-						deadline on: '.$requestdeadlineformat.'<br />
+						deadline on: '.$dateformatted.'<br />
 						<span class="grey">(asked by '.$request['suggestionusername'].', approved by '.$request['editorname'].')</span>	<br />
 						'.$request['description'].'<br />
-						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>
-						<br />';
+						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>';
+					if ($user['officetype'] != 'Low')
+						echo ' or <a href="/office/howdoi/editrequest/'.$request['id'].'">[modify and assign]</a>';
+					echo '<br />';
 				}
 			}
 		}
@@ -113,9 +114,9 @@ if ($user['officetype'] != 'Low')
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

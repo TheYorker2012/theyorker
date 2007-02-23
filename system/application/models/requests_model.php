@@ -559,38 +559,43 @@ class Requests_Model extends Model
 			FROM	content_types
 			WHERE	(content_type_codename = ?)';
 		$query = $this->db->query($sql,array($type_codename));
-		$type_id = $query->row()->content_type_id;
-		$sql = 'SELECT	user_entity_id,
-				business_card_name
-			FROM	content_types
-
-			JOIN	organisations
-			ON	organisation_entity_id = content_type_related_organisation_enitity_id
-			
-			JOIN	subscriptions
-			ON	subscription_organisation_entity_id = organisation_entity_id
-			
-			JOIN	users
-			ON	user_entity_id = subscription_user_entity_id
-
-			JOIN	business_cards
-			ON	business_card_user_entity_id = user_entity_id
-
-			WHERE	content_type_id = ?
-			ORDER BY business_card_name ASC';
-		$query = $this->db->query($sql,array($type_id));
-		$result = array();
-		if ($query->num_rows() > 0)
+		if ($query->num_rows() == 1)
 		{
-			foreach ($query->result() as $row)
+			$type_id = $query->row()->content_type_id;
+			$sql = 'SELECT	user_entity_id,
+					business_card_name
+				FROM	content_types
+	
+				JOIN	organisations
+				ON	organisation_entity_id = content_type_related_organisation_enitity_id
+				
+				JOIN	subscriptions
+				ON	subscription_organisation_entity_id = organisation_entity_id
+				
+				JOIN	users
+				ON	user_entity_id = subscription_user_entity_id
+	
+				JOIN	business_cards
+				ON	business_card_user_entity_id = user_entity_id
+	
+				WHERE	content_type_id = ?
+				ORDER BY business_card_name ASC';
+			$query = $this->db->query($sql,array($type_id));
+			$result = array();
+			if ($query->num_rows() > 0)
 			{
-				$result[] = array(
-					'id'=>$row->user_entity_id,
-					'name'=>$row->business_card_name
-					);
+				foreach ($query->result() as $row)
+				{
+					$result[] = array(
+						'id'=>$row->user_entity_id,
+						'name'=>$row->business_card_name
+						);
+				}
 			}
+			return $result;
 		}
-		return $result;
+		else
+			return FALSE;
 	}
 	
 	function GetWritersForArticle($article_id)

@@ -57,11 +57,10 @@
 				echo '<b>To be published</b>';
 				foreach ($category['unpublished'] as $unpublished)
 				{
-					$publish = strtotime($unpublished['publish']);
-					$publishformat = date('F jS Y', $publish).' at '.date('g.i A', $publish);
+					$dateformatted = date('F jS Y', $unpublished['publish']).' at '.date('g.i A', $unpublished['publish']);
 					echo '<br /><span class="orange">'.$unpublished['heading'].'</span>
 						<span class="grey">(published by '.$unpublished['editorname'].')</span>
-						<br />being published on: '.$publishformat.'
+						<br />being published on: '.$dateformatted.'
 						<br /><a href="/office/howdoi/editquestion/'.$unpublished['id'].'">[edit]</a>';
 				}
 			}
@@ -74,11 +73,10 @@
 				echo '<b>Published</b>';
 				foreach ($category['published'] as $published)
 				{
-					$publish = strtotime($published['publish']);
-					$publishformat = date('F jS Y', $publish).' at '.date('g.i A', $publish);
+					$dateformatted = date('F jS Y', $published['publish']).' at '.date('g.i A', $published['publish']);
 					echo '<br /><span class="orange">'.$published['heading'].'</span>
 						<span class="grey">(published by '.$published['editorname'].')</span>
-						<br />published on: '.$publishformat.'
+						<br />published on: '.$dateformatted.'
 						<br /><a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a>';
 				}
 			}
@@ -91,11 +89,10 @@
 				echo '<b>Pulled</b>';
 				foreach ($category['pulled'] as $pulled)
 				{
-					$pull = strtotime($pulled['publish']);
-					$pullformat = date('F jS Y', $pull).' at '.date('g.i A', $pull);
+					$dateformatted = date('F jS Y', $pulled['publish']).' at '.date('g.i A', $pulled['publish']);
 					echo '<br /><span class="orange">'.$pulled['heading'].'</span>
 						<span class="grey">(pulled by '.$pulled['editorname'].')</span>
-						<br />pulled on: '.$pullformat.'
+						<br />pulled on: '.$dateformatted.'
 						<br /><a href="/office/howdoi/editquestion/'.$pulled['id'].'">[edit]</a>';
 				}
 			}
@@ -105,9 +102,9 @@
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

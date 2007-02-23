@@ -40,8 +40,7 @@
 						$first_hr = TRUE;
 					else
 						echo '<hr>';
-					$revisiontime = strtotime($revision['updated']);
-					$revisiontimeformat = date('F jS Y', $revisiontime).' at '.date('g.i A', $revisiontime);
+					$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
 					echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>';
 					if ($revision['id'] == $article['header']['live_content'])
 					{
@@ -52,7 +51,7 @@
 					}
 					elseif ($revision['id'] == $article['displayrevision']['id'])
 						echo '<br /><span class="orange">(Displayed)</span>';
-					echo '<br />by '.$revision['username'].'<br />on '.$revisiontimeformat;
+					echo '<br />by '.$revision['username'].'<br />on '.$dateformatted;
 				}
 			}
 			else
@@ -82,14 +81,7 @@ if ($article['header']['status'] == 'request')
 		<b>Description: </b>'.$article['header']['requestdescription'].'<br />';
 	if ($user['officetype'] != 'Low')
 	{
-		/*
-		echo '<form class="form" action="/office/howdoi/editrequest/'.$parameters['article_id'].'" method="get" >
-				<fieldset>
-					<input type="submit" value="Modify" class="button" />
-				</fieldset>
-			</form>';
-		*/
-		echo '<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[Modify]</a>';
+		echo '<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[modify and assign]</a>';
 	}
 	echo '</div>';
 }
@@ -199,9 +191,9 @@ if ($user['officetype'] != 'Low')
 			foreach ($article['revisions'] as $revision)
 			{
 				if ($revision['id'] == $article['header']['live_content'])
-					$publishdate = strtotime($revision['updated']);
+					$publishdate = $revision['updated'];
 			}
-			$revisiondate = strtotime($article['displayrevision']['updated']);
+			$revisiondate = $article['displayrevision']['updated'];
 			if ($revisiondate < $publishdate)
 			{
 				echo '<div class="information_box"><span class="orange">Warning!</span><br />this is an old revision, it may be missing some current content.</div><br />';

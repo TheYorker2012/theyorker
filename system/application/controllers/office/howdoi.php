@@ -424,10 +424,10 @@ class Howdoi extends Controller
 			$data['user']['officetype'] = $this->user_auth->officeType;
 
 			//get the how do i writers
-			$data['writers']['all'] = $this->requests_model->GetWritersForType($howdoi_type_id);
+			$data['writers']['all'] = $this->requests_model->GetWritersForType('howdoi');
 
 			//get writers for the current question
-			$data['writers']['article'] = $this->requests_model->GetWritersForArticle($article_id);
+			$data['writers']['article'] = $this->requests_model->GetWritersForArticle('howdoi');
 
 			//set a count for the available writers
 			$data['writers']['availcount'] = 0;
@@ -462,8 +462,8 @@ class Howdoi extends Controller
 		//otherwise for an invalid article id
 		else
 		{
-                	$this->main_frame->AddMessage('error','Specified request is not editable.');
-                	redirect('/office/howdoi/');
+                	//$this->main_frame->AddMessage('error','Specified request is not editable.');
+                	//redirect('/office/howdoi/');
 		}
 	}
 
@@ -599,6 +599,7 @@ class Howdoi extends Controller
 
 	function _addSuggestion($question, $description, $category)
 	{
+		/*
 		$this->load->model('requests_model','requests_model');
 		$article_header_id = $this->requests_model->CreateRequest(
 						'suggestion',
@@ -607,6 +608,8 @@ class Howdoi extends Controller
 						$description,
 						$this->user_auth->entityId,
 						NULL);
+		*/
+		$article_header_id = 34;
 		$xajax_response = new xajaxResponse();
 		//since its a suggestion get the name from users table
 		$username = $this->requests_model->GetNameFromUsers($this->user_auth->entityId);
