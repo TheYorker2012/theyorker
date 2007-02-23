@@ -1,23 +1,7 @@
 	<div class='RightToolbar'>
 		<h4><?php echo $latest_heading; ?></h4>
 
-		<?php if (!isset($puffers)) { ?>
-
-			<?php foreach ($news_previews as $preview) { ?>
-			<div class='NewsPreview'>
-				<a href='/news/<?php echo $article_type; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
-				<h3><?php echo anchor('/news/' .$article_type.'/'.$preview['id'], $preview['heading']); ?></h3>
-				<?php foreach ($preview['authors'] as $reporter) { ?>
-				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
-				<?php } ?>
-				<p class='Date'><?php echo $preview['date']; ?></p>
-				<p class='More'><?php echo anchor('/news/'.$article_type.'/'.$preview['id'], 'Read more...'); ?></p>
-			    <p><?php echo $preview['blurb']; ?></p>
-				<br style='clear: both;' />
-			</div>
-			<?php } ?>
-
-		<?php } else { ?>
+		<?php if (isset($puffers)) { ?>
 
 			<?php echo '<div class=\'LifestylePuffer\'>';
 			foreach ($puffers as $puffer) {
@@ -26,13 +10,29 @@
 				echo '</a>';
 			}
 			echo '</div>'; ?>
+			<h4><?php echo $other_heading; ?></h4>
 
 		<?php } ?>
+
+		<?php foreach ($news_previews as $preview) { ?>
+		<div class='NewsPreview'>
+			<a href='/news/<?php echo $preview['article_type']; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
+			<h3><?php echo anchor('/news/' .$preview['article_type'].'/'.$preview['id'], $preview['heading']); ?></h3>
+			<?php foreach ($preview['authors'] as $reporter) { ?>
+			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
+			<?php } ?>
+			<p class='Date'><?php echo $preview['date']; ?></p>
+			<p class='More'><?php echo anchor('/news/'.$preview['article_type'].'/'.$preview['id'], 'Read more...'); ?></p>
+		    <p><?php echo $preview['blurb']; ?></p>
+			<br style='clear: both;' />
+		</div>
+		<?php } ?>
+
 		<h4><?php echo $other_heading; ?></h4>
 	   	<?php foreach ($news_others as $other) { ?>
 		<div class='NewsOther'>
-			<a href='/news/<?php echo $article_type; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
-		    <p class='Headline'><a href='/news/<?php echo $article_type; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
+			<a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
+		    <p class='Headline'><a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
 			<?php foreach ($other['authors'] as $reporter) { ?>
 			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
 			<?php } ?>

@@ -181,15 +181,18 @@ class News_model extends Model
 	{
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id,
-			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
-			FROM articles
+			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+			content_types.content_type_codename
+			FROM articles, content_types
 			WHERE (articles.article_id = ?)
+			AND articles.article_content_type_id = content_types.content_type_id
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
+			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading
@@ -253,16 +256,19 @@ class News_model extends Model
 	function GetSummaryArticle($id, $dateformat='%W, %D %M %Y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id, 
-				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date
-			FROM articles
+		$sql = 'SELECT articles.article_live_content_id,
+				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+				content_types.content_type_codename
+			FROM articles, content_types
 			WHERE (articles.article_id = ?)
+			AND articles.article_content_type_id = content_types.content_type_id
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
+			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
 		}
 		$sql = 'SELECT article_contents.article_content_heading,
