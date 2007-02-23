@@ -46,6 +46,7 @@ class Wikiparser {
 	function Wikiparser() {
 		$CI = &get_instance();
 		$CI->load->helper('wikilink');
+		$CI->load->helper('text');
 		
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
@@ -672,7 +673,7 @@ Done.
 		$this->nextnowiki = 0;
 		$output = preg_replace_callback('/&lt;nowiki&gt;&lt;\/nowiki&gt;/i',array(&$this,"handle_restore_nowiki"),$output);
 
-		return $output;
+		return ascii_to_entities($output);
 	}
 	
 	function handle_save_nowiki($matches) {
