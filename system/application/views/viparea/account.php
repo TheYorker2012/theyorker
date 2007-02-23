@@ -40,6 +40,7 @@
 	</fieldset>
 	</form>
 </div>
+<?php if(!$is_student){ ?>
 <div class='grey_box'>
 <h2>account password</h2>
 	<p>
@@ -61,4 +62,5 @@
 	</fieldset>
 	</form>
 </div>
+<?php } ?>
 <a href='/viparea/'>Back to the vip area.</a>

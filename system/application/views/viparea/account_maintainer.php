@@ -15,11 +15,13 @@
 		<input type='radio' name='maintainer_type' value='yorker' <?php if($maintainer['maintained'] == false){ echo "checked";}?> 
 		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> The Yorker<br />
 		
+		<?php if($is_student){ ?>
 		<input type='radio' name='maintainer_type' value='student' <?php if($maintainer['is_user']){ echo "checked";}?>
 		onclick="document.getElementById('nonstudent_details').style.display = 'none';" /> Me (<?php echo $user_fullname; ?>)<br />
-		
+		<?php }else{ ?>
 		<input type='radio' name='maintainer_type' value='nonstudent' <?php if($maintainer['maintained'] and $maintainer['student'] == false){ echo "checked";}?>
 		onclick="document.getElementById('nonstudent_details').style.display = 'block';" /> Non student member<br />
+		<?php } ?>
 		
 		<div id='nonstudent_details' <?php if($maintainer['maintained'] and $maintainer['student'] == false){}else{ echo 'style="display: none;"';}?>>
 			<label for='maintainer_name'>Maintainer's Name:</label>
@@ -35,5 +37,5 @@
 	</fieldset>
 	</form>
 </div>
-<a href='<?php echo vip_url('account/update'); ?>'>Back to my viparea account.</a>
+<a href='<?php echo vip_url('account/update'); ?>'>Back to my account settings.</a>
 <? echo maintainer; ?>

@@ -87,6 +87,7 @@ class Account extends Controller
 		$data['account_password_text'] = $this->pages_model->GetPropertyWikitext('account_password');
 		$data['account_username_text'] = $this->pages_model->GetPropertyWikitext('account_username');
 		$data['maintainer'] = $this->_GetMaintainer($organisation);
+		$data['is_student'] = $this->user_auth->isUser;
 		
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account', $data);
@@ -146,6 +147,7 @@ class Account extends Controller
 		$data['account_maintenance_text'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
 		$data['maintainer'] = $this->_GetMaintainer($organisation);
 		$data['user_fullname'] = $this->user_auth->firstname." ".$this->user_auth->surname;
+		$data['is_student'] = $this->user_auth->isUser;
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account_maintainer', $data);
 		

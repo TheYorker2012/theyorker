@@ -93,54 +93,23 @@ function preloader()
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
 		<div class='navigationmenu_item'>
-			<a href='/'>Home</a>
+			<a href='<?php echo vip_url('directory/information'); ?>'>Directory Entry</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/calendar/'>Calendar</a>
+			<a href='<?php echo vip_url('calendar'); ?>'>Manage Events</a>
 		</div>
 		<div class='navigationmenu_item_noborder'>
-			<a href='/directory/'>Directory</a>
+			<a href='<?php echo vip_url('members'); ?>'>Manage Members</a>
 		</div>
-
+		
 		<div class='navigationmenu_item'>
-			<a href='/news/'>Uni News</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/national/'>UK &amp; World News</a>
+			<a href='<?php echo vip_url('account/update'); ?>'>My Account</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/features/'>Features</a>
+			<a href='<?php echo vip_url('advertising'); ?>'>Advertising</a>
 		</div>
 		<div class='navigationmenu_item'>
-			<a href='/lifestyle/'>Lifestyle</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/reviews/food'>Food</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/reviews/drink'>Drink</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/reviews/culture'>Culture</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/campaign/'>Campaigns</a>
-		</div>
-		<div class='navigationmenu_item_noborder'>
-			<a href='/news/archive/'>News Archive</a>
-		</div>
-
-		<div class='navigationmenu_item'>
-			<a href='/charity/'>Our Charity</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/howdoi/'>How Do I</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
-		</div>
-		<div class='navigationmenu_item'>
-			<a href='/games/'>Games Zone</a>
+			<a href='<?php echo vip_url('contact'); ?>'>Contact Vip Rep</a>
 		</div>
 		<div style='padding: 20px 0px 0px 0px;' align='center'>
 			<img src='/images/adverts/3-120x600.gif' alt='Ad' title='Ad' />
