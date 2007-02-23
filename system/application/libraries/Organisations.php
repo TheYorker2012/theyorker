@@ -106,7 +106,7 @@ class Organisations
 				'description' => $org['organisation_description'],
 				'type'        => $org['organisation_type_name'],
 				'website'     => $org['organisation_url'],
-				'location'    => $org['organisation_location'],
+				'location'    => $org['organisation_location_id'],
 				'open_times'  => $org['organisation_opening_hours'],
 				'email_address'   => $org['organisation_email_address'],
 				'postal_address'  => $org['organisation_postal_address'],

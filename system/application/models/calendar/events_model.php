@@ -674,7 +674,7 @@ class Events_model extends Model
 					'system_update_ts' => 'UNIX_TIMESTAMP(events.event_timestamp)',
 					//'user_update_ts'   => 'UNIX_TIMESTAMP(events_occurrence_users.event_occurrence_user_timestamp)',
 					'blurb'    => 'events.event_blurb',
-					'shortloc' => 'event_occurrences.event_occurrence_location',
+					'shortloc' => 'event_occurrences.event_occurrence_location_name',
 					'type'     => 'event_types.event_type_name',
 					'state'    => 'event_occurrences.event_occurrence_state',
 					'organisation' => 'organisations.organisation_name',
@@ -790,6 +790,9 @@ class Events_model extends Model
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 			AND	subscriptions.subscription_organisation_entity_id
 				= ' . $this->mActiveEntityId . '
+		LEFT JOIN locations
+			ON locations.location_id
+				= event_occurrences.event_occurrence_location_id
 		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
 		
 		$query = $this->db->query($sql);
@@ -1267,7 +1270,7 @@ class Events_model extends Model
 					event_occurrence_event_id,
 					event_occurrence_state,
 					event_occurrence_description,
-					event_occurrence_location,
+					event_occurrence_location_name,
 					event_occurrence_postcode,
 					event_occurrence_start_time,
 					event_occurrence_end_time,
@@ -1345,7 +1348,7 @@ class Events_model extends Model
 		
 		static $translation = array(
 			'description'	=> 'event_occurrences.event_occurrence_description',
-			'location'		=> 'event_occurrences.event_occurrence_location',
+			'location'		=> 'event_occurrences.event_occurrence_location_name',
 			'postcode'		=> 'event_occurrences.event_occurrence_postcode',
 			'all_day'		=> 'event_occurrences.event_occurrence_all_day',
 		);
@@ -1695,7 +1698,8 @@ END';
 				event_occurrence_event_id,
 				event_occurrence_state,
 				event_occurrence_description,
-				event_occurrence_location,
+				event_occurrence_location_id,
+				event_occurrence_location_name,
 				event_occurrence_postcode,
 				event_occurrence_start_time,
 				event_occurrence_end_time,
@@ -1705,7 +1709,8 @@ END';
 				event_occurrences.event_occurrence_event_id,
 				\'movedraft\',
 				event_occurrences.event_occurrence_description,
-				event_occurrences.event_occurrence_location,
+				event_occurrences.event_occurrence_location_id,
+				event_occurrences.event_occurrence_location_name,
 				event_occurrences.event_occurrence_postcode,
 				event_occurrences.event_occurrence_start_time,
 				event_occurrences.event_occurrence_end_time,

@@ -264,7 +264,7 @@ class Review_model extends Model {
 			organisations.organisation_fileas,
 
 			organisation_contents.organisation_content_description as organisation_description,
-			organisation_contents.organisation_content_location as organisation_location,
+			organisation_contents.organisation_content_location_id as organisation_location_id,
 			organisation_contents.organisation_content_postal_address as organisation_postal_address,
 			organisation_contents.organisation_content_postcode as organisation_postcode,
 			organisation_contents.organisation_content_phone_external as organisation_phone_external,

@@ -59,7 +59,7 @@ class Directory_model extends Model {
 			' organisations.organisation_directory_entry_name,'.
 			' organisation_contents.organisation_content_description as organisation_description,'.
 			' organisation_contents.organisation_content_url as organisation_url,'.
-			' organisation_contents.organisation_content_location as organisation_location,'.
+			' organisation_contents.organisation_content_location_id as organisation_location_id,'.
 			' organisation_contents.organisation_content_opening_hours as organisation_opening_hours,'.
 			' organisation_contents.organisation_content_postal_address as organisation_postal_address,'.
 			' organisation_contents.organisation_content_email_address as organisation_email_address,'.
@@ -248,7 +248,6 @@ class Directory_model extends Model {
 			'`organisation_content_last_author_timestamp`,'.
 			'`organisation_content_organisation_entity_id`,'.
 			'`organisation_content_description`,'.
-			'`organisation_content_location`,'.
 			'`organisation_content_postal_address`,'.
 			'`organisation_content_postcode`,'.
 			'`organisation_content_phone_external`,'.
@@ -261,13 +260,12 @@ class Directory_model extends Model {
 			'	?,'. // author enitity id
 			'	NOW(),'. // timestamp
 			'	organisations.organisation_entity_id,'. // organisation_id
-			'	?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ';
+			'	?, ?, ?, ?, ?, ?, ?, ?, ?) ';
 			'FROM organisations '.
 			'WHERE organisations.organisation_directory_entry_name = ?';
 		$query = $this->db->query($sql, array(
 			$this->user_auth->entityId,
 			$Data['description'],
-			$Data['location'],
 			$Data['postal_address'],
 			$Data['postcode'],
 			$Data['phone_external'],
