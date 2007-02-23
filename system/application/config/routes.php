@@ -88,8 +88,8 @@ $route['viparea'] = 'office/vipindex';
 // VIP routing                                                                //
 //****************************************************************************//
 
-$route['viparea/'.$org_name_regex.'/directory'] = 'office/yorkerdirectory';
-$route['viparea/'.$org_name_regex.'/directory/(.*)'] = 'office/yorkerdirectory/$1';
+$route['viparea/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
+$route['viparea/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
 $route['viparea/'.$org_name_regex] = 'office/vipindex';
 $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 
@@ -100,8 +100,8 @@ $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 
 
 $route['office/directory'] = 'office/yorkerdirectory';
-$route['office/vip/'.$org_name_regex.'/directory'] = 'office/yorkerdirectory';
-$route['office/vip/'.$org_name_regex.'/directory/(.*)'] = 'office/yorkerdirectory/$1';
+$route['office/vip/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
+$route['office/vip/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
 $route['office/vip/'.$org_name_regex] = 'office/vipindex';
 $route['office/vip/'.$org_name_regex.'/(.*)'] = 'office/$1';
 /*$route['office/vip/'.$org_name_regex.'/([^/]*)'] = 'office/$1';

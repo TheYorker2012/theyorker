@@ -1,0 +1,66 @@
+== URI design ==
+=== Base of all member controller uris ===
+<- base -><-- controller + org --><...
+/admin/vip
+  /viparea
+          /$organisation/members
+
+=== Subcontroller URI design ===
+<<VIP+PR>>
+ /list                       list members of the organisation/team, applicable filters
+      /filter/$filter          apply filter
+ /info/$entity_id            basic information about the user and their membership
+                 /cards        cards for this member
+                 /post	       [post changes to membership details]
+ /cards                      show organisation business cards
+       /filter/$filter         apply filter
+       /request                request business cards from members
+               /filter/$filter   matching filter
+               /send/$filter     send request matching filter (post data confirm)
+               /post             use post data
+       /new                    create a new business card
+       /$card_id               view business card
+                /edit          edit/preview the business card
+                     /post       [save changes to content of card]
+                /post          [post changes to the business card]
+ /invite                     invite students to join the organisation by uni email
+        /post                  post invite list
+ /contact                    contact a set of members (select members)
+         /notify               write/preview notification
+                /filter/$filter  filter those to contact
+                /post/$filter    post notificiation
+         /email                write/preview email
+               /filter/$filter   filter those to contact
+               /post/$filter     post emails
+
+<<PR>>
+
+e.g.
+ /admin/vip/theyorker/members/cards/430/edit
+
+
+=== View design ===
+tabs at top for List, Business Cards, Invite, Contact
+
+=== controller wide member list filters ===
+also works out base url which excludes unecesaries
+/not ?              exclude following
+                    otherwise include following
++ /team/$team_name  team $team_name
++ /paid             paid members
++ /vip              vips
++ /carded           with business cards
++ /carding          card requested
++ /cardable         card recieved
++ /mailable         on mailing list
++ /user/$entity_id  specific user
++ /card/$card_id    user with specific card
++ /search           match posted search
+
+e.g. to get users in tech and news team who haven't submitted cards
+/team/theyorker_tech/team/theyorker_news/not/carded/not/cardable
+
+== DB Requirements == 
+
+== Questions ==
+Wikitext in mass notifications/emails?
