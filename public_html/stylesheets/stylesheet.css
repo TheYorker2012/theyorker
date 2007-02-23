@@ -38,6 +38,7 @@ ul{
 
 ol {
     list-style-type: decimal;
+    list-style-image: none;
 }
 
 
