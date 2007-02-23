@@ -34,6 +34,35 @@ function GetUserLevel()
 	return $user_level;
 }
 
+function GetDefaultHomepage()
+{
+	switch (GetUserLevel()) {
+		case "student":
+			return "";
+		break;
+		case "vip":
+			return "/viparea";
+		break;
+		case "organisation":
+			return "/viparea";
+		break;
+		case "office":
+			return "/office";
+		break;
+		case "pr":
+			return "/office";
+		break;
+		case "editor":
+			return "/office";
+		break;
+		case "admin":
+			return "/admin";
+		break;
+		default:
+			return "";
+		break;
+	}
+}
 
 /// VIP URL similar to site_url.
 function vip_url($Path = '', $Set = FALSE)
@@ -569,6 +598,12 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				$CI->user_auth->loginOffice($password);
 			} else {
 				$CI->user_auth->login($username, $password, false);
+				
+				if($RedirectDestination == "" || $RedirectDestination == "/")
+				{
+				$RedirectDestination = GetDefaultHomepage();
+				}
+				
 			}
 			
 			$CI->messages->AddMessage('success',$success_msg);
