@@ -46,19 +46,18 @@ class Wikiparser {
 	function Wikiparser() {
 		$CI = &get_instance();
 		$CI->load->helper('wikilink');
-		$CI->load->helper('text');
 		
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
 		$this->image_uri = '/images/prototype/';
 		$this->image_overrides = array();
 		$this->ignore_images = false;
-		$this->emphasis[1] = "";
-		$this->emphasis[2] = "";
-		$this->emphasis[3] = "";
-		$this->emphasis[4] = "";
-		$this->emphasis[5] = "";
-		$this->emphasis[6] = "";
+		$this->emphasis[1] = '';
+		$this->emphasis[2] = '';
+		$this->emphasis[3] = '';
+		$this->emphasis[4] = '';
+		$this->emphasis[5] = '';
+		$this->emphasis[6] = '';
 		
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
@@ -465,7 +464,7 @@ class Wikiparser {
 				case 'PAGENAME': return $this->page_title;
 				case 'NAMESPACE': return 'None';
 				case 'SITENAME': return $_SERVER['HTTP_HOST'];
-				default: return '';	
+				default: return $matches[0];	
 			}
 		}
 		unset($this->template_elements);
@@ -536,7 +535,7 @@ class Wikiparser {
 		foreach ($line_regexes as $func=>$regex) {
 			if (preg_match("/$regex/i",$line,$matches)) {
 				$called[$func] = true;
-				$func = "handle_".$func;
+				$func = 'handle_'.$func;
 				$line = $this->$func($matches);
 				if ($this->stop || $this->stop_all) break;
 			}
@@ -567,15 +566,15 @@ class Wikiparser {
 	 * @return string Processed wikitext (HTML).
 	 */
 	function test() {
-		$text = "WikiParser stress tester. <br /> Testing...
+		$text = 'WikiParser stress tester. <br /> Testing...
 __TOC__		
 		
 == Nowiki test ==
-<nowiki>[[wooticles|narf]] and '''test''' and stuff.</nowiki>
+<nowiki>[[wooticles|narf]] and \'\'\'test\'\'\' and stuff.</nowiki>
 
 == Character formatting ==
-This is ''emphasized'', this is '''really emphasized''', this is ''''grossly emphasized'''',
-and this is just '''''freeking insane'''''.
+This is \'\'emphasized\'\', this is \'\'\'really emphasized\'\'\', this is \'\'\'\'grossly emphasized\'\'\'\',
+and this is just \'\'\'\'\'freeking insane\'\'\'\'\'.
 Done.	
 
 == Variables ==
@@ -602,13 +601,13 @@ Done.
 == Preformat ==
 Not preformatted.
  Totally preformatted 01234    o o
- Again, this is preformatted    b    <-- It's a face
- Again, this is preformatted   ---'
+ Again, this is preformatted    b    <-- It\'s a face
+ Again, this is preformatted   ---\'
 Done.
 		
 == Bullet test ==
 * One bullet
-* Another '''bullet'''
+* Another \'\'\'bullet\'\'\'
 *# a list item
 *# another list item
 *#* unordered, ordered, unordered
@@ -629,7 +628,7 @@ Normal
 : more indentation
 Done.
 
-";
+';
 		return $this->parse($text);
 	}
 	
@@ -639,7 +638,7 @@ Done.
 	 * @param $title string Title.
 	 * @return string HTML processed wikitext.
 	 */
-	function parse($text,$title="") {
+	function parse($text,$title='') {
 		assert('is_string($text)');
 		
 		$this->redirect = false;
@@ -655,7 +654,7 @@ Done.
 		
 		$this->page_title = $title;
 
-		$output = "";
+		$output = '';
 		
 		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
 
@@ -671,14 +670,14 @@ Done.
 		}
 
 		$this->nextnowiki = 0;
-		$output = preg_replace_callback('/&lt;nowiki&gt;&lt;\/nowiki&gt;/i',array(&$this,"handle_restore_nowiki"),$output);
-
-		return ascii_to_entities($output);
+		$output = preg_replace_callback('/&lt;nowiki&gt;&lt;\/nowiki&gt;/i',array(&$this,'handle_restore_nowiki'),$output);
+		
+		return $output;
 	}
 	
 	function handle_save_nowiki($matches) {
 		array_push($this->nowikis,$matches[1]);
-		return "<nowiki></nowiki>";
+		return '<nowiki></nowiki>';
 	}
 	
 	function handle_restore_nowiki($matches) {

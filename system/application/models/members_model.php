@@ -54,51 +54,46 @@ class Members_model extends Model {
 		return $members;
 	}
 	
-	function GetMemberDetails($member_id) {
+	/// Gets a users membership with an organisation.
+	/**
+	 * @param $user_id integer User entity id.
+	 * @param $organisation_id integer Organisation entity id.
+	 * @return FALSE or associative array of membership attributes.
+	 *	- Subscription must be membership
+	 *	- Subscription must not be deleted
+	 *	- email will only be returned if the member is on the mailing list
+	 */
+	function GetMemberDetails($user_id, $organisation_id)
+	{
 		$sql = '
-				SELECT 
-				subscriptions.subscription_paid,
-				subscriptions.subscription_email, 
-				subscriptions.subscription_vip,
-				subscriptions.subscription_user_confirmed,
-				subscriptions.subscription_deleted,
-				subscriptions.subscription_member,
-				subscriptions.subscription_interested,				
-				users.user_firstname,
-				users.user_surname,
-				users.user_email,
-				users.user_entity_id,
-				users.user_gender,
-				users.user_enrolled_year,
-				users.user_nickname
-				FROM 
+			SELECT
+				subscriptions.subscription_paid AS paid,
+				subscriptions.subscription_email AS on_mailing_list,
+				subscriptions.subscription_vip AS vip,
+				subscriptions.subscription_interested AS interested,
+				users.user_firstname AS firstname,
+				users.user_surname AS surname,
+				IF(subscriptions.subscription_email, users.user_email, NULL) AS email,
+				users.user_gender AS gender,
+				users.user_enrolled_year AS enrol_year,
+				users.user_nickname AS nickname
+			FROM
 				subscriptions
-				INNER JOIN users
-				ON subscriptions.subscription_user_entity_id = users.user_entity_id
-				WHERE users.user_entity_id = "'.$member_id.'"
-				LIMIT 1
-				';
-		$query = $this->db->query($sql);	
-		$tmpmember = array();
-		$member = array();
-		foreach($query->result() as $row) {
-			$tmpmember['nickname']       = $row->user_nickname;
-			$tmpmember['firstname']      = $row->user_firstname;
-			$tmpmember['surname']        = $row->user_surname;
-			$tmpmember['id']             = $row->user_entity_id;
-			$tmpmember['email']          = $row->user_email;
-			$tmpmember['gender']        = $row->user_gender;
-			$tmpmember['enrol_year']    = $row->user_enrolled_year;			
-			$tmpmember['paid']           = $row->subscription_paid;
-			$tmpmember['if_email']       = $row->subscription_email;
-			$tmpmember['vip']            = $row->subscription_vip;
-			$tmpmember['confirmed']      = $row->subscription_user_confirmed;
-			$tmpmember['deleted']        = $row->subscription_deleted;
-			$tmpmember['member']         = $row->subscription_member;
-			$tmpmember['interested']     = $row->subscription_interested;
-			$member[] = $tmpmember;
+			INNER JOIN users
+				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
+			WHERE	subscriptions.subscription_user_entity_id = ?
+				AND	subscriptions.subscription_organisation_entity_id = ?
+				AND	subscriptions.subscription_member = TRUE
+				AND	subscriptions.subscription_deleted = FALSE
+			';
+		$bind_data = array($user_id, $organisation_id);
+		$query = $this->db->query($sql, $bind_data);
+		if (!$query->num_rows()) {
+			return FALSE;
+		} else {
+			$result = $query->result_array();
+			return $result[0];
 		}
-		return $member;				
 	}
 
 	function GetTeams($organisation_id) {

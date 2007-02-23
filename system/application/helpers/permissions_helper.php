@@ -209,6 +209,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'editor'	=> FALSE,
 			'admin'		=> FALSE,
 		);
+		if ($action_levels['vip']) {
+			VipOrganisationId($CI->user_auth->organisationLogin);
+		}
 	} elseif ($user_level === 'vip') {
 		// Logged in as student and in VIP area
 		$vip_door_open_action = array(

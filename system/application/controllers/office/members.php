@@ -50,7 +50,6 @@ class Members extends Controller
 		$this->load->model('directory_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
-		$this->load->helper('wikilink');
 	}
 	
 	// FIRST LEVEL OF ROUTING
@@ -75,8 +74,7 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		/// @todo Implement $viparea/members/list/...
 		
-		$this->pages_model->SetPageCode('viparea_members');		
-		
+		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'user'         => $this->user_auth->entityId,
@@ -100,19 +98,32 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		/// @todo Implement $viparea/members/info/...
 		
+		// Get membership information
+		$membership = $this->members_model->GetMemberDetails($EntityId, VipOrganisationId());
 		
-		$this->pages_model->SetPageCode('viparea_members');	
+		if (FALSE !== $membership) {
+			$this->pages_model->SetPageCode('viparea_members_info');
 			
-		$data = array(
-			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
-			'organisation' => $this->members_model->GetAllMemberDetails(VipOrganisationId()),
-			'member'       => $this->members_model->GetMemberDetails($EntityId)
-
-		);
-		// Set up the content
-		$this->main_frame->SetContentSimple('viparea/editmembers', $data);
-		
-		// Load the main frame
+			$data = array(
+				'member_entity_id' => $EntityId,
+				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+				'organisation' => $this->members_model->GetAllMemberDetails(VipOrganisationId()),
+				'membership'       => $membership,
+			);
+			// Set up the content
+			$this->main_frame->SetContentSimple('viparea/editmembers', $data);
+			
+			// Load the main frame
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> $this->user_auth->organisationName,
+				'firstname'		=> $membership['firstname'],
+				'surname'		=> $membership['surname'],
+			));
+			
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('vip_members_notmember','error'));
+		}
 		$this->main_frame->Load();
 	}
 	
