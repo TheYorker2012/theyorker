@@ -63,7 +63,7 @@ class Reviews extends Controller
 	/**
 	 * @note This just redirects to food reviews.
 	 */
-	function _index()
+	function index()
 	{	
 		redirect('/reviews/food'); //Send them to the food page instead
 	}
@@ -73,6 +73,9 @@ class Reviews extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
+		//Pass content_type to view
+		$data['content_type'] = $content_type;
+
 		//Set page code
 		$this->pages_model->SetPageCode('review_main');
 		
@@ -149,7 +152,7 @@ class Reviews extends Controller
 		$data['league_data'] = $leagues;
 
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/'.$content_type,$data);
+		$this->main_frame->SetContentSimple('reviews/food',$data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
@@ -300,6 +303,21 @@ class Reviews extends Controller
 					$item_filter_by = FALSE,
 					$where_equal_to = FALSE)
 	{
+
+	//POST data set overwrites uri data
+	if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
+	if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
+	if (isset($_POST['where_equal_to'])) $where_equal_to = $_POST['where_equal_to'];
+	if (isset($_POST['sorted_by'])) $where_equal_to = $_POST['sorted_by'];
+
+
+	//For next page so we remember the options given
+	$data['item_filter_by'] = $item_filter_by;
+	$data['where_equal_to'] = $where_equal_to;
+	$data['sorted_by'] = $sorted_by;
+	$data['item_type'] = $item_type;
+	
+
 		if (!CheckPermissions('public')) return;
 		
 		//Set page code

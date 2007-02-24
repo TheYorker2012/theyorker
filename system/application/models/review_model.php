@@ -848,6 +848,9 @@ function GetTagOrganisation($type,$organisation)
 	//Gets a table review for a section which is sorted depending on parameters
 	function GetTableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')
 	{
+
+	//Used later on
+	$select_tag_group = '';
 	
 		switch ($sorted_by) //Set sorting query
 		{
@@ -868,13 +871,15 @@ function GetTagOrganisation($type,$organisation)
 			break;
 
 			default:
-				$sort_sql = 'ORDER BY ';
+				$sort_sql = 'ORDER BY correct_tag, t.tag_name, ';
+				$escaped_tag_group_name = mysql_real_escape_string($sorted_by);
+				$select_tag_group = ", IF(tg.tag_group_name ='".$escaped_tag_group_name."',0,1) AS correct_tag";
 			break;
 		}
 
 		$sql = '
 			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,tg.tag_group_name,t.tag_name,
-			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating
+			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating'.$select_tag_group.'
 			FROM content_types AS ct
 			INNER JOIN review_context_contents AS rcc
 			ON ct.content_type_id = rcc.review_context_content_content_type_id

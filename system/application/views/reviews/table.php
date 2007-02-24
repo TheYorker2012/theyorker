@@ -1,12 +1,12 @@
 	<span class="grey">Showing</span> <?php echo count($entries); ?>
-	<span class="grey">entries from</span> <?php echo $this->uri->segment(3); ?>
-	<span class="grey">ordered by</span> <?php echo $this->uri->segment(4); ?>
+	<span class="grey">entries from</span> <?php echo $item_type; ?>
+	<span class="grey">ordered by</span> <?php echo $sorted_by; ?>
 	<br /><br />
 	<table class="ReviewList">
 		<tr class="ReviewListTop">
-			<td><a href="/reviews/table/<?php echo $this->uri->segment(3); ?>/name<?php if ($this->uri->segment(5)!='') echo '/'.$this->uri->segment(5).'/'.$this->uri->segment(6); ?>" name="tabletop">Name</a></td>
-			<td><a href="/reviews/table/<?php echo $this->uri->segment(3); ?>/star<?php if ($this->uri->segment(5)!='') echo '/'.$this->uri->segment(5).'/'.$this->uri->segment(6); ?>"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="v" /> Star Rating</span></a></td>
-			<td><a href="/reviews/table/<?php echo $this->uri->segment(3); ?>/user<?php if ($this->uri->segment(5)!='') echo '/'.$this->uri->segment(5).'/'.$this->uri->segment(6); ?>">User Rating</a></td>
+			<td><a href="/reviews/table/<?php echo $item_type; ?>/name<?php if ($item_filter_by!='') echo '/'.$item_filter_by.'/'.$where_equal_to; ?>" name="tabletop">Name</a></td>
+			<td><a href="/reviews/table/<?php echo $item_type; ?>/star<?php if ($item_filter_by!='') echo '/'.$item_filter_by.'/'.$where_equal_to; ?>"><span class="sorted_by"><img style="display: inline;" src="/images/prototype/reviews/sortarrow.gif" alt="v" /> Star Rating</span></a></td>
+			<td><a href="/reviews/table/<?php echo $item_type; ?>/user<?php if ($item_filter_by!='') echo '/'.$item_filter_by.'/'.$where_equal_to; ?>">User Rating</a></td>
 
 <?php
 //Tag names at top of table
@@ -14,8 +14,8 @@ if (isset($review_tags))
 {
 	foreach ($review_tags as &$tag)
 		{
-			echo '<td><a href="/reviews/table/'.$this->uri->segment(3).'/'.$tag;
-			if ($this->uri->segment(5) != '') echo '/'.$this->uri->segment(5).'/'.$this->uri->segment(6);
+			echo '<td><a href="/reviews/table/'.$item_type.'/'.$tag;
+			if ($item_filter_by != '') echo '/'.$item_filter_by.'/'.$where_equal_to;
 			echo '">'.$tag.'</a></td>';
 		}
 }
@@ -51,7 +51,7 @@ if (isset($review_tags))
 
 echo	'<tr class="ReviewElementEnd">
 			<td colspan="0">
-				<a href="#tabletop">&gt;Go back to top</a>&nbsp;&nbsp;<a href="/reviews/'.$this->uri->segment(3).'">&gt;Go back to '.$this->uri->segment(3).'</a>
+				<a href="#tabletop">&gt;Go back to top</a>&nbsp;&nbsp;<a href="/reviews/'.$item_type.'">&gt;Go back to '.$item_type.' </a>
 			</td>
 		</tr>
 	</table>';

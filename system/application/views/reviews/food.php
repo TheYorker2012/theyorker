@@ -27,19 +27,35 @@ if (isset($league_data))
 	<h2>browse by</h2>
 	<?php
 	/* Review types - this depends on the page : food/drink/culture */
+	/* Note from Frank $content_type is passed to here containing either 'food'/'drink'/'culture' */
 	?>
-	<form name="reviews" class="form">
+
+<?php
+	echo '<form name="reviews" class="form" method="post" action="/reviews/table/'.$this->uri->segment(2).'/star">';
+?>
 		<fieldset>
 			<label for="filter">Find based on: </label>
-			<select name="filter" onChange="updatesortby(this.selectedIndex)" style="width: 150px">
-				<option value="all" selected>See All</option>
-				<option value="cuisine">Cuisine</option>
-				<option value="price">Price</option>
-				<option value="rating">Rating</option>
+			<select name="item_filter_by" onChange="updatesortby(this.selectedIndex)" style="width: 150px">
+				<option value="any" selected>See All</option>
+<?php
+//List Tag Group Names
+
+//Check if any exist
+if (isset($table_data['tag_group_names'][0]) == 1)
+{
+
+	//Foreach print out the value
+	foreach($table_data['tag_group_names'] as $tag)
+	{
+		echo '<option value="'.$tag.'">'.$tag.'</option>';
+	}
+}
+
+?>
 			</select>
-			<label for="sortby">Only Show: </label>
-			<select name="sortby" style="width: 150px;">
-				<option value="all" selected>See All</option>
+			<label for="where_equal_to">Only Show: </label>
+			<select name="where_equal_to" style="width: 150px;">
+				<option value="any" selected>See All</option>
 			</select>
 			<br />
 			<input type="submit" class="button" value="Find" />
@@ -49,19 +65,36 @@ if (isset($league_data))
 
 	<script type="text/javascript">
 
-	var filterlist=document.reviews.filter
-	var sortbylist=document.reviews.sortby
+	var filterlist=document.reviews.sorted_by
+	var sortbylist=document.reviews.where_equal_to
 	/* The following sets the array which links each selection from the first form select with a series of selections
 	 * into the second form select
-	 * sortby[0] is See Alll.
+	 * sortby[0] is See All.
 	 * The first value is what the select option text is, the second is the value tag
 	 * So "Dirt Cheap|dirtcheap" makes <option value="dirtcheap">Dirt Cheap</option>
 	*/
 	var sortby=new Array()
 	sortby[0]=["See All|all"]
-	sortby[1]=["Eastern|easten", "Western|western", "Mediteranian|mediteranina", "Arabic|arabic", "Asian|asian", "British Traditional|british", "Australian|australian"]
-	sortby[2]=["Cheaper Resturants|cheaper", "More Expensive|moreexpensive", "Dirt Cheap|dirtcheap", "Kinda Cheap|kindacheap", "Ish Cheap|ishcheap", "Hella Costly|hellacostly"]
-	sortby[3]=["High Ratings Only|highstar", "Low Ratings Only|lowstar", "1 Star|1star", "2 Star|2star", "3 Star|3star", "4 Star|4star", "5 Star|5star"]
+
+<?php
+//Print out the tags for each tag_group
+	
+	//Foreach tag_group
+	for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++)
+	{
+		echo 'sortby['.($tag_group_no+1).']=[';
+
+		//Print each tag
+		for ($tag_no = 0; $tag_no < count($table_data[$table_data['tag_group_names'][$tag_group_no]]); $tag_no++)
+		{
+			echo '"'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'|'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'", ';
+		}
+		echo "]\n";
+	}
+
+?>
+
+	
 	function updatesortby(selectedsortby){
 		sortbylist.options.length=0
 		if (selectedsortby>=0){
