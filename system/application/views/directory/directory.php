@@ -21,7 +21,7 @@
 			<?php
 				$idPostfix = 1;
 				foreach ($organisation_types as $org_type) {
-					echo '<input id="filterCheck'.$idPostfix++.'" onChange="searchPage(\'searchText\',\'Letter\',\'filterCheck\');" type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span> ('.$org_type['quantity'].')<br />';
+					echo '<input style="float: none;" id="filterCheck'.$idPostfix++.'" onChange="searchPage(\'searchText\',\'Letter\',\'filterCheck\');" type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span> ('.$org_type['quantity'].')<br />';
 				}
 			?>
 		</div>
