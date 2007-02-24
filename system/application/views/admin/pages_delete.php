@@ -1,4 +1,6 @@
 <?php if ($confirm) { ?>
+<div class='blue_box'>
+	<H2>Confirm page deletion</H2>
 	<p><em>Are you sure you want to delete this page and its associated properties?</em></p>
 	Codename: <?php echo $information['codename']; ?><br />
 	Title: <?php echo $information['title']; ?><br />
@@ -19,5 +21,6 @@
 			<input type='submit' class='button' name='confirm_delete' value='Yes, Delete' />
 		</fieldset>
 	</form>
+</div>
 <?php } ?>
 <a href='/admin/pages'>Back to Pages Administration</a>

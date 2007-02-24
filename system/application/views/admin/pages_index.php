@@ -1,3 +1,4 @@
+<div class='blue_box'>
 <h2>Custom pages</h2>
 
 <?php if ($permissions['custom_new']) { ?>
@@ -19,6 +20,9 @@ foreach ($custom as $page) {
 	echo '<br />';
 }
 ?></p>
+</div>
+
+<div class='blue_box'>
 <h2>Pages</h2>
 
 <p><a href="/admin/pages/common">Common Properties</a></p>
@@ -41,3 +45,4 @@ foreach ($pages as $page) {
 	echo '<br />';
 }
 ?></p>
+</div>

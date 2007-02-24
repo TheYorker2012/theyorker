@@ -1,38 +1,41 @@
 <?php if ($show_details) { ?>
-<h2>Page Details:</h2>
-<form name='page_form' action='<?php echo $target; ?>' method='POST' class='form'>
-	<fieldset>
-		<label for='codename'>Codename:</label>
-		<input name='codename' size='35' value=<?php
-			echo '"';
-			if (!empty($codename)) { echo $codename; }
-			echo '"';
-			if (!$permissions['rename']) { echo ' READONLY'; }
-			?>>
-		<br />
-		<label for='title'>Title:</label>
-		<input name='title' size='35' value='<?php if (!empty($title)) { echo htmlentities($title, ENT_QUOTES);} ?>'>
-		<br />
-		<label for='description'>Description</label>
-		<input name='description' size='35' value='<?php if (!empty($description)) { echo htmlentities($description, ENT_QUOTES);} ?>'>
-		<br />
-		<label for='keywords'>Keywords</label>
-		<input name='keywords' size='35' value='<?php if (!empty($keywords)) { echo htmlentities($keywords, ENT_QUOTES);} ?>'>
-		<br />
-	</fieldset>
-	<fieldset>
-		<label for='save_button'></label>
-		<input type='submit' class='button' name='save_button' value='Save'>
-	</fieldset>
-</form>
+	<div class='blue_box'>
+		<h2>Page Details</h2>
+		<form name='page_form' action='<?php echo $target; ?>' method='POST' class='form'>
+			<fieldset>
+				<label for='codename'>Codename:</label>
+				<input name='codename' size='35' value=<?php
+					echo '"';
+					if (!empty($codename)) { echo $codename; }
+					echo '"';
+					if (!$permissions['rename']) { echo ' READONLY'; }
+					?>>
+				<br />
+				<label for='title'>Title:</label>
+				<input name='title' size='35' value='<?php if (!empty($title)) { echo htmlentities($title, ENT_QUOTES);} ?>'>
+				<br />
+				<label for='description'>Description</label>
+				<input name='description' size='35' value='<?php if (!empty($description)) { echo htmlentities($description, ENT_QUOTES);} ?>'>
+				<br />
+				<label for='keywords'>Keywords</label>
+				<input name='keywords' size='35' value='<?php if (!empty($keywords)) { echo htmlentities($keywords, ENT_QUOTES);} ?>'>
+				<br />
+			</fieldset>
+			<fieldset>
+				<label for='save_button'></label>
+				<input type='submit' class='button' name='save_button' value='Save'>
+			</fieldset>
+		</form>
+	</div>
 <?php
 }
 if (!empty($properties) || $permissions['prop_add']) {
 ?>
 
-<h2>Properties</h2>
-<form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
-	<fieldset>
+<div class='blue_box'>
+	<h2>Page Properties</h2>
+	<form name='property_edit_form' action='<?php echo $target; ?>' method='POST' class='form'>
+		<fieldset>
 			<?php
 			foreach ($properties as $property) {
 			?>
@@ -71,14 +74,15 @@ if (!empty($properties) || $permissions['prop_add']) {
 			// New properties are put here (destionation div)
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
-		<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
-		<?php }
-		if ($permissions['prop_edit']) {
-			?>
-			<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
-		<?php } ?>
-	</fieldset>
-</form>
+			<input type="button" class='button' onClick="AddClones()" value="Add Property"/>
+			<?php }
+			if ($permissions['prop_edit']) {
+				?>
+				<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
+			<?php } ?>
+		</fieldset>
+	</form>
+</div>
 <?php
 }
 ?>
