@@ -6,38 +6,47 @@ class Policy extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		// Load the public frame
 		$this->load->helpers('images');
 	}
 
+	/// Main page
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
 		
 		$this->pages_model->SetPageCode('our_policy');
 		
-		$statement_of_policy_image = $this->pages_model->GetPropertyText('statement_of_policy');
-		$privacy_policy_image = $this->pages_model->GetPropertyText('privacy_policy');
-		$user_agreement = $this->pages_model->GetPropertyText('user_agreement');
-			$data['textblocks'] = array(
-				array(
-					'shorttitle'   => 'statement_of_policy',
-					'blurb'        => $this->pages_model->GetPropertyWikitext('statement_of_policy'),
-					'image' => photoLocation($statement_of_policy_image),
+		// Get the blocks array from page properties.
+		$blocks = $this->pages_model->GetPropertyArray('blocks', array(
+			// First index is [int]
+			array('pre' => '[', 'post' => ']', 'type' => 'int'),
+			// Second index is .string
+			array('pre' => '.', 'type' => 'enum',
+				'enum' => array(
+					array('title',	'text'),
+					array('blurb',	'wikitext'),
+					array('image',	'text'),
 				),
-				array(
-					'shorttitle'   => 'privacy_policy',
-					'blurb'        => $this->pages_model->GetPropertyWikitext('privacy_policy'),
-					'image' => photoLocation($privacy_policy_image),
-				),
-				array(
-					'shorttitle'   => 'user_agreement',
-					'blurb'        => $this->pages_model->GetPropertyWikitext('user_agreement'),
-					'image' => photoLocation($user_agreement),
-				),
+			),
+		));
+		if (FALSE === $blocks) {
+			$blocks = array();
+		}
+		
+		// Create data array.
+		$data = array();
+		$data['textblocks'] = array();
+		
+		// Process page properties.
+		foreach ($blocks as $key => $block) {
+			$data['textblocks'][] = array(
+				'shorttitle'	=> str_replace(' ','_',$block['title']),
+				'blurb'			=> $block['blurb'],
+				'image'			=> imageLocTag($block['image'], "medium"),
 			);
-		// Set up the public frame
+		}
+		
+		// Load the main frame
 		$this->main_frame->SetContentSimple('about/about', $data);
 		$this->main_frame->Load();
 	}

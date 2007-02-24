@@ -1,13 +1,11 @@
 <?php
 
-/// About Us page
 class About extends Controller
 {
-	/// Default constructor
+
 	function __construct()
 	{
 		parent::Controller();
-		
 		$this->load->helpers('images');
 	}
 
@@ -42,7 +40,6 @@ class About extends Controller
 		// Process page properties.
 		foreach ($blocks as $key => $block) {
 			$data['textblocks'][] = array(
-				'title'			=> $block['title'],
 				'shorttitle'	=> str_replace(' ','_',$block['title']),
 				'blurb'			=> $block['blurb'],
 				'image'			=> imageLocTag($block['image'], "medium"),

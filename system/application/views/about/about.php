@@ -6,9 +6,8 @@ foreach ($textblocks as $textblock) {
 	<?php echo $textblock['image']; ?>
 </div>
 <div class='columnText'>
-	<p><?php echo $textblock['blurb']; ?></p>
+	<?php echo $textblock['blurb']; ?>
 </div>
-<div class="clear">&nbsp;</div>
 <?php
 }
 ?>
