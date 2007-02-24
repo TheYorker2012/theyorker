@@ -138,7 +138,6 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			} else {
 				$new['photo_deleted'] = "0";
 			}
-			echo $this->input->post('title');
 			$this->db->update('photos', $new, array('photo_id' => $id));
 
 		}
@@ -154,10 +153,6 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
 			);
 		}
-		
-//		$test = $this->load->view('office/gallery/galleryimage', $data, true);
-//		$data2 = array('pageNumbers' => '', 'test' => $test);
-//		$this->load->view('office/gallery/galleryframe', $data2);
 		
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/galleryimage');

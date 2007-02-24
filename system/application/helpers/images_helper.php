@@ -34,6 +34,37 @@ function photoLocation($id, $extension = '.jpg', $force = FALSE) {
 // ------------------------------------------------------------------------
 
 /**
+ * Photo Location with Tag
+ *
+ * When Given an ID, this will return the location of an Photo. 
+ * Offers a fallback when the photo is not found.
+ *
+ * @access	public
+ * @param	integer
+ * @param	string
+ * @param	boolean
+ * @return	string
+ */	
+function photoLocTag($id, $extension = '.jpg', $alt = false, $force = FALSE) {
+	$location = 'images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+	if ($force or is_file($location)) {
+		if (is_string($alt)) {
+			return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+		} else {
+			$CI =& get_instance();
+			$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
+			$query = $query->result()->photo_title;
+			return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query.'" alt="'.$query.'" /></a>';
+		}
+		return '/'.$location;
+	} else {
+		return '<img src="/images/images/null.jpg" alt="File not found" title="File not found"/>';
+	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
  * Image Location
  *
  * When Given an ID, this will return the location of an Image. 
@@ -89,6 +120,80 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		}
 	}
 }
+
+// ------------------------------------------------------------------------
+
+/**
+ * Image Location with Tag
+ *
+ * When Given an ID, this will return the location of an Image. 
+ * Offers a partial fallback when the image is not found. The optional 
+ * type_codename parameter greatly speeds up the function my removing the 
+ * need to query the database.
+ *
+ * If a type is not specified, then it will assume that it exists in the
+ * database and fetch a type.
+ *
+ * @access	public
+ * @param	integer
+ * @param	integer
+ * @param	string
+ * @param	boolean
+ * @return	string
+ */	
+
+function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null) {
+	if (is_null($extension)) $extension = '.jpg';
+	if (is_string($type)) {
+		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+		if ($force or is_file($location)) {
+			if (is_string($alt)) {
+				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+			} else{
+				$CI =& get_instance();
+				$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
+				$query = $query->result();
+				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>'
+			}
+		} else {
+			return '<img src="/images/images/'.$type.'/null.jpg" />';
+		}
+	} else {
+		$CI =& get_instance();
+		$query = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $id), 1);
+		$fetched_type = false;
+		foreach ($query->result() as $onerow) {
+			$fetched_type = $onerow->image_image_type_id;
+		}
+		$query->free_result();
+		if ($fetched_type) {
+			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type));
+			$fetched_type = false;
+			foreach ($query->result() as $onerow) {
+				$fetched_type = $onerow->image_type_codename;
+			}
+			if (!$fetched_type) {
+				return '<img src="/images/images/null.jpg" />';
+			}
+			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
+			if ($force or is_file($location)) {
+				if (is_string($alt)) {
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+				} else{
+					$CI =& get_instance();
+					$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
+					$query = $query->result();
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>'
+				}
+			} else {
+				return '<img src="/images/images/'.$fetched_type.'/null.jpg" />';
+			}
+		} else {
+			return '<img src="/images/images/null.jpg" />';
+		}
+	}
+}
+
 
 // ------------------------------------------------------------------------
 
