@@ -1,3 +1,13 @@
+<div class='RightToolbar'>
+	<?php if (isset($main_text)) { ?>
+		<h4>What's this?</h4>
+		<p><?php echo $main_text; ?></p>
+	<?php } ?>
+	<?php if (isset($page_help)) { ?>
+		<h4>Helper</h4>
+		<?php echo $page_help; ?>
+	<?php } ?>
+</div>
 <?php if ($show_details) { ?>
 	<div class='blue_box'>
 		<h2>Page Details</h2>

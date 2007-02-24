@@ -109,6 +109,11 @@ class Pages extends Controller
 				unset($data['pages'][0]);
 			}
 			
+			$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
+			if (NULL !== $main_text) {
+				$data['main_text'] = $main_text;
+			}
+			
 			$data['permissions'] = $this->mPermissions;
 			$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
 		}
@@ -175,6 +180,10 @@ class Pages extends Controller
 			}
 		}
 		
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
+		if (NULL !== $main_text) {
+			$Data['main_text'] = $main_text;
+		}
 		return $Data;
 	}
 	
@@ -383,6 +392,14 @@ class Pages extends Controller
 				}
 			}
 		}
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
+		if (NULL !== $main_text) {
+			$data['main_text'] = $main_text;
+		}
+		$page_help = $this->pages_model->GetPropertyWikitext('special:help',$page_code, NULL);
+		if (NULL !== $page_help) {
+			$data['page_help'] = $page_help;
+		}
 		return $data;
 	}
 	
@@ -419,6 +436,10 @@ class Pages extends Controller
 				$this->messages->AddMessage('error','The page could not be deleted.');
 				redirect('admin/pages');
 			}
+		}
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
+		if (NULL !== $main_text) {
+			$data['main_text'] = $main_text;
 		}
 		return $data;
 	}

@@ -1,3 +1,10 @@
+<div class='RightToolbar'>
+	<?php if (isset($main_text)) { ?>
+		<h4>What's this?</h4>
+		<p><?php echo $main_text; ?></p>
+	<?php } ?>
+</div>
+
 <div class='blue_box'>
 <h2>Custom pages</h2>
 

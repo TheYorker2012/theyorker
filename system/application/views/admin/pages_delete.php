@@ -1,4 +1,10 @@
 <?php if ($confirm) { ?>
+<div class='RightToolbar'>
+	<?php if (isset($main_text)) { ?>
+		<h4>What's this?</h4>
+		<p><?php echo $main_text; ?></p>
+	<?php } ?>
+</div>
 <div class='blue_box'>
 	<H2>Confirm page deletion</H2>
 	<p><em>Are you sure you want to delete this page and its associated properties?</em></p>
