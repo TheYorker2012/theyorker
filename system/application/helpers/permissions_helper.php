@@ -289,21 +289,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 		$admin_door_open_action = $office_door_open_action;
 		
-		// Change an office user to pr if they rep for the organisation
-		if ($user_level === 'office' && $Permission === 'pr') {
-			// Check user is PR Rep for this organisation
-			$rep_organisations = $CI->user_auth->getPrRepOrganisations();
-			foreach ($rep_organisations as $organisation) {
-				if ($organisation['organisation_directory_entry_name']
-						== $organisation_shortname) {
-					// Yes, match, PR Rep, set stuff and change user level to PR
-					VipOrganisationId($organisation['organisation_entity_id']);
-					$user_level = 'pr';
-					break;
-				}
-			}
-		}
-		
 		// Refine further
 		if ($user_level === 'office') {
 			$action_levels = array(
@@ -321,7 +306,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> TRUE,
+				'pr'			=> 'pr',
 				'editor'		=> FALSE,
 				'admin'			=> FALSE,
 			);
@@ -331,7 +316,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> TRUE,
+				'pr'			=> 'pr',
 				'editor'		=> TRUE,
 				'admin'			=> FALSE,
 			);
@@ -341,10 +326,31 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $admin_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> TRUE,
+				'pr'			=> 'pr',
 				'editor'		=> TRUE,
 				'admin'			=> TRUE,
 			);
+		}
+		
+		// Change an office user to pr if they rep for the organisation
+		if ($Permission === 'pr') {
+			if ($action_levels['pr'] === 'pr') {
+				$action_levels['pr'] = FALSE;
+				// Check user is PR Rep for this organisation
+				$rep_organisations = $CI->user_auth->getPrRepOrganisations();
+				foreach ($rep_organisations as $organisation) {
+					if ($organisation['organisation_directory_entry_name']
+							== $organisation_shortname) {
+						// Yes, match, PR Rep, set stuff and change user level to PR
+						VipOrganisationId($organisation['organisation_entity_id']);
+						$action_levels['pr'] = TRUE;
+						break;
+					}
+				}
+			} elseif ($action_levels['pr'] === TRUE) {
+				/// @todo Allow admin/editors unconditional access to pr.
+				$CI->AddMessage('error','Admin/editor pr org exists check not implemented');
+			}
 		}
 	}
 
@@ -485,7 +491,7 @@ function GetRedirectData()
 function HtmlButtonLink($Link, $Caption)
 {
 	return '
-<form action="'.$Link.'" method="link" class="form">
+<form action="'.$Link.'" method="post" class="form">
 	<input type="submit" class="button" value="'.$Caption.'" />
 </form>';
 }
