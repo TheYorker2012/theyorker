@@ -64,6 +64,42 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $organisation_id);
 		return $query->result_array();
 	}
+	
+	function GetBusinessCards($OrganisationId, $FilterSql, $BindData)
+	{
+		$bind_data = array($OrganisationId);
+		$sql = '
+			SELECT	business_cards.business_card_id AS id,
+					business_cards.business_card_image_id AS image_id,
+					business_cards.business_card_name AS name,
+					business_cards.business_card_title AS title,
+					business_cards.business_card_course AS course,
+					business_cards.business_card_blurb AS blurb,
+					business_cards.business_card_email AS email,
+					business_cards.business_card_mobile AS mobile,
+					business_cards.business_card_phone_internal AS phone_internal,
+					business_cards.business_card_phone_external AS phone_external,
+					business_cards.business_card_postal_address AS postal_address,
+					business_card_groups.business_card_group_name AS group_name 
+			FROM		business_cards
+			INNER JOIN	business_card_groups
+					ON	business_cards.business_card_business_card_group_id
+							= business_card_groups.business_card_group_id
+			LEFT JOIN	subscriptions
+					ON	subscriptions.subscription_user_entity_id
+							= business_cards.business_card_user_entity_id
+					AND	subscriptions.subscription_deleted	= FALSE
+					AND subscriptions.subscription_member	= TRUE
+			LEFT JOIN	users
+					ON	users.user_entity_id
+							= business_cards.business_card_user_entity_id
+			WHERE		business_card_groups.business_card_group_organisation_entity_id
+							= ?
+					AND	' . $FilterSql;
+		$bind_data += $BindData;
+		$query = $this->db->query($sql, $bind_data);
+		return $query->result_array();
+	}
 
 }	
 ?>

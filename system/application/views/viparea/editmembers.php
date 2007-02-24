@@ -8,7 +8,7 @@
 <?php //$this->load->view('viparea/members_list', array('organisation' => $organisation));?>
 <div class='blue_box'>
 	<div style="text-align: center;"><h2>Membership - <?php echo $membership['firstname'] ?></h2></div>
-	<a href="<?php echo vip_url('members/info/'.$membership['user_id'].'/cards');?>">Member's Business Card</a>
+	<a href="<?php echo vip_url('members/cards/filter/user/'.$membership['user_id'].'');?>">Member's Business Card</a>
 	<br />
 	<a href='/viparea/members/unsubscribe/<?php echo $membership['user_id']; ?>'>Unsubscribe Member</a>
 	<br />
