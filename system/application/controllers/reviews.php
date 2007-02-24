@@ -113,8 +113,15 @@ class Reviews extends Controller
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/food/'.$organisation_code_name;
 
+		// Create byline --- USING STATIC DATA CHANGE ME!!!!
+		$this->load->library('byline');
+		$this->byline->AddReporter(439);	// Temp using Dan Ashby
+		$this->byline->SetDate('Sat 24th February 2007');
+	
+		// Think these can go now...???
 		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_author_by_line'] = 'Supreme Commander';
+
 
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');

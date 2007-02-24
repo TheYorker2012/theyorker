@@ -58,8 +58,8 @@ class News extends Controller {
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 		// Get common news content
-		$data['byline_heading'] = $this->pages_model->GetPropertyText('news:byline_heading', TRUE);
-		$data['byline_more'] = $this->pages_model->GetPropertyText('news:byline_more', TRUE);
+		//$data['byline_heading'] = $this->pages_model->GetPropertyText('news:byline_heading', TRUE);
+		//$data['byline_more'] = $this->pages_model->GetPropertyText('news:byline_more', TRUE);
 
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
@@ -99,6 +99,11 @@ class News extends Controller {
 	    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 		}
 
+		// Create byline
+		$this->load->library('byline');
+		$this->byline->AddReporter($main_article['authors']);
+		$this->byline->SetDate($main_article['date']);
+
     	/// Get some of the 2nd- and 3rd-latest articles
     	$news_previews = array();
     	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
@@ -118,12 +123,6 @@ class News extends Controller {
 
 
 		/// Temporarily fill in a few gaps in the model data
-		$data['main_article']['writerimg'] = '/images/prototype/news/benest.png';
-		foreach ($data['main_article']['related_articles'] as &$related) {
-    		$related['image'] = '/images/prototype/news/thumb9.jpg';
-    		$related['image_description'] = 'temp image';
-		}
-
 		for ($i = 0; $i < count($data['news_previews']); $i++) {
     		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
     		$data['news_previews'][$i]['image_description'] = 'temp image';

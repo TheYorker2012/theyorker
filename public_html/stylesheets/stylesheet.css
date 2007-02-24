@@ -853,19 +853,24 @@ div.ArticleColumn div.intro {
 	font-size: medium;
 }
 
-div.ArticleColumn div.Byline {
-	border-width: 1px 0 1px 0;
-	overflow: hidden;
-	height: 50px;
+div.Byline {
 	width: 400px;
+	height: 50px;
+	overflow: hidden;
+	border: #20C1F0 solid;
+	border-width: 1px 0;
+	padding: 5px;
+	color: #000;
+	font-size: small;
+	margin-bottom: 5px;
 }
 
-div.ArticleColumn div.Byline span.reporter {
+div.Byline span.reporter {
 	font-weight: bold;
 	font-size: medium;
 }
 
-div.ArticleColumn div.Byline img {
+div.Byline img {
 	float: right;
 }
 

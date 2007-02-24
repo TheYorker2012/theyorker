@@ -108,19 +108,15 @@ if (isset($table_data['tag_group_names'][0]) == 1)
 
 <div class='blue_box'>
 		<h2><?php echo $content_type; ?> feature</h2>
+		<h3><?php echo anchor($article_link, $article_title); ?></h3>
+		<?php $this->byline->load(); ?>
+		<p>
 <?php
 
 echo '<a href="'.$article_link.'">';
 echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" weight=200 height=100 title="'.$article_photo_title.'" /></a>';
 
 ?>
-		<h3><?php echo anchor($article_link, $article_title); ?></h3>
-		<!-- Enter the default byline here - tempoarry solution follows -->
-		<span style='font-size: medium;'><b><?php echo $article_author; ?></b></span><br />
-		<?php echo $article_author_by_line ?><br /><br />
-		<?php echo $article_date ?><br />
-		<span class="orange"><?php echo anchor($article_link, 'Read more...', array('class' => 'orange')); ?></span>
-	        <p>
 			<?php echo $article_content; ?>
 		</p>
 </div>

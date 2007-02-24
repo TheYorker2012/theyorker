@@ -75,16 +75,7 @@
 		<div class='intro'><?php echo $main_article['subtext']; ?></div>
 		<?php } ?>
 
-		<div class='blue_box Byline'>
-			<?php foreach ($main_article['authors'] as $reporter) { ?>
-			<img src='<?php echo $main_article['writerimg']; ?>' alt='<?php echo $reporter['name']; ?>' title='<?php echo $reporter['name']; ?>' />
-			<?php } ?>
-			<?php foreach ($main_article['authors'] as $reporter) { ?>
-			<span class='reporter'><?php echo $reporter['name']; ?></span><br />
-			<?php } ?>
-			<?php echo $main_article['date']; ?><br />
-			<a href='/archive'><span class='orange'><?php echo $byline_more; ?></span></a>
-		</div>
+		<?php $this->byline->load(); ?>
 
         <p><?php echo $main_article['text']; ?></p>
 

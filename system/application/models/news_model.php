@@ -375,27 +375,9 @@ class News_model extends Model
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
 	    $authors = array();
-		
 	    foreach ($query->result() as $row)
-		{			
-			$sql = 'SELECT business_cards.business_card_name
-					FROM business_cards
-					WHERE (business_cards.business_card_user_entity_id = ?)';
-			$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-			if ($author_query->num_rows() > 0)
-			{
-				$author_row = $author_query->row();
-				$name = $author_row->business_card_name;
-			}
-			$sql = 'SELECT user_has_properties.user_has_properties_photo_id
-					FROM user_has_properties
-					WHERE (user_has_properties.user_has_properties_user_entity_id = ?)';
-			$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-			if ($author_query->num_rows() > 0)
-			{
-				$author_row = $author_query->row();
-				$authors[] = array('photo'=>$author_row->user_has_properties_photo_id,'name'=>$name,'id'=>$row->article_writer_user_entity_id);
-			}
+		{
+			$authors[] = $row->article_writer_user_entity_id;
 		}
 		$result['authors'] = $authors;
 

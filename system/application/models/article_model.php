@@ -9,22 +9,44 @@
 class Article_model extends Model
 {
 
-	function ArticleModel()
+	function __construct()
 	{
 		// Call the Model Constructor
 		parent::Model();
 		$this->load->library('wikiparser');
 	}
 
-	// Returns names from Business Card, assumes $user_id exists
+	/// Retrieves all the information for a reporter's byline
+	function GetReporterByline($user_id)
+	{
+		$sql = 'SELECT business_cards.business_card_name,
+				 business_cards.business_card_image_id
+				FROM business_cards
+				WHERE business_card_user_entity_id = ?
+				AND business_cards.business_card_deleted = 0';
+		$query = $this->db->query($sql, array($user_id));
+		$result = array();
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			$result['name'] = $row->business_card_name;
+			$result['photo'] = $row->business_card_image_id;
+		}
+		return $result;
+	}
+
+	// Returns names from Business Card
 	function GetBusinessCardName($user_id)
 	{
 		$sql = 'SELECT business_card_name
 				FROM business_cards
 				WHERE business_card_user_entity_id = ?';
 		$query = $this->db->query($sql, array($user_id));
-		$row = $query->row();
-		return $row->business_card_name;
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			return $row->business_card_name;
+		} else {
+			return '';
+		}
 	}
 
 	// Get the majority of information about an article
@@ -123,7 +145,8 @@ class Article_model extends Model
 	// Assumes revision id exists
 	function GetRevisionData ($revision_id)
 	{
-		$sql = 'SELECT article_contents.article_content_last_author_user_entity_id AS last_author,
+		$sql = 'SELECT article_contents.article_content_id AS id,
+				 article_contents.article_content_last_author_user_entity_id AS last_author,
 				 UNIX_TIMESTAMP(article_contents.article_content_last_author_timestamp) AS last_edit,
 				 article_contents.article_content_heading AS headline,
 				 article_contents.article_content_subheading AS subheadline,
@@ -133,7 +156,18 @@ class Article_model extends Model
 				FROM article_contents
 				WHERE article_contents.article_content_id = ?';
 		$query = $this->db->query($sql, array($revision_id));
-		return $query->row_array();
+		$result = $query->row_array();
+		$sql = 'SELECT fact_box_id AS id,
+				 fact_box_title AS title,
+				 fact_box_wikitext AS text
+				FROM fact_boxes
+				WHERE fact_box_article_content_id = ?
+				AND fact_box_deleted = 0';
+		$query = $this->db->query($sql, array($revision_id));
+		if ($query->num_rows() == 1) {
+			$result['fact_box'] = $query->row_array();
+		}
+		return $result;
 	}
 
 	function CreateNewRevision ($article_id, $user_id, $headline, $subheadline, $subtext, $blurb, $wiki, $wiki_cache)
@@ -184,6 +218,8 @@ class Article_model extends Model
 				WHERE article_content_id = ?';
 		$query = $this->db->query($sql, array($headline,$subheadline,$subtext,$blurb,$wiki,$wiki_cache,$revision));
 	}
+
+
 
 
 
@@ -365,8 +401,24 @@ class Article_model extends Model
 				fact_box_wikitext,
 				fact_box_wikitext_cache,
 				fact_box_timestamp)
-			VALUES (?, ?, ?, CURRENT_TIMESTAMP)';
-		$this->db->query($sql, array($article_content_id,$title,$wikitext));
+			VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)';
+		$this->db->query($sql, array($article_content_id,$title,$wikitext,$wiki_cache));
+		return $this->db->insert_id();
+	}
+
+	/**
+	 * Given a article content id, it updates the fact box contents for that revision (if it exists)
+	 */
+	function UpdateRevisionFactBox ($revision, $title, $text)
+	{
+		$wiki_cache = $this->wikiparser->parse($text);
+		$sql = 'UPDATE fact_boxes
+				SET fact_box_title = ?,
+				 fact_box_wikitext = ?,
+				 fact_box_wikitext_cache = ?
+				WHERE fact_box_article_content_id = ?
+				AND fact_box_deleted = 0';
+		$this->db->query($sql, array($title,$text,$wiki_cache,$revision));
 	}
 
 	/**
