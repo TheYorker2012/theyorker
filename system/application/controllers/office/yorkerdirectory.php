@@ -78,6 +78,8 @@ class Yorkerdirectory extends Controller
 		if ($action=='view'){
 			$organisation = $this->user_auth->organisationShortName;
 			$this->pages_model->SetPageCode('viparea_directory_information');
+			//Get Organisation Data
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
 			//Send data if given
 			if(!empty($_POST['submitbutton'])){
@@ -87,9 +89,25 @@ class Yorkerdirectory extends Controller
 				}
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
 			}
+			//Show hide directory entry information and form detection
+			if(!empty($_POST['directory_visibility'])){
+				if($_POST['directory_visibility']=="Show Entry"){
+					$this->directory_model->MakeDirectoryEntryVisible($organisation);
+					$this->main_frame->AddMessage('success','Directory entry made visible.');
+				}
+				if($_POST['directory_visibility']=="Hide Entry"){
+					$this->directory_model->MakeDirectoryEntryVisible($organisation, false);
+					$this->main_frame->AddMessage('success','Directory entry hidden.');
+				}
+			}
 			
-			//Get Data And toolbar
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
+			//Find out if the directory entry is currently visable.
+			$data['directory_visibility'] = $this->directory_model->IsEntryShownInDirectory($organisation);
+			if($data['directory_visibility']){
+				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_true');
+			}else{
+				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_false');
+			}
 			
 			if (!empty($data)) {
 				$this->_SetupNavbar();

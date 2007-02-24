@@ -35,6 +35,7 @@ class Directory_model extends Model {
 			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisations.organisation_directory_entry_name IS NOT NULL'.
 			' AND organisation_types.organisation_type_directory=1 '.
+			' AND organisations.organisation_show_in_directory=1 '.
 			'ORDER BY organisation_name';
 
 		$query = $this->db->query($sql);
@@ -317,6 +318,52 @@ class Directory_model extends Model {
 			'	AND organisations.organisation_directory_entry_name = ?';
 		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
+	}
+	
+	//Finds out if the directory entry is listed in the directory
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return bool true if the directory entry is listed in the directory.
+	 **/
+	function IsEntryShownInDirectory($DirectoryEntryName)
+	{
+		// Remove the organisation content with the given id and which is not live.
+		$sql =
+			'SELECT'.
+			' organisations.organisation_show_in_directory '.
+			'FROM organisations '.
+			'WHERE organisations.organisation_directory_entry_name=? '.
+			'LIMIT 1';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		$row = $query->row();
+		//Check result to find out if its in the directory and return value.
+		$in_directory = $row->organisation_show_in_directory;
+		if($in_directory == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	//Updates the visiblity of a directory entry in the directory
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @param $valuee true to make the directory entry visible false to hide it.
+	 * @return bool true if the directory entry is listed in the directory.
+	 **/
+	function MakeDirectoryEntryVisible($DirectoryEntryName, $value=1)
+	{
+		// If $value is set to false the directory will not be visible, defaults to showing the organisation in the directory.
+		if($value == false){
+			$value = 0;
+		}else{
+			$value = 1;
+		}
+		$sql =
+		'UPDATE organisations SET'.
+		' organisation_show_in_directory='.$value.' '.
+		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		return true;
 	}
 }
 ?>

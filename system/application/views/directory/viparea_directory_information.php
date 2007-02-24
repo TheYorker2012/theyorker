@@ -21,6 +21,15 @@
 		}?>
 		</ol>
 	</div>
+	<h4>Visability</h4>
+	<div class="Entry">
+		<p>
+		<?php echo $directory_visibility_text; ?>
+		</p>
+		<form action="<?php echo vip_url('directory/information/'); ?>" method="post" class="form">
+			<input type='submit' name='directory_visibility' class='button' value='<?php if($directory_visibility){ echo "Hide Entry"; }else{ echo "Show Entry"; }?>' /> 
+		</form>
+	</div>
 </div>
 
 <form id='orgdetails' name='orgdetails' action='<?php echo vip_url('directory/information'); ?>' method='POST' class='form'>
