@@ -152,8 +152,12 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 			} else{
 				$CI =& get_instance();
 				$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
-				$query = $query->result();
-				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';
+				if ($query->num_rows() > 0) {
+					$query = $query->row();
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';
+				} else {
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" /></a>';
+				}
 			}
 		} else {
 			return '<img src="/images/images/'.$type.'/null.jpg" />';
