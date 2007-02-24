@@ -124,6 +124,7 @@ class Yorkerdirectory extends Controller
 				// Set up the public frame
 				$this->main_frame->SetTitleParameters(
 						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetPage('information');
 				$this->main_frame->SetContent($the_view);
 			} else {
 				$this->load->library('custom_pages');
@@ -151,6 +152,7 @@ class Yorkerdirectory extends Controller
 				// Set up the public frame
 				$this->main_frame->SetTitleParameters(
 						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetPage('information');
 				$this->main_frame->SetContent($the_view);
 			} else {
 				$this->load->library('custom_pages');
@@ -180,6 +182,7 @@ class Yorkerdirectory extends Controller
 				// Set up the public frame
 				$this->main_frame->SetTitleParameters(
 						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetPage('information');
 				$this->main_frame->SetContent($the_view);
 			} else {
 				$this->load->library('custom_pages');
@@ -229,6 +232,7 @@ class Yorkerdirectory extends Controller
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetPage('photos');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
@@ -262,6 +266,7 @@ class Yorkerdirectory extends Controller
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetPage('map');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
@@ -326,6 +331,7 @@ class Yorkerdirectory extends Controller
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetPage('contacts');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
@@ -386,6 +392,7 @@ class Yorkerdirectory extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name']));
+		$this->main_frame->SetPage('contacts');
 		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
