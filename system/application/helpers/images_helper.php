@@ -153,7 +153,7 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null) {
 				$CI =& get_instance();
 				$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 				$query = $query->result();
-				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>'
+				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';
 			}
 		} else {
 			return '<img src="/images/images/'.$type.'/null.jpg" />';
@@ -183,7 +183,7 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null) {
 					$CI =& get_instance();
 					$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 					$query = $query->result();
-					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>'
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
 				}
 			} else {
 				return '<img src="/images/images/'.$fetched_type.'/null.jpg" />';
