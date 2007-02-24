@@ -39,11 +39,19 @@
 		<h2 style='margin-bottom: 5px;'><?php echo $review_title; ?></h2><br />
 		<h5>"<?php echo $review_blurb; ?>"</h5><br />
 		<h4>Rating</h4>
-		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-		<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
-		<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />
-		<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " /><br /><br />
+<?php
+		//Star display
+		//Display stars
+		for ($stars = 0; ($stars < $review_rating/2); $stars++)
+		{
+			echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
+		}
+		//Fill in the blanks
+		for ($emptystars = 0; $emptystars < (5 - $stars); $emptystars++)
+		{
+			echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
+		}
+?>
 	</div>
 </div>
 <div class="blue_box">
@@ -141,7 +149,7 @@ if ($this->user_auth->entityId > 0)
 }
 else
 {
-	echo '<i>You can your own comment by <a href="/login/main">logging in</a></i>';
+	echo '<i>You can add your own comment by <a href="/login/main'.$this->uri->uri_string().'">logging in</a></i>';
 }
 ?>
 	<br />

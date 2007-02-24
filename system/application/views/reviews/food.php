@@ -107,17 +107,17 @@ if (isset($table_data['tag_group_names'][0]) == 1)
 </div>
 
 <div class='blue_box'>
-		<h2>food feature</h2>
+		<h2><?php echo $content_type; ?> feature</h2>
 <?php
-/*
+
 echo '<a href="'.$article_link.'">';
-echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" title="'.$article_photo_title.'" /></a>';
-*/
+echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" weight=200 height=100 title="'.$article_photo_title.'" /></a>';
+
 ?>
 		<h3><?php echo anchor($article_link, $article_title); ?></h3>
 		<!-- Enter the default byline here - tempoarry solution follows -->
-		#Put default byline here<br />
-		<span style='font-size: medium;'><b><?php echo "<a href='".$article_author_link."'>".$article_author."</a>"; ?></b></span><br />
+		<span style='font-size: medium;'><b><?php echo $article_author; ?></b></span><br />
+		<?php echo $article_author_by_line ?><br /><br />
 		<?php echo $article_date ?><br />
 		<span class="orange"><?php echo anchor($article_link, 'Read more...', array('class' => 'orange')); ?></span>
 	        <p>

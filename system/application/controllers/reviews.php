@@ -109,14 +109,15 @@ class Reviews extends Controller
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
 
 		$data['article_title'] = $article_database_result['heading'];
-		$data['article_author'] = $article_database_result['authors'][0]['name'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/food/'.$organisation_code_name;
 
+		$data['article_author'] = $article_database_result['authors'][0]['name'];
+		$data['article_author_by_line'] = 'Supreme Commander';
+
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
-		$data['article_author_link'] = '/directory/view/'.$article_database_result['authors'][0]['name'];
 		if ($article_database_result['photos'] != array())
 		{
 			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
@@ -198,13 +199,15 @@ class Reviews extends Controller
 			$article[$article_no]['article_author'] = $article_database_result['authors'][0]['name'];
 			$article[$article_no]['article_content'] = $article_database_result['text'];
 			$article[$article_no]['article_date'] = $article_database_result['date'];
-
 			$article[$article_no]['article_photo'] = '/images/prototype/news/benest.png';
 			$article[$article_no]['article_author_link'] = '/directory/view/1';
 		}
 
 		//Place articles into the data array to be passed along
 		$data['article'] = $article;
+
+		//Review rating needs to be fixed it doesn't appear to be in the database
+		$data['review_rating'] = 5;
 
 		//Get user rating
 		$data['user_rating'] = $this->Review_model->GetUserRating($article_id);
@@ -388,7 +391,7 @@ class Reviews extends Controller
 	}
 
 	/// Leages
-	function leagues($League = NULL)
+	function leagues($league_code_name = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -396,10 +399,13 @@ class Reviews extends Controller
 		$this->pages_model->SetPageCode('review_league');
 
 		//Check we have being passed a league to view otherwise the query returns badly...
-		if ($League === NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
+		if ($league_code_name === NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
+
+		//Find out the content_type
+		$content_type = $this->Review_model->GetLeagueType($league_code_name);
 
 		//Get leagues from model
-		$leagues = $this->Review_model->GetLeague($League);
+		$leagues = $this->Review_model->GetLeague($league_code_name);
 
 		//Check for if zero
 		if (isset($leagues[0]['league_name']) == 1)
@@ -411,28 +417,38 @@ class Reviews extends Controller
 			{
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
-				$reviews['review_rating'][$row] = $leagues[$row]['average_user_rating'];
+				$reviews['review_rating'][$row] = $leagues[$row]['average_rating'];
 				//This will need the use of a function which returns what a organisition has being reviews on
-				$reviews['review_link'][$row] = '/reviews/food/'.$leagues[$row]['organisation_directory_entry_name']; 
+				$reviews['review_link'][$row] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name']; 
 				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 			}
 		
 		//Pass over the amount of entries to view
 		$data['max_entries'] = $row;
-
-		//Get league data
-		$league_data = $this->Review_model->GetLeagueDetails('food');
-
-		//Pass tabledata straight to view it is in the proper format
-		$data['league_data'] = $league_data;
-
-			$data['reviews'] = $reviews;
+		$data['reviews'] = $reviews;
 		}
 		else
 		{	//No rows returned
 			$data['max_entries'] = 0;
 		}
+
+		//Get other league table data
+		$league_data = $this->Review_model->GetLeagueDetails($content_type);
+		$leagues = array();
+		foreach ($league_data as &$league)
+		{
+			$leagues[] = array(
+				'league_image_path'=>(imageLocation($league['league_image_id'], 'puffer')),
+				'league_name'=>$league['league_name'],
+				'league_size'=>$league['league_size'],
+				'league_codename'=>$league['league_codename']
+				);
+		}
+
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $leagues;
+
 
 		$this->main_frame->SetContentSimple('reviews/leagues',$data);
 		$this->main_frame->Load();

@@ -43,7 +43,14 @@ if (isset($league_data))
 						echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
 				}
 
-			echo '<br />User rating: '.$reviews['review_rating'][$topten].'/10</div>';
+			if ($reviews['review_rating'][$topten] != 0)
+			{
+				echo '<br />Current rating: '.$reviews['review_rating'][$topten].'/10</div>';
+			}
+			else
+			{
+				echo '<br />Not yet rated</div>';
+			}
 			echo '<h3 style="display: inline;"><a style="color: #20c1f0;" href="'.$reviews['review_link'][$topten].'">'.($topten+1).' - '.$reviews['review_title'][$topten].'</a></h3><br />';
 			echo '		<a href="'.$reviews['review_website'][$topten].'">'.$reviews['review_website'][$topten].'</a><br />';
 			echo '		'.$reviews['review_blurb'][$topten].'';

@@ -349,12 +349,27 @@ class Review_model extends Model {
 		$tmpleague['league_name']              = $row->league_name;
 		$tmpleague['content_type_name']		   = $row->content_type_name;
 		$tmpleague['content_type_codename']	   = $row->content_type_codename;
-		$tmpleague['average_user_rating']	   = $row->comment_summary_cache_average_rating;
+		$tmpleague['average_rating'] = 5;
+		$tmpleague['average_user_rating'] = 0;
+		if ($row->comment_summary_cache_average_rating != '')
+			$tmpleague['average_user_rating']	   = $row->comment_summary_cache_average_rating;
 		$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
 		$league[]                              = $tmpleague;
 	}
 
 	return $league;
+	}
+
+	//Get league type
+	function GetLeagueType($league_code_name)
+	{
+		$sql = 'SELECT content_types.content_type_codename FROM leagues
+				INNER JOIN content_types ON content_types.content_type_id = leagues.league_content_type_id
+				WHERE leagues.league_codename = ?';
+		$query = $this->db->query($sql, $league_code_name);
+		$query = $query->result_array();
+		$type = $query[0]['content_type_codename'];
+		return $type;
 	}
 
 	//Gets the league details for the front pages /reviews/food, /reviews/drink etc...
@@ -810,19 +825,14 @@ function GetTagOrganisation($type,$organisation)
 	//Gets the current average user rating for a article
 	function GetUserRating($article_id)
 	{
-		$sql = 'SELECT comment_rating FROM comments WHERE comment_article_id = ?';
+		$sql = 'SELECT comment_summary_cache_comment_count,comment_summary_cache_average_rating FROM comment_summary_cache WHERE comment_summary_cache_article_id = ?';
 		$query = $this->db->query($sql,$article_id);
 		if ($query->result_array() == array()) return 0; //Not rated yet
 
-		$num = 0; $sum = 0;
+		$query = $query->result_array();
+		$query = $query[0];
 
-		foreach ($query->result_array() as $row)
-		{
-			$num++;
-			$sum += $row['comment_rating'];
-		}
-
-		return array((ceil($sum / $num)),$num);
+		return array($query['comment_summary_cache_average_rating'],$query['comment_summary_cache_comment_count']);
 	}
 
 	//Adds a comment to the database, frb501
@@ -835,6 +845,25 @@ function GetTagOrganisation($type,$organisation)
 		$comment['comment_text'] = $post_data['comment_text'];
 		$comment['comment_rating'] = $post_data['comment_rating'];
 		$this->db->insert('comments',$comment); //Add users comment to database
+
+		//Set cache table
+		$sql = 'SELECT comment_rating FROM comments WHERE comment_article_id = ?';
+		$query = $this->db->query($sql,$comment['comment_article_id']);
+		if ($query->result_array() == array()) return 0; //Not rated yet
+
+		$num = 0; $sum = 0;
+
+		foreach ($query->result_array() as $row)
+		{
+			$num++;
+			$sum += $row['comment_rating'];
+		}
+
+		$average_rating = ceil($sum / $num);
+
+		$sql = 'INSERT INTO comment_summary_cache (comment_summary_cache_content_type_id 	,comment_summary_cache_organisation_entity_id,comment_summary_cache_article_id,comment_summary_cache_comment_count,comment_summary_cache_average_rating) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE comment_summary_cache_comment_count = ?, comment_summary_cache_average_rating = ?';
+
+		$this->db->query($sql,array($comment['comment_content_type_id'],$comment['comment_organisation_entity_id'],$comment['comment_article_id'],$num,$average_rating,$num,$average_rating));
 	}
 
 	//Logically deletes a comment from the database
