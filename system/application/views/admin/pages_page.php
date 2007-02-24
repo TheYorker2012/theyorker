@@ -58,7 +58,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 				</p>
 				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['label'], ENT_QUOTES);?>">
 				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['type'], ENT_QUOTES);?>">
-				<textarea name="<?php echo $property['id'];?>" cols="60" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo htmlentities($property['text'], ENT_QUOTES);?></textarea>
+				<textarea name="<?php echo $property['id'];?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo htmlentities($property['text'], ENT_QUOTES);?></textarea>
 				<br />
 			<?php
 			}
@@ -77,7 +77,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 						<option value ="wikitext">Wikitext</option>
 						<option value ="xhtml">XHTML</option>
 					</SELECT><br />
-				<textarea name="newprop" cols="60" rows="10"></textarea>
+				<textarea name="newprop" class="full" rows="10"></textarea>
 				<br />
 			</div>
 			<?php
@@ -109,7 +109,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 		<input type='radio' name='properties_type' value='image'> Image
 		<br />
 		<label for='properties_value'>Property value</label>
-		<textarea name="properties_value" cols="60" rows="10"></textarea>
+		<textarea name="properties_value" class="full" rows="10"></textarea>
 	</fieldset>
 	<fieldset>
 		<input type='submit' class='button' name='property_button' value='Add'>
