@@ -142,7 +142,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
  * @return	string
  */	
 
-function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null) {
+function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $force = false) {
 	if (is_null($extension)) $extension = '.jpg';
 	if (is_string($type)) {
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;

@@ -3,7 +3,7 @@ foreach ($textblocks as $textblock) {
 ?>
 <a name='<?php echo $textblock['shorttitle']; ?>'></a>
 <div class='columnPhoto' style='padding: 25px 0px 0px 0px;'>
-	<a href='<?php echo $textblock['image']; ?>'><img src='<?php echo $textblock['image']; ?>' width='220px'/></a>
+	<?php echo $textblock['image']; ?>
 </div>
 <div class='columnText'>
 	<p><?php echo $textblock['blurb']; ?></p>

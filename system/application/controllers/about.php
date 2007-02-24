@@ -45,7 +45,7 @@ class About extends Controller
 				'title'			=> $block['title'],
 				'shorttitle'	=> str_replace(' ','_',$block['title']),
 				'blurb'			=> $block['blurb'],
-				'image'			=> photoLocation($block['image']),
+				'image'			=> imageLocTag($block['image'], "medium"),
 			);
 		}
 		
