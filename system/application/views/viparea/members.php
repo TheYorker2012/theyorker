@@ -16,5 +16,5 @@
 <input type='checkbox' name='filter_team_3' value='1'> Team 3<br />
 <input type='checkbox' name='filter_team_4' value='1'> Team 4<br />
 </div>
-<?php $this->load->view('viparea/members_list', array('organisation' => $organisation));?>
+<?php $this->load->view('viparea/members_list');?>
 <a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>

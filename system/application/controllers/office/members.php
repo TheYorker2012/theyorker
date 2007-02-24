@@ -77,8 +77,7 @@ class Members extends Controller
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
-			'user'         => $this->user_auth->entityId,
-			'organisation' => $this->members_model->GetAllMemberDetails(VipOrganisationId()),
+			'members'      => $this->members_model->GetMemberDetails(VipOrganisationId()),
 			'team'         => $this->members_model->GetTeams($this->user_auth->organisationLogin)
 		);
 		// Set up the content
@@ -96,31 +95,83 @@ class Members extends Controller
 	function info($EntityId = NULL, $Page = NULL)
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		/// @todo Implement $viparea/members/info/...
+		
+		// If no entity id was provided, redirect back to members list.
+		if (NULL === $EntityId) {
+			return redirect(vip_url('members/list'));
+		}
 		
 		// Get membership information
-		$membership = $this->members_model->GetMemberDetails($EntityId, VipOrganisationId());
+		// This will determine whether the entity is a member.
+		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
 		
-		if (FALSE !== $membership) {
-			$this->pages_model->SetPageCode('viparea_members_info');
+		if (!empty($membership)) {
+			$membership = $membership[0];
 			
-			$data = array(
-				'member_entity_id' => $EntityId,
-				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
-				'organisation' => $this->members_model->GetAllMemberDetails(VipOrganisationId()),
-				'membership'       => $membership,
-			);
-			// Set up the content
-			$this->main_frame->SetContentSimple('viparea/editmembers', $data);
+			if (NULL === $Page) {
+				// DISPLAY USER INFORMATION --------------------------------- //
+				$this->pages_model->SetPageCode('viparea_members_info');
+				
+				// Stringify gender
+				$membership['gender'] =  (($membership['gender']=='m')?('male')
+										:(($membership['gender']=='f')?('female')
+										:('unknown')));
+				
+				$data = array(
+					'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+					'membership'   => $membership,
+				);
+				// Set up the content
+				$this->main_frame->SetContentSimple('viparea/editmembers', $data);
+				
+				// Load the main frame
+				$this->main_frame->SetTitleParameters(array(
+					'organisation'	=> $this->user_auth->organisationName,
+					'firstname'		=> $membership['firstname'],
+					'surname'		=> $membership['surname'],
+				));
 			
-			// Load the main frame
-			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> $this->user_auth->organisationName,
-				'firstname'		=> $membership['firstname'],
-				'surname'		=> $membership['surname'],
-			));
+			} elseif ($Page === 'post') {
+				// SAVE MEMBERSHIP INFORMATION ------------------------------ //
+				// Find the changes
+				$confirm = $this->input->post('member_update'); // = 'Update'
+				if ($confirm === 'Update') {
+					$member_paid	= (FALSE !== $this->input->post('member_paid'));
+					$member_vip		= (FALSE !== $this->input->post('member_vip'));
+					
+					$changes = array();
+					if ($member_paid !== (bool)$membership['paid']) {
+						// Paid has changed
+						$changes['paid'] = $member_paid;
+					}
+					if ($member_vip !== (bool)$membership['vip']) {
+						// Vip status has changed
+						$changes['vip'] = $member_vip;
+					}
+					
+					// If changes save them
+					// If no changes don't save them
+					if (empty($changes)) {
+						$this->messages->AddMessage('information','No changes were made to the membership.');
+					} else {
+						$this->messages->AddMessage('success',
+								'The membership\'s '.implode(', ',array_keys($changes)).' flags were successfully updated');
+						$this->messages->AddMessage('error',
+								'The membership\'s '.implode(', ',array_keys($changes)).' flags could not be updated');
+					}
+				}
+				
+				// Redirect
+				return redirect(vip_url('members/info/'.$EntityId));
+				
+			} elseif ($Page === 'cards') {
+				// DISPLAY BUSINESS CARDS ----------------------------------- //
+				
+				
+			}
 			
 		} else {
+			// The entity isn't a member of the organisation
 			$this->load->library('custom_pages');
 			$this->main_frame->SetContent(new CustomPageView('vip_members_notmember','error'));
 		}

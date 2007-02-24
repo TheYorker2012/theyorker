@@ -34,33 +34,34 @@ function GetUserLevel()
 	return $user_level;
 }
 
+/// Get the site path of the home page for the user.
 function GetDefaultHomepage()
 {
 	switch (GetUserLevel()) {
-		case "student":
-			return "";
-		break;
-		case "vip":
-			return "/viparea";
-		break;
-		case "organisation":
-			return "/viparea";
-		break;
-		case "office":
-			return "/office";
-		break;
-		case "pr":
-			return "/office";
-		break;
-		case "editor":
-			return "/office";
-		break;
-		case "admin":
-			return "/admin";
-		break;
+		case 'student':
+			return '';
+			break;
+		case 'vip':
+			return '/viparea';
+			break;
+		case 'organisation':
+			return '/viparea';
+			break;
+		case 'office':
+			return '/office';
+			break;
+		case 'pr':
+			return '/office';
+			break;
+		case 'editor':
+			return '/office';
+			break;
+		case 'admin':
+			return '/admin';
+			break;
 		default:
-			return "";
-		break;
+			return '';
+			break;
 	}
 }
 
@@ -599,7 +600,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 			} else {
 				$CI->user_auth->login($username, $password, false);
 				
-				if($RedirectDestination == "" || $RedirectDestination == "/")
+				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{
 				$RedirectDestination = GetDefaultHomepage();
 				}

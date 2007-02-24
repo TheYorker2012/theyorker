@@ -12,16 +12,20 @@
 		<th>VIP</th>
 		<th>Edit</th>
 	</tr>
-	<?php for($i=0;$i<count($organisation);$i++) {?>
+	<?php foreach ($members as $membership) {?>
 	<tr>
-		<td><?php echo $organisation[$i]['firstname']; ?></td>
-		<td><?php echo $organisation[$i]['surname']; ?></td>
-		<td><a href='mailto:<?php echo $organisation[$i]['email'];?>'><?php echo $organisation[$i]['email']; ?></a></td>
-		<td><?php echo $organisation[$i]['paid']; ?></td>
-		<td><?php echo $organisation[$i]['if_email']; ?></td>
-		<td><?php echo $organisation[$i]['confirmed']; ?></td>
-		<td><?php echo $organisation[$i]['vip']; ?></td>
-		<td><a href='<?php echo vip_url('members/info/'.$organisation[$i]['id']); ?>'>Edit</a></td>
+		<td><?php echo $membership['firstname']; ?></td>
+		<td><?php echo $membership['surname']; ?></td>
+		<?php if (NULL !== $membership['email']) { ?>
+			<td><a href='mailto:<?php echo $membership['email'];?>'><?php echo $membership['email']; ?></a></td>
+		<?php } else {?>
+			<td>unavailable</td>
+		<?php } ?>
+		<td><?php echo $membership['paid']; ?></td>
+		<td><?php echo $membership['on_mailing_list']; ?></td>
+		<td>0</td>
+		<td><?php echo $membership['vip']; ?></td>
+		<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'>Edit</a></td>
 	</tr>
 	<?php } ?>
 	</table>	
