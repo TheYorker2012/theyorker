@@ -160,7 +160,7 @@ class Reviews extends Controller
 		$data['league_data'] = $leagues;
 
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/food',$data);
+		$this->main_frame->SetContentSimple('reviews/main',$data);
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

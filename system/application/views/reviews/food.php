@@ -1,9 +1,25 @@
 <div class="RightToolbar">
-	<h4>Leagues</h4>
-	<div class="Entry">
 
 <?php
+
+//Barcrawls for culture only
+if ($content_type == 'culture')
+{
+	echo "
+	<h4>Bar Crawls</h4>
+	<div class='Entry'>".'
+		Planning a night out on the town? Then look no further!<br /><br />
+			<a href="/reviews/barcrawl">Bob Bastards Bar Craw</a><br />
+			<a href="/reviews/barcrawl">Sids Death Line</a><br />
+			<a href="/reviews/barcrawl">Garys Green Mile</a><br />
+	</div>
+	';
+};
+
 //Display leagues
+
+echo '<h4>Leagues</h4>
+	<div class="Entry">';
 
 if (isset($league_data))
 {
