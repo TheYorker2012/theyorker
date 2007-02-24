@@ -2,13 +2,14 @@
 	<h4>Actions</h4>
 	<form class="form" method="post" name="clearform" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
+			<ul>
 			<input type="hidden" name="clear" value="clear" />
-			<a href="<?=site_url('office')?>">Return to the Office</a><br />
+			<li><a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a></li>
+			<li><a href="<?=site_url('office')?>">Return to the Office</a></li>
 			<?php if($this->uri->segment(4)) {
-				echo '<a href="'.site_url('office/gallery').'">Return to the Gallery</a><br />';
+				echo '<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>';
 			}?>
-			<a href="javascript:document.clearform.submit()">Start a new Search</a><br />
-			<a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a><br />
+			<li><a href="javascript:document.clearform.submit()">Start a new Search</a></li>
 		</div>
 	</form>
 	<h4>Search by...</h4>
