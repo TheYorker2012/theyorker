@@ -256,7 +256,7 @@ class Reviews extends Controller
 		));
 
 		// Load the public frame view (which will load the content view)
-		$this->main_frame->SetContentSimple('reviews/'.$content_type.'review', $data);
+		$this->main_frame->SetContentSimple('reviews/mainreview', $data);
 		$this->main_frame->Load();
 
 	}
