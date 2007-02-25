@@ -399,7 +399,9 @@ class Review_model extends Model {
 		INNER JOIN organisations ON organisations.organisation_entity_id = articles.article_organisation_entity_id
 		WHERE
 			articles.article_content_type_id = ? AND
-			organisations.organisation_directory_entry_name = ?";
+			organisations.organisation_directory_entry_name = ?
+		ORDER BY article_id DESC
+		";
 		$query = $this->db->query($sql,array($content_type_id,$organisation_name));
 		if ($query->num_rows() != 0) //If article exists
 		{

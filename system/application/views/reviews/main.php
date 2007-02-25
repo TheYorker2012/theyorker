@@ -3,7 +3,7 @@
 <?php
 
 //Barcrawls for culture only
-if ($content_type == 'culture')
+if ($content_type == 'culture' && FALSE) //Disabled due to barcrawls not existing in the database... in a working fashion...
 {
 	echo "
 	<h4>Bar Crawls</h4>
@@ -124,12 +124,13 @@ if (isset($table_data['tag_group_names'][0]) == 1)
 
 <div class='blue_box'>
 		<h2><?php echo $content_type; ?> feature</h2>
-		<h3><?php echo anchor($article_link, $article_title); ?></h3>
+		<?php $this->byline->load(); ?>
+
 <?php
 echo '<a href="'.$article_link.'">';
 echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" weight=200 height=100 title="'.$article_photo_title.'" /></a>';
 ?>
-		<?php $this->byline->load(); ?>
+		<h3><?php echo anchor($article_link, $article_title); ?></h3>
 		<p>
 			<?php echo $article_content; ?>
 		</p>

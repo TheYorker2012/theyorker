@@ -185,7 +185,7 @@ class Reviews extends Controller
 		}
 		//Find our article_id
 		$article_id = $this->Review_model->GetArticleID($organisation_name,$content_id);
-		$article_comment_id = $article_id[0];
+		$article_comment_id = $article_id[count($article_id) - 1];
 
 		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
@@ -288,7 +288,7 @@ class Reviews extends Controller
 
 		//Comment system
 		$data['page_id'] = 105;
-		$data['comments'] = $this->Review_model->GetComments(105,1);
+		//$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
 		$data['article_id'] = 111;
 
 		$this->main_frame->SetTitleParameters(array('organisation' => 'The Great Piss Up'));
