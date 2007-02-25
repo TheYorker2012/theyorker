@@ -8,7 +8,7 @@ class Reviews extends Controller
 {
 	/// Valid content types
 	protected static $mContentType = array(
-		'food','drink','culture'
+		'food','drink','culture','barcrawl'
 	);
 	
 	
@@ -172,17 +172,9 @@ class Reviews extends Controller
 		//Set page code
 		$this->pages_model->SetPageCode('review_context');
 
-		/// @TODO THIS NEEDS REMOVING, HARDCODING = BAD, GET FROM DATABASE
-		$TEMPORARY_hardwired_content_ids = array(
-			'food' => 7,
-			'drink' => 8,
-			'culture' => 9,
-		);
-		if (array_key_exists($content_type, $TEMPORARY_hardwired_content_ids)) {
-			$content_id = $TEMPORARY_hardwired_content_ids[$content_type];
-		} else {
-			$content_id = 7;
-		}
+		//This needs to be altered to throw errors incase of unknown content_types...
+		$content_id = $this->Review_model->GetContentTypeID($content_type);
+
 		//Find our article_id
 		$article_id = $this->Review_model->GetArticleID($organisation_name,$content_id);
 		$article_comment_id = $article_id[count($article_id) - 1];
@@ -269,6 +261,7 @@ class Reviews extends Controller
 		redirect($_POST['return_page']); //Send user back to previous page
 	}
 
+/* Old dummy data - Will returns error etc...
 	/// Bar Crawl Page
 	function barcrawl($CrawlName = FALSE)
 	{
@@ -306,6 +299,8 @@ class Reviews extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
+
+*/
 
 	/// Display table for review table (from puffers)
 	function table(	$item_type = FALSE,

@@ -1050,6 +1050,18 @@ function GetTagOrganisation($type,$organisation)
 
 		return $reviews;
 	}
+
+	//Returns a content_type_id from a content_type_codename
+	function GetContentTypeID($codename)
+	{
+		$sql = 'SELECT content_type_id FROM content_types WHERE content_type_codename = ?';
+		$query = $this->db->query($sql, $codename);
+		$query = $query->result_array();
+		if ($query == NULL) return NULL;
+		$query = $query[0]['content_type_id'];
+		return $query;
+	}
+
 }
 
 
