@@ -213,7 +213,7 @@ class Yorkerdirectory extends Controller
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
-			$data['images'] = get_photos($data['organisation']['id']);
+			$data['images'] = $this->slideshow->get_photos($data['organisation']['id']);
 			
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
