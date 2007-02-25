@@ -12,7 +12,7 @@
 	<?php foreach( $images->result() as $image ) { ?>
 	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
 	<br />
-	<a href='/viparea/directory/<?php echo $organisation['id']; ?>/photos/move/<?php echo $image->photo_id; ?>/up'>Move up</a> | <a href='/viparea/directory/<?php echo $organisation['id']; ?>/photos/move/<?php echo $image->photo_id; ?>/down'>Move down</a> | <a href='/viparea/directory/<?php echo $organisation['id']; ?>/photos/delete/<?php echo $image->photo_id; ?>'>Delete</a>
+	<a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/move/<?php echo $image->photo_id; ?>/up'>Move up</a> | <a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/move/<?php echo $image->photo_id; ?>/down'>Move down</a> | <a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/delete/<?php echo $image->photo_id; ?>'>Delete</a>
 	<br />
 	<?php } ?>
 </div>
