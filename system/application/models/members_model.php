@@ -165,10 +165,10 @@ class Members_model extends Model {
 		$this->db->query($sql);
 	}
 	
-	# Completely deletes a subscription from the table
 	function RemoveSubscription($UserId,$OrgId) {
 		$sql = '
-				DELETE FROM subscriptions
+				UPDATE subscriptions
+				SET subscription_member = "0"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"								
 				';
