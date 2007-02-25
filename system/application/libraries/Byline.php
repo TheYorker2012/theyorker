@@ -68,6 +68,16 @@ class Byline extends FramesView
 		$this->SetData('article_date',$this->mDate);
 		parent::Load();
 	}
+
+	/**
+	 * @brief Reset the authors and date to none
+	 */
+	function Reset()
+	{
+		$this->mReporters = array();
+		$this->mDate = '';
+	}
+
 }
 
 ?>

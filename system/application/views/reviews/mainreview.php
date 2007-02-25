@@ -63,16 +63,15 @@
 	for ($article_no = 0; $article_no < count($article); $article_no++)
 	{
 
-	echo '
-		<img src="'.$article[$article_no]['article_photo'].'" alt="Reporter" title="Reporter" style="float: right;" />
-		<span style="font-size: medium;"><b>'.$article[$article_no]['article_author'].'</b></span><br />
-		'.$article[$article_no]['article_date'].'<br />
-		<span style="color: #ff6a00;">Read more articles by this reporter</span>
-	        <p>
-			<span style="color:black;">'.$article[$article_no]['article_content'].'</span>
-		</p>
-		';
-		if ($article_no < (count($article) - 1)) { echo '<hr>'; }
+	//Byline support
+	$this->byline->AddReporter($article[$article_no]['article_authors']);
+	$this->byline->SetDate($article[$article_no]['article_date']);
+	echo $this->byline->load();
+	$this->byline->Reset();
+
+	//Print Article
+	echo '<p><span style="color:black;">'.$article[$article_no]['article_content'].'</span></p>';
+		if ($article_no < (count($article) - 1)) { echo '<hr>'; } //Last line support
 	}
 
 ?>

@@ -115,7 +115,7 @@ class Reviews extends Controller
 
 		// Create byline --- Note to byliner... dynamic data done
 		$this->load->library('byline');
-		$this->byline->AddReporter($article_database_result['authors'][0]);
+		$this->byline->AddReporter($article_database_result['authors']);
 		$this->byline->SetDate($article_database_result['date']);
 	
 		//Set Blurb
@@ -191,16 +191,23 @@ class Reviews extends Controller
 		$data['type_id'] 	= $content_id;
 		$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
 
+		//Load bylines support
+		$this->load->library('byline');
+
 		//Get the article for each article on the page
 		for ($article_no = 0; $article_no < count($article_id); $article_no++)
 		{
+			//Load article from news model
 			$article_database_result = $this->News_model->GetFullArticle($article_id[$article_no]);
-			$article[$article_no]['article_title'] = $article_database_result['heading'];
-			$article[$article_no]['article_author'] = $article_database_result['authors'][0]['name'];
-			$article[$article_no]['article_content'] = $article_database_result['text'];
+
+			//Bylines
+			$article[$article_no]['article_authors'] = $article_database_result['authors'];
 			$article[$article_no]['article_date'] = $article_database_result['date'];
-			$article[$article_no]['article_photo'] = '/images/prototype/news/benest.png';
-			$article[$article_no]['article_author_link'] = '/directory/view/1';
+
+			//The rest
+			$article[$article_no]['article_title'] = $article_database_result['heading'];
+			$article[$article_no]['article_content'] = $article_database_result['text'];
+
 		}
 
 		//Place articles into the data array to be passed along
@@ -237,11 +244,7 @@ class Reviews extends Controller
 		{
 			$data['deal'] = $review_database_result['review_context_content_deal'];
 		}
-
-		//Dummy Data
-		$data['also_does_state']		= 5;  //Food is 4, Drink is 2, Culture is 1, Add together
-		$data['price_rating']			= 'Good Value';
-
+		
 		//Set title parameters
 		$this->main_frame->SetTitleParameters(array(
 			'content_type' => $content_type,
