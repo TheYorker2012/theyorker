@@ -87,7 +87,7 @@ class Reviews extends Controller
 		$this->load->model('News_model');
 
 		//For culture - The right side barcrawl list
-		if ($content_type == 'culture')
+		if ($content_type == 'culture' && FALSE)
 		{
 			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
 			
