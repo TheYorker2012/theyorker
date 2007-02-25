@@ -284,14 +284,64 @@ class Members extends Controller
 	
 	/// Invite new members to join.
 	/**
-	 * @param $Suboption [string] Sub operation:
-	 *	- 'post'
 	 */
-	function invite($Suboption = NULL)
+	function invite()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		/// @todo Implement $viparea/members/invite/...
-		$this->messages->AddMessage('information', 'todo: implement invite');
+		
+		$default_list = '';
+		
+		// Read the post data
+		$button = $this->input->post('members_invite_button');
+		if ($button === 'Invite Members') {
+			$emails = $this->input->post('invite_list');
+			if (FALSE !== $emails) {
+				// Validate the emails
+				$email_list = explode("\n", $emails);
+				$valids = array();
+				$failures = array();
+				foreach ($email_list as $key => $email) {
+					if (!empty($email)) {
+						if (preg_match('/^([a-z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
+							$valids[] = $matches[1];
+						} else {
+							$failures[] = $email;
+						}
+					}
+				}
+				if (!empty($failures)) {
+					// There were failures!
+					$this->messages->AddMessage('error', 'The following lines don\'t look like valid york email addresses:<br />'.implode('<br />',$failures));
+					$default_list = $emails;
+					
+				} elseif (empty($valids)) {
+					// There weren't any valids.
+					$this->messages->AddMessage('information', 'You didn\'t specify any email addresses.');
+				
+				} else {
+					// Everything was fine.
+					$this->messages->AddMessage('success','Everything looks good but i haven\'t been programmed what to do next :)');
+					
+					/// @TODO Do something with invite email addresses
+					
+				}
+			}
+		}
+		
+		$this->pages_model->SetPageCode('viparea_members_invite');
+		
+		$data = array(
+			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+			'what_to_do' => $this->pages_model->GetPropertyWikitext('what_to_do'),
+			'target' => vip_url('members/invite'),
+			'default_list' => $default_list,
+		);
+		$this->main_frame->SetContentSimple('viparea/members_invite', $data);
+	
+		// Set the title parameters
+		$this->main_frame->SetTitleParameters(array(
+			'organisation'	=> $this->user_auth->organisationName,
+		));
 		
 		// Load the main frame
 		$this->main_frame->Load();
