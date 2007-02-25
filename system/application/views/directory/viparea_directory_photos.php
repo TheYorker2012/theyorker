@@ -9,7 +9,7 @@
 	</p>
 </div>
 <div class='blue_box'>
-	<?php foreach( $images as $image ) { ?>
+	<?php foreach( $images->result() as $image ) { ?>
 	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
 	<br />
 	<a href='/viparea/directory/<?php echo $organisation; ?>/photos/move/<?php echo $image->photo_id; ?>/up'>Move up</a> | <a href='/viparea/directory/<?php echo $organisation; ?>/photos/move/<?php echo $image->photo_id; ?>/down'>Move down</a> | <a href='/viparea/directory/<?php echo $organisation; ?>/photos/delete/<?php echo $image->photo_id; ?>'>Delete</a>
