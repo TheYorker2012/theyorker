@@ -201,7 +201,7 @@ class Yorkerdirectory extends Controller
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
-		$this->load->helper('images')
+		$this->load->helper('images');
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
