@@ -113,16 +113,11 @@ class Reviews extends Controller
 		$data['article_date'] = $article_database_result['date'];
 		$data['article_link'] = '/reviews/food/'.$organisation_code_name;
 
-		// Create byline --- USING STATIC DATA CHANGE ME!!!!
+		// Create byline --- Note to byliner... dynamic data done
 		$this->load->library('byline');
-		$this->byline->AddReporter(439);	// Temp using Dan Ashby
-		$this->byline->SetDate('Sat 24th February 2007');
+		$this->byline->AddReporter($article_database_result['authors'][0]);
+		$this->byline->SetDate($article_database_result['date']);
 	
-		// Think these can go now...???
-		$data['article_author'] = $article_database_result['authors'][0]['name'];
-		$data['article_author_by_line'] = 'Supreme Commander';
-
-
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
 		if ($article_database_result['photos'] != array())
@@ -200,7 +195,6 @@ class Reviews extends Controller
 		for ($article_no = 0; $article_no < count($article_id); $article_no++)
 		{
 			$article_database_result = $this->News_model->GetFullArticle($article_id[$article_no]);
-
 			$article[$article_no]['article_title'] = $article_database_result['heading'];
 			$article[$article_no]['article_author'] = $article_database_result['authors'][0]['name'];
 			$article[$article_no]['article_content'] = $article_database_result['text'];

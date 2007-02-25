@@ -62,6 +62,7 @@
 
 	for ($article_no = 0; $article_no < count($article); $article_no++)
 	{
+
 	echo '
 		<img src="'.$article[$article_no]['article_photo'].'" alt="Reporter" title="Reporter" style="float: right;" />
 		<span style="font-size: medium;"><b>'.$article[$article_no]['article_author'].'</b></span><br />
