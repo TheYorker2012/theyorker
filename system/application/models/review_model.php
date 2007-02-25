@@ -285,7 +285,6 @@ class Review_model extends Model {
 			review_context_contents.review_context_content_deal_expires,
 			review_context_contents.review_context_content_rating,
 			review_context_contents.review_context_content_serving_times,
-			review_context_contents.review_context_content_directions,
 			review_context_contents.review_context_content_content_type_id
 			  FROM content_types
 			  INNER JOIN review_context_contents

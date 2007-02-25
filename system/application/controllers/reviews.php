@@ -275,7 +275,7 @@ class Reviews extends Controller
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
-		$data['barcrawl_directions'] = $review_database_result['review_context_content_directions'];
+//		$data['barcrawl_directions'] = $review_database_result['review_context_content_directions'];
 
 		//Check the deal isn't expired
 		if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
