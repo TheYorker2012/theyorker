@@ -104,6 +104,115 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
+	
+	
+	# returns whether a member is subscribed and confirmed
+	function IsSubscribed($UserId,$OrganisationId) {
+		$sql = '
+				SELECT subscriptions.subscription_user_entity_id
+				FROM   subscriptions
+				WHERE  subscriptions.subscription_user_entity_id = "'.$UserId.'"
+					   AND subscriptions.subscription_organisation_entity_id = "'.$OrganisationId.'"
+					   AND subscriptions.subscription_user_confirmed = "1"
+					   AND subscriptions.subscription_member = "1"
+				';
+		$query = $this->db->query($sql);
+		$result_array = $query->result_array();
+		if(count($result_array) == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	# sets vip to $status
+	function UpdateVipStatus($Status,$UserId,$OrgId) {
+		$sql = '
+				UPDATE subscriptions
+				SET    subscription_vip = "'.$Status.'"				
+				WHERE  subscription_user_entity_id = "'.$UserId.'"
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"
+				';
+		$query = $this->db->query($sql);
+	}
+	
+	# sets paid to $status
+	function UpdatePaidStatus($Status,$UserId,$OrgId) {
+		$sql = '
+				UPDATE subscriptions
+				SET subscription_paid = "'.$Status.'"				
+				WHERE  subscription_user_entity_id = "'.$UserId.'"
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				';
+		$this->db->query($sql);
+	}	
+	
+	# Assumes not already in DB (use AlreadyMember to check)
+	# Also needs to inform the member of the invitations, is this done in prefs?
+	function InviteMember($UserId,$OrgId) {
+		$sql = '
+				INSERT INTO subscriptions
+							(
+							subscription_organisation_entity_id,
+							subscription_user_entity_id,
+							)
+						VALUES
+							{
+							\''.$OrgId.'\',
+							\''.$UserId.'\'
+							}
+				';
+		$this->db->query($sql);
+	}
+	
+	# Completely deletes a subscription from the table
+	function RemoveSubscription($UserId,$OrgId) {
+		$sql = '
+				DELETE FROM subscriptions
+				WHERE  subscription_user_entity_id = "'.$UserId.'"
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"								
+				';
+		$this->db->query($sql);		
+	}
+	
+	# sets member=1
+	function ConfirmMember($UserId,$OrgId) {
+		$sql = '
+				UPDATE subscriptions
+				SET subscription_member = "1"
+				WHERE  subscription_user_entity_id = "'.$UserId.'"
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				';
+		$this->db->query($sql);		
+	}
+	
+	#sets confirmed=1
+	function ConfirmSubscription($UserId,$OrgId) {
+		$sql = '
+				UPDATE subscriptions
+				SET subscription_user_confirmed = "1"
+				WHERE  subscription_user_entity_id = "'.$UserId.'"
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				';
+		$this->db->query($sql);			
+	}
+	
+	# A check against an organisation inviting a user twice	
+	function AlreadyMember($UserId,$OrgId) {
+		$sql = '
+				SELECT subscriptions.subscription_user_entity_id
+				FROM   subscriptions
+				WHERE  subscriptions.subscription_user_entity_id = "'.$UserId.'"
+					   AND subscriptions.subscription_organisation_entity_id = "'.$OrganisationId.'"
+				';
+		$query = $this->db->query($sql);
+		$result_array = $query->result_array();
+		if(count($result_array) == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 }	
 ?>
