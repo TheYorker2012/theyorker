@@ -20,10 +20,10 @@ class News_model extends Model
 	}
 
 	/**
-	*Determines wheter the proveded ID is of specified type.
-	*@param $id is an article_id
-	*@param $type is a content_type_codename
-	*@return BOOLEAN
+	*Determines wheter the provided ID is of specified type.
+	*@param $id The article_id to test.
+	*@param $type The content_type_codename being tested.
+	*@return boolean
 	**/	
 		
 	function IdIsOfType($id,$type)
@@ -46,6 +46,11 @@ class News_model extends Model
 		}
 	}
 
+	/**
+	*Returns the content_type_codename of a content_type_id.
+	*@param $type_id The content_type_id.
+	*@return content_type_codename This corresponds to the content_type_id provided.
+	**/
 	function getArticleTypeCodename ($type_id)
 	{
 		$sql = 'SELECT content_type_codename
@@ -55,6 +60,11 @@ class News_model extends Model
 		return $query->row_array();
 	}
 
+	/**
+	*Returns information about a particular content_type
+	*@param $type This is a content_type_codename for the desired content_type.
+	*@return array[content_type_has_children(int),content_type_parent_content_type_id(content_type_id),content_type_name(string)]
+	**/
 	function getArticleTypeInformation ($type)
 	{
 		$sql = 'SELECT content_type_has_children, content_type_parent_content_type_id, content_type_name
@@ -68,6 +78,13 @@ class News_model extends Model
 		return $result;
 	}
 
+	/**
+	*Returns infomation about all content subtypes of a particular content type
+	*@param $main_type This is the content_type_codename that you want all subtypes of.
+	*@return array[subtypes == array[id(content_type_id),codename(content_type_codename),
+	*@return image(content_type_image_id),image_title(image_title),image_extension(image_file_extension),
+	*@return image_codename(image_type_codename),name(content_type_name)]
+	**/
 	function getSubArticleTypes ($main_type)
 	{
 		$result = array();
@@ -341,7 +358,7 @@ class News_model extends Model
 	/**
 	 * Get array containing all data needed to display a full news article.
 	 * -Currently does not return related articles and only returns photo_id-
-	 * @param $id is the article_id of the article data to return
+	 * @param $id This is the article_id of the article data to return.
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'text','blurb','authors' (just ids atm),'fact_boxes','photos' (just ids atm)
 	 * @return 'links', 'related_articles'

@@ -24,6 +24,7 @@ class ModelTest extends Controller {
 		$this->load->model('news_model','news');
 		$this->load->model('article_model','article');
 		$this->load->model('wikicache_model','wiki');
+		$this->load->model('requests_model','request');
 		
 		//Load data from model
 		$article = $this->news->GetSummaryArticle(1);
@@ -42,6 +43,21 @@ class ModelTest extends Controller {
 
 		//add factbox wikicache
 //		$this->wiki->UpdateFactWikicache();
+
+		//Requests testing
+//		$tmp = $this->request->CreateRequest('suggestion','uninews','W00T Bobs fun stuff','Tis about Bob...',1,1171231491);
+//		$this->request->AddUserToRequest($tmp,2);
+//		$this->request->AcceptRequest(44,2);
+//		$this->request->CreateArticleRevision($tmp,2,'Heading','subheading','subtext','Wooot wikitext','teh blurb');
+//		$this->request->UpdateArticleRevision(29,2,'Heading has changed','subheading has changed','subtext1','Wooot 2  wikitext','teh blurbage');
+//		$this->request->DeclineRequest(44,2);
+//		$this->request->RemoveUserFromRequest(44,2);
+//		$this->request->UpdateRequestStatus(44,'request',array('editor'=>1,'publish_date'=>1191231491,'title'=>'Bob is Back','description'=>'WooooHoooo'));
+//		$this->request->GetArticleRevisions(44);
+//		$this->request->GetPulledArticles('uninews');
+//		$this->request->GetRequestedArticles('uninews');
+//		$this->request->GetSuggestedArticles('uninews');
+//		$this->request->GetPublishedArticles('uninews',TRUE);
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
