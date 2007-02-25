@@ -1,0 +1,21 @@
+# To update content type organisation team links
+UPDATE content_types SET `content_type_related_organisation_entity_id`=
+(SELECT entities.entity_id FROM entities WHERE entities.entity_username = CONCAT('theyorker_section_',content_types.content_type_codename))
+WHERE `content_type_related_organisation_entity_id` IS NULL;
+
+# To insert into entities any content types not already done
+INSERT INTO `entities` (`entity_username`)
+SELECT CONCAT('theyorker_section_',content_types.content_type_codename)
+FROM content_types
+WHERE content_types_related_organisation_entity_id IS NULL;
+
+# To insert into organisations any teams not linked in content types
+INSERT INTO `organisations` (`organisation_entity_id`, `organisation_organisation_type_id`, `organisation_parent_organisation_entity_id`, `organisation_name`, `organisation_show_in_directory`)
+SELECT entities.entity_id,
+5,
+453,
+CONCAT('theyorker_section_',content_types.content_type_codename),
+0
+FROM content_types INNER JOIN entities ON entities.entity_username=
+CONCAT('theyorker_section_',content_types.content_type_codename)
+WHERE content_type_related_organisation_entity_id IS NULL;

@@ -11,7 +11,7 @@ class Dev extends Controller {
 		$op  = '<a href="/admin/dev/phpinfo">PHP information</a><br />';
 		$op .= 'If you think this is wrong then email mg512<br />';
 		$op .= 'Info dumps follow:<br /><pre>';
-		exec('svn info', $ops);
+		exec('svn info ..', $ops);
 		$op .= implode("\n",$ops);
 		$op .= '<pre />';
 		

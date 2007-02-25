@@ -145,67 +145,85 @@ class Members extends Controller
 		if (!empty($membership)) {
 			$membership = $membership[0];
 			
-			if (NULL === $Page) {
-				// DISPLAY USER INFORMATION --------------------------------- //
-				$this->pages_model->SetPageCode('viparea_members_info');
+			// Read the post data
+			$button = $this->input->post('member_update');
+			if ($button === 'Update') {
+				$member_paid	= (FALSE !== $this->input->post('member_paid'));
+				$member_vip		= (FALSE !== $this->input->post('member_vip'));
 				
-				// Stringify gender
-				$membership['gender'] =  (($membership['gender']=='m')?('male')
-										:(($membership['gender']=='f')?('female')
-										:('unknown')));
-				
-				$data = array(
-					'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
-					'membership'   => $membership,
-				);
-				// Set up the content
-				$this->main_frame->SetContentSimple('viparea/editmembers', $data);
-				
-				// Set the title parameters
-				$this->main_frame->SetTitleParameters(array(
-					'organisation'	=> $this->user_auth->organisationName,
-					'firstname'		=> $membership['firstname'],
-					'surname'		=> $membership['surname'],
-				));
-			
-			} elseif ($Page === 'post') {
-				// SAVE MEMBERSHIP INFORMATION ------------------------------ //
-				// Find the changes
-				$confirm = $this->input->post('member_update'); // = 'Update'
-				if ($confirm === 'Update') {
-					$member_paid	= (FALSE !== $this->input->post('member_paid'));
-					$member_vip		= (FALSE !== $this->input->post('member_vip'));
-					
-					$changes = array();
-					if ($member_paid !== (bool)$membership['paid']) {
-						// Paid has changed
-						$changes['paid'] = $member_paid;
-					}
-					if ($member_vip !== (bool)$membership['vip']) {
-						// Vip status has changed
-						$changes['vip'] = $member_vip;
-					}
-					
-					// If changes save them
-					// If no changes don't save them
-					if (empty($changes)) {
-						$this->messages->AddMessage('information','No changes were made to the membership.');
-					} else {
-						/// @todo Save member updated to database
-						$this->messages->AddMessage('success',
-								'The membership\'s '.implode(', ',array_keys($changes)).' flags were successfully updated');
-						$this->messages->AddMessage('error',
-								'The membership\'s '.implode(', ',array_keys($changes)).' flags could not be updated');
-					}
+				$changes = array();
+				if ($member_paid !== (bool)$membership['paid']) {
+					// Paid has changed
+					$membership['paid'] = $changes['paid'] = $member_paid;
+				}
+				if ($member_vip !== (bool)$membership['vip']) {
+					// Vip status has changed
+					$membership['vip'] = $changes['vip'] = $member_vip;
 				}
 				
-				// Redirect
-				return redirect(vip_url('members/info/'.$EntityId));
-				
-			} else {
-				// No other pages available
-				return show_404();
-			}
+				// If changes save them
+				// If no changes don't save them
+				if (empty($changes)) {
+					$this->messages->AddMessage('information','No changes were made to the membership.');
+				} else {
+					/// @todo Do in single update to db
+					$successes = array();
+					$failures = array();
+					if (array_key_exists('paid', $changes)) {
+						$num_changes = $this->members_model->UpdatePaidStatus(
+							$changes['paid']?'1':'0',
+							$EntityId, VipOrganisationId());
+						if ($num_changes) {
+							$successes[] = 'paid';
+						} else {
+							$failures[] = 'paid';
+						}
+					}
+					if (array_key_exists('vip', $changes)) {
+						$num_changes = $this->members_model->UpdateVipStatus(
+							$changes['vip']?'1':'0',
+							$EntityId, VipOrganisationId());
+						if ($num_changes) {
+							$successes[] = 'vip';
+						} else {
+							$failures[] = 'vip';
+						}
+					}
+					if (!count($failures)) {
+						$this->messages->AddMessage('success',
+								'The membership\'s '.implode(', ',$successes).' flags were successfully updated');
+					} elseif (!count($successes)) {
+						$this->messages->AddMessage('error',
+								'The membership\'s '.implode(', ',$failures).' flags could not be updated');
+					} else {
+						$this->messages->AddMessage('error',
+								'The membership\'s '.implode(', ',$failures).' flags could not be updated (the flags '.
+								implode(', ',$successes).' were successfully updated)');
+					}
+				}
+			} 
+			
+			// DISPLAY USER INFORMATION --------------------------------- //
+			$this->pages_model->SetPageCode('viparea_members_info');
+			
+			// Stringify gender
+			$membership['gender'] =  (($membership['gender']=='m')?('male')
+									:(($membership['gender']=='f')?('female')
+									:('unknown')));
+			
+			$data = array(
+				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+				'membership'   => $membership,
+			);
+			// Set up the content
+			$this->main_frame->SetContentSimple('viparea/editmembers', $data);
+			
+			// Set the title parameters
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> $this->user_auth->organisationName,
+				'firstname'		=> $membership['firstname'],
+				'surname'		=> $membership['surname'],
+			));
 			
 		} else {
 			// The entity isn't a member of the organisation
@@ -228,6 +246,8 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->helper('images');
+		
+		$mode = 'view';
 		
 		$sql = array('TRUE',array());
 		if ($Suboption1 === 'filter') {
@@ -256,27 +276,63 @@ class Members extends Controller
 		} elseif (is_numeric($Suboption1)) {
 			$sql[0] = 'business_cards.business_card_id=?';
 			$sql[1] = array($Suboption1);
+			if ($Suboption2 === 'edit') {
+				$mode = 'edit';
+			}
 		}
 		$business_cards = $this->members_model->GetBusinessCards(
 				VipOrganisationId(),
 				$sql[0], $sql[1]);
 		
 		// DISPLAY BUSINESS CARDS ----------------------------------- //
+		if ($mode === 'view') {
+			$this->pages_model->SetPageCode('viparea_members_cards');
+			
+			$data = array(
+				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+				'business_cards' => $business_cards,
+			);
+			
+			// Set up the content
+			$this->main_frame->SetContentSimple('viparea/members_cards', $data);
+			
+			// Set the title parameters
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> $this->user_auth->organisationName,
+			));
+			
+		} elseif ($mode === 'edit') {
+			if (!count($business_cards)) {
+				$this->messages->AddMessage('error','Business card '.$Suboption1.' could not be found');
+				redirect(vip_url('members/cards'));
+			}
+			$this->pages_model->SetPageCode('viparea_members_card_edit');
+			
+			$this->load->model('directory_model');
 		
-		$this->pages_model->SetPageCode('viparea_members_cards');
-		
-		$data = array(
-			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'business_cards' => $business_cards,
-		);
-		
-		// Set up the content
-		$this->main_frame->SetContentSimple('viparea/members_cards', $data);
-		
-		// Set the title parameters
-		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> $this->user_auth->organisationName,
-		));
+			// translate into nice names for view
+			$data = array(
+				'business_card' => $business_cards[0],
+				'business_card_goups' => array(),
+			);
+			
+			// Business Card Groups
+			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups(VipOrganisation());
+			foreach ($groups as $group) {
+				$data['business_card_goups'][] = array(
+					'name' => $group['business_card_group_name'],
+					'id' => $group['business_card_group_id'],
+					'href' => vip_url('members/cards/filter/cardgroup/'.$group['business_card_group_id'])
+				);
+			}
+			
+			// Set the title parameters
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> $this->user_auth->organisationName,
+				'name'			=> $business_cards[0]['name'],
+			));
+			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
+		}
 		
 		// Load the main frame
 		$this->main_frame->Load();

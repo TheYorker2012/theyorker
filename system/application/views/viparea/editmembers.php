@@ -41,7 +41,7 @@
 	</form>
 	
 	<H3>Membership Information</H3>
-	<form action="<?php echo vip_url('members/info/'.$membership['user_id'].'/post');?>" class='form' method='POST'>
+	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
 		<fieldset>
 			<P>On Mailing List:<?php echo $membership['on_mailing_list'] ? 'Yes' : 'No'; ?></P>
 			<label for='member_paid'>Paid:</label>

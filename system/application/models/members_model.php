@@ -73,6 +73,7 @@ class Members_model extends Model {
 		$sql = '
 			SELECT	business_cards.business_card_user_entity_id AS user_id,
 					business_cards.business_card_id AS id,
+					business_cards.business_card_business_card_group_id AS group_id,
 					business_cards.business_card_image_id AS image_id,
 					business_cards.business_card_name AS name,
 					business_cards.business_card_title AS title,
@@ -134,6 +135,7 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$query = $this->db->query($sql);
+		return $this->db->affected_rows();
 	}
 	
 	# sets paid to $status
@@ -145,6 +147,7 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
 				';
 		$this->db->query($sql);
+		return $this->db->affected_rows();
 	}	
 	
 	# Assumes not already in DB (use AlreadyMember to check)

@@ -376,63 +376,6 @@ class Yorkerdirectory extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function editcontact($business_card)
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$organisation = $this->user_auth->organisationShortName;
-		$this->pages_model->SetPageCode('viparea_directory_editcontact');
-			
-		$organisation = ''; // Throw this away and retrieve it from the $business_card instead for security
-		
-		// Members data
-		$members = $this->directory_model->GetDirectoryOrganisationCardsById($business_card);
-		// translate into nice names for view
-		foreach ($members as $member) {
-			$data['editmember'] = array(
-				'name' => $member['business_card_name'],
-				'title' => $member['business_card_title'],
-				'course' => $member['business_card_course'],
-				'group_id' => $member['business_card_business_card_group_id'],
-				'blurb' => $member['business_card_blurb'],
-				'email' => $member['business_card_email'],
-				'phone_mobile' => $member['business_card_mobile'],
-				'phone_internal' => $member['business_card_phone_internal'],
-				'phone_external' => $member['business_card_phone_external'],
-				'postal_address' => $member['business_card_postal_address']
-			);
-			$organisation = $member['organisation_directory_entry_name'];
-		}
-		
-		//Get Data And toolbar
-		$data += $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar();
-
-		// Business Card Groups
-		$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
-		// translate into nice names for view
-		$data['business_card']['groups'] = array();
-		foreach ($groups as $group) {
-			$data['business_card']['groups'][] = array(
-				'name' => $group['business_card_group_name'],
-				'id' => $group['business_card_group_id'],
-				'href' => vip_url('directory/'.$organisation.'/contacts/'.$group['business_card_group_id'])
-			);
-		}
-		
-		// Set up the directory view
-		$the_view = $this->frames->view('directory/viparea_directory_contacts', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name']));
-		$this->main_frame->SetPage('contacts');
-		$this->main_frame->SetContent($the_view);
-		
-		// Load the public frame view
-		$this->main_frame->Load();
-	}
-	
 	/// Set up the navigation bar.
 	/**
 	 * @param $DirectoryEntry Directory entry of organisation.
