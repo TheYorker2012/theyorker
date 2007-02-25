@@ -1,5 +1,4 @@
 	<div class='RightToolbar'>
-		TEST
 		<h4><?php echo $latest_heading; ?></h4>
 
 		<?php if (isset($puffers)) { ?>
