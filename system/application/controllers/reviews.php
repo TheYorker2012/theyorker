@@ -111,7 +111,7 @@ class Reviews extends Controller
 		$data['article_title'] = $article_database_result['heading'];
 		$data['article_content'] = $article_database_result['subtext'];
 		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/food/'.$organisation_code_name;
+		$data['article_link'] = '/reviews/'.$content_type.'/'.$organisation_code_name;
 
 		// Create byline --- Note to byliner... dynamic data done
 		$this->load->library('byline');
