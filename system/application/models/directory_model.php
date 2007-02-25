@@ -105,6 +105,7 @@ class Directory_model extends Model {
 	{
 		$sql =
 			'SELECT'.
+			' business_cards.business_card_user_entity_id,'.
 			' business_cards.business_card_id,'.
 			' business_cards.business_card_image_id,'.
 			' business_cards.business_card_name,'.
@@ -138,6 +139,7 @@ class Directory_model extends Model {
 	{
 		$sql =
 			'SELECT'.
+			' business_cards.business_card_user_entity_id,'.
 			' business_cards.business_card_id,'.
 			' business_cards.business_card_image_id,'.
 			' business_cards.business_card_name,'.

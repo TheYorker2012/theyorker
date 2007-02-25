@@ -29,9 +29,9 @@
 	</div>
 	<?php
 	} else {
-		foreach ($organisation['cards'] as $member) {
+		foreach ($organisation['cards'] as $business_card) {
 			$this->load->view('directory/business_card',array(
-				'business_card' => $member,
+				'business_card' => $business_card,
 				'editmode' => isset($organisation['editmode']),
 			));
 		}

@@ -221,16 +221,6 @@ class Members extends Controller
 				VipOrganisationId(),
 				$sql[0], $sql[1]);
 		
-		foreach ($business_cards as $key => $business_card) {
-			if($business_card['image_id'] == NULL)
-			{
-				$image = '/images/prototype/directory/members/no_image.png';
-			} else {
-				$image = photoLocation($business_card['image_id']);
-			}
-			$business_cards[$key]['image'] = $image;
-		}
-		
 		// DISPLAY BUSINESS CARDS ----------------------------------- //
 		
 		$this->pages_model->SetPageCode('viparea_members_cards');
@@ -296,25 +286,41 @@ class Members extends Controller
 	{
 		$sortable = FALSE;
 		$post_search = NULL;
+		static $field_translator = array(
+			'team'			=> 'NULL',
+			'user'			=> 'business_cards.business_card_user_entity_id',
+			'card'			=> 'business_cards.business_card_id',
+			'paid' 			=> 'NULL',
+			'vip'			=> 'NULL',
+			'carded'		=> 'NULL',
+			'carding'		=> 'NULL',
+			'cardable'		=> 'NULL',
+			'mailable'		=> 'NULL',
+			'search'		=> 'NULL',
+			'firstname'		=> 'NULL',
+			'surname'		=> 'NULL',
+			'nickname'		=> 'NULL',
+			'enrol_year'	=> 'NULL',
+		);
 		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
 			if (is_bool($er)) {
 				if ($filt !== 'search') {
-					$Conditions[] = '('.$filt.'='.($er?'1':'0').')';
+					$Conditions[] = '('.$field_translator[$filt].'='.($er?'1':'0').')';
 				} else {
 					$post_search = $er;
 				}
 			} elseif ($filt !== 'sort') {
 				$disjuncts = array();
 				foreach ($er[TRUE] as $id => $dummy) {
-					$disjuncts[] = '('.$filt.'=?)';
+					$disjuncts[] = '('.$field_translator[$filt].'=?)';
 					$bind_data[] = $id;
 				}
 				if (!empty($disjuncts)) {
 					$Conditions[] = '('.implode(' OR ', $disjuncts).')';
 				}
 				foreach ($er[FALSE] as $id => $dummy) {
-					$Conditions[] = '('.$filt.'!=?)';
+					$Conditions[] = '('.$field_translator[$filt].'!=?)';
 					$bind_data[] = $id;
 				}
 			} else {
@@ -333,7 +339,7 @@ class Members extends Controller
 		if ($sortable) {
 			$sorts = array();
 			foreach ($Filter['sort'] as $sorter) {
-				$sorts[] = $sorter[1].' '.$sorter[0];
+				$sorts[] = $field_translator[$sorter[1]].' '.$sorter[0];
 			}
 			$sql .= ' ORDER BY '.implode(', ',$sorts);
 		}

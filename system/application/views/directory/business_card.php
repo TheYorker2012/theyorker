@@ -1,8 +1,26 @@
+<?php
+if($business_card['image_id'] == NULL)
+{
+	$business_card['image'] = '/images/prototype/directory/members/no_image.png';
+} else {
+	$business_card['image'] = photoLocation($business_card['image_id']);
+}
+?>
 <div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
 	<div style='float:right;'>
 		<img src='<?php echo $business_card['image']; ?>' alt='<?php echo $business_card['name']; ?>' />
 	</div>
-	<span style="font-size: large;  color: #2DC6D7; "><?php echo $business_card['name']."<br />".$business_card['title']; ?></span>
+	<span style="font-size: large;  color: #2DC6D7; ">
+	<?php
+	if (	isset($editmode) && $editmode &&
+			isset($business_card['user_id']) && NULL != $business_card['user_id']) {
+		echo '<a href="'.vip_url('members/info/'.$business_card['user_id']).'">'.$business_card['name'].'</a>';
+	} else {
+		echo $business_card['name'];
+	}
+	echo '<br />'.$business_card['title'];
+	?>
+	</span>
 	<p style='font-size:small;'><?php echo $business_card['blurb']; ?></p>
 	<p>
 		<?php

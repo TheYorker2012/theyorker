@@ -309,12 +309,14 @@ class Yorkerdirectory extends Controller
 			$data['organisation']['cards'] = array();
 			foreach ($members as $member) {
 				$data['organisation']['cards'][] = array(
+					'user_id' => $member['business_card_user_entity_id'],
 					'id' => $member['business_card_id'],
 					'name' => $member['business_card_name'],
 					'title' => $member['business_card_title'],
 					'course' => $member['business_card_course'],
 					'blurb' => $member['business_card_blurb'],
 					'email' => $member['business_card_email'],
+					'image_id' => $member['business_card_image_id'],
 					'phone_mobile' => $member['business_card_mobile'],
 					'phone_internal' => $member['business_card_phone_internal'],
 					'phone_external' => $member['business_card_phone_external'],
