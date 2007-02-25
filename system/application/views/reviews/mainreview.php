@@ -3,6 +3,13 @@
 	<div class='Entry'>
 		<?php echo $organisation_description; ?>
 	</div>
+
+<?php
+
+if ($content_type != 'barcrawl')
+{ //Normal Section
+
+?>
 	<h4>Details</h4>
 	<div class='Entry'>
 		<span class="ReviewDetailsTitle">Address</span><br />
@@ -29,6 +36,22 @@
 		<span class="ReviewDetailsTitle">Average Drink Price</span><br />
 				<span class="ReviewDetailsInfo"><?php echo '£'.($average_price/100); ?></span><br />
 	</div>
+
+<?php
+}
+else
+{ //Barcrawl Section
+	echo "<h4>Other Barcrawls</h4><div class='Entry'>";
+	foreach ($barcrawls as $barcrawl)
+	{
+		echo '<a href="'.$barcrawl['barcrawl_link'].'">'.$barcrawl['barcrawl_name'].'</a><br />';
+	}
+echo '</div>';
+
+}
+
+?>
+
 </div>
 
 <div class="grey_box">
@@ -64,6 +87,27 @@
 ?>
 	</div>
 </div>
+
+<?php
+if ($content_type == 'barcrawl' && FALSE)
+{	
+	//Barcrawl top box
+	echo '<div class="blue_box"><h2>barcrawl details</h2>';
+	echo '<table><tr><td><b>Pub</b></td><td><b>Recommended Drink</b></td><td><b>Cost</b></td></tr>';
+	foreach ($bar_list as $bar)
+	{
+		echo '<tr><td>'.$bar['bar_name'].'</td><td>'.$bar['bar_drink'].'</td><td>£'.($bar['bar_drink_cost'] / 100).'</td>';
+	}
+
+	echo '</table><br />';	
+
+	echo '<font size=3><b>Directions</b></font><br /><br />'.$barcrawl_directions;
+
+echo '</div>';
+
+}
+?>
+
 <div class="blue_box">
 	<h2>reviews</h2>
 

@@ -3,17 +3,15 @@
 <?php
 
 //Barcrawls for culture only
-if ($content_type == 'culture' && FALSE) //Disabled due to barcrawls not existing in the database... in a working fashion...
+if ($content_type == 'culture' && FALSE)
 {
-	echo "
-	<h4>Bar Crawls</h4>
-	<div class='Entry'>".'
-		Planning a night out on the town? Then look no further!<br /><br />
-			<a href="/reviews/barcrawl">Bob Bastards Bar Craw</a><br />
-			<a href="/reviews/barcrawl">Sids Death Line</a><br />
-			<a href="/reviews/barcrawl">Garys Green Mile</a><br />
-	</div>
-	';
+//Barcrawl Section
+	echo "<h4>Barcrawls</h4><div class='Entry'>Fancy a night on the town? <br />We have the crawls just for you<br /><br />";
+	foreach ($barcrawls as $barcrawl)
+	{
+		echo '<a href="'.$barcrawl['barcrawl_link'].'">'.$barcrawl['barcrawl_name'].'</a><br />';
+	}
+echo '</div>';
 };
 
 //Display leagues

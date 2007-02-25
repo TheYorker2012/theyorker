@@ -86,6 +86,26 @@ class Reviews extends Controller
 		//Load news model
 		$this->load->model('News_model');
 
+		//For culture - The right side barcrawl list
+		if ($content_type == 'culture')
+		{
+			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
+			
+			if ($barcrawl_id != array()) //If not empty
+			{
+				$barcrawl_index = 0;
+				
+				foreach ($barcrawl_id as $id) //Get all the information from news model
+				{
+					$barinfo = $this->News_model->GetSimpleArticle($id);
+					$barcrawls[$barcrawl_index]['barcrawl_name'] = $barinfo['heading'];
+					$barcrawls[$barcrawl_index]['barcrawl_link'] = '/reviews/barcrawl/'.$this->Review_model->GetDirectoryName($id);
+				}
+			}
+			$data['barcrawls'] = $barcrawls;
+
+		}
+
 		//Get the last article_id
 		$article_id = $this->News_model->GetLatestId($content_type,1); //1 is the amount of articles
 		$article_id = $article_id[0]; //Only 1 article being retrieved so...
@@ -172,6 +192,9 @@ class Reviews extends Controller
 		//Set page code
 		$this->pages_model->SetPageCode('review_context');
 
+		//Pass content_type to view
+		$data['content_type'] = $content_type;
+
 		//This needs to be altered to throw errors incase of unknown content_types...
 		$content_id = $this->Review_model->GetContentTypeID($content_type);
 
@@ -182,6 +205,28 @@ class Reviews extends Controller
 		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
 		$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
+
+		//For barcrawls only - The right side barlist
+		if ($content_type == 'barcrawl')
+		{
+			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
+			
+			if ($barcrawl_id != array()) //If not empty
+			{
+				$barcrawl_index = 0;
+				
+				foreach ($barcrawl_id as $id) //Get all the information from news model
+				{
+					$barinfo = $this->News_model->GetSimpleArticle($id);
+					$barcrawls[$barcrawl_index]['barcrawl_name'] = $barinfo['heading'];
+					$barcrawls[$barcrawl_index]['barcrawl_link'] = '/reviews/barcrawl/'.$this->Review_model->GetDirectoryName($id);
+				}
+			}
+			$data['barcrawls'] = $barcrawls;
+
+			$data['bar_list'] = $this->Review_model->GetPubList(1);
+
+		}
 
 		//Load bylines support
 		$this->load->library('byline');
@@ -230,6 +275,7 @@ class Reviews extends Controller
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
+		$data['barcrawl_directions'] = $review_database_result['review_context_content_directions'];
 
 		//Check the deal isn't expired
 		if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
