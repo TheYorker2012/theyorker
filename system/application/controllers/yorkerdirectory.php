@@ -355,7 +355,7 @@ EXTRAHEAD;
 				$data['organisation']['cards'][] = array(
 					'name' => $member['business_card_name'],
 					'title' => $member['business_card_title'],
-					'image_id' => $image['business_card_image_id'],
+					'image_id' => $member['business_card_image_id'],
 					'course' => $member['business_card_course'],
 					'blurb' => $member['business_card_blurb'],
 					'email' => $member['business_card_email'],
