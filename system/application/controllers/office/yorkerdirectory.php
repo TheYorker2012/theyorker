@@ -114,6 +114,7 @@ class Yorkerdirectory extends Controller
 				
 				// Insert main text from pages information
 				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+				$data['revisions_information_text'] = $this->pages_model->GetPropertyWikitext('revisions_information_text');
 				
 				//Page Revisions
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
@@ -158,7 +159,49 @@ class Yorkerdirectory extends Controller
 				$this->load->library('custom_pages');
 				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 			}
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		if($action=='preview'){
+			$organisation = $this->user_auth->organisationShortName;
+			$this->pages_model->SetPageCode('viparea_directory_publish');
 			
+			//Show a toolbar in a message for the preview.
+			$published = $this->directory_model->IsRevisionPublished($organisation, $revision);
+			$user_level = GetUserLevel();
+			if($published){
+				$message = 'This is a preview of the current published directory revision.<br />'.$user_level;
+			}else{
+				$message = 'This is a preview of a directory revision.<br />'.$user_level;
+			}
+			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
+			
+			if($published == false){
+				//if($user_level == "office" || $user_level == "editor" || $user_level == "admin"){
+					$message .= ' | <a href="'.vip_url('directory/information/publish/'.$revision).'">Publish This Revision</a>';
+				//}
+				$message .= ' | <a href="'.vip_url('directory/information/delete/'.$revision).'">Delete This Revision</a>';
+			}
+			
+			$this->main_frame->AddMessage('information',$message);
+			
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
+			
+			if (!empty($data)) {
+				$this->_SetupNavbar();
+				
+				// Set up the directory view
+				$the_view = $this->frames->view('directory/directory_view', $data);
+				
+				// Set up the public frame
+				$this->main_frame->SetTitleParameters(
+						array('organisation' => $data['organisation']['name']));
+				$this->main_frame->SetPage('information');
+				$this->main_frame->SetContent($the_view);
+			} else {
+				$this->load->library('custom_pages');
+				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+			}
 			// Load the public frame view
 			$this->main_frame->Load();
 		}

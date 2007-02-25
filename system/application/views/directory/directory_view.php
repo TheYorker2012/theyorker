@@ -86,15 +86,6 @@ if (!empty($organisation['reviews_by_type'])) {
 <?php
 }
 ?>
-	<h4>Related articles</h4>
-	<div style='padding: 10px 5px 10px 5px;'>
-			<h5>Article title 1</h5>
-			<a href='#'>A brief description of the article...</a>
-			<h5>Article title 2</h5>
-			<a href='#'>A brief description of the article...</a>
-			<h5>Article title 3</h5>
-			<a href='#'>A brief description of the article...</a>
-	</div>
 </div>
 <div style="padding:0px 3px 0px 0px; width: 420px; margin: 0px;">
 	<div style="border: 1px solid #2DC6D7; padding: 5px; font-size: small; margin-bottom: 4px; ">
