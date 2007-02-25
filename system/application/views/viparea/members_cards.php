@@ -4,6 +4,7 @@
 		<?php echo $main_text; ?>
 	</p>
 </div>
+<div style="width: 420px; margin: 0px; padding-right: 3px; ">
 <?php
 if (empty($business_cards)) {
 ?>
@@ -19,3 +20,4 @@ if (empty($business_cards)) {
 }
 ?>
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>
+</div>

@@ -15,7 +15,7 @@ class Members_model extends Model {
 	 *	- Subscription must not be deleted
 	 *	- email will only be returned if the member is on the mailing list
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL)
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array())
 	{
 		$bind_data = array();
 		$sql = '
@@ -48,6 +48,8 @@ class Members_model extends Model {
 			';
 		// Run the query and return the raw results array.
 		$bind_data[] = $organisation_id;
+		$sql .= ' AND ' . $FilterSql;
+		$bind_data = array_merge($bind_data, $BindData);
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
@@ -65,7 +67,7 @@ class Members_model extends Model {
 		return $query->result_array();
 	}
 	
-	function GetBusinessCards($OrganisationId, $FilterSql, $BindData)
+	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
 	{
 		$bind_data = array($OrganisationId);
 		$sql = '
@@ -86,14 +88,14 @@ class Members_model extends Model {
 			INNER JOIN	business_card_groups
 					ON	business_cards.business_card_business_card_group_id
 							= business_card_groups.business_card_group_id
-			'./*LEFT JOIN	subscriptions
+			LEFT JOIN	subscriptions
 					ON	subscriptions.subscription_user_entity_id
 							= business_cards.business_card_user_entity_id
 					AND	subscriptions.subscription_deleted	= FALSE
 					AND subscriptions.subscription_member	= TRUE
 			LEFT JOIN	users
 					ON	users.user_entity_id
-							= business_cards.business_card_user_entity_id*/'
+							= business_cards.business_card_user_entity_id
 			WHERE		business_card_groups.business_card_group_organisation_entity_id
 							= ?
 					AND	business_cards.business_card_deleted = 0

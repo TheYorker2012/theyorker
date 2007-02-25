@@ -10,7 +10,6 @@
  /list                       list members of the organisation/team, applicable filters
       /filter/$filter          apply filter
  /info/$entity_id            basic information about the user and their membership
-                 /cards        cards for this member
                  /post         [post changes to membership details]
  /cards                      show organisation business cards
        /filter/$filter         apply filter
@@ -47,6 +46,8 @@ also works out base url which excludes unecesaries
 /not ?              exclude following
                     otherwise include following
 + /team/$team_name  team $team_name
++ /user/$entity_id  specific user
++ /card/$card_id    user with specific card
 + /sort/asc/$field  sort ascending by $field
 + /sort/desc/$field sort descending by $field
 + /paid             paid members
@@ -55,9 +56,7 @@ also works out base url which excludes unecesaries
 + /carding          card requested
 + /cardable         card recieved
 + /mailable         on mailing list
-+ /user/$entity_id  specific user
-+ /card/$card_id    user with specific card
-+ /search           match posted search
++ /search/$field    match posted search
 
 e.g. to get users in tech and news team who haven't submitted cards
 /team/theyorker_tech/team/theyorker_news/not/carded/not/cardable

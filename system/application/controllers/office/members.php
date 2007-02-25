@@ -75,9 +75,26 @@ class Members extends Controller
 		/// @todo Implement $viparea/members/list/...
 		
 		if ($Filter === 'filter') {
+			static $field_translator = array(
+				'team'			=> 'NULL',
+				'user'			=> 'users.user_entity_id',
+				'card'			=> 'NULL',
+				'paid' 			=> 'subscriptions.subscription_paid',
+				'vip'			=> 'subscriptions.subscription_vip',
+				'carded'		=> 'NULL',
+				'carding'		=> 'NULL',
+				'cardable'		=> 'NULL',
+				'mailable'		=> 'subscriptions.subscription_email',
+				'search'		=> 'NULL',
+				'firstname'		=> 'users.user_firstname',
+				'surname'		=> 'users.user_surname',
+				'nickname'		=> 'users.user_nickname',
+				'enrol_year'	=> 'users.user_enrolled_year',
+			);
 			try {
 				$filter = $this->_GetFilter(4);
-				$this->messages->AddDumpMessage('filter',$this->_GenerateFilterSql($filter));
+				$sql = $this->_GenerateFilterSql($filter, $field_translator);
+				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
 			}
@@ -85,10 +102,14 @@ class Members extends Controller
 			return show_404();
 		}
 		
+		if (!isset($members)) {
+			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
+		}
+		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
-			'members'      => $this->members_model->GetMemberDetails(VipOrganisationId()),
+			'members'      => $members,
 			'team'         => $this->members_model->GetTeams($this->user_auth->organisationLogin)
 		);
 		// Set up the content
@@ -210,12 +231,31 @@ class Members extends Controller
 		
 		$sql = array('TRUE',array());
 		if ($Suboption1 === 'filter') {
+			static $field_translator = array(
+				'team'			=> 'NULL',
+				'user'			=> 'business_cards.business_card_user_entity_id',
+				'card'			=> 'business_cards.business_card_id',
+				'paid' 			=> 'subscriptions.subscription_paid',
+				'vip'			=> 'subscriptions.subscription_vip',
+				'carded'		=> 'NULL',
+				'carding'		=> 'NULL',
+				'cardable'		=> 'NULL',
+				'mailable'		=> 'subscriptions.subscription_email',
+				'search'		=> 'NULL',
+				'firstname'		=> 'users.user_firstname',
+				'surname'		=> 'users.user_surname',
+				'nickname'		=> 'users.user_nickname',
+				'enrol_year'	=> 'users.user_enrolled_year',
+			);
 			try {
 				$filter = $this->_GetFilter(4);
-				$sql = $this->_GenerateFilterSql($filter);
+				$sql = $this->_GenerateFilterSql($filter, $field_translator);
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
 			}
+		} elseif (is_numeric($Suboption1)) {
+			$sql[0] = 'business_cards.business_card_id=?';
+			$sql[1] = array($Suboption1);
 		}
 		$business_cards = $this->members_model->GetBusinessCards(
 				VipOrganisationId(),
@@ -282,26 +322,10 @@ class Members extends Controller
 	 * @param $Conditions array SQL condition strings.
 	 * @return array(sql, bind_data).
 	 */
-	protected function _GenerateFilterSql($Filter, $Conditions = array())
+	protected function _GenerateFilterSql($Filter, $field_translator, $Conditions = array())
 	{
 		$sortable = FALSE;
 		$post_search = NULL;
-		static $field_translator = array(
-			'team'			=> 'NULL',
-			'user'			=> 'business_cards.business_card_user_entity_id',
-			'card'			=> 'business_cards.business_card_id',
-			'paid' 			=> 'NULL',
-			'vip'			=> 'NULL',
-			'carded'		=> 'NULL',
-			'carding'		=> 'NULL',
-			'cardable'		=> 'NULL',
-			'mailable'		=> 'NULL',
-			'search'		=> 'NULL',
-			'firstname'		=> 'NULL',
-			'surname'		=> 'NULL',
-			'nickname'		=> 'NULL',
-			'enrol_year'	=> 'NULL',
-		);
 		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
 			if (is_bool($er)) {
@@ -338,7 +362,7 @@ class Members extends Controller
 		}
 		if ($sortable) {
 			$sorts = array();
-			foreach ($Filter['sort'] as $sorter) {
+			foreach (array_reverse($Filter['sort']) as $sorter) {
 				$sorts[] = $field_translator[$sorter[1]].' '.$sorter[0];
 			}
 			$sql .= ' ORDER BY '.implode(', ',$sorts);

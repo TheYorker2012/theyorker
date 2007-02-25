@@ -58,7 +58,7 @@ if($business_card['image_id'] == NULL)
 		<?php
 		if (isset($editmode) && $editmode) {
 		?>
-			<form name='member' method='post' action='<?php vip_url('members/cards/'.$business_card['id'].'/edit'); ?>' class='form'>
+			<form name='member' method='post' action='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>' class='form'>
 			<input name='member_edit_button' type='submit' id='member_edit_button' value='Edit' class='button' /><br />
 			</form>
 		<?php
