@@ -263,7 +263,7 @@ class Directory_model extends Model {
 			'	?,'. // author enitity id
 			'	NOW(),'. // timestamp
 			'	organisations.organisation_entity_id,'. // organisation_id
-			'	?, ?, ?, ?, ?, ?, ?, ?, ?) '.
+			'	?, ?, ?, ?, ?, ?, ?, ?, ? '.
 			'FROM organisations '.
 			'WHERE organisations.organisation_directory_entry_name = ?';
 		$query = $this->db->query($sql, array(
