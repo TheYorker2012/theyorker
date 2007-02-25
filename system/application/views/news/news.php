@@ -44,7 +44,7 @@
 		<h4><?php echo $related_heading; ?></h4>
 			<?php foreach ($main_article['related_articles'] as $related) { ?>
 			<div class='NewsOther'>
-				<a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src="<?php echo $related['image']; ?>" alt="<?php echo $related['image_description']; ?>" title="<?php echo $related['image_description']; ?>" /></a>
+				<a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src="<?php echo $related['photo_url']; ?>" alt="<?php echo $related['photo_title']; ?>" title="<?php echo $related['photo_title']; ?>" /></a>
 			    <p class='Headline'><a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
 				<?php foreach ($related['authors'] as $reporter) { ?>
 				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
