@@ -195,7 +195,6 @@ class Reviews extends Controller
 		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
 		$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
-		$review_database_result = $this->Review_model->GetReview($organisation_name,$content_type);
 
 		//Get the article for each article on the page
 		for ($article_no = 0; $article_no < count($article_id); $article_no++)
@@ -213,15 +212,14 @@ class Reviews extends Controller
 		//Place articles into the data array to be passed along
 		$data['article'] = $article;
 
-		//Review rating needs to be fixed it doesn't appear to be in the database
-		$data['review_rating'] = 5;
-
 		//Get user rating
 		$data['user_rating'] = $this->Review_model->GetUserRating($article_id);
 		$data['user_rating'] = $data['user_rating'][0];
 		$data['user_based'] = $this->Review_model->GetUserRating($article_id);
 		$data['user_based'] = $data['user_based'][1];
 
+		//Review context content
+		$review_database_result = $this->Review_model->GetReview($organisation_name,$content_type);
 		$review_database_result = $review_database_result[0]; //Unique so just first row
 
 		$data['article_id'] = $article_id;
@@ -235,6 +233,7 @@ class Reviews extends Controller
 		$data['website']				= $review_database_result['organisation_url'];
 		$data['telephone']				= $review_database_result['organisation_phone_external'];
 		$data['average_price']			= ''.$review_database_result['review_context_content_average_price'];
+		$data['review_rating'] 			= $review_database_result['review_context_content_rating'];
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
@@ -424,7 +423,7 @@ class Reviews extends Controller
 			{
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
-				$reviews['review_rating'][$row] = $leagues[$row]['average_rating'];
+				$reviews['review_rating'][$row] = $leagues[$row]['review_rating'];
 				//This will need the use of a function which returns what a organisition has being reviews on
 				$reviews['review_link'][$row] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name']; 
 				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
