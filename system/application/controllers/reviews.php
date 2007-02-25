@@ -240,9 +240,13 @@ class Reviews extends Controller
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
 
 		//Check the deal isn't expired
-		if ($review_database_result['review_context_content_deal_expires'] < time())
+		if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
 		{
 			$data['deal'] = $review_database_result['review_context_content_deal'];
+		}
+		else
+		{
+			$data['deal'] = NULL; //Null disables the deal section in the view
 		}
 		
 		//Set title parameters

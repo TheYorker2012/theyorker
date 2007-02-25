@@ -42,12 +42,22 @@
 <?php
 		//Star display
 		//Display stars
-		for ($stars = 0; ($stars < $review_rating/2); $stars++)
+		for ($stars = 0; ($stars < floor($review_rating/2)); $stars++)
 		{
 			echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
 		}
+		//Display Half Star
+		if (($review_rating % 2) == 1)
+		{
+			echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
+		}
+		else
+		{
+ 			if ($review_rating != 10) echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
+		}
+		
 		//Fill in the blanks
-		for ($emptystars = 0; $emptystars < (5 - $stars); $emptystars++)
+		for ($emptystars = 0; $emptystars < (4 - $stars); $emptystars++)
 		{
 			echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
 		}

@@ -132,6 +132,9 @@ echo '<img style="float: right;" src="'.$article_photo.'" alt="'.$article_photo_
 ?>
 		<h3><?php echo anchor($article_link, $article_title); ?></h3>
 		<p>
-			<?php echo $article_content; ?>
+			<?php echo $article_content; ?><br />
+			<span class="orange">
+				<?php echo anchor($article_link, 'Read more...', array('class' => 'orange')); ?>
+			</span>
 		</p>
 </div>
