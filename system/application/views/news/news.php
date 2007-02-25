@@ -16,7 +16,7 @@
 
 		<?php foreach ($news_previews as $preview) { ?>
 		<div class='NewsPreview'>
-			<a href='/news/<?php echo $preview['article_type']; ?>/<?php echo $preview['id']; ?>'><img src='<?php echo $preview['image']; ?>' alt='<?php echo $preview['image_description']; ?>' title='<?php echo $preview['image_description']; ?>' /></a>
+			<a href='/news/<?php echo $preview['article_type']; ?>/<?php echo $preview['id']; ?>'><img src="<?php echo $preview['photo_url']; ?>" alt="<?php echo $preview['photo_title']; ?>" title="<?php echo $preview['photo_title']; ?>" /></a>
 			<h3><?php echo anchor('/news/' .$preview['article_type'].'/'.$preview['id'], $preview['heading']); ?></h3>
 			<?php foreach ($preview['authors'] as $reporter) { ?>
 			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
@@ -31,7 +31,7 @@
 		<h4><?php echo $other_heading; ?></h4>
 	   	<?php foreach ($news_others as $other) { ?>
 		<div class='NewsOther'>
-			<a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><img src='<?php echo $other['image']; ?>' alt='<?php echo $other['image_description']; ?>' title='<?php echo $other['image_description']; ?>' /></a>
+			<a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><img src="<?php echo $other['photo_url']; ?>" alt="<?php echo $other['photo_title']; ?>" title="<?php echo $other['photo_title']; ?>" /></a>
 		    <p class='Headline'><a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
 			<?php foreach ($other['authors'] as $reporter) { ?>
 			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
@@ -44,7 +44,7 @@
 		<h4><?php echo $related_heading; ?></h4>
 			<?php foreach ($main_article['related_articles'] as $related) { ?>
 			<div class='NewsOther'>
-				<a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src='<?php echo $related['image']; ?>' alt='<?php echo $related['image_description']; ?>' title='<?php echo $related['image_description']; ?>' /></a>
+				<a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src="<?php echo $related['image']; ?>" alt="<?php echo $related['image_description']; ?>" title="<?php echo $related['image_description']; ?>" /></a>
 			    <p class='Headline'><a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
 				<?php foreach ($related['authors'] as $reporter) { ?>
 				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>

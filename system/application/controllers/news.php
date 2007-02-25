@@ -121,18 +121,6 @@ class News extends Controller {
 		$data['news_previews'] = $news_previews;
 		$data['news_others'] = $news_others;
 
-
-		/// Temporarily fill in a few gaps in the model data
-		for ($i = 0; $i < count($data['news_previews']); $i++) {
-    		$data['news_previews'][$i]['image'] = '/images/prototype/news/thumb2.jpg';
-    		$data['news_previews'][$i]['image_description'] = 'temp image';
-		}
-
-		for ($i = 0; $i < count($data['news_others']); $i++) {
-    		$data['news_others'][$i]['image'] = '/images/prototype/news/thumb3.jpg';
-    		$data['news_others'][$i]['image_description'] = 'temp image';
-		}
-
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('news/news', $data);
 

@@ -233,16 +233,23 @@ class News_model extends Model
 			}
 			$result['authors'] = $authors;
 		}
-		$sql = 'SELECT article_photos.article_photo_photo_id
-			FROM article_photos
-				WHERE (article_photos.article_photo_article_id = ?
-				AND article_photos.article_photo_number = 0)
-				LIMIT 0,10';
-		$query = $this->db->query($sql, array($content_id));
-		if ($query->num_rows() > 0)
-		{
-			$row = $query->result();
-			$result['photos'] = $row->article_photo_photo_id;
+		$sql = 'SELECT article_photos.article_photo_photo_id,
+				 photos.photo_title
+				FROM article_photos, photos
+				WHERE article_photos.article_photo_article_id = ?
+				AND article_photos.article_photo_photo_id = photos.photo_id
+				AND article_photos.article_photo_number = 0';
+		$query = $this->db->query($sql, array($id));
+		$this->load->helper('images');
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			$result['photo_id'] = $row->article_photo_photo_id;
+			$result['photo_url'] = imageLocation($row->article_photo_photo_id, 'small');
+			$result['photo_title'] = $row->photo_title;
+		} else {
+			$result['photo_id'] = 0;
+			$result['photo_url'] = '/images/prototype/news/small-default.jpg';
+			$result['photo_title'] = 'The Yorker - News';
 		}
 		return $result;
 	}
@@ -310,16 +317,23 @@ class News_model extends Model
 			}
 			$result['authors'] = $authors;
 		}
-		$sql = 'SELECT article_photos.article_photo_photo_id
-				FROM article_photos
-				WHERE (article_photos.article_photo_article_id = ?
-				AND article_photos.article_photo_number = 0)
-				LIMIT 0,10';
-		$query = $this->db->query($sql,array($content_id));
-		if ($query->num_rows() > 0)
-		{
-			$row = $query->result();
-			$result['photos'] = $row->article_photo_photo_id;
+		$sql = 'SELECT article_photos.article_photo_photo_id,
+				 photos.photo_title
+				FROM article_photos, photos
+				WHERE article_photos.article_photo_article_id = ?
+				AND article_photos.article_photo_photo_id = photos.photo_id
+				AND article_photos.article_photo_number = 0';
+		$query = $this->db->query($sql, array($id));
+		$this->load->helper('images');
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			$result['photo_id'] = $row->article_photo_photo_id;
+			$result['photo_url'] = imageLocation($row->article_photo_photo_id, 'small');
+			$result['photo_title'] = $row->photo_title;
+		} else {
+			$result['photo_id'] = 0;
+			$result['photo_url'] = '/images/prototype/news/small-default.jpg';
+			$result['photo_title'] = 'The Yorker - News';
 		}
 		return $result;
 	}
