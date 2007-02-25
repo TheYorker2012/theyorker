@@ -200,6 +200,8 @@ class Yorkerdirectory extends Controller
 		
 		$organisation = $this->user_auth->organisationShortName;
 		$this->pages_model->SetPageCode('viparea_directory_photos');
+		$this->load->model('slideshow');
+		$this->load->helper('images')
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
@@ -210,21 +212,8 @@ class Yorkerdirectory extends Controller
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
-			$data['oraganisation'] = $organisation;
-			$data['images'] = array ( //data sent in order
-								array(
-									'id' => 32,
-									'url' => photoLocation(32),
-								),
-								array(
-									'id' => 32,
-									'url' => photoLocation(32),
-								),
-								array(
-									'id' => 32,
-									'url' => photoLocation(32),
-								),
-							);
+			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
+			$data['images'] = get_photos($data['organisation']['id']);
 			
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
