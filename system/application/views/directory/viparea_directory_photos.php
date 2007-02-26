@@ -12,13 +12,15 @@
 	<?php foreach( $images->result() as $image ) { ?>
 	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
 	<br />
-	<a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/move/<?php echo $image->photo_id; ?>/up'>Move up</a> | <a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/move/<?php echo $image->photo_id; ?>/down'>Move down</a> | <a href='/viparea/directory/<?php echo $organisation['shortname']; ?>/photos/delete/<?php echo $image->photo_id; ?>'>Delete</a>
+	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/move/'.$image->photo_id.'/up', 'move up')?> | 
+	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/move/'.$image->photo_id.'/down', 'move down')?> | 
+	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/delete/'.$image->photo_id.'', 'delete')?> 
 	<br />
 	<?php } ?>
 </div>
 <div class='blue_box'>
 <h2> photo upload </h2>
-<form action='/viparea/directory/<?php echo $organisation; ?>/photos/upload' method='POST'>
+<form action='/viparea/directory/<?=$organisation['shortname']?>/photos/upload' method='POST'>
 	Photo File : <input type="file" name="userfile1" size="30" />
 <input type="hidden" name="destination" id="destination" value="1" />
 <input type="submit" value="upload" />
