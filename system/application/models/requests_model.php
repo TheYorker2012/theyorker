@@ -91,63 +91,51 @@ class Requests_Model extends Model
 	}
 
 	//Add a  new request to the article table
-	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
+	function CreateRequest($status,$type_id,$title,$description,$user,$date)
 	{
-		$sql = 'SELECT 	content_type_id
-			FROM	content_types
-			WHERE	(content_type_codename = ?)';
-		$query = $this->db->query($sql,array($type_codename));
-		if ($query->num_rows() == 1)
+		if ($status == 'suggestion')
 		{
-			$type_id = $query->row()->content_type_id;
-			if ($status == 'suggestion')
-			{
-				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id)
-					VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
-				$this->db->query($sql,array($type_id,$title,$description,$user));
-				$sql = 'SELECT 	article_id
-					FROM	articles
-					WHERE	(article_id=LAST_INSERT_ID())';
-				$query = $this->db->query($sql);
-				$id = $query->row()->article_id;
-				$this->db->trans_complete();
-				
-				return $id;
-			}
-			elseif ($status == 'request')
-			{
-				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id,
-						article_editor_approved_user_entity_id,
-						article_publish_date)
-					VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
-				$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
-				$sql = 'SELECT 	article_id 
-					FROM	articles
-					WHERE	(article_id=LAST_INSERT_ID())';
-				$query = $this->db->query($sql);
-				$id = $query->row()->article_id;
-				$this->db->trans_complete();
-				
-				return $id;
-			}
-			else
-			{
-				return FALSE;
-			}
+			$this->db->trans_start();
+			$sql = 'INSERT INTO articles(
+					article_content_type_id,
+					article_created,
+					article_request_title,
+					article_request_description,
+					article_suggestion_accepted,
+					article_request_entity_id)
+				VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
+			$this->db->query($sql,array($type_id,$title,$description,$user));
+			$sql = 'SELECT 	article_id
+				FROM	articles
+				WHERE	(article_id=LAST_INSERT_ID())';
+			$query = $this->db->query($sql);
+			$id = $query->row()->article_id;
+			$this->db->trans_complete();
+			
+			return $id;
+		}
+		elseif ($status == 'request')
+		{
+			$this->db->trans_start();
+			$sql = 'INSERT INTO articles(
+					article_content_type_id,
+					article_created,
+					article_request_title,
+					article_request_description,
+					article_suggestion_accepted,
+					article_request_entity_id,
+					article_editor_approved_user_entity_id,
+					article_publish_date)
+				VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
+			$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
+			$sql = 'SELECT 	article_id 
+				FROM	articles
+				WHERE	(article_id=LAST_INSERT_ID())';
+			$query = $this->db->query($sql);
+			$id = $query->row()->article_id;
+			$this->db->trans_complete();
+			
+			return $id;
 		}
 		else
 		{
@@ -350,17 +338,40 @@ class Requests_Model extends Model
 
 	function GetRequestedArticles($type_codename)
 	{
-		$sql = 'SELECT	articles.article_id,
-				UNIX_TIMESTAMP(articles.article_created) AS article_created,
-				articles.article_request_title
-			FROM	articles, content_types
-			WHERE	articles.article_suggestion_accepted = 1
-			AND	content_types.content_type_id = articles.article_content_type_id
-			AND	content_types.content_type_codename = ?
-			AND	articles.article_live_content_id IS NULL
-			AND	articles.article_deleted = 0
-			AND	articles.article_pulled = 0';
+		$sql = 'SELECT content_type_id,
+				 content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type_codename));
+		$row = $query->row();
+		$type_codenames = array($type_codename);
+		$type_sql = array('content_types.content_type_codename = ?');
+		if ($row->content_type_has_children) {
+			$sql = 'SELECT content_type_codename
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$type_codenames[] = $row->content_type_codename;
+					$type_sql[] = 'content_types.content_type_codename = ?';
+				}
+			}
+		}
+
+		$sql = 'SELECT articles.article_id,
+				 UNIX_TIMESTAMP(articles.article_created) AS article_created,
+				 articles.article_request_title,
+				 content_types.content_type_name
+				FROM articles, content_types
+				WHERE articles.article_suggestion_accepted = 1
+				AND	content_types.content_type_id = articles.article_content_type_id
+				AND	articles.article_live_content_id IS NULL
+				AND	articles.article_deleted = 0
+				AND	articles.article_pulled = 0
+				AND	(';
+		$sql .= implode(' OR ',$type_sql) . ')';
+		$query = $this->db->query($sql,$type_codenames);
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
@@ -369,7 +380,8 @@ class Requests_Model extends Model
 				$result_item = array(
 					'id'=>$row->article_id,
 					'created'=>$row->article_created,
-					'title'=>$row->article_request_title
+					'title'=>$row->article_request_title,
+					'box'=>$row->content_type_name
 					);
 				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
 				$result[] = $result_item;
@@ -454,47 +466,63 @@ class Requests_Model extends Model
 
 	function GetSuggestedArticles($type_codename)
 	{
-		$sql = 'SELECT 	content_type_id
-			FROM	content_types
-			WHERE	(content_type_codename = ?)';
+		$sql = 'SELECT content_type_id,
+				 content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type_codename));
-		if ($query->num_rows() == 1)
-		{
-			$type_id = $query->row()->content_type_id;
-			$sql = 'SELECT	article_id,
-					article_request_title,
-					article_request_description,
-					UNIX_TIMESTAMP(article_created) as article_created,
-					article_request_entity_id,
-					business_card_name
-				FROM	articles
-				JOIN	business_cards
-				ON	business_card_user_entity_id = article_request_entity_id
-				WHERE	article_suggestion_accepted = 0
-				AND	article_content_type_id = ?
-				AND	article_deleted = 0
-				AND	article_pulled = 0';
-			$query = $this->db->query($sql,array($type_id));
-			$result = array();
-			if ($query->num_rows() > 0)
-			{
-				foreach ($query->result() as $row)
-				{
-					$result_item = array(
-						'id'=>$row->article_id,
-						'title'=>$row->article_request_title,
-						'description'=>$row->article_request_description,
-						'userid'=>$row->article_request_entity_id,
-						'username'=>$row->business_card_name,
-						'created'=>$row->article_created
-						);
-					$result[] = $result_item;
+		$row = $query->row();
+		$type_codenames = array($type_codename);
+		$type_sql = array('content_types.content_type_codename = ?');
+		if ($row->content_type_has_children) {
+			$sql = 'SELECT content_type_codename
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$type_codenames[] = $row->content_type_codename;
+					$type_sql[] = 'content_types.content_type_codename = ?';
 				}
 			}
-			return $result;
 		}
-	} 
-	
+
+		$sql = 'SELECT articles.article_id,
+				 UNIX_TIMESTAMP(articles.article_created) AS article_created,
+				 articles.article_request_title,
+				 article_request_entity_id,
+				 business_card_name,
+				 content_types.content_type_name
+				FROM content_types, articles
+				JOIN business_cards
+				 ON business_card_user_entity_id = article_request_entity_id
+				WHERE articles.article_suggestion_accepted = 0
+				AND	content_types.content_type_id = articles.article_content_type_id
+				AND	articles.article_live_content_id IS NULL
+				AND	articles.article_deleted = 0
+				AND	articles.article_pulled = 0
+				AND	(';
+		$sql .= implode(' OR ',$type_sql) . ')';
+		$query = $this->db->query($sql,$type_codenames);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'id'=>$row->article_id,
+					'title'=>$row->article_request_title,
+					'box'=>$row->content_type_name,
+					'userid'=>$row->article_request_entity_id,
+					'username'=>$row->business_card_name,
+					'created'=>$row->article_created
+					);
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+
 	function GetArticleRevisions($article_id)
 	{
 		$sql = 'SELECT	article_content_id,
@@ -626,13 +654,16 @@ class Requests_Model extends Model
 		return $result;
 	}
 	
-	function AddUserToRequest($article_id, $user_id)
+	function AddUserToRequest($article_id, $reporter_id, $editor_id)
 	{
-		$sql = 'INSERT	INTO article_writers(
-				article_writer_user_entity_id,
-				article_writer_article_id)
-			VALUES	(?,?)';
-		$this->db->query($sql,array($user_id, $article_id));
+		$sql = 'INSERT INTO article_writers
+				(
+				 article_writer_user_entity_id,
+				 article_writer_article_id,
+				 article_writer_editor_accepted_user_entity_id
+				)
+				VALUES (?,?,?)';
+		$this->db->query($sql,array($reporter_id, $article_id, $editor_id));
 	}
 	
 	function RemoveUserFromRequest($article_id, $user_id)

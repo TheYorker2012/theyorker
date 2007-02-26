@@ -3,17 +3,12 @@
 	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
 	<div class='RightToolbar'>
-		<h4><?php echo $tasks_heading; ?></h4>
-		<ul>
-			<li><a href='/office/news/request'><?php echo $tasks['request']; ?></a></li>
-		</ul>
-	</div>
-	<div class='blue_box'>
-		<h2><?php echo $heading; ?></h2>
+		<h4><?php echo $heading; ?></h4>
 		<?php echo $intro; ?>
 	</div>
+
 	<form name='new_request' id='new_request' action='/office/news/request' method='post' class='form'>
-		<div class='grey_box'>
+		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<input type='text' name='r_title' id='r_title' value='' size='30' />

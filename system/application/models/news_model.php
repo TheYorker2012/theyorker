@@ -63,11 +63,14 @@ class News_model extends Model
 	/**
 	*Returns information about a particular content_type
 	*@param $type This is a content_type_codename for the desired content_type.
-	*@return array[content_type_has_children(int),content_type_parent_content_type_id(content_type_id),content_type_name(string)]
+	*@return array[codename(string),has_children(int),parent_id(content_type_id),name(string)]
 	**/
 	function getArticleTypeInformation ($type)
 	{
-		$sql = 'SELECT content_type_has_children, content_type_parent_content_type_id, content_type_name
+		$sql = 'SELECT content_type_codename AS codename,
+				 content_type_has_children AS has_children,
+				 content_type_parent_content_type_id AS parent_id,
+				 content_type_name AS name
 				FROM content_types
 				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type));
@@ -179,12 +182,8 @@ class News_model extends Model
 			{
 				$result[] = $row->article_id;
 			}
-			return $result;
-		}else
-		{
-			return FALSE;
 		}
-		
+		return $result;		
 	}
 
 	/**

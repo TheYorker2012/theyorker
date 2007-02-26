@@ -6,8 +6,10 @@
 	timers['Subtext'] = 0;
 	timers['Blurb'] = 0;
 	timers['Content'] = 0;
+	timers['Factbox'] = 0;
 	var pages = new Array('request','article','comments','revisions','sidebar');
 	var preview = 0;
+	var functionQueue = '';
 
 	function tabs (selected) {
 		for (i=0; i < pages.length; i++) {
@@ -45,7 +47,9 @@
 		var subtext = document.getElementById('subtext').value;
 		var blurb = document.getElementById('blurb').value;
 		var wiki = document.getElementById('content').value;
-		xajax__updateHeadlines(articleRevision,headline,subheadline,subtext,blurb,wiki,preview);
+		var fact_heading = document.getElementById('factbox_heading').value;
+		var fact_text = document.getElementById('factbox').value;
+		xajax__updateHeadlines(articleRevision,headline,subheadline,subtext,blurb,wiki,preview,fact_heading,fact_text);
 	}
 
 	function headlinesUpdates (revision, date) {
@@ -56,6 +60,9 @@
 		if (preview) {
 			document.getElementById('preview_load').className = 'ajax_loading show';
 			window.location = '/office/news/preview/<?php echo $article['id']; ?>/<?php echo $article['box_codename']; ?>/' + articleRevision;
+		} else if (functionQueue != '') {
+			eval(functionQueue + '();');
+			functionQueue = '';
 		} else {
 			document.getElementById('save_form').className = 'form show';
 		}
@@ -81,6 +88,46 @@
 		}
 	}
 
+	function newFactbox() {
+		document.getElementById('factbox_create').className = 'hide';
+		document.getElementById('factbox_load').className = 'ajax_loading show';
+		if (articleRevision == 0) {
+			functionQueue = 'newFactbox';
+			updateHeadlines();
+		} else {
+			var fact_heading = document.getElementById('factbox_heading').value;
+			var fact_text = document.getElementById('factbox').value;
+			xajax__newFactbox(articleRevision,fact_heading,fact_text);
+		}
+	}
+
+	function factbox_created(success) {
+		if (success == 0) {
+			functionQueue = 'newFactbox';
+			updateHeadlines();
+		} else {
+			document.getElementById('factbox_load').className = 'hide';
+			document.getElementById('factbox_container').className = 'show';
+			document.getElementById('save_form').className = 'form show';
+		}
+	}
+
+	function deleteFactbox() {
+		document.getElementById('factbox_container').className = 'hide';
+		document.getElementById('factbox_load2').className = 'ajax_loading show';
+		if (articleRevision == 0) {
+			functionQueue = 'deleteFactbox';
+			updateHeadlines();
+		} else {
+			xajax__removeFactBox(articleRevision);
+		}
+	}
+
+	function factbox_deleted() {
+		document.getElementById('factbox_load2').className = 'hide';
+		document.getElementById('factbox_create').className = 'show';
+	}
+
 	// pre-load ajax images
 	imageObj = new Image();
 	imageObj.src = '/images/prototype/prefs/loading.gif';
@@ -89,7 +136,9 @@
 
 	<div class="RightToolbar">
 		<h4>Article Status</h4>
-		<div id="revision_status"></div><br />
+		<div id="revision_status">
+			You are editing revision <b><?php echo $revision['id']; ?></b> which was last saved <b><?php echo date('D jS F Y @ H:i:s',$revision['last_edit']); ?></b>
+		</div><br />
 		<div id="save_load" class="ajax_loading hide">
 			<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Auto Saving...
 		</div>
@@ -202,12 +251,12 @@
 			<div class="blue_box">
 				<h2>revisions...</h2>
 				<div id="revision_container">
-				<?php foreach ($revisions as $revision) { ?>
+				<?php foreach ($revisions as $rev) { ?>
 					<div class="revision">
 						<span class="right">
-							<?php echo (date('D jS F Y @ H:i', $revision['updated'])); ?>
+							<?php echo (date('D jS F Y @ H:i', $rev['updated'])); ?>
 						</span>
-						<?php echo ('<b>#' . $revision['id'] . '</b> - ' . $revision['username']); ?>
+						<?php echo ('<b>#' . $rev['id'] . '</b> - ' . $rev['username']); ?>
 					</div>
 				<?php } ?>
 				</div>
@@ -216,8 +265,29 @@
 
 		<div id="content_sidebar" class="hide">
 			<div class="blue_box">
-				<h2>sidebar...</h2>
-				@TODO: SIDEBAR
+				<h2>fact box...</h2>
+				<div id="factbox_load" class="ajax_loading hide">
+					<img src="/images/prototype/prefs/loading.gif" alt="Creating" title="Creating" /> Creating new fact box...
+				</div>
+				<div id="factbox_load2" class="ajax_loading hide">
+					<img src="/images/prototype/prefs/loading.gif" alt="Deleting" title="Deleting" /> Deleting fact box...
+				</div>
+				<div id="factbox_create"<?php if (isset($revision['fact_box'])) { echo ' class="hide"'; } ?>>
+					There is currently no fact box for this article.
+					<br />
+					<input type="button" name="make_factbox" id="make_factbox" class="button" style="float: none;" value="Create Fact Box" onclick="newFactbox();" />
+				</div>
+				<div id="factbox_container"<?php if (!isset($revision['fact_box'])) { echo ' class="hide"'; } ?>>
+					<fieldset>
+						<label for="factbox_heading">Factbox Heading:</label>
+						<input type="text" name="factbox_heading" id="factbox_heading" value="<?php if (isset($revision['fact_box'])) { echo $revision['fact_box']['title']; } ?>" size="30"  onkeyup="articleContentUpdate('Factbox');" />
+						<br />
+						<label for="factbox" class="full">Factbox Content</label>
+						<textarea name="factbox" id="factbox" class="full" rows="18"  onkeyup="articleContentUpdate('Factbox');"><?php if (isset($revision['fact_box'])) { echo $revision['fact_box']['text']; } ?></textarea>
+						<br />
+						<input type="button" name="remove_factbox" id="remove_factbox" class="button" value="Delete Fact Box" onclick="deleteFactbox();" />
+					</fieldset>
+				</div>
 			</div>
 		</div>
 	</form>

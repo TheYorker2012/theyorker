@@ -3,17 +3,12 @@
 	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
 	<div class='RightToolbar'>
-		<h4><?php echo $tasks_heading; ?></h4>
-		<ul>
-			<li><a href='/office/news/request'><?php echo $tasks['request']; ?></a></li>
-		</ul>
-	</div>
-	<div class='blue_box'>
-		<h2><?php echo $heading; ?></h2>
+		<h4><?php echo $heading; ?></h4>
 		<?php echo $intro; ?>
 	</div>
-	<form name='new_request' id='new_request' action='/office/news/request/<?php echo $article['id']; ?>' method='post' class='form'>
-		<div class='grey_box'>
+
+	<form name='new_request' id='new_request' action='/office/news/<?php echo $article['id']; ?>' method='post' class='form'>
+		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<?php if ($edit_enable) { ?>
@@ -45,7 +40,7 @@
 				<?php } ?>
 				<?php if ($status == 'suggestion') { ?>
 					<label for='r_created'>Created:</label>
-					<div id='r_created' style='float: left; margin: 5px 10px;'><?php echo $article['created']; ?></div>
+					<div id='r_created' style='float: left; margin: 5px 10px;'><?php echo date('D jS F Y @ H:i:s',$article['created']); ?></div>
 				    <br />
 				<?php } ?>
 				<?php if (($user_level == 'editor') || ($status == 'request')) { ?>
@@ -122,7 +117,7 @@
 		<?php } ?>
 	</div>
 	</form>
-	<?php if ($edit_enable) { ?>
+	<?php if (($edit_enable) && ($user_level == 'editor')) { ?>
 		<script type='text/javascript'>
 		Calendar.setup(
 			{

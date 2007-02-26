@@ -300,7 +300,7 @@ class Article_model extends Model
 				article_organisation_entity_id,
 				article_created,
 				article_publish_date,
-				article_location,
+				article_location_id,
 				article_live_content_id,
 				article_suggestion_accepted,
 				article_pulled,
@@ -318,7 +318,7 @@ class Article_model extends Model
 				'organisation'=>$row->article_organisation_entity_id,
 				'created'=>$row->article_created,
 				'publish_date'=>$row->article_publish_date,
-				'location'=>$row->article_location,
+				'location'=>$row->article_location_id,
 				'live_content'=>$row->article_live_content_id,
 				'suggestion_accepted'=>$row->article_suggestion_accepted,
 				'pulled'=>$row->article_pulled,
@@ -392,7 +392,7 @@ class Article_model extends Model
 	/**
 	 * Inserts a new fact box into the database.
 	 */
-	function InsertFactBox($article_content_id, $title, $wikitext)
+	function InsertFactBox($article_content_id, $title = "", $wikitext = "")
 	{
 		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'INSERT INTO fact_boxes (
@@ -407,7 +407,7 @@ class Article_model extends Model
 	}
 
 	/**
-	 * Given a article content id, it updates the fact box contents for that revision (if it exists)
+	 * Given an article content id, it updates the fact box contents for that revision (if it exists)
 	 */
 	function UpdateRevisionFactBox ($revision, $title, $text)
 	{
@@ -422,18 +422,14 @@ class Article_model extends Model
 	}
 
 	/**
-	 * Given a fact box id, it updates the fact box with the given data.
+	 * Given an article content id, it deletes the corresponding fact box
 	 */
-	function UpdateFactBox($id, $article_content_id, $title, $wikitext, $deleted)
+	function DeleteRevisionFactBox ($revision)
 	{
-		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'UPDATE fact_boxes
-			SET fact_box_article_content_id = ?,
-				fact_box_title = ?,
-				fact_box_wikitext = ?,
-				fact_box_deleted = ?
-			WHERE fact_box_id = ?';
-		$this->db->query($sql, array($article_content_id,$title,$wikitext,$deleted,$id));
+				SET fact_box_deleted = 1
+				WHERE fact_box_article_content_id = ?';
+		$this->db->query($sql, array($revision));
 	}
 
 	/*****************************************************

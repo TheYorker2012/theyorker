@@ -1,9 +1,11 @@
 <?php
+
 /**
  * This is the controller for the news section.
  *
  * @author Chris Travis	(cdt502 - ctravis@gmail.com)
  */
+
 class News extends Controller {
 
 	/**
@@ -35,13 +37,13 @@ class News extends Controller {
 			$article_type = 'uninews';
 			$type_info = $this->News_model->getArticleTypeInformation($article_type);
 		}
-		if ($type_info['content_type_parent_content_type_id'] != NULL) {
-			$parent = $this->News_model->getArticleTypeCodename($type_info['content_type_parent_content_type_id']);
+		if ($type_info['parent_id'] != NULL) {
+			$parent = $this->News_model->getArticleTypeCodename($type_info['parent_id']);
 			$this->pages_model->SetPageCode('news_' . $parent['content_type_codename']);
-			$this->main_frame->SetTitleParameters(array('section' => ' - ' . $type_info['content_type_name']));
+			$this->main_frame->SetTitleParameters(array('section' => ' - ' . $type_info['name']));
 		} else {
 			$this->pages_model->SetPageCode('news_' . $article_type);
-			if ($type_info['content_type_has_children']) {
+			if ($type_info['has_children']) {
 				$this->main_frame->SetTitleParameters(array('section' => ''));
 			}
 		}
@@ -63,10 +65,10 @@ class News extends Controller {
 
     	/// Get the latest article ids from the model.
     	$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
-		if (($type_info['content_type_has_children']) || ($type_info['content_type_parent_content_type_id'] != NULL)) {
+		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->helper('images');
 			$temp_type = $article_type;
-			if ($type_info['content_type_parent_content_type_id'] != NULL) {
+			if ($type_info['parent_id'] != NULL) {
 				$temp_type = $parent['content_type_codename'];
 			}
 			$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
