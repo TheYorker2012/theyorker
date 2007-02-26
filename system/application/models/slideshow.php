@@ -49,11 +49,11 @@ class Slideshow extends Model {
 			if ($order == 'asc') {
 				$sql = 'UPDATE organisation_slideshows
 				        SET organisation_slideshow_order=organisation_slideshow_order+1
-				        WHERE organisation_slideshow_organisation_entity_id=? AND organisation_slideshow_photo_id!=? AND organisation_slideshow_order=?';
+				        WHERE organisation_slideshow_organisation_entity_id=? AND (NOT organisation_slideshow_photo_id=?) AND organisation_slideshow_order=?';
 			} else {
 				$sql = 'UPDATE organisation_slideshows
 				        SET organisation_slideshow_order=organisation_slideshow_order-1
-				        WHERE organisation_slideshow_organisation_entity_id=? AND organisation_slideshow_photo_id!=? AND organisation_slideshow_order=?';
+				        WHERE organisation_slideshow_organisation_entity_id=? AND (NOT organisation_slideshow_photo_id=?) AND organisation_slideshow_order=?';
 				
 			}
 			$this->db->query($sql, array($organisation_id, $photo_id, $row->organisation_slideshow_order));
