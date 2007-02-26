@@ -24,7 +24,7 @@ class Image_upload {
 		
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
-			$query = $query->where('image_type_photo_thumbnail', '1')
+			$query = $query->where('image_type_photo_thumbnail', '1');
 			$type = array_pop($types);
 			$query = $query->where('image_type_codename', $type);
 			foreach ($types as $type) {
