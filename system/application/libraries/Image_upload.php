@@ -46,7 +46,7 @@ class Image_upload {
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
+		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->ci->main_frame->SetExtraHead($head);
 		$this->ci->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
@@ -57,7 +57,7 @@ class Image_upload {
 		if (!CheckPermissions('office')) return;
 
 		$objResponse = new xajaxResponse();
-		$this->load->library('image_lib');
+		$this->-ci->load->library('image_lib');
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
 
@@ -78,13 +78,13 @@ class Image_upload {
 		$config['x_axis'] = $formData['x1'];
 		$config['y_axis'] = $formData['y1'];
 
-		$this->image_lib->initialize($config);
+		$this->ci->image_lib->initialize($config);
 
-		if (!$this->image_lib->crop())
+		if (!$this->ci->image_lib->crop())
 		{
 //			die('The crop failed.');
 //			echo $config['source_image'];
-			echo $this->image_lib->display_errors();
+			echo $this->ci->image_lib->display_errors();
 		}
 
 		$config['source_image'] = BASE_DIR.imageLocationFromId($selectedThumb[4], $selectedThumb[3], null, TRUE);
@@ -92,13 +92,13 @@ class Image_upload {
 		$config['width'] = $selectedThumb[5];
 		$config['height'] = $selectedThumb[6];
 
-		$this->image_lib->initialize($config);
+		$this->ci->image_lib->initialize($config);
 
-		if (!$this->image_lib->resize())
+		if (!$this->ci->image_lib->resize())
 		{
 //			die('The resize failed.');
 //			echo $config['source_image'];
-			echo $this->image_lib->display_errors();
+			echo $this->ci->image_lib->display_errors();
 		}
 
 		$objResponse->addAssign("submitButton","value","Save");
