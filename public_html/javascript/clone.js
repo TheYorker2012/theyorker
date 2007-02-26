@@ -15,6 +15,8 @@ function AddClones() {
 		for (var i=0; i<newField.length; i++) {
 			if (newField[i].name)
 				newField[i].name = newField[i].name + count;
+			if (newField[i].getAttribute('for'))
+				newField[i].setAttribute('for', newField[i].getAttribute('for') + count);
 		}
 		var Spawn = document.getElementById('destination');
 		Spawn.value = count;

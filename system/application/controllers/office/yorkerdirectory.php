@@ -260,13 +260,16 @@ class Yorkerdirectory extends Controller
 				} elseif ($this->uri->segment(7) == 'down') {
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
-			} elseif($action == 'delete') {
+			} elseif ($action == 'delete') {
 				if ($this->uri->segment(7) == 'confirm') {
 					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
 					$this->messages->AddMessage('info', 'Photo Deleted');
 				} else {
-					$this->messages->AddMessage('info', 'Are you sure? <a href="confirm">Click to delete</a>');
+					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
 				}
+			} elseif ($action == 'upload') {
+				$this->load->library('image_upload');
+				$this->image_upload->recieveUpload(site_url('viparea/'.$data['organisation'].'/directory/photos'), array('slideshow'));
 			}
 			
 			// Insert main text from pages information
@@ -281,7 +284,8 @@ class Yorkerdirectory extends Controller
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
-				$this->main_frame->SetPage('photos');
+			$this->main_frame->SetPage('photos');
+			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
