@@ -54,16 +54,51 @@ class Members_model extends Model {
 		return $query->result_array();
 	}
 
-	function GetTeams($organisation_id) {
+	/// Get all teams down to a depth of @a $levels levels.
+	/**
+	 * @param $organisation_id int Entity id of organisation to get teams of.
+	 * @param $levels int Number of levels to go down where 0 is the first set
+	 *	of teams only (Default=1, down to team's subteams)
+	 * @return array of teams, each with:
+	 *	- 'id' (Entity id of team).
+	 *	- 'parent_id' (Entity id of parent team, which is either another team
+	 *		in the result or is @a $organisation_id).
+	 *	- 'name' (Team name).
+	 */
+	function GetTeams($organisation_id, $levels = 1)
+	{
+		/// @pre $levels < 5 Any more is just crazy
+		assert('$levels < 5');
+		
+		// Start at each organisation and match those that have a sequence of
+		// 0 up to @a $levels joins up to @a $organisation_id
+		$bind_data = array();
 		$sql = '
-			SELECT
-				organisations.organisation_entity_id AS organisation_id,
-				organisations.organisation_name AS organisation_name
-			FROM
-				organisations
-			WHERE organisation_parent_organisation_entity_id = ?
-				';
-		$query = $this->db->query($sql, $organisation_id);
+			SELECT	team0.organisation_entity_id AS id,
+					team0.organisation_parent_organisation_entity_id AS parent_id,
+					team0.organisation_name AS name
+			FROM	organisations AS team0';
+		for ($level_counter = 1; $level_counter <= $levels; ++$level_counter) {
+			$sql .= '
+				LEFT JOIN organisations AS team'.$level_counter.'
+					ON	team'.($level_counter-1).'.organisation_parent_organisation_entity_id
+							!= ?
+					AND	team'.($level_counter-1).'.organisation_parent_organisation_entity_id
+							= team'.$level_counter.'.organisation_entity_id';
+			$bind_data[] = $organisation_id;
+		}
+		$sql .= '
+			WHERE	team0.organisation_parent_organisation_entity_id = ?';
+		$bind_data[] = $organisation_id;
+		for ($level_counter = 1; $level_counter <= $levels; ++$level_counter) {
+			$sql .= '
+				OR	team'.$level_counter.'.organisation_parent_organisation_entity_id = ?';
+			$bind_data[] = $organisation_id;
+		}
+		$sql .= ' ORDER BY team0.organisation_name';
+		
+		// Perform the query
+		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
 	

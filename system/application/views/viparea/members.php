@@ -11,10 +11,35 @@
 <input type='checkbox' name='filter_phone' value='1'> Phone Number<br />
 <input type='checkbox' name='filter_drive' value='1'> Can Drive<br />
 <h4>Filter by team</h4>
-<input type='checkbox' name='filter_team_1' value='1'> Team 1<br />
-<input type='checkbox' name='filter_team_2' value='1'> Team 2<br />
-<input type='checkbox' name='filter_team_3' value='1'> Team 3<br />
-<input type='checkbox' name='filter_team_4' value='1'> Team 4<br />
+<?php
+	/// Draw a branch of the tree of teams
+	function DoTeam($team, $in_list = TRUE)
+	{
+		if ($in_list) {
+			echo '<LI>';
+		}
+		echo '<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'">';
+		echo $team['name'];
+		if (!empty($team['subteams'])) {
+			echo '<UL>';
+			foreach ($team['subteams'] as $subteam) {
+				DoTeam($subteam);
+			}
+			echo '</UL>';
+		}
+		if ($in_list) {
+			echo '</LI>';
+		}
+		return count($team['subteams']);
+	}
+	
+	// Draw the tree of teams
+	foreach ($teams as $team) {
+		if (!DoTeam($team, FALSE)) {
+			echo '<br />';
+		}
+	}
+?>
 </div>
 <a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a>
 <?php $this->load->view('viparea/members_list');?>

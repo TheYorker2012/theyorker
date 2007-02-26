@@ -106,11 +106,31 @@ class Members extends Controller
 			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
 		}
 		
+		$teams_list = $this->members_model->GetTeams(VipOrganisationId());
+		
+		// Reindex teams
+		$teams = array();
+		foreach ($teams_list as $team) {
+			$team['subteams'] = array();
+			$teams[$team['id']] = $team;
+		}
+		
+		// Set up team tree
+		$teams_tree = array();
+		foreach ($teams as $id => $team) {
+			$parent = $team['parent_id'];
+			if (array_key_exists($parent, $teams)) {
+				$teams[$parent]['subteams'][] = &$teams[$id];
+			} else {
+				$teams_tree[] = &$teams[$id];
+			}
+		}
+		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'members'      => $members,
-			'team'         => $this->members_model->GetTeams($this->user_auth->organisationLogin)
+			'teams'        => $teams_tree,
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/members', $data);
