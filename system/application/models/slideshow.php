@@ -46,9 +46,16 @@ class Slideshow extends Model {
 		$this->db->query($sql, array($organisation_id, $photo_id));
 		$result = $this->db->getwhere('organisation_slideshows', array('organisation_slideshow_organisation_entity_id' => $organisation_id, 'organisation_slideshow_photo_id' => $photo_id), 1);
 		foreach ($result->result() as $row) {
-			$sql = 'UPDATE organisation_slideshows
-			        SET organisation_slideshow_order=organisation_slideshow_order+1
-			        WHERE organisation_slideshow_organisation_entity_id=? AND organisation_slideshow_photo_id!=? AND organisation_slideshow_order=?';
+			if ($order == 'asc') {
+				$sql = 'UPDATE organisation_slideshows
+				        SET organisation_slideshow_order=organisation_slideshow_order+1
+				        WHERE organisation_slideshow_organisation_entity_id=? AND organisation_slideshow_photo_id!=? AND organisation_slideshow_order=?';
+			} else {
+				$sql = 'UPDATE organisation_slideshows
+				        SET organisation_slideshow_order=organisation_slideshow_order-1
+				        WHERE organisation_slideshow_organisation_entity_id=? AND organisation_slideshow_photo_id!=? AND organisation_slideshow_order=?';
+				
+			}
 			$this->db->query($sql, array($organisation_id, $photo_id, $row->organisation_slideshow_order));
 		}
 		return true;
