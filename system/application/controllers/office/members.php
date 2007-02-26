@@ -43,6 +43,12 @@
  */
 class Members extends Controller
 {
+	/// associative array All teams indexed by entity id
+	protected $mAllTeams;
+	
+	/// teams in a tree structure including main organisations
+	protected $mOrganisation;
+	
 	/// Default constructor.
 	function __construct()
 	{
@@ -50,6 +56,48 @@ class Members extends Controller
 		$this->load->model('directory_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
+		
+		$this->mAllTeams = NULL;
+		$this->mOrganisation = NULL;
+	}
+	
+	/// Load the teams up to a specific depth.
+	/**
+	 * @param $Depth int To pass into members_model::GetTeams.
+	 * @note Results stored in mAllTeams and mOrganisation.
+	 */
+	protected function _GetTeams($Depth = NULL)
+	{
+		// Get teams array from database
+		if (NULL === $Depth) {
+			$teams_list = $this->members_model->GetTeams(VipOrganisationId());
+		} else {
+			$teams_list = $this->members_model->GetTeams(VipOrganisationId(), $Depth);
+		}
+		
+		// Reindex teams by entity id
+		$this->mAllTeams = array(
+			VipOrganisationId() => array(
+				'id' 		=> VipOrganisationId(),
+				'parent_id'	=> -1,
+				'name'		=> $this->user_auth->organisationName,
+				'subteams'	=> array(),
+			)
+		);
+		foreach ($teams_list as $team) {
+			$team['subteams'] = array();
+			$this->mAllTeams[$team['id']] = $team;
+		}
+		
+		// Set up team tree using references
+		foreach ($this->mAllTeams as $id => $team) {
+			if ($id != VipOrganisationId()) {
+				$parent = $team['parent_id'];
+				assert('array_key_exists($parent, $this->mAllTeams)');
+				$this->mAllTeams[$parent]['subteams'][] = &$this->mAllTeams[$id];
+			}
+		}
+		$this->mOrganisation = &$this->mAllTeams[VipOrganisationId()];
 	}
 	
 	// FIRST LEVEL OF ROUTING
@@ -106,34 +154,16 @@ class Members extends Controller
 			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
 		}
 		
-		$teams_list = $this->members_model->GetTeams(VipOrganisationId());
-		
-		// Reindex teams
-		$teams = array();
-		foreach ($teams_list as $team) {
-			$team['subteams'] = array();
-			$teams[$team['id']] = $team;
-		}
-		
-		// Set up team tree
-		$teams_tree = array();
-		foreach ($teams as $id => $team) {
-			$parent = $team['parent_id'];
-			if (array_key_exists($parent, $teams)) {
-				$teams[$parent]['subteams'][] = &$teams[$id];
-			} else {
-				$teams_tree[] = &$teams[$id];
-			}
-		}
+		$this->_GetTeams();
 		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'members'      => $members,
-			'teams'        => $teams_tree,
+			'organisation' => $this->mOrganisation,
 		);
 		// Set up the content
-		$this->main_frame->SetContentSimple('viparea/members', $data);
+		$this->main_frame->SetContentSimple('members/members', $data);
 		
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
@@ -236,7 +266,7 @@ class Members extends Controller
 				'membership'   => $membership,
 			);
 			// Set up the content
-			$this->main_frame->SetContentSimple('viparea/editmembers', $data);
+			$this->main_frame->SetContentSimple('members/editmembers', $data);
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
@@ -253,10 +283,49 @@ class Members extends Controller
 		$this->main_frame->Load();
 	}
 	
+	/// Team management.
+	/**
+	 * @param $Suboption1 [string/integer] Operation code or team id.
+	 *	- 'new'
+	 * @param $Suboption2 [string] Sub operation code.
+	 *	- 'edit'
+	 */
+	function teams(	$Suboption1 = NULL,
+					$Suboption2 = NULL)
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$this->_GetTeams();
+		
+		$this->pages_model->SetPageCode('viparea_members_teams');
+		
+		$data = array(
+			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'organisation' => $this->mOrganisation,
+		);
+		
+		$this->main_frame->SetContentSimple('members/teams', $data);
+		
+		// Set the title parameters
+		$this->main_frame->SetTitleParameters(array(
+			'organisation'	=> $this->user_auth->organisationName,
+		));
+		
+		// Load the main frame
+		$this->main_frame->Load();
+	}
+	
 	/// Business card management.
 	/**
 	 * @param $Suboption1 [string/integer] Operation code or business card id.
+	 *	- 'filter'
+	 *	- 'request'
+	 *	- 'new'
 	 * @param $Suboption2 [string] Sub operation code.
+	 *	- 'filter'
+	 *	- 'send'
+	 *	- 'post'
+	 *	- 'edit'
 	 * @param $Suboption3 [string] Another sub operation code.
 	 */
 	function cards(	$Suboption1 = NULL,
@@ -314,7 +383,7 @@ class Members extends Controller
 			);
 			
 			// Set up the content
-			$this->main_frame->SetContentSimple('viparea/members_cards', $data);
+			$this->main_frame->SetContentSimple('members/members_cards', $data);
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
@@ -367,6 +436,8 @@ class Members extends Controller
 		
 		$default_list = '';
 		
+		$this->_GetTeams();
+		
 		// Read the post data
 		$button = $this->input->post('members_invite_button');
 		if ($button === 'Invite Members') {
@@ -393,13 +464,12 @@ class Members extends Controller
 				} elseif (empty($valids)) {
 					// There weren't any valids.
 					$this->messages->AddMessage('information', 'You didn\'t specify any email addresses.');
-				
+					
 				} else {
 					// Everything was fine.
 					$this->messages->AddMessage('success','Everything looks good but i haven\'t been programmed what to do next :)');
 					
 					/// @TODO Do something with invite email addresses
-					
 				}
 			}
 		}
@@ -410,9 +480,10 @@ class Members extends Controller
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			'what_to_do' => $this->pages_model->GetPropertyWikitext('what_to_do'),
 			'target' => vip_url('members/invite'),
+			'organisation' => $this->mOrganisation,
 			'default_list' => $default_list,
 		);
-		$this->main_frame->SetContentSimple('viparea/members_invite', $data);
+		$this->main_frame->SetContentSimple('members/members_invite', $data);
 	
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
