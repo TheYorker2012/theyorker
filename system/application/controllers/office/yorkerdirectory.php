@@ -257,7 +257,7 @@ class Yorkerdirectory extends Controller
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($this->uri->segment(7) == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
-				} else {
+				} elseif ($this->uri->segment(7) == 'down') {
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
 			} elseif($action == 'delete') {
