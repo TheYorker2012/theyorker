@@ -147,7 +147,7 @@ class Howdoi extends Controller
 		foreach ($data['categories'] as $category_id => $category)
 		{
 			//suggestions
-			$data['categories'][$category_id]['suggestions'] = $this->requests_model->GetSuggestedArticles($category['codename']);
+			$data['categories'][$category_id]['suggestions'] = $this->requests_model->GetSuggestedArticles($category['codename'], FALSE);
 			$data['status_count']['suggestions'] = $data['status_count']['suggestions'] + count($data['categories'][$category_id]['suggestions']);
 			//due to the change in requests model must now get each article header in full
 			foreach ($data['categories'][$category_id]['suggestions'] as &$suggestion)
@@ -155,7 +155,7 @@ class Howdoi extends Controller
 				$suggestion = $this->requests_model->GetSuggestedArticle($suggestion['id']);
 			}
 			//requests
-			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category['codename']);
+			$data['categories'][$category_id]['requests'] = $this->requests_model->GetRequestedArticles($category['codename'], FALSE);
 			$data['status_count']['requests'] = $data['status_count']['requests'] + count($data['categories'][$category_id]['requests']);
 			//due to the change in requests model must now get each article header in full
 			foreach ($data['categories'][$category_id]['requests'] as &$request)

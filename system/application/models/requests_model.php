@@ -346,7 +346,7 @@ class Requests_Model extends Model
 		return $result;
 	}
 
-	function GetRequestedArticles($type_codename)
+	function GetRequestedArticles($type_codename, $get_children = TRUE)
 	{
 		$sql = 'SELECT content_type_id,
 				 content_type_has_children
@@ -358,15 +358,18 @@ class Requests_Model extends Model
 			$row = $query->row();
 			$type_codenames = array($type_codename);
 			$type_sql = array('content_types.content_type_codename = ?');
-			if ($row->content_type_has_children) {
-				$sql = 'SELECT content_type_codename
-						FROM content_types
-						WHERE content_type_parent_content_type_id = ?';
-				$query = $this->db->query($sql,array($row->content_type_id));
-				if ($query->num_rows() > 0) {
-					foreach ($query->result() as $row) {
-						$type_codenames[] = $row->content_type_codename;
-						$type_sql[] = 'content_types.content_type_codename = ?';
+			if ($get_children == TRUE)
+			{
+				if ($row->content_type_has_children) {
+					$sql = 'SELECT content_type_codename
+							FROM content_types
+							WHERE content_type_parent_content_type_id = ?';
+					$query = $this->db->query($sql,array($row->content_type_id));
+					if ($query->num_rows() > 0) {
+						foreach ($query->result() as $row) {
+							$type_codenames[] = $row->content_type_codename;
+							$type_sql[] = 'content_types.content_type_codename = ?';
+						}
 					}
 				}
 			}
@@ -479,7 +482,7 @@ class Requests_Model extends Model
 		return $result;
 	}
 
-	function GetSuggestedArticles($type_codename)
+	function GetSuggestedArticles($type_codename, $get_children = TRUE)
 	{
 		$sql = 'SELECT content_type_id,
 				 content_type_has_children
@@ -491,15 +494,18 @@ class Requests_Model extends Model
 			$row = $query->row();
 			$type_codenames = array($type_codename);
 			$type_sql = array('content_types.content_type_codename = ?');
-			if ($row->content_type_has_children) {
-				$sql = 'SELECT content_type_codename
-						FROM content_types
-						WHERE content_type_parent_content_type_id = ?';
-				$query = $this->db->query($sql,array($row->content_type_id));
-				if ($query->num_rows() > 0) {
-					foreach ($query->result() as $row) {
-						$type_codenames[] = $row->content_type_codename;
-						$type_sql[] = 'content_types.content_type_codename = ?';
+			if ($get_children == TRUE)
+			{
+				if ($row->content_type_has_children) {
+					$sql = 'SELECT content_type_codename
+							FROM content_types
+							WHERE content_type_parent_content_type_id = ?';
+					$query = $this->db->query($sql,array($row->content_type_id));
+					if ($query->num_rows() > 0) {
+						foreach ($query->result() as $row) {
+							$type_codenames[] = $row->content_type_codename;
+							$type_sql[] = 'content_types.content_type_codename = ?';
+						}
 					}
 				}
 			}
