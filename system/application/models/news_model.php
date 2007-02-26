@@ -91,38 +91,33 @@ class News_model extends Model
 	function getSubArticleTypes ($main_type)
 	{
 		$result = array();
-		$sql = 'SELECT content_type_id, content_type_has_children
-				FROM content_types
-				WHERE content_type_codename = ?';
+		$sql = 'SELECT  child.content_type_id, child.content_type_codename,
+		        	child.content_type_name, image_id, image_file_extension,
+			        image_type_codename, image_title
+			FROM    content_types AS parent
+			INNER JOIN      content_types AS child
+			ON      parent.content_type_id = child.content_type_parent_content_type_id
+			INNER JOIN      images
+			ON      child.content_type_image_id = image_id
+			INNER JOIN      image_types
+			ON      image_image_type_id = image_type_id
+			WHERE   parent.content_type_codename = ?
+			AND     parent.content_type_has_children = 1
+			ORDER BY        child.content_type_section_order ASC';
 		$query = $this->db->query($sql,array($main_type));
-		$row = $query->row();
-		if ($row->content_type_has_children) {
-			$sql = 'SELECT content_type_id,
-					 content_type_codename,
-					 content_type_image_id,
-					 content_type_name
-					FROM content_types
-					WHERE content_type_parent_content_type_id = ?
-					ORDER BY content_type_section_order ASC';
-			$query = $this->db->query($sql,array($row->content_type_id));
-			if ($query->num_rows() > 0) {
-				foreach ($query->result() as $row) {
-					$sql = 'SELECT images.image_title, images.image_file_extension, image_types.image_type_codename
-							FROM images, image_types
-							WHERE images.image_id = ?
-							AND images.image_image_type_id = image_types.image_type_id';
-					$query = $this->db->query($sql,array($row->content_type_image_id));
-					$row2 = $query->row();
-					$result[] = array(
-						'id' => $row->content_type_id,
-						'codename' => $row->content_type_codename,
-						'image' => $row->content_type_image_id,
-						'image_title' => $row2->image_title,
-						'image_extension' => $row2->image_file_extension,
-						'image_codename' => $row2->image_type_codename,
-						'name' => $row->content_type_name
-					);
-				}
+		if ($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$result[] = array(
+					'id' => $row->content_type_id,
+					'codename' => $row->content_type_codename,
+					'name' => $row->content_type_name,
+					'image' => $row->image_id,
+					'image_title' => $row->image_title,
+					'image_extension' => $row->image_file_extension,
+					'image_codename' => $row->image_type_codename
+				);
 			}
 		}
 		return $result;
