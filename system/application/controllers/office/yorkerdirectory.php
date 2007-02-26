@@ -261,7 +261,7 @@ class Yorkerdirectory extends Controller
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
 			} elseif($action == 'delete') {
-				if ($this->uri->segment(8) == 'confirm') {
+				if ($this->uri->segment(7) == 'confirm') {
 					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
 					$this->messages->AddMessage('info', 'Photo Deleted');
 				} else {
