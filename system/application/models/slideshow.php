@@ -55,7 +55,7 @@ class Slideshow extends Model {
 	}
 	
 	function pushDown($photo_id, $organisation_id) {
-		return pushUp($photo_id, $organisation_id, 'desc');
+		return $this->pushUp($photo_id, $organisation_id, 'desc');
 	}
 
 	function deletePhoto($photo_id, $organisation_id) {

@@ -266,7 +266,6 @@ class Yorkerdirectory extends Controller
 					$this->messages->AddMessage('info', 'Photo Deleted');
 				} else {
 					$this->messages->AddMessage('info', 'Are you sure? <a href="confirm">Click to delete</a>');
-					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
 				}
 			}
 			
