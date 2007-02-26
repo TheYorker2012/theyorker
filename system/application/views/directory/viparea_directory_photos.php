@@ -12,9 +12,9 @@
 	<?php foreach( $images->result() as $image ) { ?>
 	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
 	<br />
-	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/move/'.$image->photo_id.'/up', 'move up')?> | 
-	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/move/'.$image->photo_id.'/down', 'move down')?> | 
-	<?=anchor('viparea/directory/'.$organisation['shortname'].'/photos/delete/'.$image->photo_id.'', 'delete')?> 
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/up', 'move up')?> | 
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/down', 'move down')?> | 
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/delete/'.$image->photo_id.'', 'delete')?> 
 	<br />
 	<?php } ?>
 </div>
