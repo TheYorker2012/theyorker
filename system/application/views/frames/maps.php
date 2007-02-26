@@ -40,112 +40,223 @@ switch($_SERVER['SERVER_NAME']) {
 		map.addOverlay(marker);
 	}
 
-	function maps_editLocationControl(map, description) {
-		this.description = description;
+	function maps_editableLocation(id, point, description) {
+		this.id = id;
 		this.button = null;
-		this.map = map;
+		this.description = description;
+		this.point = point;
+		this.container = null;
+		this.marker = null;
+		this.latctl = null;
+		this.lngctl = null;
 
-		this.initialize = function(map) {
-			var container = document.createElement("div");
+		this.initialize = function(container) {
+			this.container = container;
+
+			this.latctl = document.createElement("input");
+			this.latctl.setAttribute("type", "text");
+			this.latctl.setAttribute("name", this.id + "_lat");
+			this.container.form.appendChild(this.latctl);
+
+			this.lngctl = document.createElement("input");
+			this.lngctl.setAttribute("type", "text");
+			this.lngctl.setAttribute("name", this.id + "_lng");
+			this.container.form.appendChild(this.lngctl);
+
 			this.button = document.createElement("div");
-
-			this.setButtonStyle(this.button);
-			container.appendChild(this.button);
+			maps_setButtonStyle(this.button);
 			this.button.appendChild(document.createTextNode("Add " + this.description));
 
-			this.description = this.description + "<br /><br />Drag to move";
-			
-			var control = this;
+			var ctl = this;
 			GEvent.addDomListener(
-				this.button, 
-				"click",
+				this.button,
+				"click", 
 				function() {
-					var point = map.getCenter();
-					control.createMarker(point);
+					ctl.point = ctl.container.map.getCenter();
+					ctl.addMarker();
 				}
 			);
-			
-			map.getContainer().appendChild(container);
-			return container;
+
+			container.control.appendChild(this.button);
+
+			if (this.point != null) {
+				this.addMarker();
+			}
 		}
 
-		this.createMarker = function(point) {
-			var marker = new GMarker(point, {draggable: true});
-			var control = this;
+		this.clickMarker = function() {
+			this.marker.openInfoWindowHtml(this.description + "<br /><br />Drag to move");
+		}
+
+		this.dragStart = function() {
+			this.container.map.closeInfoWindow();
+		}
+
+		this.dragEnd = function() {
+			this.latctl.setAttribute("value", this.marker.getPoint().lat());
+			this.lngctl.setAttribute("value", this.marker.getPoint().lng());
+		}
+
+		this.addMarker = function() {
+			this.marker = new GMarker(this.point, {draggable: true});
+			var ctl = this;
 			GEvent.addListener(
-				marker, 
-				"click",
+				this.marker, 
+				"click", 
 				function() {
-					marker.openInfoWindowHtml(control.description);
+					ctl.clickMarker();
 				}
 			);
 			GEvent.addListener(
-				marker, 
+				this.marker, 
 				"dragstart", 
 				function() {
-					map.closeInfoWindow();
+					ctl.dragStart();
 				}
 			);
 			GEvent.addListener(
-				marker, 
+				this.marker, 
 				"dragend", 
 				function() {
+					ctl.dragEnd();
 				}
 			);
-			map.addOverlay(marker);
-			marker.openInfoWindowHtml(control.description);
-			this.button.style.display = 'none';
+
+			this.latctl.setAttribute("value", this.point.lat());
+			this.lngctl.setAttribute("value", this.point.lng());
+
+			this.button.style.display = "none";
+
+			this.container.map.addOverlay(this.marker);
+			this.clickMarker();
+		}
+	}
+
+	function maps_setButtonStyle(button) {
+		button.style.backgroundColor = "white";
+		button.style.borderStyle = "solid";
+		button.style.borderColor = "black";
+		button.style.borderWidth = "1px";
+		button.style.padding = "2px";
+		button.style.margin = "2px"
+		button.style.textAlign = "center";
+		button.style.font.size = "12px";
+		button.style.cursor = "pointer";
+	}
+
+	function maps_editLocationControl(map, id, post) {
+		this.control = null;
+		this.map = map;
+		this.locations = new Array();
+		this.form = null;
+		this.id = id;
+		this.post = post;
+
+		this.initialize = function(map) {
+			this.control = document.createElement("div");
+
+			this.form = document.createElement("form");
+			this.form.setAttribute("id", this.id + "_form");
+			this.form.setAttribute("name", this.id + "_form");
+			this.form.setAttribute("action", this.post);
+			this.form.setAttribute("method", "post");
+			this.form.style.display = "none";
+			this.control.appendChild(this.form);
+
+			map.getContainer().appendChild(this.control);
+			return this.control;
 		}
 
-		this.setButtonStyle = function(button) {
-			button.style.backgroundColor = "white";
-			button.style.borderStyle = "solid";
-			button.style.borderColor = "black";
-			button.style.borderWidth = "1px";
-			button.style.padding = "2px";
-			button.style.font.size = "12px";
-			button.style.cursor = "pointer";
+		this.addLocation = function(id, description, lat, lng) {
+			var point = null;
+			if (lat != null) {
+				point = new GLatLng(lat, lng);
+			}
+			var newlocation = new maps_editableLocation(id, point, description);
+			newlocation.initialize(this);
+			this.locations.push(newlocation);
+		}
+
+		this.getDefaultPosition = function() {
+			return new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(5, 5));
 		}
 	}
 	maps_editLocationControl.prototype = new GControl();
 
-	/* Hack alert! */
-	var maps_editLocationTop = 5;
-	maps_editLocationControl.prototype.getDefaultPosition = function() {
-		var ret = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(5, maps_editLocationTop));
-		maps_editLocationTop = maps_editLocationTop + 27;
-		return ret;
-	}
+	function maps_saveLocationControl(map, form) {
+		this.form = form;
 
+		this.initialize = function(map) {
+			var button = document.createElement("div");
+			maps_setButtonStyle(button);
+			button.appendChild(document.createTextNode("Save"));
+			map.getContainer().appendChild(button);
+
+			var ctl = this;
+			GEvent.addDomListener(
+				button, 
+				"click", 
+				function() {
+					ctl.form.submit();
+				}
+			);
+
+			return button;
+		}
+
+		this.getDefaultPosition = function() {
+			return new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(5, 18));
+		}
+	}
+	maps_saveLocationControl.prototype = new GControl();
 
 	function maps_onLoad() {
+		var map;
+		var bounds;
+		var locationctl;
+		var savectl;
+
 <?php
 foreach ($maps as $map) {
 ?>
-		var map = new GMap2(document.getElementById("<?php echo($map['element']);?>"));
+		map = new GMap2(document.getElementById("<?php echo($map['element']);?>"));
 		map.addControl(new GSmallMapControl());
+		locationctl = new maps_editLocationControl(map, "<?php echo($map['element']);?>", "<?php echo($map['post']);?>");
+		map.addControl(locationctl);
+		savectl = new maps_saveLocationControl(map, locationctl.form);
+		map.addControl(savectl);
 <?php	
 	if (count($map['locations']) == 0) {
 		// Default to somewhere near york
-		echo('		map.setCenter(new GLatLng(53.955, -1.08), 15);');
+		echo('		'
+			.'map.setCenter(new GLatLng(53.955, -1.08), 15);'."\n"
+		);
 	} elseif (count($map['locations']) == 1) {
-		echo('		map.setCenter(new GLatLng(');
-		echo($map['locations'][0]['lat']);
-		echo(', ');
-		echo($map['locations'][0]['lng']);
-		echo('), 15);'."\n");
+		echo('		'
+			.'map.setCenter(new GLatLng('
+				.$map['locations'][0]['lat'].', '
+				.$map['locations'][0]['lng']
+			.'), '
+			.'15);'."\n"
+		);
 	} else {
-		echo('		var bounds = new GLatLngBounds(new GLatLng(');
-		echo($map['minlat']);
-		echo(', ');
-		echo($map['minlng']);
-		echo('), new GLatLng(');
-		echo($map['maxlat']);
-		echo(', ');
-		echo($map['maxlng']);
-		echo('));'."\n");
-		echo('		map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));'."\n");
+		echo('		'
+			.'bounds = new GLatLngBounds('
+				.'new GLatLng('
+					.$map['minlat'].', '
+					.$map['minlng']
+				.'), new GLatLng('
+					.$map['maxlat'].', '
+					.$map['maxlng']
+				.')'
+			.');'."\n"
+		);
+		echo('		'
+			.'map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));'."\n"
+		);
 	}
+
+	echo("\n");
 
 	foreach ($map['locations'] as $location) {
 		echo('		'
@@ -157,19 +268,17 @@ foreach ($maps as $map) {
 		);
 	}
 
-	echo('		var ctrl;'."\n");
-	foreach($map['newlocations'] as $location) {
-		echo('		ctrl = new maps_editLocationControl(map, "');
-		echo($location['description']);
-		echo('");'."\n");
-		if ($location['lat'] != null) {
-			echo('		ctrl.setLocation(');
-			echo($location['lat']);
-			echo(', ');
-			echo($location['lng']);
-			echo(');'."\n");
-		}
-		echo('		map.addControl(ctrl);'."\n");
+	echo("\n");
+
+	foreach($map['newlocations'] as $id => $location) {
+		echo('		'
+			.'locationctl.addLocation('
+				.'"'.$id.'", '
+				.'"'.$location['description'].'", '
+				.($location['lat'] == null ? 'null' : $location['lat']).', '
+				.($location['lng'] == null ? 'null' : $location['lng'])
+			.');'."\n"
+		);
 	}
 }
 
