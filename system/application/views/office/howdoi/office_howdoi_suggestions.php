@@ -21,13 +21,14 @@
 			echo '</div>';
 		}
 		if ($status_count['suggestions'] > 0)
+		{
 			echo '<div class="information_box">';
 			if ($status_count['suggestions'] == 1)
 				echo 'There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.';
 			else
 				echo 'There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.';
 			echo '</div>';
-
+		}
 	echo '</div>';
 	?>
 </div>
