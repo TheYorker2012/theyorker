@@ -78,7 +78,14 @@ class Yorkerdirectory extends Controller
 
 			$organisation = $this->user_auth->organisationShortName;
 			$this->pages_model->SetPageCode('viparea_directory_information');	
-			
+		
+		//test to allow a person to view deleted revisions
+		$show_all_revisions = false;
+		if($action=='viewall'){
+			$show_all_revisions = true;
+			$action='view';
+		}
+		
 		if($action=='delete'){
 			$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
 			if($result == 1){
@@ -106,7 +113,7 @@ class Yorkerdirectory extends Controller
 			
 			//Send data if given
 			if(!empty($_POST['submitbutton'])){
-				$this->main_frame->AddMessage('success','Directory entry updated.');
+				$this->main_frame->AddMessage('success','A new directory entry revision has been created.');
 				if($_POST['description']==null){
 					$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
 				}
@@ -140,7 +147,8 @@ class Yorkerdirectory extends Controller
 				$data['revisions_information_text'] = $this->pages_model->GetPropertyWikitext('revisions_information_text');
 				
 				//Page Revisions
-				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation);
+				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
+				$data['show_all_revisions'] = $show_all_revisions;
 				
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);

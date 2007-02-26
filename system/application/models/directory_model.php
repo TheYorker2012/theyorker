@@ -196,17 +196,13 @@ class Directory_model extends Model {
 	*/
 	function GetRevisonsOfDirectoryEntry($DirectoryEntryName, $showall=false)
 	{
-		if($showall==true){
-			$showall=1;
-		}else{
-			$showall=0;
-		}
 		//Find the differant revisions
 		$sql =
 			'SELECT'.
 			'	organisations.organisation_live_content_id, '.
 			'	organisation_contents.organisation_content_id, '.
 			'	organisation_contents.organisation_content_last_author_timestamp, '.
+			'	organisation_contents.organisation_content_deleted, '.
 			'	users.user_firstname, '.
 			'	users.user_surname '.
 			'FROM	organisations '.
@@ -216,9 +212,12 @@ class Directory_model extends Model {
 			'INNER JOIN users '.
 			'	ON	users.user_entity_id '.
 			'	=	organisation_contents.organisation_content_last_author_user_entity_id '.
-			'WHERE	organisations.organisation_directory_entry_name=? '.
-			'AND	organisation_contents.organisation_content_deleted='.$showall.' '.
-			'ORDER BY organisation_content_last_author_timestamp';
+			'WHERE	organisations.organisation_directory_entry_name=? ';
+			if($showall==true){
+			}else{
+			$sql .= 'AND organisation_contents.organisation_content_deleted=0 ';
+			}
+			$sql .= 'ORDER BY organisation_content_last_author_timestamp';
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$query_array = $query->result_array();
 		$data = array();
@@ -228,6 +227,7 @@ class Directory_model extends Model {
 				'id'		=> $row['organisation_content_id'],
 				'author'	=> $row['user_firstname'].' '.$row['user_surname'],
 				'published'	=> $live,
+				'deleted' => $row['organisation_content_deleted'],
 				'timestamp'	=> $row['organisation_content_last_author_timestamp']
 			);
 		}

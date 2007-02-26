@@ -19,23 +19,32 @@
 		<ol>
 		<?php foreach($revisions as $revison) {
 			echo '<li>';
-			echo 'Author : '.$revison['author'].'<br />';
-			echo 'Created : '.$revison['timestamp'].'<br />';
-			if ($organisation['revision_id'] == $revison['id']) {
-				echo ' <b>(Editing)</b>';
-			} else {
-				echo ' <a href="'.vip_url('directory/information/view/'.$revison['id']).'">Edit</a>';
-			}
-			echo ' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview</a>';
-				if ($revison['published']==true){
-					echo ' <span class="orange">(Published)</span>';
+			if ($revison['deleted']){echo '<span class="red">';}
+				echo 'Author : '.$revison['author'].'<br />';
+				echo 'Created : '.$revison['timestamp'].'<br />';
+				if ($organisation['revision_id'] == $revison['id']) {
+					echo ' <b>(Editing)</b>';
 				} else {
-					echo ' <a href="'.vip_url('directory/information/delete/'.$revison['id']).'">Delete</a>';
+					echo ' <a href="'.vip_url('directory/information/view');
+					if ($revison['deleted']){echo 'all';}
+					echo '/'.$revison['id'].'">Edit</a>';
 				}
+				echo ' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview</a>';
+					if ($revison['published']==true){
+						echo ' <span class="orange">(Published)</span>';
+					}
+			if ($revison['deleted']){echo '</span>';}
 			echo '</li>';
 		}?>
 		</ol>
-		<?php echo $revisions_information_text; ?>
+		<?php
+		if ($show_all_revisions){
+			echo '<p><a href="'.vip_url('directory/information/view').'">Hide deleted revisions</a></p>';
+		}else{
+			echo '<p><a href="'.vip_url('directory/information/viewall').'">Include deleted revisions.</a></p>';
+		}
+		echo $revisions_information_text;
+		?>
 	</div>
 </div>
 
