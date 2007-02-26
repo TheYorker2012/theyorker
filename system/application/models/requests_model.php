@@ -621,7 +621,7 @@ class Requests_Model extends Model
 				FROM	content_types
 	
 				JOIN	organisations
-				ON	organisation_entity_id = content_type_related_organisation_enitity_id
+				ON	organisation_entity_id = content_type_related_organisation_entity_id
 				
 				JOIN	subscriptions
 				ON	subscription_organisation_entity_id = organisation_entity_id
