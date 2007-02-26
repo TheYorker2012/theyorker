@@ -194,8 +194,13 @@ class Directory_model extends Model {
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 * @return An array of revisions
 	*/
-	function GetRevisonsOfDirectoryEntry($DirectoryEntryName)
+	function GetRevisonsOfDirectoryEntry($DirectoryEntryName, $showall=false)
 	{
+		if($showall==true){
+			$showall=1;
+		}else{
+			$showall=0;
+		}
 		//Find the differant revisions
 		$sql =
 			'SELECT'.
@@ -212,6 +217,7 @@ class Directory_model extends Model {
 			'	ON	users.user_entity_id '.
 			'	=	organisation_contents.organisation_content_last_author_user_entity_id '.
 			'WHERE	organisations.organisation_directory_entry_name=? '.
+			'AND	organisation_contents.organisation_content_deleted='.$showall.' '.
 			'ORDER BY organisation_content_last_author_timestamp';
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		$query_array = $query->result_array();
@@ -235,7 +241,7 @@ class Directory_model extends Model {
 		' organisations.organisation_live_content_id='.$id.' '.
 		'WHERE organisations.organisation_directory_entry_name=? ';
 		$query = $this->db->query($sql, $DirectoryEntryName);
-		return true;
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Add a directory entry revision
@@ -315,7 +321,29 @@ class Directory_model extends Model {
 			'		= organisations.organisation_entity_id '.
 			// Ensure that it ISN'T live
 			'	AND organisations.organisation_live_content_id '.
-			'		!= $organisation_contents.organisation_content_id '.
+			'		!= organisation_contents.organisation_content_id '.
+			// And that the directory entry name actually matches
+			'	AND organisations.organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
+		return ($this->db->affected_rows() > 0);
+	}
+	function FlagEntryRevisionAsDeletedById($DirectoryEntryName, $id, $value=true)
+	{
+		if($value==false){
+			$value = 0;
+		}else{
+			$value = 1;
+		}
+		$sql =
+		'UPDATE organisation_contents, organisations '.
+		'SET organisation_content_deleted='.$value.' '.
+		'WHERE	organisation_contents.organisation_content_id = ? '.
+			// Join to organisations table
+			'	AND	organisation_contents.organisation_content_organisation_entity_id '.
+			'		= organisations.organisation_entity_id '.
+			// Ensure that it ISN'T live
+			'	AND organisations.organisation_live_content_id '.
+			'		!= organisation_contents.organisation_content_id '.
 			// And that the directory entry name actually matches
 			'	AND organisations.organisation_directory_entry_name = ?';
 		$query = $this->db->query($sql, array($id, $DirectoryEntryName));

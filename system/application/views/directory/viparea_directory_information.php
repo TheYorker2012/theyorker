@@ -21,7 +21,11 @@
 			echo '<li>';
 			echo 'Author : '.$revison['author'].'<br />';
 			echo 'Created : '.$revison['timestamp'].'<br />';
-			echo ' <a href="'.vip_url('directory/information/view/'.$revison['id']).'">Edit</a>';
+			if ($organisation['revision_id'] == $revison['id']) {
+				echo ' <b>(Editing)</b>';
+			} else {
+				echo ' <a href="'.vip_url('directory/information/view/'.$revison['id']).'">Edit</a>';
+			}
 			echo ' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview</a>';
 				if ($revison['published']==true){
 					echo ' <span class="orange">(Published)</span>';

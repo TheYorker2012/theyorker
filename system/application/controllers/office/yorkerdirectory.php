@@ -75,9 +75,32 @@ class Yorkerdirectory extends Controller
 	function information($action='view', $revision=false)
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		if ($action=='view'){
+
 			$organisation = $this->user_auth->organisationShortName;
-			$this->pages_model->SetPageCode('viparea_directory_information');
+			$this->pages_model->SetPageCode('viparea_directory_information');	
+			
+		if($action=='delete'){
+			$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
+			if($result == 1){
+				$this->main_frame->AddMessage('success','Directory revision successfully removed.');
+			}else{
+				$this->main_frame->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+			}
+			$action='view';
+		}
+		
+		if($action=='publish'){
+			//Send and get data
+			$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
+			if($result == 1){
+				$this->main_frame->AddMessage('success','Directory revision was published successfully.');
+			}else{
+				$this->main_frame->AddMessage('error','Directory revision was not published it does not exist or is already live.');
+			}
+			$action='view';
+		}
+		
+		if ($action=='view'){
 			//Get Organisation Data
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
@@ -135,44 +158,16 @@ class Yorkerdirectory extends Controller
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
-		if($action=='publish'){
-			$organisation = $this->user_auth->organisationShortName;
-			$this->pages_model->SetPageCode('viparea_directory_publish');
-			
-			//Send and get data
-			$this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
-			
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
-			
-			if (!empty($data)) {
-				$this->_SetupNavbar();
-				
-				// Set up the directory view
-				$the_view = $this->frames->view('directory/viparea_directory_publish', $data);
-				
-				// Set up the public frame
-				$this->main_frame->SetTitleParameters(
-						array('organisation' => $data['organisation']['name']));
-				$this->main_frame->SetPage('information');
-				$this->main_frame->SetContent($the_view);
-			} else {
-				$this->load->library('custom_pages');
-				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
-			}
-			// Load the public frame view
-			$this->main_frame->Load();
-		}
+		
 		if($action=='preview'){
-			$organisation = $this->user_auth->organisationShortName;
-			$this->pages_model->SetPageCode('viparea_directory_publish');
 			
 			//Show a toolbar in a message for the preview.
 			$published = $this->directory_model->IsRevisionPublished($organisation, $revision);
 			$user_level = GetUserLevel();
 			if($published){
-				$message = 'This is a preview of the current published directory revision.<br />'.$user_level;
+				$message = 'This is a preview of the current published directory revision.<br />';
 			}else{
-				$message = 'This is a preview of a directory revision.<br />'.$user_level;
+				$message = 'This is a preview of a directory revision.<br />';
 			}
 			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
 			
@@ -202,36 +197,6 @@ class Yorkerdirectory extends Controller
 				$this->load->library('custom_pages');
 				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 			}
-			// Load the public frame view
-			$this->main_frame->Load();
-		}
-		if($action=='delete'){
-			$organisation = $this->user_auth->organisationShortName;
-			$this->pages_model->SetPageCode('viparea_directory_delete');
-			
-			$result = $this->directory_model->DeleteEntryRevisionById($organisation, $revision);
-			
-			//Delete entry
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
-			
-			if (!empty($data)) {
-			$this->_SetupNavbar();
-			
-				$data['result']=$result;
-				
-				// Set up the directory view
-				$the_view = $this->frames->view('directory/viparea_directory_delete', $data);
-				
-				// Set up the public frame
-				$this->main_frame->SetTitleParameters(
-						array('organisation' => $data['organisation']['name']));
-				$this->main_frame->SetPage('information');
-				$this->main_frame->SetContent($the_view);
-			} else {
-				$this->load->library('custom_pages');
-				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
-			}
-			
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
