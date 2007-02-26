@@ -256,12 +256,18 @@ class Yorkerdirectory extends Controller
 			$action = $this->uri->segment(5, 'default');
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($this->uri->segment(7) == 'up') {
-					$this->slideshow->pushUp($photoID, $data['id']);
+					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
 				} else {
-					$this->slideshow->pushDown($photoID, $data['id']);
+					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
 			} elseif($action == 'delete') {
-				$this->slideshow->deletePhoto($photoID, $data['id']);
+				if ($this->uri->segment(8) == 'confirm') {
+					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
+					$this->messages->AddMessage('info', 'Photo Deleted');
+				} else {
+					$this->messages->AddMessage('info', 'Are you sure? <a href="confirm">Click to delete</a>');
+					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
+				}
 			}
 			
 			// Insert main text from pages information
