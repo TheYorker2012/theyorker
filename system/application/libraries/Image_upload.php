@@ -2,9 +2,9 @@
 
 class Image_upload {
 	
-	private $ci
+	private $ci;
 	
-	public function Image_upload {
+	public function Image_upload() {
 		$this->ci = &get_instance();
 	}
 	
