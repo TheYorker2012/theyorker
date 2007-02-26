@@ -42,7 +42,6 @@ if ($user == TRUE)
 	echo '<div class="grey_box">';
 	echo '<h2>'.$vote_campaigns['title'].'</h2>';
 	echo $vote_campaigns['text'];
-	echo '<form class="form">';
 	echo '<table width="100%">';
         foreach ($campaign_list as $key => $campaigns)
 	{

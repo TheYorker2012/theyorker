@@ -33,10 +33,19 @@ class Charity extends Controller
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_charity_charities');
+		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('charities');
+
+		// Setup XAJAX functions
+		$this->load->library('xajax');
+	        $this->xajax->registerFunction(array('_addCharity', &$this, '_addCharity'));
+	        $this->xajax->processRequests();
+		
+		//get list of the charities
+		$data['charities'] = $this->charity_model->GetCharities();
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -47,9 +56,22 @@ class Charity extends Controller
 		
 		// Set up the public frame
 		$this->main_frame->SetContent($the_view);
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		// Load the public frame view
 		$this->main_frame->Load();
+	}
+
+	function _addCharity($name)
+	{
+		$this->load->model('charity_model','charity_model');
+		//$id = $this->charity_model->CreateCharity($name);
+		$id = 2;
+		$xajax_response = new xajaxResponse();
+		$xajax_response->addScriptCall('charityAdded',
+						$name,
+						$id);
+		return $xajax_response;
 	}
 
 	function modify()
