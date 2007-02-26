@@ -346,6 +346,19 @@ class Members extends Controller
 		
 		$this->_GetTeams();
 		
+		if (NULL !== $Suboption1) {
+			if (is_numeric($Suboption1) && array_key_exists((int)$Suboption1,$this->mAllTeams)) {
+				$Suboption1 = (int)$Suboption1;
+				$this->mOrganisation = &$this->mAllTeams[$Suboption1];
+			} else {
+				// Show custom error page for no existing team
+				$this->load->library('custom_pages');
+				$this->main_frame->SetContent(new CustomPageView('vip_members_notteam','error'));
+				$this->main_frame->Load();
+				return;
+			}
+		}
+		
 		$this->pages_model->SetPageCode('viparea_members_teams');
 		
 		$data = array(

@@ -12,7 +12,7 @@
 			echo '<LI>';
 		}
 		echo '<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />';
-		echo $team['name'];
+		echo '<a href="'.vip_url('members/teams/'.$team['id']).'">'.$team['name'].'</a>';
 		if (!empty($team['subteams'])) {
 			echo '<UL>';
 			foreach ($team['subteams'] as $subteam) {
