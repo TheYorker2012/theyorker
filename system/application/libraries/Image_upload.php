@@ -9,8 +9,6 @@ class Image_upload {
 	}
 	
 	public function recieveUpload($returnPath, $types = false) {
-		if (!CheckPermissions('office')) return;
-		
 		$this->ci->load->library(array('image_lib', 'upload', 'xajax'));
 		$this->ci->load->helper('images');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
@@ -50,11 +48,11 @@ class Image_upload {
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->ci->main_frame->SetExtraHead($head);
 		$this->ci->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
-		$this->ci->main_frame->Load();
+		return $this->ci->main_frame->Load();
 	}
 	
 	function process_form_data($formData) {
-		if (!CheckPermissions('office')) return;
+		if (!CheckPermissions('office')) return; //keep this for now...
 
 		$objResponse = new xajaxResponse();
 		$this->ci->load->library('image_lib');
