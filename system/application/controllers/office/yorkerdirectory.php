@@ -245,18 +245,30 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
 		$this->load->helper('images');
+		$this->load->helper('url');
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 
 		if (!empty($data)) {
 			$this->_SetupNavbar();
+			$photoID = $this->uri->segment(6, false);
+			$action = $this->uri->segment(5, 'default');
+			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
+				if ($this->uri->segment(7) == 'up') {
+					$this->slideshow->pushUp($photoID, $data['id']);
+				} else {
+					$this->slideshow->pushDown($photoID, $data['id']);
+				}
+			} elseif($action == 'delete') {
+				$this->slideshow->deletePhoto($photoID, $data['id']);
+			}
 			
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
-			$data['images'] = $this->slideshow->get_photos($data['organisation']['id']);
+			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
 			
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
