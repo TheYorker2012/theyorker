@@ -57,7 +57,7 @@ class Image_upload {
 		if (!CheckPermissions('office')) return;
 
 		$objResponse = new xajaxResponse();
-		$this->-ci->load->library('image_lib');
+		$this->ci->load->library('image_lib');
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
 
