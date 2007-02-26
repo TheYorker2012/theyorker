@@ -12,7 +12,7 @@
 <input type='checkbox' name='filter_drive' value='1'> Can Drive<br />
 <?php
 	/// Draw a branch of the tree of teams
-	function DoTeam($team, $in_list = TRUE)
+	function EchoTeamFilters($team, $in_list = TRUE)
 	{
 		if ($in_list) {
 			echo '<LI>';
@@ -22,7 +22,7 @@
 		if (!empty($team['subteams'])) {
 			echo '<UL>';
 			foreach ($team['subteams'] as $subteam) {
-				DoTeam($subteam);
+				EchoTeamFilters($subteam);
 			}
 			echo '</UL>';
 		}
@@ -36,7 +36,7 @@
 		echo '<h4>Filter by team</h4>';
 		// Draw the tree of teams
 		foreach ($organisation['subteams'] as $team) {
-			if (!DoTeam($team, FALSE)) {
+			if (!EchoTeamFilters($team, FALSE)) {
 				echo '<br />';
 			}
 		}

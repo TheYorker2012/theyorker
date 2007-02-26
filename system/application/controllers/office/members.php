@@ -122,6 +122,54 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		/// @todo Implement $viparea/members/list/...
 		
+		// Check for post data
+		if (!empty($_POST)) {
+			$selected_members = $this->input->post('members_selected');
+			// Reindex selected members
+			if (is_array($selected_members)) {
+				foreach ($selected_members as $key => $member_name) {
+					if (preg_match('/^user(\d+)$/',$member_name,$matches)) {
+						$selected_members[$key] = (int)$matches[1];
+					}
+				}
+				$this->messages->AddDumpMessage('userids',$selected_members);
+			} else {
+				$selected_members = array();
+			}
+			
+			// Check which button was pressed
+			$invite_check        = $this->input->post('members_select_invite_button');
+			$request_cards_check = $this->input->post('members_select_request_cards_button');
+			$unsubscribe_check   = $this->input->post('members_select_unsubscribe_button');
+			if ($invite_check === 'Invite') {
+				if (empty($selected_members)) {
+					$this->messages->AddMessage('information',
+						'No members selected, please use the check boxes to select the members that you wish to invite into a team.');
+				} else {
+					
+				}
+				
+			} elseif ($request_cards_check === 'Request business cards') {
+				if (empty($selected_members)) {
+					$this->messages->AddMessage('information',
+						'No members selected, please use the check boxes to select the members that you wish to request business cards from.');
+				} else {
+					
+				}
+				
+			} elseif ($unsubscribe_check === 'Unsubscribe') {
+				if (empty($selected_members)) {
+					$this->messages->AddMessage('information',
+						'No members selected, please use the check boxes to select the members that you wish to unsubscribe.');
+				} else {
+					
+				}
+				
+			} else {
+				$this->messages->AddMessage('error', 'Invalid post data, no recognised button signiture.');
+			}
+		}
+		
 		if ($Filter === 'filter') {
 			static $field_translator = array(
 				'team'			=> 'NULL',
@@ -159,6 +207,7 @@ class Members extends Controller
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'target'       => $this->uri->uri_string(),
 			'members'      => $members,
 			'organisation' => $this->mOrganisation,
 		);
@@ -567,18 +616,28 @@ class Members extends Controller
 		return array($sql, $bind_data);
 	}
 	
+	/// Regenerate the uri filter from the filter object.
+	protected function _RegenerateFilter($Filter)
+	{
+		
+	}
+	
 	/// Get member filter from url.
-	protected function _GetFilter($StartRSegment)
+	protected function _GetFilter($StartRSegment, $OverrideSegments = NULL, $PreFilter = NULL)
 	{
 		$default = array(
 				TRUE  => array(),
 				FALSE => array(),
 			);
-		$filter = array(
-			'team' => $default,
-			'user' => $default,
-			'card' => $default,
-		);
+		if (NULL === $PreFilter) {
+			$filter = array(
+				'team' => $default,
+				'user' => $default,
+				'card' => $default,
+			);
+		} else {
+			$filter = $PreFilter;
+		}
 		// Start at RSegment and read expressions
 		$segment_number = $StartRSegment;
 		while ($segment_number <= $this->uri->total_rsegments()) {
