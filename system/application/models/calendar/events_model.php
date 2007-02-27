@@ -572,9 +572,11 @@ class Events_model extends Model
 				$this->mReadOnly = FALSE;
 				if (VipMode() !== 'none') {
 					$this->mActiveEntityId = VipOrganisationId();
+			$this->messages->AddDumpMessage('active_entity_id1',$this->mActiveEntityId);
 					$this->mActiveEntityType = self::$cEntityVip;
 				} else {
 					$this->mActiveEntityId = $CI->user_auth->entityId;
+			$this->messages->AddDumpMessage('active_entity_id2',$this->mActiveEntityId);
 					$this->mActiveEntityType = self::$cEntityUser;
 				}
 			} else {
