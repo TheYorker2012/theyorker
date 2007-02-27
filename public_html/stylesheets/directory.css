@@ -1,0 +1,20 @@
+div#NotFound, div#Jumpers {
+	text-align: center;
+}
+
+div.DirectoryList h4 {
+	margin-bottom: 0;
+}
+
+div.DirectoryList h4 span {
+	font-size: smaller;
+	font-weight: normal;
+}
+
+div#LetterJump {
+	text-align: center;
+}
+
+div#LetterJump a {
+	margin: 0.1em;
+}

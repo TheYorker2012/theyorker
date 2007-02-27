@@ -27,7 +27,7 @@ class NavigationBar extends FramesView
 	/**
 	 * @param $Style string Style of navbar to use.
 	 */
-	function __construct($Style = 'navbar')
+	function __construct($Style = 'Navbar')
 	{
 		parent::__construct('general/navbar');
 
@@ -42,14 +42,12 @@ class NavigationBar extends FramesView
 	 * @param $Key string Unique name of item.
 	 * @param $Title string Title to be displayed.
 	 * @param $Link string URL to link to.
-	 * @param $Class string Class name.
 	 */
-	function AddItem($Key, $Title, $Link, $Class = '')
+	function AddItem($Key, $Title, $Link)
 	{
 		$this->mItems[$Key] = array(
 				'title' => $Title,
 				'link' => $Link,
-				'class' => $Class,
 			);
 	}
 
@@ -80,7 +78,6 @@ class Navigation_bar
 	 * @param $Items array of items, each with the following fields:
 	 *	- 'title' (string Title of the item).
 	 *	- 'link' (string URL to link to).
-	 *	- 'class' (optional string Class name).
 	 */
 	function &Create($Items = array())
 	{
@@ -90,8 +87,7 @@ class Navigation_bar
 			$result->AddItem(
 					$key,
 					$item['title'],
-					$item['link'],
-					array_key_exists('class',$item) ? $item['class'] : ''
+					$item['link']
 				);
 		}
 

@@ -47,6 +47,8 @@ class Home extends Controller {
 		
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
+
+		$this->main_frame->SetExtraCss('/stylesheets/home.css');
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

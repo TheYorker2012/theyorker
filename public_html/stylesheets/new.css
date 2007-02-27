@@ -35,10 +35,20 @@ a {
 	color: #999;
 }
 
+ul {
+	list-style-image: url('/images/prototype/homepage/arrow.png');
+	list-style-position: inside;
+	padding-left: 0;
+	margin-left: 0;
+}
+
+li {
+}
 
 /* Form formatting */
 fieldset {
 	border: 0;
+	padding: 0;
 }
 
 label {
@@ -59,13 +69,6 @@ input.button {
 	float: right;
 }
 
-/* Heading formating */
-h4 {
-	background-color: #999;
-	color: white;
-	padding: 0.5em;
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in the page frame and overall layout               *
@@ -79,7 +82,10 @@ body {
 /* Create Header, Body and Footer sections */
 div#Header, div#Page, div#Footer {
 	/* Remove next line for variable width */
-	width: 780px;
+	/*width: 750px;*/
+
+	min-width: 700px;
+
 	margin-left: auto;
 	margin-right: auto;
 	clear: both;
@@ -102,7 +108,11 @@ div#HeaderMenu {
 	text-align: right;
 }
 
-/* Formatting for the banner at the top of the page */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the banner at the top of the page               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 div#TopBanner {
 	background-image: url(/images/prototype/header/homepage_bk.gif);
 	background-repeat: repeat-x;
@@ -128,6 +138,11 @@ div#TopBannerPictures img {
 	padding-right: 0.5em;
 }
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the search box and navigation menu              *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /* Formatting for the search box */
 fieldset#SearchBox {
 	display: block;
@@ -151,9 +166,8 @@ fieldset#SearchBox input {
 
 /* Formatting for the navigation on the left */
 div#NavigationMenu ul {
-	clear: both;
 	display: block;
-	list-style: none;
+	list-style: none outside none;
 	margin: 0 0.5em 0 0;
 	padding: 0;
 	border-top: 1px solid #999;
@@ -172,6 +186,11 @@ div#NavigationMenu ul li.first {
 	border-top: 0;
 }
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in layout of main area (including right bar)       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /* Formatting for the page title */
 h1#PageTitle {
 	display: block;
@@ -180,10 +199,76 @@ h1#PageTitle {
 	margin: 0 0 0.5em 0;
 	padding: 3px 0px 2px 5px;
 	font-size: 13pt;
+	text-transform: capitalize;
 
 	/* Required only when other stylesheets are included */
 	height: auto;
 }
+
+/* Formatting for the (optional) bar on the right */
+div#RightColumn {
+	float: right;
+	width: 230px;
+}
+
+div#RightColumn h4 {
+	background-color: #999;
+	color: white;
+	padding: 0.4em;
+	margin: 0.5em 0em 0.5em 0em;
+	text-transform: capitalize;
+}
+
+div#RightColumn h4.first {
+	margin-top: 0em;
+}
+
+span.RightColumnAction {
+	text-align: right;
+	display: block;
+}
+
+div#RightColumn label {
+	float: none;
+	width: auto;
+	text-align: left;
+	margin: 0.3em;
+}
+
+div#RightColumn input {
+	float: none;
+	margin: 0.3em;
+	vertical-align: middle;
+}
+
+div#MainColumn {
+	margin-right: 255px;
+}
+
+/* Formatting for content boxes in main page area */
+div.BlueBox {
+	border: 1px solid #20c1f0;
+	padding: 0.5em;
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+
+	float: left;
+	width: 100%;
+}
+
+div.BlueBox h2 {
+	color: #20c1f0;
+	margin: 0;
+}
+
+div.BlueBox h3 {
+	color: #999999;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in footer and feedback at bottom of page           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* Formatting for footer text and feedback form */
 div#Footer small {
@@ -197,4 +282,46 @@ a#ShowFeedback {
 	text-align: center;
 	font-weight: bold;
 	color: #ff6a00;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul#Navbar {
+	display: block;
+	text-align: right;
+	float: left;
+	border-bottom: 1px solid #20c1f0;
+	margin: 0;
+	list-style: none outside none;
+}
+
+ul#Navbar li {
+	float: right;
+	text-align: center;
+	margin-right: 0.4em;
+	border: 1px solid #20c1f0;
+	padding: 0.2em;
+	min-width: 7em;
+	height: 1.2em;
+	margin-bottom: -1px;
+}
+
+ul#Navbar li.current {
+	border-bottom: 1px solid white;
+}
+
+ul#Navbar li a {
+	vertical-align: middle;
+	color: #20c1f0;
+}
+
+ul#Navbar li.current a {
+	font-weight: bold;
+}
+
+ul#Navbar li a:hover {
+	font-weight: bold;
 }

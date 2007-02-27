@@ -22,11 +22,15 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<link rel='shortcut icon' href='/images/yorker.ico' />
 	<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
 
-	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	
+	<?php
+	if (isset($extra_css)) {
+		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
+	}
+	?>
 	
 	<!-- BEGIN Multiple event handlers code -->
 	<script type="text/javascript">
@@ -56,61 +60,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<!-- END Multiple event handlers code -->
 
 	<!-- BEGIN 'head' tag items from controlling script -->
-	<?php if (isset($extra_head)) { echo($extra_head); }; ?>
+	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
 	<!-- END 'head' tag items from controlling script -->
 
-	<?php /*
-	if (isset($maps)) {
-	// The google maps API key will need to be changed whenever we change server
-	// There is a google account to do this:
-	//   username - theyorkermaps
-	//   password - same as the database
-	?>
-	<!-- BEGIN map handling code -->
-	<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q" type="text/javascript"></script>
-	<script type="text/javascript">
-	//<![CDATA[
-
-	function loadMaps() {
-		// define a sctucture to store map settings
-		function OMap(element, lat, lng) {
-			this.element = element;
-			this.lat = lat;
-			this.lng = lng;
-		}
-
-		var map;
-		var maps = new Array();
-		<?php
-		// Write code to put each the maps defined in PHP into a Javascript array
-		foreach ($maps as $map) {
-			echo 'maps.push(new OMap("'.$map['element'].'", '.$map['lat'].', '.$map['lng'].'));';
-		}
-		?>
-
-		// For each map, update the page to actually show the map
-		for (i = 0; i < maps.length; i++) {
-			var mapobj = new GMap2(document.getElementById(maps[i].element));
-			mapobj.setCenter(new GLatLng(maps[i].lat, maps[i].lng), 13);
-			mapobj.enableDoubleClickZoom();
-			mapobj.enableContinuousZoom();
-		}
-	}
-
-	onLoadFunctions.push(loadMaps);
-	onUnloadFunctions.push(GUnload);
-
-	//]]>
-	</script>
-	<!-- END map handling code -->
 	<?php
-	} */
 	include('maps.php');
 	?>
 	
-	<!-- FIXME: I'm really not sure this in necessary (and it is horrible) -->
-	<script src="/javascript/jumpto.js" type="text/javascript"></script>
-
 	<!-- BEGIN search box code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -233,10 +189,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		<div id="MainBodyPane">
 			<h1 id="PageTitle">
-				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
+				<?php if(isset($title)) { echo $title."\n"; } else { echo 'no pagename'."\n"; } ?>
 			</h1>
 
-			<?php	
+<!-- BEGIN generated content -->
+<?php	
 				// TODO: check this works properly
 
 				// Navigation bar
@@ -251,7 +208,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 				// Display the main content
 				$content[0]->Load();
-			?>
+?>
+<!-- END generated content -->
+
 		</div>
 	</div>
 

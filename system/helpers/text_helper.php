@@ -38,7 +38,7 @@
  * @param	string	the end character. Usually an ellipsis
  * @return	string
  */	
-function word_limiter($str, $n = 100, $end_char = '&#8230;')
+function word_limiter($str, $n = 100, $end_char = '...')
 {
 	if (strlen($str) < $n)
 	{

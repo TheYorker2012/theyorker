@@ -1,0 +1,18 @@
+/*div#HomeBanner {
+	margin-right: 240px;
+}
+
+div#HomeBanner img {
+	width: 100%;
+	max-width: 420px;
+	margin-top: 0.5em;
+}*/
+
+div.NewsBox {
+	float: left;
+	padding: 0.3em;
+}
+
+div.NewsBox img {
+	float: right;
+}
