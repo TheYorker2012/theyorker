@@ -25,13 +25,23 @@ function EchoOptionTeams($team, $selected, $head, $depth = 0)
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
 			<th></th>
-			<th>Forename</th>
-			<th>Surname</th>
+			<?php
+				function SortHeader($filter_base, $sort_fields, $field, $title)
+				{
+					echo '<a href="' . vip_url($filter_base . '/sort/'.
+						((isset($sort_fields[$field]) && $sort_fields[$field])
+							? 'desc' : 'asc').'/'.$field) . '">'.
+						$title.
+						'</a>';
+				}
+			?>
+			<th><?php SortHeader($filter_base, $sort_fields, 'firstname','Firstname'); ?></th>
+			<th><?php SortHeader($filter_base, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th>Paid</th>
+			<th><?php SortHeader($filter_base, $sort_fields, 'paid','Paid'); ?></th>
 			<th>E?</th>
 			<th>Conf</th>
-			<th>VIP</th>
+			<th><?php SortHeader($filter_base, $sort_fields, 'vip','VIP'); ?></th>
 			<th>Edit</th>
 		</tr>
 		<?php foreach ($members as $membership) {?>

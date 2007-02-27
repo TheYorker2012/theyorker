@@ -184,22 +184,92 @@ class Members_model extends Model {
 		return $this->db->affected_rows();
 	}	
 	
-	# Assumes not already in DB (use AlreadyMember to check)
-	# Also needs to inform the member of the invitations, is this done in prefs?
-	function InviteMember($UserId,$OrgId) {
+	/// Invite a set of users to join the organisation.
+	/**
+	 * This simply tries to set a subscription up with organisation_confirmed=1,
+	 *	So any existing members aren't affected.
+	 * Any users who aren't registered are ignored.
+	 * @param $OrganisationId integer Organisation's entity_id.
+	 * @param $Users array(strings) usernames of users to invite.
+	 * @return bool Whether any subscriptions were affected.
+	 */
+	function InviteUsers($OrganisationId, $Users)
+	{
 		$sql = '
-				INSERT INTO subscriptions
-							(
-							subscription_organisation_entity_id,
-							subscription_user_entity_id,
-							)
-						VALUES
-							{
-							\''.$OrgId.'\',
-							\''.$UserId.'\'
-							}
-				';
-		$this->db->query($sql);
+			INSERT INTO subscriptions (
+				subscriptions.subscription_organisation_entity_id,
+				subscriptions.subscription_user_entity_id,
+				subscriptions.subscription_organisation_confirmed
+			)
+			SELECT
+				?,
+				users.user_entity_id,
+				TRUE
+			FROM	entities
+			INNER JOIN users
+				ON	users.user_entity_id = entities.entity_id
+			WHERE
+				entities.entity_username
+					IN ('.implode(',',array_fill(1,count($Users),'?')).')
+			ON DUPLICATE KEY UPDATE
+				subscriptions.subscription_organisation_confirmed = TRUE
+			';
+		$bind_data = array_merge(array($OrganisationId), $Users);
+		$this->db->query($sql, $bind_data);
+		return ($this->db->affected_rows() > 0);
+	}
+	
+	/// Get information about the specified users.
+	/**
+	 * @param $OrganisationId integer Organisation's entity_id.
+	 * @param $Users array of usernames.
+	 * @return Array of user data
+	 */
+	function GetUsersStatuses($OrganisationId, $Users)
+	{
+		$sql = '
+			SELECT
+				entities.entity_username AS username,
+				subscriptions.subscription_user_confirmed AS member,
+				subscriptions.subscription_deleted AS deleted
+			FROM entities
+			INNER JOIN subscriptions
+				ON	subscriptions.subscription_organisation_entity_id = ?
+				AND	subscriptions.subscription_user_entity_id
+						= entities.entity_id
+				AND	subscriptions.subscription_organisation_confirmed = TRUE
+			WHERE	entities.entity_username
+						IN ('.implode(',',array_fill(1,count($Users),'?')).')
+			ORDER BY entities.entity_username ASC
+			';
+		$bind_data = array_merge(array($OrganisationId), $Users);
+		$query = $this->db->query($sql, $bind_data);
+		return $query->result_array();
+	}
+	
+	/// Get a list of the invited users.
+	/**
+	 * @param $OrganisationId integer Organisation's entity_id.
+	 * @return Array of user data
+	 */
+	function GetInvitedUsers($OrganisationId)
+	{
+		$sql = '
+			SELECT
+				users.user_firstname,
+				users.user_surname,
+				users.user_nickname,
+			FROM subscriptions
+			INNER JOIN users
+				ON	users.user_entity_id
+						= subscriptions.subscription_user_entity_id
+			WHERE	subscriptions.subscription_organisation_entity_id = ?
+				AND	subscriptions.subscription_organisation_confirmed = TRUE
+				AND	subscriptions.subscription_user_confirmed = FALSE
+			';
+		$bind_data = array($OrganisationId);
+		$query = $this->db->query($sql, $bind_data);
+		return $query->result_array();
 	}
 	
 	function RemoveSubscription($UserId,$OrgId) {
@@ -207,7 +277,7 @@ class Members_model extends Model {
 				UPDATE subscriptions
 				SET subscription_member = "0"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"								
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$this->db->query($sql);		
 	}
@@ -218,7 +288,7 @@ class Members_model extends Model {
 				UPDATE subscriptions
 				SET subscription_member = "1"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$this->db->query($sql);		
 	}

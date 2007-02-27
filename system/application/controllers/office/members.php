@@ -170,6 +170,9 @@ class Members extends Controller
 			}
 		}
 		
+		$filter_base = 'members/list/filter';
+		$sort_fields = array();
+		
 		if ($Filter === 'filter') {
 			static $field_translator = array(
 				'team'			=> 'NULL',
@@ -188,8 +191,17 @@ class Members extends Controller
 				'enrol_year'	=> 'users.user_enrolled_year',
 			);
 			try {
+				// Process the filter url
 				$filter = $this->_GetFilter(4);
+				// Produce sql, the base url for extra filters, and sort fields
+				$filter_base .= '/'.implode('/', $this->_ReconstructFilter($filter));
+				/*if (vip_url($filter_base) !== $this->uri->uri_string()) {
+					// If the generated url is different, redirect to it as it is neater
+					return redirect(vip_url($filter_base));
+				}*/
 				$sql = $this->_GenerateFilterSql($filter, $field_translator);
+				$sort_fields = $this->_ReindexFilterSorts($filter);
+				// Use db to get members using filter.
 				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
@@ -210,6 +222,8 @@ class Members extends Controller
 			'target'       => $this->uri->uri_string(),
 			'members'      => $members,
 			'organisation' => $this->mOrganisation,
+			'filter_base'  => $filter_base,
+			'sort_fields'  => $sort_fields,
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);
@@ -511,8 +525,8 @@ class Members extends Controller
 				$failures = array();
 				foreach ($email_list as $key => $email) {
 					if (!empty($email)) {
-						if (preg_match('/^([a-z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
-							$valids[] = $matches[1];
+						if (preg_match('/^([a-zA-Z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
+							$valids[] = strtolower($matches[1]);
 						} else {
 							$failures[] = $email;
 						}
@@ -529,9 +543,46 @@ class Members extends Controller
 					
 				} else {
 					// Everything was fine.
-					$this->messages->AddMessage('success','Everything looks good but i haven\'t been programmed what to do next :)');
+					$this->members_model->InviteUsers(VipOrganisationId(), $valids);
 					
-					/// @TODO Do something with invite email addresses
+					$invites = $this->members_model->GetUsersStatuses(VipOrganisationId(), $valids);
+					$invite_invalids = array_flip($valids); // not in $invites
+					$invite_valids = array(); // not member, not deleted
+					$invite_members = array(); // is member
+					$invite_deleted = array(); // is deleted
+					foreach ($invites as $invite) {
+						if ($invite['deleted'] == 1) {
+							$invite_deleted[] = $invite['username'];
+						} elseif ($invite['member'] == 1) {
+							$invite_member[] = $invite['username'];
+						} else {
+							$invite_valids[] = $invite['username'];
+						}
+						unset($invite_invalids[$invite['username']]);
+					}
+					
+					$messages = array();
+					if (!empty($invite_valids)) {
+						$messages[] = 'The following '.count($invite_valids).' users '.
+							'are now invited to join your organisation:'.
+							'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>';
+					}
+					if (!empty($invite_member)) {
+						$messages[] = 'The following '.count($invite_member).' users '.
+							'are already members:'.
+							'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>';
+					}
+					if (!empty($invite_invalids)) {
+						$messages[] = 'The following '.count($invite_invalids).' users '.
+							'could not be found and may not be registered with The Yorker:'.
+							'<ul><li>' . implode('</li><li>', array_keys($invite_invalids)) . '</li></ul>';
+					}
+					if (!empty($invite_deleted)) {
+						$messages[] = 'The following '.count($invite_deleted).' users '.
+							'are banned and need unbanning before they can be invited:'.
+							'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>';
+					}
+					$this->messages->AddMessage('information',implode('',$messages));
 				}
 			}
 		}
@@ -573,6 +624,22 @@ class Members extends Controller
 		
 		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	/// Reindex the sorts in a filter.
+	/**
+	 * @param $Filter array Filter produced by _GetFilter.
+	 * @return array($fields => {TRUE (asc), FALSE (desc)}) sort fields.
+	 */
+	protected function _ReindexFilterSorts($Filter)
+	{
+		$result = array();
+		if (array_key_exists('sort', $Filter)) {
+			foreach ($Filter['sort'] as $sort) {
+				$result[$sort[1]] = ($sort[0] === 'asc');
+			}
+		}
+		return $result;
 	}
 	
 	/// Generate SQL from the filter produced by _GetFilter.
@@ -629,10 +696,46 @@ class Members extends Controller
 		return array($sql, $bind_data);
 	}
 	
-	/// Regenerate the uri filter from the filter object.
-	protected function _RegenerateFilter($Filter)
+	/// Reconstruct the uri filter from the filter object.
+	protected function _ReconstructFilter($Filter)
 	{
+		$result = array();
 		
+		$sortable = FALSE;
+		$bind_data = array();
+		foreach ($Filter as $filt => $er) {
+			if (is_bool($er)) {
+				if ($filt !== 'search') {
+					if (!$er) {
+						$result[] = 'not';
+					}
+					$result[] = $filt;
+				} else {
+					//$result[] = 'search';
+				}
+			} elseif ($filt !== 'sort') {
+				foreach ($er[TRUE] as $id => $dummy) {
+					$result[] = $filt;
+					$result[] = $id;
+				}
+				foreach ($er[FALSE] as $id => $dummy) {
+					$result[] = 'not';
+					$result[] = $filt;
+					$result[] = $id;
+				}
+			} else {
+				$sortable = TRUE;
+			}
+		}
+		if ($sortable) {
+			foreach ($Filter['sort'] as $sorter) {
+				$result[] = 'sort';
+				$result[] = $sorter[0];
+				$result[] = $sorter[1];
+			}
+		}
+		
+		return $result;
 	}
 	
 	/// Get member filter from url.
@@ -642,6 +745,7 @@ class Members extends Controller
 				TRUE  => array(),
 				FALSE => array(),
 			);
+		$sort_index = array();
 		if (NULL === $PreFilter) {
 			$filter = array(
 				'team' => $default,
@@ -650,6 +754,11 @@ class Members extends Controller
 			);
 		} else {
 			$filter = $PreFilter;
+			if (array_key_exists('sort', $filter)) {
+				foreach ($filter['sort'] as $key => $sort) {
+					$sort_index[$sort[1]] = $key;
+				}
+			}
 		}
 		// Start at RSegment and read expressions
 		$segment_number = $StartRSegment;
@@ -681,8 +790,8 @@ class Members extends Controller
 				'card' => 'is_numeric',
 			);
 			static $sort_directions = array(
-				'asc'  => 'ASC',
-				'desc' => 'DESC',
+				'asc'  => 'asc',
+				'desc' => 'desc',
 			);
 			static $sortable_fields = array(
 				'firstname'  => 'firstname',
@@ -737,7 +846,12 @@ class Members extends Controller
 					}
 					$parameters[] = $parameter;
 				}
-				$filter[$segment][] = $parameters;
+				if (array_key_exists($parameters[1], $sort_index)) {
+					$filter[$segment][$sort_index[$parameters[1]]] = $parameters;
+				} else {
+					$filter[$segment][] = $parameters;
+					$sort_index[$parameters[1]] = key($filter[$segment]);
+				}
 				
 			} else {
 				throw new Exception('Unexpected filter URI segment: \''.$segment.'\'.');
