@@ -1,4 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+define('PHOTOS_PERPAGE', 12);
+define('VIEW_WIDTH', 650);
+define('BASE_DIR', '/home/theyorker/public_html');
 
 class Image_upload {
 	
