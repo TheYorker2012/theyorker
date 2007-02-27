@@ -241,6 +241,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 		if ($action_levels['vip']) {
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipMode('viparea');
 		}
 	} elseif ($user_level === 'vip') {
 		// Logged in as student and in VIP area
@@ -254,6 +255,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
 			$vip_accessible = TRUE;
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipMode('viparea');
 		} else {
 			// check permissions to access this organisation
 			$vip_organisations = $CI->user_auth->getOrganisationLogins();
@@ -261,6 +263,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
 					$vip_accessible = $vip_login_action;
 					VipOrganisationId($organisation['organisation_entity_id']);
+					VipMode('viparea');
 					break;
 				}
 			}
@@ -343,6 +346,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							== $organisation_shortname) {
 						// Yes, match, PR Rep, set stuff and change user level to PR
 						VipOrganisationId($organisation['organisation_entity_id']);
+						VipMode('office');
 						$action_levels['pr'] = TRUE;
 						break;
 					}
