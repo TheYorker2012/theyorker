@@ -158,6 +158,7 @@ class Register extends Controller {
 		{
 			$CI = &get_instance();
 			$CI->load->model('prefs_model');
+			$CI->load->model('calendar/events_model');
 			$xajax_response = new xajaxResponse();
 			if ((is_numeric($module_id)) && ($CI->prefs_model->isModule($module_id))) {
 				if ($CI->prefs_model->isSubscribed($_SESSION['ua_entityId'],$module_id)) {
@@ -171,6 +172,7 @@ class Register extends Controller {
 					} else {
 						// New subscription required
 						$CI->prefs_model->addSubscription($_SESSION['ua_entityId'], $module_id);
+						$CI->events_model->FeedSubscribe($module_id);
 					}
 					$xajax_response->addScript('document.getElementById(\'soc' . $module_id . '\').className=\'selected\';');
 				}
@@ -247,6 +249,7 @@ class Register extends Controller {
 		{
 			$CI = &get_instance();
 			$CI->load->model('prefs_model');
+			$CI->load->model('calendar/events_model');
 			$xajax_response = new xajaxResponse();
 			if ((!is_numeric($soc_id)) || (!$CI->prefs_model->isSociety($soc_id))) {
 				$xajax_response->addAlert('Invalid society selected, please try again.');
@@ -265,6 +268,7 @@ class Register extends Controller {
 					} else {
 						// New subscription required
 						$CI->prefs_model->addSubscription($_SESSION['ua_entityId'], $soc_id);
+						$CI->events_model->FeedSubscribe($soc_id);
 					}
 					// Set form controls up for unsubscription
 					$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'selected\';');
@@ -377,6 +381,9 @@ class Register extends Controller {
 
 		function societySubscription ($soc_id)
 		{
+			$CI = & get_instance();
+			$CI->load->model('calendar/events_model');
+			
 			$xajax_response = new xajaxResponse();
 			if ((!is_numeric($soc_id)) || (!isAUClub($soc_id))) {
 				$xajax_response->addAlert('Invalid athletic union club selected, please try again.');
@@ -396,8 +403,9 @@ class Register extends Controller {
 						$query = mysql_query($sql);
 					} else {
 						// New subscription required
-						$sql = 'INSERT INTO subscriptions SET subscription_organisation_entity_id = ' . $soc_id . ', subscription_user_entity_id = ' . $_SESSION['ua_entityId'] . ', subscription_interested = 1, subscription_user_confirmed = 1';
+						$sql = 'INSERT INTO subscriptions SET subscription_organisation_entity_id = ' . $soc_id . ', subscription_user_entity_id = ' . $_SESSION['ua_entityId'] . ',  subscription_user_confirmed = 1';
 						$query = mysql_query($sql);
+						$CI->events_model->FeedSubscribe($soc_id);
 					}
 					// Set form controls up for unsubscription
 					$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'selected\';');

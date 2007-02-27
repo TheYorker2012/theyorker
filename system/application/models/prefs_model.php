@@ -159,7 +159,6 @@ class Prefs_model extends Model {
 			'INSERT INTO subscriptions '.
 			'SET subscription_organisation_entity_id = ?,'.
 			' subscription_user_entity_id = ?,'.
-			' subscription_interested = 1,'.
 			' subscription_user_confirmed = 1';
 		$query = $this->db->query($sql, array($org_id, $user_id));
 	}
