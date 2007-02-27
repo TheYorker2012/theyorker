@@ -525,6 +525,9 @@ class Events_model extends Model
 	protected $mOccurrenceFilter;
 	
 	/// Entity id of user/organisation.
+	/**
+	 * @note This should ALWAYS be accessed using GetActiveEntityId()
+	 */
 	protected $mActiveEntityId;
 	
 	/// Type of acting entity.
@@ -547,24 +550,8 @@ class Events_model extends Model
 		
 		$this->load->model('calendar/recurrence_model');
 		
-		// Get entity id from user_auth library
-		$CI = &get_instance();
-		$CI->load->library('user_auth');
-		if ($CI->user_auth->isLoggedIn) {
-			$this->mReadOnly = FALSE;
-			if ($CI->user_auth->organisationLogin >= 0) {
-				$this->mActiveEntityId = $CI->user_auth->organisationLogin;
-				$this->mActiveEntityType = self::$cEntityVip;
-			} else {
-				$this->mActiveEntityId = $CI->user_auth->entityId;
-				$this->mActiveEntityType = self::$cEntityUser;
-			}
-		} else {
-			// Default to an entity id with default events
-			$this->mReadOnly = TRUE;
-			$this->mActiveEntityId = 0;
-			$this->mActiveEntityType = self::$cEntityPublic;
-		}
+		$this->mActiveEntityId = NULL;
+		$this->mActiveEntityType = self::$cEntityPublic;
 		
 		$this->mStates = array();
 		$this->mDayInformation = FALSE;
@@ -577,6 +564,26 @@ class Events_model extends Model
 	/// Get the entity id of the active entity.
 	function GetActiveEntityId()
 	{
+		if (NULL === $this->mActiveEntityId) {
+			// Get entity id from user_auth library
+			$CI = &get_instance();
+			$CI->load->library('user_auth');
+			if ($CI->user_auth->isLoggedIn) {
+				$this->mReadOnly = FALSE;
+				if (VipMode() !== 'none') {
+					$this->mActiveEntityId = VipOrganisationId();
+					$this->mActiveEntityType = self::$cEntityVip;
+				} else {
+					$this->mActiveEntityId = $CI->user_auth->entityId;
+					$this->mActiveEntityType = self::$cEntityUser;
+				}
+			} else {
+				// Default to an entity id with default events
+				$this->mReadOnly = TRUE;
+				$this->mActiveEntityId = 0;
+				$this->mActiveEntityType = self::$cEntityPublic;
+			}
+		}
 		return $this->mActiveEntityId;
 	}
 	
@@ -745,7 +752,7 @@ class Events_model extends Model
 			ON	subscriptions.subscription_user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 			AND	subscriptions.subscription_organisation_entity_id
-				= ' . $this->mActiveEntityId . '
+				= ' . $this->GetActiveEntityId() . '
 		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
 		$bind_data = array($EventId, $EventId);
 		
@@ -789,7 +796,7 @@ class Events_model extends Model
 			ON	subscriptions.subscription_user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 			AND	subscriptions.subscription_organisation_entity_id
-				= ' . $this->mActiveEntityId . '
+				= ' . $this->GetActiveEntityId() . '
 		LEFT JOIN locations
 			ON locations.location_id
 				= event_occurrences.event_occurrence_location_id
@@ -1006,7 +1013,7 @@ class Events_model extends Model
 				event_entity_relationship,
 				event_entity_confirmed)
 			VALUES';
-		$sql .= ' ('.$this->mActiveEntityId.','.$event_id.',\'own\',1)';
+		$sql .= ' ('.$this->GetActiveEntityId().','.$event_id.',\'own\',1)';
 		$query = $this->db->query($sql);
 		$affected_rows = $this->db->affected_rows();
 		if ($affected_rows == 0) {
@@ -1563,7 +1570,7 @@ END';
 		} else {
 			// Call the procedure
 			$this->db->query('CALL event_occurrence_movedraft_delete(?,?,?,?)',
-				array($this->mActiveEntityId, $EventId, $OccurrenceId, $ActivationState));
+				array($this->GetActiveEntityId(), $EventId, $OccurrenceId, $ActivationState));
 		}
 		
 		// Something should have changed
@@ -1797,8 +1804,8 @@ END';
 	 */
 	protected function SetOccurrenceUserState($OccurrenceId, $NewState)
 	{
-		/// @pre $mActiveEntityId === $sEntityUser
-		assert('$this->mActiveEntityId === self::$cEntityUser');
+		/// @pre GetActiveEntityId() === $sEntityUser
+		assert('$this->GetActiveEntityId() === self::$cEntityUser');
 		
 		$occurrence_query = new EventOccurrenceQuery();
 		
@@ -1807,7 +1814,7 @@ END';
 				event_occurrence_users.event_occurrence_user_user_entity_id,
 				event_occurrence_users.event_occurrence_user_event_occurrence_id,
 				event_occurrence_users.event_occurrence_user_state)
-			SELECT	'.$this->mActiveEntityId.', ?, ?
+			SELECT	'.$this->GetActiveEntityId().', ?, ?
 			FROM	event_occurrences
 			WHERE	(	event_occurrences.event_occurrence_id = ?
 					AND	'.$occurrence_query->ExpressionPublic().')
@@ -1888,7 +1895,7 @@ END';
 				event_subscription_user_entity_id,
 				event_subscription_organisation_entity_id
 			) SELECT
-				'.$this->mActiveEntityId.',
+				'.$this->GetActiveEntityId().',
 				organisations.organisation_entity_id
 			FROM organisations
 			WHERE	organisations.organisation_entity_id = ?
@@ -1908,7 +1915,7 @@ END';
 		$sql = '
 			DELETE FROM event_subscriptions
 			WHERE
-				event_subscription_user_entity_id = '.$this->mActiveEntityId.',
+				event_subscription_user_entity_id = '.$this->GetActiveEntityId().',
 				event_subscription_organisation_entity_id = ?
 			LIMIT 1';
 		$this->db->query($sql, $OrganisationEntityId);
