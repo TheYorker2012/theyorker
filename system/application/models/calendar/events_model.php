@@ -38,7 +38,7 @@ class EventOccurrenceQuery
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship = \'own\'
 						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	subscriptions.subscription_user_entity_id = ' . $this->mEntityId . ')';
+				OR	event_subscriptions.event_subscription_user_entity_id = ' . $this->mEntityId . ')';
 	}
 	
 	/// Produce an SQL expression for all and only rsvp'd events.
@@ -237,7 +237,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				OR subscription.vip=1
 			subscribed:
 				occurrence.event.entities.subscribers.id=me
-				subscription.interested & not subscription.deleted
+				event_subscription.interested
 			inclusions:
 				occurrence.event.entities.id=inclusion
 				
@@ -267,13 +267,10 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 			LEFT JOIN organisations
 				ON	organisations.organisation_entity_id
 						= event_entities.event_entity_entity_id
-			LEFT JOIN subscriptions
-				ON	subscriptions.subscription_organisation_entity_id
+			LEFT JOIN event_subscriptions
+				ON	event_subscriptions.event_subscription_organisation_entity_id
 						= event_entities.event_entity_entity_id
-				AND	subscriptions.subscription_user_entity_id	= ?
-				AND	subscriptions.subscription_deleted			= 0
-				AND	subscriptions.subscription_interested		= 1
-				AND	subscriptions.subscription_user_confirmed	= 1
+				AND	event_subscriptions.event_subscription_user_entity_id	= ?
 			LEFT JOIN event_occurrence_users
 				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
@@ -724,24 +721,25 @@ class Events_model extends Model
 	{
 		$occurrence_query = new EventOccurrenceQuery();
 		
-		$sql = 'SELECT
+		$sql = '
+		SELECT
 			event_occurrence_users.event_occurrence_user_event_occurrence_id
 									AS occurrence_id,
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_member = 1, users.user_email, NULL)
-									AS email
+			IF(subscriptions.subscription_member = 1 AND subscriptions.subscription_email = 1,
+				users.user_email, NULL)		AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
 			ON	event_occurrences.event_occurrence_id
 				= event_occurrence_users.event_occurrence_user_event_occurrence_id
-			AND	event_occurrences.event_occurrence_event_id = ' . $EventId . '
+			AND	event_occurrences.event_occurrence_event_id = ?
 		INNER JOIN users
 			On	users.user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 		INNER JOIN event_entities
-			ON	event_entities.event_entity_event_id = ' . $EventId . '
+			ON	event_entities.event_entity_event_id = ?
 			AND ' . $occurrence_query->ExpressionOwned() . '
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_user_entity_id
@@ -749,8 +747,9 @@ class Events_model extends Model
 			AND	subscriptions.subscription_organisation_entity_id
 				= ' . $this->mActiveEntityId . '
 		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
+		$bind_data = array($EventId, $EventId);
 		
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql, $bind_data);
 		
 		return $query->result_array();
 	}
@@ -765,14 +764,15 @@ class Events_model extends Model
 	{
 		$occurrence_query = new EventOccurrenceQuery();
 		
-		$sql = 'SELECT
+		$sql = '
+		SELECT
 			event_occurrence_users.event_occurrence_user_event_occurrence_id
 									AS occurrence_id,
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_member = 1, users.user_email, NULL)
-									AS email
+			IF(subscriptions.subscription_member = 1 AND subscriptions.subscription_email = 1,
+				users.user_email, NULL)		AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
 			ON	event_occurrences.event_occurrence_id
@@ -1874,15 +1874,45 @@ END';
 		/// @todo Implement.
 	}
 	
-	/// Create subscription to @a $EntityId
-	function FeedSubscribe($EntityId, $Data)
+	/// Create subscription to @a $OrganisationEntityId.
+	/**
+	 * @param $OrganisationEntityId ID of organisation to subscribe to.
+	 * @return int Number of affected rows.
+	 * @note @a $OrganisationEntityId must point to an existing organisation.
+	 *	- With organisation_events enabled
+	 */
+	function FeedSubscribe($OrganisationEntityId)
 	{
-		/// @todo Implement.
+		$sql = '
+			INSERT INTO event_subscriptions (
+				event_subscription_user_entity_id,
+				event_subscription_organisation_entity_id
+			) SELECT
+				'.$this->mActiveEntityId.',
+				organisations.organisation_entity_id
+			FROM organisations
+			WHERE	organisations.organisation_entity_id = ?
+				AND	organisations.organisation_events = 1
+			LIMIT 1';
+		$this->db->query($sql, $OrganisationEntityId);
+		return $this->db->affected_rows();
 	}
-	/// Remove subscription to @a $EntityId
-	function FeedUnsubscribe($EntityId)
+	
+	/// Remove subscription to @a $OrganisationEntityId.
+	/**
+	 * @param $OrganisationEntityId ID of entity (organisation) to unsubscribe from.
+	 * @return int Number of affected rows.
+	 */
+	function FeedUnsubscribe($OrganisationEntityId)
 	{
-		/// @todo Implement.
+		$sql = '
+			DELETE FROM event_subscriptions
+			WHERE
+				event_subscription_user_entity_id = '.$this->mActiveEntityId.',
+				event_subscription_organisation_entity_id = ?
+			LIMIT 1';
+		$this->db->query($sql, $OrganisationEntityId);
+		return $this->db->affected_rows();
 	}
 	
 }

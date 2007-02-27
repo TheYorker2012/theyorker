@@ -23,7 +23,6 @@ class Members_model extends Model {
 				subscriptions.subscription_paid AS paid,
 				subscriptions.subscription_email AS on_mailing_list,
 				subscriptions.subscription_vip AS vip,
-				subscriptions.subscription_interested AS interested,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
