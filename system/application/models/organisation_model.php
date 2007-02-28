@@ -20,9 +20,41 @@ class Organisation_model extends model
 	
 	// HIGH LEVEL FUNCTIONS (FOR CONTROLLERS)
 	
+	/// Get all teams down to a depth of @a $levels levels in a tree.
+	/**
+	 * @param $Depth int To pass into members_model::GetTeams.
+	 * @return array(team_list, top_team).
+	 */
+	function GetTeamsTree($OrganisationId, $Depth = NULL)
+	{
+		// Get teams array from database
+		$teams_list = $this->organisation_model->GetTeams($OrganisationId, TRUE, $Depth);
+		
+		// Reindex teams by entity id
+		$all_teams = array();
+		foreach ($teams_list as $team) {
+			$team['subteams'] = array();
+			$all_teams[(int)$team['id']] = $team;
+		}
+		
+		// Set up team tree using references
+		$real_top_id = FALSE;
+		foreach ($all_teams as $id => $team) {
+			$parent = (int)$team['parent_id'];
+			if (array_key_exists($parent, $all_teams)) {
+				$all_teams[$parent]['subteams'][] = &$all_teams[$id];
+			} else {
+				$real_top_id = $id;
+			}
+		}
+		$top_teams = &$all_teams[$real_top_id];
+		
+		return array(&$all_teams, &$top_teams);
+	}
+	
 	/// Get all teams down to a depth of @a $levels levels.
 	/**
-	 * @param $OrganisationId int Entity id of organisation to get teams of.
+	 * @param $OrganisationId int/string or directory entry Entity id of organisation to get teams of.
 	 * @param $IncludeOrg bool Whether to include the organisation itself.
 	 * @param $Levels int Number of levels to go down where 1 is the first set
 	 *	of teams only.
@@ -75,7 +107,7 @@ class Organisation_model extends model
 	
 	/// Generate the bits of a query relating to the team hierarchy.
 	/**
-	 * @param $OrganisationId int Entity id of organisation to get teams of.
+	 * @param $OrganisationId int/string Entity id or directory entry of organisation to get teams of.
 	 * @param $TeamAlias string Alias of main (lowest) team in organisations.
 	 * @param $IncludeOrg bool Whether to include the organisation itself.
 	 * @param $Levels int Number of levels to go down where 1 is the first set
@@ -99,6 +131,9 @@ class Organisation_model extends model
 			$Levels = 5;
 		}
 		
+		// Find whether input organisation is entity_id or directory_entry_name
+		$is_directory_entry_name = !is_numeric($OrganisationId);
+		
 		$team_aliases = array(0 => $TeamAlias);
 		$joins = '';
 		$join_bind = array();
@@ -106,11 +141,22 @@ class Organisation_model extends model
 		$where_disjuncts = array();
 		$where_bind = array();
 		
+		// Generalise the entity id depending on how it was input
+		if ($is_directory_entry_name) {
+			// Get the entity id from a quick lookup using the directory entry.
+			$joins .= '
+			INNER JOIN organisations as org_id_lookup
+				ON	org_id_lookup.organisation_directory_entry_name = ?';
+			$join_bind[] = $OrganisationId;
+			$org_entity_id = 'org_id_lookup.organisation_entity_id';
+		} else {
+			$org_entity_id = $this->db->escape($OrganisationId);
+		}
+		
+		// Allow the lowest level to be the organisation
 		if ($IncludeOrg) {
-			// Allow the lowest level to be the organisation
 			$where_disjuncts[] .= $team_aliases[0].
-				'.organisation_entity_id = ?';
-			$where_bind[] = $OrganisationId;
+				'.organisation_entity_id = '.$org_entity_id;
 		}
 		
 		// Start at each organisation and match those that have a sequence of
@@ -121,18 +167,15 @@ class Organisation_model extends model
 				$joins .= '
 				LEFT JOIN organisations AS '.$team_aliases[$level_counter].'
 					ON	'.$team_aliases[$level_counter-1].'.organisation_entity_id
-						!= ?
+						!= '.$org_entity_id.'
 					AND	'.$team_aliases[$level_counter-1].'.organisation_parent_organisation_entity_id
-						!= ?
+						!= '.$org_entity_id.'
 					AND	'.$team_aliases[$level_counter-1].'.organisation_parent_organisation_entity_id
 						= '.$team_aliases[$level_counter].'.organisation_entity_id';
-				$join_bind[] = $OrganisationId;
-				$join_bind[] = $OrganisationId;
 			}
 			
 			$where_disjuncts[] = $team_aliases[$level_counter].
-				'.organisation_parent_organisation_entity_id = ?';
-			$where_bind[] = $OrganisationId;
+				'.organisation_parent_organisation_entity_id = '.$org_entity_id;
 		}
 		
 		$where = '('.implode(' OR ', $where_disjuncts).')';

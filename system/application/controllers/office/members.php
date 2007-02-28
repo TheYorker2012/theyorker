@@ -69,32 +69,8 @@ class Members extends Controller
 	 */
 	protected function _GetTeams($Depth = NULL)
 	{
-		// Get teams array from database
-		$teams_list = $this->organisation_model->GetTeams(VipOrganisationId(), FALSE, $Depth);
-		
-		// Reindex teams by entity id
-		$this->mAllTeams = array(
-			VipOrganisationId() => array(
-				'id' 		=> VipOrganisationId(),
-				'parent_id'	=> -1,
-				'name'		=> $this->user_auth->organisationName,
-				'subteams'	=> array(),
-			)
-		);
-		foreach ($teams_list as $team) {
-			$team['subteams'] = array();
-			$this->mAllTeams[$team['id']] = $team;
-		}
-		
-		// Set up team tree using references
-		foreach ($this->mAllTeams as $id => $team) {
-			if ($id != VipOrganisationId()) {
-				$parent = $team['parent_id'];
-				assert('array_key_exists($parent, $this->mAllTeams)');
-				$this->mAllTeams[$parent]['subteams'][] = &$this->mAllTeams[$id];
-			}
-		}
-		$this->mOrganisation = &$this->mAllTeams[VipOrganisationId()];
+		list($this->mAllTeams, $this->mOrganisation)
+			= $this->organisation_model->GetTeamsTree(VipOrganisationId());
 	}
 	
 	// FIRST LEVEL OF ROUTING
@@ -392,7 +368,7 @@ class Members extends Controller
 		$this->pages_model->SetPageCode('viparea_members_teams');
 		
 		$this->load->model('notices_model');
-		$notices = $this->notices_model->GetNoticesForOrganisation($team_id, NULL, FALSE);
+		$notices = $this->notices_model->GetPublicNoticesForOrganisation($team_id, NULL, FALSE);
 		$this->messages->AddDumpMessage('notices',$notices);
 		
 		$data = array(

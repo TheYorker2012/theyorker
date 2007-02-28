@@ -1,20 +1,52 @@
 Database structure
 
-table notices
-	notice_id int primary key ""
-	notice_organisation_entity_id foreign key "organisation or team the notice relates to"
-	notice_subject varchar(255) "subject"
-	notice_content_wikitext text "wikitext content"
-	notice_content_cache text "cached xhtml content"
-	notice_published tinyint(1) "whether the notice has been published yet"
-	notice_deleted tinyint(1) "whether the notice has been deleted"
-	notice_updated timestamp "time last updated or published"
-	notice_expires timestamp "time when the notice is set to expire"
+uses
+[ ]	organisations can send notices to a [sub] organisation
+	not private
+	source is organisation/team vip is logged in to
+	destination is [team of] organisation vip is logged in as and chosen
+[ ]	organisations can send private messages to individuals
+	private
+	source is organisation/team vip is logged in to
+	destination is user
+[ ]	individuals can send private messages to organisations
+	private
+	source is organisation/team vip is logged in to
+	destination is 
+
+Access
+[ ]	any members with mailing list set up get it as an email
+[ ]	visible in directory page
+[ ]	displayed on my notifications page
+[ ]	some displayed on main page
+
+CREATE TABLE `notices` (
+ `notice_id` INT NOT NULL AUTO_INCREMENT,
+ `notice_source_entity_id` INT NOT NULL COMMENT 'entity the notice is from',
+ `notice_subject` VARCHAR( 255 ) NOT NULL ,
+ `notice_content_wikitext` MEDIUMTEXT NOT NULL COMMENT 'wikitext content',
+ `notice_content_cache` MEDIUMTEXT NOT NULL COMMENT 'cached xhtml content',
+ `notice_private` TINYINT( 1 ) NOT NULL COMMENT 'whether the message is unaccessible by the public/others',
+ `notice_published` TINYINT( 1 ) NOT NULL COMMENT 'whether the notice has been published yet',
+ `notice_deleted` TINYINT( 1 ) NOT NULL COMMENT 'whether the notice has been deleted',
+ `notice_updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time last updated or published',
+ `notice_expires` TIMESTAMP NOT NULL COMMENT 'time when the notice is set to expire',
+ PRIMARY KEY ( `notice_id` ) 
+) ENGINE = MYISAM  COMMENT = 'General purpose notices between entities (particularly to teams/organisations)';
+
+CREATE TABLE `notice_recipients` (
+ `notice_recipient_notice_id` INT NOT NULL COMMENT 'identifies the notice',
+ `notice_recipient_destination_entity_id` INT NOT NULL COMMENT 'entity to send it to',
+ `notice_recipient_blind` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'whether to allow other recipients to see this recipient',
+ `notice_recipient_sent` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'whether an email has been sent for this notice',
+ `notice_recipient_dismissed` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'whether the user has dismissed the notice',
+ PRIMARY KEY ( `notice_recipient_notice_id` , `notice_recipient_destination_entity_id` ) 
+) ENGINE = MYISAM  COMMENT = 'Recipients of the notices';
 
 view columns
 	notice_expires <= NOW()							AS	notice_expired
 	notice_published AND NOT notice_deleted			AS	notice_available
-	notice_available AND NOT notice_expired			AS	notice_visible
+	notice_available AND NOT notice_expired AND NOT notice_recipient_dismissed			AS	notice_visible
 
 rules
 	once published a notice is read only

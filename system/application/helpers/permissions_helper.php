@@ -93,8 +93,8 @@ function VipOrganisationId($SetOrganisation = FALSE)
 {
 	static $organisation_id = FALSE;
 	
-	if (is_string($SetOrganisation)) {
-		$organisation_id = $SetOrganisation;
+	if (FALSE !== $SetOrganisation && is_numeric($SetOrganisation)) {
+		$organisation_id = (int)$SetOrganisation;
 	}
 	return $organisation_id;
 }

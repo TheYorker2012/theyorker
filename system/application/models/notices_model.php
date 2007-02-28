@@ -24,12 +24,12 @@ class Notices_model extends model
 	
 	/// Get the notices for an organisation and its teams.
 	/**
-	 * @param $OrganisationId entity_id Id of organisation/team.
+	 * @param $OrganisationId entity_id/string Id or directory entry of organisation/team.
 	 * @param $Expired bool Whether to include expired notices.
 	 * @param $Levels int Number of levels to go down where 1 is the first set
 	 *	of teams only.
 	 */
-	function GetNoticesForOrganisation($OrganisationId, $UserId = NULL, $Expired = FALSE, $Levels = NULL)
+	function GetPublicNoticesForOrganisation($OrganisationId, $UserId = NULL, $Expired = FALSE, $Levels = NULL)
 	{
 		// Get bits of the query using the organisation_model
 		$team_query_data = $this->organisation_model->GetTeams_QueryData(
@@ -44,18 +44,16 @@ class Notices_model extends model
 		// Fields
 		$sql = '
 		SELECT
+			notice_recipients.notice_recipient_destination_entity_id AS recipient_id,
 			notices.notice_id,
 			notices.notice_subject,
-			notices.notice_content_wikitext,
 			notices.notice_content_cache,
-			notices.notice_published,
-			notices.notice_deleted,
 			UNIX_TIMESTAMP(notices.notice_updated)			AS notice_updated,
 			UNIX_TIMESTAMP(notices.notice_expires)			AS notice_expires,
 			notices.notice_expires <= NOW()					AS notice_expired,
-			notices.notice_published AND NOT notice_deleted	AS notice_available,
 			notices.notice_published AND NOT notice_deleted
-				AND NOT notices.notice_expires <= NOW()		AS notice_visible
+				AND NOT notices.notice_expires <= NOW()
+				AND NOT notice_recipient_dismissed			AS notice_visible
 		FROM organisations';
 		
 		// Joins to parent organisations
@@ -76,9 +74,13 @@ class Notices_model extends model
 		}
 		
 		$sql .= '
+		INNER JOIN notice_recipients
+			ON	notice_recipients.notice_recipient_destination_entity_id
+				= organisations.organisation_entity_id
 		INNER JOIN notices
-			ON	notices.notice_organisation_entity_id
-				= organisations.organisation_entity_id';
+			ON	notices.notice_id
+				= notice_recipients.notice_recipient_notice_id
+			AND	NOT notices.notice_private';
 		
 		// Conditions for descent from main organisation
 		$conjuncts = array();
