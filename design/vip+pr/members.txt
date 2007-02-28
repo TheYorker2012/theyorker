@@ -29,7 +29,7 @@
 === Subcontroller URI design ===
 <<VIP+PR>>
 [O]  /list                       list members of the organisation/team, applicable filters
-[O]       /filter/$filter          apply filter
+[O]       /$filter                 apply filter
 [O]  /info/$entity_id            basic information about the user and their membership
 [ ]  /teams                      team structure and rearrangements
 [ ]        /$team_id               about the team, members

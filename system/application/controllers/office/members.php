@@ -8,7 +8,7 @@
 /// Viparea members controller.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
- * @author Dave Huscroft
+ * @author Dave Huscroft (dgh500@york.ac.uk)
  *
  * Several of the URI's for this controller can have filter data appended.
  * The controller walks through the segments using a state machine to set
@@ -54,6 +54,7 @@ class Members extends Controller
 	{
 		parent::Controller();
 		$this->load->model('directory_model');
+		$this->load->model('organisation_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
 		
@@ -69,11 +70,7 @@ class Members extends Controller
 	protected function _GetTeams($Depth = NULL)
 	{
 		// Get teams array from database
-		if (NULL === $Depth) {
-			$teams_list = $this->members_model->GetTeams(VipOrganisationId());
-		} else {
-			$teams_list = $this->members_model->GetTeams(VipOrganisationId(), $Depth);
-		}
+		$teams_list = $this->organisation_model->GetTeams(VipOrganisationId(), FALSE, $Depth);
 		
 		// Reindex teams by entity id
 		$this->mAllTeams = array(
@@ -377,10 +374,12 @@ class Members extends Controller
 		
 		$this->_GetTeams();
 		
+		$team_id = VipOrganisationId();
+		
 		if (NULL !== $Suboption1) {
 			if (is_numeric($Suboption1) && array_key_exists((int)$Suboption1,$this->mAllTeams)) {
-				$Suboption1 = (int)$Suboption1;
-				$this->mOrganisation = &$this->mAllTeams[$Suboption1];
+				$team_id = (int)$Suboption1;
+				$this->mOrganisation = &$this->mAllTeams[$team_id];
 			} else {
 				// Show custom error page for no existing team
 				$this->load->library('custom_pages');
@@ -391,6 +390,10 @@ class Members extends Controller
 		}
 		
 		$this->pages_model->SetPageCode('viparea_members_teams');
+		
+		$this->load->model('notices_model');
+		$notices = $this->notices_model->GetNoticesForOrganisation($team_id, NULL, FALSE);
+		$this->messages->AddDumpMessage('notices',$notices);
 		
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),

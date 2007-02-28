@@ -1,0 +1,32 @@
+Database structure
+
+table notices
+	notice_id int primary key ""
+	notice_organisation_entity_id foreign key "organisation or team the notice relates to"
+	notice_subject varchar(255) "subject"
+	notice_content_wikitext text "wikitext content"
+	notice_content_cache text "cached xhtml content"
+	notice_published tinyint(1) "whether the notice has been published yet"
+	notice_deleted tinyint(1) "whether the notice has been deleted"
+	notice_updated timestamp "time last updated or published"
+	notice_expires timestamp "time when the notice is set to expire"
+
+view columns
+	notice_expires <= NOW()							AS	notice_expired
+	notice_published AND NOT notice_deleted			AS	notice_available
+	notice_available AND NOT notice_expired			AS	notice_visible
+
+rules
+	once published a notice is read only
+	visibility = notice_published & !notice_deleted & notice_expires > now()
+
+directory view
+	categories for each team/subteam in tree
+		special category for "all which affect me" determined by subscriptions (subscription_user_confirmed)
+	display as expandable boxes, initially with just the subject
+		only visible ones
+		ordered by notice_updated
+		expand as many as you like to show wikitext
+
+notices_model
+	GetNoticesForOrganisation(depth);

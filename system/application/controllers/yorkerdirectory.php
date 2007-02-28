@@ -127,13 +127,10 @@ class Yorkerdirectory extends Controller
 			$map = &$this->maps->CreateMap('Location', 'googlemaps');
 			$this->maps->SendMapData();
 
-			// Set up the directory view
-			$directory_view = $this->frames->view($subpageview, $data);
-
 			// Set up the directory frame to use the directory events view
 			$this->main_frame->SetPage('about');
 			$this->frame_directory->SetOrganisation($data['organisation']);
-			$this->frame_directory->SetContent($directory_view);
+			$this->frame_directory->SetContentSimple($subpageview, $data);
 			
 			// Set up the public frame to use the directory view
 			$this->main_frame->SetTitleParameters(
