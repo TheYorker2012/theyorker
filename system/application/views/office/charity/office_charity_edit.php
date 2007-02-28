@@ -11,12 +11,15 @@
 
 <div class="blue_box">
 	<h2>charity info</h2>
-	<b>Title:</b> blah<br />
-	<b>Current Total:</b> £1,242<br />
-	<b>Goal Total:</b> £15,000<br />
-	<b>Progress To Goal:</b> 8.3%<br />
-	<b>Goal Text:</b> Cool Runnings is a 1993 comedy film directed b<br />
-	<a href="/office/charity/#">[Modify]</a>
+	<?php
+	echo '
+	<b>Title: </b>'.$charity['name'].'<br />
+	<b>Current Total: </b>'.$charity['current'].'<br />
+	<b>Goal Total: </b>'.$charity['target'].'<br />
+	<b>Progress To Goal: </b>'.($charity['current']/$charity['target']*100).'%<br />
+	<b>Goal Text: </b>'.$charity['target_text'].'<br />
+	<a href="/office/charity/#">[Modify]</a>';
+	?>
 </div>
 
 <div class="grey_box">

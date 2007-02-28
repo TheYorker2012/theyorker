@@ -42,7 +42,8 @@ class Charity_model extends Model
 		$sql = 'SELECT	charity_name,
 				charity_id,
 				charity_current
-			FROM	charities';
+			FROM	charities
+			ORDER BY charity_name ASC';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -59,6 +60,20 @@ class Charity_model extends Model
 		return $result;
 	}
 
+        /**
+	 * Adds a new charity to the database.
+	 * @param $name the name of the charity to add
+	 */
+	function CreateCharity($name, $article_id)
+	{
+		$sql = 'INSERT INTO charities (
+				charity_name,
+				charity_article_id,
+				charity_current)
+			VALUES	(?, ?, FALSE)';
+		$this->db->query($sql,array($name, $article_id));
+	}
+
 	/*****************************************************
 	*  PROGRESS REPORTS
 	*****************************************************/
@@ -69,7 +84,7 @@ class Charity_model extends Model
 	 */
 	function GetCharityProgressReports($charity_id, $count)
 	{
-		$sql = 'SELECT 
+		$sql = 'SELECT
 			progress_report_articles.progress_report_article_article_id
 			FROM progress_report_articles
 			INNER JOIN articles

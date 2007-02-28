@@ -62,28 +62,59 @@ class Charity extends Controller
 		$this->main_frame->Load();
 	}
 
-	function _addCharity($name)
+	/**
+	 * This function adds a new charity to the database.
+	 */
+	function addcharity()
 	{
-		$this->load->model('charity_model','charity_model');
-		//$id = $this->charity_model->CreateCharity($name);
-		$id = 2;
-		$xajax_response = new xajaxResponse();
-		$xajax_response->addScriptCall('charityAdded',
-						$name,
-						$id);
-		return $xajax_response;
+		if (!CheckPermissions('office')) return;
+
+		/* Loads the category edit page
+		   $_POST data passed
+		   - a_charityname => the name of the new charity
+    		   - r_submit_add => the name of the submit button
+		*/
+		if (isset($_POST['r_submit_add']))
+		{
+			if (trim($_POST['a_charityname']) != '')
+			{
+				//load the required models
+				$this->load->model('charity_model','charity_model');
+				$this->load->model('requests_model','requests_model');
+	
+				//create the charity and its article
+				$id = $this->requests_model->CreateRequest('request', 'ourcharity', '', '', $this->user_auth->entityId, time());
+				$this->charity_model->CreateCharity($_POST['a_charityname'], $id);
+	
+				//return to form submit page and pass success message
+				$this->main_frame->AddMessage('success','Charity added.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else
+			{
+				//return to form submit page and pass error message
+				$this->main_frame->AddMessage('error','Must enter a name for the new charity.');
+				redirect($_POST['r_redirecturl']);
+			}
+		}
+
 	}
 
-	function modify()
+	function modify($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_charity_charities');
+		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('charities');
+
+		//get charity from given id
+		$data['charity'] = $this->charity_model->GetCharity($charity_id);
+		$data['charity']['id'] = $charity_id;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -99,16 +130,21 @@ class Charity extends Controller
 		$this->main_frame->Load();
 	}
 
-	function edit()
+	function edit($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_charity_charities');
+		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('charities');
+
+		//get charity from given id
+		$data['charity'] = $this->charity_model->GetCharity($charity_id);
+		$data['charity']['id'] = $charity_id;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;

@@ -7,14 +7,15 @@
 	<h2>charity info</h2>
 	<form class="form" action="/office/howdoi/#" method="post" >
 		<fieldset>
-			<label for"a_title">Title:</label>
-			<input type="text" name="a_title" value="blah" />
+			<?php
+			echo '<label for"a_title">Title:</label>
+			<input type="text" name="a_title" value="'.$charity['name'].'" />
 			<label for="a_goal">Goal Total:</label>
-			<input type="text" name="a_goal" value="15000" />
+			<input type="text" name="a_goal" value="'.$charity['target'].'" />
 			<label for"a_goaltext">Goal Text:</label>
-			<textarea name="a_goaltext" rows="5" cols="30" />Cool Runnings is a 1993 comedy film directed b</textarea>
-			<input type="submit" value="Modify" class="button" name="r_submit_modify" />
-
+			<textarea name="a_goaltext" rows="5" cols="30" />'.$charity['target_text'].'</textarea>
+			<input type="submit" value="Modify" class="button" name="r_submit_modify" />';
+			?>
 		</fieldset>
 	</form>
 </div>
