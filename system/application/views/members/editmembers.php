@@ -43,7 +43,10 @@
 	<H3>Membership Information</H3>
 	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
 		<fieldset>
-			<P>On Mailing List:<?php echo $membership['on_mailing_list'] ? 'Yes' : 'No'; ?></P>
+			<P>
+				On Mailing List:	<?php echo $membership['on_mailing_list'] ? 'Yes' : 'No'; ?><BR />
+				Membership Status:	<?php echo $membership['status']; ?>
+			</P>
 			<label for='member_paid'>Paid:</label>
 			<input style="border: 0px;" type='checkbox' name='member_paid' value='1' <?php if($membership['paid']){echo 'checked';} ?>>
 			<label for='member_vip'>VIP Member:</label>

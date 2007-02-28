@@ -330,6 +330,16 @@ class Members extends Controller
 			$membership['gender'] =  (($membership['gender']=='m')?('male')
 									:(($membership['gender']=='f')?('female')
 									:('unknown')));
+			// Stringify status
+			if (!$membership['confirmed']) {
+				$membership['status'] = 'Invited but unconfirmed';
+			} elseif ($membership['vip']) {
+				$membership['status'] = 'VIP member';
+			} elseif ($membership['paid']) {
+				$membership['status'] = 'Paying member';
+			} else {
+				$membership['status'] = 'Member';
+			}
 			
 			$data = array(
 				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),

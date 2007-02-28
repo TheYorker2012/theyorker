@@ -35,4 +35,4 @@
 		}
 	}
 ?>
-<a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>
+<a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>

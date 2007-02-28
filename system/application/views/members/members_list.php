@@ -57,9 +57,9 @@ function FilterLinkBool($filter, $field, $value)
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th><?php /*
+			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?></th><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?'); ?></th> */ ?>
-			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
 			<th>Edit</th>
 		</tr>
@@ -76,9 +76,9 @@ function FilterLinkBool($filter, $field, $value)
 			<?php } else {?>
 				<td><IMG SRC="/images/prototype/members/nomail.png" ALT="not available" /></td>
 			<?php } ?>
-			<td><?php FilterLinkBool($filter, 'paid', $membership['paid']); ?></td><?php /*
+			<td><?php FilterLinkBool($filter, 'confirmed', $membership['confirmed']); ?></td><?php /*
 			<td><?php FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
-			<td><?php FilterLinkBool($filter, 'confirmed', $membership['confirmed']); ?></td>
+			<td><?php FilterLinkBool($filter, 'paid', $membership['paid']); ?></td>
 			<td><?php FilterLinkBool($filter, 'vip', $membership['vip']); ?></td>
 			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'>Edit</a></td>
 		</tr>

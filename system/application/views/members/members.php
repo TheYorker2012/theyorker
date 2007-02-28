@@ -41,6 +41,8 @@
 	}
 ?>
 </div>
-<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a>
+<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a><BR />
+<a href='<?php echo vip_url('members/teams'); ?>'>Manage teams</a><BR />
+<a href='<?php echo vip_url('members/cards'); ?>'>Manage business cards</a><BR />
 <?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>
