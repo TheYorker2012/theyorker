@@ -8,8 +8,6 @@
 <input type='checkbox' name='filter_mailing_list' value='1'> On Mailing List<br />
 <input type='checkbox' name='filter_reply' value='1'> Awaiting Reply<br />
 <input type='checkbox' name='filter_vip' value='1'> VIP<br />
-<input type='checkbox' name='filter_phone' value='1'> Phone Number<br />
-<input type='checkbox' name='filter_drive' value='1'> Can Drive<br />
 <?php
 	/// Draw a branch of the tree of teams
 	function EchoTeamFilters($team, $in_list = TRUE)

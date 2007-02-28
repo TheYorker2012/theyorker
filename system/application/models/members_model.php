@@ -23,13 +23,14 @@ class Members_model extends Model {
 				subscriptions.subscription_paid AS paid,
 				subscriptions.subscription_email AS on_mailing_list,
 				subscriptions.subscription_vip AS vip,
+				subscriptions.subscription_user_confirmed AS confirmed,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
+				users.user_nickname AS nickname,
 				IF(subscriptions.subscription_email, users.user_email, NULL) AS email,
 				users.user_gender AS gender,
-				users.user_enrolled_year AS enrol_year,
-				users.user_nickname AS nickname
+				users.user_enrolled_year AS enrol_year
 			FROM
 				subscriptions
 			INNER JOIN users
@@ -42,7 +43,7 @@ class Members_model extends Model {
 		}
 		// Final conditions
 		$sql .= '	subscriptions.subscription_organisation_entity_id = ?
-				AND	subscriptions.subscription_member = TRUE
+				AND	subscriptions.subscription_organisation_confirmed = TRUE
 				AND	subscriptions.subscription_deleted = FALSE
 			';
 		// Run the query and return the raw results array.

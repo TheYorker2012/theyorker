@@ -170,16 +170,19 @@ class Members extends Controller
 			}
 		}
 		
-		$filter_base = 'members/list/filter';
+		$filter_base = 'members/list';
+		$last_sort = '';
 		$sort_fields = array();
 		
-		if ($Filter === 'filter') {
+		$filter_on = FALSE;
+		if (NULL !== $Filter) {
 			static $field_translator = array(
 				'team'			=> 'NULL',
 				'user'			=> 'users.user_entity_id',
 				'card'			=> 'NULL',
 				'paid' 			=> 'subscriptions.subscription_paid',
 				'vip'			=> 'subscriptions.subscription_vip',
+				'confirmed'		=> 'subscriptions.subscription_user_confirmed',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',
 				'cardable'		=> 'NULL',
@@ -192,7 +195,7 @@ class Members extends Controller
 			);
 			try {
 				// Process the filter url
-				$filter = $this->_GetFilter(4);
+				$filter = $this->_GetFilter(3);
 				// Produce sql, the base url for extra filters, and sort fields
 				$filter_base .= '/'.implode('/', $this->_ReconstructFilter($filter));
 				/*if (vip_url($filter_base) !== $this->uri->uri_string()) {
@@ -203,11 +206,11 @@ class Members extends Controller
 				$sort_fields = $this->_ReindexFilterSorts($filter);
 				// Use db to get members using filter.
 				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
+				$filter_on = TRUE;
+				$last_sort = $filter['_data']['last_sort'];
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
 			}
-		} elseif(NULL !== $Filter) {
-			return show_404();
 		}
 		
 		if (!isset($members)) {
@@ -222,7 +225,11 @@ class Members extends Controller
 			'target'       => $this->uri->uri_string(),
 			'members'      => $members,
 			'organisation' => $this->mOrganisation,
-			'filter_base'  => $filter_base,
+			'filter'       => array(
+				'enabled'      => $filter_on,
+				'last_sort'    => $last_sort,
+				'base'         => $filter_base,
+			),
 			'sort_fields'  => $sort_fields,
 		);
 		// Set up the content
@@ -422,6 +429,7 @@ class Members extends Controller
 				'card'			=> 'business_cards.business_card_id',
 				'paid' 			=> 'subscriptions.subscription_paid',
 				'vip'			=> 'subscriptions.subscription_vip',
+				'confirmed'		=> '1',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',
 				'cardable'		=> 'NULL',
@@ -560,29 +568,34 @@ class Members extends Controller
 						}
 						unset($invite_invalids[$invite['username']]);
 					}
+					$invite_invalids = array_keys($invite_invalids);
 					
-					$messages = array();
 					if (!empty($invite_valids)) {
-						$messages[] = 'The following '.count($invite_valids).' users '.
+						$this->messages->AddMessage('success',
+							'The following '.count($invite_valids).' users '.
 							'are now invited to join your organisation:'.
-							'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>';
+							'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>');
 					}
 					if (!empty($invite_member)) {
-						$messages[] = 'The following '.count($invite_member).' users '.
+						$this->messages->AddMessage('information',
+							'The following '.count($invite_member).' users '.
 							'are already members:'.
-							'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>';
+							'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>');
 					}
 					if (!empty($invite_invalids)) {
-						$messages[] = 'The following '.count($invite_invalids).' users '.
+						$this->messages->AddMessage('warning',
+							'The following '.count($invite_invalids).' users '.
 							'could not be found and may not be registered with The Yorker:'.
-							'<ul><li>' . implode('</li><li>', array_keys($invite_invalids)) . '</li></ul>';
+							'<ul><li>' . implode('</li><li>', $invite_invalids) . '</li></ul>');
 					}
 					if (!empty($invite_deleted)) {
-						$messages[] = 'The following '.count($invite_deleted).' users '.
+						$this->messages->AddMessage('warning',
+							'The following '.count($invite_deleted).' users '.
 							'are banned and need unbanning before they can be invited:'.
-							'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>';
+							'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>');
 					}
-					$this->messages->AddMessage('information',implode('',$messages));
+					
+					$default_list = implode("\n",$invite_deleted + $invite_invalids);
 				}
 			}
 		}
@@ -654,6 +667,9 @@ class Members extends Controller
 		$post_search = NULL;
 		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
 			if (is_bool($er)) {
 				if ($filt !== 'search') {
 					$Conditions[] = '('.$field_translator[$filt].'='.($er?'1':'0').')';
@@ -704,6 +720,9 @@ class Members extends Controller
 		$sortable = FALSE;
 		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
 			if (is_bool($er)) {
 				if ($filt !== 'search') {
 					if (!$er) {
@@ -751,6 +770,9 @@ class Members extends Controller
 				'team' => $default,
 				'user' => $default,
 				'card' => $default,
+				'_data' => array(
+					'last_sort' => '',
+				),
 			);
 		} else {
 			$filter = $PreFilter;
@@ -778,6 +800,7 @@ class Members extends Controller
 			static $validator_bools = array(
 				'paid'     => 'paid',
 				'vip'      => 'vip',
+				'confirmed' => 'confirmed',
 				'carded'   => 'carded',
 				'carding'  => 'carding',
 				'cardable' => 'cardable',
@@ -800,6 +823,8 @@ class Members extends Controller
 				'enrol_year' => 'enrol_year',
 				'paid'   => 'paid',
 				'vip'    => 'vip',
+				'mailable' => 'mailable',
+				'confirmed' => 'confirmed',
 				'carded' => 'carded',
 			);
 			$validator_2 = array(
@@ -847,11 +872,11 @@ class Members extends Controller
 					$parameters[] = $parameter;
 				}
 				if (array_key_exists($parameters[1], $sort_index)) {
-					$filter[$segment][$sort_index[$parameters[1]]] = $parameters;
-				} else {
-					$filter[$segment][] = $parameters;
-					$sort_index[$parameters[1]] = key($filter[$segment]);
+					unset($filter[$segment][$sort_index[$parameters[1]]]);
 				}
+				$filter[$segment][] = $parameters;
+				$sort_index[$parameters[1]] = key($filter[$segment]);
+				$filter['_data']['last_sort'] = $parameters[1];
 				
 			} else {
 				throw new Exception('Unexpected filter URI segment: \''.$segment.'\'.');
