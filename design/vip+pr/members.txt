@@ -88,3 +88,6 @@ e.g. to get users in tech and news team who haven't submitted cards
 
 == Questions ==
 Wikitext in mass notifications/emails?
+ - Nick: Hell ye! (justification: it's an advanced level they don't need to use,
+                   but can quickly learn and feel special (e.g. for headings etc).
+                   we can have it in the pr training too.)
