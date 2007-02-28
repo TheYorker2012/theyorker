@@ -5,13 +5,14 @@
 		if ($in_list) {
 			echo '<LI>';
 		}
-		echo '<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />';
-		echo '<a href="">';
+		if (isset($team['notices'])) {
+			echo '<a href="">';
+		}
 		echo $team['name'];
 		if (isset($team['notices'])) {
 			echo ' ('.count($team['notices']).' notices)';
+			echo '</a>';
 		}
-		echo '</a>';
 		if (!empty($team['subteams'])) {
 			echo '<UL>';
 			foreach ($team['subteams'] as $subteam) {
@@ -24,7 +25,11 @@
 		}
 		return count($team['subteams']);
 	}
-	
+?>
+
+<a href="">Only relevent notices</a><br />
+<a href="">All notices</a><br />
+<?php
 	if (!empty($teams['subteams'])) {
 		// Draw the tree of teams
 		foreach ($teams['subteams'] as $team) {

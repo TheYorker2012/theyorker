@@ -154,7 +154,9 @@ class Yorkerdirectory extends Controller
 		
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
-		
+			
+			$this->pages_model->SetPageCode('directory_notices');
+			
 			$organisation_id = $data['organisation']['id'];
 			$this->load->model('notices_model');
 			$this->load->model('organisation_model');
@@ -186,6 +188,9 @@ class Yorkerdirectory extends Controller
 			$data['notices'] = &$notices;
 			
 			$this->main_frame->SetContentSimple('directory/directory_notices', $data);
+			
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
 
 		} else {
 			$this->load->library('custom_pages');
