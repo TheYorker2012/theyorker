@@ -18,7 +18,8 @@ function EchoOptionTeams($team, $selected, $head, $depth = 0)
 	}
 }
 
-function SortLink($filter, $sort_fields, $field, $title, $boolsort = FALSE)
+/// Draw a column heading sorting hyperlink.
+function SortLink($filter, $sort_fields, $field, $title)
 {
 	echo '<a href="' . vip_url($filter['base'] . '/sort/'.
 		((isset($sort_fields[$field]) && $sort_fields[$field])
@@ -32,14 +33,18 @@ function SortLink($filter, $sort_fields, $field, $title, $boolsort = FALSE)
 		}
 	}
 	echo '</a>';
-	if ($boolsort) {
-		?><br />
-		<A HREF="<?php echo vip_url($filter['base'].'/'.$field); ?>"><IMG SRC="/images/prototype/members/yes9.png" ALT="Filter yes's" /></A>
-		<A HREF="<?php echo vip_url($filter['base'].'/not/'.$field); ?>"><IMG SRC="/images/prototype/members/no9.png" ALT="Filter no's" /></A>
-		<?
-	}
 }
 
+/// Draw links to filter a boolean field (yes/no).
+function BoolFilterLinks($filter, $field)
+{
+	?>
+	<A HREF="<?php echo vip_url($filter['base'].'/'.$field); ?>"><IMG SRC="/images/prototype/members/yes9.png" ALT="Filter yes's" /></A>
+	<A HREF="<?php echo vip_url($filter['base'].'/not/'.$field); ?>"><IMG SRC="/images/prototype/members/no9.png" ALT="Filter no's" /></A>
+	<?php
+}
+
+/// Individual filter link for data in cells of table.
 function FilterLinkBool($filter, $field, $value)
 {
 	echo '<a href="' . vip_url($filter['base'] .
@@ -58,33 +63,19 @@ function FilterLinkBool($filter, $field, $value)
 	<h2>members</h2>
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
 		
-		<?php
-		if (!empty($filter['descriptors'])) {
-			?><P>
-			Filters (<A HREF="<?php echo vip_url('members/list'); ?>">remove all</A>)
-			<OL><?php
-			foreach (array_reverse($filter['descriptors']) as $descriptor) {
-				?><LI>
-				<?php echo $descriptor['description']; ?>
-				(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_invert']); ?>">invert filter</A> |
-				<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove filter</A>)
-				</LI><?php
-			}
-			?></OL>
-			</P><?php
-		}
-		?>
-		
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
 			<th></th>
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf', TRUE); ?></th><?php /*
+			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><br />
+				<?php BoolFilterLinks($filter, 'confirmed'); ?></th><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
-			<th><?php SortLink($filter, $sort_fields, 'paid','Paid', TRUE); ?></th>
-			<th><?php SortLink($filter, $sort_fields, 'vip','VIP', TRUE); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?><br />
+				<?php BoolFilterLinks($filter, 'paid'); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?><br />
+				<?php BoolFilterLinks($filter, 'vip'); ?></th>
 			<th>Edit</th>
 		</tr>
 		<?php foreach ($members as $membership) {?>

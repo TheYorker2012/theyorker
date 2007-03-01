@@ -3,6 +3,26 @@
 	<p>
 		<?php echo $main_text; ?>
 	</p>
+
+<?php
+if (!empty($filter['descriptors'])) {
+	?><P>
+	<H4>Filters</H4>
+	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all</A></SMALL>
+	<OL><?php
+	foreach (array_reverse($filter['descriptors']) as $descriptor) {
+		?><LI>
+		<?php echo $descriptor['description']; ?><br />
+		<SMALL>
+		(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_invert']); ?>">invert filter</A> |
+		<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove filter</A>)
+		</SMALL>
+		</LI><?php
+	}
+	?></OL>
+	</P><?php
+}
+?>
 <h4>Filter by details</h4>
 <input type='checkbox' name='filter_paid' value='1'> Paid<br />
 <input type='checkbox' name='filter_mailing_list' value='1'> On Mailing List<br />
