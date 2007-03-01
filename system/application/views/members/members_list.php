@@ -18,7 +18,7 @@ function EchoOptionTeams($team, $selected, $head, $depth = 0)
 	}
 }
 
-function SortLink($filter, $sort_fields, $field, $title)
+function SortLink($filter, $sort_fields, $field, $title, $boolsort = FALSE)
 {
 	echo '<a href="' . vip_url($filter['base'] . '/sort/'.
 		((isset($sort_fields[$field]) && $sort_fields[$field])
@@ -32,6 +32,12 @@ function SortLink($filter, $sort_fields, $field, $title)
 		}
 	}
 	echo '</a>';
+	if ($boolsort) {
+		?><br />
+		<A HREF="<?php echo vip_url($filter['base'].'/'.$field); ?>"><IMG SRC="/images/prototype/members/yes9.png" ALT="Filter yes's" /></A>
+		<A HREF="<?php echo vip_url($filter['base'].'/not/'.$field); ?>"><IMG SRC="/images/prototype/members/no9.png" ALT="Filter no's" /></A>
+		<?
+	}
 }
 
 function FilterLinkBool($filter, $field, $value)
@@ -51,16 +57,34 @@ function FilterLinkBool($filter, $field, $value)
 <div class='blue_box'>
 	<h2>members</h2>
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
+		
+		<?php
+		if (!empty($filter['descriptors'])) {
+			?><P>
+			Filters (<A HREF="<?php echo vip_url('members/list'); ?>">remove all</A>)
+			<OL><?php
+			foreach (array_reverse($filter['descriptors']) as $descriptor) {
+				?><LI>
+				<?php echo $descriptor['description']; ?>
+				(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_invert']); ?>">invert filter</A> |
+				<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove filter</A>)
+				</LI><?php
+			}
+			?></OL>
+			</P><?php
+		}
+		?>
+		
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
 			<th></th>
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?></th><?php /*
-			<th><?php SortLink($filter, $sort_fields, 'mailable','E?'); ?></th> */ ?>
-			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
-			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf', TRUE); ?></th><?php /*
+			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
+			<th><?php SortLink($filter, $sort_fields, 'paid','Paid', TRUE); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'vip','VIP', TRUE); ?></th>
 			<th>Edit</th>
 		</tr>
 		<?php foreach ($members as $membership) {?>
@@ -89,11 +113,6 @@ function FilterLinkBool($filter, $field, $value)
 		?>
 		<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
 		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>
-		<?php if ($filter['enabled']) { ?>
-			/ <A HREF="<?php echo vip_url('members/list'); ?>">remove filter</A>
-		<?php } else {?>
-			/ (no filter applied)
-		<?php } ?>
 		
 		<fieldset>
 			<input type='submit' class='button' name='members_select_unsubscribe_button' value='Unsubscribe'>

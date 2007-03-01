@@ -160,6 +160,7 @@ class Members extends Controller
 		$filter_base = 'members/list';
 		$last_sort = '';
 		$sort_fields = array();
+		$filter_descriptors = array();
 		
 		$filter_on = FALSE;
 		if (NULL !== $Filter) {
@@ -183,6 +184,7 @@ class Members extends Controller
 			try {
 				// Process the filter url
 				$filter = $this->_GetFilter(3);
+				
 				// Produce sql, the base url for extra filters, and sort fields
 				$filter_base .= '/'.implode('/', $this->_ReconstructFilter($filter));
 				/*if (vip_url($filter_base) !== $this->uri->uri_string()) {
@@ -191,6 +193,7 @@ class Members extends Controller
 				}*/
 				$sql = $this->_GenerateFilterSql($filter, $field_translator);
 				$sort_fields = $this->_ReindexFilterSorts($filter);
+				$filter_descriptors = $this->_DescribeFilters($filter);
 				// Use db to get members using filter.
 				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
 				$filter_on = TRUE;
@@ -214,6 +217,7 @@ class Members extends Controller
 				'enabled'      => $filter_on,
 				'last_sort'    => $last_sort,
 				'base'         => $filter_base,
+				'descriptors'  => $filter_descriptors,
 			),
 			'sort_fields'  => $sort_fields,
 		);
@@ -675,6 +679,74 @@ class Members extends Controller
 		return $result;
 	}
 	
+	/// Produce descpriptors of the filter.
+	/**
+	 * @param $Filter array Filter produced by _GetFilter.
+	 * @return array(descriptors) where descriptors contain:
+	 *	- 'description' (textural description)
+	 *	- 'link_remove' (link to append to negate the filter)
+	 *	- 'link_invert' (link to append to invert the filter)
+	 */
+	protected function _DescribeFilters($Filter)
+	{
+		$result = array();
+		
+		$sortable = FALSE;
+		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
+			if (is_bool($er)) {
+				if ($filt !== 'search') {
+					$single_result = array();
+					if (!$er) {
+						$single_result['description'] = 'member is not '.$filt;
+						$single_result['link_invert'] = $filt;
+					} else {
+						$single_result['description'] = 'member is '.$filt;
+						$single_result['link_invert'] = 'not/'.$filt;
+					}
+					$single_result['link_remove'] = 'scrap/'.$filt;
+					$result[] = $single_result;
+				} else {
+					//$result[] = 'search';
+				}
+			} elseif ($filt !== 'sort') {
+				foreach ($er[TRUE] as $id => $dummy) {
+					$single_result = array();
+					$single_result['description'] = 'include '.$filt.' '.$id;
+					$single_result['link_invert'] = 'not/'.$filt.'/'.$id;
+					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
+					$result[] = $single_result;
+				}
+				foreach ($er[FALSE] as $id => $dummy) {
+					$single_result = array();
+					$single_result['description'] = 'exclude '.$filt.' '.$id;
+					$single_result['link_invert'] = $filt.'/'.$id;
+					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
+					$result[] = $single_result;
+				}
+			} else {
+				$sortable = TRUE;
+			}
+		}
+		if ($sortable) {
+			static $invert_sort = array(
+				'asc' => 'desc',
+				'desc' => 'asc',
+			);
+			foreach ($Filter['sort'] as $sorter) {
+				$single_result = array();
+				$single_result['description'] = 'sorted by '.$sorter[1].' ('.$sorter[0].')';
+				$single_result['link_invert'] = 'sort/'.$invert_sort[$sorter[0]].'/'.$sorter[1];
+				$single_result['link_remove'] = 'scrap/sort/asc/'.$sorter[1];
+				$result[] = $single_result;
+			}
+		}
+		
+		return $result;
+	}
+	
 	/// Generate SQL from the filter produced by _GetFilter.
 	/**
 	 * @param $Filter array Filter produced by _GetFilter.
@@ -738,7 +810,6 @@ class Members extends Controller
 		$result = array();
 		
 		$sortable = FALSE;
-		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
 			if ($filt === '_data') {
 				continue;
@@ -784,7 +855,6 @@ class Members extends Controller
 				TRUE  => array(),
 				FALSE => array(),
 			);
-		$sort_index = array();
 		if (NULL === $PreFilter) {
 			$filter = array(
 				'team' => $default,
@@ -796,11 +866,6 @@ class Members extends Controller
 			);
 		} else {
 			$filter = $PreFilter;
-			if (array_key_exists('sort', $filter)) {
-				foreach ($filter['sort'] as $key => $sort) {
-					$sort_index[$sort[1]] = $key;
-				}
-			}
 		}
 		// Start at RSegment and read expressions
 		$segment_number = $StartRSegment;
@@ -808,10 +873,18 @@ class Members extends Controller
 			// Detect whether this filter item is notted
 			$segment = $this->uri->rsegment($segment_number++);
 			$include = TRUE;
+			$remove_condition = FALSE;
 			if ($segment === 'not') {
 				$include = FALSE;
 				if ($segment_number > $this->uri->total_rsegments()) {
 					throw new Exception('Unexpected end of filter URI segments near \'not\'.');
+				}
+				$segment = $this->uri->rsegment($segment_number++);
+				
+			} elseif ($segment === 'scrap') {
+				$remove_condition = TRUE;
+				if ($segment_number > $this->uri->total_rsegments()) {
+					throw new Exception('Unexpected end of filter URI segments near \'scrap\'.');
 				}
 				$segment = $this->uri->rsegment($segment_number++);
 			}
@@ -852,7 +925,11 @@ class Members extends Controller
 			);
 			
 			if (array_key_exists($segment, $validator_bools)) {
-				$filter[$validator_bools[$segment]] = $include;
+				if ($remove_condition) {
+					unset($filter[$validator_bools[$segment]]);
+				} else {
+					$filter[$validator_bools[$segment]] = $include;
+				}
 				
 			} elseif (array_key_exists($segment, $validator_1)) {
 				// Get the user id
@@ -863,10 +940,16 @@ class Members extends Controller
 				if (!$validator_1[$segment]($id)) {
 					throw new Exception('Unexpected non '.$validator_1[$segment].' filter URI segment after \''.$segment.'\'.');
 				}
-				$filter[$segment][$include][$id] = $include;
 				// Override any previous contradicting entries
 				if (array_key_exists($id, $filter[$segment][!$include])) {
 					unset($filter[$segment][!$include][$id]);
+				}
+				if ($remove_condition) {
+					// Remove any traces of this object in filter
+					unset($filter[$segment][$include][$id]);
+				} else {
+					// Add new filter
+					$filter[$segment][$include][$id] = $include;
 				}
 				
 			} elseif (array_key_exists($segment, $validator_2)) {
@@ -891,12 +974,22 @@ class Members extends Controller
 					}
 					$parameters[] = $parameter;
 				}
-				if (array_key_exists($parameters[1], $sort_index)) {
-					unset($filter[$segment][$sort_index[$parameters[1]]]);
+				
+				if (array_key_exists($parameters[1], $filter[$segment])) {
+					unset($filter[$segment][$parameters[1]]);
 				}
-				$filter[$segment][] = $parameters;
-				$sort_index[$parameters[1]] = key($filter[$segment]);
-				$filter['_data']['last_sort'] = $parameters[1];
+				if ($remove_condition) {
+					// Cleanup after old sort instead of recreating
+					if (empty($filter[$segment])) {
+						unset($filter[$segment]);
+					}
+					$filter['_data']['last_sort'] = '';
+					
+				} else {
+					// [Re]create [old] sort field
+					$filter[$segment][$parameters[1]] = $parameters;
+					$filter['_data']['last_sort'] = $parameters[1];
+				}
 				
 			} else {
 				throw new Exception('Unexpected filter URI segment: \''.$segment.'\'.');
