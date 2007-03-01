@@ -68,7 +68,7 @@ function FilterLinkBool($filter, $field, $value)
 			<th></th>
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
-			<th>Email</th>
+			<th>Email <?php BoolFilterLinks($filter, 'mailable'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><br />
 				<?php BoolFilterLinks($filter, 'confirmed'); ?></th><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
