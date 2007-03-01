@@ -1,21 +1,21 @@
 == TODO ==
-[ ] Main list
-	[ ] Better navigation
-	[ ] Click columns for sorting
-	[ ] Filtering
-	[ ] operations from there such as invite etc.
-	[ ] teams
+[O] Main list
+	[O] Better navigation
+	[O] Click columns for sorting
+	[O] Filtering
+	[O] operations from there such as invite etc.
+	[-] teams
 [ ] business cards
 	[ ] new business card
 	[ ] request from users
 		[ ] get unpublished
 	[ ] edit page
 	[ ] publish
-	[ ] filter
+	[O] filter
 [ ] notify
 	[ ] add notifications to teams/whole lot
 	[ ] 
-[ ] invite
+[X] invite
 	
 [ ] user notifications
 

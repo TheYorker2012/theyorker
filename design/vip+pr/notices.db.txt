@@ -16,7 +16,7 @@ uses
 
 Access
 [ ]	any members with mailing list set up get it as an email
-[ ]	visible in directory page
+[O]	visible in directory page
 [ ]	displayed on my notifications page
 [ ]	some displayed on main page
 

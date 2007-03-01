@@ -95,6 +95,8 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		/// @todo Implement $viparea/members/list/...
 		
+		$this->_GetTeams();
+		
 		// Check for post data
 		if (!empty($_POST)) {
 			$selected_members = $this->input->post('members_selected');
@@ -105,7 +107,6 @@ class Members extends Controller
 						$selected_members[$key] = (int)$matches[1];
 					}
 				}
-				$this->messages->AddDumpMessage('userids',$selected_members);
 			} else {
 				$selected_members = array();
 			}
@@ -119,7 +120,20 @@ class Members extends Controller
 					$this->messages->AddMessage('information',
 						'No members selected, please use the check boxes to select the members that you wish to invite into a team.');
 				} else {
-					
+					$invite_team = $this->input->post('invite_team');
+					if (FALSE !== $invite_team && is_numeric($invite_team)) {
+						$invite_team = (int)$invite_team;
+						if (array_key_exists($invite_team, $this->mAllTeams)) {
+							$this->_InviteUsers(
+								$invite_team, $selected_members,
+								'id', $this->mAllTeams[$invite_team]['name']
+							);
+						} else {
+							$this->messages->AddMessage('error', 'Invalid post data, not a valid invite team.');
+						}
+					} else {
+						$this->messages->AddMessage('error', 'Invalid post data, no recognised invite team.');
+					}
 				}
 				
 			} elseif ($request_cards_check === 'Request business cards') {
@@ -189,8 +203,6 @@ class Members extends Controller
 		if (!isset($members)) {
 			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
 		}
-		
-		$this->_GetTeams();
 		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
@@ -540,51 +552,11 @@ class Members extends Controller
 					
 				} else {
 					// Everything was fine.
-					$this->members_model->InviteUsers(VipOrganisationId(), $valids);
-					
-					$invites = $this->members_model->GetUsersStatuses(VipOrganisationId(), $valids);
-					$invite_invalids = array_flip($valids); // not in $invites
-					$invite_valids = array(); // not member, not deleted
-					$invite_members = array(); // is member
-					$invite_deleted = array(); // is deleted
-					foreach ($invites as $invite) {
-						if ($invite['deleted'] == 1) {
-							$invite_deleted[] = $invite['username'];
-						} elseif ($invite['member'] == 1) {
-							$invite_member[] = $invite['username'];
-						} else {
-							$invite_valids[] = $invite['username'];
-						}
-						unset($invite_invalids[$invite['username']]);
-					}
-					$invite_invalids = array_keys($invite_invalids);
-					
-					if (!empty($invite_valids)) {
-						$this->messages->AddMessage('success',
-							'The following '.count($invite_valids).' users '.
-							'are now invited to join your organisation:'.
-							'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>');
-					}
-					if (!empty($invite_member)) {
-						$this->messages->AddMessage('information',
-							'The following '.count($invite_member).' users '.
-							'are already members:'.
-							'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>');
-					}
-					if (!empty($invite_invalids)) {
-						$this->messages->AddMessage('warning',
-							'The following '.count($invite_invalids).' users '.
-							'could not be found and may not be registered with The Yorker:'.
-							'<ul><li>' . implode('</li><li>', $invite_invalids) . '</li></ul>');
-					}
-					if (!empty($invite_deleted)) {
-						$this->messages->AddMessage('warning',
-							'The following '.count($invite_deleted).' users '.
-							'are banned and need unbanning before they can be invited:'.
-							'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>');
-					}
-					
-					$default_list = implode("\n",$invite_deleted + $invite_invalids);
+					$default_list = $this->_InviteUsers(
+						VipOrganisationId(), $valids,
+						'username', $this->user_auth->organisationName
+					);
+					$default_list = implode("\n",$default_list);
 				}
 			}
 		}
@@ -626,6 +598,65 @@ class Members extends Controller
 		
 		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	/// General invite users using members_model->@a $Method.
+	/**
+	 * @param $OrganisationId entity_id of Organisation/team.
+	 * @param $Users array of user specifiers.
+	 * @param $Method string Method of identifying users
+	 *	- 'username'
+	 *	- 'id
+	 * @param $OrganisationName string Name of organisation.
+	 * @return array Remaining users.
+	 */
+	protected function _InviteUsers($OrganisationId, $Users, $Method, $OrganisationName)
+	{
+		$this->members_model->InviteUsers($OrganisationId, $Users, $Method);
+		
+		$invites = $this->members_model->GetUsersStatuses($OrganisationId, $Users, $Method);
+		
+		$invite_invalids = array_flip($Users); // not in $invites
+		$invite_valids = array(); // not member, not deleted
+		$invite_members = array(); // is member
+		$invite_deleted = array(); // is deleted
+		foreach ($invites as $invite) {
+			if ($invite['deleted'] == 1) {
+				$invite_deleted[] = $invite['username'];
+			} elseif ($invite['member'] == 1) {
+				$invite_member[] = $invite['username'];
+			} else {
+				$invite_valids[] = $invite['username'];
+			}
+			unset($invite_invalids[$invite[$Method]]);
+		}
+		$invite_invalids = array_keys($invite_invalids);
+		
+		if (!empty($invite_valids)) {
+			$this->messages->AddMessage('success',
+				'The following '.count($invite_valids).' users '.
+				'are now invited to join '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>');
+		}
+		if (!empty($invite_member)) {
+			$this->messages->AddMessage('information',
+				'The following '.count($invite_member).' users '.
+				'are already members of '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>');
+		}
+		if (!empty($invite_invalids)) {
+			$this->messages->AddMessage('warning',
+				'The following '.count($invite_invalids).' users '.
+				'could not be found and may not be registered with The Yorker:'.
+				'<ul><li>' . implode('</li><li>', $invite_invalids) . '</li></ul>');
+		}
+		if (!empty($invite_deleted)) {
+			$this->messages->AddMessage('warning',
+				'The following '.count($invite_deleted).' users '.
+				'are banned and need unbanning before they can be invited to '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>');
+		}
+		return ($invite_deleted + $invite_invalids);
 	}
 	
 	/// Reindex the sorts in a filter.

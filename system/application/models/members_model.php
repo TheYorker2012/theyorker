@@ -135,7 +135,7 @@ class Members_model extends Model {
 				';
 		$this->db->query($sql);
 		return $this->db->affected_rows();
-	}	
+	}
 	
 	/// Invite a set of users to join the organisation.
 	/**
@@ -143,10 +143,13 @@ class Members_model extends Model {
 	 *	So any existing members aren't affected.
 	 * Any users who aren't registered are ignored.
 	 * @param $OrganisationId integer Organisation's entity_id.
-	 * @param $Users array(strings) usernames of users to invite.
+	 * @param $Users array Users to invite.
+	 * @param $UserField string Field which elements of @a $Users must correspond to.
+	 *	- 'username'
+	 *	- 'id'
 	 * @return bool Whether any subscriptions were affected.
 	 */
-	function InviteUsers($OrganisationId, $Users)
+	function InviteUsers($OrganisationId, $Users, $UserField)
 	{
 		$sql = '
 			INSERT INTO subscriptions (
@@ -162,7 +165,7 @@ class Members_model extends Model {
 			INNER JOIN users
 				ON	users.user_entity_id = entities.entity_id
 			WHERE
-				entities.entity_username
+				entities.entity_'.$UserField.'
 					IN ('.implode(',',array_fill(1,count($Users),'?')).')
 			ON DUPLICATE KEY UPDATE
 				subscriptions.subscription_organisation_confirmed = TRUE
@@ -175,13 +178,17 @@ class Members_model extends Model {
 	/// Get information about the specified users.
 	/**
 	 * @param $OrganisationId integer Organisation's entity_id.
-	 * @param $Users array of usernames.
+	 * @param $Users array of users.
+	 * @param $UserField string Field which elements of @a $Users must correspond to.
+	 *	- 'username'
+	 *	- 'id'
 	 * @return Array of user data
 	 */
-	function GetUsersStatuses($OrganisationId, $Users)
+	function GetUsersStatuses($OrganisationId, $Users, $UserField)
 	{
 		$sql = '
 			SELECT
+				entities.entity_id AS id,
 				entities.entity_username AS username,
 				subscriptions.subscription_user_confirmed AS member,
 				subscriptions.subscription_deleted AS deleted
@@ -191,7 +198,7 @@ class Members_model extends Model {
 				AND	subscriptions.subscription_user_entity_id
 						= entities.entity_id
 				AND	subscriptions.subscription_organisation_confirmed = TRUE
-			WHERE	entities.entity_username
+			WHERE	entities.entity_'.$UserField.'
 						IN ('.implode(',',array_fill(1,count($Users),'?')).')
 			ORDER BY entities.entity_username ASC
 			';
