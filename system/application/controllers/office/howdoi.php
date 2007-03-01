@@ -629,6 +629,7 @@ class Howdoi extends Controller
 							$_POST['a_description'],
 							$this->user_auth->entityId,
 							$_POST['a_deadline']);
+				echo $request_id;
 		                $this->main_frame->AddMessage('success','Request Created.');
 				redirect('/office/howdoi/editrequest/'.$request_id);
 			}
