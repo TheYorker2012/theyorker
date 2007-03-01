@@ -34,6 +34,53 @@ function GetUserLevel()
 	return $user_level;
 }
 
+/// Find whether the set of permissions for a level is a subset of another.
+/**
+ * This is analagous to @a $Subset <= @a $Superset.
+ * @param $Subset string Permission level to search for.
+ * @param $Superset string Permission level to search in.
+ * @return bool Whether all permissions of @a $Subset are permissions of
+ *	@a $Superset.
+ */
+function PermissionsSubset($Subset, $Superset)
+{
+	// Tree of which subsets of each permission level.
+	static $permission_subsets = array(
+		'public'		=> array(),
+		'student'		=> array('public'	=> TRUE),
+		'organisation'	=> array('student'	=> TRUE),
+		'vip'			=> array('student'	=> TRUE),
+		'office'		=> array('student'	=> TRUE),
+		'pr'			=> array('office'	=> TRUE),
+		'editor'		=> array('pr'		=> TRUE),
+		'admin'			=> array('editor'	=> TRUE),
+	);
+	
+	// Unknown superset, assume its empty, always fail.
+	if (!array_key_exists($Superset, $permission_subsets)) {
+		return FALSE;
+	}
+	// If the superset IS the subset allow.
+	if ($Superset === $Subset) {
+		return TRUE;
+	}
+	// If the subset is an explicit subset identifier of superset use it directly.
+	if (array_key_exists($Subset, $permission_subsets[$Superset])) {
+		return $permission_subsets[$Superset][$Subset];
+	}
+	// Go through the supersets subsets in a depth first manner to find subset.
+	foreach ($permission_subsets[$Superset] as $superset_subset) {
+		$subset_found = ResolvePermission($Subset, $superset_subset);
+		if ($subset_found) {
+			// $Subset is a subset of $Superset
+			return TRUE;
+		}
+		// Negative: try any other parent permissions before giving up.
+	}
+	// All explicit subsets checked. Must not be a subset.
+	return FALSE;
+}
+
 /// Get the site path of the home page for the user.
 function GetDefaultHomepage()
 {
@@ -136,19 +183,19 @@ function VipMode($SetMode = FALSE)
  */
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
+	// Initialisation stuff
 	$CI = &get_instance();
 	$CI->load->library('messages');
 	$CI->load->model('pages_model');
 
 	$user_level = GetUserLevel(); // loads the user_auth library
 	
-	// Check whether the page is accessed in a special way
+	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
 							&&	($CI->uri->segment(1) === 'viparea'));
 	$thru_office_vip	= 	(	($CI->uri->total_segments() >= 3)
 							&&	($CI->uri->segment(1) === 'office')
 							&&	($CI->uri->segment(2) === 'vip'));
-	
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
