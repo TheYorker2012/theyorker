@@ -3,6 +3,7 @@ var Events = new Array();
 var EventCount = 0;
 
 <?php foreach ($events as $event) { ?>
+	Events[EventCount] = new Array();
 	Events[EventCount]['day'] = '<?php echo $event['day']; ?>';
 	Events[EventCount]['title'] = '<?php echo $event['title']; ?>';
 	Events[EventCount]['location'] = '<?php echo $event['location']; ?>';
