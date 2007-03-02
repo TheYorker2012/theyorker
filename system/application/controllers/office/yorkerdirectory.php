@@ -76,7 +76,7 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 
-			$organisation = $this->user_auth->organisationShortName;
+			$organisation = VipOrganisation();
 			$this->pages_model->SetPageCode('viparea_directory_information');	
 		
 		//test to allow a person to view deleted revisions
@@ -87,6 +87,7 @@ class Yorkerdirectory extends Controller
 		}
 		
 		if($action=='delete'){
+		
 			$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
 			if($result == 1){
 				$this->main_frame->AddMessage('success','Directory revision successfully removed.');
@@ -97,12 +98,17 @@ class Yorkerdirectory extends Controller
 		}
 		
 		if($action=='publish'){
-			//Send and get data
-			$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
-			if($result == 1){
-				$this->main_frame->AddMessage('success','Directory revision was published successfully.');
+			//Check Permissions
+			if (PermissionsSubset('office', GetUserLevel())){
+				//Send and get data
+				$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
+				if($result == 1){
+					$this->main_frame->AddMessage('success','Directory revision was published successfully.');
+				}else{
+					$this->main_frame->AddMessage('error','Directory revision was not published it does not exist or is already live.');
+				}
 			}else{
-				$this->main_frame->AddMessage('error','Directory revision was not published it does not exist or is already live.');
+				$this->main_frame->AddMessage('error','You do not have permission to publish revisions');
 			}
 			$action='view';
 		}
@@ -214,7 +220,7 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$organisation = $this->user_auth->organisationShortName;
+		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
 		$this->load->helper('images');
@@ -273,7 +279,7 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$organisation = $this->user_auth->organisationShortName;
+		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_map');
 		
 		//Get Data And toolbar
@@ -307,7 +313,7 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$organisation = $this->user_auth->organisationShortName;
+		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
 		
 		//Get Data And toolbar
