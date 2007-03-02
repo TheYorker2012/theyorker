@@ -1,3 +1,23 @@
+<script type="text/javascript">
+var Events = new Array();
+var EventCount = 0;
+
+<?php foreach ($events as $event) { ?>
+	Events[EventCount]['day'] = <?php echo $event['day']; ?>;
+	Events[EventCount]['title'] = <?php echo $event['title']; ?>;
+	Events[EventCount]['location'] = <?php echo $event['location']; ?>;
+	EventCount++;
+<?php } ?>
+
+function drawCalendar () {
+	for (i = 0; i < EventCount; i++) {
+		var day_col = document.getElementById("cal_" + Events[i]['day']);
+		day_col.innerHTML = day_col.innerHTML + "<div class='cal_event' style='margin-top: <?php echo($height_hour * 14.5); ?>px; height: <?php echo($height_hour * 2.5); ?>px;'><div class='info'>" + Events[i]['title'] + "<br /><span class='location'>" + Events[i]['location'] + "</span></div></div>";
+	}
+}
+
+onLoadFunctions.push(drawCalendar);
+</script>
 <style>
 #cal_headings, #cal_container {
 	width: 100%;
