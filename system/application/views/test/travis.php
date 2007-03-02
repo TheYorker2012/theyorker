@@ -16,8 +16,6 @@ function drawCalendar () {
 		day_col.innerHTML = day_col.innerHTML + "<div class='cal_event' style='margin-top: <?php echo($height_hour * 14.5); ?>px; height: <?php echo($height_hour * 2.5); ?>px;'><div class='info'>" + Events[i]['title'] + "<br /><span class='location'>" + Events[i]['location'] + "</span></div></div>";
 	}
 }
-
-onLoadFunctions.push(drawCalendar);
 </script>
 <style>
 #cal_headings, #cal_container {
@@ -131,3 +129,7 @@ onLoadFunctions.push(drawCalendar);
 		<div class="cal_col_day" id="cal_sun">
 		</div>
 	</div>
+
+<script type='text/javascript'>
+drawCalendar();
+</script>
