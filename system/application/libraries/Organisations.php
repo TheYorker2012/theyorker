@@ -83,6 +83,7 @@ class Organisations
 	function _GetOrgData($OrganisationShortName, $revision_number=false)
 	{
 		$this->CI->load->helper('images');
+		$this->CI->load->model('slideshow');
 		
 		$data = array();
 
