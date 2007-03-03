@@ -73,7 +73,7 @@ function PermissionsSubset($Subset, $Superset)
 		$subset_found = PermissionsSubset($Subset, $superset_subset);
 		if ($subset_found) {
 			// $Subset is a subset of $Superset
-			return TRUE;
+			return $enable;
 		}
 		// Negative: try any other parent permissions before giving up.
 	}
