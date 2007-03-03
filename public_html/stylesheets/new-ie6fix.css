@@ -11,5 +11,6 @@ ul#Navbar li {
 }
 
 div.BlueBox {
-	width: expression(if (document.all.item("RightColumn" == null)) { document.body.clientWidth - 395 } else { document.body.clientWidth - 395 });
+	width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));
+	padding: 0.5em;
 }

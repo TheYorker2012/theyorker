@@ -9,6 +9,3 @@ foreach ($items as $key => $item) {
 }
 ?>
 </ul>
-
-<!-- Hack before page content is fixed to not overlap the navbar -->
-&nbsp;

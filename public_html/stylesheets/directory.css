@@ -2,11 +2,11 @@ div#NotFound, div#Jumpers {
 	text-align: center;
 }
 
-div.DirectoryList h4 {
+div#DirectoryMain div h4 {
 	margin-bottom: 0;
 }
 
-div.DirectoryList h4 span {
+div#DirectoryMain div h4 span {
 	font-size: smaller;
 	font-weight: normal;
 }

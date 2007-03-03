@@ -242,13 +242,12 @@ div#RightColumn input {
 }
 
 div#MainColumn {
-	margin-right: 255px;
+	margin-right: 240px;
 }
 
 /* Formatting for content boxes in main page area */
 div.BlueBox {
 	border: 1px solid #20c1f0;
-	padding: 0.5em;
 	margin: 0em 0em 0.5em 0em;
 	text-align: left;
 
@@ -258,11 +257,14 @@ div.BlueBox {
 
 div.BlueBox h2 {
 	color: #20c1f0;
-	margin: 0;
 }
 
 div.BlueBox h3 {
 	color: #999999;
+}
+
+div.BlueBox > * {
+	margin: 0.5em;
 }
 
 
@@ -294,7 +296,7 @@ ul#Navbar {
 	text-align: right;
 	float: left;
 	border-bottom: 1px solid #20c1f0;
-	margin: 0;
+	margin: 0.5em 0em 0.5em 0em;
 	list-style: none outside none;
 }
 
