@@ -15,6 +15,11 @@ switch($_SERVER['SERVER_NAME']) {
 		$key = 'unknown';
 }
 
+$editable = false;
+foreach ($maps as $map) {
+	$editable |= (count($map['newlocations']) > 0);
+}
+
 // The google maps API key will need to be changed whenever we change server
 // There is a google account to do this:
 //   username - theyorkermaps
@@ -39,6 +44,10 @@ switch($_SERVER['SERVER_NAME']) {
 		);
 		map.addOverlay(marker);
 	}
+
+<?php
+if ($editable) {
+?>
 
 	function maps_editableLocation(id, point, description) {
 		this.id = id;
@@ -210,6 +219,9 @@ switch($_SERVER['SERVER_NAME']) {
 	}
 	maps_saveLocationControl.prototype = new GControl();
 
+<?php
+}
+?>
 	function maps_onLoad() {
 		var map;
 		var bounds;
@@ -221,11 +233,16 @@ foreach ($maps as $map) {
 ?>
 		map = new GMap2(document.getElementById("<?php echo($map['element']);?>"));
 		map.addControl(new GSmallMapControl());
+<?php
+	if (count($map['newlocations']) > 0) {
+?>
 		locationctl = new maps_editLocationControl(map, "<?php echo($map['element']);?>", "<?php echo($map['post']);?>");
 		map.addControl(locationctl);
 		savectl = new maps_saveLocationControl(map, locationctl.form);
 		map.addControl(savectl);
 <?php	
+	}
+
 	if (count($map['locations']) == 0) {
 		// Default to somewhere near york
 		echo('		'
