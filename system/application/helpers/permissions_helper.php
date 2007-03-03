@@ -69,8 +69,8 @@ function PermissionsSubset($Subset, $Superset)
 		return $permission_subsets[$Superset][$Subset];
 	}
 	// Go through the supersets subsets in a depth first manner to find subset.
-	foreach ($permission_subsets[$Superset] as $superset_subset) {
-		$subset_found = ResolvePermission($Subset, $superset_subset);
+	foreach ($permission_subsets[$Superset] as $superset_subset=>$enable) {
+		$subset_found = PermissionsSubset($Subset, $superset_subset);
 		if ($subset_found) {
 			// $Subset is a subset of $Superset
 			return TRUE;
