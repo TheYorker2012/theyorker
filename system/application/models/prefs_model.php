@@ -185,6 +185,13 @@ class Prefs_model extends Model {
 		$query = $this->db->query($sql, array($org_id, $user_id));
 	}
 
+	/**
+	 * getSlideshowImages
+	 * 
+	 * DEPRECIATED
+	 * 
+	 * @author Chris Travis (cdt502 - ctravis@gmail.com)
+	 */
 	function getSlideshowImages ($org_id)
 	{
 		$sql =

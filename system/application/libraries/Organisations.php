@@ -89,13 +89,13 @@ class Organisations
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName, $revision_number);
 		foreach ($orgs as $org) {
 		
-			$slideshow_array = $this->CI->slideshow_model->getSlideshowImages($org['organisation_entity_id']);
+			$slideshow_array = $this->CI->slideshow->getPhotos($org['organisation_entity_id']);
 			$slideshow = array();
-			foreach ($slideshow_array as $slide){
+			foreach ($slideshow_array->result() as $slide){
 				$slideshow[] = array(
-					'title' => $slide["photo_title"],
-					'id' => $slide["photo_id"],
-					'url' => imageLocation($slide["photo_id"], "slideshow"),
+					'title' => $slide->photo_title,
+					'id' => $slide->photo_id,
+					'url' => imageLocation($slide->photo_id, 'slideshow'),
 				);
 			}
 			$data['organisation'] = array(

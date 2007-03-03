@@ -220,6 +220,7 @@ class Register extends Controller {
 		{
 			$CI = &get_instance();
 			$CI->load->model('prefs_model');
+			$CI->load->model('slideshow');
 			$xajax_response = new xajaxResponse();
 			if ((!is_numeric($soc_id)) || (!$CI->prefs_model->isSociety($soc_id))) {
 				$xajax_response->addAlert('Invalid society selected, please try again.');
@@ -236,9 +237,9 @@ class Register extends Controller {
 				$xajax_response->addScript('document.getElementById(\'soc_subscribe\').className=\'button show\';');
 	
 				$xajax_response->addScriptCall('Slideshow.reset');
-				$get_slideshow = $CI->prefs_model->getSlideshowImages($soc_id);
-				foreach ($get_slideshow as $photo) {
-					$xajax_response->addScriptCall('Slideshow.add', '/images/photos/' . $photo['photo_id'] . '.jpg');
+				$get_slideshow = $CI->slideshow->getPhotos($soc_id);
+				foreach ($get_slideshow->result() as $photo) {
+					$xajax_response->addScriptCall('Slideshow.add', imageLocation($slide->photo_id, 'slideshow'));
 				}
 				$xajax_response->addScriptCall('Slideshow.load');
 				}
