@@ -135,6 +135,17 @@ function VipOrganisation($SetOrganisation = FALSE)
 	return $organisation;
 }
 
+/// Get the vip organisation name.
+function VipOrganisationName($SetOrganisation = FALSE)
+{
+	static $organisation = '';
+	
+	if (is_string($SetOrganisation)) {
+		$organisation = $SetOrganisation;
+	}
+	return $organisation;
+}
+
 /// Get the vip organisation id.
 function VipOrganisationId($SetOrganisation = FALSE)
 {
@@ -288,6 +299,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 		if ($action_levels['vip']) {
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipOrganisationName($CI->user_auth->organisationName);
 			VipMode('viparea');
 		}
 	} elseif ($user_level === 'vip') {
@@ -302,6 +314,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
 			$vip_accessible = TRUE;
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipOrganisationName($CI->user_auth->organisationName);
 			VipMode('viparea');
 		} else {
 			// check permissions to access this organisation
@@ -310,6 +323,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
 					$vip_accessible = $vip_login_action;
 					VipOrganisationId($organisation['organisation_entity_id']);
+					VipOrganisationName($organisation['organisation_name']);
 					VipMode('viparea');
 					break;
 				}
@@ -393,6 +407,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							== $organisation_shortname) {
 						// Yes, match, PR Rep, set stuff and change user level to PR
 						VipOrganisationId($organisation['organisation_entity_id']);
+						VipOrganisationName($organisation['organisation_name']);
 						VipMode('office');
 						$action_levels['pr'] = TRUE;
 						break;

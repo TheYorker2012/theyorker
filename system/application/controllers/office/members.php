@@ -226,7 +226,7 @@ class Members extends Controller
 		
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> $this->user_auth->organisationName,
+			'organisation'	=> VipOrganisationName(),
 		));
 		
 		// Load the main frame
@@ -339,7 +339,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> $this->user_auth->organisationName,
+				'organisation'	=> VipOrganisationName(),
 				'firstname'		=> $membership['firstname'],
 				'surname'		=> $membership['surname'],
 			));
@@ -396,7 +396,8 @@ class Members extends Controller
 		
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> $this->user_auth->organisationName,
+			'organisation'	=> VipOrganisationName(),
+			'team'			=> $this->mOrganisation['name'],
 		));
 		
 		// Load the main frame
@@ -476,7 +477,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> $this->user_auth->organisationName,
+				'organisation'	=> VipOrganisationName(),
 			));
 			
 		} elseif ($mode === 'edit') {
@@ -506,7 +507,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> $this->user_auth->organisationName,
+				'organisation'	=> VipOrganisationName(),
 				'name'			=> $business_cards[0]['name'],
 			));
 			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
@@ -558,7 +559,7 @@ class Members extends Controller
 					// Everything was fine.
 					$default_list = $this->_InviteUsers(
 						VipOrganisationId(), $valids,
-						'username', $this->user_auth->organisationName
+						'username', VipOrganisationName()
 					);
 					$default_list = implode("\n",$default_list);
 				}
@@ -578,7 +579,7 @@ class Members extends Controller
 	
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> $this->user_auth->organisationName,
+			'organisation'	=> VipOrganisationName(),
 		));
 		
 		// Load the main frame
