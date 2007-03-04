@@ -7,6 +7,6 @@
 		<?php }
 		echo $article_date; ?><br />
 		<?php foreach ($reporters as $id => $reporter) { ?>
-			<a href='/archive/reporter/<?php echo $id; ?>'><span class='orange'>Read more article by <?php echo $reporter['name']; ?></span></a>
+			<a href='/archive/reporter/<?php echo $id; ?>'><span class='orange'>Read more articles by <?php echo $reporter['name']; ?></span></a>
 		<?php } ?>
 	</div>

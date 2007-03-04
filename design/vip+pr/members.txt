@@ -1,21 +1,21 @@
 == TODO ==
-[ ] Main list
-	[ ] Better navigation
-	[ ] Click columns for sorting
-	[ ] Filtering
-	[ ] operations from there such as invite etc.
-	[ ] teams
+[O] Main list
+	[O] Better navigation
+	[O] Click columns for sorting
+	[O] Filtering
+	[O] operations from there such as invite etc.
+	[-] teams
 [ ] business cards
 	[ ] new business card
 	[ ] request from users
 		[ ] get unpublished
 	[ ] edit page
 	[ ] publish
-	[ ] filter
+	[O] filter
 [ ] notify
 	[ ] add notifications to teams/whole lot
 	[ ] 
-[ ] invite
+[X] invite
 	
 [ ] user notifications
 
@@ -29,7 +29,7 @@
 === Subcontroller URI design ===
 <<VIP+PR>>
 [O]  /list                       list members of the organisation/team, applicable filters
-[O]       /filter/$filter          apply filter
+[O]       /$filter                 apply filter
 [O]  /info/$entity_id            basic information about the user and their membership
 [ ]  /teams                      team structure and rearrangements
 [ ]        /$team_id               about the team, members
@@ -88,3 +88,6 @@ e.g. to get users in tech and news team who haven't submitted cards
 
 == Questions ==
 Wikitext in mass notifications/emails?
+ - Nick: Hell ye! (justification: it's an advanced level they don't need to use,
+                   but can quickly learn and feel special (e.g. for headings etc).
+                   we can have it in the pr training too.)

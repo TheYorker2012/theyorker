@@ -17,6 +17,12 @@ class Slideshow_model extends Model {
 	 *	General
 	 */
 
+	/**
+	 * getSlideshowImages
+	 * 
+	 * DEPRECIATED
+	 * 
+	 */
 function getSlideshowImages ($org_id)
 {
 	$sql =

@@ -3,13 +3,31 @@
 	<p>
 		<?php echo $main_text; ?>
 	</p>
+
+<?php
+if (!empty($filter['descriptors'])) {
+	?><P>
+	<H4>Filters</H4>
+	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all</A></SMALL>
+	<OL><?php
+	foreach (array_reverse($filter['descriptors']) as $descriptor) {
+		?><LI>
+		<?php echo $descriptor['description']; ?><br />
+		<SMALL>
+		(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_invert']); ?>">invert filter</A> |
+		<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove filter</A>)
+		</SMALL>
+		</LI><?php
+	}
+	?></OL>
+	</P><?php
+}
+?>
 <h4>Filter by details</h4>
 <input type='checkbox' name='filter_paid' value='1'> Paid<br />
 <input type='checkbox' name='filter_mailing_list' value='1'> On Mailing List<br />
 <input type='checkbox' name='filter_reply' value='1'> Awaiting Reply<br />
 <input type='checkbox' name='filter_vip' value='1'> VIP<br />
-<input type='checkbox' name='filter_phone' value='1'> Phone Number<br />
-<input type='checkbox' name='filter_drive' value='1'> Can Drive<br />
 <?php
 	/// Draw a branch of the tree of teams
 	function EchoTeamFilters($team, $in_list = TRUE)
@@ -43,6 +61,8 @@
 	}
 ?>
 </div>
-<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a>
+<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a><BR />
+<a href='<?php echo vip_url('members/teams'); ?>'>Manage teams</a><BR />
+<a href='<?php echo vip_url('members/cards'); ?>'>Manage business cards</a><BR />
 <?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>

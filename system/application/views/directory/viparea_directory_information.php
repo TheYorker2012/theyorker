@@ -54,7 +54,6 @@
 	<p>
 		Organisation name : <strong><?php echo $organisation['name']; ?></strong><br />
 		Organisation type : <strong><?php echo $organisation['type']; ?></strong><br />
-		Editing revision id <?php echo $organisation['revision_id']; ?>
 	</p>
 	<textarea name='description' cols='48' rows='10'><?php echo $organisation['description']; ?></textarea>
 </div>

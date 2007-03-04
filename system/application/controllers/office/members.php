@@ -8,7 +8,7 @@
 /// Viparea members controller.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
- * @author Dave Huscroft
+ * @author Dave Huscroft (dgh500@york.ac.uk)
  *
  * Several of the URI's for this controller can have filter data appended.
  * The controller walks through the segments using a state machine to set
@@ -54,6 +54,7 @@ class Members extends Controller
 	{
 		parent::Controller();
 		$this->load->model('directory_model');
+		$this->load->model('organisation_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
 		
@@ -68,36 +69,8 @@ class Members extends Controller
 	 */
 	protected function _GetTeams($Depth = NULL)
 	{
-		// Get teams array from database
-		if (NULL === $Depth) {
-			$teams_list = $this->members_model->GetTeams(VipOrganisationId());
-		} else {
-			$teams_list = $this->members_model->GetTeams(VipOrganisationId(), $Depth);
-		}
-		
-		// Reindex teams by entity id
-		$this->mAllTeams = array(
-			VipOrganisationId() => array(
-				'id' 		=> VipOrganisationId(),
-				'parent_id'	=> -1,
-				'name'		=> $this->user_auth->organisationName,
-				'subteams'	=> array(),
-			)
-		);
-		foreach ($teams_list as $team) {
-			$team['subteams'] = array();
-			$this->mAllTeams[$team['id']] = $team;
-		}
-		
-		// Set up team tree using references
-		foreach ($this->mAllTeams as $id => $team) {
-			if ($id != VipOrganisationId()) {
-				$parent = $team['parent_id'];
-				assert('array_key_exists($parent, $this->mAllTeams)');
-				$this->mAllTeams[$parent]['subteams'][] = &$this->mAllTeams[$id];
-			}
-		}
-		$this->mOrganisation = &$this->mAllTeams[VipOrganisationId()];
+		list($this->mAllTeams, $this->mOrganisation)
+			= $this->organisation_model->GetTeamsTree(VipOrganisationId());
 	}
 	
 	// FIRST LEVEL OF ROUTING
@@ -122,6 +95,8 @@ class Members extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		/// @todo Implement $viparea/members/list/...
 		
+		$this->_GetTeams();
+		
 		// Check for post data
 		if (!empty($_POST)) {
 			$selected_members = $this->input->post('members_selected');
@@ -132,7 +107,6 @@ class Members extends Controller
 						$selected_members[$key] = (int)$matches[1];
 					}
 				}
-				$this->messages->AddDumpMessage('userids',$selected_members);
 			} else {
 				$selected_members = array();
 			}
@@ -146,7 +120,20 @@ class Members extends Controller
 					$this->messages->AddMessage('information',
 						'No members selected, please use the check boxes to select the members that you wish to invite into a team.');
 				} else {
-					
+					$invite_team = $this->input->post('invite_team');
+					if (FALSE !== $invite_team && is_numeric($invite_team)) {
+						$invite_team = (int)$invite_team;
+						if (array_key_exists($invite_team, $this->mAllTeams)) {
+							$this->_InviteUsers(
+								$invite_team, $selected_members,
+								'id', $this->mAllTeams[$invite_team]['name']
+							);
+						} else {
+							$this->messages->AddMessage('error', 'Invalid post data, not a valid invite team.');
+						}
+					} else {
+						$this->messages->AddMessage('error', 'Invalid post data, no recognised invite team.');
+					}
 				}
 				
 			} elseif ($request_cards_check === 'Request business cards') {
@@ -170,13 +157,20 @@ class Members extends Controller
 			}
 		}
 		
-		if ($Filter === 'filter') {
+		$filter_base = 'members/list';
+		$last_sort = '';
+		$sort_fields = array();
+		$filter_descriptors = array();
+		
+		$filter_on = FALSE;
+		if (NULL !== $Filter) {
 			static $field_translator = array(
 				'team'			=> 'NULL',
 				'user'			=> 'users.user_entity_id',
 				'card'			=> 'NULL',
 				'paid' 			=> 'subscriptions.subscription_paid',
 				'vip'			=> 'subscriptions.subscription_vip',
+				'confirmed'		=> 'subscriptions.subscription_user_confirmed',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',
 				'cardable'		=> 'NULL',
@@ -188,21 +182,30 @@ class Members extends Controller
 				'enrol_year'	=> 'users.user_enrolled_year',
 			);
 			try {
-				$filter = $this->_GetFilter(4);
+				// Process the filter url
+				$filter = $this->_GetFilter(3);
+				
+				// Produce sql, the base url for extra filters, and sort fields
+				$filter_base .= '/'.implode('/', $this->_ReconstructFilter($filter));
+				/*if (vip_url($filter_base) !== $this->uri->uri_string()) {
+					// If the generated url is different, redirect to it as it is neater
+					return redirect(vip_url($filter_base));
+				}*/
 				$sql = $this->_GenerateFilterSql($filter, $field_translator);
+				$sort_fields = $this->_ReindexFilterSorts($filter);
+				$filter_descriptors = $this->_DescribeFilters($filter);
+				// Use db to get members using filter.
 				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
+				$filter_on = TRUE;
+				$last_sort = $filter['_data']['last_sort'];
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
 			}
-		} elseif(NULL !== $Filter) {
-			return show_404();
 		}
 		
 		if (!isset($members)) {
 			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
 		}
-		
-		$this->_GetTeams();
 		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
@@ -210,6 +213,13 @@ class Members extends Controller
 			'target'       => $this->uri->uri_string(),
 			'members'      => $members,
 			'organisation' => $this->mOrganisation,
+			'filter'       => array(
+				'enabled'      => $filter_on,
+				'last_sort'    => $last_sort,
+				'base'         => $filter_base,
+				'descriptors'  => $filter_descriptors,
+			),
+			'sort_fields'  => $sort_fields,
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);
@@ -309,6 +319,16 @@ class Members extends Controller
 			$membership['gender'] =  (($membership['gender']=='m')?('male')
 									:(($membership['gender']=='f')?('female')
 									:('unknown')));
+			// Stringify status
+			if (!$membership['confirmed']) {
+				$membership['status'] = 'Invited but unconfirmed';
+			} elseif ($membership['vip']) {
+				$membership['status'] = 'VIP member';
+			} elseif ($membership['paid']) {
+				$membership['status'] = 'Paying member';
+			} else {
+				$membership['status'] = 'Member';
+			}
 			
 			$data = array(
 				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
@@ -346,10 +366,12 @@ class Members extends Controller
 		
 		$this->_GetTeams();
 		
+		$team_id = VipOrganisationId();
+		
 		if (NULL !== $Suboption1) {
 			if (is_numeric($Suboption1) && array_key_exists((int)$Suboption1,$this->mAllTeams)) {
-				$Suboption1 = (int)$Suboption1;
-				$this->mOrganisation = &$this->mAllTeams[$Suboption1];
+				$team_id = (int)$Suboption1;
+				$this->mOrganisation = &$this->mAllTeams[$team_id];
 			} else {
 				// Show custom error page for no existing team
 				$this->load->library('custom_pages');
@@ -360,6 +382,10 @@ class Members extends Controller
 		}
 		
 		$this->pages_model->SetPageCode('viparea_members_teams');
+		
+		$this->load->model('notices_model');
+		$notices = $this->notices_model->GetPublicNoticesForOrganisation($team_id, NULL, FALSE);
+		$this->messages->AddDumpMessage('notices',$notices);
 		
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
@@ -408,6 +434,7 @@ class Members extends Controller
 				'card'			=> 'business_cards.business_card_id',
 				'paid' 			=> 'subscriptions.subscription_paid',
 				'vip'			=> 'subscriptions.subscription_vip',
+				'confirmed'		=> '1',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',
 				'cardable'		=> 'NULL',
@@ -511,8 +538,8 @@ class Members extends Controller
 				$failures = array();
 				foreach ($email_list as $key => $email) {
 					if (!empty($email)) {
-						if (preg_match('/^([a-z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
-							$valids[] = $matches[1];
+						if (preg_match('/^([a-zA-Z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
+							$valids[] = strtolower($matches[1]);
 						} else {
 							$failures[] = $email;
 						}
@@ -529,9 +556,11 @@ class Members extends Controller
 					
 				} else {
 					// Everything was fine.
-					$this->messages->AddMessage('success','Everything looks good but i haven\'t been programmed what to do next :)');
-					
-					/// @TODO Do something with invite email addresses
+					$default_list = $this->_InviteUsers(
+						VipOrganisationId(), $valids,
+						'username', $this->user_auth->organisationName
+					);
+					$default_list = implode("\n",$default_list);
 				}
 			}
 		}
@@ -575,6 +604,149 @@ class Members extends Controller
 		$this->main_frame->Load();
 	}
 	
+	/// General invite users using members_model->@a $Method.
+	/**
+	 * @param $OrganisationId entity_id of Organisation/team.
+	 * @param $Users array of user specifiers.
+	 * @param $Method string Method of identifying users
+	 *	- 'username'
+	 *	- 'id
+	 * @param $OrganisationName string Name of organisation.
+	 * @return array Remaining users.
+	 */
+	protected function _InviteUsers($OrganisationId, $Users, $Method, $OrganisationName)
+	{
+		$this->members_model->InviteUsers($OrganisationId, $Users, $Method);
+		
+		$invites = $this->members_model->GetUsersStatuses($OrganisationId, $Users, $Method);
+		
+		$invite_invalids = array_flip($Users); // not in $invites
+		$invite_valids = array(); // not member, not deleted
+		$invite_members = array(); // is member
+		$invite_deleted = array(); // is deleted
+		foreach ($invites as $invite) {
+			if ($invite['deleted'] == 1) {
+				$invite_deleted[] = $invite['username'];
+			} elseif ($invite['member'] == 1) {
+				$invite_member[] = $invite['username'];
+			} else {
+				$invite_valids[] = $invite['username'];
+			}
+			unset($invite_invalids[$invite[$Method]]);
+		}
+		$invite_invalids = array_keys($invite_invalids);
+		
+		if (!empty($invite_valids)) {
+			$this->messages->AddMessage('success',
+				'The following '.count($invite_valids).' users '.
+				'are now invited to join '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_valids) . '</li></ul>');
+		}
+		if (!empty($invite_member)) {
+			$this->messages->AddMessage('information',
+				'The following '.count($invite_member).' users '.
+				'are already members of '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_member) . '</li></ul>');
+		}
+		if (!empty($invite_invalids)) {
+			$this->messages->AddMessage('warning',
+				'The following '.count($invite_invalids).' users '.
+				'could not be found and may not be registered with The Yorker:'.
+				'<ul><li>' . implode('</li><li>', $invite_invalids) . '</li></ul>');
+		}
+		if (!empty($invite_deleted)) {
+			$this->messages->AddMessage('warning',
+				'The following '.count($invite_deleted).' users '.
+				'are banned and need unbanning before they can be invited to '.$OrganisationName.':'.
+				'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>');
+		}
+		return ($invite_deleted + $invite_invalids);
+	}
+	
+	/// Reindex the sorts in a filter.
+	/**
+	 * @param $Filter array Filter produced by _GetFilter.
+	 * @return array($fields => {TRUE (asc), FALSE (desc)}) sort fields.
+	 */
+	protected function _ReindexFilterSorts($Filter)
+	{
+		$result = array();
+		if (array_key_exists('sort', $Filter)) {
+			foreach ($Filter['sort'] as $sort) {
+				$result[$sort[1]] = ($sort[0] === 'asc');
+			}
+		}
+		return $result;
+	}
+	
+	/// Produce descpriptors of the filter.
+	/**
+	 * @param $Filter array Filter produced by _GetFilter.
+	 * @return array(descriptors) where descriptors contain:
+	 *	- 'description' (textural description)
+	 *	- 'link_remove' (link to append to negate the filter)
+	 *	- 'link_invert' (link to append to invert the filter)
+	 */
+	protected function _DescribeFilters($Filter)
+	{
+		$result = array();
+		
+		$sortable = FALSE;
+		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
+			if (is_bool($er)) {
+				if ($filt !== 'search') {
+					$single_result = array();
+					if (!$er) {
+						$single_result['description'] = 'member is not '.$filt;
+						$single_result['link_invert'] = $filt;
+					} else {
+						$single_result['description'] = 'member is '.$filt;
+						$single_result['link_invert'] = 'not/'.$filt;
+					}
+					$single_result['link_remove'] = 'scrap/'.$filt;
+					$result[] = $single_result;
+				} else {
+					//$result[] = 'search';
+				}
+			} elseif ($filt !== 'sort') {
+				foreach ($er[TRUE] as $id => $dummy) {
+					$single_result = array();
+					$single_result['description'] = 'include '.$filt.' '.$id;
+					$single_result['link_invert'] = 'not/'.$filt.'/'.$id;
+					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
+					$result[] = $single_result;
+				}
+				foreach ($er[FALSE] as $id => $dummy) {
+					$single_result = array();
+					$single_result['description'] = 'exclude '.$filt.' '.$id;
+					$single_result['link_invert'] = $filt.'/'.$id;
+					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
+					$result[] = $single_result;
+				}
+			} else {
+				$sortable = TRUE;
+			}
+		}
+		if ($sortable) {
+			static $invert_sort = array(
+				'asc' => 'desc',
+				'desc' => 'asc',
+			);
+			foreach ($Filter['sort'] as $sorter) {
+				$single_result = array();
+				$single_result['description'] = 'sorted by '.$sorter[1].' ('.$sorter[0].')';
+				$single_result['link_invert'] = 'sort/'.$invert_sort[$sorter[0]].'/'.$sorter[1];
+				$single_result['link_remove'] = 'scrap/sort/asc/'.$sorter[1];
+				$result[] = $single_result;
+			}
+		}
+		
+		return $result;
+	}
+	
 	/// Generate SQL from the filter produced by _GetFilter.
 	/**
 	 * @param $Filter array Filter produced by _GetFilter.
@@ -587,6 +759,9 @@ class Members extends Controller
 		$post_search = NULL;
 		$bind_data = array();
 		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
 			if (is_bool($er)) {
 				if ($filt !== 'search') {
 					$Conditions[] = '('.$field_translator[$filt].'='.($er?'1':'0').')';
@@ -629,10 +804,48 @@ class Members extends Controller
 		return array($sql, $bind_data);
 	}
 	
-	/// Regenerate the uri filter from the filter object.
-	protected function _RegenerateFilter($Filter)
+	/// Reconstruct the uri filter from the filter object.
+	protected function _ReconstructFilter($Filter)
 	{
+		$result = array();
 		
+		$sortable = FALSE;
+		foreach ($Filter as $filt => $er) {
+			if ($filt === '_data') {
+				continue;
+			}
+			if (is_bool($er)) {
+				if ($filt !== 'search') {
+					if (!$er) {
+						$result[] = 'not';
+					}
+					$result[] = $filt;
+				} else {
+					//$result[] = 'search';
+				}
+			} elseif ($filt !== 'sort') {
+				foreach ($er[TRUE] as $id => $dummy) {
+					$result[] = $filt;
+					$result[] = $id;
+				}
+				foreach ($er[FALSE] as $id => $dummy) {
+					$result[] = 'not';
+					$result[] = $filt;
+					$result[] = $id;
+				}
+			} else {
+				$sortable = TRUE;
+			}
+		}
+		if ($sortable) {
+			foreach ($Filter['sort'] as $sorter) {
+				$result[] = 'sort';
+				$result[] = $sorter[0];
+				$result[] = $sorter[1];
+			}
+		}
+		
+		return $result;
 	}
 	
 	/// Get member filter from url.
@@ -647,6 +860,9 @@ class Members extends Controller
 				'team' => $default,
 				'user' => $default,
 				'card' => $default,
+				'_data' => array(
+					'last_sort' => '',
+				),
 			);
 		} else {
 			$filter = $PreFilter;
@@ -657,10 +873,18 @@ class Members extends Controller
 			// Detect whether this filter item is notted
 			$segment = $this->uri->rsegment($segment_number++);
 			$include = TRUE;
+			$remove_condition = FALSE;
 			if ($segment === 'not') {
 				$include = FALSE;
 				if ($segment_number > $this->uri->total_rsegments()) {
 					throw new Exception('Unexpected end of filter URI segments near \'not\'.');
+				}
+				$segment = $this->uri->rsegment($segment_number++);
+				
+			} elseif ($segment === 'scrap') {
+				$remove_condition = TRUE;
+				if ($segment_number > $this->uri->total_rsegments()) {
+					throw new Exception('Unexpected end of filter URI segments near \'scrap\'.');
 				}
 				$segment = $this->uri->rsegment($segment_number++);
 			}
@@ -669,6 +893,7 @@ class Members extends Controller
 			static $validator_bools = array(
 				'paid'     => 'paid',
 				'vip'      => 'vip',
+				'confirmed' => 'confirmed',
 				'carded'   => 'carded',
 				'carding'  => 'carding',
 				'cardable' => 'cardable',
@@ -681,8 +906,8 @@ class Members extends Controller
 				'card' => 'is_numeric',
 			);
 			static $sort_directions = array(
-				'asc'  => 'ASC',
-				'desc' => 'DESC',
+				'asc'  => 'asc',
+				'desc' => 'desc',
 			);
 			static $sortable_fields = array(
 				'firstname'  => 'firstname',
@@ -691,6 +916,8 @@ class Members extends Controller
 				'enrol_year' => 'enrol_year',
 				'paid'   => 'paid',
 				'vip'    => 'vip',
+				'mailable' => 'mailable',
+				'confirmed' => 'confirmed',
 				'carded' => 'carded',
 			);
 			$validator_2 = array(
@@ -698,7 +925,11 @@ class Members extends Controller
 			);
 			
 			if (array_key_exists($segment, $validator_bools)) {
-				$filter[$validator_bools[$segment]] = $include;
+				if ($remove_condition) {
+					unset($filter[$validator_bools[$segment]]);
+				} else {
+					$filter[$validator_bools[$segment]] = $include;
+				}
 				
 			} elseif (array_key_exists($segment, $validator_1)) {
 				// Get the user id
@@ -709,10 +940,16 @@ class Members extends Controller
 				if (!$validator_1[$segment]($id)) {
 					throw new Exception('Unexpected non '.$validator_1[$segment].' filter URI segment after \''.$segment.'\'.');
 				}
-				$filter[$segment][$include][$id] = $include;
 				// Override any previous contradicting entries
 				if (array_key_exists($id, $filter[$segment][!$include])) {
 					unset($filter[$segment][!$include][$id]);
+				}
+				if ($remove_condition) {
+					// Remove any traces of this object in filter
+					unset($filter[$segment][$include][$id]);
+				} else {
+					// Add new filter
+					$filter[$segment][$include][$id] = $include;
 				}
 				
 			} elseif (array_key_exists($segment, $validator_2)) {
@@ -737,7 +974,22 @@ class Members extends Controller
 					}
 					$parameters[] = $parameter;
 				}
-				$filter[$segment][] = $parameters;
+				
+				if (array_key_exists($parameters[1], $filter[$segment])) {
+					unset($filter[$segment][$parameters[1]]);
+				}
+				if ($remove_condition) {
+					// Cleanup after old sort instead of recreating
+					if (empty($filter[$segment])) {
+						unset($filter[$segment]);
+					}
+					$filter['_data']['last_sort'] = '';
+					
+				} else {
+					// [Re]create [old] sort field
+					$filter[$segment][$parameters[1]] = $parameters;
+					$filter['_data']['last_sort'] = $parameters[1];
+				}
 				
 			} else {
 				throw new Exception('Unexpected filter URI segment: \''.$segment.'\'.');

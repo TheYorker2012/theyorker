@@ -166,8 +166,11 @@ if ($user['officetype'] != 'Low')
 			<form class="form" action="/office/howdoi/questionmodify" method="post" >
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 				<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />
-				<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
-			To publish the question now, click publish now
+				<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >';
+		//if a revision exists
+		if ($parameters['revision_id'] != -1)
+		{
+			echo 'To publish the question now, click publish now
 				<fieldset>
 					<input type="submit" value="Publish Now" class="button" name="r_submit_publishnow" />
 				</fieldset>
@@ -176,8 +179,9 @@ if ($user['officetype'] != 'Low')
 					<label for"a_publishdate">Publish On (yy-mm-dd h:m):</label>
 					<input type="text" name="a_publishdate" value="'.date('y-m-d H:i').'" />
 					<input type="submit" value="Publish Then" class="button" name="r_submit_publishon" />
-				</fieldset>
-			Or delete the request
+				</fieldset>';
+		}
+		echo 'Or delete the request
 				<fieldset>
 					<input type="submit" value="Delete" class="button" name="r_submit_rejectrequest" />
 				</fieldset>
@@ -228,7 +232,8 @@ if ($user['officetype'] != 'Low')
 				</fieldset>
 			</form>
 		</div>';
-	}else if ($article['header']['status'] == 'pulled')
+	}
+	else if ($article['header']['status'] == 'pulled')
 	{
 		echo '<div class="blue_box">
 			<h2>options</h2>

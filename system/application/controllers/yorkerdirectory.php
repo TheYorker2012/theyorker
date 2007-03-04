@@ -49,6 +49,8 @@ class Yorkerdirectory extends Controller
 				'/directory/'.$DirectoryEntry.'/members');
 		$navbar->AddItem('events', 'Events',
 				'/directory/'.$DirectoryEntry.'/events');
+		$navbar->AddItem('notices', 'Notices',
+				'/directory/'.$DirectoryEntry.'/notices');
 		$navbar->AddItem('about', 'About',
 				'/directory/'.$DirectoryEntry);
 	}
@@ -132,13 +134,10 @@ class Yorkerdirectory extends Controller
 			$map = &$this->maps->CreateMap('Location', 'googlemaps');
 			$this->maps->SendMapData();
 
-			// Set up the directory view
-			$directory_view = $this->frames->view($subpageview, $data);
-
 			// Set up the directory frame to use the directory events view
 			$this->main_frame->SetPage('about');
 			$this->frame_directory->SetOrganisation($data['organisation']);
-			$this->frame_directory->SetContent($directory_view);
+			$this->frame_directory->SetContentSimple($subpageview, $data);
 			
 			// Set up the public frame to use the directory view
 			$this->main_frame->SetTitleParameters(
@@ -150,6 +149,62 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
 		}
 		// Load the main frame view
+		$this->main_frame->Load();
+	}
+	
+	/// Directory notices page.
+	function notices($organisation)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$data = $this->organisations->_GetOrgData($organisation);
+		if (!empty($data)) {
+			$this->pages_model->SetPageCode('directory_notices');
+			
+			$this->_SetupOrganisationFrame($organisation);
+			
+			$organisation_id = $data['organisation']['id'];
+			$this->load->model('notices_model');
+			$this->load->model('organisation_model');
+			
+			// Get teams
+			list($all_teams, $top_team)
+				= $this->organisation_model->GetTeamsTree($organisation_id);
+			
+			// Get notices and put into teams
+			$full_notices = $this->notices_model->GetPublicNoticesForOrganisation($organisation_id, NULL, FALSE);
+			$notices = array();
+			foreach ($full_notices as $key => $notice) {
+				if (array_key_exists($notice['recipient_id'], $all_teams)) {
+					if (!array_key_exists('notices', $all_teams[$notice['recipient_id']])) {
+						$all_teams[$notice['recipient_id']]['notices'] = array((int)$notice['notice_id']);
+					} else {
+						$all_teams[$notice['recipient_id']]['notices'][] = (int)$notice['notice_id'];
+					}
+					if (!array_key_exists((int)$notice['notice_id'], $notices)) {
+						$notice['recipients'] = array((int)$notice['recipient_id']);
+						$notices[(int)$notice['notice_id']] = $notice;
+					} else {
+						$notices[(int)$notice['notice_id']]['recipients'][] = (int)$notice['recipient_id'];
+					}
+				}
+			}
+			
+			$data['teams'] = &$top_team;
+			$data['notices'] = &$notices;
+			
+			$this->main_frame->SetPage('notices');
+			$this->main_frame->SetContentSimple('directory/directory_notices', $data);
+			
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notfound','error'));
+		}
+		
+		// Load the main frame
 		$this->main_frame->Load();
 	}
 
