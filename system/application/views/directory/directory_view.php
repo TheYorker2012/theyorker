@@ -4,7 +4,7 @@
 		<img src="/images/prototype/prefs/image_load.jpg" alt="Slideshow" title="Slideshow" />
 	</div>
 
-	<div class="entry">
+	<div class="Entry">
 <?php
 if (!empty($organisation['website'])) {
 	echo('		<img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /> ');
@@ -60,7 +60,7 @@ if (!empty($organisation['reviews_by_type'])) {
 	<div class="Entry">
 <?php
 	foreach ($organisation['reviews_by_type'] as $review_type_name => $reviews) {
-		echo '<h5>'.$review_type_name.' reviews:</h5>';
+		echo('		<h5>'.$review_type_name.' reviews</h5>'."\n");
 		// $review_type_name: name of review type e.g. food, drink...
 		foreach ($reviews as $review) {
 			/*
@@ -71,15 +71,15 @@ if (!empty($organisation['reviews_by_type'])) {
 			 *	link - where to link (not sure where this is supposed to link
 			 *	authors - array of authors, each with:
 			 */
-			echo '<a href="'.$review['link'].'">By ';
+			echo('<a href="'.$review['link'].'">By ');
 			foreach ($review['authors'] as $author) {
 				/* $author is made up of:
 				 *	name
 				 *	email
 				 */
-				echo $author['name'].', ';
+				echo($author['name'].', ');
 			}
-			echo $review['publish_date'].'</a><br />';
+			echo($review['publish_date'].'</a><br />'."\n");
 		}
 	}
 ?>

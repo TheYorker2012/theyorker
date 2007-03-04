@@ -47,7 +47,7 @@
 	<div class="BlueBox">
 		<h2>today's news</h2>
 		<div class="NewsBox">
-			<a href="."><img src="/images/prototype/homepage/square1.jpg" alt="News Prototype" /></a>
+			<a class="NewsImg" href="."><img src="/images/prototype/homepage/square1.jpg" alt="News Prototype" /></a>
 			<h3>University</h3>
 			<ul>
 				<li><a href=".">Campus hip hop star announces single launch date</a></li>
@@ -57,7 +57,7 @@
 		</div>
 
 		<div class="NewsBox">
-			<a href="."><img src="/images/prototype/homepage/square2.jpg" alt="News Prototype" /></a>
+			<a class="NewsImg" href="."><img src="/images/prototype/homepage/square2.jpg" alt="News Prototype" /></a>
 			<h3>UK &amp; World</h3>
 			<ul>
 				<li><a href=".">Lord's reform set to cause Blair and Straw headaches</a></li>

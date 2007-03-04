@@ -223,6 +223,11 @@ div#RightColumn h4.first {
 	margin-top: 0em;
 }
 
+div#RightColumn h5 {
+	margin-top: 0.5em;
+	margin-bottom: 0em;
+}
+
 span.RightColumnAction {
 	text-align: right;
 	display: block;
@@ -239,6 +244,10 @@ div#RightColumn input {
 	float: none;
 	margin: 0.3em;
 	vertical-align: middle;
+}
+
+div#RightColumn div.Entry {
+	margin: 0.5em;
 }
 
 div#MainColumn {
@@ -292,9 +301,10 @@ a#ShowFeedback {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 ul#Navbar {
+	width: 100%;
 	display: block;
 	text-align: right;
-	float: left;
+	float: right;
 	border-bottom: 1px solid #20c1f0;
 	margin: 0.5em 0em 0.5em 0em;
 	list-style: none outside none;
