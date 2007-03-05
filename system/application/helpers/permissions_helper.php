@@ -204,9 +204,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
 							&&	($CI->uri->segment(1) === 'viparea'));
-	$thru_office_vip	= 	(	($CI->uri->total_segments() >= 3)
+	$thru_office_pr	= 	(	($CI->uri->total_segments() >= 3)
 							&&	($CI->uri->segment(1) === 'office')
-							&&	($CI->uri->segment(2) === 'vip'));
+							&&	($CI->uri->segment(2) === 'pr'));
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
@@ -216,10 +216,10 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			$organisation_shortname = $CI->user_auth->organisationShortName;
 		}
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
-	} elseif ($thru_office_vip) {
+	} elseif ($thru_office_pr) {
 		$organisation_shortname = $CI->uri->segment(3);
 		$organisation_specified = TRUE;
-		vip_url('office/vip/'.$organisation_shortname.'/', TRUE);
+		vip_url('office/pr/'.$organisation_shortname.'/', TRUE);
 	} else {
 		$organisation_shortname = '';
 	}
@@ -250,12 +250,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// If vip+pr, use URI to decide which
 	if ($Permission === 'vip+pr') {
 		$Permission =	($thru_viparea		? 'vip'	:
-						($thru_office_vip	? 'pr'	: ''));
+						($thru_office_pr	? 'pr'	: ''));
 	}
 	// Ensure that:
-	//	$thru_office_vip => 'pr'
+	//	$thru_office_pr => 'pr'
 	//	$thru_viparea => 'vip'
-	elseif (	($thru_office_vip	&& $Permission !== 'pr')
+	elseif (	($thru_office_pr	&& $Permission !== 'pr')
 			||	($thru_viparea		&& $Permission !== 'vip')) {
 		$Permission = '';
 	}
