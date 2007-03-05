@@ -339,7 +339,7 @@ class News extends Controller
 			// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box'];
+			$this->validation->r_box = $data['article']['box_codename'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}

@@ -63,7 +63,7 @@ class Requests_Model extends Model
 			foreach ($query->result() as $row) {
 				if ($row->subcats) {
 					$get_sub_cats = '
-						SELECT content_type_id AS id, content_type_name AS name
+						SELECT content_type_id AS id, content_type_name AS name, content_type_codename AS codename
 						FROM content_types
 						WHERE content_type_parent_content_type_id = ?
 						AND content_type_section != \'hardcoded\'
@@ -74,7 +74,7 @@ class Requests_Model extends Model
 							$result[] = array(
 								'id' => $category->id,
 								'name' => $row->name . ' - ' . $category->name,
-								'code' => $row->code
+								'code' => $category->codename
 							);
 						}
 					}
@@ -463,7 +463,8 @@ class Requests_Model extends Model
 		if ($query->num_rows() > 0)
 		{
 			$row = $query->row();
-			$sql = 'SELECT content_type_name
+			$sql = 'SELECT content_type_name,
+				 content_type_codename
 				FROM content_types
 				WHERE content_type_id = ?';
 			$query = $this->db->query($sql, array($row->article_content_type_id));
@@ -473,6 +474,7 @@ class Requests_Model extends Model
 				'title'=>$row->article_request_title,
 				'description'=>$row->article_request_description,
 				'box'=>$row->article_content_type_id,
+				'box_codename'=>$row2->content_type_codename,
 				'box_name'=>$row2->content_type_name,
 				'userid'=>$row->article_request_entity_id,
 				'username'=>$row->business_card_name,
