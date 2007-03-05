@@ -129,7 +129,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required';
 		$fields['r_box'] = 'box';
 		if ($data['status'] == 'request') {
 			$rules['r_deadline'] = 'trim|required|numeric';

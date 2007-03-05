@@ -89,7 +89,7 @@
 			<h2><?php echo $links_heading; ?></h2>
 			<ul>
 			<?php foreach ($main_article['links'] as $link) {
-				echo '<li><a href=\'' . $link['url'] . '\'>' . $link['name'] . '</a></li>';
+				echo '<li><a href=\'' . $link['url'] . '\' target=\'_blank\'>' . $link['name'] . '</a></li>';
 			} ?>
 			</ul>
 		</div>

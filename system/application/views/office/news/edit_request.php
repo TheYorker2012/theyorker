@@ -57,8 +57,8 @@
 				<?php if ($edit_enable) { ?>
 					<select name='r_box' id='r_box' size='1'>
 					<?php foreach ($boxes as $box) {
-						echo '<option value=\'' . $box['id'] . '\'';
-						if ($box['id'] == $this->validation->r_box) {
+						echo '<option value=\'' . $box['code'] . '\'';
+						if ($box['code'] == $this->validation->r_box) {
 							echo ' selected=\'selected\'';
 						}
 						echo '>' . $box['name'] . '</option>';

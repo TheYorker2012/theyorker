@@ -39,11 +39,11 @@ class Requests_Model extends Model
 	}
 
 	// Validation check to ensure selected article box exists
-	function isBox ($box_id)
+	function isBox ($box_codename)
 	{
 		$sql = 'SELECT content_type_id
 			FROM content_types
-			WHERE content_type_id = ?
+			WHERE content_type_codename = ?
 			AND content_type_section != \'hardcoded\'';
 		$query = $this->db->query($sql, array($box_id));
 		return $query->num_rows();
