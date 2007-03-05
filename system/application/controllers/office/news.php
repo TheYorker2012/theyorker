@@ -129,7 +129,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['status'] == 'request') {
 			$rules['r_deadline'] = 'trim|required|numeric';
@@ -257,7 +257,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
@@ -452,7 +452,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
