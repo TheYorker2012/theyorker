@@ -1,15 +1,19 @@
 <div class="RightToolbar">
 	<h4>Quick Links</h4>
-	<a href="/office/charity/#">Return to content</a>
+	<?php
+	echo '<a href="/office/charity/edit/'.$charity['id'].'">Return to content</a>';
+	?>
 </div>
 
 <div class="blue_box">
 	<h2>charity info</h2>
-	<form class="form" action="/office/howdoi/#" method="post" >
+	<form class="form" action="/office/charity/domodify" method="post" >
 		<fieldset>
 			<?php
-			echo '<label for"a_title">Title:</label>
-			<input type="text" name="a_title" value="'.$charity['name'].'" />
+			echo '<input type="hidden" name="a_charityid" value="'.$charity['id'].'" />
+			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+			<label for"a_name">Name:</label>
+			<input type="text" name="a_name" value="'.$charity['name'].'" />
 			<label for="a_goal">Goal Total:</label>
 			<input type="text" name="a_goal" value="'.$charity['target'].'" />
 			<label for"a_goaltext">Goal Text:</label>

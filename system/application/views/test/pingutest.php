@@ -21,7 +21,7 @@
 	}
 
 </script>
-
+<!--
 	<div class="blue_box">
 		<h2>xajaxTest...</h2>
 		<div id="xajaxTest_load" class="ajax_loading hide">
@@ -37,6 +37,7 @@
 		<div id="xajaxTest_container">
 		</div>
 	</div>
+-->
 
 <pre>
 <?php
