@@ -156,7 +156,7 @@
 		<br />
 	</div>
 
-	<form action="/office/news/" method="post" class="form">
+	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
 		<div id="content_request">
 			<div class="blue_box">
 				<h2><?php echo $request_heading; ?></h2>
@@ -190,6 +190,12 @@
 					</div>
 					<br />
 				</fieldset>
+			</div>
+			<div style='width: 422px;'>
+				<?php if ($user_requested) { ?>
+			 	<input type='submit' name='decline' id='submit2' value='Decline Request' class='button' />
+			 	<input type='submit' name='accept' id='submit' value='Accept Request' class='button' />
+				<?php } ?>
 			</div>
 		</div>
 

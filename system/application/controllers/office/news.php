@@ -533,7 +533,7 @@ class News extends Controller
 			/// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box'];
+			$this->validation->r_box = $data['article']['box_codename'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}
@@ -567,6 +567,23 @@ class News extends Controller
 	{
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
 		if (count($data['article']) > 0) {
+			// Is user requested for this article? i.e. can edit
+			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
+			// Show or hide accept/decline request buttons
+			$data['user_requested'] = ($data['user_requested'] == 'requested');
+
+			if ($data['user_requested']) {
+				if ($this->input->post('accept') == 'Accept Request') {
+					$this->requests_model->AcceptRequest($article_id, $this->user_auth->entityId);
+					$this->main_frame->AddMessage('success','Article request accepted.');
+					redirect('/office/news/' . $article_id);
+				} elseif ($this->input->post('decline') == 'Decline Request') {
+					$this->requests_model->DeclineRequest($article_id, $this->user_auth->entityId);
+					$this->main_frame->AddMessage('success','Article request declined.');
+					redirect('/office/news/' . $article_id);
+				}
+			 }
+
 			// Setup XAJAX functions
 			$this->load->library('xajax');
 	        $this->xajax->registerFunction(array('_addComment', &$this, '_addComment'));
@@ -574,7 +591,7 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->processRequests();
-	
+
 			// Create menu
 			$navbar = $this->main_frame->GetNavbar();
 			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
@@ -597,8 +614,7 @@ class News extends Controller
 			}
 			// Get latest revision's data
 			$data['revision'] = $this->article_model->GetRevisionData($revision);
-	
-	
+
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/article', $data);
 			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));

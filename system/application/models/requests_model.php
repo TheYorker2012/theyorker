@@ -49,6 +49,21 @@ class Requests_Model extends Model
 		return $query->num_rows();
 	}
 
+	function getBoxId($box_codename)
+	{
+		$sql = 'SELECT content_type_id
+			FROM content_types
+			WHERE content_type_codename = ?
+			AND content_type_section != \'hardcoded\'';
+		$query = $this->db->query($sql, array($box_codename));
+		if ($query->num_rows() > 0) {
+			$row = $query->row();
+			return $row->content_type_id;
+		} else {
+			return FALSE;
+		}
+	}
+
 	// Retrieve a list of all the boxes a request can be assigned to
 	function getBoxes ()
 	{
@@ -156,6 +171,7 @@ class Requests_Model extends Model
 	//Make a change to a request status in the article table
 	function UpdateRequestStatus($article_id,$status,$data)
 	{
+		$data['content_type'] = $this->getBoxId($data['content_type']);
 		if ($status == 'request')
 		{
 			$sql = 'UPDATE 	articles
@@ -197,6 +213,8 @@ class Requests_Model extends Model
 	//Make a change to the title, description and content type of a suggestion
 	function UpdateSuggestion($article_id,$data)
 	{
+		// Transform content_type_codename to content_type_id
+		$data['content_type'] = $this->getBoxId($data['content_type']);
 		$sql = 'UPDATE 	articles
 			SET	article_request_title = ?,
 				article_request_description = ?,
@@ -445,43 +463,42 @@ class Requests_Model extends Model
 
 	function GetSuggestedArticle($article_id)
 	{
-		$sql = 'SELECT	article_id,
-				article_request_title,
-				article_content_type_id,
-				article_request_description,
-				UNIX_TIMESTAMP(article_created) as article_created,
-				article_request_entity_id,
-				business_card_name
-			FROM	articles
-			JOIN	business_cards
-			ON	business_card_user_entity_id = article_request_entity_id
-			WHERE article_suggestion_accepted = 0
-			AND	article_id = ?
-			AND	article_deleted = 0
-			AND	article_pulled = 0';
+		$sql = 'SELECT article_id,
+				 article_request_title,
+				 article_content_type_id,
+				 article_request_description,
+				 UNIX_TIMESTAMP(article_created) as article_created,
+				 article_request_entity_id,
+				 business_card_name,
+				 content_type_name,
+				 content_type_codename
+				FROM content_types, articles
+				JOIN business_cards
+				 ON business_card_user_entity_id = article_request_entity_id
+				WHERE article_suggestion_accepted = 0
+				AND article_id = ?
+				AND	article_deleted = 0
+				AND	article_pulled = 0
+				AND content_types.content_type_id = articles.article_content_type_id';
 		$query = $this->db->query($sql,array($article_id));
 		if ($query->num_rows() > 0)
 		{
 			$row = $query->row();
-			$sql = 'SELECT content_type_name,
-				 content_type_codename
-				FROM content_types
-				WHERE content_type_id = ?';
-			$query = $this->db->query($sql, array($row->article_content_type_id));
-			$row2 = $query->row();
 			$result = array(
 				'id'=>$row->article_id,
 				'title'=>$row->article_request_title,
 				'description'=>$row->article_request_description,
 				'box'=>$row->article_content_type_id,
-				'box_codename'=>$row2->content_type_codename,
-				'box_name'=>$row2->content_type_name,
+				'box_codename'=>$row->content_type_codename,
+				'box_name'=>$row->content_type_name,
 				'userid'=>$row->article_request_entity_id,
 				'username'=>$row->business_card_name,
 				'created'=>$row->article_created
 				);
+			return $result;
+		} else {
+			return FALSE;
 		}
-		return $result;
 	}
 
 	function GetSuggestedArticles($type_codename, $get_children = TRUE)
