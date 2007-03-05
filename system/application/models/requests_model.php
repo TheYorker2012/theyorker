@@ -45,7 +45,7 @@ class Requests_Model extends Model
 			FROM content_types
 			WHERE content_type_codename = ?
 			AND content_type_section != \'hardcoded\'';
-		$query = $this->db->query($sql, array($box_id));
+		$query = $this->db->query($sql, array($box_codename));
 		return $query->num_rows();
 	}
 
