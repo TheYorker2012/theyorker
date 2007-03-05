@@ -80,7 +80,8 @@ class Members_model extends Model {
 					ON	subscriptions.subscription_user_entity_id
 							= business_cards.business_card_user_entity_id
 					AND	subscriptions.subscription_deleted	= FALSE
-					AND subscriptions.subscription_member	= TRUE
+					AND subscriptions.subscription_user_confirmed	= TRUE
+					AND subscriptions.subscription_organisation_confirmed	= TRUE
 			LEFT JOIN	users
 					ON	users.user_entity_id
 							= business_cards.business_card_user_entity_id
@@ -101,8 +102,8 @@ class Members_model extends Model {
 				FROM   subscriptions
 				WHERE  subscriptions.subscription_user_entity_id = "'.$UserId.'"
 					   AND subscriptions.subscription_organisation_entity_id = "'.$OrganisationId.'"
-					   AND subscriptions.subscription_user_confirmed = "1"
-					   AND subscriptions.subscription_member = "1"
+					AND subscriptions.subscription_user_confirmed	= TRUE
+					AND subscriptions.subscription_organisation_confirmed	= TRUE
 				';
 		$query = $this->db->query($sql);
 		$result_array = $query->result_array();
@@ -232,7 +233,8 @@ class Members_model extends Model {
 		return $query->result_array();
 	}
 	
-	function RemoveSubscription($UserId,$OrgId) {
+	// (not in use yet, subscription_member is depreciated)
+	/*function RemoveSubscription($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
 				SET subscription_member = "0"
@@ -240,10 +242,11 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$this->db->query($sql);		
-	}
+	}*/
 	
 	# sets member=1
-	function ConfirmMember($UserId,$OrgId) {
+	// (not in use yet, subscription_member is depreciated)
+	/*function ConfirmMember($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
 				SET subscription_member = "1"
@@ -251,7 +254,7 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$this->db->query($sql);		
-	}
+	}*/
 	
 	#sets confirmed=1
 	function ConfirmSubscription($UserId,$OrgId) {

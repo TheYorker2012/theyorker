@@ -735,7 +735,9 @@ class Events_model extends Model
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_member = 1 AND subscriptions.subscription_email = 1,
+			IF(	subscriptions.subscription_organisation_confirmed = TRUE AND
+				subscriptions.subscription_user_confirmed = TRUE AND
+				subscriptions.subscription_email = TRUE,
 				users.user_email, NULL)		AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
@@ -778,7 +780,9 @@ class Events_model extends Model
 			users.user_firstname	AS firstname,
 			users.user_surname		AS surname,
 			users.user_nickname		AS nickname,
-			IF(subscriptions.subscription_member = 1 AND subscriptions.subscription_email = 1,
+			IF(	subscriptions.subscription_organisation_confirmed = TRUE AND
+				subscriptions.subscription_user_confirmed = TRUE AND
+				subscriptions.subscription_email = TRUE,
 				users.user_email, NULL)		AS email
 		FROM	event_occurrence_users
 		INNER JOIN event_occurrences
