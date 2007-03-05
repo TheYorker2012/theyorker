@@ -105,6 +105,15 @@ class Requests_Model extends Model
 		return $result;
 	}
 
+	function PublishArticle($article_id,$revision_id,$publish_date)
+	{
+		$sql = 'UPDATE articles
+				SET article_publish_date = ?,
+				 article_live_content_id = ?
+				WHERE article_id = ?';
+		$query = $this->db->query($sql,array($publish_date,$revision_id,$article_id));
+	}
+
 	//Add a  new request to the article table
 	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
 	{

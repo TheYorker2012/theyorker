@@ -62,7 +62,7 @@
             <tbody>
 				<?php if ((count($box_contents) == 0) && (count($suggestions) == 0)) { ?>
 				<tr>
-				<td colspan="3" style="text-align:center;">Box is empty</td>
+				<td colspan="0" style="text-align:center;">Box is empty</td>
 				</tr>
 				<?php } else {
 					$row_style = false;
