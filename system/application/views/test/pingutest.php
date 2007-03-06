@@ -56,13 +56,45 @@
 				<tr id="stevedave" style="display: none">
 					<td colspan=0>
 							<h5>Statistics</h5>
-							<ul>
-								<li>Events: 20%</li>
-								<li>Discounts: 35%</li>
-								<li>Smelliness: 2%</li>
-								<li>Average: 14%</li>
-							</ul>
-							<span class="grey">SteveDave Awesomeengine is responsible for:</span> Evil Eye, The Blue Bike, Floods, Barry Whites Death, American Cars, America, World War 1, World War 2, Idiots and Greenday.
+							<table>
+								<tbody>
+									<tr>
+										<td>Events: 20%</td>
+										<td>Deals: 35%</td>
+									</tr>
+									<tr>
+										<td>Reviews: 2%</td>
+										<td>Directory: 14%</td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
+							<span class="grey">SteveDave Awesomeengine is responsible for:</span>
+							<table>
+								<tbody>
+									<tr>
+										<td>Evil Eye: 10%</td>
+										<td>The Blue Bike: 10%</td>
+									</tr>
+									<tr>
+										<td>Floods: 10%</td>
+										<td>Barry Whites Death: 10%</td>
+									</tr>
+									<tr>
+										<td>American Cars: 10%</td>
+										<td>America: 10%</td>
+									</tr>
+									<tr>
+										<td>World War 1: 10%</td>
+										<td>World War 2: 10%</td>
+									</tr>
+									<tr>
+										<td>Idiots and Greenday: 10%</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
 					</td>
 				</tr>
 				<tr class="tr2">
@@ -89,6 +121,121 @@
 		</table>
 	</div>
 </div>
+
+<div class="grey_box">
+	<h2>PR Rep Organisations</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Organisation Name</th>
+					<th>Average</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Toffs</a></td>
+					<td><a href="#">14%</a></td>
+				</tr>
+				<tr id="stevedave">
+					<td colspan=0>
+							<h5>Statistics</h5>
+							<table>
+								<tbody>
+									<tr>
+										<td>Events: 35%</td>
+										<td>Deals: 2%</td>
+									</tr>
+									<tr>
+										<td>Reviews: 2%</td>
+										<td>Directory: 14%</td>
+									</tr>
+									<tr>
+										<td>Priority: 4</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
+							<span class="grey">Toffs has 2 review types:</span>
+							<table>
+								<tbody>
+									<tr>
+										<td>Food: 10%</td>
+										<td>Drink: 10%</td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
+					</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Evil Eye</a></td>
+					<td><a href="#">14%</a></td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Bleh</a></td>
+					<td><a href="#">14%</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="blue_box">
+	<h2>Organisation Reviews - Evil Eye</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Review Type</th>
+					<th>Average</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Food</a></td>
+					<td><a href="#">14%</a></td>
+				</tr>
+				<tr id="stevedave">
+					<td colspan=0>
+							<h5>Statistics</h5>
+							<table>
+								<tbody>
+									<tr>
+										<td>Updated: 35%</td>
+										<td>Deals: 2%</td>
+									</tr>
+									<tr>
+										<td>Photos: 2%</td>
+										<td>Business Cards: 14%</td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
+							<!--
+							<span class="grey">Toffs has 2 review types:</span>
+							<table>
+								<tbody>
+									<tr>
+										<td>Food: 10%</td>
+										<td>Drink: 10%</td>
+									</tr>
+								</tbody>
+							</table>
+							<br />
+							-->
+					</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Drink</a></td>
+					<td><a href="#">14%</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+<div>
+
 <!--
 	<div class="blue_box">
 		<h2>xajaxTest...</h2>

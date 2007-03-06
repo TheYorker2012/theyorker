@@ -571,6 +571,9 @@ class Requests_Model extends Model
 					$result[] = $result_item;
 				}
 			}
+			echo '<pre>';
+			echo $result;
+			echo '</pre>';
 			return $result;
 		}
 		else
