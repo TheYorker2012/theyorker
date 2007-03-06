@@ -81,7 +81,7 @@ $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
 $route['admin'] = 'admin/index';
 $route['office'] = 'office/index';
-$route['viparea'] = 'office/prindex';
+$route['viparea'] = 'office/vipindex';
 
 
 //****************************************************************************//
