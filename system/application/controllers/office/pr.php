@@ -25,7 +25,7 @@ class Pr extends controller
 		$this->pages_model->SetPageCode('office_pr');
 		
 		// Organisations to list depends on whether editor
-		if (PermissionsUnion('editor', GetUserLevel())) {
+		if (PermissionsSubset('editor', GetUserLevel())) {
 			// Show all organisations
 		} else {
 			// Show only pr rep organisations
