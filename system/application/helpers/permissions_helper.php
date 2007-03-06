@@ -670,7 +670,9 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				}
 				$CI->user_auth->loginOffice($password);
 			} else {
-				$CI->user_auth->login($username, $password, false);
+				$keep_login = (FALSE !== $CI->input->post('keep_login'));
+				
+				$CI->user_auth->login($username, $password, $keep_login);
 				
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{
