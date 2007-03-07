@@ -20,6 +20,23 @@ class Organisation_model extends model
 	
 	// HIGH LEVEL FUNCTIONS (FOR CONTROLLERS)
 	
+	/// Get all subteams of a particular team.
+	/**
+	 * @param $Team array with subteams and id.
+	 * @return array(team id).
+	 */
+	function GetSubteamIds($Team, $result = array())
+	{
+		assert('is_array($Team)');
+		if (array_key_exists('id', $Team)) {
+			$result[] = (int)$Team['id'];
+		}
+		foreach ($Team['subteams'] as $subteam) {
+			$result = $this->GetSubteamIds($subteam, $result);
+		}
+		return $result;
+	}
+	
 	/// Get all teams down to a depth of @a $levels levels in a tree.
 	/**
 	 * @param $Depth int To pass into members_model::GetTeams.

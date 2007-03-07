@@ -49,6 +49,13 @@ class Members extends Controller
 	/// teams in a tree structure including main organisations
 	protected $mOrganisation;
 	
+	protected $mMembers;
+	protected $mIsFilterOn;
+	protected $mLastSort;
+	protected $mSortFields;
+	protected $mFilterDescriptors;
+	protected $mFilterBase;
+	
 	/// Default constructor.
 	function __construct()
 	{
@@ -79,24 +86,14 @@ class Members extends Controller
 	/// Index page.
 	function index()
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		
 		/// @note Redirects to members/list
 		redirect(vip_url('members/list'));
 	}
 	
-	/// List of members and member set operations.
-	/**
-	 * @param $Filter [string] 'filter' (filter options follow).
-	 * @note This is accessed with list not memberlist (list is reserved word).
-	 */
-	function memberlist($Filter = NULL)
+	protected function _handle_member_list_member_operation()
 	{
-		if (!CheckPermissions('vip+pr')) return;
-		/// @todo Implement $viparea/members/list/...
-		
-		$this->_GetTeams();
-		
 		// Check for post data
 		if (!empty($_POST)) {
 			$selected_members = $this->input->post('members_selected');
@@ -156,16 +153,19 @@ class Members extends Controller
 				$this->messages->AddMessage('error', 'Invalid post data, no recognised button signiture.');
 			}
 		}
+	}
+	
+	/// @return bool Whether to quit
+	protected function _handle_member_list($TopTeam, $FilterSegment)
+	{
+		$this->mLastSort = '';
+		$this->mSortFields = array();
+		$this->mFilterDescriptors = array();
 		
-		$filter_base = 'members/list';
-		$last_sort = '';
-		$sort_fields = array();
-		$filter_descriptors = array();
-		
-		$filter_on = FALSE;
-		if (NULL !== $Filter) {
+		$this->mIsFilterOn = FALSE;
+		if ($this->uri->total_rsegments() >= $FilterSegment) {
 			static $field_translator = array(
-				'team'			=> 'NULL',
+				'teamid'		=> 'subscriptions.subscription_organisation_entity_id',
 				'user'			=> 'users.user_entity_id',
 				'card'			=> 'NULL',
 				'paid' 			=> 'subscriptions.subscription_paid',
@@ -183,50 +183,141 @@ class Members extends Controller
 			);
 			try {
 				// Process the filter url
-				$filter = $this->_GetFilter(3);
+				$filter = $this->_GetFilter($FilterSegment);
 				
 				// Produce sql, the base url for extra filters, and sort fields
-				$filter_base .= '/'.implode('/', $this->_ReconstructFilter($filter));
-				/*if (vip_url($filter_base) !== $this->uri->uri_string()) {
+				$this->mFilterBase .= '/'.implode('/', $this->_ReconstructFilter($filter));
+				/*if (vip_url($this->mFilterBase) !== $this->uri->uri_string()) {
 					// If the generated url is different, redirect to it as it is neater
-					return redirect(vip_url($filter_base));
+					redirect(vip_url($this->mFilterBase));
+					return TRUE;
 				}*/
 				$sql = $this->_GenerateFilterSql($filter, $field_translator);
-				$sort_fields = $this->_ReindexFilterSorts($filter);
-				$filter_descriptors = $this->_DescribeFilters($filter);
+				$this->mSortFields = $this->_ReindexFilterSorts($filter);
+				$this->mFilterDescriptors = $this->_DescribeFilters($filter);
 				// Use db to get members using filter.
-				$members = $this->members_model->GetMemberDetails(VipOrganisationId(), NULL, $sql[0], $sql[1]);
-				$filter_on = TRUE;
-				$last_sort = $filter['_data']['last_sort'];
+				
+				// Get included and excluded teams
+				$included_teams = array();
+				if (empty($filter['team'][TRUE])) {
+					$included_teams[] = &$this->mOrganisation;
+				} else {
+					foreach ($filter['team'][TRUE] as $team_to_include => $enable) {
+						if (array_key_exists($team_to_include, $this->mAllTeams)) {
+							$included_teams[$team_to_include] = &$this->mAllTeams[$team_to_include];
+						}
+					}
+				}
+				$excluded_teams = array();
+				foreach ($filter['team'][FALSE] as $team_to_exclude => $enable) {
+					if (array_key_exists($team_to_exclude, $this->mAllTeams)) {
+						$excluded_teams[$team_to_exclude] = &$this->mAllTeams[$team_to_exclude];
+					}
+				}
+				// Recursively find all child teams and do the difference
+				$team_list = array_diff(
+					$this->organisation_model->GetSubteamIds(
+						array('subteams' => $included_teams)
+					),
+					$this->organisation_model->GetSubteamIds(
+						array('subteams' => $excluded_teams)
+					)
+				);
+				
+				$memberships = $this->members_model->GetMemberDetails(
+					array_keys($this->mAllTeams), NULL, $sql[0], $sql[1]);
+				$this->mIsFilterOn = TRUE;
+				$this->mLastSort = $filter['_data']['last_sort'];
 			} catch (Exception $e) {
 				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
 			}
 		}
 		
-		if (!isset($members)) {
-			$members = $this->members_model->GetMemberDetails(VipOrganisationId());
+		if (!isset($memberships)) {
+			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
+			$memberships = $this->members_model->GetMemberDetails($team_list);
 		}
+		
+		$team_list = array_flip($team_list);
+		
+		// Merge duplicated members and produce list of teams they're subscribed to
+		$members = array();
+		foreach ($memberships as $membership) {
+			if (!array_key_exists((int)$membership['user_id'], $members)) {
+				$members[(int)$membership['user_id']] = array();
+			}
+			$members[(int)$membership['user_id']][(int)$membership['team_id']] = $membership;
+		}
+		
+		foreach ($members as $user_id => $member_teams) {
+			$team_subscriptions = array();
+			$found = FALSE;
+			foreach ($member_teams as $team_id => $member_team) {
+				if (!$found && (!isset($team_list) || array_key_exists($team_id, $team_list))) {
+					$found = TRUE;
+				}
+				if ($team_id !== VipOrganisationId()) {
+					$team_subscriptions[$team_id] = $member_team;
+					$team_subscriptions[$team_id]['team'] = &$this->mAllTeams[$team_id];
+				}
+			}
+			if ($found) {
+				if (array_key_exists($TopTeam, $member_teams)) {
+					$members[$user_id] = $member_teams[$TopTeam];
+				} else {
+					$members[$user_id] = end($member_teams);
+					unset($members[$user_id]['team_id']);
+					unset($members[$user_id]['paid']);
+					unset($members[$user_id]['on_mailing_list']);
+					unset($members[$user_id]['vip']);
+					unset($members[$user_id]['confirmed']);
+				}
+				$members[$user_id]['teams'] = $team_subscriptions;
+			} else {
+				unset($members[$user_id]);
+			}
+		}
+		
+		$this->mMembers = &$members;
+	}
+	
+	/// List of members and member set operations.
+	/**
+	 * @note This is accessed with list not memberlist (list is reserved word).
+	 */
+	function memberlist()
+	{
+		if (!CheckPermissions('vip')) return;
+		/// @todo Implement $viparea/members/list/...
+		
+		$this->_GetTeams();
+		
+		$this->_handle_member_list_member_operation();
+		
+		$this->mFilterBase = 'members/list';
+		if ($this->_handle_member_list(VipOrganisationId(),3)) return;
 		
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'target'       => $this->uri->uri_string(),
-			'members'      => $members,
+			'members'      => $this->mMembers,
 			'organisation' => $this->mOrganisation,
 			'filter'       => array(
-				'enabled'      => $filter_on,
-				'last_sort'    => $last_sort,
-				'base'         => $filter_base,
-				'descriptors'  => $filter_descriptors,
+				'enabled'      => $this->mIsFilterOn,
+				'last_sort'    => $this->mLastSort,
+				'base'         => $this->mFilterBase,
+				'descriptors'  => $this->mFilterDescriptors,
 			),
-			'sort_fields'  => $sort_fields,
+			'sort_fields'  => $this->mSortFields,
+			'in_team'      => FALSE,
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);
 		
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> VipOrganisationName(),
+			'organisation'	=> $this->user_auth->organisationName,
 		));
 		
 		// Load the main frame
@@ -240,7 +331,7 @@ class Members extends Controller
 	 */
 	function info($EntityId = NULL, $Page = NULL)
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		
 		// If no entity id was provided, redirect back to members list.
 		if (NULL === $EntityId) {
@@ -339,7 +430,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> VipOrganisationName(),
+				'organisation'	=> $this->user_auth->organisationName,
 				'firstname'		=> $membership['firstname'],
 				'surname'		=> $membership['surname'],
 			));
@@ -362,15 +453,18 @@ class Members extends Controller
 	function teams(	$Suboption1 = NULL,
 					$Suboption2 = NULL)
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		
 		$this->_GetTeams();
 		
 		$team_id = VipOrganisationId();
 		
+		$in_team = FALSE;
+		
 		if (NULL !== $Suboption1) {
 			if (is_numeric($Suboption1) && array_key_exists((int)$Suboption1,$this->mAllTeams)) {
 				$team_id = (int)$Suboption1;
+				$in_team = TRUE;
 				$this->mOrganisation = &$this->mAllTeams[$team_id];
 			} else {
 				// Show custom error page for no existing team
@@ -381,23 +475,38 @@ class Members extends Controller
 			}
 		}
 		
-		$this->pages_model->SetPageCode('viparea_members_teams');
+		$this->_handle_member_list_member_operation();
 		
-		$this->load->model('notices_model');
-		$notices = $this->notices_model->GetPublicNoticesForOrganisation($team_id, NULL, FALSE);
-		$this->messages->AddDumpMessage('notices',$notices);
+		$this->mFilterBase = 'members/teams/'.$team_id.'/members';
+		if ($this->_handle_member_list($team_id, 5)) return;
+		
+		$this->pages_model->SetPageCode('viparea_members_teams');
 		
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
+			'target'       => $this->uri->uri_string(),
+			'members'      => $this->mMembers,
 			'organisation' => $this->mOrganisation,
+			'filter'       => array(
+				'enabled'      => $this->mIsFilterOn,
+				'last_sort'    => $this->mLastSort,
+				'base'         => $this->mFilterBase,
+				'descriptors'  => $this->mFilterDescriptors,
+			),
+			'sort_fields'  => $this->mSortFields,
+			'in_team'      => $in_team,
 		);
+		
+		$this->load->model('notices_model');
+		$notices = $this->notices_model->GetPublicNoticesForOrganisation($team_id, NULL, FALSE);
+		//$this->messages->AddDumpMessage('notices',$notices);
 		
 		$this->main_frame->SetContentSimple('members/teams', $data);
 		
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> VipOrganisationName(),
-			'team'			=> $this->mOrganisation['name'],
+			'organisation'	=> $this->user_auth->organisationName,
+			'team'	=> $this->mOrganisation['name'],
 		));
 		
 		// Load the main frame
@@ -421,7 +530,7 @@ class Members extends Controller
 					$Suboption2 = NULL,
 					$Suboption3 = NULL)
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		
 		$this->load->helper('images');
 		
@@ -430,7 +539,7 @@ class Members extends Controller
 		$sql = array('TRUE',array());
 		if ($Suboption1 === 'filter') {
 			static $field_translator = array(
-				'team'			=> 'NULL',
+				'teamid'		=> 'subscriptions.subscription_organisation_entity_id',
 				'user'			=> 'business_cards.business_card_user_entity_id',
 				'card'			=> 'business_cards.business_card_id',
 				'paid' 			=> 'subscriptions.subscription_paid',
@@ -477,7 +586,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> VipOrganisationName(),
+				'organisation'	=> $this->user_auth->organisationName,
 			));
 			
 		} elseif ($mode === 'edit') {
@@ -507,7 +616,7 @@ class Members extends Controller
 			
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> VipOrganisationName(),
+				'organisation'	=> $this->user_auth->organisationName,
 				'name'			=> $business_cards[0]['name'],
 			));
 			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
@@ -522,7 +631,7 @@ class Members extends Controller
 	 */
 	function invite()
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		
 		$default_list = '';
 		
@@ -559,7 +668,7 @@ class Members extends Controller
 					// Everything was fine.
 					$default_list = $this->_InviteUsers(
 						VipOrganisationId(), $valids,
-						'username', VipOrganisationName()
+						'username', $this->user_auth->organisationName
 					);
 					$default_list = implode("\n",$default_list);
 				}
@@ -579,7 +688,7 @@ class Members extends Controller
 	
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
-			'organisation'	=> VipOrganisationName(),
+			'organisation'	=> $this->user_auth->organisationName,
 		));
 		
 		// Load the main frame
@@ -597,7 +706,7 @@ class Members extends Controller
 	 */
 	function contact($Method = NULL, $Operation = NULL)
 	{
-		if (!CheckPermissions('vip+pr')) return;
+		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/contact/...
 		$this->messages->AddMessage('information', 'todo: implement member contact');
 		
@@ -772,15 +881,19 @@ class Members extends Controller
 			} elseif ($filt !== 'sort') {
 				$disjuncts = array();
 				foreach ($er[TRUE] as $id => $dummy) {
-					$disjuncts[] = '('.$field_translator[$filt].'=?)';
-					$bind_data[] = $id;
+					if (array_key_exists($filt, $field_translator)) {
+						$disjuncts[] = '('.$field_translator[$filt].'=?)';
+						$bind_data[] = $id;
+					}
 				}
 				if (!empty($disjuncts)) {
 					$Conditions[] = '('.implode(' OR ', $disjuncts).')';
 				}
 				foreach ($er[FALSE] as $id => $dummy) {
-					$Conditions[] = '('.$field_translator[$filt].'!=?)';
-					$bind_data[] = $id;
+					if (array_key_exists($filt, $field_translator)) {
+						$Conditions[] = '('.$field_translator[$filt].'!=?)';
+						$bind_data[] = $id;
+					}
 				}
 			} else {
 				$sortable = TRUE;
@@ -911,6 +1024,7 @@ class Members extends Controller
 				'desc' => 'desc',
 			);
 			static $sortable_fields = array(
+				'team'  => 'teamid',
 				'firstname'  => 'firstname',
 				'surname'    => 'surname',
 				'nickname'   => 'nickname',

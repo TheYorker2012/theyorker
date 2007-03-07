@@ -8,7 +8,7 @@ class Members_model extends Model {
 	
 	/// Gets a users membership with an organisation.
 	/**
-	 * @param $organisation_id integer Organisation entity id.
+	 * @param $organisation_id integer/array(int) Organisation entity id.
 	 * @param $user_id integer User entity id.
 	 * @return array of associative arrays of membership attributes.
 	 *	- Subscription must be membership
@@ -17,9 +17,13 @@ class Members_model extends Model {
 	 */
 	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array())
 	{
+		if (is_array($organisation_id) && empty($organisation_id)) {
+			return array();
+		}
 		$bind_data = array();
 		$sql = '
 			SELECT
+				subscriptions.subscription_organisation_entity_id AS team_id,
 				subscriptions.subscription_paid AS paid,
 				subscriptions.subscription_email AS on_mailing_list,
 				subscriptions.subscription_vip AS vip,
@@ -42,12 +46,23 @@ class Members_model extends Model {
 			$bind_data[] = $user_id;
 		}
 		// Final conditions
-		$sql .= '	subscriptions.subscription_organisation_entity_id = ?
+		if (is_array($organisation_id) && count($organisation_id) == 1) {
+			$organisation_id = current($organisation_id);
+		}
+		if (is_array($organisation_id)) {
+			// escape organisation ids
+			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
+			$sql .= '	subscriptions.subscription_organisation_entity_id IN ('.
+				implode(',',$organisations).')';
+		} else {
+			$sql .= '	subscriptions.subscription_organisation_entity_id = ?';
+			$bind_data[] = $organisation_id;
+		}
+		$sql .= '
 				AND	subscriptions.subscription_organisation_confirmed = TRUE
 				AND	subscriptions.subscription_deleted = FALSE
 			';
 		// Run the query and return the raw results array.
-		$bind_data[] = $organisation_id;
 		$sql .= ' AND ' . $FilterSql;
 		$bind_data = array_merge($bind_data, $BindData);
 		$query = $this->db->query($sql, $bind_data);
