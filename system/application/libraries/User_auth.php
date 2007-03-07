@@ -323,6 +323,34 @@ class User_auth {
 
 		$this->localToSession();
 	}
+
+	/// Checks if the current users office password matches $password (returns true or false)
+	/**
+	 * @param $password string Password
+	 */
+	public function checkOfficePassword($password) {
+		if (!$this->isLoggedIn | !$this->isUser | $this->officeType == 'None' | $this->officeType == 'Low') {
+			/// @throw Exception You must be logged into the office with a seperate password to do this
+			throw new Exception('You must be logged into the office with a seperate password to do this');
+		}
+
+		$hash = sha1($this->salt.$password);
+
+		$sql = 'SELECT COUNT(*) AS valid
+			FROM entities INNER JOIN users ON 
+				entity_id = user_entity_id 
+			WHERE entity_id = ? AND 
+				(user_office_password = ? OR 
+					(user_office_password IS NULL AND
+					entity_password = ?))';
+		
+		$db = $this->object->db;
+		$query = $db->query($sql, array($this->entityId, $hash, $hash));
+		
+		$row = $query->row();
+		return $row->valid;
+	}
+			
 	
 	/// Logout of the yorker office
 	public function logoutOffice() {
