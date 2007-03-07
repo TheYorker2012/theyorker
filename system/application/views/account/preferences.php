@@ -1,39 +1,39 @@
-	<script type='text/javascript' src='/javascript/current_time.js'></script>
-	<script type='text/javascript'>
+	<script type="text/javascript" src="/javascript/current_time.js"></script>
+	<script type="text/javascript">
 	function collSelect (college, index_no) {
-		<?php foreach ($colleges as $college) { ?>
-		document.getElementById('coll_<?php echo $college['college_id']; ?>').className = 'unselected';
-		<?php } ?>
+<?php foreach ($colleges as $college) { ?>
+		document.getElementById('coll_<?php echo($college['college_id']); ?>').className = 'unselected';
+<?php } ?>
 		document.getElementById('coll_' + college).className = 'selected';
 		document.getElementById('college').selectedIndex = index_no;
 	}
 	</script>
 
-	<div class='grey_box' style='width: auto;'>
-		<h2><?php echo $intro_heading; ?></h2>
-		<?php echo $intro; ?>
+	<div class="BlueBox">
+		<h2><?php echo($intro_heading); ?></h2>
+		<?php echo($intro); ?>
 	</div>
-	<form name='general' id='general' action='/register' method='post' class='form'>
-		<div class='blue_box' style='width: auto;'>
+	<form id="general" action="/register" method="post">
+		<div class="BlueBox">
 			<fieldset>
-				<label for='name'>First Name:</label>
-				<input type='text' id='fname' name='fname' value='<?php echo $this->validation->fname; ?>' />
+				<label for="fname">First Name: </label>
+				<input type="text" id="fname" name="fname" value="<?php echo(htmlentities($this->validation->fname)); ?>" />
 				<br />
-				<label for='name'>Surname:</label>
-				<input type='text' id='sname' name='sname' value='<?php echo $this->validation->sname; ?>' />
+				<label for="sname">Surname:</label>
+				<input type="text" id="sname" name="sname" value="<?php echo(htmlentities($this->validation->sname)); ?>" />
 				<br />
-				<label for='email'>E-Mail Address:</label>
-				<input type='text' id='email' name='email' value='<?php echo $this->validation->email; ?>' />
+				<label for="email">E-Mail Address:</label>
+				<input type="text" id="email" name="email" value="<?php echo(htmlentities($this->validation->email)); ?>" />
 				<br />
-				<label for='nick'>Nickname:</label>
-				<input type='text' id='nick' name='nick' value='<?php echo $this->validation->nick; ?>' style='margin-bottom: 5px;' />
+				<label for="nick">Nickname:</label>
+				<input type="text" id="nick" name="nick" value="<?php echo(htmlentities($this->validation->nick)); ?>" />
 				<br />
-				<label for='gender'>Gender:</label>
-				<input type='radio' id='genderm' name='gender' value='m' <?php if ($this->validation->gender == 'm') { echo 'checked=\'checked\' '; } ?>/> Male
-				<input type='radio' id='genderf' name='gender' value='f' <?php if ($this->validation->gender == 'f') { echo 'checked=\'checked\' '; } ?>/> Female
+				<label for="gender">Gender:</label>
+				<input type="radio" id="genderm" name="gender" value="m" <?php if ($this->validation->gender == 'm') { echo('checked="checked" '); } ?>/> Male
+				<input type="radio" id="genderf" name="gender" value="f" <?php if ($this->validation->gender == 'f') { echo 'checked=\'checked\' '; } ?>/> Female
 				<br />
-				<label for='college'>College:</label>
-				<div id='college_select' class='hide'>
+				<label for="college">College:</label>
+				<div id="college_select" class='hide'>
 					<?php $college_count = ceil(count($colleges) / 2) - 1;
 
 					if (!$this->validation->college) {
@@ -47,7 +47,7 @@
 							echo 'un';
 						}
 						echo 'selected\'>';
-						?><img src='/images/prototype/prefs/college_<?php echo strtolower($college['college_name']); ?>.jpg' alt='<?php echo $college['college_name']; ?>' title='<?php echo $college['college_name']; ?>' onClick="collSelect('<?php echo $college['college_id']; ?>','<?php echo $college_counter; ?>')" /></div>
+						?><img src='/images/prototype/prefs/college_<?php echo strtolower($college['college_name']); ?>.jpg' alt='<?php echo $college['college_name']; ?>' title='<?php echo $college['college_name']; ?>' onclick="collSelect('<?php echo $college['college_id']; ?>','<?php echo $college_counter; ?>')" /></div>
 						<?php
 						$college_index++;
 						$college_counter++;
@@ -57,7 +57,7 @@
 						}
 					} ?>
 				</div>
-				<select name='college' id='college' size='1' onChange='collSelect(this.selectedIndex)'>
+				<select name='college' id='college' size='1' onchange='collSelect(this.selectedIndex)'>
 				<?php foreach ($colleges as $college) {
 					echo '<option value=\'' . $college['college_id'] . '\'';
 					if ($college['college_id'] == $this->validation->college) {

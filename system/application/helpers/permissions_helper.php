@@ -664,7 +664,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				
 			}
 			
-			$CI->messages->AddMessage('success',$success_msg);
+			$CI->messages->AddMessage('success','<p>'.$success_msg.'</p>');
 			
 			if (FALSE !== $post_data) {
 				SetRedirectData($RedirectDestination, $post_data);
@@ -672,7 +672,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 			redirect($RedirectDestination);
 			return TRUE;
 		} catch (Exception $e) {
-			$CI->messages->AddMessage('error',$e->getMessage());
+			$CI->messages->AddMessage('error','<p>'.$e->getMessage().'</p>');
 		}
 	} else {
 		$post_data = GetRedirectData();
@@ -702,7 +702,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 	// Main login message
 	$login_message = $CI->pages_model->GetPropertyText('login_message');
 	if (!empty($login_message)) {
-		$data['login_message'] = $login_message;
+		$data['login_message'] = '<p>'.$login_message.'</p>';
 	}
 
 	// Items in the right bar

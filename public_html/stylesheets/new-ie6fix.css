@@ -17,3 +17,8 @@ div.BlueBox {
 	width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));
 	padding: 0.5em;
 }
+
+div.message_error, div.message_warning, div.message_information, div.message_success {
+	width: expression(document.body.clientWidth - 150);
+	padding: 0.3em;
+}
