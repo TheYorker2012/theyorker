@@ -4,12 +4,14 @@
 			<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
 		</ul>
 		<h4>Notices</h4>
+<!--
 		<div class="information_box">
 			You have been requested to write an article about <b>Dogs</b> by <b>Chris Travis</b>
 			<br />
 			<span style="float:right"><a href="/office/news">Delete</a></span>
 			<br class='clear' />
 		</div>
+-->
 		<br />
 	</div>
 	<div class="blue_box">
@@ -60,7 +62,7 @@
             <tbody>
 				<?php if ((count($box_contents) == 0) && (count($suggestions) == 0)) { ?>
 				<tr>
-				<td colspan="3" style="text-align:center;">Box is empty</td>
+				<td colspan="0" style="text-align:center;">Box is empty</td>
 				</tr>
 				<?php } else {
 					$row_style = false;

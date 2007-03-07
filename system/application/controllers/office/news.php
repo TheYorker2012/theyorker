@@ -129,7 +129,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['status'] == 'request') {
 			$rules['r_deadline'] = 'trim|required|numeric';
@@ -257,7 +257,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
@@ -339,7 +339,7 @@ class News extends Controller
 			// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box'];
+			$this->validation->r_box = $data['article']['box_codename'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}
@@ -397,7 +397,11 @@ class News extends Controller
 							break;
 						case 'request':
 							/// If editor but also assigned reporter and not accepted then is reporter
-							$this->_showarticle($article_id);
+							if ($this->input->post('publish') == 'Publish Article') {
+								$this->_publishArticle($article_id);
+							} else {
+								$this->_showarticle($article_id);
+							}
 							break;
 						case 'suggestion':
 							$this->_editSuggestion($article_id,$data);
@@ -452,7 +456,7 @@ class News extends Controller
 		$fields['r_title'] = 'title';
 		$rules['r_brief'] = 'trim|required|xss_clean';
 		$fields['r_brief'] = 'brief';
-		$rules['r_box'] = 'trim|required|numeric';
+		$rules['r_box'] = 'trim|required|xss_clean';
 		$fields['r_box'] = 'box';
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
@@ -533,7 +537,7 @@ class News extends Controller
 			/// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box'];
+			$this->validation->r_box = $data['article']['box_codename'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}
@@ -552,8 +556,59 @@ class News extends Controller
 	}
 
 
+	/**
+	 *	@brief Publish an article either setting a date for it to go live or adding it to the article pool
+	 */
+	function _publishArticle($article_id)
+	{
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+		$data['article'] = $this->article_model->GetArticleDetails($article_id);
+		if (count($data['article']) == 0) {
+			$this->main_frame->AddMessage('error','The article you requested to publish does not exist, please try again.');
+			redirect('/office/news/');
+		} elseif ($data['user_level'] != 'editor') {
+			$this->main_frame->AddMessage('error','Only editors may publish articles.');
+			redirect('/office/news/' . $article_id);
+		} else {
+			/// @TODO: Allow adding to article pool
+			if ($this->input->post('confirm_publish') == 'Publish') {
+				if (!is_numeric($this->input->post('r_publish'))) {
+					$this->main_frame->AddMessage('error','Please select a date and time to publish the article.');
+//	Commented out for now so i can add previous articles!
+//				} elseif ($this->input->post('r_publish') < mktime()) {
+//					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
+				} elseif ($this->input->post('r_publish') > (mktime() + (60*60*24*365))) {
+					$this->main_frame->AddMessage('error','Please select a publish date within the next year.');
+				} else {
+					/// Get revision to publish
+					/// @TODO: Allow specifying of revision to publish
+					$revision_id = $this->article_model->GetLatestRevision($article_id);
+					$publish_date = date('Y-m-d H:i:s', $this->input->post('r_publish'));
+					$this->requests_model->PublishArticle($article_id,$revision_id,$publish_date);
+					$this->main_frame->AddMessage('success','The article was successfully published.');
+					redirect('/office/news');
+				}
+			}
 
+			// Get page content
+			$this->pages_model->SetPageCode('office_news_publish');
+			$data['heading'] = $this->pages_model->GetPropertyText('heading');
+			$data['intro_text'] = $this->pages_model->GetPropertyWikitext('intro_text');
 
+			// Set up the main frame
+			$this->main_frame->SetContentSimple('office/news/publish', $data);
+			$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+			// Set page title & load main frame with view
+			$this->main_frame->SetTitleParameters(
+				array('title' => $data['article']['request_title'])
+			);
+			$this->main_frame->Load();
+		}
+	}
 
 
 
@@ -567,6 +622,29 @@ class News extends Controller
 	{
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
 		if (count($data['article']) > 0) {
+			// Is user requested for this article? i.e. can edit
+			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
+			// Show or hide accept/decline request buttons
+			$data['user_requested'] = ($data['user_requested'] == 'requested');
+
+			// Make it so we only have to worry about two levels of access as admins can do everything editors can
+			$data['user_level'] = GetUserLevel();
+			if ($data['user_level'] == 'admin') {
+				$data['user_level'] = 'editor';
+			}
+
+			if ($data['user_requested']) {
+				if ($this->input->post('accept') == 'Accept Request') {
+					$this->requests_model->AcceptRequest($article_id, $this->user_auth->entityId);
+					$this->main_frame->AddMessage('success','Article request accepted.');
+					redirect('/office/news/' . $article_id);
+				} elseif ($this->input->post('decline') == 'Decline Request') {
+					$this->requests_model->DeclineRequest($article_id, $this->user_auth->entityId);
+					$this->main_frame->AddMessage('success','Article request declined.');
+					redirect('/office/news/' . $article_id);
+				}
+			 }
+
 			// Setup XAJAX functions
 			$this->load->library('xajax');
 	        $this->xajax->registerFunction(array('_addComment', &$this, '_addComment'));
@@ -574,7 +652,7 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->processRequests();
-	
+
 			// Create menu
 			$navbar = $this->main_frame->GetNavbar();
 			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
@@ -597,8 +675,7 @@ class News extends Controller
 			}
 			// Get latest revision's data
 			$data['revision'] = $this->article_model->GetRevisionData($revision);
-	
-	
+
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/article', $data);
 			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
@@ -690,10 +767,10 @@ class News extends Controller
 				$fact_text = addslashes($this->input->xss_clean($fact_text));
 				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
 				$wiki_cache = '';
-				if ($create_cache) {
+//				if ($create_cache) {
 					$this->load->library('wikiparser');
 					$wiki_cache = $this->wikiparser->parse($wiki);
-				}
+//				}
 				if ($revision == 0) {
 					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, $headline, $subheadline, $subtext, $blurb, $wiki, $wiki_cache);
 				} else {

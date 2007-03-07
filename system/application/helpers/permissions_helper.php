@@ -135,6 +135,17 @@ function VipOrganisation($SetOrganisation = FALSE)
 	return $organisation;
 }
 
+/// Get the vip organisation name.
+function VipOrganisationName($SetOrganisation = FALSE)
+{
+	static $organisation = '';
+	
+	if (is_string($SetOrganisation)) {
+		$organisation = $SetOrganisation;
+	}
+	return $organisation;
+}
+
 /// Get the vip organisation id.
 function VipOrganisationId($SetOrganisation = FALSE)
 {
@@ -193,9 +204,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
 							&&	($CI->uri->segment(1) === 'viparea'));
-	$thru_office_vip	= 	(	($CI->uri->total_segments() >= 3)
+	$thru_office_pr	= 	(	($CI->uri->total_segments() >= 3)
 							&&	($CI->uri->segment(1) === 'office')
-							&&	($CI->uri->segment(2) === 'vip'));
+							&&	($CI->uri->segment(2) === 'pr'));
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
@@ -205,10 +216,10 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			$organisation_shortname = $CI->user_auth->organisationShortName;
 		}
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
-	} elseif ($thru_office_vip) {
+	} elseif ($thru_office_pr) {
 		$organisation_shortname = $CI->uri->segment(3);
 		$organisation_specified = TRUE;
-		vip_url('office/vip/'.$organisation_shortname.'/', TRUE);
+		vip_url('office/pr/'.$organisation_shortname.'/', TRUE);
 	} else {
 		$organisation_shortname = '';
 	}
@@ -239,12 +250,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// If vip+pr, use URI to decide which
 	if ($Permission === 'vip+pr') {
 		$Permission =	($thru_viparea		? 'vip'	:
-						($thru_office_vip	? 'pr'	: ''));
+						($thru_office_pr	? 'pr'	: ''));
 	}
 	// Ensure that:
-	//	$thru_office_vip => 'pr'
+	//	$thru_office_pr => 'pr'
 	//	$thru_viparea => 'vip'
-	elseif (	($thru_office_vip	&& $Permission !== 'pr')
+	elseif (	($thru_office_pr	&& $Permission !== 'pr')
 			||	($thru_viparea		&& $Permission !== 'vip')) {
 		$Permission = '';
 	}
@@ -288,6 +299,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 		if ($action_levels['vip']) {
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipOrganisationName($CI->user_auth->organisationName);
 			VipMode('viparea');
 		}
 	} elseif ($user_level === 'vip') {
@@ -302,6 +314,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
 			$vip_accessible = TRUE;
 			VipOrganisationId($CI->user_auth->organisationLogin);
+			VipOrganisationName($CI->user_auth->organisationName);
 			VipMode('viparea');
 		} else {
 			// check permissions to access this organisation
@@ -310,6 +323,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
 					$vip_accessible = $vip_login_action;
 					VipOrganisationId($organisation['organisation_entity_id']);
+					VipOrganisationName($organisation['organisation_name']);
 					VipMode('viparea');
 					break;
 				}
@@ -393,6 +407,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							== $organisation_shortname) {
 						// Yes, match, PR Rep, set stuff and change user level to PR
 						VipOrganisationId($organisation['organisation_entity_id']);
+						VipOrganisationName($organisation['organisation_name']);
 						VipMode('office');
 						$action_levels['pr'] = TRUE;
 						break;
@@ -655,7 +670,9 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				}
 				$CI->user_auth->loginOffice($password);
 			} else {
-				$CI->user_auth->login($username, $password, false);
+				$keep_login = (FALSE !== $CI->input->post('keep_login'));
+				
+				$CI->user_auth->login($username, $password, $keep_login);
 				
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{

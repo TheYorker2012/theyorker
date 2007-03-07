@@ -133,8 +133,13 @@ class Howdoi extends Controller
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'howdoi',
 					'name'=>'Unassigned',
-					'suggestions'=>$this->requests_model->GetSuggestedArticles($howdoi_type_id)
+					'suggestions'=>$this->requests_model->GetSuggestedArticles('howdoi')
 					);
+					/*
+			echo '<pre>';
+			echo print_r($data['categories']);
+			echo '</pre>';
+			*/
 
 		//create empty arrays for the user writers status
 		$data['user']['writer']['requested'] = array();

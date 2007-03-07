@@ -134,29 +134,35 @@
 	imageObj.src = '/images/prototype/prefs/yorker-bg.png';
 	</script>
 
-	<div class="RightToolbar">
-		<h4>Article Status</h4>
-		<div id="revision_status">
-			You are editing revision <b><?php echo $revision['id']; ?></b> which was last saved <b><?php echo date('D jS F Y @ H:i:s',$revision['last_edit']); ?></b>
-		</div><br />
-		<div id="save_load" class="ajax_loading hide">
-			<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Auto Saving...
+	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
+		<div class="RightToolbar">
+			<h4>Article Status</h4>
+			<div id="revision_status">
+				You are editing revision <b><?php echo $revision['id']; ?></b> which was last saved <b><?php echo date('D jS F Y @ H:i:s',$revision['last_edit']); ?></b>
+			</div><br />
+			<div id="save_load" class="ajax_loading hide">
+				<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Auto Saving...
+			</div>
+			<div id="save_load2" class="ajax_loading hide">
+				<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Saving...
+			</div>
+			<div id="preview_load" class="ajax_loading hide">
+				<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Loading Preview...
+			</div>
+			<div id="save_form" class="form">
+				<input type="button" name="save_changes" id="save_changes" value="Save Article" class="button" onclick="updateHeadlinesManual();" />
+				<br />
+				<input type="button" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
+			</div>
+			<br style="clear:both;" /><br style="clear:both;" />
+			<?php if ($user_level == 'editor') { ?>
+				<h4>Publish Article</h4>
+				<div id="publish_form" class="form">
+					<input type="submit" name="publish" id="publish" value="Publish Article" class="button" />
+				</div>
+			<?php } ?>
 		</div>
-		<div id="save_load2" class="ajax_loading hide">
-			<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Saving...
-		</div>
-		<div id="preview_load" class="ajax_loading hide">
-			<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Loading Preview...
-		</div>
-		<div id="save_form" class="form">
-			<input type="button" name="save_changes" id="save_changes" value="Save Article" class="button" onclick="updateHeadlinesManual();" />
-			<br />
-			<input type="button" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
-		</div>
-		<br />
-	</div>
 
-	<form action="/office/news/" method="post" class="form">
 		<div id="content_request">
 			<div class="blue_box">
 				<h2><?php echo $request_heading; ?></h2>
@@ -190,6 +196,12 @@
 					</div>
 					<br />
 				</fieldset>
+			</div>
+			<div style='width: 422px;'>
+				<?php if ($user_requested) { ?>
+			 	<input type='submit' name='decline' id='submit2' value='Decline Request' class='button' />
+			 	<input type='submit' name='accept' id='submit' value='Accept Request' class='button' />
+				<?php } ?>
 			</div>
 		</div>
 

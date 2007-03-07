@@ -35,4 +35,5 @@
 		}
 	}
 ?>
+<?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>

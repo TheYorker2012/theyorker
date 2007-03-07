@@ -27,7 +27,7 @@
 			 	<label for='r_box'>Box:</label>
 				<select name='r_box' id='r_box' size='1'>
 				<?php foreach ($boxes as $box) { ?>
-		  			<option value='<?php echo $box['id']; ?>'><?php echo $box['name']; ?></option>
+		  			<option value='<?php echo $box['code']; ?>'><?php echo $box['name']; ?></option>
 				<?php } ?>
 				</select>
 		  		<br />

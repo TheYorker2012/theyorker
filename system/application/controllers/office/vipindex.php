@@ -31,7 +31,7 @@ class Vipindex extends Controller
 		);
 		// Set up the content
 		$this->main_frame->SetTitleParameters(
-				array('organisation' => $this->user_auth->organisationName)
+				array('organisation' => VipOrganisationName())
 		);
 		$this->main_frame->SetContentSimple('viparea/main', $data);
 		
