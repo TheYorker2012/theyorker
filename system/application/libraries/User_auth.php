@@ -340,12 +340,10 @@ class User_auth {
 			FROM entities INNER JOIN users ON 
 				entity_id = user_entity_id 
 			WHERE entity_id = ? AND 
-				(user_office_password = ? OR 
-					(user_office_password IS NULL AND
-					entity_password = ?))';
+				(user_office_password = ?';
 		
 		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $hash, $hash));
+		$query = $db->query($sql, array($this->entityId, $hash));
 		
 		$row = $query->row();
 		return $row->valid;
