@@ -21,10 +21,11 @@ class Travis extends Controller {
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$data['height_hour'] = 40;
-		$data['width_time_col'] = 30;
-		$data['width_day_col'] = 85;
+		$data['width_page'] = 650;
+		$data['width_time_col'] = 41;
+		$data['width_day_col'] = 87;
 
 		$data['startdate'] = mktime(0,0,0,2,25,2007);
 
