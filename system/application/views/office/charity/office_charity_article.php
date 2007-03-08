@@ -1,30 +1,37 @@
 <div class="RightToolbar">
 	<h4>Quick Links</h4>
 	<?php
-	echo '<a href="/office/charity/article/'.$charity['id'].'">Article</a><br/ >';
+	echo '<a href="/office/charity/edit/'.$charity['id'].'">Edit</a><br/ >';
 	echo '<a href="/office/charity/progressreports/'.$charity['id'].'">Progress Reports</a><br/ >';
 	echo '<br/ >';
-	?>
-	<h4>Areas for Attention</h4>
-	You have been requested to answer this question.
-	<form class="form" action="/office/charity/#" method="post" >
-		<fieldset>
-			<input type="submit" value="Accept" class="button" name="r_submit_accept" />
-			<input type="submit" value="Decline" class="button" name="r_submit_decline" />
-		</fieldset>
-	</form>
-</div>
-
-<div class="blue_box">
-	<h2>charity info</h2>
-	<?php
-	echo '
-	<b>Title: </b>'.$charity['name'].'<br />
-	<b>Current Total: </b>'.$charity['current'].'<br />
-	<b>Goal Total: </b>'.$charity['target'].'<br />
-	<b>Progress To Goal: </b>'.($charity['current']/$charity['target']*100).'%<br />
-	<b>Goal Text: </b>'.$charity['target_text'].'<br />
-	<a href="/office/charity/#">[Modify]</a>';
+	echo '<h4>Revisions (Latest First)</h4>';
+	echo '<div class="Entry">';
+		if (count($article['revisions']) > 0)
+		{
+			$first_hr = FALSE;
+			foreach ($article['revisions'] as $revision)
+			{
+				if ($first_hr == FALSE)
+					$first_hr = TRUE;
+				else
+					echo '<hr>';
+				$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
+				echo '<a href="/office/charity/article/'.$charity['id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>';
+				if ($revision['id'] == $article['header']['live_content'])
+				{
+					echo '<br /><span class="orange">(Published';
+					if ($revision['id'] == $article['displayrevision']['id'])
+						echo ', Displayed';
+					echo ')</span>';
+				}
+				elseif ($revision['id'] == $article['displayrevision']['id'])
+					echo '<br /><span class="orange">(Displayed)</span>';
+				echo '<br />by '.$revision['username'].'<br />on '.$dateformatted;
+			}
+		}
+		else
+			echo 'No Revisions ... Yet.';
+	echo '</div>';
 	?>
 </div>
 
@@ -33,9 +40,9 @@
 	<form class="form" action="/charity/howdoi/#" method="post" >
 		<fieldset>
 			<label for="a_question">Heading:</label>
-			<input type="text" name="a_question" value="why we want blah?" /><br />
+			<?php echo '<input type="text" name="a_question" value="'.$article['displayrevision']['heading'].'" /><br />'; ?>
 			<label for="a_answer">Description:</label>
-			<textarea name="a_answer" rows="5" cols="30" />Every time you click or view our ads it earns us money and we likes monies. It goes into our pocketsies very nicely. We likes pockets, theyre full of monies from you clicking.</textarea><br />
+			<?php echo '<textarea name="a_answer" rows="15" cols="30" />'.$article['displayrevision']['wikitext'].'</textarea><br />'; ?>
 			<input type="submit" value="Save" class="button" name="r_submit_save" />
 		</fieldset>
 	</form>
