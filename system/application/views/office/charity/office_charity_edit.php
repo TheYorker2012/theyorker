@@ -28,6 +28,7 @@
 	?>
 </div>
 
+<!--
 <div class="grey_box">
 	<h2>edit charity</h2>
 	<form class="form" action="/charity/howdoi/#" method="post" >
@@ -52,6 +53,7 @@
 		</fieldset>
 	</form>
 </div>
+-->
 
 <?php
 

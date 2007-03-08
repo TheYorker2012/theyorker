@@ -141,10 +141,9 @@ class Charity extends Controller
 			/* if this revision doesn't exist
 			   then return an error */
 			if ($data['article']['displayrevision'] == FALSE)
-			//if (TRUE == FALSE)
 			{
                 		$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this charity. Default selected.');
-                		redirect('/office/charity/article/'.$data['charity']['article'].'/');
+                		redirect('/office/charity/article/'.$data['charity']['id'].'/');
     			}
 		}
 
@@ -342,11 +341,43 @@ class Charity extends Controller
 				'',
 				$_POST['a_content'],
 				''
-				)
-				;
+				);
+
 			//report success
 	                $this->main_frame->AddMessage('success','New revision created for charity article.');
 			redirect('/office/charity/article/'.$_POST['r_charityid'].'/'.$revision_id.'/');
+		}
+
+		/* Updates a charity information
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+		   - r_revisionid => the id of the revision
+    		   - r_submit_articlepublish => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_articlepublish']))
+		{
+			//load the required models
+			$this->load->model('requests_model','requests_model');
+			$this->load->model('charity_model','charity_model');
+			
+			//get the data (article id) for the specified charity
+			$charity = $this->charity_model->GetCharity($_POST['r_charityid']);
+
+			//publish the current revision
+			$this->requests_model->UpdateRequestStatus(
+				$charity['article'],
+				'publish',
+				array(
+					'content_id'=>$_POST['r_revisionid'],
+					'publish_date'=>time(),
+					'editor'=>$this->user_auth->entityId
+					)
+				);
+
+			//report success
+	                $this->main_frame->AddMessage('success','Published revision for charity article.');
+			redirect('/office/charity/article/'.$_POST['r_charityid'].'/'.$_POST['r_revisionid'].'/');
 		}
 	}
 }

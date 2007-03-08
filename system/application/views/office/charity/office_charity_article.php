@@ -50,17 +50,24 @@
 	</form>
 </div>
 
-<div class="blue_box">
-	<h2>options</h2>
-	<form class="form" action="/office/charity/#" method="post" >
-		<fieldset>
-			<input type="submit" value="Publish" class="button" name="r_submit_publish" />
-		</fieldset>
-		<fieldset>
-			<input type="submit" value="Unpublish" class="button" name="r_submit_unpublish" />
-		</fieldset>
-	</form>
-</div>
+<?php
+if (($article['displayrevision']['id'] != $article['header']['live_content']) and ($user['officetype'] != 'Low'))
+{
+	echo '
+	<div class="blue_box">
+		<h2>options</h2>
+		<form class="form" action="/office/charity/domodify" method="post" >
+			<fieldset>
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+				<input type="hidden" name="r_charityid" value="'.$charity['id'].'" >
+				<input type="hidden" name="r_revisionid" value="'.$article['displayrevision']['id'].'" >
+				<input type="submit" value="Publish" class="button" name="r_submit_articlepublish" />
+			</fieldset>
+		</form>
+	</div>
+	';
+}
+?>
 
 <?php
 

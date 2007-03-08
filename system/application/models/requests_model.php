@@ -180,9 +180,9 @@ class Requests_Model extends Model
 	//Make a change to a request status in the article table
 	function UpdateRequestStatus($article_id,$status,$data)
 	{
-		$data['content_type'] = $this->getBoxId($data['content_type']);
 		if ($status == 'request')
 		{
+			$data['content_type'] = $this->getBoxId($data['content_type']);
 			$sql = 'UPDATE 	articles
 				SET	article_suggestion_accepted = 1,
 					article_editor_approved_user_entity_id = ?,
