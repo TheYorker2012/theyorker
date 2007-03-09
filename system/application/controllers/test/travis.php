@@ -61,7 +61,7 @@ class Travis extends Controller {
 
 			$cnx = @fsockopen($user.'.imap.york.ac.uk',143);
 			if (!$cnx) {
-				$xajax_response->addAlert('Unable to connect to IMAP server!');
+				$xajax_response->addScriptCall('msgError','Username does not exist!');
 			} else {
 				while (!feof($cnx)) {
 					$buffer = trim(fgets($cnx, 4096));
@@ -93,7 +93,7 @@ class Travis extends Controller {
 								fwrite($cnx,'a02 examine inbox'."\r\n");
 								$data = array();
 							} else {
-								$xajax_response->addScriptCall('msgError','Login error');
+								$xajax_response->addScriptCall('msgError','Incorrect password!');
 								fwrite($cnx,'a04 logout'."\r\n");
 							}
 						}
