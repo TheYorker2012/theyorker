@@ -31,6 +31,19 @@ class Travis extends Controller {
 		$this->main_frame->Load();
 	}
 
+	function campaign()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$data['test'] = '';
+
+		// Set up the public frame
+		$this->main_frame->SetTitle('Travis\' Ideas Page :)');
+		$this->main_frame->SetContentSimple('test/travis-campaign', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+
 	function imap()
 	{
 		if (!CheckPermissions('office')) return;
