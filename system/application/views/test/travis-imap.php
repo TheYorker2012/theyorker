@@ -1,4 +1,11 @@
 <script type="text/javascript">
+function loadWebmail() {
+	document.getElementById('username').value = document.getElementById('user').value;
+	document.getElementById('password').value = document.getElementById('pass').value;
+	document.getElementById('webmail').submit();
+	return false;
+}
+
 function checkEmail () {
 	var user = document.getElementById('user').value;
 	var pass = document.getElementById('pass').value;
@@ -45,9 +52,16 @@ function checkedEmails(count) {
 	</div>
 </form>
 
-<div id="check_load" class="ajax_loading hide">
-	<img src="/images/prototype/prefs/loading.gif" alt="Checking" title="Checking" /> Checking your e-mail account...
-</div>
-<div id="email_container" class="hide">
-No. of unread emails = <span id='email_count'>#</span>
-</div>
+
+<form action="https://webmail1.york.ac.uk/" method="post" name="login" id="webmail">
+	<div id="check_load" class="ajax_loading hide">
+		<img src="/images/prototype/prefs/loading.gif" alt="Checking" title="Checking" /> Checking your e-mail account...
+	</div>
+	<div id="email_container" class="hide">
+	No. of unread emails = <span id='email_count'>#</span><br />
+	<a href="https://webmail1.york.ac.uk/" onclick="return loadWebmail();">Click here to use UoY Webmail</a>
+	</div>
+	<input type="hidden" name="username" id="username" value="" />
+	<input type="hidden" name="password" id="password" value="" />
+	<input type="hidden" name="login" value="Login" />
+</form>
