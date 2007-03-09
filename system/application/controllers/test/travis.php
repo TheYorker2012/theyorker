@@ -107,6 +107,7 @@ class Travis extends Controller {
 									$data = array();
 								} else {
 									// No unread e-mails so logout
+									$xajax_response->addScriptCall('checkedEmails',0);
 									fwrite($cnx,'a04 logout'."\r\n");
 									$data = array();
 								}
