@@ -70,6 +70,7 @@ class Travis extends Controller {
 			$xajax_response->addScriptCall('msgError','Please enter your username and password');
 		} else {
 			$data = array();
+			$email_count = 0;
 			$buffer_old = '';
 
 			$cnx = @fsockopen($user.'.imap.york.ac.uk',143);
@@ -89,14 +90,70 @@ class Travis extends Controller {
 									// Successful server connection, so login
 									fwrite($cnx,'a01 login '.$user.' '.$pass."\r\n");
 									$data = array();
-								}
-								if ($message[2] == '[UNSEEN') {
+								} elseif ($message[2] == '[UNSEEN') {
 									$data[] = substr($message[3],0,-1);
 								}
 							} elseif ($message[1] == 'SEARCH') {
 								for ($i = 2; $i <= (count($message) - 1); $i++) {
 									$data[] = $message[$i];
 								}
+							} elseif ($message[2] == 'EXISTS') {
+								$email_count = $message[1];
+							} elseif ($message[2] == 'FETCH') {
+								$email = array();
+//print_r($message);
+								if (strpos($message[4],'\Seen') === FALSE) {
+									$email['unread'] = 1;
+								} else {
+									$email['unread'] = 0;
+
+								}
+								// Get e-mail envelope
+								for ($i = 0; $i <= 5; $i++) {
+									unset($message[$i]);
+								}
+								$message = implode(' ',$message);
+								// Get rid of leading ("
+								$message = substr($message,2);
+								$date = strpos($message,'"');
+								$email['date'] = explode(' ',date('d-M H:i',strtotime(substr($message,0,$date))));
+								if ($email['date'][0] == date('d-M')) {
+									$email['date'] = $email['date'][1];
+								} else {
+									$email['date'] = $email['date'][0];
+								}
+								// Remove date and {space} at start of subject
+								$message = substr($message,($date+2));
+								if ($message[0] == '"') {
+									$subject = strpos($message,'"',1);
+									$email['subject'] = substr($message,1,($subject-1));
+									$message = substr($message,($subject+2));
+								} elseif ($message[0] == '{') {
+									$subject = strpos($message,'}',1);
+									$sub_count = substr($message,1,($subject-1));
+									$message = substr($message,($subject+1));
+									$email['subject'] = substr($message,0,$sub_count);
+									$message = substr($message,($sub_count+1));
+								}
+								$email['subject'] = str_replace(' ','&nbsp;',$email['subject']);
+								$message = explode('))',$message,5);
+								$message[0] = substr(trim($message[0]),2);
+								$index = 0;
+								$sender = array();
+								while ($message[0] != '') {
+									if ($message[0][0] == '"') {
+										$pos = strpos($message[0],'"',1);
+										$sender[$index] = substr($message[0],1,($pos-1));
+										$message[0] = substr($message[0],($pos+2));
+									} else {
+										$sender[$index] = '';
+										$message[0] = substr($message[0],4);
+									}
+									$index++;
+								}
+//print_r($sender);
+								$email['sender'] = $sender[0] . ' (' . $sender[2] . '@' . $sender[3] . ')';
+								$data[] = $email;
 							}
 						}
 
@@ -119,9 +176,16 @@ class Travis extends Controller {
 									fwrite($cnx,'a03 search unseen'."\r\n");
 									$data = array();
 								} else {
-									// No unread e-mails so logout
-									$xajax_response->addScriptCall('checkedEmails',0);
-									fwrite($cnx,'a04 logout'."\r\n");
+									// No unread e-mails, get last 5 emails
+									$email_count = $email_count - 4;
+									$query = array();
+									for ($i = 1; $i <= 5; $i++) {
+										if ($email_count > 0) {
+											$query[] = $email_count;
+										}
+										$email_count++;
+									}
+									fwrite($cnx,'a05 fetch ' . implode(',',$query) . ' (FLAGS ENVELOPE)'."\r\n");
 									$data = array();
 								}
 							} else {
@@ -132,12 +196,36 @@ class Travis extends Controller {
 
 						if ($message[0] == 'a03') {
 							if ($message[1] == 'OK') {
-								// Successfully got new email count, so logout
+								// Successfully got new email count, get last 5 emails
 								$xajax_response->addScriptCall('checkedEmails',count($data));
-								fwrite($cnx,'a04 logout'."\r\n");
+								$email_count = $email_count - 4;
+								$query = array();
+								for ($i = 1; $i <= 5; $i++) {
+									if ($email_count > 0) {
+										$query[] = $email_count;
+									}
+									$email_count++;
+								}
+								fwrite($cnx,'a05 fetch ' . implode(',',$query) . ' (FLAGS ENVELOPE)'."\r\n");
 								$data = array();
 							} else {
 								$xajax_response->addScriptCall('msgError','Unable to find any unread emails');
+								fwrite($cnx,'a04 logout'."\r\n");
+							}
+						}
+
+						if ($message[0] == 'a05') {
+							if ($message[1] == 'OK') {
+								// Got last 5 emails, so logout
+								foreach ($data as $email) {
+									$xajax_response->addScript("york_inbox[york_inbox_count] = new Array('" . $email['unread'] . "','" . $email['date'] . "','" . $email['subject'] . "','" . $email['sender'] . "'); york_inbox_count++;");
+								}
+								$xajax_response->addScriptCall('inboxContents');
+								$xajax_response->addScriptCall('inboxChecked',date('H:i'));
+								fwrite($cnx,'a04 logout'."\r\n");
+								$data = array();
+							} else {
+								$xajax_response->addScriptCall('msgError','Unable to retrieve inbox contents');
 								fwrite($cnx,'a04 logout'."\r\n");
 							}
 						}
