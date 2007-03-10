@@ -223,8 +223,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<!-- <br /> tags necessary for correct rendering in text based browsers -->
 					<label for="a_authorname">Your Name: </label>
 						<input type="text" name="a_authorname" id="a_authorname" value="" /><br />
-					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>" />
-					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 					<label for="a_authoremail">Your E-mail: </label>
 						<input type="text" name="a_authoremail" id="a_authoremail" value="" /><br />
 					<label for="a_rating">Your Rating: </label>
@@ -238,7 +236,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 						</select><br />
 					<label for="a_feedbacktext">Your Comments: </label>
 						<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
-
+					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>" />
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 				</fieldset>
 				<fieldset>
 					<input class="button" type="submit" name="r_submit" id="r_submit" value="Submit" />
