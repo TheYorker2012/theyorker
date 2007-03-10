@@ -81,18 +81,41 @@ class Yorkerdirectory extends Controller
 		
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
+		if (PermissionsSubset('office', GetUserLevel())){
+			$show_show_all_revisions_option = true;
+		}else{
+			$show_show_all_revisions_option = false;
+		}
 		if($action=='viewall'){
-			$show_all_revisions = true;
+			if (PermissionsSubset('office', GetUserLevel())){
+				$show_all_revisions = true;
+			}else{
+				$this->main_frame->AddMessage('error','You do not have permission to view deleted revisions');
+			}
 			$action='view';
 		}
 		
 		if($action=='delete'){
-		
 			$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
 			if($result == 1){
 				$this->main_frame->AddMessage('success','Directory revision successfully removed.');
 			}else{
 				$this->main_frame->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+			}
+			$action='view';
+		}
+		if($action=='restore'){
+			//Check Permissions
+			if (PermissionsSubset('office', GetUserLevel())){
+				//Send and get data
+				$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision, false);
+				if($result == 1){
+					$this->main_frame->AddMessage('success','Directory revision was restored successfully.');
+				}else{
+					$this->main_frame->AddMessage('error','Directory revision was not restored it does not exist or it is not deleted.');
+				}
+			}else{
+				$this->main_frame->AddMessage('error','You do not have permission to restore revisions');
 			}
 			$action='view';
 		}
@@ -155,6 +178,7 @@ class Yorkerdirectory extends Controller
 				//Page Revisions
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
+				$data['show_show_all_revisions_option'] = $show_show_all_revisions_option;
 				
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
@@ -178,18 +202,30 @@ class Yorkerdirectory extends Controller
 			//Show a toolbar in a message for the preview.
 			$published = $this->directory_model->IsRevisionPublished($organisation, $revision);
 			$user_level = GetUserLevel();
+			$is_deleted = $this->directory_model->IsRevisionDeleted($revision);
 			if($published){
 				$message = 'This is a preview of the current published directory revision.<br />';
 			}else{
-				$message = 'This is a preview of a directory revision.<br />';
+				if($is_deleted){
+					$message = 'This is a preview of a <span class="red">deleted</span> directory revision.<br />';
+				}else{
+					$message = 'This is a preview of a directory revision.<br />';
+				}
 			}
 			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
 			
 			if($published == false){
-				//if($user_level == "office" || $user_level == "editor" || $user_level == "admin"){
+				if (PermissionsSubset('office', GetUserLevel())){
 					$message .= ' | <a href="'.vip_url('directory/information/publish/'.$revision).'">Publish This Revision</a>';
-				//}
-				$message .= ' | <a href="'.vip_url('directory/information/delete/'.$revision).'">Delete This Revision</a>';
+				}
+				
+				if ($is_deleted) {
+					if (PermissionsSubset('office', GetUserLevel())){
+						$message .= ' | <a href="'.vip_url('directory/information/restore/'.$revision).'">Restore This Revision</a>';
+					}
+				} else {
+					$message .= ' | <a href="'.vip_url('directory/information/delete/'.$revision).'">Delete This Revision</a>';
+				}
 			}
 			
 			$this->main_frame->AddMessage('information',$message);
