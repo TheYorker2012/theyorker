@@ -643,7 +643,11 @@ Done.
 		
 		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
 
+		// add a newline at the end if there isn't already one there
 		$lines = explode("\n",$text);
+		if (empty($lines[count($lines)-1])) {
+			$lines[] = '';
+		}
 		
 		if (preg_match('/^\#REDIRECT\s+\[\[(.*?)\]\]$/',trim($lines[0]),$matches)) {
 			$this->redirect = $matches[1];
