@@ -42,7 +42,7 @@
 $route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
-$org_name_regex = '[a-z_\d]+';
+$org_name_regex = '[a-z_\-\d]+';
 
 
 //****************************************************************************//
