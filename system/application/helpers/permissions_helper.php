@@ -11,7 +11,7 @@
 function GetUserLevel()
 {
 	$CI = &get_instance();
-	$CI->load->library('user_auth');
+	$CI->load->model('user_auth');
 
 	$user_level = 'public';
 	if ($CI->user_auth->isLoggedIn) {
@@ -291,13 +291,14 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		$action_levels = array(
 			'public'	=> TRUE,
 			'student'	=> TRUE,
-			'vip'		=> ($CI->user_auth->organisationShortName == $organisation_shortname),
+			'vip'		=> ($CI->user_auth->organisationShortName == $organisation_shortname),	/// @todo #169
 			'office'	=> FALSE,
 			'pr'		=> FALSE,
 			'editor'	=> FALSE,
 			'admin'		=> FALSE,
 		);
 		if ($action_levels['vip']) {
+			/// @todo #169
 			VipOrganisationId($CI->user_auth->organisationLogin);
 			VipOrganisationName($CI->user_auth->organisationName);
 			VipMode('viparea');

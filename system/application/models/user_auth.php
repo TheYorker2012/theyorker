@@ -8,15 +8,12 @@
 /**
  * @author Andrew Oakley (ado500)
  *
- * This library is automatically loaded and provides the login status of users.
+ * This model is automatically loaded and provides the login status of users.
  *  Currently information is avaliable as member variables.  This may be
  *  changed to accessors at some point, but if this happens I will update all
  *  pages in the SVN to use them at the same time.
- *
- * @todo Change User_auth into a model as it accesses the db lots and uses the
- *  code igniter object which would be simply $this from a model.
  */
-class User_auth {
+class User_auth extends model {
 
 	/// bool True if the user is logged in
 	public $isLoggedIn;
@@ -60,18 +57,17 @@ class User_auth {
 	///  any)
 	public $organisationShortName = '';
 
+	/// array Array indexed by organisation_directory_entry_name of organisation
+	///  entity id ('id'), name ('name') of all decendents of logged in organisation (empty
+	///  when not logged in as an organisation/vip).
+	public $allTeams = array();
+
 	/// string The salt used to generate the password hash
 	private $salt;
 
-	/// The code igniter object
-	private $object;
-	
 	/// The default constructor
 	public function __construct() {
-		$this->object = &get_instance();
-
-		// Ensure we have a session
-		session_start();
+		parent::model();
 
 		// Check if we already have login details
 		if (isset($_SESSION['ua_loggedin'])) {
@@ -88,6 +84,7 @@ class User_auth {
 			$this->organisationLogin = $_SESSION['ua_organisation'];
 			$this->organisationName = $_SESSION['ua_organisationname'];
 			$this->organisationShortName = $_SESSION['ua_organisationshortname'];
+			$this->allTeams = $_SESSION['ua_allteams'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
 
@@ -123,8 +120,7 @@ class User_auth {
 				AND entity_password = ? 
 				AND entity_deleted = FALSE';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($username, $hash));
+		$query = $this->db->query($sql, array($username, $hash));
 		
 		// See if there was a result for this username and hash
 		if ($query->num_rows() > 0) {
@@ -167,8 +163,7 @@ class User_auth {
 			FROM users 
 			WHERE user_entity_id = ?';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId));
+		$query = $this->db->query($sql, array($this->entityId));
 		
 		// See if there was a result (i.e. we have a user)
 		if ($query->num_rows() > 0) {
@@ -183,7 +178,7 @@ class User_auth {
 				FROM organisations 
 				WHERE organisation_entity_id = ?';
 
-			$query = $db->query($sql, array($this->entityId));
+			$query = $this->db->query($sql, array($this->entityId));
 			$row = $query->row();
 			
 			$this->isUser = false;
@@ -210,8 +205,7 @@ class User_auth {
 			FROM entities 
 			WHERE entity_username = ? AND entity_deleted = FALSE';
 		
-		$db = $this->object->db;
-		$query = $db->query($sql, array($username));
+		$query = $this->db->query($sql, array($username));
 
 		// See if we have an entity with this username
 		if ($query->num_rows() > 0) {
@@ -284,8 +278,7 @@ class User_auth {
 				entity_id = user_entity_id 
 			WHERE entity_id = ?';
 		
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId));
+		$query = $this->db->query($sql, array($this->entityId));
 		
 		// We should always have a result at this stage
 		if ($query->num_rows() == 0) {
@@ -342,8 +335,7 @@ class User_auth {
 			WHERE entity_id = ? AND 
 				(user_office_password = ?)';
 		
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $hash));
+		$query = $this->db->query($sql, array($this->entityId, $hash));
 		
 		$row = $query->row();
 		return $row->valid;
@@ -373,8 +365,7 @@ class User_auth {
 			WHERE entities.entity_id = ?
 				AND entity_password = ?';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $hash));
+		$query = $this->db->query($sql, array($this->entityId, $hash));
 
 		$row = $query->row();
 		return $row->valid;
@@ -390,8 +381,6 @@ class User_auth {
 	 * Defaults to the logged in entity, otherwise uses @a entity.
 	 */
 	public function setPassword($password, $entity = null) {
-		$db = $this->object->db;
-
 		if ($entity == null) {
 			if (!$this->isLoggedIn | !$this->isUser)
 				/// @throw Exception You must be logged in as a student to do this
@@ -403,7 +392,7 @@ class User_auth {
 			$sql = 'SELECT entity_salt FROM entities
 				WHERE entity_id = ?';
 
-			$query = $db->query($sql, array($entity));
+			$query = $this->db->query($sql, array($entity));
 			$row = $query->row();
 			$salt = $query->entity_salt;
 			
@@ -420,7 +409,7 @@ class User_auth {
 			SET entity_salt = ?, entity_password = ?
 			WHERE entity_id = ?';
 
-		$query = $db->query($sql, array($salt, $hash, $entity));
+		$query = $this->db->query($sql, array($salt, $hash, $entity));
 	}
 
 	/// Sets an entities office password.
@@ -445,7 +434,7 @@ class User_auth {
 			$sql = 'SELECT entity_salt FROM entities
 				WHERE entity_id = ?';
 
-			$query = $db->query($sql, array($entity));
+			$query = $this->db->query($sql, array($entity));
 			$row = $query->row();
 			$salt = $query->entity_salt;
 		}
@@ -456,8 +445,7 @@ class User_auth {
 			SET user_office_password = ?
 			WHERE user_entity_id = ?';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($hash, $entity));
+		$query = $this->db->query($sql, array($hash, $entity));
 	}
 
 	/// Get a list of organisations that the user can login to
@@ -476,8 +464,7 @@ class User_auth {
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
 			WHERE subscription_user_entity_id = ? AND subscription_vip = TRUE';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId));
+		$query = $this->db->query($sql, array($this->entityId));
 
 		return $query->result_array();
 	}
@@ -500,8 +487,7 @@ class User_auth {
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
 			WHERE subscription_user_entity_id = ? AND subscription_pr_rep = TRUE';
 
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId));
+		$query = $this->db->query($sql, array($this->entityId));
 
 		return $query->result_array();
 	}
@@ -526,8 +512,7 @@ class User_auth {
 				AND subscriptions.subscription_vip = TRUE
 				AND entity_password = ?';
 		
-		$db = $this->object->db;
-		$query = $db->query($sql, array($this->entityId, $organisationId, $hash));
+		$query = $this->db->query($sql, array($this->entityId, $organisationId, $hash));
 
 		if ($query->num_rows() == 0) {
 			/// @throw Exception Invalid organisation or password
@@ -564,6 +549,7 @@ class User_auth {
 		$_SESSION['ua_organisation'] = $this->organisationLogin;
 		$_SESSION['ua_organisationname'] = $this->organisationName;
 		$_SESSION['ua_organisationshortname'] = $this->organisationShortName;
+		$_SESSION['ua_allteams'] = $this->allTeams;
 		$_SESSION['ua_salt'] = $this->salt;
 	}
 }

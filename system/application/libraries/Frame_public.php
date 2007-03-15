@@ -62,7 +62,6 @@ class Frame_public extends FrameNavbar
 				'logged_in' => FALSE,
 			);
 		$CI = &get_instance();
-		$CI->load->library('user_auth');
 		if ($CI->user_auth->isLoggedIn) {
 			$this->mDataArray['login']['logged_in'] = TRUE;
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
