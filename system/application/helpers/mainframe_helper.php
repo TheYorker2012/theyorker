@@ -101,7 +101,7 @@ function GenerateToplinks($Permission)
 							site_url('logout/vip'.$CI->uri->uri_string()));
 				}
 			} elseif ($Permission === 'vip') {
-				$top_links[] = 'in VIP area as ' . VipOrganisationName();
+				$top_links[] = 'in VIP area as ' . VipOrganisationName(TRUE);
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
 							site_url('logout/vip'));

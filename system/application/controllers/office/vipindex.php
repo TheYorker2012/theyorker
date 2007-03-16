@@ -17,7 +17,7 @@ class Vipindex extends Controller
 		
 		$organisation = VipOrganisation();
 		if (empty($organisation)) {
-			$organisation = $this->user_auth->organisationShortName;
+			$organisation = VipOrganisation(TRUE);
 			redirect('viparea/'.$organisation);
 			return;
 		}
@@ -26,7 +26,7 @@ class Vipindex extends Controller
 		
 		$data = array(
 				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-				'organisation' => $this->user_auth->organisationShortName,
+				'organisation' => VipOrganisation(),
 				'enable_members' => TRUE, //example for the moment change this to logged in organisation
 		);
 		// Set up the content

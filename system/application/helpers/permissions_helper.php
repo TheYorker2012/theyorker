@@ -125,36 +125,36 @@ function vip_url($Path = '', $Set = FALSE)
 }
 
 /// Get the vip organisation.
-function VipOrganisation($SetOrganisation = FALSE)
+function VipOrganisation($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
-	static $organisation = '';
+	static $organisation = array('','');
 	
 	if (is_string($SetOrganisation)) {
-		$organisation = $SetOrganisation;
+		$organisation[$TopOrganisation?1:0] = $SetOrganisation;
 	}
-	return $organisation;
+	return $organisation[$TopOrganisation?1:0];
 }
 
 /// Get the vip organisation name.
-function VipOrganisationName($SetOrganisation = FALSE)
+function VipOrganisationName($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
-	static $organisation = '';
+	static $organisation = array('','');
 	
 	if (is_string($SetOrganisation)) {
-		$organisation = $SetOrganisation;
+		$organisation[$TopOrganisation?1:0] = $SetOrganisation;
 	}
-	return $organisation;
+	return $organisation[$TopOrganisation?1:0];
 }
 
 /// Get the vip organisation id.
-function VipOrganisationId($SetOrganisation = FALSE)
+function VipOrganisationId($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
-	static $organisation_id = FALSE;
+	static $organisation_id = array(FALSE, FALSE);
 	
-	if (FALSE !== $SetOrganisation && is_numeric($SetOrganisation)) {
-		$organisation_id = (int)$SetOrganisation;
+	if (FALSE !== $SetOrganisation[$TopOrganisation?1:0] && is_numeric($SetOrganisation)) {
+		$organisation_id[$TopOrganisation?1:0] = (int)$SetOrganisation;
 	}
-	return $organisation_id;
+	return $organisation_id[$TopOrganisation?1:0];
 }
 
 /// Get the vip mode that the user is in.
@@ -223,7 +223,8 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	} else {
 		$organisation_shortname = '';
 	}
-	VipOrganisation($organisation_shortname);
+	VipOrganisation(FALSE, $organisation_shortname);
+	VipOrganisation(TRUE, $CI->user_auth->organisationShortName);
 	
 	
 	// Login actions for student/vip/office logins
@@ -288,19 +289,21 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 	} elseif ($user_level === 'organisation') {
 		// Logged in from public as organisation
+		$allow_vip = array_key_exists($organisation_shortname, $CI->user_auth->allTeams);
 		$action_levels = array(
 			'public'	=> TRUE,
 			'student'	=> TRUE,
-			'vip'		=> ($CI->user_auth->organisationShortName == $organisation_shortname),	/// @todo #169
+			'vip'		=> $allow_vip,
 			'office'	=> FALSE,
 			'pr'		=> FALSE,
 			'editor'	=> FALSE,
 			'admin'		=> FALSE,
 		);
-		if ($action_levels['vip']) {
-			/// @todo #169
-			VipOrganisationId($CI->user_auth->organisationLogin);
-			VipOrganisationName($CI->user_auth->organisationName);
+		if ($allow_vip) {
+			VipOrganisationId(FALSE, $CI->user_auth->allTeams[$organisation_shortname][0]);
+			VipOrganisationName(FALSE, $CI->user_auth->allTeams[$organisation_shortname][1]);
+			VipOrganisationId(TRUE, $CI->user_auth->organisationLogin);
+			VipOrganisationName(TRUE, $CI->user_auth->organisationName);
 			VipMode('viparea');
 		}
 	} elseif ($user_level === 'vip') {
@@ -312,10 +315,13 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			TRUE
 		);
 		
-		if ($CI->user_auth->organisationShortName == $organisation_shortname) {
+		$allow_vip = array_key_exists($organisation_shortname, $CI->user_auth->allTeams);
+		if ($allow_vip) {
 			$vip_accessible = TRUE;
-			VipOrganisationId($CI->user_auth->organisationLogin);
-			VipOrganisationName($CI->user_auth->organisationName);
+			VipOrganisationId(FALSE, $CI->user_auth->allTeams[$organisation_shortname][0]);
+			VipOrganisationName(FALSE, $CI->user_auth->allTeams[$organisation_shortname][1]);
+			VipOrganisationId(TRUE, $CI->user_auth->organisationLogin);
+			VipOrganisationName(TRUE, $CI->user_auth->organisationName);
 			VipMode('viparea');
 		} else {
 			// check permissions to access this organisation
@@ -323,9 +329,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			foreach ($vip_organisations as $organisation) {
 				if ($organisation['organisation_directory_entry_name'] == $organisation_shortname) {
 					$vip_accessible = $vip_login_action;
-					VipOrganisationId($organisation['organisation_entity_id']);
-					VipOrganisationName($organisation['organisation_name']);
-					VipMode('viparea');
 					break;
 				}
 			}
@@ -407,8 +410,10 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 					if ($organisation['organisation_directory_entry_name']
 							== $organisation_shortname) {
 						// Yes, match, PR Rep, set stuff and change user level to PR
-						VipOrganisationId($organisation['organisation_entity_id']);
-						VipOrganisationName($organisation['organisation_name']);
+						VipOrganisationId(FALSE, $organisation['organisation_entity_id']);
+						VipOrganisationName(FALSE, $organisation['organisation_name']);
+						VipOrganisationId(TRUE, $organisation['organisation_entity_id']);
+						VipOrganisationName(TRUE, $organisation['organisation_name']);
 						VipMode('office');
 						$action_levels['pr'] = TRUE;
 						break;

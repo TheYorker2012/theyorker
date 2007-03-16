@@ -23,7 +23,7 @@ class Frame_vip extends Frame_public
 		$CI = &get_instance();
 		$this->SetData('vipinfo', array(
 			'name'			=> $CI->user_auth->firstname . ' ' . $CI->user_auth->surname,
-			'organisation'	=> VipOrganisationName(),
+			'organisation'	=> VipOrganisationName(TRUE),
 		));
 	}
 }

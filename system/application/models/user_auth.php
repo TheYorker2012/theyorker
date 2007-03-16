@@ -68,7 +68,9 @@ class User_auth extends model {
 	/// The default constructor
 	public function __construct() {
 		parent::model();
-
+		
+		$this->load->model('organisation_model');
+		
 		// Check if we already have login details
 		if (isset($_SESSION['ua_loggedin'])) {
 			$this->isLoggedIn = $_SESSION['ua_loggedin'];
@@ -174,23 +176,50 @@ class User_auth extends model {
 			$this->surname = $row->user_surname;
 			$this->officeLogin = $row->user_office_access;
 		} else {
-			$sql = 'SELECT organisation_name, organisation_directory_entry_name
-				FROM organisations 
-				WHERE organisation_entity_id = ?';
-
-			$query = $this->db->query($sql, array($this->entityId));
-			$row = $query->row();
-			
 			$this->isUser = false;
-			$this->organisationName = $row->organisation_name;
-			$this->organisationShortName = $row->organisation_directory_entry_name;
 			$this->surname = '';
 			$this->officeLogin = false;
 			$this->organisationLogin = $this->entityId;
+			$this->updateTeamsData();
 		}
 		
 		// Set session variables to persist information
 		$this->localToSession();
+	}
+	
+	/// Get organisation + team information.
+	/**
+	 * Fills organisationName, organisationShortName, and allTeams
+	 */
+	function updateTeamsData()
+	{
+		// This function generates SQL for getting teams of an organisation.
+		$team_query_data = $this->organisation_model->GetTeams_QueryData(
+			$this->organisationLogin,	// main organisation id
+			'team',	// team alias
+			TRUE,	// Include the organisation itself
+			NULL	// Default depth
+		);
+		$sql = '
+		SELECT	team.organisation_entity_id AS id,
+				team.organisation_name AS name,
+				team.organisation_directory_entry_name AS shortname
+		FROM	organisations AS team ' .
+			// Joins to parent organisations
+			$team_query_data['joins'] .
+			// Conditions for descent from main organisation
+			'	WHERE	' . $team_query_data['where'];
+		$query = $this->db->query($sql);
+		// Store the teams indexed by the shortname
+		$this->allTeams = array();
+		foreach ($query->result_array() as $team) {
+			$this->allTeams[$team['shortname']] = array($team['id'], $team['name']);
+			// If this team is the main organisation, store it separately
+			if ($team['id'] == $this->organisationLogin) {
+				$this->organisationName = $team['name'];
+				$this->organisationShortName = $team['shortname'];
+			}
+		}
 	}
 	
 	/// Login based on username and password.
@@ -254,6 +283,7 @@ class User_auth extends model {
 		$this->surname = '';
 		$this->permissions = 0;
 		$this->organisationLogin = -1;
+		$this->allTeams = array();
 		$this->salt = '';
 
 		// Save values in session
@@ -519,10 +549,10 @@ class User_auth extends model {
 			throw new Exception('Invalid organisation or password');
 		}
 
-		$row = $query->row();
+		//$row = $query->row();
+		
 		$this->organisationLogin = $organisationId;
-		$this->organisationName = $row->organisation_name;
-		$this->organisationShortName = $row->organisation_directory_entry_name;
+		$this->updateTeamsData();
 		$this->localToSession();
 	}
 
@@ -531,6 +561,7 @@ class User_auth extends model {
 		$this->organisationLogin = -1;
 		$this->organisationName = '';
 		$this->organisationShortName = '';
+		$this->allTeams = array();
 		$this->localToSession();
 	}
 	
