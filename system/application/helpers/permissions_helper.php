@@ -7,11 +7,14 @@
  * Helper functions for checking and obtaining permissions.
  */
 
+// User auth model should be automatically loaded
+$CI = &get_instance();
+$CI->load->model('user_auth');
+
 /// Get the user level as a string
 function GetUserLevel()
 {
 	$CI = &get_instance();
-	$CI->load->model('user_auth');
 
 	$user_level = 'public';
 	if ($CI->user_auth->isLoggedIn) {
@@ -199,7 +202,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	$CI->load->library('messages');
 	$CI->load->model('pages_model');
 
-	$user_level = GetUserLevel(); // loads the user_auth library
+	$user_level = GetUserLevel();
 	
 	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
