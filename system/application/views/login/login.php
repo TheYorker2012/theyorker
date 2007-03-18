@@ -3,10 +3,10 @@
 	$first = true;
 	foreach ($rightbar as $entry) {
 		if ($first) {
-			echo('	<h4 class="first">'.$entry['title'].'</h4>'."\n");
+			echo('	<h2 class="first">'.$entry['title'].'</h2>'."\n");
 			$first = false;
 		} else {
-			echo('	<h4>'.$entry['title'].'</h4>'."\n");
+			echo('	<h2>'.$entry['title'].'</h2>'."\n");
 		}
 		echo('	<div class="Entry">'."\n");
 		echo('		'.$entry['text']);

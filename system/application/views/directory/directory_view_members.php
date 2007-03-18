@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h4 class="first">Groups</h4>
+	<h2 class="first">Groups</h2>
 	<div class="Entry">
 <?php
 	foreach ($organisation['groups'] as $group) {
@@ -12,7 +12,7 @@
 ?>
 	</div>
 
-	<h4>Facts</h4>
+	<h2>Facts</h2>
 	<div class="entry">
 		Number of members: 1337 <br />
 		Member last joined: 5 hours ago <br />

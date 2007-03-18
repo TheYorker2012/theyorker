@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h4 class="first"><?php echo($sidebar_vote['title']); ?></h4>
+	<h2 class="first"><?php echo($sidebar_vote['title']); ?></h2>
 	<div class="Entry">
 <?php
 if ($user == TRUE) {
@@ -44,12 +44,12 @@ else
 ?>
 	</div>
 	
-	<h4><?php echo($sidebar_more['title']); ?></h4>
+	<h2><?php echo($sidebar_more['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_more['text']); ?>
 	</div>
 
-	<h4><?php echo($sidebar_related['title']); ?></h4>
+	<h2><?php echo($sidebar_related['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
@@ -61,7 +61,7 @@ else
 		</ul>
 	</div>
 
-	<h4><?php echo($sidebar_external['title']); ?></h4>
+	<h2><?php echo($sidebar_external['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
@@ -73,7 +73,7 @@ else
 		</ul>
 	</div>
 
-	<h4><?php echo($sidebar_other_campaigns['title']); ?></h4>
+	<h2><?php echo($sidebar_other_campaigns['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
@@ -87,7 +87,7 @@ else
 		</ul>
 	</div>
 	
-    	<h4><?php echo($sidebar_comments['title']); ?></h4>
+    	<h2><?php echo($sidebar_comments['title']); ?></h2>
 	<div class="Entry">
 		#TODO#
 	</div>

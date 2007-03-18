@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h4 class="first">Information</h4>
+	<h2 class="first">Information</h2>
 	<div id="SlideShow" class="entry">
 		<img src="/images/prototype/prefs/image_load.jpg" alt="Slideshow" title="Slideshow" />
 	</div>
@@ -56,7 +56,7 @@ if ($organisation['yorkipedia'] !== NULL) {
 if (!empty($organisation['reviews_by_type'])) {
 ?>
 	<!-- TODO: Rewrite this section -->
-	<h4>Reviews</h4>
+	<h2>Reviews</h2>
 	<div class="Entry">
 <?php
 	foreach ($organisation['reviews_by_type'] as $review_type_name => $reviews) {

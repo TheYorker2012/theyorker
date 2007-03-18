@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h4 class="first">Search</h4>
+	<h2 class="first">Search</h2>
 	<div class="Entry">
 		<form id="search_directory" action="" method="post">
 			<fieldset>
@@ -9,7 +9,7 @@
 		</form>
 	</div>
 
-	<h4>Filters</h4>
+	<h2>Filters</h2>
 	<div class="Entry">
 <?php
 	$idPostfix = 0;
@@ -25,7 +25,7 @@
 ?>
 	</div>
 
-	<h4>What's this?</h4>
+	<h2>What's this?</h2>
 	<div class="Entry">
 		<p><?php echo(htmlspecialchars($maintext)); ?></p>
 		<p>The directory currently has <?php echo count($organisations); ?> entries.  </p>
@@ -57,10 +57,10 @@ foreach($organisations as $organisation) {
 	}
 
 	echo('		<div id="'.htmlspecialchars($organisation['shortname']).'">'."\n");
-	echo('			<h4>'."\n");
+	echo('			<h3>'."\n");
 	echo('				<a href="/'.htmlspecialchars($organisation['link']).'">'.htmlspecialchars($organisation['name']).'</a>'."\n");
 	echo('				<span>('.htmlspecialchars($organisation['type']).')</span>'."\n");
-	echo('			</h4>'."\n");
+	echo('			</h3>'."\n");
 	if($organisation['shortdescription'] != '') {
 		echo('			<div>'."\n");
 		echo('				'.htmlspecialchars($organisation['shortdescription'])."\n");

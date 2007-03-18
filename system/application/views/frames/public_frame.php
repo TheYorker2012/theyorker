@@ -221,7 +221,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div id="FeedbackForm">
 			<form id="feedback_form" action="<?php echo site_url('feedback/'); ?>" method="post" class="form">
 				<fieldset>
-					<h4>Feedback</h4>
+					<h2>Feedback</h2>
 					<!-- <br /> tags necessary for correct rendering in text based browsers -->
 					<label for="a_authorname">Your Name: </label>
 						<input type="text" name="a_authorname" id="a_authorname" value="" /><br />

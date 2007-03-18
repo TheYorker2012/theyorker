@@ -1,10 +1,10 @@
 <div id="RightColumn">
-	<h4 class="first"><?php echo($sidebar_about['title']); ?></h4>
+	<h2 class="first"><?php echo($sidebar_about['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_about['text']); ?>
 	</div>
 
-	<h4><?php echo($sidebar_how['title']); ?></h4>
+	<h2><?php echo($sidebar_how['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_how['text']); ?>
 	</div>

@@ -229,14 +229,15 @@ div#RightColumn {
 	width: 230px;
 }
 
-div#RightColumn h4, form#feedback_form h4 {
+div#RightColumn h2, form#feedback_form h2 {
 	background-color: #999;
+	font-size: 10pt;
 	color: white;
 	padding: 0.4em;
 	margin: 0.5em 0em 0.5em 0em;
 }
 
-div#RightColumn h4.first {
+div#RightColumn h2.first {
 	margin-top: 0em;
 }
 

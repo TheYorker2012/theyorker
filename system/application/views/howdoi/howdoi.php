@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h4 class="first"><?php echo($sidebar_ask['title']); ?></h4>
+	<h2 class="first"><?php echo($sidebar_ask['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_ask['text']); ?>
 		<form action="/howdoi/ask" method="post" >
@@ -11,7 +11,7 @@
 		</form>
 	</div>
 
-	<h4><?php echo($sidebar_question_categories['title']); ?></h4>
+	<h2><?php echo($sidebar_question_categories['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
