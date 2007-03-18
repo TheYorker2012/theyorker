@@ -260,7 +260,10 @@ div#RightColumn label {
 div#RightColumn input {
 	float: none;
 	margin: 0.3em;
-	vertical-align: middle;
+}
+
+div#RightColumn input.button {
+	float: right;
 }
 
 div#RightColumn div.Entry {

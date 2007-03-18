@@ -1,71 +1,50 @@
-	<div class='RightToolbar'>
-		<h4><?php echo $latest_heading; ?></h4>
+<?php
+function printarticlelink($article, $blurb = false) {
+	echo('	<div class="Entry">'."\n");
+	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('			<img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('			<h5>'.$article['heading'].'</h5>'."\n");
+	echo('		</a>'."\n");
+	foreach($article['authors'] as $reporter)
+		echo('		<p><a href="/contact">'.$reporter['name'].'</a></p>'."\n");
+	echo('		<p>'.$article['date'].'</p>'."\n");
+	echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");
+	if ($blurb)
+		echo('		<p>'.$article['blurb'].'</p>'."\n");
+	echo('	</div>'."\n");
+}
+?>
 
-		<?php if (isset($puffers)) { ?>
+<div id="RightColumn">
+	<h4 class="First"><?php echo($latest_heading); ?></h4>
+<?php
+foreach($news_previews as $preview)
+	printarticlelink($preview, true);
+?>
+	
+	<h4><?php echo($other_heading); ?></h4>
+<?php
+foreach ($news_others as $other)
+	printarticlelink($other, false);
 
-			<?php echo '<div class=\'LifestylePuffer\'>';
-			foreach ($puffers as $puffer) {
-				echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
-				echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
-				echo '</a>';
-			}
-			echo '</div>'; ?>
-			<h4><?php echo $other_heading; ?></h4>
+if (count($main_article['related_articles']) > 0)
+	echo('	<h4>'.$related_heading.'</h4>'."\n");
 
-		<?php } ?>
+foreach ($main_article['related_articles'] as $related)
+	printarticlelink($related, false);
 
-		<?php foreach ($news_previews as $preview) { ?>
-		<div class='NewsPreview'>
-			<a href='/news/<?php echo $preview['article_type']; ?>/<?php echo $preview['id']; ?>'><img src="<?php echo $preview['photo_url']; ?>" alt="<?php echo $preview['photo_title']; ?>" title="<?php echo $preview['photo_title']; ?>" /></a>
-			<h3><?php echo anchor('/news/' .$preview['article_type'].'/'.$preview['id'], $preview['heading']); ?></h3>
-			<?php foreach ($preview['authors'] as $reporter) { ?>
-			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
-			<?php } ?>
-			<p class='Date'><?php echo $preview['date']; ?></p>
-			<p class='More'><?php echo anchor('/news/'.$preview['article_type'].'/'.$preview['id'], 'Read more...'); ?></p>
-		    <p><?php echo $preview['blurb']; ?></p>
-			<br style='clear: both;' />
-		</div>
-		<?php } ?>
+foreach($main_article['fact_boxes'] as $fact_box) {
+	echo('	<h4>'.$fact_box['title'].'</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		'.$fact_box['wikitext']."\n");
+	echo('	</div>'."\n");
+}
+?>
+</div>
 
-		<h4><?php echo $other_heading; ?></h4>
-	   	<?php foreach ($news_others as $other) { ?>
-		<div class='NewsOther'>
-			<a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><img src="<?php echo $other['photo_url']; ?>" alt="<?php echo $other['photo_title']; ?>" title="<?php echo $other['photo_title']; ?>" /></a>
-		    <p class='Headline'><a href='/news/<?php echo $other['article_type']; ?>/<?php echo $other['id']; ?>'><?php echo $other['heading']; ?></a></p>
-			<?php foreach ($other['authors'] as $reporter) { ?>
-			<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
-			<?php } ?>
-			<p class='Date'><?php echo $other['date']; ?></p>
-		</div>
-   		<?php } ?>
-		<div class='clear'></div>
-		<?php if (count($main_article['related_articles']) > 0) { ?>
-		<h4><?php echo $related_heading; ?></h4>
-			<?php foreach ($main_article['related_articles'] as $related) { ?>
-			<div class='NewsOther'>
-				<a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><img src="<?php echo $related['photo_url']; ?>" alt="<?php echo $related['photo_title']; ?>" title="<?php echo $related['photo_title']; ?>" /></a>
-			    <p class='Headline'><a href='/news/<?php echo $article_type; ?>/<?php echo $related['id']; ?>'><?php echo $related['heading']; ?></a></p>
-				<?php foreach ($related['authors'] as $reporter) { ?>
-				<p class='Writer'><a href='/contact'><?php echo $reporter['name']; ?></a></p>
-				<?php } ?>
-				<p class='Date'><?php echo $related['date']; ?></p>
-			</div>
-			<?php } ?>
-		<?php } ?>
-		<?php if ($article_type == 'uninews') { ?>
-		<div style='clear: both; text-align: center;'>
-			<a href='/news/rss/'><img src='/images/prototype/news/feed.gif' alt='<?php echo $rss_feed_title; ?>' title='<?php echo $rss_feed_title; ?>' /> <?php echo $rss_feed_title; ?></a>
-		</div>
-		<?php } ?>
-		<?php foreach ($main_article['fact_boxes'] as $fact_box) { ?>
-		<div style='padding-bottom: 150px;'>&nbsp;</div>
-		<div class='orange_box'>
-			<h2><?php echo $fact_box['title']; ?></h2>
-			<?php echo $fact_box['wikitext']; ?>
-		</div>
-		<?php } ?>
-	</div>
+
+
+
 	<div class='grey_box ArticleColumn'>
 		<h1><?php echo $main_article['heading']; ?></h1>
 		<?php if ($main_article['subheading'] != '') { ?>

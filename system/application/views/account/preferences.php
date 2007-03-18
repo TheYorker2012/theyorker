@@ -29,11 +29,11 @@
 <?php
 foreach ($colleges as $college) {
 	echo('					');
-	echo('<option value="' . $college['college_id'] . '"');
+	echo('<option value="'.$college['college_id'].'"');
 	if ($college['college_id'] == $this->validation->college) {
 		echo( ' selected="selected"');
 	}
-	echo('>'.$college['college_name'].'</option>'."\n");
+	echo('>'.htmlentities($college['college_name']).'</option>'."\n");
 }
 ?>
 				</select>

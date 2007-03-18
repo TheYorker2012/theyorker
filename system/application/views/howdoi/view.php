@@ -1,63 +1,61 @@
-<div class="RightToolbar">
-	<h4><?php echo $sidebar_ask['title']; ?></h4>
-	<?php echo $sidebar_ask['text']; ?>
-	<form class="form" action="/howdoi/ask" method="post" >
-		<fieldset>
-			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-			<textarea name="a_question" cols="24" rows="5">How Do I?</textarea>
-			<input type="submit" class="button" value="Ask" name="r_submit_ask" />
-		</fieldset>
-	</form>
-	<br />
-	<h4><?php echo $sidebar_question_categories['title']; ?></h4>
+<div id="RightColumn">
+	<h4 class="first"><?php echo($sidebar_ask['title']); ?></h4>
+	<div class="Entry">
+		<?php echo($sidebar_ask['text']); ?>
+		<form action="/howdoi/ask" method="post" >
+			<fieldset>
+				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+				<textarea name="a_question" cols="24" rows="5">How Do I?</textarea>
+				<input type="submit" class="button" value="Ask" name="r_submit_ask" />
+			</fieldset>
+		</form>
+	</div>
+
+	<h4><?php echo($sidebar_question_categories['title']); ?></h4>
+	<div class="Entry">
+		<ul>
 <?php
-	foreach ($categories as $category)
-	{
-		echo '<a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a><br />';
+	foreach ($categories as $category) {
+		echo('			');
+		echo('<li><a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a></li>'."\n");
 	}
 ?>
+		</ul>
+	</div>
 </div>
 
-<div class="grey_box">
-	<h2><?php echo $categories[$parameters['category']]['name']; ?></h2>
-	<?php echo $categories[$parameters['category']]['blurb']; ?>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2><?php echo($categories[$parameters['category']]['name']); ?></h2>
+		<p><?php echo($categories[$parameters['category']]['blurb']); ?></p>
+	</div>
+
+<?php
+if (isset($categories[$parameters['category']]['articles'])) {
+	echo('	<div class="BlueBox">'."\n");
+	echo('		<h2>'.$question_jump['title'].'</h2>'."\n");
+	echo('		<ul>'."\n");
+	foreach ($categories[$parameters['category']]['articles'] as $questions) {
+		echo('			');
+		echo('<li><a href="'.$parameters['codename'].'#q'.$questions['id'].'">'.$questions['heading'].'</a></li>'."\n");
+	}
+	echo('		</ul>'."\n");
+	echo('	</div>'."\n");
+}
+?>
+
+<?php
+if (isset($categories[$parameters['category']]['articles'])) {
+	foreach ($categories[$parameters['category']]['articles'] as $questions)
+	{
+		if (($parameters['article'] <= 0) OR ($questions['id'] == $parameters['article']))
+		{
+			echo('	<div class="BlueBox" id="q'.$questions['id'].'">'."\n");
+			echo('		<h2>'.$questions['heading'].'</h2>'."\n");
+			echo('		'.$questions['text']."\n");
+			echo('	</div>'."\n");
+		}
+	}
+}
+?>
 </div>
-
-<?php
-	if (isset($categories[$parameters['category']]['articles']))
-	{
-		echo '<div class="blue_box">';
-		echo '<h2>'.$question_jump['title'].'</h2>';
-		foreach ($categories[$parameters['category']]['articles'] as $questions)
-		{
-			echo '<a href="'.$parameters['codename'].'#'.$questions['id'].'">'.$questions['heading'].'</a><br />';
-		}
-		echo '</div>';
-	}
-?>
-
-<?php
-	if (isset($categories[$parameters['category']]['articles']))
-	{
-		foreach ($categories[$parameters['category']]['articles'] as $questions)
-		{
-			if (($parameters['article'] <= 0) OR ($questions['id'] == $parameters['article']))
-			{
-				echo '<a name="'.$questions['id'].'"></a><div class="grey_box">';
-				echo '<h2>'.$questions['heading'].'</h2>';
-				echo $questions['text'];
-				echo '<br />'; //<br />
-				//<img src="/images/prototype/directory/about/gmapwhereamI.png" width="400" height="296" alt="" />
-				echo '</div>';
-			}
-		}
-	}
-?>
-
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
-?>

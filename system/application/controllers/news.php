@@ -63,8 +63,8 @@ class News extends Controller {
 		//$data['byline_heading'] = $this->pages_model->GetPropertyText('news:byline_heading', TRUE);
 		//$data['byline_more'] = $this->pages_model->GetPropertyText('news:byline_more', TRUE);
 
-    	/// Get the latest article ids from the model.
-    	$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
+		/// Get the latest article ids from the model.
+		$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->helper('images');
 			$temp_type = $article_type;
@@ -92,7 +92,7 @@ class News extends Controller {
 			$latest_article_ids = array_merge(array($url_article_id),$latest_article_ids);
 		}
 
-    	/// Get all of the latest article
+		/// Get all of the latest article
 		if (isset($_SESSION['office_news_preview'])) {
 			$main_article = $this->News_model->GetFullArticle($latest_article_ids[0],'%W, %D %M %Y', $_SESSION['office_news_preview']);
 			$data['office_preview'] = 1;
@@ -106,19 +106,19 @@ class News extends Controller {
 		$this->byline->AddReporter($main_article['authors']);
 		$this->byline->SetDate($main_article['date']);
 
-    	/// Get some of the 2nd- and 3rd-latest articles
-    	$news_previews = array();
-    	for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
-        	array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
-    	}
+		/// Get some of the 2nd- and 3rd-latest articles
+		$news_previews = array();
+		for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
+			array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
+		}
 
-    	/// Get less of the next 3 newest articles
-    	$news_others = array();
-    	for ($index = 3; $index < count($latest_article_ids); $index++) {
-        	array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
-    	}
+		/// Get less of the next 3 newest articles
+		$news_others = array();
+		for ($index = 3; $index < count($latest_article_ids); $index++) {
+			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
+		}
 
-    	/// Gather all the data into an array to be passed to the view
+		/// Gather all the data into an array to be passed to the view
 		$data['main_article'] = $main_article;
 		$data['news_previews'] = $news_previews;
 		$data['news_others'] = $news_others;
