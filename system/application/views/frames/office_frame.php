@@ -134,6 +134,12 @@ function preloader()
 			<a href='/office/news/lifestyle/'>Lifestyle</a>
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/arts/'>Arts</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/news/sport/'>Sport</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/news/food/'>Food</a>
 		</div>
 		<div class='officenavigation_item'>

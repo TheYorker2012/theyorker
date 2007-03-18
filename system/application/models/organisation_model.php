@@ -107,16 +107,11 @@ class Organisation_model extends model
 		$sql .= '
 		WHERE	'. $team_query_data['where'];
 		
-		$bind_data = array_merge(
-			$team_query_data['join_bind'],
-			$team_query_data['where_bind']
-		);
-		
 		// Sort by the descendent name
 		$sql .= ' ORDER BY team.organisation_name';
 		
 		// Perform the query
-		$query = $this->db->query($sql, $bind_data);
+		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 	
@@ -132,9 +127,7 @@ class Organisation_model extends model
 	 * @return associative array of query data:
 	 *	- 'team_aliases'	associative array	Index level to SQL alias.
 	 *	- 'joins'			string				Joins to parent teams.
-	 *	- 'join_bind'		array				Bind data for joins.
 	 *	- 'where'			string				Where condition.
-	 *	- 'where_bind'		array				Bind data for where condition.
 	 */
 	function GetTeams_QueryData($OrganisationId, $TeamAlias, $IncludeOrg, $Levels = NULL)
 	{
@@ -153,18 +146,16 @@ class Organisation_model extends model
 		
 		$team_aliases = array(0 => $TeamAlias);
 		$joins = '';
-		$join_bind = array();
 		
 		$where_disjuncts = array();
-		$where_bind = array();
 		
 		// Generalise the entity id depending on how it was input
 		if ($is_directory_entry_name) {
 			// Get the entity id from a quick lookup using the directory entry.
 			$joins .= '
 			INNER JOIN organisations as org_id_lookup
-				ON	org_id_lookup.organisation_directory_entry_name = ?';
-			$join_bind[] = $OrganisationId;
+				ON	org_id_lookup.organisation_directory_entry_name = '.
+					$this->db->escape($OrganisationId);
 			$org_entity_id = 'org_id_lookup.organisation_entity_id';
 		} else {
 			$org_entity_id = $this->db->escape($OrganisationId);
@@ -200,9 +191,7 @@ class Organisation_model extends model
 		return array(
 			'team_aliases'	=> $team_aliases,
 			'joins'			=> $joins,
-			'join_bind'		=> $join_bind,
 			'where'			=> $where,
-			'where_bind'	=> $where_bind,
 		);
 	}
 }

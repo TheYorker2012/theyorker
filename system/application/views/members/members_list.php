@@ -68,16 +68,11 @@ function FilterLinkBool($filter, $field, $value)
 			<th></th>
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
-			<th>Email <?php BoolFilterLinks($filter, 'mailable'); ?></th>
-			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><br />
-				<?php BoolFilterLinks($filter, 'confirmed'); ?></th><?php /*
+			<th>Email</th>
+			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
-			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?><br />
-				<?php BoolFilterLinks($filter, 'paid'); ?></th>
-			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?><br />
-				<?php BoolFilterLinks($filter, 'vip'); ?></th>
-			<th>Subteams</th>
-			<th>Edit</th>
+			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
+			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
 		</tr>
 		<?php foreach ($members as $membership) {?>
 		<tr>
@@ -85,8 +80,7 @@ function FilterLinkBool($filter, $field, $value)
 				<input type="checkbox" name="members_selected[]"
 					value="user<?php echo $membership['user_id']; ?>"
 					id="user<?php echo $membership['user_id']; ?>" /></td>
-			<td><label for="user<?php echo $membership['user_id']; ?>"><?php echo $membership['firstname']; ?></label></td>
-			<td><label for="user<?php echo $membership['user_id']; ?>"><?php echo $membership['surname']; ?></label></td>
+			<td colspan=2><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname'].' '.$membership['surname']; ?></a></td>
 			<td><?php if (NULL !== $membership['email']) { ?>
 				<a href='mailto:<?php echo $membership['email'];?>'>email</a>
 			<?php } else {?>
@@ -96,20 +90,6 @@ function FilterLinkBool($filter, $field, $value)
 			<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
 			<td><?php if (isset($membership['paid'])) FilterLinkBool($filter, 'paid', $membership['paid']); ?></td>
 			<td><?php if (isset($membership['vip'])) FilterLinkBool($filter, 'vip', $membership['vip']); ?></td>
-			<td><small><?php
-				foreach ($membership['teams'] as $team) {
-					if ($team['confirmed']) {
-						echo '<IMG SRC="/images/prototype/members/yes9.png" ALT="confirmed" />';
-					} else {
-						echo '<IMG SRC="/images/prototype/members/no9.png" ALT="not confirmed" />';
-					}
-					//echo '<A HREF="'.vip_url($filter['base'] .'/team/'.$team['team_id']).'">';
-					echo '<A HREF="'.vip_url($filter['base'] .'/team/'.$team['team_id']).'">';
-					echo $team['team']['name'];
-					echo '</A><br />';
-				}
-			?></small></td>
-			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'>Edit</a></td>
 		</tr>
 		<?php } ?>
 		</table>

@@ -42,7 +42,7 @@
 $route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
-$org_name_regex = '[a-z_\d]+';
+$org_name_regex = '[a-z_\-\d]+';
 
 
 //****************************************************************************//
@@ -126,6 +126,11 @@ $route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'off
 $route['office/howdoi/editquestion/([0-9]+)'] = 'office/howdoi/questionedit/$1/-1';
 // /office/howdoi/editquestion/questionno/revisionno
 $route['office/howdoi/editquestion/([0-9]+)/([0-9]+)'] = 'office/howdoi/questionedit/$1/$2';
+
+// /office/charity/article/cid/rid
+$route['office/charity/article/([0-9]+)'] = 'office/charity/article/$1/-1';
+// /office/charity/article/cid/rid
+$route['office/charity/article/([0-9]+)/([0-9]+)'] = 'office/charity/article/$1/$2';
 
 $route['office/gallery/([0-9]+)'] = 'office/gallery';
 

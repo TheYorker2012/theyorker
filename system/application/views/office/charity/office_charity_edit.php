@@ -1,4 +1,10 @@
 <div class="RightToolbar">
+	<h4>Quick Links</h4>
+	<?php
+	echo '<a href="/office/charity/article/'.$charity['id'].'">Article</a><br/ >';
+	echo '<a href="/office/charity/progressreports/'.$charity['id'].'">Progress Reports</a><br/ >';
+	echo '<br/ >';
+	?>
 	<h4>Areas for Attention</h4>
 	You have been requested to answer this question.
 	<form class="form" action="/office/charity/#" method="post" >
@@ -22,6 +28,7 @@
 	?>
 </div>
 
+<!--
 <div class="grey_box">
 	<h2>edit charity</h2>
 	<form class="form" action="/charity/howdoi/#" method="post" >
@@ -36,19 +43,6 @@
 </div>
 
 <div class="blue_box">
-	<h2>latest progress report</h2>
-	<b>Date:</b> Saturday, 3rd February 2007<br />
-	<b>Details:</b> This is a test for a random charity progress report.<br />
-	<a href="/office/charity/#">[Modify]</a>
-</div>
-
-<div class="grey_box">
-	<h2>old progress reports</h2>
-	<b>02/02/2007</b>: Jeff ate a salad at some... <a href="/office/charity/#">[Modify]</a><br />
-	<b>24/01/2007</b>: Our first protest began... <a href="/office/charity/#">[Modify]</a><br />
-</div>
-
-<div class="blue_box">
 	<h2>options</h2>
 	<form class="form" action="/office/charity/#" method="post" >
 		<fieldset>
@@ -59,6 +53,7 @@
 		</fieldset>
 	</form>
 </div>
+-->
 
 <?php
 

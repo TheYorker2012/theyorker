@@ -42,8 +42,11 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 	if (!isset($CI->$frame_library)) {
 		if (!isset($CI->main_frame) || $Override) {
 			// Load the corresponding library and create an alias called main_frame
+			// Could also be done by adding to loader->_ci_varmap but this isn't
+			// very flexible as it depends on the internals of code igniter.
+			//  $CI->load->_ci_varmap[$frame_library] = 'main_frame';
 			$CI->load->library($frame_library);
-			$CI->main_frame = $CI->$frame_library;
+			$CI->main_frame = &$CI->$frame_library;
 			
 			$CI->main_frame->SetData('toplinks',
 					GenerateToplinks($Frame)
@@ -98,7 +101,7 @@ function GenerateToplinks($Permission)
 							site_url('logout/vip'.$CI->uri->uri_string()));
 				}
 			} elseif ($Permission === 'vip') {
-				$top_links[] = 'in VIP area as ' . VipOrganisationName();
+				$top_links[] = 'in VIP area as ' . VipOrganisationName(TRUE);
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
 							site_url('logout/vip'));

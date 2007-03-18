@@ -12,7 +12,9 @@ class Logout extends Controller
 		parent::Controller();
 		
 		$this->load->library('messages');
-		$this->load->library('user_auth');
+
+		// CheckPermissions is not used so user_auth needs loading
+		$this->load->model('user_auth');
 	}
 	
 	/// Redirect to the uri given after the initial logout/.../

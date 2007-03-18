@@ -567,7 +567,6 @@ class Events_model extends Model
 		if (NULL === $this->mActiveEntityId) {
 			// Get entity id from user_auth library
 			$CI = &get_instance();
-			$CI->load->library('user_auth');
 			if ($CI->user_auth->isLoggedIn) {
 				$this->mReadOnly = FALSE;
 				if (VipMode() !== 'none') {

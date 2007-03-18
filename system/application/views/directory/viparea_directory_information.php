@@ -38,10 +38,12 @@
 		}?>
 		</ol>
 		<?php
-		if ($show_all_revisions){
-			echo '<p><a href="'.vip_url('directory/information/view').'">Hide deleted revisions</a></p>';
-		}else{
-			echo '<p><a href="'.vip_url('directory/information/viewall').'">Include deleted revisions.</a></p>';
+		if ($show_show_all_revisions_option){
+			if ($show_all_revisions){
+				echo '<p><a href="'.vip_url('directory/information/view').'">Hide deleted revisions</a></p>';
+			}else{
+				echo '<p><a href="'.vip_url('directory/information/viewall').'">Include deleted revisions.</a></p>';
+			}
 		}
 		echo $revisions_information_text;
 		?>
@@ -65,9 +67,6 @@
 		<br />
 		<label for='url'>Website:</label>
 		<input type='text' name='url' style='width: 220px;' value='<?php echo $organisation['website']; ?>'/>
-		<br />
-		<label for='location'>Location:</label>
-		<input type='text' name='location' style='width: 220px;' value='<?php echo $organisation['location']; ?>' />
 		<br />
 		<label for='postal_address'>Postal Address:</label>
 		<textarea type='text' name='postal_address' rows='5' style='width: 220px;'><?php echo $organisation['postal_address']; ?></textarea>

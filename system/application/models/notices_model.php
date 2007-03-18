@@ -60,7 +60,7 @@ class Notices_model extends model
 		$sql .= $team_query_data['joins'];
 		
 		// Only those of interest to the user
-		$inner_bind = array();
+		$bind_data = array();
 		if (NULL !== $UserId) {
 			$sql .= '
 			INNER JOIN subscriptions
@@ -70,7 +70,7 @@ class Notices_model extends model
 					= organisations.organisation_entity_id
 				AND	subscription.subscription_user_confirmed = TRUE
 				AND	subscription.subscription_user_deleted = FALSE';
-			$inner_bind[] = $UserId;
+			$bind_data[] = $UserId;
 		}
 		
 		$sql .= '
@@ -91,12 +91,6 @@ class Notices_model extends model
 		}
 		$conjuncts[] = $team_query_data['where'];
 		$sql .= ' WHERE '.implode(' AND ', $conjuncts);
-		
-		$bind_data = array_merge(
-			$team_query_data['join_bind'],
-			$inner_bind,
-			$team_query_data['where_bind']
-		);
 		
 		// Sort by the descendent name
 		$sql .= ' ORDER BY notices.notice_expires';

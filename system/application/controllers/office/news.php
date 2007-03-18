@@ -758,13 +758,13 @@ class News extends Controller
 		}
 		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
 			if (is_numeric($revision)) {
-				$headline = addslashes($this->input->xss_clean($headline));
-				$subheadline = addslashes($this->input->xss_clean($subheadline));
-				$subtext = addslashes($this->input->xss_clean($subtext));
-				$blurb = addslashes($this->input->xss_clean($blurb));
-				$wiki = addslashes($this->input->xss_clean($wiki));
-				$fact_heading = addslashes($this->input->xss_clean($fact_heading));
-				$fact_text = addslashes($this->input->xss_clean($fact_text));
+				$headline = htmlentities($this->input->xss_clean($headline));
+				$subheadline = htmlentities($this->input->xss_clean($subheadline));
+				$subtext = htmlentities($this->input->xss_clean($subtext));
+				$blurb = htmlentities($this->input->xss_clean($blurb));
+				$wiki = htmlentities($this->input->xss_clean($wiki));
+				$fact_heading = htmlentities($this->input->xss_clean($fact_heading));
+				$fact_text = htmlentities($this->input->xss_clean($fact_text));
 				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
 				$wiki_cache = '';
 //				if ($create_cache) {

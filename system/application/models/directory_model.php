@@ -303,6 +303,22 @@ class Directory_model extends Model {
 		return ($id == $liveid);
 	}
 	
+	function IsRevisionDeleted($id)
+	{
+		$sql =
+			'SELECT'.
+			' organisation_contents.organisation_content_deleted '.
+			'FROM organisation_contents '.
+			'WHERE organisation_content_id=? '.
+			'LIMIT 1';
+		$query = $this->db->query($sql, $id);
+		$row = $query->row();
+		//Get org id to look for and the one that should be live.
+		$is_deleted = $row->organisation_content_deleted;
+		
+		return $is_deleted;
+	}
+	
 	/// Removes a revisons of a directory entry
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
