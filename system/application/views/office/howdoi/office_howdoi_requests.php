@@ -101,7 +101,7 @@ if ($user['officetype'] != 'Low')
 				<select name="a_category">';
 				foreach ($categories as $category_id => $category)
 				{
-					echo '<option value="'.$category_id.'">'.$category['name'].'</option>';
+					echo '<option value="'.$category['codename'].'">'.$category['name'].'</option>';
 				}
 				echo '</select>
 				<label for="a_deadline">Deadline (yy-mm-dd h:m):</label>

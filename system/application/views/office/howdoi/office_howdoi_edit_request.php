@@ -29,7 +29,7 @@ if ($article['header']['status'] == 'request')
 					<select name="a_category">';
 					foreach ($categories as $category_id => $category)
 					{
-						echo '<option value="'.$category_id.'"';
+						echo '<option value="'.$category['codename'].'"';
 						if ($category_id == $article['header']['content_type'])
 							echo ' selected';
 						echo '>'.$category['name'].'</option>';
