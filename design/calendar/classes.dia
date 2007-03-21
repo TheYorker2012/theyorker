@@ -65,19 +65,19 @@
   <dia:layer name="Background" visible="true">
     <dia:object type="UML - Class" version="0" id="O0">
       <dia:attribute name="obj_pos">
-        <dia:point val="2.6,4.45"/>
+        <dia:point val="2.15,1.7"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.55,4.4;20.65,6.9"/>
+        <dia:rectangle val="2.1,1.65;20.2,5.95"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="2.6,4.45"/>
+        <dia:point val="2.15,1.7"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="18"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="2.3999999999999999"/>
+        <dia:real val="4.2000000000000002"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#Source#</dia:string>
@@ -98,7 +98,7 @@
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="visible_attributes">
-        <dia:boolean val="false"/>
+        <dia:boolean val="true"/>
       </dia:attribute>
       <dia:attribute name="visible_operations">
         <dia:boolean val="true"/>
@@ -113,7 +113,7 @@
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -163,8 +163,62 @@
       <dia:attribute name="comment_font_height">
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
-      <dia:attribute name="attributes"/>
+      <dia:attribute name="attributes">
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#SourceData#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#source#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
       <dia:attribute name="operations">
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetSourceData#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#source#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
             <dia:string>#FetchEvents#</dia:string>
@@ -269,7 +323,7 @@
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -425,7 +479,7 @@
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -533,16 +587,16 @@
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O3">
       <dia:attribute name="obj_pos">
-        <dia:point val="11.6,6.89972"/>
+        <dia:point val="11.15,5.95023"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.68824,6.84972;12.45,17.9955"/>
+        <dia:rectangle val="2.68824,5.90023;12,17.9956"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="11.6,6.89972"/>
-        <dia:point val="11.6,15.8216"/>
+        <dia:point val="11.15,5.95023"/>
+        <dia:point val="11.15,15.8216"/>
         <dia:point val="2.73824,15.8216"/>
-        <dia:point val="2.73824,17.9455"/>
+        <dia:point val="2.73824,17.9456"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -565,7 +619,7 @@
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O0" connection="10"/>
+        <dia:connection handle="0" to="O0" connection="14"/>
         <dia:connection handle="1" to="O2" connection="10"/>
       </dia:connections>
     </dia:object>
@@ -574,7 +628,7 @@
         <dia:point val="-20.9737,9.9048"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.0237,9.8548;2.32632,13.9548"/>
+        <dia:rectangle val="-21.0237,9.8548;2.3263,13.9548"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-20.9737,9.9048"/>
@@ -619,7 +673,7 @@
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -841,16 +895,16 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O5">
       <dia:attribute name="obj_pos">
-        <dia:point val="11.6,6.90031"/>
+        <dia:point val="11.15,5.95026"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-9.39868,6.85031;12.45,9.97743"/>
+        <dia:rectangle val="-9.3987,5.90026;12,9.90455"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="11.6,6.90031"/>
-        <dia:point val="11.6,8.37743"/>
-        <dia:point val="-9.34868,8.37743"/>
-        <dia:point val="-9.34868,9.85455"/>
+        <dia:point val="11.15,5.95026"/>
+        <dia:point val="11.15,7.90241"/>
+        <dia:point val="-9.3487,7.90241"/>
+        <dia:point val="-9.3487,9.85455"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -873,7 +927,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O0" connection="10"/>
+        <dia:connection handle="0" to="O0" connection="14"/>
         <dia:connection handle="1" to="O4" connection="14"/>
       </dia:connections>
     </dia:object>
@@ -927,7 +981,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -1052,14 +1106,14 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O7">
       <dia:attribute name="obj_pos">
-        <dia:point val="-9.34868,13.9551"/>
+        <dia:point val="-9.3487,13.9551"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-15.0987,13.9051;-8.49868,18.9833"/>
+        <dia:rectangle val="-15.0987,13.9051;-8.4987,18.2833"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-9.34868,13.9551"/>
-        <dia:point val="-9.34868,17.3833"/>
+        <dia:point val="-9.3487,13.9551"/>
+        <dia:point val="-9.3487,17.3833"/>
         <dia:point val="-15.0487,17.3833"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -1088,14 +1142,14 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O8">
       <dia:attribute name="obj_pos">
-        <dia:point val="11.6,6.89972"/>
+        <dia:point val="11.15,5.95023"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.75,6.84972;20.5717,18.0386"/>
+        <dia:rectangle val="10.3,5.90023;20.5717,18.0386"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="11.6,6.89972"/>
-        <dia:point val="11.6,15.8216"/>
+        <dia:point val="11.15,5.95023"/>
+        <dia:point val="11.15,15.8216"/>
         <dia:point val="20.5217,15.8216"/>
         <dia:point val="20.5217,17.9886"/>
       </dia:attribute>
@@ -1120,19 +1174,19 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O0" connection="10"/>
+        <dia:connection handle="0" to="O0" connection="14"/>
         <dia:connection handle="1" to="O1" connection="10"/>
       </dia:connections>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O9">
       <dia:attribute name="obj_pos">
-        <dia:point val="10.1297,-0.841107"/>
+        <dia:point val="9.6297,-2.69111"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.0797,-0.891107;13.1297,0.608893"/>
+        <dia:rectangle val="9.5797,-2.74111;12.6297,-1.24111"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="10.1297,-0.841107"/>
+        <dia:point val="9.6297,-2.69111"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="2.9500000000000002"/>
@@ -1174,7 +1228,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -1233,16 +1287,16 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O10">
       <dia:attribute name="obj_pos">
-        <dia:point val="11.6047,0.60926"/>
+        <dia:point val="11.1047,-1.24074"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.7547,0.55926;12.4547,4.44969"/>
+        <dia:rectangle val="10.2547,-1.29074;11.9547,1.69974"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="11.6047,0.60926"/>
-        <dia:point val="11.6047,2.50448"/>
-        <dia:point val="11.6,2.50448"/>
-        <dia:point val="11.6,4.39969"/>
+        <dia:point val="11.1047,-1.24074"/>
+        <dia:point val="11.1047,0.204498"/>
+        <dia:point val="11.15,0.204498"/>
+        <dia:point val="11.15,1.64974"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -1266,7 +1320,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O9" connection="8"/>
-        <dia:connection handle="1" to="O0" connection="10"/>
+        <dia:connection handle="1" to="O0" connection="14"/>
       </dia:connections>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O11">
@@ -1319,7 +1373,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -1666,7 +1720,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -1794,7 +1848,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:point val="64.9751,4.96285"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="46.9502,4.91285;65.8251,7.94377"/>
+        <dia:rectangle val="46.9502,4.91285;65.8251,7.77469"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="64.9751,4.96285"/>
@@ -1877,7 +1931,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -2088,7 +2142,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -2216,7 +2270,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:point val="64.9751,4.96285"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="64.1251,4.91285;82.6327,7.90627"/>
+        <dia:rectangle val="64.1251,4.91285;82.6327,7.69969"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="64.9751,4.96285"/>
@@ -2299,7 +2353,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -2358,13 +2412,13 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O19">
       <dia:attribute name="obj_pos">
-        <dia:point val="31.4877,-0.725"/>
+        <dia:point val="30.9377,-0.325"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="31.4377,-0.775;41.1377,4.125"/>
+        <dia:rectangle val="30.8877,-0.375;40.5877,4.525"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="31.4877,-0.725"/>
+        <dia:point val="30.9377,-0.325"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="9.5999999999999996"/>
@@ -2406,7 +2460,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -2625,13 +2679,13 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:point val="35.7627,-4.17463"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="34.9127,-4.22463;36.6127,-0.725299"/>
+        <dia:rectangle val="34.9127,-4.22463;36.6127,-0.325299"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="35.7627,-4.17463"/>
-        <dia:point val="35.7627,-2.47497"/>
-        <dia:point val="36.2877,-2.47497"/>
-        <dia:point val="36.2877,-0.775299"/>
+        <dia:point val="35.7627,-2.27497"/>
+        <dia:point val="35.7377,-2.27497"/>
+        <dia:point val="35.7377,-0.375299"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -2660,16 +2714,16 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O21">
       <dia:attribute name="obj_pos">
-        <dia:point val="20.6498,5.65"/>
+        <dia:point val="20.2003,3.8"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.5998,0.975;31.4876,6.55"/>
+        <dia:rectangle val="20.1503,1.375;30.9378,4.7"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="20.6498,5.65"/>
-        <dia:point val="28.3453,5.65"/>
-        <dia:point val="28.3453,1.675"/>
-        <dia:point val="31.4376,1.675"/>
+        <dia:point val="20.2003,3.8"/>
+        <dia:point val="28.3453,3.8"/>
+        <dia:point val="28.3453,2.075"/>
+        <dia:point val="30.8878,2.075"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -2722,7 +2776,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         </dia:composite>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O0" connection="10"/>
+        <dia:connection handle="0" to="O0" connection="14"/>
         <dia:connection handle="1" to="O19" connection="16"/>
       </dia:connections>
     </dia:object>
@@ -2731,13 +2785,13 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:point val="52.9497,2.1125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="41.088,1.625;52.9997,3.7125"/>
+        <dia:rectangle val="40.538,1.39375;52.9997,3.7125"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="52.9497,2.1125"/>
-        <dia:point val="47.0439,2.1125"/>
-        <dia:point val="47.0439,1.675"/>
-        <dia:point val="41.138,1.675"/>
+        <dia:point val="46.7689,2.1125"/>
+        <dia:point val="46.7689,2.075"/>
+        <dia:point val="40.588,2.075"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -2844,7 +2898,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -3085,7 +3139,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -3492,7 +3546,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -3601,7 +3655,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:point val="13.035,-15.7696"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="12.985,-15.8196;34.585,-12.5196"/>
+        <dia:rectangle val="12.985,-15.8196;34.585,-11.7196"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="13.035,-15.7696"/>
@@ -3610,7 +3664,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:real val="21.5"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="3.2000000000000002"/>
+        <dia:real val="4"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#source#</dia:string>
@@ -3646,7 +3700,7 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -3697,6 +3751,29 @@ Use wget to get a data file and call ImportEvents with the file#</dia:string>
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
       <dia:attribute name="attributes">
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#SourceId#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#integer#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
             <dia:string>#Name#</dia:string>
@@ -3757,7 +3834,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:point val="-10.8878,-23.3944"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-10.9378,-23.4444;4.36216,-15.3444"/>
+        <dia:rectangle val="-10.9378,-23.4444;4.3622,-15.3444"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-10.8878,-23.3944"/>
@@ -3802,7 +3879,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -4025,7 +4102,9 @@ refer: Can events from the source be referred to in the database (allowing user-
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>##</dia:string>
+            <dia:string>#none: only view
+subscriber: things allowed by Source.Capabilities
+owner: can do anything#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -4046,13 +4125,13 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O29">
       <dia:attribute name="obj_pos">
-        <dia:point val="4.31216,-21.4944"/>
+        <dia:point val="4.3122,-21.4944"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="4.26216,-22.1944;13.085,-14.1696"/>
+        <dia:rectangle val="4.2622,-22.1944;13.085,-14.1696"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="4.31216,-21.4944"/>
+        <dia:point val="4.3122,-21.4944"/>
         <dia:point val="8.6736,-21.4944"/>
         <dia:point val="8.6736,-15.0696"/>
         <dia:point val="13.035,-15.0696"/>
@@ -4185,7 +4264,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:point val="-2.46078,-10.8749"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-2.51078,-10.9249;4.38922,-6.82485"/>
+        <dia:rectangle val="-2.51078,-10.9249;4.38922,-6.8249"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-2.46078,-10.8749"/>
@@ -4230,7 +4309,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -4359,16 +4438,16 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O32">
       <dia:attribute name="obj_pos">
-        <dia:point val="4.31216,-17.4944"/>
+        <dia:point val="4.3122,-17.4944"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-3.51078,-18.1944;5.36216,-9.27485"/>
+        <dia:rectangle val="-3.51078,-18.1944;5.3622,-9.2749"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="4.31216,-17.4944"/>
-        <dia:point val="5.31216,-17.4944"/>
-        <dia:point val="5.31216,-13.8347"/>
-        <dia:point val="-3.46078,-13.8347"/>
+        <dia:point val="4.3122,-17.4944"/>
+        <dia:point val="5.3122,-17.4944"/>
+        <dia:point val="5.3122,-13.8346"/>
+        <dia:point val="-3.46078,-13.8346"/>
         <dia:point val="-3.46078,-10.1749"/>
         <dia:point val="-2.46078,-10.1749"/>
       </dia:attribute>
@@ -4431,15 +4510,15 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O33">
       <dia:attribute name="obj_pos">
-        <dia:point val="4.33922,-8.97485"/>
+        <dia:point val="4.33922,-8.9749"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="4.28922,-15.7696;13.085,-8.07485"/>
+        <dia:rectangle val="4.28922,-15.7696;13.085,-8.0749"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="4.33922,-8.97485"/>
-        <dia:point val="8.68712,-8.97485"/>
-        <dia:point val="8.68712,-15.0696"/>
+        <dia:point val="4.33922,-8.9749"/>
+        <dia:point val="8.68711,-8.9749"/>
+        <dia:point val="8.68711,-15.0696"/>
         <dia:point val="13.035,-15.0696"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -4502,7 +4581,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:point val="-44.3329,-12.012"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-44.3829,-12.062;-21.7329,3.18798"/>
+        <dia:rectangle val="-44.3829,-12.062;-21.7329,7.188"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-44.3329,-12.012"/>
@@ -4511,7 +4590,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:real val="22.550000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="15.149999999999999"/>
+        <dia:real val="19.150000000000002"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#calendar_data#</dia:string>
@@ -4520,7 +4599,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>##</dia:string>
+        <dia:string>#Geared towards making adding events from the source easy.#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -4547,7 +4626,7 @@ refer: Can events from the source be referred to in the database (allowing user-
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -4972,7 +5051,7 @@ refer: Can events from the source be referred to in the database (allowing user-
             <dia:enum val="0"/>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>##</dia:string>
+            <dia:string>#Source implied by GetCurrentSource()#</dia:string>
           </dia:attribute>
           <dia:attribute name="abstract">
             <dia:boolean val="false"/>
@@ -4986,25 +5065,7 @@ refer: Can events from the source be referred to in the database (allowing user-
           <dia:attribute name="class_scope">
             <dia:boolean val="false"/>
           </dia:attribute>
-          <dia:attribute name="parameters">
-            <dia:composite type="umlparameter">
-              <dia:attribute name="name">
-                <dia:string>#Source#</dia:string>
-              </dia:attribute>
-              <dia:attribute name="type">
-                <dia:string>#&amp;source#</dia:string>
-              </dia:attribute>
-              <dia:attribute name="value">
-                <dia:string>##</dia:string>
-              </dia:attribute>
-              <dia:attribute name="comment">
-                <dia:string>##</dia:string>
-              </dia:attribute>
-              <dia:attribute name="kind">
-                <dia:enum val="1"/>
-              </dia:attribute>
-            </dia:composite>
-          </dia:attribute>
+          <dia:attribute name="parameters"/>
         </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
@@ -5020,6 +5081,36 @@ refer: Can events from the source be referred to in the database (allowing user-
             <dia:enum val="0"/>
           </dia:attribute>
           <dia:attribute name="comment">
+            <dia:string>#Source implied by GetCurrentSource()#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#NewCurrrentSource#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="abstract">
@@ -5040,7 +5131,7 @@ refer: Can events from the source be referred to in the database (allowing user-
                 <dia:string>#Source#</dia:string>
               </dia:attribute>
               <dia:attribute name="type">
-                <dia:string>#&amp;source#</dia:string>
+                <dia:string>#source#</dia:string>
               </dia:attribute>
               <dia:attribute name="value">
                 <dia:string>##</dia:string>
@@ -5053,36 +5144,6 @@ refer: Can events from the source be referred to in the database (allowing user-
               </dia:attribute>
             </dia:composite>
           </dia:attribute>
-        </dia:composite>
-        <dia:composite type="umloperation">
-          <dia:attribute name="name">
-            <dia:string>#NewSource#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="stereotype">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#source&amp;#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="inheritance_type">
-            <dia:enum val="2"/>
-          </dia:attribute>
-          <dia:attribute name="query">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="parameters"/>
         </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
@@ -5149,6 +5210,156 @@ refer: Can events from the source be referred to in the database (allowing user-
             </dia:composite>
           </dia:attribute>
         </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetCurrentSource#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#&amp;source#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetOccurrences#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#array[&amp;occurrence]#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetEvents#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#array[&amp;event]#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetOrganisations#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#array[$organisation]#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#GetSources#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#array[&amp;source]#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
       </dia:attribute>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -5157,14 +5368,14 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O35">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.7829,-6.91202"/>
+        <dia:point val="-21.7829,-6.912"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.8329,-20.0685;-18.8469,-6.01202"/>
+        <dia:rectangle val="-21.8329,-20.0685;-18.8469,-6.012"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-21.7829,-6.91202"/>
-        <dia:point val="-18.9469,-6.91202"/>
+        <dia:point val="-21.7829,-6.912"/>
+        <dia:point val="-18.9469,-6.912"/>
         <dia:point val="-18.9469,-19.3685"/>
         <dia:point val="-21.6519,-19.3685"/>
       </dia:attribute>
@@ -5225,14 +5436,14 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O36">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.7829,-6.11202"/>
+        <dia:point val="-21.7829,-6.112"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.8329,-20.0944;-10.8883,-5.21202"/>
+        <dia:rectangle val="-21.8329,-20.0944;-10.8883,-5.212"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-21.7829,-6.11202"/>
-        <dia:point val="-16.3606,-6.11202"/>
+        <dia:point val="-21.7829,-6.112"/>
+        <dia:point val="-16.3606,-6.112"/>
         <dia:point val="-16.3606,-19.3944"/>
         <dia:point val="-10.9383,-19.3944"/>
       </dia:attribute>
@@ -5293,16 +5504,16 @@ refer: Can events from the source be referred to in the database (allowing user-
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O37">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.7829,-4.51202"/>
+        <dia:point val="-21.7829,-4.512"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.8329,-14.8696;13.0352,-3.61202"/>
+        <dia:rectangle val="-21.8329,-14.4696;13.0352,-3.612"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-21.7829,-4.51202"/>
-        <dia:point val="10.3317,-4.51202"/>
-        <dia:point val="10.3317,-14.1696"/>
-        <dia:point val="12.9852,-14.1696"/>
+        <dia:point val="-21.7829,-4.512"/>
+        <dia:point val="10.3317,-4.512"/>
+        <dia:point val="10.3317,-13.7696"/>
+        <dia:point val="12.9852,-13.7696"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -5356,21 +5567,21 @@ refer: Can events from the source be referred to in the database (allowing user-
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O34" connection="23"/>
-        <dia:connection handle="1" to="O27" connection="12"/>
+        <dia:connection handle="1" to="O27" connection="14"/>
       </dia:connections>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O38">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.7829,-5.31202"/>
+        <dia:point val="-21.7829,-5.312"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.8329,-9.57485;-2.4612,-4.41202"/>
+        <dia:rectangle val="-21.8329,-9.5749;-2.4612,-4.412"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-21.7829,-5.31202"/>
-        <dia:point val="-12.147,-5.31202"/>
-        <dia:point val="-12.147,-8.87485"/>
-        <dia:point val="-2.5112,-8.87485"/>
+        <dia:point val="-21.7829,-5.312"/>
+        <dia:point val="-12.1471,-5.312"/>
+        <dia:point val="-12.1471,-8.8749"/>
+        <dia:point val="-2.5112,-8.8749"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -5425,6 +5636,47 @@ refer: Can events from the source be referred to in the database (allowing user-
       <dia:connections>
         <dia:connection handle="0" to="O34" connection="21"/>
         <dia:connection handle="1" to="O31" connection="14"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="UML - Dependency" version="1" id="O39">
+      <dia:attribute name="obj_pos">
+        <dia:point val="2.09972,3.8"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="-22.1826,-2.887;2.14972,3.85"/>
+      </dia:attribute>
+      <dia:attribute name="orth_points">
+        <dia:point val="2.09972,3.8"/>
+        <dia:point val="-9.81642,3.8"/>
+        <dia:point val="-9.81642,-2.437"/>
+        <dia:point val="-21.7326,-2.437"/>
+      </dia:attribute>
+      <dia:attribute name="orth_orient">
+        <dia:enum val="0"/>
+        <dia:enum val="1"/>
+        <dia:enum val="0"/>
+      </dia:attribute>
+      <dia:attribute name="orth_autoroute">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="text_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="draw_arrow">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O0" connection="14"/>
+        <dia:connection handle="1" to="O34" connection="50"/>
       </dia:connections>
     </dia:object>
   </dia:layer>
