@@ -15,6 +15,9 @@
 		if (isset($login_message)) {
 			echo '<P>'.$login_message.'</P>';
 		}
+		if (isset($previous_post_data)) {
+			echo '<P><B>The form data you submitted will be sent after you log in from this page.</B></P>';
+		}
 	?>
 	<form name='login_form' action='<?php echo $target; ?>' method='post' class='form'>
 		<fieldset>

@@ -1,7 +1,8 @@
 <div id="<?php echo $style; ?>">
 	<ul>
 <?php
-	foreach ($items as $key => $item) {
+	/// @note Echo in reverse because right aligned.
+	foreach (array_reverse($items) as $key => $item) {
 		$link_attributes = 'href="'.$item['link'].'"';
 		if ($key === $selected) {
 			$link_attributes .= ' class="current"';

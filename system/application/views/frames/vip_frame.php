@@ -98,6 +98,9 @@ function preloader()
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('calendar'); ?>'>Manage Events</a>
 		</div>
+		<div class='navigationmenu_item'>
+			<a href='<?php echo vip_url('notices'); ?>'>Manage Notices</a>
+		</div>
 		<div class='navigationmenu_item_noborder'>
 			<a href='<?php echo vip_url('members'); ?>'>Manage Members</a>
 		</div>

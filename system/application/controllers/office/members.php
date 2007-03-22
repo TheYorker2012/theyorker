@@ -3,6 +3,11 @@
 /**
  * @file controllers/office/members.php
  * @brief Viparea members controller.
+ *
+ * @see http://real.theyorker.co.uk/wiki/Functional:Member_Manager
+ *
+ * @version 20/03/2007 James Hogan (jh559)
+ *	- Added tabs
  */
 
 /// Viparea members controller.
@@ -67,6 +72,26 @@ class Members extends Controller
 		
 		$this->mAllTeams = NULL;
 		$this->mOrganisation = NULL;
+	}
+	
+	/// Set up the tabs on the main_frame.
+	/**
+	 * @param $SelectedPage string Selected Page.
+	 * @pre CheckPermissions must have already been called.
+	 */
+	protected function _SetupTabs($SelectedPage)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('members', 'Members',
+				vip_url('members'));
+		$navbar->AddItem('invite', 'New Members',
+				vip_url('members/invite'));
+		$navbar->AddItem('teams', 'Teams',
+				vip_url('members/teams'));
+		$navbar->AddItem('mailing', 'Mailing Lists',
+				vip_url('members/mailing'));
+		
+		$this->main_frame->SetPage($SelectedPage);
 	}
 	
 	/// Load the teams up to a specific depth.
@@ -290,6 +315,8 @@ class Members extends Controller
 		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/list/...
 		
+		$this->_SetupTabs('members');
+		
 		$this->_GetTeams();
 		
 		$this->_handle_member_list_member_operation();
@@ -332,6 +359,8 @@ class Members extends Controller
 	function info($EntityId = NULL, $Page = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		$this->_SetupTabs('members');
 		
 		// If no entity id was provided, redirect back to members list.
 		if (NULL === $EntityId) {
@@ -455,6 +484,8 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
+		$this->_SetupTabs('teams');
+		
 		$this->_GetTeams();
 		
 		$team_id = VipOrganisationId();
@@ -525,6 +556,8 @@ class Members extends Controller
 	 *	- 'post'
 	 *	- 'edit'
 	 * @param $Suboption3 [string] Another sub operation code.
+	 *
+	 * @todo Move back to directory :P
 	 */
 	function cards(	$Suboption1 = NULL,
 					$Suboption2 = NULL,
@@ -633,6 +666,8 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
+		$this->_SetupTabs('invite');
+		
 		$default_list = '';
 		
 		$this->_GetTeams();
@@ -704,9 +739,12 @@ class Members extends Controller
 	 *	- 'filter'
 	 *	- 'post'
 	 */
-	function contact($Method = NULL, $Operation = NULL)
+	function mailing($Method = NULL, $Operation = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		$this->_SetupTabs('mailing');
+		
 		/// @todo Implement $viparea/members/contact/...
 		$this->messages->AddMessage('information', 'todo: implement member contact');
 		

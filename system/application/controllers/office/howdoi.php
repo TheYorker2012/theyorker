@@ -25,14 +25,14 @@ class Howdoi extends Controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('categories', 'Categories',
-				'/office/howdoi/categories');
-		$navbar->AddItem('published', 'Live',
-				'/office/howdoi/published');
-		$navbar->AddItem('requests', 'Articles',
-				'/office/howdoi/requests');
 		$navbar->AddItem('suggestions', 'Suggestions',
 				'/office/howdoi/suggestions');
+		$navbar->AddItem('requests', 'Articles',
+				'/office/howdoi/requests');
+		$navbar->AddItem('published', 'Live',
+				'/office/howdoi/published');
+		$navbar->AddItem('categories', 'Categories',
+				'/office/howdoi/categories');
 	}
 
 	/**

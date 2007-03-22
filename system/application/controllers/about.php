@@ -42,7 +42,7 @@ class About extends Controller
 			$data['textblocks'][] = array(
 				'shorttitle'	=> str_replace(' ','_',$block['title']),
 				'blurb'			=> $block['blurb'],
-				'image'			=> imageLocTag($block['image'], "medium"),
+				'image'			=> imageLocTag((array_key_exists('image',$block)?$block['image']:-1), "medium"),
 			);
 		}
 		
