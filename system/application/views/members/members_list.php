@@ -4,6 +4,8 @@
  * @brief Show a list of all the members and allow filtering.
  */
 
+/// @todo all emails should be displayed
+
 /// Show select options for a team.
 function EchoOptionTeams($team, $selected, $head, $depth = 0)
 {
@@ -69,35 +71,57 @@ function FilterLinkBool($filter, $field, $value)
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><?php /*
+			<th align="center"><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
-			<th><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
-			<th><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
+			<th align="center"><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
+			<th align="center"><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
+			<th>Card</th>
 		</tr>
-		<?php foreach ($members as $membership) {?>
+		<?php 
+		$i = -1;
+		foreach ($members as $membership) {
+		$i = ($i+1)%4;
+		?>
 		<tr>
 			<td align="center">
 				<input type="checkbox" name="members_selected[]"
 					value="user<?php echo $membership['user_id']; ?>"
 					id="user<?php echo $membership['user_id']; ?>" /></td>
 			<td colspan=2><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname'].' '.$membership['surname']; ?></a></td>
+			<?php /** @todo email should show username */ ?>
 			<td><?php if (NULL !== $membership['email']) { ?>
-				<a href='mailto:<?php echo $membership['email'];?>'>email</a>
+				<a href='mailto:<?php echo $membership['email'];?>'><IMG SRC="/images/prototype/members/email.png" ALT="email" /></a>
 			<?php } else {?>
 				<IMG SRC="/images/prototype/members/nomail.png" ALT="not available" />
 			<?php } ?></td>
-			<td><?php if (isset($membership['confirmed'])) FilterLinkBool($filter, 'confirmed', $membership['confirmed']); ?></td><?php /*
+			<td align="center"><?php if (isset($membership['confirmed']) && $membership['confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/confirmed.png" ALT="Yes" />
+			<?php } ?></td><?php /*
 			<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
-			<td><?php if (isset($membership['paid'])) FilterLinkBool($filter, 'paid', $membership['paid']); ?></td>
-			<td><?php if (isset($membership['vip'])) FilterLinkBool($filter, 'vip', $membership['vip']); ?></td>
+			<td align="center"><?php if (isset($membership['paid']) && $membership['paid']) { ?>
+				<IMG SRC="/images/prototype/members/paid.png" ALT="Yes" />
+			<?php } ?></td>
+			<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
+				<IMG SRC="/images/prototype/members/vip.png" ALT="Yes" />
+			<?php } ?></td>
+			<td align="center">
+			<?php if ($i == 1) { ?>
+				<IMG SRC="/images/prototype/members/card_active.png" ALT="Active" />
+			<?php } elseif ($i == 2) { ?>
+				<IMG SRC="/images/prototype/members/card_expired.png" ALT="Expired" />
+			<?php } elseif ($i == 3) { ?>
+				<IMG SRC="/images/prototype/members/card_inactive.png" ALT="Inactive" />
+			<?php } ?>
+			</td>
 		</tr>
 		<?php } ?>
 		</table>
 		<?php
 			/// @TODO Check/uncheck all
 		?>
-		<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
-		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>
+		<?php /*<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
+		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>*/ ?>
+		<input type="button"
 		
 		<fieldset>
 			<input type='submit' class='button' name='members_select_unsubscribe_button' value='Unsubscribe'>

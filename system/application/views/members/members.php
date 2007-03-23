@@ -1,13 +1,64 @@
+<?php
+
+
+/// Draw a branch of the tree of teams
+function EchoTeamFilterOptions($team, $path = '', $indentation = 0)
+{
+	foreach ($team['subteams'] as $subteam) {
+		echo '<option name="team_'.$subteam['id'].'">';
+		//echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$indentation);
+		echo $path.$subteam['name'];
+		echo '</option>';
+		if (!empty($subteam['subteams'])) {
+			EchoTeamFilterOptions($subteam, $path.$subteam['name'].'/', $indentation+1);
+		}
+	}
+}
+
+?>
+
 <div class='RightToolbar'>
 <h4>What's this?</h4>
 	<p>
 		<?php echo $main_text; ?>
 	</p>
 
+	<H4>Search</H4>
+		<input type="checkbox" /> Within current filter<br />
+		<input value="" />
+		<input type="submit" value="Search" />
+	<H4>Filters</H4>
+		<select>
+			<option>All members</option>
+			<optgroup label="Member status:">
+				<option>Confirmed</option>
+				<option>Unconfirmed</option>
+				<option>Paying</option>
+				<option>Non-paying</option>
+				<option>VIPs</option>
+				<option>Non-VIPs</option>
+			</optgroup>
+			<optgroup label="Business card status:">
+				<option>With active business card</option>
+				<option>Still writing business card</option>
+				<option>With expired business card</option>
+				<option>Without business card</option>
+			</optgroup>
+			<?php
+				if (!empty($organisation['subteams'])) {
+					echo '<optgroup label="In team:">';
+					EchoTeamFilterOptions($organisation, FALSE);
+					echo '</optgroup>';
+				}
+			?>
+		</select>
+		<input type="submit" value="Show" />
+		<a href="#">advanced filter options</a>
+		<p>Showing confirmed members</p>
 <?php
 if (!empty($filter['descriptors'])) {
 	?><P>
-	<H4>Filters</H4>
+	<H4>Advanced Filters</H4>
 	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all</A></SMALL>
 	<OL><?php
 	foreach (array_reverse($filter['descriptors']) as $descriptor) {
@@ -22,47 +73,9 @@ if (!empty($filter['descriptors'])) {
 	?></OL>
 	</P><?php
 }
-?>
-<h4>Filter by details</h4>
-<input type='checkbox' name='filter_paid' value='1'> Paid<br />
-<input type='checkbox' name='filter_mailing_list' value='1'> On Mailing List<br />
-<input type='checkbox' name='filter_reply' value='1'> Awaiting Reply<br />
-<input type='checkbox' name='filter_vip' value='1'> VIP<br />
-<?php
-	/// Draw a branch of the tree of teams
-	function EchoTeamFilters($team, $in_list = TRUE)
-	{
-		if ($in_list) {
-			echo '<LI>';
-		}
-		echo '<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />';
-		echo $team['name'];
-		if (!empty($team['subteams'])) {
-			echo '<UL>';
-			foreach ($team['subteams'] as $subteam) {
-				EchoTeamFilters($subteam);
-			}
-			echo '</UL>';
-		}
-		if ($in_list) {
-			echo '</LI>';
-		}
-		return count($team['subteams']);
-	}
-	
-	if (!empty($organisation['subteams'])) {
-		echo '<h4>Filter by team</h4>';
-		// Draw the tree of teams
-		foreach ($organisation['subteams'] as $team) {
-			if (!EchoTeamFilters($team, FALSE)) {
-				echo '<br />';
-			}
-		}
-	}
+
+
 ?>
 </div>
-<a href='<?php echo vip_url('members/invite'); ?>'>Invite members to join</a><BR />
-<a href='<?php echo vip_url('members/teams'); ?>'>Manage teams</a><BR />
-<a href='<?php echo vip_url('members/cards'); ?>'>Manage business cards</a><BR />
 <?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>

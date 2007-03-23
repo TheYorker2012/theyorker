@@ -22,9 +22,9 @@
 == URI design ==
 === Base of all member controller uris ===
 <- base -><-- controller + org --><...
-/admin/vip
-  /viparea
-          /$organisation/members
+/admin/pr
+ /viparea
+         /$organisation/members
 
 === Subcontroller URI design ===
 <<VIP+PR>>
@@ -85,9 +85,3 @@ e.g. to get users in tech and news team who haven't submitted cards
 /team/theyorker_tech/team/theyorker_news/not/carded/not/cardable
 
 == DB Requirements == 
-
-== Questions ==
-Wikitext in mass notifications/emails?
- - Nick: Hell ye! (justification: it's an advanced level they don't need to use,
-                   but can quickly learn and feel special (e.g. for headings etc).
-                   we can have it in the pr training too.)

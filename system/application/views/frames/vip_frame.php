@@ -92,6 +92,9 @@ function preloader()
 	</div>
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
+		<div class='navigationmenu_item_noborder'>
+			<a href='<?php echo site_url('viparea'); ?>'>VIP Area Home</a>
+		</div>
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('directory/information'); ?>'>Directory Entry</a>
 		</div>
