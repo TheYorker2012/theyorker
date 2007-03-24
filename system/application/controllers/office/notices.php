@@ -41,8 +41,6 @@ class Notices extends controller
 				vip_url('notices'));
 		$navbar->AddItem('compose', 'Compose',
 				vip_url('notices/compose'));
-		$navbar->AddItem('settings', 'Settings',
-				vip_url('notices/settings'));
 		
 		$this->main_frame->SetPage($SelectedPage);
 	}
@@ -137,25 +135,6 @@ class Notices extends controller
 		$data = array();
 		
 		$this->main_frame->SetContentSimple('notices/compose',$data);
-		
-		$this->main_frame->SetTitleParameters(array(
-			'organisation' => VipOrganisationName(),
-		));
-		
-		$this->main_frame->Load();
-	}
-	
-	/// Notices settings.
-	function settings()
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->pages_model->SetPageCode('viparea_notices_settings');
-		$this->_SetupTabs('settings');
-		
-		$data = array();
-		
-		$this->main_frame->SetContentSimple('notices/settings',$data);
 		
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),

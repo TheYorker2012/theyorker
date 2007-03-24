@@ -89,11 +89,13 @@ function FilterLinkBool($filter, $field, $value)
 					id="user<?php echo $membership['user_id']; ?>" /></td>
 			<td colspan=2><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname'].' '.$membership['surname']; ?></a></td>
 			<?php /** @todo email should show username */ ?>
+			
 			<td><?php if (NULL !== $membership['email']) { ?>
-				<a href='mailto:<?php echo $membership['email'];?>'><IMG SRC="/images/prototype/members/email.png" ALT="email" /></a>
+				<a href='mailto:<?php echo $membership['email'];?>'><?php echo $membership['username']; ?></a>
 			<?php } else {?>
-				<IMG SRC="/images/prototype/members/nomail.png" ALT="not available" />
+				<?php echo $membership['username']; ?>
 			<?php } ?></td>
+			
 			<td align="center"><?php if (isset($membership['confirmed']) && $membership['confirmed']) { ?>
 				<IMG SRC="/images/prototype/members/confirmed.png" ALT="Yes" />
 			<?php } ?></td><?php /*
@@ -116,23 +118,37 @@ function FilterLinkBool($filter, $field, $value)
 		</tr>
 		<?php } ?>
 		</table>
-		<?php
-			/// @TODO Check/uncheck all
-		?>
 		<?php /*<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
 		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>*/ ?>
-		<input type="button"
-		
 		<fieldset>
-			<input type='submit' class='button' name='members_select_unsubscribe_button' value='Unsubscribe'>
-			<input type='submit' class='button' name='members_select_request_cards_button' value='Request business cards'>
+		<input type="button" value="select all" />
+		<input type="button" value="unselect all" />
 		</fieldset>
 		
-		<fieldset>
-			<label for="invite_team">Invite to team:</label>
-			<select name="invite_team"><?php EchoOptionTeams($organisation, 0, TRUE, 0); ?></select>
-			<input type='submit' class='button' name='members_select_invite_button' value='Invite'>
-		</fieldset>
+		<P>
+			Member actions:
+			<select>
+				<!--optgroup label="Actions:"-->
+					<option selected>Send e-mail</option>
+					<option>Remove membership</option>
+					<option>Make VIP</option>
+					<option>Demote from VIP</option>
+					<option>Set as paid</option>
+					<option>Set as not paid</option>
+					<option>Request business cards</option>
+					<option>Expire business cards</option>
+				<!--/optgroup-->
+				<?php
+					if (!empty($organisation['subteams'])) {
+						echo '<optgroup label="Invite:">';
+						EchoTeamFilterOptions($organisation, 'Invite to team ', FALSE);
+						echo '</optgroup>';
+					}
+				?>
+			</select>
+			<input type="button" value="Go" />
+		</P>
+		<P>Selected members (whats this for?)</P>
 	</form>
 
 </div>

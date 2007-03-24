@@ -28,17 +28,20 @@ class Members_model extends Model {
 				subscriptions.subscription_email AS on_mailing_list,
 				subscriptions.subscription_vip AS vip,
 				subscriptions.subscription_user_confirmed AS confirmed,
+				entities.entity_username AS username,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
 				users.user_nickname AS nickname,
-				IF(subscriptions.subscription_email, users.user_email, NULL) AS email,
+				IF(subscriptions.subscription_user_confirmed = TRUE, users.user_email, NULL) AS email,
 				users.user_gender AS gender,
 				users.user_enrolled_year AS enrol_year
 			FROM
 				subscriptions
 			INNER JOIN users
 				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
+			INNER JOIN entities
+				ON	subscriptions.subscription_user_entity_id = entities.entity_id
 			WHERE';
 		// If there's a restriction on the usert, apply it here
 		if (NULL !== $user_id) {

@@ -2,15 +2,15 @@
 
 
 /// Draw a branch of the tree of teams
-function EchoTeamFilterOptions($team, $path = '', $indentation = 0)
+function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0)
 {
 	foreach ($team['subteams'] as $subteam) {
 		echo '<option name="team_'.$subteam['id'].'">';
 		//echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$indentation);
-		echo $path.$subteam['name'];
+		echo $prefix.$path.$subteam['name'];
 		echo '</option>';
 		if (!empty($subteam['subteams'])) {
-			EchoTeamFilterOptions($subteam, $path.$subteam['name'].'/', $indentation+1);
+			EchoTeamFilterOptions($subteam, $prefix, $path.$subteam['name'].'/', $indentation+1);
 		}
 	}
 }
@@ -47,7 +47,7 @@ function EchoTeamFilterOptions($team, $path = '', $indentation = 0)
 			<?php
 				if (!empty($organisation['subteams'])) {
 					echo '<optgroup label="In team:">';
-					EchoTeamFilterOptions($organisation, FALSE);
+					EchoTeamFilterOptions($organisation, '', FALSE);
 					echo '</optgroup>';
 				}
 			?>

@@ -21,6 +21,7 @@
 
 <div class='RightToolbar'>
 info about writing notices from db including link to wikitext help page
+<P><a href="<?php echo vip_url('account/email'); ?>">Email settings</a></P>
 </div>
 
 <div>

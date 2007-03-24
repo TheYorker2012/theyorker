@@ -3,9 +3,7 @@
 /// Main viparea controller.
 class Account extends Controller
 {
-	/**
-	 * @brief Default constructor.
-	 */
+	/// Default constructor.
 	function __construct()
 	{
 		parent::Controller();
@@ -15,49 +13,13 @@ class Account extends Controller
 		$this->load->helper('wikilink');
 	}
 	
-	private function _GetMaintainer ($organisation) {
-		//Get data from model
-		$data = $this->orgaccount_model->GetDirectoryOrganisationMaintainer($organisation);
-		
-		foreach($data as $row){
-			//If maintainer_user_entity_id is empty the maintainer is not a student the varible student is used so the view knows which varibles from the controler to show.
-			if($row['organisation_maintainer_user_entity_id'] == null){
-			$student = false;
-			}else{
-			$student = true;
-			}
-			if($row['organisation_maintainer_user_entity_id'] == null and $row['organisation_maintainer_name'] == null){
-			$maintained = false;
-			}else{
-			$maintained = true;
-			}
-			if($row['organisation_maintainer_user_entity_id'] == $this->user_auth->entityId){
-			$is_user = true;
-			}else{
-			$is_user = false;
-			}
-			// Construct array of information
-			$maintainer = array(
-								'entity_id' => $row['organisation_entity_id'],
-								'maintainer_email' => $row['organisation_maintainer_email'],
-								'maintainer_user_entity_id' => $row['organisation_maintainer_user_entity_id'],
-								'maintainer_name' => $row['organisation_maintainer_name'],
-								'maintainer_firstname' => $row['user_firstname'],
-								'maintainer_surname' => $row['user_surname'],
-								'maintainer_student_email' => $row['user_email'],
-								'student' => $student,
-								'is_user' => $is_user,
-								'maintained' => $maintained,
-								);
-		}
-		return $maintainer;
-	}
-	function update()
+	function index()
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account');
+		$this->_SetupTabs('account');
 		
 		//Do password checks before updating
 		if(!empty($_POST["password_button"])){
@@ -102,6 +64,7 @@ class Account extends Controller
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account_maintainer');
+		$this->_SetupTabs('maintainer');
 		
 		//Send update if information is given
 		if(!empty($_POST['maintainer_button'])){
@@ -153,6 +116,87 @@ class Account extends Controller
 		
 		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	/// Email settings.
+	function email()
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$this->pages_model->SetPageCode('viparea_account_email');
+		$this->_SetupTabs('email');
+		
+		$data = array();
+		
+		$this->load->helper('string');
+		$this->main_frame->SetContentSimple('viparea/account_email',$data);
+		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
+		$this->main_frame->Load();
+	}
+	
+	
+	
+	
+	
+	/// Set up the tabs on the main_frame.
+	/**
+	 * @param $SelectedPage string Selected Page.
+	 * @pre CheckPermissions must have already been called.
+	 */
+	protected function _SetupTabs($SelectedPage)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('account', 'Account',
+				vip_url('account'));
+		$navbar->AddItem('maintainer', 'Maintainer',
+				vip_url('account/maintainer'));
+		$navbar->AddItem('email', 'Email',
+				vip_url('account/email'));
+		
+		$this->main_frame->SetPage($SelectedPage);
+	}
+	
+	
+	private function _GetMaintainer ($organisation) {
+		//Get data from model
+		$data = $this->orgaccount_model->GetDirectoryOrganisationMaintainer($organisation);
+		
+		foreach($data as $row){
+			//If maintainer_user_entity_id is empty the maintainer is not a student the varible student is used so the view knows which varibles from the controler to show.
+			if($row['organisation_maintainer_user_entity_id'] == null){
+			$student = false;
+			}else{
+			$student = true;
+			}
+			if($row['organisation_maintainer_user_entity_id'] == null and $row['organisation_maintainer_name'] == null){
+			$maintained = false;
+			}else{
+			$maintained = true;
+			}
+			if($row['organisation_maintainer_user_entity_id'] == $this->user_auth->entityId){
+			$is_user = true;
+			}else{
+			$is_user = false;
+			}
+			// Construct array of information
+			$maintainer = array(
+								'entity_id' => $row['organisation_entity_id'],
+								'maintainer_email' => $row['organisation_maintainer_email'],
+								'maintainer_user_entity_id' => $row['organisation_maintainer_user_entity_id'],
+								'maintainer_name' => $row['organisation_maintainer_name'],
+								'maintainer_firstname' => $row['user_firstname'],
+								'maintainer_surname' => $row['user_surname'],
+								'maintainer_student_email' => $row['user_email'],
+								'student' => $student,
+								'is_user' => $is_user,
+								'maintained' => $maintained,
+								);
+		}
+		return $maintainer;
 	}
 }
 

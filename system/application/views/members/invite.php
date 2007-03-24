@@ -8,9 +8,7 @@
 	<P>you have 100 members (of which 20 have paid) and 200 invited (of which 2 have paid)</P>
 </div>
 
-<P>Each of the following boxes will appear on seperate pages to form a wizard</P>
-<P>Basically the first and last box are the main pages, the second and third are for fixing errors in user input from first</P>
-
+<?php if ($State == 1) { ?>
 <div class="<?php echo alternator('blue','grey'); ?>_box">
 	<H2>Block Invite</H2>
 	<P>
@@ -18,7 +16,7 @@
 		You can also put p and v at the end to indicate paid and vip.
 	</P>
 	<?php echo $what_to_do; ?>
-	<form name='members_invite_form' action='<?php echo $target; ?>' method='POST' class='form'>
+	<form name='members_invite_form' action='2' method='POST' class='form'>
 		<fieldset>
 			<label for='invite_list'>Invite List:</label>
 			<textarea name="invite_list" class="full" rows="10"><?php echo $default_list; ?></textarea>
@@ -27,6 +25,7 @@
 	</form>
 </div>
 
+<?php } elseif ($State == 2) { ?>
 <div class="<?php echo alternator('blue','grey'); ?>_box">
 	<H2>Errors in Block Invite</H2>
 	<P>
@@ -37,7 +36,7 @@
 		81 users selected for invitation.
 	</P>
 	<?php //echo $what_to_do; ?>
-	<form name='members_invite_form' action='<?php echo $target; ?>' method='POST' class='form'>
+	<form name='members_invite_form' action='3' method='POST' class='form'>
 		<fieldset>
 			<table width="100%">
 			<tr>
@@ -74,6 +73,7 @@
 	</form>
 </div>
 
+<?php } elseif ($State == 3) { ?>
 <div class="<?php echo alternator('blue','grey'); ?>_box">
 	<H2>Unrecognised Emails in Block Invite</H2>
 	<P>
@@ -83,7 +83,7 @@
 	<P>
 		81 users selected for invitation.
 	</P>
-	<form class="form">
+	<form class="form" action="4">
 	<table width="100%">
 		<tr>
 			<th></th>
@@ -113,6 +113,7 @@
 	</form>
 </div>
 
+<?php } elseif ($State == 4) { ?>
 <div class="<?php echo alternator('blue','grey'); ?>_box">
 	<H2>Invitation List</H2>
 	<P>
@@ -126,7 +127,7 @@
 	<P>
 		81 users selected for invitation.
 	</P>
-	<form class="form">
+	<form class="form" action="1">
 	<table width="100%">
 		<tr>
 			<th></th>
@@ -170,6 +171,7 @@
 	</fieldset>
 	</form>
 </div>
+<?php } ?>
 <?php /*
 <div class="<?php echo alternator('blue','grey'); ?>_box">
 	<H2>Recently invited users</H2>

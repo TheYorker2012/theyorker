@@ -38,4 +38,3 @@
 	</form>
 </div>
 <a href='<?php echo vip_url('account/update'); ?>'>Back to my account settings.</a>
-<? echo maintainer; ?>
