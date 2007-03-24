@@ -109,7 +109,7 @@ function preloader()
 		</div>
 		
 		<div class='navigationmenu_item'>
-			<a href='<?php echo vip_url('account/update'); ?>'>My Account</a>
+			<a href='<?php echo vip_url('account'); ?>'>My Account</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('advertising'); ?>'>Advertising</a>
