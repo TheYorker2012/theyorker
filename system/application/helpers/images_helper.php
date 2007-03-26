@@ -90,7 +90,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		if ($force or is_file($location)) {
 			return '/'.$location;
 		} else {
-			return '/images/photos/null.jpg';
+			return '/images/images/'.$type.'/null.jpg';
 		}
 	} else {
 		$CI =& get_instance();
@@ -113,7 +113,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 			if ($force or is_file($location)) {
 				return '/'.$location;
 			} else {
-				return '/images/photos/null.jpg';
+				return '/images/images/'.$fetched_type.'/null.jpg';
 			}
 		} else {
 			return '/images/photos/null.jpg';

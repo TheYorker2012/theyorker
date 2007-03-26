@@ -92,18 +92,24 @@ function preloader()
 	</div>
 	<br style="clear: both;" />
 	<div style="float: left; width: 120px; margin-top: 8px; margin-right: 5px; background-color: #fff;">
+		<div class='navigationmenu_item_noborder'>
+			<a href='<?php echo site_url('viparea'); ?>'>VIP Area Home</a>
+		</div>
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('directory/information'); ?>'>Directory Entry</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('calendar'); ?>'>Manage Events</a>
 		</div>
+		<div class='navigationmenu_item'>
+			<a href='<?php echo vip_url('notices'); ?>'>Manage Notices</a>
+		</div>
 		<div class='navigationmenu_item_noborder'>
 			<a href='<?php echo vip_url('members'); ?>'>Manage Members</a>
 		</div>
 		
 		<div class='navigationmenu_item'>
-			<a href='<?php echo vip_url('account/update'); ?>'>My Account</a>
+			<a href='<?php echo vip_url('account'); ?>'>My Account</a>
 		</div>
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('advertising'); ?>'>Advertising</a>

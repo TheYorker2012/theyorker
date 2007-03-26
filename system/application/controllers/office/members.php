@@ -3,6 +3,11 @@
 /**
  * @file controllers/office/members.php
  * @brief Viparea members controller.
+ *
+ * @see http://real.theyorker.co.uk/wiki/Functional:Member_Manager
+ *
+ * @version 20/03/2007 James Hogan (jh559)
+ *	- Added tabs
  */
 
 /// Viparea members controller.
@@ -67,6 +72,26 @@ class Members extends Controller
 		
 		$this->mAllTeams = NULL;
 		$this->mOrganisation = NULL;
+	}
+	
+	/// Set up the tabs on the main_frame.
+	/**
+	 * @param $SelectedPage string Selected Page.
+	 * @pre CheckPermissions must have already been called.
+	 */
+	protected function _SetupTabs($SelectedPage)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('members', 'Members',
+				vip_url('members'));
+		$navbar->AddItem('invite', 'New Members',
+				vip_url('members/invite'));
+		$navbar->AddItem('teams', 'Teams',
+				vip_url('members/teams'));
+		$navbar->AddItem('mailing', 'Mailing Lists',
+				vip_url('members/mailing'));
+		
+		$this->main_frame->SetPage($SelectedPage);
 	}
 	
 	/// Load the teams up to a specific depth.
@@ -163,75 +188,6 @@ class Members extends Controller
 		$this->mFilterDescriptors = array();
 		
 		$this->mIsFilterOn = FALSE;
-		if ($this->uri->total_rsegments() >= $FilterSegment) {
-			static $field_translator = array(
-				'teamid'		=> 'subscriptions.subscription_organisation_entity_id',
-				'user'			=> 'users.user_entity_id',
-				'card'			=> 'NULL',
-				'paid' 			=> 'subscriptions.subscription_paid',
-				'vip'			=> 'subscriptions.subscription_vip',
-				'confirmed'		=> 'subscriptions.subscription_user_confirmed',
-				'carded'		=> 'NULL',
-				'carding'		=> 'NULL',
-				'cardable'		=> 'NULL',
-				'mailable'		=> 'subscriptions.subscription_email',
-				'search'		=> 'NULL',
-				'firstname'		=> 'users.user_firstname',
-				'surname'		=> 'users.user_surname',
-				'nickname'		=> 'users.user_nickname',
-				'enrol_year'	=> 'users.user_enrolled_year',
-			);
-			try {
-				// Process the filter url
-				$filter = $this->_GetFilter($FilterSegment);
-				
-				// Produce sql, the base url for extra filters, and sort fields
-				$this->mFilterBase .= '/'.implode('/', $this->_ReconstructFilter($filter));
-				/*if (vip_url($this->mFilterBase) !== $this->uri->uri_string()) {
-					// If the generated url is different, redirect to it as it is neater
-					redirect(vip_url($this->mFilterBase));
-					return TRUE;
-				}*/
-				$sql = $this->_GenerateFilterSql($filter, $field_translator);
-				$this->mSortFields = $this->_ReindexFilterSorts($filter);
-				$this->mFilterDescriptors = $this->_DescribeFilters($filter);
-				// Use db to get members using filter.
-				
-				// Get included and excluded teams
-				$included_teams = array();
-				if (empty($filter['team'][TRUE])) {
-					$included_teams[] = &$this->mOrganisation;
-				} else {
-					foreach ($filter['team'][TRUE] as $team_to_include => $enable) {
-						if (array_key_exists($team_to_include, $this->mAllTeams)) {
-							$included_teams[$team_to_include] = &$this->mAllTeams[$team_to_include];
-						}
-					}
-				}
-				$excluded_teams = array();
-				foreach ($filter['team'][FALSE] as $team_to_exclude => $enable) {
-					if (array_key_exists($team_to_exclude, $this->mAllTeams)) {
-						$excluded_teams[$team_to_exclude] = &$this->mAllTeams[$team_to_exclude];
-					}
-				}
-				// Recursively find all child teams and do the difference
-				$team_list = array_diff(
-					$this->organisation_model->GetSubteamIds(
-						array('subteams' => $included_teams)
-					),
-					$this->organisation_model->GetSubteamIds(
-						array('subteams' => $excluded_teams)
-					)
-				);
-				
-				$memberships = $this->members_model->GetMemberDetails(
-					array_keys($this->mAllTeams), NULL, $sql[0], $sql[1]);
-				$this->mIsFilterOn = TRUE;
-				$this->mLastSort = $filter['_data']['last_sort'];
-			} catch (Exception $e) {
-				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
-			}
-		}
 		
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
@@ -290,6 +246,8 @@ class Members extends Controller
 		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/list/...
 		
+		$this->_SetupTabs('members');
+		
 		$this->_GetTeams();
 		
 		$this->_handle_member_list_member_operation();
@@ -332,6 +290,8 @@ class Members extends Controller
 	function info($EntityId = NULL, $Page = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		$this->_SetupTabs('members');
 		
 		// If no entity id was provided, redirect back to members list.
 		if (NULL === $EntityId) {
@@ -455,6 +415,8 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
+		$this->_SetupTabs('teams');
+		
 		$this->_GetTeams();
 		
 		$team_id = VipOrganisationId();
@@ -525,6 +487,8 @@ class Members extends Controller
 	 *	- 'post'
 	 *	- 'edit'
 	 * @param $Suboption3 [string] Another sub operation code.
+	 *
+	 * @todo Move back to directory :P
 	 */
 	function cards(	$Suboption1 = NULL,
 					$Suboption2 = NULL,
@@ -626,38 +590,68 @@ class Members extends Controller
 		$this->main_frame->Load();
 	}
 	
+	/// Tags that can be appended to invite text emails
+	protected static $sInviteFlags = array(
+		'v' => 'vip',
+		'p' => 'paid',
+	);
+	
 	/// Invite new members to join.
 	/**
 	 */
-	function invite()
+	function invite($Stage = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		if (!is_numeric($Stage) || $Stage < 1 || $Stage > 4) {
+			redirect(vip_url('members/invite/1'));
+			return;
+		}
+		
+		$this->load->helper('string');
+		
+		$this->_SetupTabs('invite');
 		
 		$default_list = '';
 		
 		$this->_GetTeams();
 		
 		// Read the post data
-		$button = $this->input->post('members_invite_button');
-		if ($button === 'Invite Members') {
+		if ($this->input->post('members_invite_button') === 'Continue') {
 			$emails = $this->input->post('invite_list');
 			if (FALSE !== $emails) {
 				// Validate the emails
-				$email_list = explode("\n", $emails);
+				$preprocessed_emails = preg_replace('/[^a-zA-Z0-9@\.]+/',' ',$emails);
+				$word_list = explode(" ", $preprocessed_emails);
 				$valids = array();
 				$failures = array();
-				foreach ($email_list as $key => $email) {
-					if (!empty($email)) {
-						if (preg_match('/^([a-zA-Z0-9]{3,8})(@york\.ac\.uk)?$/', $email, $matches)) {
-							$valids[] = strtolower($matches[1]);
+				$last_email = NULL;
+				foreach ($word_list as $word) {
+					if (!empty($word)) {
+						if (preg_match('/^([a-zA-Z]{2,5}\d{2,4})(@york\.ac\.uk)?$/', $word, $matches)) {
+							$last_email = strtolower($matches[1]);
+							$valids[$last_email] = array();
 						} else {
-							$failures[] = $email;
+							$all_flags = ($last_email !== NULL);
+							if ($all_flags) {
+								foreach (str_split($word) as $flag) {
+									if (array_key_exists($flag, self::$sInviteFlags)) {
+										$valids[$last_email][self::$sInviteFlags[$flag]] = TRUE;
+									} else {
+										$all_flags = FALSE;
+										break;
+									}
+								}
+							}
+							if (!$all_flags) {
+								$failures[] = $word;
+							}
 						}
 					}
 				}
 				if (!empty($failures)) {
 					// There were failures!
-					$this->messages->AddMessage('error', 'The following lines don\'t look like valid york email addresses:<br />'.implode('<br />',$failures));
+					$this->messages->AddMessage('error', 'The following words don\'t look like valid york email addresses:<br />'.implode('<br />',$failures));
 					$default_list = $emails;
 					
 				} elseif (empty($valids)) {
@@ -666,13 +660,16 @@ class Members extends Controller
 					
 				} else {
 					// Everything was fine.
-					$default_list = $this->_InviteUsers(
-						VipOrganisationId(), $valids,
-						'username', VipOrganisationName()
-					);
-					$default_list = implode("\n",$default_list);
+					/// @todo display list of invites before inviting.
+					$this->messages->AddDumpMessage('valids',$valids);
 				}
 			}
+		} else if ($this->input->post('confirm_invite_button') === 'Confirm Invites') {
+			$default_list = $this->_InviteUsers(
+				VipOrganisationId(), $valids,
+				'username', VipOrganisationName()
+			);
+			$default_list = implode("\n",$default_list);
 		}
 		
 		$this->pages_model->SetPageCode('viparea_members_invite');
@@ -683,8 +680,10 @@ class Members extends Controller
 			'target' => vip_url('members/invite'),
 			'organisation' => $this->mOrganisation,
 			'default_list' => $default_list,
+			'step' => 1,
+			'State' => $Stage,
 		);
-		$this->main_frame->SetContentSimple('members/members_invite', $data);
+		$this->main_frame->SetContentSimple('members/invite', $data);
 	
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
@@ -704,9 +703,12 @@ class Members extends Controller
 	 *	- 'filter'
 	 *	- 'post'
 	 */
-	function contact($Method = NULL, $Operation = NULL)
+	function mailing($Method = NULL, $Operation = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		$this->_SetupTabs('mailing');
+		
 		/// @todo Implement $viparea/members/contact/...
 		$this->messages->AddMessage('information', 'todo: implement member contact');
 		
@@ -771,346 +773,6 @@ class Members extends Controller
 				'<ul><li>' . implode('</li><li>', $invite_deleted) . '</li></ul>');
 		}
 		return ($invite_deleted + $invite_invalids);
-	}
-	
-	/// Reindex the sorts in a filter.
-	/**
-	 * @param $Filter array Filter produced by _GetFilter.
-	 * @return array($fields => {TRUE (asc), FALSE (desc)}) sort fields.
-	 */
-	protected function _ReindexFilterSorts($Filter)
-	{
-		$result = array();
-		if (array_key_exists('sort', $Filter)) {
-			foreach ($Filter['sort'] as $sort) {
-				$result[$sort[1]] = ($sort[0] === 'asc');
-			}
-		}
-		return $result;
-	}
-	
-	/// Produce descpriptors of the filter.
-	/**
-	 * @param $Filter array Filter produced by _GetFilter.
-	 * @return array(descriptors) where descriptors contain:
-	 *	- 'description' (textural description)
-	 *	- 'link_remove' (link to append to negate the filter)
-	 *	- 'link_invert' (link to append to invert the filter)
-	 */
-	protected function _DescribeFilters($Filter)
-	{
-		$result = array();
-		
-		$sortable = FALSE;
-		foreach ($Filter as $filt => $er) {
-			if ($filt === '_data') {
-				continue;
-			}
-			if (is_bool($er)) {
-				if ($filt !== 'search') {
-					$single_result = array();
-					if (!$er) {
-						$single_result['description'] = 'member is not '.$filt;
-						$single_result['link_invert'] = $filt;
-					} else {
-						$single_result['description'] = 'member is '.$filt;
-						$single_result['link_invert'] = 'not/'.$filt;
-					}
-					$single_result['link_remove'] = 'scrap/'.$filt;
-					$result[] = $single_result;
-				} else {
-					//$result[] = 'search';
-				}
-			} elseif ($filt !== 'sort') {
-				foreach ($er[TRUE] as $id => $dummy) {
-					$single_result = array();
-					$single_result['description'] = 'include '.$filt.' '.$id;
-					$single_result['link_invert'] = 'not/'.$filt.'/'.$id;
-					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
-					$result[] = $single_result;
-				}
-				foreach ($er[FALSE] as $id => $dummy) {
-					$single_result = array();
-					$single_result['description'] = 'exclude '.$filt.' '.$id;
-					$single_result['link_invert'] = $filt.'/'.$id;
-					$single_result['link_remove'] = 'scrap/'.$filt.'/'.$id;
-					$result[] = $single_result;
-				}
-			} else {
-				$sortable = TRUE;
-			}
-		}
-		if ($sortable) {
-			static $invert_sort = array(
-				'asc' => 'desc',
-				'desc' => 'asc',
-			);
-			foreach ($Filter['sort'] as $sorter) {
-				$single_result = array();
-				$single_result['description'] = 'sorted by '.$sorter[1].' ('.$sorter[0].')';
-				$single_result['link_invert'] = 'sort/'.$invert_sort[$sorter[0]].'/'.$sorter[1];
-				$single_result['link_remove'] = 'scrap/sort/asc/'.$sorter[1];
-				$result[] = $single_result;
-			}
-		}
-		
-		return $result;
-	}
-	
-	/// Generate SQL from the filter produced by _GetFilter.
-	/**
-	 * @param $Filter array Filter produced by _GetFilter.
-	 * @param $Conditions array SQL condition strings.
-	 * @return array(sql, bind_data).
-	 */
-	protected function _GenerateFilterSql($Filter, $field_translator, $Conditions = array())
-	{
-		$sortable = FALSE;
-		$post_search = NULL;
-		$bind_data = array();
-		foreach ($Filter as $filt => $er) {
-			if ($filt === '_data') {
-				continue;
-			}
-			if (is_bool($er)) {
-				if ($filt !== 'search') {
-					$Conditions[] = '('.$field_translator[$filt].'='.($er?'1':'0').')';
-				} else {
-					$post_search = $er;
-				}
-			} elseif ($filt !== 'sort') {
-				$disjuncts = array();
-				foreach ($er[TRUE] as $id => $dummy) {
-					if (array_key_exists($filt, $field_translator)) {
-						$disjuncts[] = '('.$field_translator[$filt].'=?)';
-						$bind_data[] = $id;
-					}
-				}
-				if (!empty($disjuncts)) {
-					$Conditions[] = '('.implode(' OR ', $disjuncts).')';
-				}
-				foreach ($er[FALSE] as $id => $dummy) {
-					if (array_key_exists($filt, $field_translator)) {
-						$Conditions[] = '('.$field_translator[$filt].'!=?)';
-						$bind_data[] = $id;
-					}
-				}
-			} else {
-				$sortable = TRUE;
-			}
-		}
-		// Get post search
-		if (is_bool($post_search)) {
-			// Do search expression from POST data.
-		}
-		if (!empty($Conditions)) {
-			$sql = '('.implode(' AND ', $Conditions).')';
-		} else {
-			$sql = 'TRUE';
-		}
-		if ($sortable) {
-			$sorts = array();
-			foreach (array_reverse($Filter['sort']) as $sorter) {
-				$sorts[] = $field_translator[$sorter[1]].' '.$sorter[0];
-			}
-			$sql .= ' ORDER BY '.implode(', ',$sorts);
-		}
-		return array($sql, $bind_data);
-	}
-	
-	/// Reconstruct the uri filter from the filter object.
-	protected function _ReconstructFilter($Filter)
-	{
-		$result = array();
-		
-		$sortable = FALSE;
-		foreach ($Filter as $filt => $er) {
-			if ($filt === '_data') {
-				continue;
-			}
-			if (is_bool($er)) {
-				if ($filt !== 'search') {
-					if (!$er) {
-						$result[] = 'not';
-					}
-					$result[] = $filt;
-				} else {
-					//$result[] = 'search';
-				}
-			} elseif ($filt !== 'sort') {
-				foreach ($er[TRUE] as $id => $dummy) {
-					$result[] = $filt;
-					$result[] = $id;
-				}
-				foreach ($er[FALSE] as $id => $dummy) {
-					$result[] = 'not';
-					$result[] = $filt;
-					$result[] = $id;
-				}
-			} else {
-				$sortable = TRUE;
-			}
-		}
-		if ($sortable) {
-			foreach ($Filter['sort'] as $sorter) {
-				$result[] = 'sort';
-				$result[] = $sorter[0];
-				$result[] = $sorter[1];
-			}
-		}
-		
-		return $result;
-	}
-	
-	/// Get member filter from url.
-	protected function _GetFilter($StartRSegment, $OverrideSegments = NULL, $PreFilter = NULL)
-	{
-		$default = array(
-				TRUE  => array(),
-				FALSE => array(),
-			);
-		if (NULL === $PreFilter) {
-			$filter = array(
-				'team' => $default,
-				'user' => $default,
-				'card' => $default,
-				'_data' => array(
-					'last_sort' => '',
-				),
-			);
-		} else {
-			$filter = $PreFilter;
-		}
-		// Start at RSegment and read expressions
-		$segment_number = $StartRSegment;
-		while ($segment_number <= $this->uri->total_rsegments()) {
-			// Detect whether this filter item is notted
-			$segment = $this->uri->rsegment($segment_number++);
-			$include = TRUE;
-			$remove_condition = FALSE;
-			if ($segment === 'not') {
-				$include = FALSE;
-				if ($segment_number > $this->uri->total_rsegments()) {
-					throw new Exception('Unexpected end of filter URI segments near \'not\'.');
-				}
-				$segment = $this->uri->rsegment($segment_number++);
-				
-			} elseif ($segment === 'scrap') {
-				$remove_condition = TRUE;
-				if ($segment_number > $this->uri->total_rsegments()) {
-					throw new Exception('Unexpected end of filter URI segments near \'scrap\'.');
-				}
-				$segment = $this->uri->rsegment($segment_number++);
-			}
-			
-			// Get the field to filter
-			static $validator_bools = array(
-				'paid'     => 'paid',
-				'vip'      => 'vip',
-				'confirmed' => 'confirmed',
-				'carded'   => 'carded',
-				'carding'  => 'carding',
-				'cardable' => 'cardable',
-				'mailable' => 'mailable',
-				'search'   => 'search',
-			);
-			static $validator_1 = array(
-				'team' => 'is_string',
-				'user' => 'is_numeric',
-				'card' => 'is_numeric',
-			);
-			static $sort_directions = array(
-				'asc'  => 'asc',
-				'desc' => 'desc',
-			);
-			static $sortable_fields = array(
-				'team'  => 'teamid',
-				'firstname'  => 'firstname',
-				'surname'    => 'surname',
-				'nickname'   => 'nickname',
-				'enrol_year' => 'enrol_year',
-				'paid'   => 'paid',
-				'vip'    => 'vip',
-				'mailable' => 'mailable',
-				'confirmed' => 'confirmed',
-				'carded' => 'carded',
-			);
-			$validator_2 = array(
-				'sort' => array($sort_directions, $sortable_fields),
-			);
-			
-			if (array_key_exists($segment, $validator_bools)) {
-				if ($remove_condition) {
-					unset($filter[$validator_bools[$segment]]);
-				} else {
-					$filter[$validator_bools[$segment]] = $include;
-				}
-				
-			} elseif (array_key_exists($segment, $validator_1)) {
-				// Get the user id
-				if ($segment_number > $this->uri->total_rsegments()) {
-					throw new Exception('Unexpected end of filter URI segments near \''.$segment.'\'.');
-				}
-				$id = $this->uri->rsegment($segment_number++);
-				if (!$validator_1[$segment]($id)) {
-					throw new Exception('Unexpected non '.$validator_1[$segment].' filter URI segment after \''.$segment.'\'.');
-				}
-				// Override any previous contradicting entries
-				if (array_key_exists($id, $filter[$segment][!$include])) {
-					unset($filter[$segment][!$include][$id]);
-				}
-				if ($remove_condition) {
-					// Remove any traces of this object in filter
-					unset($filter[$segment][$include][$id]);
-				} else {
-					// Add new filter
-					$filter[$segment][$include][$id] = $include;
-				}
-				
-			} elseif (array_key_exists($segment, $validator_2)) {
-				if (!array_key_exists($segment, $filter)) {
-					$filter[$segment] = array();
-				}
-				$parameters = array();
-				foreach ($validator_2[$segment] as $validator) {
-					if ($segment_number > $this->uri->total_rsegments()) {
-						throw new Exception('Unexpected end of filter URI segments near \''.$segment.'\'.');
-					}
-					$parameter = $this->uri->rsegment($segment_number++);
-					if (is_string($validator) && !$validator($parameter)) {
-						throw new Exception('Unexpected non '.$validator.' filter URI segment after \''.$segment.'\'.');
-					}
-					if (is_array($validator)) {
-						if (!array_key_exists($parameter, $validator)) {
-							throw new Exception('Unexpected non {'.implode(', ',$validator).'} filter URI segment after \''.$segment.'\'.');
-						} else {
-							$parameter = $validator[$parameter];
-						}
-					}
-					$parameters[] = $parameter;
-				}
-				
-				if (array_key_exists($parameters[1], $filter[$segment])) {
-					unset($filter[$segment][$parameters[1]]);
-				}
-				if ($remove_condition) {
-					// Cleanup after old sort instead of recreating
-					if (empty($filter[$segment])) {
-						unset($filter[$segment]);
-					}
-					$filter['_data']['last_sort'] = '';
-					
-				} else {
-					// [Re]create [old] sort field
-					$filter[$segment][$parameters[1]] = $parameters;
-					$filter['_data']['last_sort'] = $parameters[1];
-				}
-				
-			} else {
-				throw new Exception('Unexpected filter URI segment: \''.$segment.'\'.');
-			}
-		}
-		return $filter;
 	}
 }
 

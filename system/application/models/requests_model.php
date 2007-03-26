@@ -53,8 +53,8 @@ class Requests_Model extends Model
 	{
 		$sql = 'SELECT content_type_id
 			FROM content_types
-			WHERE content_type_codename = ?
-			AND content_type_section != \'hardcoded\'';
+			WHERE content_type_codename = ?';
+			//AND content_type_section != \'hardcoded\'';
 		$query = $this->db->query($sql, array($box_codename));
 		if ($query->num_rows() > 0) {
 			$row = $query->row();

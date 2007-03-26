@@ -22,7 +22,7 @@
  */	
 function fullname($id) {
 	$CI =& get_instance();
-	$query = $CI->db->getwhere('users', array('user_entity_id'), 1);
+	$query = $CI->db->getwhere('users', array('user_entity_id' => $id), 1);
 	if ($query->num_rows() == 1) {
 		$result = $query->row();
 		return $result->user_firstname.' '.$result->user_surname;

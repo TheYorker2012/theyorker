@@ -19,11 +19,11 @@ class Charity extends Controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('progressreports', 'Progress Reports',
+		$navbar->AddItem('about', 'About',
 				'/office/charity/');
 		$navbar->AddItem('charities', 'Charities',
 				'/office/charity/');
-		$navbar->AddItem('about', 'About',
+		$navbar->AddItem('progressreports', 'Progress Reports',
 				'/office/charity/');
 	}
 	

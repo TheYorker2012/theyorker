@@ -45,14 +45,14 @@ class Yorkerdirectory extends Controller
 			$navbar->AddItem('reviews', 'Reviews',
 					'/directory/'.$DirectoryEntry.'/reviews');
 		}
-		$navbar->AddItem('members', 'Members',
-				'/directory/'.$DirectoryEntry.'/members');
-		$navbar->AddItem('events', 'Events',
-				'/directory/'.$DirectoryEntry.'/events');
-		$navbar->AddItem('notices', 'Notices',
-				'/directory/'.$DirectoryEntry.'/notices');
 		$navbar->AddItem('about', 'About',
 				'/directory/'.$DirectoryEntry);
+		$navbar->AddItem('notices', 'Notices',
+				'/directory/'.$DirectoryEntry.'/notices');
+		$navbar->AddItem('events', 'Events',
+				'/directory/'.$DirectoryEntry.'/events');
+		$navbar->AddItem('members', 'Members',
+				'/directory/'.$DirectoryEntry.'/members');
 	}
 
 	/// Directory index page.

@@ -419,14 +419,14 @@ class Yorkerdirectory extends Controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('contacts', 'Contacts',
-				vip_url('directory/contacts'));
-		$navbar->AddItem('map', 'Map',
-				vip_url('directory/map'));
-		$navbar->AddItem('photos', 'Photos',
-				vip_url('directory/photos'));
 		$navbar->AddItem('information', 'Information',
 				vip_url('directory/information'));
+		$navbar->AddItem('photos', 'Photos',
+				vip_url('directory/photos'));
+		$navbar->AddItem('map', 'Map',
+				vip_url('directory/map'));
+		$navbar->AddItem('contacts', 'Contacts',
+				vip_url('directory/contacts'));
 	}
 
 }
