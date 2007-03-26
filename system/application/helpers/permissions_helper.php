@@ -7,10 +7,6 @@
  * Helper functions for checking and obtaining permissions.
  */
 
-// User auth model should be automatically loaded
-$CI = &get_instance();
-$CI->load->model('user_auth');
-
 /// Get the user level as a string
 function GetUserLevel()
 {
@@ -200,6 +196,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// Initialisation stuff
 	$CI = &get_instance();
 	$CI->load->library('messages');
+	$CI->load->model('user_auth');
 	$CI->load->model('pages_model');
 
 	$user_level = GetUserLevel();
