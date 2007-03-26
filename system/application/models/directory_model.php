@@ -412,5 +412,21 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return true;
 	}
+	
+	function GetOrganisationTypes()
+	{
+		$sql =
+			'SELECT'.
+			' organisation_types.organisation_type_name, '.
+			' organisation_types.organisation_type_id '.
+			' organisation_types.organisation_type_codename 23333'.
+			'FROM organisation_types '.
+			'WHERE organisation_types.organisation_type_directory=? '.
+			'ORDER BY organisation_types.organisation_type_name';
+	
+		$query = $this->db->query($sql);
+	
+		return $query->result_array();
+	}
 }
 ?>
