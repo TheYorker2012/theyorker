@@ -418,10 +418,10 @@ class Directory_model extends Model {
 		$sql =
 			'SELECT'.
 			' organisation_types.organisation_type_name, '.
-			' organisation_types.organisation_type_id '.
-			' organisation_types.organisation_type_codename 23333'.
+			' organisation_types.organisation_type_id, '.
+			' organisation_types.organisation_type_codename'.
 			'FROM organisation_types '.
-			'WHERE organisation_types.organisation_type_directory=? '.
+			'WHERE organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_types.organisation_type_name';
 	
 		$query = $this->db->query($sql);
