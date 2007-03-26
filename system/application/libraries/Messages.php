@@ -61,7 +61,6 @@ class Messages
 	{
 		$this->mMessages = array();
 		
-		// Assume session has already been started by user_auth
 		if (array_key_exists('messages',$_SESSION)) {
 			foreach ($_SESSION['messages'] as $message) {
 				$message = new Message($message);

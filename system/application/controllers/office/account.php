@@ -19,7 +19,7 @@ class Account extends Controller
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account');
-		$this->_SetupTabs('account');
+		$this->_SetupTabs('admin');
 		
 		//Do password checks before updating
 		if(!empty($_POST["password_button"])){
@@ -64,7 +64,7 @@ class Account extends Controller
 		
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_account_maintainer');
-		$this->_SetupTabs('maintainer');
+		$this->_SetupTabs('admin');
 		
 		//Send update if information is given
 		if(!empty($_POST['maintainer_button'])){
@@ -138,6 +138,49 @@ class Account extends Controller
 		$this->main_frame->Load();
 	}
 	
+	/// Identity settings.
+	function identities()
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$this->pages_model->SetPageCode('viparea_account_identities');
+		$this->_SetupTabs('identities');
+		
+		$data = array();
+		
+		$this->load->helper('string');
+		$this->main_frame->SetContentSimple('viparea/account_identities',$data);
+		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
+		$this->main_frame->Load();
+	}
+	
+	/// Password changing.
+	function password()
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$this->pages_model->SetPageCode('viparea_account_identities');
+		$this->_SetupTabs('password');
+		
+		$data = array(
+			'main_text' => 'hello world! main text goes here. this will only be accessible when logged in as organisation as oposed to student/vip',
+			'change_password_target' => vip_url('account/password'),
+		);
+		
+		$this->load->helper('string');
+		$this->main_frame->SetContentSimple('account/password_change',$data);
+		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
+		$this->main_frame->Load();
+	}
+	
 	
 	
 	
@@ -150,12 +193,16 @@ class Account extends Controller
 	protected function _SetupTabs($SelectedPage)
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('account', 'Account',
+		$navbar->AddItem('admin', 'Admin',
 				vip_url('account'));
-		$navbar->AddItem('maintainer', 'Maintainer',
-				vip_url('account/maintainer'));
 		$navbar->AddItem('email', 'Email',
 				vip_url('account/email'));
+		$navbar->AddItem('identities', 'Identities',
+				vip_url('account/identities'));
+		$navbar->AddItem('password', 'Password',
+				vip_url('account/password'));
+		//$navbar->AddItem('maintainer', 'Maintainer',
+		//		vip_url('account/maintainer'));
 		
 		$this->main_frame->SetPage($SelectedPage);
 	}

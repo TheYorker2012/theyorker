@@ -23,11 +23,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 		<?php echo $main_text; ?>
 	</p>
 
-	<H4>Search</H4>
-		<input type="checkbox" /> Within current filter<br />
-		<input value="" />
-		<input type="submit" value="Search" />
-	<H4>Filters</H4>
+	<H4>Filter</H4>
 		<select>
 			<option>All members</option>
 			<optgroup label="Member status:">
@@ -52,26 +48,80 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 				}
 			?>
 		</select>
-		<input type="submit" value="Show" />
 		<a href="#">advanced filter options</a>
-		<p>Showing confirmed members</p>
+	
+	<H4>Find in List</H4>
+		<P>
+			<input value="" />
+		</P>
+		
+	<H4>Commands</H4>
+		<P>The following action can be performed on the selected members</P>
+		<P>
+			<select>
+				<!--optgroup label="Actions:"-->
+					<option selected>Send e-mail</option>
+					<option>Remove membership</option>
+					<option>Set as paid</option>
+					<option>Set as not paid</option>
+					<option>Request business cards</option>
+					<option>Expire business cards</option>
+				<!--/optgroup-->
+				<?php
+					if (!empty($organisation['subteams'])) {
+						echo '<optgroup label="Invite:">';
+						EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+						echo '</optgroup>';
+					}
+				?>
+			</select>
+			<input type="button" value="Go" />
+		</P>
+	
 <?php
+$filter['descriptors'] = array(
+	array('description' => 'with VIP priv','link_remove' => '#'),
+	array('description' => 'in Sections/HowDoI','link_remove' => '#'),
+);
 if (!empty($filter['descriptors'])) {
-	?><P>
+	?>
 	<H4>Advanced Filters</H4>
-	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all</A></SMALL>
-	<OL><?php
-	foreach (array_reverse($filter['descriptors']) as $descriptor) {
+	<P>Showing all:
+	<UL><?php
+	foreach ($filter['descriptors'] as $descriptor) {
 		?><LI>
-		<?php echo $descriptor['description']; ?><br />
+		<?php echo $descriptor['description']; ?>
 		<SMALL>
-		(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_invert']); ?>">invert filter</A> |
-		<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove filter</A>)
+		(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove</A>)
 		</SMALL>
 		</LI><?php
 	}
-	?></OL>
-	</P><?php
+	?></UL>
+	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all filters</A></SMALL>
+	</P>
+	<P>
+		<select>
+			<!--optgroup label="Actions:"-->
+				<option selected>Send e-mail</option>
+				<option>Remove membership</option>
+				<option>Set as paid</option>
+				<option>Set as not paid</option>
+				<option>Request business cards</option>
+				<option>Expire business cards</option>
+			<!--/optgroup-->
+			<?php
+				if (!empty($organisation['subteams'])) {
+					echo '<optgroup label="Invite:">';
+					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+					echo '</optgroup>';
+				}
+			?>
+		</select>
+		<input type="button" value="Add Filter" />
+	</P>
+	<P><a href="#">basic filter</a></P>
+	
+	<?php
 }
 
 

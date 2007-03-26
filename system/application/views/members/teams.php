@@ -4,7 +4,16 @@
 		<?php echo $main_text; ?>
 	</p>
 </div>
+
+<P>For the main organisation and each team:</P>
+<UL>
+	<li>list of current VIPs, name, username </li>
+	<li>link to user</li>
+	<li>revoke VIP for any other than the current user</li>
+</UL>
 <?php
+	
+	
 	/// Draw a branch of the tree of teams
 	function DoTeam($team, $in_list = TRUE)
 	{

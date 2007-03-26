@@ -36,7 +36,7 @@
 	<?php } ?>
 	<form action="<?php echo vip_url('account/maintainer/'); ?>" method="link" class="form">
 	<fieldset>
-		<input type="submit" class="button" value="Change Maintainer" />
+		<input type="submit" class="button" value="Change Admin" />
 	</fieldset>
 	</form>
 </div>
