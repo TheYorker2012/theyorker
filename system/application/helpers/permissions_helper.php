@@ -374,7 +374,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> 'pr',
+				'pr'			=> TRUE,
 				'editor'		=> FALSE,
 				'admin'			=> FALSE,
 			);
@@ -384,7 +384,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> 'pr',
+				'pr'			=> TRUE,
 				'editor'		=> TRUE,
 				'admin'			=> FALSE,
 			);
@@ -394,7 +394,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $admin_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> 'pr',
+				'pr'			=> TRUE,
 				'editor'		=> TRUE,
 				'admin'			=> TRUE,
 			);
@@ -421,7 +421,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				}
 			} elseif ($action_levels['pr'] === TRUE) {
 				/// @todo Allow admin/editors unconditional access to pr.
-				$CI->AddMessage('error','Admin/editor pr org exists check not implemented');
+				$CI->messages->AddMessage('error','Admin/editor pr org exists check not implemented');
 			}
 		}
 	}
