@@ -1,11 +1,11 @@
 <div id="RightColumn">
-	<h4 class="first">My Links</h4>
+	<h2 class="first">My Links</h2>
 	<div class="Entry">
 		<span class="RightColumnAction"><a href=".">Customise</a></span>
 		<a href="."><img src="/images/prototype/homepage/links.jpg" alt="Sample Links" title="Sample Links" /></a>
 	</div>
 	
-	<h4>Today's Events</h4>
+	<h2>Today's Events</h2>
 	<div class="Entry">
 		<span class="RightColumnAction"><a href=".">Calendar</a></span>
 		<ul>
@@ -17,7 +17,7 @@
 		</ul>
 	</div>
 
-	<h4>To Do</h4>
+	<h2>To Do</h2>
 	<div class="Entry">
 		<span class="RightColumnAction"><a href=".">New To Do</a></span>
 		<ul>
@@ -25,7 +25,7 @@
 		</ul>
 	</div>
 
-	<h4>2 Day Forecast</h4>
+	<h2>2 Day Forecast</h2>
 	<div class="Entry">
 		<ul>
 			<li>Today &gt; Sunny &gt; 19&deg;C</li>
@@ -33,7 +33,7 @@
 		</ul>
 	</div>
 
-	<h4>Quote of the Day</h4>
+	<h2>Quote of the Day</h2>
 	<div class="Entry">
 		"If you're going to kill a man it costs nothing to be polite to him" - <b>Winston Churchill</b>
 	</div>
