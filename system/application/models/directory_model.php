@@ -36,6 +36,7 @@ class Directory_model extends Model {
 			'WHERE organisations.organisation_directory_entry_name IS NOT NULL'.
 			' AND organisation_types.organisation_type_directory=1 '.
 			' AND organisations.organisation_show_in_directory=1 '.
+			' AND organisations.organisation_needs_approval=0 '.
 			'ORDER BY organisation_name';
 
 		$query = $this->db->query($sql);
