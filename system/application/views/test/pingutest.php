@@ -16,32 +16,32 @@
 			</thead>
 			<tbody>
 				<tr class="tr1">
-					<td>Francesca Burton</td>
+					<td><a href="#">Francesca Burton</a></td>
 					<td>87%</td>
 				</tr>
 				<tr class="tr2">
-					<td>Nancy Brehon</td>
+					<td><a href="#">Nancy Brehon</a></td>
 					<td>75%</td>
 				</tr>
 				<tr class="tr1">
-					<td>Jamie Hogan</td>
+					<td><a href="#">Jamie Hogan</a></td>
 					<td>69%</td>
 				</tr>
 				<tr class="tr2">
-					<td>Christine Travis</td>
+					<td><a href="#">Christine Travis</a></td>
 					<td>56%</td>
 				</tr>
 				<tr class="tr1">
-					<td>Joe Shelley</td>
+					<td><a href="#">Joe Shelley</a></td>
 					<td>52%</td>
 				</tr>
 				<tr class="tr2">
-					<td><span class="orange">Nicola Evans</span></td>
-					<td><span class="orange">47%</span></td>
+					<td><a href="#">Nicola Evans</a></td>
+					<td>47%</td>
 				</tr>
 				<tr class="tr1">
-					<td><span class="orange">Daniella Ashby</span></td>
-					<td><span class="orange">30%</span></td>
+					<td><a href="#">Daniella Ashby</a></td>
+					<td>30%</td>
 				</tr>
 			</tbody>
 		</table>
@@ -51,8 +51,8 @@
 	<h2>Summary (PR Rep)</h2>
 	<div id="ArticleBox">
 		<h5>Rep Info</h5>
-		Name: Nicola Evans<br />
-		Email: nse500<br />
+		Rep Business Card Here (with edit if Rep).<br />
+		Rep Rating: 75%<br />
 		<table>
 			<thead>
 				<tr>
@@ -63,27 +63,27 @@
 			</thead>
 			<tbody>
 				<tr class="tr1">
-					<td>Toffs</td>
+					<td><a href="#">Toffs</a></td>
 					<td>1</td>
 					<td>71%</td>
 				</tr>
 				<tr class="tr2">
-					<td><span class="orange">Evil Eye</span></td>
-					<td><span class="orange">1</span></td>
-					<td><span class="orange">35%</span></td>
+					<td><a href="#">Evil Eye</a></td>
+					<td>1</td>
+					<td>35%</td>
 				</tr>
 				<tr class="tr1">
-					<td>Punch Bowl</td>
+					<td><a href="#">Punch Bowl</a></td>
 					<td>2</td>
 					<td>67%</td>
 				</tr>
 				<tr class="tr2">
-					<td>Tesco (Clifton Moor)</td>
+					<td><a href="#">Tesco (Clifton Moor)</a></td>
 					<td>3</td>
 					<td>95%</td>
 				</tr>
 				<tr class="tr1">
-					<td>Fantasy World</td>
+					<td><a href="#">Fantasy World</a></td>
 					<td>5</td>
 					<td>60%</td>
 				</tr>
@@ -96,7 +96,8 @@
 	<div id="ArticleBox">
 		<h5>Toffs</h5>
 		Rep: Nicola Evans<br />
-		Rep Rating: 56/66<br />
+		Organisation Rating: 56/66<br />
+		<input type="text" value="1"><input type="submit" value="Set Priority"><br /><br />
 		<table>
 			<thead>
 				<tr>
@@ -106,55 +107,87 @@
 			</thead>
 			<tbody>
 				<tr class="tr1">
-					<td><span class="orange">Events</span></td>
+					<td><a href="#">Events</a></td>
 					<td><span class="orange">1/4</span></td>
 				</tr>
 				<tr class="tr2">
-					<td>Deals</td>
+					<td><a href="#">Deals</a></td>
+					<td>6/5</td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>2/2</td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
 					<td>3/2</td>
 				</tr>
 				<tr class="tr1">
-					<td><span class="orange">Directory</span></td>
-					<td><span class="orange">14/16</span></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>1/1</td>
 				</tr>
 				<tr class="tr2">
-					<td>Directory (Food)</td>
-					<td>6/8</td>
+					<td><a href="#">Information</a></td>
+					<td><span class="orange">29/32</span></td>
 				</tr>
 				<tr class="tr1">
-					<td>Directory (Drink)</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Directory</a></td>
+					<td><span class="orange">6/8</span></td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
 					<td>8/8</td>
 				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td><span class="orange">7/8</span></td>
+				</tr>
 				<tr class="tr2">
-					<td><span class="orange">Photos</span></td>
-					<td><span class="orange">6/6</span></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>8/8</td>
 				</tr>
 				<tr class="tr1">
-					<td>Photos (Food)</td>
+					<td><a href="#">Photos</a></td>
+					<td><span class="orange">12/12</span></td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Directory</a></td>
+					<td><span class="orange">3/3</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
 					<td>4/3</td>
 				</tr>
 				<tr class="tr2">
-					<td><span class="orange">Photos (Drink)</span></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
 					<td><span class="orange">2/3</span></td>
 				</tr>
 				<tr class="tr1">
-					<td>Tags</td>
-					<td>5/5</td>
-				</tr>
-				<tr class="tr2">
-					<td>Tags (Food)</td>
-					<td>2/2</td>
-				</tr>
-				<tr class="tr1">
-					<td>Tags (Drink)</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
 					<td>3/3</td>
 				</tr>
 				<tr class="tr2">
-					<td>Business Cards</td>
+					<td><a href="#">Tags</a></td>
+					<td><span class="orange">12/12</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>3/3</td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td><span class="orange">1/3</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>3/3</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Business Cards</a></td>
 					<td>9/6</td>
 				</tr>
 				<tr class="tr1">
-					<td><span class="orange">Serving Times</span></td>
+					<td><a href="#">Serving Times</a></td>
 					<td><span class="orange">0/1</span></td>
 				</tr>
 			</tbody>
@@ -226,16 +259,19 @@
 				<tr>
 					<th>Name</th>
 					<th>PR Rep</th>
+					<th>Options</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="tr1">
 					<td><a href="#">Ice Factory</a></td>
 					<td>Alexandra Fargus</td>
+					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
 				</tr>
 				<tr class="tr2">
 					<td><a href="#">Sports Bar</a></td>
 					<td>Knifeman Spurden</td>
+					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
 				</tr>
 			</tbody>
 		</table>
