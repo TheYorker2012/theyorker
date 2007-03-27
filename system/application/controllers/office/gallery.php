@@ -147,7 +147,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				$tagsRaw = explode('&', $this->input->post('tags'));
 				foreach ($tagsRaw as $tag) {
 					$tag = explode('=', $tag);
-					if is_string($tag[1]) {
+					if (is_string($tag[1])) {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag[1], 'tag_type' => 'photo'));
 					} else {
