@@ -76,7 +76,9 @@ function GenerateToplinks($Permission)
 	
 	switch ($UserLevel) {
 		case 'public':
-			$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
+			if ($CI->uri->segment(1) !== 'login') {
+				$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
+			}
 			$top_links[] = array('register',site_url('register'));
 			break;
 		

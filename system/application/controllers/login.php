@@ -77,21 +77,5 @@ class Login extends Controller
 		
 		LoginHandler('office', $this->_redirect());
 	}
-
-	/// Page for resetting password.
-	function resetpassword()
-	{
-		if (!CheckPermissions('public')) return;
-		
-		$this->pages_model->SetPageCode('reset_password');
-		
-		$data = array();
-		
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('login/resetpassword', $data);
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
 }
 ?>

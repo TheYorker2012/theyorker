@@ -35,9 +35,18 @@ class Account extends controller
 	}
 	
 	/// Reset password
-	protected function _password_reset($parameter)
+	protected function _password_reset($parameter = 'main')
 	{
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('public')) return;
+		
+		$this->pages_model->SetPageCode('account_password_reset');
+		
+		$data = array();
+		
+		// Set up the public frame
+		$this->main_frame->SetContentSimple('login/resetpassword', $data);
+		
+		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 	
