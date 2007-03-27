@@ -1,46 +1,3 @@
-<script type="text/javascript">
-// <![CDATA[
-
-	function checkKeypress(e) {
-		var e = (window.event) ? e : e;
-		if (e.keyCode == 13) {
-			addTag();
-			updateList();
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function updateList() {
-		$('atags_debug').innerHTML = Sortable.serialize('ctags');
-		$('tags').value = Sortable.serialize('ctags');
-	}
-
-	function addTag() {
-		Sortable.destroy($('ctags'));
-		Sortable.destroy($('atags'));
-		$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
-		Sortable.create("ctags",
-		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-		      onChange:updateList});
-		Sortable.create("atags",
-		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-		     onChange:updateList});
-		return true;
-	}
-
-  Sortable.create("ctags",
-    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-     onChange:updateList});
-  Sortable.create("atags",
-    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-    onChange:updateList});
-
-	updateList();
-// ]]>
-</script>
-
 	<h2>information</h2>
 	<form class="form" method="post" action="<?=$photoDetails->photo_id?>/save">
 		<fieldset>
@@ -108,3 +65,45 @@
 	<a href="<?=site_url(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
 	Not happy with these thumbnails? <a href="<?=site_url('office/gallery/edit/'.$photoDetails->photo_id)?>">Click here</a> to re-thumbnail.
 </div>
+<script type="text/javascript">
+// <![CDATA[
+
+	function checkKeypress(e) {
+		var e = (window.event) ? e : e;
+		if (e.keyCode == 13) {
+			addTag();
+			updateList();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function updateList() {
+		$('atags_debug').innerHTML = Sortable.serialize('ctags');
+		$('tags').value = Sortable.serialize('ctags');
+	}
+
+	function addTag() {
+		Sortable.destroy($('ctags'));
+		Sortable.destroy($('atags'));
+		$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
+		Sortable.create("ctags",
+		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+		      onChange:updateList});
+		Sortable.create("atags",
+		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+		     onChange:updateList});
+		return true;
+	}
+
+  Sortable.create("ctags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+     onChange:updateList});
+  Sortable.create("atags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+    onChange:updateList});
+
+	updateList();
+// ]]>
+</script>
