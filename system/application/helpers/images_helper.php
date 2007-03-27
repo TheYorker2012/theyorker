@@ -101,7 +101,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		}
 		$query->free_result();
 		if ($fetched_type) {
-			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type), 1S);
+			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type), 1);
 			$fetched_type = false;
 			foreach ($query->result() as $onerow) {
 				$fetched_type = $onerow->image_type_codename;
