@@ -1,3 +1,46 @@
+<script type="text/javascript">
+// <![CDATA[
+
+	function checkKeypress(e) {
+		var e = (window.event) ? e : e;
+		if (e.keyCode == 13) {
+			addTag();
+			updateList();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function updateList() {
+		$('atags_debug').innerHTML = Sortable.serialize('ctags');
+		$('tags').value = Sortable.serialize('ctags');
+	}
+
+	function addTag() {
+		Sortable.destroy($('ctags'));
+		Sortable.destroy($('atags'));
+		$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
+		Sortable.create("ctags",
+		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+		      onChange:updateList});
+		Sortable.create("atags",
+		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+		     onChange:updateList});
+		return true;
+	}
+
+  Sortable.create("ctags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+     onChange:updateList});
+  Sortable.create("atags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+    onChange:updateList});
+
+	updateList();
+// ]]>
+</script>
+
 	<h2>information</h2>
 	<form class="form" method="post" action="<?=$photoDetails->photo_id?>/save">
 		<fieldset>
@@ -12,7 +55,33 @@
 					<?php endforeach;?>
 				</select><br />
 			<label for="tags">Tags: </label>
-				<select multiple size="8" name="tags">
+				<input type="hidden" id="tags">
+				<div style="min-height:200px;">
+					<div style="float:left;">
+					<h3>Tagged as:</h3>
+					 <ul class="sortabledemo" id="ctags" style="min-height:250px;width:125px;">
+						<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
+						<li id="ctags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
+						<?php endforeach;?>
+					 </ul>
+					</div>
+					 <div style="float:left;overflow-y: auto;overflow-x: hidden;">
+					 <h3>All Tags:</h3>
+					 <ul class="sortabledemo" id="atags" style="height:250px;width:125px;">
+						<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
+						<li id="atags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
+						<?php endforeach;?>
+					 </ul>
+					</div>
+				</div>
+				<form id="addTagForm">
+					<fieldset>
+						<legend>Add new tag</legend>
+						<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
+						<input type="button" value="Add" onClick="addTag();">
+					</fieldset>
+				</form>
+				<select multiple size="8" name="oldtags">
 					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
 					<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
 					<?php endforeach;?>

@@ -17,7 +17,7 @@
 		<div class="Entry">
 			<fieldset>
 			<input type="radio" name="searchcriteria" value="title" selected />Title<br />
-			<input type="radio" name="searchcriteria" value="date" />Tag<br />
+			<input type="radio" name="searchcriteria" value="date" />Date<br />
 			<input type="radio" name="searchcriteria" value="photographer" />Photographer<br /><br />
 			Search Criteria:<input type="text" name="search" />
 			<input type="submit" class="button" name="submit" value="Search" />

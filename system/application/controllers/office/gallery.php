@@ -60,7 +60,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 						$photos = $photos->like('photo_title', $_SESSION['img_search']);
 					break;
 					case "photographer":
-						//not implemented!!!
+						//TODO implement photographer search
 						$photos = $photos->like('photo_title', $_SESSION['img_search']);
 					break;
 				}
@@ -167,6 +167,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
+		$head = '<script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js" type="text/javascript"></script>';
+		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
 	
@@ -296,10 +298,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		$this->image_lib->initialize($config);
 		
-		if (!$this->image_lib->resize())
-		{
-//			die('The resize failed.');
-		echo $config['source_image'];
+		if (!$this->image_lib->resize()) {
+			echo $config['source_image'];
 			echo $this->image_lib->display_errors();
 		}
 		
