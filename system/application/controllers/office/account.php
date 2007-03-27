@@ -18,7 +18,7 @@ class Account extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$organisation = VipOrganisation();
-		$this->pages_model->SetPageCode('viparea_account');
+		$this->pages_model->SetPageCode('viparea_settings');
 		$this->_SetupTabs('admin');
 		
 		//Do password checks before updating
@@ -54,6 +54,10 @@ class Account extends Controller
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account', $data);
 		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
 		// Load the main frame
 		$this->main_frame->Load();
 	}
@@ -63,7 +67,7 @@ class Account extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$organisation = VipOrganisation();
-		$this->pages_model->SetPageCode('viparea_account_maintainer');
+		$this->pages_model->SetPageCode('viparea_settings_admin');
 		$this->_SetupTabs('admin');
 		
 		//Send update if information is given
@@ -77,7 +81,7 @@ class Account extends Controller
 							'maintainer_name' => null
 							);
 				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
-				$this->main_frame->AddMessage('success','Maintainer information updated.');
+				$this->main_frame->AddMessage('success','Administrator information updated.');
 			break;  
 			case 'student':
 				$Data = array(
@@ -86,7 +90,7 @@ class Account extends Controller
 							'maintainer_name' => null
 							);
 				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
-				$this->main_frame->AddMessage('success','Maintainer information updated.');
+				$this->main_frame->AddMessage('success','Administrator information updated.');
 			break;
 			case 'nonstudent':
 				if (!empty($_POST['maintainer_name']) and !empty($_POST['maintainer_email'])){
@@ -96,13 +100,13 @@ class Account extends Controller
 							'maintainer_name' => $_POST['maintainer_name']
 							);
 				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
-				$this->main_frame->AddMessage('success','Maintainer information updated.');
+				$this->main_frame->AddMessage('success','Administrator information updated.');
 				}else{
-					$this->main_frame->AddMessage('error','Maintainer not updated, the name or email was left blank.');
+					$this->main_frame->AddMessage('error','Administrator not updated, the name or email was left blank.');
 				}
 			break;
 			default:
-				$this->main_frame->AddMessage('error','Maintainer not updated, invalid form option submitted.');
+				$this->main_frame->AddMessage('error','Administrator not updated, invalid form option submitted.');
 			}
 		}
 		
@@ -114,6 +118,10 @@ class Account extends Controller
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account_maintainer', $data);
 		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
 		// Load the main frame
 		$this->main_frame->Load();
 	}
@@ -123,7 +131,7 @@ class Account extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$this->pages_model->SetPageCode('viparea_account_email');
+		$this->pages_model->SetPageCode('viparea_settings_email');
 		$this->_SetupTabs('email');
 		
 		$data = array();
@@ -143,7 +151,7 @@ class Account extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$this->pages_model->SetPageCode('viparea_account_identities');
+		$this->pages_model->SetPageCode('viparea_settings_identities');
 		$this->_SetupTabs('identities');
 		
 		$data = array();
@@ -163,16 +171,24 @@ class Account extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$this->pages_model->SetPageCode('viparea_account_identities');
-		$this->_SetupTabs('password');
-		
-		$data = array(
-			'main_text' => 'hello world! main text goes here. this will only be accessible when logged in as organisation as oposed to student/vip',
-			'change_password_target' => vip_url('account/password'),
-		);
-		
-		$this->load->helper('string');
-		$this->main_frame->SetContentSimple('account/password_change',$data);
+		$this->pages_model->SetPageCode('viparea_settings_password');
+		if ($this->user_auth->isUser) {
+			$this->messages->AddMessage('error', 'Only accessible when logged in as '.VipOrganisationName().'.'.
+				HtmlButtonLink(site_url('logout/main/login/main'.$this->uri->uri_string()),'Relogin'));
+			
+		} else {
+			
+			$this->_SetupTabs('password');
+			
+			$data = array(
+				'main_text' => 'hello world! main text goes here. this will only be accessible when logged in as organisation as oposed to student/vip',
+				'change_password_target' => vip_url('account/password'),
+			);
+			
+			$this->load->helper('string');
+			$this->main_frame->SetContentSimple('account/password_change',$data);
+			
+		}
 		
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
@@ -199,8 +215,10 @@ class Account extends Controller
 				vip_url('account/email'));
 		$navbar->AddItem('identities', 'Identities',
 				vip_url('account/identities'));
-		$navbar->AddItem('password', 'Password',
-				vip_url('account/password'));
+		if (!$this->user_auth->isUser) {
+			$navbar->AddItem('password', 'Password',
+					vip_url('account/password'));
+		}
 		//$navbar->AddItem('maintainer', 'Maintainer',
 		//		vip_url('account/maintainer'));
 		

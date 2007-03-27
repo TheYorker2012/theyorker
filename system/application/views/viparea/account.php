@@ -5,7 +5,7 @@
 	</p>
 </div>
 <div class='blue_box'>
-<h2>account maintenance</h2>
+<h2>account administration</h2>
 	<p>
 		<?php echo $account_maintenance_text; ?>
 	</p>
@@ -40,27 +40,4 @@
 	</fieldset>
 	</form>
 </div>
-<?php if(!$is_student){ ?>
-<div class='grey_box'>
-<h2>account password</h2>
-	<p>
-		<?php echo $account_password_text; ?>
-	</p>
-	<form action='<?php echo vip_url('account/update'); ?>' class='form' method='POST'>
-	<fieldset>
-		<label for='password_old'>Old Password :</label>
-		<input type='password' name='password_old' style='width: 150px;' />
-		<br />
-		<label for='password_new1'>New Password :</label>
-		<input type='password' name='password_new1' style='width: 150px;' />
-		<br />
-		<label for='password_new2'>Repeat New Password :</label>
-		<input type='password' name='password_new2' style='width: 150px;' />
-		<br />
-		<label for='password_button'></label>
-		<input type='submit' name='password_button' value='Change' class='button' />
-	</fieldset>
-	</form>
-</div>
-<?php } ?>
 <a href='/viparea/'>Back to the vip area.</a>
