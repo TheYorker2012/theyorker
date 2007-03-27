@@ -144,15 +144,18 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			$this->db->delete('photo_tags', array('photo_tag_photo_id' => $id));
 			//add
 			if ($this->input->post('tags')) {
-				$tagsRaw = explode('&', $this->input->post('tags'));
+				$tagsRaw = explode('+', $this->input->post('tags'));
 				foreach ($tagsRaw as $tag) {
-					$tag = explode('=', $tag);
-					if (is_string($tag[1])) {
+					if (is_string($tag)) {
 						//this is a new tag
-						$this->db->insert('tags', array('tag_name' => $tag[1], 'tag_type' => 'photo'));
+						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
+						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);
+						$newTag = $newTag->result();
+						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $newTag->tag_id, 'photo_tag_tag_id' => $tag));
+						
 					} else {
 						//this is an existing tag
-						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tag[1]));
+						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tag));
 					}
 				}
 			}
