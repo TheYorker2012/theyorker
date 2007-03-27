@@ -11,42 +11,32 @@
 					<option value="<?=$person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?=$person->user_firstname.' '.$person->user_surname?></option>
 					<?php endforeach;?>
 				</select><br />
-			<label for="tags">Tags: </label>
-				<input type="hidden" id="tags">
-				<div style="min-height:200px;">
-					<div style="float:left;">
-					<h3>Tagged as:</h3>
-					 <ul class="sortabledemo" id="ctags" style="min-height:250px;width:125px;">
-						<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-						<li id="ctags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
-						<?php endforeach;?>
-					 </ul>
-					</div>
-					 <div style="float:left;overflow-y: auto;overflow-x: hidden;">
-					 <h3>All Tags:</h3>
-					 <ul class="sortabledemo" id="atags" style="height:250px;width:125px;">
-						<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
-						<li id="atags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
-						<?php endforeach;?>
-					 </ul>
-					</div>
-				</div>
-				<form id="addTagForm">
-					<fieldset>
-						<legend>Add new tag</legend>
-						<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
-						<input type="button" value="Add" onClick="addTag();">
-					</fieldset>
-				</form>
-				<select multiple size="8" name="oldtags">
+			<input type="hidden" id="tags">
+			<div style="min-height:200px;">
+				<div style="float:left;">
+				<h3>Tagged as:</h3>
+				 <ul class="sortabledemo" id="ctags" style="min-height:250px;width:125px;">
 					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-					<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
+					<li id="ctags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
-				</select><br />
-			<label></label>
-				<a href="#">+ Add More Tags</a><br />
-			<label></label>
-				<a href="#">- Delete Selected Tags</a><br />
+				 </ul>
+				</div>
+				 <div style="float:left;overflow-y: auto;overflow-x: hidden;">
+				 <h3>All Tags:</h3>
+				 <ul class="sortabledemo" id="atags" style="height:250px;width:125px;">
+					<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
+					<li id="atags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
+					<?php endforeach;?>
+				 </ul>
+				</div>
+			</div>
+			<form id="addTagForm">
+				<fieldset>
+					<legend>Add new tag</legend>
+					<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
+					<input type="button" value="Add" onClick="addTag();">
+				</fieldset>
+			</form>
 			<label>Home Feature: </label>
 				<input type='checkbox' name='onfrontpage' value="on" /><br />
 			<label>Hidden: </label>
@@ -79,9 +69,35 @@
 		}
 	}
 
+
+	function AddClones() {
+		if (count <= 5) {
+			count++;
+			var newClone = document.getElementById('source').cloneNode(true);
+			newClone.id = '';
+			newClone.style.display = 'block';
+			var newField = newClone.childNodes;
+			for (var i=0; i<newField.length; i++) {
+				if (newField[i].name)
+					newField[i].name = newField[i].name + count;
+				if (newField[i].nodeType == '1') if (newField[i].getAttribute('for')) //needs to be asked in order
+					newField[i].setAttribute('for', newField[i].getAttribute('for') + count);
+			}
+			var Spawn = document.getElementById('destination');
+			Spawn.value = count;
+			Spawn.parentNode.insertBefore(newClone, Spawn);
+
+		}
+	}
+
+
+
 	function updateList() {
-		$('atags_debug').innerHTML = Sortable.serialize('ctags');
-		$('tags').value = Sortable.serialize('ctags');
+		$('tags').value = '';
+		var tags = $('ctags').childNodes;
+		for (var i=0; i<$('ctags').length; i++) {
+			$('tags').value+= tags[i].innerHTML;
+		}
 	}
 
 	function addTag() {

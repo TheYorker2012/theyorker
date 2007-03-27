@@ -139,7 +139,23 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				$new['photo_deleted'] = "0";
 			}
 			$this->db->update('photos', $new, array('photo_id' => $id));
-
+			
+			//tags
+			$this->db->delete('photo_tags', array('photo_tag_photo_id' => $id));
+			//add
+			if ($this->input->post('tags')) {
+				$tagsRaw = explode('&', $this->input->post('tags'))
+				foreach ($tagsRaw as $tag) {
+					$tag = explode('=', $tag);
+					if is_string($tag[1]) {
+						//this is a new tag
+						$this->db->insert('tags', array('tag_name' => $tag[1], 'tag_type' => 'photo'))
+					} else {
+						//this is an existing tag
+						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tag[1]));
+					}
+				}
+			}
 		}
 		
 		$this->pages_model->SetPageCode('office_gallery');
