@@ -24,7 +24,8 @@
 	<br />
 	<form name='delete_confirm_form' action='<?php echo $target; ?>' method='POST' class='form'>
 		<fieldset>
-			<input type='submit' class='button' name='confirm_delete' value='Yes, Delete' />
+			<input type='hidden' name='confirm_delete' value='confirm' />
+			<input type='submit' class='button' name='submit' value='Yes, Delete' />
 		</fieldset>
 	</form>
 </div>

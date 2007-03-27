@@ -63,12 +63,32 @@ function FilterLinkBool($filter, $field, $value)
 
 <div class='blue_box'>
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
+	
+	
+	<P>The following action can be performed on the selected members</P>
+	<P>
+		<select>
+			<!--optgroup label="Actions:"-->
+				<option selected>Send e-mail</option>
+				<option>Remove membership</option>
+				<option>Set as paid</option>
+				<option>Set as not paid</option>
+				<option>Request business cards</option>
+				<option>Expire business cards</option>
+			<!--/optgroup-->
+			<?php
+				if (!empty($organisation['subteams'])) {
+					echo '<optgroup label="Invite:">';
+					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+					echo '</optgroup>';
+				}
+			?>
+		</select>
+		<input type="button" value="Go" />
+	</P>
+		
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
 		
-		<fieldset>
-		<input type="button" value="select all" />
-		<input type="button" value="unselect all" />
-		</fieldset>
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
 			<th align="center">
@@ -128,10 +148,6 @@ function FilterLinkBool($filter, $field, $value)
 		</table>
 		<?php /*<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
 		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>*/ ?>
-		<fieldset>
-		<input type="button" value="select all" />
-		<input type="button" value="unselect all" />
-		</fieldset>
 	</form>
 
 </div>

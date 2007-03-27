@@ -24,9 +24,9 @@ info about the settings and link to wikitext help (From database)
 </div>
 
 <div class="<?php echo alternator('blue','grey');?>_box">
-	<H2>Email signiture</H2>
+	<H2>Email signature</H2>
 	
-	<em>Signiture (wikitext):</em>
+	<em>Signature (wikitext):</em>
 	<textarea name="invite_list" class="full" rows="3"></textarea>
 	<br />
 	

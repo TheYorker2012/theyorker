@@ -137,11 +137,12 @@
 	</fieldset>
 </div>
 <div class="<?php echo alternator('blue','grey'); ?>_box">
-	<H2>Existing members</H2>
+	<H2>Existing Members</H2>
 	<P>
 		The following users are already members.
 		You may edit their paid status' here if you wish.
 	</P>
+	<P>Members with a <IMG SRC="/images/prototype/members/paid.png" ALT="Yes" /> are already set as paying members</P>
 	<table width="100%">
 		<tr>
 			<th></th>

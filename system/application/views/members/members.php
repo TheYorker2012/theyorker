@@ -54,29 +54,6 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 		<P>
 			<input value="" />
 		</P>
-		
-	<H4>Commands</H4>
-		<P>The following action can be performed on the selected members</P>
-		<P>
-			<select>
-				<!--optgroup label="Actions:"-->
-					<option selected>Send e-mail</option>
-					<option>Remove membership</option>
-					<option>Set as paid</option>
-					<option>Set as not paid</option>
-					<option>Request business cards</option>
-					<option>Expire business cards</option>
-				<!--/optgroup-->
-				<?php
-					if (!empty($organisation['subteams'])) {
-						echo '<optgroup label="Invite:">';
-						EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
-						echo '</optgroup>';
-					}
-				?>
-			</select>
-			<input type="button" value="Go" />
-		</P>
 	
 <?php
 $filter['descriptors'] = array(
@@ -101,18 +78,25 @@ if (!empty($filter['descriptors'])) {
 	</P>
 	<P>
 		<select>
-			<!--optgroup label="Actions:"-->
-				<option selected>Send e-mail</option>
-				<option>Remove membership</option>
-				<option>Set as paid</option>
-				<option>Set as not paid</option>
-				<option>Request business cards</option>
-				<option>Expire business cards</option>
-			<!--/optgroup-->
+			<option>All members</option>
+			<optgroup label="Member status:">
+				<option>Confirmed</option>
+				<option>Unconfirmed</option>
+				<option>Paying</option>
+				<option>Non-paying</option>
+				<option>VIPs</option>
+				<option>Non-VIPs</option>
+			</optgroup>
+			<optgroup label="Business card status:">
+				<option>With active business card</option>
+				<option>Still writing business card</option>
+				<option>With expired business card</option>
+				<option>Without business card</option>
+			</optgroup>
 			<?php
 				if (!empty($organisation['subteams'])) {
-					echo '<optgroup label="Invite:">';
-					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+					echo '<optgroup label="In team:">';
+					EchoTeamFilterOptions($organisation, '', FALSE);
 					echo '</optgroup>';
 				}
 			?>

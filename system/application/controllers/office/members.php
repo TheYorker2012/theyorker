@@ -696,21 +696,19 @@ class Members extends Controller
 	
 	/// Contact members
 	/**
-	 * @param $Method [string] Method to use.
-	 *	- 'notify'
-	 *	- 'email'
-	 * @param $Operation [string] Operation.
-	 *	- 'filter'
-	 *	- 'post'
 	 */
-	function mailing($Method = NULL, $Operation = NULL)
+	function compose()
 	{
 		if (!CheckPermissions('vip')) return;
 		
-		$this->_SetupTabs('mailing');
+		$this->pages_model->SetPageCode('viparea_members_compose');
+		$this->_SetupTabs('compose');
 		
-		/// @todo Implement $viparea/members/contact/...
-		$this->messages->AddMessage('information', 'todo: implement member contact');
+		/// @todo Implement $viparea/members/compose/...
+		$this->messages->AddMessage('information', 'todo: implement email composer');
+		
+		$data = array();
+		$this->main_frame->SetContentSimple('members/compose', $data);
 		
 		// Load the main frame
 		$this->main_frame->Load();

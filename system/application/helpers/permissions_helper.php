@@ -642,8 +642,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$data['failure'] = false;
 	}
 	$data['login_id'] = $login_id;
-	if (($CI->input->post('login_button') === 'Login') &&
-		($CI->input->post('login_id') === $login_id)) {
+	if (($CI->input->post('login_id') === $login_id)) {
 		if ($login_id === 'student') {
 			$username = $CI->input->post('username');
 		} elseif ($login_id === 'vip') {
