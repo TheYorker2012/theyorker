@@ -1,5 +1,5 @@
 	<h2>information</h2>
-	<form class="form" method="post" action="<?=site_url('office/gallery/'.$photoDetails->photo_id.'/save')?>">
+	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
 		<fieldset>
 			<label for="title">Title: </label>
 				<input type="text" name="title" value="<?=$photoDetails->photo_title?>" /><br />
