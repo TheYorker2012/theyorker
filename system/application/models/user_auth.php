@@ -308,8 +308,9 @@ class User_auth extends model {
 		$this->allTeams = array();
 		$this->salt = '';
 
-		// Save values in session
-		$this->localToSession();
+		// Clear the session
+		session_destroy();
+		session_start();
 	}
 	
 	/// Login to the yorker office
