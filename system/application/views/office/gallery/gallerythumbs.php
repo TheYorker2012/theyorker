@@ -1,3 +1,4 @@
+<div class="blue_box">
 <h2>search results</h2>
 <?php foreach ($photos as $thumbnail) { ?>
 	<div class="thumbnail_small">
@@ -9,3 +10,4 @@
 		</div>
 	</div>
 <?php } ?>
+</div>

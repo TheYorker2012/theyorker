@@ -1,3 +1,4 @@
+<div class="blue_box">
 	<h2>information</h2>
 	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
 		<fieldset>

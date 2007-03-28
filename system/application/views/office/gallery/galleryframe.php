@@ -48,7 +48,6 @@
 		</div>
 	</form>
 </div>
-<div class="blue_box">
 	<?php
 		// Load a subview.
 		$content[0]->Load();
