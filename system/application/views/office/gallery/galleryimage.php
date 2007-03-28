@@ -33,7 +33,7 @@
 			<br />
 			<label for="newtag">New Tag</label>
 				<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
-				<input type="button" value="Add" onClick="addTag();">
+				<input type="button" value="Add" onClick="updateList();">
 				<br />
 				<div id="txt_result"></div>
 			<label for="onfrontpage">Home Feature: </label>
