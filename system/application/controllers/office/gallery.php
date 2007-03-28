@@ -175,7 +175,8 @@ class Gallery extends Controller {
 				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->row(),
 				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
 				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
-				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
+				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
+				'tagsNotUsed' => $this->db->join('photo_tags', 'tags.tag_id = photo_tags.photo_tag_tag_id')->getwhere('tags', array('photo_tags.photo_tag_tag_id !=' => $id, 'tag_type'=>'photo'))
 			);
 		}
 		
@@ -184,7 +185,7 @@ class Gallery extends Controller {
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
-		$frameData = array('photographer' => $data['photographer'],
+		$frameData = array('photographer' => $data['photographer'], //wrong!!!
 		                   'tags' => $this->db->getwhere('tags', array('tag_type'=>'photo')),
 		                   'pageNumbers' => '');
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
@@ -203,8 +204,12 @@ class Gallery extends Controller {
 	}
 	
 	function tag_suggest($tag) {
-		$tagSearch = $this->db->where('tag_type', 'photo')->like('tag_name', $tag)->get('tags');
 		$objResponse = new xajaxResponse();
+		if ($tag == "") {
+			$objResponse->addAssign("txt_result", "style.display", 'none');
+			return $objResponse;
+		}
+		$tagSearch = $this->db->where('tag_type', 'photo')->like('tag_name', $tag)->get('tags');
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
