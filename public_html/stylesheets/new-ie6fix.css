@@ -5,8 +5,10 @@
 fieldset#SearchBox {
 	padding: 1px 2px 0px 22px;
 }
+
 ul#Navbar {
-	width: expression(document.body.clientWidth - 150);
+	/*width: expression(document.getElementById("Header").width - 150);*/
+	width: 630px;
 }
 
 ul#Navbar li {
@@ -14,11 +16,13 @@ ul#Navbar li {
 }
 
 div.BlueBox {
-	width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));
+	/*width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));*/
+	width: expression((document.getElementById("RightColumn") == null) ? "630px" : "390px");
 	padding: 0.5em;
 }
 
 div.message_error, div.message_warning, div.message_information, div.message_success {
-	width: expression(document.body.clientWidth - 150);
+	/*width: expression(document.body.clientWidth - 150);*/
+	width: 630px;
 	padding: 0.3em;
 }

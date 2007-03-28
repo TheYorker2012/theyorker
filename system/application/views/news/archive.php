@@ -45,19 +45,19 @@
 <div class="BlueBox">
 	<h2>search results</h2>
 	<div class="NewsBrief">
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
+		<a href='/news/article/1'><img class="Right" src='/images/prototype/news/thumb3.jpg' alt='Some Spy' title='Some Spy' /></a>
 		<h3><a href='/news/article/1'>Ex-spy death inquiry stepped up.</a></h3>
-		<p><a href="/contact">Jo Shelley</a></p>
-		<p>2nd December 2006</p>
-		<p><?php echo(anchor('news/article/1', 'Read more...')); ?></p>
+		<a href="/contact">Jo Shelley</a>
+		<div class="Date">2nd December 2006</div>
+		<?php echo(anchor('news/article/1', 'Read more...')); ?>
 		<!-- Blurb should also be here -->
 	</div>
 	<div class="NewsBrief">
-		<a href='/news/article/1'><img src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
+		<a href='/news/article/1'><img class="Right" src='/images/prototype/news/thumb2.jpg' alt='Some Spy' title='Some Spy' /></a>
 		<h3><a href='/news/article/1'>Blair 'sorrow' over slave trade.</a></h3>
-		<p><a href="/contact">Jo Shelley</a></p>
-		<p>1st December 2006</p>
-		<p><?php echo(anchor('news/article/2', 'Read more...')); ?></p>
+		<a href="/contact">Jo Shelley</a>
+		<div class="Date">1st December 2006</div>
+		<?php echo(anchor('news/article/2', 'Read more...')); ?>
 		<!-- Blurb should also be here -->
 	</div>
 </div>

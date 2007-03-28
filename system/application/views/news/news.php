@@ -11,8 +11,8 @@ function printarticlelink($article, $blurb = false) {
 	echo('			</a>'."\n");
 	echo('		</h3>'."\n");
 	foreach($article['authors'] as $reporter)
-		echo('		<a href="/contact">'.$reporter['name'].'</a><br />'."\n");
-	echo('		<span class="Date">'.$article['date'].'</span><br />'."\n");
+		echo('		<a href="/contact">'.$reporter['name'].'</a>'."\n");
+	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
 		echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
@@ -55,7 +55,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 			<h3><?php echo $main_article['subheading']; ?></h3>
 		<?php } ?>
 		<?php if ($main_article['subtext'] != '') { ?>
-		<div class='intro'><?php echo $main_article['subtext']; ?></div>
+		<div><?php echo $main_article['subtext']; ?></div>
 		<?php } ?>
 
 		<?php $this->byline->load(); ?>

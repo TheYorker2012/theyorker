@@ -38,8 +38,8 @@ if ($deal != NULL) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
+		<img class="Right" src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
 		<h2><?php echo($review_title); ?></h2>
-		<img src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
 		<p><?php echo($review_blurb); ?></p>
 		<h3>Rating</h3>
 		<div>
