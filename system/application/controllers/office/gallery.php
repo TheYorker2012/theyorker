@@ -176,7 +176,7 @@ class Gallery extends Controller {
 				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
 				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
 				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
-				'tagsNotUsed' => $this->db->join('photo_tags', 'tags.tag_id = photo_tags.photo_tag_tag_id')->getwhere('tags', array('photo_tags.photo_tag_tag_id !=' => $id, 'tag_type'=>'photo'))
+				'tagsNotUsed' => $this->db->join('photo_tags', 'tags.tag_id = photo_tags.photo_tag_photo_id')->getwhere('tags', array('photo_tags.photo_tag_photo_id !=' => $id, 'tag_type'=>'photo'))
 			);
 		}
 		
