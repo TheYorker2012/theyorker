@@ -502,7 +502,7 @@ class Review_model extends Model {
 	//Gets comments from database, frb501
 	function GetComments($organisation_name, $type, $article_id)
 	{
-		$sql = "SELECT comment_id, comment_text, comment_timestamp, comment_user_entity_id, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ? AND comment_deleted = 0";
+		$sql = "SELECT comment_id, comment_text, comment_timestamp, comment_user_entity_id, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ? AND comment_deleted = 0 ORDER BY comment_timestamp DESC";
 		$query = $this->db->query($sql,array($this->FindOrganisationID($organisation_name),$type,$article_id));
 
 		if ($query->num_rows() > 0)
@@ -510,12 +510,12 @@ class Review_model extends Model {
 			$commentno = 0;
 			foreach ($query->result() as $row)
 			{
-				$comments['comment_author'][$commentno] = $this->TranslateUserIDToName($row->comment_user_entity_id);
-				$comments['comment_id'][$commentno] = $row->comment_id;
-				$comments['comment_rating'][$commentno] = $row->comment_rating;
-				$comments['comment_date'][$commentno] = $row->comment_timestamp;
-				$comments['comment_content'][$commentno] = $row->comment_text;
-				$comments['comment_reported_count'][$commentno] = $row->comment_reported_count;
+				$comments[$commentno]['comment_author'] = $this->TranslateUserIDToName($row->comment_user_entity_id);
+				$comments[$commentno]['comment_id'] = $row->comment_id;
+				$comments[$commentno]['comment_rating'] = $row->comment_rating;
+				$comments[$commentno]['comment_date'] = $row->comment_timestamp;
+				$comments[$commentno]['comment_content'] = $row->comment_text;
+				$comments[$commentno]['comment_reported_count'] = $row->comment_reported_count;
 				$commentno++;
 			}
 

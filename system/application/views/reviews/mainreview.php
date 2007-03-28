@@ -1,210 +1,146 @@
-<div class='RightToolbar'>
-	<h4>About</h4>
-	<div class='Entry'>
-		<?php echo $organisation_description; ?>
+<div id="RightColumn">
+	<h2 class="first">About</h2>
+	<div class="Entry">
+		<?php echo($organisation_description); ?>
 	</div>
 
+	<h2>Details</h2>
+	<div class="Entry">
+		<p>
 <?php
-
-if ($content_type != 'barcrawl')
-{ //Normal Section
-
+$address = $address_main;
+$address = str_replace("\r", '', $address);
+$address = str_replace("\n", ', ', $address);
+$address = htmlspecialchars($address);
 ?>
-	<h4>Details</h4>
-	<div class='Entry'>
-		<span class="ReviewDetailsTitle">Address</span><br />
-			<span class="ReviewDetailsInfo"><?php echo $address_main; ?></span><br />
-		<span class="ReviewDetailsTitle">Website</span><br />
-			<span class="ReviewDetailsInfo"><a href="<?php echo $website; ?>" target="_new"><?php echo $website; ?></a></span><br />
-		<span class="ReviewDetailsTitle">Email</span><br />
-				<span class="ReviewDetailsInfo"><a href=><?php echo $email; ?></a></span><br />
-		<span class="ReviewDetailsTitle">Telephone</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $telephone; ?></span><br />
-		<span class="ReviewDetailsTitle">Opening Times</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $opening_times; ?></span><br />
-		<span class="ReviewDetailsTitle">Serving Times</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $serving_times; ?></span><br />
+			Address: <?php echo($address); ?><br />
+			Website: <?php echo(htmlspecialchars($website)); ?><br />
+			Email: <?php echo(htmlspecialchars($email)); ?><br />
+			Telephone: <?php echo(htmlspecialchars($telephone)); ?><br />
+			Opening Times: <?php echo(htmlspecialchars($opening_times)); ?><br />
+			Serving Times: <?php echo(htmlspecialchars($serving_times)); ?><br />
 <?php
-		if ($deal != NULL)echo '<span class="ReviewDetailsTitle">Current Deal</span><br />
-				<span class="ReviewDetailsInfo">'.$deal.'</span><br />';
+if ($deal != NULL) {
 ?>
-	</div>
-	<h4>Tips</h4>
-	<div class='Entry'>
-		<span class="ReviewDetailsTitle">Yorker Recommends</span><br />
-				<span class="ReviewDetailsInfo"><?php echo $yorker_recommendation; ?></span><br />
-		<span class="ReviewDetailsTitle">Average Drink Price</span><br />
-				<span class="ReviewDetailsInfo"><?php echo '£'.($average_price/100); ?></span><br />
-	</div>
-
+			Current Deal: <?php echo(htmlspecialchars($deal)); ?><br />
 <?php
 }
-else
-{ //Barcrawl Section
-	echo "<h4>Other Barcrawls</h4><div class='Entry'>";
-	foreach ($barcrawls as $barcrawl)
-	{
-		echo '<a href="'.$barcrawl['barcrawl_link'].'">'.$barcrawl['barcrawl_name'].'</a><br />';
-	}
-echo '</div>';
-
-}
-
 ?>
-
-</div>
-
-<div class="grey_box">
-	<div style="float: right; width: 60%;">
-		<?php echo '<img width="230px" style="float: right;" src="' . $review_image. '" style="width: 220px; margin-bottom: 3px;" />'; ?>
+		</p>
 	</div>
-	<div style="width:40%">
-		<h2 style='margin-bottom: 5px;'><?php echo $review_title; ?></h2><br />
-		<h5>"<?php echo $review_blurb; ?>"</h5><br />
-		<h4>Rating</h4>
-<?php
-		//Star display
-		//Display stars
-		for ($stars = 0; ($stars < floor($review_rating/2)); $stars++)
-		{
-			echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
-		}
-		//Display Half Star
-		if (($review_rating % 2) == 1)
-		{
-			echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
-		}
-		else
-		{
- 			if ($review_rating != 10) echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
-		}
-		
-		//Fill in the blanks
-		for ($emptystars = 0; $emptystars < (4 - $stars); $emptystars++)
-		{
-			echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
-		}
-?>
+
+	<h2>Tips</h2>
+	<div class="Entry">
+			Yorker Recommends: <?php echo(htmlspecialchars($yorker_recommendation)); ?><br />
+			Average Drink Price: £<?php echo(htmlspecialchars($average_price/100)); ?><br />
 	</div>
 </div>
 
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2><?php echo($review_title); ?></h2>
+		<img src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
+		<p><?php echo($review_blurb); ?></p>
+		<h3>Rating</h3>
+		<div>
 <?php
-if ($content_type == 'barcrawl' && FALSE)
-{	
-	//Barcrawl top box
-	echo '<div class="blue_box"><h2>barcrawl details</h2>';
-	echo '<table><tr><td><b>Pub</b></td><td><b>Recommended Drink</b></td><td><b>Cost</b></td></tr>';
-	foreach ($bar_list as $bar)
-	{
-		echo '<tr><td>'.$bar['bar_name'].'</td><td>'.$bar['bar_drink'].'</td><td>£'.($bar['bar_drink_cost'] / 100).'</td>';
-	}
-
-	echo '</table><br />';	
-
-	echo '<font size=3><b>Directions</b></font><br /><br />'.$barcrawl_directions;
-
-echo '</div>';
-
+echo('			');
+$star = 0;
+while ($star < floor($review_rating/2)) {
+	echo('<img src="/images/prototype/reviews/star.png" alt="*" title="*" />');
+	$star++;
+}
+if ($review_rating % 2 == 1) {
+	echo('<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />');
+	$star++;
+}
+while ($star < 5) {
+	echo('<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />');
+	$star++;
 }
 ?>
 
-<div class="blue_box">
-	<h2>reviews</h2>
+		</div>
+	</div>
 
+	<div class="BlueBox">
+		<h2>reviews</h2>
 <?php
-	//Author's reviews - Loop through and display all of them
-
-	for ($article_no = 0; $article_no < count($article); $article_no++)
-	{
-
-	//Byline support
-	$this->byline->AddReporter($article[$article_no]['article_authors']);
-	$this->byline->SetDate($article[$article_no]['article_date']);
-	echo $this->byline->load();
+foreach($article as $a) {
+	$this->byline->AddReporter($a['article_authors']);
+	$this->byline->SetDate($a['article_date']);
+	$this->byline->load();
 	$this->byline->Reset();
 
-	//Print Article
-	echo '<p><span style="color:black;">'.$article[$article_no]['article_content'].'</span></p>';
-		if ($article_no < (count($article) - 1)) { echo '<hr>'; } //Last line support
-	}
-
+	echo($a['article_content']);
+}
 ?>
+	</div>
 
-</div>
-<div class="grey_box">
-	<h2>your comments</h2>
-	<?php
-		if ($user_rating == null) echo 'No one has rated this place yet, you could be the first!';
-		else { echo 'User Rating: <h5 style="display:inline;">'.$user_rating.'</h5>/10 (based on '.$user_based.' votes)';
-	?>
-	<hr>
+	<div class="BlueBox">
+		<h2>your comments</h2>
+		<p>
 <?php
-	//If not empty
-	if (! empty($comments))
-	{
-if ($this->uri->segment(4) != 'all')
-	{
-		//Show the last 5 comments
-		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1) && ($commentno > count($comments['comment_date']) - 6); $commentno--)
-		{
-		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].' | <a href="/reviews/reportcomment/'.$comments['comment_id'][$commentno].'">Report</a></b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
-		}
-	}
-	else
-	{
-		//Show all comments
-		for ($commentno = count($comments['comment_date']) - 1; ($commentno > -1); $commentno--)
-		{
-		echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<hr>';
-		}
-	}
-		
-	}
-		
-
-?>
-
-<?php
-
-//If not already doing so give option for displaying all comments
-if ($this->uri->segment(4) != 'all')
-{
-	echo '<a href='.$this->uri->uri_string().'/all>View all comments</a><br /><br />';
-}
-
-}
-echo '<br /><br />';
-
-if ($this->user_auth->entityId > 0)
-{
-	echo '<h2>add comment</h2>';
-
-	//Allow a user to add a comment
-	echo form_open('reviews/addcomment');
-	echo form_hidden('comment_type_id',$type_id);
-	echo form_hidden('comment_organisation_id',$organisation_id);
-	echo form_hidden('comment_article_id',$article_id[0]);
-	echo form_hidden('comment_user_entity_id',$this->user_auth->entityId);
-	echo form_hidden('return_page',$this->uri->uri_string());
-	echo '<fieldset><textarea class="text" name="comment_text" rows="4" style="width: 90%; margin-left: 1em;"></textarea><br />';
-	echo 'Rating: <SELECT name="comment_rating">
-				<OPTION selected>1</OPTION>
-				<OPTION>2</OPTION>
-				<OPTION>3</OPTION>
-				<OPTION>4</OPTION>
-				<OPTION>5</OPTION>
-				<OPTION>6</OPTION>
-				<OPTION>7</OPTION>
-				<OPTION>8</OPTION>
-				<OPTION>9</OPTION>
-				<OPTION>10</OPTION>
-			</SELECT>&nbsp;';
-	echo '<input type="submit" class="button" value="Add Comment"></fieldset></form>';
-}
+echo('			');
+if ($user_rating == null)
+	echo('No one has rated this place yet, you could be the first!');
 else
-{
-	echo '<i>You can add your own comment by <a href="/login/main'.$this->uri->uri_string().'">logging in</a></i>';
+	echo('User Rating: '.$user_rating.'/10 (based on '.$user_based.' votes)');
+?>
+
+		</p>
+		<hr />
+<?php
+for ($i = 0; ($i < 5 || $this->uri->segment(4) == 'all') & $i < count($comments); $i++) {
+	echo('		<h3>'.htmlentities($comments[$i]['comment_author']));
+	echo(' | '.htmlentities($comments[$i]['comment_date']));
+	echo(' |  <a href="/reviews/reportcomment/'.$comments[$i]['comment_id'].'">Report</a></h3>'."\n");
+	echo('		<p>'.htmlentities($comments[$i]['comment_content']).'</p>'."\n");
+}
+
+if ($this->uri->segment(4) != 'all')
+	echo('<p><a href='.$this->uri->uri_string().'/all>View all comments</a></p>');
+
+if (!$this->user_auth->isLoggedIn) {
+?>
+		<p>Please <a href="/login/main<?php echo($this->uri->uri_string()); ?>">log in</a> to add comments</p>
+	</div>
+<?php
+} else {
+?>
+	</div>
+
+	<div class="BlueBox">
+		<h2>add comment</h2>
+		<form action="/reviews/addcomment" method="post">
+			<fieldset>
+				<input type="hidden" name="comment_type_id" value="<?php echo($type_id); ?>" />
+				<input type="hidden" name="comment_organisation_id" value="<?php echo($organisation_id); ?>" />
+				<input type="hidden" name="comment_article_id" value="<?php echo($article_id[0]); ?>" />
+				<input type="hidden" name="comment_user_entity_id" value="<?php echo($this->user_auth->entityId); ?>" />
+				<input type="hidden" name="return_page" value="<?php echo($this->uri->uri_string()) ?>" />
+				<label for="comment_text">Comments: </label>
+					<textarea name="comment_text"></textarea><br />
+				<label for="comment_rating">Rating: </label>
+					<select name="comment_rating">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+					</select>
+			</fieldset>
+			<fieldset>
+				<input type="submit" value="AddComment" class="button" />
+			</fieldset>
+		</form>
+	</div>
+<?php
 }
 ?>
-	<br />
 </div>

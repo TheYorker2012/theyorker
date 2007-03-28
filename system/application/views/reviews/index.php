@@ -1,3 +1,0 @@
-This page will no longer be here...
-
-I don't think we should get rid of the 3rd icon, it works well in the yorker style. Could we convert this section into a 'My Yorker' type section. For admining your account. Your subscriptions and links to the admin pannels that you are connected with (to then login again) We are really lacking a nice location for that at the moment, this makes sense as its an image of a guy on a laptop anyway. Just a thought, wasnt sure where to put this message for attention. -- Oj502 (owen)

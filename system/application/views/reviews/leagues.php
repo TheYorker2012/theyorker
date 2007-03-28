@@ -1,30 +1,28 @@
-<div class='RightToolbar'>
-	<h4>Other Leagues</h4>
-	<div class='Entry'>
 <?php
-//Display leagues
-if (isset($league_data))
-{
-	foreach ($league_data as $league_entry)
-	{
-		echo
-		'
-		<div class="LifestylePuffer">
-		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">
-		<img src="'.$league_entry['league_image_path'].'" alt="'.$league_entry['league_name'].'" />
-		</a>
-		</div>
-		';
-	}
-}
+if (isset($league_data)) {
 ?>
-
+<div id="RightColumn">
+	<h2 class="first">Other Leagues</h2>
+	<div class="Entry">
+<?php
+	foreach ($league_data as $league_entry) {
+		echo('		');
+		echo('<a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
+		echo('<img src="'.$league_entry['league_image_path'].'" alt="'.$league_entry['league_name'].'" />');
+		echo('</a>'."\n");
+	}
+?>
 	</div>
 </div>
 
-<div class='grey_box'>
-	<h2 style="display: inline;"><?php if (isset($league_name) == 1) echo $league_name; else echo('League');?></h2><br />
-	Read our latest reviews from all around york! <br />
+<div id="MainColumn">
+<?php
+}
+?>
+
+<div class="BlueBox">
+	<h2><?php if (isset($league_name) == 1) { echo($league_name); } else { echo('League'); }?></h2>
+	<p>Read our latest reviews from all around york! </p>
 </div>
 <?php
 	for($topten=0; ($topten<10) && ($topten < $max_entries); $topten++) {
