@@ -202,7 +202,8 @@ class Gallery extends Controller {
 	}
 	
 	function tag_suggest($tag) {
-		$tagSearch = $this->db->like('tag_name', $tag)->get('tags');
+		$tagSearch = $this->db->where('tag_type', 'photo')->like('tag_name', $tag)->get('tags');
+		$objResponse = new xajaxResponse();
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
