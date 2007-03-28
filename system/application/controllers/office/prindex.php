@@ -52,7 +52,7 @@ class Prindex extends controller
 
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
-		$this->pages_model->SetPageCode('suggestions');
+		$this->pages_model->SetPageCode('office_pr_suggestions');
 
 		$data['user'] = array(
 			'access'=>$this->user_auth->officeType,
@@ -76,7 +76,7 @@ class Prindex extends controller
 
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('unnassigned');
-		$this->pages_model->SetPageCode('unnassigned');
+		$this->pages_model->SetPageCode('office_pr_unnassigned');
 
 		$data['user'] = array(
 			'access'=>$this->user_auth->officeType,
@@ -100,7 +100,7 @@ class Prindex extends controller
 
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('summary');
+		$this->pages_model->SetPageCode('office_pr_summary');
 
 		$data['parameters'] = array(
 			'type'=>$type,
