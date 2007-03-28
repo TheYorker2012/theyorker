@@ -39,7 +39,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		}
 		$page = $this->uri->segment(3, 0);
 		
-		if ($this->input->post('submit') == 'Clear') {
+		if ($this->input->post('submit') == 'clear') {
 			$_SESSION['img_search'] = false;
 		} elseif ($this->input->post('submit')) {
 			$_SESSION['img_search'] = $this->input->post('search');
@@ -147,16 +147,16 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				$tagsRaw = explode('+', $this->input->post('tags'));
 				array_pop($tagsRaw);
 				foreach ($tagsRaw as $tag) {
-					if (is_string($tag)) {
+					$tagSearch = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
+					if ($tagSearch->num_rows() > 0) {
+						//this is an existing tag
+						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tagSearch->result()->tag_id));
+					} else {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);
 						$newTag = $newTag->result();
 						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $newTag->tag_id, 'photo_tag_tag_id' => $tag));
-						
-					} elseif ($tag > 0) {
-						//this is an existing tag
-						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tag));
 					}
 				}
 			}
