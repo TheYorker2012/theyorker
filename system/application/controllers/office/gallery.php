@@ -159,8 +159,9 @@ class Gallery extends Controller {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);
-						$newTag = $newTag->result();
-						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $newTag->tag_id, 'photo_tag_tag_id' => $tag));
+						foreach ($newTag->result() as $Ntag) {
+							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $Ntag->tag_id, 'photo_tag_tag_id' => $tag));
+						}
 					}
 				}
 			}
