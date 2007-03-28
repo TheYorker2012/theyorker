@@ -48,7 +48,7 @@ class Gallery extends Controller {
 			$_SESSION['img_photographer'] = $this->input->post('photographer');
 		}
 		
-		if (isset($_SESSION['img_search']) and $_SESSION['img_search']) {
+		if (isset($_SESSION['img_search'])) {
 			$photos = $this->db->select('*')->from('photos');
 			if ($_SESSION['img_search']) {
 				switch($_SESSION['img_search_by']) {
