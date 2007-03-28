@@ -61,6 +61,8 @@ class Gallery extends Controller {
 					case "photographer":
 						$photos = $photos->join('users', 'users.user_entity_id = photos.photo_author_user_entity_id');
 						$photos = $photos->like('users.user_nickname', $_SESSION['img_search']);
+						$photos = $photos->orlike('users.user_firstname', $_SESSION['img_search']);
+						$photos = $photos->orlike('users.user_surname', $_SESSION['img_search']);
 					break;
 				}
 			}
@@ -73,13 +75,13 @@ class Gallery extends Controller {
 			if ($_SESSION['img_search_order']) {
 				switch ($_SESSION['img_search_order']) {
 					case "title":
-						$photos = $photos->orderby('photo_title', 'desc');
+						$photos = $photos->orderby('photo_title', 'asc');
 					break;
 					case "date":
 						$photos = $photos->orderby('photo_timestamp', 'desc');
 					break;
 					case "photographer":
-						$photos = $photos->orderby('photo_author_user_entity_id', 'desc');
+						$photos = $photos->orderby('photo_author_user_entity_id', 'asc');
 					break;
 				}
 			}
