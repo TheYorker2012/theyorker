@@ -90,21 +90,6 @@ class Gallery extends Controller {
 			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page);
 		}
 		
-		$count = $photos->num_rows();
-		if ($count > PHOTOS_PERPAGE) {
-			$this->load->library('pagination');
-			
-			$config['base_url'] = site_url('office/gallery/');
-			$config['total_rows'] = $count;
-			$config['per_page'] = PHOTOS_PERPAGE;
-			$config['uri_segment'] = 3;
-			
-			$this->pagination->initialize($config);
-			$pageNumbers = $this->pagination->create_links();
-		} else {
-			$pageNumbers = '';
-		}
-		
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
