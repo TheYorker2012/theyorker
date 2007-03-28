@@ -15,7 +15,7 @@
 			<div>
 				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
 				<h4>Tagged as:</h4>
-				 <ul id="ctags" style="height:250px;width:125px;">
+				 <ul id="ctags" style="height:250px;width:125px;cursor: move;">
 					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
 					<li id="ctags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
@@ -23,7 +23,7 @@
 				</div>
 				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
 				<h4>All Tags:</h4>
-				 <ul id="atags" style="height:250px;width:125px;">
+				 <ul id="atags" style="height:250px;width:125px;cursor: move;">
 					<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
 					<li id="atags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
@@ -31,16 +31,13 @@
 				</div>
 			</div>
 			<br />
-			<form id="addTagForm">
-				<fieldset>
-					<legend>Add new tag</legend>
-					<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
-					<input type="button" value="Add" onClick="addTag();">
-				</fieldset>
-			</form>
-			<label>Home Feature: </label>
+			<label for="newtag">New Tag</label>
+				<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
+				<input type="button" value="Add" onClick="addTag();">
+				<br />
+			<label for="onfrontpage">Home Feature: </label>
 				<input type='checkbox' name='onfrontpage' value="on" /><br />
-			<label>Hidden: </label>
+			<label for="hidden">Hidden: </label>
 				<input type='checkbox' name='hidden' value="hide" /><br />
 			<input type="submit" class="button" value="Save" />
 		</fieldset>
