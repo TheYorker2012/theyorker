@@ -158,9 +158,9 @@ class Gallery extends Controller {
 					} else {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
-						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);
+						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 						foreach ($newTag->result() as $Ntag) {
-							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $Ntag->tag_id, 'photo_tag_tag_id' => $tag));
+							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $Ntag->tag_id));
 						}
 					}
 				}
@@ -185,7 +185,7 @@ class Gallery extends Controller {
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
-		$frameData = array('photographer' => $data['photographer'], //wrong!!!
+		$frameData = array('photographer' => $data['photographer'],
 		                   'tags' => $this->db->getwhere('tags', array('tag_type'=>'photo')),
 		                   'pageNumbers' => '');
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
