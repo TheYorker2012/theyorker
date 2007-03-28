@@ -61,7 +61,6 @@ class Messages
 	{
 		$this->mMessages = array();
 		
-		// Assume session has already been started by user_auth
 		if (array_key_exists('messages',$_SESSION)) {
 			foreach ($_SESSION['messages'] as $message) {
 				$message = new Message($message);
@@ -103,7 +102,8 @@ class Messages
 	 */
 	function AddDumpMessage($Name,$Variable)
 	{
-		$this->AddMessage('information', '<H4>Variable: ' . $Name . '</H4>'.
+		$CI = &get_instance();
+		$this->AddMessage('information', '<h4>Variable: ' . $Name . ' in '.$CI->uri->uri_string().'</h4>'.
 			'<pre>'.ascii_to_entities(var_export($Variable,true)).'</pre>');
 	}
 

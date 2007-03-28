@@ -9,8 +9,7 @@ define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
 define('BASE_DIR', '/home/theyorker/public_html');
 
- class Gallery extends Controller
-{
+class Gallery extends Controller {
 	/**
 	 * @brief Default constructor.
 	 */
@@ -39,7 +38,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		}
 		$page = $this->uri->segment(3, 0);
 		
-		if ($this->input->post('submit') == 'Clear') {
+		if ($this->input->post('clear') == 'clear') {
 			$_SESSION['img_search'] = false;
 		} elseif ($this->input->post('submit')) {
 			$_SESSION['img_search'] = $this->input->post('search');
@@ -49,7 +48,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			$_SESSION['img_photographer'] = $this->input->post('photographer');
 		}
 		
-		if (isset($_SESSION['img_search']) and $_SESSION['img_search']) {
+		if (isset($_SESSION['img_search'])) {
 			$photos = $this->db->select('*')->from('photos');
 			if ($_SESSION['img_search']) {
 				switch($_SESSION['img_search_by']) {
@@ -60,8 +59,10 @@ define('BASE_DIR', '/home/theyorker/public_html');
 						$photos = $photos->like('photo_title', $_SESSION['img_search']);
 					break;
 					case "photographer":
-						//not implemented!!!
-						$photos = $photos->like('photo_title', $_SESSION['img_search']);
+						$photos = $photos->join('users', 'users.user_entity_id = photos.photo_author_user_entity_id');
+						$photos = $photos->like('users.user_nickname', $_SESSION['img_search']);
+						$photos = $photos->orlike('users.user_firstname', $_SESSION['img_search']);
+						$photos = $photos->orlike('users.user_surname', $_SESSION['img_search']);
 					break;
 				}
 			}
@@ -74,13 +75,13 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			if ($_SESSION['img_search_order']) {
 				switch ($_SESSION['img_search_order']) {
 					case "title":
-						$photos = orderby('photo_title', 'desc');
+						$photos = $photos->orderby('photo_title', 'asc');
 					break;
 					case "date":
-						$photos = orderby('photo_timestamp', 'desc');
+						$photos = $photos->orderby('photo_timestamp', 'desc');
 					break;
 					case "photographer":
-						$photos = orderby('photo_author_user_entity_id', 'desc');
+						$photos = $photos->orderby('photo_author_user_entity_id', 'asc');
 					break;
 				}
 			}
@@ -88,6 +89,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		} else {
 			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page);
 		}
+		
 		
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
@@ -117,6 +119,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 	function show()
 	{
 		if (!CheckPermissions('office')) return;
+		$this->load->library('xajax');
+		$this->xajax->registerFunction(array("tag_suggest", &$this, "tag_suggest"));
+		$this->xajax->processRequests();
 		
 		$id = $this->uri->segment(4);
 		
@@ -139,7 +144,30 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				$new['photo_deleted'] = "0";
 			}
 			$this->db->update('photos', $new, array('photo_id' => $id));
-
+			
+			//tags
+			$this->db->delete('photo_tags', array('photo_tag_photo_id' => $id));
+			//add
+			if ($this->input->post('tags')) {
+				$tagsRaw = explode('+', $this->input->post('tags'));
+				array_pop($tagsRaw);
+				foreach ($tagsRaw as $tag) {
+					$tagSearch = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
+					if ($tagSearch->num_rows() > 0) {
+						//this is an existing tag
+						foreach ($tagSearch->result() as $tagS) {
+							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tagS->tag_id));
+						}
+					} else {
+						//this is a new tag
+						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
+						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
+						foreach ($newTag->result() as $Ntag) {
+							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $Ntag->tag_id));
+						}
+					}
+				}
+			}
 		}
 		
 		$this->pages_model->SetPageCode('office_gallery');
@@ -150,7 +178,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->row(),
 				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
 				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
-				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
+				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
+				'tagsNotUsed' => $this->db->query('SELECT * FROM `tags` WHERE `tag_type` = \'photo\' AND (SELECT COUNT(*) FROM `photo_tags` WHERE `photo_tag_tag_id` = tags.tag_id AND `photo_tag_photo_id` = ?) = 0', array($id))
 			);
 		}
 		
@@ -167,11 +196,34 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
+		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
+		$head.= '<script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js" type="text/javascript"></script>';
+		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
 	
 		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	function tag_suggest($tag) {
+		$objResponse = new xajaxResponse();
+		if ($tag == "") {
+			$objResponse->addAssign("txt_result", "style.display", 'none');
+			return $objResponse;
+		}
+		$tagSearch = $this->db->where('tag_type', 'photo')->like('tag_name', $tag)->get('tags');
+		$reply = '';
+		if ($tagSearch->num_rows() > 0) {
+			foreach ($tagSearch->result() as $tag) {
+				$reply.='<a onClick="$(\'newtag\').value = \''.$tag->tag_name.'\';$(\'txt_result\').style.display = \'none\'">'.$tag->tag_name.'</a><br />';
+			}
+			$objResponse->addAssign("txt_result", "style.display", 'block');
+			$objResponse->addAssign("txt_result", "innerHTML", $reply);
+		} else {
+			$objResponse->addAssign("txt_result", "style.display", 'none');
+		}
+		return $objResponse;
 	}
 	
 	function upload() {
@@ -296,10 +348,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		
 		$this->image_lib->initialize($config);
 		
-		if (!$this->image_lib->resize())
-		{
-//			die('The resize failed.');
-		echo $config['source_image'];
+		if (!$this->image_lib->resize()) {
+			echo $config['source_image'];
 			echo $this->image_lib->display_errors();
 		}
 		

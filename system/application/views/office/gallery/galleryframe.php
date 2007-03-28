@@ -16,8 +16,8 @@
 	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<fieldset>
-			<input type="radio" name="searchcriteria" value="title" selected />Title<br />
-			<input type="radio" name="searchcriteria" value="date" />Tag<br />
+			<input type="radio" name="searchcriteria" value="title" checked />Title<br />
+			<input type="radio" name="searchcriteria" value="date" />Date<br />
 			<input type="radio" name="searchcriteria" value="photographer" />Photographer<br /><br />
 			Search Criteria:<input type="text" name="search" />
 			<input type="submit" class="button" name="submit" value="Search" />
@@ -41,14 +41,13 @@
 			<select name="photographer">
 				<option value="null" selected></option>
 				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person):?>
-				<option value="<?=$person->user_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
+				<option value="<?=$person->user_entity_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			</fieldset>
 		</div>
 	</form>
 </div>
-<div class="blue_box">
 	<?php
 		// Load a subview.
 		$content[0]->Load();

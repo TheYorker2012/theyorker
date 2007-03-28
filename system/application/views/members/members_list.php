@@ -63,11 +63,38 @@ function FilterLinkBool($filter, $field, $value)
 
 <div class='blue_box'>
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
+	
+	
+	<P>The following action can be performed on the selected members</P>
+	<P>
+		<select>
+			<!--optgroup label="Actions:"-->
+				<option selected>Send e-mail</option>
+				<option>Remove membership</option>
+				<option>Set as paid</option>
+				<option>Set as not paid</option>
+				<option>Request business cards</option>
+				<option>Expire business cards</option>
+			<!--/optgroup-->
+			<?php
+				if (!empty($organisation['subteams'])) {
+					echo '<optgroup label="Invite:">';
+					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+					echo '</optgroup>';
+				}
+			?>
+		</select>
+		<input type="button" value="Go" />
+	</P>
+		
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
 		
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
-			<th></th>
+			<th align="center">
+				<input type="checkbox" name="members_selected[]"
+					value="userSelectAllNone"
+					id="userSelectAllNone" /></th>
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
@@ -87,7 +114,8 @@ function FilterLinkBool($filter, $field, $value)
 				<input type="checkbox" name="members_selected[]"
 					value="user<?php echo $membership['user_id']; ?>"
 					id="user<?php echo $membership['user_id']; ?>" /></td>
-			<td colspan=2><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname'].' '.$membership['surname']; ?></a></td>
+			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname']; ?></a></td>
+			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['surname']; ?></a></td>
 			<?php /** @todo email should show username */ ?>
 			
 			<td><?php if (NULL !== $membership['email']) { ?>
@@ -120,35 +148,6 @@ function FilterLinkBool($filter, $field, $value)
 		</table>
 		<?php /*<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
 		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>*/ ?>
-		<fieldset>
-		<input type="button" value="select all" />
-		<input type="button" value="unselect all" />
-		</fieldset>
-		
-		<P>
-			Member actions:
-			<select>
-				<!--optgroup label="Actions:"-->
-					<option selected>Send e-mail</option>
-					<option>Remove membership</option>
-					<option>Make VIP</option>
-					<option>Demote from VIP</option>
-					<option>Set as paid</option>
-					<option>Set as not paid</option>
-					<option>Request business cards</option>
-					<option>Expire business cards</option>
-				<!--/optgroup-->
-				<?php
-					if (!empty($organisation['subteams'])) {
-						echo '<optgroup label="Invite:">';
-						EchoTeamFilterOptions($organisation, 'Invite to team ', FALSE);
-						echo '</optgroup>';
-					}
-				?>
-			</select>
-			<input type="button" value="Go" />
-		</P>
-		<P>Selected members (whats this for?)</P>
 	</form>
 
 </div>

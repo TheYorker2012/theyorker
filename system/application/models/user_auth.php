@@ -19,7 +19,7 @@ class User_auth extends model {
 	public $isLoggedIn;
 
 	/// string The username of the logged in user
-	public $username;
+	public $username = '';
 
 	/// int The entityId of the logged in user
 	public $entityId;
@@ -89,7 +89,7 @@ class User_auth extends model {
 			$this->allTeams = $_SESSION['ua_allteams'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
-
+		
 		if (!$this->isLoggedIn && isset($_COOKIE['SavedLogin'])) {
 			// Try to perform the login from a cookie
 			try {
@@ -153,11 +153,20 @@ class User_auth extends model {
 		// Create a new session to prevent hijacking of sessions
 		session_regenerate_id(true);
 		
-		// Set a cookie if appropriate
+		// Set/unset a cookie if appropriate
 		if ($savelogin) {
 			setcookie(
 				'SavedLogin', 
-				implode(':$:', array($username, $hash))
+				implode(':$:', array($username, $hash)),
+				time()+$this->config->item('saved_login_duration'),
+				$this->config->item('base_url')
+			);
+		} elseif (isset($_COOKIE['SavedLogin'])) {
+			setcookie(
+				'SavedLogin',
+				$username,
+				time()-$this->config->item('saved_login_duration'),
+				$this->config->item('base_url')
 			);
 		}
 		
@@ -229,6 +238,10 @@ class User_auth extends model {
 	 * @param $savelogin bool Stay logged in.
 	 */
 	public function login($username, $password, $savelogin) {
+		// Ensure logged out!
+		if ($this->isLoggedIn) {
+			$this->logout();
+		}
 		$sql = 'SELECT entity_id, entity_username, entity_password, 
 				entity_salt 
 			FROM entities 
@@ -267,9 +280,17 @@ class User_auth extends model {
 	
 	/// Logout of the entire site
 	public function logout() {
+		if (!$this->isLoggedIn) {
+			return;
+		}
 		// Change the cookie not to store the password, if present
 		if (isset($_COOKIE['SavedLogin'])) {
-			setcookie('SavedLogin', $username);
+			setcookie(
+				'SavedLogin',
+				$this->username,
+				time()+$this->config->item('saved_login_duration'),
+				$this->config->item('base_url')
+			);
 		}
 
 		// Set login status to 'not logged in'.  Username is left for
@@ -279,6 +300,7 @@ class User_auth extends model {
 		$this->officeLogin = false;
 		$this->officeType = 'None';
 		$this->officeInterface = -1;
+		$this->username = '';
 		$this->firstname = '';
 		$this->surname = '';
 		$this->permissions = 0;
@@ -286,8 +308,9 @@ class User_auth extends model {
 		$this->allTeams = array();
 		$this->salt = '';
 
-		// Save values in session
-		$this->localToSession();
+		// Clear the session
+		session_destroy();
+		session_start();
 	}
 	
 	/// Login to the yorker office

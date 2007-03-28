@@ -1,5 +1,6 @@
+<div class="blue_box">
 	<h2>information</h2>
-	<form class="form" method="post" action="<?=$photoDetails->photo_id?>/save">
+	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
 		<fieldset>
 			<label for="title">Title: </label>
 				<input type="text" name="title" value="<?=$photoDetails->photo_title?>" /><br />
@@ -11,19 +12,34 @@
 					<option value="<?=$person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?=$person->user_firstname.' '.$person->user_surname?></option>
 					<?php endforeach;?>
 				</select><br />
-			<label for="tags">Tags: </label>
-				<select multiple size="8" name="tags">
+			<input type="hidden" name="tags" id="tags" />
+			<div>
+				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
+				<h4>Tagged as:</h4>
+				 <ul id="ctags" style="height:250px;width:125px;cursor: move;">
 					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-					<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
+					<li id="ctags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
-				</select><br />
-			<label></label>
-				<a href="#">+ Add More Tags</a><br />
-			<label></label>
-				<a href="#">- Delete Selected Tags</a><br />
-			<label>Home Feature: </label>
+				 </ul>
+				</div>
+				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
+				<h4>All Tags:</h4>
+				 <ul id="atags" style="height:250px;width:125px;cursor: move;">
+					<?php if ($tagsNotUsed->num_rows() > 0) foreach ($tagsNotUsed->result() as $tag):?>
+					<li id="atags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
+					<?php endforeach;?>
+				 </ul>
+				</div>
+			</div>
+			<br />
+			<label for="newtag">New Tag</label>
+				<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
+				<input type="button" value="Add" onClick="updateList();">
+				<br />
+				<div id="txt_result"></div>
+			<label for="onfrontpage">Home Feature: </label>
 				<input type='checkbox' name='onfrontpage' value="on" /><br />
-			<label>Hidden: </label>
+			<label for="hidden">Hidden: </label>
 				<input type='checkbox' name='hidden' value="hide" /><br />
 			<input type="submit" class="button" value="Save" />
 		</fieldset>
@@ -39,3 +55,60 @@
 	<a href="<?=site_url(photoLocation($photoDetails->photo_id))?>">Click here to view</a><br /><br />
 	Not happy with these thumbnails? <a href="<?=site_url('office/gallery/edit/'.$photoDetails->photo_id)?>">Click here</a> to re-thumbnail.
 </div>
+<script type="text/javascript">
+// <![CDATA[
+
+	function tag_suggest() {
+	    xajax_tag_suggest(escape($('newtag').value));
+	}
+
+	function checkKeypress(e) {
+		var e = (window.event) ? e : e;
+		if (e.keyCode == 13) {
+			updateList();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function updateList() {
+		addTag();
+		$('tags').value = '';
+		var tags = $('ctags').childNodes;
+		for (var i=0; i<tags.length; i++) {
+			$('tags').value+= tags[i].innerHTML + '+';
+		}
+	}
+
+	function addTag() {
+		if ($('newtag').value != "") {
+			Sortable.destroy($('ctags'));
+			Sortable.destroy($('atags'));
+			$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
+			$('newtag').value = "";
+			Sortable.create("ctags",
+			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+			      onChange:updateList});
+			Sortable.create("atags",
+			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+			     onChange:updateList});
+			return true;
+		}
+	}
+
+  Sortable.create("ctags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+     onChange:updateList});
+  Sortable.create("atags",
+    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+    onChange:updateList});
+
+	$('tags').value = '';
+	var tags = $('ctags').childNodes;
+	for (var i=0; i<tags.length; i++) {
+		$('tags').value+= tags[i].innerHTML + '+';
+	}
+
+// ]]>
+</script>

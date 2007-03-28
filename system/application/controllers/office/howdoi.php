@@ -783,7 +783,8 @@ class Howdoi extends Controller
 			{
 				$this->requests_model->AddUserToRequest(
 					$_POST['r_articleid'],
-					$_POST['a_addwriter']
+					$_POST['a_addwriter'],
+					$this->user_auth->entityId
 					);
 		                $this->main_frame->AddMessage('success','User has been added to write an answer to this question.');
 				redirect($_POST['r_redirecturl']);

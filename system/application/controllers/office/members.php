@@ -88,8 +88,8 @@ class Members extends Controller
 				vip_url('members/invite'));
 		$navbar->AddItem('teams', 'Teams',
 				vip_url('members/teams'));
-		$navbar->AddItem('mailing', 'Mailing Lists',
-				vip_url('members/mailing'));
+		$navbar->AddItem('compose', 'Compose',
+				vip_url('members/compose'));
 		
 		$this->main_frame->SetPage($SelectedPage);
 	}
@@ -592,7 +592,6 @@ class Members extends Controller
 	
 	/// Tags that can be appended to invite text emails
 	protected static $sInviteFlags = array(
-		'v' => 'vip',
 		'p' => 'paid',
 	);
 	
@@ -617,6 +616,7 @@ class Members extends Controller
 		$this->_GetTeams();
 		
 		// Read the post data
+		/// @todo require comma or newline between items
 		if ($this->input->post('members_invite_button') === 'Continue') {
 			$emails = $this->input->post('invite_list');
 			if (FALSE !== $emails) {
@@ -696,21 +696,19 @@ class Members extends Controller
 	
 	/// Contact members
 	/**
-	 * @param $Method [string] Method to use.
-	 *	- 'notify'
-	 *	- 'email'
-	 * @param $Operation [string] Operation.
-	 *	- 'filter'
-	 *	- 'post'
 	 */
-	function mailing($Method = NULL, $Operation = NULL)
+	function compose()
 	{
 		if (!CheckPermissions('vip')) return;
 		
-		$this->_SetupTabs('mailing');
+		$this->pages_model->SetPageCode('viparea_members_compose');
+		$this->_SetupTabs('compose');
 		
-		/// @todo Implement $viparea/members/contact/...
-		$this->messages->AddMessage('information', 'todo: implement member contact');
+		/// @todo Implement $viparea/members/compose/...
+		$this->messages->AddMessage('information', 'todo: implement email composer');
+		
+		$data = array();
+		$this->main_frame->SetContentSimple('members/compose', $data);
 		
 		// Load the main frame
 		$this->main_frame->Load();

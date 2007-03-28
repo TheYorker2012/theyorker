@@ -16,8 +16,7 @@ class Register extends Controller {
 		parent::Controller();
 		// Load data model
 		$this->load->model('prefs_model');
-		// Load the main frame
-		SetupMainFrame('student');
+		$this->load->model('pages_model');
 		// Get changeable page content
 		$this->pages_model->SetPageCode('preferences');
 	}

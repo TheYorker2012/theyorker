@@ -56,7 +56,7 @@ if (isset($failure) && $failure) {
 	if (isset($keep_login)) {
 ?>
 			<label for="keep_login">Remember me: </label>
-			<input type="checkbox" name="keep_login" id="keep_login" value="<?php echo $keep_login; ?>" /><br />
+			<input type="checkbox" name="keep_login" id="keep_login" <?php if ($keep_login) echo 'checked="checked" '; ?>/><br />
 <?php
 	}
 	if (isset($previous_post_data)) {

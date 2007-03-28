@@ -58,7 +58,7 @@ function photoLocTag($id, $extension = '.jpg', $alt = false, $force = FALSE) {
 		}
 		return '/'.$location;
 	} else {
-		return '<img src="/images/images/null.jpg" alt="File not found" title="File not found"/>';
+		return '<img src="/images/images/null.png" alt="File not found" title="File not found"/>';
 	}
 }
 
@@ -90,7 +90,7 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		if ($force or is_file($location)) {
 			return '/'.$location;
 		} else {
-			return '/images/images/'.$type.'/null.jpg';
+			return '/images/images/'.$type.'/null.png';
 		}
 	} else {
 		$CI =& get_instance();
@@ -101,22 +101,22 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 		}
 		$query->free_result();
 		if ($fetched_type) {
-			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type));
+			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type), 1);
 			$fetched_type = false;
 			foreach ($query->result() as $onerow) {
 				$fetched_type = $onerow->image_type_codename;
 			}
 			if (!$fetched_type) {
-				return '/images/photos/null.jpg';
+				return '/images/photos/null.png';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
 				return '/'.$location;
 			} else {
-				return '/images/images/'.$fetched_type.'/null.jpg';
+				return '/images/images/'.$fetched_type.'/null.png';
 			}
 		} else {
-			return '/images/photos/null.jpg';
+			return '/images/photos/null.png';
 		}
 	}
 }
@@ -160,7 +160,7 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 				}
 			}
 		} else {
-			return '<img src="/images/images/'.$type.'/null.jpg" />';
+			return '<img src="/images/images/'.$type.'/null.png" />';
 		}
 	} else {
 		$CI =& get_instance();
@@ -177,7 +177,7 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 				$fetched_type = $onerow->image_type_codename;
 			}
 			if (!$fetched_type) {
-				return '<img src="/images/images/null.jpg" />';
+				return '<img src="/images/images/null.png" />';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
@@ -190,10 +190,10 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
 				}
 			} else {
-				return '<img src="/images/images/'.$fetched_type.'/null.jpg" />';
+				return '<img src="/images/images/'.$fetched_type.'/null.png" />';
 			}
 		} else {
-			return '<img src="/images/images/null.jpg" />';
+			return '<img src="/images/images/null.png" />';
 		}
 	}
 }

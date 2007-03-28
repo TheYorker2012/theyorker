@@ -5,7 +5,7 @@
 	</p>
 </div>
 <div class='blue_box'>
-<h2>account maintenance</h2>
+<h2>account administration</h2>
 	<p>
 		<?php echo $account_maintenance_text; ?>
 	</p>
@@ -24,10 +24,10 @@
 		<?php } ?>
 		
 		<div id='nonstudent_details' <?php if($maintainer['maintained'] and $maintainer['student'] == false){}else{ echo 'style="display: none;"';}?>>
-			<label for='maintainer_name'>Maintainer's Name:</label>
+			<label for='maintainer_name'>Admin's Name:</label>
 			<input type='text' name='maintainer_name' style='width: 150px;' value='<?php echo $maintainer['maintainer_name']; ?>'/>
 			<br />
-			<label for='maintainer_email'>Maintainer's Email:</label>
+			<label for='maintainer_email'>Admin's Email:</label>
 			<input type='text' name='maintainer_email' style='width: 220px;' value='<?php echo $maintainer['maintainer_email']; ?>'/>
 			<br />
 		</div>

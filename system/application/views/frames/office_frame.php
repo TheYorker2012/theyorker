@@ -105,18 +105,18 @@ function preloader()
 		<div class='officenavigation_item'>
 			<a href='/logout/office'>Leave Office</a>
 		</div>
-		
+
 		<div class='officenavigation_title'>
 			Calendar
 		</div>
-		
+
 		<div class='officenavigation_item'>
 			<a href='/office/packages/'>Packages</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/directory/'>Directory</a>
 		</div>
-		
+
 		<div class='officenavigation_title'>
 			Sections
 		</div>
@@ -157,7 +157,7 @@ function preloader()
 		</div>
 
 		<div class='officenavigation_item'>
-			<a href='/office/image/requests/'>Photos</a>
+			<a href='/office/photos/'>Photos</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/gallery/'>Gallery</a>

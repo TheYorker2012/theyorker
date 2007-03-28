@@ -100,13 +100,18 @@ $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 
 
 $route['office/directory'] = 'office/yorkerdirectory';
-$route['office/pr/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
-$route['office/pr/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
-$route['office/pr/'.$org_name_regex] = 'office/prindex';
-$route['office/pr/'.$org_name_regex.'/(.*)'] = 'office/$1';
-/*$route['office/pr/'.$org_name_regex.'/([^/]*)'] = 'office/$1';
-$route['office/pr/'.$org_name_regex.'/([^/]*)/([^/]*)'] = 'office/$1/$2';
-$route['office/pr/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2/$3';*/
+$route['office/pr'] = 'office/prindex';
+$route['office/pr/org/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
+$route['office/pr/org/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
+$route['office/pr/org/'.$org_name_regex] = 'office/prindex/orgindex';
+$route['office/pr/org/'.$org_name_regex.'/(.*)'] = 'office/$1';
+/*$route['office/pr/org/'.$org_name_regex.'/([^/]*)'] = 'office/$1';
+$route['office/pr/org/'.$org_name_regex.'/([^/]*)/([^/]*)'] = 'office/$1/$2';
+$route['office/pr/org/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2/$3';*/
+$route['office/pr/summary/rep/([^/]*)'] = 'office/prindex/summary/rep/$1'; //pr rep
+$route['office/pr/summary/org/([^/]*)'] = 'office/prindex/summary/org/$1'; //organisation
+$route['office/pr/summary'] = 'office/prindex/summary/def/0'; //default
+$route['office/pr/(.*)'] = 'office/prindex/$1';
 
 // send tag adding and deleting to the correct place
 $route['office/reviews/addtag'] = 'office/reviews/addtag';

@@ -314,7 +314,7 @@ class Pages extends Controller
 				}
 			}
 			if ($Data['permissions']['prop_edit']) {
-				if ($this->input->post('property_edit_button', FALSE) !== FALSE) {
+				if ($this->input->post('save_properties', FALSE) !== FALSE) {
 					$changes = 0;
 					$input = array();
 					$input['properties'] = array();

@@ -12,21 +12,8 @@
 	</style>
 
 	<div class='RightToolbar'>
-	    <h4>Reporter</h4>
+	    <h4>Operations</h4>
 	   	<ul>
-		<li><a href='#'>Upload new photo</a></li>
-		<li><a href='#'>Select photo from gallery</a></li>
-		<li><a href='#'>Cancel Request</a></li>
-		</ul>
-		<h4>Photographer</h4>
-		<ul>
-		<li><a href='#'>Upload new photo</a></li>
-		<li><a href='#'>Select photo from gallery</a></li>
-		<li><a href='#'>Flag for review</a></li>
-		</ul>
-		<h4>Editor</h4>
-		<ul>
-		<li><a href='#'>Flag for review</a></li>
 		<li><a href='#'>Cancel Request</a></li>
 		</ul>
 	</div>
@@ -47,6 +34,13 @@
 				<label for='r_user'>Requested By:</label>
 				<div id='r_user' style='float: left; margin: 5px 10px;'>Chris Travis</div>
 				<br />
+				<label for="r_article">For Article:</label>
+				<div id="r_article" style="float: left; margin: 5px 10px;">
+					<a href="/office/news/78" target="_blank">
+						Computer Scientists make Pong in MCP
+					</a>
+				</div>
+				<br />
 				<label for='r_assigned'>Assigned to:</label>
 				<div id='r_assigned' style='float: left; margin: 5px 10px;'>Unassigned</div>
 				<input type='button' name='r_assign' value='Assign to me' class='button' />
@@ -58,39 +52,47 @@
 			<h2>photos</h2>
 			<div id="proposed_photos">
 				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
-					Chris Travis<br />
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					Mickey Mouse<br />
 					25/03/07 22:56
                 </div>
 				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<a href="">
+						<img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" />
+					</a>
 					Chris Travis<br />
 					25/03/07 22:56
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
-					Chris Travis<br />
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					Pluto<br />
 					25/03/07 22:56
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
-					Chris Travis<br />
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					Donald Duck<br />
 					25/03/07 22:56
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
-					Chris Travis<br />
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					Minnie Mouse<br />
 					25/03/07 22:56
                 </div>
 			</div>
 			<div style="clear:both;">&nbsp;</div>
-			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" />
-			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" />
+			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location='/office/gallery/';" />
+			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/gallery/upload/';" />
 			<div style="clear:both;">&nbsp;</div>
 		</div>
 

@@ -88,7 +88,8 @@ if (!empty($properties) || $permissions['prop_add']) {
 			<?php }
 			if ($permissions['prop_edit']) {
 				?>
-				<input type='submit' class='button' name='property_edit_button' value='Save Properties'>
+				<input type='hidden' name='save_properties' value='1'>
+				<input type='submit' class='button' name='save_property_button' value='Save Properties'>
 			<?php } ?>
 		</fieldset>
 	</form>

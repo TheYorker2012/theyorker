@@ -1,258 +1,383 @@
-<script type='text/javascript'>
-
-	function xajaxTest()
-	{
-		if (document.getElementById('new_xajaxTest').value == '') {
-			alert('Please enter a comment to submit.');
-		} else {
-			document.getElementById('xajaxTest_form').className = 'hide';
-			document.getElementById('xajaxTest_load').className = 'ajax_loading show';
-			xajax__xajaxTest(document.getElementById('new_xajaxTest').value);
-		}
-	}
-
-	function doxajaxTest()
-	{
-		document.getElementById('new_xajaxTest').value = '';
-		document.getElementById('xajaxTest_form').className = 'show';
-		document.getElementById('xajaxTest_load').className = 'ajax_loading hide';
-		var container = document.getElementById('xajaxTest_container');
-		container.innerHTML = '<div class="feedback"><div class="top"><span class="right">dntyn</span>dyftujd</div><div class="main">fghjfgh</div></div>' + container.innerHTML;
-	}
-
-</script>
 <div class="RightToolbar">
-	<h4>Totals</h4>
+	<h4>Make Suggestion</h4>
 	<div class="Entry">
-		There are currently
-		<ul>
-			<li>79 reviews required</li>
-			<li>2 Reps under 30%</li>
-			<li>32 outdated discounts</li>
-		</ul>
+		<a href="#">Wizard</a>
 	</div>
 </div>
-<div class="grey_box">
-	<h2>PR Officer</h2>
-	To maintain the PR Reps, you can view the list below. The list is sorted with the most incompetent authors at the top. Click on their average to quickly view other information about them. Or click on their name to view more detailed information.
-</div>
 <div class="blue_box">
-	<h2>PR Reps</h2>
+	<h2>Summary (PR Officer)</h2>
 	<div id="ArticleBox">
 		<table>
 			<thead>
 				<tr>
-					<th>PR Rep Name</th>
-					<th>Last Logged In</th>
-					<th>Average</th>
+					<th>PR Rep</th>
+					<th>Rating</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="tr1">
-					<td><a href="#">SteveDave Awesomengine</a></td>
-					<td>4th April 2007</td>
-					<td><a href="#" onclick="var element = document.getElementById('stevedave'); element.style.display == 'none' ? element.style.display = 'table-row' : element.style.display = 'none';">14%</a></td>
-				</tr>
-				<tr id="stevedave" style="display: none">
-					<td colspan=0>
-							<h5>Statistics</h5>
-							<table>
-								<tbody>
-									<tr>
-										<td>Events: 20%</td>
-										<td>Deals: 35%</td>
-									</tr>
-									<tr>
-										<td>Reviews: 2%</td>
-										<td>Directory: 14%</td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-							<span class="grey">SteveDave Awesomeengine is responsible for:</span>
-							<table>
-								<tbody>
-									<tr>
-										<td>Evil Eye: 10%</td>
-										<td>The Blue Bike: 10%</td>
-									</tr>
-									<tr>
-										<td>Floods: 10%</td>
-										<td>Barry Whites Death: 10%</td>
-									</tr>
-									<tr>
-										<td>American Cars: 10%</td>
-										<td>America: 10%</td>
-									</tr>
-									<tr>
-										<td>World War 1: 10%</td>
-										<td>World War 2: 10%</td>
-									</tr>
-									<tr>
-										<td>Idiots and Greenday: 10%</td>
-										<td></td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-					</td>
+					<td><a href="#">Francesca Burton</a></td>
+					<td>87%</td>
 				</tr>
 				<tr class="tr2">
-					<td><a href="#">Tuesday McGee</a></td>
-					<td>78th June 2007</td>
-					<td><a href="#">23%</a></td>
+					<td><a href="#">Nancy Brehon</a></td>
+					<td>75%</td>
 				</tr>
 				<tr class="tr1">
-					<td><a href="#">Funf und Funfzig</a></td>
-					<td>9st March 2002</td>
-					<td><a href="#">52%</a></td>
+					<td><a href="#">Jamie Hogan</a></td>
+					<td>69%</td>
 				</tr>
 				<tr class="tr2">
-					<td><a href="#">Stevedave Mqueen</a></td>
-					<td>30th Febuary 2008</td>
-					<td><a href="#">72%</a></td>
+					<td><a href="#">Christine Travis</a></td>
+					<td>56%</td>
 				</tr>
 				<tr class="tr1">
-					<td><a href="#">Your Mother</a></td>
-					<td>29th December 2007</td>
-					<td><a href="#">98%</a></td>
+					<td><a href="#">Joe Shelley</a></td>
+					<td>52%</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Nicola Evans</a></td>
+					<td>47%</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Daniella Ashby</a></td>
+					<td>30%</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
-
 <div class="grey_box">
-	<h2>PR Rep Organisations</h2>
+	<h2>Summary (PR Rep)</h2>
 	<div id="ArticleBox">
+		<h5>Rep Info</h5>
+		Rep Business Card Here (with edit if Rep).<br />
+		Rep Rating: 75%<br />
 		<table>
 			<thead>
 				<tr>
-					<th>Organisation Name</th>
-					<th>Average</th>
+					<th>Organisation</th>
+					<th>Priority</th>
+					<th>Rating</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="tr1">
 					<td><a href="#">Toffs</a></td>
-					<td><a href="#">14%</a></td>
-				</tr>
-				<tr id="stevedave">
-					<td colspan=0>
-							<h5>Statistics</h5>
-							<table>
-								<tbody>
-									<tr>
-										<td>Events: 35%</td>
-										<td>Deals: 2%</td>
-									</tr>
-									<tr>
-										<td>Reviews: 2%</td>
-										<td>Directory: 14%</td>
-									</tr>
-									<tr>
-										<td>Priority: 4</td>
-										<td></td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-							<span class="grey">Toffs has 2 review types:</span>
-							<table>
-								<tbody>
-									<tr>
-										<td>Food: 10%</td>
-										<td>Drink: 10%</td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-					</td>
+					<td>1</td>
+					<td>71%</td>
 				</tr>
 				<tr class="tr2">
 					<td><a href="#">Evil Eye</a></td>
-					<td><a href="#">14%</a></td>
+					<td>1</td>
+					<td>35%</td>
 				</tr>
 				<tr class="tr1">
-					<td><a href="#">Bleh</a></td>
-					<td><a href="#">14%</a></td>
+					<td><a href="#">Punch Bowl</a></td>
+					<td>2</td>
+					<td>67%</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Tesco (Clifton Moor)</a></td>
+					<td>3</td>
+					<td>95%</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Fantasy World</a></td>
+					<td>5</td>
+					<td>60%</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
-
 <div class="blue_box">
-	<h2>Organisation Reviews - Evil Eye</h2>
+	<h2>Summary (Organisation)</h2>
 	<div id="ArticleBox">
+		<h5>Toffs</h5>
+		Rep: Nicola Evans<br />
+		Organisation Rating: 56/66<br />
+		<input type="text" value="1"><input type="submit" value="Set Priority"><br /><br />
 		<table>
 			<thead>
 				<tr>
-					<th>Review Type</th>
-					<th>Average</th>
+					<th>Info</th>
+					<th>Rating<br />(Current/Expected)</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="tr1">
-					<td><a href="#">Food</a></td>
-					<td><a href="#">14%</a></td>
-				</tr>
-				<tr id="stevedave">
-					<td colspan=0>
-							<h5>Statistics</h5>
-							<table>
-								<tbody>
-									<tr>
-										<td>Updated: 35%</td>
-										<td>Deals: 2%</td>
-									</tr>
-									<tr>
-										<td>Photos: 2%</td>
-										<td>Business Cards: 14%</td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-							<!--
-							<span class="grey">Toffs has 2 review types:</span>
-							<table>
-								<tbody>
-									<tr>
-										<td>Food: 10%</td>
-										<td>Drink: 10%</td>
-									</tr>
-								</tbody>
-							</table>
-							<br />
-							-->
-					</td>
+					<td><a href="#">Events</a></td>
+					<td><span class="orange">1/4</span></td>
 				</tr>
 				<tr class="tr2">
-					<td><a href="#">Drink</a></td>
-					<td><a href="#">14%</a></td>
+					<td><a href="#">Deals</a></td>
+					<td>6/5</td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>2/2</td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td>3/2</td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>1/1</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Information</a></td>
+					<td><span class="orange">29/32</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Directory</a></td>
+					<td><span class="orange">6/8</span></td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>8/8</td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td><span class="orange">7/8</span></td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>8/8</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Photos</a></td>
+					<td><span class="orange">12/12</span></td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Directory</a></td>
+					<td><span class="orange">3/3</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>4/3</td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td><span class="orange">2/3</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>3/3</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Tags</a></td>
+					<td><span class="orange">12/12</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Food</a></td>
+					<td>3/3</td>
+				</tr>
+				<tr class="tr2">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Drink</a></td>
+					<td><span class="orange">1/3</span></td>
+				</tr>
+				<tr class="tr1">
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Culture</a></td>
+					<td>3/3</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Business Cards</a></td>
+					<td>9/6</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Serving Times</a></td>
+					<td><span class="orange">0/1</span></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-<div>
-
-<!--
-	<div class="blue_box">
-		<h2>xajaxTest...</h2>
-		<div id="xajaxTest_load" class="ajax_loading hide">
-			<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Saving new xajaxTest...
-		</div>
-		<fieldset id="xajaxTest_form" class="form">
-			<label for="new_xajaxTest" class="full">Add New xajaxTest</label>
-			<textarea name="new_xajaxTest" id="new_xajaxTest" class="full"></textarea>
-			<br />
-		 	<input type="button" name="add_xajaxTest" id="add_xajaxTest" value="Add xajaxTest" class="button" onclick="xajaxTest();" />
-		</fieldset>
-		<br />
-		<div id="xajaxTest_container">
-		</div>
+</div>
+<div class="grey_box">
+	<h2>Unnassigned (PR Officer)</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>PR Rep(s)</th>
+					<th>Assign To</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><input type="checkbox"><a href="#">Tesco (Heslington)</a></td>
+					<td>Lance Taylor</td>
+					<td><select><option>Martina Goodall</option><option>Alexandra Fargus</option></select></td>
+				</tr>
+				<tr class="tr2">
+					<td><input type="checkbox"><a href="#">Bing Bong Bowling</a></td>
+					<td>Susan Parker<br />Rachael Rout</td>
+					<td><select><option>Martina Goodall</option><option>Alexandra Fargus</option></select></td>
+				</tr>
+				<tr class="tr1">
+					<td colspan="3">
+						<input type="submit" value="Assign">
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
--->
+</div>
+<div class="blue_box">
+	<h2>Unnassigned (PR Rep)</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>PR Rep(s)</th>
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Tesco (Heslington)</a></td>
+					<td>Lance Taylor</td>
+					<td><input type="submit" value="Request"></td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Bing Bong Bowling</a></td>
+					<td>Susan Parker<br />Rachael Rout</td>
+					<td><input type="submit" value="Withdraw"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="grey_box">
+	<h2>Pending</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>PR Rep</th>
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Ice Factory</a></td>
+					<td>Alexandra Fargus</td>
+					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Sports Bar</a></td>
+					<td>Knifeman Spurden</td>
+					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="blue_box">
+	<h2>Suggestions (PR Officer)</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Suggested By</th>
+					<th>Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><input type="checkbox"><a href="#">Toffs V2.0</a></td>
+					<td>Jamie Hogan</td>
+					<td>25th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><input type="checkbox"><a href="#">So Cheesy</a></td>
+					<td>Christine Travis</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><input type="checkbox"><a href="#">Blue Bicycle</a></td>
+					<td>Joe Shelley</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><input type="checkbox"><a href="#">Vue Cinema</a></td>
+					<td>Nicola Evans</td>
+					<td>23rd March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><input type="checkbox"><a href="#">So Cheesy</a></td>
+					<td>Daniella Ashby</td>
+					<td>21st March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td colspan="2">
+						<select>
+						<!--optgroup label="Actions:"-->
+							<option selected>Reject</option>
+							<option>Accept to Unnassigned</option>
+						<!--/optgroup-->
+						
+						<optgroup label="Accept and Assign:">
+							<option name="team_456">to Martina Goodall</option>
+							<option name="team_455">to Annette Oakley</option>
+							<option name="team_454">to Rachael Ingle</option>
+							<option name="team_453">to Matilda Tole</option>
+						</optgroup>
+						</select>
+					</td>
+					<td>
+						<input type="submit" value="Go">
+					</td>
+				</tr>
+		</table>
+	</div>
+</div>
+<div class="grey_box">
+	<h2>Suggestions (PR Rep)</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Suggested By</th>
+					<th>Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Toffs V2.0</a></td>
+					<td>Jamie Hogan</td>
+					<td>25th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">So Cheesy</a></td>
+					<td>Christine Travis</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Blue Bicycle</a></td>
+					<td>Joe Shelley</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Vue Cinema</a></td>
+					<td>Nicola Evans</td>
+					<td>23rd March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">So Cheesy</a></td>
+					<td>Daniella Ashby</td>
+					<td>21st March 07</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
 
 <pre>
 <?php
