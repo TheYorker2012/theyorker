@@ -24,7 +24,7 @@
 				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
 				<h4>All Tags:</h4>
 				 <ul id="atags" style="height:250px;width:125px;cursor: move;">
-					<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
+					<?php if ($tagsNotUsed->num_rows() > 0) foreach ($tagsNotUsed->result() as $tag):?>
 					<li id="atags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
 				 </ul>
