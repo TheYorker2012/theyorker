@@ -81,17 +81,19 @@
 	}
 
 	function addTag() {
-		Sortable.destroy($('ctags'));
-		Sortable.destroy($('atags'));
-		$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
-		$('newtag').value = "";
-		Sortable.create("ctags",
-		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-		      onChange:updateList});
-		Sortable.create("atags",
-		     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-		     onChange:updateList});
-		return true;
+		if ($('newtag').value != "") {
+			Sortable.destroy($('ctags'));
+			Sortable.destroy($('atags'));
+			$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
+			$('newtag').value = "";
+			Sortable.create("ctags",
+			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+			      onChange:updateList});
+			Sortable.create("atags",
+			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
+			     onChange:updateList});
+			return true;
+		}
 	}
 
   Sortable.create("ctags",
@@ -101,6 +103,11 @@
     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
     onChange:updateList});
 
-	updateList();
+	$('tags').value = '';
+	var tags = $('ctags').childNodes;
+	for (var i=0; i<tags.length; i++) {
+		$('tags').value+= tags[i].innerHTML + '+';
+	}
+
 // ]]>
 </script>
