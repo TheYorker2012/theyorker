@@ -145,6 +145,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			//add
 			if ($this->input->post('tags')) {
 				$tagsRaw = explode('+', $this->input->post('tags'));
+				$tagsRaw = array_shift($tagsRaw);
 				foreach ($tagsRaw as $tag) {
 					if (is_string($tag)) {
 						//this is a new tag
