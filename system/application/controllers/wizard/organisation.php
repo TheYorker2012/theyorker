@@ -26,19 +26,18 @@ class Organisation extends controller
 		$skip_stages = array('3', '4'); //these stages are skipped when the user is not connected to the organisation
 		$headings = array('1'=>'Start', '2'=>'Basic Details', '3'=>'More Details', '4'=>'Photos', '5'=>'Map', '6'=>'Finish');
 
-		if (isset($_POST['stage']))
+		if (isset($_POST['r_stage']))
 		{
-			if (isset($_POST['connected']))
-				$data['is_connected'] = $_POST['connected'];
-			else
-				$data['is_connected'] = $_POST['is_connected'];
-/*
-			$data['temp'] = $_POST;
-			$data['post'][$_POST['stage']] = $_POST;
-			$data['post'][$_POST['stage']]['prev'] = htmlentities(serialize($_POST), ENT_QUOTES);
-*/
-			if (isset($_POST['submit_finish']))
-				if ($_POST['stage'] == $stage_count)
+			//dump the post data into the session
+			foreach ($_POST as $key => $postitem)
+			{
+				$_SESSION['org_wizard'][$key] = $postitem;
+			}
+			$data['is_connected'] = $_SESSION['org_wizard']['a_connected'];
+			//$data['post'][$_POST['r_stage']] = $_POST;
+			//$data['post'][$_POST['r_stage']]['prev'] = htmlentities(serialize($_POST), ENT_QUOTES);
+			if (isset($_POST['r_submit_finish']))
+				if ($_POST['r_stage'] == $stage_count)
 				{
 					//finished
 					//##TODO: actually process the form data
@@ -50,9 +49,9 @@ class Organisation extends controller
 					//send them to the final stage
 					$data['stage'] = $stage_count;
 				}
-			else if (isset($_POST['submit_next']))
+			else if (isset($_POST['r_submit_next']))
 			{
-				$data['stage'] = $_POST['stage'] + 1;
+				$data['stage'] = $_POST['r_stage'] + 1;
 				while ($data['is_connected'] == 'no' && in_array($data['stage'], $skip_stages))
 					$data['stage'] = $data['stage'] + 1;
 			}
@@ -61,14 +60,7 @@ class Organisation extends controller
 		{
 			$data['stage'] = 1;
 			$data['is_connected'] = 'yes';
-			$data['stage_list']['prev'] = array(
-				'1'=>NULL,
-				'2'=>NULL,
-				'3'=>NULL,
-				'4'=>NULL,
-				'5'=>NULL,
-				'6'=>NULL
-				);
+			$data['prev'] = array();
 		}
 
 		$data['stage_list']['count'] = $stage_count;
