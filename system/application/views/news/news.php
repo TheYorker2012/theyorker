@@ -1,8 +1,9 @@
 <?php
 function printarticlelink($article, $blurb = false) {
+	$align = $blurb ? 'Right' : 'Left';
 	echo('	<div class="Entry">'."\n");
 	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('			<img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('			<img class="'.$align.'" src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
 	echo('		</a>'."\n");
 	echo('		<h3>'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
@@ -10,11 +11,12 @@ function printarticlelink($article, $blurb = false) {
 	echo('			</a>'."\n");
 	echo('		</h3>'."\n");
 	foreach($article['authors'] as $reporter)
-		echo('		<p><a href="/contact">'.$reporter['name'].'</a></p>'."\n");
-	echo('		<p>'.$article['date'].'</p>'."\n");
-	echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");
-	if (array_key_exists('blurb', $article) && $article['blurb'] != '')
+		echo('		<a href="/contact">'.$reporter['name'].'</a><br />'."\n");
+	echo('		<span class="Date">'.$article['date'].'</span><br />'."\n");
+	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
+		echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
+	}
 	echo('	</div>'."\n");
 }
 ?>

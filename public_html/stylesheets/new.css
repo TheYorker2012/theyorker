@@ -87,6 +87,28 @@ input.button {
 	margin: 0.5em;
 }
 
+span.Date {
+	color: #ff6a00
+}
+
+img.Right {
+	float: right;
+	margin-left: 0.5em;
+}
+
+img.Left {
+	float: left;
+	margin-right: 0.5em;
+}
+
+blockquote {
+	float: right;
+	width: 12em;
+	background-color: #eeeeee;
+	text-align: center;
+	padding: 0.5em;
+	border: 1px solid #999999;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in the page frame and overall layout               *
@@ -234,14 +256,15 @@ div#RightColumn h2, form#feedback_form h2 {
 	font-size: 10pt;
 	color: white;
 	padding: 0.4em;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1.0em 0em 0.5em 0em;
 }
 
 div#RightColumn h2.first {
 	margin-top: 0em;
 }
 
-div#RightColumn h5 {
+div#RightColumn h3 {
+	font-size: 10pt;
 	margin-top: 0.5em;
 	margin-bottom: 0em;
 }
@@ -268,7 +291,7 @@ div#RightColumn input.button {
 }
 
 div#RightColumn div.Entry {
-	margin: 0.5em;
+	padding: 0em 0.5em;
 }
 
 div#MainColumn {
@@ -290,7 +313,7 @@ div.BlueBox h2 {
 }
 
 div.BlueBox h3 {
-	color: #999999;
+	color: black;
 }
 
 div.BlueBox > * {
@@ -381,4 +404,23 @@ div.message_error img, div.message_warning img, div.message_information img, div
 
 div.message_information {
 	background-color: #ffffe1;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in bylines                                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.Byline {
+	border-top: 1px solid #20c1f0;
+	border-bottom: 1px solid #20c1f0;
+	height: 64px;
+	padding: 0.5em 0.5em 0.0em 0.5em;
+}
+
+div.Byline img {
+	float: right;
+}
+
+div.Byline span.Name {
+	font-weight: bold;
+	font-size: larger;
 }
