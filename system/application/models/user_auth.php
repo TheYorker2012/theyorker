@@ -238,6 +238,10 @@ class User_auth extends model {
 	 * @param $savelogin bool Stay logged in.
 	 */
 	public function login($username, $password, $savelogin) {
+		// Ensure logged out!
+		if ($this->isLoggedIn) {
+			$this->logout();
+		}
 		$sql = 'SELECT entity_id, entity_username, entity_password, 
 				entity_salt 
 			FROM entities 
