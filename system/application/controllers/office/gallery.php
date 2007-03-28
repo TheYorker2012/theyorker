@@ -206,7 +206,7 @@ class Gallery extends Controller {
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
-				$reply.='<a onClick="$(\'newtag\').value = \''.$tag.'\'">'.$tag.'</a><br />\n';
+				$reply.='<a onClick="$(\'newtag\').value = \''.$tag->tag_name.'\'">'.$tag->tag_name.'</a><br />\n';
 			}
 			$objResponse->addAssign("txt_result", "style.display", 'block');
 			$objResponse->addAssign("txt_result", "innerHTML", $reply);

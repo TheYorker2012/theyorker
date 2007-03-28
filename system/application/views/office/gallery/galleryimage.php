@@ -32,7 +32,7 @@
 			</div>
 			<br />
 			<label for="newtag">New Tag</label>
-				<input type="text" id="newtag" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
+				<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
 				<input type="button" value="Add" onClick="addTag();">
 				<br />
 				<div id="txt_result"></div>
