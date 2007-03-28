@@ -39,7 +39,7 @@ define('BASE_DIR', '/home/theyorker/public_html');
 		}
 		$page = $this->uri->segment(3, 0);
 		
-		if ($this->input->post('submit') == 'clear') {
+		if ($this->input->post('clear') == 'clear') {
 			$_SESSION['img_search'] = false;
 		} elseif ($this->input->post('submit')) {
 			$_SESSION['img_search'] = $this->input->post('search');
