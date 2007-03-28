@@ -102,7 +102,8 @@ class Messages
 	 */
 	function AddDumpMessage($Name,$Variable)
 	{
-		$this->AddMessage('information', '<H4>Variable: ' . $Name . '</H4>'.
+		$CI = &get_instance();
+		$this->AddMessage('information', '<h4>Variable: ' . $Name . ' in '.$CI->uri->uri_string().'</h4>'.
 			'<pre>'.ascii_to_entities(var_export($Variable,true)).'</pre>');
 	}
 

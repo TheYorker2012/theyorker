@@ -41,7 +41,7 @@
 			<br />
 			<?php if (isset($keep_login)) { ?>
 				<label for='keep_login'>Remember me</label>
-				<input type='checkbox' name='keep_login' id='keep_login' value="<?php echo $keep_login; ?>" />
+				<input type='checkbox' name='keep_login' id='keep_login' <?php if ($keep_login) echo 'checked="checked"'; ?> />
 				<br />
 			<?php }  if (isset($previous_post_data)) { ?>
 				<input type='hidden' name='previous_post_data' id='previous_post_data' value='<? echo htmlentities($previous_post_data, ENT_QUOTES); ?>' />

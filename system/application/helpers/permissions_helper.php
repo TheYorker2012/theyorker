@@ -600,7 +600,6 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$page_code = 'login_office';
 		$login_id = 'office';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_office', TRUE);
-		$data['no_keep_login'] = TRUE;
 		// Find whether to fail
 		$data['failure'] = !$CI->user_auth->officeLogin;
 		if ($data['failure']) {
@@ -638,8 +637,8 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 		$page_code = 'login_public';
 		$login_id = 'student';
 		$success_msg = $CI->pages_model->GetPropertyText('login:success_public', TRUE);
-		$data['username'] = '';
-		$data['keep_login'] = '0';
+		$data['username'] = $CI->user_auth->username;
+		$data['keep_login'] = !empty($CI->user_auth->username);
 		$data['failure'] = false;
 	}
 	$data['login_id'] = $login_id;
