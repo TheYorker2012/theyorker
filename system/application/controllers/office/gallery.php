@@ -202,7 +202,7 @@ class Gallery extends Controller {
 	}
 	
 	function tag_suggest($tag) {
-		$tagSearch = $this->db->get('tags')->like('tag_name', $tag);
+		$tagSearch = $this->db->like('tag_name', $tag)->get('tags');
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
