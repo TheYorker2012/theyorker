@@ -81,6 +81,7 @@ $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
 $route['admin'] = 'admin/index';
 $route['office'] = 'office/index';
+$route['office/pr'] = 'office/prindex/repindex';
 $route['viparea'] = 'office/vipindex';
 
 
@@ -100,10 +101,10 @@ $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 
 
 $route['office/directory'] = 'office/yorkerdirectory';
-$route['office/pr/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
-$route['office/pr/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
-$route['office/pr/'.$org_name_regex] = 'office/prindex';
-$route['office/pr/'.$org_name_regex.'/(.*)'] = 'office/$1';
+$route['office/pr/org/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
+$route['office/pr/org/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';
+$route['office/pr/org/'.$org_name_regex] = 'office/prindex';
+$route['office/pr/org/'.$org_name_regex.'/(.*)'] = 'office/$1';
 /*$route['office/pr/'.$org_name_regex.'/([^/]*)'] = 'office/$1';
 $route['office/pr/'.$org_name_regex.'/([^/]*)/([^/]*)'] = 'office/$1/$2';
 $route['office/pr/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2/$3';*/

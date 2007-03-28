@@ -206,7 +206,8 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 							&&	($CI->uri->segment(1) === 'viparea'));
 	$thru_office_pr	= 	(	($CI->uri->total_segments() >= 3)
 							&&	($CI->uri->segment(1) === 'office')
-							&&	($CI->uri->segment(2) === 'pr'));
+							&&	($CI->uri->segment(2) === 'pr')
+							&&	($CI->uri->segment(3) === 'org'));
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
@@ -217,9 +218,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		}
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
 	} elseif ($thru_office_pr) {
-		$organisation_shortname = $CI->uri->segment(3);
+		$organisation_shortname = $CI->uri->segment(4);
 		$organisation_specified = TRUE;
-		vip_url('office/pr/'.$organisation_shortname.'/', TRUE);
+		vip_url('office/pr/org/'.$organisation_shortname.'/', TRUE);
 	} else {
 		$organisation_shortname = '';
 	}
