@@ -73,13 +73,13 @@ class Gallery extends Controller {
 			if ($_SESSION['img_search_order']) {
 				switch ($_SESSION['img_search_order']) {
 					case "title":
-						$photos = orderby('photo_title', 'desc');
+						$photos = $photos->orderby('photo_title', 'desc');
 					break;
 					case "date":
-						$photos = orderby('photo_timestamp', 'desc');
+						$photos = $photos->orderby('photo_timestamp', 'desc');
 					break;
 					case "photographer":
-						$photos = orderby('photo_author_user_entity_id', 'desc');
+						$photos = $photos->orderby('photo_author_user_entity_id', 'desc');
 					break;
 				}
 			}
