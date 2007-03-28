@@ -1,33 +1,24 @@
 	<style type='text/css'>
 	#proposed_photos .photo_item {
-		float: left;
-		width: 33%;
 		font-size: small;
-		text-align: center;
+		text-align: left;
 		margin-bottom: 5px;
 	}
-	#proposed_photos .photo_item .delete_icon {
+
+	#proposed_photos .photo_item img {
+		float: left;
+		margin-right: 5px;
+	}
+
+	#proposed_photos .photo_item .selection {
 		float: right;
 	}
 	</style>
 
 	<div class='RightToolbar'>
-	    <h4>Reporter</h4>
+	    <h4>Operations</h4>
 	   	<ul>
-		<li><a href='#'>Upload new photo</a></li>
-		<li><a href='#'>Select photo from gallery</a></li>
-		<li><a href='#'>Cancel Request</a></li>
-		</ul>
-		<h4>Photographer</h4>
-		<ul>
-		<li><a href='#'>Upload new photo</a></li>
-		<li><a href='#'>Select photo from gallery</a></li>
-		<li><a href='#'>Flag for review</a></li>
-		</ul>
-		<h4>Editor</h4>
-		<ul>
-		<li><a href='#'>Flag for review</a></li>
-		<li><a href='#'>Cancel Request</a></li>
+		<li><a href='/office/photos/view'>Send back for additional proposed photos</a></li>
 		</ul>
 	</div>
 
@@ -47,9 +38,15 @@
 				<label for='r_user'>Requested By:</label>
 				<div id='r_user' style='float: left; margin: 5px 10px;'>Chris Travis</div>
 				<br />
+				<label for="r_article">For Article:</label>
+				<div id="r_article" style="float: left; margin: 5px 10px;">
+					<a href="/office/news/78" target="_blank">
+						Computer Scientists make Pong in MCP
+					</a>
+				</div>
+				<br />
 				<label for='r_assigned'>Assigned to:</label>
-				<div id='r_assigned' style='float: left; margin: 5px 10px;'>Unassigned</div>
-				<input type='button' name='r_assign' value='Assign to me' class='button' />
+				<div id='r_assigned' style='float: left; margin: 5px 10px;'>Chris Travis</div>
 				<br />
 			</fieldset>
 		</div>
@@ -58,39 +55,53 @@
 			<h2>photos</h2>
 			<div id="proposed_photos">
 				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<input type="radio" name="photo_option" value="1" class="selection" />
 					Chris Travis<br />
 					25/03/07 22:56
+					<br style="clear:both;" />
                 </div>
 				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<input type="radio" name="photo_option" value="2" class="selection" />
 					Chris Travis<br />
 					25/03/07 22:56
+					<br style="clear:both;" />
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<input type="radio" name="photo_option" value="3" class="selection" />
 					Chris Travis<br />
 					25/03/07 22:56
+					<br style="clear:both;" />
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<input type="radio" name="photo_option" value="4" class="selection" />
 					Chris Travis<br />
 					25/03/07 22:56
+					<br style="clear:both;" />
                 </div>
-				<div class="photo_item">
-					<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
-					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>
+                <div class="photo_item">
+					<a href="/images/prototype/news/default_photo_large.jpg">
+						<img src="/images/prototype/news/default_photo.jpg" alt="Proposed Photo" title="Proposed Photo" />
+					</a>
+					<input type="radio" name="photo_option" value="5" class="selection" />
 					Chris Travis<br />
 					25/03/07 22:56
+					<br style="clear:both;" />
                 </div>
 			</div>
 			<div style="clear:both;">&nbsp;</div>
-			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" />
-			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" />
+			<input type="button" name="r_choose" id="r_choose" value="Choose Photo" class="button" />
 			<div style="clear:both;">&nbsp;</div>
 		</div>
 
