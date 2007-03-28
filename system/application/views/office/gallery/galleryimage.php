@@ -11,7 +11,7 @@
 					<option value="<?=$person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?=$person->user_firstname.' '.$person->user_surname?></option>
 					<?php endforeach;?>
 				</select><br />
-			<input type="hidden" id="tags">
+			<input type="hidden" id="tags" />
 			<div>
 				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
 				<h4>Tagged as:</h4>
@@ -70,7 +70,7 @@
 	function updateList() {
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
-		for (var i=0; i<$('ctags').length; i++) {
+		for (var i=0; i<tags.length; i++) {
 			$('tags').value+= '+' + tags[i].innerHTML;
 		}
 	}
