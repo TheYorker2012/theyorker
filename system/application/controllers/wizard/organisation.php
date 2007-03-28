@@ -22,7 +22,58 @@ class Organisation extends controller
 		$this->main_frame->SetPage('wizard_organisation');
 		$this->pages_model->SetPageCode('wizard_organisation');
 
-		$data = array();
+		$stage_count = 6; //total number of stages
+		$skip_stages = array('3', '4'); //these stages are skipped when the user is not connected to the organisation
+		$headings = array('1'=>'Start', '2'=>'Basic Details', '3'=>'More Details', '4'=>'Photos', '5'=>'Map', '6'=>'Finish');
+
+		if (isset($_POST['stage']))
+		{
+			if (isset($_POST['connected']))
+				$data['is_connected'] = $_POST['connected'];
+			else
+				$data['is_connected'] = $_POST['is_connected'];
+/*
+			$data['temp'] = $_POST;
+			$data['post'][$_POST['stage']] = $_POST;
+			$data['post'][$_POST['stage']]['prev'] = htmlentities(serialize($_POST), ENT_QUOTES);
+*/
+			if (isset($_POST['submit_finish']))
+				if ($_POST['stage'] == $stage_count)
+				{
+					//finished
+					//##TODO: actually process the form data
+					$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+					$data['stage'] = 1;
+				}
+				else
+				{
+					//send them to the final stage
+					$data['stage'] = $stage_count;
+				}
+			else if (isset($_POST['submit_next']))
+			{
+				$data['stage'] = $_POST['stage'] + 1;
+				while ($data['is_connected'] == 'no' && in_array($data['stage'], $skip_stages))
+					$data['stage'] = $data['stage'] + 1;
+			}
+		}
+		else
+		{
+			$data['stage'] = 1;
+			$data['is_connected'] = 'yes';
+			$data['stage_list']['prev'] = array(
+				'1'=>NULL,
+				'2'=>NULL,
+				'3'=>NULL,
+				'4'=>NULL,
+				'5'=>NULL,
+				'6'=>NULL
+				);
+		}
+
+		$data['stage_list']['count'] = $stage_count;
+		$data['stage_list']['skip'] = $skip_stages;
+		$data['stage_list']['headings'] = $headings;
 
 		// Set up the public frame
 		$the_view = $this->frames->view('wizard/organisation', $data);

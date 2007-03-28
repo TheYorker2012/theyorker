@@ -96,7 +96,7 @@
 				<tr class="tr2">
 					<td><a href="#">Sports Bar</a></td>
 					<td>Knifeman Spurden</td>
-					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
+					<td></td>
 				</tr>
 			</tbody>
 		</table>
