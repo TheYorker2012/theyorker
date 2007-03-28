@@ -41,7 +41,7 @@
 			<select name="photographer">
 				<option value="null" selected></option>
 				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person):?>
-				<option value="<?=$person->user_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
+				<option value="<?=$person->user_entity_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			</fieldset>

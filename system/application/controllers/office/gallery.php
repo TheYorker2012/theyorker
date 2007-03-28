@@ -145,16 +145,15 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			//add
 			if ($this->input->post('tags')) {
 				$tagsRaw = explode('+', $this->input->post('tags'));
-				$tagsRaw = array_shift($tagsRaw);
 				foreach ($tagsRaw as $tag) {
-					if (is_string($tag)) {
+					if (is_string($tag) and strlen($tag) > 0) {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);
 						$newTag = $newTag->result();
 						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $newTag->tag_id, 'photo_tag_tag_id' => $tag));
 						
-					} else {
+					} elseif ($tag > 0) {
 						//this is an existing tag
 						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tag));
 					}
