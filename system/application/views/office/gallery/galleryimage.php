@@ -17,7 +17,7 @@
 				<h4>Tagged as:</h4>
 				 <ul id="ctags" style="height:250px;width:125px;cursor: move;">
 					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-					<li id="ctags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
+					<li id="ctags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
 				 </ul>
 				</div>
@@ -25,16 +25,17 @@
 				<h4>All Tags:</h4>
 				 <ul id="atags" style="height:250px;width:125px;cursor: move;">
 					<?php if ($tags->num_rows() > 0) foreach ($tags->result() as $tag):?>
-					<li id="atags_<?=$tag->tag_id?>"><?=$tag->tag_name?></li>
+					<li id="atags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
 					<?php endforeach;?>
 				 </ul>
 				</div>
 			</div>
 			<br />
 			<label for="newtag">New Tag</label>
-				<input type="text" id="newtag" onKeypress="return checkKeypress(event)">
+				<input type="text" id="newtag" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
 				<input type="button" value="Add" onClick="addTag();">
 				<br />
+				<div id="txt_result"></div>
 			<label for="onfrontpage">Home Feature: </label>
 				<input type='checkbox' name='onfrontpage' value="on" /><br />
 			<label for="hidden">Hidden: </label>
@@ -55,6 +56,10 @@
 </div>
 <script type="text/javascript">
 // <![CDATA[
+
+	function tag_suggest() {
+	    xajax_tag_suggest(escape($('newtag').value));
+	}
 
 	function checkKeypress(e) {
 		var e = (window.event) ? e : e;

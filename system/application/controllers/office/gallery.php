@@ -9,8 +9,7 @@ define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
 define('BASE_DIR', '/home/theyorker/public_html');
 
- class Gallery extends Controller
-{
+class Gallery extends Controller {
 	/**
 	 * @brief Default constructor.
 	 */
@@ -117,6 +116,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 	function show()
 	{
 		if (!CheckPermissions('office')) return;
+		$this->load->library('xajax');
+		$this->xajax->registerFunction(array("tag_suggest", &$this, "tag_suggest"));
+		$this->xajax->processRequests();
 		
 		$id = $this->uri->segment(4);
 		
@@ -150,7 +152,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 					$tagSearch = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 					if ($tagSearch->num_rows() > 0) {
 						//this is an existing tag
-						$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tagSearch->result()->tag_id));
+						foreach ($tagSearch->result() as $tagS) {
+							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tagS->tag_id));
+						}
 					} else {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
@@ -194,6 +198,21 @@ define('BASE_DIR', '/home/theyorker/public_html');
 	
 		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	function tag_suggest($tag) {
+		$tagSearch = $this->db->get('tags')->like('tag_name', $tag);
+		$reply = '';
+		if ($tagSearch->num_rows() > 0) {
+			foreach ($tagSearch->result() as $tag) {
+				$reply.='<a onClick="$(\'newtag\').value = \'.'$tag.'\'">'.$tag.'</a><br />\n';
+			}
+			$objResponse->addAssign("txt_result", "style.display", 'block');
+			$objResponse->addAssign("txt_result", "innerHTML", $reply);
+		} else {
+			$objResponse->addAssign("txt_result", "style.display", 'none');
+		}
+		return $objResponse;
 	}
 	
 	function upload() {
