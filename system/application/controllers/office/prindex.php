@@ -20,12 +20,12 @@ class Prindex extends controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('suggestions', 'Suggestions',
-				'/office/pr/suggestions');
-		$navbar->AddItem('unnassigned', 'Unnassigned',
-				'/office/pr/unnassigned');
 		$navbar->AddItem('summary', 'Summary',
 				'/office/pr/summary');
+		$navbar->AddItem('unnassigned', 'Unnassigned',
+				'/office/pr/unnassigned');
+		$navbar->AddItem('suggestions', 'Suggestions',
+				'/office/pr/suggestions');
 	}
 	
 	/// Index page (accessed through /office/pr/org/$organisation)
@@ -41,7 +41,7 @@ class Prindex extends controller
 
 	function index()
 	{
-		self::summary();
+		self::summary('def',0);
 	}
 
 	function suggestions()
@@ -53,7 +53,12 @@ class Prindex extends controller
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
 		$this->pages_model->SetPageCode('suggestions');
-		$data = array();
+
+		$data['user'] = array(
+			'access'=>$this->user_auth->officeType,
+			'id'=>$this->user_auth->entityId
+			);
+//		$data['user']['access'] = 'Low';
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/suggestions', $data);
@@ -72,7 +77,12 @@ class Prindex extends controller
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('unnassigned');
 		$this->pages_model->SetPageCode('unnassigned');
-		$data = array();
+
+		$data['user'] = array(
+			'access'=>$this->user_auth->officeType,
+			'id'=>$this->user_auth->entityId
+			);
+//		$data['user']['access'] = 'Low';
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/unnassigned', $data);
@@ -82,7 +92,7 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 
-	function summary()
+	function summary($type, $name)
 	{
 		// Not accessed through /office/pr/org/$organisation, not organisation
 		// specific so needs to be office permissions.
@@ -91,7 +101,26 @@ class Prindex extends controller
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
 		$this->pages_model->SetPageCode('summary');
-		$data = array();
+
+		$data['parameters'] = array(
+			'type'=>$type,
+			'name'=>$name
+			);
+
+		$data['user'] = array(
+			'access'=>$this->user_auth->officeType,
+			'id'=>$this->user_auth->entityId
+			);
+//		$data['user']['access'] = 'Low';
+
+		//pr rep summary page shows rep/userid
+		if ($data['user']['access'] == 'Low' &&
+			$data['parameters']['type'] == 'def')
+		{
+			$data['parameters']['type'] = 'rep';
+			$data['parameters']['name'] = $data['user']['id'];
+		}
+
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary', $data);

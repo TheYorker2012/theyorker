@@ -4,48 +4,12 @@
 		<a href="#">Wizard</a>
 	</div>
 </div>
+<?php
+	if ($user['access'] == 'Admin' ||
+		$user['access'] == 'High')
+	{
+?>
 <div class="blue_box">
-	<h2>Suggestions</h2>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Suggested By</th>
-					<th>Date</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><a href="#">Toffs V2.0</a></td>
-					<td>Jamie Hogan</td>
-					<td>25th March 07</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="#">So Cheesy</a></td>
-					<td>Christine Travis</td>
-					<td>24th March 07</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="#">Blue Bicycle</a></td>
-					<td>Joe Shelley</td>
-					<td>24th March 07</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="#">Vue Cinema</a></td>
-					<td>Nicola Evans</td>
-					<td>23rd March 07</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="#">So Cheesy</a></td>
-					<td>Daniella Ashby</td>
-					<td>21st March 07</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-<div class="grey_box">
 	<h2>Suggestions</h2>
 	<div id="ArticleBox">
 		<table>
@@ -105,6 +69,57 @@
 		</table>
 	</div>
 </div>
+<?php
+	}
+?>
+<?php
+	if ($user['access'] == 'Low')
+	{
+?>
+<div class="grey_box">
+	<h2>Suggestions</h2>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Suggested By</th>
+					<th>Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="tr1">
+					<td><a href="#">Toffs V2.0</a></td>
+					<td>Jamie Hogan</td>
+					<td>25th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">So Cheesy</a></td>
+					<td>Christine Travis</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">Blue Bicycle</a></td>
+					<td>Joe Shelley</td>
+					<td>24th March 07</td>
+				</tr>
+				<tr class="tr2">
+					<td><a href="#">Vue Cinema</a></td>
+					<td>Nicola Evans</td>
+					<td>23rd March 07</td>
+				</tr>
+				<tr class="tr1">
+					<td><a href="#">So Cheesy</a></td>
+					<td>Daniella Ashby</td>
+					<td>21st March 07</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<?php
+	}
+?>
 
 
 <pre>

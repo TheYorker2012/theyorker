@@ -108,6 +108,9 @@ $route['office/pr/org/'.$org_name_regex.'/(.*)'] = 'office/$1';
 /*$route['office/pr/org/'.$org_name_regex.'/([^/]*)'] = 'office/$1';
 $route['office/pr/org/'.$org_name_regex.'/([^/]*)/([^/]*)'] = 'office/$1/$2';
 $route['office/pr/org/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2/$3';*/
+$route['office/pr/summary/rep/([^/]*)'] = 'office/prindex/summary/rep/$1'; //pr rep
+$route['office/pr/summary/org/([^/]*)'] = 'office/prindex/summary/org/$1'; //organisation
+$route['office/pr/summary'] = 'office/prindex/summary/def/0'; //default
 $route['office/pr/(.*)'] = 'office/prindex/$1';
 
 // send tag adding and deleting to the correct place
