@@ -60,8 +60,8 @@ define('BASE_DIR', '/home/theyorker/public_html');
 						$photos = $photos->like('photo_title', $_SESSION['img_search']);
 					break;
 					case "photographer":
-						//TODO implement photographer search
-						$photos = $photos->like('photo_title', $_SESSION['img_search']);
+						$photos = $photos->join('users', 'users.user_entity_id = photos.photo_author_user_entity_id');
+						$photos = $photos->like('users.user_nickname', $_SESSION['img_search']);
 					break;
 				}
 			}
@@ -145,8 +145,9 @@ define('BASE_DIR', '/home/theyorker/public_html');
 			//add
 			if ($this->input->post('tags')) {
 				$tagsRaw = explode('+', $this->input->post('tags'));
+				array_pop($tagsRaw);
 				foreach ($tagsRaw as $tag) {
-					if (is_string($tag) and strlen($tag) > 0) {
+					if (is_string($tag)) {
 						//this is a new tag
 						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
 						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'), 1);

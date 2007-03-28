@@ -71,7 +71,7 @@
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
-			$('tags').value+= '+' + tags[i].innerHTML;
+			$('tags').value+= tags[i].innerHTML + '+';
 		}
 	}
 
