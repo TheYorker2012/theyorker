@@ -35,6 +35,10 @@ a {
 	color: #999;
 }
 
+a:hover {
+	text-decoration: underline;
+}
+
 ul {
 	list-style-image: url('/images/prototype/homepage/arrow.png');
 	list-style-position: inside;
@@ -43,6 +47,10 @@ ul {
 }
 
 li {
+}
+
+h3 a {
+	color: black;
 }
 
 /* Form formatting */
@@ -89,6 +97,7 @@ input.button {
 
 div.Date {
 	color: #ff6a00;
+	font-size: smaller;
 }
 
 div#RightColumn div.Date {
@@ -111,12 +120,22 @@ img.Left {
 
 blockquote {
 	float: right;
-	width: 12em;
+	width: 14em;
 	background-color: #eeeeee;
-	text-align: center;
 	padding: 0.5em;
 	margin: 0;
 	border: 1px solid #999999;
+	font-style: italic;
+}
+
+span.author {
+	display: block;
+	font-style: normal;
+	text-align: right;
+}
+
+div.SubText {
+	font-weight: bold;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -271,7 +290,7 @@ div#RightColumn h2.first {
 }
 
 div#RightColumn h3 {
-	font-size: 10pt;
+	font-size: 11pt;
 	margin: 0em;
 }
 
