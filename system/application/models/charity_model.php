@@ -108,8 +108,8 @@ class Charity_model extends Model
 			WHERE	progress_report_articles.progress_report_article_charity_id = ?
 			AND	progress_report_articles.progress_report_article_campaign_id IS NULL
 			ORDER BY articles.article_publish_date DESC
-			LIMIT	0,3';
-		$query = $this->db->query($sql,array($charity_id));
+			LIMIT	0,?';
+		$query = $this->db->query($sql,array($charity_id, $count));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{

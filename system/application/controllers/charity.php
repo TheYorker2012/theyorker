@@ -33,7 +33,7 @@ class Charity extends Controller {
 		$data['sections']['funding']['text'] = str_replace(array("%%current%%","%%target%%"), array($data['sections']['charity']['current'],$data['sections']['charity']['target']), $data['sections']['funding']['text']);
 
 		//needs a general model as progress reports can be for campaigns and for charities
-		$pr_temp = $this->charity->GetCharityProgressReports($charity_id, 0);
+		$pr_temp = $this->charity->GetCharityProgressReports($charity_id, 3);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)
