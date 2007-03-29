@@ -271,7 +271,7 @@ class News_model extends Model
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'authors','photo','blurb'
 	 */
-	function GetSummaryArticle($id, $dateformat='%W, %D %M %Y')
+	function GetSummaryArticle($id, $dateformat='%W, %D %M %Y', $pic_size='small')
 	{
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id,
@@ -339,7 +339,7 @@ class News_model extends Model
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
 			$result['photo_id'] = $row->article_photo_photo_id;
-			$result['photo_url'] = imageLocation($row->article_photo_photo_id, 'small');
+			$result['photo_url'] = imageLocation($row->article_photo_photo_id, $pic_size);
 			$result['photo_title'] = $row->photo_title;
 		} else {
 			$result['photo_id'] = 0;

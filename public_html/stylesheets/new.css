@@ -45,6 +45,10 @@ ul {
 li {
 }
 
+p.Date {
+	color: #ff6a00;
+}
+
 /* Form formatting */
 form {
 	/* needed for IE for some reason */
@@ -317,7 +321,10 @@ div.BlueBox h2 {
 }
 
 div.BlueBox h3 {
+<<<<<<< .mine
+=======
 	color: black;
+>>>>>>> .r1746
 }
 
 div.BlueBox > * {

@@ -1,9 +1,10 @@
 <?php
 /**
  * This controller is the default.
- * It currently displays only the prototype homepage, in the prototype student frame
+ * It should now diplay a work in progress homepage
  *
  * \author Nick Evans
+ * \author Alex Fargus	
  */
 class Home extends Controller {
 
@@ -13,6 +14,8 @@ class Home extends Controller {
 	function __construct()
 	{
 		parent::Controller();
+		$this->load->model('News_model');
+		$this->load->model('Weather_Model');
 	}
 	
 	/**
@@ -40,11 +43,22 @@ class Home extends Controller {
 		
 		$this->pages_model->SetPageCode('home_main');
 		
-		$data = array();
-		
+		//Various arrays defined
+		$data = array();		//Stores all data to be passed to view
+		$res = array();
+
 		$data['welcome_title'] = $this->pages_model->GetPropertyText('welcome_title');
 		$data['welcome_text']  = $this->pages_model->GetPropertyWikitext('welcome_text');
 		
+		//Obtain news articles to be displayed
+		$article_ids = $this->News_model->GetLatestId('uninews',3);
+		$data['primary_article'] = $this->News_model->GetSummaryArticle($article_ids[0],'%W, %D %M %Y','medium');
+		$data['secondary_article'] = $this->News_model->GetSimpleArticle($article_ids[1]);
+		$data['tertiary_article'] = $this->News_model->GetSimpleArticle($article_ids[2]);
+
+		//Obtain weather
+		$data['weather_forecast'] = $this->Weather_Model->GetWeather();
+
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
 

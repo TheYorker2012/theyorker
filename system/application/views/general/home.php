@@ -1,3 +1,20 @@
+<?php
+function printsmallnewsbox($article){
+	echo('	<div class="NewsBox SmallNewsBox">'."\n");
+	echo('          <a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('                  <img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('          </a>'."\n");
+	echo('		<h3>'.$article['heading'].'</h3>'."\n");
+	echo('		<p class="Writer">'."\n");
+	foreach ($article['authors'] as $author){
+		echo($author['name'].' ');
+	}
+	echo('		</p>'."\n");
+	echo('		<p class="Date">'.$article['date'].'</p>'."\n");
+	echo('	</div>'."\n");
+}
+?>
+
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
@@ -27,10 +44,7 @@
 
 	<h2>2 Day Forecast</h2>
 	<div class="Entry">
-		<ul>
-			<li>Today &gt; Sunny &gt; 19&deg;C</li>
-			<li>Tomorrow &gt; Rainy Spells &gt; 19&deg;C</li>
-		</ul>
+		<?php echo($weather_forecast);?>
 	</div>
 
 	<h2>Quote of the Day</h2>
@@ -45,32 +59,25 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2>today's news</h2>
+		<h2><?php echo "latest news"?></h2>
 		<div class="NewsBox">
-			<a class="NewsImg" href="."><img src="/images/prototype/homepage/square1.jpg" alt="News Prototype" /></a>
-			<h3>University</h3>
-			<ul>
-				<li><a href=".">Campus hip hop star announces single launch date</a></li>
-				<li><a href=".">VC remains tight-lipped despite mass petitions on porters</a></li>
-				<li><a href=".">Vital Porters to be Cut for Three Months</a></li>
-			</ul>
+			<?php
+				echo('	<a class="NewsImg" href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'."\n");
+				echo('		<img src="'.$primary_article['photo_url'].'" alt="'.$primary_article['photo_title'].'" title="'.$primary_article['photo_title'].'" />'."\n");
+				echo('	</a>'."\n");
+			?>
+			<h3><?php echo $primary_article['heading'] ?></h3>
+			<p class="Writer">
+			<?php
+				foreach ($primary_article['authors'] as $author){
+					echo($author['name'].' ');
+				}
+			?>
+			</p>
+			<p class="Date"> <?php echo($primary_article['date']) ?></p>
+			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
 		</div>
-
-		<div class="NewsBox">
-			<a class="NewsImg" href="."><img src="/images/prototype/homepage/square2.jpg" alt="News Prototype" /></a>
-			<h3>UK &amp; World</h3>
-			<ul>
-				<li><a href=".">Lord's reform set to cause Blair and Straw headaches</a></li>
-				<li><a href=".">US promises $100 Billion to Iraq</a></li>
-				<li><a href=".">Britney: I did not sleep with 6 men</a></li>
-			</ul>
-		</div>
-	</div>
-
-	<div class="BlueBox">
-		<h2>features</h2>
-		<img src="/images/images/puffer/0/44.jpg" alt="Feature1" />
-		<br />
-		<img src="/images/images/puffer/0/43.jpg" alt="Feature2" />
+		<?php printsmallnewsbox($secondary_article) ?>
+		<?php printsmallnewsbox($tertiary_article) ?>
 	</div>
 </div>
