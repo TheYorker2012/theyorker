@@ -36,9 +36,9 @@
 			</div>
 			<br />
 			<label for="onfrontpage">Home Feature: </label>
-				<input type='checkbox' name='onfrontpage' value="on" /><br />
+				<input type='checkbox' name='onfrontpage' value="on" <?php if ($photoDetails->photo_homepage != null) echo "checked";?> /><br />
 			<label for="hidden">Hidden: </label>
-				<input type='checkbox' name='hidden' value="hide" /><br />
+				<input type='checkbox' name='hidden' value="hide" <?php if ($photoDetails->photo_deleted == 1) echo "checked";?> /><br />
 			<input type="submit" class="button" value="Save" />
 		</fieldset>
 	</form>
@@ -80,7 +80,7 @@
 	}
 
 	function deleteTag(tagID) {
-		$(tagID).parentNode.removeChild(tagID);
+		document.getElementById(tagID).parentNode.removeChild(document.getElementById(tagID));
 	}
 	
 	function setTag(tagID) {
@@ -98,7 +98,7 @@
 	$('tags').value = '';
 	var tags = $('ctags').childNodes;
 	for (var i=0; i<tags.length; i++) {
-		$('tags').value+= tags[i].innerHTML + '+';
+		$('tags').value+= tags[i].id + '+';
 	}
 
 // ]]>
