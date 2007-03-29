@@ -77,8 +77,10 @@ function printsmallnewsbox($article){
 				}
 			?>
 			</p>
+			<span>
 			<div class="Date"> <?php echo($primary_article['date']) ?></div>
 			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
+			</span>
 		</div>
 		<hr/>
 		<?php printsmallnewsbox($tertiary_article) ?>
