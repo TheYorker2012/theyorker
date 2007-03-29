@@ -1,70 +1,108 @@
-<div class="RightToolbar">
-	<h4>Pages</h4>
+<?php
+
+//$session_var defined in controller, but for some reason won't let it be accessed in these functions so i pass it through $sessionvar
+
+// prints the given list of a certain name filling in default if no data is in the session
+function PrintRadioList($input_name, $items, $default, $sessionvar)
+{
+	foreach ($items as $key => $item)
+	{
+		echo '<label for="'.$input_name.'_'.$key.'">'.$item.'</label>';
+		echo '<input type="radio" name="'.$input_name.'" id="'.$input_name.'_'.$key.'" value="'.$item.'" ';
+		if (isset($_SESSION[$sessionvar][$input_name]) && 
+			$_SESSION[$sessionvar][$input_name] == $item) 
+			echo 'checked="checked" ';
+		if (isset($_SESSION[$sessionvar][$input_name]) == false &&
+			$item == $default)
+		{
+			echo 'checked="checked" ';
+		}
+		echo '/><br />';
+	}
+}
+
+function PrintTextBox ($input_name, $item, $sessionvar)
+{
+	echo '<label for="'.$input_name.'">'.$item.'</label>';
+	echo '<input type="text" name="'.$input_name.'" id="'.$input_name.'" style="width: 220px;" ';
+	if (isset($_SESSION[$sessionvar][$input_name]))
+		echo 'value="'.$_SESSION[$sessionvar][$input_name].'" ';
+	echo '/>';	
+}
+
+function PrintTextArea ($input_name, $item, $sessionvar)
+{
+	echo '<label for="'.$input_name.'">'.$item.'</label>';
+	echo '<textarea name="'.$input_name.'" id="'.$input_name.'" cols="25" rows="5">';
+	if (isset($_SESSION[$sessionvar][$input_name]))
+		echo $_SESSION[$sessionvar][$input_name];
+	echo '</textarea>';
+}
+
+function addstrong($text)
+{
+	return '<strong>'.$text.'</strong>';
+}
+
+function addstrike($text)
+{
+	return '<strike>'.$text.'</strike>';
+}	
+
+?>
+
+<div id="RightColumn">
+	<h2 class="first">Pages</h2>
 	<div class="Entry">
-	<ol>
-	<?php
+		<ol>
+		<?php
 
-	function addstrong($text)
-	{
-		return '<strong>'.$text.'</strong>';
-	}
+		$headings = $stage_list['headings'];
 
-	function addstrike($text)
-	{
-		return '<strike>'.$text.'</strike>';
-	}	
-
-	$headings = $stage_list['headings'];
-
-	foreach ($headings as $key => &$heading)
-	{
-		if ($stage == $key)
-			$heading = addstrong($heading);
-		if ($is_connected == 'no' && in_array($key, $stage_list['skip']))
-			$heading = addstrike($heading);
-		echo '<li>'.$heading.'</li>';
-	}
-
-	?>
-	</ol>
+		foreach ($headings as $key => &$heading)
+		{
+			if ($stage == $key)
+				$heading = addstrong($heading);
+			if ($is_connected == 'No' && in_array($key, $stage_list['skip']))
+				$heading = addstrike($heading);
+			echo '<li>'.$heading.'</li>';
+		}
+		
+		?>
+		</ol>
 	</div>
-	<h4>What"s this?</h4>
+	
+	<h2>What's this?</h2>
 	<div class="Entry">
 		Blah blah blah blah blah.
         </div>
 </div>
 
+<div id="MainColumn">
 <?php
 	if ($stage == 1)
 	{
 ?>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
-<div class="grey_box">
+<div class="BlueBox">
 <h2>start suggesting</h2>
-<fieldset>
-<h4>Type of directory entry</h4>
-		<label for="a_type">Society</label>
-		<input type="radio" name="a_type" id="a_type" value="society" checked="checked"/>
-		<label for="a_type">Bar</label>
-		<input type="radio" name="a_type" id="a_type" value="bar" />
-		<label for="a_type">Restaurant</label>
-		<input type="radio" name="a_type" id="a_type" value="restaurant" />
-		<label for="a_type">Other</label>
-		<input type="radio" name="a_type" id="a_type" value="other" />
-<br /><br />
-<h4>Are you connected to this organisation?</h4>
-		<label for="a_connected">Yes</label>
-		<input type="radio" name="a_connected" value="yes" />
-		<label for="a_connected">No</label>
-		<input type="radio" name="a_connected" value="no" checked="checked"/>
-		<label for="submit_finish"></label>
-		<input type="submit" name="r_submit_finish" value="Finish" class="disabled_button" disabled />
-		<input type="submit" name="r_submit_next" value="Next" class="button" />
-
-	</fieldset>
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<h3>Type of directory entry</h3>	
+			<?php PrintRadioList('a_type', array('Society', 'Bar', 'Restaurant', 'Other'), 'Society', $session_var); ?>
+		</fieldset>
+		<fieldset>
+			<h3>Are you connected to this organisation?</h3>
+			<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" disabled="disabled" />
+			<input type="submit" name="r_submit_next" value="Next" class="button" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" disabled="disabled" />
+		</fieldset>
+	</form>
 </div>
-</form>
 <?php
 	}
 ?>
@@ -72,29 +110,24 @@
 	if ($stage == 2)
 	{
 ?>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
-<div class="grey_box">
+<div class="BlueBox">
 <h2>basic details</h2>
-	<fieldset>
-		<label for="a_name">Name: </label>
-		<input type="text" name="a_name" style="width: 220px;" />
-		<br />
-		<label for="a_description">Description:</label>
-		<textarea name="a_description" cols="29" rows="5"></textarea>
-        	<label for="a_email_address">Email Address:</label>
-		<input type="text" name="a_email_address" style="width: 220px;" value=""/>
-		<br />
-		<label for="a_website">Website: </label>
-		<input type="text" name="a_website" style="width: 220px;" /><br />
-		<br />
-		<label for="submit_finish"></label>
-		<input type="submit" name="r_submit_finish" value="Finish" class="button" />
-		<input type="submit" name="r_submit_next" value="Next" class="button" />
-
-	</fieldset>
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<?php PrintTextBox('a_name', 'Name: ', $session_var); ?>
+			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
+			<?php PrintTextBox('a_email_address', 'Email Address: ', $session_var); ?>
+			<?php PrintTextBox('a_website', 'Website: ', $session_var); ?>
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
+			<input type="submit" name="r_submit_next" value="Next" class="button" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" />
+		</fieldset>
+	</form>
 </div>
-</form>
 <?php
 	}
 ?>
@@ -103,34 +136,27 @@
 	if ($stage == 3)
 	{
 ?>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
-<div class="grey_box">
+<div class="BlueBox">
 <h2>more details</h2>
-	<fieldset>
-        <label for="a_location">Campus Location:</label>
-		<input type="text" name="a_location" style="width: 220px;" value=""/>
-		<label for="a_address">Address:</label>
-		<textarea name="a_address"></textarea>
-
-        	<label for="a_postcode">Postcode:</label>
-		<input type="text" name="a_postcode" style="width: 120px;" value=""/>
-		<label for="a_opening_times">Opening Times:</label>
-		<input type="text" name="a_opening_times" style="width: 220px;" value=""/>
-		<label for="a_phone_internal">Internal Phone:</label>
-		<input type="text" name="a_phone_internal" style="width: 120px;" value=""/>
-		<label for="a_phone_external">External Phone:</label>
-		<input type="text" name="a_phone_external" style="width: 120px;" value=""/>
-		<label for="a_fax">Fax Number:</label>
-		<input type="text" name="a_fax" style="width: 120px;" value=""/>
-		<label for="r_submit_finish"></label>
-		<input type="submit" name="r_submit_finish" value="Finish" class="button" />
-		<input type="submit" name="r_submit_next" value="Next" class="button" />
-
-	</fieldset>
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<?php PrintTextBox('a_location', 'Campus Location: ', $session_var); ?>
+			<?php PrintTextArea('a_address', 'Address: ', $session_var); ?>
+			<?php PrintTextBox('a_postcode', 'Opening Times: ', $session_var); ?>
+			<?php PrintTextBox('a_opening_times', 'Campus Location: ', $session_var); ?>
+			<?php PrintTextBox('a_phone_internal', 'Internal Phone: ', $session_var); ?>
+			<?php PrintTextBox('a_phone_external', 'External Phone: ', $session_var); ?>
+			<?php PrintTextBox('a_fax', 'Fax Number: ', $session_var); ?>
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
+			<input type="submit" name="r_submit_next" value="Next" class="button" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" />
+		</fieldset>
+	</form>
 </div>
-
-</form>
 <?php
 	}
 ?>
@@ -139,50 +165,48 @@
 	if ($stage == 4)
 	{
 ?>
-<div class="grey_box">
-<h2> photo upload </h2>
-<form action="/viparea/theyorker/directory/photos/upload" method="post" class="form" enctype="multipart/form-data">
-<fieldset>
-Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
-	<label for="title1">Photo Title:</label><input type="text" name="title1" size="30" />
-	<br />
-	<label for="userfile1">Photo File:</label><input type="file" name="userfile1" size="30" />
-
-	<br />
-<input type="hidden" name="destination" id="destination" value="1" />
-
-<input type="button" onClick="AddClones()" value="Another"/>
-<input type="submit" value="upload" />
-</fieldset>
-</form>
+<div class="BlueBox">
+<h2>photo upload </h2>
+	<form action="/viparea/theyorker/directory/photos/upload" method="post" class="form" enctype="multipart/form-data">
+		Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
+		<fieldset>
+			<label for="title1">Photo Title:</label><input type="text" name="title1" id="title1" size="30" />
+			<label for="userfile1">Photo File:</label><input type="file" name="userfile1" id="userfile1" size="20" />
+			<input type="hidden" name="destination" id="destination" value="1" />
+		</fieldset>
+		<fieldset>
+			<input type="button" onClick="AddClones()" value="Another"/>
+			<input type="submit" value="upload" />
+		</fieldset>
+	</form>
 </div>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
-<div class="grey_box">
-<fieldset>
-		<input type="submit" name="r_submit_finish" value="Finish" class="button" />
-		<input type="submit" name="r_submit_next" value="Next" class="button" />
-
-</fieldset>
+<div class="BlueBox">
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
+			<input type="submit" name="r_submit_next" value="Next" class="button" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" />
+		</fieldset>
+	</form>
 </div>
-</form>
-
 <div class="blue_box">
-		<img src="./images/100.jpg" alt="Array image Tux"/>
+	<img src="./images/100.jpg" alt="Array image Tux" />
 	<br />
 	<a href="/viparea/theyorker/directory/photos/move/100/up" title="move up">move up</a> | 
 	<a href="/viparea/theyorker/directory/photos/move/100/down" title="move down">move down</a> | 
 	<a href="/viparea/theyorker/directory/photos/delete/100" title="delete">delete</a> 
 	<br />
 
-		<img src="./images/120.jpg" alt="Array image Stress"/>
+	<img src="./images/120.jpg" alt="Array image Stress"/>
 	<br />
 	<a href="/viparea/theyorker/directory/photos/move/120/up" title="move up">move up</a> | 
 	<a href="/viparea/theyorker/directory/photos/move/120/down" title="move down">move down</a> | 
 	<a href="/viparea/theyorker/directory/photos/delete/120" title="delete">delete</a> 
 	<br />
-	</div>
-
 </div>
 
 <?php
@@ -193,45 +217,48 @@ Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
 	if ($stage == 5)
 	{
 ?>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
 <div class="blue_box">
-<fieldset>
-	<h2>location map</h2>
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+		</fieldset>
+		<h2>location map</h2>
 		1) Choose your map type:
 		<br />
-
-		<input type="radio" name="a_map_type" onclick="document.getElementById("postcode_div").style.display = "block"; document.getElementById("building_div").style.display = "none";"/> Road Map<br />
-		<input type="radio" name="a_map_type" onclick="document.getElementById("building_div").style.display = "block"; document.getElementById("postcode_div").style.display = "none";"/> Campus Map<br />
-
+		<fieldset>
+			<input type="radio" name="a_map_type" onclick="document.getElementById("postcode_div").style.display = "block"; document.getElementById("building_div").style.display = "none";"/> Road Map<br />
+			<input type="radio" name="a_map_type" onclick="document.getElementById("building_div").style.display = "block"; document.getElementById("postcode_div").style.display = "none";"/> Campus Map<br />
+		</fieldset>
 		<div id="postcode_div">
-		2) Jump to postcode<br />
-		<input type="text" name="a_map_postcode" style="width: 150px;"/><input type="button" value="Go" class="button" action="#"/>
+			2) Jump to postcode<br />
+			<fieldset>
+				<input type="text" name="a_map_postcode" style="width: 150px;"/><input type="button" value="Go" class="button" />
+			</fieldset>
 		</div>
 		<br />
 		<div id="building_div" style="display: none;">
-		2) Jump to Building<br />
-
-		<select name="a_map_building_locations" size="1">
-			<option value="" selected="selected"></option>
-			<option value="1">The list is a little short.</option>
-		</select>
-		<input type="button" value="Go" class="button" action="#"/>
+			2) Jump to Building<br />
+			<fieldset>
+			<select name="a_map_building_locations" size="1">
+				<option value="" selected="selected"></option>
+				<option value="1">The list is a little short.</option>
+			</select>
+			<input type="button" value="Go" class="button" />
+			</fieldset>
 		</div>
 		3) Refine your location
-		<p>
-		<p>click and drag the red pin to the appropriate location on the map using the tools on the left to zoom in or out as appropriate.</p>
-
-		</p>
-		<p>
-			<img width="390" src="./images/gmapwhereamI.png" />
-		</p>
-		<label for="r_submit_finish"></label>
-		<input type="submit" name="r_submit_finish" value="Finish" class="button" />
-		<input type="submit" name="r_submit_finish" value="Next" class="button" />
-	</fieldset>
+		<br />
+		click and drag the red pin to the appropriate location on the map using the tools on the left to zoom in or out as appropriate.
+		<br />
+		<img width="390" src="./images/gmapwhereamI.png" alt="where am i?" />
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
+			<input type="submit" name="r_submit_finish" value="Next" class="button" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" />
+		</fieldset>
+	</form>
 </div>
-</form>
 
 
 <?php
@@ -242,48 +269,27 @@ Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
 	if ($stage == 6)
 	{
 ?>
-<form id="orgdetails" name="orgdetails" action="/wizard/organisation" method="POST" class="form">
-<input type="hidden" name="r_stage" value="<?php echo $stage; ?>">
-<div class="grey_box">
+<div class="BlueBox">
 <h2>who are you?</h2>
-<fieldset>
-		<label for="a_user_name">Name:</label>
-		<input type="text" name="a_user_name" /><br />
-
-		<label for="a_user_email">Email:</label>
-		<input type="text" name="a_user_email" /><br />
-
-		<label for="a_user_notes">Any notes:</label>
-		<textarea name="a_user_notes"></textarea>
-
-		<label for="a_user_position">Position in society:</label>
-		<input type="text" name="a_user_position" /><br />
-
-
-		<label for="a_captcha">Enter the number:</label>
-		<input type="text" name="a_captcha"/><br />
-		<img src="captcha.jpg" style="margin-left: 0.7em; margin-top: 0.3em; height: 20px; width: 100px;"><br />
-
-
-		<label for="r_submit_finish"></label>
-		<input type="submit" name="r_submit_finish" value="Finish" class="button" />
-		<input type="submit" name="r_submit_next" value="Next" class="disabled_button" disabled />
-
-	</fieldset>
+	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
+		<fieldset>
+			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<?php PrintTextBox('a_user_name', 'Name: ', $session_var); ?>
+			<?php PrintTextBox('a_user_email', 'Email: ', $session_var); ?>
+			<?php PrintTextArea('a_user_notes', 'Any Notes: ', $session_var); ?>
+			<?php PrintTextBox('a_user_position', 'Position In Society: ', $session_var); ?>
+			<label for="captcha">Enter The Number: </label>
+			<img src="captcha.jpg" id="captcha" alt="captcha" style="margin-left: 0.7em; margin-top: 0.3em; height: 20px; width: 100px;" /><br />
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
+			<input type="submit" name="r_submit_next" value="Next" class="button" disabled="disabled" />
+			<input type="submit" name="r_submit_back" value="Back" class="button" />
+		</fieldset>
+	</form>
 </div>
-</form>
 <?php
 	}
 ?>
-
-<pre>
-<?php
-
-print_r($_SESSION);
-
-echo '<br /><br />asd<br /><br />';
-
-print_r($data);
-
-?>
-</pre>
+</div>
