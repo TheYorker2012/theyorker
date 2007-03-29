@@ -392,17 +392,20 @@ class News_model extends Model
 		$result['text'] = $row->article_content_wikitext_cache;
 		$result['blurb'] = $row->article_content_blurb;
 
-		$sql = 'SELECT article_writers.article_writer_user_entity_id
+		$sql = 'SELECT article_writers.article_writer_user_entity_id,
+				business_cards.business_card_name
 			FROM article_writers
 			WHERE (article_writers.article_writer_article_id = ?
 			AND article_writers.article_writer_status = "accepted"
-			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
+			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL)
+			AND article_writers.article_writer_user_entity_id = business_cards.business_card_user_entity_id
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
 	    $authors = array();
 	    foreach ($query->result() as $row)
 		{
-			$authors[] = $row->article_writer_user_entity_id;
+			$authors[]['id'] = $row->article_writer_user_entity_id;
+			$authors[]['name'] = $row->business_card_name;
 		}
 		$result['authors'] = $authors;
 
