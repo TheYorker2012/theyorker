@@ -80,9 +80,8 @@ function printsmallnewsbox($article){
 			<div class="Date"> <?php echo($primary_article['date']) ?></div>
 			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
 		</div>
-	</div>
-	<div class="BlueBox">	
+		<hr/>
 		<?php printsmallnewsbox($tertiary_article) ?>
-		<?php printsmallnewsbox($secondary_article) ?>a
+		<?php printsmallnewsbox($secondary_article) ?>
 	</div>
 </div>
