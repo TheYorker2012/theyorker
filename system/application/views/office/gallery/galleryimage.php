@@ -15,9 +15,9 @@
 			<input type="hidden" name="tags" id="tags" />
 			<div>
 				<div style="float:left;">
-					<label for="newtag">Add Tag</label>
-						<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
-						<input type="button" value="Add" onClick="updateList();">
+					<h4>Add Tag</h4>
+					<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
+					<input type="button" value="Add" onClick="updateList();" />
 					<div style="overflow-y: auto;overflow-x: hidden;">
 						<ul id="ntags" style="height:250px; width:125px;">
 						</ul>
@@ -28,7 +28,7 @@
 					<div style="overflow-y: auto;overflow-x: hidden;">
 					 	<ul id="ctags" style="height:250px;width:125px;">
 							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-							<li id="<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
+							<li id="<?=$tag->tag_name?>"><?=$tag->tag_name?><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>
 							<?php endforeach;?>
 					 	</ul>
 					</div>
@@ -89,7 +89,7 @@
 
 	function addTag() {
 		if ($('newtag').value != "") {
-			$('ctags').innerHTML += '<li class="orange" id="' + $('newtag').value + '">' + $('newtag').value + '<a href="deleteTag(\'' + $('newtag').value + '\')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>';
+			$('ctags').innerHTML += '<li class="orange" id="' + $('newtag').value + '">' + $('newtag').value + '<a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>';
 			$('newtag').value = "";
 			return true;
 		}
