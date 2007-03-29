@@ -61,7 +61,7 @@ function printsmallnewsbox($article){
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo "latest news"?></h2>
+		<h2><?php echo "latest uni news"?></h2>
 		<div class="NewsBox">
 			<?php
 				echo('	<a class="NewsImg" href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'."\n");
