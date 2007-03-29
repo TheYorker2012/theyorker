@@ -4,16 +4,11 @@ function printsmallnewsbox($article){
 	echo('          <a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('                  <img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
 	echo('          </a>'."\n");
-	echo('		<h3><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('		<h3 class="SmallNewsHeading"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['heading']."\n");
 	echo('		</a></h3>'."\n");
-	echo('		<p class="Writer">'."\n");
-	foreach ($article['authors'] as $author){
-		echo($author['name'].' ');
-	}
-	echo('		</p>'."\n");
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
-	echo('		<p class="More">'.$article['blurb'].'</p>'."\n");
+//	echo('		<p class="More">'.$article['blurb'].'</p>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
@@ -29,11 +24,7 @@ function printsmallnewsbox($article){
 	<div class="Entry">
 		<span class="RightColumnAction"><a href=".">Calendar</a></span>
 		<ul>
-			<li>9:30am &gt; Lecture &gt; Alcuin College</li>
-			<li>10:30am &gt; Badminton &gt; Sports Centre</li>
-			<li>2:30pm &gt; Lecture &gt; P/X/001</li>
-			<li>6.00pm &gt; The Shuttle Launch &gt; Sports Centre, Main Hall</li>
-			<li>7.30pm &gt; The Pirates of Penzance &gt; Central Hall</li>
+			<li>To Do</li>
 		</ul>
 	</div>
 
@@ -41,7 +32,7 @@ function printsmallnewsbox($article){
 	<div class="Entry">
 		<span class="RightColumnAction"><a href=".">New To Do</a></span>
 		<ul>
-			<li>Oil Bike Chain!</li>
+			<li>To Do</li>
 		</ul>
 	</div>
 
@@ -56,11 +47,11 @@ function printsmallnewsbox($article){
 	</div>
 </div>
 
-<!--<div id="HomeBanner">
-	<img src="/images/prototype/homepage/rowing.jpg" alt="Rowing at York" title="Rowing at York" />
-</div>-->
-
 <div id="MainColumn">
+	<div id="HomeBanner">
+		<img src="/images/prototype/homepage/rowing.jpg" alt="Rowing at York" title="Rowing at York" width="100%" />
+	</div>
+
 	<div class="BlueBox">
 		<h2><?php echo "latest uni news"?></h2>
 		<div class="NewsBox">
@@ -70,20 +61,10 @@ function printsmallnewsbox($article){
 				echo('	</a>'."\n");
 			?>
 			<h3><?php echo('<a href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'.$primary_article['heading'].'</a>') ?></h3>
-			<p class="Writer">
-			<?php
-				foreach ($primary_article['authors'] as $author){
-					echo($author['name'].' ');
-				}
-			?>
-			</p>
-			<span>
-			<div class="Date"> <?php echo($primary_article['date']) ?></div>
+			<div class="Date" > <?php echo($primary_article['date']) ?></div>
 			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
-			</span>
 		</div>
-		<hr/>
-		<?php printsmallnewsbox($tertiary_article) ?>
 		<?php printsmallnewsbox($secondary_article) ?>
+		<?php printsmallnewsbox($tertiary_article) ?>
 	</div>
 </div>

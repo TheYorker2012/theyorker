@@ -15,7 +15,7 @@ class Home extends Controller {
 	{
 		parent::Controller();
 		$this->load->model('News_model');
-		$this->load->model('Weather_Model');
+		$this->load->model('Home_Model');
 	}
 	
 	/**
@@ -57,7 +57,7 @@ class Home extends Controller {
 		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2]);
 
 		//Obtain weather
-		$data['weather_forecast'] = $this->Weather_Model->GetWeather();
+		$data['weather_forecast'] = $this->Home_Model->GetWeather();
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);

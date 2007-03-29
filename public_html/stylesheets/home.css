@@ -24,3 +24,10 @@ a.NewsImg {
 h3.SmallNewsHeading {
 	font-size: small;
 }
+
+p.Discreet {
+	font-size: smaller;
+	text-align: right;
+	padding: 0;
+	margin: 0;
+}
