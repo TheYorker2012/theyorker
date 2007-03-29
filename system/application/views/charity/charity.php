@@ -1,15 +1,15 @@
 <div id="RightColumn">
-	<h4 class="first"><?php echo $sections['sidebar_about']['title']; ?></h4>
+	<h2 class="first"><?php echo $sections['sidebar_about']['title']; ?></h2>
 	<div class="Entry">
-		<h5><?php echo $sections['sidebar_about']['subtitle']; ?></h5>
+		<h3><?php echo $sections['sidebar_about']['subtitle']; ?></h3>
 		<?php echo $sections['charity']['target_text']; ?>
 	</div>
-	<h4><?php echo $sections['sidebar_help']['title']; ?></h4>
+	<h2><?php echo $sections['sidebar_help']['title']; ?></h2>
 	<div class="Entry">
 		<?php echo $sections['sidebar_help']['text']; ?>
 	</div>
 	
-	<h4><?php echo $sections['sidebar_related']['title']; ?></h4><!--Next 2 sections basically the same with different data and links-->
+	<h2><?php echo $sections['sidebar_related']['title']; ?></h2><!--Next 2 sections basically the same with different data and links-->
 	<div class="Entry">
 		<?php
 	        foreach ($sections['article']['related_articles'] as $related_articles)
@@ -19,7 +19,7 @@
 		?>
 	</div>
 
-	<h4><?php echo $sections['sidebar_external']['title']; ?></h4>
+	<h2><?php echo $sections['sidebar_external']['title']; ?></h2>
 	<div class="Entry">
 		<?php
 	        foreach ($sections['article']['links'] as $links)
@@ -46,12 +46,10 @@
 		</div>
 	</div>
 
-
 	<?php
-
 	if (isset($sections['progress_reports']['entries']))
 	{
-		echo '<div class="grey_box">';
+		echo '<div class="BlueBox">';
 		echo '<h2>'.$sections['progress_reports']['title'].'</h2>';
 		foreach ($sections['progress_reports']['entries'] as $pr_entry)
 		{
@@ -60,7 +58,6 @@
 		}
 		echo '</div>';
 	}
-
 	?>
 
 </div>
