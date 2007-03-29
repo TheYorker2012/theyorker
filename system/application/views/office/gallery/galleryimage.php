@@ -17,7 +17,7 @@
 				<div style="float:left;">
 					<h4>Add Tag</h4>
 					<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
-					<input type="button" value="Add" onClick="updateList();" />
+					<input type="button" value="Add" onClick="addTag();updateList();" />
 					<div style="overflow-y: auto;overflow-x: hidden;">
 						<ul id="ntags" style="height:250px; width:125px;">
 						</ul>
@@ -63,6 +63,7 @@
 	function checkKeypress(e) {
 		var e = (window.event) ? e : e;
 		if (e.keyCode == 13) {
+			addTag();
 			updateList();
 			return false;
 		} else {
@@ -71,7 +72,6 @@
 	}
 
 	function updateList() {
-		addTag();
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
@@ -81,6 +81,7 @@
 
 	function deleteTag(tagID) {
 		document.getElementById(tagID).parentNode.removeChild(document.getElementById(tagID));
+		updateList();
 	}
 	
 	function setTag(tagID) {
@@ -98,7 +99,7 @@
 	$('tags').value = '';
 	var tags = $('ctags').childNodes;
 	for (var i=0; i<tags.length; i++) {
-		$('tags').value+= tags[i].id + '+';
+		if (tags[i].nodeType == '1') $('tags').value+= tags[i].id + '+';
 	}
 
 // ]]>
