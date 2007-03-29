@@ -91,9 +91,19 @@
 	function setTag(tagID) {
 		$('newtag').value = tagID;
 	}
+	
+	function notInList(searchItem) {
+		var tags = $('ctags').childNodes;
+		for (var i=0; i<tags.length; i++) {
+			if (tags[i].id == searchItem) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	function addTag() {
-		if ($('newtag').value != "") {
+		if ($('newtag').value != "" && notInList($('newtag').value)) {
 			$('ctags').innerHTML += '<li class="orange" name="list_'+$('newtag').value+'" id="' + $('newtag').value + '"><a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="images/icons/delete.png" alt="Remove" title="Remove" /> ' + $('newtag').value + '</a></li>';
 			$('newtag').value = "";
 			updateList()
