@@ -80,7 +80,7 @@
 	}
 
 	function deleteTag(tagID) {
-		var tag = getElementsByName('list_'.tagID);
+		var tag = document.getElementsByName('list_'.tagID);
 		for (var i=0; i<tag.length; i++) {
 			tag[i].parentNode.removeChild(tag[i]);
 		}
