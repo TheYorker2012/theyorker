@@ -33,7 +33,7 @@
 
 $active_group = "default";
 
-$db['default']['hostname'] = "ado.is-a-geek.net"
+$db['default']['hostname'] = "ado.is-a-geek.net";
 $db['default']['username'] = "yorkerremote";
 $db['default']['password'] = "df97nvc02d90dg";
 $db['default']['database'] = "yorkerremote";
