@@ -75,7 +75,9 @@
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
-			if (tags[i].nodeType == '1') $('tags').value+= tags[i].id + '+';
+			if (tags[i].nodeType == '1') {
+				$('tags').value+= tags[i].id + '+';
+			}
 		}
 	}
 
@@ -102,7 +104,9 @@
 	$('tags').value = '';
 	var tags = $('ctags').childNodes;
 	for (var i=0; i<tags.length; i++) {
-		if (tags[i].nodeType == '1') $('tags').value+= tags[i].id + '+';
+		if (tags[i].nodeType == '1') {
+			$('tags').value+= tags[i].id + '+';
+		}
 	}
 
 // ]]>
