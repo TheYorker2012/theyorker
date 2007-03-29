@@ -101,14 +101,14 @@ class Charity_model extends Model
 	 */
 	function GetCharityProgressReports($charity_id, $count)
 	{
-		$sql = 'SELECT
-			progress_report_articles.progress_report_article_article_id
-			FROM progress_report_articles
-			INNER JOIN articles
-			ON articles.article_id = progress_report_articles.progress_report_article_article_id
-			WHERE progress_report_articles.progress_report_article_charity_id = ?
+		$sql = 'SELECT	progress_report_articles.progress_report_article_article_id
+			FROM	progress_report_articles
+			INNER	JOIN articles
+			ON	articles.article_id = progress_report_articles.progress_report_article_article_id
+			WHERE	progress_report_articles.progress_report_article_charity_id = ?
+			AND	progress_report_articles.progress_report_article_campaign_id IS NULL
 			ORDER BY articles.article_publish_date DESC
-			LIMIT 0,3';
+			LIMIT	0,3';
 		$query = $this->db->query($sql,array($charity_id));
 		$result = array();
 		if ($query->num_rows() > 0)

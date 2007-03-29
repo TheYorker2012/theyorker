@@ -62,9 +62,9 @@ if (isset($sections['progress_reports']['entries']))
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>
