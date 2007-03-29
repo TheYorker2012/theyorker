@@ -433,7 +433,7 @@ class News_model extends Model
 		$photos = array();
 		foreach ($query->result() as $row)
 		{
-			$photos[$row->article_photo_number] = imageLocation($row->article_photo_photo_id, medium);
+			$photos[$row->article_photo_number] = imageLocation($row->article_photo_photo_id, 'medium');
 		}
 		$result['photos'] = $photos;
 
