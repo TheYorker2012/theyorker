@@ -420,18 +420,20 @@ class News_model extends Model
 		}
 		$result['fact_boxes'] = $fact_boxes;
 
-		$sql = 'SELECT article_photos.article_photo_photo_id
+		$sql = 'SELECT article_photos.article_photo_photo_id,
+				 article_photos.article_photo_number
 			FROM article_photos
 			WHERE (article_photos.article_photo_article_id = ?)
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($content_id));
+		$this->load->helper('images');
 		$photos = array();
 		foreach ($query->result() as $row)
 		{
-			$photos[] = $row->article_photo_photo_id;
+			$photos[$row->article_photo_number] = imageLocation($row->article_photo_photo_id, medium);
 		}
 		$result['photos'] = $photos;
-	
+
 		$sql = 'SELECT	article_links.article_link_name, article_links.article_link_url
 				FROM article_links
 				WHERE (article_links.article_link_article_id = ? 
