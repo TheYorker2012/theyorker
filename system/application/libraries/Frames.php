@@ -6,18 +6,8 @@
  * @brief Library for managing frames and views nicely.
  */
 
-/// Abstract class that outputs something when Load() is called
-/**
- * @author James Hogan (jh559@cs.york.ac.uk)
- */
-abstract class Outputter
-{
-	/// Outputs some sort of data, such as HTML, XML or whatever.
-	abstract function Load();
-}
-
 /// Simple view buffer.
-class SimpleView extends Outputter
+class SimpleView
 {
 	/// Raw data to output.
 	protected $mContent;
@@ -55,7 +45,7 @@ class SimpleView extends Outputter
  *
  * @see FramesFrame for handling subviews.
  */
-class FramesView extends Outputter
+class FramesView
 {
 	/// array The data array to send to the view.
 	protected $mDataArray;
@@ -174,6 +164,15 @@ class FramesFrame extends FramesView
 	function SetContent(&$SubView, $Index = 0)
 	{
 		$this->mDataArray['content'][$Index] = $SubView;
+	}
+	
+	/// Set contents as an array.
+	/**
+	 * @param $Contents FramesView The views to set as content.
+	 */
+	function SetContents()
+	{
+		$this->mDataArray['content'] = func_get_args();
 	}
 	
 	/// Set a specific content slot to a simple view.

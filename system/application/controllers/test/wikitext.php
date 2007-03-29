@@ -23,6 +23,8 @@ class Wikitext extends Controller {
 	{
 		if (!CheckPermissions('office')) return;
 		
+		$this->load->helper('wikitext_smiley');
+		
 		// No POST data? just set wikitext to default string
 		$wikitext = $this->input->post('wikitext');
 		if ($wikitext === FALSE) {
@@ -34,12 +36,17 @@ class Wikitext extends Controller {
 			$wikitext .= '#This is an ordered list' . "\n";
 			$wikitext .= '#*With an unordered list within' . "\n";
 			$wikitext .= '#*And another item' . "\n";
+			$wikitext .= implode('',array_keys(_get_smiley_array())) . "\n";
 		} else if (get_magic_quotes_gpc()) {
 			$wikitext = stripslashes($wikitext);
 		}
 		
+		$parsed_wikitext = $wikitext;
+		$parsed_wikitext = wikitext_parse_smileys($parsed_wikitext);
+		$parsed_wikitext = $this->wikiparser->parse($parsed_wikitext."\n",'wiki test');
+		
 		$data = array(
-				'parsed_wikitext' => $this->wikiparser->parse($wikitext."\n",'wiki test'),
+				'parsed_wikitext' => $parsed_wikitext,
 				'wikitext' => $wikitext,
 			);
 		
