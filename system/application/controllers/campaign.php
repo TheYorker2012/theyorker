@@ -12,6 +12,9 @@ class Campaign extends Controller {
 		
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
+	
+		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
+
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
 		if ($campaign_id == FALSE)
 		{

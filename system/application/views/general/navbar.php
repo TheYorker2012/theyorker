@@ -1,17 +1,11 @@
-<div id="<?php echo $style; ?>">
-	<ul>
+<ul id="<?php echo($style); ?>">
 <?php
-	/// @note Echo in reverse because right aligned.
-	foreach (array_reverse($items) as $key => $item) {
-		$link_attributes = 'href="'.$item['link'].'"';
-		if ($key === $selected) {
-			$link_attributes .= ' class="current"';
-		}
+foreach (array_reverse($items) as $key => $item) {
 ?>
-		<li><a id='navbar_<?php echo $key; ?>' <?php echo $link_attributes; ?>><?php echo $item['title']; ?></a></li>
-		<li><div class="thin">&nbsp;</div></li>
+	<li<?php if ($key === $selected) { echo(' class="current"'); } ?>>
+		<a href="<?php echo($item['link']); ?>"><?php echo $item['title']; ?></a>
+	</li>
 <?php
-		}
+}
 ?>
-	</UL>
-</DIV>
+</ul>

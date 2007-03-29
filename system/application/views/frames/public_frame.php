@@ -19,14 +19,18 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		} 
 	?></title>
 
-	<link rel='shortcut icon' href='/images/yorker.ico' />
-	<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
+	<link rel="shortcut icon" href="/images/yorker.ico" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
 
-	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	
+	<?php
+	if (isset($extra_css)) {
+		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
+	}
+	?>
 	
 	<!-- BEGIN Multiple event handlers code -->
 	<script type="text/javascript">
@@ -56,61 +60,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<!-- END Multiple event handlers code -->
 
 	<!-- BEGIN 'head' tag items from controlling script -->
-	<?php if (isset($extra_head)) { echo($extra_head); }; ?>
+	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
 	<!-- END 'head' tag items from controlling script -->
 
-	<?php /*
-	if (isset($maps)) {
-	// The google maps API key will need to be changed whenever we change server
-	// There is a google account to do this:
-	//   username - theyorkermaps
-	//   password - same as the database
-	?>
-	<!-- BEGIN map handling code -->
-	<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q" type="text/javascript"></script>
-	<script type="text/javascript">
-	//<![CDATA[
-
-	function loadMaps() {
-		// define a sctucture to store map settings
-		function OMap(element, lat, lng) {
-			this.element = element;
-			this.lat = lat;
-			this.lng = lng;
-		}
-
-		var map;
-		var maps = new Array();
-		<?php
-		// Write code to put each the maps defined in PHP into a Javascript array
-		foreach ($maps as $map) {
-			echo 'maps.push(new OMap("'.$map['element'].'", '.$map['lat'].', '.$map['lng'].'));';
-		}
-		?>
-
-		// For each map, update the page to actually show the map
-		for (i = 0; i < maps.length; i++) {
-			var mapobj = new GMap2(document.getElementById(maps[i].element));
-			mapobj.setCenter(new GLatLng(maps[i].lat, maps[i].lng), 13);
-			mapobj.enableDoubleClickZoom();
-			mapobj.enableContinuousZoom();
-		}
-	}
-
-	onLoadFunctions.push(loadMaps);
-	onUnloadFunctions.push(GUnload);
-
-	//]]>
-	</script>
-	<!-- END map handling code -->
 	<?php
-	} */
 	include('maps.php');
 	?>
 	
-	<!-- FIXME: I'm really not sure this in necessary (and it is horrible) -->
-	<script src="/javascript/jumpto.js" type="text/javascript"></script>
-
 	<!-- BEGIN search box code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -235,10 +191,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		<div id="MainBodyPane">
 			<h1 id="PageTitle">
-				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
+				<?php if(isset($title)) { echo $title."\n"; } else { echo 'no pagename'."\n"; } ?>
 			</h1>
 
-			<?php	
+<!-- BEGIN generated content -->
+<?php	
 				// TODO: check this works properly
 
 				// Navigation bar
@@ -253,7 +210,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 				// Display the main content
 				$content[0]->Load();
-			?>
+?>
+<!-- END generated content -->
+
 		</div>
 	</div>
 
@@ -262,12 +221,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div id="FeedbackForm">
 			<form id="feedback_form" action="<?php echo site_url('feedback/'); ?>" method="post" class="form">
 				<fieldset>
-					<h4>Feedback</h4>
+					<h2>Feedback</h2>
 					<!-- <br /> tags necessary for correct rendering in text based browsers -->
 					<label for="a_authorname">Your Name: </label>
 						<input type="text" name="a_authorname" id="a_authorname" value="" /><br />
-					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>" />
-					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 					<label for="a_authoremail">Your E-mail: </label>
 						<input type="text" name="a_authoremail" id="a_authoremail" value="" /><br />
 					<label for="a_rating">Your Rating: </label>
@@ -281,7 +238,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 						</select><br />
 					<label for="a_feedbacktext">Your Comments: </label>
 						<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
-
+					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>" />
+					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 				</fieldset>
 				<fieldset>
 					<input class="button" type="submit" name="r_submit" id="r_submit" value="Submit" />
@@ -298,52 +256,3 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	</div>
 </body>
 </html>
-
-<?php /*
-		<div align='center'>
-			<div style="width: 780px; margin-top: 8px; margin-left: 5px;">
-				<div id="feedbackdiv" style="width: 100%; display: none;">
-					<form name='feedback_form' id='feedback_form' action='<?php echo site_url('feedback/'); ?>' method='post' class='form'>
-						<fieldset>
-							<h4>Feedback</h4>
-							<label for='a_authorname'>Your Name:</label>
-							<input type='text' name='a_authorname' id='a_authorname' value='' />
-							<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>' />
-							<input type='hidden' name='r_redirecturl' id='r_redirecturl' value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
-							<br />
-							<label for='a_authoremail'>Your E-mail:</label>
-							<input type='text' name='a_authoremail' id='a_authoremail' value='' />
-							<br />
-							<label for='a_rating'>Your Rating:</label>
-							<select name='a_rating' id='a_rating' size='1'>
-								<option value='' selected='selected'></option>
-								<option value='1'>What's this for?</option>
-								<option value='2'>Good idea - but what does it do?</option>
-								<option value='3'>Useful.. I guess.</option>
-								<option value='4'>Great idea, and easy to use!</option>
-								<option value='5'>Amazing!!</option>
-							</select>
-							<br />
-							<label for='a_feedbacktext'>Your Comments:</label>
-							<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40"></textarea>
-							<br />
-						</fieldset>
-						<fieldset>
-							<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
-							<input type='reset' name='r_cancel' id='r_cancel' value='Cancel' class='button' onClick="document.getElementById('feedbackshowdiv').style.display = 'block'; document.getElementById('feedbackdiv').style.display = 'none';"/>
-							<br />
-						</fieldset>
-					</form>
-				</div>
-			</div>
-			<div style="width: 780px; text-align: center;" id="feedbackshowdiv">
-				<a href="#" onclick="document.getElementById('feedbackdiv').style.display = 'block'; document.getElementById('feedbackshowdiv').style.display = 'none'; return false;"><span style="color:#ff6a00; font-weight: bold;">Please give Feedback about this page</span></a>
-			</div>
-			<br /><br />
-			<div style="text-align: center; width: 780px;">
-				<small>Copyright  2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#user_agreement'>User Agreement</a> and <a href='/policy/#privacy_policy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
-			</div>
-		</div>
-	</div>
-</body>
-</html>*/?>

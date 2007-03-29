@@ -1,94 +1,73 @@
-<div class='RightToolbar'>
-	<h4><?php echo $sidebar_about['title']; ?></h4>
-	<div class='Entry'>
-		<?php echo $sidebar_about['text']; ?>
+<div id="RightColumn">
+	<h2 class="first"><?php echo($sidebar_about['title']); ?></h2>
+	<div class="Entry">
+		<?php echo($sidebar_about['text']); ?>
 	</div>
-	<h4><?php echo $sidebar_how['title']; ?></h4>
-	<div class='Entry'>
-		<?php echo $sidebar_how['text']; ?>
+
+	<h2><?php echo($sidebar_how['title']); ?></h2>
+	<div class="Entry">
+		<?php echo($sidebar_how['text']); ?>
 	</div>
 </div>
 
-<div class='blue_box'>
-	<h2><?php echo $current_campaigns['title']; ?></h2>
-	<?php echo $current_campaigns['text']; ?>
-	<h2><?php echo $votes['title']; ?></h2>
-	<?php echo $votes['text']; ?>
-	<table width="100%">
-		<?php
-                foreach ($campaign_list as $key => $campaigns)
-		{
-			$divpercentage = $campaigns['percentage']*0.76;
-			/* If anyone has a better idea so the div doesn't go off the end feel free to change it.
-			 * But I believe this works fine. --rr512
-			 */
-			echo '<tr>
-				<td>
-				<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b>
-				</td><td style="width:40%; border: thin solid #ff6a00;">
-				<div style="float: left; width: '.$divpercentage.'%; background-color: #ff6a00;">&nbsp</div>
-				<div stlye="float: right;">&nbsp;'.round($campaigns['percentage']).'%</div>
-				</td>
-				</tr>';
-		}
-		?>
-	</table>
-	<br />
-</div>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2><?php echo($current_campaigns['title']); ?></h2>
+		<?php echo($current_campaigns['text']); ?>
+	</div>
+	<div class="BlueBox">
+		<h2><?php echo($votes['title']); ?></h2>
+<?php
+echo('		'.$votes['text']);
+foreach ($campaign_list as $key => $campaigns) {
+	$percentage = round($campaigns['percentage']);
+	echo('		<div class="CampaignBox">'."\n");
+	echo('			<div class="ProgressBar">'."\n");
+	echo('				<div class="ProgressInner" style="width: '.$percentage.'%">');
+	if ($percentage <= 50) {
+		echo('&nbsp;</div>&nbsp;'.$percentage.'%'."\n");
+	} else {
+		echo('&nbsp;'.$percentage.'%</div>'."\n");
+	}
+	echo('			</div>'."\n");
+	echo('			<a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a>'."\n");
+	echo('		</div>'."\n");
+}
+?>
+	</div>
 
 <?php
-if ($user == TRUE)
-{
-	echo '<div class="grey_box">';
-	echo '<h2>'.$vote_campaigns['title'].'</h2>';
-	echo $vote_campaigns['text'];
-	echo '<table width="100%">';
-        foreach ($campaign_list as $key => $campaigns)
-	{
-		if ($user['vote_id'] == $key)
-		{
-			echo '<tr>
-				<td>
-					<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b>
-				</td>
-				<td style="width:40%; float: right">
-					<form name="withdrawform" action="/campaign/withdrawvote" method="POST" class="form">
-						<fieldset>
-							<input type="hidden" name="a_campaignid" value="'.$key.'" />
- 	                        			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-							<input type="submit" value="Withdraw Vote" class="button" name="withdrawvote" />
-						</fieldset>
-					</form>
-				</td>
-			</tr>';
-		}
-		else
-		{
-			echo '<tr>
-				<td>
-					<b><a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a></b>
-				</td>
-				<td style="width:40%; float: right">
-					<form name="voteform" action="/campaign/castvote" method="POST" class="form">
-						<fieldset>
-							<input type="hidden" name="a_campaignid" value="'.$key.'" />
- 	                        			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-							<input type="submit" value="Vote" class="button" name="r_castvote" />
-						</fieldset>
-					</form>
-				</td>
-			</tr>';
+if ($user == TRUE) {
+	echo('	<div class="BlueBox">'."\n");
+	echo('		<h2>'.$vote_campaigns['title'].'</h2>'."\n");
+	echo('		'.$vote_campaigns['text']);
+        foreach ($campaign_list as $key => $campaigns) {
+		if ($user['vote_id'] == $key) {
+?>
+		<form action="/campaign/withdrawvote" method="post" class="voteform">
+			<fieldset>
+				<input type="submit" value="Withdraw Vote" class="button" name="r_castvote" />
+				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo($campaigns['name']) ?></a>
+				<input type="hidden" name="a_campaignid" value="<?php echo($key); ?>" />
+				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
+			</fieldset>
+		</form>
+<?php
+		} else {
+?>
+		<form action="/campaign/castvote" method="post" class="voteform">
+			<fieldset>
+				<input type="submit" value="Vote" class="button" name="r_castvote" />
+				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo($campaigns['name']) ?></a>
+				<input type="hidden" name="a_campaignid" value="<?php echo($key); ?>" />
+				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
+			</fieldset>
+		</form>
+<?php
 		}
 	}
-	echo '</table>';
-	echo '</div>';
+	echo '	</div>';
 }
 ?>
 
-<?php
-
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-
-?>
+</div>

@@ -36,10 +36,10 @@ class Register extends Controller {
 		$this->load->library('validation');
 		$this->validation->set_error_delimiters('<li>','</li>');
 		// Validation rules
-		$rules['fname'] = 'trim|required|alpha|xss_clean';
-		$rules['sname'] = 'trim|required|alpha|xss_clean';
+		$rules['fname'] = 'trim|required|alpha';
+		$rules['sname'] = 'trim|required|alpha';
 		$rules['email'] = 'trim|required|valid_email';
-		$rules['nick'] = 'trim|required|alpha_numeric|xss_clean';
+		$rules['nick'] = 'trim|required|alpha_numeric';
 		$rules['gender'] = 'trim|required';
 		$rules['college'] = 'trim|required|numeric';
 		$rules['year'] = 'trim|required|numeric';

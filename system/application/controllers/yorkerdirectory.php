@@ -89,6 +89,11 @@ class Yorkerdirectory extends Controller
 		// Set up the public frame to use the directory view
 		$this->main_frame->SetContent($directory_view);
 
+		// Include the javascript
+		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');
+
+		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}

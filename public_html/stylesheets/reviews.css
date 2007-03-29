@@ -1,0 +1,15 @@
+table#ReviewSearchResults {
+	border-collapse: collapse;
+	border: 1px solid #08C0EF;
+}
+
+table#ReviewSearchResults th {
+	border: 1px solid #08C0EF;
+	padding: 0.5em;
+}
+
+table#ReviewSearchResults td {
+	border-left: 1px solid #08C0EF;
+	border-right: 1px solid #08C0EF;
+	padding: 0.5em;
+}

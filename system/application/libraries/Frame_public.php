@@ -123,6 +123,15 @@ class Frame_public extends FrameNavbar
 	{
 		$this->SetData('extra_head', $ExtraHead);
 	}
+
+	/**
+	 * @brief Sets an extra stylesheet to include.  
+	 * @param $CssPath string Path to the CSS file to include.  
+	 */
+	function SetExtraCss($CssPath) 
+	{
+		$this->SetData('extra_css', $CssPath);
+	}
 	
 	/// Add a message to the page.
 	/**

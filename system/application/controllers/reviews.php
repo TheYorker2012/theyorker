@@ -354,26 +354,22 @@ class Reviews extends Controller
 					$item_filter_by = FALSE,
 					$where_equal_to = FALSE)
 	{
+		//POST data set overwrites uri data
+		if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
+		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
+		if (isset($_POST['where_equal_to'])) $where_equal_to = $_POST['where_equal_to'];
+		if (isset($_POST['sorted_by'])) $where_equal_to = $_POST['sorted_by'];
 
-	//POST data set overwrites uri data
-	if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
-	if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
-	if (isset($_POST['where_equal_to'])) $where_equal_to = $_POST['where_equal_to'];
-	if (isset($_POST['sorted_by'])) $where_equal_to = $_POST['sorted_by'];
-
-
-	//For next page so we remember the options given
-	$data['item_filter_by'] = $item_filter_by;
-	$data['where_equal_to'] = $where_equal_to;
-	$data['sorted_by'] = $sorted_by;
-	$data['item_type'] = $item_type;
-	
+		//For next page so we remember the options given
+		$data['item_filter_by'] = $item_filter_by;
+		$data['where_equal_to'] = $where_equal_to;
+		$data['sorted_by'] = $sorted_by;
+		$data['item_type'] = $item_type;
 
 		if (!CheckPermissions('public')) return;
 		
 		//Set page code
 		$this->pages_model->SetPageCode('review_table');
-
 
 		$database_result = $this->Review_model->GetTableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
 
@@ -426,7 +422,8 @@ class Reviews extends Controller
 			$data['entries'] = $entries;
 
 		}
-
+		
+		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();
 	}

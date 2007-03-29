@@ -1,135 +1,73 @@
-<div style="width: 220px; margin: 0; padding-left: 3px; float: right; ">
-
-	<div class='RightToolbar'>
-		<h4>Search</h4>
-		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
-			<form name='search_directory' action='' method='POST' class='form'>
-				<fieldset>
-				Enter a keyword below:<br />
-				<div id="loadingdiv"style="padding: 5px; display: none; float:right;"> <img src="/images/prototype/prefs/loading.gif" width="16" height="16" /></div>
-				<div style='padding: 5px;'><input width='300' id="searchText" name="search" onKeyUp="searchPage('searchText','Letter','filterCheck');"></div>
-				<br />
-				e.g. football
-				</fieldset>
-			</form>
-		</div>
+<div id="RightColumn">
+	<h2 class="first">Search</h2>
+	<div class="Entry">
+		<form id="search_directory" action="" method="post">
+			<fieldset>
+				<label for="search">Enter a keyword below:</label>
+				<input type="text" name="search" id="search" onkeyup="searchDirectory();" />
+			</fieldset>
+		</form>
 	</div>
 
-	<div class='RightToolbar'>
-		<h4>Filters</h4>
-		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
-			<?php
-				$idPostfix = 1;
-				foreach ($organisation_types as $org_type) {
-					echo '<input style="float: none;" id="filterCheck'.$idPostfix++.'" onChange="searchPage(\'searchText\',\'Letter\',\'filterCheck\');" type="checkbox" name="'.$org_type['id'].'" value="checked" checked><span style="font-size:small" />'.$org_type['name'].'</span> ('.$org_type['quantity'].')<br />';
-				}
-			?>
-		</div>
-	</div>
-
-	<div class='RightToolbar'>
-		<h4>What's this? </h4>
-		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
-			<p><?php echo $maintext; ?></p>
-			<p>The directory currently has <?php echo count($organisations); ?> entries.</p>
-		</div>
-	</div>
-
-</div>
-
-<div  style="padding:0px; width: 420px; margin: 0px;">
-<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px;">
-<p></p>
-
-<div align="center">
-    <script language="javascript">
-		insertJumpers('Jumper','Anchor');
-
-		function onLoad() {
-			searchPage('searchText','Letter','filterCheck');
-		}
-
-		onLoadFunctions.push(onLoad);
-	</script>
-</div>
-<div id="NotFound" style="display: none;">
-    <center>
-    	<br />
-    	<br />
-        <b>No entries found</b><br />
-        <div style="text-size:small">Try a simpler search, different keywords, or include more filters.</div>
-    </center>
-</div>
-<div>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="14">
-            <td rowspan="2" class="AZTop"><div>
-                    <?php
-	$last_letter = "";
-	$current_letter_index = 0;
-
-	foreach ($organisations as $organisation) {
-
-		$current_letter_index ++;
-
-		$entry_name = $organisation['name'];
-
-		$current_letter = strtoupper($entry_name{0});
-
-		if($this->character_lib->isalpha($current_letter)) {
-			if ($current_letter!=$last_letter) {
-				$current_letter_index = 1;
-			?>
-                </div></td>
-        </tr>
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-    </table>
-</div>
-<script language="javascript"> showJumpAsLoad('<?php echo $current_letter ?>'); </script>
-<a name="Anchor<?php echo $current_letter ?>"></a>
-<div id="Letter<?php echo $current_letter ?>">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="14">
-            <td width="0" />
-            <td width="30" height="14" valign="top"><div class="AZLeft"><?php echo $current_letter ?></div></td>
-            <td rowspan="2" valign="top"><div class="AZTop"> <a href='#top' style="font-size:x-small; margin-bottom: 16px;  margin-top: 16px;">Back to top</a>
-                    <?php
-		}
-		$last_letter = $current_letter;
-	} else {
-		if ($last_letter != "0") {
-			$last_letter = "0";
-		?>
-                </div></td>
-        </tr>
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-    </table>
-    <div id="Letter0">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr height="14">
-                <td width="5">&nbsp;</td>
-                <td width="30" height="14" valign="top"><div class="AZLeft">&nbsp;</div></td>
-                <td rowspan="2" valign="top"><div class="AZTop">
-                        <?php
-		}
-		$last_letter = "0";
+	<h2>Filters</h2>
+	<div class="Entry">
+<?php
+	$idPostfix = 0;
+	foreach ($organisation_types as $org_type) {
+?>
+		<label for="filterCheck<?php echo($idPostfix); ?>">
+			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo(htmlspecialchars($org_type['id'])); ?>" checked="checked" />
+			<?php echo(htmlspecialchars($org_type['name']).' ('.$org_type['quantity'].')')?>
+		</label>
+<?php
+		$idPostfix++;
 	}
-	/*
-	 * $organisation['description'] is the description of the organisation
-	 * $organisation['shortdescription'] is cut to a finite number of words
-	 */
-	?>
-                        <div id="Letter<?php echo $last_letter.$current_letter_index ?>" class="AZEntry" name="<?php echo $organisation['type']; ?>"> <?php echo '<a href=\'/' . $organisation['link'] . '\' style="display: inline;"><span style="color:#08c0ef; font-weight: bold;">' . $organisation['name']; ?></span></a> <span style='font-size: 12px'>(<?php echo $organisation['type']; ?>)</span><br />
-                            <span style='font-size: 12px'><?php echo $organisation['shortdescription']; ?></span> </div>
-                        <?php
+?>
+	</div>
+
+	<h2>What's this?</h2>
+	<div class="Entry">
+		<p><?php echo(htmlspecialchars($maintext)); ?></p>
+		<p>The directory currently has <?php echo count($organisations); ?> entries.  </p>
+	</div>
+</div>
+
+<div id="MainColumn">
+	<div id="DirectoryMain" class="BlueBox">
+		<div id="LetterJump">
+		</div>
+		<div id="NotFound" style="display: none;">
+			<p><b>No entries found</b></p>
+			<p>Try a simpler search, different keyowords, or include more filters.</p>
+		</div>
+<?php
+$currentLetter = '';
+foreach($organisations as $organisation) {
+	$thisLetter = $organisation['name'][0];
+	$thisLetter = strtoupper($thisLetter);
+	if ($thisLetter < 'A' | $thisLetter > 'Z') {
+		$thisLetter = 'Symbol';
+	}
+
+	if ($thisLetter != $currentLetter) {
+		echo('		<div class="DirectoryList" id="DirectoryList'.$thisLetter.'">'."\n");
+		echo('			<hr />'."\n");
+		echo('		</div>'."\n");
+		$currentLetter = $thisLetter;
+	}
+
+	echo('		<div id="'.htmlspecialchars($organisation['shortname']).'">'."\n");
+	echo('			<h3>'."\n");
+	echo('				<a href="/'.htmlspecialchars($organisation['link']).'">'.htmlspecialchars($organisation['name']).'</a>'."\n");
+	echo('				<span>('.htmlspecialchars($organisation['type']).')</span>'."\n");
+	echo('			</h3>'."\n");
+	if($organisation['shortdescription'] != '') {
+		echo('			<div>'."\n");
+		echo('				'.htmlspecialchars($organisation['shortdescription'])."\n");
+		echo('			</div>'."\n");
+	}
+	echo('		</div>'."\n");
 }
 ?>
-                    </div></td>
-            </tr>
-        </table>
-    </div>
+	</div>
 </div>

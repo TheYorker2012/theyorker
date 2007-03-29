@@ -1,0 +1,21 @@
+div.CampaignBox {
+	margin: 0.5em;
+}
+
+div.ProgressBar {
+	float: right;
+	border: 1px solid #ff6a00;
+	width: 50%;
+	text-align: center;
+}
+
+div.ProgressInner {
+	float: left;
+	background-color: #ff6a00;
+	color: white;
+	text-align: center;
+}
+
+form.voteform input.button {
+	margin: 0;
+}

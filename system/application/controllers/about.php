@@ -36,14 +36,18 @@ class About extends Controller
 		// Create data array.
 		$data = array();
 		$data['textblocks'] = array();
-		
+
 		// Process page properties.
 		foreach ($blocks as $key => $block) {
-			$data['textblocks'][] = array(
-				'shorttitle'	=> str_replace(' ','_',$block['title']),
-				'blurb'			=> $block['blurb'],
-				'image'			=> imageLocTag((array_key_exists('image',$block)?$block['image']:-1), "medium"),
-			);
+			$curdata = array();
+			$curdata['shorttitle'] = str_replace(' ','_',$block['title']);
+			$curdata['blurb'] = $block['blurb'];
+			if (array_key_exists('image', $block)) {
+				$curdata['image'] = imageLocTag($block['image'], 'medium');
+			} else {
+				$curdata['image'] = null;
+			}
+			$data['textblocks'][] = $curdata;
 		}
 		
 		// Load the main frame
@@ -51,4 +55,5 @@ class About extends Controller
 		$this->main_frame->Load();
 	}
 }
+
 ?>
