@@ -19,14 +19,14 @@
 					<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
 					<input type="button" value="Add" onClick="addTag();updateList();" />
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ntags" style="height:250px; width:125px;list-style-type:none;">
+						<ul id="ntags" style="height:250px; width:125px;list-style-type:none">
 						</ul>
 					</div>
 				</div>
 				<div style="float:left">
 					<h4>Tagged as:</h4>
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ctags" style="height:250px;width:125px;list-style-type:none;">
+						<ul id="ctags" style="height:250px;width:125px;list-style-type:none">
 							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
 							<li name="list_<?=$tag->tag_name?>" id="<?=$tag->tag_name?>"><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="images/icons/delete.png" alt="Remove" title="Remove" /> <?=$tag->tag_name?></a></li>
 							<?php endforeach;?>
