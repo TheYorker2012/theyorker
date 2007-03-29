@@ -14,29 +14,27 @@
 				</select><br />
 			<input type="hidden" name="tags" id="tags" />
 			<div>
-				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
-				<h4>Tagged as:</h4>
-				 <ul id="ctags" style="height:250px;width:125px;cursor: move;">
-					<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-					<li id="ctags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
-					<?php endforeach;?>
-				 </ul>
+				<div style="float:left;">
+					<label for="newtag">Add Tag</label>
+						<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
+						<input type="button" value="Add" onClick="updateList();">
+					<div style="overflow-y: auto;overflow-x: hidden;">
+						<ul id="ntags" style="height:250px; width:125px;">
+						</ul>
+					</div>
 				</div>
-				<div style="float:left;overflow-y: auto;overflow-x: hidden;">
-				<h4>All Tags:</h4>
-				 <ul id="atags" style="height:250px;width:125px;cursor: move;">
-					<?php if ($tagsNotUsed->num_rows() > 0) foreach ($tagsNotUsed->result() as $tag):?>
-					<li id="atags_<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
-					<?php endforeach;?>
-				 </ul>
+				<div style="float:left">
+					<h4>Tagged as:</h4>
+					<div style="overflow-y: auto;overflow-x: hidden;">
+					 	<ul id="ctags" style="height:250px;width:125px;">
+							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
+							<li id="<?=$tag->tag_name?>"><?=$tag->tag_name?></li>
+							<?php endforeach;?>
+					 	</ul>
+					</div>
 				</div>
 			</div>
 			<br />
-			<label for="newtag">New Tag</label>
-				<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)">
-				<input type="button" value="Add" onClick="updateList();">
-				<br />
-				<div id="txt_result"></div>
 			<label for="onfrontpage">Home Feature: </label>
 				<input type='checkbox' name='onfrontpage' value="on" /><br />
 			<label for="hidden">Hidden: </label>
@@ -77,32 +75,25 @@
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
-			$('tags').value+= tags[i].innerHTML + '+';
+			$('tags').value+= tags[i].id + '+';
 		}
+	}
+
+	function deleteTag(tagID) {
+		$(tagID).parent.removeChild(tagID);
+	}
+	
+	function setTag(tagID) {
+		$('newtag').value = tagID;
 	}
 
 	function addTag() {
 		if ($('newtag').value != "") {
-			Sortable.destroy($('ctags'));
-			Sortable.destroy($('atags'));
-			$('ctags').innerHTML += '<li class="orange" id="ntags_' + $('newtag').value + '">' + $('newtag').value + '</li>';
+			$('ctags').innerHTML += '<li class="orange" id="' + $('newtag').value + '">' + $('newtag').value + '<a href="deleteTag(\'' + $('newtag').value + '\')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>';
 			$('newtag').value = "";
-			Sortable.create("ctags",
-			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-			      onChange:updateList});
-			Sortable.create("atags",
-			     {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-			     onChange:updateList});
 			return true;
 		}
 	}
-
-  Sortable.create("ctags",
-    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-     onChange:updateList});
-  Sortable.create("atags",
-    {dropOnEmpty:true,containment:["ctags","atags", "ntags"],constraint:false,
-    onChange:updateList});
 
 	$('tags').value = '';
 	var tags = $('ctags').childNodes;

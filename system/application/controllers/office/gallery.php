@@ -39,7 +39,7 @@ class Gallery extends Controller {
 		$page = $this->uri->segment(3, 0);
 		
 		if ($this->input->post('clear') == 'clear') {
-			$_SESSION['img_search'] = false;
+			unset($_SESSION['img_search']);
 		} elseif ($this->input->post('submit')) {
 			$_SESSION['img_search'] = $this->input->post('search');
 			$_SESSION['img_search_by'] = $this->input->post('searchcriteria');
@@ -178,8 +178,7 @@ class Gallery extends Controller {
 				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->row(),
 				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
 				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
-				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
-				'tagsNotUsed' => $this->db->query('SELECT * FROM `tags` WHERE `tag_type` = \'photo\' AND (SELECT COUNT(*) FROM `photo_tags` WHERE `photo_tag_tag_id` = tags.tag_id AND `photo_tag_photo_id` = ?) = 0', array($id))
+				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
 			);
 		}
 		
@@ -216,12 +215,11 @@ class Gallery extends Controller {
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
-				$reply.='<a onClick="$(\'newtag\').value = \''.$tag->tag_name.'\';$(\'txt_result\').style.display = \'none\'">'.$tag->tag_name.'</a><br />';
+				$reply.='<li id="'.$tag->tag_name.'"><a href="setTag(\''.$tag->tag_name.'\'); addTag()">'.$tag->tag_name.'</a></li>';
 			}
-			$objResponse->addAssign("txt_result", "style.display", 'block');
-			$objResponse->addAssign("txt_result", "innerHTML", $reply);
+			$objResponse->addAssign("ntags", "innerHTML", $reply);
 		} else {
-			$objResponse->addAssign("txt_result", "style.display", 'none');
+			$objResponse->addAssign("ntags", "innerHTML", '');
 		}
 		return $objResponse;
 	}
