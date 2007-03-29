@@ -476,19 +476,19 @@ class Requests_Model extends Model
 	{
 		$sql = 'SELECT	article_writer_article_id,
 				article_request_title
-			FROM    article_writers
+			FROM	article_writers
 	 	
-			JOIN    articles
-			ON    article_id = article_writer_article_id
+			JOIN	articles
+			ON	article_id = article_writer_article_id
 
-			JOIN    content_types
-			ON    content_type_id = article_content_type_id
+			JOIN	content_types
+			ON	content_type_id = article_content_type_id
 
-			WHERE    article_writer_user_entity_id = ?
-			AND    article_content_type_id = ?
-			AND    article_writer_status = ?
-			AND    article_live_content_id IS NULL
-			AND    article_deleted = 0';
+			WHERE	article_writer_user_entity_id = ?
+			AND	article_content_type_id = ?
+			AND	article_writer_status = ?
+			AND	article_deleted = 0';
+			//AND	article_live_content_id IS NULL
 		$query = $this->db->query($sql,array($user_id, $type, $status));
 		$result = array();
 		if ($query->num_rows() > 0)

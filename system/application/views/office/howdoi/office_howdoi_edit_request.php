@@ -6,7 +6,7 @@
 </div>
 
 <?php
-if ($article['header']['status'] == 'request')
+if (($article['header']['status'] == 'request') or ($article['header']['status'] == 'published'))
 {
 	echo '<div class="blue_box">';
 	echo '<h2>request info</h2>';

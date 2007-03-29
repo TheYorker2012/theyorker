@@ -73,7 +73,7 @@ if ($article['header']['status'] == 'suggestion')
 ?>
 
 <?php
-if ($article['header']['status'] == 'request')
+if (($article['header']['status'] == 'request') or ($article['header']['status'] == 'published'))
 {
 	echo '<div class="blue_box">';
 	echo '<h2>request info</h2>';
@@ -84,12 +84,6 @@ if ($article['header']['status'] == 'request')
 		echo '<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[modify and assign]</a>';
 	}
 	echo '</div>';
-}
-?>
-
-<?php
-if (($article['header']['status'] == 'request') or ($article['header']['status'] == 'published'))
-{
 	echo '<div class="grey_box">
 	<h2>edit question</h2>
 	<form class="form" action="/office/howdoi/questionmodify" method="post" >
