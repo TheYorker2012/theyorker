@@ -215,7 +215,7 @@ class Gallery extends Controller {
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
-				$reply.='<li id="'.$tag->tag_name.'"><a onClick="setTag(\''.$tag->tag_name.'\'); addTag()">'.$tag->tag_name.'</a></li>';
+				$reply.='<li id="'.$tag->tag_name.'"><a onClick="setTag(\''.$tag->tag_name.'\'); addTag()"><img src="images/icons/add.png" title="add" alt="add"> '.$tag->tag_name.'</a></li>';
 			}
 			$objResponse->addAssign("ntags", "innerHTML", $reply);
 		} else {
