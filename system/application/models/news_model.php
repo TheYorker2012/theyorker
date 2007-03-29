@@ -395,9 +395,9 @@ class News_model extends Model
 		$sql = 'SELECT article_writers.article_writer_user_entity_id,
 				business_cards.business_card_name
 			FROM article_writers, business_cards
-			WHERE (article_writers.article_writer_article_id = ?
+			WHERE article_writers.article_writer_article_id = ?
 			AND article_writers.article_writer_status = "accepted"
-			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL)
+			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
 			AND article_writers.article_writer_user_entity_id = business_cards.business_card_user_entity_id
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
