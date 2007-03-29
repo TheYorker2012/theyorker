@@ -264,6 +264,7 @@ class Gallery extends Controller {
 		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$head.= '<style type="text/css" media="all">#ctags li {list-style-type:none;} #ntags li {list-style-type:none;}</style>';
 		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
 		$this->main_frame->Load();
