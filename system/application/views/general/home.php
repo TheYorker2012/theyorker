@@ -4,13 +4,15 @@ function printsmallnewsbox($article){
 	echo('          <a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('                  <img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
 	echo('          </a>'."\n");
-	echo('		<h3>'.$article['heading'].'</h3>'."\n");
+	echo('		<h3><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('			'.$article['heading']."\n");
+	echo('		</a></h3>'."\n");
 	echo('		<p class="Writer">'."\n");
 	foreach ($article['authors'] as $author){
 		echo($author['name'].' ');
 	}
 	echo('		</p>'."\n");
-	echo('		<p class="Date">'.$article['date'].'</p>'."\n");
+	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
@@ -66,7 +68,7 @@ function printsmallnewsbox($article){
 				echo('		<img src="'.$primary_article['photo_url'].'" alt="'.$primary_article['photo_title'].'" title="'.$primary_article['photo_title'].'" />'."\n");
 				echo('	</a>'."\n");
 			?>
-			<h3><?php echo $primary_article['heading'] ?></h3>
+			<h3><?php echo('<a href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'.$primary_article['heading'].'</a>') ?></h3>
 			<p class="Writer">
 			<?php
 				foreach ($primary_article['authors'] as $author){
@@ -74,7 +76,7 @@ function printsmallnewsbox($article){
 				}
 			?>
 			</p>
-			<p class="Date"> <?php echo($primary_article['date']) ?></p>
+			<div class="Date"> <?php echo($primary_article['date']) ?></div>
 			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
 		</div>
 		<?php printsmallnewsbox($secondary_article) ?>
