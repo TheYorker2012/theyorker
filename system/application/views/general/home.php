@@ -13,6 +13,7 @@ function printsmallnewsbox($article){
 	}
 	echo('		</p>'."\n");
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
+	echo('		<p class="More">'.$article['blurb'].'</p>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
