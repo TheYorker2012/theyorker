@@ -28,7 +28,7 @@
 					<div style="overflow-y: auto;overflow-x: hidden;">
 					 	<ul id="ctags" style="height:250px;width:125px;">
 							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-							<li id="<?=$tag->tag_name?>"><?=$tag->tag_name?><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>
+							<li name="list_<?=$tag->tag_name?>" id="<?=$tag->tag_name?>"><?=$tag->tag_name?><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>
 							<?php endforeach;?>
 					 	</ul>
 					</div>
@@ -80,7 +80,10 @@
 	}
 
 	function deleteTag(tagID) {
-		document.getElementById(tagID).parentNode.removeChild(document.getElementById(tagID));
+		var tag = document.getElementsByName('list_'.tagID);
+		for (var i=0; i<tag.length; i++) {
+			tag[i].parentNode.removeChild(tag[i]);
+		}
 		updateList();
 	}
 	
@@ -90,7 +93,7 @@
 
 	function addTag() {
 		if ($('newtag').value != "") {
-			$('ctags').innerHTML += '<li class="orange" id="' + $('newtag').value + '">' + $('newtag').value + '<a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>';
+			$('ctags').innerHTML += '<li class="orange" name="list_'+$('newtag').value+'" id="' + $('newtag').value + '">' + $('newtag').value + '<a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="images/prototype/news/delete.gif" alt="Remove" title="Remove" /></a></li>';
 			$('newtag').value = "";
 			return true;
 		}
