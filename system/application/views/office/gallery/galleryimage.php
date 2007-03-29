@@ -75,12 +75,12 @@
 		$('tags').value = '';
 		var tags = $('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
-			$('tags').value+= tags[i].id + '+';
+			if (tags[i].nodeType == '1') $('tags').value+= tags[i].id + '+';
 		}
 	}
 
 	function deleteTag(tagID) {
-		var tag = document.getElementsByName('list_'.tagID);
+		var tag = getElementsByName('list_'.tagID);
 		for (var i=0; i<tag.length; i++) {
 			tag[i].parentNode.removeChild(tag[i]);
 		}
