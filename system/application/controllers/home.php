@@ -53,8 +53,8 @@ class Home extends Controller {
 		//Obtain news articles to be displayed
 		$article_ids = $this->News_model->GetLatestId('uninews',3);
 		$data['primary_article'] = $this->News_model->GetSummaryArticle($article_ids[0],'%W, %D %M %Y','medium');
-		$data['secondary_article'] = $this->News_model->GetSimpleArticle($article_ids[1]);
-		$data['tertiary_article'] = $this->News_model->GetSimpleArticle($article_ids[2]);
+		$data['secondary_article'] = $this->News_model->GetSummaryArticle($article_ids[1]);
+		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2]);
 
 		//Obtain weather
 		$data['weather_forecast'] = $this->Weather_Model->GetWeather();
