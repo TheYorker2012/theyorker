@@ -55,9 +55,9 @@ function printsmallnewsbox($article){
 	</div>
 </div>
 
-<!--<div id="HomeBanner">
+<div id="HomeBanner">
 	<img src="/images/prototype/homepage/rowing.jpg" alt="Rowing at York" title="Rowing at York" />
-</div>-->
+</div>
 
 <div id="MainColumn">
 	<div class="BlueBox">
