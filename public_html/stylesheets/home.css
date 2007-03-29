@@ -3,7 +3,7 @@ div.NewsBox {
 }
 
 div.SmallNewsBox {
-	width: 100%;
+	width: 50%;
 }
 
 div.NewsBox {
@@ -12,7 +12,7 @@ div.NewsBox {
 	margin: 0;
 }
 
-div.NewsBox > * {
+div.NewsBox > *, div.SmallNewsBox > * {
 	margin: 0.5em;
 }
 
@@ -20,3 +20,7 @@ a.NewsImg {
 	float: right;
 }
 
+/* This may not be needed but */
+h3.SmallNewsHeading {
+	font-size: small;
+}
