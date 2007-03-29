@@ -12,20 +12,26 @@
 	<h2><?php echo $sections['sidebar_related']['title']; ?></h2><!--Next 2 sections basically the same with different data and links-->
 	<div class="Entry">
 		<?php
-	        foreach ($sections['article']['related_articles'] as $related_articles)
+		if (isset($sections['article']['related_articles']))
 		{
-			echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
-		};
+		        foreach ($sections['article']['related_articles'] as $related_articles)
+			{
+				echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
+			}
+		}
 		?>
 	</div>
 
 	<h2><?php echo $sections['sidebar_external']['title']; ?></h2>
 	<div class="Entry">
 		<?php
-	        foreach ($sections['article']['links'] as $links)
+		if (isset($sections['article']['links']))
 		{
-			echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
-		};
+		        foreach ($sections['article']['links'] as $links)
+			{
+				echo '<b><a href="'.$links['url'].'">'.$links['name'].'</a></b><br />';
+			}
+		}
 		?>
 	</div>
 </div>
@@ -56,6 +62,8 @@
 			echo '<h5><span class="orange">'.$pr_entry['date'].'</span></h5>';
 			echo $pr_entry['text'].'<br /><br />';
 		}
+		if ($sections['progress_reports']['totalcount'] > 3)
+			echo '<a href="/charity/preports/">There are older reports click here to view all progress reports.</a>';
 		echo '</div>';
 	}
 	?>
@@ -64,8 +72,8 @@
 
 <?php
 /*
-echo '<pre>';
+echo '<div class="BlueBox"><pre>';
 echo print_r($data);
-echo '</pre>';
+echo '</pre></div>';
 */
 ?>

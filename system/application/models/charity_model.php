@@ -35,6 +35,25 @@ class Charity_model extends Model
 	}
 	
         /**
+	 * retrieves the current charities id.
+	 * @return the id of the current charity or false otherwise
+	 */
+	function GetCurrentCharity()
+	{
+		$sql = 'SELECT	charity_id
+			FROM	charities
+			WHERE	charity_current
+			LIMIT 0,1';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->charity_id;
+		}
+		return false;
+	}
+	
+        /**
 	 * retrieves a list of all charities.
 	 */
 	function GetCharities()
@@ -99,7 +118,7 @@ class Charity_model extends Model
 	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetCharityProgressReports($charity_id, $count)
+	function GetCharityProgressReports($charity_id, $limit)
 	{
 		$sql = 'SELECT	progress_report_articles.progress_report_article_article_id
 			FROM	progress_report_articles
@@ -108,8 +127,10 @@ class Charity_model extends Model
 			WHERE	progress_report_articles.progress_report_article_charity_id = ?
 			AND	progress_report_articles.progress_report_article_campaign_id IS NULL
 			ORDER BY articles.article_publish_date DESC
-			LIMIT	0,?';
-		$query = $this->db->query($sql,array($charity_id, $count));
+			';
+		if ($limit)
+			$sql = $sql.'LIMIT	0,3';
+		$query = $this->db->query($sql,array($charity_id));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
@@ -120,5 +141,24 @@ class Charity_model extends Model
 		}
 		return $result;
 
+	}
+	
+	/**
+	 * Returns the total number of progress reports relating to the given charity
+	 * @return an int specifying charity count or false on error.
+	 */
+	function GetCharityProgressReportCount($charity_id)
+	{
+		$sql = 'SELECT	count(*) as pr_count
+			FROM	progress_report_articles
+			WHERE	progress_report_articles.progress_report_article_charity_id = ?
+			AND	progress_report_articles.progress_report_article_campaign_id IS NULL';
+		$query = $this->db->query($sql,array($charity_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->pr_count;
+		}
+		return false;
 	}
 }
