@@ -136,7 +136,7 @@ class Gallery extends Controller {
 			if ($this->input->post('onfrontpage') == 'on') {
 				$new['photo_homepage'] = "";
 			} else {
-				$new['photo_homepage'] = "NULL";
+				$new['photo_homepage'] = null;
 			}
 			if ($this->input->post('hidden') == 'hide') {
 				$new['photo_deleted'] = "1";
