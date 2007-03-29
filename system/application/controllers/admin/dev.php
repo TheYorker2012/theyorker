@@ -26,6 +26,17 @@ class Dev extends Controller {
 		phpinfo();
 	}
 	
+	function retrieve($what)
+	{
+		if ($what === 'images') {
+			header('Content-type: application/x-gzip');
+			$bulk = system('tar czO images/images images/photos --exclude .svn');
+			$this->load->view('test/echo',array('content' => $bulk));
+		} else {
+			show_404();
+		}
+	}
+	
 	function log() {
 		if (!CheckPermissions('admin')) return;
 		
