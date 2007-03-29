@@ -133,11 +133,6 @@ class Gallery extends Controller {
 			             'photo_timestamp' => $this->input->post('date'),
 			             'photo_author_user_entity_id' =>  $this->input->post('photographer'));
 			
-			if ($this->input->post('onfrontpage') == 'on') {
-				$new['photo_homepage'] = "";
-			} else {
-				$new['photo_homepage'] = null;
-			}
 			if ($this->input->post('hidden') == 'hide') {
 				$new['photo_deleted'] = "1";
 			} else {

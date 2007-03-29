@@ -35,8 +35,6 @@
 				</div>
 			</div>
 			<br />
-			<label for="onfrontpage">Home Feature: </label>
-				<input type='checkbox' name='onfrontpage' value="on" <?php if ($photoDetails->photo_homepage != null) echo "checked";?> /><br />
 			<label for="hidden">Hidden: </label>
 				<input type='checkbox' name='hidden' value="hide" <?php if ($photoDetails->photo_deleted == 1) echo "checked";?> /><br />
 			<input type="submit" class="button" value="Save" />
