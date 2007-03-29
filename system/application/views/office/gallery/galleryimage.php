@@ -80,7 +80,7 @@
 	}
 
 	function deleteTag(tagID) {
-		$(tagID).parent.removeChild(tagID);
+		$(tagID).parentNode.removeChild(tagID);
 	}
 	
 	function setTag(tagID) {

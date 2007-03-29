@@ -196,7 +196,6 @@ class Gallery extends Controller {
 
 		// Set up the master frame.
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
