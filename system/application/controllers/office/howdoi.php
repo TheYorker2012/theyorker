@@ -650,8 +650,8 @@ class Howdoi extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 		
-		echo $_POST['a_answer'];
-		break;
+		//$_POST['a_answer'];
+		//break;
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
