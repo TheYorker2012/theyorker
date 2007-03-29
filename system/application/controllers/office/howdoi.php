@@ -177,9 +177,9 @@ class Howdoi extends Controller
 			$data['categories'][$category_id]['pulled'] = $this->requests_model->GetPublishedArticles($category['codename'], TRUE, TRUE);
 			$data['status_count']['pulled'] = $data['status_count']['pulled'] + count($data['categories'][$category_id]['pulled']);
 			//article writer requests
-			$temp_array = $this->requests_model->GetRequestsForUser($this->user_auth->entityId, $category_id, 'requested');
+			$temp_array = $this->requests_model->GetHowdoiWriterRequests($this->user_auth->entityId, $category_id, 'requested');
 			$data['user']['writer']['requested'] = array_merge($data['user']['writer']['requested'], $temp_array);
-			$temp_array = $this->requests_model->GetRequestsForUser($this->user_auth->entityId, $category_id, 'accepted');
+			$temp_array = $this->requests_model->GetHowdoiWriterRequests($this->user_auth->entityId, $category_id, 'accepted');
 			$data['user']['writer']['accepted'] = array_merge($data['user']['writer']['accepted'], $temp_array);
 		}
 
@@ -433,7 +433,7 @@ class Howdoi extends Controller
 			$data['writers']['all'] = $this->requests_model->GetWritersForType('howdoi');
 
 			//get writers for the current question
-			$data['writers']['article'] = $this->requests_model->GetWritersForArticle('howdoi');
+			$data['writers']['article'] = $this->requests_model->GetWritersForArticle($article_id);
 
 			//set a count for the available writers
 			$data['writers']['availcount'] = 0;
@@ -634,7 +634,6 @@ class Howdoi extends Controller
 							$_POST['a_description'],
 							$this->user_auth->entityId,
 							$_POST['a_deadline']);
-				echo $request_id;
 		                $this->main_frame->AddMessage('success','Request Created.');
 				redirect('/office/howdoi/editrequest/'.$request_id);
 			}
@@ -649,9 +648,6 @@ class Howdoi extends Controller
 	function questionmodify()
 	{
 		if (!CheckPermissions('office')) return;
-		
-		//$_POST['a_answer'];
-		//break;
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');

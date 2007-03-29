@@ -89,9 +89,9 @@ if ($article['header']['status'] == 'request')
 ?>
 
 <?php
-
+/*
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-
+*/
 ?>

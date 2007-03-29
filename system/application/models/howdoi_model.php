@@ -113,11 +113,16 @@ class Howdoi_model extends Model
 		*/
 		$sql = 'SELECT	article_id
 			FROM	articles
+			
+			JOIN	article_contents
+			ON	article_contents.article_content_id = articles.article_live_content_id
+			
 			WHERE	article_suggestion_accepted = 1
 			AND	article_content_type_id = ?
 			AND	article_live_content_id IS NOT NULL
 			AND	article_deleted = 0
-			AND	article_pulled = 0';
+			AND	article_pulled = 0
+			ORDER BY article_contents.article_content_heading';
 		$query = $this->db->query($sql,array($content_type_id));
 		$result = array();
 		if ($query->num_rows() > 0)

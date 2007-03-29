@@ -262,7 +262,7 @@ class Requests_Model extends Model
 		}
 	}
 
-	//Should this be get completed articles?
+	//Should this be get completed articles? < no chris "you are a retard" (in your own words), i need this for howdoi
 	function GetPublishedArticles($type_codename, $is_published, $is_pulled = FALSE)
 	{
 		$sql = 'SELECT 	content_type_id
@@ -300,6 +300,7 @@ class Requests_Model extends Model
 				$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
 			else
 				$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
+			$sql .= ' ORDER BY article_contents.article_content_heading ASC';
 			$query = $this->db->query($sql,array($type_id, $is_pulled));
 			$result = array();
 			if ($query->num_rows() > 0)
@@ -438,19 +439,20 @@ class Requests_Model extends Model
 	
 	function GetRequestsForUser($user_id)
 	{
-		$sql = 'SELECT articles.article_id,
-				 UNIX_TIMESTAMP(articles.article_created) AS article_created,
-				 articles.article_request_title,
-				 content_types.content_type_name AS box_name
-				FROM article_writers, articles, content_types
-				WHERE article_writers.article_writer_user_entity_id = ?
-				AND article_writers.article_writer_article_id = articles.article_id
-				AND articles.article_suggestion_accepted = 1
-				AND	content_types.content_type_id = articles.article_content_type_id
-				AND	articles.article_live_content_id IS NULL
-				AND	articles.article_deleted = 0
-				AND	articles.article_pulled = 0
-				ORDER BY content_types.content_type_name ASC, articles.article_created ASC';				
+		$sql = 'SELECT	articles.article_id,
+				UNIX_TIMESTAMP(articles.article_created) AS article_created,
+				articles.article_request_title,
+				content_types.content_type_name AS box_name
+			FROM	article_writers, articles, content_types
+			WHERE	article_writers.article_writer_user_entity_id = ?
+			AND	article_writers.article_writer_article_id = articles.article_id
+			AND	articles.article_suggestion_accepted = 1
+			AND	content_types.content_type_id = articles.article_content_type_id
+			AND	articles.article_live_content_id IS NULL
+			AND	articles.article_deleted = 0
+			AND	articles.article_pulled = 0
+			ORDER BY content_types.content_type_name ASC, 
+				articles.article_created ASC';				
 		$query = $this->db->query($sql,array($user_id));
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -465,6 +467,38 @@ class Requests_Model extends Model
 					);
 				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
 				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	function GetHowdoiWriterRequests($user_id, $type, $status)
+	{
+		$sql = 'SELECT	article_writer_article_id,
+				article_request_title
+			FROM    article_writers
+	 	
+			JOIN    articles
+			ON    article_id = article_writer_article_id
+
+			JOIN    content_types
+			ON    content_type_id = article_content_type_id
+
+			WHERE    article_writer_user_entity_id = ?
+			AND    article_content_type_id = ?
+			AND    article_writer_status = ?
+			AND    article_live_content_id IS NULL
+			AND    article_deleted = 0';
+		$query = $this->db->query($sql,array($user_id, $type, $status));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = array(
+					'id'=>$row->article_writer_article_id,
+					'title'=>$row->article_request_title
+				);
 			}
 		}
 		return $result;
