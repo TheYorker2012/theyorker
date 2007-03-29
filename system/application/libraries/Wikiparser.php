@@ -49,7 +49,7 @@ class Wikiparser {
 		
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
-		$this->image_uri = '/images/prototype/';
+		$this->image_uri = '/images/';
 		$this->image_overrides = array();
 		$this->ignore_images = false;
 		$this->emphasis[1] = '';
@@ -251,18 +251,19 @@ class Wikiparser {
 		}
 		
 		$imagetag = sprintf(
-			'<img src="%s" />',
-			$href
+			'<img src="%s" alt="%s" />',
+			$href,
+			$title
 		);
 		foreach ($options as $k=>$option) {
 			switch($option) {
 				case 'frame':
 					$imagetag = sprintf(
 						'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
-						'%s'.
+						'<img src="%s" />'.
 						'<div>%s</div>'.
 						'</div>',
-						$imagetag,
+						$href,
 						$title
 					);
 					if ($this->in_paragraph) {
