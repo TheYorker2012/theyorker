@@ -89,6 +89,9 @@ input.button {
 
 div.Date {
 	color: #ff6a00;
+}
+
+div#RightColumn div.Date {
 	clear: right;
 }
 
