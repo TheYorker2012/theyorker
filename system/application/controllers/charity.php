@@ -56,11 +56,12 @@ class Charity extends Controller {
 		
 		$this->load->model('news_model','news');
 		$this->load->model('charity_model','charity');
-		$this->pages_model->SetPageCode('charity');
+		$this->pages_model->SetPageCode('charity_pr');
 
 		$data['sections'] = array (
 					'charity'=>$this->charity->GetCharity($charity_id),
-					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE))
+					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE)),
+					'sidebar_links'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_links_title',FALSE),'text'=>$this->pages_model->GetPropertyText('sidebar_links_text',FALSE))
 					);	
 
 		$data['sections']['progress_reports']['totalcount'] = $this->charity->GetCharityProgressReportCount($charity_id);
@@ -79,30 +80,6 @@ class Charity extends Controller {
 		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['charity']['name']));
 		$this->main_frame->SetContentSimple('charity/charitypr.php', $data);
 
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	
-	//for testing
-	function edit()
-	{
-		if (!CheckPermissions('office')) return;
-
-		$this->pages_model->SetPageCode('charity');
-		
-		$data = array(
-			'Description' => '<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!<b>testing blurb</b> and it <i>works!</i> Yay!',
-			'Picture' => 'http://localhost/images/prototype/campaign/field.jpg',
-			'ProgressItems' => array(
-				array('good'=>'y','details'=>'Progress Report 1, Progress Report 1, Progress Report 1, Progress Report 1, Progress Report 1.'),
-				array('good'=>'n','details'=>'Progress Report 2, Progress Report 2, Progress Report 2, Progress Report 2, Progress Report 2.'),
-				array('good'=>'n','details'=>'Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3, Progress Report 3.')
-				)
-		);
-		
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('charity/charityedit', $data);
-		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}

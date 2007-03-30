@@ -1,7 +1,7 @@
 <div id="RightColumn">
-	<h2 class="first">Links</h2>
+	<h2 class="first"><?php echo $sections['sidebar_links']['title']; ?></h2>
 	<div class="Entry">
-		<a href="/charity">Back To Charity</a>
+		<a href="/charity"><?php echo $sections['sidebar_links']['text']; ?></a>
 	</div>
 </div>
 
