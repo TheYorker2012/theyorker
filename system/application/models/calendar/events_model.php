@@ -619,7 +619,7 @@ class Events_model extends Model
 	 * @param $Filter EventOccurrenceFilter Event filter object
 	 *	(A value of FALSE means use a default filter)
 	 */
-	function SetOccurrenceFilter($Filter = FALSE)
+	function SetOccurrenceFilter($Filter = NULL)
 	{
 		$this->mOccurrenceFilter = $Filter;
 	}
@@ -664,7 +664,7 @@ class Events_model extends Model
 		// Event occurrences
 		if ($this->IsEnabled('occurrences-all')) {
 			$filter = $this->mOccurrenceFilter;
-			if (FALSE === $filter) {
+			if (NULL === $filter) {
 				$filter = new EventOccurrenceFilter();
 			}
 			$filter->SetRange($StartTime->Timestamp(),$EndTime->Timestamp());

@@ -97,7 +97,7 @@ abstract class ViewCalendar extends FramesView
 	 * @param $Filter EventOccurrenceFilter Event filter object
 	 *	(A value of FALSE means use a default filter)
 	 */
-	function SetOccurrenceFilter($Filter = FALSE)
+	function SetOccurrenceFilter($Filter = NULL)
 	{
 		$this->mOccurrenceFilter = $Filter;
 	}

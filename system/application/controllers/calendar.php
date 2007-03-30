@@ -1,33 +1,298 @@
 <?php
 
 /**
- * @brief Controller for event manager.
- * @author David Harker (dhh500@york.ac.uk)
+ * @file calendar.php
+ * @brief Calendar controller.
+ */
+
+/// Controller for event manager.
+/**
  * @author James Hogan (jh559@cs.york.ac.uk)
+ * @author David Harker (dhh500@york.ac.uk)
+ *
+ * @version 20/03/2007 James Hogan (jh559)
+ *	- Doxygen tidy up.
  */
 class Calendar extends Controller {
 
-	/**
-	 * @brief Default constructor.
-	 */
+	/// Default constructor.
 	function __construct()
 	{
 		parent::Controller();
 	}
 	
-	/**
-	 * @brief Default function.
-	 */
+	/// Default function.
 	function index()
 	{
-		$this->week();
+		$this->days();
 	}
 	
+	function day()
+	{
+		if (!CheckPermissions('public')) return;
+		$this->_ShowDay();
+		$this->main_frame->Load();
+	}
+	
+	function agenda()
+	{
+		if (!CheckPermissions('public')) return;
+		$this->_ShowAgenda();
+		$this->main_frame->Load();
+	}
+	
+	function days()
+	{
+		if (!CheckPermissions('public')) return;
+		$this->_ShowDays();
+		$this->main_frame->Load();
+	}
+	
+	function weeks()
+	{
+		if (!CheckPermissions('public')) return;
+		$this->_ShowWeeks();
+		$this->main_frame->Load();
+	}
+	
+	/// Load the calendar system libraries.
+	function _LoadCalendarSystem()
+	{
+		// Load libraries
+		$this->load->library('academic_calendar');
+		$this->load->library('calendar_backend');
+		$this->load->library('calendar_frontend');
+	}
+	
+	/// Setup the user's event sources.
 	/**
-	 * @brief Show the calendar between certain dates.
-	 * @param $DateRange string Single date accepted by Date_uri.
+	 * @param $StartTime timestamp Start time of events.
+	 * @param $EndTime   timestamp End time of events.
 	 */
-	function week($DateRange = '')
+	function _SetupSources($StartTime, $EndTime)
+	{
+		// Load calendar source libraries
+		$this->load->library('calendar_source_yorker');
+		
+		// Set up data sources
+		$sources = array();
+		$sources[] = $source_yorker = new CalendarSourceYorker();
+		
+		// Set yorker date range to something relevent
+		$source_yorker->SetRange($StartTime, $EndTime);
+		
+		return $sources;
+	}
+	
+	function _FetchEventsFromSources(&$CalendarData, $Sources)
+	{
+		// Accumulate data from sources in $CalendarData
+		foreach ($Sources as $source) {
+			try {
+				$source->FetchEvents($CalendarData);
+			} catch (Exception $e) {
+				$this->messages->AddMessage('error', 'calendar data source failed: '.$e->getMessage());
+			}
+		}
+	}
+	
+	function _ShowDay()
+	{
+		$this->_LoadCalendarSystem();
+		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$calendar_data = new CalendarData();
+		
+		$this->_FetchEventsFromSources($calendar_data, $sources);
+		
+		// Display data
+		$this->load->library('calendar_view_days');
+		$this->load->library('calendar_view_todo_list');
+		
+		$days = new CalendarViewDays();
+		$days->SetCalendarData($calendar_data);
+		$todo = new CalendarViewTodoList();
+		$todo->SetCalendarData($calendar_data);
+		
+		$view_mode_data = array(
+			'DateDescription' => 'Today probably!',
+			'DaysView'        => &$days,
+			'TodoView'        => &$todo,
+		);
+		$view_mode = new FramesFrame('calendar/day', $view_mode_data);
+		
+		$data = array(
+			'Filters'	=> $this->_GetFilters(),
+			'ViewMode'	=> $view_mode,
+		);
+		
+		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		
+		$this->_SetupTabs('day');
+	}
+	
+	function _ShowAgenda()
+	{
+		$this->_LoadCalendarSystem();
+		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$calendar_data = new CalendarData();
+		
+		$this->_FetchEventsFromSources($calendar_data, $sources);
+		
+		// Display data
+		$this->load->library('calendar_view_agenda');
+		
+		$agenda = new CalendarViewAgenda();
+		$agenda->SetCalendarData($calendar_data);
+		
+		$data = array(
+			'Filters'	=> $this->_GetFilters(),
+			'ViewMode'	=> $agenda,
+		);
+		
+		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		
+		$this->_SetupTabs('agenda');
+	}
+	
+	function _ShowDays()
+	{
+		$this->_LoadCalendarSystem();
+		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$calendar_data = new CalendarData();
+		
+		$this->_FetchEventsFromSources($calendar_data, $sources);
+		
+		// Display data
+		$this->load->library('calendar_view_days');
+		
+		$days = new CalendarViewDays();
+		$days->SetCalendarData($calendar_data);
+		
+		$data = array(
+			'Filters'	=> $this->_GetFilters(),
+			'ViewMode'	=> $days,
+		);
+		
+		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		
+		$this->_SetupTabs('days');
+	}
+	
+	function _ShowWeeks()
+	{
+		$this->_LoadCalendarSystem();
+		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$calendar_data = new CalendarData();
+		
+		$this->_FetchEventsFromSources($calendar_data, $sources);
+		
+		// Display data
+		$this->load->library('calendar_view_weeks');
+		
+		$weeks = new CalendarViewWeeks();
+		$weeks->SetCalendarData($calendar_data);
+		
+		$data = array(
+			'Filters'	=> $this->_GetFilters(),
+			'ViewMode'	=> $weeks,
+		);
+		
+		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		
+		$this->_SetupTabs('weeks');
+	}
+	
+	/// Get the filters.
+	/**
+	 */
+	protected function _GetFilters()
+	{
+		return array(
+			'id' => array(
+				'name'			=> 'social',
+				'field'			=> 'category',
+				'value'			=> 'social',
+				'selected'		=> TRUE,
+				'description'	=> 'Social',
+				'display'		=> 'block',
+				'colour'		=> 'FFFF00',
+			),
+			'academic' => array(
+				'name'			=> 'academic',
+				'field'			=> 'category',
+				'value'			=> 'academic',
+				'selected'		=> TRUE,
+				'description'	=> 'Academic',
+				'display'		=> 'block',
+				'colour'		=> '00FF00',
+			),
+			'meeting' => array(
+				'name'			=> 'meeting',
+				'field'			=> 'category',
+				'value'			=> 'meeting',
+				'selected'		=> TRUE,
+				'description'	=> 'Meetings',
+				'display'		=> 'block',
+				'colour'		=> 'FF0000',
+			),
+			
+			'rsvp' => array(
+				'name'			=> 'rsvp',
+				'field'			=> 'visibility',
+				'value'			=> 'rsvp',
+				'selected'		=> TRUE,
+				'description'	=> 'Only those to which I\'ve RSVPd',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
+			),
+			'visible' => array(
+				'name'			=> 'visible',
+				'field'			=> 'visibility',
+				'value'			=> 'visible',
+				'selected'		=> TRUE,
+				'description'	=> 'Include those which I\'ve hidden',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_visible_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.gif',
+			),
+			'hidden' => array(
+				'name'			=> 'hidden',
+				'field'			=> 'visibility',
+				'value'			=> 'hidden',
+				'selected'		=> FALSE,
+				'description'	=> 'Include those which I\'ve hidden',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
+			),
+		);
+	}
+	
+	/// Set up the tabs on the main_frame.
+	/**
+	 * @param $SelectedPage string Selected Page.
+	 * @pre CheckPermissions must have already been called.
+	 */
+	protected function _SetupTabs($SelectedPage)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('day', 'Today',
+				site_url('calendar/day'));
+		$navbar->AddItem('days', 'Week',
+				site_url('calendar/days'));
+		$navbar->AddItem('weeks', 'Term',
+				site_url('calendar/weeks'));
+		$navbar->AddItem('agenda', 'Agenda',
+				site_url('calendar/agenda'));
+		$this->main_frame->SetPage($SelectedPage);
+	}
+	
+	
+	
+	
+	
+	function oldweek($DateRange = '')
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -101,8 +366,8 @@ class Calendar extends Controller {
 			);
 	}
 	
+	/// Show the calendar between certain Academic_times.
 	/**
-	 * @brief Show the calendar between certain Academic_times.
 	 * @param $StartTime Academic_time Start date.
 	 * @param $Days integer Number of days to display.
 	 * @param $UriBase string The base of the uri on which to build links,
@@ -136,72 +401,6 @@ EXTRAHEAD;
 		
 		// Load the public frame view
 		$this->main_frame->Load();
-	}
-	
-	/**
-	 * @brief Save any change made at UI to DB and report success or failure
-	 */
-	function ajaxCalUpdate () {
-		// the 0-6 (mon-sun) day code
-		$day = $this->uri->segment(3);
-
-		// this is the value that should be passed with each event to allow
-		// it to be uniquely identified back at your end here.
-		$refid = $this->uri->segment(4);
-
-		
-		// The operation that is being carried out
-		// Will be HIDE or SHOW at the moment
-		// "Phase 2" might see this include operations like SUBSCRIBE etc.
-		// however response will be XML, and this doesn't need doing in that
-		// way for basic functioning.
-		$op = $this->uri->segment(5);
-		
-		/*
-		Code to save the data from the script based on the above to variables
-		and echo $refid|OK|message or $refid|FAIL|message depending on the outcome
-		examples:
-			75|OK|Event <b>$title</b> has been hidden from your calendar
-			75|FAIL|You are not logged in
-		*/
-		$success = FALSE;
-		$message = '';
-		
-		// Load the model
-		$this->load->model('calendar/events_model');
-		
-		// Perform the operation putting status in $success and filling $message
-		if ($op === 'HIDE') {
-			$success = $this->events_model->OccurrenceHide();
-			if ($success) {
-				$message = 'Event hidden from your calendar';
-			} else {
-				$message = 'Could not hide event from your calendar';
-			}
-			
-		} elseif ($op === 'SHOW') {
-			$success = $this->events_model->OccurrenceShow();
-			if ($success) {
-				$message = 'Event shown in your calendar';
-			} else {
-				$message = 'Could not show event in your calendar';
-			}
-			
-		} elseif ($op === 'RSVP') {
-			$success = $this->events_model->OccurrenceRsvp();
-			if ($success) {
-				$message = 'RSVP\'d event';
-			} else {
-				$message = 'Could not RSVP event';
-			}
-		}
-		
-		$status = ($success?'OK':'FAIL');
-		// Send the data back to the js
-		$this->load->view('calendar_blank',
-				array ('replyString' => $day.'|'.$refid.'|'.$status.'|'.$message)
-			);
-		
 	}
 	
 }

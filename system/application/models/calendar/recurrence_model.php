@@ -75,6 +75,7 @@ class RecurrenceRule
 	 *	- 0 (DayMonth: Use a set of months and a 'day of month' number for the base).
 	 *	- 1 (Academic: Use a term number and a set of weeks in that term that are used as bases).
 	 *	- 2 (Easter: Use easter sunday as the base each year).
+	 *	- 3 (Weekly: Use easter sunday as the base each year).
 	 *
 	 * @note Default value is 0 (DayMonth).
 	 */
@@ -194,10 +195,10 @@ class RecurrenceRule
 			
 			$this->mMinDate	= (NULL === $ArrayData['recurrence_rule_min_date'])
 							? FALSE
-							: (int)$$ArrayData['recurrence_rule_min_date'];
+							: (int)$ArrayData['recurrence_rule_min_date'];
 			$this->mMaxDate	= (NULL === $ArrayData['recurrence_rule_max_date'])
 							? FALSE
-							: (int)$$ArrayData['recurrence_rule_max_date'];
+							: (int)$ArrayData['recurrence_rule_max_date'];
 			$this->mYearInterval	= (int)$ArrayData['recurrence_rule_year_interval'];
 			$this->mYearOffset		= (int)$ArrayData['recurrence_rule_year_offset'];
 			$this->mDateMethod		= $translation[$ArrayData['recurrence_rule_date_method']];
