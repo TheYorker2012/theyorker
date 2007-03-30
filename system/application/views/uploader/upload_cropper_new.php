@@ -98,10 +98,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	);
 	
 </script>
-<p>Photo: -</p>
-<div id="uploadedWrap">
-	<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
-</div>
+
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>
 		<label for="imageChoice">Thumbnail: -</label>
@@ -117,6 +114,10 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
+	<p>Photo: -</p>
+	<div id="uploadedWrap">
+		<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+	</div>
 		<input type="hidden" name="x1" id="x1" />
 		<input type="hidden" name="y1" id="y1" />
 		<input type="hidden" name="x2" id="x2" />
