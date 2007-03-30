@@ -189,7 +189,7 @@ class Image_upload {
 				$this->ci->db->insert('images', $row_values);
 				$id = $this->ci->db->insert_id();
 				$_SESSION['img']['list'][] = $id;
-				$_SESSION['img']['type'][] = $Thumb->image_type_codename;
+				$_SESSION['img']['type'][] = $Thumb->image_type_id;
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 			}
