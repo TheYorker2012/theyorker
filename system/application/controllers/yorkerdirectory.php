@@ -40,14 +40,14 @@ class Yorkerdirectory extends Controller
 		$this->load->library('frame_directory');
 		$data = $this->organisations->_GetOrgData($DirectoryEntry);
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('members', 'Members',
-				'/directory/'.$DirectoryEntry.'/members');
-		$navbar->AddItem('events', 'Events',
-				'/directory/'.$DirectoryEntry.'/events');
-		$navbar->AddItem('notices', 'Notices',
-				'/directory/'.$DirectoryEntry.'/notices');
 		$navbar->AddItem('about', 'About',
 				'/directory/'.$DirectoryEntry);
+		$navbar->AddItem('notices', 'Notices',
+				'/directory/'.$DirectoryEntry.'/notices');
+		$navbar->AddItem('events', 'Events',
+				'/directory/'.$DirectoryEntry.'/events');
+		$navbar->AddItem('members', 'Members',
+				'/directory/'.$DirectoryEntry.'/members');
 		if($data['organisation']['type'] == 'Societies')
 		{
 			$navbar->AddItem('reviews', 'Reviews',
