@@ -14,7 +14,6 @@ class Home_Model extends Model {
 	 */
 	function Home_Model() {
 		parent::Model();
-		$this->load->helper('images_helper');
 	}
 	/*
 	 * Function to obtain weather forecast from Yahoo RSS feed.
@@ -62,14 +61,26 @@ class Home_Model extends Model {
 	 * Returns the image location.
 	 */
 	function GetBannerImage() {
-		$sql = 'SELECT `image_id`
-			FROM images 
-			WHERE image_image_type_id = 9
-			ORDER BY `image_last_displayed_timestamp`
-			LIMIT 0,1';
+		$this->load->helper('images');
+		$sql = 'SELECT 	image_id
+			FROM	images
+			WHERE	image_image_type_id = 9
+			AND	DATE(image_last_displayed_timestamp) = CURRENT_DATE()';
 		$query = $this->db->query($sql);
+		if($query->num_rows() == 0){
+			$sql = 'SELECT image_id
+				FROM images 
+				WHERE image_image_type_id = 9
+				ORDER BY image_last_displayed_timestamp
+				LIMIT 0,1';
+			$query = $this->db->query($sql);
+			$sql = 'UPDATE images
+				SET image_last_displayed_timestamp = CURRENT_TIMESTAMP()
+				WHERE image_id = ?';
+			$update = $this->db->query($sql,array($query->row()->image_id));
+		} 
 		$id = $query->row()->image_id;
-		return $this->images_helper->photoLocTag($id);
+		return imageLocTag($id,'banner');
 	}
 }
 ?>

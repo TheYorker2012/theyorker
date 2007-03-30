@@ -67,7 +67,7 @@ $route['yorkerdirectory/(.+)'] = 'not_yorkerdirectory';
 
 //The contact us page is now the members entry for the yorker in the directory
 //This is to route /contact to that. oj502
-$route['contact'] = 'yorkerdirectory/members/theyorker';
+//$route['contact'] = 'yorkerdirectory/members/theyorker';
 
 // /howdoi/category => /howdoi/viewcategory/category (-1 meaning all)
 // /howdoi/category/12 => /howdoi/viewcategory/12

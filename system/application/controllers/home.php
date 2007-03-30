@@ -58,6 +58,9 @@ class Home extends Controller {
 
 		//Obtain weather
 		$data['weather_forecast'] = $this->Home_Model->GetWeather();
+		
+		//Obtain banner
+		$data['banner'] = $this->Home_Model->GetBannerImage();
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
