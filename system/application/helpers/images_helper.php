@@ -171,10 +171,12 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 		}
 		$query->free_result();
 		if ($fetched_type) {
-			$query = $CI->db->select('image_type_codename')->getwhere('image_types', array('image_type_id' => $fetched_type));
+			$query = $CI->db->select('image_type_codename, image_type_width, image_type_height')->getwhere('image_types', array('image_type_id' => $fetched_type), 1);
 			$fetched_type = false;
 			foreach ($query->result() as $onerow) {
 				$fetched_type = $onerow->image_type_codename;
+				$height = $onerow->image_type_height;
+				$width = $onerow->image_type_width;
 			}
 			if (!$fetched_type) {
 				return '<img src="/images/images/null.png" />';
@@ -182,12 +184,12 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
 				if (is_string($alt)) {
-					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
 				} else{
 					$CI =& get_instance();
 					$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 					$query = $query->result();
-					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
 				}
 			} else {
 				return '<img src="/images/images/'.$fetched_type.'/null.png" />';

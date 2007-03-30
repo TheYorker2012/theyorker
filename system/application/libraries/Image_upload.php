@@ -11,6 +11,27 @@ class Image_upload {
 		$this->ci = &get_instance();
 	}
 	
+	public function uploadForm($multiple = false, $photos = false) {
+		if ($this->ci->input->post('destination')) return true;
+		if ($multiple && $photos) {
+			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_photos');
+		} elseif ($multiple) {
+			$this->ci->main_frame->SetTitle('Multiple Image Uploader');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images');
+		} elseif ($photos) {
+			$this->ci->main_frame->SetTitle('Photo Uploader');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo');
+		} else {
+			$this->ci->main_frame->SetTitle('Image Uploader');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
+		}
+		$this->main_frame->Load();
+	}
+	
+	//types is an array
 	public function recieveUpload($returnPath, $types = false) {
 		$this->ci->load->library(array('image_lib', 'upload', 'xajax'));
 		$this->ci->load->helper('images');
@@ -50,7 +71,7 @@ class Image_upload {
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
 		$this->ci->main_frame->SetExtraHead($head);
-		$this->ci->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
+		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnpath' => $returnpath, 'data' => $data, 'ThumbDetails' => &$query));
 		return $this->ci->main_frame->Load();
 	}
 	
