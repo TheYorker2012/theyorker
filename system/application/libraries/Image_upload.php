@@ -81,8 +81,15 @@ class Image_upload {
 		$this->ci->load->library('image_lib');
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
+		// 0 location
+		// 1 original width(?)
+		// 2 original height(?)
+		// 3 type id
+		// 4 image id
+		// 5 image type width
+		// 6 image type height
 		
-		if (array_search($selectedThumb[4], $_SESSION['img_list']) === false) {
+		if (array_search($selectedThumb[4], $_SESSION['img']['list']) === false) {
 			$this->ci->user_auth->logout();
 			$this->ci->url->redirect('/', 'location');
 			exit;
@@ -166,7 +173,7 @@ class Image_upload {
 			createImageLocation($oneRow->photo_id);
 			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
-			$_SESSION['img_list'][] = $oneRow->photo_id;
+			$_SESSION['img']['list'][] = $oneRow->photo_id;
 			$loop = 0; // drop this loop by using $output[] = array()
 			foreach ($ThumbDetails->result() as $Thumb) {
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
@@ -181,7 +188,7 @@ class Image_upload {
 				                    'image_file_extension' => $data['file_ext']);
 				$this->ci->db->insert('images', $row_values);
 				$id = $this->ci->db->insert_id();
-				$_SESSION['img_list'][] = $id;
+				$_SESSION['img']['list'][] = $id;
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 			}
