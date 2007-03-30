@@ -121,6 +121,10 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	}
 }
 
+function is_photo($id, $extension = '.jpg') {
+	return is_file('images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension);
+}
+
 // ------------------------------------------------------------------------
 
 /**
@@ -148,8 +152,12 @@ function imageLocTag($id, $type = false, $extension = '.jpg', $alt = null, $forc
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($force or is_file($location)) {
 			if (is_string($alt)) {
-				return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
-			} else{
+				if (is_photo($id)) {
+					return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" /></a>';
+				} else {
+					return '<img src="/'.$location.'" alt="'.$alt.'" /></a>';
+				}
+			} else {
 				$CI =& get_instance();
 				$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 				if ($query->num_rows() > 0) {
