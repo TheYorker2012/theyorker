@@ -19,7 +19,7 @@ class Uploadtest extends Controller {
 	
 	function done() {
 		if (!CheckPermissions('office')) return;
-		echo "done"
+		echo "done";
 	}
 	
 }
