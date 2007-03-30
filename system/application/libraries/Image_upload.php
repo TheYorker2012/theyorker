@@ -37,47 +37,6 @@ class Image_upload {
 	
 	//types is an array
 	public function recieveUpload($returnPath, $types = false, $photo = true) {
-		$this->ci->load->library(array('image_lib', 'upload'));
-		
-		//get data about thumbnails
-		
-		$config['upload_path'] = './tmp/uploads/';
-		$config['allowed_types'] = 'jpg';
-		$config['max_size'] = '2048';
-		
-		if (is_array($types)) {
-			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
-			$query = $query->where('image_type_photo_thumbnail', $photo);
-			$type = array_pop($types);
-			$query = $query->where('image_type_codename', $type);
-			foreach ($types as $type) {
-				$query = $query-orwhere('image_type_codename', $type);
-			}
-			$query = $query->get('image_types');
-		} else {
-			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
-		}
-		
-		$data = array();
-		$this->ci->upload->initialize($config);
-		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
-			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-				$data[] = $this->ci->upload->display_errors();
-			} else {
-				$data[] = $this->ci->upload->data();
-				$data[$x - 1] = processImage($data[$x - 1], $x, $query);
-			}
-		}
-		$this->ci->main_frame->SetTitle('Photo Uploader');
-		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
-		$this->ci->main_frame->SetExtraHead($head);
-		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query));
-		return $this->ci->main_frame->Load();
-	}
-	
-	public function process_form_data($formData) {
-		if (!CheckPermissions('office')) return; //keep this for now...
 		
 		function processImage($data, $form_value, &$ThumbDetails) {
 			$config['image_library'] = 'gd2';
@@ -133,6 +92,50 @@ class Image_upload {
 
 			return $output;
 		}
+		
+		$this->ci->load->library(array('image_lib', 'upload'));
+		
+		//get data about thumbnails
+		
+		$config['upload_path'] = './tmp/uploads/';
+		$config['allowed_types'] = 'jpg';
+		$config['max_size'] = '2048';
+		
+		if (is_array($types)) {
+			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
+			$query = $query->where('image_type_photo_thumbnail', $photo);
+			$type = array_pop($types);
+			$query = $query->where('image_type_codename', $type);
+			foreach ($types as $type) {
+				$query = $query-orwhere('image_type_codename', $type);
+			}
+			$query = $query->get('image_types');
+		} else {
+			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
+		}
+		
+		$data = array();
+		$this->ci->upload->initialize($config);
+		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
+			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
+				$data[] = $this->ci->upload->display_errors();
+			} else {
+				$data[] = $this->ci->upload->data();
+				$data[$x - 1] = processImage($data[$x - 1], $x, $query);
+			}
+		}
+		$this->ci->main_frame->SetTitle('Photo Uploader');
+		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
+		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$this->ci->main_frame->SetExtraHead($head);
+		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query));
+		return $this->ci->main_frame->Load();
+	}
+	
+	public function process_form_data($formData) {
+		if (!CheckPermissions('office')) return; //keep this for now...
+		
+		
 
 		$objResponse = new xajaxResponse();
 		$this->ci->load->library('image_lib');
