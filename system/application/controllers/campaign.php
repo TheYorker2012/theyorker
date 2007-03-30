@@ -94,8 +94,8 @@ class Campaign extends Controller {
 				'title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE));
 			$data['sidebar_external'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE));
-			$data['sidebar_comments'] = array(
-				'title'=>$this->pages_model->GetPropertyText('sidebar_comments_title',TRUE));
+			$data['comments'] = array(
+				'title'=>$this->pages_model->GetPropertyText('section_comments_title',TRUE));
 			if ($this->user_auth->isLoggedIn == TRUE)
 			{
 				$data['user']['id'] = $this->user_auth->entityId;
@@ -161,8 +161,8 @@ class Campaign extends Controller {
 					'title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE));
 				$data['sidebar_external'] = array(
 					'title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE));
-				$data['sidebar_comments'] = array(
-					'title'=>$this->pages_model->GetPropertyText('sidebar_comments_title',TRUE));
+				$data['comments'] = array(
+					'title'=>$this->pages_model->GetPropertyText('section_comments_title',TRUE));
 				if ($this->user_auth->isLoggedIn == TRUE)
 				{
 					$data['user']['id'] = $this->user_auth->entityId;

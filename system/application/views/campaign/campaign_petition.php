@@ -77,11 +77,6 @@ if(count($article['links']) > 0) {
 	echo('	</div>'."\n");
 }
 ?>
-
-    	<h2><?php echo($sidebar_comments['title']); ?></h2>
-	<div class="Entry">
-		#TODO
-	</div>
 </div>
 
 <div id="MainColumn">
@@ -109,6 +104,10 @@ if (isset($sections['progress_reports']['entries'])) {
 	}
 	if ($sections['progress_reports']['totalcount'] > 3)
 		echo('<p><a href="/campaign/preports/">There are older reports click here to view all progress reports.</a></p>'."\n");
+	echo('	</div>'."\n");
+
+	echo('	<div class="BlueBox">'."\n");
+	echo('		<h2>'.$comments['title'].'</h2>');
 	echo('	</div>'."\n");
 }
 ?>

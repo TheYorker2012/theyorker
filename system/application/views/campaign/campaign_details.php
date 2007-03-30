@@ -86,11 +86,6 @@ else
 ?>
 		</ul>
 	</div>
-	
-    	<h2><?php echo($sidebar_comments['title']); ?></h2>
-	<div class="Entry">
-		#TODO#
-	</div>
 </div>
 
 <div id="MainColumn">
@@ -106,6 +101,10 @@ foreach ($article['fact_boxes'] as $fact_box) {
 	echo('		<h2>'.$fact_box['title'].'</h2>');
 	echo('		'.$fact_box['wikitext']);
 	echo('	</div>');
+
+	echo('	<div class="BlueBox">'."\n");
+	echo('		<h2>'.$comments['title'].'</h2>');
+	echo('	</div>'."\n");
 }
 ?>
 
