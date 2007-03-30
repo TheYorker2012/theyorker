@@ -36,7 +36,7 @@ class Image_upload {
 	}
 	
 	//types is an array
-	public function recieveUpload($returnPath, $types = false) {
+	public function recieveUpload($returnPath, $types = false, $photo = true) {
 		$this->ci->load->library(array('image_lib', 'upload'));
 		
 		//get data about thumbnails
@@ -47,7 +47,7 @@ class Image_upload {
 		
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
-			$query = $query->where('image_type_photo_thumbnail', '1');
+			$query = $query->where('image_type_photo_thumbnail', $photo);
 			$type = array_pop($types);
 			$query = $query->where('image_type_codename', $type);
 			foreach ($types as $type) {
@@ -150,18 +150,22 @@ class Image_upload {
 		}
 		$newDetails = getimagesize($data['full_path']);
 
-		$row_values = array ('photo_author_user_entity_id' => $this->ci->user_auth->entityId,
-		                     'photo_title' => $this->ci->input->post('title'.$form_value),
-		                     'photo_width' => $newDetails[0],
-		                     'photo_height' => $newDetails[1]);
-		$this->ci->db->insert('photos', $row_values);
-		$query = $this->ci->db->select('photo_id')->getwhere('photos', $row_values, 1);
+		if ($photo) {
+			$row_values = array ('photo_author_user_entity_id' => $this->ci->user_auth->entityId,
+			                     'photo_title' => $this->ci->input->post('title'.$form_value),
+			                     'photo_width' => $newDetails[0],
+			                     'photo_height' => $newDetails[1]);
+			$this->ci->db->insert('photos', $row_values);
+			$query = $this->ci->db->select('photo_id')->getwhere('photos', $row_values, 1);
 		
-		$oneRow = $query->row();
-		createImageLocation($oneRow->photo_id);
-		rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
+			$oneRow = $query->row();
+			createImageLocation($oneRow->photo_id);
+			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
-		$_SESSION['img_list'][] = $oneRow->photo_id;
+			$_SESSION['img_list'][] = $oneRow->photo_id;
+		} else {
+			
+		}
 		
 		$loop = 0;
 		foreach ($ThumbDetails->result() as $Thumb) {
