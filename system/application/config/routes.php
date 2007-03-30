@@ -55,6 +55,7 @@ $org_name_regex = '[a-z_\-\d]+';
 // If 3 segments, seg2 ($1) should get set to the function with name seg3 ($2)
 // If >3 segments, same as for 3 and any extra segments ($3) appended.
 $route['directory'] = 'yorkerdirectory';
+$route['directory/map'] = 'yorkerdirectory/map';
 $route['directory/('.$org_name_regex.')'] = 'yorkerdirectory/view/$1';
 $route['directory/('.$org_name_regex.')/([a-z]+)'] = 'yorkerdirectory/$2/$1';
 $route['directory/('.$org_name_regex.')/([a-z]+)/(.+)'] = 'yorkerdirectory/$2/$1/$3';

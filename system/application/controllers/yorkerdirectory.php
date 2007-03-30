@@ -65,6 +65,11 @@ class Yorkerdirectory extends Controller
 		if (!CheckPermissions('public')) return;
 		
 		$this->pages_model->SetPageCode('directory_index');
+
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('list', 'List', '/directory');
+		$navbar->AddItem('map', 'Map', '/directory/map');
+		$this->main_frame->SetPage('list');
 		
 		$data = array();
 		
@@ -95,6 +100,24 @@ class Yorkerdirectory extends Controller
 		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
 
 		// Load the public frame view
+		$this->main_frame->Load();
+	}
+
+	function map() {
+		if (!CheckPermissions('public')) return;
+
+		$this->pages_model->SetPageCode('directory_map');
+
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('list', 'List', '/directory');
+		$navbar->AddItem('map', 'Map', '/directory/map');
+		$this->main_frame->SetPage('map');
+
+		$data = array();
+		$data['organisation_types'] = $this->organisations->_GetOrganisationTypes($data['organisations'], TRUE);
+
+		$this->main_frame->SetContentSimple('directory/directory_map', $data);
+
 		$this->main_frame->Load();
 	}
 

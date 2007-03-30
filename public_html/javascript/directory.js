@@ -62,23 +62,20 @@ function initDirectory() {
 		entname = element.firstChild;
 		while(entname.nodeType != 1)
 			entname = entname.nextSibling;
-		entdesc = entname.nextSibling;
+		enttype = entname.nextSibling;
 
 		/* entname = the a tag in the h4 tag */
 		entname = entname.firstChild;
 		while(entname.nodeType != 1)
 			entname = entname.nextSibling;
-
-		enttype = entname.nextSibling;
 		entname = entname.firstChild.data;
 
-		/* enttype = the span tag in the h4 tag */
+		/* enttype = the div after the h4 tag */
 		while(enttype.nodeType != 1)
 			enttype = enttype.nextSibling;
-
 		enttype = enttype.firstChild.data;
-		enttype = enttype.substr(1, enttype.length - 2);
 
+		entdesc = enttype
 		while(entdesc != null && entdesc.nodeType != 1)
 			entdesc = entdesc.nextSibling;
 		if (entdesc != null) {
@@ -99,6 +96,7 @@ function searchDirectory() {
 	var categories = new Array();
 	var freetext = '';
 	var element;
+	var hasResults = false;
 
 	var i = 0;
 	var j;
@@ -145,11 +143,15 @@ function searchDirectory() {
 			valid = false;
 
 		curLetterValid = curLetterValid | valid;
+		hasResults = hasResults | valid;
 		entry.div.style.display = valid ? 'block' : 'none';
 	}
 
 	element = document.getElementById('DirectoryList' + curLetter);
 	element.style.display = curLetterValid ? 'block' : 'none';
+
+	element = document.getElementById('NotFound');
+	element.style.display = hasResults ? 'none' : 'block';
 }
 
 onLoadFunctions.push(initDirectory);
