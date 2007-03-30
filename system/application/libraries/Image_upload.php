@@ -65,7 +65,7 @@ class Image_upload {
 				$data[] = $this->ci->upload->display_errors();
 			} else {
 				$data[] = $this->ci->upload->data();
-				$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query);
+				$data[$x - 1] = processImage($data[$x - 1], $x, $query);
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
