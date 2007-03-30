@@ -121,6 +121,20 @@ function imageLocation($id, $type = false, $extension = '.jpg', $force = FALSE) 
 	}
 }
 
+// ------------------------------------------------------------------------
+
+/**
+ * Is photo check
+ *
+ * When Given an ID, this will return if an id is for a photo or not
+ *
+ *
+ * @access	public
+ * @param	integer
+ * @param	string
+ * @return	boolean
+ */
+
 function is_photo($id, $extension = '.jpg') {
 	return is_file('images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension);
 }
