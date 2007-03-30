@@ -13,8 +13,15 @@
 		<p><a href="#">[edit]</a> <a href="#">[expire]</a> <a href="#">[delete]</a></p>
 		<h3>Half Price Hay</h3>
 		<div class="Date">23th March 2007 - 30th March 2007</div>
-		<p>Big bags of hay half price <strike>&pound;2.00</strike> now &pound;1.00</p>
+		<p>Big bags of hay half price <strike>&pound;2.00</strike> now &pound;1.00.</p>
 		<p><a href="#">[edit]</a> <a href="#">[expire]</a> <a href="#">[delete]</a></p>
+	</div>
+	<div class="BlueBox">
+		<h2>future deals</h2>
+		<h3>Half Price Guinea Pig Food</h3>
+		<div class="Date">5th April 2007 - 15th April 2007</div>
+		<p>Big bags of fooood half price <strike>&pound;2.00</strike> now &pound;1.00.</p>
+		<p><a href="#">[edit]</a> <a href="#">[make current]</a> <a href="#">[delete]</a></p>
 	</div>
 	
 	<div class="BlueBox">
