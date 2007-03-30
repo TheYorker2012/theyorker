@@ -107,23 +107,9 @@ if (isset($sections['progress_reports']['entries'])) {
 		echo('			');
 		echo($pr_entry['text']);
 	}
+	if ($sections['progress_reports']['totalcount'] > 3)
+		echo('<p><a href="/campaign/preports/">There are older reports click here to view all progress reports.</a></p>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
 </div>
-
-
-<?php /*
-	if (isset($progress_reports['entries']))
-	{
-		echo '<div class="grey_box">';
-		echo '<span style="font-size: x-large;  color: #BBBBBB; ">'.$progress_reports['title'].'</span><br />';
-		foreach ($progress_reports['entries'] as $pr_entry)
-		{
-			echo '<br>';
-			echo '<span style="font-size: large;  color: #BBBBBB; ">'.$pr_entry['date'].'</span><br />';
-			echo $pr_entry['text'].'<br />';
-		}
-		echo '</div>';
-} */
-?>

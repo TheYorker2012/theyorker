@@ -74,6 +74,8 @@ $route['howdoi/ask'] = 'howdoi/makesuggestion';
 $route['howdoi/([a-z]+)'] = 'howdoi/viewcategory/$1/-1';
 $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 
+$route['campaign/preports'] = 'campaign/preports';
+
 
 //****************************************************************************//
 // Routing to subdirectory index pages                                        //

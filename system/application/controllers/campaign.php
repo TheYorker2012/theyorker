@@ -191,6 +191,43 @@ class Campaign extends Controller {
 		else
 			redirect('/campaign');
 	}
+	
+	function preports($charity_id = 1)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$this->load->model('news_model','news');
+		$this->load->model('charity_model','charity');
+		$this->load->model('campaign_model','campaign');
+		$this->pages_model->SetPageCode('campaign_pr');
+		
+		$campaign_id = $this->campaign->GetPetitionStatus();
+
+		$data['sections'] = array (
+					'campaign'=>$this->campaign->GetPetitionCampaign($campaign_id),
+					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE)),
+					'sidebar_links'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_links_title',FALSE),'text'=>$this->pages_model->GetPropertyText('sidebar_links_text',FALSE))
+					);	
+
+		$data['sections']['progress_reports']['totalcount'] = $this->charity->GetCharityCampaignProgressReportCount($charity_id, true);
+
+		//needs a general model as progress reports can be for campaigns and for charities
+		$pr_temp = $this->charity->GetCharityCampaignProgressReports($charity_id, false, true);
+		if (count($pr_temp) > 0)
+		{
+			foreach ($pr_temp as $row)
+			{
+				$data['sections']['progress_reports']['entries'][$row] = $this->news->GetFullArticle($row);
+			}
+		}
+
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['campaign']['name']));
+		$this->main_frame->SetContentSimple('campaign/campaign_pr.php', $data);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
 
 	function castvote()
 	{
