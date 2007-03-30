@@ -28,17 +28,34 @@
 		<p>Big bags of hay half price <strike>&pound;2.00</strike> now &pound;1.00</p>
 		<p><a href="#">[edit]</a> <a href="#">[delete]</a></p>
 	</div>
+	
+	<div class="BlueBox">
+		<h2>edit</h2>
+		<form id="dealupdate" action="#" method="post" class="form">
+			<fieldset>
+				<label for="a_title">Title: </label>
+				<input type="text" name="a_title" id="a_title" style="width: 220px;" value="Triples for Singles" />
+				<label for="a_date_start">Date - Start: </label>
+				<input type="text" name="a_date_start" id="a_date_start" style="width: 220px;" value="12/03/2007" />
+				<label for="a_date_end">Date - End: </label>
+				<input type="text" name="a_date_end" id="a_date_end" style="width: 220px;" value="20/03/2007" />
+				<label for="a_description">Description: </label>
+				<textarea name="a_description" id="a_description" cols="25" rows="5">An amazing offer on ginuea pigs, 3 for 1!!!</textarea>
+			</fieldset>
+			<fieldset>
+				<input type="submit" name="r_submit_save" value="Save" class="button" />
+			</fieldset>
+		</form>
+	</div>
 </div>
 
-<pre>
 <?php
 
 /*
-echo '<br />';
+echo '<div class="BlueBox"><pre>';
 echo print_r($content_types);
-echo '<br />';
+echo '</pre></div>';
 */
 
 
 ?>
-</pre>
