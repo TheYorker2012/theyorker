@@ -36,8 +36,7 @@ class Image_upload {
 	
 	//types is an array
 	public function recieveUpload($returnPath, $types = false) {
-		$this->ci->load->library(array('image_lib', 'upload', 'xajax'));
-		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		$this->ci->load->library(array('image_lib', 'upload'));
 		$this->ci->load->helper('images');
 		
 		//get data about thumbnails
