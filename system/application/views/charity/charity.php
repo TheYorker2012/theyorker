@@ -16,7 +16,7 @@
 		{
 		        foreach ($sections['article']['related_articles'] as $related_articles)
 			{
-				echo '<b><a href="http://www.google.com/">'.$related_articles['heading'].'</a></b><br />';
+				echo '<b><a href="/news/uninews/'.$related_articles['id'].'">'.$related_articles['heading'].'</a></b><br />';
 			}
 		}
 		?>
@@ -63,7 +63,7 @@
 			echo $pr_entry['text'].'<br /><br />';
 		}
 		if ($sections['progress_reports']['totalcount'] > 3)
-			echo '<a href="/charity/preports/">There are older reports click here to view all progress reports.</a>';
+			echo '<a href="/charity/preports/">'.$sections['progress_reports']['showmore'].'</a>';
 		echo '</div>';
 	}
 	?>

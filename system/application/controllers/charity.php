@@ -18,7 +18,7 @@ class Charity extends Controller {
 
 		$data['sections'] = array (
 					'charity'=>$this->charity->GetCharity($charity_id),
-					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE)),
+					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE),'showmore'=>$this->pages_model->GetPropertyWikitext('section_preports_showmore',FALSE)),
 					'funding'=>array('title'=>$this->pages_model->GetPropertyText('section_funding_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('section_funding_text',FALSE)),
 					'sidebar_about'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_about_title',FALSE),'subtitle'=>$this->pages_model->GetPropertyText('sidebar_about_subtitle',FALSE)),
 					'sidebar_help'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_help_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_help_text',FALSE)),
