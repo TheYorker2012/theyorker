@@ -115,22 +115,30 @@ class Charity_model extends Model
 	*****************************************************/
 	
 	/**
-	 * Returns an array of the last $count progress report items for the given campaign id.
+	 * Returns an array of the last 3 progress report items if limit is true otherwise return all for the given campaign/charity id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetCharityProgressReports($charity_id, $limit)
+	function GetCharityCampaignProgressReports($id, $limit, $is_charity)
 	{
 		$sql = 'SELECT	progress_report_articles.progress_report_article_article_id
 			FROM	progress_report_articles
 			INNER	JOIN articles
-			ON	articles.article_id = progress_report_articles.progress_report_article_article_id
-			WHERE	progress_report_articles.progress_report_article_charity_id = ?
-			AND	progress_report_articles.progress_report_article_campaign_id IS NULL
-			ORDER BY articles.article_publish_date DESC
+			ON	articles.article_id = progress_report_articles.progress_report_article_article_id';
+		if ($is_charity)
+		{
+			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_charity_id = ?
+				AND	progress_report_articles.progress_report_article_campaign_id IS NULL';
+		}
+		else
+		{
+			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_campaign_id = ?
+				AND	progress_report_articles.progress_report_article_charity_id IS NULL';
+		}			
+		$sql = $sql.' ORDER BY articles.article_publish_date DESC
 			';
 		if ($limit)
 			$sql = $sql.'LIMIT	0,3';
-		$query = $this->db->query($sql,array($charity_id));
+		$query = $this->db->query($sql,array($id));
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
@@ -147,13 +155,21 @@ class Charity_model extends Model
 	 * Returns the total number of progress reports relating to the given charity
 	 * @return an int specifying charity count or false on error.
 	 */
-	function GetCharityProgressReportCount($charity_id)
+	function GetCharityCampaignProgressReportCount($id, $is_charity)
 	{
 		$sql = 'SELECT	count(*) as pr_count
-			FROM	progress_report_articles
-			WHERE	progress_report_articles.progress_report_article_charity_id = ?
-			AND	progress_report_articles.progress_report_article_campaign_id IS NULL';
-		$query = $this->db->query($sql,array($charity_id));
+			FROM	progress_report_articles';
+		if ($is_charity)
+		{
+			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_charity_id = ?
+				AND	progress_report_articles.progress_report_article_campaign_id IS NULL';
+		}
+		else
+		{
+			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_campaign_id = ?
+				AND	progress_report_articles.progress_report_article_charity_id IS NULL';
+		}
+		$query = $this->db->query($sql,array($id));
 		if ($query->num_rows() == 1)
 		{
 			$row = $query->row();

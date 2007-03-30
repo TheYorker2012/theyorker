@@ -12,6 +12,7 @@ class Campaign extends Controller {
 		
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('charity_model','charity_model');
 	
 		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
 
@@ -106,13 +107,15 @@ class Campaign extends Controller {
 			{
 				$data['user'] = FALSE;
 			}
-						
-			$pr_temp = $this->campaign_model->GetCampaignProgressReports($campaign_id, 0);
+			
+			$data['sections']['progress_reports']['totalcount'] = $this->charity_model->GetCharityCampaignProgressReportCount($campaign_id, false);	
+	
+			$pr_temp = $this->charity_model->GetCharityCampaignProgressReports($campaign_id, true, false);
 			if (count($pr_temp) > 0)
 			{
 				foreach ($pr_temp as $row)
 				{
-					$data['sections']['progress_reports']['entries'][$row] = $this->news->GetFullArticle($row);
+					$data['sections']['progress_reports']['entries'][$row] = $this->news_model->GetFullArticle($row);
 				}
 			}
 

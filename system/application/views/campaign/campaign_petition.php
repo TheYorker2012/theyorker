@@ -89,16 +89,18 @@
 	?>
 
 	<?php
-		if (isset($progress_reports['entries']))
+		if (isset($sections['progress_reports']['entries']))
 		{
 			echo '<div class="BlueBox">';
 			echo '<span style="font-size: x-large;  color: #BBBBBB; ">'.$progress_reports['title'].'</span><br />';
-			foreach ($progress_reports['entries'] as $pr_entry)
+			foreach ($sections['progress_reports']['entries'] as $pr_entry)
 			{
 				echo '<br>';
 				echo '<span style="font-size: large;  color: #BBBBBB; ">'.$pr_entry['date'].'</span><br />';
 				echo $pr_entry['text'].'<br />';
 			}
+			if ($sections['progress_reports']['totalcount'] > 3)
+				echo '<a href="/campaign/preports/">show more...</a>';
 			echo '</div>';
 	}
 	?>
@@ -106,8 +108,8 @@
 
 <?php
 /*
-echo '<pre>';
+echo '<div class="BlueBox"><pre>';
 echo print_r($data);
-echo '</pre>';
+echo '</pre></div>';
 */
 ?>

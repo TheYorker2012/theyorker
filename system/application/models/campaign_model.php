@@ -325,7 +325,7 @@ class Campaign_model extends Model
 	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetCampaignProgressReports($campaign_id, $count)
+	function GetCampaignProgressReports2($campaign_id, $count)
 	{
 		$sql = 'SELECT 
 			progress_report_articles.progress_report_article_article_id
