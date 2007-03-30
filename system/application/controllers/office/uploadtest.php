@@ -22,4 +22,5 @@ class Uploadtest extends Controller {
 		echo "done"
 	}
 	
+}
 ?>
