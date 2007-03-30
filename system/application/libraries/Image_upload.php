@@ -176,7 +176,7 @@ class Image_upload {
 				                    'image_image_type_id' => $Thumb->image_type_id,
 				                    'image_file_extension' => $data['file_ext']);
 				$this->ci->db->insert('images', $row_values);
-				$id = $this->db->insert_id()
+				$id = $this->db->insert_id();
 				
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
