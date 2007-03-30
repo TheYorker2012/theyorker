@@ -78,6 +78,61 @@ class Image_upload {
 	
 	public function process_form_data($formData) {
 		if (!CheckPermissions('office')) return; //keep this for now...
+		
+		function processImage($data, $form_value, &$ThumbDetails) {
+			$config['image_library'] = 'gd2';
+			$config['source_image'] = $data['full_path'];
+			$config['quality'] = 85;
+			$config['master_dim'] = 'width';
+			$config['width'] = VIEW_WIDTH;
+			$config['height'] = 1000;
+
+			$output = array();
+
+			$this->ci->image_lib->initialize($config);
+			if ($data['image_width'] > 650) {
+				if (!$this->ci->image_lib->resize()) {
+					$output[]['title']= $this->ci->image_lib->display_errors();
+					return $output;
+				}
+			}
+			$newDetails = getimagesize($data['full_path']);
+
+			if ($photo) {
+				$row_values = array ('photo_author_user_entity_id' => $this->ci->user_auth->entityId,
+				                     'photo_title' => $this->ci->input->post('title'.$form_value),
+				                     'photo_width' => $newDetails[0],
+				                     'photo_height' => $newDetails[1]);
+				$this->ci->db->insert('photos', $row_values);
+				$query = $this->ci->db->select('photo_id')->getwhere('photos', $row_values, 1);
+
+				$oneRow = $query->row();
+				createImageLocation($oneRow->photo_id);
+				rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
+
+				$_SESSION['img_list'][] = $oneRow->photo_id;
+				$loop = 0; // drop this loop by using $output[] = array()
+				foreach ($ThumbDetails->result() as $Thumb) {
+					$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+					$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+					$loop++;
+				}
+			} else {
+				$loop = 0; //ditto
+				foreach ($ThumbDetails->result() as $Thumb) {
+					$row_values = array('image_title' => $this->ci->input->post('title'.$form_value),
+					                    'image_image_type_id' => $Thumb->image_type_id,
+					                    'image_file_extension' => $data['file_ext']);
+					$this->ci->db->insert('images', $row_values);
+					$id = $this->db->insert_id();
+
+					$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+					$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				}
+			}
+
+			return $output;
+		}
 
 		$objResponse = new xajaxResponse();
 		$this->ci->load->library('image_lib');
@@ -129,61 +184,6 @@ class Image_upload {
 
 		return $objResponse;
 		
-	}
-
-	private function processImage($data, $form_value, &$ThumbDetails) {
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $data['full_path'];
-		$config['quality'] = 85;
-		$config['master_dim'] = 'width';
-		$config['width'] = VIEW_WIDTH;
-		$config['height'] = 1000;
-		
-		$output = array();
-		
-		$this->ci->image_lib->initialize($config);
-		if ($data['image_width'] > 650) {
-			if (!$this->ci->image_lib->resize()) {
-				$output[]['title']= $this->ci->image_lib->display_errors();
-				return $output;
-			}
-		}
-		$newDetails = getimagesize($data['full_path']);
-
-		if ($photo) {
-			$row_values = array ('photo_author_user_entity_id' => $this->ci->user_auth->entityId,
-			                     'photo_title' => $this->ci->input->post('title'.$form_value),
-			                     'photo_width' => $newDetails[0],
-			                     'photo_height' => $newDetails[1]);
-			$this->ci->db->insert('photos', $row_values);
-			$query = $this->ci->db->select('photo_id')->getwhere('photos', $row_values, 1);
-		
-			$oneRow = $query->row();
-			createImageLocation($oneRow->photo_id);
-			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
-		
-			$_SESSION['img_list'][] = $oneRow->photo_id;
-			$loop = 0; // drop this loop by using $output[] = array()
-			foreach ($ThumbDetails->result() as $Thumb) {
-				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-				$loop++;
-			}
-		} else {
-			$loop = 0; //ditto
-			foreach ($ThumbDetails->result() as $Thumb) {
-				$row_values = array('image_title' => $this->ci->input->post('title'.$form_value),
-				                    'image_image_type_id' => $Thumb->image_type_id,
-				                    'image_file_extension' => $data['file_ext']);
-				$this->ci->db->insert('images', $row_values);
-				$id = $this->db->insert_id();
-				
-				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-			}
-		}
-
-		return $output;
 	}
 
 }
