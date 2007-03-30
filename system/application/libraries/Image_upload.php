@@ -89,11 +89,16 @@ class Image_upload {
 		// 5 image type width
 		// 6 image type height
 		
-		if (array_search($selectedThumb[4], $_SESSION['img']['list']) === false) {
+		$securityCheck = array_search($selectedThumb[4], $_SESSION['img']['list']);
+		if ($securityCheck === false) {
 			$this->ci->user_auth->logout();
 			$this->ci->url->redirect('/', 'location');
 			exit;
+		} else {
+			if ($_SESSION['img']['type'] == $selectedThumb[3])
 		}
+		
+		
 
 		if (!createImageLocationFromId($selectedThumb[4], $selectedThumb[3])) {
 			$objResponse->addAssign("submitButton","value","Error: Location not created");
