@@ -404,10 +404,10 @@ class News_model extends Model
 	    $authors = array();
 	    foreach ($query->result() as $row)
 		{
-			$authors[]['id'] = $row->article_writer_user_entity_id;
-			$authors[]['name'] = $row->business_card_name;
+			$authors['id'] = $row->article_writer_user_entity_id;
+			$authors['name'] = $row->business_card_name;
+			$result['authors'][] = $authors;
 		}
-		$result['authors'] = $authors;
 
 		$sql = 'SELECT fact_boxes.fact_box_wikitext_cache, fact_boxes.fact_box_title
 			FROM fact_boxes

@@ -97,7 +97,7 @@ class News extends Controller {
 			$main_article = $this->News_model->GetFullArticle($latest_article_ids[0],'%W, %D %M %Y', $_SESSION['office_news_preview']);
 			$data['office_preview'] = 1;
 			unset($_SESSION['office_news_preview']);
-		} else {
+		} else { 
 	    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 		}
 
