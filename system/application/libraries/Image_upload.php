@@ -163,16 +163,26 @@ class Image_upload {
 			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
 		
 			$_SESSION['img_list'][] = $oneRow->photo_id;
+			$loop = 0; // drop this loop by using $output[] = array()
+			foreach ($ThumbDetails->result() as $Thumb) {
+				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+				$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$loop++;
+			}
 		} else {
-			
+			$loop = 0; //ditto
+			foreach ($ThumbDetails->result() as $Thumb) {
+				$row_values = array('image_title' => $this->ci->input->post('title'.$form_value),
+				                    'image_image_type_id' => $Thumb->image_type_id,
+				                    'image_file_extension' => $data['file_ext']);
+				$this->ci->db->insert('images', $row_values);
+				$id = $this->db->insert_id()
+				
+				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
+				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+			}
 		}
-		
-		$loop = 0;
-		foreach ($ThumbDetails->result() as $Thumb) {
-			$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-			$loop++;
-		}
+
 		return $output;
 	}
 
