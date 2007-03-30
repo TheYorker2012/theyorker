@@ -28,7 +28,7 @@ class Image_upload {
 			$this->ci->main_frame->SetTitle('Image Uploader');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
 		}
-		$this->main_frame->Load();
+		$this->ci->main_frame->Load();
 	}
 	
 	//types is an array

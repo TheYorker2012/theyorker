@@ -11,7 +11,7 @@ class Uploadtest extends Controller {
 	function index() {
 		if (!CheckPermissions('office')) return;
 		$this->load->library('Image_upload');
-		$this->ci->load->helper('url');
+		$this->load->helper('url');
 		if ($this->image_upload->uploadForm(true, true)) {
 			$this->image_upload->recieveUpload('office/uploadtest/done', false);
 		}
