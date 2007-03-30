@@ -13,11 +13,24 @@ div.NewsBox {
 }
 
 div.NewsBox > *, div.SmallNewsBox > * {
-	margin: 0.5em;
+	margin: 0px 10px 10px 10px;
 }
 
 a.NewsImg {
 	float: right;
+	padding: 0;
+	margin: 0;
+}
+
+a.RightColumnAction {
+	font-size: smaller;
+	margin-top: 0;
+	text-align: right;
+	display: block;
+}
+
+div.Entry ul {
+	margin-bottom: 0;
 }
 
 /* This may not be needed but */
@@ -30,4 +43,8 @@ p.Discreet {
 	text-align: right;
 	padding: 0;
 	margin: 0;
+}
+
+h3 {
+	margin-bottom: 0;
 }
