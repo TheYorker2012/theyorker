@@ -307,9 +307,9 @@ class Reviews extends Controller
 		redirect($_POST['return_page']); //Send user back to previous page
 	}
 
-/* Old dummy data - Will returns error etc...
+ //Old dummy data - Will returns error etc...
 	/// Bar Crawl Page
-	function barcrawl($CrawlName = FALSE)
+	function barcrawls($CrawlName = FALSE)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -345,8 +345,6 @@ class Reviews extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-
-*/
 
 	/// Display table for review table (from puffers)
 	function table(	$item_type = FALSE,

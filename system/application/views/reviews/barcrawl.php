@@ -1,27 +1,24 @@
-<div class="ReviewInfo">
-	<div class="ReviewInfoLeft">
-	<h1 class="reviewHeader"><?php echo $crawl_title; ?> </h1><br />
-		<a href="culture">&lt;Back to Culture</a><br />
-		<a href="/reviews">&lt;Back to Reviews</a><br />
+<div id="RightColumn">
+	<div class="first">
+		<h2>Links</h2>
+		<a href="/culture">Back to Culture</a>
+		<a href="/reviews">Back to Reviews</a>
 	</div>
-	<div class="ReviewInfoRight">
-		<br /><?php echo $crawl_rating; ?>
-		<h3><?php echo $crawl_blurb; ?></h3>
+</div>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2><?php echo $crawl_title; ?></h2><img alt="Wasted Man" style="float: right" src="<?php echo $crawl_image; ?>" />
+		<p><?php echo $crawl_rating; ?></p>
+		<p><strong><?php echo $crawl_blurb; ?></strong></p>
+		<p><?php echo $crawl_content; ?></p>
 	</div>
-	<div class="ReviewInfoLeft">
-		<img alt="Wasted Man" src="<?php echo $crawl_image; ?>" /><br />
-		<?php echo $crawl_content; ?> <br /> 
-		<div class="ReviewInfo">
-			<h2>Author Reviews</h2>
-			<div class="AuthorReview">
-				<div class="AuthorReviewByline">		
-					<h3>Dan Ashbytonville</h3>
-					<a href="mailto:doggydan@woof.com">DoggyDan@woof.com</a> | <b>Editor</b> | Posted on 3rd December 2002
-				</div>
-			<div class="AuthorReviewContent">
-				I didn't like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn't like dan. He doesn't know dan. Dan doesn't know the farmer. Barry Scott sells cillit bang.
-			</div>
+	<div class="BlueBox">
+		<h2>Author Reviews</h2>
+		<h3>Dan Ashbytonville</h3>
+		<p><a href="mailto:doggydan@woof.com">DoggyDan@woof.com</a> | <b>Editor</b> | Posted on 3rd December 2002</p>
+		<p>I didn't like this. It sucked ass. Yo suck ass. Said the Farmer. The farmer doesn't like dan. He doesn't know dan. Dan doesn't know the farmer. Barry Scott sells cillit bang.</p>
 		</div>
+	
 <h2>Have Your Say</h2>
 </div>
 	</div>
@@ -100,3 +97,4 @@
 ?>
 			<a href=#>Review this Place</a><br />
 	</div>
+</div>

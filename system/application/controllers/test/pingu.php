@@ -23,5 +23,21 @@ class Pingu extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
+
+	function campaign()
+	{
+		if (!CheckPermissions('public')) return;
+
+		$this->load->model('pingu_model','pingu_model');
+		$this->pages_model->SetPageCode('officecampaign');
+		$data = array();
+
+		// Set up the public frame
+		$this->frame_public->SetTitle('Campaign Office Mockup');
+		$this->frame_public->SetContentSimple('test/pingutest2', $data);
+
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
+	}
 }
 ?>
