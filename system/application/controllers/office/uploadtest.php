@@ -12,7 +12,7 @@ class Uploadtest extends Controller {
 		if (!CheckPermissions('office')) return;
 		$this->load->library('Image_upload');
 		$this->load->helper('url');
-		if ($this->image_upload->uploadForm(true, true)) {
+		if ($this->image_upload->uploadForm(false, true)) {
 			$this->image_upload->recieveUpload('office/uploadtest/done', false);
 		}
 	}
