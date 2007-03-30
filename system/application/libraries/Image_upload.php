@@ -12,6 +12,9 @@ class Image_upload {
 	}
 	
 	public function uploadForm($multiple = false, $photos = false) {
+		$this->ci->load->library('xajax');
+		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		$this->ci->xajax->processRequests();
 		if ($this->ci->input->post('destination')) return true;
 		if ($multiple && $photos) {
 			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
@@ -34,9 +37,8 @@ class Image_upload {
 	//types is an array
 	public function recieveUpload($returnPath, $types = false) {
 		$this->ci->load->library(array('image_lib', 'upload', 'xajax'));
-		$this->ci->load->helper('images');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
-		$this->ci->xajax->processRequests();
+		$this->ci->load->helper('images');
 		
 		//get data about thumbnails
 		
