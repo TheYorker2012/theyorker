@@ -10,7 +10,7 @@ class Image_upload {
 	public function Image_upload() {
 		$this->ci = &get_instance();
 		$this->ci->load->library('xajax');
-		$this->ci->load->helper('images');
+		$this->ci->load->helper(array('images', 'url'));
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 	}
 	
@@ -77,12 +77,16 @@ class Image_upload {
 	}
 	
 	public function process_form_data($formData) {
-		if (!CheckPermissions('office')) return; //keep this for now...
-
 		$objResponse = new xajaxResponse();
 		$this->ci->load->library('image_lib');
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
+		
+		if (array_search($selectedThumb[4], $_SESSION['img_list']) === false) {
+			$this->ci->user_auth->logout();
+			$this->ci->url->redirect('/', 'location');
+			exit;
+		}
 
 		if (!createImageLocationFromId($selectedThumb[4], $selectedThumb[3])) {
 			$objResponse->addAssign("submitButton","value","Error: Location not created");
@@ -177,7 +181,7 @@ class Image_upload {
 				                    'image_file_extension' => $data['file_ext']);
 				$this->ci->db->insert('images', $row_values);
 				$id = $this->ci->db->insert_id();
-				
+				$_SESSION['img_list'][] = $id;
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 			}
