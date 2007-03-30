@@ -5,7 +5,7 @@ function printarticlelink($article, $blurb = false) {
 	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			<img class="'.$align.'" src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
 	echo('		</a>'."\n");
-	echo('		<h3>'."\n");
+	echo('		<h3 class="Headline">'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('				'.$article['heading']."\n");
 	echo('			</a>'."\n");
@@ -52,7 +52,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2 ><?php echo $main_article['heading']; ?></h2>
+		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
 <?php if ($main_article['subtext'] != '') { ?>
 		<img class="Right" src="http://theyorker.gmghosting.com/images/images/medium/0/127.jpg" alt="Replace me!" />
 		<div class="Date"><?php echo($main_article['date']); ?></div>

@@ -49,10 +49,6 @@ ul {
 li {
 }
 
-h3 a {
-	color: black;
-}
-
 /* Form formatting */
 form {
 	/* needed for IE for some reason */
@@ -291,6 +287,10 @@ div#RightColumn div.Entry {
 	margin: 0.5em 0em;
 }
 
+div#RightColumn p {
+	margin-top: 0.4em;
+}
+
 div#MainColumn {
 	margin-right: 240px;
 }
@@ -461,4 +461,12 @@ img.Left {
 	margin-bottom: 0.2em;
 	margin-top: 0;
 	clear: both;
+}
+
+div.BlueBox h2.Headline {
+	color: black;
+}
+
+.Headline a {
+	color: black;
 }
