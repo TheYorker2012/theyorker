@@ -95,27 +95,8 @@ input.button {
 	margin: 0.5em;
 }
 
-div.Date {
-	color: #ff6a00;
-	font-size: smaller;
-}
-
 div#RightColumn div.Date {
 	clear: right;
-}
-
-img.Right {
-	float: right;
-	margin-left: 0.5em;
-	margin-bottom: 0.2em;
-	clear: both;
-}
-
-img.Left {
-	float: left;
-	margin-right: 0.5em;
-	margin-bottom: 0.2em;
-	clear: both;
 }
 
 blockquote {
@@ -126,16 +107,6 @@ blockquote {
 	margin: 0;
 	border: 1px solid #999999;
 	font-style: italic;
-}
-
-span.author {
-	display: block;
-	font-style: normal;
-	text-align: right;
-}
-
-div.SubText {
-	font-weight: bold;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -343,7 +314,7 @@ div.BlueBox h3 {
 }
 
 div.BlueBox > * {
-	margin: 0.5em;
+	margin: 10px;
 }
 
 
@@ -451,4 +422,42 @@ div.Byline img {
 div.Byline span.Name {
 	font-weight: bold;
 	font-size: larger;
+}
+
+span.author {
+	display: block;
+	font-style: normal;
+	text-align: right;
+}
+
+div.Date {
+	color: #ff6a00;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Author {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.SubText {
+	font-weight: bold;
+}
+
+img.Right {
+	float: right;
+	margin-left: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
+}
+
+img.Left {
+	float: left;
+	margin-right: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
 }

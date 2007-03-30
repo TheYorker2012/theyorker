@@ -10,11 +10,13 @@ function printarticlelink($article, $blurb = false) {
 	echo('				'.$article['heading']."\n");
 	echo('			</a>'."\n");
 	echo('		</h3>'."\n");
-	foreach($article['authors'] as $reporter)
-		echo('		<a href="/contact">'.$reporter['name'].'</a>'."\n");
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
+	echo('		<div class="Author">'."\n");
+	foreach($article['authors'] as $reporter)
+		echo('			<a href="/contact">'.$reporter['name'].'</a>'."\n");
+	echo('		</div>'."\n");
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
-		echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");
+		/*echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");*/
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
 	}
 	echo('	</div>'."\n");
@@ -50,15 +52,17 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo $main_article['heading']; ?></h2>
-		<?php if ($main_article['subheading'] != '') { ?>
-			<h3><?php echo $main_article['subheading']; ?></h3>
-		<?php } ?>
-		<?php if ($main_article['subtext'] != '') { ?>
-		<div><?php echo $main_article['subtext']; ?></div>
-		<?php } ?>
-
-		<?php $this->byline->load(); ?>
+		<h2 ><?php echo $main_article['heading']; ?></h2>
+<?php if ($main_article['subtext'] != '') { ?>
+		<img class="Right" src="http://theyorker.gmghosting.com/images/images/medium/0/127.jpg" alt="Replace me!" />
+		<div class="Date"><?php echo($main_article['date']); ?></div>
+		<div class="Author">
+<?php foreach($main_article['authors'] as $reporter) { ?>
+			<a href="/contact"><?php echo($reporter['name']); ?></a>
+<?php } ?>
+		</div>
+		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
+<?php } ?>
 
         <?php echo $main_article['text']; ?>
 
