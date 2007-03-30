@@ -311,6 +311,7 @@ div.BlueBox h2 {
 
 div.BlueBox h3 {
 	color: black;
+	margin-bottom: 0;
 }
 
 div.BlueBox > * {
@@ -347,7 +348,7 @@ ul#Navbar {
 	text-align: right;
 	float: right;
 	border-bottom: 1px solid #20c1f0;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 0.0em 0em 0.5em 0em;
 	list-style: none outside none;
 }
 
