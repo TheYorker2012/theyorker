@@ -18,8 +18,6 @@ div.NewsBox > *, div.SmallNewsBox > * {
 
 a.NewsImg {
 	float: right;
-	padding: 0;
-	margin: 0;
 }
 
 a.RightColumnAction {

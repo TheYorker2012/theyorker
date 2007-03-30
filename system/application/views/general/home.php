@@ -1,15 +1,13 @@
 <?php
 function printsmallnewsbox($article){
 	echo('	<div class="NewsBox SmallNewsBox">'."\n");
-	echo('		<div style="margin-bottom: 0;">'."\n");	
-	echo('			<a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('				<img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
-	echo('			</a>'."\n");
-	echo('			<h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('				'.$article['heading']."\n");
-	echo('			</a></h3>'."\n");
-	echo('		</div>'."\n");
-	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
+	echo('		<a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('			<img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('		</a>'."\n");
+	echo('		<h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('			'.$article['heading']."\n");
+	echo('		</a></h3>'."\n");
+	echo('		<div style="clear: both" class="Date">'.$article['date'].'</div>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
@@ -17,7 +15,8 @@ function printsmallnewsbox($article){
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
-		<a href="."><img src="/images/prototype/homepage/links.jpg" alt="Sample Links" title="Sample Links" /></a>
+		<!--<a href="."><img src="/images/prototype/homepage/links.jpg" alt="Sample Links" title="Sample Links" /></a>-->
+		<p>TODO</p>
 		<a class="RightColumnAction"  href=".">Customise</a>
 	</div>
 	

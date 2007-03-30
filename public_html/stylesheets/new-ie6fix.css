@@ -17,8 +17,12 @@ ul#Navbar li {
 
 div.BlueBox {
 	/*width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));*/
-	width: expression((document.getElementById("RightColumn") == null) ? "630px" : "390px");
+	width: expression((document.getElementById("RightColumn") == null) ? "630px" : "392px");
 	padding: 10px;
+}
+
+div#HomeBanner {
+	float: left;
 }
 
 div.message_error, div.message_warning, div.message_information, div.message_success {
