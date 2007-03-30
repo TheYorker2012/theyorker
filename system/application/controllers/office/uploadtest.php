@@ -13,7 +13,7 @@ class Uploadtest extends Controller {
 		$this->load->library('Image_upload');
 		$this->load->helper('url');
 		if ($this->image_upload->uploadForm(false, false)) { //if set to images (second to false), set type on next line
-			$this->image_upload->recieveUpload('office/uploadtest/done', array('User Image'), false);
+			$this->image_upload->recieveUpload('office/uploadtest/done', array('userimage'), false);
 		}
 	}
 	
