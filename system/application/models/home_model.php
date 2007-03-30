@@ -80,7 +80,7 @@ class Home_Model extends Model {
 			$update = $this->db->query($sql,array($query->row()->image_id));
 		} 
 		$id = $query->row()->image_id;
-		return imageLocTag($id,'banner');
+		return imageLocTag($id,'banner',null,'Homapage Banner');
 	}
 }
 ?>
