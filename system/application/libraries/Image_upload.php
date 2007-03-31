@@ -14,6 +14,12 @@ class Image_upload {
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 	}
 	
+	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
+		if ($this->image_upload->uploadForm($multiple, $photos)) {
+			$this->image_upload->recieveUpload($returnPath, $types, $photos);
+		}
+	}
+	
 	public function uploadForm($multiple = false, $photos = false) {
 		$this->ci->xajax->processRequests();
 		if ($this->ci->input->post('destination')) return true;
