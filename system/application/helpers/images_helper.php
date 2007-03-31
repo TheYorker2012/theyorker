@@ -9,7 +9,7 @@
  */
 
 // ------------------------------------------------------------------------
-define ("IMAGE_HASH", 2000);
+define ("IMAGE_HASH", 2000); //upload cropper new view has this in javascript
 /**
  * Photo Location
  *

@@ -61,6 +61,12 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).height = h;
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
+				var imgSrcArray = imgSrc.split("/");
+				var imgID = imgSrcArray[imgSrcArray.length - 1].split(".");
+<?php			if ($type) foreach ($ThumbDetails->result() as $SingleInner) : ?>
+					if (!$( 'previewArea-<?=$SingleInner->image_type_id?>' ).empty()) $( 'previewArea-<?=$SingleInner->image_type_id?>' ).removeChild($( 'previewArea-<?=$SingleInner->image_type_id?>' ).firstChild);
+					$('previewArea-<?=$SingleInner->image_type_id?>').innerHTML = '<img src="images/photos/'+Math.floor(imgID[0]/2000)+'/'+imgID[0]+'.jpg" />';
+<?php			endforeach; ?>
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
