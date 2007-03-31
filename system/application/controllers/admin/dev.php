@@ -28,6 +28,7 @@ class Dev extends Controller {
 	
 	function retrieve($what)
 	{
+		if (!CheckPermissions('admin')) return;
 		if ($what === 'images') {
 			header('Content-type: application/x-gzip');
 			$bulk = system('tar czO images/images images/photos --exclude .svn');
