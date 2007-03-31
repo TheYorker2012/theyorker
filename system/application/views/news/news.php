@@ -53,14 +53,14 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
-<?php if ($main_article['subtext'] != '') { ?>
-		<img class="Right" src="http://theyorker.gmghosting.com/images/images/medium/0/127.jpg" alt="Replace me!" />
+		<img class="Right" src="<?php echo($main_article['photos']['0']); ?>" alt="Replace me!" />
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
 			<a href="/contact"><?php echo($reporter['name']); ?></a>
 <?php } ?>
 		</div>
+<?php if ($main_article['subtext'] != '') { ?>
 		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
 <?php } ?>
 

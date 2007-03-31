@@ -101,10 +101,12 @@ class News extends Controller {
 	    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 		}
 
+		/* --- No longer used ---
 		// Create byline
 		$this->load->library('byline');
 		$this->byline->AddReporter($main_article['authors']);
 		$this->byline->SetDate($main_article['date']);
+		*/
 
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();

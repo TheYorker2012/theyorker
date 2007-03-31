@@ -404,10 +404,12 @@ class News_model extends Model
 	    $authors = array();
 	    foreach ($query->result() as $row)
 		{
-			$authors['id'] = $row->article_writer_user_entity_id;
-			$authors['name'] = $row->business_card_name;
-			$result['authors'][] = $authors;
+			$authors[] = array(
+				'id' => $row->article_writer_user_entity_id,
+				'name' => $row->business_card_name
+			);
 		}
+		$result['authors'] = $authors;
 
 		$sql = 'SELECT fact_boxes.fact_box_wikitext_cache, fact_boxes.fact_box_title
 			FROM fact_boxes
@@ -428,7 +430,7 @@ class News_model extends Model
 			FROM article_photos
 			WHERE (article_photos.article_photo_article_id = ?)
 			LIMIT 0,10';
-		$query = $this->db->query($sql,array($content_id));
+		$query = $this->db->query($sql,array($id));
 		$this->load->helper('images');
 		$photos = array();
 		foreach ($query->result() as $row)
@@ -439,7 +441,7 @@ class News_model extends Model
 
 		$sql = 'SELECT	article_links.article_link_name, article_links.article_link_url
 				FROM article_links
-				WHERE (article_links.article_link_article_id = ? 
+				WHERE (article_links.article_link_article_id = ?
 				AND article_links.article_link_deleted != 1)
 				LIMIT 0,10';
 		$query = $this->db->query($sql,array($id));
