@@ -93,9 +93,15 @@ class Image_upload {
 		if ($securityCheck === false) {
 			$this->ci->user_auth->logout();
 			$this->ci->url->redirect('/', 'location');
+			//TODO add some kind of logging
 			exit;
 		} else {
-			if ($_SESSION['img']['type'] == $selectedThumb[3])
+			if ($_SESSION['img']['type'][$securityCheck] != $selectedThumb[3]) {
+				$this->ci->user_auth->logout();
+				$this->ci->url->redirect('/', 'location');
+				//TODO add some kind of logging
+				exit;
+			}
 		}
 		
 		
