@@ -126,3 +126,4 @@ foreach ($ThumbDetails->result() as $Single) {
 		<input type="hidden" name="height" id="height" />
 </form>
 <p><?=anchor($returnPath, 'Return')?></p>
+<?php exit;?>
