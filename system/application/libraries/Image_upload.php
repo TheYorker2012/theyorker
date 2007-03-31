@@ -74,7 +74,7 @@ class Image_upload {
 		$this->ci->main_frame->SetExtraHead($head);
 		//$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
 		$this->ci->load->view('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
-		return $this->ci->main_frame->Load();
+		//return $this->ci->main_frame->Load();
 	}
 	
 	public function process_form_data($formData) {
