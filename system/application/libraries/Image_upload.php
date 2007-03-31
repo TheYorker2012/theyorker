@@ -181,7 +181,7 @@ class Image_upload {
 			$this->ci->db->insert('photos', $row_values);
 			$id = $this->ci->db->insert_id();
 			createImageLocation($id);
-			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
+			rename ($data['full_path'], BASE_DIR.photoLocation($id, $data['file_ext'], TRUE));
 			
 			$loop = 0; // drop this loop by using $output[] = array()
 			foreach ($ThumbDetails->result() as $Thumb) {
