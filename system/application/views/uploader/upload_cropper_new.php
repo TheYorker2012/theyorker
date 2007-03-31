@@ -4,6 +4,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
 }
 ?>
+
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -65,11 +66,10 @@ foreach ($ThumbDetails->result() as $Single) {
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
 				var imgArray = imgSrc.split("/");
 				var idArray = imgArray[imgArray.length - 1].split(".");
-				<?php
-				foreach ($ThumbDets as $image) {
-					echo 'if (!$( \'previewArea-'.$image->image_type_id.'\' ).empty()) $( \'previewArea-'.$image->image_type_id.'\' ).removeChild($( \'previewArea-'.$image->image_type_id.'\' ).firstChild);';
-					echo '$(\'previewArea-'.$image->image_type_id.'\').innerhtml = \'<img src="\'+ idArray[0] +\'" />\';';
-				} ?>
+				<?php foreach ($ThumbDets as $image) { ?>
+					if (!$( 'previewArea-<?=$image->image_type_id?>' ).empty()) $( 'previewArea-<?=$image->image_type_id?>' ).removeChild($( 'previewArea-<?=$image->image_type_id?>' ).firstChild);
+					$('previewArea-<?=$image->image_type_id?>').innerhtml = '<img src="'+ idArray[0] +'" />';
+				<?php } ?>
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
