@@ -1,10 +1,8 @@
-<p>Select your photo/image from the list below and crop accordingly by dragging out a box. When you are happy with the crop press save to store it.</p>
+<p>All your photos are now belong to us, Select a photo and an image type below to crop a photo into an image (for stuff like thumbnails), and press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
-}
-?>
-
+}?>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -61,15 +59,8 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
-<?php		$ThumbDets = $ThumbDetails->result();
-			foreach ($ThumbDets as $Single) : ?>
+<?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
-				var imgArray = imgSrc.split("/");
-				var idArray = imgArray[imgArray.length - 1].split(".");
-				<?php foreach ($ThumbDets as $image) { ?>
-					if (!$( 'previewArea-<?=$image->image_type_id?>' ).empty()) $( 'previewArea-<?=$image->image_type_id?>' ).removeChild($( 'previewArea-<?=$image->image_type_id?>' ).firstChild);
-					$('previewArea-<?=$image->image_type_id?>').innerhtml = '<img src="'+ idArray[0] +'" />';
-				<?php } ?>
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
