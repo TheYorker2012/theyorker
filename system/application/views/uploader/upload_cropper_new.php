@@ -66,9 +66,9 @@ foreach ($ThumbDetails->result() as $Single) {
 				var imgArray = imgSrc.split("/");
 				var idArray = imgArray[imgArray.length - 1].split(".");
 				<?php
-				foreach ($ThumbDets->result() as $image) {
+				foreach ($ThumbDets as $image) {
 					echo 'if (!$( \'previewArea-'.$image->image_type_id.'\' ).empty()) $( \'previewArea-'.$image->image_type_id.'\' ).removeChild($( \'previewArea-'.$image->image_type_id.'\' ).firstChild);';
-					echo '$(\'previewArea-'.$image->image_type_id.'\').innerhtml = \'<img src="\'+ idArray[0] +\'" />\'';
+					echo '$(\'previewArea-'.$image->image_type_id.'\').innerhtml = \'<img src="\'+ idArray[0] +\'" />\';';
 				} ?>
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
