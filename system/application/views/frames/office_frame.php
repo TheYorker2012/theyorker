@@ -5,49 +5,120 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>The Yorker - <?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
-<meta name="description" content="<?php echo $description; ?>" />
-<meta name="keywords" content="<?php echo $keywords; ?>" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel='shortcut icon' href='/images/yorker.ico' />
-<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
-<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-<!-- BEGIN 'head' tag items from controlling script -->
-<?php echo @$extra_head; ?>
-<!-- END 'head' tag items from controlling script -->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="<?php echo $description; ?>" />
+	<meta name="keywords" content="<?php echo $keywords; ?>" />
+
+	<title>The Yorker - <?php 
+		// FIXME: backwards compatibility, remove when all pages are shown with titles
+		if(isset($title)) { 
+			echo $title; 
+		} else { 
+			echo 'no pagename'; 
+		} 
+	?></title>
+
+	<link rel="shortcut icon" href="/images/yorker.ico" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
+
+	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+
+	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
+	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	
+	<?php
+	if (isset($extra_css)) {
+		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
+	}
+	?>
+	
+	<!-- BEGIN Multiple event handlers code -->
+	<script type="text/javascript">
+	//<![CDATA[
+
+	// An array containing functors for all function to be run on page load
+	var onLoadFunctions = new Array();
+
+	// An array containing functors for all function to be run on page unload
+	var onUnloadFunctions = new Array();
+
+	// The function which is run on page load ensuring all functors are run
+	function onLoadHandler() {
+		for (i = 0; i < onLoadFunctions.length; i++) {
+			onLoadFunctions[i]();
+		}
+	}
+	// The function which is run on page unload ensuring all functors are run
+	function onUnloadHandler() {
+		for (i = 0; i < onUnloadFunctions.length; i++) {
+			onUnloadFunctions[i]();
+		}
+	}
+
+	//]]>
+	</script>
+	<!-- END Multiple event handlers code -->
+
+	<!-- BEGIN 'head' tag items from controlling script -->
+	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
+	<!-- END 'head' tag items from controlling script -->
+
+	<?php
+	include('maps.php');
+	?>
+	
+	<!-- BEGIN search box code -->
+	<script type="text/javascript">
+	//<![CDATA[
+
+	function inputFocus(element) {
+		if (element.value == element.defaultValue) {
+			element.value = '';
+		}
+	}
+
+	function inputBlur(element) {
+		if (element.value =='') {
+			element.value = element.defaultValue;
+		}
+	}
+
+	//]]>
+	</script>
+	<!-- END search box code -->
+
+	<!-- BEGIN feedback form code -->
+	<script type="text/javascript">
+	//<![CDATA[
+
+	function showFeedback() {
+		var showFeedbackObj = document.getElementById('ShowFeedback');
+		var feedbackObj = document.getElementById('FeedbackForm');
+		showFeedbackObj.style.display = 'none';
+		feedbackObj.style.display = 'block';
+
+		return false;
+	}
+
+	function hideFeedback() {
+		var showFeedbackObj = document.getElementById('ShowFeedback');
+		var feedbackObj = document.getElementById('FeedbackForm');
+		showFeedbackObj.style.display = 'block';
+		feedbackObj.style.display = 'none';
+
+		return false;
+	}
+	
+	//onLoadFunctions.push(hideFeedback);
+
+	//]]>
+	</script>
+	<!-- END feedback form code -->
+
 </head>
 
-<body onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
-<a name="top"></a>
-<script src="/javascript/jumpto.js" type="text/javascript"></script>
-
-<script language="JavaScript" type="text/javascript">
-
-function preloader()
-{
-     // counter
-     var i = 0;
-
-     // create object
-     imageObj = new Image();
-
-     // set image list
-     images = new Array();
-     images[0]="/images/prototype/header/header2_Layer-4.gif";
-     images[1]="/images/prototype/header/header2_Layer-3.gif";
-     images[2]="/images/prototype/header/header2_Layer-2.gif";
-
-     // start preloading
-     for(i=0; i<=3; i++)
-     {
-     	imageObj.src=images[i];
-     }
-
-}
-
-
-</script>
+<body onload="onLoadHandler()" onunload="onUnloadHandler()">
 
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
@@ -171,13 +242,13 @@ function preloader()
 		</div>
 
 		<div class='officenavigation_item'>
-			<a href='/office/reviews/food'>Food</a>
+			<a href='/office/reviewlist/food'>Food</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/reviews/drink'>Drink</a>
+			<a href='/office/reviewlist/drink'>Drink</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/reviews/culture'>Culture</a>
+			<a href='/office/reviewlist/culture'>Culture</a>
 		</div>
 
 		<div class='officenavigation_title'>

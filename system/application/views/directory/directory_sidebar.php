@@ -24,10 +24,4 @@
 	}
 ?>
 	</div>
-
-	<h2>What's this?</h2>
-	<div class="Entry">
-		<p><?php echo(htmlspecialchars($maintext)); ?></p>
-		<p>The directory currently has <?php echo count($organisations); ?> entries.  </p>
-	</div>
 </div>

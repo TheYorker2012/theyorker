@@ -90,8 +90,8 @@ class Review_model extends Model {
 			 review_context_contents.review_context_content_recommend_item as recommended_item, 
 			 review_context_contents.review_context_content_rating as content_rating,
 			 review_context_contents.review_context_content_serving_times as serving_times,
-			 review_context_contents.review_context_content_deal as deal,
-			 review_context_contents.review_context_content_deal_expires as deal_expires
+			 "deal" as deal,
+			 0 as deal_expires
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
@@ -130,8 +130,8 @@ class Review_model extends Model {
 			 review_context_contents.review_context_content_recommend_item as recommended_item, 
 			 review_context_contents.review_context_content_rating as content_rating,
 			 review_context_contents.review_context_content_serving_times as serving_times,
-			 review_context_contents.review_context_content_deal as deal,
-			 review_context_contents.review_context_content_deal_expires as deal_expires			
+			 "deal" as deal,
+			 0 as deal_expires			
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
@@ -210,9 +210,7 @@ class Review_model extends Model {
 			 review_context_content_average_price,
 			 review_context_content_recommend_item, 
 			 review_context_content_rating,
-			 review_context_content_serving_times,
-			 review_context_content_deal,
-			 review_context_content_deal_expires
+			 review_context_content_serving_times
 			) 
 			SELECT
 			review_contexts.review_context_organisation_entity_id as organisation_entity_id,
@@ -223,9 +221,7 @@ class Review_model extends Model {
 			? as average_price,
 			? as recommended_item,
 			? as rating,
-			? as serving_times,
-			? as deal,
-			? as deal_expires
+			? as serving_times
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
@@ -248,7 +244,7 @@ class Review_model extends Model {
 			';
 
 		$query = $this->db->query($sql, array($user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-							$rating, $serving_times, $deal, $deal_expires, $organisation_shortname, $content_type_codename, $organisation_shortname, $content_type_codename) );
+							$rating, $serving_times, $organisation_shortname, $content_type_codename, $organisation_shortname, $content_type_codename) );
 	}
 
 
@@ -281,8 +277,6 @@ class Review_model extends Model {
 			review_context_contents.review_context_content_blurb,
 			review_context_contents.review_context_content_average_price,
 			review_context_contents.review_context_content_recommend_item,
-			review_context_contents.review_context_content_deal,
-			review_context_contents.review_context_content_deal_expires,
 			review_context_contents.review_context_content_rating,
 			review_context_contents.review_context_content_serving_times,
 			review_context_contents.review_context_content_content_type_id
