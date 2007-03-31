@@ -66,7 +66,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<?php
 	include('maps.php');
 	?>
-	
+
 	<!-- BEGIN search box code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -108,7 +108,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		return false;
 	}
-	
+
 	onLoadFunctions.push(hideFeedback);
 
 	//]]>
@@ -132,6 +132,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				}
 			}
 			?>
+			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>

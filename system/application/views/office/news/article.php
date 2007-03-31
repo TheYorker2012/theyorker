@@ -14,10 +14,10 @@
 	function tabs (selected) {
 		for (i=0; i < pages.length; i++) {
 			document.getElementById('content_' + pages[i]).className = 'hide';
-			document.getElementById('navbar_' + pages[i]).className = '';
+			document.getElementById('Navbar_' + pages[i]).className = '';
 		}
 		document.getElementById('content_' + selected).className = 'show';
-		document.getElementById('navbar_' + selected).className = 'current';
+		document.getElementById('Navbar_' + selected).className = 'current';
 	}
 
 	function previewArticle() {
@@ -136,6 +136,20 @@
 
 	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
 		<div class="RightToolbar">
+			<h4>Photo Requests</h4>
+			<ol start="0" style="padding:0; margin:0; list-style-position:inside;">
+				<li>
+					<div style="margin-bottom: 5px;">
+						<img src="/images/images/small/0/100.jpg" alt="Photo Request" title="Photo Request" style="float: left; margin-right: 5px;" />
+						<a href="/office/photos/view/reporter"><b>Monkey in a Tree</b></a><br />
+						Date: 29/03/07<br />
+						Photos: 4<br />
+						Comments: 8
+						<br class="clear" />
+					</div>
+				</li>
+			</ol>
+
 			<h4>Article Status</h4>
 			<div id="revision_status">
 				You are editing revision <b><?php echo $revision['id']; ?></b> which was last saved <b><?php echo date('D jS F Y @ H:i:s',$revision['last_edit']); ?></b>
