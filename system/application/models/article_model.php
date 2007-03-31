@@ -586,8 +586,9 @@ class Article_model extends Model
 
 	/*****************************************************
 	*  ARTICLE PHOTOS
+	* (These functions are outdated, and will need to be moved to photo requests)
 	*****************************************************/
-
+	
 	/**
 	 * Inserts a new article photo into the database.
 	 */
@@ -616,7 +617,7 @@ class Article_model extends Model
 		$this->db->query($sql, array($article_id,$photo_id,$number,$image_type,$id));
 	}
 
-        /**
+    /**
 	 * Deletes the article photo with the given id.
 	 */
 	function DeleteArticlePhoto($id)
@@ -625,7 +626,10 @@ class Article_model extends Model
 			WHERE article_photo_id = ?';
 		$this->db->query($sql, array($id));
 	}
-
+	
+	
+	
+	
 	function PullArticle($id, $editor_id)
 	{
 		$sql = 'UPDATE	articles

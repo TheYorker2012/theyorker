@@ -3,7 +3,7 @@ function printarticlelink($article, $blurb = false) {
 	$align = $blurb ? 'Right' : 'Left';
 	echo('	<div class="Entry">'."\n");
 	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('			<img class="'.$align.'" src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('			'.$article['photo_xhtml']."\n");
 	echo('		</a>'."\n");
 	echo('		<h3 class="Headline">'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
@@ -53,7 +53,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
-		<img class="Right" src="<?php echo($main_article['photos']['0']); ?>" alt="Replace me!" />
+		<?php echo($main_article['primary_photo_xhtml']); ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>

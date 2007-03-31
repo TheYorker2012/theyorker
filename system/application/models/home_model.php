@@ -62,13 +62,13 @@ class Home_Model extends Model {
 	 */
 	function GetBannerImage() {
 		$this->load->helper('images');
-		$sql = 'SELECT 	image_id
+		$sql = 'SELECT 	image_id, image_title
 			FROM	images
 			WHERE	image_image_type_id = 9
 			AND	DATE(image_last_displayed_timestamp) = CURRENT_DATE()';
 		$query = $this->db->query($sql);
 		if($query->num_rows() == 0){
-			$sql = 'SELECT image_id
+			$sql = 'SELECT image_id, image_title
 				FROM images 
 				WHERE image_image_type_id = 9
 				ORDER BY image_last_displayed_timestamp
@@ -80,7 +80,8 @@ class Home_Model extends Model {
 			$update = $this->db->query($sql,array($query->row()->image_id));
 		} 
 		$id = $query->row()->image_id;
-		return imageLocTag($id,'banner',null,'Homapage Banner');
+		$title = $query->row()->image_title;
+		return imageLocTag($id,'banner',false,$title);
 	}
 }
 ?>

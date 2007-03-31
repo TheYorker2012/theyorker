@@ -2,7 +2,7 @@
 function printsmallnewsbox($article){
 	echo('	<div class="NewsBox SmallNewsBox">'."\n");
 	echo('		<a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('			<img src="'.$article['photo_url'].'" alt="'.$article['photo_title'].'" title="'.$article['photo_title'].'" />'."\n");
+	echo('			'.$article['photo_xhtml']."\n").'';
 	echo('		</a>'."\n");
 	echo('		<h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['heading']."\n");
@@ -59,7 +59,7 @@ function printsmallnewsbox($article){
 		<div class="NewsBox">
 			<?php
 				echo('	<a class="NewsImg" href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'."\n");
-				echo('		<img src="'.$primary_article['photo_url'].'" alt="'.$primary_article['photo_title'].'" title="'.$primary_article['photo_title'].'" />'."\n");
+				echo('		'.$primary_article['photo_xhtml']."\n");
 				echo('	</a>'."\n");
 			?>
 			<h3 class="Headline"><?php echo('<a href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'.$primary_article['heading'].'</a>') ?></h3>

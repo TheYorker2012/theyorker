@@ -98,7 +98,7 @@ class News extends Controller {
 			$data['office_preview'] = 1;
 			unset($_SESSION['office_news_preview']);
 		} else { 
-	    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+	    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0], "Right");
 		}
 
 		/* --- No longer used ---
@@ -111,13 +111,13 @@ class News extends Controller {
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();
 		for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
-			array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index]));
+			array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index], "Right"));
 		}
 
 		/// Get less of the next 3 newest articles
 		$news_others = array();
 		for ($index = 3; $index < count($latest_article_ids); $index++) {
-			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index]));
+			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index], "Left"));
 		}
 
 		/// Gather all the data into an array to be passed to the view

@@ -188,23 +188,35 @@ class News_model extends Model
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'authors','photo'
 	 */
-	function GetSimpleArticle($id, $dateformat ='%a, %D %b %y')
+	function GetSimpleArticle($id, $image_class = "", $dateformat ='%a, %D %b %y')
 	{
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id,
 			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-			content_types.content_type_codename
-			FROM articles, content_types
-			WHERE (articles.article_id = ?)
-			AND articles.article_content_type_id = content_types.content_type_id
+			content_types.content_type_codename,
+			articles.article_thumbnail_photo_id,
+			photos.photo_title
+			FROM articles
+			INNER JOIN content_types
+				ON articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
+			LEFT JOIN photos
+				ON articles.article_thumbnail_photo_id = photos.photo_id
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
+		$content_id = null;
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
 			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
+			
+			if ($row->article_thumbnail_photo_id > 0) {
+				$this->load->helper('images');
+				$result['photo_xhtml'] = imageLocTag($row->article_thumbnail_photo_id, 'small', false, $row->photo_title, $image_class);
+			} else {
+				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
+			}
 		}
 		$sql = 'SELECT article_contents.article_content_heading
 			FROM article_contents
@@ -244,24 +256,6 @@ class News_model extends Model
 			}
 			$result['authors'] = $authors;
 		}
-		$sql = 'SELECT article_photos.article_photo_photo_id,
-				 photos.photo_title
-				FROM article_photos, photos
-				WHERE article_photos.article_photo_article_id = ?
-				AND article_photos.article_photo_photo_id = photos.photo_id
-				AND article_photos.article_photo_number = 0';
-		$query = $this->db->query($sql, array($id));
-		$this->load->helper('images');
-		if ($query->num_rows() == 1) {
-			$row = $query->row();
-			$result['photo_id'] = $row->article_photo_photo_id;
-			$result['photo_url'] = imageLocation($row->article_photo_photo_id, 'small');
-			$result['photo_title'] = $row->photo_title;
-		} else {
-			$result['photo_id'] = 0;
-			$result['photo_url'] = '/images/prototype/news/small-default.jpg';
-			$result['photo_title'] = 'The Yorker - News';
-		}
 		return $result;
 	}
 
@@ -271,23 +265,35 @@ class News_model extends Model
 	 * @return An array with 'id','date','heading','subheading','subtext',
 	 * @return 'authors','photo','blurb'
 	 */
-	function GetSummaryArticle($id, $dateformat='%W, %D %M %Y', $pic_size='small')
+	function GetSummaryArticle($id, $image_class = "", $dateformat='%W, %D %M %Y', $pic_size='small', $request_primary_thumbnail=false)
 	{
 		$result['id'] = $id;
 		$sql = 'SELECT articles.article_live_content_id,
-				DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-				content_types.content_type_codename
-			FROM articles, content_types
-			WHERE (articles.article_id = ?)
-			AND articles.article_content_type_id = content_types.content_type_id
+			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+			content_types.content_type_codename,
+			articles.article_thumbnail_photo_id,
+			photos.photo_title
+			FROM articles
+			INNER JOIN content_types
+				ON articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
+			LEFT JOIN photos
+				ON articles.article_thumbnail_photo_id = photos.photo_id
 			LIMIT 0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
+		$content_id = null;
 		if ($query->num_rows() > 0)
 		{
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
 			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
+			
+			if ($row->article_thumbnail_photo_id > 0) {
+				$this->load->helper('images');
+				$result['photo_xhtml'] = imageLocTag($row->article_thumbnail_photo_id, $pic_size, false, $row->photo_title, $image_class);
+			} else {
+				$result['photo_xhtml'] = '<img src="/images/prototype/news/'.$pic_size.'-default.jpg" alt="Image not available" class="'.$image_class.'" />';
+			}
 		}
 		$sql = 'SELECT article_contents.article_content_heading,
 			article_contents.article_content_blurb
@@ -328,23 +334,24 @@ class News_model extends Model
 			}
 			$result['authors'] = $authors;
 		}
-		$sql = 'SELECT article_photos.article_photo_photo_id,
-				 photos.photo_title
-				FROM article_photos, photos
-				WHERE article_photos.article_photo_article_id = ?
-				AND article_photos.article_photo_photo_id = photos.photo_id
-				AND article_photos.article_photo_number = 0';
-		$query = $this->db->query($sql, array($id));
-		$this->load->helper('images');
-		if ($query->num_rows() == 1) {
-			$row = $query->row();
-			$result['photo_id'] = $row->article_photo_photo_id;
-			$result['photo_url'] = imageLocation($row->article_photo_photo_id, $pic_size);
-			$result['photo_title'] = $row->photo_title;
-		} else {
-			$result['photo_id'] = 0;
-			$result['photo_url'] = '/images/prototype/news/small-default.jpg';
-			$result['photo_title'] = 'The Yorker - News';
+		
+		if($request_primary_thumbnail) {
+			$sql = 'SELECT photo_requests.photo_request_chosen_photo_id as photo_id,
+			photos.photo_title as photo_title
+			FROM photo_requests
+			INNER JOIN photos
+				ON photos.photo_id = photo_request_chosen_photo_id
+			WHERE photo_requests.photo_request_article_id = ?
+			AND photo_requests.photo_request_deleted = 0
+			AND photo_requests.photo_request_chosen_photo_id IS NOT NULL
+			AND photo_requests.photo_request_approved_user_entity_id IS NOT NULL
+			AND photo_requests.photo_request_relative_photo_number = 0';
+			$query = $this->db->query($sql, array($id));
+			$this->load->helper('images');
+			if ($query->num_rows() == 1) {
+				$row = $query->row();
+				$result['photo_xhtml'] = imageLocTag($row->article_photo_photo_id, $pic_size, false, $row->photo_title, $image_class);
+			}
 		}
 		return $result;
 	}
@@ -357,7 +364,7 @@ class News_model extends Model
 	 * @return 'text','blurb','authors' (just ids atm),'fact_boxes','photos' (just ids atm)
 	 * @return 'links', 'related_articles'
 	 */
-	function GetFullArticle($id, $dateformat='%W, %D %M %Y', $preview = 0)
+	function GetFullArticle($id, $image_class = "", $dateformat='%W, %D %M %Y', $preview = 0)
 	{
 		$result['id'] = $id;
 		if ($preview == 0) {
@@ -425,19 +432,26 @@ class News_model extends Model
 		}
 		$result['fact_boxes'] = $fact_boxes;
 
-		$sql = 'SELECT article_photos.article_photo_photo_id,
-				 article_photos.article_photo_number
-			FROM article_photos
-			WHERE (article_photos.article_photo_article_id = ?)
-			LIMIT 0,10';
-		$query = $this->db->query($sql,array($id));
+		$sql = 'SELECT photo_requests.photo_request_chosen_photo_id as photo_id,
+		photo_requests.photo_request_view_large as view_large,
+		photo_requests.photo_request_title as photo_caption,
+		photos.photo_title as photo_title
+		FROM photo_requests
+		INNER JOIN photos
+			ON photos.photo_id = photo_request_chosen_photo_id
+		WHERE photo_requests.photo_request_article_id = ?
+		AND photo_requests.photo_request_deleted = 0
+		AND photo_requests.photo_request_chosen_photo_id IS NOT NULL
+		AND photo_requests.photo_request_approved_user_entity_id IS NOT NULL
+		AND photo_requests.photo_request_relative_photo_number = 0';
+		$query = $this->db->query($sql, array($id));
+
 		$this->load->helper('images');
-		$photos = array();
-		foreach ($query->result() as $row)
-		{
-			$photos[$row->article_photo_number] = imageLocation($row->article_photo_photo_id, 'medium');
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			$result['primary_photo_xhtml'] = imageLocTag($row->photo_id, 'medium', $row->view_large, $row->photo_title, $image_class);
+			$result['primary_photo_caption'] = $row->photo_caption;
 		}
-		$result['photos'] = $photos;
 
 		$sql = 'SELECT	article_links.article_link_name, article_links.article_link_url
 				FROM article_links
