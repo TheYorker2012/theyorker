@@ -60,12 +60,13 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
-<?php		foreach ($ThumbDetails->result() as $Single) : ?>
+<?php		$ThumbDets = $ThumbDetails->result();
+			foreach ($ThumbDets as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
 				var imgArray = imgSrc.split("/");
 				var idArray = imgArray[imgArray.length - 1].split(".");
 				<?php
-				foreach ($ThumbDetails->result() as $image) {
+				foreach ($ThumbDets->result() as $image) {
 					echo 'if (!$( \'previewArea-'.$image->image_type_id.'\' ).empty()) $( \'previewArea-'.$image->image_type_id.'\' ).removeChild($( \'previewArea-'.$image->image_type_id.'\' ).firstChild);';
 					echo '$(\'previewArea-'.$image->image_type_id.'\').innerhtml = \'<img src="\'+ idArray[0] +\'" />\'';
 				} ?>
