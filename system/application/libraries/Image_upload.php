@@ -179,17 +179,16 @@ class Image_upload {
 			                     'photo_width' => $newDetails[0],
 			                     'photo_height' => $newDetails[1]);
 			$this->ci->db->insert('photos', $row_values);
-			$query = $this->ci->db->select('photo_id')->getwhere('photos', $row_values, 1);
-		
-			$oneRow = $query->row();
-			createImageLocation($oneRow->photo_id);
+			$id = $this->ci->db->insert_id();
+			createImageLocation($id);
 			rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
-		
-			$_SESSION['img']['list'][] = $oneRow->photo_id;
+			
 			$loop = 0; // drop this loop by using $output[] = array()
 			foreach ($ThumbDetails->result() as $Thumb) {
+				$_SESSION['img']['list'][] = $id;
+				$_SESSION['img']['type'][] = $Thumb->image_type_id;
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$output[$loop]['string'] = photoLocation($id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 				$loop++;
 			}
 		} else {
@@ -204,6 +203,7 @@ class Image_upload {
 				$_SESSION['img']['type'][] = $Thumb->image_type_id;
 				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$loop++;
 			}
 		}
 
