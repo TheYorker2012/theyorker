@@ -251,7 +251,7 @@ class Directory_model extends Model {
 	 * @param $Data array Data of revision.
 	 * @return bool Whether a row was successfully added or not.
 	 */
-	function AddDirectoryEntryRevision($DirectoryEntryName, $Data)
+	function AddDirectoryEntryRevision($DirectoryEntryName, $Data, $NoUserEntity=false)
 	{
 		$sql = 'INSERT INTO `organisation_contents` ('.
 			'`organisation_content_last_author_user_entity_id`,'.
@@ -273,8 +273,14 @@ class Directory_model extends Model {
 			'	?, ?, ?, ?, ?, ?, ?, ?, ? '.
 			'FROM organisations '.
 			'WHERE organisations.organisation_directory_entry_name = ?';
+		if($NoUserEntity){
+			//This exists for suggestions, they have no entity id stored.
+			$EntityId = 0;
+		}else{
+			$EntityId = $this->user_auth->entityId;
+		}
 		$query = $this->db->query($sql, array(
-			$this->user_auth->entityId,
+			$EntityId,
 			$Data['description'],
 			$Data['postal_address'],
 			$Data['postcode'],
@@ -419,7 +425,7 @@ class Directory_model extends Model {
 			'SELECT'.
 			' organisation_types.organisation_type_name, '.
 			' organisation_types.organisation_type_id, '.
-			' organisation_types.organisation_type_codename'.
+			' organisation_types.organisation_type_codename '.
 			'FROM organisation_types '.
 			'WHERE organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_types.organisation_type_name';
@@ -427,6 +433,28 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql);
 	
 		return $query->result_array();
+	}
+
+	function AddDirectoryEntry($Data)
+	{
+		$sql = 'INSERT INTO `organisations` ('.
+			'`organisation_organisation_type_id`,'.
+			'`organisation_name`,'.
+			'`organisation_directory_entry_name`,'.
+			'`organisation_suggesters_name`,'.
+			'`organisation_suggesters_position`,'.
+			'`organisation_needs_approval`) '.
+			' VALUES'.
+			' (?, ?, ?, ?, ?, ? )';
+		$query = $this->db->query($sql, array(
+			$Data['type_id'],
+			$Data['name'],
+			$Data['directory_entry_name'],
+			$Data['suggestors_name'],
+			$Data['suggestors_position'],
+			1
+			));
+		return ($this->db->affected_rows() > 0);
 	}
 }
 ?>
