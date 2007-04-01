@@ -42,14 +42,17 @@ class Contact extends Controller {
 		
 		$to = $this->input->post('recipient');
 		$from = 'From: '.$this->input->post('contact_email')."\r\n";
-		$subject = $this->input->post('contact_subject');
+		$from = "Bob";
+		$subject = $this->input->post('contact_subject'); 
 		$message = $this->input->post('contact_message');
 		if ($to && $subject && $message && $this->input->post('contact_email')){
-			if (mail($to,$subject,$heading,$from)) {
+			if (mail($to,$subject,$message,$from)) {
 				redirect('/about');
 			} else {
 				redirect('/contact');
 			}
+		} else {
+			redirect('/failed');
 		}
 	}
 
