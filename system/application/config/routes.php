@@ -116,6 +116,8 @@ $route['office/pr/summary/org/([^/]*)'] = 'office/prindex/summary/org/$1'; //org
 $route['office/pr/summary'] = 'office/prindex/summary/def/0'; //default
 $route['office/pr/(.*)'] = 'office/prindex/$1';
 
+//$route['office/reviewlist/('.$org_name_regex.')/('.$org_name_regex.')'] = 'office/reviewlist/$2/$1';
+
 // send tag adding and deleting to the correct place
 $route['office/reviews/addtag'] = 'office/reviews/addtag';
 $route['office/reviews/deltag'] = 'office/reviews/deltag';
