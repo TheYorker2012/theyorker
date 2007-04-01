@@ -30,8 +30,8 @@ class Home extends Controller {
 		);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitle('List');
 		$this->main_frame->SetContentSimple('general/list', $data);
+		$this->main_frame->SetTitle('List');
 		
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

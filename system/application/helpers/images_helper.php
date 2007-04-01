@@ -162,24 +162,29 @@ function is_photo($id, $extension = '.jpg') {
 
 function imageLocTag($id, $type = false, $view_large = false, $alt = null, $class = false, $extension = '.jpg', $force = true) {
 	if (is_null($extension)) $extension = '.jpg';
+	if (is_string($class)) {
+		$class_tag = 'class="'.$class.'"';
+	} else {
+		$class_tag = '';
+	}
 	if (is_string($type)) {
 		$result = '';
 		$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 		if ($force or is_file($location)) {
 			if (is_string($alt)) {
-				$result = '<img class="'.$class.'" src="/'.$location.'" alt="'.$alt.'" />';
+				$result = '<img '.$class_tag.' src="/'.$location.'" alt="'.$alt.'" />';
 			} else {
 				$CI =& get_instance();
 				$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 				if ($query->num_rows() > 0) {
 					$query = $query->row();
-					$result = '<img class="'.$class.'" src="/'.$location.'" alt="'.$query->photo_title.'" />';
+					$result = '<img '.$class_tag.' src="/'.$location.'" alt="'.$query->photo_title.'" />';
 				} else {
-					$result = '<img class="'.$class.'" src="/'.$location.'" />';
+					$result = '<img '.$class_tag.' src="/'.$location.'" />';
 				}
 			}
 		} else {
-			return '<img class="'.$class.'" src="/images/images/'.$type.'/null.png" />';
+			return '<img '.$class_tag.' src="/images/images/'.$type.'/null.png" />';
 		}
 	} else {
 		$CI =& get_instance();
@@ -198,23 +203,23 @@ function imageLocTag($id, $type = false, $view_large = false, $alt = null, $clas
 				$width = $onerow->image_type_width;
 			}
 			if (!$fetched_type) {
-				return '<img class="'.$class.'" src="/images/images/null.png" />';
+				return '<img '.$class_tag.' src="/images/images/null.png" />';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
 				if (is_string($alt)) {
-					$result = '<img class="'.$class.'" src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$alt.'" alt="'.$alt.'" />';
+					$result = '<img '.$class_tag.' src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$alt.'" alt="'.$alt.'" />';
 				} else{
 					$CI =& get_instance();
 					$query = $CI->db->select('photo_title')->getwhere('photos', array('photo_id' => $id), 1);
 					$query = $query->result();
-					$result = '<img class="'.$class.'" src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" />';
+					$result = '<img '.$class_tag.' src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" />';
 				}
 			} else {
-				return '<img class="'.$class.'" src="/images/images/'.$fetched_type.'/null.png" />';
+				return '<img '.$class_tag.' src="/images/images/'.$fetched_type.'/null.png" />';
 			}
 		} else {
-			return '<img class="'.$class.'" src="/images/images/null.png" />';
+			return '<img '.$class_tag.' src="/images/images/null.png" />';
 		}
 	}
 	if ($view_large && (is_photo($id))) {
