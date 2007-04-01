@@ -45,7 +45,7 @@ class Contact extends Controller {
 		$subject = $this->input->post('contact_subject'); 
 		$message = $this->input->post('contact_message');
 		if ($to && $subject && $message && $from){
-			$from = 'From: '.$from."\r\n".' Reply-To:'.$from."\r\n";
+			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 			if (mail($to,$subject,$message,$from)) {
 				redirect('/about');
 			} else {
