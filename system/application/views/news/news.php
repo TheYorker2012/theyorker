@@ -52,8 +52,10 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
-		<?php echo($main_article['primary_photo_xhtml']); ?>
-		<?php echo($main_article['primary_photo_caption']); ?>
+		<div style="float:right;text-align:center;color:#999;margin-top:0;">
+			<?php echo($main_article['primary_photo_xhtml']); ?><br />
+			<?php echo($main_article['primary_photo_caption']); ?>
+		</div>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
