@@ -340,7 +340,7 @@ class News_model extends Model
 			photos.photo_title as photo_title
 			FROM photo_requests
 			INNER JOIN photos
-				ON photos.photo_id = photo_request_chosen_photo_id
+				ON photos.photo_id = photo_requests.photo_request_chosen_photo_id
 			WHERE photo_requests.photo_request_article_id = ?
 			AND photo_requests.photo_request_deleted = 0
 			AND photo_requests.photo_request_chosen_photo_id IS NOT NULL
@@ -348,9 +348,9 @@ class News_model extends Model
 			AND photo_requests.photo_request_relative_photo_number = 0';
 			$query = $this->db->query($sql, array($id));
 			$this->load->helper('images');
-			if ($query->num_rows() == 1) {
+			if ($query->num_rows() > 0) {
 				$row = $query->row();
-				$result['photo_xhtml'] = imageLocTag($row->article_photo_photo_id, $pic_size, false, $row->photo_title, $image_class);
+				$result['photo_xhtml'] = imageLocTag($row->photo_id, $pic_size, false, $row->photo_title, $image_class);
 			}
 		}
 		return $result;
@@ -482,7 +482,7 @@ class News_model extends Model
 		$related_articles = array();
 		foreach (array_values(array_unique($articles)) as $related_id)
 		{
-			$related_articles[] = self::GetSimpleArticle($related_id);
+			$related_articles[] = self::GetSimpleArticle($related_id, "Left");
 		}
 		$result['related_articles'] = $related_articles;
 		

@@ -1,6 +1,5 @@
 <?php
-function printarticlelink($article, $blurb = false) {
-	$align = $blurb ? 'Right' : 'Left';
+function printarticlelink($article) {
 	echo('	<div class="Entry">'."\n");
 	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['photo_xhtml']."\n");
@@ -27,19 +26,19 @@ function printarticlelink($article, $blurb = false) {
 	<h2 class="first"><?php echo($latest_heading); ?></h2>
 <?php
 foreach($news_previews as $preview)
-	printarticlelink($preview, true);
+	printarticlelink($preview);
 ?>
 	
 	<h2><?php echo($other_heading); ?></h2>
 <?php
 foreach ($news_others as $other)
-	printarticlelink($other, false);
+	printarticlelink($other);
 
 if (count($main_article['related_articles']) > 0)
 	echo('	<h2>'.$related_heading.'</h2>'."\n");
 
 foreach ($main_article['related_articles'] as $related)
-	printarticlelink($related, false);
+	printarticlelink($related);
 
 foreach($main_article['fact_boxes'] as $fact_box) {
 	echo('	<h2>'.$fact_box['title'].'</h2>'."\n");
@@ -54,6 +53,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
 		<?php echo($main_article['primary_photo_xhtml']); ?>
+		<?php echo($main_article['primary_photo_caption']); ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
