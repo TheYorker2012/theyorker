@@ -41,11 +41,11 @@ class Contact extends Controller {
 		if (!CheckPermissions('public')) return;
 		
 		$to = $this->input->post('recipient');
-		$from = 'From: '.$this->input->post('contact_email')."\r\n";
-		$from = "Bob";
+		$from = $this->input->post('contact_email');
 		$subject = $this->input->post('contact_subject'); 
 		$message = $this->input->post('contact_message');
-		if ($to && $subject && $message && $this->input->post('contact_email')){
+		if ($to && $subject && $message && $from){
+			$from = 'From: '.$from."\r\n".' Reply-To:'.$from."\r\n";
 			if (mail($to,$subject,$message,$from)) {
 				redirect('/about');
 			} else {
