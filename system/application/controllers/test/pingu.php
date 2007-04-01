@@ -55,5 +55,21 @@ class Pingu extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
+
+	function barcrawl()
+	{
+		if (!CheckPermissions('public')) return;
+
+		$this->load->model('pingu_model','pingu_model');
+		$this->pages_model->SetPageCode('barcrawl');
+		$data = array();
+
+		// Set up the public frame
+		$this->frame_public->SetTitle('Bar Crawl Mockup');
+		$this->frame_public->SetContentSimple('test/pingutest4', $data);
+
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
+	}
 }
 ?>
