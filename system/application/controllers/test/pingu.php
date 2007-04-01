@@ -39,5 +39,21 @@ class Pingu extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->frame_public->Load();
 	}
+
+	function foodsearch()
+	{
+		if (!CheckPermissions('public')) return;
+
+		$this->load->model('pingu_model','pingu_model');
+		$this->pages_model->SetPageCode('foodsearch');
+		$data = array();
+
+		// Set up the public frame
+		$this->frame_public->SetTitle('Food Search Mockup');
+		$this->frame_public->SetContentSimple('test/pingutest3', $data);
+
+		// Load the public frame view (which will load the content view)
+		$this->frame_public->Load();
+	}
 }
 ?>
