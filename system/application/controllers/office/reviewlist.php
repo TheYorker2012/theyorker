@@ -37,7 +37,7 @@ class Reviewlist extends Controller
 		if ($content_type > 0) {
 			$this->index($method, $content_type);
 		} else {
-			//$this->$method();
+			$this->$method();
 		}
 	}
 	

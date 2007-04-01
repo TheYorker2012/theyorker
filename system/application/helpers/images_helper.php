@@ -160,7 +160,7 @@ function is_photo($id, $extension = '.jpg') {
  * @return	string
  */	
 
-function imageLocTag($id, $type = false, $view_large = false, $alt = null, $class = false, $extension = '.jpg', $force = true) {
+function imageLocTag($id, $type = false, $view_large = false, $alt = null, $class = null, $extension = '.jpg', $force = true) {
 	if (is_null($extension)) $extension = '.jpg';
 	if (is_string($class)) {
 		$class_tag = 'class="'.$class.'"';
