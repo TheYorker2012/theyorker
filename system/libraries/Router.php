@@ -252,12 +252,16 @@ class CI_Router {
 	 */	
 	function _reindex_segments()
 	{
+		/**
+		 * @note Altered by James Hogan (jh559@cs.york.ac.uk).
+		 *	The previous use of array_dif was incorrect and didn't test for
+		 *	array equality properly. The urls /test/james/test and /james/test
+		 *	were considered equal because neither has segments the other
+		 *	doensn't.
+		 */
+		
 		// Is the routed segment array different then the main segment array?
-		if (count(array_diff($this->rsegments, $this->segments))==0 AND count(array_diff($this->segments, $this->rsegments))==0){ 
-			$diff = FALSE;
-		} else {
-			$diff = TRUE;
-		}
+		$diff = ($this->rsegments != $this->segments);
 	
 		$i = 1;
 		foreach ($this->segments as $val)

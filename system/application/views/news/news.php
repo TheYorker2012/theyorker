@@ -82,4 +82,10 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 		</ul>
 	</div>
 	<?php } ?>
+	<?php
+	// Comments if they're included
+	if (isset($comments) && NULL !== $comments) {
+		$comments->Load();	
+	}
+	?>
 </div>

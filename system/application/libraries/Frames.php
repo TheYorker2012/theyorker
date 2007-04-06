@@ -77,9 +77,11 @@ class FramesView
 	 * @param $Index integer The index of the data.
 	 * @return The data associated with @a $Index in the data array.
 	 */
-	function GetData($Index)
+	function GetData($Index, $Default = NULL)
 	{
-		return $this->mDataArray[$Index];
+		return (array_key_exists($Index, $this->mDataArray)
+				? $this->mDataArray[$Index]
+				: $Default);
 	}
 	
 	/// Set the value of a specific data field.

@@ -243,7 +243,7 @@
 		</div>
 
 		<div id="content_comments" class="hide">
-			<div class="blue_box">
+			<?php /*<div class="blue_box">
 				<h2>comments...</h2>
 				<div id="comment_load" class="ajax_loading hide">
 					<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Saving new comment...
@@ -270,7 +270,13 @@
 					</div>
 				<?php } ?>
 				</div>
-			</div>
+			</div> */ ?>
+			<?php
+			// Comments if they're included
+			if (isset($comments) && NULL !== $comments) {
+				$comments->Load();	
+			}
+			?>
 		</div>
 
 		<div id="content_revisions" class="hide">

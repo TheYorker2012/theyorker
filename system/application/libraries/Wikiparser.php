@@ -41,6 +41,27 @@
 
 /// Wikitext parsing library.
 class Wikiparser {
+	protected $reference_wiki;
+	protected $external_wikis;
+	protected $image_uri;
+	protected $image_overrides;
+	protected $ignore_images;
+	protected $emphasis;
+	protected $quote_template;
+	protected $templates;
+	
+	protected $list_level_chars;
+	protected $list_level;
+	protected $deflist;
+	protected $linknumber;
+	protected $suppress_linebreaks;
+	protected $in_paragraph;
+	protected $page_title;
+	protected $stop;
+	protected $stop_all;
+	protected $nextnowiki;
+	protected $redirect;
+	protected $nowikis;
 	
 	/// Default constructor.
 	function Wikiparser() {
@@ -51,13 +72,13 @@ class Wikiparser {
 		$this->external_wikis = PresetWikis();
 		$this->image_uri = '/images/';
 		$this->image_overrides = array();
-		$this->ignore_images = false;
-		$this->emphasis[1] = '';
-		$this->emphasis[2] = '';
-		$this->emphasis[3] = '';
-		$this->emphasis[4] = '';
-		$this->emphasis[5] = '';
-		$this->emphasis[6] = '';
+		$this->ignore_images = FALSE;
+		$this->emphasis[1] = FALSE;
+		$this->emphasis[2] = FALSE;
+		$this->emphasis[3] = FALSE;
+		$this->emphasis[4] = FALSE;
+		$this->emphasis[5] = FALSE;
+		$this->emphasis[6] = FALSE;
 		
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
@@ -66,6 +87,7 @@ class Wikiparser {
 {{1}}
 <img src="/images/prototype/news/quote_close.png" alt="Quote" title="Quote" />
 <br /><span class="author">{{2}}</span></blockquote>',
+				'frame' => '<div class="BlueBox"><h4>{{1}}</h4>{{2}}</div>',
 				'br' => '<br />',
 			);
 	}
@@ -393,9 +415,9 @@ class Wikiparser {
 	 * At the moment it does emphasis, bold, orange (feel free to change)!
 	 */
 	function handle_addemphasis($matches) {
-		$output = '<em><strong><span class="orange">'; // Orange emphasis
-		$output .= $matches[0];                        // Actual text
-		$output .= '</span></strong></em>';            // Orange emphasis
+		$output = '<span class="theyorker">'; // Orange emphasis
+		$output .= $matches[0];               // Actual text
+		$output .= '</span>';                 // Orange emphasis
 		return $output;
 
 	}
@@ -403,9 +425,12 @@ class Wikiparser {
 	function emphasize_off() {
 		$output = '';
 		if (isset($this->emphasis)) {
-			while (list($amount, $state) = each($this->emphasis)) {
-//			foreach ($this->emphasis as $amount=>$state) {
-				if ($state) $output .= $this->emphasize($amount);
+//			while (list($amount, $state) = each($this->emphasis)) {
+			foreach ($this->emphasis as $amount=>$state) {
+				if ($state) {
+					$output .= $this->emphasize($amount);
+					$this->emphasis[$amount] = FALSE;
+				}
 			}
 		}
 		
@@ -475,7 +500,7 @@ class Wikiparser {
 		$line_regexes = array(
 			'special_quote'=>'^"""(.*)"""\s*(.*)$',
 			'startparagraph'=>'^([^\{\s\*\#;\:=-].*?)$',
-			'preformat'=>'^\s(.*?)$',
+			//'preformat'=>'^\s(.*?)$',
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
 			'list'=>'^([\*\#]+)(.*?)$',

@@ -38,6 +38,103 @@ class James extends controller
 		$this->main_frame->SetTitle('Random generator');
 		$this->main_frame->Load();
 	}
+	
+	function test()
+	{
+		if (!CheckPermissions('admin')) return;
+		
+		// Load libraries
+		$this->load->library('academic_calendar');
+		$this->load->library('calendar_backend');
+		$this->load->library('calendar_frontend');
+		
+		$this->load->library('calendar_source_yorker');
+		$this->load->library('calendar_view_days');
+		
+		// Set up data sources
+		$data = new CalendarData();
+		$sources = array();
+		$sources[0] = new CalendarSourceYorker();
+		$sources[0]->SetRange(strtotime('-2month'), strtotime('1month'));
+		
+		// Accumulate data from sources in $data
+		foreach ($sources as $source) {
+			try {
+				$source->FetchEvents($data);
+			} catch (Exception $e) {
+				$this->messages->AddMessage('error', 'calendar data source failed: '.$e->getMessage());
+			}
+		}
+		
+		// Display data
+		
+		$days = new CalendarViewDays();
+		$days->SetCalendarData($data);
+		
+		$this->main_frame->SetContent($days);
+		
+		// Load view
+		$this->main_frame->Load();
+	}
+	
+	function wikify()
+	{
+		$wikitext = $this->input->post('CommentAddContent');
+		if ($wikitext !== FALSE) {
+			$this->load->model('comments_model');
+			$xhtml = $this->comments_model->ParseCommentWikitext($wikitext);
+			$this->load->view('test/echo', array('content' => $xhtml));
+		}
+	}
+	
+	function trig($CommentInclude = 1)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		// Get thread
+		$thread_id = 1;
+		
+		$this->load->library('comments');
+		
+		$this->comments->SetUri('/test/james/trig/');
+		$this->main_frame->SetContent(
+			$this->comments->CreateStandard($thread_id, $CommentInclude)
+		);
+	
+		// Load view
+		$this->main_frame->Load();
+	}
+	
+	function addcomments($place)
+	{
+		if (!CheckPermissions('admin')) return;
+		$this->load->model('comments_model');
+		if ($place == 'articles') {
+			$result = $this->comments_model->CreateThreads(
+				array(
+					'allow_ratings' => FALSE,
+					'allow_comments' => TRUE,
+					'allow_anonymous_comments' => TRUE,
+				),
+				'articles',
+				'article_id',
+				'article_public_comment_thread_id'
+			);
+			$this->messages->AddDumpMessage('public result', $result);
+			$this->comments_model->CreateThreads(
+				array(
+					'allow_ratings' => TRUE,
+					'allow_comments' => TRUE,
+					'allow_anonymous_comments' => FALSE,
+				),
+				'articles',
+				'article_id',
+				'article_private_comment_thread_id'
+			);
+			$this->messages->AddDumpMessage('private result', $result);
+		}
+		$this->main_frame->Load();
+	}
 }
 
 ?>

@@ -89,43 +89,6 @@ class Article_model extends Model
 		return $result;
 	}
 
-	// Gets all comments for a particular article whilst it is still accessible via News Office, assumes article_id exists
-	function GetArticleComments ($article_id)
-	{
-		$sql = 'SELECT comments.comment_id AS id,
-				 comments.comment_user_entity_id AS userid,
-				 comments.comment_text AS text,
-				 UNIX_TIMESTAMP(comments.comment_timestamp) AS time,
-				 business_cards.business_card_name AS name
-				FROM comments, business_cards
-				WHERE comments.comment_article_id = ?
-				AND comments.comment_deleted = 0
-				AND comments.comment_user_entity_id = business_cards.business_card_user_entity_id
-				ORDER BY comments.comment_timestamp DESC';
-		$query = $this->db->query($sql, array($article_id));
-		$result = array();
-		foreach ($query->result_array() as $row) {
-			$result[] = $row;
-		}
-		return $result;
-	}
-
-	function InsertArticleComment ($article_id, $user_id, $comment)
-	{
-		$sql = 'INSERT INTO comments
-				SET comment_article_id = ?,
-				 comment_user_entity_id = ?,
-				 comment_text = ?';
-		$query = $this->db->query($sql, array($article_id, $user_id, $comment));
-		$sql = 'SELECT UNIX_TIMESTAMP(comments.comment_timestamp) AS time,
-				 business_cards.business_card_name AS name
-				FROM comments, business_cards
-				WHERE comments.comment_user_entity_id = business_cards.business_card_user_entity_id
-				AND comments.comment_id = ?';
-		$query = $this->db->query($sql, array($this->db->insert_id()));
-		return $query->row_array();
-	}
-
 	function GetLatestRevision ($article_id)
 	{
 		$sql = 'SELECT article_content_id

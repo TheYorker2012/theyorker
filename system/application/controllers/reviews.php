@@ -182,7 +182,7 @@ class Reviews extends Controller
 	}
 	
 	/// Review page
-	function _review($content_type, $organisation_name)
+	function _review($content_type, $organisation_name, $IncludedComment = 0)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -204,7 +204,11 @@ class Reviews extends Controller
 
 		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
-		$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
+		
+		$this->load->library('comments');
+		$this->comments->SetUri('/reviews/'.$content_type.'/'.$organisation_name.'/');
+		$thread = $this->Review_model->GetReviewContextCommentThread($data['organisation_id'], $content_id);
+		$data['comments'] = $this->comments->CreateStandard($thread, $IncludedComment);
 
 		//For barcrawls only - The right side barlist
 		if ($content_type == 'barcrawl')
@@ -249,12 +253,6 @@ class Reviews extends Controller
 
 		//Place articles into the data array to be passed along
 		$data['article'] = $article;
-
-		//Get user rating
-		$data['user_rating'] = $this->Review_model->GetUserRating($article_id);
-		$data['user_rating'] = $data['user_rating'][0];
-		$data['user_based'] = $this->Review_model->GetUserRating($article_id);
-		$data['user_based'] = $data['user_based'][1];
 
 		//Review context content
 		$review_database_result = $this->Review_model->GetReview($organisation_name,$content_type);
@@ -392,7 +390,7 @@ class Reviews extends Controller
 				$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
 				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
-				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['comment_summary_cache_average_rating']);
+				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
 	
 				//Change scope of $tagbox

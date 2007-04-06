@@ -368,7 +368,9 @@ class News_model extends Model
 	{
 		$result['id'] = $id;
 		if ($preview == 0) {
-			$sql = 'SELECT articles.article_live_content_id,
+			$sql = 'SELECT
+					articles.article_live_content_id,
+					articles.article_public_comment_thread_id,
 					DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
 					articles.article_location_id
 				FROM articles
@@ -379,10 +381,12 @@ class News_model extends Model
 			$row = $query->row();
 			$result['date'] = $row->article_publish_date;
 			$result['location'] = $row->article_location_id;
+			$result['public_thread_id'] = $row->article_public_comment_thread_id;
 			$content_id = $row->article_live_content_id;
 		} else {
 			$result['date'] = date('l, jS F Y');
 			$result['location'] = 0;
+			$result['public_thread_id'] = NULL;
 			$content_id = $preview;
 		}
 		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
@@ -487,6 +491,34 @@ class News_model extends Model
 		$result['related_articles'] = $related_articles;
 		
 		return $result;
+	}
+	
+	/// Get information about the public comments thread.
+	/**
+	 * @param $ArticleId int ID of the article.
+	 * @pre loaded(model comments_model)
+	 * @return Same as comments_model::GetThreadByLinkTable
+	 */
+	function GetPublicThread($ArticleId)
+	{
+		return $this->comments_model->GetThreadByLinkTable(
+			'articles','article_public_comment_thread_id',
+			array('article_id' => $ArticleId)
+		);
+	}
+	
+	/// Get information about the private comments thread.
+	/**
+	 * @param $ArticleId int ID of the article.
+	 * @pre loaded(model comments_model)
+	 * @return Same as comments_model::GetThreadByLinkTable
+	 */
+	function GetPrivateThread($ArticleId)
+	{
+		return $this->comments_model->GetThreadByLinkTable(
+			'articles','article_private_comment_thread_id',
+			array('article_id' => $ArticleId)
+		);
 	}
 
 }

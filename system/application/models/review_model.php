@@ -10,11 +10,6 @@
 **		  : Should probably be something like GetTagGroup($tag_group_id,$order_by (enum 'star','price','user'?],$order_direction)
 **		  : If tag_group_ordered is 1 for a tag group then order by tag_order, otherwise by tag_name
 **		  : 'star' and 'price' are names of tags, ordered by tag_order and tag_name respectively
-**		  : user rating comes from a join like this (left join in case the the organisation is unrated):
-**				LEFT JOIN comment_summary_cache
-**				ON comment_summary_cache.comment_summary_cache_content_type_id = tag_groups.tag_group_content_type_id
-**				   AND comment_summary_cache.comment_summary_cache_organisation_entity_id = organisations.organisation_entity_id
-**				   AND comment_summary_cache.comment_summary_cache_article_id IS NULL
 **		  : I've added this in to your GetLeague function :-)
 **		  Get some sleep
 */
@@ -302,32 +297,36 @@ class Review_model extends Model {
 		# organisation image?
 		$sql = '
 				SELECT
-				organisations.organisation_name,
-				organisation_contents.organisation_content_url,
-				review_context_contents.review_context_content_blurb as organisation_description,
-				review_context_contents.review_context_content_rating,
-				organisations.organisation_directory_entry_name,
-				league_entries.league_entry_position,
-				leagues.league_name,
-				leagues.league_image_id,
-				content_types.content_type_name,
-				content_types.content_type_codename,
-				comment_summary_cache.comment_summary_cache_average_rating
+					organisations.organisation_name,
+					organisation_contents.organisation_content_url,
+					review_context_contents.review_context_content_blurb as organisation_description,
+					review_context_contents.review_context_content_rating,
+					organisations.organisation_directory_entry_name,
+					league_entries.league_entry_position,
+					leagues.league_name,
+					leagues.league_image_id,
+					content_types.content_type_name,
+					content_types.content_type_codename,
+					IF (thread.comment_thread_num_ratings > 0,
+						thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
+						NULL) AS average_user_rating
 				FROM content_types
 				INNER JOIN review_context_contents
-				ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
+					ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
 				INNER JOIN organisations
-				ON organisations.organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
+					ON organisations.organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			    INNER JOIN organisation_contents 
-			    ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
+			    	ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
 				INNER JOIN league_entries
-				ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
+					ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
 				INNER JOIN leagues
-				ON leagues.league_id = league_entries.league_entry_league_id AND content_types.content_type_id = leagues.league_content_type_id
-				LEFT JOIN comment_summary_cache
-				ON comment_summary_cache.comment_summary_cache_content_type_id = content_types.content_type_id
-				   AND comment_summary_cache.comment_summary_cache_organisation_entity_id = organisations.organisation_entity_id
-				   AND comment_summary_cache.comment_summary_cache_article_id IS NULL
+					ON leagues.league_id = league_entries.league_entry_league_id
+					AND content_types.content_type_id = leagues.league_content_type_id
+				INNER JOIN review_contexts
+					ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+					AND review_contexts.review_context_content_type_id = content_types.content_type_id
+				LEFT JOIN comment_threads
+					ON comment_threads.comment_thread_id = review_contexts.review_context_comment_thread_id
 				WHERE leagues.league_codename = ?
 				ORDER BY ? ?
 				';
@@ -346,8 +345,8 @@ class Review_model extends Model {
 		$tmpleague['content_type_codename']	   = $row->content_type_codename;
 		$tmpleague['review_rating'] = $row->review_context_content_rating;
 		$tmpleague['average_user_rating'] = 0;
-		if ($row->comment_summary_cache_average_rating != '')
-			$tmpleague['average_user_rating']	   = $row->comment_summary_cache_average_rating;
+		if ($row->average_user_rating != '')
+			$tmpleague['average_user_rating']	   = $row->average_user_rating;
 		$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
 		$league[]                              = $tmpleague;
 	}
@@ -493,35 +492,6 @@ class Review_model extends Model {
 		return $user;
 	}
 
-	//Gets comments from database, frb501
-	function GetComments($organisation_name, $type, $article_id)
-	{
-		$sql = "SELECT comment_id, comment_text, comment_timestamp, comment_user_entity_id, comment_rating, comment_reported_count FROM comments WHERE comment_organisation_entity_id = ? AND comment_content_type_id = ? AND comment_article_id = ? AND comment_deleted = 0 ORDER BY comment_timestamp DESC";
-		$query = $this->db->query($sql,array($this->FindOrganisationID($organisation_name),$type,$article_id));
-
-		if ($query->num_rows() > 0)
-		{
-			$commentno = 0;
-			foreach ($query->result() as $row)
-			{
-				$comments[$commentno]['comment_author'] = $this->TranslateUserIDToName($row->comment_user_entity_id);
-				$comments[$commentno]['comment_id'] = $row->comment_id;
-				$comments[$commentno]['comment_rating'] = $row->comment_rating;
-				$comments[$commentno]['comment_date'] = $row->comment_timestamp;
-				$comments[$commentno]['comment_content'] = $row->comment_text;
-				$comments[$commentno]['comment_reported_count'] = $row->comment_reported_count;
-				$commentno++;
-			}
-
-			return $comments;
-		}
-		else
-		{
-			$nocomments = array();
-			return $nocomments;
-		}
-	}
-
 	//For generating table list for front pages, frb501
 
 	//Pre condition: A entry in the content_type table e.g. 'food' or 'drink'
@@ -601,17 +571,6 @@ class Review_model extends Model {
 
 		//Return the result
 		return $tag_group;
-	}
-
-	function ReportComment($comment_id)
-	{
-		$sql = 'SELECT comment_reported_count FROM comments WHERE comment_id = ?';
-		$query = $this->db->query($sql,$comment_id);
-		$query = $query->result_array();
-		$query = $query[0]['comment_reported_count'];
-		$newcount = $query + 1;
-		$sql = 'UPDATE comments SET comment_reported_count = ? WHERE comment_id = ?';
-		$this->db->query($sql,array($newcount,$comment_id));
 	}
 
 	//For adding tags in the back pages, frb501
@@ -819,58 +778,6 @@ function GetTagOrganisation($type,$organisation)
 		$this->db->query($sql,array($organisation_id, $tag_id));
 	}
 
-	//Gets the current average user rating for a article
-	function GetUserRating($article_id)
-	{
-		$sql = 'SELECT comment_summary_cache_comment_count,comment_summary_cache_average_rating FROM comment_summary_cache WHERE comment_summary_cache_article_id = ?';
-		$query = $this->db->query($sql,$article_id);
-		if ($query->result_array() == array()) return 0; //Not rated yet
-
-		$query = $query->result_array();
-		$query = $query[0];
-
-		return array($query['comment_summary_cache_average_rating'],$query['comment_summary_cache_comment_count']);
-	}
-
-	//Adds a comment to the database, frb501
-	function SetComment($post_data)
-	{
-		$comment['comment_content_type_id'] = $post_data['comment_type_id'];
-		$comment['comment_organisation_entity_id'] = $post_data['comment_organisation_id'];
-		$comment['comment_article_id'] = $post_data['comment_article_id'];
-		$comment['comment_user_entity_id'] = $post_data['comment_user_entity_id'];
-		$comment['comment_text'] = $post_data['comment_text'];
-		$comment['comment_rating'] = $post_data['comment_rating'];
-		$this->db->insert('comments',$comment); //Add users comment to database
-
-		//Set cache table
-		$sql = 'SELECT comment_rating FROM comments WHERE comment_article_id = ?';
-		$query = $this->db->query($sql,$comment['comment_article_id']);
-		if ($query->result_array() == array()) return 0; //Not rated yet
-
-		$num = 0; $sum = 0;
-
-		foreach ($query->result_array() as $row)
-		{
-			$num++;
-			$sum += $row['comment_rating'];
-		}
-
-		$average_rating = ceil($sum / $num);
-
-		$sql = 'INSERT INTO comment_summary_cache (comment_summary_cache_content_type_id 	,comment_summary_cache_organisation_entity_id,comment_summary_cache_article_id,comment_summary_cache_comment_count,comment_summary_cache_average_rating) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE comment_summary_cache_comment_count = ?, comment_summary_cache_average_rating = ?';
-
-		$this->db->query($sql,array($comment['comment_content_type_id'],$comment['comment_organisation_entity_id'],$comment['comment_article_id'],$num,$average_rating,$num,$average_rating));
-	}
-
-	//Logically deletes a comment from the database
-	function DeleteComment($comment_id)
-	{
-		$sql = 'UPDATE comments SET comment_deleted = 1 WHERE comment_id = ?';
-		$this->db->query($sql,$comment_id);
-	}
-
-
 	//Gets a table review for a section which is sorted depending on parameters
 	function GetTableReview($content_type_codename,$sorted_by = 'any',$item_filter_by = 'any',$where_equal_to = 'any')
 	{
@@ -889,7 +796,9 @@ function GetTagOrganisation($type,$organisation)
 			break;
 
 			case 'user':
-				$sort_sql = 'ORDER BY csc.comment_summary_cache_average_rating DESC, ';
+				$sort_sql = 'ORDER BY IF (thread.comment_thread_num_ratings > 0,
+					thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
+					NULL) DESC, ';
 			break;
 
 			case 'any':
@@ -898,29 +807,39 @@ function GetTagOrganisation($type,$organisation)
 
 			default:
 				$sort_sql = 'ORDER BY correct_tag, t.tag_name, ';
-				$escaped_tag_group_name = mysql_real_escape_string($sorted_by);
-				$select_tag_group = ", IF(tg.tag_group_name ='".$escaped_tag_group_name."',0,1) AS correct_tag";
+				$select_tag_group = ', IF(tg.tag_group_name ='.$this->db->escape($sorted_by).',0,1) AS correct_tag';
 			break;
 		}
 
 		$sql = '
-			SELECT o.organisation_entity_id, o.organisation_name, oc.organisation_content_url, o.organisation_directory_entry_name,tg.tag_group_name,t.tag_name,
-			rcc.review_context_content_rating, csc.comment_summary_cache_average_rating'.$select_tag_group.'
+			SELECT
+				o.organisation_entity_id,
+				o.organisation_name,
+				oc.organisation_content_url,
+				o.organisation_directory_entry_name,
+				tg.tag_group_name,t.tag_name,
+				rcc.review_context_content_rating,
+				IF (thread.comment_thread_num_ratings > 0,
+					thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
+					NULL) AS average_user_rating'.
+				$select_tag_group.'
 			FROM content_types AS ct
 			INNER JOIN review_context_contents AS rcc
-			ON ct.content_type_id = rcc.review_context_content_content_type_id
+				ON ct.content_type_id = rcc.review_context_content_content_type_id
 			INNER JOIN organisations AS o
-			ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
+				ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
 			INNER JOIN organisation_contents AS oc
-			ON o.organisation_live_content_id = oc.organisation_content_id
-			LEFT JOIN comment_summary_cache AS csc
-			ON csc.comment_summary_cache_content_type_id = ct.content_type_id
-			AND csc.comment_summary_cache_organisation_entity_id = o.organisation_entity_id 
+				ON o.organisation_live_content_id = oc.organisation_content_id
+			INNER JOIN review_contexts
+				ON review_contexts.review_context_organisation_entity_id = o.organisation_entity_id
+				AND review_contexts.review_context_content_type_id = ct.content_type_id
+			LEFT JOIN comment_threads AS thread
+				ON thread.comment_thread_id = review_contexts.review_context_comment_thread_id 
 			LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
 			INNER JOIN tags AS t
-			ON t.tag_id = ot.organisation_tag_tag_id
+				ON t.tag_id = ot.organisation_tag_tag_id
 			INNER JOIN tag_groups AS tg
-			ON tg.tag_group_id = t.tag_tag_group_id
+				ON tg.tag_group_id = t.tag_tag_group_id
 			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id 
 			WHERE ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
@@ -1075,6 +994,25 @@ function GetTagOrganisation($type,$organisation)
 	$bar_list[3]['bar_drink_cost'] = 350;
 
 	return $bar_list;
+	}
+	
+	
+	/// Get information about the private comments thread.
+	/**
+	 * @param $OrganisationId int ID of the organisation.
+	 * @param $ContentTypeId int ID of the content type.
+	 * @pre loaded(model comments_model)
+	 * @return Same as comments_model::GetThreadByLinkTable
+	 */
+	function GetReviewContextCommentThread($OrganisationId, $ContentTypeId)
+	{
+		return $this->comments_model->GetThreadByLinkTable(
+			'review_contexts','review_context_comment_thread_id',
+			array(
+				'review_context_organisation_entity_id'	=> $OrganisationId,
+				'review_context_content_type_id'		=> $ContentTypeId,
+			)
+		);
 	}
 
 }

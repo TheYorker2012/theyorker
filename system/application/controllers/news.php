@@ -27,7 +27,7 @@ class News extends Controller {
 		}
 	}
 
-	function index($article_type = 'uninews')
+	function index($article_type = 'uninews', $CommentInclude = 0)
 	{
 		// Load public view
 		if (!CheckPermissions('public')) return;
@@ -119,6 +119,17 @@ class News extends Controller {
 		for ($index = 3; $index < count($latest_article_ids); $index++) {
 			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index], "Left"));
 		}
+		
+		// Get comments
+		if (is_numeric($main_article['public_thread_id'])) {
+			$this->load->library('comments');
+			$CommentInclude = $this->uri->segment(4);
+			if (FALSE === $CommentInclude) {
+				$CommentInclude = NULL;
+			}
+			$this->comments->SetUri('/news/'.$article_type.'/'.$latest_article_ids[0].'/');
+			$data['comments'] = $this->comments->CreateStandard((int)$main_article['public_thread_id'], $CommentInclude);
+		}
 
 		/// Gather all the data into an array to be passed to the view
 		$data['main_article'] = $main_article;
@@ -148,6 +159,7 @@ class News extends Controller {
 	/// RSS Feed Generation
 	function rss()
 	{
+		header('Content-type: application/rss+xml');
 		$data['rss_title'] = 'York Uni Campus News';
 		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
 		$data['rss_desc'] = 'All the news you need to know about from York University\'s Campus!';

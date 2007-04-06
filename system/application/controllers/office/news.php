@@ -666,7 +666,13 @@ class News extends Controller
 			$this->pages_model->SetPageCode('office_news_article');
 			$data['request_heading'] = $this->pages_model->GetPropertyText('request_heading');
 
-			$data['comments'] = $this->article_model->GetArticleComments($article_id);
+			/// @todo jh559,cdt502 ajaxify comments
+			$this->load->library('comments');
+			$thread = $this->news_model->GetPrivateThread($article_id);
+			$this->comments->SetUri('/office/news/'.$article_id.'/');
+			/// @todo jh559,cdt502 comment pages (page hardwired to 1 atm)
+			$data['comments'] = $this->comments->CreateStandard($thread, /* included comment */ 0);
+			
 			$data['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
 			$revision = $this->article_model->GetLatestRevision($article_id);
 			if (!$revision) {
