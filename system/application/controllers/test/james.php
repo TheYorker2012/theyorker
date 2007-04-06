@@ -105,7 +105,7 @@ class James extends controller
 		$this->main_frame->Load();
 	}
 	
-	function addcomments($place)
+	function addthreads($place)
 	{
 		if (!CheckPermissions('admin')) return;
 		$this->load->model('comments_model');
@@ -121,7 +121,7 @@ class James extends controller
 				'article_public_comment_thread_id'
 			);
 			$this->messages->AddDumpMessage('public result', $result);
-			$this->comments_model->CreateThreads(
+			$result = $this->comments_model->CreateThreads(
 				array(
 					'allow_ratings' => TRUE,
 					'allow_comments' => TRUE,
@@ -132,6 +132,19 @@ class James extends controller
 				'article_private_comment_thread_id'
 			);
 			$this->messages->AddDumpMessage('private result', $result);
+			
+		} elseif ($place == 'review_contexts') {
+			$result = $this->comments_model->CreateThreads(
+				array(
+					'allow_ratings' => TRUE,
+					'allow_comments' => TRUE,
+					'allow_anonymous_comments' => TRUE,
+				),
+				'review_contexts',
+				array('review_context_organisation_entity_id', 'review_context_content_type_id'),
+				'review_context_comment_thread_id'
+			);
+			$this->messages->AddDumpMessage('review_contexts', $result);
 		}
 		$this->main_frame->Load();
 	}
