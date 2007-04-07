@@ -27,6 +27,17 @@ class Calendar extends Controller {
 		$this->days();
 	}
 	
+	function add()
+	{
+		if (!CheckPermissions('student')) return;
+		
+		$data = array();
+		
+		$this->main_frame->SetContentSimple('calendar/simpleadd',$data);
+		
+		$this->main_frame->Load();
+	}
+	
 	function day()
 	{
 		if (!CheckPermissions('public')) return;
