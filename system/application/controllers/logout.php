@@ -21,13 +21,9 @@ class Logout extends Controller
 	/**
 	 * @note Duplicated from login
 	 */
-	function _redirect($FirstSegment = 3)
+	function _redirect($FirstSegment = 2)
 	{
-		$uri_target = '';
-		for ($segment_counter = $FirstSegment; $segment_counter <= $this->uri->total_segments(); ++$segment_counter) {
-			$uri_target .= $this->uri->slash_segment($segment_counter);
-		}
-		redirect($uri_target);
+		redirect(implode('/', array_slice($this->uri->rsegment_array(), $FirstSegment)));
 	}
 
 	/// Logout from main account

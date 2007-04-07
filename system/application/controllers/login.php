@@ -18,14 +18,9 @@ class Login extends Controller
 	/**
 	 * @note Duplicated from logout
 	 */
-	function _redirect($FirstSegment = 3)
+	function _redirect($FirstSegment = 2)
 	{
-		$segments = $this->uri->rsegment_array();
-		while ($FirstSegment > 1) {
-			array_shift($segments);
-			--$FirstSegment;
-		}
-		return implode('/',$segments);
+		return implode('/', array_slice($this->uri->rsegment_array(), $FirstSegment));
 	}
 
 	/// Main login screen.
@@ -63,7 +58,7 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
-		LoginHandler('vip', $this->_redirect(4), $Organisation);
+		LoginHandler('vip', $this->_redirect(3), $Organisation);
 	}
 
 	/// Office login screen.

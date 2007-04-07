@@ -336,14 +336,14 @@ class Comments
 	 * @param $CommentInclude int Number of a comment to include.
 	 * @return FramesView,NULL View class or NULL if unsuccessful
 	 */
-	function CreateStandard(&$ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
+	function CreateStandard($ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
 	{
 		// get comments + thread
 		$CI = & get_instance();
 		if (is_int($ThreadId)) {
 			$thread = $CI->comments_model->GetThreadById($ThreadId);
 		} else {
-			$thread = & $ThreadId;
+			$thread = $ThreadId;
 		}
 		if (NULL === $thread) {
 			return NULL;

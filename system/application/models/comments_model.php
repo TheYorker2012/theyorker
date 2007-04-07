@@ -172,7 +172,7 @@ class Comments_model extends model
 		$user_id = ($this->user_auth->isLoggedIn ? $this->user_auth->entityId : NULL);
 		return 'LEFT JOIN comment_ratings as '.$rating_alias.'
 			ON '.$rating_alias.'.comment_rating_comment_thread_id = '.$thread_alias.'.comment_thread_id
-			AND '.$rating_alias.'.comment_rating_author_entity_id = '.$user_id;
+			AND '.$rating_alias.'.comment_rating_author_entity_id = '.$this->db->escape($user_id);
 	}
 	
 	/// Get thread information from the thread id.
