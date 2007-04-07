@@ -55,7 +55,7 @@ class CommentViewThread extends FramesView
 		if (is_numeric($user_rating_value)) {
 			$user_rating_value = (int)$user_rating_value;
 			$verb = 'set';
-		} elseif ($user_rating_value = 'no') {
+		} elseif ('no' === $user_rating_value) {
 			$user_rating_value = NULL;
 			$verb = 'removed';
 		} else {
