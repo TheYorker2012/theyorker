@@ -87,24 +87,6 @@ class James extends controller
 		}
 	}
 	
-	function trig($CommentInclude = 1)
-	{
-		if (!CheckPermissions('public')) return;
-		
-		// Get thread
-		$thread_id = 1;
-		
-		$this->load->library('comments');
-		
-		$this->comments->SetUri('/test/james/trig/');
-		$this->main_frame->SetContent(
-			$this->comments->CreateStandard($thread_id, $CommentInclude)
-		);
-	
-		// Load view
-		$this->main_frame->Load();
-	}
-	
 	function addthreads($place)
 	{
 		if (!CheckPermissions('admin')) return;

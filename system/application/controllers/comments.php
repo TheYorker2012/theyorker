@@ -18,22 +18,23 @@ class Comments extends Controller
 	 *
 	 * @todo Do human test.
 	 */
-	function report($CommentId)
+	function report($ThreadId = NULL, $CommentId = NULL)
 	{
+		if (!is_numeric($CommentId) || !is_numeric($ThreadId)) {
+			return show_404();
+		}
 		$this->load->model('comments_model');
 		$this->load->library('messages');
 		
-		if (is_numeric($CommentId)) {
-			$result = $this->comments_model->ReportCommentInThread((int)$CommentId, 1);
-			if ($result) {
-				$this->messages->AddMessage('success', 'Comment has been reported.');
-			} else {
-				$this->messages->AddMessage('error', 'Comment could not be reported.');
-			}
+		$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
+		if ($result) {
+			$this->messages->AddMessage('success', 'Comment has been reported.');
+		} else {
+			$this->messages->AddMessage('error', 'Comment could not be reported.');
 		}
 		
 		// From login controller (should be put in helper)
-		$FirstSegment = 4;
+		$FirstSegment = 5;
 		$segments = $this->uri->rsegment_array();
 		while ($FirstSegment > 1) {
 			array_shift($segments);

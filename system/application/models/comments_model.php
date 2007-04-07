@@ -334,6 +334,7 @@ class Comments_model extends model
 		$sql = '
 		SELECT
 			comments.comment_id as comment_id,
+			comments.comment_comment_thread_id as thread_id,
 			comments.comment_content_wikitext AS wikitext,
 			comments.comment_content_xhtml AS xhtml,
 			UNIX_TIMESTAMP(comments.comment_post_time) AS post_time,

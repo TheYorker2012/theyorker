@@ -45,7 +45,7 @@ if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Commen
 } else {
 	// Don't link to report properly if only a preview.
 	if (is_numeric($Comment['comment_id'])) {
-		$report_link = ' href="'.$ReportUrlPrefix.$Comment['comment_id'].$ReportUrlPostfix.'"';
+		$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
 	} else {
 		$report_link = '';
 	}
