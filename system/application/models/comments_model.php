@@ -33,18 +33,26 @@ class Comments_model extends model
 			'DROP TRIGGER comment_ratings_update',
 			'CREATE TRIGGER comment_ratings_update BEFORE UPDATE ON comment_ratings
 				FOR EACH ROW BEGIN
-					UPDATE comment_threads SET
-						comment_threads.comment_thread_total_rating
-							= comment_threads.comment_thread_total_rating - OLD.comment_rating_value,
-						comment_threads.comment_thread_num_ratings
-							= comment_threads.comment_thread_num_ratings - 1
-						WHERE comment_threads.comment_thread_id = OLD.comment_rating_comment_thread_id;
-					UPDATE comment_threads SET
-						comment_threads.comment_thread_total_rating
-							= comment_threads.comment_thread_total_rating + NEW.comment_rating_value,
-						comment_threads.comment_thread_num_ratings
-							= comment_threads.comment_thread_num_ratings + 1
-						WHERE comment_threads.comment_thread_id = NEW.comment_rating_comment_thread_id;
+					IF OLD.comment_rating_comment_thread_id = NEW.comment_rating_comment_thread_id THEN
+						UPDATE comment_threads SET
+							comment_threads.comment_thread_total_rating
+								= comment_threads.comment_thread_total_rating
+								+ (NEW.comment_rating_value - OLD.comment_rating_value)
+							WHERE comment_threads.comment_thread_id = OLD.comment_rating_comment_thread_id;
+					ELSE
+						UPDATE comment_threads SET
+							comment_threads.comment_thread_total_rating
+								= comment_threads.comment_thread_total_rating - OLD.comment_rating_value,
+							comment_threads.comment_thread_num_ratings
+								= comment_threads.comment_thread_num_ratings - 1
+							WHERE comment_threads.comment_thread_id = OLD.comment_rating_comment_thread_id;
+						UPDATE comment_threads SET
+							comment_threads.comment_thread_total_rating
+								= comment_threads.comment_thread_total_rating + NEW.comment_rating_value,
+							comment_threads.comment_thread_num_ratings
+								= comment_threads.comment_thread_num_ratings + 1
+							WHERE comment_threads.comment_thread_id = NEW.comment_rating_comment_thread_id;
+					END IF;
 				END',
 			
 			'DROP TRIGGER comment_ratings_delete',
@@ -148,6 +156,7 @@ class Comments_model extends model
 			'.$thread_alias.'.comment_thread_allow_comments AS allow_comments,
 			'.$thread_alias.'.comment_thread_allow_anonymous_comments AS allow_anonymous_comments,
 			'.$thread_alias.'.comment_thread_num_ratings AS num_ratings,
+			'.$thread_alias.'.comment_thread_total_rating AS total_rating,
 			IF ('.$thread_alias.'.comment_thread_num_ratings > 0,
 				'.$thread_alias.'.comment_thread_total_rating / '.$thread_alias.'.comment_thread_num_ratings,
 				NULL) AS average_rating,

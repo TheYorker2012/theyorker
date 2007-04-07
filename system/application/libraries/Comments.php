@@ -35,9 +35,9 @@ class CommentViewThread extends FramesView
 	/**
 	 * @param $Thread array Thread information.
 	 */
-	function SetThread($Thread)
+	function SetThread(&$Thread)
 	{
-		$this->mThread = $Thread;
+		$this->mThread = & $Thread;
 	}
 	
 	/// Check for comment adding post data.
@@ -49,17 +49,44 @@ class CommentViewThread extends FramesView
 		$CI = & get_instance();
 		// read rating post data for thread
 		$user_rating_value = $CI->input->post('UserRatingValue');
+		if (is_numeric($this->mThread['user_rating'])) {
+			$this->mThread['user_rating'] = (int)$this->mThread['user_rating'];
+		}
 		if (is_numeric($user_rating_value)) {
 			$user_rating_value = (int)$user_rating_value;
+			$verb = 'set';
+		} elseif ($user_rating_value = 'no') {
+			$user_rating_value = NULL;
+			$verb = 'removed';
+		} else {
+			$user_rating_value = $this->mThread['user_rating'];
+		}
+		$changed = ($user_rating_value !== $this->mThread['user_rating']);
+		if ($changed) {
 			$result = $CI->comments_model->SetUserRating($this->mThreadId, $user_rating_value);
 			if (FALSE !== $result) {
-				$CI->messages->AddMessage('information','Your rating has been set');
+				$CI->messages->AddMessage('information','Your rating has been '.$verb);
+				// Update thread object
+				// old value not NULL: remove
+				if (NULL !== $this->mThread['user_rating']) {
+					--$this->mThread['num_ratings'];
+					$this->mThread['total_rating'] -= $this->mThread['user_rating'];
+				}
+				// new value not NULL: insert
+				if (NULL !== $user_rating_value) {
+					++$this->mThread['num_ratings'];
+					$this->mThread['total_rating'] += $user_rating_value;
+				}
+				// new value and update average
+				$this->mThread['user_rating'] = $user_rating_value;
+				if ($this->mThread['num_ratings'] > 0) {
+					$this->mThread['average_rating'] = $this->mThread['total_rating']/$this->mThread['num_ratings'];
+				} else {
+					$this->mThread['average_rating'] = NULL;
+				}
 			} else {
 				$CI->messages->AddMessage('error', 'Invalid user rating');
 			}
-		} elseif ($user_rating_value == 'no') {
-			$CI->comments_model->SetUserRating($this->mThreadId, NULL);
-			$CI->messages->AddMessage('information','Your rating has been removed');
 		}
 	}
 	
@@ -114,9 +141,9 @@ class CommentViewAdd extends FramesView
 	/**
 	 * @param $Thread array Thread information.
 	 */
-	function SetThread($Thread)
+	function SetThread(&$Thread)
 	{
-		$this->mThread = $Thread;
+		$this->mThread = & $Thread;
 	}
 	
 	/// Check for comment adding post data.
@@ -309,14 +336,14 @@ class Comments
 	 * @param $CommentInclude int Number of a comment to include.
 	 * @return FramesView,NULL View class or NULL if unsuccessful
 	 */
-	function CreateStandard($ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
+	function CreateStandard(&$ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
 	{
 		// get comments + thread
 		$CI = & get_instance();
 		if (is_int($ThreadId)) {
 			$thread = $CI->comments_model->GetThreadById($ThreadId);
 		} else {
-			$thread = $ThreadId;
+			$thread = & $ThreadId;
 		}
 		if (NULL === $thread) {
 			return NULL;
@@ -329,14 +356,14 @@ class Comments
 		$comment_view_add    = new CommentViewAdd($thread_id);
 		$comment_view_list   = new CommentViewList();
 		
-		// handle any form post data
-		$comment_view_add->CheckPost();
-		$comment_view_thread->CheckPost();
-		
 		// send the data to the views
 		$comment_view_list->SetComments($comments);
 		$comment_view_add->SetThread($thread);
 		$comment_view_thread->SetThread($thread);
+		
+		// handle any form post data
+		$comment_view_add->CheckPost();
+		$comment_view_thread->CheckPost();
 		
 		// set which page of comments to show
 		$comment_view_list->SetMaxPerPage($MaxPerPage);
