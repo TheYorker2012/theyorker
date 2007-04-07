@@ -18,7 +18,7 @@ if ($Thread['allow_ratings']) {
 	echo('<div class="BlueBox">');
 	echo('<h2>User comments/ratings</h2>');
 	if (NULL !== $Thread['average_rating']) {
-		echo('<p>Average rating of '.$Thread['average_rating'].' from '.
+		echo('<p>Average rating of '.sprintf('%.1f',$Thread['average_rating']).' from '.
 			$Thread['num_ratings'].' user ratings</p>');
 	}
 	if (!$LoggedIn) {

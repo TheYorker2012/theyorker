@@ -524,7 +524,7 @@ class Comments_model extends model
 	 * @param $CommentId int ID of the comment.
 	 * @return int Number of affected rows.
 	 */
-	function GoodenCommentInThread($CommentId, $Good = TRUE)
+	function GoodenComment($CommentId, $Good = TRUE)
 	{
 		/// @pre is_int(@a $CommentId)
 		assert('is_int($CommentId)');
@@ -541,7 +541,7 @@ class Comments_model extends model
 	 * @param $CommentId int ID of the comment.
 	 * @return int Number of affected rows.
 	 */
-	function DeleteCommentInThread($CommentId, $Deleted = TRUE)
+	function DeleteComment($CommentId, $Deleted = TRUE)
 	{
 		/// @pre is_int(@a $CommentId)
 		assert('is_int($CommentId)');

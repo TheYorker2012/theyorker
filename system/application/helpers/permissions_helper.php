@@ -193,6 +193,14 @@ function VipMode($SetMode = FALSE)
  */
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
+	// Translate some auxilliary permissions
+	$auxilliary_permissions = array(
+		'moderator' => 'editor',
+	);
+	if (array_key_exists($Permission, $auxilliary_permissions)) {
+		$Permission = $auxilliary_permissions[$Permission];
+	}
+	
 	// Initialisation stuff
 	$CI = &get_instance();
 	$CI->load->library('messages');

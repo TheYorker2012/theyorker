@@ -308,8 +308,14 @@ class CommentViewList extends FramesView
 		$this->SetData('PageUrlPrefix', $CI->comments->GetUriPrefix());
 		$this->SetData('PageUrlPostfix', $CI->comments->GetUriPostfix());
 		// for subviews (comments)
-		$this->SetData('ReportUrlPrefix', '/comments/report/');
-		$this->SetData('ReportUrlPostfix', $CI->uri->uri_string());
+		foreach (array(	'Report'	=> 'report',
+						'Delete'	=> 'delete',
+						'Undelete'	=> 'undelete',
+						'Good'		=> 'flaggood',
+						'Ungood'	=> 'unflaggood') as $key => $value) {
+			$this->SetData($key.'UrlPrefix', '/comments/'.$value.'/');
+			$this->SetData($key.'UrlPostfix', $CI->uri->uri_string());
+		}
 		
 		parent::Load();
 	}

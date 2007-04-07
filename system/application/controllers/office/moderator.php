@@ -9,8 +9,6 @@
 /// Moderator controller.
 class Moderator extends controller
 {
-	private static $ModeratorLevel = 'editor';
-	
 	/// Default function
 	/**
 	 * Show a moderators control panel.
@@ -18,7 +16,8 @@ class Moderator extends controller
 	 */
 	function index()
 	{
-		if (!CheckPermissions(self::$ModeratorLevel)) return;
+		if (!CheckPermissions('moderator')) return;
+		$this->pages_model->SetPageCode('office_moderator_index');
 		$this->main_frame->SetContentSimple('office/moderator/index');
 		$this->main_frame->Load();
 	}
@@ -33,11 +32,11 @@ class Moderator extends controller
 	 */
 	function comment($Comment = 'reported', $CommentInclude = 1)
 	{
-		$valids = array('reported','deleted');
+		$valids = array('reported','deleted','good');
 		if (!in_array($Comment, $valids)) {
 			show_404();
 		}
-		if (!CheckPermissions('editor')) return;
+		if (!CheckPermissions('moderator')) return;
 		
 		$this->load->library('comments');
 		
@@ -47,10 +46,12 @@ class Moderator extends controller
 		$comment_view_list   = new CommentViewList();
 		
 		// get comments + thread
-		if ($Comment === 'reported') {
+		if ('reported' === $Comment) {
 			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'reported');
-		} else {
+		} elseif ('deleted' === $Comment) {
 			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array('comments.comment_deleted=TRUE'));
+		} elseif ('good' === $Comment) {
+			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array('comments.comment_good=TRUE'));
 		}
 		
 		// send the data to the views
@@ -73,7 +74,7 @@ class Moderator extends controller
 	 */
 	function thread($Thread = NULL)
 	{
-		if (!CheckPermissions(self::$ModeratorLevel)) return;
+		if (!CheckPermissions('moderator')) return;
 		$this->main_frame->Load();
 	}
 }
