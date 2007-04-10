@@ -224,6 +224,49 @@ class Charity extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
+	
+	function setcurrent()
+	{
+		if (!CheckPermissions('office')) return;
+
+		/* Sets the current charity
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the name of the new charity
+    		   - r_submit_makecurrent => the name of the submit button
+		*/
+		if (isset($_POST['r_submit_makecurrent']))
+		{
+			//load the required models
+			$this->load->model('charity_model','charity_model');
+
+			//set the new current charity
+			$this->charity_model->SetCharityCurrent($_POST['r_charityid']);
+
+			//return to form submit page and pass success message
+			$this->main_frame->AddMessage('success','Current charity set.');
+			redirect($_POST['r_redirecturl']);
+		}
+		/* Deletes the given charity
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the name of the new charity
+    		   - r_submit_delete => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_delete']))
+		{
+			//load the required models
+			$this->load->model('charity_model','charity_model');
+
+			//set the new current charity
+			$this->charity_model->DeleteCharity($_POST['r_charityid']);
+
+			//return to form submit page and pass success message
+			$this->main_frame->AddMessage('success','Charity deleted.');
+			redirect($_POST['r_redirecturl']);
+		}
+
+	}
 
 	/**
 	 * This function adds a new charity to the database.

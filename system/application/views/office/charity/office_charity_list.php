@@ -7,7 +7,11 @@
 	<?php
 	foreach ($charities as $charity)
 	{
-		echo '<form class="form" action="/office/charity/'.$charity['id'].'" method="post" >
+		echo '<form class="form" action="/office/charity/setcurrent" method="post" >
+		<fieldset>
+			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
+			<input type="hidden" name="r_charityid" value="'.$charity['id'].'" />
+		</fieldset>
 		<fieldset>
 			<label for="r_submit_delete"><a href="/office/charity/edit/'.$charity['id'].'">'.$charity['name'].'</a></label>
 			<input type="submit" value="Delete" class="button" name="r_submit_delete" />';

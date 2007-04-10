@@ -42,7 +42,8 @@ class Charity_model extends Model
 	{
 		$sql = 'SELECT	charity_id
 			FROM	charities
-			WHERE	charity_current
+			WHERE	charity_current = 1
+			AND	charity_deleted = 0
 			LIMIT 0,1';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() == 1)
@@ -62,6 +63,7 @@ class Charity_model extends Model
 				charity_id,
 				charity_current
 			FROM	charities
+			WHERE	charity_deleted = 0
 			ORDER BY charity_name ASC';
 		$query = $this->db->query($sql);
 		$result = array();
@@ -108,6 +110,40 @@ class Charity_model extends Model
 				charity_goal_text = ?
 			WHERE	charity_id = ?';
 		$this->db->query($sql,array($name, $goal, $goaltext, $id));
+	}
+
+        /**
+	 * Sets the charity with id to the current one.
+	 * @param $id the id of the charity
+	 */
+	function SetCharityCurrent($id)
+	{
+		$this->db->trans_start();
+		//set all charities to non current
+		$sql = 'UPDATE 	charities
+			SET	charity_current = 0';
+		$this->db->query($sql);
+		//set the new current charity
+		$sql = 'UPDATE 	charities
+			SET	charity_current = 1
+			WHERE	charity_id = ?';
+		$this->db->query($sql,array($id));
+		$this->db->trans_complete();
+	}
+
+        /**
+	 * Deletes the charity with id.
+	 * @param $id the id of the charity
+	 */
+	function DeleteCharity($id)
+	{
+		//set the charity to deleted
+		$sql = 'UPDATE 	charities
+			SET	charity_deleted = 1,
+				charity_current = 0
+			WHERE	charity_id = ?';
+		$this->db->query($sql,array($id));
+		$this->db->trans_complete();
 	}
 
 	/*****************************************************
