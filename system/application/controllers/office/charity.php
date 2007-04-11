@@ -72,6 +72,11 @@ class Charity extends Controller
 		//get charity from given id
 		$data['charity'] = $this->charity_model->GetCharity($charity_id);
 		$data['charity']['id'] = $charity_id;
+		
+		if ($data['charity']['target'] == 0)
+			$data['charity']['progresspc'] = 0;
+		else
+			$data['charity']['progresspc'] = ($data['charity']['current']/$data['charity']['target'])*100;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -111,6 +116,9 @@ class Charity extends Controller
 		//get the header of the charities article and revisions
 		$data['article']['header'] = $this->article_model->GetArticleHeader($data['charity']['article']);
 		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($data['charity']['article']);
+			
+		//set the default revision to false
+		$data['article']['displayrevision'] = FALSE;
 
 		//if the revision id is set to the default
 		if ($revision_id == -1)
@@ -241,11 +249,20 @@ class Charity extends Controller
 			$this->load->model('charity_model','charity_model');
 
 			//set the new current charity
-			$this->charity_model->SetCharityCurrent($_POST['r_charityid']);
+			$result = $this->charity_model->SetCharityCurrent($_POST['r_charityid']);
 
-			//return to form submit page and pass success message
-			$this->main_frame->AddMessage('success','Current charity set.');
-			redirect($_POST['r_redirecturl']);
+			if ($result == true)
+			{
+				//return to form submit page and pass success message
+				$this->main_frame->AddMessage('success','Current charity set.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else
+			{
+				//return to form submit page and pass success message
+				$this->main_frame->AddMessage('error','To set the current charity it must have a published article.');
+				redirect($_POST['r_redirecturl']);
+			}
 		}
 		/* Deletes the given charity
 		   $_POST data passed

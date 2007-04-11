@@ -22,9 +22,9 @@
 	<b>Title: </b>'.$charity['name'].'<br />
 	<b>Current Total: </b>'.$charity['current'].'<br />
 	<b>Goal Total: </b>'.$charity['target'].'<br />
-	<b>Progress To Goal: </b>'.($charity['current']/$charity['target']*100).'%<br />
+	<b>Progress To Goal: </b>'.$charity['progresspc'].'%<br />
 	<b>Goal Text: </b>'.$charity['target_text'].'<br />
-	<a href="/office/charity/#">[Modify]</a>';
+	<a href="/office/charity/modify/'.$charity['id'].'">[Modify]</a>';
 	?>
 </div>
 

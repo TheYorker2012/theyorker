@@ -35,6 +35,18 @@
 	?>
 </div>
 
+<div class="blue_box">
+	<h2>request info</h2>
+	<b>Title: </b><?php echo $article['header']['requesttitle']; ?><br />
+	<b>Description: </b><?php echo $article['header']['requestdescription']; ?><br />
+	<?php
+	if ($user['officetype'] != 'Low')
+	{
+		echo '<a href="/office/charity/editrequest/#">[modify and assign]</a>';
+	}
+	?>
+</div>
+
 <div class="grey_box">
 	<h2>edit charity</h2>
 	<form class="form" action="/office/charity/domodify" method="post" >
