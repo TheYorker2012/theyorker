@@ -21,6 +21,25 @@ function PrintRadioList($input_name, $items, $default, $sessionvar)
 	}
 }
 
+function PrintDropDownList($input_name, $label, $items, $default, $sessionvar)
+{
+	echo '<label for="'.$input_name.'">'.$label.'</label>
+			<select name="'.$input_name.'" size="1">';
+				foreach($items as $item){
+					echo "<option value='".$item['value']."' ";
+						if (isset($_SESSION[$sessionvar][$input_name]) && 
+							$_SESSION[$sessionvar][$input_name] == $item['value']) 
+							echo 'selected';
+						if (isset($_SESSION[$sessionvar][$input_name]) == false &&
+							$item['value'] == $default)
+						{
+							echo 'selected';
+						}
+					echo ">".$item['name']."</option>";
+				}
+	echo "</select><br />";
+}
+
 function PrintTextBox ($input_name, $item, $sessionvar)
 {
 	echo '<label for="'.$input_name.'">'.$item.'</label>';
@@ -89,8 +108,15 @@ function addstrike($text)
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<h3>Type of directory entry</h3>	
-			<?php PrintRadioList('a_type', array('Society', 'Bar', 'Restaurant', 'Other'), 'Society', $session_var); ?>
+			<?php
+			$list_data = array();
+			foreach($organisations as $organisation){
+				$list_data[] = array(
+					'value' => $organisation['organisation_type_id'], 
+					'name' => $organisation['organisation_type_name']
+				);
+			}
+			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 1, $session_var); ?>
 		</fieldset>
 		<fieldset>
 			<h3>Are you connected to this organisation?</h3>
@@ -142,10 +168,9 @@ function addstrike($text)
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<?php PrintTextBox('a_location', 'Campus Location: ', $session_var); ?>
 			<?php PrintTextArea('a_address', 'Address: ', $session_var); ?>
-			<?php PrintTextBox('a_postcode', 'Opening Times: ', $session_var); ?>
-			<?php PrintTextBox('a_opening_times', 'Campus Location: ', $session_var); ?>
+			<?php PrintTextBox('a_postcode', 'Postcode: ', $session_var); ?>
+			<?php PrintTextBox('a_opening_times', 'Opening Times: ', $session_var); ?>
 			<?php PrintTextBox('a_phone_internal', 'Internal Phone: ', $session_var); ?>
 			<?php PrintTextBox('a_phone_external', 'External Phone: ', $session_var); ?>
 			<?php PrintTextBox('a_fax', 'Fax Number: ', $session_var); ?>
@@ -227,8 +252,8 @@ function addstrike($text)
 		1) Choose your map type:
 		<br />
 		<fieldset>
-			<input type="radio" name="a_map_type" onclick="document.getElementById("postcode_div").style.display = "block"; document.getElementById("building_div").style.display = "none";"/> Road Map<br />
-			<input type="radio" name="a_map_type" onclick="document.getElementById("building_div").style.display = "block"; document.getElementById("postcode_div").style.display = "none";"/> Campus Map<br />
+			<input type="radio" name="a_map_type" onclick='document.getElementById("postcode_div").style.display = "block"; document.getElementById("building_div").style.display = "none";'/> Road Map<br />
+			<input type="radio" name="a_map_type" onclick='document.getElementById("building_div").style.display = "block"; document.getElementById("postcode_div").style.display = "none";'/> Campus Map<br />
 		</fieldset>
 		<div id="postcode_div">
 			2) Jump to postcode<br />
@@ -278,7 +303,7 @@ function addstrike($text)
 			<?php PrintTextBox('a_user_name', 'Name: ', $session_var); ?>
 			<?php PrintTextBox('a_user_email', 'Email: ', $session_var); ?>
 			<?php PrintTextArea('a_user_notes', 'Any Notes: ', $session_var); ?>
-			<?php PrintTextBox('a_user_position', 'Position In Society: ', $session_var); ?>
+			<?php PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var); ?>
 			<label for="captcha">Enter The Number: </label>
 			<img src="captcha.jpg" id="captcha" alt="captcha" style="margin-left: 0.7em; margin-top: 0.3em; height: 20px; width: 100px;" /><br />
 		</fieldset>

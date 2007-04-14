@@ -13,8 +13,17 @@ class Organisation extends controller
 	function __construct()
 	{
 		parent::controller();
+		
+		$this->load->model('directory_model');
 	}
-	
+    
+	private function CreateDirectoryEntryName ($long_name){
+		//strip non alpha-numerical symbols
+		$new_string = preg_replace("/[^a-zA-Z0-9s]/", "", $long_name);
+		//replace spaces with an underscore
+		return str_replace(" ", "_", $new_string);
+	}
+    
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
@@ -52,10 +61,54 @@ class Organisation extends controller
 				if ($_POST['r_stage'] == $stage_count)
 				{
 					//finished
-					//##TODO: actually process the form data
+					//##TODO: actually process the form data for photos and maps
+					//Correctly creates organisation and details
 					//all fields in session with a_ in front are submitted data
 					//the maps and photos pages aren't working atm just the standard form submit pages
-					$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+		            if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || empty($_SESSION['org_wizard']['a_user_name']))
+					{
+						$this->messages->AddMessage('error', 'Please include at least a name, description and your name with your suggestion.');
+					} else {
+						//Store post data, so other varibles can be added to the array.
+						$post_data = array(
+							'type_id' => $_SESSION['org_wizard']['a_type'],
+							'name' => $_SESSION['org_wizard']['a_name'],
+							'suggestors_name' => $_SESSION['org_wizard']['a_user_name'],
+							'suggestors_email' => $_SESSION['org_wizard']['a_user_email'],
+							'suggestors_notes' => $_SESSION['org_wizard']['a_user_notes'],
+							'suggestors_position' => $_SESSION['org_wizard']['a_user_position'],
+							'description' => $_SESSION['org_wizard']['a_description'],
+							'postal_address' => $_SESSION['org_wizard']['a_address'],
+							'postcode' => $_SESSION['org_wizard']['a_postcode'],
+							'phone_external' => $_SESSION['org_wizard']['a_phone_external'],
+							'phone_internal' => $_SESSION['org_wizard']['a_phone_internal'],
+							'fax_number' => $_SESSION['org_wizard']['a_fax'],
+							'email_address' => $_SESSION['org_wizard']['a_email_address'],
+							'url' => $_SESSION['org_wizard']['a_website'],
+							'opening_hours' => $_SESSION['org_wizard']['a_opening_times'],
+						);
+						
+						//create a useable directory entry name and add the directory entry name to the post data
+						$post_data['directory_entry_name'] = $this->CreateDirectoryEntryName($post_data['name']);
+						$exists_already = $this->directory_model->GetDirectoryOrganisationByEntryName($post_data['directory_entry_name']);
+						if(empty($exists_already)){
+							//create directory entry
+							$result = $this->directory_model->AddDirectoryEntry($post_data);
+							if($result == 1)
+							{
+							//create directory entry revision
+							$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
+							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+							} else {
+							//Something went wrong so don't make a revision
+							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
+							}
+						}else{
+						//Name has been taken already!
+						$this->messages->AddMessage('error', 'The name of  your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
+						}
+					}
+                    
 					$data['stage'] = 1;
 				}
 				else
@@ -86,6 +139,7 @@ class Organisation extends controller
 		$data['stage_list']['count'] = $stage_count;
 		$data['stage_list']['skip'] = $skip_stages;
 		$data['stage_list']['headings'] = $headings;
+		$data['organisations'] = $this->directory_model->GetOrganisationTypes();
 		
 		//if (isset($_SESSION[$data['session_var']]) == true)
 			$_SESSION[$data['session_var']]['r_dump'] = NULL;

@@ -418,12 +418,16 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return true;
 	}
-	
+    
+    //Gets all organisation types in the directory
+	/**
+	 * @return array of organisations with their organisation_type_name, organisation_type_id, organisation_type_codename
+	 **/
 	function GetOrganisationTypes()
 	{
 		$sql =
 			'SELECT'.
-			' organisation_types.organisation_type_name, '.
+			' organisation_types.organisation_type_name,'.
 			' organisation_types.organisation_type_id, '.
 			' organisation_types.organisation_type_codename '.
 			'FROM organisation_types '.
@@ -435,6 +439,17 @@ class Directory_model extends Model {
 		return $query->result_array();
 	}
 
+    //Creates an unaproved a organisation in the directory
+	/**
+	 * @param $type_id int Organisation type id.
+	 * @param $name string Display name of the organisation.
+         	 * @param $directory_entry_name string with no spaces or non alphanumerical symbols .
+            * @param $suggestors_name name of person suggesting the organisation .
+            * @param $suggestors_position position of the person suggesting the organisation .
+            * @param $suggestors_email email address of the suggestor .
+            * @param $suggestors_notes any notes from the suggestor .
+	 * @return bool true if the organisation is listed in the directory.
+	 **/
 	function AddDirectoryEntry($Data)
 	{
 		$sql = 'INSERT INTO `organisations` ('.
@@ -443,15 +458,19 @@ class Directory_model extends Model {
 			'`organisation_directory_entry_name`,'.
 			'`organisation_suggesters_name`,'.
 			'`organisation_suggesters_position`,'.
+            '`organisation_suggesters_email`,'.
+            '`organisation_suggesters_notes`,'.
 			'`organisation_needs_approval`) '.
 			' VALUES'.
-			' (?, ?, ?, ?, ?, ? )';
+			' (?, ?, ?, ?, ?, ?, ?, ? )';
 		$query = $this->db->query($sql, array(
 			$Data['type_id'],
 			$Data['name'],
 			$Data['directory_entry_name'],
 			$Data['suggestors_name'],
 			$Data['suggestors_position'],
+            $Data['suggestors_email'],
+            $Data['suggestors_notes'],
 			1
 			));
 		return ($this->db->affected_rows() > 0);
