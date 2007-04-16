@@ -1,7 +1,7 @@
 <?php
 /*
  * Model for use of dynamic data on homepage
- * 
+ *
  *
  * \author Alex Fargus (agf501)
  *
@@ -34,13 +34,20 @@ class Home_Model extends Model {
 			$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
 			$weather_forecast = $weather->xpath('//channel/item/data:forecast');
 			//Generate the html to be displayed
-			$html = '<ul>';
-			$html = $html.'<li>'.$weather_forecast[0]->attributes()->day.' -  '.$weather_forecast[0]->attributes()->text.'. High: ';
-			$html = $html.$weather_forecast[0]->attributes()->high.', Low: '.$weather_forecast[0]->attributes()->low.'</li>';
-			$html = $html.'<li>'.$weather_forecast[1]->attributes()->day.' -  '.$weather_forecast[1]->attributes()->text.'. High: ';
-			$html = $html.$weather_forecast[1]->attributes()->high.', Low: '.$weather_forecast[1]->attributes()->low.'</li>';
-			$html = $html.'</ul>';
-			$html = $html.'<p class="Discreet">Data provided by Yahoo</p>';
+			$html = '<table border="0" width="100%">';
+			$html .= '<tr><td align="Center">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</td><td align="Center">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</td></tr>';
+			$html .= '<tr><td align="Center">';
+			$html .= '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'">';
+			$html .= '</td><td align="Center">';
+			$html .= '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[1]->attributes()->code.'.gif" title="'.$weather_forecast[1]->attributes()->text.'" alt="'.$weather_forecast[1]->attributes()->text.'">';
+			$html .= '</td></tr>';
+			$html .= '<tr><td align="Center">';
+			$html .= $weather_forecast[0]->attributes()->low.'&#176;C - '.$weather_forecast[0]->attributes()->high.'&#176;C';
+			$html .= '</td><td align="Center">';
+			$html .= $weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
+			$html .= '</td></tr>';
+			$html .= '</table>';
+			$html .= '<p class="Discreet">Data provided by Yahoo</p>';
 			//Delete the old weather forecast
 			$sql = 'DELETE FROM weather_cache';
 			$query = $this->db->query($sql);
@@ -69,7 +76,7 @@ class Home_Model extends Model {
 		$query = $this->db->query($sql);
 		if($query->num_rows() == 0){
 			$sql = 'SELECT image_id, image_title
-				FROM images 
+				FROM images
 				WHERE image_image_type_id = 9
 				ORDER BY image_last_displayed_timestamp
 				LIMIT 0,1';
@@ -78,7 +85,7 @@ class Home_Model extends Model {
 				SET image_last_displayed_timestamp = CURRENT_TIMESTAMP()
 				WHERE image_id = ?';
 			$update = $this->db->query($sql,array($query->row()->image_id));
-		} 
+		}
 		$id = $query->row()->image_id;
 		$title = $query->row()->image_title;
 		return imageLocTag($id,'banner',false,$title);
