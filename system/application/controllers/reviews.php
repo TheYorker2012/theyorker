@@ -10,13 +10,13 @@ class Reviews extends Controller
 	protected static $mContentType = array(
 		'food','drink','culture','barcrawl'
 	);
-	
-	
+
+
 	/// Default constructor
 	function Reviews()
 	{
 		parent::Controller();
-		
+
 		//Load Helper Functions so we can return dynamic url's
 		//And possible forms later on for the admin pages
 		$this->load->helper('form');
@@ -30,32 +30,32 @@ class Reviews extends Controller
 		$this->load->model('Review_model');
 
 	}
-	
+
 	/// Remap function ALWAYS CALLED
 	function _remap()
 	{
 		$method			= $this->uri->rsegment(2);
 		$param_start	= 2;
-		
+
 		if (FALSE === $method) {
 			return $this->index();
 		}
-		
+
 		if (FALSE !== array_search($method, self::$mContentType)) {
 			$content_type	= $method;
 			$param_start	= 1;
-			
+
 			// valid content type
 			$organisation_name	= $this->uri->rsegment(3);
-			
+
 			if (FALSE === $organisation_name) {
 				$method = '_main';
-				
+
 			} else {
 				$method = '_review';
 			}
 		}
-		
+
 		call_user_func_array(array(&$this, $method), array_slice($this->uri->rsegment_array(), $param_start));
 	}
 
@@ -64,7 +64,7 @@ class Reviews extends Controller
 	 * @note This just redirects to food reviews.
 	 */
 	function index()
-	{	
+	{
 		redirect('/reviews/food'); //Send them to the food page instead
 	}
 
@@ -72,13 +72,13 @@ class Reviews extends Controller
 	function _main($content_type)
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		//Pass content_type to view
 		$data['content_type'] = $content_type;
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_main');
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'content_type' => $content_type
 		));
@@ -90,11 +90,11 @@ class Reviews extends Controller
 		if ($content_type == 'culture' && FALSE)
 		{
 			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
-			
+
 			if ($barcrawl_id != array()) //If not empty
 			{
 				$barcrawl_index = 0;
-				
+
 				foreach ($barcrawl_id as $id) //Get all the information from news model
 				{
 					$barinfo = $this->News_model->GetSimpleArticle($id);
@@ -117,13 +117,12 @@ class Reviews extends Controller
 		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name, $content_type);
 
 		//Incase of no data
-		if (count($reviews_database_result) == 0) {
-			$this->messages->AddMessage('information', 'No articles could be found', FALSE);
+		if (count($reviews_database_result) != 0) {
+			//$this->messages->AddMessage('information', 'No articles could be found', FALSE);
 		}
 
 		//First row only since it should be unique
-		$reviews_database_result = $reviews_database_result[0];
-
+		//$reviews_database_result = $reviews_database_result[0];
 
 		//Get the article summary
 		$article_database_result = $this->News_model->GetFullArticle($article_id);
@@ -137,10 +136,10 @@ class Reviews extends Controller
 		$this->load->library('byline');
 		$this->byline->AddReporter($article_database_result['authors']);
 		$this->byline->SetDate($article_database_result['date']);
-	
+
 		//Set Blurb
 		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
-		if ($article_database_result['photos'] != array())
+		if (isset($article_database_result['photos']))
 		{
 			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
 		}
@@ -176,19 +175,19 @@ class Reviews extends Controller
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/main',$data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-	
+
 	/// Review page
 	function _review($content_type, $organisation_name, $IncludedComment = 0)
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		//Load news model
 		$this->load->model('News_model');
-		
+
 		//Set page code
 		$this->pages_model->SetPageCode('review_context');
 
@@ -204,7 +203,7 @@ class Reviews extends Controller
 
 		$data['organisation_id'] = $this->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
-		
+
 		$this->load->library('comments');
 		$this->comments->SetUri('/reviews/'.$content_type.'/'.$organisation_name.'/');
 		$thread = $this->Review_model->GetReviewContextCommentThread($data['organisation_id'], $content_id);
@@ -214,11 +213,11 @@ class Reviews extends Controller
 		if ($content_type == 'barcrawl')
 		{
 			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
-			
+
 			if ($barcrawl_id != array()) //If not empty
 			{
 				$barcrawl_index = 0;
-				
+
 				foreach ($barcrawl_id as $id) //Get all the information from news model
 				{
 					$barinfo = $this->News_model->GetSimpleArticle($id);
@@ -276,15 +275,15 @@ class Reviews extends Controller
 //		$data['barcrawl_directions'] = $review_database_result['review_context_content_directions'];
 
 		//Check the deal isn't expired
-		if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
-		{
-			$data['deal'] = $review_database_result['review_context_content_deal'];
-		}
-		else
-		{
+		//if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
+		//{
+		//	$data['deal'] = $review_database_result['review_context_content_deal'];
+		//}
+		//else
+		//{
 			$data['deal'] = NULL; //Null disables the deal section in the view
-		}
-		
+		//}
+
 		//Set title parameters
 		$this->main_frame->SetTitleParameters(array(
 			'content_type' => $content_type,
@@ -310,7 +309,7 @@ class Reviews extends Controller
 	function barcrawls($CrawlName = FALSE)
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		//Set page code
 		$this->pages_model->SetPageCode('review_context_barcrawl');
 
@@ -363,7 +362,7 @@ class Reviews extends Controller
 		$data['item_type'] = $item_type;
 
 		if (!CheckPermissions('public')) return;
-		
+
 		//Set page code
 		$this->pages_model->SetPageCode('review_table');
 
@@ -382,25 +381,25 @@ class Reviews extends Controller
 
 			//A list of all tags
 			$data['review_tags'] = $database_result[0]['tag_groups'];
-	
+
 			//For each row in the table
-	
+
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
 				$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
 				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
 				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
-				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name']; 
-	
+				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
+
 				//Change scope of $tagbox
 				$tagbox = array();
-	
+
 				//Tags work as a array within a array, which is just confusing!
 				for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
 				{
 					$tag_group_name = $data['review_tags'][$tagno];
-	
+
 					//Pass only if it exists for this organisation
 					if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
 					{
@@ -411,14 +410,14 @@ class Reviews extends Controller
 						$tagbox[$data['review_tags'][$tagno]] = array('n/a');
 					}
 				}
-	
+
 				$entries[$reviewno]['tagbox'] = $tagbox;
 			}
-	
+
 			$data['entries'] = $entries;
 
 		}
-		
+
 		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();
@@ -435,7 +434,7 @@ class Reviews extends Controller
 	function leagues($league_code_name = NULL)
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
 
@@ -460,11 +459,11 @@ class Reviews extends Controller
 				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
 				$reviews['review_rating'][$row] = $leagues[$row]['review_rating'];
 				//This will need the use of a function which returns what a organisition has being reviews on
-				$reviews['review_link'][$row] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name']; 
+				$reviews['review_link'][$row] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name'];
 				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
 				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
 			}
-		
+
 		//Pass over the amount of entries to view
 		$data['max_entries'] = $row;
 		$data['reviews'] = $reviews;
