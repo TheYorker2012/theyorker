@@ -47,31 +47,35 @@ $mypath = pathinfo(__FILE__);
 $snippets_dir = $mypath['dirname'] . "/snippets";
 $days_JSON = array ();
 
-foreach ($events as $events_array_index => $event) {
-	
-	if (isset ($days_JSON[$event['day']]))
-		$days_JSON[$event['day']] .= ",\n";
-	
+foreach ($Events as $events_array_index => $event_main) {
+	//var_dump($event_main);
+	foreach ($event_main->Occurrences as $event) {
+		//var_dump($event);
+		if (isset ($days_JSON[$event->StartTime->Midnight()->Timestamp()]))
+			$days_JSON[$event->StartTime->Midnight()->Timestamp()] .= ",\n";
 		
-	/* ($events_array_index <= (count ($events) - 1))
-		$fcom = '';
-	else
-		$fcom = ',';*/
-		
-	$replace = array (
-		'%%arrid%%' => $events_array_index, 
-		'%%refid%%' => $event['ref_id'],
-		'%%name%%' => htmlspecialchars ($event['name']),
-		'%%date%%' => $event['date'],
-		'%%day%%' =>  $event['day'],
-		'%%starttime%%' => $event['starttime'],
-		'%%endtime%%' => $event['endtime'],
-		'%%blurb%%' => htmlspecialchars ($event['blurb']),
-		'%%shortloc%%' => htmlspecialchars ($event['shortloc']),
-		'%%type%%' => htmlspecialchars ($event['type'])
-	);
-	
-	@$days_JSON[$event['day']] .= apinc ($snippets_dir . "/singleEventJSArr.inc",$replace);
+			
+		/* ($events_array_index <= (count ($events) - 1))
+			$fcom = '';
+		else
+			$fcom = ',';*/
+			
+		$replace = array (
+			'%%arrid%%' => $events_array_index, 
+			'%%refid%%' => $event->OccurrenceId,
+			'%%name%%' => htmlspecialchars ($event_main->Name),
+			'%%date%%' => $event->StartTime->Format('Ymd'),
+			'%%starttime%%' => $event->StartTime->Format('Hi'),
+			'%%endtime%%' => $event->EndTime->Format('Hi'),
+			'%%day%%' => $event->Day,
+			'%%blurb%%' => htmlspecialchars ($event_main->Description),
+			'%%shortloc%%' => htmlspecialchars ($event->LocationDescription),
+		);
+		if (isset($days_JSON[$event->Day])) {
+			$days_JSON[$event->Day] .= ',';
+		}
+		@$days_JSON[$event->Day] .= apinc ($snippets_dir . "/singleEventJSArr.inc",$replace);
+	}
 }
 
 $ops = "";
@@ -92,8 +96,10 @@ $js_ops = "\ncalevents = ({ \n\t$ops\n})";
 ?>
 
 		<?php
-echo '<a href="'.$prev.'">Previous Week</a><br/>';
-echo '<a href="'.$next.'">Next Week</a><br/>';
+if (isset($prev) && isset($next)) {
+	echo '<a href="'.$prev.'">Previous Week</a><br/>';
+	echo '<a href="'.$next.'">Next Week</a><br/>';
+}
 
 //$mypath = pathinfo(__FILE__);
 //$snippets_dir = $mypath['dirname'] . "/snippets";

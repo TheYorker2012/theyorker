@@ -38,8 +38,9 @@ class Calendar extends Controller {
 		$this->main_frame->Load();
 	}
 	
-	function day()
+	function day($DateRange = '')
 	{
+		return $this->days($DateRange);
 		if (!CheckPermissions('public')) return;
 		$this->_ShowDay();
 		$this->main_frame->Load();
@@ -52,10 +53,54 @@ class Calendar extends Controller {
 		$this->main_frame->Load();
 	}
 	
-	function days()
+	function days($DateRange = '')
 	{
 		if (!CheckPermissions('public')) return;
-		$this->_ShowDays();
+		
+		$this->load->library('academic_calendar');
+		$this->load->library('date_uri');
+		
+		// Sorry about the clutter, this will be moved in a bit but it isn't
+		// practical to put it in the view
+		$extra_head = <<<EXTRAHEAD
+		
+			<script src="/javascript/prototype.js" type="text/javascript"></script>
+			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+			<script src="/javascript/calendar.js" type="text/javascript"></script>
+			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+			
+EXTRAHEAD;
+		$this->main_frame->SetExtraHead($extra_head);
+		
+		if (!empty($DateRange)) {
+			// $DateRange Not empty
+			
+			// Read the date, only allowing a single date (no range data)
+			$uri_result = $this->date_uri->ReadUri($DateRange, FALSE);
+			if ($uri_result['valid']) {
+				// $DateRange Valid
+				$start_time = $uri_result['start'];
+				$start_time = $start_time->BackToMonday();
+				$format = $uri_result['format']; // Use the format in all links
+				$days = 7; // force 7 days until view can handle different values.
+				
+				$this->_ShowDays($start_time, $days, $format);
+				$this->main_frame->Load();
+				return;
+				
+			} else {
+				// $DateRange Invalid
+				$this->main_frame->AddMessage('error','Unrecognised date: "'.$DateRange.'"');
+			}
+		}
+		
+		// Default to this week
+		$format = 'ac';
+		$base_time = new Academic_time(time());
+		
+		$monday = $base_time->BackToMonday();
+		
+		$this->_ShowDays($monday, 7, $format);
 		$this->main_frame->Load();
 	}
 	
@@ -110,7 +155,7 @@ class Calendar extends Controller {
 	function _ShowDay()
 	{
 		$this->_LoadCalendarSystem();
-		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$sources = $this->_SetupSources(strtotime('month'), strtotime('1month'));
 		$calendar_data = new CalendarData();
 		
 		$this->_FetchEventsFromSources($calendar_data, $sources);
@@ -165,10 +210,10 @@ class Calendar extends Controller {
 		$this->_SetupTabs('agenda');
 	}
 	
-	function _ShowDays()
+	function _ShowDays($start, $num_days, $format)
 	{
 		$this->_LoadCalendarSystem();
-		$sources = $this->_SetupSources(strtotime('-2month'), strtotime('1month'));
+		$sources = $this->_SetupSources($start->Timestamp(), $start->Adjust($num_days.'days')->Timestamp());
 		$calendar_data = new CalendarData();
 		
 		$this->_FetchEventsFromSources($calendar_data, $sources);
@@ -178,6 +223,7 @@ class Calendar extends Controller {
 		
 		$days = new CalendarViewDays();
 		$days->SetCalendarData($calendar_data);
+		$days->SetRange($start, $num_days);
 		
 		$data = array(
 			'Filters'	=> $this->_GetFilters(),
