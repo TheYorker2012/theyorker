@@ -105,6 +105,8 @@ class Yorkerdirectory extends Controller
 
 	function map() {
 		if (!CheckPermissions('public')) return;
+	
+		$this->load->library('maps');
 
 		$this->pages_model->SetPageCode('directory_map');
 
@@ -114,7 +116,18 @@ class Yorkerdirectory extends Controller
 		$this->main_frame->SetPage('map');
 
 		$data = array();
+
+		// Get the search pattern from POST (optional)
+		$search_pattern = $this->input->post('search_directory', TRUE);
+		// Get the organisations matching the search and pass the search pattern
+		// to the view as well
+		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern);
+		$data['search'] = $search_pattern;
+
 		$data['organisation_types'] = $this->organisations->_GetOrganisationTypes($data['organisations'], TRUE);
+
+		$map = &$this->maps->CreateMap('Test Map', 'map');
+		$this->maps->SendMapData();
 
 		$this->main_frame->SetContentSimple('directory/directory_map', $data);
 
