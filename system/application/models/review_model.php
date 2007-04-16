@@ -307,8 +307,8 @@ class Review_model extends Model {
 					leagues.league_image_id,
 					content_types.content_type_name,
 					content_types.content_type_codename,
-					IF (thread.comment_thread_num_ratings > 0,
-						thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
+					IF (comment_threads.comment_thread_num_ratings > 0,
+						comment_threads.comment_thread_total_rating / comment_threads.comment_thread_num_ratings,
 						NULL) AS average_user_rating
 				FROM content_types
 				INNER JOIN review_context_contents
