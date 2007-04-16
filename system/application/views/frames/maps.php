@@ -5,6 +5,8 @@ switch($_SERVER['SERVER_NAME']) {
 	case 'theyorker.gmghosting.com':
 		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q';
 		break;
+	case 'theyorker2.gmghosting.com':
+		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBTRyAb-KmMkdWctvtd_CKS_Gh2u2BQV2EX1b0qY4PM1eJgajR_yMSsENw';
 	case 'ado.is-a-geek.net':
 		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
 		break;
