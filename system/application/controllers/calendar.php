@@ -40,9 +40,11 @@ class Calendar extends Controller {
 	
 	function day($DateRange = '')
 	{
-		return $this->days($DateRange);
+		//return $this->days($DateRange);
 		if (!CheckPermissions('public')) return;
-		$this->_ShowDay();
+		//$this->_ShowDay();
+		$this->main_frame->SetExtraHead('<link href="stylsheets/calendar.css" rel="stylesheet" type="text/css">');
+		$this->main_frame->SetContentSimple('calendar/today');
 		$this->main_frame->Load();
 	}
 	
