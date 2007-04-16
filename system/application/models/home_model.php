@@ -90,5 +90,31 @@ class Home_Model extends Model {
 		$title = $query->row()->image_title;
 		return imageLocTag($id,'banner',false,$title);
 	}
+
+	/*
+	 * Function to obtain a random quote for today.
+	 * Returns the quote_text and quote_author in an array.
+	 */
+	function GetQuote() {
+		$this->load->helper('images');
+		$sql = 'SELECT quote_text, quote_author
+			FROM quotes
+			WHERE DATE(quote_last_displayed_timestamp) = CURRENT_DATE()';
+		$query = $this->db->query($sql);
+		if($query->num_rows() == 0){
+			$sql = 'SELECT quote_id, quote_text, quote_author
+				FROM quotes
+				WHERE 1
+				ORDER BY quote_last_displayed_timestamp
+				LIMIT 0,1';
+			$query = $this->db->query($sql);
+			$sql = 'UPDATE quotes
+				SET quote_last_displayed_timestamp = CURRENT_TIMESTAMP()
+				WHERE quote_id = ?';
+			$update = $this->db->query($sql,array($query->row()->quote_id));
+		}
+		return $query->row();
+	}
+
 }
 ?>

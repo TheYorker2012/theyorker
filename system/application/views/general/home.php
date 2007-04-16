@@ -19,7 +19,7 @@ function printsmallnewsbox($article){
 		<p>TODO</p>
 		<a class="RightColumnAction"  href=".">Customise</a>
 	</div>
-	
+
 	<h2>Today's Events</h2>
 	<div class="Entry">
 		<ul>
@@ -43,13 +43,13 @@ function printsmallnewsbox($article){
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
-		"If you're going to kill a man it costs nothing to be polite to him" - <b>Winston Churchill</b>
+		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
 	</div>
 </div>
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php 
+		<?php
 			echo($banner);
 		?>
 	</div>
