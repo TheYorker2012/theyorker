@@ -52,7 +52,7 @@ foreach($table_data['tag_group_names'] as $tag) {
 		sortby[0]=["See All|all"]
 <?php
 //Print out the tags for each tag_group
-	
+
 //Foreach tag_group
 for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++) {
 	echo('		sortby['.($tag_group_no+1).']=[');
@@ -64,7 +64,7 @@ for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $
 	echo("]\n");
 }
 ?>
-	
+
 		function updatesortby(selectedsortby){
 			sortbylist.options.length=0
 			if (selectedsortby>=0){
@@ -77,17 +77,44 @@ for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $
 	</div>
 
 	<div class="BlueBox">
-		<h2><?php echo($content_type); ?> feature</h2>
-<?php
-		$this->byline->load();
-		echo('		<a href="'.$article_link.'">'."\n");
-		echo('			<img src="'.$article_photo.'" alt="'.$article_photo_alt_text.'" title="'.$article_photo_title.'" />'."\n");
-		echo('		</a>');
-		echo('		<h3>'."\n");
-		echo('			<a href="'.$article_link.'">'.$article_title.'</a>'."\n");
-		echo('		</h3>'."\n");
-		echo('		<p>'.$article_content.'</p>'."\n");
-		echo('		<p>'.anchor($article_link, 'Read more...').'</p>'."\n");
-?>
+		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
+		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
+		<div style="float:right;color:#999;margin-top:0;line-height:95%;">
+			<?php echo($main_article['primary_photo_xhtml']); ?><br />
+			<?php echo($main_article['primary_photo_caption']); ?>
+		</div>
+		<? } ?>
+		<div class="Date"><?php echo($main_article['date']); ?></div>
+		<div class="Author">
+<?php foreach($main_article['authors'] as $reporter) { ?>
+			<a href="/contact"><?php echo($reporter['name']); ?></a>
+<?php } ?>
+		</div>
+<?php if ($main_article['subtext'] != '') { ?>
+		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
+<?php } ?>
+
+		<?php echo $main_article['text']; ?>
+
+		<?php if (isset($office_preview)) { ?>
+			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
+		<?php } ?>
 	</div>
+	<?php if (count($main_article['links']) > 0) { ?>
+	<div class="BlueBox">
+		<h2><?php echo $links_heading; ?></h2>
+		<ul>
+		<?php foreach ($main_article['links'] as $link) {
+			echo '<li><a href=\'' . $link['url'] . '\' target=\'_blank\'>' . $link['name'] . '</a></li>';
+		} ?>
+		</ul>
+	</div>
+	<?php } ?>
+	<?php
+	// Comments if they're included
+	if (isset($comments) && NULL !== $comments) {
+		$comments->Load();
+	}
+	?>
+
 </div>

@@ -108,48 +108,46 @@ class Reviews extends Controller
 
 		//Get the last article_id
 		$article_id = $this->News_model->GetLatestId($content_type,1); //1 is the amount of articles
-		$article_id = $article_id[0]; //Only 1 article being retrieved so...
 
 		//Get the directory name of the organistion it's about
-		$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
+		//$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
 
 		//Get data from GetReviews
-		$reviews_database_result = $this->Review_model->GetReview($organisation_code_name, $content_type);
+		//$reviews_database_result = $this->Review_model->GetReview($organisation_code_name, $content_type);
 
 		//Incase of no data
-		if (count($reviews_database_result) != 0) {
+		//if (count($reviews_database_result) != 0) {
 			//$this->messages->AddMessage('information', 'No articles could be found', FALSE);
-		}
+		//}
 
 		//First row only since it should be unique
 		//$reviews_database_result = $reviews_database_result[0];
 
 		//Get the article summary
-		$article_database_result = $this->News_model->GetFullArticle($article_id);
+		//$article_database_result = $this->News_model->GetFullArticle($article_id);
 
-		$data['article_title'] = $article_database_result['heading'];
-		$data['article_content'] = $article_database_result['subtext'];
-		$data['article_date'] = $article_database_result['date'];
-		$data['article_link'] = '/reviews/'.$content_type.'/'.$organisation_code_name;
+		$main_article = $this->News_model->GetFullArticle($article_id[0]);
+
+		$data['main_article'] = $main_article;
 
 		// Create byline --- Note to byliner... dynamic data done
-		$this->load->library('byline');
-		$this->byline->AddReporter($article_database_result['authors']);
-		$this->byline->SetDate($article_database_result['date']);
+		//$this->load->library('byline');
+		//$this->byline->AddReporter($article_database_result['authors']);
+		//$this->byline->SetDate($article_database_result['date']);
 
 		//Set Blurb
-		$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
-		if (isset($article_database_result['photos']))
-		{
-			$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
-		}
-		else
-		{
-			$data['article_photo'] = imageLocation(1);
-		}
+		//$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
+		//if (isset($article_database_result['photos']))
+		//{
+		//	$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
+		//}
+		//else
+		//{
+		//	$data['article_photo'] = imageLocation(1);
+		//}
 
-		$data['article_photo_alt_text'] = "Article Image";
-		$data['article_photo_title'] = "Recent Title";
+		//$data['article_photo_alt_text'] = "Article Image";
+		//$data['article_photo_title'] = "Recent Title";
 
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags($content_type);
