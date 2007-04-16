@@ -27,13 +27,13 @@ function printarticlelink($article) {
 
 <?php
 if (isset($puffers)) {
-	echo '<div align=\'center\'>';
 	foreach ($puffers as $puffer) {
+		echo '<div class=\'Puffer\'>';
 		echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
 		echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
-		echo '</a>';
+		echo '</a></div>';
 	}
-	echo '</div><h2>' . $other_heading . '</h2>';
+	echo '<h2>' . $other_heading . '</h2>';
 } ?>
 
 <?php
@@ -69,7 +69,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>
-		<? } ?>
+		<?php } ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
