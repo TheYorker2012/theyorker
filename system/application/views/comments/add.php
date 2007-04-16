@@ -32,7 +32,7 @@
 				/**
 				* @todo Add smileys intelligently. e.g. if blank and add, has space at
 				*	the beginning which is interpretted as preformatting in wikitext.
-				*/ 
+				*/
 				?>
 				document.CommentAdd.CommentAddContent.value += " " + smiley;
 			}
@@ -63,15 +63,20 @@
 				}
 				?>
 				</select> */ ?>
+				<textarea name="CommentAddContent" cols="40" rows="4"><?php echo $DefaultContent; ?></textarea>
+			</fieldset>
+				<a href="#" onClick="document.getElementById('Layer1').style.display = 'block'; return false;"> Insert Smily </a>
+
+				<div id="Layer1" style="position:relative; width: 216px; height: 270px; z-index:0; top: -15px; display:none; background-color: #FFFFCC; layer-background-color: #FFFFCC; border: 1px none #000000;">
+				<?php echo $SmileyTable; ?>
+				<input type="button" class="button" name="Close" value="Close" onClick="document.getElementById('Layer1').style.display = 'none';" />
+				</div>
+
+			<fieldset>
 				<?php if ($Thread['allow_anonymous_comments']) { ?>
 					<label for="CommentAddAnonymous">Anonymous</label>
 					<input type="checkbox" name="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo ' checked="checked"'; ?> />
 				<?php } ?>
-				<label for="CommentAddContent">Content (wikitext)</label>
-				<textarea name="CommentAddContent" cols="40" rows="4"><?php echo $DefaultContent; ?></textarea>
-			</fieldset>
-				<?php echo $SmileyTable; ?>
-			<fieldset>
 				<input type="submit" class="button" name="CommentAddPreview" value="Preview" />
 				<input type="submit" class="button" name="CommentAddSubmit" value="Submit" />
 			</fieldset>
