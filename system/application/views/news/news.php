@@ -40,7 +40,7 @@ if (isset($puffers)) {
 foreach($news_previews as $preview)
 	printarticlelink($preview);
 ?>
-	
+
 	<h2><?php echo($other_heading); ?></h2>
 <?php
 foreach ($news_others as $other)
@@ -64,10 +64,12 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
+		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
 		<div style="float:right;color:#999;margin-top:0;line-height:95%;">
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>
+		<? } ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
@@ -97,7 +99,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 	<?php
 	// Comments if they're included
 	if (isset($comments) && NULL !== $comments) {
-		$comments->Load();	
+		$comments->Load();
 	}
 	?>
 </div>
