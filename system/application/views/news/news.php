@@ -24,6 +24,18 @@ function printarticlelink($article) {
 
 <div id="RightColumn">
 	<h2 class="first"><?php echo($latest_heading); ?></h2>
+
+<?php
+if (isset($puffers)) {
+	echo '<div align=\'center\'>';
+	foreach ($puffers as $puffer) {
+		echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
+		echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
+		echo '</a>';
+	}
+	echo '</div><h2>' . $other_heading . '</h2>';
+} ?>
+
 <?php
 foreach($news_previews as $preview)
 	printarticlelink($preview);
@@ -52,7 +64,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
-		<div style="float:right;color:#999;margin-top:0;line-height:90%;font-size:x-small;">
+		<div style="float:right;color:#999;margin-top:0;line-height:95%;">
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>
