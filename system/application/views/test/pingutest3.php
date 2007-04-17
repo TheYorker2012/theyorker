@@ -6,13 +6,13 @@
 				<label for="item_filter_by">Find based on: </label>
 				<select name="item_filter_by">
 					<option value="any" selected="selected">See All</option>
-	
+
 					<option value="Cuisine">Cuisine</option>
 					<option value="Price">Price</option>
 					<option value="Find by Time">Find by Time</option>
 					<option value="Atmosphere">Atmosphere</option>
 				</select><br />
-	
+
 				<label for="where_equal_to">Only Show: </label>
 				<select name="where_equal_to">
 					<option value="any" selected="selected">See All</option>
@@ -63,7 +63,7 @@
 				<tbody>
 				<tr>
 					<td width="20%" valign="top">
-						<img src="/images/images/medium/0/127.jpg" alt="singer" title="singer" />
+						<img src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
 						<!--<img src="/images/images/small/0/94.jpg" alt="singer" title="singer" />-->
 					</td>
 					<td width="80%" valign="top">
