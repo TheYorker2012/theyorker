@@ -125,7 +125,7 @@ class CI_Router {
 		foreach(explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val)
 		{
 			// Filter segments for security
-			$val = trim($this->_filter_uri($val));
+			$val = trim($val);//$this->_filter_uri($val));
 			
 			if ($val != '')
 				$this->segments[] = $val;
@@ -417,10 +417,10 @@ class CI_Router {
 		{
 			if ( ! preg_match("|^[".preg_quote($this->config->item('permitted_uri_chars'))."]+$|i", $str))
 			{
-				exit('The URI you submitted has disallowed characters: '.$str);
+				exit('The URI you submitted has disallowed characters.');
 			}
-		}
-		return $str;
+		}	
+			return $str;
 	}
 	
 	// --------------------------------------------------------------------
