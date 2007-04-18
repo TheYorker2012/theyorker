@@ -316,7 +316,6 @@ class CI_Router {
 			$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');	
 			if ($path != '' AND $path != "/".SELF)
 			{
-				echo 'PATH_INFO:'.$path;
 				return $path;
 			}
 					
@@ -324,7 +323,7 @@ class CI_Router {
 			$path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');	
 			if ($path != '')
 			{
-				echo 'QUERY_STRING:'.$path;
+				phpinfo();
 				return $path;
 			}
 			
@@ -332,7 +331,6 @@ class CI_Router {
 			$path = (isset($_SERVER['ORIG_PATH_INFO'])) ? $_SERVER['ORIG_PATH_INFO'] : @getenv('ORIG_PATH_INFO');	
 			if ($path != '' AND $path != "/".SELF)
 			{
-				echo 'ORIG_PATH_INFO:'.$path;
 				return $path;
 			}
 
