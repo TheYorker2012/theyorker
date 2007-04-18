@@ -91,7 +91,6 @@ class CI_Router {
 		
 		// Fetch the complete URI string
 		$this->uri_string = $this->_get_uri_string();
-		echo $this->uri_string;
 		
 		// If the URI contains only a slash we'll kill it
 		if ($this->uri_string == '/')
@@ -317,6 +316,7 @@ class CI_Router {
 			$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');	
 			if ($path != '' AND $path != "/".SELF)
 			{
+				echo 'PATH_INFO:'.$path;
 				return $path;
 			}
 					
@@ -324,6 +324,7 @@ class CI_Router {
 			$path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');	
 			if ($path != '')
 			{
+				echo 'QUERY_STRING:'.$path;
 				return $path;
 			}
 			
@@ -331,6 +332,7 @@ class CI_Router {
 			$path = (isset($_SERVER['ORIG_PATH_INFO'])) ? $_SERVER['ORIG_PATH_INFO'] : @getenv('ORIG_PATH_INFO');	
 			if ($path != '' AND $path != "/".SELF)
 			{
+				echo 'ORIG_PATH_INFO:'.$path;
 				return $path;
 			}
 
