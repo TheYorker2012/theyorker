@@ -76,5 +76,18 @@ class Logout extends Controller
 		
 		$this->_redirect();
 	}
+	
+	/// Logout from facebook api
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	logging out.
+	 */
+	function facebook()
+	{
+		$this->load->library('facebook');
+		$this->facebook->Disable();
+		
+		$this->_redirect();
+	}
 }
 ?>

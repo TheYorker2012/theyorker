@@ -72,5 +72,18 @@ class Login extends Controller
 		
 		LoginHandler('office', $this->_redirect());
 	}
+	
+	/// Facebook login.
+	/**
+	 * Any additional uri segments are used as the redirect address after
+	 *	successful login.
+	 */
+	function facebook()
+	{
+		$this->load->library('facebook');
+		$this->facebook->Enable();
+		
+		redirect($this->_redirect());
+	}
 }
 ?>

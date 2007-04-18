@@ -46,7 +46,7 @@ class CI_Input {
 	
 		$CFG =& load_class('Config');
 		$this->use_xss_clean	= ($CFG->item('global_xss_filtering') === TRUE) ? TRUE : FALSE;
-		$this->allow_get_array	= ($CFG->item('enable_query_strings') === TRUE) ? TRUE : FALSE;		
+		$this->allow_get_array	= TRUE;//($CFG->item('enable_query_strings') === TRUE) ? TRUE : FALSE;		
 		$this->_sanitize_globals();
 	}
 	
