@@ -41,7 +41,15 @@ $config['index_page'] = "";
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= "AUTO";
+$config['uri_protocol']	= 'AUTO';
+
+/*
+ * Added by James Hogan on 18/04/2007
+ * Whether to check the GET array when uri_protocol = AUTO.
+ * Facebook API sends auth_token as get data, but using the other uri protocols
+ * is not reliable on all servers. AUTO does a good enough job though.
+ */
+$config['uri_protocol_auto_get']	= FALSE;
 
 /*
 |--------------------------------------------------------------------------

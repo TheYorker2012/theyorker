@@ -300,8 +300,10 @@ class CI_Router {
 			// If the URL has a question mark then it's simplest to just
 			// build the URI string from the zero index of the $_GET array.
 			// This avoids having to deal with $_SERVER variables, which
-			// can be unreliable in some environments
-			if (is_array($_GET) AND count($_GET) == 1)
+			// can be unreliable in some environments.
+			// Uri_protocol_auto_get determines whether to allow the uri from
+			// get data. This is because facebook sends auth_token as GET data.
+			if ($this->config->item('uri_protocol_auto_get') && is_array($_GET) AND count($_GET) == 1)
 			{
 				// Note: Due to a bug in current() that affects some versions
 				// of PHP we can not pass function call directly into it
