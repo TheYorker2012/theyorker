@@ -91,6 +91,7 @@ class CI_Router {
 		
 		// Fetch the complete URI string
 		$this->uri_string = $this->_get_uri_string();
+		echo $this->uri_string;
 		
 		// If the URI contains only a slash we'll kill it
 		if ($this->uri_string == '/')
@@ -125,7 +126,7 @@ class CI_Router {
 		foreach(explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val)
 		{
 			// Filter segments for security
-			$val = trim($val);//$this->_filter_uri($val));
+			$val = trim($this->_filter_uri($val));
 			
 			if ($val != '')
 				$this->segments[] = $val;
