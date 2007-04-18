@@ -318,18 +318,17 @@ class CI_Router {
 			{
 				return $path;
 			}
-					
-			// No PATH_INFO?... What about QUERY_STRING?
-			$path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');	
-			if ($path != '')
-			{
-				phpinfo();
-				return $path;
-			}
 			
 			// No QUERY_STRING?... Maybe the ORIG_PATH_INFO variable exists?
 			$path = (isset($_SERVER['ORIG_PATH_INFO'])) ? $_SERVER['ORIG_PATH_INFO'] : @getenv('ORIG_PATH_INFO');	
 			if ($path != '' AND $path != "/".SELF)
+			{
+				return $path;
+			}
+					
+			// No PATH_INFO?... What about QUERY_STRING?
+			$path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');	
+			if ($path != '')
 			{
 				return $path;
 			}
