@@ -1,12 +1,14 @@
 <?php
 function printsmallnewsbox($article){
-	echo('	'."\n");
-	echo('		'."\n");
-	echo('		<li><h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('	<div class="NewsBox SmallNewsBox">'."\n");
+	echo('		<a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('			'.$article['photo_xhtml']."\n").'';
+	echo('		</a>'."\n");
+	echo('		<h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['heading']."\n");
-	echo('		</a></h3></li>'."\n");
-	echo('		'."\n");
-	echo('	'."\n");
+	echo('		</a></h3>'."\n");
+	echo('		<div style="clear: both" class="Date">'.$article['date'].'</div>'."\n");
+	echo('	</div>'."\n");
 }
 ?>
 
@@ -64,12 +66,8 @@ function printsmallnewsbox($article){
 			<div class="Date" > <?php echo($primary_article['date']) ?></div>
 			<p class="More"> <?php echo($primary_article['blurb']) ?></p>
 		</div>
-		<div class="NewsBox">
-		<ul>
 		<?php printsmallnewsbox($secondary_article) ?>
 		<?php printsmallnewsbox($tertiary_article) ?>
-		</ul>
-		</div>
 	</div>
 
 	<div class="BlueBox">
