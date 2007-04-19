@@ -10,13 +10,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta name="description" content="<?php echo $description; ?>" />
 	<meta name="keywords" content="<?php echo $keywords; ?>" />
 
-	<title>The Yorker - <?php 
+	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($title)) { 
-			echo $title; 
-		} else { 
-			echo 'no pagename'; 
-		} 
+		if(isset($title)) {
+			echo $title;
+		} else {
+			echo 'no pagename';
+		}
 	?></title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
@@ -25,13 +25,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-	
+
 	<?php
 	if (isset($extra_css)) {
 		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
 	}
 	?>
-	
+
 	<!-- BEGIN Multiple event handlers code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -166,27 +166,29 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<li><a href="/news/national/">UK &amp; World News</a></li>
+					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
 					<li><a href="/news/sport/">Sport</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
-					<li><a href="/reviews/culture">Culture</a></li>
+					<!--<li><a href="/reviews/culture">Culture</a></li>-->
 					<li><a href="/campaign/">Campaigns</a></li>
-					<li><a href="/news/archive/">News Archive</a></li>
+					<!--<li><a href="/news/archive/">News Archive</a></li>-->
 				</ul>
 				<ul>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
 					<li><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<li><a href="/games/">Games Zone</a></li>
+					<!--<li><a href="/games/">Games Zone</a></li>-->
 				</ul>
+				<!--
 				<ul>
 					<li class="first"><a href="/viparea/">Enter VIP Area</a></li>
 					<li><a href="/office/">Enter Office</a></li>
 				</ul>
+				-->
 			</div>
 		</div>
 
@@ -196,7 +198,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			</h1>
 
 <!-- BEGIN generated content -->
-<?php	
+<?php
 				// TODO: check this works properly
 
 				// Navigation bar
@@ -249,10 +251,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			</form>
 		</div>
 		<small>
-			Copyright 2007 The Yorker.  Use of this Web site constitutes acceptance of the The Yorker 
-			<a href='/policy/#user_agreement'>User Agreement</a> and 
-			<a href='/policy/#privacy_policy'>Privacy Policy</a>.  
-			 Page rendered in {elapsed_time} seconds.  
+			Copyright 2007 The Yorker.  Use of this Web site constitutes acceptance of the The Yorker
+			<a href='/policy/#user_agreement'>User Agreement</a> and
+			<a href='/policy/#privacy_policy'>Privacy Policy</a>.
+			 Page rendered in {elapsed_time} seconds.
 		</small>
 	</div>
 </body>
