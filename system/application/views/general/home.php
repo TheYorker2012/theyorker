@@ -72,7 +72,7 @@ function printsmallnewsbox($article){
 
 	<div class="BlueBox" style="float: left; width:48%; height:120px;">
 		<h2><?php echo('features') ?></h2>
-		<ul>
+		<ul style="list-style-position: outside; padding-left: 17px;">
 		<li><a href="" style="font-weight: bold; color: #000000;" >Student in bad attack on cat</a></li>
 		<li><a href="" style="font-weight: bold; color: #000000;">Why I think ducks are bad</a></li>
 		</ul>
@@ -81,7 +81,7 @@ function printsmallnewsbox($article){
 	<div class="BlueBox" style="float: left; width:48%; height:120px; margin-left: 9px;">
 		<h2><?php echo('arts') ?></h2>
 
-		<ul>
+		<ul style="list-style-position: outside; padding-left: 17px;">
 		<li><a href="" style="font-weight: bold; color: #000000;">Green books are better for you</a></li>
 		<li><a href="" style="font-weight: bold; color: #000000;">What the matrix never told you</a></li>
 		</ul>
