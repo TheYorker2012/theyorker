@@ -70,19 +70,21 @@ function printsmallnewsbox($article){
 		<?php printsmallnewsbox($tertiary_article) ?>
 	</div>
 
-	<div class="BlueBox" style="float: left; width:48%;">
+	<div class="BlueBox" style="float: left; width:48%; height:120px;">
 		<h2><?php echo('features') ?></h2>
-
-		<small><h3 class="Headline"><a href="">Student in bad attack on cat</a></h3></small>
-		<small><h3 class="Headline"><a href="">Why I think ducks are bad</a></h3></small>
+		<ul>
+		<li><a href="" style="font-weight: bold; color: #000000;" >Student in bad attack on cat</a></li>
+		<li><a href="" style="font-weight: bold; color: #000000;">Why I think ducks are bad</a></li>
+		</ul>
 
 	</div>
-	<div class="BlueBox" style="float: left; width:48%; margin-left: 8px;">
+	<div class="BlueBox" style="float: left; width:48%; height:120px; margin-left: 9px;">
 		<h2><?php echo('arts') ?></h2>
 
-		<small><h3 class="Headline"><a href="">Green books are better for you</a></h3></small>
-		<small><h3 class="Headline"><a href="">What the matrix never told you</a></h3></small>
-
+		<ul>
+		<li><a href="" style="font-weight: bold; color: #000000;">Green books are better for you</a></li>
+		<li><a href="" style="font-weight: bold; color: #000000;">What the matrix never told you</a></li>
+		</ul>
 	</div>
 
 	<div class="BlueBox">
