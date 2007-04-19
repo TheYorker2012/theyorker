@@ -1,14 +1,12 @@
 <?php
 function printsmallnewsbox($article){
-	echo('	<div class="NewsBox SmallNewsBox">'."\n");
-	echo('		<a class="NewsImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('			'.$article['photo_xhtml']."\n").'';
-	echo('		</a>'."\n");
+	echo('	'."\n");
+	echo('		'."\n");
 	echo('		<h3 class="Headline"><a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['heading']."\n");
 	echo('		</a></h3>'."\n");
 	echo('		<div style="clear: both" class="Date">'.$article['date'].'</div>'."\n");
-	echo('	</div>'."\n");
+	echo('	'."\n");
 }
 ?>
 
