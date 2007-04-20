@@ -193,7 +193,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][$loc] = $temp;
 				}
 			}
-			header('Location:'.base_url('organisation/wizard'));
+			header('Location:'.site_url('organisation/wizard'));
 		} elseif ($action == 'delete') {
 			//TODO provide Confirmation message
 			$id = $this->uri->segment(5);
@@ -205,7 +205,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][] = $id;
 				}
 			}
-			header('Location:'.base_url('organisation/wizard'));
+			header('Location:'.site_url('organisation/wizard'));
 		}
 	}
 }

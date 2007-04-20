@@ -213,7 +213,7 @@ function addstrike($text)
 		<br />
 		<?=anchor('wizard/organisation/photo/move/up/'.$img, 'move up')?> |
 		<?=anchor('wizard/organisation/photo/move/down/'.$img, 'move down')?> |
-		<?=anchor('wizard/organisation/photo/delete'.$img, 'delete')?>
+		<?=anchor('wizard/organisation/photo/delete/'.$img, 'delete')?>
 		<br />
 	<?php } ?>
 </div>
