@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h2 class="first">Browse By</h2>
+	<h2 class="first">The Guide</h2>
 	<div class="Entry">
 		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
 			<fieldset>

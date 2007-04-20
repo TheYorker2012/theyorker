@@ -20,6 +20,11 @@ function printsmallnewsbox($article){
 		<a class="RightColumnAction"  href=".">Customise</a>
 	</div>
 
+	<h2>My Webmail</h2>
+	<div class="Entry">
+		<a href="">10 Unread E-mails</a>
+	</div>
+
 	<h2>Today's Events</h2>
 	<div class="Entry">
 		<ul>
@@ -36,7 +41,7 @@ function printsmallnewsbox($article){
 		<a class="RightColumnAction"  href=".">New To Do</a>
 	</div>
 
-	<h2>2 Day Forecast</h2>
+	<h2>York Weather</h2>
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
 	</div>
@@ -55,7 +60,7 @@ function printsmallnewsbox($article){
 	</div>
 
 	<div class="BlueBox">
-		<h2><?php echo('latest uni news')?></h2>
+		<h2><?php echo('latest news')?></h2>
 		<div class="NewsBox">
 			<?php
 				echo('	<a class="NewsImg" href="/news/'.$primary_article['article_type'].'/'.$primary_article['id'].'">'."\n");
