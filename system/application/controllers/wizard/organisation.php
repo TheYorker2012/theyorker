@@ -192,6 +192,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][$loc+1] = $_SESSION['org_wizard']['img'][$loc];
 					$_SESSION['org_wizard']['img'][$loc] = $temp;
 				}
+			}
 			header('Location:'.base_url('organisation/wizard'));
 		} elseif ($action == 'delete') {
 			//TODO provide Confirmation message
