@@ -152,9 +152,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<div id="Page">
 		<div id="NavigationColumn">
-			<form id="site_search" action="/search/layout" method="post">
+			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
+				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+				<input type="hidden" name="cof" value="FORID:0" />
 				<fieldset id="SearchBox">
-					<input type="text" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
 				</fieldset>
 			</form>
 			<div id="NavigationMenu">

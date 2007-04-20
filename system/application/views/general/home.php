@@ -28,7 +28,7 @@ function printsmallnewsbox($article){
 
 	<h2>My Webmail</h2>
 	<div class="Entry">
-		<a href="https://webmail1.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a> <a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a>
+		<table width="100%"><tr><td><a href="https://webmail1.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
 	</div>
 
 	<h2>Today's Events</h2>

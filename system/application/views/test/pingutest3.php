@@ -17,6 +17,12 @@
 				<select name="where_equal_to">
 					<option value="any" selected="selected">See All</option>
 				</select><br />
+
+				<label for="sort_by">Sort By: </label>
+				<select name="sort_by">
+					<option value="name" selected="selected">Name</option>
+				</select><br />
+
 			</fieldset>
 			<fieldset>
 				<input type="submit" value="Find" class="button" />
