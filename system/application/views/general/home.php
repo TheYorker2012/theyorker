@@ -15,14 +15,20 @@ function printsmallnewsbox($article){
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
-		<!--<a href="."><img src="/images/prototype/homepage/links.jpg" alt="Sample Links" title="Sample Links" /></a>-->
-		<p>TODO</p>
+		<a href="http://www.york.ac.uk/"><img title="University Of York" src="/images/prototype/homepage/links/york.gif" width="50" height="50"></a>
+		<a href="http://www.yusu.org/"><img title="York University Students' Union" src="/images/prototype/homepage/links/yusu.gif" width="50" height="50"></a>
+		<a href="http://www.facebook.com/"><img title="Facebook" src="/images/prototype/homepage/links/facebook.gif" width="50" height="50"></a>
+		<a href="http://www.hotmail.co.uk/"><img title="Hotmail" src="/images/prototype/homepage/links/hotmail.jpg" width="50" height="50"></a>
+		<a href="http://news.bbc.co.uk/"><img title="BBC News" src="/images/prototype/homepage/links/bbc.gif" width="50" height="50"></a>
+		<a href="http://www.google.co.uk/"><img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50"></a>
+		<a href="http://en.wikipedia.org/"><img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50"></a>
+		<a href="http://gmail.google.com/"><img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50"></a>
 		<a class="RightColumnAction"  href=".">Customise</a>
 	</div>
 
 	<h2>My Webmail</h2>
 	<div class="Entry">
-		<a href="">10 Unread E-mails</a>
+		<a href="https://webmail1.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a> <a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a>
 	</div>
 
 	<h2>Today's Events</h2>
