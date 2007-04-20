@@ -171,7 +171,7 @@ class Organisation extends controller
 		if (!CheckPermissions('public')) return;
 		$this->xajax->processRequests();
 		if ($type == 'images') {
-			$this->Image_upload->recieveUpload('wizard/organisation', array('slideshow'));
+			$this->image_upload->recieveUpload('wizard/organisation', array('slideshow'));
 		}
 	}
 
