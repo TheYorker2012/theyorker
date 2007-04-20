@@ -283,7 +283,7 @@ class Yorkerdirectory extends Controller
 					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
 				}
 			} elseif ($action == 'upload') {
-				
+				$this->ci->xajax->processRequests();
 				return $this->image_upload->recieveUpload(site_url('viparea/'.$data['organisation'].'/directory/photos/upload'), array('slideshow'));
 			}
 			
