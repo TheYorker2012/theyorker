@@ -289,6 +289,7 @@ class Yorkerdirectory extends Controller
 				foreach ($_SESSION['img']['list'] as $newID) {
 					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
 				}
+				unset($_SESSION['img']['list']);
 			}
 			
 			// Insert main text from pages information
