@@ -192,7 +192,7 @@ function addstrike($text)
 ?>
 <div class="BlueBox">
 <h2>photo upload </h2>
-	<form action="/viparea/theyorker/directory/photos/upload" method="post" class="form" enctype="multipart/form-data">
+	<form action="/wizard/organisation/upload/images" method="post" class="form" enctype="multipart/form-data">
 		Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
 		<fieldset>
 			<label for="title1">Photo Title:</label><input type="text" name="title1" id="title1" size="30" />
@@ -205,6 +205,19 @@ function addstrike($text)
 		</fieldset>
 	</form>
 </div>
+<?php if (isset($_SESSION['org_wizard']['img'])) { ?>
+<div class="GreyBox">
+	<?php 	$count = 0;
+		foreach ($_SESSION['org_wizard']['img'] as $img) { ?>
+		<?=imageLocTag($img, 'slideshow', false, $_SESSION['org_wizard']['a_name'])?>
+		<br />
+		<?=anchor('wizard/organisation/photo/move/up/'.$img, 'move up')?> |
+		<?=anchor('wizard/organisation/photo/move/down/'.$img, 'move down')?> |
+		<?=anchor('wizard/organisation/photo/delete'.$img, 'delete')?>
+		<br />
+	<?php } ?>
+</div>
+<?php } ?>
 <div class="BlueBox">
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
@@ -218,21 +231,7 @@ function addstrike($text)
 		</fieldset>
 	</form>
 </div>
-<div class="blue_box">
-	<img src="./images/100.jpg" alt="Array image Tux" />
-	<br />
-	<a href="/viparea/theyorker/directory/photos/move/100/up" title="move up">move up</a> | 
-	<a href="/viparea/theyorker/directory/photos/move/100/down" title="move down">move down</a> | 
-	<a href="/viparea/theyorker/directory/photos/delete/100" title="delete">delete</a> 
-	<br />
 
-	<img src="./images/120.jpg" alt="Array image Stress"/>
-	<br />
-	<a href="/viparea/theyorker/directory/photos/move/120/up" title="move up">move up</a> | 
-	<a href="/viparea/theyorker/directory/photos/move/120/down" title="move down">move down</a> | 
-	<a href="/viparea/theyorker/directory/photos/delete/120" title="delete">delete</a> 
-	<br />
-</div>
 
 <?php
 	}

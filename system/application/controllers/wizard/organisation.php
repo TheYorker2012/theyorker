@@ -15,6 +15,7 @@ class Organisation extends controller
 		parent::controller();
 		
 		$this->load->model('directory_model');
+		$this->load->library('Image_upload');
 	}
     
 	private function CreateDirectoryEntryName ($long_name){
@@ -54,6 +55,12 @@ class Organisation extends controller
 			{
 				$_SESSION['org_wizard'][$key] = $postitem;
 			}
+			if (isset($_SESSION['img']['list'])) {
+				foreach ($_SESSION['img']['list'] as $newImg) {
+					$_SESSION['org_wizard']['img'][] = $newImg;
+				}
+				unset($_SESSION['img']['list']);
+			}
 			$data['is_connected'] = $_SESSION['org_wizard']['a_connected'];
 			//$data['post'][$_POST['r_stage']] = $_POST;
 			//$data['post'][$_POST['r_stage']]['prev'] = htmlentities(serialize($_POST), ENT_QUOTES);
@@ -61,11 +68,11 @@ class Organisation extends controller
 				if ($_POST['r_stage'] == $stage_count)
 				{
 					//finished
-					//##TODO: actually process the form data for photos and maps
+					//##TODO: actually process the form data for maps
 					//Correctly creates organisation and details
 					//all fields in session with a_ in front are submitted data
 					//the maps and photos pages aren't working atm just the standard form submit pages
-		            if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || empty($_SESSION['org_wizard']['a_user_name']))
+					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || empty($_SESSION['org_wizard']['a_user_name']))
 					{
 						$this->messages->AddMessage('error', 'Please include at least a name, description and your name with your suggestion.');
 					} else {
@@ -94,11 +101,18 @@ class Organisation extends controller
 						if(empty($exists_already)){
 							//create directory entry
 							$result = $this->directory_model->AddDirectoryEntry($post_data);
+							$newOrgId = $this->db->insert_id();
 							if($result == 1)
 							{
 							//create directory entry revision
 							$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
 							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+							$this->load->model('slideshow');
+							if (isset($_SESSION['org_wizard']['img'])) {
+								foreach ($_SESSION['org_wizard']['img'] as $img) {
+									$this->slideshow->addPhoto($img, $newOrgId);
+								}
+							}
 							} else {
 							//Something went wrong so don't make a revision
 							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
@@ -108,7 +122,7 @@ class Organisation extends controller
 						$this->messages->AddMessage('error', 'The name of  your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
 						}
 					}
-                    
+
 					$data['stage'] = 1;
 				}
 				else
@@ -145,11 +159,53 @@ class Organisation extends controller
 			$_SESSION[$data['session_var']]['r_dump'] = NULL;
 
 		// Set up the public frame
+		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 		$the_view = $this->frames->view('wizard/organisation', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->load();
+	}
+
+	function upload($type) {
+		if (!CheckPermissions('public')) return;
+		$this->ci->xajax->processRequests();
+		if ($type == 'images') {
+			recieveUpload('wizard/organisation', array('slideshow'));
+		}
+	}
+
+	function photo($action) {
+		$this->load->helper('url');
+		if ($action == 'move') {
+			$direction = $this->uri->segment(5);
+			$loc = array_search($this->uri->segment(6), $_SESSION['org_wizard']['img']);
+			if ($direction == 'up') {
+				if ($loc != 0) {
+					$temp = $_SESSION['org_wizard']['img'][$loc-1];
+					$_SESSION['org_wizard']['img'][$loc-1] = $_SESSION['org_wizard']['img'][$loc];
+					$_SESSION['org_wizard']['img'][$loc] = $temp;
+				}
+			} else {
+				if ($loc != count($_SESSION['org_wizard']['img'])-1) {
+					$temp = $_SESSION['org_wizard']['img'][$loc+1];
+					$_SESSION['org_wizard']['img'][$loc+1] = $_SESSION['org_wizard']['img'][$loc];
+					$_SESSION['org_wizard']['img'][$loc] = $temp;
+				}
+			header('Location:'.base_url('organisation/wizard'));
+		} elseif ($action == 'delete') {
+			//TODO provide Confirmation message
+			$id = $this->uri->segment(5);
+			//if php has a function to renumber the keys in an array, plz change this
+			$oldImgList = $_SESSION['org_wizard']['img'];
+			unset($_SESSION['org_wizard']['img']);
+			foreach ($oldImgList as $img) {
+				if ($img != $id) {
+					$_SESSION['org_wizard']['img'][] = $id;
+				}
+			}
+			header('Location:'.base_url('organisation/wizard');
+		}
 	}
 }
 ?>
