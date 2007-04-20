@@ -284,7 +284,7 @@ class Yorkerdirectory extends Controller
 				}
 			} elseif ($action == 'upload') {
 				$this->load->library('image_upload');
-				return $this->image_upload->recieveUpload(site_url('viparea/'.$data['organisation'].'/directory/photos'), array('slideshow'));
+				return $this->image_upload->recieveUpload(site_url('viparea/'.$data['organisation'].'/directory/photos/upload'), array('slideshow'));
 			}
 			
 			// Insert main text from pages information
