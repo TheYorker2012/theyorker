@@ -169,7 +169,7 @@ class Organisation extends controller
 
 	function upload($type) {
 		if (!CheckPermissions('public')) return;
-		$this->ci->xajax->processRequests();
+		$this->xajax->processRequests();
 		if ($type == 'images') {
 			recieveUpload('wizard/organisation', array('slideshow'));
 		}
