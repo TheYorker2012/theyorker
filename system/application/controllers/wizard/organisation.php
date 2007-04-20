@@ -205,7 +205,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][] = $id;
 				}
 			}
-			header('Location:'.base_url('organisation/wizard');
+			header('Location:'.base_url('organisation/wizard'));
 		}
 	}
 }
