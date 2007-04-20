@@ -70,6 +70,13 @@ class Slideshow extends Model {
 		                                                          'organisation_slideshow_photo_id' => $photo_id));
 	}
 
+	function addPhoto($photo_id, $organisation_id) {
+		$count = $this->db->query('SELECT COUNT(*) AS row_count FROM organisation_slideshows WHERE organisation_slideshow_organisation_entity_id = '.$organisation_id);
+		$count = $count->first_row()->row_count;
+		return $this->db->insert('organisation_slideshows', array('organisation_slideshow_organisation_entity_id' => $organisation_id,
+		                                                          'organisation_slideshow_photo_id' => $photo_id,
+		                                                          'organisation_slideshow_order' => $count));
+	}
 
 }
 ?>
