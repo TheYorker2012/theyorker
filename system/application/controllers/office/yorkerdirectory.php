@@ -259,8 +259,8 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
-		$this->load->helper('images');
-		$this->load->helper('url');
+		$this->load->helper(array('images', 'url'));
+		$this->load->library('image_upload');
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
@@ -283,7 +283,7 @@ class Yorkerdirectory extends Controller
 					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
 				}
 			} elseif ($action == 'upload') {
-				$this->load->library('image_upload');
+				
 				return $this->image_upload->recieveUpload(site_url('viparea/'.$data['organisation'].'/directory/photos/upload'), array('slideshow'));
 			}
 			
