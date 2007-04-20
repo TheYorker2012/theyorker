@@ -160,7 +160,7 @@ class Organisation extends controller
 
 		// Set up the public frame
 		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$the_view = $this->frames->view('organisation/wizard', $data);
+		$the_view = $this->frames->view('wizard/organisation', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
@@ -171,7 +171,7 @@ class Organisation extends controller
 		if (!CheckPermissions('public')) return;
 		$this->xajax->processRequests();
 		if ($type == 'images') {
-			$this->image_upload->recieveUpload('organisation/wizard', array('slideshow'));
+			$this->image_upload->recieveUpload('wizard/organisation', array('slideshow'));
 		}
 	}
 
@@ -193,7 +193,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][$loc] = $temp;
 				}
 			}
-			header('Location:'.site_url('organisation/wizard'));
+			header('Location:'.site_url('wizard/organisation'));
 		} elseif ($action == 'delete') {
 			//TODO provide Confirmation message
 			$id = $this->uri->segment(5);
@@ -205,7 +205,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][] = $id;
 				}
 			}
-			header('Location:'.site_url('organisation/wizard'));
+			header('Location:'.site_url('wizard/organisation'));
 		}
 	}
 }
