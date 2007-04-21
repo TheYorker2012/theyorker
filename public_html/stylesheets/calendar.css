@@ -112,6 +112,18 @@
 	font-weight: bold;
 }
 
+.calviewIndEventBox2 {
+	border: none;
+	border-bottom: 1px solid #999;
+	background-color: #eee;
+	padding: 0px;
+	width: 50%;
+	margin: 0px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	text-align: left;
+}
+
 #calviewEventMenu {
 	display: none;
 	position: absolute;
@@ -121,7 +133,8 @@
 	width: 154px;
 	background-color: #ffffff;
 	border: 1px solid #000000;
-	padding: 1px;}
+	padding: 1px;
+}
 
 #calviewEventMenu ul {
 	display: block;
