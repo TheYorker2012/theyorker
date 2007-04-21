@@ -25,6 +25,21 @@ class Facebook
 		
 		if (array_key_exists('auth_token', $_GET)) {
 			$this->AuthToken = $_GET['auth_token'];
+			$this->Connect();
+			redirect($CI->uri->uri_string());
+		}
+		$links = array();
+		if ($this->InUse()) {
+			if (isset($_SESSION['facebook']['session'])) {
+				$this->Session = $_SESSION['facebook']['session'];
+			}
+			$links[] = array('Disable Facebook', site_url('logout/facebook'.$CI->uri->uri_string()));
+		} else {
+			$links[] = array('Enable Facebook', site_url('login/facebook'.$CI->uri->uri_string()));
+		}
+		if (isset($CI->main_frame)) {
+			$CI->main_frame->SetData('extra_menu_buttons',
+				array_merge($CI->main_frame->GetData('extra_menu_buttons', array()),$links));
 		}
 	}
 	
@@ -47,28 +62,33 @@ class Facebook
 		}
 	}
 	
+	function HandleException($E)
+	{
+		$this->Disable();
+		$CI = & get_instance();
+		$CI->messages->AddMessage('information', 'You have logged out of facebook. '. HtmlButtonLink(site_url('login/facebook'.$CI->uri->uri_string()),'Log back in'));
+	}
+	
 	function Connect()
 	{
 		if (!array_key_exists('facebook', $_SESSION)) {
 			$_SESSION['facebook'] = array();
-		}// elseif (array_key_exists('session', $_SESSION['facebook'])) {
-			//$this->Session = $_SESSION['facebook'];
-		//}
+		}
 		
 		// Already created client?
 		if ($this->Client !== NULL) {
 			return;
-		}
-		// Got an authentication token?
-		if (!$this->AuthToken) {
-			// redirect to the login page
-			$this->RedirectLogin();
 		}
 		try {
 			if (NULL !== $this->Session && array_key_exists('session_key', $this->Session)) {
 				$session_key = $this->Session['session_key'];
 			} else {
 				$session_key = NULL;
+				// Got an authentication token?
+				if (!$this->AuthToken) {
+					// redirect to the login page
+					$this->RedirectLogin();
+				}
 			}
 			
 			// Create our client object.  
@@ -88,6 +108,8 @@ class Facebook
 				$_SESSION['facebook']['session'] = $this->Session;
 				$this->Uid = $this->Session['uid'];
 			}
+			
+			//var_dump($this->Client->auth_createToken());
 			
 		} catch (FacebookRestClientException $ex) {
 			if ($ex->getCode() == FacebookAPIErrorCodes::API_EC_PARAM) {

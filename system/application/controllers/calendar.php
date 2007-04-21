@@ -327,10 +327,10 @@ class Calendar extends Controller {
 		$this->main_frame->Load();
 	}
 	
-	function days($DateRange = NULL)
+	function days($DateRange = NULL, $Filter = NULL)
 	{
 		if (!CheckPermissions('public')) return;
-		$this->_ShowDays($DateRange);
+		$this->_ShowDays($DateRange, $Filter);
 		$this->main_frame->Load();
 	}
 	
@@ -355,7 +355,7 @@ class Calendar extends Controller {
 	 * @param $StartTime timestamp Start time of events.
 	 * @param $EndTime   timestamp End time of events.
 	 */
-	function _SetupSources($StartTime, $EndTime, $Todos = FALSE)
+	function _SetupSources($StartTime, $EndTime, $Todos = FALSE, $Filter = NULL)
 	{
 		// Load calendar source libraries
 		$this->load->library('calendar_source_yorker');
@@ -368,6 +368,9 @@ class Calendar extends Controller {
 		
 		$source_yorker = new CalendarSourceYorker();
 		$source_yorker->EnableTodo($Todos);
+		if (NULL !== $Filter) {
+			$source_yorker->SetOccurrenceFilter($Filter);
+		}
 		$sources[] = $source_yorker;
 		
 		$sources[] = new CalendarSourceFacebook();
@@ -463,9 +466,10 @@ class Calendar extends Controller {
 		$this->_SetupTabs('agenda');
 	}
 	
-	function _ShowDays($DateRange = NULL)
+	function _ShowDays($DateRange = NULL, $Filter = NULL)
 	{
 		$this->_LoadCalendarSystem();
+		// Read date range
 		$this->load->library('date_uri');
 		$range = $this->date_uri->ReadUri($DateRange, TRUE);
 		$now = new Academic_time(time());
@@ -476,7 +480,84 @@ class Calendar extends Controller {
 			$start = $now->Midnight();
 			$end = $start->Adjust('7day');
 		}
-		$sources = $this->_SetupSources($start->Timestamp(), $end->Timestamp());
+		
+		// Read filter
+		// eg
+		// cat:no-social.att:no-no.search:all:yorker:case
+		$this->load->library('filter_uri');
+		$filter_def = new FilterDefinition(
+			array(
+				// category
+				'cat' => array(
+					'name' => 'category',
+					array(
+						'no-social',
+						'no-academic',
+						'no-meeting',
+					),
+				),
+				'att' => array(
+					'name' => 'attending',
+					array(
+						'no-declined',
+						'no-maybe',
+						'no-accepted',
+					)
+				),
+				'search' => array(
+					array(
+						'name' => 'field',
+						'all',
+						'name',
+						'description',
+					),
+					array(
+						'name' => 'criteria',
+						'type' => 'string',
+					),
+					array(
+						'name' => 'flags',
+						'count' => array(0),
+						'regex',
+						'case',
+					),
+				),
+			)
+		);
+		if (NULL === $Filter) {
+			// simulate "att:no-declined"
+			$filter = array(
+			);
+		} else {
+			$filter = $filter_def->ReadUri($Filter);
+		}
+		$occurrence_filter = NULL;
+		if (FALSE === $filter) {
+			$this->messages->AddMessage('error', 'The filter text in the uri was not valid');
+		} else {
+			$this->load->model('calendar/events_model');
+			$occurrence_filter = new EventOccurrenceFilter();
+			$occurrence_filter->EnableFilter('hide');
+			$occurrence_filter->EnableFilter('show');
+			$occurrence_filter->EnableFilter('rsvp');
+			if (array_key_exists('att', $filter)) {
+				foreach ($filter['att'] as $attendence) {
+					switch ($attendence[0]) {
+						case 'no-declined':
+							$occurrence_filter->DisableFilter('hide');
+							break;
+						case 'no-maybe':
+							$occurrence_filter->DisableFilter('show');
+							break;
+						case 'no-accepted':
+							$occurrence_filter->DisableFilter('rsvp');
+							break;
+					}
+				}
+			}
+		}
+		
+		$sources = $this->_SetupSources($start->Timestamp(), $end->Timestamp(), FALSE, $occurrence_filter);
 		$calendar_data = new CalendarData();
 		
 		$this->_FetchEventsFromSources($calendar_data, $sources);

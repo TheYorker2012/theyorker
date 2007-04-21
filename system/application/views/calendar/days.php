@@ -6,6 +6,14 @@ function DrawOccurrence(&$Occurrence)
 	echo($Occurrence->StartTime->Format('g:m a'));
 	echo('<br />');
 	echo($Occurrence->Event->Name);
+	echo('<br />');
+	if (FALSE === $Occurrence->UserAttending) {
+		echo('not attending');
+	} elseif (TRUE === $Occurrence->UserAttending) {
+		echo('attending');
+	} else {
+		echo('maybe attending');
+	}
 	echo('</div>');
 }
 

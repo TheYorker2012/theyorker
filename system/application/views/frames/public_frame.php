@@ -192,6 +192,21 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/office/">Enter Office</a></li>
 				</ul>
 				-->
+				<?php
+				if (isset($extra_menu_buttons)) {
+					echo('<ul>');
+					foreach ($extra_menu_buttons as $key => $button) {
+						echo('<li'.(!$key ? ' class="first"':'').'>');
+						if (is_string($button)) {
+							echo($button);
+						} else {
+							echo('<a href="'.$button[1].'">'.$button[0].'</a>');
+						}
+						echo('</li>');
+					}
+					echo('</ul>');
+				}
+				?>
 			</div>
 		</div>
 

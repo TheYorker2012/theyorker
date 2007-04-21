@@ -106,7 +106,7 @@ class Messages
 			if (!is_array($message)) {
 				$message = array($message);
 			}
-			$args = count($messages);
+			$args = count($message);
 			if ($args === 1) {
 				$this->AddMessage($DefaultType, $message[0], $DefaultPersistence);
 			} elseif ($args === 2) {

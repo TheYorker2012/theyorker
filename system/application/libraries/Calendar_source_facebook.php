@@ -36,37 +36,58 @@ class CalendarSourceFacebook extends CalendarSource
 		
 		if (!$CI->facebook->InUse()) return;
 		
-		// Get events for the next few weeks.
-		$events = $CI->facebook->Client->events_get(
-			$CI->facebook->Uid,
-			null,
-			$this->mStartTime,
-			$this->mEndTime,
-			null
-		);
-		
-		/*
-		echo('<pre align="left">');
-		print_r($events);
-		echo('</pre>');
-		//*/
-		
-		if (!empty($events)) {
-			foreach ($events as $event) {
-				$event_obj = & $Data->NewEvent();
-				$occurrence = & $Data->NewOccurrence($event_obj);
-				$event_obj->SourceEventId = $event['eid'];
-				$event_obj->Name = $event['name'];
-				$event_obj->Description = $event['description'];
-				$event_obj->LastUpdate = $event['update_time'];
-				$occurrence->SourceOccurrenceId = $event['eid'];
-				$occurrence->LocationDescription = $event['location'];
-				$occurrence->StartTime = new Academic_time((int)$event['start_time']);
-				$occurrence->EndTime = new Academic_time((int)$event['end_time']);
-				$occurrence->TimeAssociated = TRUE;
-				unset($occurrence);
-				unset($event_obj);
+		try {
+			// Get events for the next few weeks.
+			$events = $CI->facebook->Client->events_get(
+				$CI->facebook->Uid,
+				null,
+				$this->mStartTime,
+				$this->mEndTime,
+				null
+			);
+			
+			/*
+			echo('<pre align="left">');
+			print_r($events);
+			echo('</pre>');
+			//*/
+			
+			if (!empty($events)) {
+				foreach ($events as $event) {
+					// get the list of members, so we can see if the user is attending.
+					$members = $CI->facebook->Client->events_getMembers($event['eid']);
+					$user_id = $CI->facebook->Client->users_getLoggedInUser();
+					$attending = NULL;
+					if (is_array($members['attending']) && in_array($user_id, $members['attending'])) {
+						$attending = TRUE;
+					} elseif (is_array($members['declined']) && in_array($user_id, $members['declined'])) {
+						$attending = FALSE;
+					} else {
+						$attending = NULL;
+					}
+					/*echo '<pre align="left">';
+					print_r($event);
+					print_r($members);
+					echo '</pre>';*/
+					
+					$event_obj = & $Data->NewEvent();
+					$occurrence = & $Data->NewOccurrence($event_obj);
+					$event_obj->SourceEventId = $event['eid'];
+					$event_obj->Name = $event['name'];
+					$event_obj->Description = $event['description'];
+					$event_obj->LastUpdate = $event['update_time'];
+					$occurrence->SourceOccurrenceId = $event['eid'];
+					$occurrence->LocationDescription = $event['location'];
+					$occurrence->StartTime = new Academic_time((int)$event['start_time']);
+					$occurrence->EndTime = new Academic_time((int)$event['end_time']);
+					$occurrence->TimeAssociated = TRUE;
+					$occurrence->UserAttending = $attending;
+					unset($occurrence);
+					unset($event_obj);
+				}
 			}
+		} catch (FacebookRestClientException $ex) {
+			$CI->facebook->HandleException($ex);
 		}
 		
 		/*if (isset($events[0]))

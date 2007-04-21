@@ -232,6 +232,7 @@ class EventOccurrenceQuery
  *	private? active? inactive?
  *	hidden events? normal events? rsvpd events?
  *	date range
+ * @todo Generalise event occurrence filter across calendar sources
  */
 class EventOccurrenceFilter extends EventOccurrenceQuery
 {
