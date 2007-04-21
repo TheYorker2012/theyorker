@@ -305,6 +305,10 @@ div.RightToolbar li {
 	font-size: small;
 }
 
+div#MainBodyPane {
+	margin-left: 130px;
+}
+
 /**
  *	Navigation Menu Style (public_frame)
  */
@@ -369,62 +373,48 @@ span.red {
 }
 
 
-/**
- *	Horizontal Navbar Styles (frame_navbar)
- */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-div#navbar ul {
-	padding: 0px;
-	margin: 0px;
-	color: White;
-	float: left;
+ul#Navbar {
 	width: 100%;
-	vertical-align: middle
-}
-
-div#navbar ul li {
-	display: inline;
-	font-size: 14px;
-}
-
-div#navbar ul li a {
-	spacing: 0.2em 0.2em;
-	padding: 0.2em 1em;
-	color: #08c0ef;
-	text-decoration: none;
+	display: block;
+	text-align: right;
 	float: right;
-	border-right: 1px solid #08c0ef;
-	border-left: 1px solid #08c0ef;
-	border-bottom: 1px solid #08c0ef;
-	width: 75px;
+	border-bottom: 1px solid #20c1f0;
+	margin: 0.0em 0em 0.5em 0em;
+	list-style: none outside none;
+}
+
+ul#Navbar li {
+	float: right;
 	text-align: center;
+	margin-right: 0.4em;
+	border: 1px solid #20c1f0;
+	padding: 0.2em;
+	min-width: 7em;
+	height: 1.2em;
+	margin-bottom: -1px;
 }
 
-div#navbar ul li a:hover	{
-	color: #06a5cd;
+ul#Navbar li.current {
+	border-bottom: 1px solid white;
+}
+
+ul#Navbar li a {
+	vertical-align: middle;
+	color: #20c1f0;
+}
+
+ul#Navbar li.current a {
 	font-weight: bold;
-	border-right: 1px solid #06a5cd;
-	border-left: 1px solid #06a5cd;
-	border-bottom: 1px solid #06a5cd;
-
 }
 
-div#navbar ul li .current {
+ul#Navbar li a:hover {
 	font-weight: bold;
- 	color: #06a5cd;
-	border-right: 1px solid #06a5cd;
-	border-left: 1px solid #06a5cd;
-	border-bottom: 1px solid #06a5cd;
-
 }
 
-div#navbar ul li .thin {
-	spacing: 0px 1px;
-	padding: 0px;
-	color: #ffffff;
-	text-decoration: none;
-	float: right;
-}
 
 /**
  *	---------------------
