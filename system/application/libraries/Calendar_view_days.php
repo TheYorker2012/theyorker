@@ -25,6 +25,16 @@ class CalendarViewDays extends CalendarView
 	function __construct()
 	{
 		parent::__construct('calendar/days');
+		
+		
+		$extra_head = <<<EXTRAHEAD
+			<script src="/javascript/prototype.js" type="text/javascript"></script>
+			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+			<script src="/javascript/calendar.js" type="text/javascript"></script>
+			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+EXTRAHEAD;
+		$CI = & get_instance();
+		$CI->main_frame->SetExtraHead($extra_head);
 	}
 	
 	function SetStartEnd($Start, $End)

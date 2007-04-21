@@ -26,24 +26,27 @@
 
 ?>
 
-<ul>
-	<?php
-	foreach ($Filters as $id => $filter) {
-		switch ($filter['display']) {
-			case 'block':
-				echo '<li><a href="#">';
-				echo $filter['name'];
-				echo '</a></li>';
-				break;
-			case 'image':
-				echo '<img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/>';
-				break;
-		}
-	}
-	?>
-</ul>
-
 <div>
+	<ul>
+		<?php
+		// Commented out until actually functional
+		/*foreach ($Filters as $id => $filter) {
+			switch ($filter['display']) {
+				case 'block':
+					echo '<li><a href="#">';
+					echo $filter['name'];
+					echo '</a></li>';
+					break;
+				case 'image':
+					echo '<li><img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/></li>';
+					break;
+			}
+		}*/
+		?>
+	</ul>
+</div>
+
+<div><br />
 <?php
 // Load the main view
 $ViewMode->Load();
