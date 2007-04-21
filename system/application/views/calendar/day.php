@@ -8,7 +8,7 @@
 
 ?>
 
-<h3><?php echo $DateDescription ?></h3>
+<h3><?php echo $DateDescription; ?></h3>
 
 <div id='RightColumn'>
 	<h2>To-Do</h2>
@@ -16,8 +16,5 @@
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox">
-		<h2>Day</h2>
-		<?php $DaysView->Load(); ?>
-	</div>
+	<?php $DaysView->Load(); ?>
 </div>

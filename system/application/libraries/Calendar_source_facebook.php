@@ -1,0 +1,98 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * @file libraries/Calendar_source_facebook.php
+ * @brief Calendar source for facebook events.
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ * @pre loaded(library calendar_backend)
+ *
+ * Event source class for obtaining facebook events using the facebook api.
+ *
+ * @version 18-04-2007 James Hogan (jh559)
+ *	- Created.
+ */
+
+/// Calendar source for facebook events.
+class CalendarSourceFacebook extends CalendarSource
+{
+	/// Default constructor.
+	function __construct()
+	{
+		parent::__construct();
+		
+		$this->mName = 'Facebook';
+		//$this->mCapabilities[] = 'rsvp';
+		$this->mCapabilities[] = 'refer';
+	}
+	
+	/// Fedge the events of the source.
+	/**
+	 * @param $Data CalendarData Data object to add events to.
+	 */
+	protected function _FetchEvents(&$Data)
+	{
+		$CI = & get_instance();
+		
+		if (!$CI->facebook->InUse()) return;
+		
+		// Get events for the next few weeks.
+		$events = $CI->facebook->Client->events_get(
+			$CI->facebook->Uid,
+			null,
+			$this->mStartTime,
+			$this->mEndTime,
+			null
+		);
+		
+		/*
+		echo('<pre align="left">');
+		print_r($events);
+		echo('</pre>');
+		//*/
+		
+		if (!empty($events)) {
+			foreach ($events as $event) {
+				$event_obj = & $Data->NewEvent();
+				$occurrence = & $Data->NewOccurrence($event_obj);
+				$event_obj->SourceEventId = $event['eid'];
+				$event_obj->Name = $event['name'];
+				$event_obj->Description = $event['description'];
+				$event_obj->LastUpdate = $event['update_time'];
+				$occurrence->SourceOccurrenceId = $event['eid'];
+				$occurrence->LocationDescription = $event['location'];
+				$occurrence->StartTime = new Academic_time((int)$event['start_time']);
+				$occurrence->EndTime = new Academic_time((int)$event['end_time']);
+				$occurrence->TimeAssociated = TRUE;
+				unset($occurrence);
+				unset($event_obj);
+			}
+		}
+		
+		/*if (isset($events[0]))
+		{
+			$first_event_eid = $events[0]['eid'];
+			$event_members = $client->events_getMembers($events[0]['eid']);
+			$event_count = count($event_members['attending']);
+		}*/
+	}
+}
+
+
+
+/// Dummy class
+class Calendar_source_facebook
+{
+	/// Default constructor.
+	function __construct()
+	{
+		$CI = & get_instance();
+		$CI->load->library('facebook');
+		
+		if ($CI->facebook->InUse()) {
+			$CI->facebook->Connect();
+		}
+	}
+}
+
+?>

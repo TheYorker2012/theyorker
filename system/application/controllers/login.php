@@ -12,15 +12,8 @@ class Login extends Controller
 	function __construct()
 	{
 		parent::Controller();
-	}
-	
-	/// Redirect to the uri given after the initial login/.../
-	/**
-	 * @note Duplicated from logout
-	 */
-	function _redirect($FirstSegment = 2)
-	{
-		return implode('/', array_slice($this->uri->rsegment_array(), $FirstSegment));
+		
+		$this->load->helper('uri_tail');
 	}
 
 	/// Main login screen.
@@ -32,7 +25,7 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('public', FALSE, TRUE)) return;
 		
-		LoginHandler('student', $this->_redirect());
+		LoginHandler('student', GetUriTail(2));
 	}
 
 	/// VIP login screen.
@@ -44,7 +37,7 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
-		LoginHandler('vip', $this->_redirect());
+		LoginHandler('vip', GetUriTail(2));
 	}
 
 	/// VIP login screen for specific organisation.
@@ -58,7 +51,7 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
-		LoginHandler('vip', $this->_redirect(3), $Organisation);
+		LoginHandler('vip', GetUriTail(3), $Organisation);
 	}
 
 	/// Office login screen.
@@ -70,7 +63,7 @@ class Login extends Controller
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
-		LoginHandler('office', $this->_redirect());
+		LoginHandler('office', GetUriTail(2));
 	}
 	
 	/// Facebook login.
@@ -83,7 +76,7 @@ class Login extends Controller
 		$this->load->library('facebook');
 		$this->facebook->Enable();
 		
-		redirect($this->_redirect());
+		RedirectUriTail(2);
 	}
 }
 ?>

@@ -15,15 +15,7 @@ class Logout extends Controller
 
 		// CheckPermissions is not used so user_auth needs loading
 		$this->load->model('user_auth');
-	}
-	
-	/// Redirect to the uri given after the initial logout/.../
-	/**
-	 * @note Duplicated from login
-	 */
-	function _redirect($FirstSegment = 2)
-	{
-		redirect(implode('/', array_slice($this->uri->rsegment_array(), $FirstSegment)));
+		$this->load->helper('uri_tail');
 	}
 
 	/// Logout from main account
@@ -40,7 +32,7 @@ class Logout extends Controller
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
-		$this->_redirect();
+		RedirectUriTail(2);
 	}
 	
 	/// Logout from vip area
@@ -57,7 +49,7 @@ class Logout extends Controller
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
-		$this->_redirect();
+		RedirectUriTail(2);
 	}
 
 	/// Logout from office
@@ -74,7 +66,7 @@ class Logout extends Controller
 			$CI->messages->AddMessage('error',$e->getMessage());
 		}
 		
-		$this->_redirect();
+		RedirectUriTail(2);
 	}
 	
 	/// Logout from facebook api
@@ -87,7 +79,7 @@ class Logout extends Controller
 		$this->load->library('facebook');
 		$this->facebook->Disable();
 		
-		$this->_redirect();
+		RedirectUriTail(2);
 	}
 }
 ?>

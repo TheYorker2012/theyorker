@@ -20,6 +20,14 @@ class CalendarViewAgenda extends CalendarView
 	function __construct()
 	{
 		parent::__construct('calendar/agenda');
+		
+		$this->SetData('MiniMode', FALSE);
+	}
+	
+	/// Whether to use mini mode.
+	function SetMiniMode($Mini = TRUE)
+	{
+		$this->SetData('MiniMode', $Mini);
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -32,7 +40,7 @@ class CalendarViewAgenda extends CalendarView
 	 */
 	protected function ProcessEvents(&$Data, $Categories)
 	{
-		$occurrences = $Data->GetOccurrences();
+		$occurrences = $Data->GetCalendarOccurrences();
 		$events = $Data->GetEvents();
 		
 		$this->SetData('Occurrences', $occurrences);

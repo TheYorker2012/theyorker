@@ -1,25 +1,23 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * @file libraries/Calendar_view_weeks.php
- * @brief Calendar view for a set of weeks.
+ * @file libraries/Calendar_view_icalendar.php
+ * @brief Calendar view for vcalendar/icalendar file formats.
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * @pre loaded(library Calendar_frontend)
  *
- * Term / month view.
- *
- * @version 29-03-2007 James Hogan (jh559)
+ * @version 18-04-2007 James Hogan (jh559)
  *	- Created.
  */
 
-/// Weeks calendar view class.
-class CalendarViewWeeks extends CalendarView
+/// iCal/vCal view class.
+class CalendarViewICalendar extends CalendarView
 {
 	/// Default constructor.
-	function __construct()
+	function __construct($UseIcal = TRUE)
 	{
-		parent::__construct('calendar/weeks');
+		parent::__construct('calendar/'.($UseIcal ? 'ical' : 'vcal'));
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -32,16 +30,22 @@ class CalendarViewWeeks extends CalendarView
 	 */
 	protected function ProcessEvents(&$Data, $Categories)
 	{
-		$occurrences = $Data->GetCalendarOccurrences();
+		$occurrences = $Data->GetOccurrences();
 		$events = $Data->GetEvents();
 		
 		$this->SetData('Occurrences', $occurrences);
 		$this->SetData('Events', $events);
 	}
+	
+	function Load()
+	{
+		header('Content-type: text/calendar');
+		parent::Load();
+	}
 }
 
 /// Dummy class.
-class Calendar_view_weeks
+class Calendar_view_icalendar
 {
 
 }

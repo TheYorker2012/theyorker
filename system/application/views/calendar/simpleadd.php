@@ -1,22 +1,31 @@
+<?php
+
+/**
+ * @param $EventCategories array[id => array('id'=>,'name'=>,'colour'=>)]
+ * @param $AddForm id
+ */
+
+?>
+
 <div id="RightColumn">
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">
-		<p>Some bullshit about adding events.</p>
+		<p>Some useful information about adding events.</p>
 
 	</div>
 	<h2>Hints</h2>
 	<div class="Entry">
-		<p>Weeeeeeeeee!</p>
+		<p>hello!</p>
 	</div>
 </div>
 
 <script type="text/javascript">
 
-function ShitFunction()
+function FrequencyChange()
 {
-	var repeat_select = document.getElementById("repeat");
+	var repeat_select = document.getElementById("a_frequency");
 	var repeat_type = repeat_select.options[repeat_select.selectedIndex].value
-	var repeat_div = document.getElementById("repeat_div");
+	var repeat_div = document.getElementById("frequency_div");
 
 	if (repeat_type == "none")
 	{
@@ -24,25 +33,25 @@ function ShitFunction()
 	}
 	else if (repeat_type == "daily")
 	{
-		repeat_div.innerHTML = '<fieldset><label for="">Every:</label><input type="text" size="3" value="1"> day(s)</fieldset>'
+		repeat_div.innerHTML = '<fieldset><label for="a_interval">Every:</label><input name="a_interval" id="a_interval" type="text" size="3" value="1"> day(s)</fieldset>'
 	}
 	else if (repeat_type == "weekly")
 	{
 		repeat_div.innerHTML = '\
 		<fieldset>\
-		<label for="rw_oft">Every</label><input type="text" size="3" value="1"><br />\
-		<label for="rw_mon">Monday</label><input id="rw_mon" type="checkbox"><br />\
-		<label for="rw_tur">Tuesday</label><input id="rw_tur" type="checkbox"><br />\
-		<label for="rw_wed">Wednesday</label><input id="rw_wed" type="checkbox"><br />\
-		<label for="rw_thu">Thursday</label><input id="rw_thu" type="checkbox"><br />\
-		<label for="rw_fri">Friday</label><input id="rw_fri" type="checkbox"><br />\
-		<label for="rw_sat">Saturday</label><input id="rw_sat" type="checkbox"><br />\
-		<label for="rw_sun">Sunday</label><input id="rw_sun" type="checkbox"><br />\
+		<label for="a_interval">Every</label><input name="a_interval" id="a_interval" type="text" size="3" value="1"><br />\
+		<label for="a_onday[mon]">Monday</label><input name="a_onday[mon]" id="a_onday[mon]" type="checkbox"><br />\
+		<label for="a_onday[tue]">Tuesday</label><input name="a_onday[tue]" id="a_onday[tue]" type="checkbox"><br />\
+		<label for="a_onday[wed]">Wednesday</label><input name="a_onday[wed]" id="a_onday[wed]" type="checkbox"><br />\
+		<label for="a_onday[thu]">Thursday</label><input name="a_onday[thu]" id="a_onday[thu]" type="checkbox"><br />\
+		<label for="a_onday[fri]">Friday</label><input name="a_onday[fri]" id="a_onday[fri]" type="checkbox"><br />\
+		<label for="a_onday[sat]">Saturday</label><input name="a_onday[sat]" id="a_onday[sat]" type="checkbox"><br />\
+		<label for="a_onday[sun]">Sunday</label><input name="a_onday[sun]" id="a_onday[sun]" type="checkbox"><br />\
 		</fieldset>';
 	}
 	else if (repeat_type == "yearly")
 	{
-		repeat_div.innerHTML = '<fieldset><label for="">Every:</label><input type="text" size="3" value="1"> year(s)</fieldset>'
+		repeat_div.innerHTML = '<fieldset><label for="a_interval">Every:</label><input name="a_interval" id="a_interval" type="text" size="3" value="1"> year(s)</fieldset>'
 	}
 }
 
@@ -51,31 +60,43 @@ function ShitFunction()
 <div id="MainColumn">
 <div class="BlueBox">
 		<h2>add event</h2>
-		<form id="" action="" method="post" class="">
+		<form id="" action="<?php echo($AddForm['target']); ?>" method="post" class="">
 
 		<fieldset>
 		<!-- <br /> tags necessary for correct rendering in text based browsers -->
-		<label for="a_authorname">What: </label>
-		<input type="text" name="a_authorname" id="a_authorname" value="" size="30"/><br />
+		<label for="a_summary">Summary: </label>
+		<input type="text" name="a_summary" id="a_summary" value="<?php echo($AddForm['default_summary']); ?>" size="30"/><br />
 		
-		<label for="a_authorname">Start: </label>
-		<input type="text" name="a_authorname" id="a_authorname" value="29/03/2007" size="10"/>
-		<input type="text" name="a_authorname" id="a_authorname" value="9.15" size="5"/>
-		<label for="finish_date">Finish: </label>
-		<input type="text" name="a_authorname" id="a_authorname" value="29/03/2007" size="10"/>
-		<input type="text" name="a_authorname" id="a_authorname" value="10.15" size="5"/>
+		<label for="a_allday">All day:</label>
+		<input type="checkbox" name="a_allday" <?php if ($AddForm['default_allday']) echo('checked="checked"');?> />
+		
+		<label for="a_startdate">Start: </label>
+		<input type="text" name="a_startdate" id="a_startdate" value="<?php echo($AddForm['default_startdate']); ?>" size="10" />
+		<input type="text" name="a_starttime" id="a_starttime" value="<?php echo($AddForm['default_starttime']); ?>" size="5" />
+		<label for="a_enddate">Finish: </label>
+		<input type="text" name="a_enddate" id="a_enddate" value="<?php echo($AddForm['default_enddate']); ?>" size="10" />
+		<input type="text" name="a_endtime" id="a_endtime" value="<?php echo($AddForm['default_endtime']); ?>" size="5" />
 		<br />
 
-		<label for="a_authorname">Where: </label>
-		<input type="text" id="autocomplete" name="autocomplete_parameter"/>
-		<span id="indicator1" style="display: none"><img src="/images/spinner.gif" alt="Working..." /></span>
-		<div id="autocomplete_choices" class="autocomplete"></div>
+		<label for="a_location">Where: </label>
+		<input type="text" id="a_location" name="a_location" />
 
-		<label for="">Description:</label>
-		<textarea</textarea><br />
+		<label for="a_category">Category: </label>
+		<select id="a_category" name="a_category">
+			<?php
+			foreach ($EventCategories as $key => $category) {
+				echo('<option value="'.$key.'"'.($key == $AddForm['default_eventcategory'] ? ' selected="selected"':'').'>');
+				echo($category['name']);
+				echo('</option>');
+			}
+			?>
+		</select>
+
+		<label for="a_description">Description:</label>
+		<textarea id="a_description" name="a_description"></textarea><br />
 		
-		<label for="">Repeats:</label>
-		<select onchange="ShitFunction()" id="repeat">
+		<label for="a_frequency">Repeats:</label>
+		<select onchange="FrequencyChange()" id="a_frequency" name="a_frequency">
 			<option value="none" selected="selected">None</option>
 			<option value="daily">Daily</option>
 			<option value="weekly">Weekly</option>
@@ -83,7 +104,7 @@ function ShitFunction()
 		</select>
 		<br /><br />
 	</fieldset>
-		<div id="repeat_div" style=""></div>
+		<div id="frequency_div" style=""></div>
 	<fieldset>
 	</fieldset>
 	<fieldset>

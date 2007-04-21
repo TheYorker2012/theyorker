@@ -45,12 +45,14 @@ class CalendarOccurrence
 	public $State				= 'published';
 	/// &CalendarOccurrence,NULL Reference to the active occurrence.
 	public $ActiveOccurrence	= NULL;
-	/// bool Whether the event is time associated
-	public $TimeAssociated		= FALSE;
+	/// bool Whether the occurrence is a todo item.
+	public $Todo				= FALSE;
 	/// AcademicTime,NULL Start time of event.
 	public $StartTime			= NULL;
 	/// AcademicTime,NULL End time of event.
 	public $EndTime				= NULL;
+	/// bool Whether the event is time associated
+	public $TimeAssociated		= TRUE;
 	/// string,NULL Description of location.
 	public $LocationDescription	= NULL;
 	/// url,NULL URL of location.
@@ -64,6 +66,15 @@ class CalendarOccurrence
 	public $UserAttending		= 'maybe';
 	/// int[0,100],NULL How complete the item is for the user.
 	public $UserProgress		= NULL;
+	
+	/// bool Whether to display on the users calendar.
+	public $DisplayOnCalendar	= TRUE;
+	/// bool Whether to display on the users to-do list.
+	public $DisplayOnTodo		= FALSE;
+	/// AcademicTime,NULL Effective start time of todo.
+	public $TodoStartTime		= NULL;
+	/// AcademicTime,NULL Effective end time of todo.
+	public $TodoEndTime			= NULL;
 	
 	/// Primary constructor.
 	/**
@@ -101,6 +112,8 @@ class CalendarEvent
 	public $Category		= NULL;
 	/// string Name of event.
 	public $Name			= '';
+	/// bool Whether the event is time associated
+	public $TimeAssociated		= TRUE;
 	/// string,NULL Description of event (parsed wikitext).
 	public $Description		= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.
@@ -109,6 +122,8 @@ class CalendarEvent
 	public $LastUpdate		= NULL;
 	/// string Status of the user regarding the event (must be in @a $ValidUserStatuses).
 	public $UserStatus		= 'none';
+	/// RecurrenceSet Recurrence information.
+	public $Recur			= NULL;
 	
 	/// Primary constructor.
 	/**
@@ -271,6 +286,9 @@ class CalendarData
 	/// array[&CalendarSource] List of source objects.
 	protected $mSources			= array();
 	
+	/// array[string => bool] Flags for enabling different information.
+	protected $mFlags			= array();
+	
 	/// Constructors.
 	/**
 	 * @param $Argument1 (NULL), &CalendarData, array[$CalendarData]
@@ -366,6 +384,36 @@ class CalendarData
 		return $this->mOccurrences;
 	}
 	
+	/// Get the array of calendar occurrences.
+	/**
+	 * @return array[&CalendarOccurrence] Array of occurrence references.
+	 */
+	function GetCalendarOccurrences()
+	{
+		$result = array();
+		foreach ($this->mOccurrences as $key => $occurrence) {
+			if ($occurrence->DisplayOnCalendar) {
+				$result[] = & $this->mOccurrences[$key];
+			}
+		}
+		return $result;
+	}
+	
+	/// Get the array of todo occurrences.
+	/**
+	 * @return array[&CalendarOccurrence] Array of occurrence references.
+	 */
+	function GetTodoOccurrences()
+	{
+		$result = array();
+		foreach ($this->mOccurrences as $key => $occurrence) {
+			if ($occurrence->DisplayOnTodo) {
+				$result[] = & $this->mOccurrences[$key];
+			}
+		}
+		return $result;
+	}
+	
 	/// Get the array of Events
 	/**
 	 * @return array[&CalendarEvent] Array of event references.
@@ -391,6 +439,56 @@ class CalendarData
 	function GetSource()
 	{
 		return $this->mSources;
+	}
+	
+	/// Enable a flag.
+	/**
+	 * @param $FlagName string The name of the flag to enable.
+	 */
+	function EnableFlag($FlagName)
+	{
+		$this->mFlags[$FlagName] = TRUE;
+	}
+	
+	/// Disable a flag.
+	/**
+	 * @param $FlagName string The name of the flag to disable.
+	 */
+	function DisableFlag($FlagName)
+	{
+		$this->mFlags[$FlagName] = FALSE;
+	}
+	
+	/// Get the value of a flag.
+	/**
+	 * @param $FlagName string The name of the flag.
+	 * @return bool The value of the flag specified by @a $FlagName.
+	 */
+	function GetFlag($FlagName)
+	{
+		return $this->mFlags[$Flagname];
+	}
+	
+	/// Get the events from multiple sources
+	/**
+	 * @return Array of messages to display.
+	 */
+	function FetchEventsFromSources($Sources)
+	{
+		if (!is_array($Sources)) {
+			$Sources = array($Sources);
+		}
+		$CI = & get_instance();
+		$messages = array();
+		// Accumulate data from sources in $this
+		foreach ($Sources as $source) {
+			try {
+				$source->FetchEvents($this);
+			} catch (Exception $e) {
+				$messages[] = array('calendar data source failed: '.$e->getMessage(), 'error');
+			}
+		}
+		return $messages;
 	}
 }
 

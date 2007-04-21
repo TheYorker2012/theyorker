@@ -20,6 +20,17 @@ class CalendarViewTodoList extends CalendarView
 	function __construct()
 	{
 		parent::__construct('calendar/todo_list');
+		
+		$CI = & get_instance();
+		
+		$this->SetData('InlineAdder', TRUE);
+		$this->SetData('InlineAdderTarget', site_url('calendar/actions/add/todo'.$CI->uri->uri_string()));
+	}
+	
+	/// Disable the cunning inline todo adder.
+	function DisableInlineAdder()
+	{
+		$this->SetData('InlineAdder', FALSE);
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -32,11 +43,9 @@ class CalendarViewTodoList extends CalendarView
 	 */
 	protected function ProcessEvents(&$Data, $Categories)
 	{
-		$occurrences = $Data->GetOccurrences();
-		$events = $Data->GetEvents();
+		$items = $Data->GetTodoOccurrences();
 		
-		$this->SetData('Occurrences', $occurrences);
-		$this->SetData('Events', $events);
+		$this->SetData('Items', $items);
 	}
 }
 

@@ -36,6 +36,66 @@ class Home extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
+	
+	/// Setup the user's main event sources.
+	/**
+	 * @param $StartTime timestamp Start time of events.
+	 * @param $EndTime   timestamp End time of events.
+	 */
+	function _SetupSources($StartTime, $EndTime)
+	{
+		// Load calendar source libraries
+		$this->load->library('calendar_backend');
+		$this->load->library('calendar_source_yorker');
+		$this->load->library('calendar_source_facebook');
+		
+		// Set up data sources
+		$sources = array();
+		
+		$source_yorker = new CalendarSourceYorker();
+		$source_yorker->EnableTodo(TRUE);
+		$sources[] = $source_yorker;
+		
+		$sources[] = new CalendarSourceFacebook();
+		
+		// Set sources date range to something relevent
+		foreach ($sources as $source) {
+			$source->SetRange($StartTime, $EndTime);
+		}
+		
+		return $sources;
+	}
+	
+	/**
+	 * @return array(Todays events view, Todo view).
+	 */
+	private function _GetMiniCalendars()
+	{
+		$this->load->library('academic_calendar');
+		$this->load->library('calendar_frontend');
+		$this->load->library('calendar_view_agenda');
+		$this->load->library('calendar_view_todo_list');
+		
+		$now = new Academic_time(time());
+		$start = $now;
+		$end = $now->Midnight()->Adjust('+2day');
+		$sources = $this->_SetupSources($start->Timestamp(), $end->Timestamp());
+		$calendar_data = new CalendarData();
+		
+		$this->messages->AddMessages($calendar_data->FetchEventsFromSources($sources));
+		
+		// Display data
+		$this->load->library('calendar_view_days');
+		
+		$EventsView = new CalendarViewAgenda();
+		$EventsView->SetMiniMode();
+		$EventsView->SetCalendarData($calendar_data);
+		//$EventsView->SetStartEnd($start->Timestamp(), $end->Timestamp());
+		
+		$TodoView = new CalendarViewTodoList();
+		$TodoView->SetCalendarData($calendar_data);
+		return array($EventsView, $TodoView);
+	}
 
 	function index()
 	{
@@ -64,6 +124,9 @@ class Home extends Controller {
 
 		//Obtain banner
 		$data['banner'] = $this->Home_Model->GetBannerImage();
+		
+		// Minifeeds
+		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);

@@ -114,6 +114,7 @@ class Calendar extends controller
 	
 	function events($EventId = FALSE, $OccurrenceId=FALSE)
 	{
+		show_404();
 		if (FALSE!==$EventId && !is_numeric($EventId)) {
 			show_404();
 		}
@@ -135,6 +136,7 @@ class Calendar extends controller
 				foreach ($rules as $info) {
 					$name = $info[0];
 					$rule = $info[1];
+					/// @todo Update for new recurrence system
 					$rule_id = $this->recurrence_model->AddRule($rule);
 					if (FALSE === $rule_id) {
 						$this->messages->AddMessage('warning','RRule named '.$name.' could not be added');
@@ -196,7 +198,6 @@ class Calendar extends controller
 				
 				$fields = array(
 						'occurrence_id' => 'event_occurrences.event_occurrence_id',
-						'description' => 'event_occurrences.event_occurrence_description',
 						'start' => 'event_occurrences.event_occurrence_start_time',
 						'end' => 'event_occurrences.event_occurrence_end_time',
 						'status'=>$filter->ExpressionPublicState(),
@@ -242,7 +243,7 @@ class Calendar extends controller
 					}
 					$op .= '<LI>'.$occurrence['status'].' <A HREF="' . vip_url('calendar/events/' . $EventId . '/' . $occurrence['occurrence_id']) . '">' .
 						$occurrence['start'] . ' -> ' . $occurrence['end'] . '</A> '.
-						$occurrence['description'].' ('.implode(', ',$links).') </LI>';
+						' ('.implode(', ',$links).') </LI>';
 				}
 				$op .= '</OL>';
 				
@@ -289,7 +290,6 @@ class Calendar extends controller
 				
 				$result = $filter->GenerateOccurrences(array(
 					'occurrence_id' => 'event_occurrences.event_occurrence_id',
-					'description' => 'event_occurrences.event_occurrence_description',
 					'start' => 'event_occurrences.event_occurrence_start_time',
 					'end' => 'event_occurrences.event_occurrence_end_time',
 					'active_id' => 'event_occurrences.event_occurrence_active_occurrence_id',
@@ -299,7 +299,7 @@ class Calendar extends controller
 					'cancelled'=>$filter->ExpressionPublicCancelled(),
 					'postponed'=>$filter->ExpressionPublicPostponed(),
 					'rescheduled'=>$filter->ExpressionPublicRescheduled(),
-					'ts' => 'event_occurrences.event_occurrence_timestamp',
+					'ts' => 'event_occurrences.event_occurrence_last_modified',
 					));
 				
 				$rsvps = $this->events_model->GetOccurrenceRsvp($OccurrenceId);
@@ -378,11 +378,10 @@ class Calendar extends controller
 				'description' => 'Ready for the alpha launch?',
 				'occurrences' => array(
 					array(
-						'description' => 'the only occurrence',
 						'location' => 'tba',
 						'start' => mktime(14,30,0,2,14,2007),
 						'end' => mktime(17,0,0,2,14,2007),
-						'all_day' => FALSE,
+						'time_associated' => TRUE,
 						'ends_late' => FALSE,
 					),
 				),

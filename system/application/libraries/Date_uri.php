@@ -169,13 +169,13 @@ class Date_uri
 			
 			if (TRUE) {
 				// Echo the regular expression
-				echo 'Debug output (not html formatted, see source):'."\n\n";
+				echo '<h2>Debug output<h2><pre>';
 				echo '			if ($AllowRange) {'."\n";
 				echo '				return \''.$multiple_regex."';\n";
 				echo '			} else {'."\n";
 				echo '				return \''.$single_regex."';\n";
-				echo '			}'."\n\n";
-				echo 'End of Debug output'."\n\n";
+				echo '			}'."\n";
+				echo '</pre><h2>End of Debug output</h2>';
 			}
 			
 			return ($AllowRange

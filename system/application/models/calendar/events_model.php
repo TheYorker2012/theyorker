@@ -26,9 +26,10 @@ class EventOccurrenceQuery
 		if (FALSE === $EntityId) {
 			$EntityId = $this->mEntityId;
 		}
-		return	'(	event_entities.event_entity_entity_id = ' . $EntityId . '
+		return	'(events.event_organizer_entity_id = ' . $EntityId . ' OR
+				(	event_entities.event_entity_entity_id = ' . $EntityId . '
 				AND	event_entities.event_entity_confirmed = 1
-				AND	event_entities.event_entity_relationship = \'own\')';
+				AND	event_entities.event_entity_relationship = \'own\'))';
 	}
 	
 	/// Produce an SQL expression for all and only subscribed events.
@@ -44,37 +45,93 @@ class EventOccurrenceQuery
 	/// Produce an SQL expression for all and only rsvp'd events.
 	function ExpressionVisibilityRsvp()
 	{
-		return	'event_occurrence_users.event_occurrence_user_state=\'rsvp\'';
+		return	'event_occurrence_users.event_occurrence_user_attending=TRUE';
 	}
 	
 	/// Produce an SQL expression for all and only hidden events.
 	function ExpressionVisibilityHidden()
 	{
-		return	'event_occurrence_users.event_occurrence_user_state=\'hide\'';
+		return	'event_occurrence_users.event_occurrence_user_attending=FALSE';
 	}
 	
 	/// Produce an SQL expression for all and only normal visibility events.
 	function ExpressionVisibilityNormal()
 	{
-		return	'(		event_occurrence_users.event_occurrence_user_state=\'show\'
-					OR	event_occurrence_users.event_occurrence_user_state IS NULL)';
+		return	'event_occurrence_users.event_occurrence_user_attending IS NULL';
+	}
+	
+	/// Produce an SQL expression for whether an occurrence should be on a users calendar.
+	function ExpressionShowOnCalendar()
+	{
+		return 'event_occurrences.event_occurrence_end_time IS NOT NULL '.
+				'AND (	event_occurrence_users.event_occurrence_user_attending IS NULL'.
+				'	OR	event_occurrence_users.event_occurrence_user_attending = TRUE)';
+	}
+	
+	/// Produce an SQL expression for whether an occurrence should be on a users todo list.
+	function ExpressionShowOnTodo()
+	{
+		return 'event_occurrence_users.event_occurrence_user_todo = TRUE '.
+				'OR (	event_occurrence_users.event_occurrence_user_todo IS NULL'.
+				'	AND	events.event_todo)';
+	}
+	
+	/// Produce an SQL expression for the effective todo start time.
+	function ExpressionTodoStart()
+	{
+		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
+				'	AND events.event_todo = FALSE,'.
+				'UNIX_TIMESTAMP(CURRENT_TIMESTAMP),'.
+				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time))';
+	}
+	
+	/// Produce an SQL expression for the effective todo end time.
+	function ExpressionTodoEnd()
+	{
+		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
+				'	AND events.event_todo = FALSE,'.
+				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time),'.
+				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time))';
 	}
 	
 	/// Produce an SQL expression for all and only occurrences in a range of time.
 	function ExpressionDateRange($Range)
 	{
 		assert('is_array($Range)');
-		assert('is_int($Range[0]) || FALSE === $Range[0]');
-		assert('is_int($Range[1]) || FALSE === $Range[1]');
+		assert('is_int($Range[0]) || NULL === $Range[0]');
+		assert('is_int($Range[1]) || NULL === $Range[1]');
 		
-		$conditions = array();
-		if (FALSE !== $Range[0]) {
+		$conditions = array($this->ExpressionShowOnCalendar());
+		if (NULL !== $Range[0]) {
 			$conditions[] = 'event_occurrences.event_occurrence_end_time >
 								FROM_UNIXTIME('.$Range[0].')';
 		}
-		if (FALSE !== $Range[1]) {
+		if (NULL !== $Range[1]) {
 			$conditions[] = 'event_occurrences.event_occurrence_start_time <
 								FROM_UNIXTIME('.$Range[1].')';
+		}
+		if (empty($conditions)) {
+			return 'TRUE';
+		} else {
+			return '('.implode(' AND ',$conditions).')';
+		}
+	}
+	
+	/// Produce an SQL expression for all and only todos in a range of time.
+	function ExpressionTodoRange($Range)
+	{
+		assert('is_array($Range)');
+		assert('is_int($Range[0]) || NULL === $Range[0]');
+		assert('is_int($Range[1]) || NULL === $Range[1]');
+		
+		$conditions = array($this->ExpressionShowOnTodo());
+		if (NULL !== $Range[0]) {
+			$conditions[] = '(	event_occurrence_users.event_occurrence_user_progress IS NULL '.
+							'OR	event_occurrence_users.event_occurrence_user_progress < 100 '.
+							'OR	DATE_ADD(event_occurrence_users.event_occurrence_user_timestamp, INTERVAL 1 WEEK) > FROM_UNIXTIME('.$Range[0].'))';
+		}
+		if (NULL !== $Range[1]) {
+			$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > '.$this->ExpressionTodoStart();
 		}
 		if (empty($conditions)) {
 			return 'TRUE';
@@ -179,48 +236,38 @@ class EventOccurrenceQuery
 class EventOccurrenceFilter extends EventOccurrenceQuery
 {
 	/// array[bool] For enabling/disabling sources of events.
-	protected $mSources;
+	protected $mSources = array(
+		'owned'      => TRUE,
+		'subscribed' => TRUE,
+		'inclusions' => FALSE,
+		'all'        => FALSE,
+	);
 	
 	/// array[bool] For filtering sources of events.
-	protected $mFilters;
+	protected $mFilters = array(
+		'private'    => TRUE,
+		'active'     => TRUE,
+		'inactive'   => TRUE,
+		
+		'hide'       => FALSE,
+		'show'       => TRUE,
+		'rsvp'       => TRUE,
+	);
 	
 	/// array[feed] For including additional sources.
-	protected $mInclusions;
+	protected $mInclusions = array();
 	
 	/// array[2*timestamp] For filtering by time.
-	protected $mRange;
+	protected $mRange = array( NULL, NULL );
+	
+	/// array[string=>bool] Whether each type of event is enabled (require different range methods).
+	protected $mFlags = array(
+		'event' => TRUE,
+		'todo' => FALSE
+	);
 	
 	/// string Special mysql condition.
-	protected $mSpecialCondition;
-	
-	/// Default constructor
-	function __construct()
-	{
-		parent::__construct();
-		
-		// Initialise sources + filters
-		$this->mSources = array(
-				'owned'      => TRUE,
-				'subscribed' => TRUE,
-				'inclusions' => FALSE,
-				'all'        => FALSE,
-			);
-		$this->mFilters = array(
-				'private'    => TRUE,
-				'active'     => TRUE,
-				'inactive'   => TRUE,
-				
-				'hide'       => FALSE,
-				'show'       => TRUE,
-				'rsvp'       => TRUE,
-			);
-		
-		$this->mInclusions = array();
-		
-		$this->mRange = array( FALSE, FALSE );
-		
-		$this->mSpecialCondition = FALSE;
-	}
+	protected $mSpecialCondition = FALSE;
 	
 	/// Retrieve specified fields of event occurrences.
 	/**
@@ -301,8 +348,7 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 				$subscribed = '0';
 			}
 			
-			if ($this->mSources['inclusions'] && count($this->mInclusions) > 0)
-{
+			if ($this->mSources['inclusions'] && count($this->mInclusions) > 0) {
 				$includes = array();
 				foreach ($this->mInclusions as $inclusion) {
 					$includes[] = 'event_entities.event_entity_event_id=?';
@@ -358,12 +404,17 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 		$filters = '('.$state.' AND '.$visibility.')';
 		
 		// DATE RANGE ----------------------------------------------------------
+		$ranges = array();
+		if ($this->mFlags['event']) {
+			$ranges[] = $this->ExpressionDateRange($this->mRange);
+		}
+		if ($this->mFlags['todo']) {
+			$ranges[] = $this->ExpressionTodoRange($this->mRange);
+		}
 		
-		$date_range = $this->ExpressionDateRange($this->mRange);
 		
 		// SPECIAL CONDITION ---------------------------------------------------
-		
-		$conditions = array($date_range,$sources,$filters);
+		$conditions = array('('.implode(' OR ',$ranges).')', $sources, $filters);
 		
 		if (FALSE !== $this->mSpecialCondition) {
 			$conditions[] = '('.$this->mSpecialCondition.')';
@@ -490,6 +541,12 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 	function SetSpecialCondition($Condition = FALSE)
 	{
 		$this->mSpecialCondition = $Condition;
+	}
+	
+	/// Enable/disable something.
+	function SetFlag($FlagName, $Value)
+	{
+		$this->mFlags[$FlagName] = $Value;
 	}
 	
 }
@@ -754,7 +811,7 @@ class Events_model extends Model
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 			AND	subscriptions.subscription_organisation_entity_id
 				= ' . $this->GetActiveEntityId() . '
-		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
+		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE';
 		$bind_data = array($EventId, $EventId);
 		
 		$query = $this->db->query($sql, $bind_data);
@@ -803,7 +860,7 @@ class Events_model extends Model
 		LEFT JOIN locations
 			ON locations.location_id
 				= event_occurrences.event_occurrence_location_id
-		WHERE	event_occurrence_users.event_occurrence_user_state = \'rsvp\'';
+		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE';
 		
 		$query = $this->db->query($sql);
 		
@@ -892,6 +949,25 @@ class Events_model extends Model
 		/// @todo Implement.
 	}
 	
+	/// Get a list of available event categories.
+	/**
+	 * @return array[array('id' =>, 'name' =>, 'colour' =>)]
+	 */
+	function CategoriesGet()
+	{
+		$this->db->select(
+			'event_type_id			AS id,'.
+			'event_type_name		AS name,'.
+			'event_type_colour_hex	AS colour'
+		);
+		$category_query = $this->db->Get('event_types');
+		$categories = array();
+		foreach ($category_query->result_array() as $category) {
+			$categories[(int)$category['id']] = $category;
+		}
+		return $categories;
+	}
+	
 	
 	/// Get an existing event.
 	/**
@@ -909,6 +985,8 @@ class Events_model extends Model
 	 */
 	function EventsGet($Fields, $EventId = FALSE, $RecurrenceRule = FALSE, $Filter = '', $FilterBind = array())
 	{
+		/// @todo Tweak to get recurrence rules with new system
+		assert(FALSE);
 		if ($RecurrenceRule) {
 			$Fields[] = $this->recurrence_model->SqlSelectRecurrenceRule();
 		}
@@ -971,71 +1049,128 @@ class Events_model extends Model
 		}
 	}
 	
+	/// Generate a unique identifier for an event.
+	function GenerateEventUid($EventTime)
+	{
+		$now = time();
+		$nowtime = gmdate('Ymd',$now).'T'.gmdate('His',$now).'Z';
+		$eventtime = gmdate('Ymd',$EventTime).'T'.gmdate('His',$EventTime).'Z';
+		
+		$result = $nowtime.'-'.sha1($eventtime.'YORKER'.mt_rand().$_SERVER['SERVER_ADDR'].session_id());
+		$result .= '@theyorker.co.uk';
+		return $result;
+	}
 	
 	/// Create a new event.
 	/**
-	 * @param $EventData array Event data.
-	 * @return array(
-	 *	'event_id' => new event id,
-	 *	'occurrences' => occurrences added)
+	 * @param $EventData array Event data. The following are compulsory:
+	 *	- 'recur' RecurrenceSet Recurrences.
+	 * @return array
+	 *	- 'event_id' => new event id,
+	 *	- 'occurrences' array['YYYYMMDD' => array['HHMMSS' => array]] recur property overrides.
+	 *		Fields are:
+	 *		'location_id'
+	 *		'location_name'
 	 * @exception Exception The event could not be created.
+	 *
+	 * - Uses @a $EventData to create a new event.
+	 * - Uses @a $EventData['recur'] to generate occurrences.
+	 * - Uses @a $EventData['occurrences'] to set occurrence specific properties.
 	 */
 	function EventCreate($EventData)
 	{
 		if ($this->mReadOnly) {
 			throw new Exception(self::$cReadOnlyMessage);
 		}
+		// if the recurrence rule isn't set set it and force it to be a todo
+		if (!array_key_exists('recur', $EventData)) {
+			$EventData['recur'] = new RecurrenceSet();
+		}
 		static $translation = array(
-			'name'			=> 'events.event_name',
-			'description'	=> 'events.event_description',
-			'parent'		=> 'events.event_parent_id',
-			'recurrence_rule_id'	=> 'events.event_recurrence_rule_id',
+			'name'				=> 'event_name',
+			'description'		=> 'event_description',
+			/// @pre $EventData['category'] is valid
+			'category'			=> 'event_type_id',
+			'parent'			=> 'event_parent_id',
+			'time_associated'	=> 'event_time_associated',
+			'todo'				=> 'event_todo',
 		);
-		$fields = array();
-		$bind_data = array();
+		list($start, $end) = $EventData['recur']->GetStartEnd();
+		if (NULL === $start) {
+			$start = time();
+			$EventData['recur']->SetStartEnd($start, $end);
+		}
+		/// @pre Start must be a timestamp
+		assert('is_int($start)');
+		/// @pre End must be a timestamp or NULL
+		assert('is_int($end) || NULL === $end');
+		if (NULL === $end) {
+			$EventData['todo'] = TRUE;
+		}
+		
+		$fields = array(
+			'event_organizer_entity_id = '.$this->GetActiveEntityId(),
+			'event_uid = "'.$this->GenerateEventUid($start).'"',
+		);
+		$fields[] = 'event_start = FROM_UNIXTIME('.$start.')';
+		if (is_int($end)) {
+			$fields[] = 'event_end = FROM_UNIXTIME('.$end.')';
+		} else {
+			$fields[] = 'event_end = NULL';
+		}
+		
 		foreach ($translation as $input_name => $field_name) {
 			if (array_key_exists($input_name, $EventData)) {
-				$fields[] = $field_name.'=?';
-				$bind_data[] = $EventData[$input_name];
+				$fields[] = $field_name.'='.$this->db->escape($EventData[$input_name]);
 			}
 		}
 		
+		// Range to generate occurrences within
+		$generate_min = max($start, strtotime('-1month'));
+		$generate_until = strtotime('2year');
+		
+		// Generate
+		$recurrence_set = $EventData['recur']->Resolve($generate_min, $generate_until);
+		
+		// Now go through, making a list
+		$occurrences = array();
+		foreach ($recurrence_set as $date => $times) {
+			foreach ($times as $time => $duration) {
+				$occurrence = array();
+				if (NULL === $time) {
+					$occurrence['start'] = strtotime($date);
+				} else {
+					$occurrence['start'] = strtotime($date.' '.$time);
+				}
+				// Handle unending todo
+				if (NULL === $duration) {
+					$occurrence['end'] = NULL;
+				} else {
+					$occurrence['end'] = $occurrence['start'] + $duration;
+				}
+				if (array_key_exists('time_associated', $EventData)) {
+					$occurrence['time_associated'] = $EventData['time_associated'];
+				}
+				$occurrence['state'] = 'draft';
+				$occurrences[] = $occurrence;
+			}
+		}
+		
+		$fields[] = 'event_recurrence_updated_until = FROM_UNIXTIME('.$generate_until.')';
+		
 		// create new event
-		$sql = 'INSERT INTO events SET '.implode(',',$fields);
-		$query = $this->db->query($sql, $bind_data);
+		$sql_insert = 'INSERT INTO events SET '.implode(',', $fields);
+		$this->db->query($sql_insert);
 		$affected_rows = $this->db->affected_rows();
 		if ($affected_rows == 0) {
 			throw new Exception('Event could not be created (1)');
 		}
 		$event_id = $this->db->insert_id();
 		
-		// link event to creater
-		$sql = 'INSERT INTO event_entities (
-				event_entity_entity_id,
-				event_entity_event_id,
-				event_entity_relationship,
-				event_entity_confirmed)
-			VALUES';
-		$sql .= ' ('.$this->GetActiveEntityId().','.$event_id.',\'own\',1)';
-		$query = $this->db->query($sql);
-		$affected_rows = $this->db->affected_rows();
-		if ($affected_rows == 0) {
-			// Should now delete event since couldn't bind to entity
-			$sql = 'DELETE FROM events WHERE events.event_id='.$event_id;
-			$query = $this->db->query($sql);
-			$affected_rows = $this->db->affected_rows();
-			// Throw error message
-			$message = 'Event could not be created (';
-			if ($affected_rows == 1) {
-				$message .= '2-clean)';
-			} else {
-				$message .= '2-unclean)';
-			}
-			throw new Exception($message);
-		}
+		$this->recurrence_model->InsertRecurrenceSet($EventData['recur'], $event_id);
 		
-		if (array_key_exists('occurrences',$EventData)) {
-			$num_occurrences = $this->OccurrencesAdd($event_id, $EventData['occurrences']);
+		if (!empty($occurrences)) {
+			$num_occurrences = $this->OccurrencesAdd($event_id, $occurrences);
 		} else {
 			$num_occurrences = 0;
 		}
@@ -1066,9 +1201,9 @@ class Events_model extends Model
 		$event_id = $EventData['id'];
 		
 		static $translation = array(
-			'name'					=> 'events.event_name',
-			'description'			=> 'events.event_description',
-			'recurrence_rule_id'	=> 'events.event_recurrence_rule_id',
+			'name'				=> 'events.event_name',
+			'description'		=> 'events.event_description',
+			'time_associated'	=> 'events.event_time_associated',
 		);
 		$fields = array();
 		$bind_data = array();
@@ -1211,11 +1346,11 @@ class Events_model extends Model
 							$occurrence_data = array();
 							foreach ($recurrences as $when => $value) {
 								$occurrence_data[] = array(
-									'state'			=> 'published',
-									'all_day'		=> TRUE,
-									'ends_late'		=> FALSE,
-									'start'			=> $when,
-									'end'			=> strtotime('+1day',$when),
+									'state'				=> 'published',
+									'time_associated'	=> TRUE,
+									'ends_late'			=> FALSE,
+									'start'				=> $when,
+									'end'				=> strtotime('+1day',$when),
 								);
 							}
 							//$this->messages->AddDumpMessage('data',$occurrence_data);
@@ -1262,29 +1397,31 @@ class Events_model extends Model
 		
 		static $translation2 = array(
 			'state',
-			'description',
 			'location',
 			'postcode',
-			'all_day',
+			'time_associated',
 			'ends_late',
 		);
 		
-		$sql_owned = 'SELECT COUNT(*) FROM event_entities
-			WHERE event_entities.event_entity_event_id = '.$this->db->escape($EventId).'
-			AND ' . $occurrence_query->ExpressionOwned();
-		$query = $this->db->query($sql_owned);
+		// Check owned
+		$this->db->select('COUNT(*)');
+		$this->db->from('events');
+		$this->db->join('event_entities','event_id = event_entity_event_id','left');
+		$this->db->where('event_entity_event_id', $EventId);
+		$this->db->where($occurrence_query->ExpressionOwned());
+		$query = $this->db->get();
 		if ($query->num_rows() > 0) {
 		
 			// create each occurrences
 			$sql = 'INSERT INTO event_occurrences (
 					event_occurrence_event_id,
 					event_occurrence_state,
-					event_occurrence_description,
 					event_occurrence_location_name,
 					event_occurrence_postcode,
+					event_occurrence_original_start_time,
 					event_occurrence_start_time,
 					event_occurrence_end_time,
-					event_occurrence_all_day,
+					event_occurrence_time_associated,
 					event_occurrence_ends_late)
 				VALUES';
 			$first = TRUE;
@@ -1317,22 +1454,22 @@ class Events_model extends Model
 					$sql .= ',';
 				$sql .=	' ('.$EventId.
 						','.$values[0].		// state
-						','.$values[1].		// description
-						','.$values[2].		// location
-						','.$values[3];		// postcode
-				// start time
-				if (array_key_exists('start', $occurrence))
-					$sql .= ',FROM_UNIXTIME('.$occurrence['start'].')';
-				else
-					$sql .= ',DEFAULT';
+						','.$values[1].		// location
+						','.$values[2];		// postcode
+				// original and start time
+				if (array_key_exists('start', $occurrence)) {
+					$sql .= str_repeat(',FROM_UNIXTIME('.$occurrence['start'].')', 2);
+				} else {
+					$sql .= str_repeat(',DEFAULT', 2);
+				}
 				// end time
-				if (array_key_exists('end', $occurrence))
+				if (array_key_exists('end', $occurrence) && NULL !== $occurrence['end']) {
 					$sql .= ',FROM_UNIXTIME('.$occurrence['end'].')';
-				else
+				} else {
 					$sql .= ',DEFAULT';
-				
-				$sql .=	','.$values[4].		// all_day
-						','.$values[5].')'; // ends_late
+				}
+				$sql .= ','.$values[3].		// time associated
+						','.$values[4].')'; // ends_late
 				
 				$first = FALSE;
 			}
@@ -1357,10 +1494,8 @@ class Events_model extends Model
 		$occurrence_query = new EventOccurrenceQuery();
 		
 		static $translation = array(
-			'description'	=> 'event_occurrences.event_occurrence_description',
-			'location'		=> 'event_occurrences.event_occurrence_location_name',
-			'postcode'		=> 'event_occurrences.event_occurrence_postcode',
-			'all_day'		=> 'event_occurrences.event_occurrence_all_day',
+			'location'			=> 'event_occurrences.event_occurrence_location_name',
+			'postcode'			=> 'event_occurrences.event_occurrence_postcode',
 		);
 		$result = 0;
 		foreach ($OccurrenceData as $occurrence) {
@@ -1422,7 +1557,7 @@ class Events_model extends Model
 						= event_occurrences.event_occurrence_event_id
 				AND ' . $occurrence_query->ExpressionOwned() . '
 			SET		event_occurrences.event_occurrence_state=?,
-					event_occurrences.event_occurrence_timestamp=CURRENT_TIMESTAMP()
+					event_occurrences.event_occurrence_last_modified=CURRENT_TIMESTAMP()
 			WHERE	event_occurrences.event_occurrence_event_id=?';
 		$bind_data = array($NewState, $EventId);
 		if (FALSE !== $OccurrenceId) {
@@ -1550,7 +1685,7 @@ BEGIN
 		SELECT preactive.event_occurrence_id INTO preactive_id
 			FROM event_occurrences AS preactive
 			WHERE preactive.event_occurrence_active_occurrence_id = occurrence_id
-			ORDER BY preactive.event_occurrence_timestamp DESC
+			ORDER BY preactive.event_occurrence_last_modified DESC
 			LIMIT 1;
 		UPDATE	event_occurrences
 			SET		event_occurrences.event_occurrence_active_occurrence_id
@@ -1707,24 +1842,20 @@ END';
 		$sql_insert = 'INSERT INTO event_occurrences (
 				event_occurrence_event_id,
 				event_occurrence_state,
-				event_occurrence_description,
 				event_occurrence_location_id,
 				event_occurrence_location_name,
 				event_occurrence_postcode,
 				event_occurrence_start_time,
 				event_occurrence_end_time,
-				event_occurrence_all_day,
 				event_occurrence_ends_late)
 			SELECT
 				event_occurrences.event_occurrence_event_id,
 				\'movedraft\',
-				event_occurrences.event_occurrence_description,
 				event_occurrences.event_occurrence_location_id,
 				event_occurrences.event_occurrence_location_name,
 				event_occurrences.event_occurrence_postcode,
 				event_occurrences.event_occurrence_start_time,
 				event_occurrences.event_occurrence_end_time,
-				event_occurrences.event_occurrence_all_day,
 				event_occurrences.event_occurrence_ends_late
 			FROM event_occurrences
 			INNER JOIN event_entities
@@ -1749,10 +1880,10 @@ END';
 							= ?,
 						event_occurrences.event_occurrence_state
 							= \'cancelled\',
-						event_occurrences.event_occurrence_timestamp
+						event_occurrences.event_occurrence_last_modified
 							= IF(event_occurrences.event_occurrence_id = ?,
 								CURRENT_TIMESTAMP(),
-								event_occurrences.event_occurrence_timestamp)
+								event_occurrences.event_occurrence_last_modified)
 				WHERE	event_occurrences.event_occurrence_id = ?
 					OR	event_occurrences.event_occurrence_active_occurrence_id = ?';
 					
@@ -1797,15 +1928,11 @@ END';
 	/// Set user-occurrence link.
 	/**
 	 * @param $OccurrenceId integer Id of occurrence.
-	 * @param $NewState string new db state:
-	 *	- 'show' (show the event normally).
-	 *	- 'hide' (hide the event).
-	 *	- 'rsvp' (rsvp the event).
+	 * @param $NewAttending bool,NULL Whether the user is attending
 	 * @return bool True on success, False on failure.
 	 * @pre Occurrence is visible to user.
-	 * @post Occurrence is RSVP'd to user.
 	 */
-	protected function SetOccurrenceUserState($OccurrenceId, $NewState)
+	protected function SetOccurrenceUserAttending($OccurrenceId, $NewAttending)
 	{
 		/// @pre GetActiveEntityId() === $sEntityUser
 		assert('$this->GetActiveEntityId() === self::$cEntityUser');
@@ -1816,18 +1943,18 @@ END';
 			INSERT INTO event_occurrence_users (
 				event_occurrence_users.event_occurrence_user_user_entity_id,
 				event_occurrence_users.event_occurrence_user_event_occurrence_id,
-				event_occurrence_users.event_occurrence_user_state)
+				event_occurrence_users.event_occurrence_user_attending)
 			SELECT	'.$this->GetActiveEntityId().', ?, ?
 			FROM	event_occurrences
 			WHERE	(	event_occurrences.event_occurrence_id = ?
 					AND	'.$occurrence_query->ExpressionPublic().')
 			ON DUPLICATE KEY UPDATE
-				event_occurrence_users.event_occurrence_user_state = ?';
+				event_occurrence_users.event_occurrence_user_attending = ?';
 		$bind_data = array(
 				$OccurrenceId,
-				$NewState,
+				$NewAttending,
 				$OccurrenceId,
-				$NewState,
+				$NewAttending,
 			);
 		$query = $this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows > 0);
@@ -1843,7 +1970,7 @@ END';
 	 */
 	function OccurrenceRsvp($OccurrenceId)
 	{
-		return $this->SetOccurrenceUserState($OccurrenceId, 'rsvp');
+		return $this->SetOccurrenceUserAttending($OccurrenceId, TRUE);
 	}
 	
 	/// Set user-occurrence link to Hide.
@@ -1856,7 +1983,7 @@ END';
 	 */
 	function OccurrenceHide($OccurrenceId)
 	{
-		return $this->SetOccurrenceUserState($OccurrenceId, 'hide');
+		return $this->SetOccurrenceUserAttending($OccurrenceId, FALSE);
 	}
 	
 	/// Set user-occurrence link to Show.
@@ -1869,7 +1996,7 @@ END';
 	 */
 	function OccurrenceShow($OccurrenceId)
 	{
-		return $this->SetOccurrenceUserState($OccurrenceId, 'show');
+		return $this->SetOccurrenceUserAttending($OccurrenceId, NULL);
 	}
 	
 	

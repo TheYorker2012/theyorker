@@ -12,16 +12,29 @@
  * @version 20/03/2007 James Hogan (jh559)
  *	- Created
  *
- * @param $Items array Array of to-do list items
+ * @param $Items array[CalendarOccurrence] Array of to-do list items
+ * @param $InlineAdder bool Whether to have an inline todo adder.
+ * @param $InlineAdderTarget string
  *
  */
 
-?>
-
-<ul>
-<?php
-foreach ($Events as $event) {
-	echo '<li>'.$event->Name.'</li>';
+if ($InlineAdder) {
+	?>
+	<div class="BlueBox">
+		<form method="post" action="<?php echo $InlineAdderTarget; ?>">
+			<input name="todo_name" />
+			<input name="todo_submit" type="submit" value="Add"/>
+		</form>
+	</div>
+	<?php
 }
 ?>
-</ul>
+<div class="BlueBox">
+	<ul>
+		<?php
+		foreach ($Items as $item) {
+			echo '<li>'.$item->Event->Name.'</li>';
+		}
+		?>
+	</ul>
+</div>

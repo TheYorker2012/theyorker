@@ -33,17 +33,13 @@ function printsmallnewsbox($article){
 
 	<h2>Today's Events</h2>
 	<div class="Entry">
-		<ul>
-			<li>To Do</li>
-		</ul>
+		<?php $events->Load(); ?>
 		<a class="RightColumnAction"  href=".">Calendar</a>
 	</div>
 
 	<h2>To Do</h2>
 	<div class="Entry">
-		<ul>
-			<li>To Do</li>
-		</ul>
+		<?php $todo->Load(); ?>
 		<a class="RightColumnAction"  href=".">New To Do</a>
 	</div>
 

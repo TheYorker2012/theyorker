@@ -9,7 +9,6 @@
 // Load the Frames library
 $CI = &get_instance();
 $CI->load->library('frames');
-$CI->load->helper('text');
 
 /// Message class.
 /**
@@ -95,6 +94,29 @@ class Messages
 		}
 	}
 	
+	/// Add multiple messages to the queue.
+	/**
+	 * @param $Messages array[array($message[, $type, [$persistent]])] Messages.
+	 * @param $DefaultType string
+	 * @param $DefaultPersistence bool
+	 */
+	function AddMessages($Messages, $DefaultType = 'information', $DefaultPersistence = TRUE)
+	{
+		foreach ($Messages as $message) {
+			if (!is_array($message)) {
+				$message = array($message);
+			}
+			$args = count($messages);
+			if ($args === 1) {
+				$this->AddMessage($DefaultType, $message[0], $DefaultPersistence);
+			} elseif ($args === 2) {
+				$this->AddMessage($message[1], $message[0], $DefaultPersistence);
+			} elseif ($args > 2) {
+				$this->AddMessage($message[1], $message[0], $message[2]);
+			}
+		}
+	}
+	
 	/// Add a variable dump in a message to the queue.
 	/**
 	 * @param $Name string Name of variable.
@@ -104,7 +126,7 @@ class Messages
 	{
 		$CI = &get_instance();
 		$this->AddMessage('information', '<h4>Variable: ' . $Name . ' in '.$CI->uri->uri_string().'</h4>'.
-			'<pre>'.ascii_to_entities(var_export($Variable,true)).'</pre>');
+			'<pre>'.var_export($Variable,true).'</pre>');
 	}
 
 	/// Clear the queue of persistent messages.
