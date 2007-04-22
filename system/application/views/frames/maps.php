@@ -225,32 +225,46 @@ if ($editable) {
 }
 ?>
 	var unitiles = {
-		'0.-1': 'none', '0.0': 'part', '0.1': 'part', '0.2': 'part', '0.3': 'part', '0.4': 'part', '0.5': 'part', '0.6': 'none',
-		'1.-1': 'none', '1.0': 'part', '1.5': 'part', '1.6': 'part',
-		'2.-1': 'part', '2.0': 'part', '2.6': 'part',
-		'3.-1': 'part', '3.6': 'part',
-		'4.-1': 'part', '4.6': 'part',
-		'5.-1': 'part', '5.0': 'part', '5.3': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part',
-		'5.-1': 'part', '5.0': 'part', '5.3': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part',
-		'6.-1': 'none', '6.0': 'part', '6.1': 'part', '6.2': 'part', '6.3': 'part', '6.4': 'none', '6.5': 'none', '6.6': 'none'};
+		'0.0': 'none', '0.1': 'part', '0.2': 'part', '0.3': 'part', '0.4': 'part', '0.5': 'part', '0.6': 'part', '0.7': 'none',
+		'1.0': 'none', '1.1': 'part', '1.6': 'part', '1.7': 'part',
+		'2.0': 'part', '2.1': 'part', '2.7': 'part',
+		'3.0': 'part', '3.7': 'part',
+		'4.0': 'part', '4.7': 'part',
+		'5.0': 'part', '5.1': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part', '5.7': 'part',
+		'5.0': 'part', '5.1': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part', '5.7': 'part',
+		'6.0': 'none', '6.1': 'part', '6.2': 'part', '6.3': 'part', '6.4': 'part', '6.5': 'none', '6.6': 'none', '6.7': 'none'};
 
 	function maps_getMapTileUrl(tile, zoom) {
 		if (zoom === 17 && tile.x >= 65150 && tile.y >= 42114 && tile.x <= 65156 && tile.y <= 42121) {
 			var x = tile.x - 65150;
-			var y = tile.y - 42115;
+			var y = tile.y - 42114;
 			if (unitiles[x + '.' + y] === undefined) {
-				return 'http://ado.is-a-geek.net/xmldemo/gmap/data/uni.' + x + '.' + y + '.png';
+				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/large/large-' + x + '.' + y + '.png';
 			}
 		}
 		return G_NORMAL_MAP.getTileLayers()[0].getTileUrl(tile, zoom);
 	}
 
 	function maps_getOverlayTileUrl(tile, zoom) {
-		if (zoom === 17 &&  tile.x >= 65150 && tile.y >= 42114 && tile.x <= 65156 && tile.y <= 42121) {
-			var x = tile.x - 65150;
-			var y = tile.y - 42115;
-			if (unitiles[x + '.' + y] === 'part') {
-				return 'http://ado.is-a-geek.net/xmldemo/gmap/data/uni.' + x + '.' + y + '.png';
+		if (zoom === 17) {
+			if (tile.x >= 65150 && tile.y >= 42114 && tile.x <= 65156 && tile.y <= 42121) {
+				var x = tile.x - 65150;
+				var y = tile.y - 42114;
+				if (unitiles[x + '.' + y] === 'part') {
+					return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/large/large-' + x + '.' + y + '.png';
+				}
+			}
+		} else if (zoom === 16) {
+			if (tile.x >= 32575 && tile.y >= 21057 && tile.x <= 32578 && tile.y <= 21060) {
+				var x = tile.x - 32575;
+				var y = tile.y - 21057;
+				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/small/small-' + x + '.' + y + '.png';
+			}
+		} else if (zoom === 15) {
+			if (tile.x >= 16287 && tile.y >= 10528 && tile.x <= 16289 && tile.y <= 10530) {
+				var x = tile.x - 16287;
+				var y = tile.y - 10528;
+				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/xsmall/xsmall-' + x + '.' + y + '.png';
 			}
 		}
 		return '';
