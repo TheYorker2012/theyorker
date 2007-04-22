@@ -12,9 +12,9 @@
 	<?php foreach( $images->result() as $image ) { ?>
 	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
 	<br />
-	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/up', 'move up')?> | 
-	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/down', 'move down')?> | 
-	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/delete/'.$image->photo_id.'', 'delete')?> 
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/up', 'move up')?> |
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/move/'.$image->photo_id.'/down', 'move down')?> |
+	<?=anchor('viparea/'.$organisation['shortname'].'/directory/photos/delete/'.$image->photo_id.'', 'delete')?>
 	<br />
 	<?php } ?>
 </div>
@@ -24,7 +24,7 @@
 	<label for="title">Photo Title:</label><input type="text" name="title" size="30" /><br />
 	<label for="userfile">Photo File:</label><input type="file" name="userfile" size="30" /><br />
 </div>
-<?=form_open_multipart('viparea/'.$organisation['shortname'].'/directory/photos/upload'); ?>
+<?=form_open_multipart(vip_url().$organisation['shortname'].'/directory/photos/upload'); ?>
 <p>Photo's should be in jpg format. The upload size limit is 2mb(?).</p><br />
 <div>
 	<label for="title1">Photo Title:</label><input type="text" name="title1" size="30" />
