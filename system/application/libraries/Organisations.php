@@ -107,7 +107,6 @@ class Organisations
 				'description' => $org['organisation_description'],
 				'type'        => $org['organisation_type_name'],
 				'website'     => $org['organisation_url'],
-				'location'    => $org['organisation_location_id'],
 				'open_times'  => $org['organisation_opening_hours'],
 				'email_address'   => $org['organisation_email_address'],
 				'postal_address'  => $org['organisation_postal_address'],
@@ -116,6 +115,9 @@ class Organisations
 				'phone_external'  => $org['organisation_phone_external'],
 				'fax_number'  => $org['organisation_fax_number'],
 				'revision_id'  => $org['organisation_revision_id'],
+				'location' => $org['organisation_location_id'],
+				'location_lat' => $org['location_lat'], 
+				'location_lng' => $org['location_lng']
 			);
 			if (NULL === $org['organisation_yorkipedia_entry']) {
 				$data['organisation']['yorkipedia'] = NULL;

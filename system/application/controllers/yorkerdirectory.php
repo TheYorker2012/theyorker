@@ -166,9 +166,12 @@ class Yorkerdirectory extends Controller
 			$data['organisation']['reviews_untyped'] = $directory_reviews;
 			$data['organisation']['reviews_by_type'] = $review_types;
 
-			$this->load->library('maps');
-			$map = &$this->maps->CreateMap('Location', 'googlemaps');
-			$this->maps->SendMapData();
+			if ($data['organisation']['location_lat'] !== NULL) {
+				$this->load->library('maps');
+				$map = &$this->maps->CreateMap('Location', 'googlemaps');
+				$map->AddLocation($data['organisation']['name'], $data['organisation']['location_lat'], $data['organisation']['location_lng']);
+				$this->maps->SendMapData();
+			}
 
 			// Set up the directory frame to use the directory events view
 			$this->main_frame->SetPage('about');

@@ -319,7 +319,8 @@ class Yorkerdirectory extends Controller
 	function map()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+	
+		$this->load->library('maps');
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_map');
 		
@@ -327,6 +328,16 @@ class Yorkerdirectory extends Controller
 		$data = $this->organisations->_GetOrgData($organisation);
 		
 		if (!empty($data)) {
+			if (isset($_POST['0_lat'])) {
+				$this->directory_model->UpdateDirectoryEntryLocation(
+					$organisation, 
+					$data['organisation']['location'],
+					$_POST['0_lat'], 
+					$_POST['0_lng']
+				);
+				$data['organisation']['location_lat'] = $_POST['0_lat'];
+				$data['organisation']['location_lng'] = $_POST['0_lng'];
+			}
 			$this->_SetupNavbar();
 			
 			// Insert main text from pages information
@@ -336,6 +347,14 @@ class Yorkerdirectory extends Controller
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_map', $data);
 			
+			$map = &$this->maps->CreateMap('Test Map', 'googlemaps');
+			if ($data['organisation']['location_lat'] !== NULL) {
+				$map->WantLocation($data['organisation']['name'], $data['organisation']['location_lat'], $data['organisation']['location_lng']);
+			} else {
+				$map->WantLocation($data['organisation']['name']);
+			}
+			$this->maps->SendMapData();
+
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));

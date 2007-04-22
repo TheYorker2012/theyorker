@@ -34,7 +34,6 @@ foreach ($maps as $map) {
 
 	<script type="text/javascript">
 	//<![CDATA[
-
 	function maps_addLocation(map, lat, lng, description) {
 		var point = new GLatLng(lat, lng);
 		var marker = new GMarker(point);
@@ -225,17 +224,90 @@ if ($editable) {
 <?php
 }
 ?>
+	var unitiles = {
+		'0.-1': 'none', '0.0': 'part', '0.1': 'part', '0.2': 'part', '0.3': 'part', '0.4': 'part', '0.5': 'part', '0.6': 'none',
+		'1.-1': 'none', '1.0': 'part', '1.5': 'part', '1.6': 'part',
+		'2.-1': 'part', '2.0': 'part', '2.6': 'part',
+		'3.-1': 'part', '3.6': 'part',
+		'4.-1': 'part', '4.6': 'part',
+		'5.-1': 'part', '5.0': 'part', '5.3': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part',
+		'5.-1': 'part', '5.0': 'part', '5.3': 'part', '5.4': 'part', '5.5': 'part', '5.6': 'part',
+		'6.-1': 'none', '6.0': 'part', '6.1': 'part', '6.2': 'part', '6.3': 'part', '6.4': 'none', '6.5': 'none', '6.6': 'none'};
+
+	function maps_getMapTileUrl(tile, zoom) {
+		if (zoom === 17 && tile.x >= 65150 && tile.y >= 42114 && tile.x <= 65156 && tile.y <= 42121) {
+			var x = tile.x - 65150;
+			var y = tile.y - 42115;
+			if (unitiles[x + '.' + y] === undefined) {
+				return 'http://ado.is-a-geek.net/xmldemo/gmap/data/uni.' + x + '.' + y + '.png';
+			}
+		}
+		return G_NORMAL_MAP.getTileLayers()[0].getTileUrl(tile, zoom);
+	}
+
+	function maps_getOverlayTileUrl(tile, zoom) {
+		if (zoom === 17 &&  tile.x >= 65150 && tile.y >= 42114 && tile.x <= 65156 && tile.y <= 42121) {
+			var x = tile.x - 65150;
+			var y = tile.y - 42115;
+			if (unitiles[x + '.' + y] === 'part') {
+				return 'http://ado.is-a-geek.net/xmldemo/gmap/data/uni.' + x + '.' + y + '.png';
+			}
+		}
+		return '';
+	}
+
 	function maps_onLoad() {
 		var map;
 		var bounds;
 		var locationctl;
 		var savectl;
 
+		var copyright;
+		var copyrightCollection;
+		var uniMapTiles;
+		var uniOverlayTiles;
+		var unimap;
+		var unioverlay;
+
+		copyright = new GCopyright(
+			1, 
+			new GLatLngBounds(
+				new GLatLng(53.94, -1.06),
+				new GLatLng(53.951, -1.04)
+			),
+			17,
+			'York University');
+		copyrightCollection = new GCopyrightCollection('University Maps &copy;');
+		copyrightCollection.addCopyright(copyright);
+
+		uniMapTiles = new GTileLayer(copyrightCollection, 0, 17);
+		uniMapTiles.getTileUrl = maps_getMapTileUrl;
+		uniMapTiles.getCopyright = function(bounds, zoom) {
+			var cpy1 = copyrightCollection.getCopyrightNotice(bounds, zoom);
+			var cpy2 = G_NORMAL_MAP.getTileLayers()[0].getCopyright(bounds, zoom);
+			cpy2 = G_NORMAL_MAP.getTileLayers()[0].getCopyright(bounds, zoom);
+			if (cpy1 === null)
+				return cpy2;
+			if (cpy2 === null)
+				return cpy1;
+			return cpy1 + '<br />' + cpy2;
+		};
+		uniMapTiles.isPng = function() { return true; };
+
+		uniOverlayTiles = new GTileLayer(copyrightCollection, 17, 17);
+		uniOverlayTiles.getTileUrl = maps_getOverlayTileUrl;
+		uniOverlayTiles.isPng = function() { return true; };
+
+		unimap = new GMapType([uniMapTiles], new GMercatorProjection(18), "University Map", {errorMessage:"No Data Available"});
+		unioverlay = new GTileLayerOverlay(uniOverlayTiles);
+
 <?php
 foreach ($maps as $map) {
 ?>
 		map = new GMap2(document.getElementById("<?php echo($map['element']);?>"));
+		map.addMapType(unimap);
 		map.addControl(new GSmallMapControl());
+		//map.enableScrollWheelZoom();
 <?php
 	if (count($map['newlocations']) > 0) {
 ?>
@@ -300,6 +372,11 @@ foreach ($maps as $map) {
 			.');'."\n"
 		);
 	}
+
+	echo("\n");
+
+	echo('		map.setMapType(unimap);'."\n");
+	echo('		map.addOverlay(unioverlay);'."\n");
 }
 
 ?>

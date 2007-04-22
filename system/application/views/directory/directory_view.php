@@ -24,14 +24,14 @@ if (!empty($organisation['phone_internal'])) {
 	echo('		<img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
 	echo(htmlspecialchars($organisation['phone_internal']).'<br />'."\n");
 }
-if (!empty($organisation['fax_number'])) {
+if (!empty($organisation['fax_internal'])) {
 	echo('		<img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /> ');
 	echo(htmlspecialchars($organisation['fax_internal']).'<br />'."\n");
 }
-if (!empty($organisation['location'])) {
+/*if (!empty($organisation['location'])) {
 	echo('		<img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /> ');
 	echo(htmlspecialchars($organisation['location']).'<br />'."\n");
-}
+}*/
 if (!empty($organisation['open_times'])) {
 	echo('		<img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /> ');
 	echo(htmlspecialchars($organisation['open_times']).'<br />'."\n");
@@ -94,8 +94,14 @@ if (!empty($organisation['reviews_by_type'])) {
 		<h2>about us</h2>
 		<p><?php echo(htmlspecialchars($organisation['description'])); ?></p>
 	</div>
+<?php
+if($organisation['location_lat'] !== NULL) {
+?>
 	<div class="BlueBox">
 		<h2>finding us</h2>
 		<div id="googlemaps" style="height: 300px"></div>
 	</div>
+<?php
+}
+?>
 </div>

@@ -13,41 +13,46 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
 <link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
 <link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- BEGIN Multiple event handlers code -->
+<script type="text/javascript">
+//<![CDATA[
+
+// An array containing functors for all function to be run on page load
+var onLoadFunctions = new Array();
+
+// An array containing functors for all function to be run on page unload
+var onUnloadFunctions = new Array();
+
+// The function which is run on page load ensuring all functors are run
+function onLoadHandler() {
+	for (i = 0; i < onLoadFunctions.length; i++) {
+		onLoadFunctions[i]();
+	}
+}
+// The function which is run on page unload ensuring all functors are run
+function onUnloadHandler() {
+	for (i = 0; i < onUnloadFunctions.length; i++) {
+		onUnloadFunctions[i]();
+	}
+}
+
+//]]>
+</script>
+<!-- END Multiple event handlers code -->
+
+
 <!-- BEGIN 'head' tag items from controlling script -->
 <?php echo @$extra_head; ?>
 <!-- END 'head' tag items from controlling script -->
+<?php
+include('maps.php');
+?>
 </head>
 
-<body onLoad="preloader(); if(typeof onLoad == 'function') onLoad();">
+<body onLoad="onLoadHandler(); if(typeof onLoad == 'function') onLoad();">
 <a name="top"></a>
-<script src="/javascript/jumpto.js" type="text/javascript"></script>
 
-<script language="JavaScript" type="text/javascript">
-
-function preloader()
-{
-     // counter
-     var i = 0;
-
-     // create object
-     imageObj = new Image();
-
-     // set image list
-     images = new Array();
-     images[0]="/images/prototype/header/header2_Layer-4.gif";
-     images[1]="/images/prototype/header/header2_Layer-3.gif";
-     images[2]="/images/prototype/header/header2_Layer-2.gif";
-
-     // start preloading
-     for(i=0; i<=3; i++)
-     {
-     	imageObj.src=images[i];
-     }
-
-}
-
-
-</script>
 
 <div style="width: 100%;" align="center">
 <div style="width: 780px; text-align: left; background-color: #fff;">

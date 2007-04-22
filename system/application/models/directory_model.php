@@ -61,7 +61,6 @@ class Directory_model extends Model {
 			' organisations.organisation_directory_entry_name,'.
 			' organisation_contents.organisation_content_description as organisation_description,'.
 			' organisation_contents.organisation_content_url as organisation_url,'.
-			' organisation_contents.organisation_content_location_id as organisation_location_id,'.
 			' organisation_contents.organisation_content_opening_hours as organisation_opening_hours,'.
 			' organisation_contents.organisation_content_postal_address as organisation_postal_address,'.
 			' organisation_contents.organisation_content_email_address as organisation_email_address,'.
@@ -71,7 +70,9 @@ class Directory_model extends Model {
 			' organisation_contents.organisation_content_fax_number as organisation_fax_number,'.
 			' organisation_contents.organisation_content_id as organisation_revision_id,'.
 			' organisations.organisation_yorkipedia_entry,'.
-			' organisation_types.organisation_type_name '.
+			' organisation_types.organisation_type_name,'.
+			' organisations.organisation_location_id,'.
+			' locations.location_lat, locations.location_lng '.
 			'FROM organisations '.
 			// Get organisation type, but make sure the type allows directory entries.
 			'INNER JOIN organisation_types '.
@@ -89,6 +90,9 @@ class Directory_model extends Model {
 			$sql .= '?';
 			$bind_data[] = $RevisionNumber;
 		}
+		$sql .= ' LEFT JOIN locations '.
+			' ON locations.location_id'.
+			'			= organisations.organisation_location_id';
 		$sql .= ' WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_name';
@@ -233,6 +237,25 @@ class Directory_model extends Model {
 			);
 		}
 		return $data;
+	}
+
+	function UpdateDirectoryEntryLocation($DirectoryEntryName, $locationid, $lat, $lng) {
+		if ($locationid === null) {
+			$this->db->trans_start();
+			$sql = 'INSERT INTO locations (location_lat, location_lng)
+					VALUES (?, ?)';
+			$query = $this->db->query($sql, array($lat, $lng));
+			$sql = 'UPDATE organisations
+					SET organisation_location_id = LAST_INSERT_ID()
+					WHERE organisation_directory_entry_name = ?';
+			$query = $this->db->query($sql, array($DirectoryEntryName));
+		} else {
+			$sql = 	'UPDATE locations
+					SET location_lat = ?, location_lng = ?
+					WHERE location_id = ?;';
+			$query = $this->db->query($sql, array($lat, $lng, $locationid));
+		}
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	function PublishDirectoryEntryRevisionById($DirectoryEntryName, $id)
