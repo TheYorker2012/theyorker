@@ -13,6 +13,12 @@ class EventOccurrenceQuery
 		$this->mEntityId = $CI->events_model->GetActiveEntityId();
 	}
 	
+	/// Get the current entity id.
+	function GetEntityId()
+	{
+		return $this->mEntityId;
+	}
+	
 	/// Produce an SQL expression for all and only public events.
 	function ExpressionPublic()
 	{
@@ -63,9 +69,7 @@ class EventOccurrenceQuery
 	/// Produce an SQL expression for whether an occurrence should be on a users calendar.
 	function ExpressionShowOnCalendar()
 	{
-		return 'event_occurrences.event_occurrence_end_time IS NOT NULL '.
-				'AND (	event_occurrence_users.event_occurrence_user_attending IS NULL'.
-				'	OR	event_occurrence_users.event_occurrence_user_attending = TRUE)';
+		return 'event_occurrences.event_occurrence_end_time IS NOT NULL';
 	}
 	
 	/// Produce an SQL expression for whether an occurrence should be on a users todo list.
@@ -113,7 +117,12 @@ class EventOccurrenceQuery
 		if (empty($conditions)) {
 			return 'TRUE';
 		} else {
-			return '('.implode(' AND ',$conditions).')';
+			// take care of the special case when an event of zero length covers a boundary
+			$zero_len_at_beginning =
+				'(event_occurrences.event_occurrence_start_time = FROM_UNIXTIME('.$Range[0].') AND '.
+				'event_occurrences.event_occurrence_end_time = FROM_UNIXTIME('.$Range[0].'))';
+			
+			return '(('.implode(' AND ',$conditions).') OR '.$zero_len_at_beginning.')';
 		}
 	}
 	
@@ -1933,10 +1942,10 @@ END';
 	 * @return bool True on success, False on failure.
 	 * @pre Occurrence is visible to user.
 	 */
-	protected function SetOccurrenceUserAttending($OccurrenceId, $NewAttending)
+	function SetOccurrenceUserAttending($OccurrenceId, $NewAttending)
 	{
 		/// @pre GetActiveEntityId() === $sEntityUser
-		assert('$this->GetActiveEntityId() === self::$cEntityUser');
+		assert('$this->mActiveEntityType === self::$cEntityUser');
 		
 		$occurrence_query = new EventOccurrenceQuery();
 		
@@ -1947,8 +1956,14 @@ END';
 				event_occurrence_users.event_occurrence_user_attending)
 			SELECT	'.$this->GetActiveEntityId().', ?, ?
 			FROM	event_occurrences
+			INNER JOIN events
+				ON	event_id = event_occurrence_event_id
+			LEFT JOIN event_entities
+				ON	event_entity_event_id = event_id
+				AND	event_entity_entity_id = '.$this->GetActiveEntityId().'
 			WHERE	(	event_occurrences.event_occurrence_id = ?
-					AND	'.$occurrence_query->ExpressionPublic().')
+					AND	('.$occurrence_query->ExpressionPublic().'
+						OR	'.$occurrence_query->ExpressionOwned().'))
 			ON DUPLICATE KEY UPDATE
 				event_occurrence_users.event_occurrence_user_attending = ?';
 		$bind_data = array(
@@ -1957,8 +1972,8 @@ END';
 				$OccurrenceId,
 				$NewAttending,
 			);
-		$query = $this->db->query($sql, $bind_data);
-		return ($this->db->affected_rows > 0);
+		$this->db->query($sql, $bind_data);
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	/// Set user-occurrence link to RSVP.

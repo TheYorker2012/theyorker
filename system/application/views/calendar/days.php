@@ -7,7 +7,7 @@ function DrawOccurrence(&$Occurrence, $Squash)
 	?>
 	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;">
 		<div style="padding: 2px;font-size: small;">
-			<strong><?php echo($Occurrence->Event->Name); ?></strong>
+			<span><?php echo($Occurrence->Event->Name); ?></span>
 			<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
 				<div>
 					<?php
@@ -25,12 +25,37 @@ function DrawOccurrence(&$Occurrence, $Squash)
 						echo('<i>');
 						echo($Occurrence->Event->Description);
 						echo('</i><br />');
+						$CI = & get_instance();
 						if (FALSE === $Occurrence->UserAttending) {
 							echo('not attending');
+							echo(' (<a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/accept'.$CI->uri->uri_string()).'">attend</a>');
+							echo(', <a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
 						} elseif (TRUE === $Occurrence->UserAttending) {
 							echo('attending');
+							echo(' (<a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>');
+							echo(', <a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
 						} else {
 							echo('maybe attending');
+							echo(' (<a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/accept'.$CI->uri->uri_string()).'">attend</a>');
+							echo(', <a href="'.site_url('calendar/actions/attend/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->SourceOccurrenceId).
+								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
 						}
 					}
 					?>

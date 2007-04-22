@@ -185,9 +185,8 @@ abstract class CalendarSource
 	/*
 	/// array[string] Array of valid members of @a mCapabilities.
 	protected static $sValidCapabilities = array(
-		'rsvp',
-		'cache',
-		'refer',
+		'rsvp',  // its possible to rsvp these event
+		'cache', // these events can be cached in the database
 	);
 	*/
 
@@ -195,13 +194,34 @@ abstract class CalendarSource
 	protected $mSourceId = NULL;
 	/// string Source name.
 	protected $mName = '';
-	/// array[string] Array of capabilities (each must be in @a $sSourceCapabilities.
+	/// array[string] Array of capabilities (each must be in @a $sValidCapabilities).
 	protected $mCapabilities = array();
 	
-	/// timestamp,NULL Start time of range of events to fetch.
-	protected $mStartTime = NULL;
-	/// timestamp,NULL End time of range of events to fetch.
-	protected $mEndTime = NULL;
+	
+	/// array[bool] Groups of events to include.
+	protected $mGroups = array(
+		'owned'      => TRUE,
+		'subscribed' => TRUE,
+		'inclusions' => FALSE,
+		'all'        => FALSE,
+		
+		'private'    => TRUE,
+		'active'     => TRUE,
+		'inactive'   => TRUE,
+		
+		'hide'       => FALSE,
+		'show'       => TRUE,
+		'rsvp'       => TRUE,
+		
+		'event'      => TRUE,
+		'todo'       => FALSE,
+	);
+	
+	/// array[source id] For including additional specific items.
+	protected $mInclusions = array();
+	
+	/// array[2*timestamp] For filtering by time.
+	protected $mRange = array( NULL, NULL );
 	
 	/// Default constructor.
 	function __construct()
@@ -214,7 +234,7 @@ abstract class CalendarSource
 	 */
 	function SetSourceId($SourceId)
 	{
-		$this->mSourceId = $SourceId;;
+		$this->mSourceId = $SourceId;
 	}
 	
 	/// Get the source id.
@@ -236,17 +256,77 @@ abstract class CalendarSource
 		return in_array($Capability, $this->mCapabilities);
 	}
 	
-	/// Set the range of dates to fetch.
+	/// Enable a group of events.
 	/**
-	 * @param $StartTime timestamp,NULL Start time of events to fetch.
-	 * @param $EndTime   timestamp,NULL End time of events to fetch.
+	 * @param $GroupName string Index to $this->mSources.
+	 * @return bool Whether successfully enabled.
 	 */
-	function SetRange($StartTime, $EndTime = NULL)
+	function EnableGroup($GroupName)
 	{
-		$this->mStartTime = $StartTime;
-		$this->mEndTime = $EndTime;
+		if (array_key_exists($GroupName, $this->mGroups)) {
+			$this->mGroups[$GroupName] = TRUE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
 	}
 	
+	/// Disable a group of events.
+	/**
+	 * @param $SourceName string Index to $this->mGroups.
+	 * @return bool Whether successfully disabled.
+	 */
+	function DisableGroup($GroupName)
+	{
+		if (array_key_exists($GroupName, $this->mGroups)) {
+			$this->mGroups[$GroupName] = FALSE;
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/// Add inclusion.
+	/**
+	 * @param $FeedId integer/array Feed id(s).
+	 * @param $EnableInclusions bool Whether to enable inclusions.
+	 */
+	function AddInclusion($FeedId, $EnableInclusions = FALSE)
+	{
+		if (is_array($FeedId)) {
+			$this->mInclusions = array_merge($this->mInclusions, $FeedId);
+		} else {
+			$this->mInclusions[] = $FeedId;
+		}
+		if ($EnableInclusions) {
+			$this->EnableGroup('inclusions');
+		}
+	}
+	
+	/// Clear inclusions.
+	/**
+	 * @param $DisableInclusions bool Whether to disable inclusions.
+	 */
+	function ClearInclusions($DisableInclusions = FALSE)
+	{
+		$this->mInclusions = array();
+		if ($DisableInclusions) {
+			$this->DisableGroup('inclusions');
+		}
+	}
+	
+	/// Set the date range.
+	/**
+	 * @param $Start timestamp,NULL Start time.
+	 * @param $End timestamp,NULL End time.
+	 */
+	function SetRange($Start = NULL, $End = NULL)
+	{
+		assert('is_int($Start) || NULL === $Start');
+		assert('is_int($End)   || NULL === $End');
+		$this->mRange[0] = $Start;
+		$this->mRange[1] = $End;
+	}
 	
 	/// Fedge the events of the source.
 	/**
@@ -263,6 +343,19 @@ abstract class CalendarSource
 	 * @param $Data CalendarData Data object to add events to.
 	 */
 	protected abstract function _FetchEvents(&$Data);
+	
+	// MAKING CHANGES **********************************************************
+	
+	/// Set the user's attending status on an occurrence.
+	/**
+	 * @param $Occurrence Occurrence identifier.
+	 * @param $Attending bool,NULL Whether attending.
+	 * @return bool Whether successful.
+	 */
+	function AttendingOccurrence($Occurrence, $Attending)
+	{
+		return FALSE;
+	}
 }
 
 /// Calendar data object.
@@ -274,8 +367,9 @@ class CalendarData
 	protected $mNextEventIndex			= 0;
 	/// int The next organisation index to use.
 	protected $mNextOrganisationIndex	= 0;
-	/// int The next source index to use.
-	protected $mNextSourceIndex			= 0;
+	
+	/// int The last inserted source index.
+	protected $mLastSourceIndex			= 0;
 	
 	/// array[$CalendarOccurrence] List of occurrences.
 	protected $mOccurrences		= array();
@@ -312,7 +406,6 @@ class CalendarData
 			$this->mNextOccurrenceIndex   = $Argument1->mNextOccurrenceIndex;
 			$this->mNextEventIndex        = $Argument1->mNextEventIndex;
 			$this->mNextOrganisationIndex = $Argument1->mNextOrganisationIndex;
-			$this->mNextSourceIndex       = $Argument1->mNextSourceIndex;
 			
 		}
 	}
@@ -360,8 +453,7 @@ class CalendarData
 	 */
 	function NewCurrentSource(&$Source)
 	{
-		$source_id = $this->mNextSourceIndex++;
-		$Source->SetSourceId($source_id);
+		$source_id = $Source->GetSourceId();
 		$this->mSource[$source_id] = &$Source;
 	}
 	
@@ -372,7 +464,7 @@ class CalendarData
 	 */
 	function GetCurrentSource()
 	{
-		return $this->mSource[$this->mNextSourceIndex - 1];
+		return $this->mSource[$this->mLastSourceIndex];
 	}
 	
 	/// Get the array of occurrences.
@@ -489,6 +581,111 @@ class CalendarData
 			}
 		}
 		return $messages;
+	}
+}
+
+
+/// Calendar source for standard sources.
+class CalendarSources extends CalendarSource
+{
+	/// array[CalendarSource] Array of sources.
+	protected $mSources = array();
+	
+	/// Default constructor.
+	function __construct()
+	{
+		parent::__construct();
+		
+		$this->mName = 'My Calendar';
+		//$this->mCapabilities[] = 'rsvp';
+		//$this->mCapabilities[] = 'refer';
+	}
+	
+	/// Add a source.
+	/**
+	 * @param $Source CalendarSource Event source to add
+	 * @return @a $Source.
+	 */
+	function AddSource(&$Source)
+	{
+		$source_id = $Source->GetSourceId();
+		assert('NULL !== $source_id');
+		$this->mSources[$Source->GetSourceId()] = &$Source;
+		return $Source;
+	}
+	
+	function EnableGroup($GroupName)
+	{
+		foreach ($this->mSources as $source) {
+			$source->EnableGroup($GroupName);
+		}
+		return parent::EnableGroup($GroupName);
+	}
+	
+	function DisableGroup($GroupName)
+	{
+		foreach ($this->mSources as $source) {
+			$source->DisableGroup($GroupName);
+		}
+		return parent::DisableGroup($GroupName);
+	}
+	
+	function AddInclusion($FeedId, $EnableInclusions = FALSE)
+	{
+		foreach ($this->mSources as $source) {
+			$source->AddInclusion($FeedId, $EnableInclusions);
+		}
+		return parent::AddInclusion($FeedId, $EnableInclusions);
+	}
+	
+	function ClearInclusions($DisableInclusions = FALSE)
+	{
+		foreach ($this->mSources as $source) {
+			$source->ClearInclusions($DisableInclusions);
+		}
+		return parent::ClearInclusions($DisableInclusions);
+	}
+	
+	function SetRange($Start = NULL, $End = NULL)
+	{
+		foreach ($this->mSources as $source) {
+			$source->SetRange($Start, $End);
+		}
+		return parent::SetRange($Start, $End);
+	}
+	
+	/// Fetch the events of the sources and return an array of messages.
+	function FetchEvents(&$Data)
+	{
+		$messages = array();
+		foreach ($this->mSources as $source) {
+			try {
+				$source->FetchEvents($Data);
+			} catch (Exception $e) {
+				$messages[] = array('calendar data source '.$source->mName.' failed: '.$e->getMessage(), 'error');
+			}
+		}
+		return $messages;
+	}
+	
+	protected function _FetchEvents(&$Data)
+	{
+	}
+	
+	/// Set the user's attending status on an occurrence.
+	/**
+	 * @param $SourceId int Event source id.
+	 * @param $Occurrence Occurrence identifier.
+	 * @param $Attending bool,NULL Whether attending.
+	 * @return bool Whether successful.
+	 */
+	function AttendingOccurrence($SourceId, $Occurrence, $Attending)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->AttendingOccurrence($Occurrence, $Attending);
+		} else {
+			return FALSE;
+		}
 	}
 }
 

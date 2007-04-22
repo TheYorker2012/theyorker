@@ -17,10 +17,11 @@
 class CalendarSourceFacebook extends CalendarSource
 {
 	/// Default constructor.
-	function __construct()
+	function __construct($SourceId)
 	{
 		parent::__construct();
 		
+		$this->SetSourceId($SourceId);
 		$this->mName = 'Facebook';
 		//$this->mCapabilities[] = 'rsvp';
 		$this->mCapabilities[] = 'refer';
@@ -41,8 +42,8 @@ class CalendarSourceFacebook extends CalendarSource
 			$events = $CI->facebook->Client->events_get(
 				$CI->facebook->Uid,
 				null,
-				$this->mStartTime,
-				$this->mEndTime,
+				$this->mRange[0],
+				$this->mRange[1],
 				null
 			);
 			

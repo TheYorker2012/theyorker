@@ -37,41 +37,15 @@ class Home extends Controller {
 		$this->main_frame->Load();
 	}
 	
-	/// Setup the user's main event sources.
-	/**
-	 * @param $StartTime timestamp Start time of events.
-	 * @param $EndTime   timestamp End time of events.
-	 */
-	function _SetupSources($StartTime, $EndTime)
-	{
-		// Load calendar source libraries
-		$this->load->library('calendar_backend');
-		$this->load->library('calendar_source_yorker');
-		$this->load->library('calendar_source_facebook');
-		
-		// Set up data sources
-		$sources = array();
-		
-		$source_yorker = new CalendarSourceYorker();
-		$source_yorker->EnableTodo(TRUE);
-		$sources[] = $source_yorker;
-		
-		$sources[] = new CalendarSourceFacebook();
-		
-		// Set sources date range to something relevent
-		foreach ($sources as $source) {
-			$source->SetRange($StartTime, $EndTime);
-		}
-		
-		return $sources;
-	}
-	
 	/**
 	 * @return array(Todays events view, Todo view).
 	 */
 	private function _GetMiniCalendars()
 	{
 		$this->load->library('academic_calendar');
+		$this->load->library('calendar_backend');
+		$this->load->library('calendar_source_my_calendar');
+		
 		$this->load->library('calendar_frontend');
 		$this->load->library('calendar_view_agenda');
 		$this->load->library('calendar_view_todo_list');
@@ -79,7 +53,10 @@ class Home extends Controller {
 		$now = new Academic_time(time());
 		$start = $now;
 		$end = $now->Midnight()->Adjust('+2day');
-		$sources = $this->_SetupSources($start->Timestamp(), $end->Timestamp());
+		
+		$sources = new CalendarSourceMyCalendar();
+		$sources->SetRange($start->Timestamp(), $end->Timestamp());
+		
 		$calendar_data = new CalendarData();
 		
 		$this->messages->AddMessages($calendar_data->FetchEventsFromSources($sources));

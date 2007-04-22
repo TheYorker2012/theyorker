@@ -26,11 +26,10 @@
 
 ?>
 
-<div>
+<div class="BlueBox">
 	<ul>
 		<?php
-		// Commented out until actually functional
-		/*foreach ($Filters as $id => $filter) {
+		foreach ($Filters as $id => $filter) {
 			switch ($filter['display']) {
 				case 'block':
 					echo '<li><a href="#">';
@@ -41,12 +40,12 @@
 					echo '<li><img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/></li>';
 					break;
 			}
-		}*/
+		}
 		?>
 	</ul>
 </div>
 
-<div><br />
+<div class="BlueBox">
 <?php
 // Load the main view
 $ViewMode->Load();

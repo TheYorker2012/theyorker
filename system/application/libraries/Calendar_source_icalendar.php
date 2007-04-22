@@ -164,10 +164,11 @@ class CalendarSourceICalendar extends CalendarSource
 	protected $mErrors = array();
 	
 	/// Default constructor.
-	function __construct($ICalendarData = '')
+	function __construct($ICalendarData = '', $SourceId)
 	{
 		parent::__construct();
 		
+		$this->SetSourceId($SourceId);
 		$this->mName = 'iCalendar file';
 		//$this->mCapabilities[] = 'rsvp';
 		//$this->mCapabilities[] = 'refer';
