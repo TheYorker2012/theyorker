@@ -24,4 +24,11 @@
 	}
 ?>
 	</div>
+
+	<h2>Suggestions</h2>
+	<div class="Entry">
+		<ul>
+		<li><a href="/wizard/organisation">Suggest an entry</a></li>
+		</ul>
+	</div>
 </div>
