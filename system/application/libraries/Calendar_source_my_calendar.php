@@ -27,18 +27,24 @@ class CalendarSourceMyCalendar extends CalendarSources
 		$CI = & get_instance();
 		$CI->load->model('calendar/events_model');
 		
-		$CI->db->from('event_source_entities');
-		$CI->db->join('event_sources', 'event_source_entity_event_source_id = event_source_id', 'inner');
-		$CI->db->where(array('event_source_entity_entity_id' => $CI->events_model->GetActiveEntityId()));
+		$CI->db->from('event_sources');
+		$CI->db->join('event_source_entities', 'event_source_entity_event_source_id = event_source_id', 'left');
+		$CI->db->where('event_source_entity_entity_id = '.
+			$CI->db->escape($CI->events_model->GetActiveEntityId()).
+			' OR event_source_permanent = TRUE');
 		$CI->db->select('event_source_id AS id,'.
 						'event_source_protocol AS protocol,'.
 						'event_source_url AS url');
 		$query = $CI->db->get();
 		$sources = $query->result_array();
 		
-		$this->AddSource(new CalendarSourceYorker(0));
 		foreach ($sources as $source) {
 			switch ($source['protocol']) {
+				case 'yorkerdb':
+					$CI->load->library('calendar_source_yorker');
+					$this->AddSource(new CalendarSourceYorker($source['id']));
+					break;
+					
 				case 'facebook':
 					$CI->load->library('calendar_source_facebook');
 					$this->AddSource(new CalendarSourceFacebook($source['id']));
@@ -65,7 +71,6 @@ class Calendar_source_my_calendar
 	function __construct()
 	{
 		$CI = & get_instance();
-		$CI->load->library('calendar_source_yorker');
 		$CI->load->model('calendar/recurrence_model');
 	}
 }
