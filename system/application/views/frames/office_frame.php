@@ -9,13 +9,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta name="description" content="<?php echo $description; ?>" />
 	<meta name="keywords" content="<?php echo $keywords; ?>" />
 
-	<title>The Yorker - <?php
+	<title>The Yorker - <?php 
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($title)) {
-			echo $title;
-		} else {
-			echo 'no pagename';
-		}
+		if(isset($title)) { 
+			echo $title; 
+		} else { 
+			echo 'no pagename'; 
+		} 
 	?></title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
@@ -26,13 +26,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-
+	
 	<?php
 	if (isset($extra_css)) {
 		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
 	}
 	?>
-
+	
 	<!-- BEGIN Multiple event handlers code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -67,7 +67,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<?php
 	include('maps.php');
 	?>
-
+	
 	<!-- BEGIN search box code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -109,7 +109,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		return false;
 	}
-
+	
 	//onLoadFunctions.push(hideFeedback);
 
 	//]]>
@@ -266,11 +266,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
-
+	
 	</div>
-
-	<div id="MainBodyPane">
-
+	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
 		// Navigation bar
 		if (isset($content['navbar']))
@@ -283,14 +281,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		}
 	?>
 
-
-	<?php
-		// Display the main content
-		$content[0]->Load();
-	?>
-
 	</div>
-
+	<div style="float: right; width: 650px; padding: 0px; margin-top: 8px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
+		<?php
+			// Display the main content
+			$content[0]->Load();
+		?>
+	</div>
 </div>
 
 	<div style="float: right; width: 650px; margin-top: 8px; margin-left: 5px; background-color: #fff;">
