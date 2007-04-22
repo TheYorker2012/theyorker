@@ -34,31 +34,41 @@ class CalendarSourceMyCalendar extends CalendarSources
 			' OR event_source_permanent = TRUE');
 		$CI->db->select('event_source_id AS id,'.
 						'event_source_protocol AS protocol,'.
-						'event_source_url AS url');
+						'event_source_url AS url,'.
+						'event_source_entity_visible AS visible');
 		$query = $CI->db->get();
 		$sources = $query->result_array();
 		
 		foreach ($sources as $source) {
-			switch ($source['protocol']) {
-				case 'yorkerdb':
-					$CI->load->library('calendar_source_yorker');
-					$this->AddSource(new CalendarSourceYorker($source['id']));
-					break;
-					
-				case 'facebook':
-					$CI->load->library('calendar_source_facebook');
-					$this->AddSource(new CalendarSourceFacebook($source['id']));
-					break;
-					
-				case 'ical':
-					if (NULL !== $source['url']) {
-						$data = file_get_contents(urlencode($source['url']));
-						if (FALSE !== $data) {
-							$CI->load->library('calendar_source_icalendar');
-							$this->AddSource(new CalendarSourceICalendar($data, $source['id']));
+			if (NULL === $source['visible']) {
+				$visible = TRUE;
+			} else {
+				$visible = (bool)$source['visible'];
+			}
+			if ($visible) {
+				switch ($source['protocol']) {
+					case 'yorkerdb':
+						$CI->load->library('calendar_source_yorker');
+						$this->AddSource(new CalendarSourceYorker($source['id']));
+						break;
+						
+					case 'facebook':
+						$CI->load->library('calendar_source_facebook');
+						$this->AddSource(new CalendarSourceFacebook($source['id']));
+						break;
+						
+					case 'ical':
+						if (NULL !== $source['url']) {
+							$data = file_get_contents($source['url']);
+							if (FALSE !== $data) {
+								$CI->load->library('calendar_source_icalendar');
+								$this->AddSource(new CalendarSourceICalendar($data, $source['id']));
+							} else {
+								$CI->messages->AddMessage('information','Could not access ical import');
+							}
 						}
-					}
-					break;
+						break;
+				}
 			}
 		}
 	}

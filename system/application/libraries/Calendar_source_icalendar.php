@@ -295,7 +295,7 @@ class CalendarSourceICalendar extends CalendarSource
 						if (array_key_exists('EXRULE', $event)) {
 							$event_obj->Recur->AddExRules($event['EXRULE']);
 						}
-						$occurrences = $event_obj->Recur->Resolve($this->mStartTime, $this->mEndTime);
+						$occurrences = $event_obj->Recur->Resolve($this->mRange[0], $this->mRange[1]);
 						
 						$state = 'published';
 						if (array_key_exists('STATUS', $event)) {
