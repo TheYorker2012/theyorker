@@ -252,7 +252,7 @@ class Yorkerdirectory extends Controller
 		}
 	}
 	
-	function photos()
+	function photos($action = 'default', $photoID = FALSE, $operation = FALSE)
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
@@ -267,16 +267,14 @@ class Yorkerdirectory extends Controller
 
 		if (!empty($data)) {
 			$this->_SetupNavbar();
-			$photoID = $this->uri->segment(6, false);
-			$action = $this->uri->segment(5, 'default');
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
-				if ($this->uri->segment(7) == 'up') {
+				if ($operation == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
-				} elseif ($this->uri->segment(7) == 'down') {
+				} elseif ($operation == 'down') {
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
 			} elseif ($action == 'delete') {
-				if ($this->uri->segment(7) == 'confirm') {
+				if ($operation == 'confirm') {
 					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
 					$this->messages->AddMessage('info', 'Photo Deleted');
 				} else {
@@ -284,7 +282,7 @@ class Yorkerdirectory extends Controller
 				}
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
-				return $this->image_upload->recieveUpload(site_url('viparea/'.$this->uri->segment(2).'/directory/photos'), array('slideshow'));
+				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));
 			} elseif (isset($_SESSION['img']['list'])) {
 				foreach ($_SESSION['img']['list'] as $newID) {
 					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
