@@ -32,11 +32,11 @@
 
 <div class='blue_box'>
 	<h2>entries for this organisation</h2>
-	
+
     <table cellspacing="0" cellpadding="0">
         <tr>
             <td width="83"><p align="center"> Directory </p></td>
-            <td width="78"><p align="center"><b><a href="/office/pr/<?php echo $organisation['shortname']; ?>/directory/information">Edit</a></b></p></td>
+            <td width="78"><p align="center"><b><a href="/office/pr/org/<?php echo $organisation['shortname']; ?>/directory/information">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm<b></b></p></td>
         </tr>
         <tr>
@@ -54,6 +54,6 @@
             <td width="78"><p align="center"><b><a href="/office/reviews/<?php echo $organisation['shortname']; ?>/culture">Edit</a></b></p></td>
             <td width="168"><p align="center"> - </p></td>
         </tr>
-    </table>	
+    </table>
 </div>
 
