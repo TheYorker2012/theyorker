@@ -29,7 +29,7 @@ class Notices_model extends model
 	 * @param $Levels int Number of levels to go down where 1 is the first set
 	 *	of teams only.
 	 */
-	function GetPublicNoticesForOrganisation($OrganisationId, $UserId = NULL, $Expired = FALSE, $Levels = NULL)
+	function GetPublicNoticesForOrganisation($OrganisationId, $UserId = NULL, $Expired = FALSE, $Levels = NULL, $dateformat ='%a, %D %b %y')
 	{
 		// Get bits of the query using the organisation_model
 		$team_query_data = $this->organisation_model->GetTeams_QueryData(
@@ -48,19 +48,19 @@ class Notices_model extends model
 			notices.notice_id,
 			notices.notice_subject,
 			notices.notice_content_cache,
-			UNIX_TIMESTAMP(notices.notice_updated)			AS notice_updated,
-			UNIX_TIMESTAMP(notices.notice_expires)			AS notice_expires,
-			notices.notice_expires <= NOW()					AS notice_expired,
+			DATE_FORMAT(notices.notice_updated, ?) AS notice_updated,
+			DATE_FORMAT(notices.notice_expires, ?) AS notice_expires,
+			notices.notice_expires <= NOW() AS notice_expired,
 			notices.notice_published AND NOT notice_deleted
 				AND NOT notices.notice_expires <= NOW()
-				AND NOT notice_recipient_dismissed			AS notice_visible
+				AND NOT notice_recipient_dismissed AS notice_visible
 		FROM organisations';
 		
 		// Joins to parent organisations
 		$sql .= $team_query_data['joins'];
 		
 		// Only those of interest to the user
-		$bind_data = array();
+		$bind_data = array($dateformat, $dateformat);
 		if (NULL !== $UserId) {
 			$sql .= '
 			INNER JOIN subscriptions

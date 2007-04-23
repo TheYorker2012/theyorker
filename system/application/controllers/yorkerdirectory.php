@@ -229,7 +229,8 @@ class Yorkerdirectory extends Controller
 				}
 			}
 			
-			$data['teams'] = &$top_team;
+			$data['teams_all'] = &$all_teams;
+			$data['teams_tree'] = &$top_team;
 			$data['notices'] = &$notices;
 			
 			$this->main_frame->SetPage('notices');
