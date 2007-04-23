@@ -102,17 +102,35 @@ class Messages
 	 */
 	function AddMessages($Messages, $DefaultType = 'information', $DefaultPersistence = TRUE)
 	{
-		foreach ($Messages as $message) {
-			if (!is_array($message)) {
-				$message = array($message);
+		foreach (array('error', 'warning', 'success', 'information') as $type) {
+			if (array_key_exists($type, $Messages)) {
+				// Handle if the array is first indexed by type
+				foreach ($Messages[$type] as $message) {
+					if (!is_array($message)) {
+						$message = array($message);
+					}
+					$args = count($message);
+					if ($args === 1) {
+						$this->AddMessage($type, $message[0], $DefaultPersistence);
+					} elseif ($args > 1) {
+						$this->AddMessage($type, $message[0], $message[1]);
+					}
+				}
 			}
-			$args = count($message);
-			if ($args === 1) {
-				$this->AddMessage($DefaultType, $message[0], $DefaultPersistence);
-			} elseif ($args === 2) {
-				$this->AddMessage($message[1], $message[0], $DefaultPersistence);
-			} elseif ($args > 2) {
-				$this->AddMessage($message[1], $message[0], $message[2]);
+		}
+		foreach ($Messages as $key => $message) {
+			if (is_int($key)) {
+				if (!is_array($message)) {
+					$message = array($message);
+				}
+				$args = count($message);
+				if ($args === 1) {
+					$this->AddMessage($DefaultType, $message[0], $DefaultPersistence);
+				} elseif ($args === 2) {
+					$this->AddMessage($message[1], $message[0], $DefaultPersistence);
+				} elseif ($args > 2) {
+					$this->AddMessage($message[1], $message[0], $message[2]);
+				}
 			}
 		}
 	}

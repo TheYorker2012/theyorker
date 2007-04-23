@@ -23,8 +23,7 @@ class CalendarSourceFacebook extends CalendarSource
 		
 		$this->SetSourceId($SourceId);
 		$this->mName = 'Facebook';
-		//$this->mCapabilities[] = 'rsvp';
-		$this->mCapabilities[] = 'refer';
+		//$this->mCapabilities[] = 'attend';
 	}
 	
 	/// Fedge the events of the source.

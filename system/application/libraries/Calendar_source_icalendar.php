@@ -170,8 +170,7 @@ class CalendarSourceICalendar extends CalendarSource
 		
 		$this->SetSourceId($SourceId);
 		$this->mName = 'iCalendar file';
-		//$this->mCapabilities[] = 'rsvp';
-		//$this->mCapabilities[] = 'refer';
+		//$this->mCapabilities[] = 'attend';
 		
 		$this->SetIcalData($ICalendarData);
 	}

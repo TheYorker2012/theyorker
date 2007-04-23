@@ -535,7 +535,8 @@ class Date_uri
 	
 	/// Generate a URI from a date in a particular format.
 	/**
-	 * @param $Date Academic_time Date to generate URI for.
+	 * @param $Start Academic_time Start date to generate URI for.
+	 * @param $End Academic_time End date to generate URI for.
 	 * @param $Format Format string like part of return value of ReadUri().
 	 *	- 'gr'	YEAR-MON-DD
 	 *	- 'gr:gr'	YEAR-MON-DD:YEAR-MON-DD
@@ -571,19 +572,26 @@ class Date_uri
 		} elseif ($start_format === 'ac') {
 			$result = $Start->AcademicYear();
 			$result .= '-'.$Start->AcademicTermNameUnique();
-			$result .= '-'.$Start->AcademicWeek();
 			$put_end = ($end_format === 'ac');
-			$dow = $Start->Format('D');
-			if ($dow == 1 && $unit !== 'day') {
-				$result .= '-'.$dow;
+			$by_term = (0 === $Start->AcademicDay() && 0 === $End->AcademicDay());
+			if (!$by_term) {
+				$result .= '-'.$Start->AcademicWeek();
+				$dow = $Start->Format('D');
+				if ($dow !== 1 && $unit === 'day') {
+					$result .= '-'.$dow;
+				} else {
+					$put_end = FALSE;
+				}
 			} else {
-				$put_end = FALSE;
+				$End = $End->Adjust('-1day');
 			}
 			if ($put_end) {
 				$result .= ':'.$End->AcademicYear();
 				$result .= '-'.$End->AcademicTermNameUnique();
-				$result .= '-'.$End->AcademicWeek();
-				$result .= '-'.$End->Format('D');
+				if (!$by_term) {
+					$result .= '-'.$End->AcademicWeek();
+					$result .= '-'.$End->Format('D');
+				}
 			}
 			$valid = TRUE;
 		} else {

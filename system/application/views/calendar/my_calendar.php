@@ -27,26 +27,32 @@
 ?>
 
 <div class="BlueBox">
-	<ul>
-		<?php
-		foreach ($Filters as $id => $filter) {
-			switch ($filter['display']) {
-				case 'block':
-					echo '<li><a href="#">';
-					echo $filter['name'];
-					echo '</a></li>';
-					break;
-				case 'image':
-					echo '<li><img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/></li>';
-					break;
+	<table border="0" cellpadding="2" cellspacing="0">
+		<tr>
+			<?php
+			foreach ($Filters as $id => $filter) {
+				switch ($filter['display']) {
+					case 'block':
+						echo '<td><a href="#">';
+						echo $filter['name'];
+						echo '</a></td>';
+						break;
+					case 'image':
+						echo '<td><img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/></td>';
+						break;
+				}
 			}
-		}
-		?>
-	</ul>
+			
+			?>
+		</tr>
+	</table>
 </div>
 
 <div class="BlueBox">
 <?php
+if (isset($RangeDescription)) {
+	echo('<h4>My Calendar: '.$RangeDescription.'</h4>');
+}
 // Load the main view
 $ViewMode->Load();
 ?>

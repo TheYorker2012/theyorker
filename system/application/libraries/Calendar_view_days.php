@@ -16,11 +16,6 @@
 /// Days calendar view class.
 class CalendarViewDays extends CalendarView
 {
-	/// timestamp Start time of range of events to fetch.
-	protected $mStartTime = NULL;
-	/// timestamp End time of range of events to fetch.
-	protected $mEndTime = NULL;
-	
 	/// Default constructor.
 	function __construct()
 	{
@@ -35,12 +30,6 @@ class CalendarViewDays extends CalendarView
 EXTRAHEAD;
 		$CI = & get_instance();
 		$CI->main_frame->SetExtraHead($extra_head);
-	}
-	
-	function SetStartEnd($Start, $End)
-	{
-		$this->mStartTime = $Start;
-		$this->mEndTime = $End;
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -61,17 +50,22 @@ EXTRAHEAD;
 		$end = $this->mEndTime;
 		while ($start < $end) {
 			$date = date('Ymd', $start);
+			$ac_date = new Academic_time($start);
 			$days[$date] = array(
-				'date' => new Academic_time($start),
+				'date'   => $ac_date,
 				'events' => array(),
+				'link'   => $this->GenerateRangeUrl($ac_date, $ac_date->Adjust('1day')),
 			);
 			$start = strtotime('1day',$start);
 		}
-		
 		foreach ($occurrences as $key => $occurrence) {
 			$occ = & $occurrences[$key];
 			$date = $occ->StartTime->Format('Ymd');
-			$time = $occ->StartTime->Format('His');
+			if ($occurrence->TimeAssociated) {
+				$time = $occ->StartTime->Format('His');
+			} else {
+				$time = '000000';
+			}
 			if (array_key_exists($date, $days)) {
 				if (!array_key_exists($time, $days[$date]['events'])) {
 					$days[$date]['events'][$time] = array();

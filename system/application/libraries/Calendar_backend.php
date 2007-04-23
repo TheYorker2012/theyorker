@@ -185,7 +185,7 @@ abstract class CalendarSource
 	/*
 	/// array[string] Array of valid members of @a mCapabilities.
 	protected static $sValidCapabilities = array(
-		'rsvp',  // its possible to rsvp these event
+		'attend',  // its possible to rsvp these event
 		'cache', // these events can be cached in the database
 	);
 	*/
@@ -350,11 +350,21 @@ abstract class CalendarSource
 	/**
 	 * @param $Occurrence Occurrence identifier.
 	 * @param $Attending bool,NULL Whether attending.
-	 * @return bool Whether successful.
+	 * @return array Array of message arrays, indexed by type.
 	 */
 	function AttendingOccurrence($Occurrence, $Attending)
 	{
-		return FALSE;
+		return array('error' => array('Attendance status information for this event source is not currently supported.'));
+	}
+	
+	/// Delete an event.
+	/**
+	 * @param $Event Event identifier.
+	 * @return array Array of messages.
+	 */
+	function DeleteEvent($Event)
+	{
+		return array('error' => array('Deleting events in this event source is not currently supported.'));
 	}
 }
 
@@ -453,8 +463,8 @@ class CalendarData
 	 */
 	function NewCurrentSource(&$Source)
 	{
-		$source_id = $Source->GetSourceId();
-		$this->mSource[$source_id] = &$Source;
+		$this->mLastSourceIndex = $Source->GetSourceId();
+		$this->mSource[$this->mLastSourceIndex] = &$Source;
 	}
 	
 	/// Get the current source.
@@ -684,7 +694,22 @@ class CalendarSources extends CalendarSource
 		if (array_key_exists($SourceId, $this->mSources)) {
 			return $this->mSources[$SourceId]->AttendingOccurrence($Occurrence, $Attending);
 		} else {
-			return FALSE;
+			return parent::AttendingOccurrence($Occurrence, $Attending);
+		}
+	}
+	
+	/// Delete event.
+	/**
+	 * @param $SourceId int Event source id.
+	 * @param $Event Event identifier.
+	 * @return array Array of messages.
+	 */
+	function DeleteEvent($SourceId, $Event)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->DeleteEvent($Event);
+		} else {
+			return parent::DeleteEvent($Event);
 		}
 	}
 }

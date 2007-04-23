@@ -1,5 +1,14 @@
 <?php
 
+echo('<div align="center">');
+if (isset($BackwardUrl)) {
+	echo('<a href="'.$BackwardUrl.'">Backward</a> ');
+}
+if (isset($ForwardUrl)) {
+	echo('<a href="'.$ForwardUrl.'">Forward</a>');
+}
+echo('</div>');
+
 $squash = count($Days) > 3;
 
 function DrawOccurrence(&$Occurrence, $Squash)
@@ -24,38 +33,54 @@ function DrawOccurrence(&$Occurrence, $Squash)
 						}
 						echo('<i>');
 						echo($Occurrence->Event->Description);
-						echo('</i><br />');
+						echo('</i>');
 						$CI = & get_instance();
-						if (FALSE === $Occurrence->UserAttending) {
-							echo('not attending');
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
+						if ($Occurrence->EndTime->Timestamp() > time()) {
+							echo('<br />');
+							if (FALSE === $Occurrence->UserAttending) {
+								echo('not attending');
+								if ($Occurrence->Event->Source->IsSupported('attend')) {
+									echo(' (<a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/accept'.$CI->uri->uri_string()).'">attend</a>');
+									echo(', <a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
+								}
+							} elseif (TRUE === $Occurrence->UserAttending) {
+								echo('attending');
+								if ($Occurrence->Event->Source->IsSupported('attend')) {
+									echo(' (<a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>');
+									echo(', <a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
+								}
+							} else {
+								echo('maybe attending');
+								if ($Occurrence->Event->Source->IsSupported('attend')) {
+									echo(' (<a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/accept'.$CI->uri->uri_string()).'">attend</a>');
+									echo(', <a href="'.site_url('calendar/actions/attend/'.
+										$Occurrence->Event->Source->GetSourceId().
+										'/'.urlencode($Occurrence->SourceOccurrenceId).
+										'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
+								}
+							}
+						}
+						if ('owned' === $Occurrence->Event->UserStatus) {
+							echo('<br />');
+							echo('<a href="'.site_url('calendar/actions/delete/'.
 								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/accept'.$CI->uri->uri_string()).'">attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
-						} elseif (TRUE === $Occurrence->UserAttending) {
-							echo('attending');
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
-						} else {
-							echo('maybe attending');
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/accept'.$CI->uri->uri_string()).'">attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
+								'/'.urlencode($Occurrence->Event->SourceEventId).
+								$CI->uri->uri_string()).'">delete</a>');
 						}
 					}
 					?>
@@ -71,9 +96,11 @@ echo('<table id="calviewCalTable" border="0" cellpadding="0" cellspacing="0" wid
 echo('<tr>');
 foreach ($Days as $date => $times) {
 	echo('<th class="calviewCalHeadingCell">');
+	echo('<a href="'.$times['link'].'">');
 	echo($times['date']->Format('l'));
 	echo('<br />');
 	echo($times['date']->Format('jS M'));
+	echo('</a>');
 	echo('</th>');
 }
 echo('</tr><tr>');

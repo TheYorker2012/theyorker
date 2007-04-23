@@ -16,11 +16,6 @@
 /// Weeks calendar view class.
 class CalendarViewWeeks extends CalendarView
 {
-	/// timestamp Start time of range of events to fetch.
-	protected $mStartTime = NULL;
-	/// timestamp End time of range of events to fetch.
-	protected $mEndTime = NULL;
-	
 	/// Default constructor.
 	function __construct()
 	{
@@ -35,12 +30,6 @@ class CalendarViewWeeks extends CalendarView
 EXTRAHEAD;
 		$CI = & get_instance();
 		$CI->main_frame->SetExtraHead($extra_head);
-	}
-	
-	function SetStartEnd($Start, $End)
-	{
-		$this->mStartTime = $Start;
-		$this->mEndTime = $End;
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -60,12 +49,17 @@ EXTRAHEAD;
 		$start = new Academic_time($this->mStartTime);
 		$end   = new Academic_time($this->mEndTime);
 		$start = $start->Midnight()->BackToMonday();
-		$end = $end->Midnight()->BackToMonday()->Adjust('1week');
-		while ($start < $end) {
+		$end = $end->Midnight();
+		$monday = $end->BackToMonday();
+		if ($end->Timestamp() !== $monday->Timestamp()) {
+			$end = $monday->Adjust('1week');
+		}
+		while ($start->Timestamp() < $end->Timestamp()) {
 			$date = $start->Format('Ymd');
 			$days[$date] = array(
 				'date' => $start,
 				'events' => array(),
+				'link'   => $this->GenerateRangeUrl($start, $start->Adjust('1day')),
 			);
 			$start = $start->Adjust('1day');
 		}
@@ -73,7 +67,11 @@ EXTRAHEAD;
 		foreach ($occurrences as $key => $occurrence) {
 			$occ = & $occurrences[$key];
 			$date = $occ->StartTime->Format('Ymd');
-			$time = $occ->StartTime->Format('His');
+			if ($occurrence->TimeAssociated) {
+				$time = $occ->StartTime->Format('His');
+			} else {
+				$time = '000000';
+			}
 			if (array_key_exists($date, $days)) {
 				if (!array_key_exists($time, $days[$date]['events'])) {
 					$days[$date]['events'][$time] = array();
@@ -89,7 +87,16 @@ EXTRAHEAD;
 		$weeks = array();
 		$day_counter = 0;
 		foreach ($days as $date => $day) {
-			$weeks[(int)($day_counter/7)][$date] = $day;
+			$week = (int)($day_counter/7);
+			if (!array_key_exists($week, $weeks)) {
+				$weeks[$week] = array(
+					'days' => array(),
+					'link' => $this->GenerateRangeUrl($day['date'], $day['date']->Adjust('1week')),
+					'start' => $day['date'],
+				);
+			}
+			$weeks[$week]['days'][$date] = $day;
+			$weeks[$week]['end'] = $day['date'];
 			++$day_counter;
 		}
 		

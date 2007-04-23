@@ -39,13 +39,17 @@ class EventOccurrenceQuery
 	}
 	
 	/// Produce an SQL expression for all and only subscribed events.
-	function ExpressionSubscribed()
+	function ExpressionSubscribed($EntityId = FALSE)
 	{
-		return	'(	(	event_entities.event_entity_entity_id = ' . $this->mEntityId . '
+		if (FALSE === $EntityId) {
+			$EntityId = $this->mEntityId;
+		}
+		return	'(	events.event_organizer_entity_id = ' . $EntityId . '
+				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship = \'own\'
 						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	event_subscriptions.event_subscription_user_entity_id = ' . $this->mEntityId . ')';
+				OR	event_subscriptions.event_subscription_user_entity_id = ' . $EntityId . ')';
 	}
 	
 	/// Produce an SQL expression for all and only rsvp'd events.
@@ -1192,6 +1196,39 @@ class Events_model extends Model
 		);
 	}
 	
+	/// Event delete.
+	/**
+	 * @param $EventId int Event identifier.
+	 * @return Whether successfully deleted.
+	 */
+	function EventDelete($EventId)
+	{
+		// Don't need to delete occurrences as if the event is marked as deleted
+		// they won't show up from any queries anymore.
+		/// @todo BUT then cancelled occurrences don't show up, this needs sorting.
+		if (false) {
+			// cancel all published occurrences
+			$this->OccurrencePublishedCancel($EventId, NULL);
+			// delete all unpublished occurrences
+			$this->OccurrenceChangeState($EventId, NULL, NULL, 'deleted', array(
+				'event_occurrences.event_occurrence_state NOT IN ("published", "cancelled")'
+			));
+		}
+		
+		$occurrence_query = new EventOccurrenceQuery();
+		// delete the event
+		$delete_sql =
+		'UPDATE events
+		LEFT JOIN event_entities ON event_id = event_entity_event_id '.
+			'AND event_entity_entity_id = '.$occurrence_query->GetEntityId().'
+		SET event_deleted = TRUE
+		WHERE event_id = '.$this->db->escape($EventId).' AND
+			'.$occurrence_query->ExpressionOwned();
+		
+		$this->db->query($delete_sql);
+		return $this->db->affected_rows();
+	}
+	
 	/// Alter existing events.
 	/**
 	 * @param $EventData array Array of Event data arrays.
@@ -1562,6 +1599,8 @@ class Events_model extends Model
 		// change the state to $NewState
 		// where the state was $OldState
 		$sql = 'UPDATE event_occurrences
+			INNER JOIN events
+				ON	event_id = event_occurrence_event_id
 			INNER JOIN event_entities
 				ON	event_entities.event_entity_event_id
 						= event_occurrences.event_occurrence_event_id
@@ -1575,7 +1614,7 @@ class Events_model extends Model
 			$bind_data[] = $OccurrenceId;
 		}
 		if (is_string($OldState)) {
-			$sql .= ' AND		event_occurrences.event_occurrence_state=?';
+			$sql .= ' AND	event_occurrences.event_occurrence_state=?';
 			$bind_data[] = $OldState;
 		}
 		foreach ($ExtraConditions as $ExtraCondition) {

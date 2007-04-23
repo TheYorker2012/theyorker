@@ -32,7 +32,7 @@ class CalendarSourceYorker extends CalendarSource
 		
 		$this->SetSourceId($SourceId);
 		$this->mName = 'Yorker events';
-		$this->mCapabilities[] = 'rsvp';
+		$this->mCapabilities[] = 'attend';
 	}
 	
 	/// Set the special condition.
@@ -80,8 +80,8 @@ class CalendarSourceYorker extends CalendarSource
 			//'blurb'				=> 'events.event_blurb',
 			'event_time_associated'	=> 'events.event_time_associated',
 			'last_update'		=> 'UNIX_TIMESTAMP(events.event_timestamp)',
-			'subscribed'		=> 'event_subscriptions.event_subscription_user_entity_id IS NOT NULL',
-			'owned'				=> 'event_entities.event_entity_entity_id = '.$CI->events_model->GetActiveEntityId(),
+			'subscribed'		=> $this->mQuery->ExpressionSubscribed(),
+			'owned'				=> $this->mQuery->ExpressionOwned(),
 			
 			'org_id'			=> 'organisations.organisation_entity_id',
 			'org_name'			=> 'organisations.organisation_name',
@@ -96,6 +96,12 @@ class CalendarSourceYorker extends CalendarSource
 			$fields['todo_end']		= $this->mQuery->ExpressionTodoEnd();
 		}
 		$db_data = $this->MainQuery($fields);
+		
+		/*
+		echo('<span align="left">');
+		var_dump($db_data);
+		echo('</span>');
+		//*/
 		
 		// Go through and sort the database data into objects.
 		$events = array();
@@ -114,6 +120,18 @@ class CalendarSourceYorker extends CalendarSource
 				$event->Description = $row['description'];
 				$event->LastUpdate = $row['last_update'];
 				$event->TimeAssociated = $row['event_time_associated'];
+				if ($row['owned']) {
+					$event->UserStatus = 'owner';
+				} elseif ($row['subscribed']) {
+					$event->UserStatus = 'subscriber';
+				}
+			} else {
+				$event = $events[$event_id];
+				if ($row['owned']) {
+					$event->UserStatus = 'owner';
+				} elseif ($row['subscribed'] && 'none' === $event->UserStatus) {
+					$event->UserStatus = 'subscriber';
+				}
 			}
 			if (!array_key_exists($occurrence_id, $occurrences)) {
 				$occurrence = & $Data->NewOccurrence($events[$event_id]);
@@ -215,7 +233,7 @@ class CalendarSourceYorker extends CalendarSource
 			SELECT '.implode(',',$FieldStrings).' FROM event_occurrences
 			INNER JOIN events
 				ON	event_occurrences.event_occurrence_event_id = events.event_id
-				AND	events.event_deleted = 0
+				AND	(events.event_deleted = 0 || event_occurrence_state = "cancelled")
 			LEFT JOIN event_types
 				ON	events.event_type_id = event_types.event_type_id
 			LEFT JOIN event_entities
@@ -355,12 +373,41 @@ class CalendarSourceYorker extends CalendarSource
 	/**
 	 * @param $OccurrenceId Occurrence identifier.
 	 * @param $Attending bool,NULL Whether attending.
-	 * @return bool Whether successful.
+	 * @return array Array of messages.
 	 */
 	function AttendingOccurrence($OccurrenceId, $Attending)
 	{
-		$CI = & get_instance();
-		return $CI->events_model->SetOccurrenceUserAttending($OccurrenceId, $Attending);
+		$messages = array();
+		if (is_numeric($OccurrenceId)) {
+			$CI = & get_instance();
+			$result = $CI->events_model->SetOccurrenceUserAttending((int)$OccurrenceId, $Attending);
+			if (!$result) {
+				$messages['error'][] = 'The attendance status could not be set.';
+			}
+		} else {
+			$messages['error'][] = 'The occurrence identifier was invalid.';
+		}
+		return $messages;
+	}
+	
+	/// Delete an event.
+	/**
+	 * @param $EventId Event identifier.
+	 * @return array Array of messages.
+	 */
+	function DeleteEvent($EventId)
+	{
+		$messages = array();
+		if (is_numeric($EventId)) {
+			$CI = & get_instance();
+			$result = $CI->events_model->EventDelete((int)$EventId);
+			if (!$result) {
+				$messages['error'][] = 'The event could not be deleted.';
+			}
+		} else {
+			$messages['error'][] = 'The event identifier was invalid.';
+		}
+		return $messages;
 	}
 }
 
