@@ -68,7 +68,8 @@ class CalendarSourceFacebook extends CalendarSource
 					$occurrence = & $Data->NewOccurrence($event_obj);
 					$event_obj->SourceEventId = 'e'.$event['eid'];
 					$event_obj->Name = $event['name'];
-					$event_obj->Description = $event['description'];
+					$event_obj->Description = str_replace("\n",'<br />'."\n", $event['description']);
+					$event_obj->Description .= '<br /><a href="http://www.facebook.com/event.php?eid='.$event['eid'].'">This event on Facebook</a>';
 					$event_obj->LastUpdate = $event['update_time'];
 					if (!empty($event['pic'])) {
 						$event_obj->Image = $event['pic'];
@@ -105,7 +106,7 @@ class CalendarSourceFacebook extends CalendarSource
 							$occurrence = & $Data->NewOccurrence($event_obj);
 							$event_obj->SourceEventId = 'bd'.$birthday['uid'];
 							$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
-							$event_obj->Description = '';
+							$event_obj->Description = '<a href="http://www.facebook.com/profile.php?id='.$birthday['uid'].'">'.$birthday['name'].'\'s profile</a>';
 							$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
 							if (!empty($birthday['pic'])) {
 								$event_obj->Image = $birthday['pic'];
