@@ -37,7 +37,7 @@ class CalendarSourceFacebook extends CalendarSource
 		if (!$CI->facebook->InUse()) return;
 		
 		try {
-			// Get events for the next few weeks.
+			// Get events in the range.
 			$events = $CI->facebook->Client->events_get(
 				$CI->facebook->Uid,
 				null,
@@ -46,17 +46,11 @@ class CalendarSourceFacebook extends CalendarSource
 				null
 			);
 			
-			/*
-			echo('<pre align="left">');
-			print_r($events);
-			echo('</pre>');
-			//*/
-			
+			$user_id = $CI->facebook->Client->users_getLoggedInUser();
 			if (!empty($events)) {
 				foreach ($events as $event) {
 					// get the list of members, so we can see if the user is attending.
 					$members = $CI->facebook->Client->events_getMembers($event['eid']);
-					$user_id = $CI->facebook->Client->users_getLoggedInUser();
 					$attending = NULL;
 					if (is_array($members['attending']) && in_array($user_id, $members['attending'])) {
 						$attending = TRUE;
@@ -72,7 +66,7 @@ class CalendarSourceFacebook extends CalendarSource
 					
 					$event_obj = & $Data->NewEvent();
 					$occurrence = & $Data->NewOccurrence($event_obj);
-					$event_obj->SourceEventId = $event['eid'];
+					$event_obj->SourceEventId = 'e'.$event['eid'];
 					$event_obj->Name = $event['name'];
 					$event_obj->Description = $event['description'];
 					$event_obj->LastUpdate = $event['update_time'];
@@ -86,6 +80,50 @@ class CalendarSourceFacebook extends CalendarSource
 					unset($event_obj);
 				}
 			}
+			
+			// Get friends with birthdays in the range.
+			$birthdays = $CI->facebook->Client->fql_query(
+				'SELECT uid, name, birthday, profile_update_time FROM user '.
+				//'WHERE uid = '.$user_id
+				'WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '.$user_id.') '.
+				'OR uid = '.$user_id
+			);
+			
+			$year = date('Y', $this->mRange[0]);
+			$yesterday = strtotime('-1day',$this->mRange[0]);
+			foreach ($birthdays as $birthday) {
+				if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
+					$start_age = $year - $matches[2];
+					$dob = strtotime($matches[1].$year);
+					
+					while ($dob < $this->mRange[1]) {
+						if ($dob >= $yesterday) {
+							$event_obj = & $Data->NewEvent();
+							$occurrence = & $Data->NewOccurrence($event_obj);
+							$event_obj->SourceEventId = 'bd'.$birthday['uid'];
+							$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
+							$event_obj->Description = '';
+							$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
+							$occurrence->SourceOccurrenceId = 'bd'.$birthday['uid'].'.'.$start_age;
+							$occurrence->LocationDescription = '';
+							$occurrence->StartTime = new Academic_time($dob);
+							$occurrence->EndTime = $occurrence->StartTime->Adjust('1day');
+							$occurrence->TimeAssociated = FALSE;
+							$occurrence->UserAttending = NULL;
+							unset($occurrence);
+							unset($event_obj);
+						}
+						$dob = strtotime('1year', $dob);
+						++$start_age;
+					}
+				}
+			}
+			
+			/*
+			echo('<pre align="left">');
+			print_r($birthdays);
+			echo('</pre>');
+			//*/
 		} catch (FacebookRestClientException $ex) {
 			$CI->facebook->HandleException($ex);
 		}
