@@ -9,7 +9,7 @@ if (isset($ForwardUrl)) {
 }
 echo('</div>');
 
-$squash = count($Days) > 3;
+$squash = (count($Days) > 3);
 
 function DrawOccurrence(&$Occurrence, $Squash)
 {
@@ -81,6 +81,10 @@ function DrawOccurrence(&$Occurrence, $Squash)
 								$Occurrence->Event->Source->GetSourceId().
 								'/'.urlencode($Occurrence->Event->SourceEventId).
 								$CI->uri->uri_string()).'">delete</a>');
+						}
+						if (!$Squash && NULL !== $Occurrence->Event->Image) {
+							echo('<br />');
+							echo('<img src="'.$Occurrence->Event->Image.'" />');
 						}
 					}
 					?>

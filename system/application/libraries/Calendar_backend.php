@@ -124,6 +124,8 @@ class CalendarEvent
 	public $UserStatus		= 'none';
 	/// RecurrenceSet Recurrence information.
 	public $Recur			= NULL;
+	/// string URL of image.
+	public $Image			= NULL;
 	
 	/// Primary constructor.
 	/**

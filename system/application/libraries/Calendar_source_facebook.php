@@ -70,6 +70,9 @@ class CalendarSourceFacebook extends CalendarSource
 					$event_obj->Name = $event['name'];
 					$event_obj->Description = $event['description'];
 					$event_obj->LastUpdate = $event['update_time'];
+					if (!empty($event['pic'])) {
+						$event_obj->Image = $event['pic'];
+					}
 					$occurrence->SourceOccurrenceId = $event['eid'];
 					$occurrence->LocationDescription = $event['location'];
 					$occurrence->StartTime = new Academic_time((int)$event['start_time']);
@@ -83,7 +86,7 @@ class CalendarSourceFacebook extends CalendarSource
 			
 			// Get friends with birthdays in the range.
 			$birthdays = $CI->facebook->Client->fql_query(
-				'SELECT uid, name, birthday, profile_update_time FROM user '.
+				'SELECT uid, name, birthday, profile_update_time, pic FROM user '.
 				//'WHERE uid = '.$user_id
 				'WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '.$user_id.') '.
 				'OR uid = '.$user_id
@@ -104,6 +107,9 @@ class CalendarSourceFacebook extends CalendarSource
 							$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
 							$event_obj->Description = '';
 							$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
+							if (!empty($birthday['pic'])) {
+								$event_obj->Image = $birthday['pic'];
+							}
 							$occurrence->SourceOccurrenceId = 'bd'.$birthday['uid'].'.'.$start_age;
 							$occurrence->LocationDescription = '';
 							$occurrence->StartTime = new Academic_time($dob);
@@ -127,13 +133,6 @@ class CalendarSourceFacebook extends CalendarSource
 		} catch (FacebookRestClientException $ex) {
 			$CI->facebook->HandleException($ex);
 		}
-		
-		/*if (isset($events[0]))
-		{
-			$first_event_eid = $events[0]['eid'];
-			$event_members = $client->events_getMembers($events[0]['eid']);
-			$event_count = count($event_members['attending']);
-		}*/
 	}
 }
 
