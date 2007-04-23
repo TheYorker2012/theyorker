@@ -128,7 +128,7 @@ div#Header, div#Page, div#Footer {
 
 /* Create Navigation and Main areas in Body */
 div#NavigationColumn {
-	width: 125px;
+	width: 120px;
 	float: left;
 }
 
@@ -201,7 +201,7 @@ fieldset#SearchBox input {
 div#NavigationMenu ul {
 	display: block;
 	list-style: none outside none;
-	margin: 0 0.5em 0 0;
+	margin: 0 0 0 0;
 	padding: 0;
 	border-top: 1px solid #999;
 }

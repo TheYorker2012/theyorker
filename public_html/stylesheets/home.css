@@ -1,3 +1,7 @@
+div#HomeBanner {
+	padding-bottom: 0.5em;
+}
+
 div.NewsBox {
 	width: 100%;
 }
