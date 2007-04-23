@@ -55,6 +55,7 @@ class Home extends Controller {
 		$end = $now->Midnight()->Adjust('+2day');
 		
 		$sources = new CalendarSourceMyCalendar();
+		$sources->EnableGroup('todo');
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
 		
 		$calendar_data = new CalendarData();
