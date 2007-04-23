@@ -30,7 +30,7 @@ if ($InlineAdder) {
 }
 ?>
 <div class="BlueBox">
-	<ul>
+	<ul d="todolist">
 		<?php
 		foreach ($Items as $item) {
 			echo '<li>'.$item->Event->Name.'</li>';
@@ -38,3 +38,9 @@ if ($InlineAdder) {
 		?>
 	</ul>
 </div>
+
+<script type="text/javascript">
+// <![CDATA[
+	Sortable.create("todolist", {dropOnEmpty:true,containment:["todolist"],constraint:false});
+// ]]>
+</script>
