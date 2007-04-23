@@ -284,11 +284,24 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function review($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
 		
+		/*
+		[a_review_author] => name of the author
+		[a_review_text] => review data
+		[r_submit_newreview] => submit button
+		*/
+		if (isset($_POST['r_submit_newreview']))
+		{
+			echo '<pre>';
+			print_r($_POST);
+			echo '</pre>';
+		}
+
+		$this->load->model('bylines_model');
 		$this->pages_model->SetPageCode('office_review_reviews');
 
 		//Get navigation bar and tell it the current page
@@ -298,6 +311,10 @@ class Reviews extends Controller
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		//bylines
+		$data['bylines']['generic'] = $this->bylines_model->GetGeneralBylines();
+		$data['bylines']['user'] = $this->bylines_model->GetUsersBylines($this->user_auth->entityId);
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
@@ -338,7 +355,7 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function comments($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
