@@ -241,41 +241,17 @@ function addstrike($text)
 	if ($stage == 5)
 	{
 ?>
-<div class="blue_box">
+<div class="BlueBox">
+	<h2>location map</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
 		</fieldset>
-		<h2>location map</h2>
-		1) Choose your map type:
-		<br />
-		<fieldset>
-			<input type="radio" name="a_map_type" onclick='document.getElementById("postcode_div").style.display = "block"; document.getElementById("building_div").style.display = "none";'/> Road Map<br />
-			<input type="radio" name="a_map_type" onclick='document.getElementById("building_div").style.display = "block"; document.getElementById("postcode_div").style.display = "none";'/> Campus Map<br />
-		</fieldset>
-		<div id="postcode_div">
-			2) Jump to postcode<br />
-			<fieldset>
-				<input type="text" name="a_map_postcode" style="width: 150px;"/><input type="button" value="Go" class="button" />
-			</fieldset>
-		</div>
-		<br />
-		<div id="building_div" style="display: none;">
-			2) Jump to Building<br />
-			<fieldset>
-			<select name="a_map_building_locations" size="1">
-				<option value="" selected="selected"></option>
-				<option value="1">The list is a little short.</option>
-			</select>
-			<input type="button" value="Go" class="button" />
-			</fieldset>
-		</div>
-		3) Refine your location
-		<br />
-		click and drag the red pin to the appropriate location on the map using the tools on the left to zoom in or out as appropriate.
-		<br />
-		<img width="390" src="./images/gmapwhereamI.png" alt="where am i?" />
+		<div id="googlemaps" style="height: 300px"></div>
+		<noscript>
+			<p>Javascript support is required for map editing</p>
+		</noscript>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
 			<input type="submit" name="r_submit_finish" value="Next" class="button" />

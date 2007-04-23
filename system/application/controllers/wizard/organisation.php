@@ -106,13 +106,23 @@ class Organisation extends controller
 							{
 							//create directory entry revision
 							$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
-							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
-							$this->load->model('slideshow');
 							if (isset($_SESSION['org_wizard']['img'])) {
+								$this->load->model('slideshow');
 								foreach ($_SESSION['org_wizard']['img'] as $img) {
 									$this->slideshow->addPhoto($img, $newOrgId);
 								}
 							}
+
+							if (isset($_SESSION['org_wizard']['0_lat'])) {
+								$this->directory_model->UpdateDirectoryEntryLocation(
+									$post_data['directory_entry_name'], 
+									null, 
+									$_SESSION['org_wizard']['0_lat'], 
+									$_SESSION['org_wizard']['0_lng']
+								);
+							}
+
+							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
 							} else {
 							//Something went wrong so don't make a revision
 							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
@@ -141,6 +151,22 @@ class Organisation extends controller
 				$data['stage'] = $_POST['r_stage'] - 1;
 				while ($data['is_connected'] == 'No' && in_array($data['stage'], $skip_stages))
 					$data['stage'] = $data['stage'] - 1;
+			}
+
+			if ($data['stage'] === 5) {
+				$this->load->library('maps');
+				$map = &$this->maps->CreateMap('Add Location', 'googlemaps');
+				if (isset($_SESSION['org_wizard']['0_lat'])) {
+					$map->WantLocation(
+						$_SESSION['org_wizard']['a_name'], 
+						$_SESSION['org_wizard']['0_lat'], 
+						$_SESSION['org_wizard']['0_lng']
+					);
+				} else {
+					$map->WantLocation($_SESSION['org_wizard']['a_name']);
+				}
+				$map->SetFormId('orgdetails');
+				$this->maps->SendMapData();
 			}
 		}
 		else

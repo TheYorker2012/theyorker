@@ -6,6 +6,7 @@ class Map {
 		'element' => '',
 		'description' => '',
 		'post' => false,
+		'form' => 'null',
 		'zoom' => 13,
 		'minlat' => 90,
 		'maxlat' => -90,
@@ -66,6 +67,10 @@ class Map {
 	// input.  
 	public function SetPostLocation($url) {
 		$this->map['post'] = $url;
+	}
+
+	public function SetFormId($id) {
+		$this->map['form'] = $id;
 	}
 	
 	// Requests that the user places pins on the map.  If the lat

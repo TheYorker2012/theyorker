@@ -67,11 +67,13 @@ if ($editable) {
 			this.latctl = document.createElement("input");
 			this.latctl.setAttribute("type", "text");
 			this.latctl.setAttribute("name", this.id + "_lat");
+			this.latctl.style.display = "none";
 			this.container.form.appendChild(this.latctl);
 
 			this.lngctl = document.createElement("input");
 			this.lngctl.setAttribute("type", "text");
 			this.lngctl.setAttribute("name", this.id + "_lng");
+			this.lngctl.style.display = "none";
 			this.container.form.appendChild(this.lngctl);
 
 			this.button = document.createElement("div");
@@ -155,24 +157,32 @@ if ($editable) {
 		button.style.cursor = "pointer";
 	}
 
-	function maps_editLocationControl(map, id, post) {
+	function maps_editLocationControl(map, id, post, form) {
 		this.control = null;
 		this.map = map;
 		this.locations = new Array();
+		this.formname = form;
 		this.form = null;
 		this.id = id;
 		this.post = post;
 
 		this.initialize = function(map) {
 			this.control = document.createElement("div");
+			
+			if (this.formname === 'null') {
+				this.form = document.createElement("form");
+				this.control.appendChild(this.form);
+				this.form.setAttribute("id", this.id + "_form");
+				this.form.setAttribute("name", this.id + "_form");
+				this.form.setAttribute("action", this.post);
+				this.form.setAttribute("method", "post");
+				this.form.style.display = "none";
 
-			this.form = document.createElement("form");
-			this.form.setAttribute("id", this.id + "_form");
-			this.form.setAttribute("name", this.id + "_form");
-			this.form.setAttribute("action", this.post);
-			this.form.setAttribute("method", "post");
-			this.form.style.display = "none";
-			this.control.appendChild(this.form);
+				var savectl = new maps_saveLocationControl(map, this.form);
+				map.addControl(savectl);
+			} else {
+				this.form = document.getElementById(this.formname);
+			}
 
 			map.getContainer().appendChild(this.control);
 			return this.control;
@@ -274,7 +284,6 @@ if ($editable) {
 		var map;
 		var bounds;
 		var locationctl;
-		var savectl;
 
 		var copyright;
 		var copyrightCollection;
@@ -289,7 +298,7 @@ if ($editable) {
 				new GLatLng(53.94, -1.06),
 				new GLatLng(53.951, -1.04)
 			),
-			17,
+			15,
 			'York University');
 		copyrightCollection = new GCopyrightCollection('University Maps &copy;');
 		copyrightCollection.addCopyright(copyright);
@@ -325,10 +334,8 @@ foreach ($maps as $map) {
 <?php
 	if (count($map['newlocations']) > 0) {
 ?>
-		locationctl = new maps_editLocationControl(map, "<?php echo($map['element']);?>", "<?php echo($map['post']);?>");
+		locationctl = new maps_editLocationControl(map, "<?php echo($map['element']);?>", "<?php echo($map['post']);?>", "<?php echo($map['form']); ?>");
 		map.addControl(locationctl);
-		savectl = new maps_saveLocationControl(map, locationctl.form);
-		map.addControl(savectl);
 <?php	
 	}
 
