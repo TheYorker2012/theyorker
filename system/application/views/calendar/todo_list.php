@@ -30,7 +30,7 @@ if ($InlineAdder) {
 }
 ?>
 <div class="BlueBox">
-	<ul d="todolist">
+	<ul id="todolist">
 		<?php
 		foreach ($Items as $item) {
 			echo '<li>'.$item->Event->Name.'</li>';
