@@ -52,6 +52,38 @@ class Businesscards_model extends Model
 		$query = $this->db->query($sql);
 		return $query;
 	}
+	
+	function UpdateBuisnessCard($user_id, $group_id, $image_id, $name,
+			$title, $blurb, $course, $email, $mobile, 
+			$phone_internal, $phone_external, $postal_address,
+			$order, $start_date, $end_date, $business_card_id)
+	{
+		$sql = "UPDATE `business_cards` SET".
+				" `business_card_user_entity_id` = ?,".
+				" `business_card_image_id` = ?,".
+				" `business_card_name` = ?,".
+				" `business_card_title` = ?,".
+				" `business_card_blurb` = ?,".
+				" `business_card_course` = ?,".
+				" `business_card_business_card_group_id` = ?,".
+				" `business_card_email` = ?,".
+				" `business_card_mobile` = ?,".
+				" `business_card_phone_internal` = ?,".
+				" `business_card_phone_external` = ?,".
+				" `business_card_postal_address` = ?,".
+				" `business_card_order` = ?,".
+				" `business_card_start_date` = ?,".
+				" `business_card_end_date` = ?".
+				" WHERE `business_cards`.`business_card_id` = ?";
+				$this->db->query($sql,array($user_id, $image_id, $name, 
+							$title, $blurb, $course, 
+							$group_id, $email, $mobile, 
+							$phone_internal, $phone_external, 
+							$postal_address, $order,
+							$start_date, $end_date, $business_card_id));
+		return ($this->db->affected_rows() > 0);
+	}
+	
 	function GetUserIdFromUsername($username)
 	{
 		$sql =
@@ -87,6 +119,7 @@ class Businesscards_model extends Model
 			SET	business_card_deleted = 1
 			WHERE	(business_card_id=?)';
 		$this->db->query($sql,array($id));
+		return ($this->db->affected_rows() > 0);
 	}
 	
 	function AddOrganisationCardGroup($Data)

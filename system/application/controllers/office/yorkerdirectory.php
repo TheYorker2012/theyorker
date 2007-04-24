@@ -395,15 +395,27 @@ class Yorkerdirectory extends Controller
 		$action="viewgroup";
 		$business_card_group=-1;
 		}
-		if($action=="confirmdelete"){
-		//set things back to normal
-		$action="viewgroup";
-		$business_card_group=-1;
+		
+		if($action=="confirmdeletecard"){//business_card_group is actually the card id for this action
+			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($business_card_group);
+			foreach($cards_data as $card_data){
+				$this->main_frame->AddMessage('information','Are you sure you want to delete '.$card_data['business_card_name'].'\'s contact card?<br /><a href="'.vip_url('directory/contacts/deletecard/'.$business_card_group).'">Yes</a> | <a href="'.vip_url('directory/contacts/').'">No</a>');
+			}
+			//set things back to normal
+			$action="viewgroup";
+			$business_card_group=-1;
 		}
-		if($action=="deletecard"){
-		//set things back to normal
-		$action="viewgroup";
-		$business_card_group=-1;
+		
+		if($action=="deletecard"){//business_card_group is actually the card id for this action
+			$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
+			if($result){
+				$this->main_frame->AddMessage('success','The contact card was successfully deleted.');
+			}else{
+				$this->main_frame->AddMessage('error','The contact card was not removed, it does not exist.');
+			}
+			//set things back to normal
+			$action="viewgroup";
+			$business_card_group=-1;
 		}
 		
 		//Add Groups

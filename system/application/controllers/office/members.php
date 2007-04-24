@@ -568,27 +568,65 @@ class Members extends Controller
 				'business_card' => $business_cards[0],
 				'business_card_goups' => array(),
 			);
-			//Send data to form
-			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($Suboption1);
-			foreach($cards_data as $card_data){
-				if($card_data['business_card_user_entity_id']!=0){
-				$username = $this->businesscards_model->GetUsernameFromUserId($card_data['business_card_user_entity_id']);
+			
+			//Get post data
+			if(!empty($_POST["card_editbutton"])){
+				if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
+				{
+				$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
+				//add failed send the data back into the form
+				$data['card_form']=$_POST;
 				}else{
-				$username = "";
+					//find user id if exist
+					if(!empty($_POST["card_username"])){
+						//find user id from username
+						$user_id = $this->businesscards_model->GetUserIdFromUsername($_POST["card_username"]);
+					}else{
+						$user_id = "";
+					}
+					
+					//Send message if username was given and no id found
+					if($user_id==""&&!empty($_POST["card_username"])){
+						$this->main_frame->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
+						//add failed send the data back into the form
+						$data['card_form']=$_POST;
+					} else {
+					
+						//add contact card
+						//@note start time, end time, order, and image id are all currently null and not in use.
+						$this->businesscards_model->UpdateBuisnessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
+				$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"], 
+				$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
+				0, null, null, $Suboption1);
+						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
+						
+					}
 				}
-				$data['card_form'] = array(
-					'card_name' => $card_data['business_card_name'],
-					'card_title' => $card_data['business_card_title'],
-					'group_id' => $card_data['business_card_business_card_group_id'],
-					'card_username' => $username,
-					'card_course' => $card_data['business_card_course'],
-					'email' => $card_data['business_card_email'],
-					'card_about' => $card_data['business_card_blurb'],
-					'postal_address' => $card_data['business_card_postal_address'],
-					'phone_mobile' => $card_data['business_card_mobile'],
-					'phone_internal' => $card_data['business_card_phone_internal'],
-					'phone_external' => $card_data['business_card_phone_external'],
-				);
+			} else {
+			
+				//Send data to form if it isnt reloaded from a update attempt
+				$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($Suboption1);
+				foreach($cards_data as $card_data){
+					if($card_data['business_card_user_entity_id']!=0){
+					$username = $this->businesscards_model->GetUsernameFromUserId($card_data['business_card_user_entity_id']);
+					}else{
+					$username = "";
+					}
+					$data['card_form'] = array(
+						'card_name' => $card_data['business_card_name'],
+						'card_title' => $card_data['business_card_title'],
+						'group_id' => $card_data['business_card_business_card_group_id'],
+						'card_username' => $username,
+						'card_course' => $card_data['business_card_course'],
+						'email' => $card_data['business_card_email'],
+						'card_about' => $card_data['business_card_blurb'],
+						'postal_address' => $card_data['business_card_postal_address'],
+						'phone_mobile' => $card_data['business_card_mobile'],
+						'phone_internal' => $card_data['business_card_phone_internal'],
+						'phone_external' => $card_data['business_card_phone_external'],
+					);
+				}
+			
 			}
 			
 			// Business Card Groups

@@ -9,7 +9,7 @@
 
 <h2>Edit <?php if(!empty($business_card['name'])){echo $business_card['name'];} ?></h2>
 
-<form name='edit_card' method='post' action='<?php echo vip_url('directory/contacts'); ?>' class='form'>
+<form name='edit_card' method='post' action='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>' class='form'>
 	<fieldset>
 		<label for='card_name'>Name:</label>
 		<input type='text' name='card_name' value='<?php if(!empty($card_form['card_name'])){echo $card_form['card_name'];} ?>'/>
@@ -61,6 +61,7 @@
 		<input type='text' name='phone_external' value='<?php if(!empty($card_form['phone_external'])){echo $card_form['phone_external'];} ?>'/>
 		<br />
 		<label for='card_editbutton'></label>
+		<input name='card_revertbutton' type='button' onClick="parent.location='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>'"value='Undo Changes' class='button' />
 		<input name='card_editbutton' type='submit' id='card_editbutton' value='Update' class='button' />
 		</fieldset>
 	</form>
