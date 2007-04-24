@@ -20,8 +20,8 @@ class Home extends Controller {
 	}
 
 	/**
-	* Displays prototype homepage, in the prototype student frame
-	*/
+ 	 * Displays prototype homepage, in the prototype student frame
+	 */
 	function pagelist()
 	{
 		if (!CheckPermissions('public')) return;
@@ -94,6 +94,22 @@ class Home extends Controller {
 		$data['primary_article'] = $this->News_model->GetSummaryArticle($article_ids[0],"Left",'%W, %D %M %Y','medium',true);
 		$data['secondary_article'] = $this->News_model->GetSummaryArticle($article_ids[1],"Left");
 		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
+
+		//Obtain sports articles to be displayed
+		$article_ids = $this->News_model->GetLatestId('sport',3);
+		$data['primary_sports'] = $this->News_model->GetSummaryArticle($article_ids[0],"Left",'%W, %D %M %Y','medium',true);
+		$data['secondary_sports'] = $this->News_model->GetSummaryArticle($article_ids[1],"Left");
+		$data['tertiary_sports'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
+
+		//Features
+		$article_ids = $this->News_model->GetLatestId('features',2);
+		$data['features'] = array($this->News_model->GetSimpleArticle($article_ids[0]),
+					$this->News_model->GetSimpleArticle($article_ids[1]));
+
+		//Arts
+		$article_ids = $this->News_model->GetLatestId('arts',2);
+		$data['arts'] = array($this->News_model->GetSimpleArticle($article_ids[0]),
+					$this->News_model->GetSimpleArticle($article_ids[1]));
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
