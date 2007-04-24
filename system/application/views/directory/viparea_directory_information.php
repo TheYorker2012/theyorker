@@ -49,15 +49,54 @@
 		?>
 	</div>
 </div>
-
-<form id='orgdetails' name='orgdetails' action='<?php echo vip_url('directory/information'); ?>' method='POST' class='form'>
 <div class='blue_box'>
 	<h2>about</h2>
+	<div name='name_details' id='name_details'>
 	<p>
 		Organisation name : <strong><?php echo $organisation['name']; ?></strong><br />
 		Organisation type : <strong><?php echo $organisation['type']; ?></strong><br />
 	</p>
-	<textarea name='description' cols='48' rows='10'><?php echo $organisation['description']; ?></textarea>
+	<?php
+		if (PermissionsSubset('office', GetUserLevel()))
+		{
+		?>
+		<form class='form'>
+			<fieldset>
+			<input name='name_edit_button' type='button' onClick="document.getElementById('name_details').style.display = 'none'; document.getElementById('name_details_form').style.display = 'block';" value='Edit' class='button' />
+			</fieldset>
+		</form>
+		</div>
+		<div name='name_details_form' id='name_details_form' style='display: none;'>
+			<form name='org_name' action='<?php echo vip_url('directory/information/changename'); ?>' method='POST' class='form'>
+				<fieldset>
+					<label for='organisation_name'>Name:</label>
+					<input type='text' name='organisation_name' value='<?php echo $organisation['name']; ?>'/>
+					<br />
+					<label for="organisation_type">Type:</label>
+					<select name="organisation_type" size="1">
+						<?php
+							foreach($organisation['types'] as $type){
+								echo "<option value='".$type['organisation_type_id']."' ";
+									if ($organisation['type'] == $type['organisation_type_name'])
+									{
+									echo 'selected';
+									}
+								echo ">".$type['organisation_type_name']."</option>";
+							}
+						?>
+					</select><br />
+					<input name='name_update_button' type='submit' value='Update' class='button' />
+					<input name='name_cancel_button' type='button' onClick="document.getElementById('name_details_form').style.display = 'none'; document.getElementById('name_details').style.display = 'block';" value='Cancel' class='button' />
+				</fieldset>
+			</form>
+		<?php
+		}
+	?>
+	</div>
+<form id='orgdetails' name='orgdetails' action='<?php echo vip_url('directory/information'); ?>' method='POST' class='form'>
+	<fieldset>
+		<textarea name='description' cols='48' rows='10'><?php echo $organisation['description']; ?></textarea>
+	</fieldset>
 </div>
 <div class='grey_box'>
 <h2>details</h2>

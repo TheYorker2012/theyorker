@@ -40,6 +40,13 @@ class Yorkerdirectory extends Controller
 		$this->_office();
 	}
 	
+	private function CreateDirectoryEntryName ($long_name){
+		//strip non alpha-numerical symbols
+		$new_string = preg_replace("/[^a-zA-Z0-9s]/", "", $long_name);
+		//replace spaces with an underscore
+		return str_replace(" ", "_", $new_string);
+	}
+	
 	/// office/directory
 	function _office()
 	{
@@ -102,6 +109,26 @@ class Yorkerdirectory extends Controller
 				$this->main_frame->AddMessage('success','Directory revision successfully removed.');
 			}else{
 				$this->main_frame->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+			}
+			$action='view';
+		}
+		if($action=='changename'){
+			//Check Permissions
+			if (PermissionsSubset('office', GetUserLevel())){
+				if($_POST['organisation_name']==""){
+					$this->main_frame->AddMessage('error','Please enter an organisation name.');
+				}else{
+					$new_directory_entry_name = $this->CreateDirectoryEntryName($_POST['organisation_name']);
+					$result = $this->directory_model->UpdateDirctoryEntryType($organisation, $_POST['organisation_type']);
+					$result2 = $this->directory_model->UpdateDirctoryEntryNames($organisation, $_POST['organisation_name'], $organisation);
+					if($result==1 && $result2==1){
+						$this->main_frame->AddMessage('success','Organisation name was successfully changed.');
+					}else{
+						$this->main_frame->AddMessage('error','Update did not work, please try again.');
+					}
+				}
+			}else{
+				$this->main_frame->AddMessage('error','You do not have permission to change the organisations name.');
 			}
 			$action='view';
 		}
@@ -180,7 +207,7 @@ class Yorkerdirectory extends Controller
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
 				$data['show_show_all_revisions_option'] = $show_show_all_revisions_option;
-				
+				$data['organisation']['types'] = $this->directory_model->GetOrganisationTypes();
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
 				
