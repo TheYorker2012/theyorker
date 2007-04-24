@@ -115,6 +115,12 @@
 		<label for='phone_external'>Phone External:</label>
 		<input type='text' name='phone_external' value='<?php if(!empty($card_form['phone_external'])){echo $card_form['phone_external'];} ?>'/>
 		<br />
+		<label for='phone_internal'>Phone Internal:</label>
+		<input type='text' name='phone_internal' value='<?php if(!empty($card_form['phone_internal'])){echo $card_form['phone_internal'];} ?>'/>
+		<br />
+		<label for='phone_external'>Phone External:</label>
+		<input type='text' name='phone_external' value='<?php if(!empty($card_form['phone_external'])){echo $card_form['phone_external'];} ?>'/>
+		<br />
 		<label for='card_addbutton'></label>
 		<input name='card_addbutton' type='submit' id='card_addbutton' value='Add' class='button' />
 		</fieldset>

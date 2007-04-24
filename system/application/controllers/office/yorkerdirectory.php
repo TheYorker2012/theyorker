@@ -380,7 +380,7 @@ class Yorkerdirectory extends Controller
 		
 		//Deletegroup
 		if($action=="deletegroup"){
-			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
 			if(empty($cards)){
 				$result = $this->businesscards_model->RemoveOrganisationCardGroupById($business_card_group);
 				if($result == 1){
@@ -396,17 +396,8 @@ class Yorkerdirectory extends Controller
 		$business_card_group=-1;
 		}
 		
-		if($action=="confirmdeletecard"){//business_card_group is actually the card id for this action
-			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($business_card_group);
-			foreach($cards_data as $card_data){
-				$this->main_frame->AddMessage('information','Are you sure you want to delete '.$card_data['business_card_name'].'\'s contact card?<br /><a href="'.vip_url('directory/contacts/deletecard/'.$business_card_group).'">Yes</a> | <a href="'.vip_url('directory/contacts/').'">No</a>');
-			}
-			//set things back to normal
-			$action="viewgroup";
-			$business_card_group=-1;
-		}
-		
 		if($action=="deletecard"){//business_card_group is actually the card id for this action
+			if (PermissionsSubset('office', GetUserLevel())){
 			$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
 			if($result){
 				$this->main_frame->AddMessage('success','The contact card was successfully deleted.');
@@ -416,6 +407,24 @@ class Yorkerdirectory extends Controller
 			//set things back to normal
 			$action="viewgroup";
 			$business_card_group=-1;
+			}else{
+				$this->main_frame->AddMessage('error','You do not have permission to delete contact cards.');
+			}
+		}
+		if($action=="approvecard"){//business_card_group is actually the card id for this action
+			if (PermissionsSubset('office', GetUserLevel())){
+			$result = $this->businesscards_model->ApproveBusinessCard($business_card_group);
+			if($result){
+				$this->main_frame->AddMessage('success','The contact card was successfully approved.');
+			}else{
+				$this->main_frame->AddMessage('error','The contact card was not approved, it does not exist.');
+			}
+			//set things back to normal
+			$action="viewgroup";
+			$business_card_group=-1;
+			}else{
+				$this->main_frame->AddMessage('error','You do not have permission to approve contact cards.');
+			}
 		}
 		
 		//Add Groups
@@ -483,7 +492,7 @@ class Yorkerdirectory extends Controller
 			}
 					
 			// Members data
-			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
 			// translate into nice names for view
 			$data['organisation']['cards'] = array();
 			foreach ($members as $member) {
@@ -499,7 +508,8 @@ class Yorkerdirectory extends Controller
 					'phone_mobile' => $member['business_card_mobile'],
 					'phone_internal' => $member['business_card_phone_internal'],
 					'phone_external' => $member['business_card_phone_external'],
-					'postal_address' => $member['business_card_postal_address']
+					'postal_address' => $member['business_card_postal_address'],
+					'approved' => $member['business_card_approved']
 				);
 			}
 			

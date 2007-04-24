@@ -20,7 +20,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
 	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
-
+	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
 

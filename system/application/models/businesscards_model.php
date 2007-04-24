@@ -74,7 +74,7 @@ class Businesscards_model extends Model
 				" `business_card_postal_address` = ?,".
 				" `business_card_order` = ?,".
 				" `business_card_start_date` = ?,".
-				" `business_card_end_date` = ?".
+				" `business_card_end_date` = ?,".
 				" `business_card_approved` = ?".
 				" WHERE `business_cards`.`business_card_id` = ?";
 				$this->db->query($sql,array($user_id, $image_id, $name, 
@@ -83,6 +83,14 @@ class Businesscards_model extends Model
 							$phone_internal, $phone_external, 
 							$postal_address, $order,
 							$start_date, $end_date, $force_publish, $business_card_id));
+		return ($this->db->affected_rows() > 0);
+	}
+	function ApproveBusinessCard($Id)
+	{
+		$sql = "UPDATE `business_cards` SET".
+				" `business_card_approved` = 1".
+				" WHERE `business_cards`.`business_card_id` = ?";
+				$this->db->query($sql,$Id);
 		return ($this->db->affected_rows() > 0);
 	}
 	
