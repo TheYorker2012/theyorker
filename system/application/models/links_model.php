@@ -86,7 +86,7 @@ class Links_Model extends Model {
 		$query = $this->db->query($sql,array($user));
 		if (sizeof($ordered_arry) == $query->num_rows()) {
 			for ($i = 0; $i <= sizeof($ordered_array); $i++){
-				$sql = 'UPDATE user_links SET user_link_order = ? WHERE user_link_id = ?'
+				$sql = 'UPDATE user_links SET user_link_order = ? WHERE user_link_id = ?';
 				$this->db->query($sql,array($i,$ordered_array[$i]));
 			}
 			$this->db->trans_complete();
@@ -114,9 +114,9 @@ class Links_Model extends Model {
 	function GetAllOfficialLinks() {
 		$sql = 'SELECT link_url,link_name,link_image_id
 			FROM links
-			WHERE link_official = 1'
+			WHERE link_official = 1';
 		$query = $this->db->query($sql);
-		$result = array()
+		$result = array();
 		foreach ($query->result() as $row){
 			$result[] = array('url'=>$row->link_url,
 				'name'=>$row->link_name,
@@ -126,9 +126,11 @@ class Links_Model extends Model {
 	}
 
 	function ReplaceImage() {
+		echo "notimp"
 	}
 
 	function AddUserLink() {
+		echo "notimp"
 	}
 }
 ?>
