@@ -111,7 +111,7 @@ class Links_Model extends Model {
 			INNER JOIN user_links
 			ON user_link_link_id = link_id
 			WHERE image_id = link_image_id
-			WHERE user_link_user_entity_id = ?
+			AND user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
 		return $this->db->query($sql, array($user));
 	}
