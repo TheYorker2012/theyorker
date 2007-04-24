@@ -134,6 +134,18 @@ class Links_Model extends Model {
 		echo "notimp";
 	}
 
+	function UserTotalLinks($user) {
+		$sql = 'SELECT COUNT(*) AS total FROM user_links WHERE user_link_user_entity_id = ?';
+		return $this->db->query($sql, array($user))->first_row()->total;
+	}
+
+	function AddUserLink($user, $link) {
+		$sql = 'INSERT INTO user_links
+		        (user_link_user_entity_id, user_link_link_id, user_link_order)
+		        VALUES (?, ?, ?)';
+		$this->db->query($sql, array($user, $link, $this->UserTotalLinks($user)));
+	}
+
 	function AddUserLinks($user, $links) {
 		$first = true;
 		$sql = 'INSERT INTO user_links (user_link_user_entity_id, user_link_link_id, user_link_order) VALUES';

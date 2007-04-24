@@ -72,96 +72,10 @@
 		</fieldset>
 		</form>
 		<div style="height:200px;overflow-x: hidden;overflow-y:scroll;overflow:-moz-scrollbars-vertical !important;">
-			<table style="width:100%;">
-	            <tbody>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>University Of York <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>York University Students' Union <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Facebook <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Hotmail <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google UK <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Wikipedia <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>	
-
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>University Of York <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>York University Students' Union <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Facebook <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Hotmail <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google UK <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Wikipedia <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>	
-
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>University Of York <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>York University Students' Union <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Facebook <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Hotmail <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Google UK <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>
-					<tr>
-						<td><a href="#"><img title="Add to Homepage" src="/images/icons/add.png" width="16" height="16"></a></td>
-						<td>Wikipedia <a href="http://www.google.co.uk/" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a></td>
-						</tr>	
-			    </tbody>
-			</table>
+<?php foreach ($AllLinks as $option) {?>
+			<a href="links/add/<?=$option->link_id?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
+			<?=$option->link_name?> <a href="<?=$option->link_url?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a>
+<?php } ?>
 		</div>
 	</div>
 </div>
