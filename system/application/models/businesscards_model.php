@@ -60,6 +60,25 @@ class Businesscards_model extends Model
 			WHERE	(business_card_id=?)';
 		$this->db->query($sql,array($id));
 	}
+	
+	function AddOrganisationCardGroup($Data)
+	{
+	$sql = 'INSERT INTO business_card_groups 
+	(business_card_group_name, business_card_group_organisation_entity_id, business_card_group_order) 
+	VALUES (?, ?, ?)';
+	$query = $this->db->query($sql, array($Data['group_name'], $Data['organisation_id'], $Data['group_order']));
+	return ($this->db->affected_rows() > 0);
+	}
+	
+	function RemoveOrganisationCardGroupById($Id)
+	{
+		// Remove the organisation card group with the given id
+		$sql =
+			'DELETE FROM business_card_groups '.
+			'WHERE	business_card_groups.business_card_group_id=? LIMIT 1';
+		$query = $this->db->query($sql, $Id);
+		return ($this->db->affected_rows() > 0);
+	}
 
 	/// retrieves generic bylines for use by anyone
 	function GetGeneralBylines()

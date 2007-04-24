@@ -441,6 +441,40 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return true;
 	}
+
+	//Updates the directory entry long and short names
+	/**
+	*@param $DirectoryEntryName string Directory entry name of the organisation.
+	*@param $NewDirectoryEntryLongName string full text name of the directory entry
+	*@param $NewDirectoryEntryName string must be valid for a url, must be unique! process the long name to make a short name.
+	*@return true if successful
+	**/
+	function UpdateDirctoryEntryNames($DirectoryEntryName, $NewDirectoryEntryLongName, $NewDirectoryEntryName)
+	{
+		$sql =
+		'UPDATE organisations SET'.
+		' organisations.organisation_name=?,'.
+		' organisations.organisation_directory_entry_name=? '.
+		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, array($NewDirectoryEntryLongName, $NewDirectoryEntryName, $DirectoryEntryName));
+		return ($this->db->affected_rows() > 0);
+	}
+	
+	//Updates the directory entry type
+	/**
+	*@param $DirectoryEntryName string Directory entry name of the organisation.
+	*@param $TypeId int of the organisation type
+	*@return true if successful
+	**/
+	function UpdateDirctoryEntryType($DirectoryEntryName, $TypeId)
+	{
+		$sql =
+		'UPDATE organisations SET'.
+		' organisations.organisation_organisation_type_id='.$TypeId.' '.
+		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		return ($this->db->affected_rows() > 0);
+	}
     
     //Gets all organisation types in the directory
 	/**
