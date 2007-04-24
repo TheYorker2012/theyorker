@@ -662,7 +662,7 @@ class Requests_Model extends Model
 	
 	function GetArticleWriters($article_id)
 	{
-		$sql = 'SELECT	article_writer_user_entity_id
+		$sql = 'SELECT	article_writer_user_entity_id,
 				business_card_name
 			FROM	article_writers
 

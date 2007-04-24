@@ -21,7 +21,7 @@
 					else
 						echo '<hr>';
 					$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-					echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>';
+					echo '<a href="/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>';
 					if ($revision['id'] == $article['header']['live_content'])
 					{
 						echo '<br /><span class="orange">(Published';
@@ -42,10 +42,25 @@
 
 <div class="blue_box">
 	<h2>edit review</h2>
+	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+		<fieldset>
+			<label for="review">Review:</label>
+			<?php
+			if ($article['displayrevision'] != FALSE)
+				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
+			else
+				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
+			?>
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_save" value="Save Revision" />
+		</fieldset>
+	</form>
 </div>
 
-<div class="blue_box">
-	<h2>edit review</h2>
+<!--
+<div class="grey_box">
+	<h2>change author</h2>
 	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
 		<fieldset>
 			<label for="a_review_author">Author:</label>
@@ -67,24 +82,34 @@
 				?>
 				</optgroup>
 			</select>
-			<label for="review">Review:</label>
-			<?php
-			if ($article['displayrevision'] != FALSE)
-				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
-			else
-				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
-			?>
 		</fieldset>
 		<fieldset>
-			<input type="submit" name="r_submit_save" value="Save Unpublished" />
-			<input type="submit" name="r_submit_publish" value="Publish" />
+			<input type="submit" name="r_submit_set" value="Set As Author" />
 		</fieldset>
 	</form>
 </div>
-
-<div class="grey_box">
-	<h2>delete review</h2>
-	If you wish to delete this review, click the button to do so...<br /><br />
+-->
+<?php
+if ($user['officetype'] != 'Low')
+{
+?>
+<div class="blue_box">
+	<h2>editor options</h2>
+	If you wish to PUBLISH this review, click the button to do so...<br /><br />
+	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+		<fieldset>
+			<input type="submit" name="r_submit_publish" value="Publish" />
+		</fieldset>
+	</form>
+	<br />
+	If you wish to PULL this published review, click the button to do so...<br /><br />
+	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+		<fieldset>
+			<input type="submit" name="r_submit_pull" value="Pull" />
+		</fieldset>
+	</form>
+	<br />
+	If you wish to DELETE this review, click the button to do so...<br /><br />
 	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
 		<fieldset>
 			<input type="submit" name="r_submit_delete" value="Delete" />
@@ -92,6 +117,9 @@
 	</form>
 	<br />
 </div>
+<?php
+}
+?>
 
 <?php
 echo '<pre>';

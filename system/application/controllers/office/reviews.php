@@ -299,6 +299,11 @@ class Reviews extends Controller
 		$this->_SetupNavbar($organisation, $context_type);
 		$this->main_frame->SetPage('reviews');
 
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['organistion'] = $organisation;
+		$data['parameters']['context_type'] = $context_type;
+
 		//$this->businesscards_model->NewBusinessCard(NULL, 3, 0, 'Default Name', 'Default Title', 'default blurb', 'Default Course', NULL,
 		//	NULL, NULL, NULL, 'Default Address', 0, NULL, NULL);
 		
@@ -399,14 +404,67 @@ class Reviews extends Controller
 		$this->_SetupNavbar($organisation,$context_type);
 		$this->main_frame->SetPage('reviews');
 
+		if (isset($_POST['r_submit_save']))
+		{
+			$revision_id = $this->requests_model->CreateArticleRevision(
+				$article_id,
+				$this->user_auth->entityId,
+				'',
+				'',
+				'',
+				$_POST['a_review_text'],
+				''
+				)
+				;
+	                $this->main_frame->AddMessage('success','New revision created for review.');
+		}
+		elseif (isset($_POST['r_submit_publish']))
+		{
+			echo 'r_submit_publish';
+		}
+		elseif (isset($_POST['r_submit_pull']))
+		{
+			echo 'r_submit_pull';
+		}
+		elseif (isset($_POST['r_submit_delete']))
+		{
+			echo 'r_submit_delete';
+		}
+
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
 		$data['parameters']['article_id'] = $article_id;
 		$data['parameters']['revision_id'] = $revision_id;
+		$data['parameters']['organisation'] = $organisation;
+		$data['parameters']['context_type'] = $context_type;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$writers = $this->requests_model->GetArticleWriters($article_id);
+		$found = false;
+		foreach($writers as $writer)
+		{
+			if ($writer['id'] == $data['user']['id'])
+				$found = $data['user']['id'];
+		}
+		
+		if ($found == false && $data['user']['officetype'] = 'Low')
+		{
+			$this->main_frame->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
+			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/');
+		}
 		
 		/** get the article's header for the article id passed to 
 		    the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		if ($data['article']['header']['organisation'] != $data['organisation']['id'])
+		{
+			$this->main_frame->AddMessage('error','Specified review is for a different organisation. Can\'t edit.');
+			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/');
+		}
 		
 		//get the list of current question revisions
 		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
@@ -447,13 +505,9 @@ class Reviews extends Controller
 			if ($data['article']['displayrevision'] == FALSE)
 			{
 				$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this review. Default selected.');
-				redirect('/office/reviews/'.$organisation.'/'.$content_type.'/'.$article_id.'/');
+				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/'.$article_id.'/');
 			}
 		}
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
 		
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
