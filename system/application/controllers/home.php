@@ -96,7 +96,7 @@ class Home extends Controller {
 		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
 
 		//Obtain Links
-		if ($this->User_auth->isLoggedIn) {
+		if ($this->user_auth->isLoggedIn) {
 			$data['link'] = $this->Links_Model->GetUserLinks($this->User_auth->entityId);
 		} else {
 			$data['link'] = $this->Links_Model->GetUserLinks(0);
