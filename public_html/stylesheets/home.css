@@ -1,5 +1,9 @@
 div#HomeBanner {
-	padding-bottom: 0.5em;
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+
+	float: left;
+	width: 100%;
 }
 
 div.NewsBox {
