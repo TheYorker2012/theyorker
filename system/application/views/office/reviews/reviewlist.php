@@ -9,7 +9,7 @@
 		</div>
 		<div id="NotFound" style="display: none;">
 			<h3>No entries found</h3>
-			<p>Try a simpler search, different keyowords, or include more filters.</p>
+			<p>Try a simpler search, different keywords, or include more filters.</p>
 		</div>
 <?php
 $currentLetter = '';

@@ -1,16 +1,10 @@
 <?php
 
-/// Yorker directory.
+/// Review Leagues List
 /**
- * @author Owen Jones (oj502@york.ac.uk)
- * @author James Hogan (jh559@cs.york.ac.uk)
+ * @author Mark Goodall
+ * @author Nick Evans
  *
- * The URI /directory maps to this controller (see config/routes.php).
- *
- * Any 2nd URI segment is sent to Yorkerdirectory::view (see config/routes.php).
- *
- * Any 3rd URI segment (e.g. events) is sent to the function with the same value.
- *	(see config/routes.php).
  */
 class Reviewlist extends Controller
 {
@@ -32,14 +26,13 @@ class Reviewlist extends Controller
 	}
 
 	//Shows list of leagues with "Last updated" and "Assigned to" columns
-	function showleagues($content_type_codename)
-	{
+	function showleagues($content_type_codename) {
+		if (!CheckPermissions('office')) return;
+		
 		$content_type_id = $this->pr_model->GetContentTypeId($content_type_codename);
 		if ($content_type_id == 0) {
 			show_404();
 		}
-		
-		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_leagues_show');
 
@@ -48,21 +41,20 @@ class Reviewlist extends Controller
 		//$data['leagues'] = $this->pr_model->GetReviewContextListFromId($content_type_id,'office/reviews/','/'.$content_type_codename.'/review'); //$this->organisations->_GetOrgs($search_pattern);
 	
 		// Set up the  frame
-		$this->main_frame->SetContentSimple('office/reviews/reviewlist', $data);
+		$this->main_frame->SetContentSimple('office/reviews/showleagues', $data);
 
 		// Load the frame view
 		$this->main_frame->Load();
 	}
 	
 	//List leagues allowing editing of an individual league
-	function editleagues($content_type_codename)
-	{
+	function editleagues($content_type_codename) {
+		if (!CheckPermissions('office')) return;
+		
 		$content_type_id = $this->pr_model->GetContentTypeId($content_type_codename);
 		if ($content_type_id == 0) {
 			show_404();
 		}
-		
-		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_leagues_edit');
 
@@ -78,14 +70,15 @@ class Reviewlist extends Controller
 	}
 	
 	//Edit details of a particular league
-	function editleaguedetails($content_type_codename, $league_codename)
-	{
+	function editleaguedetails($content_type_codename, $league_codename) {
+		if (!CheckPermissions('office')) return;
+		
 		$content_type_id = $this->pr_model->GetContentTypeId($content_type_codename);
 		if ($content_type_id == 0) {
 			show_404();
 		}
 		
-		if (!CheckPermissions('office')) return;
+		
 		
 		$this->pages_model->SetPageCode('office_league_edit_details');
 
@@ -101,14 +94,13 @@ class Reviewlist extends Controller
 	}
 
 	//Edit contents of a particular league
-	function editleaguecontents($content_type_codename, $league_codename)
-	{
+	function editleaguecontents($content_type_codename, $league_codename) {
+		if (!CheckPermissions('office')) return;
+		
 		$content_type_id = $this->pr_model->GetContentTypeId($content_type_codename);
 		if ($content_type_id == 0) {
 			show_404();
 		}
-		
-		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_league_edit_contents');
 
@@ -128,14 +120,13 @@ class Reviewlist extends Controller
 	 * @note POST data:
 	 *	- 'search' (search pattern, optional)
 	 */
-	function attentionlist($content_type_codename)
-	{
+	function attentionlist($content_type_codename) {
+		if (!CheckPermissions('office')) return;
+		
 		$content_type_id = $this->pr_model->GetContentTypeId($content_type_codename);
 		if ($content_type_id == 0) {
 			//show_404();
 		}
-		
-		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_review_attention_list');
 
