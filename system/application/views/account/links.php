@@ -1,10 +1,13 @@
+<form>
+	<input type="hidden" name="linklist" id="linklist" />
+</form>
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
-				<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></a>
+				<span id="<?=$picture->link_id?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></span>
 		<?php } } else { ?>
-				<a href="http://theyorker.co.uk">You have no links :(</a>
+				You have no links :(
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
@@ -12,7 +15,7 @@
 		<table border="0">
 		<tr>
 		<td>
-			<img title="Bin" src="/images/prototype/prefs/trash.png" width="48" height="48">
+			<img id="bin" title="Bin" src="/images/prototype/prefs/trash.png" width="48" height="48">
 		</td>
 		<td>
 			Drag and drop links into the bin to remove them from your home page
@@ -32,11 +35,28 @@
  <script type="text/javascript" language="javascript">
  // <![CDATA[
    Sortable.create("links",
-     {tag:'img',overlap:'horizontal',constraint: false,
-      onUpdate:function(){
-	  		alert(Sortable.serialize("links"));
-      }
-    })
+     {tag:'span',overlap:'horizontal',constraint: false,
+      onUpdate:updateList()
+    });
+
+	Droppables.add('bin', {
+		overlap:'horizontal',
+		onDrop:function(element) {
+			element.parentNode.removeChild(element);
+			updateList()
+		}
+	});
+
+	function updateList() {
+		$('linklist').value = '';
+		var tags = $('links').childNodes;
+		for (var i=0; i<tags.length; i++) {
+			if (tags[i].nodeType == '1') {
+				$('tags').value+= tags[i].id + '+';
+			}
+		}
+		//do some ajax here!
+	}
  // ]]>
  </script>
 

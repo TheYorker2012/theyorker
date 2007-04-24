@@ -101,8 +101,7 @@ class Links_Model extends Model {
 	 * Returns an array with users images + links
 	 */
 	function GetUserLinks($user) {
-		//Add image loc tags
-		$sql = 'SELECT link_url,link_name,link_image_id
+		$sql = 'SELECT link_id, link_url,link_name,link_image_id
 			FROM links
 			INNER JOIN user_links
 			ON user_link_link_id = link_id
