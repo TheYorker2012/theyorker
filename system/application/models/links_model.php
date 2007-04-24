@@ -85,7 +85,7 @@ class Links_Model extends Model {
 		$sql = 'SELECT user_link_id FROM user_links WHERE user_link_user_entity_id = ?';
 		$query = $this->db->query($sql,array($user));
 		if (sizeof($ordered_arry) == $query->num_rows()) {
-			for ($i = 0, $i <= sizeof($ordered_array), $i++){
+			for ($i = 0; $i <= sizeof($ordered_array); $i++){
 				$sql = 'UPDATE user_links SET user_link_order = ? WHERE user_link_id = ?'
 				$this->db->query($sql,array($i,$ordered_array[$i]));
 			}
