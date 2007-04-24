@@ -50,7 +50,7 @@ class Businesscards_model extends Model
 			FROM	business_cards
 			WHERE	(business_card_id=LAST_INSERT_ID())';
 		$query = $this->db->query($sql);
-		return $query
+		return $query;
 	}
 	
 	function DeleteBusinessCard($id)
@@ -79,49 +79,33 @@ class Businesscards_model extends Model
 		$query = $this->db->query($sql, $Id);
 		return ($this->db->affected_rows() > 0);
 	}
-
-	/// retrieves generic bylines for use by anyone
-	function GetGeneralBylines()
+	
+	/// Get all bylines
+	/**
+	 * @return array[bylines].
+	 */
+	function GetBylines()
 	{
-		$sql = 'SELECT 	bylines.byline_id,
-				bylines.byline_display_name,
-				bylines.byline_image_id
-			FROM	bylines
-			WHERE	bylines.byline_user_entity_id IS NULL
-			AND	bylines.byline_deleted = 0';
+		$sql =
+			'SELECT'.
+			' business_cards.business_card_user_entity_id,'.
+			' business_cards.business_card_id,'.
+			' business_cards.business_card_name '.
+			'FROM business_cards '.
+			'INNER JOIN business_card_groups '.
+			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
+			'WHERE business_cards.business_card_deleted = 0 '.
+			'AND business_card_groups.business_card_group_organisation_entity_id IS NULL '.
+			'ORDER BY business_cards.business_card_name';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0)
 		{
 			foreach($query->result() as $row)
 			{
-				$result_item['id'] = $row->byline_id;
-				$result_item['name'] = $row->byline_display_name;
-				$result_item['image'] = $row->byline_image_id;
-				$result[] = $result_item;
-			}			
-		}
-		return $result;
-	}
-
-	/// retrieves a users bylines
-	function GetUsersBylines($user_id)
-	{
-		$sql = 'SELECT 	bylines.byline_id,
-				bylines.byline_display_name,
-				bylines.byline_image_id
-			FROM	bylines
-			WHERE	bylines.byline_user_entity_id = ?
-			AND	bylines.byline_deleted = 0';
-		$query = $this->db->query($sql, array($user_id));
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach($query->result() as $row)
-			{
-				$result_item['id'] = $row->byline_id;
-				$result_item['name'] = $row->byline_display_name;
-				$result_item['image'] = $row->byline_image_id;
+				$result_item['user_id'] = $row->business_card_user_entity_id;
+				$result_item['id'] = $row->business_card_id;
+				$result_item['name'] = $row->business_card_name;
 				$result[] = $result_item;
 			}			
 		}
