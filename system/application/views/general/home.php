@@ -16,7 +16,7 @@ function printsmallnewsbox($article){
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
 <?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
-		<a href="<?=$picture?>"><?=imageLocTag($picture, 'link', false, $picture)?></a>
+		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></a>
 <?php } } else { ?>
 		You have no links :(
 <?php }?>
