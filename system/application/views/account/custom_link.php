@@ -7,7 +7,7 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Add Custom Link</h2>
-		To add a link that is not in the list, enter it here.
+		To add a link that is not in the list, enter it here. Nominating a link means it will get considered for becoming official, with a proper icon.
 		<form action="customlink" method="post">
 		<fieldset>
 			<label for="lname"> Link Name: </label>
