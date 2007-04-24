@@ -120,7 +120,7 @@ class Links_Model extends Model {
 		$sql = 'SELECT link_id, link_url,link_name,link_image_id
 			FROM links
 			WHERE link_official = 1
-			ORDER BY link_name DESC';
+			ORDER BY link_name ASC';
 		$query = $this->db->query($sql);
 		return $query;
 	}
