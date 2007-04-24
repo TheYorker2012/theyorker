@@ -15,7 +15,8 @@ class Home extends Controller {
 	{
 		parent::Controller();
 		$this->load->model('News_model');
-		$this->load->model(array('Home_Model', 'links_model'));
+		$this->load->model('Home_Model');
+		$this->load->model('links_model');
 	}
 
 	/**
