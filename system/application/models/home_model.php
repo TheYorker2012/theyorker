@@ -115,6 +115,7 @@ class Home_Model extends Model {
 		}
 		return $query->row();
 	}
+	
 
 }
 ?>

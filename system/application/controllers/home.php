@@ -15,7 +15,7 @@ class Home extends Controller {
 	{
 		parent::Controller();
 		$this->load->model('News_model');
-		$this->load->model('Home_Model');
+		$this->load->model(array('Home_Model', 'links_model'));
 	}
 
 	/**
@@ -93,6 +93,13 @@ class Home extends Controller {
 		$data['primary_article'] = $this->News_model->GetSummaryArticle($article_ids[0],"Left",'%W, %D %M %Y','medium',true);
 		$data['secondary_article'] = $this->News_model->GetSummaryArticle($article_ids[1],"Left");
 		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
+
+		//Obtain Links
+		if ($this->User_auth->isLoggedIn) {
+			$data['link'] = $this->Links_Model->GetUserLinks($this->User_auth->entityId);
+		} else {
+			$data['link'] = $this->Links_Model->GetUserLinks(0);
+		}
 
 		//Obtain weather
 		$data['weather_forecast'] = $this->Home_Model->GetWeather();

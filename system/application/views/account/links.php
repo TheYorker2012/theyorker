@@ -1,14 +1,9 @@
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
-		<img title="University Of York" src="/images/prototype/homepage/links/york.gif" width="50" height="50">
-		<img title="York University Students' Union" src="/images/prototype/homepage/links/yusu.gif" width="50" height="50">
-		<img title="Facebook" src="/images/prototype/homepage/links/facebook.gif" width="50" height="50">
-		<img title="Hotmail" src="/images/prototype/homepage/links/hotmail.jpg" width="50" height="50">
-		<img title="BBC News" src="/images/prototype/homepage/links/bbc.gif" width="50" height="50">
-		<img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50">
-		<img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50">
-		<img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50">
+		<?php foreach($link as $picture) {?>
+				<a href="<?=$picture?>"><?=imageLocTag($picture, 'link', false, $picture)?></a>
+		<?php } ?>
 	</div>
 	<h2>Remove Links</h2>
 	<div class="Entry">

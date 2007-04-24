@@ -15,14 +15,11 @@ function printsmallnewsbox($article){
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
-		<a href="http://www.york.ac.uk/"><img title="University Of York" src="/images/prototype/homepage/links/york.gif" width="50" height="50"></a>
-		<a href="http://www.yusu.org/"><img title="York University Students' Union" src="/images/prototype/homepage/links/yusu.gif" width="50" height="50"></a>
-		<a href="http://www.facebook.com/"><img title="Facebook" src="/images/prototype/homepage/links/facebook.gif" width="50" height="50"></a>
-		<a href="http://www.hotmail.co.uk/"><img title="Hotmail" src="/images/prototype/homepage/links/hotmail.jpg" width="50" height="50"></a>
-		<a href="http://news.bbc.co.uk/"><img title="BBC News" src="/images/prototype/homepage/links/bbc.gif" width="50" height="50"></a>
-		<a href="http://www.google.co.uk/"><img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50"></a>
-		<a href="http://en.wikipedia.org/"><img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50"></a>
-		<a href="http://gmail.google.com/"><img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50"></a>
+<?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
+		<a href="<?=$picture?>"><?=imageLocTag($picture, 'link', false, $picture)?></a>
+<?php } else { ?>
+		You have no links :(
+<?php }?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
 

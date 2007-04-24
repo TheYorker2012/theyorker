@@ -108,7 +108,7 @@ class Links_Model extends Model {
 			ON user_link_link_id = link_id
 			WHERE user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
-		$query = $this->db->query($sql, array($user));
+		return $this->db->query($sql, array($user));
 	}
 
 	function GetAllOfficialLinks() {
@@ -118,10 +118,9 @@ class Links_Model extends Model {
 		$query = $this->db->query($sql);
 		$result = array()
 		foreach ($query->result() as $row){
-			$res = array('url'=>$row->link_url,
+			$result[] = array('url'=>$row->link_url,
 				'name'=>$row->link_name,
 				'image'=>$row->link_image_id);
-			$result[] = $res;
 		}
 		return $result;
 	}
