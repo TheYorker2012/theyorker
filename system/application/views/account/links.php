@@ -52,7 +52,7 @@
 		var tags = $('links').childNodes;
 		for (var i=0; i<tags.length; i++) {
 			if (tags[i].nodeType == '1') {
-				$('tags').value+= tags[i].id + '+';
+				$('linklist').value+= tags[i].id + '+';
 			}
 		}
 		//do some ajax here!
