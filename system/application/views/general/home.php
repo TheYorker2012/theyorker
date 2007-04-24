@@ -17,7 +17,7 @@ function printsmallnewsbox($article){
 	<div class="Entry">
 <?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
 		<a href="<?=$picture?>"><?=imageLocTag($picture, 'link', false, $picture)?></a>
-<?php } else { ?>
+<?php } } else { ?>
 		You have no links :(
 <?php }?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
