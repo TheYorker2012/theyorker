@@ -98,7 +98,7 @@ class Links_Model extends Model {
 	}
 
 	function DropUserLinks($user) {
-		$sql = 'DELETE FROM user_links WHERE user_links_entity_id= ?';
+		$sql = 'DELETE FROM user_links WHERE user_links_user_entity_id= ?';
 		return $this->db->query($sql, array($user));
 	}
 
