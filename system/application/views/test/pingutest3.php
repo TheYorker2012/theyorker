@@ -51,6 +51,8 @@
 						<span style="color: #999999; font-size: 0.9em;" ><a href="#">Website</a> | <a href="#">Map</a></span>
 					</td>
 					<td width="126" align="center">
+						<img src="/images/prototype/reviews/y.png" alt="y" />
+						<img src="/images/prototype/homepage/arrow.png" alt="y" />
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
