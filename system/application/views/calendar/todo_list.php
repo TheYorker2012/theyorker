@@ -21,20 +21,23 @@
 if ($InlineAdder) {
 	?>
 		<form method="post" action="<?php echo $InlineAdderTarget; ?>">
-			<input name="todo_name" />
-			<input name="todo_submit" type="submit" value="Add"/>
+			<fieldset>
+				<input name="todo_name" />
+				<input name="todo_submit" type="submit" value="Add"/>
+			</fieldset>
 		</form>
 	<?php
 }
 ?>
-
-<ul id="todolist">
-	<?php
-	foreach ($Items as $item) {
-		echo '<li>'.$item->Event->Name.'</li>';
-	}
-	?>
-</ul>
+<div class="TodoBox">
+	<ul id="todolist">
+		<?php
+		foreach ($Items as $item) {
+			echo '<li>'.$item->Event->Name.'</li>';
+		}
+		?>
+	</ul>
+</div>
 
 <script type="text/javascript">
 // <![CDATA[

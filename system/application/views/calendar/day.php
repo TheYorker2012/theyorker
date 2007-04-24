@@ -9,12 +9,14 @@
  *	- 'add' string Path to event adder
  */
 
+/* This is a date description that just says "Today probably!"?
+ * <h3><?php echo $DateDescription; ?></h3>
+ */
+
 ?>
 
-<h3><?php echo $DateDescription; ?></h3>
-
 <div id='RightColumn'>
-	<h2>To-Do</h2>
+	<h2 style="margin-left: 0.4em;">To-Do</h2>
 	<?php $TodoView->Load(); ?>
 	
 	<?php if (!$ReadOnly) { ?>

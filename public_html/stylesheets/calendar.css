@@ -229,4 +229,8 @@ a.CalendarButtons {
 	margin-left: 0;
 	margin-right: 0;
 }
+
+div.TodoBox {
+	margin-left: 10px;
+}
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
