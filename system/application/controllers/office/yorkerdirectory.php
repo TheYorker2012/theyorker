@@ -22,7 +22,8 @@ class Yorkerdirectory extends Controller
 		$this->load->library('organisations');
 		$this->load->helpers('images');
 		$this->load->model('directory_model');
-
+		$this->load->model('businesscards_model');
+		
 		$this->load->helper('text');
 		$this->load->helper('images');
 		$this->load->helper('wikilink');
@@ -367,7 +368,7 @@ class Yorkerdirectory extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function contacts($business_card_group=-1)
+	function contacts($action="viewgroup", $business_card_group=-1)
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
@@ -376,6 +377,37 @@ class Yorkerdirectory extends Controller
 		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
+		
+		//Deletegroup
+		if($action=="deletegroup"){
+			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			if(empty($cards)){
+				$result = $this->businesscards_model->RemoveOrganisationCardGroupById($business_card_group);
+				if($result == 1){
+					$this->main_frame->AddMessage('success','Group was successfully removed.');
+				}else{
+					$this->main_frame->AddMessage('error','Group was not removed, the group does not exist.');
+				}
+			}else{
+				$this->main_frame->AddMessage('error','Group was not removed, you cannot remove groups with cards.');
+			}
+		//set things back to normal
+		$action="viewgroup";
+		$business_card_group=-1;
+		}
+		
+		//Add Groups
+		if(!empty($_POST["group_name"])){
+			$max_order = $this->businesscards_model->SelectMaxGroupOrderById($data['organisation']['id']);
+			$post_data = array(
+				'group_name' => $_POST["group_name"],
+				'organisation_id' => $data['organisation']['id'],
+				'group_order' => $max_order+1,
+			);
+			$this->businesscards_model->AddOrganisationCardGroup($post_data);
+			$this->main_frame->AddMessage('success','Group was successfully added.');
+			
+		}
 		
 		if (!empty($data)) {
 			$this->_SetupNavbar();
@@ -387,7 +419,7 @@ class Yorkerdirectory extends Controller
 			foreach ($groups as $group) {
 				$data['organisation']['groups'][] = array(
 					'name' => $group['business_card_group_name'],
-					'href' => vip_url('directory/contacts/'.$group['business_card_group_id']),
+					'href' => vip_url('directory/contacts/viewgroup/'.$group['business_card_group_id']),
 					'id' => $group['business_card_group_id']
 				);
 				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
@@ -418,7 +450,7 @@ class Yorkerdirectory extends Controller
 			$data['organisation']['editmode'] = true;
 			
 			// Set up the directory view
-			$the_view = $this->frames->view('directory/directory_view_members', $data);
+			$the_view = $this->frames->view('directory/viparea_directory_view_members', $data);
 			
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(

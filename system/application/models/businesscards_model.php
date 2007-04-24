@@ -69,6 +69,16 @@ class Businesscards_model extends Model
 	$query = $this->db->query($sql, array($Data['group_name'], $Data['organisation_id'], $Data['group_order']));
 	return ($this->db->affected_rows() > 0);
 	}
+	function SelectMaxGroupOrderById($OrgId)
+	{
+		$sql = 'SELECT MAX(business_card_group_order) as highest_group_number
+		FROM business_card_groups
+		WHERE business_card_groups.business_card_group_organisation_entity_id=?';
+		$query = $this->db->query($sql, $OrgId);
+		
+		$row = $query->row();
+		return $row->highest_group_number;
+	}
 	
 	function RemoveOrganisationCardGroupById($Id)
 	{

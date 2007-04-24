@@ -6,14 +6,25 @@
 ?>
 		<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
 			<?php echo(htmlspecialchars($group['name'])); ?>
-		</a><br />
+		</a>&nbsp;<a href='<?php echo vip_url('directory/contacts/deletegroup/'.$group['id']); ?>'>Del</a><br />
 <?php
 	}
 ?>
+	<br/>
 	</div>
-
-	<h2>Facts</h2>
+	<h2>Add a group</h2>
 	<div class="entry">
+		<form name='add_group' method='post' action='<?php vip_url('directory/contacts'); ?>' class='form'>
+			<fieldset>
+				<label for="group_name"></label>
+				<input type="text" name="group_name">
+				<input name='add_group_button' type='submit' id='add_group_button' value='Add' class='button' />
+			<fieldset>
+		</form>
+	</div>
+	<h2>Add a card</h2>
+	<div class="entry">
+	You can't add any contact cards untill you have at least one group.
 	</div>
 </div>
 
