@@ -21,7 +21,5 @@ information goes here.
 		<?php if($enable_members == TRUE){?>
 		<li><a href='<?php echo vip_url('members'); ?>'>Manage members</a></li>
 		<?php }?>
-		<li><a href='<?php echo vip_url('advertising'); ?>'>Advertising</a></li>
-		<li><a href='<?php echo vip_url('account/update'); ?>'>My Viparea Account</a></li>
 	</ul>
 </div>
