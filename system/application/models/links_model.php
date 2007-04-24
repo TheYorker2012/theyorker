@@ -37,7 +37,7 @@ class Links_Model extends Model {
 			$sql ='DELETE FROM links WHERE link_id = ?';
 			$this->db->query($sql,array($id));
 			$sql = 'DELETE FROM images WHERE image_id = ?';
-			$this->db->query($sql,array($row->link_image_id);
+			$this->db->query($sql,array($row->link_image_id));
 			$rmimage = True;
 		}
 		$sql = 'SELECT user_link_order FROM user_links 
