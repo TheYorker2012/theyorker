@@ -90,7 +90,7 @@ class Account extends controller
 		$objResponse = new xajaxResponse();
 		$links = explode('+', $links);
 		array_pop($links);
-		foreach ($links as $link) {
+		foreach ($links as &$link) {
 			$link = explode('_', $link);
 			$link = $link[1];
 		}
