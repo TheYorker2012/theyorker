@@ -19,29 +19,39 @@
 </ul>
 </div>
 
-<form class='form'>
 <div class="blue_box">
 	<h2>edit review</h2>
-	<fieldset>
-		<label for='review_author'>Author:</label>
-		<select name="rating">
-			<option>Bob</option>
-			<option>Bill</option>
-			<option>Jim McJim</option>
-			<option>Fat Man Scoop</option>
-			<option selected>ADO</option>
-			<option>Lord of Darkness</option>
-			<option>Tom</option>
-			<option>Andy</option>
-			<option>Nick</option>
-			<option>James</option>
-		</select>
-		<label for='review'>Review:</label>
-		<textarea name='reviewinfo_about' cols='40' rows='10'><?php echo 'review'; ?></textarea>
-	</fieldset>
-	<input type="submit" value="Save Unpublished" /> <input type="submit" value="Publish" />
+	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+		<fieldset>
+			<label for="a_review_author">Author:</label>
+			<select name="a_review_author">
+				<optgroup label="Generic:">
+				<?php 
+				foreach ($bylines['generic'] as $option)
+				{
+					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
+				}
+				?>
+				</optgroup>
+				<optgroup label="Personal:">
+				<?php 
+				foreach ($bylines['user'] as $option)
+				{
+					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
+				}
+				?>
+				</optgroup>
+			</select>
+			<label for="review">Review:</label>
+			<textarea name="a_review_text" id="a_review_text" cols="50" rows="10"><?php echo 'review'; ?></textarea>
+		</fieldset>
+		<fieldset>
+			<input type="submit" name="r_submit_save" value="Save Unpublished" />
+			<input type="submit" name="r_submit_publish" value="Publish" />
+		</fieldset>
+	</form>
 </div>
-</form>
+
 <div class="grey_box">
 	<h2>delete review</h2>
 	If you wish to delete this review, click the button to do so...<br /><br />

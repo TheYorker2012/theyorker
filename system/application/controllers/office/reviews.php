@@ -289,8 +289,12 @@ class Reviews extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
+		$this->load->model('requests_model');
 		$this->load->model('businesscards_model');
 		$this->pages_model->SetPageCode('office_review_reviews');
+
+		//$this->businesscards_model->NewBusinessCard(NULL, 3, 0, 'Default Name', 'Default Title', 'default blurb', 'Default Course', NULL,
+		//	NULL, NULL, NULL, 'Default Address', 0, NULL, NULL);
 		
 		/*
 		[a_review_author] => byline id of the author
@@ -298,16 +302,36 @@ class Reviews extends Controller
 		[r_submit_newreview] => submit button
 		*/
 		if (isset($_POST['r_submit_newreview']))
-		{
-			echo '<pre>';
-			print_r($_POST);
-			echo '</pre>';
-			
-			//$status,$type_codename,$title,$description,$user,$data
-			/*$this->requests_model->CreateRequest(
+		{	
+			//create the review
+			$article_id = $this->requests_model->CreateRequest(
 				'request',
 				$context_type,
-				'');*/
+				'',
+				'',
+				$this->user_auth->entityId,
+				NULL);
+			//add the first revision from form data
+			$this->requests_model->CreateArticleRevision(
+				$article_id,
+				$this->user_auth->entityId,
+				'',
+				'',
+				'',
+				$_POST['a_review_text'],
+				'');
+			//add the selected byline to the review
+			$this->requests_model->AddUserToRequest(
+				$article_id,
+				$_POST['a_review_author'],
+				$this->user_auth->entityId,
+				$this->user_auth->entityId);
+			//auto accept the review write request
+			$this->requests_model->AcceptRequest(
+				$article_id,
+				$this->user_auth->entityId);
+			//success
+			$this->main_frame->AddMessage('success','Review Added.');
 		}
 
 		//Get navigation bar and tell it the current page
@@ -319,11 +343,19 @@ class Reviews extends Controller
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
 		//bylines
-		//$data['bylines']['generic'] = $this->bylines_model->GetGeneralBylines();
-		//$data['bylines']['user'] = $this->bylines_model->GetUsersBylines($this->user_auth->entityId);
+		$temp_bylines = $this->businesscards_model->GetBylines();
 
-		//$this->businesscards_model->NewBusinessCard(436, 3, 0, 'My Name', 'My Title', 'my blurb', 'My Course', NULL,
-		//	023648273482, 23452, 0234523455, 'My Address', 0, time(), time());
+		foreach($temp_bylines as $byline)
+		{
+			if (is_null($byline['user_id']))
+			{
+				$data['bylines']['generic'][] = $byline;
+			}
+			else
+			{
+				$data['bylines']['user'][] = $byline;
+			}
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
