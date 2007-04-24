@@ -72,10 +72,6 @@
 		</fieldset>
 		</form>
 		<div style="height:200px;overflow-x: hidden;overflow-y:scroll;overflow:-moz-scrollbars-vertical !important;">
-<?php foreach ($AllLinks as $option) {?>
-			<a href="links/add/<?=$option->link_id?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
-			<?=$option->link_name?> <a href="<?=$option->link_url?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a>
-<?php } ?>
 		</div>
 	</div>
 </div>
