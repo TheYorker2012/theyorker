@@ -291,7 +291,7 @@ class Reviews extends Controller
 
 		$this->load->model('requests_model');
 		$this->load->model('businesscards_model');
-		$this->load->model('review_model');
+		$this->load->model('article_model');
 		$this->pages_model->SetPageCode('office_review_reviews');
 
 		//Get navigation bar and tell it the current page
@@ -339,7 +339,8 @@ class Reviews extends Controller
 			//auto accept the review write request
 			$this->requests_model->AcceptRequest(
 				$article_id,
-				$this->user_auth->entityId);
+				$this->user_auth->entityId,
+				$_POST['a_review_author']);
 			//success
 			$this->main_frame->AddMessage('success','Review Added.');
 		}
@@ -349,10 +350,6 @@ class Reviews extends Controller
 		
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
-		
-		//reviews
-		$data['reviews'] = $this->review_model->GetOrgReviews($context_type, $data['organisation']['id']);
-
 		foreach($temp_bylines as $byline)
 		{
 			if (is_null($byline['user_id']))
@@ -364,6 +361,16 @@ class Reviews extends Controller
 				$data['bylines']['user'][] = $byline;
 			}
 		}
+		
+		//reviews
+		$temp_reviews = $this->review_model->GetOrgReviews($context_type, $data['organisation']['id']);
+		foreach($temp_reviews as $review)
+		{
+			$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
+			$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
+			$temp['article']['id'] = $review['id'];
+			$data['reviews'][] = $temp;
+		}		
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
@@ -378,16 +385,89 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function reviewedit($ContextType, $organisation, $ArticleId)
+	function reviewedit($context_type, $organisation, $article_id, $revision_id)
 	{
 		if (!CheckPermissions('office')) return;
 		
+		$this->load->model('requests_model');
+		$this->load->model('businesscards_model');
+		$this->load->model('article_model');
 		$this->pages_model->SetPageCode('office_review_reviewedit');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar($organisation,$ContextType);
+		$this->_SetupNavbar($organisation,$context_type);
 		$this->main_frame->SetPage('reviews');
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['article_id'] = $article_id;
+		$data['parameters']['revision_id'] = $revision_id;
+		
+		/** get the article's header for the article id passed to 
+		    the function */
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		//get the list of current question revisions
+		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
+			
+		//set the default revision to false
+		$data['article']['displayrevision'] = FALSE;
+		
+		//if the revision id is set to the default
+		if ($revision_id == -1)
+		{
+			/* is a published article, therefore
+			   load the live content revision */
+			if ($data['article']['header']['live_content'] != FALSE)
+			{
+				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
+				$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+			}
+			/* no live content, therefore is a
+			   request, so load the latest
+			   revision as default */
+			else
+			{
+				//make sure a revision exists
+				if (isset($data['article']['revisions'][0]))
+				{
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
+					$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+				}
+			}
+		}
+		else
+		{
+			/* load the revision with the given 
+			   revision id */
+			$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
+			/* if this revision doesn't exist
+			   then return an error */
+			if ($data['article']['displayrevision'] == FALSE)
+			{
+				$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this review. Default selected.');
+				redirect('/office/reviews/'.$organisation.'/'.$content_type.'/'.$article_id.'/');
+			}
+		}
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//bylines
+		$temp_bylines = $this->businesscards_model->GetBylines();
+		foreach($temp_bylines as $byline)
+		{
+			if (is_null($byline['user_id']))
+			{
+				$data['bylines']['generic'][] = $byline;
+			}
+			else
+			{
+				$data['bylines']['user'][] = $byline;
+			}
+		}
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -398,7 +478,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => $context_type));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view

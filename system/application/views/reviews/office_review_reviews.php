@@ -16,15 +16,15 @@
 			There are <a href="#">Comments</a> that have been reported for abuse.
 		</div>
 	</div>
-<h4>Whats this?</h4>
-	<p>
-		<?php echo 'whats_this'; ?>
-	</p>
-<h4>Other tasks</h4>
-<ul>
-	<li><a href="#">Maintain my account</a></li>
-	<li><a href="#">Remove this directory entry</a></li>
-</ul>
+	<h4>Whats this?</h4>
+		<p>
+			<?php echo 'whats_this'; ?>
+		</p>
+	<h4>Other tasks</h4>
+	<ul>
+		<li><a href="#">Maintain my account</a></li>
+		<li><a href="#">Remove this directory entry</a></li>
+	</ul>
 </div>
 
 <div class="blue_box">
@@ -60,23 +60,15 @@
 </div>
 <div class="grey_box">
 	<h2>maintain reviews</h2>
-		<img src="/images/prototype/news/benest.png" alt="Reporter" title="Reporter" style="float: right;" />
-		<span style="font-size: medium;"><b>Chris Travis</b></span><br />
-		25th March 2007<br />
-		<a href="/office/reviews/theyorker/food/reviewedit/2"><span class="orange">Edit this review</a> <span class="black">|</span> <a href="#">Delete this review</a>
-	        <p>
-		A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.<br /><br />
-
-		<img src="/images/prototype/news/benest.png" alt="Reporter" title="Reporter" style="float: right;" />
-		<span style="font-size: medium;"><b>Chris Travis</b></span><br />
-		25th March 2007<br />
-		<a href="/office/reviews/theyorker/food/reviewedit/2"><span class="orange">Edit this review</span></a> | <a href="#">Delete this review</a>
-	        <p>
-		A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks A whole load of bollocks about nothing.
+	<?php
+		foreach ($reviews as $review)
+		{
+			if (isset($review['writers'][0]))
+			{
+				echo '<span style="font-size: medium;"><b>'.$review['writers'][0]['name'].'</b></span><br />';
+				echo $review['article']['created'].'<br />';
+				echo '<a href="/office/reviews/theyorker/food/reviewedit/'.$review['article']['id'].'"><span class="orange">Edit this review</a><br /><br />';
+			}
+		}
+	?>
 </div>
-
-<?php
-echo '<pre>';
-print_r($data);
-echo '</pre>';
-?>

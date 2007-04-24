@@ -320,11 +320,12 @@ class Article_model extends Model
 				article_content_subtext,
 				article_content_wikitext,
 				article_content_blurb,
-				editor_user.business_card_name as editor_name
+				user_firstname,
+				user_surname
 			FROM	article_contents
 
-			JOIN	business_cards as editor_user
-			ON	editor_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+			JOIN	users
+			ON      user_entity_id = article_content_last_author_user_entity_id
 
 			WHERE	article_content_id = ?
 			AND	article_content_article_id = ?';
@@ -335,7 +336,7 @@ class Article_model extends Model
 			return array(
 				'id'=>$row->article_content_id,
 				'lasteditid'=>$row->article_content_last_author_user_entity_id,
-				'lasteditname'=>$row->editor_name,
+				'lasteditname'=>$row->user_firstname.' '.$row->user_surname,
 				'updated'=>$row->article_content_last_author_timestamp,
 				'heading'=>$row->article_content_heading,
 				'subheading'=>$row->article_content_subheading,

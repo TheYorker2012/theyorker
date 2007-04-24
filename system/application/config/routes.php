@@ -130,8 +130,10 @@ $route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview/$1';
 $route['office/reviews/('.$org_name_regex.')/([a-z]+)'] = 'office/reviews/information/$2/$1';
 // /office/reviews/theyorker/food/comments => /office/reviews/comments/theyorker/food/
 $route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)'] = 'office/reviews/$3/$2/$1';
+// /office/reviews/theyorker/food/reviewedit/12/11 => /office/reviews/reviewedit/theyorker/food/12/11
+$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)/([0-9]+)'] = 'office/reviews/$3/$2/$1/$4/$5';
 // /office/reviews/theyorker/food/reviewedit/12 => /office/reviews/reviewedit/theyorker/food/12
-$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'office/reviews/$3/$2/$1/$4';
+$route['office/reviews/('.$org_name_regex.')/([a-z]+)/([a-z]+)/([0-9]+)'] = 'office/reviews/$3/$2/$1/$4/-1';
 
 
 // /office/howdoi/editquestion/questionno/defaultrevision

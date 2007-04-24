@@ -632,11 +632,12 @@ class Requests_Model extends Model
 				article_content_heading,
 				article_content_last_author_user_entity_id,
 				UNIX_TIMESTAMP(article_content_last_author_timestamp) AS article_content_last_author_timestamp,
-				business_card_name
+				user_firstname,
+				user_surname
 			FROM	article_contents
 
-			JOIN	business_cards
-			ON      business_card_user_entity_id = article_content_last_author_user_entity_id
+			JOIN	users
+			ON      user_entity_id = article_content_last_author_user_entity_id
 
 			WHERE	article_content_article_id = ?
 			ORDER BY	article_content_last_author_timestamp DESC';
@@ -651,7 +652,7 @@ class Requests_Model extends Model
 					'title'=>$row->article_content_heading,
 					'updated'=>$row->article_content_last_author_timestamp,
 					'userid'=>$row->article_content_last_author_user_entity_id,
-					'username'=>$row->business_card_name
+					'username'=>$row->user_firstname.' '.$row->user_surname
 					);
 				$result[] = $result_item;
 			}
@@ -732,12 +733,13 @@ class Requests_Model extends Model
 	function GetWritersForArticle($article_id)
 	{
 		$sql = 'SELECT	article_writer_user_entity_id,
+				article_writer_byline_business_card_id,
 				article_writer_status,
 				business_card_name
 			FROM	article_writers
 
 			JOIN	business_cards
-			ON	business_card_user_entity_id = article_writer_user_entity_id
+			ON	business_card_id = article_writer_byline_business_card_id
 
 			WHERE	article_writer_article_id = ?
 			ORDER BY business_card_name ASC';
@@ -749,6 +751,7 @@ class Requests_Model extends Model
 			{
 				$result[] = array(
 					'id'=>$row->article_writer_user_entity_id,
+					'byline_id'=>$row->article_writer_user_entity_id,
 					'name'=>$row->business_card_name,
 					'status'=>$row->article_writer_status
 					);
@@ -785,13 +788,14 @@ class Requests_Model extends Model
 		$this->db->query($sql,array($article_id));
 	}
 	
-	function AcceptRequest($article_id, $user_id)
+	function AcceptRequest($article_id, $user_id, $business_card_id)
 	{
 		$sql = 'UPDATE 	article_writers
-			SET	article_writer_status = "accepted"
+			SET	article_writer_status = "accepted",
+				article_writer_byline_business_card_id = ?
 			WHERE	(article_writer_user_entity_id = ?
 			AND	article_writer_article_id = ?)';
-		$this->db->query($sql,array($user_id,$article_id));
+		$this->db->query($sql,array($business_card_id,$user_id,$article_id));
 	}
 	
 	function DeclineRequest($article_id, $user_id)
