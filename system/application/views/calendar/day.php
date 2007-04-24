@@ -20,10 +20,12 @@
 	<?php $TodoView->Load(); ?>
 	
 	<?php if (!$ReadOnly) { ?>
-		<h2>Actions</h2>
-		<ul>
-			<li><a href="<?=$Path['add']?>">Add an event</a></li>
-		</ul>
+		<h2 style="margin-left: 0.4em;">Actions</h2>
+		<div class="TodoBox">
+			<ul>
+				<li><a href="<?=$Path['add']?>">Add an event</a></li>
+			</ul>
+		</div>
 	<?php } ?>
 </div>
 
