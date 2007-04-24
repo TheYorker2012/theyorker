@@ -5,7 +5,7 @@
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
-				<span id="links_<?=$picture->link_id?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension)?></span> 
+			<?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension, $picture->link_id)?>
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
@@ -39,7 +39,7 @@
 			Sortable.destroy("links");
 			element.parentNode.removeChild(element);
 			Sortable.create("links",
-				{tag:'span',overlap:'horizontal',constraint: false, onUpdate:updateList});
+				{tag:'img',overlap:'horizontal',constraint: false, onUpdate:updateList});
 			updateList();
 		}
 	});
@@ -57,7 +57,7 @@
 	}
 	
 	Sortable.create("links", {
-		tag:'span',overlap:'horizontal',constraint: false,onUpdate:updateList});
+		tag:'img',overlap:'horizontal',constraint: false,onUpdate:updateList});
  // ]]>
  </script>
 

@@ -160,12 +160,14 @@ function is_photo($id, $extension = '.jpg') {
  * @return	string
  */	
 
-function imageLocTag($id, $type = false, $view_large = false, $alt = null, $class = null, $extension = '.jpg', $force = true) {
+function imageLocTag($id, $type = false, $view_large = false, $alt = null, $class = null, $extension = '.jpg', $id = null, $force = true) {
 	if (is_null($extension)) $extension = '.jpg';
+	$extend = '';
 	if (is_string($class)) {
-		$class_tag = 'class="'.$class.'"';
-	} else {
-		$class_tag = '';
+		$extend.= 'class="'.$class.'" ';
+	}
+	if (is_string($id)) {
+		$extend.= 'id = "'.$id.'"';
 	}
 	if (is_string($type)) {
 		$result = '';
