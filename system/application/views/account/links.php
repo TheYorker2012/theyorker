@@ -5,7 +5,7 @@
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
-				<span id="links_<?=$picture->link_id?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></span>
+				<span id="links_<?=$picture->link_id?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name)?></span>
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>

@@ -65,7 +65,7 @@ class Links_Model extends Model {
 	}
 
 	function ModifyLink() {
-
+		echo "not impl.";
 	}
 
 	/*
@@ -95,6 +95,11 @@ class Links_Model extends Model {
 			$this->db->trans_rollback();
 			return False;
 		}
+	}
+
+	function DropUserLinks($user) {
+		$sql = 'DELETE FROM user_links WHERE user_links_entity_id= ?';
+		return $this->db->query($sql, array($user));
 	}
 
 	/*
@@ -128,8 +133,18 @@ class Links_Model extends Model {
 		echo "notimp";
 	}
 
-	function AddUserLink() {
-		echo "notimp";
+	function AddUserLinks($user, $links) {
+		$first = false;
+		$sql = 'INSERT INTO user_links (user_link_user_entity_id, user_link_link_id, user_link_order) VALUES';
+		for ($i = 0; $i < count($links); $i++) {
+			if (!$first) {
+				$sql.= ',';
+				$first = true;
+			}
+			$sql.= ' ('.$user.', ?, '.$i.')';
+		}
+		
+		return $this->db->query($sql, $links);
 	}
 }
 ?>

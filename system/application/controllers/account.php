@@ -88,6 +88,14 @@ class Account extends controller
 	 */
 	function _links_update($links) {
 		$objResponse = new xajaxResponse();
+		
+		$links=explode('+', $links);
+		foreach ($links as $link) {
+			$link = explode('_', $link);
+			$link = $link[1];
+		}
+		$this->Links_Model->DropUserLinks($this->user_auth->entityId);
+		$this->Links_Model->AddUserLinks($this->user_auth->entityId, $links);
 		return $objResponse;
 	}
 	
