@@ -102,6 +102,7 @@ class Messages
 	 */
 	function AddMessages($Messages, $DefaultType = 'information', $DefaultPersistence = TRUE)
 	{
+		assert('is_array($Messages)');
 		foreach (array('error', 'warning', 'success', 'information') as $type) {
 			if (array_key_exists($type, $Messages)) {
 				// Handle if the array is first indexed by type

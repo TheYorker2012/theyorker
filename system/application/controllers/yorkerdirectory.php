@@ -44,8 +44,8 @@ class Yorkerdirectory extends Controller
 				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('notices', 'Notices',
 				'/directory/'.$DirectoryEntry.'/notices');
-		$navbar->AddItem('events', 'Events',
-				'/directory/'.$DirectoryEntry.'/events');
+		$navbar->AddItem('calendar', 'Calendar',
+				'/directory/'.$DirectoryEntry.'/calendar');
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
 		if($data['organisation']['type'] == 'Societies')
@@ -249,7 +249,7 @@ class Yorkerdirectory extends Controller
 	}
 
 	/// Directory events page.
-	function events($organisation, $DateRange = '')
+	function calendar($organisation, $DateRange = NULL, $Filter = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -258,111 +258,133 @@ class Yorkerdirectory extends Controller
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
 			$this->_SetupOrganisationFrame($organisation);
-
-			$this->load->model('calendar/events_model');
 			
-			$this->load->library('view_calendar_select_week');
-			$this->load->library('view_calendar_list');
-			$this->load->library('date_uri');
-
-			// Sorry about the clutter, this will be moved in a bit but it isn't
-			// practical to put it in the view
-			$extra_head = <<<EXTRAHEAD
-				<script src="/javascript/prototype.js" type="text/javascript"></script>
-				<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-				<script src="/javascript/calendar.js" type="text/javascript"></script>
-				<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+			$this->load->library('my_calendar');
+			$this->load->library('calendar_source_yorker');
+			$this->my_calendar->SetUrlPrefix('/directory/'.$organisation.'/calendar/');
+			//$this->My_calendar->SetAgenda(vip_url('calendar/agenda').'/');
+			
+			$yorker_source = new CalendarSourceYorker(9);
+			// Only those events of the organisation
+			$yorker_source->DisableGroup('subscribed');
+			$yorker_source->DisableGroup('owned');
+			$yorker_source->DisableGroup('private');
+			$yorker_source->EnableGroup('active');
+			$yorker_source->DisableGroup('inactive');
+			$yorker_source->EnableGroup('hide');
+			$yorker_source->EnableGroup('show');
+			$yorker_source->EnableGroup('rsvp');
+			$yorker_source->AddInclusion((int)$data['organisation']['id'], TRUE);
+			
+			$this->my_calendar->SetTabs(FALSE);
+			$calendar_view = $this->my_calendar->GetMyCalendar($yorker_source, $DateRange, $Filter);
+			
+			if (FALSE) {
+				$this->load->model('calendar/events_model');
+				
+				$this->load->library('view_calendar_select_week');
+				$this->load->library('view_calendar_list');
+				$this->load->library('date_uri');
+	
+				// Sorry about the clutter, this will be moved in a bit but it isn't
+				// practical to put it in the view
+				$extra_head = <<<EXTRAHEAD
+					<script src="/javascript/prototype.js" type="text/javascript"></script>
+					<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+					<script src="/javascript/calendar.js" type="text/javascript"></script>
+					<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
 EXTRAHEAD;
-
-			$use_default_range = FALSE;
-			if (empty($DateRange)) {
-				// $DateRange Empty
-				$use_default_range = TRUE;
-
-			} else {
-				$uri_result = $this->date_uri->ReadUri($DateRange);
-				if ($uri_result['valid']) {
-					// valid
-					$start_time = $uri_result['start'];
-					$end_time = $uri_result['end'];
-					$format = $uri_result['format'];
-					$range_description = $uri_result['description'];
-
-				} else {
-					// invalid
-					$this->main_frame->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
+	
+				$use_default_range = FALSE;
+				if (empty($DateRange)) {
+					// $DateRange Empty
 					$use_default_range = TRUE;
+	
+				} else {
+					$uri_result = $this->date_uri->ReadUri($DateRange);
+					if ($uri_result['valid']) {
+						// valid
+						$start_time = $uri_result['start'];
+						$end_time = $uri_result['end'];
+						$format = $uri_result['format'];
+						$range_description = $uri_result['description'];
+	
+					} else {
+						// invalid
+						$this->main_frame->AddMessage('error','Unrecognised date range: "'.$DateRange.'"');
+						$use_default_range = TRUE;
+					}
 				}
+	
+				if ($use_default_range) {
+					// Default to this week
+					$start_time = Academic_time::NewToday();
+					$start_time = $start_time->BackToMonday();
+					$end_time = $start_time->Adjust('1week');
+					$format = 'ac';
+					//$range_description = 'from today for 1 week';
+					$range_description = 'this week';
+				}
+	
+				// Use the start time, end time, and format to set up views
+	
+				//$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
+				$weeks_start = $this->academic_calendar->AcademicDayOfTerm(
+						$start_time->AcademicYear(),
+						$start_time->AcademicTerm(),
+						1,
+						0,0,0
+					);
+				/*if ($weeks_start->Timestamp() < $monday->Timestamp()) {
+					$weeks_start = $monday;
+				}*/
+	
+				/*$weeks_end = $end_time->Adjust('5week')->BackToMonday();
+				if ($weeks_end->Timestamp() < $monday->Timestamp()) {
+					$weeks_end = $monday->Adjust('5week');
+				}*/
+	
+				// Set up the week select view
+				$week_select = new ViewCalendarSelectWeek();
+				$week_select->SetUriBase('directory/'.$organisation.'/calendar/');
+				$week_select->SetUriFormat($format);
+				//$week_select->SetRange($weeks_start, $weeks_end);
+				$week_select->SetAcademicTerm($weeks_start->AcademicYear(), $weeks_start->AcademicTerm());
+				$week_select->SetSelectedWeek($start_time, $end_time);
+				$week_select->Retrieve();
+	
+				$occurrence_filter = new EventOccurrenceFilter();
+				$occurrence_filter->EnableSource('all');
+				$occurrence_filter->SetSpecialCondition(
+						'organisations.organisation_directory_entry_name = '.
+						$this->db->escape($organisation)
+					);
+	
+				// Set up the events list
+				$events_list = new ViewCalendarList();
+				$events_list->SetUriBase('directory/'.$organisation.'/calendar/');
+				$events_list->SetUriFormat($format);
+				$events_list->SetRange($start_time, $end_time);
+				$events_list->SetOccurrenceFilter($occurrence_filter);
+				$events_list->Retrieve();
+	
+				// Set up the directory events view to contain the week select and
+				// events list
+				$directory_events = new FramesFrame('directory/directory_view_events',$data);
+				$directory_events->SetContent($week_select,'week_select');
+				$directory_events->SetContent($events_list,'events_list');
+				$directory_events->SetData('date_range_description', $range_description);
 			}
-
-			if ($use_default_range) {
-				// Default to this week
-				$start_time = Academic_time::NewToday();
-				$start_time = $start_time->BackToMonday();
-				$end_time = $start_time->Adjust('1week');
-				$format = 'ac';
-				//$range_description = 'from today for 1 week';
-				$range_description = 'this week';
-			}
-
-			// Use the start time, end time, and format to set up views
-
-			//$weeks_start = $start_time->Adjust('-2week')->BackToMonday();
-			$weeks_start = $this->academic_calendar->AcademicDayOfTerm(
-					$start_time->AcademicYear(),
-					$start_time->AcademicTerm(),
-					1,
-					0,0,0
-				);
-			/*if ($weeks_start->Timestamp() < $monday->Timestamp()) {
-				$weeks_start = $monday;
-			}*/
-
-			/*$weeks_end = $end_time->Adjust('5week')->BackToMonday();
-			if ($weeks_end->Timestamp() < $monday->Timestamp()) {
-				$weeks_end = $monday->Adjust('5week');
-			}*/
-
-			// Set up the week select view
-			$week_select = new ViewCalendarSelectWeek();
-			$week_select->SetUriBase('directory/'.$organisation.'/events/');
-			$week_select->SetUriFormat($format);
-			//$week_select->SetRange($weeks_start, $weeks_end);
-			$week_select->SetAcademicTerm($weeks_start->AcademicYear(), $weeks_start->AcademicTerm());
-			$week_select->SetSelectedWeek($start_time, $end_time);
-			$week_select->Retrieve();
-
-			$occurrence_filter = new EventOccurrenceFilter();
-			$occurrence_filter->EnableSource('all');
-			$occurrence_filter->SetSpecialCondition(
-					'organisations.organisation_directory_entry_name = '.
-					$this->db->escape($organisation)
-				);
-
-			// Set up the events list
-			$events_list = new ViewCalendarList();
-			$events_list->SetUriBase('directory/'.$organisation.'/events/');
-			$events_list->SetUriFormat($format);
-			$events_list->SetRange($start_time, $end_time);
-			$events_list->SetOccurrenceFilter($occurrence_filter);
-			$events_list->Retrieve();
-
-			// Set up the directory events view to contain the week select and
-			// events list
-			$directory_events = new FramesFrame('directory/directory_view_events',$data);
-			$directory_events->SetContent($week_select,'week_select');
-			$directory_events->SetContent($events_list,'events_list');
-			$directory_events->SetData('date_range_description', $range_description);
 
 			// Set up the directory frame to use the messages frame
-			$this->main_frame->SetPage('events');
+			$this->main_frame->SetPage('calendar');
 			$this->frame_directory->SetOrganisation($data['organisation']);
-			$this->frame_directory->SetContent($directory_events);
+			$this->frame_directory->SetContent($calendar_view);
 
 			// Set up the public frame to use the directory frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
-			$this->main_frame->SetExtraHead($extra_head);
+			//$this->main_frame->SetExtraHead($extra_head);
 			$this->main_frame->SetContent($this->frame_directory);
 
 		} else {

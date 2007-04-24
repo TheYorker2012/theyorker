@@ -917,7 +917,7 @@ class CalendarSourceICalendar extends CalendarSource
 		);
 		$valid_properties = array(
 			'FREQ'		=> array('[A-Z]+',	array(0=>$valid_frequencies)),
-			'UNTIL'		=> array('('.$date.')(T'.$time.')?', 'CheckDateTime'),
+			'UNTIL'		=> array('('.$date.')(T'.$time.'Z?)?', 'CheckDateTime'),
 			'COUNT'		=> array('\d+',		array(0=>array(1,NULL))),
 			'INTERVAL'	=> array('\d+',		array(0=>array(1,NULL))),
 			'WKST'		=> array($weekday, ),

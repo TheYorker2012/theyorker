@@ -288,6 +288,20 @@ abstract class CalendarSource
 		}
 	}
 	
+	/// Find whether a group of events is enabled.
+	/**
+	 * @param $SourceName string Index to $this->mGroups.
+	 * @return bool Whether the group is enabled.
+	 */
+	function GroupEnabled($GroupName)
+	{
+		if (array_key_exists($GroupName, $this->mGroups)) {
+			return $this->mGroups[$GroupName];
+		} else {
+			return FALSE;
+		}
+	}
+	
 	/// Add inclusion.
 	/**
 	 * @param $FeedId integer/array Feed id(s).
@@ -338,6 +352,7 @@ abstract class CalendarSource
 	{
 		$Data->NewCurrentSource($this);
 		$this->_FetchEvents($Data);
+		return array();
 	}
 	
 	/// Fedge the events of the source.

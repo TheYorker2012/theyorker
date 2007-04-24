@@ -174,6 +174,28 @@ function VipMode($SetMode = FALSE)
 	return $vip_mode;
 }
 
+/// Get the vip/pr user level.
+/**
+ * @param $Permission Permission to retrieve ('read','rep','write').
+ * @return bool Whether the user can access that part of PR/VIP.
+ */
+function VipLevel($Permission, $Set = FALSE)
+{
+	static $pr_levels = array(
+		'none'  => 0,
+		'read'  => 1,
+		'rep'   => 2,
+		'write' => 3,
+	);
+	static $pr_level = 0;
+	
+	if ($Set) {
+		$pr_level = (int)$pr_levels[$Permission];
+	}
+	
+	return $pr_level >= $pr_levels[$Permission];
+}
+
 
 /// Check the access permissions.
 /**
@@ -314,6 +336,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			VipOrganisationId(TRUE, $CI->user_auth->organisationLogin);
 			VipOrganisationName(TRUE, $CI->user_auth->organisationName);
 			VipMode('viparea');
+			VipLevel('write', TRUE);
 		}
 	} elseif ($user_level === 'vip') {
 		// Logged in as student and in VIP area
@@ -332,6 +355,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			VipOrganisationId(TRUE, $CI->user_auth->organisationLogin);
 			VipOrganisationName(TRUE, $CI->user_auth->organisationName);
 			VipMode('viparea');
+			VipLevel('write', TRUE);
 		} else {
 			// check permissions to access this organisation
 			$vip_organisations = $CI->user_auth->getOrganisationLogins();
@@ -373,17 +397,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'student'		=> $office_door_open_action,
 				'vip'			=> $vip_login_action,
 				'office'		=> TRUE,
-				'pr'			=> FALSE,
-				'editor'		=> FALSE,
-				'admin'			=> FALSE,
-			);
-		} elseif ($user_level === 'pr') {
-			$action_levels = array(
-				'public'		=> $office_door_open_action,
-				'student'		=> $office_door_open_action,
-				'vip'			=> $vip_login_action,
-				'office'		=> TRUE,
-				'pr'			=> TRUE,
+				'pr'			=> 'pr',
 				'editor'		=> FALSE,
 				'admin'			=> FALSE,
 			);
@@ -411,26 +425,33 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		
 		// Change an office user to pr if they rep for the organisation
 		if ($Permission === 'pr') {
-			if ($action_levels['pr'] === 'pr') {
+			// Get organisation information
+			$CI->db->select('organisation_entity_id as id,'.
+							'organisation_name as name,'.
+							'organisation_pr_rep as rep');
+			$CI->db->where(array('organisation_directory_entry_name' => $organisation_shortname));
+			$matching_org = $CI->db->get('organisations')->result_array();
+			
+			if (empty($matching_org)) {
 				$action_levels['pr'] = FALSE;
-				// Check user is PR Rep for this organisation
-				$rep_organisations = $CI->user_auth->getPrRepOrganisations();
-				foreach ($rep_organisations as $organisation) {
-					if ($organisation['organisation_directory_entry_name']
-							== $organisation_shortname) {
-						// Yes, match, PR Rep, set stuff and change user level to PR
-						VipOrganisationId(FALSE, $organisation['organisation_entity_id']);
-						VipOrganisationName(FALSE, $organisation['organisation_name']);
-						VipOrganisationId(TRUE, $organisation['organisation_entity_id']);
-						VipOrganisationName(TRUE, $organisation['organisation_name']);
-						VipMode('office');
-						$action_levels['pr'] = TRUE;
-						break;
+			} else {
+				$matching_org = $matching_org[0];
+				if ($action_levels['pr'] === 'pr') {
+					$action_levels['pr'] = TRUE;
+					$rep = ($matching_org['rep'] == $CI->user_auth->entityId);
+					if ($rep) {
+						VipLevel('rep', TRUE);
+					} else {
+						VipLevel('read', TRUE);
 					}
+				} elseif ($action_levels['pr']) {
+					VipLevel('write', TRUE);
 				}
-			} elseif ($action_levels['pr'] === TRUE) {
-				/// @todo Allow admin/editors unconditional access to pr.
-				$CI->messages->AddMessage('error','Admin/editor pr org exists check not implemented');
+				VipOrganisationId(FALSE, $matching_org['id']);
+				VipOrganisationName(FALSE, $matching_org['name']);
+				VipOrganisationId(TRUE, $matching_org['id']);
+				VipOrganisationName(TRUE, $matching_org['name']);
+				VipMode('office');
 			}
 		}
 	}
@@ -600,6 +621,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 	$CI->load->library('messages');
 
 	$data = array(
+		//'target' => 'https://'.$_SERVER['HTTP_HOST'].$CI->uri->uri_string(),
 		'target' => $CI->uri->uri_string(),
 	);
 
@@ -689,7 +711,7 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{
-				$RedirectDestination = GetDefaultHomepage();
+					$RedirectDestination = GetDefaultHomepage();
 				}
 				
 			}

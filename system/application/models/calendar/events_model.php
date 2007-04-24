@@ -49,7 +49,7 @@ class EventOccurrenceQuery
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship = \'own\'
 						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	event_subscriptions.event_subscription_user_entity_id = ' . $EntityId . ')';
+				OR	subscriptions.subscription_user_entity_id = ' . $EntityId . ')';
 	}
 	
 	/// Produce an SQL expression for all and only rsvp'd events.
@@ -328,10 +328,11 @@ class EventOccurrenceFilter extends EventOccurrenceQuery
 			LEFT JOIN organisations
 				ON	organisations.organisation_entity_id
 						= event_entities.event_entity_entity_id
-			LEFT JOIN event_subscriptions
-				ON	event_subscriptions.event_subscription_organisation_entity_id
+			LEFT JOIN subscriptions
+				ON	subscriptions.subscription_organisation_entity_id
 						= event_entities.event_entity_entity_id
-				AND	event_subscriptions.event_subscription_user_entity_id	= ?
+				AND	subscriptions.subscription_user_entity_id	= ?
+				AND	subscriptions.subscription_calendar = TRUE
 			LEFT JOIN event_occurrence_users
 				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id
@@ -639,13 +640,13 @@ class Events_model extends Model
 			// Get entity id from user_auth library
 			$CI = &get_instance();
 			if ($CI->user_auth->isLoggedIn) {
-				$this->mReadOnly = FALSE;
-				if (VipMode() !== 'none') {
-					$this->mActiveEntityId = VipOrganisationId();
-					$this->mActiveEntityType = self::$cEntityVip;
-				} else {
+				$this->mActiveEntityId = VipOrganisationId();
+				if (FALSE === $this->mActiveEntityId) {
+					$this->mReadOnly = FALSE;
 					$this->mActiveEntityId = $CI->user_auth->entityId;
 					$this->mActiveEntityType = self::$cEntityUser;
+				} else {
+					$this->mReadOnly = !VipLevel('rep');
 				}
 			} else {
 				// Default to an entity id with default events
@@ -1203,6 +1204,9 @@ class Events_model extends Model
 	 */
 	function EventDelete($EventId)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		// Don't need to delete occurrences as if the event is marked as deleted
 		// they won't show up from any queries anymore.
 		/// @todo BUT then cancelled occurrences don't show up, this needs sorting.
@@ -1299,6 +1303,9 @@ class Events_model extends Model
 	 */
 	function EventsGenerateRecurrences($Until, $EventId = FALSE)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		// Initial query to get the events
 		$bind_data = array();
 		$sql_select_events = '
@@ -1440,6 +1447,9 @@ class Events_model extends Model
 	 */
 	function OccurrencesAdd($EventId, $OccurrenceData)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		$occurrence_query = new EventOccurrenceQuery();
 		
 		static $translation2 = array(
@@ -1538,6 +1548,9 @@ class Events_model extends Model
 	 */
 	function OccurrencesAlter($EventId, $OccurrenceData)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		$occurrence_query = new EventOccurrenceQuery();
 		
 		static $translation = array(
@@ -1594,6 +1607,9 @@ class Events_model extends Model
 	 */
 	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		$occurrence_query = new EventOccurrenceQuery();
 		
 		// change the state to $NewState
@@ -1705,6 +1721,9 @@ class Events_model extends Model
 	 */
 	protected function OccurrenceMovedraftDelete($EventId, $OccurrenceId, $ActivationState)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		// find recently changed occurrence
 		// change all others pointing to $OccurrenceId to point to it, and it to null
 		// change state to $ActivationState
@@ -1816,6 +1835,9 @@ END';
 	 */
 	function OccurrenceCancelledActivate($EventId, $OccurrenceId)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		// Make this occurrence the active occurrence.
 		// update new_active
 		// on sibling (same active occurrence)
@@ -1883,6 +1905,9 @@ END';
 	 */
 	function OccurrencePostpone($EventId, $OccurrenceId)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		$this->OccurrenceCancelledActivate($EventId, $OccurrenceId);
 		
 		$occurrence_query = new EventOccurrenceQuery();
@@ -1963,6 +1988,9 @@ END';
 	 */
 	function OccurrenceDelete($EventId,$OccurrenceId)
 	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		return 0;
 		/// @todo Implement.
 		// cleanup after anything linking to occurrences
@@ -1985,6 +2013,9 @@ END';
 	{
 		/// @pre GetActiveEntityId() === $sEntityUser
 		assert('$this->mActiveEntityType === self::$cEntityUser');
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
 		
 		$occurrence_query = new EventOccurrenceQuery();
 		
@@ -2066,46 +2097,6 @@ END';
 		/// @todo Implement.
 	}
 	
-	/// Create subscription to @a $OrganisationEntityId.
-	/**
-	 * @param $OrganisationEntityId ID of organisation to subscribe to.
-	 * @return int Number of affected rows.
-	 * @note @a $OrganisationEntityId must point to an existing organisation.
-	 *	- With organisation_events enabled
-	 */
-	function FeedSubscribe($OrganisationEntityId)
-	{
-		$sql = '
-			INSERT INTO event_subscriptions (
-				event_subscription_user_entity_id,
-				event_subscription_organisation_entity_id
-			) SELECT
-				'.$this->GetActiveEntityId().',
-				organisations.organisation_entity_id
-			FROM organisations
-			WHERE	organisations.organisation_entity_id = ?
-				AND	organisations.organisation_events = 1
-			LIMIT 1';
-		$this->db->query($sql, $OrganisationEntityId);
-		return $this->db->affected_rows();
-	}
-	
-	/// Remove subscription to @a $OrganisationEntityId.
-	/**
-	 * @param $OrganisationEntityId ID of entity (organisation) to unsubscribe from.
-	 * @return int Number of affected rows.
-	 */
-	function FeedUnsubscribe($OrganisationEntityId)
-	{
-		$sql = '
-			DELETE FROM event_subscriptions
-			WHERE
-				event_subscription_user_entity_id = '.$this->GetActiveEntityId().',
-				event_subscription_organisation_entity_id = ?
-			LIMIT 1';
-		$this->db->query($sql, $OrganisationEntityId);
-		return $this->db->affected_rows();
-	}
 	
 }
 

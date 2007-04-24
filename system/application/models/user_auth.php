@@ -522,29 +522,6 @@ class User_auth extends model {
 		return $query->result_array();
 	}
 
-	/// Get a list of organisations that the user is a PR rep for
-	/**
-	 * @return array of arrays Straight from organisations table with fields:
-	 *	- 'organisation_entity_id'
-	 *	- 'organisation_name'
-	 *	- 'organisation_directory_entry_name'
-	 *
-	 * Does not indicate whether the user is actually in the office or not.
-	 */
-	public function getPrRepOrganisations() {
-		if ($this->officeType == 'None')
-			/// @throw Exception You must be logged in to the office to do this
-			throw new Exception('You must be logged in to the office to do this');
-
-		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations 
-				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
-			WHERE subscription_user_entity_id = ? AND subscription_pr_rep = TRUE';
-
-		$query = $this->db->query($sql, array($this->entityId));
-
-		return $query->result_array();
-	}
-
 	/// Login to an organisations admin interface
 	/**
 	 * @param $password string Password.

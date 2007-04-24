@@ -54,10 +54,19 @@ class CalendarSourceFacebook extends CalendarSource
 					$attending = NULL;
 					if (is_array($members['attending']) && in_array($user_id, $members['attending'])) {
 						$attending = TRUE;
+						if (!$this->GroupEnabled('rsvp')) {
+							continue;
+						}
 					} elseif (is_array($members['declined']) && in_array($user_id, $members['declined'])) {
 						$attending = FALSE;
+						if (!$this->GroupEnabled('hide')) {
+							continue;
+						}
 					} else {
 						$attending = NULL;
+						if (!$this->GroupEnabled('show')) {
+							continue;
+						}
 					}
 					/*echo '<pre align="left">';
 					print_r($event);
@@ -85,52 +94,50 @@ class CalendarSourceFacebook extends CalendarSource
 				}
 			}
 			
-			// Get friends with birthdays in the range.
-			$birthdays = $CI->facebook->Client->fql_query(
-				'SELECT uid, name, birthday, profile_update_time, pic FROM user '.
-				//'WHERE uid = '.$user_id
-				'WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '.$user_id.') '.
-				'OR uid = '.$user_id
-			);
-			
-			$year = date('Y', $this->mRange[0]);
-			$yesterday = strtotime('-1day',$this->mRange[0]);
-			foreach ($birthdays as $birthday) {
-				if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
-					$start_age = $year - $matches[2];
-					$dob = strtotime($matches[1].$year);
-					
-					while ($dob < $this->mRange[1]) {
-						if ($dob >= $yesterday) {
-							$event_obj = & $Data->NewEvent();
-							$occurrence = & $Data->NewOccurrence($event_obj);
-							$event_obj->SourceEventId = 'bd'.$birthday['uid'];
-							$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
-							$event_obj->Description = '<a href="http://www.facebook.com/profile.php?id='.$birthday['uid'].'" target="_blank">'.$birthday['name'].'\'s profile</a>';
-							$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
-							if (!empty($birthday['pic'])) {
-								$event_obj->Image = $birthday['pic'];
+			// only birthdays if showing maybe events
+			if ($this->GroupEnabled('show')) {
+				// Get friends with birthdays in the range.
+				$birthdays = $CI->facebook->Client->fql_query(
+					'SELECT uid, name, birthday, profile_update_time, pic FROM user '.
+					//'WHERE uid = '.$user_id
+					'WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '.$user_id.') '.
+					'OR uid = '.$user_id
+				);
+				
+				$year = date('Y', $this->mRange[0]);
+				$yesterday = strtotime('-1day',$this->mRange[0]);
+				foreach ($birthdays as $birthday) {
+					if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
+						$start_age = $year - $matches[2];
+						$dob = strtotime($matches[1].$year);
+						
+						while ($dob < $this->mRange[1]) {
+							if ($dob >= $yesterday) {
+								$event_obj = & $Data->NewEvent();
+								$occurrence = & $Data->NewOccurrence($event_obj);
+								$event_obj->SourceEventId = 'bd'.$birthday['uid'];
+								$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
+								$event_obj->Description = '<a href="http://www.facebook.com/profile.php?id='.$birthday['uid'].'" target="_blank">'.$birthday['name'].'\'s profile</a>';
+								$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
+								if (!empty($birthday['pic'])) {
+									$event_obj->Image = $birthday['pic'];
+								}
+								$occurrence->SourceOccurrenceId = 'bd'.$birthday['uid'].'.'.$start_age;
+								$occurrence->LocationDescription = '';
+								$occurrence->StartTime = new Academic_time($dob);
+								$occurrence->EndTime = $occurrence->StartTime->Adjust('1day');
+								$occurrence->TimeAssociated = FALSE;
+								$occurrence->UserAttending = NULL;
+								unset($occurrence);
+								unset($event_obj);
 							}
-							$occurrence->SourceOccurrenceId = 'bd'.$birthday['uid'].'.'.$start_age;
-							$occurrence->LocationDescription = '';
-							$occurrence->StartTime = new Academic_time($dob);
-							$occurrence->EndTime = $occurrence->StartTime->Adjust('1day');
-							$occurrence->TimeAssociated = FALSE;
-							$occurrence->UserAttending = NULL;
-							unset($occurrence);
-							unset($event_obj);
+							$dob = strtotime('1year', $dob);
+							++$start_age;
 						}
-						$dob = strtotime('1year', $dob);
-						++$start_age;
 					}
 				}
 			}
 			
-			/*
-			echo('<pre align="left">');
-			print_r($birthdays);
-			echo('</pre>');
-			//*/
 		} catch (FacebookRestClientException $ex) {
 			$CI->facebook->HandleException($ex);
 		}

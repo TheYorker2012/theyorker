@@ -38,7 +38,15 @@
 						echo '</a></td>';
 						break;
 					case 'image':
-						echo '<td><img src="'.$filter['selected_image'].'" alt="'.$filter['name'].'"/></td>';
+						echo('<td>');
+						if (array_key_exists('link', $filter)) {
+							echo('<a href="'.$filter['link'].'">');
+						}
+						echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'"/>');
+						if (array_key_exists('link', $filter)) {
+							echo('</a>');
+						}
+						echo('</td>');
 						break;
 				}
 			}

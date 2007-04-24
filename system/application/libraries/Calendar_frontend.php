@@ -85,7 +85,7 @@ abstract class CalendarView extends FramesView
 	{
 		assert('NULL !== $this->mRangeUrl');
 		$CI = & get_instance();
-		return site_url(
+		return (
 			$this->mRangeUrl[0].
 			$CI->date_uri->GenerateUri($this->mRangeUrl[1], $Start, $End).
 			$this->mRangeUrl[2]

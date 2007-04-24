@@ -128,51 +128,6 @@ class CalendarActions
  */
 class Calendar extends Controller
 {
-	protected static $sFilterDef = array(
-		// category
-		'cat' => array(
-			'name' => 'category',
-			array(
-				'no-social',
-				'no-academic',
-				'no-meeting',
-			),
-		),
-		'att' => array(
-			'name' => 'attending',
-			array(
-				'no-declined',
-				'no-maybe',
-				'no-accepted',
-				'declined',
-				'maybe',
-				'accepted',
-			),
-		),
-		'source' => array(
-			array(
-				'type' => 'int',
-			),
-		),
-		'search' => array(
-			array(
-				'name' => 'field',
-				'all',
-				'name',
-				'description',
-			),
-			array(
-				'name' => 'criteria',
-				'type' => 'string',
-			),
-			array(
-				'name' => 'flags',
-				'count' => array(0),
-				'regex',
-				'case',
-			),
-		),
-	);
 
 	/// Default constructor.
 	function __construct()
@@ -199,34 +154,23 @@ class Calendar extends Controller
 		}
 	}
 	
+	protected function _SetupMyCalendar()
+	{
+		$this->load->library('My_calendar');
+		$this->load->library('calendar_source_my_calendar');
+		$this->my_calendar->SetUrlPrefix('/calendar/range/');
+		$this->my_calendar->SetAgenda('/calendar/agenda/');
+		return new CalendarSourceMyCalendar();
+	}
+	
 	function range($DateRange = NULL, $Filter = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->load->library('academic_calendar');
-		$this->load->library('date_uri');
-		$range = $this->date_uri->ReadUri($DateRange, TRUE);
-		$now = new Academic_time(time());
-		if ($range['valid']) {
-			$start	= $range['start'];
-			$end	= $range['end'];
-		} else {
-			$start	= $now->Midnight();
-			$end	= $start->Adjust('1week');
-		}
-		
-		$days = Academic_time::DaysBetweenTimestamps(
-			$start->Timestamp(),
-			$end->Timestamp()
+		$sources = & $this->_SetupMyCalendar();
+		$this->main_frame->SetContent(
+			$this->my_calendar->GetMyCalendar($sources, $DateRange, $Filter)
 		);
-		
-		if ($days > 7) {
-			$this->_ShowWeeks($DateRange, $Filter, $range['format']);
-		} elseif ($days > 1) {
-			$this->_ShowDays($DateRange, $Filter, $range['format']);
-		} else {
-			$this->_ShowDay($DateRange, $Filter, $range['format']);
-		}
 		
 		$this->main_frame->Load();
 	}
@@ -234,7 +178,12 @@ class Calendar extends Controller
 	function agenda($DateRange = NULL, $Filter = NULL)
 	{
 		if (!CheckPermissions('public')) return;
-		$this->_ShowAgenda($DateRange, $Filter);
+		
+		$sources = & $this->_SetupMyCalendar();
+		$this->main_frame->SetContent(
+			$this->my_calendar->GetAgenda($sources, $DateRange, $Filter)
+		);
+		
 		$this->main_frame->Load();
 	}
 	
@@ -264,342 +213,6 @@ class Calendar extends Controller
 		$this->load->library('academic_calendar');
 		$this->load->library('calendar_backend');
 		$this->load->library('calendar_frontend');
-	}
-	
-	/// Setup the user's event sources.
-	function _SetupSources()
-	{
-		$this->load->library('calendar_source_my_calendar');
-		return new CalendarSourceMyCalendar();
-	}
-	
-	function _ShowDay($DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
-	{
-		$this->_LoadCalendarSystem();
-		$range = $this->date_uri->ReadUri($DateRange, TRUE);
-		$now = new Academic_time(time());
-		if ($range['valid']) {
-			$start = $range['start'];
-		} else {
-			$start = $now->Midnight();
-		}
-		$end = $start->Adjust('1day');
-		
-		$sources = $this->_SetupSources();
-		$sources->SetRange($start->Timestamp(), $end->Timestamp());
-		$sources->EnableGroup('todo');
-		
-		$calendar_data = new CalendarData();
-		
-		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
-		
-		// Display data
-		$this->load->library('calendar_view_days');
-		$this->load->library('calendar_view_todo_list');
-		
-		$days = new CalendarViewDays();
-		$days->SetCalendarData($calendar_data);
-		$days->SetRangeUrl(
-			'calendar/range/',
-			$Format,
-			NULL !== $Filter ? '/'.$Filter : ''
-		);
-		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
-		$todo = new CalendarViewTodoList();
-		$todo->SetCalendarData($calendar_data);
-		
-		$view_mode_data = array(
-			'DateDescription' => 'Today probably!',
-			'DaysView'        => &$days,
-			'TodoView'        => &$todo,
-		);
-		$view_mode = new FramesFrame('calendar/day', $view_mode_data);
-		
-		$data = array(
-			'Filters'	=> $this->_GetFilters(),
-			'ViewMode'	=> $view_mode,
-			'RangeDescription' => $range['description'],
-		);
-		
-		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
-		
-		$this->_SetupTabs('day', $start, $Filter);
-	}
-	
-	function _ShowAgenda($DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
-	{
-		$this->_LoadCalendarSystem();
-		
-		$sources = $this->_SetupSources();
-		$sources->SetRange(time(), strtotime('1month'));
-		
-		$calendar_data = new CalendarData();
-		
-		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
-		
-		// Display data
-		$this->load->library('calendar_view_agenda');
-		
-		$agenda = new CalendarViewAgenda();
-		$agenda->SetCalendarData($calendar_data);
-		
-		$data = array(
-			'Filters'	=> $this->_GetFilters(),
-			'ViewMode'	=> $agenda,
-		);
-		
-		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
-		
-		$this->_SetupTabs('agenda', new Academic_time(time()), $Filter);
-	}
-	
-	function _ShowDays($DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
-	{
-		$this->_LoadCalendarSystem();
-		// Read date range
-		$this->load->library('date_uri');
-		$range = $this->date_uri->ReadUri($DateRange, TRUE);
-		$now = new Academic_time(time());
-		if ($range['valid']) {
-			$start = $range['start'];
-			$end = $range['end'];
-		} else {
-			$start = $now->Midnight();
-			$end = $start->Adjust('7day');
-		}
-		
-		// Read filter
-		// eg
-		// cat:no-social.att:no-no.search:all:yorker:case
-		$this->load->library('filter_uri');
-		$filter_def = new FilterDefinition(self::$sFilterDef);
-		if (NULL === $Filter) {
-			// simulate "att:no-declined"
-			$filter = array(
-			);
-		} else {
-			$filter = $filter_def->ReadUri($Filter);
-		}
-		
-		$sources = $this->_SetupSources();
-		$sources->SetRange($start->Timestamp(), $end->Timestamp());
-		
-		if (FALSE === $filter) {
-			$this->messages->AddMessage('error', 'The filter text in the uri was not valid');
-		} else {
-			$this->load->model('calendar/events_model');
-			$sources->EnableGroup('hide');
-			$sources->EnableGroup('show');
-			$sources->EnableGroup('rsvp');
-			if (array_key_exists('att', $filter)) {
-				foreach ($filter['att'] as $attendence) {
-					switch ($attendence[0]) {
-						case 'no-declined':
-							$sources->DisableGroup('hide');
-							break;
-						case 'no-maybe':
-							$sources->DisableGroup('show');
-							break;
-						case 'no-accepted':
-							$sources->DisableGroup('rsvp');
-							break;
-						case 'declined':
-							$sources->EnableGroup('hide');
-							break;
-						case 'maybe':
-							$sources->EnableGroup('show');
-							break;
-						case 'accepted':
-							$sources->EnableGroup('rsvp');
-							break;
-					}
-				}
-			}
-		}
-		
-		$calendar_data = new CalendarData();
-		
-		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
-		
-		// Display data
-		$this->load->library('calendar_view_days');
-		
-		$days = new CalendarViewDays();
-		$days->SetCalendarData($calendar_data);
-		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
-		$days->SetRangeUrl(
-			'calendar/range/',
-			$Format,
-			NULL !== $Filter ? '/'.$Filter : ''
-		);
-		
-		$data = array(
-			'Filters'	=> $this->_GetFilters(),
-			'ViewMode'	=> $days,
-			'RangeDescription' => $range['description'],
-		);
-		
-		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
-		
-		$this->_SetupTabs('days', $start, $Filter);
-	}
-	
-	function _ShowWeeks($DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
-	{
-		$this->_LoadCalendarSystem();
-		// Read date range
-		$this->load->library('date_uri');
-		$range = $this->date_uri->ReadUri($DateRange, TRUE);
-		$now = new Academic_time(time());
-		if ($range['valid']) {
-			$start = $range['start'];
-			$end = $range['end'];
-		} else {
-			$start = $now->BackToMonday();
-			$end = $start->Adjust('4weeks');
-		}
-		
-		// Read filter
-		// eg
-		// cat:no-social.att:no-no.search:all:yorker:case
-		$this->load->library('filter_uri');
-		$filter_def = new FilterDefinition(self::$sFilterDef);
-		if (NULL === $Filter) {
-			// simulate "att:no-declined"
-			$filter = array(
-			);
-		} else {
-			$filter = $filter_def->ReadUri($Filter);
-		}
-		
-		$sources = $this->_SetupSources();
-		$sources->SetRange($start->Timestamp(), $end->Timestamp());
-		
-		if (FALSE === $filter) {
-			$this->messages->AddMessage('error', 'The filter text in the uri was not valid');
-		} else {
-			$this->load->model('calendar/events_model');
-			$sources->EnableGroup('hide');
-			$sources->EnableGroup('show');
-			$sources->EnableGroup('rsvp');
-			if (array_key_exists('att', $filter)) {
-				foreach ($filter['att'] as $attendence) {
-					switch ($attendence[0]) {
-						case 'no-declined':
-							$sources->DisableGroup('hide');
-							break;
-						case 'no-maybe':
-							$sources->DisableGroup('show');
-							break;
-						case 'no-accepted':
-							$sources->DisableGroup('rsvp');
-							break;
-						case 'declined':
-							$sources->EnableGroup('hide');
-							break;
-						case 'maybe':
-							$sources->EnableGroup('show');
-							break;
-						case 'accepted':
-							$sources->EnableGroup('rsvp');
-							break;
-					}
-				}
-			}
-		}
-		
-		$calendar_data = new CalendarData();
-		
-		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
-		
-		// Display data
-		$this->load->library('calendar_view_weeks');
-		
-		$weeks = new CalendarViewWeeks();
-		$weeks->SetCalendarData($calendar_data);
-		$weeks->SetStartEnd($start->Timestamp(), $end->Timestamp());
-		$weeks->SetRangeUrl(
-			'calendar/range/',
-			$Format,
-			NULL !== $Filter ? '/'.$Filter : ''
-		);
-		
-		$data = array(
-			'Filters'	=> $this->_GetFilters(),
-			'ViewMode'	=> $weeks,
-			'RangeDescription' => $range['description'],
-		);
-		
-		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
-		
-		$this->_SetupTabs('weeks', $start, $Filter);
-	}
-	
-	/// Get the filters.
-	/**
-	 */
-	protected function _GetFilters()
-	{
-		return array(
-			'id' => array(
-				'name'			=> 'social',
-				'field'			=> 'category',
-				'value'			=> 'social',
-				'selected'		=> TRUE,
-				'description'	=> 'Social',
-				'display'		=> 'block',
-				'colour'		=> 'FFFF00',
-			),
-			'academic' => array(
-				'name'			=> 'academic',
-				'field'			=> 'category',
-				'value'			=> 'academic',
-				'selected'		=> TRUE,
-				'description'	=> 'Academic',
-				'display'		=> 'block',
-				'colour'		=> '00FF00',
-			),
-			'meeting' => array(
-				'name'			=> 'meeting',
-				'field'			=> 'category',
-				'value'			=> 'meeting',
-				'selected'		=> TRUE,
-				'description'	=> 'Meetings',
-				'display'		=> 'block',
-				'colour'		=> 'FF0000',
-			),
-			
-			'rsvp' => array(
-				'name'			=> 'rsvp',
-				'field'			=> 'visibility',
-				'value'			=> 'rsvp',
-				'selected'		=> TRUE,
-				'description'	=> 'Only those to which I\'ve RSVPd',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
-			),
-			'visible' => array(
-				'name'			=> 'visible',
-				'field'			=> 'visibility',
-				'value'			=> 'visible',
-				'selected'		=> TRUE,
-				'description'	=> 'Include those which I\'ve hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_visible_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.gif',
-			),
-			'hidden' => array(
-				'name'			=> 'hidden',
-				'field'			=> 'visibility',
-				'value'			=> 'hidden',
-				'selected'		=> FALSE,
-				'description'	=> 'Include those which I\'ve hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
-			),
-		);
 	}
 	
 	function add()

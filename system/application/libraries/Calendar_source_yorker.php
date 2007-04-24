@@ -241,10 +241,11 @@ class CalendarSourceYorker extends CalendarSource
 			LEFT JOIN organisations
 				ON	organisations.organisation_entity_id
 						= event_entities.event_entity_entity_id
-			LEFT JOIN event_subscriptions
-				ON	event_subscriptions.event_subscription_organisation_entity_id
+			LEFT JOIN subscriptions
+				ON	subscriptions.subscription_organisation_entity_id
 						= event_entities.event_entity_entity_id
-				AND	event_subscriptions.event_subscription_user_entity_id	= ?
+				AND	subscriptions.subscription_user_entity_id	= ?
+				AND	subscriptions.subscription_calendar = TRUE
 			LEFT JOIN event_occurrence_users
 				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 						= event_occurrences.event_occurrence_id

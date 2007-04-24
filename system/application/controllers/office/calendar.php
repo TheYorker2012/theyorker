@@ -7,6 +7,43 @@ class Calendar extends controller
 		parent::controller();
 	}
 	
+	
+	/// Display event information.
+	function event($EventId = NULL)
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$data = array(
+			
+		);
+		$this->main_frame->SetContentSimple('calendar/event', $data);
+		
+		$this->main_frame->Load();
+	}
+	
+	
+	/// Show the calendar interface.
+	function range($DateRange = NULL, $Filter = NULL)
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		$sources = & $this->_SetupMyCalendar();
+		$this->main_frame->SetContent(
+			$this->my_calendar->GetMyCalendar(
+				$sources, $DateRange, $Filter)
+		);
+		
+		$this->main_frame->Load();
+	}
+	
+	protected function _SetupMyCalendar()
+	{
+		$this->load->library('my_calendar');
+		$this->load->library('calendar_source_yorker');
+		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
+		//$this->calendar->SetAgenda(vip_url('calendar/agenda').'/');
+		return new CalendarSourceYorker(9);
+	}
+	
 	function index()
 	{
 		if (!CheckPermissions('vip+pr')) return;
