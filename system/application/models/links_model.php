@@ -109,7 +109,7 @@ class Links_Model extends Model {
 		$sql = 'SELECT link_id, link_url,link_name,link_image_id, image_file_extension
 			FROM links, images
 			INNER JOIN user_links
-			ON user_link_link_id = link_id
+			ON user_link_link_id = links.link_id
 			WHERE image_id = link_image_id
 			AND user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
