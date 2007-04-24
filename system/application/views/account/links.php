@@ -42,8 +42,13 @@
 	Droppables.add('bin', {
 		overlap:'horizontal',
 		onDrop:function(element) {
+			Sortable.destroy("links");
 			element.parentNode.removeChild(element);
-			updateList()
+			Sortable.create("links",
+				{tag:'span',overlap:'horizontal',constraint: false,
+					onUpdate:updateList()
+				});
+			updateList();
 		}
 	});
 
