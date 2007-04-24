@@ -121,13 +121,7 @@ class Links_Model extends Model {
 			FROM links
 			WHERE link_official = 1';
 		$query = $this->db->query($sql);
-		$result = array();
-		foreach ($query->result() as $row){
-			$result[] = array('url'=>$row->link_url,
-				'name'=>$row->link_name,
-				'image'=>$row->link_image_id);
-		}
-		return $result;
+		return $query;
 	}
 
 	function ReplaceImage() {
