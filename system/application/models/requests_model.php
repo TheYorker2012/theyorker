@@ -241,6 +241,15 @@ class Requests_Model extends Model
 		$query = $this->db->query($sql,array($content_type,$article_id));
 	}
 
+	//Make a change to the organisation of an article (make a review)
+	function UpdateOrganisationID($article_id,$org_id)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_organisation_entity_id = ?
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($org_id,$article_id));
+	}
+
 	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
 	function GetPulledArticles($type_id)
 	{

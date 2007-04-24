@@ -1014,6 +1014,36 @@ function GetTagOrganisation($type,$organisation)
 			)
 		);
 	}
+	
+	function GetOrgReviews($type_codename, $org_id)
+	{
+		$sql = 'SELECT 	content_type_id
+			FROM	content_types
+			WHERE	(content_type_codename = ?)';
+		$query = $this->db->query($sql,array($type_codename));
+		if ($query->num_rows() == 1)
+		{
+			$type_id = $query->row()->content_type_id;
+			$sql = 'SELECT	article_id
+				FROM	articles
+				WHERE	(article_content_type_id = ?
+				AND	article_organisation_entity_id = ?)';
+			$query = $this->db->query($sql,array($type_id, $org_id));
+			$result = array();
+			if ($query->num_rows() > 0)
+			{
+				foreach ($query->result() as $row)
+				{
+					$result[] = array(
+						'id'=>$row->article_id
+						);
+				}
+			}
+			return $result;
+		}
+		else
+			return false;
+	}
 
 }
 

@@ -291,7 +291,13 @@ class Reviews extends Controller
 
 		$this->load->model('requests_model');
 		$this->load->model('businesscards_model');
+		$this->load->model('review_model');
 		$this->pages_model->SetPageCode('office_review_reviews');
+
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation, $context_type);
+		$this->main_frame->SetPage('reviews');
 
 		//$this->businesscards_model->NewBusinessCard(NULL, 3, 0, 'Default Name', 'Default Title', 'default blurb', 'Default Course', NULL,
 		//	NULL, NULL, NULL, 'Default Address', 0, NULL, NULL);
@@ -303,7 +309,7 @@ class Reviews extends Controller
 		*/
 		if (isset($_POST['r_submit_newreview']))
 		{	
-			//create the review
+			//create the article
 			$article_id = $this->requests_model->CreateRequest(
 				'request',
 				$context_type,
@@ -311,6 +317,10 @@ class Reviews extends Controller
 				'',
 				$this->user_auth->entityId,
 				NULL);
+			//set the articles organistion
+			$this->requests_model->UpdateOrganisationID(
+				$article_id,
+				$data['organisation']['id']);
 			//add the first revision from form data
 			$this->requests_model->CreateArticleRevision(
 				$article_id,
@@ -334,16 +344,14 @@ class Reviews extends Controller
 			$this->main_frame->AddMessage('success','Review Added.');
 		}
 
-		//Get navigation bar and tell it the current page
-		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar($organisation, $context_type);
-		$this->main_frame->SetPage('reviews');
-
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
+		
+		//reviews
+		$data['reviews'] = $this->review_model->GetOrgReviews($context_type, $data['organisation']['id']);
 
 		foreach($temp_bylines as $byline)
 		{
