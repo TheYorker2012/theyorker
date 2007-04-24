@@ -117,7 +117,7 @@ class Links_Model extends Model {
 	}
 
 	function GetAllOfficialLinks() {
-		$sql = 'SELECT link_url,link_name,link_image_id
+		$sql = 'SELECT link_id, link_url,link_name,link_image_id
 			FROM links
 			WHERE link_official = 1';
 		$query = $this->db->query($sql);

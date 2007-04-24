@@ -102,8 +102,8 @@ class Account extends controller
 	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
-	function links()
-	{
+	function links($action = 'none', $id = null) {
+		
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 		
@@ -113,10 +113,13 @@ class Account extends controller
 		$this->xajax->registerFunction(array("links_update", &$this, "_links_update"));
 		$this->xajax->processRequests();
 		
+		if ($action = 'add') {
+			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
+		}
 
 		$this->_SetupTabs('links');
 
-		$data['test'] = 'test';
+		$data['AllLinks'] = $this->Links_Model->GetAllOfficialLinks();
 		$data['link'] = $this->Links_Model->GetUserLinks($this->user_auth->entityId);
 
 		/// Get custom page content
