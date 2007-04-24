@@ -95,15 +95,15 @@ function GenerateToplinks($Permission)
 		
 		case 'organisation':
 		case 'vip':
-			$top_links[] = 'logged in as ' . $username;
 			if ($Permission === 'public' || $Permission === 'student') {
+				$top_links[] = 'logged in as ' . $username;
 				$top_links[] = $go_vip;
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
 							site_url('logout/vip'.$CI->uri->uri_string()));
 				}
 			} elseif ($Permission === 'vip') {
-				$top_links[] = 'in VIP area as ' . VipOrganisationName(TRUE);
+				$top_links[] = 'in VIP area of ' . VipOrganisationName(TRUE).' as ' . $username;
 				if ($UserLevel === 'vip') {
 					$top_links[] = array('leave VIP area',
 							site_url('logout/vip'));
@@ -124,6 +124,12 @@ function GenerateToplinks($Permission)
 						$Permission === 'editor' ||
 						$Permission === 'admin') {
 				$top_links[] = 'in office as ' . $username;
+				$top_links[] = array('leave office',
+						site_url('logout/office'));
+			} elseif (	$Permission === 'pr') {
+				$top_links[] = 'in PR area of ' . VipOrganisationName(TRUE).' as ' . $username;
+				$top_links[] = array('office',
+						site_url('office'));
 				$top_links[] = array('leave office',
 						site_url('logout/office'));
 			}
