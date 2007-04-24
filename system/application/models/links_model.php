@@ -99,6 +99,7 @@ class Links_Model extends Model {
 	}
 
 	function DropUserLinks($user) {
+		//TODO Check Link if link is not official, so we can delete it totally
 		$sql = 'DELETE FROM user_links WHERE user_link_user_entity_id= ?';
 		return $this->db->query($sql, array($user));
 	}

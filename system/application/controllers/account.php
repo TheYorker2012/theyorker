@@ -155,6 +155,7 @@ class Account extends controller
 			redirect('/account/links', 'location');
 		}
 		
+		$data = array();
 		$this->_SetupTabs('links');
 
 		/// Get custom page content
