@@ -187,9 +187,9 @@ class Prefs_model extends Model {
 
 	/**
 	 * getSlideshowImages
-	 * 
+	 *
 	 * DEPRECIATED
-	 * 
+	 *
 	 * @author Chris Travis (cdt502 - ctravis@gmail.com)
 	 */
 	function getSlideshowImages ($org_id)
@@ -296,6 +296,31 @@ class Prefs_model extends Model {
 			array_push($societies, $row['orgid']);
 		}
 		return $societies;
+	}
+
+	function getAllSubscriptions ($user_id)
+	{
+		$sql =
+		'SELECT
+		 organisations.organisation_name AS organisation_name,
+		 organisation_types.organisation_type_name AS organisation_type_name,
+		 subscriptions.subscription_organisation_entity_id AS org_id,
+		 subscriptions.subscription_email AS subscription_email,
+		 subscriptions.subscription_paid AS subscription_paid,
+		 subscriptions.subscription_calendar AS subscription_calendar,
+		 subscriptions.subscription_todo AS subscription_todo
+		FROM subscriptions
+		INNER JOIN organisations
+		 ON subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN organisation_types
+		 ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+		WHERE subscriptions.subscription_user_entity_id = ?
+		 AND subscriptions.subscription_deleted = 0
+		ORDER BY organisation_name ASC';
+
+		$query = $this->db->query($sql, $user_id);
+
+		return $query->result_array();
 	}
 
 	/**

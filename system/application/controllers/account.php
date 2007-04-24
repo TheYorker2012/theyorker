@@ -14,6 +14,29 @@ class Account extends controller
 	function __construct()
 	{
 		parent::controller();
+		$this->load->model('prefs_model');
+	}
+
+	/// Set up the tabs on the main_frame.
+	/**
+	 * @param $SelectedPage string Selected Page.
+	 * @pre CheckPermissions must have already been called.
+	 */
+	protected function _SetupTabs($SelectedPage)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('subscriptions', 'Subscriptions',
+				'/account');
+		$navbar->AddItem('personal', 'Personal',
+				'/account/personal');
+		$navbar->AddItem('homepage', 'Homepage',
+				'/account/homepage');
+		$navbar->AddItem('password', 'Password',
+				'/account/password/change');
+		$navbar->AddItem('bcards', 'VIP',
+				'/account/bcards');
+
+		$this->main_frame->SetPage($SelectedPage);
 	}
 
 	/**
@@ -24,11 +47,14 @@ class Account extends controller
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 
-		$data['test'] = 'test';
+		$this->_SetupTabs('subscriptions');
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_home');
-
+		
+		/// Get subscriptions of the current user
+		$data['Subscriptions']  = $this->prefs_model->getAllSubscriptions($this->user_auth->entityId);
+		
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/myaccount', $data);
 		/// Set page title & load main frame with view
@@ -43,6 +69,8 @@ class Account extends controller
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 
+		$this->_SetupTabs('bcards');
+
 		$data['test'] = 'test';
 
 		/// Get custom page content
@@ -53,6 +81,49 @@ class Account extends controller
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
+	
+		/**
+	 *	@brief	Allows setting of links and other homepage related settings
+	 */
+	function homepage()
+	{
+		/// Make sure users have necessary permissions to view this page
+		if (!CheckPermissions('student')) return;
+
+		$this->_SetupTabs('homepage');
+
+		$data['test'] = 'test';
+
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_homepage');
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('account/homepage', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->Load();
+	}
+
+	/**
+	 *	@brief	Allows setting of personal information
+	 */
+	function personal()
+	{
+		/// Make sure users have necessary permissions to view this page
+		if (!CheckPermissions('student')) return;
+
+		$this->_SetupTabs('personal');
+
+		$data['test'] = 'test';
+
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_personal');
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('account/personal', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->Load();
+	}
+
 
 	/// Password related operations
 	function password($option = '', $parameter = NULL)
@@ -105,6 +176,8 @@ class Account extends controller
 		$password_setter  = $handlers[$parameter][2];
 
 		if (!CheckPermissions($permission_level)) return;
+
+		$this->_SetupTabs('password');
 
 		$this->pages_model->SetPageCode('account_password_change');
 
