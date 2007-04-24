@@ -27,7 +27,7 @@ function printmiddlebox($title,$article_array){
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
 <?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
-		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name)?></a>
+		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension)?></a>
 <?php } } else { ?>
 	<a href="http://theyorker.co.uk">You have no links :(</a>
 <?php }?>
