@@ -221,12 +221,12 @@ a.CalendarFilter {
 	padding-left: 10px;
 	padding-right: 10px;
 	border: 1px #999 solid;
-	margin-top: 13px;
 }
 
 a.CalendarButtons {
 	float: right;
+	padding-right: 10px;
 	margin-left: 0;
-	margin-top: 13px;
+	margin-right: 0;
 }
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
