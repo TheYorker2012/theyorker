@@ -66,6 +66,7 @@ class Members extends Controller
 	{
 		parent::Controller();
 		$this->load->model('directory_model');
+		$this->load->model('businesscards_model');
 		$this->load->model('organisation_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
@@ -567,11 +568,33 @@ class Members extends Controller
 				'business_card' => $business_cards[0],
 				'business_card_goups' => array(),
 			);
+			//Send data to form
+			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($Suboption1);
+			foreach($cards_data as $card_data){
+				if($card_data['business_card_user_entity_id']!=0){
+				$username = $this->businesscards_model->GetUsernameFromUserId($card_data['business_card_user_entity_id']);
+				}else{
+				$username = "";
+				}
+				$data['card_form'] = array(
+					'card_name' => $card_data['business_card_name'],
+					'card_title' => $card_data['business_card_title'],
+					'group_id' => $card_data['business_card_business_card_group_id'],
+					'card_username' => $username,
+					'card_course' => $card_data['business_card_course'],
+					'email' => $card_data['business_card_email'],
+					'card_about' => $card_data['business_card_blurb'],
+					'postal_address' => $card_data['business_card_postal_address'],
+					'phone_mobile' => $card_data['business_card_mobile'],
+					'phone_internal' => $card_data['business_card_phone_internal'],
+					'phone_external' => $card_data['business_card_phone_external'],
+				);
+			}
 			
 			// Business Card Groups
 			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups(VipOrganisation());
 			foreach ($groups as $group) {
-				$data['business_card_goups'][] = array(
+				$data['groups'][] = array(
 					'name' => $group['business_card_group_name'],
 					'id' => $group['business_card_group_id'],
 					'href' => vip_url('members/cards/filter/cardgroup/'.$group['business_card_group_id'])

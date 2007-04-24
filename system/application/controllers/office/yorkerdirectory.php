@@ -418,6 +418,39 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->AddMessage('success','Group was successfully added.');
 			
 		}
+		if(!empty($_POST["card_addbutton"])){
+			if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
+			{
+			$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
+			//add failed send the data back into the form
+			$data['card_form']=$_POST;
+			}else{
+				//find user id if exist
+				if(!empty($_POST["card_username"])){
+					//find user id from username
+					$user_id = $this->businesscards_model->GetUserIdFromUsername($_POST["card_username"]);
+				}else{
+					$user_id = "";
+				}
+				
+				//Send message if username was given and no id found
+				if($user_id==""&&!empty($_POST["card_username"])){
+					$this->main_frame->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
+				//add failed send the data back into the form
+				$data['card_form']=$_POST;
+				} else {
+				
+					//add contact card
+					//@note start time, end time, order, and image id are all currently null and not in use.
+					$this->businesscards_model->NewBusinessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
+			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"], 
+			$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
+			0, null, null);
+					$this->main_frame->AddMessage('success','The contact card was successfully added.');
+					
+				}
+			}
+		}
 		
 		if (!empty($data)) {
 			$this->_SetupNavbar();

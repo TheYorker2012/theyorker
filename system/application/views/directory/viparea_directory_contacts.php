@@ -9,51 +9,61 @@
 
 <h2>Edit <?php if(!empty($business_card['name'])){echo $business_card['name'];} ?></h2>
 
-<form name='member' method='post' action='/viparea/directory/contacts/' class='form'>
+<form name='edit_card' method='post' action='<?php echo vip_url('directory/contacts'); ?>' class='form'>
 	<fieldset>
-		<label for='member_name'>Name:</label>
-		<input type='text' name='member_name' value='<?php if(!empty($business_card['name'])){echo $business_card['name'];} ?>'/>
+		<label for='card_name'>Name:</label>
+		<input type='text' name='card_name' value='<?php if(!empty($card_form['card_name'])){echo $card_form['card_name'];} ?>'/>
 		<br />
-		<label for='member_title'>Title:</label>
-		<input type='text' name='member_title' value='<?php if(!empty($business_card['title'])){echo $business_card['title'];} ?>'/>
+		<label for='card_title'>Title:</label>
+		<input type='text' name='card_title' value='<?php if(!empty($card_form['card_title'])){echo $card_form['card_title'];} ?>'/>
 		<br />
-		<label for='member_group'>Group:</label>
-		<select name='member_group'>
+		<label for='group_id'>Group:</label>
+		<select name='group_id'>
 		<?php
-		foreach ($business_card_groups as $group) {
+		foreach ($groups as $group) {
 			?>
-			<option value='<?php echo $group['id'] ?>' <?php if ($group['id']==$business_card['group_id']) echo 'SELECTED'; ?>><?php echo $group['name'] ?></option>
+			<option value='<?php echo $group['id'] ?>'
+			<?php if(!empty($card_form['group_id']))
+					{
+						if ($group['id']==$card_form['group_id'])
+						{echo 'selected';}
+					}
+				?>
+				>
+				<?php echo $group['name'] ?></option>
 			<?php
 		}
 		?>
 		</select>
 		<br />
-		<label for='member_course'>Course:</label>
-		<input type='text' name='member_course' value='<?php if(!empty($business_card['course'])){echo $business_card['course'];} ?>'/>
+		<label for='card_username'>Yorker Username:</label>
+		<input type='text' name='card_username' value='<?php if(!empty($card_form['card_username'])){echo $card_form['card_username'];} ?>'/>
 		<br />
-		<label for='member_email'>Email:</label>
-		<input type='text' name='member_email' value='<?php if(!empty($business_card['email'])){echo $business_card['email'];} ?>'/>
+		<label for='card_course'>Course:</label>
+		<input type='text' name='card_course' value='<?php if(!empty($card_form['card_course'])){echo $card_form['card_course'];} ?>'/>
 		<br />
-		<label for='member_about'>About:</label>
-		<textarea name='member_about' cols='28' rows='7'><?php if(!empty($business_card['about'])){echo $business_card['about'];} ?></textarea>
+		<label for='email'>Email:</label>
+		<input type='text' name='email' value='<?php if(!empty($card_form['email'])){echo $card_form['email'];} ?>'/>
 		<br />
-		<label for='member_address'>Postal Address:</label>
-		<textarea name='member_address' cols='25' rows='4'><?php if(!empty($business_card['postal_address'])){echo $business_card['postal_address'];} ?></textarea>
+		<label for='card_about'>About:</label>
+		<textarea name='card_about' cols='28' rows='7'><?php if(!empty($card_form['card_about'])){echo $card_form['card_about'];} ?></textarea>
 		<br />
-		<label for='member_phone_mobile'>Phone Mobile:</label>
-		<input type='text' name='member_phone_mobile' value='<?php if(!empty($business_card['mobile_phone'])){echo $business_card['mobile_phone'];} ?>'/>
+		<label for='postal_address'>Postal Address:</label>
+		<textarea name='postal_address' cols='25' rows='4'><?php if(!empty($card_form['postal_address'])){echo $card_form['postal_address'];} ?></textarea>
 		<br />
-		<label for='member_phone_internal'>Phone Internal:</label>
-		<input type='text' name='member_phone_internal' value='<?php if(!empty($business_card['phone_internal'])){echo $business_card['phone_internal'];} ?>'/>
+		<label for='phone_mobile'>Phone Mobile:</label>
+		<input type='text' name='phone_mobile' value='<?php if(!empty($card_form['phone_mobile'])){echo $card_form['phone_mobile'];} ?>'/>
 		<br />
-		<label for='member_phone_external'>Phone External:</label>
-		<input type='text' name='member_phone_external' value='<?php if(!empty($business_card['phone_external'])){echo $business_card['phone_external'];} ?>'/>
+		<label for='phone_internal'>Phone Internal:</label>
+		<input type='text' name='phone_internal' value='<?php if(!empty($card_form['phone_internal'])){echo $card_form['phone_internal'];} ?>'/>
 		<br />
-		<label for='member_addbutton'></label>
-		<input name='member_cancelbutton' type='button' id='member_cancelbutton' value='Cancel' class='button' />
-		<input name='member_addbutton' type='submit' id='member_addbutton' value='Add/Edit' class='button' />
+		<label for='phone_external'>Phone External:</label>
+		<input type='text' name='phone_external' value='<?php if(!empty($card_form['phone_external'])){echo $card_form['phone_external'];} ?>'/>
+		<br />
+		<label for='card_editbutton'></label>
+		<input name='card_editbutton' type='submit' id='card_editbutton' value='Update' class='button' />
 		</fieldset>
 	</form>
 </div>
-<a href='/viparea/'>Back to the vip area.</a>
+<a href='<?php echo vip_url('directory/contacts'); ?>'>Back to the Viparea contacts editor.</a>
 </div>

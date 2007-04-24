@@ -52,6 +52,34 @@ class Businesscards_model extends Model
 		$query = $this->db->query($sql);
 		return $query;
 	}
+	function GetUserIdFromUsername($username)
+	{
+		$sql =
+			'SELECT entities.entity_id as id '.
+			'FROM entities '.
+			'WHERE entities.entity_username=? ';
+		$query = $this->db->query($sql, $username);
+		$row = $query->row();
+		if(empty($row)){
+			return null;
+		}else{
+			return $row->id;
+		}
+	}
+	function GetUsernameFromUserId($UserId)
+	{
+		$sql =
+			'SELECT entities.entity_username as username '.
+			'FROM entities '.
+			'WHERE entities.entity_id=? ';
+		$query = $this->db->query($sql, $UserId);
+		$row = $query->row();
+		if(empty($row)){
+			return null;
+		}else{
+			return $row->username;
+		}
+	}
 	
 	function DeleteBusinessCard($id)
 	{
