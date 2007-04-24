@@ -84,14 +84,26 @@ class Account extends controller
 	}
 	
 	/**
+	 *	@brief	AJAX call
+	 */
+	function _links_update($links) {
+		echo "not done";
+	}
+	
+	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
 	function links()
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
+		
 		$this->load->model('Links_Model');
+		$this->load->library('xajax');
 		$this->load->helper('images');
+		$this->xajax->registerFunction(array("links_update", &$this, "_links_update"));
+		$this->xajax->processRequests();
+		
 
 		$this->_SetupTabs('links');
 
@@ -101,7 +113,8 @@ class Account extends controller
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_links');
 		
-		$head = '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
+		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
+		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
 
 		/// Set up the main frame

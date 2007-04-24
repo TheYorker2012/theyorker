@@ -4,10 +4,8 @@
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
-		<?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
+		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
 				<span id="<?=$picture->link_id?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></span>
-		<?php } } else { ?>
-				You have no links :(
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
@@ -35,8 +33,10 @@
  <script type="text/javascript" language="javascript">
  // <![CDATA[
    Sortable.create("links",
-     {tag:'span',overlap:'horizontal',constraint: false,
-      onUpdate:updateList()
+    {tag:'span',overlap:'horizontal',constraint: false,
+	onUpdate:function() {
+		updateList()
+	}
     });
 
 	Droppables.add('bin', {
@@ -60,7 +60,8 @@
 				$('linklist').value+= tags[i].id + '+';
 			}
 		}
-		//do some ajax here!
+		
+		xajax_links_update($('linklist').value);
 	}
  // ]]>
  </script>
