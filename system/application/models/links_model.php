@@ -107,7 +107,7 @@ class Links_Model extends Model {
 	 */
 	function GetUserLinks($user) {
 		$sql = 'SELECT link_id, link_url,link_name,link_image_id, image_file_extension
-			FROM links, images
+			FROM images, links
 			INNER JOIN user_links
 			ON user_link_link_id = links.link_id
 			WHERE image_id = link_image_id
