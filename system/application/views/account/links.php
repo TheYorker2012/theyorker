@@ -32,12 +32,12 @@
 
  <script type="text/javascript" language="javascript">
  // <![CDATA[
-   Sortable.create("links",
-    {tag:'span',overlap:'horizontal',constraint: false,
-	onUpdate:function() {
-		alert('boo');
-		updateList();
-	}
+	Sortable.create("links", {
+		tag:'span',overlap:'horizontal',constraint: false,
+		onUpdate: function(element) {
+			alert('boo');
+			updateList();
+		},
     });
 
 	Droppables.add('bin', {
@@ -47,7 +47,7 @@
 			element.parentNode.removeChild(element);
 			Sortable.create("links",
 				{tag:'span',overlap:'horizontal',constraint: false,
-					onUpdate:updateList()
+					onUpdate: updateList(),
 				});
 			updateList();
 		}

@@ -87,7 +87,8 @@ class Account extends controller
 	 *	@brief	AJAX call
 	 */
 	function _links_update($links) {
-		echo "not done";
+		$objResponse = new xajaxResponse();
+		return $objResponse;
 	}
 	
 	/**
