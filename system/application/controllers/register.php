@@ -26,11 +26,19 @@ class Register extends Controller {
 		// TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
 		
+		$this->load->library('account_personal');
+		
 		// Get page content
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		
+		$this->account_personal->Validate();
+		
+		//$directory_view = $this->frames->view('directory/directory', $data);
 
+		$data['bigcontent'] = $this->account_personal;
+		$this->main_frame->SetContentSimple('account/preferences', $data);
+		
 		// Set up the main frame
 		$this->main_frame->SetTitleParameters(
 			array('section' => 'General')

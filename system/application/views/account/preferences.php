@@ -5,6 +5,9 @@
 
 <div id="MainColumn">
 
-(Load Account_personal here)
+<?php
+// Display the main content
+$bigcontent->Load();
+?>
 
 </div>

@@ -15,6 +15,7 @@ class Account extends controller
 	{
 		parent::controller();
 		$this->load->model('prefs_model');
+		$this->load->model('prefs_model');
 	}
 
 	/// Set up the tabs on the main_frame.
@@ -29,8 +30,8 @@ class Account extends controller
 				'/account');
 		$navbar->AddItem('personal', 'Personal',
 				'/account/personal');
-		$navbar->AddItem('homepage', 'Homepage',
-				'/account/homepage');
+		$navbar->AddItem('links', 'Links',
+				'/account/links');
 		$navbar->AddItem('password', 'Password',
 				'/account/password/change');
 		$navbar->AddItem('bcards', 'VIP',
@@ -82,23 +83,47 @@ class Account extends controller
 		$this->main_frame->Load();
 	}
 	
-		/**
+	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
-	function homepage()
+	function links()
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 
-		$this->_SetupTabs('homepage');
+		$this->_SetupTabs('links');
 
 		$data['test'] = 'test';
 
 		/// Get custom page content
-		$this->pages_model->SetPageCode('account_homepage');
+		$this->pages_model->SetPageCode('account_links');
+		
+		$head = '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
+		$this->main_frame->SetExtraHead($head);
 
 		/// Set up the main frame
-		$this->main_frame->SetContentSimple('account/homepage', $data);
+		$this->main_frame->SetContentSimple('account/links', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->Load();
+	}
+	
+	/**
+	 *	@brief	Allows setting of links and other homepage related settings
+	 */
+	function customlink()
+	{
+		/// Make sure users have necessary permissions to view this page
+		if (!CheckPermissions('student')) return;
+
+		$this->_SetupTabs('links');
+
+		$data['test'] = 'test';
+
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_customlinks');
+		
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('account/custom_link', $data);
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
@@ -108,19 +133,30 @@ class Account extends controller
 	 */
 	function personal()
 	{
-		/// Make sure users have necessary permissions to view this page
+		// TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
-
-		$this->_SetupTabs('personal');
-
-		$data['test'] = 'test';
-
+		
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_personal');
-
-		/// Set up the main frame
-		$this->main_frame->SetContentSimple('account/personal', $data);
-		/// Set page title & load main frame with view
+		
+		$this->_SetupTabs('personal');
+		
+		$this->load->library('account_personal');
+		
+		// Get page content
+		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
+		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
+		
+		$this->account_personal->Validate();
+		
+		$data['bigcontent'] = $this->account_personal;
+		$this->main_frame->SetContentSimple('account/preferences', $data);
+		
+		// Set up the main frame
+		$this->main_frame->SetTitleParameters(
+			array('section' => 'General')
+		);
+		// Load the main frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 
