@@ -142,10 +142,19 @@ class Account extends controller
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
-
+		
+		$this->load->model('Links_Model');
+		
+		if ($this->input->post('lurl') and $this->input->post('lname')) {
+			if ($this->input->post('lnominate') == 'on') {
+				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
+			} else {
+				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
+			}
+			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
+		}
+		
 		$this->_SetupTabs('links');
-
-		$data['test'] = 'test';
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_customlinks');

@@ -8,10 +8,10 @@
 	<div class="BlueBox">
 		<h2>Add Custom Link</h2>
 		To add a link that is not in the list, enter it here.
-		<form>
+		<form action="customlink" method="post">
 		<fieldset>
 			<label for="lname"> Link Name: </label>
-			<input type="text" id="lname" name="lname" value="" />
+			<input type="text" id="lname" name="lname" value="" default />
 			<br />
 			<label for="lurl"> Link URL: </label>
 			<input type="text" id="lurl" name="lurl" value="http://" />

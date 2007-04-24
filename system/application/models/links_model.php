@@ -18,9 +18,10 @@ class Links_Model extends Model {
 	/*
 	 * Adds a user link with default image to database
 	 */
-	function AddLink($name,$url) {
-		$sql = 'INSERT INTO links(link_url,link_name) VALUES (?,?)';
-		$query = $this->db->query($sql,array($url,$name));
+	function AddLink($name, $url, $nominated) {
+		$sql = 'INSERT INTO links(link_url,link_name,link_nominated) VALUES (?, ?, ?)';
+		$query = $this->db->query($sql,array($url, $name, $nominated));\
+		return $this->db->insert_id();
 	}
 	/*
 	 * Removes user link from database (+ any non default or official pics)

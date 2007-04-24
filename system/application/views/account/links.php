@@ -24,7 +24,7 @@
 	<h2>Custom Links</h2>
 	<div class="Entry">
 		Custom links allow you to add a link that is not in the list.<br />
-		<form action="/account/customlink">
+		<form method="post" action="/account/customlink">
 		<input type="submit" value="Create Link" class="button" />
 		</form>
 	</div>
@@ -64,13 +64,13 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Add Links</h2>
-		<form>
+<!--		<form>
 		<fieldset>
 			<label for="sname"> Search: </label>
 			<input type="text" id="sname" name="sname" value="" />
 			<br />
 		</fieldset>
-		</form>
+		</form>-->
 		<div style="height:200px;overflow-x: hidden;overflow-y:scroll;overflow:-moz-scrollbars-vertical !important;">
 			<?php foreach ($AllLinks->result() as $option) {?>
 						<a href="links/add/<?=$option->link_id?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
