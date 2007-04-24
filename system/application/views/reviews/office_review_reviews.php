@@ -37,7 +37,7 @@
 				<?php 
 				foreach ($bylines['generic'] as $option)
 				{
-					echo '<option>'.$option['name'].'</option>';
+					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
 				}
 				?>
 				</optgroup>
@@ -45,7 +45,7 @@
 				<?php 
 				foreach ($bylines['user'] as $option)
 				{
-					echo '<option>'.$option['name'].'</option>';
+					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
 				}
 				?>
 				</optgroup>

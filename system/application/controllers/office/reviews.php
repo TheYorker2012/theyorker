@@ -285,12 +285,15 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
-	function review($ContextType, $organisation)
+	function review($context_type, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
+
+		$this->load->model('businesscards_model');
+		$this->pages_model->SetPageCode('office_review_reviews');
 		
 		/*
-		[a_review_author] => name of the author
+		[a_review_author] => byline id of the author
 		[a_review_text] => review data
 		[r_submit_newreview] => submit button
 		*/
@@ -299,22 +302,28 @@ class Reviews extends Controller
 			echo '<pre>';
 			print_r($_POST);
 			echo '</pre>';
+			
+			//$status,$type_codename,$title,$description,$user,$data
+			/*$this->requests_model->CreateRequest(
+				'request',
+				$context_type,
+				'');*/
 		}
-
-		$this->load->model('bylines_model');
-		$this->pages_model->SetPageCode('office_review_reviews');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar($organisation,$ContextType);
+		$this->_SetupNavbar($organisation, $context_type);
 		$this->main_frame->SetPage('reviews');
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
 		//bylines
-		$data['bylines']['generic'] = $this->bylines_model->GetGeneralBylines();
-		$data['bylines']['user'] = $this->bylines_model->GetUsersBylines($this->user_auth->entityId);
+		//$data['bylines']['generic'] = $this->bylines_model->GetGeneralBylines();
+		//$data['bylines']['user'] = $this->bylines_model->GetUsersBylines($this->user_auth->entityId);
+
+		//$this->businesscards_model->NewBusinessCard(436, 3, 0, 'My Name', 'My Title', 'my blurb', 'My Course', NULL,
+		//	023648273482, 23452, 0234523455, 'My Address', 0, time(), time());
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
@@ -322,7 +331,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => $context_type));
 		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
