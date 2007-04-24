@@ -91,7 +91,7 @@ class Account extends controller
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 		$this->load->model('Links_Model');
-		$this->load->helper('images')
+		$this->load->helper('images');
 
 		$this->_SetupTabs('links');
 
