@@ -101,6 +101,11 @@ if ($user['officetype'] != 'Low')
 			<input type="submit" name="r_submit_publish" value="Publish" />
 		</fieldset>
 	</form>
+	<?php
+	if ($parameters['revision_id'] == $article['header']['live_content'])
+		if ($parameters['revision_id'] == $article['displayrevision']['id'])
+			{
+	?>
 	<br />
 	If you wish to PULL this published review, click the button to do so...<br /><br />
 	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
@@ -108,6 +113,9 @@ if ($user['officetype'] != 'Low')
 			<input type="submit" name="r_submit_pull" value="Pull" />
 		</fieldset>
 	</form>
+	<?php
+			}
+	?>
 	<br />
 	If you wish to DELETE this review, click the button to do so...<br /><br />
 	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">

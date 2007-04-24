@@ -420,15 +420,26 @@ class Reviews extends Controller
 		}
 		elseif (isset($_POST['r_submit_publish']))
 		{
-			echo 'r_submit_publish';
+			$this->requests_model->UpdateRequestStatus(
+				$article_id,
+				'publish',
+				array('content_id'=>$revision_id,
+					'publish_date'=>date('y-m-d H:i:s'),
+					'editor'=>$this->user_auth->entityId)
+				);
+			$this->main_frame->AddMessage('success','Review had been published.');
 		}
 		elseif (isset($_POST['r_submit_pull']))
 		{
-			echo 'r_submit_pull';
+			$this->article_model->PullArticle($article_id, $this->user_auth->entityId);
+			$this->requests_model->UpdatePulledToRequest($article_id, $this->user_auth->entityId);
+			$this->main_frame->AddMessage('success','Review has been pulled from publication.');
 		}
 		elseif (isset($_POST['r_submit_delete']))
 		{
-			echo 'r_submit_delete';
+			$this->requests_model->RejectSuggestion($article_id);
+			$this->main_frame->AddMessage('success','Review has been deleted.');
+			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 
 		/** store the parameters passed to the method so it can be
@@ -453,7 +464,7 @@ class Reviews extends Controller
 		if ($found == false && $data['user']['officetype'] = 'Low')
 		{
 			$this->main_frame->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
-			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/');
+			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 		
 		/** get the article's header for the article id passed to 
@@ -463,7 +474,7 @@ class Reviews extends Controller
 		if ($data['article']['header']['organisation'] != $data['organisation']['id'])
 		{
 			$this->main_frame->AddMessage('error','Specified review is for a different organisation. Can\'t edit.');
-			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/');
+			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 		
 		//get the list of current question revisions
@@ -505,7 +516,7 @@ class Reviews extends Controller
 			if ($data['article']['displayrevision'] == FALSE)
 			{
 				$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this review. Default selected.');
-				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/'.$article_id.'/');
+				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/');
 			}
 		}
 		

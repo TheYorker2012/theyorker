@@ -1027,7 +1027,9 @@ function GetTagOrganisation($type,$organisation)
 			$sql = 'SELECT	article_id
 				FROM	articles
 				WHERE	(article_content_type_id = ?
-				AND	article_organisation_entity_id = ?)';
+				AND	article_organisation_entity_id = ?
+				AND	article_deleted = 0
+				AND	article_pulled = 0)';
 			$query = $this->db->query($sql,array($type_id, $org_id));
 			$result = array();
 			if ($query->num_rows() > 0)
