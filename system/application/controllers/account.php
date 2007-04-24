@@ -152,6 +152,7 @@ class Account extends controller
 				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
 			}
 			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
+			redirect('/account/links', 'location');
 		}
 		
 		$this->_SetupTabs('links');

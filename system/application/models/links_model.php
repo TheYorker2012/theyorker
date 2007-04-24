@@ -20,7 +20,7 @@ class Links_Model extends Model {
 	 */
 	function AddLink($name, $url, $nominated) {
 		$sql = 'INSERT INTO links(link_url,link_name,link_nominated) VALUES (?, ?, ?)';
-		$query = $this->db->query($sql,array($url, $name, $nominated));\
+		$query = $this->db->query($sql,array($url, $name, $nominated));
 		return $this->db->insert_id();
 	}
 	/*
