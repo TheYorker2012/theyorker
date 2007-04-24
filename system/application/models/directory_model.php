@@ -106,7 +106,7 @@ class Directory_model extends Model {
 	 * @param $BusinessCardGroupId business card group to return
 	 * @return array[business_card].
 	 */
-	function GetDirectoryOrganisationCardsByGroupId($BusinessCardGroupId)
+	function GetDirectoryOrganisationCardsByGroupId($BusinessCardGroupId, $Show_all=false)
 	{
 		$sql =
 			'SELECT'.
@@ -122,13 +122,17 @@ class Directory_model extends Model {
 			' business_cards.business_card_phone_internal,'.
 			' business_cards.business_card_phone_external,'.
 			' business_cards.business_card_postal_address,'.
-			' business_card_groups.business_card_group_name '.
+			' business_card_groups.business_card_group_name, '.
+			' business_cards.business_card_approved '.
 			'FROM business_cards '.
 			'INNER JOIN business_card_groups '.
 			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
 			'WHERE business_cards.business_card_deleted = 0 '.
-			'AND business_card_groups.business_card_group_id = ? '.
-			'ORDER BY business_cards.business_card_order';
+			'AND business_card_groups.business_card_group_id = ? ';
+			if($Show_all==false){
+			$sql .='AND business_cards.business_card_approved = 1 ';
+			}
+			$sql .='ORDER BY business_cards.business_card_order';
 	
 		$query = $this->db->query($sql, $BusinessCardGroupId);
 	
@@ -157,6 +161,7 @@ class Directory_model extends Model {
 			' business_cards.business_card_phone_internal,'.
 			' business_cards.business_card_phone_external,'.
 			' business_cards.business_card_postal_address,'.
+			' business_cards.business_card_approved, '.
 			' organisations.organisation_directory_entry_name '.
 			'FROM business_cards '.
 			'INNER JOIN business_card_groups '.

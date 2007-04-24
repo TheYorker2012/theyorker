@@ -19,7 +19,7 @@ class Businesscards_model extends Model
 	function NewBusinessCard($user_id, $group_id, $image_id, $name,
 			$title, $blurb, $course, $email, $mobile, 
 			$phone_internal, $phone_external, $postal_address,
-			$order, $start_date, $end_date)
+			$order, $start_date, $end_date, $force_publish=0)
 	{
 		$sql = 'INSERT INTO business_cards(
 				business_card_user_entity_id,
@@ -38,14 +38,15 @@ class Businesscards_model extends Model
 				business_card_start_date,
 				business_card_end_date,
 				business_card_deleted,
+				business_card_approved,
 				business_card_timestamp)
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,CURRENT_TIMESTAMP)';
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?,CURRENT_TIMESTAMP)';
 		$this->db->query($sql,array($user_id, $image_id, $name, 
 						$title, $blurb, $course, 
 						$group_id, $email, $mobile, 
 						$phone_internal, $phone_external, 
 						$postal_address, $order,
-						$start_date, $end_date));
+						$start_date, $end_date, $force_publish));
 		$sql = 'SELECT 	business_card_id
 			FROM	business_cards
 			WHERE	(business_card_id=LAST_INSERT_ID())';
@@ -56,7 +57,7 @@ class Businesscards_model extends Model
 	function UpdateBuisnessCard($user_id, $group_id, $image_id, $name,
 			$title, $blurb, $course, $email, $mobile, 
 			$phone_internal, $phone_external, $postal_address,
-			$order, $start_date, $end_date, $business_card_id)
+			$order, $start_date, $end_date, $business_card_id, $force_publish=0)
 	{
 		$sql = "UPDATE `business_cards` SET".
 				" `business_card_user_entity_id` = ?,".
@@ -74,13 +75,14 @@ class Businesscards_model extends Model
 				" `business_card_order` = ?,".
 				" `business_card_start_date` = ?,".
 				" `business_card_end_date` = ?".
+				" `business_card_approved` = ?".
 				" WHERE `business_cards`.`business_card_id` = ?";
 				$this->db->query($sql,array($user_id, $image_id, $name, 
 							$title, $blurb, $course, 
 							$group_id, $email, $mobile, 
 							$phone_internal, $phone_external, 
 							$postal_address, $order,
-							$start_date, $end_date, $business_card_id));
+							$start_date, $end_date, $force_publish, $business_card_id));
 		return ($this->db->affected_rows() > 0);
 	}
 	

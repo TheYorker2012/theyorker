@@ -58,9 +58,9 @@ if($business_card['image_id'] == NULL)
 		<?php
 		if (isset($editmode) && $editmode) {
 		?>
-			<form name='member' method='post' action='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>' class='form'>
+			<form name='member' method='post' action='<?php echo vip_url('directory/contacts/deletecard/'.$business_card['id']); ?>' class='form'>
 			<fieldset>
-				<input name='member_delete_button' type='button' onClick="parent.location='<?php echo vip_url('directory/contacts/confirmdeletecard/'.$business_card['id']); ?>'"value='Delete' class='button' />
+				<input name='member_delete_button' type='submit' onClick="return confirm('Are you sure you want to delete <?php echo $business_card['name']; ?>s contact card?');" value='Delete' class='button' />
 				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />
 			</fieldset>
 			</form>
