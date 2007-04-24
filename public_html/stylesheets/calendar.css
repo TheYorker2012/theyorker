@@ -213,4 +213,20 @@
 	text-align: center;
 	color: #444444;
 }
+
+a.CalendarFilter {
+	float: left;
+	min-width: 40px;
+	text-align: center;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 1px #999 solid;
+	margin-top: 13px;
+}
+
+a.CalendarButtons {
+	float: right;
+	margin-left: 0;
+	margin-top: 13px;
+}
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */

@@ -27,36 +27,28 @@
 ?>
 
 <div class="BlueBox">
-	<table border="0" cellpadding="2" cellspacing="0">
-		<tr>
-			<?php
-			foreach ($Filters as $id => $filter) {
-				switch ($filter['display']) {
-					case 'block':
-						echo '<td><a href="#">';
-						echo $filter['name'];
-						echo '</a></td>';
-						break;
-					case 'image':
-						echo('<td>');
-						if (array_key_exists('link', $filter)) {
-							echo('<a href="'.$filter['link'].'">');
-						}
-						echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'"/>');
-						if (array_key_exists('link', $filter)) {
-							echo('</a>');
-						}
-						echo('</td>');
-						break;
+	<?php
+	foreach ($Filters as $id => $filter) {
+		switch ($filter['display']) {
+			case 'block':
+				echo '<a class="CalendarFilter" href="#">';
+				echo $filter['name'];
+				echo '</a>';
+				break;
+			case 'image':
+				if (array_key_exists('link', $filter)) {
+					echo('<a class="CalendarButtons" href="'.$filter['link'].'">');
 				}
-			}
-			
-			?>
-		</tr>
-	</table>
-</div>
-
-<div class="BlueBox">
+				echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'" />');
+				if (array_key_exists('link', $filter)) {
+					echo('</a>');
+				}
+				break;
+		}
+	}
+	
+	?>
+<div style="clear: both;"></div>
 <?php
 if (isset($RangeDescription)) {
 	echo('<h4>My Calendar: '.$RangeDescription.'</h4>');
