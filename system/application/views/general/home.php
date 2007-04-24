@@ -40,6 +40,7 @@ function printsmallnewsbox($article){
 	<h2>To Do</h2>
 	<div class="Entry">
 		<?php $todo->Load(); ?>
+		<a class="RightColumnAction"  href=".">New To Do</a>
 	</div>
 
 	<h2>York Weather</h2>
