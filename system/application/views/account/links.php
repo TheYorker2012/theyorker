@@ -39,8 +39,7 @@
 			Sortable.destroy("links");
 			element.parentNode.removeChild(element);
 			Sortable.create("links",
-				{tag:'span',overlap:'horizontal',constraint: false,onUpdate:updateList,
-				});
+				{tag:'span',overlap:'horizontal',constraint: false,onUpdate:"updateList"});
 			updateList();
 		}
 	});
@@ -55,13 +54,10 @@
 		}
 		
 		xajax_links_update(escape($('linklist').value));
-		
-		
 	}
 	
 	Sortable.create("links", {
-		tag:'span',overlap:'horizontal',constraint: false,onUpdate:updateList
-    });
+		tag:'span',overlap:'horizontal',constraint: false,onUpdate:updateList});
  // ]]>
  </script>
 
