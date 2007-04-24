@@ -35,7 +35,8 @@
    Sortable.create("links",
     {tag:'span',overlap:'horizontal',constraint: false,
 	onUpdate:function() {
-		updateList()
+		alert('boo');
+		updateList();
 	}
     });
 
@@ -61,7 +62,7 @@
 			}
 		}
 		
-		xajax_links_update($('linklist').value);
+		xajax_links_update(escape($('linklist').value));
 	}
  // ]]>
  </script>
