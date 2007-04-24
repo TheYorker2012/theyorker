@@ -97,7 +97,7 @@ class Home extends Controller {
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
-			$data['link'] = $this->Links_Model->GetUserLinks($this->User_auth->entityId);
+			$data['link'] = $this->Links_Model->GetUserLinks($this->user_auth->entityId);
 		} else {
 			$data['link'] = $this->Links_Model->GetUserLinks(0);
 		}
