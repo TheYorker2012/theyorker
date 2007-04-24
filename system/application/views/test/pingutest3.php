@@ -48,7 +48,7 @@
 					<td valign="top">
 						<font size="+1"><strong>Boxing Club</strong></font>
 						<br />
-						[<a href="#">Website</a> / <a href="#">Map</a>]
+						<a href="#">Website</a> | <a href="#">Map</a>
 					</td>
 					<td width="126" align="center">
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
@@ -73,7 +73,7 @@
 						<!--<img src="/images/images/small/0/94.jpg" alt="singer" title="singer" />-->
 					</td>
 					<td width="80%" valign="top">
-						When I was about 10, as the weather started to get warm in April, my brother, Roberto, and I often spent our afternoons looking for Astacus fluviatilis, or crayfish.
+						Whether dining in the cozy interior or on the outdoor villa-style terrace overlooking the San Antonio River, exquisite food and impeccable service are mainstays of the Fig Tree Restaurant. Crisp linens drape tables set with fine china and sparkling crystal in elegant yet homey surroundings.
 					</td>
 				</tr>
 				<tr>
@@ -103,7 +103,7 @@
 				<tr>
 					<td align="left" colspan="2">
 						<img src="/images/prototype/news/quote_open.png" alt="oquote" />
-						fight for your food
+						Day or night, this is a great place to be!
 						<img src="/images/prototype/news/quote_close.png" alt="oquote" />
 					</td>
 				</tr>
