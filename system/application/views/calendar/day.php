@@ -4,6 +4,9 @@
  * @param $DateDescription string     .
  * @param $DaysView        FramesDay  .
  * @param $TodoView        FramesView .
+ * @param $ReadOnly        bool
+ * @param $Paths           array[string => string]
+ *	- 'add' string Path to event adder
  */
 
 ?>
@@ -13,6 +16,13 @@
 <div id='RightColumn'>
 	<h2>To-Do</h2>
 	<?php $TodoView->Load(); ?>
+	
+	<?php if (!$ReadOnly) { ?>
+		<h2>Actions</h2>
+		<ul>
+			<li><a href="<?=$Path['add']?>">Add an event</a></li>
+		</ul>
+	<?php } ?>
 </div>
 
 <div id="MainColumn">

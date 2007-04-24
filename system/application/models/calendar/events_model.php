@@ -631,6 +631,15 @@ class Events_model extends Model
 		$this->SetOccurrenceFilter();
 		
 		$this->load->library('academic_calendar');
+		
+		// So that IsReadOnly will work
+		$this->GetActiveEntityId();
+	}
+	
+	/// Find whether the user has permission to alter the calendar.
+	function IsReadOnly()
+	{
+		return $this->mReadOnly;
 	}
 	
 	/// Get the entity id of the active entity.

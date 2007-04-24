@@ -11,7 +11,7 @@ echo('</div>');
 
 $squash = (count($Days) > 3);
 
-function DrawOccurrence(&$Occurrence, $Squash)
+function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly)
 {
 	?>
 	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;">
@@ -25,6 +25,9 @@ function DrawOccurrence(&$Occurrence, $Squash)
 						echo('-');
 						echo($Occurrence->EndTime->Format('g:ia'));
 						echo('<br />');
+					}
+					if ('published' !== $Occurrence->State) {
+						echo('<strong>'.$Occurrence->State.'</strong>');
 					}
 					if (!$Squash) {
 						if (!empty($Occurrence->LocationDescription)) {
@@ -75,7 +78,7 @@ function DrawOccurrence(&$Occurrence, $Squash)
 								}
 							}
 						}
-						if ('owned' === $Occurrence->Event->UserStatus) {
+						if (!$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
 							echo('<br />');
 							echo('<a href="'.site_url('calendar/actions/delete/'.
 								$Occurrence->Event->Source->GetSourceId().
@@ -114,7 +117,7 @@ foreach ($Days as $date => $day) {
 	if (array_key_exists('000000',$times)) {
 		foreach ($times['000000'] as $occurrence) {
 			if (!$occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $squash);
+				DrawOccurrence($occurrence, $squash, $ReadOnly);
 			}
 		}
 	}
@@ -127,7 +130,7 @@ foreach ($Days as $date => $day) {
 	foreach ($times as $time => $ocs) {
 		foreach ($ocs as $occurrence) {
 			if ($occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $squash);
+				DrawOccurrence($occurrence, $squash, $ReadOnly);
 			}
 		}
 	}

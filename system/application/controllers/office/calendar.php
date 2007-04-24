@@ -8,6 +8,16 @@ class Calendar extends controller
 	}
 	
 	
+	function add()
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		$this->load->library('My_calendar');
+		$this->main_frame->SetContent($this->my_calendar->GetAdder());
+		
+		$this->main_frame->Load();
+	}
+	
 	/// Display event information.
 	function event($EventId = NULL)
 	{
@@ -27,6 +37,11 @@ class Calendar extends controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		$sources = & $this->_SetupMyCalendar();
+		
+		// Gotta be a rep or admin to edit
+		$date_range_split = explode(':', $DateRange);
+		$this->my_calendar->SetPath('add', vip_url('calendar/add/'.$date_range_split[0]));
+		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetMyCalendar(
 				$sources, $DateRange, $Filter)
@@ -41,7 +56,7 @@ class Calendar extends controller
 		$this->load->library('calendar_source_yorker');
 		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
 		//$this->calendar->SetAgenda(vip_url('calendar/agenda').'/');
-		return new CalendarSourceYorker(9);
+		return new CalendarSourceYorker(0);
 	}
 	
 	function index()

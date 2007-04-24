@@ -137,6 +137,7 @@ class CalendarSourceYorker extends CalendarSource
 				$occurrence = & $Data->NewOccurrence($events[$event_id]);
 				$occurrences[$occurrence_id] = & $occurrence;
 				$occurrence->SourceOccurrenceId = $occurrence_id;
+				$occurrence->State = $row['state'];
 				/// @todo Active occurrence
 				if (NULL !== $row['start']) {
 					$occurrence->StartTime = new Academic_time((int)$row['start']);

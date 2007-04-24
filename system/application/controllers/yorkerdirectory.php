@@ -276,7 +276,11 @@ class Yorkerdirectory extends Controller
 			$yorker_source->EnableGroup('rsvp');
 			$yorker_source->AddInclusion((int)$data['organisation']['id'], TRUE);
 			
+			$now = new Academic_time(time());
 			$this->my_calendar->SetTabs(FALSE);
+			$this->my_calendar->SetDefaultRange(
+				$now->AcademicYear().'-'.$now->AcademicTermNameUnique()
+			);
 			$calendar_view = $this->my_calendar->GetMyCalendar($yorker_source, $DateRange, $Filter);
 			
 			if (FALSE) {
