@@ -94,7 +94,7 @@ class Account extends controller
 		$this->_SetupTabs('links');
 
 		$data['test'] = 'test';
-		$data['link'] = $this->;
+		$data['link'] = $this->Links_Model->GetUserLinks($this->user_auth->entityId);
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_links');

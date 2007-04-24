@@ -1,9 +1,11 @@
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
-		<?php foreach($link as $picture) {?>
-				<a href="<?=$picture?>"><?=imageLocTag($picture, 'link', false, $picture)?></a>
-		<?php } ?>
+		<?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
+				<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></a>
+		<?php } } else { ?>
+				<a href="http://theyorker.co.uk">You have no links :(</a>
+		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
 	<div class="Entry">

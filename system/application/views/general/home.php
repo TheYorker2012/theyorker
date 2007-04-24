@@ -18,7 +18,7 @@ function printsmallnewsbox($article){
 <?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
 		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_url)?></a>
 <?php } } else { ?>
-		You have no links :(
+	<a href="http://theyorker.co.uk">You have no links :(</a>
 <?php }?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
