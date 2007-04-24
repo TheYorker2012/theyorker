@@ -48,7 +48,7 @@
 					<td valign="top">
 						<font size="+1"><strong>Boxing Club</strong></font>
 						<br />
-						<a href="#">Website</a> | <a href="#">Map</a>
+						<span style="color: #999999"><a href="#">Website</a> | <a href="#">Map</a></span>
 					</td>
 					<td width="126" align="center">
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
@@ -82,7 +82,7 @@
 						<tr>
 							<td>
 								<strong>Cuisine:</strong><br />
-								French<br />English
+								French / English
 							</td>
 							<td >
 								<strong>Price:</strong><br />
