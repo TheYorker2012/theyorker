@@ -48,7 +48,7 @@
 					<td valign="top">
 						<font size="+1"><strong>Boxing Club</strong></font>
 						<br />
-						<span style="color: #999999"><a href="#">Website</a> | <a href="#">Map</a></span>
+						<span style="color: #999999; font-size: 0.9em;" ><a href="#">Website</a> | <a href="#">Map</a></span>
 					</td>
 					<td width="126" align="center">
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
@@ -56,7 +56,7 @@
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
 						<img src="/images/prototype/reviews/star.png" alt="*" title="*" />
 						<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />
-						<div class="Date">User Rating: 9/10</div>
+						<div class="Date" style="font-size: 0.9em;">User Rating: 9/10</div>
 					</td>
 				</tr>
 				</tbody>
