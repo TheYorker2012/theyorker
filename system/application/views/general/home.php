@@ -23,24 +23,23 @@ function printsmallnewsbox($article){
 		<a href="http://www.google.co.uk/"><img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50"></a>
 		<a href="http://en.wikipedia.org/"><img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50"></a>
 		<a href="http://gmail.google.com/"><img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50"></a>
-		<a class="RightColumnAction"  href=".">Customise</a>
+		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
 
 	<h2>My Webmail</h2>
 	<div class="Entry">
-		<table width="100%"><tr><td><a href="https://webmail1.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
+		<table width="100%"><tr><td><a href="https://webmail.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
 	</div>
 
 	<h2>Today's Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
-		<a class="RightColumnAction"  href=".">Calendar</a>
+		<a class="RightColumnAction"  href="/calendar/">Calendar</a>
 	</div>
 
 	<h2>To Do</h2>
 	<div class="Entry">
 		<?php $todo->Load(); ?>
-		<a class="RightColumnAction"  href=".">New To Do</a>
 	</div>
 
 	<h2>York Weather</h2>

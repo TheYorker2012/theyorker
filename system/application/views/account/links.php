@@ -1,14 +1,14 @@
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
-		<a href="http://www.york.ac.uk/"><img title="University Of York" src="/images/prototype/homepage/links/york.gif" width="50" height="50"></a>
-		<a href="http://www.yusu.org/"><img title="York University Students' Union" src="/images/prototype/homepage/links/yusu.gif" width="50" height="50"></a>
-		<a href="http://www.facebook.com/"><img title="Facebook" src="/images/prototype/homepage/links/facebook.gif" width="50" height="50"></a>
-		<a href="http://www.hotmail.co.uk/"><img title="Hotmail" src="/images/prototype/homepage/links/hotmail.jpg" width="50" height="50"></a>
-		<a href="http://news.bbc.co.uk/"><img title="BBC News" src="/images/prototype/homepage/links/bbc.gif" width="50" height="50"></a>
-		<a href="http://www.google.co.uk/"><img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50"></a>
-		<a href="http://en.wikipedia.org/"><img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50"></a>
-		<a href="http://gmail.google.com/"><img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50"></a>
+		<img title="University Of York" src="/images/prototype/homepage/links/york.gif" width="50" height="50">
+		<img title="York University Students' Union" src="/images/prototype/homepage/links/yusu.gif" width="50" height="50">
+		<img title="Facebook" src="/images/prototype/homepage/links/facebook.gif" width="50" height="50">
+		<img title="Hotmail" src="/images/prototype/homepage/links/hotmail.jpg" width="50" height="50">
+		<img title="BBC News" src="/images/prototype/homepage/links/bbc.gif" width="50" height="50">
+		<img title="Google UK" src="/images/prototype/homepage/links/google.jpg" width="50" height="50">
+		<img title="Wikipedia" src="/images/prototype/homepage/links/wiki.png" width="50" height="50">
+		<img title="Gmail" src="/images/prototype/homepage/links/gmail.gif" width="50" height="50">
 	</div>
 	<h2>Remove Links</h2>
 	<div class="Entry">
