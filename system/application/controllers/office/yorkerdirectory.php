@@ -395,6 +395,16 @@ class Yorkerdirectory extends Controller
 		$action="viewgroup";
 		$business_card_group=-1;
 		}
+		if($action=="confirmdelete"){
+		//set things back to normal
+		$action="viewgroup";
+		$business_card_group=-1;
+		}
+		if($action=="deletecard"){
+		//set things back to normal
+		$action="viewgroup";
+		$business_card_group=-1;
+		}
 		
 		//Add Groups
 		if(!empty($_POST["group_name"])){
@@ -423,6 +433,8 @@ class Yorkerdirectory extends Controller
 					'id' => $group['business_card_group_id']
 				);
 				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
+				$data['current_group']['id'] = $business_card_group;
+				if($group['business_card_group_id'] == $business_card_group) $data['current_group']['name'] = $group['business_card_group_name'];
 			}
 					
 			// Members data
