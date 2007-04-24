@@ -27,7 +27,7 @@ function printmiddlebox($title,$article_array){
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
 <?php if ($link->num_rows() > 0) { foreach($link->result() as $picture) {?>
-		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension)?></a>
+		<a href="<?=$picture->link_url?>"><?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension, null, 'title = "'.$picture->link_name.'"')?></a>
 <?php } } else { ?>
 	<a href="http://theyorker.co.uk">You have no links :(</a>
 <?php }?>
@@ -37,7 +37,6 @@ function printmiddlebox($title,$article_array){
 	<h2>My Webmail</h2>
 	<div class="Entry">
 		<table width="100%"><tr><td><a href="https://webmail.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
-		<table width="100%"><tr><td><a href="https://webmail.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail1.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
 	</div>
 
 	<h2>Today's Events</h2>
