@@ -88,8 +88,8 @@ class Account extends controller
 	 */
 	function _links_update($links) {
 		$objResponse = new xajaxResponse();
-		var_dump($links);
-		$links=explode('+', $links);
+		$links = explode('+', $links);
+		array_pop($links);
 		foreach ($links as $link) {
 			$link = explode('_', $link);
 			$link = $link[1];
