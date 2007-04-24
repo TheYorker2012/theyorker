@@ -120,7 +120,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
 		<div id="HeaderMenu">
-			<span style="color: #999999; font-size: small;">
+			<span style="color: #999999; font-size:x-small;">
 			<?php
 			// Set by GenerateToplinks in mainframe_helper
 			if (isset($toplinks)) {
