@@ -90,7 +90,7 @@ class Links_Model extends Model {
 				$this->db->query($sql,array($i,$ordered_array[$i]));
 			}
 			$this->db->trans_complete();
-			return True
+			return True;
 		} else {
 			$this->db->trans_rollback();
 			return False;
