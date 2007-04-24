@@ -120,13 +120,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
 		<div id="HeaderMenu">
-			<span style="color: #999999; font-size:small;">
+			<span style="color: #999999;">
 			<?php
 			// Set by GenerateToplinks in mainframe_helper
 			if (isset($toplinks)) {
 				foreach ($toplinks as $link) {
 					if (is_string($link)) {
-						echo $link.' | ';
+						echo '<span style="color: #000000;">'.$link.'</span> | ';
 					} elseif (is_array($link)) {
 						echo '<a href="'.$link[1].'">'.$link[0].'</a> | ';
 					}
