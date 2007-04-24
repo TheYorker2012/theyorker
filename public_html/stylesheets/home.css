@@ -39,6 +39,16 @@ div.Entry ul {
 	margin-bottom: 0;
 }
 
+ul.TitleList {
+	list-style-position: outside;
+	padding-left: 17px;
+}
+
+a.TitleHeading {
+	font-weight: bold;
+	color: #000000;
+}
+
 /* This may not be needed but */
 h3.SmallNewsHeading {
 	font-size: small;
