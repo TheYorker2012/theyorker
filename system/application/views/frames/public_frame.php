@@ -120,6 +120,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
 		<div id="HeaderMenu">
+			<span style="color: #999999; font-size: small;">
 			<?php
 			// Set by GenerateToplinks in mainframe_helper
 			if (isset($toplinks)) {
@@ -136,6 +137,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
+			</span>
 		</div>
 
 		<div id="TopBanner">
