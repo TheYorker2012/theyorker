@@ -126,11 +126,11 @@ class Links_Model extends Model {
 	}
 
 	function ReplaceImage() {
-		echo "notimp"
+		echo "notimp";
 	}
 
 	function AddUserLink() {
-		echo "notimp"
+		echo "notimp";
 	}
 }
 ?>
