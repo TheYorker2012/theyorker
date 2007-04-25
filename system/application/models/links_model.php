@@ -88,9 +88,9 @@ class Links_Model extends Model {
 		        ON links.link_id = user_link_link_id
 		        WHERE user_link_user_entity_id= ?
 		        AND link_official = 0';
-		$query = $this->db->query($sql, array($user))
+		$query = $this->db->query($sql, array($user));
 		foreach ($query->result() as $unofficialLink) {
-			if (is_null(array_search($unofficialLink, $links)) {
+			if (is_null(array_search($unofficialLink, $links))) {
 				$this->DeleteLink($user, $unofficialLink);
 			}
 		}
