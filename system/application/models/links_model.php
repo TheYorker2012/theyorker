@@ -94,8 +94,8 @@ class Links_Model extends Model {
 				$this->DeleteLink($user, $unofficialLink);
 			}
 		}
-		DropUserLinks($user);
-		AddUserLinks($user, $links);
+		$this->DropUserLinks($user);
+		$this->AddUserLinks($user, $links);
 	}
 
 	function DropUserLinks($user) {
