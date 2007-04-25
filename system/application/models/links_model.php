@@ -29,7 +29,6 @@ class Links_Model extends Model {
 	 */
 	function DeleteLink($user,$id) {
 		$this->db->trans_start();
-		$rmimage = False;
 		$sql = 'SELECT link_official, link_image_id 
 			FROM links WHERE link_id = ?';
 		$query = $this->db->query($sql,array($id));
@@ -90,7 +89,7 @@ class Links_Model extends Model {
 		        AND link_official = 0';
 		$query = $this->db->query($sql, array($user));
 		foreach ($query->result() as $unofficialLink) {
-			if (is_null(array_search($unofficialLink, $links))) {
+			if (array_search($unofficialLink, $links) === false) {
 				$this->DeleteLink($user, $unofficialLink);
 			}
 		}
