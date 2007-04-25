@@ -152,8 +152,8 @@ class Account extends controller
 			}
 			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
 			redirect('/account/links', 'location');
-		} else {
-			$this->messages->AddMessage('error', 'Please enter a name and url.');
+		} else if($this->input->post('lurl')) {
+			$this->messages->AddMessage('error', 'Please enter a name for your link.');
 		}
 		
 		$data = array();
