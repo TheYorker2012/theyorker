@@ -2,9 +2,24 @@
 
 class Calendar extends controller
 {
+	protected $mActions;
+	
 	function __construct()
 	{
 		parent::controller();
+	}
+	
+	function actions()
+	{
+		// do the magic, use calendar_actions as a controller
+		$this->load->model('calendar/organizer_actions');
+		$args = func_get_args();
+		$func = array_shift($args);
+		if ('_' !== substr($func,0,1) && method_exists($this->organizer_actions, $func)) {
+			call_user_func_array(array(&$this->organizer_actions, $func), $args);
+		} else {
+			show_404();
+		}
 	}
 	
 	
@@ -29,6 +44,59 @@ class Calendar extends controller
 		$this->main_frame->SetContentSimple('calendar/event', $data);
 		
 		$this->main_frame->Load();
+	}
+	
+	function publish($EventId = NULL)
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
+		if (is_numeric($EventId)) {
+			$EventId = (int)$EventId;
+			
+			/// Get the specific event
+			$this->load->library('calendar_backend');
+			$this->load->library('calendar_source_yorker');
+			$source_yorker = new CalendarSourceYorker(0);
+			$calendar_data = new CalendarData();
+			$source_yorker->FetchEvent($calendar_data, $EventId);
+			$events = $calendar_data->GetEvents();
+			if (array_key_exists(0, $events)) {
+				$event = $events[0];
+				if ($this->input->post('evpub_cancel')) {
+					// REDIRECT
+					$this->messages->AddMessage('information','Event publication was cancelled.');
+					$this->load->helper('uri_tail');
+					RedirectUriTail(3);
+					
+				} elseif ($this->input->post('evpub_confirm')) {
+					// PUBLISH
+					$result = $this->events_model->OccurrenceDraftPublish($EventId, FALSE);
+					if ($result > 0) {
+						$this->messages->AddMessage('success',$result.' occurrences were altered');
+					} else {
+						print_r($this->db->last_query());
+						exit;
+						$this->messages->AddMessage('error','No occurrences were altered');
+					}
+					$this->load->helper('uri_tail');
+					RedirectUriTail(3);
+					
+				} else {
+					$data = array(
+						'Event' => $event,
+					);
+					
+					$this->main_frame->SetContentSimple('calendar/publish', $data);
+					
+					$this->main_frame->Load();
+				}
+			} else {
+				$this->messages->AddMessage('error', 'The event coud not be found');
+			}
+			//RedirectTailUri();
+		} else {
+			show_404();
+		}
 	}
 	
 	

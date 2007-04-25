@@ -118,14 +118,15 @@ class EventOccurrenceQuery
 			$conditions[] = 'event_occurrences.event_occurrence_start_time <
 								FROM_UNIXTIME('.$Range[1].')';
 		}
-		if (empty($conditions)) {
+		if (count($conditions) <= 1) {
 			return 'TRUE';
 		} else {
 			// take care of the special case when an event of zero length covers a boundary
-			$zero_len_at_beginning =
-				'(event_occurrences.event_occurrence_start_time = FROM_UNIXTIME('.$Range[0].') AND '.
-				'event_occurrences.event_occurrence_end_time = FROM_UNIXTIME('.$Range[0].'))';
-			
+			if (NULL !== $Range[0]) {
+				$zero_len_at_beginning =
+					'(event_occurrences.event_occurrence_start_time = FROM_UNIXTIME('.$Range[0].') AND '.
+					'event_occurrences.event_occurrence_end_time = FROM_UNIXTIME('.$Range[0].'))';
+			}
 			return '(('.implode(' AND ',$conditions).') OR '.$zero_len_at_beginning.')';
 		}
 	}
@@ -1626,13 +1627,13 @@ class Events_model extends Model
 		$sql = 'UPDATE event_occurrences
 			INNER JOIN events
 				ON	event_id = event_occurrence_event_id
-			INNER JOIN event_entities
+			LEFT JOIN event_entities
 				ON	event_entities.event_entity_event_id
 						= event_occurrences.event_occurrence_event_id
-				AND ' . $occurrence_query->ExpressionOwned() . '
 			SET		event_occurrences.event_occurrence_state=?,
 					event_occurrences.event_occurrence_last_modified=CURRENT_TIMESTAMP()
-			WHERE	event_occurrences.event_occurrence_event_id=?';
+			WHERE	event_occurrences.event_occurrence_event_id=?
+				AND	'.$occurrence_query->ExpressionOwned();
 		$bind_data = array($NewState, $EventId);
 		if (FALSE !== $OccurrenceId) {
 			$sql .= ' AND	event_occurrences.event_occurrence_id=?';

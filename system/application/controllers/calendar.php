@@ -5,120 +5,6 @@
  * @brief Calendar controller.
  */
 
-/// Calenda actions psuedocontroller.
-class CalendarActions
-{
-	/// Main code igniter instance.
-	private $CI;
-	
-	function __construct()
-	{
-		$this->CI = & get_instance();
-		
-		$this->CI->load->helper('uri_tail');
-	}
-	
-	/// Display a form for setting occurrence attendence.
-	function attend($SourceId = NULL, $OccurrenceId = NULL, $Action = NULL)
-	{
-		if (!CheckPermissions('student')) return;
-		
-		if (is_numeric($SourceId)) {
-			static $mapping = array(
-				'accept'  => TRUE,
-				'decline' => FALSE,
-				'maybe'   => NULL,
-			);
-			if (array_key_exists($Action, $mapping)) {
-				$action = $mapping[$Action];
-				// Now determine what protocol to use
-				$this->CI->load->library('calendar_backend');
-				$this->CI->load->library('calendar_source_my_calendar');
-				$my_calendar = new CalendarSourceMyCalendar();
-				$messages = $my_calendar->AttendingOccurrence((int)$SourceId, $OccurrenceId, $action);
-				if (!array_key_exists('error', $messages)) {
-					$this->CI->messages->AddMessage('success', 'Your attending status has been set to '.$Action);
-				}
-				$this->CI->messages->AddMessages($messages);
-				RedirectUriTail(6);
-			} else {
-				return show_404();
-			}
-		} else {
-			return show_404();
-		}
-	}
-	
-	function delete($SourceId = NULL, $EventId = NULL)
-	{
-		if (!CheckPermissions('student')) return;
-		
-		if (is_numeric($SourceId)) {
-			static $mapping = array(
-				'accept'  => TRUE,
-				'decline' => FALSE,
-				'maybe'   => NULL,
-			);
-			// Now determine what protocol to use
-			$this->CI->load->library('calendar_backend');
-			$this->CI->load->library('calendar_source_my_calendar');
-			$my_calendar = new CalendarSourceMyCalendar();
-			$messages = $my_calendar->DeleteEvent((int)$SourceId, $EventId);
-			if (!array_key_exists('error', $messages)) {
-				$this->CI->messages->AddMessage('success', 'The event was successfully deleted.');
-			}
-			$this->CI->messages->AddMessages($messages);
-			RedirectUriTail(5);
-		} else {
-			return show_404();
-		}
-	}
-	
-	function add($type = '')
-	{
-		if (!CheckPermissions('student')) return;
-		
-		$method = '_add_'.$type;
-		if (method_exists($this, $method)) {
-			$this->$method();
-			RedirectUriTail(4);
-		} else {
-			show_404();
-		}
-	}
-	
-	function _add_todo()
-	{
-		$CI = & $this->CI;
-		// Read the post data
-		$name = $CI->input->post('todo_name');
-		if (FALSE !== $name) {
-			if (empty($name)) {
-				$CI->messages->AddMessage('warning', 'You didn\'t specify a name for the to do list item.');
-			} else {
-				$CI->load->model('calendar/events_model');
-				$input['recur'] = new RecurrenceSet();
-				$input['todo'] = TRUE;
-				$input['name'] = $name;
-				
-				try {
-					$results = $CI->events_model->EventCreate($input);
-					$CI->messages->AddMessage('success', 'To do list item added.');
-				} catch (Exception $e) {
-					$CI->messages->AddMessage('error', $e->getMessage());
-				}
-			}
-		} else {
-			$CI->messages->AddMessage('error', 'Invalid todo name');
-		}
-	}
-	
-	function _add_event()
-	{
-		$this->CI->messages->AddMessage('error', 'Not yet implemented');
-	}
-}
-
 /// Controller for event manager.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
@@ -143,12 +29,12 @@ class Calendar extends Controller
 	
 	function actions()
 	{
-		// do the magic
-		$actor = new CalendarActions();
+		// do the magic, use calendar_actions as a controller
+		$this->load->model('calendar/calendar_actions');
 		$args = func_get_args();
 		$func = array_shift($args);
-		if ('_' !== substr($func,0,1) && method_exists($actor, $func)) {
-			call_user_func_array(array(&$actor, $func), $args);
+		if ('_' !== substr($func,0,1) && method_exists($this->calendar_actions, $func)) {
+			call_user_func_array(array(&$this->calendar_actions, $func), $args);
 		} else {
 			show_404();
 		}

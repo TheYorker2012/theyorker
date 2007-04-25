@@ -14,7 +14,7 @@
 function GetUriTail($PreSegments)
 {
 	$CI = & get_instance();
-	return implode('/', array_slice($CI->uri->rsegment_array(), $PreSegments));
+	return implode('/', array_slice($CI->uri->segment_array(), VipSegments()+$PreSegments));
 }
 
 /// Redirec to the uri tail, all uri segments after the first @a $PreSegment segments.

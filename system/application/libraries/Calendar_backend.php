@@ -204,7 +204,6 @@ abstract class CalendarSource
 	protected $mGroups = array(
 		'owned'      => TRUE,
 		'subscribed' => TRUE,
-		'inclusions' => FALSE,
 		'all'        => FALSE,
 		
 		'private'    => TRUE,
@@ -218,9 +217,6 @@ abstract class CalendarSource
 		'event'      => TRUE,
 		'todo'       => FALSE,
 	);
-	
-	/// array[source id] For including additional specific items.
-	protected $mInclusions = array();
 	
 	/// array[2*timestamp] For filtering by time.
 	protected $mRange = array( NULL, NULL );
@@ -302,35 +298,6 @@ abstract class CalendarSource
 		}
 	}
 	
-	/// Add inclusion.
-	/**
-	 * @param $FeedId integer/array Feed id(s).
-	 * @param $EnableInclusions bool Whether to enable inclusions.
-	 */
-	function AddInclusion($FeedId, $EnableInclusions = FALSE)
-	{
-		if (is_array($FeedId)) {
-			$this->mInclusions = array_merge($this->mInclusions, $FeedId);
-		} else {
-			$this->mInclusions[] = $FeedId;
-		}
-		if ($EnableInclusions) {
-			$this->EnableGroup('inclusions');
-		}
-	}
-	
-	/// Clear inclusions.
-	/**
-	 * @param $DisableInclusions bool Whether to disable inclusions.
-	 */
-	function ClearInclusions($DisableInclusions = FALSE)
-	{
-		$this->mInclusions = array();
-		if ($DisableInclusions) {
-			$this->DisableGroup('inclusions');
-		}
-	}
-	
 	/// Set the date range.
 	/**
 	 * @param $Start timestamp,NULL Start time.
@@ -344,7 +311,19 @@ abstract class CalendarSource
 		$this->mRange[1] = $End;
 	}
 	
-	/// Fedge the events of the source.
+	/// Fetch a specific event.
+	/**
+	 * @param $Data CalendarData Data object to add events to.
+	 * @param $Event identifier Source event identitier.
+	 */
+	function FetchEvent($Data, $Event)
+	{
+		$Data->NewCurrentSource($this);
+		$this->_FetchEvents($Data);
+		return array();
+	}
+	
+	/// Fetch the events of the source.
 	/**
 	 * @param $Data CalendarData Data object to add events to.
 	 */
@@ -355,7 +334,14 @@ abstract class CalendarSource
 		return array();
 	}
 	
-	/// Fedge the events of the source.
+	/// Fetch the events of the source.
+	/**
+	 * @param $Data CalendarData Data object to add events to.
+	 * @param $Event identifier Source event identitier.
+	 */
+	protected abstract function _FetchEvent(&$Data, $Event);
+	
+	/// Fetch the events of the source.
 	/**
 	 * @param $Data CalendarData Data object to add events to.
 	 */
@@ -681,6 +667,16 @@ class CalendarSources extends CalendarSource
 		return parent::SetRange($Start, $End);
 	}
 	
+	/// Fetch the event of the sources and return an array of messages.
+	function FetchEvent(&$Data, $SourceId, $Event)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->FetchEvent($Data, $Event);
+		} else {
+			return;
+		}
+	}
+	
 	/// Fetch the events of the sources and return an array of messages.
 	function FetchEvents(&$Data)
 	{
@@ -693,6 +689,10 @@ class CalendarSources extends CalendarSource
 			}
 		}
 		return $messages;
+	}
+	
+	protected function _FetchEvent(&$Data, $Event)
+	{
 	}
 	
 	protected function _FetchEvents(&$Data)

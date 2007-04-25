@@ -32,6 +32,7 @@ class Facebook
 		if ($this->InUse()) {
 			if (isset($_SESSION['facebook']['session'])) {
 				$this->Session = $_SESSION['facebook']['session'];
+				$this->Uid = $this->Session['uid'];
 			}
 			$links[] = array('Disable Facebook', site_url('logout/facebook'.$CI->uri->uri_string()));
 		} else {

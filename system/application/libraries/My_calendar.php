@@ -637,7 +637,7 @@ class My_calendar
 				'name'			=> 'social',
 				'field'			=> 'category',
 				'value'			=> 'social',
-				'selected'		=> TRUE,
+				'selected'		=> FALSE,
 				'description'	=> 'Social',
 				'display'		=> 'block',
 				'colour'		=> 'FFFF00',
@@ -661,16 +661,16 @@ class My_calendar
 				'colour'		=> 'FF0000',
 			),
 			
-			'rsvp' => array(
-				'name'			=> 'attending',
+			'hidden' => array(
+				'name'			=> 'not attending',
 				'field'			=> 'visibility',
-				'value'			=> 'yes',
-				'selected'		=> $Sources->GroupEnabled('rsvp'),
-				'description'	=> 'Only those to which I\'ve RSVPd',
+				'value'			=> 'no',
+				'selected'		=> $Sources->GroupEnabled('hide'),
+				'description'	=> 'Include those which I have hidden',
 				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
 			),
 			'visible' => array(
 				'name'			=> 'maybe attending',
@@ -683,16 +683,16 @@ class My_calendar
 				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
 			),
-			'hidden' => array(
-				'name'			=> 'not attending',
+			'rsvp' => array(
+				'name'			=> 'attending',
 				'field'			=> 'visibility',
-				'value'			=> 'no',
-				'selected'		=> $Sources->GroupEnabled('hide'),
-				'description'	=> 'Include those which I have hidden',
+				'value'			=> 'yes',
+				'selected'		=> $Sources->GroupEnabled('rsvp'),
+				'description'	=> 'Only those to which I\'ve RSVPd',
 				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
+				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
 			),
 		);
 	}

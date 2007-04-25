@@ -20,6 +20,12 @@ class CalendarSourceYorker extends CalendarSource
 	/// EventOccurrenceQuery Query object.
 	protected $mQuery;
 	
+	/// array[stream id] For including additional specific streams.
+	protected $mStreams = array();
+	
+	/// array[source id] For including additional specific streams.
+	protected $mEvents = array();
+	
 	/// string Special mysql condition.
 	protected $mSpecialCondition = FALSE;
 	
@@ -33,6 +39,37 @@ class CalendarSourceYorker extends CalendarSource
 		$this->SetSourceId($SourceId);
 		$this->mName = 'Yorker events';
 		$this->mCapabilities[] = 'attend';
+		
+		$this->mGroups['streams'] = FALSE;
+	}
+	
+	/// Add included stream.
+	/**
+	 * @param $StreamId integer/array Feed id(s).
+	 * @param $EnableStreams bool Whether to enable inclusions.
+	 */
+	function IncludeStream($StreamId, $EnableStreams = FALSE)
+	{
+		if (is_array($StreamId)) {
+			$this->mStreams = array_merge($this->mStreams, $FeedId);
+		} else {
+			$this->mStreams[] = $StreamId;
+		}
+		if ($EnableStreams) {
+			$this->EnableGroup('streams');
+		}
+	}
+	
+	/// Clear included streams.
+	/**
+	 * @param $DisableStreams bool Whether to disable streams.
+	 */
+	function ClearStreams($DisableStreams = FALSE)
+	{
+		$this->mInclusions = array();
+		if ($DisableStreams) {
+			$this->DisableGroup('streams');
+		}
 	}
 	
 	/// Set the special condition.
@@ -44,70 +81,96 @@ class CalendarSourceYorker extends CalendarSource
 		$this->mSpecialCondition = $Condition;
 	}
 	
-	/// Fedge the events of the source.
+	/// Fetch the events of the source.
+	/**
+	 * @param $Data CalendarData Data object to add events to.
+	 * @param $Event identifier Source event identitier.
+	 */
+	protected function _FetchEvent(&$Data, $Event)
+	{
+		$CI = & get_instance();
+		$this->TransformEventData(
+			$Data,
+			$this->MainQuery(
+				$this->GetFields(),
+				'('.$this->mQuery->ExpressionOwned().
+				' OR ('.$this->mQuery->ExpressionSubscribed().
+					' AND '.$this->mQuery->ExpressionPublic().'))'.
+				' AND events.event_id = '.$CI->db->escape($Event)
+			)
+		);
+	}
+	
+	/// Fetch the events of the source.
 	/**
 	 * @param $Data CalendarData Data object to add events to.
 	 */
 	protected function _FetchEvents(&$Data)
 	{
-		
-		$CI = & get_instance();
-		
-		$fields = array(
-			'occurrence_id'		=> 'event_occurrences.event_occurrence_id',
-			'state'				=> 'event_occurrences.event_occurrence_state',
-			'active'			=> 'event_occurrences.event_occurrence_active_occurrence_id',
-			'start'				=> 'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)',
-			'end'				=> 'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time)',
-			'time_associated'	=> 'event_occurrences.event_occurrence_time_associated',
-			'location'			=> 'event_occurrences.event_occurrence_location_name',
-			'ends_late'			=> 'event_occurrences.event_occurrence_ends_late',
+		$this->TransformEventData(
+			$Data,
+			$this->MainQuery(
+				$this->GetFields(),
+				$this->ProduceWhereClause()
+			)
+		);
+	}
+	
+	protected function GetFields()
+	{
+		$fields =
+			'event_occurrences.event_occurrence_id						AS occurrence_id,'.
+			'event_occurrences.event_occurrence_state					AS state,'.
+			'event_occurrences.event_occurrence_active_occurrence_id	AS active,'.
+			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time) AS start,'.
+			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time) AS end,'.
+			'event_occurrences.event_occurrence_time_associated			AS time_associated,'.
+			'event_occurrences.event_occurrence_location_name			AS location,'.
+			'event_occurrences.event_occurrence_ends_late				AS ends_late,'.
 			
 			// show on calendar if date associated and attending=TRUE or NULL
-			'show_on_calendar'	=> $this->mQuery->ExpressionShowOnCalendar(),
+			$this->mQuery->ExpressionShowOnCalendar().' AS show_on_calendar,'.
 			
-			'user_last_update'	=> 'UNIX_TIMESTAMP(event_occurrence_users.event_occurrence_user_timestamp)',
-			'user_attending'	=> 'event_occurrence_users.event_occurrence_user_attending',
-			'user_todo'			=> 'event_occurrence_users.event_occurrence_user_todo',
-			'user_progress'		=> 'event_occurrence_users.event_occurrence_user_progress',
+			'UNIX_TIMESTAMP(event_occurrence_users.event_occurrence_user_timestamp) AS user_last_update,'.
+			'event_occurrence_users.event_occurrence_user_attending	AS user_attending,'.
+			'event_occurrence_users.event_occurrence_user_todo		AS user_todo,'.
+			'event_occurrence_users.event_occurrence_user_progress	AS user_progress,'.
 			
-			'event_id'			=> 'events.event_id',
-			'event_todo'		=> 'events.event_todo',
-			'category_name'		=> 'event_types.event_type_name',
-			'category_colour'	=> 'event_types.event_type_colour_hex',
-			'name'				=> 'events.event_name',
-			'description'		=> 'events.event_description',
-			//'blurb'				=> 'events.event_blurb',
-			'event_time_associated'	=> 'events.event_time_associated',
-			'last_update'		=> 'UNIX_TIMESTAMP(events.event_timestamp)',
-			'subscribed'		=> $this->mQuery->ExpressionSubscribed(),
-			'owned'				=> $this->mQuery->ExpressionOwned(),
+			'events.event_id	AS event_id,'.
+			'events.event_todo	AS event_todo,'.
+			'event_types.event_type_name		AS category_name,'.
+			'event_types.event_type_colour_hex	AS category_colour,'.
+			'events.event_name			AS name,'.
+			'events.event_description	AS description,'.
+			//'events.event_blurb AS blurb,'.
+			'events.event_time_associated			AS event_time_associated,'.
+			'UNIX_TIMESTAMP(events.event_timestamp)	AS last_update,'.
+			$this->mQuery->ExpressionSubscribed().'	AS subscribed,'.
+			$this->mQuery->ExpressionOwned().'		AS owned,'.
 			
-			'org_id'			=> 'organisations.organisation_entity_id',
-			'org_name'			=> 'organisations.organisation_name',
-			'org_shortname'		=> 'organisations.organisation_directory_entry_name',
-		);
+			'organisations.organisation_entity_id	AS org_id,'.
+			'organisations.organisation_name		AS org_name,'.
+			'organisations.organisation_directory_entry_name AS org_shortname';
 		
 		if ($this->mGroups['todo']) {
-			// show on todo if user todo=TRUE or (NULL AND todo)
-			$fields['show_on_todo']	= $this->mQuery->ExpressionShowOnTodo();
-			// effective start and end of todo if forced into one (from now until the beginning of the event)
-			$fields['todo_start']	= $this->mQuery->ExpressionTodoStart();
-			$fields['todo_end']		= $this->mQuery->ExpressionTodoEnd();
+			$fields .= ','.
+				// show on todo if user todo=TRUE or (NULL AND todo)
+				$this->mQuery->ExpressionShowOnTodo().' AS show_on_todo,'.
+				// effective start and end of todo if forced into one (from now until the beginning of the event)
+				$this->mQuery->ExpressionTodoStart().' AS todo_start,'.
+				$this->mQuery->ExpressionTodoEnd().' AS todo_end';
 		}
-		$db_data = $this->MainQuery($fields);
 		
-		/*
-		echo('<span align="left">');
-		var_dump($db_data);
-		echo('</span>');
-		//*/
-		
+		return $fields;
+	}
+	
+	protected function TransformEventData(&$Data, $DbData)
+	{
 		// Go through and sort the database data into objects.
 		$events = array();
 		$occurrences = array();
 		$organisations = array();
-		foreach ($db_data as $row) {
+		foreach ($DbData as $row) {
 			$event_id = (int)$row['event_id'];
 			$occurrence_id = (int)$row['occurrence_id'];
 			
@@ -199,64 +262,53 @@ class CalendarSourceYorker extends CalendarSource
 	
 	/// Retrieve specified fields of event occurrences.
 	/**
-	 * @param $Fields array of aliases to select expressions (field names).
-	 *	e.g. array('name' => 'events.event_name')
+	 * @param $Fields string Fields to select
 	 * @return array Results from db query.
 	 */
-	function MainQuery($Fields)
+	function MainQuery($Fields, $Where)
 	{
-		// MAIN QUERY ----------------------------------------------------------
-		/*
-			owned:
-				occurrence.event.owners.id=me
-				OR subscription.vip=1
-			subscribed:
-				occurrence.event.entities.subscribers.id=me
-				event_subscription.interested
-			inclusions:
-				occurrence.event.entities.id=inclusion
-				
-			own OR (public AND (subscribed OR inclusion))
-		*/
-		
-		$FieldStrings = array();
-		foreach ($Fields as $Alias => $Expression) {
-			if (is_string($Alias)) {
-				$FieldStrings[] = $Expression.' AS '.$Alias;
-			} else {
-				$FieldStrings[] = $Expression;
-			}
-		}
-		
 		/// @todo Optimise main event query to avoid left joins amap
-		$bind_data = array();
 		$sql = '
-			SELECT '.implode(',',$FieldStrings).' FROM event_occurrences
-			INNER JOIN events
-				ON	event_occurrences.event_occurrence_event_id = events.event_id
-				AND	(events.event_deleted = 0 || event_occurrence_state = "cancelled")
-			LEFT JOIN event_types
-				ON	events.event_type_id = event_types.event_type_id
-			LEFT JOIN event_entities
-				ON	event_entities.event_entity_event_id = events.event_id
-			LEFT JOIN organisations
-				ON	organisations.organisation_entity_id
-						= event_entities.event_entity_entity_id
-			LEFT JOIN subscriptions
-				ON	subscriptions.subscription_organisation_entity_id
-						= event_entities.event_entity_entity_id
-				AND	subscriptions.subscription_user_entity_id	= ?
-				AND	subscriptions.subscription_calendar = TRUE
-			LEFT JOIN event_occurrence_users
-				ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
-						= event_occurrences.event_occurrence_id
-				AND	event_occurrence_users.event_occurrence_user_user_entity_id
-						= ?
-			LEFT JOIN event_occurrences AS active_occurrence
-				ON	event_occurrences.event_occurrence_active_occurrence_id
-						= active_occurrence.event_occurrence_id';
-		$bind_data[] = $this->mQuery->GetEntityId();
-		$bind_data[] = $this->mQuery->GetEntityId();
+		SELECT '.$Fields.' FROM event_occurrences
+		INNER JOIN events
+			ON	event_occurrences.event_occurrence_event_id = events.event_id
+			AND	(events.event_deleted = 0 || event_occurrence_state = "cancelled")
+		LEFT JOIN event_types
+			ON	events.event_type_id = event_types.event_type_id
+		LEFT JOIN event_entities
+			ON	event_entities.event_entity_event_id = events.event_id
+		LEFT JOIN organisations
+			ON	organisations.organisation_entity_id
+					= event_entities.event_entity_entity_id
+		LEFT JOIN subscriptions
+			ON	subscriptions.subscription_organisation_entity_id
+					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
+			AND	subscriptions.subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
+			AND	subscriptions.subscription_calendar = TRUE
+		LEFT JOIN event_occurrence_users
+			ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
+					= event_occurrences.event_occurrence_id
+			AND	event_occurrence_users.event_occurrence_user_user_entity_id
+					= '.$this->mQuery->GetEntityId().'
+		LEFT JOIN event_occurrences AS active_occurrence
+			ON	event_occurrences.event_occurrence_active_occurrence_id
+					= active_occurrence.event_occurrence_id';
+		
+		$sql .= ' WHERE '.$Where.
+				' ORDER BY event_occurrences.event_occurrence_start_time';
+		
+		// Try it out
+		$CI = & get_instance();
+		return $CI->db->query($sql)->result_array();
+	}
+	
+	/// Produce the where part of the sql statement.
+	/**
+	 * @return string SQL where clause.
+	 */
+	protected function ProduceWhereClause()
+	{
+		$CI = & get_instance();
 		
 		// SOURCES -------------------------------------------------------------
 		
@@ -277,13 +329,14 @@ class CalendarSourceYorker extends CalendarSource
 				$subscribed = '0';
 			}
 			
-			if ($this->mGroups['inclusions'] && count($this->mInclusions) > 0) {
-				$includes = array();
-				foreach ($this->mInclusions as $inclusion) {
-					$includes[] = 'event_entities.event_entity_event_id=?';
-					$bind_data[] = $inclusion;
+			if ($this->mGroups['streams'] && count($this->mStreams) > 0) {
+				$streams = array();
+				foreach ($this->mStreams as $stream_id) {
+					$streams[] = $CI->db->escape($stream_id);
 				}
-				$included = '('.implode(' AND ', $includes).')';
+				$streams = implode(',', $streams);
+				$included = '(events.event_organizer_entity_id IN ('.$streams.') OR '.
+							' event_entities.event_entity_event_id IN ('.$streams.'))';
 			} else {
 				$included = '0';
 			}
@@ -357,16 +410,7 @@ class CalendarSourceYorker extends CalendarSource
 			$conditions[] = '('.$this->mSpecialCondition.')';
 		}
 		
-		// WHERE CLAUSE --------------------------------------------------------
-		
-		$sql .= ' WHERE '.implode(' AND ',$conditions).'';
-		
-		$sql .= ' ORDER BY event_occurrences.event_occurrence_start_time';
-		
-		// Try it out
-		$CI = &get_instance();
-		$query = $CI->db->query($sql,$bind_data);
-		return $query->result_array();
+		return implode(' AND ', $conditions);
 	}
 	
 	// MAKING CHANGES **********************************************************

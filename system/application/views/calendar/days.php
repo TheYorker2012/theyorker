@@ -20,6 +20,7 @@ function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly)
 			<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
 				<div>
 					<?php
+					$CI = & get_instance();
 					if ($Occurrence->TimeAssociated) {
 						echo($Occurrence->StartTime->Format('g:ia'));
 						echo('-');
@@ -28,6 +29,21 @@ function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly)
 					}
 					if ('published' !== $Occurrence->State) {
 						echo('<strong>'.$Occurrence->State.'</strong>');
+						if (!$Squash && !$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
+							$links = array();
+							if ('none' !== VipMode() &&
+								'draft' === $Occurrence->State &&
+								$Occurrence->Event->Source->GetSourceId() === 0)
+							{
+								$links[] = '<a href="'.vip_url('calendar/publish/'.$Occurrence->Event->SourceEventId.$CI->uri->uri_string()).'">publish</a>';
+							}
+							$links[] = '<a href="'.site_url('calendar/actions/delete/'.
+								$Occurrence->Event->Source->GetSourceId().
+								'/'.urlencode($Occurrence->Event->SourceEventId).
+								$CI->uri->uri_string()).'">delete</a>';
+							echo(' ('.implode(',', $links).')');
+						}
+						echo('<br />');
 					}
 					if (!$Squash) {
 						if (!empty($Occurrence->LocationDescription)) {
@@ -37,7 +53,6 @@ function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly)
 						echo('<i>');
 						echo($Occurrence->Event->Description);
 						echo('</i>');
-						$CI = & get_instance();
 						if ($Occurrence->EndTime->Timestamp() > time()) {
 							echo('<br />');
 							if (FALSE === $Occurrence->UserAttending) {
@@ -77,13 +92,6 @@ function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly)
 										'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
 								}
 							}
-						}
-						if (!$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
-							echo('<br />');
-							echo('<a href="'.site_url('calendar/actions/delete/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->Event->SourceEventId).
-								$CI->uri->uri_string()).'">delete</a>');
 						}
 						if (!$Squash && NULL !== $Occurrence->Event->Image) {
 							echo('<br />');

@@ -274,7 +274,7 @@ class Yorkerdirectory extends Controller
 			$yorker_source->EnableGroup('hide');
 			$yorker_source->EnableGroup('show');
 			$yorker_source->EnableGroup('rsvp');
-			$yorker_source->AddInclusion((int)$data['organisation']['id'], TRUE);
+			$yorker_source->IncludeStream((int)$data['organisation']['id'], TRUE);
 			
 			$now = new Academic_time(time());
 			$this->my_calendar->SetTabs(FALSE);

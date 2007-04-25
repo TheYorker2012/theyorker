@@ -196,6 +196,18 @@ function VipLevel($Permission, $Set = FALSE)
 	return $pr_level >= $pr_levels[$Permission];
 }
 
+/// Get the number of segments used up until the controller
+function VipSegments($Set = NULL)
+{
+	static $vip_segments = 0;
+	
+	if (NULL !== $Set) {
+		$vip_segments = $Set;
+	}
+	
+	return $vip_segments;
+}
+
 
 /// Check the access permissions.
 /**
@@ -243,6 +255,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		if ($CI->uri->total_segments() > 1) {
 			$organisation_shortname = $CI->uri->segment(2);
 			$organisation_specified = TRUE;
+			VipSegments(2);
 		} else {
 			$organisation_shortname = $CI->user_auth->organisationShortName;
 		}
@@ -250,13 +263,13 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	} elseif ($thru_office_pr) {
 		$organisation_shortname = $CI->uri->segment(4);
 		$organisation_specified = TRUE;
+		VipSegments(4);
 		vip_url('office/pr/org/'.$organisation_shortname.'/', TRUE);
 	} else {
 		$organisation_shortname = '';
 	}
 	VipOrganisation(FALSE, $organisation_shortname);
 	VipOrganisation(TRUE, $CI->user_auth->organisationShortName);
-	
 	
 	// Login actions for student/vip/office logins
 	$student_login_action = array(
