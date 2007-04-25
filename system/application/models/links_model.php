@@ -79,6 +79,7 @@ class Links_Model extends Model {
 	}
 
 	function ChangeUserLinks($user, $links) {
+		var_dump($links);
 		$sql = 'SELECT user_link_link_id AS id
 		        FROM user_links
 		        INNER JOIN links
@@ -88,7 +89,6 @@ class Links_Model extends Model {
 		$query = $this->db->query($sql, array($user));
 		foreach ($query->result() as $unofficialLink) {
 			if (array_search($unofficialLink->id, $links) === false) {
-				echo $unofficialLink->id;
 				$this->DeleteLink($user, $unofficialLink->id);
 			}
 		}
