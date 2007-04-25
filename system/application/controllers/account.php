@@ -94,8 +94,7 @@ class Account extends controller
 			$link = explode('_', $link);
 			$link = $link[1];
 		}
-		$this->Links_Model->DropUserLinks($this->user_auth->entityId);
-		$this->Links_Model->AddUserLinks($this->user_auth->entityId, $links);
+		$this->Links_Model->ChangeUserLinks($this->user_auth->entityId, $links)
 		return $objResponse;
 	}
 	

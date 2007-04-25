@@ -34,35 +34,18 @@ class Links_Model extends Model {
 			FROM links WHERE link_id = ?';
 		$query = $this->db->query($sql,array($id));
 		$row = $query->result();
-		if ($row->link_id == 0) {
+		if ($row->link_official == 0) {
 			$sql ='DELETE FROM links WHERE link_id = ?';
 			$this->db->query($sql,array($id));
-			$sql = 'DELETE FROM images WHERE image_id = ?';
-			$this->db->query($sql,array($row->link_image_id));
-			$rmimage = True;
-		}
-		$sql = 'SELECT user_link_order FROM user_links 
-			WHERE user_link_link_id = ?';
-		$query = $this->db->query($sql,array($id));
-		$position = $query->result()->user_link_order;
-		$sql ='DELETE FROM user_links WHERE user_link_link_id = ?';
-		$this->db->query($sql,array($id));
-		$sql = 'SELECT user_link_id, user_link_order 
-			FROM user_links WHERE user_link_user_entity_id = ?';
-		$query = $this->db->query($sql,array($user));
-		foreach ($query->result() as $row){
-			if ($row->user_link_order > $position) {
-				$sql = 'UPDATE user_links 
-					SET user_link_order = (user_link_order - 1) 
-					WHERE user_link_id = ?';
-				$this->db->query($sql,array($row->user_link_id));
+			//TODO move this static number into a config file somewhere
+			if ($row->link_image_id != 232) {
+				$sql = 'DELETE FROM images WHERE image_id = ?';
+				$this->db->query($sql,array($row->link_image_id));
+				$this->load->helper('images_helper');
+				delete(photoLocation($row->link_image_id));
 			}
 		}
 		$this->db->trans_complete();
-		if ($rmimage){
-			$this->load->helper('images_helper');
-			delete(photoLocation($row->link_image_id));
-		}
 	}
 
 	function ModifyLink() {
@@ -72,9 +55,9 @@ class Links_Model extends Model {
 	/*
 	 * Makes a link an officical link, cannot be undone!
 	 */
-	function PromoteLink($user) {
+	function PromoteLink($user, $linkId) {
 		$sql = 'UPDATE links SET link_official = 1, link_editor_entity_id = ? WHERE link_id = ?';
-		$this->db->query($sql,array($user));
+		$this->db->query($sql,array($user, $linkId));
 	}
 
 	/*
@@ -98,8 +81,24 @@ class Links_Model extends Model {
 		}
 	}
 
+	function ChangeUserLinks($user, $links) {
+		$sql = 'SELECT user_link_link_id
+		        FROM user_links
+		        INNER JOIN links
+		        ON links.link_id = user_link_link_id
+		        WHERE user_link_user_entity_id= ?
+		        AND link_official = 0';
+		$query = $this->db->query($sql, array($user))
+		foreach ($query->result() as $unofficialLink) {
+			if (is_null(array_search($unofficialLink, $links)) {
+				$this->DeleteLink($user, $unofficialLink);
+			}
+		}
+		DropUserLinks($user);
+		AddUserLinks($user, $links);
+	}
+
 	function DropUserLinks($user) {
-		//TODO Check Link if link is not official, so we can delete it totally
 		$sql = 'DELETE FROM user_links WHERE user_link_user_entity_id= ?';
 		return $this->db->query($sql, array($user));
 	}
