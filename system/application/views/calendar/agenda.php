@@ -15,12 +15,10 @@ if (!empty($Occurrences)) {
 		echo($occurrence->StartTime->Format('H:i'));
 		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
 		echo($occurrence->Event->Name);
-		echo('</td></tr>');
 		if (!empty($occurrence->LocationDescription)) {
-			echo('<tr><td /><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-			echo($occurrence->LocationDescription);
-			echo('</td></tr>');
+			echo('('.$occurrence->LocationDescription.')');
 		}
+		echo('</td></tr>');
 	}
 	?>
 	</table>
