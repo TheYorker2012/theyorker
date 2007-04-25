@@ -11,7 +11,7 @@ if (!empty($Occurrences)) {
 	<table border="0" cellpadding="1" cellspacing="0">
 	<?
 	foreach ($Occurrences as $occurrence) {
-		echo('<tr><td>');
+		echo('<tr><td valign="top">');
 		echo($occurrence->StartTime->Format('H:i'));
 		echo('</td><td><img src="/images/prototype/homepage/arrow.png" /></td><td>');
 		echo($occurrence->Event->Name);
