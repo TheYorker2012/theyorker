@@ -4,7 +4,7 @@
 		<?php echo($main_text); ?>
 	</div>
 	<? } ?>
-	<form id="general" action="/register" method="post">
+	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
 			Please enter your name:
 			<fieldset>
@@ -79,8 +79,13 @@ foreach ($years as $year) {
 				<input class="checkbox" type="checkbox" id="facebook" name="facebook" value="1" <?php if ($this->validation->facebook) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>
-		</div>
+		<?php if(!$in_wizard) { ?>
+		 	<input type='submit' name='submit' id='submit' value='Save' class='button' />
+		<? } ?>	
+			</div>
+		<?php if($in_wizard) { ?>
 		<div>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
 		</div>
+		<? } ?>
 	</form>

@@ -185,7 +185,7 @@ class Account extends controller
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		
-		$this->account_personal->Validate();
+		$this->account_personal->Validate(false,'/account/personal');
 		
 		$data['bigcontent'] = $this->account_personal;
 		$this->main_frame->SetContentSimple('account/preferences', $data);

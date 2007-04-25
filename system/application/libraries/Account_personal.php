@@ -18,7 +18,7 @@ class Account_personal extends FramesFrame
 	/**
 	 * @brief Echo's out the form and does validation
 	 */
-	function Validate()
+	function Validate($in_wizard, $form_action, $redirect_address = null)
 	{
 		// Load the Frames library
 		$CI = &get_instance();
@@ -81,7 +81,11 @@ class Account_personal extends FramesFrame
 					($CI->validation->facebook ? '' : null)
 					);
 				$CI->prefs_model->updateUserInfo($CI->user_auth->entityId,$info);
-				redirect('/register/academic');
+				if($redirect_address == null) {
+					$CI->main_frame->AddMessage('success','Your personal information has been updated successfully.');
+				} else {
+					redirect($redirect_address);
+				}
 			}
 		}
 
@@ -118,5 +122,7 @@ class Account_personal extends FramesFrame
 
 		$this->SetData('colleges', $CI->prefs_model->GetColleges());
 		$this->SetData('years', $CI->prefs_model->GetYears());
+		$this->SetData('form_action', $form_action);
+		$this->SetData('in_wizard', $in_wizard);
 	}
 }

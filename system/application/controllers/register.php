@@ -32,7 +32,7 @@ class Register extends Controller {
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		
-		$this->account_personal->Validate();
+		$this->account_personal->Validate(true,'/register','/register/academic');
 		
 		//$directory_view = $this->frames->view('directory/directory', $data);
 
