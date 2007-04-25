@@ -7,11 +7,21 @@
  */
 
 if (!empty($Occurrences)) {
+	?>
+	<table border="0" cellpadding="1" cellspacing="0">
+	<?
 	foreach ($Occurrences as $occurrence) {
-		echo('<div class="BlueBox">');
-		echo($occurrence->StartTime->Format('H:i').' - '.$occurrence->Event->Name);
-		echo('</div>');
+		echo('<tr><td>');
+		echo($occurrence->StartTime->Format('H:i'));
+		echo('</td><td><img src="/images/prototype/homepage/arrow.png" /></td><td>');
+		echo($occurrence->Event->Name);
+		echo('</td></tr><tr><td colspan="2" /><td>');
+		echo($occurrence->LocationDescription);
+		echo('</td></tr>');
 	}
+	?>
+	</table>
+	<?php
 } else {
 	?>
 	You have no events today.

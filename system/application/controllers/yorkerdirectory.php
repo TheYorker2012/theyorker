@@ -264,7 +264,7 @@ class Yorkerdirectory extends Controller
 			$this->my_calendar->SetUrlPrefix('/directory/'.$organisation.'/calendar/');
 			//$this->My_calendar->SetAgenda(vip_url('calendar/agenda').'/');
 			
-			$yorker_source = new CalendarSourceYorker(9);
+			$yorker_source = new CalendarSourceYorker(0);
 			// Only those events of the organisation
 			$yorker_source->DisableGroup('subscribed');
 			$yorker_source->DisableGroup('owned');
