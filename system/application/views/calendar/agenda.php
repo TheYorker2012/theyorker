@@ -13,11 +13,14 @@ if (!empty($Occurrences)) {
 	foreach ($Occurrences as $occurrence) {
 		echo('<tr><td valign="top">');
 		echo($occurrence->StartTime->Format('H:i'));
-		echo('</td><td><img src="/images/prototype/homepage/arrow.png" /></td><td>');
+		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
 		echo($occurrence->Event->Name);
-		echo('</td></tr><tr><td colspan="2" /><td>');
-		echo($occurrence->LocationDescription);
 		echo('</td></tr>');
+		if (!empty($occurrence->LocationDescription)) {
+			echo('<tr><td /><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
+			echo($occurrence->LocationDescription);
+			echo('</td></tr>');
+		}
 	}
 	?>
 	</table>

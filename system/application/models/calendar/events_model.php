@@ -1176,6 +1176,9 @@ class Events_model extends Model
 				if (array_key_exists('time_associated', $EventData)) {
 					$occurrence['time_associated'] = $EventData['time_associated'];
 				}
+				if (array_key_exists('location', $EventData)) {
+					$occurrence['location'] = $EventData['location'];
+				}
 				$occurrence['state'] = 'draft';
 				$occurrences[] = $occurrence;
 			}
