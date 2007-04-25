@@ -63,9 +63,8 @@ class Articles_model extends Model {
 			' article_contents.article_content_id,'.
 			' article_contents.article_content_wikitext,'.
 			' article_contents.article_content_wikitext_cache,'.
-			' users.user_firstname,'.
-			' users.user_surname,'.
-			' users.user_email '.
+			' business_cards.business_card_name,'.
+			' business_cards.business_card_email '.
 			//' users.user_image_id '.
 			'FROM articles '.
 			'INNER JOIN organisations '.
@@ -78,8 +77,8 @@ class Articles_model extends Model {
 			' ON articles.article_content_type_id = content_types.content_type_id '.
 			'INNER JOIN article_writers '.
 			' ON articles.article_id = article_writers.article_writer_article_id '.
-			'INNER JOIN users '.
-			' ON article_writers.article_writer_user_entity_id = users.user_entity_id '.
+			'INNER JOIN business_cards '.
+			' ON article_writers.article_writer_byline_business_card_id = business_cards.business_card_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
 			' AND organisation_types.organisation_type_directory=1 ';
 			//' AND reviews.rto_content_type_id IS NULL ';
@@ -102,8 +101,8 @@ class Articles_model extends Model {
 			}
 			// Now add the author
 			$reviews[$data['article_id']]['authors'][] = array(
-				'name' => $data['user_firstname'].' '.$data['user_surname'],
-				'email' => $data['user_email'],
+				'name' => $data['business_card_name'],
+				'email' => $data['business_card_email'],
 			);
 		}
 

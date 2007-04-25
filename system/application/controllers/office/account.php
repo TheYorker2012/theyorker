@@ -12,15 +12,15 @@ class Account extends Controller
 		$this->load->library('organisations');
 		$this->load->helper('wikilink');
 	}
-	
+
 	function index()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_settings');
 		$this->_SetupTabs('admin');
-		
+
 		//Do password checks before updating
 		if(!empty($_POST["password_button"])){
 			if($_POST["password_new1"]==$_POST["password_new2"]){
@@ -41,8 +41,8 @@ class Account extends Controller
 			$this->main_frame->AddMessage('error','The new password you entered was not the same in both fields.');
 			}
 		}
-		
-		
+
+
 		$data = $this->organisations->_GetOrgData($organisation);
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		$data['account_maintenance_text'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
@@ -50,26 +50,26 @@ class Account extends Controller
 		$data['account_username_text'] = $this->pages_model->GetPropertyWikitext('account_username');
 		$data['maintainer'] = $this->_GetMaintainer($organisation);
 		$data['is_student'] = $this->user_auth->isUser;
-		
+
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account', $data);
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
 		));
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	function maintainer()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_settings_admin');
 		$this->_SetupTabs('admin');
-		
+
 		//Send update if information is given
 		if(!empty($_POST['maintainer_button'])){
 			switch ($_POST['maintainer_type'])
@@ -82,7 +82,7 @@ class Account extends Controller
 							);
 				$this->orgaccount_model->UpdateDirectoryOrganisationMaintainer($organisation, $Data);
 				$this->main_frame->AddMessage('success','Administrator information updated.');
-			break;  
+			break;
 			case 'student':
 				$Data = array(
 							'maintainer_email' => null,
@@ -109,7 +109,7 @@ class Account extends Controller
 				$this->main_frame->AddMessage('error','Administrator not updated, invalid form option submitted.');
 			}
 		}
-		
+
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		$data['account_maintenance_text'] = $this->pages_model->GetPropertyWikitext('account_maintenance');
 		$data['maintainer'] = $this->_GetMaintainer($organisation);
@@ -117,90 +117,90 @@ class Account extends Controller
 		$data['is_student'] = $this->user_auth->isUser;
 		// Set up the content
 		$this->main_frame->SetContentSimple('viparea/account_maintainer', $data);
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
 		));
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	/// Email settings.
 	function email()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_settings_email');
 		$this->_SetupTabs('email');
-		
+
 		$data = array();
-		
+
 		$this->load->helper('string');
 		$this->main_frame->SetContentSimple('viparea/account_email',$data);
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
 		));
-		
+
 		$this->main_frame->Load();
 	}
-	
+
 	/// Identity settings.
 	function identities()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_settings_identities');
 		$this->_SetupTabs('identities');
-		
+
 		$data = array();
-		
+
 		$this->load->helper('string');
 		$this->main_frame->SetContentSimple('viparea/account_identities',$data);
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
 		));
-		
+
 		$this->main_frame->Load();
 	}
-	
+
 	/// Password changing.
 	function password()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_settings_password');
 		if ($this->user_auth->isUser) {
 			$this->messages->AddMessage('error', 'Only accessible when logged in as '.VipOrganisationName().'.'.
 				HtmlButtonLink(site_url('logout/main/login/main'.$this->uri->uri_string()),'Relogin'));
-			
+
 		} else {
-			
+
 			$this->_SetupTabs('password');
-			
+
 			$data = array(
 				'main_text' => 'hello world! main text goes here. this will only be accessible when logged in as organisation as oposed to student/vip',
 				'change_password_target' => vip_url('account/password'),
 			);
-			
+
 			$this->load->helper('string');
 			$this->main_frame->SetContentSimple('account/password_change',$data);
-			
+
 		}
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => VipOrganisationName(),
 		));
-		
+
 		$this->main_frame->Load();
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/// Set up the tabs on the main_frame.
 	/**
 	 * @param $SelectedPage string Selected Page.
@@ -221,15 +221,15 @@ class Account extends Controller
 		}
 		//$navbar->AddItem('maintainer', 'Maintainer',
 		//		vip_url('account/maintainer'));
-		
+
 		$this->main_frame->SetPage($SelectedPage);
 	}
-	
-	
+
+
 	private function _GetMaintainer ($organisation) {
 		//Get data from model
 		$data = $this->orgaccount_model->GetDirectoryOrganisationMaintainer($organisation);
-		
+
 		foreach($data as $row){
 			//If maintainer_user_entity_id is empty the maintainer is not a student the varible student is used so the view knows which varibles from the controler to show.
 			if($row['organisation_maintainer_user_entity_id'] == null){
@@ -255,7 +255,7 @@ class Account extends Controller
 								'maintainer_name' => $row['organisation_maintainer_name'],
 								'maintainer_firstname' => $row['user_firstname'],
 								'maintainer_surname' => $row['user_surname'],
-								'maintainer_student_email' => $row['user_email'],
+								'maintainer_student_email' => $row['entity_username'].'@york.ac.uk',
 								'student' => $student,
 								'is_user' => $is_user,
 								'maintained' => $maintained,

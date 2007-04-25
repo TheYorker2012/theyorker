@@ -5,7 +5,7 @@ class Members_model extends Model {
 	{
 		parent::Model();
 	}
-	
+
 	/// Gets a users membership with an organisation.
 	/**
 	 * @param $organisation_id integer/array(int) Organisation entity id.
@@ -33,7 +33,7 @@ class Members_model extends Model {
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
 				users.user_nickname AS nickname,
-				IF(subscriptions.subscription_user_confirmed = TRUE, users.user_email, NULL) AS email,
+				IF(subscriptions.subscription_user_confirmed = TRUE, entities.entity_username, NULL) AS email,
 				users.user_gender AS gender,
 				users.user_enrolled_year AS enrol_year
 			FROM
@@ -71,7 +71,7 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
-	
+
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
 	{
 		$bind_data = array($OrganisationId);
@@ -89,7 +89,7 @@ class Members_model extends Model {
 					business_cards.business_card_phone_internal AS phone_internal,
 					business_cards.business_card_phone_external AS phone_external,
 					business_cards.business_card_postal_address AS postal_address,
-					business_card_groups.business_card_group_name AS group_name 
+					business_card_groups.business_card_group_name AS group_name
 			FROM		business_cards
 			INNER JOIN	business_card_groups
 					ON	business_cards.business_card_business_card_group_id
@@ -111,8 +111,8 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
-	
-	
+
+
 	# returns whether a member is subscribed and confirmed
 	function IsSubscribed($UserId,$OrganisationId) {
 		$sql = '
@@ -131,31 +131,31 @@ class Members_model extends Model {
 			return true;
 		}
 	}
-	
+
 	# sets vip to $status
 	function UpdateVipStatus($Status,$UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET    subscription_vip = "'.$Status.'"				
+				SET    subscription_vip = "'.$Status.'"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$query = $this->db->query($sql);
 		return $this->db->affected_rows();
 	}
-	
+
 	# sets paid to $status
 	function UpdatePaidStatus($Status,$UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET subscription_paid = "'.$Status.'"				
+				SET subscription_paid = "'.$Status.'"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
 		$this->db->query($sql);
 		return $this->db->affected_rows();
 	}
-	
+
 	/// Invite a set of users to join the organisation.
 	/**
 	 * This simply tries to set a subscription up with organisation_confirmed=1,
@@ -193,7 +193,7 @@ class Members_model extends Model {
 		$this->db->query($sql, $bind_data);
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	/// Get information about the specified users.
 	/**
 	 * @param $OrganisationId integer Organisation's entity_id.
@@ -225,7 +225,7 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
-	
+
 	/// Get a list of the invited users.
 	/**
 	 * @param $OrganisationId integer Organisation's entity_id.
@@ -250,7 +250,7 @@ class Members_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
-	
+
 	// (not in use yet, subscription_member is depreciated)
 	/*function RemoveSubscription($UserId,$OrgId) {
 		$sql = '
@@ -259,9 +259,9 @@ class Members_model extends Model {
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
-		$this->db->query($sql);		
+		$this->db->query($sql);
 	}*/
-	
+
 	# sets member=1
 	// (not in use yet, subscription_member is depreciated)
 	/*function ConfirmMember($UserId,$OrgId) {
@@ -271,21 +271,21 @@ class Members_model extends Model {
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
-		$this->db->query($sql);		
+		$this->db->query($sql);
 	}*/
-	
+
 	#sets confirmed=1
 	function ConfirmSubscription($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
 				SET subscription_user_confirmed = "1"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"				
+				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';
-		$this->db->query($sql);			
+		$this->db->query($sql);
 	}
-	
-	# A check against an organisation inviting a user twice	
+
+	# A check against an organisation inviting a user twice
 	function AlreadyMember($UserId,$OrgId) {
 		$sql = '
 				SELECT subscriptions.subscription_user_entity_id
@@ -302,5 +302,5 @@ class Members_model extends Model {
 		}
 	}
 
-}	
+}
 ?>

@@ -7,25 +7,25 @@ class Useradder extends Controller
 	function index()
 	{
 		if (!CheckPermissions()) return;
-		
+
 		$this->main_frame->SetContentSimple('test/useradder');
-		
+
 		$this->main_frame->Load();
 	}
-	
+
 	function add()
 	{
 		if (!CheckPermissions()) return;
-		
+
 		$this->load->helper('string');
-		
+
 		$safety = $this->input->post('safety');
 		$username = $this->input->post('username');
 		$password = $this->input->post('password');
-		
+
 		$salt = random_string('alnum', 32);
 		$hash = sha1($salt.$password);
-		
+
 		if ('grannysmith' === $safety) {
 			$sql_add_entity = '
 				INSERT INTO entities (
@@ -36,7 +36,7 @@ class Useradder extends Controller
 			$this->db->query($sql_add_entity,array($username,$hash,$salt));
 			if (1||$this->db->affected_rows() > 0) {
 				$entity_id = $this->db->insert_id();
-		
+
 				$firstname = $this->input->post('firstname');
 				$surname = $this->input->post('surname');
 				$email = $this->input->post('email');
@@ -48,18 +48,16 @@ class Useradder extends Controller
 						user_entity_id,
 						user_firstname,
 						user_surname,
-						user_email,
 						user_nickname,
 						user_gender,
 						user_office_password,
 						user_office_access,
 						user_admin
-					) VALUES (?,?,?,?,?,\'m\',?,1,1)';
+					) VALUES (?,?,?,?,\'m\',?,1,1)';
 				$this->db->query($sql_add_entity,array(
 						$entity_id,
 						$firstname,
 						$surname,
-						$email,
 						$nickname,
 						$hashoffice,
 					));

@@ -29,10 +29,12 @@ class Orgaccount_model extends Model {
 			' organisations.organisation_maintainer_name,'.
 			' users.user_firstname,'.
 			' users.user_surname,'.
-			' users.user_email'.
+			' entities.entity_username'.
 			' FROM organisations '.
 			'LEFT JOIN users '.
 			'ON users.user_entity_id = organisations.organisation_maintainer_user_entity_id '.
+			'LEFT JOIN entities '.
+			'ON entities.entity_id = organisations.organisation_maintainer_user_entity_id '.
 			'WHERE organisations.organisation_directory_entry_name=? ';
 
 		$query = $this->db->query($sql, $DirectoryEntryName);

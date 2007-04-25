@@ -14,7 +14,7 @@ class Account_personal extends FramesFrame
 		/// Set view to use for layout & design of byline
 		parent::__construct('account/user_settings');
 	}
-	
+
 	/**
 	 * @brief Echo's out the form and does validation
 	 */
@@ -23,16 +23,17 @@ class Account_personal extends FramesFrame
 		// Load the Frames library
 		$CI = &get_instance();
 		$CI->load->library('frames');
-	
+
 		$CI->load->model('prefs_model');
-	
+
 		// Perform validation checks on submitted data
 		$CI->load->library('validation');
 		$CI->validation->set_error_delimiters('<li>','</li>');
 		// Validation rules
 		$rules['fname'] = 'trim|required|alpha';
 		$rules['sname'] = 'trim|required|alpha';
-		$rules['email'] = 'trim|required|valid_email';
+		$rules['yorkmail'] = '';
+		$rules['facebook'] = '';
 		$rules['nick'] = 'trim|required|alpha_numeric';
 		$rules['gender'] = 'trim|required';
 		$rules['college'] = 'trim|required|numeric';
@@ -42,7 +43,8 @@ class Account_personal extends FramesFrame
 		// names of fields for error msgs
 		$fields['fname'] = 'first name';
 		$fields['sname'] = 'surname';
-		$fields['email'] = 'e-mail address';
+		$fields['yorkmail'] = 'YorkMail password';
+		$fields['facebook'] = 'facebook integration';
 		$fields['nick'] = 'nickname';
 		$fields['gender'] = 'gender';
 		$fields['college'] = 'college';
@@ -71,11 +73,12 @@ class Account_personal extends FramesFrame
 					$CI->validation->college,
 					$CI->validation->fname,
 					$CI->validation->sname,
-					$CI->validation->email,
+					$CI->validation->yorkmail,
 					$CI->validation->nick,
 					$CI->validation->gender,
 					$CI->validation->year,
-					$CI->validation->time
+					$CI->validation->time,
+					($CI->validation->facebook ? '' : null)
 					);
 				$CI->prefs_model->updateUserInfo($CI->user_auth->entityId,$info);
 				redirect('/register/academic');
@@ -102,11 +105,15 @@ class Account_personal extends FramesFrame
 			$CI->validation->college = $userInfo['user_college'];
 			$CI->validation->year = $userInfo['user_enrolled_year'];
 			$CI->validation->time = $userInfo['user_time_format'];
+			$CI->validation->facebook = $userInfo['user_facebook_enabled'];
+			$CI->validation->yorkmail = $userInfo['user_yorkmail_password'];
+			/*
 			if ($userInfo['user_email'] != '') {
-				$CI->validation->email = $userInfo['user_email'];
+				$CI->validation->facebook = $userInfo['user_facebook_enabled'];
 			} else {
 				$CI->validation->email = $CI->user_auth->username . '@york.ac.uk';
 			}
+			*/
 		}
 
 		$this->SetData('colleges', $CI->prefs_model->GetColleges());

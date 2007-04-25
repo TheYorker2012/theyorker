@@ -82,7 +82,8 @@ class Prefs_model extends Model {
 			' user_college_organisation_entity_id  AS user_college,'.
 			' user_firstname,'.
 			' user_surname,'.
-			' user_email,'.
+			' (user_facebook_session_id IS NOT NULL) as user_facebook_enabled,'.
+			' user_yorkmail_password,'.
 			' user_nickname,'.
 			' user_gender,'.
 			' user_time_format,'.
@@ -95,17 +96,20 @@ class Prefs_model extends Model {
 
 	function updateUserInfo ($uid, $info)
 	{
+		$row = $this->getUserInfo ($uid);
+
 		$sql =
 			'UPDATE users '.
 			'SET'.
 			' user_college_organisation_entity_id = ?,'.
 			' user_firstname = ?,'.
 			' user_surname = ?,'.
-			' user_email = ?,'.
+			' user_yorkmail_password = ?,'.
 			' user_nickname = ?,'.
 			' user_gender = ?,'.
 			' user_enrolled_year = ?,'.
-			' user_time_format = ? '.
+			' user_time_format = ?, '.
+			' user_facebook_session_id = ? '.
 			'WHERE user_entity_id = ' . $uid;
 		$query = $this->db->query($sql, $info);
 	}

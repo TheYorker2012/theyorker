@@ -1,18 +1,22 @@
+	<?php if (isset($main_heading)) { ?>
 	<div class="BlueBox">
 		<h2><?php echo($main_heading); ?></h2>
+		<?php echo($main_text); ?>
 	</div>
+	<? } ?>
 	<form id="general" action="/register" method="post">
 		<div class="BlueBox">
+			Please enter your name:
 			<fieldset>
-				<label for="fname">First Name: </label>
+				<label for="fname">Forename: </label>
 				<input type="text" id="fname" name="fname" value="<?php echo(htmlentities($this->validation->fname)); ?>" />
 				<br />
 				<label for="sname">Surname: </label>
 				<input type="text" id="sname" name="sname" value="<?php echo(htmlentities($this->validation->sname)); ?>" />
 				<br />
-				<label for="email">E-mail Address: </label>
-				<input type="text" id="email" name="email" value="<?php echo(htmlentities($this->validation->email)); ?>" />
-				<br />
+			</fieldset>
+			To allow us to personalise your experience of our site, please tell us more about yourself:
+			<fieldset>
 				<label for="nick">Nickname: </label>
 				<input type="text" id="nick" name="nick" value="<?php echo(htmlentities($this->validation->nick)); ?>" />
 				<br />
@@ -62,6 +66,18 @@ foreach ($years as $year) {
 				</select>
 				<br />
 				<!-- TODO: add current time thing -->
+			</fieldset>
+				If you would like to see how many unread e-mails you have in your inbox, please enter your YorkMail e-mail password here:
+			<fieldset>
+				<label for="yorkmail">Webmail Password:</label>
+				<input type="text" id="yorkmail" name="yorkmail" value="<?php echo(htmlentities($this->validation->yorkmail)); ?>" />
+				<br />
+			</fieldset>
+				If you would like to see your facebook events on your calendar, tick the box below, and facebook will soon prompt you to log in.
+			<fieldset>
+				<label class="radio" for="facebook">Facebook Integration:</label>
+				<input class="checkbox" type="checkbox" id="facebook" name="facebook" value="1" <?php if ($this->validation->facebook) { echo('checked="checked" '); } ?>/>
+				<br />
 			</fieldset>
 		</div>
 		<div>
