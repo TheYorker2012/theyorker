@@ -32,7 +32,7 @@ class Links_Model extends Model {
 		$sql = 'SELECT link_official, link_image_id 
 			FROM links WHERE link_id = ?';
 		$query = $this->db->query($sql,array($id));
-		$row = $query->result();
+		$row = $query->first_row();
 		if ($row->link_official == 0) {
 			$sql ='DELETE FROM links WHERE link_id = ?';
 			$this->db->query($sql,array($id));
@@ -40,8 +40,6 @@ class Links_Model extends Model {
 			if ($row->link_image_id != 232) {
 				$sql = 'DELETE FROM images WHERE image_id = ?';
 				$this->db->query($sql,array($row->link_image_id));
-				$this->load->helper('images_helper');
-				delete(photoLocation($row->link_image_id));
 			}
 		}
 		$this->db->trans_complete();
