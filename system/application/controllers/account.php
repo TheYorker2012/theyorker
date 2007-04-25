@@ -112,7 +112,7 @@ class Account extends controller
 		$this->xajax->registerFunction(array("links_update", &$this, "_links_update"));
 		$this->xajax->processRequests();
 		
-		if ($action = 'add') {
+		if ($action == 'add') {
 			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
 		}
 

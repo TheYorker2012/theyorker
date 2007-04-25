@@ -79,7 +79,6 @@ class Links_Model extends Model {
 	}
 
 	function ChangeUserLinks($user, $links) {
-		var_dump($links);
 		$sql = 'SELECT user_link_link_id AS id
 		        FROM user_links
 		        INNER JOIN links
