@@ -144,7 +144,7 @@ class Account extends controller
 		
 		$this->load->model('Links_Model');
 		
-		if ($this->input->post('lurl') and $this->input->post('lname')) {
+		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
 			if ($this->input->post('lnominate') == 'on') {
 				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
 			} else {
@@ -152,6 +152,8 @@ class Account extends controller
 			}
 			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
 			redirect('/account/links', 'location');
+		} else {
+			$this->messages->AddMessage('error', 'Please enter a name and url.');
 		}
 		
 		$data = array();
@@ -181,12 +183,13 @@ class Account extends controller
 		
 		$this->load->library('account_personal');
 		
-		// Get page content
-		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
-		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		
 		$this->account_personal->Validate(false,'/account/personal');
 		
+		// Get page content
+		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
+		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
+
 		$data['bigcontent'] = $this->account_personal;
 		$this->main_frame->SetContentSimple('account/preferences', $data);
 		
