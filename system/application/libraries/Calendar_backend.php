@@ -319,7 +319,7 @@ abstract class CalendarSource
 	function FetchEvent($Data, $Event)
 	{
 		$Data->NewCurrentSource($this);
-		$this->_FetchEvents($Data);
+		$this->_FetchEvent($Data, $Event);
 		return array();
 	}
 	
