@@ -48,6 +48,7 @@ class CalendarSourceFacebook extends CalendarSource
 		
 		if ('e' === substr($Event, 0, 1)) {
 			$Event = substr($Event, 1);
+			var_dump($Event);
 			if (is_numeric($Event)) {
 				$this->GetEvents($Data, (int)$Event);
 			}
@@ -91,6 +92,7 @@ class CalendarSourceFacebook extends CalendarSource
 				$range[1],
 				null
 			);
+			var_dump($events);
 			
 			if (!empty($events)) {
 				foreach ($events as $event) {
