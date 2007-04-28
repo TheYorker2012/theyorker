@@ -94,14 +94,22 @@ $CI = & get_instance();
 			echo('<img src="'.$Occurrence->Event->Image.'" />');
 		}
 		echo('</p>');
-		if (isset($Attendees)) {
-		var_dump($Attendees);
-			/*echo('<h2>Confirmed Attendees</h2>');
+		if (isset($Attendees) && !empty($Attendees)) {
+			echo('<h2>Confirmed Attendees</h2>');
 			echo('<ul>');
 			foreach ($Attendees as $attendee) {
-				echo('<li>'.$attendee.'</li>');
+				echo('<li>');
+				$linked = array_key_exists('link', $attendee);
+				if ($linked) {
+					echo('<a href="'.$attendee['link'].'" target="_blank">');
+				}
+				echo($attendee['name']);
+				if ($linked) {
+					echo('</a>');
+				}
+				echo(' '.$attendee['attend'].'</li>');
 			}
-			echo('</ul>');*/
+			echo('</ul>');
 		}
 		?>
 		

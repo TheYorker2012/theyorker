@@ -432,7 +432,7 @@ class My_calendar
 			} else {
 				$CI->messages->AddMessage('error', 'The event coud not be found');
 				$CI->load->helper('uri_tail');
-				RedirectUriTail(4);
+				RedirectUriTail(5);
 			}
 		} else {
 			show_404();

@@ -470,6 +470,12 @@ class CalendarSourceYorker extends CalendarSource
 		if (is_numeric($Occurrence)) {
 			$CI = & get_instance();
 			$attendees = $CI->events_model->GetOccurrenceRsvp($Occurrence);
+			foreach ($attendees as $key => $value) {
+				$attendees[$key] = array(
+					'name' => $value['firstname'] . ' ' . $value['surname'],
+					'attend' => TRUE
+				);
+			}
 			return $attendees;
 		} else {
 			return parent::GetOcurrenceAttendanceList($Occurrence);
