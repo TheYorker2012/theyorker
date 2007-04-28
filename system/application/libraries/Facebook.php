@@ -123,7 +123,8 @@ class Facebook
 				$this->RedirectLogin();
 			} else {
 				// Developers should probably handle other exceptions in a better way than this.
-				throw $ex;
+				//throw $ex;
+				$this->HandleException($ex);
 			}
 		}
 	}
