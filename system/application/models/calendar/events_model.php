@@ -825,24 +825,25 @@ class Events_model extends Model
 		INNER JOIN event_occurrences
 			ON	event_occurrences.event_occurrence_id
 				= event_occurrence_users.event_occurrence_user_event_occurrence_id
-			AND	event_occurrences.event_occurrence_event_id = ?
+			AND	event_occurrences.event_occurrence_event_id = '.$this->db->escape($EventId).'
+		INNER JOIN events
+			ON	event_occurrence_event_id = event_id
 		INNER JOIN users
 			On	users.user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 		INNER JOIN entities
 			ON entities.entity_id = users.user_entity_id
-		INNER JOIN event_entities
-			ON	event_entities.event_entity_event_id = ?
-			AND ' . $occurrence_query->ExpressionOwned() . '
+		LEFT JOIN event_entities
+			ON	event_entities.event_entity_event_id = '.$this->db->escape($EventId).'
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 			AND	subscriptions.subscription_organisation_entity_id
 				= ' . $this->GetActiveEntityId() . '
-		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE';
-		$bind_data = array($EventId, $EventId);
+		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE
+			AND	'.$occurrence_query->ExpressionOwned();
 
-		$query = $this->db->query($sql, $bind_data);
+		$query = $this->db->query($sql);
 
 		return $query->result_array();
 	}
@@ -873,15 +874,16 @@ class Events_model extends Model
 			ON	event_occurrences.event_occurrence_id
 				= event_occurrence_users.event_occurrence_user_event_occurrence_id
 			AND	event_occurrences.event_occurrence_id = ' . $OccurrenceId . '
+		INNER JOIN events
+			ON	event_occurrence_event_id = event_id
 		INNER JOIN users
 			On	users.user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
 		INNER JOIN entities
 			ON entities.entity_id = users.user_entity_id
-		INNER JOIN event_entities
+		LEFT JOIN event_entities
 			ON	event_entities.event_entity_event_id
 				= event_occurrences.event_occurrence_event_id
-			AND ' . $occurrence_query->ExpressionOwned() . '
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_user_entity_id
 				= event_occurrence_users.event_occurrence_user_user_entity_id
@@ -890,7 +892,8 @@ class Events_model extends Model
 		LEFT JOIN locations
 			ON locations.location_id
 				= event_occurrences.event_occurrence_location_id
-		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE';
+		WHERE	event_occurrence_users.event_occurrence_user_attending = TRUE
+			AND	'.$occurrence_query->ExpressionOwned();
 
 		$query = $this->db->query($sql);
 

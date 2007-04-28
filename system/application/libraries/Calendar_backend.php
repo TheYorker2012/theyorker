@@ -369,6 +369,20 @@ abstract class CalendarSource
 	{
 		return array('error' => array('Deleting events in this event source is not currently supported.'));
 	}
+	
+	/// Get list of known attendees.
+	/**
+	 * @param $Occurrence Occurrence identifier.
+	 * @return array Attendees, defined by fields:
+	 *	- 'name' string Name of attendee.
+	 *	- 'link' string URL about user.
+	 *	- 'entity_id' int Entity id if known.
+	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
+	 */
+	function GetOccurrenceAttendanceList($Occurrence)
+	{
+		return array();
+	}
 }
 
 /// Calendar data object.
@@ -727,6 +741,25 @@ class CalendarSources extends CalendarSource
 			return $this->mSources[$SourceId]->DeleteEvent($Event);
 		} else {
 			return parent::DeleteEvent($Event);
+		}
+	}
+	
+	/// Get list of known attendees.
+	/**
+	 * @param $SourceId int Event source id.
+	 * @param $Occurrence Occurrence identifier.
+	 * @return array Attendees, defined by fields:
+	 *	- 'name' string Name of attendee.
+	 *	- 'link' string URL about user.
+	 *	- 'entity_id' int Entity id if known.
+	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
+	 */
+	function GetOccurrenceAttendanceList($SourceId, $Occurrence)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->GetOccurrenceAttendanceList($Occurrence);
+		} else {
+			return parent::GetOccurrenceAttendanceList($Occurrence);
 		}
 	}
 }

@@ -64,6 +64,7 @@ class My_calendar
 	/// array[string => string]
 	protected $mPaths = array(
 		'add' => '/dead',
+		'edit' => '/dead',
 	);
 	
 	function __construct()
@@ -369,6 +370,73 @@ class My_calendar
 		$this->SetupTabs('agenda', new Academic_time(time()), $Filter);
 		
 		return new FramesView('calendar/my_calendar', $data);
+	}
+	
+	/// Display event information.
+	function GetEvent($SourceId = NULL, $EventId = NULL, $OccurrenceId = NULL)
+	{
+		if (is_numeric($SourceId)) {
+			$SourceId = (int)$SourceId;
+			
+			$CI = & get_instance();
+			
+			// Get the specific event
+			$CI->load->library('calendar_backend');
+			$CI->load->library('calendar_source_my_calendar');
+			$sources = new CalendarSourceMyCalendar();
+			$calendar_data = new CalendarData();
+			$sources->FetchEvent($calendar_data, $SourceId, $EventId);
+			$events = $calendar_data->GetEvents();
+			if (array_key_exists(0, $events)) {
+				$event = $events[0];
+				// Find the occurrence
+				$found_occurrence = NULL;
+				foreach ($event->Occurrences as $key => $occurrence) {
+					if ($occurrence->SourceOccurrenceId == $OccurrenceId) {
+						$found_occurrence = & $event->Occurrences[$key];
+						break;
+					}
+				}
+				if (NULL === $found_occurrence) {
+					return show_404();
+				}
+				/*if ($CI->input->post('evpub_cancel')) {
+					// REDIRECT
+					$CI->messages->AddMessage('information','Event publication was cancelled.');
+					$CI->load->helper('uri_tail');
+					RedirectUriTail(4);
+					
+				} elseif ($CI->input->post('evpub_confirm')) {
+					// PUBLISH
+					$result = $CI->events_model->OccurrenceDraftPublish($EventId, FALSE);
+					if ($result > 0) {
+						$CI->messages->AddMessage('success',$result.' occurrences were altered');
+					} else {
+						print_r($CI->db->last_query());
+						exit;
+						$CI->messages->AddMessage('error','No occurrences were altered');
+					}
+					$CI->load->helper('uri_tail');
+					RedirectUriTail(4);
+					
+				} else {*/
+					$data = array(
+						'Event' => &$event,
+						'Occurrence' => &$found_occurrence,
+						'ReadOnly' => $this->mReadOnly,
+						'Attendees' => $sources->GetOccurrenceAttendanceList($SourceId, $OccurrenceId),
+					);
+					
+					return new FramesView('calendar/event', $data);
+				//}
+			} else {
+				$CI->messages->AddMessage('error', 'The event coud not be found');
+				$CI->load->helper('uri_tail');
+				RedirectUriTail(4);
+			}
+		} else {
+			show_404();
+		}
 	}
 	
 	function GetAdder()

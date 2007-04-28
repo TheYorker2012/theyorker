@@ -455,6 +455,26 @@ class CalendarSourceYorker extends CalendarSource
 		}
 		return $messages;
 	}
+	
+	/// Get list of known attendees.
+	/**
+	 * @param $Occurrence Occurrence identifier.
+	 * @return array Attendees, defined by fields:
+	 *	- 'name' string Name of attendee.
+	 *	- 'link' string URL about user.
+	 *	- 'entity_id' int Entity id if known.
+	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
+	 */
+	function GetOccurrenceAttendanceList($Occurrence)
+	{
+		if (is_numeric($Occurrence)) {
+			$CI = & get_instance();
+			$attendees = $CI->events_model->GetOccurrenceRsvp($Occurrence);
+			return $attendees;
+		} else {
+			return parent::GetOcurrenceAttendanceList($Occurrence);
+		}
+	}
 }
 
 

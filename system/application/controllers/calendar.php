@@ -49,6 +49,21 @@ class Calendar extends Controller
 		return new CalendarSourceMyCalendar();
 	}
 	
+	/// Display event information.
+	function event($SourceId = NULL, $EventId = NULL, $OccurrenceId = NULL)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$this->load->library('my_calendar');
+		
+		$this->main_frame->SetContent(
+			$this->my_calendar->GetEvent(
+				$SourceId, $EventId, $OccurrenceId)
+		);
+		
+		$this->main_frame->Load();
+	}
+	
 	function range($DateRange = NULL, $Filter = NULL)
 	{
 		if (!CheckPermissions('public')) return;
@@ -58,6 +73,7 @@ class Calendar extends Controller
 		// Gotta be a rep or admin to edit
 		$date_range_split = explode(':', $DateRange);
 		$this->my_calendar->SetPath('add', site_url('calendar/add/'.$date_range_split[0]));
+		$this->my_calendar->SetPath('edit', site_url('calendar/event'));
 		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetMyCalendar($sources, $DateRange, $Filter)

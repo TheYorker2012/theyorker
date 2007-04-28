@@ -34,14 +34,16 @@ class Calendar extends controller
 	}
 	
 	/// Display event information.
-	function event($EventId = NULL)
+	function event($SourceId = NULL, $EventId = NULL, $OccurrenceId = NULL)
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		
-		$data = array(
-			
+		$this->load->library('my_calendar');
+		
+		$this->main_frame->SetContent(
+			$this->my_calendar->GetEvent(
+				$SourceId, $EventId, $OccurrenceId)
 		);
-		$this->main_frame->SetContentSimple('calendar/event', $data);
 		
 		$this->main_frame->Load();
 	}
@@ -53,7 +55,7 @@ class Calendar extends controller
 		if (is_numeric($EventId)) {
 			$EventId = (int)$EventId;
 			
-			/// Get the specific event
+			// Get the specific event
 			$this->load->library('calendar_backend');
 			$this->load->library('calendar_source_yorker');
 			$source_yorker = new CalendarSourceYorker(0);
@@ -92,8 +94,9 @@ class Calendar extends controller
 				}
 			} else {
 				$this->messages->AddMessage('error', 'The event coud not be found');
+				$this->load->helper('uri_tail');
+				RedirectUriTail(3);
 			}
-			//RedirectTailUri();
 		} else {
 			show_404();
 		}
@@ -109,6 +112,7 @@ class Calendar extends controller
 		// Gotta be a rep or admin to edit
 		$date_range_split = explode(':', $DateRange);
 		$this->my_calendar->SetPath('add', vip_url('calendar/add/'.$date_range_split[0]));
+		$this->my_calendar->SetPath('edit', vip_url('calendar/event/'));
 		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetMyCalendar(

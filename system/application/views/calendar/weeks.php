@@ -1,11 +1,13 @@
 <?php
 
+echo('<div align="center">');
 if (isset($BackwardUrl)) {
-	echo('<a href="'.$BackwardUrl.'">Backward</a>');
+	echo('<a href="'.$BackwardUrl.'"><img src="/images/prototype/calendar/backward.gif" alt="Backward" /></a> ');
 }
 if (isset($ForwardUrl)) {
-	echo('<a href="'.$ForwardUrl.'">Forward</a>');
+	echo('<a href="'.$ForwardUrl.'"><img src="/images/prototype/calendar/forward.gif" alt="Forward" /></a>');
 }
+echo('</div>');
 
 $squash = count($Days) > 3;
 
