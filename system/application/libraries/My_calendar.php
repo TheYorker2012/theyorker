@@ -417,6 +417,8 @@ class My_calendar
 					$CI->main_frame->SetTitleParameters(array(
 						'event' => $event->Name,
 					));
+		
+					$this->SetupTabs('', $found_occurrence->StartTime);
 					
 					return new FramesView('calendar/event', $data);
 				}

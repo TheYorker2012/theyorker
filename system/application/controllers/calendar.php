@@ -42,7 +42,7 @@ class Calendar extends Controller
 	
 	protected function _SetupMyCalendar()
 	{
-		$this->load->library('My_calendar');
+		$this->load->library('my_calendar');
 		$this->load->library('calendar_source_my_calendar');
 		$this->my_calendar->SetUrlPrefix('/calendar/range/');
 		$this->my_calendar->SetAgenda('/calendar/agenda/');
@@ -57,6 +57,8 @@ class Calendar extends Controller
 		$this->pages_model->SetPageCode('calendar_event');
 		
 		$this->load->library('my_calendar');
+		$this->my_calendar->SetUrlPrefix('/calendar/range/');
+		$this->my_calendar->SetAgenda('/calendar/agenda/');
 		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetEvent(

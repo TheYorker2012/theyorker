@@ -45,6 +45,7 @@ class Calendar extends controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->library('my_calendar');
+		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
 		
 		$this->pages_model->SetPageCode('viparea_calendar_event');
 		$this->main_frame->SetTitleParameters(array(
