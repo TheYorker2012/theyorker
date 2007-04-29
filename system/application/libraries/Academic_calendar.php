@@ -788,7 +788,6 @@ class Academic_calendar {
 	 */
 	function __construct()
 	{
-		date_default_timezone_set('Europe/London');
 	}
 
 

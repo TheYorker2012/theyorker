@@ -68,6 +68,8 @@ class Calendar extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
+		$this->pages_model->SetPageCode('calendar_personal');
+		
 		$sources = & $this->_SetupMyCalendar();
 		
 		// Gotta be a rep or admin to edit

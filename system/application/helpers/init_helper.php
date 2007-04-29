@@ -9,6 +9,9 @@
  * - Warn if Magic quotes are enabled
  */
 
+// Set the timezone
+date_default_timezone_set('Europe/London');
+
 // Start a session
 session_start();
 

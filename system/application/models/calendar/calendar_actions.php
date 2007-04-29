@@ -81,13 +81,13 @@ class Calendar_actions extends model
 	
 	function _add_todo()
 	{
-		$CI = & $this;
 		// Read the post data
-		$name = $CI->input->post('todo_name');
+		$name = $this->input->post('todo_name');
 		if (FALSE !== $name) {
 			if (empty($name)) {
-				$CI->messages->AddMessage('warning', 'You didn\'t specify a name for the to do list item.');
+				$this->messages->AddMessage('warning', 'You didn\'t specify a name for the to do list item.');
 			} else {
+				$CI = & get_instance();
 				$CI->load->model('calendar/events_model');
 				$input['recur'] = new RecurrenceSet();
 				$input['todo'] = TRUE;
@@ -95,13 +95,13 @@ class Calendar_actions extends model
 				
 				try {
 					$results = $CI->events_model->EventCreate($input);
-					$CI->messages->AddMessage('success', 'To do list item added.');
+					$this->messages->AddMessage('success', 'To do list item added.');
 				} catch (Exception $e) {
-					$CI->messages->AddMessage('error', $e->getMessage());
+					$this->messages->AddMessage('error', $e->getMessage());
 				}
 			}
 		} else {
-			$CI->messages->AddMessage('error', 'Invalid todo name');
+			$this->messages->AddMessage('error', 'Invalid todo name');
 		}
 	}
 	
