@@ -28,6 +28,12 @@ class Calendar extends controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->library('My_calendar');
+		
+		$this->pages_model->SetPageCode('viparea_calendar_new_event');
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
+		
 		$this->main_frame->SetContent($this->my_calendar->GetAdder());
 		
 		$this->main_frame->Load();
@@ -39,6 +45,11 @@ class Calendar extends controller
 		if (!CheckPermissions('vip+pr')) return;
 		
 		$this->load->library('my_calendar');
+		
+		$this->pages_model->SetPageCode('viparea_calendar_event');
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
 		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetEvent(
@@ -113,6 +124,11 @@ class Calendar extends controller
 		$date_range_split = explode(':', $DateRange);
 		$this->my_calendar->SetPath('add', vip_url('calendar/add/'.$date_range_split[0]));
 		$this->my_calendar->SetPath('edit', vip_url('calendar/event/'));
+		
+		$this->pages_model->SetPageCode('viparea_calendar_range');
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => VipOrganisationName(),
+		));
 		
 		$this->main_frame->SetContent(
 			$this->my_calendar->GetMyCalendar(

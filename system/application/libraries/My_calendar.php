@@ -137,6 +137,10 @@ class My_calendar
 		
 		$this->mDateRange = $DateRange;
 		
+		$CI->main_frame->SetTitleParameters(array(
+			'range' => $range['description'],
+		));
+		
 		if ($days > 7) {
 			return $this->GetWeeks($Sources, $DateRange, $Filter, $range['format']);
 		} elseif ($days > 1) {
@@ -239,7 +243,6 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $view_mode,
-			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
@@ -285,7 +288,6 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $days,
-			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
@@ -331,7 +333,6 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $weeks,
-			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
@@ -400,26 +401,12 @@ class My_calendar
 				if (NULL === $found_occurrence) {
 					return show_404();
 				}
-				/*if ($CI->input->post('evpub_cancel')) {
+				if ($CI->input->post('evview_return')) {
 					// REDIRECT
-					$CI->messages->AddMessage('information','Event publication was cancelled.');
 					$CI->load->helper('uri_tail');
-					RedirectUriTail(4);
+					RedirectUriTail(5);
 					
-				} elseif ($CI->input->post('evpub_confirm')) {
-					// PUBLISH
-					$result = $CI->events_model->OccurrenceDraftPublish($EventId, FALSE);
-					if ($result > 0) {
-						$CI->messages->AddMessage('success',$result.' occurrences were altered');
-					} else {
-						print_r($CI->db->last_query());
-						exit;
-						$CI->messages->AddMessage('error','No occurrences were altered');
-					}
-					$CI->load->helper('uri_tail');
-					RedirectUriTail(4);
-					
-				} else {*/
+				} else {
 					$data = array(
 						'Event' => &$event,
 						'Occurrence' => &$found_occurrence,
@@ -427,8 +414,12 @@ class My_calendar
 						'Attendees' => $sources->GetOccurrenceAttendanceList($SourceId, $OccurrenceId),
 					);
 					
+					$CI->main_frame->SetTitleParameters(array(
+						'event' => $event->Name,
+					));
+					
 					return new FramesView('calendar/event', $data);
-				//}
+				}
 			} else {
 				$CI->messages->AddMessage('error', 'The event coud not be found');
 				$CI->load->helper('uri_tail');

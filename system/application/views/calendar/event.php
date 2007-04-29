@@ -15,15 +15,20 @@
 $CI = & get_instance();
 ?>
 <div class="BlueBox">
-	<span><?=$Occurrence->Event->Name?></span>
+	<h2><?=$Occurrence->Event->Name?></h2>
 	<div><p>
 		<?php
+		// date + time
+		echo('<div class="Date">');
+		echo($Occurrence->StartTime->Format('D, jS M y'));
 		if ($Occurrence->TimeAssociated) {
-			echo($Occurrence->StartTime->Format('g:ia'));
+			echo('. '.$Occurrence->StartTime->Format('g:ia'));
 			echo('-');
 			echo($Occurrence->EndTime->Format('g:ia'));
-			echo('<br />');
 		}
+		echo('</div>');
+		
+		echo('<p>');
 		if ('published' !== $Occurrence->State) {
 			echo('<strong>'.$Occurrence->State.'</strong>');
 			if (!$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
@@ -43,7 +48,7 @@ $CI = & get_instance();
 			echo('<br />');
 		}
 		if (!empty($Occurrence->LocationDescription)) {
-			echo($Occurrence->LocationDescription);
+			echo('at: '.$Occurrence->LocationDescription);
 			echo('<br />');
 		}
 		echo('<i>');
@@ -94,6 +99,14 @@ $CI = & get_instance();
 			echo('<img src="'.$Occurrence->Event->Image.'" />');
 		}
 		echo('</p>');
+		?>
+		<form method="post" action="<?=get_instance()->uri->uri_string()?>">
+			<fieldset>
+				<input type="submit" name="evview_return" value="Return" />
+			</fieldset>
+		</form>
+		<?php
+		// Attendee list
 		if (isset($Attendees) && !empty($Attendees)) {
 			echo('<h2>Confirmed Attendees</h2>');
 			echo('<ul>');
@@ -112,6 +125,5 @@ $CI = & get_instance();
 			echo('</ul>');
 		}
 		?>
-		
 	</div>
 </div>

@@ -253,7 +253,7 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->pages_model->SetPageCode('directory_events');
+		$this->pages_model->SetPageCode('directory_calendar');
 		
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
@@ -281,6 +281,7 @@ class Yorkerdirectory extends Controller
 			$this->my_calendar->SetDefaultRange(
 				$now->AcademicYear().'-'.$now->AcademicTermNameUnique()
 			);
+			$this->my_calendar->SetPath('edit', site_url('calendar/event'));
 			$calendar_view = $this->my_calendar->GetMyCalendar($yorker_source, $DateRange, $Filter);
 			
 			if (FALSE) {

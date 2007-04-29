@@ -54,6 +54,8 @@ class Calendar extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
+		$this->pages_model->SetPageCode('calendar_event');
+		
 		$this->load->library('my_calendar');
 		
 		$this->main_frame->SetContent(
@@ -129,6 +131,9 @@ class Calendar extends Controller
 		if (!CheckPermissions('student')) return;
 		
 		$this->load->library('My_calendar');
+		
+		$this->pages_model->SetPageCode('calendar_new_event');
+		
 		$this->main_frame->SetContent($this->my_calendar->GetAdder());
 		
 		$this->main_frame->Load();

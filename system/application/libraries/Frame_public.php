@@ -46,6 +46,8 @@ class Frame_public extends FrameNavbar
 {
 	/// Has the title been set yet
 	private $mTitleSet;
+	/// array Title parameters.
+	private $mTitleParameters = NULL;
 	
 	/**
 	 * @brief Default constructor.
@@ -67,28 +69,6 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
 		$this->mDataArray['uri'] = $CI->uri->uri_string();
-	}
-	
-	/**
-	 * @brief Set the page title.
-	 * @param $Title string Page title.
-	 */
-	function SetTitle($Title)
-	{
-		$this->SetData('title', $Title);
-		$this->mTitleSet = TRUE;
-	}
-	
-	/**
-	 * @brief Set the page title parameters.
-	 * @param $Parameters array[string=>string] Array of parameters to be
-	 *	replaced.
-	 */
-	function SetTitleParameters($Parameters = array())
-	{
-		$CI = &get_instance();
-		$this->SetData('title', $CI->pages_model->GetTitle($Parameters));
-		$this->mTitleSet = TRUE;
 	}
 	
 	/// Add keywords to the page.
@@ -146,13 +126,39 @@ class Frame_public extends FrameNavbar
 		$CI->messages->AddMessage($Type, $Message, $Persistent);
 	}
 	
+	/**
+	 * @brief Set the page title.
+	 * @param $Title string Page title.
+	 */
+	function SetTitle($Title)
+	{
+		$this->SetData('title', $Title);
+		$this->mTitleSet = TRUE;
+	}
+	
+	/**
+	 * @brief Set the page title parameters.
+	 * @param $Parameters array[string=>string] Array of parameters to be
+	 *	replaced.
+	 */
+	function SetTitleParameters($Parameters = array())
+	{
+		if (NULL === $this->mTitleParameters) {
+			$this->mTitleParameters = $Parameters;
+		} else {
+			$this->mTitleParameters = array_merge($this->mTitleParameters, $Parameters);
+		}
+	}
+	
 	/// Load the frame.
 	function Load()
 	{
 		$CI = &get_instance();
 		if ($CI->pages_model->PageCodeSet()) {
-			if (!$this->mTitleSet) {
-				$this->SetTitleParameters();
+			if (NULL !== $this->mTitleParameters) {
+				$this->SetData('title', $CI->pages_model->GetTitle($this->mTitleParameters));
+			} elseif (!$this->mTitleSet) {
+				$this->SetData('title', $CI->pages_model->GetTitle());
 			}
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());

@@ -417,19 +417,24 @@ class Pages_model extends Model
 	 *	and @a $Parameters is array('organisation'=>'The Yorker'),
 	 *	then the result is 'Events for The Yorker'.
 	 */
-	function GetTitle($Parameters)
+	function GetTitle($Parameters = array())
 	{
 		$PageCode = $this->mPageCode;
 		if (!array_key_exists($PageCode,$this->mPageInfo)) {
 			assert('$this->PageCodeSet()');
 			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
 		}
-		$keys = array_keys($Parameters);
-		foreach ($keys as $id => $key) {
-			$keys[$id] = '%%'.$key.'%%';
+		$title = $this->mPageInfo[$PageCode]['title'];
+		if (empty($Parameters)) {
+			return $title;
+		} else {
+			$keys = array_keys($Parameters);
+			foreach ($keys as $id => $key) {
+				$keys[$id] = '%%'.$key.'%%';
+			}
+			$values = array_values($Parameters);
+			return str_replace($keys, $values, $title);
 		}
-		$values = array_values($Parameters);
-		return str_replace($keys, $values, $this->mPageInfo[$PageCode]['title']);
 	}
 	
 	/// Get the page description.
