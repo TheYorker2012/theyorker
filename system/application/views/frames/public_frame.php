@@ -164,8 +164,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<div id="NavigationMenu">
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
 				<ul class="first">
-					<li class="first"><a href="/">Home</a></li>
-					<li><a href="/calendar/">Calendar</a></li>
+					<li class="first"><a href="/">My Home</a></li>
+					<li><a href="/calendar/">My Calendar</a></li>
 					<li><a href="/directory/">Directory</a></li>
 				</ul>
 				<ul>
