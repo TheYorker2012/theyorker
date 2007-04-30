@@ -13,18 +13,24 @@ class Organisation extends controller
 	function __construct()
 	{
 		parent::controller();
-		
+
 		$this->load->model('directory_model');
 		$this->load->library('Image_upload');
 	}
-    
+
 	private function CreateDirectoryEntryName ($long_name){
-		//strip non alpha-numerical symbols
-		$new_string = preg_replace("/[^a-zA-Z0-9s]/", "", $long_name);
-		//replace spaces with an underscore
-		return str_replace(" ", "_", $new_string);
+		//lower case
+		$new_string = strtolower($long_name);
+		//spaces to underscores
+        $new_string = preg_replace('/\s/', '_', $new_string);
+        //strip non alpha-numerical symbols
+        $new_string = preg_replace('/[^\da-z_]/', '', $new_string);
+        //replace double underscores
+        $new_string = str_replace('__', '_', $new_string);
+
+		return $new_string;
 	}
-    
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
@@ -94,7 +100,7 @@ class Organisation extends controller
 							'url' => $_SESSION['org_wizard']['a_website'],
 							'opening_hours' => $_SESSION['org_wizard']['a_opening_times'],
 						);
-						
+
 						//create a useable directory entry name and add the directory entry name to the post data
 						$post_data['directory_entry_name'] = $this->CreateDirectoryEntryName($post_data['name']);
 						$exists_already = $this->directory_model->GetDirectoryOrganisationByEntryName($post_data['directory_entry_name']);
@@ -119,9 +125,9 @@ class Organisation extends controller
 
 							if (isset($_SESSION['org_wizard']['0_lat'])) {
 								$this->directory_model->UpdateDirectoryEntryLocation(
-									$post_data['directory_entry_name'], 
-									null, 
-									$_SESSION['org_wizard']['0_lat'], 
+									$post_data['directory_entry_name'],
+									null,
+									$_SESSION['org_wizard']['0_lat'],
 									$_SESSION['org_wizard']['0_lng']
 								);
 							}
@@ -162,8 +168,8 @@ class Organisation extends controller
 				$map = &$this->maps->CreateMap('Add Location', 'googlemaps');
 				if (isset($_SESSION['org_wizard']['0_lat'])) {
 					$map->WantLocation(
-						$_SESSION['org_wizard']['a_name'], 
-						$_SESSION['org_wizard']['0_lat'], 
+						$_SESSION['org_wizard']['a_name'],
+						$_SESSION['org_wizard']['0_lat'],
 						$_SESSION['org_wizard']['0_lng']
 					);
 				} else {
@@ -184,7 +190,7 @@ class Organisation extends controller
 		$data['stage_list']['skip'] = $skip_stages;
 		$data['stage_list']['headings'] = $headings;
 		$data['organisations'] = $this->directory_model->GetOrganisationTypes();
-		
+
 		//if (isset($_SESSION[$data['session_var']]) == true)
 			$_SESSION[$data['session_var']]['r_dump'] = NULL;
 
