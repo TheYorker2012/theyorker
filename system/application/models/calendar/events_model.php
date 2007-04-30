@@ -145,12 +145,13 @@ class EventOccurrenceQuery
 							'OR	DATE_ADD(event_occurrence_users.event_occurrence_user_timestamp, INTERVAL 1 WEEK) > FROM_UNIXTIME('.$Range[0].'))';
 		}
 		if (NULL !== $Range[1]) {
-			$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > '.$this->ExpressionTodoStart();
+			//$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > '.$this->ExpressionTodoStart();
+			$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > FROM_UNIXTIME('.time().')';
 		}
 		if (empty($conditions)) {
 			return 'TRUE';
 		} else {
-		var_dump($conditions);
+		//var_dump($conditions);
 			return '('.implode(' AND ',$conditions).')';
 		}
 	}
