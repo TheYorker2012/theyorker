@@ -33,7 +33,7 @@ if ($InlineAdder) {
 	<ul id="todolist">
 		<?php
 		foreach ($Items as $item) {
-			echo '<li>'.$item->Event->Name.'</li>';
+			echo '<li style="cursor: move;">'.$item->Event->Name.'</li>';
 		}
 		?>
 	</ul>
