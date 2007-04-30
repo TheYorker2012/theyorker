@@ -157,8 +157,8 @@ class CalendarSourceYorker extends CalendarSource
 				// show on todo if user todo=TRUE or (NULL AND todo)
 				$this->mQuery->ExpressionShowOnTodo().' AS show_on_todo,'.
 				// effective start and end of todo if forced into one (from now until the beginning of the event)
-				$this->mQuery->ExpressionTodoStart().' AS todo_start,'.
-				$this->mQuery->ExpressionTodoEnd().' AS todo_end';
+				'UNIX_TIMESTAMP('.$this->mQuery->ExpressionTodoStart().') AS todo_start,'.
+				'UNIX_TIMESTAMP('.$this->mQuery->ExpressionTodoEnd().') AS todo_end';
 		}
 		
 		return $fields;
@@ -392,10 +392,10 @@ class CalendarSourceYorker extends CalendarSource
 		// DATE RANGE ----------------------------------------------------------
 		$ranges = array();
 		if ($this->mGroups['event']) {
-			$ranges[] = $this->mQuery->ExpressionDateRange($this->mRange);
+			$ranges[] = $this->mQuery->ExpressionDateRange($this->mEventRange);
 		}
 		if ($this->mGroups['todo']) {
-			$ranges[] = $this->mQuery->ExpressionTodoRange($this->mRange);
+			$ranges[] = $this->mQuery->ExpressionTodoRange($this->mTodoRange);
 		}
 		
 		

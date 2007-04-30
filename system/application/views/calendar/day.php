@@ -16,7 +16,7 @@
 ?>
 
 <div id='RightColumn'>
-	<h2 style="margin-left: 0.4em;">To-Do</h2>
+	<h2 style="margin-left: 0.4em;">To-Do List</h2>
 	<?php $TodoView->Load(); ?>
 	
 	<?php if (!$ReadOnly) { ?>

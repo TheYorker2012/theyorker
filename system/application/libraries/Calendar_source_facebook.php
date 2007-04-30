@@ -66,11 +66,13 @@ class CalendarSourceFacebook extends CalendarSource
 	 */
 	protected function _FetchEvents(&$Data)
 	{
-		$CI = & get_instance();
-		if (!$CI->facebook->InUse()) return;
-		
-		$this->GetEvents($Data);
-		$this->GetBirthdays($Data);
+		if ($this->GroupEnabled('event')) {
+			$CI = & get_instance();
+			if (!$CI->facebook->InUse()) return;
+			
+			$this->GetEvents($Data);
+			$this->GetBirthdays($Data);
+		}
 	}
 	
 	protected function GetEvents(&$Data, $EventId = NULL)
@@ -80,15 +82,15 @@ class CalendarSourceFacebook extends CalendarSource
 		try {
 			// Get events in the range.
 			if (NULL === $EventId) {
-				$range = $this->mRange;
+				$event_range = $this->mEventRange;
 			} else {
-				$range = array(NULL, NULL);
+				$event_range = array(NULL, NULL);
 			}
 			$events = $CI->facebook->Client->events_get(
 				$CI->facebook->Uid,
 				$EventId,
-				$range[0],
-				$range[1],
+				$event_range[0],
+				$event_range[1],
 				null
 			);
 			
@@ -147,12 +149,12 @@ class CalendarSourceFacebook extends CalendarSource
 	{
 		$CI = & get_instance();
 		
-		$range = $this->mRange;
+		$event_range = $this->mEventRange;
 		if (NULL === $range[0]) {
-			$range[0] = time();
+			$event_range[0] = time();
 		}
 		if (NULL === $range[1]) {
-			$range[1] = strtotime('+1year');
+			$event_range[1] = strtotime('+1year');
 		}
 		
 		try {
@@ -166,11 +168,11 @@ class CalendarSourceFacebook extends CalendarSource
 			if ($specific) {
 				$query .= ' AND uid = '.$UserId;
 			} else {
-				$year = date('Y', $range[0]);
+				$year = date('Y', $event_range[0]);
 			}
 			$birthdays = $CI->facebook->Client->fql_query($query);
 			
-			$yesterday = strtotime('-1day',$range[0]);
+			$yesterday = strtotime('-1day',$event_range[0]);
 			foreach ($birthdays as $birthday) {
 				if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
 					if ($specific) {
@@ -178,7 +180,7 @@ class CalendarSourceFacebook extends CalendarSource
 						if ($year >= 1970 && $year < 2037) {
 							$start_age = $Age;
 							$dob = strtotime($matches[1].$year);
-							$range[1] = $dob+1;
+							$event_range[1] = $dob+1;
 							$yesterday = $dob;
 						} else {
 							continue;
@@ -188,7 +190,7 @@ class CalendarSourceFacebook extends CalendarSource
 						$dob = strtotime($matches[1].$year);
 					}
 					
-					while ($dob < $range[1]) {
+					while ($dob < $event_range[1]) {
 						if ($dob >= $yesterday) {
 							$event_obj = & $Data->NewEvent();
 							$occurrence = & $Data->NewOccurrence($event_obj);

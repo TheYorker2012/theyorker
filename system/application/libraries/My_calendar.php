@@ -211,6 +211,7 @@ class My_calendar
 		$end = $start->Adjust('1day');
 		
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
+		$sources->SetTodoRange(time(), time());
 		$this->ReadFilter($sources, $Filter);
 		$sources->EnableGroup('todo');
 		
@@ -230,6 +231,7 @@ class My_calendar
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
 		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
+		
 		$todo = new CalendarViewTodoList();
 		$todo->SetCalendarData($calendar_data);
 		

@@ -218,8 +218,11 @@ abstract class CalendarSource
 		'todo'       => FALSE,
 	);
 	
-	/// array[2*timestamp] For filtering by time.
-	protected $mRange = array( NULL, NULL );
+	/// array[2*timestamp] For filtering events by time.
+	protected $mEventRange = array( NULL, NULL );
+	
+	/// array[2*timestamp] For filtering to do items by time.
+	protected $mTodoRange = array( NULL, NULL );
 	
 	/// Default constructor.
 	function __construct()
@@ -298,7 +301,7 @@ abstract class CalendarSource
 		}
 	}
 	
-	/// Set the date range.
+	/// Set the event date range.
 	/**
 	 * @param $Start timestamp,NULL Start time.
 	 * @param $End timestamp,NULL End time.
@@ -307,8 +310,21 @@ abstract class CalendarSource
 	{
 		assert('is_int($Start) || NULL === $Start');
 		assert('is_int($End)   || NULL === $End');
-		$this->mRange[0] = $Start;
-		$this->mRange[1] = $End;
+		$this->mEventRange[0] = $Start;
+		$this->mEventRange[1] = $End;
+	}
+	
+	/// Set the todo date range.
+	/**
+	 * @param $Start timestamp,NULL Start time.
+	 * @param $End timestamp,NULL End time.
+	 */
+	function SetTodoRange($Start = NULL, $End = NULL)
+	{
+		assert('is_int($Start) || NULL === $Start');
+		assert('is_int($End)   || NULL === $End');
+		$this->mTodoRange[0] = $Start;
+		$this->mTodoRange[1] = $End;
 	}
 	
 	/// Fetch a specific event.
@@ -679,6 +695,14 @@ class CalendarSources extends CalendarSource
 			$source->SetRange($Start, $End);
 		}
 		return parent::SetRange($Start, $End);
+	}
+	
+	function SetTodoRange($Start = NULL, $End = NULL)
+	{
+		foreach ($this->mSources as $source) {
+			$source->SetTodoRange($Start, $End);
+		}
+		return parent::SetTodoRange($Start, $End);
 	}
 	
 	/// Fetch the event of the sources and return an array of messages.

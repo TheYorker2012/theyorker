@@ -58,6 +58,7 @@ class Home extends Controller {
 		$sources = new CalendarSourceMyCalendar();
 		$sources->EnableGroup('todo');
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
+		$sources->SetTodoRange(time(), time());
 		
 		$calendar_data = new CalendarData();
 		
