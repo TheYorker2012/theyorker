@@ -47,7 +47,7 @@ class Home_Model extends Model {
 			$html .= $weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
 			$html .= '</td></tr>';
 			$html .= '</table>';
-			$html .= '<p class="Discreet">Data provided by Yahoo</p>';
+			//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
 			//Delete the old weather forecast
 			$sql = 'DELETE FROM weather_cache';
 			$query = $this->db->query($sql);

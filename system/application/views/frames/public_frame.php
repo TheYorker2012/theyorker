@@ -271,10 +271,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			</form>
 		</div>
 		<small>
-			Copyright 2007 The Yorker.  Use of this Web site constitutes acceptance of the The Yorker
-			<a href='/policy/#user_agreement'>User Agreement</a> and
-			<a href='/policy/#privacy_policy'>Privacy Policy</a>.
-			 Page rendered in {elapsed_time} seconds.
+			Copyright 2007 The Yorker. Weather data provided by Yahoo. Page rendered in {elapsed_time} seconds.<br />
+			<a href='/policy/#user_agreement'>User Agreement</a>
+			<a href='/policy/#privacy_policy'>Privacy Policy</a>
 		</small>
 	</div>
 </body>
