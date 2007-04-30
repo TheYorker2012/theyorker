@@ -48,7 +48,7 @@ class Home extends Controller {
 		$this->load->library('calendar_source_my_calendar');
 		
 		$this->load->library('calendar_frontend');
-		$this->load->library('calendar_view_agenda');
+		$this->load->library('calendar_view_upcoming');
 		$this->load->library('calendar_view_todo_list');
 		
 		$now = new Academic_time(time());
@@ -66,7 +66,7 @@ class Home extends Controller {
 		// Display data
 		$this->load->library('calendar_view_days');
 		
-		$EventsView = new CalendarViewAgenda();
+		$EventsView = new CalendarViewUpcoming();
 		$EventsView->SetMiniMode();
 		$EventsView->SetCalendarData($calendar_data);
 		//$EventsView->SetStartEnd($start->Timestamp(), $end->Timestamp());

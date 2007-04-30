@@ -39,7 +39,7 @@ function printmiddlebox($title,$article_array){
 		<table width="100%"><tr><td><a href="https://webmail.york.ac.uk/"><img src="/images/prototype/news/test/webmail_large.jpg"></a></td><td><a href="https://webmail.york.ac.uk/">0 Unread E-mails</a></td></tr></table>
 	</div>
 
-	<h2>Today's Events</h2>
+	<h2>Upcoming Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
 		<a class="RightColumnAction"  href="/calendar/">Calendar</a>
