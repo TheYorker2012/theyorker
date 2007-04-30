@@ -90,7 +90,7 @@ class EventOccurrenceQuery
 		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
 				'	AND events.event_todo = FALSE,'.
 				'UNIX_TIMESTAMP(CURRENT_TIMESTAMP),'.
-				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time))';
+				'UNIX_TIMESTAMP(CURRENT_TIMESTAMP))';
 	}
 
 	/// Produce an SQL expression for the effective todo end time.
@@ -145,8 +145,7 @@ class EventOccurrenceQuery
 							'OR	DATE_ADD(event_occurrence_users.event_occurrence_user_timestamp, INTERVAL 1 WEEK) > FROM_UNIXTIME('.$Range[0].'))';
 		}
 		if (NULL !== $Range[1]) {
-			//$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > '.$this->ExpressionTodoStart();
-			$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > FROM_UNIXTIME('.time().')';
+			$conditions[] = 'FROM_UNIXTIME('.$Range[1].') > '.$this->ExpressionTodoStart();
 		}
 		if (empty($conditions)) {
 			return 'TRUE';
