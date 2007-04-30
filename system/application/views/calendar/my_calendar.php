@@ -51,7 +51,7 @@
 <div style="clear: both;"></div>
 <?php
 if (isset($RangeDescription)) { 
-	echo('<h4>My Calendar: '.$RangeDescription.'</h4>');
+	echo('<h4>'.$RangeDescription.'</h4>');
 }
 // Load the main view
 $ViewMode->Load();
