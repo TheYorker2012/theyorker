@@ -8,13 +8,7 @@
 
 // split into today and tomorrow
 $days = array();
-$today = (int)date('Ymd');
-$tomorrow = (int)date('Ymd', strtotime('+1day'));
-$special_names = array(
-	$tomorrow => 'Tomorrow',
-	$today    => 'Today',
-);
-$default_day = $today;
+$day_quantities = array();
 
 foreach ($Occurrences as $key => $occurrence) {
 	$date = (int)$occurrence->StartTime->Format('Ymd');
@@ -24,6 +18,25 @@ foreach ($Occurrences as $key => $occurrence) {
 		$time = -1;
 	}
 	$days[$date][$time][] = & $Occurrences[$key];
+	if (!array_key_exists($date, $day_quantities)) {
+		$day_quantities[$date] = 1;
+	} else {
+		++$day_quantities[$date];
+	}
+}
+
+$today = (int)date('Ymd');
+$tomorrow = (int)date('Ymd', strtotime('+1day'));
+$special_names = array(
+	$tomorrow => 'Tomorrow',
+	$today    => 'Today',
+);
+$default_day = $today;
+
+if (!array_key_exists($today, $day_quantities) &&
+	array_key_exists($tomorrow, $day_quantities))
+{
+	$default_day = $tomorrow;
 }
 
 $start_table = '<table style="clear: both;" border="0" cellpadding="1" cellspacing="0">';
