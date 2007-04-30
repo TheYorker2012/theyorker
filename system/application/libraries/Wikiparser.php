@@ -541,7 +541,8 @@ class Wikiparser {
 		$line = rtrim($line);
 		
 		// escape some symbols
-		$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
+		$line = htmlentities($line, ENT_COMPAT, 'UTF-8');
+		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 		
 		foreach ($line_regexes as $func=>$regex) {
 			if (preg_match("/$regex/i",$line,$matches)) {

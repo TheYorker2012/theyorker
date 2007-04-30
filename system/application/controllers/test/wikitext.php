@@ -37,8 +37,6 @@ class Wikitext extends Controller {
 			$wikitext .= '#*With an unordered list within' . "\n";
 			$wikitext .= '#*And another item' . "\n";
 			$wikitext .= implode('',array_keys(_get_smiley_array())) . "\n";
-		} else if (get_magic_quotes_gpc()) {
-			$wikitext = stripslashes($wikitext);
 		}
 		
 		$parsed_wikitext = $wikitext;

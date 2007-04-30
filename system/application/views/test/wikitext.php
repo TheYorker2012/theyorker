@@ -12,7 +12,7 @@ echo form_open('/test/wikitext');
 $textarea_data = array(
 		'name'        => 'wikitext',
 		'id'          => 'wikitext',
-		'value'       => $wikitext,
+		'value'       => htmlentities($wikitext, ENT_QUOTES, 'UTF-8'),
 		'rows'        => '10',
 		'cols'        => '80',
 		'style'       => 'width:100%',
@@ -31,7 +31,7 @@ echo form_close('') . '<br/>';
 $textarea_data = array(
 		'name'        => 'html',
 		'id'          => 'html',
-		'value'       => $parsed_wikitext,
+		'value'       => htmlentities($parsed_wikitext, ENT_QUOTES, 'UTF-8'),
 		'rows'        => '10',
 		'cols'        => '80',
 		'style'       => 'width:100%',
