@@ -43,7 +43,7 @@ class Directory_model extends Model {
 
 		return $query->result_array();
 	}
-	
+
 	/// Get an organisation by name.
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -100,7 +100,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}
-	
+
 	/// Get an organisation's business cards, for a business card group.
 	/**
 	 * @param $BusinessCardGroupId business card group to return
@@ -133,9 +133,9 @@ class Directory_model extends Model {
 			$sql .='AND business_cards.business_card_approved = 1 ';
 			}
 			$sql .='ORDER BY business_cards.business_card_order';
-	
+
 		$query = $this->db->query($sql, $BusinessCardGroupId);
-	
+
 		return $query->result_array();
 	}
 
@@ -171,12 +171,12 @@ class Directory_model extends Model {
 			'WHERE business_cards.business_card_deleted = 0 '.
 			'AND business_cards.business_card_id = ? '.
 			'LIMIT 1';
-	
+
 		$query = $this->db->query($sql, $BusinessCardId);
-	
+
 		return $query->result_array();
 	}
-	
+
 	/// Get an organisation's business card groups.
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -193,9 +193,9 @@ class Directory_model extends Model {
 			' ON organisations.organisation_entity_id = business_card_groups.business_card_group_organisation_entity_id '.
 			'WHERE organisations.organisation_directory_entry_name=? '.
 			'ORDER BY business_card_groups.business_card_group_order';
-	
+
 		$query = $this->db->query($sql, $DirectoryEntryName);
-	
+
 		return $query->result_array();
 	}
 
@@ -262,7 +262,7 @@ class Directory_model extends Model {
 		}
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	function PublishDirectoryEntryRevisionById($DirectoryEntryName, $id)
 	{
 		$sql =
@@ -272,7 +272,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	/// Add a directory entry revision
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of org.
@@ -321,7 +321,7 @@ class Directory_model extends Model {
 			$DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	function IsRevisionPublished($DirectoryEntryName, $id)
 	{
 		$sql =
@@ -334,10 +334,10 @@ class Directory_model extends Model {
 		$row = $query->row();
 		//Get org id to look for and the one that should be live.
 		$liveid = $row->organisation_live_content_id;
-		
+
 		return ($id == $liveid);
 	}
-	
+
 	function IsRevisionDeleted($id)
 	{
 		$sql =
@@ -350,10 +350,10 @@ class Directory_model extends Model {
 		$row = $query->row();
 		//Get org id to look for and the one that should be live.
 		$is_deleted = $row->organisation_content_deleted;
-		
+
 		return $is_deleted;
 	}
-	
+
 	/// Removes a revisons of a directory entry
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -400,7 +400,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, array($id, $DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	//Finds out if the directory entry is listed in the directory
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -464,7 +464,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, array($NewDirectoryEntryLongName, $NewDirectoryEntryName, $DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
 	}
-	
+
 	//Updates the directory entry type
 	/**
 	*@param $DirectoryEntryName string Directory entry name of the organisation.
@@ -480,7 +480,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return ($this->db->affected_rows() > 0);
 	}
-    
+
     //Gets all organisation types in the directory
 	/**
 	 * @return array of organisations with their organisation_type_name, organisation_type_id, organisation_type_codename
@@ -495,9 +495,9 @@ class Directory_model extends Model {
 			'FROM organisation_types '.
 			'WHERE organisation_types.organisation_type_directory=1 '.
 			'ORDER BY organisation_types.organisation_type_name';
-	
+
 		$query = $this->db->query($sql);
-	
+
 		return $query->result_array();
 	}
 
@@ -514,17 +514,23 @@ class Directory_model extends Model {
 	 **/
 	function AddDirectoryEntry($Data)
 	{
-		$sql = 'INSERT INTO `organisations` ('.
-			'`organisation_organisation_type_id`,'.
-			'`organisation_name`,'.
-			'`organisation_directory_entry_name`,'.
-			'`organisation_suggesters_name`,'.
-			'`organisation_suggesters_position`,'.
-            '`organisation_suggesters_email`,'.
-            '`organisation_suggesters_notes`,'.
-			'`organisation_needs_approval`) '.
-			' VALUES'.
-			' (?, ?, ?, ?, ?, ?, ?, ? )';
+		//$sql = 'INSERT INTO `entities` () VALUES ();';
+		//$query = $this->db->query($sql);
+
+		$sql = 'INSERT INTO `entities` () VALUES ();
+			INSERT INTO `organisations` (
+			`organisation_id`,
+			`organisation_organisation_type_id`,
+			`organisation_name`,
+			`organisation_directory_entry_name`,
+			`organisation_suggesters_name`,
+			`organisation_suggesters_position`,
+            `organisation_suggesters_email`,
+            `organisation_suggesters_notes`,
+			`organisation_needs_approval`)
+			 VALUES
+			 (LAST_INSERT_ID() ,? , ?, ?, ?, ?, ?, ?, ? )';
+
 		$query = $this->db->query($sql, array(
 			$Data['type_id'],
 			$Data['name'],
