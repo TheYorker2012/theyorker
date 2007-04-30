@@ -21,10 +21,15 @@
 if ($InlineAdder) {
 	?>
 		<form method="post" action="<?php echo $InlineAdderTarget; ?>">
-			<fieldset>
+				<table border="0">
+				<tr>
+				<td>
 				<input name="todo_name" />
+				</td><td>
 				<input name="todo_submit" type="submit" value="Add"/>
-			</fieldset>
+				</td>
+				</tr>
+				</table>
 		</form>
 	<?php
 }
