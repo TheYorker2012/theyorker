@@ -150,10 +150,10 @@ class CalendarSourceFacebook extends CalendarSource
 		$CI = & get_instance();
 		
 		$event_range = $this->mEventRange;
-		if (NULL === $range[0]) {
+		if (NULL === $event_range[0]) {
 			$event_range[0] = time();
 		}
-		if (NULL === $range[1]) {
+		if (NULL === $event_range[1]) {
 			$event_range[1] = strtotime('+1year');
 		}
 		
