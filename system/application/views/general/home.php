@@ -42,7 +42,6 @@ function printmiddlebox($title,$article_array){
 	<h2>Upcoming Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
-		<a class="RightColumnAction"  href="/calendar/">Calendar</a>
 	</div>
 
 	<h2>To Do</h2>
@@ -86,7 +85,7 @@ function printmiddlebox($title,$article_array){
 	</div>
 
 	<div class="BlueBox" style="float: left; width:48%; height:120px;">
-		<?php 
+		<?php
 			printmiddlebox('features',$features);
 		?>
 	</div>
