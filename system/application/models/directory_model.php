@@ -514,11 +514,10 @@ class Directory_model extends Model {
 	 **/
 	function AddDirectoryEntry($Data)
 	{
-		//$sql = 'INSERT INTO `entities` () VALUES ();';
-		//$query = $this->db->query($sql);
+		$sql = 'INSERT INTO `entities` () VALUES ();';
+		$query = $this->db->query($sql);
 
-		$sql = 'INSERT INTO `entities` () VALUES ();
-			INSERT INTO `organisations` (
+		$sql = 'INSERT INTO `organisations` (
 			`organisation_id`,
 			`organisation_organisation_type_id`,
 			`organisation_name`,
