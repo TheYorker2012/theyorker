@@ -8,6 +8,7 @@
  * @param $Occurrence CalendarEvent,NULL Occurrence information.
  * @param $ReadOnly bool Whether the event is read only.
  * @param $Attendees array[string] Attending users.
+ * @param $FailRedirect string URL fail redirect path.
  */
 
 
@@ -42,7 +43,7 @@ $CI = & get_instance();
 				$links[] = '<a href="'.site_url('calendar/actions/delete/'.
 					$Occurrence->Event->Source->GetSourceId().
 					'/'.urlencode($Occurrence->Event->SourceEventId).
-					$CI->uri->uri_string()).'">delete</a>';
+					$FailRedirect).'">delete</a>';
 				echo(' ('.implode(',', $links).')');
 			}
 			echo('<br />');

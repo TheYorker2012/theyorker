@@ -382,6 +382,7 @@ class My_calendar
 			$CI = & get_instance();
 			
 			// Get the specific event
+			$CI->load->helper('uri_tail');
 			$CI->load->library('calendar_backend');
 			$CI->load->library('calendar_source_my_calendar');
 			$sources = new CalendarSourceMyCalendar();
@@ -412,6 +413,7 @@ class My_calendar
 						'Occurrence' => &$found_occurrence,
 						'ReadOnly' => $this->mReadOnly,
 						'Attendees' => $sources->GetOccurrenceAttendanceList($SourceId, $OccurrenceId),
+						'FailRedirect' => site_url(GetUriTail(5)),
 					);
 					
 					$CI->main_frame->SetTitleParameters(array(
@@ -424,7 +426,6 @@ class My_calendar
 				}
 			} else {
 				$CI->messages->AddMessage('error', 'The event coud not be found');
-				$CI->load->helper('uri_tail');
 				RedirectUriTail(5);
 			}
 		} else {

@@ -74,11 +74,17 @@ foreach ($special_names as $date => $name) {
 		$previous_time_associative = TRUE;
 		foreach ($days[$date] as $time => $occurrences) {
 			$time_associative = ($time !== -1);
+			if ($time_associative && !$previous_time_associative) {
+				echo('</table>');
+				echo($hrule);
+				echo($start_table);
+			}
+			$previous_time_associative = $time_associative;
+			
 			foreach ($occurrences as $occurrence) {
 				echo('<tr><td valign="top">');
 				if ($time_associative) {
 					echo($occurrence->StartTime->Format('H:i'));
-					$any_time_associative = TRUE;
 				}
 				echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
 				echo('<span><a href="' . '/calendar/event' . '/' . $occurrence->Event->Source->GetSourceId(). '/' . urlencode($occurrence->Event->SourceEventId) . '/' . urlencode($occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$occurrence->Event->Name.'</a></span>');
@@ -87,12 +93,6 @@ foreach ($special_names as $date => $name) {
 				}
 				echo('</td></tr>');
 			}
-			if ($time_associative && !$previous_time_associative) {
-				echo('</table>');
-				echo($hrule);
-				echo($start_table);
-			}
-			$previous_time_associative = $time_associative;
 		}
 		echo('</table>');
 	} else {
