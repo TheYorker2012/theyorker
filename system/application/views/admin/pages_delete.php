@@ -9,7 +9,7 @@
 	<H2>Confirm page deletion</H2>
 	<p><em>Are you sure you want to delete this page and its associated properties?</em></p>
 	Codename: <?php echo $information['codename']; ?><br />
-	Title: <?php echo $information['title']; ?><br />
+	Title: <?php echo $information['head_title']; ?><br />
 	Description: <?php echo $information['description']; ?><br />
 	Keywords: <?php echo $information['keywords']; ?><br />
 	<br />

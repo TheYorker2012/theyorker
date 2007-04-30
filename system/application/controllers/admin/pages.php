@@ -137,14 +137,22 @@ class Pages extends Controller
 		
 		$Data['target'] = $Target;
 		$Data['codename'] = '';
-		$Data['title'] = '';
+		$Data['head_title'] = '';
+		$Data['body_title'] = '';
+		$Data['title_separate'] = FALSE;
 		$Data['description'] = '';
 		$Data['keywords'] = '';
 		$Data['properties'] = array();
 		
 		$input['codename']    = $this->input->post('codename',    FALSE);
 		if (FALSE !== $input['codename']) {
-			$input['title']       = $this->input->post('title',       FALSE);
+			$input['head_title']  = $this->input->post('head_title',  FALSE);
+			$input['title_separate']  = ($this->input->post('title_separate',  FALSE) !== FALSE);
+			if (!$input['title_separate']) {
+				$input['body_title'] = $this->input->post('head_title', FALSE);
+			} else {
+				$input['body_title'] = $this->input->post('body_title', FALSE);
+			}
 			$input['description'] = $this->input->post('description', FALSE);
 			$input['keywords']    = $this->input->post('keywords',    FALSE);
 			$save_failed = FALSE;
@@ -160,12 +168,20 @@ class Pages extends Controller
 			} else {
 				$save_failed = TRUE;
 			}
-			if (FALSE !== $input['title'])
-				$Data['title'] = $input['title'];
+			if (FALSE !== $input['head_title'])
+				$Data['head_title'] = $input['head_title'];
+			if (FALSE !== $input['body_title'])
+				$Data['body_title'] = $input['body_title'];
+			$Data['title_separate'] = $input['title_separate'];
 			if (FALSE !== $input['description'])
 				$Data['description'] = $input['description'];
 			if (FALSE !== $input['keywords'])
 				$Data['keywords'] = $input['keywords'];
+				
+			// If don't separate titles, ignore body title
+			if (!$input['title_separate']) {
+				$input['body_title'] = NULL;
+			}
 			
 			if (FALSE === $save_failed) {
 				// Try and save to db
@@ -225,7 +241,13 @@ class Pages extends Controller
 			if (!$global_scope) {
 				$data['target']      = $Target.$InputPageCode;
 				$data['codename']    = $InputPageCode;
-				$data['title']       = $page_info['title'];
+				$data['head_title']  = $page_info['head_title'];
+				$data['title_separate'] = (NULL !== $page_info['body_title']);
+				if (!$data['title_separate']) {
+					$data['body_title'] = $page_info['head_title'];
+				} else {
+					$data['body_title'] = $page_info['body_title'];
+				}
 				$data['description'] = $page_info['description'];
 				$data['keywords']    = $page_info['keywords'];
 			} else {
@@ -274,7 +296,14 @@ class Pages extends Controller
 			if (!$global_scope) {
 				$input['codename']    = $this->input->post('codename',    FALSE);
 				if (FALSE !== $input['codename']) {
-					$input['title']       = $this->input->post('title',       FALSE);
+					$input['head_title']  = $this->input->post('head_title',  FALSE);
+					$input['body_title']  = $this->input->post('body_title',  FALSE);
+					$input['title_separate']  = ($this->input->post('title_separate',  FALSE) !== FALSE);
+					if (!$input['title_separate']) {
+						$input['body_title'] = $this->input->post('head_title', FALSE);
+					} else {
+						$input['body_title'] = $this->input->post('body_title', FALSE);
+					}
 					$input['description'] = $this->input->post('description', FALSE);
 					$input['keywords']    = $this->input->post('keywords',    FALSE);
 					$save_failed = FALSE;
@@ -292,12 +321,20 @@ class Pages extends Controller
 							$save_failed = TRUE;
 						}
 					}
-					if (FALSE !== $input['title'])
-						$data['title'] = $input['title'];
+					if (FALSE !== $input['head_title'])
+						$data['head_title'] = $input['head_title'];
+					if (FALSE !== $input['body_title'])
+						$data['body_title'] = $input['body_title'];
+					$data['title_separate'] = $input['title_separate'];
 					if (FALSE !== $input['description'])
 						$data['description'] = $input['description'];
 					if (FALSE !== $input['keywords'])
 						$data['keywords'] = $input['keywords'];
+				
+					// If don't separate titles, ignore body title
+					if (!$input['title_separate']) {
+						$input['body_title'] = NULL;
+					}
 					
 					if (FALSE === $save_failed) {
 						// Try and save to db

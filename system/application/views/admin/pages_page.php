@@ -21,8 +21,15 @@
 					if (!$permissions['rename']) { echo ' READONLY'; }
 					?>>
 				<br />
-				<label for='title'>Title:</label>
-				<input name='title' size='35' value='<?php if (!empty($title)) { echo htmlentities($title, ENT_QUOTES);} ?>'>
+				<label id="title_label" for='title'>Header Title:</label>
+				<input name='head_title' size='35' value='<?php if (!empty($head_title)) { echo htmlentities($head_title, ENT_QUOTES);} ?>'>
+				<label for="title_separate">Separate header and body titles</label>
+				<input type="checkbox" name="title_separate"<?=($title_separate ? ' checked="checked"' : '')?> />
+				<div id="separate_title">
+					<label for='body_title'>Body Title:</label>
+					<input name='body_title' size='35' value='<?php if (!empty($body_title)) { echo htmlentities($body_title, ENT_QUOTES);} ?>'>
+				</div>
+				
 				<br />
 				<label for='description'>Description</label>
 				<input name='description' size='35' value='<?php if (!empty($description)) { echo htmlentities($description, ENT_QUOTES);} ?>'>

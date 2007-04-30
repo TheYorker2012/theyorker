@@ -12,8 +12,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($title)) {
-			echo $title;
+		if(isset($head_title)) {
+			echo $head_title;
 		} else {
 			echo 'no pagename';
 		}
@@ -214,7 +214,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		<div id="MainBodyPane">
 			<h1 id="PageTitle">
-				<?php if(isset($title)) { echo $title."\n"; } else { echo 'no pagename'."\n"; } ?>
+				<?php if(isset($body_title)) { echo $body_title."\n"; } else { echo 'no pagename'."\n"; } ?>
 			</h1>
 
 <!-- BEGIN generated content -->
@@ -261,7 +261,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 						</select><br />
 					<label for="a_feedbacktext">Your Comments: </label>
 						<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
-					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>" />
+					<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo str_replace("'", "", $head_title); } ?>" />
 					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 				</fieldset>
 				<fieldset>

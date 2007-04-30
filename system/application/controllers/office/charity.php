@@ -86,9 +86,9 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/office_charity_edit', $data);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
-			'name'=>$data['charity']['name']))
-			);
+		$this->main_frame->SetTitleParamters(array(
+			'name' => $data['charity']['name']
+		));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -163,9 +163,9 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/office_charity_article', $data);
 
 		// Set up the public frame
-		$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
-			'name'=>$data['charity']['name']))
-			);
+		$this->main_frame->SetTitleParamters(array(
+			'name' => $data['charity']['name']
+		));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -196,9 +196,9 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/office_charity_modify', $data);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
-			'name'=>$data['charity']['name']))
-			);
+		$this->main_frame->SetTitleParamters(array(
+			'name' => $data['charity']['name']
+		));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -224,9 +224,9 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/office_charity_progress_report', $data);
 		
 		// Set up the public frame
-		//$this->main_frame->SetTitle($this->pages_model->GetTitle(array(
-		//	'name'=>$data['charity']['name']))
-		//	);
+		//$this->main_frame->SetTitleParamters(array(
+		//	'name' => $data['charity']['name']
+		//));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view

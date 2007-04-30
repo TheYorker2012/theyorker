@@ -11,8 +11,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<title>The Yorker - <?php 
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($title)) { 
-			echo $title; 
+		if(isset($head_title)) { 
+			echo $head_title; 
 		} else { 
 			echo 'no pagename'; 
 		} 
@@ -162,7 +162,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		</form>
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
-				<?php if(isset($title)) { echo $title; } else { echo 'no pagename'; } ?>
+				<?php if(isset($body_title)) { echo $body_title; } else { echo 'no pagename'; } ?>
 		</div>
 	</div>
 	<br style="clear: both;" />
@@ -300,7 +300,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<legend>Feedback</legend>
 				<label for='a_authorname'>Your Name:</label>
 				<input type='text' name='a_authorname' id='a_authorname' value='' />
-				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($title)) { echo str_replace("'", "", $title); } ?>' />
+				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($head_title)) { echo str_replace("'", "", $head_title); } ?>' />
 				<input type='hidden' name='r_redirecturl' id='r_redirecturl' value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 				<br />
 				<label for='a_authoremail'>Your E-mail:</label>

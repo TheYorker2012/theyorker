@@ -410,30 +410,36 @@ class Pages_model extends Model
 	/**
 	 * @param $Parameters array[string=>string] Array of parameters.
 	 *	Each parameter can be referred to in the database and is replaced here.
-	 * @return string Page title with parameters substituted.
+	 * @return array(string,string) Page head and body title with parameters substituted.
 	 * @pre PageCodeSet() === TRUE
 	 *
 	 * For example if the title in the db is: 'Events for %%organisation%%',
 	 *	and @a $Parameters is array('organisation'=>'The Yorker'),
 	 *	then the result is 'Events for The Yorker'.
 	 */
-	function GetTitle($Parameters = array())
+	function GetTitles($Parameters = array())
 	{
 		$PageCode = $this->mPageCode;
 		if (!array_key_exists($PageCode,$this->mPageInfo)) {
 			assert('$this->PageCodeSet()');
 			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
 		}
-		$title = $this->mPageInfo[$PageCode]['title'];
+		$titles = array(
+			$this->mPageInfo[$PageCode]['head_title'],
+			$this->mPageInfo[$PageCode]['body_title'],
+		);
+		if (NULL === $titles[1]) {
+			$titles[1] = $titles[0];
+		}
 		if (empty($Parameters)) {
-			return $title;
+			return $titles;
 		} else {
 			$keys = array_keys($Parameters);
 			foreach ($keys as $id => $key) {
 				$keys[$id] = '%%'.$key.'%%';
 			}
 			$values = array_values($Parameters);
-			return str_replace($keys, $values, $title);
+			return str_replace($keys, $values, $titles);
 		}
 	}
 	
@@ -477,7 +483,8 @@ class Pages_model extends Model
 			'SELECT'.
 			' pages.page_id,'.
 			' pages.page_codename,'.
-			' pages.page_title,'.
+			' pages.page_head_title,'.
+			' pages.page_body_title,'.
 			' pages.page_description,'.
 			' pages.page_keywords '.
 			'FROM pages '.
@@ -506,7 +513,8 @@ class Pages_model extends Model
 				'SELECT'.
 				' pages.page_id,'.
 				' pages.page_codename,'.
-				' pages.page_title,'.
+				' pages.page_head_title,'.
+				' pages.page_body_title,'.
 				' pages.page_description,'.
 				' pages.page_keywords '.
 				'FROM pages '.
@@ -520,7 +528,8 @@ class Pages_model extends Model
 				$result = $results[0];
 				$data['page_id']     = $result['page_id'];
 				$data['codename']    = $result['page_codename'];
-				$data['title']       = $result['page_title'];
+				$data['head_title']  = $result['page_head_title'];
+				$data['body_title']  = $result['page_body_title'];
 				$data['description'] = $result['page_description'];
 				$data['keywords']    = $result['page_keywords'];
 			}
@@ -548,11 +557,11 @@ class Pages_model extends Model
 				$data['properties'] = array();
 				foreach ($property_results as $property) {
 					$data['properties'][] = array(
-							'id'    => $property['page_property_id'],
-							'label' => $property['page_property_label'],
-							'text'  => $property['page_property_text'],
-							'type'  => $property['property_type_name'],
-						);
+						'id'    => $property['page_property_id'],
+						'label' => $property['page_property_label'],
+						'text'  => $property['page_property_text'],
+						'type'  => $property['property_type_name'],
+					);
 				}
 			}
 		} else {
@@ -577,7 +586,8 @@ class Pages_model extends Model
 		if (!$global_scope) {
 			$translation = array(
 					'codename'    => 'page_codename',
-					'title'       => 'page_title',
+					'head_title'  => 'page_head_title',
+					'body_title'  => 'page_body_title',
 					'description' => 'page_description',
 					'keywords'    => 'page_keywords',
 				);
@@ -707,7 +717,8 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 	{
 		$translation = array(
 				'codename'    => 'page_codename',
-				'title'       => 'page_title',
+				'head_title'  => 'page_head_title',
+				'body_title'  => 'page_body_title',
 				'description' => 'page_description',
 				'keywords'    => 'page_keywords',
 			);

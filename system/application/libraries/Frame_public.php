@@ -132,7 +132,8 @@ class Frame_public extends FrameNavbar
 	 */
 	function SetTitle($Title)
 	{
-		$this->SetData('title', $Title);
+		$this->SetData('head_title', $Title);
+		$this->SetData('body_title', $Title);
 		$this->mTitleSet = TRUE;
 	}
 	
@@ -156,10 +157,12 @@ class Frame_public extends FrameNavbar
 		$CI = &get_instance();
 		if ($CI->pages_model->PageCodeSet()) {
 			if (NULL !== $this->mTitleParameters) {
-				$this->SetData('title', $CI->pages_model->GetTitle($this->mTitleParameters));
+				$titles = $CI->pages_model->GetTitles($this->mTitleParameters);
 			} elseif (!$this->mTitleSet) {
-				$this->SetData('title', $CI->pages_model->GetTitle());
+				$titles = $CI->pages_model->GetTitles();
 			}
+			$this->SetData('head_title', $titles[0]);
+			$this->SetData('body_title', $titles[1]);
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());
 		}
