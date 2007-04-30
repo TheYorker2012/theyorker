@@ -26,6 +26,9 @@ foreach ($Occurrences as $key => $occurrence) {
 	$days[$date][$time][] = & $Occurrences[$key];
 }
 
+$start_table = '<table style="clear: both;" border="0" cellpadding="1" cellspacing="0">';
+$hrule = '<hr style="color: #999999; background-color: #999999; height: 1px; border: 0;" />';
+
 foreach ($special_names as $date => $name) {
 	$default = ($date==$default_day);
 	$lowername = strtolower($name);
@@ -54,27 +57,35 @@ foreach ($special_names as $date => $name) {
 	echo('</ul><div>');
 	if (array_key_exists($date, $days)) {
 		ksort($days[$date]);
-		echo('<table style="clear: both;" border="0" cellpadding="1" cellspacing="0">');
+		echo($start_table);
+		$previous_time_associative = TRUE;
 		foreach ($days[$date] as $time => $occurrences) {
 			$time_associative = ($time !== -1);
 			foreach ($occurrences as $occurrence) {
 				echo('<tr><td valign="top">');
 				if ($time_associative) {
 					echo($occurrence->StartTime->Format('H:i'));
+					$any_time_associative = TRUE;
 				}
 				echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-				echo($occurrence->Event->Name);
+				echo('<span><a href="' . '/calendar/event' . '/' . $occurrence->Event->Source->GetSourceId(). '/' . urlencode($occurrence->Event->SourceEventId) . '/' . urlencode($occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$occurrence->Event->Name.'</a></span>');
 				if (!empty($occurrence->LocationDescription)) {
 					echo(' ('.$occurrence->LocationDescription.')');
 				}
 				echo('</td></tr>');
 			}
+			if ($time_associative && !$previous_time_associative) {
+				echo('</table>');
+				echo($hrule);
+				echo($start_table);
+			}
+			$previous_time_associative = $time_associative;
 		}
 		echo('</table>');
 	} else {
 		echo('<p>You have no events '.$lowername.'</p>');
 	}
-	echo('</div><p><small><a href="/calendar/add/'.$lowername.'">Add event '.$lowername.'</a></small></p>');
+	echo('</div><p><small><a class="RightColumnAction" href="/calendar/range/'.$lowername.'">Go to '.$lowername.'</a></small></p>');
 	echo('</div>');
 }
 

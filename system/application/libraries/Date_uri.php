@@ -435,9 +435,9 @@ class Date_uri
 								$results['offset'] . ' ' .
 								$results['offset_unit'] . ' time';
 					}
-					if (!empty($offset)) {
-						$start = $start->Adjust($offset);
-					}
+				}
+				if (!empty($offset)) {
+					$start = $start->Adjust($offset);
 				}
 				// Set the implicit duration if no end is specified
 				if (!$has_end) {
@@ -506,9 +506,9 @@ class Date_uri
 								' for ' . $results['end_offset'] .
 								' ' . $results['end_offset_unit'];
 					}
-					if (!empty($offset)) {
-						$end = $start->Adjust($offset);
-					}
+				}
+				if (!empty($offset)) {
+					$end = $start->Adjust($offset);
 				}
 			}
 			// If the end is before the start, use the start for 1 day
