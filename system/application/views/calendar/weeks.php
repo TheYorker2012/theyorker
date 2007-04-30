@@ -11,12 +11,13 @@ echo('</div>');
 
 $squash = count($Days) > 3;
 
-function DrawOccurrence(&$Occurrence, $Squash)
+function DrawOccurrence(&$Occurrence, $Squash, $Path)
 {
+	$CI = & get_instance();
 	?>
 	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;">
 		<div style="padding: 2px;font-size: small;">
-			<span><?php echo($Occurrence->Event->Name); ?></span>
+			<?='<span><a href="' . $Path['edit'] . '/' . $Occurrence->Event->Source->GetSourceId(). '/' . urlencode($Occurrence->Event->SourceEventId) . '/' . urlencode($Occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$Occurrence->Event->Name.'</a></span>'?>
 			<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
 				<div>
 					<?php
@@ -80,7 +81,7 @@ foreach ($Weeks as $key => $week) {
 		echo('<td><a href="'.$day['link'].'">');
 		foreach ($times as $time => $ocs) {
 			foreach ($ocs as $occurrence) {
-				DrawOccurrence($occurrence, $squash);
+				DrawOccurrence($occurrence, $squash, $Path);
 			}
 		}
 		echo('</a></td>');
