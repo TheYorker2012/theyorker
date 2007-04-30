@@ -243,6 +243,7 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $view_mode,
+			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
@@ -288,6 +289,7 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $days,
+			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
@@ -333,6 +335,7 @@ class My_calendar
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
 			'ViewMode'	=> $weeks,
+			'RangeDescription' => $range['description'],
 			'ReadOnly' => $this->mReadOnly,
 			'Path' => $this->mPaths,
 		);
