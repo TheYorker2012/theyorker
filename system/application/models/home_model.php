@@ -35,7 +35,7 @@ class Home_Model extends Model {
 			$weather_forecast = $weather->xpath('//channel/item/data:forecast');
 			//Generate the html to be displayed
 			$html = '<table border="0" width="100%">';
-			$html .= '<tr><td align="Center" width="50%">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</td><td align="Center">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</td></tr>';
+			$html .= '<tr><td align="Center" width="50%" class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</td><td align="Center" class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</td></tr>';
 			$html .= '<tr><td align="Center" width="50%">';
 			$html .= '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'">';
 			$html .= '</td><td align="Center">';
@@ -115,7 +115,7 @@ class Home_Model extends Model {
 		}
 		return $query->row();
 	}
-	
+
 
 }
 ?>
