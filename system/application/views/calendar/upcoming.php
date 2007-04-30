@@ -54,7 +54,7 @@ foreach ($special_names as $date => $name) {
 	echo('</ul><div>');
 	if (array_key_exists($date, $days)) {
 		ksort($days[$date]);
-		echo('<table border="0" cellpadding="1" cellspacing="0">');
+		echo('<table style="clear: both;" border="0" cellpadding="1" cellspacing="0">');
 		foreach ($days[$date] as $time => $occurrences) {
 			$time_associative = ($time !== -1);
 			foreach ($occurrences as $occurrence) {
