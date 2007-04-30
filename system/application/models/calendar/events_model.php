@@ -89,8 +89,8 @@ class EventOccurrenceQuery
 	{
 		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
 				'	AND events.event_todo = FALSE,'.
-				'UNIX_TIMESTAMP(CURRENT_TIMESTAMP),'.
-				'UNIX_TIMESTAMP(CURRENT_TIMESTAMP))';
+				'CURRENT_TIMESTAMP,'.
+				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time))';
 	}
 
 	/// Produce an SQL expression for the effective todo end time.
@@ -150,7 +150,6 @@ class EventOccurrenceQuery
 		if (empty($conditions)) {
 			return 'TRUE';
 		} else {
-		//var_dump($conditions);
 			return '('.implode(' AND ',$conditions).')';
 		}
 	}
