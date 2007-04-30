@@ -84,22 +84,22 @@ class EventOccurrenceQuery
 				'	AND	events.event_todo)';
 	}
 
-	/// Produce an SQL expression for the effective todo start time.
+	/// Produce an SQL expression for the effective todo start time mysql timestamp.
 	function ExpressionTodoStart()
 	{
 		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
 				'	AND events.event_todo = FALSE,'.
 				'CURRENT_TIMESTAMP,'.
-				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time))';
+				'event_occurrences.event_occurrence_start_time)';
 	}
 
-	/// Produce an SQL expression for the effective todo end time.
+	/// Produce an SQL expression for the effective todo end time mysql timestamp.
 	function ExpressionTodoEnd()
 	{
 		return 'IF(event_occurrence_users.event_occurrence_user_todo = TRUE '.
 				'	AND events.event_todo = FALSE,'.
-				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time),'.
-				'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time))';
+				'event_occurrences.event_occurrence_start_time,'.
+				'event_occurrences.event_occurrence_end_time)';
 	}
 
 	/// Produce an SQL expression for all and only occurrences in a range of time.
@@ -150,7 +150,6 @@ class EventOccurrenceQuery
 		if (empty($conditions)) {
 			return 'TRUE';
 		} else {
-			var_dump($conditions);
 			return '('.implode(' AND ',$conditions).')';
 		}
 	}
