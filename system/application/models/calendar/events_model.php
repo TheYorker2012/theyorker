@@ -150,6 +150,7 @@ class EventOccurrenceQuery
 		if (empty($conditions)) {
 			return 'TRUE';
 		} else {
+			var_dump($conditions);
 			return '('.implode(' AND ',$conditions).')';
 		}
 	}
