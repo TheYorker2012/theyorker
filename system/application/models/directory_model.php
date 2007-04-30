@@ -518,7 +518,7 @@ class Directory_model extends Model {
 		$query = $this->db->query($sql);
 
 		$sql = 'INSERT INTO `organisations` (
-			`organisation_id`,
+			`organisation_entity_id`,
 			`organisation_organisation_type_id`,
 			`organisation_name`,
 			`organisation_directory_entry_name`,
