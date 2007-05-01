@@ -513,3 +513,12 @@ div.BlueBox h2.Headline {
 .Headline a {
 	color: black;
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in slideshow                                       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#SlideShow {
+	height: 165px;
+	width: 220px;
+}

@@ -1,8 +1,20 @@
+<script type="text/javascript" src="/javascript/prototype.js"></script>
+<script type="text/javascript" src="/javascript/scriptaculous.js?load=effects"></script>
+<script type="text/javascript" src="/javascript/slideshow_new.js"></script>
+
+
 <div id="RightColumn">
 	<h2 class="first">Information</h2>
 	<div id="SlideShow" class="entry">
-		<img src="/images/prototype/prefs/image_load.jpg" alt="Slideshow" title="Slideshow" />
+		<img src="/images/prototype/prefs/image_load.jpg" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
 	</div>
+
+	<script type="text/javascript">
+<?php foreach ($organisation['slideshow'] as $slide_photo) { ?>
+	Slideshow.add('<?php echo($slide_photo['url']); ?>');
+<?php } ?>
+	Slideshow.load();
+	</script>
 
 	<div class="Entry">
 <?php
