@@ -116,6 +116,7 @@ abstract class CalendarView extends FramesView
 			$days = Academic_time::DaysBetweenTimestamps($this->mStartTime, $this->mEndTime);
 			$start = new Academic_time($this->mStartTime);
 			$end   = new Academic_time($this->mEndTime);
+			$now   = new Academic_time(time());
 			
 			$try_again = TRUE;
 			if (0 === $start->AcademicDay() &&
@@ -179,12 +180,29 @@ abstract class CalendarView extends FramesView
 					));
 					$try_again = FALSE;
 				}
+				$this->SetData('NowUrl', $this->GenerateRangeUrl(
+					$CI->academic_calendar->Academic(
+						$now->AcademicYear(),
+						$now->AcademicTerm(),
+						1
+					),
+					$CI->academic_calendar->Academic(
+						$now->AcademicYear() + (5 === $start->AcademicTerm() ? 1 : 0),
+						($now->AcademicTerm() + 1)%6,
+						1
+					)
+				));
+				$this->SetData('NowUrlLabel', 'This term');
 			}
 			if ($try_again) {
+				$now = $now->Midnight();
 				if ($days >= 7) {
 					$forward_jump = '1week';
+					$now = $now->BackToMonday();
+					$this->SetData('NowUrlLabel', 'This week');
 				} else {
 					$forward_jump = '1day';
+					$this->SetData('NowUrlLabel', 'Today');
 				}
 				$this->SetData('ForwardUrl', $this->GenerateRangeUrl(
 					$start->Adjust($forward_jump),
@@ -193,6 +211,10 @@ abstract class CalendarView extends FramesView
 				$this->SetData('BackwardUrl', $this->GenerateRangeUrl(
 					$start->Adjust('-'.$forward_jump),
 					$end->Adjust('-'.$forward_jump)
+				));
+				$this->SetData('NowUrl', $this->GenerateRangeUrl(
+					$now,
+					$now->Adjust('+'.$forward_jump)
 				));
 			}
 		}

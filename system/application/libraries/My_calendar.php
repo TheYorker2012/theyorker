@@ -635,10 +635,9 @@ class My_calendar
 			} else {
 				$Filter = '/'.$Filter;
 			}
-			$now = new Academic_time(time());
-			$navbar->AddItem('day', 'Today',
+			$navbar->AddItem('day', 'Day',
 				$this->mRangeUrl.
-				'today'.
+				$Start->AcademicYear().'-'.$Start->AcademicTermNameUnique().'-'.$Start->AcademicWeek().'-'.$Start->Format('D').
 				$Filter
 			);
 			$monday = $Start->BackToMonday();

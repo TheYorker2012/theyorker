@@ -4,8 +4,11 @@ echo('<div align="center">');
 if (isset($BackwardUrl)) {
 	echo('<a href="'.$BackwardUrl.'"><img src="/images/prototype/calendar/backward.gif" alt="Backward" /></a> ');
 }
+if (isset($NowUrl)) {
+	echo('<a href="'.$NowUrl.'">'.$NowUrlLabel.'</a> ');
+}
 if (isset($ForwardUrl)) {
-	echo('<a href="'.$ForwardUrl.'"><img src="/images/prototype/calendar/forward.gif" alt="Forward" /></a>');
+	echo('<a href="'.$ForwardUrl.'"><img src="/images/prototype/calendar/forward.gif" alt="Forward" /></a> ');
 }
 echo('</div>');
 
