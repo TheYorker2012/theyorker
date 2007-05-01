@@ -46,7 +46,7 @@ foreach ($special_names as $date => $name) {
 	$default = ($date==$default_day);
 	$lowername = strtolower($name);
 	$div_id = 'upcoming_'.$lowername;
-	
+
 	echo('<div id="'.$div_id.'"'.($default ? '' : ' style="display: none"').'>');
 	echo('<ul id="SideTabBar">');
 	foreach ($special_names as $date1 => $name1) {
@@ -98,7 +98,7 @@ foreach ($special_names as $date => $name) {
 	} else {
 		echo('<p>You have no events '.$lowername.'</p>');
 	}
-	echo('</div><p><small><a class="RightColumnAction" href="/calendar/range/'.$lowername.'">Go to '.$lowername.'</a></small></p>');
+	echo('</div><a class="RightColumnAction" href="/calendar/range/'.$lowername.'">Go to '.$lowername.'</a>');
 	echo('</div>');
 }
 
