@@ -67,7 +67,7 @@ function FilterLinkBool($filter, $field, $value)
 
 	<P>The following action can be performed on the selected members</P>
 	<P>
-		<select>
+		<select style="float: none;">
 			<!--optgroup label="Actions:"-->
 				<option selected>Send e-mail</option>
 				<option>Remove membership</option>
@@ -84,7 +84,7 @@ function FilterLinkBool($filter, $field, $value)
 				}
 			?>
 		</select>
-		<input type="button" value="Go" />
+		<input type="button" value="Go" style="float: none;"/>
 	</P>
 	<br />
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
