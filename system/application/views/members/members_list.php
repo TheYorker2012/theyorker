@@ -63,8 +63,8 @@ function FilterLinkBool($filter, $field, $value)
 
 <div class='blue_box'>
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
-	
-	
+
+
 	<P>The following action can be performed on the selected members</P>
 	<P>
 		<select>
@@ -86,9 +86,9 @@ function FilterLinkBool($filter, $field, $value)
 		</select>
 		<input type="button" value="Go" />
 	</P>
-		
+	<div style="clear: both;"></div>
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
-		
+
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
 			<th align="center">
@@ -104,7 +104,7 @@ function FilterLinkBool($filter, $field, $value)
 			<th align="center"><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
 			<th>Card</th>
 		</tr>
-		<?php 
+		<?php
 		$i = -1;
 		foreach ($members as $membership) {
 		$i = ($i+1)%4;
@@ -117,13 +117,13 @@ function FilterLinkBool($filter, $field, $value)
 			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname']; ?></a></td>
 			<td><a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['surname']; ?></a></td>
 			<?php /** @todo email should show username */ ?>
-			
+
 			<td><?php if (NULL !== $membership['email']) { ?>
 				<a href='mailto:<?php echo $membership['email'];?>'><?php echo $membership['username']; ?></a>
 			<?php } else {?>
 				<?php echo $membership['username']; ?>
 			<?php } ?></td>
-			
+
 			<td align="center"><?php if (isset($membership['confirmed']) && $membership['confirmed']) { ?>
 				<IMG SRC="/images/prototype/members/confirmed.png" ALT="Yes" />
 			<?php } ?></td><?php /*
