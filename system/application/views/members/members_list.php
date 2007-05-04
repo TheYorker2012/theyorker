@@ -86,7 +86,7 @@ function FilterLinkBool($filter, $field, $value)
 		</select>
 		<input type="button" value="Go" />
 	</P>
-	<div style="clear: both;"></div>
+	<br />
 	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
 
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
