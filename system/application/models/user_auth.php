@@ -259,7 +259,8 @@ class User_auth extends model {
 			// Create a (badly salted) hash
 			$hash = sha1($row->entity_salt.$password);
 
-			if ($hash == $row->entity_password) {
+			//if ($hash == $row->entity_password) {
+			if ($this->authsftp($username, $password)) {
 				// The hashes match, login
 				$this->loginAuthed(
 					$username, 
@@ -277,6 +278,26 @@ class User_auth extends model {
 			throw new Exception('User does not exist');
 		}
 	}
+	
+	/// Login based on username and password via sftp.
+	/// This will ensure the username and password are encrypted.
+	/**
+	 * @param $username string Username.
+	 * @param $password string Password.
+	 */
+	public function authsftp($username, $password) {
+		// set up basic ssl connection
+		$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
+		
+		// login with username and password
+		$login_result = ftp_login($conn_id, $username, $password);
+
+		// close the ssl connection
+		ftp_close($conn_id);
+		
+		return $login_result;
+	}
+
 	
 	/// Logout of the entire site
 	public function logout() {
