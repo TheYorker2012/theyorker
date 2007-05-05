@@ -260,7 +260,7 @@ class User_auth extends model {
 			$hash = sha1($row->entity_salt.$password);
 
 			//if ($hash == $row->entity_password) {
-			if ($this->authsftp($username, $password)) {
+			if ($this->authUni($username, $password)) {
 				// The hashes match, login
 				$this->loginAuthed(
 					$username, 
@@ -279,17 +279,22 @@ class User_auth extends model {
 		}
 	}
 	
-	/// Login based on username and password via sftp.
+	/// Login based on username and password against the university, currently via sftp.
 	/// This will ensure the username and password are encrypted.
 	/**
 	 * @param $username string Username.
 	 * @param $password string Password.
+	 * @return true if auth successful
 	 */
-	public function authsftp($username, $password) {
-		// set up basic ssl connection
-		$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
+	private function authUni($username, $password) {
+		//temporarily use ftp only for local development
+		$conn_id = ftp_connect('ftp.york.ac.uk');
 		
-		// login with username and password
+	 	//NB sftp will not work in windows without recompiling php - TODO: enable in production environment
+		//set up basic ssl connection
+		//$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
+		
+		// attempt login with username and password
 		@$login_result = ftp_login($conn_id, $username, $password);
 
 		// close the ssl connection
@@ -298,7 +303,6 @@ class User_auth extends model {
 		return $login_result;
 	}
 
-	
 	/// Logout of the entire site
 	public function logout() {
 		if (!$this->isLoggedIn) {
