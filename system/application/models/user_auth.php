@@ -290,7 +290,7 @@ class User_auth extends model {
 		$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
 		
 		// login with username and password
-		$login_result = ftp_login($conn_id, $username, $password);
+		@$login_result = ftp_login($conn_id, $username, $password);
 
 		// close the ssl connection
 		ftp_close($conn_id);
