@@ -160,7 +160,7 @@ class News extends Controller {
 	function rss()
 	{
 		header('Content-type: application/rss+xml');
-		$data['rss_title'] = 'York Uni Campus News';
+		$data['rss_title'] = 'Campus News';
 		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
 		$data['rss_desc'] = 'All the news you need to know about from York University\'s Campus!';
 		$data['rss_category'] = 'News';

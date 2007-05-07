@@ -31,10 +31,10 @@ foreach ($rss_items as $item) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
 	echo substr($temp_reporters, 0, -2) . '</author>
-		<link>http://www.theyorker.co.uk/news/' . $item['id'] . '</link>
+		<link>http://theyorker2.gmghosting.com/news/uninews/' . $item['id'] . '</link>
 		<description>' . $item['blurb'] . '</description>
 		<pubDate>' . $item['date'] . '</pubDate>
-		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/' . $item['id'] . '</guid>
+		<guid isPermaLink=\'true\'>http://theyorker2.gmghosting.com/news/uninews/' . $item['id'] . '</guid>
 		</item>';
 }
 echo '</channel></rss>';
