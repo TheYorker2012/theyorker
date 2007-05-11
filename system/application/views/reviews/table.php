@@ -32,7 +32,7 @@
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox" style="padding-right: 6px;">
+	<div class="BlueBox">
 		<h2>food search ordered by star rating</h2>
 		<table border="0" width="97%">
 		<tbody>
@@ -95,22 +95,13 @@
 					<td colspan="2">
 						<table border="0" width="100%">
 						<tr>
-							<td>
-								<strong>Cuisine:</strong><br />
-								French / English
-							</td>
-							<td >
-								<strong>Price:</strong><br />
-								Cheap
-							</td>
-							<td>
-								<strong>Time:</strong><br />
-								Late Night
-							</td>
-							<td>
-								<strong>Atmosphere:</strong><br />
-								Romantic
-							</td>
+							<?php
+							foreach($entry['tagbox'] as $tag => $values ) {
+								echo('<td>');
+								echo('<strong>'.$tag.':</strong><br />');
+								echo(implode(' / ', $values).'</td>');
+							}
+							?>
 						</tr>
 						</table>
 					</td>
