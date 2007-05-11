@@ -8,19 +8,29 @@ div#HomeBanner {
 
 div.NewsBox {
 	width: 100%;
-}
-
-div.SmallNewsBox {
-	width: 50%;
-}
-
-div.NewsBox {
 	float: left;
 	padding: 0;
 	margin: 0;
 }
 
-div.NewsBox > *, div.SmallNewsBox > * {
+div.LeftNewsBox {
+	width: 50%;
+	float: left;
+	margin: 0;
+}
+
+div.RightNewsBox {
+	width: 50%;
+	float: right;
+	margin: 0;
+}
+
+div.LeftNewsBox h4, div.RightNewsBox h4 {
+	font-size: small;
+	color: #20c1f0;
+}
+
+div.NewsBox > * {
 	margin: 0px 10px 10px 10px;
 }
 
@@ -49,6 +59,24 @@ a.TitleHeading {
 	color: #000000;
 }
 
+div.BlueBox h2 {
+	border-color: #999; 
+	border-bottom-style: solid;
+	border-bottom-width: thin; 
+}
+
+a.MailLogo {
+	float: left; 
+	margin: 0px 0px 0px 10px;
+	padding: 0;
+}
+
+p.MailText {
+	text-align: center; 
+	margin: 50px 10px 10px 50px;
+	padding: 7px 0px 0px 0px;
+}
+
 /* This may not be needed but */
 h3.SmallNewsHeading {
 	font-size: small;
@@ -64,3 +92,4 @@ p.Discreet {
 h3 {
 	margin-bottom: 0;
 }
+
