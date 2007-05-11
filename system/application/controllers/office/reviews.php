@@ -368,6 +368,7 @@ class Reviews extends Controller
 		}
 		
 		//reviews
+		$data['reviews'] = array();
 		$temp_reviews = $this->review_model->GetOrgReviews($context_type, $data['organisation']['id']);
 		foreach($temp_reviews as $review)
 		{
