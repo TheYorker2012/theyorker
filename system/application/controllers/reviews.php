@@ -380,36 +380,37 @@ class Reviews extends Controller
 			//A list of all tags
 			$data['review_tags'] = $database_result[0]['tag_groups'];
 
-			//For each row in the table
-
+			//For each row in the table			
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
-				$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
-				$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
-				$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
-				$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
-				$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
-
-				//Change scope of $tagbox
-				$tagbox = array();
-
-				//Tags work as a array within a array, which is just confusing!
-				for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
+				if (isset($database_result[$reviewno]['organisation_name']))
 				{
-					$tag_group_name = $data['review_tags'][$tagno];
+					$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
+					$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
+					$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
+					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
+					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 
-					//Pass only if it exists for this organisation
-					if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
+					//Change scope of $tagbox
+					$tagbox = array();
+
+					//Tags work as a array within a array, which is just confusing!
+					for($tagno = 0; $tagno < count($data['review_tags']); $tagno++)
 					{
-						$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
+						$tag_group_name = $data['review_tags'][$tagno];
+
+						//Pass only if it exists for this organisation
+						if (isset($database_result[$reviewno]['tags'][$tag_group_name]))
+						{
+							$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
+						}
+						else //Else pass a empty array - Changed a array containing 'n/a'
+						{
+							$tagbox[$data['review_tags'][$tagno]] = array('n/a');
+						}
 					}
-					else //Else pass a empty array - Changed a array containing 'n/a'
-					{
-						$tagbox[$data['review_tags'][$tagno]] = array('n/a');
-					}
+					$entries[$reviewno]['tagbox'] = $tagbox;
 				}
-
-				$entries[$reviewno]['tagbox'] = $tagbox;
 			}
 
 			$data['entries'] = $entries;
