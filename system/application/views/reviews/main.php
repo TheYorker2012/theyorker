@@ -85,7 +85,7 @@
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>
-		<? } ?>
+		<?php } ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
