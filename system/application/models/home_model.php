@@ -26,7 +26,7 @@ class Home_Model extends Model {
 			WHERE weather_cache_timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 4 HOUR) ';
 		$query = $this->db->query($sql);
 		//If 0 rows returned then get up to date weather
-		if ($query->num_rows() == 0 || true) { //TODO: Remove true to enable caching
+		if ($query->num_rows() == 0 || True) { //TODO: Remove true to enable caching
 			//Get the rss feed
 			$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
 			$response = file_get_contents($weather_data);
@@ -35,17 +35,24 @@ class Home_Model extends Model {
 			$weather_forecast = $weather->xpath('//channel/item/data:forecast');
 			//Generate the html to be displayed
 			$html = '<table border="0" width="100%">';
-			$html .= '<tr><td align="Center" width="50%"><div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div></td><td align="Center"><div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div></td></tr>';
-			$html .= '<tr><td align="Center" width="50%">';
-			$html .= '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'">';
-			$html .= '</td><td align="Center">';
-			$html .= '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[1]->attributes()->code.'.gif" title="'.$weather_forecast[1]->attributes()->text.'" alt="'.$weather_forecast[1]->attributes()->text.'">';
-			$html .= '</td></tr>';
-			$html .= '<tr><td align="Center">';
-			$html .= $weather_forecast[0]->attributes()->low.'&#176;C - '.$weather_forecast[0]->attributes()->high.'&#176;C';
-			$html .= '</td><td align="Center">';
-			$html .= $weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
-			$html .= '</td></tr>';
+			$html .= '	<tr><td align="center">';
+			$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
+			$html .= '	</td>';
+			$html .= '	<td align="center">';
+			$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
+			$html .= '	</td></tr>';
+			$html .= '	<tr><td align="center">';
+			$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'" />';
+			$html .= '	</td>';
+			$html .= '	<td align="center">';
+			$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[1]->attributes()->code.'.gif" title="'.$weather_forecast[1]->attributes()->text.'" alt="'.$weather_forecast[1]->attributes()->text.'" />';
+			$html .= '	</td></tr>';
+			$html .= '	<tr><td align="center">';
+			$html .= '		'.$weather_forecast[0]->attributes()->low.'&#176;C - '.$weather_forecast[0]->attributes()->high.'&#176;C';
+			$html .= '	</td>';
+			$html .= '	<td align="center">';
+			$html .= '		'.$weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
+			$html .= '	</td></tr>';
 			$html .= '</table>';
 			//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
 			//Delete the old weather forecast
