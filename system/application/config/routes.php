@@ -148,6 +148,7 @@ $route['office/charity/article/([0-9]+)'] = 'office/charity/article/$1/-1';
 // /office/charity/article/cid/rid
 $route['office/charity/article/([0-9]+)/([0-9]+)'] = 'office/charity/article/$1/$2';
 
+$route['office/gallery/return'] = 'office/gallery';
 $route['office/gallery/([0-9]+)'] = 'office/gallery';
 
 
