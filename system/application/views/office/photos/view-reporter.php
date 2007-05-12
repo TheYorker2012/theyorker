@@ -54,11 +54,11 @@
 			<label for="imgid_<?=$i?>_img">Photo</label>
 			<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
 			<br />
-			<label for="imgid_<?=$i?>_allow">Suggest:</label>
-			<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
-			<br />
 			<label for="imgid_<?=$i?>_comment">Comment:</label>
 			<textarea name="imgid_<?=$i?>_comment"></textarea>
+			<br />
+			<label for="imgid_<?=$i?>_allow">Suggest:</label>
+			<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
 <?php }?>
 			<input type='button' name='r_assign' value='Suggest' class='button' />
 			<br />
