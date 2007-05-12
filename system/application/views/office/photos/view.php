@@ -85,7 +85,7 @@
 } ?>
 			</div>
 			<div style="clear:both;">&nbsp;</div>
-			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location'/office/gallery/';" />
+			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location='/office/gallery/';" />
 			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/photos/upload/<?php echo($id); ?>';" />
 			<div style="clear:both;">&nbsp;</div>
 		</div>
