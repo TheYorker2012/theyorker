@@ -62,7 +62,7 @@
 				<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
 				<input type="hidden" name="imgid_<?=$i?>_number" value="<?=$suggestion[$i]?>" />
 <?php }?>
-				<input type="hidden" name="imgid_number" value="<?=$count($suggestion)?>" />
+				<input type="hidden" name="imgid_number" value="<?=count($suggestion)?>" />
 				<input type='submit' name='r_assign' value='Suggest' class='button' />
 				<br />
 			</fieldset>
