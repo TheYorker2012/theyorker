@@ -18,7 +18,7 @@
 		</ul>
 	</div>
 
-	<form name='edit_request' id='edit_request' action='/office/photos/view/ID' method='post' class='form'>
+	<form name='edit_request' id='edit_request' action='/office/photos/view/<?=$photoRequest->photo_request_id?>/reporter' method='post' class='form'>
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>
@@ -60,7 +60,7 @@
 			<label for="imgid_<?=$i?>_allow">Suggest:</label>
 			<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
 <?php }?>
-			<input type='button' name='r_assign' value='Suggest' class='button' />
+			<input type='submit' name='r_assign' value='Suggest' class='button' />
 			<br />
 		</div>
 <?php }?>
