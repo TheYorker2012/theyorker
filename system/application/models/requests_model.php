@@ -899,11 +899,24 @@ class Requests_Model extends Model
 		
 	}
 	
-	function GetAllPhotoRequests($id)
-	{	//Return all photo_requests for a given article
-		$sql = 'SELECT * FROM photo_requests, photo_request_photos
+	function GetPhotoRequest($id)
+	{	//Return details on a single request
+		$sql = 'SELECT *, count(*) AS photo_count
+		        FROM photo_requests
+		        JOIN photo_request_photos
 		        WHERE photo_request_id = photo_request_photo_photo_request_id
-		            AND photo_request_article_id = ?';
+		            AND photo_request_id = ?
+		        GROUP BY photo_request_photo_photo_request_id
+		        LIMIT 1';
+		$query = $this->db->query($sql,array($id));
+		return $query->result();
+		
+	}
+	
+	function GetAllPhotosForRequest($id)
+	{	//Return all photos for a request
+		$sql = 'SELECT * FROM photo_request_photos
+		        WHERE photo_request_photo_photo_request_id = ?';
 		$query = $this->db->query($sql,array($id));
 		return $query;
 		

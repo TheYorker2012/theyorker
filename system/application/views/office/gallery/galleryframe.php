@@ -8,6 +8,7 @@
 			<li><a href="<?=site_url('office')?>">Return to the Office</a></li>
 			<?php if($this->uri->segment(4)) {
 				echo '<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>';
+				echo '<li><a href="'.site_url('office/gallery/return').'">Select this Photo</a></li>';
 			}?>
 			<li><a href="javascript:document.clearform.submit()">Start a new Search</a></li>
 		</div>
