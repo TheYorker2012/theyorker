@@ -33,7 +33,7 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2>food search ordered by star rating</h2>
+		<h2><?php echo($item_type); ?> search results</h2>
 		<table border="0" width="97%">
 		<tbody>
 		<?php
@@ -71,7 +71,7 @@
 						}
 						
 						?>
-						<div class="Date" style="font-size: 0.9em;">User Rating: <?php echo($entry['review_user_rating']); ?>/10</div>
+						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
 					</td>
 				</tr>
 				</tbody>
@@ -88,7 +88,7 @@
 						<!--<img src="/images/images/small/0/94.jpg" alt="singer" title="singer" />-->
 					</td>
 					<td width="80%" valign="top">
-						Whether dining in the cozy interior or on the outdoor villa-style terrace overlooking the San Antonio River, exquisite food and impeccable service are mainstays of the Fig Tree Restaurant. Crisp linens drape tables set with fine china and sparkling crystal in elegant yet homey surroundings.
+						<?php echo($entry['review_blurb']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -97,7 +97,7 @@
 						<tr>
 							<?php
 							foreach($entry['tagbox'] as $tag => $values ) {
-								echo('<td>');
+								echo('<td width="25% valign="top">');
 								echo('<strong>'.$tag.':</strong><br />');
 								echo(implode(' / ', $values).'</td>');
 							}
@@ -106,13 +106,20 @@
 						</table>
 					</td>
 				</tr>
+				<?php
+				if($entry['review_quote'] != "")
+				{
+				?>
 				<tr>
 					<td align="left" colspan="2">
 						<img src="/images/prototype/news/quote_open.png" alt="oquote" />
-						Day or night, this is a great place to be!
+						<?php echo($entry['review_quote']); ?>
 						<img src="/images/prototype/news/quote_close.png" alt="oquote" />
 					</td>
 				</tr>
+				<?php
+				}
+				?>
 				</tbody>
 				</table>
 			</td>
