@@ -819,6 +819,8 @@ function GetTagOrganisation($type,$organisation)
 				o.organisation_directory_entry_name,
 				tg.tag_group_name,t.tag_name,
 				rcc.review_context_content_rating,
+				rcc.review_context_content_blurb,
+				rcc.review_context_content_quote,
 				IF (thread.comment_thread_num_ratings > 0,
 					thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
 					NULL) AS average_user_rating'.
@@ -849,7 +851,6 @@ function GetTagOrganisation($type,$organisation)
 		//Ok now we need to rearrange this into a useful format (Since a lot of duplicated data currently exists)
 		$reviews = array(); //Make array scope for rest of function
 		$data_present = 0;
-
 		foreach ($raw_reviews as $single_review)
 		{
 			//Check to see if the information is already in the array
