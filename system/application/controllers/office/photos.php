@@ -52,6 +52,16 @@ class Photos extends Controller
 		$requestID = $this->uri->segment(4);
 		$viewer = $this->uri->segment(5);
 
+		if ($this->input->post('r_assign') == 'Suggest' and $this->input->post('imgid_number')) {
+			for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
+				if ($this->input->post('imgid_'.$i.'_allow') == 'y'){
+					$this->requests_model->SuggestPhoto($requestID,
+						                                $this->input->post('imgid_'.$i.'_number'),
+						                                $this->input->post('imgid_'.$i.'_comment'));
+				}
+			}
+		}
+
 		$data['photoRequest'] = $this->requests_model->GetPhotoRequest($requestID);
 		$data['photos'] = $this->requests_model->GetAllPhotosForRequest($requestID);
 		$data['article'] = $this->article_model->GetArticleDetails($data['photoRequest']->photo_request_article_id);
@@ -67,15 +77,7 @@ class Photos extends Controller
 //			$this->messages->AddMessage('error', 'This photo request is marked as deleted.');
 //		}
 		
-		if ($this->input->post('r_assign') == 'Suggest' and $this->input->post('imgid_number')) {
-			for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
-				if ($this->input->post('imgid_'.$i.'_allow') == 'y'){
-					$this->requests_model->SuggestPhoto($requestID,
-						                                $this->input->post('imgid_'.$i.'_number'),
-						                                $this->input->post('imgid_'.$i.'_comment'));
-				}
-			}
-		}
+
 
    		/// Get custom page content
 		$this->pages_model->SetPageCode('office_photos');
