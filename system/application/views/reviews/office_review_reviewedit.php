@@ -128,9 +128,3 @@ if ($user['officetype'] != 'Low')
 <?php
 }
 ?>
-
-<?php
-echo '<pre>';
-print_r($data);
-echo '</pre>';
-?>

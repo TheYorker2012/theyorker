@@ -81,10 +81,3 @@ if (($article['displayrevision']['id'] != $article['header']['live_content']) an
 }
 ?>
 
-<?php
-
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-
-?>

@@ -185,9 +185,6 @@ function print_profiles($profiles)
 		if ($pic) {
 			print "<img src=\"$pic\">\n";
 		}
-		print '<pre style="overflow: hidden;">';
-		print_r($profile);
-		print '</pre>';
 	}
 }
 
