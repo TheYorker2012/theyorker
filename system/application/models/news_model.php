@@ -185,9 +185,6 @@ class News_model extends Model
 				$result[] = $row->article_id;
 			}
 		}
-		while (count($result) < $number) {
-			$result[] = NULL;
-		}
 		return $result;
 	}
 

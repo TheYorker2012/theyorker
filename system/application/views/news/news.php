@@ -15,7 +15,6 @@ function printarticlelink($article) {
 		echo('			<a href="/contact">'.$reporter['name'].'</a>'."\n");
 	echo('		</div>'."\n");
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
-		/*echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");*/
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
 	}
 	echo('	</div>'."\n");
@@ -23,7 +22,6 @@ function printarticlelink($article) {
 ?>
 
 <div id="RightColumn">
-<?php if ($this->uri->segment(2) != 'comment') {?>
 	<h2 class="first"><?php echo($latest_heading); ?></h2>
 
 <?php
@@ -38,27 +36,30 @@ if (isset($puffers)) {
 } ?>
 
 <?php
+// News Previews
 foreach($news_previews as $preview)
 	printarticlelink($preview);
-?>
 
-<?php /*	<h2><?php echo($other_heading); ?></h2>
-<?php
+// Other News
+if (count($news_others) > 0)
+	echo('	<h2>'.$other_heading.'</h2>'."\n");
+
 foreach ($news_others as $other)
 	printarticlelink($other);
-*/
+
+// Related Articles
 if (count($main_article['related_articles']) > 0)
 	echo('	<h2>'.$related_heading.'</h2>'."\n");
 
 foreach ($main_article['related_articles'] as $related)
 	printarticlelink($related);
 
+// Fact Box
 foreach($main_article['fact_boxes'] as $fact_box) {
 	echo('	<h2>'.$fact_box['title'].'</h2>'."\n");
 	echo('	<div class="Entry">'."\n");
 	echo('		'.$fact_box['wikitext']."\n");
 	echo('	</div>'."\n");
-}
 }
 ?>
 </div>
