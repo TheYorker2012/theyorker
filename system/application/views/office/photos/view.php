@@ -72,6 +72,31 @@
 			</fieldset>
 		</div>
 
+<?php if (isset($suggestion)) { ?>
+
+		<div class="grey_box">
+			<h2>Your Suggestions</h2>
+			<fieldset>
+				<?php for($i=0; $i < count($suggestion); $i++) { ?>
+					<h3><?=$i+1?>:</h3>
+					<label for="imgid_<?=$i?>_img">Photo</label>
+					<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
+					<br />
+					<label for="imgid_<?=$i?>_comment">Comment:</label>
+					<textarea name="imgid_<?=$i?>_comment"></textarea>
+					<br />
+					<label for="imgid_<?=$i?>_allow">Suggest:</label>
+					<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
+					<input type="hidden" name="imgid_<?=$i?>_number" value="<?=$suggestion[$i]?>" />
+				<?php } ?>
+				<input type="hidden" name="imgid_number" value="<?=count($suggestion)?>" />
+				<input type="submit" name="r_suggest" value="Suggest" class="button" />
+				<br />
+			</fieldset>
+		</div>
+
+<?php } else { ?>
+
 		<div class="blue_box">
 			<h2>photos</h2>
 			<div id="proposed_photos">
@@ -86,7 +111,7 @@
 			</div>
 			<div style="clear:both;">&nbsp;</div>
 			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location='/office/gallery/';" />
-			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/photos/upload/<?php echo($id); ?>';" />
+			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/gallery/upload/';" />
 			<div style="clear:both;">&nbsp;</div>
 		</div>
 
@@ -121,4 +146,7 @@
 			 	<input type="button" name="add_comment" id="add_comment" value="Add Comment" class="button" />
 			</fieldset>
 		</div>
+
+<?php } ?>
+
 	</form>

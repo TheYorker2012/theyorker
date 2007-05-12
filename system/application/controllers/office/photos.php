@@ -60,7 +60,27 @@ class Photos extends Controller
 				/// If request doesn't exist then redirect
 				redirect('/office/photos/');
 			} else {
-				/// Get suggested photos for request
+				/// Check if there are any new suggested photos - ask for confirmation
+	      	/// @TODO:Ensure request is open for new suggestions
+				if (isset($_SESSION['img']['list'])) {
+					$data['suggestion'] = array_unique($_SESSION['img']['list']);
+					$this->load->helper('images');
+					/// Reset list of new suggestions
+					unset($_SESSION['img']);
+				}
+
+				/// Add any confirmed suggestions
+				/// @TODO: Don't allow duplicate suggestions
+				/// @TODO: Get rid of POST to prevent refresh adding them again
+				if (($this->input->post('r_suggest') == 'Suggest') && ($this->input->post('imgid_number'))) {
+					for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
+						if ($this->input->post('imgid_'.$i.'_allow') == 'y'){
+							$this->photos_model->SuggestPhoto($request_id,$this->input->post('imgid_'.$i.'_number'),$this->input->post('imgid_'.$i.'_comment'),$this->user_auth->entityId);
+						}
+					}
+				}
+
+            /// Get suggested photos for request
 				$data['photos'] = $this->photos_model->GetSuggestedPhotos($request_id);
 
 				/// Load main frame with view
@@ -68,65 +88,7 @@ class Photos extends Controller
 				$this->main_frame->Load();
 			}
 		}
-
-/*
-		$this->load->helper(array('images', 'entity'));
-
-		if ($this->input->post('r_assign') == 'Suggest' and $this->input->post('imgid_number')) {
-			for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
-				if ($this->input->post('imgid_'.$i.'_allow') == 'y'){
-					$this->requests_model->SuggestPhoto($requestID,
-						                                $this->input->post('imgid_'.$i.'_number'),
-						                                $this->input->post('imgid_'.$i.'_comment'));
-				}
-			}
-		}
-
-		$data['photos'] = $this->requests_model->GetAllPhotosForRequest($requestID);
-*/
-
 	}
-
-	/**
-	 *	@brief	Allow users to upload photos
-	 */
-	function upload()
-	{
-		/// Make sure users have necessary permissions to view this page
-		if (!CheckPermissions('office')) return;
-
-		///@TODO: Check request is open / accepting photos / exists
-		if (!$this->uri->segment(4)) {
-			redirect('/office/photos');
-		} else {
-			$this->load->library('image_upload');
-			$this->image_upload->automatic('/office/photos/uploaded/' . $this->uri->segment(4), array('small','medium'), false, true);
-		}
-	}
-
-	/**
-	 *	@brief	Adds selected/uploaded photos to the photo request
-	 */
-	function uploaded()
-	{
-		/// Make sure users have necessary permissions to view this page
-		if (!CheckPermissions('office')) return;
-
-		///@TODO: Check request is open / accepting photos / exists
-		if (!$this->uri->segment(4)) {
-			redirect('/office/photos');
-		} else {
-			///@TODO: Check imglist isn't empty/null/exists
-			$new_photos = array_unique($_SESSION['img']['list']);
-			foreach ($new_photos as $photo) {
-				$this->photos_model->SuggestPhoto($this->uri->segment(4),$photo,'',$this->user_auth->entityId);
-			}
-			/// Reset list of uploaded photos
-			unset($_SESSION['img']);
-			/// Take user back to photo request
-			redirect('/office/photos/view/'.$this->uri->segment(4));
-		}
-	 }
 
 }
 
