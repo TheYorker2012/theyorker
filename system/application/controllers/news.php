@@ -111,7 +111,8 @@ class News extends Controller {
 					'blurb'					=>	NULL,
 					'authors'				=>	array(),
 					'links'					=>	array(),
-					'related_articles'	=> array()
+					'related_articles'	=> array(),
+					'fact_boxes'			=>	array()
 				);
 			} else {
 		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
