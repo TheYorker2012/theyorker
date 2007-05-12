@@ -42,7 +42,7 @@ class Gallery extends Controller {
 		if ($page === 'return') {
 			//some people won't approve of this method, but the user cannot harm anything messing this up and its short
 			$_SESSION['img']['list'] = array($bits[6]);
-			redirect($_SESSION['img']['return']);
+			header('Location: '.$_SESSION['img']['return']);
 		} elseif ($bits[4] != 'gallery') {
 			$_SESSION['img']['return'] = $_SERVER["HTTP_REFERER"];
 		}
