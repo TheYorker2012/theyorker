@@ -158,11 +158,18 @@ class Frame_public extends FrameNavbar
 		if ($CI->pages_model->PageCodeSet()) {
 			if (NULL !== $this->mTitleParameters) {
 				$titles = $CI->pages_model->GetTitles($this->mTitleParameters);
+				$title_set = FALSE;
 			} elseif (!$this->mTitleSet) {
 				$titles = $CI->pages_model->GetTitles();
+				$title_set = FALSE;
+			} else {
+				// Title has already been set manually.
+				$title_set = TRUE;
 			}
-			$this->SetData('head_title', $titles[0]);
-			$this->SetData('body_title', $titles[1]);
+			if (!$title_set) {
+				$this->SetData('head_title', $titles[0]);
+				$this->SetData('body_title', $titles[1]);
+			}
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());
 		}
