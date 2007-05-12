@@ -34,7 +34,8 @@ if (isset($puffers)) {
 		echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
 		echo '</a></div>';
 	}
-	echo '<h2>' . $other_heading . '</h2>';
+	if (count($news_previews) > 0)
+		echo '<h2>' . $other_heading . '</h2>';
 } ?>
 
 <?php
