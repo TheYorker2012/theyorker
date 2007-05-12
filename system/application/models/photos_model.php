@@ -66,143 +66,116 @@ class Photos_model extends Model
 	}
 
 
-	function GetLatestId($type, $number)
-	//Returns the '$number' most recent article ID of type '$type'
-	//Ordered by 'most recent'.
+	function GetPhotoRequestDetails($id)
 	{
-		$sql = 'SELECT content_type_id, content_type_has_children
-				FROM content_types
-				WHERE content_type_codename = ?';
-		$query = $this->db->query($sql,array($type));
-		$row = $query->row();
-		if (($query->num_rows() > 0) && ($row->content_type_has_children)) {
-			$sql = 'SELECT content_type_codename
-					FROM content_types
-					WHERE content_type_parent_content_type_id = ?';
-			$query = $this->db->query($sql,array($row->content_type_id));
-			$types = array();
-			if ($query->num_rows() > 0) {
-				foreach ($query->result() as $row) {
-					$types[] = $row->content_type_codename;
-				}
-			}
+		$sql = 'SELECT photo_requests.photo_request_title,
+				photo_requests.photo_request_description,
+				photo_requests.photo_request_article_id,
+				UNIX_TIMESTAMP(photo_requests.photo_request_timestamp) AS photo_request_timestamp,
+				photo_requests.photo_request_user_entity_id,
+				photo_requests.photo_request_approved_user_entity_id,
+				articles.article_request_title,
+				users.user_firstname,
+				users.user_surname,
+				photo_requests.photo_request_deleted,
+				photo_requests.photo_request_chosen_photo_id,
+				photo_requests.photo_request_flagged
+			FROM photo_requests, articles, users
+			WHERE photo_requests.photo_request_id = ?
+			AND photo_requests.photo_request_article_id = articles.article_id
+			AND photo_requests.photo_request_user_entity_id = users.user_entity_id';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 0) {
+			return FALSE;
 		} else {
-			$types = array($type);
-		}
-
-		$sql = 'SELECT articles.article_id FROM articles
-				LEFT JOIN content_types
-				ON (content_types.content_type_id = articles.article_content_type_id)
-				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
-				AND articles.article_live_content_id IS NOT NULL
-				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
-		if (!empty($types)) {
-			$sql .= '	AND (';
-			$first = TRUE;
-			foreach ($types as $type) {
-				if (!$first) {
-					$sql .= ' OR ';
-				} else {
-					$first = FALSE;
+			$row = $query->row();
+      	$result = array(
+				'id'					=> $id,
+				'title'				=>	$row->photo_request_title,
+				'description'		=>	$row->photo_request_description,
+				'article_id'		=>	$row->photo_request_article_id,
+				'article_title'	=>	$row->article_request_title,
+				'time'				=>	$row->photo_request_timestamp,
+				'reporter_id'		=>	$row->photo_request_user_entity_id,
+				'reporter_name'	=>	$row->user_firstname . ' ' . $row->user_surname,
+				'editor_id'			=>	$row->photo_request_approved_user_entity_id
+      	);
+      	if ($row->photo_request_approved_user_entity_id !== NULL) {
+				$editor_sql = 'SELECT users.user_firstname,
+										users.user_surname
+									FROM users
+									WHERE users.user_entity_id = ?';
+				$editor_query = $this->db->query($editor_sql,array($row->photo_request_approved_user_entity_id));
+				$editor_row = $editor_query->row();
+				$result['editor_name'] = $editor_row->user_firstname . ' ' . $editor_row->user_surname;
+			}
+			$user_sql = 'SELECT photo_request_users.photo_request_user_user_entity_id,
+					photo_request_users.photo_request_user_status,
+					users.user_firstname,
+					users.user_surname
+				FROM photo_request_users, users
+				WHERE photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
+				AND photo_request_users.photo_request_user_photo_request_id = ?';
+			$user_query = $this->db->query($user_sql, array($id));
+			if ($user_query->num_rows() == 0) {
+				$result['status'] = 'unassigned';
+				$result['assigned_status'] = 'unassigned';
+			} else {
+				$user_row = $user_query->row();
+				$result['assigned_name'] = $user_row->user_firstname . ' ' . $user_row->user_surname;
+				$result['assigned_id'] = $user_row->photo_request_user_user_entity_id;
+				$result['assigned_status'] = $user_row->photo_request_user_status;
+				if ($result['assigned_status'] != 'declined') {
+					$result['status'] = 'assigned';
 				}
-				$sql .= 'content_types.content_type_codename = ?';
 			}
-			$sql .= ') ';
+			if ($row->photo_request_deleted) {
+				$result['status'] = 'deleted';
+			} elseif ($row->photo_request_chosen_photo_id !== NULL) {
+				$result['status'] = 'completed';
+			} elseif ($row->photo_request_flagged) {
+				$result['status'] = 'ready';
+			}
+      	return $result;
 		}
-		$sql .= 'ORDER BY articles.article_publish_date DESC
-				LIMIT 0, ?';
-		$types[] = $number;
-		$query = $this->db->query($sql,$types);
+	}
+
+	function GetSuggestedPhotos($id)
+	{
+		$this->load->helper('images');
 		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result() as $row)
-			{
-				$result[] = $row->article_id;
-			}
-		}
-		while (count($result) < $number) {
-			$result[] = NULL;
+		$sql = 'SELECT photo_request_photos.photo_request_photo_photo_id,
+					photo_request_photos.photo_request_photo_comment,
+					UNIX_TIMESTAMP(photo_request_photos.photo_request_photo_date) AS photo_request_photo_date,
+					photo_request_photos.photo_request_photo_user_id,
+					users.user_firstname,
+					users.user_surname
+				FROM photo_request_photos, users
+				WHERE photo_request_photos.photo_request_photo_photo_request_id = ?
+				AND photo_request_photos.photo_request_photo_user_id = users.user_entity_id
+				ORDER BY photo_request_photos.photo_request_photo_date ASC';
+		$query = $this->db->query($sql,array($id));
+		foreach ($query->result() as $photo) {
+			$result[] = array(
+				'id'			=>	$photo->photo_request_photo_photo_id,
+				'comment'	=>	$photo->photo_request_photo_comment,
+				'time'		=>	$photo->photo_request_photo_date,
+				'user_id'	=>	$photo->photo_request_photo_user_id,
+				'user_name'	=>	$photo->user_firstname . ' ' . $photo->user_surname,
+				'url'			=>	imageLocation($photo->photo_request_photo_photo_id, 'small')
+			);
 		}
 		return $result;
 	}
 
-	/**
-	 * Get array containing data needed for 'NewsOther'
-	 * @param $id is the article_id of the article data to return
-	 * @param $dateformat is an optional string containg the format you wish the dates to be returned
-	 * @return An array with 'id','date','heading','subheading','subtext',
-	 * @return 'authors','photo'
-	 */
-	function GetSimpleArticle($id, $image_class = "", $dateformat ='%a, %D %b %y')
+	function SuggestPhoto($request_id,$photo_id,$comment,$user_id)
 	{
-		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id,
-			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-			content_types.content_type_codename,
-			articles.article_thumbnail_photo_id,
-			photos.photo_title
-			FROM articles
-			INNER JOIN content_types
-				ON articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
-			LEFT JOIN photos
-				ON articles.article_thumbnail_photo_id = photos.photo_id
-			LIMIT 0,1';
-		$query = $this->db->query($sql, array($dateformat,$id));
-		$content_id = null;
-		if ($query->num_rows() > 0)
-		{
-		    $row = $query->row();
-		    $result['date'] = $row->article_publish_date;
-			$result['article_type'] = $row->content_type_codename;
-		    $content_id = $row->article_live_content_id;
-
-			if ($row->article_thumbnail_photo_id > 0) {
-				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->article_thumbnail_photo_id, 'small', false, $row->photo_title, $image_class);
-			} else {
-				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
-			}
-		}
-		$sql = 'SELECT article_contents.article_content_heading
-			FROM article_contents
-			WHERE (article_contents.article_content_id = ?)
-			LIMIT 0,1';
-		$query = $this->db->query($sql, array($content_id));
-        if ($query->num_rows() > 0)
-		{
-		    $row = $query->row();
-		    $result['heading'] = $row->article_content_heading;
-		}
-		$sql = 'SELECT article_writers.article_writer_user_entity_id
-			FROM article_writers
-			WHERE (article_writers.article_writer_article_id = ?
-			AND article_writers.article_writer_status = "accepted"
-			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
-
-			LIMIT 0,10';
-		$query = $this->db->query($sql, array($id));
-		if ($query->num_rows() > 0)
-		{
-		    $authors = array();
-		    foreach ($query->result() as $row)
-			{
-				$sql = 'SELECT business_cards.business_card_name
-					FROM business_cards
-					WHERE (business_cards.business_card_user_entity_id = ?)';
-				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-				if ($author_query->num_rows() > 0)
-				{
-					$author_row = $author_query->row();
-					$authors[] = array(
-						'name' => $author_row->business_card_name,
-						'id' => $row->article_writer_user_entity_id
-					);
-				}
-			}
-			$result['authors'] = $authors;
-		}
-		return $result;
+		$sql = 'INSERT INTO photo_request_photos
+				SET photo_request_photos.photo_request_photo_photo_request_id = ?,
+					photo_request_photos.photo_request_photo_photo_id = ?,
+					photo_request_photos.photo_request_photo_comment = ?,
+					photo_request_photos.photo_request_photo_user_id = ?';
+		$query = $this->db->query($sql,array($request_id,$photo_id,$comment,$user_id));
 	}
 
 }
