@@ -65,3 +65,11 @@ for($topten=0; ($topten<10) && ($topten < $max_entries); $topten++) {
 	}
 	?>
 </div>
+
+<?php
+
+echo '<div class="BlueBox"><pre>';
+print_r($data);
+echo '</pre></div>';
+
+?>

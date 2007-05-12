@@ -369,6 +369,12 @@ class Reviews extends Controller
 		$columns = array(0);
 		$entries = array();
 
+		//Get data for the links to the table page
+		$tabledata = $this->Review_model->GetTags($item_type);
+
+		//Pass tabledata straight to view it is in the proper format
+		$data['table_data'] = $tabledata;
+
 		//Incase of null result
 		if ($database_result[0]['tag_groups'] == 'empty')
 		{
