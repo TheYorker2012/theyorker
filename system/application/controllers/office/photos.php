@@ -51,11 +51,13 @@ class Photos extends Controller
 
 		$requestID = $this->uri->segment(4);
 		$viewer = $this->uri->segment(5);
+		
+		$data['requestID'] = $requestID;
 
 		$data['photoRequest'] = $this->requests_model->GetPhotoRequest($requestID);
 		$data['photos'] = $this->requests_model->GetAllPhotosForRequest($requestID);
 		$data['article'] = $this->article_model->GetArticleDetails($data['photoRequest']->photo_request_article_id);
-		
+		var_dump($data);
 		if ($data['photoRequest']->photo_count == 0) {
 			$this->messages->AddMessage('info', 'There are no photos for this request yet...');
 		}
