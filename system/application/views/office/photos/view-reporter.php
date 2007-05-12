@@ -49,19 +49,21 @@
 <?php if(isset($suggestion)) {?>
 		<div class="blue_box">
 			<h2>Your Suggestion</h2>
-			<?php for($i=0; $i < count($suggestion); $i++) {?>
-			<h3><?=$i+1?>:</h3>
-			<label for="imgid_<?=$i?>_img">Photo</label>
-			<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
-			<br />
-			<label for="imgid_<?=$i?>_comment">Comment:</label>
-			<textarea name="imgid_<?=$i?>_comment"></textarea>
-			<br />
-			<label for="imgid_<?=$i?>_allow">Suggest:</label>
-			<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
+			<fieldset>
+				<?php for($i=0; $i < count($suggestion); $i++) {?>
+				<h3><?=$i+1?>:</h3>
+				<label for="imgid_<?=$i?>_img">Photo</label>
+				<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
+				<br />
+				<label for="imgid_<?=$i?>_comment">Comment:</label>
+				<textarea name="imgid_<?=$i?>_comment"></textarea>
+				<br />
+				<label for="imgid_<?=$i?>_allow">Suggest:</label>
+				<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
 <?php }?>
-			<input type='submit' name='r_assign' value='Suggest' class='button' />
-			<br />
+				<input type='submit' name='r_assign' value='Suggest' class='button' />
+				<br />
+			</fieldset>
 		</div>
 <?php }?>
 
