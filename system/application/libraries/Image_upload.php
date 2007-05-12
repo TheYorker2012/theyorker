@@ -57,7 +57,7 @@ class Image_upload {
 			$type = array_pop($types);
 			$query = $query->where('image_type_codename', $type);
 			foreach ($types as $type) {
-				$query = $query-orwhere('image_type_codename', $type);
+				$query = $query->orwhere('image_type_codename', $type);
 			}
 			$query = $query->get('image_types');
 		} else {
