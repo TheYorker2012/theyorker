@@ -15,6 +15,8 @@ class Photos extends Controller
 	{
 		parent::Controller();
 
+  		/// Load photo requests model
+		$this->load->model('photos_model');
 	}
 
 	/**
@@ -25,10 +27,11 @@ class Photos extends Controller
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('office')) return;
 
-		$data['test'] = 'test';
-
 		/// Get custom page content
 		$this->pages_model->SetPageCode('office_photos');
+
+		/// Retrieve list of all open requests
+		$data['requests'] = $this->photos_model->GetAllOpenPhotoRequests();
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('office/photos/home', $data);
