@@ -909,7 +909,7 @@ class Requests_Model extends Model
 		        GROUP BY photo_request_photo_photo_request_id
 		        LIMIT 1';
 		$query = $this->db->query($sql,array($id));
-		return $query->result();
+		return $query->first_row();
 		
 	}
 	
