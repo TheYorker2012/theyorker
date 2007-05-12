@@ -22,9 +22,11 @@ function printarticlelink($article) {
 ?>
 
 <div id="RightColumn">
-	<h2 class="first"><?php echo($latest_heading); ?></h2>
-
 <?php
+// Latest News
+if ((count($news_previews) > 0) || ((isset($puffers)) && (count($puffers) > 0)))
+	echo('	<h2 class="first">' . $latest_heading . '</h2>');
+
 if (isset($puffers)) {
 	foreach ($puffers as $puffer) {
 		echo '<div class=\'Puffer\'>';
