@@ -15,8 +15,8 @@ class Image_upload {
 	}
 	
 	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
-		if ($this->image_upload->uploadForm($multiple, $photos)) {
-			$this->image_upload->recieveUpload($returnPath, $types, $photos);
+		if ($this->uploadForm($multiple, $photos)) {
+			$this->recieveUpload($returnPath, $types, $photos);
 		}
 	}
 	
