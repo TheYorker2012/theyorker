@@ -159,14 +159,21 @@ class News_model extends Model
 				ON (content_types.content_type_id = articles.article_content_type_id)
 				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
 				AND articles.article_live_content_id IS NOT NULL
-				AND	articles.article_editor_approved_user_entity_id IS NOT NULL
-				AND (';
-		for ($i = 1; $i <= count($types); $i++) {
-			$sql .= 'content_types.content_type_codename = ? OR ';
+				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
+		if (!empty($types)) {
+			$sql .= '	AND (';
+			$first = TRUE;
+			foreach ($types as $type) {
+				if (!$first) {
+					$sql .= ' OR ';
+				} else {
+					$first = FALSE;
+				}
+				$sql .= 'content_types.content_type_codename = ?';
+			}
+			$sql .= ') ';
 		}
-		$sql = substr($sql, 0, -4);
-		$sql .= ')
-				ORDER BY articles.article_publish_date DESC
+		$sql .= 'ORDER BY articles.article_publish_date DESC
 				LIMIT 0, ?';
 		$types[] = $number;
 		$query = $this->db->query($sql,$types);
@@ -178,7 +185,10 @@ class News_model extends Model
 				$result[] = $row->article_id;
 			}
 		}
-		return $result;		
+		while (count($result) < $number) {
+			$result[] = NULL;
+		}
+		return $result;
 	}
 
 	/**
