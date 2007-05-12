@@ -76,7 +76,7 @@
 				<div class="photo_item">
 					<?=imageLocTag($preview->photo_request_photo_photo_id, 'medium', true, 'Proposed Photo')?>
 					<?=fullname($preview->photo_request_photo_user_id)?><br />
-					<?=$preview->photo_request_photo_date?>
+					<?=$preview->photo_request_photo_date?><br />
 				</div>
 <?php }?>
 			</div>

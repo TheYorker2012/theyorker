@@ -61,11 +61,11 @@ class Photos extends Controller
 		}
 		if ($data['photoRequest']->photo_request_chosen_photo_id != null) {
 			//TODO convert to username
-			$this->messages->AddMessage('info', 'The final photo for this request has been chosen by '.$data['photoRequest']->photo_request_approved_user_entity_id);
+			$this->messages->AddMessage('info', 'The final photo for this request has been chosen by '.fullname($data['photoRequest']->photo_request_approved_user_entity_id));
 		}
-		if ($data['photoRequest']->photo_request_deleted = 1) {
-			$this->messages->AddMessage('error', 'This photo request is marked as deleted.');
-		}
+//		if ($data['photoRequest']->photo_request_deleted = 1) {
+//			$this->messages->AddMessage('error', 'This photo request is marked as deleted.');
+//		}
 		
 		if ($this->input->post('r_assign') == 'Suggest' and $this->input->post('imgid_number')) {
 			for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
