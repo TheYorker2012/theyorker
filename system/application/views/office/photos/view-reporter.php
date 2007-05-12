@@ -59,9 +59,9 @@
 			<br />
 			<label for="imgid_<?=$i?>_comment">Comment:</label>
 			<textarea name="imgid_<?=$i?>_comment"></textarea>
-			<br />
 <?php }?>
 			<input type='button' name='r_assign' value='Suggest' class='button' />
+			<br />
 		</div>
 <?php }?>
 
