@@ -77,9 +77,4 @@ foreach($article as $a) {
 ?>
 	</div>
 
-	<?php
-	if (isset($comments) && NULL !== $comments) {
-		$comments->Load();
-	}
-	?>
 </div>
