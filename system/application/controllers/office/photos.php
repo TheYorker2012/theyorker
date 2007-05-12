@@ -122,7 +122,7 @@ class Photos extends Controller
 				$this->photos_model->SuggestPhoto($this->uri->segment(4),$photo,'',$this->user_auth->entityId);
 			}
 			/// Reset list of uploaded photos
-			$_SESSION['img'] = array();
+			unset($_SESSION['img']);
 			/// Take user back to photo request
 			redirect('/office/photos/view/'.$this->uri->segment(4));
 		}
