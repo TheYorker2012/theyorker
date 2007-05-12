@@ -34,7 +34,7 @@ class Home_Model extends Model {
 			$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
 			$weather_forecast = $weather->xpath('//channel/item/data:forecast');
 			//Generate the html to be displayed
-			$html = '<table border="0" width="100%">';
+			$html = '<table border="0" width="90%">';
 			$html .= '	<tr><td align="center">';
 			$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
 			$html .= '	</td>';

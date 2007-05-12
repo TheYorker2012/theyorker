@@ -48,11 +48,11 @@ class Yorkerdirectory extends Controller
 				'/directory/'.$DirectoryEntry.'/calendar');*/
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
-		if($data['organisation']['type'] == 'Societies')
+		/*if($data['organisation']['type'] == 'Societies')
 		{
 			$navbar->AddItem('reviews', 'Reviews',
 					'/directory/'.$DirectoryEntry.'/reviews');
-		}
+		}*/
 	}
 
 	/// Directory index page.

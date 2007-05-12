@@ -58,7 +58,7 @@
 </div>
 
 <div id="MainColumn">
-	<div id="HomeBanner">
+	<div id="HomeBanner"> 
 		<?php echo($banner) ?>
 	</div>
 

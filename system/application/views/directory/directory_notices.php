@@ -47,13 +47,6 @@
 */
 ?>
 
-<div id="RightColumn">
-	<h2 class="first">Notice Boards</h2>
-	<div class="Entry">
-		Some filters like on the directory index will go here, assuming the organisation has teams
-	</div>
-</div>
-<div id="MainColumn">
 <?php
 foreach($notices as $notice) {
 ?>
@@ -75,4 +68,3 @@ foreach($notices as $notice) {
 <?php
 }
 ?>
-</div>
