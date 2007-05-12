@@ -121,7 +121,7 @@ class News extends Controller {
 		}
 		
 		// Get comments
-		if (is_numeric($main_article['public_thread_id'])) {
+		/*if (is_numeric($main_article['public_thread_id'])) {
 			$this->load->library('comments');
 			$CommentInclude = $this->uri->segment(4);
 			if (FALSE === $CommentInclude) {
@@ -129,7 +129,7 @@ class News extends Controller {
 			}
 			$this->comments->SetUri('/news/'.$article_type.'/'.$latest_article_ids[0].'/');
 			$data['comments'] = $this->comments->CreateStandard((int)$main_article['public_thread_id'], $CommentInclude);
-		}
+		}*/
 
 		/// Gather all the data into an array to be passed to the view
 		$data['main_article'] = $main_article;

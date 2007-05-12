@@ -494,7 +494,6 @@ img.Right {
 	float: right;
 	margin-left: 0.5em;
 	margin-bottom: 0.2em;
-	margin-top: 0;
 	clear: both;
 }
 
@@ -502,7 +501,6 @@ img.Left {
 	float: left;
 	margin-right: 0.5em;
 	margin-bottom: 0.2em;
-	margin-top: 0;
 	clear: both;
 }
 

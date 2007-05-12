@@ -1,7 +1,7 @@
 <?php
 function printarticlelink($article) {
 	echo('	<div class="Entry">'."\n");
-	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	Echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['photo_xhtml']."\n");
 	echo('		</a>'."\n");
 	echo('		<h3 class="Headline">'."\n");
