@@ -36,7 +36,7 @@
 				<br />
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
-					<a href="/office/news/<?=$photoRequest->photo_request_article_id?>" target="_blank"><?=$article->request_title?></a>
+					<a href="/office/news/<?=$photoRequest->photo_request_article_id?>" target="_blank"><?=$article['request_title']?></a>
 				</div>
 				<br /><!--
 				<label for='r_assigned'>Assigned to:</label>
