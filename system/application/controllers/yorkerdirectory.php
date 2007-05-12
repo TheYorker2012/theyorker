@@ -44,8 +44,8 @@ class Yorkerdirectory extends Controller
 				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('notices', 'Notices',
 				'/directory/'.$DirectoryEntry.'/notices');
-		$navbar->AddItem('calendar', 'Calendar',
-				'/directory/'.$DirectoryEntry.'/calendar');
+		/*$navbar->AddItem('calendar', 'Calendar',
+				'/directory/'.$DirectoryEntry.'/calendar');*/
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
 		if($data['organisation']['type'] == 'Societies')
@@ -66,10 +66,10 @@ class Yorkerdirectory extends Controller
 		
 		$this->pages_model->SetPageCode('directory_index');
 
-		$navbar = $this->main_frame->GetNavbar();
+		/*$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('list', 'List', '/directory');
 		$navbar->AddItem('map', 'Map', '/directory/map');
-		$this->main_frame->SetPage('list');
+		$this->main_frame->SetPage('list');*/
 		
 		$data = array();
 		

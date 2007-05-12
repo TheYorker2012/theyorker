@@ -133,7 +133,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				}
 			}
 			?>
-			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
@@ -164,13 +163,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<div id="NavigationMenu">
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
 				<ul class="first">
-					<li class="first"><a href="/">My Home</a></li>
-					<li><a href="/calendar/">My Calendar</a></li>
+					<li class="first"><a href="/">Home</a></li>
 					<li><a href="/directory/">Directory</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
@@ -178,15 +175,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/comment/">Comment</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
-					<!--<li><a href="/reviews/culture">Culture</a></li>-->
-					<li><a href="/campaign/">Campaigns</a></li>
-					<!--<li><a href="/news/archive/">News Archive</a></li>-->
 				</ul>
 				<ul>
-					<li class="first"><a href="/charity/">Our Charity</a></li>
-					<li><a href="/howdoi/">How Do I</a></li>
+					<li class="first"><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<!--<li><a href="/games/">Games Zone</a></li>-->
 				</ul>
 				<!--
 				<ul>

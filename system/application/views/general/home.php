@@ -33,7 +33,7 @@
 ?>
 
 <div id="RightColumn">
-	<h2 class="first">My Links</h2>
+	<h2 class="first">Links</h2>
 	<div class="Entry">
 <?php 	if ($link->num_rows() > 0) 
 	{ 
@@ -44,27 +44,6 @@
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
 	}
 ?>
-		<a class="RightColumnAction"  href="/account/links">Customise</a>
-	</div>
-
-	<h2> My Webmail </h2>
-	<a class="MailLogo" href="https://webmail.york.ac.uk">
-		<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
-	</a>
-	<div class="Entry">
-			<p class="MailText">
-				<a href="https://webmail.york.ac.uk/">E-mail</a>
-			</p>
-	</div>
-
-	<h2>Upcoming Events</h2>
-	<div class="Entry">
-		<?php $events->Load(); ?>
-	</div>
-
-	<h2>To Do</h2>
-	<div class="Entry">
-		<?php $todo->Load(); ?>
 	</div>
 
 	<h2>York Weather</h2>
