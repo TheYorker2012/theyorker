@@ -138,16 +138,18 @@
 		<div class="RightToolbar">
 			<h4>Photo Requests</h4>
 			<ol start="0" style="padding:0; margin:0; list-style-position:inside;">
+				<?php if ($photoRequests->num_rows() > 0) foreach ($photoRequests->result() as $request) {?>
 				<li>
 					<div style="margin-bottom: 5px;">
-						<img src="/images/images/small/0/100.jpg" alt="Photo Request" title="Photo Request" style="float: left; margin-right: 5px;" />
-						<a href="/office/photos/view/reporter"><b>Monkey in a Tree</b></a><br />
-						Date: 29/03/07<br />
-						Photos: 4<br />
-						Comments: 8
-						<br class="clear" />
+						<?php if ($request->photo_request_chosen_photo_id != null) {
+							echo imageLocTag($request->photo_request_chosen_photo_id, 'small', false, 'chosen photo', null, null, null, 'style="float: left; margin-right: 5px;"');
+						}?>
+						<a href="/office/photos/view/<?=$request->photo_request_id?>/reporter"><?=$request->photo_request_title?></a><br />
+						<?=$request->photo_request_timestamp?><br />
+						Photos: <?=$request->photo_count?><br class="clear" />
 					</div>
 				</li>
+<?php }//bad styling?>
 			</ol>
 
 			<h4>Article Status</h4>

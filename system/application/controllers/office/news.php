@@ -618,9 +618,10 @@ class News extends Controller
 
 
 
-	function _showarticle($article_id = 0)
-	{
+	function _showarticle($article_id = 0) {
+		$this->load->helper('images');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
+		$data['photoRequests'] = $this->requests_model->GetPhotoRequests($article_id);
 		if (count($data['article']) > 0) {
 			// Is user requested for this article? i.e. can edit
 			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);

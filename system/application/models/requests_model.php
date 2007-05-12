@@ -887,23 +887,28 @@ class Requests_Model extends Model
 	}
 
 	function GetPhotoRequests($id)
-	{	//Return all photo_request ids for a given article
-		$sql = 'SELECT	photo_request_id
-			FROM	photo_requests
-			WHERE	(photo_request_article_id = ?)';
+	{	//Return all photo_requests for a given article
+		$sql = 'SELECT *, count(*) AS photo_count
+		        FROM photo_requests
+		        JOIN photo_request_photos
+		        WHERE photo_request_id = photo_request_photo_photo_request_id
+		            AND photo_request_article_id = ?
+		        GROUP BY photo_request_photo_photo_request_id';
 		$query = $this->db->query($sql,array($id));
-		$request_ids = array();
-		foreach ($query->result() as $row)
-		{
-			$request_ids[] = $row->photo_request_id;
-		}
-		return	$request_ids;
+		return $query;
+		
+	}
+	
+	function GetAllPhotoRequests($id)
+	{	//Return all photo_requests for a given article
+		$sql = 'SELECT * FROM photo_requests, photo_request_photos
+		        WHERE photo_request_id = photo_request_photo_photo_request_id
+		            AND photo_request_article_id = ?';
+		$query = $this->db->query($sql,array($id));
+		return $query;
+		
 	}
 
-	function GetPhotoRequestDetails($request_id)
-	{
-		$sql = 'SELECT';	
-	}
 
 	function CreateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
 	{
