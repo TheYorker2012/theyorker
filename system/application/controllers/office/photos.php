@@ -46,6 +46,8 @@ class Photos extends Controller
 		if (!CheckPermissions('office')) return;
 		
 		$this->load->helper(array('images', 'entity'));
+		$this->load->model('requests_model');
+		$this->load->model('article_model');
 
 		$requestID = $this->uri->segment(4);
 		$viewer = $this->uri->segment(5);
