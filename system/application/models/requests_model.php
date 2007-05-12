@@ -866,15 +866,14 @@ class Requests_Model extends Model
 		$query = $this->db->query($sql,array($request_id,$user_id));
 	}
 
-	function SuggestPhoto($request_id,$photo_id,$comment,$recommended = 0)
+	function SuggestPhoto($request_id,$photo_id,$comment)
 	{	//Photographer reccomends a photo to be used
 		$sql = 'INSERT	INTO photo_request_photos(
 				photo_request_photo_photo_request_id,
 				photo_request_photo_photo_id,
-				photo_request_photo_comment,
-				photo_request_photo_recommended)
-			VALUES	(?,?,?,?)';
-		$query = $this->db->query($sql,array($request_id,$photo_id,$comment,$recommended));			
+				photo_request_photo_comment)
+			VALUES	(?,?,?)';
+		$query = $this->db->query($sql,array($request_id,$photo_id,$comment));			
 	}
 
 	function AcceptPhoto($request_id,$user_id,$photo_id)
