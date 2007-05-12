@@ -2,19 +2,22 @@
 if (isset($maps)) {
 
 switch($_SERVER['SERVER_NAME']) {
-	case 'theyorker.gmghosting.com':
-		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQpSg5-_eQ-9kxEpRcRNaP_SBL1ahQ985h-Do2Gm1Tle5pYiLO7kiWF8Q';
-		//break; for some reason theyorker2.gmghosting.com comes up as theyorker.gmghosting.com
 	case 'theyorker2.gmghosting.com':
 		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBTRyAb-KmMkdWctvtd_CKS_Gh2u2BQV2EX1b0qY4PM1eJgajR_yMSsENw';
 		break;
 	case 'ado.is-a-geek.net':
-		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
+		switch($_SERVER['SERVER_PORT']) {
+			case '81':
+				$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBT4dMPT2p45abcp05Afs400sGBlHhSRzf7KBtwhiztl3iJwkwpQtRAZiQ';
+				break;
+			default:
+				$key = 'unknown';
+				break;
+		}
 		break;
 	case 'localhost':
-		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT2yXp_ZAY8_ufC3CFXhHIE1NvwkxS_eaUeRp8y_e74I4oBnTQAPy1jcg';
-		break;
-	case 'default':
+		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
+	default:
 		$key = 'unknown';
 }
 
@@ -31,9 +34,42 @@ foreach ($maps as $map) {
 
 	<!-- BEGIN map handling code -->
 	<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?php echo($key); ?>" type="text/javascript"></script>
+	<script src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=<?php echo($key); ?>" type="text/javascript"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[
+	function dump(arr, level) {
+		var dumped_text = "";
+		if (!level) {
+			level = 0;
+		}
+
+		// The padding given at the beginning of the line.
+		var level_padding = "";
+		for (var j = 0; j < level + 1; j++) {
+			level_padding += "    ";
+		}
+
+		var value;
+		if (typeof(arr) === 'object') { //Array/Hashes/Objects
+			for(var item in arr) {
+				value = arr[item];
+
+				if (typeof(value) === 'object') { //If it is an array,
+					dumped_text += level_padding + "'" + item + "' ...\n";
+					dumped_text += dump(value,level+1);
+				} else {
+					dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+				}
+			}
+		} else { //Stings/Chars/Numbers etc.
+			dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+		}
+		return dumped_text;
+	}
+
+	var maps = {};
+
 	function maps_addLocation(map, lat, lng, description) {
 		var point = new GLatLng(lat, lng);
 		var marker = new GMarker(point);
@@ -50,6 +86,37 @@ foreach ($maps as $map) {
 <?php
 if ($editable) {
 ?>
+
+	function maps_search(search, map, results) {
+		searcher = new GlocalSearch();
+		searcher.setNoHtmlGeneration();
+		searcher.setCenterPoint(maps[map].getCenter());
+		searcher.setSearchCompleteCallback(this, function(searcher, results) {
+			while(results.hasChildNodes())
+				results.removeChild(results.firstChild);
+			for(key in searcher.results) {
+				li = document.createElement("li");
+				a = document.createElement("a");
+				a.setAttribute(
+					"href", 
+					'javascript:maps["' + map + '"].setCenter(new GLatLng(' + 
+						searcher.results[key].lat + ', ' + 
+						searcher.results[key].lng + '));'
+				);
+				a.appendChild(document.createTextNode(searcher.results[key].titleNoFormatting));
+				li.appendChild(a);
+				results.appendChild(li);
+			}
+		}, [searcher, results]);
+		while(results.hasChildNodes())
+			results.removeChild(results.firstChild);
+		li = document.createElement("li");
+		li.appendChild(document.createTextNode('Searching...'));
+		results.appendChild(li);
+
+		searcher.execute(search);
+	}
+
 
 	function maps_editableLocation(id, point, description) {
 		this.id = id;
@@ -328,6 +395,7 @@ if ($editable) {
 foreach ($maps as $map) {
 ?>
 		map = new GMap2(document.getElementById("<?php echo($map['element']);?>"));
+		maps["<?php echo($map['element']); ?>"] = map;
 		map.addMapType(unimap);
 		map.addControl(new GSmallMapControl());
 		//map.enableScrollWheelZoom();

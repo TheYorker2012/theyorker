@@ -3,9 +3,16 @@
 	<p>
 		<?php echo $main_text; ?>
 	</p>
-<h4>Other tasks</h4>
+
+<h4>Jump to Location</h4>
+<fieldset>
+<input style="width: 60%" type="text" id="MapSearch"/>
+<input style="width: 30%; float: right" type="submit" value="Search" onclick="maps_search(document.getElementById('MapSearch').value, 'googlemaps', document.getElementById('MapSearchResults'));"/>
+</fieldset>
 <ul>
-	<li><a href='#'>Do not show a map</a></li>
+	<li><a href='javascript:maps["googlemaps"].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));'>Central Hall</a></li>
+</ul>
+<ul id="MapSearchResults">
 </ul>
 </div>
 
