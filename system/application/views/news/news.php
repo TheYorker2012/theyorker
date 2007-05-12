@@ -23,6 +23,7 @@ function printarticlelink($article) {
 ?>
 
 <div id="RightColumn">
+	<?php if ($this->uri->segment(2) != 'comment') {?>
 	<h2 class="first"><?php echo($latest_heading); ?></h2>
 
 <?php
@@ -41,11 +42,11 @@ foreach($news_previews as $preview)
 	printarticlelink($preview);
 ?>
 
-	<h2><?php echo($other_heading); ?></h2>
+<?php /*	<h2><?php echo($other_heading); ?></h2>
 <?php
 foreach ($news_others as $other)
 	printarticlelink($other);
-
+*/
 if (count($main_article['related_articles']) > 0)
 	echo('	<h2>'.$related_heading.'</h2>'."\n");
 
@@ -57,6 +58,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 	echo('	<div class="Entry">'."\n");
 	echo('		'.$fact_box['wikitext']."\n");
 	echo('	</div>'."\n");
+}
 }
 ?>
 </div>
