@@ -39,7 +39,7 @@ class Gallery extends Controller {
 		$page = $this->uri->segment(3, 0);
 		
 		$bits = explode('/', $_SERVER["HTTP_REFERER"]);
-		if ($page == 'return') {
+		if ($page === 'return') {
 			//some people won't approve of this method, but the user cannot harm anything messing this up and its short
 			$_SESSION['img']['list'] = array($bits[6]);
 			redirect($_SESSION['img']['return']);
