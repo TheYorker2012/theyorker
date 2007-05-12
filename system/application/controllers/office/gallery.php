@@ -109,8 +109,8 @@ class Gallery extends Controller {
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
-		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Gallery');
+		$this->main_frame->SetContent($gallery_frame);
 	
 		// Load the main frame
 		$this->main_frame->Load();

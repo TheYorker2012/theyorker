@@ -39,12 +39,17 @@ class Photos extends Controller
 	/**
 	 *	@brief Load photo request details
 	 */
+	//TODO Security!!!
 	function view()
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('office')) return;
 
-		$data['test'] = 'test';
+		$requestID = $this->uri->segment(4);
+		$viewer = $this->uri->segment(5);
+
+		$data['photoRequests'] = $this->requests_model->GetPhotoAllRequests($requestID);
+		
 
    		/// Get custom page content
 		$this->pages_model->SetPageCode('office_photos');
@@ -52,17 +57,17 @@ class Photos extends Controller
 		/// Set up the main frame
 		/// Using seperate views for mockups to make it more clear what options should be
 		/// displayed/hidden for each user
-		if ($this->uri->segment(4) == 'editor') {
+		if ($viewer == 'editor') {
 			$this->main_frame->SetContentSimple('office/photos/view-editor', $data);
-		} elseif ($this->uri->segment(4) == 'all') {
+		} elseif ($viewer == 'all') {
 			$this->main_frame->SetContentSimple('office/photos/view-everyone', $data);
-		} elseif ($this->uri->segment(4) == 'reporter') {
+		} elseif ($viewer == 'reporter') {
 			$this->main_frame->SetContentSimple('office/photos/view-reporter', $data);
-		} elseif ($this->uri->segment(4) == 'photographer') {
+		} elseif ($viewer == 'photographer') {
 			$this->main_frame->SetContentSimple('office/photos/view-photographer', $data);
-		} elseif ($this->uri->segment(4) == 'flagged') {
+		} elseif ($viewer == 'flagged') {
 			$this->main_frame->SetContentSimple('office/photos/view-flagged', $data);
-		} elseif ($this->uri->segment(4) == 'completed') {
+		} elseif ($viewer == 'completed') {
 			$this->main_frame->SetContentSimple('office/photos/view-completed', $data);
 		} else {
 			$this->main_frame->SetContentSimple('office/photos/view', $data);
