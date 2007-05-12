@@ -98,14 +98,14 @@ class Image_upload {
 		
 		$securityCheck = array_search($selectedThumb[4], $_SESSION['img']['list']);
 		if ($securityCheck === false) {
-			exit("LOGOUT #1" . print_r($selectedThumb) . '****' . var_dump($_SESSION));
+			exit("LOGOUT #1" . print_r($selectedThumb) . '****' . var_dump($_SESSION['img']));
 			$this->ci->user_auth->logout();
 			redirect('/', 'location');
 			//TODO add some kind of logging
 			exit;
 		} else {
 			if ($_SESSION['img']['type'][$securityCheck] != $selectedThumb[3]) {
-				exit("LOGOUT #2" . print_r($selectedThumb) . '****' . var_dump($_SESSION));
+				exit("LOGOUT #2" . print_r($selectedThumb) . '****' . var_dump($_SESSION['img']));
 				$this->ci->user_auth->logout();
 				redirect('/', 'location');
 				//TODO add some kind of logging
