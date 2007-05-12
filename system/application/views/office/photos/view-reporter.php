@@ -58,7 +58,7 @@
 			<textarea name="imgid_<?=$i?>_comment"></textarea>
 			<br />
 			<label for="imgid_<?=$i?>_img">Photo</label>
-			<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo', null, null, 'imgid_'.$i.'_img', 'style="float: left; margin: 5px 10px;"')?>
+			<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
 			<br />
 <?php }?>
 			<input type='button' name='r_assign' value='Suggest' class='button' />
