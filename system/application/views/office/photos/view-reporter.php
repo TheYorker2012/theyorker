@@ -55,6 +55,9 @@
 			<label for="imgid_<?=$i?>_allow">Suggest:</label>
 			<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" />
 			<br />
+			<label for="imgid_<?=$i?>_comment">Comment:</label>
+			<textarea name="imgid_<?=$i?>_comment"></textarea>
+			<br />
 <?php }?>
 		</div>
 <?php }?>
@@ -62,7 +65,7 @@
 		<div class="blue_box">
 			<h2>photos</h2>
 			<div id="proposed_photos">
-<?php if($photoRequest->photo_count != 0) foreach ($photos as $preview) {?>
+<?php if($photoRequest->photo_count != 0) foreach ($photos->result() as $preview) {?>
 				<div class="photo_item">
 					<?=imageLocTag($preview->photo_request_photo_photo_id, 'medium', true, 'Proposed Photo')?>
 					<?=fullname($preview->photo_request_photo_user_id)?><br />
