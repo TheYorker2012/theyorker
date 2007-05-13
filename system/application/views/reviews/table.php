@@ -125,10 +125,6 @@
 						{
 							echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
 						}
-						for($i=0;$i<$empty;$i++)
-						{
-							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
-						}
 						
 						?>
 						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
