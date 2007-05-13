@@ -31,7 +31,8 @@ if (isset($blogs)) {
 	foreach ($blogs as $blog) {
 		echo '<div class=\'Puffer\'>';
 		echo '<a href=\'/news/' . $blog['codename'] . '\'>';
-		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' />';
+		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' style="float:right;" />';
+		echo $blog['name'];
 		echo '</a></div>';
 	}
 	if (count($news_previews) > 0)
