@@ -192,15 +192,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			Sections
 		</div>
 
-					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<li><a href="/news/features/">Features</a></li>
-					<li><a href="/news/lifestyle/">Lifestyle</a></li>
-					<li><a href="/news/arts/">Arts</a></li>
-					<li><a href="/news/sport/">Sport</a></li>
-					<li><a href="/news/comment/">Comment</a></li>
-					<li><a href="/reviews/food">Food</a></li>
-					<li><a href="/reviews/drink">Drink</a></li>
-
 		<div class='officenavigation_item'>
 			<a href='/office/news/uninews/'>Uni News</a>
 		</div>
