@@ -32,6 +32,13 @@
 			<p>The directory currently has <?php echo count($organisations); ?> entries.</p>
 		</div>
 	</div>
+	
+	<div class='RightToolbar'>
+		<h4>New Organisation</h4>
+		<div style='padding: 10px 5px 10px 5px; font-size:small;'>
+			<p><a href="/wizard/organisation">Suggest an entry</a></p>
+		</div>
+	</div>
 
 </div>
 

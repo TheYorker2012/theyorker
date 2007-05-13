@@ -25,6 +25,18 @@ class Reviewlist extends Controller
 		$this->load->helper('wikilink');
 	}
 
+	/// Set up the tabs
+	private function _SetupTabs($content_type_codename)
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('attentionlist', 'Venues',
+				'/office/reviewlist/'.$content_type_codename.'/attentionlist');
+		$navbar->AddItem('showleagues', 'Leagues',
+				'/office/reviewlist/'.$content_type_codename.'/showleagues');
+		$navbar->AddItem('editleagues', 'Edit Leagues',
+				'/office/reviewlist/'.$content_type_codename.'/editleagues');
+	}
+
 	//Shows list of leagues with "Last updated" and "Assigned to" columns
 	function showleagues($content_type_codename) {
 		if (!CheckPermissions('office')) return;
@@ -34,6 +46,9 @@ class Reviewlist extends Controller
 			show_404();
 		}
 		
+		$this->_SetupTabs($content_type_codename);
+		$this->main_frame->SetPage('showleagues');
+		
 		$this->pages_model->SetPageCode('office_leagues_show');
 
 		$data = array();
@@ -41,7 +56,7 @@ class Reviewlist extends Controller
 		//$data['leagues'] = $this->pr_model->GetReviewContextListFromId($content_type_id,'office/reviews/','/'.$content_type_codename.'/review'); //$this->organisations->_GetOrgs($search_pattern);
 	
 		// Set up the  frame
-		$this->main_frame->SetContentSimple('office/reviews/showleagues', $data);
+		$this->main_frame->SetContentSimple('office/reviews/show_leagues', $data);
 
 		// Load the frame view
 		$this->main_frame->Load();
@@ -56,6 +71,9 @@ class Reviewlist extends Controller
 			show_404();
 		}
 		
+		$this->_SetupTabs($content_type_codename);
+		$this->main_frame->SetPage('editleagues');
+		
 		$this->pages_model->SetPageCode('office_leagues_edit');
 
 		$data = array();
@@ -63,7 +81,7 @@ class Reviewlist extends Controller
 		//$data['leagues'] = $this->pr_model->GetReviewContextListFromId($content_type_id,'office/reviews/','/'.$content_type_codename.'/review'); //$this->organisations->_GetOrgs($search_pattern);
 	
 		// Set up the  frame
-		$this->main_frame->SetContentSimple('office/reviews/reviewlist', $data);
+		$this->main_frame->SetContentSimple('office/reviews/edit_leagues', $data);
 
 		// Load the frame view
 		$this->main_frame->Load();
@@ -78,7 +96,8 @@ class Reviewlist extends Controller
 			show_404();
 		}
 		
-		
+		$this->_SetupTabs($content_type_codename);
+		$this->main_frame->SetPage('editleagues');
 		
 		$this->pages_model->SetPageCode('office_league_edit_details');
 
@@ -87,7 +106,7 @@ class Reviewlist extends Controller
 		//$data['leagues'] = $this->pr_model->GetReviewContextListFromId($content_type_id,'office/reviews/','/'.$content_type_codename.'/review'); //$this->organisations->_GetOrgs($search_pattern);
 	
 		// Set up the  frame
-		$this->main_frame->SetContentSimple('office/reviews/reviewlist', $data);
+		$this->main_frame->SetContentSimple('office/reviews/edit_league_details', $data);
 
 		// Load the frame view
 		$this->main_frame->Load();
@@ -101,6 +120,9 @@ class Reviewlist extends Controller
 		if ($content_type_id == 0) {
 			show_404();
 		}
+		
+		$this->_SetupTabs($content_type_codename);
+		$this->main_frame->SetPage('showleagues');
 		
 		$this->pages_model->SetPageCode('office_league_edit_contents');
 
@@ -127,6 +149,9 @@ class Reviewlist extends Controller
 		if ($content_type_id == 0) {
 			//show_404();
 		}
+		
+		$this->_SetupTabs($content_type_codename);
+		$this->main_frame->SetPage('attentionlist');
 		
 		$this->pages_model->SetPageCode('office_review_attention_list');
 

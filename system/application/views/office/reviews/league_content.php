@@ -3,6 +3,7 @@
     cursor: move;
   }
 </style>
+
 <div class="blue_box">
 	<div style="min-height:200px;">
 	<div style="float:left;overflow-y: auto;overflow-x: hidden;">
