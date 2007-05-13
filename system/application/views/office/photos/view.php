@@ -120,7 +120,8 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 		</div>
 
 <?php } else { ?>
-
+	</form>
+	<form>
 		<div class="blue_box">
 			<h2>photos</h2>
 			<div id="proposed_photos">
@@ -171,13 +172,13 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 			</fieldset>
 		</div>
 
-		<div style="width:410px;">
-		<?php // Display comments if thread exists
-		if ((isset($comments)) && (NULL !== $comments)) {
-			$comments->Load();
-		} ?>
-		</div>
+	</form>
+
+	<div style="width:422px;">
+	<?php // Display comments if thread exists
+	if ((isset($comments)) && (NULL !== $comments)) {
+		$comments->Load();
+	} ?>
+	</div>
 
 <?php } ?>
-
-	</form>

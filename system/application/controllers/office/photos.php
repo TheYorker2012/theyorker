@@ -47,7 +47,7 @@ class Photos extends Controller
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('office')) return;
 
-   	/// Get custom page content
+		/// Get custom page content
 		$this->pages_model->SetPageCode('office_photos');
 
 		$request_id = $this->uri->segment(4);
@@ -61,7 +61,7 @@ class Photos extends Controller
 				redirect('/office/photos/');
 			} else {
 				/// Check if there are any new suggested photos - ask for confirmation
-	      	/// @TODO:Ensure request is open for new suggestions
+				/// @TODO:Ensure request is open for new suggestions
 				if (isset($_SESSION['img']['list'])) {
 					$data['suggestion'] = array_unique($_SESSION['img']['list']);
 					$this->load->helper('images');
@@ -80,7 +80,7 @@ class Photos extends Controller
 					redirect('/office/photos/view/'.$request_id.'/');
 				}
 
-            /// Get suggested photos for request
+				/// Get suggested photos for request
 				$data['photos'] = $this->photos_model->GetSuggestedPhotos($request_id);
 
 				/// Get comments
