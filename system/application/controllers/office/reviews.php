@@ -261,26 +261,79 @@ class Reviews extends Controller
 	function photos($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_review_photos');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
-		$this->_SetupNavbar($organisation,$ContextType);
-		$this->main_frame->SetPage('photos');
 
 		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+//jadded
+		if (!empty($data)) {
+			$action = $this->uri->segment(6);
+			$photoID = $this->uri->segment(7);
+			$operation = $this->uri->segment(8);
+			$this->load->model('slideshow');
+			$this->_SetupNavbar($organisation,$ContextType);
+			$this->main_frame->SetPage('photos');
+			$this->load->helper(array('images', 'url'));
+			$this->load->library('image_upload');
+			$data['ContextType'] = $ContextType;
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
+				if ($operation == 'up') {
+					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
+				} elseif ($operation == 'down') {
+					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
+				}
+			} elseif ($action == 'delete') {
+				if ($operation == 'confirm') {
+					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
+					$this->messages->AddMessage('info', 'Photo Deleted');
+				} else {
+					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
+				}
+			} elseif ($action == 'upload') {
+				$this->xajax->processRequests();
+				return $this->image_upload->recieveUpload('office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow'));
+			} elseif (isset($_SESSION['img']['list'])) {
+				foreach ($_SESSION['img']['list'] as $newID) {
+					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
+				}
+				unset($_SESSION['img']['list']);
+			}
+
+			// Insert main text from pages information
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
+			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
+
+			// Set up the directory view
+			$the_view = $this->frames->view('office/reviews/photos', $data);
+
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(
+					array('organisation' => $data['organisation']['name']));
+			$this->main_frame->SetPage('photos');
+			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->main_frame->SetContent($the_view);
+		} else {
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
+		}
 
 		// Set up the view
-		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
+		$the_view = $this->frames->view('office/reviews/photos', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+				      'content_type' => $ContextType));
 		$this->main_frame->SetContent($the_view);
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
