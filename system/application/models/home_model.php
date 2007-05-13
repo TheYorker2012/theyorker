@@ -26,7 +26,7 @@ class Home_Model extends Model {
 			WHERE weather_cache_timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 4 HOUR) ';
 		$query = $this->db->query($sql);
 		//If 0 rows returned then get up to date weather
-		if ($query->num_rows() == 0 || True) { //TODO: Remove true to enable caching
+		if ($query->num_rows() == 0) {
 			//Get the rss feed
 			$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
 			$response = file_get_contents($weather_data);
