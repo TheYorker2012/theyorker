@@ -324,6 +324,9 @@ class Wikiparser {
 		if (array_key_exists($namespace, $this->external_wikis)) {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
+		} elseif ('youtube' === $namespace) {
+			$output = '<object width="425" height="350" align="center"><param name="movie" value="http://www.youtube.com/v/'.$href.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$href.'" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>';
+			return $output;
 		} else {
 			$reference_wiki = $this->external_wikis[$this->reference_wiki];
 		}
@@ -522,8 +525,8 @@ class Wikiparser {
 					'([^\]]*?)'. // href
 					'(\s+[^\]]*?)?'. // with optional title
 				'\]'.
-				'|'. // or
-				'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url
+				//'|'. // or
+				//'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url
 				'|'. // or
 				'([^\s,@\<\>\{\}]+@([^\s,@\.\<\>\{\}]+\.)*[^\s,@\.\<\>\{\}]+)'. // implicit email address
 				')',
