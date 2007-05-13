@@ -71,7 +71,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
-		<div style="float:right;color:#999;margin-top:0;line-height:95%;">
+		<div style="float:right;margin-top:0;line-height:95%;">
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>

@@ -59,9 +59,6 @@ class News extends Controller {
 		$data['other_heading'] = $this->pages_model->GetPropertyText('other_heading');
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
-		// Get common news content
-		//$data['byline_heading'] = $this->pages_model->GetPropertyText('news:byline_heading', TRUE);
-		//$data['byline_more'] = $this->pages_model->GetPropertyText('news:byline_more', TRUE);
 
 		/// Get the latest article ids from the model.
 		$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
@@ -98,6 +95,7 @@ class News extends Controller {
 			$data['office_preview'] = 1;
 			unset($_SESSION['office_news_preview']);
 		} else {
+			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
 				$main_article = array(
 					'id'						=>	0,
@@ -118,13 +116,6 @@ class News extends Controller {
 		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 		 }
 		}
-
-		/* --- No longer used ---
-		// Create byline
-		$this->load->library('byline');
-		$this->byline->AddReporter($main_article['authors']);
-		$this->byline->SetDate($main_article['date']);
-		*/
 
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();
