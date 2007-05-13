@@ -24,7 +24,7 @@
 	<label for="title">Photo Title:</label><input type="text" name="title" size="30" /><br />
 	<label for="userfile">Photo File:</label><input type="file" name="userfile" size="30" /><br />
 </div>
-<?=form_open_multipart('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/upload')); ?>
+<?=form_open_multipart('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/upload'); ?>
 <p>Photo's should be in jpg format. The upload size limit is 2mb(?).</p><br />
 <div>
 	<label for="title1">Photo Title:</label><input type="text" name="title1" size="30" />
