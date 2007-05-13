@@ -29,25 +29,40 @@ class Yorkerdirectory extends Controller
 		$this->load->helper('wikilink');
 	}
 	
-	private function CreateDirectoryEntryName ($long_name) {
+	private function _CreateDirectoryEntryName($long_name)
+	{
 		//strip non alpha-numerical symbols
 		$new_string = preg_replace("/[^a-zA-Z0-9s]/", "", $long_name);
 		//replace spaces with an underscore
 		return str_replace(" ", "_", $new_string);
 	}
 	
-	/// Set up the tabs
-	private function _SetupTabs()
+	/// Set up the navigation bar for the directory view.
+	private function _SetupDirectoryNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('live', 'Live',
-				'/office/directory/');
+						'/office/directory/');
 		$navbar->AddItem('hidden', 'Hidden',
-				'/office/directory/');
+						'/office/directory/');
 		$navbar->AddItem('suggested', 'Suggested',
-				'/office/directory/');
+						'/office/directory/');
 	}
 	
+	/// Set up the navigation bar for a specific organisation.
+	private function _SetupOrganisationNavbar()
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('information', 'Information',
+				vip_url('directory/information'));
+		$navbar->AddItem('photos', 'Photos',
+				vip_url('directory/photos'));
+		$navbar->AddItem('map', 'Map',
+				vip_url('directory/map'));
+		$navbar->AddItem('contacts', 'Contacts',
+				vip_url('directory/contacts'));
+	}
+
 	/// Directory index page.
 	/**
 	 * @note Shows error 404 when accessed from viparea
@@ -56,9 +71,15 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 		
+		$this->_office();
+	}
+	
+	/// office/directory
+	function _office()
+	{
 		$this->pages_model->SetPageCode('office_directory_index');
 		
-		$this->_SetupTabs();
+		$this->_SetupDirectoryNavbar();
 		$this->main_frame->SetPage('live');
 		
 		$data = array();
@@ -128,7 +149,7 @@ class Yorkerdirectory extends Controller
 				if ($_POST['organisation_name']=="") {
 					$this->messages->AddMessage('error','Please enter an organisation name.');
 				} else {
-					$new_directory_entry_name = $this->CreateDirectoryEntryName($_POST['organisation_name']);
+					$new_directory_entry_name = $this->_CreateDirectoryEntryName($_POST['organisation_name']);
 					$result = $this->directory_model->UpdateDirctoryEntryType($organisation, $_POST['organisation_type']);
 					$result2 = $this->directory_model->UpdateDirctoryEntryNames($organisation, $_POST['organisation_name'], $organisation);
 					if ($result==1 && $result2==1) {
@@ -207,7 +228,7 @@ class Yorkerdirectory extends Controller
 			}
 			
 			if (!empty($data)) {
-				$this->_SetupNavbar();
+				$this->_SetupOrganisationNavbar();
 				
 				// Insert main text from pages information
 				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -272,7 +293,7 @@ class Yorkerdirectory extends Controller
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
 			if (!empty($data)) {
-				$this->_SetupNavbar();
+				$this->_SetupOrganisationNavbar();
 				
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/directory_view', $data);
@@ -305,7 +326,7 @@ class Yorkerdirectory extends Controller
 		$data = $this->organisations->_GetOrgData($organisation);
 
 		if (!empty($data)) {
-			$this->_SetupNavbar();
+			$this->_SetupOrganisationNavbar();
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
@@ -375,7 +396,7 @@ class Yorkerdirectory extends Controller
 				$data['organisation']['location_lat'] = $_POST['0_lat'];
 				$data['organisation']['location_lng'] = $_POST['0_lng'];
 			}
-			$this->_SetupNavbar();
+			$this->_SetupOrganisationNavbar();
 			
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -514,7 +535,7 @@ class Yorkerdirectory extends Controller
 		}
 		
 		if (!empty($data)) {
-			$this->_SetupNavbar();
+			$this->_SetupOrganisationNavbar();
 			
 			// Business Card Groups
 			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
@@ -571,23 +592,6 @@ class Yorkerdirectory extends Controller
 		
 		// Load the public frame view
 		$this->main_frame->Load();
-	}
-	
-	/// Set up the navigation bar.
-	/**
-	 * @param $DirectoryEntry Directory entry of organisation.
-	 */
-	private function _SetupNavbar()
-	{
-		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('information', 'Information',
-				vip_url('directory/information'));
-		$navbar->AddItem('photos', 'Photos',
-				vip_url('directory/photos'));
-		$navbar->AddItem('map', 'Map',
-				vip_url('directory/map'));
-		$navbar->AddItem('contacts', 'Contacts',
-				vip_url('directory/contacts'));
 	}
 
 }

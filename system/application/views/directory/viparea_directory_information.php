@@ -30,7 +30,7 @@
 					echo '/'.$revison['id'].'">Edit</a>';
 				}
 				echo(' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview');
-				if (!$the_revision['published'] && $user_is_editor) {
+				if (!$revison['published'] && $user_is_editor) {
 					echo(' &amp; Publish');
 				}
 				echo('</a>');
