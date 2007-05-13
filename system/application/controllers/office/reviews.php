@@ -312,7 +312,7 @@ class Reviews extends Controller
 			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
 
 			// Set up the directory view
-			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
+			$the_view = $this->frames->view('office/reviews/photos', $data);
 
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
@@ -326,7 +326,7 @@ class Reviews extends Controller
 		}
 
 		// Set up the view
-		$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
+		$the_view = $this->frames->view('office/reviews/photos', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
