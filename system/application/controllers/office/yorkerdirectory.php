@@ -29,7 +29,7 @@ class Yorkerdirectory extends Controller
 		$this->load->helper('wikilink');
 	}
 	
-	private function CreateDirectoryEntryName ($long_name){
+	private function CreateDirectoryEntryName ($long_name) {
 		//strip non alpha-numerical symbols
 		$new_string = preg_replace("/[^a-zA-Z0-9s]/", "", $long_name);
 		//replace spaces with an underscore
@@ -93,115 +93,116 @@ class Yorkerdirectory extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 
-			$organisation = VipOrganisation();
-			$this->pages_model->SetPageCode('viparea_directory_information');	
+		$organisation = VipOrganisation();
+		$this->pages_model->SetPageCode('viparea_directory_information');
+		
+		$editor_level = PermissionsSubset('editor', GetUserLevel());
 		
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
-		if (PermissionsSubset('office', GetUserLevel())){
-			$show_show_all_revisions_option = true;
-		}else{
-			$show_show_all_revisions_option = false;
-		}
-		if($action=='viewall'){
-			if (PermissionsSubset('office', GetUserLevel())){
+		if ($action=='viewall') {
+			if ($editor_level) {
 				$show_all_revisions = true;
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to view deleted revisions');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to view deleted revisions');
 			}
 			$action='view';
 		}
 		
-		if($action=='delete'){
-			$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
-			if($result == 1){
-				$this->main_frame->AddMessage('success','Directory revision successfully removed.');
-			}else{
-				$this->main_frame->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+		if ($action=='delete') {
+			if ($editor_level) {
+				$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
+				if ($result == 1) {
+					$this->messages->AddMessage('success','Directory revision successfully removed.');
+				} else {
+					$this->messages->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+				}
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to remove revisions.');
 			}
 			$action='view';
 		}
-		if($action=='changename'){
+		if ($action=='changename') {
 			//Check Permissions
-			if (PermissionsSubset('office', GetUserLevel())){
-				if($_POST['organisation_name']==""){
-					$this->main_frame->AddMessage('error','Please enter an organisation name.');
-				}else{
+			if ($editor_level) {
+				if ($_POST['organisation_name']=="") {
+					$this->messages->AddMessage('error','Please enter an organisation name.');
+				} else {
 					$new_directory_entry_name = $this->CreateDirectoryEntryName($_POST['organisation_name']);
 					$result = $this->directory_model->UpdateDirctoryEntryType($organisation, $_POST['organisation_type']);
 					$result2 = $this->directory_model->UpdateDirctoryEntryNames($organisation, $_POST['organisation_name'], $organisation);
-					if($result==1 && $result2==1){
-						$this->main_frame->AddMessage('success','Organisation name was successfully changed.');
-					}else{
-						$this->main_frame->AddMessage('error','Update did not work, please try again.');
+					if ($result==1 && $result2==1) {
+						$this->messages->AddMessage('success','Organisation name was successfully changed.');
+					} else {
+						$this->messages->AddMessage('error','Update did not work, please try again.');
 					}
 				}
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to change the organisations name.');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to change the organisations name.');
 			}
 			$action='view';
 		}
-		if($action=='restore'){
+		if ($action=='restore') {
 			//Check Permissions
-			if (PermissionsSubset('office', GetUserLevel())){
+			if ($editor_level) {
 				//Send and get data
 				$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision, false);
-				if($result == 1){
-					$this->main_frame->AddMessage('success','Directory revision was restored successfully.');
-				}else{
-					$this->main_frame->AddMessage('error','Directory revision was not restored it does not exist or it is not deleted.');
+				if ($result == 1) {
+					$this->messages->AddMessage('success','Directory revision was restored successfully.');
+				} else {
+					$this->messages->AddMessage('error','Directory revision was not restored it does not exist or it is not deleted.');
 				}
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to restore revisions');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to restore revisions');
 			}
 			$action='view';
 		}
 		
-		if($action=='publish'){
+		if ($action=='publish') {
 			//Check Permissions
-			if (PermissionsSubset('office', GetUserLevel())){
+			if ($editor_level) {
 				//Send and get data
 				$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
-				if($result == 1){
-					$this->main_frame->AddMessage('success','Directory revision was published successfully.');
-				}else{
-					$this->main_frame->AddMessage('error','Directory revision was not published it does not exist or is already live.');
+				if ($result == 1) {
+					$this->messages->AddMessage('success','Directory revision was published successfully.');
+				} else {
+					$this->messages->AddMessage('error','Directory revision was not published it does not exist or is already live.');
 				}
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to publish revisions');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to publish revisions');
 			}
 			$action='view';
 		}
 		
-		if ($action=='view'){
+		if ($action=='view') {
 			//Get Organisation Data
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
 			//Send data if given
-			if(!empty($_POST['submitbutton'])){
-				$this->main_frame->AddMessage('success','A new directory entry revision has been created.');
-				if($_POST['description']==null){
-					$this->main_frame->AddMessage('information','About field is blank we advise you add some detail.');
-				}
+			if (!empty($_POST['description'])) {
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
+				$this->messages->AddMessage('success','A new directory entry revision has been created.');
+				if ($_POST['description']==null) {
+					$this->messages->AddMessage('information','About field is blank we advise you add some detail.');
+				}
 			}
 			//Show hide directory entry information and form detection
-			if(!empty($_POST['directory_visibility'])){
-				if($_POST['directory_visibility']=="Show Entry"){
+			if (!empty($_POST['directory_visibility'])) {
+				if ($_POST['directory_visibility']=="Show Entry") {
 					$this->directory_model->MakeDirectoryEntryVisible($organisation);
-					$this->main_frame->AddMessage('success','Directory entry made visible.');
+					$this->messages->AddMessage('success','Directory entry made visible.');
 				}
-				if($_POST['directory_visibility']=="Hide Entry"){
+				if ($_POST['directory_visibility']=="Hide Entry") {
 					$this->directory_model->MakeDirectoryEntryVisible($organisation, false);
-					$this->main_frame->AddMessage('success','Directory entry hidden.');
+					$this->messages->AddMessage('success','Directory entry hidden.');
 				}
 			}
 			
 			//Find out if the directory entry is currently visable.
 			$data['directory_visibility'] = $this->directory_model->IsEntryShownInDirectory($organisation);
-			if($data['directory_visibility']){
+			if ($data['directory_visibility']) {
 				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_true');
-			}else{
+			} else {
 				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_false');
 			}
 			
@@ -215,7 +216,8 @@ class Yorkerdirectory extends Controller
 				//Page Revisions
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
-				$data['show_show_all_revisions_option'] = $show_show_all_revisions_option;
+				$data['show_show_all_revisions_option'] = $editor_level;
+				$data['user_is_editor'] = $editor_level;
 				$data['organisation']['types'] = $this->directory_model->GetOrganisationTypes();
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
@@ -234,30 +236,30 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->Load();
 		}
 		
-		if($action=='preview'){
+		if ($action=='preview') {
 			
 			//Show a toolbar in a message for the preview.
 			$published = $this->directory_model->IsRevisionPublished($organisation, $revision);
 			$user_level = GetUserLevel();
 			$is_deleted = $this->directory_model->IsRevisionDeleted($revision);
-			if($published){
+			if ($published) {
 				$message = 'This is a preview of the current published directory revision.<br />';
-			}else{
-				if($is_deleted){
+			} else {
+				if ($is_deleted) {
 					$message = 'This is a preview of a <span class="red">deleted</span> directory revision.<br />';
-				}else{
+				} else {
 					$message = 'This is a preview of a directory revision.<br />';
 				}
 			}
 			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
 			
-			if($published == false){
-				if (PermissionsSubset('office', GetUserLevel())){
+			if ($published == false) {
+				if ($editor_level) {
 					$message .= ' | <a href="'.vip_url('directory/information/publish/'.$revision).'">Publish This Revision</a>';
 				}
 				
 				if ($is_deleted) {
-					if (PermissionsSubset('office', GetUserLevel())){
+					if ($editor_level) {
 						$message .= ' | <a href="'.vip_url('directory/information/restore/'.$revision).'">Restore This Revision</a>';
 					}
 				} else {
@@ -265,7 +267,7 @@ class Yorkerdirectory extends Controller
 				}
 			}
 			
-			$this->main_frame->AddMessage('information',$message);
+			$this->messages->AddMessage('information',$message);
 			
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
 			
@@ -411,60 +413,62 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
 		
+		$editor_level = PermissionsSubset('editor', GetUserLevel());
+		
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 		
 		//Deletegroup
-		if($action=="deletegroup"){
+		if ($action=="deletegroup") {
 			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
-			if(empty($cards)){
+			if (empty($cards)) {
 				$result = $this->businesscards_model->RemoveOrganisationCardGroupById($business_card_group);
-				if($result == 1){
-					$this->main_frame->AddMessage('success','Group was successfully removed.');
-				}else{
-					$this->main_frame->AddMessage('error','Group was not removed, the group does not exist.');
+				if ($result == 1) {
+					$this->messages->AddMessage('success','Group was successfully removed.');
+				} else {
+					$this->messages->AddMessage('error','Group was not removed, the group does not exist.');
 				}
-			}else{
-				$this->main_frame->AddMessage('error','Group was not removed, you cannot remove groups with cards.');
+			} else {
+				$this->messages->AddMessage('error','Group was not removed, you cannot remove groups with cards.');
 			}
 		//set things back to normal
 		$action="viewgroup";
 		$business_card_group=-1;
 		}
 		
-		if($action=="deletecard"){//business_card_group is actually the card id for this action
-			if (PermissionsSubset('office', GetUserLevel())){
+		if ($action=="deletecard") {//business_card_group is actually the card id for this action
+			if ($editor_level) {
 			$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
-			if($result){
-				$this->main_frame->AddMessage('success','The contact card was successfully deleted.');
-			}else{
-				$this->main_frame->AddMessage('error','The contact card was not removed, it does not exist.');
+			if ($result) {
+				$this->messages->AddMessage('success','The contact card was successfully deleted.');
+			} else {
+				$this->messages->AddMessage('error','The contact card was not removed, it does not exist.');
 			}
 			//set things back to normal
 			$action="viewgroup";
 			$business_card_group=-1;
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to delete contact cards.');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to delete contact cards.');
 			}
 		}
-		if($action=="approvecard"){//business_card_group is actually the card id for this action
-			if (PermissionsSubset('office', GetUserLevel())){
+		if ($action=="approvecard") {//business_card_group is actually the card id for this action
+			if ($editor_level) {
 			$result = $this->businesscards_model->ApproveBusinessCard($business_card_group);
-			if($result){
-				$this->main_frame->AddMessage('success','The contact card was successfully approved.');
-			}else{
-				$this->main_frame->AddMessage('error','The contact card was not approved, it does not exist.');
+			if ($result) {
+				$this->messages->AddMessage('success','The contact card was successfully approved.');
+			} else {
+				$this->messages->AddMessage('error','The contact card was not approved, it does not exist.');
 			}
 			//set things back to normal
 			$action="viewgroup";
 			$business_card_group=-1;
-			}else{
-				$this->main_frame->AddMessage('error','You do not have permission to approve contact cards.');
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to approve contact cards.');
 			}
 		}
 		
 		//Add Groups
-		if(!empty($_POST["group_name"])){
+		if (!empty($_POST["group_name"])) {
 			$max_order = $this->businesscards_model->SelectMaxGroupOrderById($data['organisation']['id']);
 			$post_data = array(
 				'group_name' => $_POST["group_name"],
@@ -472,27 +476,27 @@ class Yorkerdirectory extends Controller
 				'group_order' => $max_order+1,
 			);
 			$this->businesscards_model->AddOrganisationCardGroup($post_data);
-			$this->main_frame->AddMessage('success','Group was successfully added.');
+			$this->messages->AddMessage('success','Group was successfully added.');
 			
 		}
-		if(!empty($_POST["card_addbutton"])){
-			if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
+		if (!empty($_POST["card_addbutton"])) {
+			if (empty($_POST["card_name"]) || empty($_POST["card_title"]))
 			{
-			$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
+			$this->messages->AddMessage('error','Please include a name and a title for your contact card');
 			//add failed send the data back into the form
 			$data['card_form']=$_POST;
-			}else{
+			} else {
 				//find user id if exist
-				if(!empty($_POST["card_username"])){
+				if (!empty($_POST["card_username"])) {
 					//find user id from username
 					$user_id = $this->businesscards_model->GetUserIdFromUsername($_POST["card_username"]);
-				}else{
+				} else {
 					$user_id = "";
 				}
 				
 				//Send message if username was given and no id found
-				if($user_id==""&&!empty($_POST["card_username"])){
-					$this->main_frame->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
+				if ($user_id==""&&!empty($_POST["card_username"])) {
+					$this->messages->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
 				//add failed send the data back into the form
 				$data['card_form']=$_POST;
 				} else {
@@ -503,7 +507,7 @@ class Yorkerdirectory extends Controller
 			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"], 
 			$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
 			0, null, null);
-					$this->main_frame->AddMessage('success','The contact card was successfully added.');
+					$this->messages->AddMessage('success','The contact card was successfully added.');
 					
 				}
 			}
@@ -524,7 +528,7 @@ class Yorkerdirectory extends Controller
 				);
 				if ($business_card_group==-1) $business_card_group = $group['business_card_group_id'];
 				$data['current_group']['id'] = $business_card_group;
-				if($group['business_card_group_id'] == $business_card_group) $data['current_group']['name'] = $group['business_card_group_name'];
+				if ($group['business_card_group_id'] == $business_card_group) $data['current_group']['name'] = $group['business_card_group_name'];
 			}
 					
 			// Members data

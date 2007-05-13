@@ -114,32 +114,36 @@ class Review_model extends Model {
 		$sql =
 			'
 			SELECT
-			 unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-			 concat(users.user_firstname, " ",users.user_surname) as name,
-			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
-			 review_context_contents.review_context_content_id as context_content_id,
-			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published,
-			 review_context_contents.review_context_content_blurb as content_blurb,
-			 review_context_contents.review_context_content_quote as content_quote,
-			 review_context_contents.review_context_content_average_price as average_price,
-			 review_context_contents.review_context_content_recommend_item as recommended_item, 
-			 review_context_contents.review_context_content_rating as content_rating,
-			 review_context_contents.review_context_content_serving_times as serving_times,
-			 "deal" as deal,
-			 0 as deal_expires			
-			FROM review_contexts 
-			INNER JOIN organisations 
-			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
-			 AND organisations.organisation_directory_entry_name = ?
+				review_context_contents.review_context_content_id as content_id,
+				unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
+				concat(users.user_firstname, " ",users.user_surname) as name,
+				review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
+				review_context_contents.review_context_content_id as context_content_id,
+				(review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published,
+				review_context_contents.review_context_content_blurb as content_blurb,
+				review_context_contents.review_context_content_quote as content_quote,
+				review_context_contents.review_context_content_average_price as average_price,
+				review_context_contents.review_context_content_recommend_item as recommended_item, 
+				review_context_contents.review_context_content_rating as content_rating,
+				review_context_contents.review_context_content_serving_times as serving_times
+			FROM review_contexts
+			INNER JOIN organisations
+				ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
 			INNER JOIN content_types
-			ON review_contexts.review_context_content_type_id=content_types.content_type_id
-			 AND content_types.content_type_codename = ?
-			INNER JOIN review_context_contents 
-			ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
-			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
+				ON review_contexts.review_context_content_type_id=content_types.content_type_id
+			INNER JOIN review_context_contents
+				ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
+				AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users 
-			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			WHERE '.(($context_content_id==-1) ? '1': 'review_context_contents.review_context_content_id = ?').'
+				ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
+			WHERE	organisations.organisation_directory_entry_name = ?
+				AND	content_types.content_type_codename = ?';
+		if ($context_content_id !== -1) {
+			$sql .= ' AND review_context_contents.review_context_content_id = ?';
+		} else {
+			$sql .= ' AND review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id';
+		}
+		$sql .= '
 			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
 			LIMIT 1
 			';
@@ -157,13 +161,14 @@ class Review_model extends Model {
 	function GetReviewContextContentRevisions($organisation_shortname,$content_type_codename)
 	{
 		$sql =
-			'
-			SELECT
-			 unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-			 concat(users.user_firstname, " ",users.user_surname) as name,
-			 review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
-			 review_context_contents.review_context_content_id as context_content_id,
-			 (review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published
+			'SELECT
+				review_context_contents.review_context_content_id AS id,
+				unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
+				concat(users.user_firstname, " ",users.user_surname) as author,
+				review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
+				review_context_contents.review_context_content_id as content_id,
+				(review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as published,
+				review_context_contents.review_context_content_deleted AS deleted
 			FROM review_contexts 
 			INNER JOIN organisations 
 			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
@@ -176,8 +181,7 @@ class Review_model extends Model {
 			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users 
 			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			WHERE 1
-			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
+			ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC
 			';
 
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
@@ -185,61 +189,66 @@ class Review_model extends Model {
 		return $query->result_array();
 	}
 
+	/// Adds a review content to the db
 	/**
-	 * Adds a review content to the db
-	 *
+	 * @return Number of affected rows.
 	 */
-
-	function SetReviewContextContent($organisation_shortname, $content_type_codename, $user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-							$rating, $serving_times, $deal, $deal_expires, $publish = false)
+	function SetReviewContextContent(
+		$organisation_shortname, $content_type_codename, $user_entity_id, $blurb,
+		$quote, $average_price, $recommended_item, $rating, $serving_times,
+		$publish = false)
 	{
 		$sql =
 			'
 			INSERT INTO review_context_contents 
 			(
-			 review_context_content_organisation_entity_id,
-			 review_context_content_content_type_id,
-			 review_context_content_last_author_user_entity_id,
-			 review_context_content_blurb,
-			 review_context_content_quote,
-			 review_context_content_average_price,
-			 review_context_content_recommend_item, 
-			 review_context_content_rating,
-			 review_context_content_serving_times
+				review_context_content_organisation_entity_id,
+				review_context_content_content_type_id,
+				review_context_content_last_author_user_entity_id,
+				review_context_content_blurb,
+				review_context_content_quote,
+				review_context_content_average_price,
+				review_context_content_recommend_item, 
+				review_context_content_rating,
+				review_context_content_serving_times
 			) 
 			SELECT
-			review_contexts.review_context_organisation_entity_id as organisation_entity_id,
-			review_contexts.review_context_content_type_id as content_type_id,
-			? as user_entity_id,
-			? as blurb,
-			? as quote,
-			? as average_price,
-			? as recommended_item,
-			? as rating,
-			? as serving_times
-			FROM review_contexts 
-			INNER JOIN organisations 
-			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
-			 AND organisations.organisation_directory_entry_name = ?
+				review_contexts.review_context_organisation_entity_id as organisation_entity_id,
+				review_contexts.review_context_content_type_id as content_type_id,
+				? as user_entity_id,
+				? as blurb,
+				? as quote,
+				? as average_price,
+				? as recommended_item,
+				? as rating,
+				? as serving_times
+			FROM review_contexts
+			INNER JOIN organisations
+				ON	organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
+				AND	organisations.organisation_directory_entry_name = ?
 			INNER JOIN content_types
-			ON review_contexts.review_context_content_type_id=content_types.content_type_id
-			 AND content_types.content_type_codename = ?
-			WHERE 1
+				ON	review_contexts.review_context_content_type_id=content_types.content_type_id
+				AND	content_types.content_type_codename = ?
 			LIMIT 1
 			;
 			';
 			
-		if ($publish) $sql +=
-			'
-			UPDATE review_contexts
-			SET review_contexts.review_context_live_content_id = LAST_INSERT_ID() 
-			WHERE review_contexts.review_context_organisation_entity_id = (SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)
-			 AND review_contexts.review_context_content_type_id = (SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?)
-			;
-			';
+		if ($publish) {
+			$sql +=
+				'UPDATE review_contexts
+				SET
+					review_contexts.review_context_live_content_id = LAST_INSERT_ID()
+				WHERE	review_contexts.review_context_organisation_entity_id =
+		(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)
+					AND	review_contexts.review_context_content_type_id =
+		(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?)';
+		}
 
-		$query = $this->db->query($sql, array($user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-							$rating, $serving_times, $organisation_shortname, $content_type_codename, $organisation_shortname, $content_type_codename) );
+		$query = $this->db->query($sql, array(
+			$user_entity_id, $blurb, $quote, $average_price, $recommended_item,
+			$rating, $serving_times, $organisation_shortname, $content_type_codename,
+			$organisation_shortname, $content_type_codename) );
+		return $this->db->affected_rows();
 	}
 
 
