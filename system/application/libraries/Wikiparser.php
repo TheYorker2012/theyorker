@@ -325,7 +325,49 @@ class Wikiparser {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
 		} elseif ('youtube' === $namespace) {
-			$output = '<object width="425" height="350" align="center"><param name="movie" value="http://www.youtube.com/v/'.$href.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$href.'" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>';
+			$output = '
+<center>
+<script language="JavaScript" type="text/javascript">
+<!--
+// Version check based upon the values entered above in "Globals"
+var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+// Check to see if the version meets the requirements for playback
+if (hasReqestedVersion) {
+	// if we\'ve detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(
+				"src", "http://www.youtube.com/v/'.$href.'",
+				"width", "425",
+				"height", "350",
+				"align", "center",
+				"id", "movie",
+				"quality", "high",
+				"bgcolor", "#FFFFFF",
+				"name", "movie",
+				"allowScriptAccess","sameDomain",
+				"type", "application/x-shockwave-flash",
+				"codebase", "http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab",
+				"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+} else {  // flash is too old or we can\'t detect the plugin
+	var alternateContent = \'<div style="width: 425px; height: 350px; border: 1px solid #999999;"><br />\'
+	+ "<b>YouTube Video Clip</b><br /><br /> "
+	+ "This content requires the Adobe Flash Player 9. "
+	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
+	+ "</div>";
+	document.write(alternateContent);  // insert non-flash content
+}
+// -->
+</script>
+<noscript>
+	<div style="width: 425px; height: 350px; border: 1px solid #999999;"><br />
+	<b>YouTube Video Clip</b><br /><br />
+  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
+  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+  	</div>
+</noscript>
+</center>';
 			return $output;
 		} else {
 			$reference_wiki = $this->external_wikis[$this->reference_wiki];
