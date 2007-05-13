@@ -71,17 +71,103 @@ class Photos extends Controller
 
 				/// Add any confirmed suggestions
 				/// @TODO: Don't allow duplicate suggestions
-				/// @TODO: Get rid of POST to prevent refresh adding them again
 				if (($this->input->post('r_suggest') == 'Suggest') && ($this->input->post('imgid_number'))) {
 					for ($i=0; $i<$this->input->post('imgid_number'); $i++) {
 						if ($this->input->post('imgid_'.$i.'_allow') == 'y'){
 							$this->photos_model->SuggestPhoto($request_id,$this->input->post('imgid_'.$i.'_number'),$this->input->post('imgid_'.$i.'_comment'),$this->user_auth->entityId);
 						}
 					}
+					redirect('/office/photos/view/'.$request_id.'/');
 				}
 
             /// Get suggested photos for request
 				$data['photos'] = $this->photos_model->GetSuggestedPhotos($request_id);
+
+				/// Get comments
+				if (is_numeric($data['comments_thread'])) {
+					$this->load->library('comments');
+					$this->comments->SetUri('/office/photos/view/'.$request_id.'/');
+					$data['comments'] = $this->comments->CreateStandard((int)$data['comments_thread'],1);
+				}
+
+				/// Get current user's access level
+				$data['user_level'] = GetUserLevel();
+				if ($data['user_level'] == 'admin') {
+					/// Admin users are effectively editors
+					$data['user_level'] = 'editor';
+				}
+				if ($data['user_level'] != 'editor') {
+					if (($data['status'] == 'assigned') && ($data['reporter_id'] == $this->user_auth->entityId)) {
+						$data['user_level'] = 'photographer';
+					} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
+						$data['user_level'] = 'reporter';
+					} else {
+						$data['user_level'] = 'everyone';
+					}
+				}
+				/* At this point $data['user_level'] should hold one of the following access levels:
+				 *	-	editor
+				 *	-	photographer
+				 *	-	reporter
+				 *	-	everyone
+				 */
+
+				/// Access matrix
+				$data['access']['details'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	FALSE,
+					'reporter'		=> TRUE,
+					'everyone'		=> FALSE
+				);
+				$data['access']['upload'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	TRUE,
+					'reporter'		=> TRUE,
+					'everyone'		=> TRUE
+				);
+				$data['access']['gallery'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	TRUE,
+					'reporter'		=> TRUE,
+					'everyone'		=> TRUE
+				);
+				$data['access']['ready'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	TRUE,
+					'reporter'		=> FALSE,
+					'everyone'		=> FALSE
+				);
+				$data['access']['complete'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	FALSE,
+					'reporter'		=> FALSE,
+					'everyone'		=> FALSE
+				);
+				$data['access']['cancel'] = array(
+					'editor'			=>	TRUE,
+					'photographer'	=>	FALSE,
+					'reporter'		=> TRUE,
+					'everyone'		=> FALSE
+				);
+
+				/*	Possible photo request statuses:
+					-*	open	unassigned
+					-	open	assigned		requested
+					-	open	assigned		accepted
+					-*	open	assigned		declined
+				*/
+
+				/// Check if user is trying to edit request's details
+				if ($this->input->post('r_details') == 'Edit') {
+					/// Check the have the necessary permissions to edit
+					if ($data['access']['details'][$data['user_level']]) {
+						$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
+						$this->main_frame->AddMessage('success','Photo request details successfully changed.');
+						redirect('/office/photos/view/'.$request_id.'/');
+					} else {
+						$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
+					}
+				}
 
 				/// Load main frame with view
 				$this->main_frame->SetContentSimple('office/photos/view', $data);

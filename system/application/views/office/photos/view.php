@@ -1,3 +1,28 @@
+<?php
+function printInput ($title, $name,$type,$value,$section,$access,$user_level)
+{
+	if ($type != 'submit') {
+	   echo('<label for="'.$name.'">'.$title.':</label>');
+	}
+	if ($access[$section][$user_level]) {
+		switch ($type) {
+			case 'textarea':
+				echo('<textarea name="'.$name.'" id="'.$name.'" cols="25" rows="5">'.$value.'</textarea>');
+				break;
+			case 'submit':
+				echo('<input type="'.$type.'" name="'.$name.'" id="'.$name.'" value="'.$value.'" class="button" />');
+				break;
+			default:
+				echo('<input type="'.$type.'" name="'.$name.'" id="'.$name.'" value="'.$value.'" size="30" />');
+				break;
+		}
+	} else {
+		echo('<div id="'.$name.'" style="float:left;margin:5px 10px;">'.$value.'</div>');
+	}
+	echo('<br />');
+}
+?>
+
 	<style type='text/css'>
 	#proposed_photos .photo_item {
 		float: left;
@@ -35,12 +60,11 @@
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>
-				<label for='r_title'>Title:</label>
-				<input type='text' name='r_title' id='r_title' value='<?php echo($title); ?>' size='30' />
-				<br />
-				<label for='r_brief'>Description:</label>
-				<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo($description); ?></textarea>
-			    <br />
+
+				<?php printInput('Title','r_title','text',$title,'details',$access,$user_level); ?>
+				<?php printInput('Description','r_brief','textarea',$description,'details',$access,$user_level); ?>
+				<?php printInput('','r_details','submit','Edit','details',$access,$user_level); ?>
+
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
 					<a href="/office/news/<?php echo($article_id); ?>" target="_blank">
@@ -145,6 +169,13 @@
 				<br />
 			 	<input type="button" name="add_comment" id="add_comment" value="Add Comment" class="button" />
 			</fieldset>
+		</div>
+
+		<div style="width:410px;">
+		<?php // Display comments if thread exists
+		if ((isset($comments)) && (NULL !== $comments)) {
+			$comments->Load();
+		} ?>
 		</div>
 
 <?php } ?>

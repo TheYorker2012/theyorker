@@ -79,7 +79,8 @@ class Photos_model extends Model
 				users.user_surname,
 				photo_requests.photo_request_deleted,
 				photo_requests.photo_request_chosen_photo_id,
-				photo_requests.photo_request_flagged
+				photo_requests.photo_request_flagged,
+				photo_requests.photo_request_comment_thread_id
 			FROM photo_requests, articles, users
 			WHERE photo_requests.photo_request_id = ?
 			AND photo_requests.photo_request_article_id = articles.article_id
@@ -98,7 +99,8 @@ class Photos_model extends Model
 				'time'				=>	$row->photo_request_timestamp,
 				'reporter_id'		=>	$row->photo_request_user_entity_id,
 				'reporter_name'	=>	$row->user_firstname . ' ' . $row->user_surname,
-				'editor_id'			=>	$row->photo_request_approved_user_entity_id
+				'editor_id'			=>	$row->photo_request_approved_user_entity_id,
+				'comments_thread'	=>	$row->photo_request_comment_thread_id
       	);
       	if ($row->photo_request_approved_user_entity_id !== NULL) {
 				$editor_sql = 'SELECT users.user_firstname,
@@ -176,6 +178,15 @@ class Photos_model extends Model
 					photo_request_photos.photo_request_photo_comment = ?,
 					photo_request_photos.photo_request_photo_user_id = ?';
 		$query = $this->db->query($sql,array($request_id,$photo_id,$comment,$user_id));
+	}
+
+	function ChangeDetails($request_id,$title,$description)
+	{
+		$sql = 'UPDATE photo_requests
+				SET photo_requests.photo_request_title = ?,
+					photo_requests.photo_request_description = ?
+				WHERE photo_requests.photo_request_id = ?';
+		$query = $this->db->query($sql,array($title,$description,$request_id));
 	}
 
 }
