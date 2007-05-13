@@ -27,31 +27,20 @@
 </ul>
 </div>
 
-<?php
 
-	echo form_open('office/reviews/addtag');
-	echo form_hidden('organisation_name',$organisation_name);
-	echo form_hidden('context_type',$context_type);
-	echo '<div class="blue_box">';
-	echo '<h2>list boxes for each tag group</h2>';
-	echo '<b>Possible tags</b><br />';
-	echo '<select size=4 name=tag>';
-	foreach ($new_tags['tag_group_names'] as $tag_group_name)
-	{
-		foreach ($new_tags[$tag_group_name] as $tag)
-		{
-			echo '<option value="'.$tag.'">'.$tag_group_name.' -> '.$tag.'</option>';
-		}
-	}
-	echo '</select><br />';
- 	echo '<input type="submit" value="Add new tag">';
-	echo '</form><br /><br />';
-
+	<div class="blue_box">
+	<h2>tagged as...</h2>
+	<p>
+	
+	<?php
 	echo form_open('office/reviews/deltag');
 	echo form_hidden('organisation_name',$organisation_name);
 	echo form_hidden('context_type',$context_type);
-	echo '<b>Current tags</b><br />';
-	echo '<select size=4 name=tag>';
+	?>
+	
+	<select size="5" name="tag" style="float: none; width: 350px;">
+	
+	<?php
 	foreach ($existing_tags['tag_group_names'] as $tag_group_name)
 	{
 		foreach ($existing_tags[$tag_group_name] as $tag)
@@ -59,9 +48,41 @@
 			echo '<option value="'.$tag.'">'.$tag_group_name.' -> '.$tag.'</option>';
 		}
 	}
-	echo '</select><br />';
- 	echo '<input type="submit" value="Delete tag">';
-	echo '</div></form>';
-
-?>
+	?>
+	
+	</select><br />
+ 	<input type="submit" value="Delete tag" style="float: none;">
+	</form>
+	
+	</p>
+	</div>
+	
+	<div class="blue_box">
+	<h2>potential tags</h2>
+	<p>
+	
+	<?php
+	echo form_open('office/reviews/addtag');
+	echo form_hidden('organisation_name',$organisation_name);
+	echo form_hidden('context_type',$context_type);
+	?>
+	
+	<select size="8" name="tag" style="float: none;  width: 350px;">
+	
+	<?php
+	foreach ($new_tags['tag_group_names'] as $tag_group_name)
+	{
+		foreach ($new_tags[$tag_group_name] as $tag)
+		{
+			echo '<option value="'.$tag.'">'.$tag_group_name.' -> '.$tag.'</option>';
+		}
+	}
+	?>
+	
+	</select><br />
+ 	<input type="submit" value="Add new tag" style="float: none;">
+	</form>
+	
+	</p>
+	</div>
 
