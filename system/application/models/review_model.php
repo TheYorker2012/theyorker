@@ -817,6 +817,7 @@ function GetTagOrganisation($type,$organisation)
 			SELECT
 				o.organisation_entity_id,
 				o.organisation_name,
+				o.organisation_entity_id,
 				oc.organisation_content_url,
 				o.organisation_directory_entry_name,
 				tg.tag_group_name,t.tag_name,

@@ -108,7 +108,7 @@
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><?php echo($entry['review_title']); ?></strong></font>
+						<font size="+1"><strong><a href="<?php echo($entry['review_table_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
 						<br />
 						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
@@ -125,6 +125,10 @@
 						{
 							echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
 						}
+						for($i=0;$i<$empty;$i++)
+						{
+							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
+						}
 						
 						?>
 						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
@@ -138,12 +142,10 @@
 			<td>
 				<table border="0" width="100%">
 				<tbody>
-				<tr>
-				<!--
+				<tr><!--
 					<td width="20%" valign="top">
 						<img style="padding-left: 3px; padding-right: 6px;" src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
-					</td>
-				-->
+					</td>-->
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>
 					</td>
@@ -190,11 +192,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-
-echo '<div class="BlueBox"><pre>';
-print_r($data);
-echo '</pre></div>';
-
-?>

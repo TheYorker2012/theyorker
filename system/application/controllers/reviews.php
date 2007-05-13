@@ -347,6 +347,9 @@ class Reviews extends Controller
 					$item_filter_by = FALSE,
 					$where_equal_to = FALSE)
 	{
+		//Load slideshow model
+		$this->load->model('slideshow');
+		
 		//POST data set overwrites uri data
 		if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
 		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
@@ -393,12 +396,37 @@ class Reviews extends Controller
 				{
 				//surely this should be in the model
 					$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
+					$entries[$reviewno]['review_id'] = $database_result[$reviewno]['organisation_entity_id'];
 					$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 					$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
 					$entries[$reviewno]['review_blurb'] = $database_result[$reviewno]['review_context_content_blurb'];
 					$entries[$reviewno]['review_quote'] = $database_result[$reviewno]['review_context_content_quote'];
 					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
+					
+					//complete temp hack that doesn't even work
+					$sql = 'SELECT content_type_id
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($item_type));
+		$row = $query->row();
+		if ($query->num_rows() == 1){
+			$type_id = $row->content_type_id;
+			}
+			else{
+			$type_id = NULL;}
+					
+					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id'], $type_id);
+					$slideshow = array();
+					foreach ($slideshow_array->result() as $slide){
+						$slideshow[] = array(
+							'title' => $slide->photo_title,
+							'id' => $slide->photo_id,
+							'url' => imageLocation($slide->photo_id, 'slideshow'),
+						);
+					}
+					
+					$entries[$reviewno]['slideshow'] = $slideshow;
 
 					//Change scope of $tagbox
 					$tagbox = array();

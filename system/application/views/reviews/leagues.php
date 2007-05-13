@@ -56,7 +56,7 @@ if (isset($league_data)) {
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><?php echo($entry['review_title']); ?></strong></font>
+						<font size="+1"><strong><a href="<?php echo($entry['review_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
 						<br />
 						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
@@ -94,8 +94,7 @@ if (isset($league_data)) {
 				<!--
 					<td width="20%" valign="top">
 						<img style="padding-left: 3px; padding-right: 6px;" src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
-					</td>
-				-->
+					</td>-->
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>
 					</td>
@@ -146,12 +145,4 @@ if (isset($league_data)) {
 
 <?php
 }
-?>
-
-<?php
-
-echo '<div class="BlueBox"><pre>';
-print_r($data);
-echo '</pre></div>';
-
 ?>
