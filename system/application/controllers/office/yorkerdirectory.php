@@ -28,17 +28,6 @@ class Yorkerdirectory extends Controller
 		$this->load->helper('images');
 		$this->load->helper('wikilink');
 	}
-
-	/// Directory index page.
-	/**
-	 * @note Shows error 404 when accessed from viparea
-	 */
-	function index()
-	{
-		if (!CheckPermissions('office')) return;
-		
-		$this->_office();
-	}
 	
 	private function CreateDirectoryEntryName ($long_name){
 		//strip non alpha-numerical symbols
@@ -47,10 +36,30 @@ class Yorkerdirectory extends Controller
 		return str_replace(" ", "_", $new_string);
 	}
 	
-	/// office/directory
-	function _office()
+	/// Set up the tabs
+	private function _SetupTabs()
 	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('live', 'Live',
+				'/office/directory/');
+		$navbar->AddItem('hidden', 'Hidden',
+				'/office/directory/');
+		$navbar->AddItem('suggested', 'Suggested',
+				'/office/directory/');
+	}
+	
+	/// Directory index page.
+	/**
+	 * @note Shows error 404 when accessed from viparea
+	 */
+	function index()
+	{
+		if (!CheckPermissions('office')) return;
+		
 		$this->pages_model->SetPageCode('office_directory_index');
+		
+		$this->_SetupTabs();
+		$this->main_frame->SetPage('live');
 		
 		$data = array();
 		
