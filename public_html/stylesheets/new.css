@@ -206,6 +206,10 @@ div#NavigationMenu ul {
 	border-top: 1px solid #999;
 }
 
+div#NavigationMenu ul a {
+	display: block;
+}
+
 div#NavigationMenu ul.first {
 	border-top: 0;
 }
