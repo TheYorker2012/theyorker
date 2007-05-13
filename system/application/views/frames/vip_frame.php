@@ -5,50 +5,20 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>The Yorker - <?php if(isset($head_title)) { echo $head_title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
-<meta name="description" content="<?php echo $description; ?>" />
-<meta name="keywords" content="<?php echo $keywords; ?>" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel='shortcut icon' href='/images/yorker.ico' />
-<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
-<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
-<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-
-<!-- BEGIN Multiple event handlers code -->
-<script type="text/javascript">
-//<![CDATA[
-
-// An array containing functors for all function to be run on page load
-var onLoadFunctions = new Array();
-
-// An array containing functors for all function to be run on page unload
-var onUnloadFunctions = new Array();
-
-// The function which is run on page load ensuring all functors are run
-function onLoadHandler() {
-	for (i = 0; i < onLoadFunctions.length; i++) {
-		onLoadFunctions[i]();
-	}
-}
-// The function which is run on page unload ensuring all functors are run
-function onUnloadHandler() {
-	for (i = 0; i < onUnloadFunctions.length; i++) {
-		onUnloadFunctions[i]();
-	}
-}
-
-//]]>
-</script>
-<!-- END Multiple event handlers code -->
-
-
-<!-- BEGIN 'head' tag items from controlling script -->
-<?php echo @$extra_head; ?>
-<!-- END 'head' tag items from controlling script -->
-<?php
-include('maps.php');
-?>
+	<title>The Yorker - <?php if(isset($head_title)) { echo $head_title; } else { echo 'no pagename'; } //FIXME backwards compatibility, remove when all pages are shown with titles?></title>
+	<meta name="description" content="<?php echo $description; ?>" />
+	<meta name="keywords" content="<?php echo $keywords; ?>" />
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel='shortcut icon' href='/images/yorker.ico' />
+	<link rel='alternate' type='application/rss+xml' title='The Yorker - Campus News' href='/news/rss' />
+	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+	
+	<?php
+		// Get common javascript
+		include('top_script.php');
+	?>
 </head>
 
 <body onLoad="onLoadHandler(); if(typeof onLoad == 'function') onLoad();">

@@ -32,88 +32,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	}
 	?>
 
-	<!-- BEGIN Multiple event handlers code -->
-	<script type="text/javascript">
-	//<![CDATA[
-
-	// An array containing functors for all function to be run on page load
-	var onLoadFunctions = new Array();
-
-	// An array containing functors for all function to be run on page unload
-	var onUnloadFunctions = new Array();
-
-	// The function which is run on page load ensuring all functors are run
-	function onLoadHandler() {
-		for (i = 0; i < onLoadFunctions.length; i++) {
-			onLoadFunctions[i]();
-		}
-	}
-	// The function which is run on page unload ensuring all functors are run
-	function onUnloadHandler() {
-		for (i = 0; i < onUnloadFunctions.length; i++) {
-			onUnloadFunctions[i]();
-		}
-	}
-
-	//]]>
-	</script>
-	<!-- END Multiple event handlers code -->
-
-	<!-- BEGIN 'head' tag items from controlling script -->
-	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
-	<!-- END 'head' tag items from controlling script -->
-
 	<?php
-	include('maps.php');
+		// Get common javascript
+		include('top_script.php');
 	?>
-
-	<!-- BEGIN search box code -->
-	<script type="text/javascript">
-	//<![CDATA[
-
-	function inputFocus(element) {
-		if (element.value == element.defaultValue) {
-			element.value = '';
-		}
-	}
-
-	function inputBlur(element) {
-		if (element.value =='') {
-			element.value = element.defaultValue;
-		}
-	}
-
-	//]]>
-	</script>
-	<!-- END search box code -->
-
-	<!-- BEGIN feedback form code -->
-	<script type="text/javascript">
-	//<![CDATA[
-
-	function showFeedback() {
-		var showFeedbackObj = document.getElementById('ShowFeedback');
-		var feedbackObj = document.getElementById('FeedbackForm');
-		showFeedbackObj.style.display = 'none';
-		feedbackObj.style.display = 'block';
-
-		return false;
-	}
-
-	function hideFeedback() {
-		var showFeedbackObj = document.getElementById('ShowFeedback');
-		var feedbackObj = document.getElementById('FeedbackForm');
-		showFeedbackObj.style.display = 'block';
-		feedbackObj.style.display = 'none';
-
-		return false;
-	}
-
-	onLoadFunctions.push(hideFeedback);
-
-	//]]>
-	</script>
-	<!-- END feedback form code -->
 
 </head>
 
@@ -133,6 +55,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				}
 			}
 			?>
+			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
@@ -154,10 +77,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<div id="Page">
 		<div id="NavigationColumn">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
-				<fieldset>
-					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
-					<input type="hidden" name="cof" value="FORID:0" />
-				</fieldset>
+				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+				<input type="hidden" name="cof" value="FORID:0" />
 				<fieldset id="SearchBox">
 					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
 				</fieldset>
@@ -165,11 +86,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<div id="NavigationMenu">
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
 				<ul class="first">
-					<li class="first"><a href="/">Home</a></li>
+					<li class="first"><a href="/">My Home</a></li>
+					<li><a href="/calendar/">My Calendar</a></li>
 					<li><a href="/directory/">Directory</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
+					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
@@ -177,10 +100,15 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/comment/">Comment</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
+					<!--<li><a href="/reviews/culture">Culture</a></li>-->
+					<li><a href="/campaign/">Campaigns</a></li>
+					<!--<li><a href="/news/archive/">News Archive</a></li>-->
 				</ul>
 				<ul>
-					<li class="first"><a href="/howdoi/">How Do I</a></li>
+					<li class="first"><a href="/charity/">Our Charity</a></li>
+					<li><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
+					<!--<li><a href="/games/">Games Zone</a></li>-->
 				</ul>
 				<!--
 				<ul>
@@ -189,7 +117,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				-->
 				<?php
-				/*
 				if (isset($extra_menu_buttons)) {
 					echo('<ul>');
 					foreach ($extra_menu_buttons as $key => $button) {
@@ -203,7 +130,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					}
 					echo('</ul>');
 				}
-				*/
 				?>
 			</div>
 		</div>
