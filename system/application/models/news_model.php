@@ -92,7 +92,7 @@ class News_model extends Model
 	function getSubArticleTypes ($main_type)
 	{
 		$result = array();
-		$sql = 'SELECT  child.content_type_id, child.content_type_codename, child.content_type_blurb
+		$sql = 'SELECT  child.content_type_id, child.content_type_codename, child.content_type_blurb,
 		        	child.content_type_name, image_id, image_file_extension,
 			        image_type_codename, image_title
 			FROM    content_types AS parent
