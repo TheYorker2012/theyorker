@@ -271,9 +271,9 @@ class Reviews extends Controller
 
 //jadded
 		if (!empty($data)) {
-			$action = $this->uri->get_segment(6);
-			$photoID = $this->uri->get_segment(7);
-			$operation = $this->uri->get_segment(8);
+			$action = $this->uri->segment(6);
+			$photoID = $this->uri->segment(7);
+			$operation = $this->uri->segment(8);
 			$this->load->model('slideshow');
 			$this->_SetupNavbar($organisation,$ContextType);
 			$this->main_frame->SetPage('photos');
