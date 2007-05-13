@@ -38,21 +38,19 @@
             <td width="83"><p align="center"> Directory </p></td>
             <td width="78"><p align="center"><b><a href="/office/pr/org/<?php echo $organisation['shortname']; ?>/directory/information">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm<b></b></p></td>
+            <td width="32">&nbsp;</td>
         </tr>
         <tr>
             <td width="83"><p align="center"> Food </p></td>
             <td width="78"><p align="center"><b><a href="/office/reviews/<?php echo $organisation['shortname']; ?>/food">Edit</a></b></p></td>
             <td width="168"><p align="center"> 2/02/2007 at 6:06pm </p></td>
+			<td width="32"><p align="center"> <form action="#" onSubmit="return confirm('Are you sure you want to remove this context?');"> <input type="image" src="/images/icons/delete.png" alt="Delete" /> </form></p></td>
         </tr>
         <tr>
             <td width="83"><p align="center"> Drink </p></td>
-            <td width="78"><p align="center"><b><a href="/office/reviews/<?php echo $organisation['shortname']; ?>/drink">Edit</a></b></p></td>
-            <td width="168"><p align="center"> 2/02/2007 at 6:06pm </p></td>
-        </tr>
-        <tr>
-            <td width="83"><p align="center"> Culture </p></td>
-            <td width="78"><p align="center"><b><a href="/office/reviews/<?php echo $organisation['shortname']; ?>/culture">Edit</a></b></p></td>
-            <td width="168"><p align="center"> - </p></td>
+            <td width="78"><p align="center"><form><input type="submit" value="Add Drink Context" /></form></p></td>
+            <td width="168">&nbsp;</td>
+			<td width="32">&nbsp;</td>
         </tr>
     </table>
 </div>
