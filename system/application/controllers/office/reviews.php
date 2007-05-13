@@ -34,16 +34,16 @@ class Reviews extends Controller
 		$this->load->library('frame_directory');
 
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('comments', 'Comments',
-				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/comments');
-		$navbar->AddItem('reviews', 'Reviews',
-				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
-		$navbar->AddItem('photos', 'Photos',
-				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
-		$navbar->AddItem('tags', 'Tags',
-				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/tags');
 		$navbar->AddItem('information', 'Information',
-				'/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
+		$navbar->AddItem('tags', 'Tags',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/tags');
+		$navbar->AddItem('photos', 'Photos',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
+		$navbar->AddItem('reviews', 'Reviews',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
+		$navbar->AddItem('comments', 'Comments',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/comments');
 	}
 
 	/// Main reviews page
@@ -78,116 +78,203 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 	
-	// Reviews information page
-	function information($ContextType, $organisation)
+	/// Reviews information page
+	function information($ContextType, $organisation, $action = 'view', $revision_id = -1)
 	{
+		/// @todo add show all option backend
 		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_reviews_information');
+		
+		$editor_level = PermissionsSubset('editor', GetUserLevel());
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
 		$data['context_type'] = $ContextType;
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('information');
-
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 		
-		// Handle submitted data
-		if ($this->input->post('reviewinfo_rating') != false)
-		{
-    		// Set up validation library
-    		$this->load->library('validation');
-    		$this->validation->set_error_delimiters('<li>','</li>');
-    		
-    		// Specify validation rules
-    		$rules['reviewinfo_about'] = 'trim|required|xss_clean';
-    		$rules['reviewinfo_rating'] = 'trim|required|numeric';
-    		$rules['reviewinfo_quote'] = 'trim|required|xss_clean';
-    		$rules['reviewinfo_recommended'] = 'trim|xss_clean';
-    		$rules['reviewinfo_average_price'] = 'trim|numeric';
-    		$rules['reviewinfo_serving_hours'] = 'trim|xss_clean';
-    		$rules['reviewinfo_deal'] = 'trim|xss_clean';
-    		$rules['reviewinfo_deal_expires'] = 'trim|xss_clean';
-    		$this->validation->set_rules($rules);
-    		
-    		// Set field names for displaying in error messages
-    		$fields['reviewinfo_about'] = 'blurb';
-    		$fields['reviewinfo_rating'] = 'rating';
-    		$fields['reviewinfo_quote'] = 'quote';
-    		$fields['reviewinfo_recommended'] = 'recommended item';
-    		$fields['reviewinfo_average_price'] = 'average price';
-    		$fields['reviewinfo_serving_hours'] = 'serving hours';
-    		$fields['reviewinfo_deal'] = 'deal';
-    		$fields['reviewinfo_deal_expires'] = 'deal expiry date';
-    		$this->validation->set_fields($fields);
-    		
-    		// Run validation
-    		$errors = array();
-    		if ($this->validation->run())
-    		{
-        		if ($this->input->post('reviewinfo_deal_expires') != false)
-        		{
-            		if (!$this->input->post('reviewinfo_deal')) array_push($errors, 'Please enter deal information or remove the deal expiry date.');
-            	    if (strtotime($this->input->post('reviewinfo_deal_expires')) == false) array_push($errors, 'Please enter the deal expiry date in the format yyyy-mm-dd');
-        	    }
-    
-    			// If there are no errors, insert data into database
-    			if (count($errors) == 0) 
-    			{
-        			$this->review_model->SetReviewContextContent(
-        			    $organisation,
-        			    $ContextType,
-        			    $this->user_auth->entityId,
-        			    $this->input->post('reviewinfo_about'),
-        			    $this->input->post('reviewinfo_quote'),
-        			    $this->input->post('reviewinfo_average_price'),
-        			    $this->input->post('reviewinfo_recommended'),
-        			    $this->input->post('reviewinfo_rating'),
-        			    $this->input->post('reviewinfo_serving_hours'),
-        			    $this->input->post('reviewinfo_deal'),
-        			    $this->input->post('reviewinfo_deal_expires')
-        			);
-        			$this->main_frame->AddMessage('success','Review information updated.');
-    			}
-    		}
-
-    		// If there are errors, display them
-    		if ($this->validation->error_string != '') $this->main_frame->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $this->validation->error_string . '</ul>');
-    		elseif (count($errors) > 0) {
-    			$temp_msg = '';
-    			foreach ($errors as $error) $temp_msg .= '<li>' . $error . '</li>';
-    			$this->main_frame->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $temp_msg . '</ul>');
-    		}
+		//test to allow a person to view deleted revisions
+		$show_all_revisions = false;
+		if ($action=='viewall') {
+			if ($editor_level) {
+				$show_all_revisions = true;
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to view deleted revisions');
+			}
+			$action = 'view';
 		}
 		
-		// Get revision data from model
-		$data['revisions'] = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType);
+		if ($action=='delete') {
+			if ($editor_level) {
+				if (TRUE) {
+					/// @todo Review context revision removal.
+					$this->messages->AddMessage('error', 'Removal of revisions is not yet available');
+				} else {
+					$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
+					if ($result == 1) {
+						$this->messages->AddMessage('success','Directory revision successfully removed.');
+					} else {
+						$this->messages->AddMessage('error','Directory revision was not removed, revision does not exist or is live.');
+					}
+				}
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to remove revisions.');
+			}
+			$action='view';
+		}
 		
-		// Get context contents from model
-		$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType);
-		if (isset($context_contents[0])) $data = array_merge($data, $context_contents[0]);
-		else
-		{
-    		$data['content_blurb'] = '';
-    		$data['content_quote'] = '';
-    		$data['average_price'] = '';
-    		$data['recommended_item'] = '';
-    		$data['content_rating'] = 5;
-    		$data['serving_times'] = '';
-    		$data['deal'] = '';
-    		$data['deal_expires'] = '';
+		if ($action=='restore') {
+			//Check Permissions
+			if ($editor_level) {
+				if (TRUE) {
+					/// @todo Review context revision restoration.
+					$this->messages->AddMessage('error', 'Restoration of revisions is not yet available');
+				} else {
+					//Send and get data
+					$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision, false);
+					if ($result == 1) {
+						$this->messages->AddMessage('success','Directory revision was restored successfully.');
+					} else {
+						$this->messages->AddMessage('error','Directory revision was not restored it does not exist or it is not deleted.');
+					}
+				}
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to restore revisions');
+			}
+			$action='view';
+		}
+		
+		if ($action=='publish') {
+			//Check Permissions
+			if ($editor_level) {
+				if (TRUE) {
+					/// @todo Review context revision publication.
+					$this->messages->AddMessage('error', 'Publication of revisions is not yet available');
+				} else {
+					//Send and get data
+					$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
+					if ($result == 1) {
+						$this->messages->AddMessage('success','Directory revision was published successfully.');
+					} else {
+						$this->messages->AddMessage('error','Directory revision was not published it does not exist or is already live.');
+					}
+				}
+			} else {
+				$this->messages->AddMessage('error','You do not have permission to publish revisions');
+			}
+			$action='view';
+		}
+		
+		if ('preview' === $action) {
+			$this->messages->AddMessage('error', 'Previewing of revisions is not yet available');
+			$action = 'view';
 		}
 
-		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_information', $data);
-
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(
-				array('organisation' => $data['organisation']['name'],
-						'content_type' => ucfirst($ContextType)));
-		$this->main_frame->SetContent($the_view);
+		if ('view' === $action) {
+			// Insert main text from pages information (sample)
+			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			
+			// Handle submitted data
+			if ($this->input->post('reviewinfo_rating') != false)
+			{
+				// Set up validation library
+				$this->load->library('validation');
+				$this->validation->set_error_delimiters('<li>','</li>');
+				
+				// Specify validation rules
+				$rules['reviewinfo_about'] = 'trim|required|xss_clean';
+				$rules['reviewinfo_rating'] = 'trim|required|numeric';
+				$rules['reviewinfo_quote'] = 'trim|required|xss_clean';
+				$rules['reviewinfo_recommended'] = 'trim|xss_clean';
+				$rules['reviewinfo_average_price'] = 'trim|numeric';
+				$rules['reviewinfo_serving_hours'] = 'trim|xss_clean';
+				$this->validation->set_rules($rules);
+				
+				// Set field names for displaying in error messages
+				$fields['reviewinfo_about'] = 'blurb';
+				$fields['reviewinfo_rating'] = 'rating';
+				$fields['reviewinfo_quote'] = 'quote';
+				$fields['reviewinfo_recommended'] = 'recommended item';
+				$fields['reviewinfo_average_price'] = 'average price';
+				$fields['reviewinfo_serving_hours'] = 'serving hours';
+				$this->validation->set_fields($fields);
+				
+				// Run validation
+				$errors = array();
+				if ($this->validation->run())
+				{
+					if ($this->input->post('reviewinfo_deal_expires') != false)
+					{
+						if (!$this->input->post('reviewinfo_deal'))
+							array_push($errors, 'Please enter deal information or remove the deal expiry date.');
+						if (strtotime($this->input->post('reviewinfo_deal_expires')) == false)
+							array_push($errors, 'Please enter the deal expiry date in the format yyyy-mm-dd');
+					}
+		
+					// If there are no errors, insert data into database
+					if (count($errors) == 0) 
+					{
+						if ($this->review_model->SetReviewContextContent(
+							$organisation,
+							$ContextType,
+							$this->user_auth->entityId,
+							$this->input->post('reviewinfo_about'),
+							$this->input->post('reviewinfo_quote'),
+							$this->input->post('reviewinfo_average_price'),
+							$this->input->post('reviewinfo_recommended'),
+							$this->input->post('reviewinfo_rating'),
+							$this->input->post('reviewinfo_serving_hours')
+						)) {
+							$this->messages->AddMessage('success','Review information updated.');
+						} else {
+							$this->messages->AddMessage('error','Review information could not be updated.');
+						}
+					}
+				}
+	
+				// If there are errors, display them
+				if ($this->validation->error_string != '') {
+					$this->messages->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $this->validation->error_string . '</ul>');
+				} elseif (count($errors) > 0) {
+					$temp_msg = '';
+					foreach ($errors as $error) $temp_msg .= '<li>' . $error . '</li>';
+					$this->messages->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $temp_msg . '</ul>');
+				}
+			}
+			
+			// Get revision data from model
+			$data['revisions'] = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType);
+			$data['show_all_revisions'] = $show_all_revisions;
+			$data['show_show_all_revisions_option'] = $editor_level;
+			$data['user_is_editor'] = $editor_level;
+			
+			// Get context contents from model
+			$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
+			if (isset($context_contents[0]))
+				$data = array_merge($data, $context_contents[0]);
+			else
+			{
+				$this->messages->AddMessage('error', 'Review context does not exist');
+				$data['content_blurb'] = '';
+				$data['content_quote'] = '';
+				$data['average_price'] = '';
+				$data['recommended_item'] = '';
+				$data['content_rating'] = 5;
+				$data['serving_times'] = '';
+				$data['deal'] = '';
+				$data['deal_expires'] = '';
+			}
+			//$this->messages->AddDumpMessage('data',$data);
+	
+			// Set up the public frame
+			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
+		}
+		
+		$this->main_frame->SetTitleParameters(array(
+			'organisation' => $data['organisation']['name'],
+			'content_type' => ucfirst($ContextType),
+		));
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -331,7 +418,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-				      'content_type' => $ContextType));
+					  'content_type' => $ContextType));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -353,7 +440,7 @@ class Reviews extends Controller
 		$this->main_frame->SetPage('reviews');
 
 		/** store the parameters passed to the method so it can be
-		    used for links in the view */
+			used for links in the view */
 		$data['parameters']['organistion'] = $organisation;
 		$data['parameters']['context_type'] = $context_type;
 
@@ -400,7 +487,7 @@ class Reviews extends Controller
 				$this->user_auth->entityId,
 				$_POST['a_review_author']);
 			//success
-			$this->main_frame->AddMessage('success','Review Added.');
+			$this->messages->AddMessage('success','Review Added.');
 		}
 
 		// Insert main text from pages information (sample)
@@ -470,7 +557,7 @@ class Reviews extends Controller
 				''
 				)
 				;
-	                $this->main_frame->AddMessage('success','New revision created for review.');
+					$this->messages->AddMessage('success','New revision created for review.');
 		}
 		elseif (isset($_POST['r_submit_publish']))
 		{
@@ -481,23 +568,23 @@ class Reviews extends Controller
 					'publish_date'=>date('y-m-d H:i:s'),
 					'editor'=>$this->user_auth->entityId)
 				);
-			$this->main_frame->AddMessage('success','Review had been published.');
+			$this->messages->AddMessage('success','Review had been published.');
 		}
 		elseif (isset($_POST['r_submit_pull']))
 		{
 			$this->article_model->PullArticle($article_id, $this->user_auth->entityId);
 			$this->requests_model->UpdatePulledToRequest($article_id, $this->user_auth->entityId);
-			$this->main_frame->AddMessage('success','Review has been pulled from publication.');
+			$this->messages->AddMessage('success','Review has been pulled from publication.');
 		}
 		elseif (isset($_POST['r_submit_delete']))
 		{
 			$this->requests_model->RejectSuggestion($article_id);
-			$this->main_frame->AddMessage('success','Review has been deleted.');
+			$this->messages->AddMessage('success','Review has been deleted.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 
 		/** store the parameters passed to the method so it can be
-		    used for links in the view */
+			used for links in the view */
 		$data['parameters']['article_id'] = $article_id;
 		$data['parameters']['revision_id'] = $revision_id;
 		$data['parameters']['organisation'] = $organisation;
@@ -517,17 +604,17 @@ class Reviews extends Controller
 		
 		if ($found == false && $data['user']['officetype'] = 'Low')
 		{
-			$this->main_frame->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
+			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 		
 		/** get the article's header for the article id passed to 
-		    the function */
+			the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
 		
 		if ($data['article']['header']['organisation'] != $data['organisation']['id'])
 		{
-			$this->main_frame->AddMessage('error','Specified review is for a different organisation. Can\'t edit.');
+			$this->messages->AddMessage('error','Specified review is for a different organisation. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
 		
@@ -569,7 +656,7 @@ class Reviews extends Controller
 			   then return an error */
 			if ($data['article']['displayrevision'] == FALSE)
 			{
-				$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this review. Default selected.');
+				$this->messages->AddMessage('error','Specified revision doesn\'t exist for this review. Default selected.');
 				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/');
 			}
 		}
