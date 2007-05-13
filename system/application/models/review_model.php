@@ -301,6 +301,7 @@ class Review_model extends Model {
 					organisation_contents.organisation_content_url,
 					review_context_contents.review_context_content_blurb as organisation_description,
 					review_context_contents.review_context_content_rating,
+					review_context_contents.review_context_content_quote,
 					organisations.organisation_directory_entry_name,
 					league_entries.league_entry_position,
 					leagues.league_name,
@@ -344,6 +345,7 @@ class Review_model extends Model {
 		$tmpleague['content_type_name']		   = $row->content_type_name;
 		$tmpleague['content_type_codename']	   = $row->content_type_codename;
 		$tmpleague['review_rating'] = $row->review_context_content_rating;
+		$tmpleague['review_quote'] = $row->review_context_content_quote;
 		$tmpleague['average_user_rating'] = 0;
 		if ($row->average_user_rating != '')
 			$tmpleague['average_user_rating']	   = $row->average_user_rating;

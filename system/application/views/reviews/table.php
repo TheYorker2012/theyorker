@@ -110,12 +110,13 @@
 					<td valign="top">
 						<font size="+1"><strong><?php echo($entry['review_title']); ?></strong></font>
 						<br />
-						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a> | <a href="#">Map</a></span>
+						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
 					<td width="126" align="center">
 						<?php
 						$whole = floor($entry['review_rating'] / 2); 
 						$part = $entry['review_rating'] % 2;
+						$empty = 5 - $whole - $part;
 						for($i=0;$i<$whole;$i++)
 						{
 							echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
@@ -123,6 +124,10 @@
 						if ($part == 1)
 						{
 							echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
+						}
+						for($i=0;$i<$empty;$i++)
+						{
+							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
 						}
 						
 						?>
@@ -138,10 +143,11 @@
 				<table border="0" width="100%">
 				<tbody>
 				<tr>
+				<!--
 					<td width="20%" valign="top">
 						<img style="padding-left: 3px; padding-right: 6px;" src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
-						<!--<img src="/images/images/small/0/94.jpg" alt="singer" title="singer" />-->
 					</td>
+				-->
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>
 					</td>
@@ -188,3 +194,11 @@
 		</table>
 	</div>
 </div>
+
+<?php
+
+echo '<div class="BlueBox"><pre>';
+print_r($data);
+echo '</pre></div>';
+
+?>

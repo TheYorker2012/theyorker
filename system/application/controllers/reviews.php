@@ -463,13 +463,15 @@ class Reviews extends Controller
 			//Place remaining data into a array for the view
 			for ($row = 0; $row < count($leagues); $row++)
 			{
-				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
-				$reviews['review_website'][$row] = $leagues[$row]['organisation_url'];
-				$reviews['review_rating'][$row] = $leagues[$row]['review_rating'];
+				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
+				$reviews[$row]['review_website'] = $leagues[$row]['organisation_url'];
+				$reviews[$row]['review_rating'] = $leagues[$row]['review_rating'];
+				$reviews[$row]['review_quote'] = $leagues[$row]['review_quote'];
+				$reviews[$row]['review_user_rating'] = $leagues[$row]['average_user_rating'];
 				//This will need the use of a function which returns what a organisition has being reviews on
-				$reviews['review_link'][$row] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name'];
-				$reviews['review_blurb'][$row] = $leagues[$row]['organisation_description'];
-				$reviews['review_title'][$row] = $leagues[$row]['organisation_name'];
+				$reviews[$row]['review_link'] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name'];
+				$reviews[$row]['review_blurb'] = $leagues[$row]['organisation_description'];
+				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
 			}
 
 		//Pass over the amount of entries to view
