@@ -27,6 +27,17 @@ function printarticlelink($article) {
 if ((count($news_previews) > 0) || ((isset($puffers)) && (count($puffers) > 0)))
 	echo('	<h2 class="first">' . $latest_heading . '</h2>');
 
+if (isset($blogs)) {
+	foreach ($blogs as $blog) {
+		echo '<div class=\'Puffer\'>';
+		echo '<a href=\'/news/' . $blog['codename'] . '\'>';
+		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' />';
+		echo '</a></div>';
+	}
+	if (count($news_previews) > 0)
+		echo '<h2>' . $other_heading . '</h2>';
+}
+
 if (isset($puffers)) {
 	foreach ($puffers as $puffer) {
 		echo '<div class=\'Puffer\'>';

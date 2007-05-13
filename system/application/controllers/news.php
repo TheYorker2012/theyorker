@@ -64,13 +64,24 @@ class News extends Controller {
 		$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->helper('images');
-			$temp_type = $article_type;
-			if ($type_info['parent_id'] != NULL) {
+			if ($type_info['section'] == 'blogs') {
 				$temp_type = $parent['content_type_codename'];
-			}
-			$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
-			foreach ($data['puffers'] as &$puffer) {
-				$puffer['image'] = imageLocation($puffer['image'], $puffer['image_codename'], $puffer['image_extension']);
+				if ($type_info['has_children']) {
+					$temp_type = $article_type;
+				}
+				$data['blogs'] = $this->News_model->getSubArticleTypes($temp_type);
+				foreach ($data['blogs'] as &$blog) {
+					$blog['image'] = imageLocation($blog['image'], $blog['image_codename'], $blog['image_extension']);
+				}
+			} else {
+				$temp_type = $article_type;
+				if ($type_info['parent_id'] != NULL) {
+					$temp_type = $parent['content_type_codename'];
+				}
+				$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
+				foreach ($data['puffers'] as &$puffer) {
+					$puffer['image'] = imageLocation($puffer['image'], $puffer['image_codename'], $puffer['image_extension']);
+				}
 			}
 		}
 
