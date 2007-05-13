@@ -9,13 +9,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta name="description" content="<?php echo $description; ?>" />
 	<meta name="keywords" content="<?php echo $keywords; ?>" />
 
-	<title>The Yorker - <?php 
+	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($head_title)) { 
-			echo $head_title; 
-		} else { 
-			echo 'no pagename'; 
-		} 
+		if(isset($head_title)) {
+			echo $head_title;
+		} else {
+			echo 'no pagename';
+		}
 	?></title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
@@ -26,13 +26,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-	
+
 	<?php
 	if (isset($extra_css)) {
 		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
 	}
 	?>
-	
+
 	<!-- BEGIN Multiple event handlers code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -67,7 +67,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<?php
 	include('maps.php');
 	?>
-	
+
 	<!-- BEGIN search box code -->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -109,7 +109,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		return false;
 	}
-	
+
 	//onLoadFunctions.push(hideFeedback);
 
 	//]]>
@@ -176,14 +176,14 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/logout/office'>Leave Office</a>
 		</div>
-
+		<!--
 		<div class='officenavigation_title'>
 			Calendar
 		</div>
-
 		<div class='officenavigation_item'>
 			<a href='/office/packages/'>Packages</a>
 		</div>
+		-->
 		<div class='officenavigation_item'>
 			<a href='/office/directory/'>Directory</a>
 		</div>
@@ -192,11 +192,17 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			Sections
 		</div>
 
+					<li class="first"><a href="/news/uninews">Uni News</a></li>
+					<li><a href="/news/features/">Features</a></li>
+					<li><a href="/news/lifestyle/">Lifestyle</a></li>
+					<li><a href="/news/arts/">Arts</a></li>
+					<li><a href="/news/sport/">Sport</a></li>
+					<li><a href="/news/comment/">Comment</a></li>
+					<li><a href="/reviews/food">Food</a></li>
+					<li><a href="/reviews/drink">Drink</a></li>
+
 		<div class='officenavigation_item'>
 			<a href='/office/news/uninews/'>Uni News</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/national/'>UK &amp; World News</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/features/'>Features</a>
@@ -211,17 +217,22 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/sport/'>Sport</a>
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/food/'>Comment</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/news/food/'>Food</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/drink/'>Drink</a>
 		</div>
+		<!--
 		<div class='officenavigation_item'>
 			<a href='/office/news/culture/'>Culture</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/archive/'>Manage Writer</a>
 		</div>
+		-->
 
 		<div class='officenavigation_title'>
 			Photographers
@@ -233,9 +244,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/gallery/'>Gallery</a>
 		</div>
+
+		<!--
 		<div class='officenavigation_item'>
 			<a href='/office/photographers'>Manage Photographers</a>
 		</div>
+		-->
 
 		<div class='officenavigation_title'>
 			Reviews
@@ -247,9 +261,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/reviewlist/drink'>Drink</a>
 		</div>
+		<!--
 		<div class='officenavigation_item'>
 			<a href='/office/reviewlist/culture'>Culture</a>
 		</div>
+		-->
 
 		<div class='officenavigation_title'>
 			Other Features
@@ -263,10 +279,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
+		<!--
 		<div class='officenavigation_item'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
-	
+		-->
+
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
