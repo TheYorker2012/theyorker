@@ -33,7 +33,7 @@ if (isset($blogs)) {
 		echo '<a href=\'/news/' . $blog['codename'] . '\'>';
 		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' style="float:right;" />';
 		echo $blog['name'];
-		echo '</a></div>';
+		echo '</a><br style="clear:both" /></div>';
 	}
 	if (count($news_previews) > 0)
 		echo '<h2>' . $other_heading . '</h2>';
