@@ -8,7 +8,11 @@ if($business_card['image_id'] == NULL)
 ?>
 <div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
 	<div style='float:right;'>
-		<img src='<?php echo $business_card['image']; ?>' alt='<?php echo $business_card['name']; ?>' />
+<?php if ($business_card['image_id'] == NULL) {
+	echo '<img src="/images/prototype/directory/members/no_image.png" alt="no user image" />';
+} else {
+	echo imageLocTag($business_card['image_id'], 'userimage', false, $business_card['name']);
+}?>
 	</div>
 	<span style="font-size: large;  color: #2DC6D7; ">
 	<?php
