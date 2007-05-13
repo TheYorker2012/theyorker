@@ -297,7 +297,7 @@ class Reviews extends Controller
 				}
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
-				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));
+				return $this->image_upload->recieveUpload('office/reviews/'..'/'.$ContextType.'/photos', array('slideshow'));
 			} elseif (isset($_SESSION['img']['list'])) {
 				foreach ($_SESSION['img']['list'] as $newID) {
 					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
