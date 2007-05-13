@@ -30,22 +30,22 @@ if($business_card['image_id'] == NULL)
 		<?php
 		if (!empty($business_card['course'])) {
 			?>
-			<img alt="Course" name="Course" src="/images/prototype/directory/scroll.gif" /> <?php echo $business_card['course']; ?><br />
+			<img alt="Course" name="Course" src="/images/icons/script.png" /> <?php echo $business_card['course']; ?><br />
 			<?php
 		}
 		if (!empty($business_card['email'])) {
 			?>
-			<img alt="Email" name="Email" src="/images/prototype/directory/email.gif" /> <a href='mailto:<?php echo $business_card['email']; ?>'><?php echo $business_card['email']; ?></a><br />
+			<img alt="Email" name="Email" src="/images/icons/email.png" /> <a href='mailto:<?php echo $business_card['email']; ?>'><?php echo $business_card['email']; ?></a><br />
 			<?php
 		}
 		if (!empty($business_card['postal_address'])) {
 			?>
-			<img alt="Address" name="Address" src="/images/prototype/directory/address.gif" /> <?php echo $business_card['postal_address']; ?><br />
+			<img alt="Address" name="Address" src="/images/icons/map.png" /> <?php echo $business_card['postal_address']; ?><br />
 			<?php
 		}
 		if(!empty($business_card['phone_internal']) or !empty($business_card['phone_external']) or !empty($business_card['phone_mobile'])){
 		?>
-			<img alt="Phone" name="Phone" src="/images/prototype/directory/phone.gif" />
+			<img alt="Phone" name="Phone" src="/images/icons/phone.png" />
 			<?php
 			if (!empty($business_card['phone_internal'])) {
 			echo $business_card['phone_internal'].", ";
