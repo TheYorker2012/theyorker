@@ -81,7 +81,12 @@ class Review_model extends Model {
 		if ($this->db->affected_rows()) {
 			$this->load->model('comments_model');
 			$CI = & get_instance();
-			$CI->comments_model->CreateThread(array(), 'review_contexts', $query[0], 'review_context_comment_thread_id');
+			$CI->comments_model->CreateThread(
+				array(), 'review_contexts',
+				$query[0], 'review_context_comment_thread_id');
+			$CI->comments_model->CreateThread(
+				array('allow_anonymous_comments' => FALSE), 'review_contexts',
+				$query[0], 'review_context_office_comment_thread_id');
 			return TRUE;
 		} else {
 			return FALSE;
@@ -1077,6 +1082,24 @@ function GetTagOrganisation($type,$organisation)
 	
 	
 	/// Get information about the private comments thread.
+	/**
+	 * @param $OrganisationId int ID of the organisation.
+	 * @param $ContentTypeId int ID of the content type.
+	 * @pre loaded(model comments_model)
+	 * @return Same as comments_model::GetThreadByLinkTable
+	 */
+	function GetReviewContextOfficeCommentThread($OrganisationId, $ContentTypeId)
+	{
+		return $this->comments_model->GetThreadByLinkTable(
+			'review_contexts','review_context_office_comment_thread_id',
+			array(
+				'review_context_organisation_entity_id'	=> $OrganisationId,
+				'review_context_content_type_id'		=> $ContentTypeId,
+			)
+		);
+	}
+	
+	/// Get information about the public comments thread.
 	/**
 	 * @param $OrganisationId int ID of the organisation.
 	 * @param $ContentTypeId int ID of the content type.
