@@ -77,8 +77,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<div id="Page">
 		<div id="NavigationColumn">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
-				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
-				<input type="hidden" name="cof" value="FORID:0" />
+				<fieldset>
+					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+					<input type="hidden" name="cof" value="FORID:0" />
+				</fieldset>
 				<fieldset id="SearchBox">
 					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
 				</fieldset>
