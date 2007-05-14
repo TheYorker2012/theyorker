@@ -24,7 +24,7 @@ if (isset($league_data)) {
 		<tbody>
 		<?php
 		
-		if (count($reviews) == 0)
+		if (isset($reviews) == false)
 		{
 		?>
 		<tr>
@@ -37,12 +37,12 @@ if (isset($league_data)) {
 				No Results.
 			</td>
 		</tr>
-		<?php		
-		
+		<?php	
 		}
-		
-		foreach($reviews as $entry)
-		{
+		else
+		{		
+			foreach($reviews as $entry)
+			{
 		
 		?>
 		<tr>
@@ -135,8 +135,8 @@ if (isset($league_data)) {
 		</tr>
 		<?php
 		
+			}		
 		}
-		
 		?>
 		</tbody>
 		</table>
@@ -145,4 +145,8 @@ if (isset($league_data)) {
 
 <?php
 }
+
+echo '<pre>';
+print_r($data);
+echo '</pre>';
 ?>
