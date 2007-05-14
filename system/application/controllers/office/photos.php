@@ -157,7 +157,7 @@ class Photos extends Controller
 				if ($data['status'] == 'completed') {
 					$data['access']['details'] = array(
 						'editor'		=>	TRUE,
-						'photographer'	=>	FALSE,
+						'photographer'	=>	TRUE,
 						'reporter'		=>	TRUE,
 						'everyone'		=>	FALSE
 					);
