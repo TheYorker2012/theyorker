@@ -65,7 +65,9 @@ class News extends Controller {
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->helper('images');
 			if ($type_info['section'] == 'blogs') {
-				$temp_type = $parent['content_type_codename'];
+				if ($type_info['parent_id'] != NULL) {
+					$temp_type = $parent['content_type_codename'];
+				}
 				if ($type_info['has_children']) {
 					$temp_type = $article_type;
 				}
