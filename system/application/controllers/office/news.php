@@ -23,6 +23,19 @@ class News extends Controller
 		$this->load->model('requests_model');
 	}
 
+	/**
+	 *	@brief	Testing new interface idea
+	 */
+	function test ()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$data['test'] = 'test';
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/test', $data);
+		$this->main_frame->Load();
+	}
 
 	/**
 	 *	@brief Determines which function is used depending on url
@@ -656,11 +669,11 @@ class News extends Controller
 
 			// Create menu
 			$navbar = $this->main_frame->GetNavbar();
-			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
-			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
-			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
-			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
 			$navbar->AddItem('request', 'request', 'javascript:tabs(\'request\');');
+			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
+			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
+			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
+			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
 			$navbar->SetSelected('request');
 
 			// Get page content
