@@ -167,8 +167,49 @@ class Reviews extends Controller
 		}
 		
 		if ('preview' === $action) {
-			$this->messages->AddMessage('error', 'Previewing of revisions is not yet available');
-			$action = 'view';
+			$here = site_url('office/reviews/'.$organisation.'/'.$ContextType.'/information');
+			
+			$revision = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType, $revision_id);
+			if (!array_key_exists(0, $revision)) {
+				$action = 'view';
+			} else {
+			
+				//Show a toolbar in a message for the preview.
+				$published = $revision[0]['published'];
+				$user_level = GetUserLevel();
+				$is_deleted = $revision[0]['deleted'];
+				if ($published) {
+					$message = 'This is a preview of the current published review page.<br />';
+				} else {
+					if ($is_deleted) {
+						$message = 'This is a preview of a <span class="red">deleted</span> review page revision.<br />';
+					} else {
+						$message = 'This is a preview of a review page revision.<br />';
+					}
+				}
+				$message .= '<a href="'.$here.'/view/'.$revision_id.'">Go Back</a>';
+				
+				if ($published == false) {
+					if ($editor_level) {
+						$message .= ' | <a href="'.$here.'/publish/'.$revision_id.'">Publish This Revision</a>';
+					}
+					
+					if ($is_deleted) {
+						if ($editor_level) {
+							$message .= ' | <a href="'.$here.'/restore/'.$revision_id.'">Restore This Revision</a>';
+						}
+					} else {
+						$message .= ' | <a href="'.$here.'/delete/'.$revision_id.'">Delete This Revision</a>';
+					}
+				}
+				
+				$this->messages->AddMessage('information',$message);
+				
+				$this->load->library('Review_views');
+				$this->review_views->DisableComments();
+				$this->review_views->SetRevision($revision_id);
+				$this->review_views->DisplayReview($ContextType,$organisation);
+			}
 		}
 
 		if ('view' === $action) {

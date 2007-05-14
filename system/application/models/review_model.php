@@ -158,7 +158,7 @@ class Review_model extends Model {
 	/**
 	 * @return A single review context for an organisation
 	 */
-	function GetReviewContextContentRevisions($organisation_shortname,$content_type_codename)
+	function GetReviewContextContentRevisions($organisation_shortname,$content_type_codename, $revision_id = -1)
 	{
 		$sql =
 			'SELECT
@@ -176,8 +176,13 @@ class Review_model extends Model {
 			INNER JOIN content_types
 			ON review_contexts.review_context_content_type_id=content_types.content_type_id
 			 AND content_types.content_type_codename = ?
-			INNER JOIN review_context_contents 
-			ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
+			INNER JOIN review_context_contents
+			  	ON  review_context_content_content_type_id = review_context_content_type_id
+			  	AND  review_context_content_organisation_entity_id = review_context_organisation_entity_id';
+		if ($revision_id !== -1) {
+			$sql .= ' AND review_context_contents.review_context_content_id = '.$this->db->escape($revision_id);
+		}
+		$sql .= '
 			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users 
 			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
@@ -252,12 +257,12 @@ class Review_model extends Model {
 	}
 
 
-	function GetReview($organisation_directory_entry_name,$content_type_codename) {
+	function GetReview($organisation_directory_entry_name,$content_type_codename, $context_revision_id = -1) {
 
-	#dgh500
-	# need organisation type?
-	# need organisation fileas - what IS this?? all null in DB
-	$sql = '
+		#dgh500
+		# need organisation type?
+		# need organisation fileas - what IS this?? all null in DB
+		$sql = '
 			SELECT
 			organisations.organisation_entity_id,
 			organisations.organisation_name,
@@ -284,21 +289,29 @@ class Review_model extends Model {
 			review_context_contents.review_context_content_rating,
 			review_context_contents.review_context_content_serving_times,
 			review_context_contents.review_context_content_content_type_id
-			  FROM content_types
+			  FROM review_contexts
+			  INNER JOIN content_types
+			  	ON content_types.content_type_id = review_contexts.review_context_content_type_id
 			  INNER JOIN review_context_contents
-			  ON content_types.content_type_id = review_context_contents.review_context_content_content_type_id
+			  	ON  review_context_content_content_type_id = review_context_content_type_id
+			  	AND  review_context_content_organisation_entity_id = review_context_organisation_entity_id';
+		if ($context_revision_id !== -1) {
+			$sql .= ' AND review_context_contents.review_context_content_id = '.$this->db->escape($context_revision_id);
+		} else {
+			$sql .= ' AND review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id';
+		}
+		$sql .= '
 			  INNER JOIN organisations
-			  ON review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
+			  ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
 			  INNER JOIN organisation_contents 
 			  ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
-			  WHERE content_types.content_type_codename = "'.$content_type_codename.'"
-			  AND organisations.organisation_directory_entry_name = "'.$organisation_directory_entry_name.'"
-			';
+			  WHERE content_types.content_type_codename = '.$this->db->escape($content_type_codename).'
+			  AND organisations.organisation_directory_entry_name = '.$this->db->escape($organisation_directory_entry_name);
 
-	$result = $query = $this->db->query($sql);
-	$reviews = $query->result_array();
-
-	return $reviews;
+		$result = $query = $this->db->query($sql);
+		$reviews = $query->result_array();
+	
+		return $reviews;
 	}
 
 	function GetLeague($league_codename,$order='ASC',$sortby='league_entries.league_entry_position') {
@@ -340,29 +353,29 @@ class Review_model extends Model {
 				WHERE leagues.league_codename = ?
 				ORDER BY ? ?
 				';
-	$query = $this->db->query($sql,array($league_codename,$sortby,$order));
-	$tmpleague = array();
-	$league    = array();
-
-	// Assign nice names to the result
-	foreach($query->result() as $row) {
-		$tmpleague['organisation_name']        = $row->organisation_name;
-		$tmpleague['organisation_url']         = $row->organisation_content_url;
-		$tmpleague['organisation_description']         = $row->organisation_description;
-		$tmpleague['league_entry_position']    = $row->league_entry_position;
-		$tmpleague['league_name']              = $row->league_name;
-		$tmpleague['content_type_name']		   = $row->content_type_name;
-		$tmpleague['content_type_codename']	   = $row->content_type_codename;
-		$tmpleague['review_rating'] = $row->review_context_content_rating;
-		$tmpleague['review_quote'] = $row->review_context_content_quote;
-		$tmpleague['average_user_rating'] = 0;
-		if ($row->average_user_rating != '')
-			$tmpleague['average_user_rating']	   = $row->average_user_rating;
-		$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
-		$league[]                              = $tmpleague;
-	}
-
-	return $league;
+		$query = $this->db->query($sql,array($league_codename,$sortby,$order));
+		$tmpleague = array();
+		$league    = array();
+	
+		// Assign nice names to the result
+		foreach($query->result() as $row) {
+			$tmpleague['organisation_name']        = $row->organisation_name;
+			$tmpleague['organisation_url']         = $row->organisation_content_url;
+			$tmpleague['organisation_description']         = $row->organisation_description;
+			$tmpleague['league_entry_position']    = $row->league_entry_position;
+			$tmpleague['league_name']              = $row->league_name;
+			$tmpleague['content_type_name']		   = $row->content_type_name;
+			$tmpleague['content_type_codename']	   = $row->content_type_codename;
+			$tmpleague['review_rating'] = $row->review_context_content_rating;
+			$tmpleague['review_quote'] = $row->review_context_content_quote;
+			$tmpleague['average_user_rating'] = 0;
+			if ($row->average_user_rating != '')
+				$tmpleague['average_user_rating']	   = $row->average_user_rating;
+			$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
+			$league[]                              = $tmpleague;
+		}
+	
+		return $league;
 	}
 
 	//Get league type
