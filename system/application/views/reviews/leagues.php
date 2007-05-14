@@ -145,8 +145,4 @@ if (isset($league_data)) {
 
 <?php
 }
-
-echo '<pre>';
-print_r($data);
-echo '</pre>';
 ?>
