@@ -126,7 +126,26 @@ class Reviews extends Controller
 		//Get the article summary
 		//$article_database_result = $this->News_model->GetFullArticle($article_id);
 
-		$main_article = $this->News_model->GetFullArticle($article_id[0]);
+		/// If there are no articles for this particular section then show a page anyway
+		if (count($article_id) == 0) {
+			$main_article = array(
+				'id'						=>	0,
+				'date'					=>	date('l, jS F Y'),
+				'location'				=> 0,
+				'public_thread_id'	=>	NULL,
+				'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
+				'subheading'			=>	NULL,
+				'subtext'				=>	NULL,
+				'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
+				'blurb'					=>	NULL,
+				'authors'				=>	array(),
+				'links'					=>	array(),
+				'related_articles'	=> array(),
+				'fact_boxes'			=>	array()
+			);
+		} else {
+			$main_article = $this->News_model->GetFullArticle($article_id[0]);
+		}
 
 		$data['main_article'] = $main_article;
 

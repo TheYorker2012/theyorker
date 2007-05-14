@@ -81,7 +81,7 @@
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
-		<div style="float:right;color:#999;margin-top:0;line-height:95%;">
+		<div style="float:right;margin-top:0;line-height:95%;">
 			<?php echo($main_article['primary_photo_xhtml']); ?><br />
 			<?php echo($main_article['primary_photo_caption']); ?>
 		</div>
@@ -96,7 +96,7 @@
 		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
 <?php } ?>
 
-		<?php echo $main_article['text']; ?>
+        <?php echo $main_article['text']; ?>
 
 		<?php if (isset($office_preview)) { ?>
 			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
@@ -118,5 +118,4 @@
 		$comments->Load();
 	}
 	?>
-
 </div>
