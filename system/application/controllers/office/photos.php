@@ -167,6 +167,9 @@ class Photos extends Controller
 							if ($data['assigned_status'] == 'requested') {
 								$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
 								redirect('/office/photos/view/'.$request_id);
+							} elseif ($data['assigned_status'] == 'accepted') {
+								$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'declined');
+								redirect('/office/photos/view/'.$request_id);
 							}
 						} elseif ($data['user_level'] == 'editor') {
 							$this->photos_model->UnassignPhotographer($request_id);
