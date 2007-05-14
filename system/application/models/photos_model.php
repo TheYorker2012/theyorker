@@ -36,7 +36,7 @@ class Photos_model extends Model
 		if ($query->num_rows() > 0) {
 			foreach ($query->result() as $row) {
 				$request = array(
-					'id'			=>	$row->photo_request_id,
+					'id'		=>	$row->photo_request_id,
 					'title'		=>	$row->photo_request_title,
 					'time'		=>	$row->photo_request_timestamp
 				);
@@ -91,22 +91,21 @@ class Photos_model extends Model
 		} else {
 			$row = $query->row();
       	$result = array(
-				'id'					=> $id,
+				'id'				=>	$id,
 				'title'				=>	$row->photo_request_title,
 				'description'		=>	$row->photo_request_description,
 				'article_id'		=>	$row->photo_request_article_id,
-				'article_title'	=>	$row->article_request_title,
+				'article_title'		=>	$row->article_request_title,
 				'time'				=>	$row->photo_request_timestamp,
 				'reporter_id'		=>	$row->photo_request_user_entity_id,
-				'reporter_name'	=>	$row->user_firstname . ' ' . $row->user_surname,
+				'reporter_name'		=>	$row->user_firstname . ' ' . $row->user_surname,
 				'editor_id'			=>	$row->photo_request_approved_user_entity_id,
 				'comments_thread'	=>	$row->photo_request_comment_thread_id
       	);
       	if ($row->photo_request_approved_user_entity_id !== NULL) {
-				$editor_sql = 'SELECT users.user_firstname,
-										users.user_surname
-									FROM users
-									WHERE users.user_entity_id = ?';
+				$editor_sql = 'SELECT users.user_firstname, users.user_surname
+							FROM users
+							WHERE users.user_entity_id = ?';
 				$editor_query = $this->db->query($editor_sql,array($row->photo_request_approved_user_entity_id));
 				$editor_row = $editor_query->row();
 				$result['editor_name'] = $editor_row->user_firstname . ' ' . $editor_row->user_surname;
@@ -119,10 +118,9 @@ class Photos_model extends Model
 				WHERE photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
 				AND photo_request_users.photo_request_user_photo_request_id = ?';
 			$user_query = $this->db->query($user_sql, array($id));
-			if ($user_query->num_rows() == 0) {
-				$result['status'] = 'unassigned';
-				$result['assigned_status'] = 'unassigned';
-			} else {
+			$result['status'] = 'unassigned';
+			$result['assigned_status'] = 'unassigned';
+			if ($user_query->num_rows() > 0) {
 				$user_row = $user_query->row();
 				$result['assigned_name'] = $user_row->user_firstname . ' ' . $user_row->user_surname;
 				$result['assigned_id'] = $user_row->photo_request_user_user_entity_id;
@@ -159,12 +157,12 @@ class Photos_model extends Model
 		$query = $this->db->query($sql,array($id));
 		foreach ($query->result() as $photo) {
 			$result[] = array(
-				'id'			=>	$photo->photo_request_photo_photo_id,
+				'id'		=>	$photo->photo_request_photo_photo_id,
 				'comment'	=>	$photo->photo_request_photo_comment,
 				'time'		=>	$photo->photo_request_photo_date,
 				'user_id'	=>	$photo->photo_request_photo_user_id,
 				'user_name'	=>	$photo->user_firstname . ' ' . $photo->user_surname,
-				'url'			=>	imageLocation($photo->photo_request_photo_photo_id, 'small')
+				'url'		=>	imageLocation($photo->photo_request_photo_photo_id, 'small')
 			);
 		}
 		return $result;
@@ -187,6 +185,53 @@ class Photos_model extends Model
 					photo_requests.photo_request_description = ?
 				WHERE photo_requests.photo_request_id = ?';
 		$query = $this->db->query($sql,array($title,$description,$request_id));
+	}
+
+	/**
+	 *	@brief	Retrieves a list of all users subscribed to the photographers organisation (ID:456)
+	 */
+	function GetPhotographers()
+	{
+		$result = array();
+		$sql = 'SELECT	users.user_entity_id,
+						users.user_firstname,
+						users.user_surname
+				FROM	users, subscriptions
+				WHERE	users.user_entity_id = subscriptions.subscription_user_entity_id
+				AND		subscriptions.subscription_organisation_entity_id = 456
+				AND		subscriptions.subscription_user_confirmed = 1
+				AND		subscriptions.subscription_organisation_confirmed = 1
+				AND		subscriptions.subscription_deleted = 0
+				ORDER BY users.user_surname ASC, users.user_firstname ASC';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$result[] = array(
+					'id'	=>	$row->user_entity_id,
+					'name'	=>	$row->user_firstname . ' ' . $row->user_surname
+				);
+			}
+		}
+		return $result;
+	}
+
+	function AssignPhotographer($request_id,$user_id,$status = 'requested')
+	{
+		/// Remove any previous assigned photographer as only one may be assigned at a time
+		$this->UnassignPhotographer($request_id);
+		/// Insert new request for a photographer
+		$sql = 'INSERT INTO photo_request_users
+				SET	photo_request_users.photo_request_user_photo_request_id = ?,
+					photo_request_users.photo_request_user_user_entity_id = ?,
+					photo_request_users.photo_request_user_status = ?';
+		$query = $this->db->query($sql,array($request_id,$user_id,$status));
+	}
+
+	function UnassignPhotographer($request_id)
+	{
+		$sql = 'DELETE FROM photo_request_users
+				WHERE photo_request_users.photo_request_user_photo_request_id = ?';
+		$query = $this->db->query($sql,array($request_id));
 	}
 
 }

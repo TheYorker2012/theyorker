@@ -86,7 +86,37 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 	echo($assigned_name . ' (' . $assigned_status . ')');
 } ?>
 				</div>
-				<input type='button' name='r_assign' value='Assign to me' class='button' />
+<?php
+$assign_text = '';
+$other_input = '';
+
+$select_users = '<select name="r_assignuser" id="r_assignuser" size="">';
+foreach ($photographers as $user) {
+	$select_users .= '	<option value='.$user['id'].'>'.$user['name'].'</option>';
+}
+$select_users .= '	</select>';
+
+if ($status == 'unassigned') {
+	if ($user_level == 'editor') {
+		$assign_text = 'Assign';
+		$other_input = $select_users;
+	} else {
+		$assign_text = 'Assign Me';
+	}
+} elseif ($status == 'assigned') {
+	if ($user_level == 'editor') {
+		$assign_text = 'Unassign';
+	} elseif ($user_level == 'photographer') {
+		$assign_text = 'Unassign Me';
+		if ($assigned_status == 'requested') {
+			$assign_text = 'Accept';
+			$other_input = '<input type="submit" name="r_decline" value="Decline" class="button" />';
+		}
+	}
+}
+?>
+				<?php echo($other_input); ?>
+				<?php if ($assign_text != '') { ?><input type="submit" name="r_assign" value="<?php echo($assign_text); ?>" class="button" /><?php } ?>
 				<br />
 <?php if ($editor_id !== NULL) { ?>
 				<label for="r_reviewed">Reviewed by:</label>
@@ -121,7 +151,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 
 <?php } else { ?>
 	</form>
-	<form>
+	<form class="form">
 		<div class="blue_box">
 			<h2>photos</h2>
 			<div id="proposed_photos">

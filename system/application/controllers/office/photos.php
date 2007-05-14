@@ -82,6 +82,8 @@ class Photos extends Controller
 
 				/// Get suggested photos for request
 				$data['photos'] = $this->photos_model->GetSuggestedPhotos($request_id);
+				/// Get photographers that request can be assigned to
+				$data['photographers'] = $this->photos_model->GetPhotographers();
 
 				/// Get comments
 				if (is_numeric($data['comments_thread'])) {
@@ -114,48 +116,29 @@ class Photos extends Controller
 
 				/// Access matrix
 				$data['access']['details'] = array(
-					'editor'			=>	TRUE,
+					'editor'		=>	TRUE,
 					'photographer'	=>	FALSE,
-					'reporter'		=> TRUE,
-					'everyone'		=> FALSE
-				);
-				$data['access']['upload'] = array(
-					'editor'			=>	TRUE,
-					'photographer'	=>	TRUE,
-					'reporter'		=> TRUE,
-					'everyone'		=> TRUE
-				);
-				$data['access']['gallery'] = array(
-					'editor'			=>	TRUE,
-					'photographer'	=>	TRUE,
-					'reporter'		=> TRUE,
-					'everyone'		=> TRUE
+					'reporter'		=>	TRUE,
+					'everyone'		=>	FALSE
 				);
 				$data['access']['ready'] = array(
-					'editor'			=>	TRUE,
+					'editor'		=>	TRUE,
 					'photographer'	=>	TRUE,
-					'reporter'		=> FALSE,
-					'everyone'		=> FALSE
+					'reporter'		=>	FALSE,
+					'everyone'		=>	FALSE
 				);
 				$data['access']['complete'] = array(
-					'editor'			=>	TRUE,
+					'editor'		=>	TRUE,
 					'photographer'	=>	FALSE,
-					'reporter'		=> FALSE,
-					'everyone'		=> FALSE
+					'reporter'		=>	FALSE,
+					'everyone'		=>	FALSE
 				);
 				$data['access']['cancel'] = array(
-					'editor'			=>	TRUE,
+					'editor'		=>	TRUE,
 					'photographer'	=>	FALSE,
-					'reporter'		=> TRUE,
-					'everyone'		=> FALSE
+					'reporter'		=>	TRUE,
+					'everyone'		=>	FALSE
 				);
-
-				/*	Possible photo request statuses:
-					-*	open	unassigned
-					-	open	assigned		requested
-					-	open	assigned		accepted
-					-*	open	assigned		declined
-				*/
 
 				/// Check if user is trying to edit request's details
 				if ($this->input->post('r_details') == 'Edit') {
@@ -166,6 +149,34 @@ class Photos extends Controller
 						redirect('/office/photos/view/'.$request_id.'/');
 					} else {
 						$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
+					}
+				}
+
+				/// Check if trying to change assigned photographer
+				if ($this->input->post('r_assign') !== FALSE) {
+					if ($status == 'unassigned') {
+						if (($user_level == 'editor') && (is_numeric($this->input->post('r_assignuser')))) {
+							$this->photos_model->AssignPhotographer($request_id,$this->input->post('r_assignuser'));
+							redirect('/office/photos/view/'.$request_id);
+						} else {
+							$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
+							redirect('/office/photos/view/'.$request_id);
+						}
+					} elseif ($status == 'assigned') {
+						if ($user_level == 'editor') {
+							$this->photos_model->UnassignPhotographer($request_id);
+							redirect('/office/photos/view/'.$request_id);
+						} elseif ($user_level == 'photographer') {
+							if ($assigned_status == 'requested') {
+								$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
+								redirect('/office/photos/view/'.$request_id);
+							}
+						}
+					}
+				} elseif ($this->input->post('r_decline') !== FALSE) {
+					if (($status == 'assigned') && ($user_level == 'photographer') && ($assigned_status == 'requested')) {
+						$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'declined');
+						redirect('/office/photos/view/'.$request_id);
 					}
 				}
 
