@@ -157,7 +157,7 @@ class Photos extends Controller
 
 				/// Check if user is trying to cancel or (un)ready a request
 				$special_op = $this->uri->segment(5);
-				if (($special_op) && (is_numeric($special_op))) {
+				if ($special_op) {
 					if ($special_op == 'ready') {
 						if ($data['access']['ready'][$data['user_level']]) {
 							$this->photos_model->FlagRequestReady($request_id);
