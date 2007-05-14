@@ -139,6 +139,48 @@ class Photos extends Controller
 					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
+				$data['request_finished'] = FALSE;
+				if (($data['status'] == 'deleted') || ($data['status'] == 'completed')) {
+					$data['request_finished'] = TRUE;
+				}
+				if (($data['status'] == 'unassigned') || ($data['status'] == 'assigned')) {
+					$data['request_editable'] = TRUE;
+				} else {
+					$data['request_editable'] = FALSE;
+					$data['access']['details'] = array(
+						'editor'		=>	FALSE,
+						'photographer'	=>	FALSE,
+						'reporter'		=>	FALSE,
+						'everyone'		=>	FALSE
+					);
+				}
+
+				/// Check if user is trying to cancel or (un)ready a request
+				$special_op = $this->uri->segment(5);
+				if ((!$special_op) || (!is_numeric($special_op))) {
+					redirect('/office/photos/view/'.$request_id);
+				} elseif ($special_op == 'ready') {
+					if ($data['access']['ready'][$data['user_level']]) {
+						$this->photos_model->FlagRequestReady($request_id);
+					} else {
+						$this->main_frame->AddMessage('error','You do not have the necessary permissions to flag this request as being ready.');
+					}
+					redirect('/office/photos/view/'.$request_id);
+				} elseif ($special_op == 'unready') {
+					if ($data['access']['ready'][$data['user_level']]) {
+						$this->photos_model->FlagRequestReady($request_id,0);
+					} else {
+						$this->main_frame->AddMessage('error','You do not have the necessary permissions to remove the ready flag on this request.');
+					}
+					redirect('/office/photos/view/'.$request_id);
+				} elseif ($special_op == 'cancel') {
+					if ($data['access']['cancel'][$data['user_level']]) {
+						$this->photos_model->CancelRequest($request_id);
+					} else {
+						$this->main_frame->AddMessage('error','You do not have the necessary permissions to cancel this photo request.');
+					}
+					redirect('/office/photos/view/'.$request_id);
+				}
 
 				/// Check if user is trying to edit request's details
 				if ($this->input->post('r_details') == 'Edit') {

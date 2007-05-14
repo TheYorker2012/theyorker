@@ -39,22 +39,22 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 	</style>
 
 	<div class='RightToolbar'>
-	    <h4>Reporter</h4>
+	    <h4>Operations</h4>
 	   	<ul>
-				<li><a href='#'>Upload new photo</a></li>
-				<li><a href='#'>Select photo from gallery</a></li>
-				<li><a href='#'>Cancel Request</a></li>
-			</ul>
-			<h4>Photographer</h4>
-			<ul>
-				<li><a href='#'>Upload new photo</a></li>
-				<li><a href='#'>Select photo from gallery</a></li>
-				<li><a href='#'>Flag for review</a></li>
-			</ul>
-			<h4>Editor</h4>
-			<ul>
-				<li><a href='#'>Flag for review</a></li>
-				<li><a href='#'>Cancel Request</a></li>
+			<?php if ($request_editable) { ?>
+				<li><a href='/office/gallery/upload/'>Upload new photo</a></li>
+				<li><a href='/office/gallery/'>Select photo from gallery</a></li>
+			<?php } ?>
+			<?php if ($access['ready'][$user_level]) {
+				if ($request_editable) { ?>
+					<li><a href='/office/photos/view/<?php echo($id); ?>/ready'>Flag as ready</a></li>
+				<?php } elseif (!$request_finished) { ?>
+					<li><a href='/office/photos/view/<?php echo($id); ?>/unready'>Remove ready flag</a></li>
+				<?php } ?>
+			<?php } ?>
+			<?php if (($access['cancel'][$user_level]) && (!$request_finished)) { ?>
+				<li><a href='/office/photos/view/<?php echo($id); ?>/cancel'>Cancel Request</a></li>
+			<?php } ?>
 			</ul>
 	</div>
 
@@ -161,18 +161,19 @@ if ($status == 'unassigned') {
 <?php foreach ($photos as $photo) {
 	echo('				<div class="photo_item">');
 	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a>');
-	echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
+	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
+		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
+	}
 	echo('					' . $photo['user_name'] . '<br />');
 	echo('					' . date('d/m/y @ H:i',$photo['time']) . '');
 	echo('            </div>');
 } ?>
 			</div>
 			<div style="clear:both;">&nbsp;</div>
-			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location='/office/gallery/';" />
-			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/gallery/upload/';" />
-			<div style="clear:both;">&nbsp;</div>
 		</div>
+	</form>
 
+<!--
 		<div class="grey_box">
 			<h2>comments</h2>
 			<div id="comment_container">
@@ -204,8 +205,7 @@ if ($status == 'unassigned') {
 			 	<input type="button" name="add_comment" id="add_comment" value="Add Comment" class="button" />
 			</fieldset>
 		</div>
-
-	</form>
+-->
 
 	<div style="width:422px;">
 	<?php // Display comments if thread exists
