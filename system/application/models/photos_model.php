@@ -192,6 +192,8 @@ class Photos_model extends Model
 		$row = $query->row();
 		if ($row->next_number === NULL) {
 			$row->next_number = 0;
+		} else {
+			$row->next_number++;
 		}
 
 		/// Insert new photo request
