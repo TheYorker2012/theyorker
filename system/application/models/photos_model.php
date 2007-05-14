@@ -207,7 +207,7 @@ class Photos_model extends Model
 				VALUES	(?,?,?,1,?,?)';
 		$query = $this->db->query($sql,array($user_id,$article_id,$row->next_number,$title,$description));
 		$new_id = $this->db->insert_id();
-var_dump($new_id);
+
 		/// Create new comment thread
 		$this->load->model('comments_model');
 		$CI = &get_instance();
