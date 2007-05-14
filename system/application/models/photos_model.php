@@ -254,7 +254,7 @@ class Photos_model extends Model
 		$sql = 'UPDATE	photo_requests
 				SET		photo_requests.photo_request_chosen_photo_id = ?,
 						photo_requests.photo_request_approved_user_entity_id = ?,
-						photo_requests.photo_request_description = ''
+						photo_requests.photo_request_description = \'\'
 				WHERE	photo_requests.photo_request_id = ?';
 		$query = $this->db->query($sql,array($photo_id,$editor_id,$request_id));
 	}
