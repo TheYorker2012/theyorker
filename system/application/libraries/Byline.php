@@ -42,10 +42,17 @@ class Byline extends FramesView
 		foreach ($Reporters as $Entity) {
 			$reporter = $CI->article_model->GetReporterByline($Entity['id']);
 			if (count($reporter) > 0) {
-				$this->mReporters[$Entity['id']] = array(
-					'name' => $reporter['name'],
-					'photo' => photoLocation($reporter['photo'],'.jpg',true)    
-				);
+				if ($reporter['photo'] == null) {
+					$this->mReporters[$Entity['id']] = array(
+						'name' => $reporter['name'],
+						'photo' => 'images/prototype/directory/members/no_image.png'
+					);
+				} else {
+					$this->mReporters[$Entity['id']] = array(
+						'name' => $reporter['name'],
+						'photo' => imageLocation($reporter['photo'], 'userimage',)
+					);
+				}
 			}
 		}
 	}
