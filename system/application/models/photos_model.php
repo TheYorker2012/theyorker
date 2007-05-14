@@ -207,7 +207,8 @@ class Photos_model extends Model
 
 		/// Create new comment thread
 		$this->load->model('comments_model');
-		$this->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'photo_requests', array('photo_request_id' => $this->db->insert_id()), 'photo_request_comment_thread_id');
+		$CI = &get_instance();
+		$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'photo_requests', array('photo_request_id' => $this->db->insert_id()), 'photo_request_comment_thread_id');
 	}
 
 	function SuggestPhoto($request_id,$photo_id,$comment,$user_id)
