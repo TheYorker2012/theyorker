@@ -126,7 +126,26 @@ class Reviews extends Controller
 		//Get the article summary
 		//$article_database_result = $this->News_model->GetFullArticle($article_id);
 
-		$main_article = $this->News_model->GetFullArticle($article_id[0]);
+		/// If there are no articles for this particular section then show a page anyway
+		if (count($article_id) == 0) {
+			$main_article = array(
+				'id'						=>	0,
+				'date'					=>	date('l, jS F Y'),
+				'location'				=> 0,
+				'public_thread_id'	=>	NULL,
+				'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
+				'subheading'			=>	NULL,
+				'subtext'				=>	NULL,
+				'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
+				'blurb'					=>	NULL,
+				'authors'				=>	array(),
+				'links'					=>	array(),
+				'related_articles'	=> array(),
+				'fact_boxes'			=>	array()
+			);
+		} else {
+			$main_article = $this->News_model->GetFullArticle($article_id[0]);
+		}
 
 		$data['main_article'] = $main_article;
 
@@ -185,7 +204,7 @@ class Reviews extends Controller
 
 		$this->load->library('review_views');
 		$this->review_views->DisplayReview($content_type, $organisation_name, $IncludedComment);
-		
+
 		$this->main_frame->Load();
 	}
 
@@ -244,7 +263,7 @@ class Reviews extends Controller
 	{
 		//Load slideshow model
 		$this->load->model('slideshow');
-		
+
 		//POST data set overwrites uri data
 		if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
 		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
@@ -284,7 +303,7 @@ class Reviews extends Controller
 			//A list of all tags
 			$data['review_tags'] = $database_result[0]['tag_groups'];
 
-			//For each row in the table			
+			//For each row in the table
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
 				if (isset($database_result[$reviewno]['organisation_name']))
@@ -298,7 +317,7 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_quote'] = $database_result[$reviewno]['review_context_content_quote'];
 					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
-					
+
 					//complete temp hack that doesn't even work
 					$sql = 'SELECT content_type_id
 				FROM content_types
@@ -310,7 +329,7 @@ class Reviews extends Controller
 			}
 			else{
 			$type_id = NULL;}
-					
+
 					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id'], $type_id);
 					$slideshow = array();
 					foreach ($slideshow_array->result() as $slide){
@@ -320,7 +339,7 @@ class Reviews extends Controller
 							'url' => imageLocation($slide->photo_id, 'slideshow'),
 						);
 					}
-					
+
 					$entries[$reviewno]['slideshow'] = $slideshow;
 
 					//Change scope of $tagbox
