@@ -154,27 +154,27 @@ class Photos extends Controller
 
 				/// Check if trying to change assigned photographer
 				if ($this->input->post('r_assign') !== FALSE) {
-					if ($status == 'unassigned') {
-						if (($user_level == 'editor') && (is_numeric($this->input->post('r_assignuser')))) {
+					if ($data['status'] == 'unassigned') {
+						if (($data['user_level'] == 'editor') && (is_numeric($this->input->post('r_assignuser')))) {
 							$this->photos_model->AssignPhotographer($request_id,$this->input->post('r_assignuser'));
 							redirect('/office/photos/view/'.$request_id);
 						} else {
 							$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
 							redirect('/office/photos/view/'.$request_id);
 						}
-					} elseif ($status == 'assigned') {
-						if ($user_level == 'photographer') {
-							if ($assigned_status == 'requested') {
+					} elseif ($data['status'] == 'assigned') {
+						if ($data['user_level'] == 'photographer') {
+							if ($data['assigned_status'] == 'requested') {
 								$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
 								redirect('/office/photos/view/'.$request_id);
 							}
-						} elseif ($user_level == 'editor') {
+						} elseif ($data['user_level'] == 'editor') {
 							$this->photos_model->UnassignPhotographer($request_id);
 							redirect('/office/photos/view/'.$request_id);
 						}
 					}
 				} elseif ($this->input->post('r_decline') !== FALSE) {
-					if (($status == 'assigned') && ($user_level == 'photographer') && ($assigned_status == 'requested')) {
+					if (($data['status'] == 'assigned') && ($data['user_level'] == 'photographer') && ($data['assigned_status'] == 'requested')) {
 						$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'declined');
 						redirect('/office/photos/view/'.$request_id);
 					}
