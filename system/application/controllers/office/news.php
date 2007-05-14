@@ -638,7 +638,7 @@ class News extends Controller
 		$this->load->helper('images');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
 		$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
-var_dump($data['photo_requests']);
+
 		if (count($data['article']) > 0) {
 			// Is user requested for this article? i.e. can edit
 			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
@@ -735,7 +735,7 @@ var_dump($data['photo_requests']);
 			$this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$title,$description);
 			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			foreach ($photo_requests as $photo) {
-				$xajax_response->addScriptCall('photo_created',imageLocTag($photo['photo_request_chosen_photo_id'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"'),$photo['photo_request_id'],$photo['photo_request_title'],date('d/m/y H:i', $photo['photo_request_timestamp']));
+				$xajax_response->addScriptCall('photo_created',imageLocTag($photo['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']));
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');

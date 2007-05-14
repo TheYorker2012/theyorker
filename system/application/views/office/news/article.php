@@ -157,11 +157,11 @@
 <?php if (count($photo_requests) > 0) {
 	foreach ($photo_requests as $request) { ?>
 				<div style="margin-bottom:5px;">
-				<?php if ($request['photo_request_chosen_photo_id'] != null) {
-					echo imageLocTag($request['photo_request_chosen_photo_id'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
+				<?php if ($request['chosen_photo'] != null) {
+					echo imageLocTag($request['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
 				} ?>
-					<a href="/office/photos/view/<?php echo($request['photo_request_id']); ?>"><?php echo($request['photo_request_title']); ?></a><br />
-					<?php echo(date('d/m/y H:i', $request['photo_request_timestamp'])); ?><br />
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
+					<?php echo(date('d/m/y H:i', $request['time'])); ?><br />
 					<br class="clear" />
 				</div>
 <?php	}
