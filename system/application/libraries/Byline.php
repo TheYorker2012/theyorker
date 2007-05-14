@@ -50,7 +50,7 @@ class Byline extends FramesView
 				} else {
 					$this->mReporters[$Entity['id']] = array(
 						'name' => $reporter['name'],
-						'photo' => imageLocation($reporter['photo'], 'userimage',)
+						'photo' => imageLocation($reporter['photo'], 'userimage')
 					);
 				}
 			}
