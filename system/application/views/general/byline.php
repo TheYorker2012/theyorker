@@ -11,9 +11,5 @@ foreach ($reporters as $reporter) {
 
 echo('		<div class="Date">'.$article_date.'</div>'."\n");
 
-foreach ($reporters as $id => $reporter) {
-	echo('		');
-	echo('<a href="/archive/reporter/'.$id.'">Read more articles by '.$reporter['name'].'</a>');
-}
 ?>
 	</div>
