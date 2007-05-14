@@ -65,6 +65,21 @@ class Photos_model extends Model
 		return $result;
 	}
 
+	function GetPhotoRequestsForArticle($article_id)
+	{
+		$result = array();
+		$sql = 'SELECT		photo_requests.photo_request_id
+				FROM		photo_requests
+				WHERE		photo_requests.photo_request_article_id = ?
+				ORDER BY	photo_requests.photo_request_relative_photo_number ASC';
+		$query = $this->db->query($sql,array($article_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$result[] = $this->GetPhotoRequestDetails($row->photo_request_id);
+			}
+		}
+		return $result;
+	}
 
 	function GetPhotoRequestDetails($id)
 	{
@@ -165,6 +180,31 @@ class Photos_model extends Model
 			);
 		}
 		return $result;
+	}
+
+	function AddNewPhotoRequest($user_id,$article_id,$title,$description)
+	{
+		/// Get next relative photo number
+		$sql = 'SELECT	MAX(photo_request_relative_photo_number) AS next_number
+				FROM	photo_requests
+				WHERE	photo_request_article_id = ?';
+		$query = $this->db->query($sql,array($article_id));
+		$row = $query->row();
+
+		/// Insert new photo request
+		$sql = 'INSERT INTO	photo_requests(
+					photo_request_user_entity_id,
+					photo_request_article_id,
+					photo_request_relative_photo_number,
+					photo_request_view_large,
+					photo_request_title,
+					photo_request_description)
+				VALUES	(?,?,?,1,?,?)';
+		$query = $this->db->query($sql,array($user_id,$article_id,$row->next_number,$title,$description));
+
+		/// Create new comment thread
+		$this->load->model('comments_model');
+		$this->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'photo_requests', array('photo_request_id' => $this->db->insert_id()), 'photo_request_comment_thread_id');
 	}
 
 	function SuggestPhoto($request_id,$photo_id,$comment,$user_id)
