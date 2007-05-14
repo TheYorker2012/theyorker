@@ -182,7 +182,7 @@ foreach ($photos as $photo) {
 	$photo['url'] = imageLocation($photo['id'], $photo_size);
 
 	echo('				<div class="photo_item" style="width: '.$photo_width.'%;">');
-	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a>');
+	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a><br />');
 	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
 		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
 	}
