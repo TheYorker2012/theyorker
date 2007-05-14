@@ -65,6 +65,81 @@ class Reviews extends Controller
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		// Read any post data
+		if ($this->input->post('create_confirm')) {
+			$context = $this->input->post('create_context');
+			if ($this->review_model->CreateReviewContext($organisation, $context)) {
+				$this->messages->AddMessage('success', 'Review page successfully created');
+			} else {
+				$this->messages->AddMessage('error', 'Review page could not be created');
+			}
+		}
+		if ($this->input->post('remove_confirm')) {
+			$context = $this->input->post('remove_context');
+			if ($this->review_model->DeleteReviewContext($organisation, $context)) {
+				$this->messages->AddMessage('success', 'Review page successfully removed');
+			} else {
+				$this->messages->AddMessage('error', 'Review page could not be removed');
+			}
+		}
+		
+		// Fill the contexts array
+		$data['contexts'] = array(
+			'directory' => array(
+				'name' => 'Directory',
+				'exists' => TRUE,
+				'editable' => TRUE,
+				'creatable' => FALSE,
+				'deletable' => FALSE,
+				'edit' => site_url('office/pr/'.$organisation.'/directory/information'),
+				'updated' => '',
+				'deletable' => FALSE,
+			),
+		);
+		// get the context types
+		/// @todo move this query into a model
+		/// @todo ensure that the organisation exists (using organisation_name != null
+		$query = $this->db->query('
+			SELECT
+				organisation_name AS organisation_name,
+				content_type_codename AS content_codename,
+				content_type_name AS content_name,
+				UNIX_TIMESTAMP(review_context_content_last_author_timestamp) AS timestamp,
+				review_context_deleted AS deleted
+			FROM content_types
+			LEFT JOIN organisations
+				ON	organisation_directory_entry_name = '.$this->db->escape($organisation).'
+			LEFT JOIN review_contexts
+				ON	review_context_content_type_id = content_type_id
+				AND	review_context_organisation_entity_id = organisation_entity_id
+				AND	review_context_deleted = FALSE
+			LEFT JOIN review_context_contents
+				ON review_context_content_id = review_context_live_content_id
+			WHERE
+				content_type_has_reviews = TRUE
+			ORDER BY content_type_section_order ASC');
+		$content_types = $query->result_array();
+		foreach ($content_types as $context_type) {
+			$context = array();
+			$context['name'] = $context_type['content_name'];
+			$context['exists'] = (NULL !== $context_type['deleted']);
+			$context['editable'] = $context['exists'];
+			$context['creatable'] = !$context['exists'];
+			$context['deletable'] = $context['exists'];
+			if ($context['exists']) {
+				$context['edit'] = site_url('office/reviews/'.$organisation.'/'.$context_type['content_codename'].'/information');
+				$context['delete'] = site_url('office/reviews/'.$organisation);
+				if (NULL !== $context_type['timestamp']) {
+					$context['updated'] = date('d/m/Y h:i', $context_type['timestamp']);
+				} else {
+					$context['updated'] = '';
+				}
+			} else {
+				$context['create'] = site_url('office/reviews/'.$organisation);
+			}
+			$data['contexts'][$context_type['content_codename']] = $context;
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_overview', $data);
