@@ -92,7 +92,8 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 $assign_text = '';
 $other_input = '';
 
-$select_users = '<br /><select name="r_assignuser" id="r_assignuser" size="">';
+$select_users = '<br /><label for="r_assignuser">&nbsp;</label>
+<select name="r_assignuser" id="r_assignuser" size="">';
 foreach ($photographers as $user) {
 	$select_users .= '	<option value='.$user['id'].'>'.$user['name'].'</option>';
 }
