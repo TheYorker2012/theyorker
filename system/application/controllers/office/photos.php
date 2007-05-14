@@ -157,40 +157,40 @@ class Photos extends Controller
 
 				/// Check if user is trying to cancel or (un)ready a request
 				$special_op = $this->uri->segment(5);
-				if ((!$special_op) || (!is_numeric($special_op))) {
-					redirect('/office/photos/view/'.$request_id);
-				} elseif ($special_op == 'ready') {
-					if ($data['access']['ready'][$data['user_level']]) {
-						$this->photos_model->FlagRequestReady($request_id);
-					} else {
-						$this->main_frame->AddMessage('error','You do not have the necessary permissions to flag this request as being ready.');
+				if (($special_op) && (is_numeric($special_op))) {
+					if ($special_op == 'ready') {
+						if ($data['access']['ready'][$data['user_level']]) {
+							$this->photos_model->FlagRequestReady($request_id);
+						} else {
+							$this->main_frame->AddMessage('error','You do not have the necessary permissions to flag this request as being ready.');
+						}
+						redirect('/office/photos/view/'.$request_id);
+					} elseif ($special_op == 'unready') {
+						if ($data['access']['ready'][$data['user_level']]) {
+							$this->photos_model->FlagRequestReady($request_id,0);
+						} else {
+							$this->main_frame->AddMessage('error','You do not have the necessary permissions to remove the ready flag on this request.');
+						}
+						redirect('/office/photos/view/'.$request_id);
+					} elseif ($special_op == 'cancel') {
+						if ($data['access']['cancel'][$data['user_level']]) {
+							$this->photos_model->CancelRequest($request_id);
+						} else {
+							$this->main_frame->AddMessage('error','You do not have the necessary permissions to cancel this photo request.');
+						}
+						redirect('/office/photos/view/'.$request_id);
 					}
-					redirect('/office/photos/view/'.$request_id);
-				} elseif ($special_op == 'unready') {
-					if ($data['access']['ready'][$data['user_level']]) {
-						$this->photos_model->FlagRequestReady($request_id,0);
-					} else {
-						$this->main_frame->AddMessage('error','You do not have the necessary permissions to remove the ready flag on this request.');
-					}
-					redirect('/office/photos/view/'.$request_id);
-				} elseif ($special_op == 'cancel') {
-					if ($data['access']['cancel'][$data['user_level']]) {
-						$this->photos_model->CancelRequest($request_id);
-					} else {
-						$this->main_frame->AddMessage('error','You do not have the necessary permissions to cancel this photo request.');
-					}
-					redirect('/office/photos/view/'.$request_id);
-				}
-
-				/// Check if user is trying to edit request's details
-				if ($this->input->post('r_details') == 'Edit') {
-					/// Check the have the necessary permissions to edit
-					if ($data['access']['details'][$data['user_level']]) {
-						$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
-						$this->main_frame->AddMessage('success','Photo request details successfully changed.');
-						redirect('/office/photos/view/'.$request_id.'/');
-					} else {
-						$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
+	
+					/// Check if user is trying to edit request's details
+					if ($this->input->post('r_details') == 'Edit') {
+						/// Check the have the necessary permissions to edit
+						if ($data['access']['details'][$data['user_level']]) {
+							$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
+							$this->main_frame->AddMessage('success','Photo request details successfully changed.');
+							redirect('/office/photos/view/'.$request_id.'/');
+						} else {
+							$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
+						}
 					}
 				}
 
