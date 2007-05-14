@@ -103,7 +103,7 @@ class Photos extends Controller
 				} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
 					$data['user_level'] = 'reporter';
 				} elseif ($is_editor == 'editor') {
-					$data['user_level'] == 'editor';
+					$data['user_level'] = 'editor';
 				} else {
 					$data['user_level'] = 'everyone';
 				}
