@@ -148,17 +148,12 @@ class Reviews extends Controller
 		if ($action=='publish') {
 			//Check Permissions
 			if ($editor_level) {
-				if (TRUE) {
-					/// @todo Review context revision publication.
-					$this->messages->AddMessage('error', 'Publication of revisions is not yet available');
+				//Send and get data
+				$result = $this->review_model->PublishContextContentRevision($organisation, $ContextType, $revision_id);
+				if ($result) {
+					$this->messages->AddMessage('success','Review page revision was published successfully.');
 				} else {
-					//Send and get data
-					$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
-					if ($result == 1) {
-						$this->messages->AddMessage('success','Directory revision was published successfully.');
-					} else {
-						$this->messages->AddMessage('error','Directory revision was not published it does not exist or is already live.');
-					}
+					$this->messages->AddMessage('error','Review page revision was not published as it does not exist or is already live.');
 				}
 			} else {
 				$this->messages->AddMessage('error','You do not have permission to publish revisions');
