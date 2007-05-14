@@ -68,7 +68,7 @@
 					$row_style = false;
 					foreach ($suggestions as $suggestion) { ?>
 						<tr<?php if ($row_style) { echo ' class="tr2"'; }?>>
-							<td><a href="/office/news/<?php echo $suggestion['id']; ?>"><?php echo $suggestion['title']; ?></a></td>
+							<td><a href="/office/news/<?php echo $suggestion['id']; ?>"><?php if ($suggestion['title'] == '') { echo '<i>no title</i>'; } else { echo $suggestion['title']; } ?></a></td>
 							<?php if ($parent_type) { ?><td><?php echo $suggestion['box']; ?></td><?php } ?>
 							<td><?php echo $suggestion['username']; ?></td>
 							<td>suggestion</td>
@@ -77,7 +77,7 @@
 					}
 					foreach ($box_contents as $request) { ?>
 						<tr<?php if ($row_style) { echo ' class="tr2"'; }?>>
-							<td><a href="/office/news/<?php echo $request['id']; ?>"><?php echo $request['title']; ?></a></td>
+							<td><a href="/office/news/<?php echo $request['id']; ?>"><?php if ($request['title'] == '') { echo '<i>no title</i>'; } else { echo $request['title']; } ?></a></td>
 							<?php if ($parent_type) { ?><td><?php echo $request['box']; ?></td><?php } ?>
 							<td>
 							<?php foreach ($request['reporters'] as $reporter) { echo ($reporter['name'] . '<br />'); } ?>

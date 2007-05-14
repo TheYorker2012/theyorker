@@ -1,7 +1,33 @@
+<?php
+function printInput ($title, $name,$type,$value,$section,$access,$user_level)
+{
+	if ($type != 'submit') {
+	   echo('<label for="'.$name.'">'.$title.':</label>');
+	}
+	if ($access[$section][$user_level]) {
+		switch ($type) {
+			case 'textarea':
+				echo('<textarea name="'.$name.'" id="'.$name.'" cols="25" rows="5">'.$value.'</textarea>');
+				break;
+			case 'submit':
+				echo('<input type="'.$type.'" name="'.$name.'" id="'.$name.'" value="'.$value.'" class="button" />');
+				break;
+			default:
+				echo('<input type="'.$type.'" name="'.$name.'" id="'.$name.'" value="'.$value.'" size="30" />');
+				break;
+		}
+	} else {
+		if ($type != 'submit') {
+			echo('<div id="'.$name.'" style="float:left;margin:5px 10px;">'.$value.'</div>');
+		}
+	}
+	echo('<br />');
+}
+?>
+
 	<style type='text/css'>
 	#proposed_photos .photo_item {
 		float: left;
-		width: 20%;
 		font-size: x-small;
 		text-align: center;
 		margin-bottom: 5px;
@@ -12,22 +38,22 @@
 	</style>
 
 	<div class='RightToolbar'>
-	    <h4>Reporter</h4>
+	    <h4>Operations</h4>
 	   	<ul>
-				<li><a href='#'>Upload new photo</a></li>
-				<li><a href='#'>Select photo from gallery</a></li>
-				<li><a href='#'>Cancel Request</a></li>
-			</ul>
-			<h4>Photographer</h4>
-			<ul>
-				<li><a href='#'>Upload new photo</a></li>
-				<li><a href='#'>Select photo from gallery</a></li>
-				<li><a href='#'>Flag for review</a></li>
-			</ul>
-			<h4>Editor</h4>
-			<ul>
-				<li><a href='#'>Flag for review</a></li>
-				<li><a href='#'>Cancel Request</a></li>
+			<?php if ($request_editable) { ?>
+				<li><a href='/office/gallery/upload/'>Upload new photo</a></li>
+				<li><a href='/office/gallery/'>Select photo from gallery</a></li>
+			<?php } ?>
+			<?php if ($access['ready'][$user_level]) {
+				if ($request_editable) { ?>
+					<li><a href='/office/photos/view/<?php echo($id); ?>/ready'>Flag as ready</a></li>
+				<?php } elseif (!$request_finished) { ?>
+					<li><a href='/office/photos/view/<?php echo($id); ?>/unready'>Remove ready flag</a></li>
+				<?php } ?>
+			<?php } ?>
+			<?php if (($access['cancel'][$user_level]) && (!$request_finished)) { ?>
+				<li><a href='/office/photos/view/<?php echo($id); ?>/cancel'>Cancel Request</a></li>
+			<?php } ?>
 			</ul>
 	</div>
 
@@ -35,12 +61,17 @@
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>
-				<label for='r_title'>Title:</label>
-				<input type='text' name='r_title' id='r_title' value='<?php echo($title); ?>' size='30' />
-				<br />
-				<label for='r_brief'>Description:</label>
-				<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo($description); ?></textarea>
-			    <br />
+
+				<?php printInput('Title','r_title','text',$title,'details',$access,$user_level); ?>
+				<?php
+				if ($status == 'completed') {
+					printInput('Description','r_brief','text',$description,'details',$access,$user_level);
+				} else {
+					printInput('Description','r_brief','textarea',$description,'details',$access,$user_level);
+				} ?>
+
+				<?php printInput('','r_details','submit','Edit','details',$access,$user_level); ?>
+
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
 					<a href="/office/news/<?php echo($article_id); ?>" target="_blank">
@@ -62,7 +93,38 @@
 	echo($assigned_name . ' (' . $assigned_status . ')');
 } ?>
 				</div>
-				<input type='button' name='r_assign' value='Assign to me' class='button' />
+<?php
+$assign_text = '';
+$other_input = '';
+
+$select_users = '<br /><label for="r_assignuser">&nbsp;</label>
+<select name="r_assignuser" id="r_assignuser" size="">';
+foreach ($photographers as $user) {
+	$select_users .= '	<option value='.$user['id'].'>'.$user['name'].'</option>';
+}
+$select_users .= '	</select>';
+
+if ($status == 'unassigned') {
+	if ($user_level == 'editor') {
+		$assign_text = 'Assign';
+		$other_input = $select_users;
+	} else {
+		$assign_text = 'Assign Me';
+	}
+} elseif ($status == 'assigned') {
+	if ($user_level == 'photographer') {
+		$assign_text = 'Unassign Me';
+		if ($assigned_status == 'requested') {
+			$assign_text = 'Accept';
+			$other_input = '<br /><input type="submit" name="r_decline" value="Decline" class="button" />';
+		}
+	} elseif ($user_level == 'editor') {
+		$assign_text = 'Unassign';
+	}
+}
+?>
+				<?php echo($other_input); ?>
+				<?php if ($assign_text != '') { ?><input type="submit" name="r_assign" value="<?php echo($assign_text); ?>" class="button" /><?php } ?>
 				<br />
 <?php if ($editor_id !== NULL) { ?>
 				<label for="r_reviewed">Reviewed by:</label>
@@ -96,25 +158,47 @@
 		</div>
 
 <?php } else { ?>
-
+	</form>
+	<form name='edit_photos' id='edit_photos' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
+<?php if ($status == 'completed') { ?>
 		<div class="blue_box">
-			<h2>photos</h2>
+			<h2>chosen photo</h2>
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><img src="<?php echo(imageLocation($chosen_photo, 'medium')); ?>" alt="<?php echo($title); ?>" title="<?php echo($title); ?>" /></a><br />
+			<?php echo($description); ?>
+		</div>
+<?php } ?>
+		<div class="blue_box">
+			<h2>suggested photos</h2>
 			<div id="proposed_photos">
-<?php foreach ($photos as $photo) {
-	echo('				<div class="photo_item">');
-	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a>');
-	echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
+<?php
+$photo_width = '20';
+$photo_size = 'small';
+if ($status == 'ready') {
+	$photo_width = '50';
+	$photo_size = 'medium';
+}
+
+foreach ($photos as $photo) {
+	$photo['url'] = imageLocation($photo['id'], $photo_size);
+
+	echo('				<div class="photo_item" style="width: '.$photo_width.'%;">');
+	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a><br />');
+	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
+		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
+	}
 	echo('					' . $photo['user_name'] . '<br />');
 	echo('					' . date('d/m/y @ H:i',$photo['time']) . '');
+	if ($status == 'ready') {
+		echo('					<br /><a href="/office/photos/view/'.$id.'/select/'.$photo['id'].'">Select this Photo</a>');
+	}
 	echo('            </div>');
 } ?>
 			</div>
 			<div style="clear:both;">&nbsp;</div>
-			<input type="button" name="r_gallery" id="r_gallery" value="Select from Gallery" class="button" onclick="window.location='/office/gallery/';" />
-			<input type="button" name="r_upload" id="r_upload" value="Upload Photo" class="button" onclick="window.location='/office/gallery/upload/';" />
-			<div style="clear:both;">&nbsp;</div>
 		</div>
+	</form>
 
+<!--
 		<div class="grey_box">
 			<h2>comments</h2>
 			<div id="comment_container">
@@ -146,7 +230,13 @@
 			 	<input type="button" name="add_comment" id="add_comment" value="Add Comment" class="button" />
 			</fieldset>
 		</div>
+-->
+
+	<div style="width:422px;">
+	<?php // Display comments if thread exists
+	if ((isset($comments)) && (NULL !== $comments)) {
+		$comments->Load();
+	} ?>
+	</div>
 
 <?php } ?>
-
-	</form>

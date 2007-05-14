@@ -21,8 +21,23 @@ class News extends Controller
 		$this->load->model('article_model');
 		/// Load requests admin model
 		$this->load->model('requests_model');
+		/// Load photo requests admin model
+		$this->load->model('photos_model');
 	}
 
+	/**
+	 *	@brief	Testing new interface idea
+	 */
+	function test ()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$data['test'] = 'test';
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/test', $data);
+		$this->main_frame->Load();
+	}
 
 	/**
 	 *	@brief Determines which function is used depending on url
@@ -618,10 +633,12 @@ class News extends Controller
 
 
 
-	function _showarticle($article_id = 0) {
+	function _showarticle($article_id = 0)
+	{
 		$this->load->helper('images');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
-		$data['photoRequests'] = $this->requests_model->GetPhotoRequests($article_id);
+		$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
+
 		if (count($data['article']) > 0) {
 			// Is user requested for this article? i.e. can edit
 			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
@@ -652,15 +669,16 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_updateHeadlines', &$this, '_updateHeadlines'));
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
+	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
 	        $this->xajax->processRequests();
 
 			// Create menu
 			$navbar = $this->main_frame->GetNavbar();
-			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
-			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
-			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
-			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
 			$navbar->AddItem('request', 'request', 'javascript:tabs(\'request\');');
+			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
+			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
+			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
+			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
 			$navbar->SetSelected('request');
 
 			// Get page content
@@ -703,7 +721,28 @@ class News extends Controller
 		redirect('/news/' . $this->uri->segment(5) . '/' . $this->uri->segment(4));
 	}
 
+	function _newPhoto($title,$description)
+	{
+		$this->load->helper('images');
+		$xajax_response = new xajaxResponse();
+		$article_id = $this->uri->segment(3);
 
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
+			$this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$title,$description);
+			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
+			foreach ($photo_requests as $photo) {
+				$xajax_response->addScriptCall('photo_created',imageLocTag($photo['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']));
+			}
+		} else {
+			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
+		}
+		return $xajax_response;
+	}
 
 	function _newFactbox($revision,$title,$text)
 	{

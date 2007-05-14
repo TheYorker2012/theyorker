@@ -52,6 +52,21 @@
 		xajax__updateHeadlines(articleRevision,headline,subheadline,subtext,blurb,wiki,preview,fact_heading,fact_text);
 	}
 
+	function createNewPhoto() {
+		var title = document.getElementById('photo_title').value;
+		var description = document.getElementById('photo_description').value;
+		document.getElementById('photo_requests').innerHTML = '';
+		xajax__newPhoto(title,description);
+	}
+	
+	function photo_created(photo,id,datetime) {
+		var container = document.getElementById('photo_requests');
+		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">' + photo;
+		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '">' + title + '</a><br />';
+		container.innerHTML = container.innerHTML + datetime + '<br />';
+		container.innerHTML = container.innerHTML + '<br class="clear" /></div>';
+	}
+
 	function headlinesUpdates (revision, date) {
 		articleRevision = revision;
 		document.getElementById('revision_status').innerHTML = "You are editing revision <b>" + revision + "</b> which was last saved @ <b>" + date + "</b>";
@@ -137,20 +152,27 @@
 	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
 		<div class="RightToolbar">
 			<h4>Photo Requests</h4>
-			<ol start="0" style="padding:0; margin:0; list-style-position:inside;">
-				<?php if ($photoRequests->num_rows() > 0) foreach ($photoRequests->result() as $request) {?>
-				<li>
-					<div style="margin-bottom: 5px;">
-						<?php if ($request->photo_request_chosen_photo_id != null) {
-							echo imageLocTag($request->photo_request_chosen_photo_id, 'small', false, 'chosen photo', null, null, null, 'style="float: left; margin-right: 5px;"');
-						}?>
-						<a href="/office/photos/view/<?=$request->photo_request_id?>/reporter"><?=$request->photo_request_title?></a><br />
-						<?=$request->photo_request_timestamp?><br />
-						Photos: <?=$request->photo_count?><br class="clear" />
-					</div>
-				</li>
-<?php }//bad styling?>
-			</ol>
+			<div id="photo_requests">
+
+<?php if (count($photo_requests) > 0) {
+	foreach ($photo_requests as $request) { ?>
+				<div style="margin-bottom:5px;">
+				<?php if ($request['chosen_photo'] != null) {
+					echo imageLocTag($request['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
+				} ?>
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
+					<?php echo(date('d/m/y H:i', $request['time'])); ?><br />
+					<br class="clear" />
+				</div>
+<?php	}
+	} ?>
+			</div>
+			<div>
+				<input type="text" name="photo_title" id="photo_title" value="Photo Title" />
+				<textarea name="photo_description" id="photo_description" rows="3">Description of Photo required</textarea>
+				<input type="button" name="new_photo" id="new_photo" value="Request Photo" class="button" onclick="createNewPhoto();" />
+				<br class="clear" />
+			</div>
 
 			<h4>Article Status</h4>
 			<div id="revision_status">
@@ -276,7 +298,7 @@
 			<?php
 			// Comments if they're included
 			if (isset($comments) && NULL !== $comments) {
-				$comments->Load();	
+				$comments->Load();
 			}
 			?>
 		</div>

@@ -70,7 +70,8 @@ class News_model extends Model
 		$sql = 'SELECT content_type_codename AS codename,
 				 content_type_has_children AS has_children,
 				 content_type_parent_content_type_id AS parent_id,
-				 content_type_name AS name
+				 content_type_name AS name,
+				 content_type_section AS section
 				FROM content_types
 				WHERE content_type_codename = ?';
 		$query = $this->db->query($sql,array($type));
@@ -91,7 +92,7 @@ class News_model extends Model
 	function getSubArticleTypes ($main_type)
 	{
 		$result = array();
-		$sql = 'SELECT  child.content_type_id, child.content_type_codename,
+		$sql = 'SELECT  child.content_type_id, child.content_type_codename, child.content_type_blurb,
 		        	child.content_type_name, image_id, image_file_extension,
 			        image_type_codename, image_title
 			FROM    content_types AS parent
@@ -113,6 +114,7 @@ class News_model extends Model
 					'id' => $row->content_type_id,
 					'codename' => $row->content_type_codename,
 					'name' => $row->content_type_name,
+					'blurb' => $row->content_type_blurb,
 					'image' => $row->image_id,
 					'image_title' => $row->image_title,
 					'image_extension' => $row->image_file_extension,
@@ -184,9 +186,6 @@ class News_model extends Model
 			{
 				$result[] = $row->article_id;
 			}
-		}
-		while (count($result) < $number) {
-			$result[] = NULL;
 		}
 		return $result;
 	}

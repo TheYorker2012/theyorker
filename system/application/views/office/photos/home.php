@@ -40,29 +40,7 @@ function PrintRequestList ($data, $AssignedColumn = FALSE) {
 ?>
 
 	<div class="RightToolbar">
-		<h4>Heading</h4>
-		Hey, not sure what should go here but without this toolbar the page becomes quite sparse
-		and looks wierd... soooooo this is here.... urm.... not sure what to say really... apart
-		from that this is where all the un-completed photo requests are displayed so that photographers
-		and the photo editor can see the status of their department. Oh and 24 is uber 1337 :P
-		
-		<h4>Status: Requested</h4>
-		<ul>
-		<li><a href="/office/photos/view/editor">Editor</a></li>
-		<li><a href="/office/photos/view/reporter">Assigned Reporter</a></li>
-		<li><a href="/office/photos/view/photographer">Assigned Photographer</a></li>
-		<li><a href="/office/photos/view/all">All office users</a></li>
-		</ul>
-
-		<h4>Status: Ready</h4>
-		<ul>
-		<li><a href="/office/photos/view/flagged">Review photo request</a></li>
-		</ul>
-
-		<h4>Status: Completed</h4>
-		<ul>
-		<li><a href="/office/photos/view/completed">Request History</a></li>
-		</ul>
+		<!-- Does anything need to go here? -->
 	</div>
 
 	<div class="blue_box">

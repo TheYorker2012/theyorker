@@ -44,6 +44,73 @@ class Travis extends Controller {
 		$this->main_frame->Load();
 	}
 
+	function contenttypes()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$sql = 'SELECT content_type_id AS id, content_type_name AS name
+				FROM content_types
+				WHERE content_type_has_children = 1
+				ORDER BY content_type_name ASC';
+		$query = $this->db->query($sql);
+		$data['parents'] = array();
+		foreach ($query->result() as $row) {
+			$data['parents'][] = $row;
+		}
+
+		// Set up the public frame
+		$this->main_frame->SetTitle('Content Types Adder');
+		$this->main_frame->SetContentSimple('test/travis-contenttypes', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+
+	function addtype()
+	{
+		if (!CheckPermissions('office')) return;
+		if ($this->input->post('c_add') !== FALSE) {
+			$sql = 'INSERT INTO organisations
+				SET organisation_organisation_type_id = ?,
+					organisation_parent_organisation_entity_id = ?,
+					organisation_name = ?,
+					organisation_directory_entry_name = ?,
+					organisation_show_in_directory = ?,
+					organisation_reviewed = ?,
+					organisation_pr_suggestion = ?';
+			$query = $this->db->query($sql,array(5,453,$this->input->post('c_name'),$this->input->post('c_dname'),0,1,0));
+			
+			$org_id = $this->db->insert_id();
+			$sql = 'INSERT INTO entities
+				SET entity_id = ?, entity_username = ?';
+			$query = $this->db->query($sql,array($org_id,$this->input->post('c_dname')));
+
+			$sql = 'INSERT INTO content_types
+				SET content_type_codename = ?,
+					content_type_related_organisation_entity_id = ?,
+					content_type_parent_content_type_id = ?,
+					content_type_name = ?,
+					content_type_archive = ?,
+					content_type_blurb = ?,
+					content_type_has_reviews = ?,
+					content_type_has_children = ?,
+					content_type_section = ?';
+			$query = $this->db->query($sql,array($this->input->post('c_codename'),
+															$org_id,
+															$this->input->post('c_parent'),
+															$this->input->post('c_name'),
+															1,
+															$this->input->post('c_blurb'),
+															0,
+															$this->input->post('c_children'),
+															$this->input->post('c_section')
+															)
+												);
+			$this->main_frame->AddMessage('success','New content type added');
+			redirect('/test/travis/contenttypes');
+		}
+
+	}
+
 	function imap()
 	{
 		if (!CheckPermissions('office')) return;

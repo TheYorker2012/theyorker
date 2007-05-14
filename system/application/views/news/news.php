@@ -1,7 +1,7 @@
 <?php
 function printarticlelink($article) {
 	echo('	<div class="Entry">'."\n");
-	Echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['photo_xhtml']."\n");
 	echo('		</a>'."\n");
 	echo('		<h3 class="Headline">'."\n");
@@ -15,7 +15,6 @@ function printarticlelink($article) {
 		echo('			<a href="/contact">'.$reporter['name'].'</a>'."\n");
 	echo('		</div>'."\n");
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
-		/*echo('		'.anchor('/news/'.$article['article_type'].'/'.$article['id'], 'Read more...')."\n");*/
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
 	}
 	echo('	</div>'."\n");
@@ -23,10 +22,23 @@ function printarticlelink($article) {
 ?>
 
 <div id="RightColumn">
-	<?php if ($this->uri->segment(2) != 'comment') {?>
-	<h2 class="first"><?php echo($latest_heading); ?></h2>
-
 <?php
+// Latest News
+if ((count($news_previews) > 0) || ((isset($puffers)) && (count($puffers) > 0)))
+	echo('	<h2 class="first">' . $latest_heading . '</h2>');
+
+if (isset($blogs)) {
+	foreach ($blogs as $blog) {
+		echo '<div class=\'Puffer\'>';
+		echo '<a href=\'/news/' . $blog['codename'] . '\'>';
+		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' style="float:right;" />';
+		echo $blog['name'];
+		echo '</a><br style="clear:both" /></div>';
+	}
+	if (count($news_previews) > 0)
+		echo '<h2>' . $other_heading . '</h2>';
+}
+
 if (isset($puffers)) {
 	foreach ($puffers as $puffer) {
 		echo '<div class=\'Puffer\'>';
@@ -39,27 +51,30 @@ if (isset($puffers)) {
 } ?>
 
 <?php
+// News Previews
 foreach($news_previews as $preview)
 	printarticlelink($preview);
-?>
 
-<?php /*	<h2><?php echo($other_heading); ?></h2>
-<?php
+// Other News
+if (count($news_others) > 0)
+	echo('	<h2>'.$other_heading.'</h2>'."\n");
+
 foreach ($news_others as $other)
 	printarticlelink($other);
-*/
+
+// Related Articles
 if (count($main_article['related_articles']) > 0)
 	echo('	<h2>'.$related_heading.'</h2>'."\n");
 
 foreach ($main_article['related_articles'] as $related)
 	printarticlelink($related);
 
+// Fact Box
 foreach($main_article['fact_boxes'] as $fact_box) {
 	echo('	<h2>'.$fact_box['title'].'</h2>'."\n");
 	echo('	<div class="Entry">'."\n");
 	echo('		'.$fact_box['wikitext']."\n");
 	echo('	</div>'."\n");
-}
 }
 ?>
 </div>
@@ -83,7 +98,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
 <?php } ?>
 
-        <?php echo $main_article['text']; ?>
+        <?php echo($main_article['text']); ?>
 
 		<?php if (isset($office_preview)) { ?>
 			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
