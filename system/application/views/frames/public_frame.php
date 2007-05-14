@@ -117,6 +117,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				-->
 				<?php
+				/*
 				if (isset($extra_menu_buttons)) {
 					echo('<ul>');
 					foreach ($extra_menu_buttons as $key => $button) {
@@ -130,6 +131,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					}
 					echo('</ul>');
 				}
+				*/
 				?>
 			</div>
 		</div>
