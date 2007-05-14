@@ -274,8 +274,23 @@ class User_auth extends model {
 				throw new Exception('Invalid password');
 			}
 		} else {
-			/// @throw Exception User doesn't exist.
-			throw new Exception('User does not exist');
+			if ($this->authUni($username, $password)) {
+				$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
+				echo($username);
+				$query = $this->db->query($sql, array($username));
+				$this->entityId = $this->db->insert_id();
+				$this->isLoggedIn = true;
+				$this->isUser = true;
+				$this->setPassword($password);
+				$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
+				$query = $this->db->query($sql, array($this->entityId));
+
+				$this->login($username, $password, $savelogin);
+				redirect('register');
+			} else {
+				/// @throw Exception Could not find user or uni login
+				throw new Exception('Could not find user or uni login');
+			}
 		}
 	}
 	
