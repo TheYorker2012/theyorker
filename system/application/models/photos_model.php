@@ -246,7 +246,7 @@ class Photos_model extends Model
 	{
 		$sql = 'UPDATE	photo_requests
 				SET		photo_requests.photo_request_deleted = 1
-				WHERE	photo_requests.photo_request_request_id = ?';
+				WHERE	photo_requests.photo_request_id = ?';
 		$query = $this->db->query($sql,array($request_id));
 	}
 
