@@ -190,6 +190,9 @@ class Photos_model extends Model
 				WHERE	photo_request_article_id = ?';
 		$query = $this->db->query($sql,array($article_id));
 		$row = $query->row();
+		if ($row->next_number === NULL) {
+			$row->next_number = 0;
+		}
 
 		/// Insert new photo request
 		$sql = 'INSERT INTO	photo_requests(
