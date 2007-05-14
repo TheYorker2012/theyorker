@@ -157,7 +157,7 @@ class Photos extends Controller
 				if ($data['status'] == 'completed') {
 					$data['access']['details'] = array(
 						'editor'		=>	TRUE,
-						'photographer'	=>	TRUE,
+						'photographer'	=>	FALSE,
 						'reporter'		=>	TRUE,
 						'everyone'		=>	FALSE
 					);
@@ -195,17 +195,17 @@ class Photos extends Controller
 						}
 						redirect('/office/photos/view/'.$request_id);
 					}
-	
-					/// Check if user is trying to edit request's details
-					if ($this->input->post('r_details') == 'Edit') {
-						/// Check the have the necessary permissions to edit
-						if ($data['access']['details'][$data['user_level']]) {
-							$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
-							$this->main_frame->AddMessage('success','Photo request details successfully changed.');
-							redirect('/office/photos/view/'.$request_id.'/');
-						} else {
-							$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
-						}
+				}
+
+				/// Check if user is trying to edit request's details
+				if ($this->input->post('r_details') == 'Edit') {
+					/// Check the have the necessary permissions to edit
+					if ($data['access']['details'][$data['user_level']]) {
+						$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
+						$this->main_frame->AddMessage('success','Photo request details successfully changed.');
+						redirect('/office/photos/view/'.$request_id.'/');
+					} else {
+						$this->main_frame->AddMessage('error','You do not have the necessary permissions to edit the details for this photo request, or this request has been completed or cancelled.');
 					}
 				}
 

@@ -159,7 +159,7 @@ if ($status == 'unassigned') {
 
 <?php } else { ?>
 	</form>
-	<form class="form">
+	<form name='edit_photos' id='edit_photos' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>
