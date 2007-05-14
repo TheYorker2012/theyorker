@@ -200,8 +200,7 @@ class Review_model extends Model {
 	 */
 	function SetReviewContextContent(
 		$organisation_shortname, $content_type_codename, $user_entity_id, $blurb,
-		$quote, $average_price, $recommended_item, $rating, $serving_times,
-		$publish = false)
+		$quote, $average_price, $recommended_item, $rating, $serving_times)
 	{
 		$sql =
 			'
@@ -234,25 +233,40 @@ class Review_model extends Model {
 			INNER JOIN content_types
 				ON	review_contexts.review_context_content_type_id=content_types.content_type_id
 				AND	content_types.content_type_codename = ?
-			LIMIT 1
-			;
-			';
-			
-		if ($publish) {
-			$sql +=
-				'UPDATE review_contexts
-				SET
-					review_contexts.review_context_live_content_id = LAST_INSERT_ID()
-				WHERE	review_contexts.review_context_organisation_entity_id =
-		(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)
-					AND	review_contexts.review_context_content_type_id =
-		(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?)';
-		}
+			LIMIT 1';
 
 		$query = $this->db->query($sql, array(
 			$user_entity_id, $blurb, $quote, $average_price, $recommended_item,
 			$rating, $serving_times, $organisation_shortname, $content_type_codename,
 			$organisation_shortname, $content_type_codename) );
+		return $this->db->affected_rows();
+	}
+	
+	/// Publish a revision of the review context content
+	/**
+	 * @return Number of affected rows.
+	 */
+	function PublishContextContentRevision($organisation_directory_entry_name,$content_type_codename, $context_revision_id)
+	{
+		$sql =
+			'UPDATE review_contexts
+			INNER JOIN review_context_contents
+				ON	review_context_content_id = '.$this->db->escape($context_revision_id).'
+			SET
+				review_contexts.review_context_live_content_id = '.$this->db->escape($context_revision_id).'
+			WHERE	review_context_content_organisation_entity_id = review_context_organisation_entity_id
+				AND	review_context_content_content_type_id = review_context_content_type_id
+				AND	review_contexts.review_context_organisation_entity_id
+						= (	SELECT organisation_entity_id
+							FROM organisations
+							WHERE organisations.organisation_directory_entry_name
+								= '.$this->db->escape($organisation_directory_entry_name).')
+				AND	review_contexts.review_context_content_type_id
+						= (	SELECT content_type_id
+							FROM content_types
+							WHERE content_types.content_type_codename
+								= '.$this->db->escape($content_type_codename).')';
+		$this->db->query($sql);
 		return $this->db->affected_rows();
 	}
 
