@@ -105,54 +105,55 @@ class Photos_model extends Model
 			return FALSE;
 		} else {
 			$row = $query->row();
-      	$result = array(
-				'id'				=>	$id,
-				'title'				=>	$row->photo_request_title,
-				'description'		=>	$row->photo_request_description,
-				'article_id'		=>	$row->photo_request_article_id,
-				'article_title'		=>	$row->article_request_title,
-				'time'				=>	$row->photo_request_timestamp,
-				'reporter_id'		=>	$row->photo_request_user_entity_id,
-				'reporter_name'		=>	$row->user_firstname . ' ' . $row->user_surname,
-				'editor_id'			=>	$row->photo_request_approved_user_entity_id,
-				'comments_thread'	=>	$row->photo_request_comment_thread_id,
-				'chosen_photo'		=>	$row->photo_request_chosen_photo_id
-      	);
-      	if ($row->photo_request_approved_user_entity_id !== NULL) {
-			$editor_sql = 'SELECT users.user_firstname, users.user_surname
-						FROM users
-						WHERE users.user_entity_id = ?';
-			$editor_query = $this->db->query($editor_sql,array($row->photo_request_approved_user_entity_id));
-			$editor_row = $editor_query->row();
-			$result['editor_name'] = $editor_row->user_firstname . ' ' . $editor_row->user_surname;
-		}
-		$user_sql = 'SELECT photo_request_users.photo_request_user_user_entity_id,
-				photo_request_users.photo_request_user_status,
-				users.user_firstname,
-				users.user_surname
-			FROM photo_request_users, users
-			WHERE photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
-			AND photo_request_users.photo_request_user_photo_request_id = ?';
-		$user_query = $this->db->query($user_sql, array($id));
-		$result['status'] = 'unassigned';
-		$result['assigned_status'] = 'unassigned';
-		if ($user_query->num_rows() > 0) {
-			$user_row = $user_query->row();
-			$result['assigned_name'] = $user_row->user_firstname . ' ' . $user_row->user_surname;
-			$result['assigned_id'] = $user_row->photo_request_user_user_entity_id;
-			$result['assigned_status'] = $user_row->photo_request_user_status;
-			if ($result['assigned_status'] != 'declined') {
-				$result['status'] = 'assigned';
+	      	$result = array(
+					'id'				=>	$id,
+					'title'				=>	$row->photo_request_title,
+					'description'		=>	$row->photo_request_description,
+					'article_id'		=>	$row->photo_request_article_id,
+					'article_title'		=>	$row->article_request_title,
+					'time'				=>	$row->photo_request_timestamp,
+					'reporter_id'		=>	$row->photo_request_user_entity_id,
+					'reporter_name'		=>	$row->user_firstname . ' ' . $row->user_surname,
+					'editor_id'			=>	$row->photo_request_approved_user_entity_id,
+					'comments_thread'	=>	$row->photo_request_comment_thread_id,
+					'chosen_photo'		=>	$row->photo_request_chosen_photo_id
+	      	);
+	      	if ($row->photo_request_approved_user_entity_id !== NULL) {
+				$editor_sql = 'SELECT users.user_firstname, users.user_surname
+							FROM users
+							WHERE users.user_entity_id = ?';
+				$editor_query = $this->db->query($editor_sql,array($row->photo_request_approved_user_entity_id));
+				$editor_row = $editor_query->row();
+				$result['editor_name'] = $editor_row->user_firstname . ' ' . $editor_row->user_surname;
 			}
+			$user_sql = 'SELECT photo_request_users.photo_request_user_user_entity_id,
+					photo_request_users.photo_request_user_status,
+					users.user_firstname,
+					users.user_surname
+				FROM photo_request_users, users
+				WHERE photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
+				AND photo_request_users.photo_request_user_photo_request_id = ?';
+			$user_query = $this->db->query($user_sql, array($id));
+			$result['status'] = 'unassigned';
+			$result['assigned_status'] = 'unassigned';
+			if ($user_query->num_rows() > 0) {
+				$user_row = $user_query->row();
+				$result['assigned_name'] = $user_row->user_firstname . ' ' . $user_row->user_surname;
+				$result['assigned_id'] = $user_row->photo_request_user_user_entity_id;
+				$result['assigned_status'] = $user_row->photo_request_user_status;
+				if ($result['assigned_status'] != 'declined') {
+					$result['status'] = 'assigned';
+				}
+			}
+			if ($row->photo_request_deleted) {
+				$result['status'] = 'deleted';
+			} elseif ($row->photo_request_chosen_photo_id !== NULL) {
+				$result['status'] = 'completed';
+			} elseif ($row->photo_request_flagged) {
+				$result['status'] = 'ready';
+			}
+	      	return $result;
 		}
-		if ($row->photo_request_deleted) {
-			$result['status'] = 'deleted';
-		} elseif ($row->photo_request_chosen_photo_id !== NULL) {
-			$result['status'] = 'completed';
-		} elseif ($row->photo_request_flagged) {
-			$result['status'] = 'ready';
-		}
-      	return $result;
 	}
 
 	function GetSuggestedPhotos($id)
