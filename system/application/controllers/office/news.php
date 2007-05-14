@@ -726,6 +726,7 @@ class News extends Controller
 		$this->load->helper('images');
 		$xajax_response = new xajaxResponse();
 		$article_id = $this->uri->segment(3);
+
 		// Make it so we only have to worry about two levels of access as admins can do everything editors can
 		$data['user_level'] = GetUserLevel();
 		if ($data['user_level'] == 'admin') {

@@ -100,10 +100,10 @@ class Photos extends Controller
 				}
 				if (($data['status'] == 'assigned') && ($data['assigned_id'] == $this->user_auth->entityId)) {
 					$data['user_level'] = 'photographer';
-				} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
-					$data['user_level'] = 'reporter';
 				} elseif ($is_editor == 'editor') {
 					$data['user_level'] = 'editor';
+				} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
+					$data['user_level'] = 'reporter';
 				} else {
 					$data['user_level'] = 'everyone';
 				}
