@@ -98,7 +98,7 @@ class Photos extends Controller
 					/// Admin users are effectively editors
 					$is_editor = 'editor';
 				}
-				if (($data['status'] == 'assigned') && ($data['reporter_id'] == $this->user_auth->entityId)) {
+				if (($data['status'] == 'assigned') && ($data['assigned_id'] == $this->user_auth->entityId)) {
 					$data['user_level'] = 'photographer';
 				} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
 					$data['user_level'] = 'reporter';
