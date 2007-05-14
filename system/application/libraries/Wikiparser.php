@@ -9,7 +9,7 @@
  * Copyright 2005, Steve Blinch
  * http://code.blitzaffe.com
  *
- * This class parses and returns the HTML representation of a document containing 
+ * This class parses and returns the HTML representation of a document containing
  * basic MediaWiki-style wiki markup.
  *
  *
@@ -25,17 +25,17 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
- *  
+ *
+ *
  *
  */
 
@@ -49,7 +49,7 @@ class Wikiparser {
 	protected $emphasis;
 	protected $quote_template;
 	protected $templates;
-	
+
 	protected $list_level_chars;
 	protected $list_level;
 	protected $deflist;
@@ -62,12 +62,12 @@ class Wikiparser {
 	protected $nextnowiki;
 	protected $redirect;
 	protected $nowikis;
-	
+
 	/// Default constructor.
 	function Wikiparser() {
 		$CI = &get_instance();
 		$CI->load->helper('wikilink');
-		
+
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
 		$this->image_uri = '/images/';
@@ -79,7 +79,7 @@ class Wikiparser {
 		$this->emphasis[4] = FALSE;
 		$this->emphasis[5] = FALSE;
 		$this->emphasis[6] = FALSE;
-		
+
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
 				'pull_quote' => '<blockquote>
@@ -91,16 +91,16 @@ class Wikiparser {
 				'br' => '<br />',
 			);
 	}
-	
+
 	function handle_sections($matches) {
 		$level = strlen($matches[1]);
 		$content = $matches[2];
-		
+
 		$this->stop = true;
 		// avoid accidental run-on emphasis
 		return $this->end_paragraph() . "\n\n<h{$level}>{$content}</h{$level}>\n\n";
 	}
-	
+
 	function handle_startparagraph($matches)
 	{
 		$this->stop = true;
@@ -111,7 +111,7 @@ class Wikiparser {
 			return "\n".$matches[0];
 		}
 	}
-	
+
 	function end_paragraph()
 	{
 		if ($this->in_paragraph) {
@@ -121,15 +121,15 @@ class Wikiparser {
 			return $this->emphasize_off();
 		}
 	}
-	
+
 	function handle_newline($matches) {
 		if ($this->suppress_linebreaks) return $this->emphasize_off();
-		
+
 		$this->stop = true;
 		// avoid accidental run-on emphasis
 		return $this->end_paragraph();
 	}
-	
+
 	/**
 	 * Used by handle_list.
 	 * @param string $containee
@@ -144,7 +144,7 @@ class Wikiparser {
 		return ($len_containee <= $len_container and
 				$containee == substr($container,0,$len_containee));
 	}
-	
+
 	/**
 	 * @note Modified by James Hogan (jh559@cs.york.ac.uk) to fix bullet
 	 *	mixing problem.
@@ -155,65 +155,65 @@ class Wikiparser {
 			'*'=>'ul',
 			'#'=>'ol',
 		);
-		
+
 		$output = '';
-		
+
 		$newlevel = ($close) ? 0 : strlen($matches[1]);
-		
+
 		$new_list = false;
-		
+
 		// While the new list types aren't compatible with the old
 		// close the last list
 		while (!$this->string_contained($this->list_level_chars, $matches[1])) {
 			// Get the last list type
 			$listchar = substr($this->list_level_chars,-1);
 			$listtype = $listtypes[$listchar];
-			
+
 			// and close it
 			$output .= '</li></'.$listtype.'>'."\n";
 			$this->list_level_chars = substr($this->list_level_chars,0,-1);
 			$this->list_level--;
 		}
-		
+
 		// Remember the list types string
 		$this->list_level_chars = $matches[1];
 		// and if we're closing all lists, don't bother continuing
 		if ($close) return $output;
-		
+
 		// While theres more lists in the new set of lists
 		// open new lists
 		while ($this->list_level<$newlevel) {
 			// Get the next new list type
 			$listchar = substr($matches[1],$this->list_level,1);
 			$listtype = $listtypes[$listchar];
-			
+
 			// and open it
 			++$this->list_level;
 			$output .= "\n".'<'.$listtype.'><li>';
-			
+
 			// We've opened a new list so we don't need to start a new list list
 			// item in a few moments.
 			$new_list = true;
 		}
-		
+
 		// close and open a new list item if the current list hasn't just
 		// been created.
 		if (!$new_list) {
 			$output .= "\n".'</li><li>';
 		}
 		$output .= $matches[2]."\n";
-		
+
 		return $this->end_paragraph().$output;
 	}
-	
+
 	function handle_definitionlist($matches,$close=false) {
-		
+
 		if ($close) {
 			$this->deflist = false;
 			return "</dl>\n";
 		}
-		
-		
+
+
 		$output = "";
 		if (!$this->deflist) $output .= "<dl>\n";
 		$this->deflist = true;
@@ -234,10 +234,10 @@ class Wikiparser {
 				$output .= "<dd>{$definition}</dd>\n";
 				break;
 		}
-		
+
 		return $this->end_paragraph().$output;
 	}
-	
+
 	function handle_preformat($matches,$close=false) {
 		if ($close) {
 			if ($this->preformat) {
@@ -247,22 +247,22 @@ class Wikiparser {
 				return '';
 			}
 		}
-		
+
 		$this->stop_all = true;
 
 		$output = "";
 		if (!isset($this->preformat) or !$this->preformat) $output .= '<pre>';
 		$this->preformat = true;
-		
+
 		$output .= $matches[1];
-		
+
 		return $this->end_paragraph().$output."\n";
 	}
-	
+
 	function handle_horizontalrule($matches) {
 		return $this->end_paragraph().'<hr />';
 	}
-	
+
 	function handle_image($href,$title,$options) {
 		if ($this->ignore_images) return "";
 		if (!$this->image_uri) return $title;
@@ -271,7 +271,7 @@ class Wikiparser {
 		} else {
 			$href = $this->image_uri . $href;
 		}
-		
+
 		$imagetag = sprintf(
 			'<img src="%s" alt="%s" />',
 			$href,
@@ -305,13 +305,13 @@ class Wikiparser {
 					break;
 			}
 		}
-		
+
 		return $imagetag;
 	}
-	
+
 	function handle_internallink($matches) {
 		$nolink = false;
-		
+
 		$href = $matches[4];
 		$title = (isset($matches[6]) and $matches[6]) ? $matches[6] : $matches[4];
 		$namespace = $matches[3];
@@ -338,8 +338,8 @@ if (hasReqestedVersion) {
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
 				"src", "http://www.youtube.com/v/'.$href.'",
-				"width", "425",
-				"height", "350",
+				"width", "340",
+				"height", "280",
 				"align", "center",
 				"id", "movie",
 				"quality", "high",
@@ -351,7 +351,7 @@ if (hasReqestedVersion) {
 				"pluginspage", "http://www.adobe.com/go/getflashplayer"
 	);
 } else {  // flash is too old or we can\'t detect the plugin
-	var alternateContent = \'<div style="width: 425px; height: 350px; border: 1px solid #999999;"><br />\'
+	var alternateContent = \'<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />\'
 	+ "<b>YouTube Video Clip</b><br /><br /> "
 	+ "This content requires the Adobe Flash Player 9. "
 	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
@@ -361,7 +361,7 @@ if (hasReqestedVersion) {
 // -->
 </script>
 <noscript>
-	<div style="width: 425px; height: 350px; border: 1px solid #999999;"><br />
+	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
 	<b>YouTube Video Clip</b><br /><br />
   	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
   	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
@@ -372,10 +372,10 @@ if (hasReqestedVersion) {
 		} else {
 			$reference_wiki = $this->external_wikis[$this->reference_wiki];
 		}
-		
+
 		$title = preg_replace('/\(.*?\)/','',$title);
 		$title = preg_replace('/^.*?\:/','',$title);
-		
+
 		/*if ($reference_wiki) {
 			$href = $reference_wiki.($namespace?$namespace.':':'').$href;
 		} else {
@@ -384,7 +384,7 @@ if (hasReqestedVersion) {
 		$href = WikiLink($reference_wiki, $href);
 
 		//if ($nolink) return $title;
-		
+
 		return sprintf(
 			'[%s %s]%s',
 			$href,
@@ -392,7 +392,7 @@ if (hasReqestedVersion) {
 			(isset($matches[7]) ? $matches[7] : "")
 		);
 	}
-	
+
 	function handle_externallink($matches) {
 		$href = $matches[2];
 		if (array_key_exists(6,$matches)) {
@@ -412,15 +412,15 @@ if (hasReqestedVersion) {
 			$title = $matches[3];
 		}
 		$newwindow = false;
-		
+
 		return sprintf(
 			'<a href="%s"%s>%s</a>',
 			$href,
 			($newwindow?' target="_blank"':''),
 			$title
-		);		
+		);
 	}
-	
+
 	function emphasize($amount) {
 		$amounts = array(
 			2=>array('<em>','</em>'),
@@ -441,16 +441,16 @@ if (hasReqestedVersion) {
 		$output .= $amounts[$amount][(int) $this->emphasis[$amount]];
 
 		$this->emphasis[$amount] = !$this->emphasis[$amount];
-		
+
 		return $output;
 	}
-	
+
 	function handle_emphasize($matches) {
 		$amount = strlen($matches[1]);
 		return $this->emphasize($amount);
 
 	}
-	
+
 	/**
 	 * @brief Add emphasis to certain text matches
 	 * @author James Hogan (jh559@cs.york.ac.uk)
@@ -466,7 +466,7 @@ if (hasReqestedVersion) {
 		return $output;
 
 	}
-	
+
 	function emphasize_off() {
 		$output = '';
 		if (isset($this->emphasis)) {
@@ -478,19 +478,19 @@ if (hasReqestedVersion) {
 				}
 			}
 		}
-		
+
 		return $output;
 	}
-	
+
 	function handle_eliminate($matches) {
 		return '';
 	}
-	
+
 	function handle_special_quote($matches)
 	{
 		return '{{'.$this->quote_template.'|'.$matches[1].'|'.$matches[2].'}}';
 	}
-	
+
 	function handle_template_parameter($matches) {
 		if (array_key_exists($matches[1],$this->template_elements)) {
 			return $this->template_elements[$matches[1]];
@@ -498,7 +498,7 @@ if (hasReqestedVersion) {
 			return '';
 		}
 	}
-	
+
 	function handle_variable($matches) {
 		$this->template_elements = explode('|',$matches[2]);
 		if (array_key_exists($this->template_elements[0], $this->templates)) {
@@ -521,12 +521,12 @@ if (hasReqestedVersion) {
 				case 'PAGENAME': return $this->page_title;
 				case 'NAMESPACE': return 'None';
 				case 'SITENAME': return $_SERVER['HTTP_HOST'];
-				default: return $matches[0];	
+				default: return $matches[0];
 			}
 		}
 		unset($this->template_elements);
 	}
-	
+
 	function handle_symbols($matches)
 	{
 		//echo var_dump($matches);
@@ -540,7 +540,7 @@ if (hasReqestedVersion) {
 			return $matches[0];
 		}
 	}
-	
+
 	function parse_line($line) {
 		$line_regexes = array(
 			'special_quote'=>'^"""(.*)"""\s*(.*)$',
@@ -577,18 +577,18 @@ if (hasReqestedVersion) {
 			'addemphasis'=>'(the yorker)',
 			'variable'=>'(\{\{([^\}]*?)\}\})',
 		);
-				
+
 		$this->stop = false;
 		$this->stop_all = false;
 
 		$called = array();
-		
+
 		$line = rtrim($line);
-		
+
 		// escape some symbols
 		$line = htmlentities($line, ENT_COMPAT, 'UTF-8');
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
-		
+
 		foreach ($line_regexes as $func=>$regex) {
 			if (preg_match("/$regex/i",$line,$matches)) {
 				$called[$func] = true;
@@ -604,35 +604,35 @@ if (hasReqestedVersion) {
 				if ($this->stop) break;
 			}
 		}
-		
+
 		$isline = strlen(trim($line))>0;
-		
+
 		// if this wasn't a list item, and we are in a list, close the list tag(s)
 		if (($this->list_level>0) && (!isset($called['list']) or !$called['list'])) $line = $this->handle_list(false,true) . $line;
 		if (isset($this->deflist) and $this->deflist && (!isset($called['definitionlist']) or !$called['definitionlist'])) $line = $this->handle_definitionlist(false,true) . $line;
 		if (isset($this->preformat) and $this->preformat && (!isset($called['preformat']) or !$called['preformat'])) $line = $this->handle_preformat(false,true) . $line;
-		
+
 		// suppress linebreaks for the next line if we just displayed one; otherwise re-enable them
 		if ($isline) $this->suppress_linebreaks = (isset($called['newline']) || isset($called['sections']));
-		
+
 		return $line;
 	}
-	
+
 	/**
 	 * @brief Perform a stress test.
 	 * @return string Processed wikitext (HTML).
 	 */
 	function test() {
 		$text = 'WikiParser stress tester. <br /> Testing...
-__TOC__		
-		
+__TOC__
+
 == Nowiki test ==
 <nowiki>[[wooticles|narf]] and \'\'\'test\'\'\' and stuff.</nowiki>
 
 == Character formatting ==
 This is \'\'emphasized\'\', this is \'\'\'really emphasized\'\'\', this is \'\'\'\'grossly emphasized\'\'\'\',
 and this is just \'\'\'\'\'freeking insane\'\'\'\'\'.
-Done.	
+Done.
 
 == Variables ==
 {{CURRENTDAY}}/{{CURRENTMONTH}}/{{CURRENTYEAR}}
@@ -661,7 +661,7 @@ Not preformatted.
  Again, this is preformatted    b    <-- It\'s a face
  Again, this is preformatted   ---\'
 Done.
-		
+
 == Bullet test ==
 * One bullet
 * Another \'\'\'bullet\'\'\'
@@ -688,7 +688,7 @@ Done.
 ';
 		return $this->parse($text);
 	}
-	
+
 	/**
 	 * @brief Parse a piece wikitext.
 	 * @param $text string Wikitext to parse.
@@ -697,22 +697,22 @@ Done.
 	 */
 	function parse($text,$title='') {
 		assert('is_string($text)');
-		
+
 		$this->redirect = false;
-		
+
 		$this->nowikis = array();
 		$this->list_level_chars = '';
 		$this->list_level = 0;
-		
+
 		$this->deflist = false;
 		$this->linknumber = 0;
 		$this->suppress_linebreaks = false;
 		$this->in_paragraph = false;
-		
+
 		$this->page_title = $title;
 
 		$output = '';
-		
+
 		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
 
 		// add a newline at the end if there isn't already one there
@@ -720,11 +720,11 @@ Done.
 		if (empty($lines[count($lines)-1])) {
 			$lines[] = '';
 		}
-		
+
 		if (preg_match('/^\#REDIRECT\s+\[\[(.*?)\]\]$/',trim($lines[0]),$matches)) {
 			$this->redirect = $matches[1];
 		}
-		
+
 		foreach ($lines as $k=>$line) {
 			$line = $this->parse_line($line);
 			$output .= $line;
@@ -732,15 +732,15 @@ Done.
 
 		$this->nextnowiki = 0;
 		$output = preg_replace_callback('/&lt;nowiki&gt;&lt;\/nowiki&gt;/i',array(&$this,'handle_restore_nowiki'),$output);
-		
+
 		return $output;
 	}
-	
+
 	function handle_save_nowiki($matches) {
 		array_push($this->nowikis,$matches[1]);
 		return '<nowiki></nowiki>';
 	}
-	
+
 	function handle_restore_nowiki($matches) {
 		return $this->nowikis[$this->nextnowiki++];
 	}
