@@ -1059,20 +1059,20 @@ function GetTagOrganisation($type,$organisation)
 	{
 		$sql = 'SELECT organisation_name,bar_crawl_organisation_recommend,bar_crawl_organisation_recommend_price FROM bar_crawl_organisations INNER JOIN organisations ON bar_crawl_organisation_organisation_entity_id = organisation_entity_id WHERE organisation';
 		
-	$bar_list[0]['bar_name'] = 'Toffs';
-	$bar_list[1]['bar_name'] = 'Gallery';
-	$bar_list[2]['bar_name'] = 'Evil Eye Lounge';
-	$bar_list[3]['bar_name'] = 'The Winchester';
-	$bar_list[0]['bar_drink'] = 'Deaths Calling';
-	$bar_list[1]['bar_drink'] = 'House';
-	$bar_list[2]['bar_drink'] = 'Deadly Rose';
-	$bar_list[3]['bar_drink'] = 'The Killer';
-	$bar_list[0]['bar_drink_cost'] = 140;
-	$bar_list[1]['bar_drink_cost'] = 230;
-	$bar_list[2]['bar_drink_cost'] = 240;
-	$bar_list[3]['bar_drink_cost'] = 350;
-
-	return $bar_list;
+		$bar_list[0]['bar_name'] = 'Toffs';
+		$bar_list[1]['bar_name'] = 'Gallery';
+		$bar_list[2]['bar_name'] = 'Evil Eye Lounge';
+		$bar_list[3]['bar_name'] = 'The Winchester';
+		$bar_list[0]['bar_drink'] = 'Deaths Calling';
+		$bar_list[1]['bar_drink'] = 'House';
+		$bar_list[2]['bar_drink'] = 'Deadly Rose';
+		$bar_list[3]['bar_drink'] = 'The Killer';
+		$bar_list[0]['bar_drink_cost'] = 140;
+		$bar_list[1]['bar_drink_cost'] = 230;
+		$bar_list[2]['bar_drink_cost'] = 240;
+		$bar_list[3]['bar_drink_cost'] = 350;
+	
+		return $bar_list;
 	}
 	
 	
