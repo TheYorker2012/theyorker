@@ -395,14 +395,14 @@ if (hasReqestedVersion) {
 
 	function handle_externallink($matches) {
 		$href = $matches[2];
-		if (array_key_exists(6,$matches)) {
+		if (array_key_exists(4,$matches)) {
 			// implicit mailto
-			$href = 'Mailto:'.$matches[6];
-			$title= $matches[6];
-		} else if (array_key_exists(4,$matches)) {
+			$href = 'Mailto:'.$matches[4];
+			$title= $matches[4];
+		/*} else if (array_key_exists(4,$matches)) {
 			// implicit url
 			$href = $matches[4];
-			$title= $matches[4];
+			$title= $matches[4];*/
 		} else if (!isset($matches[3])) {
 			// explicit unamed
 			$this->linknumber++;
@@ -586,7 +586,7 @@ if (hasReqestedVersion) {
 		$line = rtrim($line);
 
 		// escape some symbols
-		$line = htmlentities($line, ENT_COMPAT, 'UTF-8');
+		$line = htmlentities($line, ENT_NOQUOTES, 'UTF-8');
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
 		foreach ($line_regexes as $func=>$regex) {
