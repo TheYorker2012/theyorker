@@ -145,6 +145,50 @@ class Comments_model extends model
 		);
 	}
 	
+	/// Create a new thread and link to a table.
+	/**
+	 * @param $Properties array[key=>value] Array of thread properties:
+	 *	- 'allow_ratings' bool=FALSE Whether to allow users to rate the thread.
+	 *	- 'allow_comments' bool=TRUE Whether to allow the user to post comments.
+	 *	- 'allow_anonymous_comments' bool=TRUE Whether to allow anonymous comments.
+	 * @param $Table string Name of table.
+	 * @param $Keys array[string => string] array of primary key values.
+	 * @param $Field string Name of field.
+	 *
+	 * For each row of @a $Table satisfying @a $Keys, the thread is set to a new thread.
+	 */
+	function CreateThread($Properties, $Table, $Keys, $Field)
+	{
+		$properties = array(
+			'comment_thread_allow_ratings' => FALSE,
+			'comment_thread_allow_comments' => TRUE,
+			'comment_thread_allow_anonymous_comments' => TRUE,
+		);
+		
+		// Validate properties
+		foreach ($Properties as $key => $value) {
+			if (array_key_exists('comment_thread_'.$key, $properties)) {
+				$properties['comment_thread_'.$key] = $value;
+			}
+		}
+		
+		// insert
+		$this->db->insert('comment_threads', $properties);
+		if ($this->db->affected_rows() > 0) {
+			$new_thread_id = $this->db->insert_id();
+			$keys[] = $Field.' IS NULL';
+			$this->db->update($Table, array($Field => $new_thread_id), $keys);
+			if ($this->db->affected_rows() === 0) {
+				$this->db->delete('comment_threads', array('comment_thread_id' => $new_thread_id));
+				return FALSE;
+			} else {
+				return TRUE;
+			}
+		} else {
+			return FALSE;
+		}
+	}
+	
 	/// Get the fields which need selecting from a thread.
 	/**
 	 * @return string Sql fields needed for thread.

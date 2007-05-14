@@ -32,26 +32,54 @@
 
 <div class='blue_box'>
 	<h2>entries for this organisation</h2>
-
-    <table cellspacing="0" cellpadding="0">
-        <tr>
-            <td width="83"><p align="center"> Directory </p></td>
-            <td width="78"><p align="center"><b><a href="/office/pr/org/<?php echo $organisation['shortname']; ?>/directory/information">Edit</a></b></p></td>
-            <td width="168"><p align="center"> 2/02/2007 at 6:06pm<b></b></p></td>
-            <td width="32">&nbsp;</td>
-        </tr>
-        <tr>
-            <td width="83"><p align="center"> Food </p></td>
-            <td width="78"><p align="center"><b><a href="/office/reviews/<?php echo $organisation['shortname']; ?>/food">Edit</a></b></p></td>
-            <td width="168"><p align="center"> 2/02/2007 at 6:06pm </p></td>
-			<td width="32"><p align="center"> <form action="#" onSubmit="return confirm('Are you sure you want to remove this context?');"> <input type="image" src="/images/icons/delete.png" alt="Delete" /> </form></p></td>
-        </tr>
-        <tr>
-            <td width="83"><p align="center"> Drink </p></td>
-            <td width="78"><p align="center"><form><input type="submit" value="Add Drink Context" /></form></p></td>
-            <td width="168">&nbsp;</td>
-			<td width="32">&nbsp;</td>
-        </tr>
-    </table>
+	
+	<table cellspacing="0" cellpadding="0">
+		<?php
+		foreach ($contexts as $id => $context) {
+			echo('<tr>');
+			// name
+			echo('<td width="83"><p align="center">'.$context['name'].'</p></td>');
+			// add/edit
+			echo('<td width="78"><p align="center">');
+			if ($context['exists']) {
+				if ($context['editable']) {
+					echo('<b><a href="'.$context['edit'].'">Edit</a></b>');
+				}
+			} else {
+				if ($context['creatable']) {
+					echo('<form method="post" action="'.$context['create'].'">');
+					echo('<input type="hidden" name="create_context" value="'.$id.'" />');
+					echo('<input type="hidden" name="create_confirm" value="1" />');
+					echo('<input type="submit" value="Add '.$context['name'].' Section" />');
+					echo('</form>');
+				}
+			}
+			echo('</p></td>');
+			// updated
+			echo('<td width="168"><p align="center">');
+			if (empty($context['updated'])) {
+				echo('&nbsp;');
+			} else {
+				echo($context['updated']);
+			}
+			echo('</p></td>');
+			// delete
+			echo('<td width="32">');
+			if ($context['deletable']) {
+				echo('<p align="center">');
+				echo('<form method="post" action="'.$context['delete'].'" onSubmit="return confirm(\'Are you sure you want to remove this section?\');">');
+				echo('<input type="hidden" name="remove_context" value="'.$id.'" />');
+				echo('<input type="hidden" name="remove_confirm" value="1" />');
+				echo('<input type="image" src="/images/icons/delete.png" alt="Delete" />');
+				echo('</form>');
+				echo('</p>');
+			} else {
+				echo('&nbsp;');
+			}
+			echo('</td>');
+			echo('</tr>');
+		}
+		?>
+	</table>
 </div>
 

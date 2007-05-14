@@ -47,27 +47,66 @@ class Review_model extends Model {
 		return ($query->num_rows() != 0);
 	}
 
+	/// A single review context for an organisation.
 	/**
-	 * @return A single review context for an organisation
+	 * @return bool Whether successful
 	 */
 	function CreateReviewContext($organisation_shortname,$content_type_codename)
 	{
-		$sql =
-			'
+		$sql = 'SELECT
+			(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)  as review_context_organisation_entity_id,
+			(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?) as review_context_content_type_id';
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename))->result_array();
+		if (!array_key_exists(0, $query)) {
+			return FALSE;
+		}
+		$org_entity_id = $query[0]['review_context_organisation_entity_id'];
+		$content_id = $query[0]['review_context_content_type_id'];
+		if (NULL === $org_entity_id || NULL === $content_id) {
+			return FALSE;
+		}
+		// Create the new context.
+		$sql = '
 			INSERT INTO review_contexts 
 			(
 			 review_context_organisation_entity_id,
 			 review_context_content_type_id
 			) 
-			SELECT
-			(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)  as organisation_entity_id,
-			(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?) as content_type_id
-			;
-
+			VALUES ('.$org_entity_id.','.$content_id.')
+			ON DUPLICATE KEY UPDATE review_context_deleted = FALSE
 			';
-		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
-
-		return ($query->num_rows() != 0);
+		$this->db->query($sql);
+		
+		// check something's happened
+		if ($this->db->affected_rows()) {
+			$this->load->model('comments_model');
+			$CI = & get_instance();
+			$CI->comments_model->CreateThread(array(), 'review_contexts', $query[0], 'review_context_comment_thread_id');
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+		
+	}
+	
+	function DeleteReviewContext($organisation_shortname, $content_type_codename)
+	{
+		$sql = 'SELECT
+			(SELECT organisation_entity_id FROM organisations WHERE organisations.organisation_directory_entry_name = ?)  as review_context_organisation_entity_id,
+			(SELECT content_type_id FROM content_types WHERE content_types.content_type_codename = ?) as review_context_content_type_id';
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename))->result_array();
+		if (!array_key_exists(0, $query)) {
+			return FALSE;
+		}
+		if (NULL === $query[0]['review_context_organisation_entity_id'] ||
+			NULL === $query[0]['review_context_content_type_id'])
+		{
+			return FALSE;
+		}
+		$this->db->update('review_contexts',
+			array('review_context_deleted' => TRUE),
+			$query[0]);
+		return $this->db->affected_rows() > 0;
 	}
 
 	///	Return published review context.
