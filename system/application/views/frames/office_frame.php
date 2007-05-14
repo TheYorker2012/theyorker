@@ -129,6 +129,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/arts/'>Arts</a>
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/blogs/'>Blogs</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/news/sport/'>Sport</a>
 		</div>
 		<div class='officenavigation_item'>
