@@ -139,10 +139,6 @@ class Photos extends Controller
 					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
-				$data['request_finished'] = FALSE;
-				if (($data['status'] == 'deleted') || ($data['status'] == 'completed')) {
-					$data['request_finished'] = TRUE;
-				}
 				if (($data['status'] == 'unassigned') || ($data['status'] == 'assigned')) {
 					$data['request_editable'] = TRUE;
 				} else {
@@ -151,6 +147,18 @@ class Photos extends Controller
 						'editor'		=>	FALSE,
 						'photographer'	=>	FALSE,
 						'reporter'		=>	FALSE,
+						'everyone'		=>	FALSE
+					);
+				}
+				$data['request_finished'] = FALSE;
+				if (($data['status'] == 'deleted') || ($data['status'] == 'completed')) {
+					$data['request_finished'] = TRUE;
+				}
+				if ($data['status'] == 'completed') {
+					$data['access']['details'] = array(
+						'editor'		=>	TRUE,
+						'photographer'	=>	FALSE,
+						'reporter'		=>	TRUE,
 						'everyone'		=>	FALSE
 					);
 				}
@@ -177,6 +185,13 @@ class Photos extends Controller
 							$this->photos_model->CancelRequest($request_id);
 						} else {
 							$this->main_frame->AddMessage('error','You do not have the necessary permissions to cancel this photo request.');
+						}
+						redirect('/office/photos/view/'.$request_id);
+					} elseif ($special_op == 'select') {
+						if ($data['access']['complete'][$data['user_level']]) {
+							$this->photos_model->SelectPhoto($request_id,$this->uri->segment(6),$this->user_auth->entityId);
+						} else {
+							$this->main_frame->AddMessage('error','You do not have the necessary permissions to select the chosen photo for this photo request.');
 						}
 						redirect('/office/photos/view/'.$request_id);
 					}
@@ -224,6 +239,9 @@ class Photos extends Controller
 						redirect('/office/photos/view/'.$request_id);
 					}
 				}
+
+				/// Load image helper to get suggested photos' thumbnails
+				$this->load->helper('images');
 
 				/// Load main frame with view
 				$this->main_frame->SetContentSimple('office/photos/view', $data);

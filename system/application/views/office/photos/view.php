@@ -28,7 +28,6 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 	<style type='text/css'>
 	#proposed_photos .photo_item {
 		float: left;
-		width: 20%;
 		font-size: x-small;
 		text-align: center;
 		margin-bottom: 5px;
@@ -64,7 +63,13 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 			<fieldset>
 
 				<?php printInput('Title','r_title','text',$title,'details',$access,$user_level); ?>
-				<?php printInput('Description','r_brief','textarea',$description,'details',$access,$user_level); ?>
+				<?php
+				if ($status == 'completed') {
+					printInput('Description','r_brief','text',$description,'details',$access,$user_level);
+				} else {
+					printInput('Description','r_brief','textarea',$description,'details',$access,$user_level);
+				} ?>
+
 				<?php printInput('','r_details','submit','Edit','details',$access,$user_level); ?>
 
 				<label for="r_article">For Article:</label>
@@ -155,17 +160,37 @@ if ($status == 'unassigned') {
 <?php } else { ?>
 	</form>
 	<form class="form">
+<?php if ($status == 'completed') { ?>
 		<div class="blue_box">
-			<h2>photos</h2>
+			<h2>chosen photo</h2>
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><img src="<?php echo(imageLocation($chosen_photo, 'medium')); ?>" alt="<?php echo($title); ?>" title="<?php echo($title); ?>" /></a><br />
+			<?php echo($description); ?>
+		</div>
+<?php } ?>
+		<div class="blue_box">
+			<h2>suggested photos</h2>
 			<div id="proposed_photos">
-<?php foreach ($photos as $photo) {
-	echo('				<div class="photo_item">');
+<?php
+$photo_width = '20';
+$photo_size = 'small';
+if ($status == 'ready') {
+	$photo_width = '50';
+	$photo_size = 'medium';
+}
+
+foreach ($photos as $photo) {
+	$photo['url'] = imageLocation($photo['id'], $photo_size);
+
+	echo('				<div class="photo_item" style="width: '.$photo_width.'%;">');
 	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a>');
 	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
 		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
 	}
 	echo('					' . $photo['user_name'] . '<br />');
 	echo('					' . date('d/m/y @ H:i',$photo['time']) . '');
+	if ($status == 'ready') {
+		echo('					<br /><a href="/office/photos/view/'.$id.'/select/'.$photo['id'].'">Select this Photo</a>');
+	}
 	echo('            </div>');
 } ?>
 			</div>

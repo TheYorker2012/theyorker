@@ -100,7 +100,8 @@ class Photos_model extends Model
 				'reporter_id'		=>	$row->photo_request_user_entity_id,
 				'reporter_name'		=>	$row->user_firstname . ' ' . $row->user_surname,
 				'editor_id'			=>	$row->photo_request_approved_user_entity_id,
-				'comments_thread'	=>	$row->photo_request_comment_thread_id
+				'comments_thread'	=>	$row->photo_request_comment_thread_id,
+				'chosen_photo'		=>	$row->photo_request_chosen_photo_id
       	);
       	if ($row->photo_request_approved_user_entity_id !== NULL) {
 				$editor_sql = 'SELECT users.user_firstname, users.user_surname
@@ -142,7 +143,6 @@ class Photos_model extends Model
 
 	function GetSuggestedPhotos($id)
 	{
-		$this->load->helper('images');
 		$result = array();
 		$sql = 'SELECT photo_request_photos.photo_request_photo_photo_id,
 					photo_request_photos.photo_request_photo_comment,
@@ -161,8 +161,7 @@ class Photos_model extends Model
 				'comment'	=>	$photo->photo_request_photo_comment,
 				'time'		=>	$photo->photo_request_photo_date,
 				'user_id'	=>	$photo->photo_request_photo_user_id,
-				'user_name'	=>	$photo->user_firstname . ' ' . $photo->user_surname,
-				'url'		=>	imageLocation($photo->photo_request_photo_photo_id, 'small')
+				'user_name'	=>	$photo->user_firstname . ' ' . $photo->user_surname
 			);
 		}
 		return $result;
@@ -248,6 +247,16 @@ class Photos_model extends Model
 				SET		photo_requests.photo_request_deleted = 1
 				WHERE	photo_requests.photo_request_id = ?';
 		$query = $this->db->query($sql,array($request_id));
+	}
+
+	function SelectPhoto($request_id,$photo_id,$editor_id)
+	{
+		$sql = 'UPDATE	photo_requests
+				SET		photo_requests.photo_request_chosen_photo_id = ?,
+						photo_requests.photo_request_approved_user_entity_id = ?,
+						photo_requests.photo_request_description = ''
+				WHERE	photo_requests.photo_request_id = ?';
+		$query = $this->db->query($sql,array($photo_id,$editor_id,$request_id));
 	}
 
 }
