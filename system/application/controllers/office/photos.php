@@ -93,19 +93,19 @@ class Photos extends Controller
 				}
 
 				/// Get current user's access level
-				$data['user_level'] = GetUserLevel();
-				if ($data['user_level'] == 'admin') {
+				$is_editor = GetUserLevel();
+				if ($is_editor == 'admin') {
 					/// Admin users are effectively editors
-					$data['user_level'] = 'editor';
+					$is_editor = 'editor';
 				}
-				if ($data['user_level'] != 'editor') {
-					if (($data['status'] == 'assigned') && ($data['reporter_id'] == $this->user_auth->entityId)) {
-						$data['user_level'] = 'photographer';
-					} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
-						$data['user_level'] = 'reporter';
-					} else {
-						$data['user_level'] = 'everyone';
-					}
+				if (($data['status'] == 'assigned') && ($data['reporter_id'] == $this->user_auth->entityId)) {
+					$data['user_level'] = 'photographer';
+				} elseif ($data['reporter_id'] == $this->user_auth->entityId) {
+					$data['user_level'] = 'reporter';
+				} elseif ($is_editor == 'editor') {
+					$data['user_level'] == 'editor';
+				} else {
+					$data['user_level'] = 'everyone';
 				}
 				/* At this point $data['user_level'] should hold one of the following access levels:
 				 *	-	editor
