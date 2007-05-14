@@ -17,7 +17,9 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 				break;
 		}
 	} else {
-		echo('<div id="'.$name.'" style="float:left;margin:5px 10px;">'.$value.'</div>');
+		if ($type != 'submit') {
+			echo('<div id="'.$name.'" style="float:left;margin:5px 10px;">'.$value.'</div>');
+		}
 	}
 	echo('<br />');
 }
@@ -108,7 +110,7 @@ if ($status == 'unassigned') {
 		$assign_text = 'Unassign Me';
 		if ($assigned_status == 'requested') {
 			$assign_text = 'Accept';
-			$other_input = '<input type="submit" name="r_decline" value="Decline" class="button" />';
+			$other_input = '<br /><input type="submit" name="r_decline" value="Decline" class="button" />';
 		}
 	} elseif ($user_level == 'editor') {
 		$assign_text = 'Unassign';
