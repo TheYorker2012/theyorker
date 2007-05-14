@@ -104,14 +104,14 @@ if ($status == 'unassigned') {
 		$assign_text = 'Assign Me';
 	}
 } elseif ($status == 'assigned') {
-	if ($user_level == 'editor') {
-		$assign_text = 'Unassign';
-	} elseif ($user_level == 'photographer') {
+	if ($user_level == 'photographer') {
 		$assign_text = 'Unassign Me';
 		if ($assigned_status == 'requested') {
 			$assign_text = 'Accept';
 			$other_input = '<input type="submit" name="r_decline" value="Decline" class="button" />';
 		}
+	} elseif ($user_level == 'editor') {
+		$assign_text = 'Unassign';
 	}
 }
 ?>

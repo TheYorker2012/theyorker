@@ -163,14 +163,14 @@ class Photos extends Controller
 							redirect('/office/photos/view/'.$request_id);
 						}
 					} elseif ($status == 'assigned') {
-						if ($user_level == 'editor') {
-							$this->photos_model->UnassignPhotographer($request_id);
-							redirect('/office/photos/view/'.$request_id);
-						} elseif ($user_level == 'photographer') {
+						if ($user_level == 'photographer') {
 							if ($assigned_status == 'requested') {
 								$this->photos_model->AssignPhotographer($request_id,$this->user_auth->entityId,'accepted');
 								redirect('/office/photos/view/'.$request_id);
 							}
+						} elseif ($user_level == 'editor') {
+							$this->photos_model->UnassignPhotographer($request_id);
+							redirect('/office/photos/view/'.$request_id);
 						}
 					}
 				} elseif ($this->input->post('r_decline') !== FALSE) {
