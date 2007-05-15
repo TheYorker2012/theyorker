@@ -108,21 +108,24 @@ class Home_Hack_Model extends Model {
 				article_contents.article_content_heading
 					AS heading,
 				DATE_FORMAT(
-					articles.article_publish_date, 
+					articles.article_publish_date,
 					?)
 					AS date,
 				article_contents.article_content_blurb
 					AS blurb,
 				articles.article_thumbnail_photo_id
 					AS photo_id,
-				photos.photo_title
+				photo_requests.photo_request_title
+					AS photo_title
 			FROM articles
 			INNER JOIN content_types ON
-				articles.article_content_type_id = 
+				articles.article_content_type_id =
 					content_types.content_type_id
-			LEFT JOIN photos ON
-				articles.article_thumbnail_photo_id = 
-					photos.photo_id
+			LEFT JOIN photo_requests ON
+				(articles.article_thumbnail_photo_id =
+					photo_requests.photo_request_relative_photo_number
+				AND photo_requests.photo_request_article_id =
+					articles.article_id)
 			INNER JOIN article_contents ON
 				article_contents.article_content_id = 
 					articles.article_live_content_id
