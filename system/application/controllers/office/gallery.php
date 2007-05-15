@@ -251,7 +251,7 @@ class Gallery extends Controller {
 	}
 	
 	private function _checkImageProperties(&$imgData, &$imgTypes) {
-		foreach ($imgTypes as $imgType) {
+		foreach ($imgTypes->result() as $imgType) {
 			if ($imgData['image_width'] < $imgType->image_type_width) return false;
 			if ($imgData['image_height'] < $imgType->image_type_height) return false;
 		}
