@@ -7,7 +7,7 @@
 	timers['Blurb'] = 0;
 	timers['Content'] = 0;
 	timers['Factbox'] = 0;
-	var pages = new Array('request','article','comments','revisions','sidebar');
+	var pages = new Array('request','article','comments','revisions');
 	var preview = 0;
 	var functionQueue = '';
 
