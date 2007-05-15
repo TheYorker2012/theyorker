@@ -407,6 +407,7 @@ class News_model extends Model
 			$result['date'] = date('l, jS F Y');
 			$content_id = $preview;
 		}
+		if ($content_id === NULL) return NULL;
 		$sql = 'SELECT	article_contents.article_content_heading,
 						article_contents.article_content_subheading,
 						article_contents.article_content_subtext,
