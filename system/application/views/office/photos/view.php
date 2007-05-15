@@ -74,7 +74,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
-					<a href="/office/news/<?php echo($article_id); ?>" target="_blank">
+					<a href="/office/news/<?php echo($article_id); ?>">
 						<?php echo($article_title); ?>
 					</a>
 				</div>
