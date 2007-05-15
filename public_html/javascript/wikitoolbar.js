@@ -76,7 +76,7 @@ function insertYouTube(textarea) {
 	if (ytClipId.indexOf('&')!=-1) ytClipId = ytClipId.substring(0,ytClipId.indexOf('&'));
 	
 	//Insert the string into the textarea
-	insertTags('\n\n[[YouTube:' + ytClipId + ']]\n\n', '', '', textarea);
+	insertTags('\n\n[[youtube:' + ytClipId + ']]\n\n', '', '', textarea);
 }
 
 function mwSetupToolbar(toolbar, textarea, extrabuttons) {
