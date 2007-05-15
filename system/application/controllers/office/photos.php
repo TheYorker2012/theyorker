@@ -60,6 +60,9 @@ class Photos extends Controller
 				/// If request doesn't exist then redirect
 				redirect('/office/photos/');
 			} else {
+				/// Get help text for current request status
+				$data['help_text'] = $this->pages_model->GetPropertyWikiText('help_'.$data['status']);
+
 				/// Check if there are any new suggested photos - ask for confirmation
 				/// @TODO:Ensure request is open for new suggestions
 				if (isset($_SESSION['img']['list'])) {
