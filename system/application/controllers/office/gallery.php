@@ -241,6 +241,14 @@ class Gallery extends Controller {
 		$this->main_frame->Load();
 	}
 	
+	private function _checkImageProperties(&$imgData, &$imgTypes) {
+		foreach ($imgTypes as $imgType) {
+			if ($imgData['image_width'] < $imgType->image_type_width) return false;
+			if ($imgData['image_height'] < $imgType->image_type_height) return false;
+		}
+		return true;
+	}
+	
 	function do_upload() {
 		if (!CheckPermissions('office')) return;
 		
@@ -264,7 +272,8 @@ class Gallery extends Controller {
 				$data[] = $this->upload->display_errors();
 			} else {
 				$data[] = $this->upload->data();
-				$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
+				if ($this->_checkImageProperties($data[$x - 1], $query))
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query, $photo);
 			}
 		}
 		$this->main_frame->SetTitle('Gallery Photo Cropper');
