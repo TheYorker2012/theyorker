@@ -43,7 +43,7 @@ class Gallery extends Controller {
 				//some people won't approve of this method, but the user cannot harm anything messing this up and its short
 				$_SESSION['img']['list'] = array($bits[6]);
 				header('Location: '.$_SESSION['img']['return']);
-			} elseif ($bits[4] != 'gallery') {
+			} elseif (isset ($bits[4]) and $bits[4] != 'gallery') {
 				$_SESSION['img']['return'] = $_SERVER["HTTP_REFERER"];
 			}
 		}
