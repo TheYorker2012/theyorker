@@ -68,7 +68,7 @@
 		var container = document.getElementById('photo_requests');
 
 		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">';
-		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '<img src="' + photo + '" alt="' + title + '" title="' + title + '" style="float: left; margin-right: 5px;" /></a>';
+		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '"><img src="' + photo + '" alt="' + title + '" title="' + title + '" style="float: left; margin-right: 5px;" /></a>';
 		container.innerHTML = container.innerHTML + '<b>Photo ' + number + '</b> ';
 		if (main == 1) {
 			container.innerHTML = container.innerHTML + '(M)';
