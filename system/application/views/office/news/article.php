@@ -262,9 +262,6 @@
 					<label for="content" class="full">Main Article Content</label>
 					<div id="toolbar"></div>
 					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo $revision['text']; ?></textarea>
-					<script type="text/javascript">
-						mwSetupToolbar('toolbar','content', false);
-					</script>
 					<br />
 				</fieldset>
 			</div>
@@ -351,3 +348,7 @@
 			</div>
 		</div>
 	</form>
+
+	<script type="text/javascript">
+		mwSetupToolbar('toolbar','content', false);
+	</script>
