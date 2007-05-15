@@ -120,7 +120,12 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 function insertImageTag(textarea, imageNumber) {
 	// If this doesn't work, the text box must not be visible
 	var txtarea = document.getElementById(textarea);
-	if (!txtarea.selectionStart) {
+	try {
+		if (!txtarea.selectionStart) {
+			alert('To insert an image, please go to the body tab and place the cursor somewhere in the main article.') ;
+			return false;
+		}
+	} catch (error) {
 		alert('To insert an image, please go to the body tab and place the cursor somewhere in the main article.') ;
 		return false;
 	}
