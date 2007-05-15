@@ -121,7 +121,7 @@ function insertImageTag(textarea, imageNumber) {
 	// If this doesn't work, the text box must not be visible
 	var txtarea = document.getElementById(textarea);
 	try {
-		if (!txtarea.selectionStart) {
+		if (!document.selection && textbox.selectionStart === null) {
 			alert('To insert an image, please go to the body tab and place the cursor somewhere in the main article.') ;
 			return false;
 		}
