@@ -15,8 +15,15 @@ switch($_SERVER['SERVER_NAME']) {
 				break;
 		}
 		break;
+	case 'theyorker.co.uk':
+		$key = 'ABQIAAAAG00OtuAD_rmvNO96T7IKKRQvDtNQ40ZIAwPbdVsXHih395_7yhSQKuqfztRWCvwCVXmQ0TIhchXzRw';
+		break;
+	case 'www.theyorker.co.uk':
+		$key = 'ABQIAAAAG00OtuAD_rmvNO96T7IKKRSsupC0bCgwgBIcSr9y7Z9nV9qoOBRUsXmbgvycoXlZCvBZpQ0TqmIW0A';
+		break;
 	case 'localhost':
 		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
+		break;
 	default:
 		$key = 'unknown';
 }
