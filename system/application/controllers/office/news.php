@@ -737,9 +737,18 @@ class News extends Controller
 		}
 		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
 			$this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$title,$description);
+
 			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			foreach ($photo_requests as $photo) {
-				$xajax_response->addScriptCall('photo_created',imageLocTag($photo['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']));
+				$main = 0;
+				$thumb = 0;
+				if ($data['article']['photo_main'] == $photo['photo_number']) {
+					$main = 1;
+				}
+				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
+					$thumb = 1;
+				}
+				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'], 'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
@@ -778,7 +787,7 @@ class News extends Controller
 				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
 					$thumb = 1;
 				}
-				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'], 'medium'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
+				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'], 'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to edit photo requests for this article!');
