@@ -637,9 +637,10 @@ class News extends Controller
 	{
 		$this->load->helper('images');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
-		$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 
 		if (count($data['article']) > 0) {
+			// Get photo requests for article
+			$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			// Is user requested for this article? i.e. can edit
 			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
 			// Show or hide accept/decline request buttons
@@ -676,7 +677,7 @@ class News extends Controller
 			$navbar = $this->main_frame->GetNavbar();
 			$navbar->AddItem('request', 'request', 'javascript:tabs(\'request\');');
 			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
-			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
+			//$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
 			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
 			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
 			$navbar->SetSelected('request');
@@ -815,6 +816,9 @@ class News extends Controller
 				$wiki_cache = '';
 //				if ($create_cache) {
 					$this->load->library('wikiparser');
+					foreach ($data['photo_requests'] as $photo) {
+						$this->wikiparser->image_overrides[$photo['chosen_photo']] = imageLocation($photo['chosen_photo'], 'medium');
+					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
 //				}
 				if ($revision == 0) {
