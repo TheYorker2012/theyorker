@@ -113,7 +113,7 @@ class Home_Hack_Model extends Model {
 					AS date,
 				article_contents.article_content_blurb
 					AS blurb,
-				articles.article_thumbnail_photo_id
+				photo_request.photo_request_chosen_photo_id
 					AS photo_id,
 				photo_requests.photo_request_title
 					AS photo_title
