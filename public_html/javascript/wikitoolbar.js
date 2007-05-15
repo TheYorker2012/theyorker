@@ -92,7 +92,7 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	addFunction(mwEditButtons,'/images/icons/button_youtube.gif','YouTube Video', insertYouTube ,'mw-editbutton-youtube');
 
 	if(extrabuttons) {
-		addButton(mwEditButtons,'/images/icons/button_factbox.png','Fact box','\n{{factbox:Title of Box|\n','\n}}\n','Factbox body text.\nFactbox body text.','mw-editbutton-factbox');
+		addButton(mwEditButtons,'/images/icons/button_factbox.png','Fact box','\n{{factbox:Title of Box|\n','\n}}\n','* Fact one.\n* Fact two.','mw-editbutton-factbox');
 		addButton(mwEditButtons,'/images/icons/button_headline.png','Level 2 heading','\n== ',' ==\n','Heading text','mw-editbutton-heading');
 		addButton(mwEditButtons,'/images/icons/button_enter.png','Force single line break','{{br}}\n','','','mw-editbutton-linebreak');
 	}
