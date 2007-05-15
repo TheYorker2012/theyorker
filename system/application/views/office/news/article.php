@@ -164,7 +164,7 @@
 					<br />
 					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
 					<span style="font-size:x-small;">
-						<?php echo(date('d/m/y @ H:i', $request['time'])); ?></span><br />
+						<?php echo(date('d/m/y @ H:i', $request['time'])); ?><br />
 						[ <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a> ]
 						<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Main</a> ]<?php } ?>
 						<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Thumbnail</a> ]<?php } ?>
