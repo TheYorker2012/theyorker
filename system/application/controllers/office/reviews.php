@@ -276,7 +276,6 @@ class Reviews extends Controller
 				$this->messages->AddMessage('information',$message);
 				
 				$this->load->library('Review_views');
-				$this->review_views->DisableComments();
 				$this->review_views->SetRevision($revision_id);
 				$this->review_views->DisplayReview($ContextType,$organisation);
 			}
@@ -802,40 +801,28 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
-	function comments($ContextType, $organisation)
+	function comments($ContextType, $organisation, $Action = 'view', $IncludedComment = 0)
 	{
 		if (!CheckPermissions('office')) return;
 		
 		$this->pages_model->SetPageCode('office_review_comments');
-
-		//Get navigation bar and tell it the current page
-		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('comments');
 
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		//This needs to be altered to throw errors incase of unknown content_types...
+		$content_id = $this->review_model->GetContentTypeID($ContextType);
+		$data = $this->organisations->_GetOrgData($organisation);
+		$organisation_id = $data['organisation']['id'];
+		
+		$this->load->library('comments');
+		$this->comments->SetUri('/office/reviews/'.$ContextType.'/'.$organisation.'/view/');
+		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
+		$data['comments'] = $this->comments->CreateStandard($thread, $IncludedComment);
 
-		//Find last article id
-		$article_id = $this->review_model->GetArticleID($organisation,$this->review_model->FindContentID($ContextType));
-
-		if (isset($article_id[0])) //Check that a article exists
-		{
-			$article_id = $article_id[0];
-
-			//Get user comments for moderation
-			$data['comments'] 	= $this->review_model->GetComments($organisation,$this->review_model->FindContentID($ContextType),$article_id);
-
-		}
-
-		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_comments', $data);
-
-		// Set up the public frame
+		$this->main_frame->SetContentSimple('reviews/office_review_comments', $data);
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
 						'content_type' => $ContextType));
-		$this->main_frame->SetContent($the_view);
 		
 		// Load the public frame view
 		$this->main_frame->Load();

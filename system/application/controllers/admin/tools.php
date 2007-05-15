@@ -23,12 +23,24 @@ class Tools extends controller
 	}
 	
 	/// Handle the database tools
-	function database($Tool = 'index')
+	function database($Tool = 'index', $Param1 = NULL)
 	{
 		if (!CheckPermissions('admin')) return;
-		static $valid_tools = array('flush');
+		static $valid_tools = array('reset','triggers');
 		if (in_array($Tool, $valid_tools)) {
 			$function_name = '_database_'.$Tool;
+			$this->$function_name($Param1);
+			$this->main_frame->load();
+		} else {
+			show_404();
+		}
+	}
+	
+	function _database_reset($what)
+	{
+		static $valid_tools = array('comments');
+		if (in_array($what, $valid_tools)) {
+			$function_name = '_database_reset_'.$what;
 			$this->$function_name();
 			$this->main_frame->load();
 		} else {
@@ -36,7 +48,75 @@ class Tools extends controller
 		}
 	}
 	
-	function _database_flush() {
+	function _database_reset_comments()
+	{
+		static $thread_fields = array(
+			'articles' => array(
+				'keys' => array('article_id'),
+				'fields' => array(
+					'article_private_comment_thread_id' => array(
+						'allow_anonymous_comments' => FALSE,
+					),
+					'article_public_comment_thread_id' => array(
+					),
+				),
+			),
+			'review_contexts' => array(
+				'keys' => array(
+					'review_context_organisation_entity_id',
+					'review_context_content_type_id',
+				),
+				'fields' => array(
+					'review_context_comment_thread_id' => array(
+					),
+					'review_context_office_comment_thread_id' => array(
+						'allow_anonymous_comments' => FALSE,
+					),
+				),
+			),
+			'photo_requests' => array(
+				'keys' => array('photo_request_id'),
+				'fields' => array(
+					'photo_request_comment_thread_id' => array(
+						'allow_ratings' => TRUE,
+					),
+				),
+			),
+		);
+		
+		
+		// start transaction
+		$this->db->trans_start();
+		// delete all references to comment threads
+		foreach ($thread_fields as $table => $info) {
+			$setter = array();
+			foreach ($info['fields'] as $field => $param) {
+				$setter[$field] = NULL;
+			}
+			$this->db->update($table, $setter, '1');
+		}
+		// delete all comments
+		$this->db->delete('comments', '1');
+		// delete all comment ratings
+		$this->db->delete('comment_ratings', '1');
+		// delete all comment threads
+		$this->db->delete('comment_threads', '1');
+		// end transaction
+		$this->db->trans_complete();
+		
+		$this->load->model('comments_model');
+		foreach ($thread_fields as $table => $info) {
+			foreach ($info['fields'] as $field => $param) {
+				$this->comments_model->CreateThreads($param, $table, $info['keys'], $field);
+			}
+		}
+		
+		$this->messages->AddMessage('success', 'Comment threads have been successfully reset.');
+		$this->main_frame->Load();
+	}
+	
+	function _database_triggers($what)
+	{
 		static $flush_triggers = array(
 			//'Calendar' => array('events_model', '');
 			'Comments' => array('comments_model', 'CreateTriggers'),

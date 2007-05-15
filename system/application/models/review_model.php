@@ -81,7 +81,12 @@ class Review_model extends Model {
 		if ($this->db->affected_rows()) {
 			$this->load->model('comments_model');
 			$CI = & get_instance();
-			$CI->comments_model->CreateThread(array(), 'review_contexts', $query[0], 'review_context_comment_thread_id');
+			$CI->comments_model->CreateThread(
+				array(), 'review_contexts',
+				$query[0], 'review_context_comment_thread_id');
+			$CI->comments_model->CreateThread(
+				array('allow_anonymous_comments' => FALSE), 'review_contexts',
+				$query[0], 'review_context_office_comment_thread_id');
 			return TRUE;
 		} else {
 			return FALSE;
@@ -1059,24 +1064,42 @@ function GetTagOrganisation($type,$organisation)
 	{
 		$sql = 'SELECT organisation_name,bar_crawl_organisation_recommend,bar_crawl_organisation_recommend_price FROM bar_crawl_organisations INNER JOIN organisations ON bar_crawl_organisation_organisation_entity_id = organisation_entity_id WHERE organisation';
 		
-	$bar_list[0]['bar_name'] = 'Toffs';
-	$bar_list[1]['bar_name'] = 'Gallery';
-	$bar_list[2]['bar_name'] = 'Evil Eye Lounge';
-	$bar_list[3]['bar_name'] = 'The Winchester';
-	$bar_list[0]['bar_drink'] = 'Deaths Calling';
-	$bar_list[1]['bar_drink'] = 'House';
-	$bar_list[2]['bar_drink'] = 'Deadly Rose';
-	$bar_list[3]['bar_drink'] = 'The Killer';
-	$bar_list[0]['bar_drink_cost'] = 140;
-	$bar_list[1]['bar_drink_cost'] = 230;
-	$bar_list[2]['bar_drink_cost'] = 240;
-	$bar_list[3]['bar_drink_cost'] = 350;
-
-	return $bar_list;
+		$bar_list[0]['bar_name'] = 'Toffs';
+		$bar_list[1]['bar_name'] = 'Gallery';
+		$bar_list[2]['bar_name'] = 'Evil Eye Lounge';
+		$bar_list[3]['bar_name'] = 'The Winchester';
+		$bar_list[0]['bar_drink'] = 'Deaths Calling';
+		$bar_list[1]['bar_drink'] = 'House';
+		$bar_list[2]['bar_drink'] = 'Deadly Rose';
+		$bar_list[3]['bar_drink'] = 'The Killer';
+		$bar_list[0]['bar_drink_cost'] = 140;
+		$bar_list[1]['bar_drink_cost'] = 230;
+		$bar_list[2]['bar_drink_cost'] = 240;
+		$bar_list[3]['bar_drink_cost'] = 350;
+	
+		return $bar_list;
 	}
 	
 	
 	/// Get information about the private comments thread.
+	/**
+	 * @param $OrganisationId int ID of the organisation.
+	 * @param $ContentTypeId int ID of the content type.
+	 * @pre loaded(model comments_model)
+	 * @return Same as comments_model::GetThreadByLinkTable
+	 */
+	function GetReviewContextOfficeCommentThread($OrganisationId, $ContentTypeId)
+	{
+		return $this->comments_model->GetThreadByLinkTable(
+			'review_contexts','review_context_office_comment_thread_id',
+			array(
+				'review_context_organisation_entity_id'	=> $OrganisationId,
+				'review_context_content_type_id'		=> $ContentTypeId,
+			)
+		);
+	}
+	
+	/// Get information about the public comments thread.
 	/**
 	 * @param $OrganisationId int ID of the organisation.
 	 * @param $ContentTypeId int ID of the content type.

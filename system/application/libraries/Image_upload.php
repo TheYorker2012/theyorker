@@ -41,6 +41,14 @@ class Image_upload {
 		$this->ci->main_frame->Load();
 	}
 	
+	private function checkImageProperties(&$imgData, &$imgTypes) {
+		foreach ($imgTypes->result() as $imgType) {
+			if ($imgData['image_width'] < $imgType->image_type_width) return false;
+			if ($imgData['image_height'] < $imgType->image_type_height) return false;
+		}
+		return true;
+	}
+	
 	//types is an array
 	public function recieveUpload($returnPath, $types = false, $photo = true) {
 		$this->ci->load->library(array('image_lib', 'upload'));
@@ -71,7 +79,9 @@ class Image_upload {
 				$data[] = $this->ci->upload->display_errors();
 			} else {
 				$data[] = $this->ci->upload->data();
-				$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+				
+				if ($this->checkImageProperties($data[$x - 1], $query))
+					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');

@@ -7,7 +7,16 @@
  */
 define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
-define('BASE_DIR', '/home/theyorker/public_html');
+switch ($_SERVER["HTTP_HOST"]) {
+	case "theyorker.co.uk":
+		define('BASE_DIR', '/home/yorker/public_html');
+		break;
+	case "www.theyorker.co.uk":
+		define('BASE_DIR', '/home/yorker/public_html');
+		break;
+	default:
+		define('BASE_DIR', '/home/theyorker/public_html');
+}
 
 class Gallery extends Controller {
 	/**
@@ -43,7 +52,7 @@ class Gallery extends Controller {
 				//some people won't approve of this method, but the user cannot harm anything messing this up and its short
 				$_SESSION['img']['list'] = array($bits[6]);
 				header('Location: '.$_SESSION['img']['return']);
-			} elseif ($bits[4] != 'gallery') {
+			} elseif (isset ($bits[4]) and $bits[4] != 'gallery') {
 				$_SESSION['img']['return'] = $_SERVER["HTTP_REFERER"];
 			}
 		}
@@ -241,6 +250,14 @@ class Gallery extends Controller {
 		$this->main_frame->Load();
 	}
 	
+	private function _checkImageProperties(&$imgData, &$imgTypes) {
+		foreach ($imgTypes->result() as $imgType) {
+			if ($imgData['image_width'] < $imgType->image_type_width) return false;
+			if ($imgData['image_height'] < $imgType->image_type_height) return false;
+		}
+		return true;
+	}
+	
 	function do_upload() {
 		if (!CheckPermissions('office')) return;
 		
@@ -264,7 +281,8 @@ class Gallery extends Controller {
 				$data[] = $this->upload->display_errors();
 			} else {
 				$data[] = $this->upload->data();
-				$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
+				if ($this->_checkImageProperties($data[$x - 1], $query))
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
 			}
 		}
 		$this->main_frame->SetTitle('Gallery Photo Cropper');

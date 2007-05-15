@@ -1,77 +1,13 @@
-<div class='RightToolbar'>
-<h4>Areas for Attention</h4>
-The following reviews are waiting to be published:
-<ul>
-	<li><a href='#'>Dan Ashby 02/02/2007</a></li>
-	<li><a href='#'>Charlotte Chung 02/02/2007</a></li>
-</ul>
-<p>
-<a href='#'>Information</a> has been updated and is waiting to be published.
-</p>
-<p>
-<?php
-$abuse = 0;
-	//If not empty
-	if (! empty($comments))
-	{
-		//For all comments
-		for ($commentno = count($comments['comment_date']) - 1; $commentno > -1; $commentno--)
-		{
-			//Is reported box
-			if ($comments['comment_reported_count'][$commentno] > 2)
-			{
-				$abuse = 1;
-			}
-		}
-	}
-if ($abuse) echo "There are <a href='#'>Comments</a> that have been reported for abuse.";
-?>
-
-</p>
-<h4>What's this?</h4>
-	<p>
-		<?php echo 'whats_this'; ?>
-	</p>
-<h4>Other tasks</h4>
-<ul>
-	<li><a href='#'>Maintain my account</a></li>
-	<li><a href='#'>Remove this directory entry</a></li>
-</ul>
+<div class="MainColumn">
+	<div class="blue_box">
+		<h2>private office comments</h2>
+	</div>
+	<?php
+		$comments->Load();
+	?>
 </div>
 
-<div class="blue_box">
-	<h2>user comments</h2>
-
-<?php
-	//If not empty
-	if (! empty($comments))
-	{
-		//Show all comments
-		for ($commentno = count($comments['comment_date']) - 1; $commentno > -1; $commentno--)
-		{
-		//Is reported box
-		if ($comments['comment_reported_count'][$commentno] > 2)
-		{
-		echo '<div class="information_box"><img src="/images/prototype/homepage/infomark.png" alt="!" />This comment has been reported for abuse '.$comments['comment_reported_count'][$commentno].' times. You may wish to consider removing it</div>';
-		}
-
-		//Print Main Comment
-
-		if ($comments['comment_reported_count'][$commentno] > 2)
-			{
-				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br /><span class="orange">'.strip_tags($comments['comment_content'][$commentno]).'</span><br /><br />Reported ';
-				echo '<span class="orange">'.$comments['comment_reported_count'][$commentno].'</span>';
-				echo ' times<br /><a href="/office/reviews/delcomment/'.$this->uri->segment(4).'/'.$this->uri->segment(3).'/'.$comments['comment_id'][$commentno].'">[remove]</a><br /><hr>';
-			}
-			else
-			{
-				echo '<b>'.strip_tags($comments['comment_author'][$commentno]).' | '.$comments['comment_date'][$commentno].'</b><br />'.strip_tags($comments['comment_content'][$commentno]).'<br /><br />Reported ';
-				echo $comments['comment_reported_count'][$commentno];
-				echo ' times<br /><a href="/office/reviews/delcomment/'.$this->uri->segment(4).'/'.$this->uri->segment(3).'/'.$comments['comment_id'][$commentno].'">[remove]</a><br /><hr>';
-			}
-		}
-	}
-
-?>
-	
+<div class='RightToolbar'>
+	<h4>About this page</h4>
+	<p>these comments are private and only visible from the office.</p>
 </div>

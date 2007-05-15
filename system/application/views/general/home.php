@@ -1,35 +1,41 @@
 <?php
-	function get_link_ref($article,$prefix){
-		return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
-	};
+function get_link_ref($article,$prefix){
+	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
+};
 
-	function print_box($primary_article,$secondary_article,$tertiary_article,$heading,$prefix){
+function print_box($articles,$heading,$prefix){
+	if (count($articles) != 0) {
 		echo('  <h2>'.$heading.'</h2>'."\n"); 
 		echo('  <div class="NewsBox">'."\n"); 
-		echo('          <a class="NewsImg"'.get_link_ref($primary_article,$prefix).'>'."\n");
-		echo('                  '.$primary_article['photo_xhtml']."\n").'';
+		echo('          <a class="NewsImg"'.get_link_ref($articles[0],$prefix).'>'."\n");
+		echo('                  '.$articles[0]['photo_xhtml']."\n").'';
 		echo('          </a>'."\n");
-		echo('          <h3 class="Headline"><a '.get_link_ref($primary_article,$prefix).'>'.$primary_article['heading'].'</a></h3>'."\n");
-		echo('          <div class="Date">'.$primary_article['date'].'</div>'."\n");
-		echo('		<p class="More">'.$primary_article['blurb'].'</p>'."\n");
-		echo('          <ul class="TitleList">'."\n");
-		echo('                  <li><a '.get_link_ref($secondary_article,$prefix).'>'.$secondary_article['heading'].'</a></li>'."\n");
-		echo('                  <li><a '.get_link_ref($tertiary_article,$prefix).'>'.$tertiary_article['heading'].'</a></li>'."\n");
-		echo('          </ul>'."\n");
-		echo('  </div>'."\n");
-	};
-
-	
-	function print_middle_box($title,$article_array){
-		echo('  <h4>'.$title.'</h4>'."\n");
-		echo('  <ul class="TitleList">'."\n");
-		foreach ($article_array as $article) {
-			echo('          <li><a href="/news/'.$article['article_type'].'/'.$article['id'].'" >'."\n");
-			echo('                  '.$article['heading']."\n");
-			echo('          </a></li>'."\n");
+		echo('          <h3 class="Headline"><a '.get_link_ref($articles[0],$prefix).'>'.$articles[0]['heading'].'</a></h3>'."\n");
+		echo('          <div class="Date">'.$articles[0]['date'].'</div>'."\n");
+		echo('		<p class="More">'.$articles[0]['blurb'].'</p>'."\n");
+		if (count($articles) > 1) {
+			echo('          <ul class="TitleList">'."\n");
+			echo('                  <li><a '.get_link_ref($articles[1],$prefix).'>'.$articles[1]['heading'].'</a></li>'."\n");
+			if (count($articles) > 2)
+				echo('                  <li><a '.get_link_ref($articles[2],$prefix).'>'.$articles[2]['heading'].'</a></li>'."\n");
+			echo('          </ul>'."\n");
 		}
-		echo('  </ul>'."\n");
-	};
+		echo('  </div>'."\n");
+		
+	}
+};
+
+
+function print_middle_box($title,$article_array){
+	echo('  <h4>'.$title.'</h4>'."\n");
+	echo('  <ul class="TitleList">'."\n");
+	foreach ($article_array as $article) {
+		echo('          <li><a href="/news/'.$article['article_type'].'/'.$article['id'].'" >'."\n");
+		echo('                  '.$article['heading']."\n");
+		echo('          </a></li>'."\n");
+	}
+	echo('  </ul>'."\n");
+};
 ?>
 
 <div id="RightColumn">
@@ -63,20 +69,20 @@
 	</div>
 
 	<div class="BlueBox">
-		<?php print_box($primary_article,$secondary_article,$tertiary_article,'latest news','news') ?>
+		<?php print_box($articles['uninews'],'latest news','news') ?>
 	</div>
 
 	<div class="BlueBox">
 		<h2><?php echo('and today...')?></h2>
 		<div class="LeftNewsBox NewsBox">
-			<?php print_middle_box('IN FEATURES',$features) ?>
+			<?php print_middle_box('IN FEATURES',$articles['features']) ?>
 		</div>
 		<div class="RightNewsBox NewsBox">
-			<?php print_middle_box('IN ARTS',$arts) ?>
+			<?php print_middle_box('IN ARTS',$articles['arts']) ?>
 		</div>
 	</div>
 
 	<div class="BlueBox">
-		<?php print_box($primary_sports,$secondary_sports,$tertiary_sports,'latest sport','news/sport') ?>
+		<?php print_box($articles['sport'],'latest sport','news/sport') ?>
 	</div>
 </div>

@@ -58,7 +58,7 @@
 		document.getElementById('photo_requests').innerHTML = '';
 		xajax__newPhoto(title,description);
 	}
-	
+
 	function photo_created(photo,id,datetime) {
 		var container = document.getElementById('photo_requests');
 		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">' + photo;
@@ -161,7 +161,7 @@
 					echo imageLocTag($request['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
 				} ?>
 					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
-					<?php echo(date('d/m/y H:i', $request['time'])); ?><br />
+					<?php echo(date('d/m/y H:i', $request['time'])); ?> <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a><br />
 					<br class="clear" />
 				</div>
 <?php	}
@@ -260,6 +260,7 @@
 					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo $revision['blurb']; ?></textarea>
 					<br />
 					<label for="content" class="full">Main Article Content</label>
+					<div id="toolbar"></div>
 					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo $revision['text']; ?></textarea>
 					<br />
 				</fieldset>
@@ -347,3 +348,7 @@
 			</div>
 		</div>
 	</form>
+
+	<script type="text/javascript">
+		mwSetupToolbar('toolbar','content', false);
+	</script>

@@ -394,13 +394,13 @@ class News extends Controller
 			if (is_numeric($article_id)) {
 				$article_info = $this->article_model->GetArticleHeader($article_id);
 				if ($article_info !== FALSE) {
-	
+
 					/// Make it so we only have to worry about two levels of access as admins can do everything editors can
 					$data['user_level'] = GetUserLevel();
 					if ($data['user_level'] == 'admin') {
 						$data['user_level'] = 'editor';
 					}
-	
+
 					/// Determine what operation to perform
 					switch ($article_info['status']) {
 						case 'pulled':
@@ -422,7 +422,7 @@ class News extends Controller
 							$this->_editSuggestion($article_id,$data);
 							break;
 					}
-	
+
 				} else {
 					redirect('/office/news');
 				}
@@ -691,7 +691,7 @@ class News extends Controller
 			$this->comments->SetUri('/office/news/'.$article_id.'/');
 			/// @todo jh559,cdt502 comment pages (page hardwired to 1 atm)
 			$data['comments'] = $this->comments->CreateStandard($thread, /* included comment */ 0);
-			
+
 			$data['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
 			$revision = $this->article_model->GetLatestRevision($article_id);
 			if (!$revision) {
@@ -703,7 +703,7 @@ class News extends Controller
 
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/article', $data);
-			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').'<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
 			// Set page title & load main frame with view
 			$this->main_frame->SetTitleParameters(
 				array('title' => $data['article']['request_title'])

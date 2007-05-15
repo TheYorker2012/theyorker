@@ -154,6 +154,8 @@ class Comments_model extends model
 	 * @param $Table string Name of table.
 	 * @param $Keys array[string => string] array of primary key values.
 	 * @param $Field string Name of field.
+	 * @return bool Whether the comment thread was created.
+	 *	Note that this will be false if a comment thread already exists.
 	 *
 	 * For each row of @a $Table satisfying @a $Keys, the thread is set to a new thread.
 	 */
@@ -176,8 +178,10 @@ class Comments_model extends model
 		$this->db->insert('comment_threads', $properties);
 		if ($this->db->affected_rows() > 0) {
 			$new_thread_id = $this->db->insert_id();
-			$keys[] = $Field.' IS NULL';
-			$this->db->update($Table, array($Field => $new_thread_id), $keys);
+			$Keys[] = $Field.' IS NULL';
+			$this->db->where($Keys);
+			$this->db->limit(1);
+			$this->db->update($Table, array($Field => $new_thread_id));
 			if ($this->db->affected_rows() === 0) {
 				$this->db->delete('comment_threads', array('comment_thread_id' => $new_thread_id));
 				return FALSE;

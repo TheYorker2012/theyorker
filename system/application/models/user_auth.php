@@ -276,7 +276,6 @@ class User_auth extends model {
 		} else {
 			if ($this->authUni($username, $password)) {
 				$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
-				echo($username);
 				$query = $this->db->query($sql, array($username));
 				$this->entityId = $this->db->insert_id();
 				$this->isLoggedIn = true;
