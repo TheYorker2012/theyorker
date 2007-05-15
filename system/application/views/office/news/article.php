@@ -52,6 +52,11 @@
 		xajax__updateHeadlines(articleRevision,headline,subheadline,subtext,blurb,wiki,preview,fact_heading,fact_text);
 	}
 
+	function updatePhoto(id,operation) {
+		document.getElementById('photo_requests').innerHTML = '';
+		xajax__updatePhoto(id,operation);
+	}
+
 	function createNewPhoto() {
 		var title = document.getElementById('photo_title').value;
 		var description = document.getElementById('photo_description').value;
@@ -59,12 +64,30 @@
 		xajax__newPhoto(title,description);
 	}
 
-	function photo_created(photo,id,datetime) {
+	function photo_created(photo,id,title,datetime,number,main,thumb) {
 		var container = document.getElementById('photo_requests');
-		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">' + photo;
+
+		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">';
+		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '<img src="' + photo + '" alt="' + title + '" title="' + title + '" style="float: left; margin-right: 5px;" /></a>';
+		container.innerHTML = container.innerHTML + '<b>Photo ' + number + '</b> ';
+		if (main == 1) {
+			container.innerHTML = container.innerHTML + '(M)';
+		}
+		if (thumb == 1) {
+			container.innerHTML = container.innerHTML + '(T)';
+		}
+		container.innerHTML = container.innerHTML + '<br />';
 		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '">' + title + '</a><br />';
-		container.innerHTML = container.innerHTML + datetime + '<br />';
-		container.innerHTML = container.innerHTML + '<br class="clear" /></div>';
+		container.innerHTML = container.innerHTML + '<span style="font-size:x-small;">' + datetime + '<br />';
+		container.innerHTML = container.innerHTML + '[ <a onclick="insertImageTag(\'content\', \'' + number + '\');return false;" href="#">Insert</a> ]';
+		if (main != 1) {
+			container.innerHTML = container.innerHTML + ' [ <a href="#" onclick="updatePhoto(\'' + number + '\',\'main\');return false;">Main</a> ]';
+		}
+		if (thumb != 1) {
+			container.innerHTML = container.innerHTML + ' [ <a href="#" onclick="updatePhoto(\'' + number + '\',\'thumbnail\');return false;">Thumbnail</a> ]';
+		}
+		container.innerHTML = container.innerHTML + '</span><br class="clear" /></div>';
+
 	}
 
 	function headlinesUpdates (revision, date) {
@@ -166,8 +189,8 @@
 					<span style="font-size:x-small;">
 						<?php echo(date('d/m/y @ H:i', $request['time'])); ?><br />
 						[ <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a> ]
-						<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Main</a> ]<?php } ?>
-						<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Thumbnail</a> ]<?php } ?>
+						<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto('<?php echo($request['photo_number']); ?>','main');return false;">Main</a> ]<?php } ?>
+						<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto('<?php echo($request['photo_number']); ?>','thumbnail');return false;">Thumbnail</a> ]<?php } ?>
 					</span>
 					<br class="clear" />
 				</div>
