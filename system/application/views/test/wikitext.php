@@ -17,12 +17,19 @@ $textarea_data = array(
 		'cols'        => '80',
 		'style'       => 'width:100%',
 	);
+?>
+<div id="toolbar"></div>
+<?php
 echo form_textarea($textarea_data) . '<br/>';
 
 echo form_submit('submit', 'Preview') . '<br/>';
 
 echo form_close('') . '<br/>';
 ?>
+
+<script type="text/javascript">
+	mwSetupToolbar('toolbar','wikitext', true);
+</script>
 
 <HR>
 <H3>HTML Output:</H3>
