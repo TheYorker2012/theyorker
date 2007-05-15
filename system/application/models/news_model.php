@@ -459,7 +459,7 @@ class News_model extends Model
 		$sql = 'SELECT		photo_requests.photo_request_chosen_photo_id	as photo_id,
 							photo_requests.photo_request_view_large			as view_large,
 							photo_requests.photo_request_title				as photo_caption,
-							photo_requests.photo_request_description		as photo_alt,
+							photo_requests.photo_request_description		as photo_alt
 				FROM		photo_requests
 				WHERE		photo_requests.photo_request_article_id = ?
 				AND			photo_requests.photo_request_deleted = 0
