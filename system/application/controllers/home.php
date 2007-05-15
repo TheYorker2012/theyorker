@@ -17,6 +17,7 @@ class Home extends Controller {
 		$this->load->model('News_model');
 		$this->load->model('Home_Model');
 		$this->load->model('Links_Model');
+		$this->load->model('Home_Hack_Model');
 	}
 
 	/**
@@ -82,6 +83,7 @@ class Home extends Controller {
 		if (!CheckPermissions('public')) return;
 
 		$this->pages_model->SetPageCode('home_main');
+		$this->load->helper('images');
 
 		//Various arrays defined
 		$data = array();		//Stores all data to be passed to view
@@ -90,27 +92,67 @@ class Home extends Controller {
 		$data['welcome_title'] = $this->pages_model->GetPropertyText('welcome_title');
 		$data['welcome_text']  = $this->pages_model->GetPropertyWikitext('welcome_text');
 
-		//Obtain news articles to be displayed
-		$article_ids = $this->News_model->GetLatestId('uninews',3);
-		$data['primary_article'] = $this->News_model->GetSummaryArticle($article_ids[0],"Left",'%W, %D %M %Y','medium',true);
-		$data['secondary_article'] = $this->News_model->GetSummaryArticle($article_ids[1],"Left");
-		$data['tertiary_article'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
+		$data['articles'] = array(
+			'uninews' => array(),
+			'sport' => array(),
+			'features' => array(),
+			'arts' => array()
+		);
 
-		//Obtain sports articles to be displayed
-		$article_ids = $this->News_model->GetLatestId('sport',3);
-		$data['primary_sports'] = $this->News_model->GetSummaryArticle($article_ids[0],"Left",'%W, %D %M %Y','medium',true);
-		$data['secondary_sports'] = $this->News_model->GetSummaryArticle($article_ids[1],"Left");
-		$data['tertiary_sports'] = $this->News_model->GetSummaryArticle($article_ids[2],"Left");
+		// Get the article ids of all articles to be displayed
+		$article_all_ids = $this->Home_Hack_Model->getLatestArticleIds(
+			array(
+				'uninews' => 3,
+				'sport' => 3,
+				'features' => 2,
+				'arts' => 2
+			)
+		);
 
-		//Features
-		$article_ids = $this->News_model->GetLatestId('features',2);
-		$data['features'] = array($this->News_model->GetSimpleArticle($article_ids[0]),
-					$this->News_model->GetSimpleArticle($article_ids[1]));
+		// Create an array to map an article id to an article type
+		$article_base_types = array();
+		foreach($article_all_ids as $type => $ids) {
+			foreach($ids as $id)
+				$article_base_types[$id] = $type;
+		}
+		
+		// Get the ids of articles which require summaries
+		$article_summary_ids = array();
+		if (count($article_all_ids['uninews']) > 0)
+			$article_summary_ids[] = $article_all_ids['uninews'][0];
+		if (count($article_all_ids['sport']) > 0)
+			$article_summary_ids[] = $article_all_ids['sport'][0];
+		
+		// Get the article summaries, create html for image tags
+		$article_summaries = $this->Home_Hack_Model->getArticleSummaries($article_summary_ids, '%W, %D %M %Y');
+		foreach($article_summaries as $summary) {
+			$type = $article_base_types[$summary['id']];
+			$summary['photo_xhtml'] = imageLocTag(
+				$summary['photo_id'], 
+				'medium', 
+				false, 
+				$summary['photo_title'],
+				'left'
+			);
+			$data['articles'][$type][] = $summary;
+		}
 
-		//Arts
-		$article_ids = $this->News_model->GetLatestId('arts',2);
-		$data['arts'] = array($this->News_model->GetSimpleArticle($article_ids[0]),
-					$this->News_model->GetSimpleArticle($article_ids[1]));
+		// Get the ids of articles which require titles
+		$article_title_ids = array();
+		foreach($article_all_ids as $type => $ids) {
+			foreach($ids as $id) {
+				if (!in_array($id, $article_summary_ids))
+					$article_title_ids[] = $id;
+			}
+		}
+		
+		// Get the article titles
+		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids);
+		foreach($article_titles as $title) {
+			$type = $article_base_types[$title['id']];
+			$data['articles'][$type][] = $title;
+		}
+
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
