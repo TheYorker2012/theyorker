@@ -282,7 +282,7 @@ class Gallery extends Controller {
 			} else {
 				$data[] = $this->upload->data();
 				if ($this->_checkImageProperties($data[$x - 1], $query))
-					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query, $photo);
+					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
 			}
 		}
 		$this->main_frame->SetTitle('Gallery Photo Cropper');
