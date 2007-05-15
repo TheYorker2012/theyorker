@@ -160,8 +160,8 @@
 				<?php if ($request['chosen_photo'] != null) {
 					echo imageLocTag($request['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
 				} ?>
-					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['photo_number']); ?></a><br />
-					<?php echo(date('d/m/y H:i', $request['time'])); ?> <a onclick="insertTags('[[Image:<?php echo($request['number']); ?>]]\n','','','content');return false;" href="#">Insert</a><br />
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
+					<?php echo(date('d/m/y H:i', $request['time'])); ?> <a onclick="insertTags('[[image:<?php echo($request['photo_number']); ?>]]\n','','','content');return false;" href="#">Insert</a><br />
 					<br class="clear" />
 				</div>
 <?php	}
