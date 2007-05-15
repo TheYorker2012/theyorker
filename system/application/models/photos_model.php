@@ -95,7 +95,8 @@ class Photos_model extends Model
 				photo_requests.photo_request_deleted,
 				photo_requests.photo_request_chosen_photo_id,
 				photo_requests.photo_request_flagged,
-				photo_requests.photo_request_comment_thread_id
+				photo_requests.photo_request_comment_thread_id,
+				photo_requests.photo_request_relative_photo_number
 			FROM photo_requests, articles, users
 			WHERE photo_requests.photo_request_id = ?
 			AND photo_requests.photo_request_article_id = articles.article_id
@@ -116,7 +117,8 @@ class Photos_model extends Model
 					'reporter_name'		=>	$row->user_firstname . ' ' . $row->user_surname,
 					'editor_id'			=>	$row->photo_request_approved_user_entity_id,
 					'comments_thread'	=>	$row->photo_request_comment_thread_id,
-					'chosen_photo'		=>	$row->photo_request_chosen_photo_id
+					'chosen_photo'		=>	$row->photo_request_chosen_photo_id,
+					'photo_number'		=>	$row->photo_request_relative_photo_number
 	      	);
 	      	if ($row->photo_request_approved_user_entity_id !== NULL) {
 				$editor_sql = 'SELECT users.user_firstname, users.user_surname
