@@ -86,7 +86,7 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	addButton(mwEditButtons,'/images/icons/button_bold.png','Bold text','\'\'\'','\'\'\'','Bold text','mw-editbutton-bold');
 	addButton(mwEditButtons,'/images/icons/button_italic.png','Italic text','\'\'','\'\'','Italic text','mw-editbutton-italic');
 	addButton(mwEditButtons,'/images/icons/button_ordered.png','Numbered list','\n# ','\n','List item','mw-editbutton-numberlist');
-	addButton(mwEditButtons,'/images/icons/button_unordered.png','Bulleted lost','\n* ','\n','List item','mw-editbutton-bulletlist');
+	addButton(mwEditButtons,'/images/icons/button_unordered.png','Bulleted list','\n* ','\n','List item','mw-editbutton-bulletlist');
 	addButton(mwEditButtons,'/images/icons/button_extlink.png','External link (remember http:// prefix)','[',']','http://www.example.com title of link','mw-editbutton-extlink');
 	addButton(mwEditButtons,'/images/icons/button_quote.png','Pull quote','\n"""','""" quote author\n','Quote text.','mw-editbutton-pullquote');
 	addFunction(mwEditButtons,'/images/icons/button_youtube.gif','YouTube Video', insertYouTube ,'mw-editbutton-youtube');
@@ -103,8 +103,8 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	var textbox = document.getElementById(textarea);
 	if (!textbox) { return false; }
 
-	// Don't generate buttons for browsers which don't fully
-	// support it.
+	// Don't generate buttons for browsers which don't fully support it.
+	// This check had to be removed for article editing to work
 	//if (!document.selection && textbox.selectionStart === null) {
 	//	return false;
 	//}
