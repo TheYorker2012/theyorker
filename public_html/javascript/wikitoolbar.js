@@ -129,7 +129,7 @@ function insertImageTag(textarea, imageNumber) {
 		alert('To insert an image, please go to the body tab and place the cursor somewhere in the main article.') ;
 		return false;
 	}
-	insertTags('[[image:' + imageNumber + ']]\n','','',textarea);
+	insertTags('[[image:' + imageNumber + '|right|caption here]]\n','','',textarea);
 }
 
 

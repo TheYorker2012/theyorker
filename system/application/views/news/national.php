@@ -1,13 +1,3 @@
-	<div id='newsnav'>
-		<ul id='newsnavlist'>
-		<li><a href='/news/'><img src='/images/prototype/news/uk.png' alt='Campus News' title='Campus News' /> Campus News</a></li>
-		<li><a href='/news/national/' id='current'><img src='/images/prototype/news/earth.png' alt='National News' title='National News' /> National News</a></li>
-		<li><a href='/news/features/'><img src='/images/prototype/news/feature.gif' alt='Features' title='Features' /> Features</a></li>
-		<li><a href='/news/lifestyle/'><img src='/images/prototype/news/feature.gif' alt='Lifestyle' title='Lifestyle' /> Lifestyle</a></li>
-		<li><a href='/news/archive/'><img src='/images/prototype/news/archive.png' alt='Archive' title='Archive' /> Archive</a></li>
-		</ul>
-	</div>
-	<div class='clear'>&nbsp;</div>
 
 	<div style='width:130px; float: left; text-align:center;'>
 		<a href='/news/national'><img src='/images/prototype/news/national_news.jpg' alt='National News' title='National News' /></a>
