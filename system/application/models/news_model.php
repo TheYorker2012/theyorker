@@ -200,17 +200,21 @@ class News_model extends Model
 	function GetSimpleArticle($id, $image_class = "", $dateformat ='%a, %D %b %y')
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id,
-			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-			content_types.content_type_codename,
-			articles.article_thumbnail_photo_id,
-			photos.photo_title
-			FROM articles
-			INNER JOIN content_types
-				ON articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
-			LEFT JOIN photos
-				ON articles.article_thumbnail_photo_id = photos.photo_id
-			LIMIT 0,1';
+		$sql = 'SELECT		articles.article_live_content_id,
+							DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+							content_types.content_type_codename,
+							photo_requests.photo_request_chosen_photo_id,
+							photo_requests.photo_request_title
+				FROM		articles
+				INNER JOIN	content_types
+					ON		articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
+				LEFT JOIN	photo_requests
+					ON		(articles.article_thumbnail_photo_id = photo_requests.photo_request_relative_photo_number
+					AND		articles.article_id = photo_requests.photo_request_article_id
+					AND		photo_requests.photo_request_deleted = 0
+					AND		photo_requests.photo_request_chosen_photo_id IS NOT NULL
+					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL)
+				LIMIT		0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
 		$content_id = null;
 		if ($query->num_rows() > 0)
@@ -220,13 +224,14 @@ class News_model extends Model
 			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
 			
-			if ($row->article_thumbnail_photo_id > 0) {
+			if ($row->photo_request_chosen_photo_id > 0) {
 				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->article_thumbnail_photo_id, 'small', false, $row->photo_title, $image_class);
+				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, 'small', false, $row->photo_request_title, $image_class);
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
 			}
 		}
+		if ($content_id === NULL) return NULL;
 		$sql = 'SELECT article_contents.article_content_heading
 			FROM article_contents
 			WHERE (article_contents.article_content_id = ?)
@@ -277,17 +282,23 @@ class News_model extends Model
 	function GetSummaryArticle($id, $image_class = "", $dateformat='%W, %D %M %Y', $pic_size='small', $request_primary_thumbnail=false)
 	{
 		$result['id'] = $id;
-		$sql = 'SELECT articles.article_live_content_id,
-			DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-			content_types.content_type_codename,
-			articles.article_thumbnail_photo_id,
-			photos.photo_title
-			FROM articles
-			INNER JOIN content_types
-				ON articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
-			LEFT JOIN photos
-				ON articles.article_thumbnail_photo_id = photos.photo_id
-			LIMIT 0,1';
+
+		$sql = 'SELECT		articles.article_live_content_id,
+							DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
+							articles.article_main_photo_id,
+							content_types.content_type_codename,
+							photo_requests.photo_request_chosen_photo_id,
+							photo_requests.photo_request_title
+				FROM		articles
+				INNER JOIN	content_types
+					ON		articles.article_id = ? AND articles.article_content_type_id = content_types.content_type_id
+				LEFT JOIN	photo_requests
+					ON		(articles.article_thumbnail_photo_id = photo_requests.photo_request_relative_photo_number
+					AND		articles.article_id = photo_requests.photo_request_article_id
+					AND		photo_requests.photo_request_deleted = 0
+					AND		photo_requests.photo_request_chosen_photo_id IS NOT NULL
+					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL)
+				LIMIT		0,1';
 		$query = $this->db->query($sql, array($dateformat,$id));
 		$content_id = null;
 		if ($query->num_rows() > 0)
@@ -295,11 +306,12 @@ class News_model extends Model
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
 			$result['article_type'] = $row->content_type_codename;
+			$result['main_photo_id'] = $row->article_main_photo_id;
 		    $content_id = $row->article_live_content_id;
 			
-			if ($row->article_thumbnail_photo_id > 0) {
+			if ($row->photo_request_chosen_photo_id > 0) {
 				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->article_thumbnail_photo_id, $pic_size, false, $row->photo_title, $image_class);
+				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, $pic_size, false, $row->photo_request_title, $image_class);
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/'.$pic_size.'-default.jpg" alt="Image not available" class="'.$image_class.'" />';
 			}
@@ -345,17 +357,15 @@ class News_model extends Model
 		}
 		
 		if($request_primary_thumbnail) {
-			$sql = 'SELECT photo_requests.photo_request_chosen_photo_id as photo_id,
-			photos.photo_title as photo_title
-			FROM photo_requests
-			INNER JOIN photos
-				ON photos.photo_id = photo_requests.photo_request_chosen_photo_id
-			WHERE photo_requests.photo_request_article_id = ?
-			AND photo_requests.photo_request_deleted = 0
-			AND photo_requests.photo_request_chosen_photo_id IS NOT NULL
-			AND photo_requests.photo_request_approved_user_entity_id IS NOT NULL
-			AND photo_requests.photo_request_relative_photo_number = 0';
-			$query = $this->db->query($sql, array($id));
+			$sql = 'SELECT	photo_requests.photo_request_chosen_photo_id	as photo_id,
+							photo_requests.photo_request_title				as photo_title
+					FROM	photo_requests
+					WHERE	photo_requests.photo_request_article_id = ?
+					AND		photo_requests.photo_request_deleted = 0
+					AND		photo_requests.photo_request_chosen_photo_id IS NOT NULL
+					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL
+					AND		photo_requests.photo_request_relative_photo_number = ?';
+			$query = $this->db->query($sql, array($id,$result['main_photo_id']));
 			$this->load->helper('images');
 			if ($query->num_rows() > 0) {
 				$row = $query->row();
@@ -376,34 +386,37 @@ class News_model extends Model
 	function GetFullArticle($id, $image_class = "", $dateformat='%W, %D %M %Y', $preview = 0)
 	{
 		$result['id'] = $id;
-		if ($preview == 0) {
-			$sql = 'SELECT
-					articles.article_live_content_id,
-					articles.article_public_comment_thread_id,
-					DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
-					articles.article_location_id
-				FROM articles
-				WHERE (articles.article_id = ?)
-				LIMIT 0,1';
-			$query = $this->db->query($sql, array($dateformat,$id));
-			if ( $query->num_rows() == 0 ) return NULL;
-			$row = $query->row();
-			$result['date'] = $row->article_publish_date;
-			$result['location'] = $row->article_location_id;
-			$result['public_thread_id'] = $row->article_public_comment_thread_id;
-			$content_id = $row->article_live_content_id;
-		} else {
+		$sql = 'SELECT	articles.article_live_content_id,
+						DATE_FORMAT(articles.article_publish_date, ?)	AS article_publish_date,
+						articles.article_location_id,
+						articles.article_main_photo_id,
+						articles.article_public_comment_thread_id
+				FROM	articles
+				WHERE	articles.article_id = ?
+				AND		articles.article_pulled = 0
+				AND		articles.article_deleted = 0
+				LIMIT	0,1';
+		$query = $this->db->query($sql, array($dateformat,$id));
+		if ($query->num_rows() == 0) return NULL;
+		$row = $query->row();
+		$result['date'] = $row->article_publish_date;
+		$result['location'] = $row->article_location_id;
+		$result['public_thread_id'] = $row->article_public_comment_thread_id;
+		$result['main_photo'] = $row->article_main_photo_id;
+		$content_id = $row->article_live_content_id;
+		if ($preview) {
 			$result['date'] = date('l, jS F Y');
-			$result['location'] = 0;
-			$result['public_thread_id'] = NULL;
 			$content_id = $preview;
 		}
-		$sql = 'SELECT article_contents.article_content_heading, article_contents.article_content_subheading,
-				article_contents.article_content_subtext, article_contents.article_content_wikitext_cache,
-				article_contents.article_content_blurb
-			FROM article_contents
-			WHERE (article_contents.article_content_id = ?)
-			LIMIT 0,1';
+		if ($content_id === NULL) return NULL;
+		$sql = 'SELECT	article_contents.article_content_heading,
+						article_contents.article_content_subheading,
+						article_contents.article_content_subtext,
+						article_contents.article_content_wikitext_cache,
+						article_contents.article_content_blurb
+				FROM	article_contents
+				WHERE	article_contents.article_content_id = ?
+				LIMIT	0,1';
 		$query = $this->db->query($sql,array($content_id));
 		$row = $query->row();
 		$result['heading'] = $row->article_content_heading;
@@ -445,24 +458,22 @@ class News_model extends Model
 		}
 		$result['fact_boxes'] = $fact_boxes;
 
-		$sql = 'SELECT photo_requests.photo_request_chosen_photo_id as photo_id,
-		photo_requests.photo_request_view_large as view_large,
-		photo_requests.photo_request_title as photo_caption,
-		photos.photo_title as photo_title
-		FROM photo_requests
-		INNER JOIN photos
-			ON photos.photo_id = photo_request_chosen_photo_id
-		WHERE photo_requests.photo_request_article_id = ?
-		AND photo_requests.photo_request_deleted = 0
-		AND photo_requests.photo_request_chosen_photo_id IS NOT NULL
-		AND photo_requests.photo_request_approved_user_entity_id IS NOT NULL
-		AND photo_requests.photo_request_relative_photo_number = 0';
-		$query = $this->db->query($sql, array($id));
+		$sql = 'SELECT		photo_requests.photo_request_chosen_photo_id	as photo_id,
+							photo_requests.photo_request_view_large			as view_large,
+							photo_requests.photo_request_title				as photo_caption,
+							photo_requests.photo_request_description		as photo_alt
+				FROM		photo_requests
+				WHERE		photo_requests.photo_request_article_id = ?
+				AND			photo_requests.photo_request_deleted = 0
+				AND			photo_requests.photo_request_chosen_photo_id IS NOT NULL
+				AND			photo_requests.photo_request_approved_user_entity_id IS NOT NULL
+				AND			photo_requests.photo_request_relative_photo_number = ?';
+		$query = $this->db->query($sql, array($id,$result['main_photo']));
 
 		$this->load->helper('images');
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
-			$result['primary_photo_xhtml'] = imageLocTag($row->photo_id, 'medium', $row->view_large, $row->photo_title, $image_class);
+			$result['primary_photo_xhtml'] = imageLocTag($row->photo_id, 'medium', $row->view_large, $row->photo_alt, $image_class);
 			$result['primary_photo_caption'] = $row->photo_caption;
 		}
 
@@ -495,7 +506,10 @@ class News_model extends Model
 		$related_articles = array();
 		foreach (array_values(array_unique($articles)) as $related_id)
 		{
-			$related_articles[] = self::GetSimpleArticle($related_id, "Left");
+			$temp_related = $this->GetSimpleArticle($related_id, "Left");
+			if ($temp_related !== NULL) {
+				$related_articles[] = $temp_related;
+			}
 		}
 		$result['related_articles'] = $related_articles;
 		

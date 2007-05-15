@@ -111,10 +111,10 @@ class News extends Controller {
 			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
 				$main_article = array(
-					'id'						=>	0,
+					'id'					=>	0,
 					'date'					=>	date('l, jS F Y'),
-					'location'				=> 0,
-					'public_thread_id'	=>	NULL,
+					'location'				=>	0,
+					'public_thread_id'		=>	NULL,
 					'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
 					'subheading'			=>	NULL,
 					'subtext'				=>	NULL,
@@ -122,11 +122,15 @@ class News extends Controller {
 					'blurb'					=>	NULL,
 					'authors'				=>	array(),
 					'links'					=>	array(),
-					'related_articles'	=> array(),
+					'related_articles'		=>	array(),
 					'fact_boxes'			=>	array()
 				);
 			} else {
 		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+				/// Check if article requested doesn't exist
+				if ($main_article === NULL) {
+					redirect('/news/'.$article_type);
+				}
 		 }
 		}
 

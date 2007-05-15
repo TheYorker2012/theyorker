@@ -637,9 +637,10 @@ class News extends Controller
 	{
 		$this->load->helper('images');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
-		$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 
 		if (count($data['article']) > 0) {
+			// Get photo requests for article
+			$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			// Is user requested for this article? i.e. can edit
 			$data['user_requested'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
 			// Show or hide accept/decline request buttons
@@ -670,13 +671,14 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
+	        $this->xajax->registerFunction(array('_updatePhoto', &$this, '_updatePhoto'));
 	        $this->xajax->processRequests();
 
 			// Create menu
 			$navbar = $this->main_frame->GetNavbar();
 			$navbar->AddItem('request', 'request', 'javascript:tabs(\'request\');');
 			$navbar->AddItem('article', 'body', 'javascript:tabs(\'article\');');
-			$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
+			//$navbar->AddItem('sidebar', 'sidebar', 'javascript:tabs(\'sidebar\');');
 			$navbar->AddItem('comments', 'comments', 'javascript:tabs(\'comments\');');
 			$navbar->AddItem('revisions', 'revisions', 'javascript:tabs(\'revisions\');');
 			$navbar->SetSelected('request');
@@ -726,6 +728,7 @@ class News extends Controller
 		$this->load->helper('images');
 		$xajax_response = new xajaxResponse();
 		$article_id = $this->uri->segment(3);
+		$data['article'] = $this->article_model->GetArticleDetails($article_id);
 
 		// Make it so we only have to worry about two levels of access as admins can do everything editors can
 		$data['user_level'] = GetUserLevel();
@@ -734,12 +737,60 @@ class News extends Controller
 		}
 		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
 			$this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$title,$description);
+
 			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			foreach ($photo_requests as $photo) {
-				$xajax_response->addScriptCall('photo_created',imageLocTag($photo['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']));
+				$main = 0;
+				$thumb = 0;
+				if ($data['article']['photo_main'] == $photo['photo_number']) {
+					$main = 1;
+				}
+				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
+					$thumb = 1;
+				}
+				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'], 'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
+		}
+		return $xajax_response;
+	}
+
+	function _updatePhoto($photo_number,$image_operation)
+	{
+		$this->load->helper('images');
+		$xajax_response = new xajaxResponse();
+		$article_id = $this->uri->segment(3);
+		$data['article'] = $this->article_model->GetArticleDetails($article_id);
+
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
+			if ($image_operation == 'main') {
+				$this->photos_model->SetArticleMainPhoto($article_id,$photo_number);
+				$data['article']['photo_main'] = $photo_number;
+			} elseif ($image_operation == 'thumbnail') {
+				$this->photos_model->SetArticleThumbnailPhoto($article_id,$photo_number);
+				$data['article']['photo_thumbnail'] = $photo_number;
+			}
+
+			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
+			foreach ($photo_requests as $photo) {
+				$main = 0;
+				$thumb = 0;
+				if ($data['article']['photo_main'] == $photo['photo_number']) {
+					$main = 1;
+				}
+				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
+					$thumb = 1;
+				}
+				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'], 'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
+			}
+		} else {
+			$xajax_response->addAlert('You do not have the permissions required to edit photo requests for this article!');
 		}
 		return $xajax_response;
 	}
@@ -815,6 +866,10 @@ class News extends Controller
 				$wiki_cache = '';
 //				if ($create_cache) {
 					$this->load->library('wikiparser');
+					$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
+					foreach ($data['photo_requests'] as $photo) {
+						$this->wikiparser->add_image_override($photo['photo_number'], imageLocation($photo['chosen_photo'], 'medium'));
+					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
 //				}
 				if ($revision == 0) {

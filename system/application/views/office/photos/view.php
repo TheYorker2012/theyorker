@@ -54,7 +54,10 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 			<?php if (($access['cancel'][$user_level]) && (!$request_finished)) { ?>
 				<li><a href='/office/photos/view/<?php echo($id); ?>/cancel'>Cancel Request</a></li>
 			<?php } ?>
-			</ul>
+		</ul>
+
+		<h4>What now?</h4>
+		<?php echo($help_text); ?>
 	</div>
 
 	<form name='edit_request' id='edit_request' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
@@ -74,7 +77,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
-					<a href="/office/news/<?php echo($article_id); ?>" target="_blank">
+					<a href="/office/news/<?php echo($article_id); ?>">
 						<?php echo($article_title); ?>
 					</a>
 				</div>

@@ -308,5 +308,21 @@ class Photos_model extends Model
 		$query = $this->db->query($sql,array($photo_id,$editor_id,$request_id));
 	}
 
+	function SetArticleMainPhoto($article_id,$photo_number)
+	{
+		$sql = 'UPDATE	articles
+				SET		articles.article_main_photo_id = ?
+				WHERE	articles.article_id = ?';
+		$query = $this->db->query($sql,array($photo_number,$article_id));
+	}
+
+	function SetArticleThumbnailPhoto($article_id,$photo_number)
+	{
+		$sql = 'UPDATE	articles
+				SET		articles.article_thumbnail_photo_id = ?
+				WHERE	articles.article_id = ?';
+		$query = $this->db->query($sql,array($photo_number,$article_id));
+	}
+
 }
 ?>

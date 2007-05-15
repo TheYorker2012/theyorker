@@ -15,13 +15,6 @@
 				<li><a href='#'>Drink 02/02/2007</a></li>
 			</ul>
 		</div>
-		<div class="information_box">
-			<b>Comments</b> in the following sections have been reported for abuse:
-			<ul>
-				<li><a href='#'>Food 02/02/2007</a></li>
-				<li><a href='#'>Drink 02/02/2007</a></li>
-			</ul>
-		</div>
 	</div>
 
 <h4>What's this?</h4>
@@ -32,7 +25,7 @@
 
 <div class='blue_box'>
 	<h2>entries for this organisation</h2>
-	
+
 	<table cellspacing="0" cellpadding="0">
 		<?php
 		foreach ($contexts as $id => $context) {

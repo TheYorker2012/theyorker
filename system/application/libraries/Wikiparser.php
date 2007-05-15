@@ -92,6 +92,16 @@ class Wikiparser {
 			);
 	}
 
+	/**
+	 *	@brief		Adds a rule to the wikiparser making it replace [[Image:$id]] with <img src="$url" />
+	 *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
+	 *	@date		Tue 15th May 2007 16:42
+	 */
+	function add_image_override($id, $url)
+	{
+		$this->image_overrides[$id] = $url;
+	}
+
 	function handle_sections($matches) {
 		$level = strlen($matches[1]);
 		$content = $matches[2];
