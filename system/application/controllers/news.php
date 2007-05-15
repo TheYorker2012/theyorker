@@ -110,23 +110,13 @@ class News extends Controller {
 		} else {
 			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
-				$main_article = array(
-					'id'						=>	0,
-					'date'					=>	date('l, jS F Y'),
-					'location'				=> 0,
-					'public_thread_id'	=>	NULL,
-					'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
-					'subheading'			=>	NULL,
-					'subtext'				=>	NULL,
-					'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
-					'blurb'					=>	NULL,
-					'authors'				=>	array(),
-					'links'					=>	array(),
-					'related_articles'	=> array(),
-					'fact_boxes'			=>	array()
-				);
+				$main_article = $no_articles;
 			} else {
 		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+				/// Check if article requested doesn't exist
+				if ($main_article === NULL) {
+					redirect('/news/'.$article_type);
+				}
 		 }
 		}
 
@@ -207,6 +197,22 @@ class News extends Controller {
 		$this->load->view('news/rss', $data);
 	}
 
+	/// Message to display when no articles exist
+	private static $no_articles = array(
+		'id'					=>	0,
+		'date'					=>	date('l, jS F Y'),
+		'location'				=>	0,
+		'public_thread_id'		=>	NULL,
+		'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
+		'subheading'			=>	NULL,
+		'subtext'				=>	NULL,
+		'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
+		'blurb'					=>	NULL,
+		'authors'				=>	array(),
+		'links'					=>	array(),
+		'related_articles'		=>	array(),
+		'fact_boxes'			=>	array()
+	);
 
     /// test data for use until we can use the database (example national news)
 	private static $national_data = array(
