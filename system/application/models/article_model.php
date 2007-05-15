@@ -60,6 +60,8 @@ class Article_model extends Model
 				 articles.article_request_description AS request_description,
 				 articles.article_request_entity_id AS suggest_userid,
 				 articles.article_editor_approved_user_entity_id AS editor_userid,
+				 articles.article_thumbnail_photo_id AS photo_thumbnail,
+				 articles.article_main_photo_id AS photo_main,
 				 content_types.content_type_name AS box_name,
 				 content_types.content_type_codename AS box_codename
 				FROM articles, content_types

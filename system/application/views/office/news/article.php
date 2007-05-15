@@ -158,9 +158,15 @@
 	foreach ($photo_requests as $request) { ?>
 				<div style="margin-bottom:5px;">
 					<a href="/office/photos/view/<?php echo($request['id']); ?>"><img src="<?php echo(imageLocation($request['chosen_photo'], 'small')); ?>" alt="<?php echo($request['title']); ?>" title="<?php echo($request['title']); ?>" style="float: left; margin-right: 5px;" /></a>
-					<b>Photo <?php echo($request['photo_number']); ?></b><br />
+					<b>Photo <?php echo($request['photo_number']); ?></b>
+					<?php if ($article['photo_main'] == $request['photo_number']) { echo('(M)'); } ?>
+					<?php if ($article['photo_thumbnail'] == $request['photo_number']) { echo('(T)'); } ?>
+					<br />
 					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
-					<?php echo(date('d/m/y @ H:i', $request['time'])); ?> <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a><br />
+					<span style="font-size:x-small;"><?php echo(date('d/m/y @ H:i', $request['time'])); ?></span><br />
+					[ <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a> ]
+					<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Main</a> ]<?php } ?>
+					<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="">Thumbnail</a> ]<?php } ?>
 					<br class="clear" />
 				</div>
 <?php	}
