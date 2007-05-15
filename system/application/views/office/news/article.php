@@ -157,11 +157,10 @@
 <?php if (count($photo_requests) > 0) {
 	foreach ($photo_requests as $request) { ?>
 				<div style="margin-bottom:5px;">
-				<?php if ($request['chosen_photo'] != null) {
-					echo imageLocTag($request['chosen_photo'], 'small', false, 'Chosen Photo', null, null, null, 'style="float: left; margin-right: 5px;"');
-				} ?>
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><img src="<?php echo(imageLocation($request['chosen_photo'], 'small')); ?>" alt="<?php echo($request['title']); ?>" title="<?php echo($request['title']); ?>" style="float: left; margin-right: 5px;" /></a>
+					<b>Photo <?php echo($request['photo_number']); ?></b><br />
 					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
-					<?php echo(date('d/m/y H:i', $request['time'])); ?> <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a><br />
+					<?php echo(date('d/m/y @ H:i', $request['time'])); ?> <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a><br />
 					<br class="clear" />
 				</div>
 <?php	}
