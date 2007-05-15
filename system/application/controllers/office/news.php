@@ -816,6 +816,7 @@ class News extends Controller
 				$wiki_cache = '';
 //				if ($create_cache) {
 					$this->load->library('wikiparser');
+					$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 					foreach ($data['photo_requests'] as $photo) {
 						$this->wikiparser->image_overrides[$photo['chosen_photo']] = imageLocation($photo['chosen_photo'], 'medium');
 					}
