@@ -116,13 +116,23 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	return true;
 }
 
+
+function insertImageTag(textarea, imageNumber) {
+	// If this doesn't work, the text box must not be visible
+	if (!document.selection && textbox.selectionStart === null) {
+		alert('To insert an image, please go to the body tab and place the cursor somewhere in the main article.') ;
+		return false;
+	}
+	insertTags('[[image:' + imageNumber + ']]\n','','',textarea);
+}
+
+
 // apply tagOpen/tagClose to selection in textarea,
 // use sampleText instead of selection if there is none
 // copied and adapted from phpBB
 function insertTags(tagOpen, tagClose, sampleText, textarea) {
 
 	var txtarea = document.getElementById(textarea);
-
 
 	// IE
 	if (document.selection  && !is_gecko) {
