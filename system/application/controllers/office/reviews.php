@@ -50,7 +50,7 @@ class Reviews extends Controller
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->main_frame->load();
 	}
 
@@ -58,14 +58,14 @@ class Reviews extends Controller
 	function overview($organisation)
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_reviews_overview');
 
 		$data = $this->organisations->_GetOrgData($organisation);
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
+
 		// Read any post data
 		if ($this->input->post('create_confirm')) {
 			$context = $this->input->post('create_context');
@@ -83,7 +83,7 @@ class Reviews extends Controller
 				$this->messages->AddMessage('error', 'Review page could not be removed');
 			}
 		}
-		
+
 		// Fill the contexts array
 		$data['contexts'] = array(
 			'directory' => array(
@@ -92,7 +92,7 @@ class Reviews extends Controller
 				'editable' => TRUE,
 				'creatable' => FALSE,
 				'deletable' => FALSE,
-				'edit' => site_url('office/pr/'.$organisation.'/directory/information'),
+				'edit' => site_url('office/pr/org/'.$organisation.'/directory/information'),
 				'updated' => '',
 				'deletable' => FALSE,
 			),
@@ -152,15 +152,15 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	/// Reviews information page
 	function information($ContextType, $organisation, $action = 'view', $revision_id = -1)
 	{
 		/// @todo add show all option backend
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_reviews_information');
-		
+
 		$editor_level = PermissionsSubset('editor', GetUserLevel());
 
 		//Get navigation bar and tell it the current page
@@ -168,7 +168,7 @@ class Reviews extends Controller
 		$data['context_type'] = $ContextType;
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('information');
-		
+
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
 		if ($action=='viewall') {
@@ -179,7 +179,7 @@ class Reviews extends Controller
 			}
 			$action = 'view';
 		}
-		
+
 		if ($action=='delete') {
 			if ($editor_level) {
 				if (TRUE) {
@@ -198,7 +198,7 @@ class Reviews extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ($action=='restore') {
 			//Check Permissions
 			if ($editor_level) {
@@ -219,7 +219,7 @@ class Reviews extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ($action=='publish') {
 			//Check Permissions
 			if ($editor_level) {
@@ -235,15 +235,15 @@ class Reviews extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ('preview' === $action) {
 			$here = site_url('office/reviews/'.$organisation.'/'.$ContextType.'/information');
-			
+
 			$revision = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType, $revision_id);
 			if (!array_key_exists(0, $revision)) {
 				$action = 'view';
 			} else {
-			
+
 				//Show a toolbar in a message for the preview.
 				$published = $revision[0]['published'];
 				$user_level = GetUserLevel();
@@ -258,12 +258,12 @@ class Reviews extends Controller
 					}
 				}
 				$message .= '<a href="'.$here.'/view/'.$revision_id.'">Go Back</a>';
-				
+
 				if ($published == false) {
 					if ($editor_level) {
 						$message .= ' | <a href="'.$here.'/publish/'.$revision_id.'">Publish This Revision</a>';
 					}
-					
+
 					if ($is_deleted) {
 						if ($editor_level) {
 							$message .= ' | <a href="'.$here.'/restore/'.$revision_id.'">Restore This Revision</a>';
@@ -272,9 +272,9 @@ class Reviews extends Controller
 						$message .= ' | <a href="'.$here.'/delete/'.$revision_id.'">Delete This Revision</a>';
 					}
 				}
-				
+
 				$this->messages->AddMessage('information',$message);
-				
+
 				$this->load->library('Review_views');
 				$this->review_views->SetRevision($revision_id);
 				$this->review_views->DisplayReview($ContextType,$organisation);
@@ -284,14 +284,14 @@ class Reviews extends Controller
 		if ('view' === $action) {
 			// Insert main text from pages information (sample)
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-			
+
 			// Handle submitted data
 			if ($this->input->post('reviewinfo_rating') != false)
 			{
 				// Set up validation library
 				$this->load->library('validation');
 				$this->validation->set_error_delimiters('<li>','</li>');
-				
+
 				// Specify validation rules
 				$rules['reviewinfo_about'] = 'trim|required|xss_clean';
 				$rules['reviewinfo_rating'] = 'trim|required|numeric';
@@ -300,7 +300,7 @@ class Reviews extends Controller
 				$rules['reviewinfo_average_price'] = 'trim|numeric';
 				$rules['reviewinfo_serving_hours'] = 'trim|xss_clean';
 				$this->validation->set_rules($rules);
-				
+
 				// Set field names for displaying in error messages
 				$fields['reviewinfo_about'] = 'blurb';
 				$fields['reviewinfo_rating'] = 'rating';
@@ -309,7 +309,7 @@ class Reviews extends Controller
 				$fields['reviewinfo_average_price'] = 'average price';
 				$fields['reviewinfo_serving_hours'] = 'serving hours';
 				$this->validation->set_fields($fields);
-				
+
 				// Run validation
 				$errors = array();
 				if ($this->validation->run())
@@ -321,9 +321,9 @@ class Reviews extends Controller
 						if (strtotime($this->input->post('reviewinfo_deal_expires')) == false)
 							array_push($errors, 'Please enter the deal expiry date in the format yyyy-mm-dd');
 					}
-		
+
 					// If there are no errors, insert data into database
-					if (count($errors) == 0) 
+					if (count($errors) == 0)
 					{
 						if ($this->review_model->SetReviewContextContent(
 							$organisation,
@@ -342,7 +342,7 @@ class Reviews extends Controller
 						}
 					}
 				}
-	
+
 				// If there are errors, display them
 				if ($this->validation->error_string != '') {
 					$this->messages->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $this->validation->error_string . '</ul>');
@@ -352,13 +352,13 @@ class Reviews extends Controller
 					$this->messages->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $temp_msg . '</ul>');
 				}
 			}
-			
+
 			// Get revision data from model
 			$data['revisions'] = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType);
 			$data['show_all_revisions'] = $show_all_revisions;
 			$data['show_show_all_revisions_option'] = $editor_level;
 			$data['user_is_editor'] = $editor_level;
-			
+
 			// Get context contents from model
 			$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
 			if (isset($context_contents[0]))
@@ -376,11 +376,11 @@ class Reviews extends Controller
 				$data['deal_expires'] = '';
 			}
 			//$this->messages->AddDumpMessage('data',$data);
-	
+
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
 		}
-		
+
 		$this->main_frame->SetTitleParameters(array(
 			'organisation' => $data['organisation']['name'],
 			'content_type' => ucfirst($ContextType),
@@ -419,14 +419,14 @@ class Reviews extends Controller
 	function tags($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_reviews_tags');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('tags');
-		
+
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
@@ -454,7 +454,7 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function photos($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
@@ -556,14 +556,14 @@ class Reviews extends Controller
 
 		//$this->businesscards_model->NewBusinessCard(NULL, 3, 0, 'Default Name', 'Default Title', 'default blurb', 'Default Course', NULL,
 		//	NULL, NULL, NULL, 'Default Address', 0, NULL, NULL);
-		
+
 		/*
 		[a_review_author] => byline id of the author
 		[a_review_text] => review data
 		[r_submit_newreview] => submit button
 		*/
 		if (isset($_POST['r_submit_newreview']))
-		{	
+		{
 			//create the article
 			$article_id = $this->requests_model->CreateRequest(
 				'request',
@@ -602,7 +602,7 @@ class Reviews extends Controller
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
+
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
 		foreach($temp_bylines as $byline)
@@ -616,7 +616,7 @@ class Reviews extends Controller
 				$data['bylines']['user'][] = $byline;
 			}
 		}
-		
+
 		//reviews
 		$data['reviews'] = array();
 		$temp_reviews = $this->review_model->GetOrgReviews($context_type, $data['organisation']['id']);
@@ -626,25 +626,25 @@ class Reviews extends Controller
 			$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
 			$temp['article']['id'] = $review['id'];
 			$data['reviews'][] = $temp;
-		}		
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
-	
+
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
 						'content_type' => $context_type));
 		$this->main_frame->SetContent($the_view);
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function reviewedit($context_type, $organisation, $article_id, $revision_id)
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->load->model('requests_model');
 		$this->load->model('businesscards_model');
 		$this->load->model('article_model');
@@ -703,7 +703,7 @@ class Reviews extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
-		
+
 		$writers = $this->requests_model->GetArticleWriters($article_id);
 		$found = false;
 		foreach($writers as $writer)
@@ -711,29 +711,29 @@ class Reviews extends Controller
 			if ($writer['id'] == $data['user']['id'])
 				$found = $data['user']['id'];
 		}
-		
+
 		if ($found == false && $data['user']['officetype'] = 'Low')
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
-		
-		/** get the article's header for the article id passed to 
+
+		/** get the article's header for the article id passed to
 			the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
-		
+
 		if ($data['article']['header']['organisation'] != $data['organisation']['id'])
 		{
 			$this->messages->AddMessage('error','Specified review is for a different organisation. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
 		}
-		
+
 		//get the list of current question revisions
 		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
-			
+
 		//set the default revision to false
 		$data['article']['displayrevision'] = FALSE;
-		
+
 		//if the revision id is set to the default
 		if ($revision_id == -1)
 		{
@@ -759,7 +759,7 @@ class Reviews extends Controller
 		}
 		else
 		{
-			/* load the revision with the given 
+			/* load the revision with the given
 			   revision id */
 			$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
 			/* if this revision doesn't exist
@@ -770,7 +770,7 @@ class Reviews extends Controller
 				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/');
 			}
 		}
-		
+
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
 		foreach($temp_bylines as $byline)
@@ -804,7 +804,7 @@ class Reviews extends Controller
 	function comments($ContextType, $organisation, $Action = 'view', $IncludedComment = 0)
 	{
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_review_comments');
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('comments');
@@ -813,7 +813,7 @@ class Reviews extends Controller
 		$content_id = $this->review_model->GetContentTypeID($ContextType);
 		$data = $this->organisations->_GetOrgData($organisation);
 		$organisation_id = $data['organisation']['id'];
-		
+
 		$this->load->library('comments');
 		$this->comments->SetUri('/office/reviews/'.$ContextType.'/'.$organisation.'/view/');
 		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
@@ -823,47 +823,47 @@ class Reviews extends Controller
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
 						'content_type' => $ContextType));
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
-	
+
+
 	// These are all the edit pages for the admin panel
 	// Additional controllers will be required
-	
+
 	/*function edit()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		$data['title_image'] = 'images/prototype/reviews/reviews_01.gif';
-		
+
 		// Set up the public frame
 		$this->main_frame->SetTitle('Edit');
 		$this->main_frame->SetContentSimple('reviews/mainedit', $data);
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 	function editsection()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		// Set up the public frame
 		$this->main_frame->SetTitle('Edit Section');
 		$this->main_frame->SetContentSimple('reviews/sectionedit');
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 	function editreview()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		// Set up the public frame
 		$this->main_frame->SetTitle('Edit Review');
 		$this->main_frame->SetContentSimple('reviews/reviewedit');
-		
+
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}*/
