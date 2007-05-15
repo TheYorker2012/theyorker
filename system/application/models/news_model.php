@@ -231,6 +231,7 @@ class News_model extends Model
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
 			}
 		}
+		if ($content_id === NULL) return NULL;
 		$sql = 'SELECT article_contents.article_content_heading
 			FROM article_contents
 			WHERE (article_contents.article_content_id = ?)
@@ -505,7 +506,10 @@ class News_model extends Model
 		$related_articles = array();
 		foreach (array_values(array_unique($articles)) as $related_id)
 		{
-			$related_articles[] = self::GetSimpleArticle($related_id, "Left");
+			$temp_related = $this->GetSimpleArticle($related_id, "Left");
+			if ($temp_related !== NULL) {
+				$related_articles[] = $temp_related;
+			}
 		}
 		$result['related_articles'] = $related_articles;
 		
