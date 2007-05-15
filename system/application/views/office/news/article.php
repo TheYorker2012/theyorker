@@ -58,7 +58,7 @@
 		document.getElementById('photo_requests').innerHTML = '';
 		xajax__newPhoto(title,description);
 	}
-	
+
 	function photo_created(photo,id,datetime) {
 		var container = document.getElementById('photo_requests');
 		container.innerHTML = container.innerHTML + '<div style="margin-bottom:5px;">' + photo;
@@ -260,7 +260,11 @@
 					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo $revision['blurb']; ?></textarea>
 					<br />
 					<label for="content" class="full">Main Article Content</label>
+					<div id="toolbar"></div>
 					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo $revision['text']; ?></textarea>
+					<script type="text/javascript">
+						mwSetupToolbar('toolbar','content', false);
+					</script>
 					<br />
 				</fieldset>
 			</div>
