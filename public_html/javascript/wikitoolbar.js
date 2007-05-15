@@ -105,9 +105,9 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 
 	// Don't generate buttons for browsers which don't fully
 	// support it.
-	if (!document.selection && textbox.selectionStart === null) {
-		return false;
-	}
+	//if (!document.selection && textbox.selectionStart === null) {
+	//	return false;
+	//}
 
 	for (var i = 0; i < mwEditButtons.length; i++) {
 		mwInsertEditButton(toolbar, mwEditButtons[i], textarea);
