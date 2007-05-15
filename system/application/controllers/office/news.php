@@ -703,8 +703,7 @@ class News extends Controller
 
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/article', $data);
-			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
-			$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').'<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
 			// Set page title & load main frame with view
 			$this->main_frame->SetTitleParameters(
 				array('title' => $data['article']['request_title'])
