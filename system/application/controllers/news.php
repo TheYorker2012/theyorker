@@ -198,7 +198,7 @@ class News extends Controller {
 	}
 
 	/// Message to display when no articles exist
-	private static $no_articles = array(
+	private $no_articles = array(
 		'id'					=>	0,
 		'date'					=>	date('l, jS F Y'),
 		'location'				=>	0,
