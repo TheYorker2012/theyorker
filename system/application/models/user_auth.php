@@ -308,11 +308,15 @@ class User_auth extends model {
 		//set up basic ssl connection
 		//$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
 		
-		// attempt login with username and password
-		@$login_result = ftp_login($conn_id, $username, $password);
+		if (FALSE !== $conn_id) {
+			// attempt login with username and password
+			@$login_result = ftp_login($conn_id, $username, $password);
 
-		// close the ssl connection
-		ftp_close($conn_id);
+			// close the ssl connection
+			ftp_close($conn_id);
+		} else {
+			throw new Exception('Internal error: Could not connect to york.ac.uk.');
+		}
 		
 		return $login_result;
 	}
