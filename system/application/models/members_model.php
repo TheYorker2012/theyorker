@@ -74,6 +74,16 @@ class Members_model extends Model {
 		return $query->result_array();
 	}
 
+	function GetUsername($EntityId) {
+		$sql = 'SELECT entity_username
+				FROM entities 
+				WHERE entity_id = ?';
+		
+		$query = $this->db->query($sql, array($EntityId));
+		$row = $query->row();
+		return $row['entity_username'];
+	}
+
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
 	{
 		$bind_data = array($OrganisationId);
