@@ -80,8 +80,7 @@ class Members_model extends Model {
 				WHERE entity_id = ?';
 		
 		$query = $this->db->query($sql, array($EntityId));
-		$row = $query->row();
-		return $row['entity_username'];
+		return $query->row()->entity_username;
 	}
 
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
