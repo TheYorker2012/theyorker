@@ -226,6 +226,96 @@ class News extends Controller
 	}
 
 
+	/**
+	 *	@brief Create a new article without having to make a suggestion or request
+	 */
+	function create()
+	{
+		/// Make sure users have necessary permissions to view this page
+		if (!CheckPermissions('office')) return;
+
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_news_request');
+		/// Get page content
+		$data['boxes'] = $this->requests_model->getBoxes();
+		$data['user_level'] = 'editor';
+		$data['heading'] = $this->pages_model->GetPropertyText('heading_editor');
+		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro_editor');
+		$data['status'] = 'article';
+
+		/// Perform validation checks on submitted data
+		$this->load->library('validation');
+		$this->validation->set_error_delimiters('<li>','</li>');
+		/// Validation rules
+		$rules['r_title'] = 'trim|required|xss_clean';
+		$fields['r_title'] = 'title';
+		$rules['r_brief'] = 'trim|required|xss_clean';
+		$fields['r_brief'] = 'brief';
+		$rules['r_box'] = 'trim|required|xss_clean';
+		$fields['r_box'] = 'box';
+		$rules['r_deadline'] = 'trim|required|numeric';
+		$fields['r_deadline'] = 'deadline';
+		$this->validation->set_rules($rules);
+		$this->validation->set_fields($fields);
+		/// Run validation checks, if they pass proceed to conduct db integrity checks
+		$errors = array();
+		if ($this->validation->run()) {
+			$deadline = NULL;
+			if ($this->input->post('r_deadline') < mktime()) {
+				$errors[] = 'Please select a deadline in the future';
+			} elseif ($this->input->post('r_deadline') > (mktime() + (60*60*24*365))) {
+				$errors[] = 'Please select a deadline within the next year';
+			} else {
+				$deadline = $this->input->post('r_deadline');
+			}
+			if (!$this->requests_model->isBox($this->input->post('r_box'))) {
+				$errors[] = 'Please select the box you wish the ' . $data['status'] . ' to be submitted to';
+			}
+
+			/// If no db integrity errors then save request
+			if (count($errors) == 0) {
+				if ($deadline != NULL) {
+					$deadline = date('Y-m-d H:i:s', $deadline);
+				}
+				$article_id = $this->requests_model->CreateRequest('request',$this->input->post('r_box'),$this->input->post('r_title'),$this->input->post('r_brief'),$this->user_auth->entityId,$deadline);
+				$this->requests_model->AddUserToRequest($article_id, $this->user_auth->entityId, $this->user_auth->entityId);
+				$accept_data = array(
+					'editor' 		=>	$this->user_auth->entityId,
+					'publish_date' 	=>	$deadline,
+					'title'			=>	$this->input->post('r_title'),
+					'description'	=>	$this->input->post('r_brief'),
+					'content_type'	=>	$this->input->post('r_box')
+				);
+				$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
+				$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
+				$this->main_frame->AddMessage('success','New article ' . $data['status'] . ' created.');
+				redirect('/office/news/' . $article_id);
+			}
+		}
+
+		/// Validation errors occured
+		if ($this->validation->error_string != "") {
+			$this->main_frame->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $this->validation->error_string . '</ul>');
+		} elseif (count($errors) > 0) {
+			$temp_msg = '';
+			foreach ($errors as $error) {
+				$temp_msg .= '<li>' . $error . '</li>';
+			}
+			$this->main_frame->AddMessage('error','We were unable to process the information you submitted for the following reasons:<ul>' . $temp_msg . '</ul>');
+		}
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/create', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->SetTitleParameters(
+			array('action' => 'New', 'type' => 'Article')
+		);
+
+		/// Load main frame
+		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->Load();
+	}
+
 
 
 

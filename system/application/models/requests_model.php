@@ -192,6 +192,11 @@ class Requests_Model extends Model
 					article_content_type_id = ?
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$data['content_type'],$article_id));
+
+			/// Create new comment thread
+			$this->load->model('comments_model');
+			$CI = &get_instance();
+			$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_private_comment_thread_id');
 		}
 		else if ($status == 'publish')
 		{
@@ -202,6 +207,11 @@ class Requests_Model extends Model
 					article_pulled = 0
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
+
+			/// Create new comment thread
+			$this->load->model('comments_model');
+			$CI = &get_instance();
+			$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_public_comment_thread_id');
 		}
 
 		return $status;
