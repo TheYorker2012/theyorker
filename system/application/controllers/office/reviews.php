@@ -584,9 +584,9 @@ class Reviews extends Controller
 			//add the selected byline to the review
 			$this->requests_model->AddUserToRequest(
 				$article_id,
-				$_POST['a_review_author'],
 				$this->user_auth->entityId,
-				$this->user_auth->entityId);
+				$this->user_auth->entityId,
+				$_POST['a_review_author']);
 			//auto accept the review write request
 			$this->requests_model->AcceptRequest(
 				$article_id,

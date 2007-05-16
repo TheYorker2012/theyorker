@@ -770,8 +770,21 @@ class Requests_Model extends Model
 		return $result;
 	}
 	
-	function AddUserToRequest($article_id, $reporter_id, $editor_id)
+	function AddUserToRequest($article_id, $reporter_id, $editor_id, $business_card_id = NULL)
 	{
+		if (isset($business_card_id))
+		{
+		$sql = 'INSERT INTO article_writers
+				(
+				 article_writer_user_entity_id,
+				 article_writer_article_id,
+				 article_writer_editor_accepted_user_entity_id,
+				 article_writer_byline_business_card_id
+				)
+				VALUES (?,?,?, ?)';
+		}
+		else
+		{
 		$sql = 'INSERT INTO article_writers
 				(
 				 article_writer_user_entity_id,
@@ -779,7 +792,8 @@ class Requests_Model extends Model
 				 article_writer_editor_accepted_user_entity_id
 				)
 				VALUES (?,?,?)';
-		$this->db->query($sql,array($reporter_id, $article_id, $editor_id));
+		}
+		$this->db->query($sql,array($reporter_id, $article_id, $editor_id, $business_card_id));
 	}
 	
 	function RemoveUserFromRequest($article_id, $user_id)

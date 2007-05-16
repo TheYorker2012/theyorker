@@ -1,4 +1,5 @@
 <div class="RightToolbar">
+<!--
 	<h4>Areas for Attention</h4>
 	<div class="Entry">
 		<div class="information_box">
@@ -18,13 +19,14 @@
 	</div>
 	<h4>Whats this?</h4>
 		<p>
-			<?php echo 'whats_this'; ?>
+			<?php //echo 'whats_this'; ?>
 		</p>
 	<h4>Other tasks</h4>
 	<ul>
 		<li><a href="#">Maintain my account</a></li>
 		<li><a href="#">Remove this directory entry</a></li>
 	</ul>
+-->
 </div>
 
 <div class="blue_box">
@@ -72,3 +74,11 @@
 		}
 	?>
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>
