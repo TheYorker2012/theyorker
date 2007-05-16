@@ -65,11 +65,12 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 			<h2>details</h2>
 			<fieldset>
 
-				<?php printInput('Title','r_title','text',$title,'details',$access,$user_level); ?>
 				<?php
 				if ($status == 'completed') {
-					printInput('Description','r_brief','text',$description,'details',$access,$user_level);
+					printInput('Caption','r_title','text',$title,'details',$access,$user_level);
+					printInput('ALT Text','r_brief','text',$description,'details',$access,$user_level);
 				} else {
+					printInput('Title','r_title','text',$title,'details',$access,$user_level);
 					printInput('Description','r_brief','textarea',$description,'details',$access,$user_level);
 				} ?>
 
