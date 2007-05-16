@@ -279,6 +279,7 @@ class News extends Controller
 				}
 				$article_id = $this->requests_model->CreateRequest('request',$this->input->post('r_box'),$this->input->post('r_title'),$this->input->post('r_brief'),$this->user_auth->entityId,$deadline);
 				$this->requests_model->AddUserToRequest($article_id, $this->user_auth->entityId, $this->user_auth->entityId);
+				$this->requests_model->AcceptRequest($article_id, $this->user_auth->entityId);
 				$accept_data = array(
 					'editor' 		=>	$this->user_auth->entityId,
 					'publish_date' 	=>	$deadline,
