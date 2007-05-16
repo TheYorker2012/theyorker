@@ -9,13 +9,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta name="description" content="<?php echo $description; ?>" />
 	<meta name="keywords" content="<?php echo $keywords; ?>" />
 
-	<title>The Yorker - <?php 
+	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
-		if(isset($head_title)) { 
-			echo $head_title; 
-		} else { 
-			echo 'no pagename'; 
-		} 
+		if(isset($head_title)) {
+			echo $head_title;
+		} else {
+			echo 'no pagename';
+		}
 	?></title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
@@ -26,7 +26,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-	
+
 	<?php
 	if (isset($extra_css)) {
 		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
@@ -144,7 +144,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/culture/'>Culture</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/news/archive/'>Manage Writer</a>
+			<a href='/office/manage/members/'>Manage Writer</a>
 		</div>
 
 		<div class='officenavigation_title'>
@@ -158,7 +158,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/gallery/'>Gallery</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/photographers'>Manage Photographers</a>
+			<a href='/office/manage/members/'>Manage Photographers</a>
 		</div>
 
 		<div class='officenavigation_title'>
@@ -173,6 +173,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/reviewlist/culture'>Culture</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/manage/members/'>Manage Reviewers</a>
 		</div>
 
 		<div class='officenavigation_title'>
@@ -190,7 +193,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/games/'>Games Zone</a>
 		</div>
-	
+
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
