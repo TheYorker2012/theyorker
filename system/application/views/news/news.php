@@ -98,7 +98,8 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
 <?php } ?>
 
-        <?php echo(html_entity_decode($main_article['text'], ENT_QUOTES, 'UTF-8')); ?>
+        <?php /* echo(html_entity_decode($main_article['text'], ENT_QUOTES, 'UTF-8')); */ ?>
+        <?php echo($main_article['text']); ?>
 
 		<?php if (isset($office_preview)) { ?>
 			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
