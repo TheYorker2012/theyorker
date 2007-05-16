@@ -68,6 +68,7 @@ class Tools extends controller
 				),
 				'fields' => array(
 					'review_context_comment_thread_id' => array(
+						'allow_ratings' => TRUE,
 					),
 					'review_context_office_comment_thread_id' => array(
 						'allow_anonymous_comments' => FALSE,
@@ -78,7 +79,7 @@ class Tools extends controller
 				'keys' => array('photo_request_id'),
 				'fields' => array(
 					'photo_request_comment_thread_id' => array(
-						'allow_ratings' => TRUE,
+						'allow_anonymous_comments' => FALSE,
 					),
 				),
 			),
@@ -112,7 +113,7 @@ class Tools extends controller
 		}
 		
 		$this->messages->AddMessage('success', 'Comment threads have been successfully reset.');
-		$this->main_frame->Load();
+		redirect('admin');
 	}
 	
 	function _database_triggers($what)
