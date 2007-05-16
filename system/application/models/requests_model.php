@@ -1002,5 +1002,13 @@ class Requests_Model extends Model
 		else
 			return FALSE;
 	}
+
+	function DeleteArticle($article_id)
+	{
+		$sql = 'UPDATE		articles
+				SET			articles.article_deleted = 1
+				WHERE		articles.article_id = ?';
+		$query = $this->db->query($sql,array($article_id));
+	}
 }
 ?>

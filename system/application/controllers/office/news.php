@@ -763,6 +763,7 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
 	        $this->xajax->registerFunction(array('_updatePhoto', &$this, '_updatePhoto'));
+	        $this->xajax->registerFunction(array('_deleteArticle', &$this, '_deleteArticle'));
 	        $this->xajax->processRequests();
 
 			// Create menu
@@ -805,7 +806,6 @@ class News extends Controller
 		}
 	}
 
-
 	function preview()
 	{
 		if (!CheckPermissions('office')) return;
@@ -813,6 +813,31 @@ class News extends Controller
 		$_SESSION['office_news_preview'] = $this->uri->segment(6);
 		redirect('/news/' . $this->uri->segment(5) . '/' . $this->uri->segment(4));
 	}
+
+
+
+	function _deleteArticle()
+	{
+		$xajax_response = new xajaxResponse();
+		$article_id = $this->uri->segment(3);
+		$data['article'] = $this->article_model->GetArticleDetails($article_id);
+
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+//		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
+		if ($data['user_level'] == 'editor') {
+			$this->requests_model->DeleteArticle($article_id);
+			$this->main_frame->AddMessage('success','The article was successfully deleted.');
+			$xajax_response->addRedirect('/office/news');
+		} else {
+			$xajax_response->addAlert('You must be an editor to delete an article!');
+		}
+		return $xajax_response;
+	}
+
 
 	function _newPhoto($title,$description)
 	{

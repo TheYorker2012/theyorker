@@ -166,6 +166,12 @@
 		document.getElementById('factbox_create').className = 'show';
 	}
 
+	function delete_article() {
+		if (confirm('Are you sure you want to remove this article? This operation cannot be reverted.')) {
+
+		}
+	}
+
 	// pre-load ajax images
 	imageObj = new Image();
 	imageObj.src = '/images/prototype/prefs/loading.gif';
@@ -222,7 +228,9 @@
 				<br />
 				<input type="button" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
 				<br />
-				<input type="button" name="delete" id="delete" value="Delete Article" class="button" onclick="return confirm('Are you sure you want to remove this article. This operation cannot be undun.';" />
+				<?php if ($user_level == 'editor') { ?>
+					<input type="button" name="delete" id="delete" value="Delete Article" class="button" onclick="delete_article();" />
+				<?php } ?>
 			</div>
 			<br style="clear:both;" /><br style="clear:both;" />
 			<?php if ($user_level == 'editor') { ?>
