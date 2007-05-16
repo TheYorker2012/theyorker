@@ -75,12 +75,12 @@ class Members_model extends Model {
 	}
 
 	function GetUsername($EntityId) {
-		$sql = 'SELECT entity_username
-				FROM entities 
-				WHERE entity_id = ?';
+		$sql = 'SELECT entities.entity_username as entity_username, users.user_nickname as nickname
+				FROM entities, users
+				WHERE entities.entity_id = users.user_entity_id AND entity_id = ?';
 		
 		$query = $this->db->query($sql, array($EntityId));
-		return $query->row()->entity_username;
+		return $query->row();
 	}
 
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
