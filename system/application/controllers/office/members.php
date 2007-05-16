@@ -306,7 +306,7 @@ class Members extends Controller
 			$access_password			= $this->input->post('password');
 			$access_password_confirm	= $this->input->post('confirm_password');
 			
-			if (false) { //(!($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin')) {
+			if (!($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin')) {
 					$this->messages->AddMessage('information','You have access level "'.$this->user_auth->officeType.'". You must be an editor to perform this operation.');
 			} else {
 				if ($access_level == 'editor') {
