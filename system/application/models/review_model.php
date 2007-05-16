@@ -929,18 +929,19 @@ function GetTagOrganisation($type,$organisation)
 					thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
 					NULL) AS average_user_rating'.
 				$select_tag_group.'
-			FROM content_types AS ct
-			INNER JOIN review_context_contents AS rcc
-				ON ct.content_type_id = rcc.review_context_content_content_type_id
+			FROM review_contexts AS rc
+			INNER JOIN content_types AS ct
+				ON rc.review_context_content_type_id = ct.content_type_id
 			INNER JOIN organisations AS o
-				ON rcc.review_context_content_organisation_entity_id = o.organisation_entity_id
+				ON rc.review_context_organisation_entity_id = o.organisation_entity_id
+			INNER JOIN review_context_contents AS rcc
+				ON rc.review_context_content_type_id = rcc.review_context_content_content_type_id
+				AND rc.review_context_organisation_entity_id = rcc.review_context_content_organisation_entity_id
+				AND rc.review_context_live_content_id = rcc.review_context_content_id
 			INNER JOIN organisation_contents AS oc
 				ON o.organisation_live_content_id = oc.organisation_content_id
-			INNER JOIN review_contexts
-				ON review_contexts.review_context_organisation_entity_id = o.organisation_entity_id
-				AND review_contexts.review_context_content_type_id = ct.content_type_id
 			LEFT JOIN comment_threads AS thread
-				ON thread.comment_thread_id = review_contexts.review_context_comment_thread_id 
+				ON thread.comment_thread_id = rc.review_context_comment_thread_id 
 			LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
 			INNER JOIN tags AS t
 				ON t.tag_id = ot.organisation_tag_tag_id
