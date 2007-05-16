@@ -283,17 +283,17 @@
 					<input type="text" name="headline" id="headline" value="<?php echo $revision['headline']; ?>" size="30" onkeyup="articleContentUpdate('Headline');" />
 					<br />
 					<label for="subheadline">Sub-Headline:</label>
-					<input type="text" name="subheadline" id="subheadline" value="<?php echo htmlentities($revision['subheadline']); ?>" size="30" onkeyup="articleContentUpdate('Subheadline');" />
+					<input type="text" name="subheadline" id="subheadline" value="<?php echo $revision['subheadline']; ?>" size="30" onkeyup="articleContentUpdate('Subheadline');" />
 					<br />
 					<label for="subtext" class="full">Introduction Paragraph</label>
-					<textarea name="subtext" id="subtext" class="full" rows="2" onkeyup="articleContentUpdate('Subtext');"><?php echo htmlentities($revision['subtext']); ?></textarea>
+					<textarea name="subtext" id="subtext" class="full" rows="2" onkeyup="articleContentUpdate('Subtext');"><?php echo $revision['subtext']; ?></textarea>
 					<br />
 					<label for="blurb" class="full" onkeyup="articleContentUpdate('Blurb');">Blurb</label>
-					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo htmlentities($revision['blurb']); ?></textarea>
+					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo $revision['blurb']; ?></textarea>
 					<br />
 					<label for="content" class="full">Main Article Content</label>
 					<div id="toolbar"></div>
-					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo htmlentities($revision['text']); ?></textarea>
+					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo $revision['text']; ?></textarea>
 					<br />
 				</fieldset>
 			</div>
