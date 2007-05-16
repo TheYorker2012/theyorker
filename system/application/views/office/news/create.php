@@ -3,8 +3,11 @@
 	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
 	<div class='RightToolbar'>
-		<h4><?php echo $heading; ?></h4>
-		<?php echo $intro; ?>
+		<h4>Creating an Article</h4>
+		By completing this form you will be creating an article which you can immediately start
+		writing without having to wait for approval by an editor. The article will, however, still
+		need to be approved by an editor before it can be published onto the website and can be
+		cancelled by an editor at any point.
 	</div>
 
 	<form name='new_request' id='new_request' action='/office/news/create' method='post' class='form'>
