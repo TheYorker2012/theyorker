@@ -377,6 +377,7 @@ class Review_model extends Model {
 		# organisation image?
 		$sql = '
 				SELECT
+					organisations.organisation_entity_id,
 					organisations.organisation_name,
 					organisation_contents.organisation_content_url,
 					review_context_contents.review_context_content_blurb as organisation_description,
@@ -385,6 +386,7 @@ class Review_model extends Model {
 					organisations.organisation_directory_entry_name,
 					league_entries.league_entry_position,
 					leagues.league_name,
+					leagues.league_content_type_id,
 					leagues.league_image_id,
 					content_types.content_type_name,
 					content_types.content_type_codename,
@@ -417,11 +419,13 @@ class Review_model extends Model {
 	
 		// Assign nice names to the result
 		foreach($query->result() as $row) {
+			$tmpleague['organisation_id']          = $row->organisation_entity_id;
 			$tmpleague['organisation_name']        = $row->organisation_name;
 			$tmpleague['organisation_url']         = $row->organisation_content_url;
-			$tmpleague['organisation_description']         = $row->organisation_description;
+			$tmpleague['organisation_description'] = $row->organisation_description;
 			$tmpleague['league_entry_position']    = $row->league_entry_position;
 			$tmpleague['league_name']              = $row->league_name;
+			$tmpleague['league_content_type_id']      = $row->league_content_type_id;
 			$tmpleague['content_type_name']		   = $row->content_type_name;
 			$tmpleague['content_type_codename']	   = $row->content_type_codename;
 			$tmpleague['review_rating'] = $row->review_context_content_rating;

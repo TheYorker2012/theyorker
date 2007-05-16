@@ -69,7 +69,7 @@ foreach ($years as $year) {
 			</fieldset>
 				If you would like to see how many unread e-mails you have in your inbox, tick this box.
 			<fieldset>
-				<label class="radio" for="storepassword">Save Webmail Password:</label>
+				<label class="radio" for="storepassword">Save YorkMail Password:</label>
 				<input class="checkbox" type="checkbox" id="storepassword" name="storepassword" value="1" <?php if ($this->validation->storepassword) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>

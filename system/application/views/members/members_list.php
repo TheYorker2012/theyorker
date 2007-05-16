@@ -103,6 +103,7 @@ function FilterLinkBool($filter, $field, $value)
 			<th align="center"><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
 			<th align="center"><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
 			<th>Card</th>
+			<th>Access</th>
 		</tr>
 		<?php
 		$i = -1;
@@ -141,6 +142,13 @@ function FilterLinkBool($filter, $field, $value)
 				<IMG SRC="/images/prototype/members/card_expired.png" ALT="Expired" />
 			<?php } elseif ($i == 3) { ?>
 				<IMG SRC="/images/prototype/members/card_inactive.png" ALT="Inactive" />
+			<?php } ?>
+			</td>
+			<td align="center">
+			<?php if ($membership['office_editor_access']) { ?>
+				<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
+			<?php } elseif ($membership['office_writer_access']) { ?>
+				<IMG SRC="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
 			<?php } ?>
 			</td>
 		</tr>

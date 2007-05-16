@@ -318,29 +318,13 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 					
-					//complete temp hack that doesn't even work
-					$sql = 'SELECT content_type_id
-				FROM content_types
-				WHERE content_type_codename = ?';
-		$query = $this->db->query($sql,array($item_type));
-		$row = $query->row();
-		if ($query->num_rows() == 1){
-			$type_id = $row->content_type_id;
-			}
-			else{
-			$type_id = NULL;}
-					
-					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id'], $type_id);
-					$slideshow = array();
-					foreach ($slideshow_array->result() as $slide){
-						$slideshow[] = array(
-							'title' => $slide->photo_title,
-							'id' => $slide->photo_id,
-							'url' => imageLocation($slide->photo_id, 'slideshow'),
-						);
+					//get the slideshow images for the review item
+					$slideshow_photos = $this->slideshow->GetReviewPhotos($database_result[$reviewno]['organisation_entity_id'], $item_type, true);
+					foreach($slideshow_photos as &$slideshow_photo)
+					{
+						$slideshow_photo['location'] = photoLocation($slideshow_photo['id']);
 					}
-					
-					$entries[$reviewno]['slideshow'] = $slideshow;
+					$entries[$reviewno]['slideshow'] = $slideshow_photos;
 
 					//Change scope of $tagbox
 					$tagbox = array();
@@ -380,13 +364,19 @@ class Reviews extends Controller
 		redirect('/reviews/food');
 	}
 
-	/// Leages
+	/// Leagues
 	function leagues($league_code_name = NULL)
 	{
 		if (!CheckPermissions('public')) return;
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
+		
+		//Load slideshow model
+		$this->load->model('slideshow');
+		
+		//Load review  model
+		$this->load->model('review_model');
 
 		//Check we have being passed a league to view otherwise the query returns badly...
 		if ($league_code_name === NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
@@ -405,6 +395,7 @@ class Reviews extends Controller
 			//Place remaining data into a array for the view
 			for ($row = 0; $row < count($leagues); $row++)
 			{
+				$reviews[$row]['review_org_id'] = $leagues[$row]['organisation_id'];
 				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
 				$reviews[$row]['review_website'] = $leagues[$row]['organisation_url'];
 				$reviews[$row]['review_rating'] = $leagues[$row]['review_rating'];
@@ -414,6 +405,21 @@ class Reviews extends Controller
 				$reviews[$row]['review_link'] = '/reviews/'.$content_type.'/'.$leagues[$row]['organisation_directory_entry_name'];
 				$reviews[$row]['review_blurb'] = $leagues[$row]['organisation_description'];
 				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
+				$reviews[$row]['review_content_type_id'] = $leagues[$row]['league_content_type_id'];
+				$reviews[$row]['review_org_directory_entry_name'] = $leagues[$row]['organisation_directory_entry_name'];
+				
+				
+				//get the slideshow images for the league item
+				$slideshow_photos = $this->slideshow->GetReviewPhotos($reviews[$row]['review_org_id'], $reviews[$row]['review_content_type_id'], false);
+				foreach($slideshow_photos as &$slideshow_photo)
+				{
+					$slideshow_photo['location'] = photoLocation($slideshow_photo['id']);
+				}
+				$reviews[$row]['slideshow'] = $slideshow_photos;
+				
+				//very hacky two lines here:
+				$reviews[$row]['tags'] = $this->review_model->GetTagOrganisation('food',$reviews[$row]['review_org_directory_entry_name']);
+				$reviews[$row]['alltags'] = $this->review_model->GetTags('food');
 			}
 
 		//Pass over the amount of entries to view

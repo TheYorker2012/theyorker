@@ -27,7 +27,7 @@ class Slideshow extends Model {
 			$result = $query->orderby('organisation_slideshow_order', 'asc')->get();
 		} else {
 			$query = $this->db->select('*')->from('photos');
-			$query = $query->join('review_context_slideshows', 'review_context_slideshow_organisation_entity_id = photo_id');
+			$query = $query->join('review_context_slideshows', 'review_context_slideshow_photo_id = photo_id');
 			$query = $query->where('review_context_slideshow_organisation_entity_id', $organisation_id);
 			//one line different...
 			$query = $query->where('review_context_slideshow_content_type_id', $contextType);
@@ -35,6 +35,62 @@ class Slideshow extends Model {
 		}
 
 		return $result;
+	}
+	
+	/* pingus version of the getPhotos function as he couldn't get it to work 
+	    if $is_string
+		= true then $content_type can be 'food', 'drink' etc
+		= false then $content_type can be 7, 8, 9 (an id) */
+	function GetReviewPhotos($organisation_id, $content_type, $is_string)
+	{
+		if ($is_string == true)
+		{
+			$sql = 'SELECT content_type_id
+					FROM content_types
+					WHERE content_type_codename = ?';
+			$query = $this->db->query($sql,array($content_type));
+			$row = $query->row();
+			if ($query->num_rows() == 1)
+			{
+				$content_type = $row->content_type_id;
+			}
+			else
+			{
+				$content_type = null;
+			}
+		}		
+		if (isset($content_type))
+		{
+			$sql = 'SELECT	photo_id,
+							photo_title,
+							review_context_slideshow_order
+					FROM	photos
+					JOIN	review_context_slideshows ON review_context_slideshow_photo_id = photo_id
+					WHERE	review_context_slideshow_organisation_entity_id = ?
+					AND		review_context_slideshow_content_type_id = ?
+					AND		photo_deleted = 0
+					ORDER BY review_context_slideshow_order ASC ';
+			$query = $this->db->query($sql,array($organisation_id, $content_type));
+			if ($query->num_rows() > 0)
+			{
+				foreach ($query->result() as $row)
+				{
+					$result[$row->review_context_slideshow_order] = array(
+						'id'=>$row->photo_id,
+						'title'=>$row->photo_title
+						);
+				}
+				return $result;	
+			}
+			else
+			{
+				return array();
+			}
+		}
+		else
+		{
+			return array();
+		}
 	}
 	
 	function pushUp($photo_id, $organisation_id, $contextType = null, $order = 'asc') {

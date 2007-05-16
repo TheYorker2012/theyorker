@@ -90,31 +90,67 @@ if (isset($league_data)) {
 			<td>
 				<table border="0" width="100%">
 				<tbody>
+				<?php
+				if (isset($entry['slideshow'][1]))
+				{
+				?>
 				<tr>
-				<!--
 					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
-					</td>-->
+						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['slideshow'][1]['location']); ?>" width="144" height="116" alt="singer" title="singer" />
+					</td>
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>
 					</td>
 				</tr>
-				<!--
+				<?php
+				}
+				else
+				{
+				?>
+				<tr>
+					<td width="100%" valign="top">
+						<?php echo($entry['review_blurb']); ?>
+					</td>
+				</tr>
+				<?php
+				}
+				?>
+				<tr>
+				</tr>
 				<tr>
 					<td colspan="2">
 						<table border="0" width="100%">
 						<tr>
 							<?php
-							foreach($entry['tagbox'] as $tag => $values ) {
+							/*
+							foreach($entry['tagbox'] as $tag => $values )
+							{
 								echo('<td width="25% valign="top">');
 								echo('<strong>'.$tag.':</strong><br />');
 								echo(implode(' / ', $values).'</td>');
+							}*/
+							foreach($entry['alltags']['tag_group_names'] as $tag_group)
+							{
+								echo('<td width="25% valign="top">');
+								echo('<strong>'.$tag_group.':</strong><br />');
+								if (isset($entry['tags'][$tag_group]))
+								{
+									foreach($entry['tags'][$tag_group] as $tag)
+									{
+										echo($tag.'<br />');
+									}
+								}
+								else
+								{
+									echo('N/A');
+								}
+								echo('</td>');
 							}
 							?>
 						</tr>
 						</table>
 					</td>
-				</tr>-->
+				</tr>
 				<?php
 				if($entry['review_quote'] != "")
 				{

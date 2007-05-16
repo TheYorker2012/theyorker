@@ -299,7 +299,7 @@
 			</div>
 		</div>
 
-		<div id="content_comments" class="hide">
+		<div id="content_comments" class="hide" style="width:422px;">
 			<?php /*<div class="blue_box">
 				<h2>comments...</h2>
 				<div id="comment_load" class="ajax_loading hide">

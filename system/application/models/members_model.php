@@ -33,6 +33,8 @@ class Members_model extends Model {
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
 				users.user_nickname AS nickname,
+				(users.user_office_password IS NULL AND users.user_office_access = 1) AS office_writer_access,
+				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
 				IF(subscriptions.subscription_user_confirmed = TRUE, entities.entity_username, NULL) AS email,
 				users.user_gender AS gender,
 				users.user_enrolled_year AS enrol_year
@@ -148,11 +150,22 @@ class Members_model extends Model {
 	function UpdatePaidStatus($Status,$UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET subscription_paid = "'.$Status.'"
-				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"
+				SET subscription_paid = ?
+				WHERE  subscription_user_entity_id = ?
+				       AND subscription_organisation_entity_id = ?
 				';
-		$this->db->query($sql);
+		$this->db->query($sql, array($Status, $UserId, $OrgId));
+		return $this->db->affected_rows();
+	}
+
+	# set access level accordingly
+	function UpdateAccessLevel($OfficeAccess,$OfficePassword,$UserId) {
+		$sql = '
+				UPDATE users
+				SET user_office_access = ?, user_office_password = ?
+				WHERE users.user_entity_id = ?
+				';
+		$this->db->query($sql, array($OfficeAccess, $OfficePassword, $UserId));
 		return $this->db->affected_rows();
 	}
 
