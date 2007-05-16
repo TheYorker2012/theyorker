@@ -797,14 +797,13 @@ class Requests_Model extends Model
 		$this->db->query($sql,array($article_id));
 	}
 	
-	function AcceptRequest($article_id, $user_id, $business_card_id)
+	function AcceptRequest($article_id, $user_id)
 	{
 		$sql = 'UPDATE 	article_writers
-			SET	article_writer_status = "accepted",
-				article_writer_byline_business_card_id = ?
+			SET	article_writer_status = "accepted"
 			WHERE	(article_writer_user_entity_id = ?
 			AND	article_writer_article_id = ?)';
-		$this->db->query($sql,array($business_card_id,$user_id,$article_id));
+		$this->db->query($sql,array($user_id,$article_id));
 	}
 	
 	function DeclineRequest($article_id, $user_id)
