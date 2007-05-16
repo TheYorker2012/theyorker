@@ -860,7 +860,7 @@ class News extends Controller
 				$subtext = htmlentities($this->input->xss_clean($subtext));
 				$blurb = htmlentities($this->input->xss_clean($blurb));
 $xajax_response->addAlert('WikiText (pre): '.$wiki);
-				$wiki = htmlentities($this->input->xss_clean($wiki));
+				$wiki = $this->input->xss_clean($wiki);
 $xajax_response->addAlert('WikiText (post): '.$wiki);
 				$fact_heading = htmlentities($this->input->xss_clean($fact_heading));
 				$fact_text = htmlentities($this->input->xss_clean($fact_text));
