@@ -103,7 +103,7 @@ $other_input = '';
 $select_users = '<br /><label for="r_assignuser">&nbsp;</label>
 <select name="r_assignuser" id="r_assignuser" size="">';
 foreach ($photographers as $user) {
-	$select_users .= '	<option value='.$user['id'].'>'.$user['name'].'</option>';
+	$select_users .= '	<option value="'.$user['id'].'">'.$user['name'].'</option>';
 }
 $select_users .= '	</select>';
 
@@ -235,7 +235,7 @@ foreach ($photos as $photo) {
 		</div>
 -->
 
-	<div style="width:422px;">
+	<div style="width:420px;">
 	<?php // Display comments if thread exists
 	if ((isset($comments)) && (NULL !== $comments)) {
 		$comments->Load();
