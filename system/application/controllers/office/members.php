@@ -298,7 +298,10 @@ class Members extends Controller
 		if (NULL === $EntityId) {
 			return redirect(vip_url('members/list'));
 		}
-			
+		
+		// Get membership information for the first time
+		// This will determine whether the entity is a member.
+		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
 		
 		// Read the post data for changing office access (MANAGE ONLY)
 		if ('manage' === VipMode()) {
@@ -317,8 +320,8 @@ class Members extends Controller
 					} else {
 						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
 						$this->user_auth->setOfficePassword($access_password,  $EntityId);
-						
-						$to = $this->members_model->GetUsername($EntityId).$this->config->Item('username_email_postfix');
+												
+						$to = $membership['username'].$this->config->Item('username_email_postfix');
 						$from = $this->pages_model->GetPropertyText('system_email', true);
 						$subject = $this->pages_model->GetPropertyText('office_password_email_subject', true);
 						$message = str_replace('%%password%%',$access_password,str_replace('%%nickname%%',$membership['nickname'],$this->pages_model->GetPropertyText('office_password_email_body', true)));
@@ -351,13 +354,13 @@ class Members extends Controller
 						$this->messages->AddMessage('error','Operation Failed. User has not been set to "No Access".');
 					}
 				}
+				
+				// Get membership information again, as it will have changed.
+				$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
 			}
 		}
 		
-		// Get membership information for the first time
-		// This will determine whether the entity is a member.
-		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
-
+		
 		if (!empty($membership)) {
 			$membership = $membership[0];
 			
