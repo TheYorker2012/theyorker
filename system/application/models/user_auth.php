@@ -537,7 +537,7 @@ class User_auth extends model {
 
 			$query = $this->db->query($sql, array($entity));
 			$row = $query->row();
-			$salt = $query->entity_salt;
+			$salt = $row->entity_salt;
 		}
 
 		if ($salt == null) {

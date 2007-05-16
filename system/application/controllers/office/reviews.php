@@ -365,7 +365,7 @@ class Reviews extends Controller
 				$data = array_merge($data, $context_contents[0]);
 			else
 			{
-				$this->messages->AddMessage('error', 'Review context does not exist');
+				$this->messages->AddMessage('error', 'Review context '.$revision_id.' does not exist');
 				$data['content_blurb'] = '';
 				$data['content_quote'] = '';
 				$data['average_price'] = '';
@@ -584,9 +584,9 @@ class Reviews extends Controller
 			//add the selected byline to the review
 			$this->requests_model->AddUserToRequest(
 				$article_id,
-				$_POST['a_review_author'],
 				$this->user_auth->entityId,
-				$this->user_auth->entityId);
+				$this->user_auth->entityId,
+				$_POST['a_review_author']);
 			//auto accept the review write request
 			$this->requests_model->AcceptRequest(
 				$article_id,
