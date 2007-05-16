@@ -855,13 +855,13 @@ class News extends Controller
 		}
 		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
 			if (is_numeric($revision)) {
-				$headline = htmlentities($this->input->xss_clean($headline));
-				$subheadline = htmlentities($this->input->xss_clean($subheadline));
-				$subtext = htmlentities($this->input->xss_clean($subtext));
-				$blurb = htmlentities($this->input->xss_clean($blurb));
-				$wiki = htmlentities($this->input->xss_clean($wiki));
-				$fact_heading = htmlentities($this->input->xss_clean($fact_heading));
-				$fact_text = htmlentities($this->input->xss_clean($fact_text));
+				$headline = htmlentities($this->input->xss_clean($headline), ENT_NOQUOTES, 'UTF-8');
+				$subheadline = htmlentities($this->input->xss_clean($subheadline), ENT_NOQUOTES, 'UTF-8');
+				$subtext = htmlentities($this->input->xss_clean($subtext), ENT_NOQUOTES, 'UTF-8');
+				$blurb = htmlentities($this->input->xss_clean($blurb), ENT_NOQUOTES, 'UTF-8');
+				$wiki = $this->input->xss_clean($wiki);
+				$fact_heading = htmlentities($this->input->xss_clean($fact_heading), ENT_NOQUOTES, 'UTF-8');
+				$fact_text = htmlentities($this->input->xss_clean($fact_text), ENT_NOQUOTES, 'UTF-8');
 				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
 				$wiki_cache = '';
 //				if ($create_cache) {
