@@ -168,7 +168,7 @@
 
 	function delete_article() {
 		if (confirm('Are you sure you want to remove this article? This operation cannot be reverted.')) {
-
+			xajax__deleteArticle();
 		}
 	}
 
