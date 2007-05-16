@@ -83,7 +83,7 @@ class Prefs_model extends Model {
 			' user_firstname,'.
 			' user_surname,'.
 			' (user_facebook_session_id IS NOT NULL) as user_facebook_enabled,'.
-			' user_yorkmail_password,'.
+			' user_store_password,'.
 			' user_nickname,'.
 			' user_gender,'.
 			' user_time_format,'.
@@ -104,7 +104,7 @@ class Prefs_model extends Model {
 			' user_college_organisation_entity_id = ?,'.
 			' user_firstname = ?,'.
 			' user_surname = ?,'.
-			' user_yorkmail_password = ?,'.
+			' user_store_password = ?,'.
 			' user_nickname = ?,'.
 			' user_gender = ?,'.
 			' user_enrolled_year = ?,'.
