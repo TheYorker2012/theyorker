@@ -33,6 +33,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 		'office'		=> 'frame_office',
 		'pr'			=> 'frame_office',
 		'editor'		=> 'frame_office',
+		'manage'		=> 'frame_office',
 		'admin'			=> 'frame_office',
 	);
 	
@@ -114,6 +115,7 @@ function GenerateToplinks($Permission)
 		
 		case 'office':
 		case 'editor':
+		case 'manage':
 		case 'admin':
 			if ($Permission === 'public' || $Permission === 'student') {
 				$top_links[] = 'logged in as ' . $username;
@@ -128,6 +130,12 @@ function GenerateToplinks($Permission)
 						site_url('logout/office'));
 			} elseif (	$Permission === 'pr') {
 				$top_links[] = 'in PR area of ' . VipOrganisationName(TRUE).' as ' . $username;
+				$top_links[] = array('office',
+						site_url('office'));
+				$top_links[] = array('leave office',
+						site_url('logout/office'));
+			} elseif (	$Permission === 'manage') {
+				$top_links[] = 'in management area of ' . VipOrganisationName(TRUE).' as ' . $username;
 				$top_links[] = array('office',
 						site_url('office'));
 				$top_links[] = array('leave office',

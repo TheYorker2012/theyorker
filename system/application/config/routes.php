@@ -103,8 +103,14 @@ $route['viparea/'.$org_name_regex.'/(.*)'] = 'office/$1';
 // Office routing                                                             //
 //****************************************************************************//
 
+// special area from which editors can access vip area for the yorker.
+$route['office/manage/directory(/.*)?'] = 'office/yorkerdirectory$1';
+$route['office/manage/members/list(/.*)?'] = 'office/members/memberlist$1';
+$route['office/manage'] = 'office/vipindex';
+$route['office/manage/(.*)'] = 'office/$1';
 
 $route['office/directory'] = 'office/yorkerdirectory';
+
 $route['office/pr'] = 'office/prindex';
 $route['office/pr/org/'.$org_name_regex.'/directory(/.*)?'] = 'office/yorkerdirectory$1';
 $route['office/pr/org/'.$org_name_regex.'/members/list(/.*)?'] = 'office/members/memberlist$1';

@@ -162,6 +162,7 @@ function VipOrganisationId($TopOrganisation = FALSE, $SetOrganisation = FALSE)
  *	- 'none' Not in vip mode
  *	- 'office' VIP mode through office
  *	- 'viparea' VIP mode through viparea
+ *	- 'manage' VIP mode through office/manage
  */
 function VipMode($SetMode = FALSE)
 {
@@ -246,10 +247,14 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
 							&&	($CI->uri->segment(1) === 'viparea'));
-	$thru_office_pr	= 	(	($CI->uri->total_segments() >= 3)
+	$thru_office_pr		= 	(	($CI->uri->total_segments() >= 3)
 							&&	($CI->uri->segment(1) === 'office')
 							&&	($CI->uri->segment(2) === 'pr')
 							&&	($CI->uri->segment(3) === 'org'));
+	$thru_office_manage	=	(	($CI->uri->total_segments() >= 2)
+							&&	($CI->uri->segment(1) === 'office')
+							&&	($CI->uri->segment(2) === 'manage'));
+	static $company_short_name = 'theyorker';
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
@@ -262,9 +267,18 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
 	} elseif ($thru_office_pr) {
 		$organisation_shortname = $CI->uri->segment(4);
+		// don't allow access to vip area of the company, only through office/manage
+		if ($organisation_shortname === $company_short_name) {
+			$organisation_shortname = '';
+		}
 		$organisation_specified = TRUE;
 		VipSegments(4);
 		vip_url('office/pr/org/'.$organisation_shortname.'/', TRUE);
+	} elseif ($thru_office_manage) {
+		$organisation_shortname = $company_short_name;
+		$organisation_specified = TRUE;
+		VipSegments(2);
+		vip_url('office/manage/', TRUE);
 	} else {
 		$organisation_shortname = '';
 	}
@@ -294,14 +308,22 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	
 	// If vip+pr, use URI to decide which
 	if ($Permission === 'vip+pr') {
-		$Permission =	($thru_viparea		? 'vip'	:
-						($thru_office_pr	? 'pr'	: ''));
+		$Permission =	($thru_viparea			? 'vip'	:
+						($thru_office_pr		? 'pr'	:
+						($thru_office_manage	? 'manage'	: '')));
+	}
+	// if vip, also allow manage as that is viparea alias
+	elseif ($Permission === 'vip') {
+		$Permission =	($thru_viparea			? 'vip'	:
+						($thru_office_manage	? 'manage'	: ''));
 	}
 	// Ensure that:
 	//	$thru_office_pr => 'pr'
 	//	$thru_viparea => 'vip'
-	elseif (	($thru_office_pr	&& $Permission !== 'pr')
-			||	($thru_viparea		&& $Permission !== 'vip')) {
+	//	$thru_office_manage => 'vip'
+	elseif (	($thru_office_pr		&& $Permission !== 'pr')
+			||	($thru_viparea			&& $Permission !== 'vip')
+			||	($thru_office_manage	&& $Permission !== 'manage')) {
 		$Permission = '';
 	}
 	
@@ -319,6 +341,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'office'	=> $student_login_action,
 			'pr'		=> $student_login_action,
 			'editor'	=> $student_login_action,
+			'manage'	=> $student_login_action,
 			'admin'		=> $student_login_action,
 		);
 	} elseif ($user_level === 'student') {
@@ -329,6 +352,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'office'	=> $office_login_action,
 			'pr'		=> $office_login_action,
 			'editor'	=> $office_login_action,
+			'manage'	=> $office_login_action,
 			'admin'		=> $office_login_action,
 		);
 	} elseif ($user_level === 'organisation') {
@@ -341,6 +365,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'office'	=> FALSE,
 			'pr'		=> FALSE,
 			'editor'	=> FALSE,
+			'manage'	=> FALSE,
 			'admin'		=> FALSE,
 		);
 		if ($allow_vip) {
@@ -390,6 +415,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			'office'	=> $office_login_action,
 			'pr'		=> $office_login_action,
 			'editor'	=> $office_login_action,
+			'manage'	=> $office_login_action,
 			'admin'		=> $office_login_action,
 		);
 	} else {
@@ -412,6 +438,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'office'		=> TRUE,
 				'pr'			=> 'pr',
 				'editor'		=> FALSE,
+				'manage'		=> FALSE,
 				'admin'			=> FALSE,
 			);
 		} elseif ($user_level === 'editor') {
@@ -422,6 +449,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'office'		=> TRUE,
 				'pr'			=> TRUE,
 				'editor'		=> TRUE,
+				'manage'		=> TRUE,
 				'admin'			=> FALSE,
 			);
 		} elseif ($user_level === 'admin') {
@@ -432,39 +460,48 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'office'		=> TRUE,
 				'pr'			=> TRUE,
 				'editor'		=> TRUE,
+				'manage'		=> TRUE,
 				'admin'			=> TRUE,
 			);
 		}
 		
 		// Change an office user to pr if they rep for the organisation
-		if ($Permission === 'pr') {
+		static $vipModes = array(
+			'pr' => 'office',
+			'manage' => 'manage',
+		);
+		if (array_key_exists($Permission, $vipModes)) {
 			// Get organisation information
-			$CI->db->select('organisation_entity_id as id,'.
-							'organisation_name as name,'.
-							'organisation_pr_rep as rep');
-			$CI->db->where(array('organisation_directory_entry_name' => $organisation_shortname));
+			$CI->db->select('organisation_entity_id AS id,'.
+							'organisation_name AS name,'.
+							'organisation_pr_rep AS rep');
+			$CI->db->join('entities', 'organisation_entity_id = entity_id', 'inner');
+			$CI->db->where(array(
+				'organisation_directory_entry_name' => $organisation_shortname,
+				'entity_deleted = FALSE',
+			));
 			$matching_org = $CI->db->get('organisations')->result_array();
 			
 			if (empty($matching_org)) {
-				$action_levels['pr'] = FALSE;
+				$action_levels[$Permission] = FALSE;
 			} else {
 				$matching_org = $matching_org[0];
-				if ($action_levels['pr'] === 'pr') {
-					$action_levels['pr'] = TRUE;
+				if ($action_levels[$Permission] === 'pr') {
+					$action_levels[$Permission] = TRUE;
 					$rep = ($matching_org['rep'] == $CI->user_auth->entityId);
 					if ($rep) {
 						VipLevel('rep', TRUE);
 					} else {
 						VipLevel('read', TRUE);
 					}
-				} elseif ($action_levels['pr']) {
+				} elseif ($action_levels[$Permission]) {
 					VipLevel('write', TRUE);
 				}
 				VipOrganisationId(FALSE, $matching_org['id']);
 				VipOrganisationName(FALSE, $matching_org['name']);
 				VipOrganisationId(TRUE, $matching_org['id']);
 				VipOrganisationName(TRUE, $matching_org['name']);
-				VipMode('office');
+				VipMode($vipModes[$Permission]);
 			}
 		}
 	}
