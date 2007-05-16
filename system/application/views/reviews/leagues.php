@@ -116,13 +116,6 @@ if (isset($league_data)) {
 				}
 				?>
 				<tr>
-				<!--
-					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="/images/images/medium/0/127.jpg" width="144" height="116" alt="singer" title="singer" />
-					</td>-->
-					<td width="80%" valign="top">
-						<?php echo($entry['review_blurb']); ?>
-					</td>
 				</tr>
 				<!--
 				<tr>
