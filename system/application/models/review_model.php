@@ -341,6 +341,7 @@ class Review_model extends Model {
 			organisations.organisation_timestamp,
 			organisations.organisation_yorkipedia_entry,
 			review_context_contents.review_context_content_blurb,
+			review_context_contents.review_context_content_quote,
 			review_context_contents.review_context_content_average_price,
 			review_context_contents.review_context_content_recommend_item,
 			review_context_contents.review_context_content_rating,

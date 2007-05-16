@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">About</h2>
 	<div class="Entry">
-		<?php echo($organisation_description); ?>
+		<?php echo($review_blurb); ?>
 	</div>
 
 	<h2>Details</h2>
@@ -40,7 +40,7 @@ if ($deal != NULL) {
 	<div class="BlueBox">
 		<img class="Right" src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
 		<h2><?php echo($review_title); ?></h2>
-		<p><?php echo($review_blurb); ?></p>
+		<p><?php echo($review_quote); ?></p>
 		<h3>Rating</h3>
 		<div>
 <?php

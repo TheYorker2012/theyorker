@@ -113,6 +113,7 @@ class Review_views
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
+		$data['review_quote']			= $review_database_result['review_context_content_quote'];
 		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
 		$data['email'] 				= $review_database_result['organisation_email_address'];
 		$data['organisation_description'] = $review_database_result['organisation_description'];
