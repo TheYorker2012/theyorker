@@ -35,7 +35,7 @@ class Members_model extends Model {
 				users.user_nickname AS nickname,
 				(users.user_office_password IS NULL AND users.user_office_access = 1) AS office_writer_access,
 				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
-				IF(subscriptions.subscription_user_confirmed = TRUE, entities.entity_username, NULL) AS email,
+				entities.entity_username AS email,
 				users.user_gender AS gender,
 				users.user_enrolled_year AS enrol_year
 			FROM
@@ -72,6 +72,15 @@ class Members_model extends Model {
 		$bind_data = array_merge($bind_data, $BindData);
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
+	}
+
+	function GetUsername($EntityId) {
+		$sql = 'SELECT entities.entity_username as entity_username, users.user_nickname as nickname
+				FROM entities, users
+				WHERE entities.entity_id = users.user_entity_id AND entity_id = ?';
+		
+		$query = $this->db->query($sql, array($EntityId));
+		return $query->row();
 	}
 
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())

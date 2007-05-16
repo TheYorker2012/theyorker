@@ -298,6 +298,7 @@ class Members extends Controller
 		if (NULL === $EntityId) {
 			return redirect(vip_url('members/list'));
 		}
+			
 		
 		// Read the post data for changing office access (MANAGE ONLY)
 		if ('manage' === VipMode()) {
@@ -316,7 +317,23 @@ class Members extends Controller
 					} else {
 						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
 						$this->user_auth->setOfficePassword($access_password,  $EntityId);
-						$this->messages->AddMessage('success','Operation Successful.');
+						
+						$user = $this->members_model->GetUsername($EntityId);
+						
+						$to = $user->entity_username.$this->config->Item('username_email_postfix');
+						$from = $this->pages_model->GetPropertyText('system_email', true);
+						$subject = $this->pages_model->GetPropertyText('office_password_email_subject', true);
+						$message = str_replace('%%password%%',$access_password,str_replace('%%nickname%%',$user->nickname,$this->pages_model->GetPropertyText('office_password_email_body', true)));
+						if ($to && $subject && $message && $from){
+							$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
+							if (mail($to,$subject,$message,$from)) {
+								$this->messages->AddMessage('success','E-mail Sent Successfully.');
+							} else {
+								$this->messages->AddMessage('error','E-mail Sending Failed.');
+							}
+						} else {
+							$this->messages->AddMessage('error','E-mail Sending Failed.');
+						}
 					}
 				} elseif ($EntityId == $this->user_auth->entityId) {
 					// Ensure that the privilages user isn't trying to demote themselves.
@@ -339,10 +356,10 @@ class Members extends Controller
 			}
 		}
 		
-		// Get membership information
+		// Get membership information for the first time
 		// This will determine whether the entity is a member.
 		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
-		
+
 		if (!empty($membership)) {
 			$membership = $membership[0];
 			

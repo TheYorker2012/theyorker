@@ -253,6 +253,10 @@ class User_auth extends model {
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
 			
+			if ($row->entity_id == $this->config->Item('company_entity_id'))
+				/// @throw Exception Could not find user or uni login
+				throw new Exception('Could not find user or uni login');
+			
 			// Store the salt for any further login
 			$this->salt = $row->entity_salt;
 
@@ -579,6 +583,9 @@ class User_auth extends model {
 		if (!$this->isLoggedIn | !$this->isUser)
 			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
+		if ($organisationId == $this->config->Item('company_entity_id'))
+			/// @throw Exception You cannot enter the VIP area of this organisation
+			throw new Exception('You cannot enter the VIP area of this organisation');
 		
 		$hash = sha1($this->salt.$password);
 

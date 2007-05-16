@@ -254,7 +254,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	$thru_office_manage	=	(	($CI->uri->total_segments() >= 2)
 							&&	($CI->uri->segment(1) === 'office')
 							&&	($CI->uri->segment(2) === 'manage'));
-	static $company_short_name = 'theyorker';
+	$company_short_name = $CI->config->Item('company_organisation_id');
 	$organisation_specified = FALSE;
 	if ($thru_viparea) {
 		if ($CI->uri->total_segments() > 1) {
@@ -264,13 +264,15 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		} else {
 			$organisation_shortname = $CI->user_auth->organisationShortName;
 		}
-		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
-	} elseif ($thru_office_pr) {
-		$organisation_shortname = $CI->uri->segment(4);
 		// don't allow access to vip area of the company, only through office/manage
 		if ($organisation_shortname === $company_short_name) {
 			$organisation_shortname = '';
+			$CI->user_auth->logoutOrganisation();
+			redirect('');
 		}
+		vip_url('viparea/'.$organisation_shortname.'/', TRUE);
+	} elseif ($thru_office_pr) {
+		$organisation_shortname = $CI->uri->segment(4);
 		$organisation_specified = TRUE;
 		VipSegments(4);
 		vip_url('office/pr/org/'.$organisation_shortname.'/', TRUE);
