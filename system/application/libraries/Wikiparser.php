@@ -289,7 +289,7 @@ class Wikiparser {
 		);
 		foreach ($options as $k=>$option) {
 			switch($option) {
-				case 'frame':
+				case 'right':
 					$imagetag = sprintf(
 						'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
 						'<img src="%s" />'.
@@ -303,10 +303,25 @@ class Wikiparser {
 						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
 					}
 					break;
+				case 'left':
+					$imagetag = sprintf(
+						'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+						'<img src="%s" />'.
+						'<div>%s</div>'.
+						'</div>',
+						$href,
+						$title
+					);
+					if ($this->in_paragraph) {
+						// divs aren't allowed in paragraphs, so close and reopen
+						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+					}
+					break;
 				case 'centre':
 					$imagetag = sprintf(
-						'<div style="text-align: center;">%s</div>',
-						$imagetag
+						'<div style="text-align: center;">%s<br />%s</div>',
+						$imagetag,
+						$title
 					);
 					if ($this->in_paragraph) {
 						// divs aren't allowed in paragraphs, so close and reopen
