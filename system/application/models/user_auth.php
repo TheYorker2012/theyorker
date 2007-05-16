@@ -253,6 +253,10 @@ class User_auth extends model {
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
 			
+			if ($row->entity_id == $this->config->Item('company_entity_id'))
+				/// @throw Exception Could not find user or uni login
+				throw new Exception('Could not find user or uni login');
+			
 			// Store the salt for any further login
 			$this->salt = $row->entity_salt;
 
