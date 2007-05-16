@@ -184,9 +184,8 @@ class Review_model extends Model {
 				AND	content_types.content_type_codename = ?';
 		if ($context_content_id !== -1) {
 			$sql .= ' AND review_context_contents.review_context_content_id = ?';
-		} else {
-			$sql .= ' AND review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id';
 		}
+		
 		$sql .= '
 			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
 			LIMIT 1

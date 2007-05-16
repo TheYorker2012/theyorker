@@ -365,7 +365,7 @@ class Reviews extends Controller
 				$data = array_merge($data, $context_contents[0]);
 			else
 			{
-				$this->messages->AddMessage('error', 'Review context does not exist');
+				$this->messages->AddMessage('error', 'Review context '.$revision_id.' does not exist');
 				$data['content_blurb'] = '';
 				$data['content_quote'] = '';
 				$data['average_price'] = '';
