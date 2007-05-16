@@ -1,20 +1,19 @@
 <div class='RightToolbar'>
+<h4>Operations</h4>
+	<p>
+		<a href="<?php echo vip_url('members/cards/filter/user/'.$membership['user_id'].'');?>">Member's Business Card</a>
+		<br />
+		<a href='/viparea/members/unsubscribe/<?php echo $membership['user_id']; ?>'>Unsubscribe Member</a>
+		<br />
+	</p>
+
 <h4>What's this?</h4>
 	<p>
 		<?php echo $main_text; ?>
 	</p>
-
 </div>
-<?php //$this->load->view('viparea/members_list', array('organisation' => $organisation));?>
 <div class='blue_box'>
-	<div style="text-align: center;"><h2>Membership - <?php echo $membership['firstname'] ?></h2></div>
-	<a href="<?php echo vip_url('members/cards/filter/user/'.$membership['user_id'].'');?>">Member's Business Card</a>
-	<br />
-	<a href='/viparea/members/unsubscribe/<?php echo $membership['user_id']; ?>'>Unsubscribe Member</a>
-	<br />
-	<P>These links as icons?</P>
-	
-	<H3>Member Details</H3>
+	<H2>Member Details</H2>
 	<form class='form'>
 		<fieldset>
 			<label for='member_name'>Name:</label>
@@ -39,20 +38,72 @@
 			<br />	<br />
 		</fieldset>
 	</form>
-	
-	<H3>Membership Information</H3>
+</div>
+<div class='blue_box'>
+	<h2>Membership Status</h2>
 	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
 		<fieldset>
-			<P>
-				On Mailing List:	<?php echo $membership['on_mailing_list'] ? 'Yes' : 'No'; ?><BR />
-				Membership Status:	<?php echo $membership['status']; ?>
-			</P>
+			<label for='member_paid'>Status:</label>
+			<input style="border: 0px;" type="text" name="member_status" value="<?php echo $membership['status']; ?>" disabled />
 			<label for='member_paid'>Paid:</label>
-			<input style="border: 0px;" type='checkbox' name='member_paid' value='1' <?php if($membership['paid']){echo 'checked';} ?>>
+			<input style="border: 0px;" type='checkbox' name='member_paid' value='1' <?php if($membership['paid']){echo 'checked';} ?> />
 			<label for='member_vip'>VIP Member:</label>
-			<input style="border: 0px;" type='checkbox' name='member_vip' value='1' <?php if($membership['vip']){echo 'checked';} ?>>
+			<input style="border: 0px;" type='checkbox' name='member_vip' value='1' <?php if($membership['vip']){echo 'checked';} ?> />
 			<input name='member_update' type='submit' value='Update' class='button' />
 		</fieldset>
 	</form>
 </div>
+<script type="text/javascript">
+<!--
+function submit_checker()
+{
+	var editor_access = document.getElementById('editor_level_access');
+	var password = document.getElementById('password');
+	var confirm_password = document.getElementById('confirm_password');
+	
+	if (editor_access.checked) {
+		if (password.value!=confirm_password.value) {
+			alert('Passwords do not match, please confirm your password.');
+			return false;
+		}
+		if (password.value.length == 0) {
+			alert('You must assign editors a password');
+			return false;
+		}
+		if (password.value.length < 4) {
+			alert('Office password must be more than 3 characters in length');
+			return false;
+		}
+	}
+	return true;
+}
+function show_password_form() {
+	var editor_access = document.getElementById('editor_level_access');
+	var password_form = document.getElementById('password_form');
+	password_form.style.display = (editor_access.checked ? 'block' : 'none');
+}
+-->
+</script>
+<div class='blue_box'>
+	<h2>Office Access</h2>
+	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method='POST' onSubmit="return submit_checker();">
+		<fieldset>
+			<label for='office_access_level'>Access level:</label>
+			<input style="float:none;" type="radio" onChange="show_password_form()" id="none_level_access" name="office_access_level" value="none" <?php if (!($membership['office_writer_access'] || $membership['office_editor_access'])) echo 'checked'; ?>> No Access 
+			<input style="float:none;" type="radio" onChange="show_password_form()" id="writer_level_access" name="office_access_level" value="writer" <?php if ($membership['office_writer_access']) echo 'checked'; ?>> Writer
+			<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
+			<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">
+				<br />
+				Editors require an additional password to access the office. This should be different to their university password.
+				<label for='password'>New password:</label>
+				<input type="text" name="password" id="password" value="">
+				<label for='confirm_password'>Confirm password:</label>
+				<input type="text" name="confirm_password" id="confirm_password" value="">
+				<br />
+			</div>
+			<input name='access_update' type="submit" value="Set Access Level" class="button" />
+		</fieldset>
+	</form>
+</div>
+
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>
