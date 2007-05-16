@@ -97,7 +97,7 @@ if ('manage' === VipMode()) {
 				<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
 				<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">
 					<br />
-					Editors require an additional password to access the office. This should be different to their university password.
+					Editors require an additional password to access the office. This should be different to their university password. When this password is reset, it will be e-mailed to the user.
 					<label for='password'>New password:</label>
 					<input type="password" name="password" id="password" value="">
 					<label for='confirm_password'>Confirm password:</label>

@@ -327,7 +327,7 @@ class Members extends Controller
 						if ($to && $subject && $message && $from){
 							$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 							if (mail($to,$subject,$message,$from)) {
-								$this->messages->AddMessage('success','E-mail Sent Successfully.'.$to.$subject.$message.$from);
+								$this->messages->AddMessage('success','E-mail Sent Successfully.');
 							} else {
 								$this->messages->AddMessage('error','E-mail Sending Failed.');
 							}
