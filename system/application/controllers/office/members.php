@@ -299,6 +299,49 @@ class Members extends Controller
 			return redirect(vip_url('members/list'));
 		}
 		
+		// Read the post data
+		$button = $this->input->post('access_update');
+		if ($button === 'Set Access Level') {
+			$access_level				= $this->input->post('office_access_level');
+			$access_password			= $this->input->post('password');
+			$access_password_confirm	= $this->input->post('confirm_password');
+			
+			if (false) { //(!($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin')) {
+					$this->messages->AddMessage('information','You have access level "'.$this->user_auth->officeType.'". You must be an editor to perform this operation.');
+			} else {
+				if ($access_level == 'editor') {
+					if ($access_password!=$access_password_confirm) {
+						$this->messages->AddMessage('information','Passwords do not match, please confirm your password.');
+					} elseif (strlen($access_password) == 0) {
+						$this->messages->AddMessage('information','You must assign editors a password.');
+					} elseif (strlen($access_password) < 4) {
+						$this->messages->AddMessage('information','Office password must be more than 3 characters in length.');
+					} else {
+						$success_rows = $this->members_model->UpdateAccessLevel('1', $access_password, $EntityId);
+						if ($success_rows > 0) {
+							$this->messages->AddMessage('information','Operation Successful.');
+						} else {
+							$this->messages->AddMessage('information','Operation Failed.');
+						}
+					}
+				} elseif ($access_level == 'writer') {
+					$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
+					if ($success_rows > 0) {
+						$this->messages->AddMessage('information','User has been set to "Writer".');
+					} else {
+						$this->messages->AddMessage('information','Operation Failed. User has not been set to "Writer".');
+					}
+				} elseif ($access_level == 'none') {
+					$success_rows = $this->members_model->UpdateAccessLevel('0', null, $EntityId);
+					if ($success_rows > 0) {
+						$this->messages->AddMessage('information','User has been set to "No Access".');
+					} else {
+						$this->messages->AddMessage('information','Operation Failed. User has not been set to "No Access".');
+					}
+				}
+			}
+		}
+		
 		// Get membership information
 		// This will determine whether the entity is a member.
 		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
@@ -364,49 +407,6 @@ class Members extends Controller
 				}
 			} 
 			
-			// Read the post data
-			$button = $this->input->post('access_update');
-			if ($button === 'Set Access Level') {
-				$access_level				= $this->input->post('office_access_level');
-				$access_password			= $this->input->post('password');
-				$access_password_confirm	= $this->input->post('confirm_password');
-				
-				if (false) { //(!($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin')) {
-						$this->messages->AddMessage('information','You have access level "'.$this->user_auth->officeType.'". You must be an editor to perform this operation.');
-				} else {
-					if ($access_level == 'editor') {
-						if ($access_password!=$access_password_confirm) {
-							$this->messages->AddMessage('information','Passwords do not match, please confirm your password.');
-						} elseif (strlen($access_password) == 0) {
-							$this->messages->AddMessage('information','You must assign editors a password.');
-						} elseif (strlen($access_password) < 4) {
-							$this->messages->AddMessage('information','Office password must be more than 3 characters in length.');
-						} else {
-							$success_rows = $this->members_model->UpdateAccessLevel('1', $access_password, $EntityId);
-							if ($success_rows > 0) {
-								$this->messages->AddMessage('information','Operation Successful.');
-							} else {
-								$this->messages->AddMessage('information','Operation Failed.');
-							}
-						}
-					} elseif ($access_level == 'writer') {
-						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
-						if ($success_rows > 0) {
-							$this->messages->AddMessage('information','User has been set to "Writer".');
-						} else {
-							$this->messages->AddMessage('information','Operation Failed. User has not been set to "Writer".');
-						}
-					} elseif ($access_level == 'none') {
-						$success_rows = $this->members_model->UpdateAccessLevel('0', null, $EntityId);
-						if ($success_rows > 0) {
-							$this->messages->AddMessage('information','User has been set to "No Access".');
-						} else {
-							$this->messages->AddMessage('information','Operation Failed. User has not been set to "No Access".');
-						}
-					}
-				}
-			}
-
 			// DISPLAY USER INFORMATION --------------------------------- //
 			$this->pages_model->SetPageCode('viparea_members_info');
 			
