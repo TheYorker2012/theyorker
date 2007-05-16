@@ -32,7 +32,7 @@ class Account_personal extends FramesFrame
 		// Validation rules
 		$rules['fname'] = 'trim|required|alpha';
 		$rules['sname'] = 'trim|required|alpha';
-		$rules['yorkmail'] = '';
+		$rules['storepassword'] = '';
 		$rules['facebook'] = '';
 		$rules['nick'] = 'trim|required|alpha_numeric';
 		$rules['gender'] = 'trim|required';
@@ -43,7 +43,7 @@ class Account_personal extends FramesFrame
 		// names of fields for error msgs
 		$fields['fname'] = 'first name';
 		$fields['sname'] = 'surname';
-		$fields['yorkmail'] = 'YorkMail password';
+		$fields['storepassword'] = 'store YorkMail password';
 		$fields['facebook'] = 'facebook integration';
 		$fields['nick'] = 'nickname';
 		$fields['gender'] = 'gender';
@@ -73,7 +73,7 @@ class Account_personal extends FramesFrame
 					$CI->validation->college,
 					$CI->validation->fname,
 					$CI->validation->sname,
-					$CI->validation->yorkmail,
+					$CI->validation->storepassword,
 					$CI->validation->nick,
 					$CI->validation->gender,
 					$CI->validation->year,
@@ -110,7 +110,7 @@ class Account_personal extends FramesFrame
 			$CI->validation->year = $userInfo['user_enrolled_year'];
 			$CI->validation->time = $userInfo['user_time_format'];
 			$CI->validation->facebook = $userInfo['user_facebook_enabled'];
-			$CI->validation->yorkmail = $userInfo['user_yorkmail_password'];
+			$CI->validation->storepassword = $userInfo['user_store_password'];
 			/*
 			if ($userInfo['user_email'] != '') {
 				$CI->validation->facebook = $userInfo['user_facebook_enabled'];

@@ -221,6 +221,8 @@
 				<input type="button" name="save_changes" id="save_changes" value="Save Article" class="button" onclick="updateHeadlinesManual();" />
 				<br />
 				<input type="button" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
+				<br />
+				<input type="button" name="delete" id="delete" value="Delete Article" class="button" onclick="return confirm('Are you sure you want to remove this article. This operation cannot be undun.';" />
 			</div>
 			<br style="clear:both;" /><br style="clear:both;" />
 			<?php if ($user_level == 'editor') { ?>

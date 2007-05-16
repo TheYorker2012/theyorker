@@ -57,20 +57,20 @@ foreach ($years as $year) {
 				<br />
 				<label for="time">Time Format:</label>
 				<select name="time" id="time">
-					<option value="12"<?php 
-						if ($this->validation->time == '12') { echo ' selected="selected"'; } 
+					<option value="12"<?php
+						if ($this->validation->time == '12') { echo ' selected="selected"'; }
 					?>>12hr</option>
-					<option value="24"<?php 
-						if ($this->validation->time == '24') { echo ' selected="selected"'; } 
+					<option value="24"<?php
+						if ($this->validation->time == '24') { echo ' selected="selected"'; }
 					?>>24hr</option>
 				</select>
 				<br />
 				<!-- TODO: add current time thing -->
 			</fieldset>
-				If you would like to see how many unread e-mails you have in your inbox, please enter your YorkMail e-mail password here:
+				If you would like to see how many unread e-mails you have in your inbox, tick this box.
 			<fieldset>
-				<label for="yorkmail">Webmail Password:</label>
-				<input type="text" id="yorkmail" name="yorkmail" value="<?php echo(htmlentities($this->validation->yorkmail)); ?>" />
+				<label class="radio" for="storepassword">Save Webmail Password:</label>
+				<input class="checkbox" type="checkbox" id="storepassword" name="storepassword" value="1" <?php if ($this->validation->storepassword) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>
 				If you would like to see your facebook events on your calendar, tick the box below, and facebook will soon prompt you to log in.
@@ -81,7 +81,7 @@ foreach ($years as $year) {
 			</fieldset>
 		<?php if(!$in_wizard) { ?>
 		 	<input type='submit' name='submit' id='submit' value='Save' class='button' />
-		<? } ?>	
+		<? } ?>
 			</div>
 		<?php if($in_wizard) { ?>
 		<div>
