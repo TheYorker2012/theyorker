@@ -579,6 +579,9 @@ class User_auth extends model {
 		if (!$this->isLoggedIn | !$this->isUser)
 			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
+		if ($organisationId == $this->config->Item('company_entity_id'))
+			/// @throw Exception You cannot enter the VIP area of this organisation
+			throw new Exception('You cannot enter the VIP area of this organisation');
 		
 		$hash = sha1($this->salt.$password);
 
