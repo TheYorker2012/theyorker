@@ -63,8 +63,8 @@ if (!empty($properties) || $permissions['prop_add']) {
 						<input type='checkbox' name="delete-<?php echo $property['id'];?>"> Delete this property
 					<?php } ?>
 				</p>
-				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['label'], ENT_QUOTES, 'UTF-8', 'UTF-8');?>">
-				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['type'], ENT_QUOTES, 'UTF-8', 'UTF-8');?>">
+				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['label'], ENT_QUOTES, 'UTF-8');?>">
+				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['type'], ENT_QUOTES, 'UTF-8');?>">
 				<textarea name="<?php echo $property['id'];?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo htmlentities($property['text'], ENT_QUOTES, 'UTF-8');?></textarea>
 				<br />
 			<?php
