@@ -20,6 +20,23 @@ class Review_model extends Model {
 	{
 		parent::Model();
 	}
+	
+	function ContentTypeIDToCodename($id)
+	{
+		$sql = 'SELECT content_type_codename
+				FROM content_types
+				WHERE content_type_id = ?';
+		$query = $this->db->query($sql,array($id));
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+		{
+			return $row->content_type_codename;
+		}
+		else
+		{
+			return null;
+		}
+	}
 
 	///	Return whether the review content exists
 	/**

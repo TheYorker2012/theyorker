@@ -418,7 +418,8 @@ class Reviews extends Controller
 				$reviews[$row]['slideshow'] = $slideshow_photos;
 				
 				//very hacky two lines here:
-				$reviews[$row]['tags'] = $this->review_model->GetTagOrganisation('food',$reviews[$row]['review_org_directory_entry_name']);
+				$content_codename = $this->review_model->ContentTypeIDToCodename($reviews[$row]['review_content_type_id']);
+				$reviews[$row]['tags'] = $this->review_model->GetTagOrganisation($content_codename,$reviews[$row]['review_org_directory_entry_name']);
 				$reviews[$row]['alltags'] = $this->review_model->GetTags('food');
 			}
 
