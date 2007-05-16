@@ -859,9 +859,7 @@ class News extends Controller
 				$subheadline = htmlentities($this->input->xss_clean($subheadline));
 				$subtext = htmlentities($this->input->xss_clean($subtext));
 				$blurb = htmlentities($this->input->xss_clean($blurb));
-$xajax_response->addAlert('WikiText (pre): '.$wiki);
 				$wiki = $this->input->xss_clean($wiki);
-$xajax_response->addAlert('WikiText (post): '.$wiki);
 				$fact_heading = htmlentities($this->input->xss_clean($fact_heading));
 				$fact_text = htmlentities($this->input->xss_clean($fact_text));
 				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
@@ -873,7 +871,6 @@ $xajax_response->addAlert('WikiText (post): '.$wiki);
 						$this->wikiparser->add_image_override($photo['photo_number'], imageLocation($photo['chosen_photo'], 'medium'));
 					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
-$xajax_response->addAlert('WikiCache: '.$wiki_cache);
 //				}
 				if ($revision == 0) {
 					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, $headline, $subheadline, $subtext, $blurb, $wiki, $wiki_cache);
