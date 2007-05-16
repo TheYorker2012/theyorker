@@ -228,6 +228,7 @@
 				<div id="publish_form" class="form">
 					<input type="submit" name="publish" id="publish" value="Publish Article" class="button" />
 				</div>
+				<br style="clear:both;" /><br style="clear:both;" />
 				<h4>Delete Article</h4>
 				<div id="delete_form" class="form">
 					<input type="button" name="delete" id="delete" value="Delete Article" class="button" onclick="return confirm('Are you sure you want to remove this article. This operation cannot be undun.';" />
