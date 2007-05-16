@@ -70,7 +70,7 @@ foreach ($years as $year) {
 				If you would like to see how many unread e-mails you have in your inbox, tick this box.
 			<fieldset>
 				<label class="radio" for="storepassword">Save Webmail Password:</label>
-				<input class="checkbox" type="checkbox" id="storepassword" name="storepassword" value="1" <?php if ($this->validation->store_password) { echo('checked="checked" '); } ?>/>
+				<input class="checkbox" type="checkbox" id="storepassword" name="storepassword" value="1" <?php if ($this->validation->storepassword) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>
 				If you would like to see your facebook events on your calendar, tick the box below, and facebook will soon prompt you to log in.
