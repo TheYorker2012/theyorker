@@ -117,22 +117,40 @@ if (isset($league_data)) {
 				?>
 				<tr>
 				</tr>
-				<!--
 				<tr>
 					<td colspan="2">
 						<table border="0" width="100%">
 						<tr>
 							<?php
-							foreach($entry['tagbox'] as $tag => $values ) {
+							/*
+							foreach($entry['tagbox'] as $tag => $values )
+							{
 								echo('<td width="25% valign="top">');
 								echo('<strong>'.$tag.':</strong><br />');
 								echo(implode(' / ', $values).'</td>');
+							}*/
+							foreach($entry['alltags']['tag_group_names'] as $tag_group)
+							{
+								echo('<td width="25% valign="top">');
+								echo('<strong>'.$tag_group.':</strong><br />');
+								if (isset($entry['tags'][$tag_group]))
+								{
+									foreach($entry['tags'][$tag_group] as $tag)
+									{
+										echo($tag.'<br />');
+									}
+								}
+								else
+								{
+									echo('N/A');
+								}
+								echo('</td>');
 							}
 							?>
 						</tr>
 						</table>
 					</td>
-				</tr>-->
+				</tr>
 				<?php
 				if($entry['review_quote'] != "")
 				{
@@ -163,12 +181,4 @@ if (isset($league_data)) {
 
 <?php
 }
-?>
-
-<?php
-
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-
 ?>

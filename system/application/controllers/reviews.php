@@ -364,7 +364,7 @@ class Reviews extends Controller
 		redirect('/reviews/food');
 	}
 
-	/// Leages
+	/// Leagues
 	function leagues($league_code_name = NULL)
 	{
 		if (!CheckPermissions('public')) return;
@@ -374,6 +374,9 @@ class Reviews extends Controller
 		
 		//Load slideshow model
 		$this->load->model('slideshow');
+		
+		//Load review  model
+		$this->load->model('review_model');
 
 		//Check we have being passed a league to view otherwise the query returns badly...
 		if ($league_code_name === NULL) redirect('/reviews'); //It doesn't matter if the code below is executed or not...
@@ -403,6 +406,8 @@ class Reviews extends Controller
 				$reviews[$row]['review_blurb'] = $leagues[$row]['organisation_description'];
 				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
 				$reviews[$row]['review_content_type_id'] = $leagues[$row]['league_content_type_id'];
+				$reviews[$row]['review_org_directory_entry_name'] = $leagues[$row]['organisation_directory_entry_name'];
+				
 				
 				//get the slideshow images for the league item
 				$slideshow_photos = $this->slideshow->GetReviewPhotos($reviews[$row]['review_org_id'], $reviews[$row]['review_content_type_id'], false);
@@ -411,6 +416,10 @@ class Reviews extends Controller
 					$slideshow_photo['location'] = photoLocation($slideshow_photo['id']);
 				}
 				$reviews[$row]['slideshow'] = $slideshow_photos;
+				
+				//very hacky two lines here:
+				$reviews[$row]['tags'] = $this->review_model->GetTagOrganisation('food',$reviews[$row]['review_org_directory_entry_name']);
+				$reviews[$row]['alltags'] = $this->review_model->GetTags('food');
 			}
 
 		//Pass over the amount of entries to view
