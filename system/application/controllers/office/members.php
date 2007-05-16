@@ -319,11 +319,7 @@ class Members extends Controller
 					} else {
 						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
 						$this->user_auth->setOfficePassword($access_password,  $EntityId);
-						if ($success_rows > 0) {
-							$this->messages->AddMessage('information','Operation Successful.');
-						} else {
-							$this->messages->AddMessage('information','Operation Failed.');
-						}
+						$this->messages->AddMessage('information','Operation Successful.');
 					}
 				} elseif ($access_level == 'writer') {
 					$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
