@@ -317,7 +317,8 @@ class Members extends Controller
 					} elseif (strlen($access_password) < 4) {
 						$this->messages->AddMessage('information','Office password must be more than 3 characters in length.');
 					} else {
-						$success_rows = $this->members_model->UpdateAccessLevel('1', $access_password, $EntityId);
+						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
+						$this->user_auth->setOfficePassword($access_password,  $EntityId);
 						if ($success_rows > 0) {
 							$this->messages->AddMessage('information','Operation Successful.');
 						} else {
