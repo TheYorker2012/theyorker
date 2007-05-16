@@ -146,7 +146,7 @@ function FilterLinkBool($filter, $field, $value)
 			</td>
 			<td align="center">
 			<?php if ($membership['office_editor_access']) { ?>
-				<IMG SRC="/images/prototype/members/access_editor.gif" alt="No Office Access" title="No Office Access" />
+				<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
 			<?php } elseif ($membership['office_writer_access']) { ?>
 				<IMG SRC="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
 			<?php } ?>
