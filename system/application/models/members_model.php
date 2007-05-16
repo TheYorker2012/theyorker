@@ -35,7 +35,7 @@ class Members_model extends Model {
 				users.user_nickname AS nickname,
 				(users.user_office_password IS NULL AND users.user_office_access = 1) AS office_writer_access,
 				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
-				IF(subscriptions.subscription_user_confirmed = TRUE, entities.entity_username, NULL) AS email,
+				entities.entity_username AS email,
 				users.user_gender AS gender,
 				users.user_enrolled_year AS enrol_year
 			FROM

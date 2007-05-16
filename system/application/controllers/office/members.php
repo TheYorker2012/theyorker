@@ -321,7 +321,7 @@ class Members extends Controller
 						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
 						$this->user_auth->setOfficePassword($access_password,  $EntityId);
 												
-						$to = $membership['username'].$this->config->Item('username_email_postfix');
+						$to = $membership['email'].$this->config->Item('username_email_postfix');
 						$from = $this->pages_model->GetPropertyText('system_email', true);
 						$subject = $this->pages_model->GetPropertyText('office_password_email_subject', true);
 						$message = str_replace('%%password%%',$access_password,str_replace('%%nickname%%',$membership['nickname'],$this->pages_model->GetPropertyText('office_password_email_body', true)));
