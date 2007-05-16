@@ -66,16 +66,16 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo($item_type); ?> search results for:</h2>
+		<h2><?php echo($item_type); ?> search</h2>
 		<table border="0" width="97%">
 		<tbody>
 		<tr>
 			<td>
-				<?php echo($item_filter_by.' - '.$where_equal_to); ?>
+				<?php if($item_filter_by!='any' && $item_filter_by!='') { echo('Showing results for <b>'.$where_equal_to.'</b> based on <b>'.$item_filter_by.'</b>.'); } else { echo('Showing <b>all entries</b> in the '.$item_type.' guide.'); } ?>
 			</td>
 		</tr>
 		<?php
-		
+
 		if (count($entries) == 0)
 		{
 		?>
@@ -89,13 +89,13 @@
 				No Results.
 			</td>
 		</tr>
-		<?php		
-		
+		<?php
+
 		}
-		
+
 		foreach($entries as $entry)
 		{
-		
+
 		?>
 		<tr>
 			<td>
@@ -114,7 +114,7 @@
 					</td>
 					<td width="126" align="center">
 						<?php
-						$whole = floor($entry['review_rating'] / 2); 
+						$whole = floor($entry['review_rating'] / 2);
 						$part = $entry['review_rating'] % 2;
 						$empty = 5 - $whole - $part;
 						for($i=0;$i<$whole;$i++)
@@ -129,7 +129,7 @@
 						{
 							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
 						}
-						
+
 						?>
 						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
 					</td>
@@ -201,9 +201,9 @@
 			</td>
 		</tr>
 		<?php
-		
+
 		}
-		
+
 		?>
 		</tbody>
 		</table>

@@ -2,18 +2,10 @@
 		<h4><?php echo $tasks_heading; ?></h4>
 		<ul>
 			<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
+			<li><a href="/office/news/create">Create New Article</a></li>
 		</ul>
-		<h4>Notices</h4>
-<!--
-		<div class="information_box">
-			You have been requested to write an article about <b>Dogs</b> by <b>Chris Travis</b>
-			<br />
-			<span style="float:right"><a href="/office/news">Delete</a></span>
-			<br class='clear' />
-		</div>
--->
-		<br />
 	</div>
+
 	<div class="blue_box">
 		<h2><?php echo $mine_heading; ?></h2>
 		<div id="ArticleBox">

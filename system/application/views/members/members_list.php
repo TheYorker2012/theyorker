@@ -101,9 +101,13 @@ function FilterLinkBool($filter, $field, $value)
 			<th align="center"><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
 			<th align="center"><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
-			<th align="center"><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
+			<?php if ('manage' !== VipMode()) { ?>
+				<th align="center"><?php SortLink($filter, $sort_fields, 'vip','VIP'); ?></th>
+			<?php } ?>
 			<th>Card</th>
-			<th>Access</th>
+			<?php if ('manage' === VipMode()) { ?>
+				<th>Access</th>
+			<?php } ?>
 		</tr>
 		<?php
 		$i = -1;
@@ -132,9 +136,11 @@ function FilterLinkBool($filter, $field, $value)
 			<td align="center"><?php if (isset($membership['paid']) && $membership['paid']) { ?>
 				<IMG SRC="/images/prototype/members/paid.png" ALT="Yes" />
 			<?php } ?></td>
-			<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
-				<IMG SRC="/images/prototype/members/vip.png" ALT="Yes" />
-			<?php } ?></td>
+			<?php if ('manage' !== VipMode()) { ?>
+				<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
+					<IMG SRC="/images/prototype/members/vip.png" ALT="Yes" />
+				<?php } ?></td>
+			<?php } ?>
 			<td align="center">
 			<?php if ($i == 1) { ?>
 				<IMG SRC="/images/prototype/members/card_active.png" ALT="Active" />
@@ -144,12 +150,14 @@ function FilterLinkBool($filter, $field, $value)
 				<IMG SRC="/images/prototype/members/card_inactive.png" ALT="Inactive" />
 			<?php } ?>
 			</td>
-			<td align="center">
-			<?php if ($membership['office_editor_access']) { ?>
-				<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
-			<?php } elseif ($membership['office_writer_access']) { ?>
-				<IMG SRC="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
-			<?php } ?>
+			<?php if ('manage' === VipMode()) { ?>
+				<td align="center">
+				<?php if ($membership['office_editor_access']) { ?>
+					<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
+				<?php } elseif ($membership['office_writer_access']) { ?>
+					<IMG SRC="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
+				<?php }
+			} ?>
 			</td>
 		</tr>
 		<?php } ?>

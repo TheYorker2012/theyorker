@@ -84,26 +84,32 @@ function show_password_form() {
 }
 -->
 </script>
-<div class='blue_box'>
-	<h2>Office Access</h2>
-	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method='POST' onSubmit="return submit_checker();">
-		<fieldset>
-			<label for='office_access_level'>Access level:</label>
-			<input style="float:none;" type="radio" onChange="show_password_form()" id="none_level_access" name="office_access_level" value="none" <?php if (!($membership['office_writer_access'] || $membership['office_editor_access'])) echo 'checked'; ?>> No Access 
-			<input style="float:none;" type="radio" onChange="show_password_form()" id="writer_level_access" name="office_access_level" value="writer" <?php if ($membership['office_writer_access']) echo 'checked'; ?>> Writer
-			<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
-			<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">
-				<br />
-				Editors require an additional password to access the office. This should be different to their university password.
-				<label for='password'>New password:</label>
-				<input type="text" name="password" id="password" value="">
-				<label for='confirm_password'>Confirm password:</label>
-				<input type="text" name="confirm_password" id="confirm_password" value="">
-				<br />
-			</div>
-			<input name='access_update' type="submit" value="Set Access Level" class="button" />
-		</fieldset>
-	</form>
-</div>
+<?php
+if ('manage' === VipMode()) {
+	?>
+	<div class='blue_box'>
+		<h2>Office Access</h2>
+		<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method='POST' onSubmit="return submit_checker();">
+			<fieldset>
+				<label for='office_access_level'>Access level:</label>
+				<input style="float:none;" type="radio" onChange="show_password_form()" id="none_level_access" name="office_access_level" value="none" <?php if (!($membership['office_writer_access'] || $membership['office_editor_access'])) echo 'checked'; ?>> No Access 
+				<input style="float:none;" type="radio" onChange="show_password_form()" id="writer_level_access" name="office_access_level" value="writer" <?php if ($membership['office_writer_access']) echo 'checked'; ?>> Writer
+				<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
+				<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">
+					<br />
+					Editors require an additional password to access the office. This should be different to their university password.
+					<label for='password'>New password:</label>
+					<input type="password" name="password" id="password" value="">
+					<label for='confirm_password'>Confirm password:</label>
+					<input type="password" name="confirm_password" id="confirm_password" value="">
+					<br />
+				</div>
+				<input name='access_update' type="submit" value="Set Access Level" class="button" />
+			</fieldset>
+		</form>
+	</div>
+	<?php
+}
+?>
 
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>

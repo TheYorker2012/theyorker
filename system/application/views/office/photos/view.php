@@ -65,11 +65,12 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 			<h2>details</h2>
 			<fieldset>
 
-				<?php printInput('Title','r_title','text',$title,'details',$access,$user_level); ?>
 				<?php
 				if ($status == 'completed') {
-					printInput('Description','r_brief','text',$description,'details',$access,$user_level);
+					printInput('Caption','r_title','text',$title,'details',$access,$user_level);
+					printInput('ALT Text','r_brief','text',$description,'details',$access,$user_level);
 				} else {
+					printInput('Title','r_title','text',$title,'details',$access,$user_level);
 					printInput('Description','r_brief','textarea',$description,'details',$access,$user_level);
 				} ?>
 
@@ -103,7 +104,7 @@ $other_input = '';
 $select_users = '<br /><label for="r_assignuser">&nbsp;</label>
 <select name="r_assignuser" id="r_assignuser" size="">';
 foreach ($photographers as $user) {
-	$select_users .= '	<option value='.$user['id'].'>'.$user['name'].'</option>';
+	$select_users .= '	<option value="'.$user['id'].'">'.$user['name'].'</option>';
 }
 $select_users .= '	</select>';
 
@@ -235,7 +236,7 @@ foreach ($photos as $photo) {
 		</div>
 -->
 
-	<div style="width:422px;">
+	<div style="width:420px;">
 	<?php // Display comments if thread exists
 	if ((isset($comments)) && (NULL !== $comments)) {
 		$comments->Load();

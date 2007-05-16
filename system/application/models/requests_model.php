@@ -192,6 +192,11 @@ class Requests_Model extends Model
 					article_content_type_id = ?
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['editor'],$data['publish_date'],$data['title'],$data['description'],$data['content_type'],$article_id));
+
+			/// Create new comment thread
+			$this->load->model('comments_model');
+			$CI = &get_instance();
+			$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_private_comment_thread_id');
 		}
 		else if ($status == 'publish')
 		{
@@ -202,6 +207,11 @@ class Requests_Model extends Model
 					article_pulled = 0
 				WHERE	(article_id = ?)';
 			$query = $this->db->query($sql,array($data['content_id'],$data['publish_date'],$data['editor'],$article_id));
+
+			/// Create new comment thread
+			$this->load->model('comments_model');
+			$CI = &get_instance();
+			$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_public_comment_thread_id');
 		}
 
 		return $status;
@@ -787,14 +797,13 @@ class Requests_Model extends Model
 		$this->db->query($sql,array($article_id));
 	}
 	
-	function AcceptRequest($article_id, $user_id, $business_card_id)
+	function AcceptRequest($article_id, $user_id)
 	{
 		$sql = 'UPDATE 	article_writers
-			SET	article_writer_status = "accepted",
-				article_writer_byline_business_card_id = ?
+			SET	article_writer_status = "accepted"
 			WHERE	(article_writer_user_entity_id = ?
 			AND	article_writer_article_id = ?)';
-		$this->db->query($sql,array($business_card_id,$user_id,$article_id));
+		$this->db->query($sql,array($user_id,$article_id));
 	}
 	
 	function DeclineRequest($article_id, $user_id)
@@ -992,6 +1001,14 @@ class Requests_Model extends Model
 		}
 		else
 			return FALSE;
+	}
+
+	function DeleteArticle($article_id)
+	{
+		$sql = 'UPDATE		articles
+				SET			articles.article_deleted = 1
+				WHERE		articles.article_id = ?';
+		$query = $this->db->query($sql,array($article_id));
 	}
 }
 ?>

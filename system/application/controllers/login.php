@@ -47,7 +47,7 @@ class Login extends Controller
 	 * Any additional uri segments are used as the redirect address after
 	 *	successful login.
 	 */
-	function vipswitch($Organisation)
+	function vipswitch($Organisation = NULL)
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
 		
