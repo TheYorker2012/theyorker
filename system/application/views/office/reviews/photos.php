@@ -14,7 +14,7 @@
 	<br />
 	<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/up', 'move up')?> |
 	<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/down', 'move down')?> |
-	<a href="office/reviews/<?=$organisation['shortname']?>/<?=$ContextType?>/photos/delete/<?=$image->photo_id?>" onClick="return confirm('Are you sure you want to delete this photo?');">delete</a>
+	<a href="/office/reviews/<?=$organisation['shortname']?>/<?=$ContextType?>/photos/delete/<?=$image->photo_id?>" onClick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 	<br />
 	<?php } ?>
 </div>
