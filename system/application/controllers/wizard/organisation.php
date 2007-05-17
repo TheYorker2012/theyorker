@@ -32,11 +32,10 @@ class Organisation extends controller
 	}
 
 	function photostep() {
-		$_POST['r_stage'] = 4;
-		$this->index();
+		$this->index(4);
 	}
 
-	function index()
+	function index($stage = 1)
 	{
 		if (!CheckPermissions('public')) return;
 
@@ -190,7 +189,7 @@ class Organisation extends controller
 		}
 		else
 		{
-			$data['stage'] = 1;
+			$data['stage'] = $stage;
 			$data['is_connected'] = 'yes';
 			$data['prev'] = array();
 		}
