@@ -248,9 +248,9 @@ class Organisation extends controller
 			$oldImgList = $_SESSION['org_wizard']['img'];
 			unset($_SESSION['org_wizard']['img']);
 			foreach ($oldImgList as $img) {
-				//if ($img != $id) {
-					$_SESSION['org_wizard']['img'][] = $id;
-				//}
+				if ($img != $id) {
+					$_SESSION['org_wizard']['img'][] = $img;
+				}
 			}
 			header('Location:'.site_url('wizard/organisation/photostep'));
 		}
