@@ -122,10 +122,12 @@ class Organisation extends controller
 							{
 							//create directory entry revision
 							$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
+
 							//Store the revision id of the revision just made
-							$entry_revision_id = $this->db->insert_id();
+							//$entry_revision_id = $this->db->insert_id();
 							//Make the stored revision the live id for the created organisation.
-							$this->directory_model->PublishDirectoryEntryRevisionById($post_data['directory_entry_name'], $entry_revision_id);
+							//$this->directory_model->PublishDirectoryEntryRevisionById($post_data['directory_entry_name'], $entry_revision_id);
+
 							if (isset($_SESSION['org_wizard']['img'])) {
 								$this->load->model('slideshow');
 								foreach ($_SESSION['org_wizard']['img'] as $img) {
@@ -146,6 +148,9 @@ class Organisation extends controller
 
 							//Reset wizard on success
 							$_SESSION['org_wizard'] = array();
+
+							redirect('/directory/');
+							redirect('/office/pr/org/'.$post_data['directory_entry_name'].'/directory/information');
 
 							} else {
 							//Something went wrong so don't make a revision

@@ -8,12 +8,28 @@
 		<p>
 		<?php echo $directory_visibility_text; ?>
 		</p>
+		<?php if($show_visibility) { ?>
 		<form action="<?php echo vip_url('directory/information/'); ?>" method="post" class="form">
 			<fieldset>
-			<input type='submit' name='directory_visibility' class='button' value='<?php if($directory_visibility){ echo "Hide Entry"; }else{ echo "Show Entry"; }?>' />
+			<input type='submit' name='directory_visibility' class='button' value='<?php echo ($directory_visibility ? "Show Entry" : "Hide Entry"); ?>' />
+			</fieldset>
+		</form>
+		<?php } ?>
+	</div>
+	<?php if($user_is_editor) { ?>
+	<h4>Editor Options</h4>
+	<div class="Entry">
+		<p>
+		<?php if($show_acceptance) echo 'Please decide on whether you wish to keep this entry.'; ?>
+		</p>
+		<form action="<?php echo vip_url('directory/information/'); ?>" method="post" class="form">
+			<fieldset>
+			<input type='submit' name='directory_deletion' class='button' onclick="return confirm('This operation will perminently remove this entry from the directory. Are you sure?');" value='<?php echo ($show_acceptance ? "Reject" : "Delete"); ?>' />
+			<?php if($show_acceptance) { ?> <input type='submit' name='directory_acceptance' class='button' value='Accept' /> <?php } ?>
 			</fieldset>
 		</form>
 	</div>
+	<? } ?>
 	<h4>Revisions</h4>
 	<div class="Entry">
 		<ol>

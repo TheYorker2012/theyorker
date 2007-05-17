@@ -172,12 +172,50 @@ class Yorkerdirectory extends Controller
 				}
 			}
 
+			//Accept/reject directory entry information and form detection
+			if (!empty($_POST['directory_acceptance']) && $_POST['directory_acceptance']=='Accept') {
+				if ($editor_level) {
+					$this->directory_model->AcceptDirectoryEntry($organisation);
+					$this->messages->AddMessage('success','Directory entry accepted');
+				} else {
+					$this->messages->AddMessage('error','You do not have permission to accept directory entries.');
+				}
+			} elseif (!empty($_POST['directory_deletion']) && ($_POST['directory_deletion']=='Reject' || $_POST['directory_deletion']=='Delete')) {
+				if ($editor_level) {
+					$this->directory_model->DeleteDirectoryEntry($organisation);
+					$this->messages->AddMessage('success','Directory entry removed');
+					redirect('/office/prlist/');
+				} else {
+					$this->messages->AddMessage('error','You do not have permission to remove directory entries.');
+				}
+			}
+
+			$organisation_details = $this->directory_model->GetOrganisation($organisation);
+
 			//Find out if the directory entry is currently visable.
-			$data['directory_visibility'] = $this->directory_model->IsEntryShownInDirectory($organisation);
-			if ($data['directory_visibility']) {
-				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_true');
+			$data['show_visibility'] = (
+				$organisation_details->organisation_needs_approval == 0
+				&& $organisation_details->organisation_type_directory == 1
+				&& $organisation_details->organisation_has_live_content == 1
+			);
+			$data['directory_visibility'] = (!$organisation_details->organisation_show_in_directory);
+
+			$data['show_acceptance'] = $organisation_details->organisation_needs_approval;
+
+			if ($organisation_details->organisation_needs_approval) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> as it has not yet been accepted by an editor.';
+
+			} elseif (!$organisation_details->organisation_type_directory) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is of a type that is hidden.';
+
+			} elseif (!$organisation_details->organisation_has_live_content) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it has not yet been <b>published</b> by an editor.';
+
+			} elseif (!$organisation_details->organisation_show_in_directory) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is set to a <b>hidden</b> state.';
+
 			} else {
-				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_false');
+				$data['directory_visibility_text'] = 'This directory entry is <b>visible</b> to the public';
 			}
 
 			if (!empty($data)) {
