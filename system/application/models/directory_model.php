@@ -19,8 +19,9 @@ class Directory_model extends Model {
 	 *	- ['organisation_name']        (organisations)
 	 *	- ['organisation_description'] (organisations)
 	 *	- ['organisation_type_name']   (organisation_types)
+	 * @param $status of the entry 'live','hidden','suggested'
 	 */
-	function GetDirectoryOrganisations()
+	function GetDirectoryOrganisations($status = 'live')
 	{
 		$sql =
 			'SELECT'.
@@ -35,8 +36,8 @@ class Directory_model extends Model {
 			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
 			'WHERE organisations.organisation_directory_entry_name IS NOT NULL'.
 			' AND organisation_types.organisation_type_directory=1 '.
-			' AND organisations.organisation_show_in_directory=1 '.
-			' AND organisations.organisation_needs_approval=0 '.
+			' AND organisations.organisation_show_in_directory='.($status=='hidden' ? '0' : '1').
+			' AND organisations.organisation_needs_approval='.($status=='suggested' ? '1' : '1').
 			'ORDER BY organisation_name';
 
 		$query = $this->db->query($sql);

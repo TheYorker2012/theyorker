@@ -18,17 +18,17 @@ class Yorkerdirectory extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
+
 		$this->load->library('organisations');
 		$this->load->helpers('images');
 		$this->load->model('directory_model');
 		$this->load->model('businesscards_model');
-		
+
 		$this->load->helper('text');
 		$this->load->helper('images');
 		$this->load->helper('wikilink');
 	}
-	
+
 	private function _CreateDirectoryEntryName($long_name)
 	{
 		//strip non alpha-numerical symbols
@@ -36,19 +36,7 @@ class Yorkerdirectory extends Controller
 		//replace spaces with an underscore
 		return str_replace(" ", "_", $new_string);
 	}
-	
-	/// Set up the navigation bar for the directory view.
-	private function _SetupDirectoryNavbar()
-	{
-		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('live', 'Live',
-						'/office/directory/');
-		$navbar->AddItem('hidden', 'Hidden',
-						'/office/directory/');
-		$navbar->AddItem('suggested', 'Suggested',
-						'/office/directory/');
-	}
-	
+
 	/// Set up the navigation bar for a specific organisation.
 	private function _SetupOrganisationNavbar()
 	{
@@ -65,48 +53,13 @@ class Yorkerdirectory extends Controller
 
 	/// Directory index page.
 	/**
-	 * @note Shows error 404 when accessed from viparea
+	 * @note Shows error 404
 	 */
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
-		
-		$this->_office();
-	}
-	
-	/// office/directory
-	function _office()
-	{
-		$this->pages_model->SetPageCode('office_directory_index');
-		
-		$this->_SetupDirectoryNavbar();
-		$this->main_frame->SetPage('live');
-		
-		$data = array();
-		
-		$data['maintext'] = $this->pages_model->GetPropertyText('maintext');
 
-		// Get the search pattern from POST (optional)
-		$search_pattern = $this->input->post('search_directory', TRUE);
-		// Get the organisations matching the search and pass the search pattern
-		// to the view as well
-		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, 'office/reviews/');
-		$data['search'] = $search_pattern;
-		
-		// Get organisation types
-		$data['organisation_types'] = $this->organisations->_GetOrganisationTypes($data['organisations'], TRUE);
-
-		//Libary for AtoZ system
-		$this->load->library('character_lib'); //This character libary is used by the view, so load it here
-
-		// Set up the directory view
-		$directory_view = $this->frames->view('directory/viparea_directory', $data);
-
-		// Set up the public frame to use the directory view
-		$this->main_frame->SetContent($directory_view);
-
-		// Load the public frame view
-		$this->main_frame->Load();
+		show_404();
 	}
 
 	/// Directory organisation page.
@@ -116,9 +69,9 @@ class Yorkerdirectory extends Controller
 
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_information');
-		
+
 		$editor_level = PermissionsSubset('editor', GetUserLevel());
-		
+
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
 		if ($action=='viewall') {
@@ -129,7 +82,7 @@ class Yorkerdirectory extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ($action=='delete') {
 			if ($editor_level) {
 				$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
@@ -178,7 +131,7 @@ class Yorkerdirectory extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ($action=='publish') {
 			//Check Permissions
 			if ($editor_level) {
@@ -194,11 +147,11 @@ class Yorkerdirectory extends Controller
 			}
 			$action='view';
 		}
-		
+
 		if ($action=='view') {
 			//Get Organisation Data
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
-			
+
 			//Send data if given
 			if (!empty($_POST['description'])) {
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
@@ -218,7 +171,7 @@ class Yorkerdirectory extends Controller
 					$this->messages->AddMessage('success','Directory entry hidden.');
 				}
 			}
-			
+
 			//Find out if the directory entry is currently visable.
 			$data['directory_visibility'] = $this->directory_model->IsEntryShownInDirectory($organisation);
 			if ($data['directory_visibility']) {
@@ -226,14 +179,14 @@ class Yorkerdirectory extends Controller
 			} else {
 				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_false');
 			}
-			
+
 			if (!empty($data)) {
 				$this->_SetupOrganisationNavbar();
-				
+
 				// Insert main text from pages information
 				$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 				$data['revisions_information_text'] = $this->pages_model->GetPropertyWikitext('revisions_information_text');
-				
+
 				//Page Revisions
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
@@ -242,7 +195,7 @@ class Yorkerdirectory extends Controller
 				$data['organisation']['types'] = $this->directory_model->GetOrganisationTypes();
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
-				
+
 				// Set up the public frame
 				$this->main_frame->SetTitleParameters(
 						array('organisation' => $data['organisation']['name']));
@@ -252,13 +205,13 @@ class Yorkerdirectory extends Controller
 				$this->load->library('custom_pages');
 				$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 			}
-			
+
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
-		
+
 		if ($action=='preview') {
-			
+
 			//Show a toolbar in a message for the preview.
 			$published = $this->directory_model->IsRevisionPublished($organisation, $revision);
 			$user_level = GetUserLevel();
@@ -273,12 +226,12 @@ class Yorkerdirectory extends Controller
 				}
 			}
 			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
-			
+
 			if ($published == false) {
 				if ($editor_level) {
 					$message .= ' | <a href="'.vip_url('directory/information/publish/'.$revision).'">Publish This Revision</a>';
 				}
-				
+
 				if ($is_deleted) {
 					if ($editor_level) {
 						$message .= ' | <a href="'.vip_url('directory/information/restore/'.$revision).'">Restore This Revision</a>';
@@ -287,17 +240,17 @@ class Yorkerdirectory extends Controller
 					$message .= ' | <a href="'.vip_url('directory/information/delete/'.$revision).'">Delete This Revision</a>';
 				}
 			}
-			
+
 			$this->messages->AddMessage('information',$message);
-			
+
 			$data = $this->organisations->_GetOrgData($organisation, $revision);
-			
+
 			if (!empty($data)) {
 				$this->_SetupOrganisationNavbar();
-				
+
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/directory_view', $data);
-				
+
 				// Set up the public frame
 				$this->main_frame->SetTitleParameters(
 						array('organisation' => $data['organisation']['name']));
@@ -311,17 +264,17 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->Load();
 		}
 	}
-	
+
 	function photos($action = 'default', $photoID = FALSE, $operation = FALSE)
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
 		$this->load->helper(array('images', 'url'));
 		$this->load->library('image_upload');
-		
+
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 
@@ -349,16 +302,16 @@ class Yorkerdirectory extends Controller
 				}
 				unset($_SESSION['img']['list']);
 			}
-			
+
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
 			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
-			
+
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_photos', $data);
-			
+
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
@@ -369,42 +322,42 @@ class Yorkerdirectory extends Controller
 			$this->load->library('custom_pages');
 			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 		}
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function map()
 	{
 		if (!CheckPermissions('vip+pr')) return;
-	
+
 		$this->load->library('maps');
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_map');
-		
+
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		
+
 		if (!empty($data)) {
 			if (isset($_POST['0_lat'])) {
 				$this->directory_model->UpdateDirectoryEntryLocation(
-					$organisation, 
+					$organisation,
 					$data['organisation']['location'],
-					$_POST['0_lat'], 
+					$_POST['0_lat'],
 					$_POST['0_lng']
 				);
 				$data['organisation']['location_lat'] = $_POST['0_lat'];
 				$data['organisation']['location_lng'] = $_POST['0_lng'];
 			}
 			$this->_SetupOrganisationNavbar();
-			
+
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['map_text'] = $this->pages_model->GetPropertyWikitext('map_text');
-			
+
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_map', $data);
-			
+
 			$map = &$this->maps->CreateMap('Test Map', 'googlemaps');
 			if ($data['organisation']['location_lat'] !== NULL) {
 				$map->WantLocation($data['organisation']['name'], $data['organisation']['location_lat'], $data['organisation']['location_lng']);
@@ -422,23 +375,23 @@ class Yorkerdirectory extends Controller
 			$this->load->library('custom_pages');
 			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 		}
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-	
+
 	function contacts($action="viewgroup", $business_card_group=-1)
 	{
 		if (!CheckPermissions('vip+pr')) return;
-		
+
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
-		
+
 		$editor_level = PermissionsSubset('editor', GetUserLevel());
-		
+
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
-		
+
 		//Deletegroup
 		if ($action=="deletegroup") {
 			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
@@ -456,7 +409,7 @@ class Yorkerdirectory extends Controller
 		$action="viewgroup";
 		$business_card_group=-1;
 		}
-		
+
 		if ($action=="deletecard") {//business_card_group is actually the card id for this action
 			if ($editor_level) {
 			$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
@@ -487,7 +440,7 @@ class Yorkerdirectory extends Controller
 				$this->messages->AddMessage('error','You do not have permission to approve contact cards.');
 			}
 		}
-		
+
 		//Add Groups
 		if (!empty($_POST["group_name"])) {
 			$max_order = $this->businesscards_model->SelectMaxGroupOrderById($data['organisation']['id']);
@@ -498,7 +451,7 @@ class Yorkerdirectory extends Controller
 			);
 			$this->businesscards_model->AddOrganisationCardGroup($post_data);
 			$this->messages->AddMessage('success','Group was successfully added.');
-			
+
 		}
 		if (!empty($_POST["card_addbutton"])) {
 			if (empty($_POST["card_name"]) || empty($_POST["card_title"]))
@@ -514,29 +467,29 @@ class Yorkerdirectory extends Controller
 				} else {
 					$user_id = "";
 				}
-				
+
 				//Send message if username was given and no id found
 				if ($user_id==""&&!empty($_POST["card_username"])) {
 					$this->messages->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
 				//add failed send the data back into the form
 				$data['card_form']=$_POST;
 				} else {
-				
+
 					//add contact card
 					//@note start time, end time, order, and image id are all currently null and not in use.
 					$this->businesscards_model->NewBusinessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
-			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"], 
+			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
 			$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
 			0, null, null);
 					$this->messages->AddMessage('success','The contact card was successfully added.');
-					
+
 				}
 			}
 		}
-		
+
 		if (!empty($data)) {
 			$this->_SetupOrganisationNavbar();
-			
+
 			// Business Card Groups
 			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups($organisation);
 			// translate into nice names for view
@@ -551,7 +504,7 @@ class Yorkerdirectory extends Controller
 				$data['current_group']['id'] = $business_card_group;
 				if ($group['business_card_group_id'] == $business_card_group) $data['current_group']['name'] = $group['business_card_group_name'];
 			}
-					
+
 			// Members data
 			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
 			// translate into nice names for view
@@ -573,13 +526,13 @@ class Yorkerdirectory extends Controller
 					'approved' => $member['business_card_approved']
 				);
 			}
-			
+
 			//Put the view in edit mode
 			$data['organisation']['editmode'] = true;
-			
+
 			// Set up the directory view
 			$the_view = $this->frames->view('directory/viparea_directory_view_members', $data);
-			
+
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
@@ -589,7 +542,7 @@ class Yorkerdirectory extends Controller
 			$this->load->library('custom_pages');
 			$this->main_frame->SetContent(new CustomPageView('directory_notindirectory','error'));
 		}
-		
+
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
