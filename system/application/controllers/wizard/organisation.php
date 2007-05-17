@@ -31,6 +31,11 @@ class Organisation extends controller
 		return $new_string;
 	}
 
+	function photo() {
+		$_POST['r_stage'] = 4;
+		$this->index();
+	}
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
@@ -207,7 +212,7 @@ class Organisation extends controller
 		if (!CheckPermissions('public')) return;
 		$this->xajax->processRequests();
 		if ($type == 'images') {
-			$this->image_upload->recieveUpload('wizard/organisation', array('slideshow'));
+			$this->image_upload->recieveUpload('wizard/organisation/photo', array('slideshow'));
 		}
 	}
 
@@ -229,7 +234,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][$loc] = $temp;
 				}
 			}
-			header('Location:'.site_url('wizard/organisation'));
+			header('Location:'.site_url('wizard/organisation/photo'));
 		} elseif ($action == 'delete') {
 			//TODO provide Confirmation message
 			$id = $this->uri->segment(5);
@@ -241,7 +246,7 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][] = $id;
 				}
 			}
-			header('Location:'.site_url('wizard/organisation'));
+			header('Location:'.site_url('wizard/organisation/photo'));
 		}
 	}
 }
