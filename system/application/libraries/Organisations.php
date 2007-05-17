@@ -65,7 +65,7 @@ class Organisations
 		foreach ($orgs as $org) {
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
-				'shortname' => $org['organisation_directory_entry_name'],
+				'shortname' => $org['organisation_directory_entry_name'];
 				'link' => $urlpathpre.$org['organisation_directory_entry_name'].$urlpathpost;
 				'description' => $org['organisation_description'],
 				'shortdescription' => word_limiter(
