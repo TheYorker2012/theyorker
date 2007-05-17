@@ -93,10 +93,10 @@ function addstrike($text)
 
 	<h2>What's this?</h2>
 	<div class="Entry">
-		Welcome to the suggestion wizard. This wizard will guide you through the process of suggesting an organisation to us. Once submitted, your suggestion will be reviewed by our PR team, and will appear on our site in the near future.
+		This wizard will guide you through the process of suggesting an organisation to us. Once submitted, your suggestion will be reviewed by our PR team, and will appear on our site in the near future.
 		<br />
 		<br />
-		Please note that you may only add <I>Photos</I> or enter <I>More Details</I> if you are connected with the organisation.
+		Please note that you may only add <b>Photos</b> or enter <b>More Details</b> if you are connected with the organisation.
         </div>
 </div>
 
