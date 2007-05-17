@@ -185,11 +185,11 @@ function imageLocTag($id, $type = false, $view_large = false, $alt = null, $clas
 					$query = $query->row();
 					$result = '<img '.$extend.' src="/'.$location.'" alt="'.$query->photo_title.'" />';
 				} else {
-					$result = '<img '.$extend.' src="/'.$location.'" />';
+					$result = '<img '.$extend.' src="/'.$location.'" alt="Title not found" />';
 				}
 			}
 		} else {
-			return '<img '.$extend.' src="/images/images/'.$type.'/null.png" />';
+			return '<img '.$extend.' src="/images/images/'.$type.'/null.png" alt="Image not found" />';
 		}
 	} else {
 		$CI =& get_instance();
@@ -208,7 +208,7 @@ function imageLocTag($id, $type = false, $view_large = false, $alt = null, $clas
 				$width = $onerow->image_type_width;
 			}
 			if (!$fetched_type) {
-				return '<img '.$extend.' src="/images/images/null.png" />';
+				return '<img '.$extend.' src="/images/images/null.png" alt="Image not found" />';
 			}
 			$location = 'images/images/'.$fetched_type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
 			if ($force or is_file($location)) {
@@ -221,10 +221,10 @@ function imageLocTag($id, $type = false, $view_large = false, $alt = null, $clas
 					$result = '<img '.$extend.' src="/'.$location.'" height="'.$height.'" width="'.$width.'" title="'.$query->photo_title.'" alt="'.$query->photo_title.'" /></a>';return '<a href="'.photoLocation($id, $extension).'"><img src="/'.$location.'" title="'.$alt.'" alt="'.$alt.'" />';
 				}
 			} else {
-				return '<img '.$extend.' src="/images/images/'.$fetched_type.'/null.png" />';
+				return '<img '.$extend.' src="/images/images/'.$fetched_type.'/null.png" alt="Image not found" />';
 			}
 		} else {
-			return '<img '.$extend.' src="/images/images/null.png" />';
+			return '<img '.$extend.' src="/images/images/null.png" alt="Image not found" />';
 		}
 	}
 	if ($view_large && (is_photo($id))) {
