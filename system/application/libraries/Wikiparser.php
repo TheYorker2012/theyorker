@@ -393,6 +393,10 @@ if (hasReqestedVersion) {
   	</div>
 </noscript>
 </div>';
+			if ($this->in_paragraph) {
+				// divs aren't allowed in paragraphs, so close and reopen
+				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
+			}
 			return $output;
 		} else {
 			$reference_wiki = $this->external_wikis[$this->reference_wiki];
