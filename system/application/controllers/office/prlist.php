@@ -74,7 +74,13 @@ class Prlist extends Controller
 		$search_pattern = $this->input->post('search_directory', TRUE);
 		// Get the organisations matching the search and pass the search pattern
 		// to the view as well
-		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, 'office/reviews/', $showmode);
+
+		$linkurl = 'office/reviews/';
+		if ($showmode=='suggested') {
+			$linkurl = '/office/pr/org/';
+		}
+
+		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, $linkurl, $showmode);
 		$data['search'] = $search_pattern;
 
 		// Get organisation types
