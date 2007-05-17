@@ -37,8 +37,8 @@
 					<?php foreach ($reporters as $reporter) {
 						echo('<option value="'.$reporter['id'].'"');
 						if (is_array($this->input->post('r_reporter'))) {
-							if (array_search($reporter['id'],$this->input->post('r_reporter'))) {
-							echo(' selected="selected"');
+							if (array_search($reporter['id'],$this->input->post('r_reporter')) !== FALSE) {
+								echo(' selected="selected"');
 							}
 						}
 						echo('>'.$reporter['firstname'] . ' ' . $reporter['surname'].'</option>');
