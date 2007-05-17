@@ -63,7 +63,7 @@ class Yorkerdirectory extends Controller
 	}
 
 	/// Directory organisation page.
-	function information($action='view', $revision=false)
+	function information($action='view', $revision=true)
 	{
 		if (!CheckPermissions('vip+pr')) return;
 
@@ -149,9 +149,6 @@ class Yorkerdirectory extends Controller
 		}
 
 		if ($action=='view') {
-			//Get Organisation Data
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
-
 			//Send data if given
 			if (!empty($_POST['description'])) {
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
@@ -189,6 +186,9 @@ class Yorkerdirectory extends Controller
 					$this->messages->AddMessage('error','You do not have permission to remove directory entries.');
 				}
 			}
+
+			//Get Organisation Data
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
 
 			$organisation_details = $this->directory_model->GetOrganisation($organisation);
 

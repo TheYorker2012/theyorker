@@ -65,6 +65,8 @@ class Directory_model extends Model {
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 * @param $RevisionNumber integer Revision number to display (Default to false).
+	 *	- false	- live revision
+	 *	- true	- latest revision
 	 *
 	 * Returns the organisation left joined with the directory content.
 	 * This means the directory content is optional and may be set to NULL.
@@ -98,23 +100,22 @@ class Directory_model extends Model {
 			// Optionally get any matching content as well.
 			'LEFT JOIN organisation_contents '.
 			' ON	organisation_contents.organisation_content_organisation_entity_id '.
-			'			= organisations.organisation_entity_id '.
-			' AND	organisation_contents.organisation_content_id=';
-		$bind_data = array();
+			'			= organisations.organisation_entity_id ';
 		if ($RevisionNumber === false){
+			$sql .=' AND	organisation_contents.organisation_content_id=';
 			$sql .= 'organisations.organisation_live_content_id';
-		} else {
-			$sql .= '?';
-			$bind_data[] = $RevisionNumber;
+		} elseif ($RevisionNumber !== true) {
+			$sql .=' AND	organisation_contents.organisation_content_id=';
+			$sql .= $this->db->escape($RevisionNumber);
 		}
 		$sql .= ' LEFT JOIN locations '.
 			' ON locations.location_id'.
 			'			= organisations.organisation_location_id';
-		$sql .= ' WHERE organisations.organisation_directory_entry_name=? '.
+		$sql .= ' WHERE organisations.organisation_directory_entry_name='.$this->db->escape($DirectoryEntryName).' '.
 			' AND organisation_types.organisation_type_directory=1 '.
-			'ORDER BY organisation_name';
-		$bind_data[] = $DirectoryEntryName;
-		$query = $this->db->query($sql, $bind_data);
+			'ORDER BY organisation_contents.organisation_content_last_author_timestamp DESC '.
+			'LIMIT 1';
+		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 
