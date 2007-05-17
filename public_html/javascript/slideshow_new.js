@@ -37,6 +37,7 @@ var Slideshow = {
   showImages: [],
   current: 0,
   timer: 0,
+  shown_first: FALSE,
   
   add: function(image){
     if (typeof image == 'string') this.images.push(image);
@@ -87,17 +88,22 @@ var Slideshow = {
 
   nextImage: function(){
     if (this.imagesLoaded > 0) {
-      document.getElementById('SlideShow').style.background = "url('" + this.showImages[this.current] + "')";
-      Effect.Shrink('SlideShowImage', {queue: 'end'});
+	  if ((!this.shown_first) || (this.imagesLoaded > 1)) {
+        document.getElementById('SlideShow').style.background = "url('" + this.showImages[this.current] + "')";
+        Effect.Shrink('SlideShowImage', {queue: 'end'});
+      }
     }
     timer=setTimeout('Slideshow.resetImage()',3000);
   },
 
   resetImage: function(){
     if (this.imagesLoaded > 0) {
-      Effect.Appear('SlideShowImage', {queue: 'end'});
-      document.getElementById('SlideShowImage').src = this.showImages[this.current];
-      this.current = (this.current + 1) % this.imagesLoaded
+	  if ((!this.shown_first) || (this.imagesLoaded > 1)) {
+        Effect.Appear('SlideShowImage', {queue: 'end'});
+        document.getElementById('SlideShowImage').src = this.showImages[this.current];
+        this.current = (this.current + 1) % this.imagesLoaded
+        this.shown_first = TRUE;
+      }
     }
     timer=setTimeout('Slideshow.nextImage()',2000);
   },
