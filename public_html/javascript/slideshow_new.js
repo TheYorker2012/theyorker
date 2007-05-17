@@ -57,7 +57,13 @@ var Slideshow = {
   load: function(){
     for(var i=0; i<this.images.length; i++){
       this.loadedImages[i] = new Image();
-      eval("this.loadedImages[i].onload = this.checkFinished('" + this.images[i] + "');");
+      if (this.loadedImages[i].addEventListener){
+        eval("this.loadedImages[i].addEventListener('load', function () { Slideshow.showImages[Slideshow.imagesLoaded] = '" + this.images[i] + "'; Slideshow.imagesLoaded++; }, false);");
+      } else if (this.loadedImages[i].attachEvent){
+        eval("this.loadedImages[i].attachEvent('onload', function () { Slideshow.showImages[Slideshow.imagesLoaded] = '" + this.images[i] + "'; Slideshow.imagesLoaded++; });");
+      } else {
+        eval("this.loadedImages[i].onload = this.checkFinished('" + this.images[i] + "');");
+      }
       this.loadedImages[i].src = this.images[i];
     }
     timer=setTimeout('Slideshow.nextImage()',1000);
