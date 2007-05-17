@@ -74,7 +74,7 @@ class Prlist extends Controller
 		$search_pattern = $this->input->post('search_directory', TRUE);
 		// Get the organisations matching the search and pass the search pattern
 		// to the view as well
-		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, 'office/reviews/');
+		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, 'office/reviews/', $showmode);
 		$data['search'] = $search_pattern;
 
 		// Get organisation types
@@ -88,6 +88,10 @@ class Prlist extends Controller
 
 		// Set up the public frame to use the directory view
 		$this->main_frame->SetContent($directory_view);
+
+		// Include the javascript
+		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');
+		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
 
 		// Load the public frame view
 		$this->main_frame->Load();
