@@ -44,10 +44,10 @@ class Members_model extends Model {
 				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
 			INNER JOIN entities
 				ON	subscriptions.subscription_user_entity_id = entities.entity_id
-			WHERE';
+			WHERE entities.entity_deleted = 0 ';
 		// If there's a restriction on the usert, apply it here
 		if (NULL !== $user_id) {
-			$sql .= '	subscriptions.subscription_user_entity_id = ? AND ';
+			$sql .= '	AND subscriptions.subscription_user_entity_id = ?  ';
 			$bind_data[] = $user_id;
 		}
 		// Final conditions
@@ -57,10 +57,10 @@ class Members_model extends Model {
 		if (is_array($organisation_id)) {
 			// escape organisation ids
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
-			$sql .= '	subscriptions.subscription_organisation_entity_id IN ('.
+			$sql .= '	AND subscriptions.subscription_organisation_entity_id IN ('.
 				implode(',',$organisations).')';
 		} else {
-			$sql .= '	subscriptions.subscription_organisation_entity_id = ?';
+			$sql .= '	AND subscriptions.subscription_organisation_entity_id = ?';
 			$bind_data[] = $organisation_id;
 		}
 		$sql .= '
