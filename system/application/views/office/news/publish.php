@@ -7,6 +7,22 @@
 		<?php echo $intro_text; ?>
 	</div>
 
+<?php if (count($errors) > 0) { ?>
+	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
+		<div class='blue_box'>
+			<h2>Unable to Publish Article</h2>
+			<p>
+			You are unable to publish article as vital required information is missing. Please
+			see the list below on how to correct this:
+			<ul>
+<?php foreach ($errors as $error) {
+	echo('<li>'.$error.'</li>');
+} ?>
+			</ul>
+			</p>
+		</div>
+	</form>
+<?php } else { ?>
 	<form name='publish_request' id='publish_request' action='/office/news/<?php echo $article['id']; ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
@@ -48,3 +64,4 @@
 		}
 	);
 	</script>
+<?php } ?>
