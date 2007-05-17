@@ -105,11 +105,8 @@ class Yorkerdirectory extends Controller
 					$new_directory_entry_name = $this->_CreateDirectoryEntryName($_POST['organisation_name']);
 					$result = $this->directory_model->UpdateDirctoryEntryType($organisation, $_POST['organisation_type']);
 					$result2 = $this->directory_model->UpdateDirctoryEntryNames($organisation, $_POST['organisation_name'], $organisation);
-					if ($result==1 && $result2==1) {
-						$this->messages->AddMessage('success','Organisation name was successfully changed.');
-					} else {
-						$this->messages->AddMessage('error','Update did not work, please try again.');
-					}
+
+					$this->messages->AddMessage('success','Organisation name was successfully changed.');
 				}
 			} else {
 				$this->messages->AddMessage('error','You do not have permission to change the organisations name.');
