@@ -61,15 +61,18 @@ class Article_model extends Model
 				 articles.article_request_entity_id AS suggest_userid,
 				 articles.article_editor_approved_user_entity_id AS editor_userid,
 				 articles.article_thumbnail_photo_id AS photo_thumbnail,
+				 photo_requests.photo_request_chosen_photo_id AS photo_thumbnail_id,
 				 articles.article_main_photo_id AS photo_main,
 				 content_types.content_type_name AS box_name,
 				 content_types.content_type_codename AS box_codename
-				FROM articles, content_types
+				FROM articles, content_types, photo_requests
 				WHERE articles.article_id = ?
 				AND articles.article_suggestion_accepted = 1
 				AND articles.article_deleted = 0
 				AND articles.article_live_content_id IS NULL
-				AND articles.article_content_type_id = content_types.content_type_id';
+				AND articles.article_content_type_id = content_types.content_type_id
+				AND articles.article_id = photo_requests.photo_request_article_id
+				AND photo_requests.photo_request_relative_photo_number = articles.article_thumbnail_photo_id';
 		$query = $this->db->query($sql, array($article_id));
 		$result = array();
 		if ($query->num_rows() == 1) {

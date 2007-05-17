@@ -713,7 +713,7 @@ class News extends Controller
 			foreach ($photo_requests as $photo) {
 				if (($photo['status'] != 'completed') && ($photo['status'] != 'deleted')) {
 					$photo_all_completed = FALSE;
-				} elseif (($photo['status'] == 'completed') && ($photo['id'] == $data['article']['photo_thumbnail'])) {
+				} elseif (($photo['status'] == 'completed') && ($photo['id'] == $data['article']['photo_thumbnail_id'])) {
 					$photo_thumbnail = TRUE;
 				}
 			}
