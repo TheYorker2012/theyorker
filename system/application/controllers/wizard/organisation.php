@@ -32,10 +32,11 @@ class Organisation extends controller
 	}
 
 	function photostep() {
+		$_POST['r_stage'] = 4;
 		$this->index(4);
 	}
 
-	function index($stage = 1)
+	function index($stage = false)
 	{
 		if (!CheckPermissions('public')) return;
 
@@ -48,28 +49,33 @@ class Organisation extends controller
 
 		if (isset($_POST['r_stage']))
 		{
-			//a post has occured but there is no session data, get the serialised data out of the form and put it back into the session
-			/*
-			echo '<pre>';
-			echo print_r($_POST);
-			echo '<pre>';
-			*/
-			if (isset($_SESSION[$data['session_var']]['a_connected']) == false)
-			{
-				$unserialized = stripslashes($_POST['r_dump']);
-				$unserialized = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $unserialized );
-				$_SESSION[$data['session_var']] = unserialize($unserialized);
-			}
-			//dump the post data into the session
-			foreach ($_POST as $key => $postitem)
-			{
-				$_SESSION['org_wizard'][$key] = $postitem;
-			}
-			if (isset($_SESSION['img']['list'])) {
-				foreach ($_SESSION['img']['list'] as $newImg) {
-					$_SESSION['org_wizard']['img'][] = $newImg;
+			//No post occured, but so try to use existing session data
+			if ($stage) {
+				$data['stage'] = $stage;
+				if (isset($_SESSION['img']['list'])) {
+					foreach ($_SESSION['img']['list'] as $newImg) {
+						$_SESSION['org_wizard']['img'][] = $newImg;
+					}
+					unset($_SESSION['img']['list']);
 				}
-				unset($_SESSION['img']['list']);
+			} else {
+				//a post has occured but there is no session data, get the serialised data out of the form and put it back into the session
+				/*
+				echo '<pre>';
+				echo print_r($_POST);
+				echo '<pre>';
+				*/
+				if (isset($_SESSION[$data['session_var']]['a_connected']) == false)
+				{
+					$unserialized = stripslashes($_POST['r_dump']);
+					$unserialized = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $unserialized );
+					$_SESSION[$data['session_var']] = unserialize($unserialized);
+				}
+				//dump the post data into the session
+				foreach ($_POST as $key => $postitem)
+				{
+					$_SESSION['org_wizard'][$key] = $postitem;
+				}
 			}
 			$data['is_connected'] = $_SESSION['org_wizard']['a_connected'];
 			//$data['post'][$_POST['r_stage']] = $_POST;
@@ -189,7 +195,7 @@ class Organisation extends controller
 		}
 		else
 		{
-			$data['stage'] = $stage;
+			$data['stage'] = 1;
 			$data['is_connected'] = 'yes';
 			$data['prev'] = array();
 		}
