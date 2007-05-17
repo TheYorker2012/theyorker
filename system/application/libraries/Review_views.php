@@ -38,6 +38,7 @@ class Review_views
 		//Load news model
 		$CI->load->model('News_model');
 		$CI->load->model('Review_model');
+		$CI->load->model('Slideshow_model');
 
 		//Set page code
 		$CI->pages_model->SetPageCode('review_context');
@@ -109,12 +110,17 @@ class Review_views
 		//Review context content
 		$review_database_result = $CI->Review_model->GetReview($organisation_name,$content_type, $this->mRevisionId);
 		$review_database_result = $review_database_result[0]; //Unique so just first row
-
+		
+		$data['slideshow'] = $CI->Slideshow_model->getReviewSlideshowImages($data['organisation_id'], $content_type); 
+		@$slideshow_photo_id = $data['slideshow'][0]['photo_id'];
+		
+		$CI->load->helper('images_helper');
+		
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
 		$data['review_quote']			= $review_database_result['review_context_content_quote'];
-		$data['review_image']			= '/images/prototype/reviews/reviews_07.jpg';
+		$data['review_image']			= imageLocation($slideshow_photo_id,'slideshow');
 		$data['email'] 				= $review_database_result['organisation_email_address'];
 		$data['organisation_description'] = $review_database_result['organisation_description'];
 		$data['address_main']			= $review_database_result['organisation_postal_address'];
