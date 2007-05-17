@@ -95,7 +95,7 @@ function addstrike($text)
 	<div class="Entry">
 		Welcome to the suggestion wizard. This wizard will guide you through the process of suggesting an organisation to us. Once submitted, your suggestion will be reviewed by our PR team, and will appear on our site in the near future.
 		<br />
-		<br /?
+		<br />
 		Please note that you may only add <I>Photos</I> or enter <I>More Details</I> if you are connected with the organisation.
         </div>
 </div>
