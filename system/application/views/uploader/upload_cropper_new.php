@@ -30,7 +30,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/null.jpg', 200, 200, 1);
+			this.setImage('/images/photos/null.jpg', 200, 200, 1);
 		},
 		
 		/**
@@ -116,7 +116,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	</p>
 	<p>Photo: -</p>
 	<div id="uploadedWrap">
-		<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 		<input type="hidden" name="x1" id="x1" />
 		<input type="hidden" name="y1" id="y1" />

@@ -30,7 +30,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/null.jpg', 200, 200, 1);
+			this.setImage('/images/photos/null.jpg', 200, 200, 1);
 		},
 		
 		/**
@@ -100,7 +100,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </script>
 <p>Photo: -</p>
 <div id="uploadedWrap">
-	<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+	<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 </div>
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 	<p>

@@ -132,8 +132,9 @@ class Image_upload {
 			return $objResponse;
 		}
 
-		$config['image_library'] = 'netpbm';
-		$config['library_path'] = '/usr/bin/';
+		$config['image_library'] = 'gd2';
+//		$config['image_library'] = 'netpbm';
+//		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = BASE_DIR.$selectedThumb[0];
 		$config['width'] = $formData['width'];
 		$config['height'] = $formData['height'];
