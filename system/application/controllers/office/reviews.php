@@ -154,7 +154,7 @@ class Reviews extends Controller
 	}
 
 	/// Reviews information page
-	function information($ContextType, $organisation, $action = 'view', $revision_id = -1)
+	function information($ContextType, $organisation, $action = 'view', $revision_id = TRUE)
 	{
 		/// @todo add show all option backend
 		if (!CheckPermissions('office')) return;
@@ -239,7 +239,7 @@ class Reviews extends Controller
 		if ('preview' === $action) {
 			$here = site_url('office/reviews/'.$organisation.'/'.$ContextType.'/information');
 
-			$revision = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType, $revision_id);
+			$revision = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType, $revision_id===TRUE ? -1 : $revision_id);
 			if (!array_key_exists(0, $revision)) {
 				$action = 'view';
 			} else {
@@ -276,7 +276,7 @@ class Reviews extends Controller
 				$this->messages->AddMessage('information',$message);
 
 				$this->load->library('Review_views');
-				$this->review_views->SetRevision($revision_id);
+				$this->review_views->SetRevision(is_numeric($revision_id) ? $revision_id : -1);
 				$this->review_views->DisplayReview($ContextType,$organisation);
 			}
 		}

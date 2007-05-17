@@ -170,7 +170,7 @@ class Review_model extends Model {
 	/**
 	 * @return A single review context for an organisation
 	 */
-	function GetReviewContextContents($organisation_shortname,$content_type_codename,$context_content_id = -1)
+	function GetReviewContextContents($organisation_shortname,$content_type_codename,$revision_id = false)
 	{
 		$sql =
 			'
@@ -197,18 +197,22 @@ class Review_model extends Model {
 				AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users 
 				ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			WHERE	organisations.organisation_directory_entry_name = ?
-				AND	content_types.content_type_codename = ?';
-		if ($context_content_id !== -1) {
-			$sql .= ' AND review_context_contents.review_context_content_id = ?';
+			WHERE	organisations.organisation_directory_entry_name = ?';
+		if ($revision_id === FALSE){
+			$sql .= ' AND review_context_contents.review_context_content_id =';
+			$sql .= 'organisations.organisation_live_content_id';
+		} elseif ($revision_id !== TRUE && $revision_id !== -1) {
+			$sql .= ' AND review_context_contents.review_context_content_id =';
+			$sql .= $this->db->escape($revision_id);
 		}
 		
-		$sql .= '
-			ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC
-			LIMIT 1
-			';
+		if ($revision_id === -1) {
+			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
+		} elseif ($revision_id === TRUE) {
+			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC LIMIT 1';
+		}
 
-		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$context_content_id) );
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
 
 		return $query->result_array();
 	}
@@ -216,6 +220,10 @@ class Review_model extends Model {
 
 	///	Return review context revisions, and their author names.
 	/**
+	 * @param $revision_id bool, int Revision id or:
+	 *	- -1 - all
+	 *	- FALSE - live revision
+	 *	- TRUE - latest revision
 	 * @return A single review context for an organisation
 	 */
 	function GetReviewContextContentRevisions($organisation_shortname,$content_type_codename, $revision_id = -1)
@@ -239,15 +247,22 @@ class Review_model extends Model {
 			INNER JOIN review_context_contents
 			  	ON  review_context_content_content_type_id = review_context_content_type_id
 			  	AND  review_context_content_organisation_entity_id = review_context_organisation_entity_id';
-		if ($revision_id !== -1) {
-			$sql .= ' AND review_context_contents.review_context_content_id = '.$this->db->escape($revision_id);
+		if ($revision_id === FALSE){
+			$sql .= ' AND review_context_contents.review_context_content_id =';
+			$sql .= 'organisations.organisation_live_content_id';
+		} elseif ($revision_id !== TRUE && $revision_id !== -1) {
+			$sql .= ' AND review_context_contents.review_context_content_id =';
+			$sql .= $this->db->escape($revision_id);
 		}
 		$sql .= '
 			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users 
-			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC
-			';
+			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id';
+		if ($revision_id === -1) {
+			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
+		} elseif ($revision_id === TRUE) {
+			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC LIMIT 1';
+		}
 
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
 
@@ -332,7 +347,7 @@ class Review_model extends Model {
 
 
 	function GetReview($organisation_directory_entry_name,$content_type_codename, $context_revision_id = -1) {
-
+/// @todo use bool to represent special revisions latest and live
 		#dgh500
 		# need organisation type?
 		# need organisation fileas - what IS this?? all null in DB
