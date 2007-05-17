@@ -138,13 +138,17 @@ class Organisation extends controller
 							}
 
 							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+
+							//Reset wizard on success
+							$_SESSION['org_wizard'] = array();
+
 							} else {
 							//Something went wrong so don't make a revision
 							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
 							}
 						}else{
 						//Name has been taken already!
-						$this->messages->AddMessage('error', 'The name of  your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
+						$this->messages->AddMessage('error', 'The name of your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
 						}
 					}
 
