@@ -14,7 +14,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-	
+
 	<?php
 		// Get common javascript
 		include('top_script.php');
@@ -83,7 +83,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='navigationmenu_item_noborder'>
 			<a href='<?php echo vip_url('members'); ?>'>Manage Members</a>
 		</div>
-		
+
 		<div class='navigationmenu_item'>
 			<a href='<?php echo vip_url('account'); ?>'>Settings</a>
 		</div>
@@ -119,63 +119,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	</div>
 </div>
 
-	<div style="float: right; width: 650px; margin-top: 8px; margin-left: 5px; background-color: #fff;">
-		<div class='clear'>&nbsp;</div>
-
-		<div id="feedbackdiv" style="width: 100%; display: none;">
-
-		<form name='feedback_form' id='feedback_form' action='<?php echo site_url('feedback/'); ?>' method='post' class='form'>
-			<fieldset>
-				<legend>Feedback</legend>
-				<label for='a_authorname'>Your Name:</label>
-				<input type='text' name='a_authorname' id='a_authorname' value='' />
-				<input type='hidden' name='a_pagetitle' id='a_pagetitle' value='<?php if(isset($head_title)) { echo str_replace("'", "", $head_title); } ?>' />
-				<input type='hidden' name='r_redirecturl' id='r_redirecturl' value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
-				<br />
-				<label for='a_authoremail'>Your E-mail:</label>
-				<input type='text' name='a_authoremail' id='a_authoremail' value='' />
-				<br />
-				<label for='a_rating'>Your Rating:</label>
-				<select name='a_rating' id='a_rating' size='1'>
-					<option value='' selected='selected'></option>
-					<option value='1'>What's this for?</option>
-					<option value='2'>Good idea - but what does it do?</option>
-					<option value='3'>Useful.. I guess.</option>
-					<option value='4'>Great idea, and easy to use!</option>
-					<option value='5'>Amazing!!</option>
-				</select>
-				<br />
-				<label for='a_feedbacktext'>Your Comments:</label>
-				<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40"></textarea>
-				<br />
-			</fieldset>
-			<fieldset>
-				<label for='r_submit'></label>
-				<input type='submit' name='r_submit' id='r_submit' value='Submit' class='button' />
-				<input type='reset' name='r_cancel' id='r_cancel' value='Cancel' class='button' onClick="document.getElementById('feedbackshowdiv').style.display = 'block'; document.getElementById('feedbackdiv').style.display = 'none';"/>
-				<br />
-			</fieldset>
-		</form>
-
-		</div>
-
-	</div>
-
-
 </div>
 <br style="clear: both;" />
 
-<div align='center'>
-<div style="width: 780px; text-align: center;" id="feedbackshowdiv">
-	<a href="#" onclick="document.getElementById('feedbackdiv').style.display = 'block'; document.getElementById('feedbackshowdiv').style.display = 'none'; return false;"><span style="color:#ff6a00; font-weight: bold;">Please give Feedback about this page</span></a>
-</div>
+<?php
+	// Get common footer
+	include('footer.php');
+?>
 
-<br />
-<br />
-
-<div style="text-align: center; width: 780px;">
-	<small>Copyright  2007 The Yorker. Use of this Web site constitutes acceptance of the The Yorker <a href='/policy/#user_agreement'>User Agreement</a> and <a href='/policy/#privacy_policy'>Privacy Policy</a>. Page rendered in {elapsed_time} seconds</small>
-</div>
-</div>
 </body>
 </html>

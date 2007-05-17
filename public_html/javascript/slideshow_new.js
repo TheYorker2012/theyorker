@@ -37,6 +37,7 @@ var Slideshow = {
   showImages: [],
   current: 0,
   timer: 0,
+  shownFirst: 0,
   
   add: function(image){
     if (typeof image == 'string') this.images.push(image);
@@ -57,7 +58,13 @@ var Slideshow = {
   load: function(){
     for(var i=0; i<this.images.length; i++){
       this.loadedImages[i] = new Image();
-      eval("this.loadedImages[i].onload = this.checkFinished('" + this.images[i] + "');");
+      if (this.loadedImages[i].addEventListener){
+        eval("this.loadedImages[i].addEventListener('load', function () { Slideshow.showImages[Slideshow.imagesLoaded] = '" + this.images[i] + "'; Slideshow.imagesLoaded++; }, false);");
+      } else if (this.loadedImages[i].attachEvent){
+        eval("this.loadedImages[i].attachEvent('onload', function () { Slideshow.showImages[Slideshow.imagesLoaded] = '" + this.images[i] + "'; Slideshow.imagesLoaded++; });");
+      } else {
+        eval("this.loadedImages[i].onload = this.checkFinished('" + this.images[i] + "');");
+      }
       this.loadedImages[i].src = this.images[i];
     }
     timer=setTimeout('Slideshow.nextImage()',1000);
@@ -81,17 +88,22 @@ var Slideshow = {
 
   nextImage: function(){
     if (this.imagesLoaded > 0) {
-      document.getElementById('SlideShow').style.background = "url('" + this.showImages[this.current] + "')";
-      Effect.Shrink('SlideShowImage', {queue: 'end'});
+	  if ((this.shownFirst == 0) || (this.imagesLoaded > 1)) {
+        document.getElementById('SlideShow').style.background = "url('" + this.showImages[this.current] + "')";
+        Effect.Shrink('SlideShowImage', {queue: 'end'});
+      }
     }
     timer=setTimeout('Slideshow.resetImage()',3000);
   },
 
   resetImage: function(){
     if (this.imagesLoaded > 0) {
-      Effect.Appear('SlideShowImage', {queue: 'end'});
-      document.getElementById('SlideShowImage').src = this.showImages[this.current];
-      this.current = (this.current + 1) % this.imagesLoaded
+	  if ((this.shownFirst == 0) || (this.imagesLoaded > 1)) {
+        Effect.Appear('SlideShowImage', {queue: 'end'});
+        document.getElementById('SlideShowImage').src = this.showImages[this.current];
+        this.current = (this.current + 1) % this.imagesLoaded
+        this.shownFirst = 1;
+      }
     }
     timer=setTimeout('Slideshow.nextImage()',2000);
   },

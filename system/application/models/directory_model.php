@@ -19,25 +19,39 @@ class Directory_model extends Model {
 	 *	- ['organisation_name']        (organisations)
 	 *	- ['organisation_description'] (organisations)
 	 *	- ['organisation_type_name']   (organisation_types)
+	 * @param $status of the entry 'live','hidden','suggested'
 	 */
-	function GetDirectoryOrganisations()
+	function GetDirectoryOrganisations($status = 'live')
 	{
 		$sql =
-			'SELECT'.
-			' organisations.organisation_name,'.
-			' organisations.organisation_directory_entry_name,'.
-			' organisation_contents.organisation_content_description as organisation_description,'.
-			' organisation_types.organisation_type_name '.
-			'FROM organisations '.
-			'INNER JOIN organisation_types '.
-			'ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id '.
-			'INNER JOIN organisation_contents '.
-			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
-			'WHERE organisations.organisation_directory_entry_name IS NOT NULL'.
-			' AND organisation_types.organisation_type_directory=1 '.
-			' AND organisations.organisation_show_in_directory=1 '.
-			' AND organisations.organisation_needs_approval=0 '.
-			'ORDER BY organisation_name';
+			'SELECT
+			 organisations.organisation_name,
+			 organisations.organisation_directory_entry_name,
+			 organisation_contents.organisation_content_description as organisation_description,
+			 organisation_types.organisation_type_name
+			FROM organisations
+			INNER JOIN organisation_types
+			ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id
+			INNER JOIN organisation_contents
+			ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
+			WHERE organisations.organisation_directory_entry_name IS NOT NULL ';
+		if ($status=='hidden') {
+			$sql .= '
+			 AND organisation_types.organisation_type_directory=1
+			 AND organisations.organisation_show_in_directory=0
+			 AND organisations.organisation_needs_approval=0 ';
+		} elseif ($status=='suggested') {
+			$sql .= '
+			 AND organisations.organisation_needs_approval=1 ';
+		} else {
+			$sql .= '
+			 AND organisation_types.organisation_type_directory=1
+			 AND organisations.organisation_show_in_directory=1
+			 AND organisations.organisation_needs_approval=0 ';
+		}
+
+			$sql .= '
+			 ORDER BY organisation_name';
 
 		$query = $this->db->query($sql);
 

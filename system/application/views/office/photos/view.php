@@ -167,8 +167,8 @@ if ($status == 'unassigned') {
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>
-			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><img src="<?php echo(imageLocation($chosen_photo, 'medium')); ?>" alt="<?php echo($title); ?>" title="<?php echo($title); ?>" /></a><br />
-			<?php echo($description); ?>
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><img src="<?php echo(imageLocation($chosen_photo, 'medium')); ?>" alt="<?php echo($description); ?>" title="<?php echo($description); ?>" /></a><br />
+			<?php echo($title); ?>
 		</div>
 <?php } ?>
 		<div class="blue_box">

@@ -31,7 +31,12 @@ class Organisation extends controller
 		return $new_string;
 	}
 
-	function index()
+	function photostep() {
+		$_POST['r_stage'] = 4;
+		$this->index(4);
+	}
+
+	function index($stage = false)
 	{
 		if (!CheckPermissions('public')) return;
 
@@ -44,28 +49,33 @@ class Organisation extends controller
 
 		if (isset($_POST['r_stage']))
 		{
-			//a post has occured but there is no session data, get the serialised data out of the form and put it back into the session
-			/*
-			echo '<pre>';
-			echo print_r($_POST);
-			echo '<pre>';
-			*/
-			if (isset($_SESSION[$data['session_var']]['a_connected']) == false)
-			{
-				$unserialized = stripslashes($_POST['r_dump']);
-				$unserialized = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $unserialized );
-				$_SESSION[$data['session_var']] = unserialize($unserialized);
-			}
-			//dump the post data into the session
-			foreach ($_POST as $key => $postitem)
-			{
-				$_SESSION['org_wizard'][$key] = $postitem;
-			}
-			if (isset($_SESSION['img']['list'])) {
-				foreach ($_SESSION['img']['list'] as $newImg) {
-					$_SESSION['org_wizard']['img'][] = $newImg;
+			//No post occured, but so try to use existing session data
+			if ($stage) {
+				$data['stage'] = $stage;
+				if (isset($_SESSION['img']['list'])) {
+					foreach ($_SESSION['img']['list'] as $newImg) {
+						$_SESSION['org_wizard']['img'][] = $newImg;
+					}
+					unset($_SESSION['img']['list']);
 				}
-				unset($_SESSION['img']['list']);
+			} else {
+				//a post has occured but there is no session data, get the serialised data out of the form and put it back into the session
+				/*
+				echo '<pre>';
+				echo print_r($_POST);
+				echo '<pre>';
+				*/
+				if (isset($_SESSION[$data['session_var']]['a_connected']) == false)
+				{
+					$unserialized = stripslashes($_POST['r_dump']);
+					$unserialized = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $unserialized );
+					$_SESSION[$data['session_var']] = unserialize($unserialized);
+				}
+				//dump the post data into the session
+				foreach ($_POST as $key => $postitem)
+				{
+					$_SESSION['org_wizard'][$key] = $postitem;
+				}
 			}
 			$data['is_connected'] = $_SESSION['org_wizard']['a_connected'];
 			//$data['post'][$_POST['r_stage']] = $_POST;
@@ -133,13 +143,17 @@ class Organisation extends controller
 							}
 
 							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+
+							//Reset wizard on success
+							$_SESSION['org_wizard'] = array();
+
 							} else {
 							//Something went wrong so don't make a revision
 							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
 							}
 						}else{
 						//Name has been taken already!
-						$this->messages->AddMessage('error', 'The name of  your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
+						$this->messages->AddMessage('error', 'The name of your suggestion already exists in the directory. If you still wish to submit your suggestion please change the name.');
 						}
 					}
 
@@ -207,15 +221,14 @@ class Organisation extends controller
 		if (!CheckPermissions('public')) return;
 		$this->xajax->processRequests();
 		if ($type == 'images') {
-			$this->image_upload->recieveUpload('wizard/organisation', array('slideshow'));
+			$this->image_upload->recieveUpload('wizard/organisation/photostep', array('slideshow'));
 		}
 	}
 
-	function photo($action) {
+	function photo($action, $id = -1, $direction = '') {
 		$this->load->helper('url');
 		if ($action == 'move') {
-			$direction = $this->uri->segment(5);
-			$loc = array_search($this->uri->segment(6), $_SESSION['org_wizard']['img']);
+			$loc = array_search($id, $_SESSION['org_wizard']['img']);
 			if ($direction == 'up') {
 				if ($loc != 0) {
 					$temp = $_SESSION['org_wizard']['img'][$loc-1];
@@ -229,19 +242,17 @@ class Organisation extends controller
 					$_SESSION['org_wizard']['img'][$loc] = $temp;
 				}
 			}
-			header('Location:'.site_url('wizard/organisation'));
+			header('Location:'.site_url('wizard/organisation/photostep'));
 		} elseif ($action == 'delete') {
-			//TODO provide Confirmation message
-			$id = $this->uri->segment(5);
 			//if php has a function to renumber the keys in an array, plz change this
 			$oldImgList = $_SESSION['org_wizard']['img'];
 			unset($_SESSION['org_wizard']['img']);
 			foreach ($oldImgList as $img) {
 				if ($img != $id) {
-					$_SESSION['org_wizard']['img'][] = $id;
+					$_SESSION['org_wizard']['img'][] = $img;
 				}
 			}
-			header('Location:'.site_url('wizard/organisation'));
+			header('Location:'.site_url('wizard/organisation/photostep'));
 		}
 	}
 }

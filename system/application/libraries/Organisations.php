@@ -5,19 +5,19 @@
  * @brief Library for getting organisation information.
  * @author James Hogan (jh559@cs.york.ac.uk)
  */
- 
+
 class Organisations
 {
 	/// Code igniter instance.
 	private $CI;
-	
+
 	/// Default constructor
 	function __construct()
 	{
 		$this->CI = &get_instance();
 		$this->CI->load->model('slideshow_model');
 	}
-	
+
 	/// Get organisation types from organisations.
 	/**
 	 * @param $Organisations array Organisations as returned by _GetOrgs.
@@ -52,19 +52,21 @@ class Organisations
 	/// Temporary function get organisations.
 	/**
 	 * @param $Pattern string/bool Search pattern or FALSE if all.
+	 * @param $urlpath path that links will point to
+	 * @param $status of the entry 'live','hidden','suggested'
 	 * @return array of organisations matching pattern.
 	 */
-	function _GetOrgs($Pattern, $urlpath='directory/')
+	function _GetOrgs($Pattern, $urlpathpre='directory/', $urlpathpost='', $status='live')
 	{
 		$org_description_words = $this->CI->pages_model->GetPropertyInteger('org_description_words', FALSE, 5);
-		
-		$orgs = $this->CI->directory_model->GetDirectoryOrganisations();
+
+		$orgs = $this->CI->directory_model->GetDirectoryOrganisations($status);
 		$organisations = array();
 		foreach ($orgs as $org) {
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
 				'shortname' => $org['organisation_directory_entry_name'],
-				'link' => $urlpath.$org['organisation_directory_entry_name'],
+				'link' => $urlpathpre.$org['organisation_directory_entry_name'].$urlpathpost,
 				'description' => $org['organisation_description'],
 				'shortdescription' => word_limiter(
 					$org['organisation_description'], $org_description_words),
@@ -79,17 +81,17 @@ class Organisations
 	 * @param $OrganisationShortName Short name of organisation.
 	 * @return Organisation data relating to specified organisation or FALSE.
 	 */
-	 
+
 	function _GetOrgData($OrganisationShortName, $revision_number=false)
 	{
 		$this->CI->load->helper('images');
 		$this->CI->load->model('slideshow');
-		
+
 		$data = array();
 
 		$orgs = $this->CI->directory_model->GetDirectoryOrganisationByEntryName($OrganisationShortName, $revision_number);
 		foreach ($orgs as $org) {
-		
+
 			$slideshow_array = $this->CI->slideshow->getPhotos($org['organisation_entity_id']);
 			$slideshow = array();
 			foreach ($slideshow_array->result() as $slide){
@@ -116,7 +118,7 @@ class Organisations
 				'fax_number'  => $org['organisation_fax_number'],
 				'revision_id'  => $org['organisation_revision_id'],
 				'location' => $org['organisation_location_id'],
-				'location_lat' => $org['location_lat'], 
+				'location_lat' => $org['location_lat'],
 				'location_lng' => $org['location_lng']
 			);
 			if (NULL === $org['organisation_yorkipedia_entry']) {

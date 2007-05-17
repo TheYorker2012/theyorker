@@ -680,19 +680,63 @@ class News extends Controller
 			$this->main_frame->AddMessage('error','Only editors may publish articles.');
 			redirect('/office/news/' . $article_id);
 		} else {
+			/// Get revision to publish
+			/// @TODO: Allow specifying of revision to publish
+			$revision_id = $this->article_model->GetLatestRevision($article_id);
+			$data['revision_data'] = $this->article_model->GetRevisionData($revision_id);
+
+			$errors = array();
+			if ($data['revision_data']['headline'] == '') {
+				$errors[] = 'Headline not specified.';
+			}
+			if ($data['revision_data']['blurb'] == '') {
+				$errors[] = 'Blurb not specified.';
+			}
+			$reporter_check = FALSE;
+			foreach ($data['article']['reporters'] as $reporter) {
+				if ($reporter['status'] == 'accepted') {
+					$reporter['bcard'] = $this->article_model->GetReporterByline($reporter['id']);
+					if (count($reporter['bcard']) > 0) { 
+						$reporter_check = TRUE;
+					} else {
+						$reporter_check = FALSE;
+						break;
+					}
+				}
+			}
+			if (!$reporter_check) {
+				$errors[] = 'At least one reporter must be assigned and have accepted to write this article. All reporters must have a business card also.';
+			}
+			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
+			$photo_all_completed = TRUE;
+			$photo_thumbnail = FALSE;
+			foreach ($photo_requests as $photo) {
+				if (($photo['status'] != 'completed') && ($photo['status'] != 'deleted')) {
+					$photo_all_completed = FALSE;
+				} elseif (($photo['status'] == 'completed') && ($photo['photo_number'] == $data['article']['photo_thumbnail'])) {
+					$photo_thumbnail = TRUE;
+				}
+			}
+			if ($data['article']['photo_thumbnail'] === NULL) {
+				$errors[] = 'Photo to use for article thumbnails not selected.';
+			}
+			if (!$photo_all_completed) {
+				$errors[] = 'All photo requests must have either been completed or cancelled.';			
+			}
+			if (!$photo_thumbnail) {
+				$errors[] = 'The photo request that has been set to use for thumbnails must be completed.';			
+			}
+			$data['errors'] = $errors;
+
 			/// @TODO: Allow adding to article pool
-			if ($this->input->post('confirm_publish') == 'Publish') {
+			if (($this->input->post('confirm_publish') == 'Publish') && (count($errors) == 0)) {
 				if (!is_numeric($this->input->post('r_publish'))) {
 					$this->main_frame->AddMessage('error','Please select a date and time to publish the article.');
-//	Commented out for now so i can add previous articles!
-//				} elseif ($this->input->post('r_publish') < mktime()) {
-//					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
+				} elseif ($this->input->post('r_publish') < mktime()) {
+					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
 				} elseif ($this->input->post('r_publish') > (mktime() + (60*60*24*365))) {
 					$this->main_frame->AddMessage('error','Please select a publish date within the next year.');
 				} else {
-					/// Get revision to publish
-					/// @TODO: Allow specifying of revision to publish
-					$revision_id = $this->article_model->GetLatestRevision($article_id);
 					$publish_date = date('Y-m-d H:i:s', $this->input->post('r_publish'));
 					$this->requests_model->PublishArticle($article_id,$revision_id,$publish_date);
 					$this->main_frame->AddMessage('success','The article was successfully published.');

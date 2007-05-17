@@ -1,8 +1,15 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
-define('BASE_DIR', '/home/theyorker/public_html');
-
+switch ($_SERVER["HTTP_HOST"]) {
+	case "theyorker.co.uk":
+		define('BASE_DIR', '/home/yorker/public_html');
+		break;
+	case "www.theyorker.co.uk":
+		define('BASE_DIR', '/home/yorker/public_html');
+		break;
+	default:
+		define('BASE_DIR', '/home/theyorker/public_html');
+}
 class Image_upload {
 	
 	private $ci;
@@ -132,7 +139,8 @@ class Image_upload {
 			return $objResponse;
 		}
 
-		$config['image_library'] = 'netpbm';
+		$config['image_library'] = 'imagemagick';
+//		$config['image_library'] = 'netpbm';
 		$config['library_path'] = '/usr/bin/';
 		$config['source_image'] = BASE_DIR.$selectedThumb[0];
 		$config['width'] = $formData['width'];

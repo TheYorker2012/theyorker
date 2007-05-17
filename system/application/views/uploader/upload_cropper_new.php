@@ -11,7 +11,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		xajax_process_form_data(xajax.getFormValues("pictureCrop"));
 		return false;
 	}
-	
+
 	/**
 	 * A little manager that allows us to swap the image dynamically
 	 *
@@ -22,7 +22,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @var obj
 		 */
 		curCrop: null,
-		
+
 		/**
 		 * Initialises the cropImageManager
 		 *
@@ -30,22 +30,22 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('images/photos/null.jpg', 200, 200, 1);
+			this.setImage('/images/photos/null.jpg', 200, 200, 1);
 		},
-		
+
 		/**
 		 * Handles the changing of the select to change the image, the option value
 		 * is a pipe seperated list of imgSrc|width|height
-		 * 
+		 *
 		 * @access public
 		 * @param obj event
 		 * @return void
 		 */
 		onChange: function( e ) {
 			var vals = $F( Event.element( e ) ).split('|');
-			this.setImage( vals[0], vals[1], vals[2], vals[3] ); 
+			this.setImage( vals[0], vals[1], vals[2], vals[3] );
 		},
-		
+
 		/**
 		 * Sets the image within the element & attaches/resets the image cropper
 		 *
@@ -67,7 +67,7 @@ foreach ($ThumbDetails->result() as $Single) {
 					minWidth: <?=$Single->image_type_width?>,
 					minHeight: <?=$Single->image_type_height?>,
 					ratioDim: { x: <?=$Single->image_type_width?>, y: <?=$Single->image_type_height?> },
-					displayOnInit: true, 
+					displayOnInit: true,
 					onEndCrop: onEndCrop,
 					previewWrap: 'previewArea-<?=$Single->image_type_id?>'} );
 				this.curCrop.reset();
@@ -75,8 +75,8 @@ foreach ($ThumbDetails->result() as $Single) {
 <?php		endforeach; ?>
 		}
 	};
-	
-	
+
+
 	// setup the callback function
 	function onEndCrop( coords, dimensions ) {
 		$( 'x1' ).value = coords.x1;
@@ -86,17 +86,17 @@ foreach ($ThumbDetails->result() as $Single) {
 		$( 'width' ).value = dimensions.width;
 		$( 'height' ).value = dimensions.height;
 	}
-	
+
 	// basic example
-	Event.observe( 
-		window, 
-		'load', 
-		function() { 
+	Event.observe(
+		window,
+		'load',
+		function() {
 			CropImageManager.init();
 			Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
 		}
 	);
-	
+
 </script>
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
@@ -114,9 +114,10 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
+	<div style="clear: both;"></div>
 	<p>Photo: -</p>
 	<div id="uploadedWrap">
-		<img src="images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 		<input type="hidden" name="x1" id="x1" />
 		<input type="hidden" name="y1" id="y1" />

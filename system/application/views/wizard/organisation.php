@@ -9,8 +9,8 @@ function PrintRadioList($input_name, $items, $default, $sessionvar)
 	{
 		echo '<label for="'.$input_name.'_'.$key.'">'.$item.'</label>';
 		echo '<input type="radio" name="'.$input_name.'" id="'.$input_name.'_'.$key.'" value="'.$item.'" ';
-		if (isset($_SESSION[$sessionvar][$input_name]) && 
-			$_SESSION[$sessionvar][$input_name] == $item) 
+		if (isset($_SESSION[$sessionvar][$input_name]) &&
+			$_SESSION[$sessionvar][$input_name] == $item)
 			echo 'checked="checked" ';
 		if (isset($_SESSION[$sessionvar][$input_name]) == false &&
 			$item == $default)
@@ -27,8 +27,8 @@ function PrintDropDownList($input_name, $label, $items, $default, $sessionvar)
 			<select name="'.$input_name.'" size="1">';
 				foreach($items as $item){
 					echo "<option value='".$item['value']."' ";
-						if (isset($_SESSION[$sessionvar][$input_name]) && 
-							$_SESSION[$sessionvar][$input_name] == $item['value']) 
+						if (isset($_SESSION[$sessionvar][$input_name]) &&
+							$_SESSION[$sessionvar][$input_name] == $item['value'])
 							echo 'selected';
 						if (isset($_SESSION[$sessionvar][$input_name]) == false &&
 							$item['value'] == $default)
@@ -46,7 +46,7 @@ function PrintTextBox ($input_name, $item, $sessionvar)
 	echo '<input type="text" name="'.$input_name.'" id="'.$input_name.'" style="width: 220px;" ';
 	if (isset($_SESSION[$sessionvar][$input_name]))
 		echo 'value="'.$_SESSION[$sessionvar][$input_name].'" ';
-	echo '/>';	
+	echo '/>';
 }
 
 function PrintTextArea ($input_name, $item, $sessionvar)
@@ -66,7 +66,7 @@ function addstrong($text)
 function addstrike($text)
 {
 	return '<strike>'.$text.'</strike>';
-}	
+}
 
 ?>
 
@@ -86,14 +86,17 @@ function addstrike($text)
 				$heading = addstrike($heading);
 			echo '<li>'.$heading.'</li>';
 		}
-		
+
 		?>
 		</ol>
 	</div>
-	
+
 	<h2>What's this?</h2>
 	<div class="Entry">
-		Blah blah blah blah blah.
+		This wizard will guide you through the process of suggesting an organisation to us. Once submitted, your suggestion will be reviewed by our PR team, and will appear on our site in the near future.
+		<br />
+		<br />
+		Please note that you may only add <b>Photos</b> or enter <b>More Details</b> if you are connected with the organisation.
         </div>
 </div>
 
@@ -112,7 +115,7 @@ function addstrike($text)
 			$list_data = array();
 			foreach($organisations as $organisation){
 				$list_data[] = array(
-					'value' => $organisation['organisation_type_id'], 
+					'value' => $organisation['organisation_type_id'],
 					'name' => $organisation['organisation_type_name']
 				);
 			}
@@ -200,8 +203,7 @@ function addstrike($text)
 			<input type="hidden" name="destination" id="destination" value="1" />
 		</fieldset>
 		<fieldset>
-			<input type="button" onClick="AddClones()" value="Another"/>
-			<input type="submit" value="upload" />
+			<input class="button" type="submit" value="Upload" />
 		</fieldset>
 	</form>
 </div>
@@ -211,9 +213,9 @@ function addstrike($text)
 		foreach ($_SESSION['org_wizard']['img'] as $img) { ?>
 		<?=imageLocTag($img, 'slideshow', false, $_SESSION['org_wizard']['a_name'])?>
 		<br />
-		<?=anchor('wizard/organisation/photo/move/up/'.$img, 'move up')?> |
-		<?=anchor('wizard/organisation/photo/move/down/'.$img, 'move down')?> |
-		<?=anchor('wizard/organisation/photo/delete/'.$img, 'delete')?>
+		<?=anchor('wizard/organisation/photo/move/'.$img.'/up/', 'move up')?> |
+		<?=anchor('wizard/organisation/photo/move/'.$img.'/down/', 'move down')?> |
+		<a href="/wizard/organisation/photo/delete/<?php echo $img ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 		<br />
 	<?php } ?>
 </div>
