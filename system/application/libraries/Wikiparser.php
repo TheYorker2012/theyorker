@@ -351,8 +351,8 @@ class Wikiparser {
 			$namespace = '';
 		} elseif ('youtube' === $namespace) {
 			$output = '
-<center>
-<script language="JavaScript" type="text/javascript">
+<div style="text-align:center;">
+<script type="text/javascript">
 <!--
 // Version check based upon the values entered above in "Globals"
 var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
@@ -392,7 +392,11 @@ if (hasReqestedVersion) {
   	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
   	</div>
 </noscript>
-</center>';
+</div>';
+			if ($this->in_paragraph) {
+				// divs aren't allowed in paragraphs, so close and reopen
+				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
+			}
 			return $output;
 		} else {
 			$reference_wiki = $this->external_wikis[$this->reference_wiki];
