@@ -34,9 +34,15 @@
 				<?php if ($user_level == 'editor') { ?>
 					<label for='r_reporter'>Reporter(s):</label>
 					<select name='r_reporter[]' id='r_reporter' size='4' multiple='multiple'>
-					<?php foreach ($reporters as $reporter) { ?>
-			  			<option value='<?php echo $reporter['id']; ?>'<?php if (array_search($reporter['id'],$this->validation->r_reporter)) { echo(' selected="selected"'); } ?>><?php echo ($reporter['firstname'] . ' ' . $reporter['surname']); ?></option>
-					<?php } ?>
+					<?php foreach ($reporters as $reporter) {
+						echo('<option value="'.$reporter['id'].'"');
+						if (is_array($this->validation->r_reporter)) {
+							if (array_search($reporter['id'],$this->validation->r_reporter)) {
+							echo(' selected="selected"');
+							}
+						}
+						echo('>'.$reporter['firstname'] . ' ' . $reporter['surname'].'</option>');
+					} ?>
 					</select>
 					<i>Hold down Ctrl to select more than one.</i>
 			 		<br />
