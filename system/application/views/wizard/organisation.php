@@ -210,9 +210,9 @@ function addstrike($text)
 		foreach ($_SESSION['org_wizard']['img'] as $img) { ?>
 		<?=imageLocTag($img, 'slideshow', false, $_SESSION['org_wizard']['a_name'])?>
 		<br />
-		<?=anchor('wizard/organisation/photo/move/up/'.$img, 'move up')?> |
-		<?=anchor('wizard/organisation/photo/move/down/'.$img, 'move down')?> |
-		<a href="/wizard/organisation/photo/delete/<?php echo $img ?>" onclick="return confirm('Are you sure you want to delete this picture?');">delete</a>
+		<?=anchor('wizard/organisation/photo/move/'.$img.'/up/', 'move up')?> |
+		<?=anchor('wizard/organisation/photo/move/'.$img.'/down/', 'move down')?> |
+		<a href="/wizard/organisation/photo/delete/<?php echo $img ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 		<br />
 	<?php } ?>
 </div>
