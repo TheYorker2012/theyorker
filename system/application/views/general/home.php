@@ -28,11 +28,13 @@ function print_box($articles,$heading,$prefix){
 
 function print_middle_box($title,$article_array){
 	echo('  <h4>'.$title.'</h4>'."\n");
-	echo('  <ul class="TitleList">'."\n");
-	foreach ($article_array as $article) {
-		echo('          <li><a href="/news/'.$article['article_type'].'/'.$article['id'].'" >'."\n");
-		echo('                  '.$article['heading']."\n");
-		echo('          </a></li>'."\n");
+	if (count($article_array) > 0) {
+		echo('  <ul class="TitleList">'."\n");
+		foreach ($article_array as $article) {
+			echo('          <li><a href="/news/'.$article['article_type'].'/'.$article['id'].'" >'."\n");
+			echo('                  '.$article['heading']."\n");
+			echo('          </a></li>'."\n");
+		}
 	}
 	echo('  </ul>'."\n");
 };
