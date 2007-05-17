@@ -132,7 +132,11 @@ class Home extends Controller {
 				'medium', 
 				false, 
 				$summary['photo_title'],
-				'left'
+				'left',
+				NULL,
+				NULL,
+				NULL,
+				FALSE
 			);
 			$data['articles'][$type][] = $summary;
 		}
