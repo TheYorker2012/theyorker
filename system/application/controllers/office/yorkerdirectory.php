@@ -209,7 +209,7 @@ class Yorkerdirectory extends Controller
 				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is of a type that is hidden.';
 
 			} elseif (!$organisation_details->organisation_has_live_content) {
-				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it has not yet been <b>published</b> by an editor.';
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as no revisions have been <b>published</b> by an editor.';
 
 			} elseif (!$organisation_details->organisation_show_in_directory) {
 				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is set to a <b>hidden</b> state.';
