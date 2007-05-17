@@ -200,7 +200,7 @@ function addstrike($text)
 			<input type="hidden" name="destination" id="destination" value="1" />
 		</fieldset>
 		<fieldset>
-			<input type="submit" value="upload" />
+			<input class="button" type="submit" value="upload" />
 		</fieldset>
 	</form>
 </div>
@@ -212,7 +212,7 @@ function addstrike($text)
 		<br />
 		<?=anchor('wizard/organisation/photo/move/up/'.$img, 'move up')?> |
 		<?=anchor('wizard/organisation/photo/move/down/'.$img, 'move down')?> |
-		<?=anchor('wizard/organisation/photo/delete/'.$img, 'delete')?>
+		<a href="/wizard/organisation/photo/delete/<?php echo $img ?>" onclick="return confirm('Are you sure you want to delete this picture?');">delete</a>
 		<br />
 	<?php } ?>
 </div>
