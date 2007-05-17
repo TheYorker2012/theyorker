@@ -200,7 +200,7 @@ function addstrike($text)
 			<input type="hidden" name="destination" id="destination" value="1" />
 		</fieldset>
 		<fieldset>
-			<input class="button" type="submit" value="upload" />
+			<input class="button" type="submit" value="Upload" />
 		</fieldset>
 	</form>
 </div>
