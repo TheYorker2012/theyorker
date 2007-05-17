@@ -38,10 +38,11 @@
 		<div style="display: none" id="LetterJump">
 		</div>
 		<div id="NotFound" style="<?php if (sizeof($organisations)>0) echo 'display: none;'?>">
-			<h3>No entries found</h3>
 			<?php if (sizeof($organisations)>0) { ?>
+			<h3>No results found</h3>
 			<p>Try a simpler search, different keywords, or include more filters.</p>
 			<?php } else { ?>
+			<h3>No entries to view</h3>
 			<p>There are no entries with this status in the directory.</p>
 			<?php } ?>
 		</div>
