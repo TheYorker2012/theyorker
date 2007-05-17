@@ -101,14 +101,14 @@ class Organisation extends controller
 							'suggestors_notes' => $_SESSION['org_wizard']['a_user_notes'],
 							'suggestors_position' => $_SESSION['org_wizard']['a_user_position'],
 							'description' => $_SESSION['org_wizard']['a_description'],
-							'postal_address' => $_SESSION['org_wizard']['a_address'],
-							'postcode' => $_SESSION['org_wizard']['a_postcode'],
-							'phone_external' => $_SESSION['org_wizard']['a_phone_external'],
-							'phone_internal' => $_SESSION['org_wizard']['a_phone_internal'],
-							'fax_number' => $_SESSION['org_wizard']['a_fax'],
-							'email_address' => $_SESSION['org_wizard']['a_email_address'],
-							'url' => $_SESSION['org_wizard']['a_website'],
-							'opening_hours' => $_SESSION['org_wizard']['a_opening_times'],
+							'postal_address' => isset($_SESSION['org_wizard']['a_address']) 		? $_SESSION['org_wizard']['a_address'] : '',
+							'postcode' => 		isset($_SESSION['org_wizard']['a_postcode']) 		? $_SESSION['org_wizard']['a_postcode'] : '',
+							'phone_external' => isset($_SESSION['org_wizard']['a_phone_external']) 	? $_SESSION['org_wizard']['a_phone_external'] : '',
+							'phone_internal' => isset($_SESSION['org_wizard']['a_phone_internal']) 	? $_SESSION['org_wizard']['a_phone_internal'] : '',
+							'fax_number' => 	isset($_SESSION['org_wizard']['a_fax']) 			? $_SESSION['org_wizard']['a_fax'] : '',
+							'email_address' => 	isset($_SESSION['org_wizard']['a_email_address']) 	? $_SESSION['org_wizard']['a_email_address'] : '',
+							'url' => 			isset($_SESSION['org_wizard']['a_website']) 		? $_SESSION['org_wizard']['a_website'] : '',
+							'opening_hours' => 	isset($_SESSION['org_wizard']['a_opening_times']) 	? $_SESSION['org_wizard']['a_opening_times'] : ''
 						);
 
 						//create a useable directory entry name and add the directory entry name to the post data
