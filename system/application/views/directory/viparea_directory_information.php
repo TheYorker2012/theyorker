@@ -1,8 +1,10 @@
 <div class='RightToolbar'>
-<h4>What's this?</h4>
+	<?php if(!$user_is_editor) { ?>
+	<h4>What's this?</h4>
 	<div class="Entry">
 		<?php echo $main_text; ?>
 	</div>
+	<?php } ?>
 	<h4>Visability</h4>
 	<div class="Entry">
 		<p>
