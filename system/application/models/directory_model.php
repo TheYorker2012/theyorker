@@ -41,7 +41,7 @@ class Directory_model extends Model {
 		if ($status=='hidden') {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
-			 AND (organisations.organisation_show_in_directory=0 OR organisations.organisation_live_content_id IS NOT NULL)
+			 AND (organisations.organisation_show_in_directory=0 OR organisations.organisation_live_content_id IS NULL)
 			 AND organisations.organisation_needs_approval=0 ';
 		} elseif ($status=='suggested') {
 			$sql .= '
