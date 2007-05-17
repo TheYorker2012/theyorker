@@ -63,7 +63,7 @@ class Yorkerdirectory extends Controller
 	}
 
 	/// Directory organisation page.
-	function information($action='view', $revision=false)
+	function information($action='view', $revision=true)
 	{
 		if (!CheckPermissions('vip+pr')) return;
 
@@ -105,11 +105,8 @@ class Yorkerdirectory extends Controller
 					$new_directory_entry_name = $this->_CreateDirectoryEntryName($_POST['organisation_name']);
 					$result = $this->directory_model->UpdateDirctoryEntryType($organisation, $_POST['organisation_type']);
 					$result2 = $this->directory_model->UpdateDirctoryEntryNames($organisation, $_POST['organisation_name'], $organisation);
-					if ($result==1 && $result2==1) {
-						$this->messages->AddMessage('success','Organisation name was successfully changed.');
-					} else {
-						$this->messages->AddMessage('error','Update did not work, please try again.');
-					}
+
+					$this->messages->AddMessage('success','Organisation name was successfully changed.');
 				}
 			} else {
 				$this->messages->AddMessage('error','You do not have permission to change the organisations name.');
@@ -149,9 +146,6 @@ class Yorkerdirectory extends Controller
 		}
 
 		if ($action=='view') {
-			//Get Organisation Data
-			$data = $this->organisations->_GetOrgData($organisation, $revision);
-
 			//Send data if given
 			if (!empty($_POST['description'])) {
 				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
@@ -172,12 +166,53 @@ class Yorkerdirectory extends Controller
 				}
 			}
 
+			//Accept/reject directory entry information and form detection
+			if (!empty($_POST['directory_acceptance']) && $_POST['directory_acceptance']=='Accept') {
+				if ($editor_level) {
+					$this->directory_model->AcceptDirectoryEntry($organisation);
+					$this->messages->AddMessage('success','Directory entry accepted');
+				} else {
+					$this->messages->AddMessage('error','You do not have permission to accept directory entries.');
+				}
+			} elseif (!empty($_POST['directory_deletion']) && ($_POST['directory_deletion']=='Reject' || $_POST['directory_deletion']=='Delete')) {
+				if ($editor_level) {
+					$this->directory_model->DeleteDirectoryEntry($organisation);
+					$this->messages->AddMessage('success','Directory entry removed');
+					redirect('/office/prlist/');
+				} else {
+					$this->messages->AddMessage('error','You do not have permission to remove directory entries.');
+				}
+			}
+
+			//Get Organisation Data
+			$data = $this->organisations->_GetOrgData($organisation, $revision);
+
+			$organisation_details = $this->directory_model->GetOrganisation($organisation);
+
 			//Find out if the directory entry is currently visable.
-			$data['directory_visibility'] = $this->directory_model->IsEntryShownInDirectory($organisation);
-			if ($data['directory_visibility']) {
-				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_true');
+			$data['show_visibility'] = (
+				$organisation_details->organisation_needs_approval == 0
+				&& $organisation_details->organisation_type_directory == 1
+				&& $organisation_details->organisation_has_live_content == 1
+			);
+			$data['directory_visibility'] = (!$organisation_details->organisation_show_in_directory);
+
+			$data['show_acceptance'] = $organisation_details->organisation_needs_approval;
+
+			if ($organisation_details->organisation_needs_approval) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> as it has not yet been accepted by an editor.';
+
+			} elseif (!$organisation_details->organisation_type_directory) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is of a type that is hidden.';
+
+			} elseif (!$organisation_details->organisation_has_live_content) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as no revisions have been <b>published</b> by an editor.';
+
+			} elseif (!$organisation_details->organisation_show_in_directory) {
+				$data['directory_visibility_text'] = 'This directory entry is <b>not visible</b> to the public, as it is set to a <b>hidden</b> state.';
+
 			} else {
-				$data['directory_visibility_text'] = $this->pages_model->GetPropertyText('directory_visible_false');
+				$data['directory_visibility_text'] = 'This directory entry is <b>visible</b> to the public';
 			}
 
 			if (!empty($data)) {

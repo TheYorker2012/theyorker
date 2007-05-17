@@ -32,13 +32,16 @@ class Directory_model extends Model {
 			FROM organisations
 			INNER JOIN organisation_types
 			ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id
-			INNER JOIN organisation_contents
+			LEFT JOIN organisation_contents
 			ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
+			INNER JOIN entities
+			ON entities.entity_id = organisations.organisation_entity_id
+			AND entities.entity_deleted = 0
 			WHERE organisations.organisation_directory_entry_name IS NOT NULL ';
 		if ($status=='hidden') {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
-			 AND organisations.organisation_show_in_directory=0
+			 AND (organisations.organisation_show_in_directory=0 OR organisations.organisation_live_content_id IS NULL)
 			 AND organisations.organisation_needs_approval=0 ';
 		} elseif ($status=='suggested') {
 			$sql .= '
@@ -62,6 +65,8 @@ class Directory_model extends Model {
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
 	 * @param $RevisionNumber integer Revision number to display (Default to false).
+	 *	- false	- live revision
+	 *	- true	- latest revision
 	 *
 	 * Returns the organisation left joined with the directory content.
 	 * This means the directory content is optional and may be set to NULL.
@@ -95,23 +100,22 @@ class Directory_model extends Model {
 			// Optionally get any matching content as well.
 			'LEFT JOIN organisation_contents '.
 			' ON	organisation_contents.organisation_content_organisation_entity_id '.
-			'			= organisations.organisation_entity_id '.
-			' AND	organisation_contents.organisation_content_id=';
-		$bind_data = array();
+			'			= organisations.organisation_entity_id ';
 		if ($RevisionNumber === false){
+			$sql .=' AND	organisation_contents.organisation_content_id=';
 			$sql .= 'organisations.organisation_live_content_id';
-		} else {
-			$sql .= '?';
-			$bind_data[] = $RevisionNumber;
+		} elseif ($RevisionNumber !== true) {
+			$sql .=' AND	organisation_contents.organisation_content_id=';
+			$sql .= $this->db->escape($RevisionNumber);
 		}
 		$sql .= ' LEFT JOIN locations '.
 			' ON locations.location_id'.
 			'			= organisations.organisation_location_id';
-		$sql .= ' WHERE organisations.organisation_directory_entry_name=? '.
+		$sql .= ' WHERE organisations.organisation_directory_entry_name='.$this->db->escape($DirectoryEntryName).' '.
 			' AND organisation_types.organisation_type_directory=1 '.
-			'ORDER BY organisation_name';
-		$bind_data[] = $DirectoryEntryName;
-		$query = $this->db->query($sql, $bind_data);
+			'ORDER BY organisation_contents.organisation_content_last_author_timestamp DESC '.
+			'LIMIT 1';
+		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 
@@ -418,27 +422,30 @@ class Directory_model extends Model {
 	//Finds out if the directory entry is listed in the directory
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
-	 * @return bool true if the directory entry is listed in the directory.
+	 * @return a class containing the fields as attributes.
 	 **/
-	function IsEntryShownInDirectory($DirectoryEntryName)
+	function GetOrganisation($DirectoryEntryName)
 	{
-		// Remove the organisation content with the given id and which is not live.
 		$sql =
-			'SELECT'.
-			' organisations.organisation_show_in_directory '.
-			'FROM organisations '.
-			'WHERE organisations.organisation_directory_entry_name=? '.
-			'LIMIT 1';
+			'SELECT
+			 organisations.organisation_name,
+			 organisations.organisation_directory_entry_name,
+			 organisations.organisation_show_in_directory,
+			 organisations.organisation_needs_approval,
+			 organisation_types.organisation_type_directory,
+			 (organisations.organisation_live_content_id IS NOT NULL) as organisation_has_live_content,
+			 organisation_types.organisation_type_name
+			FROM organisations
+			INNER JOIN organisation_types
+			ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id
+			WHERE organisations.organisation_directory_entry_name=?
+			LIMIT 1';
+
 		$query = $this->db->query($sql, $DirectoryEntryName);
-		$row = $query->row();
-		//Check result to find out if its in the directory and return value.
-		$in_directory = $row->organisation_show_in_directory;
-		if($in_directory == 1){
-			return true;
-		}else{
-			return false;
-		}
+
+		return $query->row();
 	}
+
 	//Updates the visiblity of a directory entry in the directory
 	/**
 	 * @param $DirectoryEntryName string Directory entry name of the organisation.
@@ -457,6 +464,36 @@ class Directory_model extends Model {
 		'UPDATE organisations SET'.
 		' organisation_show_in_directory='.$value.' '.
 		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		return true;
+	}
+
+	//Updates the approval state of a directory entry in the directory
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return bool true if the directory entry is listed in the directory.
+	 **/
+	function AcceptDirectoryEntry($DirectoryEntryName)
+	{
+		$sql =
+		'UPDATE organisations SET'.
+		' organisation_needs_approval=0 '.
+		'WHERE organisations.organisation_directory_entry_name=? ';
+		$query = $this->db->query($sql, $DirectoryEntryName);
+		return true;
+	}
+
+	//Deletes the entity related to the directory entry
+	/**
+	 * @param $DirectoryEntryName string Directory entry name of the organisation.
+	 * @return bool true if the directory entry is listed in the directory.
+	 **/
+	function DeleteDirectoryEntry($DirectoryEntryName)
+	{
+		$sql =
+		'UPDATE entities, organisations SET '.
+		' entity_deleted=1 '.
+		' WHERE organisations.organisation_entity_id = entities.entity_id AND organisations.organisation_directory_entry_name=? ';
 		$query = $this->db->query($sql, $DirectoryEntryName);
 		return true;
 	}

@@ -101,14 +101,14 @@ class Organisation extends controller
 							'suggestors_notes' => $_SESSION['org_wizard']['a_user_notes'],
 							'suggestors_position' => $_SESSION['org_wizard']['a_user_position'],
 							'description' => $_SESSION['org_wizard']['a_description'],
-							'postal_address' => $_SESSION['org_wizard']['a_address'],
-							'postcode' => $_SESSION['org_wizard']['a_postcode'],
-							'phone_external' => $_SESSION['org_wizard']['a_phone_external'],
-							'phone_internal' => $_SESSION['org_wizard']['a_phone_internal'],
-							'fax_number' => $_SESSION['org_wizard']['a_fax'],
-							'email_address' => $_SESSION['org_wizard']['a_email_address'],
-							'url' => $_SESSION['org_wizard']['a_website'],
-							'opening_hours' => $_SESSION['org_wizard']['a_opening_times'],
+							'postal_address' => isset($_SESSION['org_wizard']['a_address']) 		? $_SESSION['org_wizard']['a_address'] : '',
+							'postcode' => 		isset($_SESSION['org_wizard']['a_postcode']) 		? $_SESSION['org_wizard']['a_postcode'] : '',
+							'phone_external' => isset($_SESSION['org_wizard']['a_phone_external']) 	? $_SESSION['org_wizard']['a_phone_external'] : '',
+							'phone_internal' => isset($_SESSION['org_wizard']['a_phone_internal']) 	? $_SESSION['org_wizard']['a_phone_internal'] : '',
+							'fax_number' => 	isset($_SESSION['org_wizard']['a_fax']) 			? $_SESSION['org_wizard']['a_fax'] : '',
+							'email_address' => 	isset($_SESSION['org_wizard']['a_email_address']) 	? $_SESSION['org_wizard']['a_email_address'] : '',
+							'url' => 			isset($_SESSION['org_wizard']['a_website']) 		? $_SESSION['org_wizard']['a_website'] : '',
+							'opening_hours' => 	isset($_SESSION['org_wizard']['a_opening_times']) 	? $_SESSION['org_wizard']['a_opening_times'] : ''
 						);
 
 						//create a useable directory entry name and add the directory entry name to the post data
@@ -120,36 +120,46 @@ class Organisation extends controller
 							$newOrgId = $this->db->insert_id();
 							if($result == 1)
 							{
-							//create directory entry revision
-							$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
-							//Store the revision id of the revision just made
-							$entry_revision_id = $this->db->insert_id();
-							//Make the stored revision the live id for the created organisation.
-							$this->directory_model->PublishDirectoryEntryRevisionById($post_data['directory_entry_name'], $entry_revision_id);
-							if (isset($_SESSION['org_wizard']['img'])) {
-								$this->load->model('slideshow');
-								foreach ($_SESSION['org_wizard']['img'] as $img) {
-									$this->slideshow->addPhoto($img, $newOrgId);
+								//create directory entry revision
+								$this->directory_model->AddDirectoryEntryRevision($post_data['directory_entry_name'], $post_data);
+
+								//Store the revision id of the revision just made
+								//$entry_revision_id = $this->db->insert_id();
+								//Make the stored revision the live id for the created organisation.
+								//$this->directory_model->PublishDirectoryEntryRevisionById($post_data['directory_entry_name'], $entry_revision_id);
+
+								if (isset($_SESSION['org_wizard']['img'])) {
+									$this->load->model('slideshow');
+									foreach ($_SESSION['org_wizard']['img'] as $img) {
+										$this->slideshow->addPhoto($img, $newOrgId);
+									}
 								}
-							}
 
-							if (isset($_SESSION['org_wizard']['0_lat'])) {
-								$this->directory_model->UpdateDirectoryEntryLocation(
-									$post_data['directory_entry_name'],
-									null,
-									$_SESSION['org_wizard']['0_lat'],
-									$_SESSION['org_wizard']['0_lng']
-								);
-							}
+								if (isset($_SESSION['org_wizard']['0_lat'])) {
+									$this->directory_model->UpdateDirectoryEntryLocation(
+										$post_data['directory_entry_name'],
+										null,
+										$_SESSION['org_wizard']['0_lat'],
+										$_SESSION['org_wizard']['0_lng']
+									);
+								}
 
-							$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+								$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
 
-							//Reset wizard on success
-							$_SESSION['org_wizard'] = array();
+								//Reset wizard on success
+								$_SESSION['org_wizard'] = array();
+
+								$this->load->model('user_auth');
+
+								if ($this->user_auth->officeType == 'None') {
+									redirect('/directory/');
+								} else {
+									redirect('/office/pr/org/'.$post_data['directory_entry_name'].'/directory/information');
+								}
 
 							} else {
-							//Something went wrong so don't make a revision
-							$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
+								//Something went wrong so don't make a revision
+								$this->messages->AddMessage('error', 'An error occurred when your details were submitted, please try again.');
 							}
 						}else{
 						//Name has been taken already!
