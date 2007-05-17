@@ -683,7 +683,7 @@ class News extends Controller
 			/// Get revision to publish
 			/// @TODO: Allow specifying of revision to publish
 			$revision_id = $this->article_model->GetLatestRevision($article_id);
-			$data['revision_data'] = $this->artice_model->GetRevisionData($revision_id);
+			$data['revision_data'] = $this->article_model->GetRevisionData($revision_id);
 
 			$errors = array();
 			if ($data['revision_data']['headline'] == '') {
