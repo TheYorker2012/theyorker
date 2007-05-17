@@ -71,6 +71,9 @@ class Home_Hack_Model extends Model {
 	}
 
 	function getArticleTitles($articles) {
+		if (count($articles) == 0)
+			return array();
+
 		$sql_requestedArticles = implode(', ', $articles);
 		$sql = '
 			SELECT 
@@ -96,6 +99,9 @@ class Home_Hack_Model extends Model {
 	}
 
 	function getArticleSummaries($articles, $dateFormat) {
+		if (count($articles) == 0)
+			return array();
+
 		$params = array($dateFormat);
 		
 		$sql_requestedArticles = implode(', ', $articles);
