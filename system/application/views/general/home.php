@@ -35,8 +35,8 @@ function print_middle_box($title,$article_array){
 			echo('                  '.$article['heading']."\n");
 			echo('          </a></li>'."\n");
 		}
+		echo('  </ul>'."\n");
 	}
-	echo('  </ul>'."\n");
 };
 ?>
 
