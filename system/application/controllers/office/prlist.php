@@ -77,7 +77,7 @@ class Prlist extends Controller
 
 		$linkurl = 'office/reviews/';
 		if ($showmode=='suggested') {
-			$linkurl = '/office/pr/org/';
+			$linkurl = 'office/pr/org/';
 		}
 
 		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern, $linkurl, $showmode);
