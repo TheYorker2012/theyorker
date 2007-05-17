@@ -12,7 +12,7 @@
 		<div class='blue_box'>
 			<h2>Unable to Publish Article</h2>
 			<p>
-			You are unable to publish article as vital required information is missing. Please
+			You are unable to publish this article as vital required information is missing. Please
 			see the list below on how to correct this:
 			<ul>
 <?php foreach ($errors as $error) {
