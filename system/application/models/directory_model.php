@@ -32,7 +32,7 @@ class Directory_model extends Model {
 			FROM organisations
 			INNER JOIN organisation_types
 			ON organisations.organisation_organisation_type_id=organisation_types.organisation_type_id
-			INNER JOIN organisation_contents
+			LEFT JOIN organisation_contents
 			ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
 			INNER JOIN entities
 			ON entities.entity_id = organisations.organisation_entity_id
@@ -41,7 +41,7 @@ class Directory_model extends Model {
 		if ($status=='hidden') {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
-			 AND organisations.organisation_show_in_directory=0
+			 AND (organisations.organisation_show_in_directory=0 OR organisations.organisation_live_content_id IS NOT NULL)
 			 AND organisations.organisation_needs_approval=0 ';
 		} elseif ($status=='suggested') {
 			$sql .= '
