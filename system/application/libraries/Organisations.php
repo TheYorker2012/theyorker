@@ -52,11 +52,11 @@ class Organisations
 	/// Temporary function get organisations.
 	/**
 	 * @param $Pattern string/bool Search pattern or FALSE if all.
-	 * @param
+	 * @param $urlpath path that links will point to
 	 * @param $status of the entry 'live','hidden','suggested'
 	 * @return array of organisations matching pattern.
 	 */
-	function _GetOrgs($Pattern, $urlpath='directory/', $status='live')
+	function _GetOrgs($Pattern, $urlpathpre='directory/', $urlpathpost='', $status='live')
 	{
 		$org_description_words = $this->CI->pages_model->GetPropertyInteger('org_description_words', FALSE, 5);
 
@@ -66,7 +66,7 @@ class Organisations
 			$organisations[] = array(
 				'name' => $org['organisation_name'],
 				'shortname' => $org['organisation_directory_entry_name'],
-				'link' => $urlpath.$org['organisation_directory_entry_name'],
+				'link' => $urlpathpre.$org['organisation_directory_entry_name'].$urlpathpost;
 				'description' => $org['organisation_description'],
 				'shortdescription' => word_limiter(
 					$org['organisation_description'], $org_description_words),
