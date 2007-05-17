@@ -1,4 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+define('VIEW_WIDTH', 650);
 switch ($_SERVER["HTTP_HOST"]) {
 	case "theyorker.co.uk":
 		define('BASE_DIR', '/home/yorker/public_html');
