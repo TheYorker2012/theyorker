@@ -225,10 +225,10 @@ class Organisation extends controller
 		}
 	}
 
-	function photo($action) {
+	function photo($action, $id = -1) {
 		$this->load->helper('url');
 		if ($action == 'move') {
-			$direction = $this->uri->segment(5);
+			$direction = $id;
 			$loc = array_search($this->uri->segment(6), $_SESSION['org_wizard']['img']);
 			if ($direction == 'up') {
 				if ($loc != 0) {
@@ -245,8 +245,6 @@ class Organisation extends controller
 			}
 			header('Location:'.site_url('wizard/organisation/photostep'));
 		} elseif ($action == 'delete') {
-			//TODO provide Confirmation message
-			$id = $this->uri->segment(5);
 			//if php has a function to renumber the keys in an array, plz change this
 			$oldImgList = $_SESSION['org_wizard']['img'];
 			unset($_SESSION['org_wizard']['img']);
