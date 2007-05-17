@@ -37,7 +37,7 @@ var Slideshow = {
   showImages: [],
   current: 0,
   timer: 0,
-  shown_first: FALSE,
+  shownFirst: 0,
   
   add: function(image){
     if (typeof image == 'string') this.images.push(image);
@@ -88,7 +88,7 @@ var Slideshow = {
 
   nextImage: function(){
     if (this.imagesLoaded > 0) {
-	  if ((!this.shown_first) || (this.imagesLoaded > 1)) {
+	  if ((this.shownFirst == 0) || (this.imagesLoaded > 1)) {
         document.getElementById('SlideShow').style.background = "url('" + this.showImages[this.current] + "')";
         Effect.Shrink('SlideShowImage', {queue: 'end'});
       }
@@ -98,11 +98,11 @@ var Slideshow = {
 
   resetImage: function(){
     if (this.imagesLoaded > 0) {
-	  if ((!this.shown_first) || (this.imagesLoaded > 1)) {
+	  if ((this.shownFirst == 0) || (this.imagesLoaded > 1)) {
         Effect.Appear('SlideShowImage', {queue: 'end'});
         document.getElementById('SlideShowImage').src = this.showImages[this.current];
         this.current = (this.current + 1) % this.imagesLoaded
-        this.shown_first = TRUE;
+        this.shownFirst = 1;
       }
     }
     timer=setTimeout('Slideshow.nextImage()',2000);
