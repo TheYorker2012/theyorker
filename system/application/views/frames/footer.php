@@ -1,6 +1,6 @@
 <div id="Footer">
 	<a id="ShowFeedback" href="#FeedbackForm" onclick="showFeedback();">Please give feedback about this page</a>
-	<div id="FeedbackForm">
+	<div id="FeedbackForm" style="display: none;">
 		<form id="feedback_form" action="<?php echo site_url('feedback/'); ?>" method="post" class="form">
 			<fieldset>
 				<h2>Feedback</h2>
