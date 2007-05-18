@@ -41,7 +41,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 	    <h4>Operations</h4>
 	   	<ul>
 			<?php if ($request_editable) { ?>
-				<li><a href='/office/gallery/upload/'>Upload new photo</a></li>
+				<!--<li><a href='/office/gallery/upload/'>Upload new photo</a></li> Doesn't work properly nse500-->
 				<li><a href='/office/gallery/'>Select photo from gallery</a></li>
 			<?php } ?>
 			<?php if ($access['ready'][$user_level]) {
