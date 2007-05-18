@@ -19,6 +19,7 @@
 	echo('<li>'.$error.'</li>');
 } ?>
 			</ul>
+			<input type='submit' name='back' id='back' value='Back' class='button' />
 			</p>
 		</div>
 	</form>
