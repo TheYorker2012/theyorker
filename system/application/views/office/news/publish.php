@@ -20,8 +20,8 @@
 } ?>
 			</ul>
 			</p>
+			<input type='submit' name='back' id='back' value='Back' class='button' />
 		</div>
-		<input type='submit' name='back' id='back' value='Back' class='button' />
 	</form>
 <?php } else { ?>
 	<form name='publish_request' id='publish_request' action='/office/news/<?php echo $article['id']; ?>' method='post' class='form'>
