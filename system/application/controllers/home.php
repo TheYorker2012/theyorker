@@ -38,7 +38,7 @@ class Home extends Controller {
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-	
+
 	/**
 	 * @return array(Todays events view, Todo view).
 	 */
@@ -47,32 +47,32 @@ class Home extends Controller {
 		$this->load->library('academic_calendar');
 		$this->load->library('calendar_backend');
 		$this->load->library('calendar_source_my_calendar');
-		
+
 		$this->load->library('calendar_frontend');
 		$this->load->library('calendar_view_upcoming');
 		$this->load->library('calendar_view_todo_list');
-		
+
 		$now = new Academic_time(time());
 		$start = $now;
 		$end = $now->Midnight()->Adjust('+2day');
-		
+
 		$sources = new CalendarSourceMyCalendar();
 		$sources->EnableGroup('todo');
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
 		$sources->SetTodoRange(time(), time());
-		
+
 		$calendar_data = new CalendarData();
-		
+
 		$this->messages->AddMessages($calendar_data->FetchEventsFromSources($sources));
-		
+
 		// Display data
 		$this->load->library('calendar_view_days');
-		
+
 		$EventsView = new CalendarViewUpcoming();
 		$EventsView->SetMiniMode();
 		$EventsView->SetCalendarData($calendar_data);
 		//$EventsView->SetStartEnd($start->Timestamp(), $end->Timestamp());
-		
+
 		$TodoView = new CalendarViewTodoList();
 		$TodoView->SetCalendarData($calendar_data);
 		return array($EventsView, $TodoView);
@@ -115,22 +115,22 @@ class Home extends Controller {
 			foreach($ids as $id)
 				$article_base_types[$id] = $type;
 		}
-		
+
 		// Get the ids of articles which require summaries
 		$article_summary_ids = array();
 		if (count($article_all_ids['uninews']) > 0)
 			$article_summary_ids[] = $article_all_ids['uninews'][0];
 		if (count($article_all_ids['sport']) > 0)
 			$article_summary_ids[] = $article_all_ids['sport'][0];
-		
+
 		// Get the article summaries, create html for image tags
 		$article_summaries = $this->Home_Hack_Model->getArticleSummaries($article_summary_ids, '%W, %D %M %Y');
 		foreach($article_summaries as $summary) {
 			$type = $article_base_types[$summary['id']];
 			$summary['photo_xhtml'] = imageLocTag(
-				$summary['photo_id'], 
-				'medium', 
-				false, 
+				$summary['photo_id'],
+				'medium',
+				false,
 				$summary['photo_title'],
 				'left',
 				NULL,
@@ -149,7 +149,7 @@ class Home extends Controller {
 					$article_title_ids[] = $id;
 			}
 		}
-		
+
 		// Get the article titles
 		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids);
 		foreach($article_titles as $title) {
@@ -173,7 +173,7 @@ class Home extends Controller {
 
 		//Obtain banner
 		$data['banner'] = $this->Home_Model->GetBannerImage();
-		
+
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
 
@@ -182,7 +182,7 @@ class Home extends Controller {
 
 		$this->main_frame->SetExtraCss('/stylesheets/home.css');
 
-		$this->main_frame->SetExtraHead('<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>');
+		$this->main_frame->SetExtraHead('<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=dragdrop" type="text/javascript"></script>');
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
