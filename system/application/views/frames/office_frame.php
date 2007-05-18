@@ -103,7 +103,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 
 		<div class='officenavigation_item'>
-			<a href='/office/packages/'>Packages</a>
+			<a href='/office/packages/' onclick="alert('Coming soon...'); return false;">Packages</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/prlist/'>Directory</a>
@@ -117,7 +117,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/uninews/'>Uni News</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/news/national/'>UK &amp; World News</a>
+			<a href='/office/news/comment/'>News Comment</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/features/'>Features</a>
@@ -129,19 +129,16 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/arts/'>Arts</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/news/blogs/'>Blogs</a>
+			<a href='/office/news/sport/'>Sport</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/news/sport/'>Sport</a>
+			<a href='/office/news/blogs/'>Blogs</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/food/'>Food</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/drink/'>Drink</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/culture/'>Culture</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/manage/members/'>Manage Writer</a>
@@ -172,14 +169,17 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/reviewlist/drink'>Drink</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/reviewlist/culture'>Culture</a>
-		</div>
-		<div class='officenavigation_item'>
 			<a href='/office/manage/members/'>Manage Reviewers</a>
 		</div>
 
 		<div class='officenavigation_title'>
 			Other Features
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/moderator/'>Comment Moderation</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/quotes/'>Quotes</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/campaign/'>Campaigns</a>
@@ -191,7 +191,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/games/'>Games Zone</a>
+			<a href='/office/games/' onclick="alert('Coming soon...'); return false;">Games Zone</a>
 		</div>
 
 	</div>
