@@ -19,8 +19,8 @@
 	echo('<li>'.$error.'</li>');
 } ?>
 			</ul>
-			</p>
 			<input type='submit' name='back' id='back' value='Back' class='button' />
+			</p>
 		</div>
 	</form>
 <?php } else { ?>
