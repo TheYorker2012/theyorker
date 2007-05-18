@@ -10,10 +10,10 @@
 		<form name='quote_form' action='/office/quotes/update/<?php echo $quote->quote_id; ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='quote_text'>Quote:</label>
-				<textarea id='quote_text' name='quote_text' cols="30" rows="6"><?php echo htmlentities($quote->quote_text); ?></textarea>
+				<textarea id='quote_text' name='quote_text' cols="30" rows="6"><?php echo $quote->quote_text; ?></textarea>
 				<br />
 				<label for='quote_author'>Author:</label>
-				<textarea id='quote_author' name='quote_author' cols="30" rows="2"><?php echo htmlentities($quote->quote_author); ?></textarea>
+				<textarea id='quote_author' name='quote_author' cols="30" rows="2"><?php echo $quote->quote_author; ?></textarea>
 				<br />
 			<?php if($quote->quote_last_displayed_timestamp != null) { ?>
 				<input type='hidden' id='quote_scheduled' name='quote_scheduled' value='1'/>
