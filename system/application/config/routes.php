@@ -44,6 +44,14 @@ $route['scaffolding_trigger'] = "";
 
 $org_name_regex = '[a-z_\-\d]+';
 
+//****************************************************************************//
+// Routing for photos and images                                              //
+//****************************************************************************//
+
+$route['photos/(.+)/(.+)'] = 'photos/$1/$2';
+$route['photos/(.+)'] = 'photos/$1';
+$route['images/(.+)'] = 'images/$1';
+$route['images/(.+)/(.+)'] = 'images/$1/$2';
 
 //****************************************************************************//
 // Routing in the main controller directory                                   //
