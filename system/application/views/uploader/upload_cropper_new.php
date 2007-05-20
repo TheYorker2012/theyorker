@@ -2,7 +2,8 @@
 <?php
 foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
-}?>
+}
+?>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -30,7 +31,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('/images/photos/null.jpg', 200, 200, 1);
+			this.setImage('/photos/full/0', 380, 235, 1);
 		},
 
 		/**

@@ -16,27 +16,29 @@
 			<div>
 				<div style="float:left;">
 					<h4>Add Tag</h4>
-					<input type="text" id="newtag" autocomplete="off" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
-					<input type="button" value="Add" onClick="addTag();updateList();" />
+					<input type="text" id="newtag" autocomplete="off" size="15" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
+					<input type="button" value="Add" onClick="addTag();updateList();" /><br />
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ntags" style="height:250px; width:125px;list-style: none outside none;">
+						<ul id="ntags" style="height:250px; width:190px;list-style: none outside none;">
 						</ul>
 					</div>
 				</div>
 				<div style="float:left">
 					<h4>Tagged as:</h4>
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ctags" style="height:250px;width:125px;list-style: none outside none;">
+						<ul id="ctags" style="height:250px;width:190px;list-style: none outside none;">
 							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-							<li name="list_<?=$tag->tag_name?>" id="<?=$tag->tag_name?>"><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="images/icons/delete.png" alt="Remove" title="Remove" /> <?=$tag->tag_name?></a></li>
+							<li name="list_<?=$tag->tag_name?>" id="<?=$tag->tag_name?>"><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="/images/icons/delete.png" alt="Remove" title="Remove" /> <?=$tag->tag_name?></a></li>
 							<?php endforeach;?>
 						</ul>
 					</div>
 				</div>
 			</div>
 			<br />
-			<label for="hidden">Hidden: </label>
+			<label for="hidden">Deleted: </label>
 				<input type='checkbox' name='hidden' value="hide" <?php if ($photoDetails->photo_deleted == 1) echo "checked";?> /><br />
+				<label for="hidden-gallery">Removed from Gallery: </label>
+					<input type='checkbox' name='hidden-gallery' value="hide" <?php if ($photoDetails->photo_gallery == 1) echo "checked";?> /><br />
 			<input type="submit" class="button" value="Save" />
 		</fieldset>
 	</form>
@@ -102,7 +104,7 @@
 
 	function addTag() {
 		if ($('newtag').value != "" && notInList($('newtag').value)) {
-			$('ctags').innerHTML += '<li class="orange" name="list_'+$('newtag').value+'" id="' + $('newtag').value + '"><a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="images/icons/delete.png" alt="Remove" title="Remove" /> ' + $('newtag').value + '</a></li>';
+			$('ctags').innerHTML += '<li class="orange" name="list_'+$('newtag').value+'" id="' + $('newtag').value + '"><a onClick="deleteTag(\'' + $('newtag').value + '\')"><img src="/images/icons/delete.png" alt="Remove" title="Remove" /> ' + $('newtag').value + '</a></li>';
 			$('newtag').value = "";
 			updateList()
 			return true;

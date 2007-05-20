@@ -1,13 +1,15 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-define('VIEW_WIDTH', 650);
+if (!defined('VIEW_WIDTH')) {
+	define('VIEW_WIDTH', 650);
+}
+define('VIEW_HEIGHT', 650);
 class Image_upload {
 	
 	private $ci;
 	
 	public function Image_upload() {
 		$this->ci = &get_instance();
-		$this->ci->load->library('xajax');
-		$this->ci->load->library('images');
+		$this->ci->load->library(array('xajax', 'image'));
 		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 	}
@@ -55,7 +57,7 @@ class Image_upload {
 		
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
-		$config['max_size'] = 2^24;
+		$config['max_size'] = 16777216;
 		
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
@@ -69,22 +71,22 @@ class Image_upload {
 		} else {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
 		}
-		
 		$data = array();
 		$this->ci->upload->initialize($config);
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-				$data[] = $this->ci->upload->display_errors();
+				$this->main_frame->AddMessage('error', $this->ci->upload->display_errors());
 			} else {
 				$data[] = $this->ci->upload->data();
 				
 				if ($this->checkImageProperties($data[$x - 1], $query))
+				//var_dump( $this->processImage($data[$x - 1], $x, $query, $photo) );
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->ci->main_frame->SetExtraHead($head);
 		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
 		return $this->ci->main_frame->Load();
@@ -97,7 +99,7 @@ class Image_upload {
 		// 0 location
 		// 1 original width(?)
 		// 2 original height(?)
-		// 3 type codename
+		// 3 type
 		// 4 image id
 		// 5 image type width
 		// 6 image type height
@@ -122,8 +124,8 @@ class Image_upload {
 		*/
 
 		$sql = 'SELECT image_type_id AS id, image_type_width AS x, image_type_height AS y
-		        FROM image_types WHERE image_type_codename = ? LIMIT 1';
-		$result = $this->ci->db->query($sql, array($selectedThumb[3]))
+		        FROM image_types WHERE image_type_id = ? LIMIT 1';
+		$result = $this->ci->db->query($sql, array($selectedThumb[3]));
 		if($result->num_rows() != 1) {
 			$this->ci->user_auth->logout();
 			redirect('/', 'location');
@@ -134,7 +136,7 @@ class Image_upload {
 		$bits = explode('/', $selectedThumb[0]);
 		if ($bits[1] == 'tmp') {
 			//Get mime
-			if (function_exists('exif_imagetype') {
+			if (function_exists('exif_imagetype')) {
 				$mime = image_type_to_mime_type(exif_imagetype($selectedThumb[0]));
 			} else {
 				$byDot = explode('/', $selectedThumb[0]);
@@ -159,6 +161,7 @@ class Image_upload {
 				}
 			}
 			$result = $result->first_row();
+			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($image, $newImage, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
 			$id = $this->ci->image->add($type, $image, array($title, $mime));
 			if ($id != false) {
@@ -166,12 +169,12 @@ class Image_upload {
 					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
 						if (isset($newImages['oldID'])) {
 							$this->ci->image->delete('image', $id); //TODO log orphaned image if false
-							$newImage['oldID'] = $newImages['list']
+							$newImage['oldID'] = $newImages['list'];
 						} else {
 							$newImages['oldID'] = true;
 						}
 						$newImages['list'] = $id;
-					} elseif
+					}
 				}
 			} else {
 				$objResponse->addAssign("submitButton","value","Not Saved");
@@ -180,8 +183,8 @@ class Image_upload {
 			}
 		} else {
 			$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? AND photo_thumbs_image_type_id = ? LIMIT 1';
-			$this->ci->db->query($sql, array($selectedThumb[4], $result->first_row()->image_type_id));
-			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['x2'] , $formData['y2']);
+			$this->ci->db->query($sql, array($selectedThumb[4], $selectedThumb[3]));
+			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
 		}
 
 		$objResponse->addAssign("submitButton","value","Save");
@@ -203,12 +206,21 @@ class Image_upload {
 				break;
 		}
 		if ($data['image_width'] > VIEW_WIDTH) {
-			//RESIZE
+			$ratio_orig = $data['image_width']/$data['image_height'];
+			$width = VIEW_WIDTH;
+			$height = VIEW_HEIGHT;
+			if (VIEW_WIDTH/VIEW_HEIGHT > $ratio_orig) {
+			   $width = VIEW_HEIGHT*$ratio_orig;
+			} else {
+			   $height = VIEW_WIDTH/$ratio_orig;
+			}
+			$newImage = imagecreatetruecolor($width, $height);
+			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $data['image_width'], $data['image_height']);
 		} else {
 			$newImage = $image;
 		}
-		$x = imagesx($image);
-		$y = imagesy($image);
+		$x = imagesx($newImage);
+		$y = imagesy($newImage);
 		
 		if ($photo) {
 			$info = array('author_id' => $this->ci->user_auth->entityId,
@@ -216,23 +228,22 @@ class Image_upload {
 			              'x'         => $x,
 			              'y'         => $y,
 			              'mime'      => $data['file_type'],);
-				$info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime']);
-			$id = $this->ci->image->add('photo', &$newImage, $info)
+			$id = $this->ci->image->add('photo', &$newImage, $info);
 			if ($id === false) {
 				return false;
 			} else {
 				foreach ($ThumbDetails->result() as $Thumb) {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => photoLocation($id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
 				}
 			}
 		} else {
 			foreach ($ThumbDetails->result() as $Thumb) {
-				$_SESSION['img'][] = array('list' => count($_SESSION['img'])
+				$_SESSION['img'][] = array('list' => count($_SESSION['img']),
 				                           'type' => $Thumb->image_type_id);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
+				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
 			}
 		}
 		return $output;
