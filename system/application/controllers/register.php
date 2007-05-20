@@ -161,7 +161,7 @@ class Register extends Controller {
 				$xajax_response->addScriptCall('Slideshow.reset');
 				$get_slideshow = $CI->slideshow->getPhotos($soc_id);
 				foreach ($get_slideshow->result() as $photo) {
-					$xajax_response->addScriptCall('Slideshow.add', imageLocation($slide->photo_id, 'slideshow'));
+					$xajax_response->addScriptCall('Slideshow.add', '/photos/slideshow/'.$slide->photo_id);
 				}
 				$xajax_response->addScriptCall('Slideshow.load');
 				}

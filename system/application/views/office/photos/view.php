@@ -146,7 +146,7 @@ if ($status == 'unassigned') {
 				<?php for($i=0; $i < count($suggestion); $i++) { ?>
 					<h3><?=$i+1?>:</h3>
 					<label for="imgid_<?=$i?>_img">Photo</label>
-					<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
+					<?=$this->image->getThumb($suggestion[$i], 'medium')?>
 					<br />
 					<label for="imgid_<?=$i?>_comment">Comment:</label>
 					<textarea name="imgid_<?=$i?>_comment"></textarea>
@@ -167,7 +167,7 @@ if ($status == 'unassigned') {
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>
-			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><img src="<?php echo(imageLocation($chosen_photo, 'medium')); ?>" alt="<?php echo($description); ?>" title="<?php echo($description); ?>" /></a><br />
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><?=$this->image->getThumb($chosen_photo, 'medium')?></a><br />
 			<?php echo($title); ?>
 		</div>
 <?php } ?>
@@ -183,10 +183,10 @@ if ($status == 'ready') {
 }
 
 foreach ($photos as $photo) {
-	$photo['url'] = imageLocation($photo['id'], $photo_size);
+	$photo['tag'] = $this->image->getThumb($photo['id'], $photo_size);
 
 	echo('				<div class="photo_item" style="width: '.$photo_width.'%;">');
-	echo('					<a href="/office/gallery/show/' . $photo['id'] . '"><img src="' . $photo['url'] . '" alt="' . $photo['comment'] . '" title="' . $photo['comment'] . '" /></a><br />');
+	echo('					<a href="/office/gallery/show/' . $photo['id'] . '">'.$photo['tag'].'</a><br />');
 	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
 		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
 	}

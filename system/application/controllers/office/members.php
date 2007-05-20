@@ -554,7 +554,7 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
-		$this->load->helper('images');
+		$this->load->library('image');
 		
 		$mode = 'view';
 		

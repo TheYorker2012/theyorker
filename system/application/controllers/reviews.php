@@ -21,7 +21,7 @@ class Reviews extends Controller
 		//And possible forms later on for the admin pages
 		$this->load->helper('form');
 		$this->load->helper('url');
-		$this->load->helper('images');
+		$this->load->library('image');
 
 		//Load page model
 		$this->load->model('pages_model');
@@ -180,7 +180,7 @@ class Reviews extends Controller
 		foreach ($league_data as &$league)
 		{
 			$leagues[] = array(
-				'league_image_path'=>(imageLocation($league['league_image_id'], 'puffer')),
+				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -322,7 +322,7 @@ class Reviews extends Controller
 					$slideshow_photos = $this->slideshow->GetReviewPhotos($database_result[$reviewno]['organisation_entity_id'], $item_type, true);
 					foreach($slideshow_photos as &$slideshow_photo)
 					{
-						$slideshow_photo['location'] = photoLocation($slideshow_photo['id']);
+						$slideshow_photo['location'] = '/photo/slideshow/'.$slideshow_photo['id']; //changed from photo
 					}
 					$entries[$reviewno]['slideshow'] = $slideshow_photos;
 
@@ -413,7 +413,7 @@ class Reviews extends Controller
 				$slideshow_photos = $this->slideshow->GetReviewPhotos($reviews[$row]['review_org_id'], $reviews[$row]['review_content_type_id'], false);
 				foreach($slideshow_photos as &$slideshow_photo)
 				{
-					$slideshow_photo['location'] = photoLocation($slideshow_photo['id']);
+					$slideshow_photo['location'] = '/photos/slideshow/'.$slideshow_photo['id']; //This was originally fetching photos
 				}
 				$reviews[$row]['slideshow'] = $slideshow_photos;
 				
@@ -438,7 +438,7 @@ class Reviews extends Controller
 		foreach ($league_data as &$league)
 		{
 			$leagues[] = array(
-				'league_image_path'=>(imageLocation($league['league_image_id'], 'puffer')),
+				'league_image_path'=> '/photos/puffer/'.$league['league_image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']

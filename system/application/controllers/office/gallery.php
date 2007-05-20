@@ -24,7 +24,8 @@ class Gallery extends Controller {
 	 */
 	function __construct() {
 		parent::Controller();
-		$this->load->helper(array('url', 'form', 'images', 'entity'));
+		$this->load->helper(array('url', 'form', 'entity'));
+		$this->load->library('image');
 	}
 	
 	function index() {
@@ -262,7 +263,7 @@ class Gallery extends Controller {
 		if (!CheckPermissions('office')) return;
 		
 		$this->load->library(array('image_lib', 'upload', 'xajax'));
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 		$this->xajax->processRequests();
 		
@@ -297,7 +298,7 @@ class Gallery extends Controller {
 		if (!CheckPermissions('office')) return;
 		
 		$this->load->library(array('image_lib', 'xajax'));
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 		$this->xajax->processRequests();
 		

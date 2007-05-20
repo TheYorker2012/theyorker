@@ -4,28 +4,28 @@ class Image {
 	
 	private $ci;
 
-	public function Image {
+	public function Image() {
 		$this->ci = &get_instance();
 	}
 	
 	public function getPhoto($photoID) {
 		$data = $this->get($photoID, 'photos');
-		return '<img src="/photo/'.$photoID.'" height="'.$data->photo_height.'" width="'.$data->photo_width.'" alt="'.$data->photo_title.'" title="'.$data->photo_title.'" />';
+		return '<img src="/photos/'.$photoID.'" height="'.$data->photo_height.'" width="'.$data->photo_width.'" alt="'.$data->photo_title.'" title="'.$data->photo_title.'" />';
 	}
 	
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguements = array()) {
 		$data = $this->get($photoID, 'thumbs', $type);
 		$tagInner = '';
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		$tag = '<img src="/photo/'.$type.'/'.$photoID.'" height="'.$data->image_type_height.'" width="'.$data->image_type_width.'" alt="'.$data->photo_title.'" title="'.$data->photo_title.'" '.$tagInner.'/>';
-		if ($viewLarge) $tag = '<a href="/photo/full/'.$photoID.'">'.$tag.'</a>';
+		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" height="'.$data->image_type_height.'" width="'.$data->image_type_width.'" alt="'.$data->photo_title.'" title="'.$data->photo_title.'" '.$tagInner.'/>';
+		if ($viewLarge) $tag = '<a href="/photos/full/'.$photoID.'">'.$tag.'</a>';
 		return $tag;
 	}
 	
 	public function getImage($imageID, $type, $extraTags = array(), $extraArguements = array()) {
 		$data = $this->get($imageID, 'images');
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		return '<img src="/image/'.$type.'/'.$imageID.'" height="'.$data->image_type_height'" width="'.$data->image_type_width.'" alt="'.$data->image_title.'" title="'.$data->image_title.'" '.$tagInner.'/>';
+		return '<img src="/images/'.$type.'/'.$imageID.'" height="'.$data->image_type_height.'" width="'.$data->image_type_width.'" alt="'.$data->image_title.'" title="'.$data->image_title.'" '.$tagInner.'/>';
 	}
 	
 	private function get($id, $table, $type = null) {
@@ -58,11 +58,15 @@ class Image {
 				return false;
 		}
 		if ($result->num_rows() == 1 and $table == 'images') {
-			return $result->first_row();
+			return $result->first_row('array');
 		} elseif ($result->num_rows() == 1 and $result->first_row()->photo_deleted = 0) {
-			return $result->first_row();
+			return $result->first_row('array');
 		} else {
-			return $buggered; //TODO NULLS
+			switch ($table) {
+				case 'photos':
+					return array('photo_height' => 512, 'photo_width' => 512, 'photo_title' => 'Photo not found');
+					break;
+			}
 		}
 	}
 	
@@ -95,21 +99,21 @@ class Image {
 			case 'photo':
 				//set switch to deleted
 				$sql = 'DELETE FROM photos WHERE photo_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id)) {
+				if ($this->ci->db->simple_query($sql, array($id))) {
 					return true;
 				}
 				break;
 			case 'image':
 				//delete from db
 				$sql = 'DELETE FROM images WHERE image_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id)) {
+				if ($this->ci->db->simple_query($sql, array($id))) {
 					return true;
 				}
 				break;
 			case 'thumb':
 				//delete from db
 				$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? and photo_thumbs_image_type_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id, $image_type)) {
+				if ($this->ci->db->simple_query($sql, array($id, $image_type))) {
 					return true;
 				}
 				break;
@@ -163,3 +167,5 @@ class Image {
 		$this->ci->db->query($sql, array($photoID, $type->id));
 		return true;
 	}
+}
+?>

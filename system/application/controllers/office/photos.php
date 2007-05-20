@@ -67,7 +67,7 @@ class Photos extends Controller
 				/// @TODO:Ensure request is open for new suggestions
 				if (isset($_SESSION['img']['list'])) {
 					$data['suggestion'] = array_unique($_SESSION['img']['list']);
-					$this->load->helper('images');
+					$this->load->library('image');
 					/// Reset list of new suggestions
 					unset($_SESSION['img']);
 				}
@@ -244,7 +244,7 @@ class Photos extends Controller
 				}
 
 				/// Load image helper to get suggested photos' thumbnails
-				$this->load->helper('images');
+				$this->load->library('image');
 
 				/// Load main frame with view
 				$this->main_frame->SetContentSimple('office/photos/view', $data);

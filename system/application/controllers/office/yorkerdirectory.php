@@ -25,7 +25,7 @@ class Yorkerdirectory extends Controller
 		$this->load->model('businesscards_model');
 
 		$this->load->helper('text');
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->load->helper('wikilink');
 	}
 
@@ -307,7 +307,8 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
-		$this->load->helper(array('images', 'url'));
+		$this->load->helper('url');
+		$this->load->library('image')
 		$this->load->library('image_upload');
 
 		//Get Data And toolbar

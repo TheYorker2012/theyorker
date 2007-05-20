@@ -475,7 +475,8 @@ class Reviews extends Controller
 			$this->load->model('slideshow');
 			$this->_SetupNavbar($organisation,$ContextType);
 			$this->main_frame->SetPage('photos');
-			$this->load->helper(array('images', 'url'));
+			$this->load->helper('url');
+			$this->load->library('image');
 			$this->load->library('image_upload');
 			$data['ContextType'] = $ContextType;
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
