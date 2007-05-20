@@ -308,8 +308,7 @@ class Yorkerdirectory extends Controller
 		$this->pages_model->SetPageCode('viparea_directory_photos');
 		$this->load->model('slideshow');
 		$this->load->helper('url');
-		$this->load->library('image')
-		$this->load->library('image_upload');
+		$this->load->library(array('image', 'image_upload'));
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
@@ -332,11 +331,11 @@ class Yorkerdirectory extends Controller
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));
-			} elseif (isset($_SESSION['img']['list'])) {
-				foreach ($_SESSION['img']['list'] as $newID) {
-					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
+			} elseif (isset($_SESSION['img'])) {
+				foreach ($_SESSION['img'] as $newID) {
+					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
 				}
-				unset($_SESSION['img']['list']);
+				unset($_SESSION['img']);
 			}
 
 			// Insert main text from pages information
