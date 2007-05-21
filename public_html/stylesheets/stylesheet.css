@@ -1159,7 +1159,7 @@ div.RightToolbar div.LifestylePuffer {
 
 
 
-#ArticleBox table {
+#ArticleBox table, .ArticleBox table {
     padding: 0;
     border: 0;
     margin: 0;
@@ -1167,25 +1167,25 @@ div.RightToolbar div.LifestylePuffer {
     width: 100%;
     border-collapse: collapse;
 }
-#ArticleBox tr {
+#ArticleBox tr, .ArticleBox tr {
     font-size: small;
 }
-#ArticleBox .tr2 {
+#ArticleBox .tr2, .ArticleBox .tr2 {
     background-color: #eee;
 }
-#ArticleBox th {
+#ArticleBox th, .ArticleBox th {
     border-bottom: 2px #000 solid;
     text-align: left;
 }
-#ArticleBox td {
+#ArticleBox td, .ArticleBox td {
     border-bottom: 1px #000 solid;
 	vertical-align: top;
 }
-#ArticleBox td a {
+#ArticleBox td a, .ArticleBox td a {
     color: #08c0ef;
     text-decoration: none;
 }
-#ArticleBox td a:hover {
+#ArticleBox td a:hover, .ArticleBox td a:hover {
     text-decoration: underline;
 }
 

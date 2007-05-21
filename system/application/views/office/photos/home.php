@@ -1,6 +1,6 @@
 <?php
 function PrintRequestList ($data, $AssignedColumn = FALSE) {
-	echo('		<div id="ArticleBox">'."\n");
+	echo('		<div class="ArticleBox">'."\n");
 	echo('			<table>'."\n");
 	echo('			    <thead>'."\n");
 	echo('			        <tr>'."\n");
