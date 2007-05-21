@@ -50,8 +50,8 @@ $org_name_regex = '[a-z_\-\d]+';
 
 $route['photos/(.+)/(.+)'] = 'photos/index/$1/$2';
 $route['photos/(.+)'] = 'photos/index/$1';
-$route['images/(.+)'] = 'image/index/$1';
-$route['images/(.+)/(.+)'] = 'image/index/$1/$2';
+$route['image/(.+)'] = 'image/index/$1';
+$route['image/(.+)/(.+)'] = 'image/index/$1/$2';
 
 //****************************************************************************//
 // Routing in the main controller directory                                   //
