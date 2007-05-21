@@ -33,7 +33,7 @@ class Photos_model extends Model
 				WHERE		photo_requests.photo_request_deleted = 0
 				AND			photo_requests.photo_request_chosen_photo_id IS NULL
 				AND			photo_requests.photo_request_article_id = articles.article_id
-				ORDER BY	articles.article_publish_date DESC';
+				ORDER BY	articles.article_publish_date ASC';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0) {
 			foreach ($query->result() as $row) {
