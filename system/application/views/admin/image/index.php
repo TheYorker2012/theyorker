@@ -8,5 +8,5 @@
 <?php } else { ?>
 			<p>There are no image types :(</p>
 <?php } ?>
-</div>
+</div><br />
 <?=$extra?>
