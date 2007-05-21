@@ -3,10 +3,10 @@
 /**
  * @author Mark Goodall (mark.goodall@gmail.com)
  */
-class Images extends Controller
+class Image extends Controller
 {
 	/// Default constructor.
-	function Images() {
+	function Image() {
 		parent::Controller();
 	}
 	

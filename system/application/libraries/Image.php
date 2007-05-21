@@ -26,7 +26,7 @@ class Image {
 		$data = $this->get($imageID, 'images', $type);
 		$tagInner = '';
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		return '<img src="/images/'.$type.'/'.$imageID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
+		return '<img src="/image/'.$type.'/'.$imageID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
 	}
 	
 	private function get($id, $table, $type = null) {
