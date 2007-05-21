@@ -18,6 +18,7 @@
 						<fieldset>
 							<label for="upload">New null image</label>
 							<input type="file" name="upload" /></br>
+							<input type="hidden" name="image_type_id" value="<?=image_type_id?>" />
 							<input type="submit" value="Upload" />
 						</fieldset>
 					</form>
@@ -31,3 +32,4 @@
 		</tbody>
 	</table>
 </div>
+<?=$extra?>

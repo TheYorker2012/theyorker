@@ -181,7 +181,7 @@ $route['admin/directory'] = 'admin/yorkerdirectory';
 $route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
 $route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
 
-$route['admin/images/([0-9]+)'] = 'admin/images';
+$route['admin/imagescp/([a-z]+)'] = 'admin/images/edit/$1';
 
 unset($org_name_regex);
 

@@ -57,7 +57,7 @@ class Image_upload {
 		
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
-		$config['max_size'] = 16777216;
+		$config['max_size'] = 16384;
 		
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');

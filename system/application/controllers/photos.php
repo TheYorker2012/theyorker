@@ -15,10 +15,13 @@ class Photos extends Controller
 			$sql = 'SELECT photo_mime, photo_data FROM photos WHERE photo_id = ? LIMIT 1';
 			$result = $this->db->query($sql, array($id));
 			if ($result->num_rows() == 1) {
+				header('Expires: '.date(DATE_RFC822, strtotime('+1 month')));
+				header('Cache-Control: store, cache');
+				header('Pragma: cache');
 				header('Content-Type: '.$result->first_row()->photo_mime);
 				echo $result->first_row()->photo_data;
 			} else {
-				header('Location: /images/null-blank.jpg');
+				header('HTTP/1.0 404 Not Found');
 			}
 		} elseif ($type == 'view') {
 			die('//TODO page containing full view');
@@ -44,6 +47,8 @@ class Photos extends Controller
 					header('Pragma: cache');
 					header('Content-Type: '.$result->first_row()->image_type_error_mime);
 					echo $result->first_row()->image_type_error_data;
+				} else {
+					header('HTTP/1.0 404 Not Found');
 				}
 			}
 		}

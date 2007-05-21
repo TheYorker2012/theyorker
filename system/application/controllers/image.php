@@ -28,6 +28,8 @@ class Images extends Controller
 				header('Pragma: cache');
 				header('Content-Type: '.$result->first_row()->image_type_error_mime);
 				echo $result->first_row()->image_type_error_data;
+			} else {
+				header('HTTP/1.0 404 Not Found');
 			}
 		}
 	}
