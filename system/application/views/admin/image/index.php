@@ -1,4 +1,4 @@
-<div class="blue_box">
+<div class="blue_box" style="width:638px">
 	<table>
 		<th>
 			<tr>
@@ -8,7 +8,7 @@
 			</tr>
 		</th>
 		<tbody>
-<?php if($imageType->num_rows() > 0) foreach ($imageType as $type) {?>
+<?php if($imageType->num_rows() > 0) foreach ($imageType->result() as $type) {?>
 			<tr>
 				<td><?=$type->image_type_name?></td>
 				<td><?=$this->image->getImage(0, $type->image_type_codename)?></td>
@@ -18,7 +18,7 @@
 						<fieldset>
 							<label for="upload">New null image</label>
 							<input type="file" name="upload" /></br>
-							<input type="hidden" name="image_type_id" value="<?=image_type_id?>" />
+							<input type="hidden" name="image_type_id" value="<?=$type->image_type_id?>" />
 							<input type="submit" value="Upload" />
 						</fieldset>
 					</form>

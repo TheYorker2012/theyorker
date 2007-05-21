@@ -20,7 +20,7 @@ class Imagecp extends Controller {
 			                'image_type_width'				=> $this->input->post('image_type_width'),
 			                'image_type_height'				=> $this->input->post('image_type_height'),
 			                'image_type_codename'			=> $this->input->post('image_type_codename'),
-			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'))
+			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'));
 			$this->db->insert('image_types', $insert);
 		} elseif ($this->input->post('image_type_id')) {
 			$this->load->library('upload');
@@ -34,15 +34,16 @@ class Imagecp extends Controller {
 				$this->messages->AddMessage('error', $this->upload->display_errors());
 			} else {
 				$uploadData = $this->upload->data();
-				$this->where('image_type_id', $this->input->post('image_type_id'))
-				     ->update('image_types', array('image_type_error_mime' => $uploadData['file_type'],
-				                                   'image_type_error_data' => mysql_escape_string(file_get_contents($uploadData['full_path']))));
+				echo var_dump($uploadData);
+				$this->db->where('image_type_id', $this->input->post('image_type_id'))
+				         ->update('image_types', array('image_type_error_mime' => $uploadData['file_type'],
+				                                       'image_type_error_data' => mysql_escape_string(file_get_contents($uploadData['full_path']))));
 				unlink($uploadData['full_path']);
 			}
 		}
 		
 		$data['imageType'] = $this->db->select('image_type_id, image_type_name, image_type_codename')->get('image_types');
-		$data['extra'] = $this->view->load('admin/images/add', null, true);
+		$data['extra'] = $this->load->view('admin/image/add', null, true);
 		
 		$this->main_frame->SetTitle('Image Control Panel');
 		$this->main_frame->SetContentSimple('admin/image/index', $data);
@@ -61,14 +62,14 @@ class Imagecp extends Controller {
 			                'image_type_width'				=> $this->input->post('image_type_width'),
 			                'image_type_height'				=> $this->input->post('image_type_height'),
 			                'image_type_codename'			=> $this->input->post('image_type_codename'),
-			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'))
+			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'));
 			$this->db->where('image_type_id', $this->input->post('image_type_id'))->update('image_types', $insert);
 		}
 		
 		$data['imageType'] = $this->db->select('image_type_name, image_type_codename')->get('image_types');
 		$typeData = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height, image_type_photo_thumbnail, image_type_codename')
 		                     ->getwhere('image_types', array('image_type_codename' => $codename))->first_row('array');
-		$data['extra'] = $this->view->load('admin/images/edit', $typeData, true);
+		$data['extra'] = $this->load->view('admin/image/edit', $typeData, true);
 		
 		$this->main_frame->SetTitle('Image Control Panel');
 		$this->main_frame->SetContentSimple('admin/image/index', $data);

@@ -23,7 +23,7 @@ class Image {
 	}
 	
 	public function getImage($imageID, $type, $extraTags = array(), $extraArguements = array()) {
-		$data = $this->get($imageID, 'images');
+		$data = $this->get($imageID, 'images', $type);
 		$tagInner = '';
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
 		return '<img src="/images/'.$type.'/'.$imageID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
