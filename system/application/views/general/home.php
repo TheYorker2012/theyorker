@@ -5,8 +5,8 @@ function get_link_ref($article,$prefix){
 
 function print_box($articles,$heading,$prefix){
 	if (count($articles) != 0) {
-		echo('  <h2>'.$heading.'</h2>'."\n"); 
-		echo('  <div class="NewsBox">'."\n"); 
+		echo('  <h2>'.$heading.'</h2>'."\n");
+		echo('  <div class="NewsBox">'."\n");
 		echo('          <a class="NewsImg"'.get_link_ref($articles[0],$prefix).'>'."\n");
 		echo('                  '.$articles[0]['photo_xhtml']."\n").'';
 		echo('          </a>'."\n");
@@ -21,7 +21,7 @@ function print_box($articles,$heading,$prefix){
 			echo('          </ul>'."\n");
 		}
 		echo('  </div>'."\n");
-		
+
 	}
 };
 
@@ -43,12 +43,12 @@ function print_middle_box($title,$article_array){
 <div id="RightColumn">
 	<h2 class="first">Links</h2>
 	<div class="Entry">
-<?php 	if ($link->num_rows() > 0) 
-	{ 
+<?php 	if ($link->num_rows() > 0)
+	{
 	foreach($link->result() as $picture){
 		echo('	<a href="'.$picture->link_url.'">'.imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension, null, 'title = "'.$picture->link_name.'"').'</a>'."\n");
-		} 
-	} else { 
+		}
+	} else {
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
 	}
 ?>
@@ -61,7 +61,7 @@ function print_middle_box($title,$article_array){
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
-		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
+		"<?php echo htmlentities($quote->quote_text);?>" - <b><?php echo htmlentities($quote->quote_author);?></b>
 	</div>
 </div>
 

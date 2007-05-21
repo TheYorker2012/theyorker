@@ -550,52 +550,7 @@ class Article_model extends Model
 		$this->db->query($sql, array($article_id,$tag_id));
 	}
 
-	/*****************************************************
-	*  ARTICLE PHOTOS
-	* (These functions are outdated, and will need to be moved to photo requests)
-	*****************************************************/
-	
-	/**
-	 * Inserts a new article photo into the database.
-	 */
-	function InsertArticlePhoto($article_id, $photo_id, $number, $image_type)
-	{
-		$sql = 'INSERT INTO article_photos (
-				article_photo_article_id,
-				article_photo_photo_id,
-				article_photo_number,
-				article_photo_image_type)
-			VALUES (?, ?, ?, ?)';
-		$this->db->query($sql, array($article_id,$photo_id,$number,$image_type));
-	}
 
-	/**
-	 * Given an article photo id, it updates the article photo with the given data.
-	 */
-	function UpdateArticlePhoto($id, $article_id, $photo_id, $number, $image_type)
-	{
-		$sql = 'UPDATE article_photos
-			SET article_photo_article_id = ?,
-				article_photo_photo_id = ?,
-				article_photo_number = ?,
-				article_photo_image_type = ?
-			WHERE article_photo_id = ?';
-		$this->db->query($sql, array($article_id,$photo_id,$number,$image_type,$id));
-	}
-
-    /**
-	 * Deletes the article photo with the given id.
-	 */
-	function DeleteArticlePhoto($id)
-	{
-		$sql = 'DELETE FROM article_photos
-			WHERE article_photo_id = ?';
-		$this->db->query($sql, array($id));
-	}
-	
-	
-	
-	
 	function PullArticle($id, $editor_id)
 	{
 		$sql = 'UPDATE	articles

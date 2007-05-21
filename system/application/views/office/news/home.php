@@ -1,3 +1,77 @@
+<?php
+function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
+	$colCount = 4;
+	if ($parent_type)	$colCount++;
+	if ($suggestion)	$colCount--;
+	$colCount = floor(100 / $colCount);
+	echo('		<div class="ArticleBox">'."\n");
+	echo('			<table>'."\n");
+	echo('			    <thead>'."\n");
+	echo('			        <tr>'."\n");
+	echo('				        <th style="width:'.$colCount.'%;">Title</th>'."\n");
+	if ($parent_type) {
+		echo('				        <th style="width:'.$colCount.'%;">Box</th>'."\n");
+	}
+	if ($suggestion) {
+		echo('				        <th style="width:'.$colCount.'%;">Suggested by</th>'."\n");
+		echo('				        <th style="text-align:right;width:'.$colCount.'%;">Submitted</th>'."\n");
+	} else {
+		echo('				        <th style="width:'.$colCount.'%;">Reporters</th>'."\n");
+		echo('				        <th style="width:'.$colCount.'%;">Status</th>'."\n");
+		echo('				        <th style="text-align:right;width:'.$colCount.'%;">Deadline</th>'."\n");
+	}
+	echo('	    		    </tr>'."\n");
+	echo('			    </thead>'."\n");
+	echo('	            <tbody>'."\n");
+	$RowStyle = FALSE;
+	if (count($data) == 0) {
+		echo('						<tr>'."\n");
+		echo('							<td colspan="0" style="text-align:center; font-style:italic;">None</td>'."\n");
+		echo('						</tr>'."\n");
+	} else {
+		foreach ($data as $row) {
+			if ($row['title'] == '') {
+				$row['title'] = '<i>no title</i>';
+			}
+			echo('					<tr ');
+			if ($RowStyle) {
+				echo('class="tr2"');
+			}
+			echo('>'."\n");
+			echo('						<td><a href="/office/news/' . $row['id'] . '/">' . $row['title'] . '</a></td>'."\n");
+			if ($parent_type) {
+				echo('						<td>' . $row['box'] . '</td>'."\n");
+			}
+			if ($suggestion) {
+				echo('						<td>' . $row['suggester'] . '</td>'."\n");
+				echo('						<td style="text-align:right;">' . date('d/m/y @ H:i', $row['created']) . '</td>'."\n");
+			} else {
+				echo('						<td>');
+				foreach ($row['reporters'] as $reporter) {
+					echo('<img src="/images/prototype/news/person.gif" alt="Reporter" title="Reporter" /> ' . $reporter['name'] . '<br />');
+				}
+				echo('</td>'."\n");
+				echo('						<td>');
+				foreach ($row['reporters'] as $reporter) {
+					echo('<img src="/images/prototype/news/' . $reporter['status'] . '.gif" alt="' . $reporter['status'] . '" title="' . $reporter['status'] . '" /> ' . $reporter['status'] . '<br />');
+				}
+				echo('</td>'."\n");
+				echo('						<td style="text-align:right;');
+				if (mktime() > $row['deadline']) {
+					echo('color:red;');
+				}
+				echo('">' . date('d/m/y @ H:i', $row['deadline']) . '</td>'."\n");
+			}
+			echo('					</tr>'."\n");
+			$RowStyle = !$RowStyle;
+		}
+	}
+	echo('			    </tbody>'."\n");
+	echo('			</table>'."\n");
+	echo('		</div>'."\n");
+}
+?>
+
 	<div class="RightToolbar">
 		<h4><?php echo $tasks_heading; ?></h4>
 		<ul>
@@ -7,81 +81,32 @@
 	</div>
 
 	<div class="blue_box">
-		<h2><?php echo $mine_heading; ?></h2>
-		<div id="ArticleBox">
-			<table>
-			    <thead>
-			        <tr>
-				        <th>Article Title</th>
-				        <th>Box</th>
-				        <th>Reporters</th>
-				        <th>Status</th>
-	    		    </tr>
-			    </thead>
-            <tbody>
-				<?php if (count($my_requests) == 0) { ?>
-				<tr>
-				<td colspan="4" style="text-align:center;">You have no requests</td>
-				</tr>
-				<?php } else {
-					$row_style = false;
-					foreach ($my_requests as $request) { ?>
-						<tr<?php if ($row_style) { echo ' class="tr2"'; }?>>
-							<td><a href="/office/news/<?php echo $request['id']; ?>"><?php echo $request['title']; ?></a></td>
-							<td><?php echo $request['box']; ?></td>
-							<td><?php foreach ($request['reporters'] as $reporter) { echo ($reporter['name'] . '<br />'); } ?></td>
-							<td><?php foreach ($request['reporters'] as $reporter) { echo ($reporter['status'] . '<br />'); } ?></td>
-						</tr>
-					<?php $row_style = !$row_style;
-					}
-				} ?>
-			    </tbody>
-			</table>
-		</div>
-	</div>
-	<div class="grey_box">
 		<h2><?php echo $box_display_name; ?> box...</h2>
-		<div id="ArticleBox">
-			<table>
-			    <thead>
-			        <tr>
-				        <th>Article Title</th>
-						<?php if ($parent_type) { ?><th>Box</th><?php } ?>
-				        <th>Reporters</th>
-				        <th>Status</th>
-	    		    </tr>
-			    </thead>
-            <tbody>
-				<?php if ((count($box_contents) == 0) && (count($suggestions) == 0)) { ?>
-				<tr>
-				<td colspan="0" style="text-align:center;">Box is empty</td>
-				</tr>
-				<?php } else {
-					$row_style = false;
-					foreach ($suggestions as $suggestion) { ?>
-						<tr<?php if ($row_style) { echo ' class="tr2"'; }?>>
-							<td><a href="/office/news/<?php echo $suggestion['id']; ?>"><?php if ($suggestion['title'] == '') { echo '<i>no title</i>'; } else { echo $suggestion['title']; } ?></a></td>
-							<?php if ($parent_type) { ?><td><?php echo $suggestion['box']; ?></td><?php } ?>
-							<td><?php echo $suggestion['username']; ?></td>
-							<td>suggestion</td>
-						</tr>
-					<?php $row_style = !$row_style;
-					}
-					foreach ($box_contents as $request) { ?>
-						<tr<?php if ($row_style) { echo ' class="tr2"'; }?>>
-							<td><a href="/office/news/<?php echo $request['id']; ?>"><?php if ($request['title'] == '') { echo '<i>no title</i>'; } else { echo $request['title']; } ?></a></td>
-							<?php if ($parent_type) { ?><td><?php echo $request['box']; ?></td><?php } ?>
-							<td>
-							<?php foreach ($request['reporters'] as $reporter) { echo ($reporter['name'] . '<br />'); } ?>
-							</td>
-							<td>
-							<?php foreach ($request['reporters'] as $reporter) { echo ($reporter['status'] . '<br />'); } ?>
-							</td>
-						</tr>
-					<?php $row_style = !$row_style;
-					}
-				} ?>
-			    </tbody>
-			</table>
-		</div>
+		Welcome to this box, there are currently:
+		<ul>
+			<li><?php echo(count($box_contents['suggestion'])); ?> suggestions</li>
+			<li><?php echo(count($box_contents['unassigned'])); ?> unassigned requests</li>
+			<li><?php echo(count($box_contents['assigned'])); ?> assigned requests</li>
+			<li><?php echo(count($box_contents['ready'])); ?> ready articles</li>
+		</ul>
+	</div>
+
+	<div class="grey_box" style="width:auto">
+		<h2>suggestions...</h2>
+		<?php PrintRequestList($box_contents['suggestion'],$parent_type,TRUE); ?>
+	</div>
+
+	<div class="grey_box" style="width:auto">
+		<h2>unassigned requests...</h2>
+		<?php PrintRequestList($box_contents['unassigned'],$parent_type); ?>
+	</div>
+
+	<div class="grey_box" style="width:auto">
+		<h2>assigned requests...</h2>
+		<?php PrintRequestList($box_contents['assigned'],$parent_type); ?>
+	</div>
+
+	<div class="grey_box" style="width:auto">
+		<h2>ready articles...</h2>
+		<?php PrintRequestList($box_contents['ready'],$parent_type); ?>
 	</div>
