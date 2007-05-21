@@ -38,7 +38,7 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 				echo('class="tr2"');
 			}
 			echo('>'."\n");
-			echo('						<td><a href="/office/news/' . $row['id'] . '/">' . $row['title'] . '</a></td>'."\n");
+			echo('						<td><a href="/office/news/' . $row['id'] . '/"><img src="/images/prototype/news/article-small.gif" alt="Article Request" title="Article Request" /> ' . $row['title'] . '</a></td>'."\n");
 			if ($parent_type) {
 				echo('						<td>' . $row['box'] . '</td>'."\n");
 			}
