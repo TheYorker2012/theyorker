@@ -100,8 +100,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/arts/">Arts</a></li>
 					<li><a href="/news/sport/">Sport</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
-					<li><a href="/reviews/food">Food</a></li>
-					<li><a href="/reviews/drink">Drink</a></li>
+					<!--<li><a href="/reviews/food">Food</a></li>-->
+					<!--<li><a href="/reviews/drink">Drink</a></li>-->
 					<!--<li><a href="/reviews/culture">Culture</a></li>-->
 					<!--<li><a href="/campaign/">Campaigns</a></li>-->
 					<!--<li><a href="/news/archive/">News Archive</a></li>-->
