@@ -34,10 +34,9 @@ class Imagecp extends Controller {
 				$this->messages->AddMessage('error', $this->upload->display_errors());
 			} else {
 				$uploadData = $this->upload->data();
-				echo var_dump($uploadData);
 				$this->db->where('image_type_id', $this->input->post('image_type_id'))
 				         ->update('image_types', array('image_type_error_mime' => $uploadData['file_type'],
-				                                       'image_type_error_data' => mysql_escape_string(file_get_contents($uploadData['full_path']))));
+				                                       'image_type_error_data' => file_get_contents($uploadData['full_path'])));
 				unlink($uploadData['full_path']);
 			}
 		}
