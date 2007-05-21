@@ -22,27 +22,10 @@ class Imagecp extends Controller {
 			                'image_type_codename'			=> $this->input->post('image_type_codename'),
 			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'));
 			$this->db->insert('image_types', $insert);
-		} elseif ($this->input->post('image_type_id')) {
-			$this->load->library('upload');
-			$config['upload_path'] = './tmp/uploads/';
-			$config['allowed_types'] = 'gif|jpg|png';
-			$config['max_size'] = '2048';
-			$this->upload->initialize($config);
-			
-			if (!$this->upload->do_upload('upload')) {
-				$this->load->library('messages');
-				$this->messages->AddMessage('error', $this->upload->display_errors());
-			} else {
-				$uploadData = $this->upload->data();
-				$this->db->where('image_type_id', $this->input->post('image_type_id'))
-				         ->update('image_types', array('image_type_error_mime' => $uploadData['file_type'],
-				                                       'image_type_error_data' => file_get_contents($uploadData['full_path'])));
-				unlink($uploadData['full_path']);
-			}
 		}
 		
 		$data['imageType'] = $this->db->select('image_type_id, image_type_name, image_type_codename')->get('image_types');
-		$data['extra'] = $this->load->view('admin/image/add', null, true);
+		$data['extra'] = $this->load->view('admin/image/add', '', true);
 		
 		$this->main_frame->SetTitle('Image Control Panel');
 		$this->main_frame->SetContentSimple('admin/image/index', $data);
@@ -63,7 +46,24 @@ class Imagecp extends Controller {
 			                'image_type_codename'			=> $this->input->post('image_type_codename'),
 			                'image_type_photo_thumbnail'	=> $this->input->post('image_type_photo_thumbnail'));
 			$this->db->where('image_type_id', $this->input->post('image_type_id'))->update('image_types', $insert);
-		}
+		} elseif ($this->input->post('image_type_id')) {
+				$this->load->library('upload');
+				$config['upload_path'] = './tmp/uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['max_size'] = '2048';
+				$this->upload->initialize($config);
+
+				if (!$this->upload->do_upload('upload')) {
+					$this->load->library('messages');
+					$this->messages->AddMessage('error', $this->upload->display_errors());
+				} else {
+					$uploadData = $this->upload->data();
+					$this->db->where('image_type_id', $this->input->post('image_type_id'))
+					         ->update('image_types', array('image_type_error_mime' => $uploadData['file_type'],
+					                                       'image_type_error_data' => file_get_contents($uploadData['full_path'])));
+					unlink($uploadData['full_path']);
+				}
+			}
 		
 		$data['imageType'] = $this->db->select('image_type_name, image_type_codename')->get('image_types');
 		$typeData = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height, image_type_photo_thumbnail, image_type_codename')

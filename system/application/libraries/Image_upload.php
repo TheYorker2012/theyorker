@@ -223,6 +223,7 @@ class Image_upload {
 		$y = imagesy($newImage);
 		
 		if ($photo) {
+			unlink($data['full_path']);
 			$info = array('author_id' => $this->ci->user_auth->entityId,
 			              'title'     => $this->ci->input->post('title'.$form_value),
 			              'x'         => $x,

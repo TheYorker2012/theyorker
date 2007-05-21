@@ -16,5 +16,15 @@
 			<input type="submit" value="Save"/>
 		</fieldset>
 	</form>
+	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
+		<fieldset>
+			<legend>Null Image</legend>
+			<?=$this->image->getImage(0, $type->image_type_codename)?><br />
+			<label for="upload">New null image</label>
+			<input type="file" name="upload" /></br>
+			<input type="hidden" name="image_type_id" value="<?=$type->image_type_id?>" />
+			<input type="submit" value="Upload" />
+		</fieldset>
+	</form>
 </div>
 <?php }?>

@@ -1,35 +1,12 @@
 <div class="blue_box" style="width:638px">
-	<table>
-		<th>
-			<tr>
-				<td>Image Type</td>
-				<td>Null Image</td>
-				<td>Options</td>
-			</tr>
-		</th>
-		<tbody>
 <?php if($imageType->num_rows() > 0) foreach ($imageType->result() as $type) {?>
-			<tr>
-				<td><?=$type->image_type_name?></td>
-				<td><?=$this->image->getImage(0, $type->image_type_codename)?></td>
-				<td>
-					<a href="<?=$type->image_type_codename?>">Edit</a>,
-					<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
-						<fieldset>
-							<label for="upload">New null image</label>
-							<input type="file" name="upload" /></br>
-							<input type="hidden" name="image_type_id" value="<?=$type->image_type_id?>" />
-							<input type="submit" value="Upload" />
-						</fieldset>
-					</form>
-				</td>
-			</tr>
+	<div>
+		<h3><?=$type->image_type_name?></h3>
+		<?=$this->image->getImage(0, $type->image_type_codename)?><br />
+		<a href="imagecp/<?=$type->image_type_codename?>">Edit</a>, <a href="imagecp/view/<?=$type->image_type_codename?>">View All</a>
+	</div>
 <?php } else { ?>
-			<tr>
-				<td colspan="3">There are no image types :(</td>
-			</tr>
+			<p>There are no image types :(</p>
 <?php } ?>
-		</tbody>
-	</table>
 </div>
 <?=$extra?>
