@@ -737,8 +737,8 @@ class News extends Controller
 			if (($this->input->post('confirm_publish') == 'Publish') && (count($errors) == 0)) {
 				if (!is_numeric($this->input->post('r_publish'))) {
 					$this->main_frame->AddMessage('error','Please select a date and time to publish the article.');
-				} elseif ($this->input->post('r_publish') < mktime()) {
-					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
+//				} elseif ($this->input->post('r_publish') < mktime()) {
+//					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
 				} elseif ($this->input->post('r_publish') > (mktime() + (60*60*24*365))) {
 					$this->main_frame->AddMessage('error','Please select a publish date within the next year.');
 				} else {
