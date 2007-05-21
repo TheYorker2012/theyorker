@@ -544,7 +544,7 @@ class User_auth extends model {
 			$salt = $this->getRandomData();
 		}
 
-		$hash = sha1($this->salt.$password);
+		$hash = sha1($salt.$password);
 		
 		$sql = 'UPDATE users 
 			SET user_office_password = ?
