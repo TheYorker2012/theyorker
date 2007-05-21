@@ -3,7 +3,7 @@
 	<div class="Entry">
 		This page allows you to edit quotes <b>live</b>. Take care.<br />
 		<br />
-		Note that the quotes in the pool are listed in chrionalogical order of when they will appear on the site. This list shows only the next few quotes that are in the queue.
+		Note that the quotes in the pool are listed in <b>chronological order</b> of when they will appear on the site. This list shows only the next few quotes that are in the queue.
 	</div>
 </div>
 
