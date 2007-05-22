@@ -160,13 +160,13 @@ class Image_upload {
 			}
 			switch ($mime) {
 				case 'image/jpeg':
-					$image = imagecreatefromjpeg($selectedThumb[0]);
+					$image = imagecreatefromjpeg('.'.$selectedThumb[0]);
 					break;
 				case 'image/png':
-					$image = imagecreatefrompng($selectedThumb[0]);
+					$image = imagecreatefrompng('.'.$selectedThumb[0]);
 					break;
 				case 'image/gif':
-					$image = imagecreatefromgif($selectedThumb[0]);
+					$image = imagecreatefromgif('.'.$selectedThumb[0]);
 					break;
 			}
 			$result = $result->first_row();
