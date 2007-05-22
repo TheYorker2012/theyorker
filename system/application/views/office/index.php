@@ -6,7 +6,7 @@ function PrintRequestList ($data) {
 	echo('			        <tr>'."\n");
 	echo('				        <th style="width:20%;">Title</th>'."\n");
 	echo('				        <th style="width:20%;">Box</th>'."\n");
-	echo('				        <th style="width:20%;">Reporters</th>'."\n");
+	echo('				        <th style="width:20%;">Assignees</th>'."\n");
 	echo('				        <th style="width:20%;">Status</th>'."\n");
 	echo('				        <th style="width:20%;text-align:right;">Deadline</th>'."\n");
 	echo('	    		    </tr>'."\n");
@@ -27,11 +27,17 @@ function PrintRequestList ($data) {
 				echo('class="tr2"');
 			}
 			echo('>'."\n");
-			echo('						<td><a href="/office/news/' . $row['id'] . '/"><img src="/images/prototype/news/article-small.gif" alt="Article Request" title="Article Request" /> ' . $row['title'] . '</a></td>'."\n");
+			echo('						<td><a href="');
+			if ($row['type'] == 'photo') {
+				echo('/office/photos/view/');
+			} else {
+				echo('/office/news/');
+			}
+			echo($row['id'] . '/"><img src="/images/prototype/news/'.$row['type'].'-small.gif" alt="'.$row['type'].' Request" title="'.$row['type'].' Request" /> ' . $row['title'] . '</a></td>'."\n");
 			echo('						<td>' . $row['box'] . '</td>'."\n");
 			echo('						<td>');
 			foreach ($row['reporters'] as $reporter) {
-				echo('<img src="/images/prototype/news/person.gif" alt="Reporter" title="Reporter" /> ' . $reporter['name'] . '<br />');
+				echo('<img src="/images/prototype/news/person.gif" alt="Assignee" title="Assignee" /> ' . $reporter['name'] . '<br />');
 			}
 			echo('</td>'."\n");
 			echo('						<td>');
@@ -86,6 +92,6 @@ function PrintRequestList ($data) {
 </div>
 
 <div class="grey_box" style="width:auto">
-	<h2>my article requests...</h2>
+	<h2>my requests...</h2>
 	<?php PrintRequestList($my_requests); ?>
 </div>
