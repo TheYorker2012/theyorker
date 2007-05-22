@@ -1,4 +1,10 @@
 <div class='RightToolbar'>
+	<h4>Actions</h4>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/banners/upload">Upload new banner(s)</a></li>
+		</ul>
+	</div>
 	<h4>What's this?</h4>
 	<div class="Entry">
 		This page allows you to edit banners <b>live</b>. Take care.<br />

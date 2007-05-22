@@ -81,6 +81,11 @@ class Banners extends Controller
 		}
 		redirect('/office/banners');
 	}
+	
+	function upload() {
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('office/banners', array('banner'), true, false);
+	}
 }
 
 ?>
