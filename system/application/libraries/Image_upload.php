@@ -138,7 +138,7 @@ class Image_upload {
 		if ($bits[1] == 'tmp') {
 			//Get mime
 			if (function_exists('exif_imagetype')) {
-				$mime = image_type_to_mime_type('.'.exif_imagetype($selectedThumb[0]));
+				$mime = image_type_to_mime_type(exif_imagetype('.'.$selectedThumb[0]));
 			} else {
 				$byDot = explode('/', $selectedThumb[0]);
 				switch ($byDot[count($byDot)-1]) {
