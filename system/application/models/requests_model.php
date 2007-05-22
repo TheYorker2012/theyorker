@@ -159,7 +159,8 @@ class Requests_Model extends Model
 					'created'	=>	$row->created,
 					'deadline'	=>	$row->deadline,
 					'title'		=>	$row->title,
-					'box'		=>	$row->box
+					'box'		=>	$row->box,
+					'type'		=>	'article'
 				);
 				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
 				$result[] = $result_item;
