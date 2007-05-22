@@ -36,7 +36,7 @@ if (isset($failure) && $failure) {
 	if (isset($usernames)) {
 ?>
 		<label for="username">Select Organisation:</label>
-			<select name="username">
+			<select name="username" id="username">
 			<?php foreach ($usernames as $id => $name) { ?>
 				<option value="<?php echo $id; ?>"<?php if (isset($default_username) && $id==$default_username) { echo ' selected="selected"'; } ?>><?php echo $name; ?></option>
 			<?php } ?>
