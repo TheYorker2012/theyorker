@@ -179,8 +179,8 @@ class Image_upload {
 				foreach ($_SESSION['img'] as &$newImages) {
 					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
 						if (isset($newImages['oldID'])) {
-							$this->ci->image->delete('image', $id); //TODO log orphaned image if false
-							$newImage['oldID'] = $newImages['list'];
+							$this->ci->image->delete('image', $newImages['oldID']); //TODO log orphaned image if false
+							$newImage['oldID'] = $id;
 						} else {
 							$newImages['oldID'] = true;
 						}
