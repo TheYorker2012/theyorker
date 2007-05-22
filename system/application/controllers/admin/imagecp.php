@@ -76,9 +76,18 @@ class Imagecp extends Controller {
 		$this->main_frame->Load();
 	}
 	
-	function view($codename) {
+	function view($codename, $action = 'view', $id = 0) {
+		if ($action == 'delete') {
+			$this->messages->AddMessage('info', 'Are you sure you want to delete this image? <a href="/office/imagecp/view/'.$codename.'/'.$id.'/deleted">Yes</a>');
+		} elseif ($action == 'deleted') {
+			$sql = 'SELECT image_type_photo_thumbnail FROM image_types WHERE image_type_codename = ? LIMIT 1';
+			$typeDetails = $this-db->query($sql, array($codename));
+			if ($typeDetails->num_rows() == 1 && $typeDetails->first_row()->image_type_photo_thumbnail == 0) {
+				$this->image->delete('image', $id);
+			}
+		}
 		//TODO paginate using pageination lib
-		$sql = 'SELECT image_id, image_title, image_image_type_id FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
+		$sql = 'SELECT image_id, image_title, image_image_type_id, image_type_photo_thumbnail FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
 		$data['images'] = $this->db->query($sql, array($codename));
 		$data['codename'] = $codename;
 		
