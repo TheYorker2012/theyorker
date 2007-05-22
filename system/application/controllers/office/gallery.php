@@ -7,16 +7,6 @@
  */
 define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
-//switch ($_SERVER["HTTP_HOST"]) {
-//	case "theyorker.co.uk":
-//		define('BASE_DIR', '/home/yorker/public_html');
-//		break;
-//	case "www.theyorker.co.uk":
-//		define('BASE_DIR', '/home/yorker/public_html');
-//		break;
-//	default:
-//		define('BASE_DIR', '/home/theyorker/public_html');
-//}
 
 class Gallery extends Controller {
 	/**

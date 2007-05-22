@@ -87,6 +87,11 @@ class Imagecp extends Controller {
 		
 		$this->main_frame->Load();
 	}
+	
+	function add($codename) {
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('admin/imagecp', array($codename), true, false);
+	}
 
 }
 ?>
