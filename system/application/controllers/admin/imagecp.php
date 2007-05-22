@@ -81,7 +81,7 @@ class Imagecp extends Controller {
 			$this->messages->AddMessage('info', 'Are you sure you want to delete this image? <a href="/office/imagecp/view/'.$codename.'/'.$id.'/deleted">Yes</a>');
 		} elseif ($action == 'deleted') {
 			$sql = 'SELECT image_type_photo_thumbnail FROM image_types WHERE image_type_codename = ? LIMIT 1';
-			$typeDetails = $this-db->query($sql, array($codename));
+			$typeDetails = $this->db->query($sql, array($codename));
 			if ($typeDetails->num_rows() == 1 && $typeDetails->first_row()->image_type_photo_thumbnail == 0) {
 				$this->image->delete('image', $id);
 			}
