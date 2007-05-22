@@ -38,7 +38,7 @@ class Photos_model extends Model
 				AND			photo_request_users.photo_request_user_photo_request_id = photo_requests.photo_request_id
 				AND			photo_request_users.photo_request_user_status != "declined"
 				AND			photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
-				AND			photo_requests.photo_request_id = articles.article_id
+				AND			photo_requests.photo_request_article_id = articles.article_id
 				AND			photo_requests.photo_request_chosen_photo_id IS NULL
 				AND			photo_requests.photo_request_approved_user_entity_id IS NULL
 				AND			photo_requests.photo_request_flagged = 0
