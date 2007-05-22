@@ -78,7 +78,7 @@ class Imagecp extends Controller {
 	
 	function view($codename, $action = 'view', $id = 0) {
 		if ($action == 'delete') {
-			$this->messages->AddMessage('info', 'Are you sure you want to delete this image? <a href="/office/imagecp/view/'.$codename.'/'.$id.'/deleted">Yes</a>');
+			$this->messages->AddMessage('info', 'Are you sure you want to delete this image? <a href="/admin/imagecp/view/'.$codename.'/'.$id.'/deleted">Yes</a>');
 		} elseif ($action == 'deleted') {
 			$sql = 'SELECT image_type_photo_thumbnail FROM image_types WHERE image_type_codename = ? LIMIT 1';
 			$typeDetails = $this->db->query($sql, array($codename));
