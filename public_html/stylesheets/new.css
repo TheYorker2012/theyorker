@@ -522,3 +522,13 @@ div#SlideShow {
 	height: 165px;
 	width: 220px;
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in wikitext                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+span.theyorker {
+	color: #ff6a00;
+	font-style: italic;
+	font-weight: bold;
+	text-transform: capitalize;
+}
