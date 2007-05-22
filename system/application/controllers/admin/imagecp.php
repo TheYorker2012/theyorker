@@ -70,7 +70,18 @@ class Imagecp extends Controller {
 		                     ->getwhere('image_types', array('image_type_codename' => $codename))->first_row('array');
 		$data['extra'] = $this->load->view('admin/image/edit', $typeData, true);
 		
-		$this->main_frame->SetTitle('Image Control Panel');
+		$this->main_frame->SetTitle('Image Control Panel - Editing '.$typeData['image_type_name']);
+		$this->main_frame->SetContentSimple('admin/image/index', $data);
+		
+		$this->main_frame->Load();
+	}
+	
+	function view($codename) {
+		//TODO paginate using pageination lib
+		$data['images'] = $this->db->getwhere('images', array('image_type_codename' => $codename));
+		$data['codename'] = $codename;
+		
+		$this->main_frame->SetTitle('Image Control Panel - Viewing '.$typeData['image_type_name']);
 		$this->main_frame->SetContentSimple('admin/image/index', $data);
 		
 		$this->main_frame->Load();

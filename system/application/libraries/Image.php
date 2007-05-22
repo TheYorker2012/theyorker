@@ -23,7 +23,13 @@ class Image {
 	}
 	
 	public function getImage($imageID, $type, $extraTags = array(), $extraArguements = array()) {
-		$data = $this->get($imageID, 'images', $type);
+		if (is_int($type)) {
+			$sql = 'SELECT image_type_codename FROM image_types WHERE image_type_id = ?';
+			$codename = $this->db->query($sql, array($type))->first_row()->image_type_codename;
+			$data = $this->get($imageID, 'images', $codename);
+		} else {
+			$data = $this->get($imageID, 'images', $type);
+		}
 		$tagInner = '';
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
 		return '<img src="/image/'.$type.'/'.$imageID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
