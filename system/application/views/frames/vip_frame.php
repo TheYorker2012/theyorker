@@ -72,6 +72,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
 				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
 				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
+
+				<!--
+					//FIXME
+					<span style="font-size: 16px; font-weight:bold; "><?php echo $vipinfo['name']; ?></span><br />
+					<span style="font-size: 16px; font-weight:bold"><?php echo $vipinfo['organisation']; ?></span>
+				-->
 			</div>
 		</div>
 	</div>
