@@ -124,7 +124,8 @@ class Image_upload {
 		}
 		*/
 
-		$sql = 'SELECT image_type_id AS id, image_type_width AS x, image_type_height AS y
+		$sql = 'SELECT image_type_id AS id, image_type_width AS x,
+		               image_type_height AS y, image_type_codename AS codename
 		        FROM image_types WHERE image_type_id = ? LIMIT 1';
 		$result = $this->ci->db->query($sql, array($selectedThumb[3]));
 		if($result->num_rows() != 1) {
@@ -172,7 +173,7 @@ class Image_upload {
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($image, $newImage, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
-			$id = $this->ci->image->add($type, $image, array($title, $mime));
+			$id = $this->ci->image->add($result->codename, $image, array($title, $mime));
 			if ($id != false) {
 				foreach ($_SESSION['img'] as &$newImages) {
 					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
