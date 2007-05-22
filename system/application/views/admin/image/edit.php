@@ -10,9 +10,9 @@
 			<label for="image_type_width">Width</label>
 			<input type="text" name="image_type_width" value="<?=$image_type_width?>" />
 			<label for="image_type_height">Height</label>
-			<input type="text" name="image_type_height" <?php if($image_type_height==1) echo 'checked'?> />
+			<input type="text" name="image_type_height" value="<?=$image_type_height?>" />
 			<label for="image_type_photo_thumbnail">Is a photo thumbnail</label>
-			<input type="checkbox" name="image_type_photo_thumbnail" value="1" /><br />
+			<input type="checkbox" name="image_type_photo_thumbnail" value="1" <?php if ($image_type_photo_thumbnail == 1) echo 'checked'?> /><br />
 			<input type="submit" value="Save"/>
 		</fieldset>
 	</form>

@@ -75,7 +75,7 @@ class Image_upload {
 		$this->ci->upload->initialize($config);
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-				$this->main_frame->AddMessage('error', $this->ci->upload->display_errors());
+				$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
 			} else {
 				$data[] = $this->ci->upload->data();
 				
