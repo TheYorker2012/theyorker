@@ -78,7 +78,8 @@ class Imagecp extends Controller {
 	
 	function view($codename) {
 		//TODO paginate using pageination lib
-		$data['images'] = $this->db->getwhere('images', array('image_type_codename' => $codename));
+		$sql = 'SELECT image_id, image_title, image_image_type_id FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
+		$data['images'] = $this->db->query($sql, array($codename));
 		$data['codename'] = $codename;
 		
 		$this->main_frame->SetTitle('Image Control Panel - Viewing '.$typeData['image_type_name']);
