@@ -101,7 +101,7 @@ class Image {
 					$id = $info['type_code'];
 				}
 				$sql = 'INSERT INTO images (image_title, image_image_type_id, image_mime, image_data)
-				        VALUES (?, ?, ?, '.mysql_escape_string($imageStr).')'; // We don't want the binary escaped
+				        VALUES (?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
 				$this->ci->db->query($sql, array($info['title'], $id, $info['mime']));
 				break;
 			default:
