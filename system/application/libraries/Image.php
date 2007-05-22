@@ -98,7 +98,7 @@ class Image {
 				if (isset($info['type_id'])) {
 					$id = $info['type_id'];
 				} else {
-					die('portion not implemented yet')
+					die('portion not implemented yet');
 					//$id = $info['type_code'];
 				}
 				$sql = 'INSERT INTO images (image_title, image_image_type_id, image_mime, image_data)
