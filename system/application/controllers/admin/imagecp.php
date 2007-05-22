@@ -24,7 +24,7 @@ class Imagecp extends Controller {
 			$this->db->insert('image_types', $insert);
 		}
 		
-		$data['imageType'] = $this->db->select('image_type_id, image_type_name, image_type_codename')->get('image_types');
+		$data['imageType'] = $this->db->select('image_type_id, image_type_name, image_type_codename, image_type_photo_thumbnail')->get('image_types');
 		$data['extra'] = $this->load->view('admin/image/add', '', true);
 		
 		$this->main_frame->SetTitle('Image Control Panel');
@@ -65,7 +65,7 @@ class Imagecp extends Controller {
 				}
 			}
 		
-		$data['imageType'] = $this->db->select('image_type_name, image_type_codename')->get('image_types');
+		$data['imageType'] = $this->db->select('image_type_name, image_type_codename, image_type_photo_thumbnail')->get('image_types');
 		$typeData = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height, image_type_photo_thumbnail, image_type_codename')
 		                     ->getwhere('image_types', array('image_type_codename' => $codename))->first_row('array');
 		$data['extra'] = $this->load->view('admin/image/edit', $typeData, true);
