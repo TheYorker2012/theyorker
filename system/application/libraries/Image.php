@@ -116,21 +116,21 @@ class Image {
 			case 'photo':
 				//set switch to deleted
 				$sql = 'DELETE FROM photos WHERE photo_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id))) {
+				if ($this->ci->db->query($sql, array($id))) {
 					return true;
 				}
 				break;
 			case 'image':
 				//delete from db
 				$sql = 'DELETE FROM images WHERE image_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id))) {
+				if ($this->ci->db->query($sql, array($id))) {
 					return true;
 				}
 				break;
 			case 'thumb':
 				//delete from db
 				$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? and photo_thumbs_image_type_id = ? LIMIT 1';
-				if ($this->ci->db->simple_query($sql, array($id, $image_type))) {
+				if ($this->ci->db->query($sql, array($id, $image_type))) {
 					return true;
 				}
 				break;
