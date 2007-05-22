@@ -95,10 +95,11 @@ class Image {
 				$this->ci->db->query($sql, array($info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime']));
 				break;
 			case 'image':
-				if ($info['type_id']) {
-					$id = $this->ci->db->select('image_image_type_id')->getwhere('images', array('image_id' => $info['type_id']), 1)->first_row()->image_image_type_id;
+				if (isset($info['type_id'])) {
+					$id = $info['type_id'];
 				} else {
-					$id = $info['type_code'];
+					die('portion not implemented yet')
+					//$id = $info['type_code'];
 				}
 				$sql = 'INSERT INTO images (image_title, image_image_type_id, image_mime, image_data)
 				        VALUES (?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
