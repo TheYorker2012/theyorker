@@ -22,6 +22,7 @@ class Image_upload {
 	
 	public function uploadForm($multiple = false, $photos = false) {
 		$this->ci->xajax->processRequests();
+		$_SESSION['img'] = array();
 		if ($this->ci->input->post('destination')) return true;
 		if ($multiple && $photos) {
 			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
@@ -221,6 +222,8 @@ class Image_upload {
 		}
 		$x = imagesx($newImage);
 		$y = imagesy($newImage);
+		
+		$output = array();
 		
 		if ($photo) {
 			unlink($data['full_path']);
