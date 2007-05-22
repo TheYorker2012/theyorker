@@ -147,19 +147,27 @@ class Image_upload {
 					case 'JPG':
 					case 'JPEG':
 						$mime = 'image/jpeg';
-						$image = imagecreatefromjpeg($selectedThumb[0]);
 						break;
 					case 'png':
 					case 'PNG':
 						$mime = 'image/png';
-						$image = imagecreatefrompng($selectedThumb[0]);
 						break;
 					case 'gif':
 					case 'GIF':
 						$mime = 'image/gif';
-						$image = imagecreatefromgif($selectedThumb[0]);
 						break;
 				}
+			}
+			switch ($mime) {
+				case 'image/jpeg':
+					$image = imagecreatefromjpeg($selectedThumb[0]);
+					break;
+				case 'image/png':
+					$image = imagecreatefrompng($selectedThumb[0]);
+					break;
+				case 'image/gif':
+					$image = imagecreatefromgif($selectedThumb[0]);
+					break;
 			}
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
