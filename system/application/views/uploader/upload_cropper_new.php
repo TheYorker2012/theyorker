@@ -31,7 +31,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('/photos/full/0', 380, 235, 1);
+			this.setImage('/images/null-blank.jpg', 380, 235, 1);
 		},
 
 		/**
