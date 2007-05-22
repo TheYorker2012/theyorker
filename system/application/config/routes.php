@@ -182,7 +182,7 @@ $route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$
 $route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
 
 $route['admin/imagecp/view/([a-z]+)'] = 'admin/imagecp/view/$1';
-$route['admin/imagecp/view/([a-z]+)/([0-9]+)/delete'] = 'admin/imagecp/view/$1/delete/$2';
+$route['admin/imagecp/view/([a-z]+)/([0-9]+)/([a-z]+)'] = 'admin/imagecp/view/$1/$3/$2';
 $route['admin/imagecp/delete/([a-z]+)'] = 'admin/imagecp/delete/$1';
 $route['admin/imagecp/edit/([a-z]+)'] = 'admin/imagecp/edit/$1';
 $route['admin/imagecp/add/([a-z]+)'] = 'admin/imagecp/add/$1';
