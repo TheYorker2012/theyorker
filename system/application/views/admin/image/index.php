@@ -4,7 +4,7 @@
 		<h5><?=$type->image_type_name?></h5>
 		<?=$this->image->getImage(0, $type->image_type_codename)?><br />
 		<a href="<?=site_url('admin/imagecp/edit/'.$type->image_type_codename)?>">Edit</a>,
-<?php if($type->image_type_photo_thumbnail) { ?>
+<?php if(!$type->image_type_photo_thumbnail) { ?>
 		<a href="<?=site_url('admin/imagecp/add/'.$type->image_type_codename)?>">Add</a>,
 <?php } ?>
 		<a href="<?=site_url('admin/imagecp/view/'.$type->image_type_codename)?>">View All</a>,
