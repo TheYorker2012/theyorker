@@ -26,7 +26,7 @@ class Index extends Controller
 
 		$all_requests = array();
 		while ((count($article_requests) > 0) || (count($photos_requests) > 0)) {
-			if ((count($article_requests) > 0) && ($article_requests[0]['deadline'] < $photos_requests[0]['deadline'])) {
+			if ((count($article_requests) > 0) && ((count($photos_requests) == 0) || ($article_requests[0]['deadline'] < $photos_requests[0]['deadline']))) {
 				$all_requests[] = array_shift($article_requests);
 			} else {
 				$all_requests[] = array_shift($photos_requests);

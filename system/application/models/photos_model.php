@@ -55,10 +55,12 @@ class Photos_model extends Model
 					'box'		=>	'Photos',
 					'type'		=>	'photo',
 					'reporters' =>	array(
-										'id'		=>	$row->photographer_id,
-										'byline_id'	=>	NULL,
-										'name'		=>	$row->user_firstname . ' ' . $row->user_surname,
-										'status'	=>	$row->photographer_status
+										array(
+											'id'		=>	$row->photographer_id,
+											'byline_id'	=>	NULL,
+											'name'		=>	$row->user_firstname . ' ' . $row->user_surname,
+											'status'	=>	$row->photographer_status
+										)
 									)
 				);
 			}
