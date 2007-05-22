@@ -68,11 +68,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<h1 id="TopBannerName">
 				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="The Yorker"/></a>
 			</h1>
-			<div id="TopBannerPictures">
-				<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+			<div id="TopBannerPictures" style="line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
 					<span style="font-size: 16px; font-weight:bold; "><?php echo $vipinfo['name']; ?></span><br />
 					<span style="font-size: 16px; font-weight:bold"><?php echo $vipinfo['organisation']; ?></span>
-				</div>
+
 			</div>
 		</div>
 	</div>
