@@ -24,6 +24,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
@@ -66,9 +69,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="The Yorker"/></a>
 			</h1>
 			<div id="TopBannerPictures">
-				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
-				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
-				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
+				<div style="float: right; line-height: 19px; width: 500px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+					<span style="font-size: 16px; font-weight:bold; "><?php echo $vipinfo['name']; ?></span><br />
+					<span style="font-size: 16px; font-weight:bold"><?php echo $vipinfo['organisation']; ?></span>
+				</div>
 			</div>
 		</div>
 	</div>
