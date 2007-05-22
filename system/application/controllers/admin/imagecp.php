@@ -83,7 +83,7 @@ class Imagecp extends Controller {
 		$data['codename'] = $codename;
 		
 		$this->main_frame->SetTitle('Image Control Panel - Viewing '.$typeData['image_type_name']);
-		$this->main_frame->SetContentSimple('admin/image/index', $data);
+		$this->main_frame->SetContentSimple('admin/image/view', $data);
 		
 		$this->main_frame->Load();
 	}
