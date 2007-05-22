@@ -96,7 +96,7 @@ class Image {
 				break;
 			case 'image':
 				if ($info['type_id']) {
-					$id = $CI->db->select('image_image_type_id')->getwhere('images', array('image_id' => $info['type_id']), 1)->first_row()->image_image_type_id;
+					$id = $this->ci->db->select('image_image_type_id')->getwhere('images', array('image_id' => $info['type_id']), 1)->first_row()->image_image_type_id;
 				} else {
 					$id = $info['type_code'];
 				}
