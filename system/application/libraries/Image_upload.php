@@ -104,6 +104,7 @@ class Image_upload {
 		// 4 image id
 		// 5 image type width
 		// 6 image type height
+		// 7 title
 		
 		/* REDO
 		$securityCheck = array_search($selectedThumb[4], $_SESSION['img'][]['list']);// this is the line to change
@@ -173,7 +174,7 @@ class Image_upload {
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($image, $newImage, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
-			$id = $this->ci->image->add($result->codename, $image, array($title, $mime));
+			$id = $this->ci->image->add($result->codename, $image, array($selectedThumb[7], $mime));
 			if ($id != false) {
 				foreach ($_SESSION['img'] as &$newImages) {
 					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
@@ -248,7 +249,7 @@ class Image_upload {
 				foreach ($ThumbDetails->result() as $Thumb) {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
 				}
 			}
 		} else {
@@ -256,7 +257,7 @@ class Image_upload {
 				$_SESSION['img'][] = array('list' => count($_SESSION['img']),
 				                           'type' => $Thumb->image_type_id);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height);
+				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
 			}
 		}
 		return $output;
