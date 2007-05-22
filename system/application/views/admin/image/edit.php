@@ -1,5 +1,5 @@
 <?php if (isset($image_type_id)) {?>
-<div class="blue_box">
+<div class="blue_box" style="overflow:auto;display:block">
 	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<input type="hidden" name="image_type_id" value="<?=$image_type_id?>" />
