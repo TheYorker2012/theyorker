@@ -104,12 +104,11 @@ class Links_Model extends Model {
 	 * Returns an array with users images + links
 	 */
 	function GetUserLinks($user) {
-		$sql = 'SELECT link_id, link_url,link_name,link_image_id, image_file_extension
-			FROM images, links
+		$sql = 'SELECT link_id, link_url, link_name, link_image_id
+			FROM links
 			INNER JOIN user_links
 			ON user_link_link_id = links.link_id
-			WHERE image_id = link_image_id
-			AND user_link_user_entity_id = ?
+			WHERE user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
 		return $this->db->query($sql, array($user));
 	}
