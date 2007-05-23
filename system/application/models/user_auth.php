@@ -391,7 +391,7 @@ class User_auth extends model {
 		if ($row->user_office_password == null) {
 			// The user doesn't have a seperate password, this is a
 			//  low level login
-			if ($this->authUni($password)) {
+			if ($this->authUni($this->entityId,$password)) {
 			//if ($row->entity_password == $hash) {
 				$this->officeType = 'Low';
 				$this->officeInterface = $row->user_office_interface_id;
@@ -544,7 +544,7 @@ class User_auth extends model {
 			$salt = $this->getRandomData();
 		}
 
-		$hash = sha1($this->salt.$password);
+		$hash = sha1($salt.$password);
 		
 		$sql = 'UPDATE users 
 			SET user_office_password = ?

@@ -1,7 +1,6 @@
 <?php
-
 /**
- *	Provides the Yorker Office - News Functionality
+ *	Yorker Office - Article Manager
  *
  *	@author Chris Travis (cdt502 - ctravis@gmail.com)
  */
@@ -40,7 +39,7 @@ class News extends Controller
 	}
 
 	/**
-	 *	@brief Determines which function is used depending on url
+	 *	@brief	Determines which function is used depending on url
 	 */
 	function _remap($method)
 	{
@@ -75,11 +74,9 @@ class News extends Controller
 		/// Get page content
 		$data['tasks_heading'] = $this->pages_model->GetPropertyText('news_office:tasks_heading', TRUE);
 		$data['mine_heading'] = $this->pages_model->GetPropertyText('news_office:my_jobs_heading', TRUE);
-		$data['box_contents'] = $this->requests_model->GetRequestedArticles($type_info['codename']);
-		$data['suggestions'] = $this->requests_model->GetSuggestedArticles($type_info['codename']);
-		$data['parent_type'] = $type_info['has_children'];
 
-		$data['my_requests'] = $this->requests_model->GetRequestsForUser($this->user_auth->entityId);
+		$data['box_contents'] = $this->requests_model->GetArticlesForBox($type_info['codename'], $this->user_auth->entityId);
+		$data['parent_type'] = $type_info['has_children'];
 		$data['box_display_name'] = $type_info['name'];
 
 		/// Make it so we only have to worry about two levels of access as admins can do everything editors can
@@ -190,6 +187,14 @@ class News extends Controller
 				}
 				$article_id = $this->requests_model->CreateRequest($data['status'],$this->input->post('r_box'),$this->input->post('r_title'),$this->input->post('r_brief'),$this->user_auth->entityId,$deadline);
 				if ($data['status'] == 'request') {
+					$accept_data = array(
+						'editor' 		=>	$this->user_auth->entityId,
+						'publish_date' 	=>	$deadline,
+						'title'			=>	$this->input->post('r_title'),
+						'description'	=>	$this->input->post('r_brief'),
+						'content_type'	=>	$this->input->post('r_box')
+					);
+					$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
 					/// Assign reporters to request
 					foreach ($this->input->post('r_reporter') as $reporter) {
 						$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
@@ -732,8 +737,8 @@ class News extends Controller
 			if (($this->input->post('confirm_publish') == 'Publish') && (count($errors) == 0)) {
 				if (!is_numeric($this->input->post('r_publish'))) {
 					$this->main_frame->AddMessage('error','Please select a date and time to publish the article.');
-				} elseif ($this->input->post('r_publish') < mktime()) {
-					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
+//				} elseif ($this->input->post('r_publish') < mktime()) {
+//					$this->main_frame->AddMessage('error','Please select a publish date in the future.');
 				} elseif ($this->input->post('r_publish') > (mktime() + (60*60*24*365))) {
 					$this->main_frame->AddMessage('error','Please select a publish date within the next year.');
 				} else {

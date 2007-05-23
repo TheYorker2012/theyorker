@@ -19,40 +19,98 @@ class Photos_model extends Model
 	}
 
 
+	function GetMyRequests($user_id)
+	{
+		$result = array();
+		$sql = 'SELECT		photo_requests.photo_request_id								AS	id,
+				 			UNIX_TIMESTAMP(photo_requests.photo_request_timestamp)		AS	created,
+							UNIX_TIMESTAMP(articles.article_publish_date)				AS	deadline,
+							photo_requests.photo_request_title							AS	title,
+							users.user_firstname,
+							users.user_surname,
+							photo_request_users.photo_request_user_user_entity_id		AS	photographer_id,
+							photo_request_users.photo_request_user_status				AS	photographer_status
+				FROM		articles,
+							photo_requests,
+							photo_request_users,
+							users
+				WHERE		photo_request_users.photo_request_user_user_entity_id = ?
+				AND			photo_request_users.photo_request_user_photo_request_id = photo_requests.photo_request_id
+				AND			photo_request_users.photo_request_user_status != "declined"
+				AND			photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
+				AND			photo_requests.photo_request_article_id = articles.article_id
+				AND			photo_requests.photo_request_chosen_photo_id IS NULL
+				AND			photo_requests.photo_request_approved_user_entity_id IS NULL
+				AND			photo_requests.photo_request_flagged = 0
+				AND			photo_requests.photo_request_deleted = 0
+				ORDER BY	articles.article_publish_date ASC';
+		$query = $this->db->query($sql,array($user_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$result[] = array(
+					'id'		=>	$row->id,
+					'created'	=>	$row->created,
+					'deadline'	=>	$row->deadline,
+					'title'		=>	$row->title,
+					'box'		=>	'Photos',
+					'type'		=>	'photo',
+					'reporters' =>	array(
+										array(
+											'id'		=>	$row->photographer_id,
+											'byline_id'	=>	NULL,
+											'name'		=>	$row->user_firstname . ' ' . $row->user_surname,
+											'status'	=>	$row->photographer_status
+										)
+									)
+				);
+			}
+		}
+		return $result;
+	}
+
+
 	function GetAllOpenPhotoRequests()
 	{
 		$result['unassigned'] = array();
 		$result['assigned'] = array();
 		$result['ready'] = array();
-		$sql = 'SELECT photo_requests.photo_request_id,
-					UNIX_TIMESTAMP(photo_requests.photo_request_timestamp) AS photo_request_timestamp,
-					photo_requests.photo_request_title,
-					photo_requests.photo_request_flagged
-				FROM photo_requests
-				WHERE photo_requests.photo_request_deleted = 0
-				AND photo_requests.photo_request_chosen_photo_id IS NULL
-				ORDER BY photo_requests.photo_request_timestamp DESC';
+		$sql = 'SELECT		photo_requests.photo_request_id,
+							UNIX_TIMESTAMP(photo_requests.photo_request_timestamp) AS photo_request_timestamp,
+							photo_requests.photo_request_title,
+							photo_requests.photo_request_flagged,
+							UNIX_TIMESTAMP(articles.article_publish_date) AS article_publish_date
+				FROM		photo_requests, articles
+				WHERE		photo_requests.photo_request_deleted = 0
+				AND			photo_requests.photo_request_chosen_photo_id IS NULL
+				AND			photo_requests.photo_request_article_id = articles.article_id
+				ORDER BY	articles.article_publish_date ASC';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0) {
 			foreach ($query->result() as $row) {
 				$request = array(
 					'id'		=>	$row->photo_request_id,
 					'title'		=>	$row->photo_request_title,
-					'time'		=>	$row->photo_request_timestamp
+					'time'		=>	$row->photo_request_timestamp,
+					'deadline'	=>	$row->article_publish_date
 				);
-				$user_sql = 'SELECT photo_request_users.photo_request_user_user_entity_id,
-						users.user_firstname,
-						users.user_surname
-					FROM photo_request_users, users
-					WHERE photo_request_users.photo_request_user_status != \'declined\'
-					AND photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
-					AND photo_request_users.photo_request_user_photo_request_id = ?';
+				$user_sql = 'SELECT		photo_request_users.photo_request_user_user_entity_id,
+										photo_request_users.photo_request_user_status,
+										users.user_firstname,
+										users.user_surname
+							FROM		photo_request_users, users
+							WHERE		photo_request_users.photo_request_user_status != \'declined\'
+							AND			photo_request_users.photo_request_user_user_entity_id = users.user_entity_id
+							AND			photo_request_users.photo_request_user_photo_request_id = ?';
 				$user_query = $this->db->query($user_sql, array($row->photo_request_id));
 				if ($user_query->num_rows() == 0) {
+					$request['user_name'] = '';
+					$request['user_status'] = '';
+					$request['user_id'] = '';
 					$result['unassigned'][] = $request;
 				} else {
 					$user_row = $user_query->row();
 					$request['user_name'] = $user_row->user_firstname . ' ' . $user_row->user_surname;
+					$request['user_status'] = $user_row->photo_request_user_status;
 					$request['user_id'] = $user_row->photo_request_user_user_entity_id;
 					if ($row->photo_request_flagged) {
 						$result['ready'][] = $request;

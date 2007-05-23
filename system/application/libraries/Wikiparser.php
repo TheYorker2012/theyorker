@@ -83,10 +83,12 @@ class Wikiparser {
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
 				'pull_quote' => '<blockquote>
+<div>
 <img src="/images/prototype/news/quote_open.png" alt="Quote" title="Quote" />
 {{1}}
 <img src="/images/prototype/news/quote_close.png" alt="Quote" title="Quote" />
-<br /><span class="author">{{2}}</span></blockquote>',
+<br /><span class="author">{{2}}</span>
+</div></blockquote>',
 				'frame' => '<div class="BlueBox"><h4>{{1}}</h4>{{2}}</div>',
 				'br' => '<br />',
 			);
@@ -292,10 +294,11 @@ class Wikiparser {
 				case 'right':
 					$imagetag = sprintf(
 						'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
-						'<img src="%s" />'.
+						'<img src="%s" alt="%s" />'.
 						'<div>%s</div>'.
 						'</div>',
 						$href,
+						$title,
 						$title
 					);
 					if ($this->in_paragraph) {
@@ -306,10 +309,11 @@ class Wikiparser {
 				case 'left':
 					$imagetag = sprintf(
 						'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
-						'<img src="%s" />'.
+						'<img src="%s" alt="%s" />'.
 						'<div>%s</div>'.
 						'</div>',
 						$href,
+						$title,
 						$title
 					);
 					if ($this->in_paragraph) {
@@ -746,7 +750,7 @@ Done.
 
 		// add a newline at the end if there isn't already one there
 		$lines = explode("\n",$text);
-		if (empty($lines[count($lines)-1])) {
+		if (!empty($lines[count($lines)-1])) {
 			$lines[] = '';
 		}
 

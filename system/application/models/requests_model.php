@@ -1,15 +1,184 @@
 <?php
+
 /**
- *Template for request_model,  still to be tested
- *@author Alex Fargus (agf501)
- **/
+ *	Template for request_model,  still to be tested
+ *	@author	Alex Fargus (agf501)
+ */
 
 class Requests_Model extends Model
 {
+
+
 	function Requests_Model()
 	{
 		parent::Model();
 	}
+
+
+	function GetArticlesForBox($type_codename, $user_id, $get_children = TRUE)
+	{
+		$result = array(
+			'suggestion'	=>	array(),
+			'unassigned'	=>	array(),
+			'assigned'		=>	array(),
+			'ready'			=>	array()
+		);
+		$sql = 'SELECT	content_type_id,
+						content_type_has_children
+				FROM	content_types
+				WHERE	content_type_codename = ?';
+		$query = $this->db->query($sql,array($type_codename));
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			$type_codenames = array($user_id,$type_codename);
+			$type_sql = array('content_types.content_type_codename = ?');
+			if (($get_children) && ($row->content_type_has_children)) {
+				$sql = 'SELECT	content_type_codename
+						FROM	content_types
+						WHERE	content_type_parent_content_type_id = ?';
+				$query = $this->db->query($sql,array($row->content_type_id));
+				if ($query->num_rows() > 0) {
+					foreach ($query->result() as $row) {
+						$type_codenames[] = $row->content_type_codename;
+						$type_sql[] = 'content_types.content_type_codename = ?';
+					}
+				}
+			}
+			$sql = 'SELECT		articles.article_id								AS	id,
+					 			UNIX_TIMESTAMP(articles.article_created)		AS	created,
+								UNIX_TIMESTAMP(articles.article_publish_date)	AS	deadline,
+								users.user_firstname,
+								users.user_surname,
+								articles.article_request_title					AS	title,
+								articles.article_suggestion_accepted			AS	suggestion_accepted,
+								articles.article_ready							AS	ready,
+								content_types.content_type_name					AS	box
+					FROM		content_types,
+								users,
+								articles
+					LEFT JOIN	article_writers
+					ON	(		articles.article_id = article_writers.article_writer_article_id
+							AND	article_writers.article_writer_user_entity_id = ?
+							AND	article_writers.article_writer_status != "declined"
+						)
+					WHERE		content_types.content_type_id = articles.article_content_type_id
+					AND			articles.article_live_content_id IS NULL
+					AND			articles.article_deleted = 0
+					AND			articles.article_request_entity_id = users.user_entity_id
+					AND	(';
+			$sql .= implode(' OR ',$type_sql) . ') ';
+			$sql .='ORDER BY	article_writers.article_writer_status			DESC,
+								articles.article_publish_date					ASC,
+								articles.article_request_title					ASC';
+			$query = $this->db->query($sql,$type_codenames);
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$result_item = array(
+						'id'		=>	$row->id,
+						'created'	=>	$row->created,
+						'deadline'	=>	$row->deadline,
+						'title'		=>	$row->title,
+						'suggester'	=>	$row->user_firstname . ' ' . $row->user_surname,
+						'box'		=>	$row->box
+					);
+					$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
+					$status = 'unassigned';
+					if (!$row->suggestion_accepted) {
+						$status = 'suggestion';
+					} elseif ($row->ready) {
+						$status = 'ready';
+					}
+					foreach ($result_item['reporters'] as $reporter) {
+						if ($reporter['status'] == 'accepted') {
+							$status = 'assigned';
+							break;
+						}
+					}
+					$result[$status][] = $result_item;
+				}
+			}
+		}
+		return $result;
+	}
+
+
+	function GetWritersForArticle($article_id)
+	{
+		$result = array();
+		$sql = 'SELECT		article_writers.article_writer_user_entity_id,
+							article_writers.article_writer_byline_business_card_id,
+							article_writers.article_writer_status,
+							users.user_firstname,
+							users.user_surname
+				FROM		article_writers,
+							users
+				WHERE		article_writer_article_id = ?
+				AND			article_writer_user_entity_id = users.user_entity_id
+				ORDER BY	users.user_surname ASC,
+							users.user_firstname ASC';
+		$query = $this->db->query($sql,array($article_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$result[] = array(
+					'id'		=>	$row->article_writer_user_entity_id,
+					'byline_id'	=>	$row->article_writer_user_entity_id,
+					'name'		=>	$row->user_firstname . ' ' . $row->user_surname,
+					'status'	=>	$row->article_writer_status
+				);
+			}
+		}
+		return $result;
+	}
+
+	function GetMyRequests($user_id)
+	{
+		$result = array();
+		$sql = 'SELECT		articles.article_id								AS	id,
+				 			UNIX_TIMESTAMP(articles.article_created)		AS	created,
+							UNIX_TIMESTAMP(articles.article_publish_date)	AS	deadline,
+							articles.article_request_title					AS	title,
+							content_types.content_type_name					AS	box
+				FROM		content_types,
+							articles,
+							article_writers
+				WHERE		article_writers.article_writer_user_entity_id = ?
+				AND			article_writers.article_writer_article_id = articles.article_id
+				AND			article_writers.article_writer_status != "declined"
+				AND			content_types.content_type_id = articles.article_content_type_id
+				AND			articles.article_suggestion_accepted = 1
+				AND			articles.article_ready = 0
+				AND			articles.article_deleted = 0
+				AND			articles.article_live_content_id IS NULL
+
+				ORDER BY	articles.article_publish_date					ASC';
+		$query = $this->db->query($sql,array($user_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$result_item = array(
+					'id'		=>	$row->id,
+					'created'	=>	$row->created,
+					'deadline'	=>	$row->deadline,
+					'title'		=>	$row->title,
+					'box'		=>	$row->box,
+					'type'		=>	'article'
+				);
+				$result_item['reporters'] = $this->GetWritersForArticle($result_item['id']);
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+
+
+
+
+
+
+
+
+
+
+
 
 	// Retrieve list of all reporters (this includes editors and photographers) that a request can be assigned to
 	function getReporters ()
@@ -455,7 +624,7 @@ class Requests_Model extends Model
 		else
 			return FALSE;
 	}
-	
+
 	function GetRequestsForUser($user_id)
 	{
 		$sql = 'SELECT	articles.article_id,
@@ -738,36 +907,6 @@ class Requests_Model extends Model
 		}
 		else
 			return FALSE;
-	}
-	
-	function GetWritersForArticle($article_id)
-	{
-		$sql = 'SELECT	article_writer_user_entity_id,
-				article_writer_byline_business_card_id,
-				article_writer_status,
-				business_card_name
-			FROM	article_writers
-
-			JOIN	business_cards
-			ON	business_card_id = article_writer_byline_business_card_id
-
-			WHERE	article_writer_article_id = ?
-			ORDER BY business_card_name ASC';
-		$query = $this->db->query($sql,array($article_id));
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result() as $row)
-			{
-				$result[] = array(
-					'id'=>$row->article_writer_user_entity_id,
-					'byline_id'=>$row->article_writer_user_entity_id,
-					'name'=>$row->business_card_name,
-					'status'=>$row->article_writer_status
-					);
-			}
-		}
-		return $result;
 	}
 	
 	function AddUserToRequest($article_id, $reporter_id, $editor_id, $business_card_id = NULL)
