@@ -8,6 +8,10 @@
 	<h4>What's this?</h4>
 	<div class="Entry">
 		This page allows you to edit links <b>live</b>. Take care.<br />
+		<br />
+		<b>Official links</b> are available for the user to add to their homepage, and should be edited with extreme caution, as any changes will <b>instantly</b> be reflected on the live site.<br />
+		<br />
+		<b>Nominations</b> are links that users have nominated to become official. Rejecting these will not delete them, but will hide them from the list. Accepting a nominated link will promote it to official status, where it is <b>instantly</b> visible to users of the site.
 	</div>
 </div>
 
