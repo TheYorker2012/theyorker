@@ -88,8 +88,7 @@ class Image {
 	}
 	
 	public function add($type, &$newImage, $info = array()) {
-		$image;
-		$imageStr = $this->image2string($image, $info['mime']);
+		$imageStr = $this->image2string($newImage, $info['mime']);
 		switch ($type) {
 			case 'photo':
 				$sql = 'INSERT INTO photos (photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_mime, photo_data)
