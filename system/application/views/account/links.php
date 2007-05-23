@@ -5,7 +5,7 @@
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
-			<?=$this->image->getImage($picture->link_image_id, 'link')?>
+			<?=$this->image->getImage($picture->link_image_id, 'link', array('id' => 'links_'.$picture->link_id))?>
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
