@@ -184,7 +184,7 @@ class Image_upload {
 						} else {
 							$newImages['oldID'] = true;
 						}
-						$newImages['list'] = $id;
+						//$newImages['list'] = $id;
 					}
 				}
 			} else {
