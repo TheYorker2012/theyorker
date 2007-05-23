@@ -74,7 +74,5 @@ class Quote_Model extends Model {
 		$update = $this->db->query($sql,array($quote_id));
 		return true;
 	}
-
-
 }
 ?>

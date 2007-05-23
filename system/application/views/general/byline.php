@@ -1,8 +1,7 @@
 	<div class="Byline">
 <?php
 foreach ($reporters as $reporter) {
-	echo('		');
-	echo('<img src="'.$reporter['photo'].'" alt="'.$reporter['name'].'" title="'.$reporter['name'].'" />'."\n");
+	echo($reporter['photo']);
 }
 
 foreach ($reporters as $reporter) {
