@@ -43,15 +43,68 @@ class Conversion extends controller {
 						}
 					}
 					$data['image_data'] = file_get_contents('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension));
-					unlink('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension));
 					$this->db->where('image_id', $result->image_id)->update('images', $data);
 					echo "updated ".$result->image_id.'<br />';
 				} else {
 					echo $this->imageLocation($result->image_id, $type, $result->image_file_extension);
-					echo "skipped ".$result->image_id.'<br />';
+					echo " skipped ".$result->image_id.'<br />';
 				}
 			}
 		}
+		
+		$imageTypes = $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => 1));
+		$photos = $this->db->get('photos');
+		
+		foreach ($photos->result() as $photo) {
+			if (file_exists('.'.$this->photoLoc($photo->photo_id))) {
+				$data = array();
+				if (function_exists('exif_imagetype')) {
+					$data['photo_mime'] = image_type_to_mime_type(exif_imagetype('.'.$this->photoLoc($result->photo_id)));
+				} else {
+					$byDot = explode('.', $this->photoLoc($result->photo_id));
+					switch ($byDot[count($byDot)-1]) {
+						case 'jpg':
+						case 'jpeg':
+						case 'JPG':
+						case 'JPEG':
+							$data['photo_mime'] = 'image/jpeg';
+							break;
+						case 'png':
+						case 'PNG':
+							$data['photo_mime'] = 'image/png';
+							break;
+						case 'gif':
+						case 'GIF':
+							$data['photo_mime'] = 'image/gif';
+							break;
+					}
+				}
+				$data['photo_data'] = file_get_contents('.'.$this->photoLoc($result->photo_id));
+				$this->db->where('photo_id', $result->photo_id)->update('photos', $data);
+				echo "updated ".$result->photo_id.' main, ';
+				foreach ($imageTypes as $type) {
+					if (file_exists('.'.$this->imageLocation($result->photo_id, $type->image_type_codename))) {
+						$innerData['photo_thumbs_data'] = file_get_contents('.'.$this->imageLocation($result->photo_id, $type->image_type_codename));
+						$innerData['photo_thumbs_image_type_id'] = $type->image_type_id;
+						$innerData['photo_thumbs_photo_id'] = $result->photo_id;
+						$this->db->insert('photo_thumbs', $innerData);
+						echo $type->image_type_codename.', ';
+					} else {
+						echo $type->image_type_codename.' missing, ';
+					}
+				}
+				echo '<br />';
+			} elseif ($photo->photo_mime == null) {
+				$this->db->where('photo_id', $photo->photo_id)->delete('photos');
+			} else {
+				echo $this->photoLoc($photo->photo_id);
+				echo " skipped<br />";
+			}
+		}
+	}
+	
+	private function photoLoc($id) {
+		return '/images/photos/'.(floor($id / IMAGE_HASH)).'/'.$id.'.jpg';
 	}
 	
 	private function imageLocation($id, $type = false, $extension = '.jpg') {
