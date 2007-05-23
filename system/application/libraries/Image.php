@@ -163,7 +163,7 @@ class Image {
 		return true;
 	}
 	
-	private function image2string(&$image, $mime) {
+	private function image2string(&$newImage, $mime) {
 		//THIS SUCKS!!
 		$contents = ob_get_contents();
 		if ($contents !== false) ob_clean(); else ob_start();
