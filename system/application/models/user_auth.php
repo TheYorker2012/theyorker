@@ -541,7 +541,13 @@ class User_auth extends model {
 		}
 
 		if ($salt == null) {
+			/// Generate a salt if none exists
 			$salt = $this->getRandomData();
+			/// Save new salt to db
+			$sql = 'UPDATE entities
+					SET entity_salt = ?
+					WHERE entity_id = ?';
+			$query = $this->db->query($sql, array($salt, $entity));
 		}
 
 		$hash = sha1($salt.$password);
