@@ -98,12 +98,14 @@ class Links_Model extends Model {
 			$query = $this->db->query($sql,array($linkId));
 			$row = $query->first_row();
 
-			$sql ='DELETE FROM links WHERE link_id = ?';
-			$this->db->query($sql,array($linkId));
-			//TODO move this static number into a config file somewhere
-			if ($row->link_image_id != 232) {
-				$sql = 'DELETE FROM images WHERE image_id = ?';
-				$this->db->query($sql,array($row->link_image_id));
+			if($query->num_rows() > 0) {
+				$sql ='DELETE FROM links WHERE link_id = ?';
+				$this->db->query($sql,array($linkId));
+				//TODO move this static number into a config file somewhere
+				if ($row->link_image_id != 232) {
+					$sql = 'DELETE FROM images WHERE image_id = ?';
+					$this->db->query($sql,array($row->link_image_id));
+				}
 			}
 		}
 	}
