@@ -182,7 +182,7 @@ class Image_upload {
 							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
 							$_SESSION['img'][$iUp]['oldID'] = $id;
 						} else {
-							$_SESSION['img'][$iUp]['oldID'] = 0;
+							$_SESSION['img'][$iUp]['oldID'] = $id;
 						}
 						//$newImages['list'] = $id;
 					}
