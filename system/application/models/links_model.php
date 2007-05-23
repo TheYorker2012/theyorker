@@ -45,6 +45,28 @@ class Links_Model extends Model {
 		$this->db->trans_complete();
 	}
 
+	/*
+	 * Removes user link from database (+ any non default or official pics) only if no longer in use.
+	 */
+	function DeleteOfficialLink($id) {
+		$sql = 'DELETE FROM user_links WHERE user_link_link_id= ?';
+		$query = $this->db->query($sql,array($id));
+
+		//Get Image Id
+		$sql = 'SELECT link_image_id
+			FROM links WHERE link_id = ?';
+		$query = $this->db->query($sql,array($id));
+		$row = $query->first_row();
+
+		$sql ='DELETE FROM links WHERE link_id = ?';
+		$this->db->query($sql,array($id));
+		//TODO move this static number into a config file somewhere
+		if ($row->link_image_id != 232) {
+			$sql = 'DELETE FROM images WHERE image_id = ?';
+			$this->db->query($sql,array($row->link_image_id));
+		}
+	}
+
 	function UpdateLink($link_id, $link_name, $link_url) {
 		$sql = 'UPDATE links SET link_name = ?, link_url = ? WHERE link_id = ?';
 		$this->db->query($sql,array($link_name, $link_url, $link_id));
@@ -64,6 +86,26 @@ class Links_Model extends Model {
 	function RejectLink($user, $linkId) {
 		$sql = 'UPDATE links SET link_nominated = 0, link_editor_entity_id = ? WHERE link_id = ?';
 		$this->db->query($sql,array($user, $linkId));
+
+		$sql = 'SELECT user_link_link_id FROM user_links WHERE user_link_link_id= ?';
+		$query = $this->db->query($sql,array($linkId));
+		$users_with_link = $query->num_rows();
+
+		if ($users_with_link == 0) {
+			//Get Image Id
+			$sql = 'SELECT link_image_id
+				FROM links WHERE link_id = ?';
+			$query = $this->db->query($sql,array($id));
+			$row = $query->first_row();
+
+			$sql ='DELETE FROM links WHERE link_id = ?';
+			$this->db->query($sql,array($linkId));
+			//TODO move this static number into a config file somewhere
+			if ($row->link_image_id != 232) {
+				$sql = 'DELETE FROM images WHERE image_id = ?';
+				$this->db->query($sql,array($row->link_image_id));
+			}
+		}
 	}
 
 	/*

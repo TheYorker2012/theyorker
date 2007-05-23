@@ -135,10 +135,16 @@ class Links extends Controller
 
 		$link_name = htmlentities($this->input->post('link_name'), ENT_NOQUOTES, 'UTF-8');
 		$link_url = $this->input->post('link_url');
+		$delete = ($this->input->post('name_delete_button') == 'Delete');
 
 		$this->load->model('Links_Model');
-		$this->Links_Model->UpdateLink($link_id, $link_name, $link_url);
-		$this->messages->AddMessage('success', 'Link updated successfully');
+		if ($delete) {
+			$this->Links_Model->DeleteOfficialLink($link_id);
+			$this->messages->AddMessage('success', 'Link deleted successfully');
+		} else {
+			$this->Links_Model->UpdateLink($link_id, $link_name, $link_url);
+			$this->messages->AddMessage('success', 'Link updated successfully');
+		}
 
 		redirect('/office/links');
 	}
