@@ -177,12 +177,12 @@ class Image_upload {
 			$id = $this->ci->image->add('image', $image, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
-					if ($selectedThumb[4] == $_SESSION['img']['list'] and $selectedThumb[3] == $_SESSION['img']['type']) {
-						if (isset($_SESSION['img']['oldID'])) {
-							$this->ci->image->delete('image', $_SESSION['img']['oldID']); //TODO log orphaned image if false
-							$_SESSION['img']['oldID'] = $id;
+					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
+						if (isset($_SESSION['img'][$iUp]['oldID'])) {
+							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
+							$_SESSION['img'][$iUp]['oldID'] = $id;
 						} else {
-							$_SESSION['img']['oldID'] = 0;
+							$_SESSION['img'][$iUp]['oldID'] = 0;
 						}
 						//$newImages['list'] = $id;
 					}
