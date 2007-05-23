@@ -174,7 +174,7 @@ class Image_upload {
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
-			$id = $this->ci->image->add('image', $image, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
+			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
 					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
