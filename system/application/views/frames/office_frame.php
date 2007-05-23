@@ -188,6 +188,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/banners/'>Homepage Banners</a>
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/links/'>Links</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/campaign/'>Campaigns</a>
 		</div>
 		<div class='officenavigation_item'>
