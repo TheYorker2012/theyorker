@@ -52,10 +52,10 @@ class Account extends controller
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_home');
-		
+
 		/// Get subscriptions of the current user
 		$data['Subscriptions']  = $this->prefs_model->getAllSubscriptions($this->user_auth->entityId);
-		
+
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/myaccount', $data);
 		/// Set page title & load main frame with view
@@ -82,7 +82,7 @@ class Account extends controller
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
-	
+
 	/**
 	 *	@brief	AJAX call
 	 */
@@ -97,23 +97,24 @@ class Account extends controller
 		$this->Links_Model->ChangeUserLinks($this->user_auth->entityId, $links);
 		return $objResponse;
 	}
-	
+
 	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
 	function links($action = 'none', $id = null) {
-		
+
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
-		
+
 		$this->load->model('Links_Model');
 		$this->load->library('xajax');
 		$this->load->library('image');
 		$this->xajax->registerFunction(array("links_update", &$this, "_links_update"));
 		$this->xajax->processRequests();
-		
+
 		if ($action == 'add') {
 			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
+			redirect('/account/links');
 		}
 
 		$this->_SetupTabs('links');
@@ -123,7 +124,7 @@ class Account extends controller
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_links');
-		
+
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
@@ -133,7 +134,7 @@ class Account extends controller
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
-	
+
 	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
@@ -141,9 +142,9 @@ class Account extends controller
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
-		
+
 		$this->load->model('Links_Model');
-		
+
 		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
 			if ($this->input->post('lnominate') == 'on') {
 				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
@@ -155,13 +156,13 @@ class Account extends controller
 		} else if($this->input->post('lurl')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
 		}
-		
+
 		$data = array();
 		$this->_SetupTabs('links');
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_customlinks');
-		
+
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/custom_link', $data);
 		/// Set page title & load main frame with view
@@ -175,24 +176,24 @@ class Account extends controller
 	{
 		// TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
-		
+
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_personal');
-		
+
 		$this->_SetupTabs('personal');
-		
+
 		$this->load->library('account_personal');
-		
-		
+
+
 		$this->account_personal->Validate(false,'/account/personal');
-		
+
 		// Get page content
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 
 		$data['bigcontent'] = $this->account_personal;
 		$this->main_frame->SetContentSimple('account/preferences', $data);
-		
+
 		// Set up the main frame
 		$this->main_frame->SetTitleParameters(
 			array('section' => 'General')
