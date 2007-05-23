@@ -169,13 +169,13 @@ class Image {
 		if ($contents !== false) ob_clean(); else ob_start();
 		switch ($mime) {
 			case 'image/png':
-				imagepng($image);
+				imagepng($newImage);
 				break;
 			case 'image/jpeg':
-				imagejpeg($image);
+				imagejpeg($newImage);
 				break;
 			case 'image/gif':
-				imagegif($image);
+				imagegif($newImage);
 				break;
 		}
 		$data = ob_get_contents();
