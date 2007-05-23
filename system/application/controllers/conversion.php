@@ -16,6 +16,7 @@ class Account extends controller {
 //		$image['link'] = $this->db->getwhere('images', array('image_type_type_id', 10));
 		
 		foreach ($image as $type => $results) {
+			echo "starting ".$type.'<br/>';
 			foreach ($results->result() as $result) {
 				if ($result->image_mime == null && file_exists(imageLocation($result->image_id, $type, $result->image_file_extension))) {
 					if (function_exists('exif_imagetype')) {
@@ -41,6 +42,9 @@ class Account extends controller {
 					}
 					$data['image_data'] = file_get_contents('.'.imageLocation($result->image_id, $type, $result->image_file_extension));
 					$this->db->where('image_id', $result->image_id)->update('images', $data);
+					echo "updated ".$result->image_id.'<br />';
+				} else {
+					echo "skipped ".$result->image_id.'<br />';
 				}
 			}
 		}
