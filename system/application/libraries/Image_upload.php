@@ -142,7 +142,7 @@ class Image_upload {
 			if (function_exists('exif_imagetype')) {
 				$mime = image_type_to_mime_type(exif_imagetype('.'.$selectedThumb[0]));
 			} else {
-				$byDot = explode('/', $selectedThumb[0]);
+				$byDot = explode('.', $selectedThumb[0]);
 				switch ($byDot[count($byDot)-1]) {
 					case 'jpg':
 					case 'jpeg':
