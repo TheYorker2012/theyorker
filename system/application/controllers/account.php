@@ -108,7 +108,7 @@ class Account extends controller
 		
 		$this->load->model('Links_Model');
 		$this->load->library('xajax');
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->xajax->registerFunction(array("links_update", &$this, "_links_update"));
 		$this->xajax->processRequests();
 		

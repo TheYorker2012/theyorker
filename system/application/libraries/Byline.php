@@ -38,7 +38,7 @@ class Byline extends FramesView
 		}
 		$CI = &get_instance();
 		$CI->load->model('article_model');
-		$CI->load->helper('images');
+		$CI->load->library('images');
 		foreach ($Reporters as $Entity) {
 			$reporter = $CI->article_model->GetReporterByline($Entity['id']);
 			if (count($reporter) > 0) {
@@ -50,7 +50,7 @@ class Byline extends FramesView
 				} else {
 					$this->mReporters[$Entity['id']] = array(
 						'name' => $reporter['name'],
-						'photo' => imageLocation($reporter['photo'], 'userimage')
+						'photo' => '/images/userimage/'.$reporter['photo']) //TODO change to use library
 					);
 				}
 			}

@@ -38,7 +38,7 @@ if ($deal != NULL) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<img class="Right" src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
+		<?$this->image->getThumb($review_image, 'slideshow', false, array('class' => 'Right'))?>
 		<h2><?php echo($review_title); ?></h2>
 		<p><?php echo($review_quote); ?></p>
 		<h3>Rating</h3>

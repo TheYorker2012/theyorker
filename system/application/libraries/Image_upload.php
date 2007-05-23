@@ -1,23 +1,16 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-define('VIEW_WIDTH', 650);
-switch ($_SERVER["HTTP_HOST"]) {
-	case "theyorker.co.uk":
-		define('BASE_DIR', '/home/yorker/public_html');
-		break;
-	case "www.theyorker.co.uk":
-		define('BASE_DIR', '/home/yorker/public_html');
-		break;
-	default:
-		define('BASE_DIR', '/home/theyorker/public_html');
+if (!defined('VIEW_WIDTH')) {
+	define('VIEW_WIDTH', 650);
 }
+define('VIEW_HEIGHT', 650);
 class Image_upload {
 	
 	private $ci;
 	
 	public function Image_upload() {
 		$this->ci = &get_instance();
-		$this->ci->load->library('xajax');
-		$this->ci->load->helper(array('images', 'url'));
+		$this->ci->load->library(array('xajax', 'image'));
+		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 	}
 	
@@ -29,6 +22,7 @@ class Image_upload {
 	
 	public function uploadForm($multiple = false, $photos = false) {
 		$this->ci->xajax->processRequests();
+		$_SESSION['img'] = array();
 		if ($this->ci->input->post('destination')) return true;
 		if ($multiple && $photos) {
 			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
@@ -63,8 +57,8 @@ class Image_upload {
 		//get data about thumbnails
 		
 		$config['upload_path'] = './tmp/uploads/';
-		$config['allowed_types'] = 'jpg';
-		$config['max_size'] = '2048';
+		$config['allowed_types'] = 'jpg|png|gif|jpeg';
+		$config['max_size'] = 16384;
 		
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
@@ -78,42 +72,42 @@ class Image_upload {
 		} else {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
 		}
-		
 		$data = array();
 		$this->ci->upload->initialize($config);
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-				$data[] = $this->ci->upload->display_errors();
+				$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
 			} else {
 				$data[] = $this->ci->upload->data();
 				
 				if ($this->checkImageProperties($data[$x - 1], $query))
+				//var_dump( $this->processImage($data[$x - 1], $x, $query, $photo) );
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->ci->main_frame->SetExtraHead($head);
 		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
-		//$this->ci->load->view('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
 		return $this->ci->main_frame->Load();
 	}
 	
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
-		$this->ci->load->library('image_lib');
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		// 0 location
 		// 1 original width(?)
 		// 2 original height(?)
-		// 3 type id
+		// 3 type
 		// 4 image id
 		// 5 image type width
 		// 6 image type height
+		// 7 title
 		
-		$securityCheck = array_search($selectedThumb[4], $_SESSION['img']['list']);
+		/* REDO
+		$securityCheck = array_search($selectedThumb[4], $_SESSION['img'][]['list']);// this is the line to change
 		if ($securityCheck === false) {
 			exit("LOGOUT #1" . print_r($selectedThumb) . '****' . var_dump($_SESSION['img']));
 			$this->ci->user_auth->logout();
@@ -121,7 +115,7 @@ class Image_upload {
 			//TODO add some kind of logging
 			exit;
 		} else {
-			if ($_SESSION['img']['type'][$securityCheck] != $selectedThumb[3]) {
+			if ($_SESSION['img'][$securityCheck]['type'] != $selectedThumb[3]) {
 				exit("LOGOUT #2" . print_r($selectedThumb) . '****' . var_dump($_SESSION['img']));
 				$this->ci->user_auth->logout();
 				redirect('/', 'location');
@@ -129,113 +123,156 @@ class Image_upload {
 				exit;
 			}
 		}
-		
-		
+		*/
 
-		if (!createImageLocationFromId($selectedThumb[4], $selectedThumb[3])) {
-			$objResponse->addAssign("submitButton","value","Error: Location not created");
-			$objResponse->addAssign("submitButton","disabled",false);
-
-			return $objResponse;
+		$sql = 'SELECT image_type_id AS id, image_type_width AS x,
+		               image_type_height AS y, image_type_codename AS codename
+		        FROM image_types WHERE image_type_id = ? LIMIT 1';
+		$result = $this->ci->db->query($sql, array($selectedThumb[3]));
+		if($result->num_rows() != 1) {
+			$this->ci->user_auth->logout();
+			redirect('/', 'location');
+			//TODO add some kind of logging
+			exit;
 		}
 
-		$config['image_library'] = 'imagemagick';
-//		$config['image_library'] = 'netpbm';
-		$config['library_path'] = '/usr/bin/';
-		$config['source_image'] = BASE_DIR.$selectedThumb[0];
-		$config['width'] = $formData['width'];
-		$config['height'] = $formData['height'];
-		$config['maintain_ratio'] = FALSE;
-		$config['new_image'] = BASE_DIR.imageLocationFromId($selectedThumb[4], $selectedThumb[3], null, TRUE);
-		$config['x_axis'] = $formData['x1'];
-		$config['y_axis'] = $formData['y1'];
-
-		$this->ci->image_lib->initialize($config);
-
-		if (!$this->ci->image_lib->crop())
-		{
-//			die('The crop failed.');
-//			echo $config['source_image'];
-			echo $this->ci->image_lib->display_errors();
-		}
-
-		$config['source_image'] = BASE_DIR.imageLocationFromId($selectedThumb[4], $selectedThumb[3], null, TRUE);
-		unset($config['new_image']);
-		$config['width'] = $selectedThumb[5];
-		$config['height'] = $selectedThumb[6];
-
-		$this->ci->image_lib->initialize($config);
-
-		if (!$this->ci->image_lib->resize())
-		{
-//			die('The resize failed.');
-//			echo $config['source_image'];
-			echo $this->ci->image_lib->display_errors();
+		$bits = explode('/', $selectedThumb[0]);
+		if ($bits[1] == 'tmp') {
+			//Get mime
+			if (function_exists('exif_imagetype')) {
+				$mime = image_type_to_mime_type(exif_imagetype('.'.$selectedThumb[0]));
+			} else {
+				$byDot = explode('/', $selectedThumb[0]);
+				switch ($byDot[count($byDot)-1]) {
+					case 'jpg':
+					case 'jpeg':
+					case 'JPG':
+					case 'JPEG':
+						$mime = 'image/jpeg';
+						break;
+					case 'png':
+					case 'PNG':
+						$mime = 'image/png';
+						break;
+					case 'gif':
+					case 'GIF':
+						$mime = 'image/gif';
+						break;
+				}
+			}
+			switch ($mime) {
+				case 'image/jpeg':
+					$image = imagecreatefromjpeg('.'.$selectedThumb[0]);
+					break;
+				case 'image/png':
+					$image = imagecreatefrompng('.'.$selectedThumb[0]);
+					break;
+				case 'image/gif':
+					$image = imagecreatefromgif('.'.$selectedThumb[0]);
+					break;
+			}
+			$result = $result->first_row();
+			$newImage = imagecreatetruecolor($result->x, $result->y);
+			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
+			$id = $this->ci->image->add('image', $image, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
+			if ($id != false) {
+				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
+					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
+						if (isset($_SESSION['img'][$iUp]['oldID'])) {
+							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
+							$_SESSION['img'][$iUp]['oldID'] = $id;
+						} else {
+							$_SESSION['img'][$iUp]['oldID'] = $id;
+						}
+						//$newImages['list'] = $id;
+					}
+				}
+// php limitation
+//				foreach ($_SESSION['img'] as &$newImages) {
+//					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
+//						if (isset($newImages['oldID'])) {
+//							$this->ci->image->delete('image', $newImages['oldID']); //TODO log orphaned image if false
+//							$newImage['oldID'] = $id;
+//						} else {
+//							$newImages['oldID'] = 0;
+//						}
+//						//$newImages['list'] = $id;
+//					}
+//				}
+			} else {
+				$objResponse->addAssign("submitButton","value","Not Saved");
+				$objResponse->addAssign("submitButton","disabled",false);
+				return $objResponse;
+			}
+		} else {
+			$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? AND photo_thumbs_image_type_id = ? LIMIT 1';
+			$this->ci->db->query($sql, array($selectedThumb[4], $selectedThumb[3]));
+			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
 		}
 
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 
 		return $objResponse;
-		
 	}
 
 	private function processImage($data, $form_value, &$ThumbDetails, $photo) {
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $data['full_path'];
-		$config['quality'] = 85;
-		$config['master_dim'] = 'width';
-		$config['width'] = VIEW_WIDTH;
-		$config['height'] = 1000;
+		switch ($data['file_type']) {
+			case 'image/gif':
+				$image = imagecreatefromgif($data['full_path']);
+				break;
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($data['full_path']);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($data['full_path']);
+				break;
+		}
+		if ($data['image_width'] > VIEW_WIDTH) {
+			$ratio_orig = $data['image_width']/$data['image_height'];
+			$width = VIEW_WIDTH;
+			$height = VIEW_HEIGHT;
+			if (VIEW_WIDTH/VIEW_HEIGHT > $ratio_orig) {
+			   $width = VIEW_HEIGHT*$ratio_orig;
+			} else {
+			   $height = VIEW_WIDTH/$ratio_orig;
+			}
+			$newImage = imagecreatetruecolor($width, $height);
+			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $data['image_width'], $data['image_height']);
+		} else {
+			$newImage = $image;
+		}
+		$x = imagesx($newImage);
+		$y = imagesy($newImage);
 		
 		$output = array();
 		
-		$this->ci->image_lib->initialize($config);
-		if ($data['image_width'] > 650) {
-			if (!$this->ci->image_lib->resize()) {
-				$output[]['title']= $this->ci->image_lib->display_errors();
-				return $output;
-			}
-		}
-		$newDetails = getimagesize($data['full_path']);
-
 		if ($photo) {
-			$row_values = array ('photo_author_user_entity_id' => $this->ci->user_auth->entityId,
-			                     'photo_title' => $this->ci->input->post('title'.$form_value),
-			                     'photo_width' => $newDetails[0],
-			                     'photo_height' => $newDetails[1]);
-			$this->ci->db->insert('photos', $row_values);
-			$id = $this->ci->db->insert_id();
-			createImageLocation($id);
-			rename ($data['full_path'], BASE_DIR.photoLocation($id, $data['file_ext'], TRUE));
-			
-			$loop = 0; // drop this loop by using $output[] = array()
-			foreach ($ThumbDetails->result() as $Thumb) {
-				$_SESSION['img']['list'][] = $id;
-				$_SESSION['img']['type'][] = $Thumb->image_type_id;
-				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = photoLocation($id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-				$loop++;
+			unlink($data['full_path']);
+			$info = array('author_id' => $this->ci->user_auth->entityId,
+			              'title'     => $this->ci->input->post('title'.$form_value),
+			              'x'         => $x,
+			              'y'         => $y,
+			              'mime'      => $data['file_type'],);
+			$id = $this->ci->image->add('photo', &$newImage, $info);
+			if ($id === false) {
+				return false;
+			} else {
+				foreach ($ThumbDetails->result() as $Thumb) {
+					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
+					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
+				}
 			}
 		} else {
-			$loop = 0; //ditto
 			foreach ($ThumbDetails->result() as $Thumb) {
-				$row_values = array('image_title' => $this->ci->input->post('title'.$form_value),
-				                    'image_image_type_id' => $Thumb->image_type_id,
-				                    'image_file_extension' => $data['file_ext']);
-				$this->ci->db->insert('images', $row_values);
-				$id = $this->ci->db->insert_id();
-				$_SESSION['img']['list'][] = $id;
-				$_SESSION['img']['type'][] = $Thumb->image_type_id;
-				$output[$loop]['title'] = $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = '/tmp/uploads/'.$data['file_name'].'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-				$loop++;
+				$_SESSION['img'][] = array('list' => count($_SESSION['img']),
+				                           'type' => $Thumb->image_type_id);
+				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
+				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
 			}
 		}
-
 		return $output;
 	}
-
 }
-
 ?>

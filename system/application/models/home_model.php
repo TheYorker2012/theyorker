@@ -75,7 +75,7 @@ class Home_Model extends Model {
 	 * Returns the image location.
 	 */
 	function GetBannerImage() {
-		$this->load->helper('images');
+		$this->load->library('image');
 		$sql = 'SELECT 	image_id, image_title
 			FROM	images
 			WHERE	image_image_type_id = 9
@@ -95,7 +95,7 @@ class Home_Model extends Model {
 		}
 		$id = $query->row()->image_id;
 		$title = $query->row()->image_title;
-		return imageLocTag($id,'banner',false,$title);
+		return $this->image->getImage($id,'banner');
 	}
 
 	/*
@@ -103,7 +103,7 @@ class Home_Model extends Model {
 	 * Returns the quote_text and quote_author in an array.
 	 */
 	function GetQuote() {
-		$this->load->helper('images');
+		$this->load->library('image');
 		$sql = 'SELECT quote_text, quote_author
 			FROM quotes
 			WHERE DATE(quote_last_displayed_timestamp) = CURRENT_DATE()';

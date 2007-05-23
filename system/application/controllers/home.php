@@ -83,7 +83,7 @@ class Home extends Controller {
 		if (!CheckPermissions('public')) return;
 
 		$this->pages_model->SetPageCode('home_main');
-		$this->load->helper('images');
+		$this->load->library('image');
 
 		//Various arrays defined
 		$data = array();		//Stores all data to be passed to view
@@ -127,17 +127,7 @@ class Home extends Controller {
 		$article_summaries = $this->Home_Hack_Model->getArticleSummaries($article_summary_ids, '%W, %D %M %Y');
 		foreach($article_summaries as $summary) {
 			$type = $article_base_types[$summary['id']];
-			$summary['photo_xhtml'] = imageLocTag(
-				$summary['photo_id'],
-				'medium',
-				false,
-				$summary['photo_title'],
-				'left',
-				NULL,
-				NULL,
-				NULL,
-				FALSE
-			);
+			$summary['photo_xhtml'] = $this->image->getThumb($summary['photo_id'], 'medium', false, array('class' => 'left'));
 			$data['articles'][$type][] = $summary;
 		}
 

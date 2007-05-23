@@ -114,13 +114,13 @@ class Review_views
 		$slideshow = $CI->Slideshow_model->getReviewSlideshowImages($data['organisation_id'], $content_id); 
 		@$slideshow_photo_id = $slideshow[0]['photo_id'];
 		
-		$CI->load->helper('images_helper');
+		$CI->load->library('image');
 		
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
 		$data['review_quote']			= $review_database_result['review_context_content_quote'];
-		$data['review_image']			= imageLocation($slideshow_photo_id,'slideshow');
+		$data['review_image']			= $slideshow_photo_id;
 		$data['email'] 				= $review_database_result['organisation_email_address'];
 		$data['organisation_description'] = $review_database_result['organisation_description'];
 		$data['address_main']			= $review_database_result['organisation_postal_address'];

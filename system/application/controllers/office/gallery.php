@@ -7,16 +7,6 @@
  */
 define('PHOTOS_PERPAGE', 12);
 define('VIEW_WIDTH', 650);
-switch ($_SERVER["HTTP_HOST"]) {
-	case "theyorker.co.uk":
-		define('BASE_DIR', '/home/yorker/public_html');
-		break;
-	case "www.theyorker.co.uk":
-		define('BASE_DIR', '/home/yorker/public_html');
-		break;
-	default:
-		define('BASE_DIR', '/home/theyorker/public_html');
-}
 
 class Gallery extends Controller {
 	/**
@@ -24,7 +14,8 @@ class Gallery extends Controller {
 	 */
 	function __construct() {
 		parent::Controller();
-		$this->load->helper(array('url', 'form', 'images', 'entity'));
+		$this->load->helper(array('url', 'form', 'entity'));
+		$this->load->library('image');
 	}
 	
 	function index() {
@@ -50,10 +41,10 @@ class Gallery extends Controller {
 			$bits = explode('/', $_SERVER["HTTP_REFERER"]);
 			if ($page === 'return') {
 				//some people won't approve of this method, but the user cannot harm anything messing this up and its short
-				$_SESSION['img']['list'] = array($bits[6]);
-				header('Location: '.$_SESSION['img']['return']);
+				$_SESSION['img'][] = array('list' => $bits[6], 'type' => 'all');
+				header('Location: '.$_SESSION['img_return']);
 			} elseif (isset ($bits[4]) and $bits[4] != 'gallery') {
-				$_SESSION['img']['return'] = $_SERVER["HTTP_REFERER"];
+				$_SESSION['img_return'] = $_SERVER["HTTP_REFERER"];
 			}
 		}
 		
@@ -69,7 +60,7 @@ class Gallery extends Controller {
 		}
 		
 		if (isset($_SESSION['img_search'])) {
-			$photos = $this->db->select('*')->from('photos');
+			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->from('photos');
 			if ($_SESSION['img_search']) {
 				switch($_SESSION['img_search_by']) {
 					case "date":
@@ -107,7 +98,7 @@ class Gallery extends Controller {
 			}
 			$photos = $photos->limit(PHOTOS_PERPAGE, $page)->get();
 		} else {
-			$photos = $this->db->get('photos', PHOTOS_PERPAGE, $page);
+			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->get('photos', PHOTOS_PERPAGE, $page);
 		}
 		
 		
@@ -211,7 +202,7 @@ class Gallery extends Controller {
 
 		// Set up the master frame.
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<script src="javascript/prototype.js" type="text/javascript"></script>';
+		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
@@ -230,7 +221,7 @@ class Gallery extends Controller {
 		$reply = '';
 		if ($tagSearch->num_rows() > 0) {
 			foreach ($tagSearch->result() as $tag) {
-				$reply.='<li id="'.$tag->tag_name.'"><a onClick="setTag(\''.$tag->tag_name.'\'); addTag()"><img src="images/icons/add.png" title="add" alt="add"> '.$tag->tag_name.'</a></li>';
+				$reply.='<li id="'.$tag->tag_name.'"><a onClick="setTag(\''.$tag->tag_name.'\'); addTag()"><img src="/images/icons/add.png" title="add" alt="add"> '.$tag->tag_name.'</a></li>';
 			}
 			$objResponse->addAssign("ntags", "innerHTML", $reply);
 		} else {
@@ -242,70 +233,21 @@ class Gallery extends Controller {
 	function upload() {
 		if (!CheckPermissions('office')) return;
 		
-		$_SESSION['img_list'] = array();
-		
-		$this->main_frame->SetTitle('Admins\'s Photo Uploader');
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
-		$this->main_frame->SetContentSimple('uploader/admin_upload_form');
-		$this->main_frame->Load();
-	}
-	
-	private function _checkImageProperties(&$imgData, &$imgTypes) {
-		foreach ($imgTypes->result() as $imgType) {
-			if ($imgData['image_width'] < $imgType->image_type_width) return false;
-			if ($imgData['image_height'] < $imgType->image_type_height) return false;
-		}
-		return true;
-	}
-	
-	function do_upload() {
-		if (!CheckPermissions('office')) return;
-		
-		$this->load->library(array('image_lib', 'upload', 'xajax'));
-		$this->load->helper('images');
-		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
-		$this->xajax->processRequests();
-		
-		//get data about thumbnails
-		
-		$config['upload_path'] = './tmp/uploads/';
-		$config['allowed_types'] = 'jpg';
-		$config['max_size'] = '2048';
-		
-		$query = $this->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
-		
-		$data = array();
-		$this->upload->initialize($config);
-		for ($x = 1; $x <= $this->input->post('destination'); $x++) {
-			if ( ! $this->upload->do_upload('userfile'.$x)) {
-				$data[] = $this->upload->display_errors();
-			} else {
-				$data[] = $this->upload->data();
-				if ($this->_checkImageProperties($data[$x - 1], $query))
-					$data[$x - 1] = $this->_processImage($data[$x - 1], $x, $query);
-			}
-		}
-		$this->main_frame->SetTitle('Gallery Photo Cropper');
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
-		$this->main_frame->SetExtraHead($head);
-		$this->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$query));
-		$this->main_frame->Load();
+		$_SESSION['img'] = array();
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('office/gallery', false, true, true);
 	}
 	
 	function edit() {
 		if (!CheckPermissions('office')) return;
 		
-		$this->load->library(array('image_lib', 'xajax'));
-		$this->load->helper('images');
-		$this->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		$this->load->library('image_upload');
 		$this->xajax->processRequests();
 		
 		$output = array(); // hack to use same view
 		$data = array();
 		
 		$id = $this->uri->segment(4);
-		$_SESSION['img_list'][] = $id;
 		
 		$photoDetails = $this->db->getwhere('photos', array('photo_id' => $id));
 		$thumbDetails = $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
@@ -314,7 +256,7 @@ class Gallery extends Controller {
 		foreach ($photoDetails->result() as $Photo) {
 			foreach ($thumbDetails->result() as $Thumb) {
 				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = photoLocation($Photo->photo_id).'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
 				$loop++;
 			}
 		}
@@ -323,104 +265,10 @@ class Gallery extends Controller {
 		
 		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="stylesheets/cropper.css" media="all" /><script src="javascript/prototype.js" type="text/javascript"></script><script src="javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="javascript/cropper.js" type="text/javascript"></script>';
+		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
-		$this->main_frame->SetContentSimple('uploader/admin_upload_cropper', array('data' => $data, 'ThumbDetails' => &$thumbDetails));
+		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => '/office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'ThumbDetails' => &$thumbDetails, 'type' => true));
 		$this->main_frame->Load();
-	}
-	
-	function process_form_data($formData) {
-		if (!CheckPermissions('office')) return;
-
-		$objResponse = new xajaxResponse();
-		$this->load->library('image_lib');
-		
-		$selectedThumb = explode("|", $formData['imageChoice']);
-		
-		if (!createImageLocationFromId($selectedThumb[4], $selectedThumb[3])) {
-			$objResponse->addAssign("submitButton","value","Error: Location not created");
-			$objResponse->addAssign("submitButton","disabled",false);
-
-			return $objResponse;
-		}
-		
-		$config['image_library'] = 'imagemagick';
-//		$config['image_library'] = 'netpbm';
-		$config['library_path'] = '/usr/bin/';
-		$config['source_image'] = BASE_DIR.$selectedThumb[0];
-		$config['width'] = $formData['width'];
-		$config['height'] = $formData['height'];
-		$config['maintain_ratio'] = FALSE;
-		$config['new_image'] = BASE_DIR.imageLocationFromId($selectedThumb[4], $selectedThumb[3], null, TRUE);
-		$config['x_axis'] = $formData['x1'];
-		$config['y_axis'] = $formData['y1'];
-		
-		$this->image_lib->initialize($config);
-
-		if (!$this->image_lib->crop())
-		{
-//			die('The crop failed.');
-			echo $config['source_image'];
-			echo $this->image_lib->display_errors();
-		}
-		
-		$config['source_image'] = BASE_DIR.imageLocationFromId($selectedThumb[4], $selectedThumb[3], null, TRUE);
-		unset($config['new_image']);
-		$config['width'] = $selectedThumb[5];
-		$config['height'] = $selectedThumb[6];
-		
-		$this->image_lib->initialize($config);
-		
-		if (!$this->image_lib->resize()) {
-			echo $config['source_image'];
-			echo $this->image_lib->display_errors();
-		}
-		
-		$objResponse->addAssign("submitButton","value","Save");
-		$objResponse->addAssign("submitButton","disabled",false);
-
-		return $objResponse;
-	}
-	
-	function _processImage($data, $form_value, &$ThumbDetails) {
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $data['full_path'];
-		$config['quality'] = 85;
-		$config['master_dim'] = 'width';
-		$config['width'] = VIEW_WIDTH;
-		$config['height'] = 1000;
-		
-		$output = array();
-		
-		$this->image_lib->initialize($config);
-		if ($data['image_width'] > 650) {
-			if (!$this->image_lib->resize()) {
-				$output[]['title']= $this->image_lib->display_errors();
-				return $output;
-			}
-		}
-		$newDetails = getimagesize($data['full_path']);
-
-		$row_values = array ('photo_author_user_entity_id' => $this->user_auth->entityId,
-		                     'photo_title' => $this->input->post('title'.$form_value),
-		                     'photo_width' => $newDetails[0],
-		                     'photo_height' => $newDetails[1]);
-		$this->db->insert('photos', $row_values);
-		$query = $this->db->select('photo_id')->getwhere('photos', $row_values, 1);
-		
-		$oneRow = $query->row();
-		createImageLocation($oneRow->photo_id);
-		rename ($data['full_path'], BASE_DIR.photoLocation($oneRow->photo_id, $data['file_ext'], TRUE));
-		
-		$_SESSION['img_list'][] = $oneRow->photo_id;
-		
-		$loop = 0;
-		foreach ($ThumbDetails->result() as $Thumb) {
-			$output[$loop]['title'] = $this->input->post('title'.$form_value).' - '.$Thumb->image_type_name;
-			$output[$loop]['string'] = photoLocation($oneRow->photo_id, $data['file_ext']).'|'.$newDetails[0].'|'.$newDetails[1].'|'.$Thumb->image_type_id.'|'.$oneRow->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
-			$loop++;
-		}
-		return $output;
 	}
 }
 

@@ -53,7 +53,7 @@
 				<?php for($i=0; $i < count($suggestion); $i++) {?>
 				<h3><?=$i+1?>:</h3>
 				<label for="imgid_<?=$i?>_img">Photo</label>
-				<?=imageLocTag($suggestion[$i], 'medium', true, 'Suggested Photo')?>
+				<?=$this->image->getThumb($suggestion[$i], 'medium', true)?>
 				<br />
 				<label for="imgid_<?=$i?>_comment">Comment:</label>
 				<textarea name="imgid_<?=$i?>_comment"></textarea>
@@ -74,7 +74,7 @@
 			<div id="proposed_photos">
 <?php if($photoRequest->photo_count != 0) foreach ($photos->result() as $preview) {?>
 				<div class="photo_item">
-					<?=imageLocTag($preview->photo_request_photo_photo_id, 'medium', true, 'Proposed Photo')?>
+					<?=$this->image->getThumb($preview->photo_request_photo_photo_id, 'medium')?>
 					<?=fullname($preview->photo_request_photo_user_id)?><br />
 					<?=$preview->photo_request_photo_date?><br />
 				</div>

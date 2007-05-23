@@ -225,8 +225,8 @@ class News_model extends Model
 		    $content_id = $row->article_live_content_id;
 			
 			if ($row->photo_request_chosen_photo_id > 0) {
-				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, 'small', false, $row->photo_request_title, $image_class);
+				$this->load->library('image');
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, 'small');
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
 			}
@@ -310,8 +310,8 @@ class News_model extends Model
 		    $content_id = $row->article_live_content_id;
 			
 			if ($row->photo_request_chosen_photo_id > 0) {
-				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, $pic_size, false, $row->photo_request_title, $image_class);
+				$this->load->library('image');
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, $pic_size, false, array('class' => $image_class));
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/'.$pic_size.'-default.jpg" alt="Image not available" class="'.$image_class.'" />';
 			}
@@ -366,10 +366,10 @@ class News_model extends Model
 					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL
 					AND		photo_requests.photo_request_relative_photo_number = ?';
 			$query = $this->db->query($sql, array($id,$result['main_photo_id']));
-			$this->load->helper('images');
+			$this->load->library('image');
 			if ($query->num_rows() > 0) {
 				$row = $query->row();
-				$result['photo_xhtml'] = imageLocTag($row->photo_id, $pic_size, false, $row->photo_title, $image_class);
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_id, $pic_size, false, array('class' => $image_class));
 			}
 		}
 		return $result;
@@ -470,10 +470,10 @@ class News_model extends Model
 				AND			photo_requests.photo_request_relative_photo_number = ?';
 		$query = $this->db->query($sql, array($id,$result['main_photo']));
 
-		$this->load->helper('images');
+		$this->load->library('image');
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
-			$result['primary_photo_xhtml'] = imageLocTag($row->photo_id, 'medium', $row->view_large, $row->photo_alt, $image_class);
+			$result['primary_photo_xhtml'] = $this->image->getThumb($row->photo_id, 'medium', $row->view_large, array('class' => $image_class));
 			$result['primary_photo_caption'] = $row->photo_caption;
 		}
 
