@@ -8,7 +8,7 @@ define ("IMAGE_HASH", 2000); //upload cropper new view has this in javascript
  */
 
 /// Account controller.
-class Account extends controller {
+class Conversion extends controller {
 	function index() {
 		$image['banner'] = $this->db->getwhere('images', array('image_type_type_id', 9));
 //		$image['gamethumb'] = $this->db->getwhere('images', array('image_type_type_id', 8));
