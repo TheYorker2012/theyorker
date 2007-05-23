@@ -82,7 +82,7 @@ class News extends Controller {
 				}
 				$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
 				foreach ($data['puffers'] as &$puffer) {
-					$puffer['image'] = '/photos/'.$puffer['image_codename'].'/'.$puffer['image']);
+					$puffer['image'] = '/photos/'.$puffer['image_codename'].'/'.$puffer['image'];
 				}
 			}
 		}
