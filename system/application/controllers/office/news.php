@@ -25,16 +25,19 @@ class News extends Controller
 	}
 
 	/**
-	 *	@brief	Testing new interface idea
+	 *	@brief	Shows the scheduled and live (published within the last 7 days) articles on the site.
 	 */
-	function test ()
+	function scheduledlive()
 	{
 		if (!CheckPermissions('office')) return;
 
-		$data['test'] = 'test';
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_scheduled_and_live');
+
+		$data['articlelist'] = $this->news_model->getScheduledAndLive();
 
 		/// Set up the main frame
-		$this->main_frame->SetContentSimple('office/news/test', $data);
+		$this->main_frame->SetContentSimple('office/news/scheduled_and_live', $data);
 		$this->main_frame->Load();
 	}
 
@@ -701,7 +704,7 @@ class News extends Controller
 			foreach ($data['article']['reporters'] as $reporter) {
 				if ($reporter['status'] == 'accepted') {
 					$reporter['bcard'] = $this->article_model->GetReporterByline($reporter['id']);
-					if (count($reporter['bcard']) > 0) { 
+					if (count($reporter['bcard']) > 0) {
 						$reporter_check = TRUE;
 					} else {
 						$reporter_check = FALSE;
@@ -726,10 +729,10 @@ class News extends Controller
 				$errors[] = 'Photo to use for article thumbnails not selected.';
 			}
 			if (!$photo_all_completed) {
-				$errors[] = 'All photo requests must have either been completed or cancelled.';			
+				$errors[] = 'All photo requests must have either been completed or cancelled.';
 			}
 			if (!$photo_thumbnail) {
-				$errors[] = 'The photo request that has been set to use for thumbnails must be completed.';			
+				$errors[] = 'The photo request that has been set to use for thumbnails must be completed.';
 			}
 			$data['errors'] = $errors;
 

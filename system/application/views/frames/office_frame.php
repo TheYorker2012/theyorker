@@ -176,6 +176,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			Other Features
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/scheduledlive/'>Scheduled and Live</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/moderator/'>Comment Moderation</a>
 		</div>
 		<div class='officenavigation_item'>

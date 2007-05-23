@@ -22,7 +22,6 @@ class Banners extends Controller
 
 		$data = array();
 
-		$this->load->model('Banner_Model');
 		$data['banners'] = $this->Banner_Model->GetBanners();
 
 		$this->load->helper('images_helper');
@@ -44,7 +43,6 @@ class Banners extends Controller
 			redirect('/office/banners');
 		}
 
-		$this->load->model('Banner_Model');
 		$data['banner'] = $this->Banner_Model->GetBanner($banner_id);
 
 		$this->load->helper('images_helper');
@@ -81,7 +79,7 @@ class Banners extends Controller
 		}
 		redirect('/office/banners');
 	}
-	
+
 	function upload() {
 		$this->load->library('image_upload');
 		$this->image_upload->automatic('office/banners', array('banner'), true, false);
