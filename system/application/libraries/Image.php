@@ -16,8 +16,9 @@ class Image {
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
 		$data = $this->get($photoID, 'thumbs', $type);
 		$tagInner = '';
-		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
+		$data['alt'] = $data['title'];
+		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
+		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" '.$tagInner.'/>';
 		if ($viewLarge) $tag = '<a href="/photos/full/'.$photoID.'">'.$tag.'</a>';
 		return $tag;
 	}
@@ -31,8 +32,9 @@ class Image {
 			$data = $this->get($imageID, 'images', $type);
 		}
 		$tagInner = '';
-		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		return '<img src="/image/'.$type.'/'.$imageID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" '.$tagInner.'/>';
+		$data['alt'] = $data['title'];
+		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
+		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.'/>';
 	}
 	
 	private function get($id, $table, $type = null) {
