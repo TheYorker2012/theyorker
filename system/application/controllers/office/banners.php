@@ -24,7 +24,7 @@ class Banners extends Controller
 
 		$data['banners'] = $this->Banner_Model->GetBanners();
 
-		$this->load->helper('images_helper');
+		$this->load->library('image');
 		$this->main_frame->SetContentSimple('office/banners/banner_list', $data);
 
 		$this->main_frame->Load();
@@ -45,7 +45,7 @@ class Banners extends Controller
 
 		$data['banner'] = $this->Banner_Model->GetBanner($banner_id);
 
-		$this->load->helper('images_helper');
+		$this->load->library('image');
 		$this->main_frame->SetContentSimple('office/banners/banner_edit', $data);
 
 		$this->main_frame->Load();

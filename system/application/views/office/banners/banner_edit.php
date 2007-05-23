@@ -10,7 +10,7 @@
 		<form name='banner_form' action='/office/banners/update/<?php echo $banner->banner_id; ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='banner_image'>Banner:</label>
-				<img src="<?php echo imageLocation($banner->banner_id, 'banner'); ?>" />
+				<?php echo $this->image->getImage($banner->banner_id, 'banner'); ?>
 				<br />
 				<label for='banner_title'>Title/Author:</label>
 				<textarea id='banner_title' name='banner_title' cols="30" rows="2"><?php echo $banner->banner_title; ?></textarea>

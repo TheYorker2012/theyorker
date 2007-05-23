@@ -25,7 +25,7 @@
 	<?php foreach($banners as $banner) { ?>
 
 	<tr>
-	<td><img src="<?php echo imageLocation($banner['banner_id'], 'banner'); ?>" title="<?php echo $banner['banner_title']; ?>" alt="<?php echo $banner['banner_title']; ?>" width="294" height="75" /></td>
+	<td><?php echo $this->image->getImage($banner['banner_id'], 'banner', array('width' => '294', 'height' => '75')); ?></td>
 	<td><?php echo (isset($banner['banner_last_displayed_timestamp']) ? $banner['banner_last_displayed_timestamp'] : 'In Pool'); ?></td>
 	<td><a href="/office/banners/edit/<?php echo $banner['banner_id']; ?>" title="Edit this banner">Edit</a></td>
 	</tr>
