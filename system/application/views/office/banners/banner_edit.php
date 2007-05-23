@@ -29,7 +29,7 @@
 					<br />
 				</div>
 				<input name='name_cancel_button' type='button' onClick="document.location='/office/banners/';" value='Cancel' class='button' />
-				<input name='name_delete_button' type='submit' value='Delete' class='button' />
+				<input name='name_delete_button' type='submit' value='Delete' class='button' onclick="return confirm('Are you sure you want to perminently remove this banner?');" />
 				<input name='name_update_button' type='submit' value='Update' class='button' />
 			</fieldset>
 		</form>
