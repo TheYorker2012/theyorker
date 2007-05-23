@@ -95,7 +95,7 @@ class Links_Model extends Model {
 			//Get Image Id
 			$sql = 'SELECT link_image_id
 				FROM links WHERE link_id = ?';
-			$query = $this->db->query($sql,array($id));
+			$query = $this->db->query($sql,array($linkId));
 			$row = $query->first_row();
 
 			$sql ='DELETE FROM links WHERE link_id = ?';
