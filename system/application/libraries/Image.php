@@ -87,7 +87,7 @@ class Image {
 		}
 	}
 	
-	public function add($type, &$image, $info = array()) {
+	public function add($type, &$newImage, $info = array()) {
 		$image;
 		$imageStr = $this->image2string($image, $info['mime']);
 		switch ($type) {

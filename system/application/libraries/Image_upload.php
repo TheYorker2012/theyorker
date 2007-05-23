@@ -173,7 +173,7 @@ class Image_upload {
 			}
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
-			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
+			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['x2'], $formData['y2']);
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
