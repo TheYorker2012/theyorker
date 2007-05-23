@@ -182,7 +182,7 @@ class Image_upload {
 							$this->ci->image->delete('image', $newImages['oldID']); //TODO log orphaned image if false
 							$newImage['oldID'] = $id;
 						} else {
-							$newImages['oldID'] = true;
+							$newImages['oldID'] = 0;
 						}
 						//$newImages['list'] = $id;
 					}
