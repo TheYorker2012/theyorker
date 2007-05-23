@@ -13,7 +13,7 @@ class Image {
 		return '<img src="/photos/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
 	}
 	
-	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguements = array()) {
+	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
 		$data = $this->get($photoID, 'thumbs', $type);
 		$tagInner = '';
 		foreach ($extraTags as $name => $value) $tagInner.= $name.'="'.$value.'" ';
@@ -22,7 +22,7 @@ class Image {
 		return $tag;
 	}
 	
-	public function getImage($imageID, $type, $extraTags = array(), $extraArguements = array()) {
+	public function getImage($imageID, $type, $extraTags = array(), $extraArguments = array()) {
 		if (is_int($type)) {
 			$sql = 'SELECT image_type_codename FROM image_types WHERE image_type_id = ?';
 			$codename = $this->db->query($sql, array($type))->first_row()->image_type_codename;
