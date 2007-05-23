@@ -68,14 +68,22 @@ class Banners extends Controller
 		$banner_scheduled = htmlentities($this->input->post('banner_scheduled'), ENT_NOQUOTES, 'UTF-8');
 		$banner_schedule_date = htmlentities($this->input->post('banner_schedule_date'), ENT_NOQUOTES, 'UTF-8');
 
+		$delete = ($this->input->post('name_delete_button') == 'Delete');
+
 		$banner_last_displayed_timestamp = ($banner_scheduled ? $banner_schedule_date : null);
 
-		if ($banner_title){
-			$this->load->model('Banner_Model');
-			$this->Banner_Model->UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp);
-			$this->messages->AddMessage('success', 'Banner update successfully');
+		$this->load->model('Banner_Model');
+		if ($delete) {
+				$this->load->library('image');
+				$this->image->delete('image', $banner_id);
+				$this->messages->AddMessage('success', 'Banner deleted successfully');
 		} else {
-			$this->messages->AddMessage('error', 'Banner update failed: no data was provided.');
+			if ($banner_title){
+				$this->Banner_Model->UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp);
+				$this->messages->AddMessage('success', 'Banner update successfully');
+			} else {
+				$this->messages->AddMessage('error', 'Banner update failed: no data was provided.');
+			}
 		}
 		redirect('/office/banners');
 	}
