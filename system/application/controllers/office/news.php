@@ -1,4 +1,3 @@
-<<<<<<< .working
 <?php
 /**
  *	Yorker Office - Article Manager
