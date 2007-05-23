@@ -1,4 +1,5 @@
 <?php
+set_time_limit(0);
 define ("IMAGE_HASH", 2000); //upload cropper new view has this in javascript
 
 /**
@@ -10,19 +11,20 @@ define ("IMAGE_HASH", 2000); //upload cropper new view has this in javascript
 /// Account controller.
 class Conversion extends controller {
 	function index() {
-		$image['banner'] = $this->db->getwhere('images', array('image_type_type_id', 9));
-//		$image['gamethumb'] = $this->db->getwhere('images', array('image_type_type_id', 8));
-//		$image['puffer'] = $this->db->getwhere('images', array('image_type_type_id', 5));
-//		$image['link'] = $this->db->getwhere('images', array('image_type_type_id', 10));
+		$image['banner'] = $this->db->getwhere('images', array('image_image_type_id' => 9));
+		$image['gamethumb'] = $this->db->getwhere('images', array('image_image_type_id' => 8));
+		$image['puffer'] = $this->db->getwhere('images', array('image_image_type_id' => 5));
+		$image['link'] = $this->db->getwhere('images', array('image_image_type_id' => 10));
 		
 		foreach ($image as $type => $results) {
 			echo "starting ".$type.'<br/>';
 			foreach ($results->result() as $result) {
-				if ($result->image_mime == null && file_exists(imageLocation($result->image_id, $type, $result->image_file_extension))) {
+				if ($result->image_mime == null && file_exists('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension))) {
+					$data = array();
 					if (function_exists('exif_imagetype')) {
-						$mime = image_type_to_mime_type(exif_imagetype('.'.imageLocation($result->image_id, $type, $result->image_file_extension)));
+						$data['image_mime'] = image_type_to_mime_type(exif_imagetype('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension)));
 					} else {
-						$byDot = explode('.', imageLocation($result->image_id, $type, $result->image_file_extension));
+						$byDot = explode('.', $this->imageLocation($result->image_id, $type, $result->image_file_extension));
 						switch ($byDot[count($byDot)-1]) {
 							case 'jpg':
 							case 'jpeg':
@@ -40,10 +42,12 @@ class Conversion extends controller {
 								break;
 						}
 					}
-					$data['image_data'] = file_get_contents('.'.imageLocation($result->image_id, $type, $result->image_file_extension));
+					$data['image_data'] = file_get_contents('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension));
+					unlink('.'.$this->imageLocation($result->image_id, $type, $result->image_file_extension));
 					$this->db->where('image_id', $result->image_id)->update('images', $data);
 					echo "updated ".$result->image_id.'<br />';
 				} else {
+					echo $this->imageLocation($result->image_id, $type, $result->image_file_extension);
 					echo "skipped ".$result->image_id.'<br />';
 				}
 			}
@@ -53,11 +57,7 @@ class Conversion extends controller {
 	private function imageLocation($id, $type = false, $extension = '.jpg') {
 		if (is_string($type)) {
 			$location = 'images/images/'.$type.'/'.(floor($id / IMAGE_HASH)).'/'.$id.$extension;
-			if ($force or is_file($location)) {
-				return '/'.$location;
-			} else {
-				return false;
-			}
+			return '/'.$location;
 		}
 	}
 	
