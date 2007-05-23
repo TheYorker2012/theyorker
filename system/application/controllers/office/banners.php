@@ -81,9 +81,13 @@ class Banners extends Controller
 	}
 
 	function upload() {
+		//has user got access to office
+		if (!CheckPermissions('office')) return;
+
 		$this->load->library('image_upload');
 		$this->image_upload->automatic('office/banners', array('banner'), true, false);
 	}
+
 }
 
 ?>
