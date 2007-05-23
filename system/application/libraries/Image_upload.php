@@ -176,17 +176,29 @@ class Image_upload {
 			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $result->x, $result->y, imagesx($image), imagesy($image));
 			$id = $this->ci->image->add('image', $image, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
-				foreach ($_SESSION['img'] as &$newImages) {
-					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
-						if (isset($newImages['oldID'])) {
-							$this->ci->image->delete('image', $newImages['oldID']); //TODO log orphaned image if false
-							$newImage['oldID'] = $id;
+				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
+					if ($selectedThumb[4] == $_SESSION['img']['list'] and $selectedThumb[3] == $_SESSION['img']['type']) {
+						if (isset($_SESSION['img']['oldID'])) {
+							$this->ci->image->delete('image', $_SESSION['img']['oldID']); //TODO log orphaned image if false
+							$_SESSION['img']['oldID'] = $id;
 						} else {
-							$newImages['oldID'] = 0;
+							$_SESSION['img']['oldID'] = 0;
 						}
 						//$newImages['list'] = $id;
 					}
 				}
+// php limitation
+//				foreach ($_SESSION['img'] as &$newImages) {
+//					if ($selectedThumb[4] == $newImages['list'] and $selectedThumb[3] == $newImages['type']) {
+//						if (isset($newImages['oldID'])) {
+//							$this->ci->image->delete('image', $newImages['oldID']); //TODO log orphaned image if false
+//							$newImage['oldID'] = $id;
+//						} else {
+//							$newImages['oldID'] = 0;
+//						}
+//						//$newImages['list'] = $id;
+//					}
+//				}
 			} else {
 				$objResponse->addAssign("submitButton","value","Not Saved");
 				$objResponse->addAssign("submitButton","disabled",false);
