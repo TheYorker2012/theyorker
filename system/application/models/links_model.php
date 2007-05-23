@@ -1,7 +1,7 @@
 <?php
 /*
  * Model for managment of user quick links
- * 
+ *
  *
  * \author Alex Fargus (agf501)
  *
@@ -29,7 +29,7 @@ class Links_Model extends Model {
 	 */
 	function DeleteLink($user,$id) {
 		$this->db->trans_start();
-		$sql = 'SELECT link_official, link_image_id 
+		$sql = 'SELECT link_official, link_image_id
 			FROM links WHERE link_id = ?';
 		$query = $this->db->query($sql,array($id));
 		$row = $query->first_row();
@@ -45,8 +45,9 @@ class Links_Model extends Model {
 		$this->db->trans_complete();
 	}
 
-	function ModifyLink() {
-		echo "not impl.";
+	function UpdateLink($link_id, $link_name, $link_url) {
+		$sql = 'UPDATE links SET link_name = ?, link_url = ? WHERE link_id = ?';
+		$this->db->query($sql,array($link_name, $link_url, $link_id));
 	}
 
 	/*
@@ -54,6 +55,14 @@ class Links_Model extends Model {
 	 */
 	function PromoteLink($user, $linkId) {
 		$sql = 'UPDATE links SET link_official = 1, link_editor_entity_id = ? WHERE link_id = ?';
+		$this->db->query($sql,array($user, $linkId));
+	}
+
+	/*
+	 * Rejects a link from nomination, cannot be undone!
+	 */
+	function RejectLink($user, $linkId) {
+		$sql = 'UPDATE links SET link_nominated = 0, link_editor_entity_id = ? WHERE link_id = ?';
 		$this->db->query($sql,array($user, $linkId));
 	}
 
@@ -113,10 +122,27 @@ class Links_Model extends Model {
 		return $this->db->query($sql, array($user));
 	}
 
+	function GetLink($link_id) {
+		$sql = 'SELECT link_id, link_url, link_name, link_image_id
+			FROM links
+			WHERE link_id = ?
+			';
+		return $this->db->query($sql, array($link_id))->row();
+	}
+
 	function GetAllOfficialLinks() {
 		$sql = 'SELECT link_id, link_url,link_name,link_image_id
 			FROM links
 			WHERE link_official = 1
+			ORDER BY link_name ASC';
+		$query = $this->db->query($sql);
+		return $query;
+	}
+
+	function GetAllNominatedLinks() {
+		$sql = 'SELECT link_id, link_url,link_name,link_image_id
+			FROM links
+			WHERE link_official = 0 AND link_nominated = 1
 			ORDER BY link_name ASC';
 		$query = $this->db->query($sql);
 		return $query;
@@ -149,7 +175,7 @@ class Links_Model extends Model {
 			}
 			$sql.= ' ('.$user.', ?, '.$i.')';
 		}
-		
+
 		return $this->db->query($sql, $links);
 	}
 }
