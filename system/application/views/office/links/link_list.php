@@ -8,8 +8,6 @@
 	<h4>What's this?</h4>
 	<div class="Entry">
 		This page allows you to edit links <b>live</b>. Take care.<br />
-		<br />
-		Note that the links in the pool are listed in <b>chronological order</b> of when they will appear on the site. This list shows only the next few links that are in the queue.
 	</div>
 </div>
 

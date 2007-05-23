@@ -65,8 +65,8 @@ class Links extends Controller
 			redirect('/office/links');
 		}
 
-		$this->load->model('Link_Model');
-		$this->Link_Model->PromoteLink($this->user_auth->entityId, $link_id);
+		$this->load->model('Links_Model');
+		$this->Links_Model->PromoteLink($this->user_auth->entityId, $link_id);
 		$this->messages->AddMessage('success', 'Link promoted successfully');
 
 		redirect('/office/links');
@@ -85,8 +85,8 @@ class Links extends Controller
 			redirect('/office/links');
 		}
 
-		$this->load->model('Link_Model');
-		$this->Link_Model->RejectLink($this->user_auth->entityId, $link_id);
+		$this->load->model('Links_Model');
+		$this->Links_Model->RejectLink($this->user_auth->entityId, $link_id);
 		$this->messages->AddMessage('success', 'Link rejected successfully');
 
 		redirect('/office/links');
@@ -104,7 +104,7 @@ class Links extends Controller
 
 		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
 			$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
-			redirect('/account/links', 'location');
+			redirect('/office/links', 'location');
 		} else if($this->input->post('lurl')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
 		}
