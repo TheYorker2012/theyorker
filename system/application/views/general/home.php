@@ -46,7 +46,7 @@ function print_middle_box($title,$article_array){
 <?php 	if ($link->num_rows() > 0)
 	{
 	foreach($link->result() as $picture){
-		echo('	<a href="'.$picture->link_url.'">'.$this->image->getImage($picture->link_image_id, 'link').'</a>'."\n");
+		echo('	<a href="'.$picture->link_url.'">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => $picture->link_name, 'alt' => $picture->link_name)).'</a>'."\n");
 		}
 	} else {
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
