@@ -19,7 +19,7 @@
 				<textarea id='link_url' name='link_url' cols="30" rows="2"><?php echo $link->link_url; ?></textarea>
 				<br />
 				<input name='name_cancel_button' type='button' onClick="document.location='/office/links/';" value='Cancel' class='button' />
-				<input name='name_delete_button' type='submit' value='Delete' class='button' onclick="return confirm('Are you sure you want to remove this link?');" />
+				<input name='name_delete_button' type='submit' value='Delete' class='button' onclick="return confirm('Are you sure you want to remove this link? Doing this will remove the link from ALL user\'s homepages, without warning.');" />
 				<input name='name_update_button' type='submit' value='Update' class='button' />
 			</fieldset>
 		</form>
