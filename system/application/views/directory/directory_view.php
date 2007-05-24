@@ -5,17 +5,18 @@
 
 <div id="RightColumn">
 	<h2 class="first">Information</h2>
-	<div id="SlideShow" class="entry">
-		<img src="/images/prototype/prefs/image_load.jpg" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
-	</div>
+	<?php if(count($organisation['slideshow']) > 0) { ?>
+		<div id="SlideShow" class="entry">
+			<img src="<?php echo($organisation['slideshow'][0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
+		</div>
 
-	<script type="text/javascript">
-<?php foreach ($organisation['slideshow'] as $slide_photo) { ?>
-	Slideshow.add('<?php echo($slide_photo['url']); ?>');
-<?php } ?>
-	Slideshow.load();
-	</script>
-
+		<script type="text/javascript">
+	<?php foreach ($organisation['slideshow'] as $slide_photo) { ?>
+		Slideshow.add('<?php echo($slide_photo['url']); ?>');
+	<?php } ?>
+		Slideshow.load();
+		</script>
+	<?php } ?>
 	<div class="Entry">
 <?php
 if (!empty($organisation['website'])) {

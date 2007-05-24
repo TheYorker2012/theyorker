@@ -965,7 +965,7 @@ function GetTagOrganisation($type,$organisation)
 			INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
 			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id
-			WHERE ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
+			WHERE rc.review_context_deleted = 0 AND ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
 		$query = $this->db->query($sql, array($content_type_codename));
 		$raw_reviews = $query->result_array();
@@ -1186,6 +1186,84 @@ function GetTagOrganisation($type,$organisation)
 		}
 		else
 			return false;
+	}
+
+
+	/**
+	 * Get array containing all data needed to display a review (from the pool) on the front page.
+	 * @param $content_type This is the content_type of the section for which to return the front page
+	 */
+	function GetFrontPageReview($content_type)
+	{
+		$basesql = 'SELECT
+						articles.article_id as id,
+						DATE_FORMAT(articles.article_publish_date, "%W, %D %M %Y") as date,
+						organisations.organisation_name,
+						organisations.organisation_entity_id,
+						organisations.organisation_directory_entry_name,
+						content_types.content_type_name,
+						content_types.content_type_codename,
+						article_contents.article_content_heading,
+						article_contents.article_content_wikitext_cache as text,
+						review_context_contents.review_context_content_quote as quote,
+						review_context_contents.review_context_content_rating as rating
+			FROM articles
+			INNER JOIN content_types
+			ON articles.article_content_type_id = content_types.content_type_id
+			INNER JOIN organisations
+			ON organisations.organisation_entity_id = articles.article_organisation_entity_id
+			INNER JOIN article_contents
+			ON articles.article_live_content_id = article_contents.article_content_id
+			INNER JOIN review_contexts
+			ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+			AND review_contexts.review_context_deleted = 0
+			AND review_contexts.review_context_content_type_id = content_types.content_type_id
+			INNER JOIN review_context_contents
+			ON review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id
+			WHERE 		articles.article_pulled = 0
+				AND		articles.article_deleted = 0
+				AND		content_types.content_type_codename = ?';
+
+		$sql = $basesql.' AND DATE(articles.article_display_date) = CURRENT_DATE()';
+
+		$query = $this->db->query($sql, array($content_type));
+
+		if($query->num_rows() == 0){
+			$sql = $basesql.' ORDER BY article_display_date	LIMIT 0,1';
+			$query = $this->db->query($sql, array($content_type));
+
+			if($query->num_rows() != 0) {
+				$sql = 'UPDATE articles
+					SET article_display_date = CURRENT_TIMESTAMP()
+					WHERE article_id = ?';
+				$update = $this->db->query($sql,array($query->row()->id));
+			} else {
+				return null;
+			}
+		}
+
+		$result = $query->row_array();
+
+		$sql = 'SELECT article_writers.article_writer_user_entity_id,
+				business_cards.business_card_name
+			FROM article_writers, business_cards
+			WHERE article_writers.article_writer_article_id = ?
+			AND article_writers.article_writer_status = "accepted"
+			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
+			AND article_writers.article_writer_user_entity_id = business_cards.business_card_user_entity_id
+			LIMIT 0,10';
+		$query = $this->db->query($sql,array($result['id']));
+	    $authors = array();
+	    foreach ($query->result() as $row)
+		{
+			$authors[] = array(
+				'id' => $row->article_writer_user_entity_id,
+				'name' => $row->business_card_name
+			);
+		}
+		$result['authors'] = $authors;
+
+		return $result;
 	}
 
 }

@@ -36,7 +36,7 @@
 			<label for="a_review_author">Author:</label>
 			<select name="a_review_author">
 				<optgroup label="Generic:">
-				<?php 
+				<?php
 				foreach ($bylines['generic'] as $option)
 				{
 					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
@@ -44,7 +44,7 @@
 				?>
 				</optgroup>
 				<optgroup label="Personal:">
-				<?php 
+				<?php
 				foreach ($bylines['user'] as $option)
 				{
 					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
@@ -52,7 +52,8 @@
 				?>
 				</optgroup>
 			</select>
-			<label for="review">Review:</label>
+			<br /><br />
+			<div id="toolbar" style="clear: both;"></div>
 			<textarea name="a_review_text" id="a_review_text" cols="50" rows="10"><?php echo 'review'; ?></textarea>
 		</fieldset>
 		<fieldset>
@@ -60,6 +61,9 @@
 		</fieldset>
 	</form>
 </div>
+<script type="text/javascript">
+	mwSetupToolbar('toolbar','a_review_text', false);
+</script>
 <div class="grey_box">
 	<h2>maintain reviews</h2>
 	<?php

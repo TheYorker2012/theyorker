@@ -74,99 +74,35 @@ class Reviews extends Controller
 		if (!CheckPermissions('public')) return;
 
 		//Pass content_type to view
-		$data['content_type'] = $content_type;
+
+		$main_review = $this->Review_model->GetFrontPageReview($content_type);
+		$data['content_type'] = $main_review['content_type_name'];
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_main');
 
 		$this->main_frame->SetTitleParameters(array(
-			'content_type' => $content_type
+			'content_type' => $data['content_type']
 		));
 
-		//Load news model
-		$this->load->model('News_model');
+		/// If there are no reviews for this particular section then show a page anyway
+		if ($main_review != null) {
+			$this->load->model('slideshow');
+			$slideshow_array = $this->slideshow->getPhotos($main_review['organisation_entity_id']);
+			$slideshow = array();
 
-		//For culture - The right side barcrawl list
-		if ($content_type == 'culture' && FALSE)
-		{
-			$barcrawl_id = $this->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
-
-			if ($barcrawl_id != array()) //If not empty
-			{
-				$barcrawl_index = 0;
-
-				foreach ($barcrawl_id as $id) //Get all the information from news model
-				{
-					$barinfo = $this->News_model->GetSimpleArticle($id);
-					$barcrawls[$barcrawl_index]['barcrawl_name'] = $barinfo['heading'];
-					$barcrawls[$barcrawl_index]['barcrawl_link'] = '/reviews/barcrawl/'.$this->Review_model->GetDirectoryName($id);
-				}
+			$this->load->library('image');
+			foreach ($slideshow_array->result() as $slide){
+				$slideshow[] = array(
+					'title' => $slide->photo_title,
+					'id' => $slide->photo_id,
+					'url' => $this->image->getPhotoURL($slide->photo_id, 'slideshow')
+				);
 			}
-			$data['barcrawls'] = $barcrawls;
-
+			$main_review['slideshow'] = $slideshow;
 		}
 
-		//Get the last article_id
-		$article_id = $this->News_model->GetLatestId($content_type,1); //1 is the amount of articles
-
-		//Get the directory name of the organistion it's about
-		//$organisation_code_name = $this->Review_model->GetDirectoryName($article_id);
-
-		//Get data from GetReviews
-		//$reviews_database_result = $this->Review_model->GetReview($organisation_code_name, $content_type);
-
-		//Incase of no data
-		//if (count($reviews_database_result) != 0) {
-			//$this->messages->AddMessage('information', 'No articles could be found', FALSE);
-		//}
-
-		//First row only since it should be unique
-		//$reviews_database_result = $reviews_database_result[0];
-
-		//Get the article summary
-		//$article_database_result = $this->News_model->GetFullArticle($article_id);
-
-		/// If there are no articles for this particular section then show a page anyway
-		if (count($article_id) == 0) {
-			$main_article = array(
-				'id'						=>	0,
-				'date'					=>	date('l, jS F Y'),
-				'location'				=> 0,
-				'public_thread_id'	=>	NULL,
-				'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
-				'subheading'			=>	NULL,
-				'subtext'				=>	NULL,
-				'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
-				'blurb'					=>	NULL,
-				'authors'				=>	array(),
-				'links'					=>	array(),
-				'related_articles'	=> array(),
-				'fact_boxes'			=>	array()
-			);
-		} else {
-			$main_article = $this->News_model->GetFullArticle($article_id[0]);
-		}
-
-		$data['main_article'] = $main_article;
-
-		// Create byline --- Note to byliner... dynamic data done
-		//$this->load->library('byline');
-		//$this->byline->AddReporter($article_database_result['authors']);
-		//$this->byline->SetDate($article_database_result['date']);
-
-		//Set Blurb
-		//$data['main_blurb'] = $this->pages_model->GetPropertyText('blurb');
-		//if (isset($article_database_result['photos']))
-		//{
-		//	$data['article_photo'] = imageLocation($article_database_result['photos'][0]);
-		//}
-		//else
-		//{
-		//	$data['article_photo'] = imageLocation(1);
-		//}
-
-		//$data['article_photo_alt_text'] = "Article Image";
-		//$data['article_photo_title'] = "Recent Title";
+		$data['main_review'] = $main_review;
 
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags($content_type);
@@ -190,6 +126,12 @@ class Reviews extends Controller
 		//Pass tabledata straight to view it is in the proper format
 		$data['league_data'] = $leagues;
 
+		$this->main_frame->SetExtraHead('
+		<script type="text/javascript" src="/javascript/prototype.js"></script>
+		<script type="text/javascript" src="/javascript/scriptaculous.js"></script>
+		<script src="/javascript/slideshow_new.js" type="text/javascript"></script>
+		');
+
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/main',$data);
 
@@ -204,56 +146,10 @@ class Reviews extends Controller
 
 		$this->load->library('review_views');
 		$this->review_views->DisplayReview($content_type, $organisation_name, $IncludedComment);
-		
+
 		$this->main_frame->Load();
 	}
 
-	/// Add a comment
-	function addcomment()
-	{
-		/// @todo Model shouldn't have to deal with post data.
-		$this->Review_model->SetComment($_POST); //Gives model post data
-		redirect($_POST['return_page']); //Send user back to previous page
-	}
-
- //Old dummy data - Will returns error etc...
-	/// Bar Crawl Page
-	function barcrawls($CrawlName = FALSE)
-	{
-		if (!CheckPermissions('public')) return;
-
-		//Set page code
-		$this->pages_model->SetPageCode('review_context_barcrawl');
-
-		//Dummy Data - frb501
-		$data['crawl_title']='The Great Piss Up';
-		$data['crawl_blurb']='A kick ass crawl. So cool I came back home with a dead donkey!';
-		$data['crawl_image']='/images/prototype/reviews/reviews_07.jpg';
-		$data['crawl_content']='The industry section around this area fart is particularly sexy and it likes nick evans sex The fart industry section around this area is sex particularly sexy and it longwordtastic likes nick evans The industry section longwordtastic around this area is particularly sexy fart and it likes nick evans The industry longwordtastic section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around this area is particularly sexy and it likes nick evans The industry section around
-';
-		$data['crawl_rating'] = '5 skulls!';
-		$data['crawl_directions']='Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire and will show you the way to new jersey, not ammarillo though or however you spells it check it Follow the white rabbit for he is on fire';
-
-		$data['crawl_cost']='12';
-		$data['pub_list'] = array('Kings Head','Ducks Head','Your Head');
-		$drink_guide[0] = array('Kings Head','Bloody Mary','2');
-		$drink_guide[1] = array('Ducks Head','Eggs Galore','4');
-		$drink_guide[2] = array('Your Head','Ale','5');
-		$data['drink_guide'] = $drink_guide;
-
-		//Comment system
-		$data['page_id'] = 105;
-		//$data['comments'] 	= $this->Review_model->GetComments($organisation_name,$content_id,$article_comment_id);
-		$data['article_id'] = 111;
-
-		$this->main_frame->SetTitleParameters(array('organisation' => 'The Great Piss Up'));
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/barcrawl',$data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
 
 	/// Display table for review table (from puffers)
 	function table(	$item_type = FALSE,
@@ -263,7 +159,7 @@ class Reviews extends Controller
 	{
 		//Load slideshow model
 		$this->load->model('slideshow');
-		
+
 		//POST data set overwrites uri data
 		if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
 		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
@@ -303,7 +199,9 @@ class Reviews extends Controller
 			//A list of all tags
 			$data['review_tags'] = $database_result[0]['tag_groups'];
 
-			//For each row in the table			
+			$this->load->library('image');
+
+			//For each row in the table
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
 				if (isset($database_result[$reviewno]['organisation_name']))
@@ -317,14 +215,13 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_quote'] = $database_result[$reviewno]['review_context_content_quote'];
 					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
-					
+
 					//get the slideshow images for the review item
-					$slideshow_photos = $this->slideshow->GetReviewPhotos($database_result[$reviewno]['organisation_entity_id'], $item_type, true);
-					foreach($slideshow_photos as &$slideshow_photo)
+					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']); //$item_type, true);
+					if($slideshow_array->num_rows() > 0)
 					{
-						$slideshow_photo['location'] = '/photo/slideshow/'.$slideshow_photo['id']; //changed from photo
+						$entries[$reviewno]['review_image'] = $this->image->getPhotoURL($slideshow_array->row()->photo_id, 'slideshow');
 					}
-					$entries[$reviewno]['slideshow'] = $slideshow_photos;
 
 					//Change scope of $tagbox
 					$tagbox = array();
@@ -357,13 +254,6 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
-	/// Report a comment
-	function reportcomment($comment_id)
-	{
-		$this->Review_model->ReportComment($comment_id);
-		redirect('/reviews/food');
-	}
-
 	/// Leagues
 	function leagues($league_code_name = NULL)
 	{
@@ -371,10 +261,10 @@ class Reviews extends Controller
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
-		
+
 		//Load slideshow model
 		$this->load->model('slideshow');
-		
+
 		//Load review  model
 		$this->load->model('review_model');
 
@@ -407,16 +297,15 @@ class Reviews extends Controller
 				$reviews[$row]['review_title'] = $leagues[$row]['organisation_name'];
 				$reviews[$row]['review_content_type_id'] = $leagues[$row]['league_content_type_id'];
 				$reviews[$row]['review_org_directory_entry_name'] = $leagues[$row]['organisation_directory_entry_name'];
-				
-				
+
+
 				//get the slideshow images for the league item
-				$slideshow_photos = $this->slideshow->GetReviewPhotos($reviews[$row]['review_org_id'], $reviews[$row]['review_content_type_id'], false);
-				foreach($slideshow_photos as &$slideshow_photo)
+				$slideshow_array = $this->slideshow->getPhotos($reviews[$row]['review_org_id']); //, $reviews[$row]['review_content_type_id'], false);
+				if($slideshow_array->num_rows() > 0)
 				{
-					$slideshow_photo['location'] = '/photos/slideshow/'.$slideshow_photo['id']; //This was originally fetching photos
+					$reviews[$row]['image'] = $slideshow_array->row()->photo_id;
 				}
-				$reviews[$row]['slideshow'] = $slideshow_photos;
-				
+
 				//very hacky two lines here:
 				$content_codename = $this->review_model->ContentTypeIDToCodename($reviews[$row]['review_content_type_id']);
 				$reviews[$row]['tags'] = $this->review_model->GetTagOrganisation($content_codename,$reviews[$row]['review_org_directory_entry_name']);
