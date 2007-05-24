@@ -38,9 +38,27 @@ if ($deal != NULL) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<?$this->image->getThumb($review_image, 'slideshow', false, array('class' => 'Right'))?>
+		<?php if(count($slideshow) > 0) { ?>
+		<div style="float:right;margin-top:0;line-height:95%;">
+			<div id="SlideShow" class="entry">
+				<img src="<?php echo($main_review['slideshow'][0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
+			</div>
+
+			<script type="text/javascript">
+		<?php foreach ($slideshow as $slide_photo) { ?>
+			Slideshow.add('<?php echo($slide_photo['url']); ?>');
+		<?php } ?>
+			Slideshow.load();
+			</script>
+		</div>
+		<?php } ?>
+
 		<h2><?php echo($review_title); ?></h2>
-		<p><?php echo($review_quote); ?></p>
+		<p>
+		<img src="/images/prototype/news/quote_open.png" />
+		<?php echo($review_quote); ?>
+		<img src="/images/prototype/news/quote_close.png" />
+		</p>
 		<h3>Rating</h3>
 		<div>
 <?php

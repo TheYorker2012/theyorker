@@ -37,6 +37,10 @@ class Image {
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.'/>';
 	}
 
+	public function getPhotoURL($photoID, $type) {
+		return '/photos/'.$type.'/'.$photoID;
+	}
+
 	private function get($id, $table, $type = null) {
 		$result = null;
 		switch ($table) {

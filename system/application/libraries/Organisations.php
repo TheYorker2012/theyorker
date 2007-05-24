@@ -84,7 +84,7 @@ class Organisations
 
 	function _GetOrgData($OrganisationShortName, $revision_number=false)
 	{
-		$this->CI->load->helper('images');
+		$this->CI->load->library('image');
 		$this->CI->load->model('slideshow');
 
 		$data = array();
@@ -98,7 +98,7 @@ class Organisations
 				$slideshow[] = array(
 					'title' => $slide->photo_title,
 					'id' => $slide->photo_id,
-					'url' => '/images/slideshow/'.$slide->photo_id //TODO change all references of this to use library
+					'url' => $this->CI->image->getPhotoURL($slide->photo_id, 'slideshow')
 				);
 			}
 			$data['organisation'] = array(

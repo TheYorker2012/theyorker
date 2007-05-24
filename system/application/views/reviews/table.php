@@ -148,7 +148,7 @@
 				?>
 				<tr>
 					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['slideshow'][1]['location']); ?>" width="144" height="116" alt="singer" title="singer" />
+						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['slideshow'][1]['location']); ?>" width="144" height="116"/>
 					</td>
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>

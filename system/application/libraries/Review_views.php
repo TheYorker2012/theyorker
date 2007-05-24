@@ -62,28 +62,6 @@ class Review_views
 			$data['comments'] = $CI->comments->CreateStandard($thread, $IncludedComment);
 		}
 
-		//For barcrawls only - The right side barlist
-		if ($content_type == 'barcrawl')
-		{
-			$barcrawl_id = $CI->News_model->GetLatestId('barcrawl',5); //Latest 5 entries
-
-			if ($barcrawl_id != array()) //If not empty
-			{
-				$barcrawl_index = 0;
-
-				foreach ($barcrawl_id as $id) //Get all the information from news model
-				{
-					$barinfo = $CI->News_model->GetSimpleArticle($id);
-					$barcrawls[$barcrawl_index]['barcrawl_name'] = $barinfo['heading'];
-					$barcrawls[$barcrawl_index]['barcrawl_link'] = '/reviews/barcrawl/'.$CI->Review_model->GetDirectoryName($id);
-				}
-			}
-			$data['barcrawls'] = $barcrawls;
-
-			$data['bar_list'] = $CI->Review_model->GetPubList(1);
-
-		}
-
 		//Load bylines support
 		$CI->load->library('byline');
 
@@ -111,16 +89,27 @@ class Review_views
 		$review_database_result = $CI->Review_model->GetReview($organisation_name,$content_type, $this->mRevisionId);
 		$review_database_result = $review_database_result[0]; //Unique so just first row
 
-		$slideshow = $CI->Slideshow->GetReviewPhotos($data['organisation_id'], $content_id, false);
-		@$slideshow_photo_id = $slideshow[0]['id'];
+		/// If there are no reviews for this particular section then show a page anyway
+		if ($main_review != null) {
+			$this->load->model('slideshow');
+			$slideshow_array = $this->slideshow->getPhotos($data['organisation_id'],);
+			$slideshow = array();
 
-		$CI->load->library('image');
+			$this->load->library('image');
+			foreach ($slideshow_array->result() as $slide){
+				$slideshow[] = array(
+					'title' => $slide->photo_title,
+					'id' => $slide->photo_id,
+					'url' => $this->image->getPhotoURL($slide->photo_id, 'slideshow')
+				);
+			}
+			$data['slideshow'] = $slideshow;
+		}
 
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
 		$data['review_quote']			= $review_database_result['review_context_content_quote'];
-		$data['review_image']			= $slideshow_photo_id;
 		$data['email'] 				= $review_database_result['organisation_email_address'];
 		$data['organisation_description'] = $review_database_result['organisation_description'];
 		$data['address_main']			= $review_database_result['organisation_postal_address'];
@@ -132,17 +121,12 @@ class Review_views
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
-//		$data['barcrawl_directions'] = $review_database_result['review_context_content_directions'];
 
-		//Check the deal isn't expired
-		//if (strtotime($review_database_result['review_context_content_deal_expires']) > time())
-		//{
-		//	$data['deal'] = $review_database_result['review_context_content_deal'];
-		//}
-		//else
-		//{
-			$data['deal'] = NULL; //Null disables the deal section in the view
-		//}
+		$this->main_frame->SetExtraHead('
+		<script type="text/javascript" src="/javascript/prototype.js"></script>
+		<script type="text/javascript" src="/javascript/scriptaculous.js"></script>
+		<script src="/javascript/slideshow_new.js" type="text/javascript"></script>
+		');
 
 		//Set title parameters
 		$CI->main_frame->SetTitleParameters(array(

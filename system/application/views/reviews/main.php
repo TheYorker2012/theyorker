@@ -78,44 +78,74 @@
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox">
-		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
-		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
-		<div style="float:right;margin-top:0;line-height:95%;">
-			<?php echo($main_article['primary_photo_xhtml']); ?><br />
-			<?php echo($main_article['primary_photo_caption']); ?>
+<?php if (!isset($main_review)) { ?>
+		<div class="BlueBox">
+		<h2 class="Headline">No reviews</h2>
+		<div class="Date"><?php echo(date('l, jS F Y')); ?></div>
+		<p>Sorry, there are currently no reviews available for this section. Please check back soon.</p>
 		</div>
-		<?php } ?>
-		<div class="Date"><?php echo($main_article['date']); ?></div>
-		<div class="Author">
-<?php foreach($main_article['authors'] as $reporter) { ?>
-			<a href="/contact"><?php echo($reporter['name']); ?></a>
-<?php } ?>
-		</div>
-<?php if ($main_article['subtext'] != '') { ?>
-		<div class="SubText"><?php echo($main_article['subtext']); ?></div>
-<?php } ?>
+<?php } else { ?>
+		<div class="BlueBox">
+			<div style="float: right"><a href="<?php echo '/reviews/'.$main_review['content_type_codename'].'/'.$main_review['organisation_directory_entry_name']; ?>"><b>View Guide</b> <img src="/images/icons/book_go.png" /></a></div>
+			<h2 class="Headline"><?php echo $main_review['organisation_name']; ?></h2>
+			<?php if(count($main_review['slideshow']) > 0) { ?>
+			<div style="float:right;margin-top:0;line-height:95%;">
+				<div id="SlideShow" class="entry">
+					<img src="<?php echo($main_review['slideshow'][0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
+				</div>
 
-        <?php echo $main_article['text']; ?>
-
-		<?php if (isset($office_preview)) { ?>
-			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
-		<?php } ?>
-	</div>
-	<?php if (count($main_article['links']) > 0) { ?>
-	<div class="BlueBox">
-		<h2><?php echo $links_heading; ?></h2>
-		<ul>
-		<?php foreach ($main_article['links'] as $link) {
-			echo '<li><a href=\'' . $link['url'] . '\' target=\'_blank\'>' . $link['name'] . '</a></li>';
-		} ?>
-		</ul>
-	</div>
+				<script type="text/javascript">
+			<?php foreach ($main_review['slideshow'] as $slide_photo) { ?>
+				Slideshow.add('<?php echo($slide_photo['url']); ?>');
+			<?php } ?>
+				Slideshow.load();
+				</script>
+			</div>
+			<?php } ?>
+			<div class="Date"><?php echo($main_review['date']); ?></div>
+			<div class="Author">
+	<?php foreach($main_review['authors'] as $reporter) { ?>
+				<a href="/contact"><?php echo($reporter['name']); ?></a>
 	<?php } ?>
-	<?php
-	// Comments if they're included
-	if (isset($comments) && NULL !== $comments) {
-		$comments->Load();
-	}
-	?>
+			</div>
+
+	<?php if ($main_review['quote'] != '') { ?>
+			<div class="SubText">
+				<img src="/images/prototype/news/quote_open.png" />
+				<?php echo($main_review['quote']); ?>
+				<img src="/images/prototype/news/quote_close.png" />
+			</div>
+	<?php } ?>
+
+			<h3>Rating</h3>
+			<div>
+			<?php
+			$review_rating = $main_review['rating'];
+			$star = 0;
+			while ($star < floor($review_rating/2)) {
+				echo('<img src="/images/prototype/reviews/star.png" alt="*" title="*" />');
+				$star++;
+			}
+			if ($review_rating % 2 == 1) {
+				echo('<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />');
+				$star++;
+			}
+			while ($star < 5) {
+				echo('<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />');
+				$star++;
+			}
+			?>
+
+			</div>
+
+			<?php echo $main_review['text']; ?>
+		</div>
+
+		<?php
+		// Comments if they're included
+		if (isset($comments) && NULL !== $comments) {
+			$comments->Load();
+		}
+}
+?>
 </div>
