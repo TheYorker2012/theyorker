@@ -62,6 +62,7 @@
 		</script>
 
 	</div>
+	<!--
 	<h2 class="first">Leagues</h2>
 	<div class="Entry">
 	<ul>
@@ -75,6 +76,7 @@
 	?>
 	</ul>
 	</div>
+	-->
 </div>
 
 <div id="MainColumn">

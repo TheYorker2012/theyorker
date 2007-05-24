@@ -143,12 +143,12 @@
 				<table border="0" width="100%">
 				<tbody>
 				<?php
-				if (isset($entry['slideshow'][1]))
+				if (isset($entry['review_image']))
 				{
 				?>
 				<tr>
 					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['slideshow'][1]['location']); ?>" width="144" height="116"/>
+						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['review_image']); ?>" width="144" height="116"/>
 					</td>
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>

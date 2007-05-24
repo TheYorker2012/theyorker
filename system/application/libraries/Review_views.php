@@ -90,21 +90,19 @@ class Review_views
 		$review_database_result = $review_database_result[0]; //Unique so just first row
 
 		/// If there are no reviews for this particular section then show a page anyway
-		if ($main_review != null) {
-			$this->load->model('slideshow');
-			$slideshow_array = $this->slideshow->getPhotos($data['organisation_id'],);
-			$slideshow = array();
+		$CI->load->model('slideshow');
+		$slideshow_array = $CI->slideshow->getPhotos($data['organisation_id']);
+		$slideshow = array();
 
-			$this->load->library('image');
-			foreach ($slideshow_array->result() as $slide){
-				$slideshow[] = array(
-					'title' => $slide->photo_title,
-					'id' => $slide->photo_id,
-					'url' => $this->image->getPhotoURL($slide->photo_id, 'slideshow')
-				);
-			}
-			$data['slideshow'] = $slideshow;
+		$CI->load->library('image');
+		foreach ($slideshow_array->result() as $slide){
+			$slideshow[] = array(
+				'title' => $slide->photo_title,
+				'id' => $slide->photo_id,
+				'url' => $CI->image->getPhotoURL($slide->photo_id, 'slideshow')
+			);
 		}
+		$data['slideshow'] = $slideshow;
 
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
@@ -122,7 +120,7 @@ class Review_views
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
 
-		$this->main_frame->SetExtraHead('
+		$CI->main_frame->SetExtraHead('
 		<script type="text/javascript" src="/javascript/prototype.js"></script>
 		<script type="text/javascript" src="/javascript/scriptaculous.js"></script>
 		<script src="/javascript/slideshow_new.js" type="text/javascript"></script>

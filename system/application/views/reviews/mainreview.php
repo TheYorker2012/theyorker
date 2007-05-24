@@ -19,13 +19,6 @@ $address = htmlspecialchars($address);
 			Telephone: <?php echo(htmlspecialchars($telephone)); ?><br />
 			Opening Times: <?php echo(htmlspecialchars($opening_times)); ?><br />
 			Serving Times: <?php echo(htmlspecialchars($serving_times)); ?><br />
-<?php
-if ($deal != NULL) {
-?>
-			Current Deal: <?php echo(htmlspecialchars($deal)); ?><br />
-<?php
-}
-?>
 		</p>
 	</div>
 
@@ -41,7 +34,7 @@ if ($deal != NULL) {
 		<?php if(count($slideshow) > 0) { ?>
 		<div style="float:right;margin-top:0;line-height:95%;">
 			<div id="SlideShow" class="entry">
-				<img src="<?php echo($main_review['slideshow'][0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
+				<img src="<?php echo($slideshow[0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
 			</div>
 
 			<script type="text/javascript">
@@ -54,13 +47,17 @@ if ($deal != NULL) {
 		<?php } ?>
 
 		<h2><?php echo($review_title); ?></h2>
+
+	<?php if ($review_quote != '') { ?>
 		<p>
 		<img src="/images/prototype/news/quote_open.png" />
 		<?php echo($review_quote); ?>
 		<img src="/images/prototype/news/quote_close.png" />
 		</p>
+	<?php } ?>
 		<h3>Rating</h3>
 		<div>
+
 <?php
 echo('			');
 $star = 0;

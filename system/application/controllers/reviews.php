@@ -217,12 +217,11 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 
 					//get the slideshow images for the review item
-					$slideshow_photos = $this->slideshow->GetReviewPhotos($database_result[$reviewno]['organisation_entity_id'], $item_type, true);
-					foreach($slideshow_photos as &$slideshow_photo)
+					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']); //$item_type, true);
+					if($slideshow_array->num_rows() > 0)
 					{
-						$slideshow_photo['location'] = $this->image->getPhotoURL($slideshow_photo['id'], 'slideshow');
+						$entries[$reviewno]['review_image'] = $this->image->getPhotoURL($slideshow_array->row()->photo_id, 'slideshow');
 					}
-					$entries[$reviewno]['slideshow'] = $slideshow_photos;
 
 					//Change scope of $tagbox
 					$tagbox = array();
@@ -301,12 +300,11 @@ class Reviews extends Controller
 
 
 				//get the slideshow images for the league item
-				$slideshow_photos = $this->slideshow->GetReviewPhotos($reviews[$row]['review_org_id'], $reviews[$row]['review_content_type_id'], false);
-				foreach($slideshow_photos as &$slideshow_photo)
+				$slideshow_array = $this->slideshow->getPhotos($reviews[$row]['review_org_id']); //, $reviews[$row]['review_content_type_id'], false);
+				if($slideshow_array->num_rows() > 0)
 				{
-					$slideshow_photo['location'] = '/photos/slideshow/'.$slideshow_photo['id']; //This was originally fetching photos
+					$reviews[$row]['image'] = $slideshow_array->row()->photo_id;
 				}
-				$reviews[$row]['slideshow'] = $slideshow_photos;
 
 				//very hacky two lines here:
 				$content_codename = $this->review_model->ContentTypeIDToCodename($reviews[$row]['review_content_type_id']);
