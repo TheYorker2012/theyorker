@@ -629,6 +629,8 @@ class Reviews extends Controller
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 
+		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
@@ -790,6 +792,8 @@ class Reviews extends Controller
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
+
+		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(

@@ -45,6 +45,7 @@
 	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<label for="review">Review:</label>
+			<div id="toolbar"></div>
 			<?php
 			if ($article['displayrevision'] != FALSE)
 				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
@@ -57,6 +58,10 @@
 		</fieldset>
 	</form>
 </div>
+
+<script type="text/javascript">
+	mwSetupToolbar('toolbar','review', false);
+</script>
 
 <!--
 <div class="grey_box">
