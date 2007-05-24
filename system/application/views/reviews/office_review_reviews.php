@@ -61,7 +61,7 @@
 	</form>
 </div>
 <script type="text/javascript">
-	mwSetupToolbar('toolbar','review', false);
+	mwSetupToolbar('toolbar','a_review_text', false);
 </script>
 <div class="grey_box">
 	<h2>maintain reviews</h2>
