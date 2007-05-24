@@ -62,11 +62,12 @@
 		</script>
 
 	</div>
-	<!--
+	<?php
+	/*
 	<h2 class="first">Leagues</h2>
 	<div class="Entry">
 	<ul>
-	<?php
+
 		foreach ($league_data as $league_entry) {
 			echo('		');
 			echo('<li><a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
@@ -76,7 +77,8 @@
 	?>
 	</ul>
 	</div>
-	-->
+	*/
+	?>
 </div>
 
 <div id="MainColumn">
