@@ -38,7 +38,7 @@ class Review_views
 		//Load news model
 		$CI->load->model('News_model');
 		$CI->load->model('Review_model');
-		$CI->load->model('Slideshow_model');
+		$CI->load->model('Slideshow');
 
 		//Set page code
 		$CI->pages_model->SetPageCode('review_context');
@@ -111,8 +111,8 @@ class Review_views
 		$review_database_result = $CI->Review_model->GetReview($organisation_name,$content_type, $this->mRevisionId);
 		$review_database_result = $review_database_result[0]; //Unique so just first row
 
-		$slideshow = $CI->Slideshow_model->getReviewSlideshowImages($data['organisation_id'], $content_id);
-		@$slideshow_photo_id = $slideshow[0]['photo_id'];
+		$slideshow = $CI->Slideshow->GetReviewPhotos($data['organisation_id'], $content_id, false);
+		@$slideshow_photo_id = $slideshow[0]['id'];
 
 		$CI->load->library('image');
 

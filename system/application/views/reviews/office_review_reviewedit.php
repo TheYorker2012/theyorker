@@ -66,7 +66,7 @@
 			<label for="a_review_author">Author:</label>
 			<select name="a_review_author">
 				<optgroup label="Generic:">
-				<?php 
+				<?php
 				foreach ($bylines['generic'] as $option)
 				{
 					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
@@ -74,7 +74,7 @@
 				?>
 				</optgroup>
 				<optgroup label="Personal:">
-				<?php 
+				<?php
 				foreach ($bylines['user'] as $option)
 				{
 					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
@@ -130,7 +130,7 @@ if ($user['officetype'] != 'Low')
 ?>
 
 <?php
-echo '<pre>';
-print_r($data);
-echo '</pre>';
+//echo '<pre>';
+//print_r($data);
+//echo '</pre>';
 ?>

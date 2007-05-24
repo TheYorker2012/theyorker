@@ -639,7 +639,7 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
-	function reviewedit($context_type, $organisation, $article_id, $revision_id)
+	function reviewedit($context_type, $organisation, $article_id, $revision_id = -1)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -710,7 +710,7 @@ class Reviews extends Controller
 				$found = $data['user']['id'];
 		}
 
-		if ($found == false && $data['user']['officetype'] = 'Low')
+		if ($found == false && $data['user']['officetype'] == 'Low')
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
