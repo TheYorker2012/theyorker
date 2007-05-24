@@ -265,6 +265,17 @@ class Image_upload {
 				}
 			}
 		} else {
+			switch ($data['file_type']) {
+				case 'image/gif':
+					imagegif($newImage, $data['full_path']);
+					break;
+				case 'image/jpeg':
+					imagejpeg($newImage, $data['full_path']);
+					break;
+				case 'image/png':
+					imagepng($newImage, $data['full_path']);
+					break;
+			}
 			foreach ($ThumbDetails->result() as $Thumb) {
 				$_SESSION['img'][] = array('list' => count($_SESSION['img']),
 				                           'type' => $Thumb->image_type_id);
