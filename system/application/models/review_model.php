@@ -1216,6 +1216,7 @@ function GetTagOrganisation($type,$organisation)
 			ON articles.article_live_content_id = article_contents.article_content_id
 			INNER JOIN review_contexts
 			ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+			AND review_contexts.deleted = 0
 			AND review_contexts.review_context_content_type_id = content_types.content_type_id
 			INNER JOIN review_context_contents
 			ON review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id
