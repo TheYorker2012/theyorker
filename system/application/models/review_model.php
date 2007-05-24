@@ -965,7 +965,7 @@ function GetTagOrganisation($type,$organisation)
 			INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
 			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id
-			WHERE ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
+			WHERE rc.review_context_deleted = 0 AND ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
 		$query = $this->db->query($sql, array($content_type_codename));
 		$raw_reviews = $query->result_array();
