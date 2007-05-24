@@ -768,7 +768,8 @@ class Reviews extends Controller
 				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/');
 			}
 		}
-		$data['this_url'] = '/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'$article_id.'/'.$revision_id;
+
+		$data['this_url'] = '/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$revision_id;
 
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();
