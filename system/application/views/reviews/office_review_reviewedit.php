@@ -42,7 +42,7 @@
 
 <div class="blue_box">
 	<h2>edit review</h2>
-	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<label for="review">Review:</label>
 			<?php
@@ -61,7 +61,7 @@
 <!--
 <div class="grey_box">
 	<h2>change author</h2>
-	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<label for="a_review_author">Author:</label>
 			<select name="a_review_author">
@@ -96,7 +96,7 @@ if ($user['officetype'] != 'Low')
 <div class="blue_box">
 	<h2>editor options</h2>
 	If you wish to PUBLISH this review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<input type="submit" name="r_submit_publish" value="Publish" />
 		</fieldset>
@@ -108,7 +108,7 @@ if ($user['officetype'] != 'Low')
 	?>
 	<br />
 	If you wish to PULL this published review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<input type="submit" name="r_submit_pull" value="Pull" />
 		</fieldset>
@@ -118,7 +118,7 @@ if ($user['officetype'] != 'Low')
 	?>
 	<br />
 	If you wish to DELETE this review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
+	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
 			<input type="submit" name="r_submit_delete" value="Delete" />
 		</fieldset>
