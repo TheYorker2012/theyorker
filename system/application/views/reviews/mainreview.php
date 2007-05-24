@@ -67,12 +67,12 @@ while ($star < 5) {
 		<h2>reviews</h2>
 <?php
 foreach($article as $a) {
-	$this->byline->AddReporter($a['article_authors']);
-	$this->byline->SetDate($a['article_date']);
+	$this->byline->AddReporter($a['authors']);
+	$this->byline->SetDate($a['date']);
 	$this->byline->load();
 	$this->byline->Reset();
 
-	echo($a['article_content']);
+	echo($a['text']);
 }
 ?>
 	</div>
