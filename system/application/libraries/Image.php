@@ -1,18 +1,18 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Image {
-	
+
 	private $ci;
 
 	public function Image() {
 		$this->ci = &get_instance();
 	}
-	
+
 	public function getPhoto($photoID) {
 		$data = $this->get($photoID, 'photos');
 		return '<img src="/photos/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
 	}
-	
+
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
 		$data = $this->get($photoID, 'thumbs', $type);
 		$tagInner = '';
@@ -22,7 +22,7 @@ class Image {
 		if ($viewLarge) $tag = '<a href="/photos/full/'.$photoID.'">'.$tag.'</a>';
 		return $tag;
 	}
-	
+
 	public function getImage($imageID, $type, $extraTags = array(), $extraArguments = array()) {
 		if (is_int($type)) {
 			$sql = 'SELECT image_type_codename FROM image_types WHERE image_type_id = ?';
@@ -36,8 +36,9 @@ class Image {
 		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.'/>';
 	}
-	
+
 	private function get($id, $table, $type = null) {
+		$result = null;
 		switch ($table) {
 			case "photos":
 				$sql = 'SELECT photo_title AS title, photo_width AS width, photo_height AS height, photo_gallery, photo_complete, photo_deleted
@@ -57,7 +58,7 @@ class Image {
 				        INNER JOIN image_types
 				        ON photo_thumbs.photo_thumbs_image_type_id = image_types.image_type_id
 				        WHERE photos.photo_id = ? AND image_types.image_type_codename = ?';
-				
+
 				$result = $this->ci->db->query($sql, array($id, $type));
 				break;
 			case 'images':
@@ -73,7 +74,7 @@ class Image {
 		}
 		if ($result->num_rows() == 1 and $table == 'images') {
 			return $result->first_row('array');
-		} elseif ($result->num_rows() == 1 and $result->first_row()->photo_deleted = 0) {
+		} elseif ($result->num_rows() == 1 && $result->first_row()->photo_deleted == 0) {
 			return $result->first_row('array');
 		} else {
 			switch ($table) {
@@ -91,7 +92,7 @@ class Image {
 			}
 		}
 	}
-	
+
 	public function add($type, &$newImage, $info = array()) {
 		$imageStr = $this->image2string($newImage, $info['mime']);
 		switch ($type) {
@@ -116,7 +117,7 @@ class Image {
 		}
 		return $this->ci->db->insert_id();
 	}
-	
+
 	public function delete($type, $id, $image_type = null) {
 		switch($type) {
 			case 'photo':
@@ -143,9 +144,9 @@ class Image {
 		}
 		return false;
 	}
-	
+
 	public function thumbnail($photoID, $type, $x1, $y1, $x2, $y2) {
-		
+
 		//GRAB
 		$sql = 'SELECT photo_data, photo_mime FROM photos WHERE photo_id = ? LIMIT 1';
 		$result = $this->ci->db->query($sql, array($photoID));
@@ -166,7 +167,7 @@ class Image {
 		$this->ci->db->query($sql, array($photoID, $type->id));
 		return true;
 	}
-	
+
 	private function image2string(&$newImage, $mime) {
 		//THIS SUCKS!!
 		$contents = ob_get_contents();
