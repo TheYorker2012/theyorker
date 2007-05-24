@@ -44,7 +44,6 @@
 	<h2>edit review</h2>
 	<form class="form" action="<?php echo($this_url); ?>" method="POST">
 		<fieldset>
-			<label for="review">Review:</label>
 			<div id="toolbar"></div>
 			<?php
 			if ($article['displayrevision'] != FALSE)
