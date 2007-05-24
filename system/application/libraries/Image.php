@@ -46,13 +46,18 @@ class Image {
 				$result = $this->ci->db->query($sql, array($id));
 				break;
 			case 'thumbs':
-				$sql = 'SELECT image_type_width AS width, image_type_height AS height, photo_title AS title, photo_gallery, photo_deleted
-				        FROM photos, photo_thumbs, image_types
-				        WHERE photo_id = photo_thumbs_photo_id
-				          AND photo_thumbs_image_type_id = image_type_id
-				          AND photo_id = ?
-				          AND image_type_codename = ?
-				        LIMIT 1';
+				$sql = 'SELECT image_types.image_type_width AS width,
+				        image_types.image_type_height AS height,
+				        photos.photo_title AS title,
+				        photos.photo_gallery,
+				        photos.photo_deleted
+				        FROM photos
+				        INNER JOIN photo_thumbs
+				        ON photos.photo_id = photo_thumbs.photo_thumbs_photo_id
+				        INNER JOIN image_types
+				        ON photo_thumbs.photo_thumbs_image_type_id = image_types.image_type_id
+				        WHERE photos.photo_id = ? AND image_types.image_type_codename = ?';
+				
 				$result = $this->ci->db->query($sql, array($id, $type));
 				break;
 			case 'images':
