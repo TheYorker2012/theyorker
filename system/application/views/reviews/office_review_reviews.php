@@ -52,7 +52,7 @@
 				?>
 				</optgroup>
 			</select>
-			<br />
+			<br /><br />
 			<div id="toolbar" style="clear: both;"></div>
 			<textarea name="a_review_text" id="a_review_text" cols="50" rows="10"><?php echo 'review'; ?></textarea>
 		</fieldset>
