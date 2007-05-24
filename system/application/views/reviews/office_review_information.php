@@ -6,6 +6,7 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 ?>
 
 <div class='RightToolbar'>
+	<!--
 	<h4>Areas for Attention</h4>
 	<div class="Entry">
 		<div class="information_box">
@@ -35,6 +36,7 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 			There are <a href='#'>Comments</a> that have been reported for abuse.
 		</div>
 	</div>
+	-->
 	<h4>Revisions</h4>
 	<div class="Entry">
 		<ol>
@@ -121,7 +123,7 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 		<label for='reviewinfo_serving_hours'>Serving Hours:</label>
 		<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo($serving_times); ?></textarea>
 		<br />
-		
+
 		<label for='reviewinfo_submitbutton'></label>
 		<input type='submit' name='submitbutton' value='Create new revision' class='button' />
 	</fieldset>
