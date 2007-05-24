@@ -6,7 +6,7 @@ class About extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		$this->load->helpers('images');
+		$this->load->library('image');
 	}
 
 	/// Main page
@@ -43,7 +43,7 @@ class About extends Controller
 			$curdata['shorttitle'] = str_replace(' ','_',$block['title']);
 			$curdata['blurb'] = $block['blurb'];
 			if (array_key_exists('image', $block)) {
-				$curdata['image'] = imageLocTag($block['image'], 'medium');
+				$curdata['image'] = $this->image->getThumb($block['image'], 'medium');
 			} else {
 				$curdata['image'] = null;
 			}

@@ -475,7 +475,8 @@ class Reviews extends Controller
 			$this->load->model('slideshow');
 			$this->_SetupNavbar($organisation,$ContextType);
 			$this->main_frame->SetPage('photos');
-			$this->load->helper(array('images', 'url'));
+			$this->load->helper('url');
+			$this->load->library('image');
 			$this->load->library('image_upload');
 			$data['ContextType'] = $ContextType;
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -492,11 +493,11 @@ class Reviews extends Controller
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload('office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow'));
-			} elseif (isset($_SESSION['img']['list'])) {
-				foreach ($_SESSION['img']['list'] as $newID) {
-					$this->slideshow->addPhoto($newID, $data['organisation']['id']);
+			} elseif (isset($_SESSION['img'])) {
+				foreach ($_SESSION['img'] as $newID) {
+					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
 				}
-				unset($_SESSION['img']['list']);
+				unset($_SESSION['img']);
 			}
 
 			// Insert main text from pages information
@@ -638,7 +639,7 @@ class Reviews extends Controller
 		$this->main_frame->Load();
 	}
 
-	function reviewedit($context_type, $organisation, $article_id, $revision_id)
+	function reviewedit($context_type, $organisation, $article_id, $revision_id = -1)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -709,7 +710,7 @@ class Reviews extends Controller
 				$found = $data['user']['id'];
 		}
 
-		if ($found == false && $data['user']['officetype'] = 'Low')
+		if ($found == false && $data['user']['officetype'] == 'Low')
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
@@ -767,6 +768,8 @@ class Reviews extends Controller
 				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/');
 			}
 		}
+
+		$data['this_url'] = '/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$revision_id;
 
 		//bylines
 		$temp_bylines = $this->businesscards_model->GetBylines();

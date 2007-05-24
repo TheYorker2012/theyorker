@@ -65,5 +65,14 @@ class Quote_Model extends Model {
 		return true;
 	}
 
+	/*
+	 * Function to update a particular quote.
+	 * Returns the the number of rows affected.
+	 */
+	function RemoveQuote($quote_id) {
+		$sql = 'DELETE FROM quotes WHERE quote_id = ?';
+		$update = $this->db->query($sql,array($quote_id));
+		return true;
+	}
 }
 ?>

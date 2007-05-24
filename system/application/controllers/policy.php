@@ -6,7 +6,7 @@ class Policy extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		$this->load->helpers('images');
+		$this->load->library('image');
 	}
 
 	/// Main page
@@ -42,7 +42,7 @@ class Policy extends Controller
 			$data['textblocks'][] = array(
 				'shorttitle'	=> str_replace(' ','_',$block['title']),
 				'blurb'			=> $block['blurb'],
-				'image'			=> imageLocTag($block['image'], "medium"),
+				'image'			=> $this->image->getThumb($block['image'], 'medium'),
 			);
 		}
 		

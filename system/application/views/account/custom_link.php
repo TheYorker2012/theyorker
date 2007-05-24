@@ -17,9 +17,9 @@
 			<input type="text" id="lurl" name="lurl" value="http://" />
 			<br />
 			<label for="lnominate"> Nominate Link: </label>
-			<input type="checkbox" id="lnominate" name="lnominate" />
+			<input type="checkbox" id="lnominate" name="lnominate" checked/>
 			<br />
-			<input type="button" value="Back" class="button" onClick="window.location='/account/links';"> <input type="submit" value="Create Link" class="button"> 
+			<input type="button" value="Back" class="button" onClick="window.location='/account/links';"> <input type="submit" value="Create Link" class="button">
 		</fieldset>
 		</form>
 	</div>

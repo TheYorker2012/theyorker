@@ -25,7 +25,7 @@ class Yorkerdirectory extends Controller
 		$this->load->model('prefs_model');
 
 		$this->load->helper('text');
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->load->helper('wikilink');
 	}
 

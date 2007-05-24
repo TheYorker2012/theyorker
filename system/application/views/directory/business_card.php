@@ -1,18 +1,10 @@
-<?php
-if($business_card['image_id'] == NULL)
-{
-	$business_card['image'] = '/images/prototype/directory/members/no_image.png';
-} else {
-	$business_card['image'] = photoLocation($business_card['image_id']);
-}
-?>
 <div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
 	<div style='float:right;'>
 <?php if ($business_card['image_id'] == NULL) {
-	echo '<img src="/images/prototype/directory/members/no_image.png" alt="no user image" />';
-} else {
-	echo imageLocTag($business_card['image_id'], 'userimage', false, $business_card['name']);
-}?>
+	$business_card['image_id'] = 0;
+}
+echo $this->image->getImage($business_card['image_id'], 'userimage');
+?>
 	</div>
 	<span style="font-size: large;  color: #2DC6D7; ">
 	<?php

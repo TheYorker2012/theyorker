@@ -5,7 +5,7 @@
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
-			<?=imageLocTag($picture->link_image_id, 'link', false, $picture->link_name, null, $picture->image_file_extension, 'links_'.$picture->link_id, 'title ="'.$picture->link_name.'"')?>
+			<?=$this->image->getImage($picture->link_image_id, 'link', array('id' => 'links_'.$picture->link_id, 'title' => $picture->link_name, 'alt' => $picture->link_name))?>
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
@@ -52,10 +52,10 @@
 				$('linklist').value+= tags[i].id + '+';
 			}
 		}
-		
+
 		xajax_links_update(escape($('linklist').value));
 	}
-	
+
 	Sortable.create("links", {
 		tag:'img',overlap:'horizontal',constraint: false,onUpdate:updateList});
  // ]]>

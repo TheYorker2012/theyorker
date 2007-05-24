@@ -211,7 +211,7 @@ function addstrike($text)
 <div class="GreyBox">
 	<?php 	$count = 0;
 		foreach ($_SESSION['org_wizard']['img'] as $img) { ?>
-		<?=imageLocTag($img, 'slideshow', false, $_SESSION['org_wizard']['a_name'])?>
+		<?=$this->image->getThumb($img, 'slideshow')?>
 		<br />
 		<?=anchor('wizard/organisation/photo/move/'.$img.'/up/', 'move up')?> |
 		<?=anchor('wizard/organisation/photo/move/'.$img.'/down/', 'move down')?> |

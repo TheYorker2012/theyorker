@@ -44,6 +44,14 @@ $route['scaffolding_trigger'] = "";
 
 $org_name_regex = '[a-z_\-\d]+';
 
+//****************************************************************************//
+// Routing for photos and images                                              //
+//****************************************************************************//
+
+$route['photos/(.+)/(.+)'] = 'photos/index/$1/$2';
+$route['photos/(.+)'] = 'photos/index/$1';
+$route['image/(.+)'] = 'image/index/$1';
+$route['image/(.+)/(.+)'] = 'image/index/$1/$2';
 
 //****************************************************************************//
 // Routing in the main controller directory                                   //
@@ -173,7 +181,11 @@ $route['admin/directory'] = 'admin/yorkerdirectory';
 $route['admin/directory/('.$org_name_regex.')'] = 'admin/yorkerdirectory/view//$1';
 $route['admin/directory/('.$org_name_regex.')/([a-z]+)'] = 'admin/yorkerdirectory/$2//$1';
 
-$route['admin/images/([0-9]+)'] = 'admin/images';
+$route['admin/imagecp/view/([a-z]+)'] = 'admin/imagecp/view/$1';
+$route['admin/imagecp/view/([a-z]+)/([0-9]+)/([a-z]+)'] = 'admin/imagecp/view/$1/$3/$2';
+$route['admin/imagecp/delete/([a-z]+)'] = 'admin/imagecp/delete/$1';
+$route['admin/imagecp/edit/([a-z]+)'] = 'admin/imagecp/edit/$1';
+$route['admin/imagecp/add/([a-z]+)'] = 'admin/imagecp/add/$1';
 
 unset($org_name_regex);
 

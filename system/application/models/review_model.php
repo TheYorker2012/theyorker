@@ -20,7 +20,7 @@ class Review_model extends Model {
 	{
 		parent::Model();
 	}
-	
+
 	function ContentTypeIDToCodename($id)
 	{
 		$sql = 'SELECT content_type_codename
@@ -48,9 +48,9 @@ class Review_model extends Model {
 			'
 			SELECT
 			   	review_contexts.review_context_live_content_id
-			FROM review_contexts 
-			INNER JOIN organisations 
-			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			FROM review_contexts
+			INNER JOIN organisations
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
 			 AND organisations.organisation_directory_entry_name = ?
 			INNER JOIN content_types
 			ON review_contexts.review_context_content_type_id=content_types.content_type_id
@@ -84,16 +84,16 @@ class Review_model extends Model {
 		}
 		// Create the new context.
 		$sql = '
-			INSERT INTO review_contexts 
+			INSERT INTO review_contexts
 			(
 			 review_context_organisation_entity_id,
 			 review_context_content_type_id
-			) 
+			)
 			VALUES ('.$org_entity_id.','.$content_id.')
 			ON DUPLICATE KEY UPDATE review_context_deleted = FALSE
 			';
 		$this->db->query($sql);
-		
+
 		// check something's happened
 		if ($this->db->affected_rows()) {
 			$this->load->model('comments_model');
@@ -108,9 +108,9 @@ class Review_model extends Model {
 		} else {
 			return FALSE;
 		}
-		
+
 	}
-	
+
 	function DeleteReviewContext($organisation_shortname, $content_type_codename)
 	{
 		$sql = 'SELECT
@@ -143,20 +143,20 @@ class Review_model extends Model {
 			 review_context_contents.review_context_content_blurb as content_blurb,
 			 review_context_contents.review_context_content_quote as content_quote,
 			 review_context_contents.review_context_content_average_price as average_price,
-			 review_context_contents.review_context_content_recommend_item as recommended_item, 
+			 review_context_contents.review_context_content_recommend_item as recommended_item,
 			 review_context_contents.review_context_content_rating as content_rating,
 			 review_context_contents.review_context_content_serving_times as serving_times,
 			 "deal" as deal,
 			 0 as deal_expires
-			FROM review_contexts 
-			INNER JOIN organisations 
-			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			FROM review_contexts
+			INNER JOIN organisations
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
 			 AND organisations.organisation_directory_entry_name = ?
 			INNER JOIN content_types
 			ON review_contexts.review_context_content_type_id=content_types.content_type_id
 			 AND content_types.content_type_codename = ?
-			INNER JOIN review_context_contents 
-			ON review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id 
+			INNER JOIN review_context_contents
+			ON review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id
 			WHERE 1
 			';
 
@@ -164,8 +164,8 @@ class Review_model extends Model {
 
 		return $query->result_array();
 	}
-	
-	
+
+
 	///	Return revision, or most recent if no specified.
 	/**
 	 * @return A single review context for an organisation
@@ -184,7 +184,7 @@ class Review_model extends Model {
 				review_context_contents.review_context_content_blurb as content_blurb,
 				review_context_contents.review_context_content_quote as content_quote,
 				review_context_contents.review_context_content_average_price as average_price,
-				review_context_contents.review_context_content_recommend_item as recommended_item, 
+				review_context_contents.review_context_content_recommend_item as recommended_item,
 				review_context_contents.review_context_content_rating as content_rating,
 				review_context_contents.review_context_content_serving_times as serving_times
 			FROM review_contexts
@@ -195,7 +195,7 @@ class Review_model extends Model {
 			INNER JOIN review_context_contents
 				ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
 				AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
-			INNER JOIN users 
+			INNER JOIN users
 				ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
 			WHERE	organisations.organisation_directory_entry_name = ?';
 		if ($revision_id === FALSE){
@@ -205,7 +205,7 @@ class Review_model extends Model {
 			$sql .= ' AND review_context_contents.review_context_content_id =';
 			$sql .= $this->db->escape($revision_id);
 		}
-		
+
 		if ($revision_id === -1) {
 			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
 		} elseif ($revision_id === TRUE) {
@@ -237,9 +237,9 @@ class Review_model extends Model {
 				review_context_contents.review_context_content_id as content_id,
 				(review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as published,
 				review_context_contents.review_context_content_deleted AS deleted
-			FROM review_contexts 
-			INNER JOIN organisations 
-			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id 
+			FROM review_contexts
+			INNER JOIN organisations
+			ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
 			 AND organisations.organisation_directory_entry_name = ?
 			INNER JOIN content_types
 			ON review_contexts.review_context_content_type_id=content_types.content_type_id
@@ -256,7 +256,7 @@ class Review_model extends Model {
 		}
 		$sql .= '
 			 AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
-			INNER JOIN users 
+			INNER JOIN users
 			ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id';
 		if ($revision_id === -1) {
 			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
@@ -279,7 +279,7 @@ class Review_model extends Model {
 	{
 		$sql =
 			'
-			INSERT INTO review_context_contents 
+			INSERT INTO review_context_contents
 			(
 				review_context_content_organisation_entity_id,
 				review_context_content_content_type_id,
@@ -287,10 +287,10 @@ class Review_model extends Model {
 				review_context_content_blurb,
 				review_context_content_quote,
 				review_context_content_average_price,
-				review_context_content_recommend_item, 
+				review_context_content_recommend_item,
 				review_context_content_rating,
 				review_context_content_serving_times
-			) 
+			)
 			SELECT
 				review_contexts.review_context_organisation_entity_id as organisation_entity_id,
 				review_contexts.review_context_content_type_id as content_type_id,
@@ -316,7 +316,7 @@ class Review_model extends Model {
 			$organisation_shortname, $content_type_codename) );
 		return $this->db->affected_rows();
 	}
-	
+
 	/// Publish a revision of the review context content
 	/**
 	 * @return Number of affected rows.
@@ -367,7 +367,7 @@ class Review_model extends Model {
 			organisation_contents.organisation_content_email_address as organisation_email_address,
 			organisation_contents.organisation_content_url as organisation_url,
 			organisation_contents.organisation_content_opening_hours as organisation_opening_hours,
-			
+
 			organisations.organisation_events,
 			organisations.organisation_hits,
 			organisations.organisation_timestamp,
@@ -393,14 +393,14 @@ class Review_model extends Model {
 		$sql .= '
 			  INNER JOIN organisations
 			  ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
-			  INNER JOIN organisation_contents 
-			  ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
+			  INNER JOIN organisation_contents
+			  ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
 			  WHERE content_types.content_type_codename = '.$this->db->escape($content_type_codename).'
 			  AND organisations.organisation_directory_entry_name = '.$this->db->escape($organisation_directory_entry_name);
 
 		$result = $query = $this->db->query($sql);
 		$reviews = $query->result_array();
-	
+
 		return $reviews;
 	}
 
@@ -430,8 +430,8 @@ class Review_model extends Model {
 					ON review_context_contents.review_context_content_content_type_id = content_types.content_type_id
 				INNER JOIN organisations
 					ON organisations.organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
-			    INNER JOIN organisation_contents 
-			    	ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id 
+			    INNER JOIN organisation_contents
+			    	ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
 				INNER JOIN league_entries
 					ON league_entries.league_entry_organisation_entity_id = organisations.organisation_entity_id
 				INNER JOIN leagues
@@ -448,7 +448,7 @@ class Review_model extends Model {
 		$query = $this->db->query($sql,array($league_codename,$sortby,$order));
 		$tmpleague = array();
 		$league    = array();
-	
+
 		// Assign nice names to the result
 		foreach($query->result() as $row) {
 			$tmpleague['organisation_id']          = $row->organisation_entity_id;
@@ -468,7 +468,7 @@ class Review_model extends Model {
 			$tmpleague['organisation_directory_entry_name'] = $row->organisation_directory_entry_name;
 			$league[]                              = $tmpleague;
 		}
-	
+
 		return $league;
 	}
 
@@ -510,6 +510,8 @@ class Review_model extends Model {
 		INNER JOIN organisations ON organisations.organisation_entity_id = articles.article_organisation_entity_id
 		WHERE
 			articles.article_content_type_id = ? AND
+			articles.article_live_content_id IS NOT NULL AND
+			DATE(article_publish_date) >= CURRENT_DATE() AND
 			organisations.organisation_directory_entry_name = ?
 		ORDER BY article_id DESC
 		";
@@ -642,7 +644,7 @@ class Review_model extends Model {
 		if (isset($tag_group_names) == 0) return array(); //No data so return empty array
 
 		$index = 0; //For indexing
-	
+
 		foreach ($queryarray as &$row)
 		{
 			$index++;
@@ -667,7 +669,7 @@ class Review_model extends Model {
 			}
 			else
 			{								//Order by field tag_name
-			$msql = '						
+			$msql = '
 					 SELECT DISTINCT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
 					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
@@ -721,7 +723,7 @@ class Review_model extends Model {
 		if (!isset($tag_group_names)) return array(); //No tags in this type
 
 		$index = 0; //For indexing
-	
+
 		foreach ($queryarray as &$row)
 		{
 			$index++;
@@ -745,7 +747,7 @@ class Review_model extends Model {
 			}
 			else
 			{								//Order by field tag_name
-			$msql = '						
+			$msql = '
 					 SELECT DISTINCT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
@@ -797,7 +799,7 @@ function GetTagOrganisation($type,$organisation)
 		}
 
 		$index = 0; //For indexing
-	
+
 		foreach ($queryarray as &$row)
 		{
 			$index++;
@@ -823,7 +825,7 @@ function GetTagOrganisation($type,$organisation)
 			}
 			else
 			{								//Order by field tag_name
-			$msql = '						
+			$msql = '
 					 SELECT tags.tag_name FROM tags
 					 INNER JOIN tag_groups ON tags.tag_tag_group_id = tag_groups.tag_group_id
 					 INNER JOIN organisation_tags ON organisation_tags.organisation_tag_tag_id = tags.tag_id
@@ -862,7 +864,7 @@ function GetTagOrganisation($type,$organisation)
 	{
 		//Get all the tags which it does have
 		$currenttags = $this->GetTagOrganisation($type,$organisation);
-		
+
 		//Get all possible tags
 		$possibletags = $this->GetAllTags($type);
 
@@ -902,7 +904,7 @@ function GetTagOrganisation($type,$organisation)
 
 	//Used later on
 	$select_tag_group = '';
-	
+
 		switch ($sorted_by) //Set sorting query
 		{
 			case 'name':
@@ -956,13 +958,13 @@ function GetTagOrganisation($type,$organisation)
 			INNER JOIN organisation_contents AS oc
 				ON o.organisation_live_content_id = oc.organisation_content_id
 			LEFT JOIN comment_threads AS thread
-				ON thread.comment_thread_id = rc.review_context_comment_thread_id 
-			LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id 
+				ON thread.comment_thread_id = rc.review_context_comment_thread_id
+			LEFT JOIN organisation_tags AS ot ON ot.organisation_tag_organisation_entity_id = o.organisation_entity_id
 			INNER JOIN tags AS t
 				ON t.tag_id = ot.organisation_tag_tag_id
 			INNER JOIN tag_groups AS tg
 				ON tg.tag_group_id = t.tag_tag_group_id
-			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id 
+			LEFT JOIN tags ON tags.tag_id = ot.organisation_tag_tag_id
 			WHERE ct.content_type_codename = ? '.$sort_sql.'tg.tag_group_order ASC, t.tag_order ASC';
 
 		$query = $this->db->query($sql, array($content_type_codename));
@@ -1026,7 +1028,7 @@ function GetTagOrganisation($type,$organisation)
 			}
 
 		}
-		
+
 			//Get a sorted list of tag group names
 			//Sort tag_groups by tag_group_order
 			$sql = '
@@ -1100,7 +1102,7 @@ function GetTagOrganisation($type,$organisation)
 	function GetPubList($organisation_id)
 	{
 		$sql = 'SELECT organisation_name,bar_crawl_organisation_recommend,bar_crawl_organisation_recommend_price FROM bar_crawl_organisations INNER JOIN organisations ON bar_crawl_organisation_organisation_entity_id = organisation_entity_id WHERE organisation';
-		
+
 		$bar_list[0]['bar_name'] = 'Toffs';
 		$bar_list[1]['bar_name'] = 'Gallery';
 		$bar_list[2]['bar_name'] = 'Evil Eye Lounge';
@@ -1113,11 +1115,11 @@ function GetTagOrganisation($type,$organisation)
 		$bar_list[1]['bar_drink_cost'] = 230;
 		$bar_list[2]['bar_drink_cost'] = 240;
 		$bar_list[3]['bar_drink_cost'] = 350;
-	
+
 		return $bar_list;
 	}
-	
-	
+
+
 	/// Get information about the private comments thread.
 	/**
 	 * @param $OrganisationId int ID of the organisation.
@@ -1135,7 +1137,7 @@ function GetTagOrganisation($type,$organisation)
 			)
 		);
 	}
-	
+
 	/// Get information about the public comments thread.
 	/**
 	 * @param $OrganisationId int ID of the organisation.
@@ -1153,7 +1155,7 @@ function GetTagOrganisation($type,$organisation)
 			)
 		);
 	}
-	
+
 	function GetOrgReviews($type_codename, $org_id)
 	{
 		$sql = 'SELECT 	content_type_id

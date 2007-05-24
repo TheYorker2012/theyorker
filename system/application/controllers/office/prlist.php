@@ -25,7 +25,7 @@ class Prlist extends Controller
 		$this->load->model('businesscards_model');
 
 		$this->load->helper('text');
-		$this->load->helper('images');
+		$this->load->library('image');
 		$this->load->helper('wikilink');
 	}
 

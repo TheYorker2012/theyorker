@@ -1,0 +1,296 @@
+project myProjectId "My Project" "1.0" 2007-05-07 2008-11-03
+
+resource developers "Developers" {
+  resource jh559 "James Hogan"
+  resource nse500 "Nick Evans"
+  resource mg512 "Mark Goodall"
+}
+
+flags calendar
+flags facebook, ical
+flags login
+
+task yorker "The Yorker" {
+  start 2007-05-07
+  flags calendar, facebook, login
+
+  task spec "Specification"
+  task software "Software Development" {
+    start 2007-05-07
+    flags calendar, facebook, login
+
+    task t1 "limit event description" {
+      allocate jh559
+      flags calendar
+      task t1 "figure out how to do it" {
+        effort 3h
+      }
+      task t2 "do it" {
+        effort 3h
+      }
+    }
+    task t2 "fix facebook event information bug on gmg" {
+      allocate jh559
+      flags calendar, facebook
+      task t1 "figure out why it doesn't work" {
+        effort 3h
+      }
+      task t2 "fix it" {
+        effort 1h
+      }
+    }
+    task t3 "calendar filter by categories" {
+      allocate jh559
+      flags calendar
+      task backend "ensure backend is in place" {
+        effort 3h
+      }
+      task filter "update uri filter to handle categories" {
+        effort 2h
+      }
+      task view "update views + hyperlinks to use category filter uri" {
+        effort 2h
+      }
+    }
+    task t4 "calendar recent changes on home page" {
+      allocate jh559
+      flags calendar
+      task backend "backend system for getting changes from different sources" {
+        effort 1h
+      }
+      task yorker "update yorker source to get alterations since last view" {
+        effort 3h
+        depends !backend
+      }
+      task facebook "update facebook source to get recent invitations if possible" {
+        effort 2h
+        depends !backend
+      }
+      task display "display recent changes with links in view" {
+        effort 2h
+        depends !backend
+      }
+      task home "put view on home page" {
+        effort 10min
+        depends !display
+      }
+    }
+    task t5 "cache imported calendars" {
+      allocate jh559
+      flags calendar
+      task design "design overall caching system to handle all calendar caching (in detail)" {
+        effort 6h
+      }
+      task backend "implement caching" {
+        effort 2d
+      }
+    }
+    task t6 "events spanning multiple days" {
+      allocate jh559
+      flags calendar
+      task design "figure out how best to approach" {
+        effort 1h
+      }
+      task backend "implement in the back end" {
+        effort 2h
+      }
+      task display "ensure displayed correctly and not appearing as separate events" {
+        effort 2h
+      }
+    }
+    task t7 "recurrence resolution" {
+      allocate jh559
+      flags calendar
+      task t1 "daily recurrence" {
+        effort 1d
+      }
+      task t2 "weekly recurrence"{
+        effort 1d
+      }
+      task t3 "monthly recurrence"{
+        effort 1d
+      }
+      task t4 "termly recurrence" {
+        effort 3d
+      }
+      task t5 "by easter" {
+        effort 3d
+      }
+    }
+    task t8 "secure logins" {
+      allocate developers
+      flags login
+      effort 1d
+    }
+    task t9 "fancify agenda" {
+      allocate developers
+      flags login
+      effort 1d
+    }
+    task t10 "full icalendar import" {
+      allocate jh559
+      flags calendar, ical
+      task t1 "basic tools for reading structure"
+      task t2 "events" {
+        depends !t1
+      }
+      task t3 "todo" {
+        depends !t1
+        task t1 "basic todo items" {
+          effort 3h
+        }
+        task t2 "nested todo items" {
+          effort 3h
+        }
+      }
+      task t4 "timezone awareness" {
+        depends !t1
+        effort 2d
+      }
+    }
+    task t11 "linking to facebook event connects to facebook" {
+      allocate jh559
+      flags calendar, facebook
+      effort 3h
+    }
+    task t12 "calendar week view only show term titles if spanning multiple terms" {
+      allocate jh559
+      flags calendar
+      effort 3h
+    }
+    task t13 "vip calendar allows cancelling of individual occurrences" {
+      flags calendar
+      allocate jh559
+      effort 1h
+    }
+    task t14 "vip calendar allows moving of individual events" {
+      flags calendar
+      allocate jh559
+      depends !t16
+      effort 1h
+    }
+    task t15 "add events onto personal todo list" {
+      allocate jh559
+      flags calendar
+      effort 2h
+    }
+    task t16 "backend functions for updating a recurrence rule, adding/removing occurrences etc" {
+      flags calendar
+      allocate jh559
+      task design "design interface + exactly how backend will do it" {
+        effort 5h
+      }
+      task backend "do backend functions to do the changes" {
+        effort 1d
+      }
+    }
+    task t17 "scaleable and reliable system for updating recurrence occurrences" {
+      allocate jh559
+      flags calendar
+      task design "design how it should work and the parameters needed" {
+        effort 3h
+      }
+      task backend "backend function for updating, flexible + potentially not require event input" {
+        effort 3h
+      }
+      task system "system for keeping it up to date, so that no event is ever not displayed where it should be" {
+        effort 3h
+      }
+    }
+    task t18 "restrict time that its possible to browse into future to just shorter than max recurrence generation time" {
+      flags calendar
+      allocate jh559
+      effort 1h
+    }
+    task t19 "fix academic dates so that it either will work into future or won't die" {
+      flags calendar
+      allocate jh559
+      task t1 "consider storing as rrules" {
+        effort 2h
+      }
+      task t2 "generatable dates" {
+        effort
+      }
+    }
+
+    task m1 "facebook caching works" {
+      milestone
+      allocate jh559
+      flags calendar, facebook
+      depends !t5
+    }
+    task m2 "icalendar caching works" {
+      milestone
+      allocate jh559
+      flags calendar, facebook
+      depends !t5
+      depends !t10.t2, !t10.t3
+    }
+    task facebook "Facebook useable" {
+      milestone
+      depends !m1
+    }
+
+    task hosting_beta "sort out hosting for beta launch" {
+      effort 1d
+      allocate nse500
+      depends !!deliveries.alpha
+    }
+    task hosting_full "sort out hosting for full launch" {
+      effort 1d
+      allocate nse500
+      depends !!deliveries.beta
+    }
+  }
+  task test "Software testing"
+
+  task deliveries "Milestones" {
+    task alpha "Alpha Release" {
+      end 2007-05-07
+      milestone
+    }
+    task beta_calendar "Beta Calendar" {
+      milestone
+      flags calendar
+      priority 800
+      depends !!software.t1
+      depends !!software.t2
+      depends !!software.t3
+      depends !!software.t4
+      depends !!software.t5
+      depends !!software.t6
+      depends !!software.t7
+      depends !!software.t8
+      depends !!software.t9
+      depends !!software.t11
+      depends !!software.t12
+      depends !!software.t13
+      depends !!software.t14
+      depends !!software.t15
+      depends !!software.t17
+      depends !!software.t19
+    }
+    task beta "Beta Release" {
+      milestone
+      depends !!software.hosting_beta
+      depends !beta_calendar
+    }
+    task full_calendar "Full Calendar" {
+      depends !!software.t18
+    }
+    task full "Full Release" {
+      milestone
+      depends !!software.hosting_full
+      depends !full_calendar
+      depends !beta
+    }
+  }
+}
+
+taskreport "Gantt Chart" {
+  headline "Project Gantt Chart"
+  columns hierarchindex, name, start, end, effort, duration, chart
+  timeformat "%a %Y-%m-%d"
+  loadunit days
+  hideresource 1
+}

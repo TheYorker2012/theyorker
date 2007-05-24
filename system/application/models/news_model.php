@@ -19,13 +19,64 @@ class News_model extends Model
 		parent::Model();
 	}
 
+
+	/**
+	*Returns the scheduled and live (published within the last 7 days) articles on the site.
+	**/
+	function getScheduledAndLive()
+	{
+	$sql = 'SELECT
+			articles.article_id as article_id,
+			articles.article_publish_date as publish_date,
+			DATE(articles.article_publish_date) <= CURRENT_DATE() as is_live,
+			article_contents.article_content_heading as headline,
+			article_contents.article_content_last_author_timestamp as updated_date,
+
+			GROUP_CONCAT(business_cards.business_card_name
+				 ORDER BY business_cards.business_card_name
+				 SEPARATOR ", <br />") as authors,
+
+			IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(ct_parent.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) as content_type_name
+
+			FROM articles
+
+			INNER JOIN content_types
+			ON articles.article_content_type_id = content_types.content_type_id
+			AND (content_types.content_type_section = "news" OR content_types.content_type_section = "blogs")
+
+			LEFT JOIN content_types ct_parent
+			ON ct_parent.content_type_id = content_types.content_type_parent_content_type_id
+
+			INNER JOIN article_writers
+			ON article_writers.article_writer_article_id = articles.article_id
+			AND article_writers.article_writer_status = "accepted"
+			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
+
+			LEFT JOIN business_cards
+			ON article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+
+			INNER JOIN article_contents
+			  ON article_contents.article_content_id = articles.article_live_content_id
+			 AND article_pulled = 0
+			 AND article_suggestion_accepted = 1
+
+			WHERE DATE(articles.article_publish_date) > DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+
+			GROUP BY articles.article_id
+
+			ORDER BY articles.article_publish_date DESC';
+
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
 	/**
 	*Determines wheter the provided ID is of specified type.
 	*@param $id The article_id to test.
 	*@param $type The content_type_codename being tested.
 	*@return boolean
-	**/	
-		
+	**/
+
 	function IdIsOfType($id,$type)
 	{
 		$sql = 'SELECT content_type_codename
@@ -223,10 +274,10 @@ class News_model extends Model
 		    $result['date'] = $row->article_publish_date;
 			$result['article_type'] = $row->content_type_codename;
 		    $content_id = $row->article_live_content_id;
-			
+
 			if ($row->photo_request_chosen_photo_id > 0) {
-				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, 'small', false, $row->photo_request_title, $image_class);
+				$this->load->library('image');
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, 'small');
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
 			}
@@ -247,14 +298,14 @@ class News_model extends Model
 			WHERE (article_writers.article_writer_article_id = ?
 			AND article_writers.article_writer_status = "accepted"
 			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
-			
+
 			LIMIT 0,10';
 		$query = $this->db->query($sql, array($id));
 		if ($query->num_rows() > 0)
 		{
 		    $authors = array();
 		    foreach ($query->result() as $row)
-			{			
+			{
 				$sql = 'SELECT business_cards.business_card_name
 					FROM business_cards
 					WHERE (business_cards.business_card_user_entity_id = ?)';
@@ -308,10 +359,10 @@ class News_model extends Model
 			$result['article_type'] = $row->content_type_codename;
 			$result['main_photo_id'] = $row->article_main_photo_id;
 		    $content_id = $row->article_live_content_id;
-			
+
 			if ($row->photo_request_chosen_photo_id > 0) {
-				$this->load->helper('images');
-				$result['photo_xhtml'] = imageLocTag($row->photo_request_chosen_photo_id, $pic_size, false, $row->photo_request_title, $image_class);
+				$this->load->library('image');
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, $pic_size, false, array('class' => $image_class));
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/'.$pic_size.'-default.jpg" alt="Image not available" class="'.$image_class.'" />';
 			}
@@ -339,7 +390,7 @@ class News_model extends Model
 		{
 		    $authors = array();
 		    foreach ($query->result() as $row)
-			{			
+			{
 				$sql = 'SELECT business_cards.business_card_name
 						FROM business_cards
 						WHERE (business_cards.business_card_user_entity_id = ?)';
@@ -355,7 +406,7 @@ class News_model extends Model
 			}
 			$result['authors'] = $authors;
 		}
-		
+
 		if($request_primary_thumbnail) {
 			$sql = 'SELECT	photo_requests.photo_request_chosen_photo_id	as photo_id,
 							photo_requests.photo_request_title				as photo_title
@@ -366,10 +417,10 @@ class News_model extends Model
 					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL
 					AND		photo_requests.photo_request_relative_photo_number = ?';
 			$query = $this->db->query($sql, array($id,$result['main_photo_id']));
-			$this->load->helper('images');
+			$this->load->library('image');
 			if ($query->num_rows() > 0) {
 				$row = $query->row();
-				$result['photo_xhtml'] = imageLocTag($row->photo_id, $pic_size, false, $row->photo_title, $image_class);
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_id, $pic_size, false, array('class' => $image_class));
 			}
 		}
 		return $result;
@@ -470,10 +521,10 @@ class News_model extends Model
 				AND			photo_requests.photo_request_relative_photo_number = ?';
 		$query = $this->db->query($sql, array($id,$result['main_photo']));
 
-		$this->load->helper('images');
+		$this->load->library('image');
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
-			$result['primary_photo_xhtml'] = imageLocTag($row->photo_id, 'medium', $row->view_large, $row->photo_alt, $image_class);
+			$result['primary_photo_xhtml'] = $this->image->getThumb($row->photo_id, 'medium', $row->view_large, array('class' => $image_class));
 			$result['primary_photo_caption'] = $row->photo_caption;
 		}
 
@@ -489,7 +540,7 @@ class News_model extends Model
 			$links[] = array('name'=>$row->article_link_name,'url'=>$row->article_link_url);
 		}
 		$result['links'] = $links;
-	
+
 		$sql = 'SELECT	related_articles.related_article_1_article_id, related_articles.related_article_2_article_id
 				FROM	related_articles
 				WHERE	(related_article_1_article_id = ?
@@ -512,10 +563,10 @@ class News_model extends Model
 			}
 		}
 		$result['related_articles'] = $related_articles;
-		
+
 		return $result;
 	}
-	
+
 	/// Get information about the public comments thread.
 	/**
 	 * @param $ArticleId int ID of the article.
@@ -529,7 +580,7 @@ class News_model extends Model
 			array('article_id' => $ArticleId)
 		);
 	}
-	
+
 	/// Get information about the private comments thread.
 	/**
 	 * @param $ArticleId int ID of the article.

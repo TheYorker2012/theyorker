@@ -1,7 +1,7 @@
 <?php
 /*
  * Model for managment of user quick links
- * 
+ *
  *
  * \author Alex Fargus (agf501)
  *
@@ -29,7 +29,7 @@ class Links_Model extends Model {
 	 */
 	function DeleteLink($user,$id) {
 		$this->db->trans_start();
-		$sql = 'SELECT link_official, link_image_id 
+		$sql = 'SELECT link_official, link_image_id
 			FROM links WHERE link_id = ?';
 		$query = $this->db->query($sql,array($id));
 		$row = $query->first_row();
@@ -45,8 +45,33 @@ class Links_Model extends Model {
 		$this->db->trans_complete();
 	}
 
-	function ModifyLink() {
-		echo "not impl.";
+	/*
+	 * Removes user link from database (+ any non default or official pics) only if no longer in use.
+	 */
+	function DeleteOfficialLink($id) {
+		$sql = 'DELETE FROM user_links WHERE user_link_link_id= ?';
+		$query = $this->db->query($sql,array($id));
+
+		//Get Image Id
+		$sql = 'SELECT link_image_id
+			FROM links WHERE link_id = ?';
+		$query = $this->db->query($sql,array($id));
+		$row = $query->first_row();
+
+		if($query->num_rows() > 0) {
+			$sql ='DELETE FROM links WHERE link_id = ?';
+			$this->db->query($sql,array($id));
+			//TODO move this static number into a config file somewhere
+			if ($row->link_image_id != 232) {
+				$sql = 'DELETE FROM images WHERE image_id = ?';
+				$this->db->query($sql,array($row->link_image_id));
+			}
+		}
+	}
+
+	function UpdateLink($link_id, $link_name, $link_url) {
+		$sql = 'UPDATE links SET link_name = ?, link_url = ? WHERE link_id = ?';
+		$this->db->query($sql,array($link_name, $link_url, $link_id));
 	}
 
 	/*
@@ -55,6 +80,36 @@ class Links_Model extends Model {
 	function PromoteLink($user, $linkId) {
 		$sql = 'UPDATE links SET link_official = 1, link_editor_entity_id = ? WHERE link_id = ?';
 		$this->db->query($sql,array($user, $linkId));
+	}
+
+	/*
+	 * Rejects a link from nomination, cannot be undone!
+	 */
+	function RejectLink($user, $linkId) {
+		$sql = 'UPDATE links SET link_nominated = 0, link_editor_entity_id = ? WHERE link_id = ?';
+		$this->db->query($sql,array($user, $linkId));
+
+		$sql = 'SELECT user_link_link_id FROM user_links WHERE user_link_link_id= ?';
+		$query = $this->db->query($sql,array($linkId));
+		$users_with_link = $query->num_rows();
+
+		if ($users_with_link == 0) {
+			//Get Image Id
+			$sql = 'SELECT link_image_id
+				FROM links WHERE link_id = ?';
+			$query = $this->db->query($sql,array($linkId));
+			$row = $query->first_row();
+
+			if($query->num_rows() > 0) {
+				$sql ='DELETE FROM links WHERE link_id = ?';
+				$this->db->query($sql,array($linkId));
+				//TODO move this static number into a config file somewhere
+				if ($row->link_image_id != 232) {
+					$sql = 'DELETE FROM images WHERE image_id = ?';
+					$this->db->query($sql,array($row->link_image_id));
+				}
+			}
+		}
 	}
 
 	/*
@@ -104,20 +159,36 @@ class Links_Model extends Model {
 	 * Returns an array with users images + links
 	 */
 	function GetUserLinks($user) {
-		$sql = 'SELECT link_id, link_url,link_name,link_image_id, image_file_extension
-			FROM images, links
+		$sql = 'SELECT link_id, link_url, link_name, link_image_id
+			FROM links
 			INNER JOIN user_links
 			ON user_link_link_id = links.link_id
-			WHERE image_id = link_image_id
-			AND user_link_user_entity_id = ?
+			WHERE user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
 		return $this->db->query($sql, array($user));
+	}
+
+	function GetLink($link_id) {
+		$sql = 'SELECT link_id, link_url, link_name, link_image_id
+			FROM links
+			WHERE link_id = ?
+			';
+		return $this->db->query($sql, array($link_id))->row();
 	}
 
 	function GetAllOfficialLinks() {
 		$sql = 'SELECT link_id, link_url,link_name,link_image_id
 			FROM links
 			WHERE link_official = 1
+			ORDER BY link_name ASC';
+		$query = $this->db->query($sql);
+		return $query;
+	}
+
+	function GetAllNominatedLinks() {
+		$sql = 'SELECT link_id, link_url,link_name,link_image_id
+			FROM links
+			WHERE link_official = 0 AND link_nominated = 1
 			ORDER BY link_name ASC';
 		$query = $this->db->query($sql);
 		return $query;
@@ -150,7 +221,7 @@ class Links_Model extends Model {
 			}
 			$sql.= ' ('.$user.', ?, '.$i.')';
 		}
-		
+
 		return $this->db->query($sql, $links);
 	}
 }

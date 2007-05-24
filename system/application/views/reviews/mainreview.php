@@ -38,7 +38,7 @@ if ($deal != NULL) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<img class="Right" src="<?php echo($review_image); ?>" alt="<?php echo($review_title); ?>" />
+		<?$this->image->getThumb($review_image, 'slideshow', false, array('class' => 'Right'))?>
 		<h2><?php echo($review_title); ?></h2>
 		<p><?php echo($review_quote); ?></p>
 		<h3>Rating</h3>
@@ -67,12 +67,12 @@ while ($star < 5) {
 		<h2>reviews</h2>
 <?php
 foreach($article as $a) {
-	$this->byline->AddReporter($a['article_authors']);
-	$this->byline->SetDate($a['article_date']);
+	$this->byline->AddReporter($a['authors']);
+	$this->byline->SetDate($a['date']);
 	$this->byline->load();
 	$this->byline->Reset();
 
-	echo($a['article_content']);
+	echo($a['text']);
 }
 ?>
 	</div>

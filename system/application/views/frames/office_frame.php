@@ -176,10 +176,19 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			Other Features
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/scheduledlive/'>Scheduled and Live</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/moderator/'>Comment Moderation</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/quotes/'>Quotes</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/banners/'>Homepage Banners</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/links/'>Links</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/campaign/'>Campaigns</a>

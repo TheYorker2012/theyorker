@@ -25,16 +25,19 @@ class News extends Controller
 	}
 
 	/**
-	 *	@brief	Testing new interface idea
+	 *	@brief	Shows the scheduled and live (published within the last 7 days) articles on the site.
 	 */
-	function test ()
+	function scheduledlive()
 	{
 		if (!CheckPermissions('office')) return;
 
-		$data['test'] = 'test';
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_scheduled_and_live');
+
+		$data['articlelist'] = $this->news_model->getScheduledAndLive();
 
 		/// Set up the main frame
-		$this->main_frame->SetContentSimple('office/news/test', $data);
+		$this->main_frame->SetContentSimple('office/news/scheduled_and_live', $data);
 		$this->main_frame->Load();
 	}
 
@@ -701,7 +704,7 @@ class News extends Controller
 			foreach ($data['article']['reporters'] as $reporter) {
 				if ($reporter['status'] == 'accepted') {
 					$reporter['bcard'] = $this->article_model->GetReporterByline($reporter['id']);
-					if (count($reporter['bcard']) > 0) { 
+					if (count($reporter['bcard']) > 0) {
 						$reporter_check = TRUE;
 					} else {
 						$reporter_check = FALSE;
@@ -726,10 +729,10 @@ class News extends Controller
 				$errors[] = 'Photo to use for article thumbnails not selected.';
 			}
 			if (!$photo_all_completed) {
-				$errors[] = 'All photo requests must have either been completed or cancelled.';			
+				$errors[] = 'All photo requests must have either been completed or cancelled.';
 			}
 			if (!$photo_thumbnail) {
-				$errors[] = 'The photo request that has been set to use for thumbnails must be completed.';			
+				$errors[] = 'The photo request that has been set to use for thumbnails must be completed.';
 			}
 			$data['errors'] = $errors;
 
@@ -775,7 +778,7 @@ class News extends Controller
 
 	function _showarticle($article_id = 0)
 	{
-		$this->load->helper('images');
+		$this->load->library('image');
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
 
 		if (count($data['article']) > 0) {
@@ -890,7 +893,7 @@ class News extends Controller
 
 	function _newPhoto($title,$description)
 	{
-		$this->load->helper('images');
+		$this->load->library('image');
 		$xajax_response = new xajaxResponse();
 		$article_id = $this->uri->segment(3);
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
@@ -913,7 +916,7 @@ class News extends Controller
 				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
 					$thumb = 1;
 				}
-				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'],'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
+				$xajax_response->addScriptCall('photo_created','/photos/small/'.$photo['chosen_photo'],$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
@@ -923,7 +926,7 @@ class News extends Controller
 
 	function _updatePhoto($photo_number,$image_operation)
 	{
-		$this->load->helper('images');
+		$this->load->library('image');
 		$xajax_response = new xajaxResponse();
 		$article_id = $this->uri->segment(3);
 		$data['article'] = $this->article_model->GetArticleDetails($article_id);
@@ -952,7 +955,7 @@ class News extends Controller
 				if ($data['article']['photo_thumbnail'] == $photo['photo_number']) {
 					$thumb = 1;
 				}
-				$xajax_response->addScriptCall('photo_created',imageLocation($photo['chosen_photo'],'small'),$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
+				$xajax_response->addScriptCall('photo_created','/photos/small/'.$photo['chosen_photo'],$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to edit photo requests for this article!');
@@ -1033,7 +1036,7 @@ class News extends Controller
 					$this->load->library('wikiparser');
 					$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 					foreach ($data['photo_requests'] as $photo) {
-						$this->wikiparser->add_image_override($photo['photo_number'], imageLocation($photo['chosen_photo'],'medium'));
+						$this->wikiparser->add_image_override($photo['photo_number'], '/photo/medium'.$photo['chosen_photo']);
 					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
 //				}

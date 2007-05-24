@@ -10,7 +10,7 @@
 </div>
 <div class='blue_box'>
 	<?php foreach( $images->result() as $image ) { ?>
-	<img src='<?=imageLocation($image->photo_id, 'slideshow')?>' alt='<?php echo $organisation.' image '.$image->photo_title; ?>'/>
+	<?=$this->image->getThumb($image->photo_id, 'slideshow')?>
 	<br />
 	<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/up', 'move up')?> |
 	<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/down', 'move down')?> |

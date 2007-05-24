@@ -98,7 +98,7 @@ class Organisations
 				$slideshow[] = array(
 					'title' => $slide->photo_title,
 					'id' => $slide->photo_id,
-					'url' => imageLocation($slide->photo_id, 'slideshow'),
+					'url' => '/images/slideshow/'.$slide->photo_id //TODO change all references of this to use library
 				);
 			}
 			$data['organisation'] = array(

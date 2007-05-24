@@ -8,37 +8,37 @@
  * The primary purpose of this is to allow previewing in the office without
  * duplication of code.
  */
- 
+
 /// Reviews helper library.
 class Review_views
 {
 	/// bool Display comments?
 	protected $mCommentsEnabled = TRUE;
-	
+
 	/// int Revision number to display.
 	protected $mRevisionId = -1;
-	
+
 	/// Disable comments.
 	function DisableComments()
 	{
 		$this->mCommentsEnabled = FALSE;
 	}
-	
+
 	/// Set the content revision id to display.
 	function SetRevision($RevisionId)
 	{
 		$this->mRevisionId = $RevisionId;
 	}
-	
+
 	/// Display a review page
 	function DisplayReview($content_type, $organisation_name, $IncludedComment = 0)
 	{
 		$CI = & get_instance();
-		
+
 		//Load news model
 		$CI->load->model('News_model');
 		$CI->load->model('Review_model');
-		$CI->load->model('Slideshow_model');
+		$CI->load->model('Slideshow');
 
 		//Set page code
 		$CI->pages_model->SetPageCode('review_context');
@@ -51,7 +51,6 @@ class Review_views
 
 		//Find our article_id
 		$article_id = $CI->Review_model->GetArticleID($organisation_name,$content_id);
-		$article_comment_id = $article_id[count($article_id) - 1];
 
 		$data['organisation_id'] = $CI->Review_model->FindOrganisationID($organisation_name);
 		$data['type_id'] 	= $content_id;
@@ -88,6 +87,7 @@ class Review_views
 		//Load bylines support
 		$CI->load->library('byline');
 
+		$article = array();
 		//Get the article for each article on the page
 		for ($article_no = 0; $article_no < count($article_id); $article_no++)
 		{
@@ -95,12 +95,12 @@ class Review_views
 			$article_database_result = $CI->News_model->GetFullArticle($article_id[$article_no]);
 
 			//Bylines
-			$article[$article_no]['article_authors'] = $article_database_result['authors'];
-			$article[$article_no]['article_date'] = $article_database_result['date'];
+			$article[$article_no]['authors'] = $article_database_result['authors'];
+			$article[$article_no]['date'] = $article_database_result['date'];
 
 			//The rest
-			$article[$article_no]['article_title'] = $article_database_result['heading'];
-			$article[$article_no]['article_content'] = $article_database_result['text'];
+			$article[$article_no]['heading'] = $article_database_result['heading'];
+			$article[$article_no]['text'] = $article_database_result['text'];
 
 		}
 
@@ -110,17 +110,17 @@ class Review_views
 		//Review context content
 		$review_database_result = $CI->Review_model->GetReview($organisation_name,$content_type, $this->mRevisionId);
 		$review_database_result = $review_database_result[0]; //Unique so just first row
-		
-		$slideshow = $CI->Slideshow_model->getReviewSlideshowImages($data['organisation_id'], $content_id); 
-		@$slideshow_photo_id = $slideshow[0]['photo_id'];
-		
-		$CI->load->helper('images_helper');
-		
+
+		$slideshow = $CI->Slideshow->GetReviewPhotos($data['organisation_id'], $content_id, false);
+		@$slideshow_photo_id = $slideshow[0]['id'];
+
+		$CI->load->library('image');
+
 		$data['article_id'] = $article_id;
 		$data['review_title'] 			= $review_database_result['organisation_name'];
 		$data['review_blurb']			= $review_database_result['review_context_content_blurb'];
 		$data['review_quote']			= $review_database_result['review_context_content_quote'];
-		$data['review_image']			= imageLocation($slideshow_photo_id,'slideshow');
+		$data['review_image']			= $slideshow_photo_id;
 		$data['email'] 				= $review_database_result['organisation_email_address'];
 		$data['organisation_description'] = $review_database_result['organisation_description'];
 		$data['address_main']			= $review_database_result['organisation_postal_address'];

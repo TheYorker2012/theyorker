@@ -63,7 +63,7 @@ class News extends Controller {
 		/// Get the latest article ids from the model.
 		$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
-			$this->load->helper('images');
+			$this->load->library('image');
 			if ($type_info['section'] == 'blogs') {
 				if ($type_info['parent_id'] != NULL) {
 					$temp_type = $parent['content_type_codename'];
@@ -73,7 +73,7 @@ class News extends Controller {
 				}
 				$data['blogs'] = $this->News_model->getSubArticleTypes($temp_type);
 				foreach ($data['blogs'] as &$blog) {
-					$blog['image'] = imageLocation($blog['image'], $blog['image_codename'], $blog['image_extension']);
+					$blog['image'] = '/image/'.$blog['image_codename'].'/'.$blog['image'];
 				}
 			} else {
 				$temp_type = $article_type;
@@ -82,7 +82,7 @@ class News extends Controller {
 				}
 				$data['puffers'] = $this->News_model->getSubArticleTypes($temp_type);
 				foreach ($data['puffers'] as &$puffer) {
-					$puffer['image'] = imageLocation($puffer['image'], $puffer['image_codename'], $puffer['image_extension']);
+					$puffer['image'] = '/image/'.$puffer['image_codename'].'/'.$puffer['image'];
 				}
 			}
 		}

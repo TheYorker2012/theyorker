@@ -52,11 +52,11 @@ class Organisation extends controller
 			//No post occured, but so try to use existing session data
 			if ($stage) {
 				$data['stage'] = $stage;
-				if (isset($_SESSION['img']['list'])) {
-					foreach ($_SESSION['img']['list'] as $newImg) {
-						$_SESSION['org_wizard']['img'][] = $newImg;
+				if (isset($_SESSION['img'])) {
+					foreach ($_SESSION['img'] as $newImg) {
+						$_SESSION['org_wizard']['img'][] = $newImg['list'];
 					}
-					unset($_SESSION['img']['list']);
+					unset($_SESSION['img']);
 				}
 			} else {
 				//a post has occured but there is no session data, get the serialised data out of the form and put it back into the session

@@ -71,12 +71,19 @@ class Quotes extends Controller
 
 		$quote_last_displayed_timestamp = ($quote_scheduled ? $quote_schedule_date : null);
 
-		if ($quote_text && $quote_author){
-			$this->load->model('Quote_Model');
-			$this->Quote_Model->UpdateQuote($quote_id, $quote_text, $quote_author, $quote_last_displayed_timestamp);
-			$this->messages->AddMessage('success', 'Quote update successfully');
+		$delete = ($this->input->post('name_delete_button') == 'Delete');
+
+		$this->load->model('Quote_Model');
+		if ($delete) {
+			$this->Quote_Model->RemoveQuote($quote_id);
+			$this->messages->AddMessage('success', 'Quote deleted successfully');
 		} else {
-			$this->messages->AddMessage('error', 'Quote update failed: no data was provided.');
+			if ($quote_text && $quote_author){
+				$this->Quote_Model->UpdateQuote($quote_id, $quote_text, $quote_author, $quote_last_displayed_timestamp);
+				$this->messages->AddMessage('success', 'Quote update successfully');
+			} else {
+				$this->messages->AddMessage('error', 'Quote update failed: no data was provided.');
+			}
 		}
 		redirect('/office/quotes');
 	}
