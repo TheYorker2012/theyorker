@@ -17,8 +17,12 @@ class Image {
 		$data = $this->get($photoID, 'thumbs', $type);
 		$tagInner = '';
 		$data['alt'] = $data['title'];
+		if (isset($data['photo_gallery'])) {
+			unset($data['photo_gallery']);
+			unset($data['photo_deleted']);
+		}
 		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" '.$tagInner.'/>';
+		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" '.$tagInner.' />';
 		if ($viewLarge) $tag = '<a href="/photos/full/'.$photoID.'">'.$tag.'</a>';
 		return $tag;
 	}
@@ -34,7 +38,7 @@ class Image {
 		$tagInner = '';
 		$data['alt'] = $data['title'];
 		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
-		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.'/>';
+		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.' />';
 	}
 
 	public function getPhotoURL($photoID, $type) {
