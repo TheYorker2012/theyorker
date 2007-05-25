@@ -6,7 +6,7 @@
 	<? } ?>
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
-			Please enter your name:
+			<p>Please enter your name:</p>
 			<fieldset>
 				<label for="fname">Forename: </label>
 				<input type="text" id="fname" name="fname" value="<?php echo(htmlentities($this->validation->fname)); ?>" />
@@ -15,7 +15,7 @@
 				<input type="text" id="sname" name="sname" value="<?php echo(htmlentities($this->validation->sname)); ?>" />
 				<br />
 			</fieldset>
-			To allow us to personalise your experience of our site, please tell us more about yourself:
+			<p>To allow us to personalise your experience of our site, please tell us more about yourself:</p>
 			<fieldset>
 				<label for="nick">Nickname: </label>
 				<input type="text" id="nick" name="nick" value="<?php echo(htmlentities($this->validation->nick)); ?>" />
@@ -67,13 +67,13 @@ foreach ($years as $year) {
 				<br />
 				<!-- TODO: add current time thing -->
 			</fieldset>
-				If you would like to see how many unread e-mails you have in your inbox, tick this box.
+			<p>If you would like to see how many unread e-mails you have in your inbox, tick this box.</p>
 			<fieldset>
 				<label class="radio" for="storepassword">Save YorkMail Password:</label>
 				<input class="checkbox" type="checkbox" id="storepassword" name="storepassword" value="1" <?php if ($this->validation->storepassword) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>
-				If you would like to see your facebook events on your calendar, tick the box below, and facebook will soon prompt you to log in.
+			<p>If you would like to see your facebook events on your calendar, tick the box below, and facebook will soon prompt you to log in.</p>
 			<fieldset>
 				<label class="radio" for="facebook">Facebook Integration:</label>
 				<input class="checkbox" type="checkbox" id="facebook" name="facebook" value="1" <?php if ($this->validation->facebook) { echo('checked="checked" '); } ?>/>

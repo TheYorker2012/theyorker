@@ -1,10 +1,10 @@
 	<script type='text/javascript' src='/javascript/prototype.js'></script>
 	<script type='text/javascript' src='/javascript/scriptaculous.js'></script>
-	<script type='text/javascript' src='/javascript/slideshow.js'></script>
+	<script type='text/javascript' src='/javascript/slideshow_new.js'></script>
 	<script type='text/javascript' src='/javascript/subscriptions.js'></script>
 	<script type='text/javascript'>
 	var societies = Array();
-	<?php foreach ($societies as $soc) { ?>
+	<?php foreach ($organisations as $soc) { ?>
 	societies['<?php echo $soc['id']; ?>'] = Array();
 	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo $soc['name']; ?>';
 	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo $soc['directory']; ?>';
@@ -12,16 +12,18 @@
 	<?php } ?>
 	</script>
 
-	<div class='blue_box' style='width: auto;'>
+	<div class="BlueBox">
 		<h2><?php echo $heading; ?></h2>
 		<?php echo $intro; ?>
 	</div>
-	<div style='float: left; width: 320px;'>
-		<h4>Societies</h4>
-		<div id='soc_container'>
-			<?php foreach ($societies as $soc) {
+
+	<div class="BlueBox" style="width: 49%;">
+		<h2>Societies</h2>
+
+		<div id='subscription_container'>
+			<?php foreach ($organisations as $soc) {
 				echo '<div id=\'soc' . $soc['id'] . '\' class=\'';
-				if (array_search($soc['id'],$society_subscriptions) !== FALSE) {
+				if (array_search($soc['id'],$organisation_subscriptions) !== FALSE) {
 					echo 'selected';
 				} else {
 					echo 'unselected';
@@ -37,24 +39,26 @@
 		</select>
 		-->
 	</div>
-	<div style='float: right; width: 320px;'>
-		<h4 id='socname'>&nbsp;</h4>
-		<div align='center'>
-			<div id='ss' style='text-align:left;'>
-				<img id='changeme' src='/images/prototype/prefs/image_load.jpg' alt='Society Image' title='Society Image' />
+
+	<div id="subscription_info" class="BlueBox">
+		<h2 id='subscription_name'>&nbsp;</h2>
+
+		<div id="SlideShowContainer">
+			<div id="SlideShow">
+			   <img id="SlideShowImage" src="/images/prototype/prefs/image_load.jpg" alt="Subscription Image" title="Subscription Image" />
 			</div>
 		</div>
-		<div style='clear:both;'>&nbsp;</div>
-		<b>Description...</b>
-		<div id='socdesc' class='blue_box' style='overflow:auto; height: 80px; width: auto;'></div>
-		<div id='socinfo'></div>
-		<div style='text-align:center;'>
-			<form id='form_subscribe' action='/register/societies/' method='post' class='form' onsubmit='return socSubscribe();'>
-			<input type='submit' name='soc_subscribe' id='soc_subscribe' value='Subscribe' class='button hide' />
-			<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='sub_loading' class='hide' style='float:right;' />
-			</form>
-		</div>
+		<h3>Description...</h3>
+		<div id='subscription_desc' class='blue_box'></div>
+		<form id='form_subscribe' action='/register/societies/' method='post' class='form' onsubmit='return socSubscribe();'>
+			<div style='text-align:center;'>
+				<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='subscription_loading' class='hide' style='float:right;' />
+				<input type='submit' name='subscription_subscribe' id='subscription_subscribe' value='Subscribe' class='button hide' />
+				<br style='clear: both;' />
+			</div>
+		</form>
 	</div>
+
 	<br style='clear: both;' />
 	<form action='/register/au/' method='post' class='form'>
 		<div style='margin-top: 1em;'>

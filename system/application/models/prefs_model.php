@@ -1,8 +1,8 @@
 <?php
 /**
- * This model retrieves data required for the Preferences Wizard.
+ *	This model retrieves data required for the Preferences Wizard
  *
- * @author Chris Travis (cdt502 - ctravis@gmail.com)
+ *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
  */
 
 class Prefs_model extends Model {

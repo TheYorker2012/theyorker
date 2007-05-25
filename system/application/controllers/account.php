@@ -15,7 +15,6 @@ class Account extends controller
 	{
 		parent::controller();
 		$this->load->model('prefs_model');
-		$this->load->model('prefs_model');
 	}
 
 	/// Set up the tabs on the main_frame.
