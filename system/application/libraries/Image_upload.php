@@ -270,10 +270,10 @@ class Image_upload {
 					imagegif($newImage, $data['full_path']);
 					break;
 				case 'image/jpeg':
-					imagejpeg($newImage, $data['full_path']);
+					imagejpeg($newImage, $data['full_path'], 90);
 					break;
 				case 'image/png':
-					imagepng($newImage, $data['full_path']);
+					imagepng($newImage, $data['full_path'], 9);
 					break;
 			}
 			foreach ($ThumbDetails->result() as $Thumb) {

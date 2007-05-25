@@ -182,10 +182,10 @@ class Image {
 		if ($contents !== false) ob_clean(); else ob_start();
 		switch ($mime) {
 			case 'image/png':
-				imagepng($newImage);
+				imagepng($newImage, 9);
 				break;
 			case 'image/jpeg':
-				imagejpeg($newImage);
+				imagejpeg($newImage, 90);
 				break;
 			case 'image/gif':
 				imagegif($newImage);
