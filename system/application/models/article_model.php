@@ -155,7 +155,7 @@ class Article_model extends Model
 				FROM article_contents
 				INNER JOIN articles
 				ON articles.article_id = ? AND article_contents.article_content_article_id = articles.article_id
-				WHERE articles.article_live_content_id != article_contents.article_content_id
+				WHERE (articles.article_live_content_id IS NULL OR articles.article_live_content_id != article_contents.article_content_id)
 				AND article_contents.article_content_last_author_user_entity_id = ?
 				AND (DATE_ADD(article_contents.article_content_last_author_timestamp, INTERVAL 1 HOUR) > CURRENT_TIMESTAMP) ';
 		if ($revision > 0) {
