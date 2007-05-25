@@ -68,7 +68,6 @@ class Article_model extends Model
 				WHERE articles.article_id = ?
 				AND articles.article_suggestion_accepted = 1
 				AND articles.article_deleted = 0
-				AND articles.article_live_content_id IS NULL
 				AND articles.article_content_type_id = content_types.content_type_id';
 		$query = $this->db->query($sql, array($article_id));
 		$result = array();

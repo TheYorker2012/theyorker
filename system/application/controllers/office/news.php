@@ -505,7 +505,7 @@ class News extends Controller
 						case 'pulled':
 							$this->_showarticle($article_id);
 						case 'published':
-							if ($data['user_level'] != 'editor') {
+							if ($data['user_level'] == 'editor') {
 								/// EDITOR: Changes + Pull + Change publish date
 								$this->_showarticle($article_id);
 							} else {
