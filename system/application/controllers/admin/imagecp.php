@@ -83,6 +83,7 @@ class Imagecp extends Controller {
 			if ($typeDetails->num_rows() == 1 && $typeDetails->first_row()->image_type_photo_thumbnail == 0) {
 				$this->image->delete('image', $id);
 			}
+			redirect('admin/imagecp/view/'.$codename.'/');
 		}
 		//TODO paginate using pageination lib
 		$sql = 'SELECT image_id, image_title, image_image_type_id, image_type_photo_thumbnail FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
