@@ -505,20 +505,18 @@ class News extends Controller
 						case 'pulled':
 							$this->_showarticle($article_id);
 						case 'published':
+						case 'request':
 							if ($data['user_level'] == 'editor') {
-								/// EDITOR: Changes + Pull + Change publish date
-								$this->_showarticle($article_id);
+								/// If editor but also assigned reporter and not accepted then is reporter
+								if ($this->input->post('publish') == 'Publish Article') {
+									$this->_publishArticle($article_id);
+								} else {
+									/// EDITOR: Changes + Pull + Change publish date
+									$this->_showarticle($article_id);
+								}
 							} else {
 								/// EVERYONE: View + Notice that already published
 								echo('This article is live, and cannot be edited except by an editor.');
-							}
-							break;
-						case 'request':
-							/// If editor but also assigned reporter and not accepted then is reporter
-							if ($this->input->post('publish') == 'Publish Article') {
-								$this->_publishArticle($article_id);
-							} else {
-								$this->_showarticle($article_id);
 							}
 							break;
 						case 'suggestion':
