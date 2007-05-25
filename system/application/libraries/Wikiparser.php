@@ -67,6 +67,7 @@ class Wikiparser {
 	function Wikiparser() {
 		$CI = &get_instance();
 		$CI->load->helper('wikilink');
+		$CI->load->library('image');
 
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
@@ -278,63 +279,59 @@ class Wikiparser {
 	function handle_image($href,$title,$options) {
 		if ($this->ignore_images) return "";
 		if (!$this->image_uri) return $title;
+
+		$imagetag = '';
 		if (array_key_exists($href,$this->image_overrides)) {
-			$href = $this->image_overrides[$href];
+			$imagetag = $this->image_overrides[$href];
 		} else {
-			$href = $this->image_uri . $href;
+			$imagetag = sprintf(
+				'<img src="%s" alt="%s" />',
+				$href,
+				$title
+			);
 		}
 
-		$imagetag = sprintf(
-			'<img src="%s" alt="%s" />',
-			$href,
-			$title
-		);
-		foreach ($options as $k=>$option) {
-			switch($option) {
-				case 'right':
-					$imagetag = sprintf(
-						'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
-						'<img src="%s" alt="%s" />'.
-						'<div>%s</div>'.
-						'</div>',
-						$href,
-						$title,
-						$title
-					);
-					if ($this->in_paragraph) {
-						// divs aren't allowed in paragraphs, so close and reopen
-						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
-					}
-					break;
-				case 'left':
-					$imagetag = sprintf(
-						'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
-						'<img src="%s" alt="%s" />'.
-						'<div>%s</div>'.
-						'</div>',
-						$href,
-						$title,
-						$title
-					);
-					if ($this->in_paragraph) {
-						// divs aren't allowed in paragraphs, so close and reopen
-						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
-					}
-					break;
-				case 'centre':
-					$imagetag = sprintf(
-						'<div style="text-align: center;">%s<br />%s</div>',
-						$imagetag,
-						$title
-					);
-					if ($this->in_paragraph) {
-						// divs aren't allowed in paragraphs, so close and reopen
-						$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
-					}
-					break;
-			}
-		}
+		$option = array_pop($options); //Will return null if empty
 
+		switch($option) {
+			case 'right':
+				$imagetag = sprintf(
+					'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+					$imagetag.
+					'<div>%s</div>'.
+					'</div>',
+					$title
+				);
+				if ($this->in_paragraph) {
+					// divs aren't allowed in paragraphs, so close and reopen
+					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+				}
+				break;
+			case 'left':
+				$imagetag = sprintf(
+					'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+					$imagetag.
+					'<div>%s</div>'.
+					'</div>',
+					$title
+				);
+				if ($this->in_paragraph) {
+					// divs aren't allowed in paragraphs, so close and reopen
+					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+				}
+				break;
+			case 'centre':
+				$imagetag = sprintf(
+					'<div style="text-align: center;">%s<br />%s</div>',
+					$imagetag,
+					$title
+				);
+				if ($this->in_paragraph) {
+					// divs aren't allowed in paragraphs, so close and reopen
+					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
+				}
+				break;
+		}
 		return $imagetag;
 	}
 

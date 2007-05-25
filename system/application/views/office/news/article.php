@@ -77,7 +77,7 @@
 			container.innerHTML = container.innerHTML + '(T)';
 		}
 		container.innerHTML = container.innerHTML + '<br />';
-		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '">' + title + '</a><br />';
+		container.innerHTML = container.innerHTML + '<a href="/office/photos/view/' + id + '">' + (title == '' ? 'No Title' : title) + '</a><br />';
 		container.innerHTML = container.innerHTML + '<span style="font-size:x-small;">' + datetime + '<br />';
 		container.innerHTML = container.innerHTML + '[ <a onclick="insertImageTag(\'content\', \'' + number + '\');return false;" href="#">Insert</a> ]';
 		if (main != 1) {
@@ -191,7 +191,7 @@
 					<?php if ($article['photo_main'] == $request['photo_number']) { echo('(M)'); } ?>
 					<?php if ($article['photo_thumbnail'] == $request['photo_number']) { echo('(T)'); } ?>
 					<br />
-					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']); ?></a><br />
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo(($request['title']=='' ? 'No Title' : $request['title'])); ?></a><br />
 					<span style="font-size:x-small;">
 						<?php echo(date('d/m/y @ H:i', $request['time'])); ?><br />
 						[ <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a> ]

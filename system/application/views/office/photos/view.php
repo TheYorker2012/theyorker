@@ -74,7 +74,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 					printInput('Description','r_brief','textarea',$description,'details',$access,$user_level);
 				} ?>
 
-				<?php printInput('','r_details','submit','Edit','details',$access,$user_level); ?>
+				<?php printInput('','r_details','submit','Update','details',$access,$user_level); ?>
 
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">

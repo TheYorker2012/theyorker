@@ -204,7 +204,7 @@ class Photos extends Controller
 				}
 
 				/// Check if user is trying to edit request's details
-				if ($this->input->post('r_details') == 'Edit') {
+				if ($this->input->post('r_details') == 'Update') {
 					/// Check the have the necessary permissions to edit
 					if ($data['access']['details'][$data['user_level']]) {
 						$this->photos_model->ChangeDetails($request_id,$this->input->post('r_title'),$this->input->post('r_brief'));
