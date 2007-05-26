@@ -45,6 +45,7 @@ class Feedback extends Controller {
 
 				$to = $this->pages_model->GetPropertyText('feedback_email', true);
 				$from = (!$author_email ? 'noreply@theyorker.co.uk' : $author_email);
+				$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 				$subject = "The Yorker: Site Feedback";
 				$message =
 'Someone has been kind enough to write in the little box at the bottom of the page.
