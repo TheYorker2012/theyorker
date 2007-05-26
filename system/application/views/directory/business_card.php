@@ -71,7 +71,7 @@ echo $this->image->getImage($business_card['image_id'], 'userimage');
 				if (PermissionsSubset('office', GetUserLevel())){ ?>
 				<input name='member_delete_button' type='submit' onClick="return confirm('Are you sure you want to delete <?php echo $business_card['name']; ?>s contact card?');" value='Delete' class='button' />
 				<?php }?>
-				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('members/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />
+				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('directory/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />
 			</fieldset>
 			</form>
 		<?php

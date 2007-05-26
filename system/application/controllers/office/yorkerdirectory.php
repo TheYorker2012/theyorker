@@ -439,22 +439,19 @@ class Yorkerdirectory extends Controller
 			} else {
 				$this->messages->AddMessage('error','Group was not removed, you cannot remove groups with cards.');
 			}
-		//set things back to normal
-		$action="viewgroup";
-		$business_card_group=-1;
+			//set things back to normal
+			redirect(vip_url('directory/contacts/'));
 		}
 
 		if ($action=="deletecard") {//business_card_group is actually the card id for this action
 			if ($editor_level) {
-			$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
-			if ($result) {
-				$this->messages->AddMessage('success','The contact card was successfully deleted.');
-			} else {
-				$this->messages->AddMessage('error','The contact card was not removed, it does not exist.');
-			}
-			//set things back to normal
-			$action="viewgroup";
-			$business_card_group=-1;
+				$result = $this->businesscards_model->DeleteBusinessCard($business_card_group);
+				if ($result) {
+					$this->messages->AddMessage('success','The contact card was successfully deleted.');
+				} else {
+					$this->messages->AddMessage('error','The contact card was not removed, it does not exist.');
+				}
+				redirect(vip_url('directory/contacts/'));
 			} else {
 				$this->messages->AddMessage('error','You do not have permission to delete contact cards.');
 			}
@@ -468,8 +465,7 @@ class Yorkerdirectory extends Controller
 				$this->messages->AddMessage('error','The contact card was not approved, it does not exist.');
 			}
 			//set things back to normal
-			$action="viewgroup";
-			$business_card_group=-1;
+			redirect(vip_url('directory/contacts/'));
 			} else {
 				$this->messages->AddMessage('error','You do not have permission to approve contact cards.');
 			}
@@ -485,14 +481,14 @@ class Yorkerdirectory extends Controller
 			);
 			$this->businesscards_model->AddOrganisationCardGroup($post_data);
 			$this->messages->AddMessage('success','Group was successfully added.');
-
+			redirect(vip_url('directory/contacts/'));
 		}
 		if (!empty($_POST["card_addbutton"])) {
 			if (empty($_POST["card_name"]) || empty($_POST["card_title"]))
 			{
-			$this->messages->AddMessage('error','Please include a name and a title for your contact card');
-			//add failed send the data back into the form
-			$data['card_form']=$_POST;
+				$this->messages->AddMessage('error','Please include a name and a title for your contact card');
+				//add failed send the data back into the form
+				$data['card_form']=$_POST;
 			} else {
 				//find user id if exist
 				if (!empty($_POST["card_username"])) {
@@ -514,10 +510,11 @@ class Yorkerdirectory extends Controller
 					$this->businesscards_model->NewBusinessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
 			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
 			$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
-			0, null, null);
+			0, null, null, 1); //@note the 1 in the last parameter forces the card to be published when it is created. Beta only.
 					$this->messages->AddMessage('success','The contact card was successfully added.');
-
 				}
+
+				redirect(vip_url('directory/contacts/viewgroup/'.$_POST["group_id"]));
 			}
 		}
 
@@ -578,6 +575,187 @@ class Yorkerdirectory extends Controller
 		}
 
 		// Load the public frame view
+		$this->main_frame->Load();
+	}
+
+	/// Business card management.
+	/**
+	 * @param $Suboption1 [string/integer] Operation code or business card id.
+	 *	- 'filter'
+	 *	- 'request'
+	 *	- 'new'
+	 * @param $Suboption2 [string] Sub operation code.
+	 *	- 'filter'
+	 *	- 'send'
+	 *	- 'post'
+	 *	- 'edit'
+	 * @param $Suboption3 [string] Another sub operation code.
+	 *
+	 * @todo Move back to directory :P
+	 */
+	function cards(	$Suboption1 = NULL,
+					$Suboption2 = NULL,
+					$Suboption3 = NULL)
+	{
+		if (!CheckPermissions('vip+pr')) return;
+
+		$this->load->library('image');
+		$this->load->model('members_model');
+
+		$mode = 'view';
+
+		$sql = array('TRUE',array());
+		if ($Suboption1 === 'filter') {
+			static $field_translator = array(
+				'teamid'		=> 'subscriptions.subscription_organisation_entity_id',
+				'user'			=> 'business_cards.business_card_user_entity_id',
+				'card'			=> 'business_cards.business_card_id',
+				'paid' 			=> 'subscriptions.subscription_paid',
+				'vip'			=> 'subscriptions.subscription_vip',
+				'confirmed'		=> '1',
+				'carded'		=> 'NULL',
+				'carding'		=> 'NULL',
+				'cardable'		=> 'NULL',
+				'mailable'		=> 'subscriptions.subscription_email',
+				'search'		=> 'NULL',
+				'firstname'		=> 'users.user_firstname',
+				'surname'		=> 'users.user_surname',
+				'nickname'		=> 'users.user_nickname',
+				'enrol_year'	=> 'users.user_enrolled_year',
+			);
+			try {
+				$filter = $this->_GetFilter(4);
+				$sql = $this->_GenerateFilterSql($filter, $field_translator);
+			} catch (Exception $e) {
+				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
+			}
+		} elseif (is_numeric($Suboption1)) {
+			$sql[0] = 'business_cards.business_card_id=?';
+			$sql[1] = array($Suboption1);
+			if ($Suboption2 === 'edit') {
+				$mode = 'edit';
+			}
+		}
+		$business_cards = $this->members_model->GetBusinessCards(
+				VipOrganisationId(),
+				$sql[0], $sql[1]);
+
+		// DISPLAY BUSINESS CARDS ----------------------------------- //
+		if ($mode === 'view') {
+			$this->pages_model->SetPageCode('viparea_members_cards');
+
+			$data = array(
+				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+				'business_cards' => $business_cards,
+			);
+
+			// Set up the content
+			$this->main_frame->SetContentSimple('members/members_cards', $data);
+
+			// Set the title parameters
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> VipOrganisationName(),
+			));
+
+		} elseif ($mode === 'edit') {
+			if (!count($business_cards)) {
+				$this->messages->AddMessage('error','Business card '.$Suboption1.' could not be found');
+				redirect(vip_url('directory/cards'));
+			}
+			$this->pages_model->SetPageCode('viparea_members_card_edit');
+
+			$this->load->model('directory_model');
+
+			// translate into nice names for view
+			$data = array(
+				'business_card' => $business_cards[0],
+				'business_card_goups' => array(),
+			);
+
+			//Get post data
+			if(!empty($_POST["card_editbutton"])){
+				if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
+				{
+				$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
+				//add failed send the data back into the form
+				$data['card_form']=$_POST;
+				}else{
+					//find user id if exist
+					if(!empty($_POST["card_username"])){
+						//find user id from username
+						$user_id = $this->businesscards_model->GetUserIdFromUsername($_POST["card_username"]);
+					}else{
+						$user_id = "";
+					}
+
+					//Send message if username was given and no id found
+					if($user_id==""&&!empty($_POST["card_username"])){
+						$this->main_frame->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
+						//add failed send the data back into the form
+						$data['card_form']=$_POST;
+					} else {
+
+						//add contact card
+						//@note start time, end time, order, and image id are all currently null and not in use.
+						$this->businesscards_model->UpdateBuisnessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
+				$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
+				$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
+				0, null, null, $Suboption1, 1); //The last param 1 forces immediate publishing
+						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
+
+						redirect(vip_url('directory/contacts/viewgroup/'.$_POST["group_id"]));
+					}
+				}
+			} else {
+
+				//Send data to form if it isnt reloaded from a update attempt
+				$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($Suboption1);
+				foreach($cards_data as $card_data){
+					if($card_data['business_card_user_entity_id']!=0){
+					$username = $this->businesscards_model->GetUsernameFromUserId($card_data['business_card_user_entity_id']);
+					}else{
+					$username = "";
+					}
+					$data['card_form'] = array(
+						'card_name' => $card_data['business_card_name'],
+						'card_title' => $card_data['business_card_title'],
+						'group_id' => $card_data['business_card_business_card_group_id'],
+						'card_username' => $username,
+						'card_course' => $card_data['business_card_course'],
+						'email' => $card_data['business_card_email'],
+						'card_about' => $card_data['business_card_blurb'],
+						'postal_address' => $card_data['business_card_postal_address'],
+						'phone_mobile' => $card_data['business_card_mobile'],
+						'phone_internal' => $card_data['business_card_phone_internal'],
+						'phone_external' => $card_data['business_card_phone_external'],
+					);
+				}
+
+			}
+
+			// Business Card Groups
+			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups(VipOrganisation());
+			foreach ($groups as $group) {
+				$data['groups'][] = array(
+					'name' => $group['business_card_group_name'],
+					'id' => $group['business_card_group_id'],
+					'href' => vip_url('directory/cards/filter/cardgroup/'.$group['business_card_group_id'])
+				);
+			}
+
+			// Set the title parameters
+			$this->main_frame->SetTitleParameters(array(
+				'organisation'	=> VipOrganisationName(),
+				'name'			=> $business_cards[0]['name'],
+			));
+			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
+		}
+
+		$this->_SetupOrganisationNavbar();
+
+		$this->main_frame->SetPage('contacts');
+
+		// Load the main frame
 		$this->main_frame->Load();
 	}
 

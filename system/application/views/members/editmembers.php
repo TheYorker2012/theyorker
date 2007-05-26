@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
 <h4>Operations</h4>
 	<p>
-		<a href="<?php echo vip_url('members/cards/filter/user/'.$membership['user_id'].'');?>">Member's Business Card</a>
+		<a href="<?php echo vip_url('directory/cards/filter/user/'.$membership['user_id'].'');?>">Member's Business Card</a>
 		<br />
 		<a href='/viparea/members/unsubscribe/<?php echo $membership['user_id']; ?>'>Unsubscribe Member</a>
 		<br />
@@ -60,7 +60,7 @@ function submit_checker()
 	var editor_access = document.getElementById('editor_level_access');
 	var password = document.getElementById('password');
 	var confirm_password = document.getElementById('confirm_password');
-	
+
 	if (editor_access.checked) {
 		if (password.value!=confirm_password.value) {
 			alert('Passwords do not match, please confirm your password.');
@@ -92,7 +92,7 @@ if ('manage' === VipMode()) {
 		<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method='POST' onSubmit="return submit_checker();">
 			<fieldset>
 				<label for='office_access_level'>Access level:</label>
-				<input style="float:none;" type="radio" onChange="show_password_form()" id="none_level_access" name="office_access_level" value="none" <?php if (!($membership['office_writer_access'] || $membership['office_editor_access'])) echo 'checked'; ?>> No Access 
+				<input style="float:none;" type="radio" onChange="show_password_form()" id="none_level_access" name="office_access_level" value="none" <?php if (!($membership['office_writer_access'] || $membership['office_editor_access'])) echo 'checked'; ?>> No Access
 				<input style="float:none;" type="radio" onChange="show_password_form()" id="writer_level_access" name="office_access_level" value="writer" <?php if ($membership['office_writer_access']) echo 'checked'; ?>> Writer
 				<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
 				<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">

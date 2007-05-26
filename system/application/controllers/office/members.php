@@ -50,17 +50,17 @@ class Members extends Controller
 {
 	/// associative array All teams indexed by entity id
 	protected $mAllTeams;
-	
+
 	/// teams in a tree structure including main organisations
 	protected $mOrganisation;
-	
+
 	protected $mMembers;
 	protected $mIsFilterOn;
 	protected $mLastSort;
 	protected $mSortFields;
 	protected $mFilterDescriptors;
 	protected $mFilterBase;
-	
+
 	/// Default constructor.
 	function __construct()
 	{
@@ -70,11 +70,11 @@ class Members extends Controller
 		$this->load->model('organisation_model');
 		$this->load->model('members_model');
 		$this->load->library('organisations');
-		
+
 		$this->mAllTeams = NULL;
 		$this->mOrganisation = NULL;
 	}
-	
+
 	/// Set up the tabs on the main_frame.
 	/**
 	 * @param $SelectedPage string Selected Page.
@@ -91,10 +91,10 @@ class Members extends Controller
 				vip_url('members/teams'));
 		$navbar->AddItem('compose', 'Compose',
 				vip_url('members/compose'));
-		
+
 		$this->main_frame->SetPage($SelectedPage);
 	}
-	
+
 	/// Load the teams up to a specific depth.
 	/**
 	 * @param $Depth int To pass into members_model::GetTeams.
@@ -105,19 +105,19 @@ class Members extends Controller
 		list($this->mAllTeams, $this->mOrganisation)
 			= $this->organisation_model->GetTeamsTree(VipOrganisationId());
 	}
-	
+
 	// FIRST LEVEL OF ROUTING
 	// These are public functions representing the first segment after members
-	
+
 	/// Index page.
 	function index()
 	{
 		if (!CheckPermissions('vip')) return;
-		
+
 		/// @note Redirects to members/list
 		redirect(vip_url('members/list'));
 	}
-	
+
 	protected function _handle_member_list_member_operation()
 	{
 		// Check for post data
@@ -133,7 +133,7 @@ class Members extends Controller
 			} else {
 				$selected_members = array();
 			}
-			
+
 			// Check which button was pressed
 			$invite_check        = $this->input->post('members_select_invite_button');
 			$request_cards_check = $this->input->post('members_select_request_cards_button');
@@ -158,45 +158,45 @@ class Members extends Controller
 						$this->messages->AddMessage('error', 'Invalid post data, no recognised invite team.');
 					}
 				}
-				
+
 			} elseif ($request_cards_check === 'Request business cards') {
 				if (empty($selected_members)) {
 					$this->messages->AddMessage('information',
 						'No members selected, please use the check boxes to select the members that you wish to request business cards from.');
 				} else {
-					
+
 				}
-				
+
 			} elseif ($unsubscribe_check === 'Unsubscribe') {
 				if (empty($selected_members)) {
 					$this->messages->AddMessage('information',
 						'No members selected, please use the check boxes to select the members that you wish to unsubscribe.');
 				} else {
-					
+
 				}
-				
+
 			} else {
 				$this->messages->AddMessage('error', 'Invalid post data, no recognised button signiture.');
 			}
 		}
 	}
-	
+
 	/// @return bool Whether to quit
 	protected function _handle_member_list($TopTeam, $FilterSegment)
 	{
 		$this->mLastSort = '';
 		$this->mSortFields = array();
 		$this->mFilterDescriptors = array();
-		
+
 		$this->mIsFilterOn = FALSE;
-		
+
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
 			$memberships = $this->members_model->GetMemberDetails($team_list);
 		}
-		
+
 		$team_list = array_flip($team_list);
-		
+
 		// Merge duplicated members and produce list of teams they're subscribed to
 		$members = array();
 		foreach ($memberships as $membership) {
@@ -205,7 +205,7 @@ class Members extends Controller
 			}
 			$members[(int)$membership['user_id']][(int)$membership['team_id']] = $membership;
 		}
-		
+
 		foreach ($members as $user_id => $member_teams) {
 			$team_subscriptions = array();
 			$found = FALSE;
@@ -234,10 +234,10 @@ class Members extends Controller
 				unset($members[$user_id]);
 			}
 		}
-		
+
 		$this->mMembers = &$members;
 	}
-	
+
 	/// List of members and member set operations.
 	/**
 	 * @note This is accessed with list not memberlist (list is reserved word).
@@ -246,16 +246,16 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/list/...
-		
+
 		$this->_SetupTabs('members');
-		
+
 		$this->_GetTeams();
-		
+
 		$this->_handle_member_list_member_operation();
-		
+
 		$this->mFilterBase = 'members/list';
 		if ($this->_handle_member_list(VipOrganisationId(),3)) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
@@ -273,16 +273,16 @@ class Members extends Controller
 		);
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);
-		
+
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
 			'organisation'	=> VipOrganisationName(),
 		));
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	/// Specific member information.
 	/**
 	 * @param $EntityId integer Entity id.
@@ -291,22 +291,22 @@ class Members extends Controller
 	function info($EntityId = NULL, $Page = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
-		
+
 		$this->_SetupTabs('members');
-		
+
 		// If no entity id was provided, redirect back to members list.
 		if (NULL === $EntityId) {
 			return redirect(vip_url('members/list'));
 		}
-			
-		
+
+
 		// Read the post data for changing office access (MANAGE ONLY)
 		if ('manage' === VipMode()) {
 			$access_level	= $this->input->post('office_access_level');
 			if (FALSE !== $access_level) {
 				$access_password			= $this->input->post('password');
 				$access_password_confirm	= $this->input->post('confirm_password');
-				
+
 				if ($access_level == 'editor') {
 					if ($access_password!=$access_password_confirm) {
 						$this->messages->AddMessage('error','Passwords do not match, please confirm your password.');
@@ -317,9 +317,9 @@ class Members extends Controller
 					} else {
 						$success_rows = $this->members_model->UpdateAccessLevel('1', null, $EntityId);
 						$this->user_auth->setOfficePassword($access_password,  $EntityId);
-						
+
 						$user = $this->members_model->GetUsername($EntityId);
-						
+
 						$to = $user->entity_username.$this->config->Item('username_email_postfix');
 						$from = $this->pages_model->GetPropertyText('system_email', true);
 						$subject = $this->pages_model->GetPropertyText('office_password_email_subject', true);
@@ -355,20 +355,20 @@ class Members extends Controller
 				}
 			}
 		}
-		
+
 		// Get membership information for the first time
 		// This will determine whether the entity is a member.
 		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
 
 		if (!empty($membership)) {
 			$membership = $membership[0];
-			
+
 			// Read the post data
 			$button = $this->input->post('member_update');
 			if ($button === 'Update') {
 				$member_paid	= (FALSE !== $this->input->post('member_paid'));
 				$member_vip		= (FALSE !== $this->input->post('member_vip'));
-				
+
 				$changes = array();
 				if ($member_paid !== (bool)$membership['paid']) {
 					// Paid has changed
@@ -378,7 +378,7 @@ class Members extends Controller
 					// Vip status has changed
 					$membership['vip'] = $changes['vip'] = $member_vip;
 				}
-				
+
 				// If changes save them
 				// If no changes don't save them
 				if (empty($changes)) {
@@ -419,11 +419,11 @@ class Members extends Controller
 								implode(', ',$successes).' were successfully updated)');
 					}
 				}
-			} 
-			
+			}
+
 			// DISPLAY USER INFORMATION --------------------------------- //
 			$this->pages_model->SetPageCode('viparea_members_info');
-			
+
 			// Stringify gender
 			$membership['gender'] =  (($membership['gender']=='m')?('male')
 									:(($membership['gender']=='f')?('female')
@@ -438,21 +438,21 @@ class Members extends Controller
 			} else {
 				$membership['status'] = 'Member';
 			}
-			
+
 			$data = array(
 				'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 				'membership'   => $membership,
 			);
 			// Set up the content
 			$this->main_frame->SetContentSimple('members/editmembers', $data);
-			
+
 			// Set the title parameters
 			$this->main_frame->SetTitleParameters(array(
 				'organisation'	=> VipOrganisationName(),
 				'firstname'		=> $membership['firstname'],
 				'surname'		=> $membership['surname'],
 			));
-			
+
 		} else {
 			// The entity isn't a member of the organisation
 			$this->load->library('custom_pages');
@@ -460,7 +460,7 @@ class Members extends Controller
 		}
 		$this->main_frame->Load();
 	}
-	
+
 	/// Team management.
 	/**
 	 * @param $Suboption1 [string/integer] Operation code or team id.
@@ -472,15 +472,15 @@ class Members extends Controller
 					$Suboption2 = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
-		
+
 		$this->_SetupTabs('teams');
-		
+
 		$this->_GetTeams();
-		
+
 		$team_id = VipOrganisationId();
-		
+
 		$in_team = FALSE;
-		
+
 		if (NULL !== $Suboption1) {
 			if (is_numeric($Suboption1) && array_key_exists((int)$Suboption1,$this->mAllTeams)) {
 				$team_id = (int)$Suboption1;
@@ -494,14 +494,14 @@ class Members extends Controller
 				return;
 			}
 		}
-		
+
 		$this->_handle_member_list_member_operation();
-		
+
 		$this->mFilterBase = 'members/teams/'.$team_id.'/members';
 		if ($this->_handle_member_list($team_id, 5)) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_members_teams');
-		
+
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'target'       => $this->uri->uri_string(),
@@ -516,223 +516,48 @@ class Members extends Controller
 			'sort_fields'  => $this->mSortFields,
 			'in_team'      => $in_team,
 		);
-		
+
 		$this->load->model('notices_model');
 		$notices = $this->notices_model->GetPublicNoticesForOrganisation($team_id, NULL, FALSE);
 		//$this->messages->AddDumpMessage('notices',$notices);
-		
+
 		$this->main_frame->SetContentSimple('members/teams', $data);
-		
+
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
 			'organisation'	=> VipOrganisationName(),
 			'team'	=> $this->mOrganisation['name'],
 		));
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
-	/// Business card management.
-	/**
-	 * @param $Suboption1 [string/integer] Operation code or business card id.
-	 *	- 'filter'
-	 *	- 'request'
-	 *	- 'new'
-	 * @param $Suboption2 [string] Sub operation code.
-	 *	- 'filter'
-	 *	- 'send'
-	 *	- 'post'
-	 *	- 'edit'
-	 * @param $Suboption3 [string] Another sub operation code.
-	 *
-	 * @todo Move back to directory :P
-	 */
-	function cards(	$Suboption1 = NULL,
-					$Suboption2 = NULL,
-					$Suboption3 = NULL)
-	{
-		if (!CheckPermissions('vip')) return;
-		
-		$this->load->library('image');
-		
-		$mode = 'view';
-		
-		$sql = array('TRUE',array());
-		if ($Suboption1 === 'filter') {
-			static $field_translator = array(
-				'teamid'		=> 'subscriptions.subscription_organisation_entity_id',
-				'user'			=> 'business_cards.business_card_user_entity_id',
-				'card'			=> 'business_cards.business_card_id',
-				'paid' 			=> 'subscriptions.subscription_paid',
-				'vip'			=> 'subscriptions.subscription_vip',
-				'confirmed'		=> '1',
-				'carded'		=> 'NULL',
-				'carding'		=> 'NULL',
-				'cardable'		=> 'NULL',
-				'mailable'		=> 'subscriptions.subscription_email',
-				'search'		=> 'NULL',
-				'firstname'		=> 'users.user_firstname',
-				'surname'		=> 'users.user_surname',
-				'nickname'		=> 'users.user_nickname',
-				'enrol_year'	=> 'users.user_enrolled_year',
-			);
-			try {
-				$filter = $this->_GetFilter(4);
-				$sql = $this->_GenerateFilterSql($filter, $field_translator);
-			} catch (Exception $e) {
-				$this->messages->AddMessage('error','The filter is invalid: '.$e->getMessage());
-			}
-		} elseif (is_numeric($Suboption1)) {
-			$sql[0] = 'business_cards.business_card_id=?';
-			$sql[1] = array($Suboption1);
-			if ($Suboption2 === 'edit') {
-				$mode = 'edit';
-			}
-		}
-		$business_cards = $this->members_model->GetBusinessCards(
-				VipOrganisationId(),
-				$sql[0], $sql[1]);
-		
-		// DISPLAY BUSINESS CARDS ----------------------------------- //
-		if ($mode === 'view') {
-			$this->pages_model->SetPageCode('viparea_members_cards');
-			
-			$data = array(
-				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-				'business_cards' => $business_cards,
-			);
-			
-			// Set up the content
-			$this->main_frame->SetContentSimple('members/members_cards', $data);
-			
-			// Set the title parameters
-			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> VipOrganisationName(),
-			));
-			
-		} elseif ($mode === 'edit') {
-			if (!count($business_cards)) {
-				$this->messages->AddMessage('error','Business card '.$Suboption1.' could not be found');
-				redirect(vip_url('members/cards'));
-			}
-			$this->pages_model->SetPageCode('viparea_members_card_edit');
-			
-			$this->load->model('directory_model');
-		
-			// translate into nice names for view
-			$data = array(
-				'business_card' => $business_cards[0],
-				'business_card_goups' => array(),
-			);
-			
-			//Get post data
-			if(!empty($_POST["card_editbutton"])){
-				if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
-				{
-				$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
-				//add failed send the data back into the form
-				$data['card_form']=$_POST;
-				}else{
-					//find user id if exist
-					if(!empty($_POST["card_username"])){
-						//find user id from username
-						$user_id = $this->businesscards_model->GetUserIdFromUsername($_POST["card_username"]);
-					}else{
-						$user_id = "";
-					}
-					
-					//Send message if username was given and no id found
-					if($user_id==""&&!empty($_POST["card_username"])){
-						$this->main_frame->AddMessage('error','The user '.$_POST["card_username"].' was not found, you may have spelt the username incorrectly or the user is not on the yorker. You may wish to leave that field blank.');
-						//add failed send the data back into the form
-						$data['card_form']=$_POST;
-					} else {
-					
-						//add contact card
-						//@note start time, end time, order, and image id are all currently null and not in use.
-						$this->businesscards_model->UpdateBuisnessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
-				$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"], 
-				$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
-				0, null, null, $Suboption1);
-						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
-						
-					}
-				}
-			} else {
-			
-				//Send data to form if it isnt reloaded from a update attempt
-				$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($Suboption1);
-				foreach($cards_data as $card_data){
-					if($card_data['business_card_user_entity_id']!=0){
-					$username = $this->businesscards_model->GetUsernameFromUserId($card_data['business_card_user_entity_id']);
-					}else{
-					$username = "";
-					}
-					$data['card_form'] = array(
-						'card_name' => $card_data['business_card_name'],
-						'card_title' => $card_data['business_card_title'],
-						'group_id' => $card_data['business_card_business_card_group_id'],
-						'card_username' => $username,
-						'card_course' => $card_data['business_card_course'],
-						'email' => $card_data['business_card_email'],
-						'card_about' => $card_data['business_card_blurb'],
-						'postal_address' => $card_data['business_card_postal_address'],
-						'phone_mobile' => $card_data['business_card_mobile'],
-						'phone_internal' => $card_data['business_card_phone_internal'],
-						'phone_external' => $card_data['business_card_phone_external'],
-					);
-				}
-			
-			}
-			
-			// Business Card Groups
-			$groups = $this->directory_model->GetDirectoryOrganisationCardGroups(VipOrganisation());
-			foreach ($groups as $group) {
-				$data['groups'][] = array(
-					'name' => $group['business_card_group_name'],
-					'id' => $group['business_card_group_id'],
-					'href' => vip_url('members/cards/filter/cardgroup/'.$group['business_card_group_id'])
-				);
-			}
-			
-			// Set the title parameters
-			$this->main_frame->SetTitleParameters(array(
-				'organisation'	=> VipOrganisationName(),
-				'name'			=> $business_cards[0]['name'],
-			));
-			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
-		}
-		
-		// Load the main frame
-		$this->main_frame->Load();
-	}
-	
+
 	/// Tags that can be appended to invite text emails
 	protected static $sInviteFlags = array(
 		'p' => 'paid',
 	);
-	
+
 	/// Invite new members to join.
 	/**
 	 */
 	function invite($Stage = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
-		
+
 		if (!is_numeric($Stage) || $Stage < 1 || $Stage > 4) {
 			redirect(vip_url('members/invite/1'));
 			return;
 		}
-		
+
 		$this->load->helper('string');
-		
+
 		$this->_SetupTabs('invite');
-		
+
 		$default_list = '';
-		
+
 		$this->_GetTeams();
-		
+
 		// Read the post data
 		/// @todo require comma or newline between items
 		if ($this->input->post('members_invite_button') === 'Continue') {
@@ -771,11 +596,11 @@ class Members extends Controller
 					// There were failures!
 					$this->messages->AddMessage('error', 'The following words don\'t look like valid york email addresses:<br />'.implode('<br />',$failures));
 					$default_list = $emails;
-					
+
 				} elseif (empty($valids)) {
 					// There weren't any valids.
 					$this->messages->AddMessage('information', 'You didn\'t specify any email addresses.');
-					
+
 				} else {
 					// Everything was fine.
 					/// @todo display list of invites before inviting.
@@ -789,9 +614,9 @@ class Members extends Controller
 			);
 			$default_list = implode("\n",$default_list);
 		}
-		
+
 		$this->pages_model->SetPageCode('viparea_members_invite');
-		
+
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			'what_to_do' => $this->pages_model->GetPropertyWikitext('what_to_do'),
@@ -802,36 +627,36 @@ class Members extends Controller
 			'State' => $Stage,
 		);
 		$this->main_frame->SetContentSimple('members/invite', $data);
-	
+
 		// Set the title parameters
 		$this->main_frame->SetTitleParameters(array(
 			'organisation'	=> VipOrganisationName(),
 		));
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	/// Contact members
 	/**
 	 */
 	function compose()
 	{
 		if (!CheckPermissions('vip')) return;
-		
+
 		$this->pages_model->SetPageCode('viparea_members_compose');
 		$this->_SetupTabs('compose');
-		
+
 		/// @todo Implement $viparea/members/compose/...
 		$this->messages->AddMessage('information', 'todo: implement email composer');
-		
+
 		$data = array();
 		$this->main_frame->SetContentSimple('members/compose', $data);
-		
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	/// General invite users using members_model->@a $Method.
 	/**
 	 * @param $OrganisationId entity_id of Organisation/team.
@@ -845,9 +670,9 @@ class Members extends Controller
 	protected function _InviteUsers($OrganisationId, $Users, $Method, $OrganisationName)
 	{
 		$this->members_model->InviteUsers($OrganisationId, $Users, $Method);
-		
+
 		$invites = $this->members_model->GetUsersStatuses($OrganisationId, $Users, $Method);
-		
+
 		$invite_invalids = array_flip($Users); // not in $invites
 		$invite_valids = array(); // not member, not deleted
 		$invite_members = array(); // is member
@@ -863,7 +688,7 @@ class Members extends Controller
 			unset($invite_invalids[$invite[$Method]]);
 		}
 		$invite_invalids = array_keys($invite_invalids);
-		
+
 		if (!empty($invite_valids)) {
 			$this->messages->AddMessage('success',
 				'The following '.count($invite_valids).' users '.
