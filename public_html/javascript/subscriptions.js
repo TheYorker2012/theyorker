@@ -18,15 +18,15 @@
 		if (document.getElementById('soc' + socid).className != 'selected') {
 			document.getElementById('soc' + socid).className = 'viewing';
 		}
-		xajax__getInfo(socid);
+		xajax__getInfo(socid,subscription_type);
 		return false;
 	}
 
-	function socSubscribe () {
-		document.getElementById('soc_subscribe').className = 'hide';
-		document.getElementById('subscription_loading').style.display = 'block';
+	function orgSubscribe () {
+		document.getElementById('subscription_subscribe').className = 'hide';
+		document.getElementById('subscription_loading').className = 'show';
 		document.getElementById('soc' + lastViewed).className = 'loading';
-		xajax__changeSubscription(lastViewed);
+		xajax__changeSub(lastViewed,subscription_type);
 		return false;
 	}
 

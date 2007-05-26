@@ -3,7 +3,6 @@
 /**
  *	@file	Account_personal.php
  *	@author	Chris Travis (ctravis@gmail.com - cdt502)
- *	@brief	Library for rendering reporter bylines
  */
 
 class Account_personal extends FramesFrame

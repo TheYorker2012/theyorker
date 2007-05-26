@@ -190,116 +190,64 @@ class Prefs_model extends Model {
 	}
 
 	/**
-	 * getSlideshowImages
-	 *
-	 * DEPRECIATED
-	 *
-	 * @author Chris Travis (cdt502 - ctravis@gmail.com)
+	 *	Organisation Subscriptions
 	 */
-	function getSlideshowImages ($org_id)
+
+	function isOrganisationType($type)
 	{
-		$sql =
-			'SELECT'.
-			' photos.photo_title,'.
-			' photos.photo_id '.
-			'FROM photos, organisation_slideshows AS slideshow '.
-			'WHERE slideshow.organisation_slideshow_organisation_entity_id = ' . $org_id .
-			' AND photos.photo_deleted = 0'.
-			' AND slideshow.organisation_slideshow_photo_id = photos.photo_id '.
-			'ORDER BY slideshow.organisation_slideshow_order ASC';
-		$query = $this->db->query($sql);
+		$sql = 'SELECT		organisation_types.organisation_type_name			AS friendlyname
+				FROM		organisation_types
+				WHERE		organisation_types.organisation_type_codename = ?';
+		$query = $this->db->query($sql,array($type));
+		return $query->row_array();
+	}
+
+	function getAllOrganisations ($type)
+	{
+		$sql = 'SELECT		organisation_entity_id							AS id,
+							organisation_contents.organisation_content_url	AS url,
+							organisation_directory_entry_name				AS directory,
+							organisation_name								AS name
+				FROM		organisations,
+							organisation_contents,
+							organisation_types
+				WHERE		organisations.organisation_live_content_id = organisation_contents.organisation_content_id
+				AND			organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND			organisation_types.organisation_type_codename = ?
+				ORDER BY	name ASC';
+		$query = $this->db->query($sql,array($type));
 		return $query->result_array();
 	}
 
-	/**
-	 *	Societies
-	 */
-
-	function getAllSocieties ()
+	function isOfOrganisationType ($org_id,$type)
 	{
-		$sql =
-			'SELECT'.
-			' organisation_entity_id AS id,'.
-			' organisation_contents.organisation_content_url AS url,'.
-			' organisation_directory_entry_name AS directory,'.
-			' organisation_name AS name '.
-			'FROM organisations '.
-			'INNER JOIN organisation_contents '.
-			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
-			'WHERE organisation_organisation_type_id = 2 '.
-			'ORDER BY name ASC';
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-	function isSociety ($soc_id)
-	{
-		$sql =
-			'SELECT'.
-			' organisation_entity_id AS id '.
-			'FROM organisations '.
-			'WHERE organisation_organisation_type_id = 2'.
-			' AND organisation_entity_id = ' . $soc_id;
-		$query = $this->db->query($sql);
+		$sql = 'SELECT		organisation_entity_id
+				FROM		organisations,
+							organisation_types
+				WHERE		organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND			organisation_types.organisation_type_codename = ?
+				AND			organisation_entity_id = ?';
+		$query = $this->db->query($sql,array($type, $org_id));
 		return $query->num_rows();
 	}
 
-	function getSocietySubscriptions ($user_id)
+	function getOrganisationTypeSubscriptions ($user_id,$type)
 	{
-		$sql =
-			'SELECT'.
-			' subscriptions.subscription_organisation_entity_id AS orgid '.
-			'FROM subscriptions, organisations '.
-			'WHERE subscriptions.subscription_user_entity_id = '.$user_id.
-			' AND subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id'.
-			' AND subscriptions.subscription_deleted = 0'.
-			' AND organisations.organisation_organisation_type_id = 2';
-		$query = $this->db->query($sql);
-		$societies = array();
+		$sql = 'SELECT		subscriptions.subscription_organisation_entity_id	AS orgid
+				FROM		subscriptions,
+							organisations,
+							organisation_types
+				WHERE		subscriptions.subscription_user_entity_id = ?
+				AND			subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+				AND			subscriptions.subscription_deleted = 0
+				AND			organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND			organisation_types.organisation_type_codename = ?';
+		$query = $this->db->query($sql,array($user_id,$type));
+		$orgs = array();
 		foreach ($query->result_array() as $row) {
-			array_push($societies, $row['orgid']);
+			array_push($orgs, $row['orgid']);
 		}
-		return $societies;
-	}
-
-	/**
-	 *	Athletic Union Clubs
-	 */
-
-	function getAllAUClubs ()
-	{
-		$sql =
-			'SELECT'.
-			' organisation_entity_id AS id,'.
-			' organisation_contents.organisation_content_url AS url,'.
-			' organisation_directory_entry_name AS directory,'.
-			' organisation_name AS name '.
-			'FROM organisations '.
-			'INNER JOIN organisation_contents '.
-			'ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id '.
-			'WHERE organisation_organisation_type_id = 3 '.
-			'ORDER BY name ASC';
-
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-	function getAUClubSubscriptions ($user_id)
-	{
-		$sql =
-			'SELECT'.
-			' subscriptions.subscription_organisation_entity_id AS orgid '.
-			'FROM subscriptions, organisations '.
-			'WHERE subscriptions.subscription_user_entity_id = '.$user_id.
-			' AND subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id'.
-			' AND subscriptions.subscription_deleted = 0'.
-			' AND organisations.organisation_organisation_type_id = 3';
-		$query = $this->db->query($sql);
-		$societies = array();
-		foreach ($query->result_array() as $row) {
-			array_push($societies, $row['orgid']);
-		}
-		return $societies;
+		return $orgs;
 	}
 
 	function getAllSubscriptions ($user_id)

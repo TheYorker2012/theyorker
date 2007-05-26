@@ -3,19 +3,31 @@
  *	This provides the wizard for setting up a user's
  *	preferences when they first login to the site.
  *
- *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
+ *	@author	Chris Travis	(cdt502 - ctravis@gmail.com)
  */
 
 class Register extends Controller {
 
 	/**
-	 * @brief Default Constructor.
+	 *	@brief	Default Constructor.
 	 */
 	function __construct()
 	{
 		parent::Controller();
 		// Load data model
 		$this->load->model('prefs_model');
+	}
+
+	/**
+	 *	@brief	Determines which function is used depending on url
+	 */
+	function _remap($method)
+	{
+		if (method_exists($this, $method)) {
+			$this->$method();
+		} else {
+			$this->subscriptions($method);
+		}
 	}
 
 	function index()
@@ -31,7 +43,7 @@ class Register extends Controller {
 		$data['bigcontent'] = $this->account_personal;
 
 		/// Validate form submission
-		$this->account_personal->Validate(true,'/register','/register/societies');
+		$this->account_personal->Validate(true,'/register','/register/college_campus');
 
 		/// Set up the main frame
 		$this->main_frame->SetTitleParameters(
@@ -40,6 +52,132 @@ class Register extends Controller {
 		/// Load the main frame view (which will load the content view)
 		$this->main_frame->SetContentSimple('account/preferences', $data);
 		$this->main_frame->Load();
+	}
+
+	function subscriptions ($type = 'college_campus')
+	{
+		if (!CheckPermissions('student')) return;
+
+		$type_info = $this->prefs_model->isOrganisationType($type);
+		if (count($type_info) == 0) {
+			$type = 'college_campus';
+			$type_info = $this->prefs_model->isOrganisationType($type);
+		}
+
+		$this->load->library('xajax');
+		$this->xajax->registerFunction(array('_getInfo',&$this,'_getInfo'));
+		$this->xajax->registerFunction(array('_changeSub',&$this,'_changeSub'));
+		$this->xajax->processRequests();
+
+		// Get changeable page content
+		$this->pages_model->SetPageCode('preferences');
+		// Get page content
+		$data['heading'] = $this->pages_model->GetPropertyText($type . '_heading');
+		$data['intro'] = $this->pages_model->GetPropertyWikitext($type . '_intro');
+		$data['organisation_subscriptions'] = $this->prefs_model->getOrganisationTypeSubscriptions($this->user_auth->entityId,$type);
+		$data['organisations'] = $this->prefs_model->getAllOrganisations($type);
+		$data['type'] = $type;
+		$data['friendly_name'] = $type_info['friendlyname'];
+
+		$wizard_step = array(
+				'',
+				'college_campus',
+				'societies',
+				'athletic_union',
+				'departments',
+				'venues',
+				'organisations',
+				'end'
+		);
+		$wizard_current = array_search($type,$wizard_step);
+		if ($wizard_current === FALSE) {
+			$data['button_back'] = '/account/';
+            $data['button_next'] = '/account/';
+		} else {
+			$data['button_back'] = '/register/' . $wizard_step[$wizard_current - 1];;
+			$data['button_next'] = '/register/' . $wizard_step[$wizard_current + 1];
+		}
+		/// Skip step if no organisations to subscribe to
+		if (count($data['organisations']) == 0) {
+			redirect($data['button_next']);
+		} else {
+			// Set up the public frame
+			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').
+											'<link href="/stylesheets/account.css" rel="stylesheet" type="text/css" />');
+			$this->main_frame->SetTitleParameters(
+				array('section' => $type_info['friendlyname'])
+			);
+			$this->main_frame->SetContentSimple('account/subscriptions', $data);
+			// Load the public frame view (which will load the content view)
+			$this->main_frame->Load();
+		}
+	}
+
+	function _getInfo ($org_id,$type)
+	{
+		$this->load->model('slideshow');
+		$xajax_response = new xajaxResponse();
+		if ((!is_numeric($org_id)) || (!$this->prefs_model->isOfOrganisationType($org_id,$type))) {
+			$xajax_response->addAlert('Invalid organisation selected, please try again.');
+		} else {
+			$org_info = $this->prefs_model->getOrganisationDescription($org_id);
+			$xajax_response->addAssign('subscription_desc','innerHTML', $org_info['description']);
+			if ($this->prefs_model->isSubscribed($this->user_auth->entityId,$org_id)) {
+				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $org_id . '/remove/\';');
+				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Unsubscribe\';');
+			} else {
+				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $org_id . '/add/\';');
+				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Subscribe\';');
+			}
+			$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').className=\'button show\';');
+
+			$xajax_response->addScriptCall('Slideshow.reset');
+			$get_slideshow = $this->slideshow->getPhotos($org_id);
+			foreach ($get_slideshow->result() as $photo) {
+				$xajax_response->addScriptCall('Slideshow.add', '/photos/slideshow/'.$photo->photo_id);
+			}
+			$xajax_response->addScriptCall('Slideshow.load');
+		}
+		return $xajax_response;
+	}
+
+	function _changeSub ($org_id,$type)
+	{
+		$xajax_response = new xajaxResponse();
+		if ((!is_numeric($org_id)) || (!$this->prefs_model->isOfOrganisationType($org_id,$type))) {
+			$xajax_response->addAlert('Invalid society selected, please try again.');
+		} else {
+			if ($this->prefs_model->isSubscribed($this->user_auth->entityId,$org_id)) {
+				// Is subscribed, so delete subscription
+				$this->prefs_model->deleteSubscription($this->user_auth->entityId, $org_id);
+				// Set form controls up ready for subscription
+				$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'viewing\';');
+				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $org_id . '/add/\';');
+				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Subscribe\';');
+			} else {
+				if ($this->prefs_model->isDeletedSubscription($this->user_auth->entityId,$org_id)) {
+					// User used to be subscribed, so just activate subscription again
+					$this->prefs_model->reactivateSubscription($this->user_auth->entityId,$org_id);
+				} else {
+					// New subscription required
+					$this->prefs_model->addSubscription($this->user_auth->entityId, $org_id);
+				}
+				// Set form controls up for unsubscription
+				$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'selected\';');
+				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $org_id . '/remove/\';');
+				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Unsubscribe\';');
+			}
+			$xajax_response->addScript('document.getElementById(\'subscription_loading\').className=\'hide\';');
+			$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').className=\'button show\';');
+		}
+		return $xajax_response;
+	}
+
+	function end()
+	{
+		if (!CheckPermissions('student')) return;
+		$this->main_frame->AddMessage('success','Thank you for completing the preferences wizard and welcome to The Yorker.');
+		redirect('/home');
 	}
 
 /*	Academic Subscriptions not being asked for due to lack of timetabling info - cdt502 @ 23rd May 2007
@@ -133,218 +271,5 @@ class Register extends Controller {
 	}
 */
 
-	function societies ()
-	{
-		if (!CheckPermissions('student')) return;
-		
-		/// Get changeable page content
-		$this->pages_model->SetPageCode('preferences');
-		/// Get page content
-		$data['heading'] = $this->pages_model->GetPropertyText('societies_heading');
-		$data['intro'] = $this->pages_model->GetPropertyWikitext('societies_intro');
-		$data['organisation_subscriptions'] = $this->prefs_model->getSocietySubscriptions($this->user_auth->entityId);
-		$data['organisations'] = $this->prefs_model->getAllSocieties();
-
-		// Setup XAJAX calls
-		$this->load->library('xajax');
-		$this->xajax->registerFunction(array('_getInfo',&$this,'_getInfo'));
-		$this->xajax->registerFunction(array('_changeSub',&$this,'_changeSub'));
-		$this->xajax->processRequests();
-
-		/// Set up the public frame
-		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').
-										'<link href="/stylesheets/account.css" rel="stylesheet" type="text/css" />');
-		$this->main_frame->SetContentSimple('account/societies', $data);
-		$this->main_frame->SetTitleParameters(
-			array('section' => 'Societies')
-		);
-		/// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
-	function _getInfo ($soc_id)
-	{
-		$this->load->model('slideshow');
-		$xajax_response = new xajaxResponse();
-		if ((!is_numeric($soc_id)) || (!$this->prefs_model->isSociety($soc_id))) {
-			$xajax_response->addAlert('Invalid society selected, please try again.');
-		} else {
-			$soc_info = $this->prefs_model->getOrganisationDescription($soc_id);
-			$xajax_response->addAssign('subscription_desc','innerHTML', $soc_info['description']);
-			if ($this->prefs_model->isSubscribed($this->user_auth->entityId,$soc_id)) {
-				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $soc_id . '/remove/\';');
-				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Unsubscribe\';');
-			} else {
-				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $soc_id . '/add/\';');
-				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Subscribe\';');
-			}
-			$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').className=\'button show\';');
-
-			$xajax_response->addScriptCall('Slideshow.reset');
-			$get_slideshow = $this->slideshow->getPhotos($soc_id);
-			foreach ($get_slideshow->result() as $photo) {
-				$xajax_response->addScriptCall('Slideshow.add', '/photos/slideshow/'.$photo->photo_id);
-			}
-			$xajax_response->addScriptCall('Slideshow.load');
-		}
-		return $xajax_response;
-	}
-
-	function _changeSub ($soc_id)
-	{
-		$xajax_response = new xajaxResponse();
-		if ((!is_numeric($soc_id)) || (!$this->prefs_model->isSociety($soc_id))) {
-			$xajax_response->addAlert('Invalid society selected, please try again.');
-		} else {
-			if ($this->prefs_model->isSubscribed($this->user_auth->entityId,$soc_id)) {
-				// Is subscribed, so delete subscription
-				$this->prefs_model->deleteSubscription($this->user_auth->entityId, $soc_id);
-				// Set form controls up ready for subscription
-				$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'viewing\';');
-				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $soc_id . '/add/\';');
-				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Subscribe\';');
-			} else {
-				if ($this->prefs_model->isDeletedSubscription($this->user_auth->entityId,$soc_id)) {
-					// User used to be subscribed, so just activate subscription again
-					$this->prefs_model->reactivateSubscription($this->user_auth->entityId, $soc_id);
-				} else {
-					// New subscription required
-					$this->prefs_model->addSubscription($this->user_auth->entityId, $soc_id);
-				}
-				// Set form controls up for unsubscription
-				$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'selected\';');
-				$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/societies/' . $soc_id . '/remove/\';');
-				$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').value=\'Unsubscribe\';');
-			}
-			$xajax_response->addScript('document.getElementById(\'subscription_loading\').className=\'hide\';');
-			$xajax_response->addScript('document.getElementById(\'subscription_subscribe\').className=\'button show\';');
-		}
-		return $xajax_response;
-	}
-
-
-
-
-
-
-
-
-	function au ()
-	{
-		if (!CheckPermissions('student')) return;
-
-		// Get changeable page content
-		$this->pages_model->SetPageCode('preferences');
-
-		$this->load->library('xajax');
-
-		function isAUClub ($soc_id)
-		{
-			$sql =
-				'SELECT'.
-				' organisation_entity_id AS id '.
-				'FROM organisations '.
-				'WHERE organisation_organisation_type_id = 3'.
-				' AND organisation_entity_id = ' . $soc_id;
-			$query = mysql_query($sql);
-			return mysql_num_rows($query);
-		}
-
-		function getInfo ($soc_id)
-		{
-			$xajax_response = new xajaxResponse();
-			if ((!is_numeric($soc_id)) || (!isAUClub($soc_id))) {
-				$xajax_response->addAlert('Invalid athletic union club selected, please try again.');
-			} else {
-				$dbquery = mysql_query('SELECT organisation_content_description AS description FROM organisations INNER JOIN organisation_contents ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id WHERE organisation_organisation_type_id = 3 AND organisation_entity_id = ' . $soc_id . ' ORDER BY organisation_name ASC');
-				$dbres = mysql_fetch_array($dbquery);
-				$info = $dbres['description'];
-				$xajax_response->addAssign('socdesc','innerHTML', $info);
-				// ERROR: $this->prefs_model->isSubscribed() doesn't work and i can't work out how to reference it
-				if (isSubscribed($_SESSION['ua_entityId'],$soc_id)) {
-					$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/au/' . $soc_id . '/remove/\';');
-					$xajax_response->addScript('document.getElementById(\'soc_subscribe\').value=\'Unsubscribe\';');
-				} else {
-					$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/au/' . $soc_id . '/add/\';');
-					$xajax_response->addScript('document.getElementById(\'soc_subscribe\').value=\'Subscribe\';');
-				}
-				$xajax_response->addScript('document.getElementById(\'soc_subscribe\').className=\'button show\';');
-
-				$get_slideshow = mysql_query('SELECT photos.photo_title, photos.photo_id FROM photos, organisation_slideshows AS slideshow WHERE slideshow.organisation_slideshow_organisation_entity_id = ' . $soc_id . ' AND slideshow.organisation_slideshow_photo_id = photos.photo_id ORDER BY slideshow.organisation_slideshow_order ASC');
-				$xajax_response->addScriptCall('Slideshow.reset');
-				while ($dbres = mysql_fetch_array($get_slideshow)) {
-					$xajax_response->addScriptCall('Slideshow.add', '/images/photos/' . $dbres['photo_id'] . '.jpg');
-				}
-				$xajax_response->addScriptCall('Slideshow.load');
-				}
-			return $xajax_response;
-		}
-
-		function societySubscription ($soc_id)
-		{
-			$CI = & get_instance();
-			$CI->load->model('calendar/events_model');
-
-			$xajax_response = new xajaxResponse();
-			if ((!is_numeric($soc_id)) || (!isAUClub($soc_id))) {
-				$xajax_response->addAlert('Invalid athletic union club selected, please try again.');
-			} else {
-				if (isSubscribed($_SESSION['ua_entityId'],$soc_id)) {
-					// Is subscribed, so delete subscription
-					$sql = 'UPDATE subscriptions SET subscription_deleted = 1, subscription_timestamp = CURRENT_TIMESTAMP WHERE subscription_organisation_entity_id = ' . $soc_id . ' AND subscription_user_entity_id = ' . $_SESSION['ua_entityId'];
-					$query = mysql_query($sql);
-					// Set form controls up ready for subscription
-					$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'viewing\';');
-					$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/au/' . $soc_id . '/add/\';');
-					$xajax_response->addScript('document.getElementById(\'soc_subscribe\').value=\'Subscribe\';');
-				} else {
-					if (isDeletedSubscription($_SESSION['ua_entityId'],$soc_id)) {
-						// User used to be subscribed, so just activate subscription again
-						$sql = 'UPDATE subscriptions SET subscription_deleted = 0, subscription_timestamp = CURRENT_TIMESTAMP WHERE subscription_organisation_entity_id = ' . $soc_id . ' AND subscription_user_entity_id = ' . $_SESSION['ua_entityId'];
-						$query = mysql_query($sql);
-					} else {
-						// New subscription required
-						$sql = 'INSERT INTO subscriptions SET subscription_organisation_entity_id = ' . $soc_id . ', subscription_user_entity_id = ' . $_SESSION['ua_entityId'] . ',  subscription_user_confirmed = 1';
-						$query = mysql_query($sql);
-						$CI->events_model->FeedSubscribe($soc_id);
-					}
-					// Set form controls up for unsubscription
-					$xajax_response->addScript('document.getElementById(\'soc\' + lastViewed).className=\'selected\';');
-					$xajax_response->addScript('document.getElementById(\'form_subscribe\').action=\'/register/au/' . $soc_id . '/remove/\';');
-					$xajax_response->addScript('document.getElementById(\'soc_subscribe\').value=\'Unsubscribe\';');
-				}
-				$xajax_response->addScript('document.getElementById(\'sub_loading\').className=\'hide\';');
-				$xajax_response->addScript('document.getElementById(\'soc_subscribe\').className=\'button show\';');
-			}
-			return $xajax_response;
-		}
-		$this->xajax->registerFunction('getInfo');
-		$this->xajax->registerFunction('societySubscription');
-		$this->xajax->processRequests();
-
-		// Get page content
-		$data['heading'] = $this->pages_model->GetPropertyText('au_heading');
-		$data['intro'] = $this->pages_model->GetPropertyWikitext('au_intro');
-		$data['society_subscriptions'] = $this->prefs_model->getAUClubSubscriptions($this->user_auth->entityId);
-		$data['societies'] = $this->prefs_model->getAllAUClubs();
-
-		// Set up the public frame
-
-		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
-		$this->main_frame->SetContentSimple('account/au', $data);
-
-		$this->main_frame->SetTitleParameters(
-			array('section' => 'Athletic Union Clubs')
-		);
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
-	function end()
-	{
-		if (!CheckPermissions('student')) return;
-		$this->main_frame->AddMessage('success','Thank you for completing the preferences wizard and welcome to The Yorker.');
-		redirect('/home');
-	}
 }
 ?>

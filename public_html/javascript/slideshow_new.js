@@ -115,6 +115,7 @@ var Slideshow = {
     this.imagesLoaded = 0;
     this.showImages = [];
     this.current = 0;
+	this.shownFirst = 0;
     clearTimeout(timer);
 	document.getElementById('SlideShowImage').src = '/images/prototype/prefs/image_load.jpg';
 	document.getElementById('SlideShow').style.background = "url('/images/prototype/prefs/image_load.jpg')";

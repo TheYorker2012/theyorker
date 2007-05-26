@@ -1,5 +1,5 @@
 	<script type='text/javascript' src='/javascript/prototype.js'></script>
-	<script type='text/javascript' src='/javascript/scriptaculous.js'></script>
+	<script type='text/javascript' src='/javascript/scriptaculous.js?load=effects'></script>
 	<script type='text/javascript' src='/javascript/slideshow_new.js'></script>
 	<script type='text/javascript' src='/javascript/subscriptions.js'></script>
 	<script type='text/javascript'>
@@ -10,6 +10,7 @@
 	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo $soc['directory']; ?>';
 	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo $soc['url']; ?>';
 	<?php } ?>
+	var subscription_type = '<?php echo($type); ?>';
 	</script>
 
 	<div class="BlueBox">
@@ -18,7 +19,7 @@
 	</div>
 
 	<div class="BlueBox" style="width: 49%;">
-		<h2>Societies</h2>
+		<h2><?php echo($friendly_name); ?></h2>
 
 		<div id='subscription_container'>
 			<?php foreach ($organisations as $soc) {
@@ -28,12 +29,12 @@
 				} else {
 					echo 'unselected';
 				}
-				echo '\'><a href=\'/register/societies/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . $soc['name'] . '</a></div>';
+				echo '\'><a href=\'/register/' . $type . '/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . $soc['name'] . '</a></div>';
 			} ?>
 		</div>
 		<!--
 		<select name='society' id='society' size='10' onChange='get_info(this);' style='width: 200px;'>
-			<?php foreach ($societies as $soc) { ?>
+			<?php foreach ($organisations as $soc) { ?>
 			<option value='<?php echo $soc['id']; ?>'><?php echo $soc['name']; ?></option>
 			<?php } ?>
 		</select>
@@ -50,7 +51,7 @@
 		</div>
 		<h3>Description...</h3>
 		<div id='subscription_desc' class='blue_box'></div>
-		<form id='form_subscribe' action='/register/societies/' method='post' class='form' onsubmit='return socSubscribe();'>
+		<form id='form_subscribe' action='/register/<?php echo($type); ?>/' method='post' class='form' onsubmit='return orgSubscribe();'>
 			<div style='text-align:center;'>
 				<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='subscription_loading' class='hide' style='float:right;' />
 				<input type='submit' name='subscription_subscribe' id='subscription_subscribe' value='Subscribe' class='button hide' />
@@ -60,9 +61,9 @@
 	</div>
 
 	<br style='clear: both;' />
-	<form action='/register/au/' method='post' class='form'>
+	<form action='<?php echo($button_next); ?>' method='post' class='form'>
 		<div style='margin-top: 1em;'>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
-			<input type='button' name='back' id='back' value='< Back' class='button' onclick="window.location='/register/academic'" />
+			<input type='button' name='back' id='back' value='< Back' class='button' onclick="window.location='<?php echo($button_back); ?>'" />
 		</div>
 	</form>
