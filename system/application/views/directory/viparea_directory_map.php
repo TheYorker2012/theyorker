@@ -15,7 +15,7 @@
 </ul>
 </td>
 <td>
-<img  src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="Central Hall" />
+<img  src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" />
 </td>
 </tr>
 </table>
