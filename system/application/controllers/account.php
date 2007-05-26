@@ -152,8 +152,12 @@ class Account extends controller
 						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
 					}
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
-
-					redirect('/account/customlink/2/'.$newId, 'location');
+					if ($this->input->post('upload')) {
+						redirect('/account/customlink/2/'.$newId, 'location');
+					} else {
+						redirect('/account/customlink/3/'.$newId, 'location');
+					}
+					exit;
 				} else if($this->input->post('lurl')) {
 					$this->messages->AddMessage('error', 'Please enter a name for your link.');
 				}
@@ -168,8 +172,10 @@ class Account extends controller
 					foreach ($_SESSION['img'] as $newImage) {
 						if ($newImage['codename'] == 'link') {
 							$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+							break;
 						}
 					}
+					redirect('/account/links', 'location');
 				}
 				break;
 		}
