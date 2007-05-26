@@ -48,11 +48,11 @@ class Feedback extends Controller {
 				$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 				$subject = "The Yorker: Site Feedback";
 				$message =
-'Someone has been kind enough to write in the little box at the bottom of the page.
+'Name: '.$author_name.'
+Email: '.$author_email.'
 
 Page Title: '.$page_title.'
-Name: '.$author_name.'
-Email: '.$author_email.'
+
 Rating: '.$rating.'
 
 '.$feedback_text.'
