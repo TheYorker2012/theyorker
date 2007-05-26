@@ -66,7 +66,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		<div id="TopBanner">
 			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="The Yorker"/></a>
+				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
 			</h1>
 			<div id="TopBannerPictures">
 				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />

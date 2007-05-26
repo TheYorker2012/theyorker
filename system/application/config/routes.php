@@ -86,6 +86,8 @@ $route['howdoi/([a-z]+)/([0-9]+)'] = 'howdoi/viewcategory/$1/$2';
 $route['campaign/preports'] = 'campaign/preports';
 
 $route['account/links/add/([0-9]+)'] = 'account/links/add/$1';
+$route['account/customlink/([0-9]+)'] = 'account/customlink/$1';
+$route['account/customlink/([0-9]+)/([0-9]+)'] = 'account/customlink/$1/$2';
 
 
 //****************************************************************************//

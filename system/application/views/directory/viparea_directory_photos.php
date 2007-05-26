@@ -14,7 +14,7 @@
 	<br />
 	<?=anchor(vip_url('directory/photos/move/'.$image->photo_id.'/up'), 'move up')?> |
 	<?=anchor(vip_url('directory/photos/move/'.$image->photo_id.'/down'), 'move down')?> |
-	<?=anchor(vip_url('directory/photos/delete/'.$image->photo_id.''), 'delete')?>
+	<a href="<?php echo vip_url('directory/photos/delete/'.$image->photo_id) ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 	<br />
 	<?php } ?>
 </div>
@@ -34,8 +34,7 @@
 </div>
 <input type="hidden" name="destination" id="destination" value="1" />
 
-<input type="button" onClick="AddClones()" value="Another"/>
-<input type="submit" value="upload" />
+<input type="submit" value="Upload" />
 </form>
 </div>
 <a href='/viparea/'>Back to the vip area.</a>

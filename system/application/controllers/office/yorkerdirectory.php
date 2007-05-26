@@ -318,16 +318,15 @@ class Yorkerdirectory extends Controller
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
+					redirect(vip_url('directory/photos'));
 				} elseif ($operation == 'down') {
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
+					redirect(vip_url('directory/photos'));
 				}
 			} elseif ($action == 'delete') {
-				if ($operation == 'confirm') {
-					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
-					$this->messages->AddMessage('info', 'Photo Deleted');
-				} else {
-					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
-				}
+				$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
+				$this->messages->AddMessage('info', 'Photo Deleted');
+				redirect(vip_url('directory/photos'));
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));

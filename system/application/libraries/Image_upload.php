@@ -4,22 +4,22 @@ if (!defined('VIEW_WIDTH')) {
 }
 define('VIEW_HEIGHT', 650);
 class Image_upload {
-	
+
 	private $ci;
-	
+
 	public function Image_upload() {
 		$this->ci = &get_instance();
 		$this->ci->load->library(array('xajax', 'image'));
 		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
 	}
-	
+
 	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
 		if ($this->uploadForm($multiple, $photos)) {
 			$this->recieveUpload($returnPath, $types, $photos);
 		}
 	}
-	
+
 	public function uploadForm($multiple = false, $photos = false) {
 		$this->ci->xajax->processRequests();
 		$_SESSION['img'] = array();
@@ -41,25 +41,25 @@ class Image_upload {
 		}
 		$this->ci->main_frame->Load();
 	}
-	
-	private function checkImageProperties(&$imgData, &$imgTypes) {
+
+	private function checkImageProperties(&$imgData, &$imgTypes, $photo) {
 		foreach ($imgTypes->result() as $imgType) {
 			if ($imgData['image_width'] < $imgType->image_type_width) return false;
 			if ($imgData['image_height'] < $imgType->image_type_height) return false;
 		}
 		return true;
 	}
-	
+
 	//types is an array
 	public function recieveUpload($returnPath, $types = false, $photo = true) {
 		$this->ci->load->library(array('image_lib', 'upload'));
-		
+
 		//get data about thumbnails
-		
+
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['max_size'] = 16384;
-		
+
 		if (is_array($types)) {
 			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
 			$query = $query->where('image_type_photo_thumbnail', $photo);
@@ -77,12 +77,21 @@ class Image_upload {
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
 				$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
+				redirect($returnPath, 'location');
 			} else {
 				$data[] = $this->ci->upload->data();
-				
-				if ($this->checkImageProperties($data[$x - 1], $query))
-				//var_dump( $this->processImage($data[$x - 1], $x, $query, $photo) );
+
+				if ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+				} elseif($this->ci->input->post('destination') == 1) {
+					//redirect back home
+					$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
+					redirect($returnPath, 'location');
+				} else {
+					//just display error
+					$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
+				}
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
@@ -92,7 +101,7 @@ class Image_upload {
 		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
 		return $this->ci->main_frame->Load();
 	}
-	
+
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
 
@@ -105,7 +114,7 @@ class Image_upload {
 		// 5 image type width
 		// 6 image type height
 		// 7 title
-		
+
 		/* REDO
 		$securityCheck = array_search($selectedThumb[4], $_SESSION['img'][]['list']);// this is the line to change
 		if ($securityCheck === false) {
@@ -217,6 +226,7 @@ class Image_upload {
 	}
 
 	private function processImage($data, $form_value, &$ThumbDetails, $photo) {
+		$image = null;
 		switch ($data['file_type']) {
 			case 'image/gif':
 				$image = imagecreatefromgif($data['full_path']);
@@ -244,9 +254,9 @@ class Image_upload {
 		}
 		$x = imagesx($newImage);
 		$y = imagesy($newImage);
-		
+
 		$output = array();
-		
+
 		if ($photo) {
 			unlink($data['full_path']);
 			$info = array('author_id' => $this->ci->user_auth->entityId,
@@ -270,15 +280,16 @@ class Image_upload {
 					imagegif($newImage, $data['full_path']);
 					break;
 				case 'image/jpeg':
-					imagejpeg($newImage, $data['full_path']);
+					imagejpeg($newImage, $data['full_path'], 90);
 					break;
 				case 'image/png':
-					imagepng($newImage, $data['full_path']);
+					imagepng($newImage, $data['full_path'], 9);
 					break;
 			}
 			foreach ($ThumbDetails->result() as $Thumb) {
-				$_SESSION['img'][] = array('list' => count($_SESSION['img']),
-				                           'type' => $Thumb->image_type_id);
+				$_SESSION['img'][] = array('list'		=> count($_SESSION['img']),
+				                           'type'		=> $Thumb->image_type_id,
+				                           'codename'	=> $Thumb->image_type_codename);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
 				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
 			}

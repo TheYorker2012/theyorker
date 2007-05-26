@@ -360,11 +360,11 @@ class News_model extends Model
 			$result['main_photo_id'] = $row->article_main_photo_id;
 		    $content_id = $row->article_live_content_id;
 
+			$this->load->library('image');
 			if ($row->photo_request_chosen_photo_id > 0) {
-				$this->load->library('image');
 				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, $pic_size, false, array('class' => $image_class));
 			} else {
-				$result['photo_xhtml'] = '<img src="/images/prototype/news/'.$pic_size.'-default.jpg" alt="Image not available" class="'.$image_class.'" />';
+				$result['photo_xhtml'] = $this->image->getThumb(-1, $pic_size, false, array('class' => $image_class, 'alt' => 'Image not available', 'title' => 'Image not available'));
 			}
 		}
 		$sql = 'SELECT article_contents.article_content_heading,

@@ -68,7 +68,6 @@ class Article_model extends Model
 				WHERE articles.article_id = ?
 				AND articles.article_suggestion_accepted = 1
 				AND articles.article_deleted = 0
-				AND articles.article_live_content_id IS NULL
 				AND articles.article_content_type_id = content_types.content_type_id';
 		$query = $this->db->query($sql, array($article_id));
 		$result = array();
@@ -152,11 +151,13 @@ class Article_model extends Model
 
 	function GetArticleRevisionToEdit ($article_id, $user_id, $revision = 0)
 	{
-		$sql = 'SELECT article_content_id
+		$sql = 'SELECT article_contents.article_content_id
 				FROM article_contents
-				WHERE article_content_article_id = ?
-				AND article_content_last_author_user_entity_id = ?
-				AND (DATE_ADD(article_content_last_author_timestamp, INTERVAL 1 HOUR) > CURRENT_TIMESTAMP) ';
+				INNER JOIN articles
+				ON articles.article_id = ? AND article_contents.article_content_article_id = articles.article_id
+				WHERE (articles.article_live_content_id IS NULL OR articles.article_live_content_id != article_contents.article_content_id)
+				AND article_contents.article_content_last_author_user_entity_id = ?
+				AND (DATE_ADD(article_contents.article_content_last_author_timestamp, INTERVAL 1 HOUR) > CURRENT_TIMESTAMP) ';
 		if ($revision > 0) {
 			$sql .= 'AND article_content_id = ' . $revision. ' ';
 		}

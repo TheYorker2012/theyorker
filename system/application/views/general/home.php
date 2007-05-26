@@ -61,7 +61,7 @@ function print_middle_box($title,$article_array){
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
-		"<?php echo htmlentities($quote->quote_text);?>" - <b><?php echo htmlentities($quote->quote_author);?></b>
+		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
 	</div>
 </div>
 

@@ -503,18 +503,20 @@ class News extends Controller
 					/// Determine what operation to perform
 					switch ($article_info['status']) {
 						case 'pulled':
-							/// EVERYONE: View + Notice that article pulled
-							break;
+							$this->_showarticle($article_id);
 						case 'published':
-							/// EVERYONE: View + Notice that already published
-							/// EDITOR: Changes + Pull + Change publish date
-							break;
 						case 'request':
-							/// If editor but also assigned reporter and not accepted then is reporter
-							if ($this->input->post('publish') == 'Publish Article') {
-								$this->_publishArticle($article_id);
+							if ($data['user_level'] == 'editor') {
+								/// If editor but also assigned reporter and not accepted then is reporter
+								if ($this->input->post('publish') == 'Publish Article') {
+									$this->_publishArticle($article_id);
+								} else {
+									/// EDITOR: Changes + Pull + Change publish date
+									$this->_showarticle($article_id);
+								}
 							} else {
-								$this->_showarticle($article_id);
+								/// EVERYONE: View + Notice that already published
+								echo('This article is live, and cannot be edited except by an editor.');
 							}
 							break;
 						case 'suggestion':
@@ -1014,6 +1016,7 @@ class News extends Controller
 
 	function _updateHeadlines($revision,$headline,$subheadline,$subtext,$blurb,$wiki,$create_cache,$fact_heading,$fact_text)
 	{
+		$this->load->library('image');
 		$xajax_response = new xajaxResponse();
 		$article_id = $this->uri->segment(3);
 		// Make it so we only have to worry about two levels of access as admins can do everything editors can
@@ -1036,7 +1039,7 @@ class News extends Controller
 					$this->load->library('wikiparser');
 					$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 					foreach ($data['photo_requests'] as $photo) {
-						$this->wikiparser->add_image_override($photo['photo_number'], '/photo/medium'.$photo['chosen_photo']);
+						$this->wikiparser->add_image_override($photo['photo_number'], $this->image->getThumb($photo['chosen_photo'], 'medium', true));
 					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
 //				}

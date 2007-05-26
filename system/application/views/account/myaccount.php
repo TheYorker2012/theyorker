@@ -11,10 +11,12 @@ function _render_bool_image($bool) {
 <div id="RightColumn">
 	<h2 class="first">Edit Subscriptions</h2>
 	<ul>
-	<li><a href="/register/academic">Academic Subscriptions</a></li>
+	<li><a href="/register/departments">Academic Subscriptions</a></li>
 	<li><a href="/register/societies">Society Subscriptions</a></li>
-	<li><a href="/register/au">AU Subscriptions</a></li>
-	<li><a href="/register/venue">Venue Subscriptions</a></li>
+	<li><a href="/register/athletic_union">AU Subscriptions</a></li>
+	<li><a href="/register/venues">Venue Subscriptions</a></li>
+	<li><a href="/register/college_campus">College &amp; Campus Subscriptions</a></li>
+	<li><a href="/register/organisations">Organisation Subscriptions</a></li>
 	</ul>
 </div>
 

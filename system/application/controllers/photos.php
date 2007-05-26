@@ -9,8 +9,8 @@ class Photos extends Controller
 	function Photos() {
 		parent::Controller();
 	}
-	
-	function index($type = 'full', $id) {
+
+	function index($type = 'full', $id = -1) {
 		if ($type == 'full') {
 			$sql = 'SELECT photo_mime, photo_data FROM photos WHERE photo_id = ? LIMIT 1';
 			$result = $this->db->query($sql, array($id));
