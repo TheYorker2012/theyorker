@@ -56,10 +56,7 @@ Page Title: '.$page_title.'
 Rating: '.$rating.'
 
 '.$feedback_text.'
-
-Thanks,
-
-The Yorker Team';
+';
 
 			@$send_mail = mail($to,$subject,$message,$from);
 			if ($send_mail) {
