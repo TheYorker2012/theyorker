@@ -14,7 +14,7 @@
 	<br />
 	<?=anchor(vip_url('directory/photos/move/'.$image->photo_id.'/up'), 'move up')?> |
 	<?=anchor(vip_url('directory/photos/move/'.$image->photo_id.'/down'), 'move down')?> |
-	<?=anchor(vip_url('directory/photos/delete/'.$image->photo_id.''), 'delete')?>
+	<a href="directory/photos/delete/<?php echo $image->photo_id ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 	<br />
 	<?php } ?>
 </div>

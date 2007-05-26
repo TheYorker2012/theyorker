@@ -322,12 +322,8 @@ class Yorkerdirectory extends Controller
 					$this->slideshow->pushDown($photoID, $data['organisation']['id']);
 				}
 			} elseif ($action == 'delete') {
-				if ($operation == 'confirm') {
-					$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
-					$this->messages->AddMessage('info', 'Photo Deleted');
-				} else {
-					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
-				}
+				$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
+				$this->messages->AddMessage('info', 'Photo Deleted');
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));
