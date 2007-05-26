@@ -92,7 +92,7 @@ class Howdoi extends Controller
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('requests_model','requests_model');
-		
+
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar();
 		if ($page == 'suggestions')
@@ -133,7 +133,7 @@ class Howdoi extends Controller
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'howdoi',
 					'name'=>'Unassigned',
-					'suggestions'=>$this->requests_model->GetSuggestedArticles('howdoi')
+					'suggestions'=>$this->requests_model->GetSuggestedArticles('howdoi',false)
 					);
 					/*
 			echo '<pre>';
@@ -280,11 +280,11 @@ class Howdoi extends Controller
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
 					);
-					
-		/** get the article's header for the article id passed to 
+
+		/** get the article's header for the article id passed to
 		    the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
-		
+
 		/** this checks to see if the article id given is for a how
 		    do i question or is an article of another type */
 		$correct_content_type = FALSE;
@@ -299,7 +299,7 @@ class Howdoi extends Controller
 		{
 			//get the list of current question revisions
 			$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
-			
+
 			//set the default revision to false
 			$data['article']['displayrevision'] = FALSE;
 
@@ -333,7 +333,7 @@ class Howdoi extends Controller
 				}
 				else
 				{
-					/* load the revision with the given 
+					/* load the revision with the given
 					   revision id */
 					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
 					/* if this revision doesn't exist
@@ -349,17 +349,17 @@ class Howdoi extends Controller
 			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;
 			$data['user']['officetype'] = $this->user_auth->officeType;
-			
+
 			/* finds whether the current user is requested to
 			   write for this question */
 			$data['article']['hasarticlerequest'] = $this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId);
-	
+
 			// Set up the view
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_question', $data);
 
 			// Set up the public frame
 			$this->main_frame->SetContent($the_view);
-	
+
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
@@ -412,7 +412,7 @@ class Howdoi extends Controller
 		/** get the article's header for the article id passed to
 	            the function */
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
-		
+
 		/** this checks to see if the article id given is for a how
  	            do i question or is an article of another type */
 		$correct_content_type = FALSE;
@@ -437,7 +437,7 @@ class Howdoi extends Controller
 
 			//set a count for the available writers
 			$data['writers']['availcount'] = 0;
-			
+
 			/* loop though the possible writers and remove the
 			   writers that are already involved with this
 			   article */
@@ -461,7 +461,7 @@ class Howdoi extends Controller
 
 			// Set up the public frame
 			$this->main_frame->SetContent($the_view);
-	
+
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
@@ -502,22 +502,22 @@ class Howdoi extends Controller
 			//Get navigation bar and tell it the current page
 			$this->_SetupNavbar();
 			$this->main_frame->SetPage('categories');
-	
+
 			// Insert main text from pages information
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-			
-			/* get the data for the category provided in the post 
+
+			/* get the data for the category provided in the post
 			   data */
 			$data['category'] = $this->howdoi_model->GetContentCategory($_POST['r_categoryid']);
 			$data['category']['id'] = $_POST['r_categoryid'];
-	
+
 			// Set up the view
 			$this->main_frame->SetTitleParameters(array('category'=>$data['category']['name']));
 			$the_view = $this->frames->view('office/howdoi/office_howdoi_edit_category', $data);
-	
+
 			// Set up the public frame
 			$this->main_frame->SetContent($the_view);
-	
+
 			// Load the public frame view
 			$this->main_frame->Load();
 		}
@@ -644,7 +644,7 @@ class Howdoi extends Controller
 			}
 		}
 	}
-	
+
 	function questionmodify()
 	{
 		if (!CheckPermissions('office')) return;
@@ -673,7 +673,7 @@ class Howdoi extends Controller
 			if (isset($_POST['r_submit_modify']))
 			{
 				$this->requests_model->UpdateSuggestion(
-					$_POST['r_articleid'], 
+					$_POST['r_articleid'],
 					array('title'=>$_POST['a_title'],
 						'description'=>$_POST['a_description'],
 						'content_type'=>$_POST['a_category'])
@@ -760,7 +760,7 @@ class Howdoi extends Controller
 			}
 		}
 	}
-	
+
 	function writermodify()
 	{
 		if (!CheckPermissions('office')) return;
