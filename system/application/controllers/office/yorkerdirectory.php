@@ -700,7 +700,7 @@ class Yorkerdirectory extends Controller
 						$this->businesscards_model->UpdateBuisnessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
 				$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
 				$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
-				0, null, null, $Suboption1);
+				0, null, null, $Suboption1, 1); //The last param 1 forces immediate publishing
 						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
 
 						redirect(vip_url('directory/contacts/viewgroup/'.$_POST["group_id"]));
