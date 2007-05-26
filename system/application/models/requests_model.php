@@ -799,12 +799,7 @@ class Requests_Model extends Model
 					$result[] = $result_item;
 				}
 			}
-/* Removing this for now as it's stopping me adding articles to the News Office - Chris
-   Also... use print_r($result) as its an array
-			echo '<pre>';
-			echo $result;
-			echo '</pre>';
-*/
+
 			return $result;
 		}
 		else

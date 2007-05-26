@@ -135,11 +135,6 @@ class Howdoi extends Controller
 					'name'=>'Unassigned',
 					'suggestions'=>$this->requests_model->GetSuggestedArticles('howdoi',false)
 					);
-					/*
-			echo '<pre>';
-			echo print_r($data['categories']);
-			echo '</pre>';
-			*/
 
 		//create empty arrays for the user writers status
 		$data['user']['writer']['requested'] = array();
