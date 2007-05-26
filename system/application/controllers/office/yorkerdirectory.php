@@ -749,6 +749,10 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
 		}
 
+		$this->_SetupOrganisationNavbar();
+
+		$this->main_frame->SetPage('contacts');
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
