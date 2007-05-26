@@ -42,7 +42,7 @@ class Image_upload {
 		$this->ci->main_frame->Load();
 	}
 	
-	private function checkImageProperties(&$imgData, &$imgTypes) {
+	private function checkImageProperties(&$imgData, &$imgTypes, $photo) {
 		foreach ($imgTypes->result() as $imgType) {
 			if ($imgData['image_width'] < $imgType->image_type_width) return false;
 			if ($imgData['image_height'] < $imgType->image_type_height) return false;
@@ -80,9 +80,17 @@ class Image_upload {
 			} else {
 				$data[] = $this->ci->upload->data();
 				
-				if ($this->checkImageProperties($data[$x - 1], $query))
-				//var_dump( $this->processImage($data[$x - 1], $x, $query, $photo) );
+				if ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+					
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+				} elseif($this->ci->input->post('destination') == 1) {
+					//redirect back home
+					$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
+					redirect($returnPath, 'location');
+				} else {
+					//just display error
+					$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
+				}
 			}
 		}
 		$this->ci->main_frame->SetTitle('Photo Uploader');
