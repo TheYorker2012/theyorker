@@ -286,8 +286,6 @@ class Requests_Model extends Model
 	//Add a  new request to the article table
 	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
 	{
-		if ($user == null) $user = 0;
-
 		$sql = 'SELECT 	content_type_id
 			FROM	content_types
 			WHERE	(content_type_codename = ?)';

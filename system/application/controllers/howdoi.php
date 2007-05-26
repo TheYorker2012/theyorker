@@ -112,11 +112,13 @@ class Howdoi extends Controller {
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('howdoi_model','howdoi_model');
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+		//$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+		$user_id = (!$this->user_auth->entityId ? 0 : $this->user_auth->entityId);
 
 		if (isset($_POST['r_submit_ask']))
 		{
-			$result = $this->requests_model->CreateRequest('suggestion', $howdoi_type_id, $_POST['a_question'], '', $this->user_auth->entityId, '');
+			$result = $this->requests_model->CreateRequest('suggestion', 'howdoi', $_POST['a_question'], '', $user_id, '');
 			if ($result) {
 				$this->main_frame->AddMessage('success','Your question has been added and the editors notified.');
 			} else {
