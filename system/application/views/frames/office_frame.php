@@ -71,7 +71,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<span style="font-size: 18px; font-weight:bold; ">Leave<br />Office</span>
 		</div>
 		</a>
-		<div style="float: right; width: 400px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
+		<div style="float: right; width: 375px; overflow: hidden; color: #FFFFFF; text-align: center; position: relative; top: 37px; height: 40px;">
 			<span style="font-size: 40px; font-weight:bold; ">Office</span>
 		</div>
 	</div>
