@@ -63,7 +63,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<div style="width: 780px; background-image:url(/images/prototype/header/homepage_bk.gif); background-repeat:repeat-x; height:108; float: left;">
 		<div style="float: left;">
 			<a href="/home/">
-				<img src="/images/prototype/header/header_Layer-1.gif" width="275" height="108" alt="" border="0" />
+				<img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="" border="0" />
 			</a>
 		</div>
 		<a href="/logout/office">
