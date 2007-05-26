@@ -5,7 +5,7 @@
 		<?php echo $main_text; ?>
 	</div>
 	<?php } ?>
-	<h4>Visability</h4>
+	<h4>Visibility</h4>
 	<div class="Entry">
 		<p>
 		<?php echo $directory_visibility_text; ?>
