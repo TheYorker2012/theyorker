@@ -514,9 +514,8 @@ class Yorkerdirectory extends Controller
 					$this->businesscards_model->NewBusinessCard($user_id, $_POST["group_id"], null, $_POST["card_name"],
 			$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
 			$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
-			0, null, null);
+			0, null, null, 1); //@note the 1 in the last parameter forces the card to be published when it is created. Beta only.
 					$this->messages->AddMessage('success','The contact card was successfully added.');
-
 				}
 			}
 		}
