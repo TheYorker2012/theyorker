@@ -152,7 +152,7 @@ class Account extends controller
 						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
 					}
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
-					if ($this->input->post('upload')) {
+					if ($this->input->post('upload') != false) {
 						redirect('/account/customlink/2/'.$newId, 'location');
 					} else {
 						redirect('/account/customlink/3/'.$newId, 'location');
