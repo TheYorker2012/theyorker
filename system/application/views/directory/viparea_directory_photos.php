@@ -34,8 +34,7 @@
 </div>
 <input type="hidden" name="destination" id="destination" value="1" />
 
-<input type="button" onClick="AddClones()" value="Another"/>
-<input type="submit" value="upload" />
+<input type="submit" value="Upload" />
 </form>
 </div>
 <a href='/viparea/'>Back to the vip area.</a>

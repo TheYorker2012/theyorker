@@ -328,7 +328,7 @@ class Yorkerdirectory extends Controller
 				} else {
 					$this->messages->AddMessage('info', 'Are you sure? <a href="'.$photoID.'/confirm">Click to delete</a>');
 				}
-			} elseif ($action == 'upload') {
+			} elseif ($action == 'Upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload(vip_url('directory/photos'), array('slideshow'));
 			} elseif (isset($_SESSION['img'])) {
