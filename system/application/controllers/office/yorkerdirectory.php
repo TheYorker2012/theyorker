@@ -703,6 +703,7 @@ class Yorkerdirectory extends Controller
 				0, null, null, $Suboption1);
 						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
 
+						redirect(vip_url('directory/contacts/viewgroup/'.$_POST["group_id"]));
 					}
 				}
 			} else {
