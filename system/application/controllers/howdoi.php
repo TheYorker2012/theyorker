@@ -9,7 +9,7 @@ class Howdoi extends Controller {
 	{
 		parent::Controller();
 	}
-	
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
@@ -51,7 +51,7 @@ class Howdoi extends Controller {
 	function viewcategory($codename, $id)
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
 		$this->pages_model->SetPageCode('howdoi_view');
@@ -89,7 +89,7 @@ class Howdoi extends Controller {
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(array('category'=>$data['categories'][$view_category_id]['name']));
 			$this->main_frame->SetContentSimple('howdoi/view', $data);
-	
+
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
 		}
@@ -97,7 +97,7 @@ class Howdoi extends Controller {
 			//needs a new page to show invalid category
 			redirect('/howdoi');
 	}
-	
+
 	/* ##TODO: write a proper description
 	Array
 		(
@@ -112,12 +112,18 @@ class Howdoi extends Controller {
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('howdoi_model','howdoi_model');
-		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+		//$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
+
+		$user_id = (!$this->user_auth->entityId ? 0 : $this->user_auth->entityId);
 
 		if (isset($_POST['r_submit_ask']))
 		{
-			$this->requests_model->CreateRequest('suggestion', $howdoi_type_id, $_POST['a_question'], '', $this->user_auth->entityId, '');
-			$this->main_frame->AddMessage('success','Your question has been added and the editors notified.');
+			$result = $this->requests_model->CreateRequest('suggestion', 'howdoi', $_POST['a_question'], '', $user_id, '');
+			if ($result) {
+				$this->main_frame->AddMessage('success','Your question has been added and the editors notified.');
+			} else {
+				$this->main_frame->AddMessage('error','There is a problem with this service, please try again later.');
+			}
 			redirect($_POST['r_redirecturl']);
 		}
 	}

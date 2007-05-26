@@ -311,7 +311,7 @@ class Requests_Model extends Model
 				$query = $this->db->query($sql);
 				$id = $query->row()->article_id;
 				$this->db->trans_complete();
-		
+
 				return $id;
 			}
 			elseif ($status == 'request')
@@ -334,7 +334,7 @@ class Requests_Model extends Model
 				$query = $this->db->query($sql);
 				$id = $query->row()->article_id;
 				$this->db->trans_complete();
-		
+
 				return $id;
 			}
 			else
@@ -469,16 +469,16 @@ class Requests_Model extends Model
 				article_editor_approved_user_entity_id,
 				author_user.business_card_name as author_name,
 				editor_user.business_card_name as editor_name
-	
+
 				FROM	articles
 				JOIN	article_contents
 				ON      article_content_id = article_live_content_id
-	
+
 				JOIN	business_cards as editor_user
 				ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
 				JOIN	business_cards as author_user
 				ON	author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
-	
+
 				WHERE	article_suggestion_accepted = 1
 				AND	article_content_type_id = ?
 				AND	article_live_content_id IS NOT NULL
@@ -530,7 +530,7 @@ class Requests_Model extends Model
 			ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
 			JOIN	business_cards as suggestion_user
 			ON	suggestion_user.business_card_user_entity_id = article_request_entity_id
-			
+
 			WHERE	article_suggestion_accepted = 1
 			AND	article_id = ?
 			AND	article_live_content_id IS NULL
@@ -589,7 +589,7 @@ class Requests_Model extends Model
 					}
 				}
 			}
-	
+
 			$sql = 'SELECT articles.article_id,
 					 UNIX_TIMESTAMP(articles.article_created) AS article_created,
 					 articles.article_request_title,
@@ -618,7 +618,7 @@ class Requests_Model extends Model
 					$result[] = $result_item;
 				}
 			}
-	
+
 			return $result;
 		}
 		else
@@ -639,8 +639,8 @@ class Requests_Model extends Model
 			AND	articles.article_live_content_id IS NULL
 			AND	articles.article_deleted = 0
 			AND	articles.article_pulled = 0
-			ORDER BY content_types.content_type_name ASC, 
-				articles.article_created ASC';				
+			ORDER BY content_types.content_type_name ASC,
+				articles.article_created ASC';
 		$query = $this->db->query($sql,array($user_id));
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -659,13 +659,13 @@ class Requests_Model extends Model
 		}
 		return $result;
 	}
-	
+
 	function GetHowdoiWriterRequests($user_id, $type, $status)
 	{
 		$sql = 'SELECT	article_writer_article_id,
 				article_request_title
 			FROM	article_writers
-	 	
+
 			JOIN	articles
 			ON	article_id = article_writer_article_id
 
@@ -761,22 +761,28 @@ class Requests_Model extends Model
 			}
 
 			$sql = 'SELECT articles.article_id,
-					 UNIX_TIMESTAMP(articles.article_created) AS article_created,
-					 articles.article_request_title,
-					 article_request_entity_id,
-					 business_card_name,
-					 content_types.content_type_name
+					UNIX_TIMESTAMP(articles.article_created) AS article_created,
+					articles.article_request_title,
+					article_request_entity_id,
+
+					(SELECT business_card_name FROM business_cards, business_card_groups
+					WHERE business_card_user_entity_id = article_request_entity_id
+					AND business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+					AND business_card_group_organisation_entity_id IS NULL ) AS business_card_name,
+
+					content_types.content_type_name
+
 					FROM content_types, articles
-					JOIN business_cards
-					 ON business_card_user_entity_id = article_request_entity_id
+
 					WHERE articles.article_suggestion_accepted = 0
-					AND	content_types.content_type_id = articles.article_content_type_id
-					AND	articles.article_live_content_id IS NULL
-					AND	articles.article_deleted = 0
-					AND	articles.article_pulled = 0
+					AND content_types.content_type_id = articles.article_content_type_id
+					AND articles.article_live_content_id IS NULL
+					AND articles.article_deleted = 0
+					AND articles.article_pulled = 0
 					AND	(';
 			$sql .= implode(' OR ',$type_sql) . ')';
 			$query = $this->db->query($sql,$type_codenames);
+
 			$result = array();
 			if ($query->num_rows() > 0)
 			{
@@ -793,12 +799,7 @@ class Requests_Model extends Model
 					$result[] = $result_item;
 				}
 			}
-/* Removing this for now as it's stopping me adding articles to the News Office - Chris
-   Also... use print_r($result) as its an array
-			echo '<pre>';
-			echo $result;
-			echo '</pre>';
-*/
+
 			return $result;
 		}
 		else
@@ -838,7 +839,7 @@ class Requests_Model extends Model
 		}
 		return $result;
 	}
-	
+
 	function GetArticleWriters($article_id)
 	{
 		$sql = 'SELECT	article_writer_user_entity_id,
@@ -863,7 +864,7 @@ class Requests_Model extends Model
 		}
 		return $result;
 	}
-	
+
 	function GetWritersForType($type_codename)
 	{
 		$sql = 'SELECT 	content_type_id
@@ -876,19 +877,19 @@ class Requests_Model extends Model
 			$sql = 'SELECT	user_entity_id,
 					business_card_name
 				FROM	content_types
-	
+
 				JOIN	organisations
 				ON	organisation_entity_id = content_type_related_organisation_entity_id
-				
+
 				JOIN	subscriptions
 				ON	subscription_organisation_entity_id = organisation_entity_id
-				
+
 				JOIN	users
 				ON	user_entity_id = subscription_user_entity_id
-	
+
 				JOIN	business_cards
 				ON	business_card_user_entity_id = user_entity_id
-	
+
 				WHERE	content_type_id = ?
 				ORDER BY business_card_name ASC';
 			$query = $this->db->query($sql,array($type_id));
@@ -908,7 +909,7 @@ class Requests_Model extends Model
 		else
 			return FALSE;
 	}
-	
+
 	function AddUserToRequest($article_id, $reporter_id, $editor_id, $business_card_id = NULL)
 	{
 		if (isset($business_card_id))
@@ -934,7 +935,7 @@ class Requests_Model extends Model
 		}
 		$this->db->query($sql,array($reporter_id, $article_id, $editor_id, $business_card_id));
 	}
-	
+
 	function RemoveUserFromRequest($article_id, $user_id)
 	{
 		$sql = 'DELETE FROM article_writers
@@ -949,7 +950,7 @@ class Requests_Model extends Model
 			WHERE	(article_writer_article_id = ?)';
 		$this->db->query($sql,array($article_id));
 	}
-	
+
 	function AcceptRequest($article_id, $user_id)
 	{
 		$sql = 'UPDATE 	article_writers
@@ -958,7 +959,7 @@ class Requests_Model extends Model
 			AND	article_writer_article_id = ?)';
 		$this->db->query($sql,array($user_id,$article_id));
 	}
-	
+
 	function DeclineRequest($article_id, $user_id)
 	{
 		$sql = 'UPDATE 	article_writers
@@ -967,7 +968,7 @@ class Requests_Model extends Model
 			AND	article_writer_article_id = ?)';
 		$this->db->query($sql,array($user_id, $article_id));
 	}
-	
+
 	function IsUserRequestedForArticle($article_id, $user_id)
 	{
 		$sql = 'SELECT	article_writer_status
@@ -983,7 +984,7 @@ class Requests_Model extends Model
 		else
 			return FALSE;
 	}
-	
+
 	function RequestPhoto($article_id,$user_id,$photo_position,$title,$description,$large_photo=1)
 	{
 		$sql = 'INSERT 	INTO photo_reqests(
@@ -996,7 +997,7 @@ class Requests_Model extends Model
 			VALUES	(?,?,?,?,?,?)';
 		$query = $this->db->query($sql,array($user,$article_id,$photo_position,$large_photo,$title,$description));
 	}
-	
+
 	function ApprovePhotoRequest($request_id,$photographer_id,$editor_id)
 	{	//Photo editor must approve the request before it is passed on to the photographer
 		$sql = 'UPDATE	photo_requests
@@ -1006,7 +1007,7 @@ class Requests_Model extends Model
 				photo_request_user_photo_request_id,
 				photo_request_user_entity_id)
 			VALUES	(?,?)';
-		$query = $this->db->query($sql,array($editor_id,$request_id,$request_id,$photographer_id));			
+		$query = $this->db->query($sql,array($editor_id,$request_id,$request_id,$photographer_id));
 	}
 
 	function AcceptPhotoRequest($request_id,$user_id)
@@ -1034,7 +1035,7 @@ class Requests_Model extends Model
 				photo_request_photo_photo_id,
 				photo_request_photo_comment)
 			VALUES	(?,?,?)';
-		$query = $this->db->query($sql,array($request_id,$photo_id,$comment));			
+		$query = $this->db->query($sql,array($request_id,$photo_id,$comment));
 	}
 
 	function AcceptPhoto($request_id,$user_id,$photo_id)
@@ -1043,7 +1044,7 @@ class Requests_Model extends Model
 			SET	photo_request_approved_user_entity_id = ?,
 				photo_request_chosen_photo_id = ?
 			WHERE 	(photo_request_id = ?)';
-		$query = $this->db->query($sql,array($user_id,$photo_id,$request_id));			
+		$query = $this->db->query($sql,array($user_id,$photo_id,$request_id));
 	}
 
 	function GetPhotoRequests($id)
@@ -1056,9 +1057,9 @@ class Requests_Model extends Model
 		        GROUP BY photo_request_photo_photo_request_id';
 		$query = $this->db->query($sql,array($id));
 		return $query;
-		
+
 	}
-	
+
 	function GetPhotoRequest($id)
 	{	//Return details on a single request
 		$sql = 'SELECT *, count(*) AS photo_count
@@ -1070,16 +1071,16 @@ class Requests_Model extends Model
 		        LIMIT 1';
 		$query = $this->db->query($sql,array($id));
 		return $query->first_row();
-		
+
 	}
-	
+
 	function GetAllPhotosForRequest($id)
 	{	//Return all photos for a request
 		$sql = 'SELECT * FROM photo_request_photos
 		        WHERE photo_request_photo_photo_request_id = ?';
 		$query = $this->db->query($sql,array($id));
 		return $query;
-		
+
 	}
 
 
@@ -1115,7 +1116,7 @@ class Requests_Model extends Model
 				article_content_blurb = ?
 			WHERE	(article_content_id = ?)';
 		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
-	}	
+	}
 
 	function RejectSuggestion($id)
 	{
@@ -1124,7 +1125,7 @@ class Requests_Model extends Model
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($id));
 	}
-	
+
 	function GetNameFromUsers($user_id)
 	{
 		$sql = 'SELECT	user_firstname,
@@ -1140,7 +1141,7 @@ class Requests_Model extends Model
 		else
 			return FALSE;
 	}
-	
+
 	function GetNameFromBusinessCards($user_id)
 	{
 		$sql = 'SELECT	business_card_name

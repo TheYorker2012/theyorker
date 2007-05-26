@@ -88,10 +88,3 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 }
 ?>
 
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
-?>
