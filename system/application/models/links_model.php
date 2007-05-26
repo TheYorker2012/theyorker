@@ -194,9 +194,19 @@ class Links_Model extends Model {
 		return $query;
 	}
 
-	function ReplaceImage() {
-		echo "notimp";
-	}
+//First checks that the user owns the link and it is not official
+	function ReplaceImage($linkID, $userID, $imageID, $admin = false) {
+		$sql = 'SELECT user_link_link_id FROM user_links
+		        INNER JOIN links ON links.link_id = user_links.user_link_link_id
+		        WHERE user_link_link_id = ? AND user_link_user_entity_id = ?
+		          AND links.link_official = 0 LIMIT 1';
+		if ($this->db->query($sql, array($linkID, $userID))->num_rows() == 1 or $admin) {
+			$this->db->where('link_id',  $linkID)
+			         ->update('links', array('link_image_id' => $imageID));
+			return true;
+		}
+		return false;
+}
 
 	function UserTotalLinks($user) {
 		$sql = 'SELECT COUNT(*) AS total FROM user_links WHERE user_link_user_entity_id = ?';

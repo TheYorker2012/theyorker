@@ -19,7 +19,7 @@
 			<label for="lnominate"> Nominate Link: </label>
 			<input type="checkbox" id="lnominate" name="lnominate" checked/>
 			<br />
-			<input type="button" value="Back" class="button" onClick="window.location='/account/links';"> <input type="submit" value="Create Link" class="button">
+			<input type="button" value="Back" class="button" onClick="window.location='/account/links';"> <input type="submit" value="Upload Icon & Save" class="button"> <input type="submit" value="Just Save" class="button">
 		</fieldset>
 		</form>
 	</div>

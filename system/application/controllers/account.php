@@ -137,24 +137,43 @@ class Account extends controller
 	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
-	function customlink()
+	function customlink($stage = 1, $id = 0)
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 
 		$this->load->model('Links_Model');
+		switch ($stage) {
+			case 1:
+				if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
+					if ($this->input->post('lnominate') == 'on') {
+						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
+					} else {
+						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
+					}
+					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
 
-		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
-			if ($this->input->post('lnominate') == 'on') {
-				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
-			} else {
-				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
-			}
-			$this->Links_Model->AddUserLink($this->user_auth->entityId, $id);
-			redirect('/account/links', 'location');
-		} else if($this->input->post('lurl')) {
-			$this->messages->AddMessage('error', 'Please enter a name for your link.');
+					redirect('/account/customlink/2/'.$newId, 'location');
+				} else if($this->input->post('lurl')) {
+					$this->messages->AddMessage('error', 'Please enter a name for your link.');
+				}
+				break;
+			case 2:
+				$this->load->library('image_upload');
+				$_SESSION['img'] = array();
+				$this->image_upload->automatic('/account/customlink/3/'.$id, array('link'), false, false);
+				exit;
+			case 3:
+				if (isset($_SESSION['img'])) {
+					foreach ($_SESSION['img'] as $newImage) {
+						if ($newImage['codename'] == 'link') {
+							$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+						}
+					}
+				}
+				break;
 		}
+
 
 		$data = array();
 		$this->_SetupTabs('links');
