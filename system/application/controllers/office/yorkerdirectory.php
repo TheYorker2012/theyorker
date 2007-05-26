@@ -600,6 +600,7 @@ class Yorkerdirectory extends Controller
 		if (!CheckPermissions('vip+pr')) return;
 
 		$this->load->library('image');
+		$this->load->model('members_model');
 
 		$mode = 'view';
 
