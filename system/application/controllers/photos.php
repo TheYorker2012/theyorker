@@ -14,7 +14,7 @@ class Photos extends Controller
 		if ($type == 'full') {
 			$sql = 'SELECT 
 					photo_mime AS mime, 
-					photo_data AS data
+					photo_data AS data,
 					UNIX_TIMESTAMP(photo_timestamp) AS timestamp
 				FROM photos WHERE photo_id = ? LIMIT 1';
 			$result = $this->db->query($sql, array($id));
@@ -42,7 +42,7 @@ class Photos extends Controller
 			} else {
 				$sql = 'SELECT 
 						image_type_error_mime AS mime, 
-						image_type_error_data AS data
+						image_type_error_data AS data,
 						NOW() AS timestamp
 					FROM image_types WHERE image_type_codename = ? LIMIT 1';
 				$result = $this->db->query($sql, array($type));
