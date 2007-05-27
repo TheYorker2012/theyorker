@@ -33,8 +33,8 @@ class Account extends controller
 				'/account/links');
 		$navbar->AddItem('password', 'Password',
 				'/account/password/change');
-		$navbar->AddItem('bcards', 'VIP',
-				'/account/bcards');
+		//$navbar->AddItem('bcards', 'VIP',
+		//		'/account/bcards');
 
 		$this->main_frame->SetPage($SelectedPage);
 	}
