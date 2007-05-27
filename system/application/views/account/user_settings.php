@@ -1,7 +1,7 @@
 	<?php if (isset($main_heading)) { ?>
 	<div class="BlueBox">
-		<h2><?php echo($main_heading); ?></h2>
-		<?php echo($main_text); ?>
+		<h2>What's this?</h2>
+		This information will allow us to personalise your experience of our site, and will allow you to use our facilities to communicate with any societies that you are a member of.
 	</div>
 	<? } ?>
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
