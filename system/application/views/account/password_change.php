@@ -4,6 +4,7 @@
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
+		<h2>Change Password</h2>
 		<?php echo form_open($change_password_target, array('class' => 'form')); ?>
 		<fieldset>
 			<label for="oldpassword">Current password:</label>
