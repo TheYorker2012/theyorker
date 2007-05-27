@@ -16,7 +16,6 @@
 	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>Replace Image</legend>
-			<?=$this->image->getImage(0, $image_type_codename)?><br />
 			<label for="upload">New Image</label>
 			<input type="file" name="upload" /></br>
 			<label for="image_id">Image Id</label>
