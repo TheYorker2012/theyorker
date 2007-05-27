@@ -16,9 +16,10 @@ class Photos extends Controller
 			$result = $this->db->query($sql, array($id));
 			if ($result->num_rows() == 1) {
 				header('Content-type: '.$result->first_row()->photo_mime);
-				header('Cache-control: store, cache');
-				header('Expires: '.date(DATE_RFC822, strtotime('+1 month')));
-				header('Pragma: cache');
+				header("Cache-control: max-age=3600");
+				//header('Cache-control: store, cache');
+				//header('Expires: '.date(DATE_RFC822, strtotime('+1 month')));
+				//header('Pragma: cache');
 				echo $result->first_row()->photo_data;
 			} else {
 				header('HTTP/1.0 404 Not Found');
@@ -34,9 +35,10 @@ class Photos extends Controller
 			$result = $this->db->query($sql, array($id, $type));
 			if ($result->num_rows() == 1) {
 				header('Content-type: '.$result->first_row()->photo_mime);
-				header('Cache-control: no-store, cache');
-				header('Expires: '.date(DATE_RFC822, strtotime('+10 minutes')));
-				header('Pragma: cache');
+				header("Cache-control: max-age=3600");
+				//header('Cache-control: no-store, cache');
+				//header('Expires: '.date(DATE_RFC822, strtotime('+10 minutes')));
+				//header('Pragma: cache');
 				echo $result->first_row()->photo_thumbs_data;
 			} else {
 				$sql = 'SELECT image_type_error_mime, image_type_error_data FROM image_types WHERE image_type_codename = ? LIMIT 1';
