@@ -250,39 +250,16 @@ class Account extends controller
 	/// Reset password
 	protected function _password_reset($parameter = 'main')
 	{
-		if (!CheckPermissions('public')) return;
-
-		$username = $this->input->post('username');
-		if (is_string($username)) {
-			if($this->user_auth->resetpassword($username)) {
-				get_instance()->messages->AddMessage(
-					'success',
-					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to choose a new password for your account.</p>'
-				);
-			} else {
-				get_instance()->messages->AddMessage(
-					'error',
-					'<p>There was an error sending the e-mail.</p>'
-				);
-			}
-		}
-
-		$this->pages_model->SetPageCode('account_password_reset');
-
-		$data = array();
-		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
-		$data['submit'] = $this->pages_model->GetPropertyText('submit');
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('login/resetpassword', $data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
+		$this->_password_reset_register('account_password_reset');
 	}
 
 	/// Register
 	protected function _password_register($parameter = 'main')
 	{
+		$this->_password_reset_register('account_password_register');
+	}
+
+	protected function _password_reset_register($pagecode) {
 		if (!CheckPermissions('public')) return;
 
 		$username = $this->input->post('username');
@@ -300,7 +277,7 @@ class Account extends controller
 			}
 		}
 
-		$this->pages_model->SetPageCode('account_password_register');
+		$this->pages_model->SetPageCode($pagecode);
 
 		$data = array();
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
