@@ -21,7 +21,7 @@
 			<label for="image_title">Image Title</label>
 			<input type="text" name="image_title" id="image_title" value=""/>
 			<label for="image_id">Image Id</label>
-			<input type="text" name="image_id" id="image_id" value="" disabled/>
+			<input type="text" name="image_id" id="image_id" value=""/>
 			<input type="submit" value="Upload" />
 		</fieldset>
 	</form>
