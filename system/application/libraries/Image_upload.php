@@ -82,7 +82,10 @@ class Image_upload {
 				$data[] = $this->ci->upload->data();
 
 				if ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
-
+					// fix for Microsoft's Stupidity
+					if ($data['file_type'] == 'image/pjpeg') {
+						$data['file_type'] = 'image/jpeg';
+					}
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 				} elseif($this->ci->input->post('destination') == 1) {
 					//redirect back home

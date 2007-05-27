@@ -10,7 +10,7 @@ class Image {
 
 	public function getPhoto($photoID) {
 		$data = $this->get($photoID, 'photos');
-		return '<img src="/photos/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
+		return '<img src="/photos/full/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
 	}
 
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
@@ -41,7 +41,7 @@ class Image {
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.' />';
 	}
 
-	public function getPhotoURL($photoID, $type) {
+	public function getPhotoURL($photoID, $type = 'full') {
 		return '/photos/'.$type.'/'.$photoID;
 	}
 
