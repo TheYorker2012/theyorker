@@ -77,6 +77,26 @@ class Imagecp extends Controller {
 	}
 
 	function view($codename, $action = 'view', $id = 0) {
+		if ($this->input->post('image_id')) {
+			$this->load->library('upload');
+			$config['upload_path'] = './tmp/uploads/';
+			$config['allowed_types'] = 'gif|jpg|png';
+			$config['max_size'] = '2048';
+			$this->upload->initialize($config);
+
+			if (!$this->upload->do_upload('upload')) {
+				$this->load->library('messages');
+				$this->messages->AddMessage('error', $this->upload->display_errors());
+			} else {
+				$uploadData = $this->upload->data();
+				$this->db->where('image_id', $this->input->post('image_id'))
+						 ->update('images', array('image_mime' => $uploadData['file_type'],
+													   'image_data' => file_get_contents($uploadData['full_path'])));
+				unlink($uploadData['full_path']);
+			}
+			redirect('admin/imagecp/view/'.$codename.'/');
+		}
+
 		if ($action == 'delete') {
 			$sql = 'SELECT image_type_photo_thumbnail FROM image_types WHERE image_type_codename = ? LIMIT 1';
 			$typeDetails = $this->db->query($sql, array($codename));

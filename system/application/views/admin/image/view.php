@@ -11,3 +11,17 @@
 			<p>There are no images :(</p>
 <?php } ?>
 </div><br />
+
+<div class="blue_box" style="width:638px;overflow:auto">
+	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
+		<fieldset>
+			<legend>Replace Image</legend>
+			<?=$this->image->getImage(0, $image_type_codename)?><br />
+			<label for="upload">New Image</label>
+			<input type="file" name="upload" /></br>
+			<label for="image_id">Image Id</label>
+			<input type="text" name="image_id" value="" />
+			<input type="submit" value="Upload" />
+		</fieldset>
+	</form>
+</div>
