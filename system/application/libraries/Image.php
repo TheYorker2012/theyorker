@@ -171,7 +171,7 @@ class Image {
 		}
 		//STORE
 		$newImage = $this->image2string($newImage, $result->photo_mime);
-		$sql = 'INSERT INTO photo_thumbs VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
+		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_data) VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
 		$this->ci->db->query($sql, array($photoID, $type->id));
 		return true;
 	}
