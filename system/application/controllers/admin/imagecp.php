@@ -91,7 +91,9 @@ class Imagecp extends Controller {
 				$uploadData = $this->upload->data();
 				$this->db->where('image_id', $this->input->post('image_id'))
 						 ->update('images', array('image_mime' => $uploadData['file_type'],
-													   'image_data' => file_get_contents($uploadData['full_path'])));
+													   'image_data' => file_get_contents($uploadData['full_path']),
+													   'image_title' => $this->input->post('image_title')
+													   ));
 				unlink($uploadData['full_path']);
 			}
 			redirect('admin/imagecp/view/'.$codename.'/');
