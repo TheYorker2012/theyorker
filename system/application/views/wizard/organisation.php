@@ -244,6 +244,40 @@ function addstrike($text)
 	{
 ?>
 <div class="BlueBox">
+	<h2>jump to location</h2>
+	<p>To move the map to closer to the location you want, select one of these options:</p>
+
+	<div style="width: 43%; float: left; margin-right: 0px;">
+		<b>On Campus:</b><br />
+		<a href='javascript:maps["googlemaps"].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));'>
+		<table border="0" width="100%">
+		<tr>
+		<td>
+		<ul>
+			<li>Central Hall</li>
+		</ul>
+		</td>
+		<td>
+		<img  src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" />
+		</td>
+		</tr>
+		</table>
+		</a>
+	</div>
+	<div style="width: 50%; float: right; margin-left: 0px;">
+		<b>Off Campus:</b><br />
+		<p>Enter a place name or postcode:</p>
+		<fieldset>
+		<input style="width: 55%" type="text" id="MapSearch"/>
+		<input style="width: 35%; float: right" type="submit" value="Search" onclick="maps_search(document.getElementById('MapSearch').value, 'googlemaps', document.getElementById('MapSearchResults'));"/>
+		</fieldset>
+		<ul id="MapSearchResults">
+	</div>
+</ul>
+
+</table>
+</div>
+<div class="BlueBox">
 	<h2>location map</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
