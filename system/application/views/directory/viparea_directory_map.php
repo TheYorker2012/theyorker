@@ -17,7 +17,7 @@
 </div>
 </a>
 
-<p><b>Off Campus:</b></p>
+<p style="clear: both;"><b>Off Campus:</b></p>
 <p>Enter a place name or postcode:</p>
 <fieldset>
 <input style="width: 60%" type="text" id="MapSearch"/>
