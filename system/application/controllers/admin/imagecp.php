@@ -96,6 +96,7 @@ class Imagecp extends Controller {
 													   ));
 				unlink($uploadData['full_path']);
 			}
+			$this->messages->AddMessage('success', 'Image Uploaded Successfully');
 			redirect('admin/imagecp/view/'.$codename.'/');
 		}
 
