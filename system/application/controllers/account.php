@@ -257,12 +257,12 @@ class Account extends controller
 			if($this->user_auth->resetpassword($username)) {
 				get_instance()->messages->AddMessage(
 					'success',
-					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>'
+					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to choose a new password for your account.</p>'
 				);
 			} else {
 				get_instance()->messages->AddMessage(
 					'error',
-					'<p>There was an error sending the e-mail</p>'
+					'<p>There was an error sending the e-mail.</p>'
 				);
 			}
 		}
@@ -295,7 +295,7 @@ class Account extends controller
 			} else {
 				get_instance()->messages->AddMessage(
 					'error',
-					'<p>There was an error sending the e-mail</p>'
+					'<p>There was an error sending the e-mail.</p>'
 				);
 			}
 		}
