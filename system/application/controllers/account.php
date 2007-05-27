@@ -252,6 +252,21 @@ class Account extends controller
 	{
 		if (!CheckPermissions('public')) return;
 
+		$username = $this->input->post('username');
+		if (is_string($username)) {
+			if($this->user_auth->resetpassword($username)) {
+				get_instance()->messages->AddMessage(
+					'success',
+					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>'
+				);
+			} else {
+				get_instance()->messages->AddMessage(
+					'error',
+					'<p>There was an error sending the e-mail</p>'
+				);
+			}
+		}
+
 		$this->pages_model->SetPageCode('account_password_reset');
 
 		$data = array();
