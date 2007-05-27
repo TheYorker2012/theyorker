@@ -12,8 +12,8 @@ class Photos extends Controller
 
 	function index($type = 'full', $id = -1) {
 		if ($type == 'full') {
-			$sql = 'SELECT 
-					photo_mime AS mime, 
+			$sql = 'SELECT
+					photo_mime AS mime,
 					photo_data AS data,
 					UNIX_TIMESTAMP(photo_timestamp) AS timestamp
 				FROM photos WHERE photo_id = ? LIMIT 1';
@@ -27,8 +27,8 @@ class Photos extends Controller
 		} elseif ($type == 'view') {
 			die('//TODO page containing full view');
 		} else {
-			$sql = 'SELECT 
-					photo_thumbs_data AS data, 
+			$sql = 'SELECT
+					photo_thumbs_data AS data,
 					photo_mime AS mime,
 					UNIX_TIMESTAMP(photo_thumbs_timestamp) AS timestamp
 				FROM photo_thumbs, photos
@@ -40,8 +40,8 @@ class Photos extends Controller
 			if ($result->num_rows() == 1) {
 				$row = $result->first_row();
 			} else {
-				$sql = 'SELECT 
-						image_type_error_mime AS mime, 
+				$sql = 'SELECT
+						image_type_error_mime AS mime,
 						image_type_error_data AS data,
 						NOW() AS timestamp
 					FROM image_types WHERE image_type_codename = ? LIMIT 1';
