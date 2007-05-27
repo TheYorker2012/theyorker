@@ -282,7 +282,7 @@ class User_auth extends model {
 				throw new Exception('Invalid password');
 			}
 		} else {
-			throw new Exception('Invalid username or password');
+			throw new Exception('Invalid username or password.');
 		}
 	}
 	
@@ -341,7 +341,7 @@ class User_auth extends model {
 		);
 		$body = str_replace(
 			'%%link%%',
-			'http://ado.is-a-geek.net:81/register/newpass/'.
+			'http://ado.is-a-geek.net:81/login/newpass/'.
 				$username.'/'.$random,
 			$body
 		);
