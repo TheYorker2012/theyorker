@@ -54,7 +54,7 @@ function PermissionsSubset($Subset, $Superset)
 		'editor'		=> array('pr'		=> TRUE),
 		'admin'			=> array('editor'	=> TRUE),
 	);
-	
+
 	// Unknown superset, assume its empty, always fail.
 	if (!array_key_exists($Superset, $permission_subsets)) {
 		return FALSE;
@@ -115,7 +115,7 @@ function GetDefaultHomepage()
 function vip_url($Path = '', $Set = FALSE)
 {
 	static $base = '/viparea/';
-	
+
 	if ($Set) {
 		$base = $Path;
 	} else {
@@ -127,7 +127,7 @@ function vip_url($Path = '', $Set = FALSE)
 function VipOrganisation($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
 	static $organisation = array('','');
-	
+
 	if (is_string($SetOrganisation)) {
 		$organisation[$TopOrganisation?1:0] = $SetOrganisation;
 	}
@@ -138,7 +138,7 @@ function VipOrganisation($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 function VipOrganisationName($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
 	static $organisation = array('','');
-	
+
 	if (is_string($SetOrganisation)) {
 		$organisation[$TopOrganisation?1:0] = $SetOrganisation;
 	}
@@ -149,7 +149,7 @@ function VipOrganisationName($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 function VipOrganisationId($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 {
 	static $organisation_id = array(FALSE, FALSE);
-	
+
 	if (FALSE !== $SetOrganisation[$TopOrganisation?1:0] && is_numeric($SetOrganisation)) {
 		$organisation_id[$TopOrganisation?1:0] = (int)$SetOrganisation;
 	}
@@ -167,11 +167,11 @@ function VipOrganisationId($TopOrganisation = FALSE, $SetOrganisation = FALSE)
 function VipMode($SetMode = FALSE)
 {
 	static $vip_mode = 'none';
-	
+
 	if (is_string($SetMode)) {
 		$vip_mode = $SetMode;
 	}
-	
+
 	return $vip_mode;
 }
 
@@ -189,11 +189,11 @@ function VipLevel($Permission, $Set = FALSE)
 		'write' => 3,
 	);
 	static $pr_level = 0;
-	
+
 	if ($Set) {
 		$pr_level = (int)$pr_levels[$Permission];
 	}
-	
+
 	return $pr_level >= $pr_levels[$Permission];
 }
 
@@ -201,11 +201,11 @@ function VipLevel($Permission, $Set = FALSE)
 function VipSegments($Set = NULL)
 {
 	static $vip_segments = 0;
-	
+
 	if (NULL !== $Set) {
 		$vip_segments = $Set;
 	}
-	
+
 	return $vip_segments;
 }
 
@@ -229,7 +229,7 @@ function VipSegments($Set = NULL)
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	// Start a session
-	session_start();
+	@session_start();
 
 	// Translate some auxilliary permissions
 	$auxilliary_permissions = array(
@@ -238,7 +238,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	if (array_key_exists($Permission, $auxilliary_permissions)) {
 		$Permission = $auxilliary_permissions[$Permission];
 	}
-	
+
 	// Initialisation stuff
 	$CI = &get_instance();
 	$CI->load->library('messages');
@@ -246,7 +246,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	$CI->load->model('pages_model');
 
 	$user_level = GetUserLevel();
-	
+
 	// URL analysis regarding vip area
 	$thru_viparea		=	(	($CI->uri->total_segments() >= 1)
 							&&	($CI->uri->segment(1) === 'viparea'));
@@ -289,7 +289,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	}
 	VipOrganisation(FALSE, $organisation_shortname);
 	VipOrganisation(TRUE, $CI->user_auth->organisationShortName);
-	
+
 	// Login actions for student/vip/office logins
 	$student_login_action = array(
 		'redirect+url','login/main',
@@ -310,7 +310,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		'redirect+url','login/office',
 		'post' => TRUE
 	);
-	
+
 	// If vip+pr, use URI to decide which
 	if ($Permission === 'vip+pr') {
 		$Permission =	($thru_viparea			? 'vip'	:
@@ -331,7 +331,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			||	($thru_office_manage	&& $Permission !== 'manage')) {
 		$Permission = '';
 	}
-	
+
 	// Matrix indexed by user level, then page level, of behaviour
 	// Possible values:
 	//	NULL/notset	http error 404
@@ -389,7 +389,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			. $CI->pages_model->GetPropertyText('login:warn_open_vip', TRUE),
 			TRUE
 		);
-		
+
 		$allow_vip = array_key_exists($organisation_shortname, $CI->user_auth->allTeams);
 		if ($allow_vip) {
 			$vip_accessible = TRUE;
@@ -412,7 +412,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				$vip_accessible = FALSE;
 			}
 		}
-		
+
 		$action_levels = array(
 			'public'	=> $vip_door_open_action,
 			'student'	=> $vip_door_open_action,
@@ -433,7 +433,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			TRUE
 		);
 		$admin_door_open_action = $office_door_open_action;
-		
+
 		// Refine further
 		if ($user_level === 'office') {
 			$action_levels = array(
@@ -469,7 +469,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'admin'			=> TRUE,
 			);
 		}
-		
+
 		// Change an office user to pr if they rep for the organisation
 		static $vipModes = array(
 			'pr' => 'office',
@@ -486,7 +486,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'entity_deleted = FALSE',
 			));
 			$matching_org = $CI->db->get('organisations')->result_array();
-			
+
 			if (empty($matching_org)) {
 				$action_levels[$Permission] = FALSE;
 			} else {
@@ -518,7 +518,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			|| NULL === $action_levels[$Permission]) {
 		return show_404();
 	} else {
-		
+
 		$action = $action_levels[$Permission];
 		// True is allow
 		if (TRUE === $action) {
@@ -533,7 +533,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 						$CI->messages->AddMessage($action[3], $action[4], FALSE);
 					}
 					break;
-					
+
 				case 'redirect+url':
 					$action[1] .= $CI->uri->uri_string();
 				case 'redirect':
@@ -568,7 +568,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			$CI->messages->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
 			//redirect('');
 		}
-		
+
 		// Restore post data
 		if ((TRUE === $action || is_array($action)) && !$NoPost) {
 			$post_data = GetRedirectData();
@@ -761,18 +761,18 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				$CI->user_auth->loginOffice($password);
 			} else {
 				$keep_login = (FALSE !== $CI->input->post('keep_login'));
-				
+
 				$CI->user_auth->login($username, $password, $keep_login);
-				
+
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{
 					$RedirectDestination = GetDefaultHomepage();
 				}
-				
+
 			}
-			
+
 			$CI->messages->AddMessage('success','<p>'.$success_msg.'</p>');
-			
+
 			if (FALSE !== $post_data) {
 				SetRedirectData($RedirectDestination, $post_data);
 			}
