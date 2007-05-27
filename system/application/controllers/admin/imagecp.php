@@ -77,7 +77,7 @@ class Imagecp extends Controller {
 	}
 
 	function view($codename, $action = 'view', $id = 0) {
-		if ($this->input->post('image_id')) {
+		if ($this->input->post('image_title')) {
 			$this->load->library('upload');
 			$config['upload_path'] = './tmp/uploads/';
 			$config['allowed_types'] = 'gif|jpg|png';
