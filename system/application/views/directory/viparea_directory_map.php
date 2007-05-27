@@ -8,8 +8,8 @@
 <b>On Campus:</b><br />
 <a href='javascript:maps["googlemaps"].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));'>
 <div style="float: left">
-<ul style="margin-top: 14px; margin-bottom: 14px;">
-	<li>Central Hall</li>
+<ul style="margin-top: 0px; margin-bottom: 0px;">
+	<li style="margin-top: 14px; margin-bottom: 14px;">Central Hall</li>
 </ul>
 </div>
 <div style="float: right">
