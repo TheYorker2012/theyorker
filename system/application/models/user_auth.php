@@ -237,13 +237,13 @@ class User_auth extends model {
 	 * @param $password string Password.
 	 * @param $savelogin bool Stay logged in.
 	 */
-	public function login($username, $password, $savelogin) {
+	public function login($username, $password, $savelogin, $newpass = false) {
 		// Ensure logged out!
 		if ($this->isLoggedIn) {
 			$this->logout();
 		}
 		$sql = 'SELECT entity_id, entity_username, entity_password, 
-				entity_salt 
+				entity_salt, entity_pwreset 
 			FROM entities 
 			WHERE entity_username = ? AND entity_deleted = FALSE';
 		
@@ -263,8 +263,12 @@ class User_auth extends model {
 			// Create a (badly salted) hash
 			$hash = sha1($row->entity_salt.$password);
 
-			//if ($hash == $row->entity_password) {
-			if ($this->authUni($username, $password)) {
+			if ($newpass)
+				$success = $row->entity_pwreset == $password;
+			else
+				$success = $hash == $row->entity_password;
+
+			if ($success) {
 				// The hashes match, login
 				$this->loginAuthed(
 					$username, 
@@ -278,51 +282,80 @@ class User_auth extends model {
 				throw new Exception('Invalid password');
 			}
 		} else {
-			if ($this->authUni($username, $password)) {
-				$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
-				$query = $this->db->query($sql, array($username));
-				$this->entityId = $this->db->insert_id();
-				$this->isLoggedIn = true;
-				$this->isUser = true;
-				//$this->setPassword($password);
-				$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
-				$query = $this->db->query($sql, array($this->entityId));
-
-				$this->login($username, $password, $savelogin);
-				redirect('register');
-			} else {
-				/// @throw Exception Could not find user or uni login
-				throw new Exception('Could not find user or uni login');
-			}
+			throw new Exception('Invalid username or password');
 		}
 	}
 	
-	/// Login based on username and password against the university, currently via sftp.
-	/// This will ensure the username and password are encrypted.
-	/**
-	 * @param $username string Username.
-	 * @param $password string Password.
-	 * @return true if auth successful
-	 */
-	private function authUni($username, $password) {
-		//temporarily use ftp only for local development
-		$conn_id = ftp_connect('ftp.york.ac.uk');
-		
-	 	//NB sftp will not work in windows without recompiling php - TODO: enable in production environment
-		//set up basic ssl connection
-		//$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
-		
-		if (FALSE !== $conn_id) {
-			// attempt login with username and password
-			@$login_result = ftp_login($conn_id, $username, $password);
+	public function resetpassword($username) {
+		$sql = 'SELECT entity_id, entity_username, entity_password, 
+				entity_salt, user_nickname 
+			FROM entities 
+			INNER JOIN users ON
+				user_entity_id = entity_id
+			WHERE entity_username = ?';
+	
+		$query = $this->db->query($sql, array($username));
+		$random = $this->getRandomData();
 
-			// close the ssl connection
-			ftp_close($conn_id);
+		// See if we have an entity with this username
+		if ($query->num_rows() == 0) {
+			$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
+			$query = $this->db->query($sql, array($username));
+			$entityId = $this->db->insert_id();
+			$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
+			$query = $this->db->query($sql, array($entityId));
+			$new = true;
+			$nick = '';
 		} else {
-			throw new Exception('Internal error: Could not connect to york.ac.uk.');
+			$row = $query->row();
+			$entityId = $row->entity_id;
+			$nick = $row->user_nickname;
+			$new = false;
 		}
-		
-		return $login_result;
+
+		$sql = 'UPDATE 
+				entities
+			SET 
+				entity_pwreset = ?
+			WHERE 
+				entity_id = ?';
+
+		$query = $this->db->query($sql, array($random, $entityId));
+		if ($this->db->affected_rows() == 0) {
+			throw new Exception('Internal error: failed setting passkey');
+		}
+
+		$to = $username.$this->config->Item('username_email_postfix');
+		$from = $this->pages_model->GetPropertyText('system_email', true);
+		$subject = $this->pages_model->GetPropertyText(
+			$new ? 
+				'user_password_new_email_subject' : 
+				'user_password_reset_email_subject',
+			true
+		);
+		$body = $this->pages_model->GetPropertyText(
+			$new ? 
+				'user_password_new_email_body' : 
+				'user_password_reset_email_body',
+			true
+		);
+		$body = str_replace(
+			'%%link%%',
+			'http://ado.is-a-geek.net:81/register/newpass/'.
+				$username.'/'.$random,
+			$body
+		);
+		$body = str_replace(
+			'%%nickname%%',
+			$nick,
+			$body
+		);
+		return mail(
+			$to,
+			$subject, 
+			$body, 
+			'From: '.$from
+		);
 	}
 
 	/// Logout of the entire site

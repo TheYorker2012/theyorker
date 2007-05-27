@@ -18,6 +18,36 @@ class Register extends Controller {
 		$this->load->model('prefs_model');
 	}
 
+	function newpass($user = null, $key = null) {
+		$password = $this->input->post('newpassword');
+		$password2 = $this->input->post('confirmnewpassword');
+
+		if (!CheckPermissions('public')) return;
+
+		try {
+			$this->user_auth->login($user, $key, false, true);
+		} catch (Exception $e) {
+			get_instance()->messages->AddMessage('error','<p>'.$e->getMessage().'</p>');
+			redirect('/account/password/register');
+		}
+
+		if (is_string($password)) {
+			if ($password == $password2) {
+				$this->user_auth->setPassword($password);
+				redirect('/register');
+			} else {
+				get_instance()->messages->AddMessage('error','<p>Passwords do not match.</p>');
+			}
+		}
+
+		$this->main_frame->SetTitleParameters(
+			array('section' => 'Set Password')
+		);
+
+		$this->main_frame->SetContentSimple('account/newpass', array());
+		$this->main_frame->Load();
+	}
+
 	/**
 	 *	@brief	Determines which function is used depending on url
 	 */
