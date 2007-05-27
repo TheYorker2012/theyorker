@@ -95,8 +95,9 @@ class Imagecp extends Controller {
 													   'image_title' => $this->input->post('image_title')
 													   ));
 				unlink($uploadData['full_path']);
+
+				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
 			}
-			$this->messages->AddMessage('success', 'Image Uploaded Successfully');
 			redirect('admin/imagecp/view/'.$codename.'/');
 		}
 
