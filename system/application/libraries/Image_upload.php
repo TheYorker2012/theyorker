@@ -198,7 +198,7 @@ class Image_upload {
 				putenv('GDFONTPATH=' . realpath('.').'/images');
 				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 				$font = 'arial';
-				imagettftext($newImage, 8, 0, 0, 0, $grey, $font, 'Test');
+				imagettftext($newImage, 8, 0, 10, 10, $grey, $font, 'Test');
 			//}
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
