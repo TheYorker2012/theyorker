@@ -229,7 +229,7 @@ function VipSegments($Set = NULL)
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	// Start a session
-	@session_start();
+	session_start();
 
 	// Translate some auxilliary permissions
 	$auxilliary_permissions = array(
