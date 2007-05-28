@@ -28,6 +28,7 @@
 		<div class="BlueBox">
 			<h2>watermark</h2>
 			<p> If you would like to have these photos watermarked, enter the watermark text in the box below. Leave this box blank otherwise.</p>
+			<p> Use the watermark to accredit the <b>author</b> of the photo, if necessary.</p>
 			<div>
 				<label for="watermark">Watermark: </label>
 				<input type="text" name="watermark" size="32" />
