@@ -57,6 +57,11 @@
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
 
 			if(document.getElementById('imageChoice').value == 'choose') {
+				//Crude fix for IE 6: initialise off screen
+				uploadedWrapMasterDiv = document.getElementById('uploadedWrapMaster');
+				//uploadedWrapMasterDiv.style.display = 'none';
+				uploadedWrapMasterDiv.style.position = 'relative';
+				uploadedWrapMasterDiv.style.left = '0px';
 				document.getElementById('uploadedWrapMaster').style.display = 'none';
 			}
 
@@ -134,12 +139,6 @@
 	function pageReady() {
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
-
-		//Crude fix for IE 6: initialise off screen
-		uploadedWrapMasterDiv = document.getElementById('uploadedWrapMaster');
-		uploadedWrapMasterDiv.style.display = 'none';
-		uploadedWrapMasterDiv.style.position = 'relative';
-		uploadedWrapMasterDiv.style.left = '0px';
 	}
 
 	onLoadFunctions.push(pageReady);
