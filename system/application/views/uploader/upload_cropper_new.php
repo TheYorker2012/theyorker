@@ -135,7 +135,7 @@
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
 
-		document.getElementById('uploadedWrapMaster').style.display = 'none';
+		//document.getElementById('uploadedWrapMaster').style.display = 'none';
 
 		document.getElementById('blanket').style.display = 'none';
 	}
