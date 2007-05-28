@@ -26,6 +26,14 @@
 			<input type="button" class="button" onclick="AddClones()" value="Add Another File"/>
 		</div>
 		<div class="BlueBox">
+			<h2>watermark</h2>
+			<p> If you would like to have these photos watermarked, enter the watermark text in the box below. Leave this box blank otherwise.</p>
+			<div>
+				<label for="watermark">Watermark: </label>
+				<input type="text" name="watermark" size="32" />
+			</div>
+		</div>
+		<div class="BlueBox">
 			<h2>next step...</h2>
 			<p>When you have finished selecting files, click the button below to proceed.</p>
 			<input type="submit" class="button" value="Upload" />

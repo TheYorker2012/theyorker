@@ -12,6 +12,7 @@ class Image_upload {
 		$this->ci->load->library(array('xajax', 'image'));
 		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		putenv('GDFONTPATH=' . realpath('.').'/images');
 	}
 
 	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
@@ -120,6 +121,7 @@ class Image_upload {
 		// 5 image type width
 		// 6 image type height
 		// 7 title
+		// 8 thumb_id
 
 		/* REDO
 		$securityCheck = array_search($selectedThumb[4], $_SESSION['img'][]['list']);// this is the line to change
@@ -190,17 +192,13 @@ class Image_upload {
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
 
-			// Create some colors
-			$grey = imagecolorallocate($im, 128, 128, 128);
-			// The text to draw
-			$text = 'Testing...';
-			putenv('GDFONTPATH=' . realpath('.'));
-			// Replace path by your own font path
-			$font = 'arial';
-
-			$objResponse->addAlert('GDFONTPATH=' . realpath('.'));
-
-			imagettftext($newImage, 12, 5, 20, 20, $grey, $font, $text);
+			//Water mark
+			$photowatermark = $selectedThumb[9];
+			if (strlen($photowatermark) > 0) {
+				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+				$font = 'arial';
+				imagettftext($newImage, 8, 90, $width - 5, $height - 5, $grey, $font, htmlspecialchars_decode($photowatermark));
+			}
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
@@ -259,6 +257,10 @@ class Image_upload {
 				$image = imagecreatefrompng($data['full_path']);
 				break;
 		}
+
+		$width = $data['image_width'];
+		$height = $data['image_height'];
+
 		if ($data['image_width'] > VIEW_WIDTH) {
 			$ratio_orig = $data['image_width']/$data['image_height'];
 			$width = VIEW_WIDTH;
@@ -270,19 +272,18 @@ class Image_upload {
 			}
 			$newImage = imagecreatetruecolor($width, $height);
 			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $data['image_width'], $data['image_height']);
-
-			// Create some colors
-			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
-			// The text to draw
-			$text = 'Testing...';
-			putenv('GDFONTPATH=' . realpath('.').'/images');
-			// Replace path by your own font path
-			$font = 'arial';
-
-			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, $text);
 		} else {
 			$newImage = $image;
 		}
+
+		//Water mark
+		$photowatermark = (isset($this->ci->input->post('watermark')) ? trim($this->ci->input->post('watermark')) : '');
+		if (strlen($photowatermark) > 0) {
+			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+			$font = 'arial';
+			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
+		}
+
 		$x = imagesx($newImage);
 		$y = imagesy($newImage);
 
@@ -300,9 +301,11 @@ class Image_upload {
 				return false;
 			} else {
 				foreach ($ThumbDetails->result() as $Thumb) {
+					$watermark = ($Thumb->image_type_codename == 'medium' && $photowatermark ? str_replace('|', '', $photowatermark) : ''));
+
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.$id.'-'.$Thumb->image_type_id,
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.str_replace('|', '', $this->ci->input->post('title'.$form_value)).'|'.$id.'-'.$Thumb->image_type_id.'|'.$watermark,
 					                  'thumb_id' => $id.'-'.$Thumb->image_type_id
 					                  );
 				}
@@ -320,11 +323,15 @@ class Image_upload {
 					break;
 			}
 			foreach ($ThumbDetails->result() as $Thumb) {
+				$watermark = ($photowatermark ? str_replace('|', '', $photowatermark) : ''));
+
 				$_SESSION['img'][] = array('list'		=> count($_SESSION['img']),
 				                           'type'		=> $Thumb->image_type_id,
 				                           'codename'	=> $Thumb->image_type_codename);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
+				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.$id.'-'.$Thumb->image_type_id.'|'.$watermark,
+				                  'thumb_id' => $id.'-'.$Thumb->image_type_id
+				                  );
 			}
 		}
 		return $output;
