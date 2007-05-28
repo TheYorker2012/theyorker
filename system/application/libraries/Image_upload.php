@@ -198,6 +198,8 @@ class Image_upload {
 			// Replace path by your own font path
 			$font = 'arial';
 
+			$objResponse->addAlert('GDFONTPATH=' . realpath('.'));
+
 			imagettftext($newImage, 12, 5, 0, $formData['height'] - 5, $grey, $font, $text);
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
