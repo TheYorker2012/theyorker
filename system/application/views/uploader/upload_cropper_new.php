@@ -25,7 +25,7 @@
 		 * @return void
 		 */
 		init: function() {
-			//this.setImage('/images/null-blank.jpg', 380, 235, 1);
+			this.setImage('/images/null-blank.jpg', 380, 235, 1);
 		},
 
 		/**
@@ -205,7 +205,7 @@
 	</div>
 </div>
 
-<div id="thumbWrapMaster" class="BlueBox" style="display: none; width: 100%;">
+<div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
