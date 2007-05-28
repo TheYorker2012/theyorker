@@ -12,6 +12,7 @@ class Image_upload {
 		$this->ci->load->library(array('xajax', 'image'));
 		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
+		putenv('GDFONTPATH=' . realpath('.').'/images');
 	}
 
 	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
@@ -190,16 +191,7 @@ class Image_upload {
 			}
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
-			//imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
-
-			//Water mark
-			//$photowatermark = $selectedThumb[9];
-			//if (strlen($photowatermark) > 0) {
-				putenv('GDFONTPATH=' . realpath('.').'/images');
-				$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
-				$font = 'arial';
-				imagettftext($newImage, 8, 0, 10, 10, $grey, $font, 'Test');
-			//}
+			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
@@ -235,7 +227,9 @@ class Image_upload {
 		} else {
 			$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? AND photo_thumbs_image_type_id = ? LIMIT 1';
 			$this->ci->db->query($sql, array($selectedThumb[4], $selectedThumb[3]));
-			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
+			if (!$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height'], $selectedThumb[9]) ) {
+				$objResponse->addAlert("The thumbnail was not saved, please try again.");
+			}
 		}
 
 		$objResponse->addScriptCall("registerImageSave", $selectedThumb[4].'-'.$selectedThumb[3]);
@@ -281,7 +275,6 @@ class Image_upload {
 		$photowatermark = $this->ci->input->post('watermark');
 		$photowatermark = (isset($photowatermark) ? trim($this->ci->input->post('watermark')) : '');
 		if (strlen($photowatermark) > 0) {
-			putenv('GDFONTPATH=' . realpath('.').'/images');
 			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 			$font = 'arial';
 			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));

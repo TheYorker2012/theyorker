@@ -6,6 +6,7 @@ class Image {
 
 	public function Image() {
 		$this->ci = &get_instance();
+		putenv('GDFONTPATH=' . realpath('.').'/images');
 	}
 
 	public function getPhoto($photoID) {
@@ -153,7 +154,7 @@ class Image {
 		return false;
 	}
 
-	public function thumbnail($photoID, $type, $x1, $y1, $x2, $y2) {
+	public function thumbnail($photoID, $type, $x1, $y1, $x2, $y2, $watermark = '') {
 
 		//GRAB
 		$sql = 'SELECT photo_data, photo_mime FROM photos WHERE photo_id = ? LIMIT 1';
@@ -164,11 +165,20 @@ class Image {
 		} else {
 			return false;
 		}
+
 		//CROP resized too
 		$newImage = imagecreatetruecolor($type->x, $type->y);
-		//if (!imagecopyresampled($newImage, $image, 0, 0, $x1, $y1, $type->x, $type->y, $x2, $y2)) {
-			//return false;
-		//}
+		if (!imagecopyresampled($newImage, $image, 0, 0, $x1, $y1, $type->x, $type->y, $x2, $y2)) {
+			return false;
+		}
+
+		//WATERMARK
+		if (strlen($watermark) > 0) {
+			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+			$font = 'arial';
+			imagettftext($newImage, 8, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
+		}
+
 		//STORE
 		$newImage = $this->image2string($newImage, $result->photo_mime);
 		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_data) VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
