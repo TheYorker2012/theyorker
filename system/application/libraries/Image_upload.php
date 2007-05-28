@@ -277,7 +277,7 @@ class Image_upload {
 			$text = 'Testing...';
 			putenv('GDFONTPATH=' . realpath('.'));
 			// Replace path by your own font path
-			$font = 'arial';
+			$font = 'arial.ttf';
 
 			imagettftext($newImage, 18, 0, 20, 20, $grey, $font, $text);
 
