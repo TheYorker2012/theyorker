@@ -94,7 +94,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbTypeList.each(function(item) {
 			  msg += thumbTypeNameMap[item] + '\n';
-			};
+			});
 			return msg;
 		}
 	}
@@ -104,7 +104,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbTypeList.each(function(item) {
 			  msg += thumbTypeNameMap[item] + '\n';
-			};
+			});
 			alert(msg);
 			return false;
 		} else {
