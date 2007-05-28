@@ -198,7 +198,8 @@
 </div>
 
 <div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
-<h2>stored thumbnails</h2>
+<h2>thumbnail scratchpad</h2>
+<p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
 <tr>
 <?php
