@@ -189,6 +189,17 @@ class Image_upload {
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
+
+			// Create some colors
+			$grey = imagecolorallocate($im, 128, 128, 128);
+			// The text to draw
+			$text = 'Testing...';
+			putenv('GDFONTPATH=' . realpath('.'));
+			// Replace path by your own font path
+			$font = 'arial';
+
+			imagettftext($newImage, 12, 5, 0, $formData['height'] - 5, $grey, $font, $text);
+
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
