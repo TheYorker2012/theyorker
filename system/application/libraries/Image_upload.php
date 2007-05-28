@@ -122,6 +122,7 @@ class Image_upload {
 		// 6 image type height
 		// 7 title
 		// 8 thumb_id
+		// 9 watermark
 
 		/* REDO
 		$securityCheck = array_search($selectedThumb[4], $_SESSION['img'][]['list']);// this is the line to change
@@ -197,7 +198,7 @@ class Image_upload {
 			if (strlen($photowatermark) > 0) {
 				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 				$font = 'arial';
-				imagettftext($newImage, 8, 90, $width - 5, $height - 5, $grey, $font, htmlspecialchars_decode($photowatermark));
+				imagettftext($newImage, 8, 90, $result->x - 5, $result->y - 5, $grey, $font, htmlspecialchars_decode($photowatermark));
 			}
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
