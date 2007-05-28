@@ -61,10 +61,10 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
 
-			document.getElementById('uploadedWrap').style.display = 'block';
-
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
+				document.getElementById('uploadedWrap').style.display = 'block';
+
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
