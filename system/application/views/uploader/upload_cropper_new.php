@@ -51,12 +51,6 @@
 
 			//IE 6 Requires the div to be displayed for setImage is run
 			if(document.getElementById('imageChoice').value != 'choose') {
-				//Crude fix for IE 6: initialise off screen
-				uploadedWrapMasterDiv = document.getElementById('uploadedWrapMaster');
-				//uploadedWrapMasterDiv.style.display = 'none';
-				uploadedWrapMasterDiv.style.position = 'relative';
-				uploadedWrapMasterDiv.style.left = '0px';
-
 				document.getElementById('uploadedWrapMaster').style.display = 'block';
 			}
 
@@ -211,6 +205,10 @@
 	</div>
 </div>
 
+<div id="blanket" style="color:#000033; clear: both; background-color:#cccccc; position:absolute; top:100px; left:100px; width:480px; height:280px; z-index:99;">
+
+</div>
+
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
@@ -232,7 +230,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </table>
 </div>
 
-<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%; ">
+<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
