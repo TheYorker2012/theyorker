@@ -47,16 +47,24 @@
 				}
 			}
 
+			document.getElementById('thumbWrapMaster').style.display = 'block';
+
+			//IE 6 Requires the div to be displayed for setImage is run
+			if(document.getElementById('imageChoice').value != 'choose') {
+				document.getElementById('uploadedWrapMaster').style.display = 'block';
+			}
+
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
+
+			if(document.getElementById('imageChoice').value == 'choose') {
+				document.getElementById('uploadedWrapMaster').style.display = 'none';
+			}
 
 			currentThumb = vals[8];
 			currentSelectIndex = document.getElementById('imageChoice').selectedIndex;
 
 			//Put the current thumb into a list of unsaved thumbs
 			if ( thumbSecondSaveList.grep(currentThumb).length == 0) thumbSecondSaveList.push(currentThumb);
-
-			document.getElementById('uploadedWrapMaster').style.display = (document.getElementById('imageChoice').value == 'choose' ? 'none' : 'block' );
-			document.getElementById('thumbWrapMaster').style.display = 'block';
 		},
 
 		/**
