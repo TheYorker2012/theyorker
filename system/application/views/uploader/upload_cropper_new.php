@@ -30,9 +30,6 @@
 		 */
 		init: function() {
 			this.setImage('/images/null-blank.jpg', 380, 235, 1);
-
-			document.getElementById('uploadedWrapMaster').style.display = 'none';
-			document.getElementById('blanket').style.display = 'none';
 		},
 
 		/**
@@ -138,13 +135,6 @@
 		}
 	}
 
-	function pageReady() {
-		document.getElementById('loadingWrap').style.display = 'none';
-		document.getElementById('dropdownWrap').style.display = 'block';
-	}
-
-	onLoadFunctions.push(pageReady);
-
 	function canReturn() {
 		if(thumbList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
@@ -169,15 +159,21 @@
 		$( 'height' ).value = dimensions.height;
 	}
 
-	// basic example
-	Event.observe(
-		window,
-		'load',
-		function() {
-			CropImageManager.init();
-			Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
-		}
-	);
+	onLoadFunctions.push (function() {
+		alert('1');
+		CropImageManager.init();
+		Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
+	});
+
+	onLoadFunctions.push (function() {
+		alert('2');
+
+		document.getElementById('uploadedWrapMaster').style.display = 'none';
+		document.getElementById('blanket').style.display = 'none';
+
+		document.getElementById('loadingWrap').style.display = 'none';
+		document.getElementById('dropdownWrap').style.display = 'block';
+	});
 
 </script>
 
