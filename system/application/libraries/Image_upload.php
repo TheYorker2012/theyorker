@@ -76,33 +76,32 @@ class Image_upload {
 		$data = array();
 		$this->ci->upload->initialize($config);
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
-			if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-				$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
-				redirect($returnPath, 'location');
-			} else {
-				$data[] = $this->ci->upload->data();
-
-				if (!$data[$x - 1]['is_image']) {
-					$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
-					redirect($returnPath, 'location');
-				} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
-					// fix for Microsoft's Stupidity
-					if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
-						$data[$x - 1]['file_type'] = 'image/jpeg';
-					}
-					$title = $this->ci->input->post('title'.$x);
-					if (isset($title) && strlen($title) > 0) {
-						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
-					} else {
-						unset($data[$x - 1]);
-					}
-				} elseif($this->ci->input->post('destination') == 1) {
-					//redirect back home
-					$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
+			$title = $this->ci->input->post('title'.$x);
+			if (isset($title) && strlen($title) > 0) {
+				if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
+					$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
 					redirect($returnPath, 'location');
 				} else {
-					//just display error
-					$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
+					$data[] = $this->ci->upload->data();
+
+					if (!$data[$x - 1]['is_image']) {
+						$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
+						redirect($returnPath, 'location');
+					} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+						// fix for Microsoft's Stupidity
+						if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
+							$data[$x - 1]['file_type'] = 'image/jpeg';
+						}
+						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+
+					} elseif($this->ci->input->post('destination') == 1) {
+						//redirect back home
+						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
+						redirect($returnPath, 'location');
+					} else {
+						//just display error
+						$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
+					}
 				}
 			}
 		}
