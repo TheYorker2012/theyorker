@@ -260,7 +260,7 @@ class Image_upload {
 				break;
 		}
 
-		define('VIEW_WIDTH', 650);
+		define('VIEW_WIDTH', 300);
 
 		if ($data['image_width'] > VIEW_WIDTH) {
 			$ratio_orig = $data['image_width']/$data['image_height'];
