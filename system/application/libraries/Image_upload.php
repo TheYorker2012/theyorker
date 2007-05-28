@@ -190,13 +190,13 @@ class Image_upload {
 			}
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
-			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
+			//imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
 
 			//Water mark
 			//$photowatermark = $selectedThumb[9];
 			//if (strlen($photowatermark) > 0) {
 				putenv('GDFONTPATH=' . realpath('.').'/images');
-				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+				$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 				$font = 'arial';
 				imagettftext($newImage, 8, 0, 10, 10, $grey, $font, 'Test');
 			//}
