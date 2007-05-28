@@ -259,7 +259,10 @@ class Image_upload {
 				$image = imagecreatefrompng($data['full_path']);
 				break;
 		}
-		if (true) { //($data['image_width'] > VIEW_WIDTH) {
+
+		define('VIEW_WIDTH', 650);
+
+		if ($data['image_width'] > VIEW_WIDTH) {
 			$ratio_orig = $data['image_width']/$data['image_height'];
 			$width = VIEW_WIDTH;
 			$height = VIEW_HEIGHT;
