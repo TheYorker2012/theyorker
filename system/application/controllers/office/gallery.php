@@ -268,7 +268,7 @@ class Gallery extends Controller {
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
-		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => '/office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'ThumbDetails' => &$thumbDetails, 'type' => true));
+		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => 'office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'ThumbDetails' => &$thumbDetails, 'type' => true));
 		$this->main_frame->Load();
 	}
 }
