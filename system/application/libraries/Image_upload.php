@@ -279,7 +279,7 @@ class Image_upload {
 			// Replace path by your own font path
 			$font = 'arial';
 
-			imagettftext($newImage, 8, 270, 50, 50, $grey, $font, $text);
+			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, $text);
 		} else {
 			$newImage = $image;
 		}
