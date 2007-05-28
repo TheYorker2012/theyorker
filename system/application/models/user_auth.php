@@ -633,7 +633,7 @@ class User_auth extends model {
 				AND subscriptions.subscription_vip = TRUE
 				AND entity_password = ?';
 
-		$query = $this->db->query($sql, array($this->entityId, $organisationId/*, $hash*/));
+		$query = $this->db->query($sql, array($this->entityId, $organisationId, $hash));
 
 		if ($query->num_rows() != 1) {
 			/// @throw Exception Invalid organisation or password
