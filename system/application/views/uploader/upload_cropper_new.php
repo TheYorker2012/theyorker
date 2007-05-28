@@ -98,7 +98,7 @@
 		if(thumbList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbList.each(function(item) {
-			  msg += '- ' + thumbNameMap[item] + '\n';
+			  msg += ' ' + thumbNameMap[item] + '\n';
 			});
 			return msg;
 		}
@@ -115,7 +115,7 @@
 		if(thumbList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbList.each(function(item) {
-			  msg += '- ' + thumbNameMap[item] + '\n';
+			  msg += ' ' + thumbNameMap[item] + '\n';
 			});
 			msg += '\nYou must save all thumbnail sizes to continue.';
 			alert(msg);
