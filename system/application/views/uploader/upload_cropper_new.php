@@ -1,11 +1,11 @@
 
 <div class="BlueBox" style="width: 100%;">
-<h3>instructions</h3>
+<h2>instructions</h2>
 <p>Please select a thumbnail size from the drop down box, and use the tool below to crop your photo appropriately. Press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
 </div>
 
 <div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
-<h3>thumbnails</h3>
+<h2>thumbnails</h2>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
@@ -156,7 +156,7 @@ foreach ($ThumbDetails->result() as $Single) {
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 <div class="BlueBox" style="width: 100%;">
-	<h3>thumbnail selector</h3>
+	<h2>thumbnail selector</h2>
 	<div id="loadingWrap">
 		<p>Loading...</p>
 	</div>
@@ -174,16 +174,13 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
+	<br />
 	</div>
 </div>
-<div class="BlueBox" style="width: 100%;">
-	<h3>original photograph</h3>
-	<div style="clear: both;"></div>
-	<div id="uploadedWrapMaster" style="display: none;">
-		<p>Original Photo: -</p>
-		<div id="uploadedWrap">
-			<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
-		</div>
+<div id="uploadedWrapMaster" class="BlueBox" style="display: none; width: 100%;">
+	<h2>original photograph</h2>
+	<div id="uploadedWrap">
+		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 	<input type="hidden" name="x1" id="x1" />
 	<input type="hidden" name="y1" id="y1" />
@@ -193,4 +190,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	<input type="hidden" name="height" id="height" />
 </div>
 </form>
-<p><a href="/<?=$returnPath?>" onclick="return canReturn();">Return</a></p>
+<div class="BlueBox" style="width: 100%;">
+	<h2>finished</h2>
+	<p>If you have thumbnailed all photos, click the button below:</p>
+	<p><input type="button" onclick="if (canReturn()) window.location='\<?=$returnPath?>';" value="Finish" /></p>
