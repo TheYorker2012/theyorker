@@ -25,7 +25,7 @@
 		 * @return void
 		 */
 		init: function() {
-			this.setImage('/images/null-blank.jpg', 380, 235, 1);
+			//this.setImage('/images/null-blank.jpg', 380, 235, 1);
 		},
 
 		/**
