@@ -325,8 +325,8 @@ class Image_upload {
 				                           'type'		=> $Thumb->image_type_id,
 				                           'codename'	=> $Thumb->image_type_codename);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.$id.'-'.$Thumb->image_type_id.'|'.$watermark,
-				                  'thumb_id' => $id.'-'.$Thumb->image_type_id
+				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.count($output).'-'.$Thumb->image_type_id.'|'.$watermark,
+				                  'thumb_id' => count($output).'-'.$Thumb->image_type_id
 				                  );
 			}
 		}
