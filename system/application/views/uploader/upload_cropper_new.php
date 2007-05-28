@@ -67,7 +67,7 @@
 			currentSelectIndex = document.getElementById('imageChoice').selectedIndex;
 
 			//Put the current thumb into a list of unsaved thumbs
-			if ( thumbSecondSaveList.grep(currentThumb).length == 0 && currentThumb) thumbSecondSaveList.push(currentThumb);
+			if ( thumbSecondSaveList.grep(currentThumb).length == 0 && currentSelectIndex != 0) thumbSecondSaveList.push(currentThumb);
 		},
 
 		/**
