@@ -226,7 +226,7 @@ class Image_upload {
 			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
 		}
 
-		$objResponse->addScriptCall("registerImageSave", $selectedThumb[4]);
+		$objResponse->addScriptCall("registerImageSave", $selectedThumb[3]);
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 

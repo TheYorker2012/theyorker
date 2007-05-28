@@ -103,7 +103,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		if(thumbTypeList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbTypeList.each(function(item) {
-			  msg += thumbTypeNameMap[item] + '\n';
+			  msg += '- ' + thumbTypeNameMap[item] + '\n';
 			});
 			alert(msg);
 			return false;
