@@ -6,7 +6,6 @@ class Image {
 
 	public function Image() {
 		$this->ci = &get_instance();
-		putenv('GDFONTPATH=' . realpath('.').'/images');
 	}
 
 	public function getPhoto($photoID) {
@@ -174,6 +173,7 @@ class Image {
 
 		//WATERMARK
 		if (strlen($watermark) > 0) {
+			putenv('GDFONTPATH=' . realpath('.').'/images');
 			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 			$font = 'arial';
 			imagettftext($newImage, 8, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
