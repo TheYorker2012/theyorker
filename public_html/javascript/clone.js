@@ -30,8 +30,8 @@ function AddClones() {
 function ValidateClones() {
 	var Spawn = document.getElementById('destination');
 	var BrothersOfSpawn = Spawn.parentNode.childNodes;
-	for (var i=0; i<BrothersOfSpawn.length; i++) {
-		if(BrothersOfSpawn[i].nodeName == 'DIV') {
+	for (var j=0; j<BrothersOfSpawn.length; j++) {
+		if(BrothersOfSpawn[j].nodeName == 'DIV') {
 			var BrothersOfSpawnSons = BrothersOfSpawn[i].childNodes;
 			for (var i=0; i<BrothersOfSpawnSons.length; i++) {
 				if(BrothersOfSpawnSons[i].name && BrothersOfSpawnSons[i].name.substr(0,5) == 'title' && BrothersOfSpawnSons[i].value == '') {
