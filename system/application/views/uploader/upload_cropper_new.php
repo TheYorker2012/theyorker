@@ -112,7 +112,7 @@
 	<?php
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
-			if (strlen($singleThumb['thumb_id']) > 0) {
+			if (!$noforcesave) {
 			?>
 			thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
 			thumbList.push('<?=$singleThumb['thumb_id']?>');
@@ -134,8 +134,16 @@
 			  msg += ' ' + thumbNameMap[item] + '\n';
 			});
 			return msg;
+		} else if(thumbSecondSaveList.length != 0) {
+			var msg = 'You were editing the following thumbnails, but didn\'t save them:\n';
+			thumbSecondSaveList.each(function(item) {
+			  msg += ' ' + thumbNameMap[item] + '\n';
+			});
+			return msg;
 		}
 	}
+
+currentSelectIndex != 0
 
 	function canReturn() {
 		if(thumbList.length != 0) {
@@ -146,6 +154,13 @@
 			msg += '\nYou must save all thumbnail sizes to continue.';
 			alert(msg);
 			return false;
+		} else if(thumbSecondSaveList.length != 0) {
+			var msg = 'You were editing the following thumbnails, but didn\'t save them:\n';
+			thumbSecondSaveList.each(function(item) {
+			  msg += ' ' + thumbNameMap[item] + '\n';
+			});
+			msg += '\nAre you sure you want to continue?';
+			return confirm(msg);
 		} else {
 			return true;
 		}

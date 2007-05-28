@@ -256,8 +256,8 @@ class Gallery extends Controller {
 		foreach ($photoDetails->result() as $Photo) {
 			foreach ($thumbDetails->result() as $Thumb) {
 				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|||';
-				$output[$loop]['thumb_id'] = '';
+				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.str_replace('|', '', $Photo->photo_title).'|'.$Photo->photo_id.'-'.$Thumb->image_type_id.'|';
+				$output[$loop]['thumb_id'] = $Photo->photo_id.'-'.$Thumb->image_type_id;
 				$loop++;
 			}
 		}
@@ -268,7 +268,7 @@ class Gallery extends Controller {
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);
-		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => 'office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'ThumbDetails' => &$thumbDetails, 'type' => true));
+		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => 'office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'noforcesave' => true,  'ThumbDetails' => &$thumbDetails, 'type' => true));
 		$this->main_frame->Load();
 	}
 }
