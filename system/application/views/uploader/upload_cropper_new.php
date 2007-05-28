@@ -26,6 +26,9 @@
 		 */
 		init: function() {
 			this.setImage('/images/null-blank.jpg', 380, 235, 1);
+
+			document.getElementById('uploadedWrapMaster').style.display = 'none';
+			document.getElementById('blanket').style.display = 'none';
 		},
 
 		/**
@@ -134,10 +137,6 @@
 	function pageReady() {
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
-
-		//document.getElementById('uploadedWrapMaster').style.display = 'none';
-
-		document.getElementById('blanket').style.display = 'none';
 	}
 
 	onLoadFunctions.push(pageReady);
