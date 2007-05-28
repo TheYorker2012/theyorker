@@ -134,6 +134,10 @@
 	function pageReady() {
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
+
+		document.getElementById('uploadedWrapMaster').style.display = 'none';
+
+		document.getElementById('blanket').style.display = 'none';
 	}
 
 	onLoadFunctions.push(pageReady);
@@ -205,11 +209,11 @@
 	</div>
 </div>
 
-<div id="blanket" style="color:#000033; clear: both; background-color:#cccccc; position:absolute; top:100px; left:100px; width:480px; height:280px; z-index:99;">
+<div id="blanket" style="clear: both; position: relative; width: 480px; height: 4000px;">
 
 </div>
 
-<div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%;">
+<div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%; display: none;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
