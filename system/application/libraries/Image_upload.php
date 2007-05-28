@@ -275,7 +275,7 @@ class Image_upload {
 			$grey = imagecolorallocate($newImage, 0, 0, 0);
 			// The text to draw
 			$text = 'Testing...';
-			//putenv('GDFONTPATH=' . realpath('.').'/images');
+			putenv('GDFONTPATH=' . realpath('.').'/images');
 			// Replace path by your own font path
 			$font = 'arial';
 
