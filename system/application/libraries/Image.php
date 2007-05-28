@@ -166,9 +166,9 @@ class Image {
 		}
 		//CROP resized too
 		$newImage = imagecreatetruecolor($type->x, $type->y);
-		if (!imagecopyresampled($newImage, $image, 0, 0, $x1, $y1, $type->x, $type->y, $x2, $y2)) {
-			return false;
-		}
+		//if (!imagecopyresampled($newImage, $image, 0, 0, $x1, $y1, $type->x, $type->y, $x2, $y2)) {
+			//return false;
+		//}
 		//STORE
 		$newImage = $this->image2string($newImage, $result->photo_mime);
 		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_data) VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
