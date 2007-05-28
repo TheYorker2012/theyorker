@@ -32,7 +32,7 @@ function ValidateClones() {
 	var BrothersOfSpawn = Spawn.parentNode.childNodes;
 	for (var j=0; j<BrothersOfSpawn.length; j++) {
 		if(BrothersOfSpawn[j].nodeName == 'DIV') {
-			var BrothersOfSpawnSons = BrothersOfSpawn[i].childNodes;
+			var BrothersOfSpawnSons = BrothersOfSpawn[j].childNodes;
 			for (var i=0; i<BrothersOfSpawnSons.length; i++) {
 				if(BrothersOfSpawnSons[i].name && BrothersOfSpawnSons[i].name.substr(0,5) == 'title' && BrothersOfSpawnSons[i].value == '') {
 					return confirm('You have some images without titles, these will be ignored by the uploader. Are you sure you want to continue?');
