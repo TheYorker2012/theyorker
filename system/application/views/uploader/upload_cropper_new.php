@@ -44,7 +44,7 @@
 			var vals = $F( Event.element( e ) ).split('|');
 
 			//If the thumb has not been saved, flag an error
-			if ( thumbSecondSaveList.grep(currentThumb).length > 0) {
+			if ( thumbSecondSaveList.grep(currentThumb).length > 0 && currentSelectIndex != 0) {
 				if(!confirm('You have not saved changes to this thumbnail. Are you sure you want to switch to a different thumbnail?')) {
 					document.getElementById('imageChoice').selectedIndex = currentSelectIndex;
 					return false;
