@@ -43,9 +43,9 @@ foreach ($ThumbDetails->result() as $Single) {
 		 * @return void
 		 */
 		onChange: function( e ) {
-			document.getElementById('uploadedWrapMaster').style.display = 'none';
 			var vals = $F( Event.element( e ) ).split('|');
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
+			document.getElementById('uploadedWrapMaster').style.display = 'block';
 		},
 
 		/**
@@ -104,10 +104,6 @@ foreach ($ThumbDetails->result() as $Single) {
 	function pageReady() {
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
-
-		document.getElementById('uploadedImage').load = function() {
-			document.getElementById('uploadedWrapMaster').style.display = 'block';
-		}
 	}
 
 	onLoadFunctions.push(pageReady);
