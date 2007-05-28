@@ -10,6 +10,8 @@ class Logout extends Controller
 	function __construct()
 	{
 		parent::Controller();
+
+		session_start();
 		
 		$this->load->library('messages');
 
