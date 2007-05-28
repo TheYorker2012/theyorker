@@ -62,7 +62,7 @@ class Image_upload {
 		$config['max_size'] = 16384;
 
 		if (is_array($types)) {
-			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height');
+			$query = $this->ci->db->select('image_type_id, image_type_codename, image_type_name, image_type_width, image_type_height');
 			$query = $query->where('image_type_photo_thumbnail', $photo);
 			$type = array_pop($types);
 			$query = $query->where('image_type_codename', $type);
@@ -71,7 +71,7 @@ class Image_upload {
 			}
 			$query = $query->get('image_types');
 		} else {
-			$query = $this->ci->db->select('image_type_id, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
+			$query = $this->ci->db->select('image_type_id, image_type_codename, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
 		}
 		$data = array();
 		$this->ci->upload->initialize($config);
@@ -277,7 +277,8 @@ class Image_upload {
 		}
 
 		//Water mark
-		$photowatermark = (isset($this->ci->input->post('watermark')) ? trim($this->ci->input->post('watermark')) : '');
+		$photowatermark = $this->ci->input->post('watermark');
+		$photowatermark = (isset($photowatermark) ? trim($this->ci->input->post('watermark')) : '');
 		if (strlen($photowatermark) > 0) {
 			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 			$font = 'arial';
@@ -301,7 +302,7 @@ class Image_upload {
 				return false;
 			} else {
 				foreach ($ThumbDetails->result() as $Thumb) {
-					$watermark = ($Thumb->image_type_codename == 'medium' && $photowatermark ? str_replace('|', '', $photowatermark) : ''));
+					$watermark = ($Thumb->image_type_codename == 'medium' && $photowatermark ? str_replace('|', '', $photowatermark) : '');
 
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
@@ -323,7 +324,7 @@ class Image_upload {
 					break;
 			}
 			foreach ($ThumbDetails->result() as $Thumb) {
-				$watermark = ($photowatermark ? str_replace('|', '', $photowatermark) : ''));
+				$watermark = ($photowatermark ? str_replace('|', '', $photowatermark) : '');
 
 				$_SESSION['img'][] = array('list'		=> count($_SESSION['img']),
 				                           'type'		=> $Thumb->image_type_id,
