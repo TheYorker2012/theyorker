@@ -61,7 +61,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
 
-			getElementById('uploadedWrap').style.display = 'block';
+			document.getElementById('uploadedWrap').style.display = 'block';
 
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
@@ -103,8 +103,8 @@ foreach ($ThumbDetails->result() as $Single) {
 	}
 
 	function pageReady() {
-		getElementById('loadingWrap').style.display = 'none';
-		getElementById('dropdownWrap').style.display = 'block';
+		document.getElementById('loadingWrap').style.display = 'none';
+		document.getElementById('dropdownWrap').style.display = 'block';
 	}
 
 	onLoadFunctions.push(pageReady);
