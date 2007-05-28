@@ -1,9 +1,13 @@
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
-		xajax.$('submitButton').disabled=true;
-		xajax.$('submitButton').value="Saving...";
-		xajax_process_form_data(xajax.getFormValues("pictureCrop"));
+		if(currentSelectIndex!=0) {
+			xajax.$('submitButton').disabled=true;
+			xajax.$('submitButton').value="Saving...";
+			xajax_process_form_data(xajax.getFormValues("pictureCrop"));
+		} else {
+			alert('Please select a thumbnail.');
+		}
 		return false;
 	}
 
@@ -177,7 +181,7 @@
 
 </script>
 
-<form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
+<form id="pictureCrop" action="javascript:void(null);" onsubmit="return submitPicture();">
 <div class="BlueBox" style="width: 100%;">
 	<div style="float: right; width: 55%;">
 	<ol>
