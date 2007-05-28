@@ -272,14 +272,14 @@ class Image_upload {
 			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $data['image_width'], $data['image_height']);
 
 			// Create some colors
-			$grey = imagecolorallocate($newImage, 255, 255, 255);
+			$grey = imagecolorallocate($newImage, 0, 0, 0);
 			// The text to draw
 			$text = 'Testing...';
 			putenv('GDFONTPATH=' . realpath('.').'/images');
 			// Replace path by your own font path
 			$font = 'arial';
 
-			imagettftext($newImage, 10, 0, 5, $data['image_height'] - 5, $grey, $font, $text);
+			imagettftext($newImage, 10, 0, 5, $height - 5, $grey, $font, $text);
 		} else {
 			$newImage = $image;
 		}
