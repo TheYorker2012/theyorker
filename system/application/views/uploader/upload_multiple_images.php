@@ -13,7 +13,7 @@
 	<form action="<?=site_url($this->uri->uri_string())?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
 		<div class="BlueBox">
 			<h2>image upload</h2>
-			<p> Please choose the photos you wish up upload here. Each file is limited to 2Mb in size, and must be larger than 220x165 in resolution.</p>
+			<p> Please choose the images you wish up upload here. Each file is limited to 2Mb in size, and must be larger than the image size required.</p>
 			<div>
 				<label for="title1">Title / ALT Text: </label>
 				<input type="text" name="title1" size="32" />

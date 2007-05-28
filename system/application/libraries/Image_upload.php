@@ -90,7 +90,12 @@ class Image_upload {
 					if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
 						$data[$x - 1]['file_type'] = 'image/jpeg';
 					}
-					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+					$title = $this->ci->input->post('title'.$x);
+					if (isset($title) && strlen($title) > 0) {
+						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
+					} else {
+						unset($data[$x - 1]);
+					}
 				} elseif($this->ci->input->post('destination') == 1) {
 					//redirect back home
 					$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
