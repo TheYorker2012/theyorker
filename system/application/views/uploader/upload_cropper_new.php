@@ -160,13 +160,8 @@
 	}
 
 	onLoadFunctions.push (function() {
-		alert('1');
 		CropImageManager.init();
 		Event.observe( $('imageChoice'), 'change', CropImageManager.onChange.bindAsEventListener( CropImageManager ), false );
-	});
-
-	onLoadFunctions.push (function() {
-		alert('2');
 
 		document.getElementById('uploadedWrapMaster').style.display = 'none';
 		document.getElementById('blanket').style.display = 'none';
