@@ -78,7 +78,7 @@
 	var thumbTypeList = new Array();
 	var thumbTypeNameMap = new Array();
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
-		thumbTypeNameMap[<?=$Single->image_type_id?>] = '<?=$Single->image_type_name?>';
+		thumbTypeNameMap[<?=$Single->image_type_id?>] = '<?=str_replace("'", "\\'", $Single->image_type_name)?>';
 		thumbTypeList.push(<?=$Single->image_type_id?>);
 <?php		endforeach; ?>
 
@@ -172,7 +172,7 @@
 
 <div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
 <h2>stored thumbnails</h2>
-<table border="0">
+<table border="0" width="100%">
 <tr>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
