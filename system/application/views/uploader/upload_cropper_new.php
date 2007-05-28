@@ -76,22 +76,29 @@
 	};
 
 
-	var thumbTypeList = new Array();
-	var thumbTypeNameMap = new Array();
-<?php		foreach ($ThumbDetails->result() as $Single) : ?>
-		thumbTypeNameMap[<?=$Single->image_type_id?>] = '<?=str_replace("'", "\\'", $Single->image_type_name)?>';
-		thumbTypeList.push(<?=$Single->image_type_id?>);
-<?php		endforeach; ?>
+	var thumbList = new Array();
+	var thumbNameMap = new Array();
 
-	function registerImageSave(image_type_id) {
-		thumbTypeList = thumbTypeList.without(image_type_id);
+	<?php
+	foreach($data as $d) {
+		foreach($d as $singleThumb) {
+		?>
+		thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
+		thumbList.push('<?=$singleThumb['thumb_id']?>');
+		<?
+		}
+	}
+	?>
+
+	function registerImageSave(thumb_id) {
+		thumbList = thumbList.without(thumb_id);
 	}
 
 	window.onbeforeunload = function () {
-		if(thumbTypeList.length != 0) {
+		if(thumbList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
-			thumbTypeList.each(function(item) {
-			  msg += '- ' + thumbTypeNameMap[item] + '\n';
+			thumbList.each(function(item) {
+			  msg += '- ' + thumbNameMap[item] + '\n';
 			});
 			return msg;
 		}
@@ -105,10 +112,10 @@
 	onLoadFunctions.push(pageReady);
 
 	function canReturn() {
-		if(thumbTypeList.length != 0) {
+		if(thumbList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
-			thumbTypeList.each(function(item) {
-			  msg += '- ' + thumbTypeNameMap[item] + '\n';
+			thumbList.each(function(item) {
+			  msg += '- ' + thumbNameMap[item] + '\n';
 			});
 			msg += '\nYou must save all thumbnail sizes to continue.';
 			alert(msg);
@@ -142,7 +149,7 @@
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 <div class="BlueBox" style="width: 100%;">
-	<div style="float: right; width: 60%;">
+	<div style="float: right; width: 55%;">
 	<ol>
 	<li>Select a thumbnail from the drop down box</li>
 	<li>Use the tool below to crop your photo appropriately</li>
@@ -207,5 +214,5 @@ foreach ($ThumbDetails->result() as $Single) {
 <div class="BlueBox" style="width: 100%;">
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
-	<p><input type="button" onclick="if (canReturn()) window.location='\<?=$returnPath?>';" value="Finish" /></p>
+	<p><input type="button" onclick="if (canReturn()) window.location='/<?=$returnPath?>';" value="Finish" /></p>
 </div>

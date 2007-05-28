@@ -226,7 +226,7 @@ class Image_upload {
 			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
 		}
 
-		$objResponse->addScriptCall("registerImageSave", $selectedThumb[3]);
+		$objResponse->addScriptCall("registerImageSave", $selectedThumb[4].'-'.$selectedThumb[3]);
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 
@@ -279,7 +279,9 @@ class Image_upload {
 				foreach ($ThumbDetails->result() as $Thumb) {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value),
+					                  'thumb_id' => $id.'-'.$Thumb->image_type_id
+					                  );
 				}
 			}
 		} else {
