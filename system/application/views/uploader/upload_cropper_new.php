@@ -37,9 +37,10 @@
 		 * @return void
 		 */
 		onChange: function( e ) {
+
 			var vals = $F( Event.element( e ) ).split('|');
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
-			document.getElementById('uploadedWrapMaster').style.display = 'block';
+			document.getElementById('uploadedWrapMaster').style.display = (vals[0] ? 'block' : 'none');
 			document.getElementById('thumbWrapMaster').style.display = 'block';
 		},
 
