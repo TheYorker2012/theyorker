@@ -281,7 +281,7 @@ class Image_upload {
 		if (strlen($photowatermark) > 0) {
 			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 			$font = 'arial';
-			imagettftext($newImage, 10, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
+			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
 		}
 
 		$x = imagesx($newImage);
