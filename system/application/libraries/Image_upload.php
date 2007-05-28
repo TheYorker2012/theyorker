@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 if (!defined('VIEW_WIDTH')) {
-	define('VIEW_WIDTH', 650);
+	define('VIEW_WIDTH', 200);
 }
 define('VIEW_HEIGHT', 650);
 class Image_upload {
