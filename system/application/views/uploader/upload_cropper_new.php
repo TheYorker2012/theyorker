@@ -151,14 +151,14 @@ foreach ($ThumbDetails->result() as $Single) {
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 <div class="BlueBox" style="width: 100%;">
 	<h2>thumbnail selector</h2>
+	<div style="float: right; width: 60%;">
 	<ol>
 	<li>Select a thumbnail from the drop down box</li>
 	<li>Use the tool below to crop your photo appropriately</li>
 	<li>Press save once you are happy with the crop</li>
 	<li>Repeat for every thumbnail in the list</li>
 	</ol>
-	<br />
-	<div style="clear: both;">
+	</div>
 	<div id="loadingWrap">
 		<p><b>Loading...</b></p>
 	</div>
@@ -176,8 +176,6 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
-	<br />
-	<br />
 	</div>
 </div>
 <div id="uploadedWrapMaster" class="BlueBox" style="display: none; width: 100%;">
