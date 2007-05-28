@@ -229,7 +229,7 @@ class Image_upload {
 //				}
 			} else {
 				$objResponse->addAlert("The thumbnail was not saved, please try again.");
-				$objResponse->addAssign("submitButton","value","Save");
+				$objResponse->addAssign("submitButton","value","Save again");
 				$objResponse->addAssign("submitButton","disabled",false);
 				return $objResponse;
 			}
