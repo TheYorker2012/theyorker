@@ -200,7 +200,7 @@ class Image_upload {
 
 			$objResponse->addAlert('GDFONTPATH=' . realpath('.'));
 
-			imagettftext($newImage, 12, 5, 0, $formData['height'] - 5, $grey, $font, $text);
+			imagettftext($newImage, 12, 5, 20, 20, $grey, $font, $text);
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
