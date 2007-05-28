@@ -81,10 +81,13 @@ class Image_upload {
 			} else {
 				$data[] = $this->ci->upload->data();
 
-				if ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+				if (!$data[$x - 1]['is_image']) {
+					$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
+					redirect($returnPath, 'location');
+				} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
 					// fix for Microsoft's Stupidity
-					if ($data['file_type'] == 'image/pjpeg') {
-						$data['file_type'] = 'image/jpeg';
+					if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
+						$data[$x - 1]['file_type'] = 'image/jpeg';
 					}
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 				} elseif($this->ci->input->post('destination') == 1) {
