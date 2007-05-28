@@ -279,7 +279,7 @@ class Image_upload {
 				foreach ($ThumbDetails->result() as $Thumb) {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value),
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.$id.'-'.$Thumb->image_type_id,
 					                  'thumb_id' => $id.'-'.$Thumb->image_type_id
 					                  );
 				}

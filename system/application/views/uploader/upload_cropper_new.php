@@ -37,9 +37,14 @@
 		 * @return void
 		 */
 		onChange: function( e ) {
-
 			var vals = $F( Event.element( e ) ).split('|');
+			if ( thumbList.grep(currentThumb).length > 0) {
+				if(!confirm('You have not saved changes to this thumbnail. Are you sure you want to switch to a different thumbnail?')) {
+					return false;
+				}
+			}
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
+			currentThumb = vals[8];
 			document.getElementById('uploadedWrapMaster').style.display = (document.getElementById('imageChoice').value == 'choose' ? 'none' : 'block' );
 			document.getElementById('thumbWrapMaster').style.display = 'block';
 		},
@@ -75,6 +80,7 @@
 		}
 	};
 
+	var currentThumb = null;
 
 	var thumbList = new Array();
 	var thumbNameMap = new Array();
