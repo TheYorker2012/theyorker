@@ -1,0 +1,59 @@
+/**
+ *	Stylesheet for account section
+ *
+ *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
+ */
+
+.hide {
+	display:	none;
+}
+
+.show {
+	display:	block;
+}
+
+div#subscription_info {
+	float:		right;
+	width:		49%;
+	display:	none;
+}
+
+div#subscription_container {
+	overflow: auto;
+	border: 1px #000 solid;
+	padding: 5px;
+	height: 400px;
+}
+
+div#subscription_container div {
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+div#subscription_container div.unselected {
+	background-image: url('/images/prototype/prefs/bullet.gif');
+}
+
+div#subscription_container div.viewing {
+	background-image: url('/images/prototype/prefs/arrow.gif');
+}
+
+div#subscription_container div.loading {
+	background-image: url('/images/prototype/prefs/loading.gif');
+}
+
+div#subscription_container div.selected {
+	background-image: url('/images/prototype/prefs/success.gif');
+}
+
+div.ajax_loading {
+	text-align: center;
+	font-size: small;
+	border-top: 1px #000000 solid;
+	border-bottom: 1px #ff6a00 solid;
+	padding: 4px;
+	background-image: url('/images/prototype/prefs/yorker-bg.png');
+	background-position: center left;
+	background-repeat: no-repeat;
+}
