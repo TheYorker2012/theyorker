@@ -213,6 +213,7 @@ class Prefs_model extends Model {
 							organisation_types
 				WHERE		organisations.organisation_live_content_id = organisation_contents.organisation_content_id
 				AND			organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND			organisations.organisation_events = 1
 				AND			organisation_types.organisation_type_codename = ?
 				ORDER BY	name ASC';
 		$query = $this->db->query($sql,array($type));
@@ -225,6 +226,7 @@ class Prefs_model extends Model {
 				FROM		organisations,
 							organisation_types
 				WHERE		organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND			organisations.organisation_events = 1
 				AND			organisation_types.organisation_type_codename = ?
 				AND			organisation_entity_id = ?';
 		$query = $this->db->query($sql,array($type, $org_id));
