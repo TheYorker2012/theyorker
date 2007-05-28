@@ -1,9 +1,3 @@
-
-<div class="BlueBox" style="width: 100%;">
-<h2>instructions</h2>
-<p>Please select a thumbnail size from the drop down box, and use the tool below to crop your photo appropriately. Press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
-</div>
-
 <div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
 <h2>thumbnails</h2>
 <?php
@@ -157,8 +151,16 @@ foreach ($ThumbDetails->result() as $Single) {
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 <div class="BlueBox" style="width: 100%;">
 	<h2>thumbnail selector</h2>
+	<ol>
+	<li>Select a thumbnail from the drop down box</li>
+	<li>Use the tool below to crop your photo appropriately</li>
+	<li>Press save once you are happy with the crop</li>
+	<li>Repeat for every thumbnail in the list</li>
+	</ol>
+	<br />
+	<div style="clear: both;">
 	<div id="loadingWrap">
-		<p>Loading...</p>
+		<p><b>Loading...</b></p>
 	</div>
 	<div id="dropdownWrap" style="display: none;">
 	<p>
@@ -174,6 +176,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
+	<br />
 	<br />
 	</div>
 </div>
@@ -194,3 +197,4 @@ foreach ($ThumbDetails->result() as $Single) {
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
 	<p><input type="button" onclick="if (canReturn()) window.location='\<?=$returnPath?>';" value="Finish" /></p>
+</div>
