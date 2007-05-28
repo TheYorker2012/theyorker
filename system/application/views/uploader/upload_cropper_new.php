@@ -38,13 +38,23 @@
 		 */
 		onChange: function( e ) {
 			var vals = $F( Event.element( e ) ).split('|');
-			if ( thumbList.grep(currentThumb).length > 0) {
+
+			//If the thumb has not been saved, flag an error
+			if ( thumbSecondSaveList.grep(currentThumb).length > 0) {
 				if(!confirm('You have not saved changes to this thumbnail. Are you sure you want to switch to a different thumbnail?')) {
+					document.getElementById('imageChoice').selectedIndex = currentSelectIndex;
 					return false;
 				}
 			}
+
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
+
 			currentThumb = vals[8];
+			currentSelectIndex = document.getElementById('imageChoice').selectedIndex;
+
+			//Put the current thumb into a list of unsaved thumbs
+			if ( thumbSecondSaveList.grep(currentThumb).length == 0) thumbSecondSaveList.push(currentThumb);
+
 			document.getElementById('uploadedWrapMaster').style.display = (document.getElementById('imageChoice').value == 'choose' ? 'none' : 'block' );
 			document.getElementById('thumbWrapMaster').style.display = 'block';
 		},
@@ -81,8 +91,10 @@
 	};
 
 	var currentThumb = null;
+	var currentSelectIndex = 0;
 
 	var thumbList = new Array();
+	var thumbSecondSaveList = new Array();
 	var thumbNameMap = new Array();
 
 	<?php
@@ -98,6 +110,7 @@
 
 	function registerImageSave(thumb_id) {
 		thumbList = thumbList.without(thumb_id);
+		thumbSecondSaveList = thumbSecondSaveList.without(thumb_id);
 	}
 
 	window.onbeforeunload = function () {
@@ -174,7 +187,7 @@
 			<?php
 			foreach($data as $d) {
 				foreach($d as $singleThumb) {
-					echo '<option value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
+					echo '<option value="'.$singleThumb['string'].'" value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
 				}
 			}
 			?>
