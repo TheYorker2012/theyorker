@@ -134,6 +134,12 @@
 	function pageReady() {
 		document.getElementById('loadingWrap').style.display = 'none';
 		document.getElementById('dropdownWrap').style.display = 'block';
+
+		//Crude fix for IE 6: initialise off screen
+		uploadedWrapMasterDiv = document.getElementById('uploadedWrapMaster');
+		uploadedWrapMasterDiv.style.display = 'none';
+		uploadedWrapMasterDiv.style.position = 'relative';
+		uploadedWrapMasterDiv.style.left = '0px';
 	}
 
 	onLoadFunctions.push(pageReady);
@@ -205,10 +211,6 @@
 	</div>
 </div>
 
-<div id="blanket" style="display: block; background-color: #FFFFFF; width: 400px; height: 400px; position: relative;">
-
-</div>
-
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
@@ -230,7 +232,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </table>
 </div>
 
-<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%;">
+<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%; position: absolute; left: -4000px;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
