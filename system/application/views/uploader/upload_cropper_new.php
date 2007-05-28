@@ -112,10 +112,12 @@
 	<?php
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
-		?>
-		thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
-		thumbList.push('<?=$singleThumb['thumb_id']?>');
-		<?
+			if (strlen($singleThumb['thumb_id']) > 0) {
+			?>
+			thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
+			thumbList.push('<?=$singleThumb['thumb_id']?>');
+			<?
+			}
 		}
 	}
 	?>
