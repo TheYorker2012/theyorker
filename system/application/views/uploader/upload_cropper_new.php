@@ -1,9 +1,18 @@
+
+<div class="BlueBox" style="width: 100%;">
+<h3>instructions</h3>
 <p>Please select a thumbnail size from the drop down box, and use the tool below to crop your photo appropriately. Press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
+</div>
+
+<div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
+<h3>thumbnails</h3>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
 }
 ?>
+</div>
+
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -46,6 +55,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			var vals = $F( Event.element( e ) ).split('|');
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
 			document.getElementById('uploadedWrapMaster').style.display = 'block';
+			document.getElementById('thumbWrapMaster').style.display = 'block';
 		},
 
 		/**
@@ -145,12 +155,13 @@ foreach ($ThumbDetails->result() as $Single) {
 </script>
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
+<div class="BlueBox" style="width: 100%;">
+	<h3>thumbnail selector</h3>
 	<div id="loadingWrap">
-		Loading...
+		<p>Loading...</p>
 	</div>
 	<div id="dropdownWrap" style="display: none;">
 	<p>
-		<label for="imageChoice">Thumbnail: -</label>
 		<select name="imageChoice" id="imageChoice">
 			<option value="choose">Please Choose...</option>
 			<?php
@@ -164,18 +175,22 @@ foreach ($ThumbDetails->result() as $Single) {
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
 	</div>
+</div>
+<div class="BlueBox" style="width: 100%;">
+	<h3>original photograph</h3>
 	<div style="clear: both;"></div>
-	<p>Original Photo: -</p>
 	<div id="uploadedWrapMaster" style="display: none;">
+		<p>Original Photo: -</p>
 		<div id="uploadedWrap">
 			<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 		</div>
 	</div>
-		<input type="hidden" name="x1" id="x1" />
-		<input type="hidden" name="y1" id="y1" />
-		<input type="hidden" name="x2" id="x2" />
-		<input type="hidden" name="y2" id="y2" />
-		<input type="hidden" name="width" id="width" />
-		<input type="hidden" name="height" id="height" />
+	<input type="hidden" name="x1" id="x1" />
+	<input type="hidden" name="y1" id="y1" />
+	<input type="hidden" name="x2" id="x2" />
+	<input type="hidden" name="y2" id="y2" />
+	<input type="hidden" name="width" id="width" />
+	<input type="hidden" name="height" id="height" />
+</div>
 </form>
-<p><a href="<?=$returnPath?>" onclick="return canReturn();">Return</a></p>
+<p><a href="/<?=$returnPath?>" onclick="return canReturn();">Return</a></p>
