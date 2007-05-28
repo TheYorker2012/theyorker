@@ -25,7 +25,7 @@
 		 * @return void
 		 */
 		init: function() {
-			//this.setImage('/images/null-blank.jpg', 380, 235, 1);
+			this.setImage('/images/null-blank.jpg', 380, 235, 1);
 		},
 
 		/**
@@ -203,6 +203,10 @@
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
 	</div>
+</div>
+
+<div id="blanket" style="display: block; background-color: #FFFFFF; width: 400px; height: 400px; position: relative;">
+
 </div>
 
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%;">
