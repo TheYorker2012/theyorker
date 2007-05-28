@@ -231,7 +231,6 @@ class Image_upload {
 				$objResponse->addAlert("The thumbnail was not saved, please try again.");
 			}
 		}
-		$objResponse->addAlert($selectedThumb[9]);
 
 		$objResponse->addScriptCall("registerImageSave", $selectedThumb[4].'-'.$selectedThumb[3]);
 		$objResponse->addAssign("submitButton","value","Save");

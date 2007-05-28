@@ -17,20 +17,20 @@ class Gallery extends Controller {
 		$this->load->helper(array('url', 'form', 'entity'));
 		$this->load->library('image');
 	}
-	
+
 	function index() {
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->pages_model->SetPageCode('office_gallery');
 		$count = $this->db->get('photos')->num_rows();
 		if ($count > PHOTOS_PERPAGE) {
 			$this->load->library('pagination');
-			
+
 			$config['base_url'] = site_url('office/gallery/');
 			$config['total_rows'] = $count;
 			$config['per_page'] = PHOTOS_PERPAGE;
 			$config['uri_segment'] = 3;
-			
+
 			$this->pagination->initialize($config);
 			$pageNumbers = $this->pagination->create_links();
 		} else {
@@ -47,8 +47,8 @@ class Gallery extends Controller {
 				$_SESSION['img_return'] = $_SERVER["HTTP_REFERER"];
 			}
 		}
-		
-		
+
+
 		if ($this->input->post('clear') == 'clear') {
 			unset($_SESSION['img_search']);
 		} elseif ($this->input->post('submit')) {
@@ -58,7 +58,7 @@ class Gallery extends Controller {
 			$_SESSION['img_tag'] = $this->input->post('tag');
 			$_SESSION['img_photographer'] = $this->input->post('photographer');
 		}
-		
+
 		if (isset($_SESSION['img_search'])) {
 			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->from('photos');
 			if ($_SESSION['img_search']) {
@@ -100,17 +100,17 @@ class Gallery extends Controller {
 		} else {
 			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->get('photos', PHOTOS_PERPAGE, $page);
 		}
-		
-		
+
+
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			'photos' => $photos->result()
 		);
-		
+
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
 		$gallery_div->AddData($data);
-		
+
 		// Set up the subview for gallery.
 		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
 		                   'tags' => $this->db->getwhere('tags', array('tag_type' => 'photo')),
@@ -122,35 +122,35 @@ class Gallery extends Controller {
 		// Set up the master frame.
 		$this->main_frame->SetTitle('Photo Gallery');
 		$this->main_frame->SetContent($gallery_frame);
-	
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	function show()
 	{
 		if (!CheckPermissions('office')) return;
 		$this->load->library('xajax');
 		$this->xajax->registerFunction(array("tag_suggest", &$this, "tag_suggest"));
 		$this->xajax->processRequests();
-		
+
 		$id = $this->uri->segment(4);
-		
+
 		if ($this->uri->segment(5) == 'save'
 		    and $this->input->post('title')
 		    and $this->input->post('date')) {
-			
+
 			$new = array('photo_title' => $this->input->post('title'),
 			             'photo_timestamp' => $this->input->post('date'),
 			             'photo_author_user_entity_id' =>  $this->input->post('photographer'));
-			
+
 			if ($this->input->post('hidden') == 'hide') {
 				$new['photo_deleted'] = "1";
 			} else {
 				$new['photo_deleted'] = "0";
 			}
 			$this->db->update('photos', $new, array('photo_id' => $id));
-			
+
 			//tags
 			$this->db->delete('photo_tags', array('photo_tag_photo_id' => $id));
 			//add
@@ -175,7 +175,7 @@ class Gallery extends Controller {
 				}
 			}
 		}
-		
+
 		$this->pages_model->SetPageCode('office_gallery');
 
 		if ($id) {
@@ -187,7 +187,7 @@ class Gallery extends Controller {
 				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
 			);
 		}
-		
+
 		// Set up the center div for the gallery.
 		$gallery_div = $this->frames->view('office/gallery/galleryimage');
 		$gallery_div->AddData($data);
@@ -206,11 +206,11 @@ class Gallery extends Controller {
 		$this->main_frame->SetExtraHead($head);
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
-	
+
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-	
+
 	function tag_suggest($tag) {
 		$objResponse = new xajaxResponse();
 		if ($tag == "") {
@@ -229,41 +229,42 @@ class Gallery extends Controller {
 		}
 		return $objResponse;
 	}
-	
+
 	function upload() {
 		if (!CheckPermissions('office')) return;
-		
+
 		$_SESSION['img'] = array();
 		$this->load->library('image_upload');
 		$this->image_upload->automatic('office/gallery', false, true, true);
 	}
-	
+
 	function edit() {
 		if (!CheckPermissions('office')) return;
-		
+
 		$this->load->library('image_upload');
 		$this->xajax->processRequests();
-		
+
 		$output = array(); // hack to use same view
 		$data = array();
-		
+
 		$id = $this->uri->segment(4);
-		
+
 		$photoDetails = $this->db->getwhere('photos', array('photo_id' => $id));
 		$thumbDetails = $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
-		
+
 		$loop = 0;
 		foreach ($photoDetails->result() as $Photo) {
 			foreach ($thumbDetails->result() as $Thumb) {
 				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height;
+				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'||';
+				$output[$loop]['thumb_id'] = '';
 				$loop++;
 			}
 		}
-		
+
 		$data[] = $output;
-		
-		$this->main_frame->SetTitle('Admin\'s Photo Cropper');
+
+		$this->main_frame->SetTitle('Photo Recropper');
 		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
 		$this->main_frame->SetExtraHead($head);

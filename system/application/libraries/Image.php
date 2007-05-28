@@ -174,7 +174,7 @@ class Image {
 		//WATERMARK
 		if (strlen($watermark) > 0) {
 			putenv('GDFONTPATH=' . realpath('.').'/images');
-			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 			$font = 'arial';
 			imagettftext($newImage, 10, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
 		}
