@@ -248,7 +248,7 @@ foreach ($ThumbDetails->result() as $Single) {
 <div id="uploadedWrapMaster" class="BlueBox" style="display: block;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
-		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+		<img src="/images/null-blank.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 	<input type="hidden" name="x1" id="x1" />
 	<input type="hidden" name="y1" id="y1" />
