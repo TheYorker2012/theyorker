@@ -12,7 +12,6 @@ class Image_upload {
 		$this->ci->load->library(array('xajax', 'image'));
 		$this->ci->load->helper('url');
 		$this->ci->xajax->registerFunction(array("process_form_data", &$this, "process_form_data"));
-		putenv('GDFONTPATH=' . realpath('.').'/images');
 	}
 
 	public function automatic($returnPath, $types = false, $multiple = false, $photos = false) {
@@ -196,6 +195,7 @@ class Image_upload {
 			//Water mark
 			$photowatermark = $selectedThumb[9];
 			if (strlen($photowatermark) > 0) {
+				putenv('GDFONTPATH=' . realpath('.').'/images');
 				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 				$font = 'arial';
 				imagettftext($newImage, 8, 90, $result->x - 5, $result->y - 5, $grey, $font, htmlspecialchars_decode($photowatermark));
@@ -281,6 +281,7 @@ class Image_upload {
 		$photowatermark = $this->ci->input->post('watermark');
 		$photowatermark = (isset($photowatermark) ? trim($this->ci->input->post('watermark')) : '');
 		if (strlen($photowatermark) > 0) {
+			putenv('GDFONTPATH=' . realpath('.').'/images');
 			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 			$font = 'arial';
 			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
