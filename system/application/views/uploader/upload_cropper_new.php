@@ -45,6 +45,7 @@ foreach ($ThumbDetails->result() as $Single) {
 		onChange: function( e ) {
 			var vals = $F( Event.element( e ) ).split('|');
 			this.setImage( vals[0], vals[1], vals[2], vals[3] );
+			document.getElementById('uploadedWrapMaster').style.display = 'block';
 		},
 
 		/**
@@ -63,8 +64,6 @@ foreach ($ThumbDetails->result() as $Single) {
 
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
-				document.getElementById('uploadedWrap').style.display = 'block';
-
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
@@ -167,8 +166,10 @@ foreach ($ThumbDetails->result() as $Single) {
 	</div>
 	<div style="clear: both;"></div>
 	<p>Original Photo: -</p>
-	<div id="uploadedWrap" style="display: none;">
-		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+	<div id="uploadedWrapMaster" style="display: none;">
+		<div id="uploadedWrap">
+			<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+		</div>
 	</div>
 		<input type="hidden" name="x1" id="x1" />
 		<input type="hidden" name="y1" id="y1" />
