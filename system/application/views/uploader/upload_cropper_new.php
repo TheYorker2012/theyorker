@@ -78,6 +78,40 @@ foreach ($ThumbDetails->result() as $Single) {
 	};
 
 
+	var thumbTypeList = new Array();
+	var thumbTypeNameMap = new Array();
+<?php		foreach ($ThumbDetails->result() as $Single) : ?>
+		thumbTypeNameMap[<?=$Single->image_type_id?>] = '<?=$Single->image_type_name?>';
+		thumbTypeList.push(<?=$Single->image_type_id?>);
+<?php		endforeach; ?>
+
+	function registerImageSave(image_type_id) {
+		thumbTypeList = thumbTypeList.without(image_type_id);
+	}
+
+	window.onbeforeunload = function () {
+		if(thumbTypeList.length != 0) {
+			var msg = 'You have not saved versions of the following thumbnails:\n';
+			thumbTypeList.each(function(item) {
+			  msg += thumbTypeNameMap[item] + '\n';
+			};
+			return msg;
+		}
+	}
+
+	function canReturn() {
+		if(thumbTypeList.length != 0) {
+			var msg = 'You have not saved versions of the following thumbnails:\n';
+			thumbTypeList.each(function(item) {
+			  msg += thumbTypeNameMap[item] + '\n';
+			};
+			alert(msg);
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	// setup the callback function
 	function onEndCrop( coords, dimensions ) {
 		$( 'x1' ).value = coords.x1;
@@ -127,4 +161,4 @@ foreach ($ThumbDetails->result() as $Single) {
 		<input type="hidden" name="width" id="width" />
 		<input type="hidden" name="height" id="height" />
 </form>
-<p><?=anchor($returnPath, 'Return')?></p>
+<p><a href="<?=$returnPath?>" onclick="return canReturn();">Return</a></p>
