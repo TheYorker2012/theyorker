@@ -1,4 +1,4 @@
-<p>All your photos are now belong to us, Select a photo and an image type below to crop a photo into an image (for stuff like thumbnails), and press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
+<p>Please select a thumbnail size from the drop down box, and use the tool below to crop your photo appropriately. Press save once you are happy with the crop, so we can store it. You can always re-save it if you change your mind.</p>
 <?php
 foreach ($ThumbDetails->result() as $Single) {
 	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
@@ -60,6 +60,9 @@ foreach ($ThumbDetails->result() as $Single) {
 			$( 'uploadedImage' ).src = imgSrc;
 			$( 'uploadedImage' ).width = w;
 			$( 'uploadedImage' ).height = h;
+
+			getElementById('uploadedWrap').style.display = 'block';
+
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
 			if (imgTypeNew == <?=$Single->image_type_id?>) {
 				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
@@ -93,11 +96,18 @@ foreach ($ThumbDetails->result() as $Single) {
 		if(thumbTypeList.length != 0) {
 			var msg = 'You have not saved versions of the following thumbnails:\n';
 			thumbTypeList.each(function(item) {
-			  msg += thumbTypeNameMap[item] + '\n';
+			  msg += '- ' + thumbTypeNameMap[item] + '\n';
 			});
 			return msg;
 		}
 	}
+
+	function pageReady() {
+		getElementById('loadingWrap').style.display = 'none';
+		getElementById('dropdownWrap').style.display = 'block';
+	}
+
+	onLoadFunctions.push(pageReady);
 
 	function canReturn() {
 		if(thumbTypeList.length != 0) {
@@ -105,6 +115,7 @@ foreach ($ThumbDetails->result() as $Single) {
 			thumbTypeList.each(function(item) {
 			  msg += '- ' + thumbTypeNameMap[item] + '\n';
 			});
+			msg += '\nYou must save all thumbnail sizes to continue.';
 			alert(msg);
 			return false;
 		} else {
@@ -135,6 +146,10 @@ foreach ($ThumbDetails->result() as $Single) {
 </script>
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
+	<div id="loadingWrap">
+		Loading...
+	</div>
+	<div id="dropdownWrap" style="display: none;">
 	<p>
 		<label for="imageChoice">Thumbnail: -</label>
 		<select name="imageChoice" id="imageChoice">
@@ -149,9 +164,10 @@ foreach ($ThumbDetails->result() as $Single) {
 		</select>
 		<input id="submitButton" type="submit" value="Save"/>
 	</p>
+	</div>
 	<div style="clear: both;"></div>
-	<p>Photo: -</p>
-	<div id="uploadedWrap">
+	<p>Original Photo: -</p>
+	<div id="uploadedWrap" style="display: none;">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 		<input type="hidden" name="x1" id="x1" />
