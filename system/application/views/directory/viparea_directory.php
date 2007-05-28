@@ -16,8 +16,8 @@
 	foreach ($organisation_types as $org_type) {
 ?>
 		<label for="filterCheck<?php echo($idPostfix); ?>">
-			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo(htmlspecialchars($org_type['id'])); ?>" checked="checked" />
-			<?php echo(htmlspecialchars($org_type['name']).' ('.$org_type['quantity'].')')?>
+			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo($org_type['id']); ?>" checked="checked" />
+			<?php echo($org_type['name'].' ('.$org_type['quantity'].')')?>
 		</label>
 <?php
 		$idPostfix++;
@@ -62,15 +62,15 @@ foreach($organisations as $organisation) {
 		$currentLetter = $thisLetter;
 	}
 
-	echo('		<div id="'.htmlspecialchars($organisation['shortname']).'">'."\n");
+	echo('		<div id="'.$organisation['shortname'].'">'."\n");
 	echo('			<h3>'."\n");
-	echo('				<a href="/'.htmlspecialchars($organisation['link']).'">'.htmlspecialchars($organisation['name']).'</a>'."\n");
-	/*echo('				<span>('.htmlspecialchars($organisation['type']).')</span>'."\n");*/
+	echo('				<a href="/'.$organisation['link'].'">'.$organisation['name'].'</a>'."\n");
+	/*echo('				<span>('.$organisation['type'].')</span>'."\n");*/
 	echo('			</h3>'."\n");
-	echo('			<div class="Date">'.htmlspecialchars($organisation['type']).'</div>'."\n");
+	echo('			<div class="Date">'.$organisation['type'].'</div>'."\n");
 	if($organisation['shortdescription'] != '') {
 		echo('			<div>'."\n");
-		echo('				'.htmlspecialchars($organisation['shortdescription'])."\n");
+		echo('				'.$organisation['shortdescription']."\n");
 		echo('			</div>'."\n");
 	}
 	echo('		</div>'."\n");
