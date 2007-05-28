@@ -1,6 +1,6 @@
 <div id="source" style="display:none;">
 	<label for="title" style="margin-top: 20px;">Title / ALT Text: </label>
-	<input type="text" name="title" size="30" style="margin-top: 20px;" />
+	<input type="text" name="title" size="32" style="margin-top: 20px;" />
 	<label for="userfile">File Location: </label>
 	<input type="file" name="userfile" size="20"/>
 </div>
@@ -17,13 +17,23 @@
 			<p> Please choose the photos you wish up upload here. Each file is limited to 2Mb in size, and must be larger than 220x165 in resolution.</p>
 			<div>
 				<label for="title1">Title / ALT Text: </label>
-				<input type="text" name="title1" size="30" />
+				<input type="text" name="title1" size="32" />
 				<label for="userfile1">File Location: </label>
 				<input type="file" name="userfile1" size="20" />
 			</div>
 			<input type="hidden" name="destination" id="destination" value="1" />
 			<div style="clear: both"></div>
 			<input type="button" class="button" onclick="AddClones()" value="Add Another File"/>
+		</div>
+		<div class="BlueBox">
+			<h2>watermark</h2>
+			<p> If you would like to have these photos watermarked, enter the watermark text in the box below. Leave this box blank otherwise.</p>
+			<p> Use the watermark to accredit the <b>author</b> of the photo, if necessary.</p>
+			<div>
+				<label for="watermark">Watermark: </label>
+				<input type="text" name="watermark" size="32" />
+				<div style="clear: both"></div>
+			</div>
 		</div>
 		<div class="BlueBox">
 			<h2>next step...</h2>

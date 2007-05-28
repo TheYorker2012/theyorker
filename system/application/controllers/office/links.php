@@ -151,7 +151,7 @@ class Links extends Controller
 
 	function upload() {
 		$this->load->library('image_upload');
-		$this->image_upload->automatic('office/links', array('link'), true, false);
+		$this->image_upload->automatic('/office/links', array('link'), true, false);
 	}
 }
 

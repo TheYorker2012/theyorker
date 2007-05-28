@@ -122,7 +122,7 @@ class Imagecp extends Controller {
 
 	function add($codename) {
 		$this->load->library('image_upload');
-		$this->image_upload->automatic('admin/imagecp', array($codename), true, false);
+		$this->image_upload->automatic('/admin/imagecp', array($codename), true, false);
 	}
 
 }

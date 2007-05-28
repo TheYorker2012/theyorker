@@ -112,10 +112,14 @@
 	<?php
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
-		?>
-		thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
-		thumbList.push('<?=$singleThumb['thumb_id']?>');
-		<?
+			?>
+			thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
+			<?php
+			if (!(isset($noforcesave) && $noforcesave)) {
+			?>
+			thumbList.push('<?=$singleThumb['thumb_id']?>');
+			<?
+			}
 		}
 	}
 	?>
@@ -132,6 +136,12 @@
 			  msg += ' ' + thumbNameMap[item] + '\n';
 			});
 			return msg;
+		} else if(thumbSecondSaveList.length != 0 && currentSelectIndex != 0) {
+			var msg = 'You were editing the following thumbnails, but didn\'t save them:\n';
+			thumbSecondSaveList.each(function(item) {
+			  msg += ' ' + thumbNameMap[item] + '\n';
+			});
+			return msg;
 		}
 	}
 
@@ -144,6 +154,13 @@
 			msg += '\nYou must save all thumbnail sizes to continue.';
 			alert(msg);
 			return false;
+		} else if(thumbSecondSaveList.length != 0 && currentSelectIndex != 0) {
+			var msg = 'You were editing the following thumbnails, but didn\'t save them:\n';
+			thumbSecondSaveList.each(function(item) {
+			  msg += ' ' + thumbNameMap[item] + '\n';
+			});
+			msg += '\nAre you sure you want to continue?';
+			return confirm(msg);
 		} else {
 			return true;
 		}
@@ -231,7 +248,7 @@ foreach ($ThumbDetails->result() as $Single) {
 <div id="uploadedWrapMaster" class="BlueBox" style="display: block;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
-		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
+		<img src="/images/null-blank.jpg" alt="Uploaded image" id="uploadedImage" />
 	</div>
 	<input type="hidden" name="x1" id="x1" />
 	<input type="hidden" name="y1" id="y1" />
@@ -244,5 +261,5 @@ foreach ($ThumbDetails->result() as $Single) {
 <div class="BlueBox" style="">
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
-	<p><input type="button" onclick="if (canReturn()) window.location='/<?=$returnPath?>';" value="Finish" /></p>
+	<p><input type="button" onclick="if (canReturn()) window.location='<?=$returnPath?>';" value="Finish" /></p>
 </div>
