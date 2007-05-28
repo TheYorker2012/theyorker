@@ -276,9 +276,9 @@ class Image_upload {
 		$photowatermark = $this->ci->input->post('watermark');
 		$photowatermark = (isset($photowatermark) ? trim($this->ci->input->post('watermark')) : '');
 		if (strlen($photowatermark) > 0) {
-			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
+			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 			$font = 'arial';
-			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
+			imagettftext($newImage, 10, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
 		}
 
 		$x = imagesx($newImage);

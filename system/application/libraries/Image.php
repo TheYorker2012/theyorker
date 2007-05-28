@@ -176,7 +176,7 @@ class Image {
 			putenv('GDFONTPATH=' . realpath('.').'/images');
 			$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 			$font = 'arial';
-			imagettftext($newImage, 8, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
+			imagettftext($newImage, 10, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
 		}
 
 		//STORE
