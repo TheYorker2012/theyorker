@@ -26,7 +26,7 @@ class User_auth extends model {
 
 	/// bool True if the user is an actual user rather than an organisation
 	public $isUser;
-	
+
 	/// bool If the user has an office login (does not indicate if they are
 	///  logged in)
 	public $officeLogin;
@@ -42,7 +42,7 @@ class User_auth extends model {
 
 	/// string The surname of the logged in user
 	public $surname = '';
-	
+
 	/// int The permission of the logged in user
 	public $permissions;
 
@@ -68,9 +68,9 @@ class User_auth extends model {
 	/// The default constructor
 	public function __construct() {
 		parent::model();
-		
+
 		$this->load->model('organisation_model');
-		
+
 		// Check if we already have login details
 		if (isset($_SESSION['ua_loggedin'])) {
 			$this->isLoggedIn = $_SESSION['ua_loggedin'];
@@ -89,19 +89,19 @@ class User_auth extends model {
 			$this->allTeams = $_SESSION['ua_allteams'];
 			$this->salt = $_SESSION['ua_salt'];
 		}
-		
+
 		if (!$this->isLoggedIn && isset($_COOKIE['SavedLogin'])) {
 			// Try to perform the login from a cookie
 			try {
 				$details = explode(
-					':$:', 
+					':$:',
 					$_COOKIE['SavedLogin']
 				);
 				if (count($details) == 2) {
 					// We have a username and has, login
 					$this->loginByHash(
-						$details[0], 
-						$details[1], 
+						$details[0],
+						$details[1],
 						true
 					);
 				} elseif (count($details) == 1) {
@@ -113,50 +113,50 @@ class User_auth extends model {
 			}
 		}
 	}
-	
+
 	/// Attempts to log a user in based on a username and hash.
 	private function loginByHash($username, $hash, $savelogin) {
-		$sql = 'SELECT entity_id, entity_salt 
-			FROM entities 
-			WHERE entity_username = ? 
-				AND entity_password = ? 
+		$sql = 'SELECT entity_id, entity_salt
+			FROM entities
+			WHERE entity_username = ?
+				AND entity_password = ?
 				AND entity_deleted = FALSE';
 
 		$query = $this->db->query($sql, array($username, $hash));
-		
+
 		// See if there was a result for this username and hash
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
-			
+
 			// Get the salt
 			$this->salt = $row->entity_salt;
 
 			// Perform actual login
 			$this->loginAuthed(
-				$username, 
-				$row->entity_id, 
-				$savelogin, 
+				$username,
+				$row->entity_id,
+				$savelogin,
 				$hash
 			);
 		} else {
 			throw new Exception('Invalid username or password');
 		}
 	}
-	
+
 	/// Performs the actual login once a user is authenticated
 	private function loginAuthed($username, $entityId, $savelogin, $hash) {
 		$this->isLoggedIn = true;
 		$this->username = $username;
 		$this->entityId = $entityId;
 		$this->officeLogin = false;
-		
+
 		// Create a new session to prevent hijacking of sessions
 		session_regenerate_id(true);
-		
+
 		// Set/unset a cookie if appropriate
 		if ($savelogin) {
 			setcookie(
-				'SavedLogin', 
+				'SavedLogin',
 				implode(':$:', array($username, $hash)),
 				time()+$this->config->item('saved_login_duration'),
 				$this->config->item('base_url')
@@ -169,17 +169,17 @@ class User_auth extends model {
 				$this->config->item('base_url')
 			);
 		}*/
-		
+
 		$sql = 'SELECT user_firstname, user_surname, user_office_access
-			FROM users 
+			FROM users
 			WHERE user_entity_id = ?';
 
 		$query = $this->db->query($sql, array($this->entityId));
-		
+
 		// See if there was a result (i.e. we have a user)
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
-			
+
 			$this->isUser = true;
 			$this->firstname = $row->user_firstname;
 			$this->surname = $row->user_surname;
@@ -191,11 +191,11 @@ class User_auth extends model {
 			$this->organisationLogin = $this->entityId;
 			$this->updateTeamsData();
 		}
-		
+
 		// Set session variables to persist information
 		$this->localToSession();
 	}
-	
+
 	/// Get organisation + team information.
 	/**
 	 * Fills organisationName, organisationShortName, and allTeams
@@ -230,46 +230,50 @@ class User_auth extends model {
 			}
 		}
 	}
-	
+
 	/// Login based on username and password.
 	/**
 	 * @param $username string Username.
 	 * @param $password string Password.
 	 * @param $savelogin bool Stay logged in.
 	 */
-	public function login($username, $password, $savelogin) {
+	public function login($username, $password, $savelogin, $newpass = false) {
 		// Ensure logged out!
 		if ($this->isLoggedIn) {
 			$this->logout();
 		}
-		$sql = 'SELECT entity_id, entity_username, entity_password, 
-				entity_salt 
-			FROM entities 
+		$sql = 'SELECT entity_id, entity_username, entity_password,
+				entity_salt, entity_pwreset
+			FROM entities
 			WHERE entity_username = ? AND entity_deleted = FALSE';
-		
+
 		$query = $this->db->query($sql, array($username));
 
 		// See if we have an entity with this username
 		if ($query->num_rows() > 0) {
 			$row = $query->row();
-			
+
 			if ($row->entity_id == $this->config->Item('company_entity_id'))
 				/// @throw Exception Could not find user or uni login
 				throw new Exception('Could not find user or uni login');
-			
+
 			// Store the salt for any further login
 			$this->salt = $row->entity_salt;
 
 			// Create a (badly salted) hash
 			$hash = sha1($row->entity_salt.$password);
 
-			//if ($hash == $row->entity_password) {
-			if ($this->authUni($username, $password)) {
+			if ($newpass)
+				$success = $row->entity_pwreset == $password;
+			else
+				$success = $hash == $row->entity_password;
+
+			if ($success) {
 				// The hashes match, login
 				$this->loginAuthed(
-					$username, 
-					$row->entity_id, 
-					$savelogin, 
+					$username,
+					$row->entity_id,
+					$savelogin,
 					$hash
 				);
 
@@ -278,51 +282,80 @@ class User_auth extends model {
 				throw new Exception('Invalid password');
 			}
 		} else {
-			if ($this->authUni($username, $password)) {
-				$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
-				$query = $this->db->query($sql, array($username));
-				$this->entityId = $this->db->insert_id();
-				$this->isLoggedIn = true;
-				$this->isUser = true;
-				//$this->setPassword($password);
-				$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
-				$query = $this->db->query($sql, array($this->entityId));
-
-				$this->login($username, $password, $savelogin);
-				redirect('register');
-			} else {
-				/// @throw Exception Could not find user or uni login
-				throw new Exception('Could not find user or uni login');
-			}
+			throw new Exception('Invalid username or password.');
 		}
 	}
-	
-	/// Login based on username and password against the university, currently via sftp.
-	/// This will ensure the username and password are encrypted.
-	/**
-	 * @param $username string Username.
-	 * @param $password string Password.
-	 * @return true if auth successful
-	 */
-	private function authUni($username, $password) {
-		//temporarily use ftp only for local development
-		$conn_id = ftp_connect('ftp.york.ac.uk');
-		
-	 	//NB sftp will not work in windows without recompiling php - TODO: enable in production environment
-		//set up basic ssl connection
-		//$conn_id = ftp_ssl_connect('ftp.york.ac.uk');
-		
-		if (FALSE !== $conn_id) {
-			// attempt login with username and password
-			@$login_result = ftp_login($conn_id, $username, $password);
 
-			// close the ssl connection
-			ftp_close($conn_id);
+	public function resetpassword($username) {
+		$sql = 'SELECT entity_id, entity_username, entity_password,
+				entity_salt, user_nickname
+			FROM entities
+			INNER JOIN users ON
+				user_entity_id = entity_id
+			WHERE entity_username = ?';
+
+		$query = $this->db->query($sql, array($username));
+		$random = $this->getRandomData();
+
+		// See if we have an entity with this username
+		if ($query->num_rows() == 0) {
+			$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
+			$query = $this->db->query($sql, array($username));
+			$entityId = $this->db->insert_id();
+			$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
+			$query = $this->db->query($sql, array($entityId));
+			$new = true;
+			$nick = '';
 		} else {
-			throw new Exception('Internal error: Could not connect to york.ac.uk.');
+			$row = $query->row();
+			$entityId = $row->entity_id;
+			$nick = $row->user_nickname;
+			$new = false;
 		}
-		
-		return $login_result;
+
+		$sql = 'UPDATE
+				entities
+			SET
+				entity_pwreset = ?
+			WHERE
+				entity_id = ?';
+
+		$query = $this->db->query($sql, array($random, $entityId));
+		if ($this->db->affected_rows() == 0) {
+			throw new Exception('Internal error: failed setting passkey');
+		}
+
+		$to = $username.$this->config->Item('username_email_postfix');
+		$from = $this->pages_model->GetPropertyText('system_email', true);
+		$subject = $this->pages_model->GetPropertyText(
+			$new ?
+				'user_password_new_email_subject' :
+				'user_password_reset_email_subject',
+			true
+		);
+		$body = $this->pages_model->GetPropertyText(
+			$new ?
+				'user_password_new_email_body' :
+				'user_password_reset_email_body',
+			true
+		);
+		$body = str_replace(
+			'%%link%%',
+			'http://www.theyorker.co.uk/login/newpass/'.
+				$username.'/'.$random,
+			$body
+		);
+		$body = str_replace(
+			'%%nickname%%',
+			$nick,
+			$body
+		);
+		return mail(
+			$to,
+			$subject,
+			$body,
+			'From: '.$from
+		);
 	}
 
 	/// Logout of the entire site
@@ -341,7 +374,7 @@ class User_auth extends model {
 		}
 
 		// Set login status to 'not logged in'.  Username is left for
-		//  login form.  
+		//  login form.
 		$this->isLoggedIn = false;
 		$this->entityId = -1;
 		$this->officeLogin = false;
@@ -359,7 +392,7 @@ class User_auth extends model {
 		session_destroy();
 		session_start();
 	}
-	
+
 	/// Login to the yorker office
 	/**
 	 * @param $password string Password.
@@ -371,15 +404,15 @@ class User_auth extends model {
 		}
 
 		$hash = sha1($this->salt.$password);
-		
-		$sql = 'SELECT entity_password, user_office_interface_id, 
+
+		$sql = 'SELECT entity_password, user_office_interface_id,
 				user_office_password, user_admin
-			FROM entities INNER JOIN users ON 
-				entity_id = user_entity_id 
+			FROM entities INNER JOIN users ON
+				entity_id = user_entity_id
 			WHERE entity_id = ?';
-		
+
 		$query = $this->db->query($sql, array($this->entityId));
-		
+
 		// We should always have a result at this stage
 		if ($query->num_rows() == 0) {
 			/// @throw Exception Cannot find entity!
@@ -387,7 +420,7 @@ class User_auth extends model {
 		}
 
 		$row = $query->row();
-		
+
 		if ($row->user_office_password == null) {
 			// The user doesn't have a seperate password, this is a
 			//  low level login
@@ -431,25 +464,25 @@ class User_auth extends model {
 		$hash = sha1($this->salt.$password);
 
 		$sql = 'SELECT COUNT(*) AS valid
-			FROM entities INNER JOIN users ON 
-				entity_id = user_entity_id 
-			WHERE entity_id = ? AND 
+			FROM entities INNER JOIN users ON
+				entity_id = user_entity_id
+			WHERE entity_id = ? AND
 				(user_office_password = ?)';
-		
+
 		$query = $this->db->query($sql, array($this->entityId, $hash));
-		
+
 		$row = $query->row();
 		return $row->valid;
 	}
-			
-	
+
+
 	/// Logout of the yorker office
 	public function logoutOffice() {
 		$this->officeType = 'None';
 		$this->officeInterface = -1;
 		$this->localToSession();
 	}
-	
+
 	/// Checks if the current users password matches $password (returns true or false)
 	/**
 	 * @param $password string Password
@@ -488,7 +521,7 @@ class User_auth extends model {
 			if (!$this->isLoggedIn | !$this->isUser)
 				/// @throw Exception You must be logged in as a student to do this
 				throw new Exception('You must be logged in as a student to do this');
-			
+
 			$entity = $this->entityId;
 			$salt = $this->salt;
 		} else {
@@ -499,14 +532,14 @@ class User_auth extends model {
 			$row = $query->row();
 			$salt = $query->entity_salt;
 		}
-		
+
 		/// @TODO: check that null is returned for no salt
 		if ($salt == null) {
 			$salt = $this->getRandomData();
 		}
-			
+
 		$hash = sha1($salt.$password);
-		$sql = 'UPDATE entities 
+		$sql = 'UPDATE entities
 			SET entity_salt = ?, entity_password = ?
 			WHERE entity_id = ?';
 
@@ -551,8 +584,8 @@ class User_auth extends model {
 		}
 
 		$hash = sha1($salt.$password);
-		
-		$sql = 'UPDATE users 
+
+		$sql = 'UPDATE users
 			SET user_office_password = ?
 			WHERE user_entity_id = ?';
 
@@ -571,7 +604,7 @@ class User_auth extends model {
 			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
 
-		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations 
+		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
 			WHERE subscription_user_entity_id = ? AND subscription_vip = TRUE';
 
@@ -592,17 +625,17 @@ class User_auth extends model {
 		if ($organisationId == $this->config->Item('company_entity_id'))
 			/// @throw Exception You cannot enter the VIP area of this organisation
 			throw new Exception('You cannot enter the VIP area of this organisation');
-		
+
 		$hash = sha1($this->salt.$password);
 
-		$sql = 'SELECT organisation_name, organisation_directory_entry_name FROM entities 
+		$sql = 'SELECT organisation_name, organisation_directory_entry_name FROM entities
 			INNER JOIN subscriptions ON entities.entity_id = subscriptions.subscription_user_entity_id
 			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
-				AND subscriptions.subscription_organisation_entity_id = ? 
+				AND subscriptions.subscription_organisation_entity_id = ?
 				AND subscriptions.subscription_vip = TRUE';
 				//AND entity_password = ?';
-		
+
 		$query = $this->db->query($sql, array($this->entityId, $organisationId/*, $hash*/));
 
 		if ($query->num_rows() == 0 || !$this->authUni($this->username, $password)) {
@@ -611,7 +644,7 @@ class User_auth extends model {
 		}
 
 		//$row = $query->row();
-		
+
 		$this->organisationLogin = $organisationId;
 		$this->updateTeamsData();
 		$this->localToSession();
@@ -625,7 +658,7 @@ class User_auth extends model {
 		$this->allTeams = array();
 		$this->localToSession();
 	}
-	
+
 	/// Save all data from this class in the session
 	private function localToSession() {
 		$_SESSION['ua_loggedin'] = $this->isLoggedIn;

@@ -22,5 +22,23 @@ function AddClones() {
 		Spawn.value = count;
 		Spawn.parentNode.insertBefore(newClone, Spawn);
 		
+	} else {
+		alert('You may not upload more than 6 photos at once.');
 	}
+}
+
+function ValidateClones() {
+	var Spawn = document.getElementById('destination');
+	var BrothersOfSpawn = Spawn.parentNode.childNodes;
+	for (var j=0; j<BrothersOfSpawn.length; j++) {
+		if(BrothersOfSpawn[j].nodeName == 'DIV') {
+			var BrothersOfSpawnSons = BrothersOfSpawn[j].childNodes;
+			for (var i=0; i<BrothersOfSpawnSons.length; i++) {
+				if(BrothersOfSpawnSons[i].name && BrothersOfSpawnSons[i].name.substr(0,5) == 'title' && BrothersOfSpawnSons[i].value == '') {
+					return confirm('You have some images without titles, these will be ignored by the uploader. Are you sure you want to continue?');
+				}
+			}
+		}
+	}
+	return true;
 }

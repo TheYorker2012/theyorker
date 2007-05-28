@@ -591,15 +591,25 @@ class Requests_Model extends Model
 			}
 
 			$sql = 'SELECT articles.article_id,
-					 UNIX_TIMESTAMP(articles.article_created) AS article_created,
-					 articles.article_request_title,
-					 content_types.content_type_name
-					FROM articles, content_types
+					UNIX_TIMESTAMP(articles.article_created) AS article_created,
+					articles.article_request_title,
+					article_request_entity_id,
+
+					(SELECT business_card_name FROM business_cards, business_card_groups
+					WHERE business_card_user_entity_id = article_request_entity_id
+					AND business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+					AND business_card_group_organisation_entity_id IS NULL ) AS business_card_name,
+
+					content_types.content_type_name
+
+					FROM content_types, articles
+
 					WHERE articles.article_suggestion_accepted = 1
-					AND	content_types.content_type_id = articles.article_content_type_id
-					AND	articles.article_live_content_id IS NULL
-					AND	articles.article_deleted = 0
-					AND	articles.article_pulled = 0
+					AND content_types.content_type_id = articles.article_content_type_id
+					AND articles.article_live_content_id IS NULL
+					AND articles.article_deleted = 0
+					AND articles.article_pulled = 0
+
 					AND	(';
 			$sql .= implode(' OR ',$type_sql) . ')';
 			$query = $this->db->query($sql,$type_codenames);

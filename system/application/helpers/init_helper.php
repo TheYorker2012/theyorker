@@ -12,9 +12,6 @@
 // Set the timezone
 date_default_timezone_set('Europe/London');
 
-// Start a session
-session_start();
-
 // Warn if Magic quotes are enabled
 SpecialInitAssert(!get_magic_quotes_gpc(), 'Magic Quotes are Enabled! They\'re evil and cause problems so please disable them in the PHP config.');
 

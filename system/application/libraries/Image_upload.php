@@ -81,8 +81,14 @@ class Image_upload {
 			} else {
 				$data[] = $this->ci->upload->data();
 
-				if ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
-
+				if (!$data[$x - 1]['is_image']) {
+					$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
+					redirect($returnPath, 'location');
+				} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+					// fix for Microsoft's Stupidity
+					if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
+						$data[$x - 1]['file_type'] = 'image/jpeg';
+					}
 					$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 				} elseif($this->ci->input->post('destination') == 1) {
 					//redirect back home
@@ -209,7 +215,8 @@ class Image_upload {
 //					}
 //				}
 			} else {
-				$objResponse->addAssign("submitButton","value","Not Saved");
+				$objResponse->addAlert("The thumbnail was not saved, please try again.");
+				$objResponse->addAssign("submitButton","value","Save");
 				$objResponse->addAssign("submitButton","disabled",false);
 				return $objResponse;
 			}
@@ -219,6 +226,7 @@ class Image_upload {
 			$this->ci->image->thumbnail($selectedThumb[4], $result->first_row(), $formData['x1'], $formData['y1'], $formData['width'] , $formData['height']);
 		}
 
+		$objResponse->addScriptCall("registerImageSave", $selectedThumb[4].'-'.$selectedThumb[3]);
 		$objResponse->addAssign("submitButton","value","Save");
 		$objResponse->addAssign("submitButton","disabled",false);
 
@@ -271,7 +279,9 @@ class Image_upload {
 				foreach ($ThumbDetails->result() as $Thumb) {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value));
+					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.$id.'-'.$Thumb->image_type_id,
+					                  'thumb_id' => $id.'-'.$Thumb->image_type_id
+					                  );
 				}
 			}
 		} else {

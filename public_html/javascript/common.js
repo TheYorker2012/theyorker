@@ -1,3 +1,62 @@
+// ** BEGIN Multiple event handlers code **
+// An array containing functors for all function to be run on page load
+var onLoadFunctions = new Array();
+
+// An array containing functors for all function to be run on page unload
+var onUnloadFunctions = new Array();
+
+// The function which is run on page load ensuring all functors are run
+function onLoadHandler() {
+	for (i = 0; i < onLoadFunctions.length; i++) {
+		onLoadFunctions[i]();
+	}
+}
+// The function which is run on page unload ensuring all functors are run
+function onUnloadHandler() {
+	for (i = 0; i < onUnloadFunctions.length; i++) {
+		onUnloadFunctions[i]();
+	}
+}
+// ** END Multiple event handlers code **
+
+// ** BEGIN Search box code **
+function inputFocus(element) {
+	if (element.value == element.defaultValue) {
+		element.value = '';
+	}
+}
+
+function inputBlur(element) {
+	if (element.value =='') {
+		element.value = element.defaultValue;
+	}
+}
+// ** END Search box code **
+
+// ** BEGIN feedback form code **
+function showFeedback() {
+	var showFeedbackObj = document.getElementById('ShowFeedback');
+	var feedbackObj = document.getElementById('FeedbackForm');
+	showFeedbackObj.style.display = 'none';
+	feedbackObj.style.display = 'block';
+
+	return false;
+}
+
+function hideFeedback() {
+	var showFeedbackObj = document.getElementById('ShowFeedback');
+	var feedbackObj = document.getElementById('FeedbackForm');
+	showFeedbackObj.style.display = 'block';
+	feedbackObj.style.display = 'none';
+
+	return false;
+}
+
+onLoadFunctions.push(hideFeedback);
+// ** END feedback form code **
+
+
+
 // Flash Player Version Detection - Rev 1.5
 // Detect Client Browser type
 // Copyright(c) 2005-2006 Adobe Macromedia Software, LLC. All rights reserved.

@@ -80,7 +80,7 @@ function GenerateToplinks($Permission)
 			if ($CI->uri->segment(1) !== 'login') {
 				//$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
 			}
-			//$top_links[] = array('register',site_url('register'));
+			$top_links[] = array('register',site_url('/account/password/register'));
 			break;
 		
 		case 'student':

@@ -12,46 +12,60 @@ class Photos extends Controller
 
 	function index($type = 'full', $id = -1) {
 		if ($type == 'full') {
-			$sql = 'SELECT photo_mime, photo_data FROM photos WHERE photo_id = ? LIMIT 1';
+			$sql = 'SELECT
+					photo_mime AS mime,
+					photo_data AS data,
+					UNIX_TIMESTAMP(photo_timestamp) AS timestamp
+				FROM photos WHERE photo_id = ? LIMIT 1';
 			$result = $this->db->query($sql, array($id));
 			if ($result->num_rows() == 1) {
-				header('Expires: '.date(DATE_RFC822, strtotime('+1 month')));
-				header('Cache-Control: store, cache');
-				header('Pragma: cache');
-				header('Content-Type: '.$result->first_row()->photo_mime);
-				echo $result->first_row()->photo_data;
+				$row = $result->first_row();
 			} else {
 				header('HTTP/1.0 404 Not Found');
+				return;
 			}
 		} elseif ($type == 'view') {
 			die('//TODO page containing full view');
 		} else {
-			$sql = 'SELECT photo_thumbs_data, photo_mime FROM photo_thumbs, photos
+			$sql = 'SELECT
+					photo_thumbs_data AS data,
+					photo_mime AS mime,
+					UNIX_TIMESTAMP(photo_thumbs_timestamp) AS timestamp
+				FROM photo_thumbs, photos
 			        WHERE photo_thumbs_photo_id = ?
 			          AND photo_thumbs_photo_id = photo_id
 			          AND photo_thumbs_image_type_id = (SELECT image_type_id FROM image_types WHERE image_type_codename =? LIMIT 1)
 			        LIMIT 1';
 			$result = $this->db->query($sql, array($id, $type));
 			if ($result->num_rows() == 1) {
-				header('Expires: '.date(DATE_RFC822, strtotime('+10 minutes')));
-				header('Cache-Control: no-store, cache');
-				header('Pragma: cache');
-				header('Content-Type: '.$result->first_row()->photo_mime);
-				echo $result->first_row()->photo_thumbs_data;
+				$row = $result->first_row();
 			} else {
-				$sql = 'SELECT image_type_error_mime, image_type_error_data FROM image_types WHERE image_type_codename = ? LIMIT 1';
+				$sql = 'SELECT
+						image_type_error_mime AS mime,
+						image_type_error_data AS data,
+						NOW() AS timestamp
+					FROM image_types WHERE image_type_codename = ? LIMIT 1';
 				$result = $this->db->query($sql, array($type));
 				if ($result->num_rows() == 1) {
-					header('Expires: '.date(DATE_RFC822, strtotime('-10 minutes')));
-					header('Cache-Control: no-store, cache');
-					header('Pragma: cache');
-					header('Content-Type: '.$result->first_row()->image_type_error_mime);
-					echo $result->first_row()->image_type_error_data;
+					$row = $result->first_row();
 				} else {
 					header('HTTP/1.0 404 Not Found');
+					return;
 				}
 			}
 		}
+
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+			$modified = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+			if ($modified >= $row->timestamp) {
+				header('HTTP/1.1 304 Not Modified');
+				return;
+			}
+		}
+
+		header('Content-type: '.$row->mime);
+		header('Last-Modified: '.date('r', $row->timestamp));
+		echo $row->data;
 	}
 }
 ?>

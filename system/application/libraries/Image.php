@@ -10,7 +10,7 @@ class Image {
 
 	public function getPhoto($photoID) {
 		$data = $this->get($photoID, 'photos');
-		return '<img src="/photos/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
+		return '<img src="/photos/full/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
 	}
 
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
@@ -41,7 +41,7 @@ class Image {
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.' />';
 	}
 
-	public function getPhotoURL($photoID, $type) {
+	public function getPhotoURL($photoID, $type = 'full') {
 		return '/photos/'.$type.'/'.$photoID;
 	}
 
@@ -171,7 +171,7 @@ class Image {
 		}
 		//STORE
 		$newImage = $this->image2string($newImage, $result->photo_mime);
-		$sql = 'INSERT INTO photo_thumbs VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
+		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_data) VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
 		$this->ci->db->query($sql, array($photoID, $type->id));
 		return true;
 	}

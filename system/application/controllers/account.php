@@ -33,8 +33,8 @@ class Account extends controller
 				'/account/links');
 		$navbar->AddItem('password', 'Password',
 				'/account/password/change');
-		$navbar->AddItem('bcards', 'VIP',
-				'/account/bcards');
+		//$navbar->AddItem('bcards', 'VIP',
+		//		'/account/bcards');
 
 		$this->main_frame->SetPage($SelectedPage);
 	}
@@ -233,6 +233,7 @@ class Account extends controller
 		static $handlers = array(
 			'change' => '_password_change',
 			'reset'  => '_password_reset',
+			'register' => '_password_register',
 		);
 
 		if (array_key_exists($option, $handlers)) {
@@ -249,11 +250,38 @@ class Account extends controller
 	/// Reset password
 	protected function _password_reset($parameter = 'main')
 	{
+		$this->_password_reset_register('account_password_reset');
+	}
+
+	/// Register
+	protected function _password_register($parameter = 'main')
+	{
+		$this->_password_reset_register('account_password_register');
+	}
+
+	protected function _password_reset_register($pagecode) {
 		if (!CheckPermissions('public')) return;
 
-		$this->pages_model->SetPageCode('account_password_reset');
+		$username = $this->input->post('username');
+		if (is_string($username)) {
+			if($this->user_auth->resetpassword($username)) {
+				get_instance()->messages->AddMessage(
+					'success',
+					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>'
+				);
+			} else {
+				get_instance()->messages->AddMessage(
+					'error',
+					'<p>There was an error sending the e-mail.</p>'
+				);
+			}
+		}
+
+		$this->pages_model->SetPageCode($pagecode);
 
 		$data = array();
+		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
+		$data['submit'] = $this->pages_model->GetPropertyText('submit');
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('login/resetpassword', $data);

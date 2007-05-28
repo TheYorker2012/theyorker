@@ -1,11 +1,12 @@
 	<?php if (isset($main_heading)) { ?>
 	<div class="BlueBox">
-		<h2><?php echo($main_heading); ?></h2>
-		<?php echo($main_text); ?>
+		<h2>What's this?</h2>
+		This information will allow us to personalise your experience of our site, and will allow you to use our facilities to communicate with any societies that you are a member of.
 	</div>
 	<? } ?>
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
+			<h2>About You</h2>
 			<p>Please enter your name:</p>
 			<fieldset>
 				<label for="fname">Forename: </label>
@@ -67,6 +68,7 @@ foreach ($years as $year) {
 				<br />
 				<!-- TODO: add current time thing -->
 			</fieldset>
+			<div style="display: none;">
 			<p>If you would like to see how many unread e-mails you have in your inbox, tick this box.</p>
 			<fieldset>
 				<label class="radio" for="storepassword">Save YorkMail Password:</label>
@@ -79,6 +81,7 @@ foreach ($years as $year) {
 				<input class="checkbox" type="checkbox" id="facebook" name="facebook" value="1" <?php if ($this->validation->facebook) { echo('checked="checked" '); } ?>/>
 				<br />
 			</fieldset>
+			</div>
 		<?php if(!$in_wizard) { ?>
 		 	<input type='submit' name='submit' id='submit' value='Save' class='button' />
 		<? } ?>

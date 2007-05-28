@@ -7,8 +7,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="<?php echo $description; ?>" />
-	<meta name="keywords" content="<?php echo $keywords; ?>" />
+	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
+	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles

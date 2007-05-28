@@ -7,21 +7,17 @@
 <h4>Jump to Location</h4>
 <b>On Campus:</b><br />
 <a href='javascript:maps["googlemaps"].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));'>
-<table border="0" width="100%">
-<tr>
-<td>
+<div style="float: left">
 <ul>
 	<li>Central Hall</li>
 </ul>
-</td>
-<td>
+</div>
+<div style="float: right">
 <img  src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" />
-</td>
-</tr>
-</table>
+</div>
 </a>
 
-<p><b>Off Campus:</b></p>
+<p style="clear: both;"><b>Off Campus:</b></p>
 <p>Enter a place name or postcode:</p>
 <fieldset>
 <input style="width: 60%" type="text" id="MapSearch"/>

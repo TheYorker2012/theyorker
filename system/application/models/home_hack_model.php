@@ -92,7 +92,9 @@ class Home_Hack_Model extends Model {
 					articles.article_live_content_id
 			WHERE
 				articles.article_id 
-					IN ('.$sql_requestedArticles.')';
+					IN ('.$sql_requestedArticles.')
+			ORDER BY
+				article_publish_date DESC';
 
 		$query = $this->db->query($sql, array());
 		return $query->result_array();
@@ -137,7 +139,9 @@ class Home_Hack_Model extends Model {
 					articles.article_live_content_id
 			WHERE
 				articles.article_id 
-					IN ('.$sql_requestedArticles.')';
+					IN ('.$sql_requestedArticles.')
+			ORDER BY
+				article_publish_date DESC';
 
 		$query = $this->db->query($sql, $params);
 		return $query->result_array();
