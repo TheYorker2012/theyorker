@@ -281,7 +281,7 @@ class Image_upload {
 
 			imagettftext($newImage, 18, 0, 20, 20, $grey, $font, $text);
 
-
+			echo(realpath('.'));
 		} else {
 			$newImage = $image;
 		}
