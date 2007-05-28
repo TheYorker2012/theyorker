@@ -173,7 +173,7 @@
 </script>
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="return submitPicture();">
-<div class="BlueBox" style="width: 100%;">
+<div class="BlueBox" style="">
 	<div style="float: right; width: 55%;">
 	<ol>
 	<li>Select a thumbnail from the drop down box</li>
@@ -207,7 +207,7 @@
 
 </div>
 
-<div id="thumbWrapMaster" class="BlueBox" style="display: block; width: 100%; display: none;">
+<div id="thumbWrapMaster" class="BlueBox" style="display: block; display: none;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
@@ -228,7 +228,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </table>
 </div>
 
-<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%;">
+<div id="uploadedWrapMaster" class="BlueBox" style="display: block;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
@@ -241,7 +241,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	<input type="hidden" name="height" id="height" />
 </div>
 </form>
-<div class="BlueBox" style="width: 100%;">
+<div class="BlueBox" style="">
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
 	<p><input type="button" onclick="if (canReturn()) window.location='/<?=$returnPath?>';" value="Finish" /></p>
