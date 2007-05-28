@@ -197,7 +197,7 @@
 	</div>
 </div>
 
-<div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
+<div class="BlueBox" id="thumbWrapMaster" style="display: block; width: 100%;">
 <h2>thumbnail scratchpad</h2>
 <p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
@@ -218,7 +218,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </table>
 </div>
 
-<div id="uploadedWrapMaster" class="BlueBox" style="display: none; width: 100%;">
+<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
