@@ -256,7 +256,7 @@ class Gallery extends Controller {
 		foreach ($photoDetails->result() as $Photo) {
 			foreach ($thumbDetails->result() as $Thumb) {
 				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
-				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'||';
+				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|||';
 				$output[$loop]['thumb_id'] = '';
 				$loop++;
 			}
