@@ -193,13 +193,13 @@ class Image_upload {
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
 
 			//Water mark
-			$photowatermark = $selectedThumb[9];
-			if (strlen($photowatermark) > 0) {
+			//$photowatermark = $selectedThumb[9];
+			//if (strlen($photowatermark) > 0) {
 				putenv('GDFONTPATH=' . realpath('.').'/images');
 				$grey = imagecolorallocate($newImage, 0x99, 0x99, 0x99);
 				$font = 'arial';
-				imagettftext($newImage, 8, 90, $result->x - 5, $result->y - 5, $grey, $font, htmlspecialchars_decode($photowatermark));
-			}
+				imagettftext($newImage, 8, 0, 0, 0, $grey, $font, 'Test');
+			//}
 
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {

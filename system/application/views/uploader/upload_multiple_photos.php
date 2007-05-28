@@ -31,6 +31,7 @@
 			<div>
 				<label for="watermark">Watermark: </label>
 				<input type="text" name="watermark" size="32" />
+				<div style="clear: both"></div>
 			</div>
 		</div>
 		<div class="BlueBox">
