@@ -1,12 +1,3 @@
-<div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
-<h2>thumbnails</h2>
-<?php
-foreach ($ThumbDetails->result() as $Single) {
-	echo '<p>'.$Single->image_type_name.': -</p><div id="previewArea-'.$Single->image_type_id.'"></div>';
-}
-?>
-</div>
-
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -150,7 +141,6 @@ foreach ($ThumbDetails->result() as $Single) {
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="submitPicture();">
 <div class="BlueBox" style="width: 100%;">
-	<h2>thumbnail selector</h2>
 	<div style="float: right; width: 60%;">
 	<ol>
 	<li>Select a thumbnail from the drop down box</li>
@@ -159,6 +149,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	<li>Repeat for every thumbnail in the list</li>
 	</ol>
 	</div>
+	<h2>thumbnail selector</h2>
 	<div id="loadingWrap">
 		<p><b>Loading...</b></p>
 	</div>
@@ -178,6 +169,27 @@ foreach ($ThumbDetails->result() as $Single) {
 	</p>
 	</div>
 </div>
+
+<div class="BlueBox" id="thumbWrapMaster" style="display: none; width: 100%;">
+<h2>stored thumbnails</h2>
+<table border="0">
+<tr>
+<?php
+foreach ($ThumbDetails->result() as $Single) {
+	echo '<th>'.$Single->image_type_name.'</th>';
+}
+?>
+</tr>
+<tr>
+<?php
+foreach ($ThumbDetails->result() as $Single) {
+	echo '<td><div id="previewArea-'.$Single->image_type_id.'"></div></td>';
+}
+?>
+</tr>
+</table>
+</div>
+
 <div id="uploadedWrapMaster" class="BlueBox" style="display: none; width: 100%;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
