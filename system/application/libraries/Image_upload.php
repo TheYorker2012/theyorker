@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 if (!defined('VIEW_WIDTH')) {
-	define('VIEW_WIDTH', 200);
+	define('VIEW_WIDTH', 650);
 }
 define('VIEW_HEIGHT', 650);
 class Image_upload {
@@ -259,7 +259,7 @@ class Image_upload {
 				$image = imagecreatefrompng($data['full_path']);
 				break;
 		}
-		if ($data['image_width'] > VIEW_WIDTH) {
+		if (true) { //($data['image_width'] > VIEW_WIDTH) {
 			$ratio_orig = $data['image_width']/$data['image_height'];
 			$width = VIEW_WIDTH;
 			$height = VIEW_HEIGHT;
@@ -280,6 +280,7 @@ class Image_upload {
 			$font = 'arial';
 
 			imagettftext($newImage, 18, 0, 20, 20, $grey, $font, $text);
+
 
 		} else {
 			$newImage = $image;
