@@ -226,7 +226,7 @@ foreach ($ThumbDetails->result() as $Single) {
 </table>
 </div>
 
-<div id="uploadedWrapMaster" class="BlueBox" style="display: none; width: 100%;">
+<div id="uploadedWrapMaster" class="BlueBox" style="display: block; width: 100%;">
 	<h2>original photograph</h2>
 	<div id="uploadedWrap">
 		<img src="/images/photos/null.jpg" alt="Uploaded image" id="uploadedImage" />
