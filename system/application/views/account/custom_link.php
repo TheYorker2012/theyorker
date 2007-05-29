@@ -17,8 +17,6 @@ function radio_click() {
 }
 -->
 </script>
-
-
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Add Custom Link</h2>
@@ -26,13 +24,13 @@ function radio_click() {
 		<form action="customlink/1" method="post">
 		<fieldset>
 			<label for="title1"> Link Name: </label>
-			<input type="text" id="lname" name="title1" value="" default />
+			<input type="text" name="title1" value="" default />
 			<br />
 			<label for="lurl"> Link URL: </label>
-			<input type="text" id="lurl" name="lurl" value="http://" />
+			<input type="text" name="lurl" value="http://" />
 			<br />
 			<label for="lnominate"> Nominate Link: </label>
-			<input type="checkbox" id="lnominate" name="lnominate" checked/>
+			<input type="checkbox" name="lnominate" checked/>
 			<br style="clear: both;"/>
 			<label for="image_pick"> Link Image: </label>
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_gallery" name="image_pick" value="gallery" checked/> Gallery
