@@ -192,7 +192,7 @@ class Members extends Controller
 
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
-			$memberships = $this->members_model->GetMemberDetails($team_list);
+			$memberships = $this->members_model->GetMemberDetails($team_list, null, 'TRUE', array(), ('manage' === VipMode()));
 		}
 
 		$team_list = array_flip($team_list);
@@ -358,10 +358,21 @@ class Members extends Controller
 
 		// Get membership information for the first time
 		// This will determine whether the entity is a member.
-		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
+		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId, 'TRUE', array(), ('manage' === VipMode()));
 
 		if (!empty($membership)) {
 			$membership = $membership[0];
+
+			// Read the post data
+			$button = $this->input->post('member_byline_reset');
+			if ($button === 'Set Default Byline') {
+				if ( $this->members_model->SetDefaultByline($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Byline was added successfully.');
+				} else {
+					$this->messages->AddMessage('error','Byline could not be added, a byline might already exist.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			}
 
 			// Read the post data
 			$button = $this->input->post('member_cmd');
@@ -483,6 +494,10 @@ class Members extends Controller
 				$membership['cmd_string'] = 'This user is a <b>member</b> of your organisation, click below to remove them.';
 				$membership['cmd_action'] = 'Remove';
 				$membership['cmd_js'] = "return confirm('Are you sure that you want to remove this member from your organisation?');";
+			}
+
+			if ('manage' === VipMode()) {
+				$membership['byline_reset'] = true;
 			}
 
 			$data = array(

@@ -57,6 +57,9 @@
 	<h2>Membership Control</h2>
 	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
 			<p><?php echo $membership['cmd_string']; ?></p>
+<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
+			<input name='member_byline_reset' type='submit' value='Set Default Byline' class='button' onclick="return confirm('This will set the byline of the member to their full name. Are you sure?');" />
+<?php } ?>
 			<input name='member_cmd' type='submit' value='<?php echo $membership['cmd_action']; ?>' class='button' onclick="<?php echo $membership['cmd_js']; ?>"/>
 			<div style="clear: both;"></div>
 	</form>

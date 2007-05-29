@@ -14,7 +14,7 @@ class Members_model extends Model {
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array())
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false;)
 	{
 		if (is_array($organisation_id) && empty($organisation_id)) {
 			return array();
@@ -86,12 +86,18 @@ class Members_model extends Model {
 		if (is_array($organisation_id)) {
 			// escape organisation ids
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
-			$sql .= '	AND subscriptions.subscription_organisation_entity_id IN ('.
+			$sql .= '	AND (subscriptions.subscription_organisation_entity_id IN ('.
 				implode(',',$organisations).')';
 		} else {
-			$sql .= '	AND subscriptions.subscription_organisation_entity_id = ?';
+			$sql .= '	AND (subscriptions.subscription_organisation_entity_id = ?';
 			$bind_data[] = $organisation_id;
 		}
+		if ($manage_mode) {
+			$sql .= ' OR users.user_office_access = 1) ';
+		} else {
+			$sql .= ' ) ';
+		}
+
 		$sql .= '
 				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
 				AND	subscriptions.subscription_deleted = 0
@@ -363,6 +369,24 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = ?
 				';
 		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
+	}
+
+	function SetDefaultByline($UserId) {
+		$sql = '
+			INSERT INTO business_cards (business_card_business_card_group_id, business_card_user_entity_id, business_card_name,business_card_title,business_card_approved)
+			SELECT 3, users.user_entity_id, CONCAT(users.user_firstname,' ',users.user_surname), 'Reporter',1
+			FROM users
+			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
+								   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
+								   AND byline_groups.business_card_group_organisation_entity_id IS NULL)
+							ON bylines.business_card_user_entity_id = users.user_entity_id
+				AND bylines.business_card_deleted = 0
+				AND bylines.business_card_approved = 1
+			WHERE users.user_office_access = 1
+				AND bylines.business_card_id IS NULL
+				AND users.user_entity_id = ?';
+		$this->db->query($sql, array($UserId));
 		return $this->db->affected_rows() > 0;
 	}
 
