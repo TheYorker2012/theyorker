@@ -57,11 +57,13 @@
 	<h2>Membership Control</h2>
 	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
 			<p><?php echo $membership['cmd_string']; ?></p>
-<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
-			<input name='member_byline_reset' type='submit' value='Set Default Byline' class='button' onclick="return confirm('This will set the byline of the member to their full name. Are you sure?');" />
-<?php } ?>
 			<input name='member_cmd' type='submit' value='<?php echo $membership['cmd_action']; ?>' class='button' onclick="<?php echo $membership['cmd_js']; ?>"/>
 			<div style="clear: both;"></div>
+<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
+			<p>This user does not have a byline. This means that the user will not be able to write articles in the office. To give this user the default byline, click below:</p>
+			<input name='member_byline_reset' type='submit' value='Set Default Byline' class='button' onclick="return confirm('This will set the byline of the member to their full name. Are you sure?');" />
+			<div style="clear: both;"></div>
+<?php } ?>
 	</form>
 </div>
 <script type="text/javascript">
