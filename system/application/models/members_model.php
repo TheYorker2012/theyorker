@@ -92,16 +92,17 @@ class Members_model extends Model {
 			$sql .= '	AND (subscriptions.subscription_organisation_entity_id = ?';
 			$bind_data[] = $organisation_id;
 		}
+		$sql .= '
+				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
+				AND	subscriptions.subscription_deleted = 0
+			';
+
 		if ($manage_mode) {
 			$sql .= ' OR users.user_office_access = 1) ';
 		} else {
 			$sql .= ' ) ';
 		}
 
-		$sql .= '
-				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
-				AND	subscriptions.subscription_deleted = 0
-			';
 		// Run the query and return the raw results array.
 		$sql .= ' AND ' . $FilterSql;
 		$bind_data = array_merge($bind_data, $BindData);

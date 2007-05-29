@@ -496,7 +496,7 @@ class Members extends Controller
 				$membership['cmd_js'] = "return confirm('Are you sure that you want to remove this member from your organisation?');";
 			}
 
-			if ('manage' === VipMode()) {
+			if ('manage' === VipMode() && (!$membership['has_byline'] || $membership['byline_needs_approval'] || $membership['byline_expired']) ) {
 				$membership['byline_reset'] = true;
 			}
 

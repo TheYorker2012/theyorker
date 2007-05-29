@@ -129,9 +129,18 @@ function FilterLinkBool($filter, $field, $value)
 				<?php echo $membership['username']; ?>
 			<?php } ?></td>
 
-			<td align="center"><?php if (isset($membership['confirmed']) && $membership['confirmed']) { ?>
-				<IMG SRC="/images/prototype/members/confirmed.png" ALT="Yes" />
-			<?php } ?></td><?php /*
+			<td align="center">
+			<php if ($membership['user_confirmed'] && $membership['org_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />
+			<?php } elseif ($membership['user_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />
+			<?php } elseif ($membership['org_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />
+			<?php } else { ?>
+				&nbsp;
+			<?php } ?>
+
+			</td><?php /*
 			<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
 			<td align="center"><?php if (isset($membership['paid']) && $membership['paid']) { ?>
 				<IMG SRC="/images/prototype/members/paid.png" ALT="Yes" />
