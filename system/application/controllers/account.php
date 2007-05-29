@@ -165,6 +165,7 @@ class Account extends controller
 					}
 				} else if($this->input->post('lurl')) {
 					$this->messages->AddMessage('error', 'Please enter a name for your link.');
+					redirect('/account/customlink', 'location');
 				}
 		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
