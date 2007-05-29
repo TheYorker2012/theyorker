@@ -193,20 +193,12 @@ function addstrike($text)
 	if ($stage == 4)
 	{
 ?>
-<div class="BlueBox">
-<h2>photo upload </h2>
-	<form action="/wizard/organisation/upload/images" method="post" class="form" enctype="multipart/form-data">
-		Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
-		<fieldset>
-			<label for="title1">Photo Title:</label><input type="text" name="title1" id="title1" size="30" />
-			<label for="userfile1">Photo File:</label><input type="file" name="userfile1" id="userfile1" size="20" />
-			<input type="hidden" name="destination" id="destination" value="1" />
-		</fieldset>
-		<fieldset>
-			<input class="button" type="submit" value="Upload" />
-		</fieldset>
-	</form>
-</div>
+
+<?php
+	$CI = &get_instance();
+	$CI->load->view('uploader/upload_single_photo', array('action_url' => '/wizard/organisation/upload/images') );
+?>
+
 <?php if (isset($_SESSION['org_wizard']['img'])) { ?>
 <div class="GreyBox">
 	<?php 	$count = 0;

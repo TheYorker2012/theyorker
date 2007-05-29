@@ -85,9 +85,6 @@ class Howdoi extends Controller
 	 */
 	function getdata($page)
 	{
-		//has the user got access to the office
-		if (!CheckPermissions('office')) return;
-
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');

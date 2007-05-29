@@ -73,7 +73,7 @@
 			{
 				echo '<span style="font-size: medium;"><b>'.$review['writers'][0]['name'].'</b></span><br />';
 				echo $review['article']['created'].'<br />';
-				echo '<a href="/office/reviews/'.$parameters['organistion'].'/'.$parameters['context_type'].'/reviewedit/'.$review['article']['id'].'"><span class="orange">Edit this review</a><br /><br />';
+				echo '<a href="/office/reviews/'.$parameters['organistion'].'/'.$parameters['context_type'].'/reviewedit/'.$review['article']['id'].'"><span class="orange">Edit or <b>publish</b> this review</a><br /><br />';
 			}
 		}
 	?>

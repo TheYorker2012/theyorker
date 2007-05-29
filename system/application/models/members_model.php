@@ -27,7 +27,8 @@ class Members_model extends Model {
 				subscriptions.subscription_paid AS paid,
 				subscriptions.subscription_email AS on_mailing_list,
 				subscriptions.subscription_vip AS vip,
-				subscriptions.subscription_user_confirmed AS confirmed,
+				subscriptions.subscription_user_confirmed AS user_confirmed,
+				subscriptions.subscription_organisation_confirmed AS org_confirmed,
 				entities.entity_username AS username,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
@@ -64,8 +65,8 @@ class Members_model extends Model {
 			$bind_data[] = $organisation_id;
 		}
 		$sql .= '
-				AND	subscriptions.subscription_organisation_confirmed = TRUE
-				AND	subscriptions.subscription_deleted = FALSE
+				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
+				AND	subscriptions.subscription_deleted = 0
 			';
 		// Run the query and return the raw results array.
 		$sql .= ' AND ' . $FilterSql;
@@ -78,7 +79,7 @@ class Members_model extends Model {
 		$sql = 'SELECT entities.entity_username as entity_username, users.user_nickname as nickname
 				FROM entities, users
 				WHERE entities.entity_id = users.user_entity_id AND entity_id = ?';
-		
+
 		$query = $this->db->query($sql, array($EntityId));
 		return $query->row();
 	}
@@ -273,49 +274,79 @@ class Members_model extends Model {
 		return $query->result_array();
 	}
 
-	// (not in use yet, subscription_member is depreciated)
-	/*function RemoveSubscription($UserId,$OrgId) {
+	function RemoveSubscription($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET subscription_member = "0"
-				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"
+				SET subscription_user_confirmed = 0, subscription_organisation_confirmed = 0
+				WHERE  subscription_user_entity_id = ?
+				       AND subscription_organisation_entity_id = ?
 				';
-		$this->db->query($sql);
-	}*/
+		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
+	}
 
-	# sets member=1
-	// (not in use yet, subscription_member is depreciated)
-	/*function ConfirmMember($UserId,$OrgId) {
+	function WithdrawInvite($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET subscription_member = "1"
-				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"
+				SET subscription_organisation_confirmed = 0
+				WHERE  subscription_user_entity_id = ?
+				       AND subscription_organisation_entity_id = ?
 				';
-		$this->db->query($sql);
-	}*/
+		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
+	}
 
-	#sets confirmed=1
+
+	function ConfirmMember($UserId,$OrgId) {
+		$sql = '
+				UPDATE subscriptions
+				SET subscription_organisation_confirmed = 1
+				WHERE  subscription_user_entity_id = ?
+				       AND subscription_organisation_entity_id = ?
+				';
+		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
+	}
+
+	function InviteMember($UserId,$OrgId) {
+		if ($this->AlreadyMember($UserId,$OrgId)) {
+			$sql = '
+					UPDATE subscriptions
+					SET subscription_organisation_confirmed = 1
+					WHERE  subscription_user_entity_id = ?
+						   AND subscription_organisation_entity_id = ?
+					';
+			$this->db->query($sql, array($UserId, $OrgId));
+		} else {
+			$sql = '
+				INSERT INTO subscriptions (subscription_user_entity_id, subscription_organisation_entity_id, subscription_organisation_confirmed)
+					VALUES ?, ?, 1
+					';
+			$this->db->query($sql, array($UserId, $OrgId));
+		}
+		return $this->db->affected_rows() > 0;
+	}
+
 	function ConfirmSubscription($UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET subscription_user_confirmed = "1"
-				WHERE  subscription_user_entity_id = "'.$UserId.'"
-				       AND subscription_organisation_entity_id = "'.$OrgId.'"
+				SET subscription_user_confirmed = 1
+				WHERE  subscription_user_entity_id = ?
+				       AND subscription_organisation_entity_id = ?
 				';
-		$this->db->query($sql);
+		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
 	}
 
-	# A check against an organisation inviting a user twice
+	// A check against an organisation inviting a user twice
 	function AlreadyMember($UserId,$OrgId) {
 		$sql = '
 				SELECT subscriptions.subscription_user_entity_id
 				FROM   subscriptions
-				WHERE  subscriptions.subscription_user_entity_id = "'.$UserId.'"
-					   AND subscriptions.subscription_organisation_entity_id = "'.$OrganisationId.'"
+				WHERE  subscriptions.subscription_user_entity_id = ?
+					   AND subscriptions.subscription_organisation_entity_id = ?
 				';
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql, array($UserId, $OrgId));
 		$result_array = $query->result_array();
 		if(count($result_array) == 0) {
 			return false;

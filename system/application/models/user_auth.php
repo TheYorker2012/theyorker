@@ -424,8 +424,7 @@ class User_auth extends model {
 		if ($row->user_office_password == null) {
 			// The user doesn't have a seperate password, this is a
 			//  low level login
-			if ($this->authUni($this->entityId,$password)) {
-			//if ($row->entity_password == $hash) {
+			if ($row->entity_password == $hash) {
 				$this->officeType = 'Low';
 				$this->officeInterface = $row->user_office_interface_id;
 			} else {
@@ -492,8 +491,6 @@ class User_auth extends model {
 			/// @throw Exception You must be logged in as a student to do this
 			throw new Exception('You must be logged in as a student to do this');
 		}
-
-		return $this->authUni($this->username, $password);
 
 		$hash = sha1($this->salt.$password);
 
@@ -633,12 +630,12 @@ class User_auth extends model {
 			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
 				AND subscriptions.subscription_organisation_entity_id = ?
-				AND subscriptions.subscription_vip = TRUE';
-				//AND entity_password = ?';
+				AND subscriptions.subscription_vip = TRUE
+				AND entity_password = ?';
 
-		$query = $this->db->query($sql, array($this->entityId, $organisationId/*, $hash*/));
+		$query = $this->db->query($sql, array($this->entityId, $organisationId, $hash));
 
-		if ($query->num_rows() == 0 || !$this->authUni($this->username, $password)) {
+		if ($query->num_rows() != 1) {
 			/// @throw Exception Invalid organisation or password
 			throw new Exception('Invalid organisation or password');
 		}

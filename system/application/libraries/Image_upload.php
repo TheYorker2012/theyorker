@@ -75,6 +75,9 @@ class Image_upload {
 		}
 		$data = array();
 		$this->ci->upload->initialize($config);
+
+		$photos_loaded = 0;
+
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			$title = $this->ci->input->post('title'.$x);
 			if (isset($title) && strlen($title) > 0) {
@@ -94,6 +97,8 @@ class Image_upload {
 						}
 						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 
+						$photos_loaded++;
+
 					} elseif($this->ci->input->post('destination') == 1) {
 						//redirect back home
 						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
@@ -105,6 +110,11 @@ class Image_upload {
 				}
 			}
 		}
+
+		if($photos_loaded == 0) {
+			$this->ci->main_frame->AddMessage('error', 'No photos were uploaded, as none had titles.');
+		}
+
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
@@ -281,7 +291,7 @@ class Image_upload {
 		if (strlen($photowatermark) > 0) {
 			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 			$font = 'arial';
-			imagettftext($newImage, 10, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
+			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
 		}
 
 		$x = imagesx($newImage);
