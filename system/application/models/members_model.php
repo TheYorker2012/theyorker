@@ -13,7 +13,6 @@ class Members_model extends Model {
 	 * @return array of associative arrays of membership attributes.
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
-	 *	- email will only be returned if the member is on the mailing list
 	 */
 	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array())
 	{
@@ -21,6 +20,17 @@ class Members_model extends Model {
 			return array();
 		}
 		$bind_data = array();
+
+		if (is_array($organisation_id)) {
+			// escape organisation ids
+			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
+			$org_match_sql .= '	IN ('.
+				implode(',',$organisations).')';
+		} else {
+			$org_match_sql .= '	= ?';
+			$bind_data[] = $organisation_id;
+		}
+
 		$sql = '
 			SELECT
 				subscriptions.subscription_organisation_entity_id AS team_id,
@@ -38,14 +48,31 @@ class Members_model extends Model {
 				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
 				entities.entity_username AS email,
 				users.user_gender AS gender,
-				users.user_enrolled_year AS enrol_year
+				users.user_enrolled_year AS enrol_year,
+				(bylines.business_card_id IS NOT NULL) as has_byline,
+				(bylines.business_card_approved = 0) as byline_needs_approval,
+				(CURRENT_DATE() < DATE(bylines.business_card_start_date) OR CURRENT_DATE() > DATE(bylines.business_card_end_date) ) as byline_expired,
+				(business_cards.business_card_id IS NOT NULL) as has_business_card,
+				(business_cards.business_card_approved = 0) as business_card_needs_approval,
+				(CURRENT_DATE() < DATE(business_cards.business_card_start_date) OR CURRENT_DATE() > DATE(business_cards.business_card_end_date) ) as business_card_expired
 			FROM
 				subscriptions
 			INNER JOIN users
 				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
 			INNER JOIN entities
 				ON	subscriptions.subscription_user_entity_id = entities.entity_id
+			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
+					   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
+					   AND byline_groups.business_card_group_organisation_entity_id = NULL)
+				ON bylines.business_card_user_entity_id = users.user_entity_id
+				AND bylines.business_card_deleted = 0
+			LEFT JOIN (business_cards JOIN business_card_groups
+					   ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id
+					   AND business_card_groups.business_card_group_organisation_entity_id '.$org_match_sql.')
+				ON business_cards.business_card_user_entity_id = users.user_entity_id
+				AND business_cards.business_card_deleted = 0
 			WHERE entities.entity_deleted = 0 ';
+
 		// If there's a restriction on the usert, apply it here
 		if (NULL !== $user_id) {
 			$sql .= '	AND subscriptions.subscription_user_entity_id = ?  ';

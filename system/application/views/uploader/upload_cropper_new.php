@@ -220,14 +220,19 @@
 	</div>
 </div>
 
-<div id="blanket" style="clear: both; position: relative; width: 480px; height: 4000px;">
+<div id="blanket" style="clear: both; position: relative; width: 480px; height: 4080px;">
+	<div style="clear: both; position: relative; width: 400px; height: 4000px;">
 	<?php
+	//Ensure images are cached by loading them at the bottom of the webpage
+	//This div also hides the thumbWrapMaster by pushing it off the bottom of the screen,
+	// so that it is still accessable from the DOM in IE6 during page load.
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
 			echo '<img src="'.$singleThumb['cache_img'].'" height="2" width="2" />';
 		}
 	}
 	?>
+	</div>
 </div>
 
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; display: none;">
