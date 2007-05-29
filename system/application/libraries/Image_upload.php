@@ -128,6 +128,12 @@ class Image_upload {
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
 
+		$objResponse->addAssign("submitButton","value","Save");
+		$objResponse->addAssign("submitButton","disabled",false);
+
+		return $objResponse;
+
+
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		// 0 location
 		// 1 original width(?)
@@ -158,11 +164,6 @@ class Image_upload {
 			}
 		}
 		*/
-
-		$objResponse->addAssign("submitButton","value","Save");
-		$objResponse->addAssign("submitButton","disabled",false);
-
-		return $objResponse;
 
 		$sql = 'SELECT image_type_id AS id, image_type_width AS x,
 		               image_type_height AS y, image_type_codename AS codename
