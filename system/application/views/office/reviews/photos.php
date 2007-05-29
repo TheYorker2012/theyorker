@@ -18,6 +18,6 @@
 
 	<?php
 		$CI = &get_instance();
-		$CI->load->view('uploader/upload_single_photo', array('action_url' => 'office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/upload') );
+		$CI->load->view('uploader/upload_single_photo', array('action_url' => '/office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/upload') );
 	?>
 </div>
