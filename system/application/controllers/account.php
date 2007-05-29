@@ -147,7 +147,7 @@ class Account extends controller
 		if($action == 'store') {
 				if ($this->input->post('title1') && $this->input->post('lurl') && $this->input->post('lurl') != 'http://') {
 
-					$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
+					$newId = $this->Links_Model->AddLink($this->input->post('title1'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
 
 					if ($this->input->post('image_pick') == 'gallery') {
