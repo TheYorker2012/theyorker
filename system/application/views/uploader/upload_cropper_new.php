@@ -221,7 +221,13 @@
 </div>
 
 <div id="blanket" style="clear: both; position: relative; width: 480px; height: 4000px;">
-
+	<?php
+	foreach($data as $d) {
+		foreach($d as $singleThumb) {
+			echo '<img src="'.$singleThumb['cache_img'].'" height="2" width="2" />';
+		}
+	}
+	?>
 </div>
 
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; display: none;">
