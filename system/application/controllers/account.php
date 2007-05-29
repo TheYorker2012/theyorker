@@ -155,7 +155,7 @@ class Account extends controller
 					if ($this->input->post('upload') != false) {
 						redirect('/account/customlink/2/'.$newId, 'location');
 					} else {
-						redirect('/account/customlink/3/'.$newId, 'location');
+						redirect('/account/links/'.$newId, 'location');
 					}
 					exit;
 				} else if($this->input->post('lurl')) {
