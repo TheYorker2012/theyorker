@@ -375,7 +375,7 @@ class Members_model extends Model {
 	function SetDefaultByline($UserId) {
 		$sql = '
 			INSERT INTO business_cards (business_card_business_card_group_id, business_card_user_entity_id, business_card_name,business_card_title,business_card_approved)
-			SELECT 3, users.user_entity_id, CONCAT(users.user_firstname,' ',users.user_surname), 'Reporter',1
+			SELECT 3, users.user_entity_id, CONCAT(users.user_firstname," ",users.user_surname), "Reporter",1
 			FROM users
 			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
 								   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
