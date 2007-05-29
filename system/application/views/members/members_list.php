@@ -130,7 +130,7 @@ function FilterLinkBool($filter, $field, $value)
 			<?php } ?></td>
 
 			<td align="center">
-			<php if ($membership['user_confirmed'] && $membership['org_confirmed']) { ?>
+			<?php if ($membership['user_confirmed'] && $membership['org_confirmed']) { ?>
 				<IMG SRC="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />
 			<?php } elseif ($membership['user_confirmed']) { ?>
 				<IMG SRC="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />
