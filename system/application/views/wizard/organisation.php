@@ -195,7 +195,7 @@ function addstrike($text)
 ?>
 <div class="BlueBox">
 <h2>photo upload </h2>
-	<form action="/wizard/organisation/upload/images" method="post" class="form" enctype="multipart/form-data">
+	<form action="/wizard/organisation/upload/images" method="post" class="form" enctype="multipart/form-data" onsubmit="return ValidateClones();">
 		Photo's should be in jpg format. The upload size limit is 2mb(?).<br />
 		<fieldset>
 			<label for="title1">Photo Title:</label><input type="text" name="title1" id="title1" size="30" />
