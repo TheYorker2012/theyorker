@@ -157,7 +157,6 @@ class Account extends controller
 						redirect('/account/links', 'location');
 					} elseif ($this->input->post('image_pick') == 'custom') {
 						$this->load->library('image_upload');
-						$this->ci->xajax->processRequests();
 						$_SESSION['img'] = array();
 						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), false);
 					} else {
