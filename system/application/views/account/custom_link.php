@@ -43,6 +43,7 @@ function radio_click() {
 			<p>Please select an image to be used for this link. The image must be larger than 50x50 pixels.</p>
 			<label for="userfile1">File Location: </label>
 			<input type="file" name="userfile1" size="20" />
+			<input type="hidden" name="destination" id="destination" value="1" />
 			<br style="clear: both;"/>
 			</div>
 			<input type="submit" value="Finish" class="button"> <input type="button" value="Back" class="button" onClick="window.location='/account/links';">
