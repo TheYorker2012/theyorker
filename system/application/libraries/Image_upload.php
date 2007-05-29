@@ -169,6 +169,7 @@ class Image_upload {
 			//TODO add some kind of logging
 			exit;
 		}
+			echo('hello');
 
 		$bits = explode('/', $selectedThumb[0]);
 		if ($bits[1] == 'tmp') {
