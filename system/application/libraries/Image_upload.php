@@ -35,9 +35,11 @@ class Image_upload {
 			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images');
 		} elseif ($photos) {
 			$this->ci->main_frame->SetTitle('Photo Upload');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo');
 		} else {
 			$this->ci->main_frame->SetTitle('Image Upload');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
 		}
 		$this->ci->main_frame->Load();

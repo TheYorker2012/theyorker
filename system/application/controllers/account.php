@@ -166,7 +166,7 @@ class Account extends controller
 				$this->load->library('image_upload');
 				$_SESSION['img'] = array();
 				$this->image_upload->automatic('/account/customlink/3/'.$id, array('link'), false, false);
-				exit;
+
 			case 3:
 				if (isset($_SESSION['img'])) {
 					foreach ($_SESSION['img'] as $newImage) {
