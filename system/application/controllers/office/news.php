@@ -516,7 +516,8 @@ class News extends Controller
 								}
 							} else {
 								/// EVERYONE: View + Notice that already published
-								echo('This article is live, and cannot be edited except by an editor.');
+								/// WTF is this here for? -> echo('This article is live, and cannot be edited except by an editor.');
+								$this->_showarticle($article_id);
 							}
 							break;
 						case 'suggestion':
