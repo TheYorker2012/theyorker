@@ -169,14 +169,17 @@ class Account extends controller
 				}
 		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
+					$image_count = 0;
 					foreach ($_SESSION['img'] as $newImage) {
 						if ($newImage['codename'] == 'link') {
 							$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+							$this->messages->AddMessage('success', 'Link added successfully.');
+							redirect('/account/links', 'location');
 							break;
 						}
 					}
-					$this->messages->AddMessage('success', 'Link added successfully.');
-					redirect('/account/links', 'location');
+					$this->messages->AddMessage('error', 'The link image was not added.');
+					redirect('/account/customlink', 'location');
 				}
 		} else {
 			$data = array();
