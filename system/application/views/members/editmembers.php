@@ -53,6 +53,14 @@
 		</fieldset>
 	</form>
 </div>
+<div class='blue_box'>
+	<h2>Membership Control</h2>
+	<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
+			<p><?php echo $membership['cmd_string']; ?></p>
+			<input name='member_cmd' type='submit' value='<?php echo $membership['cmd_action']; ?>' class='button' onclick="<?php echo $membership['cmd_js']; ?>"/>
+			<div style="clear: both;"></div>
+	</form>
+</div>
 <script type="text/javascript">
 <!--
 function submit_checker()
@@ -97,7 +105,7 @@ if ('manage' === VipMode()) {
 				<input style="float:none;" type="radio" onChange="show_password_form()" id="editor_level_access" name="office_access_level" value="editor" <?php if ($membership['office_editor_access']) echo 'checked'; ?>> Editor
 				<div id="password_form" style="display: <?php echo ($membership['office_editor_access'] ? 'block' : 'none'); ?>;">
 					<br />
-					Editors require an additional password to access the office. This should be different to their university password. When this password is reset, it will be e-mailed to the user.
+					<p>Editors require an additional password to access the office. This should be different to their university password. When this password is reset, it will be e-mailed to the user.</p>
 					<label for='password'>New password:</label>
 					<input type="password" name="password" id="password" value="">
 					<label for='confirm_password'>Confirm password:</label>
