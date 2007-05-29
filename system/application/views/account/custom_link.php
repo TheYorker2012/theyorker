@@ -21,7 +21,7 @@ function radio_click() {
 	<div class="BlueBox">
 		<h2>Add Custom Link</h2>
 		<p>To add a link that is not in the list, enter it here. Nominating a link means it will get considered for becoming official, with a proper icon.</p>
-		<form action="customlink/store" method="post">
+		<form action="/account/customlink/store" method="post">
 		<fieldset>
 			<label for="title1"> Link Name: </label>
 			<input type="text" name="title1" value="" default />
