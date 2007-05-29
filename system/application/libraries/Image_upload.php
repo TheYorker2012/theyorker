@@ -344,7 +344,7 @@ class Image_upload {
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
 				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.count($output).'-'.$Thumb->image_type_id.'|'.$watermark,
 				                  'thumb_id' => count($output).'-'.$Thumb->image_type_id,
-				                  'cache_img' => '/photos/full/'.$id
+				                  'cache_img' => '/tmp/uploads/'.$data['file_name']
 				                  );
 			}
 		}
