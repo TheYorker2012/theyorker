@@ -159,6 +159,11 @@ class Image_upload {
 		}
 		*/
 
+		$objResponse->addAssign("submitButton","value","Save");
+		$objResponse->addAssign("submitButton","disabled",false);
+
+		return $objResponse;
+
 		$sql = 'SELECT image_type_id AS id, image_type_width AS x,
 		               image_type_height AS y, image_type_codename AS codename
 		        FROM image_types WHERE image_type_id = ? LIMIT 1';
@@ -169,7 +174,6 @@ class Image_upload {
 			//TODO add some kind of logging
 			exit;
 		}
-			echo('hello');
 
 		$bits = explode('/', $selectedThumb[0]);
 		if ($bits[1] == 'tmp') {
@@ -195,7 +199,7 @@ class Image_upload {
 						break;
 				}
 			}
-			echo('hello');
+
 			switch ($mime) {
 				case 'image/jpeg':
 					$image = imagecreatefromjpeg('.'.$selectedThumb[0]);
@@ -207,11 +211,11 @@ class Image_upload {
 					$image = imagecreatefromgif('.'.$selectedThumb[0]);
 					break;
 			}
-			echo('hello');
+
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
-			echo('hello');
+
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
