@@ -24,7 +24,7 @@ function radio_click() {
 		<form action="/account/customlink/store" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<label for="title1"> Link Name: </label>
-			<input type="text" name="title1" value="" default />
+			<input type="text" name="title1" />
 			<br />
 			<label for="lurl"> Link URL: </label>
 			<input type="text" name="lurl" value="http://" />
