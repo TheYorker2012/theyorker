@@ -194,6 +194,7 @@ class Image_upload {
 						break;
 				}
 			}
+			echo('hello');
 			switch ($mime) {
 				case 'image/jpeg':
 					$image = imagecreatefromjpeg('.'.$selectedThumb[0]);
@@ -205,13 +206,15 @@ class Image_upload {
 					$image = imagecreatefromgif('.'.$selectedThumb[0]);
 					break;
 			}
+			echo('hello');
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
-
+			echo('hello');
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
+					echo('hello'.$iUp);
 					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
 						if (isset($_SESSION['img'][$iUp]['oldID'])) {
 							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
