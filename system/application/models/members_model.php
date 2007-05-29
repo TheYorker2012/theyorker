@@ -21,6 +21,7 @@ class Members_model extends Model {
 		}
 		$bind_data = array();
 
+		$org_match_sql = '';
 		if (is_array($organisation_id)) {
 			// escape organisation ids
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
