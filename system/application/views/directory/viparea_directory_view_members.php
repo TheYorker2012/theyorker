@@ -21,7 +21,7 @@
 	</div>
 
 	<h2>Add a group</h2>
-	<div class="entry">
+	<div class="Entry">
 	<?php
 	if($no_groups){
 	echo "<p>You need to create at least one group before you can begin creating contact cards</p>";
