@@ -18,7 +18,7 @@
 
 	<?php
 		$CI = &get_instance();
-		$CI->load->view('uploader/upload_single_photo', array('action_url' => vip_url('directory/photos/delete/'.$image->photo_id)) );
+		$CI->load->view('uploader/upload_single_photo', array('action_url' => vip_url('directory/photos/upload')) );
 	?>
 </div>
 
