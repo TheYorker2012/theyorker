@@ -156,6 +156,7 @@ class Account extends controller
 						$this->messages->AddMessage('success', 'Link added successfully.');
 						redirect('/account/links', 'location');
 					} elseif ($this->input->post('image_pick') == 'custom') {
+						$this->load->library(array('xajax', 'image'));
 						$this->load->library('image_upload');
 						$this->xajax->processRequests();
 						$_SESSION['img'] = array();
