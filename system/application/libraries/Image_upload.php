@@ -128,7 +128,7 @@ class Image_upload {
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
 
-		$objResponse->addAssign("submitButton","value","Save");
+		$objResponse->addAssign("submitButton","value","Save!");
 		$objResponse->addAssign("submitButton","disabled",false);
 
 		return $objResponse;
