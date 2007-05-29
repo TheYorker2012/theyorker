@@ -14,7 +14,7 @@ class Members_model extends Model {
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false;)
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false)
 	{
 		if (is_array($organisation_id) && empty($organisation_id)) {
 			return array();
