@@ -64,7 +64,7 @@ class Members_model extends Model {
 				ON	subscriptions.subscription_user_entity_id = entities.entity_id
 			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
 					   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
-					   AND byline_groups.business_card_group_organisation_entity_id = NULL)
+					   AND byline_groups.business_card_group_organisation_entity_id IS NULL)
 				ON bylines.business_card_user_entity_id = users.user_entity_id
 				AND bylines.business_card_deleted = 0
 			LEFT JOIN (business_cards JOIN business_card_groups
