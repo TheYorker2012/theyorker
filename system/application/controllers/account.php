@@ -70,6 +70,7 @@ class Account extends controller
 	{
 		if (!CheckPermissions('student')) return;
 
+		$this->load->library('validation');
 		$this->_SetupTabs('subscriptions');
 
 		/// Get custom page content
