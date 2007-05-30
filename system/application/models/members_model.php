@@ -184,7 +184,7 @@ class Members_model extends Model {
 	function UpdateVipStatus($Status,$UserId,$OrgId) {
 		$sql = '
 				UPDATE subscriptions
-				SET    subscription_vip = "'.$Status.'"
+				SET    subscription_vip_status = "'.$Status.'"
 				WHERE  subscription_user_entity_id = "'.$UserId.'"
 				       AND subscription_organisation_entity_id = "'.$OrgId.'"
 				';

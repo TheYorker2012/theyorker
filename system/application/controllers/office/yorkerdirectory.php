@@ -611,7 +611,7 @@ class Yorkerdirectory extends Controller
 				'user'			=> 'business_cards.business_card_user_entity_id',
 				'card'			=> 'business_cards.business_card_id',
 				'paid' 			=> 'subscriptions.subscription_paid',
-				'vip'			=> 'subscriptions.subscription_vip',
+				'vip'			=> 'subscriptions.subscription_vip_status',
 				'confirmed'		=> '1',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',

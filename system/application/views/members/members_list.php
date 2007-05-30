@@ -144,9 +144,13 @@ function FilterLinkBool($filter, $field, $value)
 				<img src="/images/prototype/members/paid.png" alt="Yes" />
 			<?php } ?></td>
 			<?php if ('manage' !== VipMode()) { ?>
-				<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
-					<img src="/images/prototype/members/vip.png" alt="Yes" />
-				<?php } ?></td>
+				<td align="center">
+				<?php if (isset($membership['vip']) && $membership['vip']) { ?>
+					<img src="/images/prototype/members/vip.png" alt="VIP" title="VIP" />
+				<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
+					<img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access" title="Requested VIP Access" />
+				<?php } ?>
+				</td>
 			<?php } ?>
 			<td align="center">
 			<?php if ($membership['has_business_card']) { ?>

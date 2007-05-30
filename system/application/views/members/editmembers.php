@@ -50,8 +50,6 @@
 				<input style="border: 0px;" type="text" name="member_status" value="<?php echo $membership['status']; ?>" disabled />
 				<label for='member_paid'>Paid:</label>
 				<input style="border: 0px;" type='checkbox' name='member_paid' value='1' <?php if($membership['paid']){echo 'checked';} ?> />
-				<label for='member_vip'>VIP Member:</label>
-				<input style="border: 0px;" type='checkbox' name='member_vip' value='1' <?php if($membership['vip']){echo 'checked';} ?> />
 			</fieldset>
 			<fieldset>
 				<input name='member_update' type='submit' value='Update' class='button' />
@@ -65,13 +63,29 @@
 				<p><?php echo $membership['cmd_string']; ?></p>
 				<input name='member_cmd' type='submit' value='<?php echo $membership['cmd_action']; ?>' class='button' onclick="<?php echo $membership['cmd_js']; ?>"/>
 				<div style="clear: both;"></div>
-	<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
-				<p>This user does not have a byline. This means that the user will be <b>unable to write articles</b> in the office. To give this user the default byline, click below:</p>
 			</fieldset>
+			<?php if ('manage' !== VipMode()) { ?>
 			<fieldset>
+				<?php if (isset($membership['vip_requested']) && $membership['vip_requested']) {	?>
+					<p>This user has <b>requested</b> to become a VIP. Please decide whether or not this user should be allowed VIP access:</p>
+					<input name='vip_cmd' type='submit' value='Reject' class='button' />
+					<input name='vip_cmd' type='submit' value='Accept' class='button' onclick="return confirm('This will give the user VIP access. Are you sure?');" />
+				<?php } elseif (isset($membership['vip']) && $membership['vip']) {	?>
+					<p>This user <b>is a vip</b>. To demote the user back to member status, click below:</p>
+					<input name='vip_cmd' type='submit' value='Demote' class='button' onclick="return confirm('This will demote the user to member status, where they will no longer have access to the vip area. Are you sure?');" />
+				<?php } else {	?>
+					<p>This user <b>is not a vip</b>. To give this user the vip status, click below:</p>
+					<input name='vip_cmd' type='submit' value='Promote' class='button' onclick="return confirm('This will give the user VIP access. Are you sure?');" />
+				<?php }	?>
+				<div style="clear: both;"></div>
+			</fieldset>
+			<?php } ?>
+			<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
+			<fieldset>
+				<p>This user does not have a byline. This means that the user will be <b>unable to write articles</b> in the office. To give this user the default byline, click below:</p>
 				<input name='member_byline_reset' type='submit' value='Set Default Byline' class='button' onclick="return confirm('This will set the byline of the member to their full name. Are you sure?');" />
 			</fieldset>
-	<?php } ?>
+			<?php } ?>
 		</form>
 	</div>
 	<script type="text/javascript">
