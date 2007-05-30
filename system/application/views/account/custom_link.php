@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Link Nomination</h2>
 	<div class="Entry">
-			You may nominate your link for addition to the list. Please note that we do not accept personal homepages or other minor sites.
+			You may <b>nominate</b> your link for addition to the list. Please note that we do not accept personal homepages or other minor sites.
 	</div>
 </div>
 
@@ -50,7 +50,7 @@ function validate_form() {
 			<?php if($gallery_images->num_rows() > 0) {
 				foreach ($gallery_images->result() as $image) {?>
 				<div style="display:inline;padding: 10px;float:left">
-					<a href="#" onclick="alert('Image <?=$image->image_id?> selected');document.getElementById('chosen_image').value=<?=$image->image_id?>; return false;">
+					<a href="#" onclick="alert('Image selected');this.style.border-size=5;document.getElementById('chosen_image').value=<?=$image->image_id?>; return false;">
 					<?=$this->image->getImage($image->image_id, $image->image_image_type_id)?>
 					</a>
 				</div>
