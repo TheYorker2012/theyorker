@@ -64,6 +64,39 @@ class Account extends controller
 	}
 
 	/**
+	 *	@brief	Allows a user to become a VIP for an organisation
+	 */
+	function vip($org_id = NULL)
+	{
+		if (!CheckPermissions('student')) return;
+
+		$this->_SetupTabs('subscriptions');
+
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_home');
+
+		if (($org_id == NULL) || (!is_numeric($org_id))) {
+			$this->messages->AddMessage('error', 'The organisation you tried to apply to be VIP for does not exist.');
+			redirect('account/');
+		} elseif (!$this->prefs_model->isSubscribed($this->user_auth->entityId, $org_id)) {
+			$this->messages->AddMessage('error', 'You must be subscribed to the organisation before you can apply to become a VIP for it.');
+			redirect('account/');
+		} elseif ($this->input->post('v_apply') == 'Apply') {
+			$this->load->model('member_model');
+		} else {
+			$data['org_id'] = $org_id;
+			$data['org_name'] = $this->prefs_model->getOrganisationDescription($org_id);
+			$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
+			$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
+
+			/// Set up the main frame
+			$this->main_frame->SetContentSimple('account/vip_application', $data);
+			/// Set page title & load main frame with view
+			$this->main_frame->Load();
+		}
+	}
+
+	/**
 	 *	@brief	Allows setting of business card information
 	 */
 	function bcards()
