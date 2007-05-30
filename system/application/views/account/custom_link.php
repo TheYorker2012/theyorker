@@ -25,6 +25,12 @@ function validate_form() {
 	}
 	return true;
 }
+
+function select_image(id) {
+	alert('Image selected');
+	document.getElementById('chosen_image').value=id;
+	return false;
+}
 -->
 </script>
 <div id="MainColumn">
@@ -50,7 +56,7 @@ function validate_form() {
 			<?php if($gallery_images->num_rows() > 0) {
 				foreach ($gallery_images->result() as $image) {?>
 				<div style="display:inline;padding: 10px;float:left">
-					<a href="#" onclick="alert('Image selected');this.style.border-size=5;document.getElementById('chosen_image').value=<?=$image->image_id?>; return false;">
+					<a href="#" onclick="return select_image(<?=$image->image_id?>);">
 					<?=$this->image->getImage($image->image_id, $image->image_image_type_id)?>
 					</a>
 				</div>
