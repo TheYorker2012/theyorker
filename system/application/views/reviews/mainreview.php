@@ -26,7 +26,7 @@ $address = htmlspecialchars($address);
 	<h2>Tips</h2>
 	<div class="Entry">
 			<?php if(strlen(trim($yorker_recommendation)) > 0) { ?><b>We Recommend:</b>  <?php echo(htmlspecialchars($yorker_recommendation)); ?><br /><?php } ?>
-			<?php ($average_price > 0) { ?><b>Average Drink Price:</b> &pound;<?php echo(htmlspecialchars($average_price/100)); ?><br /><?php } ?>
+			<?php if($average_price > 0) { ?><b>Average Drink Price:</b> &pound;<?php echo(htmlspecialchars($average_price/100)); ?><br /><?php } ?>
 	</div>
 	<?php } ?>
 </div>
