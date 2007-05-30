@@ -37,7 +37,7 @@ class Members_model extends Model {
 				subscriptions.subscription_organisation_entity_id AS team_id,
 				subscriptions.subscription_paid AS paid,
 				subscriptions.subscription_email AS on_mailing_list,
-				(subscriptions.subscription_vip_status = "accepted") AS vip,
+				(subscriptions.subscription_vip_status = "approved") AS vip,
 				(subscriptions.subscription_vip_status = "requested") AS vip_requested,
 				subscriptions.subscription_user_confirmed AS user_confirmed,
 				subscriptions.subscription_organisation_confirmed AS org_confirmed,
@@ -94,7 +94,7 @@ class Members_model extends Model {
 			$bind_data[] = $organisation_id;
 		}
 		$sql .= '
-				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
+				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1 OR subscriptions.subscription_vip_status != "none")
 				AND	subscriptions.subscription_deleted = 0
 			';
 

@@ -603,7 +603,7 @@ class User_auth extends model {
 
 		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
-			WHERE subscription_user_entity_id = ? AND subscription_vip_status = "accepted"';
+			WHERE subscription_user_entity_id = ? AND subscription_vip_status = "approved"';
 
 		$query = $this->db->query($sql, array($this->entityId));
 
@@ -630,7 +630,7 @@ class User_auth extends model {
 			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
 				AND subscriptions.subscription_organisation_entity_id = ?
-				AND subscriptions.subscription_vip_status = "accepted"
+				AND subscriptions.subscription_vip_status = "approved"
 				AND entity_password = ?';
 
 		$query = $this->db->query($sql, array($this->entityId, $organisationId, $hash));
