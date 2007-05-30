@@ -13,19 +13,19 @@ $address = str_replace("\r", '', $address);
 $address = str_replace("\n", ', ', $address);
 $address = htmlspecialchars($address);
 ?>
-			Address: <?php echo($address); ?><br />
-			Website: <?php echo(htmlspecialchars($website)); ?><br />
-			Email: <?php echo(htmlspecialchars($email)); ?><br />
-			Telephone: <?php echo(htmlspecialchars($telephone)); ?><br />
-			Opening Times: <?php echo(htmlspecialchars($opening_times)); ?><br />
-			Serving Times: <?php echo(htmlspecialchars($serving_times)); ?><br />
+			<b>Address:</b>  <?php echo($address); ?><br />
+			<b>Website:</b>  <a href="<?php echo(htmlspecialchars($website)); ?>">Click Here</a><br />
+			<b>Email:</b>  <a href="mailto:<?php echo(htmlspecialchars($email)); ?>"><?php echo(htmlspecialchars($email)); ?></a><br />
+			<b>Telephone:</b>  <?php echo(htmlspecialchars($telephone)); ?><br />
+			<b>Opening Times:</b>  <?php echo(htmlspecialchars($opening_times)); ?><br />
+			<b>Serving Times:</b> <?php echo(htmlspecialchars($serving_times)); ?><br />
 		</p>
 	</div>
 
 	<h2>Tips</h2>
 	<div class="Entry">
-			Yorker Recommends: <?php echo(htmlspecialchars($yorker_recommendation)); ?><br />
-			Average Drink Price: £<?php echo(htmlspecialchars($average_price/100)); ?><br />
+			<b>We Recommend:</b>  <?php echo(htmlspecialchars($yorker_recommendation)); ?><br />
+			<b>Average Drink Price:</b> &pound;<?php echo(htmlspecialchars($average_price/100)); ?><br />
 	</div>
 </div>
 
