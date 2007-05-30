@@ -122,7 +122,7 @@ class Prefs_model extends Model {
 	{
 		$sql =
 			'SELECT'.
-			' organisations.organisation_name AS name '.
+			' organisations.organisation_name AS name, '.
 			' organisation_content_description AS description '.
 			'FROM organisations '.
 			'INNER JOIN organisation_contents '.
