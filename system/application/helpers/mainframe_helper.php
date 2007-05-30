@@ -36,7 +36,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 		'manage'		=> 'frame_office',
 		'admin'			=> 'frame_office',
 	);
-	
+
 	assert('array_key_exists($Frame,$frames)');
 	$frame_library = $frames[$Frame];
 	$CI = &get_instance();
@@ -78,7 +78,7 @@ function GenerateToplinks($Permission)
 	switch ($UserLevel) {
 		case 'public':
 			if ($CI->uri->segment(1) !== 'login') {
-				//$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
+				$top_links[] = array('log in',  site_url('login/main'.$CI->uri->uri_string()));
 			}
 			$top_links[] = array('register',site_url('/account/password/register'));
 			break;
