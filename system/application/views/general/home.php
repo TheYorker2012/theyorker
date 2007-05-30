@@ -52,6 +52,7 @@ function print_middle_box($title,$article_array){
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
 	}
 ?>
+	<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
 
 	<h2>York Weather</h2>
@@ -66,7 +67,7 @@ function print_middle_box($title,$article_array){
 </div>
 
 <div id="MainColumn">
-	<div id="HomeBanner"> 
+	<div id="HomeBanner">
 		<?php echo($banner) ?>
 	</div>
 
