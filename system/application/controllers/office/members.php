@@ -444,7 +444,7 @@ class Members extends Controller
 					}
 					if (array_key_exists('vip', $changes)) {
 						$num_changes = $this->members_model->UpdateVipStatus(
-							$changes['vip']?'1':'0',
+							$changes['vip']?'accepted':'none',
 							$EntityId, VipOrganisationId());
 						if ($num_changes) {
 							$successes[] = 'vip';
