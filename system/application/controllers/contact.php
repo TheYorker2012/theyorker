@@ -2,7 +2,7 @@
 /**
  * This is the controller for contact us page
  *
- * \author Alex Fargus	
+ * \author Alex Fargus
  */
 class Contact extends Controller {
 
@@ -15,13 +15,13 @@ class Contact extends Controller {
 		parent::Controller();
 		$this->load->model('Contact_Model');
 	}
-	
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
 		$this->pages_model->SetPageCode('contact_us');
-		
+
 		//Various arrays defined
 		$data = array();	//Stores all data to be passed to view
 
@@ -39,22 +39,41 @@ class Contact extends Controller {
 	function sendmail(){
 		//Still need to add captcha
 		if (!CheckPermissions('public')) return;
-		
+
+		require_once "Mail.php";
+
 		$to = $this->input->post('recipient');
 		$from = $this->input->post('contact_email');
-		$subject = $this->input->post('contact_subject'); 
+		$subject = $this->input->post('contact_subject');
 		$message = $this->input->post('contact_message');
+		$headers = array(
+			'From' => $from,
+			'To' => $to,
+			'Subject' => $subject
+		);
+		$smtp = Mail::factory(
+			'smtp',
+			array (
+				'host' => 'ado.is-a-geek.net',
+				'auth' => false/*,
+				'username' => $username,
+				'password' => $password*/
+			)
+		);
+		$mail = $smtp->send($to, $headers, $message);
+
 		if ($to && $subject && $message && $from){
-			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
-			if (mail($to,$subject,$message,$from)) {
+			if (!PEAR::isError($mail)) {
+				$this->main_frame->AddMessage('success', 'Thank you for contacting us.');
 				redirect('/about');
 			} else {
+				$this->main_frame->AddMessage('error', 'E-mail sending failed.');
 				redirect('/contact');
 			}
 		} else {
-			redirect('/failed');
+			$this->main_frame->AddMessage('error', 'E-mail sending failed.');
+			redirect('/contact');
 		}
 	}
-
 }
 ?>

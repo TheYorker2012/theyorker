@@ -171,6 +171,14 @@ div#TopBannerPictures img {
 	padding-right: 0.5em;
 }
 
+div#TopBannerText{
+	text-align: center;
+	margin-top: 40px;
+	font-size: 16px;
+	font-weight: bold;
+	color: white;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in the search box and navigation menu              *

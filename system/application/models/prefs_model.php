@@ -122,6 +122,7 @@ class Prefs_model extends Model {
 	{
 		$sql =
 			'SELECT'.
+			' organisations.organisation_name AS name, '.
 			' organisation_content_description AS description '.
 			'FROM organisations '.
 			'INNER JOIN organisation_contents '.
@@ -187,6 +188,20 @@ class Prefs_model extends Model {
 			'WHERE subscription_organisation_entity_id = ?'.
 			' AND subscription_user_entity_id = ?';
 		$query = $this->db->query($sql, array($org_id, $user_id));
+	}
+
+	/* Store info about a VIP application */
+	function vipApplication ($user_id,$org_id,$position,$phone)
+	{
+		$sql = 'UPDATE	subscriptions, users
+				SET		subscriptions.subscription_user_position = ?,
+						users.user_contact_phone_number = ?
+				WHERE	subscriptions.subscription_user_entity_id = ?
+				AND		subscriptions.subscription_organisation_entity_id = ?
+				AND		subscriptions.subscription_user_entity_id = users.user_entity_id';
+		$query = $this->db->query($sql,array($position,$phone,$user_id,$org_id));
+
+		$sql = 'UPDATE';
 	}
 
 	/**
@@ -255,22 +270,22 @@ class Prefs_model extends Model {
 	function getAllSubscriptions ($user_id)
 	{
 		$sql =
-		'SELECT
-		 organisations.organisation_name AS organisation_name,
-		 organisation_types.organisation_type_name AS organisation_type_name,
-		 subscriptions.subscription_organisation_entity_id AS org_id,
-		 subscriptions.subscription_email AS subscription_email,
-		 subscriptions.subscription_paid AS subscription_paid,
-		 subscriptions.subscription_calendar AS subscription_calendar,
-		 subscriptions.subscription_todo AS subscription_todo
-		FROM subscriptions
-		INNER JOIN organisations
-		 ON subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
-		INNER JOIN organisation_types
-		 ON organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
-		WHERE subscriptions.subscription_user_entity_id = ?
-		 AND subscriptions.subscription_deleted = 0
-		ORDER BY organisation_name ASC';
+		'SELECT		organisations.organisation_name							AS organisation_name,
+					organisation_types.organisation_type_name				AS organisation_type_name,
+					subscriptions.subscription_organisation_entity_id		AS org_id,
+					subscriptions.subscription_email						AS subscription_email,
+					subscriptions.subscription_paid							AS subscription_paid,
+					subscriptions.subscription_calendar						AS subscription_calendar,
+					subscriptions.subscription_todo							AS subscription_todo,
+					subscriptions.subscription_vip_status					AS vip_status
+					FROM subscriptions
+		INNER JOIN	organisations
+			ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN	organisation_types
+			ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+		WHERE		subscriptions.subscription_user_entity_id = ?
+		AND			subscriptions.subscription_deleted = 0
+		ORDER BY	organisation_name ASC';
 
 		$query = $this->db->query($sql, $user_id);
 

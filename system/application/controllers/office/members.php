@@ -409,19 +409,32 @@ class Members extends Controller
 			}
 
 			// Read the post data
+			$button = $this->input->post('vip_cmd');
+			if ($button === 'Demote' || $button === 'Reject') {
+				if ( $this->members_model->UpdateVipStatus('none', $EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Member demoted successfully.');
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			} elseif ($button === 'Promote' || $button === 'Accept') {
+				if ( $this->members_model->UpdateVipStatus('approved', $EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Member promoted successfully.');
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			}
+
+			// Read the post data
 			$button = $this->input->post('member_update');
 			if ($button === 'Update') {
 				$member_paid	= (FALSE !== $this->input->post('member_paid'));
-				$member_vip		= (FALSE !== $this->input->post('member_vip'));
 
 				$changes = array();
 				if ($member_paid !== (bool)$membership['paid']) {
 					// Paid has changed
 					$membership['paid'] = $changes['paid'] = $member_paid;
-				}
-				if ($member_vip !== (bool)$membership['vip']) {
-					// Vip status has changed
-					$membership['vip'] = $changes['vip'] = $member_vip;
 				}
 
 				// If changes save them
@@ -440,16 +453,6 @@ class Members extends Controller
 							$successes[] = 'paid';
 						} else {
 							$failures[] = 'paid';
-						}
-					}
-					if (array_key_exists('vip', $changes)) {
-						$num_changes = $this->members_model->UpdateVipStatus(
-							$changes['vip']?'1':'0',
-							$EntityId, VipOrganisationId());
-						if ($num_changes) {
-							$successes[] = 'vip';
-						} else {
-							$failures[] = 'vip';
 						}
 					}
 					if (!count($failures)) {
@@ -495,6 +498,8 @@ class Members extends Controller
 				$membership['cmd_action'] = 'Remove';
 				$membership['cmd_js'] = "return confirm('Are you sure that you want to remove this member from your organisation?');";
 			}
+
+
 
 			if ('manage' === VipMode() && (!$membership['has_byline'] || $membership['byline_needs_approval'] || $membership['byline_expired']) ) {
 				$membership['byline_reset'] = true;

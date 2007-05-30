@@ -1,22 +1,4 @@
 var DirectoryEntries = new Array();
-var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-function createLetterJumpLinks() {
-	var container = document.getElementById('LetterJump');
-	var link;
-	var curchar;
-
-	for (var i = 0; i < letters.length; i++) {
-		curchar = letters.charAt(i);
-		link = document.createElement('a');
-		link.appendChild(document.createTextNode(curchar));
-		container.appendChild(link);
-	
-		if (document.getElementById('DirectoryList' + curchar) != null) {
-			link.setAttribute('href', '#DirectoryList' + curchar);
-		}
-	}
-}
 
 function getNextDirEntry(element) {
 	var id;
@@ -88,8 +70,6 @@ function initDirectory() {
 
 		element = getNextDirEntry(element.nextSibling);
 	}
-
-	createLetterJumpLinks();
 }
 
 function searchDirectory() {
@@ -115,21 +95,9 @@ function searchDirectory() {
 
 	var entry;
 	var valid;
-	var curLetter = 'A';
-	var curLetterValid;
-	var thisLetter;
 
 	for (i = 0; i < DirectoryEntries.length; i++) {
 		entry = DirectoryEntries[i];
-
-		thisLetter = entry.name.charAt(0);
-		if (thisLetter != curLetter) {
-			element = document.getElementById('DirectoryList' + curLetter);
-			element.style.display = curLetterValid ? 'block' : 'none';
-
-			curLetter = thisLetter;
-			curLetterValid = false;
-		}
 
 		valid = false;
 		for (j = 0; j < categories.length; j++) {
@@ -142,13 +110,9 @@ function searchDirectory() {
 		if (valid && entry.name.indexOf(freetext) == -1 && entry.description.indexOf(freetext) == -1)
 			valid = false;
 
-		curLetterValid = curLetterValid | valid;
 		hasResults = hasResults | valid;
 		entry.div.style.display = valid ? 'block' : 'none';
 	}
-
-	element = document.getElementById('DirectoryList' + curLetter);
-	element.style.display = curLetterValid ? 'block' : 'none';
 
 	element = document.getElementById('NotFound');
 	element.style.display = hasResults ? 'none' : 'block';

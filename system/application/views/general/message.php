@@ -16,7 +16,7 @@ else
 
 <?php
 echo('<div class="message_'.$class.'">'."\n");
-echo('	<img src="/images/prototype/homepage/'.$class.'.png" alt="'.$class.'" />'."\n");
+echo('	<img src="/images/prototype/homepage/'.$class.'.png" alt="'.$class.'" width="30" height="30" />'."\n");
 echo('	'.$text."\n");
 echo('</div>'."\n");
 ?>

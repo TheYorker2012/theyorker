@@ -350,12 +350,26 @@ class User_auth extends model {
 			$nick,
 			$body
 		);
-		return mail(
-			$to,
-			$subject,
-			$body,
-			'From: '.$from
+
+		require_once "Mail.php";
+
+		$headers = array(
+			'From' => $from,
+			'To' => $to,
+			'Subject' => $subject
 		);
+		$smtp = Mail::factory(
+			'smtp',
+			array (
+				'host' => 'ado.is-a-geek.net',
+				'auth' => false/*,
+				'username' => $username,
+				'password' => $password*/
+			)
+		);
+		$mail = $smtp->send($to, $headers, $body);
+
+		return !PEAR::isError($mail);
 	}
 
 	/// Logout of the entire site
@@ -603,7 +617,7 @@ class User_auth extends model {
 
 		$sql = 'SELECT organisation_entity_id, organisation_name, organisation_directory_entry_name FROM organisations
 				INNER JOIN subscriptions ON subscription_organisation_entity_id = organisation_entity_id
-			WHERE subscription_user_entity_id = ? AND subscription_vip = TRUE';
+			WHERE subscription_user_entity_id = ? AND subscription_vip_status = "approved"';
 
 		$query = $this->db->query($sql, array($this->entityId));
 
@@ -630,7 +644,7 @@ class User_auth extends model {
 			INNER JOIN organisations ON organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			WHERE entities.entity_id = ?
 				AND subscriptions.subscription_organisation_entity_id = ?
-				AND subscriptions.subscription_vip = TRUE
+				AND subscriptions.subscription_vip_status = "approved"
 				AND entity_password = ?';
 
 		$query = $this->db->query($sql, array($this->entityId, $organisationId, $hash));

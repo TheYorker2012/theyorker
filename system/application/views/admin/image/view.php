@@ -12,16 +12,17 @@
 <?php } ?>
 </div><br />
 
-<div class="blue_box" id="upload_form" style="width:638px;overflow:auto;display:none;">
+<div class="blue_box" id="upload_form" style="width:638px;overflow:auto;">
 	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
 		<fieldset>
-			<legend>Replace Image</legend>
+			<legend>Add/Replace Image</legend>
 			<label for="upload">New Image</label>
 			<input type="file" name="upload" /></br>
 			<label for="image_title">Image Title</label>
 			<input type="text" name="image_title" id="image_title" value=""/>
 			<label for="image_id">Image Id</label>
-			<input type="text" name="image_id" id="image_id" value=""/>
+			<input type="text" name="image_id" id="image_id" value=""/> (If image_id is blank then add)
+			<input type="hidden" name="image_type_id" id="image_type_id" value="<?php echo $image_type_id; ?>"/>
 			<input type="submit" value="Upload" />
 		</fieldset>
 	</form>

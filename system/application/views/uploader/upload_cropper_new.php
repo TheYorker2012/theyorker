@@ -210,7 +210,7 @@
 			<?php
 			foreach($data as $d) {
 				foreach($d as $singleThumb) {
-					echo '<option value="'.$singleThumb['string'].'" value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
+					echo '<option value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
 				}
 			}
 			?>
@@ -228,7 +228,7 @@
 	// so that it is still accessable from the DOM in IE6 during page load.
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
-			echo '<img src="'.$singleThumb['cache_img'].'" height="2" width="2" />';
+			echo '<img src="'.$singleThumb['cache_img'].'" height="2" width="2" alt="" />';
 		}
 	}
 	?>

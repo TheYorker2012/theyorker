@@ -54,9 +54,54 @@ class Account extends controller
 
 		/// Get subscriptions of the current user
 		$data['Subscriptions']  = $this->prefs_model->getAllSubscriptions($this->user_auth->entityId);
+		$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
+		$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/myaccount', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->Load();
+	}
+
+	/**
+	 *	@brief	Allows a user to become a VIP for an organisation
+	 */
+	function vip($org_id = NULL)
+	{
+		if (!CheckPermissions('student')) return;
+
+		$this->_SetupTabs('subscriptions');
+
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_home');
+		$data['org_id'] = $org_id;
+		$data['org_name'] = $this->prefs_model->getOrganisationDescription($org_id);
+		$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
+		$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
+
+		if (($org_id == NULL) || (!is_numeric($org_id))) {
+			$this->messages->AddMessage('error', 'The organisation you tried to apply to be VIP for does not exist.');
+			redirect('account/');
+		} elseif (!$this->prefs_model->isSubscribed($this->user_auth->entityId, $org_id)) {
+			$this->messages->AddMessage('error', 'You must be subscribed to the organisation before you can apply to become a VIP for it.');
+			redirect('account/');
+		} elseif ($this->input->post('v_apply') == 'Apply') {
+			/// Process form submission
+			$this->load->model('members_model');
+			$position = htmlentities($this->input->post('v_position'), ENT_QUOTES, 'UTF-8');
+			$phone = htmlentities($this->input->post('v_phone'), ENT_QUOTES, 'UTF-8');
+			if ($position == '') {
+				$this->messages->AddMessage('error', 'Please make sure you specify your position in the organisation before submitting the application.');
+			} else {
+				$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$org_id);
+				$this->prefs_model->vipApplication ($this->user_auth->entityId,$org_id,$position,$phone);
+				$this->messages->AddMessage('success', 'Your application to become VIP for ' . $data['org_name']['name'] . ' has been successfully recieved.');
+				redirect('/account');
+			}
+		}
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('account/vip_application', $data);
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
@@ -149,10 +194,11 @@ class Account extends controller
 
 					$newId = $this->Links_Model->AddLink($this->input->post('title1'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
+					$chosenImageID = $this->input->post('chosen_image');
 
-					if ($this->input->post('image_pick') == 'gallery') {
+					if ($this->input->post('image_pick') == 'gallery' && $chosenImageID) {
 						//Take link image id and associate it with the link
-						//$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+						$this->Links_Model->ReplaceImage($newId, $this->user_auth->entityId, $chosenImageID);
 						$this->messages->AddMessage('success', 'Link added successfully.');
 						redirect('/account/links', 'location');
 					} elseif ($this->input->post('image_pick') == 'custom') {
@@ -185,10 +231,14 @@ class Account extends controller
 				}
 		} else {
 			$data = array();
+			$data['gallery_images'] = $this->Links_Model->GalleryLinks();
+
 			$this->_SetupTabs('links');
 
 			/// Get custom page content
 			$this->pages_model->SetPageCode('account_customlinks');
+
+			$this->load->library('image');
 
 			/// Set up the main frame
 			$this->main_frame->SetContentSimple('account/custom_link', $data);

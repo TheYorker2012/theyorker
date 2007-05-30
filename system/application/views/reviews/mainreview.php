@@ -13,20 +13,22 @@ $address = str_replace("\r", '', $address);
 $address = str_replace("\n", ', ', $address);
 $address = htmlspecialchars($address);
 ?>
-			Address: <?php echo($address); ?><br />
-			Website: <?php echo(htmlspecialchars($website)); ?><br />
-			Email: <?php echo(htmlspecialchars($email)); ?><br />
-			Telephone: <?php echo(htmlspecialchars($telephone)); ?><br />
-			Opening Times: <?php echo(htmlspecialchars($opening_times)); ?><br />
-			Serving Times: <?php echo(htmlspecialchars($serving_times)); ?><br />
+			<?php if(strlen(trim($address)) > 0) { ?><b>Address:</b>  <?php echo($address); ?><br /><?php } ?>
+			<?php if(strlen(trim($website)) > 0) { ?><b>Website:</b>  <a href="<?php echo(htmlspecialchars($website)); ?>">Click Here</a><br /><?php } ?>
+			<?php if(strlen(trim($email)) > 0) { ?><b>Email:</b>  <a href="mailto:<?php echo(htmlspecialchars($email)); ?>"><?php echo(htmlspecialchars($email)); ?></a><br /><?php } ?>
+			<?php if(strlen(trim($telephone)) > 0) { ?><b>Telephone:</b>  <?php echo(htmlspecialchars($telephone)); ?><br /><?php } ?>
+			<?php if(strlen(trim($opening_times)) > 0) { ?><b>Opening Times:</b>  <?php echo(htmlspecialchars($opening_times)); ?><br /><?php } ?>
+			<?php if(strlen(trim($serving_times)) > 0) { ?> <b>Serving Times:</b> <?php echo(htmlspecialchars($serving_times)); ?><br /><?php } ?>
 		</p>
 	</div>
 
+	<?php if(strlen(trim($yorker_recommendation)) > 0 || $average_price > 0) { ?>
 	<h2>Tips</h2>
 	<div class="Entry">
-			Yorker Recommends: <?php echo(htmlspecialchars($yorker_recommendation)); ?><br />
-			Average Drink Price: £<?php echo(htmlspecialchars($average_price/100)); ?><br />
+			<?php if(strlen(trim($yorker_recommendation)) > 0) { ?><b>We Recommend:</b>  <?php echo(htmlspecialchars($yorker_recommendation)); ?><br /><?php } ?>
+			<?php if($average_price > 0) { ?><b>Average Drink Price:</b> &pound;<?php echo(htmlspecialchars($average_price/100)); ?><br /><?php } ?>
 	</div>
+	<?php } ?>
 </div>
 
 <div id="MainColumn">

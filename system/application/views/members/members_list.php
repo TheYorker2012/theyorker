@@ -64,7 +64,6 @@ function FilterLinkBool($filter, $field, $value)
 <div class="BlueBox">
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
 
-
 	<p>The following action can be performed on the selected members</p>
 	<select style="float: none;">
 		<!--optgroup label="Actions:"-->
@@ -122,7 +121,7 @@ function FilterLinkBool($filter, $field, $value)
 			<?php /** @todo email should show username */ ?>
 
 			<td><?php if (NULL !== $membership['email']) { ?>
-				<a href='mailto:<?php echo $membership['email'];?>'><?php echo $membership['username']; ?></a>
+				<a href='mailto:<?php echo $membership['email'];?>@york.ac.uk'><?php echo $membership['username']; ?></a>
 			<?php } else {?>
 				<?php echo $membership['username']; ?>
 			<?php } ?></td>
@@ -144,9 +143,13 @@ function FilterLinkBool($filter, $field, $value)
 				<img src="/images/prototype/members/paid.png" alt="Yes" />
 			<?php } ?></td>
 			<?php if ('manage' !== VipMode()) { ?>
-				<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
-					<img src="/images/prototype/members/vip.png" alt="Yes" />
-				<?php } ?></td>
+				<td align="center">
+				<?php if (isset($membership['vip']) && $membership['vip']) { ?>
+					<img src="/images/prototype/members/vip.png" alt="VIP" title="VIP" />
+				<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
+					<img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access" title="Requested VIP Access" />
+				<?php } ?>
+				</td>
 			<?php } ?>
 			<td align="center">
 			<?php if ($membership['has_business_card']) { ?>

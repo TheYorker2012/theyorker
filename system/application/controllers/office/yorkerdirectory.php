@@ -325,7 +325,7 @@ class Yorkerdirectory extends Controller
 				}
 			} elseif ($action == 'delete') {
 				$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
-				$this->messages->AddMessage('info', 'Photo Deleted');
+				$this->messages->AddMessage('success', 'Photo Deleted');
 				redirect(vip_url('directory/photos'));
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
@@ -611,7 +611,7 @@ class Yorkerdirectory extends Controller
 				'user'			=> 'business_cards.business_card_user_entity_id',
 				'card'			=> 'business_cards.business_card_id',
 				'paid' 			=> 'subscriptions.subscription_paid',
-				'vip'			=> 'subscriptions.subscription_vip',
+				'vip'			=> 'subscriptions.subscription_vip_status',
 				'confirmed'		=> '1',
 				'carded'		=> 'NULL',
 				'carding'		=> 'NULL',

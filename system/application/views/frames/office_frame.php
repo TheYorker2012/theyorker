@@ -99,7 +99,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 
 		<div class='officenavigation_title'>
-			Calendar
+			Public Relations
 		</div>
 
 		<div class='officenavigation_item'>
@@ -107,6 +107,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/prlist/'>Directory</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/vipmanager/'>VIP Manager</a>
 		</div>
 
 		<div class='officenavigation_title'>
