@@ -62,21 +62,20 @@ $filter['descriptors'] = array(
 );
 if (!empty($filter['descriptors'])) {
 	?>
-	<H4>Advanced Filters</H4>
-	<P>Showing all:
-	<UL><?php
+	<h3>Advanced Filters</h3>
+	<p>Showing all:</p>
+	<ul><?php
 	foreach ($filter['descriptors'] as $descriptor) {
-		?><LI>
+		?><li>
 		<?php echo $descriptor['description']; ?>
-		<SMALL>
-		(<A HREF="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove</A>)
-		</SMALL>
-		</LI><?php
+		<small>
+		(<a href="<?php echo vip_url($filter['base'].'/'.$descriptor['link_remove']); ?>">remove</a>)
+		</small>
+		</li><?php
 	}
-	?></UL>
-	<SMALL><A HREF="<?php echo vip_url('members/list'); ?>">remove all filters</A></SMALL>
-	</P>
-	<P>
+	?></ul>
+	<small><a href="<?php echo vip_url('members/list'); ?>">remove all filters</a></small>
+	<p>
 		<select>
 			<option>All members</option>
 			<optgroup label="Member status:">
@@ -102,8 +101,8 @@ if (!empty($filter['descriptors'])) {
 			?>
 		</select>
 		<input type="button" value="Add Filter" />
-	</P>
-	<P><a href="#">basic filter</a></P>
+	</p>
+	<p><a href="#">basic filter</a></p>
 	
 	<?php
 }
@@ -111,5 +110,6 @@ if (!empty($filter['descriptors'])) {
 
 ?>
 </div>
+<div id="MainColumn">
 <?php $this->load->view('members/members_list');?>
-<a href='<?php echo vip_url(); ?>'>Back to the vip area.</a>
+</div>
