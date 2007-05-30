@@ -1,0 +1,534 @@
+/* This CSS has been written by ADO
+ * I intend to go through much of the website and check it is written using
+ * standard html and with appropriate styles.  Please don't add anything to
+ * this for now.  Page specific styles will be moved into seperate css files
+ * and only included where necessary.  
+ *
+ * My rules:
+ * 	Make sure it validates
+ * 	Use the most appropriate selectors (that are supported in IE6):
+ * 		By ID for elements which only occur once
+ * 		By child selector for elements which are always children of
+ * 			other elements
+ * 		By class for those which can't be selected any other way
+ * 	Don't use pixels unless there is a good reason, make sure the page
+ * 		scales properly
+ *
+ * Don't break the rules if you edit here, I'm trying to make this nice :)
+ */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS that applies to all elements                            *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+html {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+}
+
+img {
+	border: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #999;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+ul {
+	list-style-image: url('/images/prototype/homepage/arrow.png');
+	list-style-position: inside;
+	padding-left: 0;
+	margin-left: 0;
+}
+
+li {
+}
+
+/* Form formatting */
+form {
+	/* needed for IE for some reason */
+	margin: 0px;
+}
+
+fieldset {
+	border: 0;
+	padding: 0;
+}
+
+label, span.label {
+	display: block;
+	clear: both;
+	float: left;
+	width: 30%;
+	text-align: right;
+	margin: 0.4em;
+}
+
+label.radio {
+	clear: none;
+	width: auto;
+	margin-right: 0.2em;
+}
+
+input, select, textarea{
+	float: left;
+	margin: 0.2em;
+}
+
+input.radio {
+	clear: none;
+	margin: 0.4em;
+	margin-left: 0.2em;
+}
+
+input.button {
+	float: right;
+	margin: 0.5em;
+}
+
+div#RightColumn div.Date {
+	clear: right;
+}
+
+blockquote {
+	float: right;
+	width: 14em;
+	background-color: #eeeeee;
+	padding: 0.5em;
+	margin: 0;
+	border: 1px solid #999999;
+	font-style: italic;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the page frame and overall layout               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Make sure page in in center for IE6 */
+body {
+	text-align: center;
+}
+
+/* Create Header, Body and Footer sections */
+div#Header, div#Page, div#Footer {
+	/* Remove next line for variable width */
+	width: 760px;
+
+	margin-left: auto;
+	margin-right: auto;
+	clear: both;
+	text-align: left;
+	padding: 0;
+}
+
+/* Create Navigation and Main areas in Body */
+div#NavigationColumn {
+	width: 120px;
+	float: left;
+}
+
+div#MainBodyPane {
+	margin-left: 130px;
+}
+
+/* Formatting for links right at the top of the page */
+div#HeaderMenu {
+	text-align: right;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the banner at the top of the page               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#TopBanner {
+	background-image: url(/images/prototype/header/homepage_bk.gif);
+	background-repeat: repeat-x;
+	float: left;
+	width: 100%;
+}
+
+h1#TopBannerName {
+	float: left;
+	margin: 0;
+
+	/* Required only when other stylesheets are included */
+	padding: 0;
+	background-color: transparent;
+}
+
+div#TopBannerPictures {
+	float: right;
+}
+
+div#TopBannerPictures img {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the search box and navigation menu              *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Formatting for the search box */
+fieldset#SearchBox {
+	display: block;
+	margin: 0em 0em 0.5em 0em;
+	border: solid 1px #20c1f0;
+	background-image: url(/images/prototype/header/search.png);
+	background-repeat: no-repeat;
+	background-position: 3px 3px;
+	padding: 2px 2px 2px 22px;
+}
+
+fieldset#SearchBox input {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	color: #20c1f0;
+	/* Border necessary to remove native border in KHTML browsers */
+	border: 1px solid white;
+}
+
+/* Formatting for the navigation on the left */
+div#NavigationMenu ul {
+	display: block;
+	list-style: none outside none;
+	margin: 0 0 0 0;
+	padding: 0;
+	border-top: 1px solid #999;
+}
+
+div#NavigationMenu ul.first {
+	border-top: 0;
+}
+
+div#NavigationMenu ul li {
+	border-top: 1px solid #ccc;
+	padding: 3px 0px 3px 4px;
+}
+
+div#NavigationMenu ul li.first {
+	border-top: 0;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in layout of main area (including right bar)       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Formatting for the page title */
+h1#PageTitle {
+	display: block;
+	color: white;
+	background-color: #20c1f0;
+	margin: 0 0 0.5em 0;
+	padding: 3px 0px 2px 5px;
+	font-size: 13pt;
+	text-transform: capitalize;
+
+	/* Required only when other stylesheets are included */
+	height: auto;
+}
+
+/* Formatting for the (optional) bar on the right */
+div#RightColumn {
+	float: right;
+	width: 230px;
+}
+
+div#RightColumn h2, form#feedback_form h2 {
+	background-color: #999;
+	font-size: 10pt;
+	color: white;
+	padding: 0.4em;
+	margin: 1.0em 0em 0.5em 0em;
+}
+
+div#RightColumn h2.first {
+	margin-top: 0em;
+}
+
+div#RightColumn h3 {
+	font-size: 11pt;
+	margin: 0em;
+}
+
+span.RightColumnAction {
+	text-align: right;
+	display: block;
+}
+
+div#RightColumn label {
+	float: none;
+	width: auto;
+	text-align: left;
+	margin: 0.3em;
+}
+
+div#RightColumn input {
+	float: none;
+	margin: 0.3em;
+}
+
+div#RightColumn input.button {
+	float: right;
+}
+
+div#RightColumn div.Entry {
+	padding: 0em 0.5em;
+	margin: 0.5em 0em;
+}
+
+div#RightColumn p {
+	margin-top: 0.4em;
+}
+
+div#RightColumn div.Puffer {
+	text-align: center;
+	margin-bottom: 0.5em;
+}
+
+div#MainColumn {
+	margin-right: 240px;
+}
+
+/* Formatting for content boxes in main page area */
+div.BlueBox {
+	border: 1px solid #20c1f0;
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+
+	float: left;
+	width: 100%;
+}
+
+div.BlueBox h2 {
+	color: #20c1f0;
+}
+
+div.BlueBox h3 {
+	color: black;
+	margin-bottom: 0;
+}
+
+div.BlueBox > * {
+	margin: 10px;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in footer and feedback at bottom of page           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Formatting for footer text and feedback form */
+div#Footer small {
+	display: block;
+	text-align: center;
+}
+
+a#ShowFeedback {
+	display: none;
+	margin: 1em;
+	text-align: center;
+	font-weight: bold;
+	color: #ff6a00;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul#Navbar {
+	width: 100%;
+	display: block;
+	text-align: right;
+	float: right;
+	border-bottom: 1px solid #20c1f0;
+	margin: 0.0em 0em 0.5em 0em;
+	list-style: none outside none;
+}
+
+ul#Navbar li {
+	float: right;
+	text-align: center;
+	margin-right: 0.4em;
+	border: 1px solid #20c1f0;
+	padding: 0.2em;
+	min-width: 7em;
+	height: 1.2em;
+	margin-bottom: -1px;
+}
+
+ul#Navbar li.current {
+	border-bottom: 1px solid white;
+}
+
+ul#Navbar li a {
+	vertical-align: middle;
+	color: #20c1f0;
+}
+
+ul#Navbar li.current a {
+	font-weight: bold;
+}
+
+ul#Navbar li a:hover {
+	font-weight: bold;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip on the sidebar of the homepage        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul#SideTabBar {
+	width: 100%;
+	display: block;
+	text-align: right;
+	float: right;
+	border-bottom: 1px solid #999999;
+	margin: 0.0em 0em 0.25em 0em;
+	list-style: none outside none;
+	font-size: 0.8em;
+}
+
+ul#SideTabBar li {
+	float: right;
+	text-align: center;
+	margin-right: 0.2em;
+	border: 1px solid #999999;
+	padding: 0.1em;
+	width: 7.5em;
+	height: 1.3em;
+	margin-bottom: -1px;
+	cursor: pointer;
+	vertical-align: middle;
+	color: #999999;
+}
+
+ul#SideTabBar li.current {
+	border-bottom: 1px solid white;
+	font-weight: bold;
+}
+
+ul#SideTabBar li:hover {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div.message_error, div.message_warning, div.message_information, div.message_success {
+	width: 100%;
+	float: left;
+	border: 1px solid black;
+	margin-bottom: 0.5em;
+}
+
+div.message_error img, div.message_warning img, div.message_information img, div.message_success img {
+	float: left;
+}
+
+div.message_error > *, div.message_warning > *, div.message_information > *, div.message_success > * {
+	margin: 0.3em;
+}
+
+div.message_information {
+	background-color: #ffffe1;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in bylines                                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.Byline {
+	border-top: 1px solid #20c1f0;
+	border-bottom: 1px solid #20c1f0;
+	height: 64px;
+	padding: 0.5em 0.5em 0.0em 0.5em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+div.Byline img {
+	float: right;
+}
+
+div.Byline span.Name {
+	font-weight: bold;
+	font-size: larger;
+}
+
+span.author {
+	display: block;
+	font-style: normal;
+	text-align: right;
+}
+
+div.Date {
+	color: #ff6a00;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Author {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.SubText {
+	font-weight: bold;
+}
+
+img.Right {
+	float: right;
+	margin-left: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
+}
+
+img.Left {
+	float: left;
+	margin-right: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
+}
+
+div.BlueBox h2.Headline {
+	color: black;
+}
+
+.Headline a {
+	color: black;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in slideshow                                       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#SlideShow {
+	height: 165px;
+	width: 220px;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in wikitext                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+span.theyorker {
+	color: #ff6a00;
+	font-style: italic;
+	font-weight: bold;
+	text-transform: capitalize;
+}

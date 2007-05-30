@@ -1,0 +1,40 @@
+/* This style sheet is for putting fixes for styles in new.css for the gayness
+ * that is known as IE6.  Keep it as small as possible, same rules apply as in
+ * new.css */
+
+img {
+	behavior: url(/javascript/iepngfix.htc);
+}
+
+div#googlemaps img {
+	behavior: default;
+}
+
+fieldset#SearchBox {
+	padding: 1px 2px 0px 22px;
+}
+
+ul#Navbar {
+	/*width: expression(document.getElementById("Header").width - 150);*/
+	width: 630px;
+}
+
+ul#Navbar li {
+	width: expression("7em");
+}
+
+div.BlueBox {
+	/*width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));*/
+	width: expression((document.getElementById("RightColumn") == null) ? "630px" : "392px");
+	padding: 10px;
+}
+
+div#HomeBanner {
+	float: left;
+}
+
+div.message_error, div.message_warning, div.message_information, div.message_success {
+	/*width: expression(document.body.clientWidth - 150);*/
+	width: 630px;
+	padding: 0.3em;
+}

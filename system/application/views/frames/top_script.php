@@ -18,9 +18,6 @@
 	include('maps.php');
 	?>
 
-	<!--[if lt IE 7.]>
-	<script defer type="text/javascript" src="/javascript/pngfix.js"></script>
-	<![endif]-->
 
 	<!-- BEGIN 'head' tag items from controlling script -->
 	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
