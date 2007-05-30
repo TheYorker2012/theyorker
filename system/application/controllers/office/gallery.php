@@ -258,6 +258,7 @@ class Gallery extends Controller {
 				$output[$loop]['title'] = $Photo->photo_title.' - '.$Thumb->image_type_name;
 				$output[$loop]['string'] = '/photos/full/'.$Photo->photo_id.'|'.$Photo->photo_width.'|'.$Photo->photo_height.'|'.$Thumb->image_type_id.'|'.$Photo->photo_id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.str_replace('|', '', $Photo->photo_title).'|'.$Photo->photo_id.'-'.$Thumb->image_type_id.'|';
 				$output[$loop]['thumb_id'] = $Photo->photo_id.'-'.$Thumb->image_type_id;
+				$output[$loop]['cache_img'] = '/photos/full/'.$Photo->photo_id;
 				$loop++;
 			}
 		}

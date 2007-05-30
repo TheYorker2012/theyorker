@@ -192,7 +192,7 @@ class Members extends Controller
 
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
-			$memberships = $this->members_model->GetMemberDetails($team_list);
+			$memberships = $this->members_model->GetMemberDetails($team_list, null, 'TRUE', array(), ('manage' === VipMode()));
 		}
 
 		$team_list = array_flip($team_list);
@@ -358,10 +358,55 @@ class Members extends Controller
 
 		// Get membership information for the first time
 		// This will determine whether the entity is a member.
-		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId);
+		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId, 'TRUE', array(), ('manage' === VipMode()));
 
 		if (!empty($membership)) {
 			$membership = $membership[0];
+
+			// Read the post data
+			$button = $this->input->post('member_byline_reset');
+			if ($button === 'Set Default Byline') {
+				if ( $this->members_model->SetDefaultByline($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Byline was added successfully.');
+				} else {
+					$this->messages->AddMessage('error','Byline could not be added, a byline might already exist.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			}
+
+			// Read the post data
+			$button = $this->input->post('member_cmd');
+			if ($button === 'Remove') {
+				if ( $this->members_model->RemoveSubscription($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Member removed successfully.');
+					return redirect(vip_url('members/list'));
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+					return redirect(vip_url('members/info/'.$EntityId));
+				}
+			} elseif ($button === 'Invite') {
+				if ( $this->members_model->InviteMember($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','User invited successfully.');
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			} elseif ($button === 'Withdraw Invite') {
+				if ( $this->members_model->WithdrawInvite($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Invite withdrawn successfully.');
+					return redirect(vip_url('members/list'));
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+					return redirect(vip_url('members/info/'.$EntityId));
+				}
+			} elseif ($button === 'Accept') {
+				if ( $this->members_model->ConfirmMember($EntityId, VipOrganisationId()) ) {
+					$this->messages->AddMessage('success','Member accepted successfully.');
+				} else {
+					$this->messages->AddMessage('error','No changes were made to the membership.');
+				}
+				return redirect(vip_url('members/info/'.$EntityId));
+			}
 
 			// Read the post data
 			$button = $this->input->post('member_update');
@@ -429,14 +474,30 @@ class Members extends Controller
 									:(($membership['gender']=='f')?('female')
 									:('unknown')));
 			// Stringify status
-			if (!$membership['confirmed']) {
-				$membership['status'] = 'Invited but unconfirmed';
-			} elseif ($membership['vip']) {
-				$membership['status'] = 'VIP member';
-			} elseif ($membership['paid']) {
-				$membership['status'] = 'Paying member';
+			if (!$membership['user_confirmed'] && !$membership['org_confirmed']) {
+				$membership['status'] = 'Non-member';
+				$membership['cmd_string'] = 'This user is <b>not a member</b> of your organisation, click below to invite them.';
+				$membership['cmd_action'] = 'Invite';
+				$membership['cmd_js'] = '';
+			} elseif (!$membership['user_confirmed'] && $membership['org_confirmed']) {
+				$membership['status'] = 'Invited';
+				$membership['cmd_string'] = 'You have <b>invited</b> this user to join your organisation, but they have not yet replied, click below to withdraw your invitation.';
+				$membership['cmd_action'] = 'Withdraw Invite';
+				$membership['cmd_js'] = "return confirm('Are you sure that you want to withdraw the invite for this user?');";
+			} elseif ($membership['user_confirmed'] && !$membership['org_confirmed']) {
+				$membership['status'] = 'Requested to join';
+				$membership['cmd_string'] = 'This user has <b>requested</b> to become a member of your organisation, click below to accept their request.';
+				$membership['cmd_action'] = 'Accept';
+				$membership['cmd_js'] = '';
 			} else {
 				$membership['status'] = 'Member';
+				$membership['cmd_string'] = 'This user is a <b>member</b> of your organisation, click below to remove them.';
+				$membership['cmd_action'] = 'Remove';
+				$membership['cmd_js'] = "return confirm('Are you sure that you want to remove this member from your organisation?');";
+			}
+
+			if ('manage' === VipMode() && (!$membership['has_byline'] || $membership['byline_needs_approval'] || $membership['byline_expired']) ) {
+				$membership['byline_reset'] = true;
 			}
 
 			$data = array(

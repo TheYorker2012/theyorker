@@ -137,60 +137,64 @@ class Account extends controller
 	/**
 	 *	@brief	Allows setting of links and other homepage related settings
 	 */
-	function customlink($stage = 1, $id = 0)
+	function customlink($action = '', $id = 0)
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
 
 		$this->load->model('Links_Model');
-		switch ($stage) {
-			case 1:
-				if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
-					if ($this->input->post('lnominate') == 'on') {
-						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
-					} else {
-						$newId = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 0);
-					}
+
+		if($action == 'store') {
+				if ($this->input->post('title1') && $this->input->post('lurl') && $this->input->post('lurl') != 'http://') {
+
+					$newId = $this->Links_Model->AddLink($this->input->post('title1'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
-					if ($this->input->post('upload') != false) {
-						redirect('/account/customlink/2/'.$newId, 'location');
+
+					if ($this->input->post('image_pick') == 'gallery') {
+						//Take link image id and associate it with the link
+						//$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+						$this->messages->AddMessage('success', 'Link added successfully.');
+						redirect('/account/links', 'location');
+					} elseif ($this->input->post('image_pick') == 'custom') {
+						$this->load->library(array('xajax', 'image'));
+						$this->load->library('image_upload');
+						$this->xajax->processRequests();
+						$_SESSION['img'] = array();
+						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), true);
 					} else {
-						redirect('/account/customlink/3/'.$newId, 'location');
+						$this->messages->AddMessage('error', 'Please select either a custom or gallery image.');
+						redirect('/account/customlink', 'location');
 					}
-					exit;
 				} else if($this->input->post('lurl')) {
 					$this->messages->AddMessage('error', 'Please enter a name for your link.');
+					redirect('/account/customlink', 'location');
 				}
-				break;
-			case 2:
-				$this->load->library('image_upload');
-				$_SESSION['img'] = array();
-				$this->image_upload->automatic('/account/customlink/3/'.$id, array('link'), false, false);
-				exit;
-			case 3:
+		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
+					$image_count = 0;
 					foreach ($_SESSION['img'] as $newImage) {
 						if ($newImage['codename'] == 'link') {
 							$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+							$this->messages->AddMessage('success', 'Link added successfully.');
+							redirect('/account/links', 'location');
 							break;
 						}
 					}
-					redirect('/account/links', 'location');
+					$this->messages->AddMessage('error', 'The link image was not added.');
+					redirect('/account/customlink', 'location');
 				}
-				break;
+		} else {
+			$data = array();
+			$this->_SetupTabs('links');
+
+			/// Get custom page content
+			$this->pages_model->SetPageCode('account_customlinks');
+
+			/// Set up the main frame
+			$this->main_frame->SetContentSimple('account/custom_link', $data);
+			/// Set page title & load main frame with view
+			$this->main_frame->Load();
 		}
-
-
-		$data = array();
-		$this->_SetupTabs('links');
-
-		/// Get custom page content
-		$this->pages_model->SetPageCode('account_customlinks');
-
-		/// Set up the main frame
-		$this->main_frame->SetContentSimple('account/custom_link', $data);
-		/// Set page title & load main frame with view
-		$this->main_frame->Load();
 	}
 
 	/**

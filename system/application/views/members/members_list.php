@@ -106,13 +106,13 @@ function FilterLinkBool($filter, $field, $value)
 			<?php } ?>
 			<th>Card</th>
 			<?php if ('manage' === VipMode()) { ?>
+				<th>Byline</th>
 				<th>Access</th>
 			<?php } ?>
 		</tr>
 		<?php
-		$i = -1;
+
 		foreach ($members as $membership) {
-		$i = ($i+1)%4;
 		?>
 		<tr>
 			<td align="center">
@@ -129,9 +129,18 @@ function FilterLinkBool($filter, $field, $value)
 				<?php echo $membership['username']; ?>
 			<?php } ?></td>
 
-			<td align="center"><?php if (isset($membership['confirmed']) && $membership['confirmed']) { ?>
-				<IMG SRC="/images/prototype/members/confirmed.png" ALT="Yes" />
-			<?php } ?></td><?php /*
+			<td align="center">
+			<?php if ($membership['user_confirmed'] && $membership['org_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />
+			<?php } elseif ($membership['user_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />
+			<?php } elseif ($membership['org_confirmed']) { ?>
+				<IMG SRC="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />
+			<?php } else { ?>
+				&nbsp;
+			<?php } ?>
+
+			</td><?php /*
 			<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
 			<td align="center"><?php if (isset($membership['paid']) && $membership['paid']) { ?>
 				<IMG SRC="/images/prototype/members/paid.png" ALT="Yes" />
@@ -142,16 +151,33 @@ function FilterLinkBool($filter, $field, $value)
 				<?php } ?></td>
 			<?php } ?>
 			<td align="center">
-			<?php if ($i == 1) { ?>
-				<IMG SRC="/images/prototype/members/card_active.png" ALT="Active" />
-			<?php } elseif ($i == 2) { ?>
-				<IMG SRC="/images/prototype/members/card_expired.png" ALT="Expired" />
-			<?php } elseif ($i == 3) { ?>
-				<IMG SRC="/images/prototype/members/card_inactive.png" ALT="Inactive" />
+			<?php if ($membership['has_business_card']) { ?>
+				<?php if ($membership['business_card_needs_approval']) { ?>
+					<IMG SRC="/images/prototype/members/card_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
+				<?php } elseif ($membership['business_card_expired']) { ?>
+					<IMG SRC="/images/prototype/members/card_expired.png" alt="Expired" title="Expired" />
+				<?php } else { ?>
+					<IMG SRC="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />
+				<?php } ?>
+			<?php } else { ?>
+				&nbsp;
 			<?php } ?>
 			</td>
 			<?php if ('manage' === VipMode()) { ?>
-				<td align="center">
+			<td align="center">
+			<?php if ($membership['has_byline']) { ?>
+				<?php if ($membership['byline_needs_approval']) { ?>
+					<IMG SRC="/images/prototype/members/byline_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
+				<?php } elseif ($membership['byline_expired']) { ?>
+					<IMG SRC="/images/prototype/members/byline_expired.png" alt="Byline Expired" title="Byline Expired" />
+				<?php } else { ?>
+					<IMG SRC="/images/prototype/members/byline_active.png" alt="Byline OK" title="Byline OK" />
+				<?php } ?>
+			<?php } else { ?>
+				&nbsp;
+			<?php } ?>
+			</td>
+			<td align="center">
 				<?php if ($membership['office_editor_access']) { ?>
 					<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
 				<?php } elseif ($membership['office_writer_access']) { ?>

@@ -35,9 +35,11 @@ class Image_upload {
 			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images');
 		} elseif ($photos) {
 			$this->ci->main_frame->SetTitle('Photo Upload');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo');
 		} else {
 			$this->ci->main_frame->SetTitle('Image Upload');
+			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
 		}
 		$this->ci->main_frame->Load();
@@ -75,6 +77,9 @@ class Image_upload {
 		}
 		$data = array();
 		$this->ci->upload->initialize($config);
+
+		$photos_loaded = 0;
+
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			$title = $this->ci->input->post('title'.$x);
 			if (isset($title) && strlen($title) > 0) {
@@ -94,6 +99,8 @@ class Image_upload {
 						}
 						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
 
+						$photos_loaded++;
+
 					} elseif($this->ci->input->post('destination') == 1) {
 						//redirect back home
 						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
@@ -105,6 +112,11 @@ class Image_upload {
 				}
 			}
 		}
+
+		if($photos_loaded == 0) {
+			$this->ci->main_frame->AddMessage('error', 'No photos were uploaded, as none had titles.');
+		}
+
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
 		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
@@ -115,6 +127,12 @@ class Image_upload {
 
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
+
+		$objResponse->addAssign("submitButton","value","Save!");
+		$objResponse->addAssign("submitButton","disabled",false);
+
+		return $objResponse;
+
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		// 0 location
@@ -182,6 +200,7 @@ class Image_upload {
 						break;
 				}
 			}
+
 			switch ($mime) {
 				case 'image/jpeg':
 					$image = imagecreatefromjpeg('.'.$selectedThumb[0]);
@@ -193,6 +212,7 @@ class Image_upload {
 					$image = imagecreatefromgif('.'.$selectedThumb[0]);
 					break;
 			}
+
 			$result = $result->first_row();
 			$newImage = imagecreatetruecolor($result->x, $result->y);
 			imagecopyresampled($newImage, $image, 0, 0, $formData['x1'], $formData['y1'], $result->x, $result->y, $formData['width'], $formData['height']);
@@ -200,6 +220,7 @@ class Image_upload {
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
+					echo('hello'.$iUp);
 					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
 						if (isset($_SESSION['img'][$iUp]['oldID'])) {
 							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
@@ -281,7 +302,7 @@ class Image_upload {
 		if (strlen($photowatermark) > 0) {
 			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
 			$font = 'arial';
-			imagettftext($newImage, 10, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
+			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
 		}
 
 		$x = imagesx($newImage);
@@ -306,7 +327,8 @@ class Image_upload {
 					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
 					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
 					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.str_replace('|', '', $this->ci->input->post('title'.$form_value)).'|'.$id.'-'.$Thumb->image_type_id.'|'.$watermark,
-					                  'thumb_id' => $id.'-'.$Thumb->image_type_id
+					                  'thumb_id' => $id.'-'.$Thumb->image_type_id,
+					                  'cache_img' => '/photos/full/'.$id
 					                  );
 				}
 			}
@@ -330,7 +352,8 @@ class Image_upload {
 				                           'codename'	=> $Thumb->image_type_codename);
 				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
 				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.count($output).'-'.$Thumb->image_type_id.'|'.$watermark,
-				                  'thumb_id' => count($output).'-'.$Thumb->image_type_id
+				                  'thumb_id' => count($output).'-'.$Thumb->image_type_id,
+				                  'cache_img' => '/tmp/uploads/'.$data['file_name']
 				                  );
 			}
 		}

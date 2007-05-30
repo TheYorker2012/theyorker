@@ -1,0 +1,16 @@
+<div class="BlueBox">
+	<form action="<?= isset($action_url) ? $action_url : site_url($this->uri->uri_string())?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
+		<h2>photo upload</h2>
+		<p> Please choose a photo you wish up upload here. The file is limited to 2Mb in size, and must be larger than 220x165 in resolution.</p>
+		<div>
+			<label for="title1">Title / ALT Text: </label>
+			<input type="text" name="title1" size="32" />
+			<label for="userfile1">File Location: </label>
+			<input type="file" name="userfile1" size="20" />
+		</div>
+		<input type="hidden" name="destination" id="destination" value="1" />
+		<div style="clear: both"></div>
+		<p>When you have selected a file, click the button below to proceed.</p>
+		<input type="submit" class="button" value="Upload" />
+	</form>
+</div>

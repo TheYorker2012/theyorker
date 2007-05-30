@@ -231,11 +231,13 @@ class Organisation extends controller
 		if (!CheckPermissions('public')) return;
 		$this->xajax->processRequests();
 		if ($type == 'images') {
-			$this->image_upload->recieveUpload('wizard/organisation/photostep', array('slideshow'));
+			$this->image_upload->recieveUpload('/wizard/organisation/photostep', array('slideshow'));
 		}
 	}
 
 	function photo($action, $id = -1, $direction = '') {
+		if (!CheckPermissions('public')) return;
+
 		$this->load->helper('url');
 		if ($action == 'move') {
 			$loc = array_search($id, $_SESSION['org_wizard']['img']);
