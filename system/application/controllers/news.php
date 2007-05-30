@@ -186,17 +186,17 @@ class News extends Controller {
 	function rss()
 	{
 		header('Content-type: application/rss+xml');
-		$data['rss_title'] = 'Campus News';
+		$data['rss_title'] = 'UniNews';
 		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
-		$data['rss_desc'] = 'All the news you need to know about from York University\'s Campus!';
+		$data['rss_desc'] = 'All the news you need to know about from University of York\'s Campus!';
 		$data['rss_category'] = 'News';
-		$data['rss_pubdate'] = 'Thu, 14 Dec 2006 00:00:01 GMT';
-		$data['rss_lastbuild'] = 'Tue, 10 Jun 2003 09:41:01 GMT';
-		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-campus.jpg';
-		$data['rss_width'] = '274';
-		$data['rss_height'] = '108';
-		$data['rss_email_ed'] = 'news@theyorker.co.uk';
-		$data['rss_email_web'] = 'webmaster@theyorker.co.uk';
+		$data['rss_pubdate'] = date('r');
+		$data['rss_lastbuild'] = date('r');
+		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
+		$data['rss_width'] = '126';
+		$data['rss_height'] = '126';
+		$data['rss_email_ed'] = $this->config->item('editor_email_address');
+		$data['rss_email_web'] = $this->config->item('webmaster_email_address');
 
 		/// Get latest article ids
 		$latest_article_ids = $this->News_model->GetLatestId('uninews',9);

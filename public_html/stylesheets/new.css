@@ -439,12 +439,12 @@ div.message_error, div.message_warning, div.message_information, div.message_suc
 	margin-bottom: 0.5em;
 }
 
-div.message_error > *, div.message_warning > *, div.message_information > *, div.message_success > * {
-	margin: 0.3em;
-}
-
 div.message_error img, div.message_warning img, div.message_information img, div.message_success img {
 	float: left;
+}
+
+div.message_error > *, div.message_warning > *, div.message_information > *, div.message_success > * {
+	margin: 0.3em;
 }
 
 div.message_information {

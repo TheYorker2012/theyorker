@@ -1,16 +1,19 @@
-<div class='RightToolbar'>
-<h4>What's this?</h4>
-	<p>
+<div id="RightColumn">
+	<h2 class="first">What's this?</h2>
+	<div class="Entry">
 		<?php echo $main_text; ?>
-	</p>
+	</div>
 </div>
 
-<P>For the main organisation and each team:</P>
-<UL>
-	<li>list of current VIPs, name, username </li>
-	<li>link to user</li>
-	<li>revoke VIP for any other than the current user</li>
-</UL>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<p>For the main organisation and each team:</p>
+		<ul>
+			<li>list of current VIPs, name, username </li>
+			<li>link to user</li>
+			<li>revoke VIP for any other than the current user</li>
+		</ul>
+	</div>
 <?php
 	
 	

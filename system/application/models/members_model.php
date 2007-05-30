@@ -13,14 +13,25 @@ class Members_model extends Model {
 	 * @return array of associative arrays of membership attributes.
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
-	 *	- email will only be returned if the member is on the mailing list
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array())
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false)
 	{
 		if (is_array($organisation_id) && empty($organisation_id)) {
 			return array();
 		}
 		$bind_data = array();
+
+		$org_match_sql = '';
+		if (is_array($organisation_id)) {
+			// escape organisation ids
+			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
+			$org_match_sql .= '	IN ('.
+				implode(',',$organisations).')';
+		} else {
+			$org_match_sql .= '	= ?';
+			$bind_data[] = $organisation_id;
+		}
+
 		$sql = '
 			SELECT
 				subscriptions.subscription_organisation_entity_id AS team_id,
@@ -38,14 +49,31 @@ class Members_model extends Model {
 				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
 				entities.entity_username AS email,
 				users.user_gender AS gender,
-				users.user_enrolled_year AS enrol_year
+				users.user_enrolled_year AS enrol_year,
+				(bylines.business_card_id IS NOT NULL) as has_byline,
+				(bylines.business_card_approved = 0) as byline_needs_approval,
+				(CURRENT_DATE() < DATE(bylines.business_card_start_date) OR CURRENT_DATE() > DATE(bylines.business_card_end_date) ) as byline_expired,
+				(business_cards.business_card_id IS NOT NULL) as has_business_card,
+				(business_cards.business_card_approved = 0) as business_card_needs_approval,
+				(CURRENT_DATE() < DATE(business_cards.business_card_start_date) OR CURRENT_DATE() > DATE(business_cards.business_card_end_date) ) as business_card_expired
 			FROM
 				subscriptions
 			INNER JOIN users
 				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
 			INNER JOIN entities
 				ON	subscriptions.subscription_user_entity_id = entities.entity_id
+			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
+					   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
+					   AND byline_groups.business_card_group_organisation_entity_id IS NULL)
+				ON bylines.business_card_user_entity_id = users.user_entity_id
+				AND bylines.business_card_deleted = 0
+			LEFT JOIN (business_cards JOIN business_card_groups
+					   ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id
+					   AND business_card_groups.business_card_group_organisation_entity_id '.$org_match_sql.')
+				ON business_cards.business_card_user_entity_id = users.user_entity_id
+				AND business_cards.business_card_deleted = 0
 			WHERE entities.entity_deleted = 0 ';
+
 		// If there's a restriction on the usert, apply it here
 		if (NULL !== $user_id) {
 			$sql .= '	AND subscriptions.subscription_user_entity_id = ?  ';
@@ -58,16 +86,23 @@ class Members_model extends Model {
 		if (is_array($organisation_id)) {
 			// escape organisation ids
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
-			$sql .= '	AND subscriptions.subscription_organisation_entity_id IN ('.
+			$sql .= '	AND (subscriptions.subscription_organisation_entity_id IN ('.
 				implode(',',$organisations).')';
 		} else {
-			$sql .= '	AND subscriptions.subscription_organisation_entity_id = ?';
+			$sql .= '	AND (subscriptions.subscription_organisation_entity_id = ?';
 			$bind_data[] = $organisation_id;
 		}
 		$sql .= '
 				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1)
 				AND	subscriptions.subscription_deleted = 0
 			';
+
+		if ($manage_mode) {
+			$sql .= ' OR users.user_office_access = 1) ';
+		} else {
+			$sql .= ' ) ';
+		}
+
 		// Run the query and return the raw results array.
 		$sql .= ' AND ' . $FilterSql;
 		$bind_data = array_merge($bind_data, $BindData);
@@ -335,6 +370,24 @@ class Members_model extends Model {
 				       AND subscription_organisation_entity_id = ?
 				';
 		$this->db->query($sql, array($UserId, $OrgId));
+		return $this->db->affected_rows() > 0;
+	}
+
+	function SetDefaultByline($UserId) {
+		$sql = '
+			INSERT INTO business_cards (business_card_business_card_group_id, business_card_user_entity_id, business_card_name,business_card_title,business_card_approved)
+			SELECT 3, users.user_entity_id, CONCAT(users.user_firstname," ",users.user_surname), "Reporter",1
+			FROM users
+			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
+								   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
+								   AND byline_groups.business_card_group_organisation_entity_id IS NULL)
+							ON bylines.business_card_user_entity_id = users.user_entity_id
+				AND bylines.business_card_deleted = 0
+				AND bylines.business_card_approved = 1
+			WHERE users.user_office_access = 1
+				AND bylines.business_card_id IS NULL
+				AND users.user_entity_id = ?';
+		$this->db->query($sql, array($UserId));
 		return $this->db->affected_rows() > 0;
 	}
 

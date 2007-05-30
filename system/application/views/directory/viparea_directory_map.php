@@ -1,36 +1,34 @@
-<div class='RightToolbar'>
-<h4>What's this?</h4>
-	<p>
-		<?php echo $main_text; ?>
-	</p>
+<div id="RightColumn">
+	<h2 class="first">What's this?</h2>
+	<div class="Entry">
+		<?php echo($main_text); ?>
+	</div>
 
-<h4>Jump to Location</h4>
-<b>On Campus:</b><br />
-<a href='javascript:maps["googlemaps"].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));'>
-<div style="float: left">
-<ul>
-	<li>Central Hall</li>
-</ul>
-</div>
-<div style="float: right">
-<img  src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" />
-</div>
-</a>
+	<h2>Jump to Location</h2>
+	<div class="Entry">
+		<h3>On Campus:</h3>
+		<img src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" class="Right" />
+		<ul><li>
+			<a onclick="javascript:maps['googlemaps'].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));">
+			Central Hall
+			</a>
+		</li></ul>
 
-<p style="clear: both;"><b>Off Campus:</b></p>
-<p>Enter a place name or postcode:</p>
-<fieldset>
-<input style="width: 60%" type="text" id="MapSearch"/>
-<input style="width: 30%; float: right" type="submit" value="Search" onclick="maps_search(document.getElementById('MapSearch').value, 'googlemaps', document.getElementById('MapSearchResults'));"/>
-</fieldset>
-<ul id="MapSearchResults">
-</ul>
+		<h3>Off Campus:</h3>
+		<p>Enter a place name or postcode:</p>
+		<fieldset>
+			<input type="text" id="MapSearch"/>
+			<input type="submit" value="Search" onclick="maps_search(document.getElementById('MapSearch').value, 'googlemaps', document.getElementById('MapSearchResults'));" class="button" />
+		</fieldset>
+		<ul id="MapSearchResults">
+		</ul>
+	</div>
 </div>
 
-<form id='orgdetails' name='orgdetails' action='/viparea/directory/<?php echo $organisation['shortname']; ?>/updatemap' method='POST' class='form'>
-<div class='blue_box'>
+<div id="MainColumn">
+	<div class="BlueBox">
 	<h2>location</h2>
 		<div id='googlemaps' style='height: 300px'>
 		</div>
+	</div>
 </div>
-<a href='/viparea/'>Back to the vip area.</a>

@@ -19,13 +19,9 @@
 
 ?>
 
-<div class='RightToolbar'>
-<H4>something here</H4>
-</div>
-
-<div class="<?php echo alternator('blue','grey');?>_box">
-	<H2>Email addresses</H2>
-	<form>
+<div class="BlueBox">
+	<h2>Email addresses</h2>
+	<form action="" method="post">
 		<table>
 			<tr>
 				<th>Name</th>
@@ -40,7 +36,7 @@
 				<td>jh559@york.ac.uk</td>
 				<td>personal</td>
 				<td>YES</td>
-				<th><input type="radio" name="emailDefault" checked /></th>
+				<th><input type="radio" name="emailDefault" checked="checked" /></th>
 				<td></td>
 			</tr>
 			<tr>
@@ -62,36 +58,45 @@
 					<a href="#">X</a>
 				</td>
 			</tr>
-		</table><br />
-		<input type="submit" class="button" value="Save default" />
+		</table>
+		<fieldset>
+			<input type="submit" class="button" value="Save default" />
+		</fieldset>
 		
-		<H3>Add email address</H3>
-		Type: <select>
-			<option selected>Personal</option>
+		<h3>Add email address</h3>
+		<fieldset>
+		<label for="email_type">Type:</label>
+		<select id="email_type">
+			<option selected="selected">Personal</option>
 			<option>Organisation</option>
-		</select><br />
-		Name: <input value="Jimmy" /><br />
-		Email address: <input value="j@mes.hog.an" /><br />
-		<P>The Name will appear to recipients in the From field</P>
-		<P>The brief description is so that VIPs can see what addresses are meant for</P>
-		<P>
+		</select>
+		<label for="email_name">Name:</label>
+			<input id="email_name" value="" />
+		<label for="email_address">Email address:</label>
+			<input id="email_address" value="" />
+		</fieldset>
+		<p>The Name will appear to recipients in the From field</p>
+		<p>The brief description is so that VIPs can see what addresses are meant for</p>
+		<p>
 			New email addresses will be verified before they can be used.
 			An email will be sent to it with a link which must be followed to verify the address.
-		</P>
-		<input type="submit" class="button" value="Submit" />
+		</p>
+		<fieldset>
+			<input type="submit" class="button" value="Submit" />
+		</fieldset>
 	</form>
 	
 </div>
 
-<div class="<?php echo alternator('blue','grey');?>_box">
-	<H2>Society email address</H2>
-	<P><strong>Society email is not set up</strong></P>
-	<P>
+<div class="BlueBox">
+	<h2>Society email address</h2>
+	<p><strong>Society email is not set up</strong></p>
+	<p>
 		If you have a society account with the university you can register it with The Yorker.
 		This makes it easy to send emails from the soc email address and optionally allows you to
 			see an unread email count on the [vip] homepage.
-	</P>
-	<P>Click register to set up your soc account.</P>
+	</p>
+	<p>Click register to set up your soc account.</p>
 	<input type="button" class="button" value="Register" />
 </div>
 
@@ -104,7 +109,7 @@
 		
 		<P>
 			Unread mail counter:
-			<input type="radio" name="socUnreadCounter" value="enabled" checked /> Enabled
+			<input type="radio" name="socUnreadCounter" value="enabled" checked="checked" /> Enabled
 			<input type="radio" name="socUnreadCounter" value="disabled" /> Disabled
 		</P>
 		<P>The unread mail counter allows you to see how many unread emails are in your soc email inbox from the [vip] homepage</P>

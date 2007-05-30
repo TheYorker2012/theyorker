@@ -24,9 +24,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
@@ -101,14 +98,14 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<ul>
 					<li class="first"><a href="<?php echo vip_url('directory/information'); ?>">Directory Entry</a></li>
 					<li><a href="<?php echo vip_url('calendar/range'); ?>">Manage Events</a></li>
-					<li><a href="<?php echo vip_url('notices'); ?>">Manage Notices</a></li>
+					<!--li><a href="<?php echo vip_url('notices'); ?>">Manage Notices</a></li>-->
 					<li><a href="<?php echo vip_url('members'); ?>">Manage Members</a></li>
 				</ul>
-				<ul>
+				<!--<ul>
 					<li class="first"><a href="<?php echo vip_url('account'); ?>">Settings</a></li>
 					<li><a href="<?php echo vip_url('advertising'); ?>">Advertising</a></li>
 					<li><a href="<?php echo vip_url('contactpr'); ?>">Contact PR Rep</a></li>
-				</ul>
+				</ul>-->
 				<?php
 				if (isset($extra_menu_buttons)) {
 					echo('<ul>');

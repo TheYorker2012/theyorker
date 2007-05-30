@@ -7,6 +7,9 @@ switch($_SERVER['SERVER_NAME']) {
 		break;
 	case 'ado.is-a-geek.net':
 		switch($_SERVER['SERVER_PORT']) {
+			case '8080':
+				$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQPanSJrv5dLwm34RoMgVs2q2e-dxSNZMuIMC4Hd-oH7nXtYCR3tXg6aA';
+				break;
 			case '81':
 				$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBT4dMPT2p45abcp05Afs400sGBlHhSRzf7KBtwhiztl3iJwkwpQtRAZiQ';
 				break;
