@@ -89,11 +89,19 @@ class Imagecp extends Controller {
 				$this->messages->AddMessage('error', $this->upload->display_errors());
 			} else {
 				$uploadData = $this->upload->data();
-				$this->db->where('image_id', $this->input->post('image_id'))
+				$image_id = $this->input->post('image_id');
+				if (isset($image_id) && strlen(trim($image_id)) > 0) {
+					$this->db->where('image_id', $image_id)
 						 ->update('images', array('image_mime' => $uploadData['file_type'],
 													   'image_data' => file_get_contents($uploadData['full_path']),
 													   'image_title' => $this->input->post('image_title')
 													   ));
+				} else {
+					$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
+													   'image_data' => file_get_contents($uploadData['full_path']),
+													   'image_title' => $this->input->post('image_title')
+													   ));
+				}
 				unlink($uploadData['full_path']);
 
 				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
