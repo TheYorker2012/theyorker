@@ -27,11 +27,11 @@
 					}
 				?>
 				</select>
-				<label for="contact_email" size="30">Your Email: </label>
-				<input id="contact_email" name="contact_email" size="30" />
-				<label for="contact_subject" size="30">Subject: </label>
-				<input id="contact_subject" name="contact_subject" size="30" />
-				<textarea name="contact_message" cols="40" rows="14"></textarea>
+				<label for="contact_email">Your Email: </label>
+				<input id="contact_email" name="contact_email" style="width:60%" />
+				<label for="contact_subject">Subject: </label>
+				<input id="contact_subject" name="contact_subject" style="width:60%" />
+				<textarea name="contact_message" cols="40" rows="14" style="width:95%" ></textarea>
 			</fieldset>
 			<fieldset>
 				<input type="submit" class="button" value="Send" id="contact_send" />

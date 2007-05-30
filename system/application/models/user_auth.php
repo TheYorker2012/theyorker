@@ -350,12 +350,26 @@ class User_auth extends model {
 			$nick,
 			$body
 		);
-		return mail(
-			$to,
-			$subject,
-			$body,
-			'From: '.$from
+
+		require_once "Mail.php";
+
+		$headers = array(
+			'From' => $from,
+			'To' => $to,
+			'Subject' => $subject
 		);
+		$smtp = Mail::factory(
+			'smtp',
+			array (
+				'host' => 'ado.is-a-geek.net',
+				'auth' => false/*,
+				'username' => $username,
+				'password' => $password*/
+			)
+		);
+		$mail = $smtp->send($to, $headers, $body);
+
+		return !PEAR::isError($mail);
 	}
 
 	/// Logout of the entire site

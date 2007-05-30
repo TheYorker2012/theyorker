@@ -40,13 +40,30 @@ class Contact extends Controller {
 		//Still need to add captcha
 		if (!CheckPermissions('public')) return;
 
+		require_once "Mail.php";
+
 		$to = $this->input->post('recipient');
 		$from = $this->input->post('contact_email');
 		$subject = $this->input->post('contact_subject');
 		$message = $this->input->post('contact_message');
+		$headers = array(
+			'From' => $from,
+			'To' => $to,
+			'Subject' => $subject
+		);
+		$smtp = Mail::factory(
+			'smtp',
+			array (
+				'host' => 'ado.is-a-geek.net',
+				'auth' => false/*,
+				'username' => $username,
+				'password' => $password*/
+			)
+		);
+		$mail = $smtp->send($to, $headers, $message);
+
 		if ($to && $subject && $message && $from){
-			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
-			if (mail($to,$subject,$message,$from)) {
+			if (!PEAR::isError($mail)) {
 				$this->main_frame->AddMessage('success', 'Thank you for contacting us.');
 				redirect('/about');
 			} else {
@@ -58,6 +75,5 @@ class Contact extends Controller {
 			redirect('/contact');
 		}
 	}
-
 }
 ?>
