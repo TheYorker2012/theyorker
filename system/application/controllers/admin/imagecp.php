@@ -121,7 +121,7 @@ class Imagecp extends Controller {
 		//TODO paginate using pageination lib
 		$sql = 'SELECT image_type_id, image_type_name, image_type_width , image_type_height , image_type_photo_thumbnail, image_type_codename FROM image_types WHERE image_type_codename = ?';
 		$result = $this->db->query($sql, array($codename));
-		$data = $result->rowarray();
+		$data = $result->row_array();
 
 		$sql = 'SELECT image_id, image_title, image_image_type_id, image_type_photo_thumbnail FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
 		$data['images'] = $this->db->query($sql, array($codename));
