@@ -160,7 +160,7 @@ class Account extends controller
 						$this->load->library('image_upload');
 						$this->xajax->processRequests();
 						$_SESSION['img'] = array();
-						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), true);
+						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), false);
 					} else {
 						$this->messages->AddMessage('error', 'Please select either a custom or gallery image.');
 						redirect('/account/customlink', 'location');

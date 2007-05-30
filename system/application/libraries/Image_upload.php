@@ -114,7 +114,7 @@ class Image_upload {
 		}
 
 		if($photos_loaded == 0) {
-			$this->ci->main_frame->AddMessage('error', 'No photos were uploaded, as none had titles.');
+			$this->ci->main_frame->AddMessage('error', 'No photos were uploaded. Either no photos were provided, or the photos provided were not given titles.');
 		}
 
 		$this->ci->main_frame->SetTitle('Photo Uploader');
@@ -127,12 +127,6 @@ class Image_upload {
 
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
-
-		$objResponse->addAssign("submitButton","value","Save!");
-		$objResponse->addAssign("submitButton","disabled",false);
-
-		return $objResponse;
-
 
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		// 0 location
