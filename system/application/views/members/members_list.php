@@ -29,9 +29,9 @@ function SortLink($filter, $sort_fields, $field, $title)
 	echo $title;
 	if ($filter['last_sort'] === $field) {
 		if (isset($sort_fields[$field]) && $sort_fields[$field]) {
-			echo '<IMG SRC="/images/prototype/members/sortasc.png" ALT="sorted ascending" />';
+			echo '<img src="/images/prototype/members/sortasc.png" alt="sorted ascending" />';
 		} else {
-			echo '<IMG SRC="/images/prototype/members/sortdesc.png" ALT="sorted descending" />';
+			echo '<Img src="/images/prototype/members/sortdesc.png" alt="sorted descending" />';
 		}
 	}
 	echo '</a>';
@@ -41,8 +41,8 @@ function SortLink($filter, $sort_fields, $field, $title)
 function BoolFilterLinks($filter, $field)
 {
 	?>
-	<A HREF="<?php echo vip_url($filter['base'].'/'.$field); ?>"><IMG SRC="/images/prototype/members/yes9.png" ALT="Filter yes's" /></A>
-	<A HREF="<?php echo vip_url($filter['base'].'/not/'.$field); ?>"><IMG SRC="/images/prototype/members/no9.png" ALT="Filter no's" /></A>
+	<a href="<?php echo vip_url($filter['base'].'/'.$field); ?>"><img src="/images/prototype/members/yes9.png" alt="Filter yes's" /></a>
+	<a href="<?php echo vip_url($filter['base'].'/not/'.$field); ?>"><img src="/images/prototype/members/no9.png" alt="Filter no's" /></a>
 	<?php
 }
 
@@ -52,42 +52,40 @@ function FilterLinkBool($filter, $field, $value)
 	echo '<a href="' . vip_url($filter['base'] .
 		((!$value)?'/not/':'/') . $field) . '">';
 	if ($value) {
-		echo '<IMG SRC="/images/prototype/members/yes.png" ALT="Yes" />';
+		echo '<img src="/images/prototype/members/yes.png" alt="Yes" />';
 	} else {
-		echo '<IMG SRC="/images/prototype/members/no.png" ALT="No" />';
+		echo '<img src="/images/prototype/members/no.png" alt="No" />';
 	}
 	echo '</a>';
 }
 
 ?>
 
-<div class='blue_box'>
+<div class="BlueBox">
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
 
 
-	<P>The following action can be performed on the selected members</P>
-	<P>
-		<select style="float: none;">
-			<!--optgroup label="Actions:"-->
-				<option selected>Send e-mail</option>
-				<option>Remove membership</option>
-				<option>Set as paid</option>
-				<option>Set as not paid</option>
-				<option>Request business cards</option>
-				<option>Expire business cards</option>
-			<!--/optgroup-->
-			<?php
-				if (!empty($organisation['subteams'])) {
-					echo '<optgroup label="Invite:">';
-					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
-					echo '</optgroup>';
-				}
-			?>
-		</select>
-		<input type="button" value="Go" style="float: none;"/>
-	</P>
+	<p>The following action can be performed on the selected members</p>
+	<select style="float: none;">
+		<!--optgroup label="Actions:"-->
+			<option selected="selected">Send e-mail</option>
+			<option>Remove membership</option>
+			<option>Set as paid</option>
+			<option>Set as not paid</option>
+			<option>Request business cards</option>
+			<option>Expire business cards</option>
+		<!--/optgroup-->
+		<?php
+			if (!empty($organisation['subteams'])) {
+				echo '<optgroup label="Invite:">';
+				EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+				echo '</optgroup>';
+			}
+		?>
+	</select>
+	<input type="button" value="Go" style="float: none;"/>
 	<br />
-	<form class="form" method="post" action="<?php echo $target; ?>" name="member_select_form" id="member_select_form">
+	<form class="form" method="post" action="<?php echo $target; ?>" id="member_select_form">
 
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 		<tr style="background-color: #eee">
@@ -98,7 +96,7 @@ function FilterLinkBool($filter, $field, $value)
 			<th><?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?></th>
 			<th><?php SortLink($filter, $sort_fields, 'surname','Surname'); ?></th>
 			<th>Email</th>
-			<th align="center"><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?><?php /*
+			<th align="center"><?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?></th><?php /*
 			<th><?php SortLink($filter, $sort_fields, 'mailable','E?', TRUE); ?></th> */ ?>
 			<th align="center"><?php SortLink($filter, $sort_fields, 'paid','Paid'); ?></th>
 			<?php if ('manage' !== VipMode()) { ?>
@@ -131,11 +129,11 @@ function FilterLinkBool($filter, $field, $value)
 
 			<td align="center">
 			<?php if ($membership['user_confirmed'] && $membership['org_confirmed']) { ?>
-				<IMG SRC="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />
+				<img src="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />
 			<?php } elseif ($membership['user_confirmed']) { ?>
-				<IMG SRC="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />
+				<img src="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />
 			<?php } elseif ($membership['org_confirmed']) { ?>
-				<IMG SRC="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />
+				<img src="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />
 			<?php } else { ?>
 				&nbsp;
 			<?php } ?>
@@ -143,21 +141,21 @@ function FilterLinkBool($filter, $field, $value)
 			</td><?php /*
 			<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
 			<td align="center"><?php if (isset($membership['paid']) && $membership['paid']) { ?>
-				<IMG SRC="/images/prototype/members/paid.png" ALT="Yes" />
+				<img src="/images/prototype/members/paid.png" alt="Yes" />
 			<?php } ?></td>
 			<?php if ('manage' !== VipMode()) { ?>
 				<td align="center"><?php if (isset($membership['vip']) && $membership['vip']) { ?>
-					<IMG SRC="/images/prototype/members/vip.png" ALT="Yes" />
+					<img src="/images/prototype/members/vip.png" alt="Yes" />
 				<?php } ?></td>
 			<?php } ?>
 			<td align="center">
 			<?php if ($membership['has_business_card']) { ?>
 				<?php if ($membership['business_card_needs_approval']) { ?>
-					<IMG SRC="/images/prototype/members/card_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
+					<img src="/images/prototype/members/card_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
 				<?php } elseif ($membership['business_card_expired']) { ?>
-					<IMG SRC="/images/prototype/members/card_expired.png" alt="Expired" title="Expired" />
+					<img src="/images/prototype/members/card_expired.png" alt="Expired" title="Expired" />
 				<?php } else { ?>
-					<IMG SRC="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />
+					<img src="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />
 				<?php } ?>
 			<?php } else { ?>
 				&nbsp;
@@ -167,11 +165,11 @@ function FilterLinkBool($filter, $field, $value)
 			<td align="center">
 			<?php if ($membership['has_byline']) { ?>
 				<?php if ($membership['byline_needs_approval']) { ?>
-					<IMG SRC="/images/prototype/members/byline_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
+					<img src="/images/prototype/members/byline_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
 				<?php } elseif ($membership['byline_expired']) { ?>
-					<IMG SRC="/images/prototype/members/byline_expired.png" alt="Byline Expired" title="Byline Expired" />
+					<img src="/images/prototype/members/byline_expired.png" alt="Byline Expired" title="Byline Expired" />
 				<?php } else { ?>
-					<IMG SRC="/images/prototype/members/byline_active.png" alt="Byline OK" title="Byline OK" />
+					<img src="/images/prototype/members/byline_active.png" alt="Byline OK" title="Byline OK" />
 				<?php } ?>
 			<?php } else { ?>
 				&nbsp;
@@ -179,9 +177,9 @@ function FilterLinkBool($filter, $field, $value)
 			</td>
 			<td align="center">
 				<?php if ($membership['office_editor_access']) { ?>
-					<IMG SRC="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
+					<img src="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
 				<?php } elseif ($membership['office_writer_access']) { ?>
-					<IMG SRC="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
+					<img src="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
 				<?php }
 			} ?>
 			</td>

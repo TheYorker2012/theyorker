@@ -24,9 +24,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
