@@ -54,6 +54,8 @@ class Account extends controller
 
 		/// Get subscriptions of the current user
 		$data['Subscriptions']  = $this->prefs_model->getAllSubscriptions($this->user_auth->entityId);
+		$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
+		$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/myaccount', $data);

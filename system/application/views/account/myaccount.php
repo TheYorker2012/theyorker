@@ -28,6 +28,11 @@ function _render_vip_image($status, $org_id) {
 	<li><a href="/register/college_campus">College &amp; Campus Subscriptions</a></li>
 	<li><a href="/register/organisations">Organisation Subscriptions</a></li>
 	</ul>
+
+	<h2><?php echo ($vip_help_heading); ?></h2>
+	<div class="Entry">
+		<?php echo ($vip_help_text); ?>
+	</div>
 </div>
 
 <div id="MainColumn">
