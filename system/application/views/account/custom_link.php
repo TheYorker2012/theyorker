@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Link Nomination</h2>
 	<div class="Entry">
-			You may <b>nominate</b> your link for addition to the list. Please note that we do not accept personal homepages or other minor sites.
+			You may <b>nominate</b> your link for addition to the main list. Please note that we do not accept personal homepages or other minor sites.
 	</div>
 </div>
 
@@ -36,7 +36,7 @@ function select_image(id) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Add Custom Link</h2>
-		<p>To add a link that is not in the list, enter it here. Nominating a link means it will get considered for becoming official, with a proper icon.</p>
+		<p>To add a link that is not in the main list, enter it here. Nominating a link means it will get considered for becoming official, with a proper icon.</p>
 		<form action="/account/customlink/store" method="post" enctype="multipart/form-data" onsubmit="return validate_form();">
 		<fieldset>
 			<label for="title1"> Link Name: </label>
