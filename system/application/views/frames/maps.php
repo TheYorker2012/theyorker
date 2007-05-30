@@ -137,6 +137,8 @@ if ($editable) {
 		this.marker = null;
 		this.latctl = null;
 		this.lngctl = null;
+		this.shown = false;
+		this.buttonhide = null;
 
 		this.initialize = function(container) {
 			this.container = container;
@@ -157,6 +159,11 @@ if ($editable) {
 			maps_setButtonStyle(this.button);
 			this.button.appendChild(document.createTextNode("Add " + this.description));
 
+			this.buttonhide = document.createElement("div");
+			maps_setButtonStyle(this.buttonhide);
+			this.buttonhide.appendChild(document.createTextNode("Remove " + this.description));
+			this.buttonhide.style.display = "none";
+
 			var ctl = this;
 			GEvent.addDomListener(
 				this.button,
@@ -167,7 +174,17 @@ if ($editable) {
 				}
 			);
 
+			GEvent.addDomListener(
+				this.buttonhide,
+				"click",
+				function() {
+					ctl.container.map.closeInfoWindow();
+					ctl.removeMarker();
+				}
+			);
+
 			container.control.appendChild(this.button);
+			container.control.appendChild(this.buttonhide);
 
 			if (this.point != null) {
 				this.addMarker();
@@ -187,35 +204,53 @@ if ($editable) {
 			this.lngctl.setAttribute("value", this.marker.getPoint().lng());
 		}
 
+		this.removeMarker = function() {
+			this.container.map.removeOverlay(this.marker);
+
+			this.latctl.setAttribute("value", "0");
+			this.lngctl.setAttribute("value", "0");
+
+			this.button.style.display = "block";
+			this.buttonhide.style.display = "none";
+			this.shown = false;
+		}
+
 		this.addMarker = function() {
-			this.marker = new GMarker(this.point, {draggable: true});
-			var ctl = this;
-			GEvent.addListener(
-				this.marker, 
-				"click", 
-				function() {
-					ctl.clickMarker();
-				}
-			);
-			GEvent.addListener(
-				this.marker, 
-				"dragstart", 
-				function() {
-					ctl.dragStart();
-				}
-			);
-			GEvent.addListener(
-				this.marker, 
-				"dragend", 
-				function() {
-					ctl.dragEnd();
-				}
-			);
+			if (this.maker == null) {
+				this.marker = new GMarker(this.point, {draggable: true});
+
+				var ctl = this;
+				GEvent.addListener(
+					this.marker, 
+					"click", 
+					function() {
+						ctl.clickMarker();
+					}
+				);
+				GEvent.addListener(
+					this.marker, 
+					"dragstart", 
+					function() {
+						ctl.dragStart();
+					}
+				);
+				GEvent.addListener(
+					this.marker, 
+					"dragend", 
+					function() {
+						ctl.dragEnd();
+					}
+				);
+			} else {
+				this.marker.setPoint(this.point);
+			}
 
 			this.latctl.setAttribute("value", this.point.lat());
 			this.lngctl.setAttribute("value", this.point.lng());
 
 			this.button.style.display = "none";
+			this.buttonhide.style.display = "block";
+			this.shown = true;
 
 			this.container.map.addOverlay(this.marker);
 			this.clickMarker();

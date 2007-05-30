@@ -9,7 +9,7 @@
 		<h3>On Campus:</h3>
 		<img src="/images/prototype/directory/central_hall.gif" title="Central Hall" alt="" class="Right" />
 		<ul><li>
-			<a onclick="javascript:maps['googlemaps'].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305));">
+			<a href="#" onclick="javascript:maps['googlemaps'].setCenter(new GLatLng(53.94704447468437, -1.0529279708862305)); return false;">
 			Central Hall
 			</a>
 		</li></ul>
