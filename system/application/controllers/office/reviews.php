@@ -489,7 +489,7 @@ class Reviews extends Controller
 				}
 			} elseif ($action == 'delete') {
 				$this->slideshow->deletePhoto($photoID, $data['organisation']['id']);
-				$this->messages->AddMessage('info', 'Photo Deleted');
+				$this->messages->AddMessage('success', 'Photo Deleted');
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
 				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow'));
