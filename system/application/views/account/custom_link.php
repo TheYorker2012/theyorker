@@ -36,8 +36,18 @@ function radio_click() {
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_gallery" name="image_pick" value="gallery" checked/> Gallery
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_custom" name="image_pick" value="custom"/> Upload Custom
 			<br style="clear: both;"/>
-			<div style="width: 260px; height: 260px;" id="div_gallery">
-			Gallery
+			<div style="width: 100%; height: 260px;" id="div_gallery">
+			<?php if($gallery_images->num_rows() > 0) {
+				foreach ($gallery_images->result() as $image) {?>
+				<div style="display:inline;padding: 10px;float:left">
+					<a href="#" onclick="alert('Image <?=$image->image_id?> selected');return false;">
+					<?=$this->image->getImage($image->image_id, $image->image_image_type_id)?>
+					</a>
+				</div>
+				<?php } ?>
+			<?php } else { ?>
+					<p>There are currently no images in the gallery.</p>
+			<?php } ?>
 			</div>
 			<div id="div_custom" style="display :none;">
 			<p>Please select an image to be used for this link. The image must be larger than 50x50 pixels.</p>

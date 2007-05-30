@@ -230,10 +230,14 @@ class Account extends controller
 				}
 		} else {
 			$data = array();
+			$data['gallery_images'] = $this->Links_Model->GalleryLinks();
+
 			$this->_SetupTabs('links');
 
 			/// Get custom page content
 			$this->pages_model->SetPageCode('account_customlinks');
+
+			$this->load->library('image');
 
 			/// Set up the main frame
 			$this->main_frame->SetContentSimple('account/custom_link', $data);

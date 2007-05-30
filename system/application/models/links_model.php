@@ -16,6 +16,13 @@ class Links_Model extends Model {
 		parent::Model();
 	}
 	/*
+	 * Gets gallery links
+	 */
+	function GalleryLinks() {
+			$sql = 'SELECT image_id, image_title, image_image_type_id FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ? AND image_title = "" ';
+			return $this->db->query($sql, array('link'));
+	}
+	/*
 	 * Adds a user link with default image to database
 	 */
 	function AddLink($name, $url, $nominated) {
