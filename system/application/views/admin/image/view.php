@@ -21,7 +21,8 @@
 			<label for="image_title">Image Title</label>
 			<input type="text" name="image_title" id="image_title" value=""/>
 			<label for="image_id">Image Id</label>
-			<input type="text" name="image_id" id="image_id" value=""/> (If blank then add)
+			<input type="text" name="image_id" id="image_id" value=""/> (If image_id is blank then add)
+			<input type="hidden" name="image_type_id" id="image_type_id" value="<?php echo $image_type_id; ?>"/>
 			<input type="submit" value="Upload" />
 		</fieldset>
 	</form>

@@ -99,7 +99,8 @@ class Imagecp extends Controller {
 				} else {
 					$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
 													   'image_data' => file_get_contents($uploadData['full_path']),
-													   'image_title' => $this->input->post('image_title')
+													   'image_title' => $this->input->post('image_title'),
+													   'image_image_type_id' => $this->input->post('image_type_id')
 													   ));
 				}
 				unlink($uploadData['full_path']);
@@ -118,6 +119,10 @@ class Imagecp extends Controller {
 			redirect('admin/imagecp/view/'.$codename.'/');
 		}
 		//TODO paginate using pageination lib
+		$sql = 'SELECT image_type_id, image_type_name, image_type_width , image_type_height , image_type_photo_thumbnail, image_type_codename FROM image_types WHERE image_type_codename = ?';
+		$result = $this->db->query($sql, array($codename));
+		$data = $result->rowarray();
+
 		$sql = 'SELECT image_id, image_title, image_image_type_id, image_type_photo_thumbnail FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
 		$data['images'] = $this->db->query($sql, array($codename));
 		$data['codename'] = $codename;
