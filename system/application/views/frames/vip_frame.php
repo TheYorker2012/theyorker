@@ -65,16 +65,11 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<h1 id="TopBannerName">
 				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
 			</h1>
-			<div id="TopBannerPictures">
-				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
-				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
-				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
-
-				<!--
-					//FIXME
-					<span style="font-size: 16px; font-weight:bold; "><?php echo $vipinfo['name']; ?></span><br />
-					<span style="font-size: 16px; font-weight:bold"><?php echo $vipinfo['organisation']; ?></span>
-				-->
+			<div id="TopBannerText">
+				<p>
+					<?php echo $vipinfo['name']; ?><br />
+					<?php echo $vipinfo['organisation']; ?>
+				</p>
 			</div>
 		</div>
 	</div>
