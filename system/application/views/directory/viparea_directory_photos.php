@@ -24,21 +24,8 @@
 	</div>
 <?php } ?>
 
-	<div class="BlueBox">
-		<h2>photo upload</h2>
-
-<?php echo(form_open_multipart(vip_url('directory/photos/upload'))); ?>
-		<p>Photo's should be in jpg format. The upload size limit is 2MB.</p>
-		<fieldset>
-			<label for="title1">Photo Title:</label>
-				<input type="text" name="title1" id="title1" />
-			<label for="userfile1">Photo File:</label>
-				<input type="file" name="userfile1" id="userfile1" />
-			<input type="hidden" name="destination" id="destination" value="1" />
-		</fieldset>
-		<fieldset>
-			<input type="submit" value="Upload" class="button" />
-		</fieldset>
-		</form>
-	</div>
+	<?php
+		$CI = &get_instance();
+		$CI->load->view('uploader/upload_single_photo', array('action_url' => vip_url('directory/photos/upload')) );
+	?>
 </div>
