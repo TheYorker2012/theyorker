@@ -16,6 +16,7 @@
 	<div class="BlueBox">
 		<h2><?php echo $heading; ?></h2>
 		<?php echo $intro; ?>
+		<p>If you wish to become a VIP of any of these organisations, please click 'my account' at the top of the page, at the end of this wizard.</p>
 	</div>
 
 	<div class="BlueBox" style="width: 49%;">

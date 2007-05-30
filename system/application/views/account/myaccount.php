@@ -29,9 +29,9 @@ function _render_vip_image($status, $org_id) {
 	<li><a href="/register/organisations">Organisation Subscriptions</a></li>
 	</ul>
 
-	<h2><?php echo ($vip_help_heading); ?></h2>
+	<h2>Achieving VIP Status</h2>
 	<div class="Entry">
-		<?php echo ($vip_help_text); ?>
+		To request VIP status for an organisation that you are subscribed to, click the <img src="/images/prototype/prefs/apply.gif" alt="Apply to be VIP" title="Apply to be VIP" /> icon associated with it. We will then recieive this request and confirm it as soon as possible.
 	</div>
 </div>
 
@@ -61,7 +61,7 @@ function _render_vip_image($status, $org_id) {
 						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_calendar']); ?> <?php echo _render_bool_image($subscription['subscription_todo']); ?></td>
 						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_email']); ?></td>
 						<td style="text-align:center;"><?php echo _render_vip_image($subscription['vip_status'], $subscription['org_id']); ?></td>
-					</tr>					
+					</tr>
 					<?php
 					}
 					?>
