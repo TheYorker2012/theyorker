@@ -6,4 +6,7 @@ $config['username_email_postfix'] = '@york.ac.uk';
 $config['company_organisation_id'] = 'theyorker';
 $config['company_entity_id'] = 378;
 
+$config['editor_email_address'] = 'editor@theyorker.co.uk';
+$config['webmaster_email_address'] = 'webmaster@theyorker.co.uk';
+
 ?>

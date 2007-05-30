@@ -7,7 +7,7 @@ echo '<?xml version=\'1.0\' ?>
 	<link>' . $rss_link . '</link>
 	<description>' . $rss_desc . '</description>
 	<language>en-gb</language>
-	<copyright>Copyright 2006-07, The Yorker</copyright>
+	<copyright>Copyright 2006-'.date('Y').', The Yorker</copyright>
 	<category>' . $rss_category . '</category>
 	<pubDate>' . $rss_pubdate . '</pubDate>
 	<lastBuildDate>' . $rss_lastbuild . '</lastBuildDate>
@@ -25,16 +25,16 @@ echo '<?xml version=\'1.0\' ?>
 foreach ($rss_items as $item) {
 	echo '<item>
 		<title>' . $item['heading'] . '</title>
-		<author>';
+		<author>' . $rss_email_ed . ' (';
 	$temp_reporters = '';
 	foreach ($item['authors'] as $reporter) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
-	echo substr($temp_reporters, 0, -2) . '</author>
-		<link>http://theyorker2.gmghosting.com/news/uninews/' . $item['id'] . '</link>
+	echo substr($temp_reporters, 0, -2) . ')</author>
+		<link>http://www.theyorker.co.uk/news/uninews/' . $item['id'] . '</link>
 		<description>' . $item['blurb'] . '</description>
-		<pubDate>' . $item['date'] . '</pubDate>
-		<guid isPermaLink=\'true\'>http://theyorker2.gmghosting.com/news/uninews/' . $item['id'] . '</guid>
+		<pubDate>' . date('r',strtotime($item['date'])) . '</pubDate>
+		<guid isPermaLink=\'true\'>http://www.yorker.co.uk/news/uninews/' . $item['id'] . '</guid>
 		</item>';
 }
 echo '</channel></rss>';
