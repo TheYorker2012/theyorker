@@ -8,7 +8,7 @@ class Members_model extends Model {
 
 	/// Gets a users membership with an organisation.
 	/**
-	 * @param $organisation_id integer/array(int) Organisation entity id.
+	 * @param $organisation_id integer/array(int) Organisation entity id. (if false returns VIPs of all organisations)
 	 * @param $user_id integer User entity id.
 	 * @return array of associative arrays of membership attributes.
 	 *	- Subscription must be membership
@@ -27,7 +27,7 @@ class Members_model extends Model {
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
 			$org_match_sql .= '	IN ('.
 				implode(',',$organisations).')';
-		} else {
+		} elseif ($organisation_id) {
 			$org_match_sql .= '	= ?';
 			$bind_data[] = $organisation_id;
 		}
@@ -41,11 +41,16 @@ class Members_model extends Model {
 				(subscriptions.subscription_vip_status = "requested") AS vip_requested,
 				subscriptions.subscription_user_confirmed AS user_confirmed,
 				subscriptions.subscription_organisation_confirmed AS org_confirmed,
+				subscriptions.subscription_user_position as position,
 				entities.entity_username AS username,
+				organisations.organisation_name AS organisation_name,
+				organisations.organisation_directory_entry_name AS organisation_codename,
+				organisations.organisation_entity_id AS organisation_entity_id,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,
 				users.user_nickname AS nickname,
+				users.user_contact_phone_number AS phone_number,
 				(users.user_office_password IS NULL AND users.user_office_access = 1) AS office_writer_access,
 				(users.user_office_password IS NOT NULL AND users.user_office_access = 1) AS office_editor_access,
 				entities.entity_username AS email,
@@ -63,6 +68,8 @@ class Members_model extends Model {
 				ON	subscriptions.subscription_user_entity_id = users.user_entity_id
 			INNER JOIN entities
 				ON	subscriptions.subscription_user_entity_id = entities.entity_id
+			INNER JOIN organisations
+				ON	organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 			LEFT JOIN (business_cards AS bylines JOIN business_card_groups AS byline_groups
 					   ON byline_groups.business_card_group_id = bylines.business_card_business_card_group_id
 					   AND byline_groups.business_card_group_organisation_entity_id IS NULL)
@@ -89,24 +96,31 @@ class Members_model extends Model {
 			$organisations = array_map(array(&$this->db, 'escape'), $organisation_id);
 			$sql .= '	AND (subscriptions.subscription_organisation_entity_id IN ('.
 				implode(',',$organisations).')';
-		} else {
+		} elseif ($organisation_id) {
 			$sql .= '	AND (subscriptions.subscription_organisation_entity_id = ?';
 			$bind_data[] = $organisation_id;
 		}
-		$sql .= '
+		if ($organisation_id) {
+			$sql .= '
 				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1 OR subscriptions.subscription_vip_status != "none")
 				AND	subscriptions.subscription_deleted = 0
 			';
-
-		if ($manage_mode) {
-			$sql .= ' OR users.user_office_access = 1) ';
+			if ($manage_mode) {
+				$sql .= ' OR users.user_office_access = 1) ';
+			} else {
+				$sql .= ' ) ';
+			}
 		} else {
-			$sql .= ' ) ';
+			$sql .= ' AND subscriptions.subscription_vip_status != "none" ';
 		}
 
 		// Run the query and return the raw results array.
 		$sql .= ' AND ' . $FilterSql;
 		$bind_data = array_merge($bind_data, $BindData);
+
+		if (!$organisation_id)
+			$sql .= ' ORDER BY vip_requested DESC, organisation_name, surname ';
+
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
 	}

@@ -64,7 +64,6 @@ function FilterLinkBool($filter, $field, $value)
 <div class="BlueBox">
 	<h2>Members of <?php echo $organisation['name']; ?></h2>
 
-
 	<p>The following action can be performed on the selected members</p>
 	<select style="float: none;">
 		<!--optgroup label="Actions:"-->
@@ -122,7 +121,7 @@ function FilterLinkBool($filter, $field, $value)
 			<?php /** @todo email should show username */ ?>
 
 			<td><?php if (NULL !== $membership['email']) { ?>
-				<a href='mailto:<?php echo $membership['email'];?>'><?php echo $membership['username']; ?></a>
+				<a href='mailto:<?php echo $membership['email'];?>@york.ac.uk'><?php echo $membership['username']; ?></a>
 			<?php } else {?>
 				<?php echo $membership['username']; ?>
 			<?php } ?></td>
