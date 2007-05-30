@@ -194,10 +194,11 @@ class Account extends controller
 
 					$newId = $this->Links_Model->AddLink($this->input->post('title1'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
+					$chosenImageID = $this->input->post('chosen_image');
 
-					if ($this->input->post('image_pick') == 'gallery') {
+					if ($this->input->post('image_pick') == 'gallery' && $chosenImageID) {
 						//Take link image id and associate it with the link
-						//$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+						$this->Links_Model->ReplaceImage($newId, $this->user_auth->entityId, $chosenImageID);
 						$this->messages->AddMessage('success', 'Link added successfully.');
 						redirect('/account/links', 'location');
 					} elseif ($this->input->post('image_pick') == 'custom') {
