@@ -190,6 +190,20 @@ class Prefs_model extends Model {
 		$query = $this->db->query($sql, array($org_id, $user_id));
 	}
 
+	/* Store info about a VIP application */
+	function vipApplication ($user_id,$org_id,$position,$phone)
+	{
+		$sql = 'UPDATE	subscriptions, users
+				SET		subscriptions.subscription_user_position = ?,
+						users.user_contact_phone_number = ?
+				WHERE	subscriptions.subscription_user_entity_id = ?
+				AND		subscriptions.subscription_organisation_entity_id = ?
+				AND		subscriptions.subscription_user_entity_id = users.user_entity_id';
+		$query = $this->db->query($sql,array($position,$phone,$user_id,$org_id));
+
+		$sql = 'UPDATE';
+	}
+
 	/**
 	 *	Organisation Subscriptions
 	 */

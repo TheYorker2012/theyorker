@@ -70,11 +70,14 @@ class Account extends controller
 	{
 		if (!CheckPermissions('student')) return;
 
-		$this->load->library('validation');
 		$this->_SetupTabs('subscriptions');
 
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_home');
+		$data['org_id'] = $org_id;
+		$data['org_name'] = $this->prefs_model->getOrganisationDescription($org_id);
+		$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
+		$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
 
 		if (($org_id == NULL) || (!is_numeric($org_id))) {
 			$this->messages->AddMessage('error', 'The organisation you tried to apply to be VIP for does not exist.');
@@ -83,18 +86,24 @@ class Account extends controller
 			$this->messages->AddMessage('error', 'You must be subscribed to the organisation before you can apply to become a VIP for it.');
 			redirect('account/');
 		} elseif ($this->input->post('v_apply') == 'Apply') {
-			$this->load->model('member_model');
-		} else {
-			$data['org_id'] = $org_id;
-			$data['org_name'] = $this->prefs_model->getOrganisationDescription($org_id);
-			$data['vip_help_heading'] = $this->pages_model->GetPropertyText('vip_help_heading');
-			$data['vip_help_text'] = $this->pages_model->GetPropertyWikitext('vip_help_text');
-
-			/// Set up the main frame
-			$this->main_frame->SetContentSimple('account/vip_application', $data);
-			/// Set page title & load main frame with view
-			$this->main_frame->Load();
+			/// Process form submission
+			$this->load->model('members_model');
+			$position = htmlentities($this->input->post('v_position'), ENT_NOQUOTES, 'UTF-8');
+			$phone = htmlentities($this->input->post('v_phone'), ENT_NOQUOTES, 'UTF-8');
+			if ($position == '') {
+				$this->messages->AddMessage('error', 'Please make sure you specify your position in the organisation before submitting the application.');
+			} else {
+				$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$org_id);
+				$this->prefs_model->vipApplication ($this->user_auth->entityId,$org_id,$position,$phone);
+				$this->messages->AddMessage('success', 'Your application to become VIP for ' . $data['org_name']['name'] . ' has been successfully recieved.');
+				redirect('/account');
+			}
 		}
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('account/vip_application', $data);
+		/// Set page title & load main frame with view
+		$this->main_frame->Load();
 	}
 
 	/**
