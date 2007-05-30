@@ -261,7 +261,7 @@ class Prefs_model extends Model {
 					subscriptions.subscription_email						AS subscription_email,
 					subscriptions.subscription_paid							AS subscription_paid,
 					subscriptions.subscription_calendar						AS subscription_calendar,
-					subscriptions.subscription_todo							AS subscription_todo
+					subscriptions.subscription_todo							AS subscription_todo,
 					subscriptions.subscription_vip_status					AS vip_status
 					FROM subscriptions
 		INNER JOIN	organisations
