@@ -327,15 +327,15 @@ class Directory_model extends Model {
 		}
 		$query = $this->db->query($sql, array(
 			$EntityId,
-			htmlentities($Data['description'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['postal_address'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['postcode'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['phone_external'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['phone_internal'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['fax_number'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['email_address'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['url'], ENT_NOQUOTES, 'UTF-8'),
-			htmlentities($Data['opening_hours'], ENT_NOQUOTES, 'UTF-8'),
+			htmlentities($Data['description'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['postal_address'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['postcode'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['phone_external'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['phone_internal'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['fax_number'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['email_address'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['url'], ENT_QUOTES, 'UTF-8'),
+			htmlentities($Data['opening_hours'], ENT_QUOTES, 'UTF-8'),
 			$DirectoryEntryName));
 		return ($this->db->affected_rows() > 0);
 	}

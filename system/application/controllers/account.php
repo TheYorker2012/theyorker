@@ -88,8 +88,8 @@ class Account extends controller
 		} elseif ($this->input->post('v_apply') == 'Apply') {
 			/// Process form submission
 			$this->load->model('members_model');
-			$position = htmlentities($this->input->post('v_position'), ENT_NOQUOTES, 'UTF-8');
-			$phone = htmlentities($this->input->post('v_phone'), ENT_NOQUOTES, 'UTF-8');
+			$position = htmlentities($this->input->post('v_position'), ENT_QUOTES, 'UTF-8');
+			$phone = htmlentities($this->input->post('v_phone'), ENT_QUOTES, 'UTF-8');
 			if ($position == '') {
 				$this->messages->AddMessage('error', 'Please make sure you specify your position in the organisation before submitting the application.');
 			} else {
