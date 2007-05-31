@@ -48,7 +48,7 @@ function select_image(id) {
 			<label for="lnominate"> Nominate Link: </label>
 			<input type="checkbox" name="lnominate" id="lnominate" checked="checked" />
 			<br style="clear: both;"/>
-			<label for="image_pick"> Link Image: </label>
+			<label> Link Image: </label>
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_gallery" name="image_pick" value="gallery" checked="checked" /> Gallery
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_custom" name="image_pick" value="custom"/> Upload Custom
 			<br style="clear: both;"/>
@@ -69,11 +69,11 @@ function select_image(id) {
 			<div id="div_custom" style="display :none;">
 			<p>Please select an image to be used for this link. The image must be larger than 50x50 pixels.</p>
 			<label for="userfile1">File Location: </label>
-			<input type="file" name="userfile1" size="20" />
+			<input type="file" name="userfile1" id="userfile1" size="20" />
 			<input type="hidden" name="destination" id="destination" value="1" />
 			</div>
 			<div style="clear: both;"/>
-			<input type="submit" value="Finish" class="button" /> <input type="button" value="Back" class="button" onClick="window.location='/account/links';" />
+			<input type="submit" value="Finish" class="button" /> <input type="button" value="Back" class="button" onclick="window.location='/account/links';" />
 		</fieldset>
 		</form>
 	</div>
