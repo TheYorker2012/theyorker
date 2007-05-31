@@ -33,10 +33,9 @@
 	<h2>upload image</h2>
 	<form action="/office/links/updateimage/<?php echo $link->link_id; ?>" method="post" enctype="multipart/form-data">
 		<fieldset>
-			<legend>50x50 Image:</legend>
 			<label for="upload">50x50 Image</label>
 			<input type="file" name="upload" /></br>
-			<input type="submit" value="Upload" />
+			<input type="submit" value="Upload" class='button' />
 		</fieldset>
 	</form>
 </div>

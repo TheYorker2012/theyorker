@@ -192,6 +192,8 @@ class Links extends Controller
 			redirect('/office/links');
 		}
 
+		$link = $this->Links_Model->GetLink($link_id);
+
 		$this->load->library('upload');
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'gif|jpg|png';
@@ -206,7 +208,7 @@ class Links extends Controller
 
 			$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
 											   'image_data' => file_get_contents($uploadData['full_path']),
-											   'image_title' => $this->input->post('lname'),
+											   'image_title' => $link['link_name'],
 											   'image_image_type_id' => $this->Links_Model->GetLinkImageTypeId()
 											   ));
 			unlink($uploadData['full_path']);
