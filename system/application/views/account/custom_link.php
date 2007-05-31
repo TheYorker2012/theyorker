@@ -40,16 +40,16 @@ function select_image(id) {
 		<form action="/account/customlink/store" method="post" enctype="multipart/form-data" onsubmit="return validate_form();">
 		<fieldset>
 			<label for="title1"> Link Name: </label>
-			<input type="text" name="title1" />
+			<input type="text" name="title1" id="title1" />
 			<br />
 			<label for="lurl"> Link URL: </label>
-			<input type="text" name="lurl" value="http://" />
+			<input type="text" name="lurl"  id="lurl" value="http://" />
 			<br />
 			<label for="lnominate"> Nominate Link: </label>
-			<input type="checkbox" name="lnominate" checked/>
+			<input type="checkbox" name="lnominate" id="lnominate" checked="checked" />
 			<br style="clear: both;"/>
 			<label for="image_pick"> Link Image: </label>
-			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_gallery" name="image_pick" value="gallery" checked/> Gallery
+			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_gallery" name="image_pick" value="gallery" checked="checked" /> Gallery
 			<input style="float:none;" type="radio" onclick="radio_click();" id="rad_custom" name="image_pick" value="custom"/> Upload Custom
 			<br style="clear: both;"/>
 			<div style="width: 100%; height: 260px;" id="div_gallery">
@@ -73,7 +73,7 @@ function select_image(id) {
 			<input type="hidden" name="destination" id="destination" value="1" />
 			</div>
 			<div style="clear: both;"/>
-			<input type="submit" value="Finish" class="button"> <input type="button" value="Back" class="button" onClick="window.location='/account/links';">
+			<input type="submit" value="Finish" class="button" /> <input type="button" value="Back" class="button" onClick="window.location='/account/links';" />
 		</fieldset>
 		</form>
 	</div>
