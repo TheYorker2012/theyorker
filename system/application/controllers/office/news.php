@@ -1040,7 +1040,7 @@ class News extends Controller
 					$this->load->library('wikiparser');
 					$data['photo_requests'] = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 					foreach ($data['photo_requests'] as $photo) {
-						$this->wikiparser->add_image_override($photo['photo_number'], $this->image->getThumb($photo['chosen_photo'], 'medium', true));
+						$this->wikiparser->add_image_override($photo['photo_number'], $this->image->getThumb($photo['chosen_photo'], 'medium', true), $photo['photo_request_title']);
 					}
 					$wiki_cache = $this->wikiparser->parse($wiki);
 //				}

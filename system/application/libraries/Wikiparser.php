@@ -45,6 +45,7 @@ class Wikiparser {
 	protected $external_wikis;
 	protected $image_uri;
 	protected $image_overrides;
+	protected $title_overrides;
 	protected $ignore_images;
 	protected $emphasis;
 	protected $quote_template;
@@ -100,9 +101,11 @@ class Wikiparser {
 	 *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
 	 *	@date		Tue 15th May 2007 16:42
 	 */
-	function add_image_override($id, $url)
+	function add_image_override($id, $url, $title = '')
 	{
 		$this->image_overrides[$id] = $url;
+		$this->title_overrides[$id] = $title;
+
 	}
 
 	function handle_sections($matches) {
@@ -283,6 +286,9 @@ class Wikiparser {
 		$imagetag = '';
 		if (array_key_exists($href,$this->image_overrides)) {
 			$imagetag = $this->image_overrides[$href];
+			if (strlen($title) == 0 && isset($this->title_overrides[$href])) {
+				$title = $this->title_overrides[$href];
+			}
 		} else {
 			$imagetag = sprintf(
 				'<img src="%s" alt="%s" />',
