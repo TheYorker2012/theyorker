@@ -168,9 +168,9 @@ class Organisation extends controller
 								$_SESSION['org_wizard'] = array();
 
 								if ($data['office']) {
-									redirect('/directory/');
-								} else {
 									redirect('/office/pr/org/'.$post_data['directory_entry_name'].'/directory/information');
+								} else {
+									redirect('/directory/');
 								}
 
 							} else {
