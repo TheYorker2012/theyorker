@@ -131,10 +131,10 @@ class Links extends Controller
 
 				redirect('/office/links', 'location');
 			}
-		} elseif(!$this->input->post('lname')) {
+		} elseif($this->input->post('lurl') && !$this->input->post('lname')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
 			redirect('/office/links/customlink');
-		} elseif (!$this->input->post('upload')) {
+		} elseif ($this->input->post('lurl') && !$this->input->post('upload')) {
 			$this->messages->AddMessage('error', 'Please choose an image to upload with the link.');
 			redirect('/office/links/customlink');
 		}
