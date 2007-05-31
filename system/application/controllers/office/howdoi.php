@@ -43,8 +43,6 @@ class Howdoi extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		$this->initialised = true;
-
 		if ($this->user_auth->officeType == 'Low')
 			redirect('/office/howdoi/requests');
 		if ($this->user_auth->officeType == 'High')
