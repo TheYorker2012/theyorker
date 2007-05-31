@@ -290,48 +290,38 @@ class Wikiparser {
 				$title = $this->title_overrides[$href];
 			}
 		} else {
-			$imagetag = sprintf(
-				'<img src="%s" alt="%s" />',
-				$href,
-				$title
-			);
+			$imagetag =
+				'<img src="'.$href.'" alt="'.$title.'" />';
 		}
 
 		$option = array_pop($options); //Will return null if empty
 
 		switch($option) {
 			case 'right':
-				$imagetag = sprintf( //Olds style: background-color: #F5F5F5; border: 1px solid #D0D0D0;
+				$imagetag = //Olds style: background-color: #F5F5F5; border: 1px solid #D0D0D0;
 					'<div style="float: right; width: 180px; padding: 2px">'.
 					$imagetag.
-					'<div>%s</div>'.
-					'</div>',
-					$title
-				);
+					'<div>'.$title.'</div>'.
+					'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
 				}
 				break;
 			case 'left':
-				$imagetag = sprintf(
+				$imagetag =
 					'<div style="float: left; width: 180px; padding: 2px">'.
 					$imagetag.
-					'<div>%s</div>'.
-					'</div>',
-					$title
-				);
+					'<div>'.$title.'</div>'.
+					'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
 				}
 				break;
 			case 'centre':
-				$imagetag = sprintf(
-					'<div style="text-align: center;">%s<br />%s</div>',
-					$imagetag,
-					$title
-				);
+				$imagetag =
+					'<div style="text-align: center;">'.$title.'<br />'.$title.'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
@@ -422,12 +412,7 @@ if (hasReqestedVersion) {
 
 		//if ($nolink) return $title;
 
-		return sprintf(
-			'[%s %s]%s',
-			$href,
-			$title,
-			(isset($matches[7]) ? $matches[7] : "")
-		);
+		return '['.$href.' '.$title.']'.(isset($matches[7]) ? $matches[7] : "");
 	}
 
 	function handle_externallink($matches) {
@@ -450,12 +435,7 @@ if (hasReqestedVersion) {
 		}
 		$newwindow = false;
 
-		return sprintf(
-			'<a href="%s"%s>%s</a>',
-			$href,
-			($newwindow?' target="_blank"':''),
-			$title
-		);
+		return '<a href="'.$href.'"'.($newwindow?' target="_blank"':'').'>'.$title.'</a>';
 	}
 
 	function emphasize($amount) {
