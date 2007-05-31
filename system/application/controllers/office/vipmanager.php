@@ -65,8 +65,6 @@ class Vipmanager extends Controller
 			} else {
 				$this->messages->AddMessage('error','Member promoted successfully, but e-mail sending <b>failed</b>.');
 			}
-
-			$this->messages->AddMessage('success','Member promoted successfully.');
 		} else {
 			$this->messages->AddMessage('error','No changes were made to the membership.');
 		}
