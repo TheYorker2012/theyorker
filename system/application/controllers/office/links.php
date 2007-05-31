@@ -102,11 +102,41 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
-			$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
-			redirect('/office/links', 'location');
-		} else if($this->input->post('lurl')) {
+		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lurl') != 'http://') {
+			$this->load->library('upload');
+			$config['upload_path'] = './tmp/uploads/';
+			$config['allowed_types'] = 'gif|jpg|png';
+			$config['max_size'] = '2048';
+			$this->upload->initialize($config);
+
+			if (!$this->upload->do_upload('upload')) {
+				$this->load->library('messages');
+				$this->messages->AddMessage('error', $this->upload->display_errors());
+				redirect('/office/links/customlink');
+			} else {
+				$uploadData = $this->upload->data();
+
+				$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
+												   'image_data' => file_get_contents($uploadData['full_path']),
+												   'image_title' => $this->input->post('lname'),
+												   'image_image_type_id' => $this->Links_Model->GetLinkImageTypeId()
+												   ));
+				unlink($uploadData['full_path']);
+
+				$image_id = $this->db->insert_id();
+
+				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1, $image_id);
+
+				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
+
+				redirect('/office/links', 'location');
+			}
+		} elseif($this->input->post('lurl') && !$this->input->post('lname')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
+			redirect('/office/links/customlink');
+		} elseif ($this->input->post('lurl') == 'http://') {
+			$this->messages->AddMessage('error', 'Please choose a url.');
+			redirect('/office/links/customlink');
 		}
 
 		$data = array();
@@ -147,6 +177,50 @@ class Links extends Controller
 		}
 
 		redirect('/office/links');
+	}
+
+	//Update link image
+	function updateimage($link_id)
+	{
+		//has user got access to office
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('user_auth');
+
+		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
+			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
+			redirect('/office/links');
+		}
+
+		$link = $this->Links_Model->GetLink($link_id);
+
+		$this->load->library('upload');
+		$config['upload_path'] = './tmp/uploads/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size'] = '2048';
+		$this->upload->initialize($config);
+
+		if (!$this->upload->do_upload('upload')) {
+			$this->load->library('messages');
+			$this->messages->AddMessage('error', $this->upload->display_errors());
+		} else {
+			$uploadData = $this->upload->data();
+
+			$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
+											   'image_data' => file_get_contents($uploadData['full_path']),
+											   'image_title' => $link->link_name,
+											   'image_image_type_id' => $this->Links_Model->GetLinkImageTypeId()
+											   ));
+			unlink($uploadData['full_path']);
+
+			$image_id = $this->db->insert_id();
+
+			$id = $this->Links_Model->ReplaceImage($link_id, null, $image_id, true);
+
+			$this->messages->AddMessage('success', 'Image Uploaded Successfully');
+		}
+
+		redirect('/office/links/edit/'.$link_id);
 	}
 
 	function upload() {

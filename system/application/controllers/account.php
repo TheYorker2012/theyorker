@@ -204,7 +204,7 @@ class Account extends controller
 					} elseif ($this->input->post('image_pick') == 'custom') {
 						$this->load->library(array('xajax', 'image'));
 						$this->load->library('image_upload');
-						$this->xajax->processRequests();
+						//$this->xajax->processRequests();
 						$_SESSION['img'] = array();
 						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), false);
 					} else {

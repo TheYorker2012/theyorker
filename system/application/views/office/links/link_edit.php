@@ -3,6 +3,9 @@
 	<div class="Entry">
 		This page allows you to edit links <b>live</b>. Take care.
 	</div>
+	<div class="Entry">
+		 Please note that <b>the image must be 50x50 pixels</b> in size.
+	</div>
 </div>
 <div class='blue_box'>
 	<h2>edit link</h2>
@@ -24,4 +27,15 @@
 			</fieldset>
 		</form>
 	</div>
+</div>
+
+<div class="blue_box" id="upload_form">
+	<h2>upload image</h2>
+	<form action="/office/links/updateimage/<?php echo $link->link_id; ?>" method="post" enctype="multipart/form-data">
+		<fieldset>
+			<label for="upload">50x50 Image</label>
+			<input type="file" name="upload" /></br>
+			<input type="submit" value="Upload" class='button' />
+		</fieldset>
+	</form>
 </div>

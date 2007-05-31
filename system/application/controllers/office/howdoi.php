@@ -44,12 +44,11 @@ class Howdoi extends Controller
 		if (!CheckPermissions('office')) return;
 
 		if ($this->user_auth->officeType == 'Low')
-			self::published();
+			redirect('/office/howdoi/requests');
 		if ($this->user_auth->officeType == 'High')
-			self::suggestions();
+			redirect('/office/howdoi/suggestions');
 		if ($this->user_auth->officeType == 'Admin')
-			self::categories();
-
+			redirect('/office/howdoi/categories');
 	}
 
 	/**
@@ -85,6 +84,8 @@ class Howdoi extends Controller
 	 */
 	function getdata($page)
 	{
+		if (!CheckPermissions('office')) return;
+
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');
