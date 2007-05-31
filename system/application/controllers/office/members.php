@@ -326,10 +326,15 @@ class Members extends Controller
 						$message = str_replace('%%password%%',$access_password,str_replace('%%nickname%%',$user->nickname,$this->pages_model->GetPropertyText('office_password_email_body', true)));
 						if ($to && $subject && $message && $from){
 							$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
-							if (mail($to,$subject,$message,$from)) {
-								$this->messages->AddMessage('success','E-mail Sent Successfully.');
-							} else {
-								$this->messages->AddMessage('error','E-mail Sending Failed.');
+
+							$this->load->helper('yorkermail');
+							try {
+								yorkermail($to,$subject,$message,$from);
+								$this->main_frame->AddMessage('success',
+									'The e-mail containing the password was sent successfully.' );
+							} catch (Exception $e) {
+								$this->main_frame->AddMessage('error',
+									'E-mail Sending Failed: '.$e->getMessage() );
 							}
 						} else {
 							$this->messages->AddMessage('error','E-mail Sending Failed.');

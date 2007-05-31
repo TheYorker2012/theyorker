@@ -351,25 +351,15 @@ class User_auth extends model {
 			$body
 		);
 
-		require_once "Mail.php";
+		$this->load->helper('yorkermail');
+		try {
+			yorkermail($to,$subject,$body,$from);
+			return true;
+		} catch (Exception $e) {
+			//Do nothing
+		}
 
-		$headers = array(
-			'From' => $from,
-			'To' => $to,
-			'Subject' => $subject
-		);
-		$smtp = Mail::factory(
-			'smtp',
-			array (
-				'host' => 'ado.is-a-geek.net',
-				'auth' => false/*,
-				'username' => $username,
-				'password' => $password*/
-			)
-		);
-		$mail = $smtp->send($to, $headers, $body);
-
-		return !PEAR::isError($mail);
+		return false;
 	}
 
 	/// Logout of the entire site

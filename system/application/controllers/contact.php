@@ -46,32 +46,26 @@ class Contact extends Controller {
 		$from = $this->input->post('contact_email');
 		$subject = $this->input->post('contact_subject');
 		$message = $this->input->post('contact_message');
-		$headers = array(
-			'From' => $from,
-			'To' => $to,
-			'Subject' => $subject
-		);
-		$smtp = Mail::factory(
-			'smtp',
-			array (
-				'host' => 'ado.is-a-geek.net',
-				'auth' => false/*,
-				'username' => $username,
-				'password' => $password*/
-			)
-		);
-		$mail = $smtp->send($to, $headers, $message);
+
+		if (!$subject) $subject = 'No subject';
 
 		if ($to && $subject && $message && $from){
-			if (!PEAR::isError($mail)) {
-				$this->main_frame->AddMessage('success', 'Thank you for contacting us.');
+			$this->load->helper('yorkermail');
+			try {
+				yorkermail($to,$subject,$message,$from);
+				$this->main_frame->AddMessage('success',
+					'Thank you for contacting us.' );
 				redirect('/about');
-			} else {
-				$this->main_frame->AddMessage('error', 'E-mail sending failed.');
+			} catch (Exception $e) {
+				$this->main_frame->AddMessage('error',
+					'E-mail sending failed: '.$e->getMessage() );
 				redirect('/contact');
 			}
+		} elseif (!$to) {
+			$this->main_frame->AddMessage('error', 'E-mail sending failed. Please enter your e-mail address.');
+			redirect('/contact');
 		} else {
-			$this->main_frame->AddMessage('error', 'E-mail sending failed.');
+			$this->main_frame->AddMessage('error', 'E-mail sending failed. Please enter a message to send.');
 			redirect('/contact');
 		}
 	}
