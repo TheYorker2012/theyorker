@@ -46,6 +46,7 @@ class Members_model extends Model {
 				organisations.organisation_name AS organisation_name,
 				organisations.organisation_directory_entry_name AS organisation_codename,
 				organisations.organisation_entity_id AS organisation_entity_id,
+				organisations.organisation_needs_approval AS organisation_needs_approval,
 				users.user_entity_id AS user_id,
 				users.user_firstname AS firstname,
 				users.user_surname AS surname,

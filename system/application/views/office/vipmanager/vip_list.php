@@ -26,6 +26,7 @@
 			<th>Position</th>
 			<th align="center">Paid</th>
 			<th align="center">VIP</th>
+			<th>New</th>
 			<th>X</th>
 		</tr>
 		<?php
@@ -57,6 +58,9 @@
 					<a href="/office/vipmanager/promote/<?php echo $membership['user_id'];?>/<?php echo $membership['organisation_entity_id'];?>" onclick="return confirm('Are you sure you want to promote &quot;<?php echo $membership['firstname']; ?> <?php echo $membership['surname']; ?>&quot; of &quot;<?php echo $membership['organisation_name']; ?>&quot; to VIP status?');"><img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access: Click to Promote" title="Requested VIP Access: Click to Promote" /></a>
 				<?php } ?>
 				</td>
+			<td align="center"><?php if (isset($membership['organisation_needs_approval']) && $membership['organisation_needs_approval']) { ?>
+				<a href='/office/reviews/<?php echo $membership['organisation_codename']; ?>'><img src="/images/prototype/members/new.png" alt="Organisation Requires Approval" /></a>
+			<?php } ?></td>
 			<td align="center">
 					<a href="/office/vipmanager/demote/<?php echo $membership['user_id'];?>/<?php echo $membership['organisation_entity_id'];?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo $membership['firstname']; ?> <?php echo $membership['surname']; ?>&quot; of &quot;<?php echo $membership['organisation_name']; ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a>
 				</td>
