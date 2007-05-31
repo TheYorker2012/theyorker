@@ -6,7 +6,7 @@
  *
  */
 define('PHOTOS_PERPAGE', 12);
-define('VIEW_WIDTH', 650);
+define('VIEW_WIDTH', 600);
 
 class Gallery extends Controller {
 	/**
