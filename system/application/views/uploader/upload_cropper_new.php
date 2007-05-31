@@ -249,7 +249,7 @@ foreach ($ThumbDetails->result() as $Single) {
 	<div style="float: right; width: 55%;">
 	<ol>
 	<li>Select a thumbnail from the drop down box</li>
-	<li>Use the tool below to crop your photo appropriately</li>
+	<li>Use the tool to crop your photo appropriately</li>
 	<li>Press save once you are happy with the crop</li>
 	<li>Repeat for every thumbnail in the list</li>
 	</ol>
