@@ -306,7 +306,7 @@ function addstrike($text)
 			 ?>
 
 			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
-			 <? php } ?>
+			 <?php } ?>
 			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		</fieldset>
 		<fieldset>
