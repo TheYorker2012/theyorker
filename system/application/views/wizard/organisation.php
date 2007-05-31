@@ -121,10 +121,15 @@ function addstrike($text)
 			}
 			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 2, $session_var); ?>
 		</fieldset>
-		<fieldset>
-			<h3>Are you connected to this organisation?</h3>
-			<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
-		</fieldset>
+		<?php if($office) { ?>
+			<p>You are accessing this wizard from the office.</p>
+			<input name="a_connected" type="hidden" value="Yes" />
+		<? } else { ?>
+			<fieldset>
+				<h3>Are you connected to this organisation?</h3>
+				<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
+			</fieldset>
+		<? } ?>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" disabled="disabled" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" />
@@ -300,16 +305,19 @@ function addstrike($text)
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
 			<label for="username">Name: </label><span id="username"><?php echo $username; ?></span>
-	<?php if ($is_connected != 'No') {
+	<?php if ($is_connected != 'No' && !$office) {
 				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);
 				 PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var);
 			 ?>
 		</fieldset>
 			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
+	<?php } elseif ($office) { ?>
+			 <p>This organisation is being submitted from the office. To make it visible please go to the 'Suggestions' tab of the office directory.</p>
+		</fieldset>
 	<?php } else { ?>
+			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		</fieldset>
 	<?php }?>
-			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" disabled="disabled" />

@@ -573,10 +573,6 @@ class Directory_model extends Model {
 			`organisation_organisation_type_id`,
 			`organisation_name`,
 			`organisation_directory_entry_name`,
-			`organisation_suggesters_name`,
-			`organisation_suggesters_position`,
-            `organisation_suggesters_email`,
-            `organisation_suggesters_notes`,
 			`organisation_needs_approval`)
 			 VALUES
 			 (LAST_INSERT_ID() ,? , ?, ?, ?, ?, ?, ?, ? )';

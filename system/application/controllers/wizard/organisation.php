@@ -48,6 +48,7 @@ class Organisation extends controller
 		$data['session_var'] = 'org_wizard'; //variable in the session to store the data
 
 		$data['username'] = $this->user_auth->firstname.' '.$this->user_auth->surname;
+		$data['office'] = $this->user_auth->officeType == 'None'
 
 		if (isset($_POST['r_stage']))
 		{
@@ -151,7 +152,9 @@ class Organisation extends controller
 								$this->load->model('members_model');
 								$this->load->model('prefs_model');
 
-								if ($data['is_connected'] != 'No') {
+								if ($data['office']) {
+									$this->main_frame->AddMessage('success','The suggestion has been submitted.');
+								} elseif ($data['is_connected'] != 'No') {
 									$this->prefs_model->addSubscription ($this->user_auth->entityId, $newOrgId);
 									$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$newOrgId);
 									$this->prefs_model->vipApplication ($this->user_auth->entityId,$newOrgId,$post_data['suggestors_position'],$post_data['suggestors_phone_number']);
@@ -161,11 +164,10 @@ class Organisation extends controller
 									$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
 								}
 
-
 								//Reset wizard on success
 								$_SESSION['org_wizard'] = array();
 
-								if ($this->user_auth->officeType == 'None') {
+								if ($data['office']) {
 									redirect('/directory/');
 								} else {
 									redirect('/office/pr/org/'.$post_data['directory_entry_name'].'/directory/information');
