@@ -102,11 +102,7 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if (!$this->input->post('upload')) {
-			$this->messages->AddMessage('error', 'Please choose an image to upload with the link.');
-			redirect('/office/links/customlink');
-		} elseif ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
-
+		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://' && $this->input->post('upload')) {
 			$this->load->library('upload');
 			$config['upload_path'] = './tmp/uploads/';
 			$config['allowed_types'] = 'gif|jpg|png';
@@ -135,8 +131,11 @@ class Links extends Controller
 
 				redirect('/office/links', 'location');
 			}
-		} else if($this->input->post('lurl')) {
+		} elseif(!$this->input->post('lname')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
+			redirect('/office/links/customlink');
+		} elseif (!$this->input->post('upload')) {
+			$this->messages->AddMessage('error', 'Please choose an image to upload with the link.');
 			redirect('/office/links/customlink');
 		}
 
