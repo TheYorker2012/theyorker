@@ -208,7 +208,7 @@ class Links extends Controller
 
 			$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
 											   'image_data' => file_get_contents($uploadData['full_path']),
-											   'image_title' => $link['link_name'],
+											   'image_title' => $link->link_name,
 											   'image_image_type_id' => $this->Links_Model->GetLinkImageTypeId()
 											   ));
 			unlink($uploadData['full_path']);
