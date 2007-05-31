@@ -16,8 +16,12 @@
 			<label for="lurl"> Link URL: </label>
 			<input type="text" id="lurl" name="lurl" value="http://" />
 			<br />
+			<label for="upload">Image: </label>
+			<input type="file" id="upload" name="upload" />
+			<br />
 			<input type="button" value="Back" class="button" onClick="window.location='/office/links';"> <input type="submit" value="Create Link" class="button">
 		</fieldset>
 		</form>
 	</div>
 </div>
+

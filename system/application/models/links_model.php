@@ -25,9 +25,9 @@ class Links_Model extends Model {
 	/*
 	 * Adds a user link with default image to database
 	 */
-	function AddLink($name, $url, $nominated) {
-		$sql = 'INSERT INTO links(link_url,link_name,link_nominated) VALUES (?, ?, ?)';
-		$query = $this->db->query($sql,array($url, $name, $nominated));
+	function AddLink($name, $url, $nominated, $image_id = 0) {
+		$sql = 'INSERT INTO links(link_url,link_name,link_nominated,link_image_id) VALUES (?, ?, ?, ?)';
+		$query = $this->db->query($sql,array($url, $name, $nominated, $image_id));
 		return $this->db->insert_id();
 	}
 	/*
@@ -222,6 +222,11 @@ class Links_Model extends Model {
 	function UserTotalLinks($user) {
 		$sql = 'SELECT COUNT(*) AS total FROM user_links WHERE user_link_user_entity_id = ?';
 		return $this->db->query($sql, array($user))->first_row()->total;
+	}
+
+	function GetLinkImageTypeId() {
+		$sql = 'SELECT image_type_id FROM image_types WHERE image_types.image_type_codename = "link"';
+		return $this->db->query($sql)->first_row()->image_type_codename;
 	}
 
 	function AddUserLink($user, $link) {

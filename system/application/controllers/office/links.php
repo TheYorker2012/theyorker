@@ -102,11 +102,42 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
-			$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1);
-			redirect('/office/links', 'location');
+		if (!$this->input->post('upload') {
+			$this->messages->AddMessage('error', 'Please choose an image to upload with the link.');
+			redirect('/office/links/customlink');
+		} elseif ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
+
+			$this->load->library('upload');
+			$config['upload_path'] = './tmp/uploads/';
+			$config['allowed_types'] = 'gif|jpg|png';
+			$config['max_size'] = '2048';
+			$this->upload->initialize($config);
+
+			if (!$this->upload->do_upload('upload')) {
+				$this->load->library('messages');
+				$this->messages->AddMessage('error', $this->upload->display_errors());
+				redirect('/office/links/customlink');
+			} else {
+				$uploadData = $this->upload->data();
+
+				$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
+												   'image_data' => file_get_contents($uploadData['full_path']),
+												   'image_title' => $this->input->post('lname'),
+												   'image_image_type_id' => $this->Links_Model->GetLinkImageTypeId()
+												   ));
+				unlink($uploadData['full_path']);
+
+				$image_id = $this->db->insert_id();
+
+				$id = $this->Links_Model->AddLink($this->input->post('lname'), $this->input->post('lurl'), 1, $image_id);
+
+				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
+
+				redirect('/office/links', 'location');
+			}
 		} else if($this->input->post('lurl')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
+			redirect('/office/links/customlink');
 		}
 
 		$data = array();
@@ -119,6 +150,83 @@ class Links extends Controller
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
 	}
+
+
+
+
+
+
+
+
+		function view($codename, $action = 'view', $id = 0) {
+			if ($this->input->post('image_type_id')) {
+				$this->load->library('upload');
+				$config['upload_path'] = './tmp/uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['max_size'] = '2048';
+				$this->upload->initialize($config);
+
+				if (!$this->upload->do_upload('upload')) {
+					$this->load->library('messages');
+					$this->messages->AddMessage('error', $this->upload->display_errors());
+				} else {
+					$uploadData = $this->upload->data();
+					$image_id = $this->input->post('image_id');
+					if (isset($image_id) && strlen(trim($image_id)) > 0) {
+						$this->db->where('image_id', $image_id)
+							 ->update('images', array('image_mime' => $uploadData['file_type'],
+														   'image_data' => file_get_contents($uploadData['full_path']),
+														   'image_title' => $this->input->post('image_title')
+														   ));
+					} else {
+						$this->db->insert('images', array('image_mime' => $uploadData['file_type'],
+														   'image_data' => file_get_contents($uploadData['full_path']),
+														   'image_title' => $this->input->post('image_title'),
+														   'image_image_type_id' => $this->input->post('image_type_id')
+														   ));
+					}
+					unlink($uploadData['full_path']);
+
+					$this->messages->AddMessage('success', 'Image Uploaded Successfully');
+				}
+				redirect('admin/imagecp/view/'.$codename.'/');
+			}
+
+			if ($action == 'delete') {
+				$sql = 'SELECT image_type_photo_thumbnail FROM image_types WHERE image_type_codename = ? LIMIT 1';
+				$typeDetails = $this->db->query($sql, array($codename));
+				if ($typeDetails->num_rows() == 1 && $typeDetails->first_row()->image_type_photo_thumbnail == 0) {
+					$this->image->delete('image', $id);
+				}
+				redirect('admin/imagecp/view/'.$codename.'/');
+			}
+			//TODO paginate using pageination lib
+			$sql = 'SELECT image_type_id, image_type_name, image_type_width , image_type_height , image_type_photo_thumbnail, image_type_codename FROM image_types WHERE image_type_codename = ?';
+			$result = $this->db->query($sql, array($codename));
+			$data = $result->row_array();
+
+			$sql = 'SELECT image_id, image_title, image_image_type_id, image_type_photo_thumbnail FROM images, image_types WHERE image_image_type_id = image_type_id AND image_type_codename = ?';
+			$data['images'] = $this->db->query($sql, array($codename));
+			$data['codename'] = $codename;
+
+			$this->main_frame->SetTitle('Image Control Panel - Viewing Images');
+			$this->main_frame->SetContentSimple('admin/image/view', $data);
+
+			$this->main_frame->Load();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//Update link
 	function update($link_id)
