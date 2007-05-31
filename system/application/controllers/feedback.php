@@ -45,7 +45,6 @@ class Feedback extends Controller {
 
 				$to = $this->pages_model->GetPropertyText('feedback_email', true);
 				$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
-				$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 				$subject = "The Yorker: Site Feedback";
 				$message =
 'Name: '.$author_name.'
@@ -58,13 +57,14 @@ Rating: '.$rating.'
 '.$feedback_text.'
 ';
 
-			@$send_mail = mail($to,$subject,$message,$from);
-			if ($send_mail) {
-				$this->main_frame->AddMessage('success',
-					'You have successfully left feedback, thanks for your thoughts.');
-			} else {
-				$this->main_frame->AddMessage('success',
-					'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond.');
+			$this->load->helper('yorkermail');
+			try {
+			    yorkermail($to,$subject,$message,$from);
+			    $this->main_frame->AddMessage('success',
+			    	'You have successfully left feedback, thanks for your thoughts.' );
+			} catch (Exception $e) {
+			    $this->main_frame->AddMessage('error',
+			    	'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond. '.$e->getMessage() );
 			}
 
 		} else {

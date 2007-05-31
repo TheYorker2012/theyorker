@@ -317,15 +317,20 @@ class Account extends controller
 		if (!CheckPermissions('public')) return;
 
 		$username = $this->input->post('username');
+
+		$dnslookuptest = $username . '.imap.york.ac.uk';
+
 		if (!is_string($username)) {
 			//Do nothing
 		} elseif (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) != 1) {
-			$this->messages->AddMessage('error', '<p>The username does not appear to be of the correct form. Please enter a username, e.g. abc456.</p>');
+			$this->messages->AddMessage('error', 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456.');
+		} elseif (count(dns_get_record($dnslookuptest)) == 0) {
+			$this->messages->AddMessage('error', 'The username does not exist. Please enter a valid YorkWeb username.');
 		} else {
 			if($this->user_auth->resetpassword($username)) {
-				$this->messages->AddMessage('success', '<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>');
+				$this->messages->AddMessage('success', 'An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.');
 			} else {
-				$this->messages->AddMessage('error', '<p>There was an error sending the e-mail.</p>');
+				$this->messages->AddMessage('error', 'There was an error sending the e-mail.');
 			}
 		}
 
