@@ -226,7 +226,7 @@ class Links_Model extends Model {
 
 	function GetLinkImageTypeId() {
 		$sql = 'SELECT image_type_id FROM image_types WHERE image_types.image_type_codename = "link"';
-		return $this->db->query($sql)->first_row()->image_type_codename;
+		return $this->db->query($sql)->first_row()->image_type_id;
 	}
 
 	function AddUserLink($user, $link) {
