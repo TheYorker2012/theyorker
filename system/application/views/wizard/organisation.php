@@ -147,7 +147,7 @@ function addstrike($text)
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
 			<?php PrintTextBox('a_name', 'Organisation Name: ', $session_var); ?>
 			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
-			<?php PrintTextBox('a_email_address', 'Email Address: ', $session_var); ?>
+			<?php PrintTextBox('a_phone_number_address', 'Email Address: ', $session_var); ?>
 			<?php PrintTextBox('a_website', 'Website: ', $session_var); ?>
 		</fieldset>
 		<fieldset>
@@ -299,12 +299,15 @@ function addstrike($text)
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<?php PrintTextBox('a_user_name', 'Name: ', $session_var); ?>
-			<?php PrintTextBox('a_user_email', 'Email: ', $session_var); ?>
-			<?php PrintTextArea('a_user_notes', 'Any Notes: ', $session_var); ?>
-			<?php PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var); ?>
-			<label for="captcha">Enter The Number: </label>
-			<img src="captcha.jpg" id="captcha" alt="captcha" style="margin-left: 0.7em; margin-top: 0.3em; height: 20px; width: 100px;" /><br />
+			<label>Name: </label><?php echo $username; ?>
+			<?php if ($is_connected != 'No') {
+				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);
+				 PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var);
+			 ?>
+
+			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
+			 <? php } ?>
+			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		</fieldset>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
