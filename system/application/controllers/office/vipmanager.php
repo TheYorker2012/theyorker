@@ -53,11 +53,12 @@ class Vipmanager extends Controller
 
 		if ( $this->members_model->UpdateVipStatus('approved', $EntityId, $OrgId) ) {
 			$user = $this->members_model->GetUsername($EntityId);
+			$org = $this->members_model->GetOrganisationFromId($OrgId);
 
 			$to = $user->entity_username.$this->config->Item('username_email_postfix');
 			$from = $this->pages_model->GetPropertyText('system_email', true);
 			$subject = $this->pages_model->GetPropertyText('vip_promotion_email_subject', true);
-			$message = str_replace('%%nickname%%',$user->nickname,$this->pages_model->GetPropertyText('vip_promotion_email_body', true));
+			$message = str_replace('%%nickname%%',$user->nickname,str_replace('%%organisation%%',$org->organisation_name,$this->pages_model->GetPropertyText('vip_promotion_email_body', true)));
 
 			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 			if (mail($to,$subject,$message,$from)) {
