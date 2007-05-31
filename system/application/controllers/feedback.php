@@ -45,18 +45,17 @@ class Feedback extends Controller {
 
 				$to = $this->pages_model->GetPropertyText('feedback_email', true);
 				$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
-				$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
 				$subject = "The Yorker: Site Feedback";
 				$message =
-			'Name: '.$author_name.'
-			Email: '.$author_email.'
+'Name: '.$author_name.'
+Email: '.$author_email.'
 
-			Page Title: '.$page_title.'
+Page Title: '.$page_title.'
 
-			Rating: '.$rating.'
+Rating: '.$rating.'
 
-			'.$feedback_text.'
-			';
+'.$feedback_text.'
+';
 
 			$this->load->helper('yorkermail');
 			try {

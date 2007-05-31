@@ -60,11 +60,14 @@ class Vipmanager extends Controller
 			$subject = $this->pages_model->GetPropertyText('vip_promotion_email_subject', true);
 			$message = str_replace('%%nickname%%',$user->nickname,str_replace('%%organisation%%',$org->organisation_name,$this->pages_model->GetPropertyText('vip_promotion_email_body', true)));
 
-			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
-			if (mail($to,$subject,$message,$from)) {
-				$this->messages->AddMessage('success','Member promoted successfully. A notification e-mail has also been sent.');
-			} else {
-				$this->messages->AddMessage('error','Member promoted successfully, but e-mail sending <b>failed</b>.');
+			$this->load->helper('yorkermail');
+			try {
+			    yorkermail($to,$subject,$message,$from);
+			    $this->main_frame->AddMessage('success',
+			    	'Member promoted successfully. A notification e-mail has also been sent.' );
+			} catch (Exception $e) {
+			    $this->main_frame->AddMessage('error',
+			    	'Member promoted successfully, but e-mail sending <b>failed</b>. '.$e->getMessage() );
 			}
 		} else {
 			$this->messages->AddMessage('error','No changes were made to the membership.');

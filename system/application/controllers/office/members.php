@@ -325,8 +325,6 @@ class Members extends Controller
 						$subject = $this->pages_model->GetPropertyText('office_password_email_subject', true);
 						$message = str_replace('%%password%%',$access_password,str_replace('%%nickname%%',$user->nickname,$this->pages_model->GetPropertyText('office_password_email_body', true)));
 						if ($to && $subject && $message && $from){
-							$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
-
 							$this->load->helper('yorkermail');
 							try {
 								yorkermail($to,$subject,$message,$from);
