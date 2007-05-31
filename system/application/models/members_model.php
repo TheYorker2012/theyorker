@@ -134,6 +134,21 @@ class Members_model extends Model {
 		return $query->row();
 	}
 
+	function GetOrganisationFromId($EntityId)
+	{
+		$sql =
+			'SELECT
+			 organisations.organisation_name,
+			 organisations.organisation_directory_entry_name
+			FROM organisations
+			WHERE organisations.organisation_entity_id=?
+			LIMIT 1';
+
+		$query = $this->db->query($sql, $EntityId);
+		return $query->row();
+	}
+
+
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
 	{
 		$bind_data = array($OrganisationId);
