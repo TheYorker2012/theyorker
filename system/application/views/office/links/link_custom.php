@@ -17,7 +17,7 @@
 			<input type="text" id="lurl" name="lurl" value="http://" />
 			<br />
 			<label for="upload">Image: </label>
-			<input type="file" id="upload" name="upload" />
+			<input type="file" id="userfile" name="userfile" />
 			<br />
 			<input type="button" value="Back" class="button" onClick="window.location='/office/links';"> <input type="submit" value="Create Link" class="button">
 		</fieldset>
