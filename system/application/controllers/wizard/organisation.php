@@ -103,8 +103,8 @@ class Organisation extends controller
 						$post_data = array(
 							'type_id' => $_SESSION['org_wizard']['a_type'],
 							'name' => $_SESSION['org_wizard']['a_name'],
-							'suggestors_phone_number' => $_SESSION['org_wizard']['a_user_phone_number'],
-							'suggestors_position' => $_SESSION['org_wizard']['a_user_position'],
+							'suggestors_phone_number' => isset($_SESSION['org_wizard']['a_user_phone_number']) 		?  $_SESSION['org_wizard']['a_user_phone_number']: '',
+							'suggestors_position' =>  isset($_SESSION['org_wizard']['a_user_position']) 		? $_SESSION['org_wizard']['a_user_position']: '',
 							'description' => $_SESSION['org_wizard']['a_description'],
 							'postal_address' => isset($_SESSION['org_wizard']['a_address']) 		? $_SESSION['org_wizard']['a_address'] : '',
 							'postcode' => 		isset($_SESSION['org_wizard']['a_postcode']) 		? $_SESSION['org_wizard']['a_postcode'] : '',

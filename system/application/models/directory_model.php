@@ -581,10 +581,6 @@ class Directory_model extends Model {
 			$Data['type_id'],
 			$Data['name'],
 			$Data['directory_entry_name'],
-			$Data['suggestors_name'],
-			$Data['suggestors_position'],
-            $Data['suggestors_email'],
-            $Data['suggestors_notes'],
 			1
 			));
 		return ($this->db->affected_rows() > 0);
