@@ -575,13 +575,12 @@ class Directory_model extends Model {
 			`organisation_directory_entry_name`,
 			`organisation_needs_approval`)
 			 VALUES
-			 (LAST_INSERT_ID() ,? , ?, ?, ?, ?, ?, ?, ? )';
+			 (LAST_INSERT_ID(), ?, ?, ?, 1 )';
 
 		$query = $this->db->query($sql, array(
 			$Data['type_id'],
 			$Data['name'],
-			$Data['directory_entry_name'],
-			1
+			$Data['directory_entry_name']
 			));
 		return ($this->db->affected_rows() > 0);
 	}
