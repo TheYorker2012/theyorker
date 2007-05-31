@@ -350,7 +350,8 @@ class Wikiparser {
 
 		if ($namespace=='image') {
 			$options = explode('|',$title);
-			$title = array_pop($options);
+			$title = '';
+			if (count($options) > 2) $title = array_pop($options);
 			return $this->handle_image($href,$title,$options);
 		}
 		if (array_key_exists($namespace, $this->external_wikis)) {
