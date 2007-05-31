@@ -94,7 +94,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<li><a href="/news/comment/">News Comment</a></li>
+					<!--<li><a href="/news/comment/">News Comment</a></li>-->
 					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>

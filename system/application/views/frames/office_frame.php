@@ -119,9 +119,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/news/uninews/'>Uni News</a>
 		</div>
-		<div class='officenavigation_item'>
+		<!--<div class='officenavigation_item'>
 			<a href='/office/news/comment/'>News Comment</a>
-		</div>
+		</div>-->
 		<div class='officenavigation_item'>
 			<a href='/office/news/features/'>Features</a>
 		</div>
