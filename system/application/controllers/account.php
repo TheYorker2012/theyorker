@@ -317,17 +317,15 @@ class Account extends controller
 		if (!CheckPermissions('public')) return;
 
 		$username = $this->input->post('username');
-		if (is_string($username)) {
+		if (!is_string($username)) {
+			//Do nothing
+		} elseif (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) != 1) {
+			$this->messages->AddMessage('error', '<p>The username does not appear to be of the correct form. Please enter a username, e.g. abc456.</p>');
+		} else {
 			if($this->user_auth->resetpassword($username)) {
-				get_instance()->messages->AddMessage(
-					'success',
-					'<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>'
-				);
+				$this->messages->AddMessage('success', '<p>An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.</p>');
 			} else {
-				get_instance()->messages->AddMessage(
-					'error',
-					'<p>There was an error sending the e-mail.</p>'
-				);
+				$this->messages->AddMessage('error', '<p>There was an error sending the e-mail.</p>');
 			}
 		}
 
