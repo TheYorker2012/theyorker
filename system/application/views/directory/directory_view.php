@@ -1,3 +1,12 @@
+<?php
+function nls2p($str)
+{
+  return str_replace('<p></p>', '', '<p>'
+        . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
+        . '</p>');
+}
+?>
+
 <script type="text/javascript" src="/javascript/prototype.js"></script>
 <script type="text/javascript" src="/javascript/scriptaculous.js?load=effects"></script>
 <script type="text/javascript" src="/javascript/slideshow_new.js"></script>
@@ -21,45 +30,45 @@
 <?php
 if (!empty($organisation['website'])) {
 	echo('		<img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /> ');
-	echo('<a href="'.htmlspecialchars($organisation['website']).'">');
-	echo(htmlspecialchars($organisation['website']));
+	echo('<a href="'.$organisation['website'].'">');
+	echo($organisation['website']);
 	echo('</a><br />'."\n");
 }
 if (!empty($organisation['email_address'])) {
 	echo('		<img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /> ');
-	echo(htmlspecialchars($organisation['email_address']).'<br />'."\n");
+	echo($organisation['email_address'].'<br />'."\n");
 }
 if (!empty($organisation['phone_external'])) {
 	echo('		<img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo(htmlspecialchars($organisation['phone_external']).'<br />'."\n");
+	echo($organisation['phone_external'].'<br />'."\n");
 }
 if (!empty($organisation['phone_internal'])) {
 	echo('		<img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo(htmlspecialchars($organisation['phone_internal']).'<br />'."\n");
+	echo($organisation['phone_internal'].'<br />'."\n");
 }
 if (!empty($organisation['fax_internal'])) {
 	echo('		<img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo(htmlspecialchars($organisation['fax_internal']).'<br />'."\n");
+	echo($organisation['fax_internal'].'<br />'."\n");
 }
 /*if (!empty($organisation['location'])) {
 	echo('		<img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /> ');
-	echo(htmlspecialchars($organisation['location']).'<br />'."\n");
+	echo($organisation['location'].'<br />'."\n");
 }*/
 if (!empty($organisation['open_times'])) {
 	echo('		<img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /> ');
-	echo(htmlspecialchars($organisation['open_times']).'<br />'."\n");
+	echo($organisation['open_times'].'<br />'."\n");
 }
 if (!empty($organisation['postal_address'])) {
 	echo('		<img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
-	echo(htmlspecialchars($organisation['postal_address']));
+	echo($organisation['postal_address']);
 	if (!empty($organisation['postcode']))
-		echo('<br />'.htmlspecialchars($organisation['postcode']));
+		echo('<br />'.$organisation['postcode']);
 	echo('<br />'."\n");
 }
 if ($organisation['yorkipedia'] !== NULL) {
 	echo('		<img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> ');
-	echo('<a href="'.htmlspecialchars($organisation['yorkipedia']['url']).'">');
-	echo(htmlspecialchars($organisation['yorkipedia']['title']));
+	echo('<a href="'.$organisation['yorkipedia']['url'].'">');
+	echo($organisation['yorkipedia']['title']);
 	echo('</a><br />'."\n");
 }
 ?>
@@ -105,7 +114,7 @@ if (!empty($organisation['reviews_by_type'])) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>about us</h2>
-		<p><?php echo(htmlspecialchars($organisation['description'])); ?></p>
+		<?php echo(nls2p($organisation['description'])); ?>
 	</div>
 <?php
 if($organisation['location_lat'] !== NULL) {

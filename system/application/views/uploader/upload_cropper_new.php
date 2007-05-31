@@ -1,3 +1,8 @@
+<div class="BlueBox" id="loadingWrap">
+	<br />
+	<p><b>Loading...</b></p>
+	<br />
+</div>
 <script type="text/javascript" charset="utf-8">
 	function submitPicture()
 	{
@@ -190,35 +195,6 @@
 </script>
 
 <form id="pictureCrop" action="javascript:void(null);" onsubmit="return submitPicture();">
-<div class="BlueBox" style="">
-	<div style="float: right; width: 55%;">
-	<ol>
-	<li>Select a thumbnail from the drop down box</li>
-	<li>Use the tool below to crop your photo appropriately</li>
-	<li>Press save once you are happy with the crop</li>
-	<li>Repeat for every thumbnail in the list</li>
-	</ol>
-	</div>
-	<h2>thumbnail selector</h2>
-	<div id="loadingWrap">
-		<p><b>Loading...</b></p>
-	</div>
-	<div id="dropdownWrap" style="display: none;">
-	<p>
-		<select name="imageChoice" id="imageChoice">
-			<option value="choose">Please Choose...</option>
-			<?php
-			foreach($data as $d) {
-				foreach($d as $singleThumb) {
-					echo '<option value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
-				}
-			}
-			?>
-		</select>
-		<input id="submitButton" type="submit" value="Save"/>
-	</p>
-	</div>
-</div>
 
 <div id="blanket" style="clear: both; position: relative; width: 480px; height: 4080px;">
 	<div style="clear: both; position: relative; width: 400px; height: 4000px;">
@@ -237,7 +213,7 @@
 
 <div id="thumbWrapMaster" class="BlueBox" style="display: block; display: none;">
 <h2>thumbnail scratchpad</h2>
-<p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button above stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
+<p>This box displays the thumbnails as they are manipulated with the tool below. Clicking the save button under the photo stores the selected thumbnail to our servers, so don't worry if this scratchpad is reused when there are multiple photos.</p>
 <table border="0" width="100%">
 <tr>
 <?php
@@ -268,8 +244,36 @@ foreach ($ThumbDetails->result() as $Single) {
 	<input type="hidden" name="width" id="width" />
 	<input type="hidden" name="height" id="height" />
 </div>
-</form>
+
 <div class="BlueBox" style="">
+	<div style="float: right; width: 55%;">
+	<ol>
+	<li>Select a thumbnail from the drop down box</li>
+	<li>Use the tool to crop your photo appropriately</li>
+	<li>Press save once you are happy with the crop</li>
+	<li>Repeat for every thumbnail in the list</li>
+	</ol>
+	</div>
+	<h2>thumbnail selector</h2>
+	<div id="dropdownWrap" style="display: none;">
+	<p>
+		<select name="imageChoice" id="imageChoice">
+			<option value="choose">Please Choose...</option>
+			<?php
+			foreach($data as $d) {
+				foreach($d as $singleThumb) {
+					echo '<option value="'.$singleThumb['string'].'">'.$singleThumb['title'].'</option>';
+				}
+			}
+			?>
+		</select>
+		<input id="submitButton" type="submit" value="Save"/>
+	</p>
+	</div>
+</div>
+
+</form>
+<div class="BlueBox">
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
 	<p><input type="button" onclick="if (canReturn()) window.location='<?=$returnPath?>';" value="Finish" /></p>
