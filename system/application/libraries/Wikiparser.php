@@ -296,7 +296,7 @@ class Wikiparser {
 		switch($option) {
 			case 'right':
 				$imagetag = sprintf(
-					'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+					'<div style="float: right; width: 180px; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
 					$imagetag.
 					'<div>%s</div>'.
 					'</div>',
@@ -309,7 +309,7 @@ class Wikiparser {
 				break;
 			case 'left':
 				$imagetag = sprintf(
-					'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+					'<div style="float: left; width: 180px; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
 					$imagetag.
 					'<div>%s</div>'.
 					'</div>',
