@@ -119,7 +119,7 @@ function addstrike($text)
 					'name' => $organisation['organisation_type_name']
 				);
 			}
-			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 1, $session_var); ?>
+			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 2, $session_var); ?>
 		</fieldset>
 		<fieldset>
 			<h3>Are you connected to this organisation?</h3>
