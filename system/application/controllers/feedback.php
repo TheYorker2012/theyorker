@@ -26,6 +26,8 @@ class Feedback extends Controller {
 		$rating = $this->input->post('a_rating');
 		$feedback_text = $this->input->post('a_feedbacktext');
 
+		$this->load->library('user_agent');
+
 		$rating_converstion = array( '1' => 'What\'s this for?',
 									 '2' => 'Good idea - but what does it do?',
 									 '3' => 'Useful.. I guess.',
@@ -49,6 +51,10 @@ class Feedback extends Controller {
 				$message =
 'Name: '.$author_name.'
 Email: '.$author_email.'
+
+Browser: '.$this->agent->browser().'
+Version: '.$this->agent->version().'
+Platform: '.$this->agent->platform().'
 
 Page Title: '.$page_title.'
 
