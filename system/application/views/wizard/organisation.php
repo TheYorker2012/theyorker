@@ -300,15 +300,16 @@ function addstrike($text)
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
 			<label for="username">Name: </label><span id="username"><?php echo $username; ?></span>
-			<?php if ($is_connected != 'No') {
+	<?php if ($is_connected != 'No') {
 				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);
 				 PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var);
 			 ?>
-
-			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
-			 <?php } ?>
-			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		</fieldset>
+			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
+	<?php } else { ?>
+		</fieldset>
+	<?php }?>
+			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" disabled="disabled" />

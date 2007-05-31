@@ -90,9 +90,9 @@ class Organisation extends controller
 					//Correctly creates organisation and details
 					//all fields in session with a_ in front are submitted data
 					//the maps and photos pages aren't working atm just the standard form submit pages
-					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || ($data['is_connected'] != 'No' && empty($_SESSION['org_wizard']['a_user_position']) ) )
+					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || ($data['is_connected'] == 'No' && empty($_SESSION['org_wizard']['a_user_position']) ) )
 					{
-						if($data['is_connected'] != 'No' ) {
+						if($data['is_connected'] == 'No' ) {
 							$this->messages->AddMessage('error', 'Please include at least an organisation name and description with your suggestion.');
 						} else {
 							$this->messages->AddMessage('error', 'Please include at least an organisation name, description and your position within the organisation.');
@@ -151,7 +151,7 @@ class Organisation extends controller
 								$this->load->model('members_model');
 								$this->load->model('prefs_model');
 
-								if ($data['is_connected'] != 'No') {
+								if ($data['is_connected'] == 'No') {
 									$this->prefs_model->addSubscription ($this->user_auth->entityId, $newOrgId);
 									$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$newOrgId);
 									$this->prefs_model->vipApplication ($this->user_auth->entityId,$newOrgId,$post_data['suggestors_position'],$post_data['suggestors_phone_number']);
