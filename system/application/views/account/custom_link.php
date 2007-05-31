@@ -73,6 +73,7 @@ function select_image(id) {
 			<input type="hidden" name="destination" id="destination" value="1" />
 			</div>
 			<div style="clear: both;"/>
+			<br />
 			<input type="submit" value="Finish" class="button"> <input type="button" value="Back" class="button" onClick="window.location='/account/links';">
 		</fieldset>
 		</form>
