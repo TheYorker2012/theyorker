@@ -48,7 +48,7 @@ class Organisation extends controller
 		$data['session_var'] = 'org_wizard'; //variable in the session to store the data
 
 		$data['username'] = $this->user_auth->firstname.' '.$this->user_auth->surname;
-		$data['office'] = $this->user_auth->officeType == 'None';
+		$data['office'] = $this->user_auth->officeType != 'None';
 
 		if (isset($_POST['r_stage']))
 		{
