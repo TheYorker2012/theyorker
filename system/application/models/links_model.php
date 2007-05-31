@@ -211,7 +211,7 @@ class Links_Model extends Model {
 		        INNER JOIN links ON links.link_id = user_links.user_link_link_id
 		        WHERE user_link_link_id = ? AND user_link_user_entity_id = ?
 		          AND links.link_official = 0 LIMIT 1';
-		if ($this->db->query($sql, array($linkID, $userID))->num_rows() == 1 or $admin) {
+		if ($admin || $this->db->query($sql, array($linkID, $userID))->num_rows() == 1) {
 			$this->db->where('link_id',  $linkID)
 			         ->update('links', array('link_image_id' => $imageID));
 			return true;
