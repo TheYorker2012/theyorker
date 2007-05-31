@@ -46,11 +46,11 @@ class Howdoi extends Controller
 		$this->initialised = true;
 
 		if ($this->user_auth->officeType == 'Low')
-			self::published();
+			$this->published();
 		if ($this->user_auth->officeType == 'High')
-			self::suggestions();
+			$this->suggestions();
 		if ($this->user_auth->officeType == 'Admin')
-			self::categories();
+			$this->categories();
 
 	}
 
@@ -59,7 +59,7 @@ class Howdoi extends Controller
 	 */
 	function suggestions()
 	{
-		self::getdata('suggestions');
+		$this->getdata('suggestions');
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Howdoi extends Controller
 	 */
 	function requests()
 	{
-		self::getdata('requests');
+		$this->getdata('requests');
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Howdoi extends Controller
 	 */
 	function published()
 	{
-		self::getdata('published');
+		$this->getdata('published');
 	}
 
 	/**
