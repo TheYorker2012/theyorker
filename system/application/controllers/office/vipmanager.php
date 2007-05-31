@@ -38,7 +38,6 @@ class Vipmanager extends Controller
 		$this->main_frame->Load();
 	}
 
-	//Edit banner page
 	function promote($EntityId, $OrgId)
 	{
 		//has user got access to office
@@ -74,6 +73,28 @@ class Vipmanager extends Controller
 		}
 		return redirect('/office/vipmanager');
 	}
+
+	function demote($EntityId, $OrgId)
+	{
+		//has user got access to office
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('user_auth');
+
+		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
+			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
+			redirect('/office/');
+		}
+
+		if ( $this->members_model->UpdateVipStatus('none', $EntityId, $OrgId) ) {
+			$this->main_frame->AddMessage('success',
+			    'The member was demoted.' );
+		} else {
+			$this->messages->AddMessage('error','No changes were made to the membership.');
+		}
+		return redirect('/office/vipmanager');
+	}
+
 
 }
 

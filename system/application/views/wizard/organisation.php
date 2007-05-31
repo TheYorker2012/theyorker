@@ -312,7 +312,7 @@ function addstrike($text)
 		</fieldset>
 			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
 	<?php } elseif ($office) { ?>
-			 <p>This organisation is being submitted from an office member. To make it visible please go to the 'Suggestions' tab of the office directory.</p>
+			 <p>This organisation is being submitted from an office member.</p>
 		</fieldset>
 	<?php } else { ?>
 			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
