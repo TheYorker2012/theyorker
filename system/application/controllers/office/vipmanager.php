@@ -52,7 +52,19 @@ class Vipmanager extends Controller
 		}
 
 		if ( $this->members_model->UpdateVipStatus('approved', $EntityId, $OrgId) ) {
-			$this->messages->AddMessage('success','Member promoted successfully.');
+			$user = $this->members_model->GetUsername($EntityId);
+
+			$to = $user->entity_username.$this->config->Item('username_email_postfix');
+			$from = $this->pages_model->GetPropertyText('system_email', true);
+			$subject = $this->pages_model->GetPropertyText('vip_promotion_email_subject', true);
+			$message = str_replace('%%nickname%%',$user->nickname,$this->pages_model->GetPropertyText('vip_promotion_email_body', true));
+
+			$from = 'From: '.$from."\r\n".'Reply-To:'.$from."\r\n";
+			if (mail($to,$subject,$message,$from)) {
+				$this->messages->AddMessage('success','Member promoted successfully. A notification e-mail has also been sent.');
+			} else {
+				$this->messages->AddMessage('error','Member promoted successfully, but e-mail sending <b>failed</b>.');
+			}
 		} else {
 			$this->messages->AddMessage('error','No changes were made to the membership.');
 		}
