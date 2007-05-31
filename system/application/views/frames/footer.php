@@ -18,6 +18,8 @@
 						<option value="4">Great idea, and easy to use!</option>
 						<option value="5">Amazing!!</option>
 					</select><br />
+				<label for="a_browser_info">Include Browser Information<br />(To help diagnose a fault): </label>
+					<input type="checkbox" name="a_browser_info" id="a_browser_info" value="1" checked="checked" /><br />
 				<label for="a_feedbacktext">Your Comments: </label>
 					<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
 				<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo str_replace("'", "", $head_title); } ?>" />

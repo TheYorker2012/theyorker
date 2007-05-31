@@ -119,12 +119,17 @@ function addstrike($text)
 					'name' => $organisation['organisation_type_name']
 				);
 			}
-			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 1, $session_var); ?>
+			PrintDropDownList('a_type', 'Type of directory entry', $list_data, 2, $session_var); ?>
 		</fieldset>
-		<fieldset>
-			<h3>Are you connected to this organisation?</h3>
-			<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
-		</fieldset>
+		<?php if($office) { ?>
+			<p>You are accessing this wizard as an office member.</p>
+			<input name="a_connected" type="hidden" value="Yes" />
+		<? } else { ?>
+			<fieldset>
+				<h3>Are you connected to this organisation?</h3>
+				<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
+			</fieldset>
+		<? } ?>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" disabled="disabled" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" />
@@ -145,9 +150,9 @@ function addstrike($text)
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<?php PrintTextBox('a_name', 'Name: ', $session_var); ?>
+			<?php PrintTextBox('a_name', 'Organisation Name: ', $session_var); ?>
 			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
-			<?php PrintTextBox('a_email_address', 'Email Address: ', $session_var); ?>
+			<?php PrintTextBox('a_phone_number_address', 'Email Address: ', $session_var); ?>
 			<?php PrintTextBox('a_website', 'Website: ', $session_var); ?>
 		</fieldset>
 		<fieldset>
@@ -294,18 +299,25 @@ function addstrike($text)
 	{
 ?>
 <div class="BlueBox">
-<h2>who are you?</h2>
+<h2>about you</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<?php PrintTextBox('a_user_name', 'Name: ', $session_var); ?>
-			<?php PrintTextBox('a_user_email', 'Email: ', $session_var); ?>
-			<?php PrintTextArea('a_user_notes', 'Any Notes: ', $session_var); ?>
-			<?php PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var); ?>
-			<label for="captcha">Enter The Number: </label>
-			<img src="captcha.jpg" id="captcha" alt="captcha" style="margin-left: 0.7em; margin-top: 0.3em; height: 20px; width: 100px;" /><br />
+			<label for="username">Name: </label><span id="username"><?php echo $username; ?></span>
+	<?php if ($is_connected != 'No' && !$office) {
+				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);
+				 PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var);
+			 ?>
 		</fieldset>
+			 <p>As you are connected with this organisation, we will automatically request VIP status for you. We will contact you to confirm your position in the organisation in the near future.</p>
+	<?php } elseif ($office) { ?>
+			 <p>This organisation is being submitted from an office member.</p>
+		</fieldset>
+	<?php } else { ?>
+			 <p>Should we accept your organisation, you will be automatically subscribed to it.</p>
+		</fieldset>
+	<?php }?>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" disabled="disabled" />

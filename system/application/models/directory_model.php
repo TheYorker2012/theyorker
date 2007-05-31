@@ -573,23 +573,14 @@ class Directory_model extends Model {
 			`organisation_organisation_type_id`,
 			`organisation_name`,
 			`organisation_directory_entry_name`,
-			`organisation_suggesters_name`,
-			`organisation_suggesters_position`,
-            `organisation_suggesters_email`,
-            `organisation_suggesters_notes`,
 			`organisation_needs_approval`)
 			 VALUES
-			 (LAST_INSERT_ID() ,? , ?, ?, ?, ?, ?, ?, ? )';
+			 (LAST_INSERT_ID(), ?, ?, ?, 1 )';
 
 		$query = $this->db->query($sql, array(
 			$Data['type_id'],
 			$Data['name'],
-			$Data['directory_entry_name'],
-			$Data['suggestors_name'],
-			$Data['suggestors_position'],
-            $Data['suggestors_email'],
-            $Data['suggestors_notes'],
-			1
+			$Data['directory_entry_name']
 			));
 		return ($this->db->affected_rows() > 0);
 	}

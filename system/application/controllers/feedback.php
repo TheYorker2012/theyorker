@@ -26,6 +26,10 @@ class Feedback extends Controller {
 		$rating = $this->input->post('a_rating');
 		$feedback_text = $this->input->post('a_feedbacktext');
 
+		$include_browser_info = ($this->input->post('a_browser_info') == '1');
+
+		$this->load->library('user_agent');
+
 		$rating_converstion = array( '1' => 'What\'s this for?',
 									 '2' => 'Good idea - but what does it do?',
 									 '3' => 'Useful.. I guess.',
@@ -49,7 +53,17 @@ class Feedback extends Controller {
 				$message =
 'Name: '.$author_name.'
 Email: '.$author_email.'
+';
 
+if ($include_browser_info)
+{
+$message .='
+Browser: '.$this->agent->browser().'
+Version: '.$this->agent->version().'
+Platform: '.$this->agent->platform().'
+';
+}
+$message .='
 Page Title: '.$page_title.'
 
 Rating: '.$rating.'

@@ -38,7 +38,7 @@ class Organisation extends controller
 
 	function index($stage = false)
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('student')) return;
 
 		$this->pages_model->SetPageCode('wizard_organisation');
 
@@ -46,6 +46,9 @@ class Organisation extends controller
 		$skip_stages = array('3', '4'); //these stages are skipped when the user is not connected to the organisation
 		$headings = array('1'=>'Start', '2'=>'Basic Details', '3'=>'More Details', '4'=>'Photos', '5'=>'Map', '6'=>'Finish');
 		$data['session_var'] = 'org_wizard'; //variable in the session to store the data
+
+		$data['username'] = $this->user_auth->firstname.' '.$this->user_auth->surname;
+		$data['office'] = ($this->user_auth->officeType != 'None');
 
 		if (isset($_POST['r_stage']))
 		{
@@ -88,25 +91,27 @@ class Organisation extends controller
 					//Correctly creates organisation and details
 					//all fields in session with a_ in front are submitted data
 					//the maps and photos pages aren't working atm just the standard form submit pages
-					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || empty($_SESSION['org_wizard']['a_user_name']))
+					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || ($data['is_connected'] != 'No' && !$data['office'] && empty($_SESSION['org_wizard']['a_user_position']) ) )
 					{
-						$this->messages->AddMessage('error', 'Please include at least a name, description and your name with your suggestion.');
+						if($data['is_connected'] == 'No' || $data['office'] ) {
+							$this->messages->AddMessage('error', 'Please include at least an organisation name and description with your suggestion.');
+						} else {
+							$this->messages->AddMessage('error', 'Please include at least an organisation name, description and your position within the organisation.');
+						}
 					} else {
 						//Store post data, so other varibles can be added to the array.
 						$post_data = array(
 							'type_id' => $_SESSION['org_wizard']['a_type'],
 							'name' => $_SESSION['org_wizard']['a_name'],
-							'suggestors_name' => $_SESSION['org_wizard']['a_user_name'],
-							'suggestors_email' => $_SESSION['org_wizard']['a_user_email'],
-							'suggestors_notes' => $_SESSION['org_wizard']['a_user_notes'],
-							'suggestors_position' => $_SESSION['org_wizard']['a_user_position'],
+							'suggestors_phone_number' => isset($_SESSION['org_wizard']['a_user_phone_number']) 		?  $_SESSION['org_wizard']['a_user_phone_number']: '',
+							'suggestors_position' =>  isset($_SESSION['org_wizard']['a_user_position']) 		? $_SESSION['org_wizard']['a_user_position']: '',
 							'description' => $_SESSION['org_wizard']['a_description'],
 							'postal_address' => isset($_SESSION['org_wizard']['a_address']) 		? $_SESSION['org_wizard']['a_address'] : '',
 							'postcode' => 		isset($_SESSION['org_wizard']['a_postcode']) 		? $_SESSION['org_wizard']['a_postcode'] : '',
 							'phone_external' => isset($_SESSION['org_wizard']['a_phone_external']) 	? $_SESSION['org_wizard']['a_phone_external'] : '',
 							'phone_internal' => isset($_SESSION['org_wizard']['a_phone_internal']) 	? $_SESSION['org_wizard']['a_phone_internal'] : '',
 							'fax_number' => 	isset($_SESSION['org_wizard']['a_fax']) 			? $_SESSION['org_wizard']['a_fax'] : '',
-							'email_address' => 	isset($_SESSION['org_wizard']['a_email_address']) 	? $_SESSION['org_wizard']['a_email_address'] : '',
+							'email_address' => 	isset($_SESSION['org_wizard']['a_phone_number_address']) 	? $_SESSION['org_wizard']['a_phone_number_address'] : '',
 							'url' => 			isset($_SESSION['org_wizard']['a_website']) 		? $_SESSION['org_wizard']['a_website'] : '',
 							'opening_hours' => 	isset($_SESSION['org_wizard']['a_opening_times']) 	? $_SESSION['org_wizard']['a_opening_times'] : ''
 						);
@@ -144,17 +149,28 @@ class Organisation extends controller
 									);
 								}
 
-								$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+								$this->load->model('members_model');
+								$this->load->model('prefs_model');
+
+								if ($data['office']) {
+									$this->main_frame->AddMessage('success','The suggestion has been submitted.');
+								} elseif ($data['is_connected'] != 'No') {
+									$this->prefs_model->addSubscription ($this->user_auth->entityId, $newOrgId);
+									$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$newOrgId);
+									$this->prefs_model->vipApplication ($this->user_auth->entityId,$newOrgId,$post_data['suggestors_position'],$post_data['suggestors_phone_number']);
+									$this->main_frame->AddMessage('success','Your suggestion has been submitted, and VIP status has been requested for you.');
+								} else {
+									$this->prefs_model->addSubscription ($this->user_auth->entityId, $newOrgId);
+									$this->main_frame->AddMessage('success','Your suggestion has been submitted.');
+								}
 
 								//Reset wizard on success
 								$_SESSION['org_wizard'] = array();
 
-								$this->load->model('user_auth');
-
-								if ($this->user_auth->officeType == 'None') {
-									redirect('/directory/');
-								} else {
+								if ($data['office']) {
 									redirect('/office/pr/org/'.$post_data['directory_entry_name'].'/directory/information');
+								} else {
+									redirect('/directory/');
 								}
 
 							} else {
