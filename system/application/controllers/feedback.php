@@ -26,7 +26,7 @@ class Feedback extends Controller {
 		$rating = $this->input->post('a_rating');
 		$feedback_text = $this->input->post('a_feedbacktext');
 
-		$include_browser_info = ($this->input->post('a_browser_info') == '1')
+		$include_browser_info = ($this->input->post('a_browser_info') == '1');
 
 		$this->load->library('user_agent');
 
