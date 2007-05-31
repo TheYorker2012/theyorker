@@ -114,7 +114,7 @@ if (!empty($organisation['reviews_by_type'])) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>about us</h2>
-		<p><?php echo(nls2p($organisation['description'])); ?></p>
+		<?php echo(nls2p($organisation['description'])); ?>
 	</div>
 <?php
 if($organisation['location_lat'] !== NULL) {
