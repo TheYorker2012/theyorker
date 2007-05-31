@@ -102,7 +102,7 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://' && $this->input->post('upload')) {
+		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
 			$this->load->library('upload');
 			$config['upload_path'] = './tmp/uploads/';
 			$config['allowed_types'] = 'gif|jpg|png';
