@@ -9,6 +9,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
 	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
+	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
