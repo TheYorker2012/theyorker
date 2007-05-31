@@ -1,5 +1,5 @@
 <?php
-function yorkeremail($to, $subject, $message, $from) {
+function yorkermail($to, $subject, $message, $from) {
 	require_once('Mail.php');
 	$headers = array(
 		'From' => $from,
