@@ -145,7 +145,7 @@ function addstrike($text)
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<?php PrintTextBox('a_name', 'Name: ', $session_var); ?>
+			<?php PrintTextBox('a_name', 'Organisation Name: ', $session_var); ?>
 			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
 			<?php PrintTextBox('a_email_address', 'Email Address: ', $session_var); ?>
 			<?php PrintTextBox('a_website', 'Website: ', $session_var); ?>
