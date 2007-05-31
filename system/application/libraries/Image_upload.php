@@ -127,7 +127,6 @@ class Image_upload {
 
 	public function process_form_data($formData) {
 		$objResponse = new xajaxResponse();
-
 		$selectedThumb = explode("|", $formData['imageChoice']);
 		// 0 location
 		// 1 original width(?)
@@ -214,7 +213,6 @@ class Image_upload {
 			$id = $this->ci->image->add('image', $newImage, array('title' => $selectedThumb[7], 'mime' => $mime, 'type_id' => $selectedThumb[3]));
 			if ($id != false) {
 				for ($iUp = 0; $iUp < count($_SESSION['img']); $iUp++) {
-					echo('hello'.$iUp);
 					if ($selectedThumb[4] == $_SESSION['img'][$iUp]['list'] and $selectedThumb[3] == $_SESSION['img'][$iUp]['type']) {
 						if (isset($_SESSION['img'][$iUp]['oldID'])) {
 							$this->ci->image->delete('image', $_SESSION['img'][$iUp]['oldID']); //TODO log orphaned image if false
@@ -222,7 +220,7 @@ class Image_upload {
 						} else {
 							$_SESSION['img'][$iUp]['oldID'] = $id;
 						}
-						//$newImages['list'] = $id;
+						$_SESSION['img'][$iUp]['list'] = $id;
 					}
 				}
 // php limitation
