@@ -35,7 +35,7 @@ foreach($organisations as $organisation) {
 	echo('			<div class="Date">'.$organisation['type'].'</div>'."\n");
 	if($organisation['shortdescription'] != '') {
 		echo('			<div>'."\n");
-		echo('				'.htmlspecialchars($organisation['shortdescription'])."\n");
+		echo('				'.$organisation['shortdescription']."\n");
 		echo('			</div>'."\n");
 	}
 	echo('		</div>'."\n");
