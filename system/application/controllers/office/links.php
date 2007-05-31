@@ -102,14 +102,14 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://' && $this->input->post('userfile')) {
+		if ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://' && $this->input->post('upload')) {
 			$this->load->library('upload');
 			$config['upload_path'] = './tmp/uploads/';
 			$config['allowed_types'] = 'gif|jpg|png';
 			$config['max_size'] = '2048';
 			$this->upload->initialize($config);
 
-			if (!$this->upload->do_upload('userfile')) {
+			if (!$this->upload->do_upload('upload')) {
 				$this->load->library('messages');
 				$this->messages->AddMessage('error', $this->upload->display_errors());
 				redirect('/office/links/customlink');

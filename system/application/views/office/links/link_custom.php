@@ -8,7 +8,7 @@
 	<div class="BlueBox">
 		<h2>Nominate Custom Link</h2>
 
-		<form action="/office/links/customlink" method="post">
+		<form action="/office/links/customlink" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<label for="lname"> Link Name: </label>
 			<input type="text" id="lname" name="lname" value="" default />
@@ -17,7 +17,7 @@
 			<input type="text" id="lurl" name="lurl" value="http://" />
 			<br />
 			<label for="upload">Image: </label>
-			<input type="file" id="userfile" name="userfile" />
+			<input type="file" id="upload" name="upload" />
 			<br />
 			<input type="button" value="Back" class="button" onClick="window.location='/office/links';"> <input type="submit" value="Create Link" class="button">
 		</fieldset>
