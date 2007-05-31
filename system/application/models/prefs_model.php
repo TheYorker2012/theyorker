@@ -283,8 +283,11 @@ class Prefs_model extends Model {
 			ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
 		INNER JOIN	organisation_types
 			ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+
+		INNER JOIN	entities
+			ON organisations.organisation_entity_id = entities.entity_id
 		WHERE		subscriptions.subscription_user_entity_id = ?
-		AND			subscriptions.subscription_deleted = 0 AND organisations.organisation_deleted = 0
+		AND			subscriptions.subscription_deleted = 0 AND entities.entity_deleted = 0
 		ORDER BY	organisation_name ASC';
 
 		$query = $this->db->query($sql, $user_id);
