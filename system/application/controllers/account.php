@@ -324,7 +324,7 @@ class Account extends controller
 			//Do nothing
 		//} elseif (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) != 1) {
 		//	$this->messages->AddMessage('error', 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456.');
-		} elseif ($dnslookuptest == gethostbyname($dnslookuptest)) {
+		} elseif ($dnslookuptest === gethostbyname($dnslookuptest)) {
 			$this->messages->AddMessage('error', 'The username does not exist. Please enter a valid YorkWeb username.');
 		} else {
 			if($this->user_auth->resetpassword($username)) {
