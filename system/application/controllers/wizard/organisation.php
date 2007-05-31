@@ -48,7 +48,7 @@ class Organisation extends controller
 		$data['session_var'] = 'org_wizard'; //variable in the session to store the data
 
 		$data['username'] = $this->user_auth->firstname.' '.$this->user_auth->surname;
-		$data['office'] = $this->user_auth->officeType != 'None';
+		$data['office'] = ($this->user_auth->officeType != 'None');
 
 		if (isset($_POST['r_stage']))
 		{
@@ -91,9 +91,9 @@ class Organisation extends controller
 					//Correctly creates organisation and details
 					//all fields in session with a_ in front are submitted data
 					//the maps and photos pages aren't working atm just the standard form submit pages
-					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || ($data['is_connected'] != 'No' && empty($_SESSION['org_wizard']['a_user_position']) ) )
+					if(empty($_SESSION['org_wizard']['a_name']) || empty($_SESSION['org_wizard']['a_description']) || ($data['is_connected'] != 'No' && !$data['office'] && empty($_SESSION['org_wizard']['a_user_position']) ) )
 					{
-						if($data['is_connected'] == 'No' ) {
+						if($data['is_connected'] == 'No' || $data['office'] ) {
 							$this->messages->AddMessage('error', 'Please include at least an organisation name and description with your suggestion.');
 						} else {
 							$this->messages->AddMessage('error', 'Please include at least an organisation name, description and your position within the organisation.');
