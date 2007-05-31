@@ -318,7 +318,7 @@ class Account extends controller
 
 		$username = $this->input->post('username');
 		if (!is_string($username)) {
-			$this->messages->AddMessage('error', '<p>Please enter a username, e.g. abc456.</p>');
+			//Do nothing
 		} elseif (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) != 1) {
 			$this->messages->AddMessage('error', '<p>The username does not appear to be of the correct form. Please enter a username, e.g. abc456.</p>');
 		} else {
