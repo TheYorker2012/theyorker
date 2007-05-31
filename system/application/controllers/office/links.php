@@ -102,7 +102,7 @@ class Links extends Controller
 
 		$this->load->model('Links_Model');
 
-		if (!$this->input->post('upload') {
+		if (!$this->input->post('upload')) {
 			$this->messages->AddMessage('error', 'Please choose an image to upload with the link.');
 			redirect('/office/links/customlink');
 		} elseif ($this->input->post('lurl') && $this->input->post('lname') && $this->input->post('lname') != 'http://') {
