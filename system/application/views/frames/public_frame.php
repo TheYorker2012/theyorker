@@ -136,7 +136,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				?>
 			</div>
 
-			<img src="/images/adverts/bigd_webad.jpg" width="120" height="600" style="margin-top: 80px;" alt="" />
+			<a href="http://www.derwentcollege.co.uk"><img src="/images/adverts/bigd_webad.jpg" width="120" height="600" style="margin-top: 80px;" alt="Big D" /></a>
 		</div>
 
 		<div id="MainBodyPane">
