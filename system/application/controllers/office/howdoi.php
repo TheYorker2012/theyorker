@@ -43,6 +43,8 @@ class Howdoi extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
+		$this->initialised = true;
+
 		if ($this->user_auth->officeType == 'Low')
 			self::published();
 		if ($this->user_auth->officeType == 'High')
@@ -85,6 +87,8 @@ class Howdoi extends Controller
 	 */
 	function getdata($page)
 	{
+		if (!isset($this->initialised) && !CheckPermissions('office')) return;
+
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
 		$this->load->model('howdoi_model','howdoi_model');
