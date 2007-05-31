@@ -45,6 +45,7 @@ class Wikiparser {
 	protected $external_wikis;
 	protected $image_uri;
 	protected $image_overrides;
+	protected $title_overrides;
 	protected $ignore_images;
 	protected $emphasis;
 	protected $quote_template;
@@ -100,9 +101,11 @@ class Wikiparser {
 	 *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
 	 *	@date		Tue 15th May 2007 16:42
 	 */
-	function add_image_override($id, $url)
+	function add_image_override($id, $url, $title = '')
 	{
 		$this->image_overrides[$id] = $url;
+		$this->title_overrides[$id] = $title;
+
 	}
 
 	function handle_sections($matches) {
@@ -283,6 +286,9 @@ class Wikiparser {
 		$imagetag = '';
 		if (array_key_exists($href,$this->image_overrides)) {
 			$imagetag = $this->image_overrides[$href];
+			if (strlen($title) == 0 && isset($this->title_overrides[$href])) {
+				$title = $this->title_overrides[$href];
+			}
 		} else {
 			$imagetag = sprintf(
 				'<img src="%s" alt="%s" />',
@@ -295,8 +301,8 @@ class Wikiparser {
 
 		switch($option) {
 			case 'right':
-				$imagetag = sprintf(
-					'<div style="float: right; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+				$imagetag = sprintf( //Olds style: background-color: #F5F5F5; border: 1px solid #D0D0D0;
+					'<div style="float: right; width: 180px; padding: 2px">'.
 					$imagetag.
 					'<div>%s</div>'.
 					'</div>',
@@ -309,7 +315,7 @@ class Wikiparser {
 				break;
 			case 'left':
 				$imagetag = sprintf(
-					'<div style="float: left; background-color: #F5F5F5; border: 1px solid #D0D0D0; padding: 2px">'.
+					'<div style="float: left; width: 180px; padding: 2px">'.
 					$imagetag.
 					'<div>%s</div>'.
 					'</div>',
@@ -344,7 +350,8 @@ class Wikiparser {
 
 		if ($namespace=='image') {
 			$options = explode('|',$title);
-			$title = array_pop($options);
+			$title = '';
+			if (count($options) > 1) $title = array_pop($options);
 			return $this->handle_image($href,$title,$options);
 		}
 		if (array_key_exists($namespace, $this->external_wikis)) {

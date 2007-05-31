@@ -55,7 +55,7 @@ function select_image(id) {
 			<div style="width: 100%; height: 260px;" id="div_gallery">
 			<?php if($gallery_images->num_rows() > 0) {
 				foreach ($gallery_images->result() as $image) {?>
-				<div style="display:inline;padding: 10px;float:left">
+				<div style="display:inline;padding: 10px;">
 					<a href="#" onclick="return select_image(<?=$image->image_id?>);">
 					<?=$this->image->getImage($image->image_id, $image->image_image_type_id)?>
 					</a>
@@ -71,8 +71,8 @@ function select_image(id) {
 			<label for="userfile1">File Location: </label>
 			<input type="file" name="userfile1" size="20" />
 			<input type="hidden" name="destination" id="destination" value="1" />
-			<br style="clear: both;"/>
 			</div>
+			<div style="clear: both;"/>
 			<input type="submit" value="Finish" class="button"> <input type="button" value="Back" class="button" onClick="window.location='/account/links';">
 		</fieldset>
 		</form>
