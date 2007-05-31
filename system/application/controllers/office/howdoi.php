@@ -46,12 +46,11 @@ class Howdoi extends Controller
 		$this->initialised = true;
 
 		if ($this->user_auth->officeType == 'Low')
-			$this->published();
+			redirect('/office/howdoi/requests');
 		if ($this->user_auth->officeType == 'High')
-			$this->suggestions();
+			redirect('/office/howdoi/suggestions');
 		if ($this->user_auth->officeType == 'Admin')
-			$this->categories();
-
+			redirect('/office/howdoi/categories');
 	}
 
 	/**
@@ -59,7 +58,7 @@ class Howdoi extends Controller
 	 */
 	function suggestions()
 	{
-		$this->getdata('suggestions');
+		self::getdata('suggestions');
 	}
 
 	/**
@@ -67,7 +66,7 @@ class Howdoi extends Controller
 	 */
 	function requests()
 	{
-		$this->getdata('requests');
+		self::getdata('requests');
 	}
 
 	/**
@@ -75,7 +74,7 @@ class Howdoi extends Controller
 	 */
 	function published()
 	{
-		$this->getdata('published');
+		self::getdata('published');
 	}
 
 	/**
@@ -87,7 +86,7 @@ class Howdoi extends Controller
 	 */
 	function getdata($page)
 	{
-		if (!isset($this->initialised) && !CheckPermissions('office')) return;
+		if (!CheckPermissions('office')) return;
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
