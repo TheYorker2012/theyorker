@@ -145,7 +145,7 @@ class News extends Controller {
 		for ($index = 3; $index < count($latest_article_ids); $index++) {
 			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index], "Left"));
 		}
-		
+
 		// Get comments
 		if (is_numeric($main_article['public_thread_id'])) {
 			$this->load->library('comments');
@@ -195,8 +195,8 @@ class News extends Controller {
 		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
 		$data['rss_width'] = '126';
 		$data['rss_height'] = '126';
-		$data['rss_email_ed'] = $this->config->item('editor_email_address');
-		$data['rss_email_web'] = $this->config->item('webmaster_email_address');
+		//$data['rss_email_ed'] = $this->config->item('editor_email_address');
+		//$data['rss_email_web'] = $this->config->item('webmaster_email_address');
 
 		/// Get latest article ids
 		$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
