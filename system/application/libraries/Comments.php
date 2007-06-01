@@ -190,6 +190,7 @@ class CommentViewAdd extends FramesView
 						if (NULL === $preview['author']) {
 							$preview['author'] = 'anonymous coward';
 						}
+						$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time']);
 					} else {
 						$CI->messages->AddMessage('error', 'Comment preview could not be created');
 					}
@@ -277,12 +278,14 @@ class CommentViewList extends FramesView
 	function SetComments($Comments)
 	{
 		$this->mComments = $Comments;
+		$CI = & get_instance();
 		
 		// comment postprocessing for list
 		foreach ($this->mComments as $key => $comment) {
 			if (NULL === $comment['author']) {
 				$this->mComments[$key]['author'] = 'anonymous coward';
 			}
+			$this->mComments[$key]['post_time'] = $CI->time_format->date('%D %T', $comment['post_time']);
 		}
 	}
 	
@@ -334,6 +337,7 @@ class Comments
 	{
 		$CI = & get_instance();
 		$CI->load->model('comments_model');
+		$CI->load->library('time_format');
 	}
 	
 	/// Create the standard comment layout.

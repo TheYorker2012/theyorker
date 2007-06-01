@@ -26,6 +26,9 @@ class User_auth extends model {
 
 	/// bool True if the user is an actual user rather than an organisation
 	public $isUser;
+	
+	/// '12','24' Time format of the user
+	public $timeFormat = '12';
 
 	/// bool If the user has an office login (does not indicate if they are
 	///  logged in)
@@ -77,6 +80,7 @@ class User_auth extends model {
 			$this->username = $_SESSION['ua_username'];
 			$this->entityId = $_SESSION['ua_entityId'];
 			$this->isUser = $_SESSION['ua_isuser'];
+			$this->timeFormat = $_SESSION['ua_timeformat'];
 			$this->officeLogin = $_SESSION['ua_hasoffice'];
 			$this->officeType = $_SESSION['ua_officetype'];
 			$this->officeInterface = $_SESSION['ua_officeinterface'];
@@ -170,7 +174,7 @@ class User_auth extends model {
 			);
 		}*/
 
-		$sql = 'SELECT user_firstname, user_surname, user_office_access
+		$sql = 'SELECT user_firstname, user_surname, user_office_access, user_time_format
 			FROM users
 			WHERE user_entity_id = ?';
 
@@ -181,11 +185,13 @@ class User_auth extends model {
 			$row = $query->row();
 
 			$this->isUser = true;
+			$this->timeFormat = $row->user_time_format;
 			$this->firstname = $row->user_firstname;
 			$this->surname = $row->user_surname;
 			$this->officeLogin = $row->user_office_access;
 		} else {
 			$this->isUser = false;
+			$this->timeFormat = '12';
 			$this->surname = '';
 			$this->officeLogin = false;
 			$this->organisationLogin = $this->entityId;
@@ -666,6 +672,7 @@ class User_auth extends model {
 		$_SESSION['ua_username'] = $this->username;
 		$_SESSION['ua_entityId'] = $this->entityId;
 		$_SESSION['ua_isuser'] = $this->isUser;
+		$_SESSION['ua_timeformat'] = $this->timeFormat;
 		$_SESSION['ua_hasoffice'] = $this->officeLogin;
 		$_SESSION['ua_officetype'] = $this->officeType;
 		$_SESSION['ua_officeinterface'] = $this->officeInterface;
