@@ -61,9 +61,10 @@ if (!empty($organisation['open_times'])) {
 }
 if (!empty($organisation['postal_address'])) {
 	echo('		<tr><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
-	echo(nl2br($organisation['postal_address']).'</p>');
+	echo(nl2br($organisation['postal_address']).'');
 	if (!empty($organisation['postcode']))
-		echo('<p>'.$organisation['postcode'].'</td></tr>');
+		echo('<br />'.$organisation['postcode']);
+	echo('</td></tr>');
 }
 if ($organisation['yorkipedia'] !== NULL) {
 	echo('		<tr><td><img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /></td><td> ');
