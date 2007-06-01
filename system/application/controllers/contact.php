@@ -40,7 +40,7 @@ class Contact extends Controller {
 		//Still need to add captcha
 		if (!CheckPermissions('public')) return;
 
-		$contact = GetContact($this->input->post('recipient'));
+		$contact = $this->Contact_Model->GetContact($this->input->post('recipient'));
 
 		$to = $contact->contact_us_email;
 		$from = $this->input->post('contact_email');
