@@ -2,7 +2,7 @@
 function nls2p($str)
 {
   return str_replace('<p></p>', '',
-        preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
+        preg_replace('#([\r\n]\s*?[\r\n]){1,}#', '</p>$0<p>', $str)
         );
 }
 ?>
