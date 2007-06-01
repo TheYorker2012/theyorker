@@ -27,50 +27,52 @@ function nls2p($str)
 		</script>
 	<?php } ?>
 	<div class="Entry">
+	<table>
 <?php
 if (!empty($organisation['website'])) {
-	echo('		<p><img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /> ');
+	echo('		<tr><td><img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /></td><td>');
 	echo('<a href="'.$organisation['website'].'">');
-	echo($organisation['website']);
-	echo('</a></p>'."\n");
+	echo('Our Website');
+	echo('</a></td></tr>'."\n");
 }
 if (!empty($organisation['email_address'])) {
-	echo('		<p><img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /> ');
-	echo($organisation['email_address'].'</p>'."\n");
+	echo('		<tr><td><img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /></td> <td>');
+	echo($organisation['email_address'].'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_external'])) {
-	echo('		<p><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['phone_external'].'</p>'."\n");
+	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
+	echo($organisation['phone_external'].'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_internal'])) {
-	echo('		<p><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['phone_internal'].'</p>'."\n");
+	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
+	echo($organisation['phone_internal'].'</td></tr>'."\n");
 }
 if (!empty($organisation['fax_internal'])) {
-	echo('		<p><img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['fax_internal'].'</p>'."\n");
+	echo('		<tr><td><img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
+	echo($organisation['fax_internal'].'</td></tr>'."\n");
 }
 /*if (!empty($organisation['location'])) {
-	echo('		<p><img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /> ');
-	echo($organisation['location'].'</p>'."\n");
+	echo('		<tr><td><img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /></td><td> ');
+	echo($organisation['location'].'</td></tr>'."\n");
 }*/
 if (!empty($organisation['open_times'])) {
-	echo('		<p><img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /> ');
-	echo(nl2br($organisation['open_times']).'</p>'."\n");
+	echo('		<tr><td><img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /></td><td> ');
+	echo(nl2br($organisation['open_times']).'</td></tr>'."\n");
 }
 if (!empty($organisation['postal_address'])) {
-	echo('		<p><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
+	echo('		<tr><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
 	echo(nl2br($organisation['postal_address']).'</p>');
 	if (!empty($organisation['postcode']))
-		echo('<p>'.$organisation['postcode'].'</p>');
+		echo('<p>'.$organisation['postcode'].'</td></tr>');
 }
 if ($organisation['yorkipedia'] !== NULL) {
-	echo('		<p><img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> ');
+	echo('		<tr><td><img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /></td><td> ');
 	echo('<a href="'.$organisation['yorkipedia']['url'].'">');
 	echo($organisation['yorkipedia']['title']);
-	echo('</a></p>'."\n");
+	echo('</a></td></tr>'."\n");
 }
 ?>
+	</table>
 	</div>
 
 <?php
