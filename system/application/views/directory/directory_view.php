@@ -56,13 +56,13 @@ if (!empty($organisation['fax_internal'])) {
 }*/
 if (!empty($organisation['open_times'])) {
 	echo('		<img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /> ');
-	echo($organisation['open_times'].'<br />'."\n");
+	echo(nls2p($organisation['open_times'])."\n");
 }
 if (!empty($organisation['postal_address'])) {
 	echo('		<img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
-	echo($organisation['postal_address']);
+	echo(nls2p($organisation['postal_address']));
 	if (!empty($organisation['postcode']))
-		echo('<br />'.$organisation['postcode']);
+		echo('<p>'.$organisation['postcode'].'</p>);
 	echo('<br />'."\n");
 }
 if ($organisation['yorkipedia'] !== NULL) {
