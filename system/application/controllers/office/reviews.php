@@ -743,7 +743,9 @@ class Reviews extends Controller
 			{
 				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
 				$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
-				redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$data['parameters']['revision_id']);
+				if($data['parameters']['revision_id']) {
+					redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$data['parameters']['revision_id']);
+				}
 			}
 			/* no live content, therefore is a
 			   request, so load the latest
@@ -755,7 +757,9 @@ class Reviews extends Controller
 				{
 					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
 					$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
-					redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$data['parameters']['revision_id']);
+					if($data['parameters']['revision_id']) {
+						redirect('/office/reviews/'.$organisation.'/'.$context_type.'/reviewedit/'.$article_id.'/'.$data['parameters']['revision_id']);
+					}
 				}
 			}
 		}
