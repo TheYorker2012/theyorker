@@ -47,18 +47,31 @@ class Contact_Model extends Model {
 
 	function GetAllContacts () {
 	//Returns an array containg id, name, email and description of contacts
-		$sql = 'SELECT	contact_us_name,
+		$sql = 'SELECT	contact_us_id,
+				contact_us_name,
 				contact_us_email,
 				contact_us_description
 			FROM	contact_us';
 		$query = $this->db->query($sql);
 		$result = array();
 		foreach ($query->result() as $row) {
-			$result[] = array('name' => $row->contact_us_name,
-					'email' => $row->contact_us_email,
+			$result[] = array('id' => $row->contact_us_id,
+					'name' => $row->contact_us_name,
 					'description' => $row->contact_us_description);
 		}
 		return $result;
 	}
+
+	function GetContact ($id) {
+	//Returns an array containg id, name, email and description of contacts
+		$sql = 'SELECT	contact_us_name,
+				contact_us_email,
+				contact_us_description
+			FROM	contact_us
+			WHERE contact_us_id = ?';
+		$query = $this->db->query($sql, array($id));
+		return $query->first_row();
+	}
+
 }
 ?>

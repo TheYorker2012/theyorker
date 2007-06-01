@@ -23,7 +23,7 @@
 				<?php
 					//Note plural becomes singular
 					foreach ($contacts as $contact){
-						echo('<option value="'.$contact['email'].'">'.$contact['name'].'</option>'."\n");
+						echo('<option value="'.$contact['id'].'">'.$contact['name'].'</option>'."\n");
 					}
 				?>
 				</select>
