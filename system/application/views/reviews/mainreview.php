@@ -7,13 +7,7 @@
 	<h2>Details</h2>
 	<div class="Entry">
 		<p>
-<?php
-$address = $address_main;
-$address = str_replace("\r", '', $address);
-$address = str_replace("\n", ', ', $address);
-$address = htmlspecialchars($address);
-?>
-			<?php if(strlen(trim($address)) > 0) { ?><b>Address:</b>  <?php echo($address); ?><br /><?php } ?>
+			<?php if(strlen(trim($address_main)) > 0) { ?><b>Address:</b>  <?php echo(nl2br($address_main)); ?><br /><?php } ?>
 			<?php if(strlen(trim($website)) > 0) { ?><b>Website:</b>  <a href="<?php echo($website); ?>">Click Here</a><br /><?php } ?>
 			<?php if(strlen(trim($email)) > 0) { ?><b>Email:</b>  <?php if($this->user_auth->isLoggedIn) { ?> <a href="mailto:<?php echo($email); ?>">E-mail Us</a> <?php } else { ?>Hidden. Please log in.<?php } ?><br /><?php } ?>
 			<?php if(strlen(trim($telephone)) > 0) { ?><b>Telephone:</b>  <?php echo($telephone); ?><br /><?php } ?>
