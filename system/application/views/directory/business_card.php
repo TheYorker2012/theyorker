@@ -65,10 +65,10 @@ if ($business_card['image_id']) {
 			<form name='member' method='post' action='<?php echo vip_url('directory/contacts/deletecard/'.$business_card['id']); ?>' class='form'>
 			<fieldset>
 				<?php
-				if($business_card['editor']){
+				if($business_card['approved']){
 					echo "<small>This card is live.</small>";
 				}else{
-					if (PermissionsSubset('office', GetUserLevel())){
+					if (PermissionsSubset('editor', GetUserLevel())){
 					?>
 					<input name='member_approve_button' type='button' onClick="parent.location='<?php echo vip_url('directory/contacts/approvecard/'.$business_card['id']); ?>'"value='Approve' class='button' />
 					<?php
