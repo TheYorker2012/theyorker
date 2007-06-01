@@ -117,7 +117,7 @@ class Review_views
 		$data['average_price']			= ''.$review_database_result['review_context_content_average_price'];
 		$data['review_rating'] 			= $review_database_result['review_context_content_rating'];
 		$data['opening_times']			= $review_database_result['organisation_opening_hours'];
-		$data['yorker_recommendation']	= $review_database_result['review_context_content_rating'];
+		$data['yorker_recommendation']	= $review_database_result['review_context_content_recommend_item'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
 
 		$CI->main_frame->SetExtraHead('

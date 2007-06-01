@@ -22,11 +22,11 @@ $address = htmlspecialchars($address);
 		</p>
 	</div>
 
-	<?php if(strlen(trim($yorker_recommendation)) > 0 || $average_price > 0) { ?>
+	<?php if(strlen(trim($yorker_recommendation)) > 0 || strlen(trim($average_price)) > 0) { ?>
 	<h2>Tips</h2>
 	<div class="Entry">
 			<?php if(strlen(trim($yorker_recommendation)) > 0) { ?><b>We Recommend:</b>  <?php echo(htmlspecialchars($yorker_recommendation)); ?><br /><?php } ?>
-			<?php if($average_price > 0) { ?><b>Average Drink Price:</b> &pound;<?php echo(htmlspecialchars($average_price/100)); ?><br /><?php } ?>
+			<?php if(strlen(trim($average_price)) > 0) { ?><b>Average Drink Price:</b> <?php echo(htmlspecialchars($average_price)); ?><br /><?php } ?>
 	</div>
 	<?php } ?>
 </div>

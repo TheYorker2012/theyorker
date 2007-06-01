@@ -297,7 +297,7 @@ class Reviews extends Controller
 				$rules['reviewinfo_rating'] = 'trim|required|numeric';
 				$rules['reviewinfo_quote'] = 'trim|required|xss_clean';
 				$rules['reviewinfo_recommended'] = 'trim|xss_clean';
-				$rules['reviewinfo_average_price'] = 'trim|numeric';
+				$rules['reviewinfo_average_price'] = 'trim|xss_clean';
 				$rules['reviewinfo_serving_hours'] = 'trim|xss_clean';
 				$this->validation->set_rules($rules);
 
