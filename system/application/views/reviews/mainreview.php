@@ -48,6 +48,7 @@ $address = htmlspecialchars($address);
 		</div>
 		<?php } ?>
 
+		<?php $this->feedback_article_heading = $review_title; ?>
 		<h2><?php echo($review_title); ?></h2>
 
 	<?php if ($review_quote != '') { ?>

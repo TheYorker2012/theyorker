@@ -90,6 +90,7 @@
 		</div>
 <?php } else { ?>
 		<div class="BlueBox">
+			<?php $this->feedback_article_heading = 'Main Review Page: '.$main_review['organisation_name']; ?>
 			<div style="float: right"><a href="<?php echo '/reviews/'.$main_review['content_type_codename'].'/'.$main_review['organisation_directory_entry_name']; ?>"><b>View Guide</b> <img src="/images/icons/book_go.png" /></a></div>
 			<h2 class="Headline"><?php echo $main_review['organisation_name']; ?></h2>
 			<?php if(count($main_review['slideshow']) > 0) { ?>
