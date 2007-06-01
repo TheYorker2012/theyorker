@@ -62,7 +62,7 @@ if (!empty($organisation['postal_address'])) {
 	echo('		<img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
 	echo(nls2p($organisation['postal_address']));
 	if (!empty($organisation['postcode']))
-		echo('<p>'.$organisation['postcode'].'</p>);
+		echo('<p>'.$organisation['postcode'].'</p>');
 	echo('<br />'."\n");
 }
 if ($organisation['yorkipedia'] !== NULL) {
