@@ -6,9 +6,9 @@
 				<h2>Feedback</h2>
 				<!-- <br /> tags necessary for correct rendering in text based browsers -->
 				<label for="a_authorname">Your Name: </label>
-					<input type="text" name="a_authorname" id="a_authorname" value="" /><br />
+					<input type="text" name="a_authorname" id="a_authorname" size="30" value="" /><br />
 				<label for="a_authoremail">Your E-mail: </label>
-					<input type="text" name="a_authoremail" id="a_authoremail" value="" /><br />
+					<input type="text" name="a_authoremail" id="a_authoremail" size="30" value="" /><br />
 				<label for="a_rating">Your Rating: </label>
 					<select name="a_rating" id="a_rating" size="1">
 						<option value="" selected="selected">&nbsp;</option>
@@ -20,7 +20,7 @@
 					</select><br />
 				<?php if (isset($this->feedback_article_heading)) { ?>
 				<label for="a_articleheading">Article: </label>
-					<input type="text" name="a_articleheading" id="a_articleheading" value="<?php echo $this->feedback_article_heading; ?>" /><br />
+					<input type="hidden" name="a_articleheading" id="a_articleheading" value="<?php echo $this->feedback_article_heading; ?>" /><?php echo $this->feedback_article_heading; ?><br />
 				<?php } ?>
 				<label for="a_browser_info">Include Browser Information<br />(To help diagnose a fault): </label>
 					<input type="checkbox" name="a_browser_info" id="a_browser_info" value="1" checked="checked" /><br />
