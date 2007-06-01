@@ -421,7 +421,7 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
 
-		$editor_level = PermissionsSubset('pr', GetUserLevel()); //The pr has all the powers of the editor in the directory, but not in the calendar
+		$editor_level = PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel()); //The pr and vip has all the powers of the editor in the directory, but not in the calendar
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
