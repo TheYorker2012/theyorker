@@ -190,11 +190,14 @@ class Account extends controller
 		$this->load->model('Links_Model');
 
 		if($action == 'store') {
+				$this->load->library('image_upload');
+				$this->xajax->processRequests();
 				if ($this->input->post('title1') && $this->input->post('lurl') && $this->input->post('lurl') != 'http://') {
 
 					$newId = $this->Links_Model->AddLink($this->input->post('title1'), $this->input->post('lurl'), $this->input->post('lnominate') == 'on');
 					$this->Links_Model->AddUserLink($this->user_auth->entityId, $newId);
 					$chosenImageID = $this->input->post('chosen_image');
+					$_SESSION['link_id'] = $newId;
 
 					if ($this->input->post('image_pick') == 'gallery' && $chosenImageID) {
 						//Take link image id and associate it with the link
@@ -202,11 +205,8 @@ class Account extends controller
 						$this->messages->AddMessage('success', 'Link added successfully.');
 						redirect('/account/links', 'location');
 					} elseif ($this->input->post('image_pick') == 'custom') {
-						$this->load->library(array('xajax', 'image'));
-						$this->load->library('image_upload');
-						//$this->xajax->processRequests();
 						$_SESSION['img'] = array();
-						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$id, array('link'), false);
+						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$newId, array('link'), false);
 					} else {
 						$this->messages->AddMessage('error', 'Please select either a custom or gallery image.');
 						redirect('/account/customlink', 'location');
@@ -217,10 +217,9 @@ class Account extends controller
 				}
 		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
-					$image_count = 0;
 					foreach ($_SESSION['img'] as $newImage) {
 						if ($newImage['codename'] == 'link') {
-							$this->Links_Model->ReplaceImage($linkID, $this->user_auth->entityId, $imageID);
+							$this->Links_Model->ReplaceImage($id, $this->user_auth->entityId, $newImage['list']);
 							$this->messages->AddMessage('success', 'Link added successfully.');
 							redirect('/account/links', 'location');
 							break;

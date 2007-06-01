@@ -25,6 +25,11 @@ class Feedback extends Controller {
 		$author_email = $this->input->post('a_authoremail');
 		$rating = $this->input->post('a_rating');
 		$feedback_text = $this->input->post('a_feedbacktext');
+		$article_heading = $this->input->post('a_articleheading');
+
+		if($article_heading) {
+			$feedback_text = 'Article: '.$article_heading.'\n\n'.$feedback_text;
+		}
 
 		$include_browser_info = ($this->input->post('a_browser_info') == '1');
 

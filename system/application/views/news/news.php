@@ -79,6 +79,8 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 ?>
 </div>
 
+<?php $this->feedback_article_heading = $main_article['heading']; ?>
+
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
