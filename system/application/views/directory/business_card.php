@@ -3,7 +3,9 @@
 <?php if ($business_card['image_id'] == NULL) {
 	$business_card['image_id'] = 0;
 }
-echo $this->image->getImage($business_card['image_id'], 'userimage');
+if ($business_card['image_id']) {
+	echo $this->image->getImage($business_card['image_id'], 'userimage');
+}
 ?>
 	</div>
 	<span style="font-size: large;  color: #2DC6D7; ">
