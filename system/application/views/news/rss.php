@@ -19,6 +19,8 @@ echo '<?xml version=\'1.0\' ?>
 		<title>The Yorker - ' . $rss_title . '</title>
 		<link>' . $rss_link . '</link>
 	</image>
+	<managingEditor></managingEditor>
+	<webMaster></webMaster>';
 
 foreach ($rss_items as $item) {
 	echo '<item>
