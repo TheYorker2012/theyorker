@@ -44,12 +44,12 @@ if (!empty($organisation['phone_external'])) {
 	echo($organisation['phone_external'].'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_internal'])) {
-	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
+	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/iphone.png" /></td><td> ');
 	echo($organisation['phone_internal'].'</td></tr>'."\n");
 }
-if (!empty($organisation['fax_internal'])) {
-	echo('		<tr><td><img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
-	echo($organisation['fax_internal'].'</td></tr>'."\n");
+if (!empty($organisation['fax_number'])) {
+	echo('		<tr><td><img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/fax.gif" /></td><td> ');
+	echo($organisation['fax_number'].'</td></tr>'."\n");
 }
 /*if (!empty($organisation['location'])) {
 	echo('		<tr><td><img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /></td><td> ');
