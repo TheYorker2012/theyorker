@@ -50,6 +50,7 @@ class Wikiparser {
 	protected $emphasis;
 	protected $quote_template;
 	protected $templates;
+	protected $newline_mode;
 
 	protected $list_level_chars;
 	protected $list_level;
@@ -65,7 +66,7 @@ class Wikiparser {
 	protected $nowikis;
 
 	/// Default constructor.
-	function Wikiparser() {
+	function __construct() {
 		$CI = &get_instance();
 		$CI->load->helper('wikilink');
 		$CI->load->library('image');
@@ -94,6 +95,7 @@ class Wikiparser {
 				'frame' => '<div class="BlueBox"><h4>{{1}}</h4>{{2}}</div>',
 				'br' => '<br />',
 			);
+		$this->newline_mode = '';
 	}
 
 	/**
@@ -124,7 +126,18 @@ class Wikiparser {
 			$this->in_paragraph = true;
 			return '<p>'.$matches[0];
 		} else {
-			return "\n".$matches[0];
+			if ('br' === $this->newline_mode) {
+				// line break
+				$prefix = '<br />';
+			} elseif ('p' === $this->newline_mode) {
+				// end and start paragraph tag
+				$prefix = $this->end_paragraph().'<p>';
+				$this->in_paragraph = true;
+			} else {
+				// no change at new line
+				$prefix = '';
+			}
+			return $prefix."\n".$matches[0];
 		}
 	}
 
@@ -561,7 +574,7 @@ if (hasReqestedVersion) {
 	function parse_line($line) {
 		$line_regexes = array(
 			'special_quote'=>'^"""(.*)"""\s*(.*)$',
-			'startparagraph'=>'^([^\{\s\*\#;\:=-].*?)$',
+			'startparagraph'=>'^\s*([^\{\s\*\#;\:=-].*?)$',
 			//'preformat'=>'^\s(.*?)$',
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
