@@ -1,5 +1,5 @@
 <div id="RightColumn">
-<?php if(!$user_is_editor) { ?>
+<?php if($show_whats_this) { ?>
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">
 		<?php echo($main_text); ?>

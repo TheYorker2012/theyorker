@@ -227,7 +227,8 @@ class Yorkerdirectory extends Controller
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
 				$data['show_show_all_revisions_option'] = $editor_level;
-				$data['user_is_editor'] = $editor_level;
+				$data['show_whats_this'] = !$editor_level;
+				$data['user_is_editor'] = $vip_level;
 				$data['organisation']['types'] = $this->directory_model->GetOrganisationTypes();
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
