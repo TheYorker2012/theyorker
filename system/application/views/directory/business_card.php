@@ -65,7 +65,7 @@ if ($business_card['image_id']) {
 			<form name='member' method='post' action='<?php echo vip_url('directory/contacts/deletecard/'.$business_card['id']); ?>' class='form'>
 			<fieldset>
 				<?php
-				if($business_card['approved']){
+				if($business_card['editor']){
 					echo "<small>This card is live.</small>";
 				}else{
 					if (PermissionsSubset('office', GetUserLevel())){
@@ -76,7 +76,7 @@ if ($business_card['image_id']) {
 					echo "<small>Waiting approval.</small>";
 					}
 				}
-				if (PermissionsSubset('office', GetUserLevel())){ ?>
+				if (PermissionsSubset('pr', GetUserLevel())){ ?>
 				<input name='member_delete_button' type='submit' onClick="return confirm('Are you sure you want to delete <?php echo $business_card['name']; ?>s contact card?');" value='Delete' class='button' />
 				<?php }?>
 				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('directory/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />
