@@ -25,12 +25,12 @@ echo '<?xml version=\'1.0\' ?>
 foreach ($rss_items as $item) {
 	echo '<item>
 		<title>' . $item['heading'] . '</title>
-		<author>' . $rss_email_ed . ' (';
+		<author>';
 	$temp_reporters = '';
 	foreach ($item['authors'] as $reporter) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
-	echo substr($temp_reporters, 0, -2) . ')</author>
+	echo substr($temp_reporters, 0, -2) . '</author>
 		<link>http://www.theyorker.co.uk/news/uninews/' . $item['id'] . '</link>
 		<description>' . $item['blurb'] . '</description>
 		<pubDate>' . date('r',strtotime($item['date'])) . '</pubDate>
