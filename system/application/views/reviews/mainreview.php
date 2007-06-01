@@ -15,7 +15,7 @@ $address = htmlspecialchars($address);
 ?>
 			<?php if(strlen(trim($address)) > 0) { ?><b>Address:</b>  <?php echo($address); ?><br /><?php } ?>
 			<?php if(strlen(trim($website)) > 0) { ?><b>Website:</b>  <a href="<?php echo(htmlspecialchars($website)); ?>">Click Here</a><br /><?php } ?>
-			<?php if(strlen(trim($email)) > 0) { ?><b>Email:</b>  <a href="mailto:<?php echo(htmlspecialchars($email)); ?>"><?php echo(htmlspecialchars($email)); ?></a><br /><?php } ?>
+			<?php if(strlen(trim($email)) > 0) { ?><b>Email:</b>  <?php if($this->user_auth->isLoggedIn) { ?> <a href="mailto:<?php echo(htmlspecialchars($email)); ?>">E-mail Us</a> <?php } else { ?>Hidden. Please log in.<?php } ?><br /><?php } ?>
 			<?php if(strlen(trim($telephone)) > 0) { ?><b>Telephone:</b>  <?php echo(htmlspecialchars($telephone)); ?><br /><?php } ?>
 			<?php if(strlen(trim($opening_times)) > 0) { ?><b>Opening Times:</b>  <?php echo(htmlspecialchars($opening_times)); ?><br /><?php } ?>
 			<?php if(strlen(trim($serving_times)) > 0) { ?> <b>Serving Times:</b> <?php echo(htmlspecialchars($serving_times)); ?><br /><?php } ?>

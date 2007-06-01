@@ -37,7 +37,7 @@ if (!empty($organisation['website'])) {
 }
 if (!empty($organisation['email_address'])) {
 	echo('		<tr><td><img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /></td> <td>');
-	echo($organisation['email_address'].'</td></tr>'."\n");
+	echo(($this->user_auth->isLoggedIn ? '<a href="mailto:'.$organisation['email_address'].'">E-mail Us</a>' : 'Hidden. Please log in.').'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_external'])) {
 	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
