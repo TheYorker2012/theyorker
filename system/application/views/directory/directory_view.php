@@ -60,7 +60,7 @@ if (!empty($organisation['open_times'])) {
 }
 if (!empty($organisation['postal_address'])) {
 	echo('		<p><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
-	echo(nls2p($organisation['postal_address']).'</p>);
+	echo(nls2p($organisation['postal_address']).'</p>');
 	if (!empty($organisation['postcode']))
 		echo('<p>'.$organisation['postcode'].'</p>');
 	echo('<br />'."\n");
