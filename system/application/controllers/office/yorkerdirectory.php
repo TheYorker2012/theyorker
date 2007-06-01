@@ -70,7 +70,7 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_information');
 
-		$editor_level = PermissionsSubset('editor', GetUserLevel());
+		$editor_level = PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel()); //The pr and vip has all the powers of the editor in the directory, but not in the calendar
 
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
