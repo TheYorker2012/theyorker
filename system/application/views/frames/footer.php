@@ -36,6 +36,6 @@
 		</form>
 	</div>
 	<small>
-		Copyright 2007 The Yorker. Weather data provided by Yahoo. Page rendered in {elapsed_time} seconds. <a href='/policy/#privacy_policy'>Privacy Policy</a>
+		Copyright 2007 The Yorker. Weather data provided by Yahoo. Page rendered in {elapsed_time} seconds. <a href='/policy/'>Privacy Policy</a>
 	</small>
 </div>
