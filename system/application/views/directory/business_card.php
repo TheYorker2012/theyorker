@@ -3,7 +3,9 @@
 <?php if ($business_card['image_id'] == NULL) {
 	$business_card['image_id'] = 0;
 }
-echo $this->image->getImage($business_card['image_id'], 'userimage');
+if ($business_card['image_id']) {
+	echo $this->image->getImage($business_card['image_id'], 'userimage');
+}
 ?>
 	</div>
 	<span style="font-size: large;  color: #2DC6D7; ">
@@ -26,9 +28,15 @@ echo $this->image->getImage($business_card['image_id'], 'userimage');
 			<?php
 		}
 		if (!empty($business_card['email'])) {
+			if ($this->user_auth->isLoggedIn) {
 			?>
 			<img alt="Email" name="Email" src="/images/icons/email.png" /> <a href='mailto:<?php echo $business_card['email']; ?>'><?php echo $business_card['email']; ?></a><br />
 			<?php
+			} else {
+			?>
+			<img alt="Email" name="Email" src="/images/icons/email.png" /> Hidden. Please log in.<br />
+			<?php
+			}
 		}
 		if (!empty($business_card['postal_address'])) {
 			?>
@@ -60,7 +68,7 @@ echo $this->image->getImage($business_card['image_id'], 'userimage');
 				if($business_card['approved']){
 					echo "<small>This card is live.</small>";
 				}else{
-					if (PermissionsSubset('office', GetUserLevel())){
+					if (PermissionsSubset('editor', GetUserLevel())){
 					?>
 					<input name='member_approve_button' type='button' onClick="parent.location='<?php echo vip_url('directory/contacts/approvecard/'.$business_card['id']); ?>'"value='Approve' class='button' />
 					<?php
@@ -68,7 +76,7 @@ echo $this->image->getImage($business_card['image_id'], 'userimage');
 					echo "<small>Waiting approval.</small>";
 					}
 				}
-				if (PermissionsSubset('office', GetUserLevel())){ ?>
+				if (PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel())){ ?>
 				<input name='member_delete_button' type='submit' onClick="return confirm('Are you sure you want to delete <?php echo $business_card['name']; ?>s contact card?');" value='Delete' class='button' />
 				<?php }?>
 				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('directory/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />

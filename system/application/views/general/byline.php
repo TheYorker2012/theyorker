@@ -1,7 +1,7 @@
 	<div class="Byline">
 <?php
 foreach ($reporters as $reporter) {
-	echo($reporter['photo']);
+	if($reporter['photo']) echo($reporter['photo']);
 }
 
 foreach ($reporters as $reporter) {

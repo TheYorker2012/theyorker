@@ -1,9 +1,9 @@
 <?php
 function nls2p($str)
 {
-  return str_replace('<p></p>', '', '<p>'
-        . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
-        . '</p>');
+  return str_replace('<p></p>', '',
+        preg_replace('#([\r\n]\s*?[\r\n]){1,}#', '</p>$0<p>', $str)
+        );
 }
 ?>
 
@@ -27,51 +27,54 @@ function nls2p($str)
 		</script>
 	<?php } ?>
 	<div class="Entry">
+	<table>
 <?php
 if (!empty($organisation['website'])) {
-	echo('		<img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /> ');
+	echo('		<tr><td><img alt="Website" title="Website" src="/images/prototype/directory/link.gif" /></td><td>');
 	echo('<a href="'.$organisation['website'].'">');
-	echo($organisation['website']);
-	echo('</a><br />'."\n");
+	echo('Our Website');
+	echo('</a></td></tr>'."\n");
 }
 if (!empty($organisation['email_address'])) {
-	echo('		<img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /> ');
-	echo($organisation['email_address'].'<br />'."\n");
+	echo('		<tr><td><img alt="Email" title="Email" src="/images/prototype/directory/email.gif" /></td> <td>');
+	echo($organisation['email_address'].'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_external'])) {
-	echo('		<img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['phone_external'].'<br />'."\n");
+	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /></td><td> ');
+	echo($organisation['phone_external'].'</td></tr>'."\n");
 }
 if (!empty($organisation['phone_internal'])) {
-	echo('		<img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['phone_internal'].'<br />'."\n");
+	echo('		<tr><td><img alt="Phone Number" title="Phone Number" src="/images/prototype/directory/iphone.png" /></td><td> ');
+	echo($organisation['phone_internal'].'</td></tr>'."\n");
 }
-if (!empty($organisation['fax_internal'])) {
-	echo('		<img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/phone.gif" /> ');
-	echo($organisation['fax_internal'].'<br />'."\n");
+if (!empty($organisation['fax_number'])) {
+	echo('		<tr><td><img alt="Fax Number" title="Fax Number" src="/images/prototype/directory/fax.gif" /></td><td> ');
+	echo($organisation['fax_number'].'</td></tr>'."\n");
 }
 /*if (!empty($organisation['location'])) {
-	echo('		<img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /> ');
-	echo($organisation['location'].'<br />'."\n");
+	echo('		<tr><td><img alt="Location" title="Location" src="/images/prototype/directory/flag.gif" /></td><td> ');
+	echo($organisation['location'].'</td></tr>'."\n");
 }*/
 if (!empty($organisation['open_times'])) {
-	echo('		<img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /> ');
-	echo($organisation['open_times'].'<br />'."\n");
+	echo('		<tr valign="top"><td><img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /></td><td> ');
+	echo(nl2br($organisation['open_times']).'</td></tr>'."\n");
 }
 if (!empty($organisation['postal_address'])) {
-	echo('		<img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /> ');
-	echo($organisation['postal_address']);
+	echo('		<tr valign="top"><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
+	echo(nl2br($organisation['postal_address']).'');
 	if (!empty($organisation['postcode']))
 		echo('<br />'.$organisation['postcode']);
-	echo('<br />'."\n");
+	echo('</td></tr>');
 }
 if ($organisation['yorkipedia'] !== NULL) {
-	echo('		<img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /> ');
+	echo('		<tr><td><img alt="Yorkipedia Entry" title="Yorkipedia Entry" src="/images/prototype/directory/yorkipedia.gif" /></td><td> ');
 	echo('<a href="'.$organisation['yorkipedia']['url'].'">');
 	echo($organisation['yorkipedia']['title']);
-	echo('</a><br />'."\n");
+	echo('</a></td></tr>'."\n");
 }
 ?>
+	<tr><td></td><td></td></tr>
+	</table>
 	</div>
 
 <?php
@@ -114,7 +117,7 @@ if (!empty($organisation['reviews_by_type'])) {
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>about us</h2>
-		<?php echo(nls2p($organisation['description'])); ?>
+		<?php echo('<p>'.nls2p($organisation['description']).'</p>'); ?>
 	</div>
 <?php
 if($organisation['location_lat'] !== NULL) {

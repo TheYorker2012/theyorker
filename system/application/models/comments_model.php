@@ -649,12 +649,12 @@ class Comments_model extends model
 	{
 		static $stuff_loaded = FALSE;
 		if (!$stuff_loaded) {
-			$this->load->library('wikiparser');
+			$this->load->library('comments_parser');
 			$this->load->helper('wikitext_smiley_helper');
 			$stuff_loaded = TRUE;
 		}
 		$Wikitext = wikitext_parse_smileys($Wikitext);
-		$Wikitext = $this->wikiparser->parse($Wikitext."\n",'comment');
+		$Wikitext = $this->comments_parser->parse($Wikitext."\n",'comment');
 		return $Wikitext;
 	}
 }

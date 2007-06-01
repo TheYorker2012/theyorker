@@ -96,6 +96,8 @@ class Prefs_model extends Model {
 
 	function updateUserInfo ($uid, $info)
 	{
+		/// @todo FIXME
+		/// @bug WHAT THE CRAP IS THIS ABOUT?
 		$row = $this->getUserInfo ($uid);
 
 		$sql =

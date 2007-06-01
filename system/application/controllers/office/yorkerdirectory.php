@@ -70,7 +70,8 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_information');
 
-		$editor_level = PermissionsSubset('editor', GetUserLevel());
+		$editor_level = PermissionsSubset('pr', GetUserLevel());
+		$vip_level = PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel()); //The pr and vip has all the powers of the editor in the directory, but not in the calendar
 
 		//test to allow a person to view deleted revisions
 		$show_all_revisions = false;
@@ -84,7 +85,7 @@ class Yorkerdirectory extends Controller
 		}
 
 		if ($action=='delete') {
-			if ($editor_level) {
+			if ($vip_level) {
 				$result = $this->directory_model->FlagEntryRevisionAsDeletedById($organisation, $revision);
 				if ($result == 1) {
 					$this->messages->AddMessage('success','Directory revision successfully removed.');
@@ -131,7 +132,7 @@ class Yorkerdirectory extends Controller
 
 		if ($action=='publish') {
 			//Check Permissions
-			if ($editor_level) {
+			if ($vip_level) {
 				//Send and get data
 				$result = $this->directory_model->PublishDirectoryEntryRevisionById($organisation, $revision);
 				if ($result == 1) {
@@ -226,7 +227,8 @@ class Yorkerdirectory extends Controller
 				$data['revisions'] = $this->directory_model->GetRevisonsOfDirectoryEntry($organisation, $show_all_revisions);
 				$data['show_all_revisions'] = $show_all_revisions;
 				$data['show_show_all_revisions_option'] = $editor_level;
-				$data['user_is_editor'] = $editor_level;
+				$data['show_whats_this'] = !$editor_level;
+				$data['user_is_editor'] = $vip_level;
 				$data['organisation']['types'] = $this->directory_model->GetOrganisationTypes();
 				// Set up the directory view
 				$the_view = $this->frames->view('directory/viparea_directory_information', $data);
@@ -263,7 +265,7 @@ class Yorkerdirectory extends Controller
 			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
 
 			if ($published == false) {
-				if ($editor_level) {
+				if ($vip_level) {
 					$message .= ' | <a href="'.vip_url('directory/information/publish/'.$revision).'">Publish This Revision</a>';
 				}
 
@@ -421,7 +423,7 @@ class Yorkerdirectory extends Controller
 		$organisation = VipOrganisation();
 		$this->pages_model->SetPageCode('viparea_directory_contacts');
 
-		$editor_level = PermissionsSubset('editor', GetUserLevel());
+		$editor_level = PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel()); //The pr and vip has all the powers of the editor in the directory, but not in the calendar
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
