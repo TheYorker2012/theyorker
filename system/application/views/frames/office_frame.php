@@ -138,12 +138,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/blogs/'>Blogs</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/news/food/'>Food</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/drink/'>Drink</a>
-		</div>
-		<div class='officenavigation_item'>
 			<a href='/office/manage/members/'>Manage Writer</a>
 		</div>
 
