@@ -56,11 +56,11 @@ if (!empty($organisation['fax_internal'])) {
 	echo($organisation['location'].'</td></tr>'."\n");
 }*/
 if (!empty($organisation['open_times'])) {
-	echo('		<tr><td><img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /></td><td> ');
+	echo('		<tr valign="top"><td><img alt="Opening Times" title="Opening Times" src="/images/prototype/directory/clock.gif" /></td><td> ');
 	echo(nl2br($organisation['open_times']).'</td></tr>'."\n");
 }
 if (!empty($organisation['postal_address'])) {
-	echo('		<tr><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
+	echo('		<tr valign="top><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
 	echo(nl2br($organisation['postal_address']).'');
 	if (!empty($organisation['postcode']))
 		echo('<br />'.$organisation['postcode']);
@@ -73,6 +73,7 @@ if ($organisation['yorkipedia'] !== NULL) {
 	echo('</a></td></tr>'."\n");
 }
 ?>
+	<tr><td></td><td></td></tr>
 	</table>
 	</div>
 
