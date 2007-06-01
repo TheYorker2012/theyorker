@@ -79,7 +79,7 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 ?>
 </div>
 
-<?php $feedback_article_heading = $main_article['heading']; ?>
+<?php $this->feedback_article_heading = $main_article['heading']; ?>
 
 <div id="MainColumn">
 	<div class="BlueBox">
