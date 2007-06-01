@@ -60,7 +60,7 @@ if (!empty($organisation['open_times'])) {
 	echo(nl2br($organisation['open_times']).'</td></tr>'."\n");
 }
 if (!empty($organisation['postal_address'])) {
-	echo('		<tr valign="top><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
+	echo('		<tr valign="top"><td><img alt="Address" title="Address" src="/images/prototype/directory/address.gif" /></td><td> ');
 	echo(nl2br($organisation['postal_address']).'');
 	if (!empty($organisation['postcode']))
 		echo('<br />'.$organisation['postcode']);
