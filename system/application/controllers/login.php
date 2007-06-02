@@ -3,7 +3,7 @@
 /// Main login controller.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
- * 
+ *
  * Used for logging in and related functions.
  */
 class Login extends Controller
@@ -12,7 +12,7 @@ class Login extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
+
 		$this->load->helper('uri_tail');
 	}
 
@@ -24,7 +24,7 @@ class Login extends Controller
 	function main()
 	{
 		if (!CheckPermissions('public', FALSE, TRUE)) return;
-		
+
 		LoginHandler('student', GetUriTail(2));
 	}
 
@@ -33,6 +33,8 @@ class Login extends Controller
 		$password2 = $this->input->post('confirmnewpassword');
 
 		if (!CheckPermissions('public')) return;
+
+		$this->pages_model->SetPageCode('account_password_new');
 
 		try {
 			$this->user_auth->login($user, $key, false, true);
@@ -62,7 +64,7 @@ class Login extends Controller
 	function vip()
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
-		
+
 		LoginHandler('vip', GetUriTail(2));
 	}
 
@@ -76,7 +78,7 @@ class Login extends Controller
 	function vipswitch($Organisation = NULL)
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
-		
+
 		LoginHandler('vip', GetUriTail(3), $Organisation);
 	}
 
@@ -88,10 +90,10 @@ class Login extends Controller
 	function office()
 	{
 		if (!CheckPermissions('student', FALSE, TRUE)) return;
-		
+
 		LoginHandler('office', GetUriTail(2));
 	}
-	
+
 	/// Facebook login.
 	/**
 	 * Any additional uri segments are used as the redirect address after
@@ -101,7 +103,7 @@ class Login extends Controller
 	{
 		$this->load->library('facebook');
 		$this->facebook->Enable();
-		
+
 		RedirectUriTail(2);
 	}
 }
