@@ -21,7 +21,7 @@ class Sitemap extends Controller {
 	/// Sitemap Generation
 	function index()
 	{
-		//header('Content-type: application/xml');
+		header('Content-type: application/xml');
 		/// Get latest article ids
 		$all_articles = $this->News_model->getNewsArticlesSitemap();
 

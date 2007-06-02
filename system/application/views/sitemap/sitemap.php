@@ -12,7 +12,8 @@ foreach ($url_items as $item) {
 		<priority>'.$item['priority'].'</priority>
 	</url>';
 }
-echo '</urlset>
+echo '
+</urlset>
 ';
 
 ?>
