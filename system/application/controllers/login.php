@@ -32,9 +32,9 @@ class Login extends Controller
 		$password = $this->input->post('newpassword');
 		$password2 = $this->input->post('confirmnewpassword');
 
-		$this->pages_model->SetPageCode('account_password_new');
-
 		if (!CheckPermissions('public')) return;
+
+		$this->pages_model->SetPageCode('account_password_new');
 
 		try {
 			$this->user_auth->login($user, $key, false, true);
