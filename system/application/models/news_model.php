@@ -19,6 +19,34 @@ class News_model extends Model
 		parent::Model();
 	}
 
+	/**
+	*Returns the scheduled and live (published within the last 7 days) articles on the site.
+	**/
+	function getNewsArticlesSitemap()
+	{
+	$sql = 'SELECT
+			articles.article_id as article_id,
+			article_contents.article_content_last_author_timestamp as updated_date,
+			content_types.content_type_codename as content_type_codename
+
+			FROM articles
+
+			INNER JOIN content_types
+			ON articles.article_content_type_id = content_types.content_type_id
+			AND (content_types.content_type_section = "news" OR content_types.content_type_section = "blogs")
+
+			INNER JOIN article_contents
+			  ON article_contents.article_content_id = articles.article_live_content_id
+			 AND article_pulled = 0
+			 AND article_suggestion_accepted = 1
+
+			WHERE DATE(articles.article_publish_date) <= CURRENT_DATE()
+
+			ORDER BY articles.article_publish_date DESC';
+
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
 
 	/**
 	*Returns the scheduled and live (published within the last 7 days) articles on the site.

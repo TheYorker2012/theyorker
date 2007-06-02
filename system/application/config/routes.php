@@ -89,6 +89,11 @@ $route['account/links/add/([0-9]+)'] = 'account/links/add/$1';
 $route['account/customlink/([0-9]+)'] = 'account/customlink/$1';
 $route['account/customlink/([0-9]+)/([0-9]+)'] = 'account/customlink/$1/$2';
 
+//****************************************************************************//
+// Routing for the sitemap                                                    //
+//****************************************************************************//
+
+$route['sitemap.xml'] = 'sitemap';
 
 //****************************************************************************//
 // Routing to subdirectory index pages                                        //
