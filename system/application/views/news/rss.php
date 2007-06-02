@@ -19,18 +19,18 @@ echo '<?xml version=\'1.0\' ?>
 		<title>The Yorker - ' . $rss_title . '</title>
 		<link>' . $rss_link . '</link>
 	</image>
-	<managingEditor>no-reply@theyorker.co.uk</managingEditor>
-	<webMaster>no-reply@theyorker.co.uk</webMaster>';
+	<managingEditor>' . $rss_email_ed . '</managingEditor>
+	<webMaster>' . $rss_email_web . '</webMaster>';
 
 foreach ($rss_items as $item) {
 	echo '<item>
 		<title>' . $item['heading'] . '</title>
-		<author>';
+		<author>' . $rss_email_ed . ' (';
 	$temp_reporters = '';
 	foreach ($item['authors'] as $reporter) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
-	echo substr($temp_reporters, 0, -2) . '</author>
+	echo substr($temp_reporters, 0, -2) . ')</author>
 		<link>http://www.theyorker.co.uk/news/uninews/' . $item['id'] . '</link>
 		<description>' . $item['blurb'] . '</description>
 		<pubDate>' . date('r',strtotime($item['date'])) . '</pubDate>
