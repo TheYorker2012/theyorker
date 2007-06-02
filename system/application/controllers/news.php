@@ -195,8 +195,8 @@ class News extends Controller {
 		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
 		$data['rss_width'] = '126';
 		$data['rss_height'] = '126';
-		//$data['rss_email_ed'] = $this->config->item('editor_email_address');
-		//$data['rss_email_web'] = $this->config->item('webmaster_email_address');
+		$data['rss_email_ed'] = 'no-reply@theyorker.co.uk';
+		$data['rss_email_web'] = 'no-reply@theyorker.co.uk';
 
 		/// Get latest article ids
 		$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
