@@ -62,7 +62,7 @@ function print_middle_box($title,$article_array){
 			<input type="hidden" name="ie" value="UTF-8" />
 			<input type="hidden" name="oe" value="UTF-8" />
 			<a href="http://www.google.co.uk/">
-				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google">
+				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
 			</a>
 			<input type="text" name="q" size="16" maxlength="255" value="" />
 			<input type="submit" name="btnG" value="Search" />
