@@ -6,9 +6,9 @@
 	var societies = Array();
 	<?php foreach ($organisations as $soc) { ?>
 	societies['<?php echo $soc['id']; ?>'] = Array();
-	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo $soc['name']; ?>';
-	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo $soc['directory']; ?>';
-	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo $soc['url']; ?>';
+	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo str_replace("'", "\'", $soc['name']); ?>';
+	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo str_replace("'", "\'", $soc['directory']); ?>';
+	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo str_replace("'", "\'", $soc['url']); ?>';
 	<?php } ?>
 	var subscription_type = '<?php echo($type); ?>';
 	</script>
