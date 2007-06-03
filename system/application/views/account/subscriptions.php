@@ -49,8 +49,6 @@
 			   <img id="SlideShowImage" src="/images/prototype/prefs/image_load.jpg" alt="Subscription Image" title="Subscription Image" />
 			</div>
 		</div>
-		<h3>Description...</h3>
-		<div id='subscription_desc' class='blue_box'></div>
 		<form id='form_subscribe' action='/register/<?php echo($type); ?>/' method='post' class='form' onsubmit='return orgSubscribe();'>
 			<div style='text-align:center;'>
 				<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='subscription_loading' class='hide' style='float:right;' />
@@ -58,6 +56,8 @@
 				<br style='clear: both;' />
 			</div>
 		</form>
+		<h3>Description...</h3>
+		<div id='subscription_desc' class='blue_box'></div>
 	</div>
 
 	<br style='clear: both;' />
