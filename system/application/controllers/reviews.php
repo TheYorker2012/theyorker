@@ -239,6 +239,8 @@ class Reviews extends Controller
 						else //Else pass a empty array - Changed a array containing 'n/a'
 						{
 							//Hide the n/a as they serves no purpose... good work frank. nse500
+							//-> to clarify:
+							//"well done for making it so i only need to comment out one line to turn off the whole na thing, saves me alot of work :-)"
 							//$tagbox[$data['review_tags'][$tagno]] = array('n/a');
 						}
 					}
