@@ -691,7 +691,7 @@ class News_model extends Model
 					ON		content_types.content_type_parent_content_type_id = parent_type.content_type_id
 				WHERE		articles.article_content_type_id = content_types.content_type_id
 				AND			articles.article_pulled = 0
-				AND			articles.article_publish_date < CURRENT_DATE()
+				AND			articles.article_publish_date < CURRENT_TIMESTAMP()
 				AND			articles.article_deleted = 0
 				AND			articles.article_live_content_id IS NOT NULL
 				AND			articles.article_live_content_id = article_contents.article_content_id
