@@ -107,6 +107,7 @@ class News_model extends Model
 	$sql = 'SELECT
 			articles.article_id as article_id,
 			DATE(articles.article_publish_date) as publish_date,
+			DATE(articles.article_publish_date) <= CURRENT_DATE() as overdue,
 
 			articles.article_request_title as headline,
 

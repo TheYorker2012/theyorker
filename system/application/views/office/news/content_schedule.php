@@ -15,7 +15,7 @@
 	<?php foreach($articlelist as $article) { ?>
 
 	<tr>
-	<td><?php echo date('D jS M',strtotime($article['publish_date'])); ?></td>
+	<td style="<?php if($article['overdue']) echo 'color: red;';?>"><?php echo date('D jS M',strtotime($article['publish_date'])); ?></td>
 	<td><?php echo $article['content_type_name']; ?></td>
 	<td><?php echo $article['editor']; ?></td>
 	<td><?php echo ($article['is_accepted'] ? '<img src="/images/prototype/news/accepted.gif" title="Accepted" alt="Accepted" />' : ($article['is_requested'] ? '<img src="/images/prototype/news/requested.gif" title="Requested" alt="Requested" />' : '') ); ?></td>
