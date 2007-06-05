@@ -4,8 +4,8 @@
 	<tr>
 	<thead>
 	<th>Deadline</th>
-	<th>Editor</th>
 	<th>Box</th>
+	<th>Editor</th>
 	<th>Status</th>
 	<th>Request Title</th>
 	<th>Authors</th>

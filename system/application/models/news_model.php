@@ -87,6 +87,7 @@ class News_model extends Model
 			  ON article_contents.article_content_id = articles.article_live_content_id
 			 AND article_pulled = 0
 			 AND article_suggestion_accepted = 1
+			 AND articles.article_deleted = 0
 
 			WHERE DATE(articles.article_publish_date) > DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
 
@@ -136,7 +137,7 @@ class News_model extends Model
 
 			LEFT JOIN users AS editors ON editors.user_entity_id = articles.article_editor_approved_user_entity_id
 
-			WHERE articles.article_live_content_id IS NULL
+			WHERE articles.article_live_content_id IS NULL AND articles.article_deleted = 0
 
 			GROUP BY articles.article_id
 
