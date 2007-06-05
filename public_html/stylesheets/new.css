@@ -304,6 +304,11 @@ div#RightColumn div.Puffer {
 	margin-bottom: 0.5em;
 }
 
+div.ArticleEntry {
+	margin-left: 66px;	/* Using pixels as need to shift text to right of image */
+	padding-left: 0.5em;
+}
+
 div#MainColumn {
 	margin-right: 240px;
 }
@@ -484,6 +489,13 @@ span.author {
 
 div.Date {
 	color: #ff6a00;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Section {
+	color: #20C1F0;
 	font-size: smaller;
 	margin-top: 0;
 	margin-bottom: 0;

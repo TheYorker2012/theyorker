@@ -169,16 +169,43 @@ class News extends Controller {
 		$this->main_frame->Load();
 	}
 
-	/// The Archive section.
+	/// News archive section
 	function archive()
 	{
 		if (!CheckPermissions('public')) return;
 
-		// Set up the public frame
-		$this->main_frame->SetTitle('Archive');
-		$this->main_frame->SetContentSimple('news/archive');
+		/// Pagination
+		$this->load->library('pagination');
+		$config['base_url'] = base_url().'news/archive/';
+		$config['total_rows'] = $this->News_model->GetArchive('count')->count;
+		$config['per_page'] = 10;
+		$config['num_links'] = 2;
+		$config['full_tag_open'] = '<div style="margin:0.5em 0;">';
+		$config['full_tag_close'] = '</div>';
+		$config['cur_tag_open'] = '<span style="border:1px #20C1F0 solid;color:#fff;font-weight:bold;background-color:#20C1F0;padding:1px 3px;margin-right:2px;">';
+		$config['cur_tag_close'] = '</span>';
+		$config['num_tag_open'] = '<span style="border:1px #20C1F0 solid;padding:1px 3px;margin-right:2px;">';
+		$config['num_tag_close'] = '</span>';
+		$this->pagination->initialize($config);
 
-		// Load the public frame view (which will load the content view)
+		$offset = $this->uri->segment(3,0);
+		if (!is_numeric($offset)) {
+			$offset = 0;
+		}
+
+		/// Get all past articles
+		$data['articles'] = $this->News_model->GetArchive('search', $offset, $config['per_page']);
+		/// Get article thumbnails
+		$this->load->library('image');
+		foreach ($data['articles'] as &$article) {
+			$article['photo_xhtml'] = $this->image->getThumb($article['photo_id'], 'small', false, array('class' => 'Left'));
+		}
+
+		/// Set up the public frame
+		$this->main_frame->SetTitle('Archive');
+		$this->main_frame->SetContentSimple('news/archive', $data);
+
+		/// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 
