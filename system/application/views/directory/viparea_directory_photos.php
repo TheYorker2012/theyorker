@@ -8,6 +8,11 @@
 	<div class="Entry">
 		<?php echo($disclaimer_text); ?>
 	</div>
+
+	<h2>Help</h2>
+	<div class="Entry">
+		The <b>photo title</b> will be used as an alternative text for the photo that is uploaded, to make the site more accessible to people who have difficulty recognising images. Please try to make this title <b>concisely</b> describe what the image depicts.
+	</div>
 </div>
 
 <div id="MainColumn">

@@ -42,6 +42,23 @@ class News extends Controller
 	}
 
 	/**
+	 *	@brief	Shows the scheduled articles that are not yet live
+	 */
+	function contentschedule()
+	{
+		if (!CheckPermissions('office')) return;
+
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_content_schedule');
+
+		$data['articlelist'] = $this->news_model->getContentSchedule();
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/content_schedule', $data);
+		$this->main_frame->Load();
+	}
+
+	/**
 	 *	@brief	Determines which function is used depending on url
 	 */
 	function _remap($method)
@@ -149,7 +166,7 @@ class News extends Controller
 		if ($data['status'] == 'request') {
 			$rules['r_deadline'] = 'trim|required|numeric';
 			$fields['r_deadline'] = 'deadline';
-			$rules['r_reporter'] = 'required';
+			$rules['r_reporter'] = '';
 			$fields['r_reporter'] = 'reporter';
 		}
 		$this->validation->set_rules($rules);
@@ -170,13 +187,15 @@ class News extends Controller
 				if (count($this->input->post('r_reporter')) == 0) {
 					$valid = false;
 				}
-				foreach ($this->input->post('r_reporter') as $reporter) {
-					if (!is_numeric($reporter)) {
-						$valid = false;
+				if($this->input->post('r_reporter')) {
+					foreach ($this->input->post('r_reporter') as $reporter) {
+						if (!is_numeric($reporter)) {
+							$valid = false;
+						}
 					}
-				}
-				if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
-					$errors[] = 'Please choose the reporters you wish to assign the request to';
+					if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
+						$errors[] = 'Please choose the reporters you wish to assign the request to';
+					}
 				}
 			}
 			if (!$this->requests_model->isBox($this->input->post('r_box'))) {
@@ -199,8 +218,10 @@ class News extends Controller
 					);
 					$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
 					/// Assign reporters to request
-					foreach ($this->input->post('r_reporter') as $reporter) {
-						$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+					if($this->input->post('r_reporter')) {
+						foreach ($this->input->post('r_reporter') as $reporter) {
+							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+						}
 					}
 					/// Create initial revision
 					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
@@ -337,8 +358,18 @@ class News extends Controller
 
 
 
-	function _editRequest ($article_id, $data)
+	function _editRequest ($article_id,$data)
 	{
+
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_news_request');
+		/// Get page content
+		$data['boxes'] = $this->requests_model->getBoxes();
+		/// @TODO: this needs to get reporters only part of the article type yorker sub-team
+		$data['reporters'] = $this->requests_model->getReporters();
+		$data['tasks_heading'] = $this->pages_model->GetPropertyText('news_office:tasks_heading', TRUE);
+		$data['status'] = 'request';
+
 		// Get different content based on access
 		if ($data['user_level'] == 'editor') {
 			$data['heading'] = $this->pages_model->GetPropertyText('heading_editor');
@@ -412,31 +443,24 @@ class News extends Controller
 				if ($deadline != NULL) {
 					$deadline = date('Y-m-d H:i:s', $deadline);
 				}
-				if ($data['status'] == 'suggestion') {
+				if ($data['status'] == 'request') {
 					if ($data['user_level'] == 'editor') {
-						if ($this->input->post('accept') == 'Accept') {
-							$accept_data = array(
-								'editor' => $this->user_auth->entityId,
-								'publish_date' => $deadline,
-								'title' => $this->input->post('r_title'),
-								'description' => $this->input->post('r_brief'),
-								'content_type' => $this->input->post('r_box')
-							);
-							$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
-							foreach ($this->input->post('r_reporter') as $reporter) {
-								$this->requests_model->AddUserToRequest($article_id, $reporter);
-							}
-							$this->main_frame->AddMessage('success','Suggestion accepted and request generated.');
-						} else {
-							$this->requests_model->RejectSuggestion($article_id);
-							$this->main_frame->AddMessage('success','Suggestion successfully rejected.');
+						$accept_data = array(
+							'editor' => $this->user_auth->entityId,
+							'publish_date' => $deadline,
+							'title' => $this->input->post('r_title'),
+							'description' => $this->input->post('r_brief'),
+							'content_type' => $this->input->post('r_box')
+						);
+						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
+						$this->requests_model->RemoveAllUsersFromRequest($article_id);
+   						foreach ($this->input->post('r_reporter') as $reporter) {
+							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
 						}
-					} else {
-                        $this->requests_model->UpdateSuggestion($article_id,array('title' => $this->input->post('r_title'), 'description' => $this->input->post('r_brief'), 'content_type' => $this->input->post('r_box')));
-						$this->main_frame->AddMessage('success','Suggestion details saved.');
+						$this->main_frame->AddMessage('success','Request details saved.');
 					}
 				}
-				redirect('/office/news/request/' . $data['article']['id']);
+				redirect('/office/news/' . $data['article']['id']);
 			}
 		}
 
@@ -453,7 +477,7 @@ class News extends Controller
 			// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box_codename'];
+			$this->validation->r_box = $data['article']['box_name'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}
@@ -465,6 +489,9 @@ class News extends Controller
 		$this->main_frame->SetTitleParameters(
 			array('action' => 'Edit', 'type' => $data['status'])
 		);
+		/// Load main frame
+		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->Load();
 	}
 
 
@@ -508,7 +535,9 @@ class News extends Controller
 						case 'request':
 							if ($data['user_level'] == 'editor') {
 								/// If editor but also assigned reporter and not accepted then is reporter
-								if ($this->input->post('publish') == 'Publish Article') {
+								if ($this->uri->segment(4,'') == 'edit') {
+									$this->_editRequest($article_id,$data);
+								} elseif ($this->input->post('publish') == 'Publish Article') {
 									$this->_publishArticle($article_id);
 								} else {
 									/// EDITOR: Changes + Pull + Change publish date

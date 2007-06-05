@@ -87,12 +87,61 @@ class News_model extends Model
 			  ON article_contents.article_content_id = articles.article_live_content_id
 			 AND article_pulled = 0
 			 AND article_suggestion_accepted = 1
+			 AND articles.article_deleted = 0
 
 			WHERE DATE(articles.article_publish_date) > DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
 
 			GROUP BY articles.article_id
 
 			ORDER BY articles.article_publish_date DESC';
+
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+
+	/**
+	*Returns the scheduled articles that are not yet live.
+	**/
+	function getContentSchedule()
+	{
+	$sql = 'SELECT
+			articles.article_id as article_id,
+			DATE(articles.article_publish_date) as publish_date,
+			DATE(articles.article_publish_date) <= CURRENT_DATE() as overdue,
+
+			articles.article_request_title as headline,
+
+			GROUP_CONCAT(DISTINCT CONCAT(users.user_firstname," ",users.user_surname)
+				 ORDER BY users.user_surname
+				 SEPARATOR ", <br />") as authors,
+
+			CONCAT(editors.user_firstname," ",editors.user_surname) as editor,
+
+			COUNT(article_writers.article_writer_status) != 0 as is_requested,
+			IFNULL(MAX(article_writers.article_writer_status) = "accepted", 0) as is_accepted,
+
+			IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(ct_parent.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) as content_type_name
+
+			FROM articles
+
+			INNER JOIN content_types
+			ON articles.article_content_type_id = content_types.content_type_id
+			AND (content_types.content_type_section = "news" OR content_types.content_type_section = "blogs")
+
+			LEFT JOIN content_types ct_parent
+			ON ct_parent.content_type_id = content_types.content_type_parent_content_type_id
+
+			LEFT JOIN (article_writers JOIN users ON users.user_entity_id = article_writers.article_writer_user_entity_id)
+			ON article_writers.article_writer_article_id = articles.article_id
+
+			INNER JOIN users AS editors ON editors.user_entity_id = articles.article_editor_approved_user_entity_id
+
+			WHERE articles.article_live_content_id IS NULL AND articles.article_deleted = 0
+
+			GROUP BY articles.article_id
+
+			ORDER BY DATE(articles.article_publish_date), content_type_name';
 
 		$query = $this->db->query($sql);
 		return $query->result_array();
