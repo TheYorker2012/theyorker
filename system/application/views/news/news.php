@@ -4,6 +4,9 @@ function printarticlelink($article) {
 	echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('			'.$article['photo_xhtml']."\n");
 	echo('		</a>'."\n");
+	if (!array_key_exists('blurb', $article)) {
+		echo('		<div class="ArticleEntry">'."\n");
+	}
 	echo('		<h3 class="Headline">'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 	echo('				'.$article['heading']."\n");
@@ -14,6 +17,9 @@ function printarticlelink($article) {
 	foreach($article['authors'] as $reporter)
 		echo('			<a href="/contact">'.$reporter['name'].'</a>'."\n");
 	echo('		</div>'."\n");
+	if (!array_key_exists('blurb', $article)) {
+		echo('		</div>'."\n");
+	}
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
 		echo('		<p>'.$article['blurb'].'</p>'."\n");
 	}
@@ -85,15 +91,15 @@ foreach($main_article['fact_boxes'] as $fact_box) {
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo $main_article['heading']; ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
-		<div style="float:right;margin-top:0;line-height:95%;width:180px;">
-			<?php echo($main_article['primary_photo_xhtml']); ?><br />
-			<?php echo($main_article['primary_photo_caption']); ?>
-		</div>
+			<div style="float:right;margin-top:0;line-height:95%;width:180px;">
+				<?php echo($main_article['primary_photo_xhtml']); ?><br />
+				<?php echo($main_article['primary_photo_caption']); ?>
+			</div>
 		<?php } ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
-			<a href="/contact"><?php echo($reporter['name']); ?></a>
+			<a href="/contact"><?php echo($reporter['name']); ?></a><br />
 <?php } ?>
 		</div>
 <?php if ($main_article['subtext'] != '') { ?>

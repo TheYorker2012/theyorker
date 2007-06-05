@@ -305,7 +305,7 @@ class News_model extends Model
 
 			if ($row->photo_request_chosen_photo_id > 0) {
 				$this->load->library('image');
-				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, 'small');
+				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, 'small', false, array('class' => $image_class));
 			} else {
 				$result['photo_xhtml'] = '<img src="/images/prototype/news/small-default.jpg" alt="" class="'.$image_class.'" />';
 			}
@@ -607,6 +607,82 @@ class News_model extends Model
 			'articles','article_public_comment_thread_id',
 			array('article_id' => $ArticleId)
 		);
+	}
+
+	/**
+	 *	@param	$type:string - 'count' = retrieve num of matching results, 'search' = retrieve chosen articles
+	 */
+	function GetArchive($type = 'search', $limit = 0, $rows = 10)
+	{
+
+		$result = array();
+		if ($type == 'count') {
+			$sql = 'SELECT		COUNT(*)	AS	count'."\n";
+		} else {
+			$sql = 'SELECT		articles.article_id								AS id,
+								UNIX_TIMESTAMP(articles.article_publish_date)	AS date,
+								content_types.content_type_codename				AS type_codename,
+								IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(parent_type.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) AS type_name,
+								article_contents.article_content_heading		AS heading,
+								article_contents.article_content_blurb			AS blurb,
+								photo_requests.photo_request_chosen_photo_id	AS photo_id,
+								photo_requests.photo_request_title				AS photo_title'."\n";
+		}
+		$sql .= 'FROM		articles
+				LEFT JOIN	photo_requests
+					ON	(	articles.article_thumbnail_photo_id = photo_requests.photo_request_relative_photo_number
+					AND		articles.article_id = photo_requests.photo_request_article_id
+					AND		photo_requests.photo_request_deleted = 0
+					AND		photo_requests.photo_request_chosen_photo_id IS NOT NULL
+					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL
+						)	,
+							article_contents,
+							content_types
+				LEFT JOIN	content_types AS parent_type
+					ON		content_types.content_type_parent_content_type_id = parent_type.content_type_id
+				WHERE		articles.article_content_type_id = content_types.content_type_id
+				AND			articles.article_pulled = 0
+				AND			articles.article_publish_date < CURRENT_DATE()
+				AND			articles.article_deleted = 0
+				AND			articles.article_live_content_id IS NOT NULL
+				AND			articles.article_live_content_id = article_contents.article_content_id
+				AND			articles.article_id = article_contents.article_content_article_id
+				AND			content_types.content_type_archive = 1
+				ORDER BY	articles.article_publish_date DESC';
+		if ($type == 'search') {
+			$sql .= "\n".'LIMIT		'.$limit.','.$rows;
+		}
+		$query = $this->db->query($sql);
+		if ($type == 'count') {
+			$result = $query->row();
+		} elseif ($query->num_rows() > 0) {
+			foreach ($query->result_array() as $article) {
+				$article['reporters'] = array();
+				/// @TODO: Make following query get byline info too when new byline system implemented
+				$sql = 'SELECT		article_writers.article_writer_user_entity_id
+						FROM		article_writers
+						WHERE		article_writers.article_writer_article_id = ?
+						AND			article_writers.article_writer_status = "accepted"
+						AND			article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL';
+				$query = $this->db->query($sql,array($article['id']));
+				foreach ($query->result() as $row) {
+					/// @TODO: Remove this query and merge into above query
+					$sql = 'SELECT		business_cards.business_card_name
+							FROM		business_cards
+							WHERE		business_cards.business_card_user_entity_id = ?';
+					$query = $this->db->query($sql,array($row->article_writer_user_entity_id));
+					if ($query->num_rows() == 1) {
+						$reporter = $query->row();
+						$article['reporters'][] = array(
+							'name'	=>	$reporter->business_card_name,
+							'id'	=>	$row->article_writer_user_entity_id
+						);
+					}
+				}
+				$result[] = $article;
+			}
+		}
+		return $result;
 	}
 
 	/// Get information about the private comments thread.

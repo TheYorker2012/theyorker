@@ -6,9 +6,9 @@
 	var societies = Array();
 	<?php foreach ($organisations as $soc) { ?>
 	societies['<?php echo $soc['id']; ?>'] = Array();
-	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo $soc['name']; ?>';
-	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo $soc['directory']; ?>';
-	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo $soc['url']; ?>';
+	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo str_replace("'", "\'", $soc['name']); ?>';
+	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo str_replace("'", "\'", $soc['directory']); ?>';
+	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo str_replace("'", "\'", $soc['url']); ?>';
 	<?php } ?>
 	var subscription_type = '<?php echo($type); ?>';
 	</script>
@@ -50,8 +50,6 @@
 			   <img id="SlideShowImage" src="/images/prototype/prefs/image_load.jpg" alt="Subscription Image" title="Subscription Image" />
 			</div>
 		</div>
-		<h3>Description...</h3>
-		<div id='subscription_desc' class='blue_box'></div>
 		<form id='form_subscribe' action='/register/<?php echo($type); ?>/' method='post' class='form' onsubmit='return orgSubscribe();'>
 			<div style='text-align:center;'>
 				<img src='/images/prototype/prefs/loading.gif' alt='Loading' title='Loading' id='subscription_loading' class='hide' style='float:right;' />
@@ -59,6 +57,8 @@
 				<br style='clear: both;' />
 			</div>
 		</form>
+		<h3>Description...</h3>
+		<div id='subscription_desc' class='blue_box'></div>
 	</div>
 
 	<br style='clear: both;' />
