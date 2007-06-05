@@ -309,6 +309,10 @@ div.ArticleEntry {
 	padding-left: 0.5em;
 }
 
+div.ArticleEntry h3 {
+	margin: 0em;
+}
+
 div#MainColumn {
 	margin-right: 240px;
 }
