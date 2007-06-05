@@ -213,7 +213,7 @@ class News extends Controller {
 	function rss()
 	{
 		header('Content-type: application/rss+xml');
-		$data['rss_title'] = 'UniNews';
+		$data['rss_title'] = 'News';
 		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
 		$data['rss_desc'] = 'All the news you need to know about from University of York\'s Campus!';
 		$data['rss_category'] = 'News';
@@ -226,14 +226,17 @@ class News extends Controller {
 		$data['rss_email_web'] = 'no-reply@theyorker.co.uk';
 
 		/// Get latest article ids
-		$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
+		//$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
 
 		/// Get preview data for articles
-		$data['rss_items'] = array();
-		foreach ($latest_article_ids as $id)
-		{
-    		array_push($data['rss_items'], $this->News_model->GetSummaryArticle($id));
-		}
+		//$data['rss_items'] = array();
+		//foreach ($latest_article_ids as $id)
+		//{
+    	//	array_push($data['rss_items'], $this->News_model->GetSummaryArticle($id));
+		//}
+
+		/// Create RSS Feed for all sections
+		$data['rss_items'] = $this->News_model->GetArchive('search', 0, 20);
 
 		$this->load->view('news/rss', $data);
 	}

@@ -24,17 +24,17 @@ echo '<?xml version=\'1.0\' ?>
 
 foreach ($rss_items as $item) {
 	echo '<item>
-		<title>' . $item['heading'] . '</title>
+		<title>(' . $item['type_name'] . ') ' . html_entity_decode($item['heading'],ENT_QUOTES,'UTF-8') . '</title>
 		<author>' . $rss_email_ed . ' (';
 	$temp_reporters = '';
-	foreach ($item['authors'] as $reporter) {
+	foreach ($item['reporters'] as $reporter) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
 	echo substr($temp_reporters, 0, -2) . ')</author>
-		<link>http://www.theyorker.co.uk/news/uninews/' . $item['id'] . '</link>
-		<description>' . $item['blurb'] . '</description>
+		<link>http://www.theyorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
+		<description>' . html_entity_decode($item['blurb'],ENT_QUOTES,'UTF-8') . '</description>
 		<pubDate>' . date('r',strtotime($item['date'])) . '</pubDate>
-		<guid isPermaLink=\'true\'>http://www.yorker.co.uk/news/uninews/' . $item['id'] . '</guid>
+		<guid isPermaLink=\'true\'>http://www.yorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
 		</item>';
 }
 echo '</channel></rss>';
