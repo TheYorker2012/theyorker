@@ -21,8 +21,8 @@
 		$new_publish_date = date('D jS M',strtotime($article['publish_date']));
 		if ($publish_date != null && $publish_date != $new_publish_date) {
 			echo '<tr><td colspan="6">&nbsp;</td></tr>';
-			$publish_date = $new_publish_date;
 		}
+		$publish_date = $new_publish_date;
 	?>
 	<tr>
 	<td style="<?php if($article['overdue']) echo 'color: red;';?>"><?php echo $publish_date; ?></td>
