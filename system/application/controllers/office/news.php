@@ -337,7 +337,7 @@ class News extends Controller
 
 
 
-	function _editRequest ($article_id, $data)
+	function _editRequest ($article_id,$data)
 	{
 		// Get different content based on access
 		if ($data['user_level'] == 'editor') {
@@ -412,31 +412,23 @@ class News extends Controller
 				if ($deadline != NULL) {
 					$deadline = date('Y-m-d H:i:s', $deadline);
 				}
-				if ($data['status'] == 'suggestion') {
+				if ($data['status'] == 'request') {
 					if ($data['user_level'] == 'editor') {
-						if ($this->input->post('accept') == 'Accept') {
-							$accept_data = array(
-								'editor' => $this->user_auth->entityId,
-								'publish_date' => $deadline,
-								'title' => $this->input->post('r_title'),
-								'description' => $this->input->post('r_brief'),
-								'content_type' => $this->input->post('r_box')
-							);
-							$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
-							foreach ($this->input->post('r_reporter') as $reporter) {
-								$this->requests_model->AddUserToRequest($article_id, $reporter);
-							}
-							$this->main_frame->AddMessage('success','Suggestion accepted and request generated.');
-						} else {
-							$this->requests_model->RejectSuggestion($article_id);
-							$this->main_frame->AddMessage('success','Suggestion successfully rejected.');
+						$accept_data = array(
+							'editor' => $this->user_auth->entityId,
+							'publish_date' => $deadline,
+							'title' => $this->input->post('r_title'),
+							'description' => $this->input->post('r_brief'),
+							'content_type' => $this->input->post('r_box')
+						);
+						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
+   						foreach ($this->input->post('r_reporter') as $reporter) {
+							$this->requests_model->AddUserToRequest($article_id, $reporter);
 						}
-					} else {
-                        $this->requests_model->UpdateSuggestion($article_id,array('title' => $this->input->post('r_title'), 'description' => $this->input->post('r_brief'), 'content_type' => $this->input->post('r_box')));
-						$this->main_frame->AddMessage('success','Suggestion details saved.');
+						$this->main_frame->AddMessage('success','Request details saved.');
 					}
 				}
-				redirect('/office/news/request/' . $data['article']['id']);
+				redirect('/office/news/' . $data['article']['id']);
 			}
 		}
 
@@ -508,7 +500,9 @@ class News extends Controller
 						case 'request':
 							if ($data['user_level'] == 'editor') {
 								/// If editor but also assigned reporter and not accepted then is reporter
-								if ($this->input->post('publish') == 'Publish Article') {
+								if ($this->input->post('edit_request') == 'Edit Details') {
+									$this->_editRequest($article_id,$data);
+								} elseif ($this->input->post('publish') == 'Publish Article') {
 									$this->_publishArticle($article_id);
 								} else {
 									/// EDITOR: Changes + Pull + Change publish date

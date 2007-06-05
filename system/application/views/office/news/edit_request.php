@@ -106,7 +106,7 @@
 				 	<input type='submit' name='decline' id='submit2' value='Reject' class='button' />
 				 	<input type='submit' name='accept' id='submit' value='Accept' class='button' />
 				<?php } else { ?>
-				 	<input type='submit' name='changes' id='submit' value='Save Changes' class='button' />
+				 	<input type='submit' name='edit_request' id='submit' value='Edit Details' class='button' />
    				<?php } ?>
 			<?php } else { ?>
 			 	<input type='submit' name='changes' id='submit' value='Save Changes' class='button' />

@@ -279,6 +279,8 @@
 				<?php if ($user_requested) { ?>
 			 	<input type='submit' name='decline' id='submit2' value='Decline Request' class='button' />
 			 	<input type='submit' name='accept' id='submit' value='Accept Request' class='button' />
+				<?php } elseif ($user_level == 'editor') { ?>
+			 	<input type='submit' name='edit_request' id='edit_request' value='Edit Details' class='button' />
 				<?php } ?>
 			</div>
 		</div>
