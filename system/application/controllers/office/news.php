@@ -187,13 +187,15 @@ class News extends Controller
 				if (count($this->input->post('r_reporter')) == 0) {
 					$valid = false;
 				}
-				foreach ($this->input->post('r_reporter') as $reporter) {
-					if (!is_numeric($reporter)) {
-						$valid = false;
+				if($this->input->post('r_reporter')) {
+					foreach ($this->input->post('r_reporter') as $reporter) {
+						if (!is_numeric($reporter)) {
+							$valid = false;
+						}
 					}
-				}
-				if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
-					$errors[] = 'Please choose the reporters you wish to assign the request to';
+					if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
+						$errors[] = 'Please choose the reporters you wish to assign the request to';
+					}
 				}
 			}
 			if (!$this->requests_model->isBox($this->input->post('r_box'))) {
@@ -216,8 +218,10 @@ class News extends Controller
 					);
 					$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
 					/// Assign reporters to request
-					foreach ($this->input->post('r_reporter') as $reporter) {
-						$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+					if($this->input->post('r_reporter')) {
+						foreach ($this->input->post('r_reporter') as $reporter) {
+							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+						}
 					}
 					/// Create initial revision
 					$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
@@ -356,7 +360,7 @@ class News extends Controller
 
 	function _editRequest ($article_id,$data)
 	{
-		
+
 		/// Get changeable page content
 		$this->pages_model->SetPageCode('office_news_request');
 		/// Get page content
