@@ -15,8 +15,8 @@
 	</thead>
 	</tr>
 
+	<?php $publish_date = null; ?>
 	<?php foreach($articlelist as $article) { ?>
-	$publish_date = null;
 	<?php
 		$new_publish_date = date('D jS M',strtotime($article['publish_date']));
 		if ($publish_date != null && $publish_date != $new_publish_date) {
