@@ -407,7 +407,7 @@ class News extends Controller
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
 			$fields['r_deadline'] = 'deadline';
-			$rules['r_reporter'] = 'required';
+			$rules['r_reporter'] = '';
 			$fields['r_reporter'] = 'reporter';
 		}
 		$this->validation->set_rules($rules);
@@ -424,14 +424,16 @@ class News extends Controller
 				} else {
 					$deadline = $this->input->post('r_deadline');
 				}
-				$valid = true;
-				foreach ($this->input->post('r_reporter') as $reporter) {
-					if (!is_numeric($reporter)) {
-						$valid = false;
+				if($this->input->post('r_reporter')) {
+					$valid = true;
+					foreach ($this->input->post('r_reporter') as $reporter) {
+						if (!is_numeric($reporter)) {
+							$valid = false;
+						}
 					}
-				}
-				if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
-					$errors[] = 'Please choose the reporters you wish to assign the request to';
+					if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
+						$errors[] = 'Please choose the reporters you wish to assign the request to';
+					}
 				}
 			}
 			if (!$this->requests_model->isBox($this->input->post('r_box'))) {
@@ -454,8 +456,10 @@ class News extends Controller
 						);
 						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
 						$this->requests_model->RemoveAllUsersFromRequest($article_id);
-   						foreach ($this->input->post('r_reporter') as $reporter) {
-							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+						if($this->input->post('r_reporter')) {
+							foreach ($this->input->post('r_reporter') as $reporter) {
+								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+							}
 						}
 						$this->main_frame->AddMessage('success','Request details saved.');
 					}
@@ -607,7 +611,7 @@ class News extends Controller
 		if ($data['user_level'] == 'editor') {
 			$rules['r_deadline'] = 'trim|required|numeric';
 			$fields['r_deadline'] = 'deadline';
-			$rules['r_reporter'] = 'required';
+			$rules['r_reporter'] = '';
 			$fields['r_reporter'] = 'reporter';
 		}
 		$this->validation->set_rules($rules);
@@ -624,14 +628,16 @@ class News extends Controller
 				} else {
 					$deadline = $this->input->post('r_deadline');
 				}
-				$valid = true;
-				foreach ($this->input->post('r_reporter') as $reporter) {
-					if (!is_numeric($reporter)) {
-						$valid = false;
+				if($this->input->post('r_reporter')) {
+					$valid = true;
+					foreach ($this->input->post('r_reporter') as $reporter) {
+						if (!is_numeric($reporter)) {
+							$valid = false;
+						}
 					}
-				}
-				if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
-					$errors[] = 'Please choose the reporters you wish to assign the request to';
+					if ((!$valid) || (!$this->requests_model->reportersExist($this->input->post('r_reporter')))) {
+						$errors[] = 'Please choose the reporters you wish to assign the request to';
+					}
 				}
 			}
 			if (!$this->requests_model->isBox($this->input->post('r_box'))) {
@@ -653,8 +659,10 @@ class News extends Controller
 							'content_type' => $this->input->post('r_box')
 						);
 						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
-						foreach ($this->input->post('r_reporter') as $reporter) {
-							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+						if($this->input->post('r_reporter')) {
+							foreach ($this->input->post('r_reporter') as $reporter) {
+								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+							}
 						}
 						$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
 						$this->main_frame->AddMessage('success','Suggestion accepted and request generated.');
