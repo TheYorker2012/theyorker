@@ -1,5 +1,5 @@
 <div class='blue_box' style="width:auto">
-	<h2>scheduled and live</h2>
+	<h2>content schedule</h2>
 	<table width="100%">
 	<tr>
 	<thead>

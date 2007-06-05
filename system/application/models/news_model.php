@@ -135,7 +135,7 @@ class News_model extends Model
 			LEFT JOIN (article_writers JOIN users ON users.user_entity_id = article_writers.article_writer_user_entity_id)
 			ON article_writers.article_writer_article_id = articles.article_id
 
-			LEFT JOIN users AS editors ON editors.user_entity_id = articles.article_editor_approved_user_entity_id
+			INNER JOIN users AS editors ON editors.user_entity_id = articles.article_editor_approved_user_entity_id
 
 			WHERE articles.article_live_content_id IS NULL AND articles.article_deleted = 0
 

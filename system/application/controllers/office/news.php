@@ -166,7 +166,7 @@ class News extends Controller
 		if ($data['status'] == 'request') {
 			$rules['r_deadline'] = 'trim|required|numeric';
 			$fields['r_deadline'] = 'deadline';
-			$rules['r_reporter'] = 'required';
+			$rules['r_reporter'] = '';
 			$fields['r_reporter'] = 'reporter';
 		}
 		$this->validation->set_rules($rules);
