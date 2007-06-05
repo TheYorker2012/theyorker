@@ -98,6 +98,52 @@ class News_model extends Model
 		return $query->result_array();
 	}
 
+
+	/**
+	*Returns the scheduled articles that are not yet live.
+	**/
+	function getContantSchedule()
+	{
+	$sql = 'SELECT
+			articles.article_id as article_id,
+			DATE(articles.article_publish_date) as publish_date,
+			article_suggestion_accepted as is_accepted,
+			0 as is_requested,
+			articles.article_request_title as headline,
+
+			GROUP_CONCAT(business_cards.business_card_name
+				 ORDER BY business_cards.business_card_name
+				 SEPARATOR ", <br />") as authors,
+
+			IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(ct_parent.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) as content_type_name
+
+			FROM articles
+
+			INNER JOIN content_types
+			ON articles.article_content_type_id = content_types.content_type_id
+			AND (content_types.content_type_section = "news" OR content_types.content_type_section = "blogs")
+
+			LEFT JOIN content_types ct_parent
+			ON ct_parent.content_type_id = content_types.content_type_parent_content_type_id
+
+			LEFT JOIN article_writers
+			ON article_writers.article_writer_article_id = articles.article_id
+			AND article_writers.article_writer_status = "accepted"
+			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
+
+			LEFT JOIN business_cards
+			ON article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+
+			WHERE articles.article_live_content_id IS NULL
+
+			GROUP BY articles.article_id
+
+			ORDER BY DATE(articles.article_publish_date) DESC, content_type_name';
+
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
 	/**
 	*Determines wheter the provided ID is of specified type.
 	*@param $id The article_id to test.

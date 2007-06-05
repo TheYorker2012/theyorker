@@ -42,6 +42,23 @@ class News extends Controller
 	}
 
 	/**
+	 *	@brief	Shows the scheduled articles that are not yet live
+	 */
+	function contentschedule()
+	{
+		if (!CheckPermissions('office')) return;
+
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_content_schedule');
+
+		$data['articlelist'] = $this->news_model->getContentSchedule();
+
+		/// Set up the main frame
+		$this->main_frame->SetContentSimple('office/news/content_schedule', $data);
+		$this->main_frame->Load();
+	}
+
+	/**
 	 *	@brief	Determines which function is used depending on url
 	 */
 	function _remap($method)
