@@ -5,6 +5,8 @@
 	<div class='RightToolbar'>
 		<h4><?php echo $heading; ?></h4>
 		<?php echo $intro; ?>
+		<h4>Unassigned Requests</h4>
+		If you choose not select a reporter here then the request will remain <b>unassigned</b> until a reporter is selected. The request will appear on the content schedule.
 	</div>
 
 	<form name='new_request' id='new_request' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form'>

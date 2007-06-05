@@ -1,7 +1,7 @@
 <div class='blue_box' style="width:auto">
 	<h2>content schedule</h2>
 
-	<a href="/office/news/request">Make request</a> (this will add an entry here).
+	<p><a href="/office/news/request">Make request</a> (this will add an entry here).</p>
 
 	<table width="100%">
 	<tr>
