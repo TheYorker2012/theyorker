@@ -90,10 +90,10 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	addButton(mwEditButtons,'/images/icons/button_extlink.png','External link (remember http:// prefix)','[',']','http://www.example.com title of link','mw-editbutton-extlink');
 	addButton(mwEditButtons,'/images/icons/button_quote.png','Pull quote','\n"""','""" quote author\n','Quote text.','mw-editbutton-pullquote');
 	addFunction(mwEditButtons,'/images/icons/button_youtube.gif','YouTube Video', insertYouTube ,'mw-editbutton-youtube');
+	addButton(mwEditButtons,'/images/icons/button_headline.png','Heading','\n=== ',' ===\n','Heading text','mw-editbutton-heading');
 
 	if(extrabuttons) {
 		addButton(mwEditButtons,'/images/icons/button_factbox.png','Fact box','\n{{factbox:Title of Box|\n','\n}}\n','* Fact one.\n* Fact two.','mw-editbutton-factbox');
-		addButton(mwEditButtons,'/images/icons/button_headline.png','Level 2 heading','\n== ',' ==\n','Heading text','mw-editbutton-heading');
 		addButton(mwEditButtons,'/images/icons/button_enter.png','Force single line break','{{br}}\n','','','mw-editbutton-linebreak');
 	}
 
