@@ -61,7 +61,7 @@ class News extends Controller {
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 
 		/// Get the latest article ids from the model.
-		$latest_article_ids = $this->News_model->GetLatestId($article_type,6);
+		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->library('image');
 			if ($type_info['section'] == 'blogs') {
