@@ -16,9 +16,10 @@
 	</tr>
 
 	<?php foreach($articlelist as $article) { ?>
+	$publish_date = null;
 	<?php
 		$new_publish_date = date('D jS M',strtotime($article['publish_date']));
-		if (isset($publish_date) && $publish_date != $new_publish_date) {
+		if ($publish_date != null && $publish_date != $new_publish_date) {
 			echo '<tr><td colspan="6">&nbsp;</td></tr>';
 			$publish_date = $new_publish_date;
 		}
