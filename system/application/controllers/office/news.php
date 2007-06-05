@@ -356,6 +356,16 @@ class News extends Controller
 
 	function _editRequest ($article_id,$data)
 	{
+		
+		/// Get changeable page content
+		$this->pages_model->SetPageCode('office_news_request');
+		/// Get page content
+		$data['boxes'] = $this->requests_model->getBoxes();
+		/// @TODO: this needs to get reporters only part of the article type yorker sub-team
+		$data['reporters'] = $this->requests_model->getReporters();
+		$data['tasks_heading'] = $this->pages_model->GetPropertyText('news_office:tasks_heading', TRUE);
+		$data['status'] = 'request';
+
 		// Get different content based on access
 		if ($data['user_level'] == 'editor') {
 			$data['heading'] = $this->pages_model->GetPropertyText('heading_editor');
@@ -439,8 +449,9 @@ class News extends Controller
 							'content_type' => $this->input->post('r_box')
 						);
 						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
+						$this->requests_model->RemoveAllUsersFromRequest($article_id);
    						foreach ($this->input->post('r_reporter') as $reporter) {
-							$this->requests_model->AddUserToRequest($article_id, $reporter);
+							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
 						}
 						$this->main_frame->AddMessage('success','Request details saved.');
 					}
@@ -462,7 +473,7 @@ class News extends Controller
 			// First time form has been loaded so populate fields
 			$this->validation->r_title = $data['article']['title'];
 			$this->validation->r_brief = $data['article']['description'];
-			$this->validation->r_box = $data['article']['box_codename'];
+			$this->validation->r_box = $data['article']['box_name'];
 			if ($data['status'] == 'request') {
 				$this->validation->r_deadline = $data['article']['deadline'];
 			}
@@ -474,6 +485,9 @@ class News extends Controller
 		$this->main_frame->SetTitleParameters(
 			array('action' => 'Edit', 'type' => $data['status'])
 		);
+		/// Load main frame
+		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->Load();
 	}
 
 
@@ -517,7 +531,7 @@ class News extends Controller
 						case 'request':
 							if ($data['user_level'] == 'editor') {
 								/// If editor but also assigned reporter and not accepted then is reporter
-								if ($this->input->post('edit_request') == 'Edit Details') {
+								if ($this->uri->segment(4,'') == 'edit') {
 									$this->_editRequest($article_id,$data);
 								} elseif ($this->input->post('publish') == 'Publish Article') {
 									$this->_publishArticle($article_id);

@@ -7,7 +7,7 @@
 		<?php echo $intro; ?>
 	</div>
 
-	<form name='new_request' id='new_request' action='/office/news/<?php echo $article['id']; ?>' method='post' class='form'>
+	<form name='new_request' id='new_request' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
@@ -45,9 +45,9 @@
 				<?php } ?>
 				<?php if (($user_level == 'editor') || ($status == 'request')) { ?>
 					<label for='deadline_trigger'>Deadline:</label>
-					<div id='r_deadline_show' style='float: left; margin: 5px 10px;'><?php if ($this->validation->r_deadline != '') { echo $this->validation->r_deadline; } else { echo 'None'; } ?></div>
+					<div id='r_deadline_show' style='float: left; margin: 5px 10px;'><?php if ($this->validation->r_deadline != '') { echo date('D j M, Y @ H:i',$this->validation->r_deadline); } else { echo 'None'; } ?></div>
 					<?php if ($edit_enable) { ?>
-						<input type='hidden' name='r_deadline' id='r_deadline' value='0' />
+						<input type='hidden' name='r_deadline' id='r_deadline' value='<?php echo($this->validation->r_deadline); ?>' />
 						<br />
 						<button id='deadline_trigger' style='margin: 0 0 5px 125px;'>Select</button>
 					<?php } ?>
@@ -58,7 +58,7 @@
 					<select name='r_box' id='r_box' size='1'>
 					<?php foreach ($boxes as $box) {
 						echo '<option value=\'' . $box['code'] . '\'';
-						if ($box['code'] == $this->validation->r_box) {
+						if ($box['name'] == $this->validation->r_box) {
 							echo ' selected=\'selected\'';
 						}
 						echo '>' . $box['name'] . '</option>';
@@ -71,7 +71,7 @@
 				<?php if (($user_level == 'editor') || ($status == 'request')) { ?>
 					<label for='r_reporter'>Reporter(s):</label>
 					<?php if ($user_level == 'editor') { ?>
-						<select name='r_reporter[]' id='r_reporter' size='4' multiple='multiple'>
+						<select name='r_reporter[]' id='r_reporter' size='6' multiple='multiple'>
 						<?php
 							// Create lookup array
 							$reporters_array = array();
