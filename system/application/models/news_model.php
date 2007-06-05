@@ -117,7 +117,7 @@ class News_model extends Model
 			CONCAT(editors.user_firstname," ",editors.user_surname) as editor,
 
 			COUNT(article_writers.article_writer_status) != 0 as is_requested,
-			MAX(article_writers.article_writer_status) = "accepted" as is_accepted,
+			IFNULL(MAX(article_writers.article_writer_status) = "accepted", 0) as is_accepted,
 
 			IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(ct_parent.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) as content_type_name
 
