@@ -110,11 +110,11 @@ class News_model extends Model
 
 			articles.article_request_title as headline,
 
-			GROUP_CONCAT(DISTINCT CONCAT(users.user_firstname,' ',users.user_surname)
+			GROUP_CONCAT(DISTINCT CONCAT(users.user_firstname," ",users.user_surname)
 				 ORDER BY users.user_surname
 				 SEPARATOR ", <br />") as authors,
 
-			CONCAT(editors.user_firstname,' ',editors.user_surname) as editor,
+			CONCAT(editors.user_firstname," ",editors.user_surname) as editor,
 
 			COUNT(article_writers.article_writer_status) != 0 as is_requested,
 			MAX(article_writers.article_writer_status) = "accepted" as is_accepted,
