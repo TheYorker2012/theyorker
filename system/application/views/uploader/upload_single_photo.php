@@ -3,7 +3,7 @@
 		<h2>photo upload</h2>
 		<p> Please choose a photo you wish up upload here. The file is limited to 2Mb in size, and must be larger than 220x165 in resolution.</p>
 		<div>
-			<label for="title1">Title / ALT Text: </label>
+			<label for="title1">Photo Title: </label>
 			<input type="text" name="title1" id="title1" size="32" />
 			<label for="userfile1">File Location: </label>
 			<input type="file" name="userfile1" id="userfile1" size="20" />
