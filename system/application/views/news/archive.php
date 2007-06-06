@@ -34,7 +34,7 @@ function printarticlelink($article) {
 		<h2>news archive</h2>
 
 		<?php echo($this->pagination->create_links()); ?>
-		<div>Viewing <?php echo(($offset + 1) . ' - ' . ($offset + 10) . ' of ' . $total . ' articles'); ?></div>
+		<div>Viewing <?php echo(($offset + 1) . ' - ' . ((($offset + 10) <= $total) ? ($offset + 10) : $total) . ' of ' . $total . ' articles'); ?></div>
 		<div style="border-bottom:1px #999 solid;clear:both"></div>
 
 <?php
