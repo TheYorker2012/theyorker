@@ -134,6 +134,9 @@ class News extends Controller {
 		 }
 		}
 
+		//Set page title to include headline
+		$this->main_frame->SetTitleParameters(array('headline' => $main_article['heading']));
+
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();
 		for ($index = 1; $index <= 2 && $index < count($latest_article_ids); $index++) {
