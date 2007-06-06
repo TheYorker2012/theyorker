@@ -556,3 +556,24 @@ span.theyorker {
 	font-weight: bold;
 	text-transform: capitalize;
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in for pagination links                            *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.Pagination {
+	margin: 0 0.5em;
+	padding: 0.2em 0;
+	float: right;
+}
+
+div.Pagination span {
+	border: 1px #20C1F0 solid;
+	padding: 0.1em 0.3em;
+	margin-right: 0.2em;
+}
+
+div.Pagination span.selected {
+	color: #fff;
+	font-weight: bold;
+	background-color: #20C1F0;
+}

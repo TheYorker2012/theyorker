@@ -180,26 +180,35 @@ class News extends Controller {
 		$config['total_rows'] = $this->News_model->GetArchive('count')->count;
 		$config['per_page'] = 10;
 		$config['num_links'] = 2;
-		$config['full_tag_open'] = '<div style="margin:0.5em 0;">';
+		$config['full_tag_open'] = '<div class="Pagination">';
 		$config['full_tag_close'] = '</div>';
-		$config['cur_tag_open'] = '<span style="border:1px #20C1F0 solid;color:#fff;font-weight:bold;background-color:#20C1F0;padding:1px 3px;margin-right:2px;">';
+		$config['first_tag_open'] = '<span>';
+		$config['first_tag_close'] = '</span>';
+		$config['last_tag_open'] = '<span>';
+		$config['last_tag_close'] = '</span>';
+		$config['next_tag_open'] = '<span>';
+		$config['next_tag_close'] = '</span>';
+		$config['prev_tag_open'] = '<span>';
+		$config['prev_tag_close'] = '</span>';
+		$config['cur_tag_open'] = '<span class="selected">';
 		$config['cur_tag_close'] = '</span>';
-		$config['num_tag_open'] = '<span style="border:1px #20C1F0 solid;padding:1px 3px;margin-right:2px;">';
+		$config['num_tag_open'] = '<span>';
 		$config['num_tag_close'] = '</span>';
 		$this->pagination->initialize($config);
 
-		$offset = $this->uri->segment(3,0);
-		if (!is_numeric($offset)) {
-			$offset = 0;
+		$data['offset'] = $this->uri->segment(3,0);
+		if (!is_numeric($data['offset'])) {
+			$data['offset'] = 0;
 		}
 
 		/// Get all past articles
-		$data['articles'] = $this->News_model->GetArchive('search', $offset, $config['per_page']);
+		$data['articles'] = $this->News_model->GetArchive('search', $data['offset'], $config['per_page']);
 		/// Get article thumbnails
 		$this->load->library('image');
 		foreach ($data['articles'] as &$article) {
 			$article['photo_xhtml'] = $this->image->getThumb($article['photo_id'], 'small', false, array('class' => 'Left'));
 		}
+		$data['total'] = $config['total_rows'];
 
 		/// Set up the public frame
 		$this->main_frame->SetTitle('Archive');
