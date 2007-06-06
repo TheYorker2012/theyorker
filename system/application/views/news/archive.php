@@ -33,14 +33,20 @@ function printarticlelink($article) {
 	<div class="BlueBox">
 		<h2>news archive</h2>
 
+		<?php echo($this->pagination->create_links()); ?>
+		<div>Viewing <?php echo(($offset + 1) . ' - ' . ($offset + 10) . ' of ' . $total . ' articles'); ?></div>
+		<div style="border-bottom:1px #999 solid;clear:both"></div>
+
 <?php
 		foreach($articles as $article) {
 			printarticlelink($article);
 		}
 ?>
+
+		<?php echo($this->pagination->create_links()); ?>
+		<div>Viewing <?php echo(($offset + 1) . ' - ' . ($offset + 10) . ' of ' . $total . ' articles'); ?></div>
+		<div style="clear:both"></div>
 	</div>
-	<br style="clear:both" />
-	<?php echo($this->pagination->create_links()); ?>
 </div>
 
 
