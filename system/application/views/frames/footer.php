@@ -39,3 +39,10 @@
 		Copyright 2007 The Yorker. Weather data provided by Yahoo. Page rendered in {elapsed_time} seconds. <a href='/policy/'>Privacy Policy</a>
 	</small>
 </div>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-864229-2";
+urchinTracker();
+</script>
