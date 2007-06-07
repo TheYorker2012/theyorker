@@ -55,6 +55,7 @@ class News extends Controller {
 
 		// Get variable content based on article type
 		$data['article_type'] = $article_type;
+		$data['puffer_heading'] = $this->pages_model->GetPropertyText('puffer_heading');
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['other_heading'] = $this->pages_model->GetPropertyText('other_heading');
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
@@ -133,6 +134,9 @@ class News extends Controller {
 				}
 		 }
 		}
+
+		//Set page title to include headline
+		$this->main_frame->SetTitleParameters(array('headline' => $main_article['heading']));
 
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();

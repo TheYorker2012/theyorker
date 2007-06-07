@@ -11,14 +11,14 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
 	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
 
-	<title>The Yorker - <?php
+	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
 			echo $head_title;
 		} else {
 			echo 'no pagename';
 		}
-	?></title>
+	?> - The Yorker</title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
 	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
@@ -101,7 +101,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
 					<li><a href="/news/sport/">Sport</a></li>
-					<!--<li><a href="/news/blogs/">Blogs</a></li>-->
+					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
 					<!--<li><a href="/reviews/culture">Culture</a></li>-->

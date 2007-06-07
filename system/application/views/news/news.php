@@ -29,22 +29,28 @@ function printarticlelink($article) {
 
 <div id="RightColumn">
 <?php
-// Latest News
-if ((count($news_previews) > 0) || ((isset($puffers)) && (count($puffers) > 0)))
-	echo('	<h2 class="first">' . $latest_heading . '</h2>');
+$first_header = ' class="first"';
 
+// Puffers / Blogs Heading
+if (((isset($blogs)) && (count($blogs) > 0)) || ((isset($puffers)) && (count($puffers) > 0))) {
+	echo('	<h2' . $first_header . '>' . $puffer_heading . '</h2>'."\n");
+	$first_header = '';
+}
+
+// Blogs
 if (isset($blogs)) {
 	foreach ($blogs as $blog) {
 		echo '<div class=\'Puffer\'>';
 		echo '<a href=\'/news/' . $blog['codename'] . '\'>';
 		echo '<img src=\'' . $blog['image'] . '\' alt=\'' . $blog['image_title'] . '\' title=\'' . $blog['image_title'] . '\' style="float:right;" />';
 		echo $blog['name'];
-		echo '</a><br style="clear:both" /></div>';
+		echo '</a><br />';
+		echo $blog['blurb'];
+		echo '<br style="clear:both" /></div>';
 	}
-	if (count($news_previews) > 0)
-		echo '<h2>' . $other_heading . '</h2>';
 }
 
+// Puffers
 if (isset($puffers)) {
 	foreach ($puffers as $puffer) {
 		echo '<div class=\'Puffer\'>';
@@ -52,19 +58,22 @@ if (isset($puffers)) {
 		echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
 		echo '</a></div>';
 	}
-	if (count($news_previews) > 0)
-		echo '<h2>' . $other_heading . '</h2>';
-} ?>
+}
 
-<?php
+// Latest Articles Heading
+if (count($news_previews) > 0) {
+	echo('	<h2' . $first_header . '>' . $latest_heading . '</h2>'."\n");
+}
+
 // News Previews
 foreach($news_previews as $preview)
 	printarticlelink($preview);
 
-// Other News
+// More Articles Heading
 if (count($news_others) > 0)
 	echo('	<h2>'.$other_heading.'</h2>'."\n");
 
+// Other News
 foreach ($news_others as $other)
 	printarticlelink($other);
 
@@ -75,13 +84,6 @@ if (count($main_article['related_articles']) > 0)
 foreach ($main_article['related_articles'] as $related)
 	printarticlelink($related);
 
-// Fact Box
-foreach($main_article['fact_boxes'] as $fact_box) {
-	echo('	<h2>'.$fact_box['title'].'</h2>'."\n");
-	echo('	<div class="Entry">'."\n");
-	echo('		'.$fact_box['wikitext']."\n");
-	echo('	</div>'."\n");
-}
 ?>
 </div>
 
