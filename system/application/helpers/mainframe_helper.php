@@ -24,7 +24,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 {
 	// User level doesn't matter
 	//$user_level = GetUserLevel();
-	
+
 	static $frames = array(
 		'public'		=> 'frame_public',
 		'student'		=> 'frame_public',
@@ -36,7 +36,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 		'manage'		=> 'frame_office',
 		'admin'			=> 'frame_office',
 	);
-	
+
 	assert('array_key_exists($Frame,$frames)');
 	$frame_library = $frames[$Frame];
 	$CI = &get_instance();
@@ -48,7 +48,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 			//  $CI->load->_ci_varmap[$frame_library] = 'main_frame';
 			$CI->load->library($frame_library);
 			$CI->main_frame = &$CI->$frame_library;
-			
+
 			$CI->main_frame->SetData('toplinks',
 					GenerateToplinks($Frame)
 				);
@@ -67,14 +67,14 @@ function GenerateToplinks($Permission)
 	$UserLevel = GetUserLevel();
 
 	$top_links = array();
-	
+
 	$log_out = array('log out', site_url('logout/main'.$CI->uri->uri_string()));
 	$username = $CI->user_auth->username;
 	$enter_office = array('enter office',site_url('office'));
 	$go_office = array('office',site_url('office'));
 	$enter_vip = array('enter VIP area',site_url('viparea'));
 	$go_vip = array('VIP area',site_url('viparea'));
-	
+
 	switch ($UserLevel) {
 		case 'public':
 			if ($CI->uri->segment(1) !== 'login') {
@@ -82,18 +82,19 @@ function GenerateToplinks($Permission)
 			}
 			$top_links[] = array('register',site_url('/account/password/register'));
 			break;
-		
+
 		case 'student':
 			$top_links[] = 'logged in as ' . $username;
 			if ($CI->user_auth->officeLogin) {
 				$top_links[] = $enter_office;
 			}
-			if ($CI->user_auth->officeLogin) {
+			//@TODO: Should display to VIPs too, for now displayed to everyone nse500
+			//if ($CI->user_auth->officeLogin) {
 				$top_links[] = $enter_vip;
-			}
+			//}
 			$top_links[] = $log_out;
 			break;
-		
+
 		case 'organisation':
 		case 'vip':
 			if ($Permission === 'public' || $Permission === 'student') {
@@ -112,7 +113,7 @@ function GenerateToplinks($Permission)
 			}
 			$top_links[] = $log_out;
 			break;
-		
+
 		case 'office':
 		case 'editor':
 		case 'manage':
@@ -144,7 +145,7 @@ function GenerateToplinks($Permission)
 			$top_links[] = $log_out;
 			break;
 	}
-	
+
 	return $top_links;
 /*
 	office | editor | admin
