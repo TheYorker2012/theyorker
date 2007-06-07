@@ -55,6 +55,7 @@ class News extends Controller {
 
 		// Get variable content based on article type
 		$data['article_type'] = $article_type;
+		$data['puffer_heading'] = $this->pages_model->GetPropertyText('puffer_heading');
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['other_heading'] = $this->pages_model->GetPropertyText('other_heading');
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
