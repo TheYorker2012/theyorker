@@ -91,7 +91,7 @@ class News extends Controller {
 		/// Get requested article id if submitted
 		$url_article_id = $this->uri->segment(3);
 		// Check if an article id was requested, if so check that the type of article it corresponds
-		// to is correct for the current news view redirect to home page of article type (so that search engines do not index duplicate pages).
+		// to is correct for the current news view, otherwise 404 (so that search engines do not index duplicate pages).
 		if ($url_article_id !== FALSE) {
 			if (is_numeric($url_article_id) && $this->News_model->IdIsOfType($url_article_id,$article_type)) {
 				/// Check if requested article is already one of the IDs returned
@@ -103,7 +103,7 @@ class News extends Controller {
 				/// Put request article id onto front of array so that it becomes the main article
 				$latest_article_ids = array_merge(array($url_article_id),$latest_article_ids);
 			} else {
-				redirect('/news/'.$article_type);
+				return show_404();
 			}
 		}
 
