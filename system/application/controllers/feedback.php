@@ -28,7 +28,7 @@ class Feedback extends Controller {
 		$article_heading = $this->input->post('a_articleheading');
 
 		if($article_heading) {
-			$feedback_text = 'Article: '.$article_heading.'\n\n'.$feedback_text;
+			$feedback_text = 'Article: '.$article_heading."\n\n".$feedback_text;
 		}
 
 		$include_browser_info = ($this->input->post('a_browser_info') == '1');
