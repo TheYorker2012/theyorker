@@ -121,6 +121,6 @@ function print_middle_box($title,$article_array){
 	</div>
 
 	<div class="BlueBox">
-		<?php print_box($articles['sport'],'latest sport','news/sport') ?>
+		<?php print_box($articles['sport'],'latest sport','news') ?>
 	</div>
 </div>
