@@ -103,16 +103,16 @@ class Members_model extends Model {
 		}
 		if ($organisation_id) {
 			$sql .= '
-				AND	(subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1 OR subscriptions.subscription_vip_status != "none")
 				AND	subscriptions.subscription_deleted = 0
+				AND	( subscriptions.subscription_user_confirmed = 1 OR subscriptions.subscription_organisation_confirmed = 1 OR subscriptions.subscription_vip_status != "none"
 			';
 			if ($manage_mode) {
-				$sql .= ' OR users.user_office_access = 1) ';
+				$sql .= ' OR users.user_office_access = 1) ) ';
 			} else {
-				$sql .= ' ) ';
+				$sql .= ' ) ) ';
 			}
 		} else {
-			$sql .= ' AND subscriptions.subscription_vip_status != "none" ';
+			$sql .= ' AND subscriptions.subscription_deleted = 0 AND subscriptions.subscription_vip_status != "none" ';
 		}
 
 		// Run the query and return the raw results array.
