@@ -4,14 +4,6 @@
 /*
 **  Author: Dave Huscroft
 **  dgh500
-**  Does: Gets the data for review page, and leagues
-**  Todo: Make the 'return' values properly formatted (not just result arrays)
-**        Do the /table/x/y function. NOTE: where does the 'star' 'price' and 'user' ratings come from - price is a tag group? /confused!
-**		  : Should probably be something like GetTagGroup($tag_group_id,$order_by (enum 'star','price','user'?],$order_direction)
-**		  : If tag_group_ordered is 1 for a tag group then order by tag_order, otherwise by tag_name
-**		  : 'star' and 'price' are names of tags, ordered by tag_order and tag_name respectively
-**		  : I've added this in to your GetLeague function :-)
-**		  Get some sleep
 */
 
 class Review_model extends Model {
@@ -511,7 +503,8 @@ class Review_model extends Model {
 		WHERE
 			articles.article_content_type_id = ? AND
 			articles.article_live_content_id IS NOT NULL AND
-			DATE(article_publish_date) >= CURRENT_DATE() AND
+			DATE(article_publish_date) <= CURRENT_DATE() AND
+			articles.article_deleted = 0 AND
 			organisations.organisation_directory_entry_name = ?
 		ORDER BY article_id DESC
 		";
@@ -1224,7 +1217,7 @@ function GetTagOrganisation($type,$organisation)
 				AND		articles.article_deleted = 0
 				AND		content_types.content_type_codename = ?';
 
-		$sql = $basesql.' AND DATE(articles.article_display_date) = CURRENT_DATE()';
+		$sql = $basesql.' AND DATE(articles.article_display_date) = CURRENT_DATE() LIMIT 0,1';
 
 		$query = $this->db->query($sql, array($content_type));
 

@@ -13,27 +13,27 @@ class Pr_model extends Model {
 	function GetContentTypeId($content_type_codename)
 	{
 		$sql = 'SELECT content_type_id FROM content_types WHERE content_type_codename = ?';
-		
+
 		$query = $this->db->query($sql, $content_type_codename );
-		
+
 		if ($query->num_rows() != 0) {
-			
+
 			$query = $query->result_array();
-			
+
 			$query = $query[0];
-			
+
 			$content_type_id = $query['content_type_id'];
-		
+
 			return $content_type_id;
 		} else {
 			return 0;
 		}
 	}
-	
+
 	///	Return list of all organisations and thier Name of Place, Date of Last Review, Number of Reviews, and Info Complete status
 	function GetReviewContextListFromId($content_type, $urlpath='directory/', $urlpostfix='')
 	{
-	
+
 		$sql =
 		'
 		SELECT
@@ -41,8 +41,8 @@ class Pr_model extends Model {
 			organisations.organisation_directory_entry_name as shortname,
 			CONCAT(?, organisations.organisation_directory_entry_name, ?) as link,
 			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
-			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,			
-			
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+
 			(
 			 review_context_contents.review_context_content_blurb IS NOT NULL AND
 			 review_context_contents.review_context_content_quote IS NOT NULL AND
@@ -50,7 +50,7 @@ class Pr_model extends Model {
 			 review_context_contents.review_context_content_recommend_item IS NOT NULL AND
 			 review_context_contents.review_context_content_rating IS NOT NULL
 			) as info_complete,
-			
+
 			(
 			 SELECT MAX(article_publish_date)
 			 FROM articles
@@ -58,6 +58,10 @@ class Pr_model extends Model {
 				articles.article_content_type_id = ?
 			  AND
 				articles.article_organisation_entity_id = organisations.organisation_entity_id
+			  AND
+			  	articles.article_deleted = 0
+			  AND
+			  	articles.article_live_content_id IS NOT NULL
 			) as date_of_last_review,
 
 			(
@@ -67,6 +71,10 @@ class Pr_model extends Model {
 				articles.article_content_type_id = ?
 			  AND
 				articles.article_organisation_entity_id = organisations.organisation_entity_id
+			  AND
+			  	articles.article_deleted = 0
+			  AND
+			  	articles.article_live_content_id IS NOT NULL
 			) as review_count
 
 		FROM organisations
@@ -81,7 +89,7 @@ class Pr_model extends Model {
 		LEFT JOIN users
 		  ON
 		   	users.user_entity_id =  review_contexts.review_context_assigned_user_entity_id
-			
+
 		LEFT JOIN review_context_contents
 		  ON
 			review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id
