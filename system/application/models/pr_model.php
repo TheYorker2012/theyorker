@@ -60,6 +60,8 @@ class Pr_model extends Model {
 				articles.article_organisation_entity_id = organisations.organisation_entity_id
 			  AND
 			  	articles.article_deleted = 0
+			  AND
+			  	articles.article_live_content_id IS NOT NULL
 			) as date_of_last_review,
 
 			(
@@ -71,6 +73,8 @@ class Pr_model extends Model {
 				articles.article_organisation_entity_id = organisations.organisation_entity_id
 			  AND
 			  	articles.article_deleted = 0
+			  AND
+			  	articles.article_live_content_id IS NOT NULL
 			) as review_count
 
 		FROM organisations
