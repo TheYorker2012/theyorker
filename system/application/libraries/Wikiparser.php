@@ -51,6 +51,7 @@ class Wikiparser {
 	protected $quote_template;
 	protected $templates;
 	protected $newline_mode;
+	protected $enable_headings;
 
 	protected $list_level_chars;
 	protected $list_level;
@@ -96,6 +97,7 @@ class Wikiparser {
 				'br' => '<br />',
 			);
 		$this->newline_mode = '';
+		$this->enable_headings = true;
 	}
 
 	/**
@@ -572,9 +574,13 @@ if (hasReqestedVersion) {
 	}
 
 	function parse_line($line) {
+		$first_characters = '\{\s\*\#;\:-';
+		if ($this->enable_headings) {
+			$first_characters .= '=';
+		}
 		$line_regexes = array(
 			'special_quote'=>'^"""(.*)"""\s*(.*)$',
-			'startparagraph'=>'^\s*([^\{\s\*\#;\:=-].*?)$',
+			'startparagraph'=>'^\s*([^'.$first_characters.'].*?)$',
 			//'preformat'=>'^\s(.*?)$',
 			'definitionlist'=>'^([\;\:])\s*(.*?)$',
 			'newline'=>'^$',
@@ -582,6 +588,9 @@ if (hasReqestedVersion) {
 			'sections'=>'^(={1,6})(.*?)(={1,6})$',
 			'horizontalrule'=>'^----$',
 		);
+		if (!$this->enable_headings) {
+			unset($line_regexes['sections']);
+		}
 		$char_regexes = array(
 //			'link'=>'(\[\[((.*?)\:)?(.*?)(\|(.*?))?\]\]([a-z]+)?)',
 			'internallink'=>'('.
