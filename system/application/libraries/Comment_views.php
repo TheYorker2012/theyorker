@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file libraries/Comments.php
+ * @file libraries/Comment_views.php
  * @brief Comments helper.
  * @pre loaded(library Frames)
  * @pre loaded(library Messages)
@@ -308,8 +308,8 @@ class CommentViewList extends FramesView
 		$this->SetData('MaxPerPage', $this->mMaxPerPage);
 		$this->SetData('PageLinkSpan', $this->mPageLinkSpan);
 		$this->SetData('IncludedIndex', $this->mIncludedComment);
-		$this->SetData('PageUrlPrefix', $CI->comments->GetUriPrefix());
-		$this->SetData('PageUrlPostfix', $CI->comments->GetUriPostfix());
+		$this->SetData('PageUrlPrefix', $CI->comment_views->GetUriPrefix());
+		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix());
 		// for subviews (comments)
 		foreach (array(	'Report'	=> 'report',
 						'Delete'	=> 'delete',
@@ -325,7 +325,7 @@ class CommentViewList extends FramesView
 }
 
 /// Comments helper.
-class Comments
+class Comment_views
 {
 	/// string Prefix to uri (before included comment number).
 	protected $mUriPrefix;

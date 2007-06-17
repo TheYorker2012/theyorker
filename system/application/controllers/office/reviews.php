@@ -824,10 +824,10 @@ class Reviews extends Controller
 		$data = $this->organisations->_GetOrgData($organisation);
 		$organisation_id = $data['organisation']['id'];
 
-		$this->load->library('comments');
-		$this->comments->SetUri('/office/reviews/'.$ContextType.'/'.$organisation.'/view/');
+		$this->load->library('comment_views');
+		$this->comment_views->SetUri('/office/reviews/'.$ContextType.'/'.$organisation.'/view/');
 		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
-		$data['comments'] = $this->comments->CreateStandard($thread, $IncludedComment);
+		$data['comments'] = $this->comment_views->CreateStandard($thread, $IncludedComment);
 
 		$this->main_frame->SetContentSimple('reviews/office_review_comments', $data);
 		$this->main_frame->SetTitleParameters(

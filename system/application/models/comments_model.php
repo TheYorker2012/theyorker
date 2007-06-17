@@ -338,6 +338,25 @@ class Comments_model extends model
 		return $this->db->affected_rows();
 	}
 	
+	/// Get a comment by comment id
+	/**
+	 * @param $CommentId  int    Comment identifier.
+	 * @param $Subset     string Same subsets as GetCommentByThreadId
+	 * @param $Conditions array[string] Extra SQL conditions.
+	 * @return Single comment like GetCommentByThreadId
+	 */
+	function GetCommentByCommentId($CommentId, $Subset = 'visible', $Conditions = array())
+	{
+		$Conditions[] = 'comments.comment_id = '.$this->db->escape($CommentId);
+		$comments = $this->GetCommentsByThreadId(NULL, $Subset, $Conditions);
+		
+		if (empty($comments)) {
+			return NULL;
+		} else {
+			return $comments[0];
+		}
+	}
+	
 	/// Get comments by the thread's id
 	/**
 	 * @param $ThreadId int    Thread identifier.
@@ -429,26 +448,9 @@ class Comments_model extends model
 		$query = $this->db->query($sql);
 		$comments = $query->result_array();
 		
-		$identities = $this->GetAvailableIdentities();
-		foreach ($comments as $key => $comment) {
-			if (NULL === $comment['xhtml']) {
-				// uncached
-				$xhtml = $this->ParseCommentWikitext($comment['wikitext']);
-				$comments[$key]['xhtml'] = $xhtml;
-				
-				// try updating the cache
-				$cache_sql = '
-				UPDATE comments
-				SET comments.comment_content_xhtml = '.$this->db->escape($xhtml).'
-				WHERE comments.comment_id = '.$comment['comment_id'];
-				$this->db->query($cache_sql);
-			}
-			$comments[$key]['owned'] = array_key_exists($comment['author_id'], $identities);
-		}
+		$comments = $this->PostprocessComments($comments);
 		
 		return $comments;
-		
-		/// @todo postprocess.
 	}
 	
 	/// Create a preview comment.
@@ -610,6 +612,35 @@ class Comments_model extends model
 		$sql = 'UPDATE comments SET comments.comment_content_xhtml = NULL';
 		$this->db->query($sql);
 		return $this->db->affected_rows();
+	}
+	
+	/// Process comments from the database, filling in a few extra fields.
+	/**
+	 * @param $Comments array of comments from database.
+	 * @return @a $Comments.
+	 *
+	 * - Comment wikitext caching.
+	 * - 'owned' bool Whether the current user owns the comment.
+	 */
+	function PostprocessComments($Comments)
+	{
+		$identities = $this->GetAvailableIdentities();
+		foreach ($Comments as $key => $comment) {
+			if (NULL === $comment['xhtml']) {
+				// uncached
+				$xhtml = $this->ParseCommentWikitext($comment['wikitext']);
+				$Comments[$key]['xhtml'] = $xhtml;
+				
+				// try updating the cache
+				$cache_sql = '
+				UPDATE comments
+				SET comments.comment_content_xhtml = '.$this->db->escape($xhtml).'
+				WHERE comments.comment_id = '.$comment['comment_id'];
+				$this->db->query($cache_sql);
+			}
+			$Comments[$key]['owned'] = array_key_exists($comment['author_id'], $identities);
+		}
+		return $Comments;
 	}
 	
 	/// Get an array of identities that comments can be posted from.

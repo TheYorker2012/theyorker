@@ -56,10 +56,10 @@ class Review_views
 		$data['type_id'] 	= $content_id;
 
 		if ($this->mCommentsEnabled) {
-			$CI->load->library('comments');
-			$CI->comments->SetUri('/reviews/'.$content_type.'/'.$organisation_name.'/');
+			$CI->load->library('comment_views');
+			$CI->comment_views->SetUri('/reviews/'.$content_type.'/'.$organisation_name.'/');
 			$thread = $CI->Review_model->GetReviewContextCommentThread($data['organisation_id'], $content_id);
-			$data['comments'] = $CI->comments->CreateStandard($thread, $IncludedComment);
+			$data['comments'] = $CI->comment_views->CreateStandard($thread, $IncludedComment);
 		}
 
 		//Load bylines support

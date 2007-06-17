@@ -51,13 +51,16 @@ if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Commen
 			'</div></div>');
 	}
 } else {
-	// Don't link to report properly if only a preview.
-	if (is_numeric($Comment['comment_id'])) {
-		$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
-	} else {
-		$report_link = '';
+	// Only show the no_report index isn't set.
+	if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
+		// Don't link to report properly if only a preview.
+		if (is_numeric($Comment['comment_id'])) {
+			$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
+		} else {
+			$report_link = '';
+		}
+		echo('<p><a'.$report_link.'>report abuse</a></p>');
 	}
-	echo('<p><a'.$report_link.'>report abuse</a></p>');
 }
 echo('</div>');
 ?>

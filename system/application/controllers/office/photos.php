@@ -93,9 +93,9 @@ class Photos extends Controller
 
 				/// Get comments
 				if (is_numeric($data['comments_thread'])) {
-					$this->load->library('comments');
-					$this->comments->SetUri('/office/photos/view/'.$request_id.'/');
-					$data['comments'] = $this->comments->CreateStandard((int)$data['comments_thread'],1);
+					$this->load->library('comment_views');
+					$this->comment_views->SetUri('/office/photos/view/'.$request_id.'/');
+					$data['comments'] = $this->comment_views->CreateStandard((int)$data['comments_thread'],1);
 				}
 
 				/// Get current user's access level

@@ -22,8 +22,6 @@ class Pages extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		
-		$this->load->library('messages');
 	}
 	
 	function _SetPermissions()
