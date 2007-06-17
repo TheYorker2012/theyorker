@@ -50,15 +50,18 @@ class Comments extends Controller
 		} else {
 			// The user has not confirmed or cancelled, ask for confirmation.
 			$this->load->library('comment_views');
-			$comments = $this->comments_model->GetCommentByCommentId($CommentId);
-			if (NULL === $comments) {
+			$conditions = array('comments.comment_id = '.(int)$CommentId);
+			$comments = $this->comments_model->GetCommentsByThreadId((int)$ThreadId, 'visible', $conditions);
+			if (empty($comments)) {
 				// The comment isn't visible or doesn't exist.
 				$this->messages->AddMessage('error', 'The specified comment could not be found.');
 				redirect($redirect_to);
 			} else {
 				// Ask the user for confirmation.
 				// Mark no_report on the comments so no report link
-				$comments['no_report'] = true;
+				foreach ($comments as $key => $comment) {
+					$comments[$key]['no_report'] = true;
+				}
 				$this->pages_model->SetPageCode('comment_report');
 				
 				$data = array();
@@ -66,7 +69,7 @@ class Comments extends Controller
 				$data['culprit'] = new CommentViewList();
 				$data['target'] = $this->uri->uri_string();
 				
-				$data['culprit']->SetComments(array($comments));
+				$data['culprit']->SetComments($comments);
 				
 				$this->main_frame->SetContentSimple('comments/report', $data);
 				$this->main_frame->Load();
