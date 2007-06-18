@@ -22,8 +22,10 @@ class News extends Controller {
 	{
 		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
 			$this->index($method);
-		} else {
+		} elseif (method_exists($this, $method)) {
 			$this->$method();
+		} else {
+			show_404();
 		}
 	}
 
