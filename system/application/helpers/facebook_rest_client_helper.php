@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 //
 // +---------------------------------------------------------------------------+
-// | Facebook Development Platform PHP5 client                                 |
+// | Facebook Platform PHP5 client                                             |
 // +---------------------------------------------------------------------------+
 // | Copyright (c) 2007 Facebook, Inc.                                         | 
 // | All rights reserved.                                                      |
@@ -31,18 +31,12 @@
 // +---------------------------------------------------------------------------+
 //
 
-/**
- * REST-based API client.
- * @author ari
- * @author dave
- */
 class FacebookRestClient {
   public $secret;
   public $session_key;
   public $api_key;
-  public $server_addr;
-  public $desktop;
-  public $session_secret; // not used for server apps, for desktop apps this will get set in auth_getSession
+  public $friends_list; // to save making the friends.get api call, this will get prepopulated on canvas pages
+  public $added;        // to save making the users.isAppAdded api call, this will get prepopulated on canvas pages
   
   public $debug;
 
@@ -52,18 +46,13 @@ class FacebookRestClient {
    *                            this as null and then set it later by just 
    *                            directly accessing the $session_key member 
    *                            variable.
-   * @param bool   $desktop     set to true if you are a desktop client
    */
-  public function __construct($server_addr, $api_key, $secret, $session_key=null, $desktop=false, $throw_errors=true, $debug = '0') {
-    $this->server_addr  = $server_addr;
+  public function __construct($api_key, $secret, $session_key=null, $debug = '0') {
     $this->secret       = $secret;
     $this->session_key  = $session_key;
     $this->api_key      = $api_key;
-    $this->desktop      = $desktop;
-    $this->throw_errors = $throw_errors;
     $this->last_call_id = 0;
-    $this->last_call_success = true;
-    $this->last_error = array();
+    $this->server_addr  = FacebookPlatform::get_facebook_url('api') . '/restserver.php';
     $this->debug        = $debug;
     if ($this->debug) {
       $this->cur_id = 0;
@@ -86,31 +75,17 @@ function toggleDisplay(id, type) {
   }
 
   /**
-   * Intended for use by desktop clients.  Call this function and store the
-   * result, using it first to generate the appropriate login url and then to
-   * retrieve the session information.
-   * @return assoc array with 'token' => the auth_token string to be passed into login.php and auth_getSession.
-   */
-  public function auth_createToken() {
-    return $this->call_method('facebook.auth.createToken', array());
-  }
-
-  /**
    * Returns the session information available after current user logs in.
    * @param string $auth_token the token returned by auth_createToken or 
    *  passed back to your callback_url.
-   * @return assoc array containing session_key, uid, and secret (desktop only)
+   * @return assoc array containing session_key, uid
    */
   public function auth_getSession($auth_token) {
-    if ($this->desktop) {
-      $real_server_addr = $this->server_addr;
-      $this->server_addr = str_replace('http://', 'https://', $real_server_addr);
-    }
     $result = $this->call_method('facebook.auth.getSession', array('auth_token'=>$auth_token));
     $this->session_key = $result['session_key'];
-    if ($this->desktop) {
-      $this->session_secret = $result['secret'];
-      $this->server_addr = $real_server_addr;
+    if (isset($result['secret']) && $result['secret']) {
+      // desktop apps have a special secret
+      $this->secret = $result['secret'];
     }
     return $result;
   }
@@ -164,6 +139,45 @@ function toggleDisplay(id, type) {
       array('query' => $query));
   }
 
+  public function feed_publishStoryToUser($title, $body, 
+                                          $image_1=null, $image_1_link=null,
+                                          $image_2=null, $image_2_link=null,
+                                          $image_3=null, $image_3_link=null,
+                                          $image_4=null, $image_4_link=null,
+                                          $priority=1) {
+    return $this->call_method('facebook.feed.publishStoryToUser',
+      array('title' => $title,
+            'body' => $body,
+            'image_1' => $image_1,
+            'image_1_link' => $image_1_link,
+            'image_2' => $image_2,
+            'image_2_link' => $image_2_link,
+            'image_3' => $image_3,
+            'image_3_link' => $image_3_link,
+            'image_4' => $image_4,
+            'image_4_link' => $image_4_link,
+            'priority' => $priority));
+  }
+                                          
+  public function feed_publishActionOfUser($title, $body, 
+                                           $image_1=null, $image_1_link=null,
+                                           $image_2=null, $image_2_link=null,
+                                           $image_3=null, $image_3_link=null,
+                                           $image_4=null, $image_4_link=null,
+                                           $priority=1) {
+    return $this->call_method('facebook.feed.publishActionOfUser',
+      array('title' => $title,
+            'body' => $body,
+            'image_1' => $image_1,
+            'image_1_link' => $image_1_link,
+            'image_2' => $image_2,
+            'image_2_link' => $image_2_link,
+            'image_3' => $image_3,
+            'image_3_link' => $image_3_link,
+            'image_4' => $image_4,
+            'image_4_link' => $image_4_link,
+            'priority' => $priority));
+  }
 
   /**
    * Returns whether or not pairs of users are friends.
@@ -185,6 +199,9 @@ function toggleDisplay(id, type) {
    * @return array of friends
    */
   public function friends_get() {
+    if (isset($this->friends_list)) {
+      return $this->friends_list;
+    }
     return $this->call_method('facebook.friends.get', array());
   }
   
@@ -235,6 +252,32 @@ function toggleDisplay(id, type) {
   }
 
   /**
+   * Sends an email notification to the specified user.
+   * @return string url which you should send the logged in user to to finalize the message.
+   */
+  public function notifications_send($to_ids, $markup, $no_email) {
+    return $this->call_method('facebook.notifications.send',
+                              array('to_ids' => $to_ids, 'markup' => $markup, 'no_email' => $no_email));
+  }
+
+  /**
+   * Sends a request to the specified user (e.g. "you have 1 event invitation")
+   * @param array $to_ids   user ids to receive the request (must be friends with sender, capped at 10)
+   * @param string $type    type of request, e.g. "event" (as in "You have an event invitation.")
+   * @param string $content fbml content of the request.  really stripped down fbml - just
+   *                        text/names/links.  also, use the special tag <fb:req-choice url="" label="" />
+   *                        to specify the buttons to be included.
+   * @param string $image   url of an image to show beside the request
+   * @param bool   $invite  whether to call it an "invitation" or a "request"
+   * @return string url which you should send the logged in user to to finalize the message.
+   */
+  public function notifications_sendRequest($to_ids, $type, $content, $image, $invite) {
+    return $this->call_method('facebook.notifications.sendRequest',
+                              array('to_ids' => $to_ids, 'type' => $type, 'content' => $content,
+                                    'image' => $image, 'invite' => $invite));
+  }
+
+  /**
    * Returns photos according to the filters specified.
    * @param int $subj_id Optional: Filter by uid of user tagged in the photos.
    * @param int $aid Optional: Filter by an album, as returned by 
@@ -275,17 +318,6 @@ function toggleDisplay(id, type) {
   }
 
   /**
-   * For earlier users of Platform beta only.  Decodes ids returned in beta 
-   * version of service to real Facebook ids (event, user, etc.) in version 1.
-   * @param array $ids ids returned from beta service
-   * @return array of (old_id, new_id) pairs, for all valid old ids.
-   */
-  public function update_decodeIDs($ids)
-  {
-    return $this->call_method('facebook.update.decodeIDs', array('ids' => $ids));
-  }
-
-  /**
    * Returns the requested info fields for the requested set of users
    * @param array $uids an array of user ids 
    * @param array $fields an array of strings describing the info fields desired
@@ -303,12 +335,46 @@ function toggleDisplay(id, type) {
     return $this->call_method('facebook.users.getLoggedInUser', array());
   }
 
+  
+  /** 
+   * Returns whether or not the user corresponding to the current session object has the app installed 
+   * @return boolean 
+   */
+  public function users_isAppAdded() {
+    if (isset($this->added)) {
+      return $this->added;
+    }
+    return $this->call_method('facebook.users.isAppAdded', array());
+  }
+
+  /**
+   * Sets the FBML for the profile of the user attached to this session
+   * @param   string   $markup     The FBML that describes the profile presence of this app for the user 
+   * @return  array    A list of strings describing any compile errors for the submitted FBML
+   */
+  public function profile_setFBML($markup, $uid = null) {
+    return $this->call_method('facebook.profile.setFBML', array('markup' => $markup, 'uid' => $uid));
+  }
+
+  public function profile_getFBML($uid) {
+    return $this->call_method('facebook.profile.getFBML', array('uid' => $uid));
+  }
+
+  public function fbml_refreshImgSrc($url) {
+    return $this->call_method('facebook.fbml.refreshImgSrc', array('url' => $url));
+  }
+
+  public function fbml_refreshRefUrl($url) {
+    return $this->call_method('facebook.fbml.refreshRefUrl', array('url' => $url));
+  }
+
+  public function fbml_setRefHandle($handle, $fbml) {
+    return $this->call_method('facebook.fbml.setRefHandle', array('handle' => $handle, 'fbml' => $fbml));
+  }
+
   /* UTILITY FUNCTIONS */
 
   public function call_method($method, $params) {
-    $this->last_call_success = true;
-    $this->last_error = array();
-
     $xml = $this->post_request($method, $params);
     $sxml = simplexml_load_string($xml);
     $result = self::convert_simplexml_to_array($sxml);
@@ -328,12 +394,7 @@ function toggleDisplay(id, type) {
       print '</div>';
     }
     if (is_array($result) && isset($result['error_code'])) {
-      $this->last_call_success = false;
-      $this->last_error = $result;
-
-      if ($this->throw_errors) {
-        throw new FacebookRestClientException($result['error_msg'], $result['error_code']);
-      }
+      throw new FacebookRestClientException($result['error_msg'], $result['error_code']);
     }
     return $result;
   }
@@ -355,43 +416,26 @@ function toggleDisplay(id, type) {
       if (is_array($val)) $val = implode(',', $val);
       $post_params[] = $key.'='.urlencode($val);
     }
-    if ($this->desktop && $method != 'facebook.auth.getSession' && $method != 'facebook.auth.createToken') {
-      $secret = $this->session_secret;
-    } else {
-      $secret = $this->secret;
-    }
-    $post_params[] = 'sig='.generate_sig($params, $secret);
+    $secret = $this->secret;
+    $post_params[] = 'sig='.FacebookPlatform::generate_sig($params, $secret);
     $post_string = implode('&', $post_params);
 
-    // Use CURL if installed
-    if (function_exists('curl_init'))
-    {
+    if (function_exists('curl_init')) {
+      // Use CURL if installed...
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $this->server_addr);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_USERAGENT, 'Facebook API PHP5 Client 1.0 (curl) ' . phpversion());
+      curl_setopt($ch, CURLOPT_USERAGENT, 'Facebook API PHP5 Client 1.1 (curl) ' . phpversion());
       $result = curl_exec($ch);
       curl_close($ch);
     } else {
-
-      // non-curl based version...
-      // Using fopen with ssl transport requires OpenSSL to be installed.
-      if ((strncmp($this->server_addr, 'https', 5) == 0)
-        && function_exists('openssl_open'))
-      {
-        $protocol = 'https';
-      } else {
-        // switch back to http
-        $protocol = 'http';
-        $this->server_addr = str_replace('https://', 'http://', $this->server_addr);
-      }
-
+      // Non-CURL based version...
       $context =
-        array($protocol =>
+        array('http' =>
               array('method' => 'POST',
                     'header' => 'Content-type: application/x-www-form-urlencoded'."\r\n".
-                                'User-Agent: Facebook API PHP5 Client 1.0 (non-curl) '.phpversion()."\r\n".
+                                'User-Agent: Facebook API PHP5 Client 1.1 (non-curl) '.phpversion()."\r\n".
                                 'Content-length: ' . strlen($post_string),
                     'content' => $post_string));
       $contextid=stream_context_create($context);
@@ -430,24 +474,6 @@ class FacebookRestClientException extends Exception {
 }
 
 // Supporting methods and values------
-/**
- * Generate a signature for the API call.  Should be copied into the client
- * library and also used on the server to validate signatures.
- *
- * @author ari
- */
-function generate_sig($params_array, $secret) {
-  $str = '';
-
-  ksort($params_array);
-  foreach ($params_array as $k=>$v) {
-    if ($k != 'sig')
-      $str .= "$k=$v";
-  }
-  $str .= $secret;
-
-  return md5($str);
-}
 
 /**
  * Error codes and descriptions for the Facebook API.
