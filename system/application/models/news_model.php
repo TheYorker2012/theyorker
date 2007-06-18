@@ -38,6 +38,7 @@ class News_model extends Model
 			INNER JOIN article_contents
 			  ON article_contents.article_content_id = articles.article_live_content_id
 			 AND article_pulled = 0
+			 AND article_deleted = 0
 			 AND article_suggestion_accepted = 1
 
 			WHERE DATE(articles.article_publish_date) <= CURRENT_DATE()
@@ -289,6 +290,7 @@ class News_model extends Model
 				ON (content_types.content_type_id = articles.article_content_type_id)
 				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
 				AND articles.article_live_content_id IS NOT NULL
+				AND	articles.article_deleted = 0
 				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
 		if (!empty($types)) {
 			$sql .= '	AND (';
