@@ -87,18 +87,22 @@ class Review_model extends Model {
 		$this->db->query($sql);
 
 		// check something's happened
-		if ($this->db->affected_rows()) {
+		$affected = $this->db->affected_rows();
+		if (1 == $affected) {
+			/// @note ONLY add the new threads if the review context is NEW (not undeleted)
 			$this->load->model('comments_model');
 			$CI = & get_instance();
+			// Public thread
 			$CI->comments_model->CreateThread(
 				array(), 'review_contexts',
 				$query[0], 'review_context_comment_thread_id');
+			// Private thread
 			$CI->comments_model->CreateThread(
 				array('allow_anonymous_comments' => FALSE), 'review_contexts',
 				$query[0], 'review_context_office_comment_thread_id');
 			return TRUE;
 		} else {
-			return FALSE;
+			return (bool)$affected;
 		}
 
 	}
