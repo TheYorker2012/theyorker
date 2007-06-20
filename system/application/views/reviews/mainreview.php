@@ -88,5 +88,11 @@ foreach($article as $a) {
 }
 ?>
 	</div>
+	<?php
+		// Show comments
+		if (isset($comments)) {
+			$comments->Load();
+		}
+	?>
 
 </div>
