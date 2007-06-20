@@ -408,15 +408,6 @@ class Reviews extends Controller
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
 	}
 
-	function delcomment()
-	{
-		$context = $this->uri->segment(4);
-		$organisation = $this->uri->segment(5);
-		$comment_id = $this->uri->segment(6);
-		$this->review_model->DeleteComment($comment_id);
-		redirect('/office/reviews/'.$organisation.'/'.$context.'/comments');
-	}
-
 	function tags($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
@@ -825,7 +816,7 @@ class Reviews extends Controller
 		$organisation_id = $data['organisation']['id'];
 
 		$this->load->library('comment_views');
-		$this->comment_views->SetUri('/office/reviews/'.$ContextType.'/'.$organisation.'/view/');
+		$this->comment_views->SetUri('/office/reviews/'.$organisation.'/'.$ContextType.'/comments/view/');
 		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
 		$data['comments'] = $this->comment_views->CreateStandard($thread, $IncludedComment);
 
