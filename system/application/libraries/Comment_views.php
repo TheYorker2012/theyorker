@@ -189,7 +189,7 @@ class CommentViewAdd extends FramesView
 						// Postprocess the preview
 						$preview['owned'] = TRUE;
 						if (NULL === $preview['author']) {
-							$preview['author'] = 'anonymous coward';
+							$preview['author'] = 'Anonymous';
 						}
 						$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time']);
 					} else {
@@ -289,7 +289,7 @@ class CommentViewList extends FramesView
 		// comment postprocessing for list
 		foreach ($this->mComments as $key => $comment) {
 			if (NULL === $comment['author']) {
-				$this->mComments[$key]['author'] = 'anonymous coward';
+				$this->mComments[$key]['author'] = 'Anonymous';
 			}
 			$this->mComments[$key]['post_time'] = $CI->time_format->date('%D %T', $comment['post_time']);
 		}
@@ -365,7 +365,6 @@ class Comment_views
 			return NULL;
 		}
 		$thread_id = (int)$thread['thread_id'];
-		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'visible');
 		
 		// create the views
 		$comment_view_thread = new CommentViewThread($thread_id);
@@ -373,13 +372,15 @@ class Comment_views
 		$comment_view_list   = new CommentViewList();
 		
 		// send the data to the views
-		$comment_view_list->SetComments($comments);
 		$comment_view_add->SetThread($thread);
 		$comment_view_thread->SetThread($thread);
 		
 		// handle any form post data
 		$comment_view_add->CheckPost();
 		$comment_view_thread->CheckPost();
+		
+		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'visible');
+		$comment_view_list->SetComments($comments);
 		
 		// set which page of comments to show
 		$comment_view_list->SetMaxPerPage($MaxPerPage);
