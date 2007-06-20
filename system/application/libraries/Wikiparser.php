@@ -305,6 +305,7 @@ class Wikiparser {
 				$title = $this->title_overrides[$href];
 			}
 		} else {
+			$href = $this->image_uri.$href;
 			$imagetag =
 				'<img src="'.$href.'" alt="'.$title.'" />';
 		}

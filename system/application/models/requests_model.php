@@ -281,6 +281,11 @@ class Requests_Model extends Model
 				 article_live_content_id = ?
 				WHERE article_id = ?';
 		$query = $this->db->query($sql,array($publish_date,$revision_id,$article_id));
+
+		/// Create new comment thread
+		$this->load->model('comments_model');
+		$CI = &get_instance();
+		$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_public_comment_thread_id');
 	}
 
 	//Add a  new request to the article table

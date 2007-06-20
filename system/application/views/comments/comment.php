@@ -19,7 +19,7 @@
 <?php
 echo('<div class="'.($Comment['owned'] ? 'Blue':'Grey').'Box" id="CommentItem'.$Comment['comment_id'].'">');
 echo('<h2>'.(isset($ListNumber)?$ListNumber.': ':'').$Comment['author'].'</h2>');
-echo('<p><small>posted '.$Comment['post_time'].'</small></p>');
+echo('<div class="Date">'.$Comment['post_time'].'</div>');
 if (NULL !== $Comment['rating']) {
 	echo('<p>rated: '.$Comment['rating'].'</p>');
 }
