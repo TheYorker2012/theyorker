@@ -198,7 +198,7 @@ class CommentViewAdd extends FramesView
 					$success = (/*is_int($identity) &&*/ $CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
 					if ($success) {
 						$CI->messages->AddMessage('success', 'Comment added');
-						redirect($CI->comments->GenUri('last'));
+						redirect($CI->comment_views->GenUri('last'));
 					} else {
 						$CI->messages->AddMessage('error', 'Comment could not be added');
 					}
