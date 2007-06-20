@@ -209,6 +209,37 @@ function VipSegments($Set = NULL)
 	return $vip_segments;
 }
 
+/// Specify or get the output formats that can be produced by the controller.
+/**
+ * @param $Modes array[string],string,NULL = NULL Each element is a output mode identifier:
+ *	- 'xhtml' - Standard XHTML
+ *	- 'fbml' - Facebook markup language for facebook apps
+ */
+function OutputModes($Modes = NULL)
+{
+	static $output_modes = array('xhtml');
+	if (NULL !== $Modes) {
+		if (is_array($Modes)) {
+			$output_modes = $Modes;
+		} else {
+			$output_modes = array($Modes);
+		}
+	}
+	return $output_modes;
+}
+
+/// Specify or get the current output mode.
+/**
+ * @param $Set string,NULL = NULL Output mode identifier.
+ */
+function OutputMode($Set = NULL)
+{
+	static $output_mode = 'xhtml';
+	if (NULL !== $Set) {
+		$output_mode = $Set;
+	}
+	return $output_mode;
+}
 
 /// Check the access permissions.
 /**
@@ -229,7 +260,22 @@ function VipSegments($Set = NULL)
 function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost = FALSE)
 {
 	// Start a session
-	session_start();
+	$CI = &get_instance();
+	
+	// Decide on output format
+	if (array_key_exists('fb_sig', $_POST)) {
+		/// @todo AUTHENTICATE FACEBOOK
+		OutputMode('fbml');
+		global $_SESSION;
+		$_SESSION = array();
+	} else {
+		OutputMode('xhtml');
+		session_start();
+	}
+	// If the output mode is not supported, show a 404
+	if (!in_array(OutputMode(), OutputModes())) {
+		show_404();
+	}
 
 	// Translate some auxilliary permissions
 	$auxilliary_permissions = array(
@@ -240,7 +286,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	}
 
 	// Initialisation stuff
-	$CI = &get_instance();
 	$CI->load->library('messages');
 	$CI->load->model('user_auth');
 	$CI->load->model('pages_model');
@@ -586,7 +631,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			}
 		}
 	}
-
+	if ('fbml' === OutputMode()) {
+		$Permission = 'facebookapp';
+	}
 	SetupMainFrame($Permission, FALSE);
 
 	if (!$access_allowed && $LoadMainFrame) {

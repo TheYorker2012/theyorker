@@ -80,6 +80,7 @@ class Home extends Controller {
 
 	function index()
 	{
+		OutputModes(array('xhtml','fbml'));
 		if (!CheckPermissions('public')) return;
 
 		$this->pages_model->SetPageCode('home_main');
