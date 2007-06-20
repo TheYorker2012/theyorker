@@ -31,6 +31,222 @@ class Travis extends Controller {
 		$this->main_frame->Load();
 	}
 
+	function images()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$data['images'][] = array(
+			'url'		=>	'CompSci.jpg',
+			'style'		=>	'0',
+			'position'	=>	'right'
+		);
+		$data['images'][] = array(
+			'url'		=>	'CompSci.jpg',
+			'style'		=>	'1',
+			'position'	=>	'right'
+		);
+		$data['images'][] = array(
+			'url'		=>	'CompSci.jpg',
+			'style'		=>	'0',
+			'position'	=>	'bottom'
+		);
+		$data['images'][] = array(
+			'url'		=>	'CompSci.jpg',
+			'style'		=>	'1',
+			'position'	=>	'bottom'
+		);
+		$data['images'][] = array(
+			'url'		=>	'70.jpg',
+			'style'		=>	'0',
+			'position'	=>	'right'
+		);
+		$data['images'][] = array(
+			'url'		=>	'70.jpg',
+			'style'		=>	'1',
+			'position'	=>	'right'
+		);
+		$data['images'][] = array(
+			'url'		=>	'70.jpg',
+			'style'		=>	'0',
+			'position'	=>	'bottom'
+		);
+		$data['images'][] = array(
+			'url'		=>	'70.jpg',
+			'style'		=>	'1',
+			'position'	=>	'bottom'
+		);
+
+		// Set up the public frame
+		$this->main_frame->SetTitle('Travis\' Ideas Page :)');
+		$this->main_frame->SetContentSimple('test/travis-images', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+
+	function image_test($img_path = 'CompSci.jpg', $type = 0, $position = 'right', $caption = 'Chris Travis &copy; 2007')
+	{
+		$img_path = realpath('.') . '/images/prototype/news//' . $img_path;
+		$img = @imagecreatefromjpeg($img_path);
+		if ($img) {
+			$img_size = getimagesize($img_path);
+
+			if ($type == 0) {
+				$black = imagecolorallocate($img, 0, 0, 0);
+				$water_mark_bg = imagecolorallocatealpha($img, 255, 255, 255, 65);
+			} else {
+				$black = imagecolorallocate($img, 255, 255, 255);
+				$water_mark_bg = imagecolorallocatealpha($img, 0, 0, 0, 65);
+			}
+
+			putenv('GDFONTPATH=' . realpath('.').'/images');
+			$font = 'arial';
+
+			if ($position == 'bottom') {
+				imagefilledrectangle($img, 0, $img_size[1] - 12, $img_size[0], $img_size[1], $water_mark_bg);
+				imagettftext($img, 8, 0, 5, $img_size[1] - 2, $black, $font, html_entity_decode($caption, ENT_QUOTES, 'UTF-8'));
+			} else {
+				imagefilledrectangle($img, $img_size[0] - 12, 0, $img_size[0], $img_size[1], $water_mark_bg);
+				imagettftext($img, 8, 90, $img_size[0] - 2, $img_size[1] - 5, $black, $font, html_entity_decode($caption, ENT_QUOTES, 'UTF-8'));
+			}
+
+		} else {
+			$img = imagecreatetruecolor(150, 30);	/* Create a black image */
+			$bgc = imagecolorallocate($img, 255, 255, 255);
+			$tc  = imagecolorallocate($img, 0, 0, 0);
+	        imagefilledrectangle($img, 0, 0, 150, 30, $bgc);
+			/* Output an errmsg */
+			imagestring($img, 1, 5, 5, "Error loading $img_path", $tc);
+		}
+		header('Content-type: image/png');
+		imagepng($img);
+		imagedestroy($img);
+	}
+
+	function HttpRequest( $url, $method = 'GET', $data = NULL, $additional_headers = NULL, $followRedirects = true )
+	{
+	    # in compliance with the RFC 2616 post data will not redirected
+	    $method = strtoupper($method);
+	    $url_parsed = @parse_url($url);
+	    if (!@$url_parsed['scheme']) $url_parsed = @parse_url('http://'.$url);
+	    extract($url_parsed);
+	    if(!is_array($data))
+	    {
+	        $data = NULL;
+	    }
+	    else
+	    {
+	        $ampersand = '';
+	        $temp = NULL;
+	        foreach($data as $k => $v)
+	        {
+	            $temp .= $ampersand.urlencode($k).'='.urlencode($v);
+	            $ampersand = '&';
+	        }
+	        $data = $temp;
+	    }
+	    if(!@$port) $port = 80;
+	    if(!@$path) $path = '/';
+	    if(($method == 'GET') and ($data)) $query = (@$query)?'&'.$data:'?'.$data;
+	    if(@$query) $path .= '?'.$query;
+	    $out = "$method $path HTTP/1.0\r\n";
+	    $out .= "Host: $host\r\n";
+	    if($method == 'POST')
+	    {
+	        $out .= "Content-type: application/x-www-form-urlencoded\r\n";
+	        $out .= "Content-length: " . @strlen($data) . "\r\n";
+	    }
+	    $out .= (@$additional_headers)?$additional_headers:'';
+	    $out .= "Connection: Close\r\n\r\n";
+	    if($method == 'POST') $out .= $data."\r\n";
+	    if(!$fp = @fsockopen($host, $port, $es, $en, 5)){
+	       return false;
+	   }
+	   fwrite($fp, $out);
+		$foundBody = false;
+		$header = '';
+		$body = '';
+	    while (!feof($fp)) {
+	        $s = fgets($fp, 128);
+	        echo $s;
+	        if ( $s == "\r\n" ) {
+	            $foundBody = true;
+	            continue;
+	        }
+	        if ( $foundBody ) {
+	            $body .= $s;
+	        } else {
+	            
+	            //echo $s;
+	            
+	            if(($method != 'POST') and ($followRedirects) and (preg_match('/^Location:(.*)/i', $s, $matches) != false) )
+	            {
+	                fclose($fp);
+	                return HttpRequest( trim($matches[1]) );
+	            }
+	            $header .= $s;
+	            if(preg_match('@HTTP[/]1[.][01x][\s]{1,}([1-5][01][0-9])[\s].*$@', $s, $matches))
+	            {
+	                $status = trim($matches[1]);
+	            }
+	        }
+	    }
+	    fclose($fp);
+	    return array('head' => trim($header), 'body' => trim($body), 'status' => $status);
+	}
+
+	function feedback()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$data['test'] = '';
+		
+		if ($this->input->post('c_add') == 'Add Feedback') {
+			/*
+			var_dump(http_post_data('http://theyorker2.gmghosting.com/trac/newticket',
+									urlencode(
+										'__FORM_TOKEN=d24d3199042da4f56f979'.
+										'&type=feedback'.
+										'&action=create'.
+										'&status=new'.
+										'&priority=none'.
+										'&owner='.
+										'&summary='.$this->input->post('c_title').
+										'&description='.$this->input->post('c_desc').
+										'&milestone=1.0 Beta2'.
+										'&component=General'.
+										'&version=Beta'
+									)
+									,
+									array('httpauth'	=>	'cdt502:29fish'),
+									$info
+                     				)
+					);
+			var_dump($info);
+			*/
+			$post_data = array(
+				'__FORM_TOKEN'	=>	'd24d3199042da4f56f979',
+				'type'			=>	'feedback',
+				'action'		=>	'create',
+				'status'		=>	'new',
+				'priority'		=>	'none',
+				'owner'			=>	'',
+				'summary'		=>	$this->input->post('c_title'),
+				'description'	=>	$this->input->post('c_desc'),
+				'milestone'		=>	'1.0 Beta2',
+				'component'		=>	'General',
+				'version'		=>	'Beta'
+			);
+			var_dump($this->HttpRequest('http://theyorker2.gmghosting.com/trac/newticket', 'GET', NULL, 'Authorization: BASIC Y2R0NTAyOjI5ZmlzaA=='));
+
+		}
+
+		// Set up the public frame
+		$this->main_frame->SetTitle('Feedback => Trac Importer');
+		$this->main_frame->SetContentSimple('test/travis-feedback', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+
 	function campaign()
 	{
 		if (!CheckPermissions('office')) return;

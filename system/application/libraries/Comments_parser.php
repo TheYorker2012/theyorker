@@ -19,6 +19,7 @@ class Comments_parser extends Wikiparser
 		parent::__construct();
 		// Set the newline mode to line break.
 		$this->newline_mode = 'br';
+		$this->enable_headings = false;
 	}
 }
 

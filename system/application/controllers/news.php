@@ -22,8 +22,10 @@ class News extends Controller {
 	{
 		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
 			$this->index($method);
-		} else {
+		} elseif (method_exists($this, $method)) {
 			$this->$method();
+		} else {
+			show_404();
 		}
 	}
 
@@ -156,13 +158,13 @@ class News extends Controller {
 
 		// Get comments
 		/*if (is_numeric($main_article['public_thread_id'])) {
-			$this->load->library('comments');
+			$this->load->library('comment_views');
 			$CommentInclude = $this->uri->segment(4);
 			if (FALSE === $CommentInclude) {
 				$CommentInclude = NULL;
 			}
-			$this->comments->SetUri('/news/'.$article_type.'/'.$latest_article_ids[0].'/');
-			$data['comments'] = $this->comments->CreateStandard((int)$main_article['public_thread_id'], $CommentInclude);
+			$this->comment_views->SetUri('/news/'.$article_type.'/'.$latest_article_ids[0].'/');
+			$data['comments'] = $this->comment_views->CreateStandard((int)$main_article['public_thread_id'], $CommentInclude);
 		}*/
 
 		/// Gather all the data into an array to be passed to the view

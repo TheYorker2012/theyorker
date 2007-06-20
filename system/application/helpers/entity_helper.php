@@ -30,3 +30,5 @@ function fullname($id) {
 		return 'Invalid User ID';
 	}
 }
+
+?>

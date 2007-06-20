@@ -77,11 +77,32 @@ class Home extends Controller {
 		$TodoView->SetCalendarData($calendar_data);
 		return array($EventsView, $TodoView);
 	}
+	
+	function _FacebookHome()
+	{
+		$this->pages_model->SetPageCode('home_facebook');
+		
+		$this->main_frame->SetContentSimple('facebook/home');
+		$this->main_frame->Load();
+	}
+	
+	function facebook()
+	{
+		OutputModes(array('xhtml','fbml'));
+		if (!CheckPermissions('public')) return;
+		
+		return $this->_FacebookHome();
+	}
 
 	function index()
 	{
+		OutputModes(array('xhtml','fbml'));
 		if (!CheckPermissions('public')) return;
-
+		
+		if ('fbml' === OutputMode()) {
+			return $this->_FacebookHome();
+		}
+		
 		$this->pages_model->SetPageCode('home_main');
 		$this->load->library('image');
 

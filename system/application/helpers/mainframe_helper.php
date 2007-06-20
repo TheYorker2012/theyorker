@@ -26,6 +26,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 	//$user_level = GetUserLevel();
 
 	static $frames = array(
+		'facebookapp'	=> 'frame_facebook',
 		'public'		=> 'frame_public',
 		'student'		=> 'frame_public',
 		'vip'			=> 'frame_vip',

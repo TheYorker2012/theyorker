@@ -26,17 +26,55 @@ class Comments extends Controller
 		if (!is_numeric($CommentId) || !is_numeric($ThreadId)) {
 			return show_404();
 		}
+		if (!CheckPermissions('public')) return;
+		
 		$this->load->model('comments_model');
-		$this->load->library('messages');
 		
-		$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
-		if ($result) {
-			$this->messages->AddMessage('success', 'Comment has been reported.');
+		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 4));
+		
+		if ($this->input->post('comment_report_confirm', FALSE) !== FALSE) {
+			// The user has confirmed, report the comment.
+			$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
+			if ($result) {
+				$this->messages->AddMessage('success', 'Comment has been reported.');
+			} else {
+				$this->messages->AddMessage('error', 'Comment could not be reported.');
+			}
+			redirect($redirect_to);
+			
+		} elseif ($this->input->post('comment_report_cancel', FALSE) !== FALSE) {
+			// The user has cancelled, return to the previous page.
+			$this->messages->AddMessage('information', 'Comment has not been reported.');
+			redirect($redirect_to);
+			
 		} else {
-			$this->messages->AddMessage('error', 'Comment could not be reported.');
+			// The user has not confirmed or cancelled, ask for confirmation.
+			$this->load->library('comment_views');
+			$conditions = array('comments.comment_id = '.(int)$CommentId);
+			$comments = $this->comments_model->GetCommentsByThreadId((int)$ThreadId, 'visible', $conditions);
+			if (empty($comments)) {
+				// The comment isn't visible or doesn't exist.
+				$this->messages->AddMessage('error', 'The specified comment could not be found.');
+				redirect($redirect_to);
+			} else {
+				// Ask the user for confirmation.
+				// Mark no_report on the comments so no report link
+				foreach ($comments as $key => $comment) {
+					$comments[$key]['no_report'] = true;
+				}
+				$this->pages_model->SetPageCode('comment_report');
+				
+				$data = array();
+				$data['maintext'] = $this->pages_model->GetPropertyWikitext('main');
+				$data['culprit'] = new CommentViewList();
+				$data['target'] = $this->uri->uri_string();
+				
+				$data['culprit']->SetComments($comments);
+				
+				$this->main_frame->SetContentSimple('comments/report', $data);
+				$this->main_frame->Load();
+			}
 		}
-		
-		redirect(implode('/', array_slice($this->uri->rsegment_array(), 4)));
 	}
 	
 	/// Delete the specified comment.
