@@ -150,6 +150,7 @@ class CommentViewAdd extends FramesView
 	/**
 		checks for comment adding
 		checks for preview
+	 * @note Identity is taken from logged in user.
 	 */
 	function CheckPost()
 	{
@@ -195,12 +196,17 @@ class CommentViewAdd extends FramesView
 						$CI->messages->AddMessage('error', 'Comment preview could not be created');
 					}
 				} else {
-					$success = (/*is_int($identity) &&*/ $CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
-					if ($success) {
-						$CI->messages->AddMessage('success', 'Comment added');
-						redirect($CI->comment_views->GenUri('last'));
+					if (!$CI->user_auth->isLoggedIn) {
+						$CI->messages->AddMessage('error', 'Comment could not be added. You must be logged in to post comments.');
 					} else {
-						$CI->messages->AddMessage('error', 'Comment could not be added');
+						$success = (/*is_int($identity) &&*/
+							$CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
+						if ($success) {
+							$CI->messages->AddMessage('success', 'Comment added');
+							redirect($CI->comment_views->GenUri('last'));
+						} else {
+							$CI->messages->AddMessage('error', 'Comment could not be added');
+						}
 					}
 				}
 			}

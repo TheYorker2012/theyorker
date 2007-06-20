@@ -509,7 +509,6 @@ class Comments_model extends model
 	 *	- 'wikitext' (string)
 	 *	- 'anonymous' (bool, optional = FALSE)
 	 *	- 'author_id' (int, optional = user_id)
-	 * @pre User is allowed to post a comment on this thread (logged in).
 	 * @return int Affected rows.
 	 */
 	function AddCommentByThreadId($ThreadId, $Comment)
@@ -531,6 +530,8 @@ class Comments_model extends model
 				return 0;
 			}
 		}
+		/// @pre User is allowed to post a comment on this thread (logged in).
+		assert('$this->user_auth->isLoggedIn || array_key_exists(\'author_id\',$Comment)');
 		
 		$setters = array(
 			'comment_author_entity_id'  => 'comment_author_entity_id = '.$this->user_auth->entityId,
