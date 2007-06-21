@@ -16,6 +16,20 @@
  */
 ?>
 
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox">
+	<?php if ($Comment['owned']) { ?>
+	<div style="float:right;margin:0.2em 0.5em">
+		<img src="/images/prototype/directory/members/no_image.png" alt="Reporter" title="Reporter" />
+	</div>
+	<?php } ?>
+	<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0">
+		<b><?php echo($Comment['author']); ?></b> - <?php echo($Comment['post_time']); ?>
+	</div>
+	<?php echo($Comment['xhtml']); ?>
+	<div style="clear:both"></div>
+</div>
+
+<!--
 <?php
 echo('<div class="'.($Comment['owned'] ? 'Blue':'Grey').'Box" id="CommentItem'.$Comment['comment_id'].'">');
 echo('<h2>'.(isset($ListNumber)?$ListNumber.': ':'').$Comment['author'].'</h2>');
@@ -37,12 +51,12 @@ if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Commen
 	} else {
 		$abuse_links[] = '<a href="'.$GoodUrlPrefix.$Comment['comment_id'].$GoodUrlPostfix.'">flag as good</a>';
 	}
-	
+
 	echo('<li>There have been '.$Comment['reported_count'].' report(s) of abuse ('.
 			implode(', ',$abuse_links).
 		')</li>');
 	echo('</ul>');
-	
+
 	// Show wikitext if in debug mode
 	if ($Mode === 'debug') {
 		echo('<div><div class="GreyBox">'.
@@ -64,3 +78,4 @@ if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Commen
 }
 echo('</div>');
 ?>
+-->
