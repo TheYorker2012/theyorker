@@ -15,26 +15,28 @@
  * @param $Mode 'mod','debug' Indicates moderator and debug modes
  */
 
-function star_rating ($rating) {
-	$xhtml = '';
-	$star_count = 0;
-	$rating_left = $rating;
-
-	while ($rating_left <= 1) {
-		$xhtml .= '<img src="/images/prototype/reviews/star.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
-		$star_count++;
-		$rating_left--;
+if (!function_exists('star_rating')) {
+	function star_rating ($rating) {
+		$xhtml = '';
+		$star_count = 0;
+		$rating_left = $rating;
+	
+		while ($rating_left <= 1) {
+			$xhtml .= '<img src="/images/prototype/reviews/star.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$star_count++;
+			$rating_left--;
+		}
+		if ($rating_left == 0.5) {
+			$xhtml .= '<img src="/images/prototype/reviews/halfstar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$star_count++;
+			$rating_left -= 0.5;
+		}
+		while ($star_count < 5) {
+			$xhtml .= '<img src="/images/prototype/reviews/emptystar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$star_count++;
+		}
+		return $xhtml;
 	}
-	if ($rating_left == 0.5) {
-		$xhtml .= '<img src="/images/prototype/reviews/halfstar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
-		$star_count++;
-		$rating_left -= 0.5;
-	}
-	while ($star_count < 5) {
-		$xhtml .= '<img src="/images/prototype/reviews/emptystar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
-		$star_count++;
-	}
-	return $xhtml;
 }
 
 ?>
@@ -76,7 +78,8 @@ function star_rating ($rating) {
 				<b>DEBUG: Comment Source</b>
 			</div>
 			<pre><?php echo(htmlentities($Comment['wikitext'])); ?></pre>
-<?php	} else {
+<?php	}
+	} else {
 			// Only show 'report abuse' link if 'no_report' index isn't set
 			if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
 				// Don't provide a working 'report abuse' link if only showing a comment preview
