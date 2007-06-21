@@ -45,7 +45,7 @@ class Calendar_actions extends model
 	{
 		if (!CheckPermissions('student')) return;
 		
-		if (is_numeric($SourceId)) {
+		if (is_numeric($SourceId) && FALSE !== $this->input->post('caldel_confirm')) {
 			static $mapping = array(
 				'accept'  => TRUE,
 				'decline' => FALSE,

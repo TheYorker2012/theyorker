@@ -1,14 +1,24 @@
 <?php
+// make sure a few things are defined
+if (!isset($ReadOnly)) {
+	$ReadOnly = true;
+}
+if (!isset($Path)) {
+	$Path = array(
+		'add' => '/dead',
+		'edit' => '/dead',
+	);
+}
 
 echo('<div align="center">');
 if (isset($BackwardUrl)) {
-	echo('<a href="'.$BackwardUrl.'"><img src="/images/prototype/calendar/backward.gif" alt="Backward" /></a> ');
+	echo('<a href="'.$BackwardUrl.'"><img src="'.site_url('images/prototype/calendar/backward.gif').'" alt="Backward" /></a> ');
 }
 if (isset($NowUrl)) {
 	echo('<a href="'.$NowUrl.'">'.$NowUrlLabel.'</a> ');
 }
 if (isset($ForwardUrl)) {
-	echo('<a href="'.$ForwardUrl.'"><img src="/images/prototype/calendar/forward.gif" alt="Forward" /></a> ');
+	echo('<a href="'.$ForwardUrl.'"><img src="'.site_url('images/prototype/calendar/forward.gif').'" alt="Forward" /></a> ');
 }
 echo('</div>');
 

@@ -73,13 +73,13 @@ function CheckDates() {
 
 				<label for="caladd_start_show">Start:</label>
 				<div id="caladd_start_show">None</div>
-				<input type="hidden" name="caladd_start" id="caladd_start" value="<?php echo($AddForm['caladd_start']); ?>" />
+				<input type="hidden" name="caladd_start" id="caladd_start" value="<?php echo($AddForm['start']); ?>" />
 				<button id="caladd_start_trigger">Select</button>
 				<br />
 
 				<label for="caladd_end_show">Finish:</label>
 				<div id="caladd_end_show">None</div>
-				<input type="hidden" name="caladd_end" id="caladd_end" value="<?php echo($AddForm['caladd_end']); ?>" />
+				<input type="hidden" name="caladd_end" id="caladd_end" value="<?php echo($AddForm['end']); ?>" />
 				<button id="caladd_end_trigger">Select</button>
 				<br />
 
