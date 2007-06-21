@@ -137,7 +137,12 @@ class Calendar extends Controller
 		$this->pages_model->SetPageCode('calendar_new_event');
 		
 		$this->main_frame->SetContent($this->my_calendar->GetAdder());
-		
+		/// Load extra files required for JS date and time selector
+		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>'."\n".
+												'<script type='text/javascript' src='/javascript/calendar_select.js'></script>'."\n".
+												'<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>'."\n".
+												'<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>'."\n");
+		/// Display page
 		$this->main_frame->Load();
 	}
 	
