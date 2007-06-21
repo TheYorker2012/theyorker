@@ -9,14 +9,11 @@
 class My_calendar
 {
 
-	protected static $sFilterDef = array(
+	protected $sFilterDef = array(
 		// category
 		'cat' => array(
 			'name' => 'category',
 			array(
-				'no-social',
-				'no-academic',
-				'no-meeting',
 			),
 		),
 		'att' => array(
@@ -54,6 +51,7 @@ class My_calendar
 			),
 		),
 	);
+	protected $mCategories;
 	
 	protected $mAgenda = FALSE;
 	protected $mRangeUrl = '';
@@ -79,6 +77,11 @@ class My_calendar
 		
 		$CI->load->model('calendar/events_model');
 		$this->mReadOnly = $CI->events_model->IsReadOnly();
+		
+		$this->mCategories = $CI->events_model->CategoriesGet();
+		foreach ($this->mCategories as $category) {
+			$this->sFilterDef['cat'][0][] = 'no-'.$category['name'];
+		}
 	}
 	
 	function SetAgenda($Prefix)
@@ -158,7 +161,7 @@ class My_calendar
 		// eg
 		// cat:no-social.att:no-no.search:all:yorker:case
 		$CI->load->library('filter_uri');
-		$filter_def = new FilterDefinition(self::$sFilterDef);
+		$filter_def = new FilterDefinition($this->sFilterDef);
 		if (NULL === $Filter) {
 			$Filter = '';
 		}
@@ -192,6 +195,18 @@ class My_calendar
 						case 'accepted':
 							$sources->EnableGroup('rsvp');
 							break;
+					}
+				}
+			}
+			if (array_key_exists('cat', $filter)) {
+				$cats = array();
+				foreach ($filter['cat'] as $category) {
+					$cats[] = $category[0];
+				}
+				foreach ($this->mCategories as $category) {
+					$negator = 'no-'.$category['name'];
+					if (in_array($negator, $cats)) {
+						$sources->DisableCategory($category['name']);
 					}
 				}
 			}
@@ -443,8 +458,6 @@ class My_calendar
 	{
 		$CI = & get_instance();
 		
-		$event_categories = $CI->events_model->CategoriesGet();
-		
 		/// @todo make standard functions and views for recurrence interface
 		$form_id = 'caladd_';
 		$length_ranges = array(
@@ -504,7 +517,7 @@ class My_calendar
 			
 			// Validate category
 			if (!is_numeric($input['category']) ||
-				!array_key_exists($input['category'] = (int)$input['category'], $event_categories))
+				!array_key_exists($input['category'] = (int)$input['category'], $this->mCategories))
 			{
 				$failed_validation = TRUE;
 				$CI->messages->AddMessage('error', 'You did not specify a valid event category');
@@ -588,7 +601,7 @@ class My_calendar
 		
 		$input['target'] = $CI->uri->uri_string();
 		$data = array(
-			'EventCategories' => $event_categories,
+			'EventCategories' => $this->mCategories,
 			'AddForm' => $input,
 		);
 		
@@ -673,70 +686,67 @@ class My_calendar
 				'no-accepted' => !$Sources->GroupEnabled('rsvp'),
 				'no-maybe'    => !$Sources->GroupEnabled('show'),
 			),
-		);
-		return array(
-			'id' => array(
-				'name'			=> 'social',
-				'field'			=> 'category',
-				'value'			=> 'social',
-				'selected'		=> FALSE,
-				'description'	=> 'Social',
-				'display'		=> 'block',
-				'colour'		=> 'FFFF00',
-			),
-			'academic' => array(
-				'name'			=> 'academic',
-				'field'			=> 'category',
-				'value'			=> 'academic',
-				'selected'		=> TRUE,
-				'description'	=> 'Academic',
-				'display'		=> 'block',
-				'colour'		=> '00FF00',
-			),
-			'meeting' => array(
-				'name'			=> 'meeting',
-				'field'			=> 'category',
-				'value'			=> 'meeting',
-				'selected'		=> TRUE,
-				'description'	=> 'Meetings',
-				'display'		=> 'block',
-				'colour'		=> 'FF0000',
-			),
-			
-			'hidden' => array(
-				'name'			=> 'not attending',
-				'field'			=> 'visibility',
-				'value'			=> 'no',
-				'selected'		=> $Sources->GroupEnabled('hide'),
-				'description'	=> 'Include those which I have hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
-			),
-			'visible' => array(
-				'name'			=> 'maybe attending',
-				'field'			=> 'visibility',
-				'value'			=> 'maybe',
-				'selected'		=> $Sources->GroupEnabled('show'),
-				'description'	=> 'Include those which I have not hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
-				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
-			),
-			'rsvp' => array(
-				'name'			=> 'attending',
-				'field'			=> 'visibility',
-				'value'			=> 'yes',
-				'selected'		=> $Sources->GroupEnabled('rsvp'),
-				'description'	=> 'Only those to which I\'ve RSVPd',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+			'cat' => array(
+				// Filled in in after initialisation
 			),
 		);
+		// Fill categories
+		foreach ($this->mCategories as $category) {
+			$Filter['cat']['no-'.$category['name']] = !$Sources->CategoryEnabled($category['name']);
+		}
+		
+		// First add categories to the filters
+		$filters = array();
+		foreach ($this->mCategories as $category) {
+			$filters['cat_'.$category['name']] = array(
+				'name'			=> $category['name'],
+				'field'			=> 'category',
+				'value'			=> $category['name'],
+				'selected'		=> $Sources->CategoryEnabled($category['name']),
+				'description'	=> $category['name'],
+				'display'		=> 'block',
+				'colour'		=> $category['colour'],
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'cat', 'no-'.$category['name'])),
+			);
+		}
+		
+		// Then the attendance filters
+		$filters['hidden'] = array(
+			'name'			=> 'not attending',
+			'field'			=> 'visibility',
+			'value'			=> 'no',
+			'selected'		=> $Sources->GroupEnabled('hide'),
+			'description'	=> 'Include those which I have hidden',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
+			'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
+		);
+		$filters['visible'] = array(
+			'name'			=> 'maybe attending',
+			'field'			=> 'visibility',
+			'value'			=> 'maybe',
+			'selected'		=> $Sources->GroupEnabled('show'),
+			'description'	=> 'Include those which I have not hidden',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
+			'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
+		);
+		$filters['rsvp'] = array(
+			'name'			=> 'attending',
+			'field'			=> 'visibility',
+			'value'			=> 'yes',
+			'selected'		=> $Sources->GroupEnabled('rsvp'),
+			'description'	=> 'Only those to which I\'ve RSVPd',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
+			'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+		);
+		
+		// The filters are the deliverable
+		return $filters;
 	}
 	
 }

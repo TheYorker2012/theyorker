@@ -387,7 +387,19 @@ class CalendarSourceYorker extends CalendarSource
 			$visibility = '0';
 		}
 		
-		$filters = '('.$state.' AND '.$visibility.')';
+		$category_predicates = array();
+		foreach ($this->mCategories as $category => $enabled) {
+			if (!$enabled) {
+				$category_predicates[] = 'event_types.event_type_name <> '.$CI->db->escape($category);
+			}
+		}
+		if (count($category_predicates) > 0) {
+			$category = '('.implode(' AND ',$category_predicates).')';
+		} else {
+			$category = 'TRUE';
+		}
+		
+		$filters = '('.$state.' AND '.$visibility.' AND '.$category.')';
 		
 		// DATE RANGE ----------------------------------------------------------
 		$ranges = array();
