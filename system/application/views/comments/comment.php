@@ -67,10 +67,10 @@ function star_rating ($rating) {
 		} else {
 			$abuse_links[] = '<a href="'.$GoodUrlPrefix.$Comment['comment_id'].$GoodUrlPostfix.'"><img src="/images/icons/flag_green.png" alt="Flag as Good" title="Flag as Good" /> Flag as Good</a>';
 		}
-		echo('<ul>
-			<li>This comment has been reported for abuse '.$Comment['reported_count'].' time(s).</li>
-			<li>'.implode('&nbsp;&nbsp;&nbsp;&nbsp;',$abuse_links).'</li>
-			</ul>');
+		echo('<ul>');
+		echo('<li>This comment has been reported for abuse '.$Comment['reported_count'].' time(s).</li>');
+		echo('<li>'.implode('&nbsp;&nbsp;&nbsp;&nbsp;',$abuse_links).'</li>');
+		echo('</ul>');
 		if ($Mode === 'debug') { ?>
 			<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0">
 				<b>DEBUG: Comment Source</b>
