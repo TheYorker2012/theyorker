@@ -12,7 +12,7 @@ if (!empty($Occurrences)) {
 	<?
 	$sorted_occurrences = array();
 	foreach ($Occurrences as $key => $occurrence) {
-		$sorted_occurrences[$occurrence->StartTime()->Timestamp()][] = & $Occurrences[$key];
+		$sorted_occurrences[$occurrence->StartTime->Timestamp()][] = & $Occurrences[$key];
 	}
 	foreach ($Occurrences as $occurrence) {
 		echo('<tr><td valign="top">');
