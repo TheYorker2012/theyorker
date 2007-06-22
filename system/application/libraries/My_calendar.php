@@ -375,7 +375,7 @@ class My_calendar
 		
 		$CI = & get_instance();
 		
-		$sources->SetRange(time(), strtotime('1month'));
+		$sources->SetRange(time(), strtotime('2month'));
 		$this->ReadFilter($sources, $Filter);
 		
 		$calendar_data = new CalendarData();
@@ -523,9 +523,10 @@ class My_calendar
 			}
 			
 			// Validate category
-			if (!is_numeric($input['category']) ||
-				!array_key_exists($input['category'] = (int)$input['category'], $this->mCategories))
+			if (!array_key_exists($input['category'], $this->mCategories))
 			{
+				var_dump($input['category']);
+				var_dump($this->mCategories);
 				$failed_validation = TRUE;
 				$CI->messages->AddMessage('error', 'You did not specify a valid event category');
 			}

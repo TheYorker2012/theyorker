@@ -222,6 +222,11 @@ abstract class CalendarSource
 	protected $mCategories = array(
 	);
 	
+	/// string Phrase to match.
+	protected $mSearchPhrase = NULL;
+	/// array[string] Phrases to match.
+	protected $mSearchPhrases = NULL;
+	
 	/// array[2*timestamp] For filtering events by time.
 	protected $mEventRange = array( NULL, NULL );
 	
@@ -259,6 +264,34 @@ abstract class CalendarSource
 	function IsSupported($Capability)
 	{
 		return in_array($Capability, $this->mCapabilities);
+	}
+	
+	/// Set the search phrase to match in the events.
+	/**
+	 * @param $Pattern string Search pattern.
+	 */
+	function SetSearchPhrase($Pattern)
+	{
+		$this->mSearchPhrase = $Pattern;
+		$this->mSearchPhrases = preg_split('/(\s*,\s*|\s+)/', $Pattern);
+	}
+	
+	/// Find whether a subject matches a pattern.
+	/**
+	 * @param $Pattern string Sequence of words.
+	 * @param $Subject string Subject string.
+	 * @return bool Whether the @a $Subject matches the @a $Pattern.
+	 *
+	 * This function is very simplistic
+	 */
+	function SearchMatch($phrases, $Subject)
+	{
+		foreach ($phrases as $phrase) {
+			if (FALSE === stristr($Subject, $phrase)) {
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 	
 	/// Enable a group of events.
@@ -693,6 +726,14 @@ class CalendarSources extends CalendarSource
 		assert('NULL !== $source_id');
 		$this->mSources[$Source->GetSourceId()] = &$Source;
 		return $Source;
+	}
+	
+	function SetSearchPhrase($Phrase)
+	{
+		foreach ($this->mSources as $source) {
+			$source->SetSearchPhrase($Phrase);
+		}
+		return parent::SetSearchPhrase($Phrase);
 	}
 	
 	function EnableGroup($GroupName)

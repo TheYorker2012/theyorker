@@ -14,9 +14,15 @@ if (!empty($Occurrences)) {
 	foreach ($Occurrences as $key => $occurrence) {
 		$sorted_occurrences[$occurrence->StartTime->Timestamp()][] = & $Occurrences[$key];
 	}
+	$last_date = '';
 	foreach ($Occurrences as $occurrence) {
+		$new_date = $occurrence->StartTime->Format('%D');
+		if ($new_date != $last_date) {
+			echo('<tr><td colspan="3"><div class="Date">'.$new_date.'</div></td></tr>');
+			$last_date = $new_date;
+		}
 		echo('<tr><td valign="top">');
-		echo($occurrence->StartTime->Format('H:i'));
+		echo($occurrence->StartTime->Format('%T'));
 		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
 		echo($occurrence->Event->Name);
 		if (!empty($occurrence->LocationDescription)) {

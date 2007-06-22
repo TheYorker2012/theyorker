@@ -367,6 +367,7 @@ class CalendarSourceYorker extends CalendarSource
 			$state = '0';
 		}
 		
+		// User's attendance status
 		$visibility_predicates = array();
 		if ($this->mGroups['hide'] && $this->mGroups['show'] && $this->mGroups['rsvp']) {
 			$visibility_predicates[] = 'TRUE';
@@ -387,6 +388,7 @@ class CalendarSourceYorker extends CalendarSource
 			$visibility = '0';
 		}
 		
+		// The category of the event
 		$category_predicates = array();
 		foreach ($this->mCategories as $category => $enabled) {
 			if (!$enabled) {
@@ -399,7 +401,14 @@ class CalendarSourceYorker extends CalendarSource
 			$category = 'TRUE';
 		}
 		
-		$filters = '('.$state.' AND '.$visibility.' AND '.$category.')';
+		// Full text search
+		if (is_string($this->mSearchPhrase)) {
+			$search = 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
+		} else {
+			$search = 'TRUE';
+		}
+		
+		$filters = '('.$state.' AND '.$visibility.' AND '.$category.' AND '.$search.')';
 		
 		// DATE RANGE ----------------------------------------------------------
 		$ranges = array();

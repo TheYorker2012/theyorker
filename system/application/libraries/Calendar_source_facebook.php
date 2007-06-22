@@ -98,6 +98,17 @@ class CalendarSourceFacebook extends CalendarSource
 			
 			if (!empty($events)) {
 				foreach ($events as $event) {
+					// Check if it matches the search phrase
+					if (is_string($this->mSearchPhrase)) {
+						// use the following fields
+						//  $event['name']
+						//  $event['description']
+						if (!$this->SearchMatch($this->mSearchPhrases, $event['name'].','.$event['description']))
+						{
+							continue;
+						}
+					}
+					
 					// get the list of members, so we can see if the user is attending.
 					$members = $CI->facebook->Client->events_getMembers($event['eid']);
 					$attending = NULL;
@@ -179,6 +190,16 @@ class CalendarSourceFacebook extends CalendarSource
 			$yesterday = strtotime('-1day',$event_range[0]);
 			foreach ($birthdays as $birthday) {
 				if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
+					// Check if it matches the search phrase
+					if (is_string($this->mSearchPhrase)) {
+						// use the following fields
+						//  $birthday['name']
+						if (!$this->SearchMatch($this->mSearchPhrase, 'birthday,anniversary,'.$birthday['name']))
+						{
+							continue;
+						}
+					}
+					
 					if ($specific) {
 						$year = $matches[2] + $Age;
 						if ($year >= 1970 && $year < 2037) {

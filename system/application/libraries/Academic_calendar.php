@@ -148,7 +148,7 @@ class Academic_time
 	 */
 	function Format($Format)
 	{
-		return date($Format, $this->mTimestamp);
+		return get_instance()->time_format->date($Format, $this->mTimestamp);
 	}
 	
 	/**
@@ -353,10 +353,8 @@ class Academic_time
 	function Time()
 	{
 		if (!isset($this->mTime)) {
-			if (self::IsTwentyFourHourClock())
-				$this->mTime = date('H:i', $this->mTimestamp);
-			else
-				$this->mTime = date('g:ia', $this->mTimestamp);
+			$CI = & get_instance();
+			$this->mTime = $CI->time_format->date('%T', $this->mTimestamp);
 		}
 		return $this->mTime;
 	}
@@ -474,16 +472,6 @@ class Academic_time
 			$difference += 365 + (int)date('L',$FirstTimestamp);
 		}
 		return $difference;
-	}
-	
-	/**
-	 * @brief Find out whether to use 24 hour times.
-	 * @return Whether to use 24 hour times.
-	 */
-	private static function IsTwentyFourHourClock()
-	{
-		/// @todo jh559: Get whether to use 24 hour clock from user preferences.
-		return TRUE;
 	}
 	
 	/**
@@ -788,6 +776,8 @@ class Academic_calendar {
 	 */
 	function __construct()
 	{
+		$CI = & get_instance();
+		$CI->load->library('time_format');
 	}
 
 
