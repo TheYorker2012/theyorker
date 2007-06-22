@@ -78,8 +78,10 @@ class My_calendar
 		$CI->load->model('calendar/events_model');
 		$this->mReadOnly = $CI->events_model->IsReadOnly();
 		
-		$this->mCategories = $CI->events_model->CategoriesGet();
-		foreach ($this->mCategories as $category) {
+		// Get categories and reindex by name
+		$categories = $CI->events_model->CategoriesGet();
+		foreach ($categories as $category) {
+			$this->mCategories[$category['name']] = $category;
 			$this->sFilterDef['cat'][0][] = 'no-'.$category['name'];
 		}
 	}
@@ -246,9 +248,11 @@ class My_calendar
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
 		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
+		$days->SetCategories($this->mCategories);
 		
 		$todo = new CalendarViewTodoList();
 		$todo->SetCalendarData($calendar_data);
+		$todo->SetCategories($this->mCategories);
 		
 		$view_mode_data = array(
 			'DateDescription' => 'Today probably!',
@@ -302,6 +306,7 @@ class My_calendar
 			$Format,
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
+		$days->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -348,6 +353,7 @@ class My_calendar
 			$Format,
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
+		$weeks->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -382,6 +388,7 @@ class My_calendar
 		
 		$agenda = new CalendarViewAgenda();
 		$agenda->SetCalendarData($calendar_data);
+		$agenda->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),

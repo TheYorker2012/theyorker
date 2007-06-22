@@ -113,7 +113,7 @@ class CalendarEvent
 	/// string Name of event.
 	public $Name			= '';
 	/// bool Whether the event is time associated
-	public $TimeAssociated		= TRUE;
+	public $TimeAssociated	= TRUE;
 	/// string,NULL Description of event (parsed wikitext).
 	public $Description		= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.

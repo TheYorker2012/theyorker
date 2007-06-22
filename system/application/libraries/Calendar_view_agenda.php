@@ -22,6 +22,15 @@ class CalendarViewAgenda extends CalendarView
 		parent::__construct('calendar/agenda');
 		
 		$this->SetData('MiniMode', FALSE);
+		
+		$extra_head = <<<EXTRAHEAD
+			<script src="/javascript/prototype.js" type="text/javascript"></script>
+			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
+			<script src="/javascript/calendar.js" type="text/javascript"></script>
+			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
+EXTRAHEAD;
+		$CI = & get_instance();
+		$CI->main_frame->SetExtraHead($extra_head);
 	}
 	
 	/// Whether to use mini mode.
@@ -40,10 +49,14 @@ class CalendarViewAgenda extends CalendarView
 	 */
 	protected function ProcessEvents(&$Data, $Categories)
 	{
+		if (!is_array($Categories)) {
+			$Categories = array();
+		}
 		$occurrences = $Data->GetCalendarOccurrences();
 		$events = $Data->GetEvents();
 		
 		$this->SetData('Occurrences', $occurrences);
+		$this->SetData('Categories', $Categories);
 		$this->SetData('Events', $events);
 	}
 }
