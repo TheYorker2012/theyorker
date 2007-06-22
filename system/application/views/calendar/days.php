@@ -24,11 +24,18 @@ echo('</div>');
 
 $squash = (count($Days) > 3);
 
-function DrawOccurrence(&$Occurrence, $Squash, $ReadOnly, $Path)
+function DrawOccurrence(&$Occurrence, &$Categories, $Squash, $ReadOnly, $Path)
 {
 	$CI = & get_instance();
 	?>
-	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;">
+	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;<?php
+		$cat = $Occurrence->Event->Category;
+		if (array_key_exists($cat, $Categories)) {
+			if (array_key_exists('colour', $Categories[$cat])) {
+				echo(' background-color:#'.$Categories[$cat]['colour'].';');
+			}
+		}
+	?>">
 		<div style="padding: 2px;font-size: small;">
 			<?='<span><a href="' . $Path['edit'] . '/' . $Occurrence->Event->Source->GetSourceId(). '/' . urlencode($Occurrence->Event->SourceEventId) . '/' . urlencode($Occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$Occurrence->Event->Name.'</a></span>'?>
 			<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
@@ -138,7 +145,7 @@ foreach ($Days as $date => $day) {
 	if (array_key_exists('000000',$times)) {
 		foreach ($times['000000'] as $occurrence) {
 			if (!$occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $squash, $ReadOnly, $Path);
+				DrawOccurrence($occurrence, $Categories, $squash, $ReadOnly, $Path);
 			}
 		}
 	}
@@ -151,7 +158,7 @@ foreach ($Days as $date => $day) {
 	foreach ($times as $time => $ocs) {
 		foreach ($ocs as $occurrence) {
 			if ($occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $squash, $ReadOnly, $Path);
+				DrawOccurrence($occurrence, $Categories, $squash, $ReadOnly, $Path);
 			}
 		}
 	}
