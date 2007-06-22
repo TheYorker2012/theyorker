@@ -529,7 +529,11 @@ class My_calendar
 				var_dump($this->mCategories);
 				$failed_validation = TRUE;
 				$CI->messages->AddMessage('error', 'You did not specify a valid event category');
+			} else {
+				$input['eventcategory'] = $input['category'];
+				$input['category'] = $this->mCategories[$input['category']]['id'];
 			}
+			
 			// Validate recurrence based on frequency
 			if ('none' !== $input['frequency']) {
 				// Read interval
