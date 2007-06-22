@@ -21,18 +21,18 @@ if (!function_exists('star_rating')) {
 		$star_count = 0;
 		$rating_left = $rating;
 	
-		while ($rating_left <= 1) {
-			$xhtml .= '<img src="/images/prototype/reviews/star.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+		while ($rating_left >= 2) {
+			$xhtml .= '<img src="/images/prototype/reviews/star_small.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$star_count++;
+			$rating_left -= 2;
+		}
+		if ($rating_left == 1) {
+			$xhtml .= '<img src="/images/prototype/reviews/halfstar_small.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
 			$star_count++;
 			$rating_left--;
 		}
-		if ($rating_left == 0.5) {
-			$xhtml .= '<img src="/images/prototype/reviews/halfstar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
-			$star_count++;
-			$rating_left -= 0.5;
-		}
 		while ($star_count < 5) {
-			$xhtml .= '<img src="/images/prototype/reviews/emptystar.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$xhtml .= '<img src="/images/prototype/reviews/emptystar_small.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
 			$star_count++;
 		}
 		return $xhtml;
@@ -41,18 +41,18 @@ if (!function_exists('star_rating')) {
 
 ?>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox">
-	<div style="float:right;margin:0.2em 0.5em">
-		<?php if ($Comment['owned']) { ?>
-		<img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" />
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($Comment['author'] == 'Anonymous') { echo(' style="border-color:#999;"'); } ?>>
+	<div style="float:right;margin:0.2em 0.5em;text-align:right">
+		<?php if ($Comment['author'] == 'Anonymous') { ?>
+		<img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" />
 		<?php } else { ?>
-		<img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous" />
+		<img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" />
 		<?php } ?>
 		<?php if (NULL !== $Comment['rating']) {
 			echo('<br />' . star_rating($Comment['rating']));
 		} ?>
 	</div>
-	<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0">
+	<div style="background-color:<?php echo ($Comment['author'] == 'Anonymous') ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
 		<b><?php echo($Comment['author']); ?></b> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
@@ -80,17 +80,17 @@ if (!function_exists('star_rating')) {
 			<pre><?php echo(htmlentities($Comment['wikitext'])); ?></pre>
 <?php	}
 	} else {
-			// Only show 'report abuse' link if 'no_report' index isn't set
-			if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
-				// Don't provide a working 'report abuse' link if only showing a comment preview
-				if (is_numeric($Comment['comment_id'])) {
-					$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
-				} else {
-					$report_link = '';
-				}
-				echo('<p><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
+		// Only show 'report abuse' link if 'no_report' index isn't set
+		if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
+			// Don't provide a working 'report abuse' link if only showing a comment preview
+			if (is_numeric($Comment['comment_id'])) {
+				$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
+			} else {
+				$report_link = '';
 			}
-		} ?>
+			echo('<p><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
+		}
+	} ?>
 
 	<div style="clear:both"></div>
 </div>

@@ -100,8 +100,8 @@ class CommentViewThread extends FramesView
 		
 		$this->SetData('Thread', $this->mThread);
 		$this->SetData('LoggedIn', $logged_in);
-		$this->SetData('LoginUrl', $login_url);
-		$this->SetData('RatingTarget', $CI->uri->uri_string());
+		$this->SetData('LoginUrl', $login_url.'#comments');
+		$this->SetData('RatingTarget', $CI->uri->uri_string().'#comments');
 		
 		parent::Load();
 	}
@@ -114,7 +114,7 @@ class CommentViewAdd extends FramesView
 	protected $mThreadId;
 	/// array Thread information.
 	protected $mThread = NULL;
-	
+
 	/// Default constructor.
 	function __construct($ThreadId)
 	{
@@ -203,6 +203,7 @@ class CommentViewAdd extends FramesView
 							$CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
 						if ($success) {
 							$CI->messages->AddMessage('success', 'Comment added');
+							///@TODO: Make it go to #CommentItem{NewCommentID}
 							redirect($CI->comment_views->GenUri('last'));
 						} else {
 							$CI->messages->AddMessage('error', 'Comment could not be added');
@@ -225,8 +226,8 @@ class CommentViewAdd extends FramesView
 		
 		$this->SetData('Thread', $this->mThread);
 		$this->SetData('LoggedIn', $logged_in);
-		$this->SetData('LoginUrl', $login_url);
-		$this->SetData('FormTarget', $CI->uri->uri_string());
+		$this->SetData('LoginUrl', $login_url.'#comments');
+		$this->SetData('FormTarget', $CI->uri->uri_string().'#comment_preview');
 		$this->SetData('Identities', $CI->comments_model->GetAvailableIdentities());
 		
 		$this->SetData('ReportUrlPrefix', '/comments/report/');
@@ -246,7 +247,7 @@ class CommentViewList extends FramesView
 	
 	/// int Maximum number of comments per page.
 	protected $mMaxPerPage = 20;
-	protected $mPageLinkSpan = 3;
+	protected $mPageLinkSpan = 2;
 	
 	/// Default constructor.
 	function __construct()
@@ -305,9 +306,9 @@ class CommentViewList extends FramesView
 				$this->mIncludedComment = 1;
 			}
 		}
-		
+
 		$CI = & get_instance();
-		
+
 		$this->SetData('Items', $this->mComments);
 		$this->SetData('InnerView', 'comments/comment');
 		$this->SetData('InnerItemName', 'Comment');
@@ -315,7 +316,7 @@ class CommentViewList extends FramesView
 		$this->SetData('PageLinkSpan', $this->mPageLinkSpan);
 		$this->SetData('IncludedIndex', $this->mIncludedComment);
 		$this->SetData('PageUrlPrefix', $CI->comment_views->GetUriPrefix());
-		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix());
+		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix() .'#comments');
 		// for subviews (comments)
 		foreach (array(	'Report'	=> 'report',
 						'Delete'	=> 'delete',

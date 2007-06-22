@@ -11,21 +11,42 @@
  * @param $RatingTarget string Target of rating form.
  */
 
-?>
+if (!function_exists('star_rating_large')) {
+	function star_rating_large ($rating,$text) {
+		$xhtml = '';
+		$star_count = 0;
+		$rating_left = $rating;
+	
+		while ($rating_left >= 2) {
+			$xhtml .= '<img src="/images/prototype/reviews/star.png" alt="'.$text.' Rating: '.$rating.'" title="'.$text.' Rating: '.$rating.'" />';
+			$star_count++;
+			$rating_left -= 2;
+		}
+		if ($rating_left == 1) {
+			$xhtml .= '<img src="/images/prototype/reviews/halfstar.png" alt="'.$text.' Rating: '.$rating.'" title="'.$text.' Rating: '.$rating.'" />';
+			$star_count++;
+			$rating_left--;
+		}
+		while ($star_count < 5) {
+			$xhtml .= '<img src="/images/prototype/reviews/emptystar.png" alt="'.$text.' Rating: '.$rating.'" title="'.$text.' Rating: '.$rating.'" />';
+			$star_count++;
+		}
+		return $xhtml;
+	}
+}
 
-<?php
 if ($Thread['allow_ratings']) {
 	echo('<div class="BlueBox">');
 	echo('<h2>User comments/ratings</h2>');
 	if (NULL !== $Thread['average_rating']) {
-		echo('<p>Average rating of '.sprintf('%.1f',$Thread['average_rating']).' from '.
+		echo('<p>Average rating of '.star_rating_large($Thread['average_rating'],'Average').
 			$Thread['num_ratings'].' user ratings</p>');
 	}
 	if (!$LoggedIn) {
 		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to rate this page</p>');
 	} else {
 		if (NULL !== $Thread['user_rating']) {
-			echo('<p>You have rated this page as '.$Thread['user_rating'].'</p>');
+			echo('<p>Your Rating: '.star_rating_large($Thread['user_rating'],'Your').'</p>');
 		} else {
 			echo('<p>You have not yet rated this page</p>');
 		}
@@ -51,7 +72,5 @@ if ($Thread['allow_ratings']) {
 		<?php
 	}
 	echo('</div>');
-/*} else {
-	echo('<h2>User comments</h2>');*/
 }
 ?>

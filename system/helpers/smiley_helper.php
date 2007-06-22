@@ -86,7 +86,7 @@ function get_clickable_smileys($image_url = '', $smileys = NULL)
 			continue;
 		}
 	
-		$link[] = "<a href=\"javascript:void(0);\" onClick=\"insert_smiley('".$key."')\"><img src=\"".$image_url.$smileys[$key][0]."\" width=\"".$smileys[$key][1]."\" height=\"".$smileys[$key][2]."\" alt=\"".$smileys[$key][3]."\" style=\"border:0;\" /></a>";	
+		$link[] = "<a href=\"javascript:void(0);\" onclick=\"insert_smiley('".$key."')\"><img src=\"".$image_url.$smileys[$key][0]."\" width=\"".$smileys[$key][1]."\" height=\"".$smileys[$key][2]."\" alt=\"".$smileys[$key][3]."\" style=\"border:0;\" /></a>";
 	
 		$used[$smileys[$key][0]] = TRUE;
 	}
