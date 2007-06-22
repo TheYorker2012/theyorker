@@ -22,7 +22,7 @@ if (!function_exists('star_rating')) {
 		$rating_left = $rating;
 	
 		while ($rating_left >= 2) {
-			$xhtml .= '<img src="/images/icons/thumb_up.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$xhtml .= '<img src="/images/icons/duck.gif" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
 			$star_count++;
 			$rating_left -= 2;
 		}
@@ -32,7 +32,7 @@ if (!function_exists('star_rating')) {
 			$rating_left--;
 		}
 		while ($star_count < 5) {
-			$xhtml .= '<img src="/images/icons/thumb_down.png" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
+			$xhtml .= '<img src="/images/icons/empty_duck.gif" alt="User Rating: '.$rating.'" title="User Rating: '.$rating.'" />';
 			$star_count++;
 		}
 		return $xhtml;
