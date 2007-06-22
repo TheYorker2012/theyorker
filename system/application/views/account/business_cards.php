@@ -1,5 +1,5 @@
 <div id="RightColumn">
-	<h2>Whats This?</h2>
+	<h2 class="first">Whats This?</h2>
 	<p><?php echo $bcards_about; ?></p>
 </div>
 
