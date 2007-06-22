@@ -175,6 +175,7 @@ QUERY;
 	 */
 	function ajax($string) {
 		// TODO improve this, we only need titles
+		
 		return full($string, 3);
 	}
 
