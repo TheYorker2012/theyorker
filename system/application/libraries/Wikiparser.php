@@ -53,6 +53,8 @@ class Wikiparser {
 	protected $newline_mode;
 	protected $enable_headings;
 	protected $enable_youtube;
+	protected $enable_quickquotes;
+	protected $entities;
 
 	protected $list_level_chars;
 	protected $list_level;
@@ -100,6 +102,11 @@ class Wikiparser {
 		$this->newline_mode = '';
 		$this->enable_headings = true;
 		$this->enable_youtube = true;
+		$this->enable_quickquotes = true;
+		$this->entities = array(
+			'\'' => htmlentities('\'', ENT_QUOTES, 'UTF-8'),
+			'"'  => htmlentities('"',  ENT_QUOTES, 'UTF-8'),
+		);
 	}
 
 	/**
@@ -366,6 +373,7 @@ class Wikiparser {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
+			//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
 			$output = '
 <div style="text-align:center;">
 <script type="text/javascript">
@@ -435,6 +443,14 @@ if (hasReqestedVersion) {
 
 	function handle_externallink($matches) {
 		$href = $matches[2];
+		//var_dump($matches);
+		if (substr($href, 0, 4) !== 'http' &&
+			substr($href, 0, 1) !== '/')
+		{
+			return $matches[0];
+			//return htmlentities($matches[0], ENT_QUOTES, 'UTF-8');
+		}
+		//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
 		if (array_key_exists(4,$matches)) {
 			// implicit mailto
 			$href = 'Mailto:'.$matches[4];
@@ -470,18 +486,18 @@ if (hasReqestedVersion) {
 		// should read <em>somethin'</em> rather than <em>somethin<strong>
 		if (isset($this->emphasis) and (!$this->emphasis[$amount]) && ($this->emphasis[$amount-1]) ) {
 			$amount--;
-			$output = '\'';
+			$output = $this->entities['\''];
 		}
 
 		$output .= $amounts[$amount][(int) $this->emphasis[$amount]];
 
 		$this->emphasis[$amount] = !$this->emphasis[$amount];
-
+		
 		return $output;
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen($matches[1]);
+		$amount = strlen(html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8'));
 		return $this->emphasize($amount);
 
 	}
@@ -577,23 +593,28 @@ if (hasReqestedVersion) {
 	}
 
 	function parse_line($line) {
-		$first_characters = '\{\s\*\#;\:-';
+		$first_characters = '\s\*\#;\:-';
 		if ($this->enable_headings) {
 			$first_characters .= '=';
 		}
-		$line_regexes = array(
-			'special_quote'=>'^"""(.*)"""\s*(.*)$',
-			'startparagraph'=>'^\s*([^'.$first_characters.'].*?)$',
-			//'preformat'=>'^\s(.*?)$',
-			'definitionlist'=>'^([\;\:])\s*(.*?)$',
-			'newline'=>'^$',
-			'list'=>'^([\*\#]+)(.*?)$',
-			'sections'=>'^(={1,6})(.*?)(={1,6})$',
-			'horizontalrule'=>'^----$',
-		);
-		if (!$this->enable_headings) {
-			unset($line_regexes['sections']);
+		if (empty($this->newline_mode)) {
+			$first_characters .= '\{';
 		}
+		
+		$line_regexes = array();
+		if ($this->enable_quickquotes) {
+			$line_regexes['special_quote'] = '^'.$this->entities['"'].$this->entities['"'].$this->entities['"'].'(.*)'.$this->entities['"'].$this->entities['"'].$this->entities['"'].'\s*(.*)$';
+		}
+		$line_regexes['startparagraph'] = '^\s*([^'.$first_characters.'].*?)$';
+		//$line_regexes['preformat'] = '^\s(.*?)$';
+		$line_regexes['definitionlist'] = '^([\;\:])\s*(.*?)$';
+		$line_regexes['newline'] = '^$';
+		$line_regexes['list'] = '^([\*\#]+)(.*?)$';
+		if ($this->enable_headings) {
+			$line_regexes['sections'] = '^(={1,6})(.*?)(={1,6})$';
+		}
+		$line_regexes['horizontalrule'] = '^----$';
+		
 		$char_regexes = array(
 //			'link'=>'(\[\[((.*?)\:)?(.*?)(\|(.*?))?\]\]([a-z]+)?)',
 			'internallink'=>'('.
@@ -614,7 +635,7 @@ if (hasReqestedVersion) {
 				'|'. // or
 				'([^\s,@\<\>\{\}]+@([^\s,@\.\<\>\{\}]+\.)*[^\s,@\.\<\>\{\}]+)'. // implicit email address
 				')',
-			'emphasize'=>'(\'{2,5})',
+			'emphasize'=>'(('.$this->entities['\''].'){2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
 			'addemphasis'=>'(the yorker)',
 			'variable'=>'(\{\{([^\}]*?)\}\})',
@@ -628,7 +649,7 @@ if (hasReqestedVersion) {
 		$line = rtrim($line);
 
 		// escape some symbols
-		$line = htmlentities($line, ENT_NOQUOTES, 'UTF-8');
+		$line = htmlentities($line, ENT_QUOTES, 'UTF-8');
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
 		foreach ($line_regexes as $func=>$regex) {
@@ -755,7 +776,7 @@ Done.
 
 		$output = '';
 
-		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
+		$text = preg_replace_callback('/<nowiki>((.|\n)*)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
 
 		// add a newline at the end if there isn't already one there
 		$lines = explode("\n",$text);

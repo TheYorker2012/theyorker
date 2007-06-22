@@ -21,6 +21,8 @@ class Comments_parser extends Wikiparser
 		$this->newline_mode = 'br';
 		$this->enable_headings = false;
 		$this->enable_youtube = false;
+		$this->enable_quickquotes = false;
+		unset($this->templates['pull_quote']);
 	}
 }
 
