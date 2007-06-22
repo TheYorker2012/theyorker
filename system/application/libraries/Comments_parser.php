@@ -20,6 +20,7 @@ class Comments_parser extends Wikiparser
 		// Set the newline mode to line break.
 		$this->newline_mode = 'br';
 		$this->enable_headings = false;
+		$this->enable_youtube = false;
 	}
 }
 

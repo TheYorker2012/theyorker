@@ -113,7 +113,7 @@ class CalendarEvent
 	/// string Name of event.
 	public $Name			= '';
 	/// bool Whether the event is time associated
-	public $TimeAssociated		= TRUE;
+	public $TimeAssociated	= TRUE;
 	/// string,NULL Description of event (parsed wikitext).
 	public $Description		= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.
@@ -218,6 +218,10 @@ abstract class CalendarSource
 		'todo'       => FALSE,
 	);
 	
+	/// array[bool] Categories to allow (default to true).
+	protected $mCategories = array(
+	);
+	
 	/// array[2*timestamp] For filtering events by time.
 	protected $mEventRange = array( NULL, NULL );
 	
@@ -259,7 +263,7 @@ abstract class CalendarSource
 	
 	/// Enable a group of events.
 	/**
-	 * @param $GroupName string Index to $this->mSources.
+	 * @param $GroupName string Index to $this->mGroups.
 	 * @return bool Whether successfully enabled.
 	 */
 	function EnableGroup($GroupName)
@@ -298,6 +302,40 @@ abstract class CalendarSource
 			return $this->mGroups[$GroupName];
 		} else {
 			return FALSE;
+		}
+	}
+	
+	/// Enable a category of events.
+	/**
+	 * @param $CategoryName string Index to $this->mCategories.
+	 * @return bool Whether successfully enabled.
+	 */
+	function EnableCategory($CategoryName)
+	{
+		$this->mCategories[$CategoryName] = TRUE;
+	}
+	
+	/// Disable a category of events.
+	/**
+	 * @param $CategoryName string Index to $this->mCategories.
+	 * @return bool Whether successfully disabled.
+	 */
+	function DisableCategory($CategoryName)
+	{
+		$this->mCategories[$CategoryName] = FALSE;
+	}
+	
+	/// Find whether a category of events is enabled.
+	/**
+	 * @param $CategoryName string Index to $this->mCategories.
+	 * @return bool Whether the group is enabled.
+	 */
+	function CategoryEnabled($CategoryName)
+	{
+		if (array_key_exists($CategoryName, $this->mCategories)) {
+			return $this->mCategories[$CategoryName];
+		} else {
+			return TRUE;
 		}
 	}
 	
@@ -671,6 +709,22 @@ class CalendarSources extends CalendarSource
 			$source->DisableGroup($GroupName);
 		}
 		return parent::DisableGroup($GroupName);
+	}
+	
+	function EnableCategory($CategoryName)
+	{
+		foreach ($this->mSources as $source) {
+			$source->EnableCategory($CategoryName);
+		}
+		return parent::EnableCategory($CategoryName);
+	}
+	
+	function DisableCategory($CategoryName)
+	{
+		foreach ($this->mSources as $source) {
+			$source->DisableCategory($CategoryName);
+		}
+		return parent::DisableCategory($CategoryName);
 	}
 	
 	function AddInclusion($FeedId, $EnableInclusions = FALSE)

@@ -67,7 +67,7 @@ class Comments extends Controller
 				$data = array();
 				$data['maintext'] = $this->pages_model->GetPropertyWikitext('main');
 				$data['culprit'] = new CommentViewList();
-				$data['target'] = $this->uri->uri_string();
+				$data['target'] = $this->uri->uri_string().'#comments';
 				
 				$data['culprit']->SetComments($comments);
 				

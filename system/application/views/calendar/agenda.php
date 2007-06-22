@@ -10,6 +10,10 @@ if (!empty($Occurrences)) {
 	?>
 	<table border="0" cellpadding="1" cellspacing="0">
 	<?
+	$sorted_occurrences = array();
+	foreach ($Occurrences as $key => $occurrence) {
+		$sorted_occurrences[$occurrence->StartTime->Timestamp()][] = & $Occurrences[$key];
+	}
 	foreach ($Occurrences as $occurrence) {
 		echo('<tr><td valign="top">');
 		echo($occurrence->StartTime->Format('H:i'));

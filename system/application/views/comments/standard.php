@@ -8,7 +8,9 @@
  * @param $CommentAdd    ViewsView.
  * @param $CommentList   ViewsView.
  */
-
+?>
+<a id="comments">&nbsp;</a>
+<?php
 if (isset($CommentThread)) {
 	$CommentThread->Load();
 }

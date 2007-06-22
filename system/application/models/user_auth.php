@@ -157,7 +157,7 @@ class User_auth extends model {
 		$this->officeLogin = false;
 
 		// Create a new session to prevent hijacking of sessions
-		session_regenerate_id(true);
+		//session_regenerate_id(true);
 
 		// Set/unset a cookie if appropriate
 		if ($savelogin) {

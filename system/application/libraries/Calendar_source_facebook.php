@@ -71,7 +71,9 @@ class CalendarSourceFacebook extends CalendarSource
 			if (!$CI->facebook->InUse()) return;
 			
 			$this->GetEvents($Data);
-			$this->GetBirthdays($Data);
+			if ($this->CategoryEnabled('Anniversary')) {
+				$this->GetBirthdays($Data);
+			}
 		}
 	}
 	
@@ -130,6 +132,8 @@ class CalendarSourceFacebook extends CalendarSource
 					if (!empty($event['pic'])) {
 						$event_obj->Image = $event['pic'];
 					}
+					$event_obj->Category = 'Facebook';
+					
 					$occurrence->SourceOccurrenceId = $event_obj->SourceEventId;
 					$occurrence->LocationDescription = $event['location'];
 					$occurrence->StartTime = new Academic_time((int)$event['start_time']);
@@ -201,6 +205,8 @@ class CalendarSourceFacebook extends CalendarSource
 							if (!empty($birthday['pic'])) {
 								$event_obj->Image = $birthday['pic'];
 							}
+							$event_obj->Category = 'Anniversary';
+							
 							$occurrence->SourceOccurrenceId = $event_obj->SourceEventId;
 							$occurrence->LocationDescription = '';
 							$occurrence->StartTime = new Academic_time($dob);

@@ -9,14 +9,11 @@
 class My_calendar
 {
 
-	protected static $sFilterDef = array(
+	protected $sFilterDef = array(
 		// category
 		'cat' => array(
 			'name' => 'category',
 			array(
-				'no-social',
-				'no-academic',
-				'no-meeting',
 			),
 		),
 		'att' => array(
@@ -54,6 +51,7 @@ class My_calendar
 			),
 		),
 	);
+	protected $mCategories;
 	
 	protected $mAgenda = FALSE;
 	protected $mRangeUrl = '';
@@ -79,6 +77,13 @@ class My_calendar
 		
 		$CI->load->model('calendar/events_model');
 		$this->mReadOnly = $CI->events_model->IsReadOnly();
+		
+		// Get categories and reindex by name
+		$categories = $CI->events_model->CategoriesGet();
+		foreach ($categories as $category) {
+			$this->mCategories[$category['name']] = $category;
+			$this->sFilterDef['cat'][0][] = 'no-'.$category['name'];
+		}
 	}
 	
 	function SetAgenda($Prefix)
@@ -158,7 +163,7 @@ class My_calendar
 		// eg
 		// cat:no-social.att:no-no.search:all:yorker:case
 		$CI->load->library('filter_uri');
-		$filter_def = new FilterDefinition(self::$sFilterDef);
+		$filter_def = new FilterDefinition($this->sFilterDef);
 		if (NULL === $Filter) {
 			$Filter = '';
 		}
@@ -192,6 +197,18 @@ class My_calendar
 						case 'accepted':
 							$sources->EnableGroup('rsvp');
 							break;
+					}
+				}
+			}
+			if (array_key_exists('cat', $filter)) {
+				$cats = array();
+				foreach ($filter['cat'] as $category) {
+					$cats[] = $category[0];
+				}
+				foreach ($this->mCategories as $category) {
+					$negator = 'no-'.$category['name'];
+					if (in_array($negator, $cats)) {
+						$sources->DisableCategory($category['name']);
 					}
 				}
 			}
@@ -231,9 +248,11 @@ class My_calendar
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
 		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
+		$days->SetCategories($this->mCategories);
 		
 		$todo = new CalendarViewTodoList();
 		$todo->SetCalendarData($calendar_data);
+		$todo->SetCategories($this->mCategories);
 		
 		$view_mode_data = array(
 			'DateDescription' => 'Today probably!',
@@ -287,6 +306,7 @@ class My_calendar
 			$Format,
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
+		$days->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -333,6 +353,7 @@ class My_calendar
 			$Format,
 			NULL !== $Filter ? '/'.$Filter : ''
 		);
+		$weeks->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -367,6 +388,7 @@ class My_calendar
 		
 		$agenda = new CalendarViewAgenda();
 		$agenda->SetCalendarData($calendar_data);
+		$agenda->SetCategories($this->mCategories);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -418,7 +440,7 @@ class My_calendar
 						'Occurrence' => &$found_occurrence,
 						'ReadOnly' => $this->mReadOnly,
 						'Attendees' => $sources->GetOccurrenceAttendanceList($SourceId, $OccurrenceId),
-						'FailRedirect' => site_url(GetUriTail(5)),
+						'FailRedirect' => '/'.GetUriTail(5),
 					);
 					
 					$CI->main_frame->SetTitleParameters(array(
@@ -438,35 +460,80 @@ class My_calendar
 		}
 	}
 	
+	/// Display and handle an event adder form.
 	function GetAdder()
 	{
 		$CI = & get_instance();
 		
-		$event_categories = $CI->events_model->CategoriesGet();
-		
 		/// @todo make standard functions and views for recurrence interface
-		$input = array();
-		$input['name'] = $CI->input->post('a_summary');
-		if (FALSE !== $input['name']) {
+		$form_id = 'caladd_';
+		$length_ranges = array(
+			'summary' => array(3, 255),
+			'description' => array(NULL, 1 << 24 - 1),
+		);
+		
+		$input = array(
+			'name' => '',
+			'summary' => '',
+			'description' => '',
+			'start' => strtotime('+3hour'),
+			'end'   => strtotime('+4hour'),
+			'allday' => FALSE,
+			'time_associated'    => TRUE,
+			'eventcategory' => -1,
+		);
+		$summary = $CI->input->post($form_id.'summary');
+		if (FALSE !== $summary) {
+			// Get the data
 			$failed_validation = FALSE;
-			$input['startdate']      = $CI->input->post('a_startdate');
-			$input['starttime']      = $CI->input->post('a_starttime');
-			$input['enddate']        = $CI->input->post('a_enddate');
-			$input['endtime']        = $CI->input->post('a_endtime');
-			$input['time_associated'] = FALSE === $CI->input->post('a_allday');
-			$input['location']       = $CI->input->post('a_location');
-			$input['category']       = $CI->input->post('a_category');
+			$input['summary']        = $summary;
+			$input['start']          = $CI->input->post($form_id.'start');
+			$input['end']            = $CI->input->post($form_id.'end');
+			$input['allday']         = (FALSE !== $CI->input->post($form_id.'allday'));
+			$input['location']       = $CI->input->post($form_id.'location');
+			$input['category']       = $CI->input->post($form_id.'category');
+			$input['description']    = $CI->input->post($form_id.'description');
+			$input['frequency']      = $CI->input->post($form_id.'frequency');
+			// Simple derived data
+			$input['time_associated'] = !$input['allday'];
+			$input['name'] = $input['summary'];
+			
+			// Validate numbers
+			foreach (array('start','end') as $ts_name) {
+				if (is_numeric($input[$ts_name])) {
+					$input[$ts_name] = (int)$input[$ts_name];
+				} else {
+					$this->messages->AddMessage('error', 'Invalid '.$ts_name.' timestamp.');
+				}
+			}
+			
+			// Validate strings
+			foreach ($length_ranges as $field => $range) {
+				if (FALSE !== $input[$field]) {
+					$len = strlen($input[$field]);
+					if (NULL !== $range[0] && $len < $range[0]) {
+						$failed_validation = TRUE;
+						$CI->messages->AddMessage('error', 'The specified '.$field.' was not long enough. It must be at least '.$range[0].' characters long.');
+					}
+					if (NULL !== $range[1] && $len > $range[1]) {
+						$failed_validation = TRUE;
+						$CI->messages->AddMessage('error', 'The specified '.$field.' was too long. It must be at most '.$range[1].' characters long.');
+					}
+				}
+			}
+			
+			// Validate category
 			if (!is_numeric($input['category']) ||
-				!array_key_exists($input['category'] = (int)$input['category'], $event_categories))
+				!array_key_exists($input['category'] = (int)$input['category'], $this->mCategories))
 			{
 				$failed_validation = TRUE;
 				$CI->messages->AddMessage('error', 'You did not specify a valid event category');
 			}
-			$input['description']    = $CI->input->post('a_description');
-			$input['frequency']      = $CI->input->post('a_frequency');
-			// Figure out recurrence
+			// Validate recurrence based on frequency
 			if ('none' !== $input['frequency']) {
-				$input['interval']       = $CI->input->post('a_interval');
+				// Read interval
+				$input['interval']     = $CI->input->post($form_id.'interval');
+				// Validate interval
 				if (!is_numeric($input['interval']) || $input['interval'] < 1) {
 					$failed_validation = TRUE;
 					$CI->messages->AddMessage('error', 'You specified an invalid interval');
@@ -475,77 +542,14 @@ class My_calendar
 				}
 				if ('daily' === $input['frequency']) {
 				} elseif ('weekly' === $input['frequency']) {
-					$input['onday']          = $CI->input->post('a_onday');
+					$input['onday']          = $CI->input->post($form_id.'onday');
 				} elseif ('yearly' === $input['frequency']) {
-				}
-			}
-			foreach (array('start','end') as $startend) {
-				// Validate dates
-				$field = $startend.'date';
-				if (preg_match('/^[ \t]*(\d{1,2})\/(\d{1,2})\/(\d{4})[ \t]*$/', $input[$field], $matches)) {
-					if (checkdate((int)$matches[2], (int)$matches[1], (int)$matches[3])) {
-						$input[$field] = $matches;
-					} else {
-						$CI->messages->AddMessage('error',
-							'You specified a '.$startend.' date that does not exist: '.
-							$matches[1].'/'.$matches[2].'/'.$matches[3]
-						);
-						$failed_validation = TRUE;
-					}
-				} else {
-					$CI->messages->AddMessage('error',
-						'You specified an invalid '.$startend.' date: "'.$input[$field].'"'
-					);
-					$failed_validation = TRUE;
-				}
-				// Validate times
-				$field = $startend.'time';
-				if ($input['time_associated']) {
-					if (preg_match('/^[ \t]*([012]?\d):([0-5]?\d)(:([0-5]?\d))?[ \t]*$/', $input[$field], $matches)) {
-						$hour = (int)$matches[1];
-						$minute = (int)$matches[2];
-						if (!empty($matches[4])) {
-							$second = (int)$matches[4];
-						} else {
-							$second = 0;
-						}
-						if ($hour < 24 && $minute < 60 && $second < 60) {
-							$input[$field] = array($hour, $minute, $second);
-						} else {
-							$CI->messages->AddMessage('error',
-								'You specified a '.$startend.' time that does not exist: '.
-								$hour.':'.$minute.':'.$second
-							);
-							$failed_validation = TRUE;
-						}
-					} else {
-						$CI->messages->AddMessage('error',
-							'You specified an invalid '.$startend.' time: "'.$input[$field].'"'
-						);
-						$failed_validation = TRUE;
-					}
-				} else {
-					$input[$field] = array(0,0,0);
 				}
 			}
 			
 			if (!$failed_validation) {
-				$start = mktime(
-					$input['starttime'][0],
-					$input['starttime'][1],
-					$input['starttime'][2],
-					$input['startdate'][2],
-					$input['startdate'][1],
-					$input['startdate'][3]
-				);
-				$end = mktime(
-					$input['endtime'][0],
-					$input['endtime'][1],
-					$input['endtime'][2],
-					$input['enddate'][2],
-					$input['enddate'][1],
-					$input['enddate'][3]
-				);
+				$start = $input['start'];
+				$end   = $input['end'];
 				if ($end < $start) {
 					$CI->messages->AddMessage('error', 'You specified the end time before the start time.');
 					$failed_validation = TRUE;
@@ -602,18 +606,10 @@ class My_calendar
 			}
 		}
 		
+		$input['target'] = $CI->uri->uri_string();
 		$data = array(
-			'EventCategories' => $event_categories,
-			'AddForm' => array(
-				'target' => $CI->uri->uri_string(),
-				'default_summary' => '',
-				'default_startdate' => date('d/m/Y', strtotime('+3hour')),
-				'default_starttime' => date('H:m',   strtotime('+3hour')),
-				'default_enddate'   => date('d/m/Y', strtotime('+4hour')),
-				'default_endtime'   => date('H:m',   strtotime('+4hour')),
-				'default_allday'    => FALSE,
-				'default_eventcategory' => -1,
-			),
+			'EventCategories' => $this->mCategories,
+			'AddForm' => $input,
 		);
 		
 		return new FramesView('calendar/simpleadd', $data);
@@ -697,70 +693,67 @@ class My_calendar
 				'no-accepted' => !$Sources->GroupEnabled('rsvp'),
 				'no-maybe'    => !$Sources->GroupEnabled('show'),
 			),
-		);
-		return array(
-			'id' => array(
-				'name'			=> 'social',
-				'field'			=> 'category',
-				'value'			=> 'social',
-				'selected'		=> FALSE,
-				'description'	=> 'Social',
-				'display'		=> 'block',
-				'colour'		=> 'FFFF00',
-			),
-			'academic' => array(
-				'name'			=> 'academic',
-				'field'			=> 'category',
-				'value'			=> 'academic',
-				'selected'		=> TRUE,
-				'description'	=> 'Academic',
-				'display'		=> 'block',
-				'colour'		=> '00FF00',
-			),
-			'meeting' => array(
-				'name'			=> 'meeting',
-				'field'			=> 'category',
-				'value'			=> 'meeting',
-				'selected'		=> TRUE,
-				'description'	=> 'Meetings',
-				'display'		=> 'block',
-				'colour'		=> 'FF0000',
-			),
-			
-			'hidden' => array(
-				'name'			=> 'not attending',
-				'field'			=> 'visibility',
-				'value'			=> 'no',
-				'selected'		=> $Sources->GroupEnabled('hide'),
-				'description'	=> 'Include those which I have hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
-			),
-			'visible' => array(
-				'name'			=> 'maybe attending',
-				'field'			=> 'visibility',
-				'value'			=> 'maybe',
-				'selected'		=> $Sources->GroupEnabled('show'),
-				'description'	=> 'Include those which I have not hidden',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
-				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
-			),
-			'rsvp' => array(
-				'name'			=> 'attending',
-				'field'			=> 'visibility',
-				'value'			=> 'yes',
-				'selected'		=> $Sources->GroupEnabled('rsvp'),
-				'description'	=> 'Only those to which I\'ve RSVPd',
-				'display'		=> 'image',
-				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
-				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
-				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+			'cat' => array(
+				// Filled in in after initialisation
 			),
 		);
+		// Fill categories
+		foreach ($this->mCategories as $category) {
+			$Filter['cat']['no-'.$category['name']] = !$Sources->CategoryEnabled($category['name']);
+		}
+		
+		// First add categories to the filters
+		$filters = array();
+		foreach ($this->mCategories as $category) {
+			$filters['cat_'.$category['name']] = array(
+				'name'			=> $category['name'],
+				'field'			=> 'category',
+				'value'			=> $category['name'],
+				'selected'		=> $Sources->CategoryEnabled($category['name']),
+				'description'	=> $category['name'],
+				'display'		=> 'block',
+				'colour'		=> $category['colour'],
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'cat', 'no-'.$category['name'])),
+			);
+		}
+		
+		// Then the attendance filters
+		$filters['hidden'] = array(
+			'name'			=> 'not attending',
+			'field'			=> 'visibility',
+			'value'			=> 'no',
+			'selected'		=> $Sources->GroupEnabled('hide'),
+			'description'	=> 'Include those which I have hidden',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
+			'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
+		);
+		$filters['visible'] = array(
+			'name'			=> 'maybe attending',
+			'field'			=> 'visibility',
+			'value'			=> 'maybe',
+			'selected'		=> $Sources->GroupEnabled('show'),
+			'description'	=> 'Include those which I have not hidden',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
+			'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
+		);
+		$filters['rsvp'] = array(
+			'name'			=> 'attending',
+			'field'			=> 'visibility',
+			'value'			=> 'yes',
+			'selected'		=> $Sources->GroupEnabled('rsvp'),
+			'description'	=> 'Only those to which I\'ve RSVPd',
+			'display'		=> 'image',
+			'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
+			'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
+			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+		);
+		
+		// The filters are the deliverable
+		return $filters;
 	}
 	
 }

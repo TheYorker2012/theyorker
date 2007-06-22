@@ -18,24 +18,71 @@
  */
 
 ?>
+<a id="comment_preview"></a>
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {
 		echo('<h2>Add Comment</h2>');
 		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>');
-	} else {
-		?>
+	} else { ?>
+		<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>
 		<script type="text/javascript">
-			function insert_smiley(smiley)
-			{
-				<?php
-				/**
-				* @todo Add smileys intelligently. e.g. if blank and add, has space at
-				*	the beginning which is interpretted as preformatting in wikitext.
-				*/
-				?>
-				document.CommentAdd.CommentAddContent.value += " " + smiley;
+		function getObject(obj) {
+			if (document.getElementById) {
+				obj = document.getElementById(obj);
+			} else if (document.all) {
+				obj = document.all.item(obj);
+			} else {
+				obj = null;
 			}
+			return obj;
+		}
+		
+		function moveObject(obj,e,offset_x,offset_y) {
+			// step 1
+			var tempX = 0;
+			var tempY = 0;
+			var objHolder = obj;
+		
+			// step 2
+			obj = getObject(obj);
+			if (obj==null) return;
+		
+			// step 3
+			if (document.all) {
+				tempX = event.clientX + document.body.scrollLeft;
+				tempY = event.clientY + document.body.scrollTop;
+			} else {
+				tempX = e.pageX;
+				tempY = e.pageY;
+			}
+		
+			// step 4
+			if (tempX < 0){ tempX = 0 }
+			if (tempY < 0){ tempY = 0 }
+		
+			// step 5
+			obj.style.top  = (tempY - offset_y) + 'px';
+			obj.style.left = (tempX - offset_x) + 'px';
+		
+			// step 6
+			displayObject(objHolder, true);
+		
+			// step 7
+			return false;
+		}
+		
+		function displayObject(obj,show) {
+			obj = getObject(obj);
+			if (obj==null) return;
+			obj.style.display = show ? 'block' : 'none';
+			obj.style.visibility = show ? 'visible' : 'hidden';
+			return false;
+		}
+
+		function insert_smiley(smiley) {
+			insertTags(smiley, '', '', 'CommentAddContent');
+		}
 		</script>
 		<?php
 		// Show the preview
@@ -51,7 +98,7 @@
 		}
 		?>
 		<h2>Add Comment</h2>
-		<form class="form" name="CommentAdd" method="post" action="<?php echo $FormTarget; ?>">
+		<form class="form" id="CommentAdd" method="post" action="<?php echo $FormTarget; ?>">
 			<fieldset>
 				<?php /*
 				<label for="CommentAddIdentity">Identity</label>
@@ -63,20 +110,22 @@
 				}
 				?>
 				</select> */ ?>
-				<textarea name="CommentAddContent" cols="40" rows="4"><?php echo $DefaultContent; ?></textarea>
-			</fieldset>
-				<a href="#" onClick="document.getElementById('Layer1').style.display = 'block'; return false;"> Insert Smily </a>
 
-				<div id="Layer1" style="position:relative; width: 216px; height: 270px; z-index:0; top: -15px; display:none; background-color: #FFFFCC; layer-background-color: #FFFFCC; border: 1px none #000000;">
-				<?php echo $SmileyTable; ?>
-				<input type="button" class="button" name="Close" value="Close" onClick="document.getElementById('Layer1').style.display = 'none';" />
+				<div id="SmileySelect" style="position:absolute;width:225px;height:290px;z-index:0;display:none;border:1px #999 solid;background-color:#fff;top:0px;left:0px;">
+					<?php echo $SmileyTable; ?>
+					<input type="button" class="button" name="Close" value="Close" onclick="return displayObject('SmileySelect',false);" />
+					<div style="clear:both"></div>
 				</div>
 
-			<fieldset>
 				<?php if ($Thread['allow_anonymous_comments']) { ?>
-					<label for="CommentAddAnonymous">Anonymous</label>
-					<input type="checkbox" name="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo ' checked="checked"'; ?> />
+					<label for="CommentAddAnonymous" style="width:35%;">Post Anonymously:</label>
+					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo ' checked="checked"'; ?> />
 				<?php } ?>
+
+				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo $DefaultContent; ?></textarea>
+
+				<label><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></label>
+
 				<input type="submit" class="button" name="CommentAddPreview" value="Preview" />
 				<input type="submit" class="button" name="CommentAddSubmit" value="Submit" />
 			</fieldset>

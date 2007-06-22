@@ -42,6 +42,9 @@ EXTRAHEAD;
 	 */
 	protected function ProcessEvents(&$Data, $Categories)
 	{
+		if (!is_array($Categories)) {
+			$Categories = array();
+		}
 		$occurrences = $Data->GetCalendarOccurrences();
 		$events = $Data->GetEvents();
 		
@@ -79,6 +82,7 @@ EXTRAHEAD;
 		}
 		
 		$this->SetData('Occurrences', $occurrences);
+		$this->SetData('Categories', $Categories);
 		$this->SetData('Events', $events);
 		$this->SetData('Days', $days);
 	}

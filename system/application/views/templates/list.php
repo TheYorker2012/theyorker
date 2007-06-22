@@ -39,14 +39,14 @@ if (is_int($MaxPerPage) && $MaxPerPage > 0) {
 		$is_last_page  = ($current_page == $max_page);
 		$links = array();
 		if (!$is_first_page) {
-			$links[] = '<a href="'.
+			$links[] = '<span><a href="'.
 				$PageUrlPrefix.(1+($current_page-1)*$MaxPerPage).$PageUrlPostfix.
-				'">&lt;&lt; prev</a>';
+				'">&lt;</a></span>';
 		}
 		if ($current_page > $PageLinkSpan) {
-			$links[] = '<a href="'.
+			$links[] = '<span><a href="'.
 				$PageUrlPrefix.'1'.$PageUrlPostfix.
-				'">1</a>';
+				'">1</a></span>';
 			if ($current_page > $PageLinkSpan+1) {
 				$links[] = '...';
 			}
@@ -55,28 +55,32 @@ if (is_int($MaxPerPage) && $MaxPerPage > 0) {
 		     $page_counter <= min($max_page, $current_page+$PageLinkSpan);
 		     ++$page_counter) {
 			if ($page_counter === $current_page) {
-				$links[] = $page_counter+1;
+				$links[] = '<span class="selected">'.($page_counter+1).'</span>';
 			} else {
-				$links[] = '<a href="'.
+				$links[] = '<span><a href="'.
 					$PageUrlPrefix.(1+($page_counter)*$MaxPerPage).$PageUrlPostfix.
-					'">'.($page_counter+1).'</a>';
+					'">'.($page_counter+1).'</a></span>';
 			}
 		}
 		if ($current_page < $max_page-$PageLinkSpan) {
 			if ($current_page+1 < $max_page-$PageLinkSpan) {
 				$links[] = '...';
 			}
-			$links[] = '<a href="'.
+			$links[] = '<span><a href="'.
 				$PageUrlPrefix.(1+($max_page)*$MaxPerPage).$PageUrlPostfix.
-				'">'.($max_page+1).'</a>';
+				'">'.($max_page+1).'</a></span>';
 		}
 		if (!$is_last_page) {
-			$links[] = '<a href="'.
+			$links[] = '<span><a href="'.
 				$PageUrlPrefix.(1+($current_page+1)*$MaxPerPage).$PageUrlPostfix.
-				'">next &gt;&gt;</a>';
+				'">&gt;</a></span>';
 		}
-		$page_index = '<div class="BlueBox"><h2>Pages: '.implode(' ',$links).'</h2><p>showing '.$MaxPerPage.' comments per page</p></div>';
-		
+		$comment_text = 'comment';
+		if ($quantity > 1) {
+			$comment_text .= 's';
+		}
+		$page_index = '<div style="float:left;width:100%;margin-bottom:0.5em;"><div class="Pagination">'.implode('',$links).'</div>Showing '.($start_index + 1).' - '.$end_index.' of '.$quantity.' '.$comment_text.'</div>';
+
 		
 		// draw it
 		echo($page_index);

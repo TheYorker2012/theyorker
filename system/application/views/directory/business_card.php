@@ -78,8 +78,13 @@ if ($business_card['image_id']) {
 				}
 				if (PermissionsSubset('pr', GetUserLevel()) || PermissionsSubset('vip', GetUserLevel())){ ?>
 				<input name='member_delete_button' type='submit' onClick="return confirm('Are you sure you want to delete <?php echo $business_card['name']; ?>s contact card?');" value='Delete' class='button' />
-				<?php }?>
-				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo vip_url('directory/cards/'.$business_card['id'].'/edit'); ?>'"value='Edit' class='button' />
+				<?php }
+				if(isset($url)){
+				}else{
+				$url = vip_url('directory/cards/'.$business_card['id'].'/edit');
+				}
+				?>
+				<input name='member_edit_button' type='button' onClick="parent.location='<?php echo $url; ?>'"value='Edit' class='button' />
 			</fieldset>
 			</form>
 		<?php

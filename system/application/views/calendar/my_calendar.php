@@ -31,11 +31,20 @@
 	foreach ($Filters as $id => $filter) {
 		switch ($filter['display']) {
 			case 'block':
-				echo '<a class="CalendarFilter" href="#">';
-				echo $filter['name'];
-				echo '</a>';
+				// Change colour to that of the category, only if selected
+				echo('<a class="CalendarFilter"');
+				if ($filter['selected']) {
+					echo(' style="background-color:#'.$filter['colour'].';"');
+				}
+				if (array_key_exists('link', $filter)) {
+					echo(' href="'.$filter['link'].'"');
+				}
+				echo('>');
+				echo($filter['name']);
+				echo('</a>');
 				break;
 			case 'image':
+				// Draw one of the two images for selected/unselected with linkmy
 				if (array_key_exists('link', $filter)) {
 					echo('<a class="CalendarButtons" href="'.$filter['link'].'">');
 				}
