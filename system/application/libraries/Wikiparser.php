@@ -52,6 +52,7 @@ class Wikiparser {
 	protected $templates;
 	protected $newline_mode;
 	protected $enable_headings;
+	protected $enable_youtube;
 
 	protected $list_level_chars;
 	protected $list_level;
@@ -98,6 +99,7 @@ class Wikiparser {
 			);
 		$this->newline_mode = '';
 		$this->enable_headings = true;
+		$this->enable_youtube = true;
 	}
 
 	/**
@@ -363,7 +365,7 @@ class Wikiparser {
 		if (array_key_exists($namespace, $this->external_wikis)) {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
-		} elseif ('youtube' === $namespace) {
+		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
 			$output = '
 <div style="text-align:center;">
 <script type="text/javascript">
