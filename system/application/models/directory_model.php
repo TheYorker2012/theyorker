@@ -156,6 +156,42 @@ class Directory_model extends Model {
 
 		return $query->result_array();
 	}
+	
+	/// Get all the buisness cards asociated with a particular UserId.
+	/**
+	 * @param $UserId User entity id
+	 * @return array[business_card].
+	 */
+	function GetDirectoryOrganisationCardsByUserId($UserId)
+	{
+		$sql =
+			'SELECT'.
+			' business_cards.business_card_user_entity_id,'.
+			' business_cards.business_card_id,'.
+			' business_cards.business_card_image_id,'.
+			' business_cards.business_card_name,'.
+			' business_cards.business_card_title,'.
+			' business_cards.business_card_course,'.
+			' business_cards.business_card_blurb,'.
+			' business_cards.business_card_email,'.
+			' business_cards.business_card_mobile,'.
+			' business_cards.business_card_phone_internal,'.
+			' business_cards.business_card_phone_external,'.
+			' business_cards.business_card_postal_address,'.
+			' business_card_groups.business_card_group_name, '.
+			' business_card_groups.business_card_group_organisation_entity_id, '.
+			' organisations.organisation_name, '.
+			' business_cards.business_card_approved '.
+			'FROM business_cards '.
+			'INNER JOIN business_card_groups '.
+			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
+			'INNER JOIN organisations '.
+			' ON business_card_groups.business_card_group_organisation_entity_id = organisation_entity_id '.
+			'WHERE business_cards.business_card_deleted = 0 '.
+			'AND business_cards.business_card_user_entity_id = ? ';
+		$query = $this->db->query($sql, $UserId);
+		return $query->result_array();
+	}
 
 	/// Get an individual business card
 	/**

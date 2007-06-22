@@ -33,8 +33,8 @@ class Account extends controller
 				'/account/links');
 		$navbar->AddItem('password', 'Password',
 				'/account/password/change');
-		//$navbar->AddItem('bcards', 'VIP',
-		//		'/account/bcards');
+		$navbar->AddItem('bcards', 'VIP',
+				'/account/bcards');
 
 		$this->main_frame->SetPage($SelectedPage);
 	}
@@ -113,18 +113,104 @@ class Account extends controller
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('student')) return;
-
+		$this->load->model('directory_model');
+	
 		$this->_SetupTabs('bcards');
-
-		$data['test'] = 'test';
-
+		
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_bcards');
+		
+		$data['bcards_about'] = $this->pages_model->GetPropertyWikitext('bcards_about');
+		$cards = $this->directory_model->GetDirectoryOrganisationCardsByUserId($this->user_auth->entityId);
+		// translate into nice names for view
+		$data['cards'] = array();
+		foreach ($cards as $card) {
+			$data['cards'][] = array(
+				'organisation' => $card['organisation_name'],
+				'user_id' => $card['business_card_user_entity_id'],
+				'id' => $card['business_card_id'],
+				'name' => $card['business_card_name'],
+				'title' => $card['business_card_title'],
+				'course' => $card['business_card_course'],
+				'blurb' => $card['business_card_blurb'],
+				'email' => $card['business_card_email'],
+				'image_id' => $card['business_card_image_id'],
+				'phone_mobile' => $card['business_card_mobile'],
+				'phone_internal' => $card['business_card_phone_internal'],
+				'phone_external' => $card['business_card_phone_external'],
+				'postal_address' => $card['business_card_postal_address'],
+				'approved' => $card['business_card_approved']
+			);
+		}
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/business_cards', $data);
 		/// Set page title & load main frame with view
 		$this->main_frame->Load();
+	}
+	function bcardsedit($CardId)
+	{
+		/// Make sure users have necessary permissions to view this page
+		if (!CheckPermissions('student')) return;
+		$this->load->model('directory_model');
+		$this->load->model('businesscards_model');
+	
+		$this->_SetupTabs('bcards');
+		
+		/// Get custom page content
+		$this->pages_model->SetPageCode('account_bcards');
+		
+		$data['bcards_about'] = $this->pages_model->GetPropertyWikitext('bcards_about');
+			
+			//Send data to form from db, if there is a fail the post will overwrite this.
+			$data['users_card'] = true; // Prevent view from editing the username and group
+			$data['url'] = '/account/bcardsedit/'.$CardId;
+			$data['cancel_url'] = '/account/bcards';
+			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($CardId);
+			foreach($cards_data as $card_data){
+				$data['card_form'] = array(
+					'organisation' => $card_data['organisation_directory_entry_name'],
+					'card_name' => $card_data['business_card_name'],
+					'card_title' => $card_data['business_card_title'],
+					'group_id' => $card_data['business_card_business_card_group_id'],
+					'card_course' => $card_data['business_card_course'],
+					'email' => $card_data['business_card_email'],
+					'card_about' => $card_data['business_card_blurb'],
+					'postal_address' => $card_data['business_card_postal_address'],
+					'phone_mobile' => $card_data['business_card_mobile'],
+					'phone_internal' => $card_data['business_card_phone_internal'],
+					'phone_external' => $card_data['business_card_phone_external'],
+				);
+			}
+			//Get post data
+			if(!empty($_POST["card_editbutton"])){
+				if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
+				{
+					$this->main_frame->AddMessage('error','Please include a name and a title for your contact card');
+					//add failed send the data back into the form
+					$data['card_form']=$_POST;
+				}else{
+					//User ID and group ID are not provided so use from db.
+					$user_id = $this->user_auth->entityId;
+					$group_id = $data['card_form']['group_id'];
+					if($card_data['business_card_user_entity_id'] != $user_id){//User ID has to be that of the logged in user
+						$this->main_frame->AddMessage('error','This contact card does not belong to you!');
+					}else{
+						//update contact card
+						//@note start time, end time, order, and image id are all currently null and not in use.
+						$this->businesscards_model->UpdateBuisnessCard($user_id, $group_id, null, $_POST["card_name"],
+					$_POST["card_title"], $_POST["card_about"], $_POST["card_course"], $_POST["email"], $_POST["phone_mobile"],
+					$_POST["phone_internal"], $_POST["phone_external"], $_POST["postal_address"],
+					0, null, null, $CardId, 1); //@note The last param 1 forces immediate publishing
+						$this->main_frame->AddMessage('success','The contact card was successfully updated.');
+						
+						redirect("/account/bcards");
+					}
+				}
+			} else {
+			}
+			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
+			$this->main_frame->Load();
 	}
 
 	/**

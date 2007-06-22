@@ -672,6 +672,8 @@ class Yorkerdirectory extends Controller
 			$data = array(
 				'business_card' => $business_cards[0],
 				'business_card_goups' => array(),
+				'url' => vip_url('directory/cards/'.$business_cards[0]['id'].'/edit'),
+				'cancel_url' => vip_url('directory/contacts'),
 			);
 
 			//Get post data
