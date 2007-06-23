@@ -179,25 +179,23 @@ END:VCALENDAR
 		$this->main_frame->Load();
 	}
 	
-	function eventsearch()
+	function eventsearch($search = '')
 	{
 		if (!CheckPermissions('public')) return;
 		
 		if (array_key_exists('search', $_GET)) {
-			$search = $_GET['search'];
-		} else {
-			$search = '';
+			redirect('test/james/eventsearch/'.urlencode($_GET['search']));
 		}
-		
-		echo('<form method="get" action="'.site_url($this->uri->uri_string()).'">');
-		echo('<input name="search" type="text" value="'.htmlentities($search, ENT_QUOTES, 'utf-8').'" />');
-		echo('<input type="submit" />');
-		echo('</form>');
 		
 		// Load the libraries
 		$this->load->library('calendar_backend');
 		$this->load->library('calendar_source_my_calendar');
 		$this->load->library('facebook');
+		
+		$data = array(
+			'target' => $this->uri->uri_string(),
+			'search' => $search,
+		);
 		
 		if (!empty($search)) {
 			
@@ -239,8 +237,11 @@ END:VCALENDAR
 			// Do whatever with the data
 			// $calendar_data->GetEvents() are the events
 			// theres a couple of others for occurrences + organisations
-			var_dump($calendar_data->GetEvents());
+			$data['results'] = $calendar_data->GetEvents();
 		}
+		
+		$this->main_frame->SetContentSimple('test/james-eventsearch',$data);
+		$this->main_frame->Load();
 	}
 }
 
