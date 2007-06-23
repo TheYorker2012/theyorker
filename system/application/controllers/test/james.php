@@ -228,6 +228,10 @@ END:VCALENDAR
 			$source->EnableGroup('hide'); // Show events hidden by user
 			$source->EnableGroup('todo'); // Enable todo items
 			
+			// Set the date range if applicable
+			//$source->SetRange(strtotime('-1month'), NULL))
+			//$source->SetTodoRange(strtotime('-1month'), NULL))
+			
 			// Get the actual events from the sources
 			$calendar_data = new CalendarData();
 			$source->FetchEvents($calendar_data);
