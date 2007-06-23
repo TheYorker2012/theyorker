@@ -109,19 +109,29 @@ $CI = & get_instance();
 		<?php
 		// Attendee list
 		if (isset($Attendees) && !empty($Attendees)) {
-			echo('<h2>Confirmed Attendees</h2>');
+			echo('<h2>Attendees</h2>');
 			echo('<ul>');
-			foreach ($Attendees as $attendee) {
-				echo('<li>');
-				$linked = array_key_exists('link', $attendee);
-				if ($linked) {
-					echo('<a href="'.$attendee['link'].'" target="_blank">');
+			foreach (array(true,false) as $friend) {
+				foreach ($Attendees as $attendee) {
+					if ($attendee['friend'] === $friend) {
+						echo('<li>');
+						$linked = array_key_exists('link', $attendee);
+						if ($attendee['friend']) {
+							echo('<b>');
+						}
+						if ($linked) {
+							echo('<a href="'.$attendee['link'].'" target="_blank">');
+						}
+						echo($attendee['name']);
+						if ($linked) {
+							echo('</a>');
+						}
+						if ($attendee['friend']) {
+							echo('</b>');
+						}
+						echo(' '.$attendee['attend'].'</li>');
+					}
 				}
-				echo($attendee['name']);
-				if ($linked) {
-					echo('</a>');
-				}
-				echo(' '.$attendee['attend'].'</li>');
 			}
 			echo('</ul>');
 		}

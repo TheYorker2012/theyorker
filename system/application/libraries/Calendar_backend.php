@@ -286,6 +286,8 @@ abstract class CalendarSource
 	 */
 	function SearchMatch($phrases, $Subject)
 	{
+		/// @pre is_array(@a $phrases)
+		assert('is_array($phrases)');
 		foreach ($phrases as $phrase) {
 			if (FALSE === stristr($Subject, $phrase)) {
 				return FALSE;
@@ -465,6 +467,7 @@ abstract class CalendarSource
 	 *	- 'link' string URL about user.
 	 *	- 'entity_id' int Entity id if known.
 	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
+	 *	- 'friend' bool Whether the individual is a friend.
 	 */
 	function GetOccurrenceAttendanceList($Occurrence)
 	{

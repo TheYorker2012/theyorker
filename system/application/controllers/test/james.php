@@ -130,6 +130,114 @@ class James extends controller
 		}
 		$this->main_frame->Load();
 	}
+	
+	function recur()
+	{
+		if (!CheckPermissions('admin')) return;
+		
+		$this->load->library('academic_calendar');
+		$this->load->library('calendar_backend');
+		$this->load->model('calendar/recurrence_model');
+		$this->load->library('calendar_source_icalendar');
+		
+		$ical = new CalendarSourceICalendar(
+'BEGIN:VCALENDAR
+PRODID:-//K Desktop Environment//NONSGML KOrganizer 3.5.6//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTSTAMP:20070330T073440Z
+ORGANIZER;CN=James Hogan:MAILTO:james@albanarts.com
+CREATED:20070327T120943Z
+UID:KOrganizer-175000820.541
+SEQUENCE:9
+LAST-MODIFIED:20070330T073424Z
+SUMMARY:Freshers week
+CLASS:PUBLIC
+PRIORITY:5
+RRULE:FREQ=WEEKLY;COUNT=4;INTERVAL=2;BYDAY=WE,FR
+EXDATE;VALUE=DATE:20070330
+DTSTART:20070328T110000Z
+DTEND:20070328T131500Z
+TRANSP:OPAQUE
+END:VEVENT
+
+END:VCALENDAR
+');
+		$this->messages->AddDumpMessage('messages', $ical->ClearMessages());
+		
+		$recur = $ical->ReadRecur(
+			'FREQ=MONTHLY;INTERVAL=2;BYDAY=WE,-1FR'
+		);
+		if (NULL === $recur) {
+			$this->messages->AddDumpMessage('messages', $ical->ClearMessages());
+		} else {
+			echo('<pre>'); print_r($recur); echo('</pre>');
+			$now = time();
+			var_dump($recur->GetOccurrences($now,$now,strtotime('+5year')));
+		}
+		
+		$this->main_frame->Load();
+	}
+	
+	function eventsearch()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		if (array_key_exists('search', $_GET)) {
+			$search = $_GET['search'];
+		} else {
+			$search = '';
+		}
+		
+		echo('<form method="get" action="'.site_url($this->uri->uri_string()).'">');
+		echo('<input name="search" type="text" value="'.htmlentities($search, ENT_QUOTES, 'utf-8').'" />');
+		echo('<input type="submit" />');
+		echo('</form>');
+		
+		// Load the libraries
+		$this->load->library('calendar_backend');
+		$this->load->library('calendar_source_my_calendar');
+		$this->load->library('facebook');
+		
+		if (!empty($search)) {
+			
+			$source = new CalendarSourceMyCalendar();
+			// Use the search phrase
+			$source->SetSearchPhrase($search);
+			// Set the groups to get events from
+			/*
+				groups:
+				'owned'      => TRUE,
+				'subscribed' => TRUE,
+				'all'        => FALSE,
+				
+				'private'    => TRUE,
+				'active'     => TRUE,
+				'inactive'   => TRUE,
+				
+				'hide'       => FALSE,
+				'show'       => TRUE,
+				'rsvp'       => TRUE,
+				
+				'event'      => TRUE,
+				'todo'       => FALSE,
+			*/
+			$source->EnableGroup('all');
+			$source->DisableGroup('subscribed'); // (subset of all)
+			$source->DisableGroup('owned');      // (subset of all)
+			$source->EnableGroup('hide'); // Show events hidden by user
+			$source->EnableGroup('todo'); // Enable todo items
+			
+			// Get the actual events from the sources
+			$calendar_data = new CalendarData();
+			$source->FetchEvents($calendar_data);
+			
+			// Do whatever with the data
+			// $calendar_data->GetEvents() are the events
+			// theres a couple of others for occurrences + organisations
+			var_dump($calendar_data->GetEvents());
+		}
+	}
 }
 
 ?>

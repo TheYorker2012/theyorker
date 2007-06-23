@@ -99,7 +99,7 @@ class CalendarSourceFacebook extends CalendarSource
 			if (!empty($events)) {
 				foreach ($events as $event) {
 					// Check if it matches the search phrase
-					if (is_string($this->mSearchPhrase)) {
+					if (is_array($this->mSearchPhrases)) {
 						// use the following fields
 						//  $event['name']
 						//  $event['description']
@@ -191,10 +191,10 @@ class CalendarSourceFacebook extends CalendarSource
 			foreach ($birthdays as $birthday) {
 				if (preg_match('/([A-Z][a-z]+ \d\d?, )(\d\d\d\d)/', $birthday['birthday'], $matches)) {
 					// Check if it matches the search phrase
-					if (is_string($this->mSearchPhrase)) {
+					if (is_array($this->mSearchPhrases)) {
 						// use the following fields
 						//  $birthday['name']
-						if (!$this->SearchMatch($this->mSearchPhrase, 'birthday,anniversary,'.$birthday['name']))
+						if (!$this->SearchMatch($this->mSearchPhrases, 'birthday,anniversary,'.$birthday['name']))
 						{
 							continue;
 						}
@@ -264,30 +264,51 @@ class CalendarSourceFacebook extends CalendarSource
 				// get the list of members.
 				$CI = & get_instance();
 				try {
+					// Get the ids + statuses of event members
 					$fb_attendings = $CI->facebook->Client->fql_query(
 						'SELECT uid, rsvp_status '.
 						'FROM event_member '.
 						'WHERE eid = '.(int)$event
 					);
-					$fb_attendees = $CI->facebook->Client->fql_query(
-						'SELECT uid, name '.
-						'FROM user '.
-						'WHERE uid IN (SELECT uid, rsvp_status '.
-									'FROM event_member '.
-									'WHERE eid = '.(int)$event.')'
-					);
-					$members = $CI->facebook->Client->events_getMembers((int)$event);
-					$attendees = array();
-					foreach ($fb_attendees as $attendee) {
-						$attendees[(int)$attendee['uid']] = array(
-							'name' => $attendee['name'],
-							'link' => $this->ProfileUrl($attendee['uid']),
+					// there are only attendees if people are members
+					if (true || !empty($fb_attendings)) {
+						$fb_attendees = $CI->facebook->Client->fql_query(
+							'SELECT uid, name '.
+							'FROM user '.
+							'WHERE uid IN (SELECT uid, rsvp_status '.
+										'FROM event_member '.
+										'WHERE eid = '.(int)$event.')'
 						);
+						$fb_friend_attendees = $CI->facebook->Client->fql_query(
+							'SELECT uid '.
+							'FROM user '.
+							'WHERE uid IN (SELECT uid, rsvp_status '.
+										'FROM	event_member '.
+										'WHERE	eid = '.(int)$event.') AND '.
+								'uid IN (SELECT	uid2 '.
+										'FROM	friend '.
+										'WHERE	uid1 = '.$CI->facebook->Uid.
+											'OR	uid2 = '.$CI->facebook->Uid.')'
+						);
+						//$members = $CI->facebook->Client->events_getMembers((int)$event);
+						$attendees = array();
+						foreach ($fb_attendees as $attendee) {
+							$attendees[(int)$attendee['uid']] = array(
+								'name' => $attendee['name'],
+								'link' => $this->ProfileUrl($attendee['uid']),
+								'friend' => false,
+							);
+						}
+						foreach ($fb_friend_attendees as $friend_attendee) {
+							$attendees[(int)$friend_attendee['uid']]['friend'] = true;
+						}
+						foreach ($fb_attendings as $attending) {
+							$attendees[(int)$attending['uid']]['attend'] = $attending['rsvp_status'];
+						}
+						return array_values($attendees);
+					} else {
+						return array();
 					}
-					foreach ($fb_attendings as $attending) {
-						$attendees[(int)$attending['uid']]['attend'] = $attending['rsvp_status'];
-					}
-					return array_values($attendees);
 				} catch (FacebookRestClientException $ex) {
 					$CI->facebook->HandleException($ex);
 				}
