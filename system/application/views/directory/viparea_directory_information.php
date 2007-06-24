@@ -33,7 +33,7 @@
 			</fieldset>
 		</form>
 	</div>
-<? } ?>
+<?php } ?>
 
 	<h2>Revisions</h2>
 	<div class="Entry">

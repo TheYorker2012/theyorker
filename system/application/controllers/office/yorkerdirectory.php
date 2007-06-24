@@ -149,7 +149,11 @@ class Yorkerdirectory extends Controller
 		if ($action=='view') {
 			//Send data if given
 			if (!empty($_POST['description'])) {
-				$this->directory_model->AddDirectoryEntryRevision($organisation, $_POST);
+				$add_data = $_POST;
+				if(substr($add_data['url'], 0, 5) != 'http:' && substr($add_data['url'], 0, 6) != 'https:'){
+					$add_data['url'] = 'http://'.$add_data['url'];
+				}
+				$this->directory_model->AddDirectoryEntryRevision($organisation, $add_data);
 				$this->messages->AddMessage('success','A new directory entry revision has been created.');
 				if ($_POST['description']==null) {
 					$this->messages->AddMessage('information','About field is blank we advise you add some detail.');
