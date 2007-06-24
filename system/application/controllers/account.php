@@ -166,9 +166,10 @@ class Account extends controller
 			$data['users_card'] = true; // Prevent view from editing the username and group
 			$data['url'] = '/account/bcardsedit/'.$CardId;
 			$data['cancel_url'] = '/account/bcards';
-			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($CardId);
+			$cards_data = $this->directory_model->GetDirectoryOrganisationCardsById($CardId);//only gets one card
 			foreach($cards_data as $card_data){
 				$data['card_form'] = array(
+					'userid' => $card_data['business_card_user_entity_id'],
 					'organisation' => $card_data['organisation_directory_entry_name'],
 					'card_name' => $card_data['business_card_name'],
 					'card_title' => $card_data['business_card_title'],
@@ -182,6 +183,9 @@ class Account extends controller
 					'phone_external' => $card_data['business_card_phone_external'],
 				);
 			}
+			//User ID and group ID are not provided so use from db.
+			$group_id = $data['card_form']['group_id'];
+			$user_id = $this->user_auth->entityId;
 			//Get post data
 			if(!empty($_POST["card_editbutton"])){
 				if(empty($_POST["card_name"]) || empty($_POST["card_title"]))
@@ -190,10 +194,7 @@ class Account extends controller
 					//add failed send the data back into the form
 					$data['card_form']=$_POST;
 				}else{
-					//User ID and group ID are not provided so use from db.
-					$user_id = $this->user_auth->entityId;
-					$group_id = $data['card_form']['group_id'];
-					if($card_data['business_card_user_entity_id'] != $user_id){//User ID has to be that of the logged in user
+					if($data['card_form']['userid'] != $user_id){//User ID has to be that of the logged in user
 						$this->main_frame->AddMessage('error','This contact card does not belong to you!');
 					}else{
 						//update contact card
@@ -210,6 +211,9 @@ class Account extends controller
 			} else {
 			}
 			$this->main_frame->SetContentSimple('directory/viparea_directory_contacts', $data);
+			if($data['card_form']['userid'] != $user_id) {
+			redirect("/account/bcards");
+			}//Do not load the page if the student is accessing the editor for a card other than his.
 			$this->main_frame->Load();
 	}
 
