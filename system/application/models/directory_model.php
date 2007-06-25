@@ -309,10 +309,20 @@ class Directory_model extends Model {
 					WHERE organisation_directory_entry_name = ?';
 			$query = $this->db->query($sql, array($DirectoryEntryName));
 		} else {
-			$sql = 	'UPDATE locations
-					SET location_lat = ?, location_lng = ?
-					WHERE location_id = ?;';
-			$query = $this->db->query($sql, array($lat, $lng, $locationid));
+			if ($lat != '') {
+				$sql = 'UPDATE locations
+						SET location_lat = ?, location_lng = ?
+						WHERE location_id = ?;';
+				$query = $this->db->query($sql, array($lat, $lng, $locationid));
+			} else {
+				$sql = 'UPDATE organisations
+						SET organisation_location_id = NULL
+						WHERE organisation_directory_entry_name = ?';
+				$query = $this->db->query($sql, array($DirectoryEntryName));
+				$sql = 'DELETE FROM locations
+						WHERE location_id = ?';
+				$query = $this->db->query($sql, array($locationid));
+			}
 		}
 		return ($this->db->affected_rows() > 0);
 	}
