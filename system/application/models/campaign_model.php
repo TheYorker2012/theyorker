@@ -23,20 +23,23 @@ class Campaign_model extends Model
 	function AddNewCampaign()
 	{
 		
-	}	
+	}
 	
 	/**
-	 * Returns an array of the Campaigns that are currently being voted on
+	 * Returns an array of the all the Campaigns
 	 * in ascending order of name.
 	 * @return An array of arrays containing campaign id, names, article id and votes.
 	 */
-	function GetCampaignList()
+	function GetFullCampaignList()
 	{
-		$sql = 'SELECT campaign_name, campaign_votes, campaign_id, campaign_article_id
-			FROM campaigns
-			WHERE campaign_deleted = false
-				AND campaign_timestamp < CURRENT_TIMESTAMP
-			ORDER BY campaign_name ASC';
+		$sql = 'SELECT	campaign_name,
+						campaign_votes,
+						campaign_id,
+						campaign_article_id,
+						campaign_petition
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				ORDER BY campaign_name ASC';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -46,7 +49,113 @@ class Campaign_model extends Model
 				$result_item = array(
 					'name'=>$row->campaign_name,
 					'votes'=>$row->campaign_votes,
-					'article'=>$row->campaign_article_id
+					'article'=>$row->campaign_article_id,
+					'has_been_petitioned'=>$row->campaign_petition
+					);
+				$result[$row->campaign_id] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Returns an array of the Campaigns that are currently being voted on
+	 * in ascending order of name.
+	 * @return An array of arrays containing campaign id, names, article id and votes.
+	 */
+	function GetCampaignList()
+	{
+		$sql = 'SELECT	campaign_name,
+						campaign_votes,
+						campaign_id,
+						campaign_article_id,
+						campaign_petition
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_published <= CURRENT_TIMESTAMP
+				AND		campaign_expired = 0
+				ORDER BY campaign_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'name'=>$row->campaign_name,
+					'votes'=>$row->campaign_votes,
+					'article'=>$row->campaign_article_id,
+					'has_been_petitioned'=>$row->campaign_petition
+					);
+				$result[$row->campaign_id] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Returns an array of the all the campaigns that are going to be published in the future
+	 * in ascending order of name.
+	 * @return An array of arrays containing campaign id, names, article id, votes, publish date and expired.
+	 */
+	function GetFutureCampaignList()
+	{
+		$sql = 'SELECT	campaign_name,
+						campaign_votes,
+						campaign_id,
+						campaign_article_id,
+						campaign_petition
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		(campaign_published > CURRENT_TIMESTAMP
+				OR 		campaign_published IS NULL)
+				AND		campaign_expired = 0
+				ORDER BY campaign_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'name'=>$row->campaign_name,
+					'votes'=>$row->campaign_votes,
+					'article'=>$row->campaign_article_id,
+					'has_been_petitioned'=>$row->campaign_petition
+					);
+				$result[$row->campaign_id] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Returns an array of the all the campaigns that are currently expired
+	 * in ascending order of name.
+	 * @return An array of arrays containing campaign id, names, article id, votes, publish date and expired.
+	 */
+	function GetExpiredCampaignList()
+	{
+		$sql = 'SELECT	campaign_name,
+						campaign_votes,
+						campaign_id,
+						campaign_article_id,
+						campaign_petition
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_expired = 1
+				ORDER BY campaign_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'name'=>$row->campaign_name,
+					'votes'=>$row->campaign_votes,
+					'article'=>$row->campaign_article_id,
+					'has_been_petitioned'=>$row->campaign_petition
 					);
 				$result[$row->campaign_id] = $result_item;
 			}
@@ -60,9 +169,11 @@ class Campaign_model extends Model
 	 */
 	function GetPetitionCampaign($campaign_id)
 	{
-		$sql = 'SELECT campaign_name, campaign_petition_signatures, campaign_article_id
-			FROM campaigns
-			WHERE campaign_id = ?';
+		$sql = 'SELECT	campaign_name,
+						campaign_petition_signatures,
+						campaign_article_id
+				FROM	campaigns
+				WHERE	campaign_id = ?';
 		$query = $this->db->query($sql,array($campaign_id));
 		$row = $query->row();
 		return array(
@@ -78,9 +189,11 @@ class Campaign_model extends Model
 	 */
 	function GetPetitionStatus()
 	{
-		$sql = 'SELECT campaign_id
-			FROM campaigns
-			WHERE campaign_petition = true';
+		$sql = 'SELECT	campaign_id
+				FROM	campaigns
+				WHERE	campaign_petition = 1
+				AND		campaign_deleted = 0
+				AND		campaign_expired = 0';
 		$query = $this->db->query($sql,array());
 		$row = $query->row();
 		if ($query->num_rows() > 0)
@@ -99,9 +212,9 @@ class Campaign_model extends Model
 	 */
 	function GetUserVoteSignature($user_id)
 	{
-        	$sql = 'SELECT campaign_user_campaign_id
-			FROM campaign_users
-			WHERE campaign_user_user_entity_id = ?';
+		$sql = 'SELECT	campaign_user_campaign_id
+				FROM	campaign_users
+				WHERE	campaign_user_user_entity_id = ?';
 		$query = $this->db->query($sql,array($user_id));
 		$row = $query->row();
 		if ($query->num_rows() > 0)

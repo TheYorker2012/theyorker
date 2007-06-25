@@ -66,7 +66,7 @@ if ($user == TRUE) {
 <?php
 		}
 	}
-	echo '	</div>';
+	echo('	</div>');
 }
 ?>
 
