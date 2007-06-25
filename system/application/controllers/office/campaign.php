@@ -60,7 +60,7 @@ class Campaign extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function editarticle($campaign_id, $revision_id)
+	function editarticle($campaign_id, $revision_id = NULL)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -114,7 +114,7 @@ class Campaign extends Controller
 		if ($data['article']['header']['suggestion_accepted'] == 1)
 		{
 			//if the revision id is set to the default
-			if ($revision_id == -1)
+			if ($revision_id == NULL)
 			{
 				/* is a published article, therefore
 				   load the live content revision */
@@ -296,6 +296,30 @@ class Campaign extends Controller
 
 		// Load the public frame view
 		$this->main_frame->Load();
+	}
+	
+	function articlemodify()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->model('requests_model','requests_model');
+		$this->load->model('article_model','article_model');
+
+		if (isset($_POST['r_submit_save']))
+		{
+			$revision_id = $this->requests_model->CreateArticleRevision(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId,
+				$_POST['a_question'],
+				'',
+				'',
+				$_POST['a_answer'],
+				''
+				)
+				;
+	                $this->main_frame->AddMessage('success','New revision created for article.');
+			redirect('/office/campaign/editarticle/'.$_POST['r_campaignid'].'/'.$revision_id.'/');
+		}
 	}
 }
 ?>
