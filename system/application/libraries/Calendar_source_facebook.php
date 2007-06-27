@@ -36,6 +36,24 @@ class CalendarSourceFacebook extends CalendarSource
 		return 'http://www.facebook.com/event.php?eid='.$eid;
 	}
 	
+	/// Get all allowed categories.
+	/**
+	 * @return array[name => array], NULL, TRUE.
+	 *	- NULL if categories are not supported
+	 *	- TRUE if all categories are allowed.
+	 */
+	function GetAllCategories()
+	{
+		return array(
+			'Anniversary' => array(
+				'name' => 'Anniversary',
+			),
+			'Facebook' => array(
+				'name' => 'Facebook',
+			),
+		);
+	}
+	
 	/// Fetch the events of the source.
 	/**
 	 * @param $Data CalendarData Data object to add events to.

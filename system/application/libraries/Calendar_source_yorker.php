@@ -29,6 +29,9 @@ class CalendarSourceYorker extends CalendarSource
 	/// string Special mysql condition.
 	protected $mSpecialCondition = FALSE;
 	
+	/// array Categories cache.
+	protected $mCategoriesCache = NULL;
+	
 	/// Default constructor.
 	function __construct($SourceId)
 	{
@@ -37,7 +40,12 @@ class CalendarSourceYorker extends CalendarSource
 		$this->mQuery = new EventOccurrenceQuery();
 		
 		$this->SetSourceId($SourceId);
-		$this->mName = 'Yorker events';
+		$this->mName = 'Yorker';
+		
+		$CI = & get_instance();
+		if (!$CI->events_model->IsReadOnly()) {
+			$this->mCapabilities[] = 'create';
+		}
 		$this->mCapabilities[] = 'attend';
 		
 		$this->mGroups['streams'] = FALSE;
@@ -79,6 +87,25 @@ class CalendarSourceYorker extends CalendarSource
 	function SetSpecialCondition($Condition = FALSE)
 	{
 		$this->mSpecialCondition = $Condition;
+	}
+	
+	/// Get all allowed categories.
+	/**
+	 * @return array[name => array], NULL, TRUE.
+	 *	- NULL if categories are not supported
+	 *	- TRUE if all categories are allowed.
+	 */
+	function GetAllCategories()
+	{
+		if (NULL === $this->mCategoriesCache) {
+			$CI = & get_instance();
+			// Get categories and reindex by name
+			$categories = $CI->events_model->CategoriesGet();
+			foreach ($categories as $category) {
+				$this->mCategoriesCache[$category['name']] = $category;
+			}
+		}
+		return $this->mCategoriesCache;
 	}
 	
 	/// Fetch the events of the source.
@@ -185,6 +212,7 @@ class CalendarSourceYorker extends CalendarSource
 				$event->TimeAssociated = $row['event_time_associated'];
 				if ($row['owned']) {
 					$event->UserStatus = 'owner';
+					$event->ReadOnly = FALSE;
 				} elseif ($row['subscribed']) {
 					$event->UserStatus = 'subscriber';
 				}
@@ -252,6 +280,7 @@ class CalendarSourceYorker extends CalendarSource
 				if (!array_key_exists($org_id, $organisations)) {
 					$organisation = $organisations[$org_id] = $Data->NewOrganisation();
 					$organisation->SourceOrganisationId = $org_id;
+					$organisation->YorkerOrganisationId = $org_id;
 					$organisation->Name = $row['org_name'];
 					$organisation->ShortName = $row['org_shortname'];
 				}
@@ -279,7 +308,7 @@ class CalendarSourceYorker extends CalendarSource
 			ON	event_entities.event_entity_event_id = events.event_id
 		LEFT JOIN organisations
 			ON	organisations.organisation_entity_id
-					= event_entities.event_entity_entity_id
+					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
@@ -473,6 +502,24 @@ class CalendarSourceYorker extends CalendarSource
 			}
 		} else {
 			$messages['error'][] = 'The event identifier was invalid.';
+		}
+		return $messages;
+	}
+	
+	/// Create an event.
+	/**
+	 * @param $Event CalendarEvent event information.
+	 * @return array Array of messages.
+	 */
+	function CreateEvent($Event)
+	{
+		/// @todo Make this function work with a CalendarEvent object.
+		$messages = array();
+		$CI = & get_instance();
+		try {
+			$results = $CI->events_model->EventCreate($Event);
+		} catch (Exception $e) {
+			$messages['error'][] = $e->getMessage();
 		}
 		return $messages;
 	}

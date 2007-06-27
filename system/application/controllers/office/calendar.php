@@ -9,8 +9,10 @@ class Calendar extends controller
 		parent::controller();
 	}
 	
-	function actions()
+	function action()
 	{
+		if (!CheckPermissions('vip+pr')) return;
+		
 		// do the magic, use calendar_actions as a controller
 		$this->load->model('calendar/organizer_actions');
 		$args = func_get_args();
@@ -21,7 +23,6 @@ class Calendar extends controller
 			show_404();
 		}
 	}
-	
 	
 	function add()
 	{
@@ -46,6 +47,7 @@ class Calendar extends controller
 		
 		$this->load->library('my_calendar');
 		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
+		$this->my_calendar->SetPath('delete', vip_url('calendar/action/delete/'));
 		
 		$this->pages_model->SetPageCode('viparea_calendar_event');
 		$this->main_frame->SetTitleParameters(array(
@@ -125,6 +127,7 @@ class Calendar extends controller
 		$date_range_split = explode(':', $DateRange);
 		$this->my_calendar->SetPath('add', vip_url('calendar/add/'.$date_range_split[0]));
 		$this->my_calendar->SetPath('edit', vip_url('calendar/event/'));
+		$this->my_calendar->SetPath('delete', vip_url('calendar/actions/delete/'));
 		
 		$this->pages_model->SetPageCode('viparea_calendar_range');
 		$this->main_frame->SetTitleParameters(array(

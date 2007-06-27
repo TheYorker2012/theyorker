@@ -214,6 +214,8 @@ function VipSegments($Set = NULL)
  * @param $Modes array[string],string,NULL = NULL Each element is a output mode identifier:
  *	- 'xhtml' - Standard XHTML
  *	- 'fbml' - Facebook markup language for facebook apps
+ *
+ * @param * string Alternatively a set of string can be provided as arguments directly.
  */
 function OutputModes($Modes = NULL)
 {
@@ -222,7 +224,7 @@ function OutputModes($Modes = NULL)
 		if (is_array($Modes)) {
 			$output_modes = $Modes;
 		} else {
-			$output_modes = array($Modes);
+			$output_modes = func_get_args();
 		}
 	}
 	return $output_modes;

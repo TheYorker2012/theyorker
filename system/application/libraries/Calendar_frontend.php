@@ -25,8 +25,12 @@ abstract class CalendarView extends FramesView
 	protected $mStartTime = NULL;
 	/// timestamp End time of range of events to fetch.
 	protected $mEndTime = NULL;
-	/// array Range url information.
-	private $mRangeUrl = NULL;
+	/// class Paths class.
+	private $mPaths = NULL;
+	/// string Range format.
+	private $mRangeFormat = NULL;
+	/// string Range filter.
+	private $mRangeFilter = NULL;
 
 	/// Primary constructor.
 	/**
@@ -65,15 +69,31 @@ abstract class CalendarView extends FramesView
 		$this->mEndTime = $End;
 	}
 	
-	/// Set the range url information.
+	/// Set the URI paths class.
 	/**
-	 * @param $Prefix string
-	 * @param $Format string
-	 * @param $Postfix string
+	 * @param $Paths class Class with Range function taking range and 
 	 */
-	function SetRangeUrl($Prefix, $Format, $Postfix)
+	function SetPaths(&$Paths)
 	{
-		$this->mRangeUrl = array($Prefix, $Format, $Postfix);
+		$this->mPaths = &$Paths;
+	}
+	
+	/// Set the range format information.
+	/**
+	 * @param $Format string URI range format string.
+	 */
+	function SetRangeFormat($Format)
+	{
+		$this->mRangeFormat = $Format;
+	}
+	
+	/// Set the range filter information.
+	/**
+	 * @param $Filter string Filter URI string.
+	 */
+	function SetRangeFilter($Filter)
+	{
+		$this->mRangeFilter = $Filter;
 	}
 	
 	/// Generate a range url.
@@ -83,13 +103,13 @@ abstract class CalendarView extends FramesView
 	 */
 	function GenerateRangeUrl($Start, $End)
 	{
-		assert('NULL !== $this->mRangeUrl');
+		assert('NULL !== $this->mPaths');
+		assert('NULL !== $this->mRangeFormat');
 		$CI = & get_instance();
-		return (
-			$this->mRangeUrl[0].
-			$CI->date_uri->GenerateUri($this->mRangeUrl[1], $Start, $End).
-			$this->mRangeUrl[2]
-		);
+		return site_url($this->mPaths->Range(
+			$CI->date_uri->GenerateUri($this->mRangeFormat, $Start, $End),
+			$this->mRangeFilter
+		));
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -109,7 +129,8 @@ abstract class CalendarView extends FramesView
 		$this->ProcessEvents($this->mData, $this->mCategories);
 		
 		/// Make some links
-		if (NULL !== $this->mRangeUrl && 
+		if (NULL !== $this->mPaths &&
+			NULL !== $this->mRangeFormat &&
 			NULL !== $this->mStartTime &&
 			NULL !== $this->mEndTime)
 		{

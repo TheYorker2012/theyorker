@@ -202,7 +202,7 @@ else
 	// Is there a "remap" function?
 	if (method_exists($CI, '_remap'))
 	{
-		$CI->_remap($method);
+		call_user_func_array(array(&$CI, '_remap'), array_slice($RTR->rsegments, 1));
 	}
 	else
 	{

@@ -24,108 +24,6 @@ echo('</div>');
 
 $squash = (count($Days) > 3);
 
-function DrawOccurrence(&$Occurrence, &$Categories, $Squash, $ReadOnly, $Path)
-{
-	$CI = & get_instance();
-	?>
-	<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;<?php
-		$cat = $Occurrence->Event->Category;
-		if (array_key_exists($cat, $Categories)) {
-			if (array_key_exists('colour', $Categories[$cat])) {
-				echo(' background-color:#'.$Categories[$cat]['colour'].';');
-			}
-		}
-	?>">
-		<div style="padding: 2px;font-size: small;">
-			<?='<span><a href="' . $Path['edit'] . '/' . $Occurrence->Event->Source->GetSourceId(). '/' . urlencode($Occurrence->Event->SourceEventId) . '/' . urlencode($Occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$Occurrence->Event->Name.'</a></span>'?>
-			<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
-				<div>
-					<?php
-					if ($Occurrence->TimeAssociated) {
-						echo($Occurrence->StartTime->Format('g:ia'));
-						echo('-');
-						echo($Occurrence->EndTime->Format('g:ia'));
-						echo('<br />');
-					}
-					if ('published' !== $Occurrence->State) {
-						echo('<strong>'.$Occurrence->State.'</strong>');
-						if (!$Squash && !$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
-							$links = array();
-							if ('none' !== VipMode() &&
-								'draft' === $Occurrence->State &&
-								$Occurrence->Event->Source->GetSourceId() === 0)
-							{
-								$links[] = '<a href="'.vip_url('calendar/publish/'.$Occurrence->Event->SourceEventId.$CI->uri->uri_string()).'">publish</a>';
-							}
-							$links[] = '<a href="'.site_url('calendar/actions/delete/'.
-								$Occurrence->Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->Event->SourceEventId).
-								$CI->uri->uri_string()).'">delete</a>';
-							echo(' ('.implode(',', $links).')');
-						}
-						echo('<br />');
-					}
-					if (!$Squash) {
-						if (!empty($Occurrence->LocationDescription)) {
-							echo($Occurrence->LocationDescription);
-							echo('<br />');
-						}
-						echo('<i>');
-						echo($Occurrence->Event->Description);
-						echo('</i>');
-						if ($Occurrence->EndTime->Timestamp() > time()) {
-							echo('<br />');
-							if (FALSE === $Occurrence->UserAttending) {
-								echo('not attending');
-								if ($Occurrence->Event->Source->IsSupported('attend')) {
-									echo(' (<a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/accept'.$CI->uri->uri_string()).'">attend</a>');
-									echo(', <a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
-								}
-							} elseif (TRUE === $Occurrence->UserAttending) {
-								echo('attending');
-								if ($Occurrence->Event->Source->IsSupported('attend')) {
-									echo(' (<a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>');
-									echo(', <a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
-								}
-							} else {
-								echo('maybe attending');
-								if ($Occurrence->Event->Source->IsSupported('attend')) {
-									echo(' (<a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/accept'.$CI->uri->uri_string()).'">attend</a>');
-									echo(', <a href="'.site_url('calendar/actions/attend/'.
-										$Occurrence->Event->Source->GetSourceId().
-										'/'.urlencode($Occurrence->SourceOccurrenceId).
-										'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
-								}
-							}
-						}
-						if (NULL !== $Occurrence->Event->Image) {
-							echo('<br />');
-							echo('<img src="'.$Occurrence->Event->Image.'" />');
-						}
-					}
-					?>
-				</div>
-			</div>
-
-		</div>
-	</div>
-	<?php
-}
 
 echo('<table id="calviewCalTable" border="0" cellpadding="0" cellspacing="0" width="100%">');
 echo('<tr>');
@@ -145,7 +43,13 @@ foreach ($Days as $date => $day) {
 	if (array_key_exists('000000',$times)) {
 		foreach ($times['000000'] as $occurrence) {
 			if (!$occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $Categories, $squash, $ReadOnly, $Path);
+				$CI->load->view('calendar/occurrence_cell', array(
+					'Occurrence' => & $occurrence,
+					'Categories' => & $Categories,
+					'Squash' => $squash,
+					'ReadOnly' => $ReadOnly,
+					'Path' => $Path,
+				));
 			}
 		}
 	}
@@ -158,7 +62,13 @@ foreach ($Days as $date => $day) {
 	foreach ($times as $time => $ocs) {
 		foreach ($ocs as $occurrence) {
 			if ($occurrence->TimeAssociated) {
-				DrawOccurrence($occurrence, $Categories, $squash, $ReadOnly, $Path);
+				$CI->load->view('calendar/occurrence_cell', array(
+					'Occurrence' => & $occurrence,
+					'Categories' => & $Categories,
+					'Squash' => $squash,
+					'ReadOnly' => $ReadOnly,
+					'Path' => $Path,
+				));
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 /// Calendar actions controller.
 class Calendar_actions extends model
 {
+	/// Default constructor
 	function __construct()
 	{
 		parent::model();
@@ -13,8 +14,6 @@ class Calendar_actions extends model
 	/// Display a form for setting occurrence attendence.
 	function attend($SourceId = NULL, $OccurrenceId = NULL, $Action = NULL)
 	{
-		if (!CheckPermissions('student')) return;
-		
 		if (is_numeric($SourceId)) {
 			static $mapping = array(
 				'accept'  => TRUE,
@@ -32,7 +31,8 @@ class Calendar_actions extends model
 					$this->messages->AddMessage('success', 'Your attending status has been set to '.$Action);
 				}
 				$this->messages->AddMessages($messages);
-				RedirectUriTail(6);
+				$args = array_shift(array_shift(array_shift(func_get_args())));
+				redirect(implode('/',$args));
 			} else {
 				return show_404();
 			}
@@ -43,24 +43,35 @@ class Calendar_actions extends model
 	
 	function delete($SourceId = NULL, $EventId = NULL)
 	{
-		if (!CheckPermissions('student')) return;
-		
-		if (is_numeric($SourceId) && FALSE !== $this->input->post('caldel_confirm')) {
-			static $mapping = array(
-				'accept'  => TRUE,
-				'decline' => FALSE,
-				'maybe'   => NULL,
-			);
-			// Now determine what protocol to use
-			$this->load->library('calendar_backend');
-			$this->load->library('calendar_source_my_calendar');
-			$my_calendar = new CalendarSourceMyCalendar();
-			$messages = $my_calendar->DeleteEvent((int)$SourceId, $EventId);
-			if (!array_key_exists('error', $messages)) {
-				$this->messages->AddMessage('success', 'The event was successfully deleted.');
+		if (is_numeric($SourceId)) {
+			if (FALSE !== $this->input->post('caldel_confirm')) {
+				// User has confirmed deletion
+				static $mapping = array(
+					'accept'  => TRUE,
+					'decline' => FALSE,
+					'maybe'   => NULL,
+				);
+				// Now determine what protocol to use
+				$this->load->library('calendar_backend');
+				$this->load->library('calendar_source_my_calendar');
+				$my_calendar = new CalendarSourceMyCalendar();
+				$messages = $my_calendar->DeleteEvent((int)$SourceId, $EventId);
+				if (!array_key_exists('error', $messages)) {
+					$this->messages->AddMessage('success', 'The event was successfully deleted.');
+				}
+				$this->messages->AddMessages($messages);
+				// shift 2 arguments and redirect
+				$args = array_shift(array_shift(func_get_args()));
+				redirect(implode('/',$args));
+			} else {
+				// User has not yet confirmed deleting
+				$data = array(
+					'Event' => NULL,
+					'Occurrences' => array(),
+				);
+				$this->main_frame->SetContentSimple('calendar/event_delete', $data);
+				$this->main_frame->Load();
 			}
-			$this->messages->AddMessages($messages);
-			RedirectUriTail(5);
 		} else {
 			return show_404();
 		}
@@ -68,12 +79,11 @@ class Calendar_actions extends model
 	
 	function add($type = '')
 	{
-		if (!CheckPermissions('student')) return;
-		
 		$method = '_add_'.$type;
 		if (method_exists($this, $method)) {
 			$this->$method();
-			RedirectUriTail(4);
+			$args = array_shift(func_get_args());
+			redirect(implode('/',$args));
 		} else {
 			show_404();
 		}

@@ -106,6 +106,8 @@ class CalendarEvent
 	public $SourceEventId	= NULL;
 	/// &CalendarSource Reference to source of event.
 	public $Source;
+	/// bool Whether the user cant make changes to the event.
+	public $ReadOnly		= TRUE;
 	/// array[&CalendarOccurrence] Array of occurrences of this event.
 	public $Occurrences		= array();
 	/// string,NULL Category value.
@@ -162,12 +164,16 @@ class CalendarOrganisation
 	public $OrganisationId;
 	/// int,NULL ID of organisation, unique within source.
 	public $SourceOrganisationId	= NULL;
+	/// int,NULL Yorker entity id of organisation, unique within yorker.
+	public $YorkerOrganisationId	= NULL;
 	/// &CalendarSource Reference to source of event.
 	public $Source;
 	/// string Name of organisation.
 	public $Name = '';
-	/// string Short name of organisation
+	/// string Short name of organisation.
 	public $ShortName = '';
+	/// string Whether the organisation is in the yorker directory.
+	public $InDirectory = NULL;
 	
 	/// Primary constructor.
 	/**
@@ -187,8 +193,9 @@ abstract class CalendarSource
 	/*
 	/// array[string] Array of valid members of @a mCapabilities.
 	protected static $sValidCapabilities = array(
+		'create',  // its possible to create events
 		'attend',  // its possible to rsvp these event
-		'cache', // these events can be cached in the database
+		'cache',   // these events can be cached in the database
 	);
 	*/
 
@@ -254,6 +261,15 @@ abstract class CalendarSource
 	function GetSourceId()
 	{
 		return $this->mSourceId;
+	}
+	
+	/// Get the source name.
+	/**
+	 * @return string Source name.
+	 */
+	function GetSourceName()
+	{
+		return $this->mName;
 	}
 	
 	/// Find whether a capability is supported.
@@ -338,6 +354,17 @@ abstract class CalendarSource
 		} else {
 			return FALSE;
 		}
+	}
+	
+	/// Get all allowed categories.
+	/**
+	 * @return array[name => array], NULL, TRUE.
+	 *	- NULL if categories are not supported
+	 *	- TRUE if all categories are allowed.
+	 */
+	function GetAllCategories()
+	{
+		return NULL;
 	}
 	
 	/// Enable a category of events.
@@ -457,6 +484,16 @@ abstract class CalendarSource
 	function DeleteEvent($Event)
 	{
 		return array('error' => array('Deleting events in this event source is not currently supported.'));
+	}
+	
+	/// Create an event.
+	/**
+	 * @param $Event CalendarEvent event information.
+	 * @return array Array of messages.
+	 */
+	function CreateEvent($Event)
+	{
+		return array('error' => array('Creating events in this event source is not currently supported.'));
 	}
 	
 	/// Get list of known attendees.
@@ -699,6 +736,31 @@ class CalendarData
 		}
 		return $messages;
 	}
+	
+	/// Fill in organisation "in directory" entries.
+	function FindOrganisationInformation()
+	{
+		$ids = array();
+		// Get a list of organisation ids
+		foreach ($this->mOrganisations as $key => $organisation) {
+			if (is_int($organisation->YorkerOrganisationId)) {
+				$ids[$organisation->YorkerOrganisationId] = $key;
+			}
+		}
+		if (!empty($ids)) {
+			$CI = & get_instance();
+			$CI->load->model('directory_model');
+			$directory_entries = $CI->directory_model->GetDirectoryEntryLinks(array_keys($ids));
+			if (!empty($directory_entries)) {
+				foreach ($directory_entries as $entry) {
+					if (NULL !== $entry['directory_entry']) {
+						$this->mOrganisations[$ids[(int)$entry['id']]]->InDirectory = TRUE;
+						$this->mOrganisations[$ids[(int)$entry['id']]]->ShortName = $entry['directory_entry'];
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -729,6 +791,29 @@ class CalendarSources extends CalendarSource
 		assert('NULL !== $source_id');
 		$this->mSources[$Source->GetSourceId()] = &$Source;
 		return $Source;
+	}
+	
+	/// Get a source.
+	/**
+	 * @param $SourceId int Source identifier.
+	 * @return CalendarSource,NULL The Source or NULL if not found.
+	 */
+	function GetSource($SourceId)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId];
+		} else {
+			return NULL;
+		}
+	}
+	
+	/// Get all sources.
+	/**
+	 * @return array(CalendarSource) Array of the sources.
+	 */
+	function GetSources()
+	{
+		return $this->mSources;
 	}
 	
 	function SetSearchPhrase($Phrase)
