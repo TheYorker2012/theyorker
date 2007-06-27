@@ -16,7 +16,7 @@ class Vipmanager extends Controller
 	/// Default page.
 	function index()
 	{
-		if (!CheckPermissions('office')) return;
+		if (!CheckPermissions('editor')) return;
 
 		$this->load->model('user_auth');
 
@@ -41,7 +41,7 @@ class Vipmanager extends Controller
 	function promote($EntityId, $OrgId)
 	{
 		//has user got access to office
-		if (!CheckPermissions('office')) return;
+		if (!CheckPermissions('editor')) return;
 
 		$this->load->model('user_auth');
 
@@ -77,7 +77,7 @@ class Vipmanager extends Controller
 	function demote($EntityId, $OrgId)
 	{
 		//has user got access to office
-		if (!CheckPermissions('office')) return;
+		if (!CheckPermissions('editor')) return;
 
 		$this->load->model('user_auth');
 
