@@ -7,11 +7,13 @@
 
 ?>
 
-<div class="BlueBox">
-	<h2>Welcome to the moderator control panel</h2>
-	<UL>
-		<li><a href="<?php echo site_url('office/moderator/comment/reported'); ?>">Reported comments</a></li>
-		<li><a href="<?php echo site_url('office/moderator/comment/deleted'); ?>">Deleted comments</a></li>
-		<li><a href="<?php echo site_url('office/moderator/comment/good'); ?>">Good comments</a></li>
-	</UL>
+<div class="RightToolbar">
+	<?php echo($HelpText); ?>
+</div>
+
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2>Welcome to the MCP</h2>
+		<?php echo($MainText); ?>
+	</div>
 </div>

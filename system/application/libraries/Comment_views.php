@@ -296,6 +296,19 @@ class CommentViewList extends FramesView
 		}
 	}
 	
+	/// Get the number of comments.
+	function GetNumComments()
+	{
+		return count($this->mComments);
+	}
+	
+	/// Find whether the comments array is empty.
+	function EmptyComments()
+	{
+		return empty($this->mComments);
+	}
+	
+	/// Load the view
 	function Load()
 	{
 		// Validate the included comment.

@@ -609,7 +609,7 @@ if (hasReqestedVersion) {
 		//$line_regexes['preformat'] = '^\s(.*?)$';
 		$line_regexes['definitionlist'] = '^([\;\:])\s*(.*?)$';
 		$line_regexes['newline'] = '^$';
-		$line_regexes['list'] = '^([\*\#]+)(.*?)$';
+		$line_regexes['list'] = '^([\*\#]+)\s*(.*?)$';
 		if ($this->enable_headings) {
 			$line_regexes['sections'] = '^(={1,6})(.*?)(={1,6})$';
 		}
@@ -628,7 +628,7 @@ if (hasReqestedVersion) {
 			'externallink'=>'('.
 				'\['. // explicit with [ and ]
 					'([^\]]*?)'. // href
-					'(\s+[^\]]*?)?'. // with optional title
+					'\s+([^\]]*?)?'. // with optional title
 				'\]'.
 				//'|'. // or
 				//'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url

@@ -18,7 +18,14 @@ class Moderator extends controller
 	{
 		if (!CheckPermissions('moderator')) return;
 		$this->pages_model->SetPageCode('office_moderator_index');
-		$this->main_frame->SetContentSimple('office/moderator/index');
+		
+		$help_text = $this->pages_model->GetPropertyWikitext('help');
+		$main_text = $this->pages_model->GetPropertyWikitext('main');
+		
+		$this->main_frame->SetContentSimple('office/moderator/index', array(
+			'HelpText' => $help_text,
+			'MainText' => $main_text,
+		));
 		$this->main_frame->Load();
 	}
 	
@@ -37,6 +44,8 @@ class Moderator extends controller
 			show_404();
 		}
 		if (!CheckPermissions('moderator')) return;
+		
+		$this->pages_model->SetPageCode('office_moderator_comments');
 		
 		$this->load->library('comment_views');
 		
@@ -61,7 +70,20 @@ class Moderator extends controller
 		$comment_view_list->SetIncludedComment($CommentInclude);
 		$comment_view_list->SetData('Mode', 'mod');
 		
-		$this->main_frame->SetContent($comment_view_list);
+		// Get the filter from the page properties
+		$filter_name = $this->pages_model->GetPropertyText(
+			'filters['.$Comment.'].name', FALSE, 'Comments');
+		$filter_description = $this->pages_model->GetPropertyWikitext(
+			'filters['.$Comment.'].description', FALSE, NULL);
+		$this->main_frame->SetTitleParameters(array(
+			'filter' => $filter_name,
+		));
+		
+		$this->main_frame->SetContentSimple('office/moderator/comments', array(
+			'Comments' => $comment_view_list,
+			'Title' => $filter_name,
+			'Description' => $filter_description,
+		));
 	
 		// Load view
 		$this->main_frame->Load();
