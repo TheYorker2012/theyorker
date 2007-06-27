@@ -32,7 +32,7 @@ class EventOccurrenceQuery
 		if (FALSE === $EntityId) {
 			$EntityId = $this->mEntityId;
 		}
-		return	'(events.event_organizer_entity_id = ' . $EntityId . ' OR
+		return	'(events.event_organiser_entity_id = ' . $EntityId . ' OR
 				(	event_entities.event_entity_entity_id = ' . $EntityId . '
 				AND	event_entities.event_entity_confirmed = 1
 				AND	event_entities.event_entity_relationship = \'own\'))';
@@ -44,7 +44,7 @@ class EventOccurrenceQuery
 		if (FALSE === $EntityId) {
 			$EntityId = $this->mEntityId;
 		}
-		return	'(	events.event_organizer_entity_id = ' . $EntityId . '
+		return	'(	events.event_organiser_entity_id = ' . $EntityId . '
 				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship = \'own\'
@@ -1142,7 +1142,7 @@ class Events_model extends Model
 		}
 
 		$fields = array(
-			'event_organizer_entity_id = '.$this->GetActiveEntityId(),
+			'event_organiser_entity_id = '.$this->GetActiveEntityId(),
 			'event_uid = "'.$this->GenerateEventUid($start).'"',
 		);
 		$fields[] = 'event_start = FROM_UNIXTIME('.$start.')';
