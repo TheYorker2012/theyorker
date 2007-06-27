@@ -282,7 +282,7 @@ class CalendarSourceYorker extends CalendarSource
 					= event_entities.event_entity_entity_id
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_organisation_entity_id
-					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
+					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
 			AND	subscriptions.subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
 			AND	subscriptions.subscription_calendar = TRUE
 		LEFT JOIN event_occurrence_users
@@ -335,7 +335,7 @@ class CalendarSourceYorker extends CalendarSource
 					$streams[] = $CI->db->escape($stream_id);
 				}
 				$streams = implode(',', $streams);
-				$included = '(events.event_organizer_entity_id IN ('.$streams.') OR '.
+				$included = '(events.event_organiser_entity_id IN ('.$streams.') OR '.
 							' event_entities.event_entity_event_id IN ('.$streams.'))';
 			} else {
 				$included = '0';
