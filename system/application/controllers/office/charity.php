@@ -86,7 +86,7 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/office_charity_edit', $data);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParamters(array(
+		$this->main_frame->SetTitleParameters(array(
 			'name' => $data['charity']['name']
 		));
 		$this->main_frame->SetContent($the_view);
