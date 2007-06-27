@@ -91,32 +91,33 @@ WHERE
 	AND articles.article_id = article_contents.article_content_article_id
 	AND content_types.content_type_archive = 1
 	AND MATCH(article_content_heading, article_content_subheading, article_contents.article_content_blurb,article_content_wikitext_cache)
-AGAINST(?) ';
+AGAINST(?)  AND (';
 QUERY;
 			if ($filter & FILTER_NEWS) {
-				$sql.= 'AND content_types.content_type_codename = `uninews` OR parent_type.content_type_codename = `uninews` ';
+				$sql.= 'content_types.content_type_codename = `uninews` OR parent_type.content_type_codename = `uninews` OR ';
 			}
 			if ($filter & FILTER_FEATURES) {
-				$sql.= 'AND content_types.content_type_codename = `features` OR parent_type.content_type_codename = `features` ';
+				$sql.= 'content_types.content_type_codename = `features` OR parent_type.content_type_codename = `features` OR ';
 			}
 			if ($filter & FILTER_LIFESTYLE) {
-				$sql.= 'AND content_types.content_type_codename = `lifestyle` OR parent_type.content_type_codename = `lifestyle` ';
+				$sql.= 'content_types.content_type_codename = `lifestyle` OR parent_type.content_type_codename = `lifestyle` OR ';
 			}
 			if ($filter & FILTER_FOOD) {
-				$sql.= 'AND content_types.content_type_codename = `food` OR parent_type.content_type_codename = `food` ';
+				$sql.= 'content_types.content_type_codename = `food` OR parent_type.content_type_codename = `food` OR ';
 			}
 			if ($filter & FILTER_DRINK) {
-				$sql.= 'AND content_types.content_type_codename = `drink` OR parent_type.content_type_codename = `drink` ';
+				$sql.= 'content_types.content_type_codename = `drink` OR parent_type.content_type_codename = `drink` OR ';
 			}
 			if ($filter & FILTER_ARTS) {
-				$sql.= 'AND content_types.content_type_codename = `arts` OR parent_type.content_type_codename = `arts` ';
+				$sql.= 'content_types.content_type_codename = `arts` OR parent_type.content_type_codename = `arts` OR ';
 			}
 			if ($filter & FILTER_SPORTS) {
-				$sql.= 'AND content_types.content_type_codename = `sport` OR parent_type.content_type_codename = `sport` ';
+				$sql.= 'content_types.content_type_codename = `sport` OR parent_type.content_type_codename = `sport` OR ';
 			}
 			if ($filter & FILTER_BLOGS) {
-				$sql.= 'AND content_types.content_type_codename = `blogs` OR parent_type.content_type_codename = `blogs` ';
+				$sql.= 'content_types.content_type_codename = `blogs` OR parent_type.content_type_codename = `blogs` OR ';
 			}
+			sql.= 'FALSE) ';
 			$sql.= ordering_addition($ordering);
 			$result['articles'] = $this->db->query($sql, array($string, $string));
 		}
@@ -129,7 +130,7 @@ QUERY;
 			if ($wikiResult or $wikiResult != 1) {
 				//example result ["Tet",["Tet","Tet-off","Tet-on","TetR","Tet 1969","Tet Corporation"]]
 				preg_match_all("/[^.|\"\[\]]*/", $wikiResult, $wikiResult);
-				foreach ($wikiResult as $page) if (!empty($page) and $page != ',') $result['wiki'][] = $page;
+				foreach ($wikiResult as $page) if (!empty($page) & $page != ',') $result['wiki'][] = $page;
 			}
 		}
 		if ($filter & FILTER_DIR) {
