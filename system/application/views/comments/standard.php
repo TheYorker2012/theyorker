@@ -14,6 +14,9 @@
 if (isset($CommentThread)) {
 	$CommentThread->Load();
 }
+?>
+<h2>Comments</h2>
+<?php
 if (isset($CommentAdd)) {
 	$CommentAdd->Load();
 }
