@@ -15,7 +15,6 @@ class Organisations
 	function __construct()
 	{
 		$this->CI = &get_instance();
-		$this->CI->load->model('slideshow_model');
 	}
 
 	/// Get organisation types from organisations.
