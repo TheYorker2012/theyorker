@@ -5,21 +5,27 @@
  * @brief Calendar controller.
  */
 
-include_once(BASEPATH.'application/helpers/calendar_control.php');
-
 /// Controller for event manager.
 /**
  * @author James Hogan (jh559@cs.york.ac.uk)
  *
  * @version 20/03/2007 James Hogan (jh559)
  *	- Doxygen tidy up.
+ * @version 27/07/2007 James Hogan (jh559)
+ *	- Major shift of stuff into helpers/calendar_control
  */
-class Calendar extends CalendarController
+class Calendar extends controller
 {
 	/// Default constructor.
 	function __construct()
 	{
-		parent::__construct('public');
+		parent::controller();
+	}
+	
+	function _remap()
+	{
+		$this->load->model('subcontrollers/calendar_subcontroller');
+		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	
 	function actions()

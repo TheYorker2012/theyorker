@@ -80,7 +80,7 @@ $CI = & get_instance();
 				echo('</i>');
 				if ($Occurrence->EndTime->Timestamp() > time()) {
 					echo('<br />');
-					if (FALSE === $Occurrence->UserAttending) {
+					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');
 						if ($Event->Source->IsSupported('attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.
@@ -92,7 +92,7 @@ $CI = & get_instance();
 								'/'.urlencode($Occurrence->SourceOccurrenceId).
 								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
 						}
-					} elseif (TRUE === $Occurrence->UserAttending) {
+					} elseif ('yes' === $Occurrence->UserAttending) {
 						echo('attending');
 						if ($Event->Source->IsSupported('attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.
@@ -104,7 +104,7 @@ $CI = & get_instance();
 								'/'.urlencode($Occurrence->SourceOccurrenceId).
 								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
 						}
-					} else {
+					} elseif ('maybe' == $Occurrence->UserAttending) {
 						echo('maybe attending');
 						if ($Event->Source->IsSupported('attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.

@@ -245,8 +245,12 @@ class CalendarSourceYorker extends CalendarSource
 				if (NULL !== $row['user_last_update']) {
 					$occurrence->UserLastUpdate = (int)$row['user_last_update'];
 				}
-				if (NULL !== $row['user_attending']) {
-					$attending = (bool)$row['user_attending'];
+				if ('published' == $row['state'] || 'cancelled' == $row['state']) {
+					if (NULL !== $row['user_attending']) {
+						$attending = ((bool)$row['user_attending']) ? 'yes' : 'no';
+					} else {
+						$attending = 'maybe';
+					}
 				} else {
 					$attending = NULL;
 				}
@@ -308,10 +312,10 @@ class CalendarSourceYorker extends CalendarSource
 			ON	event_entities.event_entity_event_id = events.event_id
 		LEFT JOIN organisations
 			ON	organisations.organisation_entity_id
-					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
+					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_organisation_entity_id
-					IN (event_entities.event_entity_entity_id, events.event_organizer_entity_id)
+					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
 			AND	subscriptions.subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
 			AND	subscriptions.subscription_calendar = TRUE
 		LEFT JOIN event_occurrence_users
@@ -364,7 +368,7 @@ class CalendarSourceYorker extends CalendarSource
 					$streams[] = $CI->db->escape($stream_id);
 				}
 				$streams = implode(',', $streams);
-				$included = '(events.event_organizer_entity_id IN ('.$streams.') OR '.
+				$included = '(events.event_organiser_entity_id IN ('.$streams.') OR '.
 							' event_entities.event_entity_event_id IN ('.$streams.'))';
 			} else {
 				$included = '0';
@@ -541,7 +545,8 @@ class CalendarSourceYorker extends CalendarSource
 			foreach ($attendees as $key => $value) {
 				$attendees[$key] = array(
 					'name' => $value['firstname'] . ' ' . $value['surname'],
-					'attend' => TRUE
+					'attend' => 'yes',
+					'friend' => FALSE,
 				);
 			}
 			return $attendees;

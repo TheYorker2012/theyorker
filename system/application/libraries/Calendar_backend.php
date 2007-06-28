@@ -29,6 +29,7 @@ class CalendarOccurrence
 	);
 	/// array[string] Valid members of @a $UserAttending.
 	protected static $ValidAttendings = array(
+		NULL,  // attendence is not applicable
 		'no',
 		'maybe',
 		'yes',
@@ -63,7 +64,7 @@ class CalendarOccurrence
 	/// timestamp,NULL Time last ackowledged by user.
 	public $UserLastUpdate		= NULL;
 	/// string Whether the user is attending (must be member of @a $ValidAttendings).
-	public $UserAttending		= 'maybe';
+	public $UserAttending		= NULL;
 	/// int[0,100],NULL How complete the item is for the user.
 	public $UserProgress		= NULL;
 	
