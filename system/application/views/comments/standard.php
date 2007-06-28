@@ -15,7 +15,7 @@ if (isset($CommentThread)) {
 	$CommentThread->Load();
 }
 ?>
-<h2 style="margin:10px;color:#20c1f0;">Comments</h2>
+<h2 style="color:#20c1f0;">Comments</h2>
 <?php
 if (isset($CommentAdd)) {
 	$CommentAdd->Load();
