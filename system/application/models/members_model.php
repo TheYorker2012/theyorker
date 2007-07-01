@@ -457,7 +457,18 @@ class Members_model extends Model {
 	function GetNumberOfMembers($OrgId){
 	$sql = 'SELECT subscription_organisation_entity_id
 			FROM   subscriptions
-			WHERE  subscriptions.subscription_organisation_entity_id = ?';
+			WHERE  subscriptions.subscription_organisation_entity_id = ? 
+			AND subscriptions.subscription_deleted = 0
+			AND subscriptions.subscription_organisation_confirmed = 1';
+	$query = $this->db->query($sql, $OrgId);
+	return $query->num_rows();
+	}
+	
+	function GetNumberOfSubscriptions($OrgId){
+	$sql = 'SELECT subscription_organisation_entity_id
+			FROM   subscriptions
+			WHERE  subscriptions.subscription_organisation_entity_id = ? 
+			AND subscriptions.subscription_deleted = 0';
 	$query = $this->db->query($sql, $OrgId);
 	return $query->num_rows();
 	}
@@ -466,7 +477,7 @@ class Members_model extends Model {
 	$sql = '
 			SELECT MAX(subscriptions.subscription_timestamp)
 			FROM   subscriptions
-			WHERE  subscriptions.subscription_organisation_entity_id = ?';
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0';
 	$query = $this->db->query($sql, $OrgId);
 	$row = $query->result_array();
 	return $row[0]['MAX(subscriptions.subscription_timestamp)'];
@@ -477,7 +488,7 @@ class Members_model extends Model {
 			FROM users
 			INNER JOIN subscriptions ON 
 			users.user_entity_id = subscriptions.subscription_user_entity_id 
-			WHERE  subscriptions.subscription_organisation_entity_id = ?
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0
 			AND users.user_gender = ?';
 	$query = $this->db->query($sql, array($OrgId , 'm'));
 	return $query->num_rows();
@@ -488,7 +499,7 @@ class Members_model extends Model {
 			FROM users
 			INNER JOIN subscriptions ON 
 			users.user_entity_id = subscriptions.subscription_user_entity_id 
-			WHERE  subscriptions.subscription_organisation_entity_id = ?
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0
 			AND users.user_gender = ?';
 	$query = $this->db->query($sql, array($OrgId , 'f'));
 	return $query->num_rows();

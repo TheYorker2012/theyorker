@@ -476,6 +476,7 @@ EXTRAHEAD;
 
 			// Members data
 			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			$data['business_card_group'] = $business_card_group;
 			// translate into nice names for view
 			$data['organisation']['cards'] = array();
 			foreach ($members as $member) {
@@ -500,7 +501,7 @@ EXTRAHEAD;
 			//Facts Box
 			$organisation_id = $this->members_model->GetIdFromOrganisation($organisation);
 			$data['number_of_members'] = $this->members_model->GetNumberOfMembers($organisation_id);
-			//$data['number_of_subscriptions'] = $this->members_model->GetNumberOfSubscriptions($organisation);
+			$data['number_of_subscriptions'] = $this->members_model->GetNumberOfSubscriptions($organisation_id);
 			$data['last_joined'] = substr($this->members_model->GetJoinTimeOfLatestMember($organisation_id),0 , 10);
 			$males = $this->members_model->GetNumberOfMales($organisation_id);
 			$females = $this->members_model->GetNumberOfFemales($organisation_id);

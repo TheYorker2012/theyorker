@@ -13,7 +13,15 @@
 		foreach ($organisation['groups'] as $group) {
 ?>
 			<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
-				<?php echo(htmlspecialchars($group['name'])); ?>
+				<?php
+				if (isset($business_card_group) && $business_card_group==$group['id']){
+					echo '<b>';
+				}
+				echo(htmlspecialchars($group['name']));
+				if (isset($business_card_group) && $business_card_group==$group['id']){
+					echo '</b>';
+				}
+				?>
 			</a><br />
 <?php
 		}
@@ -28,8 +36,11 @@
 	<ul>
 		<li>Number of members : <?php if (isset($number_of_members)) echo $number_of_members; ?></li>
 		<li>Number of subscriptions : <?php if (isset($number_of_subscriptions)) echo $number_of_subscriptions; ?></li>
+		<?php if (isset($number_of_members) && $number_of_members != 0){ ?>
 		<li>Last member joined : <?php if (isset($last_joined)) echo $last_joined; ?></li>
 		<li>Male:Female ratio : <?php if (isset($male_female_ratio)) echo $male_female_ratio; ?></li>
+		<?php } ?>
+		
 	</ul>
 	</div>
 </div>
