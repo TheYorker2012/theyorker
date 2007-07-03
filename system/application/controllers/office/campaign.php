@@ -319,24 +319,41 @@ class Campaign extends Controller
 		}
 		else if (isset($_POST['r_submit_save_links']))
 		{
-			echo('<pre>');
-			print_r($_POST);
-			echo('</pre>');
-			//$article_id = $this->campaign_model->GetCampaignArticleID($_POST['r_campaignid']);
-			//$linkarray = $this->requests_model->GetArticleLinks($article_id);
-			//print_r($linkarray);
-			
+			$article_id = $this->campaign_model->GetCampaignArticleID($_POST['r_campaignid']);
+
 			for($i=1;$i<=$_POST['r_linkcount'];$i++)
 			{
 				if (isset($_POST['a_delete_'.$i]))
 				{
-					//delete campaign link
+					$this->requests_model->DeleteArticleLink(
+						$article_id,
+						$_POST['a_id_'.$i],
+						$_POST['a_name_'.$i],
+						$_POST['a_url_'.$i]
+					);
 				}
 				else
 				{
-					//update link
+					$this->requests_model->UpdateArticleLink(
+						$article_id,
+						$_POST['a_id_'.$i],
+						$_POST['a_name_'.$i],
+						$_POST['a_url_'.$i]
+					);
 				}
 			}
+			
+			if (($_POST['a_name_new'] != "") AND ($_POST['a_url_new'] != "") AND ($_POST['a_url_new'] != "http://"))
+			{
+				$this->requests_model->InsertArticleLink(
+					$article_id,
+					$_POST['a_name_new'],
+					$_POST['a_url_new']
+				);
+			}
+			
+			$this->main_frame->AddMessage('success','Links Saved.');
+			redirect($_POST['r_redirecturl']);
 		}
 	}
 }

@@ -1248,5 +1248,39 @@ class Requests_Model extends Model
 		}
 		return $links;
 	}
+	
+	function DeleteArticleLink($article_id, $link_id, $name, $url)
+	{
+		$sql = 'UPDATE		article_links
+				SET			article_link_deleted = 1
+				WHERE		article_link_article_id = ?
+				AND			article_link_id = ?
+				AND			article_link_name = ?
+				AND			article_link_url = ?';
+		$this->db->query($sql,array($article_id, $link_id, $name, $url));
+		return TRUE;
+	}
+	
+	function UpdateArticleLink($article_id, $link_id, $name, $url)
+	{
+		$sql = 'UPDATE	article_links
+				SET		article_link_name = ?,
+						article_link_url = ?
+				WHERE	article_link_article_id = ?
+				AND		article_link_id = ?';
+		$this->db->query($sql,array($name, $url, $article_id, $link_id));
+		return TRUE;
+	}
+	
+	function InsertArticleLink($article_id, $name, $url)
+	{
+		$sql = 'INSERT INTO	article_links(
+							article_link_article_id,
+							article_link_name,
+							article_link_url)
+				VALUES (?, ?, ?)';
+		$this->db->query($sql,array($article_id, $name, $url));
+		return TRUE;
+	}
 }
 ?>
