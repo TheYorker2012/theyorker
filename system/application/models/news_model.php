@@ -607,16 +607,19 @@ class News_model extends Model
 			$result['primary_photo_caption'] = $row->photo_caption;
 		}
 
-		$sql = 'SELECT	article_links.article_link_name, article_links.article_link_url
-				FROM article_links
-				WHERE (article_links.article_link_article_id = ?
-				AND article_links.article_link_deleted != 1)
-				LIMIT 0,10';
+		$sql = 'SELECT	article_links.article_link_name,
+						article_links.article_link_url,
+						article_links.article_link_id
+				FROM	article_links
+				WHERE	(article_links.article_link_article_id = ?
+				AND		article_links.article_link_deleted != 1)';
 		$query = $this->db->query($sql,array($id));
 		$links = array();
 		foreach ($query->result() as $row)
 		{
-			$links[] = array('name'=>$row->article_link_name,'url'=>$row->article_link_url);
+			$links[] = array('name'=>$row->article_link_name,
+							'url'=>$row->article_link_url,
+							'id'=>$row->article_link_id);
 		}
 		$result['links'] = $links;
 

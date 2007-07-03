@@ -392,6 +392,17 @@ class Requests_Model extends Model
 	}
 
 	//Make a change to a request status in the article table
+	function UpdateSetToUnpublished($article_id, $editor_id)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_editor_approved_user_entity_id = ?,
+				article_publish_date = CURRENT_TIMESTAMP,
+				article_live_content_id = NULL
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($editor_id, $article_id));
+	}
+
+	//Make a change to a request status in the article table
 	function UpdatePulledToRequest($article_id, $editor_id)
 	{
 		$sql = 'UPDATE 	articles
@@ -1103,16 +1114,16 @@ class Requests_Model extends Model
 	{
 		$this->load->library('wikiparser');
 		$cache = $this->wikiparser->parse($wikitext);
-		$sql = 'INSERT	INTO article_contents(
-				article_content_article_id,
-				article_content_last_author_user_entity_id,
-				article_content_heading,
-				article_content_subheading,
-				article_content_subtext,
-				article_content_wikitext,
-				article_content_wikitext_cache,
-				article_content_blurb)
-			VALUES	(?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO	article_contents(
+							article_content_article_id,
+							article_content_last_author_user_entity_id,
+							article_content_heading,
+							article_content_subheading,
+							article_content_subtext,
+							article_content_wikitext,
+							article_content_wikitext_cache,
+							article_content_blurb)
+				VALUES	(?,?,?,?,?,?,?,?)';
 		$query = $this->db->query($sql,array($id,$user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb));
 		return $this->db->insert_id();
 	}
@@ -1120,33 +1131,33 @@ class Requests_Model extends Model
 	function UpdateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
 	{
 		$this->load->library('wikiparser');
-                $cache = $this->wikiparser->parse($wikitext);
+		$cache = $this->wikiparser->parse($wikitext);
 		$sql = 'UPDATE	article_contents
-			SET	article_content_last_author_user_entity_id = ?,
-				article_content_heading = ?,
-				article_content_subheading = ?,
-				article_content_subtext = ?,
-				article_content_wikitext = ?,
-				article_content_wikitext_cache = ?,
-				article_content_blurb = ?
-			WHERE	(article_content_id = ?)';
+				SET	article_content_last_author_user_entity_id = ?,
+					article_content_heading = ?,
+					article_content_subheading = ?,
+					article_content_subtext = ?,
+					article_content_wikitext = ?,
+					article_content_wikitext_cache = ?,
+					article_content_blurb = ?
+				WHERE	(article_content_id = ?)';
 		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
 	}
 
 	function RejectSuggestion($id)
 	{
 		$sql = 'UPDATE	articles
-			SET	article_deleted = 1
-			WHERE	(article_id = ?)';
+				SET		article_deleted = 1
+				WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($id));
 	}
 
 	function GetNameFromUsers($user_id)
 	{
 		$sql = 'SELECT	user_firstname,
-				user_surname
-			FROM	users
-			WHERE	user_entity_id = ?';
+						user_surname
+				FROM	users
+				WHERE	user_entity_id = ?';
 		$query = $this->db->query($sql,array($user_id));
 		if ($query->num_rows() == 1)
 		{
@@ -1160,8 +1171,8 @@ class Requests_Model extends Model
 	function GetNameFromBusinessCards($user_id)
 	{
 		$sql = 'SELECT	business_card_name
-			FROM	business_cards
-			WHERE	business_card_user_entity_id = ?';
+				FROM	business_cards
+				WHERE	business_card_user_entity_id = ?';
 		$query = $this->db->query($sql,array($user_id));
 		if ($query->num_rows() == 1)
 		{
@@ -1178,6 +1189,64 @@ class Requests_Model extends Model
 				SET			articles.article_deleted = 1
 				WHERE		articles.article_id = ?';
 		$query = $this->db->query($sql,array($article_id));
+	}
+	
+	function GetFactBoxForArticleContent($article_content_id)
+	{
+		$sql = 'SELECT	fact_box_wikitext,
+						fact_box_title
+				FROM	fact_boxes
+				WHERE	fact_box_article_content_id = ?
+				AND		fact_box_deleted = 0
+				LIMIT 1';
+		$query = $this->db->query($sql,array($article_content_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			$fact_box['wikitext'] = $row->fact_box_wikitext;
+			$fact_box['title'] = $row->fact_box_title;
+			return $fact_box;
+		}
+		else
+			return FALSE;
+	}	
+	
+	function CreateFactBoxForArticleContent($article_content_id, $title = "", $wikitext = "")
+	{
+		$wiki_cache = $this->wikiparser->parse($wikitext);
+		$sql = 'INSERT INTO fact_boxes (
+				fact_box_article_content_id,
+				fact_box_title,
+				fact_box_wikitext,
+				fact_box_wikitext_cache,
+				fact_box_timestamp)
+			VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)';
+		$this->db->query($sql, array($article_content_id,$title,$wikitext,$wiki_cache));
+		return $this->db->insert_id();
+	}
+	
+	//Does an article have the given web link?
+	function GetArticleLinks($article_id)
+	{
+		$sql = 'SELECT	article_link_name,
+						article_link_url,
+						article_link_id
+				FROM	article_links
+				WHERE	article_link_article_id = ?
+				AND		article_link_deleted = 0';
+		$query = $this->db->query($sql,array($article_id));
+		$links = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$link['id'] = $row->article_link_id;
+				$link['name'] = $row->article_link_name;
+				$link['url'] = $row->article_link_url;
+				$links[] = $link;
+			}
+		}
+		return $links;
 	}
 }
 ?>

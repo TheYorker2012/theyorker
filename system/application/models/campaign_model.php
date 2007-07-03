@@ -25,6 +25,22 @@ class Campaign_model extends Model
 		
 	}
 	
+	function GetCampaignArticleID($campaign_id)
+	{
+		$sql = 'SELECT	campaign_article_id
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$query = $this->db->query($sql,array($campaign_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->campaign_article_id;
+		}
+		else
+			return NULL;
+	}
+	
 	/**
 	 * Returns an array of the all the Campaigns
 	 * in ascending order of name.
@@ -458,7 +474,6 @@ class Campaign_model extends Model
 			}
 		}
 		return $result;
-
 	}
 }
 ?>

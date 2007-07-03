@@ -23,8 +23,6 @@ class Campaign extends Controller
 				'/office/campaign/editarticle/'.$campaign_id);
 		$navbar->AddItem('reports', 'Reports',
 				'/office/campaign/editreports/'.$campaign_id);
-		$navbar->AddItem('facts', 'Facts',
-				'/office/campaign/editfacts/'.$campaign_id);
 		$navbar->AddItem('related', 'Related',
 				'/office/campaign/editrelated/'.$campaign_id);
 		$navbar->AddItem('publish', 'Publish',
@@ -150,6 +148,10 @@ class Campaign extends Controller
 				}
 			}
 		}	
+		
+		//get fact box
+		$data['article']['displayrevision']['fact_box'] = $this->requests_model->GetFactBoxForArticleContent($data['parameters']['revision_id']);
+		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
 		$this->main_frame->SetContentSimple('office/campaign/editarticle', $data);
@@ -193,41 +195,6 @@ class Campaign extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function editfacts($campaign_id)
-	{
-		if (!CheckPermissions('office')) return;
-
-		//load the required models
-		$this->load->model('campaign_model','campaign_model');
-		$this->load->model('news_model','news_model');
-	
-		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar($campaign_id);
-		$this->main_frame->SetPage('facts');
-		$this->pages_model->SetPageCode('office_campaign_facts');
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
-		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-		
-		//load specific campaign data
-		if (isset($data['campaign_list'][$campaign_id]))
-		{
-			$data['selected_campaign'] = $campaign_id;
-			$data['article'] = $this->news_model->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
-		}
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/editfacts', $data);
-
-		// Load the public frame view
-		$this->main_frame->Load();
-	}
-	
 	function editrelated($campaign_id)
 	{
 		if (!CheckPermissions('office')) return;
@@ -241,6 +208,10 @@ class Campaign extends Controller
 		$this->main_frame->SetPage('related');
 		$this->pages_model->SetPageCode('office_campaign_related');
 
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
@@ -257,7 +228,7 @@ class Campaign extends Controller
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/edit', $data);
+		$this->main_frame->SetContentSimple('office/campaign/editrelated', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -304,6 +275,7 @@ class Campaign extends Controller
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
+		$this->load->model('campaign_model','campaign_model');
 
 		if (isset($_POST['r_submit_save']))
 		{
@@ -315,10 +287,56 @@ class Campaign extends Controller
 				'',
 				$_POST['a_answer'],
 				''
-				)
-				;
-	                $this->main_frame->AddMessage('success','New revision created for article.');
+				);
+			$this->requests_model->CreateFactBoxForArticleContent(
+				$revision_id,
+				$_POST['a_facts_title'],
+				$_POST['a_facts']
+			);
+			$this->main_frame->AddMessage('success','New revision created for article.');
 			redirect('/office/campaign/editarticle/'.$_POST['r_campaignid'].'/'.$revision_id.'/');
+		}
+		else if (isset($_POST['r_submit_publish']))
+		{
+			$this->requests_model->UpdateRequestStatus(
+				$_POST['r_articleid'],
+				'publish',
+				array('content_id'=>$_POST['r_revisionid'],
+					'publish_date'=>date('y-m-d H:i:s'),
+					'editor'=>$this->user_auth->entityId)
+				);
+			$this->main_frame->AddMessage('success','Article revision set to published revision.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_unpublish']))
+		{
+			$this->requests_model->UpdateSetToUnpublished(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId
+				);
+			$this->main_frame->AddMessage('success','Article revision unpublished.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_save_links']))
+		{
+			echo('<pre>');
+			print_r($_POST);
+			echo('</pre>');
+			//$article_id = $this->campaign_model->GetCampaignArticleID($_POST['r_campaignid']);
+			//$linkarray = $this->requests_model->GetArticleLinks($article_id);
+			//print_r($linkarray);
+			
+			for($i=1;$i<=$_POST['r_linkcount'];$i++)
+			{
+				if (isset($_POST['a_delete_'.$i]))
+				{
+					//delete campaign link
+				}
+				else
+				{
+					//update link
+				}
+			}
 		}
 	}
 }

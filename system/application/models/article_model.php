@@ -254,7 +254,7 @@ class Article_model extends Model
 	*  PINGU HOW DO I
 	*****************************************************/
 
-        /**
+    /**
 	 * Gets the header information of the specified article id,
 	 * if the article doesn't exist returns FALSE.
 	 * returns the fields to work out its status (suggested, requested
