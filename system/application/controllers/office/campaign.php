@@ -68,6 +68,13 @@ class Campaign extends Controller
 		$this->load->model('news_model','news_model');
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
@@ -78,24 +85,15 @@ class Campaign extends Controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-		
-		//check for problems - incorrect campaign id
-		if (!isset($data['campaign_list'][$campaign_id]))
-		{
-			$this->main_frame->AddMessage('error','Specified campaign does not exist.');
-			redirect('/office/campaign/');
-		}
-
-		//
-		$article_id = $data['campaign_list'][$campaign_id]['article'];
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
 
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
-		$data['parameters']['article_id'] = $article_id;
-		$data['parameters']['revision_id'] = $revision_id;
 		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['revision_id'] = $revision_id;
+		$data['parameters']['article_id'] = $article_id;
 		
 		/** get the article's header for the article id passed to
 			the function */
@@ -154,8 +152,8 @@ class Campaign extends Controller
 		$data['article']['displayrevision']['fact_box'] = $this->requests_model->GetFactBoxForArticleContent($data['parameters']['revision_id']);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/editarticle', $data);
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/article', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -169,44 +167,39 @@ class Campaign extends Controller
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
 		$this->load->model('article_model','article_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('article');
 		$this->pages_model->SetPageCode('office_campaign_request');
 
-		/** store the parameters passed to the method so it can be
-		    used for links in the view */
-		$data['parameters']['campaign_id'] = $campaign_id;
-
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-		
-		//current campaign article id
-		$article_id = $data['campaign_list'][$campaign_id]['article'];
-		
-		//load specific campaign data
-		if (isset($data['campaign_list'][$campaign_id]))
-		{
-			$data['selected_campaign'] = $campaign_id;
-			$data['article'] = $this->news_model->GetFullArticle($article_id);
-		}
-		
-		/** get the article's header for the article id passed to
-	            the function */
-		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
-		
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
-		$data['parameters']['article_id'] = $data['campaign_list'][$campaign_id]['article'];
+		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['article_id'] = $article_id;
+		
+		/** get the article and its header */
+		$data['article'] = $this->news_model->GetFullArticle($article_id);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/editrequest', $data);
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/request', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -221,6 +214,13 @@ class Campaign extends Controller
 		$this->load->model('progressreports_model','progressreports_model');
 		$this->load->model('news_model','news_model');
 		$this->load->model('article_model','article_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
@@ -260,7 +260,48 @@ class Campaign extends Controller
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
-		$this->main_frame->SetContentSimple('office/campaign/editreports', $data);
+		$this->main_frame->SetContentSimple('office/campaign/reports', $data);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function editprogressreport($campaign_id, $revision_id = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//load the required models
+		$this->load->model('campaign_model','campaign_model');
+		$this->load->model('news_model','news_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar($campaign_id);
+		$this->main_frame->SetPage('reports');
+		$this->pages_model->SetPageCode('office_campaign_reportsarticle');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['article_id'] = $article_id;
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/reportsarticle', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -273,33 +314,38 @@ class Campaign extends Controller
 		//load the required models
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('related');
 		$this->pages_model->SetPageCode('office_campaign_related');
 
-		/** store the parameters passed to the method so it can be
-		    used for links in the view */
-		$data['parameters']['campaign_id'] = $campaign_id;
-
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['article_id'] = $article_id;
 		
-		//load specific campaign data
-		if (isset($data['campaign_list'][$campaign_id]))
-		{
-			$data['selected_campaign'] = $campaign_id;
-			$data['article'] = $this->news_model->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
-		}
+		//get campaigns article
+		$data['article'] = $this->news_model->GetFullArticle($article_id);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/editrelated', $data);
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/related', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -312,6 +358,13 @@ class Campaign extends Controller
 		//load the required models
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->campaign_model->CampaignExists($campaign_id))
+		{
+			$this->main_frame->AddMessage('error','Campaign does not exist.');
+			redirect('/office/campaign/');
+		}		
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
@@ -322,19 +375,18 @@ class Campaign extends Controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-		
-		//load specific campaign data
-		if (isset($data['campaign_list'][$campaign_id]))
-		{
-			$data['selected_campaign'] = $campaign_id;
-			$data['article'] = $this->news_model->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
-		}
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['article_id'] = $article_id;
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/edit', $data);
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/publish', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();

@@ -20,6 +20,21 @@ class Campaign_model extends Model
 	*  CAMPAIGNS
 	*****************************************************/
 	
+	function CampaignExists($campaign_id)
+	{
+		$sql = 'SELECT	campaign_id
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$query = $this->db->query($sql,array($campaign_id));
+		if ($query->num_rows() == 1)
+		{
+			return TRUE;
+		}
+		else
+			return FALSE;
+	}
+	
 	function AddNewCampaign($name, $article_id)
 	{
 		$this->db->trans_start();
