@@ -12,6 +12,7 @@ class Charity extends Controller {
 		
 		$this->load->model('news_model','news');
 		$this->load->model('charity_model','charity');
+		$this->load->model('progressreports_model','progressreports');
 		$this->pages_model->SetPageCode('charity');
 		
 		$charity_id = $this->charity->GetCurrentCharity();
@@ -36,12 +37,12 @@ class Charity extends Controller {
 
 		$data['sections']['article'] = $this->news->GetFullArticle($data['sections']['charity']['article']);
 
-		$data['sections']['progress_reports']['totalcount'] = $this->charity->GetCharityCampaignProgressReportCount($charity_id, true);
+		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
 
 		$data['sections']['funding']['text'] = str_replace(array("%%current%%","%%target%%"), array($data['sections']['charity']['current'],$data['sections']['charity']['target']), $data['sections']['funding']['text']);
 
 		//needs a general model as progress reports can be for campaigns and for charities
-		$pr_temp = $this->charity->GetCharityCampaignProgressReports($charity_id, true, true);
+		$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($charity_id, true, true);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)
@@ -72,10 +73,10 @@ class Charity extends Controller {
 					'sidebar_links'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_links_title',FALSE),'text'=>$this->pages_model->GetPropertyText('sidebar_links_text',FALSE))
 					);	
 
-		$data['sections']['progress_reports']['totalcount'] = $this->charity->GetCharityCampaignProgressReportCount($charity_id, true);
+		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
 
 		//needs a general model as progress reports can be for campaigns and for charities
-		$pr_temp = $this->charity->GetCharityCampaignProgressReports($charity_id, false, true);
+		$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($charity_id, false, true);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)

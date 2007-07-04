@@ -53,6 +53,22 @@ class Campaign_model extends Model
 			return NULL;
 	}
 	
+	function GetCampaignNameID($campaign_id)
+	{
+		$sql = 'SELECT	campaign_name
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$query = $this->db->query($sql,array($campaign_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->campaign_name;
+		}
+		else
+			return NULL;
+	}
+	
 	/**
 	 * Returns an array of the all the Campaigns
 	 * in ascending order of name.
@@ -500,7 +516,7 @@ class Campaign_model extends Model
 	 * Returns an array of the last $count progress report items for the given campaign id.
 	 * @return An array of arrays containing campaign id, names and votes.
 	 */
-	function GetCampaignProgressReports2($campaign_id, $count)
+	/*function GetCampaignProgressReports2($campaign_id, $count)
 	{
 		$sql = 'SELECT 
 				progress_report_articles.progress_report_article_article_id
@@ -520,6 +536,6 @@ class Campaign_model extends Model
 			}
 		}
 		return $result;
-	}
+	}*/
 }
 ?>

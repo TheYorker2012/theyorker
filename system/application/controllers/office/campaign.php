@@ -37,7 +37,7 @@ class Campaign extends Controller
 		$this->load->model('campaign_model','campaign_model');
 	
 		//current page
-		$this->pages_model->SetPageCode('office_campaign_index');
+		$this->pages_model->SetPageCode('office_campaign_list');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -218,30 +218,49 @@ class Campaign extends Controller
 
 		//load the required models
 		$this->load->model('campaign_model','campaign_model');
+		$this->load->model('progressreports_model','progressreports_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('reports');
 		$this->pages_model->SetPageCode('office_campaign_reports');
+		
+		//get campaign info
+		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+		$data['parameters']['article_id'] = $article_id;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get list of all campaigns
-		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-		
-		//load specific campaign data
-		if (isset($data['campaign_list'][$campaign_id]))
+		//get all progress reports for the campaign
+		$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports(
+			$campaign_id,
+			FALSE,
+			FALSE
+			);
+			
+		//get the data for each of the retrieved progress reports
+		foreach($pr_temp as $key => $pr)
 		{
-			$data['selected_campaign'] = $campaign_id;
-			$data['article'] = $this->news_model->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
+			$data['progressreports'][$key]['id'] = $pr;
+			/** get the article's header for the article id passed to
+		            the function */
+			$data['progressreports'][$key]['header'] = $this->article_model->GetArticleHeader($pr);
+			if ($data['progressreports'][$key]['header']['live_content'] != FALSE)
+				$data['progressreports'][$key]['article'] = $this->news_model->GetFullArticle($data['progressreports'][$key]['header']['live_content']);
 		}
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
-		$this->main_frame->SetContentSimple('office/campaign/edit', $data);
+		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+		$this->main_frame->SetContentSimple('office/campaign/editreports', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
