@@ -8,8 +8,8 @@ function print_table($name, $campaign_list)
 	echo('		<table width="90%" cellpadding="3" align="center">'."\n");
 	echo('			<thead>'."\n");
 	echo('				<tr>'."\n");
-	echo('					<th width="80%">Name</td>'."\n");
-	echo('					<th width="20%">Petitioned</td>'."\n");
+	echo('					<th width="80%">Name</th>'."\n");
+	echo('					<th width="20%">Petitioned</th>'."\n");
 	echo('				</tr>'."\n");
 	echo('			</thead>'."\n");
 	echo('			<tbody>'."\n");
@@ -42,4 +42,19 @@ function print_table($name, $campaign_list)
 
 <?php print_table('future campaigns', $campaign_list_future); ?>
 
+<?php print_table('unpublished campaigns', $campaign_list_unpublished); ?>
+
 <?php print_table('expired campaigns', $campaign_list_expired); ?>
+
+<div class="blue_box">
+	<h2>Add A New Campaign</h2>
+	<form class="form" action="/office/campaign/campaignmodify" method="post" >
+		<fieldset>
+			<label for="r_campaign_name">Name:</label>
+			<input type="text" name="a_campaign_name" id="r_campaign_name" value="" size="30">
+		</fieldset>
+		<fieldset>
+			<input type="submit" value="Add" class="button" name="r_submit_add_campaign" />
+		</fieldset>
+	</form>
+</div>

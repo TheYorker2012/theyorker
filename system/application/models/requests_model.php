@@ -292,8 +292,8 @@ class Requests_Model extends Model
 	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
 	{
 		$sql = 'SELECT 	content_type_id
-			FROM	content_types
-			WHERE	(content_type_codename = ?)';
+				FROM	content_types
+				WHERE	content_type_codename = ?';
 		$query = $this->db->query($sql,array($type_codename));
 		if ($query->num_rows() == 1)
 		{
@@ -301,18 +301,18 @@ class Requests_Model extends Model
 			if ($status == 'suggestion')
 			{
 				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id)
-					VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
+				$sql = 'INSERT INTO	articles(
+									article_content_type_id,
+									article_created,
+									article_request_title,
+									article_request_description,
+									article_suggestion_accepted,
+									article_request_entity_id)
+						VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
 				$this->db->query($sql,array($type_id,$title,$description,$user));
 				$sql = 'SELECT 	article_id
-					FROM	articles
-					WHERE	(article_id=LAST_INSERT_ID())';
+						FROM	articles
+						WHERE	(article_id=LAST_INSERT_ID())';
 				$query = $this->db->query($sql);
 				$id = $query->row()->article_id;
 				$this->db->trans_complete();
@@ -322,15 +322,15 @@ class Requests_Model extends Model
 			elseif ($status == 'request')
 			{
 				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id,
-						article_editor_approved_user_entity_id,
-						article_publish_date)
+				$sql = 'INSERT INTO	articles(
+									article_content_type_id,
+									article_created,
+									article_request_title,
+									article_request_description,
+									article_suggestion_accepted,
+									article_request_entity_id,
+									article_editor_approved_user_entity_id,
+									article_publish_date)
 					VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
 				$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
 				$sql = 'SELECT 	article_id

@@ -20,9 +20,21 @@ class Campaign_model extends Model
 	*  CAMPAIGNS
 	*****************************************************/
 	
-	function AddNewCampaign()
+	function AddNewCampaign($name, $article_id)
 	{
-		
+		$this->db->trans_start();
+			$sql = 'INSERT INTO campaigns(
+								campaign_name,
+								campaign_article_id)
+					VALUES (?, ?)';
+			$this->db->query($sql,array($name, $article_id));
+			$sql = 'SELECT 	campaign_id
+					FROM	campaigns
+					WHERE	campaign_id = LAST_INSERT_ID()';
+			$query = $this->db->query($sql);
+			$id = $query->row()->campaign_id;
+		$this->db->trans_complete();
+		return $id;
 	}
 	
 	function GetCampaignArticleID($campaign_id)
@@ -79,7 +91,7 @@ class Campaign_model extends Model
 	 * in ascending order of name.
 	 * @return An array of arrays containing campaign id, names, article id and votes.
 	 */
-	function GetCampaignList()
+	function GetLiveCampaignList()
 	{
 		$sql = 'SELECT	campaign_name,
 						campaign_votes,
@@ -123,8 +135,42 @@ class Campaign_model extends Model
 						campaign_petition
 				FROM	campaigns
 				WHERE	campaign_deleted = 0
-				AND		(campaign_published > CURRENT_TIMESTAMP
-				OR 		campaign_published IS NULL)
+				AND		campaign_published > CURRENT_TIMESTAMP
+				AND		campaign_expired = 0
+				ORDER BY campaign_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item = array(
+					'name'=>$row->campaign_name,
+					'votes'=>$row->campaign_votes,
+					'article'=>$row->campaign_article_id,
+					'has_been_petitioned'=>$row->campaign_petition
+					);
+				$result[$row->campaign_id] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Returns an array of the all the campaigns that are going to be published in the future
+	 * in ascending order of name.
+	 * @return An array of arrays containing campaign id, names, article id, votes, publish date and expired.
+	 */
+	function GetUnpublishedCampaignList()
+	{
+		$sql = 'SELECT	campaign_name,
+						campaign_votes,
+						campaign_id,
+						campaign_article_id,
+						campaign_petition
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_published IS NULL
 				AND		campaign_expired = 0
 				ORDER BY campaign_name ASC';
 		$query = $this->db->query($sql);
@@ -259,18 +305,18 @@ class Campaign_model extends Model
 	function UpdateUserVote($cur_campaign_id, $campaign_id, $user_id)
 	{
 		$this->db->trans_start();
-		$sql = 'UPDATE campaign_users
-			SET campaign_user_campaign_id = ?
-			WHERE campaign_user_user_entity_id = ?';
-		$this->db->query($sql,array($campaign_id, $user_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_votes = campaign_votes + 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($campaign_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_votes = campaign_votes - 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($cur_campaign_id));
+			$sql = 'UPDATE campaign_users
+					SET campaign_user_campaign_id = ?
+					WHERE campaign_user_user_entity_id = ?';
+			$this->db->query($sql,array($campaign_id, $user_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_votes = campaign_votes + 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($campaign_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_votes = campaign_votes - 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($cur_campaign_id));
 		$this->db->trans_complete();
 	}
 
@@ -281,15 +327,15 @@ class Campaign_model extends Model
 	function AddNewVote($campaign_id, $user_id)
 	{
 		$this->db->trans_start();
-		$sql = 'INSERT INTO campaign_users (
-				campaign_user_campaign_id,
-				campaign_user_user_entity_id)
-			VALUES (?, ?)';
-		$this->db->query($sql,array($campaign_id, $user_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_votes = campaign_votes + 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($campaign_id));
+			$sql = 'INSERT INTO campaign_users (
+								campaign_user_campaign_id,
+								campaign_user_user_entity_id)
+					VALUES (?, ?)';
+			$this->db->query($sql,array($campaign_id, $user_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_votes = campaign_votes + 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($campaign_id));
 		$this->db->trans_complete();
 	}
 
@@ -300,14 +346,14 @@ class Campaign_model extends Model
 	function WithdrawVote($user_id)
 	{
 		$this->db->trans_start();
-		$campaign_id = self::GetUserVoteSignature($user_id);
-		$sql = 'UPDATE campaigns
-			SET campaign_votes = campaign_votes - 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql, array($campaign_id));
-		$sql = 'DELETE FROM campaign_users
-			WHERE campaign_user_user_entity_id = ?';
-		$this->db->query($sql, array($user_id));
+			$campaign_id = self::GetUserVoteSignature($user_id);
+			$sql = 'UPDATE campaigns
+					SET campaign_votes = campaign_votes - 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql, array($campaign_id));
+			$sql = 'DELETE FROM campaign_users
+					WHERE campaign_user_user_entity_id = ?';
+			$this->db->query($sql, array($user_id));
 		$this->db->trans_complete();
 	}
 
@@ -318,11 +364,11 @@ class Campaign_model extends Model
 	function ClearVotes()
 	{
 		$this->db->trans_start();
-		$sql = 'DELETE FROM campaign_users';
-		$this->db->query($sql);
-		$sql = 'UPDATE campaigns
-			SET campaign_votes = 0';
-		$this->db->query($sql);
+			$sql = 'DELETE FROM campaign_users';
+			$this->db->query($sql);
+			$sql = 'UPDATE campaigns
+					SET campaign_votes = 0';
+			$this->db->query($sql);
 		$this->db->trans_complete();
 	}
 
@@ -350,18 +396,18 @@ class Campaign_model extends Model
 	function UpdateUserSignature($cur_campaign_id, $campaign_id, $user_id)
 	{
 		$this->db->trans_start();
-		$sql = 'UPDATE campaign_users
-			SET campaign_user_campaign_id = ?
-			WHERE campaign_user_user_entity_id = ?';
-		$this->db->query($sql,array($campaign_id, $user_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_petition_signatures = campaign_petition_signatures + 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($campaign_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_petition_signatures = campaign_petition_signatures - 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($cur_campaign_id));
+			$sql = 'UPDATE campaign_users
+					SET campaign_user_campaign_id = ?
+					WHERE campaign_user_user_entity_id = ?';
+			$this->db->query($sql,array($campaign_id, $user_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_petition_signatures = campaign_petition_signatures + 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($campaign_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_petition_signatures = campaign_petition_signatures - 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($cur_campaign_id));
 		$this->db->trans_complete();
 	}
 
@@ -372,24 +418,24 @@ class Campaign_model extends Model
 	function AddNewSignature($campaign_id, $user_id)
 	{
 		$this->db->trans_start();
-		$sql = 'INSERT INTO campaign_users (
-				campaign_user_campaign_id,
-				campaign_user_user_entity_id)
-			VALUES (?, ?)';
-		$this->db->query($sql,array($campaign_id, $user_id));
-		$sql = 'UPDATE campaigns
-			SET campaign_petition_signatures = campaign_petition_signatures + 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql,array($campaign_id));
+			$sql = 'INSERT INTO campaign_users (
+					campaign_user_campaign_id,
+					campaign_user_user_entity_id)
+					VALUES (?, ?)';
+			$this->db->query($sql,array($campaign_id, $user_id));
+			$sql = 'UPDATE campaigns
+					SET campaign_petition_signatures = campaign_petition_signatures + 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql,array($campaign_id));
 		$this->db->trans_complete();
 	}
 	
 	function GetPetitionID()
 	{
 		$sql = 'SELECT campaign_id
-			FROM campaigns
-			WHERE campaign_deleted = FALSE
-			AND campaign_petition = TRUE';
+				FROM campaigns
+				WHERE campaign_deleted = FALSE
+				AND campaign_petition = TRUE';
 		$query = $this->db->query($sql);
 		$row = $query->row();
 		if ($query->num_rows() == 1)
@@ -401,26 +447,26 @@ class Campaign_model extends Model
 	function StartPetition()
 	{
 		$this->db->trans_start();
-		$sql = 'SELECT max( campaign_votes ) AS max_campaign_votes
-			FROM campaigns';
-		$query = $this->db->query($sql);
-		$row = $query->row();
-		$sql = 'SELECT campaign_id
-			FROM campaigns
-			WHERE campaign_votes = ?
-			AND campaign_deleted = FALSE';
-		$query = $this->db->query($sql,array($row->max_campaign_votes));
-		$row = $query->row();
+			$sql = 'SELECT max( campaign_votes ) AS max_campaign_votes
+					FROM campaigns';
+			$query = $this->db->query($sql);
+			$row = $query->row();
+			$sql = 'SELECT campaign_id
+					FROM campaigns
+					WHERE campaign_votes = ?
+					AND campaign_deleted = FALSE';
+			$query = $this->db->query($sql,array($row->max_campaign_votes));
+			$row = $query->row();
 		$this->db->trans_complete();
 		if ($query->num_rows() == 1)
 		{
 			$this->db->trans_start();
-                	$sql = 'UPDATE campaigns
-				SET campaign_petition = TRUE,
-					campaign_petition_signatures = 0
-				WHERE campaign_id = ?';
-			$this->db->query($sql,array($row->campaign_id));
-			self::ClearVotes();
+                $sql = 'UPDATE campaigns
+						SET campaign_petition = TRUE,
+							campaign_petition_signatures = 0
+						WHERE campaign_id = ?';
+				$this->db->query($sql,array($row->campaign_id));
+				self::ClearVotes();
 			$this->db->trans_complete();
 			return TRUE;
 		}
@@ -435,14 +481,14 @@ class Campaign_model extends Model
 	function WithdrawSignature($user_id)
 	{
 		$this->db->trans_start();
-		$campaign_id = self::GetUserVoteSignature($user_id);
-		$sql = 'UPDATE campaigns
-			SET campaign_petition_signatures = campaign_petition_signatures - 1
-			WHERE campaign_id = ?';
-		$this->db->query($sql, array($campaign_id));
-		$sql = 'DELETE FROM campaign_users
-			WHERE campaign_user_user_entity_id = ?';
-		$this->db->query($sql, array($user_id));
+			$campaign_id = self::GetUserVoteSignature($user_id);
+			$sql = 'UPDATE campaigns
+					SET campaign_petition_signatures = campaign_petition_signatures - 1
+					WHERE campaign_id = ?';
+			$this->db->query($sql, array($campaign_id));
+			$sql = 'DELETE FROM campaign_users
+					WHERE campaign_user_user_entity_id = ?';
+			$this->db->query($sql, array($user_id));
 		$this->db->trans_complete();
 	}
 
@@ -457,13 +503,13 @@ class Campaign_model extends Model
 	function GetCampaignProgressReports2($campaign_id, $count)
 	{
 		$sql = 'SELECT 
-			progress_report_articles.progress_report_article_article_id
-			FROM progress_report_articles
-			INNER JOIN articles
-			ON articles.article_id = progress_report_articles.progress_report_article_article_id
-			WHERE progress_report_articles.progress_report_article_campaign_id = ?
-			ORDER BY articles.article_publish_date DESC
-			LIMIT 0,3';
+				progress_report_articles.progress_report_article_article_id
+				FROM progress_report_articles
+				INNER JOIN articles
+				ON articles.article_id = progress_report_articles.progress_report_article_article_id
+				WHERE progress_report_articles.progress_report_article_campaign_id = ?
+				ORDER BY articles.article_publish_date DESC
+				LIMIT 0,3';
 		$query = $this->db->query($sql,array($campaign_id));
 		$result = array();
 		if ($query->num_rows() > 0)

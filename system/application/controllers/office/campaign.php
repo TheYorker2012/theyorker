@@ -44,8 +44,9 @@ class Campaign extends Controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
 		//get the full campaign list
-		$data['campaign_list_live'] = $this->campaign_model->GetCampaignList();
+		$data['campaign_list_live'] = $this->campaign_model->GetLiveCampaignList();
 		$data['campaign_list_future'] = $this->campaign_model->GetFutureCampaignList();
+		$data['campaign_list_unpublished'] = $this->campaign_model->GetUnpublishedCampaignList();
 		$data['campaign_list_expired'] = $this->campaign_model->GetExpiredCampaignList();
 
 		// Set up the view
@@ -147,7 +148,7 @@ class Campaign extends Controller
 					redirect('/office/campaign/editarticle/'.$article_id.'/');
 				}
 			}
-		}	
+		}
 		
 		//get fact box
 		$data['article']['displayrevision']['fact_box'] = $this->requests_model->GetFactBoxForArticleContent($data['parameters']['revision_id']);
@@ -422,6 +423,29 @@ class Campaign extends Controller
 				);
 			$this->main_frame->AddMessage('success','Request has been modified.');
 			redirect($_POST['r_redirecturl']);
+		}
+	}
+	
+	function campaignmodify()
+	{
+		if (!CheckPermissions('office')) return;
+		
+		$this->load->model('campaign_model','campaign_model');
+		$this->load->model('requests_model','requests_model');
+		
+		if (isset($_POST['r_submit_add_campaign']))
+		{
+			$article_id = $this->requests_model->CreateRequest(
+				'request',
+				'campaigns',
+				"",
+				"",
+				$this->user_auth->entityId,
+				NULL
+				);
+			$campaign_id = $this->campaign_model->AddNewCampaign($_POST['a_campaign_name'], $article_id);
+			$this->main_frame->AddMessage('success','Campaign has been added.');
+			redirect('/office/campaign/editarticle/'.$campaign_id);
 		}
 	}
 }

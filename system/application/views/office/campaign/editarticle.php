@@ -58,20 +58,24 @@
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_question">Heading:</label>'."\n");
 	echo('			<input type="text" name="a_question" size="60" value="');
-	if ($article['displayrevision'] != FALSE)
+	if ($parameters['revision_id'] != NULL)
 		echo($article['displayrevision']['heading']);
 	echo('" /><br />'."\n");
 	echo('			<label for="a_answer">Article:</label>'."\n");
-	if ($article['displayrevision'] != FALSE)
+	if ($parameters['revision_id'] != NULL)
 		echo('			<textarea name="a_answer" rows="10" cols="56" />'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n");
 	else
 		echo('			<textarea name="a_answer" rows="10" cols="56" /></textarea><br />'."\n");
 	echo('			<label for="a_question">Fact Box Title:</label>'."\n");
 	echo('			<input type="text" name="a_facts_title" size="60" value="');
-	echo($article['displayrevision']['fact_box']['title']);
+	if ($parameters['revision_id'] != NULL)
+		echo($article['displayrevision']['fact_box']['title']);
 	echo('" />'."\n");
 	echo('			<label for="a_answer">Facts:</label>'."\n");
-	echo('			<textarea name="a_facts" rows="5" cols="56" />'.$article['displayrevision']['fact_box']['wikitext'].'</textarea><br />'."\n");
+	if ($parameters['revision_id'] != NULL)
+		echo('			<textarea name="a_facts" rows="5" cols="56" />'.$article['displayrevision']['fact_box']['wikitext'].'</textarea><br />'."\n");
+	else
+		echo('			<textarea name="a_facts" rows="5" cols="56" /></textarea><br />'."\n");
 	echo('			<input type="submit" value="Save" class="button" name="r_submit_save" />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('	</form>'."\n");
