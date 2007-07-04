@@ -1,6 +1,10 @@
 <?php
 	//sidebar
 	echo('<div class="RightToolbar">'."\n");
+	echo('	<h4>Quick Links</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		<a href="/office/campaign/">Back To Campaign Index</a>'."\n");
+	echo('	</div>'."\n");
 	echo('	<h4>Revisions (Latest First)</h4>'."\n");
 	echo('	<div class="Entry">'."\n");
 	if (count($article['revisions']) > 0)
@@ -38,7 +42,7 @@
 	echo('	<b>Description: </b>'.$article['header']['requestdescription'].'<br />'."\n");
 	if ($user['officetype'] != 'Low')
 	{
-		echo('<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[modify and assign]</a>'."\n");
+		echo('<a href="/office/campaign/editrequest/'.$parameters['campaign_id'].'">[modify]</a>'."\n");
 	}
 	echo('</div>'."\n");
 	

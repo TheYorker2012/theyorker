@@ -1,7 +1,10 @@
 <?php
 	//sidebar
 	echo('<div class="RightToolbar">'."\n");
-	echo('	<h4>Sidebar</h4>'."\n");
+	echo('	<h4>Quick Links</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		<a href="/office/campaign/">Back To Campaign Index</a>'."\n");
+	echo('	</div>'."\n");
 	echo('</div>'."\n");
 	
 	//main - request info

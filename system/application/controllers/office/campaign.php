@@ -160,6 +160,57 @@ class Campaign extends Controller
 		$this->main_frame->Load();
 	}
 	
+	function editrequest($campaign_id)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//load the required models
+		$this->load->model('campaign_model','campaign_model');
+		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar($campaign_id);
+		$this->main_frame->SetPage('article');
+		$this->pages_model->SetPageCode('office_campaign_request');
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['campaign_id'] = $campaign_id;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get list of all campaigns
+		$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
+		
+		//current campaign article id
+		$article_id = $data['campaign_list'][$campaign_id]['article'];
+		
+		//load specific campaign data
+		if (isset($data['campaign_list'][$campaign_id]))
+		{
+			$data['selected_campaign'] = $campaign_id;
+			$data['article'] = $this->news_model->GetFullArticle($article_id);
+		}
+		
+		/** get the article's header for the article id passed to
+	            the function */
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['article_id'] = $data['campaign_list'][$campaign_id]['article'];
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name' => $data['campaign_list'][$campaign_id]['name']));
+		$this->main_frame->SetContentSimple('office/campaign/editrequest', $data);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
 	function editreports($campaign_id)
 	{
 		if (!CheckPermissions('office')) return;
@@ -319,12 +370,14 @@ class Campaign extends Controller
 		}
 		else if (isset($_POST['r_submit_save_links']))
 		{
+			//get the article id for the campaign
 			$article_id = $this->campaign_model->GetCampaignArticleID($_POST['r_campaignid']);
-
+			//for all links work out what to do
 			for($i=1;$i<=$_POST['r_linkcount'];$i++)
 			{
 				if (isset($_POST['a_delete_'.$i]))
 				{
+					//delete the link
 					$this->requests_model->DeleteArticleLink(
 						$article_id,
 						$_POST['a_id_'.$i],
@@ -334,6 +387,7 @@ class Campaign extends Controller
 				}
 				else
 				{
+					//update the link
 					$this->requests_model->UpdateArticleLink(
 						$article_id,
 						$_POST['a_id_'.$i],
@@ -342,17 +396,31 @@ class Campaign extends Controller
 					);
 				}
 			}
-			
 			if (($_POST['a_name_new'] != "") AND ($_POST['a_url_new'] != "") AND ($_POST['a_url_new'] != "http://"))
 			{
+				//add a new link if fields non blank and non default
 				$this->requests_model->InsertArticleLink(
 					$article_id,
 					$_POST['a_name_new'],
 					$_POST['a_url_new']
 				);
 			}
-			
+			//report success and redirect
 			$this->main_frame->AddMessage('success','Links Saved.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_save_request']))
+		{
+			//get the article id for the campaign
+			$article_id = $this->campaign_model->GetCampaignArticleID($_POST['r_campaignid']);
+			//update the title and description
+			$this->requests_model->UpdateSuggestion(
+				$article_id,
+				array('title'=>$_POST['a_title'],
+					'description'=>$_POST['a_description'],
+					'content_type'=>'campaigns')
+				);
+			$this->main_frame->AddMessage('success','Request has been modified.');
 			redirect($_POST['r_redirecturl']);
 		}
 	}

@@ -395,9 +395,9 @@ class Howdoi extends Controller
 		$data['parameters']['article_id'] = $article_id;
 
 		// get the list of howdoi content type categories
-                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+		$data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
 
-                // add the unassigned type
+		// add the unassigned type
 		$data['categories'][$howdoi_type_id] = array(
 					'codename'=>'unassigned',
 					'name'=>'Unassigned',
@@ -671,7 +671,7 @@ class Howdoi extends Controller
 						'description'=>$_POST['a_description'],
 						'content_type'=>$_POST['a_category'])
 					);
-		                $this->main_frame->AddMessage('success',$_POST['r_status'].' has been modified.');
+				$this->main_frame->AddMessage('success',$_POST['r_status'].' has been modified.');
 				redirect('/office/howdoi/editquestion/'.$_POST['r_articleid']);
 			}
 			else if (isset($_POST['r_submit_accept']))
