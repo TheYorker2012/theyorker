@@ -445,6 +445,15 @@ class Requests_Model extends Model
 		$query = $this->db->query($sql,array($org_id,$article_id));
 	}
 
+	//Make a change to the publish date of an article
+	function UpdatePublishDate($article_id,$date)
+	{
+		$sql = 'UPDATE 	articles
+				SET		article_publish_date = ?
+				WHERE	article_id = ?';
+		$query = $this->db->query($sql,array($date,$article_id));
+	}
+
 	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
 	function GetPulledArticles($type_id)
 	{
@@ -1097,7 +1106,6 @@ class Requests_Model extends Model
 		        LIMIT 1';
 		$query = $this->db->query($sql,array($id));
 		return $query->first_row();
-
 	}
 
 	function GetAllPhotosForRequest($id)
@@ -1106,7 +1114,6 @@ class Requests_Model extends Model
 		        WHERE photo_request_photo_photo_request_id = ?';
 		$query = $this->db->query($sql,array($id));
 		return $query;
-
 	}
 
 

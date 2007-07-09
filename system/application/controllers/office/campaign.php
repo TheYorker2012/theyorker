@@ -266,13 +266,15 @@ class Campaign extends Controller
 		$this->main_frame->Load();
 	}
 	
-	function editprogressreport($campaign_id, $revision_id = NULL)
+	function editprogressreport($campaign_id, $pr_article_id, $revision_id = NULL)
 	{
 		if (!CheckPermissions('office')) return;
 
 		//load the required models
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
+		$this->load->model('requests_model','requests_model');
 		
 		//redirect the user away if an invalid campaign is specified
 		if (!$this->campaign_model->CampaignExists($campaign_id))
@@ -298,6 +300,61 @@ class Campaign extends Controller
 		    used for links in the view */
 		$data['parameters']['campaign_id'] = $campaign_id;
 		$data['parameters']['article_id'] = $article_id;
+		$data['parameters']['prarticle_id'] = $pr_article_id;
+		$data['parameters']['revision_id'] = $revision_id;
+		
+		/** get the article's header for the article id passed to
+			the function */
+		$data['article']['header'] = $this->article_model->GetArticleHeader($pr_article_id);
+		
+		//get the list of current question revisions
+		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($pr_article_id);
+
+		//set the default revision to false
+		$data['article']['displayrevision'] = FALSE;
+
+		/** suggestions have no contents associated with them
+			so don't try to load any, if it is not a
+			suggestion then load the displayrevision */
+		//if ($data['article']['header']['suggestion_accepted'] == 1) //progress reports can't currently be a suggestion
+		//{
+			//if the revision id is set to the default
+			if ($revision_id == NULL)
+			{
+				/* is a published article, therefore
+				   load the live content revision */
+				if ($data['article']['header']['live_content'] != FALSE)
+				{
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $data['article']['header']['live_content']);
+					$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+				}
+				/* no live content, therefore is a
+				   request, so load the latest
+				   revision as default */
+				else
+				{
+					//make sure a revision exists
+					if (isset($data['article']['revisions'][0]))
+					{
+						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $data['article']['revisions'][0]['id']);
+						$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+					}
+				}
+			}
+			else
+			{
+				/* load the revision with the given
+				   revision id */
+				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $revision_id);
+				/* if this revision doesn't exist
+				   then return an error */
+				if ($data['article']['displayrevision'] == FALSE)
+				{
+					$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this article. Default selected.');
+					redirect('/office/campaign/editprogressreport/'.$campaign_id.'/'.$pr_article_id.'/');
+				}
+			}
+		//}
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
@@ -494,6 +551,50 @@ class Campaign extends Controller
 				);
 			$this->main_frame->AddMessage('success','Request has been modified.');
 			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_save']))
+		{
+			$revision_id = $this->requests_model->CreateArticleRevision(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId,
+				'',
+				'',
+				'',
+				$_POST['a_report'],
+				''
+				);
+			$this->main_frame->AddMessage('success','New revision created for article.');
+			redirect('/office/campaign/editprogressreport/'.$_POST['r_campaignid'].'/'.$_POST['r_articleid'].'/'.$revision_id.'/');
+		}
+		else if (isset($_POST['r_submit_pr_publish']))
+		{
+			$this->requests_model->UpdateRequestStatus(
+				$_POST['r_articleid'],
+				'publish',
+				array('content_id'=>$_POST['r_revisionid'],
+					'publish_date'=>$_POST['r_date_set'],
+					'editor'=>$this->user_auth->entityId)
+				);
+			$this->main_frame->AddMessage('success','Progress report revision set to published revision.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_unpublish']))
+		{
+			$this->requests_model->UpdateSetToUnpublished(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId
+				);
+			$this->main_frame->AddMessage('success','Progress report revision unpublished.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_date']))
+		{
+			$this->requests_model->UpdatePublishDate(
+				$_POST['r_articleid'],
+				$_POST['a_date']
+				);		
+			$this->main_frame->AddMessage('success','Progress report date updated.');
+			redirect($_POST['r_redirecturl']);		
 		}
 	}
 	

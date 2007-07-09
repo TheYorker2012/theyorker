@@ -22,9 +22,3 @@
 	}
 	echo('</div>'."\n");
 ?>
-
-<?php
-echo('<pre><div class=BlueBox>');
-print_r($data);
-echo('</div></pre>');
-?>

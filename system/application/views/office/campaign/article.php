@@ -76,38 +76,42 @@
 		echo('			<textarea name="a_facts" rows="5" cols="56" />'.$article['displayrevision']['fact_box']['wikitext'].'</textarea><br />'."\n");
 	else
 		echo('			<textarea name="a_facts" rows="5" cols="56" /></textarea><br />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('		<fieldset>'."\n");
 	echo('			<input type="submit" value="Save" class="button" name="r_submit_save" />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('	</form>'."\n");
 	echo('</div>'."\n");
 	
 	//main - options
-
-	if ($parameters['revision_id'] != NULL) //if a revision exists
+	if ($user['officetype'] != 'Low')
 	{
-		echo('<div class="blue_box">'."\n");
-		echo('	<h2>options</h2>'."\n");
-		echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
-		echo('		<fieldset>'."\n");
-		echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
-		echo('			<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
-		echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >'."\n");
-		echo('		</fieldset>'."\n");
-		if ($article['displayrevision']['id'] != $article['header']['live_content'])
+		if ($parameters['revision_id'] != NULL) //if a revision exists
 		{
-			echo('		Make this revision the published revision for this campaign.'."\n");
+			echo('<div class="blue_box">'."\n");
+			echo('	<h2>options</h2>'."\n");
+			echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
 			echo('		<fieldset>'."\n");
-			echo('			<input type="submit" value="Publish" class="button" name="r_submit_publish" />'."\n");
+			echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+			echo('			<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
+			echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >'."\n");
 			echo('		</fieldset>'."\n");
+			if ($article['displayrevision']['id'] != $article['header']['live_content'])
+			{
+				echo('		Make this revision the published revision for this campaign.'."\n");
+				echo('		<fieldset>'."\n");
+				echo('			<input type="submit" value="Publish" class="button" name="r_submit_publish" />'."\n");
+				echo('		</fieldset>'."\n");
+			}
+			else
+			{
+				echo('		Set this revision to not be the default for this campaign.'."\n");
+				echo('		<fieldset>'."\n");
+				echo('			<input type="submit" value="Unpublish" class="button" name="r_submit_unpublish" />'."\n");
+				echo('		</fieldset>'."\n");
+			}
+			echo('	</form>'."\n");
+			echo('</div>'."\n");
 		}
-		else
-		{
-			echo('		Set this revision to not be the default for this campaign.'."\n");
-			echo('		<fieldset>'."\n");
-			echo('			<input type="submit" value="Unpublish" class="button" name="r_submit_unpublish" />'."\n");
-			echo('		</fieldset>'."\n");
-		}
-		echo('	</form>'."\n");
-		echo('</div>'."\n");
 	}
 ?>
