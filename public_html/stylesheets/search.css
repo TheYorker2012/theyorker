@@ -1,0 +1,50 @@
+#site-search {
+	background: url(/images/icons/magnifier.png) no-repeat 2px center;
+	width:95px;
+	padding:2px 0px 2px 20px;
+	border: 1px solid #20C1F0;
+	color:#aaa;
+	float:none;
+}
+#ajax-results {
+	filter:alpha(opacity=80);
+	opacity:.80;
+	-moz-opacity:.80;
+	background-color:white;
+	width:180px;
+	display: none;
+	position:absolute;
+	text-align:left;
+}
+#ajax-results:after {
+	clear: both;
+}
+#ajax-results h1 {
+	background-color: #FF6A00;
+	color: #fff;
+	font-size:11pt;
+	margin: 0;
+	padding: 2px 2px;
+}
+#ajax-results .extraLogin {
+	font-size:10px;
+	padding: 0;
+	margin: 0;
+}
+#ajax-results .note {
+	font-size:10px;
+	padding: 0px;
+	margin: 0px;
+	color: #fff;
+	float:right;
+}
+#ajax-results a {
+	color:black;
+}
+#ajax-results .note a {
+	color:white;
+}
+#ajax-results ul {
+	padding:0;
+	margin:0;
+}

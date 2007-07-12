@@ -1,43 +1,88 @@
-
-<!-- a_search_form defined twice, remember to recreate into class !! :) //-->
-<!-- Why is no one using CSS!!!//-->
-
-<div style="float: right; width: 630px; margin-left: 5px; background-color: rgb(255, 255, 255);">
-	<div style="border-style: solid none solid solid; border-color: rgb(147, 150, 154) -moz-use-text-color rgb(147, 150, 154) rgb(147, 150, 154); border-width: 1px 0pt 1px 1px; padding: 5px; width: 380px; float: left;">
-		<div class="ArticleColumn">
-			<?=$search_form?>
-<?php if (isset($search_results)) { ?>
-		    <ol>
-				<?php foreach ($search_results as $result):?>
-		        <li>
-		            <a href="<?=$result['link']?>"><?=$result['title']?></a>
-					<?=$result['blurb']?>
-		        </li>
-				<?php endforeach;?>
-		    </ol>
-			<p><?=$search_numbering?></p>
-	</div>
+<?php
+define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
+?>
+	<?php if (isset($articles) and $articles->num_rows() > 0) { foreach($articles->result() as $link) {
+		echo '<li><a href="/news/'.$link->category.'/'.$link->id.'">'.$link->title.'</a></li>';
+	}} else {
+		echo '<li>None Found</li>';
+	}?>
+	<?php if (isset($directory) and $directory->num_rows() > 0) { foreach($directory->result() as $entry) {
+		echo '<li><a href="/directory/'.$entry->link.'">'.$entry->title.'</a></li>';
+	}} else {
+		echo '<li>None Found</li>';
+	}?></ul>
+	<?php if (isset($events) & count($events)>0) { foreach ($events as $event) {
+		echo '<li><a href="/calendar/event/'.$event['EventId'].'/'.$event['SourceEventId'].'/">'.$event['Name'].'</a></li>';
+	}} else {
+		echo '<li>No results found</li>';
+	}?>
+	<?php if (isset($wiki)) { foreach($wiki as $page) {
+		echo '<li><a href="'.ADDR_YORKIPEDIA.$page.'">'.$page.'</a></li>';
+	}} else {
+		echo '<li>No results found</li>';
+	}?>
+<div id="RightColumn">
+	<h2>Search Options</h2>
+	<form>
+		<fieldset>
+			<p>Sort by Date/Score(radio)</p>
+			<p>define("FILTER_ALL", 			16777216);</p>
+			<p>define("FILTER_ALL_ARTICLES", 	511);</p>
+			<p>define("FILTER_NEWS", 			1);</p>
+			<p>define("FILTER_FEATURES", 		2);</p>
+			<p>define("FILTER_LIFESTYLE", 		4);</p>
+			<p>define("FILTER_FOOD",			8);</p>
+			<p>define("FILTER_DRINK", 			16);</p>
+			<p>define("FILTER_ARTS",			64);</p>
+			<p>define("FILTER_SPORTS",			128);</p>
+			<p>define("FILTER_BLOGS",			256);</p>
+			<p>define("FILTER_YORK",			512);</p>
+			<p>define("FILTER_DIR", 1024);</p>
+			<p>define("FILTER_EVENTS",			2048);</p>
+		</fieldset>
+	</form>
 </div>
-<div style="width: 239px; float: right;">
-	<div style="border-left: 1px solid rgb(147, 150, 154); padding-left: 5px; padding-bottom: 10px;">
-		<div style="margin: 0pt; padding: 3px 3px 3px 5px; background-color: rgb(148, 151, 155); color: rgb(255, 255, 255); font-size: 12px; font-weight: bold;">
-			Refine
-		</div>
-		<ul>
-			<li>All results <i>(<?=$search_all?>)</i></li>
-			<li>News <i>(<?=$search_news?>)</i></li>
-			<li>Reviews <i>(<?=$search_reviews?>)</i></li>
-			<li>Features <i>(<?=$search_features?>)</i></li>
-			<li>Events <i>(<?=$search_events?>)</i></li>
-			<li>How do I <i>(<?=$search_how?>)</i></li>
-			<li>Yorkipedia <i>(<?=$search_york?>)</i></li>
-		</ul>
+<div id="MainColumn">
+	<div class="BlueBox">
+<?php if (isset($results)) {?>
+		<h2>Search Results</h2>
+		<?php foreach ($results as $type=>$resultGroup) {
+			switch ($type) {
+				case "articles":
+					if (count($resultGroup->result()) == 0) break;
+					echo '<h3>Articles</h3><ul>';
+					foreach ($resultGroup->result() as $article) {
+						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.$article->heading.'</a> - '.$article->blurb.'</li>';
+					}
+					echo '</ul>'
+					break;
+				case "wiki":
+					if (count($resultGroup) == 0) break;
+					echo '<h3>Yorkipedia Pages</h3><ul>';
+					foreach ($resultGroup as $page) {
+						echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.$page.'</a></li>'
+					}
+					echo '</ul>';
+					break;
+				case "directory":
+					if (count($resultGroup->result()) == 0) break;
+					echo '<h3>Organisations in the directory</h3><ul>';
+					foreach ($resultGroup->result() as $article) {
+						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.$article->heading.'</a> - '.$article->blurb.'</li>';
+					}
+					break;
+				case "events":
+					if (count($resultGroup->result()) == 0) break;
+					echo '<h3>Events</h3>';
+					break;
+			}
+		}
+} else { ?>
+		<h2>Search</h2>
+		<fieldset>
+			<label for="search-text">Search for: </label><input type="text" name="search-text" />
+			<input type="submit" value="Search" />
+		</fieldset>
+<?php }?>
 	</div>
-	<div style="border-style: solid solid solid none; border-color: rgb(147, 150, 154) rgb(147, 150, 154) rgb(147, 150, 154) -moz-use-text-color; border-width: 1px 1px 1px 0pt; clear: both; padding-left: 10px;">
-		<ul>
-			<li>Sort by Relevancy</li>
-			<li>Sort by Date</li>
-		</ul>
-	</div>
-<?php } ?>
 </div>
