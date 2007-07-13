@@ -28,6 +28,18 @@ class Campaign extends Controller
 		$navbar->AddItem('publish', 'Publish',
 				'/office/campaign/editpublish/'.$campaign_id);
 	}
+
+	/// Set up the navigation bar
+	private function _SetupMainNavbar()
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('list', 'List',
+				'/office/campaign/');
+		$navbar->AddItem('add', 'Add New',
+				'/office/campaign/add/');
+		$navbar->AddItem('options', 'Options',
+				'/office/campaign/options/');
+	}
 	
 	function index()
 	{
@@ -36,7 +48,9 @@ class Campaign extends Controller
 		//load the required models
 		$this->load->model('campaign_model','campaign_model');
 	
-		//current page
+		//Get navigation bar and tell it the current page
+		$this->_SetupMainNavbar();
+		$this->main_frame->SetPage('list');
 		$this->pages_model->SetPageCode('office_campaign_list');
 
 		//get the current users id and office access
@@ -51,6 +65,52 @@ class Campaign extends Controller
 
 		// Set up the view
 		$the_view = $this->frames->view('office/campaign/list', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function add()
+	{
+		if (!CheckPermissions('office')) return;
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupMainNavbar();
+		$this->main_frame->SetPage('add');
+		$this->pages_model->SetPageCode('office_campaign_add');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
+		// Set up the view
+		$the_view = $this->frames->view('office/campaign/add', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function options()
+	{
+		if (!CheckPermissions('office')) return;
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupMainNavbar();
+		$this->main_frame->SetPage('options');
+		$this->pages_model->SetPageCode('office_campaign_options');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
+		// Set up the view
+		$the_view = $this->frames->view('office/campaign/options', $data);
 		
 		// Set up the public frame
 		$this->main_frame->SetContent($the_view);
@@ -74,7 +134,7 @@ class Campaign extends Controller
 		{
 			$this->main_frame->AddMessage('error','Campaign does not exist.');
 			redirect('/office/campaign/');
-		}		
+		}
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar($campaign_id);
@@ -435,6 +495,7 @@ class Campaign extends Controller
 		//get campaign info
 		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
 		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+		$data['campaign']['status'] = $this->campaign_model->GetCampaignStatusID($campaign_id);
 
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
@@ -618,6 +679,41 @@ class Campaign extends Controller
 			$campaign_id = $this->campaign_model->AddNewCampaign($_POST['a_campaign_name'], $article_id);
 			$this->main_frame->AddMessage('success','Campaign has been added.');
 			redirect('/office/campaign/editarticle/'.$campaign_id);
+		}
+		else if (isset($_POST['r_submit_set_to_future']))
+		{
+			$this->campaign_model->SetCampaignStatus(
+				$_POST['r_campaignid'],
+				'future'
+				);
+			$this->main_frame->AddMessage('success','Campaign has been set to future.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_set_to_expired']))
+		{
+			$this->campaign_model->SetCampaignStatus(
+				$_POST['r_campaignid'],
+				'expired'
+				);
+			$this->main_frame->AddMessage('success','Campaign has been expired.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_set_to_unpublished']))
+		{
+			$this->campaign_model->SetCampaignStatus(
+				$_POST['r_campaignid'],
+				'unpublished'
+				);
+			$this->main_frame->AddMessage('success','Campaign has been set to unpublished.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_set_to_deleted']))
+		{
+			$this->campaign_model->SetCampaignDeleted(
+				$_POST['r_campaignid']
+				);
+			$this->main_frame->AddMessage('success','Campaign has been deleted.');
+			redirect('/office/campaign');
 		}
 	}
 }

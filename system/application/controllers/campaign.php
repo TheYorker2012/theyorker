@@ -20,7 +20,7 @@ class Campaign extends Controller {
 		if ($campaign_id == FALSE)
 		{
 			$this->pages_model->SetPageCode('campaign_list');
-			$data['campaign_list'] = $this->campaign_model->GetCampaignList();
+			$data['campaign_list'] = $this->campaign_model->GetLiveCampaignList();
 			$data['current_campaigns'] = array(
 				'title'=>$this->pages_model->GetPropertyText('section_list_title'),
 				'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'));

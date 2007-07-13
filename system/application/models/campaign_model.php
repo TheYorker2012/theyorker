@@ -84,6 +84,39 @@ class Campaign_model extends Model
 			return NULL;
 	}
 	
+	function GetCampaignStatusID($campaign_id)
+	{
+		$sql = 'SELECT	campaign_status
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$query = $this->db->query($sql,array($campaign_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->campaign_status;
+		}
+		else
+			return NULL;
+	}
+	
+	function SetCampaignStatus($campaign_id, $status)
+	{
+		$sql = 'UPDATE	campaigns
+				SET		campaign_status = ?
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$this->db->query($sql,array($status, $campaign_id));
+	}
+	
+	function SetCampaignDeleted($campaign_id)
+	{
+		$sql = 'UPDATE	campaigns
+				SET		campaign_deleted = 1
+				WHERE	campaign_id = ?';
+		$this->db->query($sql,array($campaign_id));
+	}
+	
 	/**
 	 * Returns an array of the all the Campaigns
 	 * in ascending order of name.
