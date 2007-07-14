@@ -99,6 +99,9 @@ class Campaign extends Controller
 	function options()
 	{
 		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('campaign_model','campaign_model');
 	
 		//Get navigation bar and tell it the current page
 		$this->_SetupMainNavbar();
@@ -108,6 +111,18 @@ class Campaign extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$petition = $this->campaign_model->GetPetitionStatus();
+		if ($petition == FALSE)
+		{
+			$data['campaign']['is_petition'] = FALSE;
+			$data['campaign']['can_start_petition'] = $this->campaign_model->CanStartPetition();
+		}
+		else
+		{
+			$data['campaign']['is_petition'] = TRUE;
+			$data['campaign']['future_campaign_count'] = $this->campaign_model->GetFutureCampaignCount();
+		}
 
 		// Set up the view
 		$the_view = $this->frames->view('office/campaign/options', $data);
@@ -676,7 +691,10 @@ class Campaign extends Controller
 				$this->user_auth->entityId,
 				NULL
 				);
-			$campaign_id = $this->campaign_model->AddNewCampaign($_POST['a_campaign_name'], $article_id);
+			$campaign_id = $this->campaign_model->AddNewCampaign(
+				$_POST['a_campaign_name'],
+				$article_id
+				);
 			$this->main_frame->AddMessage('success','Campaign has been added.');
 			redirect('/office/campaign/editarticle/'.$campaign_id);
 		}
@@ -714,6 +732,26 @@ class Campaign extends Controller
 				);
 			$this->main_frame->AddMessage('success','Campaign has been deleted.');
 			redirect('/office/campaign');
+		}
+		else if (isset($_POST['r_submit_start']))
+		{
+			$started = $this->campaign_model->StartPetition();
+			if ($started == TRUE)
+			{
+				$this->main_frame->AddMessage('success','Campaign petition started.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else
+			{
+				$this->main_frame->AddMessage('error','Can\'t start petition.');
+				redirect($_POST['r_redirecturl']);
+			}
+		}
+		else if (isset($_POST['r_submit_end']))
+		{
+			$this->campaign_model->EndPetition();
+			$this->main_frame->AddMessage('success','Petition ended and new campaigns set for voting.');
+			redirect($_POST['r_redirecturl']);
 		}
 	}
 }

@@ -288,6 +288,42 @@ class Campaign_model extends Model
 		return $result;
 	}
 	
+	function GetFutureCampaignCount()
+	{
+		$sql = 'SELECT	COUNT(campaign_id) AS future_count
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_status = "future"';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() == 1)
+		$row = $query->row();
+		return $row->future_count;
+	}
+
+	function CanStartPetition()
+	{
+		$this->db->trans_start();
+			//find the largest
+			$sql = 'SELECT	max( campaign_votes ) AS max_campaign_votes
+					FROM	campaigns
+					WHERE	campaign_status = "live"';
+			$query = $this->db->query($sql);
+			$row = $query->row();
+			//find campaigns with this value
+			$sql = 'SELECT	campaign_id
+					FROM	campaigns
+					WHERE	campaign_votes = ?
+					AND		campaign_deleted = FALSE
+					AND		campaign_status = "live"';
+			$query = $this->db->query($sql,array($row->max_campaign_votes));
+			echo($row->max_campaign_votes);
+		$this->db->trans_complete();
+		if ($query->num_rows() == 1) //return true if there is only one campaign which has the max no of votes
+			return TRUE;
+		else
+			return FALSE;
+	}
+	
 	/**
 	 * Returns name, signatures and article id of the given campaign id
 	 * @return the name as a string.
@@ -507,34 +543,62 @@ class Campaign_model extends Model
 			return FALSE;
 	}
 
+	/**
+	 * Starts the campaign with the most votes, if possible (no two campaigns have the same votes)
+	 * @returns the campaign id of the current users vore or FALSE if no vote has been cast.
+	 */
 	function StartPetition()
 	{
-		$this->db->trans_start();
+		$this->db->trans_start();			
+			//find the largest
 			$sql = 'SELECT	max( campaign_votes ) AS max_campaign_votes
-					FROM	campaigns';
+					FROM	campaigns
+					WHERE	campaign_status = "live"';
 			$query = $this->db->query($sql);
 			$row = $query->row();
+			//find campaigns with this value
 			$sql = 'SELECT	campaign_id
 					FROM	campaigns
 					WHERE	campaign_votes = ?
-					AND		campaign_deleted = FALSE';
+					AND		campaign_deleted = FALSE
+					AND		campaign_status = "live"';
 			$query = $this->db->query($sql,array($row->max_campaign_votes));
 			$row = $query->row();
-		$this->db->trans_complete();
-		if ($query->num_rows() == 1)
-		{
-			$this->db->trans_start();
-                $sql = 'UPDATE	campaigns
+			if ($query->num_rows() == 1)
+			{
+				$sql = 'UPDATE	campaigns
+						SET		campaign_status = "expired"
+						WHERE NOT campaign_id = ?
+						AND		campaign_status = "live"';
+				$this->db->query($sql,array($row->campaign_id));
+				$sql = 'UPDATE	campaigns
 						SET		campaign_petition = TRUE,
 								campaign_petition_signatures = 0
 						WHERE	campaign_id = ?';
 				$this->db->query($sql,array($row->campaign_id));
 				self::ClearVotes();
-			$this->db->trans_complete();
-			return TRUE;
-		}
-		else
-			return FALSE;
+				return TRUE;
+			}
+			else
+				return FALSE;
+		$this->db->trans_complete();
+	}
+	
+	function EndPetition()
+	{
+		$this->db->trans_start();
+			$sql = 'UPDATE	campaigns
+					SET		campaign_status = "expired"
+					WHERE 	campaign_status = "live"
+					AND		campaign_petition = 1';
+			$this->db->query($sql);
+			$sql = 'UPDATE	campaigns
+					SET		campaign_status = "live",
+							campaign_petition = 0
+					WHERE 	campaign_status = "future"';
+			$this->db->query($sql);
+		$this->db->trans_complete();
+		return TRUE;
 	}
 
 	/**
