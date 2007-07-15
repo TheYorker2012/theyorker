@@ -66,7 +66,7 @@ if(count($article['related_articles']) > 0) {
 
 <?php
 if(count($article['links']) > 0) {
-	echo('	<h2>'.$sidebar_external['title'].'/h2>'."\n");
+	echo('	<h2>'.$sidebar_external['title'].'</h2>'."\n");
 	echo('	<div class="Entry">'."\n");
 	echo('		<ul>'."\n");
 	foreach ($article['links'] as $link) {

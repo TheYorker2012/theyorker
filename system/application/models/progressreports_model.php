@@ -27,12 +27,14 @@ class Progressreports_model extends Model
 		if ($is_charity)
 		{
 			$sql = $sql.'	WHERE	progress_report_articles.progress_report_article_charity_id = ?
-							AND		progress_report_articles.progress_report_article_campaign_id IS NULL';
+							AND		progress_report_articles.progress_report_article_campaign_id IS NULL
+							AND		progress_report_articles.progress_report_article_deleted = 0';
 		}
 		else
 		{
 			$sql = $sql.'	WHERE	progress_report_articles.progress_report_article_campaign_id = ?
-							AND		progress_report_articles.progress_report_article_charity_id IS NULL';
+							AND		progress_report_articles.progress_report_article_charity_id IS NULL
+							AND		progress_report_articles.progress_report_article_deleted = 0';
 		}			
 		$sql = $sql.' ORDER BY articles.article_publish_date DESC';
 		if ($limit)
@@ -56,16 +58,22 @@ class Progressreports_model extends Model
 	function GetCharityCampaignProgressReportCount($id, $is_charity)
 	{
 		$sql = 'SELECT	count(*) as pr_count
-			FROM	progress_report_articles';
+				FROM	progress_report_articles
+				INNER JOIN articles
+				ON		articles.article_id = progress_report_articles.progress_report_article_article_id';
 		if ($is_charity)
 		{
-			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_charity_id = ?
-				AND	progress_report_articles.progress_report_article_campaign_id IS NULL';
+			$sql = $sql.'	WHERE	progress_report_articles.progress_report_article_charity_id = ?
+							AND		progress_report_articles.progress_report_article_campaign_id IS NULL
+							AND		progress_report_articles.progress_report_article_deleted = 0
+							AND		articles.article_live_content_id IS NOT NULL';
 		}
 		else
 		{
-			$sql = $sql.' WHERE	progress_report_articles.progress_report_article_campaign_id = ?
-				AND	progress_report_articles.progress_report_article_charity_id IS NULL';
+			$sql = $sql.'	WHERE	progress_report_articles.progress_report_article_campaign_id = ?
+							AND		progress_report_articles.progress_report_article_charity_id IS NULL
+							AND		progress_report_articles.progress_report_article_deleted = 0
+							AND		articles.article_live_content_id IS NOT NULL';
 		}
 		$query = $this->db->query($sql,array($id));
 		if ($query->num_rows() == 1)
@@ -73,6 +81,49 @@ class Progressreports_model extends Model
 			$row = $query->row();
 			return $row->pr_count;
 		}
-		return false;
+		return FALSE;
+	}
+	
+	/**
+	 * Adds a link between a progress report article and its relevant chairty/campaign
+	 * @return nothing
+	 */
+	function AddCharityCampaignProgressReportLink($article_id, $is_charity, $id)
+	{
+		$sql = 'INSERT INTO	progress_report_articles(
+							progress_report_article_article_id,
+							progress_report_article_campaign_id,
+							progress_report_article_charity_id)
+				VALUES		(?,?,?)';
+		if ($is_charity == TRUE)
+		{
+			$this->db->query($sql,array($article_id,NULL,$id));
+		}
+		else
+		{
+			$this->db->query($sql,array($article_id,$id,NULL));
+		}
+		return TRUE;
+	}
+	
+	/**
+	 * Adds a link between a progress report article and its relevant chairty/campaign
+	 * @return nothing
+	 */
+	function DeleteCharityCampaignProgressReportLink($article_id, $is_charity, $id)
+	{
+		$sql = 'UPDATE	progress_report_articles
+				SET		progress_report_article_deleted = 1
+				WHERE	progress_report_article_article_id = ?';
+		if ($is_charity == TRUE)
+		{
+			$sql = $sql . ' AND progress_report_article_charity_id = ?';
+		}
+		else
+		{
+			$sql = $sql . ' AND progress_report_article_campaign_id = ?';
+		}
+		$this->db->query($sql,array($article_id,$id));
+		return TRUE;
 	}
 }

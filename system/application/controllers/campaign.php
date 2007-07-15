@@ -190,7 +190,7 @@ class Campaign extends Controller {
 			redirect('/campaign');
 	}
 	
-	function preports($charity_id = 1)
+	function preports()
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -207,10 +207,10 @@ class Campaign extends Controller {
 					'sidebar_links'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_links_title',FALSE),'text'=>$this->pages_model->GetPropertyText('sidebar_links_text',FALSE))
 					);	
 
-		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
+		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($campaign_id, false);
 
 		//needs a general model as progress reports can be for campaigns and for charities
-		$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($charity_id, false, true);
+		$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($campaign_id, false, false);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)

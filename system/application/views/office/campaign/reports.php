@@ -9,16 +9,46 @@
 	
 	//main - request info
 	echo('<div class="blue_box">'."\n");
-	echo('	<h2>edit progress reports</h2>'."\n");
-	foreach($progressreports as $pr)
+	echo('	<h2>progress reports</h2>'."\n");
+	if (count($progressreports) == 0)
 	{
-		echo('	<hr /><br />'."\n");
-		echo('	'.$pr['header']['publish_date'].' <a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
-		echo('	<br />'."\n");
-		if ($pr['header']['live_content'] != NULL)
-			echo('	'.$pr['article']['text']."\n");
-		else
-			echo('	No Preview.'."\n");
+		echo('	No Progress Reports Yet.');
+	}
+	else
+	{
+		foreach($progressreports as $pr)
+		{
+			echo('	<hr /><br />'."\n");
+			echo('	'.$pr['header']['publish_date'].' <a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
+			echo('	<br />'."\n");
+			if ($pr['header']['live_content'] != NULL)
+				echo('	'.$pr['article']['text']."\n");
+			else
+				echo('	No Preview.'."\n");
+		}
 	}
 	echo('</div>'."\n");
+	
+	echo('<div class="blue_box">'."\n");
+	echo('	<h2>add new progress report</h2>'."\n");
+	echo('	Enter the date for the new progress report.'."\n");
+	echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<label for="a_date">Date:</label>'."\n");
+	echo('			<input type="text" name="a_date" size="60" value="');
+	echo(date('Y-m-d H:i:s', time()));
+	echo('" /><br />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<input type="submit" value="Add" class="button" name="r_submit_pr_add" />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('	</form>'."\n");
+	echo('</div>'."\n");
+	
+	echo('<div class="BlueBox"><pre>');
+	print_r($data);
+	echo('</pre></div>');
 ?>

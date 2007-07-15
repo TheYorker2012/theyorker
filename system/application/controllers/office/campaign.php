@@ -25,8 +25,12 @@ class Campaign extends Controller
 				'/office/campaign/editreports/'.$campaign_id);
 		$navbar->AddItem('related', 'Related',
 				'/office/campaign/editrelated/'.$campaign_id);
-		$navbar->AddItem('publish', 'Publish',
+		//only editors/admins can see this page
+		if ($this->user_auth->officeType != 'Low')
+		{
+			$navbar->AddItem('publish', 'Publish',
 				'/office/campaign/editpublish/'.$campaign_id);
+		}
 	}
 
 	/// Set up the navigation bar
@@ -49,8 +53,11 @@ class Campaign extends Controller
 		$this->load->model('campaign_model','campaign_model');
 	
 		//Get navigation bar and tell it the current page
-		$this->_SetupMainNavbar();
-		$this->main_frame->SetPage('list');
+		if ($this->user_auth->officeType != 'Low')//only editors/admins can see the navigation bar
+		{
+			$this->_SetupMainNavbar();
+			$this->main_frame->SetPage('list');
+		}
 		$this->pages_model->SetPageCode('office_campaign_list');
 
 		//get the current users id and office access
@@ -76,62 +83,79 @@ class Campaign extends Controller
 	function add()
 	{
 		if (!CheckPermissions('office')) return;
-	
-		//Get navigation bar and tell it the current page
-		$this->_SetupMainNavbar();
-		$this->main_frame->SetPage('add');
-		$this->pages_model->SetPageCode('office_campaign_add');
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
-
-		// Set up the view
-		$the_view = $this->frames->view('office/campaign/add', $data);
 		
-		// Set up the public frame
-		$this->main_frame->SetContent($the_view);
+		//only editors/admins can see this page
+		if ($this->user_auth->officeType != 'Low')
+		{
+			//Get navigation bar and tell it the current page
+			$this->_SetupMainNavbar();
+			$this->main_frame->SetPage('add');
+			$this->pages_model->SetPageCode('office_campaign_add');
 
-		// Load the public frame view
-		$this->main_frame->Load();
+			//get the current users id and office access
+			$data['user']['id'] = $this->user_auth->entityId;
+			$data['user']['officetype'] = $this->user_auth->officeType;
+
+			// Set up the view
+			$the_view = $this->frames->view('office/campaign/add', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetContent($the_view);
+
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		else
+		{
+			$this->main_frame->AddMessage('error','You do not have access to view this page.');
+			redirect('/office/campaign/');
+		}
 	}
 	
 	function options()
 	{
 		if (!CheckPermissions('office')) return;
 		
-		//load the required models
-		$this->load->model('campaign_model','campaign_model');
-	
-		//Get navigation bar and tell it the current page
-		$this->_SetupMainNavbar();
-		$this->main_frame->SetPage('options');
-		$this->pages_model->SetPageCode('office_campaign_options');
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
-		
-		$petition = $this->campaign_model->GetPetitionStatus();
-		if ($petition == FALSE)
+		if ($this->user_auth->officeType != 'Low')
 		{
-			$data['campaign']['is_petition'] = FALSE;
-			$data['campaign']['can_start_petition'] = $this->campaign_model->CanStartPetition();
+			//load the required models
+			$this->load->model('campaign_model','campaign_model');
+		
+			//Get navigation bar and tell it the current page
+			$this->_SetupMainNavbar();
+			$this->main_frame->SetPage('options');
+			$this->pages_model->SetPageCode('office_campaign_options');
+
+			//get the current users id and office access
+			$data['user']['id'] = $this->user_auth->entityId;
+			$data['user']['officetype'] = $this->user_auth->officeType;
+			
+			$petition = $this->campaign_model->GetPetitionStatus();
+			if ($petition == FALSE)
+			{
+				$data['campaign']['is_petition'] = FALSE;
+				$data['campaign']['can_start_petition'] = $this->campaign_model->CanStartPetition();
+			}
+			else
+			{
+				$data['campaign']['is_petition'] = TRUE;
+				$data['campaign']['future_campaign_count'] = $this->campaign_model->GetFutureCampaignCount();
+			}
+
+			// Set up the view
+			$the_view = $this->frames->view('office/campaign/options', $data);
+			
+			// Set up the public frame
+			$this->main_frame->SetContent($the_view);
+
+			// Load the public frame view
+			$this->main_frame->Load();
 		}
 		else
 		{
-			$data['campaign']['is_petition'] = TRUE;
-			$data['campaign']['future_campaign_count'] = $this->campaign_model->GetFutureCampaignCount();
+			$this->main_frame->AddMessage('error','You do not have access to view this page.');
+			redirect('/office/campaign/');
 		}
-
-		// Set up the view
-		$the_view = $this->frames->view('office/campaign/options', $data);
-		
-		// Set up the public frame
-		$this->main_frame->SetContent($the_view);
-
-		// Load the public frame view
-		$this->main_frame->Load();
 	}
 	
 	function editarticle($campaign_id, $revision_id = NULL)
@@ -322,6 +346,8 @@ class Campaign extends Controller
 			FALSE
 			);
 			
+		$data['progressreports'] = array();
+			
 		//get the data for each of the retrieved progress reports
 		foreach($pr_temp as $key => $pr)
 		{
@@ -330,7 +356,7 @@ class Campaign extends Controller
 		            the function */
 			$data['progressreports'][$key]['header'] = $this->article_model->GetArticleHeader($pr);
 			if ($data['progressreports'][$key]['header']['live_content'] != FALSE)
-				$data['progressreports'][$key]['article'] = $this->news_model->GetFullArticle($data['progressreports'][$key]['header']['live_content']);
+				$data['progressreports'][$key]['article'] = $this->news_model->GetFullArticle($data['progressreports'][$key]['id']);
 		}
 		
 		// Set up the public frame
@@ -486,43 +512,52 @@ class Campaign extends Controller
 	function editpublish($campaign_id)
 	{
 		if (!CheckPermissions('office')) return;
-
-		//load the required models
-		$this->load->model('campaign_model','campaign_model');
-		$this->load->model('news_model','news_model');
 		
-		//redirect the user away if an invalid campaign is specified
-		if (!$this->campaign_model->CampaignExists($campaign_id))
+		//only editors/admins can see this page
+		if ($this->user_auth->officeType != 'Low')
 		{
-			$this->main_frame->AddMessage('error','Campaign does not exist.');
-			redirect('/office/campaign/');
-		}		
-	
-		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar($campaign_id);
-		$this->main_frame->SetPage('publish');
-		$this->pages_model->SetPageCode('office_campaign_publish');
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
+			//load the required models
+			$this->load->model('campaign_model','campaign_model');
+			$this->load->model('news_model','news_model');
+			
+			//redirect the user away if an invalid campaign is specified
+			if (!$this->campaign_model->CampaignExists($campaign_id))
+			{
+				$this->main_frame->AddMessage('error','Campaign does not exist.');
+				redirect('/office/campaign/');
+			}		
 		
-		//get campaign info
-		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
-		$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
-		$data['campaign']['status'] = $this->campaign_model->GetCampaignStatusID($campaign_id);
+			//Get navigation bar and tell it the current page
+			$this->_SetupNavbar($campaign_id);
+			$this->main_frame->SetPage('publish');
+			$this->pages_model->SetPageCode('office_campaign_publish');
 
-		/** store the parameters passed to the method so it can be
-		    used for links in the view */
-		$data['parameters']['campaign_id'] = $campaign_id;
-		$data['parameters']['article_id'] = $article_id;
-		
-		// Set up the public frame
-		$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
-		$this->main_frame->SetContentSimple('office/campaign/publish', $data);
+			//get the current users id and office access
+			$data['user']['id'] = $this->user_auth->entityId;
+			$data['user']['officetype'] = $this->user_auth->officeType;
+			
+			//get campaign info
+			$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+			$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+			$data['campaign']['status'] = $this->campaign_model->GetCampaignStatusID($campaign_id);
 
-		// Load the public frame view
-		$this->main_frame->Load();
+			/** store the parameters passed to the method so it can be
+			    used for links in the view */
+			$data['parameters']['campaign_id'] = $campaign_id;
+			$data['parameters']['article_id'] = $article_id;
+			
+			// Set up the public frame
+			$this->main_frame->SetTitleParameters(array('name' => $campaign_name));
+			$this->main_frame->SetContentSimple('office/campaign/publish', $data);
+
+			// Load the public frame view
+			$this->main_frame->Load();
+		}
+		else
+		{
+			$this->main_frame->AddMessage('error','You do not have access to view this page.');
+			redirect('/office/campaign/editarticle/'.$campaign_id);
+		}
 	}
 	
 	function articlemodify()
@@ -532,6 +567,7 @@ class Campaign extends Controller
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('article_model','article_model');
 		$this->load->model('campaign_model','campaign_model');
+		$this->load->model('progressreports_model','progressreports_model');
 
 		if (isset($_POST['r_submit_save']))
 		{
@@ -668,9 +704,40 @@ class Campaign extends Controller
 			$this->requests_model->UpdatePublishDate(
 				$_POST['r_articleid'],
 				$_POST['a_date']
-				);		
+				);
 			$this->main_frame->AddMessage('success','Progress report date updated.');
 			redirect($_POST['r_redirecturl']);		
+		}
+		else if (isset($_POST['r_submit_pr_add']))
+		{
+			$article_id = $this->requests_model->CreateRequest(
+				'request',
+				'progressreports',
+				"",
+				"",
+				$this->user_auth->entityId,
+				$_POST['a_date']
+				);
+			$this->progressreports_model->AddCharityCampaignProgressReportLink(
+				$article_id,
+				FALSE,
+				$_POST['r_campaignid']
+				);
+			$this->main_frame->AddMessage('success','Progress report added to campaign.');
+			redirect('/office/campaign/editprogressreport/'.$_POST['r_campaignid'].'/'.$article_id);		
+		}
+		else if (isset($_POST['r_submit_pr_delete']))
+		{
+			$this->requests_model->DeleteArticle(
+				$_POST['r_articleid']
+				);
+			$this->progressreports_model->DeleteCharityCampaignProgressReportLink(
+				$_POST['r_articleid'],
+				FALSE,
+				$_POST['r_campaignid']
+				);
+			$this->main_frame->AddMessage('success','Progress report added to campaign.');
+			redirect('/office/campaign/editreports/'.$_POST['r_campaignid']);	
 		}
 	}
 	

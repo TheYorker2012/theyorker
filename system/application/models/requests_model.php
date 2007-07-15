@@ -1151,6 +1151,7 @@ class Requests_Model extends Model
 		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
 	}
 
+	//same as DeleteArticle?
 	function RejectSuggestion($id)
 	{
 		$sql = 'UPDATE	articles
@@ -1190,6 +1191,7 @@ class Requests_Model extends Model
 			return FALSE;
 	}
 
+	//same as RejectSuggestion?
 	function DeleteArticle($article_id)
 	{
 		$sql = 'UPDATE		articles
