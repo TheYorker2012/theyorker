@@ -112,39 +112,40 @@ class Charity_model extends Model
 		$this->db->query($sql,array($name, $goal, $goaltext, $id));
 	}
 
-        /**
+	/**
 	 * Sets the charity with id to the current one.
 	 * @param $id the id of the charity
 	 */
 	function SetCharityCurrent($id)
 	{
 		$this->db->trans_start();
-		//see if charity has a published article
-		$sql = 'SELECT 	articles.article_live_content_id
-			FROM	charities
-			JOIN	articles
-			ON	articles.article_id = charities.charity_article_id
-			WHERE	charities.charity_id = ?
-			AND	articles.article_live_content_id IS NOT NULL';
-		$query = $this->db->query($sql,array($id));
-		if ($query->num_rows() == 1)
-		{
-			//set all charities to non current
-			$sql = 'UPDATE 	charities
-				SET	charity_current = 0';
-			$this->db->query($sql);
-			//set the new current charity
-			$sql = 'UPDATE 	charities
-				SET	charity_current = 1
-				WHERE	charity_id = ?';
-			$this->db->query($sql,array($id));
-			$this->db->trans_complete();
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+			//see if charity has a published article
+			$sql = 'SELECT 	articles.article_live_content_id
+					FROM	charities
+					JOIN	articles
+					ON		articles.article_id = charities.charity_article_id
+					WHERE	charities.charity_id = ?
+					AND		articles.article_live_content_id IS NOT NULL';
+			$query = $this->db->query($sql,array($id));
+			if ($query->num_rows() == 1)
+			{
+				//set all charities to non current
+				$sql = 'UPDATE 	charities
+						SET		charity_current = 0';
+				$this->db->query($sql);
+				//set the new current charity
+				$sql = 'UPDATE 	charities
+						SET		charity_current = 1
+						WHERE	charity_id = ?';
+				$this->db->query($sql,array($id));
+				$return = true;
+			}
+			else
+			{
+				$return = false;
+			}
+		$this->db->trans_complete();
+		return $return;
 	}
 
         /**

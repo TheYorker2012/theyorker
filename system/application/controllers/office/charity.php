@@ -19,20 +19,29 @@ class Charity extends Controller
 	private function _SetupNavbar()
 	{
 		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('about', 'About',
+		$navbar->AddItem('list', 'List',
 				'/office/charity/');
-		$navbar->AddItem('charities', 'Charities',
-				'/office/charity/');
-		$navbar->AddItem('progressreports', 'Progress Reports',
-				'/office/charity/');
+		$navbar->AddItem('add', 'Add',
+				'/office/charity/add');
+		$navbar->AddItem('current', 'Current',
+				'/office/charity/current');
+	}
+
+	/// Set up the navigation bar
+	private function _SetupNavbar2()
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('info', 'Info',
+				'/office/charity/editinfo');
+		$navbar->AddItem('article', 'Article',
+				'/office/charity/editarticle');
+		$navbar->AddItem('report', 'Reports',
+				'/office/charity/editreports');
+		$navbar->AddItem('options', 'Options',
+				'/office/charity/editoptions');
 	}
 	
 	function index()
-	{
-		$this->_CharityList();
-	}
-
-	function _CharityList()
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -40,15 +49,73 @@ class Charity extends Controller
 		$this->pages_model->SetPageCode('office_charity_list');
 		$this->load->model('charity_model','charity_model');
 		
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('list');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
 		//get list of the charities
 		$data['charities'] = $this->charity_model->GetCharities();
+
+		// Set up the view
+		$the_view = $this->frames->view('office/charity/list', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function add()
+	{
+		if (!CheckPermissions('office')) return;
+
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_charity_add');
+		
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('add');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/office_charity_list', $data);
+		$the_view = $this->frames->view('office/charity/add', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function current()
+	{
+		if (!CheckPermissions('office')) return;
+
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_charity_current');
+		$this->load->model('charity_model','charity_model');
+		
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('current');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get list of the charities
+		$data['charities'] = $this->charity_model->GetCharities();
+
+		// Set up the view
+		$the_view = $this->frames->view('office/charity/current', $data);
 		
 		// Set up the public frame
 		$this->main_frame->SetContent($the_view);
@@ -66,7 +133,7 @@ class Charity extends Controller
 		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
+		$this->_SetupNavbar2();
 		$this->main_frame->SetPage('charities');
 
 		//get charity from given id
@@ -83,7 +150,7 @@ class Charity extends Controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/office_charity_edit', $data);
+		$the_view = $this->frames->view('office/charity/edit', $data);
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array(

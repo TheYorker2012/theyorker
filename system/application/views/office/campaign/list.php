@@ -2,7 +2,6 @@
 
 function print_table($name, $campaign_list)
 {
-	echo('<div class="MainToolbar">'."\n");
 	echo('	<div class="blue_box">'."\n");
 	echo('		<h2>'.$name.'</h2>'."\n");
 	echo('		<table width="90%" cellpadding="3" align="center">'."\n");
@@ -26,7 +25,6 @@ function print_table($name, $campaign_list)
 	echo('			</tbody>'."\n");
 	echo('		</table>'."\n");
 	echo('	</div>'."\n");
-	echo('</div>'."\n");
 }
 
 ?>
@@ -38,6 +36,8 @@ function print_table($name, $campaign_list)
 	</div>
 </div>
 
+<div class="MainToolbar">
+
 <?php print_table('live campaigns', $campaign_list_live); ?>
 
 <?php print_table('future campaigns', $campaign_list_future); ?>
@@ -45,3 +45,5 @@ function print_table($name, $campaign_list)
 <?php print_table('unpublished campaigns', $campaign_list_unpublished); ?>
 
 <?php print_table('expired campaigns', $campaign_list_expired); ?>
+
+</div>
