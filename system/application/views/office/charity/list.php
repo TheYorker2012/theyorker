@@ -18,7 +18,7 @@
 	foreach ($charities as $charity)
 	{
 		echo('				<tr>'."\n");
-		echo('					<td><a href="/office/charity/edit/'.$charity['id'].'">'.$charity['name'].'</a></td>'."\n");
+		echo('					<td><a href="/office/charity/editinfo/'.$charity['id'].'">'.$charity['name'].'</a></td>'."\n");
 		if ($charity['iscurrent'] == 1)
 			echo('					<td>yes</td>'."\n");
 		else

@@ -28,17 +28,17 @@ class Charity extends Controller
 	}
 
 	/// Set up the navigation bar
-	private function _SetupNavbar2()
+	private function _SetupNavbar2($campaign_id)
 	{
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('info', 'Info',
-				'/office/charity/editinfo');
+				'/office/charity/editinfo/'.$campaign_id);
 		$navbar->AddItem('article', 'Article',
-				'/office/charity/editarticle');
-		$navbar->AddItem('report', 'Reports',
-				'/office/charity/editreports');
+				'/office/charity/editarticle/'.$campaign_id);
+		$navbar->AddItem('reports', 'Reports',
+				'/office/charity/editreports/'.$campaign_id);
 		$navbar->AddItem('options', 'Options',
-				'/office/charity/editoptions');
+				'/office/charity/editoptions/'.$campaign_id);
 	}
 	
 	function index()
@@ -124,7 +124,7 @@ class Charity extends Controller
 		$this->main_frame->Load();
 	}
 
-	function edit($charity_id)
+	function editinfo($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -133,8 +133,8 @@ class Charity extends Controller
 		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar2();
-		$this->main_frame->SetPage('charities');
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('info');
 
 		//get charity from given id
 		$data['charity'] = $this->charity_model->GetCharity($charity_id);
@@ -150,7 +150,7 @@ class Charity extends Controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/edit', $data);
+		$the_view = $this->frames->view('office/charity/info', $data);
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array(
@@ -162,7 +162,7 @@ class Charity extends Controller
 		$this->main_frame->Load();
 	}
 
-	function article($charity_id, $revision_id)
+	function editarticle($charity_id, $revision_id = NULL)
 	{
 		if (!CheckPermissions('office')) return;
 
@@ -173,8 +173,8 @@ class Charity extends Controller
 		$this->load->model('requests_model','requests_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('charities');
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('article');
 
 		//get charity from given id
 		$data['charity'] = $this->charity_model->GetCharity($charity_id);
@@ -227,7 +227,7 @@ class Charity extends Controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/office_charity_article', $data);
+		$the_view = $this->frames->view('office/charity/article', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParamters(array(
@@ -248,8 +248,8 @@ class Charity extends Controller
 		$this->load->model('charity_model','charity_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('charities');
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('info');
 
 		//get charity from given id
 		$data['charity'] = $this->charity_model->GetCharity($charity_id);
@@ -260,7 +260,7 @@ class Charity extends Controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/office_charity_modify', $data);
+		$the_view = $this->frames->view('office/charity/modify', $data);
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParamters(array(
@@ -272,23 +272,51 @@ class Charity extends Controller
 		$this->main_frame->Load();
 	}
 
-	function progressreports()
+	function editreports($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
 
 		//set the page code and load the required models
-		$this->pages_model->SetPageCode('office_charity_progressreports');
+		$this->pages_model->SetPageCode('office_charity_reports');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('progressreports');
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('reports');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
-		$the_view = $this->frames->view('office/charity/office_charity_progress_report', $data);
+		$the_view = $this->frames->view('office/charity/reports', $data);
+		
+		// Set up the public frame
+		//$this->main_frame->SetTitleParamters(array(
+		//	'name' => $data['charity']['name']
+		//));
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+
+	function editoptions($charity_id)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_charity_options');
+
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('options');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
+		// Set up the view
+		$the_view = $this->frames->view('office/charity/options', $data);
 		
 		// Set up the public frame
 		//$this->main_frame->SetTitleParamters(array(
