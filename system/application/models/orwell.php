@@ -212,7 +212,7 @@ QUERY;
 QUERY;
 		$result['articles'] = $this->db->query($sql, array($string, $string));
 
-		curl_init('http://yorkipedia.theyorker.co.uk/api.php?action=opensearch&search='.urlencode(utf8_decode($filter)));
+		$curl = curl_init('http://yorkipedia.theyorker.co.uk/api.php?action=opensearch&search='.urlencode(utf8_decode($string)));
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 0.2); //possibly not valid, manual says integer only, but we wil try...
 		$wikiResult = curl_exec($curl);
