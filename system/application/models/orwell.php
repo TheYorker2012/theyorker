@@ -179,7 +179,7 @@ QUERY;
 		$result = array();
 		$sql = <<<QUERY
 		SELECT articles.article_id AS id,
-			article_content_heading AS title
+			article_content_heading AS title,
 			UNIX_TIMESTAMP(articles.article_publish_date) AS date,
 			content_types.content_type_codename AS type_codename,
 			parent_type.content_type_codename AS parent_codename,
