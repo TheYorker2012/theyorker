@@ -207,7 +207,7 @@ QUERY;
 			OR category = 'drink'
 			OR category = 'arts'
 			OR category = 'sport'
-			OR category = 'blogs'
+			OR category = 'blogs')
 		ORDER BY score DESC LIMIT 4
 QUERY;
 		$result['articles'] = $this->db->query($sql, array($string, $string));
