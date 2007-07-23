@@ -270,7 +270,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		$_SESSION = array();
 	} else {
 		OutputMode('xhtml');
-		session_start();
+//		session_start();
 	}
 	// If the output mode is not supported, show a 404
 	if (!in_array(OutputMode(), OutputModes())) {

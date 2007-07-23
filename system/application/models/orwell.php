@@ -29,8 +29,8 @@ define("FILTER_YORK",			512);
 define("FILTER_DIR",			1024);
 define("FILTER_EVENTS",			2048);
 
-class Search extends Model {
-	function Search()
+class Orwell extends Model {
+	function Orwell()
 	{
 		//Call the Model Constructor
 		parent::Model();
