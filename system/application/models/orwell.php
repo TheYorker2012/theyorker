@@ -200,14 +200,14 @@ QUERY;
 			AND content_types.content_type_archive = 1
 			AND MATCH(article_content_heading, article_content_subheading, article_contents.article_content_blurb,article_content_wikitext_cache)
 		AGAINST(?)
-		AND (category = 'uninews'
-			OR category = 'features'
-			OR category = 'lifestyle'
-			OR category = 'food'
-			OR category = 'drink'
-			OR category = 'arts'
-			OR category = 'sport'
-			OR category = 'blogs')
+		AND (parent_type.content_type_codename = 'uninews' OR content_types.content_type_codename = 'uninews'
+			OR parent_type.content_type_codename = 'features' OR content_types.content_type_codename = 'features'
+			OR parent_type.content_type_codename = 'lifestyle' OR content_types.content_type_codename = 'lifestyle'
+			OR parent_type.content_type_codename = 'food' OR content_types.content_type_codename = 'food'
+			OR parent_type.content_type_codename = 'drink' OR content_types.content_type_codename = 'drink'
+			OR parent_type.content_type_codename = 'arts' OR content_types.content_type_codename = 'arts'
+			OR parent_type.content_type_codename = 'sport' OR content_types.content_type_codename = 'sport'
+			OR parent_type.content_type_codename = 'blogs' OR content_types.content_type_codename = 'blogs')
 		ORDER BY score DESC LIMIT 4
 QUERY;
 		$result['articles'] = $this->db->query($sql, array($string, $string));
