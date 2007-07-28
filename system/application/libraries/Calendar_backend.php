@@ -126,6 +126,8 @@ class CalendarEvent
 	public $Recur			= NULL;
 	/// string URL of image.
 	public $Image			= NULL;
+	/// int,NULL search scoring.
+	public $SearchScore		= NULL;
 	
 	/// Primary constructor.
 	/**
