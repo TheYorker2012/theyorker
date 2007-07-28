@@ -149,6 +149,19 @@ class Members_model extends Model {
 		return $query->row();
 	}
 
+	function GetIdFromOrganisation($Organisation)
+	{
+		$sql =
+			'SELECT
+			 organisations.organisation_entity_id 
+			FROM organisations
+			WHERE organisations.organisation_directory_entry_name=?
+			LIMIT 1';
+
+		$query = $this->db->query($sql, $Organisation);
+		$row = $query->row();
+		return $row->organisation_entity_id;
+	}
 
 	function GetBusinessCards($OrganisationId, $FilterSql = 'TRUE', $BindData = array())
 	{
@@ -438,6 +451,58 @@ class Members_model extends Model {
 			return true;
 		}
 	}
-
+	//Set of functions for finding out interesting facts about an organisations members
+	//@Input OrganisationId
+	//@Output Number (differant for each)
+	function GetNumberOfMembers($OrgId){
+	$sql = 'SELECT subscription_organisation_entity_id
+			FROM   subscriptions
+			WHERE  subscriptions.subscription_organisation_entity_id = ? 
+			AND subscriptions.subscription_deleted = 0
+			AND subscriptions.subscription_organisation_confirmed = 1';
+	$query = $this->db->query($sql, $OrgId);
+	return $query->num_rows();
+	}
+	
+	function GetNumberOfSubscriptions($OrgId){
+	$sql = 'SELECT subscription_organisation_entity_id
+			FROM   subscriptions
+			WHERE  subscriptions.subscription_organisation_entity_id = ? 
+			AND subscriptions.subscription_deleted = 0';
+	$query = $this->db->query($sql, $OrgId);
+	return $query->num_rows();
+	}
+	
+	function GetJoinTimeOfLatestMember($OrgId){
+	$sql = '
+			SELECT MAX(subscriptions.subscription_timestamp)
+			FROM   subscriptions
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0';
+	$query = $this->db->query($sql, $OrgId);
+	$row = $query->result_array();
+	return $row[0]['MAX(subscriptions.subscription_timestamp)'];
+	}
+	function GetNumberOfMales($OrgId){
+	$sql = '
+			SELECT users.user_gender
+			FROM users
+			INNER JOIN subscriptions ON 
+			users.user_entity_id = subscriptions.subscription_user_entity_id 
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0
+			AND users.user_gender = ?';
+	$query = $this->db->query($sql, array($OrgId , 'm'));
+	return $query->num_rows();
+	}
+	function GetNumberOfFemales($OrgId){
+	$sql = '
+			SELECT users.user_gender
+			FROM users
+			INNER JOIN subscriptions ON 
+			users.user_entity_id = subscriptions.subscription_user_entity_id 
+			WHERE  subscriptions.subscription_organisation_entity_id = ? AND subscriptions.subscription_deleted = 0
+			AND users.user_gender = ?';
+	$query = $this->db->query($sql, array($OrgId , 'f'));
+	return $query->num_rows();
+	}
 }
 ?>

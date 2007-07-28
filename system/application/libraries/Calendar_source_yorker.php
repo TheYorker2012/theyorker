@@ -188,6 +188,11 @@ class CalendarSourceYorker extends CalendarSource
 				'UNIX_TIMESTAMP('.$this->mQuery->ExpressionTodoEnd().') AS todo_end';
 		}
 		
+		# Get the store for the  search.
+		if (is_string($this->mSearchPhrase)) {
+			$fields .= ',' . $this->GetMatchAgainst() . ' AS search_score';
+		}
+		
 		return $fields;
 	}
 	
@@ -215,6 +220,9 @@ class CalendarSourceYorker extends CalendarSource
 					$event->ReadOnly = FALSE;
 				} elseif ($row['subscribed']) {
 					$event->UserStatus = 'subscriber';
+				}
+				if (is_string($this->mSearchPhrase)) {
+					$event->SearchScore = $row['search_score'];
 				}
 			} else {
 				$event = $events[$event_id];
@@ -436,7 +444,7 @@ class CalendarSourceYorker extends CalendarSource
 		
 		// Full text search
 		if (is_string($this->mSearchPhrase)) {
-			$search = 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
+			$search = $this->GetMatchAgainst();
 		} else {
 			$search = 'TRUE';
 		}
@@ -465,6 +473,12 @@ class CalendarSourceYorker extends CalendarSource
 		}
 		
 		return implode(' AND ', $conditions);
+	}
+	
+	/// Get a Match Against statement.
+	function GetMatchAgainst()
+	{
+		return 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
 	}
 	
 	// MAKING CHANGES **********************************************************

@@ -7,26 +7,16 @@
 
 <div id="MainColumn">
 
-	<?php
-	if (isset($sections['progress_reports']['entries']))
-	{
-		echo '<div class="BlueBox">';
-		echo '<h2>'.$sections['progress_reports']['title'].'</h2>';
-		foreach ($sections['progress_reports']['entries'] as $pr_entry)
-		{
-			echo '<h5><span class="orange">'.$pr_entry['date'].'</span></h5>';
-			echo $pr_entry['text'].'<br /><br />';
-		}
-		echo '</div>';
+<?php
+	echo('	<div class="BlueBox">'."\n");
+	echo('		<h2>'.$sections['progress_reports']['title'].'</h2>');
+	foreach ($sections['progress_reports']['entries'] as $pr_entry) {
+		echo('			');
+		echo('<h3>'.$pr_entry['date'].'</h3>'."\n");
+		echo('			');
+		echo($pr_entry['text']);
 	}
-	?>
+	echo('	</div>'."\n");
+?>
 
 </div>
-
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
-?>

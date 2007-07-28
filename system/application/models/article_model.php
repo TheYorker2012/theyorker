@@ -254,7 +254,7 @@ class Article_model extends Model
 	*  PINGU HOW DO I
 	*****************************************************/
 
-        /**
+    /**
 	 * Gets the header information of the specified article id,
 	 * if the article doesn't exist returns FALSE.
 	 * returns the fields to work out its status (suggested, requested
@@ -262,19 +262,19 @@ class Article_model extends Model
 	 */
 	function GetArticleHeader($article_id)
 	{
-        	$sql = 'SELECT	article_content_type_id,
-				article_organisation_entity_id,
-				article_created,
-				article_publish_date,
-				article_location_id,
-				article_live_content_id,
-				article_suggestion_accepted,
-				article_pulled,
-				article_request_title,
-				article_request_description
-			FROM	articles
-			WHERE	article_id = ?
-			AND	article_deleted = FALSE';
+		$sql = 'SELECT	article_content_type_id,
+						article_organisation_entity_id,
+						article_created,
+						article_publish_date,
+						article_location_id,
+						article_live_content_id,
+						article_suggestion_accepted,
+						article_pulled,
+						article_request_title,
+						article_request_description
+				FROM	articles
+				WHERE	article_id = ?
+				AND		article_deleted = FALSE';
 		$query = $this->db->query($sql, array($article_id));
 		if ($query->num_rows() == 1)
 		{

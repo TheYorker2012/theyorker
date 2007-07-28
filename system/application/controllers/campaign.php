@@ -12,7 +12,7 @@ class Campaign extends Controller {
 		
 		$this->load->model('campaign_model','campaign_model');
 		$this->load->model('news_model','news_model');
-		$this->load->model('charity_model','charity_model');
+		$this->load->model('progressreports_model','progressreports_model');
 	
 		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
 
@@ -20,7 +20,7 @@ class Campaign extends Controller {
 		if ($campaign_id == FALSE)
 		{
 			$this->pages_model->SetPageCode('campaign_list');
-			$data['campaign_list'] = $this->campaign_model->GetCampaignList();
+			$data['campaign_list'] = $this->campaign_model->GetLiveCampaignList();
 			$data['current_campaigns'] = array(
 				'title'=>$this->pages_model->GetPropertyText('section_list_title'),
 				'text'=>$this->pages_model->GetPropertyWikitext('section_list_text'));
@@ -108,9 +108,9 @@ class Campaign extends Controller {
 				$data['user'] = FALSE;
 			}
 			
-			$data['sections']['progress_reports']['totalcount'] = $this->charity_model->GetCharityCampaignProgressReportCount($campaign_id, false);	
+			$data['sections']['progress_reports']['totalcount'] = $this->progressreports_model->GetCharityCampaignProgressReportCount($campaign_id, false);	
 	
-			$pr_temp = $this->charity_model->GetCharityCampaignProgressReports($campaign_id, true, false);
+			$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports($campaign_id, true, false);
 			if (count($pr_temp) > 0)
 			{
 				foreach ($pr_temp as $row)
@@ -141,7 +141,7 @@ class Campaign extends Controller {
 		$cur_campaign_id = $this->campaign_model->GetPetitionStatus();
 		if ($cur_campaign_id == FALSE)
 		{
-			$data['campaign_list'] = $this->campaign_model->GetCampaignList();
+			$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
 			if (isset($data['campaign_list'][$campaign_id]))
 			{
 				$data['selected_campaign'] = $campaign_id;
@@ -190,12 +190,12 @@ class Campaign extends Controller {
 			redirect('/campaign');
 	}
 	
-	function preports($charity_id = 1)
+	function preports()
 	{
 		if (!CheckPermissions('public')) return;
 		
 		$this->load->model('news_model','news');
-		$this->load->model('charity_model','charity');
+		$this->load->model('progressreports_model','progressreports');
 		$this->load->model('campaign_model','campaign');
 		$this->pages_model->SetPageCode('campaign_pr');
 		
@@ -207,10 +207,10 @@ class Campaign extends Controller {
 					'sidebar_links'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_links_title',FALSE),'text'=>$this->pages_model->GetPropertyText('sidebar_links_text',FALSE))
 					);	
 
-		$data['sections']['progress_reports']['totalcount'] = $this->charity->GetCharityCampaignProgressReportCount($charity_id, true);
+		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($campaign_id, false);
 
 		//needs a general model as progress reports can be for campaigns and for charities
-		$pr_temp = $this->charity->GetCharityCampaignProgressReports($charity_id, false, true);
+		$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($campaign_id, false, false);
 		if (count($pr_temp) > 0)
 		{
 			foreach ($pr_temp as $row)

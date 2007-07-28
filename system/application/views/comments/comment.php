@@ -88,7 +88,7 @@ if (!function_exists('star_rating')) {
 			} else {
 				$report_link = '';
 			}
-			echo('<p><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
+			echo('<p style="font-size:x-small;"><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
 		}
 	} ?>
 

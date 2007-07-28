@@ -292,8 +292,8 @@ class Requests_Model extends Model
 	function CreateRequest($status,$type_codename,$title,$description,$user,$date)
 	{
 		$sql = 'SELECT 	content_type_id
-			FROM	content_types
-			WHERE	(content_type_codename = ?)';
+				FROM	content_types
+				WHERE	content_type_codename = ?';
 		$query = $this->db->query($sql,array($type_codename));
 		if ($query->num_rows() == 1)
 		{
@@ -301,18 +301,18 @@ class Requests_Model extends Model
 			if ($status == 'suggestion')
 			{
 				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id)
-					VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
+				$sql = 'INSERT INTO	articles(
+									article_content_type_id,
+									article_created,
+									article_request_title,
+									article_request_description,
+									article_suggestion_accepted,
+									article_request_entity_id)
+						VALUES (?,CURRENT_TIMESTAMP,?,?,0,?)';
 				$this->db->query($sql,array($type_id,$title,$description,$user));
 				$sql = 'SELECT 	article_id
-					FROM	articles
-					WHERE	(article_id=LAST_INSERT_ID())';
+						FROM	articles
+						WHERE	(article_id=LAST_INSERT_ID())';
 				$query = $this->db->query($sql);
 				$id = $query->row()->article_id;
 				$this->db->trans_complete();
@@ -322,15 +322,15 @@ class Requests_Model extends Model
 			elseif ($status == 'request')
 			{
 				$this->db->trans_start();
-				$sql = 'INSERT INTO articles(
-						article_content_type_id,
-						article_created,
-						article_request_title,
-						article_request_description,
-						article_suggestion_accepted,
-						article_request_entity_id,
-						article_editor_approved_user_entity_id,
-						article_publish_date)
+				$sql = 'INSERT INTO	articles(
+									article_content_type_id,
+									article_created,
+									article_request_title,
+									article_request_description,
+									article_suggestion_accepted,
+									article_request_entity_id,
+									article_editor_approved_user_entity_id,
+									article_publish_date)
 					VALUES (?,CURRENT_TIMESTAMP,?,?,1,?,?,?)';
 				$query = $this->db->query($sql,array($type_id,$title,$description,$user,$user,$date));
 				$sql = 'SELECT 	article_id
@@ -392,6 +392,17 @@ class Requests_Model extends Model
 	}
 
 	//Make a change to a request status in the article table
+	function UpdateSetToUnpublished($article_id, $editor_id)
+	{
+		$sql = 'UPDATE 	articles
+			SET	article_editor_approved_user_entity_id = ?,
+				article_publish_date = CURRENT_TIMESTAMP,
+				article_live_content_id = NULL
+			WHERE	(article_id = ?)';
+		$query = $this->db->query($sql,array($editor_id, $article_id));
+	}
+
+	//Make a change to a request status in the article table
 	function UpdatePulledToRequest($article_id, $editor_id)
 	{
 		$sql = 'UPDATE 	articles
@@ -432,6 +443,15 @@ class Requests_Model extends Model
 			SET	article_organisation_entity_id = ?
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($org_id,$article_id));
+	}
+
+	//Make a change to the publish date of an article
+	function UpdatePublishDate($article_id,$date)
+	{
+		$sql = 'UPDATE 	articles
+				SET		article_publish_date = ?
+				WHERE	article_id = ?';
+		$query = $this->db->query($sql,array($date,$article_id));
 	}
 
 	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
@@ -1086,7 +1106,6 @@ class Requests_Model extends Model
 		        LIMIT 1';
 		$query = $this->db->query($sql,array($id));
 		return $query->first_row();
-
 	}
 
 	function GetAllPhotosForRequest($id)
@@ -1095,7 +1114,6 @@ class Requests_Model extends Model
 		        WHERE photo_request_photo_photo_request_id = ?';
 		$query = $this->db->query($sql,array($id));
 		return $query;
-
 	}
 
 
@@ -1103,16 +1121,16 @@ class Requests_Model extends Model
 	{
 		$this->load->library('wikiparser');
 		$cache = $this->wikiparser->parse($wikitext);
-		$sql = 'INSERT	INTO article_contents(
-				article_content_article_id,
-				article_content_last_author_user_entity_id,
-				article_content_heading,
-				article_content_subheading,
-				article_content_subtext,
-				article_content_wikitext,
-				article_content_wikitext_cache,
-				article_content_blurb)
-			VALUES	(?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO	article_contents(
+							article_content_article_id,
+							article_content_last_author_user_entity_id,
+							article_content_heading,
+							article_content_subheading,
+							article_content_subtext,
+							article_content_wikitext,
+							article_content_wikitext_cache,
+							article_content_blurb)
+				VALUES	(?,?,?,?,?,?,?,?)';
 		$query = $this->db->query($sql,array($id,$user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb));
 		return $this->db->insert_id();
 	}
@@ -1120,33 +1138,34 @@ class Requests_Model extends Model
 	function UpdateArticleRevision($id,$user,$heading,$subheading,$subtext,$wikitext,$blurb)
 	{
 		$this->load->library('wikiparser');
-                $cache = $this->wikiparser->parse($wikitext);
+		$cache = $this->wikiparser->parse($wikitext);
 		$sql = 'UPDATE	article_contents
-			SET	article_content_last_author_user_entity_id = ?,
-				article_content_heading = ?,
-				article_content_subheading = ?,
-				article_content_subtext = ?,
-				article_content_wikitext = ?,
-				article_content_wikitext_cache = ?,
-				article_content_blurb = ?
-			WHERE	(article_content_id = ?)';
+				SET	article_content_last_author_user_entity_id = ?,
+					article_content_heading = ?,
+					article_content_subheading = ?,
+					article_content_subtext = ?,
+					article_content_wikitext = ?,
+					article_content_wikitext_cache = ?,
+					article_content_blurb = ?
+				WHERE	(article_content_id = ?)';
 		$query = $this->db->query($sql,array($user,$heading,$subheading,$subtext,$wikitext,$cache,$blurb,$id));
 	}
 
+	//same as DeleteArticle?
 	function RejectSuggestion($id)
 	{
 		$sql = 'UPDATE	articles
-			SET	article_deleted = 1
-			WHERE	(article_id = ?)';
+				SET		article_deleted = 1
+				WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($id));
 	}
 
 	function GetNameFromUsers($user_id)
 	{
 		$sql = 'SELECT	user_firstname,
-				user_surname
-			FROM	users
-			WHERE	user_entity_id = ?';
+						user_surname
+				FROM	users
+				WHERE	user_entity_id = ?';
 		$query = $this->db->query($sql,array($user_id));
 		if ($query->num_rows() == 1)
 		{
@@ -1160,8 +1179,8 @@ class Requests_Model extends Model
 	function GetNameFromBusinessCards($user_id)
 	{
 		$sql = 'SELECT	business_card_name
-			FROM	business_cards
-			WHERE	business_card_user_entity_id = ?';
+				FROM	business_cards
+				WHERE	business_card_user_entity_id = ?';
 		$query = $this->db->query($sql,array($user_id));
 		if ($query->num_rows() == 1)
 		{
@@ -1172,12 +1191,105 @@ class Requests_Model extends Model
 			return FALSE;
 	}
 
+	//same as RejectSuggestion?
 	function DeleteArticle($article_id)
 	{
 		$sql = 'UPDATE		articles
 				SET			articles.article_deleted = 1
 				WHERE		articles.article_id = ?';
 		$query = $this->db->query($sql,array($article_id));
+	}
+	
+	function GetFactBoxForArticleContent($article_content_id)
+	{
+		$sql = 'SELECT	fact_box_wikitext,
+						fact_box_title
+				FROM	fact_boxes
+				WHERE	fact_box_article_content_id = ?
+				AND		fact_box_deleted = 0
+				LIMIT 1';
+		$query = $this->db->query($sql,array($article_content_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			$fact_box['wikitext'] = $row->fact_box_wikitext;
+			$fact_box['title'] = $row->fact_box_title;
+			return $fact_box;
+		}
+		else
+			return FALSE;
+	}	
+	
+	function CreateFactBoxForArticleContent($article_content_id, $title = "", $wikitext = "")
+	{
+		$wiki_cache = $this->wikiparser->parse($wikitext);
+		$sql = 'INSERT INTO fact_boxes (
+				fact_box_article_content_id,
+				fact_box_title,
+				fact_box_wikitext,
+				fact_box_wikitext_cache,
+				fact_box_timestamp)
+			VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)';
+		$this->db->query($sql, array($article_content_id,$title,$wikitext,$wiki_cache));
+		return $this->db->insert_id();
+	}
+	
+	//Does an article have the given web link?
+	function GetArticleLinks($article_id)
+	{
+		$sql = 'SELECT	article_link_name,
+						article_link_url,
+						article_link_id
+				FROM	article_links
+				WHERE	article_link_article_id = ?
+				AND		article_link_deleted = 0';
+		$query = $this->db->query($sql,array($article_id));
+		$links = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$link['id'] = $row->article_link_id;
+				$link['name'] = $row->article_link_name;
+				$link['url'] = $row->article_link_url;
+				$links[] = $link;
+			}
+		}
+		return $links;
+	}
+	
+	function DeleteArticleLink($article_id, $link_id, $name, $url)
+	{
+		$sql = 'UPDATE		article_links
+				SET			article_link_deleted = 1
+				WHERE		article_link_article_id = ?
+				AND			article_link_id = ?
+				AND			article_link_name = ?
+				AND			article_link_url = ?';
+		$this->db->query($sql,array($article_id, $link_id, $name, $url));
+		return TRUE;
+	}
+	
+	function UpdateArticleLink($article_id, $link_id, $name, $url)
+	{
+		$sql = 'UPDATE	article_links
+				SET		article_link_name = ?,
+						article_link_url = ?
+				WHERE	article_link_article_id = ?
+				AND		article_link_id = ?';
+		$this->db->query($sql,array($name, $url, $article_id, $link_id));
+		return TRUE;
+	}
+	
+	function InsertArticleLink($article_id, $name, $url)
+	{
+		$sql = 'INSERT INTO	article_links(
+							article_link_article_id,
+							article_link_name,
+							article_link_url)
+				VALUES (?, ?, ?)';
+		$this->db->query($sql,array($article_id, $name, $url));
+		return TRUE;
 	}
 }
 ?>

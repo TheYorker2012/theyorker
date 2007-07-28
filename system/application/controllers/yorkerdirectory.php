@@ -22,6 +22,7 @@ class Yorkerdirectory extends Controller
 		$this->load->library('organisations');
 
 		$this->load->model('directory_model');
+		$this->load->model('members_model');
 		$this->load->model('prefs_model');
 
 		$this->load->helper('text');
@@ -475,6 +476,7 @@ EXTRAHEAD;
 
 			// Members data
 			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group);
+			$data['business_card_group'] = $business_card_group;
 			// translate into nice names for view
 			$data['organisation']['cards'] = array();
 			foreach ($members as $member) {
@@ -490,6 +492,33 @@ EXTRAHEAD;
 					'phone_external' => $member['business_card_phone_external'],
 					'postal_address' => $member['business_card_postal_address']
 				);
+			}
+			// Text information
+			$data['whats_this'] = $this->pages_model->GetPropertyWikiText('whats_this');
+			$data['no_cards'] = $this->pages_model->GetPropertyText('no_cards');
+			$data['no_groups'] = $this->pages_model->GetPropertyText('no_groups');
+		
+			//Facts Box
+			$organisation_id = $this->members_model->GetIdFromOrganisation($organisation);
+			$data['number_of_members'] = $this->members_model->GetNumberOfMembers($organisation_id);
+			$data['number_of_subscriptions'] = $this->members_model->GetNumberOfSubscriptions($organisation_id);
+			$data['last_joined'] = substr($this->members_model->GetJoinTimeOfLatestMember($organisation_id),0 , 10);
+			$males = $this->members_model->GetNumberOfMales($organisation_id);
+			$females = $this->members_model->GetNumberOfFemales($organisation_id);
+			if ($males > $females){
+				if($females == 0){
+					$data['male_female_ratio'] = "1 : 0";
+				}else{
+					$data['male_female_ratio'] = round(($males / $females), 2)." : 1";
+				}
+			}elseif ($males == $females) {
+				$data['male_female_ratio'] = "1 : 1";
+			}else{
+				if($males == 0){
+					$data['male_female_ratio'] = "0 : 1";
+				}else{
+					$data['male_female_ratio'] = "1 : ".round(($females / $males), 2);
+				}
 			}
 
 			// Set up the directory view

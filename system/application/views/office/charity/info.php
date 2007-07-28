@@ -57,8 +57,8 @@
 
 <?php
 
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
 
 ?>

@@ -1,4 +1,7 @@
-	<script type="text/javascript" src="/javascript/common.js"></script>
+<script type="text/javascript" src="/javascript/common.js"></script>
+<script type="text/javascript" src="/javascript/prototype.js"></script>
+<script type="text/javascript" src="/javascript/scriptaculous.js?load=effects,controls"></script>
+<script type="text/javascript" src="/javascript/search.js"></script>
 
 	<script type="text/javascript">
 	<!--
