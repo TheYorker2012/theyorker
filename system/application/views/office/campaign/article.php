@@ -57,7 +57,7 @@
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_question">Heading:</label>'."\n");
-	echo('			<input type="text" name="a_question" size="60" value="');
+	echo('			<input type="text" name="a_question" id="a_question" size="60" value="');
 	if ($parameters['revision_id'] != NULL)
 		echo($article['displayrevision']['heading']);
 	echo('" /><br />'."\n");

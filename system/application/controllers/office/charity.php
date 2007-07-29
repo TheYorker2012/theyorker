@@ -37,8 +37,10 @@ class Charity extends Controller
 				'/office/charity/editarticle/'.$campaign_id);
 		$navbar->AddItem('reports', 'Reports',
 				'/office/charity/editreports/'.$campaign_id);
+		$navbar->AddItem('related', 'Related',
+				'/office/charity/editrelated/'.$campaign_id);
 		$navbar->AddItem('options', 'Options',
-				'/office/charity/editoptions/'.$campaign_id);
+				'/office/charity/editoptions/'.$campaign_id);				
 	}
 	
 	function index()
@@ -218,7 +220,7 @@ class Charity extends Controller
 			if ($data['article']['displayrevision'] == FALSE)
 			{
                 		$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this charity. Default selected.');
-                		redirect('/office/charity/article/'.$data['charity']['id'].'/');
+                		//redirect('/office/charity/editarticle/'.$data['charity']['id'].'/');
     			}
 		}
 
@@ -230,7 +232,7 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/article', $data);
 
 		// Set up the public frame
-		$this->main_frame->SetTitleParamters(array(
+		$this->main_frame->SetTitleParameters(array(
 			'name' => $data['charity']['name']
 		));
 		$this->main_frame->SetContent($the_view);
@@ -263,7 +265,7 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/modify', $data);
 		
 		// Set up the public frame
-		$this->main_frame->SetTitleParamters(array(
+		$this->main_frame->SetTitleParameters(array(
 			'name' => $data['charity']['name']
 		));
 		$this->main_frame->SetContent($the_view);
@@ -291,7 +293,7 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/reports', $data);
 		
 		// Set up the public frame
-		//$this->main_frame->SetTitleParamters(array(
+		//$this->main_frame->SetTitleParameters(array(
 		//	'name' => $data['charity']['name']
 		//));
 		$this->main_frame->SetContent($the_view);
@@ -319,7 +321,7 @@ class Charity extends Controller
 		$the_view = $this->frames->view('office/charity/options', $data);
 		
 		// Set up the public frame
-		//$this->main_frame->SetTitleParamters(array(
+		//$this->main_frame->SetTitleParameters(array(
 		//	'name' => $data['charity']['name']
 		//));
 		$this->main_frame->SetContent($the_view);

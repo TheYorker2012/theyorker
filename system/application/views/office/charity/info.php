@@ -7,7 +7,7 @@
 	?>
 	<h4>Areas for Attention</h4>
 	You have been requested to answer this question.
-	<form class="form" action="/office/charity/#" method="post" >
+	<form class="form" action="/office/charity/#" method="post">
 		<fieldset>
 			<input type="submit" value="Accept" class="button" name="r_submit_accept" />
 			<input type="submit" value="Decline" class="button" name="r_submit_decline" />
@@ -15,17 +15,40 @@
 	</form>
 </div>
 
-<div class="blue_box">
-	<h2>charity info</h2>
-	<?php
-	echo '
-	<b>Title: </b>'.$charity['name'].'<br />
-	<b>Current Total: </b>'.$charity['current'].'<br />
-	<b>Goal Total: </b>'.$charity['target'].'<br />
-	<b>Progress To Goal: </b>'.$charity['progresspc'].'%<br />
-	<b>Goal Text: </b>'.$charity['target_text'].'<br />
-	<a href="/office/charity/modify/'.$charity['id'].'">[Modify]</a>';
-	?>
+<div id="MainColumn">
+	<div class="blue_box">
+		<h2>charity info</h2>
+		<?php
+		echo '
+		<b>Title: </b>'.$charity['name'].'<br />
+		<b>Current Total: </b>'.$charity['current'].'<br />
+		<b>Goal Total: </b>'.$charity['target'].'<br />
+		<b>Progress To Goal: </b>'.$charity['progresspc'].'%<br />
+		<b>Goal Text: </b>'.$charity['target_text'].'<br />
+		<a href="/office/charity/modify/'.$charity['id'].'">[Modify]</a>';
+		?>
+	</div>
+	
+	<div class="blue_box">
+		<h2>charity info</h2>
+		<form class="form" action="/office/charity/charitymodify" method="post">
+			<fieldset>
+				<input type="hidden" value="<ID HERE>" name="r_charityid" />
+			</fieldset>
+			<fieldset>
+				<label for="a_campaign_name">Name:</label>
+				<input type="text" value="Save" name="a_campaign_name" id="a_campaign_name" size="60" />
+				<label for="a_campaign_goal_ammount">Goal Ammount:</label>
+				<input type="text" value="300000" name="a_campaign_goal_ammount" id="a_campaign_goal_ammount" size="60" />
+				<label for="a_campaign_goal">Goal Text:</label>
+				<textarea name="a_campaign_goal" id="a_campaign_goal" rows="10" cols="56" /></textarea>
+			</fieldset>
+			<fieldset>
+				<input type="submit" value="Save" class="button" name="r_submit_update_info" />
+			</fieldset>
+		</form>
+	</form>
+	</div>
 </div>
 
 <!--
