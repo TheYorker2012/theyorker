@@ -81,7 +81,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<form method="post" id="site_search" action="/search">
 				<input type="text" name="site-search" id="site-search" onblur="search_onBlur()" onfocus="search_onFocus()" onkeyup="search_onKeyUp()" title="search the Site" value="search" autocomplete="off" />
 				<div id="ajax-results" onMouseOver="if (isMouseLeaveOrEnter(event, this)) {active=true;}" onMouseOut="if (isMouseLeaveOrEnter(event, this)) {search_Close(false); active=false;}">
-					<p class="note"><a href="javascript:search_noShow(0)">toggle</a></a></p>
+					<p class="note"><a href="javascript:search_noShow(0)">toggle</a></p>
 					<h1>Articles</h1>
 					<ul id="ajax-articles">
 						<li>No results found</li>
