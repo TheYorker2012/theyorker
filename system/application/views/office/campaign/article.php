@@ -5,6 +5,30 @@
 	echo('	<div class="Entry">'."\n");
 	echo('		<a href="/office/campaign/">Back To Campaign Index</a>'."\n");
 	echo('	</div>'."\n");
+	echo('	<h4>Preview</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		Preview how displayed revision will look on the public site. Remember to save any changes first.'."\n");
+	echo('		<form class="form" action="/campaign/details/'.$parameters['campaign_id'].'" method="post" >'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+	echo('				<input type="hidden" name="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="submit" value="Preview Details Page" class="button" name="r_submit_preview_details" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('		</form>'."\n");
+	echo('		<br />'."\n");
+	echo('		<form class="form" action="/campaign/" method="post" >'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+	echo('				<input type="hidden" name="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
+	echo('				<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="submit" value="Preview Petition Page" class="button" name="r_submit_preview_petition" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('		</form>'."\n");
+	echo('	</div>'."\n");
 	echo('	<h4>Revisions (Latest First)</h4>'."\n");
 	echo('	<div class="Entry">'."\n");
 	if (count($article['revisions']) > 0)
@@ -15,7 +39,7 @@
 			if ($first_hr == FALSE)
 				$first_hr = TRUE;
 			else
-				echo('		<hr>'."\n");
+				echo('		<hr />'."\n");
 			$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
 			echo('		<a href="/office/campaign/editarticle/'.$parameters['campaign_id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>'."\n");
 			if ($revision['id'] == $article['header']['live_content'])
@@ -51,9 +75,9 @@
 	echo('	<h2>edit article</h2>'."\n");
 	echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
 	echo('		<fieldset>'."\n");
-	echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
-	echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >'."\n");
-	echo('			<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" >'."\n");
+	echo('			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+	echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" />'."\n");
+	echo('			<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_question">Heading:</label>'."\n");
@@ -63,19 +87,19 @@
 	echo('" /><br />'."\n");
 	echo('			<label for="a_answer">Article:</label>'."\n");
 	if ($parameters['revision_id'] != NULL)
-		echo('			<textarea name="a_answer" rows="10" cols="56" />'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n");
+		echo('			<textarea name="a_answer" id="a_answer" rows="10" cols="56">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n");
 	else
-		echo('			<textarea name="a_answer" rows="10" cols="56" /></textarea><br />'."\n");
-	echo('			<label for="a_question">Fact Box Title:</label>'."\n");
-	echo('			<input type="text" name="a_facts_title" size="60" value="');
+		echo('			<textarea name="a_answer" id="a_answer" rows="10" cols="56"></textarea><br />'."\n");
+	echo('			<label for="a_facts_title">Fact Box Title:</label>'."\n");
+	echo('			<input type="text" name="a_facts_title" id="a_facts_title" size="60" value="');
 	if ($parameters['revision_id'] != NULL)
 		echo($article['displayrevision']['fact_box']['title']);
 	echo('" />'."\n");
-	echo('			<label for="a_answer">Facts:</label>'."\n");
+	echo('			<label for="a_facts">Facts:</label>'."\n");
 	if ($parameters['revision_id'] != NULL)
-		echo('			<textarea name="a_facts" rows="5" cols="56" />'.$article['displayrevision']['fact_box']['wikitext'].'</textarea><br />'."\n");
+		echo('			<textarea name="a_facts" id="a_facts" rows="5" cols="56">'.$article['displayrevision']['fact_box']['wikitext'].'</textarea><br />'."\n");
 	else
-		echo('			<textarea name="a_facts" rows="5" cols="56" /></textarea><br />'."\n");
+		echo('			<textarea name="a_facts" id="a_facts" rows="5" cols="56"></textarea><br />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<input type="submit" value="Save" class="button" name="r_submit_save" />'."\n");
@@ -92,9 +116,9 @@
 			echo('	<h2>options</h2>'."\n");
 			echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
 			echo('		<fieldset>'."\n");
-			echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+			echo('			<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
 			echo('			<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
-			echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >'."\n");
+			echo('			<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" />'."\n");
 			echo('		</fieldset>'."\n");
 			if ($article['displayrevision']['id'] != $article['header']['live_content'])
 			{

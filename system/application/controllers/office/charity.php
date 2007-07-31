@@ -381,7 +381,7 @@ class Charity extends Controller
 		}		
 	
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar($charity_id);
+		$this->_SetupNavbar2($charity_id);
 		$this->main_frame->SetPage('related');
 		$this->pages_model->SetPageCode('office_charity_related');
 

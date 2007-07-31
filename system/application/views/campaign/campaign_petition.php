@@ -20,7 +20,12 @@ if ($user != FALSE) {
 				<input type="password" name="a_password" />
 			</fieldset>
 			<fieldset>
-				<input type="submit" value="Sign" class="button" name="r_sign" />
+<?php
+	if ($preview_mode == TRUE)
+		echo('				<input type="submit" value="Sign" class="button" name="r_sign" disabled />');
+	else	
+		echo('				<input type="submit" value="Sign" class="button" name="r_sign" />');
+?>
 			</fieldset>
 		</form>
 <?php

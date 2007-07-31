@@ -11,7 +11,14 @@ if ($user == TRUE) {
 			<fieldset>
 				<input type="hidden" name="a_campaignid" value="<?php echo($parameters['campaign']); ?>" />
 				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
-				<input type="submit" value="Vote" class="button" name="r_castvote" />
+			</fieldset>
+			<fieldset>
+<?php
+	if ($preview_mode == TRUE)
+		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" disabled />');
+	else
+		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" disabled />');
+?>				
 			</fieldset>
 		</form>
 <?php
@@ -49,29 +56,39 @@ else
 		<?php echo($sidebar_more['text']); ?>
 	</div>
 
-	<h2><?php echo($sidebar_related['title']); ?></h2>
-	<div class="Entry">
-		<ul>
 <?php
-        foreach ($article['related_articles'] as $related_articles) {
-		echo('			');
-		echo('<li><a href="http://www.google.com/">'.$related_articles['heading'].'</a></li>'."\n");
+	if (count($article['related_articles']) > 0)
+	{
+		echo('	<h2>');
+		echo($sidebar_related['title']);
+		echo('</h2>'."\n");
+		echo('	<div class="Entry">'."\n");
+		echo('		<ul>'."\n");
+		foreach ($article['related_articles'] as $related_articles)
+		{
+			echo('			<li><a href="#">'.$related_articles['heading'].'</a></li>'."\n");
+		}
+		echo('		</ul>'."\n");
+		echo('	</div>'."\n");
 	}
 ?>
-		</ul>
-	</div>
 
-	<h2><?php echo($sidebar_external['title']); ?></h2>
-	<div class="Entry">
-		<ul>
 <?php
-        foreach ($article['links'] as $links) {
-		echo('			');
-		echo('<li><a href="'.$links['url'].'">'.$links['name'].'</a></li>'."\n");
+	if (count($article['links']) > 0)
+	{
+		echo('	<h2>');
+		echo($sidebar_external['title']);
+		echo('</h2>'."\n");
+		echo('	<div class="Entry">'."\n");
+		echo('		<ul>'."\n");
+	        foreach ($article['links'] as $links) {
+			echo('			');
+			echo('<li><a href="'.$links['url'].'">'.$links['name'].'</a></li>'."\n");
+		}
+		echo('		</ul>'."\n");
+		echo('	</div>'."\n");
 	}
 ?>
-		</ul>
-	</div>
 
 	<h2><?php echo($sidebar_other_campaigns['title']); ?></h2>
 	<div class="Entry">

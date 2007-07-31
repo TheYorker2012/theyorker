@@ -54,9 +54,9 @@
 			<?php echo('<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			<?php echo('<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n"); ?>
 			<label for="a_heading">Heading:</label>
-			<?php echo('<input type="text" name="a_heading" id="a_heading" value="'.$article['displayrevision']['heading'].'" /><br />'."\n"); ?>
+			<?php echo('<input type="text" name="a_heading" id="a_heading" size="60" value="'.$article['displayrevision']['heading'].'" /><br />'."\n"); ?>
 			<label for="a_content">Description:</label>
-			<?php echo('<textarea name="a_content" id="a_content" rows="15" cols="30">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n"); ?>
+			<?php echo('<textarea name="a_content" id="a_content" rows="10" cols="56">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n"); ?>
 			<input type="submit" value="Save" class="button" name="r_submit_article_save" />
 		</fieldset>
 	</form>

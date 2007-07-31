@@ -49,10 +49,32 @@
 			}
 			else
 			{
-				echo('	campaign voting is level, therefore can\'t start a petition.'."\n");
+				if (($campaign['live_campaign_count'] == 0) && ($campaign['future_campaign_count'] >= 1))
+				{
+					//thinks votes are level but there isn't anything
+					echo('	start voting on future campaigns.'."\n");
+					echo('	<form class="form" action="/office/campaign/campaignmodify" method="post" >'."\n");
+					echo('		<fieldset>'."\n");
+					echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+					echo('		</fieldset>'."\n");
+					echo('		<fieldset>'."\n");
+					echo('			<input type="submit" value="Start Voting" class="button" name="r_submit_end" />'."\n");
+					echo('		</fieldset>'."\n");
+					echo('	</form>'."\n");
+				}
+				else
+					echo('	campaign voting is level, therefore can\'t start a petition.'."\n");
 			}
 			echo('</div>'."\n");
 		}
 	}
 
+?>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
 ?>
