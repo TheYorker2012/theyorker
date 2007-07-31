@@ -168,35 +168,55 @@ class Charity extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		//set the page code and load the required models
-		$this->pages_model->SetPageCode('office_charity_article');
+		//load the required models
 		$this->load->model('charity_model','charity_model');
 		$this->load->model('article_model','article_model');
 		$this->load->model('requests_model','requests_model');
+		
+		//redirect the user away if an invalid charity is specified
+		if (!$this->charity_model->CharityExists($charity_id))
+		{
+			$this->main_frame->AddMessage('error','Charity does not exist.');
+			redirect('/office/charity/');
+		}
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar2($charity_id);
 		$this->main_frame->SetPage('article');
+		$this->pages_model->SetPageCode('office_charity_article');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		//get charity from given id
-		$data['charity'] = $this->charity_model->GetCharity($charity_id);
-		$data['charity']['id'] = $charity_id;
+		//$data['charity'] = $this->charity_model->GetCharity($charity_id);
+		//$data['charity']['id'] = $charity_id;
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		$data['parameters']['revision_id'] = $revision_id;
+		$data['parameters']['article_id'] = $article_id;
 		
 		//get the header of the charities article and revisions
-		$data['article']['header'] = $this->article_model->GetArticleHeader($data['charity']['article']);
-		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($data['charity']['article']);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($article_id);
 			
 		//set the default revision to false
 		$data['article']['displayrevision'] = FALSE;
 
 		//if the revision id is set to the default
-		if ($revision_id == -1)
+		if ($revision_id == NULL)
 		{
 			/* is a published article, therefore
 			   load the live content revision */
 			if ($data['article']['header']['live_content'] != FALSE)
 			{
-				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['charity']['article'], $data['article']['header']['live_content']);
+				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['header']['live_content']);
+				$data['parameters']['revision_id'] = $data['article']['header']['live_content'];
 			}
 			/* no live content, therefore is a
 			   request, so load the latest
@@ -206,7 +226,8 @@ class Charity extends Controller
 				//make sure a revision exists
 				if (isset($data['article']['revisions'][0]))
 				{
-					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['charity']['article'], $data['article']['revisions'][0]['id']);
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $data['article']['revisions'][0]['id']);
+					$data['parameters']['revision_id'] = $data['article']['revisions'][0]['id'];
 				}
 			}
 		}
@@ -214,28 +235,70 @@ class Charity extends Controller
 		{
 			/* load the revision with the given
 			   revision id */
-			$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($data['charity']['article'], $revision_id);
+			$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($article_id, $revision_id);
 			/* if this revision doesn't exist
 			   then return an error */
 			if ($data['article']['displayrevision'] == FALSE)
 			{
-                		$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this charity. Default selected.');
-                		//redirect('/office/charity/editarticle/'.$data['charity']['id'].'/');
-    			}
+                $this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this charity. Default selected.');
+                redirect('/office/charity/editarticle/'.$charity_id.'/');
+    		}
 		}
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/article', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array(
-			'name' => $data['charity']['name']
+			'name' => $charity_name
 		));
 		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	
+	function editrequest($charity_id)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//load the required models
+		$this->load->model('charity_model','charity_model');
+		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->charity_model->CharityExists($charity_id))
+		{
+			$this->main_frame->AddMessage('error','Charity does not exist.');
+			redirect('/office/charity/');
+		}		
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('article');
+		$this->pages_model->SetPageCode('office_charity_request');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get campaign info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		$data['parameters']['article_id'] = $article_id;
+		
+		/** get the article and its header */
+		$data['article'] = $this->news_model->GetFullArticle($article_id);
+		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
+		$this->main_frame->SetContentSimple('office/charity/request', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -297,6 +360,50 @@ class Charity extends Controller
 		//	'name' => $data['charity']['name']
 		//));
 		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}	
+	
+	function editrelated($charity_id)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//load the required models
+		$this->load->model('charity_model','charity_model');
+		$this->load->model('news_model','news_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->charity_model->CharityExists($charity_id))
+		{
+			$this->main_frame->AddMessage('error','Charity does not exist.');
+			redirect('/office/campaign/');
+		}		
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar($charity_id);
+		$this->main_frame->SetPage('related');
+		$this->pages_model->SetPageCode('office_charity_related');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get campaign info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		$data['parameters']['article_id'] = $article_id;
+		
+		//get campaigns article
+		$data['article'] = $this->news_model->GetFullArticle($article_id);
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
+		$this->main_frame->SetContentSimple('office/charity/related', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -428,6 +535,10 @@ class Charity extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
+		//load the required models
+		$this->load->model('requests_model','requests_model');
+		$this->load->model('charity_model','charity_model');
+			
 		/* Updates a charity information
 		   $_POST data passed
 		   - a_charityid => the id of the charity
@@ -442,10 +553,7 @@ class Charity extends Controller
 			if (trim($_POST['a_name']) != '')
 			{
 				if (is_numeric($_POST['a_goal']))
-				{
-					//load the required models
-					$this->load->model('charity_model','charity_model');
-					
+				{					
 					//update the charity
 					$this->charity_model->UpdateCharity(
 						$_POST['a_charityid'], 
@@ -470,28 +578,21 @@ class Charity extends Controller
 				$this->main_frame->AddMessage('error','You must enter a name for the charity.');
 				redirect($_POST['r_redirecturl']);
 			}
-
 		}
-
-		/* Updates a charity information
+		/* Saves the new revision of the charities article
 		   $_POST data passed
 		   - r_charityid => the id of the article
 		   - a_heading => the heading of the article revision
 		   - a_content => the content of the article revision
-    		   - r_submit_articlesave => the name of the submit button
+    		   - r_submit_article_save => the name of the submit button
 		*/
-		else if (isset($_POST['r_submit_articlesave']))
-		{
-			//load the required models
-			$this->load->model('requests_model','requests_model');
-			$this->load->model('charity_model','charity_model');
-			
-			//get the data (article id) for the specified charity
-			$charity = $this->charity_model->GetCharity($_POST['r_charityid']);
-
+		else if (isset($_POST['r_submit_article_save']))
+		{			
+			//get the article id for the specified charity
+			$article_id = $this->charity_model->GetCharityArticleId($_POST['r_charityid']);
 			//create the new revision
 			$revision_id = $this->requests_model->CreateArticleRevision(
-				$charity['article'],
+				$article_id,
 				$this->user_auth->entityId,
 				$_POST['a_heading'],
 				'',
@@ -499,31 +600,23 @@ class Charity extends Controller
 				$_POST['a_content'],
 				''
 				);
-
 			//report success
-	                $this->main_frame->AddMessage('success','New revision created for charity article.');
-			redirect('/office/charity/article/'.$_POST['r_charityid'].'/'.$revision_id.'/');
+			$this->main_frame->AddMessage('success','New revision created for charity article.');
+			redirect('/office/charity/editarticle/'.$_POST['r_charityid'].'/'.$revision_id.'/');
 		}
-
-		/* Updates a charity information
+		/* Publishes the specified article as the live content for the charity
 		   $_POST data passed
 		   - r_redirecturl => the url to redirect back to
 		   - r_charityid => the id of the charity
 		   - r_revisionid => the id of the revision
-    		   - r_submit_articlepublish => the name of the submit button
+		   - r_articleid => the article id of the charity
+    		   - r_submit_article_publish => the name of the submit button
 		*/
-		else if (isset($_POST['r_submit_articlepublish']))
+		else if (isset($_POST['r_submit_article_publish']))
 		{
-			//load the required models
-			$this->load->model('requests_model','requests_model');
-			$this->load->model('charity_model','charity_model');
-			
-			//get the data (article id) for the specified charity
-			$charity = $this->charity_model->GetCharity($_POST['r_charityid']);
-
 			//publish the current revision
 			$this->requests_model->UpdateRequestStatus(
-				$charity['article'],
+				$_POST['r_articleid'],
 				'publish',
 				array(
 					'content_id'=>$_POST['r_revisionid'],
@@ -531,10 +624,100 @@ class Charity extends Controller
 					'editor'=>$this->user_auth->entityId
 					)
 				);
-
 			//report success
-	                $this->main_frame->AddMessage('success','Published revision for charity article.');
-			redirect('/office/charity/article/'.$_POST['r_charityid'].'/'.$_POST['r_revisionid'].'/');
+			$this->main_frame->AddMessage('success','Published revision for charity article.');
+			//redirect('/office/charity/editarticle/'.$_POST['r_charityid'].'/'.$_POST['r_revisionid'].'/');
+			redirect($_POST['r_redirecturl']);
+		}
+		/* Removes the current published revision from being live for the charity
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+		   - r_revisionid => the id of the revision
+		   - r_articleid => the article id of the charity
+    		   - r_submit_article_publish => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_article_unpublish']))
+		{
+			//unpublish current revision
+			$this->requests_model->UpdateSetToUnpublished(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId
+				);
+			//report success
+			$this->main_frame->AddMessage('success','Article revision unpublished.');
+			redirect($_POST['r_redirecturl']);
+		}
+		/* Saves the new information on the request
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+		   - a_title => title of the request
+		   - a_description => description of the request
+    		   - r_submit_save_request => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_save_request']))
+		{
+			//get the article id for the campaign
+			$article_id = $this->charity_model->GetCharityArticleID($_POST['r_charityid']);
+			//update the title and description
+			$this->requests_model->UpdateSuggestion(
+				$article_id,
+				array('title'=>$_POST['a_title'],
+					'description'=>$_POST['a_description'],
+					'content_type'=>'ourcharity')
+				);
+			$this->main_frame->AddMessage('success','Request has been modified.');
+			redirect($_POST['r_redirecturl']);
+		}
+		/* Updates and saves new web links related to the charities article
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+		   - a_title => title of the request
+		   - a_description => description of the request
+    		   - r_submit_save_request => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_save_links']))
+		{
+			//get the article id for the campaign
+			$article_id = $this->charity_model->GetCharityArticleID($_POST['r_charityid']);
+			//for all links work out what to do
+			for($i=1;$i<=$_POST['r_linkcount'];$i++)
+			{
+				if (isset($_POST['a_delete_'.$i]))
+				{
+					//delete the link
+					$this->requests_model->DeleteArticleLink(
+						$article_id,
+						$_POST['a_id_'.$i],
+						$_POST['a_name_'.$i],
+						$_POST['a_url_'.$i]
+					);
+				}
+				else
+				{
+					//update the link
+					$this->requests_model->UpdateArticleLink(
+						$article_id,
+						$_POST['a_id_'.$i],
+						$_POST['a_name_'.$i],
+						$_POST['a_url_'.$i]
+					);
+				}
+			}
+			if (($_POST['a_name_new'] != "") AND ($_POST['a_url_new'] != "") AND ($_POST['a_url_new'] != "http://"))
+			{
+				//add a new link if fields non blank and non default
+				$this->requests_model->InsertArticleLink(
+					$article_id,
+					$_POST['a_name_new'],
+					$_POST['a_url_new']
+				);
+			}
+			//report success and redirect
+			$this->main_frame->AddMessage('success','Links Saved.');
+			redirect($_POST['r_redirecturl']);
 		}
 	}
 }

@@ -16,14 +16,65 @@ class Charity_model extends Model
 		parent::Model();
 	}
 	
-        /**
-	 * blah.
+	/**
+	 * returns true if the charity with id = charity_id exists
+	 */
+	function CharityExists($charity_id)
+	{
+		$sql = 'SELECT	charity_id
+				FROM	charities
+				WHERE	charity_id = ?';
+		$query = $this->db->query($sql,array($charity_id));
+		if ($query->num_rows() == 1)
+			return TRUE;
+		else
+			return FALSE;
+	}
+	
+	/**
+	 * gets the charities name
+	 * @return charity name
+	 * @pre charity with id = charity_id exists
+	 */
+	function GetCharityName($charity_id)
+	{
+		$sql = 'SELECT	charity_name
+				FROM	charities
+				WHERE	charity_id = ?';
+		$query = $this->db->query($sql,array($charity_id));
+		$row = $query->row();
+		return $row->charity_name;
+	}
+	
+	/**
+	 * gets the specified charitys article id
+	 * @return charity name
+	 * @pre charity with id = charity_id exists
+	 */
+	function GetCharityArticleId($charity_id)
+	{
+		$sql = 'SELECT	charity_article_id
+				FROM	charities
+				WHERE	charity_id = ?';
+		$query = $this->db->query($sql,array($charity_id));
+		$row = $query->row();
+		return $row->charity_article_id;
+	}
+	
+	/**
+	 * gets charity information
+	 * @return charity name, article id, target_text, target, current
+	 * @pre charity with id = charity_id exists
 	 */
 	function GetCharity($charity_id)
 	{
-		$sql = 'SELECT charity_name, charity_article_id, charity_goal_text, charity_goal, charity_total
-			FROM charities
-			WHERE charity_id = ?';
+		$sql = 'SELECT	charity_name,
+						charity_article_id,
+						charity_goal_text,
+						charity_goal,
+						charity_total
+				FROM	charities
+				WHERE	charity_id = ?';
 		$query = $this->db->query($sql,array($charity_id));
 		$row = $query->row();
 		return array(
@@ -34,17 +85,17 @@ class Charity_model extends Model
 			'current'=>$row->charity_total);
 	}
 	
-        /**
+	/**
 	 * retrieves the current charities id.
-	 * @return the id of the current charity or false otherwise
+	 * @return the id of the current charity or false if none
 	 */
 	function GetCurrentCharity()
 	{
 		$sql = 'SELECT	charity_id
-			FROM	charities
-			WHERE	charity_current = 1
-			AND	charity_deleted = 0
-			LIMIT 0,1';
+				FROM	charities
+				WHERE	charity_current = 1
+				AND		charity_deleted = 0
+				LIMIT 	0,1';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() == 1)
 		{

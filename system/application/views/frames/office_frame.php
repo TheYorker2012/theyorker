@@ -245,10 +245,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 8px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
-		<?php
+<?php
 			// Display the main content
 			$content[0]->Load();
-		?>
+?>
 	</div>
 </div>
 
