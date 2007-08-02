@@ -19,7 +19,10 @@
 		foreach($progressreports as $pr)
 		{
 			echo('	<hr /><br />'."\n");
-			echo('	'.$pr['header']['publish_date'].' <a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
+			echo('	'.$pr['header']['publish_date']);
+			if ($pr['header']['live_content'] != NULL)
+				echo(' <span class="orange">(published)</span>');
+			echo(' <a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
 			echo('	<br />'."\n");
 			if ($pr['header']['live_content'] != NULL)
 				echo('	'.$pr['article']['text']."\n");

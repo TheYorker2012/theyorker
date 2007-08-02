@@ -14,15 +14,6 @@ class Charity extends Controller {
 		$this->load->model('charity_model','charity');
 		$this->load->model('progressreports_model','progressreports');
 		$this->pages_model->SetPageCode('charity');
-		
-		$charity_id = $this->charity->GetCurrentCharity();
-		
-		if ($charity_id == false)
-		{
-			//no current charity send to main page
-			$this->main_frame->AddMessage('error','There is no current charity.');
-			redirect('');
-		}
 
 		$data['sections'] = array (
 					'progress_reports'=>array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE),'showmore'=>$this->pages_model->GetPropertyWikitext('section_preports_showmore',FALSE)),
@@ -32,10 +23,33 @@ class Charity extends Controller {
 					'sidebar_related'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE)),
 					'sidebar_external'=>array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE))
 					);
-
-		$data['sections']['charity'] = $this->charity->GetCharity($charity_id);
-
-		$data['sections']['article'] = $this->news->GetFullArticle($data['sections']['charity']['article']);
+			
+		//special bits for preview mode
+		if (isset($_POST['r_submit_preview']))
+		{
+			//set preview message
+			$this->main_frame->AddMessage('warning','<div class="Entry">Currently previewing charity. Click <a href="'.$_POST['r_redirecturl'].'">here</a> go back to charity office.</div>');
+			//set vars for preview mode
+			$charity_id = $_POST['r_charityid'];
+			$data['sections']['charity'] = $this->charity->GetCharity($charity_id);
+			$data['sections']['article'] = $this->news->GetFullArticle($data['sections']['charity']['article'], "", "%W, %D %M %Y", $_POST['r_revisionid']);
+			$data['preview_mode'] = TRUE;
+		}
+		else
+		{
+			//set vars for normal mode
+			$charity_id = $this->charity->GetCurrentCharity();
+			$data['sections']['charity'] = $this->charity->GetCharity($charity_id);
+			$data['sections']['article'] = $this->news->GetFullArticle($data['sections']['charity']['article']);
+			$data['preview_mode'] = FALSE;
+		}
+		
+		if ($charity_id == false)
+		{
+			//no current charity send to main page
+			$this->main_frame->AddMessage('error','There is no current charity.');
+			redirect('');
+		}
 
 		$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
 

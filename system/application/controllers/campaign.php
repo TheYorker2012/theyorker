@@ -96,6 +96,7 @@ class Campaign extends Controller {
 				$data['preview_mode'] = FALSE;
 			}
 	
+			$data['selected_campaign'] = $campaign_id;
 			$data['our_campaign'] = array(
 				'title'=>$this->pages_model->GetPropertyText('section_our_campaign_title',FALSE));
 			$data['progress_reports'] = array(
@@ -239,7 +240,17 @@ class Campaign extends Controller {
 		$this->load->model('campaign_model','campaign');
 		$this->pages_model->SetPageCode('campaign_pr');
 		
-		$campaign_id = $this->campaign->GetPetitionStatus();
+		if (isset($_POST['r_submit_preview_preports']))
+		{
+			//set preview message
+			$this->main_frame->AddMessage('warning','<div class="Entry">Currently previewing campaign petition progress reports. Click <a href="'.$_POST['r_redirecturl'].'">here</a> go back to campaign office.</div>');
+			//set vars for preview mode
+			$campaign_id = $_POST['r_campaignid'];
+		}
+		else
+		{
+			$campaign_id = $this->campaign->GetPetitionStatus();
+		}
 
 		$data['sections'] = array (
 					'campaign'=>$this->campaign->GetPetitionCampaign($campaign_id),

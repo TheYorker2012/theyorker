@@ -87,3 +87,11 @@ if (isset($sections['progress_reports']['entries'])) {
 ?>
 
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>

@@ -3,6 +3,22 @@
 	<div class="Entry">
 		<a href="/office/charity/">Back To Charity List</a>
 	</div>
+<?php
+	echo('	<h4>Preview</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		Preview how displayed revision will look on the public site. Remember to save any changes first.'."\n");
+	echo('		<form class="form" action="/charity/" method="post" >'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+	echo('				<input type="hidden" name="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
+	echo('				<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('			<fieldset>'."\n");
+	echo('				<input type="submit" value="Preview" class="button" name="r_submit_preview" />'."\n");
+	echo('			</fieldset>'."\n");
+	echo('		</form>'."\n");
+	echo('	</div>'."\n");
+?>
 	<h4>Revisions (Latest First)</h4>
 	<div class="Entry">
 <?php
@@ -57,6 +73,8 @@
 			<?php echo('<input type="text" name="a_heading" id="a_heading" size="60" value="'.$article['displayrevision']['heading'].'" /><br />'."\n"); ?>
 			<label for="a_content">Description:</label>
 			<?php echo('<textarea name="a_content" id="a_content" rows="10" cols="56">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n"); ?>
+		</fieldset>
+		<fieldset>
 			<input type="submit" value="Save" class="button" name="r_submit_article_save" />
 		</fieldset>
 	</form>

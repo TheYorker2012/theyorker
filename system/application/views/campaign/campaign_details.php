@@ -15,9 +15,9 @@ if ($user == TRUE) {
 			<fieldset>
 <?php
 	if ($preview_mode == TRUE)
-		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" disabled />');
+		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" disabled="disabled" />');
 	else
-		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" disabled />');
+		echo('				<input type="submit" value="Vote" class="button" name="r_castvote" />');
 ?>				
 			</fieldset>
 		</form>

@@ -220,7 +220,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/campaign/'>Campaigns</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/charity/'>Our Charity</a>
+			<a href='/office/charity/'>Charities</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
