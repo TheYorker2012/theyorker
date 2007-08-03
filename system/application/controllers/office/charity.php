@@ -340,6 +340,9 @@ class Charity extends Controller
 	function editreports($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('charity_model','charity_model');
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_charity_reports');
@@ -351,14 +354,15 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get charity info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
 
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/reports', $data);
 		
 		// Set up the public frame
-		//$this->main_frame->SetTitleParameters(array(
-		//	'name' => $data['charity']['name']
-		//));
+		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -389,7 +393,7 @@ class Charity extends Controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get campaign info
+		//get charity info
 		$charity_name = $this->charity_model->GetCharityName($charity_id);
 		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
 
@@ -412,8 +416,11 @@ class Charity extends Controller
 	function editoptions($charity_id)
 	{
 		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('charity_model','charity_model');
 
-		//set the page code and load the required models
+		//set the page code
 		$this->pages_model->SetPageCode('office_charity_options');
 
 		//Get navigation bar and tell it the current page
@@ -424,13 +431,21 @@ class Charity extends Controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		
+		//get charity info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		
+		//get the current charity
+		$data['current_charity'] = $this->charity_model->GetCurrentCharity();
+
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/options', $data);
 		
 		// Set up the public frame
-		//$this->main_frame->SetTitleParameters(array(
-		//	'name' => $data['charity']['name']
-		//));
+		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -717,6 +732,41 @@ class Charity extends Controller
 			}
 			//report success and redirect
 			$this->main_frame->AddMessage('success','Links Saved.');
+			redirect($_POST['r_redirecturl']);
+		}
+		/* Set the given charity as the current charity
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+    		   - r_submit_set_current => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_set_current']))
+		{
+			//set the current charity
+			$result = $this->charity_model->SetCharityCurrent($_POST['r_charityid']);
+			if ($result == TRUE)
+			{
+				$this->main_frame->AddMessage('success','Charity has been set as the current one.');
+				redirect($_POST['r_redirecturl']);
+			}
+			else
+			{
+				$this->main_frame->AddMessage('error','Could not set this charity as the current one.');
+				redirect($_POST['r_redirecturl']);
+			}
+		}
+		/* Set the given charity as the current charity
+		   $_POST data passed
+		   - r_redirecturl => the url to redirect back to
+		   - r_charityid => the id of the charity
+    		   - r_submit_set_current => the name of the submit button
+		*/
+		else if (isset($_POST['r_submit_remove_current']))
+		{
+			//unset the current charity
+			$this->charity_model->RemoveCharityAsCurrent($_POST['r_charityid']);
+			//set message and redirect
+			$this->main_frame->AddMessage('success','Charity has been removed as the current one.');
 			redirect($_POST['r_redirecturl']);
 		}
 	}

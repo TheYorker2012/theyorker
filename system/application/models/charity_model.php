@@ -102,7 +102,7 @@ class Charity_model extends Model
 			$row = $query->row();
 			return $row->charity_id;
 		}
-		return false;
+		return FALSE;
 	}
 	
         /**
@@ -166,6 +166,8 @@ class Charity_model extends Model
 	/**
 	 * Sets the charity with id to the current one.
 	 * @param $id the id of the charity
+	 * @return - true, if sucessfully set new charity
+	 * @return - false, if charity that is trying to be set has no live content
 	 */
 	function SetCharityCurrent($id)
 	{
@@ -189,14 +191,27 @@ class Charity_model extends Model
 						SET		charity_current = 1
 						WHERE	charity_id = ?';
 				$this->db->query($sql,array($id));
-				$return = true;
+				$return = TRUE;
 			}
 			else
 			{
-				$return = false;
+				$return = FALSE;
 			}
 		$this->db->trans_complete();
 		return $return;
+	}
+
+	/**
+	 * Unsets the current charity
+	 * @param $id the id of the charity
+	 */
+	function RemoveCharityAsCurrent($id)
+	{
+		$sql = 'UPDATE 	charities
+				SET		charity_current = 0
+				WHERE	charity_id = ?';
+		$this->db->query($sql,array($id));
+		return TRUE;
 	}
 
         /**

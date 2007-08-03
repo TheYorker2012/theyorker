@@ -44,6 +44,44 @@ class Prindex extends controller
 		self::summary('def',0);
 	}
 
+	function summary($type, $name)
+	{
+		// Not accessed through /office/pr/org/$organisation, not organisation
+		// specific so needs to be office permissions.
+		if (!CheckPermissions('office')) return;
+
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary');
+
+		$data['parameters'] = array(
+			'type'=>$type,
+			'name'=>$name
+			);
+
+		$data['user'] = array(
+			'access'=>$this->user_auth->officeType,
+			'id'=>$this->user_auth->entityId
+			);
+//		$data['user']['access'] = 'Low';
+
+		//pr rep summary page shows rep/userid
+		if ($data['user']['access'] == 'Low' &&
+			$data['parameters']['type'] == 'def')
+		{
+			$data['parameters']['type'] = 'rep';
+			$data['parameters']['name'] = $data['user']['id'];
+		}
+
+
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/summary', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+
 	function suggestions()
 	{
 		// Not accessed through /office/pr/org/$organisation, not organisation
@@ -86,44 +124,6 @@ class Prindex extends controller
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/unnassigned', $data);
-		$this->main_frame->SetContent($the_view);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->load();
-	}
-
-	function summary($type, $name)
-	{
-		// Not accessed through /office/pr/org/$organisation, not organisation
-		// specific so needs to be office permissions.
-		if (!CheckPermissions('office')) return;
-
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary');
-
-		$data['parameters'] = array(
-			'type'=>$type,
-			'name'=>$name
-			);
-
-		$data['user'] = array(
-			'access'=>$this->user_auth->officeType,
-			'id'=>$this->user_auth->entityId
-			);
-//		$data['user']['access'] = 'Low';
-
-		//pr rep summary page shows rep/userid
-		if ($data['user']['access'] == 'Low' &&
-			$data['parameters']['type'] == 'def')
-		{
-			$data['parameters']['type'] = 'rep';
-			$data['parameters']['name'] = $data['user']['id'];
-		}
-
-
-		// Set up the public frame
-		$the_view = $this->frames->view('office/pr/summary', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
