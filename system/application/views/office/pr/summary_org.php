@@ -4,112 +4,7 @@
 		<a href="#">Wizard</a>
 	</div>
 </div>
-<?php
-	if (($user['access'] == 'Admin' || 
-		$user['access'] == 'High') &&
-		$parameters['type'] == 'def')
-	{
-?>
-<div class="blue_box">
-	<h2>Summary</h2>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>PR Rep</th>
-					<th>Rating</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/rep/1">Francesca Burton</a></td>
-					<td>87%</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="/office/pr/summary/rep/1">Nancy Brehon</a></td>
-					<td>75%</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/rep/1">Jamie Hogan</a></td>
-					<td>69%</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="/office/pr/summary/rep/1">Christine Travis</a></td>
-					<td>56%</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/rep/1">Joe Shelley</a></td>
-					<td>52%</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="/office/pr/summary/rep/1">Nicola Evans</a></td>
-					<td>47%</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/rep/1">Daniella Ashby</a></td>
-					<td>30%</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-<?php
-	}
-?>
-<?php
-	if ($parameters['type'] == 'rep')
-	{
-?>
-<div class="grey_box">
-	<h2>Rep Summary</h2>
-	<div id="ArticleBox">
-		Rep Business Card Here (with edit if Rep).<br />
-		Rep Rating: 75%<br />
-		<table>
-			<thead>
-				<tr>
-					<th>Organisation</th>
-					<th>Priority</th>
-					<th>Rating</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/org/1">Toffs</a></td>
-					<td>1</td>
-					<td>71%</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="/office/pr/summary/org/1">Evil Eye</a></td>
-					<td>1</td>
-					<td>35%</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/org/1">Punch Bowl</a></td>
-					<td>2</td>
-					<td>67%</td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="/office/pr/summary/org/1">Tesco (Clifton Moor)</a></td>
-					<td>3</td>
-					<td>95%</td>
-				</tr>
-				<tr class="tr1">
-					<td><a href="/office/pr/summary/org/1">Fantasy World</a></td>
-					<td>5</td>
-					<td>60%</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-<?php
-	}
-?>
-<?php
-	if ($parameters['type'] == 'org')
-	{
-?>
+
 <div class="blue_box">
 	<h2>Toffs Summary</h2>
 	<div id="ArticleBox">
@@ -216,17 +111,11 @@
 		</table>
 	</div>
 </div>
-<?php
-	}
-?>
 
-
-<pre>
 <?php
 
-/*
-echo print_r($data);
-*/
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
 
 ?>
-</pre>

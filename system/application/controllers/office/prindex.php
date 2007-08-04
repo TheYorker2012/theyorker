@@ -39,12 +39,7 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 
-	function index()
-	{
-		self::summary('def',0);
-	}
-
-	function summary($type, $name)
+	function summary($type = NULL, $id = NULL)
 	{
 		// Not accessed through /office/pr/org/$organisation, not organisation
 		// specific so needs to be office permissions.
@@ -52,30 +47,80 @@ class Prindex extends controller
 
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary');
-
-		$data['parameters'] = array(
-			'type'=>$type,
-			'name'=>$name
-			);
-
-		$data['user'] = array(
-			'access'=>$this->user_auth->officeType,
-			'id'=>$this->user_auth->entityId
-			);
-//		$data['user']['access'] = 'Low';
-
-		//pr rep summary page shows rep/userid
-		if ($data['user']['access'] == 'Low' &&
-			$data['parameters']['type'] == 'def')
+		
+		if ($type == NULL)
 		{
-			$data['parameters']['type'] = 'rep';
-			$data['parameters']['name'] = $data['user']['id'];
+			self::_SummaryOverall();
 		}
+		else if ($type == 'rep')
+		{
+			self::_SummaryRep($id);
+		}
+		else if ($type == 'org')
+		{
+			self::_SummaryOrganisation($id);
+		}
+	}
+	
+	function _SummaryOverall()
+	{
+		//navbar and page codes
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary_overall');
 
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['type'] = 'ovr';
+		$data['parameters']['name'] = NULL;
 
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
 		// Set up the public frame
-		$the_view = $this->frames->view('office/pr/summary', $data);
+		$the_view = $this->frames->view('office/pr/summary_overall', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+	
+	function _SummaryRep($id)
+	{
+		//navbar and page codes
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary_rep');
+		
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['type'] = 'rep';
+		$data['parameters']['name'] = $id;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+	
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/summary_rep', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+	
+	function _SummaryOrganisation($id)
+	{
+		//navbar and page codes
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary_org');
+		
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['type'] = 'rep';
+		$data['parameters']['name'] = $id;
+	
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/summary_org', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
