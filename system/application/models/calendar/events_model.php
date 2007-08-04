@@ -989,9 +989,12 @@ class Events_model extends Model
 	function CategoriesGet()
 	{
 		$this->db->select(
-			'event_type_id			AS id,'.
-			'event_type_name		AS name,'.
-			'event_type_colour_hex	AS colour'
+			'event_type_id				AS id,'.
+			'event_type_name			AS name,'.
+			'event_type_border_colour	AS border_colour,'.
+			'event_type_head_colour_hex	AS heading_colour,'.
+			'event_type_colour_hex		AS colour,'.
+			'event_type_body_image		AS image'
 		);
 		$category_query = $this->db->Get('event_types');
 		$categories = array();
