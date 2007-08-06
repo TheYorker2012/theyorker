@@ -25,6 +25,7 @@ class Directory_model extends Model {
 	{
 		$sql =
 			'SELECT
+			 organisations.organisation_entity_id,
 			 organisations.organisation_name,
 			 organisations.organisation_directory_entry_name,
 			 organisation_contents.organisation_content_description as organisation_description,
@@ -50,7 +51,8 @@ class Directory_model extends Model {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
 			 AND organisations.organisation_show_in_directory=1
-			 AND organisations.organisation_needs_approval=0 ';
+			 AND organisations.organisation_needs_approval=0
+			 AND organisations.organisation_parent_organisation_entity_id IS NULL ';
 		}
 
 			$sql .= '
@@ -58,6 +60,26 @@ class Directory_model extends Model {
 
 		$query = $this->db->query($sql);
 
+		return $query->result_array();
+	}
+	
+	function GetDirectoryOrganisationsChildren()
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id as parent_organisation_entity_id,
+						children.organisation_entity_id as child_organisation_entity_id,
+						children.organisation_name,
+						children.organisation_directory_entry_name
+				FROM	organisations AS children
+				INNER JOIN organisations 
+				ON		children.organisation_parent_organisation_entity_id = organisations.organisation_entity_id 
+				INNER JOIN organisation_types
+				ON		children.organisation_organisation_type_id=organisation_types.organisation_type_id
+				WHERE	organisation_types.organisation_type_directory=1
+				AND		children.organisation_directory_entry_name IS NOT NULL 
+				AND		children.organisation_show_in_directory=1
+				AND		children.organisation_needs_approval=0
+				ORDER BY organisations.organisation_name';
+		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 

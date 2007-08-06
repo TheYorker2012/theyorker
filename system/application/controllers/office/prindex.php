@@ -50,7 +50,7 @@ class Prindex extends controller
 		
 		if ($type == NULL)
 		{
-			self::_SummaryOverall();
+			self::_SummaryOfficer();
 		}
 		else if ($type == 'rep')
 		{
@@ -62,15 +62,15 @@ class Prindex extends controller
 		}
 	}
 	
-	function _SummaryOverall()
+	function _SummaryOfficer()
 	{
 		//navbar and page codes
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_overall');
+		$this->pages_model->SetPageCode('office_pr_summary_officer');
 
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
-		$data['parameters']['type'] = 'ovr';
+		$data['parameters']['type'] = 'off';
 		$data['parameters']['name'] = NULL;
 
 		//get the current users id and office access
@@ -78,7 +78,7 @@ class Prindex extends controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
 		// Set up the public frame
-		$the_view = $this->frames->view('office/pr/summary_overall', $data);
+		$the_view = $this->frames->view('office/pr/summary_officer', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
@@ -127,30 +127,6 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 
-	function suggestions()
-	{
-		// Not accessed through /office/pr/org/$organisation, not organisation
-		// specific so needs to be office permissions.
-		if (!CheckPermissions('office')) return;
-
-		$this->_SetupNavbar();
-		$this->main_frame->SetPage('suggestions');
-		$this->pages_model->SetPageCode('office_pr_suggestions');
-
-		$data['user'] = array(
-			'access'=>$this->user_auth->officeType,
-			'id'=>$this->user_auth->entityId
-			);
-//		$data['user']['access'] = 'Low';
-
-		// Set up the public frame
-		$the_view = $this->frames->view('office/pr/suggestions', $data);
-		$this->main_frame->SetContent($the_view);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->load();
-	}
-
 	function unnassigned()
 	{
 		// Not accessed through /office/pr/org/$organisation, not organisation
@@ -161,14 +137,74 @@ class Prindex extends controller
 		$this->main_frame->SetPage('unnassigned');
 		$this->pages_model->SetPageCode('office_pr_unnassigned');
 
-		$data['user'] = array(
-			'access'=>$this->user_auth->officeType,
-			'id'=>$this->user_auth->entityId
-			);
-//		$data['user']['access'] = 'Low';
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/unnassigned', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+
+	function suggestions()
+	{
+		// Not accessed through /office/pr/org/$organisation, not organisation
+		// specific so needs to be office permissions.
+		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('suggestions');
+		$this->pages_model->SetPageCode('office_pr_suggestions');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
+		$data['orgs'] = $this->pr_model->GetSuggestedOrganistions();
+
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/suggestions', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+
+	function suggestion($shortname)
+	{
+		// Not accessed through /office/pr/org/$organisation, not organisation
+		// specific so needs to be office permissions.
+		if (!CheckPermissions('office')) return;
+		
+		//load the required models + libraries
+		$this->load->model('pr_model','pr_model');
+		$this->load->library('organisations');
+		$this->load->model('directory_model');
+		$this->load->helper('wikilink');
+
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('suggestions');
+		$this->pages_model->SetPageCode('office_pr_suggestion');
+		
+		$data = $this->organisations->_GetOrgData($shortname);
+		
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['dir_name'] = $shortname;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/suggestion', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)

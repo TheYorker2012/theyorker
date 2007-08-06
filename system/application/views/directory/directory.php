@@ -13,6 +13,7 @@
 		</div>
 <?php
 $currentLetter = '';
+$while_child_pos = 0;
 foreach($organisations as $organisation) {
 	$thisLetter = $organisation['name'][0];
 	$thisLetter = strtoupper($thisLetter);
@@ -38,8 +39,24 @@ foreach($organisations as $organisation) {
 		echo('				'.$organisation['shortdescription']."\n");
 		echo('			</div>'."\n");
 	}
+	//make sure it stays within the array then if parent id matches current org id
+	while (($while_child_pos < count($children)) && ($children[$while_child_pos]['parent_id'] == $organisation['id']))
+	{
+		echo('			<div>'."\n");
+		echo('				&gt; <a href="/'.$children[$while_child_pos]['link'].'">'.$children[$while_child_pos]['name'].'</a>'."\n");
+		echo('			</div>'."\n");
+		$while_child_pos++;
+	}
 	echo('		</div>'."\n");
 }
 ?>
 	</div>
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>

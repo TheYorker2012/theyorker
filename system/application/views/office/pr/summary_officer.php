@@ -6,7 +6,7 @@
 </div>
 
 <div class="blue_box">
-	<h2>Summary</h2>
+	<h2>Officer Summary</h2>
 	<div id="ArticleBox">
 		<table>
 			<thead>

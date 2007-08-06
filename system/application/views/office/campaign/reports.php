@@ -25,7 +25,7 @@
 			echo(' <a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
 			echo('	<br />'."\n");
 			if ($pr['header']['live_content'] != NULL)
-				echo('	'.$pr['article']['text']."\n");
+				echo('	'.word_limiter($pr['article']['text'], 50)."\n");
 			else
 				echo('	No Preview.'."\n");
 		}
