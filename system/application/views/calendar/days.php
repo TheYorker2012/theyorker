@@ -24,13 +24,25 @@ $squash = (count($Days) > 3);
 var HOUR_HEIGHT = 42;
 var COL_WIDTH = 88;
 var MAX_ALL_DAY = 0;
+var START_HOUR = 8;
+var END_HOUR = 23;
+var MAX_START_HOUR = 0;
+var MAX_END_HOUR = 29;
+var CREATE_EVENT = false;
 var DAYS = new Array();
 <?php foreach ($Days as $date => $day) { ?>
 DAYS[DAYS.length] = '<?php echo($date); ?>';
 <?php } ?>
 
 function drawCalendar () {
+	// Reset event counters
+	for (i=0;i<=(DAYS.length-1);i++) {
+		document.getElementById('cal_day_'+DAYS[i]+'_before').innerHTML = '';
+		document.getElementById('cal_day_'+DAYS[i]+'_after').innerHTML = '';
+	}
+
 	clearCalendar();
+	timeCalendar();
 	resizeCalendar();
 
 	drawAllDayEvent('901', 'Anniversary', '/test/link/', 'Birthday 20: Richard Ingle', '00:00 - 12:00', 24, 35.98, 0);
@@ -169,29 +181,58 @@ function drawEvent(parent, id, category, link, title, content, start_hour, durat
 		width = 1;
 	width = Math.floor((p_ele.offsetWidth / width)-2-5);
 
-	var event_link			= document.createElement('a');
-	event_link.href			= link;
-	event_link.appendChild(document.createTextNode(title));
+	var full_display = true;
 
-	var event_title			= document.createElement('div');
-	event_title.className	= 'cal_event_heading';
-	event_title.appendChild(event_link);
-
-	var event_content		= document.createElement('div');
-	event_content.className	= 'cal_event_info';
-	event_content.appendChild(document.createTextNode(content));
+	// Check if should be displayed
+	if ((start_hour+duration) < START_HOUR) {
+		var counter = document.getElementById(parent+'_before');
+		counter.innerHTML = Number(counter.innerHTML) + 1;
+		return;
+	}
+	if (start_hour >= (END_HOUR+1)) {
+		var counter = document.getElementById(parent+'_after');
+		counter.innerHTML = Number(counter.innerHTML) + 1;
+		return;
+	}
+	if (start_hour < START_HOUR)
+		full_display = false;
 
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
 	new_event.className		= 'cal_event cal_category_' + category;
-	new_event.style.top		= findPos(p_ele)[1] + 1 + ((start_hour*HOUR_HEIGHT)-2) + 'px';
 	new_event.style.left	= findPos(p_ele)[0] + (left*(width+2+5)) + 'px';
-	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
 	new_event.style.width	= width + 'px';
 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
 
-	new_event.appendChild(event_title);
-	new_event.appendChild(event_content);
+	if ((start_hour+duration) >= (END_HOUR+1)) {
+		duration = (END_HOUR+1) - start_hour;
+		new_event.className += ' cal_event_split_bot';
+	}
+	start_hour = start_hour-START_HOUR;
+	if (start_hour < 0) {
+		duration += start_hour;
+		start_hour = 0;
+		new_event.className += ' cal_event_split_top';
+	}
+	new_event.style.top		= findPos(p_ele)[1] + 1 + ((start_hour*HOUR_HEIGHT)-2) + 'px';
+	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
+
+	if (full_display) {
+		var event_link			= document.createElement('a');
+		event_link.href			= link;
+		event_link.appendChild(document.createTextNode(title));
+
+		var event_title			= document.createElement('div');
+		event_title.className	= 'cal_event_heading';
+		event_title.appendChild(event_link);
+
+		var event_content		= document.createElement('div');
+		event_content.className	= 'cal_event_info';
+		event_content.appendChild(document.createTextNode(content));
+
+		new_event.appendChild(event_title);
+		new_event.appendChild(event_content);
+	}
 
 	document.getElementById(parent).appendChild(new_event);
 }
@@ -207,6 +248,22 @@ function findPos(obj) {
 		}
 	}
 	return [curleft,curtop];
+}
+
+function findMouse(e) {
+	var posx = 0;
+	var posy = 0;
+	if (!e) var e = window.event;
+	if (e.pageX || e.pageY) 	{
+		posx = e.pageX;
+		posy = e.pageY;
+	} else if (e.clientX || e.clientY) 	{
+		posx = e.clientX + document.body.scrollLeft
+			+ document.documentElement.scrollLeft;
+		posy = e.clientY + document.body.scrollTop
+			+ document.documentElement.scrollTop;
+	}
+	return [posx,posy];
 }
 
 function resizeCalendarAllDay() {
@@ -237,11 +294,50 @@ function resizeCalendar() {
 	return false;
 }
 
+function alterTime (amount) {
+	// Check hour ranges
+	if (((START_HOUR+amount) >= MAX_START_HOUR) && ((END_HOUR+amount) <= MAX_END_HOUR)) {
+		START_HOUR = START_HOUR + amount;
+		END_HOUR = END_HOUR + amount;
+		drawCalendar();
+	}
+	return false;
+}
+
+function timeCalendar() {
+	var time_col = document.getElementById('calendar_time');
+	if (time_col == null)
+		return;
+
+	var current_end = END_HOUR;
+	if (current_end > 23)
+		current_end = 23;
+
+	for (h=START_HOUR; h<=current_end; h++) {
+		drawHour(h, time_col);
+	}
+	for (h=0; h<=(END_HOUR-24); h++) {
+		drawHour(h, time_col);
+	}
+
+	for (i=0;i<=(DAYS.length-1);i++) {
+		document.getElementById('cal_day_'+DAYS[i]).style.height = ((END_HOUR-START_HOUR+1)*HOUR_HEIGHT) + 'px';
+	}
+
+}
+
+function drawHour (hour, time_col) {
+	var new_hour = document.createElement('div');
+	new_hour.appendChild(document.createTextNode(hour+':00'));
+	time_col.appendChild(new_hour);
+}
+
 function clearCalendar() {
 	for (i=0;i<=(DAYS.length-1);i++) {
 		removeChildrenFromNode(document.getElementById('cal_day_'+DAYS[i]));
 	}
 	removeChildrenFromNode(document.getElementById('calendar_all_day_events'));
+	removeChildrenFromNode(document.getElementById('calendar_time'));
 }
 
 function removeChildrenFromNode(node) {
@@ -252,13 +348,82 @@ function removeChildrenFromNode(node) {
 		node.removeChild(node.firstChild);
 	}
 }
+
+function clickDay (day,event) {
+	var new_event = document.getElementById('cal_new_event');
+	if (new_event !== null) {
+		new_event.parentNode.removeChild(new_event);
+	}
+
+	var pos_relative = findMouse(event)[1] - findPos(day)[1];
+	pos_relative = Math.floor((pos_relative - 1 + 2)/(HOUR_HEIGHT/4));
+
+	var duration = 0.5;
+	var width = Math.floor(day.offsetWidth-2-5);;
+
+	new_event 				= document.createElement('div');
+	new_event.id			= 'cal_new_event';
+	new_event.className		= 'cal_event cal_category_new_event';
+	new_event.style.left	= findPos(day)[0] + 'px';
+	new_event.style.top		= findPos(day)[1] + 1 + ((pos_relative*(HOUR_HEIGHT/4))-2) + 'px';
+	new_event.style.width	= width + 'px';
+	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
+	new_event.onclick		= function(){ alert('CREATE NEW EVENT HERE!'); };
+
+	var start_time			= document.createElement('div');
+	start_time.id			= 'cal_new_event_start';
+	var display					= (pos_relative + (START_HOUR*4));
+	var display2 = (display%4)*15;
+	if (display2 == '0')
+		display2 = '00';
+	var display3 = Math.floor(display/4);
+	if (display3 > 23)
+		display3 -= 24;
+	start_time.appendChild(document.createTextNode('Start: ' + display3 + ':' + display2));
+
+	var end_time			= document.createElement('div');
+	end_time.id				= 'cal_new_event_end';
+	end_time.appendChild(document.createTextNode('End'));
+
+	new_event.appendChild(start_time);
+	new_event.appendChild(end_time);
+	day.appendChild(new_event);
+	CREATE_EVENT = true;
+}
+
+function moveDay (day, event) {
+	if (CREATE_EVENT) {
+		var new_event = document.getElementById('cal_new_event');
+		if (new_event == null)
+			return;
+
+		var pos_relative = findMouse(event)[1] - findPos(new_event)[1];
+		if (pos_relative < 0)
+			return;
+		pos_relative = Math.ceil((pos_relative + 2)/(HOUR_HEIGHT/4));
+		new_event.style.height = ((pos_relative*(HOUR_HEIGHT/4))-2) + 'px';
+
+		var start_time = Math.floor((findPos(new_event)[1] - (findPos(day)[1]-1))/(HOUR_HEIGHT/4));
+		var display = start_time + pos_relative;
+		var display2 = (display%4)*15;
+		if (display2 == '0')
+			display2 = '00';
+		var display3 = Math.floor(display/4)+START_HOUR;
+		if (display3 > 23)
+			display3 -= 24;
+		document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + display3 + ':' + display2;
+
+		document.getElementById('cal_new_event_start').focus();
+	}
+}
+
+function unclickDay(day,event) {
+	CREATE_EVENT = false;
+	document.getElementById('cal_new_event_start').focus();
+}
 </script>
 
 <style type="text/css">
-body {
-	overflow: hidden;
-}
-
 table#calendar_view {
 	border-collapse: collapse;
 	margin: 0;
@@ -271,6 +436,26 @@ table#calendar_view th {
 table#calendar_view td#calendar_all_day_events {
 	border: 1px #999 solid;
 	height: <?php echo(HOUR_HEIGHT/2); ?>px;
+}
+
+table#calendar_view td#calendar_time_up {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+table#calendar_view td#calendar_time_down {
+	text-align: center;
+	vertical-align: top;
+}
+
+table#calendar_view td.cal_day_counts {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+table#calendar_view td.cal_day_counts2 {
+	text-align: center;
+	vertical-align: top;
 }
 
 table#calendar_view td#calendar_time {
@@ -322,6 +507,22 @@ table#calendar_view div.cal_event div.cal_event_heading a:hover {
 	text-decoration: none;
 }
 
+table#calendar_view div.cal_category_new_event {
+	border: 1px #20C1F0 solid;
+	background-color: #a9ecff;
+}
+
+table#calendar_view div.cal_category_new_event div {
+	text-align: right;
+	font-size: x-small;
+}
+
+table#calendar_view div.cal_category_new_event input {
+	width: 80%;
+	border: 1px #20C1F0 solid;
+	background-color: #d4f4fd;
+}
+
 <?php foreach ($Categories as $Name => $Settings) { ?>
 table#calendar_view div.cal_category_<?php echo($Name); ?> {
 	border: 1px #<?php echo($Settings['border_colour']); ?> solid;
@@ -343,6 +544,13 @@ table#calendar_view div.cal_event div.cal_event_info {
 	padding: 0 2px;
 }
 
+table#calendar_view div.cal_event_split_top {
+	border-top: 0;
+}
+
+table#calendar_view div.cal_event_split_bottom {
+	border-bottom: 0;
+}
 </style>
 
 
@@ -376,21 +584,23 @@ table#calendar_view div.cal_event div.cal_event_info {
 
 	<!-- Spacer Row -->
 	<tr>
-		<td colspan="<?php echo(count($Days)); ?>">&nbsp;</td>
+		<td id="calendar_time_up">
+			<a href="#" onclick="return alterTime(-1);"><img src="/images/prototype/calendar/arrow_up.jpg" alt="Move Time -1hr" title="Move Time -1hr" /></a>
+			<a href="#" onclick="return alterTime(1);"><img src="/images/prototype/calendar/arrow_down.jpg" alt="Move Time +1hr" title="Move Time +1hr" /></a>
+		</td>
+<?php foreach ($Days as $date => $day) { ?>
+		<td id="cal_day_<?php echo($date); ?>_before" class="cal_day_counts"></td>
+<?php } ?>
 	</tr>
 
 	<!-- Main Calendar Display -->
 	<tr>
 		<!-- Time Column -->
-		<td id="calendar_time">
-			<?php for ($hour = 0; $hour <= 23; $hour++) { ?>
-			<div><?php echo($hour . ':00'); ?></div>
-			<?php } ?>
-		</td>
+		<td id="calendar_time"></td>
 
 		<!-- Day Columns -->
 <?php foreach ($Days as $date => $day) { ?>
-		<td id="cal_day_<?php echo($date); ?>" class="calendar_day">
+		<td id="cal_day_<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
 <?php	foreach ($day['events'] as $time => $ocs) {
 			foreach ($ocs as $occurrence) {
 				if ($occurrence->TimeAssociated) {
@@ -411,6 +621,16 @@ table#calendar_view div.cal_event div.cal_event_info {
 	</tr>
 	<!-- End of Main Calendar Display -->
 
+	<!-- Spacer Row -->
+	<tr>
+		<td id="calendar_time_down">
+			<a href="#" onclick="return alterTime(-1);"><img src="/images/prototype/calendar/arrow_up.jpg" alt="Move Time -1hr" title="Move Time -1hr" /></a>
+			<a href="#" onclick="return alterTime(1);"><img src="/images/prototype/calendar/arrow_down.jpg" alt="Move Time +1hr" title="Move Time +1hr" /></a>
+		</td>
+<?php foreach ($Days as $date => $day) { ?>
+		<td id="cal_day_<?php echo($date); ?>_after" class="cal_day_counts2"></td>
+<?php } ?>
+	</tr>
 </table>
 
 </div>
