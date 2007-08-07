@@ -9,8 +9,7 @@
 	<h2>brief information about the organisation</h2>
 	<div class="Entry">
 <?php
-
-	echo('	Please click <a href="/office/reviews/'.$organisation['shortname'].'">here</a> to go to the full directory entry.'."\n");
+	echo('	Please click <a href="/office/pr/org/'.$organisation['shortname'].'/directory/information">here</a> to go to the full directory entry.'."\n");
 	echo('<br /><br />'."\n");
 	echo('<b>Name:</b> '.$organisation['name']."\n");
 	echo('<br />'."\n");
@@ -61,10 +60,12 @@
 			<fieldset>
 				<select name="a_assign_to">
 				<optgroup label="Assign To:">
-					<option value="team_456">to Martina Goodall</option>
-					<option value="team_455">to Annette Oakley</option>
-					<option value="team_454">to Rachael Ingle</option>
-					<option value="team_453">to Matilda Tole</option>
+<?php
+	foreach($users as $user)
+	{
+		echo('					<option value="'.$user['id'].'">to '.$user['firstname'].' '.$user['surname'].'</option>'."\n");
+	}
+?>
 				</optgroup>
 				</select>
 			</fieldset>

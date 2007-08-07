@@ -182,8 +182,9 @@ class Prindex extends controller
 		// specific so needs to be office permissions.
 		if (!CheckPermissions('office')) return;
 		
-		//load the required models + libraries
+		//load the required models/libraries/helpers
 		$this->load->model('pr_model','pr_model');
+		$this->load->model('writers_model','writers_model');
 		$this->load->library('organisations');
 		$this->load->model('directory_model');
 		$this->load->helper('wikilink');
@@ -202,6 +203,7 @@ class Prindex extends controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
+		$data['users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/suggestion', $data);

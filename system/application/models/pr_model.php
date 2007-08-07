@@ -115,14 +115,13 @@ class Pr_model extends Model {
 						user_firstname,
 						user_surname
 				FROM	organisations
-				JOIN	organisation_contents
-				ON		organisation_content_organisation_entity_id = organisation_entity_id
-				JOIN	users
-				ON		user_entity_id = organisation_content_last_author_user_entity_id
+				LEFT JOIN organisation_contents
+				ON		organisation_live_content_id = organisation_content_id
+				INNER JOIN users
+				ON		organisation_content_last_author_user_entity_id = user_entity_id
 				WHERE	organisation_pr_suggestion = 1
 				AND		organisation_pr_rep IS NULL
 				ORDER BY organisation_name ASC';
-				//LIMIT	0,50';
 		$query = $this->db->query($sql);
 		$result = array();
 		if ($query->num_rows() > 0)
