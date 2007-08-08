@@ -157,7 +157,9 @@ class Prindex extends controller
 		
 		//load the required models
 		$this->load->model('pr_model','pr_model');
+		$this->load->model('writers_model','writers_model');
 
+		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
 		$this->pages_model->SetPageCode('office_pr_suggestions');
@@ -166,7 +168,11 @@ class Prindex extends controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 
+		//get all currently suggested organisations
 		$data['orgs'] = $this->pr_model->GetSuggestedOrganistions();
+		
+		//get the list of office users
+		$data['office_users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/suggestions', $data);
@@ -189,11 +195,10 @@ class Prindex extends controller
 		$this->load->model('directory_model');
 		$this->load->helper('wikilink');
 
+		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
 		$this->pages_model->SetPageCode('office_pr_suggestion');
-		
-		$data = $this->organisations->_GetOrgData($shortname);
 		
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
@@ -203,7 +208,11 @@ class Prindex extends controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		$data['users'] = $this->writers_model->GetUsersWithOfficeAccess();
+		//get the organisation specified
+		$data = $this->organisations->_GetOrgData($shortname);
+		
+		//get the list of office users
+		$data['office_users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/suggestion', $data);
