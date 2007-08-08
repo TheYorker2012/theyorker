@@ -81,7 +81,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding: 2px; margin: 0px; margin-left: 0px;'>
 			<input type="text" name="site-search" id="site-search" onblur="search_onBlur()" onfocus="search_onFocus()" onkeyup="search_onKeyUp()" title="search the Site" value="search" autocomplete="off" />
 			<div id="ajax-results" onMouseOver="if (isMouseLeaveOrEnter(event, this)) {active=true;}" onMouseOut="if (isMouseLeaveOrEnter(event, this)) {search_Close(false); active=false;}">
-				<p class="note"><a href="javascript:search_noShow(0)">toggle</a></a></p>
+				<p class="note"><a href="javascript:search_noShow(0)">toggle</a></p>
 				<h1>Articles</h1>
 				<ul id="ajax-articles">
 					<li>No results found</li>
@@ -220,7 +220,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/campaign/'>Campaigns</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/charity/'>Our Charity</a>
+			<a href='/office/charity/'>Charities</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/howdoi/'>How Do I</a>
@@ -245,10 +245,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 8px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
-		<?php
+<?php
 			// Display the main content
 			$content[0]->Load();
-		?>
+?>
 	</div>
 </div>
 
@@ -260,7 +260,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	include('footer.php');
 ?>
 
-</div>
 </body>
 </html>
 

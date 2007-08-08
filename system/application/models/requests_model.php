@@ -396,7 +396,6 @@ class Requests_Model extends Model
 	{
 		$sql = 'UPDATE 	articles
 			SET	article_editor_approved_user_entity_id = ?,
-				article_publish_date = CURRENT_TIMESTAMP,
 				article_live_content_id = NULL
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($editor_id, $article_id));

@@ -104,6 +104,42 @@ class Pr_model extends Model {
 		return $query->result_array();
 
 	}
+	
+	function GetSuggestedOrganistions()
+	{
+		$sql = 'SELECT	organisation_entity_id,
+						organisation_name,
+						organisation_directory_entry_name,
+						organisation_content_last_author_user_entity_id,
+						organisation_content_last_author_timestamp,
+						user_firstname,
+						user_surname
+				FROM	organisations
+				LEFT JOIN organisation_contents
+				ON		organisation_live_content_id = organisation_content_id
+				INNER JOIN users
+				ON		organisation_content_last_author_user_entity_id = user_entity_id
+				WHERE	organisation_pr_suggestion = 1
+				AND		organisation_pr_rep IS NULL
+				ORDER BY organisation_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->organisation_entity_id;
+				$result_item['org_name'] = $row->organisation_name;
+				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
+				$result_item['user_id'] = $row->organisation_content_last_author_user_entity_id;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result_item['suggested_time'] = $row->organisation_content_last_author_timestamp;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
 }
 
 

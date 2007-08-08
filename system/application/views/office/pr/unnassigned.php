@@ -5,7 +5,7 @@
 	</div>
 </div>
 <?php
-	if ($user['access'] == 'Admin' ||
+	if ($user['officetype'] == 'Admin' ||
 		$user['access'] == 'High')
 	{
 ?>
@@ -44,7 +44,7 @@
 	}
 ?>
 <?php
-	if ($user['access'] == 'Low')
+	if ($user['officetype'] == 'Low')
 	{
 ?>
 <div class="blue_box">

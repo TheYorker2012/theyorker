@@ -135,6 +135,8 @@ class Campaign extends Controller
 			{
 				$data['campaign']['is_petition'] = FALSE;
 				$data['campaign']['can_start_petition'] = $this->campaign_model->CanStartPetition();
+				$data['campaign']['live_campaign_count'] = $this->campaign_model->GetLiveCampaignCount();
+				$data['campaign']['future_campaign_count'] = $this->campaign_model->GetFutureCampaignCount();
 			}
 			else
 			{

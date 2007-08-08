@@ -83,6 +83,9 @@ class Yorkerdirectory extends Controller
 		$data['organisations'] = $this->organisations->_GetOrgs($search_pattern);
 		$data['search'] = $search_pattern;
 
+		// Get organisations children
+		$data['children'] = $this->organisations->_GetOrgsChildren();
+		
 		// Get organisation types
 		$data['organisation_types'] = $this->organisations->_GetOrganisationTypes($data['organisations'], TRUE);
 

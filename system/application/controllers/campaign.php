@@ -17,7 +17,13 @@ class Campaign extends Controller {
 		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
 
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
-		if ($campaign_id == FALSE)
+		//if petition preview set campaign id
+		if (isset($_POST['r_submit_preview_petition']))
+		{
+			$campaign_id = $_POST['r_campaignid'];
+		}
+		
+		if ($campaign_id == FALSE) //campaign list
 		{
 			$this->pages_model->SetPageCode('campaign_list');
 			$data['campaign_list'] = $this->campaign_model->GetLiveCampaignList();
@@ -69,12 +75,28 @@ class Campaign extends Controller {
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
 		} 
-		else
-		{
+		else //campaign petition
+		{	
 			$this->pages_model->SetPageCode('campaign_petition');
 			$data['campaign'] = $this->campaign_model->GetPetitionCampaign($campaign_id);
+			
+			//special bits for preview mode
+			if (isset($_POST['r_submit_preview_petition']))
+			{
+				//set preview message
+				$this->main_frame->AddMessage('warning','<div class="Entry">Currently previewing campaign petition. Click <a href="'.$_POST['r_redirecturl'].'">here</a> go back to campaign office.</div>');
+				//set vars for preview mode
+				$data['article'] = $this->news_model->GetFullArticle($data['campaign']['article'], "", "%W, %D %M %Y", $_POST['r_revisionid']);
+				$data['preview_mode'] = TRUE;
+			}
+			else
+			{
+				//set vars for normal mode
+				$data['article'] = $this->news_model->GetFullArticle($data['campaign']['article']);
+				$data['preview_mode'] = FALSE;
+			}
 	
-			$data['article'] = $this->news_model->GetFullArticle($data['campaign']['article']);
+			$data['selected_campaign'] = $campaign_id;
 			$data['our_campaign'] = array(
 				'title'=>$this->pages_model->GetPropertyText('section_our_campaign_title',FALSE));
 			$data['progress_reports'] = array(
@@ -141,11 +163,30 @@ class Campaign extends Controller {
 		$cur_campaign_id = $this->campaign_model->GetPetitionStatus();
 		if ($cur_campaign_id == FALSE)
 		{
-			$data['campaign_list'] = $this->campaign_model->GetFullCampaignList();
-			if (isset($data['campaign_list'][$campaign_id]))
+			$data['campaign_list'] = $this->campaign_model->GetLiveCampaignList();
+			//if campaign with id = $campaign_id is live or preview is enabled
+			if ((isset($data['campaign_list'][$campaign_id])) || (isset($_POST['r_submit_preview_details'])))
 			{
+				//special bits for preview mode
+				if (isset($_POST['r_submit_preview_details']))
+				{
+					//set preview message
+					$this->main_frame->AddMessage('warning','<div class="Entry">Currently previewing campaign details. Click <a href="'.$_POST['r_redirecturl'].'">here</a> go back to campaign office.</div>');
+					//set vars for preview mode
+					$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
+					$article_id = $this->campaign_model->GetCampaignArticleID($campaign_id);
+					$data['article'] = $this->news_model->GetFullArticle($article_id, "", "%W, %D %M %Y", $_POST['r_revisionid']);
+					$data['preview_mode'] = TRUE;
+				}
+				else
+				{
+					//set vars for normal mode
+					$campaign_name = $data['campaign_list'][$campaign_id]['name'];
+					$article_id = $data['campaign_list'][$campaign_id]['article'];
+					$data['article'] = $this->news_model->GetFullArticle($article_id);
+					$data['preview_mode'] = FALSE;
+				}
 				$data['selected_campaign'] = $campaign_id;
-				$data['article'] = $this->news_model->GetFullArticle($data['campaign_list'][$campaign_id]['article']);
 				$data['sidebar_vote'] = array(
 					'title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),
 					'newvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_new_text'),
@@ -177,7 +218,7 @@ class Campaign extends Controller {
 				$data['parameters']['campaign'] = $campaign_id;
 	
 				// Set up the public frame
-				$this->main_frame->SetTitleParameters(array('campaign' => $data['campaign_list'][$campaign_id]['name']));
+				$this->main_frame->SetTitleParameters(array('campaign' => $campaign_name));
 				$this->main_frame->SetContentSimple('campaign/campaign_details', $data);
 	
 				// Load the public frame view (which will load the content view)
@@ -199,7 +240,17 @@ class Campaign extends Controller {
 		$this->load->model('campaign_model','campaign');
 		$this->pages_model->SetPageCode('campaign_pr');
 		
-		$campaign_id = $this->campaign->GetPetitionStatus();
+		if (isset($_POST['r_submit_preview_preports']))
+		{
+			//set preview message
+			$this->main_frame->AddMessage('warning','<div class="Entry">Currently previewing campaign petition progress reports. Click <a href="'.$_POST['r_redirecturl'].'">here</a> go back to campaign office.</div>');
+			//set vars for preview mode
+			$campaign_id = $_POST['r_campaignid'];
+		}
+		else
+		{
+			$campaign_id = $this->campaign->GetPetitionStatus();
+		}
 
 		$data['sections'] = array (
 					'campaign'=>$this->campaign->GetPetitionCampaign($campaign_id),

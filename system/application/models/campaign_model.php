@@ -288,6 +288,18 @@ class Campaign_model extends Model
 		return $result;
 	}
 	
+	function GetLiveCampaignCount()
+	{
+		$sql = 'SELECT	COUNT(campaign_id) AS live_count
+				FROM	campaigns
+				WHERE	campaign_deleted = 0
+				AND		campaign_status = "live"';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() == 1)
+		$row = $query->row();
+		return $row->live_count;
+	}
+	
 	function GetFutureCampaignCount()
 	{
 		$sql = 'SELECT	COUNT(campaign_id) AS future_count

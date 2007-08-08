@@ -63,6 +63,7 @@ class Organisations
 		$organisations = array();
 		foreach ($orgs as $org) {
 			$organisations[] = array(
+				'id' => $org['organisation_entity_id'],
 				'name' => $org['organisation_name'],
 				'shortname' => $org['organisation_directory_entry_name'],
 				'link' => $urlpathpre.$org['organisation_directory_entry_name'].$urlpathpost,
@@ -80,6 +81,22 @@ class Organisations
 	 * @param $OrganisationShortName Short name of organisation.
 	 * @return Organisation data relating to specified organisation or FALSE.
 	 */
+	 
+	function _GetOrgsChildren($urlpathpre='directory/', $urlpathpost='')
+	{
+		$orgs = $this->CI->directory_model->GetDirectoryOrganisationsChildren();
+		$organisations = array();
+		foreach ($orgs as $org) {
+			$organisations[] = array(
+				'id' => $org['child_organisation_entity_id'],
+				'parent_id' => $org['parent_organisation_entity_id'],
+				'name' => $org['organisation_name'],
+				'shortname' => $org['organisation_directory_entry_name'],
+				'link' => $urlpathpre.$org['organisation_directory_entry_name'].$urlpathpost
+			);
+		}
+		return $organisations;
+	}
 
 	function _GetOrgData($OrganisationShortName, $revision_number=false)
 	{
