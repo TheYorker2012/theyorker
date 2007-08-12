@@ -117,33 +117,31 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/'>Office Home</a>
 		</div>
-		<div class='officenavigation_item'>
-			<a href='/logout/office'>Leave Office</a>
-		</div>
 
 		<div class='officenavigation_title'>
-			Public Relations
-		</div>
-
-		<div class='officenavigation_item'>
-			<a href='/office/packages/' onclick="alert('Coming soon...'); return false;">Packages</a>
+			Admin
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/prlist/'>Directory</a>
+			<a href='/office/manage/members/'>Manage Team</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/vipmanager/'>VIP Manager</a>
+			<a href='/office/vipmanager/'>Manage VIP's</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/news/contentschedule/'>Content Schedule</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/news/scheduledlive/'>Change Live Article</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/moderator/'>Comment Moderation</a>
 		</div>
 
 		<div class='officenavigation_title'>
 			Sections
 		</div>
-
 		<div class='officenavigation_item'>
 			<a href='/office/news/uninews/'>Uni News</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/comment/'>News Comment</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/news/features/'>Features</a>
@@ -161,30 +159,18 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/blogs/'>Blogs</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/guide/'>Style Guide</a>
+			<a href='/office/news/comment/'>News Comment</a>
 		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/manage/members/'>Manage Writer</a>
-		</div>
-
-		<div class='officenavigation_title'>
-			Photographers
-		</div>
-
 		<div class='officenavigation_item'>
 			<a href='/office/photos/'>Photos</a>
 		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/gallery/'>Gallery</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/manage/members/'>Manage Photographers</a>
-		</div>
 
 		<div class='officenavigation_title'>
-			Reviews
+			Info + Reviews
 		</div>
-
+		<div class='officenavigation_item'>
+			<a href='/office/prlist/'>Directory</a>
+		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/reviewlist/food'>Food</a>
 		</div>
@@ -192,29 +178,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/reviewlist/drink'>Drink</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/manage/members/'>Manage Reviewers</a>
-		</div>
-
-		<div class='officenavigation_title'>
-			Other Features
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/contentschedule/'>Content Schedule</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/news/scheduledlive/'>Scheduled and Live</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/moderator/'>Comment Moderation</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/quotes/'>Quotes</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/banners/'>Homepage Banners</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/links/'>Links</a>
+			<a href='/office/pr/summary'>PR System</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/campaign/'>Campaigns</a>
@@ -226,9 +190,44 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/games/' onclick="alert('Coming soon...'); return false;">Games Zone</a>
+			<a href='/office/games/' onclick="alert('Coming soon...'); return false;">Game Zone</a>
 		</div>
-
+		<div class='officenavigation_item'>
+			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
+		</div><!--
+		<div class='officenavigation_item'>
+			<a href='/office/packages/' onclick="alert('Coming soon...'); return false;">Packages</a>
+		</div>-->
+		
+		<div class='officenavigation_title'>
+			Photos
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/gallery/'>Gallery</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/banners/' onclick="alert('Coming soon...'); return false;">Homepage Banners</a>
+		</div>
+		
+		<div class='officenavigation_title'>
+			Homepage
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/quotes/'>Quote Moderation</a>
+		</div>
+		
+		<div class='officenavigation_item'>
+			<a href='/office/guide/'>Style Guide</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/manage/members/'>Manage Writer</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/links/'>Links</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/banners/' onclick="alert('Coming soon...'); return false;">Homepage Banners</a>
+		</div>
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php

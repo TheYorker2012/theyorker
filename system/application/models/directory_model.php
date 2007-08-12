@@ -97,16 +97,19 @@ class Directory_model extends Model {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
 			 AND (organisations.organisation_show_in_directory=0 OR organisations.organisation_live_content_id IS NULL)
-			 AND organisations.organisation_needs_approval=0 ';
+			 AND organisations.organisation_needs_approval=0
+			 AND organisations.organisation_deleted=0 ';
 		} elseif ($status=='suggested') {
 			$sql .= '
-			 AND organisations.organisation_needs_approval=1 ';
+			 AND organisations.organisation_needs_approval=1 
+			 AND organisations.organisation_deleted=0 ';
 		} else {
 			$sql .= '
 			 AND organisation_types.organisation_type_directory=1
 			 AND organisations.organisation_show_in_directory=1
 			 AND organisations.organisation_needs_approval=0
-			 AND organisations.organisation_parent_organisation_entity_id IS NULL ';
+			 AND organisations.organisation_parent_organisation_entity_id IS NULL 
+			 AND organisations.organisation_deleted=0 ';
 		}
 
 			$sql .= '

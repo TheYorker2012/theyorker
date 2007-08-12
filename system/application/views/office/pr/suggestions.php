@@ -33,28 +33,59 @@
 		echo('				</tr>'."\n");
 		$alternate == 1 ? $alternate = 2 : $alternate = 1;
 	}
-	echo('				<tr class="tr'.$alternate.'">');
 ?>
-					<td colspan="2">
-						<select>
-						<option selected>Reject</option>
-						<option>Accept to Unnassigned</option>
-						<optgroup label="Accept and Assign:">
-							<option name="team_456">to Martina Goodall</option>
-							<option name="team_455">to Annette Oakley</option>
-							<option name="team_454">to Rachael Ingle</option>
-							<option name="team_453">to Matilda Tole</option>
-						</optgroup>
-						</select>
-					</td>
-					<td>
-						<input type="submit" value="Do">
-					</td>
-				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
+
+
+
+<div class="BlueBox">
+	<h2>options</h2>
+	<div class="Entry">
+		Any option you choose here applies to all ticked organisations above.
+	</div>
+	<div class="Entry">
+		Reject all ticked suggestions
+		<form class="form" action="/office/pr/suggestionmodify" method="post">
+			<fieldset>
+				<input type="submit" value="Reject Suggestion" class="button" name="r_submit_reject" />
+			</fieldset>
+		</form>
+	</div>
+	<br />
+	<div class="Entry">
+		Accept all ticked suggestions and place them in the unassigned pool
+		<form class="form" action="/office/pr/suggestionmodify" method="post">
+			<fieldset>
+				<input type="submit" value="Accept To Pool" class="button" name="r_submit_accept_unnassigned" />
+			</fieldset>
+		</form>
+	</div>
+	<br />
+	<div class="Entry">
+		Accept all ticked suggestions and assign them to someone
+		<form class="form" action="/office/pr/suggestionmodify" method="post">
+			<fieldset>
+				<select name="a_assign_to">
+				<optgroup label="Assign To:">
+<?php
+	foreach($office_users as $office_user)
+	{
+		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+	}
+?>
+				</optgroup>
+				</select>
+			</fieldset>
+			<fieldset>
+				<input type="submit" value="Accept And Assign" class="button" name="r_submit_accept_assign" />
+			</fieldset>
+		</form>
+	</div>
+</div>
+
 <?php
 	}
 ?>

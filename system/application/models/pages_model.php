@@ -158,6 +158,63 @@ class Pages_model extends Model
 	/// Get a specific array property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @return array Array page property as specified by @a $ArraySpec.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyArrayNew($Name, $PageCode = FALSE)
+	{
+		// property type retrieval functions
+		$property_types = array(
+			'wikitext' => 'GetPropertyWikitext',
+			'text'     => 'GetPropertyText',
+		);
+		
+		// get the matching properties
+		$Regex = '/\.([^\.\[]*)|\[([^\]]*)\]|()]/';
+		$properties = $this->MatchRawProperties($PageCode, $Name, $Regex);
+		// convert into array format
+		$result = array();
+		foreach ($properties as $label => $property) {
+			// reformat the match results into an array of indicies
+			$verbose_match = $property[1];
+			unset($verbose_match[0]);
+			$indicies = array();
+			foreach ($verbose_match as $minor_match) {
+				foreach ($minor_match as $k => $atom_match) {
+					if ($atom_match !== '') {
+						$indicies[$k] = $atom_match;
+						break;
+					}
+				}
+			}
+			ksort($indicies);
+			
+			// use indicies to add to the array
+			$cur = & $result;
+			foreach ($indicies as $index) {
+				if (!array_key_exists($index, $cur)) {
+					$cur[$index] = array();
+				}
+				$cur = & $cur[$index];
+			}
+			foreach ($property[0] as $type => $info) {
+				if (array_key_exists($type, $property_types)) {
+					$cur['_'.$type] = $this->$property_types[$type]($label, $PageCode);
+				}
+			}
+		
+		}
+		
+		return $result;
+	}
+	
+	/// Get a specific array property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
 	 * @param $ArraySpec array Index descriptors, eath with:
 	 *	- ['pre'] - prefix to index
 	 *	- ['post'] - postfix to index (default='')
@@ -257,15 +314,49 @@ class Pages_model extends Model
 		if (	array_key_exists($PageCode, $this->mProperties) &&
 				array_key_exists($PropertyLabel, $this->mProperties[$PageCode])) {
 			$property = $this->mProperties[$PageCode][$PropertyLabel];
-			if (FALSE === $PropertyTypeName) {
-				return $property;
-			} elseif (array_key_exists($PropertyTypeName, $property)) {
+			if (FALSE !== $PropertyTypeName && array_key_exists($PropertyTypeName, $property)) {
 				return $property[$PropertyTypeName];
 			} else {
 				return FALSE;
 			}
 		} else {
 			return FALSE;
+		}
+	}
+	
+	function MatchRawProperties($PageCode, $Prefix, $Regex)
+	{
+		// Higher level function, doesn't care about what extra gets fetched
+		
+		// Interpret special page code
+		/// @pre is_bool(@a $PageCode) OR (@a $PageCode)
+		Assert('is_bool($PageCode) || is_string($PageCode)');
+		/// @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+		Assert('$PageCode !== FALSE || $this->PageCodeSet()');
+		if (FALSE === $PageCode) {
+			$PageCode = $this->mPageCode;
+		} elseif (TRUE === $PageCode) {
+			$PageCode = -1;
+		}
+		
+		// Get the properties associated with the page
+		if (!array_key_exists($PageCode, $this->mProperties)) {
+			// Page hasn't got any properties
+			// get them now into $this->mProperties[$PageCode]
+			$this->GetProperties($PageCode);
+		}
+		if (array_key_exists($PageCode, $this->mProperties)) {
+			$results = array();
+			foreach ($this->mProperties[$PageCode] as $label => $properties) {
+				if (substr($label,0,strlen($Prefix)) == $Prefix &&
+					preg_match_all($Regex, substr($label,strlen($Prefix)), $matches))
+				{
+					$results[$label] = array($properties, $matches);
+				}
+			}
+			return $results;
+		} else {
+			return array();
 		}
 	}
 	
@@ -443,6 +534,20 @@ class Pages_model extends Model
 		}
 	}
 	
+	/// Get the http header from the page description.
+	/**
+	 * @return NULL,string http header string or NULL for none.
+	 */
+	function GetHttpHeader()
+	{
+		$PageCode = $this->mPageCode;
+		if (!array_key_exists($PageCode,$this->mPageInfo)) {
+			assert('$this->PageCodeSet()');
+			$this->mPageInfo[$PageCode] = $this->GetSpecificPage($PageCode);
+		}
+		return $this->mPageInfo[$PageCode]['http_header'];
+	}
+	
 	/// Get the page description.
 	/**
 	 * @return string Page description.
@@ -479,19 +584,42 @@ class Pages_model extends Model
 	 */
 	function GetAllPages()
 	{
-		$sql =
-			'SELECT'.
-			' pages.page_id,'.
-			' pages.page_codename,'.
-			' pages.page_head_title,'.
-			' pages.page_body_title,'.
-			' pages.page_description,'.
-			' pages.page_keywords '.
-			'FROM pages '.
-			'ORDER BY pages.page_codename';
+		$this->db->from('pages');
+		$this->db->select(
+			'pages.page_id,'.
+			'pages.page_codename,'.
+			'pages.page_head_title,'.
+			'pages.page_body_title,'.
+			'pages.page_description,'.
+			'pages.page_keywords,'.
+			'pages.page_page_type_id'
+		);
+		$this->db->orderby('pages.page_codename');
 		
-		$query = $this->db->query($sql);
+		$query = $this->db->get();
 		return $query->result_array();
+	}
+	
+	/// Get all page types.
+	/**
+	 * @return array(id => array('name' =>, 'http_header' => ))
+	 */
+	function GetAllPageTypes()
+	{
+		$this->db->from('page_types');
+		$this->db->select(
+			'page_types.page_type_id           AS id,'.
+			'page_types.page_type_http_header  AS http_header,'.
+			'page_types.page_type_name         AS name'
+		);
+		
+		$query = $this->db->get();
+		$results = array();
+		foreach ($query->result_array() as $page_type) {
+			$page_type['id'] = (int)$page_type['id'];
+			$results[$page_type['id']] = $page_type;
+		}
+		return $results;
 	}
 	
 	/// Get a specific page
@@ -509,29 +637,34 @@ class Pages_model extends Model
 		if ($global_scope) {
 			$Properties = TRUE;
 		} else {
-			$sql =
-				'SELECT'.
+			$this->db->select(
 				' pages.page_id,'.
 				' pages.page_codename,'.
 				' pages.page_head_title,'.
 				' pages.page_body_title,'.
 				' pages.page_description,'.
-				' pages.page_keywords '.
-				'FROM pages '.
-				'WHERE pages.page_codename=?';
-			$query = $this->db->query($sql,$PageCode);
+				' pages.page_keywords, '.
+				' pages.page_page_type_id, '.
+				' page_types.page_type_http_header '
+			);
+			$this->db->from('pages');
+			$this->db->where(array('pages.page_codename' => $PageCode));
+			$this->db->join('page_types','page_types.page_type_id = pages.page_page_type_id','left');
+			$query = $this->db->get();
 			$results = $query->result_array();
 		}
 		if ($global_scope || count($results) == 1) {
 			$data = array();
 			if (!$global_scope) {
 				$result = $results[0];
-				$data['page_id']     = $result['page_id'];
-				$data['codename']    = $result['page_codename'];
-				$data['head_title']  = $result['page_head_title'];
-				$data['body_title']  = $result['page_body_title'];
-				$data['description'] = $result['page_description'];
-				$data['keywords']    = $result['page_keywords'];
+				$data['page_id']      = $result['page_id'];
+				$data['codename']     = $result['page_codename'];
+				$data['head_title']   = $result['page_head_title'];
+				$data['body_title']   = $result['page_body_title'];
+				$data['description']  = $result['page_description'];
+				$data['keywords']     = $result['page_keywords'];
+				$data['type_id']      = $result['page_page_type_id'];
+				$data['http_header']  = $result['page_type_http_header'];
 			}
 			if ($Properties) {
 				$sql =
@@ -584,13 +717,19 @@ class Pages_model extends Model
 		
 		$global_scope = (FALSE === $PageCode);
 		if (!$global_scope) {
+			if (array_key_exists('type_id', $Data) && $Data['type_id'] < 0)
+			{
+				$Data['type_id'] = NULL;
+			}
+			
 			$translation = array(
-					'codename'    => 'page_codename',
-					'head_title'  => 'page_head_title',
-					'body_title'  => 'page_body_title',
-					'description' => 'page_description',
-					'keywords'    => 'page_keywords',
-				);
+				'codename'    => 'page_codename',
+				'head_title'  => 'page_head_title',
+				'body_title'  => 'page_body_title',
+				'description' => 'page_description',
+				'keywords'    => 'page_keywords',
+				'type_id'     => 'page_page_type_id',
+			);
 			$save_data = array();
 			foreach ($Data as $key => $value) {
 				if (array_key_exists($key, $translation)) {

@@ -113,7 +113,8 @@ function addstrike($text)
 			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
 			<?php
 			$list_data = array();
-			foreach($organisations as $organisation){
+			foreach($organisations as $organisation)
+			{
 				$list_data[] = array(
 					'value' => $organisation['organisation_type_id'],
 					'name' => $organisation['organisation_type_name']
@@ -124,12 +125,12 @@ function addstrike($text)
 		<?php if($office) { ?>
 			<p>You are accessing this wizard as an office member.</p>
 			<input name="a_connected" type="hidden" value="Yes" />
-		<? } else { ?>
+		<?php } else { ?>
 			<fieldset>
 				<h3>Are you connected to this organisation?</h3>
 				<?php PrintRadioList('a_connected', array('Yes', 'No'), 'No', $session_var); ?>
 			</fieldset>
-		<? } ?>
+		<?php } ?>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" disabled="disabled" />
 			<input type="submit" name="r_submit_next" value="Next" class="button" />
@@ -140,6 +141,7 @@ function addstrike($text)
 <?php
 	}
 ?>
+
 <?php
 	if ($stage == 2)
 	{
@@ -230,8 +232,6 @@ function addstrike($text)
 		</fieldset>
 	</form>
 </div>
-
-
 <?php
 	}
 ?>
@@ -288,8 +288,6 @@ function addstrike($text)
 		</fieldset>
 	</form>
 </div>
-
-
 <?php
 	}
 ?>
@@ -328,4 +326,13 @@ function addstrike($text)
 <?php
 	}
 ?>
+
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

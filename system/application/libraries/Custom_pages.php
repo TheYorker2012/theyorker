@@ -17,6 +17,9 @@
  */
 class CustomPageView extends FramesView
 {
+	/// Content from page properties.
+	protected $mProperties = NULL;
+	
 	/// Primary constructor
 	/**
 	 * @param $PageCode string Page code.
@@ -25,8 +28,7 @@ class CustomPageView extends FramesView
 	 */
 	function __construct($PageCode, $Namespace = NULL)
 	{
-		// Set the view to use (and construct parent)
-		parent::__construct('pages/custom_page');
+		parent::__construct(NULL);
 		
 		// Find and set page code using namespace
 		if (NULL !== $Namespace) {
@@ -35,13 +37,28 @@ class CustomPageView extends FramesView
 		$CI = &get_instance();
 		$CI->pages_model->SetPageCode($PageCode);
 		
-		// Get the wikitext into data
-		$content = $CI->pages_model->GetPropertyWikitext('main', FALSE);
-		if (FALSE === $content) {
-			$CI->messages->AddMessage('error','Internal error: custom page '.$PageCode.' invalid');
-			$content = '';
+		$this->mProperties = $CI->pages_model->GetPropertyArrayNew('main');
+	}
+
+	function Load()
+	{
+		$CI = & get_instance();
+		static $valid_templates = array(
+			'default' => 'pages/custom_page',
+			'error' => 'pages/error',
+		);
+		foreach ($this->mProperties as $content) {
+			$template = @$content['template']['_text'];
+			if (NULL === $template) {
+				$template = 'default';
+			}
+			if (array_key_exists($template, $valid_templates)) {
+				$CI->load->view(
+					$valid_templates[$template],
+					array_merge($this->mDataArray, $content)
+				);
+			}
 		}
-		$this->SetData('parsed_wikitext', $content);
 	}
 }
 

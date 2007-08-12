@@ -119,7 +119,7 @@ class Pr_model extends Model {
 				ON		organisation_live_content_id = organisation_content_id
 				INNER JOIN users
 				ON		organisation_content_last_author_user_entity_id = user_entity_id
-				WHERE	organisation_pr_suggestion = 1
+				WHERE	organisation_needs_approval = 1
 				AND		organisation_pr_rep IS NULL
 				ORDER BY organisation_name ASC';
 		$query = $this->db->query($sql);

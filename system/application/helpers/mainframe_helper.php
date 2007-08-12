@@ -7,6 +7,8 @@
  * Simple helper functions for choosing and setting up the main frame.
  */
 
+global $chosenMainFrameLibrary;
+$chosenMainFrameLibrary = NULL;
 
 /// Set up the main frame.
 /**
@@ -47,12 +49,20 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 			// Could also be done by adding to loader->_ci_varmap but this isn't
 			// very flexible as it depends on the internals of code igniter.
 			//  $CI->load->_ci_varmap[$frame_library] = 'main_frame';
-			$CI->load->library($frame_library);
-			$CI->main_frame = &$CI->$frame_library;
+			/**
+			 * @note Modified 12th Aug 07
+			 *  - now loads a main_frame library which is given the name of the
+			 *	chosen frame library through a global variable.
+			 *	- the class Main_frame becomes an alias.
+			 */
+			global $chosenMainFrameLibrary;
+			$chosenMainFrameLibrary = $frame_library;
+			
+			$CI->load->library('main_frame');
 
 			$CI->main_frame->SetData('toplinks',
-					GenerateToplinks($Frame)
-				);
+				GenerateToplinks($Frame)
+			);
 		}
 	}
 }

@@ -118,6 +118,21 @@ class Pages extends Controller
 		$this->main_frame->Load();
 	}
 	
+	/// Get page times including dummy "normal" page.
+	/**
+	 */
+	private function _GetPageTypes()
+	{
+		$result = array(-1 => array(
+			'name'         => 'Normal',
+			'http_header'  => NULL
+		));
+		foreach ($this->pages_model->GetAllPageTypes() as $k => $v) {
+			$result[$k] = $v;
+		}
+		return $result;
+	}
+	
 	/// Setup the data array for the view for creating a new page.
 	/**
 	 * @param $Data array Data used for setting up the page.
@@ -140,7 +155,9 @@ class Pages extends Controller
 		$Data['title_separate'] = FALSE;
 		$Data['description'] = '';
 		$Data['keywords'] = '';
+		$Data['type_id'] = -1;
 		$Data['properties'] = array();
+		$Data['page_types'] = $this->_GetPageTypes();
 		
 		$input['codename']    = $this->input->post('codename',    FALSE);
 		if (FALSE !== $input['codename']) {
@@ -175,6 +192,8 @@ class Pages extends Controller
 				$Data['description'] = $input['description'];
 			if (FALSE !== $input['keywords'])
 				$Data['keywords'] = $input['keywords'];
+			if (FALSE !== $input['type_id'])
+				$Data['type_id'] = $input['type_id'];
 				
 			// If don't separate titles, ignore body title
 			if (!$input['title_separate']) {
@@ -248,6 +267,9 @@ class Pages extends Controller
 				}
 				$data['description'] = $page_info['description'];
 				$data['keywords']    = $page_info['keywords'];
+				$data['type_id']     = (NULL !== $page_info['type_id'] ? (int)$page_info['type_id'] : -1);
+				$data['properties']  = array();
+				$data['page_types']  = $this->_GetPageTypes();
 			} else {
 				$data['target']      = $Target;
 			}
@@ -304,6 +326,7 @@ class Pages extends Controller
 					}
 					$input['description'] = $this->input->post('description', FALSE);
 					$input['keywords']    = $this->input->post('keywords',    FALSE);
+					$input['type_id']     = $this->input->post('type_id',     FALSE);
 					$save_failed = FALSE;
 					
 					// Validate and check permissions
@@ -328,6 +351,15 @@ class Pages extends Controller
 						$data['description'] = $input['description'];
 					if (FALSE !== $input['keywords'])
 						$data['keywords'] = $input['keywords'];
+					if (FALSE !== $input['type_id']) {
+						if (!is_numeric($input['type_id'])
+								|| !array_key_exists((int)$input['type_id'], $data['page_types'])) {
+							$this->messages->AddMessage('warning','The specified page type does not exist and will not be changed.');
+							unset($input['type_id']);
+						} else {
+							$data['type_id'] = $input['type_id'] = (int)$input['type_id'];
+						}
+					}
 				
 					// If don't separate titles, ignore body title
 					if (!$input['title_separate']) {
@@ -636,7 +668,7 @@ class Pages extends Controller
 					$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
 							array(
 								array(
-									'label' => 'main',
+									'label' => 'main[0]',
 									'type' => 'wikitext',
 									'text' => 'Your page content goes here.',
 								),

@@ -61,9 +61,9 @@
 				<select name="a_assign_to">
 				<optgroup label="Assign To:">
 <?php
-	foreach($users as $user)
+	foreach($office_users as $office_user)
 	{
-		echo('					<option value="'.$user['id'].'">to '.$user['firstname'].' '.$user['surname'].'</option>'."\n");
+		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
 	}
 ?>
 				</optgroup>
