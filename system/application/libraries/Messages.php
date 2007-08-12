@@ -145,7 +145,7 @@ class Messages
 	{
 		$CI = &get_instance();
 		$this->AddMessage('information', '<h4>Variable: ' . $Name . ' in '.$CI->uri->uri_string().'</h4>'.
-			'<pre>'.var_export($Variable,true).'</pre>');
+			'<pre>'.htmlentities(var_export($Variable,true), ENT_QUOTES, 'UTF-8').'</pre>');
 	}
 
 	/// Clear the queue of persistent messages.

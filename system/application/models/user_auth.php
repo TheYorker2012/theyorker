@@ -16,7 +16,7 @@
 class User_auth extends model {
 
 	/// bool True if the user is logged in
-	public $isLoggedIn;
+	public $isLoggedIn = FALSE;
 
 	/// string The username of the logged in user
 	public $username = '';

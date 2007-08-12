@@ -48,6 +48,8 @@ class Frame_public extends FrameNavbar
 	private $mTitleSet;
 	/// array Title parameters.
 	private $mTitleParameters = NULL;
+	/// string HTTP header.
+	private $mHttpHeader = NULL;
 	
 	/**
 	 * @brief Default constructor.
@@ -172,9 +174,18 @@ class Frame_public extends FrameNavbar
 			}
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());
+			
+			if (NULL === $this->mHttpHeader) {
+				$this->mHttpHeader = $CI->pages_model->GetHttpHeader();
+			}
 		}
 		
 		$this->mDataArray['messages'] = $CI->messages->GetMessages();
+		// if applicable, send http header
+		if (NULL !== $this->mHttpHeader) {
+			header($this->mHttpHeader);
+		}
+		// write the output
 		parent::Load();
 		unset($this->mDataArray['messages']);
 		$CI->messages->ClearQueue();

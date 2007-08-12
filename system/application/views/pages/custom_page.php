@@ -1,3 +1,3 @@
 <?php
-echo $parsed_wikitext;
+echo(@$_wikitext);
 ?>
