@@ -132,14 +132,31 @@ class Prindex extends controller
 		// Not accessed through /office/pr/org/$organisation, not organisation
 		// specific so needs to be office permissions.
 		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+		$this->load->model('writers_model','writers_model');
 
+		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('unnassigned');
 		$this->pages_model->SetPageCode('office_pr_unnassigned');
-
+		
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get all currently unassigned organisations
+		$data['unassigned_orgs'] = $this->pr_model->GetUnassignedOrganistions();
+		
+		//get all currently pending organisations
+		$data['pending_orgs'] = $this->pr_model->GetPendingOrganistions();		
+		
+		//get all reps who have asked to be rep for the unassigned organisations
+		$data['reps'] = $this->pr_model->GetUnassignedOrganistionsReps();
+		
+		//get the list of office users
+		$data['office_users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/unnassigned', $data);
@@ -182,7 +199,7 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 
-	function suggestion($shortname)
+	function info($shortname)
 	{
 		// Not accessed through /office/pr/org/$organisation, not organisation
 		// specific so needs to be office permissions.
@@ -203,23 +220,46 @@ class Prindex extends controller
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
 		$data['parameters']['dir_name'] = $shortname;
-
-		//get the current users id and office access
-		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
 		
 		//get the organisation specified
 		$data = $this->organisations->_GetOrgData($shortname);
+		$data['status'] = $this->pr_model->GetOrganisationStatus($shortname);
 		
 		//get the list of office users
 		$data['office_users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+
 		// Set up the public frame
-		$the_view = $this->frames->view('office/pr/suggestion', $data);
+		$the_view = $this->frames->view('office/pr/info', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->load();
+	}
+	
+	function modify()
+	{
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+		
+		//reject the suggested organisation
+		if (isset($_POST[['r_submit_reject']))
+		{
+			$this->pr_model->DeleteOrganisation($_POST['r_direntryname']);
+		}
+		//accepts a suggestion to the unassigned pool
+		if (isset($_POST[['r_submit_accept_unnassigned']))
+		{
+			$this->pr_model->SetOrganisationUnassigned($_POST['r_direntryname']);
+		}
+		//accepts a suggestion to pending, requesting a rep to look after it
+		if (isset($_POST[['r_submit_accept_assign']))
+		{
+		
+		}		
 	}
 }
 
