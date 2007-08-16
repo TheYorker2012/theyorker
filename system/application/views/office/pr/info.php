@@ -48,6 +48,7 @@ if ($status == 'suggestion')
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<input type="submit" value="Accept To Pool" class="button" name="r_submit_accept_unnassigned" />
@@ -60,6 +61,7 @@ if ($status == 'suggestion')
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<select name="a_assign_to">
@@ -97,34 +99,43 @@ else if ($status == 'unassigned')
 			</fieldset>
 		</form>
 	</div>
+	<br />
+<?php
+if (count($reps) > 0)
+{
+?>
 	<div class="Entry">
 		The following reps have requested to look after this organisation
-		<div id="ArticleBox">
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Options</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="tr1">
-						<td>Ted Tank</td>
-						<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
-					</tr>
-					<tr class="tr2">
-						<td>Jeff Wood</td>
-						<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+<?php
+	$alternate = 1;
+	foreach($reps as $rep)
+	{
+		echo('		<form class="form" action="/office/pr/modify" method="post">'."\n");
+		echo('			<fieldset>'."\n");
+		echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n");
+		echo('				<input type="hidden" name="r_userid" value="'.$rep['user_id'].'" />'."\n");
+		echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
+		echo('			</fieldset>'."\n");
+		echo('			<fieldset>'."\n");
+		echo('				<label for="r_submit_accept_rep'.$rep['user_id'].'">'.$rep['user_firstname'].' '.$rep['user_surname'].'</label>'."\n");
+		echo('				<input type="submit" value="Accept" class="button" name="r_submit_accept_rep" id="r_submit_accept_rep'.$rep['user_id'].'" />'."\n");
+		echo('				<input type="submit" value="Reject" class="button" name="r_submit_reject_rep" />'."\n");
+		echo('			</fieldset>'."\n");
+		echo('		</form>'."\n");
+		$alternate == 1 ? $alternate = 2 : $alternate = 1;
+	}
+?>
 	</div>
+	<br />
+<?php
+}
+?>
 	<div class="Entry">
 		OR request a different rep to look after this organisation
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<select name="a_assign_to">
@@ -139,7 +150,7 @@ else if ($status == 'unassigned')
 				</select>
 			</fieldset>
 			<fieldset>
-				<input type="submit" value="Request Rep" class="button" name="r_submit_request_rep" />
+				<input type="submit" value="Request Rep" class="button" name="r_submit_officer_request_rep" />
 			</fieldset>
 		</form>
 	</div>
@@ -152,17 +163,20 @@ else if ($status == 'unassigned')
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<input type="submit" value="Request" class="button" name="r_submit_request_rep" />
 			</fieldset>
 		</form>
 	</div>
+	<br />
 	<div class="Entry">
 		Withdraw your request to be rep for this organisation
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<input type="submit" value="Withdraw" class="button" name="r_submit_withdraw_rep" />
@@ -178,13 +192,15 @@ else if ($status == 'pending')
 <div class="blue_box">
 	<h2>options (pending editor)</h2>
 	<div class="Entry">
-		*Name* has been asked to look after this organisation
+<?php echo('		'.$rep['user_firstname'].' '.$rep['user_surname'].' has been asked to look after this organisation'."\n"); ?>
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_userid" value="'.$rep['user_id'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
-				<input type="submit" value="Withdraw Request" class="button" name="r_submit_delete" />
+				<input type="submit" value="Withdraw Request" class="button" name="r_submit_withdraw_request" />
 			</fieldset>
 		</form>
 	</div>
@@ -193,13 +209,28 @@ else if ($status == 'pending')
 <div class="blue_box">
 	<h2>options (pending writer)</h2>
 	<div class="Entry">
+		Accept the request from the editor to be the rep for this organisation
+		<form class="form" action="/office/pr/modify" method="post">
+			<fieldset>
+<?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_userid" value="'.$rep['user_id'].'" />'."\n"); ?>
+			</fieldset>
+			<fieldset>
+				<input type="submit" value="Accept" class="button" name="r_submit_accept_request" />
+			</fieldset>
+		</form>
+	</div>
+	<div class="Entry">
 		Reject the request from the editor to be the rep for this organisation
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_userid" value="'.$rep['user_id'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
-				<input type="submit" value="Withdraw" class="button" name="r_submit_withdraw_rep" />
+				<input type="submit" value="Reject" class="button" name="r_submit_reject_request" />
 			</fieldset>
 		</form>
 	</div>

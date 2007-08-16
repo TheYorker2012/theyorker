@@ -30,7 +30,7 @@
 		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
-		echo('						'.$org['user_firstname'].' '.$org['user_surname'].''."\n");
+		echo('						'.$org['user_name']."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						'.$date_text.''."\n");
