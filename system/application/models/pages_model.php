@@ -860,6 +860,7 @@ WHERE page_properties.page_property_property_type_id=property_types.property_typ
 				'body_title'  => 'page_body_title',
 				'description' => 'page_description',
 				'keywords'    => 'page_keywords',
+				'type_id'     => 'page_page_type_id',
 			);
 		$save_data = array();
 		foreach ($Data as $key => $value) {
