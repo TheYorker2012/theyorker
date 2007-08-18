@@ -6,16 +6,28 @@
 </div>
 
 <div class="blue_box">
-	<h2>rep summary</h2>
+	<h2>summary - all assigned organisations</h2>
 	<div id="ArticleBox">
-		Rep Business Card Here (with edit if Rep).<br />
-		Rep Rating: 75%<br />
 		<table>
 			<thead>
 				<tr>
-					<th>Organisation</th>
-					<th>Priority</th>
-					<th>Rating</th>
+					<th>
+						Organisation
+						<a href="/office/pr/summaryall/org/asc"><img src="/images/icons/bullet_arrow_down.png" /></a>
+						<a href="/office/pr/summaryall/org/desc"><img src="/images/icons/bullet_arrow_up.png" /></a>
+					<th>
+						Priority
+						<a href="/office/pr/summaryall/pri/asc"><img src="/images/icons/bullet_arrow_down.png" /></a>
+						<a href="/office/pr/summaryall/pri/desc"><img src="/images/icons/bullet_arrow_up.png" /></a>
+					</th>
+					<th>
+						Rep
+						<a href="/office/pr/summaryall/rep/asc"><img src="/images/icons/bullet_arrow_down.png" /></a>
+						<a href="/office/pr/summaryall/rep/desc"><img src="/images/icons/bullet_arrow_up.png" /></a>
+					</th>
+					<th>
+						Rating
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,6 +41,9 @@
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						'.$org['org_priority']."\n");
+		echo('					</td>'."\n");
+		echo('					<td>'."\n");
+		echo('						'.$org['user_firstname'].' '.$org['user_surname']."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						100%'."\n");

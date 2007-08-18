@@ -1,7 +1,7 @@
 <div class="RightToolbar">
 	<h4>Make Suggestion</h4>
 	<div class="Entry">
-		<a href="#">Wizard</a>
+		<a href="/wizard/organisation/">Wizard</a>
 	</div>
 </div>
 

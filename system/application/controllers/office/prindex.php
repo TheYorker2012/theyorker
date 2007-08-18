@@ -22,6 +22,8 @@ class Prindex extends controller
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('summary', 'Summary',
 				'/office/pr/summary');
+		$navbar->AddItem('pending', 'Pending',
+				'/office/pr/pending');
 		$navbar->AddItem('unnassigned', 'Unnassigned',
 				'/office/pr/unnassigned');
 		$navbar->AddItem('suggestions', 'Suggestions',
@@ -38,35 +40,18 @@ class Prindex extends controller
 		));
 		$this->main_frame->load();
 	}
-
-	function summary($type = NULL, $id = NULL)
+	
+	function summary()
 	{
-		// Not accessed through /office/pr/org/$organisation, not organisation
-		// specific so needs to be office permissions.
 		if (!CheckPermissions('office')) return;
-
+		
+		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		
-		if ($type == NULL)
-		{
-			self::_SummaryOfficer();
-		}
-		else if ($type == 'rep')
-		{
-			self::_SummaryRep($id);
-		}
-		else if ($type == 'org')
-		{
-			self::_SummaryOrganisation($id);
-		}
-	}
-	
-	function _SummaryOfficer()
-	{
-		//navbar and page codes
-		$this->main_frame->SetPage('summary');
 		$this->pages_model->SetPageCode('office_pr_summary_officer');
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
 
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
@@ -77,6 +62,9 @@ class Prindex extends controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
+		//get rep list
+		$data['reps'] = $this->pr_model->GetRepList();
+		
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary_officer', $data);
 		$this->main_frame->SetContent($the_view);
@@ -85,20 +73,69 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 	
-	function _SummaryRep($id)
+	function summaryall($sort = 'org', $asc_desc = 'asc')
 	{
-		//navbar and page codes
-		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_rep');
+		if (!CheckPermissions('office')) return;
 		
+		//setup navbar and set page code
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary_all');
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
-		$data['parameters']['type'] = 'rep';
-		$data['parameters']['name'] = $id;
+		$data['parameters']['type'] = 'all';
+		$data['parameters']['sort'] = $sort;
+		$data['parameters']['asc_desc'] = $asc_desc;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get assigned organisation list
+		$data['orgs'] = $this->pr_model->GetAssignedOrganisationList($sort, $asc_desc);
+		
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/summary_all', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+	
+	function summaryrep($id)
+	{
+		if (!CheckPermissions('office')) return;
+		
+		//setup navbar and set page code
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('summary');
+		$this->pages_model->SetPageCode('office_pr_summary_rep');
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+		
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['type'] = 'rep';
+		$data['parameters']['id'] = $id;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get organisation list for the rep
+		$data['orgs'] = $this->pr_model->GetRepOrganisationList($id);
+		
+		//if there are no orgs for this rep
+		if (count($data['orgs']) == 0)
+		{
+			$this->main_frame->AddMessage('error','The user id specified is not that of a rep.');
+			redirect('/office/pr/summary/all/org/asc');
+		}
 	
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary_rep', $data);
@@ -108,19 +145,68 @@ class Prindex extends controller
 		$this->main_frame->load();
 	}
 	
-	function _SummaryOrganisation($id)
+	function summaryorg($dir_entry_name)
 	{
-		//navbar and page codes
+		if (!CheckPermissions('office')) return;
+		
+		//setup navbar and set page code
+		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
 		$this->pages_model->SetPageCode('office_pr_summary_org');
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+		$this->load->model('review_model','review_model');
 		
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
 		$data['parameters']['type'] = 'rep';
-		$data['parameters']['name'] = $id;
+		$data['parameters']['dir_entry_name'] = $dir_entry_name;
+		
+		//get organisation ratings
+		$data['org'] = $this->pr_model->GetOrganisationRatings($dir_entry_name);
+		
+		if ($data['org'] == FALSE)
+		{
+			$this->main_frame->AddMessage('error','The organisation specified is not assigned to a rep.');
+			redirect('/office/pr/summary/all/org/asc');
+		}
+		
+		
+		$data['context_contents'] = $this->review_model->GetReviewContextContents($dir_entry_name, 'food');
 	
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary_org', $data);
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->load();
+	}
+
+	function pending()
+	{
+		// Not accessed through /office/pr/org/$organisation, not organisation
+		// specific so needs to be office permissions.
+		if (!CheckPermissions('office')) return;
+		
+		//load the required models
+		$this->load->model('pr_model','pr_model');
+		$this->load->model('writers_model','writers_model');
+
+		//setup navbar and set page code
+		$this->_SetupNavbar();
+		$this->main_frame->SetPage('pending');
+		$this->pages_model->SetPageCode('office_pr_pending');
+		
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get all currently pending organisations
+		$data['pending_orgs'] = $this->pr_model->GetPendingOrganisations();
+
+		// Set up the public frame
+		$the_view = $this->frames->view('office/pr/pending', $data);
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view (which will load the content view)
@@ -147,16 +233,10 @@ class Prindex extends controller
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
 		//get all currently unassigned organisations
-		$data['unassigned_orgs'] = $this->pr_model->GetUnassignedOrganisations();
-		
-		//get all currently pending organisations
-		$data['pending_orgs'] = $this->pr_model->GetPendingOrganisations();		
+		$data['unassigned_orgs'] = $this->pr_model->GetUnassignedOrganisations();	
 		
 		//get all reps who have asked to be rep for the unassigned organisations
 		$data['reps'] = $this->pr_model->GetUnassignedOrganisationsReps();
-		
-		//get the list of office users
-		$data['office_users'] = $this->writers_model->GetUsersWithOfficeAccess();
 
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/unnassigned', $data);
@@ -224,6 +304,10 @@ class Prindex extends controller
 		//get the organisation specified
 		$data = $this->organisations->_GetOrgData($shortname);
 		$data['status'] = $this->pr_model->GetOrganisationStatus($shortname);
+		
+		//if the organisation is a suggestion, get the suggestee data
+		if ($data['status'] == 'suggestion')
+			$data['suggestor'] = $this->pr_model->GetSuggestedOrganisationInformation($shortname);
 		
 		//if the organisation is unassigned, get the list of reps who have requested it
 		if ($data['status'] == 'unassigned')
@@ -338,6 +422,21 @@ class Prindex extends controller
 		{
 			$this->pr_model->WithdrawRepFromPendingOrganisation($_POST['r_direntryname'], $_POST['r_userid']);
 			$this->main_frame->AddMessage('success','You have rejected the editors request to look after this organisation.');
+			redirect($_POST['r_redirecturl']);
+		}
+		//set a new priority for the organsiation
+		if (isset($_POST['r_submit_priority']))
+		{
+			$this->pr_model->SetOrganisationPriority($_POST['r_direntryname'], $_POST['a_priority']);
+			$this->main_frame->AddMessage('success','You have updated this organisations priority.');
+			redirect($_POST['r_redirecturl']);
+		}
+		
+		/* TESTING, REMOVE ME */
+		if (isset($_POST['r_submit_testing_assign']))
+		{
+			$this->pr_model->RequestRepToUnassignedOrganisation($_POST['r_direntryname'], $_POST['a_assign_to']);
+			$this->main_frame->AddMessage('success','You have done evil testing.');
 			redirect($_POST['r_redirecturl']);
 		}
 	}
