@@ -175,7 +175,7 @@ class Pages_model extends Model
 		
 		// get the matching properties
 		$Regex = '/\.([^\.\[]*)|\[([^\]]*)\]|()]/';
-		$properties = $this->MatchRawProperties($PageCode, $Name, $Regex);
+		$properties = $this->MatchRawProperties($PageCode, (NULL !== $Name) ? $Name : '', $Regex, (NULL !== $Name) ? '' : '.');
 		// convert into array format
 		$result = array();
 		foreach ($properties as $label => $property) {
@@ -185,9 +185,8 @@ class Pages_model extends Model
 			$indicies = array();
 			foreach ($verbose_match as $minor_match) {
 				foreach ($minor_match as $k => $atom_match) {
-					if ($atom_match !== '') {
+					if ('' !== $atom_match) {
 						$indicies[$k] = $atom_match;
-						break;
 					}
 				}
 			}
@@ -324,7 +323,7 @@ class Pages_model extends Model
 		}
 	}
 	
-	function MatchRawProperties($PageCode, $Prefix, $Regex)
+	function MatchRawProperties($PageCode, $Prefix, $Regex, $ForcePrefix = '')
 	{
 		// Higher level function, doesn't care about what extra gets fetched
 		
@@ -349,7 +348,7 @@ class Pages_model extends Model
 			$results = array();
 			foreach ($this->mProperties[$PageCode] as $label => $properties) {
 				if (substr($label,0,strlen($Prefix)) == $Prefix &&
-					preg_match_all($Regex, substr($label,strlen($Prefix)), $matches))
+					preg_match_all($Regex, $ForcePrefix.substr($label,strlen($Prefix)), $matches))
 				{
 					$results[$label] = array($properties, $matches);
 				}
