@@ -1,118 +1,69 @@
 <div class="RightToolbar">
 	<h4>Make Suggestion</h4>
 	<div class="Entry">
-		<a href="#">Wizard</a>
-	</div>
-</div>
-<?php
-	if ($user['officetype'] == 'Admin' ||
-		$user['access'] == 'High')
-	{
-?>
-<div class="grey_box">
-	<h2>Unnassigned</h2>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>PR Rep(s)</th>
-					<th>Assign To</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><input type="checkbox"><a href="#">Tesco (Heslington)</a></td>
-					<td>Lance Taylor</td>
-					<td><select><option>Martina Goodall</option><option>Alexandra Fargus</option></select></td>
-				</tr>
-				<tr class="tr2">
-					<td><input type="checkbox"><a href="#">Bing Bong Bowling</a></td>
-					<td>Susan Parker<br />Rachael Rout</td>
-					<td><select><option>Martina Goodall</option><option>Alexandra Fargus</option></select></td>
-				</tr>
-				<tr class="tr1">
-					<td colspan="3">
-						<input type="submit" value="Assign">
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-<?php
-	}
-?>
-<?php
-	if ($user['officetype'] == 'Low')
-	{
-?>
-<div class="blue_box">
-	<h2>Unnassigned</h2>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>PR Rep(s)</th>
-					<th>Options</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><a href="#">Tesco (Heslington)</a></td>
-					<td>Lance Taylor</td>
-					<td><input type="submit" value="Request"></td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="#">Bing Bong Bowling</a></td>
-					<td>Susan Parker<br />Rachael Rout</td>
-					<td><input type="submit" value="Withdraw"></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-<?php
-	}
-?>
-<div class="grey_box">
-	<h2>Pending</h2>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>PR Rep</th>
-					<th>Options</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="tr1">
-					<td><a href="#">Ice Factory</a></td>
-					<td>Alexandra Fargus</td>
-					<td><input type="submit" value="Accept"><input type="submit" value="Reject"></td>
-				</tr>
-				<tr class="tr2">
-					<td><a href="#">Sports Bar</a></td>
-					<td>Knifeman Spurden</td>
-					<td></td>
-				</tr>
-			</tbody>
-		</table>
+		<a href="/wizard/organisation/">Wizard</a>
 	</div>
 </div>
 
+<div class="blue_box">
+	<h2>unnassigned</h2>
+	<p>
+		This table contains a list of all organisations which have been accepted but do not have a rep assigned to them. Click an organisation name for more information and options to become its rep.
+	</p>
+	<div id="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>PR Rep(s)</th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
+	$alternate = 1;
+	$while_reps = 0;
+	foreach($unassigned_orgs as $org)
+	{
+		echo('				<tr class="tr'.$alternate.'">'."\n");
+		echo('					<td>'."\n");
+		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
+		echo('					</td>'."\n");
+		echo('					<td>'."\n");
+		//make sure it stays within the array then if parent id matches current org id
+		$no_reps = TRUE;
+		while (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
+		{
+			echo('						'.$reps[$while_reps]['user_firstname'].' '.$reps[$while_reps]['user_surname']);
+			$while_reps++;
+			if (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
+			{
+				echo(','."\n");
+				echo('						<br />'."\n");
+			}
+			else
+				echo("\n");
+			$no_reps = FALSE;
+		}
+		if ($no_reps)
+		{
+			echo('						None'."\n");
+		}
+		echo('					</td>'."\n");
+		echo('				</tr>'."\n");
+		$alternate == 1 ? $alternate = 2 : $alternate = 1;
+	}
+?>
+			</tbody>
+		</table>
+	</div>
+</div>
 
 <pre>
 <?php
-
 /*
-echo '<br />';
-echo print_r($content_types);
-echo '<br />';
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
 */
-
-
 ?>
 </pre>

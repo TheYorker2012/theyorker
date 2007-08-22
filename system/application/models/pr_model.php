@@ -105,22 +105,52 @@ class Pr_model extends Model {
 
 	}
 	
-	function GetSuggestedOrganistions()
+	// gets a list of all organisations which are suggestions for the directory
+	function GetSuggestedOrganisations()
 	{
-		$sql = 'SELECT	organisation_entity_id,
-						organisation_name,
-						organisation_directory_entry_name,
-						organisation_content_last_author_user_entity_id,
-						organisation_content_last_author_timestamp,
-						user_firstname,
-						user_surname
+		$sql = 'SELECT	organisations.organisation_entity_id,
+						organisations.organisation_name,
+						organisations.organisation_directory_entry_name,
+						organisations.organisation_suggesters_name,
+						organisations.organisation_timestamp
 				FROM	organisations
-				LEFT JOIN organisation_contents
-				ON		organisation_live_content_id = organisation_content_id
-				INNER JOIN users
-				ON		organisation_content_last_author_user_entity_id = user_entity_id
-				WHERE	organisation_needs_approval = 1
-				AND		organisation_pr_rep IS NULL
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_type_directory = 1
+				WHERE	organisations.organisation_needs_approval = 1
+				AND		organisations.organisation_pr_rep = 0
+				AND		organisations.organisation_deleted = 0
+				ORDER BY organisations.organisation_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->organisation_entity_id;
+				$result_item['org_name'] = $row->organisation_name;
+				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
+				$result_item['user_name'] = $row->organisation_suggesters_name;
+				$result_item['suggested_time'] = $row->organisation_timestamp;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	// gets a list of all organisations which are accepted suggestions for the directory, but are in the unassigned state
+	function GetUnassignedOrganisations()
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id,
+						organisations.organisation_name,
+						organisations.organisation_directory_entry_name
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_types.organisation_type_directory = 1
+				WHERE	organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 0
+				AND		organisations.organisation_deleted = 0
 				ORDER BY organisation_name ASC';
 		$query = $this->db->query($sql);
 		$result = array();
@@ -131,14 +161,694 @@ class Pr_model extends Model {
 				$result_item['org_id'] = $row->organisation_entity_id;
 				$result_item['org_name'] = $row->organisation_name;
 				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
-				$result_item['user_id'] = $row->organisation_content_last_author_user_entity_id;
-				$result_item['user_firstname'] = $row->user_firstname;
-				$result_item['user_surname'] = $row->user_surname;
-				$result_item['suggested_time'] = $row->organisation_content_last_author_timestamp;
 				$result[] = $result_item;
 			}
 		}
 		return $result;
+	}
+	
+	// returns a list, in the same order as GetUnassignedOrganistions(), of all reps which have asked to look after the organisation
+	function GetUnassignedOrganisationsReps()
+	{
+		$sql = 'SELECT	subscriptions.subscription_organisation_entity_id,
+						organisations.organisation_directory_entry_name,
+						subscriptions.subscription_user_entity_id,
+						users.user_firstname,
+						users.user_surname
+				FROM	subscriptions
+				INNER JOIN organisations
+				ON		organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_type_directory = 1
+				INNER JOIN users
+				ON		subscriptions.subscription_user_entity_id = users.user_entity_id
+				WHERE	subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "suggestion"
+				AND		organisations.organisation_deleted = 0
+				ORDER BY organisation_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->subscription_organisation_entity_id;
+				$result_item['org_dir_name'] = $row->organisation_directory_entry_name;
+				$result_item['user_id'] = $row->subscription_user_entity_id;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	// returns a list of all reps which have asked to look after the organisation specified
+	function GetOrganisationReps($shortname)
+	{
+		$sql = 'SELECT	subscriptions.subscription_user_entity_id,
+						users.user_firstname,
+						users.user_surname
+				FROM	subscriptions
+				INNER JOIN organisations
+				ON		organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
+				AND		organisations.organisation_deleted = 0
+				AND		organisation_directory_entry_name = ?
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_types.organisation_type_directory = 1
+				INNER JOIN users
+				ON		subscriptions.subscription_user_entity_id = users.user_entity_id
+				WHERE	subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "suggestion"
+				ORDER BY users.user_firstname ASC, users.user_surname ASC';
+		$query = $this->db->query($sql, array($shortname));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['user_id'] = $row->subscription_user_entity_id;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	// gets a list of all organisations which are accepted suggestions for the directory, but are in the pending state
+	function GetPendingOrganisations()
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id,
+						organisations.organisation_name,
+						organisations.organisation_directory_entry_name,
+						subscriptions.subscription_user_entity_id,
+						users.user_firstname,
+						users.user_surname
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_type_directory = 1
+				INNER JOIN subscriptions
+				ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+				AND		subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "choosing"
+				AND		subscriptions.subscription_deleted = 0
+				INNER JOIN users
+				ON		users.user_entity_id = subscriptions.subscription_user_entity_id
+				WHERE	organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 1
+				AND		organisations.organisation_deleted = 0
+				ORDER BY organisation_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->organisation_entity_id;
+				$result_item['org_name'] = $row->organisation_name;
+				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
+				$result_item['user_id'] = $row->subscription_user_entity_id;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	//returns the status of an organisation in the pr system
+	//can be: suggestion, unassigned, pending and assigned
+	function GetOrganisationStatus($shortname)
+	{
+		$sql = 'SELECT	organisations.organisation_pr_rep,
+						organisations.organisation_needs_approval,
+						organisations.organisation_entity_id
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_type_directory = 1
+				WHERE	organisations.organisation_directory_entry_name = ?';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			if ($row1->organisation_needs_approval == 1)
+				return 'suggestion';
+			else
+			{
+				if ($row1->organisation_pr_rep == 0)
+					return 'unassigned';
+				else
+				{
+					$sql = 'SELECT	subscriptions.subscription_pr_rep_chosen
+							FROM	organisations
+							INNER JOIN subscriptions
+							ON		subscriptions.subscription_organisation_entity_id = ?
+							AND		subscriptions.subscription_deleted = 0
+							AND		subscriptions.subscription_pr_rep = 1
+							WHERE	organisations.organisation_entity_id = ?';
+					$query2 = $this->db->query($sql,array($row1->organisation_entity_id, $row1->organisation_entity_id));
+					$row2 = $query2->row();
+					if ($query2->num_rows() == 1)
+					{
+						if ($row2->subscription_pr_rep_chosen == 'choosing')
+							return 'pending';
+						else if ($row2->subscription_pr_rep_chosen == 'chosen')
+							return 'assigned';
+						else
+							return FALSE;
+					}
+					else
+						return FALSE;
+				}
+			}
+		}
+		else
+			return FALSE;
+	}
+	
+	//assumes organisation is in pending status
+	function GetPendingOrganisationRep($shortname)
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			$sql = 'SELECT	subscriptions.subscription_user_entity_id,
+							users.user_firstname,
+							users.user_surname
+					FROM	subscriptions
+					INNER JOIN users
+					ON		users.user_entity_id = subscriptions.subscription_user_entity_id
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_deleted = 0
+					AND		subscriptions.subscription_pr_rep_chosen = "choosing"
+					AND		subscriptions.subscription_pr_rep = 1';
+			$query2 = $this->db->query($sql,array($row1->organisation_entity_id));
+			$row2 = $query2->row();
+			if ($query2->num_rows() == 1)
+			{
+				$result['user_id'] = $row2->subscription_user_entity_id;
+				$result['user_firstname'] = $row2->user_firstname;
+				$result['user_surname'] = $row2->user_surname;
+				return $result;
+			}
+			else
+				return FALSE;
+		}
+		else
+			return FALSE;
+	}
+	
+	function GetSuggestedOrganisationInformation($shortname)
+	{
+		$sql = 'SELECT	organisations.organisation_suggesters_name,
+						organisations.organisation_suggesters_position,
+						organisations.organisation_suggesters_email,
+						organisations.organisation_suggesters_notes
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query = $this->db->query($sql,array($shortname));
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+		{
+			$result['name'] = $row->organisation_suggesters_name;
+			$result['position'] = $row->organisation_suggesters_position;
+			$result['email'] = $row->organisation_suggesters_email;
+			$result['notes'] = $row->organisation_suggesters_notes;
+			return $result;
+		}
+	}
+	
+	function GetAssignedOrganisationList($sort, $asc_desc)
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id,
+						organisations.organisation_name,
+						organisations.organisation_directory_entry_name,
+						users.user_firstname,
+						users.user_surname,
+						organisations.organisation_priority
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_types.organisation_type_directory = 1
+				INNER JOIN subscriptions
+				ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+				AND		subscriptions.subscription_deleted = 0
+				AND		subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "chosen"
+				INNER JOIN users
+				ON		subscriptions.subscription_user_entity_id = users.user_entity_id
+				WHERE	organisations.organisation_deleted = 0
+				AND		organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 1';
+		if ($sort == 'org')
+			$sql = $sql.' ORDER BY organisations.organisation_name '.$asc_desc;
+		else if ($sort == 'rep')
+			$sql = $sql.' ORDER BY users.user_firstname '.$asc_desc.', users.user_surname '.$asc_desc.', organisations.organisation_name ASC';
+		if ($sort == 'pri')
+			$sql = $sql.' ORDER BY organisations.organisation_priority '.$asc_desc.', organisations.organisation_name ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->organisation_entity_id;
+				$result_item['org_name'] = $row->organisation_name;
+				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
+				$result_item['org_priority'] = $row->organisation_priority;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	//gets a list of all office members with at least one assigned organisation
+	function GetRepList()
+	{
+		$sql = 'SELECT	DISTINCT subscriptions.subscription_user_entity_id,
+						users.user_firstname,
+						users.user_surname
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_type_directory = 1
+				INNER JOIN subscriptions
+				ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+				AND		subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "chosen"
+				AND		subscriptions.subscription_deleted = 0
+				INNER JOIN users
+				ON		users.user_entity_id = subscriptions.subscription_user_entity_id
+				WHERE	organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 1
+				AND		organisations.organisation_deleted = 0
+				ORDER BY users.user_firstname ASC, users.user_surname ASC';
+		$query = $this->db->query($sql);
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['user_id'] = $row->subscription_user_entity_id;
+				$result_item['user_firstname'] = $row->user_firstname;
+				$result_item['user_surname'] = $row->user_surname;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	//get the list of organisations assigned to the given rep
+	function GetRepOrganisationList($user_id)
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id,
+						organisations.organisation_name,
+						organisations.organisation_directory_entry_name,
+						organisations.organisation_priority
+				FROM	organisations
+				INNER JOIN organisation_types
+				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+				AND		organisation_types.organisation_type_directory = 1
+				INNER JOIN subscriptions
+				ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+				AND		subscriptions.subscription_deleted = 0
+				AND		subscriptions.subscription_pr_rep = 1
+				AND		subscriptions.subscription_pr_rep_chosen = "chosen"
+				AND		subscriptions.subscription_user_entity_id = ?
+				WHERE	organisations.organisation_deleted = 0
+				AND		organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 1
+				ORDER BY organisations.organisation_priority ASC, organisations.organisation_name ASC';
+		$query = $this->db->query($sql,array($user_id));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['org_id'] = $row->organisation_entity_id;
+				$result_item['org_name'] = $row->organisation_name;
+				$result_item['org_dir_entry_name'] = $row->organisation_directory_entry_name;
+				$result_item['org_priority'] = $row->organisation_priority;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
+	
+	function GetOrganisationRatings($shortname)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			//get general org and rep data
+			$sql = 'SELECT	organisations.organisation_name,
+							organisations.organisation_directory_entry_name,
+							organisations.organisation_priority,
+							subscriptions.subscription_user_entity_id,
+							users.user_firstname,
+							users.user_surname
+					FROM	organisations
+					INNER JOIN organisation_types
+					ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
+					AND		organisation_types.organisation_type_directory = 1
+					INNER JOIN subscriptions
+					ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
+					AND		subscriptions.subscription_deleted = 0
+					AND		subscriptions.subscription_pr_rep = 1
+					AND		subscriptions.subscription_pr_rep_chosen = "chosen"
+					INNER JOIN users
+					ON		subscriptions.subscription_user_entity_id = users.user_entity_id
+					WHERE	organisations.organisation_deleted = 0
+					AND		organisations.organisation_needs_approval = 0
+					AND		organisations.organisation_pr_rep = 1
+					AND		organisations.organisation_directory_entry_name = ?';
+			$query2 = $this->db->query($sql,array($shortname, $shortname));
+			$row2 = $query2->row();
+			if ($query2->num_rows() == 1)
+			{
+				$result['org']['id'] = $row1->organisation_entity_id;
+				$result['org']['name'] = $row2->organisation_name;
+				$result['org']['dir_entry_name'] = $row2->organisation_directory_entry_name;
+				$result['org']['priority'] = $row2->organisation_priority;
+				$result['user']['id'] = $row2->subscription_user_entity_id;
+				$result['user']['firstname'] = $row2->user_firstname;
+				$result['user']['surname'] = $row2->user_surname;
+			}
+			
+			/* GET INFORMATION DATA */
+				
+			/* GET TAG DATA */
+			
+			//and the tag groups for the organisations context types
+			//NOTE: not limited to food and drink
+			$sql = 'SELECT	tag_groups.tag_group_id,
+							tag_groups.tag_group_name,
+							content_types.content_type_codename,
+							content_types.content_type_name
+					FROM	tag_groups
+					INNER JOIN content_types
+					ON		content_types.content_type_id = tag_groups.tag_group_content_type_id
+					INNER JOIN review_contexts
+					ON		review_contexts.review_context_organisation_entity_id = ?
+					AND		review_contexts.review_context_deleted = 0
+					AND		review_contexts.review_context_content_type_id = content_types.content_type_id
+					ORDER BY content_types.content_type_codename ASC, tag_groups.tag_group_name ASC';
+			$query3 = $this->db->query($sql,array($row1->organisation_entity_id));
+			if ($query3->num_rows() > 0)
+			{
+				foreach ($query3->result() as $row3)
+				{
+					//get the number of tags in the tag group
+					$sql = 'SELECT	count(organisation_tags.organisation_tag_tag_id) as tag_count
+							FROM	organisation_tags
+							INNER JOIN tags
+							ON		organisation_tags.organisation_tag_tag_id = tags.tag_id
+							INNER JOIN tag_groups
+							ON		tag_groups.tag_group_id = tags.tag_tag_group_id
+							WHERE	organisation_tags.organisation_tag_organisation_entity_id = ?
+							AND		tag_groups.tag_group_id = ?';
+					$query4 = $this->db->query($sql,array($row1->organisation_entity_id, $row3->tag_group_id));
+					$row4 = $query4->row();
+					$result_item['type_codename'] = $row3->content_type_codename;
+					$result_item['type_name'] = $row3->content_type_name;
+					$result_item['group_name'] = $row3->tag_group_name;
+					$result_item['tag_count'] = $row4->tag_count;
+					$result['tags'][] = $result_item;
+				}
+			}
+			
+			return $result;
+		}
+		else
+			return FALSE;
+	}
+	
+	//this deletes the organisation and its contents with the given shortname
+	function SetOrganisationDeleted($shortname)
+	{
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql,array($shortname));
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+		{
+			$sql = 'UPDATE	organisations
+					SET		organisation_deleted = 1
+					WHERE	organisations.organisation_entity_id = ?';
+			$this->db->query($sql,array($row->organisation_entity_id));
+			$sql = 'UPDATE	organisation_contents
+					SET		organisation_content_deleted = 1
+					WHERE	organisation_contents.organisation_content_organisation_entity_id = ?';
+			$this->db->query($sql,array($row->organisation_entity_id));
+			return TRUE;
+		}
+		else
+			return FALSE;
+	}
+	
+	function SetOrganisationUnassigned($shortname)
+	{
+		$sql = 'UPDATE	organisations
+				SET		organisations.organisation_needs_approval = 0,
+						organisations.organisation_pr_rep = 0
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query = $this->db->query($sql,array($shortname));
+	}
+	
+	//NOTE: must also make sure there is only one non deleted rep subscription to this org with "choosing" rep state
+	function SetOrganisationPending($shortname, $user_id)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			//update the organisation to pending status
+			$sql = 'UPDATE	organisations
+					SET		organisations.organisation_needs_approval = 0,
+							organisations.organisation_pr_rep = 1
+					WHERE	organisations.organisation_directory_entry_name = ?
+					AND		organisation_deleted = 0';
+			$this->db->query($sql,array($shortname));
+			//set pr_rep = false for all org subscriptions that are not $user_id
+			$sql = 'UPDATE	subscriptions
+					SET		subscriptions.subscription_pr_rep = 0,
+							subscriptions.subscription_pr_rep_chosen = "suggestion"
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id != ?
+					AND		subscriptions.subscription_deleted = 0';
+			$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			//does a subscription exist for user id / org id?
+			$sql = 'SELECT	subscriptions.subscription_user_entity_id
+					FROM	subscriptions
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id = ?';
+			$query2 = $this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			if ($query2->num_rows() == 1)
+			{
+				//if yes, set pr_rep = 1 and pr_chosen to "choosing"
+				$sql = 'UPDATE	subscriptions
+						SET		subscriptions.subscription_pr_rep = 1,
+								subscriptions.subscription_pr_rep_chosen = "choosing"
+						WHERE	subscriptions.subscription_organisation_entity_id = ?
+						AND		subscriptions.subscription_user_entity_id = ?
+						AND		subscriptions.subscription_deleted = 0';
+				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			}
+			else
+			{
+				//if no, create a new subscription with pr_rep = 1 and pr_chosen to "choosing"
+				$sql = 'INSERT INTO subscriptions(
+									subscription_organisation_entity_id,
+									subscription_user_entity_id,
+									subscription_calendar,
+									subscription_todo,
+									subscription_pr_rep,
+									subscription_pr_rep_chosen)
+						VALUES (?,?,0,0,1,"choosing")';
+				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			}
+		}
+		else
+			return FALSE;
+	}
+	
+	//@pre assumes organisation is in pending state
+	//@post organisation is in assigned state
+	function SetOrganisationAssigned($shortname, $user_id)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			//if there is a subscription unset the pr rep flag
+			$sql = 'UPDATE	subscriptions
+					SET		subscriptions.subscription_pr_rep_chosen = "chosen"
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id = ?
+					AND		subscriptions.subscription_deleted = 0';
+			$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			return TRUE;
+		}
+		else
+			return FALSE;
+	}
+	
+	function SetOrganisationPriority($shortname, $priority)
+	{
+		$sql = 'UPDATE	organisations
+				SET		organisations.organisation_priority = ?
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$this->db->query($sql,array($priority, $shortname));
+	}
+	
+	function RequestRepToUnassignedOrganisation($shortname, $user_id)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			//does a subscription exist for user id / org id?
+			$sql = 'SELECT	subscriptions.subscription_user_entity_id
+					FROM	subscriptions
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id = ?
+					AND		subscriptions.subscription_deleted = 0';
+			$query2 = $this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			if ($query2->num_rows() == 1)
+			{
+				//if yes, set pr_rep = 1 and pr_chosen to "suggestion"
+				$sql = 'UPDATE	subscriptions
+						SET		subscriptions.subscription_pr_rep = 1,
+								subscriptions.subscription_pr_rep_chosen = "suggestion"
+						WHERE	subscriptions.subscription_organisation_entity_id = ?
+						AND		subscriptions.subscription_user_entity_id = ?
+						AND		subscriptions.subscription_deleted = 0';
+				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			}
+			else
+			{
+				//if no, create a new subscription with pr_rep = 1 and pr_chosen to "suggestion"
+				$sql = 'INSERT INTO subscriptions(
+									subscription_organisation_entity_id,
+									subscription_user_entity_id,
+									subscription_calendar,
+									subscription_todo,
+									subscription_pr_rep,
+									subscription_pr_rep_chosen)
+						VALUES (?,?,0,0,1,"suggestion")';
+				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			}
+		}
+		else
+			return FALSE;
+	}
+	
+	function WithdrawRepFromUnassignedOrganisation($shortname, $user_id)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisation_deleted = 0';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1)
+		{
+			//does a subscription exist for user id / org id?
+			$sql = 'SELECT	subscriptions.subscription_user_entity_id
+					FROM	subscriptions
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id = ?
+					AND		subscriptions.subscription_deleted = 0';
+			$query2 = $this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			if ($query2->num_rows() == 1)
+			{
+				//if there is a subscription unset the pr rep flag
+				$sql = 'UPDATE	subscriptions
+						SET		subscriptions.subscription_pr_rep = 0,
+								subscriptions.subscription_pr_rep_chosen = "suggestion"
+						WHERE	subscriptions.subscription_organisation_entity_id = ?
+						AND		subscriptions.subscription_user_entity_id = ?
+						AND		subscriptions.subscription_deleted = 0';
+				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+				return TRUE;
+			}
+			else //else there is nothing to withdraw
+				return FALSE;
+		}
+		else
+			return FALSE;
+	}
+	
+	function WithdrawRepFromPendingOrganisation($shortname, $user_id)
+	{
+		//find the pending org 
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisation_deleted = 0
+				AND		organisations.organisation_needs_approval = 0
+				AND		organisations.organisation_pr_rep = 1';
+		$query1 = $this->db->query($sql,array($shortname));
+		$row1 = $query1->row();
+		if ($query1->num_rows() == 1) //if it exists
+		{
+			//unset the pr rep flag of the pending subscription rep
+			$sql = 'UPDATE	subscriptions
+					SET		subscriptions.subscription_pr_rep = 0,
+							subscriptions.subscription_pr_rep_chosen = "suggestion"
+					WHERE	subscriptions.subscription_organisation_entity_id = ?
+					AND		subscriptions.subscription_user_entity_id = ?
+					AND		subscriptions.subscription_deleted = 0';
+			$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
+			//set the organisation back to unassigned
+			$sql = 'UPDATE	organisations
+					SET		organisations.organisation_needs_approval = 0,
+							organisations.organisation_pr_rep = 0
+					WHERE	organisations.organisation_directory_entry_name = ?
+					AND		organisations.organisation_deleted = 0';
+			$this->db->query($sql,array($shortname));
+			return TRUE;
+		}
+		else
+			return FALSE;
 	}
 }
 

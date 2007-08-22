@@ -170,6 +170,7 @@ class Pages extends Controller
 			}
 			$input['description'] = $this->input->post('description', FALSE);
 			$input['keywords']    = $this->input->post('keywords',    FALSE);
+			$input['type_id']     = $this->input->post('type_id',     FALSE);
 			$save_failed = FALSE;
 			
 			// Validate and check permissions
@@ -192,8 +193,15 @@ class Pages extends Controller
 				$Data['description'] = $input['description'];
 			if (FALSE !== $input['keywords'])
 				$Data['keywords'] = $input['keywords'];
-			if (FALSE !== $input['type_id'])
-				$Data['type_id'] = $input['type_id'];
+			if (FALSE !== $input['type_id']) {
+				if (!is_numeric($input['type_id'])
+						|| !array_key_exists((int)$input['type_id'], $Data['page_types'])) {
+					$this->messages->AddMessage('warning','The specified page type does not exist the new page will be normal.');
+					unset($input['type_id']);
+				} else {
+					$Data['type_id'] = $input['type_id'] = (int)$input['type_id'];
+				}
+			}
 				
 			// If don't separate titles, ignore body title
 			if (!$input['title_separate']) {

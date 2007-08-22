@@ -3,32 +3,32 @@
 	<div class="Entry">
 		<a href="/wizard/organisation/">Wizard</a>
 	</div>
-	<div class="Entry">
-		<a href="/office/pr/summaryall/">All Organisations</a>
-	</div>
 </div>
 
 <div class="blue_box">
-	<h2>officer summary</h2>
+	<h2>pending</h2>
+	<p>
+		This table contains a list of all organisations which have been accepted and are waiting for the editor rep request to be accepted. Click an organisation name for more information and to accept if necessary.
+	</p>
 	<div id="ArticleBox">
 		<table>
 			<thead>
 				<tr>
+					<th>Name</th>
 					<th>PR Rep</th>
-					<th>Rating</th>
 				</tr>
 			</thead>
 			<tbody>
 <?php
 	$alternate = 1;
-	foreach($reps as $rep)
+	foreach($pending_orgs as $org)
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/summaryrep/'.$rep['user_id'].'">'.$rep['user_firstname'].' '.$rep['user_surname'].'</a>'."\n");
+		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
-		echo('						10%'."\n");
+		echo('						'.$org['user_firstname'].' '.$org['user_surname']."\n");
 		echo('					</td>'."\n");
 		echo('				</tr>'."\n");
 		$alternate == 1 ? $alternate = 2 : $alternate = 1;
@@ -39,10 +39,13 @@
 	</div>
 </div>
 
-<?php
 
+<pre>
+<?php
+/*
 echo('<div class="BlueBox"><pre>');
 print_r($data);
 echo('</pre></div>');
-
+*/
 ?>
+</pre>
