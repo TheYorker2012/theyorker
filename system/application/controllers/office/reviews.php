@@ -360,21 +360,20 @@ class Reviews extends Controller
 			$data['user_is_editor'] = $editor_level;
 
 			// Get context contents from model
-			$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
-			if (isset($context_contents[0]))
-				$data = array_merge($data, $context_contents[0]);
-			else
+			$data['main_revision'] = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
+			if ($data['main_revision'] == FALSE)
 			{
 				//Error is not needed, as the blanks make it obvious that no review context exists. Nse500
 				//$this->messages->AddMessage('error', 'Review context '.$revision_id.' does not exist');
-				$data['content_blurb'] = '';
-				$data['content_quote'] = '';
-				$data['average_price'] = '';
-				$data['recommended_item'] = '';
-				$data['content_rating'] = 5;
-				$data['serving_times'] = '';
-				$data['deal'] = '';
-				$data['deal_expires'] = '';
+				$data['main_revision']['content_id'] = 0;
+				$data['main_revision']['content_blurb'] = '';
+				$data['main_revision']['content_quote'] = '';
+				$data['main_revision']['average_price'] = '';
+				$data['main_revision']['recommended_item'] = '';
+				$data['main_revision']['content_rating'] = 5;
+				$data['main_revision']['serving_times'] = '';
+				$data['main_revision']['deal'] = '';
+				$data['main_revision']['deal_expires'] = '';
 			}
 			//$this->messages->AddDumpMessage('data',$data);
 

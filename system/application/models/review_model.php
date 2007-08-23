@@ -171,17 +171,17 @@ class Review_model extends Model {
 		$sql =
 			'
 			SELECT
-				review_context_contents.review_context_content_id as content_id,
 				unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-				concat(users.user_firstname, " ",users.user_surname) as name,
-				review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
-				review_context_contents.review_context_content_id as context_content_id,
-				review_context_contents.review_context_content_blurb as content_blurb,
-				review_context_contents.review_context_content_quote as content_quote,
-				review_context_contents.review_context_content_average_price as average_price,
-				review_context_contents.review_context_content_recommend_item as recommended_item,
-				review_context_contents.review_context_content_rating as content_rating,
-				review_context_contents.review_context_content_serving_times as serving_times
+				users.user_firstname,
+				users.user_surname,
+				review_context_contents.review_context_content_last_author_user_entity_id,
+				review_context_contents.review_context_content_id,
+				review_context_contents.review_context_content_blurb,
+				review_context_contents.review_context_content_quote,
+				review_context_contents.review_context_content_average_price,
+				review_context_contents.review_context_content_recommend_item,
+				review_context_contents.review_context_content_rating,
+				review_context_contents.review_context_content_serving_times
 			FROM
 				review_context_contents
 			INNER JOIN 
@@ -213,39 +213,26 @@ class Review_model extends Model {
 			$sql .= '
 				AND review_context_contents.review_context_content_id = ?';
 		}
-			/*
-			FROM review_contexts
-			INNER JOIN organisations
-				ON organisations.organisation_directory_entry_name = ?
-				AND organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
-			INNER JOIN content_types
-				ON content_types.content_type_codename = ?
-				AND review_contexts.review_context_content_type_id=content_types.content_type_id
-			INNER JOIN review_context_contents
-				ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
-				AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
-			INNER JOIN users
-				ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			WHERE ';
-		if ($revision_id === FALSE)
-		{
-			$sql .= ' review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id';
-		}
-		else
-		{
-			$sql .= ' review_context_contents.review_context_content_id = ?';
-		}
-
-		if ($revision_id === -1) {
-			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
-		} elseif ($revision_id === TRUE) {
-			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC LIMIT 1';
-		}*/
-
 		
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$revision_id));
-		
-		return $query->result_array();
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+		{
+			$result['content_id'] = $row->review_context_content_id;
+			$result['timestamp'] = $row->timestamp;
+			$result['firstname'] = $row->user_firstname;
+			$result['surname'] = $row->user_surname;
+            $result['user_entity_id'] = $row->review_context_content_last_author_user_entity_id;
+            $result['content_blurb'] = $row->review_context_content_blurb;
+            $result['content_quote'] = $row->review_context_content_quote;
+            $result['average_price'] = $row->review_context_content_average_price;
+            $result['recommended_item'] = $row->review_context_content_recommend_item;
+            $result['content_rating'] = $row->review_context_content_rating;
+            $result['serving_times'] = $row->review_context_content_serving_times;
+			return $result;
+		}
+		else
+			return FALSE;
 	}
 
 
