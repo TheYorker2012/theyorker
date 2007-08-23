@@ -88,7 +88,7 @@ class UriTreeSubcontroller extends model
 		}
 		// Call a function?
 		if (array_key_exists('_call', $Structure)) {
-			call_user_func_array(array(&$this, $Structure['_call']), $segments);
+			call_user_func_array(array(&$this, $Structure['_call']), $Segments);
 			$this->mFinished = TRUE;
 			return array();
 		}

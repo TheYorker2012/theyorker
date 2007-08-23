@@ -46,7 +46,9 @@ class CalendarSourceYorker extends CalendarSource
 		if (!$CI->events_model->IsReadOnly()) {
 			$this->mCapabilities[] = 'create';
 		}
-		$this->mCapabilities[] = 'attend';
+		if (!$CI->events_model->IsVip()) {
+			$this->mCapabilities[] = 'attend';
+		}
 		
 		$this->mGroups['streams'] = FALSE;
 	}
@@ -275,6 +277,17 @@ class CalendarSourceYorker extends CalendarSource
 					}
 					if (NULL !== $row['todo_end']) {
 						$occurrence->TodoEndTime = new Academic_time($row['todo_end']);
+					}
+				}
+				if ('owner' === $event->UserStatus) {
+					// The owner can alter the occurrence.
+					// Set user permissions based on state.
+					if ('draft' === $occurrence->State) {
+						$occurrence->UserPermissions[] = 'publish';
+						$occurrence->UserPermissions[] = 'delete';
+					} elseif ('published' == $occurrence->State) {
+						$occurrence->UserPermissions[] = 'cancel';
+						$occurrence->UserPermissions[] = 'move';
 					}
 				}
 			}

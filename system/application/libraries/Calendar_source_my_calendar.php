@@ -46,6 +46,7 @@ class CalendarSourceMyCalendar extends CalendarSources
 				$visible = (bool)$source['visible'];
 			}
 			if ($visible) {
+				$source['id'] = (int)$source['id'];
 				switch ($source['protocol']) {
 					case 'yorkerdb':
 						$CI->load->library('calendar_source_yorker');

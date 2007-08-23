@@ -643,6 +643,12 @@ class Events_model extends Model
 		return $this->mReadOnly;
 	}
 
+	/// Find whether the user has permission to alter the calendar.
+	function IsVip()
+	{
+		return $this->mActiveEntityType === self::$cEntityVip;
+	}
+
 	/// Get the entity id of the active entity.
 	function GetActiveEntityId()
 	{
@@ -657,6 +663,7 @@ class Events_model extends Model
 					$this->mActiveEntityType = self::$cEntityUser;
 				} else {
 					$this->mReadOnly = !VipLevel('rep');
+					$this->mActiveEntityType = self::$cEntityVip;
 				}
 			} else {
 				// Default to an entity id with default events

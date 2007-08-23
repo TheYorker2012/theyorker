@@ -23,6 +23,13 @@ class CalendarOccurrence
 		'published',
 		'cancelled',
 	);
+	/// array[string] Valid values of @a $UserPermissions.
+	protected static $ValidPermissions = array(
+		'delete',
+		'publish',
+		'cancel',
+		'move',
+	);
 	/// array[string] Valid members of @a $SpecialTags.
 	protected static $ValidSpecialTags = array(
 		'ends_late',
@@ -77,6 +84,9 @@ class CalendarOccurrence
 	/// AcademicTime,NULL Effective end time of todo.
 	public $TodoEndTime			= NULL;
 	
+	/// array[string] User permission strings (must be member of @a $ValidPermissions).
+	public $UserPermissions		= array();
+	
 	/// Primary constructor.
 	/**
 	 * @param $OccurrenceId int ID of occurrence (unique within connection).
@@ -86,6 +96,16 @@ class CalendarOccurrence
 	{
 		$this->OccurrenceId = $OccurrenceId;
 		$this->Event = &$Event;
+	}
+	
+	/// Find whether a capability is supported for the current user.
+	/**
+	* @param $Action string Action (in @a $ValidPermissions).
+	* @return bool Whether the action is supported.
+	*/
+	function UserHasPermission($Action)
+	{
+		return in_array($Action, $this->UserPermissions);
 	}
 }
 
@@ -157,6 +177,22 @@ class CalendarEvent
 		}
 		// Add to end.
 		$this->Organisations[] = &$Organisation;
+	}
+	
+	/// Get the occurrences of this event which have a certain user permission.
+	/**
+	 * @param $Permission string Permission to require.
+	 * @return array[&CalendarOccurrence] Array of occurrences.
+	 */
+	function GetOccurrencesWithUserPermission($Permission)
+	{
+		$result = array();
+		foreach ($this->Occurrences as $key => $occurrence) {
+			if ($occurrence->UserHasPermission($Permission)) {
+				$result[] = & $this->Occurrences[$key];
+			}
+		}
+		return $result;
 	}
 }
 
@@ -817,6 +853,21 @@ class CalendarSources extends CalendarSource
 	function GetSources()
 	{
 		return $this->mSources;
+	}
+	
+	/// Find whether a capability is supported.
+	/**
+	 * @param $Capability string Capabiltity.
+	 * @return bool Whether the capability is supported.
+	 */
+	function IsSupported($Capability)
+	{
+		foreach ($this->mSources as $source) {
+			if ($source->IsSupported($Capability)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 	
 	function SetSearchPhrase($Phrase)

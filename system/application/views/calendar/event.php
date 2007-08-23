@@ -6,7 +6,7 @@
  *
  * @param $Event CalendarEvent Event information.
  * @param $Occurrence CalendarEvent,NULL Occurrence information.
- * @param $ReadOnly bool Whether the event is read only.
+ * @param $ReadOnly bool Whether the source is read only.
  * @param $Attendees array[string] Attending users.
  * @param $FailRedirect string URL fail redirect path.
  * @param $Path array[string => url] Paths to common event links. used:
@@ -59,18 +59,19 @@ $CI = & get_instance();
 				echo('<p>');
 				if ('published' !== $Occurrence->State) {
 					echo('<strong>'.$Occurrence->State.'</strong>');
-					if (!$ReadOnly && 'owned' === $Event->UserStatus) {
+					if (!$Event->ReadOnly && 'owned' === $Event->UserStatus) {
 						$links = array();
 						if ('none' !== VipMode() &&
 							'draft' === $Occurrence->State &&
 							$Event->Source->GetSourceId() === 0)
 						{
-							$links[] = '<a href="'.vip_url('calendar/publish/'.$Event->SourceEventId.$CI->uri->uri_string()).'">publish</a>';
+							$links[] = '<a href="'.
+								site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
+								'">publish</a>';
 						}
-						$links[] = '<a href="'.$Path['delete'].'/'.
-							$Event->Source->GetSourceId().
-							'/'.urlencode($Event->SourceEventId).
-							$FailRedirect.'">delete</a>';
+						$links[] = '<a href="'.
+							site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
+							'">delete</a>';
 						echo(' ('.implode(',', $links).')');
 					}
 					echo('<br />');

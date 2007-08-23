@@ -127,13 +127,35 @@ class CalendarPaths
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
 	
-	/// Get the event information path.
+	/// Get the event edit path.
 	function EventEdit($Event, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
 			'/src/'.	$Event->Source->GetSourceId().
 			'/event/'.	$Event->SourceEventId.
 			'/edit'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event publish path.
+	function EventPublish($Event, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Event->Source->GetSourceId().
+			'/event/'.	$Event->SourceEventId.
+			'/op/publish'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event delete path.
+	function EventDelete($Event, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Event->Source->GetSourceId().
+			'/event/'.	$Event->SourceEventId.
+			'/op/delete'.
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
@@ -150,7 +172,7 @@ class CalendarPaths
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
 	
-	/// Get the event occurrence information path.
+	/// Get the event occurrence edit path.
 	function OccurrenceEdit($Occurrence, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
@@ -158,6 +180,30 @@ class CalendarPaths
 			'/event/'.	$Occurrence->Event->SourceEventId.
 			'/occ/'.	$Occurrence->SourceOccurrenceId.
 			'/edit'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence edit path.
+	function OccurrencePublish($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Occurrence->Event->Source->GetSourceId().
+			'/event/'.	$Occurrence->Event->SourceEventId.
+			'/occ/'.	$Occurrence->SourceOccurrenceId.
+			'/op/publish'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence edit path.
+	function OccurrenceDelete($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Occurrence->Event->Source->GetSourceId().
+			'/event/'.	$Occurrence->Event->SourceEventId.
+			'/occ/'.	$Occurrence->SourceOccurrenceId.
+			'/op/delete'.
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
@@ -247,6 +293,31 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	function __construct()
 	{
 		// Provide the ComplexController class with the url structure
+		$range_filter = array(
+			'' => '*',
+			'*' => array(
+				'_store' => 'Range',
+				'' => '*',
+				'*' => array(
+					'_store' => 'Filter'
+				),
+			),
+		);
+		$event_op = array(
+			'' => NULL,
+			'*' => array(
+				'_store' => 'OperationId',
+				'' => '*',
+				'*' => array(
+					'_store' => 'Range',
+					'' => '*',
+					'*' => array(
+						'_store' => 'Filter',
+						'_call' => 'src_event_op',
+					),
+				),
+			),
+		);
 		parent::__construct(array(
 			'' => 'view',
 			'index' => 'index',
@@ -254,14 +325,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'' => 'range',
 				'_in' => array(
 					array(
-						array(
-							'' => '*',
-							'*' => array(
-								'_store' => 'Range',
-								'' => '*',
-								'*' => array('_store' => 'Filter'),
-							),
-						),
+						$range_filter,
 						'range' => 'range',
 						'agenda' => 'agenda',
 						'export' => array(
@@ -287,42 +351,24 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 								'' => 'info',
 								'_in' => array(
 									array(
-										array(
-											'' => '*',
-											'*' => array(
-												'_store' => 'Range',
-												'' => '*',
-												'*' => array(
-													'_store' => 'Filter',
-												),
-											),
-										),
+										$range_filter,
 										'info' => 'src_event_info',
 										'edit' => 'src_event_edit',
 									),
 								),
-								'op' => 'src_event_op',
+								'op' => $event_op,
 								'occ' => array(
 									'*' => array(
 										'_store' => 'OccurrenceId',
 										'' => 'info',
 										'_in' => array(
 											array(
-												array(
-													'' => '*',
-													'*' => array(
-														'_store' => 'Range',
-														'' => '*',
-														'*' => array(
-															'_store' => 'Filter',
-														),
-													),
-												),
+												$range_filter,
 												'info' => 'src_event_info',
 												'edit' => 'src_event_edit',
 											),
 										),
-										'op' => 'src_event_op',
+										'op' => $event_op,
 									),
 								),
 							),
@@ -656,14 +702,16 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
-		$this->_GetSource();
+		if (!$this->_GetSource()) {
+			return;
+		}
 		$this->pages_model->SetPageCode('calendar_new_event');
 		$this->main_frame->SetTitleParameters(array(
 			'source' => $this->mSource->GetSourceName(),
 		));
 		if (!$this->mSource->IsSupported('create')) {
 			// Create isn't supported with this source
-			$this->messages->AddMessage('error', 'You cannot create events in this calendar source');
+			$this->messages->AddMessage('error', 'You cannot create events in this calendar');
 			$this->main_frame->Load();
 			return;
 		}
@@ -845,7 +893,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$occurrence_id = NULL;
 		}
 		
-		$this->_GetSource();
+		if (!$this->_GetSource()) {
+			return;
+		}
 		
 		$calendar_data = new CalendarData();
 		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
@@ -949,7 +999,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		
 		$this->pages_model->SetPageCode('calendar_event_edit');
 		
-		$this->_GetSource();
+		if (!$this->_GetSource()) {
+			return;
+		}
 		
 		$calendar_data = new CalendarData();
 		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
@@ -1032,6 +1084,112 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
+	/// Perform an operation on an event or occurrence
+	function src_event_op()
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		// get event/occurrence id.
+		$operation = $this->mData['OperationId'];
+		$source_id = $this->mData['SourceId'];
+		$event_id = $this->mData['EventId'];
+		$occurrence_specified = array_key_exists('OccurrenceId', $this->mData);
+		if ($occurrence_specified) {
+			$occurrence_id = $this->mData['OccurrenceId'];
+		} else {
+			$occurrence_id = NULL;
+		}
+		
+		if (!$this->_GetSource()) {
+			return;
+		}
+		
+		$calendar_data = new CalendarData();
+		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
+		$events = $calendar_data->GetEvents();
+		// Get the redirect url tail
+		$args = func_get_args();
+		$tail = implode('/', $args);
+		
+		if (!array_key_exists(0, $events)) {
+			// event is not accessible
+			$this->ErrorNotAccessible($tail);
+		} else {
+			$event = $events[0];
+			if ($event->ReadOnly || 'owned' !== $event->UserStatus) {
+				// event is read only to the current user.
+				$this->ErrorNotModifiable($tail);
+			} else {
+				switch ($operation) {
+					case 'publish':
+						/**
+						 * PUBLISH:
+						 *  - when accessed from occurrence, default to just that occurrence
+						 *  - otherwise default to all
+						 *  - show page allowing to select occurrences to publish (all in future)
+						 */
+						$this->pages_model->SetPageCode('calendar_event_publish');
+						// Get the occurrences that can be published.
+						$occurrences = $event->GetOccurrencesWithUserPermission('publish');
+						$data = array(
+							'Event' => & $event,
+							'Occurrences' => $occurrences,
+							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
+							'FormName' => 'evpub',
+						);
+						
+						$this->main_frame->SetContentSimple('calendar/event_action', $data);
+						$this->main_frame->SetTitleParameters(array(
+								'source' => $this->mSource->GetSourceName(),
+								'event' => $event->Name,
+						));
+						break;
+						
+						
+					case 'cancel':
+						$this->pages_model->SetPageCode('calendar_event_cancel');
+						// Get the occurrences that can be deleted.
+						$occurrences = $event->GetOccurrencesWithUserPermission('cancel');
+						$data = array(
+							'Event' => & $event,
+							'Occurrences' => $occurrences,
+							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
+							'FormName' => 'evdel',
+						);
+						$this->main_frame->SetContentSimple('calendar/event_action', $data);
+						$this->main_frame->SetTitleParameters(array(
+								'source' => $this->mSource->GetSourceName(),
+								'event' => $event->Name,
+						));
+						break;
+						
+					case 'delete':
+						$this->pages_model->SetPageCode('calendar_event_delete');
+						// Get the occurrences that can be deleted.
+						$occurrences = $event->GetOccurrencesWithUserPermission('delete');
+						$data = array(
+							'Event' => & $event,
+							'Occurrences' => $occurrences,
+							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
+							'FormName' => 'evdel',
+						);
+						$this->main_frame->SetContentSimple('calendar/event_action', $data);
+						$this->main_frame->SetTitleParameters(array(
+								'source' => $this->mSource->GetSourceName(),
+								'event' => $event->Name,
+						));
+						break;
+						
+					default:
+						show_404;
+						break;
+				};
+			}
+		}
+		
+		$this->main_frame->Load();
+	}
+	
 	/// Export as ical.
 	function export_ical()
 	{
@@ -1056,17 +1214,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	/// Show an error, not accessible message.
 	protected function ErrorNotAccessible($Tail)
 	{
-		$this->pages_model->SetPageCode('calendar_event_not_accessible');
-		$description = '<p>The specified event does not exist or has not been published for public viewing.</p>';
-		if (!$this->user_auth->isLoggedIn) {
-			$description .= '<p>You are not currently logged in. If you created the event you may be able to see it after you <a href="'.site_url('login/main'.$this->uri->uri_string()).'">log in</a>.</p>';
-		}
-		$this->main_frame->SetContentSimple('general/return',array(
-			'Title' => 'Event Not Accessible',
-			'Description' => $description,
-			'Target' => site_url($Tail),
-			'Caption' => 'Return',
-		));
+		$this->load->library('Custom_pages');
+		$page = new CustomPageView('calendar_event_not_accessible');
+		$page->SetData('referer', site_url($Tail));
+		$this->main_frame->SetContent($page);
+	}
+	
+	/// Show an error, not modifiable message.
+	protected function ErrorNotModifiable($Tail)
+	{
+		$this->load->library('Custom_pages');
+		$page = new CustomPageView('calendar_event_not_modifiable');
+		$page->SetData('referer', site_url($Tail));
+		$this->main_frame->SetContent($page);
 	}
 	
 	/// Setup the main source.
@@ -1082,9 +1242,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected function _GetSource()
 	{
 		$this->_SetupMyCalendar();
-		$this->mSource = $this->mMainSource->GetSource((int)$this->mData['SourceId']);
+		$source_id = (int)$this->mData['SourceId'];
+		$this->mSource = $this->mMainSource->GetSource($source_id);
 		if (NULL === $this->mSource) {
-			show_404();
+			//show_404();
+			$this->messages->AddMessage('error','You don&apos;t have permission to access calendar source #'.$source_id.'.');
+			
+			header("HTTP/1.1 404 Not Found");
+			$CI = & get_instance();
+			$CI->main_frame->Load();
+			
+			return FALSE;
+		} else {
+			return TRUE;
 		}
 	}
 	
@@ -1233,15 +1403,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	 */
 	protected function GetFilters($Sources)
 	{
-		$Filter = array(
-			'att' => array(
-				'declined' => $Sources->GroupEnabled('hide'),
-				'no-accepted' => !$Sources->GroupEnabled('rsvp'),
-				'no-maybe'    => !$Sources->GroupEnabled('show'),
-			),
-			'cat' => array(
-				// Filled in in after initialisation
-			),
+		$Filter = array();
+		$Filter['cat'] = array(
+			// Filled in in after initialisation
 		);
 		// Fill categories
 		foreach ($this->mCategories as $category) {
@@ -1263,40 +1427,47 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			);
 		}
 		
-		// Then the attendance filters
-		$filters['hidden'] = array(
-			'name'			=> 'not attending',
-			'field'			=> 'visibility',
-			'value'			=> 'no',
-			'selected'		=> $Sources->GroupEnabled('hide'),
-			'description'	=> 'Include those which I have hidden',
-			'display'		=> 'image',
-			'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
-			'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
-			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
-		);
-		$filters['visible'] = array(
-			'name'			=> 'maybe attending',
-			'field'			=> 'visibility',
-			'value'			=> 'maybe',
-			'selected'		=> $Sources->GroupEnabled('show'),
-			'description'	=> 'Include those which I have not hidden',
-			'display'		=> 'image',
-			'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
-			'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
-			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
-		);
-		$filters['rsvp'] = array(
-			'name'			=> 'attending',
-			'field'			=> 'visibility',
-			'value'			=> 'yes',
-			'selected'		=> $Sources->GroupEnabled('rsvp'),
-			'description'	=> 'Only those to which I\'ve RSVPd',
-			'display'		=> 'image',
-			'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
-			'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
-			'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
-		);
+		if ($Sources->IsSupported('attend')) {
+			$Filter['att'] = array(
+				'declined' => $Sources->GroupEnabled('hide'),
+				'no-accepted' => !$Sources->GroupEnabled('rsvp'),
+				'no-maybe'    => !$Sources->GroupEnabled('show'),
+			);
+			// Then the attendance filters
+			$filters['hidden'] = array(
+				'name'			=> 'not attending',
+				'field'			=> 'visibility',
+				'value'			=> 'no',
+				'selected'		=> $Sources->GroupEnabled('hide'),
+				'description'	=> 'Include those which I have hidden',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_hidden_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_hidden_unselect.gif',
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
+			);
+			$filters['visible'] = array(
+				'name'			=> 'maybe attending',
+				'field'			=> 'visibility',
+				'value'			=> 'maybe',
+				'selected'		=> $Sources->GroupEnabled('show'),
+				'description'	=> 'Include those which I have not hidden',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_visible_select.png',
+				'unselected_image'	=> '/images/prototype/calendar/filter_visible_unselect.png',
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
+			);
+			$filters['rsvp'] = array(
+				'name'			=> 'attending',
+				'field'			=> 'visibility',
+				'value'			=> 'yes',
+				'selected'		=> $Sources->GroupEnabled('rsvp'),
+				'description'	=> 'Only those to which I\'ve RSVPd',
+				'display'		=> 'image',
+				'selected_image'	=> '/images/prototype/calendar/filter_rsvp_select.gif',
+				'unselected_image'	=> '/images/prototype/calendar/filter_rsvp_unselect.gif',
+				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-accepted')),
+			);
+		};
 		
 		// The filters are the deliverable
 		return $filters;
