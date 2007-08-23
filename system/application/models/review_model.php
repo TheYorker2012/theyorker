@@ -166,7 +166,7 @@ class Review_model extends Model {
 	/**
 	 * @return A single review context for an organisation
 	 */
-	function GetReviewContextContents($organisation_shortname,$content_type_codename,$revision_id = false)
+	function GetReviewContextContents($organisation_shortname,$content_type_codename,$revision_id = FALSE)
 	{
 		$sql =
 			'
@@ -176,40 +176,75 @@ class Review_model extends Model {
 				concat(users.user_firstname, " ",users.user_surname) as name,
 				review_context_contents.review_context_content_last_author_user_entity_id as user_entity_id,
 				review_context_contents.review_context_content_id as context_content_id,
-				(review_contexts.review_context_live_content_id=review_context_contents.review_context_content_id ) as is_published,
 				review_context_contents.review_context_content_blurb as content_blurb,
 				review_context_contents.review_context_content_quote as content_quote,
 				review_context_contents.review_context_content_average_price as average_price,
 				review_context_contents.review_context_content_recommend_item as recommended_item,
 				review_context_contents.review_context_content_rating as content_rating,
 				review_context_contents.review_context_content_serving_times as serving_times
+			FROM
+				review_context_contents
+			INNER JOIN 
+				organisations
+			ON	organisations.organisation_directory_entry_name = ?
+			INNER JOIN 
+				content_types
+			ON	content_types.content_type_codename = ?
+			INNER JOIN 
+				users
+			ON	users.user_entity_id = review_context_contents.review_context_content_last_author_user_entity_id
+			';
+		if ($revision_id == FALSE)
+		{
+			$sql .= '
+				INNER JOIN
+					review_contexts
+				ON	review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id
+				AND	review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+				AND	review_contexts.review_context_content_type_id = content_types.content_type_id';
+		}
+		$sql .= '
+			WHERE 
+				review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
+			AND	review_context_contents.review_context_content_content_type_id = content_types.content_type_id
+			AND	review_context_contents.review_context_content_deleted = 0';
+		if ($revision_id != FALSE)
+		{
+			$sql .= '
+				AND review_context_contents.review_context_content_id = ?';
+		}
+			/*
 			FROM review_contexts
 			INNER JOIN organisations
-				ON organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
+				ON organisations.organisation_directory_entry_name = ?
+				AND organisations.organisation_entity_id = review_contexts.review_context_organisation_entity_id
 			INNER JOIN content_types
-				ON review_contexts.review_context_content_type_id=content_types.content_type_id
+				ON content_types.content_type_codename = ?
+				AND review_contexts.review_context_content_type_id=content_types.content_type_id
 			INNER JOIN review_context_contents
 				ON review_contexts.review_context_content_type_id = review_context_contents.review_context_content_content_type_id
 				AND review_contexts.review_context_organisation_entity_id = review_context_contents.review_context_content_organisation_entity_id
 			INNER JOIN users
 				ON users.user_entity_id=review_context_contents.review_context_content_last_author_user_entity_id
-			WHERE	organisations.organisation_directory_entry_name = ?';
-		if ($revision_id === FALSE){
-			$sql .= ' AND review_context_contents.review_context_content_id =';
-			$sql .= 'organisations.organisation_live_content_id';
-		} elseif ($revision_id !== TRUE && $revision_id !== -1) {
-			$sql .= ' AND review_context_contents.review_context_content_id =';
-			$sql .= $this->db->escape($revision_id);
+			WHERE ';
+		if ($revision_id === FALSE)
+		{
+			$sql .= ' review_context_contents.review_context_content_id = review_contexts.review_context_live_content_id';
+		}
+		else
+		{
+			$sql .= ' review_context_contents.review_context_content_id = ?';
 		}
 
 		if ($revision_id === -1) {
 			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp ASC';
 		} elseif ($revision_id === TRUE) {
 			$sql .= ' ORDER BY review_context_contents.review_context_content_last_author_timestamp DESC LIMIT 1';
-		}
+		}*/
 
-		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename) );
-
+		
+		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$revision_id));
+		
 		return $query->result_array();
 	}
 

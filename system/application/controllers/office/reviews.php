@@ -154,7 +154,7 @@ class Reviews extends Controller
 	}
 
 	/// Reviews information page
-	function information($ContextType, $organisation, $action = 'view', $revision_id = TRUE)
+	function information($ContextType, $organisation, $action = 'view', $revision_id = FALSE)
 	{
 		/// @todo add show all option backend
 		if (!CheckPermissions('office')) return;

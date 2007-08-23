@@ -126,3 +126,12 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 		<input type='submit' name='submitbutton' value='Create new revision' class='button' />
 	</fieldset>
 </div>
+
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>

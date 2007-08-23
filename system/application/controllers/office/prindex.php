@@ -173,7 +173,8 @@ class Prindex extends controller
 		}
 		
 		
-		$data['context_contents'] = $this->review_model->GetReviewContextContents($dir_entry_name, 'food');
+		$data['context_contents']['food'] = $this->review_model->GetReviewContextContents($dir_entry_name, 'food');
+		$data['context_contents']['drink'] = $this->review_model->GetReviewContextContents($dir_entry_name, 'food');
 	
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary_org', $data);
