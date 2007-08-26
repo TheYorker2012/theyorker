@@ -206,7 +206,7 @@ function drawEvent(parent, id, category, link, title, content, start_hour, durat
 
 	if ((start_hour+duration) >= (END_HOUR+1)) {
 		duration = (END_HOUR+1) - start_hour;
-		new_event.className += ' cal_event_split_bot';
+		new_event.className += ' cal_event_split_bottom';
 	}
 	start_hour = start_hour-START_HOUR;
 	if (start_hour < 0) {
@@ -695,12 +695,18 @@ foreach ($Days as $date => $day) {
 	echo('</td>');
 }
 echo('</tr><tr>');
+
+$TEST_OUTPUT = '';
 foreach ($Days as $date => $day) {
+	$TEST_OUTPUT .= "----- ".$date."-----\n";
 	$times = $day['events'];
 	echo('<td class="calviewCalEventsCell">');
 	foreach ($times as $time => $ocs) {
 		foreach ($ocs as $occurrence) {
 			if ($occurrence->TimeAssociated) {
+				$TEST_OUTPUT .= "-> EVENT <-\n";
+				$TEST_OUTPUT .= print_r($occurrence, TRUE);
+				$TEST_OUTPUT .= "\n\n";
 				$CI->load->view('calendar/occurrence_cell', array(
 					'Occurrence' => & $occurrence,
 					'Categories' => & $Categories,
@@ -711,9 +717,13 @@ foreach ($Days as $date => $day) {
 			}
 		}
 	}
+	$TEST_OUTPUT .= "\n\n\n\n\n\n\n";
 	echo('</td>');
 }
 echo('</tr>');
 echo('</table>');
 
+echo('<pre>');
+print($TEST_OUTPUT);
+echo('</pre>');
 ?>
