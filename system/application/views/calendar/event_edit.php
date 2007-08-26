@@ -30,25 +30,34 @@ $CI = & get_instance();
 		echo('</div>');
 		
 		echo('<p>');
-		if ('published' !== $Occurrence->State) {
+		if ('published' === $Occurrence->State || 'owned' === $Event->UserStatus) {
 			echo('<strong>'.$Occurrence->State.'</strong>');
-			if (!$Event->ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
-				$links = array();
-				if ('none' !== VipMode() &&
-					'draft' === $Occurrence->State &&
-					$Occurrence->Event->Source->GetSourceId() === 0)
-				{
-					$links[] = '<a href="'.
-						site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
-						'">publish</a>';
-				}
+		}
+		if ('owned' === $Event->UserStatus) {
+			$links = array();
+			if ($Occurrence->UserHasPermission('publish')) {
+				$links[] = '<a href="'.
+					site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
+					'">publish</a>';
+			}
+			if ($Occurrence->UserHasPermission('delete')) {
 				$links[] = '<a href="'.
 					site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
 					'">delete</a>';
-				echo(' ('.implode(',', $links).')');
 			}
-			echo('<br />');
+			if ($Occurrence->UserHasPermission('cancel')) {
+				$links[] = '<a href="'.
+					site_url($Path->OccurrenceCancel($Occurrence).$CI->uri->uri_string()).
+					'">cancel</a>';
+			}
+			if ($Occurrence->UserHasPermission('postpone')) {
+				$links[] = '<a href="'.
+					site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
+					'">postpone</a>';
+			}
+			echo(' ('.implode(',', $links).')');
 		}
+		echo('<br />');
 		if (!empty($Occurrence->LocationDescription)) {
 			echo('at: '.$Occurrence->LocationDescription);
 			echo('<br />');
@@ -62,9 +71,9 @@ $CI = & get_instance();
 		}
 		echo('</p>');
 		?>
-		<form method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
+		<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 			<fieldset>
-				<input type="submit" name="evview_return" value="Finished" />
+				<input class="button" type="submit" name="evview_return" value="Finished" />
 			</fieldset>
 		</form>
 		<?php

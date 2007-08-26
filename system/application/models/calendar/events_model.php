@@ -1634,6 +1634,7 @@ class Events_model extends Model
 	 * @param $OccurrenceId integer Id of occurrence to change the state of.
 	 * @param $OldState string Previous private state.
 	 * @param $NewState string New private state.
+	 * @param $ExtraConsitions array[string] Additional SQL conditions.
 	 * @return integer Number of changed occurrences.
 	 */
 	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
@@ -1878,6 +1879,8 @@ END';
 		//	and where new active.active is cancelled and active
 		$occurrence_query = new EventOccurrenceQuery();
 		$sql_activate = 'UPDATE event_occurrences AS new_active
+			INNER JOIN events
+				ON	event_id = new_active.event_occurrence_event_id
 			INNER JOIN event_entities
 				ON	event_entities.event_entity_event_id
 						= new_active.event_occurrence_event_id

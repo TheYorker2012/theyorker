@@ -8,6 +8,10 @@
  * @param $Occurrences Occurrences which can be altered.
  * @param $Properties Properties array.
  * @param $FormName string Form name.
+ * @param $OpStates     array[var => array('class' => string, 'label' => string)]
+ *
+ * @param $FormSelected array[int => bool],NULL   Whether certain occurrences are selected.
+ * @param $OpStatuses   array[int => var],NULL   Which occurrences have been operated on.
  */
 
 $verb = $Properties['verb']['_text'];
@@ -33,19 +37,22 @@ $verb = $Properties['verb']['_text'];
 				get_instance()->load->view('calendar/occurrence_selector', array(
 					'Event' => $Event,
 					'Occurrences' => $Occurrences,
-					'InputName' => 'evpub_occurrences',
+					'InputName' => $FormName.'_occurrences',
+					'FormSelected' => $FormSelected,
+					'OpStatuses' => $OpStatuses,
 				));
+			}
+			if (!empty($FormSelected)) {
 				echo($Properties['confirm_message']['_wikitext']);
 			} else {
-				// No occurrences can be published
 				echo($Properties['error']['no_occurrences']['_wikitext']);
 			}
 			?>
 			<fieldset>
-				<?php if (!empty($Occurrences)) { ?>
+				<?php if (!empty($FormSelected)) { ?>
 					<input class="button" type="submit" name="<?php echo($FormName); ?>_confirm" value="<?php echo($verb); ?>" />
 				<?php } ?>
-				<input class="button" type="submit" name="<?php echo($FormName); ?>_cancel" value="Cancel" />
+				<input class="button" type="submit" name="<?php echo($FormName); ?>_cancel" value="Return" />
 			</fieldset>
 		</form>
 	</div>

@@ -169,6 +169,10 @@ class CalendarSourceFacebook extends CalendarSource
 					$occurrence->EndTime = new Academic_time((int)$event['end_time']);
 					$occurrence->TimeAssociated = TRUE;
 					$occurrence->UserAttending = $attending;
+					
+					$occurrence->UserPermissions[] = 'attend';
+					$occurrence->UserPermissions[] = 'set_attend';
+					
 					unset($occurrence);
 					unset($event_obj);
 				}

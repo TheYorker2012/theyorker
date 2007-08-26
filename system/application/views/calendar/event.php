@@ -57,33 +57,46 @@ $CI = & get_instance();
 				echo('</div>');
 				
 				echo('<p>');
-				if ('published' !== $Occurrence->State) {
+				if ('published' === $Occurrence->State || 'owned' === $Event->UserStatus) {
 					echo('<strong>'.$Occurrence->State.'</strong>');
-					if (!$Event->ReadOnly && 'owned' === $Event->UserStatus) {
-						$links = array();
-						if ('none' !== VipMode() &&
-							'draft' === $Occurrence->State &&
-							$Event->Source->GetSourceId() === 0)
-						{
-							$links[] = '<a href="'.
-								site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
-								'">publish</a>';
-						}
+				}
+				if ('owned' === $Event->UserStatus) {
+					$links = array();
+					if ($Occurrence->UserHasPermission('publish')) {
+						$links[] = '<a href="'.
+							site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
+							'">publish</a>';
+					}
+					if ($Occurrence->UserHasPermission('delete')) {
 						$links[] = '<a href="'.
 							site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
 							'">delete</a>';
-						echo(' ('.implode(',', $links).')');
 					}
-					echo('<br />');
+					if ($Occurrence->UserHasPermission('cancel')) {
+						$links[] = '<a href="'.
+							site_url($Path->OccurrenceCancel($Occurrence).$CI->uri->uri_string()).
+							'">cancel</a>';
+					}
+					if ($Occurrence->UserHasPermission('postpone')) {
+						$links[] = '<a href="'.
+							site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
+							'">postpone</a>';
+					}
+					echo(' ('.implode(',', $links).')');
 				}
+				echo('<br />');
+				
 				echo('<i>');
 				echo($Event->Description);
 				echo('</i>');
-				if ($Occurrence->EndTime->Timestamp() > time()) {
+				if ($Event->Source->IsSupported('attend') &&
+					$Occurrence->UserHasPermission('attend') &&
+					$Occurrence->EndTime->Timestamp() > time())
+				{
 					echo('<br />');
 					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');
-						if ($Event->Source->IsSupported('attend')) {
+						if ($Occurrence->UserHasPermission('set_attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.
 								$Event->Source->GetSourceId().
 								'/'.urlencode($Occurrence->SourceOccurrenceId).
@@ -95,7 +108,7 @@ $CI = & get_instance();
 						}
 					} elseif ('yes' === $Occurrence->UserAttending) {
 						echo('attending');
-						if ($Event->Source->IsSupported('attend')) {
+						if ($Occurrence->UserHasPermission('set_attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.
 								$Event->Source->GetSourceId().
 								'/'.urlencode($Occurrence->SourceOccurrenceId).
@@ -107,7 +120,7 @@ $CI = & get_instance();
 						}
 					} elseif ('maybe' == $Occurrence->UserAttending) {
 						echo('maybe attending');
-						if ($Event->Source->IsSupported('attend')) {
+						if ($Occurrence->UserHasPermission('set_attend')) {
 							echo(' (<a href="'.site_url('calendar/actions/attend/'.
 								$Event->Source->GetSourceId().
 								'/'.urlencode($Occurrence->SourceOccurrenceId).
@@ -128,11 +141,11 @@ $CI = & get_instance();
 			}
 			echo('</p>');
 			?>
-			<form method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
+			<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 				<fieldset>
-					<input type="submit" name="evview_return" value="Return" />
+					<input class="button" type="submit" name="evview_return" value="Return" />
 					<?php if (!$Event->ReadOnly) { ?>
-						<input type="submit" name="evview_edit" value="Edit" />
+						<input class="button" type="submit" name="evview_edit" value="Edit" />
 					<?php } ?>
 				</fieldset>
 			</form>

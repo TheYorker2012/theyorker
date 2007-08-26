@@ -46,9 +46,7 @@ class CalendarSourceYorker extends CalendarSource
 		if (!$CI->events_model->IsReadOnly()) {
 			$this->mCapabilities[] = 'create';
 		}
-		if (!$CI->events_model->IsVip()) {
-			$this->mCapabilities[] = 'attend';
-		}
+		$this->mCapabilities[] = 'attend';
 		
 		$this->mGroups['streams'] = FALSE;
 	}
@@ -200,6 +198,8 @@ class CalendarSourceYorker extends CalendarSource
 	
 	protected function TransformEventData(&$Data, $DbData)
 	{
+		$CI = & get_instance();
+		
 		// Go through and sort the database data into objects.
 		$events = array();
 		$occurrences = array();
@@ -282,13 +282,35 @@ class CalendarSourceYorker extends CalendarSource
 				if ('owner' === $event->UserStatus) {
 					// The owner can alter the occurrence.
 					// Set user permissions based on state.
-					if ('draft' === $occurrence->State) {
-						$occurrence->UserPermissions[] = 'publish';
-						$occurrence->UserPermissions[] = 'delete';
-					} elseif ('published' == $occurrence->State) {
-						$occurrence->UserPermissions[] = 'cancel';
-						$occurrence->UserPermissions[] = 'move';
-					}
+					switch ($occurrence->State) {
+						case 'draft':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'trash';
+							break;
+							
+						case 'trashed':
+							$occurrence->UserPermissions[] = 'untrash';
+							//$occurrence->UserPermissions[] = 'delete';
+							break;
+							
+						case 'movedraft':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'delete';
+							break;
+							
+						case 'published':
+							$occurrence->UserPermissions[] = 'cancel';
+							$occurrence->UserPermissions[] = 'postpone';
+							break;
+							
+						case 'cancelled':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'postpone';
+							break;
+					};
+				} else {
+					$occurrence->UserPermissions[] = 'attend';
+					$occurrence->UserPermissions[] = 'set_attend';
 				}
 			}
 			
@@ -491,6 +513,7 @@ class CalendarSourceYorker extends CalendarSource
 	/// Get a Match Against statement.
 	function GetMatchAgainst()
 	{
+		$CI = & get_instance();
 		return 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
 	}
 	
@@ -580,6 +603,93 @@ class CalendarSourceYorker extends CalendarSource
 		} else {
 			return parent::GetOcurrenceAttendanceList($Occurrence);
 		}
+	}
+	
+	/// Publish an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'draft':
+				$result = $CI->events_model->OccurrenceDraftPublish($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			case 'movedraft':
+				return $CI->events_model->OccurrenceMovedraftPublish($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			case 'cancelled':
+				return $CI->events_model->OccurrenceCancelledRestore($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function CancelOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'movedraft':
+				$result = $CI->events_model->OccurrenceMovedraftCancel($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'deleted';
+				}
+				break;
+				
+			case 'published':
+				$result = $CI->events_model->OccurrencePublishedCancel($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'cancelled';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function DeleteOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'draft':
+				$result = $CI->events_model->OccurrenceDraftTrash($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'trashed';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
 	}
 }
 

@@ -184,7 +184,7 @@ class CalendarPaths
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
 	
-	/// Get the event occurrence edit path.
+	/// Get the event occurrence publish path.
 	function OccurrencePublish($Occurrence, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
@@ -196,7 +196,7 @@ class CalendarPaths
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
 	
-	/// Get the event occurrence edit path.
+	/// Get the event occurrence delete path.
 	function OccurrenceDelete($Occurrence, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
@@ -204,6 +204,30 @@ class CalendarPaths
 			'/event/'.	$Occurrence->Event->SourceEventId.
 			'/occ/'.	$Occurrence->SourceOccurrenceId.
 			'/op/delete'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence cancel path.
+	function OccurrenceCancel($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Occurrence->Event->Source->GetSourceId().
+			'/event/'.	$Occurrence->Event->SourceEventId.
+			'/occ/'.	$Occurrence->SourceOccurrenceId.
+			'/op/cancel'.
+			'/'.(NULL !== $range  ? $range  : 'default').
+			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence postpone path.
+	function OccurrencePostpone($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->mPath .
+			'/src/'.	$Occurrence->Event->Source->GetSourceId().
+			'/event/'.	$Occurrence->Event->SourceEventId.
+			'/occ/'.	$Occurrence->SourceOccurrenceId.
+			'/op/postpone'.
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
 	}
@@ -1120,69 +1144,121 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				// event is read only to the current user.
 				$this->ErrorNotModifiable($tail);
 			} else {
-				switch ($operation) {
-					case 'publish':
-						/**
-						 * PUBLISH:
-						 *  - when accessed from occurrence, default to just that occurrence
-						 *  - otherwise default to all
-						 *  - show page allowing to select occurrences to publish (all in future)
-						 */
-						$this->pages_model->SetPageCode('calendar_event_publish');
-						// Get the occurrences that can be published.
-						$occurrences = $event->GetOccurrencesWithUserPermission('publish');
-						$data = array(
-							'Event' => & $event,
-							'Occurrences' => $occurrences,
-							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
-							'FormName' => 'evpub',
-						);
-						
-						$this->main_frame->SetContentSimple('calendar/event_action', $data);
-						$this->main_frame->SetTitleParameters(array(
-								'source' => $this->mSource->GetSourceName(),
-								'event' => $event->Name,
-						));
-						break;
-						
-						
-					case 'cancel':
-						$this->pages_model->SetPageCode('calendar_event_cancel');
-						// Get the occurrences that can be deleted.
-						$occurrences = $event->GetOccurrencesWithUserPermission('cancel');
-						$data = array(
-							'Event' => & $event,
-							'Occurrences' => $occurrences,
-							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
-							'FormName' => 'evdel',
-						);
-						$this->main_frame->SetContentSimple('calendar/event_action', $data);
-						$this->main_frame->SetTitleParameters(array(
-								'source' => $this->mSource->GetSourceName(),
-								'event' => $event->Name,
-						));
-						break;
-						
-					case 'delete':
-						$this->pages_model->SetPageCode('calendar_event_delete');
-						// Get the occurrences that can be deleted.
-						$occurrences = $event->GetOccurrencesWithUserPermission('delete');
-						$data = array(
-							'Event' => & $event,
-							'Occurrences' => $occurrences,
-							'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
-							'FormName' => 'evdel',
-						);
-						$this->main_frame->SetContentSimple('calendar/event_action', $data);
-						$this->main_frame->SetTitleParameters(array(
-								'source' => $this->mSource->GetSourceName(),
-								'event' => $event->Name,
-						));
-						break;
-						
-					default:
-						show_404;
-						break;
+				$op_words = array(
+					'publish' => array(
+						'page_code' => 'calendar_event_publish',
+						'verb_past' => 'published',
+						'action_func' => 'PublishOccurrence',
+					),
+					'cancel' => array(
+						'page_code' => 'calendar_event_cancel',
+						'verb_past' => 'cancelled',
+						'action_func' => 'CancelOccurrence',
+					),
+					'delete' => array(
+						'page_code' => 'calendar_event_delete',
+						'verb_past' => 'deleted',
+						'action_func' => 'DeleteOccurrence',
+					),
+					/// @todo postpone: only one at a time
+					'postpone' => array(
+						'page_code' => 'calendar_event_delete',
+						'verb_past' => 'postponed',
+						'action_func' => 'PostponeOccurrence',
+					),
+				);
+				if (array_key_exists($operation, $op_words)) {
+					$words = $op_words[$operation];
+
+					// Get the occurrences.
+					$occurrences = $event->GetOccurrencesWithUserPermission($operation);
+					
+					$form_selected = array();
+					$op_statuses = array();
+					
+					foreach ($occurrences as $key => $value) {
+						$form_selected[$key] = FALSE;
+					}
+					
+					// Check post data for selection.
+					if ($this->input->post('ev'.$operation.'_confirm') !== FALSE) {
+						$occurrences_chosen = $this->input->post('ev'.$operation.'_occurrences');
+						if (is_array($occurrences_chosen) && !empty($occurrences_chosen)) {
+							// Check each chosen occurrence is in the list
+							// if not show error,  keep selection of valid ones
+							$fails = array();
+							foreach ($occurrences_chosen as $id => $state) {
+								if (array_key_exists((int)$id, $occurrences)) {
+									$form_selected[(int)$id] = TRUE;
+								} else {
+									$fails[] = (int)$id;
+								}
+							}
+							if (!empty($fails)) {
+								$this->messages->AddMessage('error', count($fails).' of the occurrences specified '.(count($fails) === 1 ? 'is' : 'are').' not able to be '.$words['verb_past'].' (occurrence id '.implode(', ', $fails).') so no action was taken.');
+							} else {
+								// if all valid, perform action
+								// show summary page
+								$op_statuses = array();
+								$fails = 0;
+								$succeeds = 0;
+								foreach ($occurrences_chosen as $id => $state) {
+									// call the main action function
+									/// @todo tackle that from hereon, the calendara data is out of date, and so the summary also
+									$this->messages->AddMessage('warning','(TODO) ignore the current state here, this is the old state');
+									$result = $this->mSource->$words['action_func']($occurrences[$id]);
+									if ($result > 0) {
+										unset($form_selected[$id]);
+										$op_statuses[$id] = 1;
+										++$succeeds;
+									} else {
+										$op_statuses[$id] = 0;
+										++$fails;
+									}
+								}
+								if (!$fails) {
+									$this->messages->AddMessage("success", 'All occurrences have been successfully '.$words['verb_past'].'.');
+								} elseif (!$succeeds) {
+									$this->messages->AddMessage("error", 'No occurrences have been '.$words['verb_past'].'.');
+								} else {
+									$this->messages->AddMessage("warning", $succeeds.' occurrence'.($succeeds > 1 ? 's':'').' have been '.$words['verb_past'].' ('.$fails.' '.($fails != 1 ? 'has' : 'have').' not).');
+								}
+							}
+						} else {
+							$this->messages->AddMessage('error', 'No occurrences were chosen to '.$operation.'. Please select the occurrences you wish to '.$operation.'.');
+						}
+					} elseif ($this->input->post('ev'.$operation.'_cancel') !== FALSE) {
+						redirect($this->mPaths->EventInfo($event).'/'.$tail);
+					} else {
+						// first view, so automatically select the chosen occurrence
+						if ($occurrence_specified && array_key_exists($occurrence_id, $occurrences)) {
+							$form_selected[$occurrence_id] = TRUE;
+						}
+					}
+					
+					
+					$this->pages_model->SetPageCode($words['page_code']);
+					$data = array(
+						'Event' => & $event,
+						'Occurrences' => $occurrences,
+						'Properties' => $this->pages_model->GetPropertyArrayNew(NULL),
+						'FormName' => 'ev'.$operation,
+						'FormSelected' => $form_selected,
+						'OpStatuses' => $op_statuses,
+						'OpStates' => array(
+							0 => array('label' => 'not '.$words['verb_past']),
+							1 => array('label' => $words['verb_past'].' successfully'),
+						),
+					);
+					
+					$this->main_frame->SetContentSimple('calendar/event_action', $data);
+					$this->main_frame->SetTitleParameters(array(
+							'source' => $this->mSource->GetSourceName(),
+							'event' => $event->Name,
+					));
+
+				} else {
+					show_404();
 				};
 			}
 		}

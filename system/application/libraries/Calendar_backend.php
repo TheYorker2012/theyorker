@@ -26,9 +26,13 @@ class CalendarOccurrence
 	/// array[string] Valid values of @a $UserPermissions.
 	protected static $ValidPermissions = array(
 		'delete',
+		'trash',
+		'untrash',
 		'publish',
 		'cancel',
-		'move',
+		'postpone',
+		'attend',
+		'set_attend',
 	);
 	/// array[string] Valid members of @a $SpecialTags.
 	protected static $ValidSpecialTags = array(
@@ -182,14 +186,14 @@ class CalendarEvent
 	/// Get the occurrences of this event which have a certain user permission.
 	/**
 	 * @param $Permission string Permission to require.
-	 * @return array[&CalendarOccurrence] Array of occurrences.
+	 * @return array[SourceOccurrenceId => &CalendarOccurrence] Array of occurrences.
 	 */
 	function GetOccurrencesWithUserPermission($Permission)
 	{
 		$result = array();
 		foreach ($this->Occurrences as $key => $occurrence) {
 			if ($occurrence->UserHasPermission($Permission)) {
-				$result[] = & $this->Occurrences[$key];
+				$result[$occurrence->SourceOccurrenceId] = & $this->Occurrences[$key];
 			}
 		}
 		return $result;
@@ -233,7 +237,7 @@ abstract class CalendarSource
 	/// array[string] Array of valid members of @a mCapabilities.
 	protected static $sValidCapabilities = array(
 		'create',  // its possible to create events
-		'attend',  // its possible to rsvp these event
+		'attend',  // its possible to rsvp these events
 		'cache',   // these events can be cached in the database
 	);
 	*/
@@ -545,9 +549,63 @@ abstract class CalendarSource
 	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
 	 *	- 'friend' bool Whether the individual is a friend.
 	 */
-	function GetOccurrenceAttendanceList($Occurrence)
+	function GetOccurrenceAttendanceList(& $Occurrence)
 	{
 		return array();
+	}
+	
+	/// Publish an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function CancelOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function DeleteOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Postpone an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PostponeOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Get information about action error codes.
+	/**
+	 * @param $ErrorCode int Error code.
+	 * @return assoc_array information about the error including:
+	 *  - summary
+	 */
+	function GetErrorDescription($ErrorCode)
+	{
+		static $error_descriptions = array(
+			-1 => array('summary' => 'Not supporteed'),
+			-2 => array('summary' => 'Permission denied'),
+		);
 	}
 }
 
