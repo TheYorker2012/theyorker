@@ -16,8 +16,6 @@ $squash = (count($Days) > 3);
 
 
 
-
-
 <?php define('HOUR_HEIGHT', 42); ?>
 
 <script type="text/javascript">
@@ -29,10 +27,52 @@ var END_HOUR = 23;
 var MAX_START_HOUR = 0;
 var MAX_END_HOUR = 29;
 var CREATE_EVENT = false;
+var FIRST_DAY = 0;
 var DAYS = new Array();
 <?php foreach ($Days as $date => $day) { ?>
+if (FIRST_DAY == 0) {
+	FIRST_DAY = new Date();
+	FIRST_DAY.setUTCDate(<?php echo(substr($date,6,2)); ?>);
+	FIRST_DAY.setUTCMonth(<?php echo(substr($date,4,2)); ?>-1);
+	FIRST_DAY.setUTCFullYear(<?php echo(substr($date,0,4)); ?>);
+	FIRST_DAY.setUTCHours(0);
+	FIRST_DAY.setUTCMinutes(0);
+	FIRST_DAY.setUTCSeconds(0);
+	FIRST_DAY.setUTCMilliseconds(0);
+	//alert(FIRST_DAY.toGMTString() + '---' + FIRST_DAY.toLocaleString());
+}
 DAYS[DAYS.length] = '<?php echo($date); ?>';
 <?php } ?>
+
+var EVENT_CACHE = new Array();
+var EVENT_COUNT = 0;
+var ALL_EVENT_CACHE = new Array();
+var ALL_EVENT_COUNT = 0;
+<?php
+// Create event cache
+foreach ($Occurrences as $event_info) {
+	if ($event_info->DisplayOnCalendar) {
+		if ($event_info->TimeAssociated) { ?>
+EVENT_CACHE[EVENT_COUNT] = new Array();
+EVENT_CACHE[EVENT_COUNT]['name']		= '<?php echo($event_info->Event->Name); ?>';
+EVENT_CACHE[EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
+EVENT_CACHE[EVENT_COUNT]['location']	= '<?php echo($event_info->LocationDescription); ?>';
+EVENT_CACHE[EVENT_COUNT]['description']	= '<?php echo(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8')); ?>';
+EVENT_CACHE[EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
+EVENT_CACHE[EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+EVENT_COUNT++;
+<?php	} else { ?>
+ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['name']		= '<?php echo($event_info->Event->Name); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['location']	= '<?php echo($event_info->LocationDescription); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['description']	= '<?php echo(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8')); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+ALL_EVENT_COUNT++;
+<?php	}
+	}
+} ?>
 
 function drawCalendar () {
 	// Reset event counters
@@ -45,13 +85,59 @@ function drawCalendar () {
 	timeCalendar();
 	resizeCalendar();
 
-	drawAllDayEvent('901', 'Anniversary', '/test/link/', 'Birthday 20: Richard Ingle', '00:00 - 12:00', 24, 35.98, 0);
-	drawAllDayEvent('903', 'Meeting', '/test/link/', 'Conference', '12:00 - 23:59', 60, 11.98, 1);
-	drawAllDayEvent('900', 'Social', '/test/link/', 'Day Event', '00:00 - 23:59', 0, 23.98, 0);
-	drawAllDayEvent('902', 'Facebook', '/test/link/', 'FragSoc', '12:00 - 18:00', 12, 29.98, 1);
+//	test_date = new Date(1188147600*1000);
+//	current_date = new Date();
+//	alert(test_date.toGMTString() + '---' + test_date.toLocaleString() + '\n' + current_date.toGMTString() + '---' + current_date.toLocaleString());
+
+	for (i=0; i<ALL_EVENT_COUNT; i++) {
+		var eventStartDate = new Date(ALL_EVENT_CACHE[i]['start_time']*1000);
+		var eventEndDate = new Date(ALL_EVENT_CACHE[i]['end_time']*1000);
+		//function drawAllDayEvent (id, category, link, title, start_hour, duration, height)
+
+		drawAllDayEvent('a'+i,
+			ALL_EVENT_CACHE[i]['category'],
+			'/test/link/',
+			ALL_EVENT_CACHE[i]['name'],
+			Number(((eventStartDate.getTime() - FIRST_DAY.getTime())/(1000*60*60)).toFixed(2)),
+			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
+		);
+	}
+
+/*
+	drawAllDayEvent('901', 'Anniversary', '/test/link/', 'Birthday 20: Richard Ingle', 24, 35.98, 0);
+	drawAllDayEvent('903', 'Meeting', '/test/link/', 'Conference', 60, 11.98, 1);
+	drawAllDayEvent('900', 'Social', '/test/link/', 'Day Event', 0, 23.98, 0);
+	drawAllDayEvent('902', 'Facebook', '/test/link/', 'FragSoc', 12, 29.98, 1);
+*/
 
 	resizeCalendarAllDay();
 
+	for (i=0; i<EVENT_COUNT; i++) {
+		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
+		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
+		//drawEvent(parent, id, category, link, title, content_time, content_location, start_hour, duration, left, width)
+
+//alert(EVENT_CACHE[i]['name']);
+//alert(zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()));
+//alert(Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)).toFixed(2)));
+//alert(Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)));
+
+		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
+			i,
+			EVENT_CACHE[i]['category'],
+			'/test/link/',
+			EVENT_CACHE[i]['name'],
+			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
+			EVENT_CACHE[i]['location'],
+			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)).toFixed(2)),
+			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
+		);
+	}
+
+
+
+
+/*
 	drawEvent('cal_day_20070716', '001', 'Academic', '/test/link/', 'RDQ', '10:15 - 11:15', 10.25, 1);
 	drawEvent('cal_day_20070716', '002', 'Academic', '/test/link/', 'NDS', '11:15 - 13:15', 11.25, 2);
 	drawEvent('cal_day_20070716', '003', 'Academic', '/test/link/', 'NDS', '13:15 - 14:15', 13.25, 1);
@@ -87,11 +173,12 @@ function drawCalendar () {
 	drawEvent('cal_day_20070721', '019', 'Facebook', '/test/link/', 'FragSoc LAN', '12:00 - 00:00', 12, 12);
 
 	drawEvent('cal_day_20070722', '020', 'Facebook', '/test/link/', 'FragSoc LAN', '00:00 - 17:00', 0, 17);
+*/
 
 	return false;
 }
 
-function drawAllDayEvent (id, category, link, title, content, start_hour, duration, height) {
+function drawAllDayEvent (id, category, link, title, start_hour, duration, height) {
 	var p_ele = document.getElementById('calendar_all_day_events');
 	if (p_ele == null)
 		return;
@@ -148,10 +235,6 @@ function drawAllDayEvent (id, category, link, title, content, start_hour, durati
 	event_title.className	= 'cal_event_heading';
 	event_title.appendChild(event_link);
 
-	var event_content		= document.createElement('div');
-	event_content.className	= 'cal_event_info';
-	event_content.appendChild(document.createTextNode(content));
-
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
 	new_event.className		= 'cal_event cal_category_' + category;
@@ -162,7 +245,6 @@ function drawAllDayEvent (id, category, link, title, content, start_hour, durati
 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
 
 	new_event.appendChild(event_title);
-	new_event.appendChild(event_content);
 
 	document.getElementById('calendar_all_day_events').appendChild(new_event);
 
@@ -170,7 +252,7 @@ function drawAllDayEvent (id, category, link, title, content, start_hour, durati
 		MAX_ALL_DAY = height;
 }
 
-function drawEvent(parent, id, category, link, title, content, start_hour, duration, left, width) {
+function drawEvent(parent, id, category, link, title, content_time, content_location, start_hour, duration, left, width) {
 	var p_ele = document.getElementById(parent);
 	if (p_ele == null)
 		return;
@@ -182,6 +264,7 @@ function drawEvent(parent, id, category, link, title, content, start_hour, durat
 	width = Math.floor((p_ele.offsetWidth / width)-2-5);
 
 	var full_display = true;
+	var height_adjustment = 0;
 
 	// Check if should be displayed
 	if ((start_hour+duration) < START_HOUR) {
@@ -207,15 +290,17 @@ function drawEvent(parent, id, category, link, title, content, start_hour, durat
 	if ((start_hour+duration) >= (END_HOUR+1)) {
 		duration = (END_HOUR+1) - start_hour;
 		new_event.className += ' cal_event_split_bottom';
+		height_adjustment = 1;
 	}
 	start_hour = start_hour-START_HOUR;
 	if (start_hour < 0) {
 		duration += start_hour;
 		start_hour = 0;
 		new_event.className += ' cal_event_split_top';
+		height_adjustment = 1;
 	}
 	new_event.style.top		= findPos(p_ele)[1] + 1 + ((start_hour*HOUR_HEIGHT)-2) + 'px';
-	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
+	new_event.style.height	= ((duration*HOUR_HEIGHT)-2+height_adjustment) + 'px';
 
 	if (full_display) {
 		var event_link			= document.createElement('a');
@@ -226,12 +311,20 @@ function drawEvent(parent, id, category, link, title, content, start_hour, durat
 		event_title.className	= 'cal_event_heading';
 		event_title.appendChild(event_link);
 
+		var event_content_i		= document.createElement('i');
+		event_content_i.appendChild(document.createTextNode(content_location));
+
 		var event_content		= document.createElement('div');
 		event_content.className	= 'cal_event_info';
-		event_content.appendChild(document.createTextNode(content));
+		event_content.appendChild(document.createTextNode(content_time));
+
+		var event_content2		= document.createElement('div');
+		event_content2.className= 'cal_event_info';
+		event_content2.appendChild(event_content_i);
 
 		new_event.appendChild(event_title);
 		new_event.appendChild(event_content);
+		new_event.appendChild(event_content2);
 	}
 
 	document.getElementById(parent).appendChild(new_event);
@@ -330,6 +423,10 @@ function drawHour (hour, time_col) {
 	var new_hour = document.createElement('div');
 	new_hour.appendChild(document.createTextNode(hour+':00'));
 	time_col.appendChild(new_hour);
+}
+
+function zeroTime (time) {
+	return ((time < 10) ? "0" : "") + time;
 }
 
 function clearCalendar() {
@@ -696,6 +793,7 @@ foreach ($Days as $date => $day) {
 }
 echo('</tr><tr>');
 
+
 $TEST_OUTPUT = '';
 foreach ($Days as $date => $day) {
 	$TEST_OUTPUT .= "----- ".$date."-----\n";
@@ -723,7 +821,11 @@ foreach ($Days as $date => $day) {
 echo('</tr>');
 echo('</table>');
 
-echo('<pre>');
-print($TEST_OUTPUT);
-echo('</pre>');
+//echo('<pre>');
+//print($TEST_OUTPUT);
+//echo('</pre>');
+
+//print('<pre>');
+//print_r($Occurrences);
+//print('</pre>');
 ?>
