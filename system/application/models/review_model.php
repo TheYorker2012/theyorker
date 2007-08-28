@@ -126,6 +126,49 @@ class Review_model extends Model {
 			$query[0]);
 		return $this->db->affected_rows() > 0;
 	}
+	
+	function GetOrganisationReviewContextTypes($organisation_shortname)
+	{
+		/// @todo ensure that the organisation exists (using organisation_name != null
+		$sql = 'SELECT
+					organisation_name,
+					content_type_codename,
+					content_type_name,
+					UNIX_TIMESTAMP(review_context_content_last_author_timestamp) AS timestamp,
+					review_context_deleted
+				FROM 
+					content_types
+				LEFT JOIN 
+					organisations
+					ON	organisation_directory_entry_name = ?
+				LEFT JOIN 
+					review_contexts
+					ON	review_context_content_type_id = content_type_id
+					AND	review_context_organisation_entity_id = organisation_entity_id
+					AND	review_context_deleted = FALSE
+				LEFT JOIN 
+					review_context_contents
+					ON review_context_content_id = review_context_live_content_id
+				WHERE
+					content_type_has_reviews = TRUE
+				ORDER BY 
+					content_type_section_order ASC';
+		$query = $this->db->query($sql,array($organisation_shortname));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['organisation_name'] = $row->organisation_name;
+				$result_item['content_codename'] = $row->content_type_codename;
+				$result_item['content_name'] = $row->content_type_name;
+				$result_item['timestamp'] = $row->timestamp;
+				$result_item['deleted'] = $row->review_context_deleted;
+				$result[] = $result_item;
+			}
+		}
+		return $result;
+	}
 
 	///	Return published review context.
 	/**

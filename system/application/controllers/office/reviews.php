@@ -98,28 +98,7 @@ class Reviews extends Controller
 			),
 		);
 		// get the context types
-		/// @todo move this query into a model
-		/// @todo ensure that the organisation exists (using organisation_name != null
-		$query = $this->db->query('
-			SELECT
-				organisation_name AS organisation_name,
-				content_type_codename AS content_codename,
-				content_type_name AS content_name,
-				UNIX_TIMESTAMP(review_context_content_last_author_timestamp) AS timestamp,
-				review_context_deleted AS deleted
-			FROM content_types
-			LEFT JOIN organisations
-				ON	organisation_directory_entry_name = '.$this->db->escape($organisation).'
-			LEFT JOIN review_contexts
-				ON	review_context_content_type_id = content_type_id
-				AND	review_context_organisation_entity_id = organisation_entity_id
-				AND	review_context_deleted = FALSE
-			LEFT JOIN review_context_contents
-				ON review_context_content_id = review_context_live_content_id
-			WHERE
-				content_type_has_reviews = TRUE
-			ORDER BY content_type_section_order ASC');
-		$content_types = $query->result_array();
+		$content_types = $this->review_model->GetOrganisationReviewContextTypes($organisation);
 		foreach ($content_types as $context_type) {
 			$context = array();
 			$context['name'] = $context_type['content_name'];
