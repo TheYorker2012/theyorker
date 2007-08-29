@@ -115,7 +115,7 @@ class Prindex extends controller
 		$this->main_frame->SetPage('summary');
 		$this->pages_model->SetPageCode('office_pr_summary_rep');
 		
-		//load the required models
+		//load the required models and libraries
 		$this->load->model('pr_model','pr_model');
 		
 		/** store the parameters passed to the method so it can be
@@ -136,7 +136,7 @@ class Prindex extends controller
 			$this->main_frame->AddMessage('error','The user id specified is not that of a rep.');
 			redirect('/office/pr/summary/all/org/asc');
 		}
-	
+		
 		// Set up the public frame
 		$the_view = $this->frames->view('office/pr/summary_rep', $data);
 		$this->main_frame->SetContent($the_view);
@@ -159,12 +159,6 @@ class Prindex extends controller
 		$this->load->model('directory_model','directory_model');
 		$this->load->library('pr','pr');
 		
-		$data['buscard'] = $this->directory_model->GetDirectoryOrganisationCardGroups($dir_entry_name);
-		foreach ($data['buscard'] as &$group)
-		{
-			$group['cards'] = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($group['business_card_group_id']);
-		}
-		
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
 		$data['parameters']['type'] = 'rep';
@@ -174,17 +168,18 @@ class Prindex extends controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get data table
-		$data['table'] = $this->pr->GetOrganisationScores($dir_entry_name);
-		
 		//get organisation information and its rep
 		$data['organisation'] = $this->pr_model->GetOrganisationRatings($dir_entry_name);
 		
+		//if doesn't exist
 		if ($data['organisation'] == FALSE)
 		{
 			$this->main_frame->AddMessage('error','Either the organisation specified is not assigned to a rep or the organisation does not exist.');
 			redirect('/office/pr/summary/all/org/asc');
 		}
+		
+		//get data table
+		$data['table'] = $this->pr->GetOrganisationScores($dir_entry_name);
 		
 		//get the organisations score
 		$data['organisation']['score'] = $this->pr->GetOrganisationTotalScore($dir_entry_name, $data['table']);

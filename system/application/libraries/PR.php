@@ -37,6 +37,15 @@ class PR
 			switch ($key)
 			{
 				case 'calendar':
+					if (isset($entry['body']))
+					{
+						foreach ($entry['body'] as $row)
+						{
+							//max of 1 mark for events
+							$result['score_current'] += min($row['score_current'], 1);
+							$result['score_possible'] += 1;
+						}
+					}
 					break;
 				case 'deals':
 					break;
@@ -66,7 +75,7 @@ class PR
 					{
 						foreach ($entry['body'] as $row)
 						{
-							//max of 1 marks for a tag group
+							//max of 1 mark for a tag group
 							$result['score_current'] += min($row['score_current'], 1); //can be 0 = no tags, or 1 = 1 or more tags
 							$result['score_possible'] += 1;
 						}
@@ -118,10 +127,50 @@ class PR
 		//get calender head
 		$calendar['head']['name'] = 'Calender';
 		//calender - events
-		$calendar['body']['0']['name'] = '*Events';
-		$calendar['body']['0']['link'] = '#';
-		$calendar['body']['0']['score_current'] = '0';
-		$calendar['body']['0']['score_possible'] = '0';
+		
+		// Event statistics
+		$this->CI->load->library('calendar_backend');
+		$this->CI->load->library('calendar_source_yorker');
+		$yorker_source = new CalendarSourceYorker(0);
+		// Only those events of the organisation
+		$yorker_source->DisableGroup('subscribed');
+		$yorker_source->DisableGroup('owned');
+		$yorker_source->DisableGroup('private');
+		$yorker_source->EnableGroup('active');
+		$yorker_source->DisableGroup('inactive');
+		$yorker_source->EnableGroup('show');
+		$yorker_source->EnableGroup('rsvp');
+		$yorker_source->IncludeStream((int)$this->CI->pr_model->GetOrganisationID($dir_entry_name), TRUE);
+		
+		//times for the next 2 weeks
+		$last_monday = strtotime("last Monday");
+		$next_monday = strtotime("next Monday");
+		$week_monday = strtotime("+1 week", $next_monday);
+		
+		//set time to this week
+		$yorker_source->SetRange($last_monday, $next_monday);
+		$this_result = $yorker_source->MainQuery( 'COUNT(*)', $yorker_source->ProduceWhereClause());
+		
+		//set time to this week
+		$yorker_source->SetRange($next_monday, $week_monday);
+		$next_result = $yorker_source->MainQuery( 'COUNT(*)', $yorker_source->ProduceWhereClause());		
+		
+		//$this->CI->messages->AddDumpMessage('this_result', $this_result);
+		//$this->CI->messages->AddDumpMessage('next_result', $next_result);
+		
+		//result = $yorker_source->MainQuery( 'COUNT(event_occurrences.event_occurrence_id)', $yorker_source->ProduceWhereClause().' GROUP BY organisations.organisation_entity_id' 	);
+		
+		$score_item['name'] = 'Events - This Week';
+		$score_item['link'] = '#';
+		$score_item['score_current'] = $this_result[0]['COUNT(*)'];
+		$score_item['score_possible'] = 1;
+		$calendar['body'][] = $score_item;
+		
+		$score_item['name'] = 'Events - Next Week';
+		$score_item['link'] = '#';
+		$score_item['score_current'] = $next_result[0]['COUNT(*)'];
+		$score_item['score_possible'] = 1;
+		$calendar['body'][] = $score_item;
 		
 		return $calendar;
 	}
@@ -153,7 +202,7 @@ class PR
 		$information['head']['name'] = 'Information';
 		
 		//information - drink
-		$score_item['name'] = 'Information';
+		$score_item['name'] = 'Directory';
 		$score_item['link'] = '/office/pr/org/'.$dir_entry_name.'/directory/information';
 		$score_item['score_current'] = 0;
 		$score_item['score_possible'] = 0;
@@ -258,8 +307,9 @@ class PR
 		
 		//get photos head
 		$photos['head']['name'] = 'Photos';
+		
 		//photos - drink
-		$score_item['name'] = 'Information';
+		$score_item['name'] = 'Directory';
 		$score_item['link'] = '/office/pr/org/'.$dir_entry_name.'/directory/photos';
 		$score_item['score_current'] = count($org_data['organisation']['slideshow']);
 		$score_item['score_possible'] = 3;

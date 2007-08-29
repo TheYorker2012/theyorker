@@ -314,7 +314,7 @@ class CalendarSourceYorker extends CalendarSource
 	/**
 	 * @return string SQL where clause.
 	 */
-	protected function ProduceWhereClause()
+	function ProduceWhereClause()
 	{
 		$CI = & get_instance();
 		
