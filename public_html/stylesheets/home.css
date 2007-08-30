@@ -114,9 +114,9 @@ div.GreyBar {
 }
 
 div.GreyBar h2 {
-	color: #ffffff;
+	color: #999;
 }
 
 div.BlueBox h4.Headline {
-	color: black;
+	color: grey;
 }

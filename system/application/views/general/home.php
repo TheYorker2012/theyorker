@@ -163,14 +163,14 @@ function print_middle_box($title,$article_array){
 		<h2>latest features</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="/photos/medium/2">
+				<img src="http://www.theyorker.co.uk/photos/medium/337">
 			</a>
-			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<h3 class="Headline"><a href="#">Into Tentation: Tent State Sussex, June 2007</a></h3>
 			<div class="Date">
-				Tuesday, 26th June 2007
+				Wednesday, 27th June 2007
 			</div>
 			<p class="More">
-				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+				Tent State University is a movement that involves universities from the US and UK at which students.
 			</p>
 		</div>
 	</div>
@@ -179,48 +179,48 @@ function print_middle_box($title,$article_array){
 		<h2>latest arts</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="/photos/medium/164">
+				<img src="http://www.theyorker.co.uk/photos/medium/5">
 			</a>
-			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<h3 class="Headline"><a href="#">Arts Week 7: Live Music and Revolutionary Politics</a></h3>
 			<div class="Date">
-				Tuesday, 26th June 2007
+				Monday, 4th June 2007
 			</div>
 			<p class="More">
-				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+				The very best of arts-based activities in week 7.
 			</p>
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<h4>MORE ARTS FEATURES</h4>
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/164">
+				<img src="http://www.theyorker.co.uk/photos/small/4">
 			</a>
 			<p class="More">
-				<a href="#">A Mini Heading</a>
+				<a href="#">Artsweek6: Live York street music</a>
 			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<h4>REVIEWS</h4>
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/2">
+				<img src="http://www.theyorker.co.uk/photos/small/9">
 			</a>
 			<p class="More">
-				<a href="#">A Second Mini Heading</a>
+				<a href="#">Review: The Tempest</a>
 			</p>
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/164">
+				<img src="http://www.theyorker.co.uk/photos/small/3">
 			</a>
 			<p class="More">
-				<a href="#">A Third Mini Heading</a>
+				<a href="#">Artsweek</a>
 			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/2">
+				<img src="http://www.theyorker.co.uk/photos/small/318">
 			</a>
 			<p class="More">
-				<a href="#">A Fourth Mini Heading</a>
+				<a href="#">Live: Jack Penate at The Cockpit 17/6/07</a>
 			</p>
 		</div>
 	</div>
