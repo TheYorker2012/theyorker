@@ -71,7 +71,6 @@ function PrintRequestList ($data) {
 	</div>
 </div>
 
-
 <div class='blue_box'>
 	<h2>from the editor</h2>
 	<p>

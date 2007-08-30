@@ -251,7 +251,7 @@
 					<label for="description">Description:</label>
 					<div id="description" class="info"><?php echo nl2br($article['request_description']); ?></div>
 					<br />
-					<label for="box">Box:</label>
+					<label for="box">Section:</label>
 					<div id="box" class="info"><?php echo $article['box_name']; ?></div>
 					<br />
 					<label for="created">Created:</label>

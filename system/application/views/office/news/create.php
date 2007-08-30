@@ -25,7 +25,7 @@
 				<br />
 				<button id='deadline_trigger' style='margin: 0 0 5px 125px;'>Select</button>
 				<br />
-			 	<label for='r_box'>Box:</label>
+			 	<label for='r_box'>Section:</label>
 				<select name='r_box' id='r_box' size='1'>
 				<?php foreach ($boxes as $box) { ?>
 		  			<option value='<?php echo $box['code']; ?>'<?php if ($this->validation->r_box == $box['code']) { echo(' selected="selected"'); } ?>><?php echo $box['name']; ?></option>

@@ -55,7 +55,7 @@
 					<?php } ?>
 					<br />
 				<?php } ?>
-			 	<label for='r_box'>Box:</label>
+			 	<label for='r_box'>Section:</label>
 				<?php if ($edit_enable) { ?>
 					<select name='r_box' id='r_box' size='1'>
 					<?php foreach ($boxes as $box) {
