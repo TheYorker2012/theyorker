@@ -21,28 +21,31 @@ class Home_Hack_Model extends Model {
 		$sql_contentTypeIds = '
 			SELECT
 				child.content_type_id
-			FROM content_types
-			LEFT JOIN content_types AS child ON
-				child.content_type_parent_content_type_id = 
-					content_types.content_type_id OR
-				child.content_type_id = 
-					content_types.content_type_id
-			WHERE content_types.content_type_codename = ?';
+			FROM 
+				content_types
+			LEFT JOIN 
+				content_types AS child 
+			ON
+				child.content_type_parent_content_type_id = content_types.content_type_id 
+			OR
+				child.content_type_id = content_types.content_type_id
+			WHERE 
+				content_types.content_type_codename = ?';
 
-		$sql_latestArtileIds = '
+		$sql_latestArtcileIds = '
 			(SELECT
 				articles.article_id, 
 				? AS content_type
-			FROM articles
+			FROM 
+				articles
 			WHERE
-				articles.article_publish_date < 
-					CURRENT_TIMESTAMP AND
-				articles.article_live_content_id 
-					IS NOT NULL AND
-				articles.article_editor_approved_user_entity_id
-					IS NOT NULL AND
-				articles.article_content_type_id
-					IN ('.$sql_contentTypeIds.')
+				articles.article_publish_date < CURRENT_TIMESTAMP 
+			AND
+				articles.article_live_content_id IS NOT NULL
+			AND
+				articles.article_editor_approved_user_entity_id	IS NOT NULL
+			AND
+				articles.article_content_type_id IN ('.$sql_contentTypeIds.')
 			ORDER BY
 				articles.article_publish_date DESC
 			LIMIT 0, ?)';
@@ -50,7 +53,7 @@ class Home_Hack_Model extends Model {
 		$sql_requestedArticles = array();
 		foreach($types as $type => $number) {
 			$result[$type] = array();
-			$sql_requestedArticles[] = $sql_latestArtileIds;
+			$sql_requestedArticles[] = $sql_latestArtcileIds;
 			$params[] = $type;
 			$params[] = $type;
 			$params[] = $number;

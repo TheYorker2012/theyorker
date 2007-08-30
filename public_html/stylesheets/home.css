@@ -93,3 +93,26 @@ h3 {
 	margin-bottom: 0;
 }
 
+/* pingu added for redesigned homepage */
+div.VideoCastBox h4 {
+	font-size: small;
+	color: #20c1f0;
+}
+
+a.NewsImgSmall {
+	float: left;
+}
+
+div.GreyBar {
+	background-color: #999;
+	border: 1px solid #999;
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+
+	float: left;
+	width: 100%;
+}
+
+div.GreyBar h2 {
+	color: #ffffff;
+}

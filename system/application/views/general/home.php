@@ -25,7 +25,6 @@ function print_box($articles,$heading,$prefix){
 	}
 };
 
-
 function print_middle_box($title,$article_array){
 	echo('  <h4>'.$title.'</h4>'."\n");
 	if (count($article_array) > 0) {
@@ -123,4 +122,207 @@ function print_middle_box($title,$article_array){
 	<div class="BlueBox">
 		<?php print_box($articles['sport'],'latest sport','news') ?>
 	</div>
+	
+	<div class="BlueBox">
+		<h2>breaker</h2>
+	</div>
+	
+	<div class="BlueBox">
+		<h2>latest news</h2>
+		<div class="NewsBox">
+			<a class="NewsImg" href="#">
+				<img src="/photos/medium/164">
+			</a>
+			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<div class="Date">
+				Tuesday, 26th June 2007
+			</div>
+			<p class="More">
+				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+			</p>
+		</div>
+		<div class="LeftNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/164">
+			</a>
+			<p class="More">
+				<a href="#">A Mini Heading</a>
+			</p>
+		</div>
+		<div class="RightNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/2">
+			</a>
+			<p class="More">
+				<a href="#">A Second Mini Heading</a>
+			</p>
+		</div>
+	</div>
+	
+	<div class="BlueBox">
+		<h2>latest features</h2>
+		<div class="NewsBox">
+			<a class="NewsImg" href="#">
+				<img src="/photos/medium/2">
+			</a>
+			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<div class="Date">
+				Tuesday, 26th June 2007
+			</div>
+			<p class="More">
+				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+			</p>
+		</div>
+	</div>
+	
+	<div class="BlueBox">
+		<h2>latest arts</h2>
+		<div class="NewsBox">
+			<a class="NewsImg" href="#">
+				<img src="/photos/medium/164">
+			</a>
+			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<div class="Date">
+				Tuesday, 26th June 2007
+			</div>
+			<p class="More">
+				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+			</p>
+		</div>
+		<div class="LeftNewsBox NewsBox">
+			<h4>MORE ARTS FEATURES</h4>
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/164">
+			</a>
+			<p class="More">
+				<a href="#">A Mini Heading</a>
+			</p>
+		</div>
+		<div class="RightNewsBox NewsBox">
+			<h4>REVIEWS</h4>
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/2">
+			</a>
+			<p class="More">
+				<a href="#">A Second Mini Heading</a>
+			</p>
+		</div>
+		<div class="LeftNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/164">
+			</a>
+			<p class="More">
+				<a href="#">A Third Mini Heading</a>
+			</p>
+		</div>
+		<div class="RightNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/2">
+			</a>
+			<p class="More">
+				<a href="#">A Fourth Mini Heading</a>
+			</p>
+		</div>
+	</div>
+	
+	<div class="BlueBox">
+		<h2>latest sports</h2>
+		<div class="NewsBox">
+			<a class="NewsImg" href="#">
+				<img src="/photos/medium/2">
+			</a>
+			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<div class="Date">
+				Tuesday, 26th June 2007
+			</div>
+			<p class="More">
+				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+			</p>
+		</div>
+		<div class="LeftNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/164">
+			</a>
+			<p class="More">
+				<a href="#">A Mini Heading</a>
+			</p>
+		</div>
+		<div class="RightNewsBox NewsBox">
+			<a class="NewsImgSmall" href="#">
+				<img src="/photos/small/2">
+			</a>
+			<p class="More">
+				<a href="#">A Second Mini Heading</a>
+			</p>
+		</div>
+	</div>
+	
+	<div class="BlueBox">
+		<h2>yorker student videocasts</h2>
+		<div class="NewsBox">
+			<div style="text-align:center;">
+				<script type="text/javascript">
+				<!--
+				// Version check based upon the values entered above in "Globals"
+				var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+				// Check to see if the version meets the requirements for playback
+				if (hasReqestedVersion) {
+					// if we've detected an acceptable version
+					// embed the Flash Content SWF when all tests are passed
+					AC_FL_RunContent(
+								"src", "http://www.youtube.com/v/LX3JJ_tPvwA",
+								"width", "340",
+								"height", "280",
+								"align", "center",
+								"id", "movie",
+								"quality", "high",
+								"bgcolor", "#FFFFFF",
+								"name", "movie",
+								"allowScriptAccess","sameDomain",
+								"type", "application/x-shockwave-flash",
+								"codebase", "http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab",
+								"pluginspage", "http://www.adobe.com/go/getflashplayer"
+					);
+				} else {  // flash is too old or we can't detect the plugin
+					var alternateContent = '<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />'
+					+ "<b>YouTube Video Clip</b><br /><br /> "
+					+ "This content requires the Adobe Flash Player 9. "
+					+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
+					+ "</div>";
+					document.write(alternateContent);  // insert non-flash content
+				}
+				// -->
+				</script>
+				<noscript>
+					<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
+						<b>YouTube Video Clip</b><br /><br />
+					  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
+					  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+				  	</div>
+				</noscript>
+			</div>
+			<div class="VideoCastBox">
+				<h4>LATEST VIDEOCASTS</h4>
+				<ul class="TitleList">
+					<li><a href="#">Videocast 1</a></li>
+					<li><a href="#">Videocast 2</a></li>
+					<li><a href="#">Videocast 3</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<!--
+	<div class="GreyBar">
+		<h2>lifestyle</h2>
+	</div>-->
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>
