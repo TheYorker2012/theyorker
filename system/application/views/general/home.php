@@ -145,13 +145,17 @@ function print_middle_box($title,$article_array){
 			<a class="NewsImgSmall" href="#">
 				<img src="http://www.theyorker.co.uk/photos/small/34">
 			</a>
-			<b><a href="#">Yorker Review of the Year</a></b>
+			<p class="More">
+				<a href="#">Yorker Review of the Year</a>
+			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
 				<img src="http://www.theyorker.co.uk/photos/small/343">
 			</a>
-			<b><a href="#">We've got flood on our hands</a></b>
+			<p class="More">
+				<a href="#">We've got flood on our hands</a>
+			</p>
 		</div>
 	</div>
 	
@@ -239,17 +243,17 @@ function print_middle_box($title,$article_array){
 			<a class="NewsImgSmall" href="#">
 				<img src="http://www.theyorker.co.uk/photos/small/332">
 			</a>
-			<h4 class="Headline">
+			<p class="More">
 				<a href="#">G*Stars enter history as 6-a-side champions</a>
-			</h4>
+			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
 				<img src="http://www.theyorker.co.uk/photos/small/334">
 			</a>
-			<h4 class="Headline">
+			<p class="More">
 				<a href="#">Veterans Claim Coveted Netball Prize</a>
-			</h4>
+			</p>
 		</div>
 	</div>
 	
