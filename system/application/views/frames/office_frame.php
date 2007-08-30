@@ -136,6 +136,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/moderator/'>Comment Moderation</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/admin/pages'>Page Properties</a>
+		</div>		
 
 		<div class='officenavigation_title'>
 			Sections
@@ -218,9 +221,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		
 		<div class='officenavigation_item'>
 			<a href='/office/guide/'>Style Guide</a>
-		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/manage/members/'>Manage Writer</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/links/'>Links</a>
