@@ -141,6 +141,8 @@ function print_middle_box($title,$article_array){
 				The yorker is undergoing development over the summer ready for its Fresher's Week relaunch, and so will not provide new content.
 			</p>
 		</div>
+		<div class="LineContainer">
+		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
 				<img src="http://www.theyorker.co.uk/photos/small/34">
@@ -188,6 +190,8 @@ function print_middle_box($title,$article_array){
 			<p class="More">
 				The very best of arts-based activities in week 7.
 			</p>
+		</div>
+		<div class="LineContainer">
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<h4>MORE ARTS FEATURES</h4>
@@ -238,6 +242,8 @@ function print_middle_box($title,$article_array){
 			<p class="More">
 				The Yorker speaks to outgoing AU Vice-President Nick Hassey, and brings you all the awards for this athletic season.
 			</p>
+		</div>
+		<div class="LineContainer">
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
@@ -312,11 +318,6 @@ function print_middle_box($title,$article_array){
 			</div>
 		</div>
 	</div>
-	
-	<!--
-	<div class="GreyBar">
-		<h2>lifestyle</h2>
-	</div>-->
 </div>
 
 <?php

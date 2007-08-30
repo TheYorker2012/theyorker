@@ -59,12 +59,12 @@ a.TitleHeading {
 	color: #000000;
 }
 
-div.BlueBox h2 {
-/*
+/* pingu removed for redesigned homepage */
+/*div.BlueBox h2 {
 	border-color: #999; 
 	border-bottom-style: solid;
-	border-bottom-width: thin; */
-}
+	border-bottom-width: thin; 
+}*/
 
 a.MailLogo {
 	float: left; 
@@ -104,20 +104,10 @@ a.NewsImgSmall {
 	float: left;
 }
 
-div.GreyBar {
-	background-color: #999;
-	border: 1px solid #999;
-	margin: 0em 0em 0.5em 0em;
-	text-align: left;
-
+div.LineContainer {
+	width: 95%;
 	float: left;
-	width: 100%;
-}
-
-div.GreyBar h2 {
-	color: #999;
-}
-
-div.BlueBox h4.Headline {
-	color: grey;
+	border-color: #999; 
+	border-top-style: solid;
+	border-top-width: thin;
 }
