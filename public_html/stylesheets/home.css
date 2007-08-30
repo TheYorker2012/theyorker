@@ -116,3 +116,7 @@ div.GreyBar {
 div.GreyBar h2 {
 	color: #ffffff;
 }
+
+div.BlueBox h4.Headline {
+	color: black;
+}
