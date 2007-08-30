@@ -138,7 +138,7 @@ function print_middle_box($title,$article_array){
 				Thursday, 28th June 2007
 			</div>
 			<p class="More">
-				The yorker is undergoing development over the summer ready for its Fresher's Week relaunch, and so will not provide new content. We will be back on the 8th October 2007.
+				The yorker is undergoing development over the summer ready for its Fresher's Week relaunch, and so will not provide new content.
 			</p>
 		</div>
 		<div class="LeftNewsBox NewsBox">
@@ -229,30 +229,30 @@ function print_middle_box($title,$article_array){
 		<h2>latest sports</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="/photos/medium/2">
+				<img src="http://www.theyorker.co.uk/photos/medium/326">
 			</a>
-			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<h3 class="Headline"><a href="#">End of Season Review</a></h3>
 			<div class="Date">
-				Tuesday, 26th June 2007
+				Wednesday, 11th July 2007
 			</div>
 			<p class="More">
-				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+				The Yorker speaks to outgoing AU Vice-President Nick Hassey, and brings you all the awards for this athletic season.
 			</p>
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/164">
+				<img src="http://www.theyorker.co.uk/photos/small/332">
 			</a>
 			<p class="More">
-				<a href="#">A Mini Heading</a>
+				<a href="#">G*Stars enter history as 6-a-side champions</a>
 			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/2">
+				<img src="http://www.theyorker.co.uk/photos/small/334">
 			</a>
 			<p class="More">
-				<a href="#">A Second Mini Heading</a>
+				<a href="#">Veterans Claim Coveted Netball Prize</a>
 			</p>
 		</div>
 	</div>
