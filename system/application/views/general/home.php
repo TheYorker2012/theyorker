@@ -131,30 +131,30 @@ function print_middle_box($title,$article_array){
 		<h2>latest news</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="/photos/medium/164">
+				<img src="http://www.theyorker.co.uk/photos/medium/25">
 			</a>
-			<h3 class="Headline"><a href="#">A Heading</a></h3>
+			<h3 class="Headline"><a href="#">Yorker back from 8th October</a></h3>
 			<div class="Date">
-				Tuesday, 26th June 2007
+				Thursday, 28th June 2007
 			</div>
 			<p class="More">
-				Two miners who escaped from a collapsed pit in Beijing ate coal and drank urine to survive, Chinese media has reported.
+				The yorker is undergoing development over the summer ready for its Fresher's Week relaunch, and so will not provide new content. We will be back on the 8th October 2007.
 			</p>
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/164">
+				<img src="http://www.theyorker.co.uk/photos/small/34">
 			</a>
 			<p class="More">
-				<a href="#">A Mini Heading</a>
+				<a href="#">Yorker Review of the Year</a>
 			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="/photos/small/2">
+				<img src="http://www.theyorker.co.uk/photos/small/343">
 			</a>
 			<p class="More">
-				<a href="#">A Second Mini Heading</a>
+				<a href="#">We've got flood on our hands</a>
 			</p>
 		</div>
 	</div>
