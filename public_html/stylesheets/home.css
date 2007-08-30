@@ -35,7 +35,7 @@ div.NewsBox > * {
 }
 
 a.NewsImg {
-	float: right;
+	float: left;
 }
 
 a.RightColumnAction {
