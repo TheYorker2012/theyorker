@@ -118,7 +118,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/news/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
-					<li><a href="/news/sport/">Sport</a></li>
+					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
