@@ -456,13 +456,19 @@ class Requests_Model extends Model
 	//can also use the GetPublishedArticles to get more data setting is_pulled to TRUE
 	function GetPulledArticles($type_id)
 	{
-		$sql = 'SELECT	article_id
-			FROM	articles
-			LEFT JOIN content_types
-			ON 	article_content_type_id = content_type_id
-			WHERE	(content_type_codename = ?
-			AND	article_pulled = 1)
-			ORDER BY article_publish_date DESC';
+		$sql = 'SELECT
+					article_id
+				FROM
+					articles
+				LEFT JOIN 
+					content_types
+				ON 	
+					article_content_type_id = content_type_id
+				WHERE	
+					content_type_codename = ? AND
+					article_pulled = 1
+				ORDER BY 
+					article_publish_date DESC';
 		$query = $this->db->query($sql,array($type_id));
 		$result = array();
 		if ($query->num_rows() > 0)
@@ -477,37 +483,49 @@ class Requests_Model extends Model
 	//Should this be get completed articles? < no chris "you are a retard" (in your own words), i need this for howdoi
 	function GetPublishedArticles($type_codename, $is_published, $is_pulled = FALSE)
 	{
-		$sql = 'SELECT 	content_type_id
-			FROM	content_types
-			WHERE	(content_type_codename = ?)';
+		$sql = 'SELECT 	
+					content_type_id
+				FROM	
+					content_types
+				WHERE	
+					content_type_codename = ?';
 		$query = $this->db->query($sql,array($type_codename));
 		if ($query->num_rows() == 1)
 		{
 			$type_id = $query->row()->content_type_id;
-			$sql = 'SELECT	article_id,
-				UNIX_TIMESTAMP(article_publish_date) as article_publish_date,
-				article_live_content_id,
-				UNIX_TIMESTAMP(article_content_last_author_timestamp) as article_content_last_author_timestamp,
-				article_content_heading,
-	                        article_content_last_author_user_entity_id,
-				article_editor_approved_user_entity_id,
-				author_user.business_card_name as author_name,
-				editor_user.business_card_name as editor_name
+			$sql = 'SELECT
+						article_id,
+						UNIX_TIMESTAMP(article_publish_date) as article_publish_date,
+						article_live_content_id,
+						UNIX_TIMESTAMP(article_content_last_author_timestamp) as article_content_last_author_timestamp,
+						article_content_heading,
+						article_content_last_author_user_entity_id,
+						article_editor_approved_user_entity_id,
+						author_user.business_card_name as author_name,
+						editor_user.business_card_name as editor_name
 
-				FROM	articles
-				JOIN	article_contents
-				ON      article_content_id = article_live_content_id
+					FROM
+						articles
+					JOIN
+						article_contents
+					ON
+						article_content_id = article_live_content_id
 
-				JOIN	business_cards as editor_user
-				ON	editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
-				JOIN	business_cards as author_user
-				ON	author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+					INNER JOIN
+						business_cards as editor_user
+					ON
+						editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
+					INNER JOIN
+						business_cards as author_user
+					ON
+						author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
 
-				WHERE	article_suggestion_accepted = 1
-				AND	article_content_type_id = ?
-				AND	article_live_content_id IS NOT NULL
-				AND	article_deleted = 0
-				AND	article_pulled = ?';
+					WHERE
+						article_suggestion_accepted = 1 AND
+						article_content_type_id = ? AND
+						article_live_content_id IS NOT NULL AND
+						article_deleted = 0 AND
+						article_pulled = ?';
 			if ($is_published == TRUE)
 				$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
 			else
