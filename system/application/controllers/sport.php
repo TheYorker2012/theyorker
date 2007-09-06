@@ -31,7 +31,7 @@ class Sport extends Controller
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 
 		//Obtain banner
-		$data['banner'] = $this->Home_Model->GetBannerImage();
+		$data['banner'] = $this->Home_Model->GetBannerImage('sportbanner');
 		
 		//Get sport ids (main category)
 		$latest_sport_ids = $this->News_model->GetLatestId('sport',3);
