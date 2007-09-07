@@ -76,8 +76,9 @@ ALL_EVENT_COUNT++;
 } ?>
 
 function drawCalendar () {
+alert('DRAWING CALENDAR');
 	// Reset event counters
-	for (i=0;i<=(DAYS.length-1);i++) {
+	for (var i=0;i<=(DAYS.length-1);i++) {
 		document.getElementById('cal_day_'+DAYS[i]+'_before').innerHTML = '';
 		document.getElementById('cal_day_'+DAYS[i]+'_after').innerHTML = '';
 	}
@@ -87,7 +88,7 @@ function drawCalendar () {
 	resizeCalendar();
 	resizeCalendarAllDay();
 
-	for (i=0; i<ALL_EVENT_COUNT; i++) {
+	for (var i=0; i<ALL_EVENT_COUNT; i++) {
 		var eventStartDate = new Date(ALL_EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(ALL_EVENT_CACHE[i]['end_time']*1000);
 		//function drawAllDayEvent (id, category, link, title, start_hour, duration, height)
@@ -109,7 +110,7 @@ function drawCalendar () {
 */
 
 	/* Determine Event Clashes */
-	for (i=0; i<EVENT_COUNT; i++) {
+	for (var i=0; i<EVENT_COUNT; i++) {
 		var clashes = new Array();
 		var clash_pos = new Array();
 		var clash_count = 0;
@@ -148,7 +149,7 @@ function drawCalendar () {
 	}
 
 	/* Draw each Event */
-	for (i=0; i<EVENT_COUNT; i++) {
+	for (var i=0; i<EVENT_COUNT; i++) {
 		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
 		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
@@ -419,7 +420,7 @@ function zeroTime (time) {
 }
 
 function clearCalendar() {
-	for (i=0;i<=(DAYS.length-1);i++) {
+	for (var i=0; i<=(DAYS.length-1); i++) {
 		removeChildrenFromNode(document.getElementById('cal_day_'+DAYS[i]));
 	}
 	removeChildrenFromNode(document.getElementById('calendar_all_day_events'));
@@ -509,13 +510,45 @@ function unclickDay(day,event) {
 }
 
 function in_array(value, a) {
-	for (pos=0; pos<a.length; pos++) {
+	for (var pos=0; pos<a.length; pos++) {
 		if (a[pos] == value) {
 			return true;
 		}
 	}
 	return false;
 }
+
+function addEventListener(instance, eventName, listener) {
+	var listenerFn = listener;
+	if (instance.addEventListener) {
+		instance.addEventListener(eventName, listenerFn, false);
+	} else if (instance.attachEvent) {
+		listenerFn = function() {
+			listener(window.event);
+		}
+		instance.attachEvent("on" + eventName, listenerFn);
+	} else {
+		throw new Error("Event registration not supported");
+	}
+	return {
+		instance: instance,
+		name: eventName,
+		listener: listenerFn
+	};
+}
+
+function removeEventListener(event) {
+	var instance = event.instance;
+	if (instance.removeEventListener) {
+		instance.removeEventListener(event.name, event.listener, false);
+	} else if (instance.detachEvent) {
+		instance.detachEvent("on" + event.name, event.listener);
+	}
+}
+
+onLoadFunctions.push(drawCalendar);
+window.onresize = drawCalendar;
+//var window_resize = addEventListener(window, "resize", drawCalendar);
 </script>
 
 <style type="text/css">
@@ -650,8 +683,6 @@ table#calendar_view div.cal_event_split_bottom {
 
 
 <div class="BlueBox">
-
-<a href="#" onclick="return drawCalendar();">Add New Event</a>
 
 <table id="calendar_view">
 	<!-- Day Headings -->
