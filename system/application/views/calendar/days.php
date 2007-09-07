@@ -39,7 +39,6 @@ if (FIRST_DAY == 0) {
 	FIRST_DAY.setUTCMinutes(0);
 	FIRST_DAY.setUTCSeconds(0);
 	FIRST_DAY.setUTCMilliseconds(0);
-	//alert(FIRST_DAY.toGMTString() + '---' + FIRST_DAY.toLocaleString());
 }
 DAYS[DAYS.length] = '<?php echo($date); ?>';
 <?php } ?>
@@ -88,10 +87,6 @@ function drawCalendar () {
 	resizeCalendar();
 	resizeCalendarAllDay();
 
-//	test_date = new Date(1188147600*1000);
-//	current_date = new Date();
-//	alert(test_date.toGMTString() + '---' + test_date.toLocaleString() + '\n' + current_date.toGMTString() + '---' + current_date.toLocaleString());
-
 	for (i=0; i<ALL_EVENT_COUNT; i++) {
 		var eventStartDate = new Date(ALL_EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(ALL_EVENT_CACHE[i]['end_time']*1000);
@@ -115,7 +110,6 @@ function drawCalendar () {
 
 	/* Determine Event Clashes */
 	for (i=0; i<EVENT_COUNT; i++) {
-//alert('Processing Event #'+i+' of '+EVENT_COUNT+' - '+EVENT_CACHE[i]['name']);
 		var clashes = new Array();
 		var clash_pos = new Array();
 		var clash_count = 0;
@@ -130,28 +124,22 @@ function drawCalendar () {
 				if (EVENT_CACHE[j]['width'] > clash_width)
 					clash_width = EVENT_CACHE[j]['width'];
 				clash_count++;
-//alert('CLASH FOUND: '+EVENT_CACHE[j]['name']);
 			}
 		}
 		if (EVENT_CACHE[i]['left'] != -1)
 			clash_pos[clash_pos.length] = EVENT_CACHE[i]['left'];
-//alert('Clashes Found: '+clash_count);
 		if ((clash_count+1) > clash_width)
 			clash_width = clash_count + 1;
 		var current_pos = 0;
-//alert('Initial current_pos: '+current_pos);
 		while (in_array(current_pos, clash_pos)) { current_pos++; }
-//alert('First Available current_pos: '+current_pos);
 		EVENT_CACHE[i]['width'] = clash_width;
 		if (EVENT_CACHE[i]['left'] == -1) {
 			EVENT_CACHE[i]['left'] = current_pos;
 			while (in_array(current_pos++, clash_pos)) { current_pos++; }
-//alert('Root Event given pos: '+EVENT_CACHE[i]['left']+' - Next Available current_pos: '+current_pos);
 		}
 		for (j=0; j<clash_count; j++) {
 			EVENT_CACHE[clashes[j]]['width'] = clash_width;
 			if (EVENT_CACHE[clashes[j]]['left'] == -1) {
-//alert('Setting '+EVENT_CACHE[clashes[j]]['name']+' left pos to: '+current_pos);
 				EVENT_CACHE[clashes[j]]['left'] = current_pos;
 				while (in_array(current_pos++, clash_pos)) { current_pos++; }
 			}
@@ -163,13 +151,6 @@ function drawCalendar () {
 	for (i=0; i<EVENT_COUNT; i++) {
 		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
-		//drawEvent(parent, id, category, link, title, content_time, content_location, start_hour, duration, left, width)
-
-//alert(EVENT_CACHE[i]['name']);
-//alert(zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()));
-//alert(Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)).toFixed(2)));
-//alert(Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)));
-
 		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
 			i,
 			EVENT_CACHE[i]['category'],
@@ -183,48 +164,6 @@ function drawCalendar () {
 			EVENT_CACHE[i]['width']
 		);
 	}
-
-
-
-
-/*
-	drawEvent('cal_day_20070716', '001', 'Academic', '/test/link/', 'RDQ', '10:15 - 11:15', 10.25, 1);
-	drawEvent('cal_day_20070716', '002', 'Academic', '/test/link/', 'NDS', '11:15 - 13:15', 11.25, 2);
-	drawEvent('cal_day_20070716', '003', 'Academic', '/test/link/', 'NDS', '13:15 - 14:15', 13.25, 1);
-	drawEvent('cal_day_20070716', '004', 'Academic', '/test/link/', 'MCP', '14:15 - 16:15', 14.25, 2);
-	drawEvent('cal_day_20070716', '005', 'Academic', '/test/link/', 'LPA', '17:15 - 18:15', 17.25, 1);
-	drawEvent('cal_day_20070716', '006', 'Social', '/test/link/', 'Badminton', '19:30 - 22:00', 19.5, 2.5);
-
-	drawEvent('cal_day_20070717', '007', 'Academic', '/test/link/', 'NDS', '10:15 - 11:15', 10.25, 1);
-	drawEvent('cal_day_20070717', '008', 'Academic', '/test/link/', 'LPA', '13:15 - 14:15', 13.25, 1);
-	drawEvent('cal_day_20070717', '009', 'Facebook', '/test/link/', 'FragSoc Pub Crawl', '19:30 - 00:00', 19.5, 4.5);
-		drawEvent('cal_day_20070717', '025', 'Facebook', '/test/link/', 'Facebook', '01:00 - 04:00', 1, 3, 0, 4);
-		drawEvent('cal_day_20070717', '026', 'Facebook', '/test/link/', 'Facebook', '02:00 - 06:00', 2, 4, 2, 4);
-		drawEvent('cal_day_20070717', '027', 'Facebook', '/test/link/', 'Facebook', '01:30 - 03:00', 1.5, 1.5, 1, 4);
-		drawEvent('cal_day_20070717', '028', 'Facebook', '/test/link/', 'Facebook', '03:30 - 06:00', 3.5, 2.5, 3, 4);
-
-
-	drawEvent('cal_day_20070718', '010', 'Academic', '/test/link/', 'LPA', '10:15 - 11:15', 10.25, 1);
-	drawEvent('cal_day_20070718', '018', 'Meeting', '/test/link/', 'Yorker Dev Meeting', '13:15 - 16:15', 13.25, 3);
-	drawEvent('cal_day_20070718', '015', 'Anniversary', '/test/link/', 'Birthday 21: Pingu', '17:00 - 23:30', 17, 6.5);
-		drawEvent('cal_day_20070718', '022', 'Social', '/test/link/', 'Viking Raid II', '03:00 - 07:00', 3, 4, 0, 3);
-		drawEvent('cal_day_20070718', '023', 'Social', '/test/link/', 'Viking Raid II', '05:00 - 06:00', 5, 1, 2, 3);
-		drawEvent('cal_day_20070718', '024', 'Social', '/test/link/', 'Viking Raid II', '06:00 - 09:00', 6, 3, 1, 3);
-
-	drawEvent('cal_day_20070719', '011', 'Academic', '/test/link/', 'LPA', '11:15 - 12:15', 11.25, 1);
-		drawEvent('cal_day_20070719', '021', 'Academic', '/test/link/', 'RDQ', '12:15 - 13:15', 12.25, 1, 0, 2);
-		drawEvent('cal_day_20070719', '012', 'Academic', '/test/link/', 'RDQ', '12:15 - 13:15', 12.25, 1, 1, 2);
-	drawEvent('cal_day_20070719', '013', 'Academic', '/test/link/', 'NDS', '15:15 - 16:15', 15.25, 1);
-	drawEvent('cal_day_20070719', '014', 'Meeting', '/test/link/', 'Watch TV', '18:00 - 23:00', 18, 5);
-
-	drawEvent('cal_day_20070720', '016', 'Academic', '/test/link/', 'RDQ', '09:15 - 10:15', 9.25, 1);
-	drawEvent('cal_day_20070720', '017', 'Academic', '/test/link/', 'MCP', '13:15 - 16:15', 13.25, 3);
-
-	drawEvent('cal_day_20070721', '019', 'Facebook', '/test/link/', 'FragSoc LAN', '12:00 - 00:00', 12, 12);
-
-	drawEvent('cal_day_20070722', '020', 'Facebook', '/test/link/', 'FragSoc LAN', '00:00 - 17:00', 0, 17);
-*/
-
 	return false;
 }
 
