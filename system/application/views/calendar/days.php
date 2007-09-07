@@ -60,6 +60,8 @@ EVENT_CACHE[EVENT_COUNT]['location']	= '<?php echo($event_info->LocationDescript
 EVENT_CACHE[EVENT_COUNT]['description']	= '<?php echo(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8')); ?>';
 EVENT_CACHE[EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+EVENT_CACHE[EVENT_COUNT]['left']		= -1;
+EVENT_CACHE[EVENT_COUNT]['width']		= 1;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
@@ -84,6 +86,7 @@ function drawCalendar () {
 	clearCalendar();
 	timeCalendar();
 	resizeCalendar();
+	resizeCalendarAllDay();
 
 //	test_date = new Date(1188147600*1000);
 //	current_date = new Date();
@@ -110,8 +113,53 @@ function drawCalendar () {
 	drawAllDayEvent('902', 'Facebook', '/test/link/', 'FragSoc', 12, 29.98, 1);
 */
 
-	resizeCalendarAllDay();
+	/* Determine Event Clashes */
+	for (i=0; i<EVENT_COUNT; i++) {
+//alert('Processing Event #'+i+' of '+EVENT_COUNT+' - '+EVENT_CACHE[i]['name']);
+		var clashes = new Array();
+		var clash_pos = new Array();
+		var clash_count = 0;
+		var clash_width = EVENT_CACHE[i]['width'];
+		for (j=i+1; j<EVENT_COUNT; j++) {
+			if (((EVENT_CACHE[j]['start_time'] >= EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['start_time'] < EVENT_CACHE[i]['end_time'])) ||
+				((EVENT_CACHE[j]['end_time'] > EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['end_time'] <= EVENT_CACHE[i]['end_time'])) ||
+				((EVENT_CACHE[j]['start_time'] < EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['end_time'] > EVENT_CACHE[i]['end_time']))) {
+				clashes[clash_count] = j;
+				if (EVENT_CACHE[j]['left'] != -1)
+					clash_pos[clash_pos.length] = EVENT_CACHE[j]['left'];
+				if (EVENT_CACHE[j]['width'] > clash_width)
+					clash_width = EVENT_CACHE[j]['width'];
+				clash_count++;
+//alert('CLASH FOUND: '+EVENT_CACHE[j]['name']);
+			}
+		}
+		if (EVENT_CACHE[i]['left'] != -1)
+			clash_pos[clash_pos.length] = EVENT_CACHE[i]['left'];
+//alert('Clashes Found: '+clash_count);
+		if ((clash_count+1) > clash_width)
+			clash_width = clash_count + 1;
+		var current_pos = 0;
+//alert('Initial current_pos: '+current_pos);
+		while (in_array(current_pos, clash_pos)) { current_pos++; }
+//alert('First Available current_pos: '+current_pos);
+		EVENT_CACHE[i]['width'] = clash_width;
+		if (EVENT_CACHE[i]['left'] == -1) {
+			EVENT_CACHE[i]['left'] = current_pos;
+			while (in_array(current_pos++, clash_pos)) { current_pos++; }
+//alert('Root Event given pos: '+EVENT_CACHE[i]['left']+' - Next Available current_pos: '+current_pos);
+		}
+		for (j=0; j<clash_count; j++) {
+			EVENT_CACHE[clashes[j]]['width'] = clash_width;
+			if (EVENT_CACHE[clashes[j]]['left'] == -1) {
+//alert('Setting '+EVENT_CACHE[clashes[j]]['name']+' left pos to: '+current_pos);
+				EVENT_CACHE[clashes[j]]['left'] = current_pos;
+				while (in_array(current_pos++, clash_pos)) { current_pos++; }
+			}
 
+		}
+	}
+
+	/* Draw each Event */
 	for (i=0; i<EVENT_COUNT; i++) {
 		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
@@ -130,7 +178,9 @@ function drawCalendar () {
 			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
 			EVENT_CACHE[i]['location'],
 			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)).toFixed(2)),
-			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
+			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
+			EVENT_CACHE[i]['left'],
+			EVENT_CACHE[i]['width']
 		);
 	}
 
@@ -257,7 +307,7 @@ function drawEvent(parent, id, category, link, title, content_time, content_loca
 	if (p_ele == null)
 		return;
 
-	if (left == null)
+	if ((left == null) || (left == -1))
 		left = 0;
 	if (width == null)
 		width = 1;
@@ -517,6 +567,15 @@ function moveDay (day, event) {
 function unclickDay(day,event) {
 	CREATE_EVENT = false;
 	document.getElementById('cal_new_event_start').focus();
+}
+
+function in_array(value, a) {
+	for (pos=0; pos<a.length; pos++) {
+		if (a[pos] == value) {
+			return true;
+		}
+	}
+	return false;
 }
 </script>
 
