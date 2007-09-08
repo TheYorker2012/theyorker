@@ -10,6 +10,7 @@ class Sport extends Controller
 		parent::Controller();
 		$this->load->model('News_model');
 		$this->load->model('Home_Model');
+		$this->load->library('Homepage_boxes');
 	}
 	
 	function index()

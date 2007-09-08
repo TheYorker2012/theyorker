@@ -1,4 +1,5 @@
 <?php
+/*
 function get_link_ref($article,$prefix){
 	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
 };
@@ -74,6 +75,7 @@ function print_box_of_category_lists($box_header,$article_types,$article_lists)
 		}
 	echo('</div>');
 }
+*/
 ?>
 
 <div id="RightColumn">
@@ -89,7 +91,7 @@ function print_box_of_category_lists($box_header,$article_types,$article_lists)
 		<?php echo($banner) ?>
 	</div>
 	<?php
-	print_box_with_picture_list($main_sport,$latest_heading);
-	print_box_of_category_lists($more_heading,$show_sports,$sport_lists);
+	$this->homepage_boxes->print_box_with_picture_list($main_sport,$latest_heading,'news');
+	$this->homepage_boxes->print_box_of_category_lists($more_heading,$show_sports,$sport_lists);
 	?>
 </div>
