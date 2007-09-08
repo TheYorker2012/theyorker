@@ -1,76 +1,67 @@
 <?php
-
-/**
- * This is the controller for the sport section.
- *
- *@authot Owen Jones (oj502@york.ac.uk)
-*Code stolen from news section --
- * @author Chris Travis	(cdt502 - ctravis@gmail.com)
+/*
+ * Sport homepage controller
+ *@author Owen Jones (oj502@york.ac.uk)
  */
-
 class Sport extends Controller
 {
 	function __construct()
 	{
 		parent::Controller();
 		$this->load->model('News_model');
-		$this->load->model('Home_Hack_Model');
 		$this->load->model('Home_Model');
 	}
 	
 	function index()
 	{
-		// Load public view
 		if (!CheckPermissions('public')) return;
-
-		$type_info = $this->News_model->getArticleTypeInformation('sport');
+		
+		//Get page properties information
 		$this->pages_model->SetPageCode('sport');
-
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['more_heading'] = $this->pages_model->GetPropertyText('more_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
-
-		//Obtain banner
+		
+		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_sport_articles');//Max number of main articles to show
+		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_sport_articles');//Max number of more articles to show
+		
+		//Obtain banner for homepage
 		$data['banner'] = $this->Home_Model->GetBannerImage('sportbanner');
 		
-		//Get sport ids (main category)
-		$latest_sport_ids = $this->News_model->GetLatestId('sport',3);
-		//MAIN HEAD fixed one general sport with summery, and two simples
-		$main_sport_previews[0] = $this->News_model->GetSummaryArticle($latest_sport_ids[0], "Left", '%W, %D %M %Y', "medium");
-		/// Get some of the 2nd- and 3rd-latest articles
-		for ($index = 1; $index <= 2 && $index < count($latest_sport_ids); $index++) {
-			array_push($main_sport_previews, $this->News_model->GetSimpleArticle($latest_sport_ids[$index], "Left"));
+		//////////////Information for main article(s)
+		//Get article ids for the main section
+		$main_article_ids = $this->News_model->GetLatestId('sport',3);
+		//First article has summery, rest are simple articles
+		$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
+		for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
+			array_push($main_article_summarys, $this->News_model->GetSimpleArticle($main_article_ids[$index], "Left"));
 		}
 		
-		
-		$show_sports_data = $this->News_model->getSubArticleTypes('sport');
-		$more_sports_num = (int)$this->pages_model->GetPropertyText('max_num_more_sport_articles');//Max number of more sports to show, TODO get from page properties
-		
-		$sport_index = 0;//index for going through each sport
-		$sports_previews = array();//Where the simple articles will go
-		
-		//////For each sport get simple articles
-		foreach ( $show_sports_data as $a_sport){
-			//Get article id's for that sport up to limit of $more_sports_num
-			$sports_ids[$sport_index] = $this->News_model->GetLatestId($a_sport['codename'],$more_sports_num);
-				//for the new sport found get a simple article for each of the ids found.
-				for ($index = 0; $index <= ($more_sports_num-1) && $index < count($sports_ids[$sport_index]); $index++) {
-					$sports_previews[$sport_index][] = $this->News_model->GetSimpleArticle($sports_ids[$sport_index][$index], "Left");
+		//////////////Information for more article list(s)
+		//Get list of article types
+		$more_article_types = $this->News_model->getSubArticleTypes('sport');
+		//////For each article type get list of simple articles to the limit of $more_articles_num
+		$article_index = 0;
+		foreach ($more_article_types as $an_article){
+			//Get article id's for that article type up to limit of $more_articles_num
+			$articles_ids[$article_index] = $this->News_model->GetLatestId($an_article['codename'],$more_articles_num);
+				//for the new article type found get a simple article for each of the ids found.
+				for ($index = 0; $index <= ($more_articles_num-1) && $index < count($articles_ids[$article_index]); $index++) {
+					$articles_summarys[$article_index][] = $this->News_model->GetSimpleArticle($articles_ids[$article_index][$index], "Left");
 				}
-			$sport_index++;
+			$article_index++;
 		}
 		
-		//Move previews into send data
-		$data['show_sports'] = $show_sports_data;
-		$data['sports'] = $sports_previews;
-		$data['main_sport'] = $main_sport_previews;
+		//Move article information into send data
+		$data['main_sport'] = $main_article_summarys;//list of main sport summary
+		$data['sport_lists'] = $articles_summarys;//array of sport article lists
+		$data['show_sports'] = $more_article_types;//list of sport article types
 		
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('sport/index', $data);
 		$this->main_frame->SetExtraCss('/stylesheets/home.css');
+		$this->main_frame->SetContentSimple('sport/index', $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-
 }
 ?>
