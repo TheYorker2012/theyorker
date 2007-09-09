@@ -561,5 +561,178 @@ class Article_model extends Model
 			WHERE	(article_id = ?)';
 		$query = $this->db->query($sql,array($editor_id, $id));
 	}
+	
+	/*********************************************************
+	*ARTICLE TYPES
+	*********************************************************/
+	
+	/**
+	*Returns infomation about all main types of article.
+	*@return array[types == array[id(content_type_id),codename(content_type_codename),
+	*@return image(content_type_image_id),image_title(image_title),image_extension(image_file_extension),
+	*@return image_codename(image_type_codename),name(content_type_name)]
+	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
+	**/
+	function getMainArticleTypes ()
+	{
+		
+		$result = array();
+		$sql = 'SELECT  content_types.content_type_id, content_types.content_type_codename, content_types.content_type_blurb, 
+						content_types.content_type_name, image_id, image_file_extension, image_type_codename,image_title			
+			FROM    content_types 
+			LEFT OUTER JOIN      images
+			ON      content_types.content_type_image_id = image_id
+			LEFT OUTER JOIN      image_types
+			ON      image_image_type_id = image_type_id
+			WHERE  content_types.content_type_parent_content_type_id IS NULL ORDER BY content_types.content_type_name ASC';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$result[] = array(
+					'id' => $row->content_type_id,
+					'codename' => $row->content_type_codename,
+					'name' => $row->content_type_name,
+					'blurb' => $row->content_type_blurb,
+					'image' => $row->image_id,
+					'image_title' => $row->image_title,
+					'image_extension' => $row->image_file_extension,
+					'image_codename' => $row->image_type_codename
+				);
+			}
+		}
+		return $result;
+	}
+	function doesCodenameExist($codename){
+	$sql= "SELECT content_types.content_type_id FROM content_types WHERE content_type_codename=? LIMIT 1";
+	$query = $this->db->query($sql,array($codename));
+	return ($query->num_rows() > 0);
+	}
+	
+	function isArticleTypeAParent($id){
+	$sql= "SELECT content_types.content_type_has_children FROM content_types WHERE content_type_id=? LIMIT 1";
+	$query = $this->db->query($sql,array($id));
+		if ($query->num_rows() > 0){
+			$row = $query->row();
+			return ($row->content_type_has_children);
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Returns infomation about all content subtypes.
+	*@return array[subtypes == array[id(content_type_id),codename(content_type_codename),parent_name,parent_codename,
+	*@return image(content_type_image_id),image_title(image_title),image_extension(image_file_extension),
+	*@return image_codename(image_type_codename),name(content_type_name)]
+	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
+	**/
+	function getAllSubArticleTypes ()
+	{
+		$result = array();
+		$sql = 'SELECT  child.content_type_id,
+						child.content_type_codename,
+						child.content_type_blurb,
+						child.content_type_name,
+						child.content_type_archive,
+						parent.content_type_name AS parent_name,
+						parent.content_type_codename AS parent_codename,
+						image_id, image_file_extension,
+						image_type_codename, image_title
+			FROM    content_types AS parent
+			INNER JOIN      content_types AS child
+			ON      parent.content_type_id = child.content_type_parent_content_type_id
+			LEFT OUTER JOIN      images
+			ON      child.content_type_image_id = image_id
+			LEFT OUTER JOIN      image_types
+			ON      image_image_type_id = image_type_id
+			WHERE     parent.content_type_has_children = 1
+			ORDER BY        parent.content_type_name ASC,  child.content_type_name ASC';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$result[] = array(
+					'id' => $row->content_type_id,
+					'codename' => $row->content_type_codename,
+					'name' => $row->content_type_name,
+					'parent_name' => $row->parent_name,
+					'parent_codename' => $row->parent_codename,
+					'in_archive' => $row->content_type_archive,
+					'blurb' => $row->content_type_blurb,
+					'image' => $row->image_id,
+					'image_title' => $row->image_title,
+					'image_extension' => $row->image_file_extension,
+					'image_codename' => $row->image_type_codename
+				);
+			}
+		}
+		return $result;
+	}
+	
+	//Make sure the parent exists, and thecodename is not already taken!
+	function insertArticleSubType($codename,$name,$parent_id,$image_id,$archive,$blurb,$order=NULL)
+	{
+		//Get org id of parent
+		$sql = 'SELECT  content_types.content_type_related_organisation_entity_id 
+			FROM    content_types 
+			WHERE  content_types.content_type_id = ?  
+			LIMIT 1';
+		$query = $this->db->query($sql,array($parent_id));
+		$row = $query->row();
+		$org_id = $row->content_type_related_organisation_entity_id;
+		//Insert new type
+		$sql = 'INSERT INTO content_types (
+				content_type_codename, 
+				content_type_related_organisation_entity_id, 
+				content_type_parent_content_type_id, 
+				content_type_image_id, 
+				content_type_name, 
+				content_type_archive, 
+				content_type_blurb, 
+				content_type_has_reviews, 
+				content_type_has_children, 
+				content_type_section, 
+				content_type_section_order 
+				)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+		$this->db->query($sql, array($codename,$org_id,$parent_id,$image_id,$name,$archive,$blurb,0,0,'news',$order));
+	}
+	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$blurb,$order)
+	{
+		//Update type
+		$sql = 'UPDATE `content_types` SET 
+		content_types.content_type_codename = ?, 
+		content_types.content_type_name = ?, 
+		content_types.content_type_parent_content_type_id = ?, 
+		content_types.content_type_archive = ?, 
+		content_types.content_type_blurb = ?, 
+		content_types.content_type_section_order = ?, 
+		WHERE content_types.content_type_id =? 
+		LIMIT 1';
+		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$blurb,$order));
+	}
+	//check for articles by this subtype first!
+	function deleteSubArticleType($id)
+	{
+		$sql = 'SELECT  content_types.content_type_has_children, content_type_section 
+			FROM    content_types 
+			WHERE  content_types.content_type_id = ?  
+			LIMIT 1';
+		$query = $this->db->query($sql,array($id));
+		$row = $query->row();
+		if($row->content_type_has_children == 1 || $row->content_type_section=='hardcoded'){
+			//must not delete!!
+			return false;
+		}else{
+			$sql = 'DELETE FROM content_types 
+				WHERE  content_types.content_type_id = ?  
+				LIMIT 1';
+			$query = $this->db->query($sql,array($id));
+			return true;
+		}
+	}
 }
 ?>

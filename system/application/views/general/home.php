@@ -1,4 +1,5 @@
 <?php
+//Note this can all be got from the Homepage_boxes library.
 function get_link_ref($article,$prefix){
 	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
 };
@@ -261,6 +262,16 @@ function print_middle_box($title,$article_array){
 				<a href="#">Veterans Claim Coveted Netball Prize</a>
 			</p>
 		</div>
+	</div>
+	
+	<div class="MiddlePufferBox">
+		<a class="MiddlePufferImgMedium MiddlePufferBox" href="#">
+			<img src="http://www.theyorker.co.uk/photos/small/332">
+		</a>
+		<h2>feature</h2>
+		<p class="More">
+			<a href="#">We trial 18 uni sports in the desert...</a>
+		</p>
 	</div>
 	
 	<div class="BlueBox">
