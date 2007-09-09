@@ -254,7 +254,7 @@ class News_model extends Model
 		}
 		return $result;
 	}
-
+	
 	/**
 	 * Returns an array of the Article IDs that are of a specified type in
 	 * decending order by publish date.
