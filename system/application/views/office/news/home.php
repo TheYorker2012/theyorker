@@ -74,39 +74,37 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 
 	<div class="RightToolbar">
 		<h4><?php echo $tasks_heading; ?></h4>
-		<ul>
-			<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
-			<li><a href="/office/news/create">Create New Article</a></li>
-		</ul>
+		<div class="Entry">
+			<ul>
+				<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
+				<li><a href="/office/news/create">Create New Article</a></li>
+			</ul>
+		</div>
 	</div>
 
 	<div class="blue_box">
-		<h2><?php echo $box_display_name; ?> box...</h2>
-		Welcome to this box, there are currently:
-		<ul>
-			<li><?php echo(count($box_contents['suggestion'])); ?> suggestions</li>
-			<li><?php echo(count($box_contents['unassigned'])); ?> unassigned requests</li>
-			<li><?php echo(count($box_contents['assigned'])); ?> assigned requests</li>
-			<li><?php echo(count($box_contents['ready'])); ?> ready articles</li>
-		</ul>
+		<h2>from the editor</h2>
+		<p>
+			text here
+		</p>
 	</div>
 
-	<div class="grey_box" style="width:auto">
+	<div class="BlueBox" style="width:auto">
 		<h2>suggestions...</h2>
 		<?php PrintRequestList($box_contents['suggestion'],$parent_type,TRUE); ?>
 	</div>
 
-	<div class="grey_box" style="width:auto">
+	<div class="BlueBox" style="width:auto">
 		<h2>unassigned requests...</h2>
 		<?php PrintRequestList($box_contents['unassigned'],$parent_type); ?>
 	</div>
 
-	<div class="grey_box" style="width:auto">
+	<div class="BlueBox" style="width:auto">
 		<h2>assigned requests...</h2>
 		<?php PrintRequestList($box_contents['assigned'],$parent_type); ?>
 	</div>
 
-	<div class="grey_box" style="width:auto">
+	<div class="BlueBox" style="width:auto">
 		<h2>ready articles...</h2>
 		<?php PrintRequestList($box_contents['ready'],$parent_type); ?>
 	</div>

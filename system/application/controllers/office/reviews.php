@@ -98,28 +98,7 @@ class Reviews extends Controller
 			),
 		);
 		// get the context types
-		/// @todo move this query into a model
-		/// @todo ensure that the organisation exists (using organisation_name != null
-		$query = $this->db->query('
-			SELECT
-				organisation_name AS organisation_name,
-				content_type_codename AS content_codename,
-				content_type_name AS content_name,
-				UNIX_TIMESTAMP(review_context_content_last_author_timestamp) AS timestamp,
-				review_context_deleted AS deleted
-			FROM content_types
-			LEFT JOIN organisations
-				ON	organisation_directory_entry_name = '.$this->db->escape($organisation).'
-			LEFT JOIN review_contexts
-				ON	review_context_content_type_id = content_type_id
-				AND	review_context_organisation_entity_id = organisation_entity_id
-				AND	review_context_deleted = FALSE
-			LEFT JOIN review_context_contents
-				ON review_context_content_id = review_context_live_content_id
-			WHERE
-				content_type_has_reviews = TRUE
-			ORDER BY content_type_section_order ASC');
-		$content_types = $query->result_array();
+		$content_types = $this->review_model->GetOrganisationReviewContextTypes($organisation);
 		foreach ($content_types as $context_type) {
 			$context = array();
 			$context['name'] = $context_type['content_name'];
@@ -154,7 +133,7 @@ class Reviews extends Controller
 	}
 
 	/// Reviews information page
-	function information($ContextType, $organisation, $action = 'view', $revision_id = TRUE)
+	function information($ContextType, $organisation, $action = 'view', $revision_id = FALSE)
 	{
 		/// @todo add show all option backend
 		if (!CheckPermissions('office')) return;
@@ -360,21 +339,20 @@ class Reviews extends Controller
 			$data['user_is_editor'] = $editor_level;
 
 			// Get context contents from model
-			$context_contents = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
-			if (isset($context_contents[0]))
-				$data = array_merge($data, $context_contents[0]);
-			else
+			$data['main_revision'] = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
+			if ($data['main_revision'] == FALSE)
 			{
 				//Error is not needed, as the blanks make it obvious that no review context exists. Nse500
 				//$this->messages->AddMessage('error', 'Review context '.$revision_id.' does not exist');
-				$data['content_blurb'] = '';
-				$data['content_quote'] = '';
-				$data['average_price'] = '';
-				$data['recommended_item'] = '';
-				$data['content_rating'] = 5;
-				$data['serving_times'] = '';
-				$data['deal'] = '';
-				$data['deal_expires'] = '';
+				$data['main_revision']['content_id'] = 0;
+				$data['main_revision']['content_blurb'] = '';
+				$data['main_revision']['content_quote'] = '';
+				$data['main_revision']['average_price'] = '';
+				$data['main_revision']['recommended_item'] = '';
+				$data['main_revision']['content_rating'] = 5;
+				$data['main_revision']['serving_times'] = '';
+				$data['main_revision']['deal'] = '';
+				$data['main_revision']['deal_expires'] = '';
 			}
 			//$this->messages->AddDumpMessage('data',$data);
 

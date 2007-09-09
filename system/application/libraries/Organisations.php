@@ -124,6 +124,7 @@ class Organisations
 				'shortname'   => $org['organisation_directory_entry_name'],
 				'description' => $org['organisation_description'],
 				'type'        => $org['organisation_type_name'],
+				'type_codename'	=> $org['organisation_type_codename'],
 				'website'     => $org['organisation_url'],
 				'open_times'  => $org['organisation_opening_hours'],
 				'email_address'   => $org['organisation_email_address'],

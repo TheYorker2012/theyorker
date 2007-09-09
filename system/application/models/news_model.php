@@ -217,6 +217,7 @@ class News_model extends Model
 	*@return array[subtypes == array[id(content_type_id),codename(content_type_codename),
 	*@return image(content_type_image_id),image_title(image_title),image_extension(image_file_extension),
 	*@return image_codename(image_type_codename),name(content_type_name)]
+	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
 	**/
 	function getSubArticleTypes ($main_type)
 	{
@@ -227,9 +228,9 @@ class News_model extends Model
 			FROM    content_types AS parent
 			INNER JOIN      content_types AS child
 			ON      parent.content_type_id = child.content_type_parent_content_type_id
-			INNER JOIN      images
+			LEFT OUTER JOIN      images
 			ON      child.content_type_image_id = image_id
-			INNER JOIN      image_types
+			LEFT OUTER JOIN      image_types
 			ON      image_image_type_id = image_type_id
 			WHERE   parent.content_type_codename = ?
 			AND     parent.content_type_has_children = 1

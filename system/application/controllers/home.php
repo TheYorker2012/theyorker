@@ -129,6 +129,7 @@ class Home extends Controller {
 				'arts' => 2
 			)
 		);
+		//$this->messages->AddDumpMessage('ids',$article_all_ids);
 
 		// Create an array to map an article id to an article type
 		$article_base_types = array();

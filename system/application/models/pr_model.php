@@ -214,7 +214,7 @@ class Pr_model extends Model {
 				INNER JOIN organisations
 				ON		organisations.organisation_entity_id = subscriptions.subscription_organisation_entity_id
 				AND		organisations.organisation_deleted = 0
-				AND		organisation_directory_entry_name = ?
+				AND		organisations.organisation_directory_entry_name = ?
 				INNER JOIN organisation_types
 				ON		organisations.organisation_organisation_type_id = organisation_types.organisation_type_id
 				AND		organisation_types.organisation_type_directory = 1
@@ -545,61 +545,34 @@ class Pr_model extends Model {
 			$row2 = $query2->row();
 			if ($query2->num_rows() == 1)
 			{
-				$result['org']['id'] = $row1->organisation_entity_id;
-				$result['org']['name'] = $row2->organisation_name;
-				$result['org']['dir_entry_name'] = $row2->organisation_directory_entry_name;
-				$result['org']['priority'] = $row2->organisation_priority;
-				$result['user']['id'] = $row2->subscription_user_entity_id;
-				$result['user']['firstname'] = $row2->user_firstname;
-				$result['user']['surname'] = $row2->user_surname;
-			}
-			
-			/* GET INFORMATION DATA */
-				
-			/* GET TAG DATA */
-			
-			//and the tag groups for the organisations context types
-			//NOTE: not limited to food and drink
-			$sql = 'SELECT	tag_groups.tag_group_id,
-							tag_groups.tag_group_name,
-							content_types.content_type_codename,
-							content_types.content_type_name
-					FROM	tag_groups
-					INNER JOIN content_types
-					ON		content_types.content_type_id = tag_groups.tag_group_content_type_id
-					INNER JOIN review_contexts
-					ON		review_contexts.review_context_organisation_entity_id = ?
-					AND		review_contexts.review_context_deleted = 0
-					AND		review_contexts.review_context_content_type_id = content_types.content_type_id
-					ORDER BY content_types.content_type_codename ASC, tag_groups.tag_group_name ASC';
-			$query3 = $this->db->query($sql,array($row1->organisation_entity_id));
-			if ($query3->num_rows() > 0)
-			{
-				foreach ($query3->result() as $row3)
-				{
-					//get the number of tags in the tag group
-					$sql = 'SELECT	count(organisation_tags.organisation_tag_tag_id) as tag_count
-							FROM	organisation_tags
-							INNER JOIN tags
-							ON		organisation_tags.organisation_tag_tag_id = tags.tag_id
-							INNER JOIN tag_groups
-							ON		tag_groups.tag_group_id = tags.tag_tag_group_id
-							WHERE	organisation_tags.organisation_tag_organisation_entity_id = ?
-							AND		tag_groups.tag_group_id = ?';
-					$query4 = $this->db->query($sql,array($row1->organisation_entity_id, $row3->tag_group_id));
-					$row4 = $query4->row();
-					$result_item['type_codename'] = $row3->content_type_codename;
-					$result_item['type_name'] = $row3->content_type_name;
-					$result_item['group_name'] = $row3->tag_group_name;
-					$result_item['tag_count'] = $row4->tag_count;
-					$result['tags'][] = $result_item;
-				}
+				$result['info']['id'] = $row1->organisation_entity_id;
+				$result['info']['name'] = $row2->organisation_name;
+				$result['info']['dir_entry_name'] = $row2->organisation_directory_entry_name;
+				$result['info']['priority'] = $row2->organisation_priority;
+				$result['rep']['id'] = $row2->subscription_user_entity_id;
+				$result['rep']['firstname'] = $row2->user_firstname;
+				$result['rep']['surname'] = $row2->user_surname;
 			}
 			
 			return $result;
 		}
 		else
 			return FALSE;
+	}
+	
+	function GetOrganisationID($shortname)
+	{
+		//find the org and if it exists
+		$sql = 'SELECT	organisations.organisation_entity_id
+				FROM	organisations
+				WHERE	organisations.organisation_directory_entry_name = ?
+				AND		organisations.organisation_deleted = 0';
+		$query = $this->db->query($sql,array($shortname));
+		$row = $query->row();
+		if ($query->num_rows() == 1)
+		{
+			return($row->organisation_entity_id);
+		}
 	}
 	
 	//this deletes the organisation and its contents with the given shortname

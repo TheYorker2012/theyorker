@@ -25,7 +25,7 @@ class Vipmanager extends Controller
 			redirect('/office/');
 		}
 
-		$this->pages_model->SetPageCode('vip manager');
+		$this->pages_model->SetPageCode('vip_manager');
 
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),

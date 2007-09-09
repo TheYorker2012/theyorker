@@ -45,7 +45,7 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 			if ($the_revision['deleted']){echo('<span class="red">');}
 			echo('Author : '.$the_revision['author'].'<br />');
 			echo('Created : '.date('d/m/Y H:i', (int)$the_revision['timestamp']).'<br />');
-			if ($content_id == $the_revision['id']) {
+			if ($main_revision['content_id'] == $the_revision['id']) {
 				echo(' <b>(Editing)</b>');
 			} else {
 				echo(' <a href="'.$reviews_information_url.'/view');
@@ -92,7 +92,7 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 <div class='blue_box'>
 	<h2>objective blurb</h2>
 	You are currently editing <span class="orange"><?php echo($organisation['name']); ?></span><br />
-	<textarea name='reviewinfo_about' cols='48' rows='10'><?php echo($content_blurb); ?></textarea>
+	<textarea name='reviewinfo_about' cols='48' rows='10'><?php echo($main_revision['content_blurb']); ?></textarea>
 </div>
 <div class='grey_box'>
 <h2>details</h2>
@@ -103,23 +103,23 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 		for ($rating = 0; $rating <= 10; $rating++)
 		{
     		echo('<option');
-    		if ($rating == $content_rating) echo(' selected');
+    		if ($rating == $main_revision['content_rating']) echo(' selected');
     		echo(' value="'.$rating.'">'.($rating / 2).'</option>');
 		}
 		?>
 		</select>
 		<br />
 		<label for='reviewinfo_quote'>Summary Quote:</label>
-		<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo($content_quote); ?></textarea>
+		<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo($main_revision['content_quote']); ?></textarea>
 		<br />
 		<label for='reviewinfo_recommended'>Recommended Item:</label>
-		<input type='text' name='reviewinfo_recommended' style='width: 220px;' value='<?php echo($recommended_item); ?>'/>
+		<input type='text' name='reviewinfo_recommended' style='width: 220px;' value='<?php echo($main_revision['recommended_item']); ?>'/>
 		<br />
 		<label for='reviewinfo_average_price'>Average Price:</label>
-		<input type='text' name='reviewinfo_average_price' style='width: 220px;' value='<?php echo($average_price); ?>'/>
+		<input type='text' name='reviewinfo_average_price' style='width: 220px;' value='<?php echo($main_revision['average_price']); ?>'/>
 		<br />
 		<label for='reviewinfo_serving_hours'>Serving Hours:</label>
-		<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo($serving_times); ?></textarea>
+		<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo($main_revision['serving_times']); ?></textarea>
 		<br />
 		
 		<label for='reviewinfo_submitbutton'></label>

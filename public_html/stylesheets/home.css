@@ -35,7 +35,7 @@ div.NewsBox > * {
 }
 
 a.NewsImg {
-	float: right;
+	float: left;
 }
 
 a.RightColumnAction {
@@ -59,11 +59,12 @@ a.TitleHeading {
 	color: #000000;
 }
 
-div.BlueBox h2 {
+/* pingu removed for redesigned homepage */
+/*div.BlueBox h2 {
 	border-color: #999; 
 	border-bottom-style: solid;
 	border-bottom-width: thin; 
-}
+}*/
 
 a.MailLogo {
 	float: left; 
@@ -93,3 +94,20 @@ h3 {
 	margin-bottom: 0;
 }
 
+/* pingu added for redesigned homepage */
+div.VideoCastBox h4 {
+	font-size: small;
+	color: #20c1f0;
+}
+
+a.NewsImgSmall {
+	float: left;
+}
+
+div.LineContainer {
+	width: 95%;
+	float: left;
+	border-color: #999; 
+	border-top-style: solid;
+	border-top-width: thin;
+}

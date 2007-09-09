@@ -26,7 +26,7 @@
 	<td><a href="/office/quotes/edit/<?php echo $quote['quote_id']; ?>" title="Edit this quote">Edit</a></td>
 	</tr>
 
-	<? } ?>
+	<?php } ?>
 	</table>
 
 </div>

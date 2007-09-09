@@ -97,7 +97,7 @@ class News extends Controller
 
 		$data['box_contents'] = $this->requests_model->GetArticlesForBox($type_info['codename'], $this->user_auth->entityId);
 		$data['parent_type'] = $type_info['has_children'];
-		$data['box_display_name'] = $type_info['name'];
+		//$data['box_display_name'] = $type_info['name'];
 
 		/// Make it so we only have to worry about two levels of access as admins can do everything editors can
 		$data['user_level'] = GetUserLevel();

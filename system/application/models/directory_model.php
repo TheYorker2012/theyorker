@@ -169,6 +169,7 @@ class Directory_model extends Model {
 			' organisation_contents.organisation_content_id as organisation_revision_id,'.
 			' organisations.organisation_yorkipedia_entry,'.
 			' organisation_types.organisation_type_name,'.
+			' organisation_types.organisation_type_codename,'.
 			' organisations.organisation_location_id,'.
 			' locations.location_lat, locations.location_lng '.
 			'FROM organisations '.

@@ -1,8 +1,8 @@
 <div class="RightToolbar">
 </div>
-<div class="grey_box">
+<div class="blue_box">
 	<h2>edit categories</h2>
-	<?php
+<?php
 	foreach ($categories as $category_id => $category)
 	{
 		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
@@ -16,8 +16,32 @@
 			</form>
 			<br />';
 	}
-	?>
-
+?>
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th style="width:40%;">Name</th>
+					<th style="width:60%;text-align:right;">Sort</th>
+				</tr>
+			</thead>
+			<tbody>
+<?php
+foreach ($categories as $category_id => $category)
+	{
+	echo('				<tr>'."\n");
+	echo('					<td>'."\n");
+	echo('						<a href="">'.$category['name'].'</a>'."\n");
+	echo('					</td>'."\n");
+	echo('					<td style="text-align:right;">'."\n");
+	echo('						<a href="">[Move Up]</a> <a href="">[Move Down]</a>'."\n");
+	echo('					</td>'."\n");
+	echo('				</tr>'."\n");
+	}
+?>
+			</tbody>
+		</table>
+	</div>
 </div>
 <?php
 echo '<div class="blue_box">

@@ -1,3 +1,44 @@
+<?php
+	function PrintSectionTableContents($header_name, $data)
+	{
+		echo '	<b>'.$header_name.'</b>';
+		echo('	<div class="ArticleBox">'."\n");
+		echo('		<table>'."\n");
+		echo('			<thead>'."\n");
+		echo('				<tr>'."\n");
+		echo('					<th style="width:50%;">'."\n");
+		echo('						Name'."\n");
+		echo('					</th>'."\n");
+		echo('					<th style="width:20%;">'."\n");
+		echo('						By'."\n");
+		echo('					</th>'."\n");
+		echo('					<th style="width:30%;text-align:right;">'."\n");
+		echo('						Date'."\n");
+		echo('					</th>'."\n");
+		echo('				</tr>'."\n");
+		echo('			</thead>'."\n");
+		echo('			<tbody>'."\n");
+		foreach ($data as $section)
+		{
+			$dateformatted = date('d/m/y @ H:i', $section['publish']);
+			echo('				<tr>'."\n");
+			echo('					<td>'."\n");
+			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.$section['heading'].'</a>'."\n");
+			echo('					</td>'."\n");
+			echo('					<td>'."\n");
+			echo('						'.$section['editorname']."\n");
+			echo('					</td>'."\n");
+			echo('					<td>'."\n");
+			echo('						'.$dateformatted."\n");
+			echo('					</td>'."\n");
+			echo('				</tr>'."\n");
+		}
+		echo('			</tbody>'."\n");
+		echo('		</table>'."\n");
+		echo('	</div>'."\n");
+	}
+?>
+
 <div class="RightToolbar">
 	<?php
 	if (count($user['writer']['requested']) > 0)
@@ -68,51 +109,15 @@
 			$br_first = FALSE; //no br is drawn after the category name
 			if (count($category['unpublished']) > 0)
 			{
-				if ($br_first == FALSE)
-					$br_first = TRUE;
-				else
-					echo '<br />';
-				echo '<b>To be published</b>';
-				foreach ($category['unpublished'] as $unpublished)
-				{
-					$dateformatted = date('F jS Y', $unpublished['publish']).' at '.date('g.i A', $unpublished['publish']);
-					echo '<br /><span class="orange">'.$unpublished['heading'].'</span>
-						<span class="grey">(published by '.$unpublished['editorname'].')</span>
-						<br />being published on: '.$dateformatted.'
-						<br /><a href="/office/howdoi/editquestion/'.$unpublished['id'].'">[edit]</a>';
-				}
+				PrintSectionTableContents('To be published', $category['unpublished']);
 			}
 			if (count($category['published']) > 0)
 			{
-				if ($br_first == FALSE)
-					$br_first = TRUE;
-				else
-					echo '<br />';
-				echo '<b>Published</b>';
-				foreach ($category['published'] as $published)
-				{
-					$dateformatted = date('F jS Y', $published['publish']).' at '.date('g.i A', $published['publish']);
-					echo '<br /><span class="orange">'.$published['heading'].'</span>
-						<span class="grey">(published by '.$published['editorname'].')</span>
-						<br />published on: '.$dateformatted.'
-						<br /><a href="/office/howdoi/editquestion/'.$published['id'].'">[edit]</a>';
-				}
+				PrintSectionTableContents('Published', $category['published']);
 			}
 			if (count($category['pulled']) > 0)
 			{
-				if ($br_first == FALSE)
-					$br_first = TRUE;
-				else
-					echo '<br />';
-				echo '<b>Pulled</b>';
-				foreach ($category['pulled'] as $pulled)
-				{
-					$dateformatted = date('F jS Y', $pulled['publish']).' at '.date('g.i A', $pulled['publish']);
-					echo '<br /><span class="orange">'.$pulled['heading'].'</span>
-						<span class="grey">(pulled by '.$pulled['editorname'].')</span>
-						<br />pulled on: '.$dateformatted.'
-						<br /><a href="/office/howdoi/editquestion/'.$pulled['id'].'">[edit]</a>';
-				}
+				PrintSectionTableContents('Pulled', $category['pulled']);
 			}
 		}
 	}
@@ -120,9 +125,9 @@
 ?>
 
 <?php
-/*
+
 echo '<pre>';
 echo print_r($data);
 echo '</pre>';
-*/
+
 ?>
