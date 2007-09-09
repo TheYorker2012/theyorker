@@ -76,7 +76,6 @@ ALL_EVENT_COUNT++;
 } ?>
 
 function drawCalendar () {
-alert('DRAWING CALENDAR');
 	// Reset event counters
 	for (var i=0;i<=(DAYS.length-1);i++) {
 		document.getElementById('cal_day_'+DAYS[i]+'_before').innerHTML = '';
