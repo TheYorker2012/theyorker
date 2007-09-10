@@ -36,7 +36,7 @@
 	</div>
 	<div class="BlueBox">
 		<h2>create new subtypes</h2>
-		<p> sorry no image or list order support yet! Edit and delete not working</p>
+		<p> sorry no image or list order support yet! delete not working</p>
 		<form method="post" action="/office/articletypes">
 			<fieldset>
 				<label for="article_type_name">Name:</label>

@@ -609,6 +609,22 @@ class Article_model extends Model
 	$query = $this->db->query($sql,array($codename));
 	return ($query->num_rows() > 0);
 	}
+
+	/**
+	*Returns the content_type_codename of a content_type_id.
+	*@param $type_id The content_type_id.
+	*@return content_type_codename This corresponds to the content_type_id provided.
+	**/
+	function getArticleTypeCodename ($type_id)
+	{
+		$sql = 'SELECT content_type_codename
+				FROM content_types
+				WHERE content_type_id = ? 
+				LIMIT 1';
+		$query = $this->db->query($sql,array($type_id));
+		$row = $query->row();
+		return $row->content_type_codename;
+	}
 	
 	function isArticleTypeAParent($id){
 	$sql= "SELECT content_types.content_type_has_children FROM content_types WHERE content_type_id=? LIMIT 1";
@@ -700,19 +716,20 @@ class Article_model extends Model
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		$this->db->query($sql, array($codename,$org_id,$parent_id,$image_id,$name,$archive,$blurb,0,0,'news',$order));
 	}
-	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$blurb,$order)
+	function updateArticleSubType($id,$codename,$name,$parent_id,$image_id,$archive,$blurb,$order=NULL)
 	{
 		//Update type
-		$sql = 'UPDATE `content_types` SET 
+		$sql = 'UPDATE content_types SET 
 		content_types.content_type_codename = ?, 
 		content_types.content_type_name = ?, 
 		content_types.content_type_parent_content_type_id = ?, 
+		content_types.content_type_image_id = ?, 
 		content_types.content_type_archive = ?, 
 		content_types.content_type_blurb = ?, 
-		content_types.content_type_section_order = ?, 
-		WHERE content_types.content_type_id =? 
+		content_types.content_type_section_order = ? 
+		WHERE content_types.content_type_id = ? 
 		LIMIT 1';
-		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$blurb,$order));
+		$this->db->query($sql, array($codename,$name,$parent_id,$image_id,$archive,$blurb,$order,$id));
 	}
 	//check for articles by this subtype first!
 	function deleteSubArticleType($id)
@@ -733,6 +750,28 @@ class Article_model extends Model
 			$query = $this->db->query($sql,array($id));
 			return true;
 		}
+	}
+		/**
+	*Returns information about a particular content_type
+	*@param $type_id This is a content_type_id for the desired content_type.
+	**/
+	function getSubArticleType ($type)
+	{
+		$sql = 'SELECT content_type_codename AS codename,
+				 content_type_has_children AS has_children,
+				 content_type_parent_content_type_id AS parent_id,
+				 content_type_name AS name,
+				 content_type_section AS section,
+				 content_type_archive AS archive,
+				 content_type_blurb AS blurb 
+				FROM content_types 
+				WHERE content_type_id = ?';
+		$query = $this->db->query($sql,array($type));
+		$result = array();
+		if ($query->num_rows() == 1) {
+			$result = $query->row_array();
+		}
+		return $result;
 	}
 }
 ?>
