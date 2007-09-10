@@ -39,7 +39,7 @@ var DAYS = new Array();
 if (FIRST_DAY == 0) {
 	FIRST_DAY = new Date();
 	FIRST_DAY.setUTCDate(<?php echo(substr($date,6,2)); ?>);
-	FIRST_DAY.setUTCMonth(<?php echo(substr($date,4,2)); ?>-1);
+	FIRST_DAY.setUTCMonth(<?php echo((substr($date,4,2))-1); ?>);
 	FIRST_DAY.setUTCFullYear(<?php echo(substr($date,0,4)); ?>);
 	FIRST_DAY.setUTCHours(0);
 	FIRST_DAY.setUTCMinutes(0);
@@ -157,6 +157,22 @@ function drawCalendar () {
 	for (var i=0; i<EVENT_COUNT; i++) {
 		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
 		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
+		if (eventStartDate.getHours() <= (MAX_END_HOUR-24)) {
+			var copyStartDate = new Date((EVENT_CACHE[i]['start_time']-86400)*1000);
+			var copyEndDate = new Date((EVENT_CACHE[i]['end_time']-86400)*1000);
+			drawEvent('cal_day_'+zeroTime(copyStartDate.getFullYear())+zeroTime(copyStartDate.getMonth()+1)+zeroTime(copyStartDate.getDate()),
+				i+'copy',
+				EVENT_CACHE[i]['category'],
+				'/test/link/',
+				EVENT_CACHE[i]['name'],
+				zeroTime(copyStartDate.getHours())+':'+zeroTime(copyStartDate.getMinutes())+' - '+zeroTime(copyEndDate.getHours())+':'+zeroTime(copyEndDate.getMinutes()),
+				EVENT_CACHE[i]['location'],
+				Number((24+copyStartDate.getHours()+(copyStartDate.getMinutes()/60)).toFixed(2)),
+				Number(((copyEndDate.getTime() - copyStartDate.getTime())/(1000*60*60)).toFixed(2)),
+				EVENT_CACHE[i]['left'],
+				EVENT_CACHE[i]['width']
+			);
+		}
 		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
 			i,
 			EVENT_CACHE[i]['category'],
