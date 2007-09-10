@@ -102,12 +102,32 @@ div.VideoCastBox h4 {
 
 a.NewsImgSmall {
 	float: left;
+	clear: both;
 }
 
 div.LineContainer {
-	width: 95%;
-	float: left;
-	border-color: #999; 
+	clear: both;
+	border-top-color: #999; 
 	border-top-style: solid;
 	border-top-width: thin;
+	margin-bottom: 10px;
+}
+
+a.PufferImg {
+	float: right;
+	clear: both;
+}
+
+div.PufferBox {
+	border: none;
+	background-color: #999;
+	color: white;
+}
+
+div.PufferBox * {
+	color: white;
+}
+
+div.PufferBox h2 {
+	color: white;
 }

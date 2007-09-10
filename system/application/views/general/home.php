@@ -132,7 +132,7 @@ function print_middle_box($title,$article_array){
 		<h2>latest news</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="http://www.theyorker.co.uk/photos/medium/25">
+				<img src="http://www.theyorker.co.uk/photos/medium/25" class="left">
 			</a>
 			<h3 class="Headline"><a href="#">Yorker back from 8th October</a></h3>
 			<div class="Date">
@@ -146,7 +146,7 @@ function print_middle_box($title,$article_array){
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/34">
+				<img src="http://www.theyorker.co.uk/photos/small/34" class="left">
 			</a>
 			<p class="More">
 				<a href="#">Yorker Review of the Year</a>
@@ -154,7 +154,7 @@ function print_middle_box($title,$article_array){
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/343">
+				<img src="http://www.theyorker.co.uk/photos/small/343" class="left">
 			</a>
 			<p class="More">
 				<a href="#">We've got flood on our hands</a>
@@ -166,7 +166,7 @@ function print_middle_box($title,$article_array){
 		<h2>latest features</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="http://www.theyorker.co.uk/photos/medium/337">
+				<img src="http://www.theyorker.co.uk/photos/medium/337" class="left">
 			</a>
 			<h3 class="Headline"><a href="#">Into Tentation: Tent State Sussex, June 2007</a></h3>
 			<div class="Date">
@@ -182,7 +182,7 @@ function print_middle_box($title,$article_array){
 		<h2>latest arts</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="http://www.theyorker.co.uk/photos/medium/5">
+				<img src="http://www.theyorker.co.uk/photos/medium/5" class="left">
 			</a>
 			<h3 class="Headline"><a href="#">Arts Week 7: Live Music and Revolutionary Politics</a></h3>
 			<div class="Date">
@@ -197,32 +197,28 @@ function print_middle_box($title,$article_array){
 		<div class="LeftNewsBox NewsBox">
 			<h4>MORE ARTS FEATURES</h4>
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/4">
+				<img src="http://www.theyorker.co.uk/photos/small/4" class="left">
 			</a>
 			<p class="More">
 				<a href="#">Artsweek6: Live York street music</a>
 			</p>
-		</div>
-		<div class="RightNewsBox NewsBox">
-			<h4>REVIEWS</h4>
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/9">
-			</a>
-			<p class="More">
-				<a href="#">Review: The Tempest</a>
-			</p>
-		</div>
-		<div class="LeftNewsBox NewsBox">
-			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/3">
+				<img src="http://www.theyorker.co.uk/photos/small/3" class="left">
 			</a>
 			<p class="More">
 				<a href="#">Artsweek</a>
 			</p>
 		</div>
 		<div class="RightNewsBox NewsBox">
+			<h4>REVIEWS</h4>
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/318">
+				<img src="http://www.theyorker.co.uk/photos/small/9" class="left">
+			</a>
+			<p class="More">
+				<a href="#">Review: The Tempest</a>
+			</p>
+			<a class="NewsImgSmall" href="#">
+				<img src="http://www.theyorker.co.uk/photos/small/318" class="left">
 			</a>
 			<p class="More">
 				<a href="#">Live: Jack Penate at The Cockpit 17/6/07</a>
@@ -234,7 +230,7 @@ function print_middle_box($title,$article_array){
 		<h2>latest sports</h2>
 		<div class="NewsBox">
 			<a class="NewsImg" href="#">
-				<img src="http://www.theyorker.co.uk/photos/medium/326">
+				<img src="http://www.theyorker.co.uk/photos/medium/326" class="left">
 			</a>
 			<h3 class="Headline"><a href="#">End of Season Review</a></h3>
 			<div class="Date">
@@ -248,7 +244,7 @@ function print_middle_box($title,$article_array){
 		</div>
 		<div class="LeftNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/332">
+				<img src="http://www.theyorker.co.uk/photos/small/332" class="left">
 			</a>
 			<p class="More">
 				<a href="#">G*Stars enter history as 6-a-side champions</a>
@@ -256,7 +252,7 @@ function print_middle_box($title,$article_array){
 		</div>
 		<div class="RightNewsBox NewsBox">
 			<a class="NewsImgSmall" href="#">
-				<img src="http://www.theyorker.co.uk/photos/small/334">
+				<img src="http://www.theyorker.co.uk/photos/small/334" class="left">
 			</a>
 			<p class="More">
 				<a href="#">Veterans Claim Coveted Netball Prize</a>
@@ -264,9 +260,9 @@ function print_middle_box($title,$article_array){
 		</div>
 	</div>
 	
-	<div class="MiddlePufferBox">
-		<a class="MiddlePufferImgMedium MiddlePufferBox" href="#">
-			<img src="http://www.theyorker.co.uk/photos/small/332">
+	<div class="BlueBox PufferBox">
+		<a class="PufferImg" href="#">
+			<img src="http://www.theyorker.co.uk/photos/small/332" class="left">
 		</a>
 		<h2>feature</h2>
 		<p class="More">
