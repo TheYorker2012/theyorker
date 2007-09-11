@@ -99,8 +99,8 @@ class Gallery extends Controller {
 			$photos = $photos->limit(PHOTOS_PERPAGE, $page)->get();
 		} else {
 			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')
-			                   ->get('photos', PHOTOS_PERPAGE, $page)
 			                   ->orderby('photo_timestamp', 'desc');
+			                   ->get('photos', PHOTOS_PERPAGE, $page)
 		}
 
 
