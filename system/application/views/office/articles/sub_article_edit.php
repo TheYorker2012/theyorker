@@ -8,7 +8,7 @@
 
 	<div class="BlueBox">
 		<h2>edit subtype</h2>
-		<p> sorry no image or list order support yet! delete not working</p>
+		<p>Sorry there is no puffer image upload/edit supported yet!</p>
 		<form method="post" action="/office/articletypes">
 			<fieldset>
 				<label for="article_type_name">Name:</label>

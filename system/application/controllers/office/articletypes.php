@@ -20,14 +20,47 @@ class Articletypes extends Controller
 		return str_replace(" ", "", $new_string);
 	}
 	
+	function moveup($id)
+	{
+		if (!CheckPermissions('editor')) return;
+		//Get page properties information
+		$move_item = $this->Article_model->getSubArticleType($id);
+		if(empty($move_item))
+		{
+			$this->messages->AddMessage('error','Invalid sub article type, cannot be re-ordered.');
+		}else if($this->Article_model->DoesOrderPositionExist($move_item['parent_id'],($move_item['section_order']-1)) == false)
+		{
+			$this->messages->AddMessage('error','This article type cannot be ordered any higher.');
+		} else {
+			$this->Article_model->SwapCategoryOrder($move_item['section_order'], $move_item['section_order']-1, $move_item['parent_id']);
+			$this->messages->AddMessage('success','The article type has been moved up.');
+		}
+		redirect('/office/articletypes');
+	}
+	function movedown($id)
+	{
+		if (!CheckPermissions('editor')) return;
+		//Get page properties information
+		$move_item = $this->Article_model->getSubArticleType($id);
+		if(empty($move_item))
+		{
+			$this->messages->AddMessage('error','Invalid sub article type, cannot be re-ordered.');
+		}else if($this->Article_model->DoesOrderPositionExist($move_item['parent_id'],($move_item['section_order']+1)) == false)
+		{
+			$this->messages->AddMessage('error','This article type cannot be ordered any lower.');
+		} else {
+			$this->Article_model->SwapCategoryOrder($move_item['section_order'], $move_item['section_order']+1, $move_item['parent_id']);
+			$this->messages->AddMessage('success','The article type has been moved down.');
+		}
+		redirect('/office/articletypes');
+	}
+	
 	function index()
 	{
 		if (!CheckPermissions('editor')) return;
 		//Get page properties information
 		$this->pages_model->SetPageCode('office_articletypes');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
-		$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
-		$data['main_articles'] = $this->Article_model->getMainArticleTypes();
 		
 		if(empty($_POST) || !empty($_POST['article_type_add']))
 		{
@@ -42,12 +75,14 @@ class Articletypes extends Controller
 				}else if($this->Article_model->isArticleTypeAParent($_POST['article_type_parent'])==false){
 					$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
 				}else{
-					//@NOTE no image or order support at the moment!
+					//@NOTE no image support at the moment!
 					//create article type
 					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],NULL,$_POST['article_type_archive'],$_POST['article_type_blurb']);
 					$this->messages->AddMessage('success','New article type created.');
 				}
 			}
+			$data['main_articles'] = $this->Article_model->getMainArticleTypes();
+			$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
 			$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
 			
 		} else if(!empty($_POST['article_type_edit'])){
@@ -64,14 +99,15 @@ class Articletypes extends Controller
 				$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
 				redirect('/office/articletypes/edit/'.$_POST['article_type_id']);
 			}else{
-				//@NOTE no image or order support at the moment!
+				//@NOTE no image support at the moment!
 				//create article type
 				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],NULL,$_POST['article_type_archive'],$_POST['article_type_blurb']);
 				$this->messages->AddMessage('success','Article type updated.');
+				
+				$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
+				$data['main_articles'] = $this->Article_model->getMainArticleTypes();
 				$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
 			}
-		} else if(!empty($_POST['article_type_delete'])){
-			
 		}
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
@@ -98,17 +134,38 @@ class Articletypes extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
-	function delete($id)
+	function delete($id, $confirm='')
 	{
 		if (!CheckPermissions('editor')) return;
 		//Get page properties information
 		$this->pages_model->SetPageCode('office_articletypes_del');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
-		
-		//Check there is no articles by this subgroup
-		//Check has no children
-		$this->main_frame->SetContentSimple('office/articles/sub_article_delete', $data);
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
+		$article_type = $this->Article_model->getSubArticleType($id);
+		$article_in_this_type = $this->News_model->GetLatestId($article_type['codename'],1);
+		if(empty($article_type)){
+			$this->messages->AddMessage('error','Invalid article type, cannot be deleted.');
+			redirect('/office/articletypes');
+		} else if($article_type['has_children']){
+			$this->messages->AddMessage('error','This article type cannot be deleted, it has children.');
+			redirect('/office/articletypes');
+		}else if (!empty($article_in_this_type)){//check for articles in this group
+			$this->messages->AddMessage('error','This article type cannot be deleted, it has articles in it.');
+			redirect('/office/articletypes');
+		} else {
+			if($confirm=='confirm'){
+				//try and delete
+				$this->messages->AddMessage('success','The sub article type has been deleted.');
+				$this->Article_model->DeleteCategory($id, $article_type['parent_id']);
+				redirect('/office/articletypes');
+			}else{
+				//Check there is no articles by this subgroup
+				$data['article_type'] = $article_type;
+				$data['article_type']['id'] = $id;
+				$data['parent_article_type'] = $this->Article_model->getSubArticleType($article_type['parent_id']);
+				$this->main_frame->SetContentSimple('office/articles/sub_article_delete', $data);
+				// Load the public frame view (which will load the content view)
+				$this->main_frame->Load();
+			}
+		}
 	}
 }
