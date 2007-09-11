@@ -250,6 +250,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected $mDateRange = 'today';
 	/// string The default date range.
 	protected $mDefaultRange = 'today:1week';
+	/// string Overlap past midnight to get events, as input to strtotime.
+	protected $mDefaultOverlap = '6hours';
 	
 	/// CalendarSource Main source
 	protected $mMainSource = NULL;
@@ -508,8 +510,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$start = $now->Midnight();
 		}
 		$end = $start->Adjust('1day');
+		$stretch_end = $end->Adjust($this->mDefaultOverlap);
 		
-		$sources->SetRange($start->Timestamp(), $end->Timestamp());
+		$sources->SetRange($start->Timestamp(), $stretch_end->Timestamp());
 		$sources->SetTodoRange(time(), time());
 		$this->ReadFilter($sources, $Filter);
 		$sources->EnableGroup('todo');
@@ -575,8 +578,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$start = $now->Midnight();
 			$end = $start->Adjust('7day');
 		}
+		$stretch_end = $end->Adjust($this->mDefaultOverlap);
 		
-		$sources->SetRange($start->Timestamp(), $end->Timestamp());
+		$sources->SetRange($start->Timestamp(), $stretch_end->Timestamp());
 		$this->ReadFilter($sources, $Filter);
 		
 		$calendar_data = new CalendarData();
