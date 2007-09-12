@@ -399,11 +399,19 @@ abstract class CalendarSource
 		}
 	}
 	
-	/// Get all allowed categories.
+	/// Find whether all categories are supported.
 	/**
-	 * @return array[name => array], NULL, TRUE.
-	 *	- NULL if categories are not supported
-	 *	- TRUE if all categories are allowed.
+	 * @return bool Whether all categories are supported 
+	 */
+	function AreAllCategoriesSupported()
+	{
+		return FALSE;
+	}
+	
+	/// Get categories.
+	/**
+	 * @return array[name => array].
+	 *	- NULL if categories are not supported.
 	 */
 	function GetAllCategories()
 	{
@@ -950,6 +958,28 @@ class CalendarSources extends CalendarSource
 			$source->DisableGroup($GroupName);
 		}
 		return parent::DisableGroup($GroupName);
+	}
+	
+	function GetAllCategories()
+	{
+		$results = NULL;
+		foreach ($this->mSources as $source) {
+			$new_categories = $source->GetAllCategories();
+			if (TRUE === $new_categories) {
+				// TRUE (support all) overides others
+				$results;
+			} elseif (is_array($new_categories)) {
+				// Add categories to results
+				if (!is_array($results)) {
+					$results = $new_categories;
+				} else {
+					foreach ($new_categories as $key => $value) {
+						$results[$key] = $value;
+					}
+				}
+			}
+		}
+		return $results;
 	}
 	
 	function EnableCategory($CategoryName)

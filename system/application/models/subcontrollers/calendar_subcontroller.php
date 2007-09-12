@@ -1310,12 +1310,15 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	}
 	
 	/// Setup the main source.
-	protected function _SetupMyCalendar()
+	function _SetupMyCalendar()
 	{
-		$this->load->library('calendar_backend');
-		$this->load->library('calendar_source_my_calendar');
-		
-		$this->mMainSource = new CalendarSourceMyCalendar();
+		if (NULL === $this->mMainSource) {
+			$this->load->library('calendar_backend');
+			$this->load->library('calendar_source_my_calendar');
+			
+			$this->mMainSource = new CalendarSourceMyCalendar();
+		}
+		return $this->mMainSource;
 	}
 	
 	/// Setup main source and get specific source, erroring if problem.
