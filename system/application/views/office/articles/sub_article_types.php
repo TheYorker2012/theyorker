@@ -10,7 +10,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Name</th><th>Parent</th><th>Image</th><th>Archive</th><th>Blurb</th><th>Edit</th><th>Del</th>
+					<th>Name</th><th>Parent</th><th>Image</th><th>Archive</th><th>Blurb</th><th>Order</th><th>Edit</th><th>Del</th>
 				</tr>
 			</thead>
 			<?php
@@ -27,6 +27,10 @@
 				echo('<td>');
 				if($sub_article['blurb']==''){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
 				echo('</td>');
+				echo('<td>');
+				echo("<a href='/office/articletypes/moveup/".$sub_article['id']."'><img src='/images/prototype/members/sortdesc.png'></a>");
+				echo("<a href='/office/articletypes/movedown/".$sub_article['id']."'><img src='/images/prototype/members/sortasc.png'></a>");
+				echo('</td>');
 				echo('<td><a href="/office/articletypes/edit/'.$sub_article['id'].'">Edit</a></td>');
 				echo('<td><a href="/office/articletypes/delete/'.$sub_article['id'].'">Del</a></td>');
 				echo('</tr>');
@@ -36,7 +40,7 @@
 	</div>
 	<div class="BlueBox">
 		<h2>create new subtypes</h2>
-		<p> sorry no image or list order support yet! Edit and delete not working</p>
+		<p>Sorry there is no puffer image upload/edit supported yet!</p>
 		<form method="post" action="/office/articletypes">
 			<fieldset>
 				<label for="article_type_name">Name:</label>

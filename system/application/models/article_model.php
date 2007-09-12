@@ -609,6 +609,22 @@ class Article_model extends Model
 	$query = $this->db->query($sql,array($codename));
 	return ($query->num_rows() > 0);
 	}
+
+	/**
+	*Returns the content_type_codename of a content_type_id.
+	*@param $type_id The content_type_id.
+	*@return content_type_codename This corresponds to the content_type_id provided.
+	**/
+	function getArticleTypeCodename ($type_id)
+	{
+		$sql = 'SELECT content_type_codename
+				FROM content_types
+				WHERE content_type_id = ? 
+				LIMIT 1';
+		$query = $this->db->query($sql,array($type_id));
+		$row = $query->row();
+		return $row->content_type_codename;
+	}
 	
 	function isArticleTypeAParent($id){
 	$sql= "SELECT content_types.content_type_has_children FROM content_types WHERE content_type_id=? LIMIT 1";
@@ -648,7 +664,7 @@ class Article_model extends Model
 			LEFT OUTER JOIN      image_types
 			ON      image_image_type_id = image_type_id
 			WHERE     parent.content_type_has_children = 1
-			ORDER BY        parent.content_type_name ASC,  child.content_type_name ASC';
+			ORDER BY        parent.content_type_name ASC,  child.content_type_section_order ASC';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0)
 		{
@@ -673,9 +689,16 @@ class Article_model extends Model
 	}
 	
 	//Make sure the parent exists, and thecodename is not already taken!
-	function insertArticleSubType($codename,$name,$parent_id,$image_id,$archive,$blurb,$order=NULL)
+	function insertArticleSubType($codename,$name,$parent_id,$image_id,$archive,$blurb)
 	{
-		//Get org id of parent
+		//Find order position to give
+		$sql = 'SELECT	MAX(content_type_section_order) as max_section_order
+			FROM	content_types
+			WHERE	content_type_parent_content_type_id = ?';
+		$query = $this->db->query($sql,array($parent_id));
+		$row = $query->row();
+		$order = $row->max_section_order + 1;
+		//Get org id of parent Should i be doing this???
 		$sql = 'SELECT  content_types.content_type_related_organisation_entity_id 
 			FROM    content_types 
 			WHERE  content_types.content_type_id = ?  
@@ -700,22 +723,22 @@ class Article_model extends Model
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		$this->db->query($sql, array($codename,$org_id,$parent_id,$image_id,$name,$archive,$blurb,0,0,'news',$order));
 	}
-	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$blurb,$order)
+	function updateArticleSubType($id,$codename,$name,$parent_id,$image_id,$archive,$blurb)
 	{
 		//Update type
-		$sql = 'UPDATE `content_types` SET 
+		$sql = 'UPDATE content_types SET 
 		content_types.content_type_codename = ?, 
 		content_types.content_type_name = ?, 
 		content_types.content_type_parent_content_type_id = ?, 
+		content_types.content_type_image_id = ?, 
 		content_types.content_type_archive = ?, 
-		content_types.content_type_blurb = ?, 
-		content_types.content_type_section_order = ?, 
-		WHERE content_types.content_type_id =? 
+		content_types.content_type_blurb = ? 
+		WHERE content_types.content_type_id = ? 
 		LIMIT 1';
-		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$blurb,$order));
+		$this->db->query($sql, array($codename,$name,$parent_id,$image_id,$archive,$blurb,$id));
 	}
 	//check for articles by this subtype first!
-	function deleteSubArticleType($id)
+	function deleteSubArticleType($id, $parent_id)
 	{
 		$sql = 'SELECT  content_types.content_type_has_children, content_type_section 
 			FROM    content_types 
@@ -731,6 +754,113 @@ class Article_model extends Model
 				WHERE  content_types.content_type_id = ?  
 				LIMIT 1';
 			$query = $this->db->query($sql,array($id));
+			return true;
+		}
+	}
+		/**
+	*Returns information about a particular content_type
+	*@param $type_id This is a content_type_id for the desired content_type.
+	**/
+	function getSubArticleType ($type)
+	{
+		$sql = 'SELECT content_type_codename AS codename,
+				 content_type_has_children AS has_children,
+				 content_type_parent_content_type_id AS parent_id,
+				 content_type_name AS name,
+				 content_type_section AS section,
+				 content_type_archive AS archive,
+				 content_type_blurb AS blurb,
+				 content_type_section_order AS section_order 
+				FROM content_types 
+				WHERE content_type_id = ?';
+		$query = $this->db->query($sql,array($type));
+		$result = array();
+		if ($query->num_rows() == 1) {
+			$result = $query->row_array();
+		}
+		return $result;
+	}
+	
+	function DoesOrderPositionExist($parent_type, $order_number)
+	{
+		$sql = 'SELECT content_type_codename FROM content_types  
+				WHERE content_type_parent_content_type_id = ? AND content_type_section_order=? LIMIT 1';
+		$query = $this->db->query($sql,array($parent_type, $order_number));
+		return ($query->num_rows() > 0);
+	}
+	function SwapCategoryOrder($category_id_1, $category_id_2, $parent_type)
+	{
+		$this->db->trans_start();
+		$sql = 'SELECT	content_type_id
+			FROM	content_types
+			WHERE	content_type_section_order = ?
+			AND	content_type_parent_content_type_id = ?';
+		$query = $this->db->query($sql,array($category_id_1, $parent_type));
+		$row = $query->row();
+		$content_type_id_1 = $row->content_type_id;
+
+		$sql = 'SELECT	content_type_id
+			FROM	content_types
+			WHERE	content_type_section_order = ?
+			AND	content_type_parent_content_type_id = ?';
+		$query = $this->db->query($sql,array($category_id_2, $parent_type));
+		$row = $query->row();
+		$content_type_id_2 = $row->content_type_id;
+
+		$sql = 'UPDATE	content_types
+			SET	content_type_section_order = ?
+			WHERE	content_type_section_order = ?
+			AND	content_type_id = ?';
+		$query = $this->db->query($sql,array($category_id_2, $category_id_1, $content_type_id_1));
+
+		$sql = 'UPDATE	content_types
+			SET	content_type_section_order = ?
+			WHERE	content_type_section_order = ?
+			AND	content_type_id = ?';
+		$query = $this->db->query($sql,array($category_id_1, $category_id_2, $content_type_id_2));
+		$this->db->trans_complete();
+	}
+	
+	function DeleteCategory($id, $parent_id)
+	{
+		$this->db->trans_start();
+		//Check its not a parent
+		$sql = 'SELECT  content_types.content_type_has_children, content_type_section 
+			FROM    content_types 
+			WHERE  content_types.content_type_id = ?  
+			LIMIT 1';
+		$query = $this->db->query($sql,array($id));
+		$row = $query->row();
+		if($row->content_type_has_children == 1 || $row->content_type_section=='hardcoded'){
+			//must not delete otherwise children would be orphend
+			$this->db->trans_complete();
+			return false;
+		}else{
+			/////////////start reordering to be able to delete it
+			$sql = 'SELECT	content_type_section_order
+				FROM	content_types
+				WHERE	content_type_id = ?';
+			$query = $this->db->query($sql,array($id));
+			$row = $query->row();
+			$delete_section_order = $row->content_type_section_order;//Its order number
+
+			$sql = 'SELECT	MAX(content_type_section_order) as max_section_order
+				FROM	content_types
+				WHERE	content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($parent_id));
+			$row = $query->row();
+			$max_section_order = $row->max_section_order;//The highest order number
+
+			for($i = $delete_section_order; $i < $max_section_order; $i++)
+			{
+				self::SwapCategoryOrder($i, $i + 1, $parent_id);//keep swaping untill the highest
+			}
+			
+			//can delete now its the highest
+			$sql = 'DELETE FROM content_types
+				WHERE	content_type_id = ?';
+			$query = $this->db->query($sql,array($id));
+			$this->db->trans_complete();
 			return true;
 		}
 	}
