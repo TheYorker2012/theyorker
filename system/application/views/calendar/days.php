@@ -59,9 +59,9 @@ foreach ($Occurrences as $event_info) {
 	if ($event_info->DisplayOnCalendar) {
 		if ($event_info->TimeAssociated) { ?>
 EVENT_CACHE[EVENT_COUNT] = new Array();
-EVENT_CACHE[EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name))); ?>';
+EVENT_CACHE[EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
-EVENT_CACHE[EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription))); ?>';
+EVENT_CACHE[EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT]['description']	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
@@ -70,9 +70,9 @@ EVENT_CACHE[EVENT_COUNT]['width']		= 1;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT]['description']	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
