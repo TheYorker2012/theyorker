@@ -38,7 +38,7 @@ var DAYS = new Array();
 <?php foreach ($Days as $date => $day) { ?>
 if (FIRST_DAY == 0) {
 	FIRST_DAY = new Date();
-	FIRST_DAY.setUTCDate(<?php echo(substr($date,6,2)); ?>);
+	FIRST_DAY.setUTCDate(<?php echo(0+substr($date,6,2)); ?>);
 	FIRST_DAY.setUTCMonth(<?php echo((substr($date,4,2))-1); ?>);
 	FIRST_DAY.setUTCFullYear(<?php echo(substr($date,0,4)); ?>);
 	FIRST_DAY.setUTCHours(0);
@@ -59,23 +59,24 @@ foreach ($Occurrences as $event_info) {
 	if ($event_info->DisplayOnCalendar) {
 		if ($event_info->TimeAssociated) { ?>
 EVENT_CACHE[EVENT_COUNT] = new Array();
-EVENT_CACHE[EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
-EVENT_CACHE[EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
-EVENT_CACHE[EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
-EVENT_CACHE[EVENT_COUNT]['description']	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
-EVENT_CACHE[EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
-EVENT_CACHE[EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
-EVENT_CACHE[EVENT_COUNT]['left']		= -1;
-EVENT_CACHE[EVENT_COUNT]['width']		= 1;
+EVENT_CACHE[EVENT_COUNT][0]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
+EVENT_CACHE[EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
+EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+EVENT_CACHE[EVENT_COUNT][6]	= -1;
+EVENT_CACHE[EVENT_COUNT][7]	= 1;
+EVENT_CACHE[EVENT_COUNT][8]	= 0;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['name']		= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['category']	= '<?php echo($event_info->Event->Category); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['location']	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['description']	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['start_time']	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT]['end_time']	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][0]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
 ALL_EVENT_COUNT++;
 <?php	}
 	}
@@ -94,14 +95,14 @@ function drawCalendar () {
 	resizeCalendarAllDay();
 
 	for (var i=0; i<ALL_EVENT_COUNT; i++) {
-		var eventStartDate = new Date(ALL_EVENT_CACHE[i]['start_time']*1000);
-		var eventEndDate = new Date(ALL_EVENT_CACHE[i]['end_time']*1000);
+		var eventStartDate = new Date(ALL_EVENT_CACHE[i][4]*1000);
+		var eventEndDate = new Date(ALL_EVENT_CACHE[i][5]*1000);
 		//function drawAllDayEvent (id, category, link, title, start_hour, duration, height)
 
 		drawAllDayEvent('a'+i,
-			ALL_EVENT_CACHE[i]['category'],
+			ALL_EVENT_CACHE[i][1],
 			'/test/link/',
-			ALL_EVENT_CACHE[i]['name'],
+			ALL_EVENT_CACHE[i][0],
 			Number(((eventStartDate.getTime() - FIRST_DAY.getTime())/(1000*60*60)).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
 		);
@@ -114,39 +115,68 @@ function drawCalendar () {
 	drawAllDayEvent('902', 'Facebook', '/test/link/', 'FragSoc', 12, 29.98, 1);
 */
 
-	/* Determine Event Clashes */
+	/* Get all the events we need to display */
+	var TEMP_CACHE = new Array();
+	var temp_count = 0;
 	for (var i=0; i<EVENT_COUNT; i++) {
+		var eventStartDate = new Date(EVENT_CACHE[i][4]*1000);
+		var eventEndDate = new Date(EVENT_CACHE[i][5]*1000);
+		TEMP_CACHE[temp_count] = new Array();
+		TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
+		temp_count++;
+		/* Display on previous day too*/
+		if (eventStartDate.getHours() <= (MAX_END_HOUR-24)) {
+			TEMP_CACHE[temp_count] = new Array();
+			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
+			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) - 86400;
+			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) - 86400;
+			TEMP_CACHE[temp_count][8] = 24;
+			temp_count++;
+		}
+		/* Display on next day too */
+		if ((((eventEndDate.getTime()-eventStartDate.getTime())/3600000)+eventStartDate.getHours()+(eventStartDate.getMinutes()/60)) > 24) {
+			TEMP_CACHE[temp_count] = new Array();
+			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
+			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) + 86400;
+			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) + 86400;
+			TEMP_CACHE[temp_count][8] = -24;
+			temp_count++;
+		}
+	}
+
+	/* Determine Event Clashes */
+	for (var i=0; i<temp_count; i++) {
 		var clashes = new Array();
 		var clash_pos = new Array();
 		var clash_count = 0;
-		var clash_width = EVENT_CACHE[i]['width'];
-		for (j=i+1; j<EVENT_COUNT; j++) {
-			if (((EVENT_CACHE[j]['start_time'] >= EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['start_time'] < EVENT_CACHE[i]['end_time'])) ||
-				((EVENT_CACHE[j]['end_time'] > EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['end_time'] <= EVENT_CACHE[i]['end_time'])) ||
-				((EVENT_CACHE[j]['start_time'] < EVENT_CACHE[i]['start_time']) && (EVENT_CACHE[j]['end_time'] > EVENT_CACHE[i]['end_time']))) {
+		var clash_width = TEMP_CACHE[i][7];
+		for (j=i+1; j<temp_count; j++) {
+			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) ||
+				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) ||
+				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5]))) {
 				clashes[clash_count] = j;
-				if (EVENT_CACHE[j]['left'] != -1)
-					clash_pos[clash_pos.length] = EVENT_CACHE[j]['left'];
-				if (EVENT_CACHE[j]['width'] > clash_width)
-					clash_width = EVENT_CACHE[j]['width'];
+				if (TEMP_CACHE[j][6] != -1)
+					clash_pos[clash_pos.length] = TEMP_CACHE[j][6];
+				if (TEMP_CACHE[j][7] > clash_width)
+					clash_width = TEMP_CACHE[j][7];
 				clash_count++;
 			}
 		}
-		if (EVENT_CACHE[i]['left'] != -1)
-			clash_pos[clash_pos.length] = EVENT_CACHE[i]['left'];
+		if (TEMP_CACHE[i][6] != -1)
+			clash_pos[clash_pos.length] = TEMP_CACHE[i][6];
 		if ((clash_count+1) > clash_width)
 			clash_width = clash_count + 1;
 		var current_pos = 0;
 		while (in_array(current_pos, clash_pos)) { current_pos++; }
-		EVENT_CACHE[i]['width'] = clash_width;
-		if (EVENT_CACHE[i]['left'] == -1) {
-			EVENT_CACHE[i]['left'] = current_pos;
+		TEMP_CACHE[i][7] = clash_width;
+		if (TEMP_CACHE[i][6] == -1) {
+			TEMP_CACHE[i][6] = current_pos;
 			while (in_array(current_pos++, clash_pos)) { current_pos++; }
 		}
 		for (j=0; j<clash_count; j++) {
-			EVENT_CACHE[clashes[j]]['width'] = clash_width;
-			if (EVENT_CACHE[clashes[j]]['left'] == -1) {
-				EVENT_CACHE[clashes[j]]['left'] = current_pos;
+			TEMP_CACHE[clashes[j]][7] = clash_width;
+			if (TEMP_CACHE[clashes[j]][6] == -1) {
+				TEMP_CACHE[clashes[j]][6] = current_pos;
 				while (in_array(current_pos++, clash_pos)) { current_pos++; }
 			}
 
@@ -154,36 +184,20 @@ function drawCalendar () {
 	}
 
 	/* Draw each Event */
-	for (var i=0; i<EVENT_COUNT; i++) {
-		var eventStartDate = new Date(EVENT_CACHE[i]['start_time']*1000);
-		var eventEndDate = new Date(EVENT_CACHE[i]['end_time']*1000);
-		if (eventStartDate.getHours() <= (MAX_END_HOUR-24)) {
-			var copyStartDate = new Date((EVENT_CACHE[i]['start_time']-86400)*1000);
-			var copyEndDate = new Date((EVENT_CACHE[i]['end_time']-86400)*1000);
-			drawEvent('cal_day_'+zeroTime(copyStartDate.getFullYear())+zeroTime(copyStartDate.getMonth()+1)+zeroTime(copyStartDate.getDate()),
-				i+'copy',
-				EVENT_CACHE[i]['category'],
-				'/test/link/',
-				EVENT_CACHE[i]['name'],
-				zeroTime(copyStartDate.getHours())+':'+zeroTime(copyStartDate.getMinutes())+' - '+zeroTime(copyEndDate.getHours())+':'+zeroTime(copyEndDate.getMinutes()),
-				EVENT_CACHE[i]['location'],
-				Number((24+copyStartDate.getHours()+(copyStartDate.getMinutes()/60)).toFixed(2)),
-				Number(((copyEndDate.getTime() - copyStartDate.getTime())/(1000*60*60)).toFixed(2)),
-				EVENT_CACHE[i]['left'],
-				EVENT_CACHE[i]['width']
-			);
-		}
+	for (var i=0; i<temp_count; i++) {
+		var eventStartDate = new Date(TEMP_CACHE[i][4]*1000);
+		var eventEndDate = new Date(TEMP_CACHE[i][5]*1000);
 		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
 			i,
-			EVENT_CACHE[i]['category'],
+			TEMP_CACHE[i][1],
 			'/test/link/',
-			EVENT_CACHE[i]['name'],
+			TEMP_CACHE[i][0],
 			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
-			EVENT_CACHE[i]['location'],
-			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)).toFixed(2)),
+			TEMP_CACHE[i][2],
+			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][8]).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
-			EVENT_CACHE[i]['left'],
-			EVENT_CACHE[i]['width']
+			TEMP_CACHE[i][6],
+			TEMP_CACHE[i][7]
 		);
 	}
 	return false;
@@ -635,6 +649,11 @@ table#calendar_view td.calendar_day div.cal_event {
 	-moz-opacity:0.8;
 }
 
+table#calendar_view td.calendar_day div.cal_event_nojs {
+	position: static;
+	margin-bottom: 5px;
+}
+
 table#calendar_view td#calendar_all_day_events div.cal_event {
 	overflow: hidden;
 	position: absolute;
@@ -749,16 +768,23 @@ table#calendar_view div.cal_event_split_bottom {
 <?php foreach ($Days as $date => $day) { ?>
 		<td id="cal_day_<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
 <?php	foreach ($day['events'] as $time => $ocs) {
-			foreach ($ocs as $occurrence) {
-				if ($occurrence->TimeAssociated) {
-/*					$CI->load->view('calendar/event_box', array(
-						'Occurrence'	=>	&$occurrence,
-						'Categories'	=>	&$Categories,
-						'Squash'		=>	$squash,
-						'ReadOnly'		=>	$ReadOnly,
-						'Path'			=>	$Path,
-					));
-*/				}
+			foreach ($ocs as $event_info) {
+				if (($event_info->DisplayOnCalendar) && ($event_info->TimeAssociated)) {
+?>
+			<div class="cal_event cal_event_nojs cal_category_<?php echo($event_info->Event->Category); ?>" onclick="alert('You clicked on this event!');">
+				<div class="cal_event_heading">
+					<a href="<?php echo('/test/link/'); ?>">
+						<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>
+					</a>
+				</div>
+				<div class="cal_event_info">
+					<?php echo($event_info->StartTime->Format('H:i') . ' - ' . $event_info->EndTime->Format('H:i')); ?>
+				</div>
+				<div class="cal_event_info">
+					<i><?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?></i>
+				</div>
+			</div>
+<?php			}
 			}
 		}
 ?>
