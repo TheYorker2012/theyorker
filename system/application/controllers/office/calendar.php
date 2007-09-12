@@ -1,5 +1,6 @@
 <?php
 
+/// Office calendar controller
 class Calendar extends controller
 {
 	protected $mActions;
@@ -9,55 +10,26 @@ class Calendar extends controller
 		parent::controller();
 	}
 	
-	function actions()
+	function _remap()
 	{
+		$this->load->model('subcontrollers/calendar_subcontroller');
+		$this->calendar_subcontroller->_SetPermission('vip+pr');
+		$this->calendar_subcontroller->_map(func_get_args());
+	}
+	
+	function action()
+	{
+		if (!CheckPermissions('vip+pr')) return;
+		
 		// do the magic, use calendar_actions as a controller
-		$this->load->model('calendar/organizer_actions');
+		$this->load->model('calendar/organiser_actions');
 		$args = func_get_args();
 		$func = array_shift($args);
-		if ('_' !== substr($func,0,1) && method_exists($this->organizer_actions, $func)) {
-			call_user_func_array(array(&$this->organizer_actions, $func), $args);
+		if ('_' !== substr($func,0,1) && method_exists($this->organiser_actions, $func)) {
+			call_user_func_array(array(&$this->organiser_actions, $func), $args);
 		} else {
 			show_404();
 		}
-	}
-	
-	
-	function add()
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->load->library('My_calendar');
-		
-		$this->pages_model->SetPageCode('viparea_calendar_new_event');
-		$this->main_frame->SetTitleParameters(array(
-			'organisation' => VipOrganisationName(),
-		));
-		
-		$this->main_frame->SetContent($this->my_calendar->GetAdder());
-		
-		$this->main_frame->Load();
-	}
-	
-	/// Display event information.
-	function event($SourceId = NULL, $EventId = NULL, $OccurrenceId = NULL)
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->load->library('my_calendar');
-		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
-		
-		$this->pages_model->SetPageCode('viparea_calendar_event');
-		$this->main_frame->SetTitleParameters(array(
-			'organisation' => VipOrganisationName(),
-		));
-		
-		$this->main_frame->SetContent(
-			$this->my_calendar->GetEvent(
-				$SourceId, $EventId, $OccurrenceId)
-		);
-		
-		$this->main_frame->Load();
 	}
 	
 	function publish($EventId = NULL)
@@ -112,52 +84,6 @@ class Calendar extends controller
 		} else {
 			show_404();
 		}
-	}
-	
-	
-	/// Show the calendar interface.
-	function range($DateRange = NULL, $Filter = NULL)
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		$sources = & $this->_SetupMyCalendar();
-		
-		// Gotta be a rep or admin to edit
-		$date_range_split = explode(':', $DateRange);
-		$this->my_calendar->SetPath('add', vip_url('calendar/add/'.$date_range_split[0]));
-		$this->my_calendar->SetPath('edit', vip_url('calendar/event/'));
-		
-		$this->pages_model->SetPageCode('viparea_calendar_range');
-		$this->main_frame->SetTitleParameters(array(
-			'organisation' => VipOrganisationName(),
-		));
-		
-		$this->main_frame->SetContent(
-			$this->my_calendar->GetMyCalendar(
-				$sources, $DateRange, $Filter)
-		);
-		
-		$this->main_frame->Load();
-	}
-	
-	protected function _SetupMyCalendar()
-	{
-		$this->load->library('my_calendar');
-		$this->load->library('calendar_source_yorker');
-		$this->my_calendar->SetUrlPrefix(vip_url('calendar/range').'/');
-		//$this->calendar->SetAgenda(vip_url('calendar/agenda').'/');
-		return new CalendarSourceYorker(0);
-	}
-	
-	function index()
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->pages_model->SetPageCode('viparea_calendar');
-		
-		$this->main_frame->SetContentSimple('viparea/calendar');
-		
-		// Load the main frame
-		$this->main_frame->Load();
 	}
 	
 	function occop($Operation, $EventId, $OccurrenceId)
@@ -456,86 +382,6 @@ class Calendar extends controller
 				);
 			}
 		}
-		
-		// Load the main frame
-		$this->main_frame->Load();
-	}
-	
-	function view($DateRange='')
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->load->library('date_uri');
-		$this->load->library('academic_calendar');
-		
-		$this->pages_model->SetPageCode('calendar_personal');
-		if (!empty($DateRange)) {
-			// $DateRange Not empty
-			
-			// Read the date, only allowing a single date (no range data)
-			$uri_result = $this->date_uri->ReadUri($DateRange, FALSE);
-			if ($uri_result['valid']) {
-				// $DateRange Valid
-				$start_time = $uri_result['start'];
-				$start_time = $start_time->BackToMonday();
-				$format = $uri_result['format']; // Use the format in all links
-				$days = 7; // force 7 days until view can handle different values.
-				
-				/*$this->_ShowCalendar(
-						$start_time, $days,
-						'/calendar/week/', $format
-					);*/
-				//return;
-				
-			} else {
-				// $DateRange Invalid
-				$this->messages->AddMessage('error','Unrecognised date: "'.$DateRange.'"');
-			}
-		}
-		
-		// Default to this week
-		$format = 'ac';
-		$base_time = new Academic_time(time());
-		
-		$monday = $base_time->BackToMonday();
-		
-		
-		// Load the public frame view
-		$this->main_frame->Load();
-	}
-	
-	function createevent()
-	{
-		if (!CheckPermissions('vip+pr')) return;
-		
-		$this->pages_model->SetPageCode('viparea_calendar_createevent');
-		
-		$this->load->model('calendar/events_model');
-		$this->load->helper('text');
-		try {
-			throw new Exception('Disabled hardcoded event adder');
-			$event_data = array(
-				'name' => 'Developer Meeting',
-				'description' => 'Ready for the alpha launch?',
-				'occurrences' => array(
-					array(
-						'location' => 'tba',
-						'start' => mktime(14,30,0,2,14,2007),
-						'end' => mktime(17,0,0,2,14,2007),
-						'time_associated' => TRUE,
-						'ends_late' => FALSE,
-					),
-				),
-			);
-			$result = $this->events_model->EventCreate($event_data);
-		} catch (Exception $msg) {
-			$this->messages->AddMessage('error',$msg->getMessage());
-			$result = FALSE;
-		}
-		
-		$this->main_frame->SetContent(
-			new SimpleView(str_replace("\n",'<br />'."\n",ascii_to_entities(var_export($result,true))))
-		);
 		
 		// Load the main frame
 		$this->main_frame->Load();

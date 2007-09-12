@@ -29,6 +29,9 @@ class CalendarSourceYorker extends CalendarSource
 	/// string Special mysql condition.
 	protected $mSpecialCondition = FALSE;
 	
+	/// array Categories cache.
+	protected $mCategoriesCache = NULL;
+	
 	/// Default constructor.
 	function __construct($SourceId)
 	{
@@ -37,7 +40,12 @@ class CalendarSourceYorker extends CalendarSource
 		$this->mQuery = new EventOccurrenceQuery();
 		
 		$this->SetSourceId($SourceId);
-		$this->mName = 'Yorker events';
+		$this->mName = 'Yorker';
+		
+		$CI = & get_instance();
+		if (!$CI->events_model->IsReadOnly()) {
+			$this->mCapabilities[] = 'create';
+		}
 		$this->mCapabilities[] = 'attend';
 		
 		$this->mGroups['streams'] = FALSE;
@@ -79,6 +87,25 @@ class CalendarSourceYorker extends CalendarSource
 	function SetSpecialCondition($Condition = FALSE)
 	{
 		$this->mSpecialCondition = $Condition;
+	}
+	
+	/// Get all allowed categories.
+	/**
+	 * @return array[name => array], NULL, TRUE.
+	 *	- NULL if categories are not supported
+	 *	- TRUE if all categories are allowed.
+	 */
+	function GetAllCategories()
+	{
+		if (NULL === $this->mCategoriesCache) {
+			$CI = & get_instance();
+			// Get categories and reindex by name
+			$categories = $CI->events_model->CategoriesGet();
+			foreach ($categories as $category) {
+				$this->mCategoriesCache[$category['name']] = $category;
+			}
+		}
+		return $this->mCategoriesCache;
 	}
 	
 	/// Fetch the events of the source.
@@ -171,6 +198,8 @@ class CalendarSourceYorker extends CalendarSource
 	
 	protected function TransformEventData(&$Data, $DbData)
 	{
+		$CI = & get_instance();
+		
 		// Go through and sort the database data into objects.
 		$events = array();
 		$occurrences = array();
@@ -190,6 +219,7 @@ class CalendarSourceYorker extends CalendarSource
 				$event->TimeAssociated = $row['event_time_associated'];
 				if ($row['owned']) {
 					$event->UserStatus = 'owner';
+					$event->ReadOnly = FALSE;
 				} elseif ($row['subscribed']) {
 					$event->UserStatus = 'subscriber';
 				}
@@ -225,8 +255,12 @@ class CalendarSourceYorker extends CalendarSource
 				if (NULL !== $row['user_last_update']) {
 					$occurrence->UserLastUpdate = (int)$row['user_last_update'];
 				}
-				if (NULL !== $row['user_attending']) {
-					$attending = (bool)$row['user_attending'];
+				if ('published' == $row['state'] || 'cancelled' == $row['state']) {
+					if (NULL !== $row['user_attending']) {
+						$attending = ((bool)$row['user_attending']) ? 'yes' : 'no';
+					} else {
+						$attending = 'maybe';
+					}
 				} else {
 					$attending = NULL;
 				}
@@ -245,6 +279,39 @@ class CalendarSourceYorker extends CalendarSource
 						$occurrence->TodoEndTime = new Academic_time($row['todo_end']);
 					}
 				}
+				if ('owner' === $event->UserStatus) {
+					// The owner can alter the occurrence.
+					// Set user permissions based on state.
+					switch ($occurrence->State) {
+						case 'draft':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'trash';
+							break;
+							
+						case 'trashed':
+							$occurrence->UserPermissions[] = 'untrash';
+							//$occurrence->UserPermissions[] = 'delete';
+							break;
+							
+						case 'movedraft':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'delete';
+							break;
+							
+						case 'published':
+							$occurrence->UserPermissions[] = 'cancel';
+							$occurrence->UserPermissions[] = 'postpone';
+							break;
+							
+						case 'cancelled':
+							$occurrence->UserPermissions[] = 'publish';
+							$occurrence->UserPermissions[] = 'postpone';
+							break;
+					};
+				} else {
+					$occurrence->UserPermissions[] = 'attend';
+					$occurrence->UserPermissions[] = 'set_attend';
+				}
 			}
 			
 			// Adjust the events user status if necessary.
@@ -260,6 +327,7 @@ class CalendarSourceYorker extends CalendarSource
 				if (!array_key_exists($org_id, $organisations)) {
 					$organisation = $organisations[$org_id] = $Data->NewOrganisation();
 					$organisation->SourceOrganisationId = $org_id;
+					$organisation->YorkerOrganisationId = $org_id;
 					$organisation->Name = $row['org_name'];
 					$organisation->ShortName = $row['org_shortname'];
 				}
@@ -287,7 +355,7 @@ class CalendarSourceYorker extends CalendarSource
 			ON	event_entities.event_entity_event_id = events.event_id
 		LEFT JOIN organisations
 			ON	organisations.organisation_entity_id
-					= event_entities.event_entity_entity_id
+					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
 		LEFT JOIN subscriptions
 			ON	subscriptions.subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
@@ -445,6 +513,7 @@ class CalendarSourceYorker extends CalendarSource
 	/// Get a Match Against statement.
 	function GetMatchAgainst()
 	{
+		$CI = & get_instance();
 		return 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
 	}
 	
@@ -491,6 +560,24 @@ class CalendarSourceYorker extends CalendarSource
 		return $messages;
 	}
 	
+	/// Create an event.
+	/**
+	 * @param $Event CalendarEvent event information.
+	 * @return array Array of messages.
+	 */
+	function CreateEvent($Event)
+	{
+		/// @todo Make this function work with a CalendarEvent object.
+		$messages = array();
+		$CI = & get_instance();
+		try {
+			$results = $CI->events_model->EventCreate($Event);
+		} catch (Exception $e) {
+			$messages['error'][] = $e->getMessage();
+		}
+		return $messages;
+	}
+	
 	/// Get list of known attendees.
 	/**
 	 * @param $Occurrence Occurrence identifier.
@@ -508,13 +595,101 @@ class CalendarSourceYorker extends CalendarSource
 			foreach ($attendees as $key => $value) {
 				$attendees[$key] = array(
 					'name' => $value['firstname'] . ' ' . $value['surname'],
-					'attend' => TRUE
+					'attend' => 'yes',
+					'friend' => FALSE,
 				);
 			}
 			return $attendees;
 		} else {
 			return parent::GetOcurrenceAttendanceList($Occurrence);
 		}
+	}
+	
+	/// Publish an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'draft':
+				$result = $CI->events_model->OccurrenceDraftPublish($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			case 'movedraft':
+				return $CI->events_model->OccurrenceMovedraftPublish($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			case 'cancelled':
+				return $CI->events_model->OccurrenceCancelledRestore($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'published';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function CancelOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'movedraft':
+				$result = $CI->events_model->OccurrenceMovedraftCancel($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'deleted';
+				}
+				break;
+				
+			case 'published':
+				$result = $CI->events_model->OccurrencePublishedCancel($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'cancelled';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function DeleteOccurrence(& $Occurrence)
+	{
+		$CI = & get_instance();
+		switch ($Occurrence->State) {
+			case 'draft':
+				$result = $CI->events_model->OccurrenceDraftTrash($Occurrence->Event->SourceEventId, $Occurrence->SourceOccurrenceId);
+				if ($result) {
+					$Occurrence->State = 'trashed';
+				}
+				break;
+				
+			default:
+				$result = -1;
+		};
+		return $result;
 	}
 }
 

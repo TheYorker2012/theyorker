@@ -36,6 +36,29 @@ class CalendarSourceFacebook extends CalendarSource
 		return 'http://www.facebook.com/event.php?eid='.$eid;
 	}
 	
+	/// Get all allowed categories.
+	/**
+	 * @return array[name => array], NULL, TRUE.
+	 *	- NULL if categories are not supported
+	 *	- TRUE if all categories are allowed.
+	 */
+	function GetAllCategories()
+	{
+		return array(
+			// Standard facebook categories
+			'Social'		=> array('name' => 'Social'),
+			'Causes'		=> array('name' => 'Causes'),
+			'Academic'		=> array('name' => 'Academic'),
+			'Meeting'		=> array('name' => 'Meeting'),
+			'Music/Arts'	=> array('name' => 'Music/Arts'),
+			'Sports'		=> array('name' => 'Sports'),
+			'Trips'			=> array('name' => 'Trips'),
+			// transform Other into Social
+			
+			'Anniversary'	=> array('name' => 'Anniversary'),
+		);
+	}
+	
 	/// Fetch the events of the source.
 	/**
 	 * @param $Data CalendarData Data object to add events to.
@@ -81,6 +104,17 @@ class CalendarSourceFacebook extends CalendarSource
 	{
 		$CI = & get_instance();
 		
+		static $event_type_translation = array(
+			'Party'      => 'social',
+			'Causes'     => 'social',
+			'Education'  => 'academic',
+			'Meetings'   => 'meeting',
+			'Music/Arts' => 'social',
+			'Sports'     => 'sport',
+			'Trips'      => 'social',
+			'Other'      => 'social',
+		);
+		
 		try {
 			// Get events in the range.
 			if (NULL === $EventId) {
@@ -98,6 +132,7 @@ class CalendarSourceFacebook extends CalendarSource
 			
 			if (!empty($events)) {
 				foreach ($events as $event) {
+					var_dump($event['event_type']);
 					// Check if it matches the search phrase
 					if (is_array($this->mSearchPhrases)) {
 						// use the following fields
@@ -143,7 +178,12 @@ class CalendarSourceFacebook extends CalendarSource
 					if (!empty($event['pic'])) {
 						$event_obj->Image = $event['pic'];
 					}
-					$event_obj->Category = 'Facebook';
+					
+					if (array_key_exists($event['event_type'], $event_type_translation)) {
+						$event_obj->Category = $event_type_translation[$event['event_type']];
+					} else {
+						$event_obj->Category = 'Facebook';
+					}
 					
 					$occurrence->SourceOccurrenceId = $event_obj->SourceEventId;
 					$occurrence->LocationDescription = $event['location'];
@@ -151,6 +191,10 @@ class CalendarSourceFacebook extends CalendarSource
 					$occurrence->EndTime = new Academic_time((int)$event['end_time']);
 					$occurrence->TimeAssociated = TRUE;
 					$occurrence->UserAttending = $attending;
+					
+					$occurrence->UserPermissions[] = 'attend';
+					$occurrence->UserPermissions[] = 'set_attend';
+					
 					unset($occurrence);
 					unset($event_obj);
 				}

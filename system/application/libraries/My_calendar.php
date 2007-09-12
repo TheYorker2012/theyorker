@@ -57,12 +57,13 @@ class My_calendar
 	protected $mRangeUrl = '';
 	protected $mTabs = TRUE;
 	protected $mDateRange = 'today';
-	protected $mDefaultRange;
+	protected $mDefaultRange = 'today:1week';
 	protected $mReadOnly = TRUE;
 	/// array[string => string]
 	protected $mPaths = array(
-		'add' => '/dead',
-		'edit' => '/dead',
+		'add' => '',
+		'edit' => '',
+		'delete' => '',
 	);
 	
 	function __construct()
@@ -72,8 +73,6 @@ class My_calendar
 		$CI->load->library('calendar_backend');
 		$CI->load->library('calendar_frontend');
 		$CI->load->library('date_uri');
-		
-		$this->mDefaultRange = 'today:1week';
 		
 		$CI->load->model('calendar/events_model');
 		$this->mReadOnly = $CI->events_model->IsReadOnly();
@@ -93,7 +92,7 @@ class My_calendar
 	
 	function SetTabs($Tabs)
 	{
-		$this->mTabs = FALSE;
+		$this->mTabs = $Tabs;
 	}
 	
 	/// Set the range url information.
@@ -441,6 +440,7 @@ class My_calendar
 						'ReadOnly' => $this->mReadOnly,
 						'Attendees' => $sources->GetOccurrenceAttendanceList($SourceId, $OccurrenceId),
 						'FailRedirect' => '/'.GetUriTail(5),
+						'Path' => $this->mPaths,
 					);
 					
 					$CI->main_frame->SetTitleParameters(array(

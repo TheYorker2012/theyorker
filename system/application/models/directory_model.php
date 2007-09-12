@@ -12,6 +12,60 @@ class Directory_model extends Model {
 		// Call the Model constructor
 		parent::Model();
 	}
+	
+	/// Get the directory entries corresponding to organisation ids.
+	function GetDirectoryEntryLinks($OrganisationIds)
+	{
+		// Handle empty ids
+		if (empty($OrganisationIds)) {
+			return array();
+		}
+		// Escape the organisation ids
+		$OrganisationIds = array_map(array(& $this->db, 'escape'), $OrganisationIds);
+		
+		$iterations = 2;
+		
+		$sql =
+			// select from organisations
+			// for i to 2
+			//   join parent if not in directory
+			'SELECT
+				organisations0.organisation_entity_id AS id,
+				IF';
+		for ($i = 0; $i <= $iterations; ++$i) {
+			$sql .=	'(organisation_types'.$i.'.organisation_type_directory = TRUE,'.
+					// if in directory, result in directory entry
+					'organisations'.$i.'.organisation_directory_entry_name,';
+			if ($i < $iterations) {
+				// if not in directory, try parent
+				$sql .= 'IF';
+			} else {
+				// at this point, lets just give up
+				$sql .= 'NULL)';
+				//(break)
+			}
+		}
+		$sql .= str_repeat(')',$iterations) . ' AS directory_entry';
+		$sql .=
+			' FROM organisations AS organisations0
+			INNER JOIN organisation_types AS organisation_types0
+				ON organisation_types0.organisation_type_id
+					= organisations0.organisation_organisation_type_id';
+		for ($i = 1; $i <= $iterations; ++$i) {
+			$sql .= ' LEFT JOIN organisations AS organisations'.$i.'
+						ON	organisations'.($i-1).'.organisation_show_in_directory = FALSE
+						AND	organisations'.$i.'.organisation_entity_id
+								= organisations'.($i-1).'.organisation_parent_organisation_entity_id';
+			$sql .= ' LEFT JOIN organisation_types AS organisation_types'.$i.'
+						ON organisation_types'.$i.'.organisation_type_id
+							= organisations'.$i.'.organisation_organisation_type_id';
+		}
+		$sql .= ' WHERE organisations0.organisation_entity_id IN ('.
+				implode(',',$OrganisationIds).')';
+		
+		$results = $this->db->query($sql);
+		return $results->result_array();
+	}
 
 	///	Find the organisations in the directory.
 	/**

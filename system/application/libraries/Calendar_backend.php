@@ -23,12 +23,24 @@ class CalendarOccurrence
 		'published',
 		'cancelled',
 	);
+	/// array[string] Valid values of @a $UserPermissions.
+	protected static $ValidPermissions = array(
+		'delete',
+		'trash',
+		'untrash',
+		'publish',
+		'cancel',
+		'postpone',
+		'attend',
+		'set_attend',
+	);
 	/// array[string] Valid members of @a $SpecialTags.
 	protected static $ValidSpecialTags = array(
 		'ends_late',
 	);
 	/// array[string] Valid members of @a $UserAttending.
 	protected static $ValidAttendings = array(
+		NULL,  // attendence is not applicable
 		'no',
 		'maybe',
 		'yes',
@@ -63,7 +75,7 @@ class CalendarOccurrence
 	/// timestamp,NULL Time last ackowledged by user.
 	public $UserLastUpdate		= NULL;
 	/// string Whether the user is attending (must be member of @a $ValidAttendings).
-	public $UserAttending		= 'maybe';
+	public $UserAttending		= NULL;
 	/// int[0,100],NULL How complete the item is for the user.
 	public $UserProgress		= NULL;
 	
@@ -76,6 +88,9 @@ class CalendarOccurrence
 	/// AcademicTime,NULL Effective end time of todo.
 	public $TodoEndTime			= NULL;
 	
+	/// array[string] User permission strings (must be member of @a $ValidPermissions).
+	public $UserPermissions		= array();
+	
 	/// Primary constructor.
 	/**
 	 * @param $OccurrenceId int ID of occurrence (unique within connection).
@@ -85,6 +100,16 @@ class CalendarOccurrence
 	{
 		$this->OccurrenceId = $OccurrenceId;
 		$this->Event = &$Event;
+	}
+	
+	/// Find whether a capability is supported for the current user.
+	/**
+	* @param $Action string Action (in @a $ValidPermissions).
+	* @return bool Whether the action is supported.
+	*/
+	function UserHasPermission($Action)
+	{
+		return in_array($Action, $this->UserPermissions);
 	}
 }
 
@@ -106,6 +131,8 @@ class CalendarEvent
 	public $SourceEventId	= NULL;
 	/// &CalendarSource Reference to source of event.
 	public $Source;
+	/// bool Whether the user cant make changes to the event.
+	public $ReadOnly		= TRUE;
 	/// array[&CalendarOccurrence] Array of occurrences of this event.
 	public $Occurrences		= array();
 	/// string,NULL Category value.
@@ -155,6 +182,22 @@ class CalendarEvent
 		// Add to end.
 		$this->Organisations[] = &$Organisation;
 	}
+	
+	/// Get the occurrences of this event which have a certain user permission.
+	/**
+	 * @param $Permission string Permission to require.
+	 * @return array[SourceOccurrenceId => &CalendarOccurrence] Array of occurrences.
+	 */
+	function GetOccurrencesWithUserPermission($Permission)
+	{
+		$result = array();
+		foreach ($this->Occurrences as $key => $occurrence) {
+			if ($occurrence->UserHasPermission($Permission)) {
+				$result[$occurrence->SourceOccurrenceId] = & $this->Occurrences[$key];
+			}
+		}
+		return $result;
+	}
 }
 
 /// Class to represent organisation from a source.
@@ -164,12 +207,16 @@ class CalendarOrganisation
 	public $OrganisationId;
 	/// int,NULL ID of organisation, unique within source.
 	public $SourceOrganisationId	= NULL;
+	/// int,NULL Yorker entity id of organisation, unique within yorker.
+	public $YorkerOrganisationId	= NULL;
 	/// &CalendarSource Reference to source of event.
 	public $Source;
 	/// string Name of organisation.
 	public $Name = '';
-	/// string Short name of organisation
+	/// string Short name of organisation.
 	public $ShortName = '';
+	/// string Whether the organisation is in the yorker directory.
+	public $InDirectory = NULL;
 	
 	/// Primary constructor.
 	/**
@@ -189,8 +236,9 @@ abstract class CalendarSource
 	/*
 	/// array[string] Array of valid members of @a mCapabilities.
 	protected static $sValidCapabilities = array(
-		'attend',  // its possible to rsvp these event
-		'cache', // these events can be cached in the database
+		'create',  // its possible to create events
+		'attend',  // its possible to rsvp these events
+		'cache',   // these events can be cached in the database
 	);
 	*/
 
@@ -256,6 +304,15 @@ abstract class CalendarSource
 	function GetSourceId()
 	{
 		return $this->mSourceId;
+	}
+	
+	/// Get the source name.
+	/**
+	 * @return string Source name.
+	 */
+	function GetSourceName()
+	{
+		return $this->mName;
 	}
 	
 	/// Find whether a capability is supported.
@@ -340,6 +397,25 @@ abstract class CalendarSource
 		} else {
 			return FALSE;
 		}
+	}
+	
+	/// Find whether all categories are supported.
+	/**
+	 * @return bool Whether all categories are supported 
+	 */
+	function AreAllCategoriesSupported()
+	{
+		return FALSE;
+	}
+	
+	/// Get categories.
+	/**
+	 * @return array[name => array].
+	 *	- NULL if categories are not supported.
+	 */
+	function GetAllCategories()
+	{
+		return NULL;
 	}
 	
 	/// Enable a category of events.
@@ -461,6 +537,16 @@ abstract class CalendarSource
 		return array('error' => array('Deleting events in this event source is not currently supported.'));
 	}
 	
+	/// Create an event.
+	/**
+	 * @param $Event CalendarEvent event information.
+	 * @return array Array of messages.
+	 */
+	function CreateEvent($Event)
+	{
+		return array('error' => array('Creating events in this event source is not currently supported.'));
+	}
+	
 	/// Get list of known attendees.
 	/**
 	 * @param $Occurrence Occurrence identifier.
@@ -471,9 +557,63 @@ abstract class CalendarSource
 	 *	- 'attend' bool,NULL TRUE for attending, FALSE for not attending, NULL for maybe.
 	 *	- 'friend' bool Whether the individual is a friend.
 	 */
-	function GetOccurrenceAttendanceList($Occurrence)
+	function GetOccurrenceAttendanceList(& $Occurrence)
 	{
 		return array();
+	}
+	
+	/// Publish an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function CancelOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Cancel an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function DeleteOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Postpone an occurrence.
+	/**
+	 * @param $Occurrence CalendarOccurrence Occurrence object.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PostponeOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Get information about action error codes.
+	/**
+	 * @param $ErrorCode int Error code.
+	 * @return assoc_array information about the error including:
+	 *  - summary
+	 */
+	function GetErrorDescription($ErrorCode)
+	{
+		static $error_descriptions = array(
+			-1 => array('summary' => 'Not supporteed'),
+			-2 => array('summary' => 'Permission denied'),
+		);
 	}
 }
 
@@ -701,6 +841,31 @@ class CalendarData
 		}
 		return $messages;
 	}
+	
+	/// Fill in organisation "in directory" entries.
+	function FindOrganisationInformation()
+	{
+		$ids = array();
+		// Get a list of organisation ids
+		foreach ($this->mOrganisations as $key => $organisation) {
+			if (is_int($organisation->YorkerOrganisationId)) {
+				$ids[$organisation->YorkerOrganisationId] = $key;
+			}
+		}
+		if (!empty($ids)) {
+			$CI = & get_instance();
+			$CI->load->model('directory_model');
+			$directory_entries = $CI->directory_model->GetDirectoryEntryLinks(array_keys($ids));
+			if (!empty($directory_entries)) {
+				foreach ($directory_entries as $entry) {
+					if (NULL !== $entry['directory_entry']) {
+						$this->mOrganisations[$ids[(int)$entry['id']]]->InDirectory = TRUE;
+						$this->mOrganisations[$ids[(int)$entry['id']]]->ShortName = $entry['directory_entry'];
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -733,6 +898,44 @@ class CalendarSources extends CalendarSource
 		return $Source;
 	}
 	
+	/// Get a source.
+	/**
+	 * @param $SourceId int Source identifier.
+	 * @return CalendarSource,NULL The Source or NULL if not found.
+	 */
+	function GetSource($SourceId)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId];
+		} else {
+			return NULL;
+		}
+	}
+	
+	/// Get all sources.
+	/**
+	 * @return array(CalendarSource) Array of the sources.
+	 */
+	function GetSources()
+	{
+		return $this->mSources;
+	}
+	
+	/// Find whether a capability is supported.
+	/**
+	 * @param $Capability string Capabiltity.
+	 * @return bool Whether the capability is supported.
+	 */
+	function IsSupported($Capability)
+	{
+		foreach ($this->mSources as $source) {
+			if ($source->IsSupported($Capability)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+	
 	function SetSearchPhrase($Phrase)
 	{
 		foreach ($this->mSources as $source) {
@@ -755,6 +958,28 @@ class CalendarSources extends CalendarSource
 			$source->DisableGroup($GroupName);
 		}
 		return parent::DisableGroup($GroupName);
+	}
+	
+	function GetAllCategories()
+	{
+		$results = NULL;
+		foreach ($this->mSources as $source) {
+			$new_categories = $source->GetAllCategories();
+			if (TRUE === $new_categories) {
+				// TRUE (support all) overides others
+				$results;
+			} elseif (is_array($new_categories)) {
+				// Add categories to results
+				if (!is_array($results)) {
+					$results = $new_categories;
+				} else {
+					foreach ($new_categories as $key => $value) {
+						$results[$key] = $value;
+					}
+				}
+			}
+		}
+		return $results;
 	}
 	
 	function EnableCategory($CategoryName)

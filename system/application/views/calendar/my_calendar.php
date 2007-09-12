@@ -62,7 +62,10 @@
 if (isset($RangeDescription)) { 
 	echo('<h4>'.$RangeDescription.'</h4>');
 }
+?>
+</div>
+
+<?php
 // Load the main view
 $ViewMode->Load();
 ?>
-</div>

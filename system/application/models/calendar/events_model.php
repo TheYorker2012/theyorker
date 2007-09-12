@@ -643,6 +643,12 @@ class Events_model extends Model
 		return $this->mReadOnly;
 	}
 
+	/// Find whether the user has permission to alter the calendar.
+	function IsVip()
+	{
+		return $this->mActiveEntityType === self::$cEntityVip;
+	}
+
 	/// Get the entity id of the active entity.
 	function GetActiveEntityId()
 	{
@@ -657,6 +663,7 @@ class Events_model extends Model
 					$this->mActiveEntityType = self::$cEntityUser;
 				} else {
 					$this->mReadOnly = !VipLevel('rep');
+					$this->mActiveEntityType = self::$cEntityVip;
 				}
 			} else {
 				// Default to an entity id with default events
@@ -989,9 +996,12 @@ class Events_model extends Model
 	function CategoriesGet()
 	{
 		$this->db->select(
-			'event_type_id			AS id,'.
-			'event_type_name		AS name,'.
-			'event_type_colour_hex	AS colour'
+			'event_type_id				AS id,'.
+			'event_type_name			AS name,'.
+			'event_type_border_colour	AS border_colour,'.
+			'event_type_head_colour_hex	AS heading_colour,'.
+			'event_type_colour_hex		AS colour,'.
+			'event_type_body_image		AS image'
 		);
 		$category_query = $this->db->Get('event_types');
 		$categories = array();
@@ -1624,6 +1634,7 @@ class Events_model extends Model
 	 * @param $OccurrenceId integer Id of occurrence to change the state of.
 	 * @param $OldState string Previous private state.
 	 * @param $NewState string New private state.
+	 * @param $ExtraConsitions array[string] Additional SQL conditions.
 	 * @return integer Number of changed occurrences.
 	 */
 	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
@@ -1868,6 +1879,8 @@ END';
 		//	and where new active.active is cancelled and active
 		$occurrence_query = new EventOccurrenceQuery();
 		$sql_activate = 'UPDATE event_occurrences AS new_active
+			INNER JOIN events
+				ON	event_id = new_active.event_occurrence_event_id
 			INNER JOIN event_entities
 				ON	event_entities.event_entity_event_id
 						= new_active.event_occurrence_event_id

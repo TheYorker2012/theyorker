@@ -8,6 +8,7 @@ class Organizer_actions extends model
 		parent::model();
 		
 		$this->load->helper('uri_tail');
+		$this->load->model('calendar/calendar_actions');
 	}
 	
 	function publish($EventId = NULL, $OccurrenceId = NULL)
@@ -25,6 +26,12 @@ class Organizer_actions extends model
 		} else {
 			show_404();
 		}
+	}
+	
+	function delete()
+	{
+		$args = func_get_args();
+		call_user_func_array(array(&$this->calendar_actions, 'delete'), $args);
 	}
 }
 
