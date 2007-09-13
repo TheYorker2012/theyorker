@@ -109,13 +109,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="<?php echo vip_url('directory/information'); ?>">Directory Entry</a></li>
-					<li><a href="<?php echo vip_url('calendar/range'); ?>">Manage Events</a></li>
+					<li><a href="<?php echo vip_url('calendar'); ?>">Manage Events</a></li>
 					<li><a href="<?php echo vip_url('notices'); ?>">Manage Notices</a></li>
 					<li><a href="<?php echo vip_url('members'); ?>">Manage Members</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="<?php echo vip_url('account'); ?>">Settings</a></li>
-					<li><a href="<?php echo vip_url('advertising'); ?>">Advertising</a></li>
+					<li><a href="<?php echo vip_url('advertising'); ?>" onclick="alert('Coming soon...'); return false;">Advertising</a></li>
 					<li><a href="<?php echo vip_url('contactpr'); ?>">Contact PR Rep</a></li>
 				</ul>
 				<?php

@@ -83,7 +83,7 @@ class Members_model extends Model {
 				AND business_cards.business_card_deleted = 0
 			WHERE entities.entity_deleted = 0 ';
 
-		// If there's a restriction on the usert, apply it here
+		// If there's a restriction on the user, apply it here
 		if (NULL !== $user_id) {
 			$sql .= '	AND subscriptions.subscription_user_entity_id = ?  ';
 			$bind_data[] = $user_id;

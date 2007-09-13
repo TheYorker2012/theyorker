@@ -246,7 +246,7 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/list/...
-
+		
 		$this->_SetupTabs('members');
 
 		$this->_GetTeams();
@@ -271,6 +271,10 @@ class Members extends Controller
 			'sort_fields'  => $this->mSortFields,
 			'in_team'      => FALSE,
 		);
+		
+		// Include the javascript
+		$this->main_frame->SetExtraHead('<script src="/javascript/memberslist.js" type="text/javascript"></script>');
+		
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);
 

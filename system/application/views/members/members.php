@@ -62,7 +62,7 @@ $filter['descriptors'] = array(
 );
 if (!empty($filter['descriptors'])) {
 	?>
-	<h3>Advanced Filters</h3>
+	<h2>Advanced Filters</h2>
 	<p>Showing all:</p>
 	<ul><?php
 	foreach ($filter['descriptors'] as $descriptor) {
@@ -113,3 +113,11 @@ if (!empty($filter['descriptors'])) {
 <div id="MainColumn">
 <?php $this->load->view('members/members_list');?>
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>

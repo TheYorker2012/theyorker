@@ -499,10 +499,9 @@ class Requests_Model extends Model
 						article_live_content_id,
 						UNIX_TIMESTAMP(article_content_last_author_timestamp) as article_content_last_author_timestamp,
 						article_content_heading,
-						article_content_last_author_user_entity_id,
 						article_editor_approved_user_entity_id,
-						author_user.business_card_name as author_name,
-						editor_user.business_card_name as editor_name
+						user_firstname,
+						user_surname
 
 					FROM
 						articles
@@ -512,13 +511,9 @@ class Requests_Model extends Model
 						article_content_id = article_live_content_id
 
 					INNER JOIN
-						business_cards as editor_user
+						users
 					ON
-						editor_user.business_card_user_entity_id = article_editor_approved_user_entity_id
-					INNER JOIN
-						business_cards as author_user
-					ON
-						author_user.business_card_user_entity_id = article_content_last_author_user_entity_id
+						users.user_entity_id = article_editor_approved_user_entity_id
 
 					WHERE
 						article_suggestion_accepted = 1 AND
@@ -530,7 +525,8 @@ class Requests_Model extends Model
 				$sql .= ' AND	article_publish_date <= CURRENT_TIMESTAMP';
 			else
 				$sql .= ' AND	article_publish_date > CURRENT_TIMESTAMP';
-			$sql .= ' ORDER BY article_contents.article_content_heading ASC';
+			$sql .= ' ORDER BY
+						article_contents.article_content_heading ASC';
 			$query = $this->db->query($sql,array($type_id, $is_pulled));
 			$result = array();
 			if ($query->num_rows() > 0)
@@ -543,9 +539,8 @@ class Requests_Model extends Model
 						'publish'=>$row->article_publish_date,
 						'lastedit'=>$row->article_content_last_author_timestamp,
 						'editorid'=>$row->article_editor_approved_user_entity_id,
-						'editorname'=>$row->editor_name,
-						'authorid'=>$row->article_content_last_author_user_entity_id,
-						'authorname'=>$row->author_name
+						'user_firstname'=>$row->user_firstname,
+						'user_surname'=>$row->user_surname
 						);
 					$result[] = $result_item;
 				}
