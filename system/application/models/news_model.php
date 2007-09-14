@@ -291,7 +291,8 @@ class News_model extends Model
 				ON (content_types.content_type_id = articles.article_content_type_id)
 				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
 				AND articles.article_live_content_id IS NOT NULL
-				AND	articles.article_deleted = 0
+				AND	articles.article_deleted = 0 
+				AND articles.article_featured = 0 
 				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
 		if (!empty($types)) {
 			$sql .= '	AND (';

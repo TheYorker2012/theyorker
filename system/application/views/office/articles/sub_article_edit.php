@@ -3,6 +3,10 @@
 	<div class="Entry">
 		<?php echo $page_information; ?>
 	</div>
+	<h2>Current Image</h2>
+	<div class="Entry" align='center'>
+		<?php echo $image; ?>
+	</div>
 </div>
 <div id="MainColumn">
 
@@ -40,7 +44,11 @@
 				/>
 				<label for="article_type_blurb">Blurb:</label>
 				<textarea name="article_type_blurb" cols="26" rows="4"><?php if(!empty($article_type_form['article_type_blurb'])){echo $article_type_form['article_type_blurb'];} ?></textarea>
+				<label for="userfile1">File Location: </label>
+				<input type="file" name="userfile1" id="userfile1" size="20" />
 			</fieldset>
+			<p>Please select a puffer image to be used for this article type. The image must be 201x81 pixels or larger.</p>
+
 			<fieldset>
 				<input name="article_type_edit" type="submit" value="Edit" class="button" />
 			</fieldset>

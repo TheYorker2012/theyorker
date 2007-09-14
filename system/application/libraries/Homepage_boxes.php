@@ -127,5 +127,18 @@ class Homepage_boxes
 			}
 		echo('</div>');
 	}
+	
+	//Prints a middle sized puffer box for featured articles/specials
+	function print_puffer_box($title, $article){
+		echo('<div class="BlueBox PufferBox">'."\n");
+		echo('	<a class="PufferImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
+		echo('		'.$articles['photo_xhtml']."\n");
+		echo('	</a>'."\n");
+		echo('	<h2>'.$title.'</h2>'."\n");
+		echo('	<p class="More">'."\n");
+		echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'.$article['blurb'].'</a>'."\n");
+		echo('	</p>'."\n");
+		echo('</div>'."\n");
+	}
 }
 ?>

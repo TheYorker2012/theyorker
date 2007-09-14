@@ -122,6 +122,12 @@ class Articletypes extends Controller
 		
 		$data['main_articles'] = $this->Article_model->getMainArticleTypes();
 		$articletype = $this->Article_model->getSubArticleType($id);
+		if(empty($articletype['image_id']))
+		{
+			$data['image']="No image available.";
+		}else{
+			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="'.$articletype['image_title'].'" title="'.$articletype['image_title'].'">';
+		}
 		$data['article_type_form'] = array (
 			'article_type_id' => $id,
 			'article_type_name' => $articletype['name'],

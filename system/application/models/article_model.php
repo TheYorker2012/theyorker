@@ -604,6 +604,7 @@ class Article_model extends Model
 		}
 		return $result;
 	}
+	//Returns true if the codename given is a valid content_type
 	function doesCodenameExist($codename){
 	$sql= "SELECT content_types.content_type_id FROM content_types WHERE content_type_codename=? LIMIT 1";
 	$query = $this->db->query($sql,array($codename));
@@ -626,6 +627,7 @@ class Article_model extends Model
 		return $row->content_type_codename;
 	}
 	
+	//Returns true if the article_type is a parent
 	function isArticleTypeAParent($id){
 	$sql= "SELECT content_types.content_type_has_children FROM content_types WHERE content_type_id=? LIMIT 1";
 	$query = $this->db->query($sql,array($id));
@@ -687,8 +689,14 @@ class Article_model extends Model
 		}
 		return $result;
 	}
-	
-	//Make sure the parent exists, and thecodename is not already taken!
+	//Creates a new content type
+	//@param codename - string to use as codename a-z A-Z only
+	//@param $name - string name
+	//@param $parent_id - id of parent content_type
+	//@param $image_id - id of related image, should be a puffer
+	//@param $archive (0,1) if articlesubtype is shown in the archive
+	//@param $blurb - String, description
+	//NOTE Make sure the parent exists, and thecodename is not already taken!
 	function insertArticleSubType($codename,$name,$parent_id,$image_id,$archive,$blurb)
 	{
 		//Find order position to give
@@ -723,6 +731,14 @@ class Article_model extends Model
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		$this->db->query($sql, array($codename,$org_id,$parent_id,$image_id,$name,$archive,$blurb,0,0,'news',$order));
 	}
+	//Updates an existing content type
+	//@param $id - id of content type to change
+	//@param codename - string to use as codename a-z A-Z only
+	//@param $name - string name
+	//@param $parent_id - id of parent content_type
+	//@param $image_id - id of related image, should be a puffer
+	//@param $archive (0,1) if articlesubtype is shown in the archive
+	//@param $blurb - String, description
 	function updateArticleSubType($id,$codename,$name,$parent_id,$image_id,$archive,$blurb)
 	{
 		//Update type
@@ -763,15 +779,23 @@ class Article_model extends Model
 	**/
 	function getSubArticleType ($type)
 	{
-		$sql = 'SELECT content_type_codename AS codename,
-				 content_type_has_children AS has_children,
-				 content_type_parent_content_type_id AS parent_id,
-				 content_type_name AS name,
-				 content_type_section AS section,
-				 content_type_archive AS archive,
-				 content_type_blurb AS blurb,
-				 content_type_section_order AS section_order 
+		$sql = 'SELECT 
+				 content_types.content_type_codename AS codename,
+				 content_types.content_type_has_children AS has_children,
+				 content_types.content_type_parent_content_type_id AS parent_id,
+				 content_types.content_type_name AS name,
+				 content_types.content_type_section AS section,
+				 content_types.content_type_archive AS archive,
+				 content_types.content_type_blurb AS blurb,
+				 content_types.content_type_section_order AS section_order ,
+				 content_types.content_type_image_id AS image_id,
+				 images.image_title AS image_title, 
+				 image_types.image_type_codename AS image_type_codename 
 				FROM content_types 
+				LEFT OUTER JOIN      images
+				ON      content_types.content_type_image_id = images.image_id 
+				LEFT OUTER JOIN      image_types
+				ON      images.image_image_type_id = image_types.image_type_id
 				WHERE content_type_id = ?';
 		$query = $this->db->query($sql,array($type));
 		$result = array();
@@ -781,6 +805,8 @@ class Article_model extends Model
 		return $result;
 	}
 	
+	//Checks to see if $parent_type has a content_type of a certain position returns true if order position exists.
+	//Use this to check if a swap is valid
 	function DoesOrderPositionExist($parent_type, $order_number)
 	{
 		$sql = 'SELECT content_type_codename FROM content_types  
@@ -821,6 +847,8 @@ class Article_model extends Model
 		$this->db->trans_complete();
 	}
 	
+	//only allow delete of children and non hardcoded sections to prevent major site break
+	//@NOTE check the content_type does not have any articles published in it!!!
 	function DeleteCategory($id, $parent_id)
 	{
 		$this->db->trans_start();
