@@ -52,7 +52,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 	
 		<h2>Find in List</h2>
 		<p>
-			<input value="" />
+			<input type="text" name="search" id="search" onkeyup="searchMemberList();" />
 		</p>
 	
 <?php
@@ -115,9 +115,9 @@ if (!empty($filter['descriptors'])) {
 </div>
 
 <?php
-
+/*
 echo('<div class="BlueBox"><pre>');
 print_r($data);
 echo('</pre></div>');
-
+*/
 ?>
