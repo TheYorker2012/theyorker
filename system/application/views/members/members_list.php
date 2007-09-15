@@ -23,18 +23,19 @@ function EchoOptionTeams($team, $selected, $head, $depth = 0)
 /// Draw a column heading sorting hyperlink.
 function SortLink($filter, $sort_fields, $field, $title)
 {
-	echo('<a href="' . vip_url($filter['base'] . '/sort/'.
+	echo('<a href="' . vip_url($filter['base'] . '/'.
 		((isset($sort_fields[$field]) && $sort_fields[$field])
 			? 'desc' : 'asc').'/'.$field) . '">');
 	echo($title);
-	if ($filter['last_sort'] === $field) {
+	//if ($filter['last_sort'] === $field) {
 		if (isset($sort_fields[$field]) && $sort_fields[$field]) {
 			echo('<img src="/images/prototype/members/sortasc.png" alt="sorted ascending" />');
-		} else {
+		}
+		elseif (isset($sort_fields[$field]) && !$sort_fields[$field]) {
 			echo('<Img src="/images/prototype/members/sortdesc.png" alt="sorted descending" />');
 		}
-	}
-	echo '</a>';
+	//}
+	echo('</a>'."\n");
 }
 
 /// Draw links to filter a boolean field (yes/no).
@@ -87,138 +88,202 @@ function FilterLinkBool($filter, $field, $value)
 	<form class="form" method="post" action="<?php echo $target; ?>" id="member_select_form">
 
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-		<tr style="background-color: #eee">
-			<th align="center">
-				<input type="checkbox" name="members_selected[]"
-					value="userSelectAllNone"
-					id="userSelectAllNone" /></th>
-			<th>
-				<?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?>
-			</th>
-			<th>
-				<?php SortLink($filter, $sort_fields, 'surname','Surname'); ?>
-			</th>
-			<th>
-				<?php SortLink($filter, $sort_fields, 'email','Email'); ?>
-			</th>
-			<th align="center">
-				<?php SortLink($filter, $sort_fields, 'confirmed','Conf'); ?>
-			</th>
-			<th align="center">
-				<?php SortLink($filter, $sort_fields, 'paid','Paid'); ?>
-			</th>
+			<thead>
+				<tr style="background-color: #eee">
+					<th align="center">
+						<input type="checkbox" id="UserSelectAllNone" onclick="checkVisibleRows()" />
+					</th>
+					<th>
+						<?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?>
+					</th>
+					<th>
+						<?php SortLink($filter, $sort_fields, 'surname','Surname'); ?>
+					</th>
+					<th>
+						<?php SortLink($filter, $sort_fields, 'email','Email'); ?>
+					</th>
+					<th align="center">
+						Conf
+					</th>
+					<th align="center">
+						Paid
+					</th>
+					<th align="center">
+						Card
+					</th>
 <?php if ('manage' !== VipMode()) { ?>
-			<th align="center">
-				<?php SortLink($filter, $sort_fields, 'vip','VIP'); ?>
-			</th>
+					<th align="center">
+						VIP
+					</th>
 <?php } ?>
-			<th align="center">
-				<?php SortLink($filter, $sort_fields, 'card','Card'); ?>
-			</th>
-			<?php if ('manage' === VipMode()) { ?>
-				<th>Byline</th>
-				<th>Access</th>
-			<?php } ?>
-		</tr>
-		</thead>
-		<tbody id="MemberTable">
-			<tr id="NotFound" style="display: none;">
-				<td colspan="8" style="text-align: center;">
-					No Matching Entries
-				</td>
-			</tr>
+<?php if ('manage' === VipMode()) { ?>
+						<th>Byline</th>
+						<th>Access</th>
+<?php } ?>
+				</tr>
+			</thead>
+			<tbody id="MemberTable">
+				<tr id="NotFound" style="display: none;">
 <?php
-		foreach ($members as $membership) {
+	if ('manage' !== VipMode()) {
+		echo('					<td colspan="8" style="text-align: center;">'."\n");
+	}
+	else {
+		echo('					<td colspan="10" style="text-align: center;">'."\n");
+	}					
 ?>
-			<tr id="<?php echo $membership['user_id']; ?>">
-				<td align="center">
-					<input type="checkbox" name="members_selected[]" value="user<?php echo $membership['user_id']; ?>" id="user<?php echo $membership['user_id']; ?>" />
-				</td>
-				<td>
-					<a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['firstname']; ?></a>
-				</td>
-				<td>
-					<a href='<?php echo vip_url('members/info/'.$membership['user_id']); ?>'><?php echo $membership['surname']; ?></a>
-				</td>
-				<td>
-					<?php 
-					if (NULL !== $membership['email'])
-					{ 
-						echo('<a href="mailto:'.$membership['email'].'@york.ac.uk">'.$membership['username'].'</a>'."\n");
-					} else {
-						echo($membership['username']."\n");
-					} ?>
-				</td>
-				<td align="center">
-					<?php 
-					if ($membership['user_confirmed'] && $membership['org_confirmed']) {
-						echo('<img src="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />'."\n");
-					} elseif ($membership['user_confirmed']) {
-						echo('<img src="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />'."\n");
-					} elseif ($membership['org_confirmed']) {
-						echo('<img src="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />'."\n");
-					//} else {
-					//	echo('&nbsp;'."\n");
-					} ?>
-				</td>
-<?php /*<td><?php if (isset($membership['on_mailing_list'])) FilterLinkBool($filter, 'mailable', $membership['on_mailing_list']); ?></td>*/ ?>
-				<td align="center">
-					<?php 
-					if (isset($membership['paid']) && $membership['paid']) {
-						echo('<img src="/images/prototype/members/paid.png" alt="Yes" />'."\n");
-					} ?>
-				</td>
-				<?php if ('manage' !== VipMode()) { ?>
-				<td align="center">
-					<?php if (isset($membership['vip']) && $membership['vip']) { ?>
-						<img src="/images/prototype/members/vip.png" alt="VIP" title="VIP" />
-					<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
-						<img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access" title="Requested VIP Access" />
-					<?php } ?>
-				</td>
-				<?php } ?>
-				<td align="center">
-				<?php if ($membership['has_business_card']) { ?>
-					<?php if ($membership['business_card_needs_approval']) { ?>
-						<img src="/images/prototype/members/card_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
-					<?php } elseif ($membership['business_card_expired']) { ?>
-						<img src="/images/prototype/members/card_expired.png" alt="Expired" title="Expired" />
-					<?php } else { ?>
-						<img src="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />
-					<?php } ?>
-				<?php } else { ?>
-					&nbsp;
-				<?php } ?>
-				</td>
-				<?php if ('manage' === VipMode()) { ?>
-				<td align="center">
-				<?php if ($membership['has_byline']) { ?>
-					<?php if ($membership['byline_needs_approval']) { ?>
-						<img src="/images/prototype/members/byline_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />
-					<?php } elseif ($membership['byline_expired']) { ?>
-						<img src="/images/prototype/members/byline_expired.png" alt="Byline Expired" title="Byline Expired" />
-					<?php } else { ?>
-						<img src="/images/prototype/members/byline_active.png" alt="Byline OK" title="Byline OK" />
-					<?php } ?>
-				<?php } else { ?>
-					&nbsp;
-				<?php } ?>
-				</td>
-				<td align="center">
-					<?php if ($membership['office_editor_access']) { ?>
-						<img src="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />
-					<?php } elseif ($membership['office_writer_access']) { ?>
-						<img src="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />
-					<?php }
-				} ?>
-				</td>
-			</tr>
-		<?php } ?>
-		</tbody>
+						No Matching Entries
+					</td>
+				</tr>
+<?php
+	if ('manage' !== VipMode()) {
+		echo('				<tr id="VIP" style="display: none;">'."\n");
+		echo('				</tr>'."\n");
+	}
+	else {
+		echo('				<tr id="Office" style="display: none;">'."\n");
+		echo('				</tr>'."\n");
+	}
+?>
+<?php
+	foreach ($members as $membership) {
+?>
+<?php 
+		echo('				<tr id="userid'.$membership['user_id'].'">'."\n");
+?>
+					<td align="center">
+<?php
+		echo('						<input type="checkbox" name="members_selected[]" id="check'.$membership['user_id'].'" />'."\n");
+?>
+					</td>
+					<td>
+<?php 
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['firstname'].'</a>'."\n");
+?>
+					</td>
+					<td>
+<?php 
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['surname'].'</a>'."\n");
+?>
+					</td>
+					<td>
+<?php 
+		if (NULL !== $membership['email']) { 
+			echo('						<a href="mailto:'.$membership['email'].'@york.ac.uk">'.$membership['username'].'</a>'."\n");
+		}
+		else {
+			echo('						'.$membership['username']."\n");
+		}
+?>
+					</td>
+					<td align="center">
+<?php 
+		if ($membership['user_confirmed'] && $membership['org_confirmed']) {
+			echo('						<div style="display: none;">confirmed</div>'."\n");
+			echo('						<img src="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />'."\n");
+		}
+		elseif ($membership['user_confirmed']) {
+			echo('						<div style="display: none;">approval</div>'."\n");
+			echo('						<img src="/images/prototype/members/user_confirmed.png" alt="Waiting for your approval" title="Waiting for your approval" />'."\n");
+		}
+		elseif ($membership['org_confirmed']) {
+			echo('						<div style="display: none;">invitation</div>'."\n");
+			echo('						<img src="/images/prototype/members/org_confirmed.png" alt="Invitation sent, awaiting reply" title="Invitation sent, awaiting reply" />'."\n");
+		}
+		else {
+			echo('						<div style="display: none;">none</div>'."\n");
+		}
+?>
+					</td>
+					<td align="center">
+<?php 
+		if (isset($membership['paid']) && $membership['paid']) {
+			echo('						<div style="display: none;">paid</div>'."\n");
+			echo('						<img src="/images/prototype/members/paid.png" alt="Yes" />'."\n");
+		}
+		else {
+			echo('						<div style="display: none;">notpaid</div>'."\n");
+		}
+?>
+					</td>
+					<td align="center">
+<?php 
+		if ($membership['has_business_card']) {
+			if ($membership['business_card_needs_approval']) {
+				echo('						<div style="display: none;">approval</div>'."\n");
+				echo('						<img src="/images/prototype/members/card_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />'."\n");
+			}
+			elseif ($membership['business_card_expired']) {
+				echo('						<div style="display: none;">expired</div>'."\n");
+				echo('						<img src="/images/prototype/members/card_expired.png" alt="Expired" title="Expired" />'."\n");
+			}
+			else {
+				echo('						<div style="display: none;">ok</div>'."\n");
+				echo('						<img src="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />'."\n");
+			}
+		}
+		else {
+			echo('						<div style="display: none;">none</div>'."\n");
+		}
+?>
+					</td>
+<?php 
+		if ('manage' !== VipMode()) {
+			echo('					<td align="center">'."\n");
+			if (isset($membership['vip']) && $membership['vip']) {
+				echo('						<div style="display: none;">vip</div>'."\n");
+				echo('						<img src="/images/prototype/members/vip.png" alt="VIP" title="VIP" />'."\n");
+			} 
+			elseif (isset($membership['vip_requested']) && $membership['vip_requested']) {
+				echo('						<div style="display: none;">requested</div>'."\n");
+				echo('						<img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access" title="Requested VIP Access" />'."\n");
+			}
+			else {
+				echo('						<div style="display: none;">none</div>'."\n");
+			}
+			echo('					</td>'."\n");
+		}
+?>
+<?php 
+	if ('manage' === VipMode()) {
+		echo('					<td align="center">'."\n");
+		if ($membership['has_byline']) {
+			if ($membership['byline_needs_approval']) {
+				echo('						<div style="display: none;">approval</div>'."\n");
+				echo('						<img src="/images/prototype/members/byline_awaiting_approval.png" alt="Awaiting Approval" title="Awaiting Approval" />'."\n");
+			}
+			elseif ($membership['byline_expired']) {
+				echo('						<div style="display: none;">expired</div>'."\n");
+				echo('						<img src="/images/prototype/members/byline_expired.png" alt="Byline Expired" title="Byline Expired" />'."\n");
+			}
+			else {
+				echo('						<div style="display: none;">ok</div>'."\n");
+				echo('						<img src="/images/prototype/members/byline_active.png" alt="Byline OK" title="Byline OK" />'."\n");
+			}
+		}
+		else {
+			echo('						<div style="display: none;">none</div>'."\n");
+		}
+		echo('					</td>'."\n");
+		echo('					<td align="center">'."\n");
+		if ($membership['office_editor_access']) {
+			echo('						<div style="display: none;">editor</div>'."\n");
+			echo('						<img src="/images/prototype/members/access_editor.gif" alt="Editor Access" title="Editor Access" />'."\n");
+		}
+		elseif ($membership['office_writer_access']) {
+			echo('						<div style="display: none;">writer</div>'."\n");
+			echo('						<img src="/images/prototype/members/access_writer.gif" alt="Writer Access" title="Writer Access" />'."\n");
+		}
+		else {
+			echo('						<div style="display: none;">none</div>'."\n");
+		}
+		echo('					</td>'."\n");
+	}
+?>	
+				</tr>
+<?php } ?>
+			</tbody>
 		</table>
-		<?php /*<a href="#" onclick="if (markAllRows('rowsDeleteForm')) return false;">check all</a> /
-		<a href="#" onclick="if (unMarkAllRows('rowsDeleteForm')) return false;">uncheck all</a>*/ ?>
 	</form>
 
 </div>

@@ -182,7 +182,7 @@ class Members extends Controller
 	}
 
 	/// @return bool Whether to quit
-	protected function _handle_member_list($TopTeam, $FilterSegment)
+	protected function _handle_member_list($TopTeam, $FilterSegment, $sortdir, $sorton)
 	{
 		$this->mLastSort = '';
 		$this->mSortFields = array();
@@ -192,7 +192,7 @@ class Members extends Controller
 
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
-			$memberships = $this->members_model->GetMemberDetails($team_list, null, 'TRUE', array(), ('manage' === VipMode()));
+			$memberships = $this->members_model->GetMemberDetails($team_list, null, 'TRUE', array(), ('manage' === VipMode()), $sortdir, $sorton);
 		}
 
 		$team_list = array_flip($team_list);
@@ -242,7 +242,7 @@ class Members extends Controller
 	/**
 	 * @note This is accessed with list not memberlist (list is reserved word).
 	 */
-	function memberlist()
+	function memberlist($sortdir = 'asc', $sorton = 'firstname')
 	{
 		if (!CheckPermissions('vip')) return;
 		/// @todo Implement $viparea/members/list/...
@@ -254,7 +254,9 @@ class Members extends Controller
 		$this->_handle_member_list_member_operation();
 
 		$this->mFilterBase = 'members/list';
-		if ($this->_handle_member_list(VipOrganisationId(),3)) return;
+		if ($this->_handle_member_list(VipOrganisationId(),3, $sortdir, $sorton)) return;
+		
+		$sortdir == 'asc' ? $this->mSortFields[$sorton] = true : $this->mSortFields[$sorton] = false;
 
 		$this->pages_model->SetPageCode('viparea_members_list');
 		$data = array(

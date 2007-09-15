@@ -14,7 +14,7 @@ class Members_model extends Model {
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false)
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false, $sortdir, $sorton)
 	{
 		if (is_array($organisation_id) && empty($organisation_id)) {
 			return array();
@@ -119,8 +119,37 @@ class Members_model extends Model {
 		$sql .= ' AND ' . $FilterSql;
 		$bind_data = array_merge($bind_data, $BindData);
 
-		if (!$organisation_id)
-			$sql .= ' ORDER BY vip_requested DESC, organisation_name, surname ';
+		//if (!$organisation_id)
+		//	$sql .= ' ORDER BY vip_requested DESC, organisation_name, surname ';
+		
+		/* sorting */
+		if ($sorton == 'surname') {
+			if ($sortdir == 'asc') {
+				$sql .= ' ORDER BY user_surname ASC ';
+			}
+			else {
+				$sql .= ' ORDER BY user_surname DESC ';
+			}
+		}
+		elseif ($sorton == 'firstname') {
+			if ($sortdir == 'asc') {
+				$sql .= ' ORDER BY user_firstname ASC ';
+			}
+			else {
+				$sql .= ' ORDER BY user_firstname DESC ';
+			}
+		}
+		elseif ($sorton == 'email') {
+			if ($sortdir == 'asc') {
+				$sql .= ' ORDER BY entity_username ASC ';
+			}
+			else {
+				$sql .= ' ORDER BY entity_username DESC ';
+			}
+		}
+			
+		
+		//$sortdir, $sorton
 
 		$query = $this->db->query($sql, $bind_data);
 		return $query->result_array();
