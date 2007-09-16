@@ -72,6 +72,8 @@ class User_auth extends model {
 	public function __construct() {
 		parent::model();
 
+		session_start();
+
 		$this->load->model('organisation_model');
 
 		// Check if we already have login details

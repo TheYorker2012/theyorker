@@ -101,7 +101,6 @@ class Login extends Controller
 	 */
 	function facebook()
 	{
-		session_start();
 		$this->load->library('facebook');
 		$this->facebook->Enable();
 

@@ -9,6 +9,7 @@
 // Load the Frames library
 $CI = &get_instance();
 $CI->load->library('frames');
+$CI->load->model('user_auth');
 
 /// Message class.
 /**

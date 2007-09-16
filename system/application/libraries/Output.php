@@ -43,7 +43,6 @@ class CI_Output {
 	{
 		log_message('debug', "Output Class Initialized");
 		
-		session_start();
 		if (isset($_SESSION['ua_loggedin']) && $_SESSION['ua_loggedin'])
 			$this->entityId = $_SESSION['ua_entityId'];
 	}

@@ -263,6 +263,11 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 {
 	// Start a session
 	$CI = &get_instance();
+
+	// Initialisation stuff
+	$CI->load->library('messages');
+	$CI->load->model('user_auth');
+	$CI->load->model('pages_model');
 	
 	// Decide on output format
 	if (array_key_exists('fb_sig', $_POST)) {
@@ -272,7 +277,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		$_SESSION = array();
 	} else {
 		OutputMode('xhtml');
-//		session_start();
 	}
 	// If the output mode is not supported, show a 404
 	if (!in_array(OutputMode(), OutputModes())) {
@@ -286,11 +290,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	if (array_key_exists($Permission, $auxilliary_permissions)) {
 		$Permission = $auxilliary_permissions[$Permission];
 	}
-
-	// Initialisation stuff
-	$CI->load->library('messages');
-	$CI->load->model('user_auth');
-	$CI->load->model('pages_model');
 
 	$user_level = GetUserLevel();
 

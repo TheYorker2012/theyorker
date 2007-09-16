@@ -6,6 +6,9 @@
  *	@brief	Library for using the facebook API.
  */
 
+$CI = &get_instance();
+$CI->load->model('user_auth');
+
 /// Main library class
 class Facebook
 {

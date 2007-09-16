@@ -11,8 +11,6 @@ class Logout extends Controller
 	{
 		parent::Controller();
 
-		session_start();
-		
 		$this->load->library('messages');
 
 		// CheckPermissions is not used so user_auth needs loading
@@ -78,7 +76,6 @@ class Logout extends Controller
 	 */
 	function facebook()
 	{
-		session_start();
 		$this->load->library('facebook');
 		$this->facebook->Disable();
 		
