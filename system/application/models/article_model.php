@@ -892,5 +892,15 @@ class Article_model extends Model
 			return true;
 		}
 	}
+	
+	function MakeArticleFeatured($id, $remove_featured=false)
+	{
+		if($remove_featured){$feature=1;}else{$feature=0;}
+		$sql = 'UPDATE articles 
+				SET	articles.article_featured = ? 
+				WHERE articles.article_id = ? 
+				LIMIT 1';
+		$query = $this->db->query($sql,array($feature, $id));
+	}
 }
 ?>

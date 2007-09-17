@@ -262,7 +262,7 @@ class News_model extends Model
 	 * @param $number is the max number of 'article_id' to return
 	 * @return An array of Article IDs in decending order by publish date.
 	 */
-	function GetLatestId($type, $number)
+	function GetLatestId($type, $number, $remove_featured=true)
 	//Returns the '$number' most recent article ID of type '$type'
 	//Ordered by 'most recent'.
 	{
@@ -291,9 +291,11 @@ class News_model extends Model
 				ON (content_types.content_type_id = articles.article_content_type_id)
 				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
 				AND articles.article_live_content_id IS NOT NULL
-				AND	articles.article_deleted = 0 
-				AND articles.article_featured = 0 
-				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
+				AND	articles.article_deleted = 0 ';
+				if ($remove_featured){
+				$sql .='AND articles.article_featured = 0 ';
+				}
+				$sql .='AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
 		if (!empty($types)) {
 			$sql .= '	AND (';
 			$first = TRUE;
@@ -321,7 +323,63 @@ class News_model extends Model
 		}
 		return $result;
 	}
-
+	
+	//@input $type codename article_type
+	//@return An Article ID of a featured article of that type, picked at random
+	function GetLatestFeaturedId($type)
+	//Returns one featured article of type '$type', picked at random
+	{
+		$sql = 'SELECT content_type_id, content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($type));
+		$row = $query->row();
+		if (($query->num_rows() > 0) && ($row->content_type_has_children)) {
+			$sql = 'SELECT content_type_codename
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			$types = array();
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$types[] = $row->content_type_codename;
+				}
+			}
+		} else {
+			$types = array($type);
+		}
+		$sql = 'SELECT articles.article_id FROM articles
+				LEFT JOIN content_types
+				ON (content_types.content_type_id = articles.article_content_type_id)
+				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
+				AND articles.article_live_content_id IS NOT NULL
+				AND	articles.article_deleted = 0 
+				AND articles.article_featured = 1 
+				AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
+		
+		if (!empty($types)) {
+			$sql .= '	AND (';
+			$first = TRUE;
+			foreach ($types as $type) {
+				if (!$first) {
+					$sql .= ' OR ';
+				} else {
+					$first = FALSE;
+				}
+				$sql .= 'content_types.content_type_codename = ?';
+			}
+			$sql .= ') ';
+		}
+		$sql .= 'ORDER BY RAND() LIMIT 1';
+		$query = $this->db->query($sql,$types);
+		
+		if ($query->num_rows() > 0)
+		{
+			$row = $query->row();
+			return $row->article_id;
+		}
+		return NULL;
+	}
 	/**
 	 * Get array containing data needed for 'NewsOther'
 	 * @param $id is the article_id of the article data to return
@@ -419,6 +477,7 @@ class News_model extends Model
 							DATE_FORMAT(articles.article_publish_date, ?) AS article_publish_date,
 							articles.article_main_photo_id,
 							content_types.content_type_codename,
+							content_types.content_type_name,
 							photo_requests.photo_request_chosen_photo_id,
 							photo_requests.photo_request_title
 				FROM		articles
@@ -438,6 +497,7 @@ class News_model extends Model
 		    $row = $query->row();
 		    $result['date'] = $row->article_publish_date;
 			$result['article_type'] = $row->content_type_codename;
+			$result['article_type_name'] = $row->content_type_name;
 			$result['main_photo_id'] = $row->article_main_photo_id;
 		    $content_id = $row->article_live_content_id;
 
@@ -754,6 +814,5 @@ class News_model extends Model
 			array('article_id' => $ArticleId)
 		);
 	}
-
 }
 ?>

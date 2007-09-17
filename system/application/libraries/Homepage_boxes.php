@@ -129,16 +129,28 @@ class Homepage_boxes
 	}
 	
 	//Prints a middle sized puffer box for featured articles/specials
+	//Make sure you use summery article, to get the article_type_name and the subheading!!
 	function print_puffer_box($title, $article){
 		echo('<div class="BlueBox PufferBox">'."\n");
 		echo('	<a class="PufferImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-		echo('		'.$articles['photo_xhtml']."\n");
+		echo('		'.$article['photo_xhtml']."\n");
 		echo('	</a>'."\n");
-		echo('	<h2>'.$title.'</h2>'."\n");
+		echo('	<h2>'.$title.' | '.$article['article_type_name'].'</h2>'."\n");
 		echo('	<p class="More">'."\n");
-		echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'.$article['blurb'].'</a>'."\n");
+		echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'.$article['heading'].'</a>'."\n");
 		echo('	</p>'."\n");
 		echo('</div>'."\n");
+	}
+	
+	//Prints a column of puffers for a right hand side bar.
+	//Each puffer must contain 'image' that is the url of where the image is, this has to be made in the controller!
+	function print_puffer_column ($puffers){
+		foreach ($puffers as $puffer) {
+			echo '<div class=\'Puffer\'>';
+			echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
+			echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
+			echo '</a></div>';
+		}
 	}
 }
 ?>

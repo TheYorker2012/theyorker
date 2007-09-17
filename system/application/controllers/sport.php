@@ -22,6 +22,7 @@ class Sport extends Controller
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['more_heading'] = $this->pages_model->GetPropertyText('more_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
+		$data['featured_puffer_title'] = $this->pages_model->GetPropertyText('featured_puffer_title',TRUE);
 		
 		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_sport_articles');//Max number of main articles to show
 		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_sport_articles');//Max number of more articles to show
@@ -43,14 +44,41 @@ class Sport extends Controller
 		$more_article_types = $this->News_model->getSubArticleTypes('sport');
 		//////For each article type get list of simple articles to the limit of $more_articles_num
 		$article_index = 0;
+		$articles_summarys = array();
 		foreach ($more_article_types as $an_article){
 			//Get article id's for that article type up to limit of $more_articles_num
 			$articles_ids[$article_index] = $this->News_model->GetLatestId($an_article['codename'],$more_articles_num);
 				//for the new article type found get a simple article for each of the ids found.
 				for ($index = 0; $index <= ($more_articles_num-1) && $index < count($articles_ids[$article_index]); $index++) {
-					$articles_summarys[$article_index][] = $this->News_model->GetSimpleArticle($articles_ids[$article_index][$index], "Left");
+					//check the article hasnt already been used as a main article
+					$found_article = array_search($articles_ids[$article_index][$index], $main_article_ids);
+					if($found_article === FALSE){
+						$articles_summarys[$article_index][] = $this->News_model->GetSimpleArticle($articles_ids[$article_index][$index], "Left");
+					}
 				}
 			$article_index++;
+		}
+		
+		/////////////Get information for side puffers @Note this is temp, hoping to have links to sport sections on the right hand side, this is a placeholder!!
+		//use article types already found by more articles
+		$data['puffers'] = array();
+		$index = 0;
+		foreach ($more_article_types as $puffer) {
+			$data['puffers'][$index] = $puffer;
+			$data['puffers'][$index]['image'] = '/image/'.$puffer['image_codename'].'/'.$puffer['image'];
+			$index++;
+		}
+		
+		//////////////Information for special/featured puffer
+		//Get article ID
+		$featured_puffer_id = $this->News_model->GetLatestFeaturedId('sport');
+		
+		//get and article summery for the article id. Using subheader, so much have at least the summery version
+		if(!empty($featured_puffer_id)){
+			$data['show_featured_puffer'] = true;
+			$data['featured_puffer'] = $this->News_model->GetSummaryArticle($featured_puffer_id);
+		}else{
+			$data['show_featured_puffer'] = false;
 		}
 		
 		//Move article information into send data
