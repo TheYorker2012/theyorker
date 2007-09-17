@@ -370,7 +370,7 @@ class News_model extends Model
 			}
 			$sql .= ') ';
 		}
-		$sql .= 'ORDER BY RAND() LIMIT 1';
+		$sql .= ' LIMIT 1';
 		$query = $this->db->query($sql,$types);
 		
 		if ($query->num_rows() > 0)

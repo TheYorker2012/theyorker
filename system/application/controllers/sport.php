@@ -17,6 +17,7 @@ class Sport extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
+		$homepage_article_types = 'sport';
 		//Get page properties information
 		$this->pages_model->SetPageCode('sport');
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
@@ -32,7 +33,7 @@ class Sport extends Controller
 		
 		//////////////Information for main article(s)
 		//Get article ids for the main section
-		$main_article_ids = $this->News_model->GetLatestId('sport',3);
+		$main_article_ids = $this->News_model->GetLatestId($homepage_article_types,3);
 		//First article has summery, rest are simple articles
 		$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
 		for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
@@ -41,7 +42,7 @@ class Sport extends Controller
 		
 		//////////////Information for more article list(s)
 		//Get list of article types
-		$more_article_types = $this->News_model->getSubArticleTypes('sport');
+		$more_article_types = $this->News_model->getSubArticleTypes($homepage_article_types);
 		//////For each article type get list of simple articles to the limit of $more_articles_num
 		$article_index = 0;
 		$articles_summarys = array();
@@ -71,7 +72,7 @@ class Sport extends Controller
 		
 		//////////////Information for special/featured puffer
 		//Get article ID
-		$featured_puffer_id = $this->News_model->GetLatestFeaturedId('sport');
+		$featured_puffer_id = $this->News_model->GetLatestFeaturedId($homepage_article_types);
 		
 		//get and article summery for the article id. Using subheader, so much have at least the summery version
 		if(!empty($featured_puffer_id)){
