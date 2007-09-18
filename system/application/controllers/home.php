@@ -184,7 +184,7 @@ class Home extends Controller {
 		$data['quote'] = $this->Home_Model->GetQuote();
 
 		//Obtain banner
-		$data['banner'] = $this->Home_Model->GetBannerImage();
+		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
 
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();

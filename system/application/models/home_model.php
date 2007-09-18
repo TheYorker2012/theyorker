@@ -73,6 +73,7 @@ class Home_Model extends Model {
 	/*
 	 * Function to obtain a random banner image for today.
 	 * Returns the image location.
+	 *@NOTE this has been replaced below, this should be deleted soon.
 	 */
 	function GetBannerImage($type='banner') {
 		$this->load->library('image');
@@ -102,6 +103,55 @@ class Home_Model extends Model {
 		$id = $query->row()->image_id;
 		$title = $query->row()->image_title;
 		return $this->image->getImage($id,$type);
+	}
+	
+	/*
+	 * Function to obtain a random banner image for today.
+	 *@param string name of the homepage section you want a banner for this is the homepage's content_type codename
+	 * Returns the image, if there is one.
+	 */
+	function GetBannerImageForHomepage($homepage_codename='home') {
+		$this->load->library('image');
+		//Get id of content_type from codename
+		//Get image id(s) from homepage_banners table with content_type id
+		//Use image id(s) to get all image information
+		//Take the one with the current date (if there is one)
+		$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type
+		FROM images
+		INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
+		INNER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
+		INNER JOIN content_types ON homepage_banners.homepage_banner_content_type_id = content_types.content_type_id 
+		WHERE content_types.content_type_codename = ? 
+		AND	DATE(images.image_last_displayed_timestamp) = CURRENT_DATE()';
+		$query = $this->db->query($sql, array($homepage_codename));
+		//Update current homepage if there is no result
+		if($query->num_rows() == 0){
+			//Find the oldest homepage image
+			$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type
+			FROM images
+			INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
+			INNER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
+			INNER JOIN content_types ON homepage_banners.homepage_banner_content_type_id = content_types.content_type_id 
+			WHERE content_types.content_type_codename = ? 
+			ORDER BY images.image_last_displayed_timestamp LIMIT 0,1';
+			$query = $this->db->query($sql, array($homepage_codename));
+			//Update the oldest with the current time&date if there is one
+			if($query->num_rows() > 0){
+				$sql = 'UPDATE images
+					SET images.image_last_displayed_timestamp = CURRENT_TIMESTAMP()
+					WHERE images.image_id = ?';
+				$update = $this->db->query($sql,array($query->row()->id));
+			}
+		}
+		//Just make sure one has now been found.
+		if($query->num_rows() > 0){
+			$id = $query->row()->id;
+			$type = $query->row()->type;
+			return $this->image->getImage($id,$type);
+		}else{
+			//no homepage found!!
+			return "";
+		}
 	}
 
 	/*

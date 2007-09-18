@@ -116,7 +116,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/news/comment/">News Comment</a></li>
 					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
-					<li><a href="/news/lifestyle/">Lifestyle</a></li>
+					<li><a href="/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
 					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
