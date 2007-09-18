@@ -91,16 +91,16 @@
 			$( 'uploadedImage' ).height = h;
 
 <?php		foreach ($ThumbDetails->result() as $Single) : ?>
-			if (imgTypeNew == <?=$Single->image_type_id?>) {
-				if (!$( 'previewArea-<?=$Single->image_type_id?>' ).empty()) $( 'previewArea-<?=$Single->image_type_id?>' ).removeChild($( 'previewArea-<?=$Single->image_type_id?>' ).firstChild);
+			if (imgTypeNew == <?php echo $Single->image_type_id?>) {
+				if (!$( 'previewArea-<?php echo $Single->image_type_id?>' ).empty()) $( 'previewArea-<?php echo $Single->image_type_id?>' ).removeChild($( 'previewArea-<?php echo $Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
-					minWidth: <?=$Single->image_type_width?>,
-					minHeight: <?=$Single->image_type_height?>,
-					ratioDim: { x: <?=$Single->image_type_width?>, y: <?=$Single->image_type_height?> },
+					minWidth: <?php echo $Single->image_type_width?>,
+					minHeight: <?php echo $Single->image_type_height?>,
+					ratioDim: { x: <?php echo $Single->image_type_width?>, y: <?php echo $Single->image_type_height?> },
 					displayOnInit: true,
 					onEndCrop: onEndCrop,
-					previewWrap: 'previewArea-<?=$Single->image_type_id?>'} );
+					previewWrap: 'previewArea-<?php echo $Single->image_type_id?>'} );
 				this.curCrop.reset();
 			}
 <?php		endforeach; ?>
@@ -118,12 +118,12 @@
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
 			?>
-			thumbNameMap['<?=$singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
+			thumbNameMap['<?php echo $singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
 			<?php
 			if (!(isset($noforcesave) && $noforcesave)) {
 			?>
-			thumbList.push('<?=$singleThumb['thumb_id']?>');
-			<?
+			thumbList.push('<?php echo $singleThumb['thumb_id']?>');
+			<?php
 			}
 		}
 	}

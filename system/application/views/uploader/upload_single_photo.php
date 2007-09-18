@@ -1,5 +1,5 @@
 <div class="BlueBox">
-	<form action="<?= isset($action_url) ? $action_url : site_url($this->uri->uri_string())?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
+	<form action="<?php echo isset($action_url) ? $action_url : site_url($this->uri->uri_string())?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
 		<h2>photo upload</h2>
 		<p> Please choose a photo you wish up upload here. The file is limited to 2Mb in size, and must be larger than 220x165 in resolution.</p>
 		<div>

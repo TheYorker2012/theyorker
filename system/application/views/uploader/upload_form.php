@@ -3,7 +3,7 @@
 	Photo File: <input type="file" name="userfile" size="30" />
 </div>
 
-<?=form_open_multipart('upload/do_upload'); ?>
+<?php echo form_open_multipart('upload/do_upload'); ?>
 Basic test script
 <div>
 	<label for="title1">Photo Title: </label>

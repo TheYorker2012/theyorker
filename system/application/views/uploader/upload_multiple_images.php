@@ -10,7 +10,7 @@
 </div>
 
 <div id="MainColumn">
-	<form action="<?=site_url($this->uri->uri_string())?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
+	<form action="<?php echo site_url($this->uri->uri_string());?>" method="post" onsubmit="return ValidateClones();" enctype="multipart/form-data">
 		<div class="BlueBox">
 			<h2>image upload</h2>
 			<p> Please choose the images you wish up upload here. Each file is limited to 2Mb in size, and must be larger than the image size required.</p>
