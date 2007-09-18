@@ -63,30 +63,37 @@ function FilterLinkBool($filter, $field, $value)
 ?>
 
 <div class="BlueBox">
-	<h2>Members of <?php echo $organisation['name']; ?></h2>
-
-	<p>The following action can be performed on the selected members</p>
-	<select style="float: none;">
-		<!--optgroup label="Actions:"-->
-			<option selected="selected">Send e-mail</option>
-			<option>Remove membership</option>
-			<option>Set as paid</option>
-			<option>Set as not paid</option>
-			<option>Request business cards</option>
-			<option>Expire business cards</option>
-		<!--/optgroup-->
-		<?php
-			if (!empty($organisation['subteams'])) {
-				echo '<optgroup label="Invite:">';
-				EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
-				echo '</optgroup>';
-			}
-		?>
-	</select>
-	<input type="button" value="Go" style="float: none;"/>
-	<br />
-	<form class="form" method="post" action="<?php echo $target; ?>" id="member_select_form">
-
+<?php
+	echo('	<h2>Members of '.$organisation['name'].'</h2>'."\n");
+	echo('	<form id="member_select_form" action="'.$target.'" method="post" class="form">'."\n");
+?>
+		<p>The following action can be performed on the selected members</p>
+		<select style="float: none;" name="a_selected_member_action" id="a_select_member_action">
+			<!--optgroup label="Actions:"-->
+				<option value="send_email" selected="selected">Send e-mail</option>
+				<option value="accept_join_request">Accept join request</option>
+				<option value="withdraw_invitation">Withdraw invitation</option>
+				<option value="remove_membership">Remove membership</option>
+				<option value="set_as_paid">Set as paid</option>
+				<option value="set_as_not_paid">Set as not paid</option>
+<?php if ('manage' !== VipMode()) { ?>
+				<option value="give_vip_access">Give VIP access</option>
+				<option value="remove_vip_access">Remove VIP access</option>
+<?php } else { ?>
+				<option value="demote_to_writer">Demote to writer</option>
+				<option value="remove_offive_access">Remove office access</option>
+<?php } ?>
+			<!--/optgroup-->
+			<?php
+				if (!empty($organisation['subteams'])) {
+					echo '<optgroup label="Invite:">';
+					EchoTeamFilterOptions($organisation, 'Invite to ', FALSE);
+					echo '</optgroup>';
+				}
+			?>
+		</select>
+		<input type="submit" value="Go" style="float: none;" name="r_submit_member_action" id="r_submit_member_action" />
+		<br />
 		<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
 			<thead>
 				<tr style="background-color: #eee">
@@ -117,8 +124,12 @@ function FilterLinkBool($filter, $field, $value)
 					</th>
 <?php } ?>
 <?php if ('manage' === VipMode()) { ?>
-						<th>Byline</th>
-						<th>Access</th>
+					<th>
+						Byline
+					</th>
+					<th>
+						Access
+					</th>
 <?php } ?>
 				</tr>
 			</thead>
@@ -153,7 +164,7 @@ function FilterLinkBool($filter, $field, $value)
 ?>
 					<td align="center">
 <?php
-		echo('						<input type="checkbox" name="members_selected[]" id="check'.$membership['user_id'].'" />'."\n");
+		echo('						<input type="checkbox" name="a_user_cb['.$membership['user_id'].']" id="a_user_cb['.$membership['user_id'].']" />'."\n");
 ?>
 					</td>
 					<td>

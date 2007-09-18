@@ -5,6 +5,25 @@ class Members_model extends Model {
 	{
 		parent::Model();
 	}
+	
+	function GetMemberName($user_id)
+	{
+		$sql = 'SELECT
+					users.user_firstname AS firstname,
+					users.user_surname AS surname
+				FROM
+					users
+				WHERE
+					users.user_entity_id = ?';
+		$query = $this->db->query($sql, array($user_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->firstname.' '.$row->surname;
+		}
+		else
+			return FALSE;
+	}
 
 	/// Gets a users membership with an organisation.
 	/**
@@ -14,7 +33,7 @@ class Members_model extends Model {
 	 *	- Subscription must be membership
 	 *	- Subscription must not be deleted
 	 */
-	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false, $sortdir, $sorton)
+	function GetMemberDetails($organisation_id, $user_id = NULL, $FilterSql = 'TRUE', $BindData = array(), $manage_mode = false, $sortdir = 'asc', $sorton = 'firstname')
 	{
 		if (is_array($organisation_id) && empty($organisation_id)) {
 			return array();
@@ -399,11 +418,12 @@ class Members_model extends Model {
 				SET subscription_organisation_confirmed = 0
 				WHERE  subscription_user_entity_id = ?
 				       AND subscription_organisation_entity_id = ?
+					   AND subscription_user_confirmed = 0
+					   AND subscription_organisation_confirmed = 1
 				';
 		$this->db->query($sql, array($UserId, $OrgId));
 		return $this->db->affected_rows() > 0;
 	}
-
 
 	function ConfirmMember($UserId,$OrgId) {
 		$sql = '
@@ -471,6 +491,7 @@ class Members_model extends Model {
 				FROM   subscriptions
 				WHERE  subscriptions.subscription_user_entity_id = ?
 					   AND subscriptions.subscription_organisation_entity_id = ?
+					   AND subscriptions.subscription_deleted = 0
 				';
 		$query = $this->db->query($sql, array($UserId, $OrgId));
 		$result_array = $query->result_array();

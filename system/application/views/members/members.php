@@ -61,20 +61,20 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 		<div class="Entry">
 		<label for="filter_confirmation">Conformation, Showing:</label>
 		<select id="filter_confirmation" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="confirmed">Confirmed</option>
 			<option value="approval">Waiting for approval</option>
 			<option value="invitation">Invitation sent</option>
 		</select>
 		<label for="filter_payment">Payment, Showing:</label>
 		<select id="filter_payment" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="paid">Paid</option>
 			<option value="notpaid">Non-paid</option>
 		</select>
 		<label for="filter_businesscard">Business Card, Showing:</label>
 		<select id="filter_businesscard" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="ok">Has business card</option>
 			<option value="approval">Waiting for approval</option>
 			<option value="expired">Business card expired</option>
@@ -83,7 +83,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 <?php if ('manage' !== VipMode()) { ?>
 		<label for="filter_vip">VIP, Showing:</label>
 		<select id="filter_vip" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="vip">Is a VIP</option>
 			<option value="requested">Has requested to be a VIP</option>
 			<option value="none">Is not a VIP</option>
@@ -91,7 +91,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 <?php } else { ?>
 		<label for="filter_byline">Byline, Showing:</label>
 		<select id="filter_byline" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="ok">Has byline</option>
 			<option value="approval">Waiting for approval</option>
 			<option value="expired">Byline expired</option>
@@ -99,15 +99,12 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 		</select>
 		<label for="filter_officeaccess">Office Access, Showing:</label>
 		<select id="filter_officeaccess" onchange="searchMemberList();">
-			<option value="all">All</option>
+			<option value="all" selected="selected">All</option>
 			<option value="editor">Editor</option>
 			<option value="writer">Writer</option>
+			<option value="none">None</option>
 		</select>
 <?php } ?>
-		</div>
-		<br />
-		<div class="Entry">
-			<small><a href="<?php echo vip_url('members/list'); ?>">reset filters</a></small>
 		</div>
 	</div>
 <?php

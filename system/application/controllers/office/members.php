@@ -122,6 +122,144 @@ class Members extends Controller
 	{
 		// Check for post data
 		if (!empty($_POST)) {
+			/* pingu's */			
+			if (empty($_POST['a_user_cb'])) {
+				$this->messages->AddMessage('information', 'No members selected, please use the check boxes to select the members that you wish to perform the action on.');
+			}
+			else {
+				//select the action to perform
+				$action = $_POST['a_selected_member_action'];
+				$selected_members = array();
+				//make an array of selected member ids where checked boxes are ticked
+				foreach($_POST['a_user_cb'] as $key => $value)
+				{
+					if ($value = 'on')
+					{
+						$selected_members[] = $key;
+					}
+				}
+				//$this->messages->AddDumpMessage('selected_members', $selected_members);
+				
+				$users_affected = array();
+				$users_unaffected = array();
+				
+				//select the correct action to perform on the members
+				foreach($selected_members as $member_id)
+				{
+					switch ($action) {
+						case 'send_email':
+							//no per member action
+							break;
+						case 'accept_join_request':
+							$rows = $this->members_model->ConfirmMember($member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'withdraw_invitation':
+							$rows = $this->members_model->WithdrawInvite($member_id, VipOrganisationId());
+						case 'remove_membership':
+							$rows = $this->members_model->UpdateVipStatus('none', $member_id, VipOrganisationId());
+							$rows = $this->members_model->RemoveSubscription($member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'set_as_paid':
+							$rows = $this->members_model->UpdatePaidStatus(true, $member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'set_as_not_paid':
+							$rows = $this->members_model->UpdatePaidStatus(false, $member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'give_vip_access':
+							$rows = $this->members_model->UpdateVipStatus('approved', $member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'remove_vip_access':
+							$rows = $this->members_model->UpdateVipStatus('none', $member_id, VipOrganisationId());
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'demote_to_writer':
+							$rows = $this->members_model->UpdateAccessLevel(true, NULL, $member_id);
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+						case 'remove_offive_access':
+							$rows = $this->members_model->UpdateAccessLevel(false, NULL, $member_id);
+							$rows == 0 ? 
+								$users_unaffected[] = $this->members_model->GetMemberName($member_id) :
+								$users_affected[] = $this->members_model->GetMemberName($member_id);
+							break;
+					}
+				}
+				
+				//display the correct information message
+				switch ($action) {
+					case 'send_email':
+						//no info message needed just route
+						$_SESSION['members_email_to'] = $selected_members;
+						redirect('/office/manage/members/compose/');
+						break;
+					case 'accept_join_request':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their membership request accepted: '.$affected);
+						break;
+					case 'withdraw_invitation':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their invitation withdrawn: '.$affected);
+						break;
+					case 'remove_membership':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their membership removed: '.$affected);
+						break;
+					case 'set_as_paid':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their paid status set to true: '.$affected);
+						break;
+					case 'set_as_not_paid':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their paid status set to false: '.$affected);
+						break;
+					case 'give_vip_access':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have been given vip access: '.$affected);
+						break;
+					case 'remove_vip_access':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their vip access removed: '.$affected);
+						break;
+					case 'demote_to_writer':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their editor access level demoted to writer: '.$affected);
+						break;
+					case 'remove_offive_access':
+						$affected = implode(', ', $users_affected);
+						$this->messages->AddMessage('information',
+													'The following members have had their office access removed: '.$affected);
+						break;
+				}
+			}
+			
+			/* james' -
 			$selected_members = $this->input->post('members_selected');
 			// Reindex selected members
 			if (is_array($selected_members)) {
@@ -176,8 +314,8 @@ class Members extends Controller
 				}
 
 			} else {
-				$this->messages->AddMessage('error', 'Invalid post data, no recognised button signiture.');
-			}
+				$this->messages->AddMessage('error', 'Invalid post data, no recognised button signature.');
+			}*/
 		}
 	}
 
@@ -715,17 +853,85 @@ class Members extends Controller
 	/// Contact members
 	/**
 	 */
-	function compose()
+	function compose($members = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+		
+		//add any members in the session to the list of recipients
+		if (is_array($_SESSION['members_email_to'])) {
+			$members = $_SESSION['members_email_to'];
+			$_SESSION['members_email_to'] = NULL; //clear the send list
+		}
+		else {
+			$members = array();
+		}
+		
+		//set the defaults for the email
+		$subject = '';
+		$content = '';
+		
+		if (!empty($_POST)) {
+			$this->messages->AddDumpMessage('_POST', $_POST);
+			
+			$selected_members = array();
+			//make an array of selected member ids where checked boxes are ticked
+			foreach($_POST['cb'] as $key => $value)
+			{
+				if ($value = 'on')
+				{
+					$selected_members[] = $key;
+				}
+			}
+			
+			if (count($selected_members) == 0)
+			{
+				$this->messages->AddMessage('error', 'You must select some members to send the email to.');
+			}
+			else if ($_POST['a_subject'] == '') {
+				$this->messages->AddMessage('error', 'You must enter a subject for the email.');
+				$members = $selected_members;
+				$content = $_POST['a_content'];
+			}
+			else if ($_POST['a_content'] == '') {
+				$this->messages->AddMessage('error', 'You must enter a message for the email.');
+				$members = $selected_members;
+				$subject = $_POST['a_subject'];
+			}
+			else {
+				//no errors so send the email
+				$this->load->helper('yorkermail_helper');
+				//$this->yorkermail_helper->yorkermail();
+			}
+		}
 
+		//set page code and setup tab nav bar
 		$this->pages_model->SetPageCode('viparea_members_compose');
 		$this->_SetupTabs('compose');
+		
+		//view data
+		$data = array(
+			'main_text'		=> $this->pages_model->GetPropertyWikitext('main_text'),
+			'target'		=> $this->uri->uri_string(),
+			'to_members'	=> $members,
+			'subject'		=> $subject,
+			'content'		=> $content
+			);
+			
+		// get member details
+		$member_details = $this->members_model->GetMemberDetails(VipOrganisationId());
+		$members = array();
+		//add required member info to the data array
+		foreach($member_details as $details) {
+			$data['members'][] = array(
+							'id'=>$details['user_id'],
+							'name'=>$details['firstname'].' '.$details['surname'],
+							'email'=>$details['email']
+							);
+		}
+		
+		//$this->messages->AddDumpMessage('members', $members);
 
-		/// @todo Implement $viparea/members/compose/...
-		$this->messages->AddMessage('information', 'todo: implement email composer');
-
-		$data = array();
+		//set content view
 		$this->main_frame->SetContentSimple('members/compose', $data);
 
 		// Load the main frame
