@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
-	<h4>What's this?</h4>
+	<h4 class="first">Information</h4>
 	<div class="Entry">
-		This page allows you to edit banners <b>live</b>. Take care.
+		<?php echo $page_information; ?>
 	</div>
 </div>
 <div class='blue_box'>

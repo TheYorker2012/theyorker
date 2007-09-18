@@ -16,12 +16,11 @@ class Banners extends Controller
 	/// Default page.
 	function index()
 	{
-		if (!CheckPermissions('office')) return;
+		if (!CheckPermissions('editor')) return;
 
-		$this->pages_model->SetPageCode('banner_list');
-
+		$this->pages_model->SetPageCode('office_banners');
 		$data = array();
-
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 		$data['banners'] = $this->Banner_Model->GetBanners();
 
 		$this->load->library('image');
@@ -29,20 +28,14 @@ class Banners extends Controller
 
 		$this->main_frame->Load();
 	}
-
 	//Edit banner page
 	function edit($banner_id)
 	{
 		//has user got access to office
-		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/banners');
-		}
-
+		if (!CheckPermissions('editor')) return;
+		$this->pages_model->SetPageCode('office_banners');
+		$data = array();
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');	
 		$data['banner'] = $this->Banner_Model->GetBanner($banner_id);
 
 		$this->load->library('image');
@@ -55,14 +48,7 @@ class Banners extends Controller
 	function update($banner_id)
 	{
 		//has user got access to office
-		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/banners');
-		}
+		if (!CheckPermissions('editor')) return;
 
 		$banner_title = htmlentities($this->input->post('banner_title'), ENT_NOQUOTES, 'UTF-8');
 		$banner_scheduled = htmlentities($this->input->post('banner_scheduled'), ENT_NOQUOTES, 'UTF-8');

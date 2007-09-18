@@ -573,9 +573,8 @@ class Article_model extends Model
 	*@return image_codename(image_type_codename),name(content_type_name)]
 	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
 	**/
-	function getMainArticleTypes ()
+	function getMainArticleTypes ($allow_with_no_children=false)
 	{
-		
 		$result = array();
 		$sql = 'SELECT  content_types.content_type_id, content_types.content_type_codename, content_types.content_type_blurb, 
 						content_types.content_type_name, image_id, image_file_extension, image_type_codename,image_title			
@@ -584,7 +583,11 @@ class Article_model extends Model
 			ON      content_types.content_type_image_id = image_id
 			LEFT OUTER JOIN      image_types
 			ON      image_image_type_id = image_type_id
-			WHERE  content_types.content_type_parent_content_type_id IS NULL ORDER BY content_types.content_type_name ASC';
+			WHERE  content_types.content_type_parent_content_type_id IS NULL ';
+			if($allow_with_no_children==false){
+				$sql .= 'AND content_types.content_type_has_children=1 ';
+			}
+			$sql .= 'ORDER BY content_types.content_type_name ASC';
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0)
 		{
