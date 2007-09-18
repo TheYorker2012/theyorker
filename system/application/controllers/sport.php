@@ -17,23 +17,23 @@ class Sport extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$homepage_article_types = 'sport';
+		$homepage_article_type = 'sport';
 		//Get page properties information
-		$this->pages_model->SetPageCode('sport');
+		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['more_heading'] = $this->pages_model->GetPropertyText('more_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 		$data['featured_puffer_title'] = $this->pages_model->GetPropertyText('featured_puffer_title',TRUE);
 		
-		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_sport_articles');//Max number of main articles to show
-		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_sport_articles');//Max number of more articles to show
+		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_articles');//Max number of main articles to show
+		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_articles');//Max number of more articles to show
 		
 		//Obtain banner for homepage
-		$data['banner'] = $this->Home_Model->GetBannerImage('sportbanner');
+		$data['banner'] = $this->Home_Model->GetBannerImage($homepage_article_type.'banner');
 		
 		//////////////Information for main article(s)
 		//Get article ids for the main section
-		$main_article_ids = $this->News_model->GetLatestId($homepage_article_types,3);
+		$main_article_ids = $this->News_model->GetLatestId($homepage_article_type,3);
 		//First article has summery, rest are simple articles
 		$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
 		for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
@@ -42,7 +42,7 @@ class Sport extends Controller
 		
 		//////////////Information for more article list(s)
 		//Get list of article types
-		$more_article_types = $this->News_model->getSubArticleTypes($homepage_article_types);
+		$more_article_types = $this->News_model->getSubArticleTypes($homepage_article_type);
 		//////For each article type get list of simple articles to the limit of $more_articles_num
 		$article_index = 0;
 		$articles_summarys = array();
@@ -60,7 +60,7 @@ class Sport extends Controller
 			$article_index++;
 		}
 		
-		/////////////Get information for side puffers @Note this is temp, hoping to have links to sport sections on the right hand side, this is a placeholder!!
+		/////////////Get information for side puffers
 		//use article types already found by more articles
 		$data['puffers'] = array();
 		$index = 0;
@@ -72,7 +72,7 @@ class Sport extends Controller
 		
 		//////////////Information for special/featured puffer
 		//Get article ID
-		$featured_puffer_id = $this->News_model->GetLatestFeaturedId($homepage_article_types);
+		$featured_puffer_id = $this->News_model->GetLatestFeaturedId($homepage_article_type);
 		
 		//get and article summery for the article id. Using subheader, so much have at least the summery version
 		if(!empty($featured_puffer_id)){
@@ -83,13 +83,13 @@ class Sport extends Controller
 		}
 		
 		//Move article information into send data
-		$data['main_sport'] = $main_article_summarys;//list of main sport summary
-		$data['sport_lists'] = $articles_summarys;//array of sport article lists
-		$data['show_sports'] = $more_article_types;//list of sport article types
+		$data['main_articles'] = $main_article_summarys;//list of main article summaryss
+		$data['lists_of_more_articles'] = $articles_summarys;//array of article lists for a category list box
+		$data['more_article_types'] = $more_article_types;//list of article types for a category list box.
 		
 		// Set up the public frame
 		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-		$this->main_frame->SetContentSimple('sport/index', $data);
+		$this->main_frame->SetContentSimple('homepages/'.$homepage_article_type, $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}

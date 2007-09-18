@@ -11,8 +11,8 @@
 		<?php echo($banner) ?>
 	</div>
 	<?php
-	$this->homepage_boxes->print_box_with_picture_list($main_sport,$latest_heading,'news');
+	$this->homepage_boxes->print_box_with_picture_list($main_articles,$latest_heading,'news');
 	if($show_featured_puffer) $this->homepage_boxes->print_puffer_box($featured_puffer_title,$featured_puffer);
-	if(!empty($sport_lists))  $this->homepage_boxes->print_box_of_category_lists($more_heading,$show_sports,$sport_lists);
+	if(!empty($sport_lists))  $this->homepage_boxes->print_box_of_category_lists($more_heading,$more_article_types,$lists_of_more_articles);
 	?>
 </div>
