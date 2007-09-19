@@ -12,13 +12,30 @@
 				<label for='banner_image'>Banner:</label>
 				<?php echo $this->image->getImage($banner->banner_id, 'banner'); ?>
 				<br />
-				<label for='banner_title'>Title/Author:</label>
+				<label for='banner_title'>Title:</label>
 				<textarea id='banner_title' name='banner_title' cols="30" rows="2"><?php echo $banner->banner_title; ?></textarea>
 				<br />
 			<?php if($banner->banner_last_displayed_timestamp != null) { ?>
 				<input type='hidden' id='banner_scheduled' name='banner_scheduled' value='1'/>
 				<div id="banner_schedule_date_div">
 			<?php } else { ?>
+				<label for='banner_homepage'>Homepage:</label>
+				<select name="banner_homepage">
+					<option value="">NONE</option>
+					<?php
+				foreach ($homepages as $homepage) {
+					echo ('					<option value="'.$homepage['id'].'"');
+						if(!empty($current_homepage_id))
+						{
+							if ($homepage['id']==$current_homepage_id)
+							{echo ' selected="selected"';}
+						}
+						echo ('>'."\n");
+						echo ('						'.$homepage['name']."\n");
+						echo ('					</option>'."\n");
+				}
+				?>
+				</select>
 				<label for='banner_scheduled'>Scheduled:</label>
 				<input type='checkbox' onchange="document.getElementById('banner_schedule_date_div').style.display = (this.checked ? 'block' : 'none');" id='banner_scheduled' name='banner_scheduled' value='1'/>
 				<br />

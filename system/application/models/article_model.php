@@ -4,6 +4,7 @@
  *
  * @author Alex Fargus (agf501)
  * @author Richard Ingle (ri504)
+ *@author Owen Jones (oj502) -- The article_types stuff
  *
  */
 class Article_model extends Model

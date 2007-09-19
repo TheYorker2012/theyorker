@@ -70,40 +70,6 @@ class Home_Model extends Model {
 			return $row->weather_cache_html;
 		}
 	}
-	/*
-	 * Function to obtain a random banner image for today.
-	 * Returns the image location.
-	 *@NOTE this has been replaced below, this should be deleted soon.
-	 */
-	function GetBannerImage($type='banner') {
-		$this->load->library('image');
-		$sql = 'SELECT images.image_id,
-				images.image_title,
-				image_types.image_type_codename
-				FROM images
-				INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id
-				WHERE image_types.image_type_codename = ?
-			AND	DATE(image_last_displayed_timestamp) = CURRENT_DATE()';
-		$query = $this->db->query($sql, array($type));
-		if($query->num_rows() == 0){
-			$sql = 'SELECT images.image_id,
-					images.image_title,
-					image_types.image_type_codename
-					FROM images
-					INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id
-					WHERE image_types.image_type_codename = ?
-				ORDER BY image_last_displayed_timestamp
-				LIMIT 0,1';
-			$query = $this->db->query($sql, array($type));
-			$sql = 'UPDATE images
-				SET image_last_displayed_timestamp = CURRENT_TIMESTAMP()
-				WHERE image_id = ?';
-			$update = $this->db->query($sql,array($query->row()->image_id));
-		}
-		$id = $query->row()->image_id;
-		$title = $query->row()->image_title;
-		return $this->image->getImage($id,$type);
-	}
 	
 	/*
 	 * Function to obtain a random banner image for today.

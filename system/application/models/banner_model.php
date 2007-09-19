@@ -47,13 +47,14 @@ class Banner_Model extends Model {
 	//@returns array of images (id, type_codename)
 	function GetBannersWithNoHompage($type='banner')
 	{
-		$sql='SELECT images.image_id AS id, image_types.image_type_codename AS type_codename 
+		$sql='SELECT images.image_id AS banner_id, image_title as banner_title, image_types.image_type_codename AS banner_type 
 		FROM images 
 			LEFT JOIN homepage_banners ON homepage_banners.homepage_banner_image_id = images.image_id 
 			INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
 		WHERE homepage_banners.homepage_banner_content_type_id IS NULL 
 		AND image_types.image_type_codename=?';
 		$query = $this->db->query($sql,array($type));
+		return $query->result_array();
 	}
 	
 	/*
@@ -90,7 +91,8 @@ class Banner_Model extends Model {
 			INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
 			INNER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
 			INNER JOIN content_types ON homepage_banners.homepage_banner_content_type_id = content_types.content_type_id 
-			WHERE image_types.image_type_codename = ?
+			WHERE image_types.image_type_codename = ? 
+			AND DATE(image_last_displayed_timestamp) < CURRENT_DATE() 
 			ORDER BY content_types.content_type_codename ASC, DATE(image_last_displayed_timestamp) DESC';
 		$query = $this->db->query($sql, array($type));
 		$unscheduled_banners = $query->result_array();
@@ -109,7 +111,23 @@ class Banner_Model extends Model {
 		$query = $this->db->query($sql, array($banner_id));
 		return $query->row();
 	}
-
+	
+	/*
+	 * Function to obtain details about a banners homepage (if there is one)
+	 * Returns the banner_homepage_id Returns NULL value if homepage doesnt exist.
+	 */
+	function GetBannersHomepageId($banner_id){
+		$sql='SELECT
+					content_types.content_type_id as banner_homepage_id
+			FROM images 
+			LEFT OUTER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
+			LEFT OUTER JOIN content_types ON homepage_banners.homepage_banner_content_type_id = content_types.content_type_id 
+			WHERE images.image_id = ?
+			LIMIT 1';
+		$query = $this->db->query($sql, array($banner_id));
+		$row = $query->row();
+		return $row->banner_homepage_id;
+	}
 	/*
 	 * Function to update a particular banner.
 	 * Returns the the number of rows affected.
@@ -125,27 +143,44 @@ class Banner_Model extends Model {
 	
 	//Creates a link so image will be in the pool to display on that homepage (images can be on multiple homepages)
 	//@param $image_id - Id of image to use.
-	//@param $homepage_type (optional) - Codename from content_types of that homepage.
-	function LinkImageToHomepage($image_id,$homepage_type='home')
+	//@param $homepage_id (optional) - Id from content_types of that homepage, default is the main homepage.
+	function LinkImageToHomepage($image_id,$homepage_id='')
 	{
-		//Insert row into homepage_banners
-		//Get Content_type id from content_types using the codename.
-		$sql='
-		INSERT INTO homepage_banners (homepage_banner_image_id, homepage_banner_content_type_id) 
-		SELECT ?, content_types.content_type_id 
-		FROM content_types WHERE content_types.content_type_codename=? LIMIT 1 ';
-		$query = $this->db->query($sql,array($image_id,$homepage_type));
+		if($homepage_id==''){
+			$sql='SELECT content_types.content_type_id 
+			FROM content_types WHERE content_types.content_type_codename=? LIMIT 1';
+			$query = $this->db->query($sql,array('home'));
+			$homepage_id = $query->row()->content_type_id;
+		}
+		$sql='INSERT INTO homepage_banners (homepage_banner_image_id, homepage_banner_content_type_id) VALUES ( ?, ?)';
+		$query = $this->db->query($sql,array($image_id,$homepage_id));
 	}
 	
 	//Deletes a link so image will no longer be in the pool to display on that homepage (images can be on multiple homepages)
 	//@param $image_id - Id of image to use.
 	//@param $homepage_type (optional) - Codename from content_types of that homepage.
-	function DeleteImageHomepageLink($image_id,$homepage_type='home')
+	function DeleteImageHomepageLink($image_id,$homepage_id='')
 	{
-	$sql='DELETE FROM homepage_banners WHERE
-		homepage_banner_image_id=? AND 
-		homepage_banner_content_type_id = (SELECT content_types.content_type_id FROM content_types WHERE content_types.content_type_codename=? LIMIT 1 ) LIMIT 1';
-	$query = $this->db->query($sql,array($image_id,$homepage_type));
+		if($homepage_id==''){
+			$sql='SELECT content_types.content_type_id 
+			FROM content_types WHERE content_types.content_type_codename=? LIMIT 1';
+			$query = $this->db->query($sql,array('home'));
+			$homepage_id = $query->row()->content_type_id;
+		}
+		$sql='DELETE FROM homepage_banners WHERE
+			homepage_banner_image_id= ? AND 
+			homepage_banner_content_type_id = ? LIMIT 1';
+		$query = $this->db->query($sql,array($image_id,$homepage_id));
+	}
+	
+	//Deletes all the links to an image (images can be on multiple homepages) to prepare for deleting the image
+	//@param $image_id - Id of image to use.
+	function DeleteAllLinksToImage($image_id)
+	{
+		$sql='DELETE FROM homepage_banners WHERE 
+		homepage_banner_image_id=?
+		';
+	$query = $this->db->query($sql,array($image_id));
 	}
 }
 ?>
