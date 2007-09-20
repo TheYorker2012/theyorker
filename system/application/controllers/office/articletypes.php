@@ -98,7 +98,7 @@ class Articletypes extends Controller
 				$data['article_type_form']['article_type_image_id'] = "";
 			}else{
 				foreach ($_SESSION['img'] as $Image) {
-					$data['image_preview']="1)".$Image['codename']."2)".$Image['oldID']."3)".$Image['ID']."4)".$Image['list']."4)".$Image['list'];
+					$data['image_preview']= $_SESSION['img'];
 					$data['article_type_form']['article_type_image_id'] = $Image['id'];
 				}
 			}
