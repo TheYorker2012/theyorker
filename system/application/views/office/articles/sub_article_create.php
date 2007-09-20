@@ -7,10 +7,13 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>create new subtypes</h2>
+		<pre>
+		<?php print_r($image_preview); ?>
+		</pre>
 		<form method="post" action="/office/articletypes/create">
 			<fieldset>
 				<label for="article_type_image_id">Image:</label>
-				<input type="hidden" name="article_type_image_id" value="<?php if(!empty($article_type_form['article_type_image_id'])){ print_r($article_type_form['article_type_image_id']); }?>"><?php
+				<input type="hidden" name="article_type_image_id" value="<?php if(!empty($article_type_form['article_type_image_id'])){ echo $article_type_form['article_type_image_id']; }?>"><?php
 				if(!empty($image_preview)){echo $image_preview;} ?>
 				<label for="article_type_name">Name:</label>
 				<input type="text" name="article_type_name" value="<?php

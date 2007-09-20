@@ -99,7 +99,7 @@ class Articletypes extends Controller
 			}else{
 				foreach ($_SESSION['img'] as $Image) {
 					$data['image_preview']= $_SESSION['img'];
-					$data['article_type_form']['article_type_image_id'] = $Image['id'];
+					//$data['article_type_form']['article_type_image_id'] = $Image['id'];
 				}
 			}
 			$this->pages_model->SetPageCode('office_articletypes');
