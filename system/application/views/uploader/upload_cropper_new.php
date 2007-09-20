@@ -118,7 +118,7 @@
 	foreach($data as $d) {
 		foreach($d as $singleThumb) {
 			?>
-			thumbNameMap['<?php echo $singleThumb['thumb_id']?>'] = '<?=str_replace("'", "\\'", $singleThumb['title'])?>';
+			thumbNameMap['<?php echo $singleThumb['thumb_id']?>'] = '<?php echo str_replace("'", "\\'", $singleThumb['title'])?>';
 			<?php
 			if (!(isset($noforcesave) && $noforcesave)) {
 			?>
