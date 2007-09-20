@@ -12,8 +12,7 @@
 
 	<div class="BlueBox">
 		<h2>edit subtype</h2>
-		<p>Sorry there is no puffer image upload/edit supported yet!</p>
-		<form method="post" action="/office/articletypes">
+		<form method="post" action="/office/articletypes/edit/<?php echo $article_type_form['article_type_id']; ?>">
 			<fieldset>
 				<label for="article_type_name">Name:</label>
 				<input type="text" name="article_type_name" value="
@@ -44,10 +43,7 @@
 				/>
 				<label for="article_type_blurb">Blurb:</label>
 				<textarea name="article_type_blurb" cols="26" rows="4"><?php if(!empty($article_type_form['article_type_blurb'])){echo $article_type_form['article_type_blurb'];} ?></textarea>
-				<label for="userfile1">File Location: </label>
-				<input type="file" name="userfile1" id="userfile1" size="20" />
 			</fieldset>
-			<p>Please select a puffer image to be used for this article type. The image must be 201x81 pixels or larger.</p>
 
 			<fieldset>
 				<input name="article_type_edit" type="submit" value="Edit" class="button" />

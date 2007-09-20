@@ -61,10 +61,19 @@ class Articletypes extends Controller
 		//Get page properties information
 		$this->pages_model->SetPageCode('office_articletypes');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
+		$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
 		
-		if(empty($_POST) || !empty($_POST['article_type_add']))
-		{
-			if(!empty($_POST['article_type_add'])){
+		$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	function create($skip_image='')
+	{
+		if (!CheckPermissions('editor')) return;
+		//Get page properties information
+		if (!empty($_SESSION['img'])||$skip_image=='skip') {//Is there an image, or are we skipping getting one?
+			//Check for post
+			if(!empty($_POST['article_type_add'])) {
 				$codename = $this->_CreateCodeName($_POST['article_type_name']);
 				if($codename==""){
 					$this->messages->AddMessage('error','Article type name must contain some standard letters.');
@@ -74,53 +83,61 @@ class Articletypes extends Controller
 					$data['article_type_form']=$_POST;
 				}else if($this->Article_model->isArticleTypeAParent($_POST['article_type_parent'])==false){
 					$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
+					$data['article_type_form']=$_POST;
 				}else{
-					//@NOTE no image support at the moment!
 					//create article type
-					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],NULL,$_POST['article_type_archive'],$_POST['article_type_blurb']);
+					$image_id=$_POST['article_type_image_id'];
+					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$_POST['article_type_archive'],$_POST['article_type_blurb']);
 					$this->messages->AddMessage('success','New article type created.');
+					redirect('/office/articletypes');
 				}
 			}
+			//Image preview
+			if($skip_image=='skip'){
+				$data['image_preview']="<b>No image selected.</b>";
+				$data['article_type_form']['article_type_image_id'] = "";
+			}else{
+				foreach ($_SESSION['img'] as $Image) {
+					$data['image_preview']="X".$Image['codename']."X".$Image['id']."X";
+					$data['article_type_form']['article_type_image_id'] = $Image['id'];
+				}
+			}
+			$this->pages_model->SetPageCode('office_articletypes');
+			$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 			$data['main_articles'] = $this->Article_model->getMainArticleTypes();
-			$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
-			$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
 			
-		} else if(!empty($_POST['article_type_edit'])){
+			$this->main_frame->SetContentSimple('office/articles/sub_article_create', $data);
+			$this->main_frame->Load();
+		}else{
+			$this->load->library('image_upload');
+			$this->image_upload->automatic('/office/articles/create', array('puffer'), false, false);
+		}
+	}
+	function edit($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		//Check for post
+		if(!empty($_POST['article_type_edit'])){
 			$codename = $this->_CreateCodeName($_POST['article_type_name']);
 			if($codename==""){
 				$this->messages->AddMessage('error','Article type name must contain some standard letters.');
 				$data['article_type_form']=$_POST;
-				redirect('/office/articletypes/edit/'.$_POST['article_type_id']);
 			}else if($this->Article_model->doesCodenameExist($codename) && $codename != $this->Article_model->getArticleTypeCodename($_POST['article_type_id'])){
 				$this->messages->AddMessage('error','This name is already taken, or there is one is too simular to this"'.$codename.'" "'.$this->News_model->getArticleTypeCodename($_POST['article_type_id']).'".');
 				$data['article_type_form']=$_POST;
-				redirect('/office/articletypes/edit/'.$_POST['article_type_id']);
 			}else if($this->Article_model->isArticleTypeAParent($_POST['article_type_parent'])==false){
 				$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
-				redirect('/office/articletypes/edit/'.$_POST['article_type_id']);
 			}else{
 				//@NOTE no image support at the moment!
 				//create article type
-				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],NULL,$_POST['article_type_archive'],$_POST['article_type_blurb']);
+				$image_id = NULL;
+				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$_POST['article_type_archive'],$_POST['article_type_blurb']);
 				$this->messages->AddMessage('success','Article type updated.');
-				
-				$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
-				$data['main_articles'] = $this->Article_model->getMainArticleTypes();
-				$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
+				redirect('/office/articletypes');
 			}
 		}
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	
-	function edit($id)
-	{
-		if (!CheckPermissions('editor')) return;
-		//Get page properties information
-		$this->pages_model->SetPageCode('office_articletypes_edit');
-		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 		
-		$data['main_articles'] = $this->Article_model->getMainArticleTypes();
 		$articletype = $this->Article_model->getSubArticleType($id);
 		if(empty($articletype['image_id']))
 		{
@@ -128,13 +145,20 @@ class Articletypes extends Controller
 		}else{
 			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="'.$articletype['image_title'].'" title="'.$articletype['image_title'].'">';
 		}
-		$data['article_type_form'] = array (
-			'article_type_id' => $id,
-			'article_type_name' => $articletype['name'],
-			'article_type_parent' => $articletype['parent_id'],
-			'article_type_archive' => $articletype['archive'],
-			'article_type_blurb' => $articletype['blurb']
-		);
+		//Only get this if there is no post
+		if(empty($_POST['article_type_edit'])){
+			$data['article_type_form'] = array (
+				'article_type_id' => $id,
+				'article_type_name' => $articletype['name'],
+				'article_type_parent' => $articletype['parent_id'],
+				'article_type_archive' => $articletype['archive'],
+				'article_type_blurb' => $articletype['blurb']
+			);
+		}
+		//Get this if we have post or not
+		$data['main_articles'] = $this->Article_model->getMainArticleTypes();
+		$this->pages_model->SetPageCode('office_articletypes_edit');
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 		
 		$this->main_frame->SetContentSimple('office/articles/sub_article_edit', $data);
 		// Load the public frame view (which will load the content view)

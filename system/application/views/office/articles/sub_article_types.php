@@ -3,6 +3,13 @@
 	<div class="Entry">
 		<?php echo $page_information; ?>
 	</div>
+	<h2>Actions</h2>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/articletypes/create">Create New Article Type</a></li>
+			<li><a href="/office/articletypes/create/skip">Create New With No Image</a></li>
+		</ul>
+	</div>
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
@@ -37,47 +44,5 @@
 			}
 			?>
 		</table>
-	</div>
-	<div class="BlueBox">
-		<h2>create new subtypes</h2>
-		<p>Sorry there is no puffer image upload/edit supported yet!</p>
-		<form method="post" action="/office/articletypes">
-			<fieldset>
-				<label for="article_type_name">Name:</label>
-				<input type="text" name="article_type_name" value="
-				<?php if(!empty($article_type_form['article_type_name'])){echo $article_type_form['article_type_name'];} ?>
-				" />
-				<label for="article_type_parent">Parent Type:</label>
-				<select name="article_type_parent">
-				<?php
-				foreach ($main_articles as $main_article) {
-					?>
-					<option value="<?php echo $main_article['id'] ?>"
-					<?php if(!empty($article_type_form['article_type_parent']))
-							{
-								if ($main_article['id']==$article_type_form['article_type_parent'])
-								{echo 'selected="selected"';}
-							}
-						?>
-						>
-						<?php echo $main_article['name'] ?></option>
-					<?php
-				}
-				?>
-				</select>
-				<label for="article_type_archive">Archive:</label>
-				<input type="checkbox" name="article_type_archive" value="1" 
-				<?php if(empty($article_type_form) || !empty($article_type_form['article_type_archive'])){echo 'checked';} ?>
-				/>
-				<label for="article_type_blurb">Blurb:</label>
-				<textarea name="article_type_blurb" cols="26" rows="4"><?php if(!empty($article_type_form['article_type_blurb'])){echo $article_type_form['article_type_blurb'];} ?></textarea>
-				<label for="userfile1">File Location: </label>
-				<input type="file" name="userfile1" id="userfile1" size="20" />
-			</fieldset>
-			<p>Please select a puffer image to be used for this article type. The image must be 201x81 pixels or larger.</p>
-			<fieldset>
-				<input name="article_type_add" type="submit" value="Add" class="button" />
-			</fieldset>
-		</form>
 	</div>
 </div>
