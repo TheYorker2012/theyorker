@@ -27,10 +27,12 @@
 			You can also put p and v at the end to indicate paid and vip.
 		</p>
 		<?php echo $what_to_do; ?>
-		<form name='members_invite_form' action='2' method='POST' class='form'>
+<?php
+	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="POST">'."\n");
+?>
 			<fieldset>
 				<label for='invite_list'>Invite List:</label>
-				<textarea name="invite_list" class="full" rows="10"><?php echo $default_list; ?></textarea>
+				<textarea name="invite_list" rows="10" cols="50"><?php echo $default_list; ?></textarea>
 				<input type='submit' class='button' name='members_invite_button' value='Continue'>
 			</fieldset>
 		</form>
@@ -43,42 +45,15 @@
 			There were syntactic errors in your input.
 			Please look though and correct them
 		</p>
-		<p>
-			81 users selected for invitation.
-		</p>
 		<?php //echo $what_to_do; ?>
-		<form name='members_invite_form' action='3' method='POST' class='form'>
+<?php
+	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="POST">'."\n");
+?>
 			<fieldset>
-				<table width="100%">
-				<tr>
-					<th></th>
-					<td>...</td>
-				</tr>
-				<tr>
-					<th>30</th>
-					<td>jh559</td>
-				</tr>
-				<tr>
-					<th>31</th>
-					<td>nse500 v</td>
-				</tr>
-				<tr>
-					<th>32</th>
-					<td colspan="3"><textarea name="invite_list" class="full" rows="3">jh559nse500</textarea></td>
-				</tr>
-				<tr>
-					<th>33</th>
-					<td>jh559 p</td>
-				</tr>
-				<tr>
-					<th>34</th>
-					<td>nse500 pv</td>
-				</tr>
-				<tr>
-					<th></th>
-					<td>...</td>
-				</tr>
-				</table>
+				<label for='invite_list_failures'>List of INCORRECT email addresses:</label>
+				<textarea name="invite_list_failures" rows="10" cols="50"><?php echo(implode("\r", $failures)); ?></textarea>
+				<label for='invite_list_valids'>List of CORRECT email addresses:</label>
+				<textarea name="invite_list_valids" rows="10" cols="50"><?php echo(implode("\r", $valids)); ?></textarea>
 				<input type='submit' class='button' name='members_invite_button' value='Continue'>
 			</fieldset>
 		</form>
@@ -86,39 +61,72 @@
 
 	<?php } elseif ($State == 3) { ?>
 	<div class="BlueBox">
-		<h2>Unrecognised Emails in Block Invite</h2>
+		<h2>Send Invitations</h2>
 		<p>
-			The following emails which you specified don't exists.
-			You can use this section to correct them.
+			The following list of emails are either already members or are already invited.
 		</p>
+		<div class="ArticleBox">
+			<table width="100%">
+				<thead>
+					<tr>
+						<th>
+							Username
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+	$alternate = 1;
+	foreach ($existing as $existing_user)
+	{
+		echo('					<tr class="tr'.$alternate.'">'."\n");
+		echo('						<td>'."\n");
+		echo('							'.$existing_user."\n");
+		echo('						</td>'."\n");
+		echo('					</tr>'."\n");
+		$alternate == 1 ? $alternate = 2 : $alternate = 1;
+	}
+?>
+				</tbody>
+			</table>
+		</div>
 		<p>
-			81 users selected for invitation.
+			You have entered the following list of emails, please uninvite any you wish not to send an invitation to and then click the Finish button.
 		</p>
-		<form class="form" action="4">
-		<table width="100%">
-			<tr>
-				<th></th>
-				<th>Username</th>
-				<th>Paid</th>
-				<th>Remove from list</th>
-			</tr>
-			<tr>
-				<th>15</th>
-				<td><input value="jh559" /></td>
-				<td><input type="checkbox" checked /></td>
-				<td><input type="checkbox" name="inviteesConfirmed[]"
-						value="yeh"
-						id="somethinghere" /></td>
-			</tr>
-			<tr>
-				<th>43</th>
-				<td><input value="jh559" /></td>
-				<td><input type="checkbox" checked /></td>
-				<td><input type="checkbox" name="inviteesConfirmed[]"
-						value="yeh"
-						id="somethinghere" /></td>
-			</tr>
-		</table>
+<?php
+	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="POST">'."\n");
+?>
+		<div class="ArticleBox">
+			<table width="100%">
+				<thead>
+					<tr>
+						<th>
+							Username
+						</th>
+						<th>
+							Invite
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+	$alternate = 1;
+	foreach ($inviting as $invite_user)
+	{
+		echo('					<tr class="tr'.$alternate.'">'."\n");
+		echo('						<td>'."\n");
+		echo('							'.$invite_user."\n");
+		echo('						</td>'."\n");
+		echo('						<td>'."\n");
+		echo('							<input type="checkbox" id="user'.$invite_user.'" name="invite['.$invite_user.']" checked="checked" />'."\n");
+		echo('						</td>'."\n");
+		echo('					</tr>'."\n");
+		$alternate == 1 ? $alternate = 2 : $alternate = 1;
+	}
+?>
+				</tbody>
+			</table>
+		</div>
 		<fieldset>
 			<input type="submit" class="button" value="Continue" />
 		</fieldset>
@@ -288,3 +296,11 @@
 	</div>
 	*/ ?>
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>

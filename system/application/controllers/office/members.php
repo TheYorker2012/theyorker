@@ -745,100 +745,129 @@ class Members extends Controller
 		// Load the main frame
 		$this->main_frame->Load();
 	}
-
-	/// Tags that can be appended to invite text emails
-	protected static $sInviteFlags = array(
-		'p' => 'paid',
-	);
-
+	
 	/// Invite new members to join.
 	/**
 	 */
-	function invite($Stage = NULL)
+	function invite()//($Stage = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
 
-		if (!is_numeric($Stage) || $Stage < 1 || $Stage > 4) {
+		//if the stage is not a valid stage redirect to stage 1
+		/*
+		if (!is_numeric($Stage) || $Stage < 1 || $Stage > 3) {
 			redirect(vip_url('members/invite/1'));
 			return;
-		}
+		}*/
 
+		//load string helper for use with preg_match() and preg_replace()
 		$this->load->helper('string');
 
+		//set up the main navbar and tell it which page we are on
 		$this->_SetupTabs('invite');
-
-		$default_list = '';
-
-		$this->_GetTeams();
-
-		// Read the post data
-		/// @todo require comma or newline between items
-		if ($this->input->post('members_invite_button') === 'Continue') {
-			$emails = $this->input->post('invite_list');
-			if (FALSE !== $emails) {
-				// Validate the emails
-				$preprocessed_emails = preg_replace('/[^a-zA-Z0-9@\.]+/',' ',$emails);
-				$word_list = explode(" ", $preprocessed_emails);
-				$valids = array();
-				$failures = array();
-				$last_email = NULL;
-				foreach ($word_list as $word) {
-					if (!empty($word)) {
-						if (preg_match('/^([a-zA-Z]{2,5}\d{2,4})(@york\.ac\.uk)?$/', $word, $matches)) {
-							$last_email = strtolower($matches[1]);
-							$valids[$last_email] = array();
-						} else {
-							$all_flags = ($last_email !== NULL);
-							if ($all_flags) {
-								foreach (str_split($word) as $flag) {
-									if (array_key_exists($flag, self::$sInviteFlags)) {
-										$valids[$last_email][self::$sInviteFlags[$flag]] = TRUE;
-									} else {
-										$all_flags = FALSE;
-										break;
-									}
-								}
-							}
-							if (!$all_flags) {
-								$failures[] = $word;
-							}
-						}
-					}
-				}
-				if (!empty($failures)) {
-					// There were failures!
-					$this->messages->AddMessage('error', 'The following words don\'t look like valid york email addresses:<br />'.implode('<br />',$failures));
-					$default_list = $emails;
-
-				} elseif (empty($valids)) {
-					// There weren't any valids.
-					$this->messages->AddMessage('information', 'You didn\'t specify any email addresses.');
-
-				} else {
-					// Everything was fine.
-					/// @todo display list of invites before inviting.
-					$this->messages->AddDumpMessage('valids',$valids);
-				}
-			}
-		} else if ($this->input->post('confirm_invite_button') === 'Confirm Invites') {
-			$default_list = $this->_InviteUsers(
-				VipOrganisationId(), $valids,
-				'username', VipOrganisationName()
-			);
-			$default_list = implode("\n",$default_list);
-		}
-
+		
+		//set the page code, so we can get the page title and any parameters
 		$this->pages_model->SetPageCode('viparea_members_invite');
 
+		//TESTING ONLY - REMOVE
+		$default_list = 'test500
+ri504
+sadfa
+ri232 fwk33
+a4f';
+
+		//$this->_GetTeams();
+
+		//initialise the data array to pass to the view, by filling it with generic information
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
 			'what_to_do' => $this->pages_model->GetPropertyWikitext('what_to_do'),
 			'target' => vip_url('members/invite'),
 			'organisation' => $this->mOrganisation,
 			'default_list' => $default_list,
-			'step' => 1,
-			'State' => $Stage,
 		);
+
+		// Read the post data
+		/// @todo require comma or newline between items
+		//stage 1+2+3
+		if ($this->input->post('members_invite_button') === 'Continue') {
+			if (!$this->input->post('invite_list')) {
+				$emails = $this->input->post('invite_list_failures')." \r".$this->input->post('invite_list_valids');
+			}
+			else {
+				//$emails = $this->input->post('invite_list');
+				$emails = $this->input->post('invite_list');
+			}
+			if (FALSE !== $emails) {
+				// Validate the emails
+				$preprocessed_emails = preg_replace('/[^a-zA-Z0-9@\.]+/',' ',$emails);
+				$word_list = explode(" ", $preprocessed_emails);
+				$valids = array();
+				$failures = array();
+				foreach ($word_list as $word) {
+					if (!empty($word)) {
+						if (preg_match('/^([a-zA-Z]{2,5}\d{2,4})(@york\.ac\.uk)?$/', $word, $matches)) {
+							$valids[] = strtolower($matches[1]);
+						} 
+						else {
+							$failures[] = $word;
+						}
+					}
+				}
+				if (!empty($failures)) {
+					// There were failures!
+					$this->messages->AddMessage('error', 'Some of the email addresses you entered were not valid.');
+					$data['failures'] = $failures;
+					$data['valids'] = $valids;
+					
+					//set view stage
+					$Stage = 2;
+				}
+				else if (empty($valids)) {
+					// There weren't any valids.
+					$this->messages->AddMessage('information', 'You didn\'t specify any email addresses.');
+					
+					//set view stage
+					$Stage = 1;
+				}
+				else {
+					// Everything was fine.
+					$member_details = $this->members_model->GetMemberDetails(VipOrganisationId());
+					//$this->messages->AddDumpMessage('member_details',$member_details);
+					$members = array();
+					foreach ($member_details as $member) {
+						$members[] = $member['username'];
+					}
+					
+					$existing = array_intersect($members, $valids);
+					$inviting = array_diff($valids, $existing);
+					
+					$data['members'] = $members;
+					$data['existing'] = $existing;
+					$data['inviting'] = $inviting;
+					
+					//set view stage
+					$Stage = 3;
+				}
+			}
+		} 
+		//stage 3
+		else if ($this->input->post('confirm_invite_button') === 'Confirm Invites') {
+			$default_list = $this->_InviteUsers(
+				VipOrganisationId(), $valids,
+				'username', VipOrganisationName()
+			);
+			$default_list = implode("\n",$default_list);
+		}
+		else {
+		/*
+			if ($Stage != 1) {
+				redirect(vip_url('members/invite/1'));
+			}*/
+			$Stage = 1;
+		}
+		
+		$data['State'] = $Stage;
 		$this->main_frame->SetContentSimple('members/invite', $data);
 
 		// Set the title parameters
@@ -857,6 +886,8 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
+		$this->messages->AddMessage('error', 'Email sending is not working at the moment.');
+		
 		//add any members in the session to the list of recipients
 		if (is_array($_SESSION['members_email_to'])) {
 			$members = $_SESSION['members_email_to'];
@@ -870,9 +901,7 @@ class Members extends Controller
 		$subject = '';
 		$content = '';
 		
-		if (!empty($_POST)) {
-			$this->messages->AddDumpMessage('_POST', $_POST);
-			
+		if (!empty($_POST)) {			
 			$selected_members = array();
 			//make an array of selected member ids where checked boxes are ticked
 			foreach($_POST['cb'] as $key => $value)
@@ -899,8 +928,10 @@ class Members extends Controller
 			}
 			else {
 				//no errors so send the email
-				$this->load->helper('yorkermail_helper');
-				//$this->yorkermail_helper->yorkermail();
+				//$this->load->helper('yorkermail');
+				//$to, $subject, $message, $from
+				//$this->yorkermail->yorkermail("ri504@york.ac.uk", "subject", "this is a test", "webmaster@theyorker.co.uk");
+				$this->messages->AddDumpMessage('_POST', $_POST);
 			}
 		}
 
