@@ -72,14 +72,20 @@ class Reviews extends Controller
 	function _main($content_type)
 	{
 		if (!CheckPermissions('public')) return;
-
+		
+		$this->load->model('Home_Model');
+		//Obtain banner for homepage
+		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($content_type);
+		
 		//Pass content_type to view
-
+	
 		$main_review = $this->Review_model->GetFrontPageReview($content_type);
 		$data['content_type'] = $main_review['content_type_name'];
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_main');
+		$data['page_header'] = $this->pages_model->GetPropertyText('header_'.$content_type);
+		$data['page_about'] = $this->pages_model->GetPropertyWikiText('about_'.$content_type);
 
 		$this->main_frame->SetTitleParameters(array(
 			'content_type' => $data['content_type']
