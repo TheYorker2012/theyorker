@@ -60,6 +60,20 @@ function FilterLinkBool($filter, $field, $value)
 	echo '</a>';
 }
 
+/// Draw a branch of the tree of teams
+function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0)
+{
+	foreach ($team['subteams'] as $subteam) {
+		echo('<option name="team_'.$subteam['id'].'">'."\n");
+		//echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$indentation);
+		echo($prefix.$path.$subteam['name']."\n");
+		echo('</option>'."\n");
+		if (!empty($subteam['subteams'])) {
+			EchoTeamFilterOptions($subteam, $prefix, $path.$subteam['name'].'/', $indentation+1);
+		}
+	}
+}
+
 ?>
 
 <div class="BlueBox">

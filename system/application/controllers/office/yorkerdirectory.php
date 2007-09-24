@@ -432,11 +432,11 @@ class Yorkerdirectory extends Controller
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
 
-		//Deletegroup
-		if ($action=="deletegroup") {
-			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);
+		//Delete group
+		if ($this->input->post('group_deletebutton')) {
+			$cards = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($this->input->post('group_id'), true);
 			if (empty($cards)) {
-				$result = $this->businesscards_model->RemoveOrganisationCardGroupById($business_card_group);
+				$result = $this->businesscards_model->RemoveOrganisationCardGroupById($this->input->post('group_id'));
 				if ($result == 1) {
 					$this->messages->AddMessage('success','Group was successfully removed.');
 				} else {
@@ -447,6 +447,17 @@ class Yorkerdirectory extends Controller
 			}
 			//set things back to normal
 			redirect(vip_url('directory/contacts/'));
+		}
+		
+		//rename group
+		if ($this->input->post('group_renamebutton')) {
+			$result = $this->businesscards_model->RenameOrganisationCardGroup($this->input->post('group_id'), $this->input->post('group_name'));
+			if ($result == 1) {
+				$this->messages->AddMessage('success','Group was successfully renamed.');
+			} else {
+				$this->messages->AddMessage('error','Group was not renamed, the group does not exist.');
+			}
+			redirect(vip_url('directory/contacts/viewgroup/'.$this->input->post('group_id')));	
 		}
 
 		if ($action=="deletecard") {//business_card_group is actually the card id for this action
@@ -478,16 +489,18 @@ class Yorkerdirectory extends Controller
 		}
 
 		//Add Groups
-		if (!empty($_POST["group_name"])) {
-			$max_order = $this->businesscards_model->SelectMaxGroupOrderById($data['organisation']['id']);
-			$post_data = array(
-				'group_name' => $_POST["group_name"],
-				'organisation_id' => $data['organisation']['id'],
-				'group_order' => $max_order+1,
-			);
-			$this->businesscards_model->AddOrganisationCardGroup($post_data);
-			$this->messages->AddMessage('success','Group was successfully added.');
-			redirect(vip_url('directory/contacts/'));
+		if ($this->input->post('add_group_button')) {
+			if (!empty($_POST["group_name"])) {
+				$max_order = $this->businesscards_model->SelectMaxGroupOrderById($data['organisation']['id']);
+				$post_data = array(
+					'group_name' => $_POST["group_name"],
+					'organisation_id' => $data['organisation']['id'],
+					'group_order' => $max_order+1,
+				);
+				$this->businesscards_model->AddOrganisationCardGroup($post_data);
+				$this->messages->AddMessage('success','Group was successfully added.');
+				redirect(vip_url('directory/contacts/'));
+			}
 		}
 		if (!empty($_POST["card_addbutton"])) {
 			if (empty($_POST["card_name"]) || empty($_POST["card_title"]))

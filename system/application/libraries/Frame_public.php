@@ -10,6 +10,7 @@
 $CI = &get_instance();
 $CI->load->library('frames');
 $CI->load->library('messages');
+$CI->load->library('adverts');
 $CI->load->library('frame_navbar');
 $CI->load->model('pages_model');
 
@@ -157,6 +158,8 @@ class Frame_public extends FrameNavbar
 	function Load()
 	{
 		$CI = &get_instance();
+		$advert = $CI->adverts->SelectNextAdvert();
+		$this->SetData('advert', $advert);
 		if ($CI->pages_model->PageCodeSet()) {
 			if (NULL !== $this->mTitleParameters) {
 				$titles = $CI->pages_model->GetTitles($this->mTitleParameters);

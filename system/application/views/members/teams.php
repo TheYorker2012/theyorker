@@ -21,20 +21,21 @@
 	function DoTeam($team, $in_list = TRUE)
 	{
 		if ($in_list) {
-			echo '<LI>';
+			echo('<li>'."\n");
 		}
-		echo '<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />';
-		echo '<a href="'.vip_url('members/teams/'.$team['id']).'">'.$team['name'].'</a>';
+		echo('<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />'."\n");
+		echo('<a href="'.vip_url('members/teams/'.$team['id']).'">'.$team['name'].'</a>'."\n");
 		if (!empty($team['subteams'])) {
-			echo '<UL>';
+			echo('<ul>'."\n");
 			foreach ($team['subteams'] as $subteam) {
 				DoTeam($subteam);
 			}
-			echo '</UL>';
+			echo('</ul>'."\n");
 		}
 		if ($in_list) {
-			echo '</LI>';
+			echo('</li>'."\n");
 		}
+				echo('<br /><br />'."\n");
 		return count($team['subteams']);
 	}
 	
@@ -42,10 +43,18 @@
 		// Draw the tree of teams
 		foreach ($organisation['subteams'] as $team) {
 			if (!DoTeam($team, FALSE)) {
-				echo '<br />';
+				echo('<br /><br />'."\n");
 			}
 		}
 	}
 ?>
 <?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

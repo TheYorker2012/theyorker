@@ -1,4 +1,5 @@
-<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">
+<!--<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">-->
+<div class="BlueBox" style="padding: 5px; font-size: small; margin-bottom: 4px; ">
 	<div style='float:right;'>
 <?php if ($business_card['image_id'] == NULL) {
 	$business_card['image_id'] = 0;

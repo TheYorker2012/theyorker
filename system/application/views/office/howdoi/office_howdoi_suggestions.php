@@ -34,33 +34,61 @@
 </div>
 
 <?php
-	echo '<div class="blue_box" id="view_suggestions">';
-	echo '<h2>suggestions</h2>';
+	echo('<div class="blue_box" id="view_suggestions">'."\n");
+	echo('	<h2>suggestions</h2>'."\n");
 	$first = FALSE;
 	foreach ($categories as $category_id => $category)
 	{
 		if ($first == FALSE)
 			$first = TRUE;
 		else
-			echo '<hr />';
-		echo '<h5>'.$category['name'].'</h5>';
-
+			echo('	<hr />'."\n");
+		echo('	<h5>'.$category['name'].'</h5>'."\n");
+		
 		if (count($category['suggestions']) > 0)
 		{
+			echo('	<div class="ArticleBox">'."\n");
+			echo('		<table>'."\n");
+			echo('			<thead>'."\n");
+			echo('				<tr>'."\n");
+			echo('					<th style="width:50%;">'."\n");
+			echo('						Name'."\n");
+			echo('					</th>'."\n");
+			echo('					<th style="width:20%;">'."\n");
+			echo('						By'."\n");
+			echo('					</th>'."\n");
+			echo('					<th style="width:30%;text-align:right;">'."\n");
+			echo('						Date'."\n");
+			echo('					</th>'."\n");
+			echo('				</tr>'."\n");
+			echo('			</thead>'."\n");
+			echo('			<tbody>'."\n");
+			$alternate = 1;
 			foreach ($category['suggestions'] as $suggestion)
 			{
-				echo '<br /><span class="orange">'.$suggestion['title'].'</span>
-					<span class="grey">(asked by '.$suggestion['username'].')</span><br />
-					'.$suggestion['description'].'<br />
-					<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">[edit]</a>
-					<br />';
+				$dateformatted = date('d/m/y @ H:i', $suggestion['created']);
+				echo('				<tr class="tr'.$alternate.'">'."\n");
+				echo('					<td>'."\n");
+				echo('						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">'.$suggestion['title'].'</a>'."\n");
+				echo('					</td>'."\n");
+				echo('					<td>'."\n");
+				echo('						'.$suggestion['username']."\n");
+				echo('					</td>'."\n");
+				echo('					<td style="text-align:right;">'."\n");
+				echo('						'.$dateformatted."\n");
+				echo('					</td>'."\n");
+				echo('				</tr>'."\n");
+				$alternate == 1 ? $alternate = 2 : $alternate = 1;
 			}
+			echo('			</tbody>'."\n");
+			echo('		</table>'."\n");
+			echo('	</div>'."\n");
 		}
 	}
 	echo '</div>';
 ?>
 
-<div class="grey_box">
+<div class="blue_box">
 
 	<h2>make a suggestion</h2>
 	<?php

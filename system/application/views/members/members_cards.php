@@ -8,7 +8,9 @@
 <?php
 if (empty($business_cards)) {
 ?>
-	<P>No matching business cards found.</P>
+	<p>
+		No matching business cards found.
+	</p>
 <?
 } else {
 	foreach ($business_cards as $business_card) {

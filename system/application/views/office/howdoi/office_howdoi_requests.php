@@ -53,42 +53,67 @@
 </div>
 
 <?php
-	if ($status_count['requests'] > 0)
+	echo('<div class="blue_box" id="view_suggestions">'."\n");
+	echo('	<h2>requests</h2>'."\n");
+	$first = FALSE;
+	foreach ($categories as $category_id => $category)
 	{
-		echo '<div class="blue_box">
-			<h2>requests</h2>';
-		$first = FALSE;
-		foreach ($categories as $category_id => $category)
+		if ($first == FALSE)
+			$first = TRUE;
+		else
+			echo('	<hr />'."\n");
+		echo('	<h5>'.$category['name'].'</h5>'."\n");
+		if (count($category['requests']) > 0)
 		{
-			if (count($category['requests']) > 0)
+			echo('	<div class="ArticleBox">'."\n");
+			echo('		<table>'."\n");
+			echo('			<thead>'."\n");
+			echo('				<tr>'."\n");
+			echo('					<th style="width:50%;">'."\n");
+			echo('						Name'."\n");
+			echo('					</th>'."\n");
+			echo('					<th style="width:20%;">'."\n");
+			echo('						By'."\n");
+			echo('					</th>'."\n");
+			echo('					<th style="width:30%;text-align:right;">'."\n");
+			echo('						Date'."\n");
+			echo('					</th>'."\n");
+			echo('				</tr>'."\n");
+			echo('			</thead>'."\n");
+			echo('			<tbody>'."\n");
+			$alternate = 1;
+			foreach ($category['requests'] as $request)
 			{
-				if ($first == FALSE)
-					$first = TRUE;
-				else
-					echo '<hr />';
-				echo '<h5>'.$category['name'].'</h5>';
-				foreach ($category['requests'] as $request)
+				$dateformatted = date('d/m/y @ H:i', $request['created']);
+				echo('				<tr class="tr'.$alternate.'">'."\n");
+				echo('					<td>'."\n");
+				echo('						<a href="/office/howdoi/editquestion/'.$request['id'].'">'.$request['title'].'</a>'."\n");
+				echo('					</td>'."\n");
+				echo('					<td>'."\n");
+				foreach ($request['reporters'] as $key => $reporter)
 				{
-					$dateformatted = date('F jS Y', $request['deadline']).' at '.date('g.i A', $request['deadline']);
-					echo '<br /><span class="orange">'.$request['title'].'</span><br />
-						deadline on: '.$dateformatted.'<br />
-						<span class="grey">(asked by '.$request['suggestionusername'].', approved by '.$request['editorname'].')</span>	<br />
-						'.$request['description'].'<br />
-						<a href="/office/howdoi/editquestion/'.$request['id'].'">[edit]</a>';
-					if ($user['officetype'] != 'Low')
-						echo ' or <a href="/office/howdoi/editrequest/'.$request['id'].'">[modify and assign]</a>';
-					echo '<br />';
+					echo('						'.$reporter['name']."\n");
+					echo('						<br />'."\n");
 				}
+				echo('					</td>'."\n");
+				echo('					<td style="text-align:right;">'."\n");
+				echo('						'.$dateformatted."\n");
+				echo('					</td>'."\n");
+				echo('				</tr>'."\n");
+				$alternate == 1 ? $alternate = 2 : $alternate = 1;
 			}
+			echo('			</tbody>'."\n");
+			echo('		</table>'."\n");
+			echo('	</div>'."\n");
 		}
-		echo '</div>';
 	}
+	echo '</div>';
 ?>
 
 <?php
 if ($user['officetype'] != 'Low')
 {
-	echo '<div class="grey_box">
+	echo '<div class="blue_box">
 		<h2>make a request</h2>
 		<form class="form" action="/office/howdoi/suggestionmodify" method="post" >
 			<fieldset>

@@ -320,7 +320,7 @@ class Members extends Controller
 	}
 
 	/// @return bool Whether to quit
-	protected function _handle_member_list($TopTeam, $FilterSegment, $sortdir, $sorton)
+	protected function _handle_member_list($TopTeam, $FilterSegment, $sortdir = 'asc', $sorton = 'firstname')
 	{
 		$this->mLastSort = '';
 		$this->mSortFields = array();
@@ -769,12 +769,8 @@ class Members extends Controller
 		//set the page code, so we can get the page title and any parameters
 		$this->pages_model->SetPageCode('viparea_members_invite');
 
-		//TESTING ONLY - REMOVE
-		$default_list = 'test500
-ri504
-sadfa
-ri232 fwk33
-a4f';
+		//stores a list of users to put in the invite box (has the list of users that had associated errors when trying to invite)
+		$default_list = '';
 
 		//$this->_GetTeams();
 
@@ -833,7 +829,6 @@ a4f';
 				else {
 					// Everything was fine.
 					$member_details = $this->members_model->GetMemberDetails(VipOrganisationId());
-					//$this->messages->AddDumpMessage('member_details',$member_details);
 					$members = array();
 					foreach ($member_details as $member) {
 						$members[] = $member['username'];
@@ -853,11 +848,22 @@ a4f';
 		} 
 		//stage 3
 		else if ($this->input->post('confirm_invite_button') === 'Confirm Invites') {
+			$selected_members = array();
+			//make an array of selected member ids where checked boxes are ticked
+			foreach($_POST['invite'] as $key => $value)
+			{
+				if ($value = 'on')
+				{
+					$selected_members[] = $key;
+				}
+			}
 			$default_list = $this->_InviteUsers(
-				VipOrganisationId(), $valids,
+				VipOrganisationId(), $selected_members,
 				'username', VipOrganisationName()
 			);
 			$default_list = implode("\n",$default_list);
+			$data['default_list'] = $default_list;
+			$Stage = 1;
 		}
 		else {
 		/*
@@ -901,7 +907,7 @@ a4f';
 		$subject = '';
 		$content = '';
 		
-		if (!empty($_POST)) {			
+		if (!empty($_POST)) {
 			$selected_members = array();
 			//make an array of selected member ids where checked boxes are ticked
 			foreach($_POST['cb'] as $key => $value)
@@ -931,7 +937,6 @@ a4f';
 				//$this->load->helper('yorkermail');
 				//$to, $subject, $message, $from
 				//$this->yorkermail->yorkermail("ri504@york.ac.uk", "subject", "this is a test", "webmaster@theyorker.co.uk");
-				$this->messages->AddDumpMessage('_POST', $_POST);
 			}
 		}
 

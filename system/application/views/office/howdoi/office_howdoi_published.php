@@ -18,20 +18,22 @@
 		echo('				</tr>'."\n");
 		echo('			</thead>'."\n");
 		echo('			<tbody>'."\n");
+		$alternate = 1;
 		foreach ($data as $section)
 		{
 			$dateformatted = date('d/m/y @ H:i', $section['publish']);
-			echo('				<tr>'."\n");
+			echo('				<tr class="tr'.$alternate.'">'."\n");
 			echo('					<td>'."\n");
 			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.$section['heading'].'</a>'."\n");
 			echo('					</td>'."\n");
 			echo('					<td>'."\n");
-			echo('						'.$section['editorname']."\n");
+			echo('						'.$section['user_firstname'].' '.$section['user_surname']."\n");
 			echo('					</td>'."\n");
-			echo('					<td>'."\n");
+			echo('					<td style="text-align:right;">'."\n");
 			echo('						'.$dateformatted."\n");
 			echo('					</td>'."\n");
 			echo('				</tr>'."\n");
+			$alternate == 1 ? $alternate = 2 : $alternate = 1;
 		}
 		echo('			</tbody>'."\n");
 		echo('		</table>'."\n");

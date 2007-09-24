@@ -19,25 +19,6 @@
 	}
 </script>
 
-<?php
-
-
-/// Draw a branch of the tree of teams
-function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0)
-{
-	foreach ($team['subteams'] as $subteam) {
-		echo '<option name="team_'.$subteam['id'].'">';
-		//echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$indentation);
-		echo $prefix.$path.$subteam['name'];
-		echo '</option>';
-		if (!empty($subteam['subteams'])) {
-			EchoTeamFilterOptions($subteam, $prefix, $path.$subteam['name'].'/', $indentation+1);
-		}
-	}
-}
-
-?>
-
 <div id="RightColumn">
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">

@@ -134,12 +134,24 @@ class Businesscards_model extends Model
 	
 	function AddOrganisationCardGroup($Data)
 	{
-	$sql = 'INSERT INTO business_card_groups 
-	(business_card_group_name, business_card_group_organisation_entity_id, business_card_group_order) 
-	VALUES (?, ?, ?)';
-	$query = $this->db->query($sql, array($Data['group_name'], $Data['organisation_id'], $Data['group_order']));
-	return ($this->db->affected_rows() > 0);
+		$sql = 'INSERT INTO business_card_groups 
+		(business_card_group_name, business_card_group_organisation_entity_id, business_card_group_order) 
+		VALUES (?, ?, ?)';
+		$query = $this->db->query($sql, array($Data['group_name'], $Data['organisation_id'], $Data['group_order']));
+		return ($this->db->affected_rows() > 0);
 	}
+	
+	function RenameOrganisationCardGroup($id, $name) {
+		$sql = 'UPDATE
+					business_card_groups
+				SET
+					business_card_group_name = ?
+				WHERE
+					business_card_group_id = ?';
+		$query = $this->db->query($sql, array($name, $id));
+		return ($this->db->affected_rows() > 0);
+	}
+	
 	function SelectMaxGroupOrderById($OrgId)
 	{
 		$sql = 'SELECT MAX(business_card_group_order) as highest_group_number

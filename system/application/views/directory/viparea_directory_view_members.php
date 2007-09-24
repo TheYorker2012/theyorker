@@ -13,14 +13,15 @@
 				echo(htmlspecialchars($group['name']));
 			}
 			?>
-		</a>&nbsp;&nbsp;<a href='<?php echo vip_url('directory/contacts/deletegroup/'.$group['id']); ?>'><b>X</b></a><br />
+		</a>
+		<br />
 <?php
 	$no_groups = false;
 	}
 ?>
 	</div>
 
-	<h2>Add a group</h2>
+	<h2>Add A New Group</h2>
 	<div class="Entry">
 	<?php
 	if($no_groups){
@@ -41,15 +42,45 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
+		<h2>edit group - <?php echo($current_group['name']); ?></h2>
+		<p>
+			rename this group
+		</p>
+		<form method="post" action="<?php echo(vip_url('directory/contacts')); ?>">
+			<fieldset>
+				<input name="group_id" type="hidden" value="<?php echo($current_group['id']); ?>" />
+			</fieldset>
+			<fieldset>
+				<label for="group_name">Group Name:</label>
+				<input type="text" name="group_name" id="group_name" value="<?php if(!empty($current_group['name'])){echo $current_group['name'];} ?>" />
+			</fieldset>
+			<fieldset>
+				<input name="group_renamebutton" id="group_renamebutton" type="submit" value="Rename" class="button" />
+			</fieldset>
+		</form>
+		<p>
+			OR delete this group
+		</p>
+		<form method="post" action="<?php echo(vip_url('directory/contacts')); ?>">
+			<fieldset>
+				<input name="group_id" type="hidden" value="<?php echo($current_group['id']); ?>" />
+			</fieldset>
+			<fieldset>
+				<input name="group_deletebutton" id="group_deletebutton" type="submit" value="Delete" class="button" />
+			</fieldset>
+		</form>
+	</div>
 <?php
 if(empty($organisation['cards'])) {
 ?>
-		<p><b>This organisation has no members listed in this group.</b></p>
+	<div class="BlueBox">
+		<p>
+			<b>This group contains no business cards.</b>
+		</p>
+	</div>
 <?php
-} else {
-	?>
-	<h2>Editing group <?php echo($current_group['name']); ?></h2>
-<?php
+}
+else {
 	foreach ($organisation['cards'] as $business_card) {
 		$this->load->view('directory/business_card',array(
 			'business_card' => $business_card,
@@ -58,13 +89,12 @@ if(empty($organisation['cards'])) {
 	}
 }
 ?>
-	</div>
 
 <?php
 	if($no_groups==false){
 ?>
 	<div class="BlueBox">
-		<h2>Add a card</h2>
+		<h2>add a new business card</h2>
 		<form method="post" action="<?php echo(vip_url('directory/contacts')); ?>">
 		<fieldset>
 			<label for="card_name">Name:</label>
