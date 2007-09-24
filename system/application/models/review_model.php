@@ -697,24 +697,18 @@ class Review_model extends Model {
 				';
 		$query = $this->db->query($sql,$type);
 		$queryarray = $query->result_array();
+		$tag_group_names = array();//where the names will go
 
-		foreach ($queryarray as &$row)
-		{
-			$tag_group_names[] = $row['tag_group_name']; //Extract the names from the array
-		}
-
-		if (isset($tag_group_names) == 0) return array(); //No data so return empty array
+		if (empty($queryarray)) return array(); //No data so return empty array
 
 		$index = 0; //For indexing
 
 		foreach ($queryarray as &$row)
 		{
-			$index++;
-			$tag_group_name[$index] = $row['tag_group_name']; //Stores the tag group names
-
+			
 			//First find out if these tags should be ordered by tag value or alphabetly
 			$nsql = 'SELECT tag_groups.tag_group_ordered FROM tag_groups WHERE tag_group_name = ?';
-			$nquery = $this->db->query($nsql,$tag_group_name[$index]);
+			$nquery = $this->db->query($nsql,$row['tag_group_name']);
 			$ordering = $nquery->row_array();
 
 			$ordering = $ordering['tag_group_ordered']; //Ordering says which ordering to use
@@ -738,14 +732,20 @@ class Review_model extends Model {
 					 WHERE tag_groups.tag_group_name = ? ORDER BY tags.tag_name';
 			}
 
-			$mquery = $this->db->query($msql,$tag_group_name[$index]); //Do query
+			$mquery = $this->db->query($msql,$row['tag_group_name']); //Do query
 			$marray = $mquery->result_array();
-
+			
+			if(!empty($marray)){
+				//dont add name to $tag_group_names if there are no tags to prevent having an empty category!
+				$tag_group_names[$index] = $row['tag_group_name']; //Stores the tag group names
+				$index++;
+			}
+			
 			//Place all of the tags into the return array
 			foreach ($marray as &$mrow)
 			{
 				//Place all tags in to the tag_group array with the key of the tag groups name
-				$tag_group[$tag_group_name[$index]][] = $mrow['tag_name'];
+				$tag_group[$row['tag_group_name']][] = $mrow['tag_name'];
 			}
 		}
 		//Add the special case

@@ -1,27 +1,29 @@
 <div id="RightColumn">
-	<h2 class="first">Leagues</h2>
-	<div class="Entry">
-	<ul>
 	<?php
-		foreach ($league_data as $league_entry) {
-			echo('		');
-			echo('<li><a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
-			echo($league_entry['league_name']);
-			echo('</a></li>'."\n");
-		}
+	//If there are some leagues print em
+	if (!empty($league_data)){
+		echo ('<h2 class="first">'.$leagues_header.'</h2>'."\n");
+		echo ('<div class="Entry">'."\n");
+		echo ('<ul>'."\n");
+			foreach ($league_data as $league_entry) {
+				echo('		');
+				echo('<li><a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
+				echo($league_entry['league_name']);
+				echo('</a></li>'."\n");
+			}
+		echo ('</ul>'."\n");
+		echo ('</div>'."\n");
+	}
 	?>
-	</ul>
-	</div>
 </div>
-
 <div id="MainColumn">
-<div id="HomeBanner">
-	<?php echo($banner) ?>
-</div>
-<div class="BlueBox">
-<h2><?php echo($page_header) ?></h2>
-<?php echo($page_about) ?>
-<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
+	<div id="HomeBanner">
+		<?php echo($banner) ?>
+	</div>
+	<div class="BlueBox">
+		<h2><?php echo($page_header) ?></h2>
+		<?php echo($page_about) ?>
+		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
 			<div style="float: left; width: 75%">
 				<table>
 					<tr>
@@ -33,7 +35,10 @@
 									<?php
 									foreach($table_data['tag_group_names'] as $tag) {
 										echo('					');
-										echo('<option value="'.$tag.'">'.$tag.'</option>'."\n");
+										echo('<option value="'.$tag.'"');
+										if (!empty($item_filter_by) && $tag==$item_filter_by)
+										{echo ' selected="selected"';}
+										echo('>'.$tag.'</option>'."\n");
 									}
 									?>
 								</select>
@@ -57,37 +62,44 @@
 				</fieldset>
 			</div>
 		</form>
-</div>
-		<script type="text/javascript">
-			var filterlist=document.reviews.sorted_by
-			var sortbylist=document.reviews.where_equal_to
-			/* The following sets the array which links each selection from the first form select with a series of selections
-			 * into the second form select
-			 * sortby[0] is See All.
-			 * The first value is what the select option text is, the second is the value tag
-			*/
-			var sortby=new Array()
-			sortby[0]=["See All|all"]
+	</div>
+	<script type="text/javascript">
+		var filterlist=document.reviews.item_filter_by
+		var sortbylist=document.reviews.where_equal_to
+		/* The following sets the array which links each selection from the first form select with a series of selections
+		 * into the second form select
+		 * sortby[0] is See All.
+		 * The first value is what the select option text is, the second is the value tag
+		*/
+		var sortby=new Array()
+		sortby[0]=["See All|all"]
 			<?php
-			//Print out the tags for each tag_group
-			//Foreach tag_group
-			for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++) {
-				echo('		sortby['.($tag_group_no+1).']=[');
-				//Print each tag
-				for ($tag_no = 0; $tag_no < count($table_data[$table_data['tag_group_names'][$tag_group_no]]); $tag_no++) {
-					echo('"'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'|'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'", ');
-				}
-				echo("]\n");
+	//Print out the tags for each tag_group
+	//Foreach tag_group
+	for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++) {
+		echo('		sortby['.($tag_group_no+1).']=[');
+		//Print each tag
+		for ($tag_no = 0; $tag_no < count($table_data[$table_data['tag_group_names'][$tag_group_no]]); $tag_no++) {
+			echo('"'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'|'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'", ');
+		}
+		echo("]\n");
+	}
+	?>
+		function updatesortby(selectedsortby){
+			sortbylist.options.length=0
+			if (selectedsortby>=0){
+			for (i=0; i<sortby[selectedsortby].length; i++)
+			sortbylist.options[sortbylist.options.length]=new Option(sortby[selectedsortby][i].split("|")[0], sortby[selectedsortby][i].split("|")[1])
 			}
-			?>
-			function updatesortby(selectedsortby){
-				sortbylist.options.length=0
-				if (selectedsortby>=0){
-				for (i=0; i<sortby[selectedsortby].length; i++)
-				sortbylist.options[sortbylist.options.length]=new Option(sortby[selectedsortby][i].split("|")[0], sortby[selectedsortby][i].split("|")[1])
-				}
+		}
+		updatesortby(filterlist.selectedIndex)
+		for (index=0; index<=sortbylist.options.length;index++){
+			if(sortbylist.options[index].value == "<?php if (!empty($where_equal_to)){echo $where_equal_to;}?>")
+			{
+			sortbylist.options[index].selected = true;
 			}
-		</script>
+		}
+	</script>
 <?php if (!isset($main_review)) { ?>
 		<div class="BlueBox">
 		<h2 class="Headline">No reviews</h2>
@@ -96,6 +108,9 @@
 		</div>
 <?php } else { ?>
 		<div class="BlueBox">
+			
+			<h2><?php echo $main_review_header; ?></h2>
+			<div class="LineContainer"></div>
 			<?php $this->feedback_article_heading = 'Main Review Page: '.$main_review['organisation_name']; ?>
 			<div style="float: right"><a href="<?php echo '/reviews/'.$main_review['content_type_codename'].'/'.$main_review['organisation_directory_entry_name']; ?>"><b>View Guide</b> <img src="/images/icons/book_go.png" /></a></div>
 			<h2 class="Headline"><?php echo $main_review['organisation_name']; ?></h2>

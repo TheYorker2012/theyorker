@@ -25,6 +25,7 @@ class Reviews extends Controller
 
 		//Load page model
 		$this->load->model('pages_model');
+		$this->load->model('Home_Model');
 
 		//Load reviews model
 		$this->load->model('Review_model');
@@ -73,7 +74,6 @@ class Reviews extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->load->model('Home_Model');
 		//Obtain banner for homepage
 		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($content_type);
 		
@@ -85,6 +85,8 @@ class Reviews extends Controller
 		//Set page code
 		$this->pages_model->SetPageCode('review_main');
 		$data['page_header'] = $this->pages_model->GetPropertyText('header_'.$content_type);
+		$data['main_review_header'] = $this->pages_model->GetPropertyText('main_review_header');
+		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
 		$data['page_about'] = $this->pages_model->GetPropertyWikiText('about_'.$content_type);
 
 		$this->main_frame->SetTitleParameters(array(
@@ -140,6 +142,7 @@ class Reviews extends Controller
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('reviews/main',$data);
+		$this->main_frame->SetExtraCss('/stylesheets/home.css');
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
@@ -158,7 +161,7 @@ class Reviews extends Controller
 
 
 	/// Display table for review table (from puffers)
-	function table(	$item_type = FALSE,
+	function table(	$content_type = FALSE,
 					$sorted_by = FALSE,
 					$item_filter_by = FALSE,
 					$where_equal_to = FALSE)
@@ -167,7 +170,7 @@ class Reviews extends Controller
 		$this->load->model('slideshow');
 
 		//POST data set overwrites uri data
-		if (isset($_POST['item_type'])) $item_filter_by = $_POST['item_type'];
+		if (isset($_POST['content_type'])) $item_filter_by = $_POST['content_type'];
 		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
 		if (isset($_POST['where_equal_to'])) $where_equal_to = $_POST['where_equal_to'];
 		if (isset($_POST['sorted_by'])) $where_equal_to = $_POST['sorted_by'];
@@ -176,20 +179,45 @@ class Reviews extends Controller
 		$data['item_filter_by'] = $item_filter_by;
 		$data['where_equal_to'] = $where_equal_to;
 		$data['sorted_by'] = $sorted_by;
-		$data['item_type'] = $item_type;
+		$data['content_type'] = $content_type;
 
 		if (!CheckPermissions('public')) return;
-
+		//Obtain banner for homepage
+		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($content_type);
+		
 		//Set page code
-		$this->pages_model->SetPageCode('review_table');
-
-		$database_result = $this->Review_model->GetTableReview($item_type,$sorted_by, $item_filter_by,$where_equal_to);
+		$this->pages_model->SetPageCode('review_main');
+		//@TODO use the nice db held name rather than the content_type
+		$this->main_frame->SetTitleParameters(array(
+			'content_type' => $content_type
+		));
+		$data['page_header'] = $this->pages_model->GetPropertyText('header_'.$content_type);
+		$data['main_review_header'] = $this->pages_model->GetPropertyText('main_review_header');
+		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
+		$data['page_about'] = $this->pages_model->GetPropertyWikiText('about_'.$content_type);
+		
+		//Get league data
+		$league_data = $this->Review_model->GetLeagueDetails($content_type);
+		$leagues = array();
+		foreach ($league_data as &$league)
+		{
+			$leagues[] = array(
+				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
+				'league_name'=>$league['league_name'],
+				'league_size'=>$league['league_size'],
+				'league_codename'=>$league['league_codename']
+				);
+		}
+		//Pass tabledata straight to view it is in the proper format
+		$data['league_data'] = $leagues;
+		
+		$database_result = $this->Review_model->GetTableReview($content_type,$sorted_by, $item_filter_by,$where_equal_to);
 
 		$columns = array(0);
 		$entries = array();
 
 		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags($item_type);
+		$tabledata = $this->Review_model->GetTags($content_type);
 
 		//Pass tabledata straight to view it is in the proper format
 		$data['table_data'] = $tabledata;
@@ -220,10 +248,10 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_blurb'] = $database_result[$reviewno]['review_context_content_blurb'];
 					$entries[$reviewno]['review_quote'] = $database_result[$reviewno]['review_context_content_quote'];
 					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
-					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$item_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
+					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$content_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 
 					//get the slideshow images for the review item
-					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']); //$item_type, true);
+					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']); //$content_type, true);
 					if($slideshow_array->num_rows() > 0)
 					{
 						$entries[$reviewno]['review_image'] = $this->image->getPhotoURL($slideshow_array->row()->photo_id, 'slideshow');
@@ -257,7 +285,8 @@ class Reviews extends Controller
 			$data['entries'] = $entries;
 
 		}
-
+		
+		$this->main_frame->SetExtraCss('/stylesheets/home.css');
 		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();

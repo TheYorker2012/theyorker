@@ -1,77 +1,111 @@
 <div id="RightColumn">
-	<h2 class="first">The Guide</h2>
-	<div class="Entry">
-		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(3)); ?>/star" method="post">
-			<fieldset>
-				<label for="item_filter_by">Find based on: </label>
-				<select name="item_filter_by" onchange="updatesortby(this.selectedIndex)">
-					<option value="any" selected="selected">See All</option>
-					<?php
-					foreach($table_data['tag_group_names'] as $tag) {
-						echo('					');
-						echo('<option value="'.$tag.'">'.$tag.'</option>'."\n");
-					}
-					?>
-				</select><br />
-
-				<label for="where_equal_to">Only Show: </label>
-				<select name="where_equal_to">
-					<option value="any" selected="selected">See All</option>
-				</select><br />
-			</fieldset>
-			<fieldset>
-				<input type="submit" value="Find" class="button" />
-			</fieldset>
-		</form>
-
-		<script type="text/javascript">
-				//<![CDATA[
-
-				var filterlist=document.reviews.sorted_by
-				var sortbylist=document.reviews.where_equal_to
-				/* The following sets the array which links each selection from the first form select with a series of selections
-				 * into the second form select
-				 * sortby[0] is See All.
-				 * The first value is what the select option text is, the second is the value tag
-				*/
-				var sortby=new Array()
-				sortby[0]=["See All|all"]
-		<?php
-		//Print out the tags for each tag_group
-
-		//Foreach tag_group
-		for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++) {
-			echo('		sortby['.($tag_group_no+1).']=[');
-
-			//Print each tag
-			for ($tag_no = 0; $tag_no < count($table_data[$table_data['tag_group_names'][$tag_group_no]]); $tag_no++) {
-				echo('"'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'|'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'", ');
+	<?php
+	//If there are some leagues print em
+	if (!empty($league_data)){
+		echo ('<h2 class="first">'.$leagues_header.'</h2>'."\n");
+		echo ('<div class="Entry">'."\n");
+		echo ('<ul>'."\n");
+			foreach ($league_data as $league_entry) {
+				echo('		');
+				echo('<li><a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
+				echo($league_entry['league_name']);
+				echo('</a></li>'."\n");
 			}
-			echo("]\n");
-		}
-		?>
-
-				function updatesortby(selectedsortby){
-					sortbylist.options.length=0
-					if (selectedsortby>=0){
-					for (i=0; i<sortby[selectedsortby].length; i++)
-					sortbylist.options[sortbylist.options.length]=new Option(sortby[selectedsortby][i].split("|")[0], sortby[selectedsortby][i].split("|")[1])
-					}
-				}
-				//]]>
-		</script>
-
-	</div>
+		echo ('</ul>'."\n");
+		echo ('</div>'."\n");
+	}
+	?>
 </div>
-
 <div id="MainColumn">
+	<div id="HomeBanner">
+		<?php echo($banner) ?>
+	</div>
 	<div class="BlueBox">
-		<h2><?php echo($item_type); ?> search</h2>
+		<h2><?php echo($page_header) ?></h2>
+		<?php echo($page_about) ?>
+		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
+			<div style="float: left; width: 75%">
+				<table>
+					<tr>
+						<td>
+							<fieldset>
+								Find based on:
+								<select name="item_filter_by" onchange="updatesortby(this.selectedIndex)">
+									<option value="any" selected="selected">See All</option>
+									<?php
+									foreach($table_data['tag_group_names'] as $tag) {
+										echo('					');
+										echo('<option value="'.$tag.'"');
+										if (!empty($item_filter_by) && $tag==$item_filter_by)
+										{echo ' selected="selected"';}
+										echo('>'.$tag.'</option>'."\n");
+									}
+									?>
+								</select>
+							</fieldset>
+						</td>
+						<td>
+							<fieldset>
+								Only Show:
+								<select name="where_equal_to">
+									<option value="any" selected="selected">See All</option>
+								</select>
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div style="float: right; width: 25%">
+				<fieldset>
+					<br />
+					<input type="submit" value="Find" style="align: right;" class="button" />
+				</fieldset>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		var filterlist=document.reviews.item_filter_by
+		var sortbylist=document.reviews.where_equal_to
+		/* The following sets the array which links each selection from the first form select with a series of selections
+		 * into the second form select
+		 * sortby[0] is See All.
+		 * The first value is what the select option text is, the second is the value tag
+		*/
+		var sortby=new Array()
+		sortby[0]=["See All|all"]
+			<?php
+	//Print out the tags for each tag_group
+	//Foreach tag_group
+	for ($tag_group_no = 0; $tag_group_no < count($table_data['tag_group_names']); $tag_group_no++) {
+		echo('		sortby['.($tag_group_no+1).']=[');
+		//Print each tag
+		for ($tag_no = 0; $tag_no < count($table_data[$table_data['tag_group_names'][$tag_group_no]]); $tag_no++) {
+			echo('"'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'|'.$table_data[$table_data['tag_group_names'][$tag_group_no]][$tag_no].'", ');
+		}
+		echo("]\n");
+	}
+	?>
+		function updatesortby(selectedsortby){
+			sortbylist.options.length=0
+			if (selectedsortby>=0){
+			for (i=0; i<sortby[selectedsortby].length; i++)
+			sortbylist.options[sortbylist.options.length]=new Option(sortby[selectedsortby][i].split("|")[0], sortby[selectedsortby][i].split("|")[1])
+			}
+		}
+		updatesortby(filterlist.selectedIndex)
+		for (index=0; index<=sortbylist.options.length;index++){
+			if(sortbylist.options[index].value == "<?php if (!empty($where_equal_to)){echo $where_equal_to;}?>")
+			{
+			sortbylist.options[index].selected = true;
+			}
+		}
+	</script>
+	<div class="BlueBox">
 		<table border="0" width="97%">
 		<tbody>
 		<tr>
 			<td>
-				<?php if($item_filter_by!='any' && $item_filter_by!='') { echo('Showing results for <b>'.$where_equal_to.'</b> based on <b>'.$item_filter_by.'</b>.'); } else { echo('Showing <b>all entries</b> in the '.$item_type.' guide.'); } ?>
+				<?php if($item_filter_by!='any' && $item_filter_by!='') { echo('Showing results for <b>'.$where_equal_to.'</b> based on <b>'.$item_filter_by.'</b>.'); } else { echo('Showing <b>all entries</b> in the '.$content_type.' guide.'); } ?>
 			</td>
 		</tr>
 		<?php
