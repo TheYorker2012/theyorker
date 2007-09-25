@@ -6,7 +6,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
 	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
 	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
 	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
