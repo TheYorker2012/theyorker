@@ -283,11 +283,24 @@ div#RightColumn label {
 
 div#RightColumn input {
 	float: none;
-	margin: 0.3em;
+	margin: 0;
+	width: 100%;
+}
+
+div#RightColumn fieldset.inline input {
+	width: 65%;
 }
 
 div#RightColumn input.button {
-	float: right;
+	width: 30%;
+}
+
+div#RightColumn input.checkbox {
+	width: auto;
+}
+
+div#RightColumn fieldset.inline input.button {
+	width: 30%;
 }
 
 div#RightColumn div.Entry {
