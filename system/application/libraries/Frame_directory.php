@@ -52,6 +52,9 @@ $CI->load->library('frames');
  */
 class Frame_directory extends FramesFrame
 {
+	/// disable adverts for the directory frame
+	protected $mHasAdverts = FALSE;
+	
 	/// Default constructor.
 	function __construct()
 	{

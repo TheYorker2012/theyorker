@@ -17,6 +17,9 @@ $CI->load->library('navigation_bar');
  */
 class FrameNavbar extends FramesFrame
 {
+	/// disable adverts for the navbar frame
+	protected $mHasAdverts = FALSE;
+	
 	/// Default constructor.
 	function __construct($ViewFile)
 	{

@@ -13,6 +13,9 @@ $CI->load->library('frame_public');
 /// Main office frame library class.
 class Frame_facebook extends Frame_public
 {
+	/// disable adverts for the facebook frame
+	protected $mHasAdverts = FALSE;
+	
 	/// Default constructor.
 	function __construct()
 	{

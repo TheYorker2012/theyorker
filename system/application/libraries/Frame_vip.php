@@ -13,6 +13,9 @@ $CI->load->library('frame_public');
 /// Main vip frame library class.
 class Frame_vip extends Frame_public
 {
+	/// disable adverts for the vip frame
+	protected $mHasAdverts = FALSE;
+	
 	/// Default constructor.
 	function __construct()
 	{

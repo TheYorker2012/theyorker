@@ -51,6 +51,8 @@ class Frame_public extends FrameNavbar
 	private $mTitleParameters = NULL;
 	/// string HTTP header.
 	private $mHttpHeader = NULL;
+	/// enable adverts for the public frame
+	protected $mHasAdverts = TRUE;
 	
 	/**
 	 * @brief Default constructor.
@@ -158,8 +160,10 @@ class Frame_public extends FrameNavbar
 	function Load()
 	{
 		$CI = &get_instance();
-		$advert = $CI->adverts->SelectNextAdvert();
-		$this->SetData('advert', $advert);
+		if ($this->mHasAdverts) {
+			$advert = $CI->adverts->SelectNextAdvert();
+			$this->SetData('advert', $advert);
+		}
 		if ($CI->pages_model->PageCodeSet()) {
 			if (NULL !== $this->mTitleParameters) {
 				$titles = $CI->pages_model->GetTitles($this->mTitleParameters);
