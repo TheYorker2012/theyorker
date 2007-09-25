@@ -146,6 +146,8 @@ $route['office/reviewlist/('.$org_name_regex.')/([a-z]+)/([0-9a-z]+)'] = 'office
 // send tag adding and deleting to the correct place
 $route['office/reviews/addtag'] = 'office/reviews/addtag';
 $route['office/reviews/deltag'] = 'office/reviews/deltag';
+$route['office/reviews/addleague'] = 'office/reviews/addleague';
+$route['office/reviews/delleague'] = 'office/reviews/delleague';
 
 // /office/reviews/theyorker/ => /office/reviews/overview/theyorker/
 $route['office/reviews/('.$org_name_regex.')'] = 'office/reviews/overview/$1';

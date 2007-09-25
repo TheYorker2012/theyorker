@@ -71,7 +71,7 @@ class Articletypes extends Controller
 	{
 		if (!CheckPermissions('editor')) return;
 		//Get page properties information
-		if (!empty($_SESSION['img'])||$skip_image=='skip') {//Is there an image, or are we skipping getting one?
+		if (!empty($_SESSION['img'])||$skip_image=='skip'||!empty($_POST['article_type_add'])) {//Is there an image, or are we skipping getting one?
 			//Check for post
 			if(!empty($_POST['article_type_add'])) {
 				$codename = $this->_CreateCodeName($_POST['article_type_name']);
@@ -125,7 +125,7 @@ class Articletypes extends Controller
 				$this->messages->AddMessage('error','Article type name must contain some standard letters.');
 				$data['article_type_form']=$_POST;
 			}else if($this->Article_model->doesCodenameExist($codename) && $codename != $this->Article_model->getArticleTypeCodename($_POST['article_type_id'])){
-				$this->messages->AddMessage('error','This name is already taken, or there is one is too simular to this"'.$codename.'" "'.$this->News_model->getArticleTypeCodename($_POST['article_type_id']).'".');
+				$this->messages->AddMessage('error','This name is already taken, or there is one is too simular to this.');
 				$data['article_type_form']=$_POST;
 			}else if($this->Article_model->isArticleTypeAParent($_POST['article_type_parent'])==false){
 				$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
