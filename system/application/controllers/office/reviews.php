@@ -454,7 +454,7 @@ class Reviews extends Controller
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation,$ContextType);
-		$this->main_frame->SetPage('tags');
+		$this->main_frame->SetPage('leagues');
 
 		// Insert main text from pages information (sample)
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
