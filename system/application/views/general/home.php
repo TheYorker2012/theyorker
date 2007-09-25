@@ -71,15 +71,16 @@ function print_middle_box($title,$article_array){
 	</div>
 
 	<h2>My Webmail </h2>
-	<a class="MailLogo" href="https://webmail.york.ac.uk">
-		<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
-	</a>
 	<div class="Entry">
-			<p class="MailText">
-				<a href="https://webmail.york.ac.uk/">E-mail</a>
-			</p>
+		<a class="MailLogo" href="https://webmail.york.ac.uk">
+			<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
+		</a>
+		<p class="MailText">
+			<a href="https://webmail.york.ac.uk/">E-mail</a>
+		</p>
 	</div>
 
+	<!--
 	<h2>Upcoming Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
@@ -94,6 +95,7 @@ function print_middle_box($title,$article_array){
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
 	</div>
+	-->
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
@@ -102,9 +104,10 @@ function print_middle_box($title,$article_array){
 </div>
 
 <div id="MainColumn">
+	<!--
 	<div id="HomeBanner">
 		<?php echo($banner) ?>
-	</div>
+	</div>-->
 
 	<div class="BlueBox">
 		<?php print_box($articles['uninews'],'latest news','news') ?>
