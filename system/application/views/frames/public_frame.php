@@ -157,7 +157,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 <?php
 	if (isset($advert)) {
-		echo('			<a href="'.$advert['url'].'"><img src="/images/adverts/'.$advert['image'].'" width="120" height="600" style="margin-top: 80px;" alt="'.$advert['alt'].'" /></a>'."\n");
+		echo('			<a href="'.$advert['url'].'"><img src="/images/adverts/'.$advert['image'].'" width="120" height="600" style="margin-top: 80px;" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" /></a>'."\n");
 	}
 ?>
 		</div>

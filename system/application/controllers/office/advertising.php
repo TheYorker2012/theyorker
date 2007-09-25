@@ -11,16 +11,164 @@ class Advertising extends Controller
 	/// Default page.
 	function index()
 	{
-		if (!CheckPermissions('vip')) return;
+		if (!CheckPermissions('office')) return;
 		
-		$this->pages_model->SetPageCode('viparea_advertising');
-		$this->messages->AddMessage('warning', 'The advertising system isn\'t yet implemented');
+		//load models
+		$this->load->model('advert_model');
+		
+		if (isset($_POST['submit_add_advert'])) {
+			if (trim($this->input->post('advert_name')) != '') {
+				$this->advert_model->AddNewAdvert($this->input->post('advert_name'));
+				$this->messages->AddMessage('success', 'The advert has been successfully added.');
+			}
+			else {
+				$this->messages->AddMessage('error', 'You must enter a name for the advert.');
+			}
+		}
+		/*
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();
+		$this->advert_model->SelectLatestAdvert();*/
+		
+		//set up page code
+		$this->pages_model->SetPageCode('advertising_list');
 		
 		$data = array(
+			'adverts'=>$this->advert_model->GetAdverts()
 		);
-		//$this->main_frame->SetContentSimple('viparea/contactpr', $data);
+
+		// Set up the directory view
+		$directory_view = $this->frames->view('office/advertising/list', $data);
+
+		// Set up the public frame to use the directory view
+		$this->main_frame->SetContent($directory_view);
 		
+		//load the page
 		$this->main_frame->Load();
+	}
+	
+	function view($advert_id = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+		
+		//load models
+		$this->load->model('advert_model');
+		
+		//set page
+		$this->pages_model->SetPageCode('advertising_view');
+		
+		//get advert data
+		$advert = $this->advert_model->AdvertExists($advert_id);
+		
+		if ($advert) {
+			
+			$data = array(
+				'advert'=>$advert
+				);
+
+			// Set up the directory view
+			$directory_view = $this->frames->view('office/advertising/view', $data);
+
+			// Set up the public frame to use the directory view
+			$this->main_frame->SetTitleParameters(array(
+				'name' => $advert['name']
+				));
+			$this->main_frame->SetContent($directory_view);
+			
+			//load the page
+			$this->main_frame->Load();
+		}
+		else {
+			$this->messages->AddMessage('error', 'The advert you specified doesn\'t exist');
+			redirect('office/advertising');
+		}
+	}
+	
+	function edit($advert_id = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+		
+		//load models
+		$this->load->model('advert_model');
+		
+		//advert is being saved/updated
+		if (isset($_POST['submit_save_advert'])) {
+			$this->advert_model->SaveAdvert(
+				$this->input->post('advert_id'),
+				$this->input->post('advert_name'),
+				$this->input->post('advert_url'),
+				$this->input->post('advert_alt'),
+				$this->input->post('advert_image'),
+				$this->input->post('advert_max_views')
+				);
+			$this->messages->AddMessage('success', 'The changed to the advert have been saved.');
+		}
+		//delete the advert
+		else if (isset($_POST['submit_delete_advert'])) {
+			$this->advert_model->DeleteAdvert(
+				$this->input->post('advert_id')
+				);
+			$this->messages->AddMessage('success', 'The advert has been deleted.');
+			redirect('/office/advertising/');
+		}
+		//pull the advert
+		else if (isset($_POST['submit_pull_advert'])) {
+			$this->advert_model->PullAdvert(
+				$this->input->post('advert_id')
+				);
+			$this->messages->AddMessage('success', 'The advert has been pulled from rotation on the public site.');
+		}
+		//make the advert live
+		else if (isset($_POST['submit_make_advert_live'])) {
+			$this->advert_model->MakeAdvertLive(
+				$this->input->post('advert_id')
+				);
+			$this->messages->AddMessage('success', 'The advert has been added to the current rotation on the public site.');
+		}	
+		
+		//set page
+		$this->pages_model->SetPageCode('advertising_edit');
+		
+		//get advert data
+		$advert = $this->advert_model->AdvertExists($advert_id);
+		
+		if ($advert) {
+			
+			$data = array(
+				'advert'=>$advert
+				);
+
+			// Set up the directory view
+			$directory_view = $this->frames->view('office/advertising/edit', $data);
+
+			// Set up the public frame to use the directory view
+			$this->main_frame->SetTitleParameters(array(
+				'name' => $advert['name']
+				));
+			$this->main_frame->SetContent($directory_view);
+			
+			//load the page
+			$this->main_frame->Load();
+		}
+		else {
+			$this->messages->AddMessage('error', 'The advert you specified doesn\'t exist');
+			redirect('office/advertising');
+		}
 	}
 }
 

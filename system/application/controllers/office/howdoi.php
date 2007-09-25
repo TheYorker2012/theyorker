@@ -215,7 +215,7 @@ class Howdoi extends Controller
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		// get the list of howdoi content type categories
-                $data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
+		$data['categories'] = $this->howdoi_model->GetCategoryNames($howdoi_type_id);
 
 		// Set up the view
 		$the_view = $this->frames->view('office/howdoi/office_howdoi_categories', $data);
@@ -355,8 +355,8 @@ class Howdoi extends Controller
 		//otherwise for an invalid article id
 		else
 		{
-                	$this->main_frame->AddMessage('error','Specified article is not editable.');
-                	redirect('/office/howdoi/');
+			$this->main_frame->AddMessage('error','Specified article is not editable.');
+			redirect('/office/howdoi/');
 		}
 	}
 
