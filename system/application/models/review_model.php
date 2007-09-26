@@ -1310,13 +1310,16 @@ function GetTagOrganisation($type,$organisation)
 
 		$result = $query->row_array();
 
-		$sql = 'SELECT article_writers.article_writer_user_entity_id,
-				business_cards.business_card_name
-			FROM article_writers, business_cards
+		$sql = 'SELECT
+					article_writers.article_writer_user_entity_id,
+					users.user_firstname,
+					users.user_surname
+			FROM article_writers 
+			INNER JOIN users ON
+				 article_writers.article_writer_user_entity_id = users.user_entity_id
 			WHERE article_writers.article_writer_article_id = ?
 			AND article_writers.article_writer_status = "accepted"
 			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
-			AND article_writers.article_writer_user_entity_id = business_cards.business_card_user_entity_id
 			LIMIT 0,10';
 		$query = $this->db->query($sql,array($result['id']));
 	    $authors = array();
@@ -1324,7 +1327,7 @@ function GetTagOrganisation($type,$organisation)
 		{
 			$authors[] = array(
 				'id' => $row->article_writer_user_entity_id,
-				'name' => $row->business_card_name
+				'name' => $row->user_firstname.' '.$row->user_surname
 			);
 		}
 		$result['authors'] = $authors;
