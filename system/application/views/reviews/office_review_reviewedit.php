@@ -1,13 +1,8 @@
 <div class="RightToolbar">
-	<h4>What's this?</h4>
+	<h4 class="first">Page Information</h4>
 		<p>
-			<?php echo 'whats_this'; ?>
+			<?php echo $page_information; ?>
 		</p>
-	<h4>Other tasks</h4>
-	<ul>
-		<li><a href="#">Maintain my account</a></li>
-		<li><a href="#">Remove this directory entry</a></li>
-	</ul>
 	<?php
 		echo '<h4>Revisions (Latest First)</h4>
 		<div class="Entry">';
@@ -39,29 +34,27 @@
 		echo '</div>';
 	?>
 </div>
-
-<div class="blue_box">
-	<h2>edit review</h2>
-	<form class="form" action="<?php echo($this_url); ?>" method="POST">
-		<fieldset>
-			<div id="toolbar"></div>
-			<?php
-			if ($article['displayrevision'] != FALSE)
-				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
-			else
-				echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
-			?>
-		</fieldset>
-		<fieldset>
-			<input type="submit" name="r_submit_save" value="Save Revision" />
-		</fieldset>
-	</form>
-</div>
-
-<script type="text/javascript">
-	mwSetupToolbar('toolbar','review', false);
-</script>
-
+<div id="MainColumn">
+	<div class="blue_box">
+		<h2>edit review</h2>
+		<form class="form" action="<?php echo($this_url); ?>" method="POST">
+			<fieldset>
+				<div id="toolbar"></div>
+				<?php
+				if ($article['displayrevision'] != FALSE)
+					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
+				else
+					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
+				?>
+			</fieldset>
+			<fieldset>
+				<input type="submit" name="r_submit_save" value="Save Revision" />
+			</fieldset>
+		</form>
+	</div>
+	<script type="text/javascript">
+		mwSetupToolbar('toolbar','review', false);
+	</script>
 <!--
 <div class="grey_box">
 	<h2>change author</h2>
@@ -132,9 +125,5 @@ if ($user['officetype'] != 'Low')
 <?php
 }
 ?>
-
-<?php
-//echo '<pre>';
-//print_r($data);
-//echo '</pre>';
-?>
+<a href="/office/reviews/<?php echo $parameters['organisation']."/".$parameters['context_type']; ?>/review">Back to the reviews list</a>
+</div>

@@ -90,12 +90,12 @@ function print_middle_box($title,$article_array){
 	<div class="Entry">
 		<?php $todo->Load(); ?>
 	</div>
+	-->
 
 	<h2>York Weather</h2>
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
 	</div>
-	-->
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">

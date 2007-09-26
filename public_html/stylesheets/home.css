@@ -131,3 +131,11 @@ div.PufferBox * {
 div.PufferBox h2 {
 	color: white;
 }
+
+/* Weather */
+table#weather {
+	/* Don't make this 100%, IE breaks */
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}

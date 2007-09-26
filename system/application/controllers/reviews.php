@@ -124,8 +124,10 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -202,8 +204,10 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -300,7 +304,9 @@ class Reviews extends Controller
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
-
+		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
+		$data['empty_league'] = $this->pages_model->GetPropertyWikiText('empty_league');
+		
 		//Load slideshow model
 		$this->load->model('slideshow');
 
@@ -312,12 +318,13 @@ class Reviews extends Controller
 
 		//Find out the content_type
 		$content_type = $this->Review_model->GetLeagueType($league_code_name);
-
+		if(empty($content_type)){show_404();}
+		
 		//Get leagues from model
 		$leagues = $this->Review_model->GetLeague($league_code_name);
 
 		//Check for if zero
-		if (isset($leagues[0]['league_name']) == 1)
+		if (!empty($leagues))
 		{
 			//Set name of league
 			$data['league_name'] = $leagues[0]['league_name']; //They should all be from the same league
@@ -358,15 +365,25 @@ class Reviews extends Controller
 		else
 		{	//No rows returned
 			$data['max_entries'] = 0;
+			//Dont have nice title because there are no leagues, so force get it.
+			$data['league_name'] = $this->review_model->GetLeagueNiceName($league_code_name);
 		}
 
-		//Get other league table data
+		//Have nice title, use it.
+		$this->main_frame->SetTitleParameters(array(
+			'section_name' => ucfirst($content_type),
+			'league_name' => $data['league_name']
+		));
+		
+		//Get league data
 		$league_data = $this->Review_model->GetLeagueDetails($content_type);
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/image/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -374,6 +391,7 @@ class Reviews extends Controller
 		}
 
 		//Pass tabledata straight to view it is in the proper format
+		$data['content_type'] = $content_type;
 		$data['league_data'] = $leagues;
 
 

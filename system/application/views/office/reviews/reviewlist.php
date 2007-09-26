@@ -5,44 +5,45 @@
 	</div>
 </div>
 <div id="MainColumn">
-	<div id="DirectoryMain" class="blue_box">
-		<div style="display: none" id="LetterJump">
-		</div>
-		<div id="NotFound" style="display: none;">
-			<h3>No entries found</h3>
-			<p>Try a simpler search, different keywords, or include more filters.</p>
-		</div>
+	<div class="blue_box">
 		<?php
-		$currentLetter = '';
 		foreach($organisations as $organisation) {
-			$thisLetter = $organisation['name'][0];
-			$thisLetter = strtoupper($thisLetter);
-			if ($thisLetter < 'A' | $thisLetter > 'Z') {
-				$thisLetter = 'Symbol';
-			}
-
-			if ($thisLetter != $currentLetter) {
-				echo('		<div class="DirectoryList" id="DirectoryList'.$thisLetter.'">'."\n");
-				/*echo('			<hr />'."\n");*/
-				echo('		</div>'."\n");
-				$currentLetter = $thisLetter;
-			}
-
-			echo('		<div id="'.htmlspecialchars($organisation['shortname']).'">'."\n");
 			echo('			<h3>'."\n");
-			echo('				<a href="/'.htmlspecialchars($organisation['link']).'">'.htmlspecialchars($organisation['name']).'</a>'."\n");
-			/*echo('				<span>('.htmlspecialchars($organisation['type']).')</span>'."\n");*/
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
+			echo(htmlspecialchars($organisation['name']));
+			echo('</a>'."\n");
 			echo('			</h3>'."\n");
-			echo('			<div class="Date">');
-			
-				echo('			<div>'."\n");
-				echo('				Info Complete: '.htmlspecialchars($organisation['info_complete'])."\n<br />");
-				echo('				Date: '.htmlspecialchars($organisation['date_of_last_review'])."\n<br />");
-				echo('				Review Count: '.htmlspecialchars($organisation['review_count'])."\n<br />");
-				echo('				Assigned User: '.htmlspecialchars($organisation['assigned_user_name'])."\n<br />");
-				echo('			</div>'."\n");
-			
-			echo('		</div>'."\n");
+			echo('			<div class="Date">'."\n");
+			echo('				Information : ');
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
+			if(htmlspecialchars($organisation['info_complete'])){echo('Complete');}else{echo('Not complete');}
+			echo("\n".'</a><br />');
+			echo('				Number of reviews : ');
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/review">'."\n");
+			if(htmlspecialchars($organisation['review_count'])==0){
+				echo 'No complete reviews!';
+				echo("\n".'</a><br />');
+			}else{
+				echo htmlspecialchars($organisation['review_count']);
+				echo("\n".'</a><br />');
+				echo('					Date of last review: ');
+				echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/review">'."\n");
+				echo(htmlspecialchars($organisation['date_of_last_review'])."\n");
+				echo('				</a><br />');
+			}
+			echo('				Assigned User : ');
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">'."\n");
+			if(htmlspecialchars($organisation['assigned_user_name'])==''){echo 'No assigned user!';}else{echo htmlspecialchars($organisation['assigned_user_name']);}
+			echo("\n".'</a><br />');
+			echo('				Number of tags : ');
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/tags">'."\n");
+			if(htmlspecialchars($organisation['number_of_tags'])==0){echo 'No tags!';}else{echo htmlspecialchars($organisation['number_of_tags']);}
+			echo("\n".'</a><br />');
+			echo('				Number of '.$content_type_codename.' leagues : ');
+			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/leagues">'."\n");
+			if(htmlspecialchars($organisation['number_of_leagues'])==0){echo 'Not in any '.$content_type_codename.' leagues!';}else{echo htmlspecialchars($organisation['number_of_leagues']);}
+			echo("\n".'</a><br />');
+			echo('			</div>'."\n");
 		}
 		?>
 	</div>

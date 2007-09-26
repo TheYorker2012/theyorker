@@ -554,6 +554,8 @@ class Yorkerdirectory extends Controller
 				$data['current_group']['id'] = $business_card_group;
 				if ($group['business_card_group_id'] == $business_card_group) $data['current_group']['name'] = $group['business_card_group_name'];
 			}
+			//Make sure there are some groups to prevent view break on none.
+			if(empty($groups)){$data['no_groups']=true;}else{$data['no_groups']=false;}
 
 			// Members data
 			$members = $this->directory_model->GetDirectoryOrganisationCardsByGroupId($business_card_group, true);

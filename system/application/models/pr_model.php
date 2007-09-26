@@ -13,18 +13,19 @@ class Pr_model extends Model {
 	function GetContentTypeId($content_type_codename)
 	{
 		$sql = 'SELECT content_type_id FROM content_types WHERE content_type_codename = ?';
-
 		$query = $this->db->query($sql, $content_type_codename );
-
 		if ($query->num_rows() != 0) {
-
-			$query = $query->result_array();
-
-			$query = $query[0];
-
-			$content_type_id = $query['content_type_id'];
-
-			return $content_type_id;
+			return $query->row()->content_type_id;
+		} else {
+			return 0;
+		}
+	}
+	function GetContentTypeNiceName($content_type_codename)
+	{
+		$sql = 'SELECT content_type_name FROM content_types WHERE content_type_codename = ?';
+		$query = $this->db->query($sql, $content_type_codename );
+		if ($query->num_rows() != 0) {
+			return $query->row()->content_type_name;
 		} else {
 			return 0;
 		}
@@ -50,7 +51,27 @@ class Pr_model extends Model {
 			 review_context_contents.review_context_content_recommend_item IS NOT NULL AND
 			 review_context_contents.review_context_content_rating IS NOT NULL
 			) as info_complete,
-
+  	
+			(
+			 SELECT COUNT(*)
+			 FROM league_entries
+			 INNER JOIN leagues ON
+			  league_entries.league_entry_league_id = leagues.league_id
+			 WHERE league_entry_organisation_entity_id = organisations.organisation_entity_id 
+			 AND leagues.league_content_type_id = ? 
+			) as number_of_leagues,
+			
+			(
+			 SELECT COUNT(*)
+			 FROM organisation_tags
+			 INNER JOIN tags ON
+			  organisation_tags.organisation_tag_tag_id = tags.tag_id
+			 LEFT OUTER JOIN tag_groups ON
+			  tags.tag_id = tag_groups.tag_group_id
+			 WHERE organisation_tag_organisation_entity_id = organisations.organisation_entity_id 
+			 AND (tag_groups.tag_group_content_type_id = ? OR tag_groups.tag_group_content_type_id IS NULL)
+			) as number_of_tags,
+			
 			(
 			 SELECT MAX(article_publish_date)
 			 FROM articles
@@ -96,10 +117,13 @@ class Pr_model extends Model {
 
 		WHERE organisation_parent_organisation_entity_id IS NULL
 
-		ORDER BY info_complete, date_of_last_review ASC
+		ORDER BY info_complete ASC, 
+		date_of_last_review ASC,
+		number_of_tags ASC,
+		number_of_leagues ASC
 		';
 
-		$query = $this->db->query($sql, array($urlpath, $urlpostfix, $content_type, $content_type, $content_type) );
+		$query = $this->db->query($sql, array($urlpath, $urlpostfix, $content_type, $content_type, $content_type, $content_type, $content_type) );
 
 		return $query->result_array();
 
