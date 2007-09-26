@@ -51,12 +51,9 @@ class Reviewlist extends Controller
 		$data['organisations'] = $this->pr_model->GetReviewContextListFromId($content_type_id,'office/reviews/','/'.$content_type_codename.'/review');
 		$data['content_type_codename'] = $content_type_codename;
 		$data['search'] = $search_pattern;
-		
-		// Set up the directory view
-		$directory_view = $this->frames->view('office/reviews/reviewlist', $data);
 
 		// Set up the public frame to use the directory view
-		$this->main_frame->SetContent($directory_view);
+		$this->main_frame->SetContentSimple('office/reviews/reviewlist', $data);
 
 		// Include the javascript
 		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');

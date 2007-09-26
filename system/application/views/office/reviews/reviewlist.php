@@ -5,16 +5,9 @@
 	</div>
 </div>
 <div id="MainColumn">
-	<div id="DirectoryMain" class="blue_box">
-		<div style="display: none" id="LetterJump">
-		</div>
-		<div id="NotFound" style="display: none;">
-			<h3>No entries found</h3>
-			<p>Try a simpler search, different keywords, or include more filters.</p>
-		</div>
+	<div class="blue_box">
 		<?php
 		foreach($organisations as $organisation) {
-			echo('		<div id="'.htmlspecialchars($organisation['shortname']).'">'."\n");
 			echo('			<h3>'."\n");
 			echo('				<a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
 			echo(htmlspecialchars($organisation['name']));
