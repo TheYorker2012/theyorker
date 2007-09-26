@@ -182,6 +182,8 @@ class Leagues extends Controller
 	//Use image cropper to change an existing puffer image
 	function changeimage($id)
 	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
 		$this->load->library('image_upload');
 		$this->image_upload->automatic('/office/leagues/storechangeimage/'.$id, array('puffer'), false, false);
 	}
