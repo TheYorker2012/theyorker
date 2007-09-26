@@ -124,8 +124,10 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -202,8 +204,10 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/images/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -300,6 +304,9 @@ class Reviews extends Controller
 
 		//Set page code
 		$this->pages_model->SetPageCode('review_league');
+		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
+		$data['empty_league'] = $this->pages_model->GetPropertyWikiText('empty_league');
+		
 		//Load slideshow model
 		$this->load->model('slideshow');
 
@@ -368,13 +375,15 @@ class Reviews extends Controller
 			'league_name' => $data['league_name']
 		));
 		
-		//Get other league table data
+		//Get league data
 		$league_data = $this->Review_model->GetLeagueDetails($content_type);
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
+			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
 			$leagues[] = array(
-				'league_image_path'=> '/image/puffer/'.$league['league_image_id'],
+				'has_image' => $has_image,
+				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -382,6 +391,7 @@ class Reviews extends Controller
 		}
 
 		//Pass tabledata straight to view it is in the proper format
+		$data['content_type'] = $content_type;
 		$data['league_data'] = $leagues;
 
 

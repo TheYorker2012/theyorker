@@ -554,13 +554,19 @@ class Review_model extends Model {
 	//Returns a 2d array 0-> leagues.... 1-> leagues... etc...
 	function GetLeagueDetails($type)
 	{
-		$sql = "SELECT leagues.league_image_id,
+		$sql = "SELECT
+				images.image_id,
+				image_types.image_type_codename,
 				leagues.league_name,
 				leagues.league_size,
 				leagues.league_codename
 				FROM leagues
 				INNER JOIN content_types ON
-				content_types.content_type_id = leagues.league_content_type_id
+					content_types.content_type_id = leagues.league_content_type_id
+				LEFT OUTER JOIN images ON
+					leagues.league_image_id = images.image_id
+				LEFT OUTER JOIN image_types ON
+					images.image_image_type_id = image_types.image_type_id 
 				WHERE content_types.content_type_name = ?";
 		$query = $this->db->query($sql,$type);
 		return $query->result_array();

@@ -2,19 +2,23 @@
 if (isset($league_data)) {
 ?>
 <div id="RightColumn">
-	<h2 class="first">Leagues</h2>
-	<div class="Entry">
-	<ul>
-	<?php
-		foreach ($league_data as $league_entry) {
-			echo('		');
-			echo('<li><a href="/reviews/leagues/'.$league_entry['league_codename'].'">');
-			echo($league_entry['league_name']);
-			echo('</a></li>'."\n");
+<?php
+//If there are some leagues print em
+if (!empty($league_data)){
+	echo ('	<h2 class="first">'.$leagues_header.'</h2>'."\n");
+	echo ('	<div class="Puffer">'."\n");
+	foreach ($league_data as $league_entry) {
+		if($league_entry['has_image']){
+			//There is a puffer image, so use it
+		echo '		<img src=\'' . $league_entry['league_image_path'] . '\' alt=\'' . $league_entry['league_name'] . '\' title=\'' . $league_entry['league_name'] . '\' />';
+		}else{
+			//There is no puffer image, just put a text link
+		echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
 		}
-	?>
-	</ul>
-	</div>
+	}
+	echo ('	</div>'."\n");
+}
+?>
 </div>
 
 <div id="MainColumn">
@@ -32,8 +36,8 @@ if (isset($league_data)) {
 			</td>
 		</tr>
 		<tr>
-			<td>
-				This league is empty.
+			<td align='center' >
+				<?php echo $empty_league; ?>
 			</td>
 		</tr>
 		<?php	
@@ -177,6 +181,7 @@ if (isset($league_data)) {
 		</tbody>
 		</table>
 	</div>
+	<a href="/reviews/<?php echo $content_type; ?>/">Back to <?php echo ucfirst($content_type); ?> Homepage</a>
 </div>
 
 <?php
