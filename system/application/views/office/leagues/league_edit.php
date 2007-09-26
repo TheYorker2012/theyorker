@@ -6,6 +6,7 @@
 	<h2>Current Image</h2>
 	<div class="Entry" align='center'>
 		<?php echo $image; ?>
+		<p><a href="/office/leagues/changeimage/<?php echo $league_form['league_id']; ?>">Change/Add Image</a></p>
 	</div>
 </div>
 <div id="MainColumn">

@@ -180,6 +180,44 @@ class Articletypes extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
+	//Use image cropper to change an existing puffer image
+	function changeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('/office/articletypes/storechangeimage/'.$id, array('puffer'), false, false);
+	}
+	
+	//Store the id of from the image cropper to change an existing puffer image
+	function storechangeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		if(!empty($_SESSION['img'])){
+			//There seems to be an image session, try to get id.
+			foreach ($_SESSION['img'] as $Image) {
+				$image_id='';
+				if(empty($Image['list'])){
+					//There is no id to use, upload must have failed
+					//Clear image session so they can try again
+					unset($_SESSION['img']);
+					redirect('/office/articletypes/changeimage/'.$id);
+				}else{
+					//Success image id caught, so store
+					$this->Article_model->updateArticleSubTypeImage($id,$Image['list']);
+					//redirect back to the edit page where you started
+					redirect('/office/articletypes/edit/'.$id);
+				}
+				//Image session no longer needed
+				unset($_SESSION['img']);
+			}
+		}else{
+			//session is empty, try getting image again
+			redirect('/office/articletypes/changeimage/'.$id);
+		}
+	}
+	
 	function delete($id, $confirm='')
 	{
 		if (!CheckPermissions('editor')) return;
