@@ -1,13 +1,24 @@
 <div id="RightColumn">
-	<h2 class="first">Suggestions</h2>
+	<h2 class="first">Your Rep</h2>
 	<div class="Entry">
-		<h3>Advertising</h3>
-		<p>information goes here.</p>
-	</div>
+<?php
+	if ($rep['has_rep'] == true) {
+		echo('		<p>'."\n");
+		echo('			Your rep is: '.$rep['firstname'].' '.$rep['surname']."\n");
+		echo('		</p>'."\n");
+	}
+	else {
+		echo('		<p>'."\n");
+		echo('			You have no dedicated rep, so our pr officer '.$rep['name'].' is looking after you.'."\n");
+		echo('		</p>'."\n");
+	}
+?>
+		<p>
+<?php
+	echo('			<a href="'.vip_url('contactpr').'">Contact Your Rep</a>'."\n");
+?>
 
-	<h2>Reminders</h2>
-	<div class="Entry">
-		<p>information goes here.</p>
+		</p>
 	</div>
 </div>
 
@@ -15,15 +26,5 @@
 	<div class="BlueBox">
 		<h2>welcome</h2>
 		<?php echo($main_text); ?>
-	</div>
-	<div class="BlueBox">
-		<h2>My Tasks</h2>
-		<ul>
-			<li><a href='<?php echo vip_url('directory/information'); ?>'>Edit the directory entry</a></li>
-			<li><a href='<?php echo vip_url('calendar/'); ?>'>Manage events</a></li>
-			<?php if($enable_members == TRUE){?>
-			<li><a href='<?php echo vip_url('members'); ?>'>Manage members</a></li>
-			<?php }?>
-		</ul>
 	</div>
 </div>

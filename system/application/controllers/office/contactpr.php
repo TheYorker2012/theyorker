@@ -32,6 +32,7 @@ class ContactPR extends Controller
 			$rep['has_rep'] = true;
 		}
 		else {
+			$rep['name'] = $this->config->item('pr_officer_name');
 			$rep['email'] = $this->config->item('pr_officer_email_address');
 			$rep['has_rep'] = false;
 		}
