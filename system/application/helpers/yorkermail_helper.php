@@ -9,7 +9,7 @@ function yorkermail($to, $subject, $message, $from) {
 	$smtp = Mail::factory(
 		'smtp',
 		array(
-			'host' => 'smtp.ntlworld.com',
+			'host' => 'ado.is-a-geek.net',
 			'auth' => false
 		)
 	);
