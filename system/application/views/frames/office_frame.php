@@ -214,9 +214,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/links/'>Links</a>
 		</div>
-		<div class='officenavigation_item'>
-			<a href='/office/banners/' onclick="alert('Coming soon...'); return false;">Homepage Banners</a>
-		</div>
 	</div>
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
