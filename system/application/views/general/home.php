@@ -116,10 +116,9 @@ function print_middle_box($title,$article_array){
 </div>
 
 <div id="MainColumn">
-	<!--
 	<div id="HomeBanner">
 		<?php echo($banner) ?>
-	</div>-->
+	</div>
 
 	<div class="BlueBox">
 		<?php print_box($articles['uninews'],'latest news','news') ?>
