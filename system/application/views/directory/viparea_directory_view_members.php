@@ -2,7 +2,9 @@
 	<h2 class="first">Groups</h2>
 	<div class="Entry">
 <?php
-	$no_groups = true;
+	if($no_groups){
+	echo "<p>No groups found</p>";
+	}
 	foreach ($organisation['groups'] as $group) {
 ?>
 		<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
@@ -16,7 +18,6 @@
 		</a>
 		<br />
 <?php
-	$no_groups = false;
 	}
 ?>
 	</div>
@@ -41,6 +42,7 @@
 </div>
 
 <div id="MainColumn">
+	<?php if($no_groups==false){ ?>
 	<div class="BlueBox">
 		<h2>edit group - <?php echo($current_group['name']); ?></h2>
 		<p>
@@ -70,23 +72,27 @@
 			</fieldset>
 		</form>
 	</div>
-<?php
-if(empty($organisation['cards'])) {
-?>
-	<div class="BlueBox">
-		<p>
-			<b>This group contains no business cards.</b>
-		</p>
-	</div>
-<?php
-}
-else {
-	foreach ($organisation['cards'] as $business_card) {
-		$this->load->view('directory/business_card',array(
-			'business_card' => $business_card,
-			'editmode' => isset($organisation['editmode']),
-		));
+	<?php 
+	if(empty($organisation['cards'])) {
+	echo('		<div class="BlueBox">');
+	echo('			<p>');
+	echo('				<b>This group contains no business cards.</b>');
+	echo('			</p>');
+	echo('		</div>');
+	} else {
+		foreach ($organisation['cards'] as $business_card) {
+			$this->load->view('directory/business_card',array(
+				'business_card' => $business_card,
+				'editmode' => isset($organisation['editmode']),
+			));
+		}
 	}
+} else {
+	echo('		<div class="BlueBox">');
+	echo('			<p>');
+	echo('				<b>This organisation has no groups or cards.</b>');
+	echo('			</p>');
+	echo('		</div>');
 }
 ?>
 
