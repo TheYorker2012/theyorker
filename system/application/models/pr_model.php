@@ -543,6 +543,7 @@ class Pr_model extends Model {
 					AND		organisations.organisation_directory_entry_name = ?';
 			$query2 = $this->db->query($sql,array($shortname, $shortname));
 			$row2 = $query2->row();
+			$result = array();
 			if ($query2->num_rows() == 1)
 			{
 				$result['info']['id'] = $row1->organisation_entity_id;

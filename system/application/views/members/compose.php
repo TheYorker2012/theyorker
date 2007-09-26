@@ -34,7 +34,7 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2>Compose Email</h2>
+		<h2>compose email</h2>
 <?php
 	echo('		<form id="member_select_form" action="'.$target.'" method="post" class="form">'."\n");
 ?>
@@ -75,11 +75,11 @@
 				<input type="button" id="r_submit_add_member" value="Add" onclick="addNameToSend()" />
 				<label for="a_subject">Subject:</label>
 <?php
-	echo('				<input type="text" name="a_subject" id="a_subject" style="width: 250px;" value="'.$subject.'" />'."\n");
+	echo('				<input type="text" name="a_subject" id="a_subject" style="width: 357px;" value="'.$subject.'" />'."\n");
 ?>
 				<label for="a_content">Message:</label>
 <?php
-	echo('				<textarea name="a_content" id="a_content" rows="10" cols="28">'.$content.'</textarea>'."\n");
+	echo('				<textarea name="a_content" id="a_content" rows="10" cols="42">'.$content.'</textarea>'."\n");
 ?>
 			</fieldset>
 			<fieldset>

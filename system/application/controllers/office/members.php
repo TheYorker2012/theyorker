@@ -209,7 +209,7 @@ class Members extends Controller
 					case 'send_email':
 						//no info message needed just route
 						$_SESSION['members_email_to'] = $selected_members;
-						redirect('/office/manage/members/compose/');
+						redirect(vip_url('members/compose/'));
 						break;
 					case 'accept_join_request':
 						$affected = implode(', ', $users_affected);
@@ -892,8 +892,6 @@ class Members extends Controller
 	{
 		if (!CheckPermissions('vip')) return;
 		
-		$this->messages->AddMessage('error', 'Email sending is not working at the moment.');
-		
 		//add any members in the session to the list of recipients
 		if (is_array($_SESSION['members_email_to'])) {
 			$members = $_SESSION['members_email_to'];
@@ -910,12 +908,17 @@ class Members extends Controller
 		if (!empty($_POST)) {
 			$selected_members = array();
 			//make an array of selected member ids where checked boxes are ticked
-			foreach($_POST['cb'] as $key => $value)
-			{
-				if ($value = 'on')
+			if (isset($_POST['cb'])) {
+				foreach($_POST['cb'] as $key => $value)
 				{
-					$selected_members[] = $key;
+					if ($value = 'on')
+					{
+						$selected_members[] = $key;
+					}
 				}
+			}
+			else {
+				$selected_members = array();
 			}
 			
 			if (count($selected_members) == 0)
@@ -934,9 +937,25 @@ class Members extends Controller
 			}
 			else {
 				//no errors so send the email
-				//$this->load->helper('yorkermail');
-				//$to, $subject, $message, $from
-				//$this->yorkermail->yorkermail("ri504@york.ac.uk", "subject", "this is a test", "webmaster@theyorker.co.uk");
+				$this->load->helper('yorkermail');
+				foreach($selected_members as $member) {
+					$member_emails[] = $this->members_model->GetMemberEmail($member);
+				}
+				$to = implode(',', $member_emails);
+				$from = $this->members_model->GetMemberEmail($this->user_auth->entityId);
+				$from = VipOrganisationName().' <'.$from.'>';
+				//try to send the email, report fail if error occurs
+				try {
+					yorkermail(
+						$to,
+						$_POST['a_subject'],
+						$_POST['a_content'],
+						$from);
+					$this->messages->AddMessage('success', 'The email has been sent.');
+				}
+				catch (Exception $e) {
+					$this->main_frame->AddMessage('error', $e->getMessage() );
+				}
 			}
 		}
 
@@ -950,7 +969,8 @@ class Members extends Controller
 			'target'		=> $this->uri->uri_string(),
 			'to_members'	=> $members,
 			'subject'		=> $subject,
-			'content'		=> $content
+			'content'		=> $content,
+			'from'			=> VipOrganisationName().' <'.$this->members_model->GetMemberEmail($this->user_auth->entityId).'>'
 			);
 			
 		// get member details
