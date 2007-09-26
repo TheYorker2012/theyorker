@@ -33,7 +33,10 @@ class Index extends Controller
 			}
 		}
 
+		//from the editor message
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		
+		//requests table data
 		$data['my_requests'] = $all_requests;
 
 		// Set up the content

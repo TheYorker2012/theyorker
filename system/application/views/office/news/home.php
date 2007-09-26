@@ -72,20 +72,20 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 }
 ?>
 
-	<div class="RightToolbar">
-		<h4><?php echo $tasks_heading; ?></h4>
-		<div class="Entry">
-			<ul>
-				<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
-				<li><a href="/office/news/create">Create New Article</a></li>
-			</ul>
-		</div>
+<div class="RightToolbar">
+	<h4><?php echo $tasks_heading; ?></h4>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
+			<li><a href="/office/news/create">Create New Article</a></li>
+		</ul>
 	</div>
+</div>
 
 	<div class="blue_box">
 		<h2>from the editor</h2>
 		<p>
-			text here
+			<?php echo $main_text; ?>
 		</p>
 	</div>
 

@@ -110,6 +110,9 @@ class News extends Controller
 		} else {
 			$data['tasks']['request'] = $this->pages_model->GetPropertyText('news_office:tasks_request', TRUE);
 		}
+		
+		//from the editor message
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext($type_info['codename'].'_main_text');
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('office/news/home', $data);
