@@ -67,8 +67,7 @@ class Reviews extends Controller
 
 		$data = $this->organisations->_GetOrgData($organisation);
 
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		// Read any post data
 		if ($this->input->post('create_confirm')) {
