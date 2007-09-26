@@ -115,7 +115,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="<?php echo vip_url('account'); ?>">Settings</a></li>
-					<li><a href="<?php echo vip_url('advertising'); ?>" onclick="alert('Coming soon...'); return false;">Advertising</a></li>
 					<li><a href="<?php echo vip_url('contactpr'); ?>">Contact PR Rep</a></li>
 				</ul>
 				<?php
