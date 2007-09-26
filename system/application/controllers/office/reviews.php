@@ -4,6 +4,7 @@
 /**
  * @author Nick Evans (nse500@cs.york.ac.uk)
  * @author Frank Burton (frb501@cs.york.ac.uk)
+ *@new_author Owen Jones (oj502@cs.york.ac.uk)
  *
  * The URI is mapped using config/routes.php
  *
@@ -37,14 +38,14 @@ class Reviews extends Controller
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('information', 'Information',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
+		$navbar->AddItem('reviews', 'Reviews',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
+		$navbar->AddItem('photos', 'Photos',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
 		$navbar->AddItem('tags', 'Tags',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/tags');
 		$navbar->AddItem('leagues', 'Leagues',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/leagues');
-		$navbar->AddItem('photos', 'Photos',
-						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
-		$navbar->AddItem('reviews', 'Reviews',
-						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/review');
 		$navbar->AddItem('comments', 'Comments',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/comments');
 	}
@@ -147,6 +148,7 @@ class Reviews extends Controller
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		$data['context_type'] = $ContextType;
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('information');
@@ -357,7 +359,18 @@ class Reviews extends Controller
 				$data['main_revision']['deal'] = '';
 				$data['main_revision']['deal_expires'] = '';
 			}
-			//$this->messages->AddDumpMessage('data',$data);
+			
+			//get reviews for areas for attention
+			$this->load->model('requests_model');
+			$this->load->model('article_model');
+			$temp_reviews = $this->review_model->GetOrgReviews($ContextType, $data['organisation']['id']);
+			foreach($temp_reviews as $review)
+			{
+				$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
+				$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
+				$temp['article']['id'] = $review['id'];
+				$data['reviews'][] = $temp;
+			}
 
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
@@ -393,15 +406,14 @@ class Reviews extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		$this->pages_model->SetPageCode('office_reviews_tags');
+		$this->pages_model->SetPageCode('office_review_tags');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('tags');
 
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//Pass organisation name to the page for submitting to add/del tag
 		$data['organisation_name'] = $organisation;
@@ -421,7 +433,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => ucfirst($ContextType)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -449,15 +461,14 @@ class Reviews extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		$this->pages_model->SetPageCode('office_reviews_leagues');
+		$this->pages_model->SetPageCode('office_review_leagues');
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
 		$this->_SetupNavbar($organisation,$ContextType);
 		$this->main_frame->SetPage('leagues');
 
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//Pass organisation name to the page for submitting to add/del tag
 		$data['organisation_name'] = $organisation;
@@ -482,7 +493,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => ucfirst($ContextType)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -559,7 +570,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-					  'content_type' => $ContextType));
+					  'content_type' => ucfirst($ContextType)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -574,9 +585,11 @@ class Reviews extends Controller
 		$this->load->model('businesscards_model');
 		$this->load->model('article_model');
 		$this->pages_model->SetPageCode('office_review_reviews');
+		
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		$this->_SetupNavbar($organisation, $context_type);
 		$this->main_frame->SetPage('reviews');
 
@@ -667,7 +680,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $context_type));
+						'content_type' => ucfirst($context_type)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -685,6 +698,7 @@ class Reviews extends Controller
 
 		//Get navigation bar and tell it the current page
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		$this->_SetupNavbar($organisation,$context_type);
 		$this->main_frame->SetPage('reviews');
 
@@ -837,7 +851,7 @@ class Reviews extends Controller
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $context_type));
+						'content_type' => ucfirst($context_type)));
 		$this->main_frame->SetContent($the_view);
 
 		// Load the public frame view
@@ -855,6 +869,9 @@ class Reviews extends Controller
 		//This needs to be altered to throw errors incase of unknown content_types...
 		$content_id = $this->review_model->GetContentTypeID($ContextType);
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['context_type'] = $ContextType;
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		$organisation_id = $data['organisation']['id'];
 
 		$this->load->library('comment_views');
@@ -865,50 +882,10 @@ class Reviews extends Controller
 		$this->main_frame->SetContentSimple('reviews/office_review_comments', $data);
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
-						'content_type' => $ContextType));
+						'content_type' => ucfirst($ContextType)));
 
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-
-
-	// These are all the edit pages for the admin panel
-	// Additional controllers will be required
-
-	/*function edit()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$data['title_image'] = 'images/prototype/reviews/reviews_01.gif';
-
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit');
-		$this->main_frame->SetContentSimple('reviews/mainedit', $data);
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	function editsection()
-	{
-		if (!CheckPermissions('public')) return;
-
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit Section');
-		$this->main_frame->SetContentSimple('reviews/sectionedit');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-	function editreview()
-	{
-		if (!CheckPermissions('public')) return;
-
-		// Set up the public frame
-		$this->main_frame->SetTitle('Edit Review');
-		$this->main_frame->SetContentSimple('reviews/reviewedit');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}*/
 }
 ?>
