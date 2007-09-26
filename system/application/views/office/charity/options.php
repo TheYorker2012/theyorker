@@ -38,9 +38,9 @@
 </div>
 
 <?php
-
+/*
 echo('<div class="BlueBox"><pre>');
 print_r($data);
 echo('</pre></div>');
-
+*/
 ?>
