@@ -7,9 +7,6 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>create new subtypes</h2>
-		<pre>
-		<?php print_r($image_preview); ?>
-		</pre>
 		<form method="post" action="/office/articletypes/create">
 			<fieldset>
 				<label for="article_type_image_id">Image:</label>

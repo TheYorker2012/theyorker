@@ -87,7 +87,8 @@ class Articletypes extends Controller
 				}else{
 					//create article type
 					$image_id=$_POST['article_type_image_id'];
-					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$_POST['article_type_archive'],$_POST['article_type_blurb']);
+					if(empty($_POST['article_type_archive'])){$archive=0;}else{$archive=1;}
+					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$archive,$_POST['article_type_blurb']);
 					$this->messages->AddMessage('success','New article type created.');
 					redirect('/office/articletypes');
 				}
@@ -97,10 +98,24 @@ class Articletypes extends Controller
 				$data['image_preview']="<b>No image selected.</b>";
 				$data['article_type_form']['article_type_image_id'] = "";
 			}else{
-				foreach ($_SESSION['img'] as $Image) {
-					$data['image_preview']= $_SESSION['img'];
-					//$data['article_type_form']['article_type_image_id'] = $Image['id'];
-					unset($_SESSION['img']);
+				if(!empty($_SESSION['img'])){
+					//There seems to be an image session, try to get id.
+					foreach ($_SESSION['img'] as $Image) {
+						$image_id='';
+						if(empty($Image['list'])){
+							//There is no id to use, upload must have failed
+							//Clear image session so they can try again
+							unset($_SESSION['img']);
+							$data['image_preview']="<b>No image selected.</b>";
+							$data['article_type_form']['article_type_image_id'] = "";
+						}else{
+							//Success image id caught, so preview
+							$data['image_preview']= '<img src="/image/puffer/'.$Image['list'].'" alt="Preview" title="Preview">';
+							$data['article_type_form']['article_type_image_id'] = $Image['list'];
+						}
+						//Image session no longer needed
+						unset($_SESSION['img']);
+					}
 				}
 			}
 			$this->pages_model->SetPageCode('office_articletypes');
