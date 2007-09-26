@@ -19,7 +19,6 @@ if (isset($league_data)) {
 
 <div id="MainColumn">
 	<div class="BlueBox">		<h2><?php if (isset($league_name) == 1) { echo($league_name); } else { echo('League'); }?></h2>
-		<p>Read our latest reviews from all around york! </p>
 		<table border="0" width="97%">
 		<tbody>
 		<?php
@@ -34,13 +33,14 @@ if (isset($league_data)) {
 		</tr>
 		<tr>
 			<td>
-				No Results.
+				This league is empty.
 			</td>
 		</tr>
 		<?php	
 		}
 		else
-		{		
+		{	
+			$count=1;
 			foreach($reviews as $entry)
 			{
 		
@@ -56,9 +56,9 @@ if (isset($league_data)) {
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><a href="<?php echo($entry['review_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
+						<font size="+1"><strong><?php echo $count.") "; ?><a href="<?php echo($entry['review_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
 						<br />
-						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
+						<span style="color: #999999; font-size: 0.9em;" >&nbsp;&nbsp;<a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
 					<td width="126" align="center">
 						<?php
@@ -170,7 +170,7 @@ if (isset($league_data)) {
 			</td>
 		</tr>
 		<?php
-		
+			$count++;
 			}		
 		}
 		?>
