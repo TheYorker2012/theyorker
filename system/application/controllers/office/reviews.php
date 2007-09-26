@@ -18,6 +18,7 @@ class Reviews extends Controller
 		$this->load->library('organisations');
 		$this->load->model('directory_model');
 		$this->load->model('review_model');
+		$this->load->model('leagues_model');
 
 		$this->load->helper('text');
 		$this->load->helper('wikilink');
@@ -38,6 +39,8 @@ class Reviews extends Controller
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/information');
 		$navbar->AddItem('tags', 'Tags',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/tags');
+		$navbar->AddItem('leagues', 'Leagues',
+						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/leagues');
 		$navbar->AddItem('photos', 'Photos',
 						 '/office/reviews/'.$DirectoryEntry.'/'.$ContextType.'/photos');
 		$navbar->AddItem('reviews', 'Reviews',
@@ -414,6 +417,67 @@ class Reviews extends Controller
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_tags', $data);
+
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(
+				array('organisation' => $data['organisation']['name'],
+						'content_type' => $ContextType));
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
+	function addleague()
+	{
+		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
+		$league_id = $_POST['league_id'];
+
+		$this->leagues_model->AddToLeague($league_id, $organisation_id);
+		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/leagues');
+	}
+
+	function delleague()
+	{
+		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
+		$league_id = $_POST['league_id'];
+		
+		$this->leagues_model->RemoveFromLeague($league_id, $organisation_id);
+		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/leagues');
+	}
+	
+	function leagues($ContextType, $organisation)
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->pages_model->SetPageCode('office_reviews_leagues');
+
+		//Get navigation bar and tell it the current page
+		$data = $this->organisations->_GetOrgData($organisation);
+		$this->_SetupNavbar($organisation,$ContextType);
+		$this->main_frame->SetPage('leagues');
+
+		// Insert main text from pages information (sample)
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+
+		//Pass organisation name to the page for submitting to add/del tag
+		$data['organisation_name'] = $organisation;
+
+		//Pass content type to the page for redirecting after submitting a tag
+		$data['context_type'] = $ContextType;
+
+		//Get a list of the tags for this organisation
+		$data['existing_leagues'] = $this->leagues_model->GetVenuesLeagues($data['organisation']['id']);
+		
+		//Get a list of tags which can be added
+		$all_leagues = $this->leagues_model->GetAllLeaguesSimple($data['organisation']['id']);
+		$data['new_leagues'] = array();
+		foreach ($all_leagues as $league){
+			if($this->leagues_model->IsVenueInLeague($league['id'],$data['organisation']['id'])==false){
+				$data['new_leagues'][] = $league;
+			}
+		}
+		// Set up the view
+		$the_view = $this->frames->view('reviews/office_review_leagues', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(

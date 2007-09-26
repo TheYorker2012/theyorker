@@ -56,30 +56,31 @@ function print_middle_box($title,$article_array){
 	</div>
 
 	<h2>Search the Web</h2>
-	<!-- Search Google -->
-	<form method="get" action="http://www.google.co.uk/search">
-		<div class="Entry">
+	<div class="Entry">
+		<form method="get" action="http://www.google.co.uk/search">
 			<input type="hidden" name="ie" value="UTF-8" />
 			<input type="hidden" name="oe" value="UTF-8" />
 			<a href="http://www.google.co.uk/">
 				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
 			</a>
-			<input type="text" name="q" size="16" maxlength="255" value="" />
-			<input type="submit" name="btnG" value="Search" />
-		</div>
-	</form>
-	<!-- Search Google -->
-
-	<h2>My Webmail </h2>
-	<a class="MailLogo" href="https://webmail.york.ac.uk">
-		<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
-	</a>
-	<div class="Entry">
-			<p class="MailText">
-				<a href="https://webmail.york.ac.uk/">E-mail</a>
-			</p>
+			<fieldset class="inline">
+				<input type="text" name="q" value="" />
+				<input type="submit" class="button" name="btnG" value="Search" />
+			</fieldset>
+		</form>
 	</div>
 
+	<h2>My Webmail </h2>
+	<div class="Entry">
+		<a class="MailLogo" href="https://webmail.york.ac.uk">
+			<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
+		</a>
+		<p class="MailText">
+			<a href="https://webmail.york.ac.uk/">E-mail</a>
+		</p>
+	</div>
+
+	<!--
 	<h2>Upcoming Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
@@ -94,6 +95,7 @@ function print_middle_box($title,$article_array){
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
 	</div>
+	-->
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
@@ -102,9 +104,10 @@ function print_middle_box($title,$article_array){
 </div>
 
 <div id="MainColumn">
+	<!--
 	<div id="HomeBanner">
 		<?php echo($banner) ?>
-	</div>
+	</div>-->
 
 	<div class="BlueBox">
 		<?php print_box($articles['uninews'],'latest news','news') ?>

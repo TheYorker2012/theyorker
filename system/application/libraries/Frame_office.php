@@ -13,6 +13,9 @@ $CI->load->library('frame_public');
 /// Main office frame library class.
 class Frame_office extends Frame_public
 {
+	/// disable adverts for the office frame
+	protected $mHasAdverts = FALSE;
+	
 	/// Default constructor.
 	function __construct()
 	{

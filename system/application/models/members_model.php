@@ -6,6 +6,7 @@ class Members_model extends Model {
 		parent::Model();
 	}
 	
+	//returns the members name
 	function GetMemberName($user_id)
 	{
 		$sql = 'SELECT
@@ -20,6 +21,25 @@ class Members_model extends Model {
 		{
 			$row = $query->row();
 			return $row->firstname.' '.$row->surname;
+		}
+		else
+			return FALSE;
+	}
+	
+	//returns the members email address
+	function GetMemberEmail($user_id)
+	{
+		$sql = 'SELECT
+					entities.entity_username AS email
+				FROM
+					entities
+				WHERE
+					entities.entity_id = ?';
+		$query = $this->db->query($sql, array($user_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->email.'@york.ac.uk';
 		}
 		else
 			return FALSE;
