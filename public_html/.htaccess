@@ -3,4 +3,3 @@ RewriteEngine on
 RewriteCond $1 !^(index\.php|tmp|images|stylesheets|javascript|js|doxygen|facebook|robots\.txt)
 RewriteRule ^(.*)$ index.php/$1 [L]
 </IfModule>
-ServerSignature Off

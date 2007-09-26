@@ -23,7 +23,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/general.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/search.css" rel="stylesheet" type="text/css" />
 
 	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
@@ -77,32 +76,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 	</div>
 	<div style="background-color: #fff;">
-		<form id="site_search" name='site_search' action='/search' method='post' style='display:inline; '>
+		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
 		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding: 2px; margin: 0px; margin-left: 0px;'>
-			<input type="text" name="site-search" id="site-search" onblur="search_onBlur()" onfocus="search_onFocus()" onkeyup="search_onKeyUp()" title="search the Site" value="search" autocomplete="off" />
-			<div id="ajax-results" onMouseOver="if (isMouseLeaveOrEnter(event, this)) {active=true;}" onMouseOut="if (isMouseLeaveOrEnter(event, this)) {search_Close(false); active=false;}">
-				<p class="note"><a href="javascript:search_noShow(0)">toggle</a></p>
-				<h1>Articles</h1>
-				<ul id="ajax-articles">
-					<li>No results found</li>
-				</ul>
-				<p class="note"><a href="javascript:search_noShow(1)">toggle</a></p>
-				<h1>Directory</h1>
-				<ul id="ajax-dir">
-					<li>No results found</li>
-				</ul>
-				<p class="note"><a href="javascript:search_noShow(2)">toggle</a></p>
-				<h1>Events</h1>
-				<ul id="ajax-events">
-					<li>No results found</li>
-				</ul>
-				<p class="note"><a href="javascript:search_noShow(3)">toggle</a></p>
-				<h1>Yorkipedia</h1>
-				<p class="extraLogin">Login to see your own events here</p>
-				<ul id="ajax-york">
-					<li>No results found</li>
-				</ul>
-			</div>
+			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' />
+			<input type="text" style="float: right; color: #20c1f0; font-size: 12px; width: 100px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
 		</div>
 		</form>
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >

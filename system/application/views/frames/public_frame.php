@@ -26,7 +26,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-	<link href="/stylesheets/search.css" rel="stylesheet" type="text/css" />
 
 	<?php
 	if (isset($extra_css)) {
@@ -78,31 +77,14 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 	<div id="Page">
 		<div id="NavigationColumn">
-			<form method="post" id="site_search" action="/search">
-				<input type="text" name="site-search" id="site-search" onblur="search_onBlur()" onfocus="search_onFocus()" onkeyup="search_onKeyUp()" title="search the Site" value="search" autocomplete="off" />
-				<div id="ajax-results" onMouseOver="if (isMouseLeaveOrEnter(event, this)) {active=true;}" onMouseOut="if (isMouseLeaveOrEnter(event, this)) {search_Close(false); active=false;}">
-					<p class="note"><a href="javascript:search_noShow(0)">toggle</a></p>
-					<h1>Articles</h1>
-					<ul id="ajax-articles">
-						<li>No results found</li>
-					</ul>
-					<p class="note"><a href="javascript:search_noShow(1)">toggle</a></p>
-					<h1>Directory</h1>
-					<ul id="ajax-dir">
-						<li>No results found</li>
-					</ul>
-					<p class="note"><a href="javascript:search_noShow(2)">toggle</a></p>
-					<h1>Events</h1>
-					<ul id="ajax-events">
-						<li>No results found</li>
-					</ul>
-					<p class="note"><a href="javascript:search_noShow(3)">toggle</a></p>
-					<h1>Yorkipedia</h1>
-					<p class="extraLogin">Login to see your own events here</p>
-					<ul id="ajax-york">
-						<li>No results found</li>
-					</ul>
-				</div>
+			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
+				<fieldset>
+					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+					<input type="hidden" name="cof" value="FORID:0" />
+				</fieldset>
+				<fieldset id="SearchBox">
+					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+				</fieldset>
 			</form>
 			<div id="NavigationMenu">
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
