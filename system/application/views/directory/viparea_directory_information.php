@@ -35,33 +35,39 @@
 	</div>
 <?php } ?>
 
-	<h2>Revisions</h2>
+	<h2>Revisions (Newest First)</h2>
 	<div class="Entry">
-		<ol>
-		<?php foreach($revisions as $revison) {
-			echo '<li>';
-			if ($revison['deleted']){echo '<span class="red">';}
-				echo 'Author : '.$revison['author'].'<br />';
-				echo 'Created : '.$revison['timestamp'].'<br />';
-				if ($organisation['revision_id'] == $revison['id']) {
-					echo ' <b>(Editing)</b>';
-				} else {
-					echo ' <a href="'.vip_url('directory/information/view');
-					if ($revison['deleted']){echo 'all';}
-					echo '/'.$revison['id'].'">Edit</a>';
+<?php
+	$first = false;
+	foreach($revisions as $revison) {
+		if (!$first) {
+			$first = true;
+		}
+		else {
+			echo('			<hr />'."\n");
+		}
+		if ($revison['deleted']){echo('<span class="red">'."\n");}
+			echo('Created : '.$revison['timestamp'].'<br />'."\n");
+			echo('Author : '.$revison['author'].'<br />'."\n");
+			if ($organisation['revision_id'] == $revison['id']) {
+				echo(' <b>(Editing)</b>'."\n");
+			} else {
+				echo(' <a href="'.vip_url('directory/information/view'));
+				if ($revison['deleted']){echo('all');}
+				echo('/'.$revison['id'].'">[View This Revision]</a>'."\n");
+			}
+			/*
+			echo(' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview');
+			if (!$revison['published'] && $user_is_editor) {
+				echo(' &amp; Publish');
+			}
+			echo('</a>');*/
+				if ($revison['published']==true){
+					echo(' <span class="orange">(Published)</span>');
 				}
-				echo(' <a href="'.vip_url('directory/information/preview/'.$revison['id']).'">Preview');
-				if (!$revison['published'] && $user_is_editor) {
-					echo(' &amp; Publish');
-				}
-				echo('</a>');
-					if ($revison['published']==true){
-						echo ' <span class="orange">(Published)</span>';
-					}
-			if ($revison['deleted']){echo '</span>';}
-			echo '</li>';
-		}?>
-		</ol>
+		if ($revison['deleted']){echo '</span>';}
+	}
+?>
 		<?php
 		if ($show_show_all_revisions_option){
 			if ($show_all_revisions){
@@ -70,6 +76,7 @@
 				echo '<p><a href="'.vip_url('directory/information/viewall').'">Include deleted revisions.</a></p>';
 			}
 		}
+		echo('<h2>About Revisions</h2>'."\n");
 		echo($revisions_information_text);
 		?>
 	</div>
@@ -154,8 +161,16 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 
 		</fieldset>
 		<fieldset>
-			<input type="submit" name="submitbutton" id="submitbutton" value="Create new revision" class="button" />
+			<input type="submit" name="submitbutton" id="submitbutton" value="Save And Preview" class="button" />
 		</fieldset>
 	</div>
 	</form>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>
