@@ -69,6 +69,7 @@ class Members extends Controller
 		$this->load->model('businesscards_model');
 		$this->load->model('organisation_model');
 		$this->load->model('members_model');
+		$this->load->model('directory_model');
 		$this->load->library('organisations');
 
 		$this->mAllTeams = NULL;
@@ -902,8 +903,9 @@ class Members extends Controller
 		}
 		
 		//set the defaults for the email
+		$signature = $this->directory_model->GetOrganisationEmailSignature(VIPOrganisation());
 		$subject = '';
-		$content = '';
+		$content = "\r\r".$signature;
 		
 		if (!empty($_POST)) {
 			$selected_members = array();
@@ -924,6 +926,8 @@ class Members extends Controller
 			if (count($selected_members) == 0)
 			{
 				$this->messages->AddMessage('error', 'You must select some members to send the email to.');
+				$content = $_POST['a_content'];
+				$subject = $_POST['a_subject'];
 			}
 			else if ($_POST['a_subject'] == '') {
 				$this->messages->AddMessage('error', 'You must enter a subject for the email.');
@@ -970,7 +974,7 @@ class Members extends Controller
 			'to_members'	=> $members,
 			'subject'		=> $subject,
 			'content'		=> $content,
-			'from'			=> VipOrganisationName().' <'.$this->members_model->GetMemberEmail($this->user_auth->entityId).'>'
+			'from'			=> VipOrganisationName().' <'.$this->members_model->GetMemberEmail($this->user_auth->entityId).'>',
 			);
 			
 		// get member details

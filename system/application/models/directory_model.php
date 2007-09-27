@@ -711,5 +711,41 @@ class Directory_model extends Model {
 			));
 		return ($this->db->affected_rows() > 0);
 	}
+	
+	/* 
+	* Gets the organisations signature from the database
+	*/
+	function GetOrganisationEmailSignature($dir_entry_name)
+	{
+		$sql = 'SELECT
+					organisation_email_signature as signature
+				FROM
+					organisations
+				WHERE
+					organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql, array($dir_entry_name));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->signature;
+		}
+		else
+			return FALSE;
+	}
+	
+	/* 
+	* Sets the organisations signature in the database
+	*/
+	function UpdateOrganisationEmailSignature($dir_entry_name, $signature)
+	{
+		$sql = 'UPDATE
+					organisations
+				SET
+					organisation_email_signature = ?
+				WHERE
+					organisation_directory_entry_name = ?';
+		$query = $this->db->query($sql, array($signature, $dir_entry_name));
+		return TRUE;
+	}
 }
 ?>
