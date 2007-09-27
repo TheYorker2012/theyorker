@@ -893,7 +893,7 @@ class Members extends Controller
 		if (!CheckPermissions('vip')) return;
 		
 		//add any members in the session to the list of recipients
-		if (is_array($_SESSION['members_email_to'])) {
+		if (isset($_SESSION['members_email_to']) && is_array($_SESSION['members_email_to'])) {
 			$members = $_SESSION['members_email_to'];
 			$_SESSION['members_email_to'] = NULL; //clear the send list
 		}

@@ -1,5 +1,50 @@
+<script type="text/javascript">
+	//<![CDATA[
+	
+	function showEditGroup() {
+		document.getElementById('WrapEditGroup').style.display = 'block';
+		document.getElementById('WrapViewGroups').style.display = 'none';
+		document.getElementById('WrapAddToGroup').style.display = 'none';
+	}
+	
+	function showViewGroups() {
+		document.getElementById('WrapEditGroup').style.display = 'none';
+		document.getElementById('WrapViewGroups').style.display = 'block';
+		document.getElementById('WrapAddToGroup').style.display = 'none';
+	}
+	
+	function showAddToGroup() {
+		document.getElementById('WrapEditGroup').style.display = 'none';
+		document.getElementById('WrapViewGroups').style.display = 'none';
+		document.getElementById('WrapAddToGroup').style.display = 'block';
+	}
+	
+	//]]>
+</script>
+
 <div id="RightColumn">
-	<h2 class="first">Groups</h2>
+<?php
+	if($no_groups==false) {
+?>
+	<h2 class="first">Group Options</h2>
+	<div class="Entry">
+		<p>
+			<a href="javascript:void(null);" onclick="showEditGroup();">Edit Group</a>
+		</p>
+		<p>
+			<a href="javascript:void(null);" onclick="showViewGroups();">View Group Cards</a>
+		</p>
+		<p>
+			<a href="javascript:void(null);" onclick="showAddToGroup();">Add New Card To Group</a>
+		</p>
+	</div>
+	<h2>Business Cards Groups</h2>
+<?php
+	}
+	else {
+		echo('	<h2 class="first">Business Cards Groups</h2>'."\n");
+	}
+?>
 	<div class="Entry">
 <?php
 	if($no_groups){
@@ -7,16 +52,23 @@
 	}
 	foreach ($organisation['groups'] as $group) {
 ?>
-		<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
-			<?php
-			if($current_group['id']==$group['id']){
-				echo("<b>".htmlspecialchars($group['name'])."</b>");
-			}else{
+		<p>
+			<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
+				<?php
+				/*
+				if($current_group['id']==$group['id']){
+					echo("<b>".htmlspecialchars($group['name'])."</b>");
+				}else{
+					echo(htmlspecialchars($group['name']));
+				}
+				*/
 				echo(htmlspecialchars($group['name']));
-			}
-			?>
-		</a>
-		<br />
+				echo('</a>');
+				if($current_group['id']==$group['id']) {
+					echo(' <b>(Viewing)</b>'."\n");
+				}
+				?>
+		</p>
 <?php
 	}
 ?>
@@ -31,8 +83,8 @@
 	?>
 		<form method="post" action="<?php echo(vip_url('directory/contacts')); ?>">
 			<fieldset>
-				<label for="group_name">Name:</label>
-				<input type="text" name="group_name" id="group_name" />
+				<label for="add_group_name">Name:</label>
+				<input type="text" name="group_name" id="add_group_name" />
 			</fieldset>
 			<fieldset>
 				<input name="add_group_button" type="submit" id="add_group_button" value="Add" class="button" />
@@ -42,8 +94,10 @@
 </div>
 
 <div id="MainColumn">
-	<?php if($no_groups==false){ ?>
-	<div class="BlueBox">
+<?php
+	if($no_groups==false) {
+?>
+	<div class="BlueBox" id="WrapEditGroup" style="display: none;">
 		<h2>edit group - <?php echo($current_group['name']); ?></h2>
 		<p>
 			rename this group
@@ -72,34 +126,46 @@
 			</fieldset>
 		</form>
 	</div>
-	<?php 
-	if(empty($organisation['cards'])) {
-	echo('		<div class="BlueBox">');
-	echo('			<p>');
-	echo('				<b>This group contains no business cards.</b>');
-	echo('			</p>');
-	echo('		</div>');
-	} else {
-		foreach ($organisation['cards'] as $business_card) {
-			$this->load->view('directory/business_card',array(
-				'business_card' => $business_card,
-				'editmode' => isset($organisation['editmode']),
-			));
+<?php 
+		if(empty($organisation['cards'])) {
+			echo('	<div id="WrapViewGroups" style="display: block;">'."\n");
+			echo('		<div class="BlueBox">');
+			echo('			<p>');
+			echo('				<b>This group contains no business cards.</b>');
+			echo('			</p>');
+			echo('		</div>');
+			echo('	</div>'."\n");
+		}
+		else {
+			echo('	<div id="WrapViewGroups" style="display: block;">'."\n");
+			foreach ($organisation['cards'] as $business_card) {
+				$this->load->view('directory/business_card',array(
+					'business_card' => $business_card,
+					'editmode' => isset($organisation['editmode']),
+				));
+			}
+			echo('	</div>'."\n");
 		}
 	}
-} else {
-	echo('		<div class="BlueBox">');
-	echo('			<p>');
-	echo('				<b>This organisation has no groups or cards.</b>');
-	echo('			</p>');
-	echo('		</div>');
-}
+	else {
+		echo('	<div id="WrapEditGroup" style="display: block;">'."\n");
+		echo('	</div>'."\n");
+		echo('	<div id="WrapViewGroups" style="display: block;">'."\n");
+		echo('		<div class="BlueBox">');
+		echo('			<p>');
+		echo('				<b>This organisation has no groups or cards.</b>');
+		echo('			</p>');
+		echo('		</div>');
+		echo('	</div>'."\n");
+		echo('	<div id="WrapAddToGroup" style="display: block;">'."\n");
+		echo('	</div>'."\n");
+	}
 ?>
 
 <?php
 	if($no_groups==false){
 ?>
-	<div class="BlueBox">
+	<div class="BlueBox" id="WrapAddToGroup" style="display: none;">
 		<h2>add a new business card</h2>
 		<form method="post" action="<?php echo(vip_url('directory/contacts')); ?>">
 		<fieldset>

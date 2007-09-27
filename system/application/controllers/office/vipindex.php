@@ -17,6 +17,7 @@ class Vipindex extends Controller
 		
 		//load the required models and libraries
 		$this->load->model('pr_model','pr_model');
+		$this->load->model('members_model','members_model');
 		
 		$organisation = VipOrganisation();
 		if (empty($organisation)) {
