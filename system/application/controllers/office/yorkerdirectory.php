@@ -432,6 +432,7 @@ class Yorkerdirectory extends Controller
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//Delete group
 		if ($this->input->post('group_deletebutton')) {

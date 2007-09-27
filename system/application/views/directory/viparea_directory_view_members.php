@@ -23,20 +23,20 @@
 </script>
 
 <div id="RightColumn">
+	<h2 class="first">What's This?</h2>
+	<div class="Entry">
+		<?php echo $page_information; ?>
+	</div>
 <?php
 	if($no_groups==false) {
 ?>
-	<h2 class="first">Group Options</h2>
+	<h2 >Group Options</h2>
 	<div class="Entry">
-		<p>
-			<a href="javascript:void(null);" onclick="showEditGroup();">Edit Group</a>
-		</p>
-		<p>
-			<a href="javascript:void(null);" onclick="showViewGroups();">View Group Cards</a>
-		</p>
-		<p>
-			<a href="javascript:void(null);" onclick="showAddToGroup();">Add New Card To Group</a>
-		</p>
+		<ul>
+			<li><a href="javascript:void(null);" onclick="showEditGroup();">Edit Group</a></li>
+			<li><a href="javascript:void(null);" onclick="showViewGroups();">View Group Cards</a></li>
+			<li><a href="javascript:void(null);" onclick="showAddToGroup();">Add New Card To Group</a></li>
+		</ul>
 	</div>
 	<h2>Business Cards Groups</h2>
 <?php
