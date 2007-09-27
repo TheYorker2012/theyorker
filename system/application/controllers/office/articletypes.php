@@ -157,9 +157,11 @@ class Articletypes extends Controller
 		$articletype = $this->Article_model->getSubArticleType($id);
 		if(empty($articletype['image_id']))
 		{
+			$data['has_image']=false;
 			$data['image']="No image available.";
 		}else{
-			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="'.$articletype['image_title'].'" title="'.$articletype['image_title'].'">';
+			$data['has_image']=true;
+			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="Image Preview" title="Image Preview">';
 		}
 		//Only get this if there is no post
 		if(empty($_POST['article_type_edit'])){
@@ -216,6 +218,14 @@ class Articletypes extends Controller
 			//session is empty, try getting image again
 			redirect('/office/articletypes/changeimage/'.$id);
 		}
+	}
+	
+	function deleteimage($id)
+	{
+		//Dont need image id as we are blanking it
+		$this->Article_model->updateArticleSubTypeImage($id,'');
+		//redirect back to the edit page where you started
+		redirect('/office/articletypes/edit/'.$id);
 	}
 	
 	function delete($id, $confirm='')
