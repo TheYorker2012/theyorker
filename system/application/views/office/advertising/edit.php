@@ -4,6 +4,9 @@
 		<?php echo('<a href="/office/advertising/view/'.$advert['id'].'">View This Advert</a>'."\n"); ?>
 	</div>
 	<div class="Entry">
+		<?php echo('<a href="/office/advertising/editimage/'.$advert['id'].'">Edit Advert Image</a>'."\n"); ?>
+	</div>
+	<div class="Entry">
 		<?php echo('<a href="/office/advertising/">Back To Adverts List</a>'."\n"); ?>
 	</div>
 </div>
@@ -30,10 +33,6 @@
 			<label for="advert_alt">Image Hover Text: </label>
 <?php
 	echo('			<input type="text" id="advert_alt" name="advert_alt" value="'.$advert['alt'].'" style="width: 250px" />'."\n");
-?>
-			<label for="advert_image">Image: </label>
-<?php
-	echo('			<input type="text" id="advert_image" name="advert_image" value="'.$advert['image'].'" style="width: 250px" />'."\n");
 ?>
 			<label for="advert_image">Max Views: </label>
 <?php

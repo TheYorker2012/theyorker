@@ -21,7 +21,7 @@ class Advert_model extends Model {
 			//select the latest advert with page views left
 			$sql = 'SELECT
 						advert_id as id,
-						advert_image as image,
+						advert_image_id as image_id,
 						advert_image_alt as alt,
 						advert_image_url as url,
 						advert_views_current as current_views,
@@ -43,7 +43,7 @@ class Advert_model extends Model {
 				$row = $query->row();
 				if ($row->live = true) {
 					$result = array(
-						'image' => $row->image,
+						'image_id' => $row->image_id,
 						'alt' => $row->alt,
 						'url' => $row->url
 						);
@@ -114,7 +114,7 @@ class Advert_model extends Model {
 		$sql = 'SELECT
 					advert_id as id,
 					advert_name as name,
-					advert_image as image,
+					advert_image_id as image_id,
 					advert_image_alt as alt,
 					advert_image_url as url,
 					advert_views_current as current_views,
@@ -134,7 +134,7 @@ class Advert_model extends Model {
 			$result = array(
 				'id' => $row->id,
 				'name' => $row->name,
-				'image' => $row->image,
+				'image_id' => $row->image_id,
 				'alt' => $row->alt,
 				'url' => $row->url,
 				'current_views' => $row->current_views,
@@ -227,6 +227,19 @@ class Advert_model extends Model {
 					advert_id = ?';
 		$this->db->query($sql, array($id));
 		return TRUE;
+	}
+	
+	function UpdateAdvertImage($advert_id, $image_id)
+	{
+		//Update type
+		$sql = 'UPDATE
+					adverts_simple
+				SET
+					advert_image_id = ? 
+				WHERE
+					advert_id = ? 
+				';
+		$this->db->query($sql, array($image_id,$advert_id));
 	}
 }
 ?>
