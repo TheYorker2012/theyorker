@@ -229,6 +229,30 @@ class Advert_model extends Model {
 		return TRUE;
 	}
 	
+	/**
+	 * @brief Returns true if the advert has an image, false otherwise
+	 */
+	function HasImage($advert_id)
+	{
+		//Select image id
+		$sql = 'SELECT
+					advert_image_id as image_id
+				FROM
+					adverts_simple
+				WHERE
+					advert_id = ? 
+				';
+		$query = $this->db->query($sql, array($advert_id));
+		$result = false;
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+			if (!empty($row->image_id)) {
+				$result = true;
+			}
+		}
+		return $result;
+	}
+	
 	function UpdateAdvertImage($advert_id, $image_id)
 	{
 		//Update type

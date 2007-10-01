@@ -144,10 +144,15 @@ class Advertising extends Controller
 		}
 		//make the advert live
 		else if (isset($_POST['submit_make_advert_live'])) {
-			$this->advert_model->MakeAdvertLive(
-				$this->input->post('advert_id')
-				);
-			$this->messages->AddMessage('success', 'The advert has been added to the current rotation on the public site.');
+			if ($this->advert_model->HasImage($this->input->post('advert_id'))) {			
+				$this->advert_model->MakeAdvertLive(
+					$this->input->post('advert_id')
+					);
+				$this->messages->AddMessage('success', 'The advert has been added to the current rotation on the public site.');
+			}
+			else {
+				$this->messages->AddMessage('error', 'The advert must have an image.');
+			}
 		}	
 		
 		//set page
