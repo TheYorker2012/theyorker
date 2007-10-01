@@ -185,7 +185,7 @@ class Advertising extends Controller
 		//Get page properties information
 		if (!CheckPermissions('editor')) return;
 		$this->load->library('image_upload');
-		$this->image_upload->automatic('/office/adverts/updateimage/'.$id, array('advert'), false, false);
+		$this->image_upload->automatic('/office/advertising/updateimage/'.$id, array('advert'), false, false);
 	}
 	
 	//Store the id of from the image cropper to change an existing puffer image
@@ -203,19 +203,19 @@ class Advertising extends Controller
 					//There is no id to use, upload must have failed
 					//Clear image session so they can try again
 					unset($_SESSION['img']);
-					redirect('/office/adverts/editimage/'.$id);
+					redirect('/office/advertising/editimage/'.$id);
 				}else{
 					//Success image id caught, so store
 					$this->advert_model->UpdateAdvertImage($id,$Image['list']);
 					//redirect back to the edit page where you started
-					redirect('/office/adverts/view/'.$id);
+					redirect('/office/advertising/view/'.$id);
 				}
 				//Image session no longer needed
 				unset($_SESSION['img']);
 			}
 		}else{
 			//session is empty, try getting image again
-			redirect('/office/adverts/editimage/'.$id);
+			redirect('/office/advertising/editimage/'.$id);
 		}
 	}
 }
