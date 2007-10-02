@@ -148,6 +148,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/news/blogs/'>Blogs</a>
 		</div>
 		<div class='officenavigation_item'>
+			<a href='/office/news/videocasts/'>Videocasts</a>
+		</div>
+		<div class='officenavigation_item'>
 			<a href='/office/news/comment/'>News Comment</a>
 		</div>
 		<div class='officenavigation_item'>
