@@ -63,7 +63,7 @@ class Charity extends Controller {
 					
 			$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
 
-			$data['sections']['funding']['text'] = str_replace(array("%%current%%","%%target%%"), array($data['sections']['charity']['current'],$data['sections']['charity']['target']), $data['sections']['funding']['text']);
+			$data['sections']['funding']['text'] = str_replace("%%target%%", $data['sections']['charity']['target'], $data['sections']['funding']['text']);
 
 			//needs a general model as progress reports can be for campaigns and for charities
 			$pr_temp = $this->progressreports->GetCharityCampaignProgressReports($charity_id, true, true);
