@@ -56,7 +56,7 @@ class Charity extends Controller {
 		{
 			$data['sections']['progress_reports'] = array('title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE),'showmore'=>$this->pages_model->GetPropertyWikitext('section_preports_showmore',FALSE));
 			$data['sections']['funding'] = array('title'=>$this->pages_model->GetPropertyText('section_funding_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('section_funding_text',FALSE));
-			$data['sections']['sidebar_about'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_about_title',FALSE),'subtitle'=>$this->pages_model->GetPropertyText('sidebar_about_subtitle',FALSE));
+			$data['sections']['sidebar_about'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_about_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_about_text',FALSE));
 			$data['sections']['sidebar_help'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_help_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_help_text',FALSE));
 			$data['sections']['sidebar_related'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE));
 			$data['sections']['sidebar_external'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE));
