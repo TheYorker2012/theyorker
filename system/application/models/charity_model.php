@@ -149,14 +149,13 @@ class Charity_model extends Model
 	 * @param $goal the target goal ammount
 	 * @param $goaltext a description of what the charity is aiming for
 	 */
-	function UpdateCharity($id, $name, $goal, $goaltext)
+	function UpdateCharity($id, $name, $goal)
 	{
 		$sql = 'UPDATE 	charities
 			SET	charity_name = ?,
-				charity_goal = ?,
-				charity_goal_text = ?
+				charity_goal = ?
 			WHERE	charity_id = ?';
-		$this->db->query($sql,array($name, $goal, $goaltext, $id));
+		$this->db->query($sql,array($name, $goal, $id));
 	}
 
 	/**
