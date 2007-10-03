@@ -87,7 +87,8 @@ class Articletypes extends Controller
 				}else{
 					//create article type
 					$image_id=$_POST['article_type_image_id'];
-					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$_POST['article_type_archive'],$_POST['article_type_blurb']);
+					if(empty($_POST['article_type_archive'])){$archive=0;}else{$archive=1;}
+					$this->Article_model->insertArticleSubType($codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$archive,$_POST['article_type_blurb']);
 					$this->messages->AddMessage('success','New article type created.');
 					redirect('/office/articletypes');
 				}
@@ -97,10 +98,24 @@ class Articletypes extends Controller
 				$data['image_preview']="<b>No image selected.</b>";
 				$data['article_type_form']['article_type_image_id'] = "";
 			}else{
-				foreach ($_SESSION['img'] as $Image) {
-					$data['image_preview']= $_SESSION['img'];
-					//$data['article_type_form']['article_type_image_id'] = $Image['id'];
-					unset($_SESSION['img']);
+				if(!empty($_SESSION['img'])){
+					//There seems to be an image session, try to get id.
+					foreach ($_SESSION['img'] as $Image) {
+						$image_id='';
+						if(empty($Image['list'])){
+							//There is no id to use, upload must have failed
+							//Clear image session so they can try again
+							unset($_SESSION['img']);
+							$data['image_preview']="<b>No image selected.</b>";
+							$data['article_type_form']['article_type_image_id'] = "";
+						}else{
+							//Success image id caught, so preview
+							$data['image_preview']= '<img src="/image/puffer/'.$Image['list'].'" alt="Preview" title="Preview">';
+							$data['article_type_form']['article_type_image_id'] = $Image['list'];
+						}
+						//Image session no longer needed
+						unset($_SESSION['img']);
+					}
 				}
 			}
 			$this->pages_model->SetPageCode('office_articletypes');
@@ -142,9 +157,11 @@ class Articletypes extends Controller
 		$articletype = $this->Article_model->getSubArticleType($id);
 		if(empty($articletype['image_id']))
 		{
+			$data['has_image']=false;
 			$data['image']="No image available.";
 		}else{
-			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="'.$articletype['image_title'].'" title="'.$articletype['image_title'].'">';
+			$data['has_image']=true;
+			$data['image']='<img src="/image/'.$articletype['image_type_codename'].'/'.$articletype['image_id'].'" alt="Image Preview" title="Image Preview">';
 		}
 		//Only get this if there is no post
 		if(empty($_POST['article_type_edit'])){
@@ -165,6 +182,52 @@ class Articletypes extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
+	//Use image cropper to change an existing puffer image
+	function changeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('/office/articletypes/storechangeimage/'.$id, array('puffer'), false, false);
+	}
+	
+	//Store the id of from the image cropper to change an existing puffer image
+	function storechangeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		if(!empty($_SESSION['img'])){
+			//There seems to be an image session, try to get id.
+			foreach ($_SESSION['img'] as $Image) {
+				$image_id='';
+				if(empty($Image['list'])){
+					//There is no id to use, upload must have failed
+					//Clear image session so they can try again
+					unset($_SESSION['img']);
+					redirect('/office/articletypes/changeimage/'.$id);
+				}else{
+					//Success image id caught, so store
+					$this->Article_model->updateArticleSubTypeImage($id,$Image['list']);
+					//redirect back to the edit page where you started
+					redirect('/office/articletypes/edit/'.$id);
+				}
+				//Image session no longer needed
+				unset($_SESSION['img']);
+			}
+		}else{
+			//session is empty, try getting image again
+			redirect('/office/articletypes/changeimage/'.$id);
+		}
+	}
+	
+	function deleteimage($id)
+	{
+		//Dont need image id as we are blanking it
+		$this->Article_model->updateArticleSubTypeImage($id,'');
+		//redirect back to the edit page where you started
+		redirect('/office/articletypes/edit/'.$id);
+	}
+	
 	function delete($id, $confirm='')
 	{
 		if (!CheckPermissions('editor')) return;

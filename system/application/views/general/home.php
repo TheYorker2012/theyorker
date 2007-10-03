@@ -4,6 +4,19 @@ function get_link_ref($article,$prefix){
 	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
 };
 
+function print_small_story($class, $article, $prefix) {
+	echo('	<div class="'.$class.' NewsBox">'."\n");
+	echo('		<a class="NewsImgSmall" '.get_link_ref($article,$prefix).'>'."\n");
+	echo('			'.$article['photo_xhtml']."\n").'';
+	echo('		</a>'."\n");
+	echo('		<p class="More">'."\n");
+	echo('			<a '.get_link_ref($article,$prefix).'>'."\n");
+	echo('				'.$article['heading']."\n");
+	echo('			</a>'."\n");
+	echo('		</p>'."\n");
+	echo('	</div>');
+}
+
 function print_box($articles,$heading,$prefix){
 	if (count($articles) != 0) {
 		echo('  <h2>'.$heading.'</h2>'."\n");
@@ -14,16 +27,15 @@ function print_box($articles,$heading,$prefix){
 		echo('          <h3 class="Headline"><a '.get_link_ref($articles[0],$prefix).'>'.$articles[0]['heading'].'</a></h3>'."\n");
 		echo('          <div class="Date">'.$articles[0]['date'].'</div>'."\n");
 		echo('		<p class="More">'.$articles[0]['blurb'].'</p>'."\n");
+		echo('	</div>'."\n");
 		if (count($articles) > 1) {
-			echo('          <ul class="TitleList">'."\n");
-			echo('                  <li><a '.get_link_ref($articles[1],$prefix).'>'.$articles[1]['heading'].'</a></li>'."\n");
+			echo('	<div class="LineContainer"></div>'."\n");
+			print_small_story('LeftNewsBox', $articles[1], $prefix);
 			if (count($articles) > 2)
-				echo('                  <li><a '.get_link_ref($articles[2],$prefix).'>'.$articles[2]['heading'].'</a></li>'."\n");
-			echo('          </ul>'."\n");
+				print_small_story('RightNewsBox', $articles[2], $prefix);
 		}
-		echo('  </div>'."\n");
-
 	}
+
 };
 
 function print_middle_box($title,$article_array){
@@ -104,10 +116,9 @@ function print_middle_box($title,$article_array){
 </div>
 
 <div id="MainColumn">
-	<!--
 	<div id="HomeBanner">
 		<?php echo($banner) ?>
-	</div>-->
+	</div>
 
 	<div class="BlueBox">
 		<?php print_box($articles['uninews'],'latest news','news') ?>

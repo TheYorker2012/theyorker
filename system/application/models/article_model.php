@@ -740,23 +740,32 @@ class Article_model extends Model
 	//@param codename - string to use as codename a-z A-Z only
 	//@param $name - string name
 	//@param $parent_id - id of parent content_type
-	//@param $image_id - id of related image, should be a puffer
 	//@param $archive (0,1) if articlesubtype is shown in the archive
 	//@param $blurb - String, description
-	function updateArticleSubType($id,$codename,$name,$parent_id,$image_id,$archive,$blurb)
+	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$blurb)
 	{
 		//Update type
 		$sql = 'UPDATE content_types SET 
 		content_types.content_type_codename = ?, 
 		content_types.content_type_name = ?, 
 		content_types.content_type_parent_content_type_id = ?, 
-		content_types.content_type_image_id = ?, 
 		content_types.content_type_archive = ?, 
 		content_types.content_type_blurb = ? 
 		WHERE content_types.content_type_id = ? 
 		LIMIT 1';
-		$this->db->query($sql, array($codename,$name,$parent_id,$image_id,$archive,$blurb,$id));
+		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$blurb,$id));
 	}
+	
+	function updateArticleSubTypeImage($id,$image_id)
+	{
+		//Update type
+		$sql = 'UPDATE content_types SET 
+		content_types.content_type_image_id = ? 
+		WHERE content_types.content_type_id = ? 
+		LIMIT 1';
+		$this->db->query($sql, array($image_id,$id));
+	}
+	
 	//check for articles by this subtype first!
 	function deleteSubArticleType($id, $parent_id)
 	{

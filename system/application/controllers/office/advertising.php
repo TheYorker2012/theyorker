@@ -76,6 +76,15 @@ class Advertising extends Controller
 		$advert = $this->advert_model->AdvertExists($advert_id);
 		
 		if ($advert) {
+		
+			if(empty($advert['image_id'])) {
+				$advert['has_image'] = false;
+				$advert['image'] = 'No image available.';
+			}
+			else {
+				$advert['has_image'] = true;
+				$advert['image'] = '<img src="/image/advert/'.$advert['image_id'].'" alt="Image Preview" title="Image Preview" />';
+			}
 			
 			$data = array(
 				'advert'=>$advert
@@ -135,10 +144,15 @@ class Advertising extends Controller
 		}
 		//make the advert live
 		else if (isset($_POST['submit_make_advert_live'])) {
-			$this->advert_model->MakeAdvertLive(
-				$this->input->post('advert_id')
-				);
-			$this->messages->AddMessage('success', 'The advert has been added to the current rotation on the public site.');
+			if ($this->advert_model->HasImage($this->input->post('advert_id'))) {			
+				$this->advert_model->MakeAdvertLive(
+					$this->input->post('advert_id')
+					);
+				$this->messages->AddMessage('success', 'The advert has been added to the current rotation on the public site.');
+			}
+			else {
+				$this->messages->AddMessage('error', 'The advert must have an image.');
+			}
 		}	
 		
 		//set page
@@ -168,6 +182,45 @@ class Advertising extends Controller
 		else {
 			$this->messages->AddMessage('error', 'The advert you specified doesn\'t exist');
 			redirect('office/advertising');
+		}
+	}
+	
+	function editimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('/office/advertising/updateimage/'.$id, array('advert'), false, false);
+	}
+	
+	//Store the id of from the image cropper to change an existing puffer image
+	function updateimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		//load models
+		$this->load->model('advert_model');
+		if(!empty($_SESSION['img'])){
+			//There seems to be an image session, try to get id.
+			foreach ($_SESSION['img'] as $Image) {
+				$image_id='';
+				if(empty($Image['list'])){
+					//There is no id to use, upload must have failed
+					//Clear image session so they can try again
+					unset($_SESSION['img']);
+					redirect('/office/advertising/editimage/'.$id);
+				}else{
+					//Success image id caught, so store
+					$this->advert_model->UpdateAdvertImage($id,$Image['list']);
+					//redirect back to the edit page where you started
+					redirect('/office/advertising/view/'.$id);
+				}
+				//Image session no longer needed
+				unset($_SESSION['img']);
+			}
+		}else{
+			//session is empty, try getting image again
+			redirect('/office/advertising/editimage/'.$id);
 		}
 	}
 }

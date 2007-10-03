@@ -91,10 +91,6 @@ input.button {
 	margin: 0.5em;
 }
 
-div#RightColumn div.Date {
-	clear: right;
-}
-
 blockquote {
 	float: right;
 	width: 14em;

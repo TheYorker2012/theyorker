@@ -23,6 +23,10 @@
 </div>
 
 <div id="MainColumn">
+	<div id="HomeBanner">
+		<img src="/images/vip_banner.jpg" title="VIP Area" width="392" height="100" alt="VIP Area" />
+	</div>
+	
 	<div class="BlueBox">
 		<h2>welcome</h2>
 		<?php echo($main_text); ?>

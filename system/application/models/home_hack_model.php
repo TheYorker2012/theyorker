@@ -85,7 +85,11 @@ class Home_Hack_Model extends Model {
 				articles.article_id
 					AS id,
 				article_contents.article_content_heading
-					AS heading
+					AS heading,
+				photo_requests.photo_request_chosen_photo_id
+					AS photo_id,
+				photo_requests.photo_request_title
+					AS photo_title
 			FROM articles
 			INNER JOIN content_types ON
 				articles.article_content_type_id = 
@@ -93,6 +97,11 @@ class Home_Hack_Model extends Model {
 			INNER JOIN article_contents ON
 				article_contents.article_content_id = 
 					articles.article_live_content_id
+			LEFT JOIN photo_requests ON
+				(articles.article_thumbnail_photo_id =
+					photo_requests.photo_request_relative_photo_number
+				AND photo_requests.photo_request_article_id =
+					articles.article_id)
 			WHERE
 				articles.article_id 
 					IN ('.$sql_requestedArticles.')

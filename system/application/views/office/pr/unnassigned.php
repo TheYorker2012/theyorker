@@ -1,4 +1,4 @@
-<div class="RightToolbar">
+<div class="RightToolbar">
 	<h4>Make Suggestion</h4>
 	<div class="Entry">
 		<a href="/wizard/organisation/">Wizard</a>
@@ -58,7 +58,6 @@
 	</div>
 </div>
 
-<pre>
 <?php
 /*
 echo('<div class="BlueBox"><pre>');
@@ -66,4 +65,3 @@ print_r($data);
 echo('</pre></div>');
 */
 ?>
-</pre>

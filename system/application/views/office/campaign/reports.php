@@ -50,8 +50,9 @@
 	echo('		</fieldset>'."\n");
 	echo('	</form>'."\n");
 	echo('</div>'."\n");
-	
+	/*
 	echo('<div class="BlueBox"><pre>');
 	print_r($data);
 	echo('</pre></div>');
+	*/
 ?>

@@ -16,13 +16,15 @@ class ContactPR extends Controller
 		//load the required models and libraries
 		$this->load->model('pr_model','pr_model');
 		$this->load->model('members_model','members_model');
+		$this->load->model('directory_model');
 		
 		//setup the page properties
 		$this->pages_model->SetPageCode('viparea_contactpr');
 		
 		//set the defaults for the email
+		$signature = $this->directory_model->GetOrganisationEmailSignature(VIPOrganisation());
 		$subject = '';
-		$content = '';
+		$content = "\r\r".$signature;
 		
 		//get the rep data from the pr model
 		$rep_data = $this->pr_model->GetOrganisationRatings(VipOrganisation());

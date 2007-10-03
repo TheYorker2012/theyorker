@@ -4,6 +4,9 @@
 		<?php echo('<a href="/office/advertising/edit/'.$advert['id'].'">Edit This Advert</a>'."\n"); ?>
 	</div>
 	<div class="Entry">
+		<?php echo('<a href="/office/advertising/editimage/'.$advert['id'].'">Edit Advert Image</a>'."\n"); ?>
+	</div>
+	<div class="Entry">
 		<?php echo('<a href="/office/advertising/">Back To Adverts List</a>'."\n"); ?>
 	</div>
 </div>
@@ -84,7 +87,8 @@
 									<b>Options:</b>
 								</td>
 								<td>
-									<?php echo('<a href="/office/advertising/edit/'.$advert['id'].'">[edit]</a>'."\n"); ?>
+									<?php echo('<a href="/office/advertising/edit/'.$advert['id'].'">[edit details]</a>'."\n"); ?>
+									<?php echo('<a href="/office/advertising/editimage/'.$advert['id'].'">[edit image]</a>'."\n"); ?>
 								</td>
 							</tr>
 						</tbody>
@@ -93,7 +97,8 @@
 				<td style="text-align: right; width: 150px;">
 
 <?php
-	echo('					<img src="/images/adverts/'.$advert['image'].'" width="120" height="600" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" />'."\n");
+	//echo('					<img src="/images/adverts/'.$advert['image'].'" width="120" height="600" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" />'."\n");
+	echo('					'.$advert['image']."\n");
 ?>
 				</td>
 			</tr>

@@ -100,10 +100,24 @@ class Leagues extends Controller
 				$data['image_preview']="<b>No image selected.</b>";
 				$data['league_form']['league_image_id'] = "";
 			}else{
-				foreach ($_SESSION['img'] as $Image) {
-					$data['image_preview']= $_SESSION['img'];
-					//$data['league_form']['league_image_id'] = $Image['id'];
-					unset($_SESSION['img']);
+				if(!empty($_SESSION['img'])){
+					//There seems to be an image session, try to get id.
+					foreach ($_SESSION['img'] as $Image) {
+						$image_id='';
+						if(empty($Image['list'])){
+							//There is no id to use, upload must have failed
+							//Clear image session so they can try again
+							unset($_SESSION['img']);
+							$data['image_preview']="<b>No image selected.</b>";
+							$data['league_form']['league_image_id'] = "";
+						}else{
+							//Success image id caught, so preview
+							$data['image_preview']= '<img src="/image/puffer/'.$Image['list'].'" alt="Preview" title="Preview">';
+							$data['league_form']['league_image_id'] = $Image['list'];
+						}
+						//Image session no longer needed
+						unset($_SESSION['img']);
+					}
 				}
 			}
 			$this->pages_model->SetPageCode('office_leagues');
@@ -143,9 +157,11 @@ class Leagues extends Controller
 		$league = $this->Leagues_model->getLeagueInformation($id);
 		if(empty($league['image_id']))
 		{
+			$data['has_image']=false;
 			$data['image']="No image available.";
 		}else{
-			$data['image']='<img src="/image/'.$league['image_type'].'/'.$league['image_id'].'" alt="'.$league['image_title'].'" title="'.$league['image_title'].'">';
+			$data['has_image']=true;
+			$data['image']='<img src="/image/'.$league['image_type'].'/'.$league['image_id'].'" alt="Image Preview" title="Image Preview">';
 		}
 		//Only get this if there is no post
 		if(empty($_POST['league_edit'])){
@@ -165,6 +181,52 @@ class Leagues extends Controller
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
+	//Use image cropper to change an existing puffer image
+	function changeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		$this->load->library('image_upload');
+		$this->image_upload->automatic('/office/leagues/storechangeimage/'.$id, array('puffer'), false, false);
+	}
+	
+	//Store the id of from the image cropper to change an existing puffer image
+	function storechangeimage($id)
+	{
+		//Get page properties information
+		if (!CheckPermissions('editor')) return;
+		if(!empty($_SESSION['img'])){
+			//There seems to be an image session, try to get id.
+			foreach ($_SESSION['img'] as $Image) {
+				$image_id='';
+				if(empty($Image['list'])){
+					//There is no id to use, upload must have failed
+					//Clear image session so they can try again
+					unset($_SESSION['img']);
+					redirect('/office/leagues/changeimage/'.$id);
+				}else{
+					//Success image id caught, so store
+					$this->Leagues_model->updateLeagueImage($id,$Image['list']);
+					//redirect back to the edit page where you started
+					redirect('/office/leagues/edit/'.$id);
+				}
+				//Image session no longer needed
+				unset($_SESSION['img']);
+			}
+		}else{
+			//session is empty, try getting image again
+			redirect('/office/leagues/changeimage/'.$id);
+		}
+	}
+	
+	function deleteimage($id)
+	{
+		//Dont need image id as we are blanking it
+		$this->Leagues_model->updateLeagueImage($id,'');
+		//redirect back to the edit page where you started
+		redirect('/office/leagues/edit/'.$id);
+	}
+	
 	function delete($id, $confirm='')
 	{
 		if (!CheckPermissions('editor')) return;

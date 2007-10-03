@@ -7,9 +7,6 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>create league</h2>
-		<pre>
-		<?php print_r($image_preview); ?>
-		</pre>
 		<form method="post" action="/office/leagues/create">
 			<fieldset>
 				<label for="league_image_id">Image:</label>

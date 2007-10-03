@@ -70,9 +70,7 @@ class Charity_model extends Model
 	{
 		$sql = 'SELECT	charity_name,
 						charity_article_id,
-						charity_goal_text,
-						charity_goal,
-						charity_total
+						charity_goal
 				FROM	charities
 				WHERE	charity_id = ?';
 		$query = $this->db->query($sql,array($charity_id));
@@ -80,9 +78,7 @@ class Charity_model extends Model
 		return array(
 			'name'=>$row->charity_name,
 			'article'=>$row->charity_article_id,
-			'target_text'=>$row->charity_goal_text,
-			'target'=>$row->charity_goal,
-			'current'=>$row->charity_total);
+			'target'=>$row->charity_goal);
 	}
 	
 	/**

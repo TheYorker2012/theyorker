@@ -67,8 +67,7 @@ class Reviews extends Controller
 
 		$data = $this->organisations->_GetOrgData($organisation);
 
-		// Insert main text from pages information (sample)
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		// Read any post data
 		if ($this->input->post('create_confirm')) {
@@ -387,18 +386,27 @@ class Reviews extends Controller
 
 	function addtag()
 	{
+		if (!CheckPermissions('office')) return;
 		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
-		$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
-
-		$this->review_model->SetOrganisationTag($organisation_id,$tag_id);
+		if(empty($_POST['tag'])){
+			$this->messages->AddMessage('error','No tag was selected to add.');
+		}else{
+			$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
+			$this->review_model->SetOrganisationTag($organisation_id,$tag_id);
+		}
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
 	}
 
 	function deltag()
 	{
+		if (!CheckPermissions('office')) return;
 		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
-		$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
-		$this->review_model->RemoveOrganisationTag($organisation_id,$tag_id);
+		if(empty($_POST['tag'])){
+			$this->messages->AddMessage('error','No tag was selected to delete.');
+		}else{
+			$tag_id = $this->review_model->TranslateTagNameToID($_POST['tag']);
+			$this->review_model->RemoveOrganisationTag($organisation_id,$tag_id);
+		}
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/tags');
 	}
 
@@ -441,19 +449,25 @@ class Reviews extends Controller
 	}
 	function addleague()
 	{
+		if (!CheckPermissions('office')) return;
 		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
-		$league_id = $_POST['league_id'];
-
-		$this->leagues_model->AddToLeague($league_id, $organisation_id);
+		if(empty($_POST['league_id'])){
+			$this->messages->AddMessage('error','No league was selected to add.');
+		}else{
+			$this->leagues_model->AddToLeague($league_id, $organisation_id);
+		}
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/leagues');
 	}
 
 	function delleague()
 	{
+		if (!CheckPermissions('office')) return;
 		$organisation_id = $this->review_model->TranslateDirectoryToID($_POST['organisation_name']);
-		$league_id = $_POST['league_id'];
-		
-		$this->leagues_model->RemoveFromLeague($league_id, $organisation_id);
+		if(empty($_POST['league_id'])){
+			$this->messages->AddMessage('error','No league was selected to delete.');
+		}else{
+			$this->leagues_model->RemoveFromLeague($_POST['league_id'], $organisation_id);
+		}
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/leagues');
 	}
 	

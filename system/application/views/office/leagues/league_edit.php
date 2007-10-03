@@ -5,7 +5,19 @@
 	</div>
 	<h2>Current Image</h2>
 	<div class="Entry" align='center'>
-		<?php echo $image; ?>
+		<p>
+			<?php echo $image; ?>
+		</p>
+	</div>
+	<h2>Image Options</h2>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/leagues/changeimage/<?php echo $league_form['league_id']; ?>">Change/Add Image</a></li>
+			<?php if($has_image){?>
+			<li><a href="/office/leagues/deleteimage/<?php echo $league_form['league_id'];
+			?>" onclick="return(confirm ('Are you sure you want to remove this image?'));" >Delete Image</a></li>
+			<?php } ?>
+		</ul>
 	</div>
 </div>
 <div id="MainColumn">

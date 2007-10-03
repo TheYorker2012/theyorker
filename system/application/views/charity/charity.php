@@ -1,8 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first"><?php echo($sections['sidebar_about']['title']); ?></h2>
 	<div class="Entry">
-		<h3><?php echo($sections['sidebar_about']['subtitle']); ?></h3>
-		<?php echo($sections['charity']['target_text']); ?>
+		<?php echo($sections['sidebar_about']['text']); ?>
 	</div>
 
 	<h2><?php echo($sections['sidebar_help']['title']); ?></h2>

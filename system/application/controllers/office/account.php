@@ -131,10 +131,27 @@ class Account extends Controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 
+		//setup page and tabs
 		$this->pages_model->SetPageCode('viparea_settings_email');
 		$this->_SetupTabs('email');
+		
+		//load the required models
+		$this->load->model('directory_model');
+		
+		//check to see if a signature update post has occured
+		if (isset($_POST['save_email_sig'])) {
+			$this->directory_model->UpdateOrganisationEmailSignature(VIPOrganisation(), $_POST['email_signature']);
+			$this->messages->AddMessage('success', 'Your organisations signature has been updated.');
+		}
+		
+		//get signature
+		$signature = $this->directory_model->GetOrganisationEmailSignature(VIPOrganisation());
 
-		$data = array();
+		$data = array(
+				'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
+				'signature' => $signature,
+				'target'	=> vip_url().'/account/email',
+				);
 
 		$this->load->helper('string');
 		$this->main_frame->SetContentSimple('viparea/account_email',$data);

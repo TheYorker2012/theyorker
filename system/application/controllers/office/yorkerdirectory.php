@@ -153,11 +153,12 @@ class Yorkerdirectory extends Controller
 				if(substr($add_data['url'], 0, 5) != 'http:' && substr($add_data['url'], 0, 6) != 'https:'){
 					$add_data['url'] = 'http://'.$add_data['url'];
 				}
-				$this->directory_model->AddDirectoryEntryRevision($organisation, $add_data);
+				$revision_id = $this->directory_model->AddDirectoryEntryRevision($organisation, $add_data);
 				$this->messages->AddMessage('success','A new directory entry revision has been created.');
 				if ($_POST['description']==null) {
 					$this->messages->AddMessage('information','About field is blank we advise you add some detail.');
 				}
+				redirect(vip_url().'/directory/information/preview/'.$revision_id);
 			}
 			//Show hide directory entry information and form detection
 			if (!empty($_POST['directory_visibility'])) {
@@ -266,7 +267,7 @@ class Yorkerdirectory extends Controller
 					$message = 'This is a preview of a directory revision.<br />';
 				}
 			}
-			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back</a>';
+			$message .= '<a href="'.vip_url('directory/information/view/'.$revision).'">Go Back To Editor</a>';
 
 			if ($published == false) {
 				if ($vip_level) {
@@ -431,6 +432,7 @@ class Yorkerdirectory extends Controller
 
 		//Get Data And toolbar
 		$data = $this->organisations->_GetOrgData($organisation);
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//Delete group
 		if ($this->input->post('group_deletebutton')) {
