@@ -88,8 +88,8 @@ class Members extends Controller
 				vip_url('members'));
 		$navbar->AddItem('invite', 'New Members',
 				vip_url('members/invite'));
-		$navbar->AddItem('teams', 'Teams',
-				vip_url('members/teams'));
+		/*$navbar->AddItem('teams', 'Teams',
+				vip_url('members/teams'));*/
 		$navbar->AddItem('compose', 'Compose',
 				vip_url('members/compose'));
 
