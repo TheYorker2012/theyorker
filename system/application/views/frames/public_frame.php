@@ -90,12 +90,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
 				<ul class="first">
 					<li class="first"><a href="/">My Home</a></li>
-					<li><a href="/calendar/">My Calendar</a></li>
+					<!--<li><a href="/calendar/">My Calendar</a></li>-->
 					<li><a href="/directory/">Directory</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<li><a href="/news/comment/">News Comment</a></li>
+					<!--<li><a href="/news/comment/">News Comment</a></li>-->
 					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
@@ -103,10 +103,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
-					<li><a href="/reviews/drink">Drink</a></li>
+					<!--<li><a href="/reviews/drink">Drink</a></li>-->
 					<!--<li><a href="/reviews/culture">Culture</a></li>-->
 					<li><a href="/news/videocasts">Videocasts</a></li>
-					<li><a href="/campaign/">Campaigns</a></li>
+					<!--<li><a href="/campaign/">Campaigns</a></li>-->
 					<li><a href="/news/archive/">News Archive</a></li>
 				</ul>
 				<ul>

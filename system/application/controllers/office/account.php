@@ -230,8 +230,8 @@ class Account extends Controller
 				vip_url('account'));
 		$navbar->AddItem('email', 'Email',
 				vip_url('account/email'));
-		$navbar->AddItem('identities', 'Identities',
-				vip_url('account/identities'));
+		/*$navbar->AddItem('identities', 'Identities',
+				vip_url('account/identities'));*/
 		if (!$this->user_auth->isUser) {
 			$navbar->AddItem('password', 'Password',
 					vip_url('account/password'));
