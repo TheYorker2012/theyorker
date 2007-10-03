@@ -67,7 +67,7 @@ if (count($sections['article']['links']) > 0) {
 				</fieldset>
 			</form>
 			<br />
-			<a href="/charity/donate">Alternative methods to donate.</a>
+			<!--<a href="/charity/donate">Alternative methods to donate.</a>-->
 		</div>
 	</div>
 
