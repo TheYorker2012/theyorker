@@ -141,11 +141,6 @@ class Charity extends Controller
 		//get charity from given id
 		$data['charity'] = $this->charity_model->GetCharity($charity_id);
 		$data['charity']['id'] = $charity_id;
-		
-		if ($data['charity']['target'] == 0)
-			$data['charity']['progresspc'] = 0;
-		else
-			$data['charity']['progresspc'] = ($data['charity']['current']/$data['charity']['target'])*100;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -573,8 +568,7 @@ class Charity extends Controller
 					$this->charity_model->UpdateCharity(
 						$_POST['a_charityid'], 
 						$_POST['a_name'],
-						$_POST['a_goal'],
-						$_POST['a_goaltext']);
+						$_POST['a_goal']);
 
 					//return to form submit page and pass success message
 					$this->main_frame->AddMessage('success','Charity updated.');
