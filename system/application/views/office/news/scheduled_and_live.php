@@ -23,7 +23,7 @@
 	<td><?php echo $article['updated_date']; ?></td>
 	</tr>
 
-	<? } ?>
+	<?php } ?>
 	</table>
 
 </div>
