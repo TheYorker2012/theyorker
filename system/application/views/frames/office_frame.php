@@ -95,6 +95,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/'>Office Home</a>
 		</div>
 
+<?php
+	//editor and admins only
+	if (PermissionsSubset('editor', GetUserLevel())){
+?>
 		<div class='officenavigation_title'>
 			Admin
 		</div>
@@ -124,7 +128,10 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>	
 		<div class='officenavigation_item'>
 			<a href='/office/advertising'>Advertising</a>
-		</div>		
+		</div>
+<?php
+	}
+?>
 
 		<div class='officenavigation_title'>
 			Sections
