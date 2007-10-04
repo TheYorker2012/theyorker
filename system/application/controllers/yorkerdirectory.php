@@ -44,8 +44,8 @@ class Yorkerdirectory extends Controller
 				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('notices', 'Notices',
 				'/directory/'.$DirectoryEntry.'/notices');
-		$navbar->AddItem('calendar', 'Calendar',
-				'/directory/'.$DirectoryEntry.'/calendar');
+		/*$navbar->AddItem('calendar', 'Calendar',
+				'/directory/'.$DirectoryEntry.'/calendar');*/
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
 		if($data['organisation']['type'] == 'Societies')
