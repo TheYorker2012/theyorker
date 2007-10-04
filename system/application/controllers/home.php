@@ -166,7 +166,7 @@ class Home extends Controller {
 		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids);
 		foreach($article_titles as $title) {
 			$type = $article_base_types[$title['id']];
-			$title['photo_xhtml'] = $this->image->getThumb($summary['photo_id'], 'small', false, array('class' => 'left'));
+			$title['photo_xhtml'] = $this->image->getThumb($title['photo_id'], 'small', false, array('class' => 'left'));
 			$data['articles'][$type][] = $title;
 		}
 
