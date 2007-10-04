@@ -281,7 +281,6 @@ class News_model extends Model
 				foreach ($query->result() as $row) {
 					$types[] = $row->content_type_codename;
 				}
-				$types[] = $type;
 			}
 		} else {
 			$types = array($type);
