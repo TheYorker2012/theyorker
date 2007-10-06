@@ -168,7 +168,7 @@ class Advert_model extends Model {
 	/**
 	 * @brief Saves the new advert data 
 	 */
-	function SaveAdvert($id, $name, $url, $alt, $image, $max)
+	function SaveAdvert($id, $name, $url, $alt, $max)
 	{
 		$sql = 'UPDATE
 					adverts_simple
@@ -176,11 +176,10 @@ class Advert_model extends Model {
 					advert_name = ?,
 					advert_image_url = ?,
 					advert_image_alt = ?,
-					advert_image = ?,
 					advert_views_max = ?
 				WHERE
 					advert_id = ?';
-		$this->db->query($sql, array($name, $url, $alt, $image, $max, $id));
+		$this->db->query($sql, array($name, $url, $alt, $max, $id));
 		return TRUE;
 	}
 	

@@ -31,7 +31,7 @@ class Homepage_boxes
 			echo('		<h3 class="Headline"><a '.$this->get_link_ref($articles[0],$prefix).'>'.$articles[0]['heading'].'</a></h3>'."\n");
 			echo('		<div class="Date">'.$articles[0]['date'].'</div>'."\n");
 			echo('		<p class="More">'.$articles[0]['blurb'].'</p>'."\n");
-			if (count($articles) > 1){echo('		<div class="LineContainer NewsBox"></div>'."\n");}
+			if (count($articles) > 1){echo('		<div class="LineContainer"></div>'."\n");}
 			echo('	</div>'."\n");
 			//loop printing the rest as small articles.
 			$index = 0;
@@ -70,7 +70,7 @@ class Homepage_boxes
 			echo('		<div class="Date">'.$articles[0]['date'].'</div>'."\n");
 			echo('		<p class="More">'.$articles[0]['blurb'].'</p>'."\n");
 			if (count($articles) > 1){
-				echo('		<div class="LineContainer NewsBox"></div>'."\n");
+				echo('		<div class="LineContainer"></div>'."\n");
 				echo('      <ul class="TitleList">'."\n");
 			}
 			echo('	</div>'."\n");

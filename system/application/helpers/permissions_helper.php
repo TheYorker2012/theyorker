@@ -842,12 +842,13 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 	$CI->pages_model->SetPageCode($page_code);
 
 	// Show "please log in" message if not failed
+	/*
 	if (!$data['failure']) {
 		$permission_message = $CI->pages_model->GetPropertyMessage('msg_permission_message');
 		if (FALSE !== $permission_message) {
 			$CI->messages->AddMessage(new Message($permission_message), FALSE);
 		}
-	}
+	}*/
 
 	// Title of login section of page
 	$section_title = $CI->pages_model->GetPropertyText('section_title');
