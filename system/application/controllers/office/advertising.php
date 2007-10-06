@@ -103,10 +103,9 @@ class Advertising extends Controller
 				$this->input->post('advert_name'),
 				$this->input->post('advert_url'),
 				$this->input->post('advert_alt'),
-				$this->input->post('advert_image'),
 				$this->input->post('advert_max_views')
 				);
-			$this->messages->AddMessage('success', 'The changed to the advert have been saved.');
+			$this->messages->AddMessage('success', 'The changes to the advert have been saved.');
 		}
 		//delete the advert
 		else if (isset($_POST['submit_delete_advert'])) {
