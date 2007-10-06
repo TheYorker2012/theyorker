@@ -1,15 +1,12 @@
-<!--<div style="border: 1px solid #999; padding: 5px; font-size: small; margin-bottom: 4px; ">-->
-<div class="BlueBox" style="padding: 5px; font-size: small; margin-bottom: 4px; ">
-	<div style='float:right;'>
-<?php if ($business_card['image_id'] == NULL) {
-	$business_card['image_id'] = 0;
-}
-if ($business_card['image_id']) {
-	echo $this->image->getImage($business_card['image_id'], 'userimage');
+<div class="BlueBox">
+<?php
+if ($business_card['image_id'] != NULL) {
+	echo("\t".'<div style="float:right;">'."\n");
+	echo($this->image->getImage($business_card['image_id'], 'userimage'));
+	echo("\t".'</div>'."\n");
 }
 ?>
-	</div>
-	<span style="font-size: large;  color: #2DC6D7; ">
+	<div style="font-size: large;  color: #2DC6D7; ">
 	<?php
 	if (	isset($editmode) && $editmode &&
 			isset($business_card['user_id']) && NULL != $business_card['user_id']) {
@@ -19,7 +16,7 @@ if ($business_card['image_id']) {
 	}
 	echo '<br />'.$business_card['title'];
 	?>
-	</span>
+	</div>
 	<p style='font-size:small;'><?php echo $business_card['blurb']; ?></p>
 	<p>
 		<?php

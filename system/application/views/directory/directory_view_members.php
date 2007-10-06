@@ -46,28 +46,30 @@
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox">
 <?php
-	if(empty($organisation['groups'])) {
+if(empty($organisation['groups'])) {
 ?>
+	<div class="BlueBox">
 		<div align="center">
 			<b><?php if (isset($no_groups)) echo $no_groups; ?></b>
 		</div>
+	</div>
 <?php
-	} else if (empty($organisation['cards'])) {
+} else if (empty($organisation['cards'])) {
 ?>
+	<div class="BlueBox">
 		<div align="center">
 			<b><?php if (isset($no_cards)) echo $no_cards; ?></b>
 		</div>
-<?php
-	} else {
-		foreach ($organisation['cards'] as $business_card) {
-			$this->load->view('directory/business_card',array(
-				'business_card' => $business_card,
-				'editmode' => isset($organisation['editmode']),
-			));
-		}
-	}
-	?>
 	</div>
+<?php
+} else {
+	foreach ($organisation['cards'] as $business_card) {
+		$this->load->view('directory/business_card',array(
+			'business_card' => $business_card,
+			'editmode' => isset($organisation['editmode']),
+		));
+	}
+}
+?>
 </div>
