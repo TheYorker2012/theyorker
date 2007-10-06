@@ -159,18 +159,18 @@ class Pages extends Controller
 		$Data['properties'] = array();
 		$Data['page_types'] = $this->_GetPageTypes();
 		
-		$input['codename']    = $this->input->post('codename',    FALSE);
+		$input['codename']    = $this->input->post('codename');
 		if (FALSE !== $input['codename']) {
-			$input['head_title']  = $this->input->post('head_title',  FALSE);
-			$input['title_separate']  = ($this->input->post('title_separate',  FALSE) !== FALSE);
+			$input['head_title']  = $this->input->post('head_title');
+			$input['title_separate']  = ($this->input->post('title_separate') !== FALSE);
 			if (!$input['title_separate']) {
-				$input['body_title'] = $this->input->post('head_title', FALSE);
+				$input['body_title'] = $this->input->post('head_title');
 			} else {
-				$input['body_title'] = $this->input->post('body_title', FALSE);
+				$input['body_title'] = $this->input->post('body_title');
 			}
-			$input['description'] = $this->input->post('description', FALSE);
-			$input['keywords']    = $this->input->post('keywords',    FALSE);
-			$input['type_id']     = $this->input->post('type_id',     FALSE);
+			$input['description'] = $this->input->post('description');
+			$input['keywords']    = $this->input->post('keywords');
+			$input['type_id']     = $this->input->post('type_id');
 			$save_failed = FALSE;
 			
 			// Validate and check permissions
@@ -322,19 +322,19 @@ class Pages extends Controller
 			}
 			
 			if (!$global_scope) {
-				$input['codename']    = $this->input->post('codename',    FALSE);
+				$input['codename']    = $this->input->post('codename');
 				if (FALSE !== $input['codename']) {
-					$input['head_title']  = $this->input->post('head_title',  FALSE);
-					$input['body_title']  = $this->input->post('body_title',  FALSE);
-					$input['title_separate']  = ($this->input->post('title_separate',  FALSE) !== FALSE);
+					$input['head_title']  = $this->input->post('head_title');
+					$input['body_title']  = $this->input->post('body_title');
+					$input['title_separate']  = ($this->input->post('title_separate') !== FALSE);
 					if (!$input['title_separate']) {
-						$input['body_title'] = $this->input->post('head_title', FALSE);
+						$input['body_title'] = $this->input->post('head_title');
 					} else {
-						$input['body_title'] = $this->input->post('body_title', FALSE);
+						$input['body_title'] = $this->input->post('body_title');
 					}
-					$input['description'] = $this->input->post('description', FALSE);
-					$input['keywords']    = $this->input->post('keywords',    FALSE);
-					$input['type_id']     = $this->input->post('type_id',     FALSE);
+					$input['description'] = $this->input->post('description');
+					$input['keywords']    = $this->input->post('keywords');
+					$input['type_id']     = $this->input->post('type_id');
 					$save_failed = FALSE;
 					
 					// Validate and check permissions
@@ -389,7 +389,7 @@ class Pages extends Controller
 				}
 			}
 			if ($Data['permissions']['prop_edit']) {
-				if ($this->input->post('save_properties', FALSE) !== FALSE) {
+				if ($this->input->post('save_properties') !== FALSE) {
 					$changes = 0;
 					$input = array();
 					$input['properties'] = array();
@@ -487,7 +487,7 @@ class Pages extends Controller
 	{
 		$data = $Data;
 		$data['target'] = $Target.$InputPageCode;
-		if (FALSE === $this->input->post('confirm_delete',FALSE)) {
+		if (FALSE === $this->input->post('confirm_delete')) {
 			// Get information about the page so user is informed before confirming.
 			$information = $this->pages_model->GetSpecificPage($Prefix.$InputPageCode, TRUE);
 			if (FALSE === $information) {
