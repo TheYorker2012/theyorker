@@ -95,12 +95,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
+					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/comment/">News Comment</a></li>
 					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
 					<li><a href="/news/arts/">Arts</a></li>
-					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
