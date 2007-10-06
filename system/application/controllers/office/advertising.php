@@ -25,25 +25,6 @@ class Advertising extends Controller
 				$this->messages->AddMessage('error', 'You must enter a name for the advert.');
 			}
 		}
-		/*
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();
-		$this->advert_model->SelectLatestAdvert();*/
 		
 		//set up page code
 		$this->pages_model->SetPageCode('advertising_list');
