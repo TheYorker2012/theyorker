@@ -37,7 +37,7 @@ class Sport extends Controller
 		//First article has summery, rest are simple articles
 		if(empty($main_article_ids)){
 			//TODO better error page for no results!
-			$main_article_summarys array();
+			$main_article_summarys = array();
 		}else{
 			$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
 			for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
