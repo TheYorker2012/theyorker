@@ -36,22 +36,8 @@ class Arts extends Controller
 		$main_article_ids = $this->News_model->GetLatestId($homepage_article_type,$main_articles_num);
 		//First article has summery, rest are simple articles
 		if(empty($main_article_ids)){
-			/// If there are no articles for this particular section then show a page anyway
-			$main_article_summarys[0] = array(
-				'id'					=>	0,
-				'date'					=>	date('l, jS F Y'),
-				'location'				=>	0,
-				'public_thread_id'		=>	NULL,
-				'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
-				'subheading'			=>	NULL,
-				'subtext'				=>	NULL,
-				'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
-				'blurb'					=>	NULL,
-				'authors'				=>	array(),
-				'links'					=>	array(),
-				'related_articles'		=>	array(),
-				'fact_boxes'			=>	array()
-			);
+			//TODO better error page for no results!
+			$main_article_summarys array();
 		}else{
 			$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
 			for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
