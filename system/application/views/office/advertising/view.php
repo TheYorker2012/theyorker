@@ -28,7 +28,7 @@
 							</tr>
 							<tr>
 								<td>
-									<b>Image URL:</b>
+									<b>Target Web Address:</b>
 								</td>
 								<td>
 									<?php echo($advert['url']); ?>
@@ -36,7 +36,7 @@
 							</tr>
 							<tr>
 								<td>
-									<b>Image Text:</b>
+									<b>Image Hover Text:</b>
 								</td>
 								<td>
 									<?php echo($advert['alt']); ?>
