@@ -146,7 +146,7 @@ class Homepage_boxes
 	//Each puffer must contain 'image' that is the url of where the image is, this has to be made in the controller!
 	function print_puffer_column ($puffers){
 		foreach ($puffers as $puffer) {
-			if(!empty($puffer['codename'])){
+			if(!empty($puffer['image_title'])){
 				echo '<div class=\'Puffer\'>';
 				echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
 				echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
