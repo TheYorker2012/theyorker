@@ -35,9 +35,13 @@ class Arts extends Controller
 		//Get article ids for the main section
 		$main_article_ids = $this->News_model->GetLatestId($homepage_article_type,$main_articles_num);
 		//First article has summery, rest are simple articles
-		$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
-		for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
-			array_push($main_article_summarys, $this->News_model->GetSimpleArticle($main_article_ids[$index], "Left"));
+		if(empty($main_article_ids)){
+			$main_article_summarys = array();
+		}else{
+			$main_article_summarys[0] = $this->News_model->GetSummaryArticle($main_article_ids[0], "Left", '%W, %D %M %Y', "medium");
+			for ($index = 1; $index <= ($main_articles_num-1) && $index < count($main_article_ids); $index++) {
+				array_push($main_article_summarys, $this->News_model->GetSimpleArticle($main_article_ids[$index], "Left"));
+			}
 		}
 		
 		//////////////Information for more article list(s)
