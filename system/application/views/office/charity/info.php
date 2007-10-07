@@ -1,8 +1,8 @@
 <div class="RightToolbar">
 	<h4>Quick Links</h4>
 	<?php
-	echo '<a href="/office/charity/article/'.$charity['id'].'">Article</a><br/ >';
-	echo '<a href="/office/charity/progressreports/'.$charity['id'].'">Progress Reports</a><br/ >';
+	echo '<a href="/office/charity/editarticle/'.$charity['id'].'">Article</a><br/ >';
+	echo '<a href="/office/charity/editreports/'.$charity['id'].'">Progress Reports</a><br/ >';
 	echo '<br/ >';
 	?>
 </div>
