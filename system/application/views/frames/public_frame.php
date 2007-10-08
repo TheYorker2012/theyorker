@@ -139,8 +139,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			</div>
 
 <?php
-	if (isset($advert)) {
-		echo('			<a href="'.$advert['url'].'"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 80px;" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" /></a>'."\n");
+	if (isset($advert) && !empty($advert['image_id']) && !empty($advert['url'])) {
+		echo('			<a href="'.$advert['url'].'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 80px;" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" /></a>'."\n");
 	}
 ?>
 		</div>

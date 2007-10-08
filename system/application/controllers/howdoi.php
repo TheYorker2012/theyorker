@@ -1,5 +1,4 @@
 <?php
-
 class Howdoi extends Controller {
 
 	/**
@@ -16,6 +15,7 @@ class Howdoi extends Controller {
 
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('Home_Model');
 		$this->pages_model->SetPageCode('howdoi_list');
 
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
@@ -41,6 +41,9 @@ class Howdoi extends Controller {
 			}
 		}
 
+		//Obtain banner for homepage
+		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage('howdoi');
+			
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('howdoi/howdoi', $data);
 
@@ -54,6 +57,7 @@ class Howdoi extends Controller {
 
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('Home_Model');
 		$this->pages_model->SetPageCode('howdoi_view');
 
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
@@ -85,7 +89,9 @@ class Howdoi extends Controller {
 				'title'=>$this->pages_model->GetPropertyText('sidebar_question_categories_title',TRUE));
 
 	                $data['parameters'] = array('category'=>$view_category_id,'codename'=>$codename,'article'=>$id);
-
+			//Obtain banner for homepage
+			$data['banner'] = $this->Home_Model->GetBannerImageForHomepage('howdoi');
+			
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(array('category'=>$data['categories'][$view_category_id]['name']));
 			$this->main_frame->SetContentSimple('howdoi/view', $data);
@@ -112,6 +118,7 @@ class Howdoi extends Controller {
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('Home_Model');
 		//$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		$user_id = (!$this->user_auth->entityId ? 0 : $this->user_auth->entityId);
