@@ -5,7 +5,7 @@
 	<h2 class="first">My Links</h2>
 	<div class="Entry" id="links">
 		<?php if ($link->num_rows() > 0) foreach($link->result() as $picture) {?>
-			<?=$this->image->getImage($picture->link_image_id, 'link', array('id' => 'links_'.$picture->link_id, 'title' => $picture->link_name, 'alt' => $picture->link_name))?>
+			<?php echo($this->image->getImage($picture->link_image_id, 'link', array('id' => 'links_'.$picture->link_id, 'title' => $picture->link_name, 'alt' => $picture->link_name))); ?>
 		<?php }?>
 	</div>
 	<h2>Remove Links</h2>
@@ -16,7 +16,7 @@
 			<img id="bin" title="Bin" src="/images/prototype/prefs/trash.png" width="48" height="48">
 		</td>
 		<td>
-			Drag and drop links into the bin to remove them from your home page
+			Drag and drop the link pictures above to remove them from your homepage.
 		</td>
 		</tr>
 		</table>
@@ -25,7 +25,9 @@
 	<div class="Entry">
 		Custom links allow you to add a link that is not in the list.<br />
 		<form method="post" action="/account/customlink">
-		<input type="submit" value="Create Link" class="button" />
+			<fieldset>
+				<input type="submit" value="Create Link" class="button" />
+			</fieldset>
 		</form>
 	</div>
 </div>
@@ -63,7 +65,7 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2>Add Links</h2>
+		<h2>add picture links to sidebar</h2>
 <!--		<form>
 		<fieldset>
 			<label for="sname"> Search: </label>
@@ -73,8 +75,8 @@
 		</form>-->
 		<div style="height:200px;overflow-x: hidden;overflow-y:scroll;overflow:-moz-scrollbars-vertical !important;">
 			<?php foreach ($AllLinks->result() as $option) {?>
-						<a href="<?=site_url('account/links/add/'.$option->link_id)?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
-						<?=$option->link_name?> <a href="<?=$option->link_url?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a><br />
+						<a href="<?php site_url('account/links/add/'.$option->link_id)?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
+						<?php echo($option->link_name); ?> <a href="<?php echo($option->link_url); ?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a><br />
 			<?php } ?>
 		</div>
 	</div>
