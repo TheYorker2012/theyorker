@@ -57,6 +57,7 @@ class Howdoi extends Controller {
 
 		$this->load->model('howdoi_model','howdoi_model');
 		$this->load->model('news_model','news_model');
+		$this->load->model('Home_Model');
 		$this->pages_model->SetPageCode('howdoi_view');
 
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
@@ -117,6 +118,7 @@ class Howdoi extends Controller {
 
 		$this->load->model('requests_model','requests_model');
 		$this->load->model('howdoi_model','howdoi_model');
+		$this->load->model('Home_Model');
 		//$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		$user_id = (!$this->user_auth->entityId ? 0 : $this->user_auth->entityId);
