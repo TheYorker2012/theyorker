@@ -6,7 +6,9 @@
 </div>
 
 <div id="MainColumn">
-
+	<div id="HomeBanner">
+		<?php echo($banner) ?>
+	</div>
 	<?php
 	if (isset($sections['progress_reports']['entries']))
 	{

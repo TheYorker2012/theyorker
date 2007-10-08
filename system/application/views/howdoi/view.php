@@ -25,6 +25,9 @@
 </div>
 
 <div id="MainColumn">
+	<div id="HomeBanner">
+		<?php echo($banner) ?>
+	</div>
 	<div class="BlueBox">
 		<h2><?php echo($categories[$parameters['category']]['name']); ?></h2>
 		<p><?php echo($categories[$parameters['category']]['blurb']); ?></p>

@@ -6,6 +6,9 @@
 </div>
 
 <div id="MainColumn">
+	<div id="HomeBanner">
+		<?php echo($banner) ?>
+	</div>
 	<div class="BlueBox">
 		<h2><?php echo($sections['no_charity']['title']); ?></h2>
 		<div class="Entry">

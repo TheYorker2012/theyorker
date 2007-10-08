@@ -12,6 +12,7 @@ class Charity extends Controller {
 		
 		$this->load->model('news_model','news');
 		$this->load->model('charity_model','charity');
+		$this->load->model('Home_Model');
 		$this->load->model('progressreports_model','progressreports');
 		$this->pages_model->SetPageCode('charity');
 			
@@ -74,7 +75,10 @@ class Charity extends Controller {
 					$data['sections']['progress_reports']['entries'][$row] = $this->news->GetFullArticle($row);
 				}
 			}
-
+			
+			//Obtain banner for homepage
+			$data['banner'] = $this->Home_Model->GetBannerImageForHomepage('ourcharity');
+		
 			// Set up the public frame
 			$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['charity']['name']));
 			$this->main_frame->SetContentSimple('charity/charity', $data);
@@ -110,6 +114,9 @@ class Charity extends Controller {
 			}
 		}
 
+		//Obtain banner for homepage
+		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage('ourcharity');
+			
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['charity']['name']));
 		$this->main_frame->SetContentSimple('charity/charitypr.php', $data);
