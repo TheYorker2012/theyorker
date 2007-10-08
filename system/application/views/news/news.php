@@ -52,12 +52,19 @@ if (isset($blogs)) {
 
 // Puffers
 if (isset($puffers)) {
-	foreach ($puffers as $puffer) {
-		echo '<div class=\'Puffer\'>';
-		echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
-		echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
-		echo '</a></div>';
-	}
+		foreach ($puffers as $puffer) {
+			if(!empty($puffer['image_title'])){
+				echo '<div class=\'Puffer\'>';
+				echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
+				echo '<img src=\'' . $puffer['image'] . '\' alt=\'' . $puffer['image_title'] . '\' title=\'' . $puffer['image_title'] . '\' />';
+				echo '</a></div>';
+			}else{
+				echo '<div class=\'Puffer\'>';
+				echo '<a href=\'/news/' . $puffer['codename'] . '\'>';
+				echo $puffer['name'];
+				echo '</a></div>';
+			}
+		}
 }
 
 // Latest Articles Heading

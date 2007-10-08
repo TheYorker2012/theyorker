@@ -145,10 +145,9 @@ class Articletypes extends Controller
 			}else if($this->Article_model->isArticleTypeAParent($_POST['article_type_parent'])==false){
 				$this->messages->AddMessage('error','The selected parent article type, cannot have children.');
 			}else{
-				//@NOTE no image support at the moment!
 				//create article type
-				$image_id = NULL;
-				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],$image_id,$_POST['article_type_archive'],$_POST['article_type_blurb']);
+				if(empty($_POST['article_type_archive'])){$archive=0;}else{$archive=1;}
+				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],$archive,$_POST['article_type_blurb']);
 				$this->messages->AddMessage('success','Article type updated.');
 				redirect('/office/articletypes');
 			}

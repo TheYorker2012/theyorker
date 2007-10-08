@@ -14,7 +14,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo $head_title;
+			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
 		} else {
 			echo 'no pagename';
 		}
@@ -100,7 +100,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
-					<li><a href="/news/arts/">Arts</a></li>
+					<li><a href="/arts/">Arts</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<!--<li><a href="/reviews/drink">Drink</a></li>-->
@@ -147,7 +147,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 		<div id="MainBodyPane">
 			<h1 id="PageTitle">
-				<?php if(isset($body_title)) { echo $body_title."\n"; } else { echo 'no pagename'."\n"; } ?>
+				<?php if(isset($body_title)) { echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n"; } else { echo 'no pagename'."\n"; } ?>
 			</h1>
 
 <!-- BEGIN generated content -->

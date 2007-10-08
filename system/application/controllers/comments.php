@@ -32,7 +32,7 @@ class Comments extends Controller
 		
 		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 4));
 		
-		if ($this->input->post('comment_report_confirm', FALSE) !== FALSE) {
+		if (isset($_POST['comment_report_confirm'])) {
 			// The user has confirmed, report the comment.
 			$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
 			if ($result) {
@@ -42,7 +42,7 @@ class Comments extends Controller
 			}
 			redirect($redirect_to);
 			
-		} elseif ($this->input->post('comment_report_cancel', FALSE) !== FALSE) {
+		} elseif (isset($_POST['comment_report_cancel'])) {
 			// The user has cancelled, return to the previous page.
 			$this->messages->AddMessage('information', 'Comment has not been reported.');
 			redirect($redirect_to);

@@ -142,6 +142,9 @@ class Advertising extends Controller
 		$advert = $this->advert_model->AdvertExists($advert_id);
 		
 		if ($advert) {
+		if (trim($advert['url']) == '') {
+			$advert['url'] = 'http://';
+		}
 			
 			$data = array(
 				'advert'=>$advert

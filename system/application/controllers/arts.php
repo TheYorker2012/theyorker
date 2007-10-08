@@ -1,9 +1,9 @@
 <?php
 /*
- * Lifestyle homepage controller
+ * Arts homepage controller
  *@author Owen Jones (oj502@york.ac.uk)
  */
-class Lifestyle extends Controller
+class Arts extends Controller
 {
 	function __construct()
 	{
@@ -17,7 +17,7 @@ class Lifestyle extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$homepage_article_type = 'lifestyle';
+		$homepage_article_type = 'arts';
 		//Get page properties information
 		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');

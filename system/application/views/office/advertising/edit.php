@@ -26,7 +26,7 @@
 <?php
 	echo('			<input type="text" id="advert_name" name="advert_name" value="'.$advert['name'].'" style="width: 250px" />'."\n");
 ?>
-			<label for="advert_name">Image URL: </label>
+			<label for="advert_name">Target Web Address: </label>
 <?php
 	echo('			<input type="text" id="advert_url" name="advert_url" value="'.$advert['url'].'" style="width: 250px" />'."\n");
 ?>
