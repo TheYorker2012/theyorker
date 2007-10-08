@@ -145,10 +145,8 @@ class Leagues extends Controller
 				$this->messages->AddMessage('error','This name is already taken, or there is one is too simular to this.');
 				$data['league_form']=$_POST;
 			}else{
-				//@NOTE no image support at the moment!
 				//create league
-				$image_id = NULL;
-				$this->Leagues_model->updateLeague($id,$codename,$_POST['league_name'],$_POST['league_type'],$image_id,$_POST['league_size'],0);
+				$this->Leagues_model->updateLeague($id,$codename,$_POST['league_name'],$_POST['league_type'],$_POST['league_size'],0);
 				$this->messages->AddMessage('success','League updated.');
 				redirect('/office/leagues');
 			}
