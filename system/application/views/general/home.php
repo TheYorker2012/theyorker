@@ -58,7 +58,7 @@ function print_middle_box($title,$article_array){
 <?php 	if ($link->num_rows() > 0)
 	{
 	foreach($link->result() as $picture){
-		echo('	<a href="'.$picture->link_url.'">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => $picture->link_name, 'alt' => $picture->link_name)).'</a>'."\n");
+		echo('	<a href="'.$picture->link_url.'" target="_blank">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => $picture->link_name, 'alt' => $picture->link_name)).'</a>'."\n");
 		}
 	} else {
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
@@ -69,26 +69,26 @@ function print_middle_box($title,$article_array){
 
 	<h2>Search the Web</h2>
 	<div class="Entry">
-		<form method="get" action="http://www.google.co.uk/search">
+		<form method="get" action="http://www.google.co.uk/search" target="_blank">
 			<input type="hidden" name="ie" value="UTF-8" />
 			<input type="hidden" name="oe" value="UTF-8" />
-			<a href="http://www.google.co.uk/">
+			<a href="http://www.google.co.uk/" target="_blank">
 				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
 			</a>
 			<fieldset class="inline">
 				<input type="text" name="q" value="" />
-				<input type="submit" class="button" name="btnG" value="Search" />
+				<input type="submit" class="button" name="btnG" value="Search" target="_blank" />
 			</fieldset>
 		</form>
 	</div>
 
 	<h2>My Webmail </h2>
 	<div class="Entry">
-		<a class="MailLogo" href="https://webmail.york.ac.uk">
+		<a class="MailLogo" href="https://webmail.york.ac.uk/" target="_blank">
 			<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
 		</a>
 		<p class="MailText">
-			<a href="https://webmail.york.ac.uk/">E-mail</a>
+			<a href="https://webmail.york.ac.uk/" target="_blank">E-mail</a>
 		</p>
 	</div>
 
