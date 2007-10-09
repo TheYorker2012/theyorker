@@ -31,6 +31,8 @@
 					/op				- operations such as delete, publish etc
 			/export					- export the contents of a source
 			/import					- import data into the source
+	/ajax
+		/recursimplevalidate
 */
 
 /// Interface to give to view for providing paths to bits of calendar system.
@@ -102,6 +104,12 @@ class CalendarPaths
 			default:
 				return NULL;
 		}
+	}
+	
+	/// Validate simple recurrence.
+	function SimpleRecurValidate()
+	{
+		return $this->mPath . '/ajax/recursimplevalidate';
 	}
 	
 	/// Get the event creation path.
@@ -230,6 +238,20 @@ class CalendarPaths
 			'/op/postpone'.
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence set attendence path.
+	/**
+	 * @param $attend string Should be one of 'yes', 'no', 'maybe'.
+	 * @param $ajax bool Whether to get the xml version.
+	 */
+	function OccurrenceAttend($Occurrence, $attend, $ajax = false)
+	{
+		return $this->mPath .
+			'/src/'.	$Occurrence->Event->Source->GetSourceId().
+			'/event/'.	$Occurrence->Event->SourceEventId.
+			'/occ/'.	$Occurrence->SourceOccurrenceId.
+			($ajax?'/ajax':'').'/attend/'.	$attend;
 	}
 }
 
@@ -395,6 +417,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 											),
 										),
 										'op' => $event_op,
+										'attend' => 'src_event_attend',
+										'ajax' => array(
+											'_store' => 'ajax',
+											'attend' => 'src_event_attend',
+										),
 									),
 								),
 							),
@@ -403,6 +430,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						'import' => NULL,
 					),
 				),
+			),
+			'ajax' => array(
+				'recursimplevalidate' => 'ajax_recursimplevalidate',
 			),
 		));
 	}
@@ -730,13 +760,18 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
+		// Validate the source
 		if (!$this->_GetSource()) {
 			return;
 		}
+		
+		$this->load->library('calendar_view_edit_simple');
+		
 		$this->pages_model->SetPageCode('calendar_new_event');
 		$this->main_frame->SetTitleParameters(array(
 			'source' => $this->mSource->GetSourceName(),
 		));
+		
 		if (!$this->mSource->IsSupported('create')) {
 			// Create isn't supported with this source
 			$this->messages->AddMessage('error', 'You cannot create events in this calendar');
@@ -744,166 +779,135 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			return;
 		}
 		
-		$categories = $this->mSource->GetAllCategories();
+		// Get the redirect url tail
+		$args = func_get_args();
+		$tail = implode('/', $args);
 		
-		/// @todo make standard functions and views for recurrence interface
-		$form_id = 'caladd_';
-		$length_ranges = array(
-			'summary' => array(3, 255),
-			'description' => array(NULL, 1 << 24 - 1),
-		);
+		// Get the buttons from post data
+		$prefix = 'evcr';
+		if (isset($_POST[$prefix.'_return'])) {
+			// REDIRECT
+			return redirect($this->mPaths->Range(isset($args[0])?$args[0]:NULL));
+		}
+		
+		$errors = array();
+		
+		// Read the recurrence data
+		if (isset($_POST[$prefix.'_recur_simple']) and
+			isset($_POST[$prefix.'_start']) and
+			isset($_POST[$prefix.'_duration']))
+		{
+			$rset_arr = $_POST[$prefix.'_recur_simple'];
+			$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
+				isset($_POST[$prefix.'_timeassociated']) && $_POST[$prefix.'_timeassociated'],
+				$_POST[$prefix.'_start'],
+				$_POST[$prefix.'_duration'],
+				$_POST[$prefix.'_recur_simple'],
+				$errors);
+		}
+		// Fill it in if none supplied
+		if (!isset($rset_arr)) {
+			$rset = new RecurrenceSet();
+			$rset->SetStartEnd(strtotime('tomorrow+12hours'), strtotime('tomorrow+13hours'));
+			$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
+		}
+		list($start, $end) = $rset->GetStartEnd();
+		$categories = $this->mSource->GetAllCategories();
 		
 		$input = array(
 			'name' => '',
-			'summary' => '',
 			'description' => '',
-			'start' => strtotime('+3hour'),
-			'end'   => strtotime('+4hour'),
-			'allday' => FALSE,
-			'time_associated'    => TRUE,
-			'eventcategory' => -1,
+			'location' => '',
+			'category' => 0,
+			'time_associated' => true,
 		);
-		$summary = $this->input->post($form_id.'summary');
-		if (FALSE !== $summary) {
-			// Get the data
-			$failed_validation = FALSE;
-			$input['summary']        = $summary;
-			$input['start']          = $this->input->post($form_id.'start');
-			$input['end']            = $this->input->post($form_id.'end');
-			$input['allday']         = (FALSE !== $this->input->post($form_id.'allday'));
-			$input['location']       = $this->input->post($form_id.'location');
-			$input['category']       = $this->input->post($form_id.'category');
-			$input['description']    = $this->input->post($form_id.'description');
-			$input['frequency']      = $this->input->post($form_id.'frequency');
-			// Simple derived data
-			$input['time_associated'] = !$input['allday'];
-			$input['name'] = $input['summary'];
+		$input_summary = $this->input->post($prefix.'_summary');
+		if (false !== $input_summary) {
+			$input_valid = true;
 			
-			// Validate numbers
-			foreach (array('start','end') as $ts_name) {
-				if (is_numeric($input[$ts_name])) {
-					$input[$ts_name] = (int)$input[$ts_name];
-				} else {
-					$this->messages->AddMessage('error', 'Invalid '.$ts_name.' timestamp.');
-				}
+			// Get more post data
+			$input['name'] = $input_summary;
+			if (strlen($input['name']) <= 3 or strlen($input['name']) >= 256) {
+				$input_valid = false;
+				$this->messages->AddMessage('error', 'Event summary is too long or too short.');
 			}
 			
-			// Validate strings
-			foreach ($length_ranges as $field => $range) {
-				if (FALSE !== $input[$field]) {
-					$len = strlen($input[$field]);
-					if (NULL !== $range[0] && $len < $range[0]) {
-						$failed_validation = TRUE;
-						$this->messages->AddMessage('error', 'The specified '.$field.' was not long enough. It must be at least '.$range[0].' characters long.');
-					}
-					if (NULL !== $range[1] && $len > $range[1]) {
-						$failed_validation = TRUE;
-						$this->messages->AddMessage('error', 'The specified '.$field.' was too long. It must be at most '.$range[1].' characters long.');
-					}
+			$input_description = $this->input->post($prefix.'_description');
+			if (false !== $input_description) {
+				$input['description'] = $input_description;
+				if (strlen($input['name']) > 65535) {
+					$input_valid = false;
+					$this->messages->AddMessage('error', 'Event description is too long.');
 				}
 			}
-			
-			// Validate category
-			if (!array_key_exists($input['category'], $categories))
-			{
-				$failed_validation = TRUE;
-				$this->messages->AddMessage('error', 'You did not specify a valid event category');
-			} else {
-				$input['eventcategory'] = $input['category'];
-				$input['category'] = $categories[$input['category']]['id'];
+			$input_category = $this->input->post($prefix.'_category');
+			if (false !== $input_category) {
+				$input['category'] = $input_category;
 			}
-			
-			// Validate recurrence based on frequency
-			if ('none' !== $input['frequency']) {
-				// Read interval
-				$input['interval']     = $this->input->post($form_id.'interval');
-				// Validate interval
-				if (!is_numeric($input['interval']) || $input['interval'] < 1) {
-					$failed_validation = TRUE;
-					$this->messages->AddMessage('error', 'You specified an invalid interval');
-				} else {
-					$input['interval'] = (int)$input['interval'];
-				}
-				if ('daily' === $input['frequency']) {
-				} elseif ('weekly' === $input['frequency']) {
-					$input['onday']          = $this->input->post($form_id.'onday');
-				} elseif ('yearly' === $input['frequency']) {
+			$input_location = $this->input->post($prefix.'_location');
+			if (false !== $input_location) {
+				$input['location'] = $input_location;
+				if (strlen($input['location']) > 50) {
+					$input_valid = false;
+					$this->messages->AddMessage('error', 'Event location is too long.');
 				}
 			}
+			$input['time_associated'] = ($this->input->post($prefix.'_timeassociated') !== false);
 			
-			if (!$failed_validation) {
-				$start = $input['start'];
-				$end   = $input['end'];
-				if ($end < $start) {
-					$this->messages->AddMessage('error', 'You specified the end time before the start time.');
-					$failed_validation = TRUE;
-				} else {
-					if (!$input['time_associated']) {
-						$end = strtotime('1day', $end);
-					}
-					$input['recur'] = new RecurrenceSet();
-					$input['recur']->SetStartEnd($start, $end);
-					
-					// daily
-					if ('daily' === $input['frequency']) {
-						$rrule = new CalendarRecurRule();
-						$rrule->SetFrequency('daily');
-						$rrule->SetInterval($input['interval']);
-						$input['recur']->AddRRules($rrule);
-						
-					} elseif ('weekly' === $input['frequency']) {
-						$rrule = new CalendarRecurRule();
-						$rrule->SetFrequency('weekly');
-						$rrule->SetInterval($input['interval']);
-						static $onday_translate = array(
-							'mon' => 'MO',
-							'tue' => 'TU',
-							'wed' => 'WE',
-							'thu' => 'TH',
-							'fri' => 'FR',
-							'sat' => 'SA',
-							'sun' => 'SU',
-						);
-						foreach ($input['onday'] as $day => $on) {
-							$short_day = strtoupper(substr($day,0,2));
-							if (array_key_exists($short_day, CalendarRecurRule::$sWeekdays)) {
-								$rrule->SetByDay(CalendarRecurRule::$sWeekdays[$short_day]);
-							}
-						}
-						$input['recur']->AddRRules($rrule);
-						
-					} elseif ('yearly' === $input['frequency']) {
-						$rrule = new CalendarRecurRule();
-						$rrule->SetFrequency('yearly');
-						$rrule->SetInterval($input['interval']);
-						$input['recur']->AddRRules($rrule);
-						
-					}
-					
-					$messages = $this->mSource->CreateEvent($input);
-					if (!array_key_exists('error', $messages) && !empty($messages['error'])) {
-						$this->messages->AddMessage('success', 'Event created successfully.');
-					}
-					$this->messages->AddMessages($messages);
+			// at this point $start and $end are still plain timestamps
+			$input['recur'] = $rset;
+			
+			if ($input_valid) {
+				$messages = $this->mSource->CreateEvent($input);
+				$this->messages->AddMessages($messages);
+				if (!array_key_exists('error', $messages) || empty($messages['error'])) {
+					$this->messages->AddMessage('success', 'Event created successfully.');
+					return redirect($this->mPaths->Range(date('Y-M-j', $start)));
 				}
 			}
 		}
 		
-		$input['target'] = $this->uri->uri_string();
-		$data = array(
-			'EventCategories' => $categories,
-			'AddForm' => $input,
+		// Ready output data
+		$start = new Academic_time($start);
+		$end   = new Academic_time($end);
+		$duration = Academic_time::Difference($start, $end, array('days', 'hours', 'minutes'));
+		$eventinfo = array(
+			'summary' => $input['name'],
+			'description' => $input['description'],
+			'location' => $input['location'],
+			'category' => $input['category'],
+			'timeassociated' => $input['time_associated'],
+			'start' => array(
+				'monthday' => $start->DayOfMonth(),
+				'month' => $start->Month(),
+				'year' => $start->Year(),
+				'time' => $start->Hour().':'.$start->Minute(),
+				'yearday' => $start->DayOfYear(),
+				'day' => $start->DayOfWeek(),
+				'monthweek' => (int)(($start->DayOfMonth()+6)/7),
+			),
+			'duration' => array(
+				'days' => $duration['days'],
+				'time' => $duration['hours'].':'.$duration['minutes'],
+			),
 		);
+		$data = array(
+			'SimpleRecur' => $rset_arr,
+			'FailRedirect' => '/'.$tail,
+			'Path' => $this->mPaths,
+			'EventCategories' => $categories,
+			'FormPrefix' => $prefix,
+			'EventInfo' => $eventinfo,
+		);
+		foreach ($errors as $error) {
+			$this->messages->AddMessage('error', $error['text']);
+		}
 		
-		$this->main_frame->SetContent(new FramesView('calendar/simpleadd', $data));
+		$this->SetupTabs('', $start);
 		
-		/// Load extra files required for JS date and time selector
-		$this->main_frame->SetData('extra_head',
-			'<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>'."\n".
-			'<script type="text/javascript" src="/javascript/calendar_select.js"></script>'."\n".
-			'<script type="text/javascript" src="/javascript/calendar_select-en.js"></script>'."\n".
-			'<script type="text/javascript" src="/javascript/calendar_select-setup.js"></script>'."\n");
-		
+		$this->main_frame->SetContent(
+			new FramesView('calendar/event_edit', $data)
+		);
 		$this->main_frame->Load();
 	}
 	
@@ -1016,6 +1020,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
+		// Get data from uri resolution.
 		$source_id = $this->mData['SourceId'];
 		$event_id = $this->mData['EventId'];
 		$occurrence_specified = array_key_exists('OccurrenceId', $this->mData);
@@ -1025,18 +1030,23 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$occurrence_id = NULL;
 		}
 		
-		$this->pages_model->SetPageCode('calendar_event_edit');
-		
+		// Validate the source
 		if (!$this->_GetSource()) {
 			return;
 		}
 		
-		$calendar_data = new CalendarData();
-		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
-		$events = $calendar_data->GetEvents();
+		$this->load->library('calendar_view_edit_simple');
+		
+		$this->pages_model->SetPageCode('calendar_event_edit');
+		
 		// Get the redirect url tail
 		$args = func_get_args();
 		$tail = implode('/', $args);
+		
+		// Fetch the specified event
+		$calendar_data = new CalendarData();
+		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
+		$events = $calendar_data->GetEvents();
 		if (array_key_exists(0, $events)) {
 			$event = $events[0];
 			
@@ -1062,11 +1072,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$occurrence_id = $found_occurrence->SourceOccurrenceId;
 				}
 			}
-			$return_button = (bool)$this->input->post('evview_return');
-			if (NULL !== $event && $event->ReadOnly) {
+			// Get the buttons from post data
+			$prefix = 'eved';
+			$return_button = isset($_POST[$prefix.'_return']);
+			if (false !== $event && $event->ReadOnly) {
 				$return_button = TRUE;
 				$this->messages->AddMessage('error', 'You do not have permission to make changes to this event.');
 			}
+			
 			if ($return_button) {
 				// REDIRECT
 				if ($occurrence_specified) {
@@ -1075,41 +1088,232 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$path = $this->mPaths->EventInfo($event);
 				}
 				return redirect($path.'/'.$tail);
-				
-			} else {
-				$data = array(
-					'Event' => &$event,
-					'ReadOnly' => $this->mSource->IsSupported('create'),
-					'FailRedirect' => '/'.$tail,
-					'Path' => $this->mPaths,
-				);
-				if (NULL !== $occurrence_id) {
-					$data['Occurrence'] = &$found_occurrence;
-					$data['Attendees'] = $this->mSource->GetOccurrenceAttendanceList($occurrence_id);
-				} else {
-					$data['Occurrence'] = NULL;
-				}
-				
-				$this->main_frame->SetTitleParameters(array(
-					'source' => $this->mSource->GetSourceName(),
-					'event' => $event->Name,
-				));
-				
-				if (NULL !== $occurrence_id) {
-					$link_time = $found_occurrence->StartTime;
-				} else {
-					$link_time = new Academic_time(time());
-				}
-				$this->SetupTabs('', $link_time);
-				
-				$this->main_frame->SetContent(
-					new FramesView('calendar/event_edit', $data)
-				);
 			}
+			
+			$input_summary = $this->input->post($prefix.'_summary');
+			$errors = array();
+			
+			// Read the recurrence data
+			if (isset($_POST[$prefix.'_recur_simple']) and
+				isset($_POST[$prefix.'_start']) and
+				isset($_POST[$prefix.'_duration']))
+			{
+				$rset_arr = $_POST[$prefix.'_recur_simple'];
+				$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
+					isset($_POST[$prefix.'_timeassociated']) && $_POST[$prefix.'_timeassociated'],
+					$_POST[$prefix.'_start'],
+					$_POST[$prefix.'_duration'],
+					$_POST[$prefix.'_recur_simple'],
+					$errors);
+			}
+			// Fill it in if none supplied
+			/// @todo Fix that the new rset doesn't have the same rrule ids, so theres a deletion/insertion instead of update.
+			if (!isset($rset_arr)) {
+				$rset = $event->GetRecurrenceSet();
+				$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
+			}
+			list($start, $end) = $rset->GetStartEnd();
+			$categories = $this->mSource->GetAllCategories();
+			
+			$input = array(
+				'name' => $event->Name,
+				'description' => $event->Description,
+				'location' => $occurrence->LocationDescription,
+				'category' => 0,
+				'time_associated' => $event->TimeAssociated,
+			);
+			if (isset($categories[$event->Category])) {
+				$input['category'] = $categories[$event->Category]['id'];
+			}
+			$input_summary = $this->input->post($prefix.'_summary');
+			if (false !== $input_summary) {
+				$input_valid = true;
+				
+				// Get more post data
+				$input['name'] = $input_summary;
+				if (strlen($input['name']) <= 3 or strlen($input['name']) >= 256) {
+					$input_valid = false;
+					$this->messages->AddMessage('error', 'Event summary is too long or too short.');
+				}
+				
+				$input_description = $this->input->post($prefix.'_description');
+				if (false !== $input_description) {
+					$input['description'] = $input_description;
+					if (strlen($input['name']) > 65535) {
+						$input_valid = false;
+						$this->messages->AddMessage('error', 'Event description is too long.');
+					}
+				}
+				$input_category = $this->input->post($prefix.'_category');
+				if (false !== $input_category) {
+					$input['category'] = $input_category;
+				}
+				$input_location = $this->input->post($prefix.'_location');
+				if (false !== $input_location) {
+					$input['location'] = $input_location;
+					if (strlen($input['location']) > 50) {
+						$input_valid = false;
+						$this->messages->AddMessage('error', 'Event location is too long.');
+					}
+				}
+				$input['time_associated'] = ($this->input->post($prefix.'_timeassociated') !== false);
+				
+				// at this point $start and $end are still plain timestamps
+				$input['recur'] = $rset;
+				
+				if ($input_valid) {
+					// Make the change
+					/// @todo WARN about going live immmediately if applicable
+					$messages = $this->mMainSource->AmmendEvent($event, $input);
+					
+					$this->messages->AddMessages($messages);
+					if (!array_key_exists('error', $messages) || empty($messages['error'])) {
+						// Success
+						$this->messages->AddMessage('success', 'Event updated');
+						
+						// REDIRECT
+						if ($occurrence_specified) {
+							$path = $this->mPaths->OccurrenceInfo($found_occurrence);
+						} else {
+							$path = $this->mPaths->EventInfo($event);
+						}
+						return redirect($path.'/'.$tail);
+					}
+				}
+			}
+			
+			// Ready output data
+			$start = new Academic_time($start);
+			$end   = new Academic_time($end);
+			$duration = Academic_time::Difference($start, $end, array('days', 'hours', 'minutes'));
+			$eventinfo = array(
+				'summary' => $input['name'],
+				'description' => $input['description'],
+				'location' => $input['location'],
+				'category' => $input['category'],
+				'timeassociated' => $input['time_associated'],
+				'start' => array(
+					'monthday' => $start->DayOfMonth(),
+					'month' => $start->Month(),
+					'year' => $start->Year(),
+					'time' => $start->Hour().':'.$start->Minute(),
+					'yearday' => $start->DayOfYear(),
+					'day' => $start->DayOfWeek(),
+					'monthweek' => (int)(($start->DayOfMonth()+6)/7),
+				),
+				'duration' => array(
+					'days' => $duration['days'],
+					'time' => $duration['hours'].':'.$duration['minutes'],
+				),
+			);
+			$data = array(
+				'SimpleRecur' => $rset_arr,
+				'FailRedirect' => '/'.$tail,
+				'Path' => $this->mPaths,
+				'EventCategories' => $categories,
+				'FormPrefix' => $prefix,
+				'EventInfo' => $eventinfo,
+			);
+			foreach ($errors as $error) {
+				$this->messages->AddMessage('error', $error['text']);
+			}
+			
+			$this->SetupTabs('', $start);
+			
+			$this->main_frame->SetTitleParameters(array(
+				'source' => $this->mSource->GetSourceName(),
+				'event' => $event->Name,
+			));
+			$this->main_frame->SetContent(
+				new FramesView('calendar/event_edit', $data)
+			);
 		} else {
+			// Event not in list
 			$this->ErrorNotAccessible($tail);
 		}
 		$this->main_frame->Load();
+	}
+	
+	/// AJAX: Validate post recurrence data asynchronously.
+	function ajax_recursimplevalidate()
+	{
+		$this->load->library('calendar_view_edit_simple');
+		$validator = new CalendarViewEditSimpleValidate();
+		$validator->SetData($_GET);
+		$validator->EchoXML();
+	}
+	
+	/// [AJAX:] Set the attendence of an event.
+	function src_event_attend($new_attendence = NULL)
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		// Get data from uri resolution.
+		$source_id = $this->mData['SourceId'];
+		$event_id = $this->mData['EventId'];
+		$occurrence_id = $this->mData['OccurrenceId'];
+		
+		// Validate the source
+		if (!$this->_GetSource()) {
+			return;
+		}
+		
+		// Validate $new_attendence
+		$new_attend = NULL;
+		switch ($new_attendence) {
+			case 'yes':
+				$new_attend = true;
+				break;
+			case 'no':
+				$new_attend = false;
+				break;
+			case 'maybe':
+				break;
+			default:
+				return show_404();
+		}
+		
+		// Get the redirect url tail
+		$args = func_get_args();
+		array_shift($args);
+		$tail = implode('/', $args);
+		
+		// Fetch the specified event
+		$calendar_data = new CalendarData();
+		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
+		$events = $calendar_data->GetEvents();
+		if (array_key_exists(0, $events)) {
+			$event = $events[0];
+			
+			// Find the occurrence
+			$found_occurrence = NULL;
+			foreach ($event->Occurrences as $key => $occurrence) {
+				if ($occurrence->SourceOccurrenceId == $occurrence_id) {
+					$found_occurrence = & $event->Occurrences[$key];
+					break;
+				}
+			}
+			if (NULL === $found_occurrence) {
+				$this->messages->AddMessage('warning', 'The event occurrence with id '.$occurrence_id.' does not belong to the event with id '.$event_id.'.');
+				redirect($tail);
+				return;
+			}
+			
+			if ($occurrence->UserHasPermission('set_attend')) {
+				$messages = $this->mSource->AttendingOccurrence($occurrence->SourceOccurrenceId, $new_attend);
+				if (!isset($messages['error']) || !empty($messages['error'])) {
+					$this->messages->AddMessage('success',
+						'Your attendance to &quot;'.htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8')."&quot; has been changed to $new_attendence.");
+				}
+			} else {
+				$this->messages->AddMessage('error', 'You cannot set an attendance on this event.');
+			}
+			redirect($tail);
+		} else {
+			// Event not in list
+			$this->ErrorNotAccessible($tail);
+			$this->main_frame->Load();
+		}
 	}
 	
 	/// Perform an operation on an event or occurrence

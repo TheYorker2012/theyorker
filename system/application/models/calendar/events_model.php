@@ -649,6 +649,12 @@ class Events_model extends Model
 		return $this->mActiveEntityType === self::$cEntityVip;
 	}
 
+	/// Find whether the user is a normal logged in yorker user.
+	function IsNormalUser()
+	{
+		return $this->mActiveEntityType === self::$cEntityUser;
+	}
+
 	/// Get the entity id of the active entity.
 	function GetActiveEntityId()
 	{
@@ -1286,29 +1292,51 @@ class Events_model extends Model
 			'name'				=> 'events.event_name',
 			'description'		=> 'events.event_description',
 			'time_associated'	=> 'events.event_time_associated',
+			'category'			=> 'events.event_type_id',
 		);
-		$fields = array();
-		$bind_data = array();
+		$fields = array(
+			'event_timestamp=NOW()'
+		);
 		foreach ($translation as $input_name => $field_name) {
 			if (array_key_exists($input_name, $EventData)) {
-				$fields[] = $field_name.'=?';
-				$bind_data[] = $EventData[$input_name];
+				$fields[] = $field_name.'='.$this->db->escape($EventData[$input_name]);
 			}
 		}
-
-		$occurrence_query = new EventOccurrenceQuery();
-
-		// create new event
-		$sql = 'UPDATE events
-				INNER JOIN event_entities
-					ON	event_entities.event_entity_event_id = events.event_id
-					AND ' . $occurrence_query->ExpressionOwned() . '
-				SET ' . implode(',',$fields) . '
-				WHERE events.event_id = ?';
-		$bind_data[] = $event_id;
-
-		$query = $this->db->query($sql, $bind_data);
-		$num_events = array($this->db->affected_rows());
+		if (isset($EventData['recur'])) {
+			list($start, $end) = $EventData['recur']->GetStartEnd();
+			$fields[] = 'events.event_start=FROM_UNIXTIME('.$this->db->Escape($start).')';
+			$fields[] = 'events.event_end=FROM_UNIXTIME('.$this->db->Escape($end).')';
+		}
+		if (!empty($fields)) {
+			$occurrence_query = new EventOccurrenceQuery();
+	
+			// create new event
+			$sql = 'UPDATE events
+					LEFT JOIN event_entities
+						ON	event_entities.event_entity_event_id = events.event_id
+					SET ' . implode(',',$fields) . '
+					WHERE ' . $occurrence_query->ExpressionOwned() . ' AND events.event_id = '.$this->db->escape($event_id);
+			
+	// 		var_dump($sql);
+	// 		exit;
+			
+	// 		$this->db->join('event_entities','event_entities.event_entity_event_id = events.event_id AND ' . $occurrence_query->ExpressionOwned()
+	// 		$this->db->set(
+	// 		$this->db->where(array('events.event_id' => $event_id));
+	// 		$this->db->update('events');
+	
+			$query = $this->db->query($sql);
+			$num_events = $this->db->affected_rows();
+		} else {
+			$num_events = 0;
+		}
+		// Only continue if something was succesfully changed in the event as UpdateRecurrenceSet does not check permissions
+		if ($num_events && isset($EventData['recur'])) {
+			$this->recurrence_model->UpdateRecurrenceSet($EventData['recur'], $event_id);
+			$this->ResolveRecurrenceSetOccurrences($event_id, $EventData['recur']);
+		}
+		
+// 		var_dump($num_events);
 
 		if (array_key_exists('occurrences',$EventData)) {
 			$num_occurrences = $this->OccurrencesAlter($event_id, $EventData['occurrences']);
@@ -1608,7 +1636,7 @@ class Events_model extends Model
 				$sets[] = 'event_occurrences.event_occurrence_end_time = FROM_UNIXTIME(?)';
 				$bind_data[] = $occurrence['end'];
 			}
-
+			
 			if (!empty($sets)) {
 				$sql = 'UPDATE event_occurrences
 					INNER JOIN event_entities
@@ -1628,6 +1656,278 @@ class Events_model extends Model
 		return $result;
 	}
 
+	/// Resolve the differences between the recurrence set of an event and its occurrences.
+	/**
+	 * @param $EventId int ID of event.
+	 * @param $RSet RecurrenceSet The recurrence information.
+	 *
+	 * This is pretty clever little function. It figures out the differences
+	 * between @a $RSet and the actual occurrences and makes changes to the
+	 * occurrences by adding, removing, and (within a day) moving occurrences.
+	 */
+	function ResolveRecurrenceSetOccurrences($EventId, & $RSet)
+	{
+		$range_start = time();
+		$range_end = strtotime('+2years');
+		
+		// Get all occurrences of the event
+		//  id, state
+		$occurrence_query = new EventOccurrenceQuery();
+		$sql = 'SELECT
+				event_occurrence_id		AS id,
+				event_occurrence_state	AS state,
+				UNIX_TIMESTAMP(event_occurrence_start_time)	AS start_time,
+				UNIX_TIMESTAMP(event_occurrence_end_time)	AS end_time
+			FROM events
+			INNER JOIN event_occurrences
+				ON event_occurrence_event_id = event_id
+			LEFT JOIN event_entities
+				ON	event_entities.event_entity_event_id
+						= event_occurrences.event_occurrence_event_id
+			WHERE event_id = '.$this->db->Escape($EventId).'
+			AND '.$occurrence_query->ExpressionOwned();
+		$results = $this->db->query($sql);
+		$occurrence_data = $results->result_array();
+		
+		// Arrays for storing actions chosen by analysis.
+		$remove_list  = array();
+		$move_list    = array();
+		$create_list  = array();
+		$restore_list = array();
+		
+		// Reformat occurrence data into time indexing
+		$occurrences = array();
+		foreach ($occurrence_data as $occurrence) {
+			$ts = $occurrence['start_time'];
+			$day = date('Ymd', $ts);
+			$time = date('His', $ts);
+			$state = $occurrence['state'];
+			$occurrence['active'] = ($state == 'published' or $state == 'draft' or $state == 'movedraft');
+			$occurrence['day'] = $day;
+			$occurrence['time'] = $time;
+			if (NULL !== $occurrence['end_time']) {
+				$occurrence['duration'] = $occurrence['end_time'] - $ts;
+			} else {
+				$occurrence['duration'] = NULL;
+			}
+			if (isset($occurrences[$day][$time])) {
+				if ($occurrence['active']) {
+					if (!$occurrence[$day][$time]['active']) {
+						$occurrences[$day][$time] = $occurrence;
+					} else {
+						// Already an occurrence here, so delete this one
+						$remove_list[] = $occurrence;
+					}
+				}
+			} else {
+				$occurrences[$day][$time] = $occurrence;
+			}
+			
+			// If any of the occurrences are greater than the current range_end, extend it
+			if (is_numeric($occurrence['start_time']) and $occurrence['start_time'] > $range_end) {
+				$range_end = $occurrence['start_time'];
+			}
+		}
+		
+		// Get the recurrences from the rule
+		$recurrences = $RSet->Resolve($range_start, $range_end);
+		
+		// First cancel / delete any occurrences which are removed.
+		foreach ($occurrences as $day => $times) {
+			// If this day is not in $recurrences, cancel
+			if (!isset($recurrences[$day])) {
+				foreach ($times as $time => $occurrence) {
+					// Its gotta be in the future for us to do anything about it
+					if ($occurrence['active'] && $occurrence['start_time'] >= $range_start) {
+						$remove_list[] = $occurrence;
+					}
+				}
+			}
+			
+			// Check that they match
+			else {
+				// Find the times which differ
+				$changed_times = array();
+				foreach ($times as $time => $occurrence) {
+					$active = $occurrence['active'];
+					$willexist = isset($recurrences[$day][$time]);
+					if (!$active and $willexist) {
+						// an inactive event has been restored
+						$restore_list[] = array($occurrence, $recurrences[$day][$time]);
+					} elseif ($active and !$willexist) {
+						// an active event has been removed
+						$occurrence['new'] = false;
+						$changed_times[$time] = $occurrence;
+					} elseif ($active and $willexist) {
+						if ($occurrence['duration'] !== $recurrences[$day][$time]) {
+							$move_list[] = array(
+								$occurrence,
+								array(
+									'duration' => $recurrences[$day][$time],
+									'day' => $day,
+									'time' => $time,
+								)
+							);
+						}
+					}
+				}
+				foreach ($recurrences[$day] as $time => $duration) {
+					if (!isset($times[$time])) {
+						$recurrence_info = array(
+							'new' => true,
+							'duration' => $duration,
+							'day' => $day,
+							'time' => $time,
+						);
+						$changed_times[$time] = $recurrence_info;
+					}
+				}
+				
+				// Match together adds and removes to form moves
+				// + +- +- +- -+ + +- +
+				ksort($changed_times);
+				$last_new = NULL;
+				$last_occ = NULL;
+				foreach ($changed_times as $time => $occurrence) {
+					if ($last_new === NULL) {
+						// First in sequence
+						$last_new = $occurrence['new'];
+						$last_occ = $occurrence;
+					} elseif ($occurrence['new'] === $last_new) {
+						// Another of same newness, take action with last one
+						if ($last_new) {
+							$create_list[] = $last_occ;
+						} else {
+							$remove_list[] = $last_occ;
+						}
+						$last_occ = $occurrence;
+					} else {
+						// Pair this and previous, and restart the sequence
+						if ($last_new) {
+							$move_list[] = array($occurrence, $last_occ);
+						} else {
+							$move_list[] = array($last_occ, $occurrence);
+						}
+						$last_new = NULL;
+					}
+				}
+				// Unmatched at end?
+				if ($last_new === TRUE) {
+					$create_list[] = $last_occ;
+				} elseif ($last_new === FALSE) {
+					$remove_list[] = $last_occ;
+				}
+			}
+		}
+		// Create any recurrences which are new.
+		foreach ($recurrences as $day => $times) {
+			// If this day is not in $occurrences, create
+			if (!isset($occurrences[$day])) {
+				foreach ($times as $time => $duration) {
+					$create_list[] = array(
+						'day' => $day,
+						'time' => $time,
+						'duration' => $duration,
+					);
+				}
+			}
+		}
+		
+		/*
+		// Output the action lists
+		$this->messages->AddDumpMessage('remove', $remove_list);
+		$this->messages->AddDumpMessage('move', $move_list);
+		$this->messages->AddDumpMessage('create', $create_list);
+		$this->messages->AddDumpMessage('restore', $restore_list);
+		return;
+		//*/
+		// Now we have the lists of changes:
+		// remove
+		foreach ($remove_list as $occurrence) {
+			switch ($occurrence['state']) {
+				case 'draft':
+				case 'movedraft':
+					// delete
+					$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'deleted');
+					break;
+				case 'published':
+					// cancel
+					$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'cancelled');
+					break;
+			}
+		}
+		// create
+		foreach ($create_list as $recurrence) {
+			// create occurrences as drafts
+			$start_time = strtotime($recurrence['day'].' '.$recurrence['time']);
+			if (NULL !== $duration) {
+				$end_time = strtotime($recurrence['duration'].' seconds', $start_time);
+			} else {
+				$end_time = NULL;
+			}
+			$sql_insert = 'INSERT INTO event_occurrences (
+				event_occurrence_event_id,
+				event_occurrence_state,
+				event_occurrence_location_name,
+				event_occurrence_original_start_time,
+				event_occurrence_start_time,
+				event_occurrence_end_time)
+				VALUES ('.$this->db->Escape($EventId).',
+						"draft",
+						"",FROM_UNIXTIME('.$start_time.'),FROM_UNIXTIME('.$start_time.'),FROM_UNIXTIME('.$end_time.'))';
+			$this->db->query($sql_insert);
+		}
+		// restore
+		foreach ($restore_list as $info) {
+			list($occurrence, $duration) = $info;
+			switch ($occurrence['state']) {
+				case 'deleted':
+				case 'trashed':
+					// draft
+					if (is_numeric($duration)) {
+						$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'draft', array(),
+							'event_occurrence_end_time = DATE_ADD(event_occurrence_start_time, INTERVAL '.(int)$duration.' SECOND)'
+						);
+					} else {
+						$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'draft', array(),
+							'event_occurrence_end_time = NULL'
+						);
+					}
+					break;
+				case 'cancelled':
+					// publish
+					if (is_numeric($duration)) {
+						$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'published', array(),
+							'event_occurrence_end_time = DATE_ADD(event_occurrence_start_time, INTERVAL '.(int)$duration.' SECOND)'
+						);
+					} else {
+						$this->OccurrenceChangeState($EventId, (int)$occurrence['id'], $occurrence['state'], 'published', array(),
+							'event_occurrence_end_time = NULL'
+						);
+					}
+					break;
+			}
+		}
+		// move
+		foreach ($move_list as $info) {
+			list($occurrence, $recurrence) = $info;
+			// alter existing occurrences copying times + duration
+			$start_time = strtotime($recurrence['day'].' '.$recurrence['time']);
+			if (NULL !== $duration) {
+				$end_time = strtotime($recurrence['duration'].' seconds', $start_time);
+			} else {
+				$end_time = NULL;
+			}
+			$sql = 'UPDATE event_occurrences
+			SET event_occurrence_start_time = FROM_UNIXTIME('.$start_time.'),
+				event_occurrence_end_time = FROM_UNIXTIME('.$end_time.'),
+				event_occurrences.event_occurrence_last_modified = CURRENT_TIMESTAMP()
+			WHERE event_occurrence_id = '.(int)$occurrence['id'];
+// 			$this->messages->AddDumpMessage('sql',$sql);
+			$this->db->query($sql);
+		}
+	}
+
 	/// Change the state of an occurrence explicitly.
 	/**
 	 * @param $EventId integer Id of event occurrence belongs to.
@@ -1635,9 +1935,10 @@ class Events_model extends Model
 	 * @param $OldState string Previous private state.
 	 * @param $NewState string New private state.
 	 * @param $ExtraConsitions array[string] Additional SQL conditions.
+	 * @param $ExtraSets array[string=>string] Addition SQL set statements (NOT ESCAPED).
 	 * @return integer Number of changed occurrences.
 	 */
-	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array())
+	protected function OccurrenceChangeState($EventId, $OccurrenceId, $OldState, $NewState, $ExtraConditions = array(), $ExtraSets = '')
 	{
 		if ($this->mReadOnly) {
 			throw new Exception(self::$cReadOnlyMessage);
@@ -1653,8 +1954,11 @@ class Events_model extends Model
 				ON	event_entities.event_entity_event_id
 						= event_occurrences.event_occurrence_event_id
 			SET		event_occurrences.event_occurrence_state=?,
-					event_occurrences.event_occurrence_last_modified=CURRENT_TIMESTAMP()
-			WHERE	event_occurrences.event_occurrence_event_id=?
+					event_occurrences.event_occurrence_last_modified=CURRENT_TIMESTAMP()';
+		if ($ExtraSets != '') {
+			$sql .= ", $ExtraSets";
+		}
+		$sql .= ' WHERE	event_occurrences.event_occurrence_event_id=?
 				AND	'.$occurrence_query->ExpressionOwned();
 		$bind_data = array($NewState, $EventId);
 		if (FALSE !== $OccurrenceId) {

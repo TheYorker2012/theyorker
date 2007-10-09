@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
  * @file Academic_calendar.php
@@ -120,7 +120,7 @@ class Academic_time
 	 */
 	static function NewToday()
 	{
-		return new Academic_time(strtotime(date('d M Y')));
+		return new Academic_time(strtotime('today'));
 	}
 	
 	/**
@@ -129,16 +129,27 @@ class Academic_time
 	 */
 	function Midnight()
 	{
-		return new Academic_time(strtotime($this->Format('d M Y')));
+		return $this->Adjust('today', 'day');
+	}
+	
+	/**
+	 * @brief Create a time object set to midnight on first day of week (backwards).
+	 * @param $StartOfWeek int [0,6] First day of week where 0=sun, 1=mon etc.
+	 * @return academic_time Midnight of first day of week as the timestamp.
+	 */
+	function StartOfWeek($StartOfWeek = 1)
+	{
+		return $this->Midnight()->Adjust((-($this->DayOfWeek($StartOfWeek))).'day');
 	}
 	
 	/**
 	 * @brief Create a time object set to midnight on monday (backwards).
-	 * @return academic_time Midnight of monday as the timestamp.
+	 * @return academic_time Midnight of first day of week as the timestamp.
+	 * @note Alias of StartOfWeek(1).
 	 */
 	function BackToMonday()
 	{
-		return $this->Midnight()->Adjust((-($this->DayOfWeek())+1).'day');
+		return $this->StartOfWeek(1);
 	}
 	
 	/**
@@ -148,17 +159,50 @@ class Academic_time
 	 */
 	function Format($Format)
 	{
-		return get_instance()->time_format->date($Format, $this->mTimestamp);
+		if (function_exists('get_instance')) {
+			return get_instance()->time_format->date($Format, $this->mTimestamp);
+		} else {
+			return date($Format, $this->mTimestamp);
+		}
 	}
 	
 	/**
 	 * @brief Adjust the timestamp using php strtotime.
 	 * @param $Difference Time difference text.
+	 * @param $Unchanging array Known to be unchanging fields:
+	 *	- 'year', 'month', 'day', 'hour', 'minute'
 	 * @return Academic_time initialised with strtotime(@a $Difference, @a this).
 	 */
-	function Adjust($Difference)
+	function Adjust($Difference, $Unchanging = NULL)
 	{
-		return new Academic_time(strtotime($Difference,$this->mTimestamp));
+		$result = new Academic_time(strtotime($Difference,$this->mTimestamp));
+		if (NULL !== $Unchanging) {
+			static $unchange_mapping = array(
+				'year'   => array('mGregorianYear'),
+				'month'  => array('mGregorianYear', 'mGregorianMonth'),
+				'day'    => array('mGregorianYear', 'mGregorianMonth', 'mGregorianDate', 'mAcademicDay', 'mDayOfWeek'),
+				'hour'   => array('mGregorianYear', 'mGregorianMonth', 'mGregorianDate', 'mAcademicDay', 'mDayOfWeek', 'mHours'),
+				'minute' => array('mGregorianYear', 'mGregorianMonth', 'mGregorianDate', 'mAcademicDay', 'mDayOfWeek', 'mHours', 'mMinutes'),
+			);
+			if (is_array($Unchanging)) {
+				foreach ($Unchanging as $unchanged) {
+					$field = $unchange_mapping[$unchanged];
+					foreach ($fields as $field) {
+						if (isset($this->$field)) {
+							$result->$field = $this->$field;
+						}
+					}
+				}
+			} elseif (is_string($Unchanging)) {
+				$fields = $unchange_mapping[$Unchanging];
+				foreach ($fields as $field) {
+					if (isset($this->$field)) {
+						$result->$field = $this->$field;
+					}
+				}
+			}
+		}
+		return $result;
 	}
 	
 	/**
@@ -203,6 +247,15 @@ class Academic_time
 		if (!isset($this->mGregorianDate))
 			$this->mGregorianDate = (int)date('j', $this->mTimestamp);
 		return $this->mGregorianDate;
+	}
+	
+	/**
+	 * @brief Get the day of the year.
+	 * @return The day of the year of the time stored, as an integer.
+	 */
+	function DayOfYear()
+	{
+		return (int)date('z', $this->mTimestamp);
 	}
 	
 	// ACADEMIC
@@ -299,16 +352,22 @@ class Academic_time
 	
 	/**
 	 * @brief Get the day of the week.
-	 * @return The day of the week of the time stored, as an integer:
-	 *	- 1: Monday
-	 *	- 7: Sunday
+	 * @param $StartOfWeek int [0,6] First day of week where 0=sun, 1=mon etc.
+	 * @return The day of the week beginning of day @a $StartOfWeek of the time
+	 *	stored, as an integer:
+	 *	- 0: First day of week
+	 *	- 6: Last day of week
 	 */
-	function DayOfWeek()
+	function DayOfWeek($StartOfWeek = 0)
 	{
 		if (!isset($this->mDayOfWeek)) {
-			$this->mDayOfWeek = (int)date('N', $this->mTimestamp);
+			$this->mDayOfWeek = (int)date('w', $this->mTimestamp);
 		}
-		return $this->mDayOfWeek;
+		if ($StartOfWeek) {
+			return ($this->mDayOfWeek + 7 - $StartOfWeek) % 7;
+		} else {
+			return $this->mDayOfWeek;
+		}
 	}
 	
 	// TIME
@@ -472,6 +531,30 @@ class Academic_time
 			$difference += 365 + (int)date('L',$FirstTimestamp);
 		}
 		return $difference;
+	}
+	
+	/// Find the difference between academic times.
+	static function Difference($First, $Second, $Units)
+	{
+		$timestamp = $First->Timestamp();
+		$end = $Second->Timestamp();
+		$result = array();
+		foreach ($Units as $unit) {
+			// If we've landed on the end date, just return the current result.
+			if ($timestamp < $end) {
+				$count = -1;
+				$inc = $timestamp;
+				while ($inc <= $end) {
+					$timestamp = $inc;
+					$inc = strtotime("+1$unit", $timestamp);
+					++$count;
+				}
+				$result[$unit] = $count;
+			} else {
+				$result[$unit] = 0;
+			}
+		}
+		return $result;
 	}
 	
 	/**

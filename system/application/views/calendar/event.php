@@ -19,7 +19,7 @@ $CI = & get_instance();
 ?>
 <div class="BlueBox">
 	<?php if (NULL !== $Event) { ?>
-		<h2><?php echo($Event->Name); ?></h2>
+		<h2><?php echo(htmlentities($Event->Name, ENT_QUOTES, 'utf-8')); ?></h2>
 		<div><p>
 			<?php
 			if (NULL !== $Occurrence) {
@@ -35,7 +35,7 @@ $CI = & get_instance();
 				
 				echo('<div>');
 				if (!empty($Occurrence->LocationDescription)) {
-					echo('Location: '.$Occurrence->LocationDescription);
+					echo('Location: '.htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
 					echo('<br />');
 				}
 				if (!empty($Event->Organisations)) {
@@ -45,7 +45,7 @@ $CI = & get_instance();
 						if ($organisation->InDirectory) {
 							$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
 						}
-						$org_text .= $organisation->Name;
+						$org_text .= htmlentities($organisation->Name, ENT_QUOTES, 'utf-8');
 						if ($organisation->InDirectory) {
 							$org_text .= '</a>';
 						}
@@ -87,7 +87,7 @@ $CI = & get_instance();
 				echo('<br />');
 				
 				echo('<i>');
-				echo($Event->Description);
+				echo($Event->GetDescriptionHtml());
 				echo('</i>');
 				if ($Event->Source->IsSupported('attend') &&
 					$Occurrence->UserHasPermission('attend') &&
@@ -165,7 +165,7 @@ $CI = & get_instance();
 							if ($linked) {
 								echo('<a href="'.$attendee['link'].'" target="_blank">');
 							}
-							echo($attendee['name']);
+							echo(htmlentities($attendee['name'], ENT_QUOTES, 'utf-8'));
 							if ($linked) {
 								echo('</a>');
 							}

@@ -24,9 +24,9 @@ if (!empty($Occurrences)) {
 		echo('<tr><td valign="top">');
 		echo($occurrence->StartTime->Format('%T'));
 		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-		echo($occurrence->Event->Name);
+		echo(htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8'));
 		if (!empty($occurrence->LocationDescription)) {
-			echo(' ('.$occurrence->LocationDescription.')');
+			echo(' ('.htmlentities($occurrence->LocationDescription, ENT_QUOTES, 'utf-8').')');
 		}
 		echo('</td></tr>');
 	}

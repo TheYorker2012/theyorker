@@ -139,17 +139,23 @@ class CalendarEvent
 	public $Category		= NULL;
 	/// string Name of event.
 	public $Name			= '';
+	/// AcademicTime,NULL Start time of event.
+	public $StartTime		= NULL;
+	/// AcademicTime,NULL End time of event.
+	public $EndTime			= NULL;
 	/// bool Whether the event is time associated
 	public $TimeAssociated	= TRUE;
 	/// string,NULL Description of event (parsed wikitext).
 	public $Description		= NULL;
+	/// html,NULL Description of event as html.
+	public $DescriptionHtml	= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.
 	public $Organisations	= array();
 	/// timestamp,NULL Time of last significant updaate to the event.
 	public $LastUpdate		= NULL;
 	/// string Status of the user regarding the event (must be in @a $ValidUserStatuses).
 	public $UserStatus		= 'none';
-	/// RecurrenceSet Recurrence information.
+	/// RecurrenceSet,NULL,TRUE Recurrence information (NULL indicates none, TRUE indicates one may exist).
 	public $Recur			= NULL;
 	/// string URL of image.
 	public $Image			= NULL;
@@ -198,6 +204,33 @@ class CalendarEvent
 		}
 		return $result;
 	}
+	
+	/// If the html is set, use it, if not create some html from the description.
+	function GetDescriptionHtml()
+	{
+		if (NULL === $this->DescriptionHtml) {
+			if (NULL !== $this->Description) {
+				$this->DescriptionHtml = nl2br(htmlentities($this->Description, ENT_QUOTES, 'utf-8'));
+			} else {
+				$this->DescriptionHtml = '';
+			}
+		}
+		return $this->DescriptionHtml;
+	}
+	
+	/// Get the recurrence set, retrieving if necessary.
+	/**
+	 * @param $onlyifexists bool Whether to disallow retrieving unfetched data.
+	 * @return RecurrenceSet,NULL,TRUE.
+	 */
+	function GetRecurrenceSet($onlyifexists = false)
+	{
+		if (!$onlyifexists && $this->Recur === TRUE) {
+			$this->Recur = $this->Source->GetEventRecur($this->SourceEventId);
+			@$this->Recur->SetStartEnd($this->StartTime->Timestamp(), $this->EndTime->Timestamp());
+		}
+		return $this->Recur;
+	}
 }
 
 /// Class to represent organisation from a source.
@@ -239,6 +272,7 @@ abstract class CalendarSource
 		'create',  // its possible to create events
 		'attend',  // its possible to rsvp these events
 		'cache',   // these events can be cached in the database
+		'recur',   // these events can have ical/yorker compatible recurrence
 	);
 	*/
 
@@ -483,10 +517,10 @@ abstract class CalendarSource
 	 * @param $Data CalendarData Data object to add events to.
 	 * @param $Event identifier Source event identitier.
 	 */
-	function FetchEvent($Data, $Event)
+	function FetchEvent($Data, $Event, $Optionals = array())
 	{
 		$Data->NewCurrentSource($this);
-		$this->_FetchEvent($Data, $Event);
+		$this->_FetchEvent($Data, $Event, $Optionals);
 		return array();
 	}
 	
@@ -505,8 +539,9 @@ abstract class CalendarSource
 	/**
 	 * @param $Data CalendarData Data object to add events to.
 	 * @param $Event identifier Source event identitier.
+	 * @param $Options array(String) array of optional data to retrieve.
 	 */
-	protected abstract function _FetchEvent(&$Data, $Event);
+	protected abstract function _FetchEvent(&$Data, $Event, $Optionals = array());
 	
 	/// Fetch the events of the source.
 	/**
@@ -547,6 +582,19 @@ abstract class CalendarSource
 		return array('error' => array('Creating events in this event source is not currently supported.'));
 	}
 	
+	/// Ammend an event.
+	/**
+	 * @param $Event CalendarEvent event information.
+	 * @param $Changes Array Changes to be made to the event.
+	 * @return array Array of messages.
+	 *
+	 * Success is indicated by (!array_key_exists('error', $result) or empty($result['error']))
+	 */
+	function AmmendEvent($Event, $Changes)
+	{
+		return array('error' => array('Ammending events in this event source is not currently supported.'));
+	}
+	
 	/// Get list of known attendees.
 	/**
 	 * @param $Occurrence Occurrence identifier.
@@ -560,6 +608,33 @@ abstract class CalendarSource
 	function GetOccurrenceAttendanceList(& $Occurrence)
 	{
 		return array();
+	}
+	
+	/// Get the recurrence set associated with an event.
+	/**
+	 * @param $EventId Event identifier.
+	 * @return RecurrenceSet,NULL.
+	 */
+	function GetEventRecur($EventId)
+	{
+		return NULL;
+	}
+	
+	/// Update the recurrence set associated with an event.
+	/**
+	 * @param $EventId               Event identifier.
+	 * @param $Rset    RecurrenceSet The new recurrence set.
+	 * @return 
+	 *
+	 * Changes the recurrence rule.
+	 * In the context of the yorker events:
+	 *  old occurrences are [draft] cancelled
+	 *  new occurrences are drafted
+	 *  existing occurrences are left
+	 */
+	function UpdateEventRecur($EventId)
+	{
+		return FALSE;
 	}
 	
 	/// Publish an occurrence.
@@ -1031,10 +1106,10 @@ class CalendarSources extends CalendarSource
 	}
 	
 	/// Fetch the event of the sources and return an array of messages.
-	function FetchEvent(&$Data, $SourceId, $Event)
+	function FetchEvent(&$Data, $SourceId, $Event, $Optionals = array())
 	{
 		if (array_key_exists($SourceId, $this->mSources)) {
-			return $this->mSources[$SourceId]->FetchEvent($Data, $Event);
+			return $this->mSources[$SourceId]->FetchEvent($Data, $Event, $Optionals);
 		} else {
 			return;
 		}
@@ -1054,7 +1129,7 @@ class CalendarSources extends CalendarSource
 		return $messages;
 	}
 	
-	protected function _FetchEvent(&$Data, $Event)
+	protected function _FetchEvent(&$Data, $Event, $Optionals = array())
 	{
 	}
 	
@@ -1109,6 +1184,16 @@ class CalendarSources extends CalendarSource
 			return $this->mSources[$SourceId]->GetOccurrenceAttendanceList($Occurrence);
 		} else {
 			return parent::GetOccurrenceAttendanceList($Occurrence);
+		}
+	}
+	
+	/// Ammend an event
+	function AmmendEvent($Event, $Changes)
+	{
+		if (array_key_exists($Event->Source->GetSourceId(), $this->mSources)) {
+			return $this->mSources[$Event->Source->GetSourceId()]->AmmendEvent($Event, $Changes);
+		} else {
+			return parent::AmmendEvent($Event, $Changes);
 		}
 	}
 }

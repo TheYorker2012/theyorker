@@ -25,19 +25,19 @@
 			The event can be cancelled however it will still be displayed on people's calendars as a cancelled event.
 			Moving the event will also leave a remnent at the old time stating that the event has been rescheduled.
 		</p>
-		<h3><?=$Event->Name?></h3>
-		<p><?=$Event->Description?></p>
+		<h3><?php echo(htmlentities($Event->Name, ENT_QUOTES, 'utf-8')); ?></h3>
+		<p><?php echo(htmlentities($Event->Description, ENT_QUOTES, 'utf-8')); ?></p>
 		<?php if (count($Event->Occurrences) > 1) { ?>
-			<P>The event occurs at these times:</P>
+			<p>The event occurs at these times:</p>
 		<? } else { ?>
-			<P>The event occurs at:</P>
+			<p>The event occurs at:</p>
 		<?php } ?>
 		<ul>
 		<?
 		foreach ($Event->Occurrences as $occurrence) {
 			?>
 			<li>
-				<?=$occurrence->StartTime->Format(DATE_RFC822)?>
+				<?php echo($occurrence->StartTime->Format(DATE_RFC822)); ?>
 			</li>
 			<?php
 		}
@@ -46,7 +46,7 @@
 		<p>
 			Are you sure you wish to publish the event and all its occurrences?
 		</p>
-		<form method="post" action="<?=get_instance()->uri->uri_string()?>">
+		<form method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 			<fieldset>
 				<input type="submit" name="evpub_confirm" value="Publish" />
 				<input type="submit" name="evpub_cancel" value="Cancel" />

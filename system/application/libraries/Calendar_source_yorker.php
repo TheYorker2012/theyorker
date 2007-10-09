@@ -113,7 +113,7 @@ class CalendarSourceYorker extends CalendarSource
 	 * @param $Data CalendarData Data object to add events to.
 	 * @param $Event identifier Source event identitier.
 	 */
-	protected function _FetchEvent(&$Data, $Event)
+	protected function _FetchEvent(&$Data, $Event, $Optionals = array())
 	{
 		$CI = & get_instance();
 		$this->TransformEventData(
@@ -146,14 +146,14 @@ class CalendarSourceYorker extends CalendarSource
 	protected function GetFields()
 	{
 		$fields =
-			'event_occurrences.event_occurrence_id						AS occurrence_id,'.
-			'event_occurrences.event_occurrence_state					AS state,'.
-			'event_occurrences.event_occurrence_active_occurrence_id	AS active,'.
-			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time) AS start,'.
-			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time) AS end,'.
-			'event_occurrences.event_occurrence_time_associated			AS time_associated,'.
-			'event_occurrences.event_occurrence_location_name			AS location,'.
-			'event_occurrences.event_occurrence_ends_late				AS ends_late,'.
+			'event_occurrences.event_occurrence_id							AS occurrence_id,'.
+			'event_occurrences.event_occurrence_state						AS state,'.
+			'event_occurrences.event_occurrence_active_occurrence_id		AS active,'.
+			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)	AS start,'.
+			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time)	AS end,'.
+// 			'event_occurrences.event_occurrence_time_associated				AS time_associated,'.
+			'event_occurrences.event_occurrence_location_name				AS location,'.
+			'event_occurrences.event_occurrence_ends_late					AS ends_late,'.
 			
 			// show on calendar if date associated and attending=TRUE or NULL
 			$this->mQuery->ExpressionShowOnCalendar().' AS show_on_calendar,'.
@@ -163,14 +163,17 @@ class CalendarSourceYorker extends CalendarSource
 			'event_occurrence_users.event_occurrence_user_todo		AS user_todo,'.
 			'event_occurrence_users.event_occurrence_user_progress	AS user_progress,'.
 			
-			'events.event_id	AS event_id,'.
-			'events.event_todo	AS event_todo,'.
-			'event_types.event_type_name		AS category_name,'.
-			'event_types.event_type_colour_hex	AS category_colour,'.
-			'events.event_name			AS name,'.
-			'events.event_description	AS description,'.
+			'events.event_id						AS event_id,'.
+			'events.event_todo						AS event_todo,'.
+			'event_types.event_type_id				AS category_id,'.
+			'event_types.event_type_name			AS category_name,'.
+			'event_types.event_type_colour_hex		AS category_colour,'.
+			'events.event_name						AS name,'.
+			'events.event_description				AS description,'.
 			//'events.event_blurb AS blurb,'.
-			'events.event_time_associated			AS event_time_associated,'.
+			'UNIX_TIMESTAMP(events.event_start)		AS base_start,'.
+			'UNIX_TIMESTAMP(events.event_end)		AS base_end,'.
+			'events.event_time_associated			AS time_associated,'.
 			'UNIX_TIMESTAMP(events.event_timestamp)	AS last_update,'.
 			$this->mQuery->ExpressionSubscribed().'	AS subscribed,'.
 			$this->mQuery->ExpressionOwned().'		AS owned,'.
@@ -213,16 +216,25 @@ class CalendarSourceYorker extends CalendarSource
 				$event = $events[$event_id] = $Data->NewEvent();
 				$event->SourceEventId = $event_id;
 				$event->Category = $row['category_name'];
+				$event->CategoryId = $row['category_id'];
 				$event->Name = $row['name'];
 				$event->Description = $row['description'];
 				$event->LastUpdate = $row['last_update'];
-				$event->TimeAssociated = $row['event_time_associated'];
+				if (NULL !== $row['base_start']) {
+					$event->StartTime = new Academic_time((int)$row['base_start']);
+				}
+				if (NULL !== $row['base_end']) {
+					$event->EndTime = new Academic_time((int)$row['base_end']);
+				}
+				$event->TimeAssociated = $row['time_associated'];
 				if ($row['owned']) {
 					$event->UserStatus = 'owner';
 					$event->ReadOnly = FALSE;
 				} elseif ($row['subscribed']) {
 					$event->UserStatus = 'subscriber';
 				}
+				// The event may or may not have recurrence rules.
+				$event->Recur = TRUE;
 				if (is_string($this->mSearchPhrase)) {
 					$event->SearchScore = $row['search_score'];
 				}
@@ -284,7 +296,9 @@ class CalendarSourceYorker extends CalendarSource
 					// Set user permissions based on state.
 					switch ($occurrence->State) {
 						case 'draft':
-							$occurrence->UserPermissions[] = 'publish';
+							if ($CI->events_model->IsVip()) {
+								$occurrence->UserPermissions[] = 'publish';
+							}
 							$occurrence->UserPermissions[] = 'trash';
 							break;
 							
@@ -308,7 +322,7 @@ class CalendarSourceYorker extends CalendarSource
 							$occurrence->UserPermissions[] = 'postpone';
 							break;
 					};
-				} else {
+				} elseif ($CI->events_model->IsNormalUser()) {
 					$occurrence->UserPermissions[] = 'attend';
 					$occurrence->UserPermissions[] = 'set_attend';
 				}
@@ -578,6 +592,65 @@ class CalendarSourceYorker extends CalendarSource
 		return $messages;
 	}
 	
+	/// Ammend an event.
+	/**
+	 * @param $Event &CalendarEvent event information.
+	 * @param $Changes Array Changes to be made to the event.
+	 * @return array Array of messages.
+	 *
+	 * Success is indicated by (!array_key_exists('error', $result) or empty($result['error']))
+	 */
+	function AmmendEvent($Event, $Changes)
+	{
+		$messages = array();
+		$CI = & get_instance();
+		try {
+			$loc_changes = array();
+			
+			if (array_key_exists('name', $Changes) &&
+				($Changes['name'] != $Event->Name))
+			{
+				$loc_changes['name'] = $Changes['name'];
+			}
+			
+			if (array_key_exists('description', $Changes) &&
+				($Changes['description'] != $Event->Description))
+			{
+				$loc_changes['description'] = $Changes['description'];
+			}
+			
+			if (array_key_exists('time_associated', $Changes) &&
+				is_bool($Changes['time_associated']) &&
+				$Changes['time_associated'] != $Event->TimeAssociated)
+			{
+				$loc_changes['time_associated'] = $Changes['time_associated'];
+			}
+			
+			if (array_key_exists('category', $Changes) &&
+				is_numeric($Changes['category']) &&
+				$Changes['category'] != $Event->CategoryId)
+			{
+				$loc_changes['category'] = $Changes['category'];
+			}
+			
+			if (isset($Changes['recur'])) {
+				$loc_changes['recur'] = $Changes['recur'];
+			}
+			
+			if (!empty($loc_changes)) {
+				$loc_changes['id'] = $Event->SourceEventId;
+				$result = $CI->events_model->EventsAlter($loc_changes);
+				if (!$result[0]) {
+					$messages['error'][] = 'The events could not be updated.';
+				}
+			}
+			
+		} catch (Exception $e) {
+			$messages['error'][] = $e->getMessage();
+		}
+		return $messages;
+	}
+	
 	/// Get list of known attendees.
 	/**
 	 * @param $Occurrence Occurrence identifier.
@@ -602,6 +675,24 @@ class CalendarSourceYorker extends CalendarSource
 			return $attendees;
 		} else {
 			return parent::GetOcurrenceAttendanceList($Occurrence);
+		}
+	}
+	
+	/// Get the recurrence set associated with an event.
+	/**
+	 * @param $Event Event identifier.
+	 * @return RecurrenceSet,NULL.
+	 */
+	function GetEventRecur(& $Event)
+	{
+		if (is_numeric($Event)) {
+			$CI = & get_instance();
+			$RecurrenceInfo = $CI->recurrence_model->SelectRecurByEvent($Event);
+			$RecurrenceSet = new RecurrenceSet();
+			$RecurrenceSet->SetRecurData($RecurrenceInfo);
+			return $RecurrenceSet;
+		} else {
+			return parent::GetEventRecur($Event);
 		}
 	}
 	
