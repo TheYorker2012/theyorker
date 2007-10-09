@@ -64,7 +64,7 @@ class CalendarSourceFacebook extends CalendarSource
 	 * @param $Data CalendarData Data object to add events to.
 	 * @param $Event identifier Source event identitier.
 	 */
-	protected function _FetchEvent(&$Data, $Event)
+	protected function _FetchEvent(&$Data, $Event, $Optionals = array())
 	{
 		$CI = & get_instance();
 		if (!$CI->facebook->InUse()) return;
@@ -132,7 +132,7 @@ class CalendarSourceFacebook extends CalendarSource
 			
 			if (!empty($events)) {
 				foreach ($events as $event) {
-					var_dump($event['event_type']);
+// 					var_dump($event['event_type']);
 					// Check if it matches the search phrase
 					if (is_array($this->mSearchPhrases)) {
 						// use the following fields
@@ -172,8 +172,9 @@ class CalendarSourceFacebook extends CalendarSource
 					$occurrence = & $Data->NewOccurrence($event_obj);
 					$event_obj->SourceEventId = 'e'.$event['eid'];
 					$event_obj->Name = $event['name'];
-					$event_obj->Description = str_replace("\n",'<br />'."\n", $event['description']);
-					$event_obj->Description .= '<br /><a href="'.$this->EventUrl($event['eid']).'" target="_blank">This event on Facebook</a>';
+					$event_obj->Description = $event['description'];
+					$event_obj->GetDescriptionHtml();
+					$event_obj->DescriptionHtml .= '<br /><br /><a href="'.$this->EventUrl($event['eid']).'" target="_blank">This event on Facebook</a>';
 					$event_obj->LastUpdate = $event['update_time'];
 					if (!empty($event['pic'])) {
 						$event_obj->Image = $event['pic'];
@@ -265,7 +266,8 @@ class CalendarSourceFacebook extends CalendarSource
 							$occurrence = & $Data->NewOccurrence($event_obj);
 							$event_obj->SourceEventId = 'bd'.$birthday['uid'].'.'.$start_age;
 							$event_obj->Name = 'Birthday '.$start_age.': '.$birthday['name'];
-							$event_obj->Description = '<a href="'.$this->ProfileUrl($birthday['uid']).'" target="_blank">'.$birthday['name'].'\'s profile</a>';
+							$event_obj->Description = '';
+							$event_obj->DescriptionHtml = '<a href="'.$this->ProfileUrl($birthday['uid']).'" target="_blank">'.$birthday['name'].'\'s profile</a>';
 							$event_obj->LastUpdate = (int)$birthday['profile_update_time'];
 							if (!empty($birthday['pic'])) {
 								$event_obj->Image = $birthday['pic'];

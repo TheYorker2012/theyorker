@@ -87,9 +87,9 @@ foreach ($special_names as $date => $name) {
 					echo($occurrence->StartTime->Format('H:i'));
 				}
 				echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-				echo('<span><a href="' . '/calendar/event' . '/' . $occurrence->Event->Source->GetSourceId(). '/' . urlencode($occurrence->Event->SourceEventId) . '/' . urlencode($occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.$occurrence->Event->Name.'</a></span>');
+				echo('<span><a href="' . '/calendar/event' . '/' . $occurrence->Event->Source->GetSourceId(). '/' . urlencode($occurrence->Event->SourceEventId) . '/' . urlencode($occurrence->SourceOccurrenceId) . $CI->uri->uri_string().'">'.htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8').'</a></span>');
 				if (!empty($occurrence->LocationDescription)) {
-					echo(' ('.$occurrence->LocationDescription.')');
+					echo(' ('.htmlentities($occurrence->LocationDescription, ENT_QUOTES, 'utf-8').')');
 				}
 				echo('</td></tr>');
 			}

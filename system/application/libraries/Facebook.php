@@ -34,7 +34,7 @@ class Facebook
 		if ($this->InUse()) {
 			$links[] = array('Disable Facebook', site_url('logout/facebook'.$CI->uri->uri_string()));
 		} else {
-			$links[] = array('Enable Facebook', site_url('login/facebook'.$CI->uri->uri_string()));
+// 			$links[] = array('Enable Facebook', site_url('login/facebook'.$CI->uri->uri_string()));
 		}
 		if (isset($CI->main_frame)) {
 			$CI->main_frame->SetData('extra_menu_buttons',

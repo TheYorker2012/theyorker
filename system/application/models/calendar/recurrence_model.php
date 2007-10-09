@@ -4,111 +4,9 @@
  * @file models/calendar/recurrence_model.php
  * @brief Recurrencce classes.
  * @author James Hogan (jh559@cs.york.ac.uk)
- * @todo Tidy up these classes at the top and redistribute the code which
- * varies between frequencies.
+ * @note James Hogan 25th Sep 07
+ *  - rewrote generation code from scratch so no phpicalendar code included.
  */
-
-// dateOfWeek() takes a date in Ymd and a day of week in 3 letters or more
-// and returns the date of that day. (ie: "sun" or "sunday" would be acceptable values of $day but not "su")
-/**
-* @note Much of this code is taken from phpicalendar v2.23, released under the GPL
-* see http://phpicalendar.net/
-* functions/date_functions
-*/
-function dateOfWeek($Ymd, $day) {
-	global $week_start_day;
-	if (!isset($week_start_day)) $week_start_day = 'Sunday';
-	$timestamp = strtotime($Ymd);
-	$num = date('w', strtotime($week_start_day));
-	$start_day_time = strtotime((date('w',$timestamp)==$num ? "$week_start_day" : "last $week_start_day"), $timestamp);
-	$ret_unixtime = strtotime($day,$start_day_time);
-	// Fix for 992744
-	// $ret_unixtime = strtotime('+12 hours', $ret_unixtime);
-	$ret_unixtime += (12 * 60 * 60);
-	$ret = date('Ymd',$ret_unixtime);
-	return $ret;
-}
-
-abstract class RRuleFrequency
-{
-	abstract function Compare($now, $then);
-	abstract function Increment($interval, $previous);
-}
-
-class RRuleFreq_daily extends RRuleFrequency
-{
-	function Compare($now, $then) {
-		$seconds_now = strtotime($now);
-		$seconds_then = strtotime($then);
-		$diff_seconds = $seconds_now - $seconds_then;
-		$diff_minutes = $diff_seconds/60;
-		$diff_hours = $diff_minutes/60;
-		$diff_days = round($diff_hours/24);
-		
-		return $diff_days;
-	}
-	
-	function Increment($interval, $previous)
-	{
-		return strtotime('+'.$interval.' day', $previous);
-	}
-}
-
-class RRuleFreq_weekly extends RRuleFrequency
-{
-	
-	function Compare($now, $then) {
-		global $week_start_day;
-		$sun_now = dateOfWeek($now, "Sunday");
-		$sun_then = dateOfWeek($then, "Sunday");
-		$seconds_now = strtotime($sun_now);
-		$seconds_then =  strtotime($sun_then);
-		$diff_weeks = round(($seconds_now - $seconds_then)/(60*60*24*7));
-		return $diff_weeks;
-	}
-	
-	function Increment($interval, $previous)
-	{
-		return strtotime('+'.$interval.' week', $previous);
-	}
-}
-
-class RRuleFreq_monthly extends RRuleFrequency
-{
-	function Compare($now, $then) {
-		ereg ("([0-9]{4})([0-9]{2})([0-9]{2})", $now, $date_now);
-		ereg ("([0-9]{4})([0-9]{2})([0-9]{2})", $then, $date_then);
-		$diff_years = $date_now[1] - $date_then[1];
-		$diff_months = $date_now[2] - $date_then[2];
-		if ($date_now[2] < $date_then[2]) {
-			$diff_years -= 1;
-			$diff_months = ($diff_months + 12) % 12;
-		}
-		$diff_months = ($diff_years * 12) + $diff_months;
-	
-		return $diff_months;
-	}
-	
-	function Increment($interval, $previous)
-	{
-		return strtotime('+'.$interval.' month', $previous);
-	}
-}
-
-class RRuleFreq_yearly extends RRuleFrequency
-{
-	function Compare($now, $then) {
-		ereg ("([0-9]{4})([0-9]{2})([0-9]{2})", $now, $date_now);
-		ereg ("([0-9]{4})([0-9]{2})([0-9]{2})", $then, $date_then);
-		$diff_years = $date_now[1] - $date_then[1];
-		return $diff_years;
-	}
-	
-	function Increment($interval, $previous)
-	{
-		return strtotime('+'.$interval.' year', $previous);
-	}
-}
 
 /// A single recurrence rule.
 class CalendarRecurRule
@@ -135,9 +33,11 @@ class CalendarRecurRule
 		'FR'	=> 5,
 		'SA'	=> 6,
 	);
+	/// int Recurrence id in database if retrieved from database.
+	protected $mRecurId;
+	
 	/// $sFrequencies Frequency of repetition.
-	protected $mFrequency;
-	protected $mFrequencyClass;
+	protected $mFrequency	= NULL;
 	/// [DateTime] Maximum acceptable date and time.
 	protected $mUntil		= NULL;
 	/// [int] Number of acceptable date and times.
@@ -145,45 +45,169 @@ class CalendarRecurRule
 	/// int Interval of the frequency.
 	protected $mInterval	= 1;
 	/// array[int<[0,59]> unique] Seconds to match.
-	protected $mBySecond	= NULL;
+	protected $mBySecond	= array();
 	/// array[int<[0,59]> unique] Minutes to match.
-	protected $mByMinute	= NULL;
+	protected $mByMinute	= array();
 	/// array[int<[0,23]> unique] Hours to match.
-	protected $mByHour		= NULL;
+	protected $mByHour		= array();
 	/// array[array(int<[,-1]+[1,]>,$sWeekdays) unique] Days of week to match.
-	protected $mByDay		= NULL;
+	protected $mByDay		= array();
 	/// array[int<[-31,-1]+[1,31]> unique] Days of the month to match.
-	protected $mByMonthDay	= NULL;
+	protected $mByMonthDay	= array();
 	/// array[int<[-366,-1]+[1,366]> unique] Days of the year to match.
-	protected $mByYearDay	= NULL;
+	protected $mByYearDay	= array();
 	/// array[int<[-53,-1]+[1,53]> unique] Weeks of the year to match.
-	protected $mByWeekNo	= NULL;
+	protected $mByWeekNo	= array();
 	/// array[int<[1,12]> unique] Months of the year to match.
-	protected $mByMonth		= NULL;
+	protected $mByMonth		= array();
 	/// array[int<[1,]> unique] Which occurrences to use.
-	protected $mBySetPos	= NULL;
+	protected $mBySetPos	= array();
 	/// array[int<[0,5]> unique] Which terms to match.
-	protected $mByTerm		= NULL;		// non standard
+	protected $mByTerm		= array();		// non standard
 	/// array[int unique] Which days of the terms.
-	protected $mByTermDay	= NULL;		// non standard
+	protected $mByTermDay	= array();		// non standard
 	/// array[int<[-20,-1]+[1,20]> unique] Which weeks of the term to match.
-	protected $mByTermWeek	= NULL;		// non standard
+	protected $mByTermWeek	= array();		// non standard
 	/// array[int<[-366,-1]+[1,366]> unique] Which days relative to easter to match.
-	protected $mByEasterDay	= NULL;		// non standard
+	protected $mByEasterDay	= array();		// non standard
 	/// $sWeekdays Which day of the week to consider the start.
-	protected $mWkSt		= 0;		// = self::$sWeekdays['SU']
+	protected $mWkSt		= 1;		// = self::$sWeekdays['MO']
 	
-	function __construct()
+	// Temporary
+	/// [DateTime] Maximum effective date and time.
+	protected $mEffectiveUntil	= NULL;
+	
+	function __construct($init = NULL)
 	{
+		if (is_array($init)) {
+			if (isset($init['freq'])) {
+				$this->mFrequency = $init['freq'];
+			}
+			if (isset($init['until'])) {
+				$this->mUntil = $init['until'];
+			}
+			if (isset($init['count'])) {
+				$this->mCount = $init['count'];
+			}
+			if (isset($init['interval'])) {
+				$this->mInterval = $init['interval'];
+			}
+			if (isset($init['bysecond'])) {
+				$this->mBySecond = $init['bysecond'];
+			}
+			if (isset($init['byminute'])) {
+				$this->mByMinute = $init['byminute'];
+			}
+			if (isset($init['byhour'])) {
+				$this->mByHour = $init['byhour'];
+			}
+			if (isset($init['byday'])) {
+				$this->mByDay = $init['byday'];
+			}
+			if (isset($init['bymonthday'])) {
+				$this->mByMonthDay = $init['bymonthday'];
+			}
+			if (isset($init['byyearday'])) {
+				$this->mByYearDay = $init['byyearday'];
+			}
+			if (isset($init['byweekno'])) {
+				$this->mByWeekNo = $init['byweekno'];
+			}
+			if (isset($init['bymonth'])) {
+				$this->mByMonth = $init['bymonth'];
+			}
+			if (isset($init['bysetpos'])) {
+				$this->mBySetPos = $init['bysetpos'];
+			}
+			if (isset($init['byterm'])) {
+				$this->mByTerm = $init['byterm'];
+			}
+			if (isset($init['bytermday'])) {
+				$this->mByTermDay = $init['bytermday'];
+			}
+			if (isset($init['bytermweek'])) {
+				$this->mByTermWeek = $init['bytermweek'];
+			}
+			if (isset($init['byeasterday'])) {
+				$this->mByEasterDay = $init['byeasterday'];
+			}
+			if (isset($init['wkst'])) {
+				$this->mWkSt = $init['wkst'];
+			}
+		}
+	}
+	
+	/// Get the recurrence rule id or NULL if none.
+	function GetRecurId()
+	{
+		return isset($this->mRecurId) ? $this->mRecurId : NULL;
+	}
+	
+	/// Get an array of the used fields.
+	function GetUsedFields()
+	{
+		$result = array('interval' => true);
+		if (NULL !== $this->mUntil) {
+			$result['until'] = true;
+		}
+		if (NULL !== $this->mCount) {
+			$result['count'] = true;
+		}
+		if (!empty($this->mBySecond)) {
+			$result['bysecond'] = true;
+		}
+		if (!empty($this->mByMinute)) {
+			$result['byminute'] = true;
+		}
+		if (!empty($this->mByHour)) {
+			$result['byhour'] = true;
+		}
+		if (!empty($this->mByDay)) {
+			$result['byday'] = true;
+		}
+		if (!empty($this->mByMonthDay)) {
+			$result['bymonthday'] = true;
+		}
+		if (!empty($this->mByYearDay)) {
+			$result['byyearday'] = true;
+		}
+		if (!empty($this->mByWeekNo)) {
+			$result['byweekno'] = true;
+		}
+		if (!empty($this->mByMonth)) {
+			$result['bymonth'] = true;
+		}
+		if (!empty($this->mBySetPos)) {
+			$result['bysetpos'] = true;
+		}
+		if (!empty($this->mByTerm)) {
+			$result['byterm'] = true;
+		}
+		if (!empty($this->mByTermDay)) {
+			$result['bytermday'] = true;
+		}
+		if (!empty($this->mByTermWeek)) {
+			$result['bytermweek'] = true;
+		}
+		if (!empty($this->mByEasterDay)) {
+			$result['byeaster'] = true;
+		}
+		if (1 !== $this->mWkSt) {
+			$result['wkst'] = true;
+		}
+		return $result;
 	}
 	
 	/// Set the frequency type.
+	/**
+	 * @param $Frequency string Frequency of recurrence (see @a $sFrequencies)
+	 */
 	function SetFrequency($Frequency)
 	{
+		assert('in_array($Frequency, self::$sFrequencies)');
 		$this->mFrequency = $Frequency;
-		$class_name = 'RRuleFreq_'.$Frequency;
-		$this->mFrequencyClass = new $class_name();
 	}
+	
 	/// Get the frequency of repetition.
 	/**
 	 * @return string Frequency method.
@@ -192,7 +216,6 @@ class CalendarRecurRule
 	{
 		return $this->mFrequency;
 	}
-	
 	/// Set the maximum date to match.
 	/**
 	 * @param $Value timestamp,NULL New timestamp or NULL.
@@ -202,7 +225,7 @@ class CalendarRecurRule
 		if (NULL !== $Value) {
 			/// @pre @a $Value must be a unix timestamp if not NULL.
 			assert('is_int($Value)');
-			$this->mCount = NULL;
+			$this->mUntil = NULL;
 		}
 		$this->mUntil = $Value;
 	}
@@ -224,7 +247,7 @@ class CalendarRecurRule
 		if (NULL !== $Value) {
 			/// @pre @a $Value must be a positive int if not NULL.
 			assert('is_int($Value) && $Value > 0');
-			$this->mUntil = NULL;
+			$this->mCount = NULL;
 		}
 		$this->mCount = $Value;
 	}
@@ -274,10 +297,10 @@ class CalendarRecurRule
 		);
 		$results = array();
 		foreach ($simples as $simple) {
-			$param = 'm'.$simple;
+			$param = 'mBy'.$simple;
 			if (!empty($this->$param)) {
 				$by = strtolower($simple);
-				foreach ($this->$param as $item) {
+				foreach ($this->$param as $item => $dummy) {
 					$results[] = array(
 						'by' => $by,
 						'primary' => $item,
@@ -287,12 +310,22 @@ class CalendarRecurRule
 			}
 		}
 		if (!empty($this->mByDay)) {
-			foreach ($this->mByDay as $item) {
-				$results[] = array(
-					'by' => 'day',
-					'primary' => $item[1],
-					'secondary' => $item[0]
-				);
+			foreach ($this->mByDay as $item => $data) {
+				if (is_int($data)) {
+					$results[] = array(
+						'by' => 'day',
+						'primary' => $item,
+						'secondary' => NULL
+					);
+				} elseif (is_array($data)) {
+					foreach ($data as $day => $dummy) {
+						$results[] = array(
+							'by' => 'day',
+							'primary' => $item,
+							'secondary' => $day
+						);
+					}
+				}
 			}
 		}
 		return $results;
@@ -300,250 +333,271 @@ class CalendarRecurRule
 	
 	/// Set the matching seconds.
 	/**
-	 * @param $Value array[int],int,NULL Array of matching seconds or NULL.
+	 * @param $Value array[int],int Array of matching seconds.
 	 */
-	function SetBySecond($Value = NULL)
+	function SetBySecond($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mBySecond) {
-				$this->mBySecond = array($Value);
-			} elseif (!in_array($Value, $this->mBySecond)) {
-				$this->mBySecond[] = $Value;
-			}
+			$this->mBySecond[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mBySecond = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mBySecond = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of bysecond records.
+	function GetBySecond()
+	{
+		return array_keys($this->mBySecond);
 	}
 	
 	/// Set the matching minutes.
 	/**
-	 * @param $Value array[int],NULL Array of matching minutes or NULL.
+	 * @param $Value array[int] Array of matching minutes or NULL.
 	 */
-	function SetByMinute($Value = NULL)
+	function SetByMinute($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByMinute) {
-				$this->mByMinute = array($Value);
-			} elseif (!in_array($Value, $this->mByMinute)) {
-				$this->mByMinute[] = $Value;
-			}
+			$this->mByMinute[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByMinute = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByMinute = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of byminute records.
+	function GetByMinute()
+	{
+		return array_keys($this->mByMinute);
 	}
 	
 	/// Set the matching hours.
 	/**
-	 * @param $Value array[int],NULL Array of matching hours or NULL.
+	 * @param $Value array[int] Array of matching hours.
 	 */
-	function SetByHour($Value = NULL)
+	function SetByHour($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByHour) {
-				$this->mByHour = array($Value);
-			} elseif (!in_array($Value, $this->mByHour)) {
-				$this->mByHour[] = $Value;
-			}
+			$this->mByHour[$Value] = 1;
 		} else {
 			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByHour = $Value;
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByHour = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of byhour records.
+	function GetByHour()
+	{
+		return array_keys($this->mByHour);
 	}
 	
 	/// Set the matching days.
 	/**
-	 * @param $Value array[array[int,int]],NULL Array of matching days or NULL.
+	 * @param $Value int,NULL Day.
 	 * @param $Optional int,NULL Optional value.
 	 */
 	function SetByDay($Value = NULL, $Optional = NULL)
 	{
 		if (is_int($Value)) {
-			$Value = array($Optional, $Value);
-			if (NULL === $this->mByDay) {
-				$this->mByDay = array($Value);
-			} elseif (!in_array($Value, $this->mByDay)) {
-				$this->mByDay[] = $Value;
+			if (NULL === $Optional) {
+				$this->mByDay[$Value] = 1;
+			} elseif (isset($this->mByDay[$Value])) {
+				if (is_array($this->mByDay[$Value])) {
+					$this->mByDay[$Value][$Optional] = 1;
+				}
+			} else {
+				$this->mByDay[$Value] = array($Optional => 1);
 			}
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_array\',$Value)))');
-			$this->mByDay = $Value;
+			/// @pre @a $Value must be NULL if not int.
+			assert('NULL === $Value');
+			$this->mByDay = array();
 		}
+	}
+	
+	/// Get an array of byday records in form day => array(weeks)/0.
+	function GetByDay()
+	{
+		return $this->mByDay;
+	}
+	
+	/// Get the days specified in a single week.
+	function GetByDayWeekless()
+	{
+		$days = array();
+		foreach ($this->mByDay as $day => $weeks) {
+			if (is_numeric($weeks) || (is_array($weeks) && (isset($weeks[1]) || isset($weeks[-1])))) {
+				$days[] = $day;
+			}
+		}
+		return $days;
 	}
 	
 	/// Set the matching month days.
 	/**
-	 * @param $Value array[int],NULL Array of matching month days or NULL.
+	 * @param $Value array[int] Array of matching month days.
 	 */
-	function SetByMonthDay($Value = NULL)
+	function SetByMonthDay($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByMonthDay) {
-				$this->mByMonthDay = array($Value);
-			} elseif (!in_array($Value, $this->mByMonthDay)) {
-				$this->mByMonthDay[] = $Value;
-			}
+			$this->mByMonthDay[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByMonthDay = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByMonthDay = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of bymonthday records.
+	function GetByMonthDay()
+	{
+		return array_keys($this->mByMonthDay);
 	}
 	
 	/// Set the matching year days.
 	/**
-	 * @param $Value array[int],NULL Array of matching year days or NULL.
+	 * @param $Value array[int] Array of matching year days.
 	 */
-	function SetByYearDay($Value = NULL)
+	function SetByYearDay($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByYearDay) {
-				$this->mByYearDay = array($Value);
-			} elseif (!in_array($Value, $this->mByYearDay)) {
-				$this->mByYearDay[] = $Value;
-			}
+			$this->mByYearDay[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByYearDay = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByYearDay = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of byyearday records.
+	function GetByYearDay()
+	{
+		return array_keys($this->mByYearDay);
 	}
 	
 	/// Set the matching week numbers.
 	/**
-	 * @param $Value array[int],NULL Array of matching week numbers or NULL.
+	 * @param $Value array[int] Array of matching week numbers.
 	 */
-	function SetByWeekNo($Value = NULL)
+	function SetByWeekNo($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByWeekNo) {
-				$this->mByWeekNo = array($Value);
-			} elseif (!in_array($Value, $this->mByWeekNo)) {
-				$this->mByWeekNo[] = $Value;
-			}
+			$this->mByWeekNo[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByWeekNo = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByWeekNo = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of byweekno records.
+	function GetByWeekNo()
+	{
+		return array_keys($this->mByWeekNo);
 	}
 	
 	/// Set the matching months.
 	/**
-	 * @param $Value array[int],NULL Array of matching months or NULL.
+	 * @param $Value array[int] Array of matching months.
 	 */
-	function SetByMonth($Value = NULL)
+	function SetByMonth($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByMonth) {
-				$this->mByMonth = array($Value);
-			} elseif (!in_array($Value, $this->mByMonth)) {
-				$this->mByMonth[] = $Value;
-			}
+			$this->mByMonth[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByMonth = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByMonth = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of bymonth records.
+	function GetByMonth()
+	{
+		return array_keys($this->mByMonth);
 	}
 	
 	/// Set the matching occurrence positions.
 	/**
-	 * @param $Value array[int],NULL Array of matching occurrence positions or NULL.
+	 * @param $Value array[int] Array of matching occurrence positions.
 	 */
-	function SetBySetPos($Value = NULL)
+	function SetBySetPos($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mBySetPos) {
-				$this->mBySetPos = array($Value);
-			} elseif (!in_array($Value, $this->mBySetPos)) {
-				$this->mBySetPos[] = $Value;
-			}
+			$this->mBySetPos[$Value] = 1;
 		} else {
 			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mBySetPos = $Value;
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mBySetPos = array_flip($Value);
 		}
+	}
+	
+	/// Get an array of bysetpos records.
+	function GetBySetPos()
+	{
+		return array_keys($this->mBySetPos);
 	}
 	
 	/// Set the matching term.
 	/**
-	 * @param $Value array[int],NULL Array of matching occurrence positions or NULL.
+	 * @param $Value array[int] Array of matching occurrence positions.
 	 */
-	function SetByTerm($Value = NULL)
+	function SetByTerm($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByTerm) {
-				$this->mByTerm = array($Value);
-			} elseif (!in_array($Value, $this->mByTerm)) {
-				$this->mByTerm[] = $Value;
-			}
+			$this->mByTerm[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByTerm = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByTerm = array_flip($Value);
 		}
 	}
 	
 	/// Set the matching days of term.
 	/**
-	 * @param $Value array[int],NULL Array of matching occurrence positions or NULL.
+	 * @param $Value array[int] Array of matching occurrence positions.
 	 */
-	function SetByTermDay($Value = NULL)
+	function SetByTermDay($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByTermDay) {
-				$this->mByTermDay = array($Value);
-			} elseif (!in_array($Value, $this->mByTermDay)) {
-				$this->mByTermDay[] = $Value;
-			}
+			$this->mByTermDay[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByTermDay = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByTermDay = array_flip($Value);
 		}
 	}
 	
 	/// Set the matching weeks of term.
 	/**
-	 * @param $Value array[int],NULL Array of matching occurrence positions or NULL.
+	 * @param $Value array[int] Array of matching occurrence positions.
 	 */
-	function SetByTermWeek($Value = NULL)
+	function SetByTermWeek($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByTermWeek) {
-				$this->mByTermWeek = array($Value);
-			} elseif (!in_array($Value, $this->mByTermWeek)) {
-				$this->mByTermWeek[] = $Value;
-			}
+			$this->mByTermWeek[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByTermWeek = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByTermWeek = array_flip($Value);
 		}
 	}
 	
 	/// Set the matching days relative to easter.
 	/**
-	 * @param $Value array[int],NULL Array of matching occurrence positions or NULL.
+	 * @param $Value array[int] Array of matching occurrence positions.
 	 */
-	function SetByEaster($Value = NULL)
+	function SetByEaster($Value = array())
 	{
 		if (is_int($Value)) {
-			if (NULL === $this->mByEaster) {
-				$this->mByEaster = array($Value);
-			} elseif (!in_array($Value, $this->mByEaster)) {
-				$this->mByEaster[] = $Value;
-			}
+			$this->mByEaster[$Value] = 1;
 		} else {
-			/// @pre @a $Value must be an array of ints or NULL if not int.
-			assert('NULL === $Value || (is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value)))');
-			$this->mByEaster = $Value;
+			/// @pre @a $Value must be an array of ints if not int.
+			assert('is_array($Value) && !in_array(FALSE, array_map(\'is_int\',$Value))');
+			$this->mByEaster = array_flip($Value);
 		}
 	}
 	
@@ -551,7 +605,7 @@ class CalendarRecurRule
 	/**
 	 * @param $Value int New week start.
 	 */
-	function SetWkSt($Value = 0)
+	function SetWkSt($Value = 1)
 	{
 		/// @pre @a $Value must be in [0,6].
 		assert('is_int($Value) && $Value >= 0 && $Value < 7');
@@ -568,18 +622,604 @@ class CalendarRecurRule
 	}
 	
 	
-	// takes iCalendar 2 day format and makes it into 3 characters
-	// if $txt is true, it returns the 3 letters, otherwise it returns the
-	// integer of that day; 0=Sun, 1=Mon, etc.
-	function two2threeCharDays($day, $txt=true) {
-		switch($day) {
-			case 'SU': return ($txt ? 'sun' : '0');
-			case 'MO': return ($txt ? 'mon' : '1');
-			case 'TU': return ($txt ? 'tue' : '2');
-			case 'WE': return ($txt ? 'wed' : '3');
-			case 'TH': return ($txt ? 'thu' : '4');
-			case 'FR': return ($txt ? 'fri' : '5');
-			case 'SA': return ($txt ? 'sat' : '6');
+	/// Get the day of the week, where 0 is the first day of the week.
+	/**
+	 * @param $dayofweek int Day of week in [0,6] ([sunday,saturday])
+	 * @note Uses @a $this->mWkSt.
+	 */
+	protected function RecurDayOfWeek($dayofweek)
+	{
+		return ($dayofweek-$this->mWkSt+7)%7;
+	}
+	
+	/// Get the day of the week, where 0 is the first day of the week.
+	/**
+	* @param $clock &Academic_time Academic time to get the day of the week of.
+	*/
+	protected function RecurDayOfWeekTimestamp(&$clock)
+	{
+		return $this->RecurDayOfWeek($clock->DayOfWeek());
+	}
+	
+	/// Get occurrences in a minute.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time     Default date information.
+	* @param $base       &Academic_time Start of the minute.
+	*/
+	protected function MinuteInner(&$result, &$default, &$base)
+	{
+		if (empty($this->mBySecond)) {
+			// If no seconds are explicitly specified, use the default
+			$result[] = strtotime($default->Second().'seconds', $base->Timestamp());
+		} else {
+			// If seconds specified, use each of those seconds past the base
+			foreach ($this->mBySecond as $second => $dummy) {
+				$result[] = strtotime($second.'seconds', $base->Timestamp());
+			}
+		}
+	}
+	
+	/// Get occurrences in an hour.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time  Default date.
+	* @param $base       &Academic_time  Start of the hour.
+	*  - ['byminute'], ['bysecond']
+	*/
+	protected function HourInner(&$result, &$default, &$base)
+	{
+		if (empty($this->mByMinute)) {
+			// If no minutes are explicitly specified, use the default
+			$this->MinuteInner($result, $default, $base->Adjust($default->Minute().'min', 'hour'));
+		} else {
+			// If minutes specified, use each of those minutes past the base
+			foreach ($this->mByMinute as $minute => $dummy) {
+				$this->MinuteInner($result, $default, $base->Adjust($minute.'min', 'hour'));
+			}
+		}
+	}
+	
+	/// Get occurrences in a day.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time  Default date.
+	* @param $base       &Academic_time  Start of the day.
+	*  - ['byhour'], ['byminute'], ['bysecond']
+	*/
+	protected function DayInner(&$result, &$default, &$base)
+	{
+		if (empty($this->mByHour)) {
+			// If no hours are explicitly specified, use the default
+			$this->HourInner($result, $default, $base->Adjust($default->Hour().'hour', 'day'));
+		} else {
+			// If hours specified, use each of those hours in the day
+			foreach ($this->mByHour as $hour => $dummy) {
+				$this->HourInner($result, $default, $base->Adjust($hour.'hour', 'day'));
+			}
+		}
+	}
+	
+	protected function WeekInnerDayMatch(&$clock)
+	{
+		return	$this->MatchRruleBymonth($clock) &&
+				$this->MatchRruleByyearday($clock) &&
+				$this->MatchRruleBymonthday($clock) &&
+				$this->MatchRruleByday($clock);
+	}
+	
+	/// Get occurrences in a week.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time  Default date.
+	* @param $base       &Academic_time  Start of the day.
+	* @param $week       int        Week number.
+	* @param $negweek    int        Negative week number.
+	*/
+	protected function WeekInner(&$result, &$default, &$base, $week = 1, $negweek = -1)
+	{
+		$start_dayofweek = $base->DayOfWeek();
+		if (empty($this->mByDay)) {
+			// If no days are explicitly specified, use the default
+			$clock = $base->Adjust($default->DayOfWeek($start_dayofweek).'day');
+			if ($this->WeekInnerDayMatch($clock)) {
+				$this->DayInner($result, $default, $clock);
+			}
+		} else {
+			for ($i = 0; $i < 7; ++$i) {
+				$dayofweek = ($start_dayofweek + $i) % 7;
+				if (array_key_exists($dayofweek, $this->mByDay)) {
+					$dummy = $this->mByDay[$dayofweek];
+					if (is_int($dummy) ||
+						(is_array($dummy) && (array_key_exists($week, $dummy) || array_key_exists($negweek, $dummy))))
+					{
+						$clock = $base->Adjust($i.'day');
+						if ($this->WeekInnerDayMatch($clock)) {
+							$this->DayInner($result, $default, $clock);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	protected function MonthlyInnerDayMatch(&$clock, $byday = true) 
+	{
+		return ($this->MatchRruleByyearday($clock) &&
+				$this->MatchRruleBymonthday($clock) &&
+				(!$byday || $this->MatchRruleByday($clock)));
+	}
+	
+	/// Get occurrences in a month.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time  Default date.
+	* @param $base       &Academic_time  Start of the day.
+	*
+	* @pre month is acceptable
+	*/
+	protected function MonthInner(&$result, &$default, &$base)
+	{
+		if (empty($this->mByMonthDay) && empty($this->mByDay)) {
+			// If no monthdays are explicitly specified, use the default
+			$clock = $base->Adjust(($default->DayOfMonth()-1).'day', 'month');
+			if ($this->MonthlyInnerDayMatch($clock)) {
+				$this->DayInner($result, $default, $clock);
+			}
+		} else {
+			if (!empty($this->mByDay)) {
+				$daysinmonth = (int)$base->Adjust('+1month-1day')->Format('j');
+				$firstday = $base->DayOfWeek();
+				for ($i = 0; $i < $daysinmonth; ++$i) {
+					$dayofweek = ($firstday + $i) % 7;
+					if (array_key_exists($dayofweek, $this->mByDay)) {
+						if (is_int($this->mByDay[$dayofweek])) {
+							$clock = $base->Adjust($i.'day', 'month');
+							if ($this->MonthlyInnerDayMatch($clock)) {
+								$this->DayInner($result, $default, $clock);
+							}
+						} elseif (is_array($this->mByDay[$dayofweek])) {
+							$week = (int)($i/7) + 1;
+							$negweek = -(int)(($daysinmonth-$i+6)/7);
+							if (array_key_exists($week, $this->mByDay[$dayofweek]) ||
+								array_key_exists($negweek, $this->mByDay[$dayofweek]))
+							{
+								$clock = $base->Adjust($i.'day', 'month');
+								if ($this->MonthlyInnerDayMatch($clock, true)) {
+									$this->DayInner($result, $default, $clock);
+								}
+							}
+						}
+					}
+				}
+			} else {
+				// If monthdays specified, use each of those monthdays in the month
+				$daysinmonth = (int)$base->Adjust('+1month-1day')->Format('j');
+				$firstday = $base->DayOfWeek();
+				for ($i = 0; $i < $daysinmonth; ++$i) {
+					$negdayofmonth = $i-$daysinmonth;
+					if (array_key_exists($i+1,           $this->mByMonthDay) ||
+						array_key_exists($negdayofmonth, $this->mByMonthDay))
+					{
+						$clock = $base->Adjust($i.'day', 'month');
+						if ($this->MonthlyInnerDayMatch($clock)) {
+							$this->DayInner($result, $default, $clock);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	protected function YearlyInnerDayMatch(&$clock, $primary = '') 
+	{
+		return (($primary == 'byyearday' || $this->MatchRruleByyearday($clock)) &&
+				($primary == 'bymonth' || $this->MatchRruleBymonth($clock)) &&
+				$this->MatchRruleBymonthday($clock) &&
+				($primary == 'byday' || $this->MatchRruleByday($clock)) &&
+				$this->MatchRruleByweekno($clock));
+	}
+	
+	/// Get occurrences in a year.
+	/**
+	* @param $result     &array     Output array.
+	* @param $default    &Academic_time  Default date.
+	* @param $base       &Academic_time  Start of the day.
+	*
+	* @pre month is acceptable
+	*/
+	protected function YearInner(&$result, &$default, &$base)
+	{
+		if (empty($this->mByYearDay) && empty($this->mByDay) && empty($this->mByMonth)) {
+			// If no yeardays are explicitly specified, use the default
+			$clock = $base->Adjust($default->DayOfYear().'day', 'year');
+			if ($this->YearlyInnerDayMatch($clock)) {
+				$this->DayInner($result, $default, $clock);
+			}
+		} elseif (!empty($this->mByMonth)) {
+			for ($i = 1; $i <= 12; ++$i) {
+				if (array_key_exists($i, $this->mByMonth)) {
+					if ($i > 1) {
+						$monthstart = $base->Adjust('+'.($i-1).'months', 'year');
+					} else {
+						$monthstart = $base;
+					}
+					$this->MonthInner($result, $default, $monthstart);
+				}
+			}
+		} elseif (!empty($this->mByYearDay)) {
+			// If yeardays specified, use each of those yeardays in the month
+			/// @todo Fix byyearday in YearInner
+			foreach ($this->mByYearDay as $yearday => $dummy) {
+				$clock = $base->Adjust(($yearday-1).'day', 'month');
+				if ($this->YearlyInnerDayMatch($clock, 'byyearday')) {
+					$this->DayInner($result, $default, $clock);
+				}
+			}
+		} elseif (!empty($this->mByDay)) {
+			$daysinyear = 265+(int)$base->Format('L');
+			$firstday = $base->DayOfWeek();
+			for ($i = 0; $i <= $daysinyear; ++$i) {
+				$dayofweek = ($firstday + $i) % 7;
+				if (array_key_exists($dayofweek, $this->mByDay)) {
+					if (is_int($this->mByDay[$dayofweek])) {
+						$clock = $base->Adjust($i.'day', 'year');
+						if ($this->YearlyInnerDayMatch($clock, 'byday')) {
+							$this->DayInner($result, $default, $clock);
+						}
+					} elseif (is_array($this->mByDay[$dayofweek])) {
+						$week = (int)($i/7) + 1;
+						$negweek = -(int)(($daysinyear-$i+6)/7);
+						if (array_key_exists($week, $this->mByDay[$dayofweek]) ||
+							array_key_exists($negweek, $this->mByDay[$dayofweek]))
+						{
+							$clock = $base->Adjust($i.'day', 'year');
+							if ($this->YearlyInnerDayMatch($clock, 'byday')) {
+								$this->DayInner($result, $default, $clock);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/*
+	secondly
+	
+	start with day
+	day valid?, start with hour of start
+	*/
+	
+	protected function RecurDailyDayMatch(&$clock) 
+	{
+		return	$this->MatchRruleBymonth($clock) &&
+				$this->MatchRruleByyearday($clock) &&
+				$this->MatchRruleBymonthday($clock) &&
+				$this->MatchRruleByday($clock);
+	}
+	
+	protected function RecurDaily(&$results, &$default)
+	{
+		// Start at the beginning of the day of base
+		$day = $default->Midnight();
+		
+		$count = NULL;
+		if (NULL !== $this->mCount) {
+			$count = $this->mCount;
+		}
+		while ((NULL === $count || $count > 0) &&
+			(NULL === $this->mEffectiveUntil || $day->Timestamp() <= $this->mEffectiveUntil))
+		{
+			if ($this->RecurDailyDayMatch($day)) {
+				$dayresults = array();
+				$this->DayInner($dayresults, $default, $day);
+				$this->HandleInners($results, $dayresults, $default, $count);
+			}
+			$day = $day->Adjust('+'.$this->mInterval.'day');
+		}
+		
+	}
+	
+	protected function RecurWeekly(&$results, &$default)
+	{
+		// Start at the beginning of the week of base
+		$day = $default->Midnight();
+		$dayofweek = $this->RecurDayOfWeekTimestamp($day);
+		if ($dayofweek) {
+			$weekstart = $day->Adjust('-'.$dayofweek.'day');
+		} else {
+			$weekstart = $day;
+		}
+		
+		$count = NULL;
+		if (NULL !== $this->mCount) {
+			$count = $this->mCount;
+		}
+		while ((NULL === $count || $count > 0) &&
+			(NULL === $this->mEffectiveUntil || $weekstart->Timestamp() <= $this->mEffectiveUntil))
+		{
+			$weekresults = array();
+			$this->WeekInner($weekresults, $default, $weekstart);
+			$this->HandleInners($results, $weekresults, $default, $count);
+			$weekstart = $weekstart->Adjust('+'.$this->mInterval.'week');
+		}
+		
+	}
+	
+	protected function RecurMonthly(&$results, &$default)
+	{
+		// Start at the beginning of the month of base
+		$monthstart = new Academic_time(mktime(0, 0, 0, $default->Month(), 1, $default->Year()));
+		
+		$count = NULL;
+		if (NULL !== $this->mCount) {
+			$count = $this->mCount;
+		}
+		while ((NULL === $count || $count > 0) &&
+			(NULL === $this->mEffectiveUntil || $monthstart->Timestamp() <= $this->mEffectiveUntil))
+		{
+			if ($this->MatchRruleBymonth($monthstart)) {
+				$monthresults = array();
+				$this->MonthInner($monthresults, $default, $monthstart);
+				$this->HandleInners($results, $monthresults, $default, $count);
+			}
+			$monthstart = $monthstart->Adjust('+'.$this->mInterval.'months');
+		}
+		
+	}
+	
+	protected function RecurYearly(&$results, &$default)
+	{
+		// Start at the beginning of the year of base
+		$yearstart = new Academic_time(mktime(0, 0, 0, 1, 1, $default->Year()));
+		
+		$count = NULL;
+		if (NULL !== $this->mCount) {
+			$count = $this->mCount;
+		}
+		while ((NULL === $count || $count > 0) &&
+			(NULL === $this->mEffectiveUntil || $yearstart->Timestamp() <= $this->mEffectiveUntil))
+		{
+			$yearresults = array();
+			$this->YearInner($yearresults, $default, $yearstart);
+			$this->HandleInners($results, $yearresults, $default, $count);
+			$yearstart = $yearstart->Adjust('+'.$this->mInterval.'years');
+		}
+		
+	}
+	
+	/**
+	* @pre @a $inner_results is sorted
+	* @note result is not necessarily sorted
+	*/
+	protected function HandleInners(&$results, &$inner_results, &$default, &$count)
+	{
+		$size = count($inner_results);
+		if (!empty($this->mBySetPos)) {
+			// Setpos, include only specifics
+			foreach ($this->mBySetPos as $setpos => $dummy) {
+				if (NULL !== $count && $count <= 0) {
+					break;
+				}
+				if ($setpos > 0) {
+					if ($setpos <= $size) {
+						$inner_result = $inner_results[$setpos-1];
+						if ($inner_result >= $default->Timestamp()) {
+							if (NULL === $this->mEffectiveUntil || $inner_result <= $this->mEffectiveUntil) {
+								$results[] = $inner_result;
+								--$count;
+							}
+						}
+					}
+				} elseif ($setpos < 0 && $setpos >= -$size) {
+					$index = $size + $setpos;
+					if (!array_key_exists($index+1, $this->mBySetPos)) {
+						$inner_result = $inner_results[$index];
+						if ($inner_result >= $default->Timestamp()) {
+							if (NULL === $this->mEffectiveUntil || $inner_result <= $this->mEffectiveUntil) {
+								$results[] = $inner_result;
+								--$count;
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// No setpos, just include as many dates as possible
+			foreach ($inner_results as $inner_result) {
+				if ($inner_result >= $default->Timestamp()) {
+					if (NULL !== $count && $count <= 0) {
+						break;
+					}
+					if (NULL === $this->mEffectiveUntil || $inner_result <= $this->mEffectiveUntil) {
+						$results[] = $inner_result;
+						--$count;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	protected function MatchRruleBymonth(&$clock)
+	{
+		// by month
+		if (!empty($this->mByMonth)) {
+			if (!array_key_exists($clock->Month(), $this->mByMonth)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected function MatchRruleByweekno(&$clock)
+	{
+		// by weekno
+		if (!empty($this->mByWeekNo)) {
+			$yearday = (int)$clock->Format('z')+1;
+			$dayofstdweek = $clock->DayOfWeek();
+			$dayofweek = $clock->DayOfWeek($this->mWkSt);
+			
+			// week 1 is first week of year with >= 4 days
+			$weekno = (int)(($yearday-$dayofweek + 9)/7);
+			if ($weekno > 52) {
+				$yeardayoflastdayofyear = 264+(int)$clock->Format('L');
+				$negyeardayofstartofweek = ($yearday-$dayofweek) - $yeardayoflastdayofyear - 2;
+				if ($negyeardayofstartofweek > -4) {
+					$weekno -= 52;
+				}
+			} elseif ($weekno < 1) {
+				$startofweek = $clock->Adjust('-'.$dayofweek.'days');
+				$yearday2 = (int)$startofweek->Format('z')+1;
+				$dayofweek2 = $this->RecurDayOfWeekTimestamp($startofweek);
+				$weekno = (int)(($yearday2-$dayofweek2 + 9)/7);
+			}
+			
+			// week -1 is the last week of year with >= 4 days
+	// 		$negweekno = (int)(($yearday-$dayofweek + 9)/7);
+			
+			/// @todo Implement negative week numbers
+			
+			if (($weekno < 1     || !array_key_exists($weekno, $this->mByWeekNo)) /*&&
+				($negweekno > -1 || !array_key_exists($negweekno, $this->mByWeekNo))*/)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected function MatchRruleByyearday(&$clock)
+	{
+		// by yearday
+		if (!empty($this->mByYearDay)) {
+			$yearday = (int)$clock->Format('z')+1;
+			if (!array_key_exists($yearday, $this->mByYearDay)) {
+				$yeardayoflastdayofyear = 264+(int)$clock->Format('L');
+				$negyearday = $yearday - $yeardayoflastdayofyear - 2;
+				if (!array_key_exists($negyearday, $this->mByYearDay))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	protected function MatchRruleBymonthday(&$clock)
+	{
+		// by monthday
+		if (!empty($this->mByMonthDay)) {
+			$year = $clock->Year();
+			$month = $clock->Month();
+			$monthday = $clock->DayOfMonth();
+			if (!array_key_exists($monthday, $this->mByMonthDay)) {
+				$megmonthday = $monthday - (int)date('j', strtotime('+1month-1day', mktime(0,0,0,$month, 1, $year))) - 1;
+				if (!array_key_exists($megmonthday, $this->mByMonthDay))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+		
+	protected function MatchRruleByday(&$clock)
+	{
+		// by day
+		if (!empty($this->mByDay))
+		{
+			$dayofstdweek = $clock->DayOfWeek();
+			if (array_key_exists($dayofstdweek, $this->mByDay)) {
+				switch ($this->mFrequency) {
+					case 'monthly':
+						return $this->MatchRruleBydayMonth($clock, $this->mByDay[$dayofstdweek]);
+					case 'yearly':
+						return $this->MatchRruleBydayYear($clock, $this->mByDay[$dayofstdweek]);
+					case 'termly':
+						return $this->MatchRruleBydayTerm($clock, $this->mByDay[$dayofstdweek]);
+					case 'weekly':
+					default:
+						return $this->MatchRruleBydayWeek($clock, $this->mByDay[$dayofstdweek]);
+							
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	protected function MatchRruleBydayWeek(&$clock, &$dayrule)
+	{
+		return is_int($dayrule) ||
+			(is_array($dayrule) && (
+				array_key_exists(1, $dayrule) ||
+				array_key_exists(-1, $dayrule)
+				)
+			);
+	}
+	
+	protected function MatchRruleBydayMonth(&$clock, &$dayrule)
+	{
+		if (is_array($dayrule)) {
+			$dayofmonth = $clock->DayOfMonth();
+			// Positive week of month
+			$weekofmonth = (int)(($dayofmonth+6) / 7);
+			// Negative week of month
+			$daysinmonth = (int)$clock->Adjust('-'.($dayofmonth-1).'days+1month-1day')->Format('j');
+			$negweekofmonth = -(int)(($daysinmonth-$dayofmonth)/7) - 1;
+			if (!array_key_exists($weekofmonth, $dayrule) &&
+				!array_key_exists($negweekofmonth, $dayrule))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected function MatchRruleBydayYear(&$clock, &$dayrule)
+	{
+		if (is_array($dayrule)) {
+			$dayofyear = $clock->DayOfYear();
+			// Positive week of year
+			$weekofyear = (int)(($dayofyear) / 7) + 1;
+			// Negative week of year
+			$daysinyear_minus1 = 264+(int)$clock->Format('L');
+			$negweekofyear = -(int)(($daysinyear_minus1-$dayofyear)/7) - 1;
+			if (!array_key_exists($weekofyear, $dayrule) &&
+				!array_key_exists($negweekofyear, $dayrule))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected function MatchRruleBydayTerm(&$clock, &$dayrule)
+	{
+		return true;
+	}
+	
+	function Recur(&$results, &$default, $effective_until)
+	{
+		$this->mEffectiveUntil = $effective_until;
+		if (NULL !== $this->mUntil && $this->mUntil < $this->mEffectiveUntil) {
+			$this->mEffectiveUntil = $this->mUntil;
+		}
+		static $frequency_handlers = array(
+			'daily' => 'RecurDaily',
+			'weekly' => 'RecurWeekly',
+			'monthly' => 'RecurMonthly',
+			'yearly' => 'RecurYearly',
+		);
+		if (array_key_exists($this->mFrequency, $frequency_handlers)) {
+			$handler = $frequency_handlers[$this->mFrequency];
+			$this->$handler($results, $default);
 		}
 	}
 	
@@ -589,384 +1229,20 @@ class CalendarRecurRule
 	 * @param $MaxDate		timestamp Max date to return.
 	 * @return array['YYYYMMDD' => array[{'HHMMSS',NULL} => duration] ] Matching occurrences in range.
 	 *
-	 * @todo Rewrite GetOccurrences properly.
-	 * @note Much of this code is taken from phpicalendar v 2.23, released under the GPL
-	 *	see http://phpicalendar.net/
-	 *	functions/ical_parser
 	 */
 	function GetOccurrences($start_date_time, $first_duration, $start_range_time, $end_range_time)
 	{
-		$byday = $this->mByDay;
-		$count = $this->mCount;
-		$number = $this->mInterval;
-		$until = $this->mUntil;
-		$byday = $this->mByDay;
-		$bymonth = $this->mByMonth;
-		$bymonthday = $this->mByMonthDay;
-		$bysetpos = $this->mBySetPos;
-		$byyearday = $this->mByYearDay;
-		$except_dates = array();
-		$bleed_time = -1;
-		$bleed_check = 0;
-		
-		$end_unixtime 	= $start_date_time + $first_duration;
-		$start_time 	= date ('His', $start_date_time);
-		$end_time 		= date ('His', $end_unixtime);
-		
-		$hour   = substr($start_time,0,2);
-		$minute = substr($start_time,2,2);
-		$second = substr($start_time,4,2);
-		
-		$master_array = array();
-		
-		// Modify the COUNT based on BYDAY
-		if ((is_array($byday)) && (NULL !== $count)) {
-			$temp = sizeof($byday);
-			$count = ($count / $temp);
-			unset($temp);
-		}
-	
-		// if $until isn't set yet, we set it to the end of our range we're looking at
-		
-		if (NULL === $until) $until = $end_range_time;
-		$abs_until = date('YmdHis', $until);
-		$end_date_time = $until;
-		$start_range_time_tmp = $start_range_time;
-		$end_range_time_tmp = $end_range_time;
-		
-		// If the $end_range_time is less than the $start_date_time, or $start_range_time is greater
-		// than $end_date_time, we may as well forget the whole thing
-		// It doesn't do us any good to spend time adding data we aren't even looking at
-		// this will prevent the year view from taking way longer than it needs to
-		if ($end_range_time_tmp >= $start_date_time && $start_range_time_tmp <= $end_date_time) {
-		
-			// if the beginning of our range is less than the start of the item, we may as well set it equal to it
-			if ($start_range_time_tmp < $start_date_time){
-				$start_range_time_tmp = $start_date_time;
-			}
-			if ($end_range_time_tmp > $end_date_time) $end_range_time_tmp = $end_date_time;
-
-			// initialize the time we will increment
-			$next_range_time = $start_range_time_tmp;
-			
-			// FIXME: This is a hack to fix repetitions with $interval > 1
-	/// number is interval, count is quantity
-	/// more than one, more than one frequency apart
-	/// extends the quantity to cover the extension because of gaps
-			if ($count > 1 && $number > 1) $count = 1 + ($count - 1) * $number;
-			
-			$count_to = 0;
-			// start at the $start_range and go until we hit the end of our range.
-			if(!isset($wkst)) $wkst='SU';
-			$week_start_day = $wkst3char = $this->two2threeCharDays($wkst);
-			while (($next_range_time >= $start_range_time_tmp) && ($next_range_time <= $end_range_time_tmp) && ($count_to !== $count)) {
-		/// finds number of frequency units between start and next range
-				$diff = $this->mFrequencyClass->Compare(date('Ymd',$next_range_time), date('Ymd',$start_date_time));
-		/// most likely in range of events
-				if ($diff < $count || NULL === $count) {
-			/// one of the matching intervals?
-					if ($diff % $number == 0) {
-						$interval = $number;
-						switch ($this->mFrequency) {
-							case 'daily':
-								$next_date_time = $next_range_time;
-								$recur_data[] = $next_date_time;
-								break;
-							case 'weekly':
-								// Populate $byday with the default day if it's not set.
-								if (!isset($byday)) {
-									$byday[] = strtoupper(substr(date('D', $start_date_time), 0, 2));
-								}
-								if (is_array($byday)) {
-									foreach($byday as $day) {
-										$day = $this->two2threeCharDays($day[1]);
-										#need to find the first day of the appropriate week.
-										#dateOfweek uses weekstartday as a global variable. This has to be changed to $wkst,
-										#but then needs to be reset for other functions
-										$week_start_day_tmp = $week_start_day;
-										$week_start_day = $wkst3char;
-										
-										$the_sunday = dateOfWeek(date("Ymd",$next_range_time), $wkst3char);
-										$next_date_time = strtotime($day,strtotime($the_sunday)) + (12 * 60 * 60);
-										$week_start_day = $week_start_day_tmp; #see above reset to global value
-										
-										#reset $next_range_time to first instance in this week.
-										if ($next_date_time < $next_range_time){
-											$next_range_time = $next_date_time;
-										}
-										// Since this renders events from $next_range_time to $next_range_time + 1 week, I need to handle intervals
-										// as well. This checks to see if $next_date_time is after $day_start (i.e., "next week"), and thus
-										// if we need to add $interval weeks to $next_date_time.
-										if ($next_date_time > strtotime($week_start_day, $next_range_time) && $interval > 1) {
-										#	$next_date_time = strtotime('+'.($interval - 1).' '.$freq_type, $next_date_time);
-										}
-										$recur_data[] = $next_date_time;
-									}
-								}
-								break;
-							case 'monthly':
-								if (empty($bymonth)) $bymonth = array(1,2,3,4,5,6,7,8,9,10,11,12);
-								$next_range_time = strtotime(date('Y-m-01', $next_range_time));
-								if (NULL !== $bysetpos) {
-									/* bysetpos code from dustinbutler
-									start on day 1 or last day.
-									if day matches any BYDAY the count is incremented.
-									SETPOS = 4, need 4th match
-									SETPOS = -1, need 1st match
-									*/
-									/// @todo Standard supports multiple setpos values
-									$bysetpos = $bysetpos[0];
-									
-									$year = date('Y', $next_range_time);
-									$month = date('m', $next_range_time);
-									if ($bysetpos > 0) {
-										$next_day = '+1 day';
-										$day = 1;
-									} else {
-										$next_day = '-1 day';
-										$day = $totalDays[$month];
-									}
-									$day = mktime(0, 0, 0, $month, $day, $year);
-									$countMatch = 0;
-									while ($countMatch != abs($bysetpos)) {
-										/* Does this day match a BYDAY value? */
-										$thisDay = $day;
-										$textDay = strtoupper(substr(date('D', $thisDay), 0, 2));
-										if (NULL !== $byday && in_array($textDay, $byday)) {
-											$countMatch++;
-										}
-										$day = strtotime($next_day, $thisDay);
-									}
-									$recur_data[] = $thisDay;
-								} elseif ((isset($bymonthday)) && (!isset($byday))) {
-									foreach($bymonthday as $day) {
-										if ($day < 0) $day = ((date('t', $next_range_time)) + ($day)) + 1;
-										$year = date('Y', $next_range_time);
-										$month = date('m', $next_range_time);
-										if (checkdate($month,$day,$year)) {
-											$next_date_time = mktime(0,0,0,$month,$day,$year);
-											$recur_data[] = $next_date_time;
-										}
-									}
-								} elseif (is_array($byday)) {
-									foreach($byday as $day_info) {
-										list($nth, $on_day_num) = $day_info;
-										//ereg ('([-\+]{0,1})?([0-9]{1})?([A-Z]{2})', $day, $byday_arr);
-										//Added for 2.0 when no modifier is set
-										//if ($byday_arr[2] != '') {
-										if ($nth !== NULL) {
-											$negative = ($nth < 0 ? -1 : 1);
-											$nth += $negative;
-										} else {
-											$nth = 0;
-										}
-										$on_day = $this->two2threeCharDays(array_search($on_day_num,self::$sWeekdays));
-										if ($nth !== NULL && $negative < 0) {
-											$last_day_tmp = date('t',$next_range_time);
-											$next_range_time = strtotime(date('Y-m-'.$last_day_tmp, $next_range_time));
-											$last_tmp = (date('w',$next_range_time) == $on_day_num) ? '' : 'last ';
-											$next_date_time = strtotime($last_tmp.$on_day, $next_range_time) - $nth * 604800;
-											$month = date('m', $next_date_time);
-											if (in_array($month, $bymonth)) {
-												$recur_data[] = $next_date_time;
-											}
-											#reset next_range_time to start of month
-											$next_range_time = strtotime(date('Y-m-'.'1', $next_range_time));
-
-										} elseif (isset($bymonthday) && (!empty($bymonthday))) {
-											// This supports MONTHLY where BYDAY and BYMONTH are both set
-											foreach($bymonthday as $day) {
-												$year 	= date('Y', $next_range_time);
-												$month 	= date('m', $next_range_time);
-												if (checkdate($month,$day,$year)) {
-													$next_date_time = mktime(0,0,0,$month,$day,$year);
-													$daday = strtolower(strftime("%a", $next_date_time));
-													if ($daday == $on_day && in_array($month, $bymonth)) {
-														$recur_data[] = $next_date_time;
-													}
-												}
-											}
-										} elseif ($nth !== NULL && $negative > 0) {
-											$next_date_time = strtotime($on_day, $next_range_time) + $nth * 604800;
-											$month = date('m', $next_date_time);
-											if (in_array($month, $bymonth)) {
-												$recur_data[] = $next_date_time;
-											}
-										}
-										$next_date = date('Ymd', $next_date_time);
-									}
-								}
-								break;
-							case 'yearly':
-								if (($bymonth === NULL) || (sizeof($bymonth) == 0)) {
-									$m = date('m', $start_date_time);
-									$bymonth = array("$m");
-								}
-
-								foreach($bymonth as $month) {
-									// Make sure the month & year used is within the start/end_range.
-									if ($month < date('m', $next_range_time)) {
-										$year = date('Y', $next_range_time);
-									} else {
-										$year = date('Y', $next_range_time);
-									}
-									if (isset($bysetpos)){
-										/* bysetpos code from dustinbutler
-										start on day 1 or last day.
-										if day matches any BYDAY the count is incremented.
-										SETPOS = 4, need 4th match
-										SETPOS = -1, need 1st match
-										*/
-										if ($bysetpos > 0) {
-											$next_day = '+1 day';
-											$day = 1;
-										} else {
-											$next_day = '-1 day';
-											$day = date("t",$month);
-										}
-										$day = mktime(12, 0, 0, $month, $day, $year);
-										$countMatch = 0;
-										while ($countMatch != abs($bysetpos)) {
-											/* Does this day match a BYDAY value? */
-											$thisDay = $day;
-											$textDay = strtoupper(substr(date('D', $thisDay), 0, 2));
-											if (in_array($textDay, $byday)) {
-												$countMatch++;
-											}
-											$day = strtotime($next_day, $thisDay);
-										}
-										$recur_data[] = $thisDay;
-									}
-									if ((isset($byday)) && (is_array($byday))) {
-										$checkdate_time = mktime(0,0,0,$month,1,$year);
-										foreach($byday as $byday_item) {
-											$nth = (NULL === $byday_item[0] ? 0 : $byday_item[0]);
-											$day = $byday_item[1];
-											$on_day = $this->two2threeCharDays($day);
-											$on_day_num = $this->two2threeCharDays($day,false);
-											if ($nth < 0) {
-												$nth = -$nth;
-												$last_day_tmp = date('t',$checkdate_time);
-												$checkdate_time = strtotime(date('Y-m-'.$last_day_tmp, $checkdate_time));
-												$last_tmp = (date('w',$checkdate_time) == $on_day_num) ? '' : 'last ';
-												$recur_data[] = strtotime($last_tmp.$on_day.' -'.$nth.' week', $checkdate_time);
-											} else {
-												$recur_data[] = strtotime($on_day.' +'.$nth.' week', $checkdate_time);
-											}
-										}
-									} elseif (NULL !== $bymonthday) {
-										foreach ($bymonthday as $day) {
-											if ($day < 0) $day = ((date('t', $next_range_time)) + ($day)) + 1;
-											$year = date('Y', $next_range_time);
-											//$month = date('m', $next_range_time);
-											if (checkdate($month,$day,$year)) {
-												$next_date_time = mktime(0,0,0,$month,$day,$year);
-												$recur_data[] = $next_date_time;
-											}
-										}
-									} else {
-										$day 	= date('d', $start_date_time);
-										$recur_data[] = mktime(0,0,0,$month,$day,$year);
-										//echo date('Ymd',$next_date_time).$summary.'<br>';
-									}
-									//$recur_data[] = $next_date_time;
-								}
-								if (isset($byyearday)) {
-									foreach ($byyearday as $yearday) {
-										ereg ('([-\+]{0,1})?([0-9]{1,3})', $yearday, $byyearday_arr);
-										if ($byyearday_arr[1] == '-') {
-											$ydtime = mktime(0,0,0,12,31,$this_year);
-											$yearnum = $byyearday_arr[2] - 1;
-											$next_date_time = strtotime('-'.$yearnum.' days', $ydtime);
-										} else {
-											$ydtime = mktime(0,0,0,1,1,$this_year);
-											$yearnum = $byyearday_arr[2] - 1;
-											$next_date_time = strtotime('+'.$yearnum.' days', $ydtime);
-										}
-										$recur_data[] = $next_date_time;
-									}
-								}
-								break;
-							default:
-								// anything else we need to end the loop
-								$next_range_time = $end_range_time_tmp + 100;
-								$count_to = $count;
-						} // switch
-					} else {
-						$interval = 1;
-					} // ! $diff % $number == 0
-					$next_range_time = $this->mFrequencyClass->Increment($interval, $next_range_time);
-				} else {
-					// end the loop because we aren't going to write this event anyway
-					$count_to = $count;
-				} // ! $diff < $count
-				// use the same code to write the data instead of always changing it 5 times
-				if (isset($recur_data) && is_array($recur_data)) {
-					foreach($recur_data as $recur_data_time) {
-						$recur_data_year = date('Y', $recur_data_time);
-						$recur_data_month = date('m', $recur_data_time);
-						$recur_data_day = date('d', $recur_data_time);
-						$recur_data_date = $recur_data_year.$recur_data_month.$recur_data_day;
-						
-						if (($recur_data_time > $start_date_time) && ($recur_data_time <= $end_date_time) && ($count_to !== $count) && !in_array($recur_data_date, $except_dates)) {
-							if (isset($allday_start) && $allday_start != '') {
-								$start_time2 = $recur_data_time;
-								$end_time2 = strtotime('+'.$diff_allday_days.' days', $recur_data_time);
-								while ($start_time2 < $end_time2) {
-									$start_date2 = date('Ymd', $start_time2);
-									/// @todo figure out what this bit of code does.
-									$master_array[$start_date2][('-1')] = $first_duration;
-									$start_time2 = strtotime('+1 day', $start_time2);
-								}
-							} else {
-								$start_unixtime_tmp = mktime($hour,$minute,$second,$recur_data_month,$recur_data_day,$recur_data_year);
-								$end_unixtime_tmp = $start_unixtime_tmp + $first_duration;
-								
-								if (($end_time >= $bleed_time) && ($bleed_check == '-1')) {
-									$start_tmp = strtotime(date('Ymd',$start_unixtime_tmp));
-									$end_date_tmp = date('Ymd',$end_unixtime_tmp);
-									while ($start_tmp < $end_unixtime_tmp) {
-										$start_date_tmp = date('Ymd',$start_tmp);
-										if ($start_date_tmp == $recur_data_year.$recur_data_month.$recur_data_day) {
-											$time_tmp = $hour.$minute.$second;
-										} else {
-											$time_tmp = '000000';
-										}
-										if ($start_date_tmp == $end_date_tmp) {
-											$end_time_tmp = $end_time;
-										} else {
-											$end_time_tmp = '240000';
-										}
-										
-										// Let's double check the until to not write past it
-										$until_check = $start_date_tmp.$time_tmp;
-										if ($abs_until > $until_check) {
-											$master_array[$start_date_tmp][$time_tmp] =  $first_duration;
-											//checkOverlap($start_date_tmp, $time_tmp, $uid);
-										}
-										$start_tmp = strtotime('+1 day',$start_tmp);
-									}
-								} else {
-									if ($bleed_check == '-1') {
-										$end_time_tmp1 = '240000';
-									}
-									if (!isset($end_time_tmp1)) $end_time_tmp1 = $end_time;
-								
-									// Let's double check the until to not write past it
-									$until_check = $recur_data_date.$hour.$minute.$second;
-									if ($abs_until > $until_check) {
-										$master_array[($recur_data_date)][($hour.$minute.$second)] = $first_duration;
-										//checkOverlap($recur_data_date, ($hour.$minute), $uid);
-									}
-								}
-							}
-						}
-					}
-					unset($recur_data);
-				}
+		$results = array();
+		$this->Recur($results, new Academic_time($start_date_time), $end_range_time);
+		$hash = array();
+		foreach ($results as $result) {
+			if ($result >= $start_range_time && $result < $end_range_time) {
+				$Ymd = date('Ymd', $result);
+				$His = date('His', $result);
+				$hash[$Ymd][$His] = $first_duration;
 			}
 		}
-		return $master_array;
+		return $hash;
 	}
 }
 
@@ -1099,6 +1375,22 @@ class RecurrenceSet
 		return $results;
 	}
 	
+	/// Find whether the recurrence set is made up of a simple rrule and no exrule.
+	/**
+	 * @return RecurrenceRule,NULL The one rule or NULL.
+	 */
+	function GetSimpleRrule()
+	{
+		if (count($this->mRRules) == 1 &&
+			empty($this->mExRules))
+		{
+			$first = array_keys($this->mRRules);
+			return $this->mRRules[$first[0]];
+		} else {
+			return NULL;
+		}
+	}
+	
 	/// Add recurring dates.
 	/**
 	 * @param $RDates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}] ] Dates to include.
@@ -1155,7 +1447,7 @@ class RecurrenceSet
 	{
 		/// @pre Start and duration must have been set.
 		assert('isset($this->mStart)');
-		if (NULL == $MinDate) {
+		if (NULL === $MinDate) {
 			$MinDateStr = NULL;
 		} else {
 			$MinDateStr = date('Ymd', $MinDate);
@@ -1323,12 +1615,15 @@ class RecurrenceSet
  */
 class Recurrence_model extends model
 {
-	/// Insert the rdates, exdates, rrules, exrules in a set into the db.
-	/**
-	 * @param $Dates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}]] 
-	 * @param $EventId int Event identifier.
-	 */
-	function InsertRecurrenceSet($Set, $EventId)
+	/// Constructor.
+	function __construct()
+	{
+		parent::model();
+		$this->load->library('academic_calendar');
+	}
+	
+	/// Insert just the date bits.
+	function InsertRecurrenceSetDates($Set, $EventId)
 	{
 		$dates = $Set->GetDatesArray();
 		
@@ -1364,6 +1659,17 @@ class Recurrence_model extends model
 		} else {
 			$dates_added = 0;
 		}
+		return $dates_added;
+	}
+	
+	/// Insert the rdates, exdates, rrules, exrules in a set into the db.
+	/**
+	 * @param $Dates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}]] 
+	 * @param $EventId int Event identifier.
+	 */
+	function InsertRecurrenceSet($Set, $EventId)
+	{
+		$dates_added = $this->InsertRecurrenceSetDates($Set, $EventId);
 		
 		$rules = $Set->GetRulesArray();
 		
@@ -1384,11 +1690,20 @@ class Recurrence_model extends model
 				'event_recur_rule_week_start' => $wkst,
 			);
 			
-			$this->db->insert('event_recur_rules', $fields);
+			$rule_id = $recur->GetRecurId();
+			if (is_int($rule_id)) {
+				// is_int so doesn't need escaping
+				$this->db->where("event_recur_rule_id = $rule_id");
+				$this->db->update('event_recur_rules', $fields);
+			} else {
+				$this->db->insert('event_recur_rules', $fields);
+			}
 			$affected = $this->db->affected_rows();
 			
 			if ($affected > 0) {
-				$rule_id = $this->db->insert_id();
+				if (!is_int($rule_id)) {
+					$rule_id = $this->db->insert_id();
+				}
 				// add the other bits
 				$bys = $recur->GetByArray();
 				
@@ -1424,9 +1739,44 @@ class Recurrence_model extends model
 	}
 	
 	/// Update a given recurrence rule in the database.
-	function UpdateRecurrenceRule($Recur)
+	function UpdateRecurrenceSet($Set, $EventId)
 	{
+		// Get the list of known recurrence rules.
+		$rules = $Set->GetRulesArray();
+		$rule_ids = array();
+		foreach ($rules as $rule_info) {
+			$id = $rule_info['rule']->GetRecurId();
+			if (is_int($id)) {
+				// ensure they're ints, so we don't have to escape them.
+				$rule_ids[] = $id;
+			} else {
+				// non int recurrence rule id: '$id'
+				assert('NULL === $id');
+			}
+		}
+		// Escape the event id
+		$event_id = $this->db->Escape($EventId);
 		
+		// Delete all attached dates.
+		/// @todo check if "has permission" security is required in this context.
+		$this->db->delete('event_dates', "event_date_event_id = $event_id");
+		// Delete all recurrence rule by's
+		// CI Active record doesn't support join with delete
+		$sql = 'DELETE event_recur_rule_by FROM event_recur_rule_by,event_recur_rules '.
+			'WHERE event_recur_rule_id = event_recur_rule_by_event_recur_rule_id AND '.
+				"event_recur_rule_event_id = $event_id";
+		$this->db->query($sql);
+		
+		// Delete rules not in the list
+		if (empty($rule_ids)) {
+			$this->db->delete('event_recur_rules', "event_recur_rule_event_id = $event_id");
+		} else {
+			$rule_id_list = join(',',$rule_ids);
+			$this->db->delete('event_recur_rules', "event_recur_rule_event_id = $event_id AND event_recur_rule_id NOT IN ($rule_id_list)");
+		}
+		
+		// Let InsertRecurrenceSet handle the adding again.
+		return $this->InsertRecurrenceSet($Set, $EventId);
 	}
 	
 	/// Get a recurrence rule from the database.

@@ -38,7 +38,7 @@ if ($InlineAdder) {
 	<ul id="todolist">
 		<?php
 		foreach ($Items as $item) {
-			echo '<li style="cursor: move;">'.$item->Event->Name.'</li>';
+			echo '<li style="cursor: move;">'.htmlentities($item->Event->Name, ENT_QUOTES, 'utf-8').'</li>';
 		}
 		?>
 	</ul>

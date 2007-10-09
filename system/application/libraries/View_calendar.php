@@ -151,7 +151,7 @@ abstract class ViewCalendar extends FramesView
 			$this->mDataArray['days'][$day_info['index']] = $day_time->Format('jS M');
 			
 			$day_info['is_holiday'    ] = $day_time->IsHoliday();
-			$day_info['is_weekend'    ] = $day_time->DayOfWeek() > 5;
+			$day_info['is_weekend'    ] = $day_time->DayOfWeek(1) > 4; // day of week where monday=0, > friday (4)
 			$day_info['year'          ] = $day_time->AcademicYear();
 			$day_info['date'          ] = $day_time->Format('jS');
 			$day_info['month_short'   ] = $day_time->Format('M');
