@@ -62,7 +62,7 @@ class Charity extends Controller {
 			$data['sections']['sidebar_related'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_related_title',TRUE));
 			$data['sections']['sidebar_external'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE));
 					
-			$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, true);
+			$data['sections']['progress_reports']['totalcount'] = $this->progressreports->GetCharityCampaignProgressReportCount($charity_id, false, true);
 
 			$data['sections']['funding']['text'] = str_replace("%%target%%", $data['sections']['charity']['target'], $data['sections']['funding']['text']);
 
