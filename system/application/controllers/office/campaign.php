@@ -677,7 +677,7 @@ class Campaign extends Controller
 				$_POST['a_report'],
 				''
 				);
-			$this->main_frame->AddMessage('success','New revision created for article.');
+			$this->main_frame->AddMessage('success','New revision created for progress report.');
 			redirect('/office/campaign/editprogressreport/'.$_POST['r_campaignid'].'/'.$_POST['r_articleid'].'/'.$revision_id.'/');
 		}
 		else if (isset($_POST['r_submit_pr_publish']))
@@ -738,7 +738,7 @@ class Campaign extends Controller
 				FALSE,
 				$_POST['r_campaignid']
 				);
-			$this->main_frame->AddMessage('success','Progress report added to campaign.');
+			$this->main_frame->AddMessage('success','Progress report deleted from campaign.');
 			redirect('/office/campaign/editreports/'.$_POST['r_campaignid']);	
 		}
 	}

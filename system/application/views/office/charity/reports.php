@@ -1,41 +1,58 @@
-<div class="RightToolbar">
-	<h4>Quick Links</h4>
-	<a href="/office/charity/#">Return to content</a>
-</div>
-
-<div class="blue_box" id="pr_1">
-	<h2>progress report - 05/02/07</h2>
-	<form class="form" action="/office/howdoi/#" method="post" >
-		<fieldset>
-			<label for="title">Info Title:</label>
-			<div id="title" class="info">random title 1</div>
-			<br />
-			<label for="description">Description:</label>
-			<div id="description" class="info">a random description 1</div>
-			<br />
-			<label for="revision">Latest Revision:</label>
-			<div id="revision" class="info">a random revision 1</div>
-			<br />
-			<label for="editor">Editor:</label>
-			<div id="editor" class="info">editor 1</div>
-			<br />
-			<label for="writers">Writers:</label>
-			<div id="writers" class="info">writer 1 (accepted)<br / >writer 2 (requested)</div>
-			<br />
-			<label for="options">Options:</label>
-			<div id="options" class="info">
-				<input type="submit" value="Edit" class="button" name="r_submit_edit" />
-				<input type="submit" value="Assign" class="button" name="r_submit_assign" />
-			</div>
-			<br />
-		</fieldset>
-	</form>
-</div>
-
 <?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
+	//sidebar
+	echo('<div class="RightToolbar">'."\n");
+	echo('	<h4>Quick Links</h4>'."\n");
+	echo('	<div class="Entry">'."\n");
+	echo('		<a href="/office/charity/">Back To Charity Index</a>'."\n");
+	echo('	</div>'."\n");
+	echo('</div>'."\n");
+	
+	//main - request info
+	echo('<div class="blue_box">'."\n");
+	echo('	<h2>progress reports</h2>'."\n");
+	if (count($progressreports) == 0)
+	{
+		echo('	No Progress Reports Yet.');
+	}
+	else
+	{
+		foreach($progressreports as $pr)
+		{
+			echo('	<hr /><br />'."\n");
+			echo('	'.$pr['header']['publish_date']);
+			if ($pr['header']['live_content'] != NULL)
+				echo(' <span class="orange">(published)</span>');
+			echo(' <a href="/office/charity/editprogressreport/'.$parameters['charity_id'].'/'.$pr['id'].'">[edit]</a>'."\n");
+			echo('	<br />'."\n");
+			if ($pr['header']['live_content'] != NULL)
+				echo('	'.word_limiter($pr['article']['text'], 50)."\n");
+			else
+				echo('	No Preview.'."\n");
+		}
+	}
+	echo('</div>'."\n");
+	
+	echo('<div class="blue_box">'."\n");
+	echo('	<h2>add new progress report</h2>'."\n");
+	echo('	Enter the date for the new progress report.'."\n");
+	echo('	<form class="form" action="/office/charity/domodify" method="post" >'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<label for="a_date">Date:</label>'."\n");
+	echo('			<input type="text" name="a_date" size="60" value="');
+	echo(date('Y-m-d H:i:s', time()));
+	echo('" /><br />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('		<fieldset>'."\n");
+	echo('			<input type="submit" value="Add" class="button" name="r_submit_pr_add" />'."\n");
+	echo('		</fieldset>'."\n");
+	echo('	</form>'."\n");
+	echo('</div>'."\n");
+	/*
+	echo('<div class="BlueBox"><pre>');
+	print_r($data);
+	echo('</pre></div>');
+	*/
 ?>
