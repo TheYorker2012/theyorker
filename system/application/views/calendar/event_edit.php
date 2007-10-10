@@ -13,7 +13,7 @@
  * @param $FailRedirect string URL fail redirect path.
  * @param $FormPrefix string Prefix of all fields.
  * @param $EventCategories array[id => array('id'=>,'name'=>,'colour'=>)]
- *
+ * @param $Help Help text array, indexed by title.
  *
  * @todo Send information about what fields have changed, and only send the deltas
  */
@@ -437,12 +437,18 @@ function CalSimpleFreqChange()
 </script>
 
 <div id="RightColumn">
-	<h2 class="first">What's this?</h2>
-	<div class="Entry">
-		<p>Hello there</p>
-	</div>
+	<?php
+	// Echo the xhtml for help.
+	echo($Help);
+	/*$first = true;
+	foreach ($Help as $title => $html) {
+		echo('<h2'.($first ? ' class="first"' : '' ).">$title</h2>\n");
+		echo("<div class=\"Entry\">\n$html</div>");
+		$first = false;
+	}*/
+	?>
 	
-	<h2>When?</h2>
+	<h2>Occurrences of this Event</h2>
 	<div class="Entry">
 		<div id="recurrences_preview_noscript" style="display: block">
 			<p>Please enable javascript to take full advantage of this interface.</p>

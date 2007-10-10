@@ -887,6 +887,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			),
 			'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 		);
+		if ($this->events_model->IsVip()) {
+			$help_xhtml = $this->pages_model->GetPropertyWikitext('help_vip');
+		} else {
+			$help_xhtml = $this->pages_model->GetPropertyWikitext('help_personal');
+		}
 		$data = array(
 			'SimpleRecur' => $rset_arr,
 			'FailRedirect' => '/'.$tail,
@@ -894,6 +899,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'EventCategories' => $categories,
 			'FormPrefix' => $prefix,
 			'EventInfo' => $eventinfo,
+			'Help' => $help_xhtml,
 		);
 		foreach ($errors as $error) {
 			$this->messages->AddMessage('error', $error['text']);
@@ -1111,10 +1117,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			list($start, $end) = $rset->GetStartEnd();
 			$categories = $this->mSource->GetAllCategories();
 			
+			$location = '';
+			if (NULL !== $found_occurrence) {
+				$location = $found_occurrence->LocationDescription;
+			}
 			$input = array(
 				'name' => $event->Name,
 				'description' => $event->Description,
-				'location' => $occurrence->LocationDescription,
+				'location' => $location,
 				'category' => 0,
 				'time_associated' => $event->TimeAssociated,
 			);
@@ -1198,6 +1208,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				),
 				'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 			);
+			if ($this->events_model->IsVip()) {
+				$help_xhtml = $this->pages_model->GetPropertyWikitext('help_vip');
+			} else {
+				$help_xhtml = $this->pages_model->GetPropertyWikitext('help_personal');
+			}
 			$data = array(
 				'SimpleRecur' => $rset_arr,
 				'FailRedirect' => '/'.$tail,
@@ -1205,6 +1220,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'EventCategories' => $categories,
 				'FormPrefix' => $prefix,
 				'EventInfo' => $eventinfo,
+				'Help' => $help_xhtml,
 			);
 			foreach ($errors as $error) {
 				$this->messages->AddMessage('error', $error['text']);

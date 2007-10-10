@@ -38,24 +38,28 @@ $CI = & get_instance();
 					echo('Location: '.htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
 					echo('<br />');
 				}
-				if (!empty($Event->Organisations)) {
-					$organisers = array();
-					foreach ($Event->Organisations as $organisation) {
-						$org_text = '';
-						if ($organisation->InDirectory) {
-							$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
-						}
-						$org_text .= htmlentities($organisation->Name, ENT_QUOTES, 'utf-8');
-						if ($organisation->InDirectory) {
-							$org_text .= '</a>';
-						}
-						$organisers[] = $org_text;
+			} else {
+				echo('<div>');
+			}
+			if (!empty($Event->Organisations)) {
+				$organisers = array();
+				foreach ($Event->Organisations as $organisation) {
+					$org_text = '';
+					if ($organisation->InDirectory) {
+						$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
 					}
-					echo('Organiser'.(count($organisers)>1 ? 's' : '').': '.implode(', ', $organisers));
-					echo('<br />');
+					$org_text .= htmlentities($organisation->Name, ENT_QUOTES, 'utf-8');
+					if ($organisation->InDirectory) {
+						$org_text .= '</a>';
+					}
+					$organisers[] = $org_text;
 				}
-				echo('</div>');
+				echo('Organiser'.(count($organisers)>1 ? 's' : '').': '.implode(', ', $organisers));
+				echo('<br />');
+			}
+			echo('</div>');
 				
+			if (NULL !== $Occurrence) {
 				echo('<p>');
 				if ('published' === $Occurrence->State || 'owned' === $Event->UserStatus) {
 					echo('<strong>'.$Occurrence->State.'</strong>');
@@ -84,11 +88,12 @@ $CI = & get_instance();
 					}
 					echo(' ('.implode(',', $links).')');
 				}
-				echo('<br />');
-				
-				echo('<i>');
-				echo($Event->GetDescriptionHtml());
-				echo('</i>');
+				echo('</p>');
+			}
+			echo('<p><i>');
+			echo($Event->GetDescriptionHtml());
+			echo('</i>');
+			if (NULL !== $Occurrence) {
 				if ($Event->Source->IsSupported('attend') &&
 					$Occurrence->UserHasPermission('attend') &&
 					$Occurrence->EndTime->Timestamp() > time())
@@ -132,8 +137,8 @@ $CI = & get_instance();
 						}
 					}
 				}
-				echo('</p>');
 			}
+			echo('</p>');
 			echo('<p>');
 			if (NULL !== $Event->Image) {
 				echo('<br />');
