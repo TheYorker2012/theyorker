@@ -55,6 +55,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				}
 			}
 			?>
+			<a href="/pdf/advertisewithus.pdf">advertise with us</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
