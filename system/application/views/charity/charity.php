@@ -36,7 +36,7 @@ if (count($sections['article']['links']) > 0) {
 <?php
 	foreach ($sections['article']['links'] as $link) {
 		echo('			');
-		echo('<li><a href="'.$link['url'].'">'.$link['name'].'</a></li>'."\n");
+		echo('<li><a href="'.$link['url'].'" target="_blank">'.$link['name'].'</a></li>'."\n");
 	}
 ?>
 		</ul>
@@ -61,7 +61,7 @@ if (count($sections['article']['links']) > 0) {
 			<?php echo($sections['funding']['text']); ?>
 		</div>
 		<div class="Entry">
-			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 				<fieldset>
 					<input type="hidden" name="cmd" value="_s-xclick" />
 					<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" />

@@ -371,7 +371,7 @@ class Charity extends Controller
 		$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports(
 			$charity_id,
 			FALSE,
-			FALSE
+			TRUE
 			);
 			
 		$data['progressreports'] = array();
@@ -906,7 +906,7 @@ class Charity extends Controller
 				);
 			$this->progressreports_model->AddCharityCampaignProgressReportLink(
 				$article_id,
-				FALSE,
+				TRUE,
 				$_POST['r_charityid']
 				);
 			$this->main_frame->AddMessage('success','Progress report added to charity.');
