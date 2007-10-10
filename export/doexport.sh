@@ -13,6 +13,9 @@ svn export .. r${rev}
 echo "Copying config files into tree"
 cp -R template/* r${rev}/
 
+echo "Creating symlink"
+ln -s r${rev}/public_html new_html
+
 echo "Creating tarball..."
 tar -cf yorker.tar r${rev}/
 
