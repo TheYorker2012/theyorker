@@ -1,0 +1,16 @@
+AddHandler application/x-httpd-php5 .php
+
+RewriteEngine on
+RewriteBase /
+
+RewriteCond %{SERVER_PORT} !^443$
+RewriteCond %{REQUEST_URI} ^/(account|login|register)
+RewriteRule ^(.*)$ https://www.theyorker.co.uk/$1 [L,R]
+
+RewriteCond %{SERVER_PORT} ^443$
+RewriteCond %{REQUEST_URI} !^/(index.php|account|login|register|images|stylesheets|javascript)
+RewriteRule ^(.*)$ http://www.theyorker.co.uk/$1 [L,R]
+
+RewriteCond %{REQUEST_URI} !^/(index\.php|tmp|images|stylesheets|javascript|js|doxygen|facebook|robots\.txt|test)
+RewriteRule ^(.*)$ index.php/$1
+RewriteRule ^index.php//$ index.php [L]
