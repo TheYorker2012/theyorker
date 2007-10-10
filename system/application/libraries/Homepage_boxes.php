@@ -135,7 +135,7 @@ class Homepage_boxes
 		echo('	<a class="PufferImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 		echo('		'.$article['photo_xhtml']."\n");
 		echo('	</a>'."\n");
-		echo('	<h2>'.$title.' | '.$article['article_type_name'].'</h2>'."\n");
+		echo('	<h2>'.$title.'</h2>'."\n");
 		echo('	<p class="More">'."\n");
 		echo('		<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'.$article['heading'].'</a>'."\n");
 		echo('	</p>'."\n");
