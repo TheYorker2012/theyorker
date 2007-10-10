@@ -4,9 +4,32 @@
  */
 ?>
 <style type="text/css">
+	
 	table.recur-cal {
 		text-align: center;
+		width: 100%;
+		border: 1px solid #A0A0A0;
+		border-collapse: collapse;
 	}
+	
+	table.recur-cal th {
+		background-color: #F4F4F4;
+		border: 1px solid #A0A0A0;
+		color: #606060;
+	}
+	
+	table.recur-cal th.term {
+		background-color: #EEEEEE;
+		color: #404040;
+	}
+	
+	table.recur-cal td.today {
+		border: 2px solid #808080;
+	}
+	table.recur-cal td.exists {
+		font-weight: bold;
+	}
+	
 	table.recur-cal td {
 		background-color: #FFFCBA;
 	}
@@ -35,7 +58,7 @@
 	}
 	
 	table.recur-cal td.selected {
-		border: 1px solid #000000;
+		border: 1px solid #404040;
 		background-color: #20C1F0;
 	}
 	table.recur-cal td.selected.weekend {
@@ -56,12 +79,6 @@
 		background-color: #FF6A00;
 	}
 	
-	table.recur-cal td.today {
-		border: 2px solid #808080;
-	}
-	table.recur-cal td.exists {
-		font-weight: bold;
-	}
 </style>
 <script type="text/javascript">
 	var <?php echo($Prefix); ?>_dates = new Array();
@@ -88,7 +105,7 @@
 		}
 	}
 </script>
-<table width="100%" class="recur-cal">
+<table class="recur-cal">
 <?php
 	$today = Academic_time::NewToday();
 // 	$today = $today->Adjust('1month');
@@ -101,7 +118,7 @@
 		if ($this_term_name != $term_name) {
 			$term_name = $this_term_name;
 			$this_term_name .= ' ('.$day_start->Format('M').')';
-			?>	<tr><th colspan="8" align="center"><?php echo($this_term_name); ?></th></tr>
+			?>	<tr><th colspan="8" class="term"><?php echo($this_term_name); ?></th></tr>
 	<tr><th></th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
 <?php	}
 		$week_number = $day_start->AcademicWeek();
