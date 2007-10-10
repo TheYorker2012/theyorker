@@ -126,6 +126,9 @@ class CalendarViewEditSimpleValidate
 	/// List of result dates.
 	private $mResults = array();
 	
+	/// Recurrence rule.
+	private $mRset = NULL;
+	
 	/// Set the post data
 	function SetData($data)
 	{
@@ -135,9 +138,9 @@ class CalendarViewEditSimpleValidate
 				isset($data[$prefix.'_start']) and
 				isset($data[$prefix.'_duration']))
 			{
-				$rset = Calendar_view_edit_simple::validate_recurrence_set_data(isset($data[$prefix.'_timeassociated']) && $data[$prefix.'_timeassociated'], $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $this->mErrors);
+				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(isset($data[$prefix.'_timeassociated']) && $data[$prefix.'_timeassociated'], $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $this->mErrors);
 				
-				$this->mResults = $rset->Resolve(time(), strtotime('1year'));
+				$this->mResults = $this->mRset->Resolve(strtotime('-1month'), strtotime('1year'));
 			} else {
 				$this->mErrors[] = array('field' => '', 'text' => 'No simple recurrence data.');
 			}
@@ -162,12 +165,18 @@ class CalendarViewEditSimpleValidate
 		foreach ($this->mErrors as $error) {
 			echo('	<error field="'.$error['field'].'">'.htmlentities($error['text'], ENT_QUOTES, 'UTF-8').'</error>'."\n");
 		}
+		list($start, $end) = $this->mRset->GetStartEnd();
+		$start_Ymd = date('Ymd', $start);
 		foreach ($this->mResults as $date => $recurrences) {
 			foreach ($recurrences as $time => $duration) {
-				echo('	<occ st="'.$date.'/'.$time.'" dur="'.$duration.'" did="0" will="1" />'."\n");
+				$classes = 'exists selected';
+				if ($date == $start_Ymd) {
+					$classes .= ' start';
+				}
+				echo("	<occ date=\"$date\" time=\"$time\" dur=\"$duration\" class=\"$classes\" />\n");
 			}
 		}
-		echo('</recur_validation>'."\n");
+		echo("</recur_validation>\n");
 	}
 }
 
@@ -179,6 +188,16 @@ class Calendar_view_edit_simple
 	{
 		$CI = & get_instance();
 		$CI->load->model('calendar/recurrence_model');
+	}
+	
+	/// Create a duration array with days later and the end time.
+	static function calculate_duration($start, $end)
+	{
+		$duration = Academic_time::Difference($start, $end, array('days'));
+		return array(
+			'days' => $duration['days'],
+			'time' => date('H:i', $end->Timestamp()),
+		);
 	}
 	
 	/// Turn a recurrence set into data for the recurrence view.
@@ -534,6 +553,7 @@ class Calendar_view_edit_simple
 				} elseif (!is_numeric($duration_time[0]) or !is_numeric($duration_time[1])) {
 					$errors[] = array('field' => 'duration', 'text' => 'Duration time not correctly numeric.');
 				} else {
+					// check time itself is valid
 					$duration_time[0] = (int)$duration_time[0];
 					$duration_time[1] = (int)$duration_time[1];
 					if ($duration_time[0] < 0 or $duration_time[0] > 24 or
@@ -550,13 +570,27 @@ class Calendar_view_edit_simple
 		}
 		// Set if all seems ok
 		if (empty($errors)) {
-			$start = mktime($time[0], $time[1], 0, $start['month'], $start['monthday'], $start['year']);
-			$duration_modstring = $duration['days']."day$duration_time[0]hour$duration_time[1]min";
-			$end = strtotime($duration_modstring, $start);
-			if ($start >= $end) {
+			$start_ts = mktime(
+				$time[0],          $time[1],           0,
+				$start['month'],   $start['monthday'], $start['year']
+			);
+			$end_ts = mktime(
+				$duration_time[0], $duration_time[1],  0,
+				$start['month'],   $start['monthday'], $start['year']
+			);
+			$days_later = $duration['days'];
+			if ($duration_time[0] < $time[0] ||
+				($duration_time[0] == $time[0] && $duration_time[1] < $time[1]))
+			{
+				++$days_later;
+			}
+			if ($days_later) {
+				$end_ts = strtotime($days_later.'days', $end_ts);
+			}
+			if ($start_ts == $end_ts) {
 				$errors[] = array('field' => 'duration', 'text' => "Duration of zero not allowed.");
 			}
-			$rset->SetStartEnd($start, $end);
+			$rset->SetStartEnd($start_ts, $end_ts);
 		} else {
 			$rset->SetStartEnd(time(), strtotime('1hour'));
 		}

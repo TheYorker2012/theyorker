@@ -28,19 +28,19 @@ class Charity extends Controller
 	}
 
 	/// Set up the navigation bar
-	private function _SetupNavbar2($campaign_id)
+	private function _SetupNavbar2($charity_id)
 	{
 		$navbar = $this->main_frame->GetNavbar();
 		$navbar->AddItem('info', 'Info',
-				'/office/charity/editinfo/'.$campaign_id);
+				'/office/charity/editinfo/'.$charity_id);
 		$navbar->AddItem('article', 'Article',
-				'/office/charity/editarticle/'.$campaign_id);
+				'/office/charity/editarticle/'.$charity_id);
 		$navbar->AddItem('reports', 'Reports',
-				'/office/charity/editreports/'.$campaign_id);
+				'/office/charity/editreports/'.$charity_id);
 		$navbar->AddItem('related', 'Related',
-				'/office/charity/editrelated/'.$campaign_id);
+				'/office/charity/editrelated/'.$charity_id);
 		$navbar->AddItem('options', 'Options',
-				'/office/charity/editoptions/'.$campaign_id);				
+				'/office/charity/editoptions/'.$charity_id);				
 	}
 	
 	function index()
@@ -338,31 +338,160 @@ class Charity extends Controller
 		
 		//load the required models
 		$this->load->model('charity_model','charity_model');
-
-		//set the page code and load the required models
-		$this->pages_model->SetPageCode('office_charity_reports');
+		$this->load->model('progressreports_model','progressreports_model');
+		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->charity_model->CharityExists($charity_id))
+		{
+			$this->main_frame->AddMessage('error','Charity does not exist.');
+			redirect('/office/charity/');
+		}
 
 		//Get navigation bar and tell it the current page
 		$this->_SetupNavbar2($charity_id);
 		$this->main_frame->SetPage('reports');
+		$this->pages_model->SetPageCode('office_charity_reports');
+		
+		//get charity info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		$data['parameters']['article_id'] = $article_id;
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
-		//get charity info
-		$charity_name = $this->charity_model->GetCharityName($charity_id);
-
-		// Set up the view
-		$the_view = $this->frames->view('office/charity/reports', $data);
+		//get all progress reports for the campaign
+		$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports(
+			$charity_id,
+			FALSE,
+			FALSE
+			);
+			
+		$data['progressreports'] = array();
+			
+		//get the data for each of the retrieved progress reports
+		foreach($pr_temp as $key => $pr)
+		{
+			$data['progressreports'][$key]['id'] = $pr;
+			/** get the article's header for the article id passed to
+		            the function */
+			$data['progressreports'][$key]['header'] = $this->article_model->GetArticleHeader($pr);
+			if ($data['progressreports'][$key]['header']['live_content'] != FALSE)
+				$data['progressreports'][$key]['article'] = $this->news_model->GetFullArticle($data['progressreports'][$key]['id']);
+		}
 		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
-		$this->main_frame->SetContent($the_view);
+		$this->main_frame->SetContentSimple('office/charity/reports', $data);
 
 		// Load the public frame view
 		$this->main_frame->Load();
-	}	
+	}
+	
+	function editprogressreport($charity_id, $pr_article_id, $revision_id = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//load the required models
+		$this->load->model('charity_model','charity_model');
+		$this->load->model('news_model','news_model');
+		$this->load->model('article_model','article_model');
+		$this->load->model('requests_model','requests_model');
+		
+		//redirect the user away if an invalid campaign is specified
+		if (!$this->charity_model->CharityExists($charity_id))
+		{
+			$this->main_frame->AddMessage('error','Charity does not exist.');
+			redirect('/office/charity/');
+		}		
+	
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar2($charity_id);
+		$this->main_frame->SetPage('reports');
+		$this->pages_model->SetPageCode('office_charity_reportsarticle');
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		//get campaign info
+		$charity_name = $this->charity_model->GetCharityName($charity_id);
+		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
+
+		/** store the parameters passed to the method so it can be
+		    used for links in the view */
+		$data['parameters']['charity_id'] = $charity_id;
+		$data['parameters']['article_id'] = $article_id;
+		$data['parameters']['prarticle_id'] = $pr_article_id;
+		$data['parameters']['revision_id'] = $revision_id;
+		
+		/** get the article's header for the article id passed to
+			the function */
+		$data['article']['header'] = $this->article_model->GetArticleHeader($pr_article_id);
+		
+		//get the list of current question revisions
+		$data['article']['revisions'] = $this->requests_model->GetArticleRevisions($pr_article_id);
+
+		//set the default revision to false
+		$data['article']['displayrevision'] = FALSE;
+
+		/** suggestions have no contents associated with them
+			so don't try to load any, if it is not a
+			suggestion then load the displayrevision */
+		//if ($data['article']['header']['suggestion_accepted'] == 1) //progress reports can't currently be a suggestion
+		//{
+			//if the revision id is set to the default
+			if ($revision_id == NULL)
+			{
+				/* is a published article, therefore
+				   load the live content revision */
+				if ($data['article']['header']['live_content'] != FALSE)
+				{
+					$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $data['article']['header']['live_content']);
+					$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+				}
+				/* no live content, therefore is a
+				   request, so load the latest
+				   revision as default */
+				else
+				{
+					//make sure a revision exists
+					if (isset($data['article']['revisions'][0]))
+					{
+						$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $data['article']['revisions'][0]['id']);
+						$data['parameters']['revision_id'] = $data['article']['displayrevision']['id'];
+					}
+				}
+			}
+			else
+			{
+				/* load the revision with the given
+				   revision id */
+				$data['article']['displayrevision'] = $this->article_model->GetRevisionContent($pr_article_id, $revision_id);
+				/* if this revision doesn't exist
+				   then return an error */
+				if ($data['article']['displayrevision'] == FALSE)
+				{
+					$this->main_frame->AddMessage('error','Specified revision doesn\'t exist for this article. Default selected.');
+					redirect('/office/charity/editprogressreport/'.$charity_id.'/'.$pr_article_id.'/');
+				}
+			}
+		//}
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
+		$this->main_frame->SetContentSimple('office/charity/reportsarticle', $data);
+
+		// Load the public frame view
+		$this->main_frame->Load();
+	}
 	
 	function editrelated($charity_id)
 	{
@@ -547,7 +676,9 @@ class Charity extends Controller
 
 		//load the required models
 		$this->load->model('requests_model','requests_model');
+		$this->load->model('article_model','article_model');
 		$this->load->model('charity_model','charity_model');
+		$this->load->model('progressreports_model','progressreports_model');
 			
 		/* Updates a charity information
 		   $_POST data passed
@@ -762,6 +893,81 @@ class Charity extends Controller
 			//set message and redirect
 			$this->main_frame->AddMessage('success','Charity has been removed as the current one.');
 			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_add']))
+		{
+			$article_id = $this->requests_model->CreateRequest(
+				'request',
+				'progressreports',
+				"",
+				"",
+				$this->user_auth->entityId,
+				$_POST['a_date']
+				);
+			$this->progressreports_model->AddCharityCampaignProgressReportLink(
+				$article_id,
+				FALSE,
+				$_POST['r_charityid']
+				);
+			$this->main_frame->AddMessage('success','Progress report added to charity.');
+			redirect('/office/charity/editprogressreport/'.$_POST['r_charityid'].'/'.$article_id);		
+		}
+		else if (isset($_POST['r_submit_pr_save']))
+		{
+			$revision_id = $this->requests_model->CreateArticleRevision(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId,
+				'',
+				'',
+				'',
+				$_POST['a_report'],
+				''
+				);
+			$this->main_frame->AddMessage('success','New revision created for progress report.');
+			redirect('/office/charity/editprogressreport/'.$_POST['r_charityid'].'/'.$_POST['r_articleid'].'/'.$revision_id.'/');
+		}
+		else if (isset($_POST['r_submit_pr_publish']))
+		{
+			$this->requests_model->UpdateRequestStatus(
+				$_POST['r_articleid'],
+				'publish',
+				array('content_id'=>$_POST['r_revisionid'],
+					'publish_date'=>$_POST['r_date_set'],
+					'editor'=>$this->user_auth->entityId)
+				);
+			$this->main_frame->AddMessage('success','Progress report revision set to published revision.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_unpublish']))
+		{
+			$this->requests_model->UpdateSetToUnpublished(
+				$_POST['r_articleid'],
+				$this->user_auth->entityId
+				);
+			$this->main_frame->AddMessage('success','Progress report revision unpublished.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_pr_date']))
+		{
+			$this->requests_model->UpdatePublishDate(
+				$_POST['r_articleid'],
+				$_POST['a_date']
+				);
+			$this->main_frame->AddMessage('success','Progress report date updated.');
+			redirect($_POST['r_redirecturl']);		
+		}
+		else if (isset($_POST['r_submit_pr_delete']))
+		{
+			$this->requests_model->DeleteArticle(
+				$_POST['r_articleid']
+				);
+			$this->progressreports_model->DeleteCharityCampaignProgressReportLink(
+				$_POST['r_articleid'],
+				FALSE,
+				$_POST['r_charityid']
+				);
+			$this->main_frame->AddMessage('success','Progress report deleted from charity.');
+			redirect('/office/charity/editreports/'.$_POST['r_charityid']);	
 		}
 	}
 }

@@ -4,6 +4,18 @@ function get_link_ref($article,$prefix){
 	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
 };
 
+function print_comment ($comment) {
+	if ($comment['comment_anonymous']) {
+		echo('			<li class="anonymous">'."\n");
+		echo('				<i>Anonymous</i>'."\n");
+	} else {
+		echo('			<li>'."\n");
+		echo('				<i>' . $comment['user_firstname'] . ' ' . $comment['user_surname'] . '</i>'."\n");
+	}
+	echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
+	echo('			</li>'."\n");
+}
+
 function print_small_story($class, $article, $prefix) {
 	echo('	<div class="'.$class.' NewsBox">'."\n");
 	echo('		<a class="NewsImgSmall" '.get_link_ref($article,$prefix).'>'."\n");
@@ -138,12 +150,19 @@ function print_middle_box($title,$article_array){
 		<?php print_box($articles['sport'],'latest sport','news') ?>
 	</div>
 
+	<div class="BlueBox">
+		<h2>latest comments</h2>
+		<ul class="comments">
+			<?php foreach ($latest_comments as $comment) print_comment($comment); ?>
+		</ul>
+	</div>
+
 <?php
 	/*
 	<div class="BlueBox">
 		<h2>breaker</h2>
 	</div>
-	
+
 	<div class="BlueBox">
 		<h2>latest news</h2>
 		<div class="NewsBox">

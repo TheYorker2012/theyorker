@@ -870,7 +870,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		// Ready output data
 		$start = new Academic_time($start);
 		$end   = new Academic_time($end);
-		$duration = Academic_time::Difference($start, $end, array('days', 'hours', 'minutes'));
 		$eventinfo = array(
 			'summary' => $input['name'],
 			'description' => $input['description'],
@@ -886,10 +885,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'day' => $start->DayOfWeek(),
 				'monthweek' => (int)(($start->DayOfMonth()+6)/7),
 			),
-			'duration' => array(
-				'days' => $duration['days'],
-				'time' => $duration['hours'].':'.$duration['minutes'],
-			),
+			'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 		);
 		$data = array(
 			'SimpleRecur' => $rset_arr,
@@ -1161,7 +1157,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
 				
-				if ($input_valid) {
+				if (empty($errors) && $input_valid) {
 					// Make the change
 					/// @todo WARN about going live immmediately if applicable
 					$messages = $this->mMainSource->AmmendEvent($event, $input);
@@ -1185,7 +1181,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			// Ready output data
 			$start = new Academic_time($start);
 			$end   = new Academic_time($end);
-			$duration = Academic_time::Difference($start, $end, array('days', 'hours', 'minutes'));
 			$eventinfo = array(
 				'summary' => $input['name'],
 				'description' => $input['description'],
@@ -1201,10 +1196,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					'day' => $start->DayOfWeek(),
 					'monthweek' => (int)(($start->DayOfMonth()+6)/7),
 				),
-				'duration' => array(
-					'days' => $duration['days'],
-					'time' => $duration['hours'].':'.$duration['minutes'],
-				),
+				'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 			);
 			$data = array(
 				'SimpleRecur' => $rset_arr,

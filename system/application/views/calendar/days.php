@@ -65,9 +65,12 @@ EVENT_CACHE[EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->Loc
 EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
-EVENT_CACHE[EVENT_COUNT][6]	= -1;
-EVENT_CACHE[EVENT_COUNT][7]	= 1;
-EVENT_CACHE[EVENT_COUNT][8]	= 0;
+EVENT_CACHE[EVENT_COUNT][6]	= '<?php echo(site_url(
+										$Path->OccurrenceInfo($event_info).
+										$CI->uri->uri_string())); ?>';
+EVENT_CACHE[EVENT_COUNT][8]	= -1;
+EVENT_CACHE[EVENT_COUNT][9]	= 1;
+EVENT_CACHE[EVENT_COUNT][10]	= 0;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
@@ -77,6 +80,9 @@ ALL_EVENT_CACHE[ALL_EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_i
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][6]	= '<?php echo(site_url(
+												$Path->OccurrenceInfo($event_info).
+												$CI->uri->uri_string())); ?>';
 ALL_EVENT_COUNT++;
 <?php	}
 	}
@@ -101,7 +107,7 @@ function drawCalendar () {
 
 		drawAllDayEvent('a'+i,
 			ALL_EVENT_CACHE[i][1],
-			'/test/link/',
+			ALL_EVENT_CACHE[i][6],
 			ALL_EVENT_CACHE[i][0],
 			Number(((eventStartDate.getTime() - FIRST_DAY.getTime())/(1000*60*60)).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
@@ -130,7 +136,7 @@ function drawCalendar () {
 			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
 			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) - 86400;
 			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) - 86400;
-			TEMP_CACHE[temp_count][8] = 24;
+			TEMP_CACHE[temp_count][9] = 24;
 			temp_count++;
 		}
 		/* Display on next day too */
@@ -139,7 +145,7 @@ function drawCalendar () {
 			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
 			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) + 86400;
 			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) + 86400;
-			TEMP_CACHE[temp_count][8] = -24;
+			TEMP_CACHE[temp_count][9] = -24;
 			temp_count++;
 		}
 	}
@@ -149,34 +155,34 @@ function drawCalendar () {
 		var clashes = new Array();
 		var clash_pos = new Array();
 		var clash_count = 0;
-		var clash_width = TEMP_CACHE[i][7];
+		var clash_width = TEMP_CACHE[i][8];
 		for (j=i+1; j<temp_count; j++) {
 			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) ||
 				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) ||
 				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5]))) {
 				clashes[clash_count] = j;
-				if (TEMP_CACHE[j][6] != -1)
-					clash_pos[clash_pos.length] = TEMP_CACHE[j][6];
-				if (TEMP_CACHE[j][7] > clash_width)
-					clash_width = TEMP_CACHE[j][7];
+				if (TEMP_CACHE[j][7] != -1)
+					clash_pos[clash_pos.length] = TEMP_CACHE[j][7];
+				if (TEMP_CACHE[j][8] > clash_width)
+					clash_width = TEMP_CACHE[j][8];
 				clash_count++;
 			}
 		}
-		if (TEMP_CACHE[i][6] != -1)
-			clash_pos[clash_pos.length] = TEMP_CACHE[i][6];
+		if (TEMP_CACHE[i][7] != -1)
+			clash_pos[clash_pos.length] = TEMP_CACHE[i][7];
 		if ((clash_count+1) > clash_width)
 			clash_width = clash_count + 1;
 		var current_pos = 0;
 		while (in_array(current_pos, clash_pos)) { current_pos++; }
-		TEMP_CACHE[i][7] = clash_width;
-		if (TEMP_CACHE[i][6] == -1) {
-			TEMP_CACHE[i][6] = current_pos;
+		TEMP_CACHE[i][8] = clash_width;
+		if (TEMP_CACHE[i][7] == -1) {
+			TEMP_CACHE[i][7] = current_pos;
 			while (in_array(current_pos++, clash_pos)) { current_pos++; }
 		}
 		for (j=0; j<clash_count; j++) {
-			TEMP_CACHE[clashes[j]][7] = clash_width;
-			if (TEMP_CACHE[clashes[j]][6] == -1) {
-				TEMP_CACHE[clashes[j]][6] = current_pos;
+			TEMP_CACHE[clashes[j]][8] = clash_width;
+			if (TEMP_CACHE[clashes[j]][7] == -1) {
+				TEMP_CACHE[clashes[j]][7] = current_pos;
 				while (in_array(current_pos++, clash_pos)) { current_pos++; }
 			}
 
@@ -190,14 +196,14 @@ function drawCalendar () {
 		drawEvent('cal_day_'+zeroTime(eventStartDate.getFullYear())+zeroTime(eventStartDate.getMonth()+1)+zeroTime(eventStartDate.getDate()),
 			i,
 			TEMP_CACHE[i][1],
-			'/test/link/',
+			TEMP_CACHE[i][6],
 			TEMP_CACHE[i][0],
 			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
 			TEMP_CACHE[i][2],
-			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][8]).toFixed(2)),
+			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][9]).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
-			TEMP_CACHE[i][6],
-			TEMP_CACHE[i][7]
+			TEMP_CACHE[i][7],
+			TEMP_CACHE[i][8]
 		);
 	}
 	return false;
@@ -773,7 +779,9 @@ table#calendar_view div.cal_event_split_bottom {
 ?>
 			<div class="cal_event cal_event_nojs cal_category_<?php echo($event_info->Event->Category); ?>" onclick="alert('You clicked on this event!');">
 				<div class="cal_event_heading">
-					<a href="<?php echo('/test/link/'); ?>">
+					<a href="<?php echo(site_url(
+									$Path->OccurrenceInfo($event_info).
+									$CI->uri->uri_string())); ?>">
 						<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>
 					</a>
 				</div>

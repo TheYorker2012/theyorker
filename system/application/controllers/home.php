@@ -102,7 +102,7 @@ class Home extends Controller {
 		if ('fbml' === OutputMode()) {
 			return $this->_FacebookHome();
 		}
-		
+
 		$this->pages_model->SetPageCode('home_main');
 		$this->load->library('image');
 
@@ -170,6 +170,8 @@ class Home extends Controller {
 			$data['articles'][$type][] = $title;
 		}
 
+		// Get latest comments made on articles
+		$data['latest_comments'] = $this->Home_Hack_Model->getLatestComments();
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {

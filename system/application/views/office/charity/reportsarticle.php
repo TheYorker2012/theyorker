@@ -3,10 +3,10 @@
 	echo('<div class="RightToolbar">'."\n");
 	echo('	<h4>Quick Links</h4>'."\n");
 	echo('	<div class="Entry">'."\n");
-	echo('		<a href="/office/campaign/">Back To Campaign Index</a>'."\n");
+	echo('		<a href="/office/charity/">Back To Charity Index</a>'."\n");
 	echo('		<br />');
-	echo('		<a href="/office/campaign/editreports/');
-	echo($parameters['campaign_id']);
+	echo('		<a href="/office/charity/editreports/');
+	echo($parameters['charity_id']);
 	echo('">Back To Progress Reports</a>'."\n");
 	echo('	</div>'."\n");
 	echo('	<h4>Revisions (Latest First)</h4>'."\n");
@@ -21,7 +21,7 @@
 			else
 				echo('		<hr>'."\n");
 			$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-			echo('		<a href="/office/campaign/editprogressreport/'.$parameters['campaign_id'].'/'.$parameters['prarticle_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>'."\n");
+			echo('		<a href="/office/charity/editprogressreport/'.$parameters['charity_id'].'/'.$parameters['prarticle_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>'."\n");
 			if ($revision['id'] == $article['header']['live_content'])
 			{
 				echo('		<br /><span class="orange">(Published');
@@ -42,11 +42,11 @@
 	//main - edit article
 	echo('<div class="blue_box">'."\n");
 	echo('	<h2>edit progress report</h2>'."\n");
-	echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
+	echo('	<form class="form" action="/office/charity/domodify" method="post" >'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
 	echo('			<input type="hidden" name="r_articleid" value="'.$parameters['prarticle_id'].'" />'."\n");
-	echo('			<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" />'."\n");
+	echo('			<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_report">Report:</label>'."\n");
@@ -66,13 +66,13 @@
 	{
 		echo('<div class="blue_box">'."\n");
 		echo('	<h2>options</h2>'."\n");
-		echo('	<form class="form" action="/office/campaign/articlemodify" method="post" >'."\n");
+		echo('	<form class="form" action="/office/charity/domodify" method="post" >'."\n");
 		echo('		<fieldset>'."\n");
 		echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
 		echo('			<input type="hidden" name="r_revisionid" id="r_revisionid" value="'.$parameters['revision_id'].'" />'."\n");
 		echo('			<input type="hidden" name="r_articleid" value="'.$parameters['prarticle_id'].'" />'."\n");
 		echo('			<input type="hidden" name="r_date_set" value="'.$article['header']['publish_date'].'" />'."\n");
-		echo('			<input type="hidden" name="r_campaignid" value="'.$parameters['campaign_id'].'" />'."\n");
+		echo('			<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n");
 		echo('		</fieldset>'."\n");
 		if ($parameters['revision_id'] != NULL) //if a revision exists
 		{

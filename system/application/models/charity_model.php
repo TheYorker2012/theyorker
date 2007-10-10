@@ -23,7 +23,8 @@ class Charity_model extends Model
 	{
 		$sql = 'SELECT	charity_id
 				FROM	charities
-				WHERE	charity_id = ?';
+				WHERE	charity_id = ?
+				AND		charity_deleted = 0';
 		$query = $this->db->query($sql,array($charity_id));
 		if ($query->num_rows() == 1)
 			return TRUE;

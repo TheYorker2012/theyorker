@@ -138,3 +138,12 @@ table#weather {
 	margin-left: auto;
 	margin-right: auto;
 }
+
+/* Latest Comments */
+ul.comments li {
+	list-style-image: url('/images/prototype/homepage/blue_user_small.gif');
+}
+
+ul.comments li.anonymous {
+	list-style-image: url('/images/prototype/homepage/grey_user_small.gif');
+}

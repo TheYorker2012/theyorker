@@ -133,23 +133,24 @@ else if ($status == 'unassigned')
 	if ($user['officetype'] != 'Low')
 	{
 ?>
+<!--
 <div class="blue_box">
 	<h2>options (user request - for testing only)</h2>
 	This is for testing only. It makes a rep request to be the organisations rep
 	<div class="Entry">
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
-<?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
-<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
+<?php //echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php //echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<select name="a_assign_to">
 				<optgroup label="Assign To:">
 <?php
-	foreach($office_users as $office_user)
-	{
-		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
-	}
+	//foreach($office_users as $office_user)
+	//{
+	//	echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+	//}
 ?>
 				</optgroup>
 				</select>
@@ -159,7 +160,7 @@ else if ($status == 'unassigned')
 			</fieldset>
 		</form>
 	</div>
-</div>
+</div>-->
 <div class="blue_box">
 	<h2>options (as an editor)</h2>
 	<div class="Entry">
