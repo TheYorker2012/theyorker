@@ -66,6 +66,7 @@ if (isset($medium_type)) { ?>
 				}
 			}
 			?>
+			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> | 
 			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
