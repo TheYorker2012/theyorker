@@ -164,7 +164,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/photos/'>Photos</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/podcasts/' onclick="alert('Coming soon...'); return false;">Podcasts</a>
+			<a href='/office/podcasts/'>Podcasts</a>
 		</div>
 
 		<div class='officenavigation_title'>
