@@ -38,20 +38,6 @@ class EventOccurrenceQuery
 				AND	event_entities.event_entity_relationship = \'own\'))';
 	}
 
-	/// Produce an SQL expression for all and only subscribed events.
-	function ExpressionSubscribed($EntityId = FALSE)
-	{
-		if (FALSE === $EntityId) {
-			$EntityId = $this->mEntityId;
-		}
-		return	'(	events.event_organiser_entity_id = ' . $EntityId . '
-				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
-					AND	event_entities.event_entity_confirmed = 1
-					AND	(	event_entities.event_entity_relationship = \'own\'
-						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	subscriptions.subscription_user_entity_id = ' . $EntityId . ')';
-	}
-
 	/// Produce an SQL expression for all and only rsvp'd events.
 	function ExpressionVisibilityRsvp()
 	{
@@ -68,6 +54,21 @@ class EventOccurrenceQuery
 	function ExpressionVisibilityNormal()
 	{
 		return	'event_occurrence_users.event_occurrence_user_attending IS NULL';
+	}
+
+	/// Produce an SQL expression for all and only subscribed events.
+	function ExpressionSubscribed($EntityId = FALSE)
+	{
+		if (FALSE === $EntityId) {
+			$EntityId = $this->mEntityId;
+		}
+		return	'(	events.event_organiser_entity_id = ' . $EntityId . '
+				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
+					AND	event_entities.event_entity_confirmed = 1
+					AND	(	event_entities.event_entity_relationship = \'own\'
+						OR	event_entities.event_entity_relationship = \'subscribe\'))
+				OR	subscriptions.subscription_user_entity_id = ' . $EntityId . '
+				OR '.$this->ExpressionVisibilityRsvp().')';
 	}
 
 	/// Produce an SQL expression for whether an occurrence should be on a users calendar.

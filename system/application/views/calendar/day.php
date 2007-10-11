@@ -15,8 +15,8 @@
 ?>
 
 <div id='RightColumn'>
-	<h2 class="first" style="margin-left: 0.4em;">To-Do List</h2>
-	<?php $TodoView->Load(); ?>
+	<?php /* ?><h2 class="first" style="margin-left: 0.4em;">To-Do List</h2>
+	<?php $TodoView->Load();*/ ?>
 	
 	<?php if (!empty($CreateSources)) { ?>
 		<h2 style="margin-left: 0.4em;">Actions</h2>

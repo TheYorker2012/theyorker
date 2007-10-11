@@ -25,6 +25,7 @@ class Calendar extends controller
 	function _remap()
 	{
 		$this->load->model('subcontrollers/calendar_subcontroller');
+		$this->calendar_subcontroller->_AddPermission('create', 'edit');
 		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	

@@ -92,50 +92,43 @@ $CI = & get_instance();
 			}
 			echo('<p><i>');
 			echo($Event->GetDescriptionHtml());
-			echo('</i>');
+			echo('</i></p>');
 			if (NULL !== $Occurrence) {
-				if ($Event->Source->IsSupported('attend') &&
-					$Occurrence->UserHasPermission('attend') &&
-					$Occurrence->EndTime->Timestamp() > time())
-				{
-					echo('<br />');
+				$attendence_actions = array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend');
+				if ($Occurrence->UserHasPermission('set_attend') /*and $Occurrence->EndTime->Timestamp() > time()*/) {
+					echo('<p>');
 					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');
-						if ($Occurrence->UserHasPermission('set_attend')) {
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/accept'.$CI->uri->uri_string()).'">attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>)');
+						if ($Occurrence->Event->Source->IsSupported('attend')) {
+							echo(' (<a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+								'">'.$attendence_actions['yes'].'</a>');
+							echo(', <a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+								'">'.$attendence_actions['maybe'].'</a>)');
 						}
 					} elseif ('yes' === $Occurrence->UserAttending) {
 						echo('attending');
-						if ($Occurrence->UserHasPermission('set_attend')) {
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/maybe'.$CI->uri->uri_string()).'">maybe attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
+						if ($Occurrence->Event->Source->IsSupported('attend')) {
+							echo(' (<a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+								'">'.$attendence_actions['maybe'].'</a>');
+							echo(', <a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+								'">'.$attendence_actions['no'].'</a>)');
 						}
-					} elseif ('maybe' == $Occurrence->UserAttending) {
+					} elseif ('maybe' === $Occurrence->UserAttending) {
 						echo('maybe attending');
-						if ($Occurrence->UserHasPermission('set_attend')) {
-							echo(' (<a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/accept'.$CI->uri->uri_string()).'">attend</a>');
-							echo(', <a href="'.site_url('calendar/actions/attend/'.
-								$Event->Source->GetSourceId().
-								'/'.urlencode($Occurrence->SourceOccurrenceId).
-								'/decline'.$CI->uri->uri_string()).'">don\'t attend</a>)');
+						if ($Occurrence->Event->Source->IsSupported('attend')) {
+							echo(' (<a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+								'">'.$attendence_actions['yes'].'</a>');
+							echo(', <a href="'.
+								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+								'">'.$attendence_actions['no'].'</a>)');
 						}
 					}
+					echo('</p>');
 				}
 			}
 			echo('</p>');

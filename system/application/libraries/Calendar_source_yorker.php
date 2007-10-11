@@ -121,8 +121,8 @@ class CalendarSourceYorker extends CalendarSource
 			$this->MainQuery(
 				$this->GetFields(),
 				'('.$this->mQuery->ExpressionOwned().
-				' OR ('.$this->mQuery->ExpressionSubscribed().
-					' AND '.$this->mQuery->ExpressionPublic().'))'.
+				' OR '.$this->mQuery->ExpressionSubscribed().
+				' OR '.$this->mQuery->ExpressionPublic().')'.
 				' AND events.event_id = '.$CI->db->escape($Event)
 			)
 		);

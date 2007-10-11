@@ -14,6 +14,8 @@ class Calendar extends controller
 	{
 		$this->load->model('subcontrollers/calendar_subcontroller');
 		$this->calendar_subcontroller->_SetPermission('vip+pr');
+		$this->calendar_subcontroller->_AddPermission('create', 'edit');
+		$this->calendar_subcontroller->SetRangePageCode('viparea_calendar');
 		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	
