@@ -163,6 +163,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/photos/'>Photos</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/podcasts/' onclick="alert('Coming soon...'); return false;">Podcasts</a>
+		</div>
 
 		<div class='officenavigation_title'>
 			Info + Reviews

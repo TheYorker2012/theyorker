@@ -11,7 +11,7 @@
 	<div class="blue_box">
 		<h2>charity info</h2>
 <?php
-	echo('			<b>Title: </b>'.$charity['name'].'<br />'."\n");
+	echo('			<b>Name: </b>'.$charity['name'].'<br />'."\n");
 	echo('			<b>Goal Total: </b>'.$charity['target'].'<br />'."\n");
 	echo('			<a href="/office/charity/modify/'.$charity['id'].'">[Modify]</a>'."\n");
 ?>
