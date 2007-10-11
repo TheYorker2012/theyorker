@@ -665,6 +665,7 @@ class News_model extends Model
 		$this->load->library('image');
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
+			$result['primary_photo_link'] = $this->image->getPhotoURL($row->photo_id, 'medium');
 			$result['primary_photo_xhtml'] = $this->image->getThumb($row->photo_id, 'medium', $row->view_large, array('class' => $image_class));
 			$result['primary_photo_caption'] = $row->photo_caption;
 		}
