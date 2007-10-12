@@ -1,1 +1,3 @@
-Sitemap: http://www.theyorker.co.uk/sitemap.xml
+# Make changes for all web spiders
+User-agent: *
+Disallow: /
