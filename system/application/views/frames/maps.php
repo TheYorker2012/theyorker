@@ -1,51 +1,17 @@
 <?php
 if (isset($maps)) {
 
-switch($_SERVER['SERVER_NAME']) {
-	case 'theyorker2.gmghosting.com':
-		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBTRyAb-KmMkdWctvtd_CKS_Gh2u2BQV2EX1b0qY4PM1eJgajR_yMSsENw';
-		break;
-	case 'ado.is-a-geek.net':
-		switch($_SERVER['SERVER_PORT']) {
-			case '8080':
-				$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQPanSJrv5dLwm34RoMgVs2q2e-dxSNZMuIMC4Hd-oH7nXtYCR3tXg6aA';
-				break;
-			case '81':
-				$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBT4dMPT2p45abcp05Afs400sGBlHhSRzf7KBtwhiztl3iJwkwpQtRAZiQ';
-				break;
-			default:
-				$key = 'unknown';
-				break;
-		}
-		break;
-	case 'theyorker.co.uk':
-		$key = 'ABQIAAAAG00OtuAD_rmvNO96T7IKKRQvDtNQ40ZIAwPbdVsXHih395_7yhSQKuqfztRWCvwCVXmQ0TIhchXzRw';
-		break;
-	case 'www.theyorker.co.uk':
-		$key = 'ABQIAAAAG00OtuAD_rmvNO96T7IKKRSsupC0bCgwgBIcSr9y7Z9nV9qoOBRUsXmbgvycoXlZCvBZpQ0TqmIW0A';
-		break;
-	case 'theyorker.ado.is-a-geek.net':
-		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBQqxqph5xmYOwiXPhDCFStDHdEmQxStGW_JuIRgEXmatGyMz88xSyDOow';
-		break;
-	case 'trunk.theyorker.gmghosting.com':
-		$key = 'ABQIAAAA4LuflJA4VPgM8D-gyba8yBR6L4oJGHgAGz3lHpOpEmhODgCApRRRjD3jh4l746FkEpP3mk8KX1qNQQ';
-		break;
-	case 'localhost':
-		$key = 'ABQIAAAA6vFF9HQVRyZ6pmMbEW2o8hT4dMPT2p45abcp05Afs400sGBlHhRGtu7daesOnj_9G28sgfkXgxTfxQ';
-		break;
-	default:
-		$key = 'unknown';
-}
+$CI = &get_instance();
+$CI->load->config('google');
+$config = $CI->config->Item('google');
+
+$key = $config['api_key'];
 
 $editable = false;
 foreach ($maps as $map) {
 	$editable |= (count($map['newlocations']) > 0);
 }
 
-// The google maps API key will need to be changed whenever we change server
-// There is a google account to do this:
-//   username - theyorkermaps
-//   password - same as the database
 ?>
 
 	<!-- BEGIN map handling code -->
