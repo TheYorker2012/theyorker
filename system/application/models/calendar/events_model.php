@@ -914,70 +914,62 @@ class Events_model extends Model
 		return $query->result_array();
 	}
 
-	// subscriber
-	/// Get the information relating to a notice type.
+	/// Get occurrences which have changed so that the user needs informing.
 	/**
-	 * @param $NoticeType string Notice type as ['type'] in return of
-	 *	GetNotices.
-	 * @return array Notice type information including:
-	 *	- 'actions' array of action names.
+	 * @return array of occurrences:
+	 *  - 'event_id'
+	 *  - 'occurrence_id'
+	 *  - 'name'
+	 *  - 'state'
+	 *  - 'start_time'
+	 *  - 'start_time'
+	 *  - 'time_associated'
 	 */
-	function GetNoticeTypeInformation($NoticeType)
+	function GetOccurrenceAlerts()
 	{
-		static $notice_types = array(
-			'requested_subscription' => array(
-				'description' => 'You have been invited to join the specified events feed.',
-				'actions' => array(
-					'Accept' => 'Subscribe to the events',
-					'Reject' => 'Reject the subscription',
-				),
-			),
-			'requested_membership' => array(
-				'description' => 'You have been invited to join the specified organisation as a member.',
-				'actions' => array(
-					'Interested' => 'Accept the membership and subscribe to events',
-					'Not interested' => 'Accept the membership but don\'t subscribe to events',
-					'Reject' => 'Reject the membership',
-				),
-			),
-		);
-		return $notice_types[$NoticeType];
+		$occurrence_query = new EventOccurrenceQuery();
+		$sql = '
+			SELECT
+				event_id,
+				event_occurrence_id AS occurrence_id,
+				event_name AS name,
+				'.$occurrence_query->ExpressionPublicState('event_occurrences').' AS state,
+				UNIX_TIMESTAMP(event_occurrence_start_time) AS start_time,
+				UNIX_TIMESTAMP(event_occurrence_end_time) AS end_time,
+				event_time_associated AS time_associated
+			FROM event_occurrence_users
+			INNER JOIN event_occurrences
+				ON event_occurrence_id = event_occurrence_user_event_occurrence_id
+			INNER JOIN events
+				ON event_id = event_occurrence_event_id
+			WHERE	event_occurrence_user_user_entity_id = '.$this->GetActiveEntityId().'
+				AND '.$occurrence_query->ExpressionVisibilityRsvp().'
+				AND event_occurrence_state = \'cancelled\'
+				AND NOT event_deleted
+			ORDER BY event_occurrence_start_time ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
 	}
-
-	/// Get notices relating to a user's calendar.
-	/**
-	 * Get all pending
-	 *	- subscriptions/memberships.
-	 *	- event ownerships/event feed inclusions
-	 * Moved RSVP'd events.
-	 * @return array Array of notice information including:
-	 *	- 'type' (e.g. requested_subscription, requested_membership)
-	 *	- 'subscription_id' (if type == requested_subscription)
-	 */
-	function GetNotices()
+	
+	/// Dismiss a cancelled occurrence.
+	function DismissCancelledOccurrence($occurrence_id)
 	{
-		/// @todo Implement.
-		/*
-		 * UNCONFIRMED SUBSCRIPTIONS
-		 * select
-		 *     from subscriptions
-		 *     where user = me
-		 *       and user_confirmed = 0
-		 *
-		 * RSVP'd CHANGED EVENTS
-		 * select public_state
-		 *     from event_occurrence_users
-		 *     inner join event_occurrences
-		 *     where user = me
-		 *       and rsvp
-		 *       and state isn't published
-		 *
-		 * UNCONFIRMED OWNERSHIPS
-		 * select
-		 *     from event_entities
-		 *     where user = me
-		 *       and confirmed = 0
-		 */
+		$occurrence_query = new EventOccurrenceQuery();
+		$sql = '
+			UPDATE	event_occurrence_users
+			INNER JOIN event_occurrences
+				ON event_occurrence_id = event_occurrence_user_event_occurrence_id
+			INNER JOIN events
+				ON event_id = event_occurrence_event_id
+			SET		event_occurrence_user_attending = NULL
+			WHERE	event_occurrence_user_event_occurrence_id = '.$this->db->escape($occurrence_id).'
+				AND event_occurrence_user_user_entity_id = '.$this->GetActiveEntityId().'
+				AND '.$occurrence_query->ExpressionVisibilityRsvp().'
+				AND event_occurrence_state = \'cancelled\'
+				AND NOT event_deleted';
+		
+		$this->db->query($sql);
+		return $this->db->affected_rows();
 	}
 
 	// TRANSACTIONS

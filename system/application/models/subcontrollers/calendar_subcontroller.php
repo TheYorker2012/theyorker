@@ -68,6 +68,18 @@ class CalendarPaths
 		$this->mCalendarMode = $Mode;
 	}
 	
+	/// Get the index path.
+	function Index()
+	{
+		return $this->mPath . '/index';
+	}
+	
+	/// Get the notification action path.
+	function NotificationAction()
+	{
+		return $this->mPath . '/notification';
+	}
+	
 	/// Get the range path.
 	function Range($range = NULL, $filter = NULL)
 	{
@@ -116,15 +128,19 @@ class CalendarPaths
 	}
 	
 	/// Get the event creation path.
-	function EventCreate($Source)
+	function EventCreateRaw($SourceId)
 	{
-		$path = $this->mPath .
-			'/src/'.	$Source->GetSourceId().
-			'/create/';
+		$path = $this->mPath . "/src/$SourceId/create/";
 		if (NULL !== $this->mDefaultRange) {
 			$path .= $this->mDefaultRange.'/';
 		}
 		return $path;
+	}
+	
+	/// Get the event creation path.
+	function EventCreate($Source)
+	{
+		return $this->EventCreateRaw($Source->GetSourceId());
 	}
 	
 	/// Get the event information path.
@@ -172,15 +188,22 @@ class CalendarPaths
 	}
 	
 	/// Get the event occurrence information path.
-	function OccurrenceInfo($Occurrence, $range = NULL, $filter = NULL)
+	function OccurrenceRawInfo($SourceId, $EventId, $OccurrenceId, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
-			'/src/'.	$Occurrence->Event->Source->GetSourceId().
-			'/event/'.	$Occurrence->Event->SourceEventId.
-			'/occ/'.	$Occurrence->SourceOccurrenceId.
-			'/info'.
+			"/src/$SourceId/event/$EventId/occ/$OccurrenceId/info".
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence information path.
+	function OccurrenceInfo($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->OccurrenceRawInfo(
+			$Occurrence->Event->Source->GetSourceId(),
+			$Occurrence->Event->SourceEventId,
+			$Occurrence->SourceOccurrenceId,
+			$range, $filter);
 	}
 	
 	/// Get the event occurrence edit path.
@@ -472,6 +495,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					),
 				),
 			),
+			'notification'=> 'notification_action',
 			'subscribe'   => 'subscribe_stream',
 			'unsubscribe' => 'unsubscribe_stream',
 			'ajax' => array(
@@ -506,14 +530,37 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 	}
 	
+	/// An action on notification.
+	function notification_action()
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		$this->load->library('calendar_notifications');
+		
+		// Perform any notification actions.
+		$this->messages->AddMessages(Notifications::CheckNotificationActions());
+		
+		// If there are messages, redirect to self to flush the post data.
+		if (isset($_POST['refer'])) {
+			return redirect($_POST['refer']);
+		} else {
+			return redirect($this->mPaths->Index());
+		}
+	}
+	
 	/// Index page with calendar preview + other stuff.
-	function index(/* ... */)
+	function index()
 	{
 		OutputModes('xhtml','fbml');
 		if (!CheckPermissions($this->mPermission)) return;
 		
 		/// @todo Put this into a view library.
-		$data = array();
+		$this->load->library('calendar_notifications');
+		
+		$data = array(
+			'Paths' => $this->mPaths,
+			'Notifications' => Calendar_notifications::GetNotifications($this->mPaths),
+		);
 		$this->main_frame->SetContentSimple('calendar/index', $data);
 		
 		$this->main_frame->Load();

@@ -61,7 +61,10 @@ $CI = & get_instance();
 				
 			if (NULL !== $Occurrence) {
 				echo('<p>');
-				if ('published' === $Occurrence->State || 'owned' === $Event->UserStatus) {
+				if ('published' === $Occurrence->State ||
+					'cancelled' === $Occurrence->State ||
+					'owned' === $Event->UserStatus)	
+				{
 					echo('<strong>'.$Occurrence->State.'</strong>');
 				}
 				if ('owned' === $Event->UserStatus) {
@@ -86,52 +89,53 @@ $CI = & get_instance();
 							site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
 							'">postpone</a>';
 					}
-					echo(' ('.implode(',', $links).')');
+					echo(' ('.implode(', ', $links).')');
 				}
 				echo('</p>');
 			}
 			echo('<p><i>');
 			echo($Event->GetDescriptionHtml());
 			echo('</i></p>');
-			if (NULL !== $Occurrence) {
+			if (NULL !== $Occurrence &&
+				$Occurrence->UserHasPermission('set_attend') &&
+				$Occurrence->State == 'published' /*&&
+				$Occurrence->EndTime->Timestamp() > time()*/)
+			{
 				$attendence_actions = array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend');
-				if ($Occurrence->UserHasPermission('set_attend') /*and $Occurrence->EndTime->Timestamp() > time()*/) {
-					echo('<p>');
-					if ('no' === $Occurrence->UserAttending) {
-						echo('not attending');
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
-								'">'.$attendence_actions['yes'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
-								'">'.$attendence_actions['maybe'].'</a>)');
-						}
-					} elseif ('yes' === $Occurrence->UserAttending) {
-						echo('attending');
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
-								'">'.$attendence_actions['maybe'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
-								'">'.$attendence_actions['no'].'</a>)');
-						}
-					} elseif ('maybe' === $Occurrence->UserAttending) {
-						echo('maybe attending');
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
-								'">'.$attendence_actions['yes'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
-								'">'.$attendence_actions['no'].'</a>)');
-						}
+				echo('<p>');
+				if ('no' === $Occurrence->UserAttending) {
+					echo('not attending');
+					if ($Occurrence->Event->Source->IsSupported('attend')) {
+						echo(' (<a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+							'">'.$attendence_actions['yes'].'</a>');
+						echo(', <a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+							'">'.$attendence_actions['maybe'].'</a>)');
 					}
-					echo('</p>');
+				} elseif ('yes' === $Occurrence->UserAttending) {
+					echo('attending');
+					if ($Occurrence->Event->Source->IsSupported('attend')) {
+						echo(' (<a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+							'">'.$attendence_actions['maybe'].'</a>');
+						echo(', <a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+							'">'.$attendence_actions['no'].'</a>)');
+					}
+				} elseif ('maybe' === $Occurrence->UserAttending) {
+					echo('maybe attending');
+					if ($Occurrence->Event->Source->IsSupported('attend')) {
+						echo(' (<a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+							'">'.$attendence_actions['yes'].'</a>');
+						echo(', <a href="'.
+							site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+							'">'.$attendence_actions['no'].'</a>)');
+					}
 				}
+				echo('</p>');
 			}
-			echo('</p>');
 			echo('<p>');
 			if (NULL !== $Event->Image) {
 				echo('<br />');

@@ -289,6 +289,7 @@ div#RightColumn fieldset.inline input {
 
 div#RightColumn input.button {
 	width: 30%;
+	float: right;
 }
 
 div#RightColumn input.checkbox {
