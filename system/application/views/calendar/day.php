@@ -23,7 +23,7 @@
 		<div class="TodoBox">
 			<ul>
 				<?php foreach ($CreateSources as $source) { ?>
-					<li><a href="<?php echo(site_url($Path->EventCreate($source))); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
+					<li><a href="<?php echo(site_url($Path->EventCreate($source)).get_instance()->uri->uri_string()); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
 				<?php } ?>
 			</ul>
 		</div>

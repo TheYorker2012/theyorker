@@ -128,19 +128,23 @@ class CalendarPaths
 	}
 	
 	/// Get the event creation path.
-	function EventCreateRaw($SourceId)
+	function EventCreateRaw($SourceId, $Range = NULL)
 	{
 		$path = $this->mPath . "/src/$SourceId/create/";
-		if (NULL !== $this->mDefaultRange) {
+		if (NULL !== $Range) {
+			$path .= $Range;
+		} elseif (NULL !== $this->mDefaultRange) {
 			$path .= $this->mDefaultRange.'/';
+		} else {
+			$path .= 'default/';
 		}
 		return $path;
 	}
 	
 	/// Get the event creation path.
-	function EventCreate($Source)
+	function EventCreate($Source, $Range = NULL)
 	{
-		return $this->EventCreateRaw($Source->GetSourceId());
+		return $this->EventCreateRaw($Source->GetSourceId(), $Range);
 	}
 	
 	/// Get the event information path.
@@ -325,6 +329,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected $mDefaultRange = 'today:1week';
 	/// string Overlap past midnight to get events, as input to strtotime.
 	protected $mDefaultOverlap = '6hours';
+	/// string Page code for index pages.
+	protected $mIndexPageCode = 'calendar_index_personal';
 	/// string Page code for range pages.
 	protected $mRangePageCode = 'calendar_personal';
 	/// bool Various permission flags.
@@ -399,6 +405,12 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	function SetRangePageCode($PageCode)
 	{
 		$this->mRangePageCode = $PageCode;
+	}
+	
+	/// Set the page code for the index.
+	function SetIndexPageCode($PageCode)
+	{
+		$this->mIndexPageCode = $PageCode;
 	}
 	
 	/// Default constructor.
@@ -530,6 +542,12 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 	}
 	
+	/// Set the default first segment.
+	function _SetDefault($Default)
+	{
+		$this->mStructure[''] = $Default;
+	}
+	
 	/// An action on notification.
 	function notification_action()
 	{
@@ -551,13 +569,21 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	/// Index page with calendar preview + other stuff.
 	function index()
 	{
+		if (!isset($this->mPermissions['index'])) {
+			return show_404();
+		}
 		OutputModes('xhtml','fbml');
 		if (!CheckPermissions($this->mPermission)) return;
 		
 		/// @todo Put this into a view library.
 		$this->load->library('calendar_notifications');
 		
+		$this->pages_model->SetPageCode($this->mIndexPageCode);
+		$this->SetupTabs('index', new Academic_time(time()));
+		
 		$data = array(
+			'IntroHtml' => $this->pages_model->GetPropertyWikitext('intro'),
+			'RightbarHtml' => $this->pages_model->GetPropertyWikitext('rightbar'),
 			'Paths' => $this->mPaths,
 			'Notifications' => Calendar_notifications::GetNotifications($this->mPaths),
 		);
@@ -876,7 +902,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
-	function src_source_create()
+	function src_source_create($range = NULL)
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
@@ -896,22 +922,23 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'source' => $this->mSource->GetSourceName(),
 		));
 		
+		// Get the redirect url tail
+		$args = func_get_args();
+		array_shift($args);
+		$tail = implode('/', $args);
+		
 		if (!$this->mSource->IsSupported('create')) {
 			// Create isn't supported with this source
-			$this->messages->AddMessage('error', 'You cannot create events in this calendar');
+			$this->ErrorNotCreateable($tail);
 			$this->main_frame->Load();
 			return;
 		}
-		
-		// Get the redirect url tail
-		$args = func_get_args();
-		$tail = implode('/', $args);
 		
 		// Get the buttons from post data
 		$prefix = 'evcr';
 		if (isset($_POST[$prefix.'_return'])) {
 			// REDIRECT
-			return redirect($this->mPaths->Range(isset($args[0])?$args[0]:NULL));
+			return redirect($tail);
 		}
 		
 		$errors = array();
@@ -1018,7 +1045,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 		$data = array(
 			'SimpleRecur' => $rset_arr,
-			'FailRedirect' => '/'.$tail,
+			'FailRedirect' => site_url($tail),
 			'Path' => $this->mPaths,
 			'EventCategories' => $categories,
 			'FormPrefix' => $prefix,
@@ -1627,6 +1654,15 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$ical->Load();
 	}
 	
+	/// Show an error, not createable message.
+	protected function ErrorNotCreateable($Tail)
+	{
+		$this->load->library('Custom_pages');
+		$page = new CustomPageView('calendar_source_no_create');
+		$page->SetData('referer', site_url($Tail));
+		$this->main_frame->SetContent($page);
+	}
+	
 	/// Show an error, not accessible message.
 	protected function ErrorNotAccessible($Tail)
 	{
@@ -1783,6 +1819,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$Filter = '/';
 			} else {
 				$Filter = '/'.$Filter;
+			}
+			if (isset($this->mPermissions['index'])) {
+				$navbar->AddItem('index', 'Summary',
+					site_url($this->mPaths->Index())
+				);
 			}
 			$navbar->AddItem('day', 'Day',
 				site_url($this->mPaths->Range(
