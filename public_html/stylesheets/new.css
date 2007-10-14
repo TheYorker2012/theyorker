@@ -474,6 +474,11 @@ div.message_information {
 	background-color: #ffffe1;
 }
 
+div#RightColumn div.message_error,
+div#RightColumn div.message_warning,
+div#RightColumn div.message_information,
+div#RightColumn div.message_success { float: none; width: auto;}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in bylines                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

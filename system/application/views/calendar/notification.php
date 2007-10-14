@@ -21,22 +21,22 @@ $html .= "<p><em>$Type[description]</em></p>\n$Custom\n";
 $html .= '<form class="form" method="post" action="'.
 		site_url($Paths->NotificationAction())
 	."\">\n";
-	$html .= '<input type="hidden" name="refer" value="'.$CI->uri->uri_string()."\" />\n";
-	$html .= "<input type=\"hidden\" name=\"calnot[type]\" value=\"$Type[id]\" />\n";
+$html .= '<fieldset>';
+$html .= '<input type="hidden" name="refer" value="'.$CI->uri->uri_string()."\" />\n";
+$html .= "<input type=\"hidden\" name=\"calnot[type]\" value=\"$Type[id]\" />\n";
 foreach ($Keys as $key => $value) {
 	$value = htmlentities($value, ENT_QUOTES, 'utf-8');
 	$html .= "<input type=\"hidden\" name=\"calnot[keys][$key]\" value=\"$value\" />\n";
 }
-$html .= "<div style=\"align:center;\">\n";
 foreach ($Type['actions'] as $action => $description) {
 	$html .= '<input class="button" type="submit"'.
 		" name=\"calnot[action]\" value=\"$action\" />\n";
 }
-$html .= '</div>';
+$html .= '</fieldset>';
 $html .= "</form>\n";
 
 // Divify and stuff
-echo("<div id=\"calnot[$key][div]\" display=\"block\">");
+echo("<div id=\"calnot_${key}_div\" style=\"display:block;\">");
 get_instance()->load->view('general/message', array(
 	'class' => $Type['class'],
 	'text' => $html,
