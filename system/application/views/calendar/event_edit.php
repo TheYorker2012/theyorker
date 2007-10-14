@@ -464,61 +464,61 @@ function CalSimpleFreqChange()
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox">
-		<h2><?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?></h2>
-		<div>
-			<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
-				<input type="hidden" id="prefix" name="prefix" value="<?php echo($FormPrefix); ?>" />
-				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
-?>				<input type="hidden" id="<?php echo($FormPrefix.'_'.$key); ?>" name="<?php echo($FormPrefix.'_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
-				<?php } ?>
-				<div class="BlueBox">
-					<h2>Event</h2>
-					<fieldset>
-						<label for="<?php echo($FormPrefix); ?>_summary">Summary</label>
-						<input type="text" id="<?php echo($FormPrefix); ?>_summary" name="<?php echo($FormPrefix); ?>_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
-						
-						<label for="<?php echo($FormPrefix); ?>_category">Category</label>
-						<select id="<?php echo($FormPrefix); ?>_category" name="<?php echo($FormPrefix); ?>_category">
-							<?php
-							foreach ($EventCategories as $key => $category) {
-								echo('<option value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
-								echo($category['name']);
-								echo('</option>');
-							}
-							?>
-						</select>
-						
-						<label for="<?php echo($FormPrefix); ?>_location">Location</label>
-						<input type="text" id="<?php echo($FormPrefix); ?>_location" name="<?php echo($FormPrefix); ?>_location" value="<?php echo(htmlentities($EventInfo['location'], ENT_QUOTES, 'utf-8')); ?>" />
-						
-						<label for="<?php echo($FormPrefix); ?>_timeassociated">Time Associated</label>
-						<input type="checkbox" onchange="SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');" id="<?php echo($FormPrefix); ?>_timeassociated" name="<?php echo($FormPrefix); ?>_timeassociated"<?php if ($EventInfo['timeassociated']) { ?>  checked="yes"<?php } ?> />
-						
-						<label for="<?php echo($FormPrefix); ?>_start">Starts on</label>
+	<div>
+		<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
+			<input type="hidden" id="prefix" name="prefix" value="<?php echo($FormPrefix); ?>" />
+			<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
+?>			<input type="hidden" id="<?php echo($FormPrefix.'_'.$key); ?>" name="<?php echo($FormPrefix.'_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
+			<?php } ?>
+			<div class="BlueBox">
+				<h2>Event</h2>
+				<fieldset>
+					<label for="<?php echo($FormPrefix); ?>_summary">Summary</label>
+					<input type="text" id="<?php echo($FormPrefix); ?>_summary" name="<?php echo($FormPrefix); ?>_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
+					
+					<label for="<?php echo($FormPrefix); ?>_category">Category</label>
+					<select id="<?php echo($FormPrefix); ?>_category" name="<?php echo($FormPrefix); ?>_category">
 						<?php
-						DateSelectorGregorian(
-							$FormPrefix.'_start',
-							$FormPrefix.'_start',
-							$EventInfo['start'],
-							$now_year,
-							$now_year+5);
+						foreach ($EventCategories as $key => $category) {
+							echo('<option value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
+							echo($category['name']);
+							echo('</option>');
+						}
 						?>
-						
-						<?php
-						DurationSelector(
-							$FormPrefix.'_duration',
-							$EventInfo['duration']);
-						?>
-						
-						<label for="<?php echo($FormPrefix); ?>_description">Description</label>
-						<textarea rows="10" id="<?php echo($FormPrefix); ?>_description" name="<?php echo($FormPrefix); ?>_description"><?php echo(htmlentities($EventInfo['description'], ENT_QUOTES, 'utf-8')); ?></textarea>
-						
-						<label for="<?php echo($FormPrefix); ?>_recur_simple_enable">Enable recurrence</label>
-						<input type="checkbox" onchange="MainRecurrenceToggle()" id="<?php echo($FormPrefix); ?>_recur_simple_enable" name="<?php echo($FormPrefix); ?>_recur_simple[enable]"<?php if (isset($SimpleRecur['enable'])) { ?>  checked="yes"<?php } ?> />
-					</fieldset>
-				</div>
-				<div id="<?php echo($FormPrefix); ?>_recurrence_div" class="BlueBox" style="display: block">
+					</select>
+					
+					<label for="<?php echo($FormPrefix); ?>_location">Location</label>
+					<input type="text" id="<?php echo($FormPrefix); ?>_location" name="<?php echo($FormPrefix); ?>_location" value="<?php echo(htmlentities($EventInfo['location'], ENT_QUOTES, 'utf-8')); ?>" />
+					
+					<label for="<?php echo($FormPrefix); ?>_description">Description</label>
+					<textarea rows="10" id="<?php echo($FormPrefix); ?>_description" name="<?php echo($FormPrefix); ?>_description"><?php echo(htmlentities($EventInfo['description'], ENT_QUOTES, 'utf-8')); ?></textarea>
+					
+				</fieldset>
+			</div>
+			<div class="BlueBox">
+				<h2>Dates and Times</h2>
+				<fieldset>
+					<label for="<?php echo($FormPrefix); ?>_timeassociated">Time Associated</label>
+					<input type="checkbox" onchange="SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');" id="<?php echo($FormPrefix); ?>_timeassociated" name="<?php echo($FormPrefix); ?>_timeassociated"<?php if ($EventInfo['timeassociated']) { ?>  checked="yes"<?php } ?> />
+					
+					<label for="<?php echo($FormPrefix); ?>_start">Starts on</label>
+					<?php
+					DateSelectorGregorian(
+						$FormPrefix.'_start',
+						$FormPrefix.'_start',
+						$EventInfo['start'],
+						$now_year,
+						$now_year+5);
+					?>
+					<?php
+					DurationSelector(
+						$FormPrefix.'_duration',
+						$EventInfo['duration']);
+					?>
+					<label for="<?php echo($FormPrefix); ?>_recur_simple_enable">Use Recurrence</label>
+					<input type="checkbox" onchange="MainRecurrenceToggle()" id="<?php echo($FormPrefix); ?>_recur_simple_enable" name="<?php echo($FormPrefix); ?>_recur_simple[enable]"<?php if (isset($SimpleRecur['enable'])) { ?>  checked="yes"<?php } ?> />
+				</fieldset>
+				<div id="<?php echo($FormPrefix); ?>_recurrence_div" style="display: block">
 					<h2>Recurrence</h2>
 					<fieldset>
 						<label for="<?php echo($FormPrefix); ?>_recur_simple_freq">Recurrence Rule</label>
@@ -776,54 +776,61 @@ function CalSimpleFreqChange()
 							<?php
 							DateSelectorGregorian($FormPrefix.'_recur_simple_until', $FormPrefix.'_recur_simple[until]', $until, $now_year, $now_year+5);
 							?>
-						</fieldset>
-						<p><small><em>Advanced reccurrence tools will be made available at a later date.</em></small></p>
+						</fieldset><?php /*
+						<p><small><em>Advanced reccurrence tools will be made available at a later date.</em></small></p> */ ?>
 					</div>
 				</div>
-				<div class="BlueBox">
-					<fieldset>
-						<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_save" value="Save" />
-						<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_return" value="Cancel" />
-					</fieldset>
+				
+				<?php if (0) { ?>
+				<h2>Include/Exclude Dates</h2>
+				<div class="cal_incex_date">
+					
 				</div>
-				<script type="text/javascript">
-					CalSimpleFreqChange();
-					hide("recurrences_preview_noscript");
-					show("recurrences_preview");
-					MainRecurrenceToggle();
-					SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');
-				</script>
-			</form>
-			<?php
-			// Attendee list
-			if (isset($Attendees) && !empty($Attendees)) {
-				echo('<h2>Attendees</h2>');
-				echo('<ul>');
-				foreach (array(true,false) as $friend) {
-					foreach ($Attendees as $attendee) {
-						if ($attendee['friend'] === $friend) {
-							echo('<li>');
-							$linked = array_key_exists('link', $attendee);
-							if ($attendee['friend']) {
-								echo('<b>');
-							}
-							if ($linked) {
-								echo('<a href="'.$attendee['link'].'" target="_blank">');
-							}
-							echo($attendee['name']);
-							if ($linked) {
-								echo('</a>');
-							}
-							if ($attendee['friend']) {
-								echo('</b>');
-							}
-							echo(' '.$attendee['attend'].'</li>');
+				<?php } ?>
+			</div>
+			<div class="BlueBox">
+				<fieldset>
+					<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_save" value="Save" />
+					<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_return" value="Cancel" />
+				</fieldset>
+			</div>
+			<script type="text/javascript">
+				CalSimpleFreqChange();
+				hide("recurrences_preview_noscript");
+				show("recurrences_preview");
+				MainRecurrenceToggle();
+				SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');
+			</script>
+		</form>
+		<?php
+		// Attendee list
+		if (isset($Attendees) && !empty($Attendees)) {
+			echo('<h2>Attendees</h2>');
+			echo('<ul>');
+			foreach (array(true,false) as $friend) {
+				foreach ($Attendees as $attendee) {
+					if ($attendee['friend'] === $friend) {
+						echo('<li>');
+						$linked = array_key_exists('link', $attendee);
+						if ($attendee['friend']) {
+							echo('<b>');
 						}
+						if ($linked) {
+							echo('<a href="'.$attendee['link'].'" target="_blank">');
+						}
+						echo($attendee['name']);
+						if ($linked) {
+							echo('</a>');
+						}
+						if ($attendee['friend']) {
+							echo('</b>');
+						}
+						echo(' '.$attendee['attend'].'</li>');
 					}
 				}
-				echo('</ul>');
 			}
-			?>
-		</div>
+			echo('</ul>');
+		}
+		?>
 	</div>
 </div>
