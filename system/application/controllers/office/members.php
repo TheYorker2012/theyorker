@@ -506,7 +506,7 @@ class Members extends Controller
 
 		// Get membership information for the first time
 		// This will determine whether the entity is a member.
-		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId, 'TRUE', array(), ('manage' === VipMode()));
+		$membership = $this->members_model->GetMemberDetails(VipOrganisationId(), $EntityId, 'TRUE', array(), FALSE);
 
 		if (!empty($membership)) {
 			$membership = $membership[0];
