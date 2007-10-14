@@ -61,7 +61,7 @@
 				</thead>
 				<tbody id="MemberTable">
 					<tr id="NotFound" style="display: none;">
-						<td>
+						<td colspan="6" style="text-align: center;">
 							No Matching Entries
 						</td>
 					</tr>
