@@ -732,6 +732,19 @@ table#calendar_view div.cal_event_split_bottom {
 
 
 <div class="BlueBox">
+<div align="center">
+<?php
+if (isset($BackwardUrl)) {
+	echo('<a href="'.$BackwardUrl.'"><img src="'.site_url('images/prototype/calendar/backward.gif').'" alt="Backward" /></a> ');
+}
+if (isset($NowUrl)) {
+	echo('<a href="'.$NowUrl.'">'.$NowUrlLabel.'</a> ');
+}
+if (isset($ForwardUrl)) {
+	echo('<a href="'.$ForwardUrl.'"><img src="'.site_url('images/prototype/calendar/forward.gif').'" alt="Forward" /></a> ');
+}
+?>
+</div>
 
 <table id="calendar_view">
 	<!-- Day Headings -->
