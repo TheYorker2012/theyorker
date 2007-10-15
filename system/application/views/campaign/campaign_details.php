@@ -83,7 +83,7 @@ else
 		echo('		<ul>'."\n");
 	        foreach ($article['links'] as $links) {
 			echo('			');
-			echo('<li><a href="'.$links['url'].'">'.$links['name'].'</a></li>'."\n");
+			echo('<li><a href="'.$links['url'].'" target="_blank">'.$links['name'].'</a></li>'."\n");
 		}
 		echo('		</ul>'."\n");
 		echo('	</div>'."\n");

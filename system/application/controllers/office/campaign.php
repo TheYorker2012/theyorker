@@ -19,6 +19,8 @@ class Campaign extends Controller
 	private function _SetupNavbar($campaign_id)
 	{
 		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('info', 'Info',
+				'/office/campaign/editinfo/'.$campaign_id);
 		$navbar->AddItem('article', 'Article',
 				'/office/campaign/editarticle/'.$campaign_id);
 		$navbar->AddItem('reports', 'Reports',
@@ -158,6 +160,39 @@ class Campaign extends Controller
 			$this->main_frame->AddMessage('error','You do not have access to view this page.');
 			redirect('/office/campaign/');
 		}
+	}
+
+	function editinfo($campaign_id)
+	{
+		if (!CheckPermissions('office')) return;
+
+		//set the page code and load the required models
+		$this->pages_model->SetPageCode('office_campaign_edit');
+		$this->load->model('campaign_model','campaign_model');
+
+		//Get navigation bar and tell it the current page
+		$this->_SetupNavbar($campaign_id);
+		$this->main_frame->SetPage('info');
+
+		//get charity from given id
+		$data['campaign']['name'] = $this->campaign_model->GetCampaignNameID($campaign_id);
+		$data['campaign']['id'] = $campaign_id;
+
+		//get the current users id and office access
+		$data['user']['id'] = $this->user_auth->entityId;
+		$data['user']['is_editor'] = PermissionsSubset('editor', GetUserLevel());
+
+		// Set up the view
+		$the_view = $this->frames->view('office/campaign/info', $data);
+		
+		// Set up the public frame
+		$this->main_frame->SetTitleParameters(array(
+			'name' => $data['campaign']['name']
+		));
+		$this->main_frame->SetContent($the_view);
+
+		// Load the public frame view
+		$this->main_frame->Load();
 	}
 	
 	function editarticle($campaign_id, $revision_id = NULL)
@@ -820,6 +855,12 @@ class Campaign extends Controller
 		{
 			$this->campaign_model->EndPetition();
 			$this->main_frame->AddMessage('success','Petition ended and new campaigns set for voting.');
+			redirect($_POST['r_redirecturl']);
+		}
+		else if (isset($_POST['r_submit_set_campaign_name']))
+		{
+			$this->campaign_model->SetCampaignName($_POST['a_campaignid'], $_POST['a_name']);
+			$this->main_frame->AddMessage('success','Campaign name has been updated.');
 			redirect($_POST['r_redirecturl']);
 		}
 	}

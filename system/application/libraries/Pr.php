@@ -6,7 +6,7 @@
  * @author Richard Ingle (ri504@cs.york.ac.uk)
  */
 
-class PR
+class Pr
 {
 	/// Code igniter instance.
 	private $CI;

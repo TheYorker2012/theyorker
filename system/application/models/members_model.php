@@ -164,26 +164,34 @@ class Members_model extends Model {
 		/* sorting */
 		if ($sorton == 'surname') {
 			if ($sortdir == 'asc') {
-				$sql .= ' ORDER BY user_surname ASC ';
+				$sql .= ' ORDER BY user_surname ASC, user_firstname ASC, organisation_name ASC ';
 			}
 			else {
-				$sql .= ' ORDER BY user_surname DESC ';
+				$sql .= ' ORDER BY user_surname DESC, user_firstname ASC, organisation_name ASC ';
 			}
 		}
 		elseif ($sorton == 'firstname') {
 			if ($sortdir == 'asc') {
-				$sql .= ' ORDER BY user_firstname ASC ';
+				$sql .= ' ORDER BY user_firstname ASC, user_surname ASC, organisation_name ASC ';
 			}
 			else {
-				$sql .= ' ORDER BY user_firstname DESC ';
+				$sql .= ' ORDER BY user_firstname DESC, user_surname ASC, organisation_name ASC ';
 			}
 		}
 		elseif ($sorton == 'email') {
 			if ($sortdir == 'asc') {
-				$sql .= ' ORDER BY entity_username ASC ';
+				$sql .= ' ORDER BY entity_username ASC, organisation_name ASC ';
 			}
 			else {
-				$sql .= ' ORDER BY entity_username DESC ';
+				$sql .= ' ORDER BY entity_username DESC, organisation_name ASC ';
+			}
+		}
+		elseif ($sorton == 'organisation') {
+			if ($sortdir == 'asc') {
+				$sql .= ' ORDER BY organisation_name ASC, user_firstname ASC, user_surname ASC ';
+			}
+			else {
+				$sql .= ' ORDER BY organisation_name DESC, user_firstname ASC, user_surname ASC ';
 			}
 		}
 			

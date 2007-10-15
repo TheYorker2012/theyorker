@@ -289,6 +289,7 @@ div#RightColumn fieldset.inline input {
 
 div#RightColumn input.button {
 	width: 30%;
+	float: right;
 }
 
 div#RightColumn input.checkbox {
@@ -473,6 +474,11 @@ div.message_information {
 	background-color: #ffffe1;
 }
 
+div#RightColumn div.message_error,
+div#RightColumn div.message_warning,
+div#RightColumn div.message_information,
+div#RightColumn div.message_success { float: none; width: auto;}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in bylines                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -567,7 +573,7 @@ span.theyorker {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * CSS used in for pagination links                            *
+ * CSS used for pagination links                               *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 div.Pagination {
 	margin: 0 0.5em;
@@ -585,4 +591,22 @@ div.Pagination span.selected {
 	color: #fff;
 	font-weight: bold;
 	background-color: #20C1F0;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS for Facebook Share Link                                 *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+a.fb_share_button {
+	display: inline-block;
+	padding: 1px 20px 0px 5px;
+	height: 15px;
+	border: 1px solid #d8dfea;
+	background: url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
+	text-decoration: none;
+}
+
+a.fb_share_button:hover {
+	color: #fff;
+	border-color: #295582;
+	background: #3b5998 url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
 }

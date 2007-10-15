@@ -20,36 +20,36 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Member Details</h2>
-		<form class='form'>
+		<form class="form">
 			<fieldset>
-				<label for='member_name'>Name:</label>
-				<input style="border: 0px;" type='text' readonly='readonly' name='member_name' id="member_name" value='<?php echo $membership['firstname'] ?>'/>
-				<label for='member_surname'>Surname:</label>
-				<input style="border: 0px;" type='text' readonly='readonly' name='member_surname' value='<?php echo $membership['surname'] ?>'/>
-				<label for='member_nick'>Nickname:</label>
-				<input style="border: 0px;" type='text' readonly='readonly' name='member_nick' value='<?php echo $membership['nickname'] ?>'/>
+				<label for="member_name">Name:</label>
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_name" id="member_name" value="<?php echo $membership['firstname'] ?>" />
+				<label for="member_surname">Surname:</label>
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_surname" value="<?php echo $membership['surname'] ?>" />
+				<label for="member_nick">Nickname:</label>
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_nick" value="<?php echo $membership['nickname'] ?>" />
 				<?php if (NULL !== $membership['email']) { ?>
-					<label for='member_email'>Email:</label>
-					<input style="border: 0px;" type='text' readonly='readonly' name='member_email' value='<?php echo $membership['email'] ?>'/>
+					<label for="member_email">Email:</label>
+					<input style="border: 0px;" type="text" readonly="readonly" name="member_email" value="<?php echo $membership['email'] ?>" />
 					<br />
 				<?php } ?>
-				<label for='member_gender'>Gender:</label>
-				<input style="border: 0px;" type='text' readonly='readonly' name='member_gender' value='<?php echo $membership['gender'] ?>'/>
+				<label for="member_gender">Gender:</label>
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_gender" value="<?php echo $membership['gender'] ?>" />
 				<br />
-				<label for='member_enrol_year'>Enrolled Year:</label>
-				<input style="border: 0px;" type='text' readonly='readonly' name='member_enrol_year' value='<?php echo $membership['enrol_year'] ?>'/>
+				<label for="member_enrol_year">Enrolled Year:</label>
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_enrol_year" value="<?php echo $membership['enrol_year'] ?>" />
 				<br />	<br />
 			</fieldset>
 		</form>
 	</div>
-	<div class='BlueBox'>
+	<div class="BlueBox">
 		<h2>Membership Status</h2>
-		<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class='form' method='POST'>
+		<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method="POST">
 			<fieldset>
-				<label for='member_paid'>Status:</label>
+				<label for="member_paid">Status:</label>
 				<input style="border: 0px;" type="text" name="member_status" value="<?php echo $membership['status']; ?>" disabled />
-				<label for='member_paid'>Paid:</label>
-				<input style="border: 0px;" type='checkbox' name='member_paid' value='1' <?php if($membership['paid']){echo 'checked';} ?> />
+				<label for="member_paid">Paid:</label>
+				<input style="border: 0px;" type="checkbox" name="member_paid" value="1" <?php if($membership['paid']){echo 'checked';} ?> />
 			</fieldset>
 			<fieldset>
 				<input name='member_update' type='submit' value='Update' class='button' />
@@ -122,7 +122,7 @@
 	<?php
 	if ('manage' === VipMode()) {
 		?>
-		<div class='blue_box'>
+		<div class='BlueBox'>
 			<h2>Office Access</h2>
 			<form action="<?php echo vip_url('members/info/'.$membership['user_id']);?>" class="form" method='POST' onSubmit="return submit_checker();">
 				<fieldset>

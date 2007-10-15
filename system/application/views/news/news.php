@@ -117,6 +117,12 @@ foreach ($main_article['related_articles'] as $related)
 
         <?php echo($main_article['text']); ?>
 
+		<div style="text-align: right">
+			<div>
+				<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
+			</div>
+		</div>
+
 		<?php if (isset($office_preview)) { ?>
 			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
 		<?php } ?>

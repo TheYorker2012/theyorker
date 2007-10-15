@@ -156,7 +156,7 @@ class News extends Controller {
 			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index], "Left"));
 		}
 
-		// Get comments
+		/// Get comments for article
 		if (is_numeric($main_article['public_thread_id'])) {
 			$this->load->library('comment_views');
 			$CommentInclude = $this->uri->segment(4);
@@ -171,6 +171,11 @@ class News extends Controller {
 		$data['main_article'] = $main_article;
 		$data['news_previews'] = $news_previews;
 		$data['news_others'] = $news_others;
+		/// Facebook share link info
+		$this->main_frame->SetData('description', $main_article['blurb']);
+		$this->main_frame->SetData('medium_type', 'news');
+		if (isset($main_article['primary_photo_link']))
+			$this->main_frame->SetData('main_image', $main_article['primary_photo_link']);
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('news/news', $data);

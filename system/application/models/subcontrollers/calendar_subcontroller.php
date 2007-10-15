@@ -31,6 +31,9 @@
 					/op				- operations such as delete, publish etc
 			/export					- export the contents of a source
 			/import					- import data into the source
+			/subscribe/$orgid/$type		- for subscribing to organisations
+			/unsubscribe/$orgid/$type	- for subscribing to organisations
+				
 	/ajax
 		/recursimplevalidate
 */
@@ -63,6 +66,18 @@ class CalendarPaths
 	function SetCalendarMode($Mode)
 	{
 		$this->mCalendarMode = $Mode;
+	}
+	
+	/// Get the index path.
+	function Index()
+	{
+		return $this->mPath . '/index';
+	}
+	
+	/// Get the notification action path.
+	function NotificationAction()
+	{
+		return $this->mPath . '/notification';
 	}
 	
 	/// Get the range path.
@@ -113,15 +128,23 @@ class CalendarPaths
 	}
 	
 	/// Get the event creation path.
-	function EventCreate($Source)
+	function EventCreateRaw($SourceId, $Range = NULL)
 	{
-		$path = $this->mPath .
-			'/src/'.	$Source->GetSourceId().
-			'/create/';
-		if (NULL !== $this->mDefaultRange) {
+		$path = $this->mPath . "/src/$SourceId/create/";
+		if (NULL !== $Range) {
+			$path .= $Range;
+		} elseif (NULL !== $this->mDefaultRange) {
 			$path .= $this->mDefaultRange.'/';
+		} else {
+			$path .= 'default/';
 		}
 		return $path;
+	}
+	
+	/// Get the event creation path.
+	function EventCreate($Source, $Range = NULL)
+	{
+		return $this->EventCreateRaw($Source->GetSourceId(), $Range);
 	}
 	
 	/// Get the event information path.
@@ -169,15 +192,22 @@ class CalendarPaths
 	}
 	
 	/// Get the event occurrence information path.
-	function OccurrenceInfo($Occurrence, $range = NULL, $filter = NULL)
+	function OccurrenceRawInfo($SourceId, $EventId, $OccurrenceId, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
-			'/src/'.	$Occurrence->Event->Source->GetSourceId().
-			'/event/'.	$Occurrence->Event->SourceEventId.
-			'/occ/'.	$Occurrence->SourceOccurrenceId.
-			'/info'.
+			"/src/$SourceId/event/$EventId/occ/$OccurrenceId/info".
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event occurrence information path.
+	function OccurrenceInfo($Occurrence, $range = NULL, $filter = NULL)
+	{
+		return $this->OccurrenceRawInfo(
+			$Occurrence->Event->Source->GetSourceId(),
+			$Occurrence->Event->SourceEventId,
+			$Occurrence->SourceOccurrenceId,
+			$range, $filter);
 	}
 	
 	/// Get the event occurrence edit path.
@@ -253,6 +283,31 @@ class CalendarPaths
 			'/occ/'.	$Occurrence->SourceOccurrenceId.
 			($ajax?'/ajax':'').'/attend/'.	$attend;
 	}
+	
+	/// Get the subscribe to organisation stream path.
+	function OrganisationSubscribe($OrgId, $Type)
+	{
+		return $this->mPath . "/subscribe/$OrgId/$Type";
+	}
+	/// Get the unsubscribe from organisation stream path.
+	function OrganisationUnsubscribe($OrgId, $Type)
+	{
+		return $this->mPath . "/unsubscribe/$OrgId/$Type";
+	}
+	
+	/// Get the HTML for a subscribe link.
+	function OrganisationSubscribeLink($OrgName, $OrgId, $Type)
+	{
+		return '<a href="'.site_url($this->OrganisationSubscribe($OrgId, 'calendar').get_instance()->uri->uri_string()).'">'.
+			"Show $OrgName events in my Personal Calendar</a>";
+	}
+	
+	/// Get the HTML for a subscribe link.
+	function OrganisationUnsubscribeLink($OrgName, $OrgId, $Type)
+	{
+		return '<a href="'.site_url($this->OrganisationUnsubscribe($OrgId, 'calendar').get_instance()->uri->uri_string()).'">'.
+			"Do not show $OrgName events in my Personal Calendar</a>";
+	}
 }
 
 
@@ -274,6 +329,12 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected $mDefaultRange = 'today:1week';
 	/// string Overlap past midnight to get events, as input to strtotime.
 	protected $mDefaultOverlap = '6hours';
+	/// string Page code for index pages.
+	protected $mIndexPageCode = 'calendar_index_personal';
+	/// string Page code for range pages.
+	protected $mRangePageCode = 'calendar_personal';
+	/// bool Various permission flags.
+	protected $mPermissions = array();
 	
 	/// CalendarSource Main source
 	protected $mMainSource = NULL;
@@ -281,6 +342,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected $mSource = NULL;
 	/// string Event identifier
 	protected $mEvent = NULL;
+	
+	/// array(int => array('subscribed','name','shortname')) Stream information.
+	protected $mStreams = NULL;
 	
 	/// bool Whether to have tabs.
 	protected $mTabs = TRUE;
@@ -335,6 +399,18 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		$this->mPaths = new CalendarPaths();
 		$this->mPaths->SetPath($Path);
+	}
+	
+	/// Set the page code for the ranges.
+	function SetRangePageCode($PageCode)
+	{
+		$this->mRangePageCode = $PageCode;
+	}
+	
+	/// Set the page code for the index.
+	function SetIndexPageCode($PageCode)
+	{
+		$this->mIndexPageCode = $PageCode;
 	}
 	
 	/// Default constructor.
@@ -431,6 +507,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					),
 				),
 			),
+			'notification'=> 'notification_action',
+			'subscribe'   => 'subscribe_stream',
+			'unsubscribe' => 'unsubscribe_stream',
 			'ajax' => array(
 				'recursimplevalidate' => 'ajax_recursimplevalidate',
 			),
@@ -449,14 +528,65 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->mPermission = $Permission;
 	}
 	
-	/// Index page with calendar preview + other stuff.
-	function index(/* ... */)
+	/// Add an allowed permission.
+	/**
+	 * @param $Permission string Allowed action.
+	 * @pre is_string(@a $Permission,..).
+	 */
+	function _AddPermission($Permission)
 	{
+		// Initialise
+		foreach (func_get_args() as $val) {
+			assert('is_string($val)');
+			$this->mPermissions[$val] = true;
+		}
+	}
+	
+	/// Set the default first segment.
+	function _SetDefault($Default)
+	{
+		$this->mStructure[''] = $Default;
+	}
+	
+	/// An action on notification.
+	function notification_action()
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		$this->load->library('calendar_notifications');
+		
+		// Perform any notification actions.
+		$this->messages->AddMessages(Notifications::CheckNotificationActions());
+		
+		// If there are messages, redirect to self to flush the post data.
+		if (isset($_POST['refer'])) {
+			return redirect($_POST['refer']);
+		} else {
+			return redirect($this->mPaths->Index());
+		}
+	}
+	
+	/// Index page with calendar preview + other stuff.
+	function index()
+	{
+		if (!isset($this->mPermissions['index'])) {
+			return show_404();
+		}
 		OutputModes('xhtml','fbml');
 		if (!CheckPermissions($this->mPermission)) return;
 		
 		/// @todo Put this into a view library.
-		$data = array();
+		$this->load->library('calendar_notifications');
+		
+		$this->pages_model->SetPageCode($this->mIndexPageCode);
+		$this->SetupTabs('index', new Academic_time(time()));
+		
+		$data = array(
+			'IntroHtml' => $this->pages_model->GetPropertyWikitext('intro'),
+			'RightbarHtml' => $this->pages_model->GetPropertyWikitext('rightbar'),
+			'Paths' => $this->mPaths,
+			'Notifications' => Calendar_notifications::GetNotifications($this->mPaths),
+		);
 		$this->main_frame->SetContentSimple('calendar/index', $data);
 		
 		$this->main_frame->Load();
@@ -466,7 +596,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
-		$this->pages_model->SetPageCode('calendar_personal');
+		$this->pages_model->SetPageCode($this->mRangePageCode);
 		
 		$this->_SetupMyCalendar();
 		$this->mPaths->SetCalendarMode('range');
@@ -500,8 +630,17 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		
 		$this->mDateRange = $date_range;
 		
+		$Organisation_names = 'Yorker';
+		if (is_array($this->mStreams)) {
+			$org_names = array();
+			foreach ($this->mStreams as $org_info) {
+				$org_names[] = $org_info['name'];
+			}
+			$Organisation_names = implode(', ', $org_names);
+		}
 		$this->main_frame->SetTitleParameters(array(
 			'range' => $range['description'],
+			'organisation' => $Organisation_names,
 		));
 		
 		/// @todo it seems to be calling ReadUri twice, once in this function and once in each callee.
@@ -524,6 +663,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$filter,
 				$range['format']);
 		}
+		if (is_array($this->mStreams)) {
+			$range_view->SetData('streams', $this->mStreams);
+			$range_view->SetData('Path', $this->mPaths);
+		}
+		$range_view->SetData('Permissions', $this->mPermissions);
 		
 		$this->main_frame->SetContent($range_view);
 		
@@ -543,14 +687,16 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$stretch_end = $end->Adjust($this->mDefaultOverlap);
 		
 		$sources->SetRange($start->Timestamp(), $stretch_end->Timestamp());
-		$sources->SetTodoRange(time(), time());
+// 		$sources->SetTodoRange(time(), time());
 		$this->ReadFilter($sources, $Filter);
-		$sources->EnableGroup('todo');
+// 		$sources->EnableGroup('todo');
 		
 		$create_sources = array();
-		foreach ($sources->GetSources() as $source) {
-			if ($source->IsSupported('create')) {
-				$create_sources[] = $source;
+		if (isset($this->mPermissions['create'])) {
+			foreach ($sources->GetSources() as $source) {
+				if ($source->IsSupported('create')) {
+					$create_sources[] = $source;
+				}
 			}
 		}
 		
@@ -572,14 +718,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$days->SetCategories($this->mCategories);
 		
 		
-		$todo = new CalendarViewTodoList();
-		$todo->SetCalendarData($calendar_data);
-		$todo->SetCategories($this->mCategories);
+// 		$todo = new CalendarViewTodoList();
+// 		$todo->SetCalendarData($calendar_data);
+// 		$todo->SetCategories($this->mCategories);
 		
 		$view_mode_data = array(
 			'DateDescription' => 'Today probably!',
 			'DaysView'        => &$days,
-			'TodoView'        => &$todo,
+// 			'TodoView'        => &$todo,
 		);
 		$view_mode = new FramesFrame('calendar/day', $view_mode_data);
 		
@@ -756,9 +902,13 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
-	function src_source_create()
+	function src_source_create($range = NULL)
 	{
 		if (!CheckPermissions($this->mPermission)) return;
+		
+		if (!isset($this->mPermissions['create'])) {
+			return show_404();
+		}
 		
 		// Validate the source
 		if (!$this->_GetSource()) {
@@ -772,22 +922,23 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'source' => $this->mSource->GetSourceName(),
 		));
 		
+		// Get the redirect url tail
+		$args = func_get_args();
+		array_shift($args);
+		$tail = implode('/', $args);
+		
 		if (!$this->mSource->IsSupported('create')) {
 			// Create isn't supported with this source
-			$this->messages->AddMessage('error', 'You cannot create events in this calendar');
+			$this->ErrorNotCreateable($tail);
 			$this->main_frame->Load();
 			return;
 		}
-		
-		// Get the redirect url tail
-		$args = func_get_args();
-		$tail = implode('/', $args);
 		
 		// Get the buttons from post data
 		$prefix = 'evcr';
 		if (isset($_POST[$prefix.'_return'])) {
 			// REDIRECT
-			return redirect($this->mPaths->Range(isset($args[0])?$args[0]:NULL));
+			return redirect($tail);
 		}
 		
 		$errors = array();
@@ -887,13 +1038,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			),
 			'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 		);
+		if ($this->events_model->IsVip()) {
+			$help_xhtml = $this->pages_model->GetPropertyWikitext('help_vip');
+		} else {
+			$help_xhtml = $this->pages_model->GetPropertyWikitext('help_personal');
+		}
 		$data = array(
 			'SimpleRecur' => $rset_arr,
-			'FailRedirect' => '/'.$tail,
+			'FailRedirect' => site_url($tail),
 			'Path' => $this->mPaths,
 			'EventCategories' => $categories,
 			'FormPrefix' => $prefix,
 			'EventInfo' => $eventinfo,
+			'Help' => $help_xhtml,
 		);
 		foreach ($errors as $error) {
 			$this->messages->AddMessage('error', $error['text']);
@@ -1111,10 +1268,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			list($start, $end) = $rset->GetStartEnd();
 			$categories = $this->mSource->GetAllCategories();
 			
+			$location = '';
+			if (NULL !== $found_occurrence) {
+				$location = $found_occurrence->LocationDescription;
+			}
 			$input = array(
 				'name' => $event->Name,
 				'description' => $event->Description,
-				'location' => $occurrence->LocationDescription,
+				'location' => $location,
 				'category' => 0,
 				'time_associated' => $event->TimeAssociated,
 			);
@@ -1198,6 +1359,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				),
 				'duration' => Calendar_view_edit_simple::calculate_duration($start, $end),
 			);
+			if ($this->events_model->IsVip()) {
+				$help_xhtml = $this->pages_model->GetPropertyWikitext('help_vip');
+			} else {
+				$help_xhtml = $this->pages_model->GetPropertyWikitext('help_personal');
+			}
 			$data = array(
 				'SimpleRecur' => $rset_arr,
 				'FailRedirect' => '/'.$tail,
@@ -1205,6 +1371,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'EventCategories' => $categories,
 				'FormPrefix' => $prefix,
 				'EventInfo' => $eventinfo,
+				'Help' => $help_xhtml,
 			);
 			foreach ($errors as $error) {
 				$this->messages->AddMessage('error', $error['text']);
@@ -1487,6 +1654,15 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$ical->Load();
 	}
 	
+	/// Show an error, not createable message.
+	protected function ErrorNotCreateable($Tail)
+	{
+		$this->load->library('Custom_pages');
+		$page = new CustomPageView('calendar_source_no_create');
+		$page->SetData('referer', site_url($Tail));
+		$this->main_frame->SetContent($page);
+	}
+	
 	/// Show an error, not accessible message.
 	protected function ErrorNotAccessible($Tail)
 	{
@@ -1515,6 +1691,88 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$this->mMainSource = new CalendarSourceMyCalendar();
 		}
 		return $this->mMainSource;
+	}
+	
+	/// Set up the calendar to display only certain streams.
+	/**
+	 * @param $streams array(int => array('subscribed' => bool)) Stream information.
+	 * @return The main source.
+	 */
+	function UseStreams($streams)
+	{
+		$this->_SetupMyCalendar();
+		
+		$this->mMainSource->DisableGroup('subscribed');
+		$this->mMainSource->DisableGroup('owned');
+		$this->mMainSource->DisableGroup('private');
+		$this->mMainSource->EnableGroup('active');
+		$this->mMainSource->DisableGroup('inactive');
+		$this->mMainSource->EnableGroup('hide');
+		$this->mMainSource->EnableGroup('show');
+		$this->mMainSource->EnableGroup('rsvp');
+		
+		if (!is_array($this->mStreams)) {
+			$this->mStreams = array();
+		}
+		foreach ($streams as $entity_id => $stream_info) {
+			$this->mMainSource->GetSource(0)->IncludeStream($entity_id, TRUE);
+			$this->mStreams[$entity_id] = $stream_info;
+		}
+	}
+	
+	/// Subscribe to a given stream and bounce back.
+	function subscribe_stream($organisation, $mode)
+	{
+		$this->load->model('calendar/events_model');
+		if ($this->events_model->IsNormalUser()) {
+			$this->load->model('prefs_model');
+			$result = $this->prefs_model->setCalendarSubscriptionByOrgName(
+				$this->events_model->GetActiveEntityId(),
+				$organisation,
+				true
+			);
+			if ($result <= 0) {
+				$this->messages->AddMessage('error', 'You could not be subscribed to this organisation&apos;s event stream. You may already be subscribed or the organisation name may be wrong.');
+			} else {
+				$this->messages->AddMessage('success', 'You have been successfully subscribed to this organisation&apos;s event stream.');
+			}
+		} elseif ($this->events_model->IsVip()) {
+			$this->messages->AddMessage('error', 'You cannot subscribe to an organisation&apos;s event stream as a VIP.');
+		} else {
+			$this->messages->AddMessage('error', 'You must be logged in to subscribe to an organisation&apos;s event stream.');
+		}
+		
+		$tail_segments = func_get_args();
+		array_shift($tail_segments);
+		array_shift($tail_segments);
+		redirect(implode('/', $tail_segments));
+	}
+	/// Unsubscribe from a given stream and bounce back.
+	function unsubscribe_stream($organisation, $mode)
+	{
+		$this->load->model('calendar/events_model');
+		if ($this->events_model->IsNormalUser()) {
+			$this->load->model('prefs_model');
+			$result = $this->prefs_model->setCalendarSubscriptionByOrgName(
+				$this->events_model->GetActiveEntityId(),
+				$organisation,
+				false
+			);
+			if ($result <= 0) {
+				$this->messages->AddMessage('error', 'You could not be unsubscribed from this organisation&apos;s event stream. You may already be unsubscribed or the organisation name may be wrong.');
+			} else {
+				$this->messages->AddMessage('success', 'You have been successfully unsubscribed from this organisation&apos;s event stream.');
+			}
+		} elseif ($this->events_model->IsVip()) {
+			$this->messages->AddMessage('error', 'You cannot unsubscribe from an organisation&apos;s event stream as a VIP.');
+		} else {
+			$this->messages->AddMessage('error', 'You must be logged in to unsubscribe from an organisation&apos;s event stream.');
+		}
+		
+		$tail_segments = func_get_args();
+		array_shift($tail_segments);
+		array_shift($tail_segments);
+		redirect(implode('/', $tail_segments));
 	}
 	
 	/// Setup main source and get specific source, erroring if problem.
@@ -1562,6 +1820,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			} else {
 				$Filter = '/'.$Filter;
 			}
+			if (isset($this->mPermissions['index'])) {
+				$navbar->AddItem('index', 'Summary',
+					site_url($this->mPaths->Index())
+				);
+			}
 			$navbar->AddItem('day', 'Day',
 				site_url($this->mPaths->Range(
 					$Start->AcademicYear().'-'.$Start->AcademicTermNameUnique().'-'.$Start->AcademicWeek().'-'.$Start->Format('D'),
@@ -1581,6 +1844,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$Filter
 				))
 			);
+			if (false) {
 			//if (is_string($this->mAgenda)) {
 				$navbar->AddItem('agenda', 'Agenda',
 					site_url($this->mPaths->Agenda(
@@ -1589,6 +1853,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					))
 				);
 			//}
+			}
 			$this->main_frame->SetPage($SelectedPage);
 		}
 	}

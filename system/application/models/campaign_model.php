@@ -100,6 +100,16 @@ class Campaign_model extends Model
 			return NULL;
 	}
 	
+	function SetCampaignName($campaign_id, $campaign_name)
+	{
+		$sql = 'UPDATE	campaigns
+				SET		campaign_name = ?
+				WHERE	campaign_deleted = 0
+				AND		campaign_id = ?';
+		$this->db->query($sql,array($campaign_name, $campaign_id));
+		return TRUE;
+	}
+	
 	function SetCampaignStatus($campaign_id, $status)
 	{
 		$sql = 'UPDATE	campaigns

@@ -26,6 +26,7 @@ class Feedback extends Controller {
 		$rating = $this->input->post('a_rating');
 		$feedback_text = $this->input->post('a_feedbacktext');
 		$article_heading = $this->input->post('a_articleheading');
+		$antispam = $this->input->post('email');
 
 		if($article_heading) {
 			$feedback_text = 'Article: '.$article_heading."\n\n".$feedback_text;
@@ -48,14 +49,15 @@ class Feedback extends Controller {
 		}
 
 		if (FALSE !== $feedback_text) {
-			$this->feedback_model->AddNewFeedback($page_title,
-				$author_name, $author_email,
-				$rating, $feedback_text);
-
-				$to = $this->pages_model->GetPropertyText('feedback_email', true);
-				$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
-				$subject = "The Yorker: Site Feedback";
-				$message =
+			if ($antispam === '' && !preg_match('/viagra|phentermine|orgasm|<\/a>|<a\s+href/i', $feedback_text)) {
+				$this->feedback_model->AddNewFeedback($page_title,
+					$author_name, $author_email,
+					$rating, $feedback_text);
+	
+					$to = $this->pages_model->GetPropertyText('feedback_email', true);
+					$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
+					$subject = "The Yorker: Site Feedback";
+					$message =
 'Name: '.$author_name.'
 Email: '.$author_email.'
 ';
@@ -76,18 +78,22 @@ Rating: '.$rating.'
 '.$feedback_text.'
 ';
 
-			$this->load->helper('yorkermail');
-			try {
-			    yorkermail($to,$subject,$message,$from);
-			    $this->main_frame->AddMessage('success',
-			    	'You have successfully left feedback, thanks for your thoughts.' );
-			} catch (Exception $e) {
-			    $this->main_frame->AddMessage('error',
-			    	'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond. '.$e->getMessage() );
+				$this->load->helper('yorkermail');
+				try {
+					yorkermail($to,$subject,$message,$from);
+					$this->messages->AddMessage('success',
+						'You have successfully left feedback, thanks for your thoughts.' );
+				} catch (Exception $e) {
+					$this->messages->AddMessage('error',
+						'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond. '.$e->getMessage() );
+				}
+			} else {
+				$this->messages->AddMessage('error',
+					'Your feedback looks like spam. Please do not include any HTML code.'
+				);
 			}
-
 		} else {
-			$this->main_frame->AddMessage('error',
+			$this->messages->AddMessage('error',
 				'To leave feedback use the feedback form at the bottom of each page.');
 		}
 

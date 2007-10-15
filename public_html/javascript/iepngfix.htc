@@ -5,6 +5,7 @@
 
 // IE5.5+ PNG Alpha Fix v1.0RC4
 // (c) 2004-2005 Angus Turnbull http://www.twinhelix.com
+// Modified and (c) 2007 Andrew Oakley
 
 // This is licensed under the CC-GNU LGPL, version 2.1 or later.
 // For details, see: http://creativecommons.org/licenses/LGPL/2.1/
@@ -38,8 +39,10 @@ function doFix()
  {
   if ((/\.png$/i).test(src))
   {
-   if (currentStyle.width == 'auto' && currentStyle.height == 'auto')
+   if (currentStyle.width == 'auto' && currentStyle.height == 'auto') {
     style.width = offsetWidth + 'px';
+    style.height = offsetHeight + 'px';
+   }
    filt(src, 'scale');
    src = blankImg;
   }
@@ -50,8 +53,10 @@ function doFix()
   if (bgImg.match(/^url[("']+(.*\.png)[)"']+$/i))
   {
    var s = RegExp.$1;
-   if (currentStyle.width == 'auto' && currentStyle.height == 'auto')
+   if (currentStyle.width == 'auto' && currentStyle.height == 'auto') {
     style.width = offsetWidth + 'px';
+    style.height = offsetHeight + 'px';
+   }
    style.backgroundImage = 'none';
    filt(s, 'crop');
    // IE link fix.

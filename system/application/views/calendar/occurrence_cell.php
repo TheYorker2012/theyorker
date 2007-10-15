@@ -41,25 +41,38 @@ $CI = & get_instance();
 					echo($Occurrence->EndTime->Format('%T'));
 					echo('<br />');
 				}
-				if ('published' !== $Occurrence->State && $Occurrence->UserHasPermission('publish')) {
+				if ('published' === $Occurrence->State ||
+					'cancelled' === $Occurrence->State ||
+					'owned' === $Occurrence->Event->UserStatus)	
+				{
 					echo('<strong>'.$Occurrence->State.'</strong>');
-					if (!$Squash && !$ReadOnly && 'owned' === $Occurrence->Event->UserStatus) {
-						$links = array();
-						if ('none' !== VipMode() &&
-							'draft' === $Occurrence->State &&
-							$Occurrence->Event->Source->GetSourceId() === 0)
-						{
-							$links[] = '<a href="'.vip_url('calendar/publish/'.$Occurrence->Event->SourceEventId.$CI->uri->uri_string()).'">publish</a>';
-						}
-						$links[] = '<a href="'.site_url('calendar/actions/delete/'.
-							$Occurrence->Event->Source->GetSourceId().
-							'/'.urlencode($Occurrence->Event->SourceEventId).
-							$CI->uri->uri_string()).'">delete</a>';
-						echo(' ('.implode(',', $links).')');
-					}
-					echo('<br />');
 				}
 				if (!$Squash) {
+					if ('owned' === $Occurrence->Event->UserStatus) {
+						$links = array();
+						if ($Occurrence->UserHasPermission('publish')) {
+							$links[] = '<a href="'.
+								site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
+								'">publish</a>';
+						}
+						if ($Occurrence->UserHasPermission('delete')) {
+							$links[] = '<a href="'.
+								site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
+								'">delete</a>';
+						}
+						if ($Occurrence->UserHasPermission('cancel')) {
+							$links[] = '<a href="'.
+								site_url($Path->OccurrenceCancel($Occurrence).$CI->uri->uri_string()).
+								'">cancel</a>';
+						}
+						if ($Occurrence->UserHasPermission('postpone')) {
+							$links[] = '<a href="'.
+								site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
+								'">postpone</a>';
+						}
+						echo(' ('.implode(', ', $links).')');
+					}
+					echo('<br />');
 					if (!empty($Occurrence->LocationDescription)) {
 						echo(htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
 						echo('<br />');
@@ -73,7 +86,10 @@ $CI = & get_instance();
 					? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
 					: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 				);
-				if ($Occurrence->UserHasPermission('set_attend') /*and $Occurrence->EndTime->Timestamp() > time()*/) {
+				if ($Occurrence->UserHasPermission('set_attend') &&
+					$Occurrence->State == 'published' /*&&
+					$Occurrence->EndTime->Timestamp() > time()*/)
+				{
 					if ($show_attendence) {
 						echo('<br />');
 					} else {

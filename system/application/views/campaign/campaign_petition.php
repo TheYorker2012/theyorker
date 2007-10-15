@@ -62,7 +62,7 @@ if(count($article['related_articles']) > 0) {
 	echo('		<ul>'."\n");
 	foreach ($article['related_articles'] as $related_articles) {
 		echo('		');
-		echo('<li><a href="http://www.google.com/">'.$related_articles['heading'].'</a></li>'."\n");
+		echo('<li><a href="'.$related_articles['url'].'">'.$related_articles['heading'].'</a></li>'."\n");
 	}
 	echo('		</ul>'."\n");
 	echo('	</div>'."\n");
@@ -76,7 +76,7 @@ if(count($article['links']) > 0) {
 	echo('		<ul>'."\n");
 	foreach ($article['links'] as $link) {
 		echo('		');
-		echo('<li><a href="'.$link['url'].'">'.$link['name'].'</a></li>'."\n");
+		echo('<li><a href="'.$link['url'].'" target="_blank">'.$link['name'].'</a></li>'."\n");
 	}
 	echo('		</ul>'."\n");
 	echo('	</div>'."\n");

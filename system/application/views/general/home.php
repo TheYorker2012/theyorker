@@ -12,7 +12,7 @@ function print_comment ($comment) {
 		echo('			<li>'."\n");
 		echo('				<i>' . $comment['user_firstname'] . ' ' . $comment['user_surname'] . '</i>'."\n");
 	}
-	echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
+	echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '#CommentItem' . $comment['comment_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
 	echo('			</li>'."\n");
 }
 

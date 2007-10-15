@@ -50,7 +50,7 @@ $verb = $Properties['verb']['_text'];
 			?>
 			<fieldset>
 				<?php if (!empty($FormSelected)) { ?>
-					<input class="button" type="submit" name="<?php echo($FormName); ?>_confirm" value="<?php echo($verb); ?>" />
+					<input class="button" type="submit" name="<?php echo($FormName); ?>_confirm" value="<?php echo($verb); ?> These Occurrences" />
 				<?php } ?>
 				<input class="button" type="submit" name="<?php echo($FormName); ?>_cancel" value="Return" />
 			</fieldset>

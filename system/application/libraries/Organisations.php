@@ -138,6 +138,13 @@ class Organisations
 				'location_lat' => $org['location_lat'],
 				'location_lng' => $org['location_lng']
 			);
+			if (isset($org['subscription_member'])) {
+				$data['organisation']['subscription'] = array(
+					'member'				=> $org['subscription_member'],
+					'membership_requested'	=> $org['subscription_membership_requested'],
+					'calendar'				=> $org['subscription_calendar'],
+				);
+			}
 			if (NULL === $org['organisation_yorkipedia_entry']) {
 				$data['organisation']['yorkipedia'] = NULL;
 			} else {

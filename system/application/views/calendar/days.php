@@ -260,7 +260,8 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 
 	var event_link			= document.createElement('a');
 	event_link.href			= link;
-	event_link.appendChild(document.createTextNode(title));
+	event_link.innerHTML	= title;
+// 	event_link.appendChild(document.createTextNode(title));
 
 	var event_title			= document.createElement('div');
 	event_title.className	= 'cal_event_heading';
@@ -336,14 +337,16 @@ function drawEvent(parent, id, category, link, title, content_time, content_loca
 	if (full_display) {
 		var event_link			= document.createElement('a');
 		event_link.href			= link;
-		event_link.appendChild(document.createTextNode(title));
+		event_link.innerHTML	= title;
+// 		event_link.appendChild(document.createTextNode(title));
 
 		var event_title			= document.createElement('div');
 		event_title.className	= 'cal_event_heading';
 		event_title.appendChild(event_link);
 
-		var event_content_i		= document.createElement('i');
-		event_content_i.appendChild(document.createTextNode(content_location));
+		var event_content_i			= document.createElement('i');
+		event_content_i.innerHTML	= content_location;
+// 		event_content_i.appendChild(document.createTextNode(content_location));
 
 		var event_content		= document.createElement('div');
 		event_content.className	= 'cal_event_info';
@@ -729,6 +732,19 @@ table#calendar_view div.cal_event_split_bottom {
 
 
 <div class="BlueBox">
+<div align="center">
+<?php
+if (isset($BackwardUrl)) {
+	echo('<a href="'.$BackwardUrl.'"><img src="'.site_url('images/prototype/calendar/backward.gif').'" alt="Backward" /></a> ');
+}
+if (isset($NowUrl)) {
+	echo('<a href="'.$NowUrl.'">'.$NowUrlLabel.'</a> ');
+}
+if (isset($ForwardUrl)) {
+	echo('<a href="'.$ForwardUrl.'"><img src="'.site_url('images/prototype/calendar/forward.gif').'" alt="Forward" /></a> ');
+}
+?>
+</div>
 
 <table id="calendar_view">
 	<!-- Day Headings -->

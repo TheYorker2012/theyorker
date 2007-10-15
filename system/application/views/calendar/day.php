@@ -15,15 +15,15 @@
 ?>
 
 <div id='RightColumn'>
-	<h2 class="first" style="margin-left: 0.4em;">To-Do List</h2>
-	<?php $TodoView->Load(); ?>
+	<?php /* ?><h2 class="first" style="margin-left: 0.4em;">To-Do List</h2>
+	<?php $TodoView->Load();*/ ?>
 	
 	<?php if (!empty($CreateSources)) { ?>
 		<h2 style="margin-left: 0.4em;">Actions</h2>
 		<div class="TodoBox">
 			<ul>
 				<?php foreach ($CreateSources as $source) { ?>
-					<li><a href="<?php echo(site_url($Path->EventCreate($source))); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
+					<li><a href="<?php echo(site_url($Path->EventCreate($source)).get_instance()->uri->uri_string()); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
 				<?php } ?>
 			</ul>
 		</div>

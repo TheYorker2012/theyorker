@@ -7,6 +7,16 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+<?php if (isset($head_title)) { ?>
+	<meta name="title" content="<?php echo htmlspecialchars($head_title); ?>" />
+<?php }
+if (isset($main_image)) { ?>
+	<link rel="image_src" href="http://<?php echo($_SERVER['SERVER_NAME'].$main_image); ?>" />
+<?php }
+/* Valid values for medium_type are "audio", "image", "video", "news", "blog" and "mult" */
+if (isset($medium_type)) { ?>
+	<meta name="medium" content="<?php echo($medium_type); ?>" />
+<?php } ?>
 	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
 	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
 	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
@@ -56,7 +66,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				}
 			}
 			?>
-			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> |
+			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> | 
 			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |

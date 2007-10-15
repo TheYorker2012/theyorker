@@ -14,27 +14,77 @@ class Vipmanager extends Controller
 	}
 
 	/// Default page.
-	function index()
+	function index($sortdir = 'asc', $sorton = 'firstname')
 	{
 		if (!CheckPermissions('editor')) return;
 
 		$this->load->model('user_auth');
+		$this->pages_model->SetPageCode('vip_manager');
 
+		/* obsolete ? */
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
 			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to view this page.');
 			redirect('/office/');
 		}
 
-		$this->pages_model->SetPageCode('vip_manager');
+		$sortdir == 'asc' ? $this->mSortFields[$sorton] = true : $this->mSortFields[$sorton] = false;
 
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'target'       => $this->uri->uri_string(),
-			'members'      => $this->members_model->GetMemberDetails(false)
+			'members'      => $this->members_model->GetMemberDetails(false, null, 'TRUE', array(), false, $sortdir, $sorton),
+			'filter'       => array(
+				'base'         => '/office/vipmanager/index',
+			),
+			'sort_fields'  => $this->mSortFields,
 		);
+		
+		// Include the javascript
+		$this->main_frame->SetExtraHead('<script src="/javascript/viplist.js" type="text/javascript"></script>');
 
+		// Set up the content
 		$this->main_frame->SetContentSimple('office/vipmanager/vip_list', $data);
 
+		// Load the main frame
+		$this->main_frame->Load();
+	}
+
+	/// Default page.
+	function info($organisation_id = NULL, $entity_id = NULL)
+	{
+		if (!CheckPermissions('editor')) return;
+		
+		// If no entity id was provided, redirect back to members list.
+		if (NULL === $organisation_id || NULL === $entity_id) {
+			return redirect('office/vipmanager');
+		}
+		
+		//get the members data for the organisation
+		$member_details = $this->members_model->GetMemberDetails($organisation_id, $entity_id, 'TRUE', array(), FALSE);
+		
+		if (!isset($member_details[0])) {
+			return redirect('office/vipmanager');
+		}
+		
+		$member_details = $member_details[0];
+		
+		// Stringify gender
+		$member_details['gender'] = (($member_details['gender']=='m')?('Male')
+									:(($member_details['gender']=='f')?('Female')
+									:('unknown')));
+		
+		$data = array(
+			'membership' => $member_details,
+		);
+
+		// Set the title parameters
+		$this->main_frame->SetTitleParameters(array(
+			'organisation'	=> $member_details['organisation_name'],
+			'name'		=> $member_details['firstname'].' '.$member_details['surname'],
+		));
+			
+		$this->pages_model->SetPageCode('vip_manager_info');
+		$this->main_frame->SetContentSimple('office/vipmanager/info', $data);
 		$this->main_frame->Load();
 	}
 

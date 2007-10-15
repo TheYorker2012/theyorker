@@ -109,6 +109,9 @@ div.LineContainer {
 	border-top-color: #999; 
 	border-top-style: solid;
 	border-top-width: thin;
+
+	/* explicitly state top and bottom margins for IE6 */
+	margin-top: 10px;
 	margin-bottom: 10px;
 }
 

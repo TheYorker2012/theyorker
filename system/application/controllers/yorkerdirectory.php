@@ -174,6 +174,27 @@ class Yorkerdirectory extends Controller
 				$map->AddLocation($data['organisation']['name'], $data['organisation']['location_lat'], $data['organisation']['location_lng']);
 				$this->maps->SendMapData();
 			}
+			
+			// Event statistics
+			$this->load->library('calendar_backend');
+			$this->load->library('calendar_source_yorker');
+			
+			$yorker_source = new CalendarSourceYorker(0);
+			// Only those events of the organisation
+			$yorker_source->DisableGroup('subscribed');
+			$yorker_source->DisableGroup('owned');
+			$yorker_source->DisableGroup('private');
+			$yorker_source->EnableGroup('active');
+			$yorker_source->DisableGroup('inactive');
+			$yorker_source->EnableGroup('hide');
+			$yorker_source->EnableGroup('show');
+			$yorker_source->EnableGroup('rsvp');
+			$yorker_source->IncludeStream((int)$data['organisation']['id'], TRUE);
+			$result = $yorker_source->MainQuery(
+				'*, COUNT(event_occurrences.event_occurrence_id)',
+				$yorker_source->ProduceWhereClause().' GROUP BY organisations.organisation_entity_id'
+			);
+// 			$this->messages->AddDumpMessage('results', $result);
 
 			// Set up the directory frame to use the directory events view
 			$this->main_frame->SetPage('about');
@@ -257,19 +278,16 @@ class Yorkerdirectory extends Controller
 		
 		if (!CheckPermissions('public')) return;
 		// Set up the filter
-		$the_source = & $this->calendar_subcontroller->_SetupMyCalendar();
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
-			// Only those events of the organisation
-			$the_source->DisableGroup('subscribed');
-			$the_source->DisableGroup('owned');
-			$the_source->DisableGroup('private');
-			$the_source->EnableGroup('active');
-			$the_source->DisableGroup('inactive');
-			$the_source->EnableGroup('hide');
-			$the_source->EnableGroup('show');
-			$the_source->EnableGroup('rsvp');
-			$the_source->GetSource(0)->IncludeStream((int)$data['organisation']['id'], TRUE);
+			$this->calendar_subcontroller->SetRangePageCode('directory_calendar');
+			$this->calendar_subcontroller->UseStreams(array(
+				(int)$data['organisation']['id'] => array(
+					'subscribed' => isset($data['organisation']['subscription']) && $data['organisation']['subscription']['calendar'],
+					'name' => $data['organisation']['name'],
+					'short_name' => $organisation,
+				)
+			));
 			
 			$args = func_get_args();
 			array_shift($args);

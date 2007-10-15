@@ -22,6 +22,7 @@
  *	- 'selected_image'   => string  Path of image for selected (if display == 'image').
  *	- 'unselected_image' => string  Path of image for unselected (if display == 'image').
  * @param $ViewMode FramesView Main subview to display events with.
+ * @param $Permissions array(string=>) Permissions such as 'create','edit'
  */
 
 ?>
@@ -58,11 +59,26 @@
 	
 	?>
 <div style="clear: both;"></div>
+<div style="width:100%;">
 <?php
 if (isset($RangeDescription)) { 
 	echo('<h4>'.$RangeDescription.'</h4>');
 }
 ?>
+</div>
+<div style="width:100%;">
+<?php
+if (isset($streams)) {
+	foreach ($streams as $id => $stream) {
+		if ($stream['subscribed']) {
+			echo($Path->OrganisationUnsubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
+		} else {
+			echo($Path->OrganisationSubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
+		}
+	}
+}
+?>
+</div>
 </div>
 
 <?php

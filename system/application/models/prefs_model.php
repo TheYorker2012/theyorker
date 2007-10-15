@@ -96,9 +96,11 @@ class Prefs_model extends Model {
 
 	function updateUserInfo ($uid, $info)
 	{
-		/// @todo FIXME
-		/// @bug WHAT THE CRAP IS THIS ABOUT?
-		$row = $this->getUserInfo ($uid);
+		/// @todo Fix this function to take sensible arguments and ensure users comply (account_personal library).
+		/// @bug This function is a load of bollocks, whoever wrote it needs shooting.
+		
+		// This line serves no purpose
+		//$row = $this->getUserInfo ($uid);
 
 		$sql =
 			'UPDATE users '.
@@ -190,6 +192,38 @@ class Prefs_model extends Model {
 			'WHERE subscription_organisation_entity_id = ?'.
 			' AND subscription_user_entity_id = ?';
 		$query = $this->db->query($sql, array($org_id, $user_id));
+	}
+	
+	/// Set the calendar subscription properties.
+	/**
+	 * @param $user_id int The entity id of the user.
+	 * @param $org_name int The organisation directory entry name of the organisation.
+	 * @param $calendar NULL,bool NULL for no change or the new calendar subscription value.
+	 * @param $todo NULL,bool NULL for no change or the new todo subscription value.
+	 */
+	function setCalendarSubscriptionByOrgName($user_id, $org_name, $calendar, $todo = NULL)
+	{
+		$sets = array();
+		if (is_bool($calendar)) {
+			$sets[] = 'subscription_calendar='.$this->db->escape($calendar);
+		}
+		if (is_bool($todo)) {
+			$sets[] = 'subscription_todo='.$this->db->escape($todo);
+		}
+		if (!empty($sets)) {
+			$imploded_sets = implode(',', $sets);
+			$sql =
+				'INSERT INTO subscriptions SET '.
+					'subscription_organisation_entity_id = (
+						SELECT organisation_entity_id FROM organisations 
+						WHERE organisation_directory_entry_name='.$this->db->escape($org_name).'),'.
+					'subscription_user_entity_id = '.$this->db->escape($user_id).','.
+					$imploded_sets.
+				" ON DUPLICATE KEY UPDATE $imploded_sets";
+			$this->db->query($sql);
+			return $this->db->affected_rows();
+		}
+		return -1;
 	}
 
 	/* Store info about a VIP application */

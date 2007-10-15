@@ -1,6 +1,11 @@
 <?php
 function yorkermail($to, $subject, $message, $from) {
 	require_once('Mail.php');
+
+	$CI = &get_instance();
+	$CI->load->config('mail');
+	$config = $CI->config->Item('mail');
+
 	$headers = array(
 		'From' => $from,
 		'To' => $to,
@@ -9,7 +14,7 @@ function yorkermail($to, $subject, $message, $from) {
 	$smtp = Mail::factory(
 		'smtp',
 		array(
-			'host' => 'ado.is-a-geek.net',
+			'host' => $config['smtp_server'],
 			'auth' => false
 		)
 	);
