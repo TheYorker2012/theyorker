@@ -17,11 +17,11 @@ if (isset($CommentThread)) {
 ?>
 <h2 style="color:#20c1f0;">Comments</h2>
 <?php
-if (isset($CommentAdd)) {
-	$CommentAdd->Load();
-}
 if (isset($CommentList)) {
 	$CommentList->Load();
+}
+if (isset($CommentAdd)) {
+	$CommentAdd->Load();
 }
 
 ?>
