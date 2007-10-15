@@ -14,11 +14,12 @@ class Vipmanager extends Controller
 	}
 
 	/// Default page.
-	function index()
+	function index($sortdir = 'asc', $sorton = 'firstname')
 	{
 		if (!CheckPermissions('editor')) return;
 
 		$this->load->model('user_auth');
+		$this->pages_model->SetPageCode('vip_manager');
 
 		/* obsolete ? */
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
@@ -26,12 +27,16 @@ class Vipmanager extends Controller
 			redirect('/office/');
 		}
 
-		$this->pages_model->SetPageCode('vip_manager');
+		$sortdir == 'asc' ? $this->mSortFields[$sorton] = true : $this->mSortFields[$sorton] = false;
 
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'target'       => $this->uri->uri_string(),
-			'members'      => $this->members_model->GetMemberDetails(false)
+			'members'      => $this->members_model->GetMemberDetails(false, null, 'TRUE', array(), false, $sortdir, $sorton),
+			'filter'       => array(
+				'base'         => '/office/vipmanager/index',
+			),
+			'sort_fields'  => $this->mSortFields,
 		);
 		
 		// Include the javascript

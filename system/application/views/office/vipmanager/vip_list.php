@@ -3,6 +3,25 @@
  * @file vip_list.php
  * @brief Show a list of all the vips in all organisations
  */
+ 
+/// Draw a column heading sorting hyperlink.
+function SortLink($filter, $sort_fields, $field, $title)
+{
+	echo('<a href="' . $filter['base'] . '/'.
+		((isset($sort_fields[$field]) && $sort_fields[$field])
+			? 'desc' : 'asc').'/'.$field . '">');
+	echo($title);
+	//if ($filter['last_sort'] === $field) {
+		if (isset($sort_fields[$field]) && $sort_fields[$field]) {
+			echo('<img src="/images/prototype/members/sortasc.png" alt="sorted ascending" />');
+		}
+		elseif (isset($sort_fields[$field]) && !$sort_fields[$field]) {
+			echo('<Img src="/images/prototype/members/sortdesc.png" alt="sorted descending" />');
+		}
+	//}
+	echo('</a>'."\n");
+}
+
 ?>
 
 <div id="RightColumn">
@@ -43,16 +62,16 @@
 							<input type="checkbox" name="members_selected[]" value="userSelectAllNone" id="userSelectAllNone" />
 						</th>
 						<th>
-							Forename
+							<?php SortLink($filter, $sort_fields, 'firstname','Firstname'); ?>
 						</th>
 						<th>
-							Surname
+							<?php SortLink($filter, $sort_fields, 'surname','Surname'); ?>
 						</th>
 						<th>
-							Email
+							<?php SortLink($filter, $sort_fields, 'email','Email'); ?>
 						</th>
 						<th>
-							Organisation
+							<?php SortLink($filter, $sort_fields, 'organisation','Organisation'); ?>
 						</th>
 						<th align="center">
 							VIP
