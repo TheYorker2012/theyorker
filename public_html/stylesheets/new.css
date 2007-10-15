@@ -189,6 +189,7 @@ fieldset#SearchBox {
 	background-repeat: no-repeat;
 	background-position: 3px 3px;
 	padding: 2px 2px 2px 22px;
+	overflow: hidden;
 }
 
 fieldset#SearchBox input {
@@ -297,6 +298,7 @@ div#RightColumn input.checkbox {
 }
 
 div#RightColumn fieldset.inline input.button {
+	float: none;
 	width: 30%;
 }
 
@@ -610,3 +612,4 @@ a.fb_share_button:hover {
 	border-color: #295582;
 	background: #3b5998 url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
 }
+
