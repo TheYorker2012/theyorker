@@ -46,6 +46,8 @@ class Home_Hack_Model extends Model {
 				articles.article_editor_approved_user_entity_id	IS NOT NULL
 			AND
 				articles.article_content_type_id IN ('.$sql_contentTypeIds.')
+			AND
+				articles.article_deleted = 0
 			ORDER BY
 				articles.article_publish_date DESC
 			LIMIT 0, ?)';
@@ -152,6 +154,8 @@ class Home_Hack_Model extends Model {
 			WHERE
 				articles.article_id
 					IN ('.$sql_requestedArticles.')
+			AND
+				articles.article_deleted = 0
 			ORDER BY
 				article_publish_date DESC';
 
