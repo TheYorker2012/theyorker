@@ -234,3 +234,144 @@ div.TodoBox {
 	margin-left: 10px;
 }
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
+
+/* for event edit form */
+fieldset.inline-checks label {
+/* 		border: thin solid black; */
+	float: left;
+	width: 50px;
+	clear: none;
+}
+
+/* for minicalendar (recurrence preview) */
+table.recur-cal {
+	text-align: center;
+	width: 100%;
+	border: 1px solid #A0A0A0;
+	border-collapse: collapse;
+}
+
+table.recur-cal th {
+	background-color: #F4F4F4;
+	border: 1px solid #A0A0A0;
+	color: #606060;
+}
+
+table.recur-cal th.term {
+	background-color: #EEEEEE;
+	color: #404040;
+}
+
+table.recur-cal td {
+	background-color: #FFFCBA;
+	cursor: pointer;
+}
+table.recur-cal td.weekend {
+	background-color: #EFECAA;
+}
+
+table.recur-cal td.even {
+	background-color: #FFF980;
+}
+table.recur-cal td.even.weekend {
+	background-color: #EFE970;
+}
+
+table.recur-cal td.past {
+	background-color: #EEEEEE;
+}
+table.recur-cal td.past.weekend {
+	background-color: #DEDEDE;
+}
+table.recur-cal td.past.even {
+	background-color: #DADADA;
+}
+table.recur-cal td.past.even.weekend {
+	background-color: #CACACA;
+}
+
+table.recur-cal td.selected {
+	border: 1px solid #404040;
+	background-color: #20C1F0;
+}
+table.recur-cal td.selected.weekend {
+	background-color: #10B1E0;
+}
+table.recur-cal td.selected.even {
+	background-color: #38A0F0;
+}
+table.recur-cal td.selected.even.weekend {
+	background-color: #2890E0;
+}
+
+table.recur-cal td.excluded,
+table.recur-cal td.excluded.weekend,
+table.recur-cal td.excluded.even,
+table.recur-cal td.excluded.even.weekend
+{					/*#FFFCBA*/
+	border: none;
+	background-color: #F0D1A0;
+	text-decoration: line-through;
+}	
+
+table.recur-cal td.included {
+	border: 1px solid #404040;
+	background-color: #40F190;
+}
+table.recur-cal td.included.weekend {
+	background-color: #30E180;
+}
+table.recur-cal td.included.even {
+	background-color: #58D090;
+}
+table.recur-cal td.included.even.weekend {
+	background-color: #48C080;
+}
+
+
+table.recur-cal td.selected.start {
+	border: 2px solid #000000;
+	background-color: #FF6A00;
+}
+table.recur-cal td.selected.start.even {
+	background-color: #FF6A00;
+}
+
+
+
+table.recur-cal td.today {
+	border: 2px solid #808080;
+}
+table.recur-cal td.exists {
+	font-weight: bold;
+}
+
+/* for include exclude dates */
+div#eved_inex_list div.description {
+	float: left;
+	font-size: small;
+	clear: none;
+}
+div#eved_inex_list fieldset.delete {
+	float: right;
+	clear: none;
+}
+div#eved_inex_list div.none,
+div#eved_inex_list div.include,
+div#eved_inex_list div.exclude {
+	border: 1px solid #808080;
+	overflow: hidden;
+	padding-left: 3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+}
+div#eved_inex_list div.none {
+	background-color: #F0F0F0;
+}
+div#eved_inex_list div.include {
+	background-color: #58D090;
+}
+div#eved_inex_list div.exclude {
+	background-color: #F0D1A0;
+}

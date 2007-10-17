@@ -1,110 +1,8 @@
 <?php
 /**
- * @param $Prefix string Prefix to calendar ids.
+ * @param $Onclick string JS function to call.
  */
 ?>
-<style type="text/css">
-	
-	table.recur-cal {
-		text-align: center;
-		width: 100%;
-		border: 1px solid #A0A0A0;
-		border-collapse: collapse;
-	}
-	
-	table.recur-cal th {
-		background-color: #F4F4F4;
-		border: 1px solid #A0A0A0;
-		color: #606060;
-	}
-	
-	table.recur-cal th.term {
-		background-color: #EEEEEE;
-		color: #404040;
-	}
-	
-	table.recur-cal td.today {
-		border: 2px solid #808080;
-	}
-	table.recur-cal td.exists {
-		font-weight: bold;
-	}
-	
-	table.recur-cal td {
-		background-color: #FFFCBA;
-	}
-	table.recur-cal td.weekend {
-		background-color: #EFECAA;
-	}
-	
-	table.recur-cal td.even {
-		background-color: #FFF980;
-	}
-	table.recur-cal td.even.weekend {
-		background-color: #EFE970;
-	}
-	
-	table.recur-cal td.past {
-		background-color: #EEEEEE;
-	}
-	table.recur-cal td.past.weekend {
-		background-color: #DEDEDE;
-	}
-	table.recur-cal td.past.even {
-		background-color: #DADADA;
-	}
-	table.recur-cal td.past.even.weekend {
-		background-color: #CACACA;
-	}
-	
-	table.recur-cal td.selected {
-		border: 1px solid #404040;
-		background-color: #20C1F0;
-	}
-	table.recur-cal td.selected.weekend {
-		background-color: #10B1E0;
-	}
-	table.recur-cal td.selected.even {
-		background-color: #38A0F0;
-	}
-	table.recur-cal td.selected.even.weekend {
-		background-color: #2890E0;
-	}
-	
-	table.recur-cal td.selected.start {
-		border: 2px solid #000000;
-		background-color: #FF6A00;
-	}
-	table.recur-cal td.selected.start.even {
-		background-color: #FF6A00;
-	}
-	
-</style>
-<script type="text/javascript">
-	var <?php echo($Prefix); ?>_dates = new Array();
-	
-	function <?php echo($Prefix); ?>ResetMinicalDates()
-	{
-		for (var date in <?php echo($Prefix); ?>_dates) {
-			date_cell = document.getElementById('<?php echo($Prefix); ?>['+date+']');
-			if (date_cell != null) {
-				date_cell.className = <?php echo($Prefix); ?>_dates[date];
-				delete <?php echo($Prefix); ?>_dates[date];
-			}
-		}
-	}
-	
-	function <?php echo($Prefix); ?>AdjustMinicalDate(date, class)
-	{
-		date_cell = document.getElementById('<?php echo($Prefix); ?>['+date+']');
-		if (date_cell != null) {
-			if (!(date in <?php echo($Prefix); ?>_dates)) {
-				<?php echo($Prefix); ?>_dates[date] = date_cell.className;
-			}
-			date_cell.className += " "+class;
-		}
-	}
-</script>
 <table class="recur-cal">
 <?php
 	$today = Academic_time::NewToday();
@@ -114,7 +12,7 @@
 	$term_name = '';
 	$today_id = $today->Format('Ymd');
 	for ($week_counter = 0; $week_counter < 52; ++$week_counter) {
-		$this_term_name = $day_start->AcademicTermName(). ' ' . $day_start->AcademicYearName(2);
+		$this_term_name = $day_start->AcademicTermNameUnique(). ' ' . $day_start->AcademicYearName(2);
 		if ($this_term_name != $term_name) {
 			$term_name = $this_term_name;
 			$this_term_name .= ' ('.$day_start->Format('M').')';
@@ -145,7 +43,10 @@
 			} else {
 				$classes = '';
 			}
-			echo("<td$classes id=\"${Prefix}[$cell_id]\">$day_of_month</td>");
+			if (isset($Onclick)) {
+				$classes .= " onclick=\"javascript:$Onclick('$cell_id');\"";
+			}
+			echo("<td$classes id=\"minical_$cell_id\">&nbsp;$day_of_month&nbsp;</td>");
 			$day_start = $day_start->Adjust('1day');
 		}
 		echo("</tr>\n");

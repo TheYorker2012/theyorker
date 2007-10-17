@@ -935,7 +935,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 		
 		// Get the buttons from post data
-		$prefix = 'evcr';
+		$prefix = 'eved';
 		if (isset($_POST[$prefix.'_return'])) {
 			// REDIRECT
 			return redirect($tail);
@@ -946,7 +946,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		// Read the recurrence data
 		if (isset($_POST[$prefix.'_recur_simple']) and
 			isset($_POST[$prefix.'_start']) and
-			isset($_POST[$prefix.'_duration']))
+			isset($_POST[$prefix.'_duration']) and
+			isset($_POST[$prefix.'_inex']))
 		{
 			$rset_arr = $_POST[$prefix.'_recur_simple'];
 			$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
@@ -954,6 +955,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$_POST[$prefix.'_start'],
 				$_POST[$prefix.'_duration'],
 				$_POST[$prefix.'_recur_simple'],
+				$_POST[$prefix.'_inex'],
 				$errors);
 		}
 		// Fill it in if none supplied
@@ -962,6 +964,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$rset->SetStartEnd(strtotime('tomorrow+12hours'), strtotime('tomorrow+13hours'));
 			$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 		}
+		// Always fill in the inex info again, ignoring input from form.
+		$inex_arr = Calendar_view_edit_simple::transform_inex_for_view($rset, $errors);
+			
 		list($start, $end) = $rset->GetStartEnd();
 		$categories = $this->mSource->GetAllCategories();
 		
@@ -1008,7 +1013,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			// at this point $start and $end are still plain timestamps
 			$input['recur'] = $rset;
 			
-			if ($input_valid) {
+			if (isset($_POST[$prefix.'_save']) && $input_valid && empty($errors)) {
 				$messages = $this->mSource->CreateEvent($input);
 				$this->messages->AddMessages($messages);
 				if (!array_key_exists('error', $messages) || empty($messages['error'])) {
@@ -1045,6 +1050,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 		$data = array(
 			'SimpleRecur' => $rset_arr,
+			'InExDates' => $inex_arr,
 			'FailRedirect' => site_url($tail),
 			'Path' => $this->mPaths,
 			'EventCategories' => $categories,
@@ -1057,7 +1063,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 		
 		$this->SetupTabs('', $start);
-		
+
+		$this->main_frame->SetExtraHead(
+				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
+				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
+		);
 		$this->main_frame->SetContent(
 			new FramesView('calendar/event_edit', $data)
 		);
@@ -1249,7 +1259,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			// Read the recurrence data
 			if (isset($_POST[$prefix.'_recur_simple']) and
 				isset($_POST[$prefix.'_start']) and
-				isset($_POST[$prefix.'_duration']))
+				isset($_POST[$prefix.'_duration']) and
+				isset($_POST[$prefix.'_inex']))
 			{
 				$rset_arr = $_POST[$prefix.'_recur_simple'];
 				$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
@@ -1257,6 +1268,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$_POST[$prefix.'_start'],
 					$_POST[$prefix.'_duration'],
 					$_POST[$prefix.'_recur_simple'],
+					$_POST[$prefix.'_inex'],
 					$errors);
 			}
 			// Fill it in if none supplied
@@ -1265,6 +1277,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$rset = $event->GetRecurrenceSet();
 				$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 			}
+			// Always fill in the inex info again, ignoring input from form.
+			$inex_arr = Calendar_view_edit_simple::transform_inex_for_view($rset, $errors);
+			
 			list($start, $end) = $rset->GetStartEnd();
 			$categories = $this->mSource->GetAllCategories();
 			
@@ -1318,7 +1333,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
 				
-				if (empty($errors) && $input_valid) {
+				if (isset($_POST[$prefix.'_save']) && $input_valid && empty($errors)) {
 					// Make the change
 					/// @todo WARN about going live immmediately if applicable
 					$messages = $this->mMainSource->AmmendEvent($event, $input);
@@ -1366,6 +1381,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			}
 			$data = array(
 				'SimpleRecur' => $rset_arr,
+				'InExDates' => $inex_arr,
 				'FailRedirect' => '/'.$tail,
 				'Path' => $this->mPaths,
 				'EventCategories' => $categories,
@@ -1383,6 +1399,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'source' => $this->mSource->GetSourceName(),
 				'event' => $event->Name,
 			));
+			$this->main_frame->SetExtraHead(
+				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
+				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
+			);
 			$this->main_frame->SetContent(
 				new FramesView('calendar/event_edit', $data)
 			);

@@ -8,10 +8,10 @@
  * @param $Event CalendarEvent Event information.
  * @param $EventInfo Array with: 'summary', 'description', 'start', 'duration' etc
  * @param $SimpleRecur Array Simple recurrence information.
+ * @param $InExDates Array Include/Exclude date information.
  * @param $ReadOnly bool Whether the source is read only.
  * @param $Attendees array[string] Attending users.
  * @param $FailRedirect string URL fail redirect path.
- * @param $FormPrefix string Prefix of all fields.
  * @param $EventCategories array[id => array('id'=>,'name'=>,'colour'=>)]
  * @param $Help Help text array, indexed by title.
  *
@@ -49,29 +49,29 @@ $months = array(
 $now_year = (int)date('Y');
 
 /// Echo a simple gregorian date selector.
-function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear)
+function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear, $onchange = NULL)
 {
 	global $nth_set;
 	global $months;
-?><select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($id); ?>_monthday" name="<?php echo($name); ?>[monthday]">
+?><select<?php if (NULL !== $onchange) { echo(" onchange=\"$onchange\""); } ?> id="<?php echo($id); ?>_monthday" name="<?php echo($name); ?>[monthday]">
 		<?php
 			foreach ($nth_set as $monthday => $monthdayname) {
 				if ($monthday > 0) {
 					echo("<option value=\"$monthday\"");
 					if ($default['monthday'] == $monthday) {
-						echo(' selected="yes"');
+						echo(' selected="selected"');
 					}
 					echo(">$monthdayname</option>\n");
 				}
 			}
 		?>
 	</select>
-	<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($id); ?>_month" name="<?php echo($name); ?>[month]">
+	<select<?php if (NULL !== $onchange) { echo(" onchange=\"$onchange\""); } ?> id="<?php echo($id); ?>_month" name="<?php echo($name); ?>[month]">
 		<?php
 			foreach ($months as $month => $monthname) {
 				echo("<option value=\"$month\"");
 				if ($default['month'] == $month) {
-					echo(' selected="yes"');
+					echo(' selected="selected"');
 				}
 				echo(">$monthname</option>\n");
 			}
@@ -84,20 +84,20 @@ function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear)
 	}
 	if (isset($default['year'])) {
 	?>
-	<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($id); ?>_year" name="<?php echo($name); ?>[year]">
+	<select<?php if (NULL !== $onchange) { echo(" onchange=\"$onchange\""); } ?> id="<?php echo($id); ?>_year" name="<?php echo($name); ?>[year]">
 		<?php
 			if ($default['year'] < $minyear) {
-				echo('<option value="'.$default['year'].'" selected="yes">'.$default['year'].'</option>');
+				echo('<option value="'.$default['year'].'" selected="selected">'.$default['year'].'</option>');
 			}
 			for ($year = $minyear; $year < $maxyear; ++$year) {
 				echo("<option value=\"$year\"");
 				if ($default['year'] == $year) {
-					echo(' selected="yes"');
+					echo(' selected="selected"');
 				}
 				echo(">$year</option>");
 			}
 			if ($default['year'] >= $year) {
-				echo('<option value="'.$default['year'].'" selected="yes">'.$default['year'].'</option>');
+				echo('<option value="'.$default['year'].'" selected="selected">'.$default['year'].'</option>');
 			}
 		?>
 	</select><?php
@@ -114,7 +114,7 @@ function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear)
 					if ($default_hour == $hour and
 						$default_minute == $minute)
 					{
-						echo(' selected="yes"');
+						echo(' selected="selected"');
 					}
 					echo('>');
 					if ($timeFormat24) {
@@ -138,7 +138,7 @@ function DurationSelector($name, $default)
 		for ($days = 0; $days <= 7; ++$days) {
 			echo("<option value=\"$days\"");
 			if ($default['days'] == $days) {
-				echo(' selected="yes"');
+				echo(' selected="selected"');
 			}
 			echo(">$days day".($days != 1 ? 's':'')." later</option>\n");
 		}
@@ -157,7 +157,7 @@ function DurationSelector($name, $default)
 					if ($default_hour == $hour and
 						$default_minute == $minute)
 					{
-						echo(' selected="yes"');
+						echo(' selected="selected"');
 					}
 					echo('>');
 					if ($timeFormat24) {
@@ -175,266 +175,6 @@ function DurationSelector($name, $default)
 
 $CI = & get_instance();
 ?>
-
-<style type="text/css">
-	fieldset.inline-checks label {
-/* 		border: thin solid black; */
-		float: left;
-		width: 50px;
-		clear: none;
-	}
-</style>
-<script type="text/javascript">
-
-var browserType;
-
-if (document.layers) {browserType = "nn4"}
-if (document.all) {browserType = "ie"}
-if (window.navigator.userAgent.toLowerCase().match("gecko")) {
-   browserType= "gecko"
-}
-
-function hide(id)
-{
-  if (browserType == "gecko" )
-     document.poppedLayer = 
-         eval('document.getElementById(id)');
-  else if (browserType == "ie")
-     document.poppedLayer = 
-        eval('document.getElementById(id)');
-  else
-     document.poppedLayer =   
-        eval('document.layers[id]');
-  document.poppedLayer.style.display = "none";
-}
-
-function show(id)
-{
-  if (browserType == "gecko" )
-     document.poppedLayer = 
-         eval('document.getElementById(id)');
-  else if (browserType == "ie")
-     document.poppedLayer = 
-        eval('document.getElementById(id)');
-  else
-     document.poppedLayer = 
-         eval('document.layers[id]');
-  document.poppedLayer.style.display = "block";
-}
-
-
-function SimpleCheckboxChange(checkbox, affected1, affected2)
-{
-	var repeat_input = document.getElementById(checkbox);
-	if (repeat_input.checked) {
-		show(affected1);
-		show(affected2);
-	} else {
-		hide(affected1);
-		hide(affected2);
-	}
-}
-
-function CheckboxChange(type, index)
-{
-	var repeat_input = document.getElementById("<?php echo($FormPrefix); ?>_recur_"+index+"_"+type+"_use");
-	if (repeat_input.checked) {
-		show("<?php echo($FormPrefix); ?>_recur_"+index+"_"+type+"_div");
-	} else {
-		hide("<?php echo($FormPrefix); ?>_recur_"+index+"_"+type+"_div");
-	}
-	<?php /** @todo remove multiple references when stuff changes!!! */ ?>
-	UpdateRecurCalPreviewLoad();
-}
-
-function MainRecurrenceToggle()
-{
-	var repeat_input = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_enable");
-	if (repeat_input.checked) {
-		show("<?php echo($FormPrefix); ?>_recurrence_div");
-	} else {
-		hide("<?php echo($FormPrefix); ?>_recurrence_div");
-	}
-	UpdateRecurCalPreviewLoad();
-}
-
-function AJAXInteraction(url, post, callback)
-{
-
-	var req = init();
-	req.onreadystatechange = processRequest;
-		
-	function init() {
-		if (window.XMLHttpRequest) {
-		return new XMLHttpRequest();
-		} else if (window.ActiveXObject) {
-		return new ActiveXObject("Microsoft.XMLHTTP");
-		}
-	}
-	
-	function processRequest () {
-		// readyState of 4 signifies request is complete
-		if (req.readyState == 4) {
-			// status of 200 signifies sucessful HTTP call
-			if (req.status == 200) {
-				if (callback) callback(req.responseXML);
-			}
-		}
-	}
-	
-	this.doGet = function() {
-		// make a HTTP GET request to the URL asynchronously
-		var post_string = url+'?';
-		var first = 1;
-		for (var key in post) {
-			if (!first) {
-				post_string += '&';
-			} else {
-				first = 0;
-			}
-			post_string += key+'='+encodeURIComponent(post[key]);
-		}
-		req.open("GET", post_string, true);
-		req.send(null);
-	}
-}
-
-function UpdateRecurCalPreviewLoad()
-{
-	hide("preview_calendar_div");
-	var url = "<?php echo(site_url($Path->SimpleRecurValidate())); ?>";
-	var post = {};
-	post["prefix"] = "<?php echo($FormPrefix); ?>";
-	if (document.getElementById("<?php echo($FormPrefix); ?>_timeassociated").checked) {
-		post["<?php echo($FormPrefix); ?>_timeassociated"]  = "on";
-	}
-	post["<?php echo($FormPrefix); ?>_start[monthday]"] = document.getElementById("<?php echo($FormPrefix); ?>_start_monthday").value;
-	post["<?php echo($FormPrefix); ?>_start[month]"]    = document.getElementById("<?php echo($FormPrefix); ?>_start_month").value;
-	post["<?php echo($FormPrefix); ?>_start[year]"]     = document.getElementById("<?php echo($FormPrefix); ?>_start_year").value;
-	post["<?php echo($FormPrefix); ?>_start[time]"]     = document.getElementById("<?php echo($FormPrefix); ?>_start_time").value;
-	post["<?php echo($FormPrefix); ?>_duration[days]"]  = document.getElementById("<?php echo($FormPrefix); ?>_duration_days").value;
-	post["<?php echo($FormPrefix); ?>_duration[time]"]  = document.getElementById("<?php echo($FormPrefix); ?>_duration_time").value;
-	if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_enable").checked) {
-		post["<?php echo($FormPrefix); ?>_recur_simple[enable]"   ] = "on";
-	}
-	post["<?php echo($FormPrefix); ?>_recur_simple[freq]"     ] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_freq").value;
-	post["<?php echo($FormPrefix); ?>_recur_simple[interval]" ] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_interval").value;
-	
-	
-	// frequency specific fields
-	var freq = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_freq").value;
-	switch (freq) {<?php /*
-		case 'daily':
-			
-			break; */ ?>
-		case 'weekly':
-			for (var day = 0; day < 7; ++day) {
-				if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_weekly_byday_"+day).checked) {
-					post["<?php echo($FormPrefix); ?>_recur_simple[weekly_byday]["+day+"]"] = "on";
-				}
-			}
-			break;
-		case 'monthly':
-			var month_method = "";
-			if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_monthly_method_monthday").checked) {
-				month_method = "monthday";
-				post["<?php echo($FormPrefix); ?>_recur_simple[monthly_monthday][monthday]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_monthly_monthday_monthday").value;
-			} else if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_monthly_method_weekday").checked) {
-				month_method = "weekday";
-				post["<?php echo($FormPrefix); ?>_recur_simple[monthly_weekday][week]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_monthly_weekday_week").value;
-				post["<?php echo($FormPrefix); ?>_recur_simple[monthly_weekday][day]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_monthly_weekday_day").value;
-			}
-			post["<?php echo($FormPrefix); ?>_recur_simple[monthly_method]"] = month_method;
-			break;
-		case 'yearly':
-			var year_method = "";
-			if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_method_monthday").checked) {
-				year_method = "monthday";
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_monthday][monthday]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_monthday_monthday").value;
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_monthday][month]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_monthday_month").value;
-			} else if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_method_weekday").checked) {
-				year_method = "weekday";
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][week]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_week").value;
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][day]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_day").value;
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][month]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_month").value;
-			} else if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_method_yearday").checked) {
-				year_method = "yearday";
-				post["<?php echo($FormPrefix); ?>_recur_simple[yearly_yearday][yearday]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_yearly_yearday_yearday").value;
-			}
-			post["<?php echo($FormPrefix); ?>_recur_simple[yearly_method]"] = year_method;
-			break;
-	}
-	// Range method
-	var range_method = "";
-	if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_range_method_noend").checked) {
-		range_method = "noend";
-	} else if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_range_method_count").checked) {
-		range_method = "count";
-		post["<?php echo($FormPrefix); ?>_recur_simple[count]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_count").value;
-	} else if (document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_range_method_until").checked) {
-		range_method = "until";
-		post["<?php echo($FormPrefix); ?>_recur_simple[until][monthday]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_until_monthday").value;
-		post["<?php echo($FormPrefix); ?>_recur_simple[until][month]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_until_month").value;
-		post["<?php echo($FormPrefix); ?>_recur_simple[until][year]"] = document.getElementById("<?php echo($FormPrefix); ?>_recur_simple_until_year").value;
-	}
-	post["<?php echo($FormPrefix); ?>_recur_simple[range_method]"] = range_method;
-	var ajax = new AJAXInteraction(url, post, UpdateRecurCalPreviewCallback); 
-	ajax.doGet();
-}
-
-function UpdateRecurCalPreviewCallback(responseXML)
-{
-	var target = document.getElementById("preview_calendar_div"); 
-	var errors = responseXML.getElementsByTagName("error");
-	if (errors.length > 0) {
-		target.innerHTML = "errors:<br />";
-		for (var i = 0; i < errors.length; ++i) {
-			target.innerHTML += errors[i].firstChild.nodeValue+"<br />";
-		}
-	} else {
-		target.innerHTML = "";
-	}
-	var occurrences = responseXML.getElementsByTagName("occ");
-	previewResetMinicalDates();
-	for (var i = 0; i < occurrences.length; ++i) {
-		date  = occurrences[i].attributes.getNamedItem("date").value;
-		classes  = occurrences[i].attributes.getNamedItem("class").value;
-		previewAdjustMinicalDate(date, classes);
-	}
-	show("preview_calendar_div");
-}
-
-function CalSimpleFreqChange()
-{
-	var freq = document.getElementById('<?php echo($FormPrefix); ?>_recur_simple_freq').value;
-	hide('<?php echo($FormPrefix); ?>_recur_simple_freq_weekly');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_freq_monthly');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_freq_yearly');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_daily');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_weekly');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_monthly');
-	hide('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_yearly');
-	switch (freq) {
-		case 'daily':
-			show('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_daily');
-			break;
-		case 'weekly':
-			show('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_weekly');
-			show('<?php echo($FormPrefix); ?>_recur_simple_freq_weekly');
-			break;
-		case 'monthly':
-			show('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_monthly');
-			show('<?php echo($FormPrefix); ?>_recur_simple_freq_monthly');
-			break;
-		case 'yearly':
-			show('<?php echo($FormPrefix); ?>_recur_simple_interval_unit_yearly');
-			show('<?php echo($FormPrefix); ?>_recur_simple_freq_yearly');
-			break;
-	}
-}
-
-
-</script>
 
 <div id="RightColumn">
 	<?php
@@ -458,7 +198,7 @@ function CalSimpleFreqChange()
 			</div>
 		</div>
 		<div id="recurrences_preview_test">
-			<?php get_instance()->load->view('calendar/minicalendar', array('Prefix' => 'preview')); ?>
+			<?php get_instance()->load->view('calendar/minicalendar', array('Onclick' => 'MinicalToggle')); ?>
 		</div>
 	</div>
 </div>
@@ -466,18 +206,18 @@ function CalSimpleFreqChange()
 <div id="MainColumn">
 	<div>
 		<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
-			<input type="hidden" id="prefix" name="prefix" value="<?php echo($FormPrefix); ?>" />
-			<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
-?>			<input type="hidden" id="<?php echo($FormPrefix.'_'.$key); ?>" name="<?php echo($FormPrefix.'_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
-			<?php } ?>
 			<div class="BlueBox">
+				<input type="hidden" id="prefix" name="prefix" value="eved" />
+				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
+?>				<input type="hidden" id="<?php echo('eved_'.$key); ?>" name="<?php echo('eved_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
+				<?php } ?>
 				<h2>Event</h2>
 				<fieldset>
-					<label for="<?php echo($FormPrefix); ?>_summary">Summary</label>
-					<input type="text" id="<?php echo($FormPrefix); ?>_summary" name="<?php echo($FormPrefix); ?>_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
+					<label for="eved_summary">Summary</label>
+					<input type="text" id="eved_summary" name="eved_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
 					
-					<label for="<?php echo($FormPrefix); ?>_category">Category</label>
-					<select id="<?php echo($FormPrefix); ?>_category" name="<?php echo($FormPrefix); ?>_category">
+					<label for="eved_category">Category</label>
+					<select id="eved_category" name="eved_category">
 						<?php
 						foreach ($EventCategories as $key => $category) {
 							echo('<option value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
@@ -487,78 +227,84 @@ function CalSimpleFreqChange()
 						?>
 					</select>
 					
-					<label for="<?php echo($FormPrefix); ?>_location">Location</label>
-					<input type="text" id="<?php echo($FormPrefix); ?>_location" name="<?php echo($FormPrefix); ?>_location" value="<?php echo(htmlentities($EventInfo['location'], ENT_QUOTES, 'utf-8')); ?>" />
+					<label for="eved_location">Location</label>
+					<input type="text" id="eved_location" name="eved_location" value="<?php echo(htmlentities($EventInfo['location'], ENT_QUOTES, 'utf-8')); ?>" />
 					
-					<label for="<?php echo($FormPrefix); ?>_description">Description</label>
-					<textarea rows="10" id="<?php echo($FormPrefix); ?>_description" name="<?php echo($FormPrefix); ?>_description"><?php echo(htmlentities($EventInfo['description'], ENT_QUOTES, 'utf-8')); ?></textarea>
+					<label for="eved_description">Description</label>
+					<textarea rows="10" cols="20" id="eved_description" name="eved_description"><?php echo(htmlentities($EventInfo['description'], ENT_QUOTES, 'utf-8')); ?></textarea>
 					
 				</fieldset>
 			</div>
 			<div class="BlueBox">
 				<h2>Dates and Times</h2>
+				<p>Set the date and time of the first occurrence of this event:</p>
 				<fieldset>
-					<label for="<?php echo($FormPrefix); ?>_timeassociated">Time Associated</label>
-					<input type="checkbox" onchange="SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');" id="<?php echo($FormPrefix); ?>_timeassociated" name="<?php echo($FormPrefix); ?>_timeassociated"<?php if ($EventInfo['timeassociated']) { ?>  checked="yes"<?php } ?> />
+					<label for="eved_timeassociated">Time Associated</label>
+					<input type="checkbox" onchange="SimpleCheckboxChange('eved_timeassociated', 'eved_start_time', 'eved_duration_time_div');" id="eved_timeassociated" name="eved_timeassociated"<?php if ($EventInfo['timeassociated']) { ?>  checked="checked"<?php } ?> />
 					
-					<label for="<?php echo($FormPrefix); ?>_start">Starts on</label>
+					<label for="eved_start_monthday">Starts on</label>
 					<?php
 					DateSelectorGregorian(
-						$FormPrefix.'_start',
-						$FormPrefix.'_start',
+						'eved_start',
+						'eved_start',
 						$EventInfo['start'],
 						$now_year,
-						$now_year+5);
+						$now_year+5,
+						'UpdateRecurCalPreviewLoad();');
 					?>
 					<?php
 					DurationSelector(
-						$FormPrefix.'_duration',
+						'eved_duration',
 						$EventInfo['duration']);
 					?>
-					<label for="<?php echo($FormPrefix); ?>_recur_simple_enable">Use Recurrence</label>
-					<input type="checkbox" onchange="MainRecurrenceToggle()" id="<?php echo($FormPrefix); ?>_recur_simple_enable" name="<?php echo($FormPrefix); ?>_recur_simple[enable]"<?php if (isset($SimpleRecur['enable'])) { ?>  checked="yes"<?php } ?> />
+					<label for="eved_recur_simple_enable">Use Recurrence</label>
+					<input type="checkbox" onchange="MainRecurrenceToggle()" id="eved_recur_simple_enable" name="eved_recur_simple[enable]"<?php if (isset($SimpleRecur['enable'])) { ?>  checked="checked"<?php } ?> />
 				</fieldset>
-				<div id="<?php echo($FormPrefix); ?>_recurrence_div" style="display: block">
+
+				<div id="eved_recurrence_div" style="display: block">
 					<h2>Recurrence</h2>
+					<p>Set a recurrence rule to determine when the event is repeated.</p>
+					<div id="recur_use_minical_nonjs" style="display:block"><p>Remember to select <em>Use Recurrence</em> above to use this section.</p></div>
+					<div id="recur_use_minical_js" style="display:none"><p>Use the calendar on the right of this page to see a preview of when occurrences will be.</p></div>
 					<fieldset>
-						<label for="<?php echo($FormPrefix); ?>_recur_simple_freq">Recurrence Rule</label>
-						<select onchange="CalSimpleFreqChange(), UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_freq" name="<?php echo($FormPrefix); ?>_recur_simple[freq]">
-							<option value="daily"<?php if ($SimpleRecur['freq'] == 'daily') { ?> selected="yes"<?php } ?>>Daily</option>
-							<option value="weekly"<?php if ($SimpleRecur['freq'] == 'weekly') { ?> selected="yes"<?php } ?>>Weekly</option>
-							<option value="monthly"<?php if ($SimpleRecur['freq'] == 'monthly') { ?> selected="yes"<?php } ?>>Monthly</option>
-							<option value="yearly"<?php if ($SimpleRecur['freq'] == 'yearly') { ?> selected="yes"<?php } ?>>Yearly</option>
+						<label for="eved_recur_simple_freq">Recurrence Rule</label>
+						<select onchange="CalSimpleFreqChange(), UpdateRecurCalPreviewLoad();" id="eved_recur_simple_freq" name="eved_recur_simple[freq]">
+							<option value="daily"<?php if ($SimpleRecur['freq'] == 'daily') { ?> selected="selected"<?php } ?>>Daily</option>
+							<option value="weekly"<?php if ($SimpleRecur['freq'] == 'weekly') { ?> selected="selected"<?php } ?>>Weekly</option>
+							<option value="monthly"<?php if ($SimpleRecur['freq'] == 'monthly') { ?> selected="selected"<?php } ?>>Monthly</option>
+							<option value="yearly"<?php if ($SimpleRecur['freq'] == 'yearly') { ?> selected="selected"<?php } ?>>Yearly</option>
 						</select>
 					</fieldset>
 					
 					<fieldset>
-						<label for="<?php echo($FormPrefix); ?>_recur_simple_interval">Recur every</label>
-						<input id="<?php echo($FormPrefix); ?>_recur_simple_interval" name="<?php echo($FormPrefix); ?>_recur_simple[interval]" type="text" size="3" value="<?php echo(isset($SimpleRecur['interval']) ? $SimpleRecur['interval'] : 1); ?>" />
-						<div id="<?php echo($FormPrefix); ?>_recur_simple_interval_unit_daily" style="display: none">
+						<label for="eved_recur_simple_interval">Recur every</label>
+						<input id="eved_recur_simple_interval" name="eved_recur_simple[interval]" type="text" size="3" value="<?php echo(isset($SimpleRecur['interval']) ? $SimpleRecur['interval'] : 1); ?>" />
+						<div id="eved_recur_simple_interval_unit_daily" style="display: none">
 							day(s)
 						</div>
-						<div id="<?php echo($FormPrefix); ?>_recur_simple_interval_unit_weekly" style="display: none">
+						<div id="eved_recur_simple_interval_unit_weekly" style="display: none">
 							week(s)
 						</div>
-						<div id="<?php echo($FormPrefix); ?>_recur_simple_interval_unit_monthly" style="display: none">
+						<div id="eved_recur_simple_interval_unit_monthly" style="display: none">
 							month(s)
 						</div>
-						<div id="<?php echo($FormPrefix); ?>_recur_simple_interval_unit_yearly" style="display: none">
+						<div id="eved_recur_simple_interval_unit_yearly" style="display: none">
 							year(s)
 						</div>
 					</fieldset>
 					
-					<div id="<?php echo($FormPrefix); ?>_recur_simple_freq_weekly" style="display: block">
+					<div id="eved_recur_simple_freq_weekly" style="display: block">
 						<h3>Recur weekly</h3>
 						<label>On days</label>
 						<fieldset class="block-checks">
 							<?php
 								$day_names = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
 								foreach ($day_names as $day_id => $day_name) {
-									echo('<label><input onchange="UpdateRecurCalPreviewLoad();" type="checkbox"  id="'.$FormPrefix.'_recur_simple_weekly_byday_'.$day_id.'" name="'.$FormPrefix.'_recur_simple[weekly_byday]['.$day_id.']"');
+									echo('<label><input onchange="UpdateRecurCalPreviewLoad();" type="checkbox"  id="eved_recur_simple_weekly_byday_'.$day_id.'" name="eved_recur_simple[weekly_byday]['.$day_id.']"');
 									if (/*(*/isset($SimpleRecur['weekly_byday'][$day_id])/*) or
 										((!isset($SimpleRecur['weekly_byday']) or empty($SimpleRecur['weekly_byday'])) and $EventInfo['start']['day'] == $day_id)*/)
 									{
-										echo(' checked="yes"');
+										echo(' checked="checked"');
 									}
 									echo(" />$day_name</label>\n");
 								}
@@ -566,22 +312,22 @@ function CalSimpleFreqChange()
 						</fieldset>
 					</div>
 					
-					<div id="<?php echo($FormPrefix); ?>_recur_simple_freq_monthly" style="display: block">
+					<div id="eved_recur_simple_freq_monthly" style="display: block">
 						<h3>Recur monthly</h3>
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_monthly_method_monthday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_monthly_method_monthday" name="<?php echo($FormPrefix); ?>_recur_simple[monthly_method]" value="monthday"<?php
+							<label for="eved_recur_simple_monthly_method_monthday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_monthly_method_monthday" name="eved_recur_simple[monthly_method]" value="monthday"<?php
 								if (!isset($SimpleRecur['monthly_method']) or $SimpleRecur['monthly_method'] == 'monthday') {
-									echo(' checked="yes"');
+									echo(' checked="checked"');
 								}
 								?> /> Recur on the</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_monthly_monthday_monthday" name="<?php echo($FormPrefix); ?>_recur_simple[monthly_monthday][monthday]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_monthly_monthday_monthday" name="eved_recur_simple[monthly_monthday][monthday]">
 								<?php
 									foreach ($nth_set as $monthday => $monthdayname) {
 										echo("<option value=\"$monthday\"");
 										if ((isset($SimpleRecur['monthly_monthday']) and $SimpleRecur['monthly_monthday']['monthday'] == $monthday) or
 											(!isset($SimpleRecur['monthly_monthday']) and $EventInfo['start']['monthday'] == $monthday))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$monthdayname</option>\n");
 									}
@@ -590,12 +336,12 @@ function CalSimpleFreqChange()
 						</fieldset>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_monthly_method_weekday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_monthly_method_weekday" name="<?php echo($FormPrefix); ?>_recur_simple[monthly_method]" value="weekday"<?php
+							<label for="eved_recur_simple_monthly_method_weekday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_monthly_method_weekday" name="eved_recur_simple[monthly_method]" value="weekday"<?php
 								if (isset($SimpleRecur['monthly_method']) and $SimpleRecur['monthly_method'] == 'weekday') {
-									echo(' checked="yes"');
+									echo(' checked="checked"');
 								}
 								?> /> On the</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_monthly_weekday_week" name="<?php echo($FormPrefix); ?>_recur_simple[monthly_weekday][week]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_monthly_weekday_week" name="eved_recur_simple[monthly_weekday][week]">
 								<?php
 									foreach ($nth_set as $index => $nth) {
 										if ($index <= 5 and $index >= -5) {
@@ -603,21 +349,21 @@ function CalSimpleFreqChange()
 											if ((isset($SimpleRecur['monthly_weekday']) and $SimpleRecur['monthly_weekday']['week'] == $index) or
 												(!isset($SimpleRecur['monthly_weekday']) and $EventInfo['start']['monthweek'] == $index))
 											{
-												echo(' selected="yes"');
+												echo(' selected="selected"');
 											}
 											echo(">$nth</option>\n");
 										}
 									}
 								?>
 							</select>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_monthly_weekday_day" name="<?php echo($FormPrefix); ?>_recur_simple[monthly_weekday][day]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_monthly_weekday_day" name="eved_recur_simple[monthly_weekday][day]">
 								<?php
 									foreach ($daysofweek as $index => $day) {
 										echo("<option value=\"$index\"");
 										if ((isset($SimpleRecur['monthly_weekday']) and $SimpleRecur['monthly_weekday']['day'] == $index) or
 											(!isset($SimpleRecur['monthly_weekday']) and $EventInfo['start']['day'] == $index))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$day</option>\n");
 									}
@@ -626,37 +372,37 @@ function CalSimpleFreqChange()
 						</fieldset>
 					</div>
 					
-					<div id="<?php echo($FormPrefix); ?>_recur_simple_freq_yearly" style="display: block">
+					<div id="eved_recur_simple_freq_yearly" style="display: block">
 						<h3>Recur yearly</h3>
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_monthday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_monthday" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_method]" value="monthday"<?php
+							<label for="eved_recur_simple_yearly_method_monthday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_yearly_method_monthday" name="eved_recur_simple[yearly_method]" value="monthday"<?php
 								if (!isset($SimpleRecur['yearly_method']) or $SimpleRecur['yearly_method'] == 'monthday') {
-									echo(' checked="yes"');
+									echo(' checked="checked"');
 								}
 								?> /> Recur on the</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_monthday_monthday" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_monthday][monthday]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_monthday_monthday" name="eved_recur_simple[yearly_monthday][monthday]">
 								<?php
 									foreach ($nth_set as $monthday => $monthdayname) {
 										echo("<option value=\"$monthday\"");
 										if ((isset($SimpleRecur['yearly_monthday']) and $SimpleRecur['yearly_monthday']['monthday'] == $monthday) or
 											(!isset($SimpleRecur['yearly_monthday']) and $EventInfo['start']['monthday'] == $monthday))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$monthdayname</option>\n");
 									}
 								?>
 							</select>
 							
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_yearly_monthday_month">day of</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_monthday_month" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_monthday][month]">
+							<label for="eved_recur_simple_yearly_monthday_month">day of</label>
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_monthday_month" name="eved_recur_simple[yearly_monthday][month]">
 								<?php
 									foreach ($months as $month => $monthname) {
 										echo("<option value=\"$month\"");
 										if ((isset($SimpleRecur['yearly_monthday']) and $SimpleRecur['yearly_monthday']['month'] == $month) or
 											(!isset($SimpleRecur['yearly_monthday']) and $EventInfo['start']['month'] == $month))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$monthname</option>\n");
 									}
@@ -665,12 +411,12 @@ function CalSimpleFreqChange()
 						</fieldset>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_weekday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_weekday" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_method]" value="weekday"<?php
+							<label for="eved_recur_simple_yearly_method_weekday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_yearly_method_weekday" name="eved_recur_simple[yearly_method]" value="weekday"<?php
 								if (isset($SimpleRecur['yearly_method']) and $SimpleRecur['yearly_method'] == 'weekday') {
-									echo(' checked="yes"');
+									echo(' checked="checked"');
 								}
 								?> /> Recur on the</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_week" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][week]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_weekday_week" name="eved_recur_simple[yearly_weekday][week]">
 								<?php
 									foreach ($nth_set as $index => $nth) {
 										if ($index <= 5 and $index >= -5) {
@@ -678,14 +424,14 @@ function CalSimpleFreqChange()
 											if ((isset($SimpleRecur['yearly_weekday']) and $SimpleRecur['yearly_weekday']['week'] == $index) or
 												(!isset($SimpleRecur['yearly_weekday']) and $EventInfo['start']['monthweek'] == $index))
 											{
-												echo(' selected="yes"');
+												echo(' selected="selected"');
 											}
 											echo(">$nth</option>\n");
 										}
 									}
 								?>
 							</select>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_day" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][day]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_weekday_day" name="eved_recur_simple[yearly_weekday][day]">
 								<?php
 									foreach ($daysofweek as $index => $day) {
 										if (is_numeric($index)) {
@@ -693,7 +439,7 @@ function CalSimpleFreqChange()
 											if ((isset($SimpleRecur['yearly_weekday']) and $SimpleRecur['yearly_weekday']['day'] == $index) or
 												(!isset($SimpleRecur['yearly_weekday']) and $EventInfo['start']['day'] == $index))
 											{
-												echo(' selected="yes"');
+												echo(' selected="selected"');
 											}
 											echo(">$day</option>\n");
 										}
@@ -702,14 +448,14 @@ function CalSimpleFreqChange()
 							</select>
 							
 							<label>in</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_weekday_month" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_weekday][month]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_weekday_month" name="eved_recur_simple[yearly_weekday][month]">
 								<?php
 									foreach ($months as $month => $monthname) {
 										echo("<option value=\"$month\"");
 										if ((isset($SimpleRecur['yearly_weekday']) and $SimpleRecur['yearly_weekday']['month'] == $month) or
 											(!isset($SimpleRecur['yearly_weekday']) and $EventInfo['start']['month'] == $month))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$monthname</option>\n");
 									}
@@ -718,19 +464,19 @@ function CalSimpleFreqChange()
 						</fieldset>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_yearday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_method_yearday" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_method]" value="yearday"<?php
+							<label for="eved_recur_simple_yearly_method_yearday"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_yearly_method_yearday" name="eved_recur_simple[yearly_method]" value="yearday"<?php
 								if (isset($SimpleRecur['yearly_method']) and $SimpleRecur['yearly_method'] == 'yearday') {
-									echo(' checked="yes"');
+									echo(' checked="checked"');
 								}
 								?> /> Recur on day</label>
-							<select onchange="UpdateRecurCalPreviewLoad();" id="<?php echo($FormPrefix); ?>_recur_simple_yearly_yearday_yearday" name="<?php echo($FormPrefix); ?>_recur_simple[yearly_yearday][yearday]">
+							<select onchange="UpdateRecurCalPreviewLoad();" id="eved_recur_simple_yearly_yearday_yearday" name="eved_recur_simple[yearly_yearday][yearday]">
 								<?php
 									for ($i = 1; $i <= 366; ++$i) {
 										echo('<option value="'. $i .'"');
 										if ((isset($SimpleRecur['yearly_yearday']) and $SimpleRecur['yearly_yearday']['yearday'] == $i) or
 											(!isset($SimpleRecur['yearly_yearday']) and $EventInfo['start']['yearday'] == $i))
 										{
-											echo(' selected="yes"');
+											echo(' selected="selected"');
 										}
 										echo(">$i</option>\n");
 									}
@@ -740,30 +486,30 @@ function CalSimpleFreqChange()
 						</fieldset>
 					</div>
 					
-					<div id="<?php echo($FormPrefix); ?>_recur_simple_range">
+					<div id="eved_recur_simple_range">
 						<h3>Recurrence range</h3>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_range_method_noend"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_range_method_noend" name="<?php echo($FormPrefix); ?>_recur_simple[range_method]" value="noend"<?php
+							<label for="eved_recur_simple_range_method_noend"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_range_method_noend" name="eved_recur_simple[range_method]" value="noend"<?php
 									if (!isset($SimpleRecur['range_method']) || $SimpleRecur['range_method'] === 'noend') {
-										echo(' checked="yes"');
+										echo(' checked="checked"');
 									}
 								?> />No end</label>
 						</fieldset>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_range_method_count"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_range_method_count" name="<?php echo($FormPrefix); ?>_recur_simple[range_method]" value="count"<?php
+							<label for="eved_recur_simple_range_method_count"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_range_method_count" name="eved_recur_simple[range_method]" value="count"<?php
 									if (isset($SimpleRecur['range_method']) && $SimpleRecur['range_method'] === 'count') {
-										echo(' checked="yes"');
+										echo(' checked="checked"');
 									}
 								?> />End after</label>
-							<input type="text" id="<?php echo($FormPrefix); ?>_recur_simple_count" name="<?php echo($FormPrefix); ?>_recur_simple[count]" value="<?php echo(isset($SimpleRecur['count']) ? $SimpleRecur['count'] : 1); ?>" size="5" /> Occurrences
+							<input type="text" id="eved_recur_simple_count" name="eved_recur_simple[count]" value="<?php echo(isset($SimpleRecur['count']) ? $SimpleRecur['count'] : 1); ?>" size="5" /> Occurrences
 						</fieldset>
 						
 						<fieldset>
-							<label for="<?php echo($FormPrefix); ?>_recur_simple_range_method_until"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="<?php echo($FormPrefix); ?>_recur_simple_range_method_until" name="<?php echo($FormPrefix); ?>_recur_simple[range_method]" value="until"<?php
+							<label for="eved_recur_simple_range_method_until"><input onchange="UpdateRecurCalPreviewLoad();" type="radio" id="eved_recur_simple_range_method_until" name="eved_recur_simple[range_method]" value="until"<?php
 									if (isset($SimpleRecur['range_method']) && $SimpleRecur['range_method'] === 'until') {
-										echo(' checked="yes"');
+										echo(' checked="checked"');
 										$until = $SimpleRecur['until'];
 									} else {
 										$until = array(
@@ -774,33 +520,95 @@ function CalSimpleFreqChange()
 									}
 								?> />End on</label>
 							<?php
-							DateSelectorGregorian($FormPrefix.'_recur_simple_until', $FormPrefix.'_recur_simple[until]', $until, $now_year, $now_year+5);
+							DateSelectorGregorian('eved_recur_simple_until', 'eved_recur_simple[until]', $until, $now_year, $now_year+5, 'UpdateRecurCalPreviewLoad();');
 							?>
 						</fieldset><?php /*
 						<p><small><em>Advanced reccurrence tools will be made available at a later date.</em></small></p> */ ?>
 					</div>
 				</div>
 				
-				<?php if (0) { ?>
-				<h2>Include/Exclude Dates</h2>
-				<div class="cal_incex_date">
-					
-				</div>
+				<?php if (1) { ?>
+					<h2>Extra Dates</h2>
+					<p>Set the dates of any other occurrences of the event below.</p>
+					<div id="incex_jsonly" style="display:none">
+						<p><em>Tip: You can click on the calendar in the sidebar to specify dates.</em></p>
+					</div>
+					<p>If you are using recurrence, you can use the &quot;Exclude Date&quot; button
+						to specify exceptions to the recurrence rule.</p>
+					<div>
+						<fieldset>
+							<label>New Date</label>
+							<?php
+							DateSelectorGregorian('eved_new_inex_date', 'eved_inex[new_date]', array(
+									'monthday' => 1,
+									'month' => 11,
+									'year' => 2007
+								), 2007, 2010);
+							?>
+						</fieldset>
+						<fieldset>
+							<input class="button" type="submit" id="eved_inex_add_exclude" name="eved_inex[add_exclude]" onclick="return NewInexDate('exclude', DateSelectToDateString('eved_new_inex_date'));" value="Exclude Date" />
+							<input class="button" type="submit" id="eved_inex_add_include" name="eved_inex[add_include]" onclick="return NewInexDate('include', DateSelectToDateString('eved_new_inex_date'));" value="Add Date" /><?php
+							// Useful for testing coz with buttons it does non-js way when js fails:
+							/*<a onclick="return NewInexDate('include', DateSelectToDateString('eved_new_inex_date'));">include</a>
+							<a onclick="return NewInexDate('exclude', DateSelectToDateString('eved_new_inex_date'));">exclude</a>*/
+							?>
+						</fieldset>
+					</div>
+					<?php /* Hidden templates for when creating new dates with js */ ?>
+					<div id="eved_inex_hidden" style="display:none">
+						<div id="eved_include_template" class="include">
+							<div class="description" id="eved_include_description">include: </div>
+							<fieldset class="delete">
+								<input type="hidden" name="include" value="DATE" />
+								<input class="button" type="submit" name="include_remove_btn" value="Delete" />
+							</fieldset>
+						</div>
+						<div id="eved_exclude_template" class="exclude">
+							<div class="description" id="eved_exclude_description">exclude: </div>
+							<fieldset class="delete">
+								<input type="hidden" name="exclude" value="DATE" />
+								<input class="button" type="submit" name="exclude_remove_btn" value="Delete" />
+							</fieldset>
+						</div>
+					</div>
+					<div id="eved_inex_list">
+						<?php
+							$any_inex_dates =	(isset($InExDates['includes']) && !empty($InExDates['includes'])) ||
+												(isset($InExDates['excludes']) && !empty($InExDates['excludes']));
+						?>
+						<div id="eved_inex_none" class="none" style="display:<?php echo($any_inex_dates?'none':'block'); ?>">
+							<div class="description"><em>There are no dates specified except the first occurrence and those from recurrence if used.</em></div>
+						</div>
+						<?php
+						foreach (array('include','exclude') as $inex) {
+							$inexes = $inex.'s';
+							if (isset($InExDates[$inexes])) {
+								foreach ($InExDates[$inexes] as $date => $dummydate) {
+									$ts = strtotime($date);
+							?><div id="eved_inex_date_<?php echo($inex.'_'.$date); ?>" class="<?php echo($inex); ?>">
+								<div class="description" id="eved_<?php echo($inex); ?>_description_<?php echo($date); ?>"><?php echo(
+									$inex.': '.date('l, j',$ts).'<sup>'.date('S',$ts).'</sup> '.date('F Y',$ts)
+								) ?></div>
+								<fieldset class="delete">
+									<input type="hidden" name="eved_inex[<?php echo($inexes.']['.$date); ?>]" value="<?php echo($date); ?>" />
+									<input class="button" type="submit" name="eved_inex[<?php echo($inex); ?>_remove_btns][<?php echo($date); ?>]" value="Delete" onclick="return RemoveInexDate('<?php echo($inex); ?>','<?php echo($date); ?>');" />
+								</fieldset>
+							</div>
+									<?php
+								}
+							}
+						}
+						?>
+					</div>
 				<?php } ?>
 			</div>
 			<div class="BlueBox">
 				<fieldset>
-					<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_save" value="Save" />
-					<input class="button" type="submit" name="<?php echo($FormPrefix); ?>_return" value="Cancel" />
+					<input class="button" type="submit" name="eved_save" value="Save" />
+					<input class="button" type="submit" name="eved_return" value="Cancel" />
 				</fieldset>
 			</div>
-			<script type="text/javascript">
-				CalSimpleFreqChange();
-				hide("recurrences_preview_noscript");
-				show("recurrences_preview");
-				MainRecurrenceToggle();
-				SimpleCheckboxChange('<?php echo($FormPrefix); ?>_timeassociated', '<?php echo($FormPrefix); ?>_start_time', '<?php echo($FormPrefix); ?>_duration_time_div');
-			</script>
 		</form>
 		<?php
 		// Attendee list

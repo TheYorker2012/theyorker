@@ -1335,7 +1335,7 @@ class RecurrenceSet
 		foreach (array('mRDates' => FALSE, 'mExDates' => TRUE) as $field => $exclude) {
 			foreach ($this->$field as $date => $times) {
 				foreach ($times as $time => $duration) {
-					if ($time_associated = NULL !== $time) {
+					if ($time_associated = NULL != $time) {
 						$start = strtotime($date.' '.$time);
 					} else {
 						$start = strtotime($date);
@@ -1351,6 +1351,34 @@ class RecurrenceSet
 					}
 				}
 			}
+		}
+		return $results;
+	}
+	
+	/// Get an array of recurrence dates.
+	/**
+	 * @return array[date => bool exclude],FALSE (too complicated)
+	 */
+	function GetSimpleDatesList($sort = false)
+	{
+		$results = array();
+		foreach (array('mRDates' => FALSE, 'mExDates' => TRUE) as $field => $exclude) {
+			foreach ($this->$field as $date => $times) {
+				foreach ($times as $time => $duration) {
+					if ($time_associated = NULL != $time) {
+						return false;
+					} else {
+						$start = strtotime($date);
+					}
+					// (exclude the start date which is added when resolving)
+					if ($exclude || $start !== $this->mStart) {
+						$results[$date] = $exclude;
+					}
+				}
+			}
+		}
+		if ($sort) {
+			ksort($results);
 		}
 		return $results;
 	}
@@ -1627,6 +1655,11 @@ class Recurrence_model extends model
 	{
 		$dates = $Set->GetDatesArray();
 		
+		// clear existing dates.
+		$sql_remove_dates = 'DELETE FROM event_dates WHERE event_date_event_id='.
+			$this->db->escape($EventId);
+		$this->db->query($sql_remove_dates);
+		
 		if (!empty($dates)) {
 			// produce the sql for each row.
 			foreach ($dates as $key => $date) {
@@ -1640,18 +1673,13 @@ class Recurrence_model extends model
 			
 			// the main query
 			$sql_insert_dates =
-			'INSERT INTO event_dates (
+			'REPLACE INTO event_dates (
 				event_date_event_id,
 				event_date_start,
 				event_date_time_associated,
 				event_date_duration,
 				event_date_exclude
-			) VALUES ('.implode('),(', $dates).')
-			ON DUPLICATE KEY UPDATE
-				event_date_duration=IF(event_date_exclude OR VALUES(event_date_exclude,
-					NULL
-					VALUES(event_date_duration)),
-				event_date_exclude=event_date_exclude OR VALUES(event_date_exclude)';
+			) VALUES ('.implode('),(', $dates).')';
 			
 			// run it
 			$this->db->query($sql_insert_dates);

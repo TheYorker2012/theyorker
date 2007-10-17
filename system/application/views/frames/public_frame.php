@@ -133,7 +133,7 @@ if (isset($medium_type)) { ?>
 				</ul>
 				-->
 				<?php
-				if (isset($extra_menu_buttons)) {
+				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
 					echo('<ul>');
 					foreach ($extra_menu_buttons as $key => $button) {
 						echo('<li'.(!$key ? ' class="first"':'').'>');

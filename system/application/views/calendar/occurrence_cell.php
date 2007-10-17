@@ -90,9 +90,8 @@ $CI = & get_instance();
 					$Occurrence->State == 'published' /*&&
 					$Occurrence->EndTime->Timestamp() > time()*/)
 				{
-					if ($show_attendence) {
-						echo('<br />');
-					} else {
+					echo('<br />');
+					if (!$show_attendence) {
 						echo('attend:');
 					}
 					if ('no' === $Occurrence->UserAttending) {

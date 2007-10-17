@@ -34,7 +34,7 @@ class CalendarViewEditSimple extends FramesView
 	{
 		parent::__construct('calendar/event_edit');
 		
-		$this->mPrefix = $prefix;
+		$this->mPrefix = 'eved';//$prefix;
 	}
 	
 	/// Set the ajax validate path.
@@ -138,7 +138,7 @@ class CalendarViewEditSimpleValidate
 				isset($data[$prefix.'_start']) and
 				isset($data[$prefix.'_duration']))
 			{
-				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(isset($data[$prefix.'_timeassociated']) && $data[$prefix.'_timeassociated'], $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $this->mErrors);
+				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(isset($data[$prefix.'_timeassociated']) && $data[$prefix.'_timeassociated'], $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $data[$prefix.'_inex'], $this->mErrors);
 				
 				$this->mResults = $this->mRset->Resolve(strtotime('-1month'), strtotime('1year'));
 			} else {
@@ -209,6 +209,7 @@ class Calendar_view_edit_simple
 		if (NULL === $recur) {
 			return NULL;
 		}
+		
 		/*
 		 * check in following order:
 		 * 	daily, interval, no bys
@@ -343,7 +344,7 @@ class Calendar_view_edit_simple
 										'week' => $setpos[0],
 										'day' => $weekdays[0],
 									);
-									var_dump($result['monthly_weekday']);
+// 									var_dump($result['monthly_weekday']);
 								} else {
 									// Invalid combination of byday and bysetpos
 									$errors[] = array('text' => "Recurrence rule too complicated for basic interface (unknown combination of byday and bysetpos)");
@@ -481,11 +482,28 @@ class Calendar_view_edit_simple
 		} else {
 			return false;
 		}
-		
+	}
+	
+	/// Turn a recurrence set into data for the include exclude dates view.
+	/**
+	 * @return array(includes,excludes => array[date=>date]).
+	 */
+	static function transform_inex_for_view(& $recur, & $errors)
+	{
+		$inex_dates = $recur->GetSimpleDatesList(true);
+		$result = array();
+		foreach ($inex_dates as $date => $exclude) {
+			if ($exclude) {
+				$result['excludes'][$date] = $date;
+			} else {
+				$result['includes'][$date] = $date;
+			}
+		}
+		return $result;
 	}
 	
 	/// Turn array data into a recurrence set.
-	static function validate_recurrence_set_data($time_associated, & $start, & $duration, & $simple, & $errors)
+	static function validate_recurrence_set_data($time_associated, & $start, & $duration, & $simple, & $inex, & $errors)
 	{
 		$rset = new RecurrenceSet();
 		
@@ -599,6 +617,13 @@ class Calendar_view_edit_simple
 			$recur = self::validate_recurrence_rule_data($simple, $errors);
 			if ($recur !== NULL) {
 				$rset->AddRRules($recur);
+			}
+		}
+		if ($inex !== NULL) {
+			$dates = self::validate_inex_dates_data($inex, $errors);
+			if ($dates !== NULL) {
+				$rset->AddExDates($dates['excludes']);
+				$rset->AddRDates($dates['includes']);
 			}
 		}
 		
@@ -859,6 +884,82 @@ class Calendar_view_edit_simple
 		}
 		
 		return $recur;
+	}
+	
+	/// Turn simple inex array data into inex date lists.
+	/**
+	 * @return array['{in,ex}cludes' => array['Ymd' => array['His' => $duration]]]
+	 *  where first is exclude, second is include
+	 */
+	static function validate_inex_dates_data(& $simple, & $errors)
+	{
+		$result = array();
+		foreach (array('exclude', 'include') as $inex) {
+			$inexes = $inex.'s';
+			$result[$inexes] = array();
+			if (isset($simple[$inexes])) {
+				// Existing ones
+				if (is_array($simple[$inexes])) {
+					foreach ($simple[$inexes] as $date => $dummydate) {
+						// Exclude if the remvove button exists.
+						if (!isset($simple[$inex.'_remove_btns'][$date])) {
+							$result[$inexes][$date] = array(NULL => NULL);
+						}
+					}
+				} else {
+					$errors[] = array('field' => $inexes, 'text' => "$inexes must be list");
+				}
+			}
+			if (isset($simple["add_$inex"])) {
+				// A new one
+				if (isset($simple['new_date']) && is_array($simple['new_date'])) {
+					$new_date = $simple['new_date'];
+					$new_date_failed = false;
+					if (isset($new_date['year']) && is_numeric($new_date['year'])) {
+						$new_date['year'] = (int)$new_date['year'];
+						if ($new_date['year'] < 1970 or $new_date['year'] > 2030) {
+							$errors[] = array('field' => $inexes, 'text' => "New $inex date year out of range.");
+							$new_date_failed = true;
+						}
+					} else {
+						$errors[] = array('field' => $inexes, 'text' => "New $inex date year missing or invalid.");
+						$new_date_failed = true;
+					}
+					if (isset($new_date['month']) && is_numeric($new_date['month'])) {
+						$new_date['month'] = (int)$new_date['month'];
+						if ($new_date['month'] < 1 or $new_date['month'] > 12) {
+							$errors[] = array('field' => $inexes, 'text' => "New $inex date month out of range.");
+							$new_date_failed = true;
+						}
+					} else {
+						$errors[] = array('field' => $inexes, 'text' => "New $inex date month missing or invalid.");
+						$new_date_failed = true;
+					}
+					if (isset($new_date['monthday']) && is_numeric($new_date['monthday'])) {
+						$new_date['monthday'] = (int)$new_date['monthday'];
+						if ($new_date['monthday'] < 1 or $new_date['month'] > 31) {
+							$errors[] = array('field' => 'start', 'text' => "New $inex date month day out of range.");
+							$new_date_failed = true;
+						}
+					} else {
+						$errors[] = array('field' => $inexes, 'text' => "New $inex date month day missing or invalid.");
+						$new_date_failed = true;
+					}
+					if (!$new_date_failed) {
+						// No problems with the new date, so add to the list.
+						$new_date_ts = mktime(
+							0,                    0,                     0,
+							$new_date['month'],   $new_date['monthday'], $new_date['year']
+						);
+						$date = date('Ymd', $new_date_ts);
+						$result[$inexes][$date] = array(NULL => NULL);
+					}
+				} else {
+					$errors[] = array('field' => $inexes, 'text' => "New $inex date information missing or invalid");
+				}
+			}
+		}
+		return $result;
 	}
 }
 
