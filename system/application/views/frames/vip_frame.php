@@ -102,7 +102,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="<?php echo vip_url('contactpr'); ?>">Contact PR Rep</a></li>
 				</ul>
 				<?php
-				if (isset($extra_menu_buttons)) {
+				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
 					echo('<ul>');
 					foreach ($extra_menu_buttons as $key => $button) {
 						echo('<li'.(!$key ? ' class="first"':'').'>');
