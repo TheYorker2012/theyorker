@@ -437,7 +437,7 @@ class Bylines extends Controller
 				if ($data['byline_info']['business_card_image_id'] === NULL) {
 					$data['byline_info']['business_card_image_href'] = '';
 				} else {
-					$data['byline_info']['business_card_image_href'] = $this->image->getPhotoURL($byline['business_card_image_id'], 'userimage');
+					$data['byline_info']['business_card_image_href'] = $this->image->getPhotoURL($data['byline_info']['business_card_image_id'], 'userimage');
 				}
 
 				// Get page properties information
@@ -587,7 +587,7 @@ class Bylines extends Controller
 				if ($data['byline_info']['business_card_image_id'] === NULL) {
 					$data['byline_info']['business_card_image_href'] = '';
 				} else {
-					$data['byline_info']['business_card_image_href'] = $this->image->getPhotoURL($byline['business_card_image_id'], 'userimage');
+					$data['byline_info']['business_card_image_href'] = $this->image->getPhotoURL($data['byline_info']['business_card_image_id'], 'userimage');
 				}
 
 				// Get page properties information
