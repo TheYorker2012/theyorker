@@ -978,6 +978,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'time_associated' => true,
 		);
 		$input_summary = $this->input->post($prefix.'_summary');
+		$confirm_list = NULL;
 		if (false !== $input_summary) {
 			$input_valid = true;
 			
@@ -1013,12 +1014,23 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			// at this point $start and $end are still plain timestamps
 			$input['recur'] = $rset;
 			
-			if (isset($_POST[$prefix.'_save']) && $input_valid && empty($errors)) {
-				$messages = $this->mSource->CreateEvent($input);
-				$this->messages->AddMessages($messages);
-				if (!array_key_exists('error', $messages) || empty($messages['error'])) {
-					$this->messages->AddMessage('success', 'Event created successfully.');
-					return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+			if ($input_valid && empty($errors)) {
+				if (isset($_POST[$prefix.'_save'])) {
+					$event = new CalendarEvent(-1, $this->mSource);
+					$changes_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+					if (empty($changes_list)) {
+						$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
+					} else {
+						$confirm_list = $changes_list;
+					}
+				}
+				if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
+					$messages = $this->mSource->CreateEvent($input);
+					$this->messages->AddMessages($messages);
+					if (!array_key_exists('error', $messages) || empty($messages['error'])) {
+						$this->messages->AddMessage('success', 'Event created successfully.');
+						return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+					}
 				}
 			}
 		}
@@ -1057,7 +1069,12 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'FormPrefix' => $prefix,
 			'EventInfo' => $eventinfo,
 			'Help' => $help_xhtml,
+			'CanPublish' => $this->mMainSource->IsSupported('publish'),
+			'Create' => true,
 		);
+		if (is_array($confirm_list)) {
+			$data['Confirms'] = $confirm_list;
+		}
 		foreach ($errors as $error) {
 			$this->messages->AddMessage('error', $error['text']);
 		}
@@ -1298,6 +1315,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$input['category'] = $categories[$event->Category]['id'];
 			}
 			$input_summary = $this->input->post($prefix.'_summary');
+			$confirm_list = NULL;
 			if (false !== $input_summary) {
 				$input_valid = true;
 				
@@ -1333,23 +1351,32 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
 				
-				if (isset($_POST[$prefix.'_save']) && $input_valid && empty($errors)) {
-					// Make the change
-					/// @todo WARN about going live immmediately if applicable
-					$messages = $this->mMainSource->AmmendEvent($event, $input);
-					
-					$this->messages->AddMessages($messages);
-					if (!array_key_exists('error', $messages) || empty($messages['error'])) {
-						// Success
-						$this->messages->AddMessage('success', 'Event updated');
-						
-						// REDIRECT
-						if ($occurrence_specified) {
-							$path = $this->mPaths->OccurrenceInfo($found_occurrence);
+				if ($input_valid && empty($errors)) {
+					if (isset($_POST[$prefix.'_save'])) {
+						$changes_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+						if (empty($changes_list)) {
+							$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
 						} else {
-							$path = $this->mPaths->EventInfo($event);
+							$confirm_list = $changes_list;
 						}
-						return redirect($path.'/'.$tail);
+					}
+					if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
+						// Make the change
+						$messages = $this->mMainSource->AmmendEvent($event, $input);
+						
+						$this->messages->AddMessages($messages);
+						if (!array_key_exists('error', $messages) || empty($messages['error'])) {
+							// Success
+							$this->messages->AddMessage('success', 'Event updated');
+							
+							// REDIRECT
+							if ($occurrence_specified) {
+								$path = $this->mPaths->OccurrenceInfo($found_occurrence);
+							} else {
+								$path = $this->mPaths->EventInfo($event);
+							}
+							return redirect($path.'/'.$tail);
+						}
 					}
 				}
 			}
@@ -1388,7 +1415,12 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'FormPrefix' => $prefix,
 				'EventInfo' => $eventinfo,
 				'Help' => $help_xhtml,
+				'CanPublish' => $this->mMainSource->IsSupported('publish'),
+				'Create' => false,
 			);
+			if (is_array($confirm_list)) {
+				$data['Confirms'] = $confirm_list;
+			}
 			foreach ($errors as $error) {
 				$this->messages->AddMessage('error', $error['text']);
 			}

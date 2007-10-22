@@ -582,6 +582,17 @@ abstract class CalendarSource
 		return array('error' => array('Creating events in this event source is not currently supported.'));
 	}
 	
+	/// Get the changes to update an event to a specified recurrence set.
+	/**
+	 * @param $Event &CalendarEvent Event information.
+	 * @param $RSet RecurrenceSet   Recurrence information.
+	 * @return array Information about the changes that must be made.
+	 */
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		return NULL;
+	}
+	
 	/// Ammend an event.
 	/**
 	 * @param $Event CalendarEvent event information.
@@ -1184,6 +1195,16 @@ class CalendarSources extends CalendarSource
 			return $this->mSources[$SourceId]->GetOccurrenceAttendanceList($Occurrence);
 		} else {
 			return parent::GetOccurrenceAttendanceList($Occurrence);
+		}
+	}
+	
+	/// Get the changes to update an event to a specified recurrence set.
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		if (array_key_exists($Event->Source->GetSourceId(), $this->mSources)) {
+			return $this->mSources[$Event->Source->GetSourceId()]->GetEventRecurChanges($Event, $RSet);
+		} else {
+			return parent::GetEventRecurChanges($Event, $RSet);
 		}
 	}
 	

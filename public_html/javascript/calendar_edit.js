@@ -409,49 +409,57 @@ var minical_inex_classes = new Array();
 
 function MinicalToggle(date)
 {
-	/*
-	none -> include -> exclude -> none
-	*/
-	var td = document.getElementById('minical_'+date+'');
-	if (1) {
-		// Toggle the obvious values
-		if (CssCheck(td, 'selected')) {
-			// selected, so inc -> none -> exc
-			if (inc_dates[date]) {
-				// inc -> none
-				RemoveInexDate('include', date);
-			} else if (!exc_dates[date]) {
-				// none -> exc
-				NewInexDate('exclude', date);
+	// If the main edit stuff is hidden (for confirmation) check before doing anything
+	if (document.getElementById('main_edit_divs').style.display == 'none') {
+		if (confirm("Clicking on the calendar will return to edit mode and alter the event.")) {
+			document.getElementById('eved_confirm_edit_btn').onclick();
+		}
+	}
+	if (document.getElementById('main_edit_divs').style.display != 'none') {
+		/*
+		none -> include -> exclude -> none
+		*/
+		var td = document.getElementById('minical_'+date+'');
+		if (1) {
+			// Toggle the obvious values
+			if (CssCheck(td, 'selected')) {
+				// selected, so inc -> none -> exc
+				if (inc_dates[date]) {
+					// inc -> none
+					RemoveInexDate('include', date);
+				} else if (!exc_dates[date]) {
+					// none -> exc
+					NewInexDate('exclude', date);
+				} else {
+					// exc -> none
+					RemoveInexDate('exclude', date);
+				}
 			} else {
-				// exc -> none
-				RemoveInexDate('exclude', date);
+				// deselected, so exc -> none -> inc
+				if (exc_dates[date]) {
+					// exc -> none
+					RemoveInexDate('exclude', date);
+				} else if (!inc_dates[date]) {
+					// none -> inc
+					NewInexDate('include', date);
+				} else {
+					// inic -> none
+					RemoveInexDate('include', date);
+				}
 			}
 		} else {
-			// deselected, so exc -> none -> inc
-			if (exc_dates[date]) {
+			// Toggle all three values
+			if (inc_dates[date]) {
+				// inc -> exc
+				RemoveInexDate('include', date);
+				NewInexDate('exclude', date);
+			} else if (exc_dates[date]) {
 				// exc -> none
 				RemoveInexDate('exclude', date);
-			} else if (!inc_dates[date]) {
+			} else {
 				// none -> inc
 				NewInexDate('include', date);
-			} else {
-				// inic -> none
-				RemoveInexDate('include', date);
 			}
-		}
-	} else {
-		// Toggle all three values
-		if (inc_dates[date]) {
-			// inc -> exc
-			RemoveInexDate('include', date);
-			NewInexDate('exclude', date);
-		} else if (exc_dates[date]) {
-			// exc -> none
-			RemoveInexDate('exclude', date);
-		} else {
-			// none -> inc
-			NewInexDate('include', date);
 		}
 	}
 	return false;

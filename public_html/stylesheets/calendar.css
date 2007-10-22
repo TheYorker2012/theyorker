@@ -375,3 +375,52 @@ div#eved_inex_list div.include {
 div#eved_inex_list div.exclude {
 	background-color: #F0D1A0;
 }
+
+/* for confirmation of changes dates */
+div#confirm_changes_div label.description {
+	float: none;
+	font-size: small;
+	clear: none;
+	text-align: left;
+	width: 100%;
+	margin: 0.0em;
+}
+div#confirm_changes_div div.description {
+	font-size: small;
+	clear: none;
+}
+div#confirm_changes_div fieldset.delete {
+	float: right;
+	clear: none;
+}
+div#confirm_changes_div div.cancel,
+div#confirm_changes_div div.delete,
+div#confirm_changes_div div.restore,
+div#confirm_changes_div div.create,
+div#confirm_changes_div div.move,
+div#confirm_changes_div div.draft {
+	border: 1px solid #808080;
+	overflow: hidden;
+	padding-left: 3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+}
+div#confirm_changes_div div.cancel {
+	background-color: #FFB0B0;
+}
+div#confirm_changes_div div.delete {
+	background-color: #FFC080;
+}
+div#confirm_changes_div div.restore {
+	background-color: #B0B0FF;
+}
+div#confirm_changes_div div.create {
+	background-color: #80FF80;
+}
+div#confirm_changes_div div.move {
+	background-color: #FFFF80;
+}
+div#confirm_changes_div div.draft {
+	background-color: #F0F0F0;
+}

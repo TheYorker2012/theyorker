@@ -46,6 +46,9 @@ class CalendarSourceYorker extends CalendarSource
 		if (!$CI->events_model->IsReadOnly()) {
 			$this->mCapabilities[] = 'create';
 		}
+		if ($CI->events_model->IsVip()) {
+			$this->mCapabilities[] = 'publish';
+		}
 		$this->mCapabilities[] = 'attend';
 		
 		$this->mGroups['streams'] = FALSE;
@@ -595,6 +598,19 @@ class CalendarSourceYorker extends CalendarSource
 			$messages['error'][] = $e->getMessage();
 		}
 		return $messages;
+	}
+	
+	/// Get the changes to update an event to a specified recurrence set.
+	/**
+	 * @param $Event &CalendarEvent Event information.
+	 * @param $RSet RecurrenceSet   Recurrence information.
+	 * @return array Information about the changes that must be made.
+	 */
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		$CI = & get_instance();
+		$changes = $CI->events_model->ResolveRecurrenceSetOccurrences($Event->SourceEventId, $RSet);
+		return $CI->events_model->TidyRecurrenceSetOccurrencesChanges($changes);
 	}
 	
 	/// Ammend an event.

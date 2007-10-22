@@ -14,6 +14,9 @@
  * @param $FailRedirect string URL fail redirect path.
  * @param $EventCategories array[id => array('id'=>,'name'=>,'colour'=>)]
  * @param $Help Help text array, indexed by title.
+ * @param $Confirms Changes to be confirmed.
+ * @param $CanPublish bool Whether the user can publish this event.
+ * @param $Create bool whether the event is new.
  *
  * @todo Send information about what fields have changed, and only send the deltas
  */
@@ -25,6 +28,39 @@ if (!is_array($SimpleRecur)) {
 		'count' => 10,
 	);
 }
+
+$confirm_types = array(
+	'cancel'  => array(
+		'description' => 'This occurrence is currently published and will be cancelled.',
+		'descriptions' => 'These occurrences are currently published and will be cancelled.',
+	),
+	'delete'  => array(
+		'description' => 'This occurrences will be deleted.',
+		'descriptions' => 'These occurrences will be deleted.',
+		'description_pub' => 'This occurrences is not published and will be deleted.',
+		'descriptions_pub' => 'These occurrences are not published and will be deleted.',
+	),
+	'move'    => array(
+		'description' => 'The time and/or duration of this occurrences will be altered.',
+		'descriptions' => 'The times and/or durations of these occurrences will be altered.',
+	),
+	'restore' => array(
+		'description' => 'This occurrence is currently cancelled and will be restored.',
+		'descriptions' => 'These occurrences are currently cancelled and will be restored.',
+	),
+	'create' => array(
+		'description' => 'This occurrence will be created.',
+		'descriptions' => 'These occurrences will be created.',
+		'description_pub' => 'This occurrences will be created. You can publish it now if you wish by selecting it.',
+		'descriptions_pub' => 'These occurrences will be created. You can publish some now if you wish by selecting them.',
+		'checkbox' => 'publish',
+	),
+	'draft' => array(
+		'description' => 'This occurrence is a draft. You can publish it now if you wish by selecting it.',
+		'descriptions' => 'These occurrences are drafts. You can publish some now if you wish by selecting them.',
+		'checkbox' => 'publish',
+	),
+);
 
 // Reference arrays
 global $nth_set;
@@ -202,10 +238,96 @@ $CI = & get_instance();
 		</div>
 	</div>
 </div>
-
 <div id="MainColumn">
 	<div>
 		<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
+			<?php
+	if (isset($Confirms) && isset($Confirms['draft']) && !$CanPublish) {
+		unset($Confirms['draft']);
+		if (empty($Confirms)) {
+			unset($Confirms);
+		}
+	}
+	if (isset($Confirms)) { ?>
+			<div id="confirm_changes_div" class="BlueBox">
+				<h2>Confirm changes</h2>
+	<?php if (count($Confirms) == 1 && isset($Confirms['draft'])) { ?>
+				<p>	This event has one or more draft occurrences which are not
+					publicly visible. You can publish some of them now if you
+					wish. </p>
+	<?php } elseif (!$Create) { ?>
+				<p>	The following changes will be made to your event. Please
+					confirm that they are correct. <p>
+				<p>	<em>Occurrences which are in the past will
+					<strong>not</strong> be altered.</em> </p>
+	<?php } else { ?>
+				<p>	The following changes will be made to your new event. Please
+					confirm that they are correct. <p>
+	<?php } ?>
+				<?php
+				foreach ($confirm_types as $class => $class_info) {
+					if (isset($Confirms[$class])) { ?>
+						<div id="confirm_changes_<?php echo($class); ?>_div">
+							<h3><?php echo(ucfirst($class)); ?> occurrences</h3>
+							<p><em><?php
+	// Get the description key based on plurality and publishability
+	$description_key = 'description';
+	if (count($Confirms[$class]) > 1) {
+		$description_key .= 's';
+	}
+	if ($CanPublish && isset($confirm_types[$class][$description_key.'_pub'])) {
+		$description_key .= '_pub';
+	}
+	echo($confirm_types[$class][$description_key]);
+							?></em></p>
+							<?php foreach ($Confirms[$class] as $id => $confirm_occ) { ?>
+							<div id="eved_confirm_<?php echo($class); ?>_list">
+								<div class="<?php echo($class); ?>"><?php
+	// Description as label or div tag
+	$show_checkbox = $CanPublish && isset($confirm_types[$class]['checkbox']);
+	$description_tag_type = $show_checkbox ? 'label' : 'div';
+	echo("<$description_tag_type class=\"description\">");
+	// Show a checkbox if necessary
+	if ($show_checkbox) {
+		$checkbox_id = 'eved_confirm_'.$class.'_'.$confirm_types[$class]['checkbox'].'_'.$confirm_occ['day'];
+		$checkbox_name = 'eved_confirm['.$class.'_'.$confirm_types[$class]['checkbox'].']['.$confirm_occ['day'].']';
+		echo('<input id="'.$checkbox_id.'" name="'.$checkbox_name.'" type="checkbox" />');
+	}
+
+	// Display the date and time of the occurrence
+	$ts = $confirm_occ['start_time'];
+	$atime = new Academic_time($ts);
+	echo(date('l, j',$ts));                // DAY MONTHDAY
+	echo('<sup>'.date('S',$ts).'</sup> '); // <sup>NTH</sup>
+	echo(date('F Y',$ts));                 // MONTH YEAR
+	echo(' at '.$atime->Format('%T'));     // at TIME
+	// Show simplistic changes to the time
+	if (isset($confirm_occ['new_start_time'])) {
+		if ($confirm_occ['new_start_time'] != $confirm_occ['start_time']) {
+			$new_atime = new Academic_time($confirm_occ['new_start_time']);
+			echo(' (moving to <strong>'.$new_atime->Format('%T').'</strong>)');
+		} elseif ($confirm_occ['new_end_time'] != $confirm_occ['end_time']) {
+			$new_atime = new Academic_time($confirm_occ['new_end_time']);
+			echo(' (ending <strong>'.$new_atime->Format('%T').'</strong>)');
+		}
+	}
+
+	// close the description tag
+	echo("</$description_tag_type>");
+								?></div>
+							</div>
+							<?php } ?>
+						</div>
+						<?php
+					}
+				} ?>
+				<fieldset>
+					<input type="submit" class="button" id="eved_confirm_edit_btn" name="eved_confirm[edit_btn]" onclick="document.getElementById('main_edit_divs').style.display='inline'; document.getElementById('confirm_changes_div').style.display='none'; return false;" value="Make further changes" />
+					<input type="submit" class="button" name="eved_confirm[confirm_btn]" value="Confirm changes" />
+				</fieldset>
+			</div>
+			<?php } ?>
+			<div id="main_edit_divs" style="display:<?php echo(isset($Confirms) ? 'none' : 'block'); ?>;">
 			<div class="BlueBox">
 				<input type="hidden" id="prefix" name="prefix" value="eved" />
 				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
@@ -608,6 +730,7 @@ $CI = & get_instance();
 					<input class="button" type="submit" name="eved_save" value="Save" />
 					<input class="button" type="submit" name="eved_return" value="Cancel" />
 				</fieldset>
+			</div>
 			</div>
 		</form>
 		<?php

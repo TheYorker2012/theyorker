@@ -1506,6 +1506,10 @@ class RecurrenceSet
 			// ensure all durations are set
 			foreach ($results[$array_name] as $date => $dates) {
 				foreach ($dates as $time => $duration) {
+					if (NULL == $time) {
+						$time = $StartTime;
+						unset($results[$array_name][$date][NULL]);
+					}
 					if (NULL === $duration) {
 						$results[$array_name][$date][$time] = $Duration;
 					}
