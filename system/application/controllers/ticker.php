@@ -122,9 +122,9 @@ class Ticker extends Controller {
 			$this->facebook->require_frame();
 			$content = $this->_dashboardHeader('myarticles');
 
-			if ($this->user_auth->isLoggedIn == 1) {
+			if ($_SESSION['ua_loggedin']) {
 				echo('LoggedIn');
-				if ($this->user_auth->officeLogin == 1) {
+				if ($_SESSION['ua_hasoffice']) {
 					echo('OfficeAccess');
 				} else {
 					echo('NoOfficeAccess');
@@ -145,8 +145,7 @@ class Ticker extends Controller {
 						session_start();
 						session_decode($session_data);
 						// Login was successful
-print_r('Session ID: ' . session_id());
-//						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 					} catch (Exception $e) {
 						// Login failed
 						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
