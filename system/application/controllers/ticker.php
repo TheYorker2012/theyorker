@@ -123,17 +123,18 @@ class Ticker extends Controller {
 				}
 			} else {
 				// Check for a login request
+print_r($_SESSION);
 print_r($_POST);
 				if ((isset($_POST['yorker_username'])) && (isset($_POST['yorker_password']))) {
 					try {
 						// Attempt login
 						$this->user_auth->login($_POST['yorker_username'], $_POST['yorker_password'], false);
+						// Login was successful
+//						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 					} catch (Exception $e) {
 						// Login failed
 						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
 					}
-					// Login was successful
-//					$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 				}
 
 				// Show Yorker login box
