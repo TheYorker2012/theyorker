@@ -873,7 +873,7 @@ class Calendar_view_edit_simple
 						}
 						
 						if (!$until_fail) {
-							$until_date = mktime(0, 0, 0, (int)$until['month'], (int)$until['monthday'], (int)$until['year']);
+							$until_date = mktime(23, 59, 59, (int)$until['month'], (int)$until['monthday'], (int)$until['year']);
 							$recur->SetUntil($until_date);
 						}
 					} else {
