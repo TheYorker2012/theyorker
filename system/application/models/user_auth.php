@@ -296,9 +296,9 @@ class User_auth extends model {
 		}
 	}
 
-	public function resetpassword($username) {
+	public function resetpassword($username, $email) {
 		$sql = 'SELECT entity_id, entity_username, entity_password,
-				entity_salt, user_nickname
+				entity_salt, user_nickname, user_email
 			FROM entities
 			INNER JOIN users ON
 				user_entity_id = entity_id
@@ -312,14 +312,15 @@ class User_auth extends model {
 			$sql = 'INSERT INTO entities (entity_username) VALUES (?)';
 			$query = $this->db->query($sql, array($username));
 			$entityId = $this->db->insert_id();
-			$sql = 'INSERT INTO users (user_entity_id) VALUES (?)';
-			$query = $this->db->query($sql, array($entityId));
+			$sql = 'INSERT INTO users (user_entity_id, user_email) VALUES (?, ?)';
+			$query = $this->db->query($sql, array($entityId, $email));
 			$new = true;
 			$nick = '';
 		} else {
 			$row = $query->row();
 			$entityId = $row->entity_id;
 			$nick = $row->user_nickname;
+			$email = $row->user_email;
 			$new = false;
 		}
 
@@ -335,7 +336,6 @@ class User_auth extends model {
 			throw new Exception('Internal error: failed setting passkey');
 		}
 
-		$to = $username.$this->config->Item('username_email_postfix');
 		$from = $this->pages_model->GetPropertyText('system_email', true);
 		$subject = $this->pages_model->GetPropertyText(
 			$new ?
@@ -352,7 +352,7 @@ class User_auth extends model {
 		$body = str_replace(
 			'%%link%%',
 			'http://www.theyorker.co.uk/login/newpass/'.
-				$username.'/'.$random,
+				urlencode($username).'/'.$random,
 			$body
 		);
 		$body = str_replace(
@@ -363,7 +363,7 @@ class User_auth extends model {
 
 		$this->load->helper('yorkermail');
 		try {
-			yorkermail($to,$subject,$body,$from);
+			yorkermail($email,$subject,$body,$from);
 			return true;
 		} catch (Exception $e) {
 			//Do nothing
