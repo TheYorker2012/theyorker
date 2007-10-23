@@ -1721,15 +1721,23 @@ class Recurrence_model extends model
 				'event_recur_rule_interval'   => $recur->GetInterval(),
 				'event_recur_rule_week_start' => $wkst,
 			);
+			$fields = array_map(array($this->db, 'escape'), $fields);
+			$fields['event_recur_rule_until'] = "FROM_UNIXTIME($fields[event_recur_rule_until])";
+			// join with ='s and ,'s
+			$set_expr = array();
+			foreach ($fields as $key => $value) {
+				$set_expr[] = "$key=$value";
+			}
+			$set_expr = implode(',',$set_expr);
 			
 			$rule_id = $recur->GetRecurId();
 			if (is_int($rule_id)) {
 				// is_int so doesn't need escaping
-				$this->db->where("event_recur_rule_id = $rule_id");
-				$this->db->update('event_recur_rules', $fields);
+				$sql = "UPDATE event_recur_rules SET $set_expr WHERE event_recur_rule_id = $rule_id";
 			} else {
-				$this->db->insert('event_recur_rules', $fields);
+				$sql = "INSERT INTO event_recur_rules SET $set_expr";
 			}
+			$this->db->query($sql);
 			$affected = $this->db->affected_rows();
 			
 			if ($affected > 0) {
