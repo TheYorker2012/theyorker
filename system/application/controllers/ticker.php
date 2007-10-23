@@ -123,8 +123,6 @@ class Ticker extends Controller {
 				}
 			} else {
 				// Check for a login request
-print_r($_SESSION);
-print_r($_POST);
 				if ((isset($_POST['yorker_username'])) && (isset($_POST['yorker_password']))) {
 					try {
 						// Attempt login
@@ -161,6 +159,8 @@ print_r($_POST);
 
 			$content .= $this->_dashboardFooter();
 			echo($content);
+print_r($_SESSION);
+print_r($_POST);
 		}
 	}
 
