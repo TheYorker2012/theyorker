@@ -3,7 +3,7 @@
 // +---------------------------------------------------------------------------+
 // | Facebook Platform PHP5 client                                             |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2007 Facebook, Inc.                                         | 
+// | Copyright (c) 2007 Facebook, Inc.                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -37,14 +37,14 @@ class FacebookRestClient {
   public $api_key;
   public $friends_list; // to save making the friends.get api call, this will get prepopulated on canvas pages
   public $added;        // to save making the users.isAppAdded api call, this will get prepopulated on canvas pages
-  
+
   public $debug;
 
   /**
    * Create the client.
-   * @param string $session_key if you haven't gotten a session key yet, leave 
-   *                            this as null and then set it later by just 
-   *                            directly accessing the $session_key member 
+   * @param string $session_key if you haven't gotten a session key yet, leave
+   *                            this as null and then set it later by just
+   *                            directly accessing the $session_key member
    *                            variable.
    */
   public function __construct($api_key, $secret, $session_key=null, $debug = '0') {
@@ -76,7 +76,7 @@ function toggleDisplay(id, type) {
 
   /**
    * Returns the session information available after current user logs in.
-   * @param string $auth_token the token returned by auth_createToken or 
+   * @param string $auth_token the token returned by auth_createToken or
    *  passed back to your callback_url.
    * @return assoc array containing session_key, uid
    */
@@ -92,13 +92,13 @@ function toggleDisplay(id, type) {
 
   /**
    * Returns events according to the filters specified.
-   * @param int $uid Optional: User associated with events.  
+   * @param int $uid Optional: User associated with events.
    *   A null parameter will default to the session user.
    * @param array $eids Optional: Filter by these event ids.
    *   A null parameter will get all events for the user.
-   * @param int $start_time Optional: Filter with this UTC as lower bound.  
+   * @param int $start_time Optional: Filter with this UTC as lower bound.
    *   A null or zero parameter indicates no lower bound.
-   * @param int $end_time Optional: Filter with this UTC as upper bound. 
+   * @param int $end_time Optional: Filter with this UTC as upper bound.
    *   A null or zero parameter indicates no upper bound.
    * @param string $rsvp_status Optional: Only show events where the given uid
    *   has this rsvp status.  This only works if you have specified a value for
@@ -111,7 +111,7 @@ function toggleDisplay(id, type) {
         array(
         'uid' => $uid,
         'eids' => $eids,
-        'start_time' => $start_time, 
+        'start_time' => $start_time,
         'end_time' => $end_time,
         'rsvp_status' => $rsvp_status));
   }
@@ -139,7 +139,7 @@ function toggleDisplay(id, type) {
       array('query' => $query));
   }
 
-  public function feed_publishStoryToUser($title, $body, 
+  public function feed_publishStoryToUser($title, $body,
                                           $image_1=null, $image_1_link=null,
                                           $image_2=null, $image_2_link=null,
                                           $image_3=null, $image_3_link=null,
@@ -158,8 +158,8 @@ function toggleDisplay(id, type) {
             'image_4_link' => $image_4_link,
             'priority' => $priority));
   }
-                                          
-  public function feed_publishActionOfUser($title, $body, 
+
+  public function feed_publishActionOfUser($title, $body,
                                            $image_1=null, $image_1_link=null,
                                            $image_2=null, $image_2_link=null,
                                            $image_3=null, $image_3_link=null,
@@ -178,6 +178,32 @@ function toggleDisplay(id, type) {
             'image_4_link' => $image_4_link,
             'priority' => $priority));
   }
+  
+  public function feed_publishTemplatizedAction($actor_id, $title_template, $title_data,
+                                                $body_template, $body_data, $body_general, 
+                                                $image_1=null, $image_1_link=null,
+                                                $image_2=null, $image_2_link=null,
+                                                $image_3=null, $image_3_link=null,
+                                                $image_4=null, $image_4_link=null,
+                                                $target_ids='') {
+    return $this->call_method('facebook.feed.publishTemplatizedAction',
+      array('actor_id' => $actor_id,
+            'title_template' => $title_template,
+            'title_data' => $title_data,
+            'body_template' => $body_template,
+            'body_data' => $body_data,
+            'body_general' => $body_general,
+            'image_1' => $image_1,
+            'image_1_link' => $image_1_link,
+            'image_2' => $image_2,
+            'image_2_link' => $image_2_link,
+            'image_3' => $image_3,
+            'image_3_link' => $image_3_link,
+            'image_4' => $image_4,
+            'image_4_link' => $image_4_link,
+            'target_ids' => $target_ids));
+  }
+
 
   /**
    * Returns whether or not pairs of users are friends.
@@ -193,7 +219,7 @@ function toggleDisplay(id, type) {
     return $this->call_method('facebook.friends.areFriends',
         array('uids1'=>$uids1, 'uids2'=>$uids2));
   }
-  
+
   /**
    * Returns the friends of the current session user.
    * @return array of friends
@@ -349,7 +375,7 @@ function toggleDisplay(id, type) {
 
   /**
    * Sets the FBML for the profile of the user attached to this session
-   * @param   string   $markup     The FBML that describes the profile presence of this app for the user 
+   * @param   string   $markup     The FBML that describes the profile presence of this app for the user
    * @return  array    A list of strings describing any compile errors for the submitted FBML
    */
   public function profile_setFBML($markup, $uid = null) {
@@ -466,7 +492,7 @@ function toggleDisplay(id, type) {
       return $arr;
     } else {
       return (string)$sxml;
-    } 
+    }
   }
 }
 
