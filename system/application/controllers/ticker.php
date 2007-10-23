@@ -123,6 +123,7 @@ class Ticker extends Controller {
 				}
 			} else {
 				// Check for a login request
+print_r($_POST);
 				if ((isset($_POST['yorker_username'])) && (isset($_POST['yorker_password']))) {
 					try {
 						// Attempt login
@@ -132,7 +133,7 @@ class Ticker extends Controller {
 						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
 					}
 					// Login was successful
-					$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+//					$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 				}
 
 				// Show Yorker login box
