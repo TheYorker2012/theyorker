@@ -107,6 +107,14 @@ class Ticker extends Controller {
 
 	function myarticles ()
 	{
+		//  PHP Sessions don't work with Facebook!
+		session_destroy();
+		if (isset($_POST["fb_sig_session_key"])) {
+			$_fb_sig_session_key = str_replace("-","0",$_POST["fb_sig_session_key"]);
+			session_id($_fb_sig_session_key);
+		}
+		session_start();
+
 		if ($user = $this->facebook->require_login()) {
 			$this->facebook->require_frame();
 			$content = $this->_dashboardHeader('myarticles');
@@ -127,8 +135,17 @@ class Ticker extends Controller {
 					try {
 						// Attempt login
 						$this->user_auth->login($_POST['yorker_username'], $_POST['yorker_password'], false);
+						// Need to transfer the yorker's login info into the facebook session
+						$session_data = session_encode();
+						session_destroy();
+						if (isset($_POST["fb_sig_session_key"])) {
+							$_fb_sig_session_key = str_replace("-","0",$_POST["fb_sig_session_key"]);
+							session_id($_fb_sig_session_key);
+						}
+						session_start();
+						session_decode($session_data);
 						// Login was successful
-//						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 					} catch (Exception $e) {
 						// Login failed
 						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
