@@ -107,7 +107,10 @@ class Ticker extends Controller {
 
 	function myarticles ()
 	{
-		//  PHP Sessions don't work with Facebook!
+		// Load yorker's user management
+		$this->load->model('user_auth');
+
+		// PHP Sessions don't work with Facebook!
 		session_destroy();
 		if (isset($_POST["fb_sig_session_key"])) {
 			$_fb_sig_session_key = str_replace("-","0",$_POST["fb_sig_session_key"]);
@@ -118,9 +121,6 @@ class Ticker extends Controller {
 		if ($user = $this->facebook->require_login()) {
 			$this->facebook->require_frame();
 			$content = $this->_dashboardHeader('myarticles');
-
-			// Load yorker's user management
-			$this->load->model('user_auth');
 
 			if ($this->user_auth->isLoggedIn == 1) {
 				echo('LoggedIn');
