@@ -56,13 +56,4 @@
 			<?php } ?>
 		</div>
 
-		<br class="clear" />
-
-<!--
-		<?php echo($business_card_id); ?><br />
-		business_cards.business_card_order,
-		UNIX_TIMESTAMP(business_cards.business_card_start_date) AS business_card_start_date,
-		UNIX_TIMESTAMP(business_cards.business_card_end_date) AS business_card_end_date,
-		business_cards.business_card_approved,
--->
 	</div>

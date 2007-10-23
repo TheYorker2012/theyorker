@@ -445,16 +445,17 @@ class News_model extends Model
 		    $authors = array();
 		    foreach ($query->result() as $row)
 			{
-				$sql = 'SELECT business_cards.business_card_name
-					FROM business_cards
-					WHERE (business_cards.business_card_user_entity_id = ?)';
+				$sql = 'SELECT	business_cards.business_card_name,
+								business_cards.business_card_id
+						FROM	business_cards
+						WHERE	(business_cards.business_card_user_entity_id = ?)';
 				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
 				if ($author_query->num_rows() > 0)
 				{
 					$author_row = $author_query->row();
 					$authors[] = array(
 						'name' => $author_row->business_card_name,
-						'id' => $row->article_writer_user_entity_id
+						'id' => $author_row->business_card_id
 					);
 				}
 			}
@@ -532,16 +533,17 @@ class News_model extends Model
 		    $authors = array();
 		    foreach ($query->result() as $row)
 			{
-				$sql = 'SELECT business_cards.business_card_name
-						FROM business_cards
-						WHERE (business_cards.business_card_user_entity_id = ?)';
+				$sql = 'SELECT	business_cards.business_card_name,
+								business_cards.business_card_id
+						FROM	business_cards
+						WHERE	(business_cards.business_card_user_entity_id = ?)';
 				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
 				if ($author_query->num_rows() > 0)
 				{
 					$author_row = $author_query->row();
 					$authors[] = array(
 						'name' => $author_row->business_card_name,
-						'id' => $row->article_writer_user_entity_id
+						'id' => $author_row->business_card_id
 					);
 				}
 			}
@@ -617,7 +619,7 @@ class News_model extends Model
 		$result['text'] = $row->article_content_wikitext_cache;
 		$result['blurb'] = $row->article_content_blurb;
 
-		$sql = 'SELECT article_writers.article_writer_user_entity_id,
+		$sql = 'SELECT article_writers.article_writer_byline_business_card_id,
 				business_cards.business_card_name
 			FROM article_writers, business_cards
 			WHERE article_writers.article_writer_article_id = ?
@@ -630,7 +632,7 @@ class News_model extends Model
 	    foreach ($query->result() as $row)
 		{
 			$authors[] = array(
-				'id' => $row->article_writer_user_entity_id,
+				'id' => $row->article_writer_byline_business_card_id,
 				'name' => $row->business_card_name
 			);
 		}
@@ -729,8 +731,23 @@ class News_model extends Model
 	/**
 	 *	@param	$type:string - 'count' = retrieve num of matching results, 'search' = retrieve chosen articles
 	 */
-	function GetArchive($type = 'search', $limit = 0, $rows = 10)
+	function GetArchive($type = 'search', $filters = array(), $limit = 0, $rows = 10)
 	{
+		// Process filters
+		$extra_from = array();
+		$extra_where = array();
+		foreach ($filters as $field => $value) {
+			switch ($field) {
+				case 'reporter':
+					if (is_numeric($value)) {
+						$extra_from[] = 'article_writers';
+						$extra_where[] = 'article_writers.article_writer_article_id = articles.article_id';
+						$extra_where[] = 'article_writers.article_writer_status = "accepted"';
+						$extra_where[] = 'article_writers.article_writer_byline_business_card_id = ' . $value;
+					}
+					break;
+			}
+		}
 
 		$result = array();
 		if ($type == 'count') {
@@ -753,8 +770,11 @@ class News_model extends Model
 					AND		photo_requests.photo_request_chosen_photo_id IS NOT NULL
 					AND		photo_requests.photo_request_approved_user_entity_id IS NOT NULL
 						)	,
-							article_contents,
-							content_types
+							article_contents,';
+		foreach ($extra_from as $from) {
+			$sql .= '		'.$from.',';
+		}
+		$sql .='			content_types
 				LEFT JOIN	content_types AS parent_type
 					ON		content_types.content_type_parent_content_type_id = parent_type.content_type_id
 				WHERE		articles.article_content_type_id = content_types.content_type_id
@@ -764,8 +784,11 @@ class News_model extends Model
 				AND			articles.article_live_content_id IS NOT NULL
 				AND			articles.article_live_content_id = article_contents.article_content_id
 				AND			articles.article_id = article_contents.article_content_article_id
-				AND			content_types.content_type_archive = 1
-				ORDER BY	articles.article_publish_date DESC';
+				AND			content_types.content_type_archive = 1';
+		foreach ($extra_where as $where) {
+			$sql .= '	AND		'.$where;
+		}
+		$sql .='	ORDER BY	articles.article_publish_date DESC';
 		if ($type == 'search') {
 			$sql .= "\n".'LIMIT		'.$limit.','.$rows;
 		}
@@ -775,26 +798,20 @@ class News_model extends Model
 		} elseif ($query->num_rows() > 0) {
 			foreach ($query->result_array() as $article) {
 				$article['reporters'] = array();
-				/// @TODO: Make following query get byline info too when new byline system implemented
-				$sql = 'SELECT		article_writers.article_writer_user_entity_id
-						FROM		article_writers
+				$sql = 'SELECT		article_writers.article_writer_byline_business_card_id,
+									business_cards.business_card_name
+						FROM		article_writers,
+									business_cards
 						WHERE		article_writers.article_writer_article_id = ?
 						AND			article_writers.article_writer_status = "accepted"
-						AND			article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL';
+						AND			article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
+						AND			business_cards.business_card_id = article_writers.article_writer_byline_business_card_id';
 				$query = $this->db->query($sql,array($article['id']));
 				foreach ($query->result() as $row) {
-					/// @TODO: Remove this query and merge into above query
-					$sql = 'SELECT		business_cards.business_card_name
-							FROM		business_cards
-							WHERE		business_cards.business_card_user_entity_id = ?';
-					$query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-					if ($query->num_rows() == 1) {
-						$reporter = $query->row();
-						$article['reporters'][] = array(
-							'name'	=>	$reporter->business_card_name,
-							'id'	=>	$row->article_writer_user_entity_id
-						);
-					}
+					$article['reporters'][] = array(
+						'name'	=>	$row->business_card_name,
+						'id'	=>	$row->article_writer_byline_business_card_id
+					);
 				}
 				$result[] = $article;
 			}

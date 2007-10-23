@@ -347,7 +347,40 @@ class Businesscards_model extends Model
 					ON		users.user_entity_id = business_cards.business_card_user_entity_id
 				WHERE		business_cards.business_card_id = ?
 				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
-				AND			business_cards.business_card_deleted = 0';
+				AND			business_cards.business_card_deleted = 0
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL';
+		$query = $this->db->query($sql, array($byline_id));
+		return $query->row_array();
+	}
+
+	function GetPublicBylineInfo ($byline_id)
+	{
+		$sql = 'SELECT		business_cards.business_card_id,
+							business_cards.business_card_user_entity_id,
+							business_cards.business_card_business_card_group_id,
+							business_cards.business_card_image_id,
+							business_cards.business_card_name,
+							business_cards.business_card_title,
+							business_cards.business_card_blurb,
+							business_cards.business_card_course,
+							business_cards.business_card_email,
+							business_cards.business_card_mobile,
+							business_cards.business_card_phone_internal,
+							business_cards.business_card_phone_external,
+							business_cards.business_card_postal_address,
+							business_cards.business_card_order,
+							business_cards.business_card_about_us,
+							UNIX_TIMESTAMP(business_cards.business_card_start_date) AS business_card_start_date,
+							UNIX_TIMESTAMP(business_cards.business_card_end_date) AS business_card_end_date,
+							business_cards.business_card_approved,
+							business_card_groups.business_card_group_name
+				FROM		business_card_groups,
+							business_cards
+				WHERE		business_cards.business_card_id = ?
+				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_cards.business_card_deleted = 0
+				AND			business_cards.business_card_approved = 1
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL';
 		$query = $this->db->query($sql, array($byline_id));
 		return $query->row_array();
 	}

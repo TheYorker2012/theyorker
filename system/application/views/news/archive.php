@@ -14,7 +14,7 @@ function printarticlelink($article) {
 	echo('			<div class="Date">'.date('D, jS F Y',$article['date']).'</div>'."\n");
 	echo('			<div class="Author">'."\n");
 	foreach($article['reporters'] as $reporter)
-		echo('				<a href="/contact">'.$reporter['name'].'</a>'."\n");
+		echo('				<a href="/news/archive/reporter/'.$reporter['id'].'/">'.$reporter['name'].'</a>'."\n");
 	echo('			</div>'."\n");
 	echo('		</div>'."\n");
 	echo('		<p>'.$article['blurb'].'</p>'."\n");
@@ -30,11 +30,13 @@ function printarticlelink($article) {
 </div>
 
 <div id="MainColumn">
+	<?php if (isset($byline_info)) $this->load->view('/office/bylines/byline', $byline_info); ?>
+
 	<div class="BlueBox">
 		<h2>news archive</h2>
 
 		<?php echo($this->pagination->create_links()); ?>
-		<div>Viewing <?php echo(($offset + 1) . ' - ' . ((($offset + 10) <= $total) ? ($offset + 10) : $total) . ' of ' . $total . ' articles'); ?></div>
+		<div>Viewing <?php echo((($total == 0) ? '0' : ($offset + 1)) . ' - ' . ((($offset + 10) <= $total) ? ($offset + 10) : $total) . ' of ' . $total . ' articles'); ?></div>
 		<div style="border-bottom:1px #999 solid;clear:both"></div>
 
 <?php
@@ -44,7 +46,7 @@ function printarticlelink($article) {
 ?>
 
 		<?php echo($this->pagination->create_links()); ?>
-		<div>Viewing <?php echo(($offset + 1) . ' - ' . ($offset + 10) . ' of ' . $total . ' articles'); ?></div>
+		<div>Viewing <?php echo((($total == 0) ? '0' : ($offset + 1)) . ' - ' . ((($offset + 10) <= $total) ? ($offset + 10) : $total) . ' of ' . $total . ' articles'); ?></div>
 		<div style="clear:both"></div>
 	</div>
 </div>

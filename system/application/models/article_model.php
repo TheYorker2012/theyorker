@@ -20,15 +20,20 @@ class Article_model extends Model
 	/// Retrieves all the information for a reporter's byline
 	function GetReporterByline($user_id)
 	{
-		$sql = 'SELECT business_cards.business_card_name,
-				 business_cards.business_card_image_id
-				FROM business_cards
-				WHERE business_card_user_entity_id = ?
-				AND business_cards.business_card_deleted = 0';
+		$sql = 'SELECT		business_cards.business_card_name,
+				 			business_cards.business_card_image_id,
+							business_cards.business_card_id
+				FROM		business_cards,
+							business_card_groups
+				WHERE		business_card_user_entity_id = ?
+				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_card_groups.business_card_group_organisation_id IS NULL
+				AND			business_cards.business_card_deleted = 0';
 		$query = $this->db->query($sql, array($user_id));
 		$result = array();
 		if ($query->num_rows() == 1) {
 			$row = $query->row();
+			$result['id'] = $row->business_card_id;
 			$result['name'] = $row->business_card_name;
 			$result['photo'] = $row->business_card_image_id;
 		}
