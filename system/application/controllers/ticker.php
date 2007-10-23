@@ -145,7 +145,8 @@ class Ticker extends Controller {
 						session_start();
 						session_decode($session_data);
 						// Login was successful
-						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+print_r('Session ID: ' . session_id());
+//						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
 					} catch (Exception $e) {
 						// Login failed
 						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
