@@ -159,6 +159,8 @@ class Ticker extends Controller {
 
 			$content .= $this->_dashboardFooter();
 			echo($content);
+echo('Logged in: ' . $this->user_auth->isLoggedIn . ' - ' . $_SESSION['ua_loggedin']);
+echo('Office Access?: ' . $this->user_auth->officeLogin . ' - ' . $_SESSION['ua_hasoffice']);
 print_r($_SESSION);
 print_r($_POST);
 		}
