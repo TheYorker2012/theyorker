@@ -114,9 +114,9 @@ class Ticker extends Controller {
 			// Load yorker's user management
 			$this->load->model('user_auth');
 
-			if ($this->user_auth->isLoggedIn) {
+			if ($this->user_auth->isLoggedIn == 1) {
 				echo('LoggedIn');
-				if ($this->user_auth->officeLogin) {
+				if ($this->user_auth->officeLogin == 1) {
 					echo('OfficeAccess');
 				} else {
 					echo('NoOfficeAccess');
