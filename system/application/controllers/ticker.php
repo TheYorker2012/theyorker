@@ -159,6 +159,10 @@ class Ticker extends Controller {
 
 			$content .= $this->_dashboardFooter();
 			echo($content);
+echo(($this->user_auth->isLoggedIn) ? 'true' : 'false');
+echo(($this->user_auth->isLoggedIn == 1) ? '1' : 'not 1');
+echo(($this->user_auth->isLoggedIn == '1') ? 'str 1' : 'not str 1');
+echo(($this->user_auth->isLoggedIn === TRUE) ? 'TRUE' : 'FALSE');
 echo('Logged in: ' . $this->user_auth->isLoggedIn . ' - ' . $_SESSION['ua_loggedin']);
 echo('Office Access?: ' . $this->user_auth->officeLogin . ' - ' . $_SESSION['ua_hasoffice']);
 print_r($_SESSION);
