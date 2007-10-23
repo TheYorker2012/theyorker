@@ -1015,20 +1015,47 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$input['recur'] = $rset;
 			
 			if ($input_valid && empty($errors)) {
+				$event = new CalendarEvent(-1, $this->mSource);
 				if (isset($_POST[$prefix.'_save'])) {
-					$event = new CalendarEvent(-1, $this->mSource);
-					$changes_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
-					if (empty($changes_list)) {
+					$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+					if (empty($confirm_list)) {
 						$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
-					} else {
-						$confirm_list = $changes_list;
 					}
 				}
 				if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
-					$messages = $this->mSource->CreateEvent($input);
+					$event_id = -1;
+					$messages = array();
+					$messages = $this->mSource->CreateEvent($input, $event_id);
 					$this->messages->AddMessages($messages);
 					if (!array_key_exists('error', $messages) || empty($messages['error'])) {
 						$this->messages->AddMessage('success', 'Event created successfully.');
+						
+						// Publish the specified occurrences.
+						$publish_occurrences = array();
+						foreach (array('create'/*,'draft'*/) as $namespace) {
+							if (isset($_POST[$prefix.'_confirm'][$namespace.'_publish'])) {
+								if (NULL === $confirm_list) {
+									$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+								}
+								foreach ($_POST[$prefix.'_confirm'][$namespace.'_publish'] as $day => $dummy) {
+									if (isset($confirm_list[$namespace][$day])) {
+										$publish_occurrences[] = $confirm_list[$namespace][$day]['start_time'];
+									}
+								}
+							}
+						}
+						if (!empty($publish_occurrences)) {
+							$event = new CalendarEvent(-1, $this->mSource);
+							$event->SourceEventId = $event_id;
+							$published = $this->mSource->PublishOccurrences($event, $publish_occurrences);
+							$desired = count($publish_occurrences);
+							if ($published < $desired) {
+								$message_type = 'warning';
+							} else {
+								$message_type = 'success';
+							}
+							$this->messages->Addmessage($message_type, "$published out of $desired occurrences were published.");
+						}
 						return redirect($this->mPaths->Range(date('Y-M-j', $start)));
 					}
 				}
@@ -1074,6 +1101,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		);
 		if (is_array($confirm_list)) {
 			$data['Confirms'] = $confirm_list;
+			if (isset($_POST[$prefix.'_confirm'])) {
+				$data['Confirm'] = $_POST[$prefix.'_confirm'];
+			} else {
+				$data['Confirm'] = NULL;
+			}
 		}
 		foreach ($errors as $error) {
 			$this->messages->AddMessage('error', $error['text']);
@@ -1353,11 +1385,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				
 				if ($input_valid && empty($errors)) {
 					if (isset($_POST[$prefix.'_save'])) {
-						$changes_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
-						if (empty($changes_list)) {
+						$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+						if (empty($confirm_list)) {
 							$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
-						} else {
-							$confirm_list = $changes_list;
 						}
 					}
 					if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
@@ -1368,6 +1398,31 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						if (!array_key_exists('error', $messages) || empty($messages['error'])) {
 							// Success
 							$this->messages->AddMessage('success', 'Event updated');
+							
+							// Publish the specified occurrences.
+							$publish_occurrences = array();
+							foreach (array('create','draft') as $namespace) {
+								if (isset($_POST[$prefix.'_confirm'][$namespace.'_publish'])) {
+									if (NULL === $confirm_list) {
+										$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+									}
+									foreach ($_POST[$prefix.'_confirm'][$namespace.'_publish'] as $day => $dummy) {
+										if (isset($confirm_list[$namespace][$day])) {
+											$publish_occurrences[] = $confirm_list[$namespace][$day]['start_time'];
+										}
+									}
+								}
+							}
+							if (!empty($publish_occurrences)) {
+								$published = $this->mSource->PublishOccurrences($event, $publish_occurrences);
+								$desired = count($publish_occurrences);
+								if ($published < $desired) {
+									$message_type = 'warning';
+								} else {
+									$message_type = 'success';
+								}
+								$this->messages->Addmessage($message_type, "$published out of $desired occurrences were published.");
+							}
 							
 							// REDIRECT
 							if ($occurrence_specified) {
@@ -1420,6 +1475,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			);
 			if (is_array($confirm_list)) {
 				$data['Confirms'] = $confirm_list;
+				if (isset($_POST[$prefix.'_confirm'])) {
+					$data['Confirm'] = $_POST[$prefix.'_confirm'];
+				} else {
+					$data['Confirm'] = NULL;
+				}
 			}
 			foreach ($errors as $error) {
 				$this->messages->AddMessage('error', $error['text']);

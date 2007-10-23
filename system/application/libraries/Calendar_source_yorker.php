@@ -585,15 +585,18 @@ class CalendarSourceYorker extends CalendarSource
 	/// Create an event.
 	/**
 	 * @param $Event CalendarEvent event information.
+	 * @param $NewId &int New source id.
 	 * @return array Array of messages.
+	 * @post @a $NewId will be set if and only if empty(result['error']).
 	 */
-	function CreateEvent($Event)
+	function CreateEvent($Event, & $NewId)
 	{
 		/// @todo Make this function work with a CalendarEvent object.
 		$messages = array();
 		$CI = & get_instance();
 		try {
 			$results = $CI->events_model->EventCreate($Event);
+			$NewId = $results['event_id'];
 		} catch (Exception $e) {
 			$messages['error'][] = $e->getMessage();
 		}
@@ -751,6 +754,23 @@ class CalendarSourceYorker extends CalendarSource
 				$result = -1;
 		};
 		return $result;
+	}
+	
+	/// Publish occurrences at specific times.
+	/**
+	 * @param $Event &CalendarEvent Drafts within this event.
+	 * @param $Timestamps array of Timestamps.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrences(& $Event, $Timestamps)
+	{
+		$CI = & get_instance();
+		$changes = $CI->events_model->OccurrencesChangeStateByTimestamp(
+			$Event->SourceEventId,
+			$Timestamps,
+			array('draft'),
+			'published');
+		return $changes;
 	}
 	
 	/// Cancel an occurrence.

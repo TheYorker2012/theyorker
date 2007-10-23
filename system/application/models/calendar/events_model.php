@@ -2105,6 +2105,57 @@ class Events_model extends Model
 		return $this->db->affected_rows();
 	}
 
+	/// Change the state of an occurrence explicitly.
+	/**
+	 * @param $EventId integer Id of event occurrence belongs to.
+	 * @param $OccurrenceId array[integer] Ids of occurrence to change the state of.
+	 * @param $OldStates array(string) Previous private state.
+	 * @param $NewState string New private state.
+	 * @param $ExtraConsitions array[string] Additional SQL conditions.
+	 * @param $ExtraSets array[string=>string] Addition SQL set statements (NOT ESCAPED).
+	 * @return integer Number of changed occurrences.
+	 */
+	function OccurrencesChangeStateByTimestamp($EventId, $Timestamps, $OldStates, $NewState, $ExtraConditions = array(), $ExtraSets = '')
+	{
+		if ($this->mReadOnly) {
+			throw new Exception(self::$cReadOnlyMessage);
+		}
+		// Don't bother continuing of parameters are empty
+		if (!is_int($EventId) ||
+			!is_array($Timestamps) || empty($Timestamps) ||
+			!is_array($OldStates)  || empty($OldStates))
+		{
+			return 0;
+		}
+		$occurrence_query = new EventOccurrenceQuery();
+
+		// change the state to $NewState
+		// where the state was in $OldStates
+		$sql = 'UPDATE event_occurrences
+			INNER JOIN events
+				ON	event_id = event_occurrence_event_id
+			LEFT JOIN event_entities
+				ON	event_entities.event_entity_event_id
+						= event_occurrences.event_occurrence_event_id
+			SET		event_occurrences.event_occurrence_state='.$this->db->escape($NewState).',
+					event_occurrences.event_occurrence_last_modified=CURRENT_TIMESTAMP()';
+		if ($ExtraSets != '') {
+			$sql .= ", $ExtraSets";
+		}
+		$sql .= " WHERE	event_occurrences.event_occurrence_event_id=$EventId
+				AND	".$occurrence_query->ExpressionOwned();
+		
+		$start_times = implode(',',array_map(array($this->db, 'escape'), $Timestamps));
+		$old_states  = implode(',',array_map(array($this->db, 'escape'), $OldStates));
+		$sql .= " AND	UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time) IN ($start_times)";
+		$sql .= " AND	event_occurrences.event_occurrence_state IN ($old_states)";
+		foreach ($ExtraConditions as $ExtraCondition) {
+			$sql .= ' AND ('.$ExtraCondition.')';
+		}
+		$this->db->query($sql);
+		return $this->db->affected_rows();
+	}
+
 
 	/// Publish a draft occurrence to the feed.
 	/**

@@ -575,9 +575,11 @@ abstract class CalendarSource
 	/// Create an event.
 	/**
 	 * @param $Event CalendarEvent event information.
+	 * @param $NewId &int New source id.
 	 * @return array Array of messages.
+	 * @post @a $NewId will be set if and only if empty(result['error']).
 	 */
-	function CreateEvent($Event)
+	function CreateEvent($Event, & $NewId)
 	{
 		return array('error' => array('Creating events in this event source is not currently supported.'));
 	}
@@ -654,6 +656,17 @@ abstract class CalendarSource
 	 * @return int Number of affected rows or error code (negative).
 	 */
 	function PublishOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Publish occurrences at specific times.
+	/**
+	 * @param $Event &CalendarEvent Drafts within this event.
+	 * @param $Timestamps array of Timestamps.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrences(& $Event, $Timestamps)
 	{
 		return -1;
 	}

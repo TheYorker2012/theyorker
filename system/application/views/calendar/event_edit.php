@@ -15,6 +15,7 @@
  * @param $EventCategories array[id => array('id'=>,'name'=>,'colour'=>)]
  * @param $Help Help text array, indexed by title.
  * @param $Confirms Changes to be confirmed.
+ * @param $Confirm array Previous post data.
  * @param $CanPublish bool Whether the user can publish this event.
  * @param $Create bool whether the event is new.
  *
@@ -35,9 +36,9 @@ $confirm_types = array(
 		'descriptions' => 'These occurrences are currently published and will be cancelled.',
 	),
 	'delete'  => array(
-		'description' => 'This occurrences will be deleted.',
+		'description' => 'This occurrence will be deleted.',
 		'descriptions' => 'These occurrences will be deleted.',
-		'description_pub' => 'This occurrences is not published and will be deleted.',
+		'description_pub' => 'This occurrence is not published and will be deleted.',
 		'descriptions_pub' => 'These occurrences are not published and will be deleted.',
 	),
 	'move'    => array(
@@ -51,7 +52,7 @@ $confirm_types = array(
 	'create' => array(
 		'description' => 'This occurrence will be created.',
 		'descriptions' => 'These occurrences will be created.',
-		'description_pub' => 'This occurrences will be created. You can publish it now if you wish by selecting it.',
+		'description_pub' => 'This occurrence will be created. You can publish it now if you wish by selecting it.',
 		'descriptions_pub' => 'These occurrences will be created. You can publish some now if you wish by selecting them.',
 		'checkbox' => 'publish',
 	),
@@ -289,9 +290,13 @@ $CI = & get_instance();
 	echo("<$description_tag_type class=\"description\">");
 	// Show a checkbox if necessary
 	if ($show_checkbox) {
+		$selected = '';
+		if (isset($Confirm[$class.'_'.$confirm_types[$class]['checkbox']][$confirm_occ['day']])) {
+			$selected = ' checked="checked"';
+		}
 		$checkbox_id = 'eved_confirm_'.$class.'_'.$confirm_types[$class]['checkbox'].'_'.$confirm_occ['day'];
 		$checkbox_name = 'eved_confirm['.$class.'_'.$confirm_types[$class]['checkbox'].']['.$confirm_occ['day'].']';
-		echo('<input id="'.$checkbox_id.'" name="'.$checkbox_name.'" type="checkbox" />');
+		echo("<input id=\"$checkbox_id\" name=\"$checkbox_name\" type=\"checkbox\"$selected />");
 	}
 
 	// Display the date and time of the occurrence
