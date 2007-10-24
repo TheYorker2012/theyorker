@@ -155,7 +155,6 @@ class CalendarSourceYorker extends CalendarSource
 			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)	AS start,'.
 			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time)	AS end,'.
 // 			'event_occurrences.event_occurrence_time_associated				AS time_associated,'.
-			'event_occurrences.event_occurrence_location_name				AS location,'.
 			'event_occurrences.event_occurrence_ends_late					AS ends_late,'.
 			
 			// show on calendar if date associated and attending=TRUE or NULL
@@ -173,6 +172,8 @@ class CalendarSourceYorker extends CalendarSource
 			'event_types.event_type_colour_hex		AS category_colour,'.
 			'events.event_name						AS name,'.
 			'events.event_description				AS description,'.
+			'events.event_location_name				AS event_location,'.
+			'event_occurrences.event_occurrence_location_name			AS occurrence_location,'.
 			//'events.event_blurb AS blurb,'.
 			'UNIX_TIMESTAMP(events.event_start)		AS base_start,'.
 			'UNIX_TIMESTAMP(events.event_end)		AS base_end,'.
@@ -222,6 +223,7 @@ class CalendarSourceYorker extends CalendarSource
 				$event->CategoryId = $row['category_id'];
 				$event->Name = $row['name'];
 				$event->Description = $row['description'];
+				$event->LocationDescription = $row['event_location'];
 				$event->LastUpdate = $row['last_update'];
 				if (NULL !== $row['base_start']) {
 					$event->StartTime = new Academic_time((int)$row['base_start']);
@@ -262,7 +264,7 @@ class CalendarSourceYorker extends CalendarSource
 					$occurrence->EndTime = new Academic_time((int)$row['end']);
 				}
 				$occurrence->TimeAssociated = $row['time_associated'];
-				$occurrence->LocationDescription = $row['location'];
+				$occurrence->LocationDescription = $row['occurrence_location'];
 				/// @todo location link
 				if ($row['ends_late']) {
 					$occurrence->SpecialTags[] = 'ends_late';
@@ -641,6 +643,12 @@ class CalendarSourceYorker extends CalendarSource
 				($Changes['description'] != $Event->Description))
 			{
 				$loc_changes['description'] = $Changes['description'];
+			}
+			
+			if (array_key_exists('location_name', $Changes) &&
+				($Changes['location_name'] !== $Event->LocationDescription))
+			{
+				$loc_changes['location_name'] = $Changes['location_name'];
 			}
 			
 			if (array_key_exists('time_associated', $Changes) &&

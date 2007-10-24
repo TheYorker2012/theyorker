@@ -34,8 +34,9 @@ $CI = & get_instance();
 				echo('</div>');
 				
 				echo('<div>');
-				if (!empty($Occurrence->LocationDescription)) {
-					echo('Location: '.htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
+				$location = $Occurrence->GetLocationDescription();
+				if (is_string($location) && !empty($location)) {
+					echo('Location: '.htmlentities($location, ENT_QUOTES, 'utf-8'));
 					echo('<br />');
 				}
 			} else {

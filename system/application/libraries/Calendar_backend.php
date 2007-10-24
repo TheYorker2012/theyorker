@@ -111,6 +111,14 @@ class CalendarOccurrence
 	{
 		return in_array($Action, $this->UserPermissions);
 	}
+	
+	/// Get the location description of the occurrence.
+	function GetLocationDescription()
+	{
+		return NULL === $this->LocationDescription
+				?	$this->Event->LocationDescription
+				:	$this->LocationDescription;
+	}
 }
 
 /// Class to represent event from any source.
@@ -149,6 +157,8 @@ class CalendarEvent
 	public $Description		= NULL;
 	/// html,NULL Description of event as html.
 	public $DescriptionHtml	= NULL;
+	/// string,NULL Description of location.
+	public $LocationDescription	= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.
 	public $Organisations	= array();
 	/// timestamp,NULL Time of last significant updaate to the event.

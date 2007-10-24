@@ -225,6 +225,19 @@ class EventOccurrenceQuery
 						'\'postponed\'))),' .
 			'event_occurrences.event_occurrence_state)';
 	}
+	
+	/// Produce an SQL expression for the location name of an occurrence.
+	/**
+	 * @param $EventAlias string Alias of event used in expression.
+	 * @param $OccurrenceAlias string Alias of occurrence used in expression.
+	 * @return string SQL string expression.
+	 */
+	function ExpressionLocationName($EventAlias = 'events', $OccurrenceAlias = 'event_occurrences')
+	{
+		return "IF ($OccurrenceAlias.event_occurrence_location_name IS NOT NULL,'.
+					'$OccurrenceAlias.event_occurrence_location_name,'.
+					'$EventAlias.event_location_name)";
+	}
 }
 
 /// Filter class for retrieving event occurrences.
@@ -759,6 +772,7 @@ class Events_model extends Model
 
 		// Event occurrences
 		if ($this->IsEnabled('occurrences-all')) {
+			$occurrence_query = new EventOccurrenceQuery();
 			$filter = $this->mOccurrenceFilter;
 			if (NULL === $filter) {
 				$filter = new EventOccurrenceFilter();
@@ -773,7 +787,7 @@ class Events_model extends Model
 					'system_update_ts' => 'UNIX_TIMESTAMP(events.event_timestamp)',
 					//'user_update_ts'   => 'UNIX_TIMESTAMP(events_occurrence_users.event_occurrence_user_timestamp)',
 					'blurb'    => 'events.event_blurb',
-					'shortloc' => 'event_occurrences.event_occurrence_location_name',
+					'shortloc' => $occurrence_query->ExpressionLocationName(),
 					'type'     => 'event_types.event_type_name',
 					'state'    => 'event_occurrences.event_occurrence_state',
 					'organisation' => 'organisations.organisation_name',
@@ -1106,12 +1120,14 @@ class Events_model extends Model
 	/**
 	 * @param $EventData array Event data. The following are compulsory:
 	 *	- 'recur' RecurrenceSet Recurrences.
-	 * @return array
-	 *	- 'event_id' => new event id,
+	 *	- 'location_name'
 	 *	- 'occurrences' array['YYYYMMDD' => array['HHMMSS' => array]] recur property overrides.
 	 *		Fields are:
 	 *		'location_id'
 	 *		'location_name'
+	 * @return array
+	 *	- 'event_id' => new event id.
+	 *	- 'occurrences' => number of occurrences generated.
 	 * @exception Exception The event could not be created.
 	 *
 	 * - Uses @a $EventData to create a new event.
@@ -1130,6 +1146,7 @@ class Events_model extends Model
 		static $translation = array(
 			'name'				=> 'event_name',
 			'description'		=> 'event_description',
+			'location_name'		=> 'event_location_name',
 			/// @pre $EventData['category'] is valid
 			'category'			=> 'event_type_id',
 			'parent'			=> 'event_parent_id',
@@ -1192,9 +1209,10 @@ class Events_model extends Model
 				if (array_key_exists('time_associated', $EventData)) {
 					$occurrence['time_associated'] = $EventData['time_associated'];
 				}
-				if (array_key_exists('location', $EventData)) {
-					$occurrence['location'] = $EventData['location'];
-				}
+// 				// Event now has its own location field
+// 				if (array_key_exists('location', $EventData)) {
+// 					$occurrence['location'] = $EventData['location'];
+// 				}
 				$occurrence['state'] = 'draft';
 				$occurrences[] = $occurrence;
 			}
@@ -1283,6 +1301,7 @@ class Events_model extends Model
 		static $translation = array(
 			'name'				=> 'events.event_name',
 			'description'		=> 'events.event_description',
+			'location_name'		=> 'events.event_location_name',
 			'time_associated'	=> 'events.event_time_associated',
 			'category'			=> 'events.event_type_id',
 		);
@@ -1512,7 +1531,7 @@ class Events_model extends Model
 			'ends_late',
 		);
 
-		// Check owned
+		// Check the event is owned by this user.
 		$this->db->select('COUNT(*)');
 		$this->db->from('events');
 		$this->db->join('event_entities','event_id = event_entity_event_id','left');
@@ -1995,7 +2014,7 @@ class Events_model extends Model
 					event_occurrence_end_time)
 					VALUES ('.$this->db->escape($EventId).',
 							"draft",
-							"",
+							DEFAULT,
 							FROM_UNIXTIME('.$this->db->escape($recurrence['start_time']).'),
 							FROM_UNIXTIME('.$this->db->escape($recurrence['start_time']).'),
 							FROM_UNIXTIME('.$this->db->escape($recurrence['end_time']).'))';

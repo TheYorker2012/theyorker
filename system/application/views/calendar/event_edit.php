@@ -243,12 +243,6 @@ $CI = & get_instance();
 	<div>
 		<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 			<?php
-	if (isset($Confirms) && isset($Confirms['draft']) && !$CanPublish) {
-		unset($Confirms['draft']);
-		if (empty($Confirms)) {
-			unset($Confirms);
-		}
-	}
 	if (isset($Confirms)) { ?>
 			<div id="confirm_changes_div" class="BlueBox">
 				<h2>Confirm changes</h2>

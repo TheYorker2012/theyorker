@@ -973,7 +973,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$input = array(
 			'name' => '',
 			'description' => '',
-			'location' => '',
+			'location_name' => '',
 			'category' => 0,
 			'time_associated' => true,
 		);
@@ -1003,8 +1003,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			}
 			$input_location = $this->input->post($prefix.'_location');
 			if (false !== $input_location) {
-				$input['location'] = $input_location;
-				if (strlen($input['location']) > 50) {
+				$input['location_name'] = $input_location;
+				if (strlen($input['location_name']) > 50) {
 					$input_valid = false;
 					$this->messages->AddMessage('error', 'Event location is too long.');
 				}
@@ -1018,6 +1018,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$event = new CalendarEvent(-1, $this->mSource);
 				if (isset($_POST[$prefix.'_save'])) {
 					$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+					if (isset($confirm_list['draft']) && !$this->mMainSource->IsSupported('publish')) {
+						unset($confirm_list['draft']);
+					}
 					if (empty($confirm_list)) {
 						$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
 					}
@@ -1068,7 +1071,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$eventinfo = array(
 			'summary' => $input['name'],
 			'description' => $input['description'],
-			'location' => $input['location'],
+			'location' => $input['location_name'],
 			'category' => $input['category'],
 			'timeassociated' => $input['time_associated'],
 			'start' => array(
@@ -1332,14 +1335,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			list($start, $end) = $rset->GetStartEnd();
 			$categories = $this->mSource->GetAllCategories();
 			
-			$location = '';
-			if (NULL !== $found_occurrence) {
-				$location = $found_occurrence->LocationDescription;
-			}
 			$input = array(
 				'name' => $event->Name,
 				'description' => $event->Description,
-				'location' => $location,
+				'location_name' => $event->LocationDescription,
 				'category' => 0,
 				'time_associated' => $event->TimeAssociated,
 			);
@@ -1372,8 +1371,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				}
 				$input_location = $this->input->post($prefix.'_location');
 				if (false !== $input_location) {
-					$input['location'] = $input_location;
-					if (strlen($input['location']) > 50) {
+					$input['location_name'] = $input_location;
+					if (strlen($input['location_name']) > 50) {
 						$input_valid = false;
 						$this->messages->AddMessage('error', 'Event location is too long.');
 					}
@@ -1386,6 +1385,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				if ($input_valid && empty($errors)) {
 					if (isset($_POST[$prefix.'_save'])) {
 						$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+						if (isset($confirm_list['draft']) && !$this->mMainSource->IsSupported('publish')) {
+							unset($confirm_list['draft']);
+						}
 						if (empty($confirm_list)) {
 							$_POST[$prefix.'_confirm']['confirm_btn'] = 'Confirm';
 						}
@@ -1442,7 +1444,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$eventinfo = array(
 				'summary' => $input['name'],
 				'description' => $input['description'],
-				'location' => $input['location'],
+				'location' => $input['location_name'],
 				'category' => $input['category'],
 				'timeassociated' => $input['time_associated'],
 				'start' => array(
