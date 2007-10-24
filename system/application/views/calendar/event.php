@@ -68,6 +68,7 @@ $CI = & get_instance();
 				{
 					echo('<strong>'.$Occurrence->State.'</strong>');
 				}
+				/*
 				if ('owned' === $Event->UserStatus) {
 					$links = array();
 					if ($Occurrence->UserHasPermission('publish')) {
@@ -92,6 +93,7 @@ $CI = & get_instance();
 					}
 					echo(' ('.implode(', ', $links).')');
 				}
+				*/
 				echo('</p>');
 			}
 			echo('<p><i>');
