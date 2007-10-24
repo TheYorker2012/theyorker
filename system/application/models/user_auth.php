@@ -26,6 +26,9 @@ class User_auth extends model {
 
 	/// bool True if the user is an actual user rather than an organisation
 	public $isUser;
+
+	/// bool True if the user is a member of the university
+	public $isUni = false;
 	
 	/// '12','24' Time format of the user
 	public $timeFormat = '12';
@@ -80,6 +83,7 @@ class User_auth extends model {
 		if (isset($_SESSION['ua_loggedin'])) {
 			$this->isLoggedIn = $_SESSION['ua_loggedin'];
 			$this->username = $_SESSION['ua_username'];
+			$this->isUni = $_SESSION['ua_username'];
 			$this->entityId = $_SESSION['ua_entityId'];
 			$this->isUser = $_SESSION['ua_isuser'];
 			if (array_key_exists('ua_timeformat', $_SESSION)) {
@@ -155,6 +159,7 @@ class User_auth extends model {
 	private function loginAuthed($username, $entityId, $savelogin, $hash) {
 		$this->isLoggedIn = true;
 		$this->username = $username;
+		$this->isUni = strpos($username, '@') === FALSE;
 		$this->entityId = $entityId;
 		$this->officeLogin = false;
 
@@ -395,6 +400,7 @@ class User_auth extends model {
 		$this->officeType = 'None';
 		$this->officeInterface = -1;
 		$this->username = '';
+		$this->isUni = false;
 		$this->firstname = '';
 		$this->surname = '';
 		$this->permissions = 0;
