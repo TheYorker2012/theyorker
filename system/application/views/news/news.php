@@ -118,27 +118,6 @@ foreach ($main_article['related_articles'] as $related)
         <?php echo($main_article['text']); ?>
 
 		<div style="text-align: right">
-			<script type="text/javascript">
-			digg_skin = 'compact';
-			digg_window = 'new';
-			</script>
-			<script src="http://digg.com/tools/diggthis.js" type="text/javascript"></script>
-			<br />
-			<a href="http://www.stumbleupon.com/submit?url=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>&title=The+Article+Title">
-				<img src="/images/prototype/news/icon_su.gif" alt="StumbleUpon" title="StumbleUpon" />
-				Stumble It!
-			</a>
-			<br />
-			<a href="http://del.icio.us/post" onclick="window.open('http://del.icio.us/post?v=4&noui&jump=close&url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title), 'delicious','toolbar=no,width=700,height=400'); return false;">
-				<img src="/images/prototype/news/icon_de.gif" alt="del.icio.us" title="del.icio.us" />
-				Delicious
-			</a>
-			<br />
-			<a href="javascript:void(0)" onclick="window.open('http://www.newsvine.com/_wine/save?popoff=1&u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>','newsvine','toolbar=no,width=590,height=600,resizable=yes,scrollbars=yes')">
-				<img src="http://www.newsvine.com/_vine/images/identity/button_seednewsvine.gif" alt="Newsvine" title="Newsvine" />
-				Newsvine
-			</a>
-			<br />
 			<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
 		</div>
 
