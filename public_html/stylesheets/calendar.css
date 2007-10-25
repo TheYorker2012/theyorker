@@ -266,83 +266,83 @@ table.recur-cal td {
 	background-color: #FFFCBA;
 	cursor: pointer;
 }
-table.recur-cal td.weekend {
+table.recur-cal td.we {
 	background-color: #EFECAA;
 }
 
-table.recur-cal td.even {
+table.recur-cal td.ev {
 	background-color: #FFF980;
 }
-table.recur-cal td.even.weekend {
+table.recur-cal td.ev.we {
 	background-color: #EFE970;
 }
 
-table.recur-cal td.past {
+table.recur-cal td.pa {
 	background-color: #EEEEEE;
 }
-table.recur-cal td.past.weekend {
+table.recur-cal td.pa.we {
 	background-color: #DEDEDE;
 }
-table.recur-cal td.past.even {
+table.recur-cal td.pa.ev {
 	background-color: #DADADA;
 }
-table.recur-cal td.past.even.weekend {
+table.recur-cal td.pa.ev.we {
 	background-color: #CACACA;
 }
 
-table.recur-cal td.selected {
+table.recur-cal td.sel {
 	border: 1px solid #404040;
 	background-color: #20C1F0;
 }
-table.recur-cal td.selected.weekend {
+table.recur-cal td.sel.we {
 	background-color: #10B1E0;
 }
-table.recur-cal td.selected.even {
+table.recur-cal td.sel.ev {
 	background-color: #38A0F0;
 }
-table.recur-cal td.selected.even.weekend {
+table.recur-cal td.sel.ev.we {
 	background-color: #2890E0;
 }
 
-table.recur-cal td.excluded,
-table.recur-cal td.excluded.weekend,
-table.recur-cal td.excluded.even,
-table.recur-cal td.excluded.even.weekend
+table.recur-cal td.exc,
+table.recur-cal td.exc.we,
+table.recur-cal td.exc.ev,
+table.recur-cal td.exc.ev.we
 {					/*#FFFCBA*/
 	border: none;
 	background-color: #F0D1A0;
 	text-decoration: line-through;
 }	
 
-table.recur-cal td.included {
+table.recur-cal td.inc {
 	border: 1px solid #404040;
 	background-color: #40F190;
 }
-table.recur-cal td.included.weekend {
+table.recur-cal td.inc.we {
 	background-color: #30E180;
 }
-table.recur-cal td.included.even {
+table.recur-cal td.inc.ev {
 	background-color: #58D090;
 }
-table.recur-cal td.included.even.weekend {
+table.recur-cal td.inc.ev.we {
 	background-color: #48C080;
 }
 
 
-table.recur-cal td.selected.start {
+table.recur-cal td.sel.sta {
 	border: 2px solid #000000;
 	background-color: #FF6A00;
 }
-table.recur-cal td.selected.start.even {
+table.recur-cal td.sel.sta.ev {
 	background-color: #FF6A00;
 }
 
 
 
-table.recur-cal td.today {
+table.recur-cal td.tod {
 	border: 2px solid #808080;
 }
-table.recur-cal td.exists {
+table.recur-cal td.exi {
 	font-weight: bold;
 }
 

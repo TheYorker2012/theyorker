@@ -27,16 +27,16 @@
 			$cell_id = $day_start->Format('Ymd');
 			$classes_list = array();
 			if ($cell_id == $today_id) {
-				$classes_list[] = 'today';
+				$classes_list[] = 'tod';
 			}
 			if ($month % 2 == 0) {
-				$classes_list[] = 'even';
+				$classes_list[] = 'ev';
 			}
 			if ($day_counter>4) {
-				$classes_list[] = 'weekend';
+				$classes_list[] = 'we';
 			}
 			if ($day_start->Timestamp() < $today->Timestamp()) {
-				$classes_list[] = 'past';
+				$classes_list[] = 'pa';
 			}
 			if (!empty($classes_list)) {
 				$classes = ' class="'.implode(' ', $classes_list).'"';
@@ -44,9 +44,9 @@
 				$classes = '';
 			}
 			if (isset($Onclick)) {
-				$classes .= " onclick=\"javascript:$Onclick('$cell_id');\"";
+				$classes .= " onclick=\"$Onclick('$cell_id');\"";
 			}
-			echo("<td$classes id=\"minical_$cell_id\">&nbsp;$day_of_month&nbsp;</td>");
+			echo("<td$classes id=\"mc$cell_id\">&nbsp;$day_of_month&nbsp;</td>");
 			$day_start = $day_start->Adjust('1day');
 		}
 		echo("</tr>\n");

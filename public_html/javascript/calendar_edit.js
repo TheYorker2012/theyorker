@@ -240,25 +240,27 @@ function UpdateRecurCalPreviewLoad()
 /// Callback function for updating the calendar preview using xml from server.
 function UpdateRecurCalPreviewCallback(responseXML)
 {
-	/// @todo Don't use innerHTML here
-	var target = document.getElementById('preview_calendar_div'); 
-	var errors = responseXML.getElementsByTagName('error');
-	var html = "";
-	if (errors.length > 0) {
-		html = "errors:<br />";
-		for (var i = 0; i < errors.length; ++i) {
-			html += errors[i].firstChild.nodeValue+"<br />";
+	if (responseXML) {
+		/// @todo Don't use innerHTML here
+		var target = document.getElementById('preview_calendar_div'); 
+		var errors = responseXML.getElementsByTagName('error');
+		var html = "";
+		if (errors.length > 0) {
+			html = "errors:<br />";
+			for (var i = 0; i < errors.length; ++i) {
+				html += errors[i].firstChild.nodeValue+"<br />";
+			}
 		}
+		target.innerHTML = html;
+		var occurrences = responseXML.getElementsByTagName('occ');
+		ResetMinicalDates();
+		for (var i = 0; i < occurrences.length; ++i) {
+			date  = occurrences[i].attributes.getNamedItem('date').value;
+			classes  = occurrences[i].attributes.getNamedItem('class').value;
+			AdjustMinicalDate(date, classes);
+		}
+		document.getElementById('preview_calendar_div').style.display = "block";
 	}
-	target.innerHTML = html;
-	var occurrences = responseXML.getElementsByTagName('occ');
-	ResetMinicalDates();
-	for (var i = 0; i < occurrences.length; ++i) {
-		date  = occurrences[i].attributes.getNamedItem('date').value;
-		classes  = occurrences[i].attributes.getNamedItem('class').value;
-		AdjustMinicalDate(date, classes);
-	}
-	document.getElementById('preview_calendar_div').style.display = "block";
 }
 
 /// The main recurrence frequency has been changed, adjust visibility of divs
@@ -313,13 +315,13 @@ var exc_dates = new Object();
 /// Number of dates
 var date_count = 0;
 
-/// Get '', 'included', 'excluded'.
+/// Get '', 'in', 'ex'.
 function TestInexDate(date)
 {
 	if (inc_dates[date]) {
-		return 'include';
+		return 'in';
 	} else if (exc_dates[date]) {
-		return 'exclude';
+		return 'ex';
 	} else {
 		return '';
 	}
@@ -328,10 +330,10 @@ function TestInexDate(date)
 /// Remove an include/exclude date
 function RemoveInexDate(inex, date)
 {
-	var div = document.getElementById('eved_inex_date_'+inex+'_'+date);
+	var div = document.getElementById('eved_inex_date_'+inex+'clude_'+date);
 	if (div) {
 		div.parentNode.removeChild(div);
-		if (inex == 'include') {
+		if (inex == 'in') {
 			delete inc_dates[date];
 		} else {
 			delete exc_dates[date];
@@ -365,7 +367,7 @@ function ModTemplateDiv(div, inex, date)
 		} else if (newFields[i].className == 'delete') {
 			ModTemplateDiv(newFields[i], inex, date);
 		}
-		if (newFields[i].name == inex+'_remove_btn') {
+		if (newFields[i].name == inex+'clude_remove_btn') {
 			newFields[i].onclick = function onclick(event) {
 				return RemoveInexDate(inex,date);
 			};
@@ -384,15 +386,15 @@ function NewInexDate(inex, date)
 	if (existing) {
 		RemoveInexDate(existing, date);
 	}
-	var templateName = 'eved_'+inex+'_template';
+	var templateName = 'eved_'+inex+'clude_template';
 	var newClone = document.getElementById(templateName).cloneNode(true);
-	newClone.id = 'eved_inex_date_'+inex+'_'+date;
+	newClone.id = 'eved_inex_date_'+inex+'clude_'+date;
 	ModTemplateDiv(newClone, inex, date);
 	
 	var destination = document.getElementById('eved_inex_list');
 	var no_dates = document.getElementById('eved_inex_none');
 	destination.appendChild(newClone);
-	if (inex == 'include') {
+	if (inex == 'in') {
 		inc_dates[date] = newClone;
 	} else {
 		exc_dates[date] = newClone;
@@ -407,7 +409,7 @@ var minical_base_classes = new Array();
 var minical_recur_classes = new Array();
 var minical_inex_classes = new Array();
 
-function MinicalToggle(date)
+function MiniTog(date)
 {
 	// If the main edit stuff is hidden (for confirmation) check before doing anything
 	if (document.getElementById('main_edit_divs').style.display == 'none') {
@@ -419,46 +421,46 @@ function MinicalToggle(date)
 		/*
 		none -> include -> exclude -> none
 		*/
-		var td = document.getElementById('minical_'+date+'');
+		var td = document.getElementById('mc'+date+'');
 		if (1) {
 			// Toggle the obvious values
-			if (CssCheck(td, 'selected')) {
+			if (CssCheck(td, 'sel')) {
 				// selected, so inc -> none -> exc
 				if (inc_dates[date]) {
 					// inc -> none
-					RemoveInexDate('include', date);
+					RemoveInexDate('in', date);
 				} else if (!exc_dates[date]) {
 					// none -> exc
-					NewInexDate('exclude', date);
+					NewInexDate('ex', date);
 				} else {
 					// exc -> none
-					RemoveInexDate('exclude', date);
+					RemoveInexDate('ex', date);
 				}
 			} else {
 				// deselected, so exc -> none -> inc
 				if (exc_dates[date]) {
 					// exc -> none
-					RemoveInexDate('exclude', date);
+					RemoveInexDate('ex', date);
 				} else if (!inc_dates[date]) {
 					// none -> inc
-					NewInexDate('include', date);
+					NewInexDate('in', date);
 				} else {
 					// inic -> none
-					RemoveInexDate('include', date);
+					RemoveInexDate('in', date);
 				}
 			}
 		} else {
 			// Toggle all three values
 			if (inc_dates[date]) {
 				// inc -> exc
-				RemoveInexDate('include', date);
-				NewInexDate('exclude', date);
+				RemoveInexDate('in', date);
+				NewInexDate('ex', date);
 			} else if (exc_dates[date]) {
 				// exc -> none
-				RemoveInexDate('exclude', date);
+				RemoveInexDate('ex', date);
 			} else {
 				// none -> inc
-				NewInexDate('include', date);
+				NewInexDate('in', date);
 			}
 		}
 	}
@@ -468,17 +470,17 @@ function MinicalToggle(date)
 /// Update inex on a date
 function UpdateMinicalInexDate(date)
 {
-	date_cell = document.getElementById('minical_'+date);
+	date_cell = document.getElementById('mc'+date);
 	if (date_cell) {
 		var inex = TestInexDate(date);
 		if (inex) {
-			CssAdd(date_cell, inex+'d');
+			CssAdd(date_cell, inex+'c');
 		}
-		if (inex != 'exclude') {
-			CssRemove(date_cell, 'excluded');
+		if (inex != 'ex') {
+			CssRemove(date_cell, 'exc');
 		}
-		if (inex != 'include') {
-			CssRemove(date_cell, 'included');
+		if (inex != 'in') {
+			CssRemove(date_cell, 'inc');
 		}
 	}
 }
@@ -486,7 +488,7 @@ function UpdateMinicalInexDate(date)
 /// Revert minical date back to before recur changes.
 function ResetMinicalDate(date)
 {
-	date_cell = document.getElementById('minical_'+date);
+	date_cell = document.getElementById('mc'+date);
 	if (date_cell != null) {
 		date_cell.className = minical_base_classes[date];
 		UpdateMinicalInexDate(date);
@@ -504,7 +506,7 @@ function ResetMinicalDates()
 
 function AdjustMinicalDate(date, class)
 {
-	date_cell = document.getElementById('minical_'+date);
+	date_cell = document.getElementById('mc'+date);
 	if (date_cell != null) {
 		if (!(date in minical_base_classes)) {
 			minical_base_classes[date] = date_cell.className;

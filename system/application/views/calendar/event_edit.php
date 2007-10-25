@@ -235,7 +235,7 @@ $CI = & get_instance();
 			</div>
 		</div>
 		<div id="recurrences_preview_test">
-			<?php get_instance()->load->view('calendar/minicalendar', array('Onclick' => 'MinicalToggle')); ?>
+			<?php get_instance()->load->view('calendar/minicalendar', array('Onclick' => 'MiniTog')); ?>
 		</div>
 	</div>
 </div>
