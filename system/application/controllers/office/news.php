@@ -795,6 +795,12 @@ class News extends Controller
 				} else {
 					$publish_date = date('Y-m-d H:i:s', $this->input->post('r_publish'));
 					$this->requests_model->PublishArticle($article_id,$revision_id,$publish_date);
+					$this->load->library('facebook_ticker');
+					if ($this->facebook_ticker->TickerUpdate()) {
+						$this->main_frame->AddMessage('success','The Yorker Facebook News Ticker Application was successfully updated.');
+					} else {
+						$this->main_frame->AddMessage('error','There was a problem updating The Yorker Facebook News Ticker Application.');
+					}
 					$this->main_frame->AddMessage('success','The article was successfully published.');
 					redirect('/office/news');
 				}

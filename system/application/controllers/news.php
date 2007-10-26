@@ -212,11 +212,16 @@ class News extends Controller {
 				}
 			}
 		}
+		// Convert filters to format required by news model
+		$archive_filters = array();
+		foreach ($filters as $field => $value) {
+			$archive_filters[] = array($field, $value);
+		}
 
 		/// Pagination
 		$this->load->library('pagination');
 		$config['base_url'] = base_url().'news/archive/';
-		$config['total_rows'] = $this->News_model->GetArchive('count', $filters)->count;
+		$config['total_rows'] = $this->News_model->GetArchive('count', $archive_filters)->count;
 		$config['per_page'] = 10;
 		$config['num_links'] = 2;
 		$config['full_tag_open'] = '<div class="Pagination">';
@@ -241,7 +246,7 @@ class News extends Controller {
 		}
 
 		/// Get all past articles
-		$data['articles'] = $this->News_model->GetArchive('search', $filters, $data['offset'], $config['per_page']);
+		$data['articles'] = $this->News_model->GetArchive('search', $archive_filters, $data['offset'], $config['per_page']);
 		/// Get article thumbnails
 		$this->load->library('image');
 		foreach ($data['articles'] as &$article) {

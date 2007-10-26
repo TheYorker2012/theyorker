@@ -1,17 +1,10 @@
 <?php
-
 /**
- *	@brief	The Yorker - News Ticker Facebook Application Code
- *	@author	Chris Travis	(cdt502 - ctravis@gmail.com)
+ *	@brief		The Yorker - News Ticker Facebook Application Code
+ *	@author		Chris Travis	(cdt502 - ctravis@gmail.com)
  */
 
-// @TODO	Only accept links coming from Facebook!
-
 class Ticker extends Controller {
-
-	private $fb_config;
-	private $facebook;
-	private $client;
 
 	/**
 	 * @brief Default Constructor.
@@ -19,115 +12,110 @@ class Ticker extends Controller {
 	function __construct()
 	{
 		parent::Controller();
-		// Load news model
+		// Load Facebook Ticker library
+		$this->load->library('facebook_ticker');
+		// Load Models
 		$this->load->model('news_model');
-		// Load Facebook Config
-		$this->load->config('facebook');
-		$this->load->helper('facebook');
-		// Setup access
-		$this->fb_config = $this->config->Item('facebook');
-		$this->facebook = new FacebookPlatform($this->fb_config['ticker']['api_key'], $this->fb_config['ticker']['secret']);
-		$this->client = &$this->facebook->api_client;
-
-		$fbuid = $this->facebook->get_loggedin_user();
-		if ($fbuid) {
-			try {
-				if ($this->client->users_isAppAdded()) {
-					// The user has added our app
-				} else {
-					// The user has not added our app
-					$this->facebook->require_add();
-				}
-			} catch (Exception $ex) {
-				// This will clear cookies for your app and redirect them to a login prompt
-				$this->facebook->set_user(null, null);
-				$this->facebook->redirect($this->facebook->require_login());
-				exit;
-			}
-		} else {
-			// The user has never used our app
-			$this->facebook->require_add();
-		}
-
-		//print_r('Facebook Session Key: ' . $this->client->session_key . '<br />'."\n");
-		//print_r('Require Add: ' . $this->facebook->require_add() . '<br />'."\n");
-	}
-
-	// @brief	Setup Dashboard title, tabs, top links etc
-	function _dashboardHeader ($selected_tab = 'latest')
-	{
-		return '<fb:fbml version="1.1">
-					<fb:dashboard>
-					</fb:dashboard>
-					<fb:tabs>
-						<fb:tab-item href="http://apps.facebook.com/theyorker/" title="Latest News"' . (($selected_tab == 'latest') ? ' selected="true"' : '') . ' />
-						<fb:tab-item href="http://apps.facebook.com/theyorker/myarticles/" title="My Articles"' . (($selected_tab == 'myarticles') ? ' selected="true"' : '') . ' />
-						<fb:tab-item href="http://apps.facebook.com/theyorker/invite/" title="Invite Friends"' . (($selected_tab == 'invite') ? ' selected="true"' : '') . ' />
-					</fb:tabs>
-					<div style="width:90%; margin: 10px auto;">';
-	}
-
-	// @brief	Finish up dashboard content template
-	function _dashboardFooter ()
-	{
-		return '</div></fb:fbml>';
 	}
 
 	// @brief	Canvas Page : List latest news in FBML
 	function index()
 	{
-		if ($user = $this->facebook->require_login()) {
-			$this->facebook->require_frame();
-			$articles = $this->news_model->GetArchive('search', array(), 0, 15);
-			$content = $this->_dashboardHeader();
-			foreach ($articles as $a) {
-	            $reporters = array();
-				foreach ($a['reporters'] as $r)
-					$reporters[] = $r['name'];
-				$reporters = implode(', ', $reporters);
-				$content .= '<div style="clear:both; border-bottom:1px solid #bbb; padding-bottom: 5px; margin-bottom: 10px;">
-								<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '">
-									<img src="http://www.theyorker.co.uk/photos/small/' . $a['photo_id'] . '" alt="' . $a['photo_title'] . '" style="float:left; margin-bottom:5px" />
-								</a>
-								<div style="margin-left:75px">
-									<span style="float:right">
-										<fb:share-button class="url" href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '" />
-									</span>
-									<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '"><b>' . $a['heading'] . '</b></a>
-									<br />' . $a['blurb'] . '<br />
-									<i>by ' . $reporters . '</i>
-								</div>
-								<div style="clear:both"></div>
-							</div>';
-			}
-			$content .= $this->_dashboardFooter();
-			echo($content);
+		if ($user = $this->facebook_ticker->Authenticate()) {
+			$data['selected_tab'] = 'latest';
+			$data['articles'] = $articles = $this->news_model->GetArchive('search', array(), 0, 15);
+			$this->facebook_ticker->CanvasPage('facebook/ticker/article_list', $data);
 		}
 	}
 
-	function myarticles ()
+	function myarticles ($sub_section = NULL, $action = NULL, $byline_id = NULL)
 	{
 		// Load yorker's user management
 		$this->load->model('user_auth');
+		$this->load->model('businesscards_model');
 
 		// PHP Sessions don't work with Facebook!
 		session_destroy();
-		if (isset($_POST["fb_sig_session_key"])) {
-			$_fb_sig_session_key = str_replace("-","0",$_POST["fb_sig_session_key"]);
+		if (isset($_POST['fb_sig_session_key'])) {
+			$_fb_sig_session_key = str_replace('-','0',$_POST['fb_sig_session_key']);
 			session_id($_fb_sig_session_key);
 		}
 		session_start();
 
-		if ($user = $this->facebook->require_login()) {
-			$this->facebook->require_frame();
-			$content = $this->_dashboardHeader('myarticles');
+		if ($user = $this->facebook_ticker->Authenticate()) {
 
-			if ($_SESSION['ua_loggedin']) {
-				echo('LoggedIn');
-				if ($_SESSION['ua_hasoffice']) {
-					echo('OfficeAccess');
+			if ((isset($_SESSION['ua_loggedin'])) && ($_SESSION['ua_loggedin'])) {
+				if ((isset($_SESSION['ua_hasoffice'])) && ($_SESSION['ua_hasoffice'])) {
+					// Get all facebook enabled bylines
+					$data['facebook_bylines'] = $this->businesscards_model->GetUserBylinesForFacebook($_SESSION['ua_entityId']);
+					// If no bylines linked to facebook or user requests - goto byline selection page
+					if ((count($data['facebook_bylines']) == 0) || ($sub_section == 'bylines')) {
+						// Get all user's bylines and prompt them to select which ones to (un)link with facebook
+						$data['user_bylines'] = $this->businesscards_model->GetUserBylines($_SESSION['ua_entityId']);
+						if (($action === NULL) || (!is_numeric($byline_id))) {
+							// Process byline image
+							$this->load->library('image');
+							foreach ($data['user_bylines'] as &$byline) {
+								if ($byline['business_card_image_id'] === NULL) {
+									$byline['business_card_image_href'] = '';
+								} else {
+									$byline['business_card_image_href'] = 'http://www.theyorker.co.uk' . $this->image->getPhotoURL($byline['business_card_image_id'], 'userimage');
+								}
+							}
+							$view = 'facebook/ticker/select_bylines';
+						} else {
+							// Check that operation is to be carried out on a byline owned by the user
+							$user_owned_byline = false;
+							foreach ($data['user_bylines'] as $byline) {
+								if ($byline['business_card_id'] == $byline_id) {
+									$user_owned_byline = true;
+									break;
+								}
+							}
+							if (!$user_owned_byline) {
+								$_SESSION['fbticker_messages'][] = array('error', 'Unable to carry out the requested operation as this byline does not belong to you!');
+							} else {
+								switch ($action) {
+									case 'link':
+										if ($this->businesscards_model->BylineFacebookSetting($byline_id, 1)) {
+											$_SESSION['fbticker_messages'][] = array('success', 'Byline successfully linked with Facebook.');
+										} else {
+											$_SESSION['fbticker_messages'][] = array('error', 'There was an error linking your byline to Facebook, please try again.');
+										}
+										break;
+									case 'unlink':
+										if ($this->businesscards_model->BylineFacebookSetting($byline_id, 0)) {
+											$_SESSION['fbticker_messages'][] = array('success', 'Byline successfully un-linked with Facebook.');
+										} else {
+											$_SESSION['fbticker_messages'][] = array('error', 'There was an error un-linking your byline with Facebook, please try again.');
+										}
+										break;
+									case 'action':
+										$this->facebook_ticker->SetFBML($byline_id);
+										break;
+								}
+							}
+							$this->facebook_ticker->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/bylines/');
+						}
+					} else {
+						// Show current articles
+						$filters = array();
+						foreach ($data['facebook_bylines'] as $byline)
+							$filters[] = array('reporter', $byline['business_card_id']);
+						$data['articles'] = $this->news_model->GetArchive('search', $filters, 0, 30);
+
+						// Check for extra operations requests
+						if (($sub_section == 'article') && ($action == 'feedpost') && (is_numeric($byline_id))) {
+							$this->_feedPost($byline_id);
+							$this->facebook_ticker->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+						}
+						// Give various extra operations that can be carried out
+						$data['extra_ops'] = true;
+						$view = 'facebook/ticker/article_list';
+					}
 				} else {
-					echo('NoOfficeAccess');
+					// Show 'not a writer / no office access error msg'
+					$view = 'facebook/ticker/no_access';
 				}
 			} else {
 				// Check for a login request
@@ -138,150 +126,69 @@ class Ticker extends Controller {
 						// Need to transfer the yorker's login info into the facebook session
 						$session_data = session_encode();
 						session_destroy();
-						if (isset($_POST["fb_sig_session_key"])) {
-							$_fb_sig_session_key = str_replace("-","0",$_POST["fb_sig_session_key"]);
+						if (isset($_POST['fb_sig_session_key'])) {
+							$_fb_sig_session_key = str_replace('-','0',$_POST['fb_sig_session_key']);
 							session_id($_fb_sig_session_key);
 						}
 						session_start();
 						session_decode($session_data);
 						// Login was successful
-						$this->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+						$this->facebook_ticker->facebook->redirect('http://apps.facebook.com/theyorker/myarticles/');
+						$_SESSION['fbticker_messages'][] = array('success', 'You have been successfully logged in.');
 					} catch (Exception $e) {
 						// Login failed
-						$content .= '<div style="color:red">' . $e->getMessage() . '</div>';
+						$_SESSION['fbticker_messages'][] = array('error', $e->getMessage());
 					}
 				}
-
 				// Show Yorker login box
-				$content .= '
-					<div>
-						To access this feature you must be a reporter for the Yorker.<br />
-						If you are a reporter, please login with your Yorker account details below.
-						<br />&nbsp;
-					</div>
-					<form action="http://apps.facebook.com/theyorker/myarticles/" method="post">
-						<fieldset style="border:0">
-							<label for="yorker_username" style="display:block;clear:both;float:left;width:30%;text-align:right;margin:0.4em;">Username:</label>
-							<input type="text" name="yorker_username" id="yorker_username" value="" style="float:left;margin:0.2em;" />
-							<br />
-							<label for="yorker_password" style="display:block;clear:both;float:left;width:30%;text-align:right;margin:0.4em;">Password:</label>
-							<input type="password" name="yorker_password" id="yorker_password" value="" style="float:left;margin:0.2em;" />
-							<br />
-							<input type="submit" name="yorker_login" id="yorker_login" value="Login" style="float:right;margin:0.5em;" />
-						</fieldset>
-					</form>
-				';
-				echo('NotLoggedIn');
+				$view = 'facebook/ticker/login';
 			}
 
-			$content .= $this->_dashboardFooter();
-			echo($content);
-echo(($this->user_auth->isLoggedIn) ? 'true' : 'false');
-echo(($this->user_auth->isLoggedIn == 1) ? '1' : 'not 1');
-echo(($this->user_auth->isLoggedIn == '1') ? 'str 1' : 'not str 1');
-echo(($this->user_auth->isLoggedIn === TRUE) ? 'TRUE' : 'FALSE');
-echo('Logged in: ' . $this->user_auth->isLoggedIn . ' - ' . $_SESSION['ua_loggedin']);
-echo('Office Access?: ' . $this->user_auth->officeLogin . ' - ' . $_SESSION['ua_hasoffice']);
-print_r($_SESSION);
-print_r($_POST);
+			$data['selected_tab'] = 'myarticles';
+			$this->facebook_ticker->CanvasPage($view, $data);
 		}
 	}
 
 	function invite ()
 	{
-		if ($user = $this->facebook->require_login()) {
-			$this->facebook->require_frame();
-			$content = $this->_dashboardHeader('invite');
-			$content .= '<fb:request-form type="The Yorker" action="http://apps.facebook.com/theyorker/invite/" method="post" invite="true" content="The Yorker provides online independent student news. Why not check out the website and find out what\'s hot in York? <fb:req-choice url=\'http://www.facebook.com/add.php?api_key=' . $this->fb_config['ticker']['api_key'] . '\' label=\'Read the latest news!\' />">
-							<fb:multi-friend-selector actiontext="Select the friends you wish to invite to add The Yorker application." bypass="cancel" />
-						</fb:request-form>';
-			$content .= $this->_dashboardFooter();
-			echo($content);
+		if ($user = $this->facebook_ticker->Authenticate()) {
+			$data['selected_tab'] = 'invite';
+			$this->facebook_ticker->CanvasPage('facebook/ticker/invite', $data);
 		}
 	}
 
-	function feedpost ()
+	function _feedPost ($article_id)
 	{
-		if ($user = $this->facebook->require_login()) {
-			$this->facebook->require_frame();
-			$articles = $this->news_model->GetArchive('search', array(), 0, 1);
+		if ($user = $this->facebook_ticker->Authenticate()) {
+			$article = $this->news_model->GetSummaryArticle($article_id);
 
-			$article_headline = $articles[0]['heading'];
-			$article_link = 'http://www.theyorker.co.uk/news/' . $articles[0]['type_codename'] . '/' . $articles[0]['id'] . '/';
-			$article_blurb = $articles[0]['blurb'];
-			$photo = 'http://www.theyorker.co.uk/photos/small/' . $articles[0]['photo_id'] . '/';
-	
+			$article_headline = $article['heading'];
+			$article_link = 'http://www.theyorker.co.uk/news/' . $article['article_type'] . '/' . $article['id'] . '/';
+			$article_blurb = $article['blurb'];
+			$photo = 'http://www.theyorker.co.uk/photos/small/' . $article['photo_id'] . '/';
+
 			$title = '{actor} has just written an article on <a href="' . $article_link . '">The Yorker</a>.';
-			$body = '<b>' . $article_headline . '</b><i>' . $article_blurb;
+			$body = '<b>' . $article_headline . '</b> <i>' . $article_blurb;
 			$body = substr($body, 0, 193) . '...</i>';
-	
-			if (!$this->client->feed_publishTemplatizedAction($user, $title, '', $body, '', '', $photo, $article_link)) {
+
+			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($user, $title, '', $body, '', '', $photo, $article_link)) {
+				$_SESSION['fbticker_messages'][] = array('success', 'The requested article was posted on your feed.');
+			} else {
 				// Error posting article to facebook
-				// @TODO: Find out what the error is and tell user
+				$_SESSION['fbticker_messages'][] = array('error', 'There was a problem posting the requested article to your feed, please try again.');
 			}
-			echo('Feed Post Submitted');
 		}
 	}
 
-	function setticker ()
+	function welcome ()
 	{
-		if ($user = $this->facebook->require_login()) {
-			$this->facebook->require_frame();
+		if ($user = $this->facebook_ticker->Authenticate()) {
+			$this->facebook_ticker->SetFBML();
 
-			$content = '<fb:fbml version="1.1">
-						<fb:wide>
-							<fb:subtitle seeallurl="http://apps.facebook.com/theyorker/">
-								The latest online independent student news...
-							</fb:subtitle>
-							<a href="http://www.theyorker.co.uk">
-								<img src="http://www.theyorker.co.uk/images/prototype/homepage/facebook_yorker_wide.jpg" />
-							</a>
-							<fb:ref handle="global_news_large" />
-						</fb:wide>
-						<fb:narrow>
-							<a href="http://www.theyorker.co.uk">
-								<img src="http://www.theyorker.co.uk/images/prototype/homepage/facebook_yorker_wide.jpg" />
-							</a>
-							<fb:ref handle="global_news_small" />
-						</fb:narrow>
-						<fb:profile-action url="http://www.theyorker.co.uk/news/archive/reporter/55/">
-							View my articles
-						</fb:profile-action>
-						</fb:fbml>';
-	
-			print_r($this->client->profile_setFBML($content));
+			$_SESSION['fbticker_messages'][] = array('success', 'Thank you for adding The Yorker\'s News Ticker Application!');
+			$this->facebook_ticker->facebook->redirect('http://apps.facebook.com/theyorker/');
 		}
 	}
 
-	function ticker_update ()
-	{
-		$articles = $this->news_model->GetArchive('search', array(), 0, 3);
-
-		$content = '';
-		foreach ($articles as $a) {
-            $reporters = array();
-			foreach ($a['reporters'] as $r)
-				$reporters[] = $r['name'];
-			$reporters = implode(', ', $reporters);
-
-			$content .= '<div style="clear:both">
-							<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '">
-								<img src="http://www.theyorker.co.uk/photos/small/' . $a['photo_id'] . '" alt="' . $a['photo_title'] . '" style="float:left; margin-bottom:3px" />
-							</a>
-							<div style="margin-left:75px">
-								<span style="float:right">
-									<fb:share-button class="url" href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '" />
-								</span>
-								<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '"><b>' . $a['heading'] . '</b></a>
-								<br />
-								<i>by ' . $reporters . '</i>
-							</div>
-						</div>';
-		}
-
-		$this->facebook->set_user($this->fb_config['ticker']['user_id'], $this->fb_config['ticker']['session_key'], $expires=null);
-		print_r($this->client->fbml_setRefHandle('global_news_large', $content));
-		print_r($this->client->fbml_setRefHandle('global_news_small', $content));
-	}
 }
 ?>

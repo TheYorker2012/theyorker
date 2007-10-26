@@ -504,6 +504,7 @@ class News_model extends Model
 
 			$this->load->library('image');
 			if ($row->photo_request_chosen_photo_id > 0) {
+				$result['photo_id'] = $row->photo_request_chosen_photo_id;
 				$result['photo_xhtml'] = $this->image->getThumb($row->photo_request_chosen_photo_id, $pic_size, false, array('class' => $image_class));
 			} else {
 				$result['photo_xhtml'] = $this->image->getThumb(-1, $pic_size, false, array('class' => $image_class, 'alt' => 'Image not available', 'title' => 'Image not available'));
@@ -736,18 +737,31 @@ class News_model extends Model
 		// Process filters
 		$extra_from = array();
 		$extra_where = array();
-		foreach ($filters as $field => $value) {
-			switch ($field) {
+		$extra_where_or = array();
+		foreach ($filters as $filter) {
+			switch ($filter[0]) {
 				case 'reporter':
-					if (is_numeric($value)) {
+					if (is_numeric($filter[1])) {
 						$extra_from[] = 'article_writers';
 						$extra_where[] = 'article_writers.article_writer_article_id = articles.article_id';
 						$extra_where[] = 'article_writers.article_writer_status = "accepted"';
-						$extra_where[] = 'article_writers.article_writer_byline_business_card_id = ' . $value;
+						$extra_where_or['reporter'][] = 'article_writers.article_writer_byline_business_card_id = ' . $filter[1];
+					}
+					break;
+				case 'section':
+					if (is_numeric($filter[1])) {
+						// Criteria is a content_type_id
+						$extra_where_or['section'][] = 'content_types.content_type_id = ' . $filter[1];
+						$extra_where_or['section'][] = 'content_types.content_type_parent_content_type_id = ' . $filter[1];
+					} else {
+						// Criteria is a content_type_codename
+						$extra_where_or['section'][] = 'content_types.content_type_codename = "' . $filter[1] . '"';
 					}
 					break;
 			}
 		}
+		$extra_from = array_unique($extra_from);
+		$extra_where = array_unique($extra_where);
 
 		$result = array();
 		if ($type == 'count') {
@@ -788,9 +802,12 @@ class News_model extends Model
 		foreach ($extra_where as $where) {
 			$sql .= '	AND		'.$where;
 		}
+		foreach ($extra_where_or as $where) {
+			$sql .= ' AND (' . implode(' OR ', $where) . ')';
+		}
 		$sql .='	ORDER BY	articles.article_publish_date DESC';
 		if ($type == 'search') {
-			$sql .= "\n".'LIMIT		'.$limit.','.$rows;
+			$sql .= "\n".'LIMIT		'. $limit . (($rows !== NULL) ? ','.$rows : '');
 		}
 		$query = $this->db->query($sql);
 		if ($type == 'count') {
