@@ -619,7 +619,7 @@ class Bylines extends Controller
 				redirect('/office/bylines/');
 			} else {
 	        	$this->load->library('image_upload');
-				$this->image_upload->automatic('/office/bylines/uploaded_photo/' . $byline_id . '/', array('userimage'));
+				$this->image_upload->automatic('/office/bylines/uploaded_photo/' . $byline_id . '/', array('userimage'), false, true);
 			}
 		}
 	}
