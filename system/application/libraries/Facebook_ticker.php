@@ -10,7 +10,7 @@
 class Facebook_ticker
 {
 	private $CI;
-	private $fb_config;
+	public $fb_config;
 	public $facebook;
 	public $client;
 
