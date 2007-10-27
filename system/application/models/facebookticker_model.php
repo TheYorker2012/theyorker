@@ -1,20 +1,125 @@
 <?php
 /**
- *	@brief		This model should control all data to do with business cards and bylines
+ *	@brief		This model allows the configuration of which articles to display in the Facebook news ticker
  *
- *	@author		Richard Ingle (ri504)
  *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
  */
 
-class Businesscards_model extends Model
+class Facebookticker_model extends Model
 {
 
 	function __construct()
 	{
 		// Call the Model Constructor
 		parent::Model();
-		$this->load->library('wikiparser');
 	}
+
+	function GetTickerSettings ()
+	{
+		$sql = 'SELECT		facebook_articles.facebook_article_id,
+							facebook_articles.facebook_article_article_id,
+							facebook_articles.facebook_article_content_type_id,
+							content_types.content_type_codename,
+							content_types.content_type_name,
+							article_contents.article_content_heading
+				FROM		facebook_articles
+				LEFT JOIN	content_types
+					ON		content_types.content_type_id = facebook_articles.facebook_article_content_type_id
+				LEFT JOIN	articles
+					ON	(	articles.article_id = facebook_articles.facebook_article_article_id
+						AND	articles.article_pulled = 0
+						AND	articles.article_deleted = 0
+						)
+				LEFT JOIN	article_contents
+					ON		article_contents.article_content_id = articles.article_live_content_id
+				ORDER BY	facebook_articles.facebook_article_display_order ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	function GetArticleSlot ($slot_id)
+	{
+		$sql = 'SELECT		facebook_articles.facebook_article_id,
+							facebook_articles.facebook_article_article_id,
+							facebook_articles.facebook_article_content_type_id,
+							content_types.content_type_codename,
+							content_types.content_type_name,
+							article_contents.article_content_heading
+				FROM		facebook_articles
+				LEFT JOIN	content_types
+					ON		content_types.content_type_id = facebook_articles.facebook_article_content_type_id
+				LEFT JOIN	articles
+					ON	(	articles.article_id = facebook_articles.facebook_article_article_id
+						AND	articles.article_pulled = 0
+						AND	articles.article_deleted = 0
+						)
+				LEFT JOIN	article_contents
+					ON		article_contents.article_content_id = articles.article_live_content_id
+				WHERE		facebook_articles.facebook_article_id = ?
+				ORDER BY	facebook_articles.facebook_article_display_order ASC';
+		$query = $this->db->query($sql, array($slot_id));
+		return $query->row_array();
+	}
+
+	function AddArticleSlot ()
+	{
+		$sql = 'INSERT INTO	facebook_articles
+							(facebook_articles.facebook_article_display_order)
+				SELECT		(MAX(facebook_articles.facebook_article_display_order) + 1)
+				FROM		facebook_articles';
+		$query = $this->db->query($sql);
+		return ($this->db->affected_rows() > 0);
+	}
+
+	function DeleteArticleSlot ($article_slot_id)
+	{
+		$sql = 'DELETE FROM	facebook_articles
+				WHERE		facebook_articles.facebook_article_id = ?';
+		$query = $this->db->query($sql, array($article_slot_id));
+		return ($this->db->affected_rows() > 0);
+	}
+
+	function GetAllArticleContentTypes ()
+	{
+		$sql = 'SELECT		content_types.content_type_id,
+							IF(content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(parent_type.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) AS content_type_name
+				FROM		content_types
+				LEFT JOIN	content_types AS parent_type
+					ON		parent_type.content_type_id = content_types.content_type_parent_content_type_id
+				WHERE		content_types.content_type_section != "hardcoded"
+				ORDER BY	parent_type.content_type_name ASC,
+							content_types.content_type_name ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	function GetContentTypeArticleCount()
+	{
+		$sql = 'SELECT		DISTINCT(facebook_articles.facebook_article_content_type_id),
+							content_types.content_type_id,
+							content_types.content_type_codename,
+							COUNT(facebook_articles.facebook_article_id) as article_count
+				FROM		facebook_articles,
+							content_types
+				WHERE		facebook_articles.facebook_article_content_type_id = content_types.content_type_id
+				GROUP BY	facebook_articles.facebook_article_content_type_id';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	function UpdateArticleSlot($slot_id, $type_id, $article_id)
+	{
+		$sql = 'UPDATE		facebook_articles
+				SET			facebook_articles.facebook_article_content_type_id = ?,
+							facebook_articles.facebook_article_article_id = ?
+				WHERE		facebook_articles.facebook_article_id = ?';
+		$query = $this->db->query($sql, array($type_id, $article_id, $slot_id));
+		return ($this->db->affected_rows() > 0);
+	}
+
+
+
+
 
 	// adds a byline, if the group id refers to a group with null org id
 	function NewBusinessCard($user_id, $group_id, $image_id, $name,

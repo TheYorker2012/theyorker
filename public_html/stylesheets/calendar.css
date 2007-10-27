@@ -234,3 +234,193 @@ div.TodoBox {
 	margin-left: 10px;
 }
 /* -- 	END LISTINGS CALENDAR VIEW CLASSES -- */
+
+/* for event edit form */
+fieldset.inline-checks label {
+/* 		border: thin solid black; */
+	float: left;
+	width: 50px;
+	clear: none;
+}
+
+/* for minicalendar (recurrence preview) */
+table.recur-cal {
+	text-align: center;
+	width: 100%;
+	border: 1px solid #A0A0A0;
+	border-collapse: collapse;
+}
+
+table.recur-cal th {
+	background-color: #F4F4F4;
+	border: 1px solid #A0A0A0;
+	color: #606060;
+}
+
+table.recur-cal th.term {
+	background-color: #EEEEEE;
+	color: #404040;
+}
+
+table.recur-cal td {
+	background-color: #FFFCBA;
+	cursor: pointer;
+}
+table.recur-cal td.we {
+	background-color: #EFECAA;
+}
+
+table.recur-cal td.ev {
+	background-color: #FFF980;
+}
+table.recur-cal td.ev.we {
+	background-color: #EFE970;
+}
+
+table.recur-cal td.pa {
+	background-color: #EEEEEE;
+}
+table.recur-cal td.pa.we {
+	background-color: #DEDEDE;
+}
+table.recur-cal td.pa.ev {
+	background-color: #DADADA;
+}
+table.recur-cal td.pa.ev.we {
+	background-color: #CACACA;
+}
+
+table.recur-cal td.sel {
+	border: 1px solid #404040;
+	background-color: #20C1F0;
+}
+table.recur-cal td.sel.we {
+	background-color: #10B1E0;
+}
+table.recur-cal td.sel.ev {
+	background-color: #38A0F0;
+}
+table.recur-cal td.sel.ev.we {
+	background-color: #2890E0;
+}
+
+table.recur-cal td.exc,
+table.recur-cal td.exc.we,
+table.recur-cal td.exc.ev,
+table.recur-cal td.exc.ev.we
+{					/*#FFFCBA*/
+	border: none;
+	background-color: #F0D1A0;
+	text-decoration: line-through;
+}	
+
+table.recur-cal td.inc {
+	border: 1px solid #404040;
+	background-color: #40F190;
+}
+table.recur-cal td.inc.we {
+	background-color: #30E180;
+}
+table.recur-cal td.inc.ev {
+	background-color: #58D090;
+}
+table.recur-cal td.inc.ev.we {
+	background-color: #48C080;
+}
+
+
+table.recur-cal td.sel.sta {
+	border: 2px solid #000000;
+	background-color: #FF6A00;
+}
+table.recur-cal td.sel.sta.ev {
+	background-color: #FF6A00;
+}
+
+
+
+table.recur-cal td.tod {
+	border: 2px solid #808080;
+}
+table.recur-cal td.exi {
+	font-weight: bold;
+}
+
+/* for include exclude dates */
+div#eved_inex_list div.description {
+	float: left;
+	font-size: small;
+	clear: none;
+}
+div#eved_inex_list fieldset.delete {
+	float: right;
+	clear: none;
+}
+div#eved_inex_list div.none,
+div#eved_inex_list div.include,
+div#eved_inex_list div.exclude {
+	border: 1px solid #808080;
+	overflow: hidden;
+	padding-left: 3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+}
+div#eved_inex_list div.none {
+	background-color: #F0F0F0;
+}
+div#eved_inex_list div.include {
+	background-color: #58D090;
+}
+div#eved_inex_list div.exclude {
+	background-color: #F0D1A0;
+}
+
+/* for confirmation of changes dates */
+div#confirm_changes_div label.description {
+	float: none;
+	font-size: small;
+	clear: none;
+	text-align: left;
+	width: 100%;
+	margin: 0.0em;
+}
+div#confirm_changes_div div.description {
+	font-size: small;
+	clear: none;
+}
+div#confirm_changes_div fieldset.delete {
+	float: right;
+	clear: none;
+}
+div#confirm_changes_div div.cancel,
+div#confirm_changes_div div.delete,
+div#confirm_changes_div div.restore,
+div#confirm_changes_div div.create,
+div#confirm_changes_div div.move,
+div#confirm_changes_div div.draft {
+	border: 1px solid #808080;
+	overflow: hidden;
+	padding-left: 3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+}
+div#confirm_changes_div div.cancel {
+	background-color: #FFB0B0;
+}
+div#confirm_changes_div div.delete {
+	background-color: #FFC080;
+}
+div#confirm_changes_div div.restore {
+	background-color: #B0B0FF;
+}
+div#confirm_changes_div div.create {
+	background-color: #80FF80;
+}
+div#confirm_changes_div div.move {
+	background-color: #FFFF80;
+}
+div#confirm_changes_div div.draft {
+	background-color: #F0F0F0;
+}

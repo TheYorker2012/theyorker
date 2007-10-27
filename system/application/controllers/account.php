@@ -407,17 +407,39 @@ class Account extends controller
 
 		$username = $this->input->post('username');
 
-		$dnslookuptest = $username . '.imap.york.ac.uk';
+		$valid = false;
+		$email_postfix = $this->config->Item('username_email_postfix');
 
-		if (!is_string($username)) {
-			//Do nothing
-		} elseif (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) != 1) {
-			$this->messages->AddMessage('error', 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456.');
-		} elseif (count(dns_get_record($dnslookuptest)) == 0) {
-			$this->messages->AddMessage('error', 'The username does not exist. Please enter a valid YorkWeb username.');
-		} else {
-			if($this->user_auth->resetpassword($username)) {
-				$this->messages->AddMessage('success', 'An e-mail has been sent to '.$username.'@york.ac.uk. Please click on the link within it to activate your account.');
+		if (is_string($username)) {
+			if (preg_match('/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i', $username) == 1) {
+				// We have something that is probably an e-mail address
+				
+				if (substr($username, - strlen($email_postfix)) == $email_postfix) {
+					// This is a york e-mail address, trim the @york.ac.uk from the end
+					$username = substr($username, 0, strlen($username) - strlen($email_postfix));
+				} else {
+					$email = $username;
+					$valid = true;
+				}
+			}
+			if (!$valid) {
+				// Not an e-mail address
+				if (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) == 1) {
+					// This is a university login
+					$dnslookuptest = $username . '.imap.york.ac.uk';
+					$valid = (count(dns_get_record($dnslookuptest)) != 0);
+					if (!$valid)
+						$this->messages->AddMessage('error', 'The username does not exist. Please enter a valid YorkWeb username.');
+					$email = $username.$this->config->Item('username_email_postfix');
+				} else {
+					$this->messages->AddMessage('error', 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456, or an e-mail address.');
+				}
+			}
+		}
+
+		if ($valid) {
+			if($this->user_auth->resetpassword($username, $email)) {
+				$this->messages->AddMessage('success', 'An e-mail has been sent to '.$email.'. Please click on the link within it to activate your account.');
 			} else {
 				$this->messages->AddMessage('error', 'There was an error sending the e-mail.');
 			}

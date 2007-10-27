@@ -111,7 +111,6 @@ if (!empty($league_data)){
 		<div class="BlueBox">
 			
 			<h2><?php echo $main_review_header; ?></h2>
-			<div class="LineContainer"></div>
 			<?php $this->feedback_article_heading = 'Main Review Page: '.$main_review['organisation_name']; ?>
 			<div style="float: right"><a href="<?php echo '/reviews/'.$main_review['content_type_codename'].'/'.$main_review['organisation_directory_entry_name']; ?>"><b>View Guide</b> <img src="/images/icons/book_go.png" /></a></div>
 			<h2 class="Headline"><?php echo $main_review['organisation_name']; ?></h2>

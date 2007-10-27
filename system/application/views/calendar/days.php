@@ -61,16 +61,16 @@ foreach ($Occurrences as $event_info) {
 EVENT_CACHE[EVENT_COUNT] = new Array();
 EVENT_CACHE[EVENT_COUNT][0]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
-EVENT_CACHE[EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT][6]	= '<?php echo(site_url(
 										$Path->OccurrenceInfo($event_info).
 										$CI->uri->uri_string())); ?>';
-EVENT_CACHE[EVENT_COUNT][8]	= -1;
-EVENT_CACHE[EVENT_COUNT][9]	= 1;
-EVENT_CACHE[EVENT_COUNT][10]	= 0;
+EVENT_CACHE[EVENT_COUNT][7]	= -1;
+EVENT_CACHE[EVENT_COUNT][8]	= 1;
+EVENT_CACHE[EVENT_COUNT][9]	= 0;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
@@ -157,9 +157,10 @@ function drawCalendar () {
 		var clash_count = 0;
 		var clash_width = TEMP_CACHE[i][8];
 		for (j=i+1; j<temp_count; j++) {
-			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) ||
-				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) ||
-				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5]))) {
+			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) || // start of j during i
+				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) || // end of j during i
+				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5])))  // j encompases i
+			{
 				clashes[clash_count] = j;
 				if (TEMP_CACHE[j][7] != -1)
 					clash_pos[clash_pos.length] = TEMP_CACHE[j][7];

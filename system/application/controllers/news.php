@@ -189,10 +189,39 @@ class News extends Controller {
 	{
 		if (!CheckPermissions('public')) return;
 
+		/// Check for search filters
+		$filters = $this->uri->uri_to_assoc();
+		if (isset($filters['reporter'])) {
+			if (!is_numeric($filters['reporter'])) {
+				$this->main_frame->AddMessage('error', 'Unknown reporter, please try again.');
+				redirect('/news/archive/');
+			} else {
+				$this->load->model('businesscards_model');
+				$data['byline_info'] = $this->businesscards_model->GetPublicBylineInfo($filters['reporter']);
+				if (count($data['byline_info']) == 0) {
+					// No byline returned, byline must not be approved so don't show
+					unset($data['byline_info']);
+				} else {
+					/// Process byline image
+					$this->load->library('image');
+					if ($data['byline_info']['business_card_image_id'] === NULL) {
+						$data['byline_info']['business_card_image_href'] = '';
+					} else {
+						$data['byline_info']['business_card_image_href'] = $this->image->getPhotoURL($data['byline_info']['business_card_image_id'], 'userimage');
+					}
+				}
+			}
+		}
+		// Convert filters to format required by news model
+		$archive_filters = array();
+		foreach ($filters as $field => $value) {
+			$archive_filters[] = array($field, $value);
+		}
+
 		/// Pagination
 		$this->load->library('pagination');
 		$config['base_url'] = base_url().'news/archive/';
-		$config['total_rows'] = $this->News_model->GetArchive('count')->count;
+		$config['total_rows'] = $this->News_model->GetArchive('count', $archive_filters)->count;
 		$config['per_page'] = 10;
 		$config['num_links'] = 2;
 		$config['full_tag_open'] = '<div class="Pagination">';
@@ -217,7 +246,7 @@ class News extends Controller {
 		}
 
 		/// Get all past articles
-		$data['articles'] = $this->News_model->GetArchive('search', $data['offset'], $config['per_page']);
+		$data['articles'] = $this->News_model->GetArchive('search', $archive_filters, $data['offset'], $config['per_page']);
 		/// Get article thumbnails
 		$this->load->library('image');
 		foreach ($data['articles'] as &$article) {
@@ -260,7 +289,7 @@ class News extends Controller {
 		//}
 
 		/// Create RSS Feed for all sections
-		$data['rss_items'] = $this->News_model->GetArchive('search', 0, 20);
+		$data['rss_items'] = $this->News_model->GetArchive('search', array(), 0, 20);
 
 		$this->load->view('news/rss', $data);
 	}

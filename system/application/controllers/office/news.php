@@ -223,7 +223,8 @@ class News extends Controller
 					/// Assign reporters to request
 					if($this->input->post('r_reporter')) {
 						foreach ($this->input->post('r_reporter') as $reporter) {
-							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+							$byline = $this->article_model->GetReporterByline($reporter);
+							$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
 						}
 					}
 					/// Create initial revision
@@ -310,7 +311,9 @@ class News extends Controller
 					$deadline = date('Y-m-d H:i:s', $deadline);
 				}
 				$article_id = $this->requests_model->CreateRequest('request',$this->input->post('r_box'),$this->input->post('r_title'),$this->input->post('r_brief'),$this->user_auth->entityId,$deadline);
-				$this->requests_model->AddUserToRequest($article_id, $this->user_auth->entityId, $this->user_auth->entityId);
+
+				$byline = $this->article_model->GetReporterByline($this->user_auth_entityId);
+				$this->requests_model->AddUserToRequest($article_id, $this->user_auth->entityId, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
 				$this->requests_model->AcceptRequest($article_id, $this->user_auth->entityId);
 				$accept_data = array(
 					'editor' 		=>	$this->user_auth->entityId,
@@ -461,7 +464,8 @@ class News extends Controller
 						$this->requests_model->RemoveAllUsersFromRequest($article_id);
 						if($this->input->post('r_reporter')) {
 							foreach ($this->input->post('r_reporter') as $reporter) {
-								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+								$byline = $this->article_model->GetReporterByline($reporter);
+								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
 							}
 						}
 						$this->main_frame->AddMessage('success','Request details saved.');
@@ -664,7 +668,8 @@ class News extends Controller
 						$this->requests_model->UpdateRequestStatus($article_id,'request',$accept_data);
 						if($this->input->post('r_reporter')) {
 							foreach ($this->input->post('r_reporter') as $reporter) {
-								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId);
+								$byline = $this->article_model->GetReporterByline($reporter);
+								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
 							}
 						}
 						$revision = $this->article_model->CreateNewRevision($article_id, $this->user_auth->entityId, '', '', '', '', '', '');
@@ -790,6 +795,12 @@ class News extends Controller
 				} else {
 					$publish_date = date('Y-m-d H:i:s', $this->input->post('r_publish'));
 					$this->requests_model->PublishArticle($article_id,$revision_id,$publish_date);
+					$this->load->library('facebook_ticker');
+					if ($this->facebook_ticker->TickerUpdate()) {
+						$this->main_frame->AddMessage('success','The Yorker Facebook News Ticker Application was successfully updated.');
+					} else {
+						$this->main_frame->AddMessage('error','There was a problem updating The Yorker Facebook News Ticker Application.');
+					}
 					$this->main_frame->AddMessage('success','The article was successfully published.');
 					redirect('/office/news');
 				}

@@ -166,7 +166,7 @@ class Comments_model extends model
 			'comment_thread_allow_comments' => TRUE,
 			'comment_thread_allow_anonymous_comments' => TRUE,
 		);
-		
+
 		// Validate properties
 		foreach ($Properties as $key => $value) {
 			if (array_key_exists('comment_thread_'.$key, $properties)) {
@@ -178,7 +178,7 @@ class Comments_model extends model
 		$this->db->insert('comment_threads', $properties);
 		if ($this->db->affected_rows() > 0) {
 			$new_thread_id = $this->db->insert_id();
-			$Keys[] = $Field.' IS NULL';
+			$this->db->where($Field.' IS NULL');
 			$this->db->where($Keys);
 			$this->db->limit(1);
 			$this->db->update($Table, array($Field => $new_thread_id));

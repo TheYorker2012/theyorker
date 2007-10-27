@@ -15,7 +15,7 @@ function printarticlelink($article) {
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
 	echo('		<div class="Author">'."\n");
 	foreach($article['authors'] as $reporter)
-		echo('			<a href="/contact">'.$reporter['name'].'</a>'."\n");
+		echo('			<a href="/news/archive/reporter/'.$reporter['id'].'/">'.$reporter['name'].'</a>'."\n");
 	echo('		</div>'."\n");
 	if (!array_key_exists('blurb', $article)) {
 		echo('		</div>'."\n");
@@ -108,7 +108,7 @@ foreach ($main_article['related_articles'] as $related)
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
-			<a href="/contact"><?php echo($reporter['name']); ?></a><br />
+			<a href="/news/archive/reporter/<?php echo($reporter['id']); ?>/"><?php echo($reporter['name']); ?></a><br />
 <?php } ?>
 		</div>
 <?php if ($main_article['subtext'] != '') { ?>
@@ -118,9 +118,7 @@ foreach ($main_article['related_articles'] as $related)
         <?php echo($main_article['text']); ?>
 
 		<div style="text-align: right">
-			<div>
-				<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
-			</div>
+			<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
 		</div>
 
 		<?php if (isset($office_preview)) { ?>

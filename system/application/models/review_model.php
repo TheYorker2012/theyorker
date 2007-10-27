@@ -94,7 +94,7 @@ class Review_model extends Model {
 			$CI = & get_instance();
 			// Public thread
 			$CI->comments_model->CreateThread(
-				array(), 'review_contexts',
+				array('comment_thread_allow_ratings' => TRUE), 'review_contexts',
 				$query[0], 'review_context_comment_thread_id');
 			// Private thread
 			$CI->comments_model->CreateThread(

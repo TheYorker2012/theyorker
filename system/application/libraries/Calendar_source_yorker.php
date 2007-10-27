@@ -46,6 +46,9 @@ class CalendarSourceYorker extends CalendarSource
 		if (!$CI->events_model->IsReadOnly()) {
 			$this->mCapabilities[] = 'create';
 		}
+		if ($CI->events_model->IsVip()) {
+			$this->mCapabilities[] = 'publish';
+		}
 		$this->mCapabilities[] = 'attend';
 		
 		$this->mGroups['streams'] = FALSE;
@@ -152,7 +155,6 @@ class CalendarSourceYorker extends CalendarSource
 			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_start_time)	AS start,'.
 			'UNIX_TIMESTAMP(event_occurrences.event_occurrence_end_time)	AS end,'.
 // 			'event_occurrences.event_occurrence_time_associated				AS time_associated,'.
-			'event_occurrences.event_occurrence_location_name				AS location,'.
 			'event_occurrences.event_occurrence_ends_late					AS ends_late,'.
 			
 			// show on calendar if date associated and attending=TRUE or NULL
@@ -170,6 +172,8 @@ class CalendarSourceYorker extends CalendarSource
 			'event_types.event_type_colour_hex		AS category_colour,'.
 			'events.event_name						AS name,'.
 			'events.event_description				AS description,'.
+			'events.event_location_name				AS event_location,'.
+			'event_occurrences.event_occurrence_location_name			AS occurrence_location,'.
 			//'events.event_blurb AS blurb,'.
 			'UNIX_TIMESTAMP(events.event_start)		AS base_start,'.
 			'UNIX_TIMESTAMP(events.event_end)		AS base_end,'.
@@ -219,6 +223,7 @@ class CalendarSourceYorker extends CalendarSource
 				$event->CategoryId = $row['category_id'];
 				$event->Name = $row['name'];
 				$event->Description = $row['description'];
+				$event->LocationDescription = $row['event_location'];
 				$event->LastUpdate = $row['last_update'];
 				if (NULL !== $row['base_start']) {
 					$event->StartTime = new Academic_time((int)$row['base_start']);
@@ -259,7 +264,7 @@ class CalendarSourceYorker extends CalendarSource
 					$occurrence->EndTime = new Academic_time((int)$row['end']);
 				}
 				$occurrence->TimeAssociated = $row['time_associated'];
-				$occurrence->LocationDescription = $row['location'];
+				$occurrence->LocationDescription = $row['occurrence_location'];
 				/// @todo location link
 				if ($row['ends_late']) {
 					$occurrence->SpecialTags[] = 'ends_late';
@@ -582,19 +587,35 @@ class CalendarSourceYorker extends CalendarSource
 	/// Create an event.
 	/**
 	 * @param $Event CalendarEvent event information.
+	 * @param $NewId &int New source id.
 	 * @return array Array of messages.
+	 * @post @a $NewId will be set if and only if empty(result['error']).
 	 */
-	function CreateEvent($Event)
+	function CreateEvent($Event, & $NewId)
 	{
 		/// @todo Make this function work with a CalendarEvent object.
 		$messages = array();
 		$CI = & get_instance();
 		try {
 			$results = $CI->events_model->EventCreate($Event);
+			$NewId = $results['event_id'];
 		} catch (Exception $e) {
 			$messages['error'][] = $e->getMessage();
 		}
 		return $messages;
+	}
+	
+	/// Get the changes to update an event to a specified recurrence set.
+	/**
+	 * @param $Event &CalendarEvent Event information.
+	 * @param $RSet RecurrenceSet   Recurrence information.
+	 * @return array Information about the changes that must be made.
+	 */
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		$CI = & get_instance();
+		$changes = $CI->events_model->ResolveRecurrenceSetOccurrences($Event->SourceEventId, $RSet);
+		return $CI->events_model->TidyRecurrenceSetOccurrencesChanges($changes);
 	}
 	
 	/// Ammend an event.
@@ -622,6 +643,12 @@ class CalendarSourceYorker extends CalendarSource
 				($Changes['description'] != $Event->Description))
 			{
 				$loc_changes['description'] = $Changes['description'];
+			}
+			
+			if (array_key_exists('location_name', $Changes) &&
+				($Changes['location_name'] !== $Event->LocationDescription))
+			{
+				$loc_changes['location_name'] = $Changes['location_name'];
 			}
 			
 			if (array_key_exists('time_associated', $Changes) &&
@@ -735,6 +762,23 @@ class CalendarSourceYorker extends CalendarSource
 				$result = -1;
 		};
 		return $result;
+	}
+	
+	/// Publish occurrences at specific times.
+	/**
+	 * @param $Event &CalendarEvent Drafts within this event.
+	 * @param $Timestamps array of Timestamps.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrences(& $Event, $Timestamps)
+	{
+		$CI = & get_instance();
+		$changes = $CI->events_model->OccurrencesChangeStateByTimestamp(
+			$Event->SourceEventId,
+			$Timestamps,
+			array('draft'),
+			'published');
+		return $changes;
 	}
 	
 	/// Cancel an occurrence.

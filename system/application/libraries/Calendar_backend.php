@@ -111,6 +111,14 @@ class CalendarOccurrence
 	{
 		return in_array($Action, $this->UserPermissions);
 	}
+	
+	/// Get the location description of the occurrence.
+	function GetLocationDescription()
+	{
+		return NULL === $this->LocationDescription
+				?	$this->Event->LocationDescription
+				:	$this->LocationDescription;
+	}
 }
 
 /// Class to represent event from any source.
@@ -149,6 +157,8 @@ class CalendarEvent
 	public $Description		= NULL;
 	/// html,NULL Description of event as html.
 	public $DescriptionHtml	= NULL;
+	/// string,NULL Description of location.
+	public $LocationDescription	= NULL;
 	/// array[&CalendarOrganisation] Array of owner organisation references.
 	public $Organisations	= array();
 	/// timestamp,NULL Time of last significant updaate to the event.
@@ -575,11 +585,24 @@ abstract class CalendarSource
 	/// Create an event.
 	/**
 	 * @param $Event CalendarEvent event information.
+	 * @param $NewId &int New source id.
 	 * @return array Array of messages.
+	 * @post @a $NewId will be set if and only if empty(result['error']).
 	 */
-	function CreateEvent($Event)
+	function CreateEvent($Event, & $NewId)
 	{
 		return array('error' => array('Creating events in this event source is not currently supported.'));
+	}
+	
+	/// Get the changes to update an event to a specified recurrence set.
+	/**
+	 * @param $Event &CalendarEvent Event information.
+	 * @param $RSet RecurrenceSet   Recurrence information.
+	 * @return array Information about the changes that must be made.
+	 */
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		return NULL;
 	}
 	
 	/// Ammend an event.
@@ -643,6 +666,17 @@ abstract class CalendarSource
 	 * @return int Number of affected rows or error code (negative).
 	 */
 	function PublishOccurrence(& $Occurrence)
+	{
+		return -1;
+	}
+	
+	/// Publish occurrences at specific times.
+	/**
+	 * @param $Event &CalendarEvent Drafts within this event.
+	 * @param $Timestamps array of Timestamps.
+	 * @return int Number of affected rows or error code (negative).
+	 */
+	function PublishOccurrences(& $Event, $Timestamps)
 	{
 		return -1;
 	}
@@ -1184,6 +1218,16 @@ class CalendarSources extends CalendarSource
 			return $this->mSources[$SourceId]->GetOccurrenceAttendanceList($Occurrence);
 		} else {
 			return parent::GetOccurrenceAttendanceList($Occurrence);
+		}
+	}
+	
+	/// Get the changes to update an event to a specified recurrence set.
+	function GetEventRecurChanges($Event, $RSet)
+	{
+		if (array_key_exists($Event->Source->GetSourceId(), $this->mSources)) {
+			return $this->mSources[$Event->Source->GetSourceId()]->GetEventRecurChanges($Event, $RSet);
+		} else {
+			return parent::GetEventRecurChanges($Event, $RSet);
 		}
 	}
 	
