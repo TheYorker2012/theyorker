@@ -58,8 +58,12 @@ var END_HOUR = 23;
 var MAX_START_HOUR = 0;
 var MAX_END_HOUR = 29;
 var CREATE_EVENT = false;
+var DESELECTING_EVENT = false;
 var FIRST_DAY = 0;
 var DAYS = new Array();
+var CREATE_EVENT_DAY = null;
+var CREATE_EVENT_START_TIME = 0;
+var CREATE_EVENT_END_TIME = 0;
 <?php foreach ($Days as $date => $day) { ?>
 if (FIRST_DAY == 0) {
 	FIRST_DAY = new Date();
@@ -534,42 +538,66 @@ function removeChildrenFromNode(node) {
 
 function clickDay (day,event) {
 	var new_event = document.getElementById('cal_new_event');
-	if (new_event !== null) {
-		new_event.parentNode.removeChild(new_event);
-	}
 
 	var pos_relative = findMouse(event)[1] - findPos(day)[1];
 	pos_relative = Math.floor((pos_relative - 1 + 2)/(HOUR_HEIGHT/4));
+	
+	DESELECTING_EVENT = false;
+	if (new_event != null) {
+		DESELECTING_EVENT = new_event.style.display != 'none';
+		if (day != CREATE_EVENT_DAY ||
+			new_event.style.display == 'none' ||
+			pos_relative + (START_HOUR*4) < CREATE_EVENT_START_TIME ||
+			pos_relative + (START_HOUR*4) >= CREATE_EVENT_END_TIME)
+		{
+			new_event.parentNode.removeChild(new_event);
+		} else {
+			return true;
+		}
+	}
+	CREATE_EVENT_DAY = day;
 
-	var duration = 0.5;
+	var duration = 1.0;
 	var width = Math.floor(day.offsetWidth-2-5);;
 
 	new_event 				= document.createElement('div');
 	new_event.id			= 'cal_new_event';
 	new_event.className		= 'cal_event cal_category_new_event';
+	new_event.style.display	= 'none';
 	new_event.style.left	= findPos(day)[0] + 'px';
 	new_event.style.top		= findPos(day)[1] + 1 + ((pos_relative*(HOUR_HEIGHT/4))-2) + 'px';
 	new_event.style.width	= width + 'px';
 	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
-	new_event.onclick		= function(){ alert('CREATE NEW EVENT HERE!'); };
+// 	new_event.onclick		= function(){ alert('CREATE NEW EVENT HERE!'); };
 
-	var start_time			= document.createElement('div');
-	start_time.id			= 'cal_new_event_start';
 	var display					= (pos_relative + (START_HOUR*4));
+	CREATE_EVENT_START_TIME	= display;
+	CREATE_EVENT_END_TIME = CREATE_EVENT_START_TIME + 4;
 	var display2 = (display%4)*15;
 	if (display2 == '0')
 		display2 = '00';
 	var display3 = Math.floor(display/4);
 	if (display3 > 23)
 		display3 -= 24;
+		
+	var start_time			= document.createElement('div');
+	start_time.id			= 'cal_new_event_start';
 	start_time.appendChild(document.createTextNode('Start: ' + display3 + ':' + display2));
 
+	var end_display2 = (CREATE_EVENT_END_TIME%4)*15;
+	if (end_display2 == '0')
+		end_display2 = '00';
+	var end_display3 = Math.floor(CREATE_EVENT_END_TIME/4);
+	if (end_display3 > 23)
+		end_display3 -= 24;
+	
 	var end_time			= document.createElement('div');
 	end_time.id				= 'cal_new_event_end';
-	end_time.appendChild(document.createTextNode('End'));
+	end_time.appendChild(document.createTextNode('Finish: ' + end_display3 + ':' + end_display2));
 
 	new_event.appendChild(start_time);
 	new_event.appendChild(end_time);
+// 	day.insertBefore(new_event, day.firstChild);
 	day.appendChild(new_event);
 	CREATE_EVENT = true;
 }
@@ -579,22 +607,41 @@ function moveDay (day, event) {
 		var new_event = document.getElementById('cal_new_event');
 		if (new_event == null)
 			return;
+		
+		
+		var start_time = CREATE_EVENT_START_TIME - (START_HOUR*4);
+		var end_time = findMouse(event)[1] - findPos(day)[1];
+		end_time = Math.floor((end_time - 1 + 2)/(HOUR_HEIGHT/4));
+		if (end_time < start_time) {
+			var tmp = start_time;
+			start_time = end_time;
+			end_time = tmp;
+		}
+		end_time++;
+		CREATE_EVENT_END_TIME = end_time + START_HOUR*4;
+		if (end_time - start_time > 1) {
+			new_event.style.display	= 'block';
+			DESELECTING_EVENT = false;
+		}
+		new_event.style.top = (findPos(day)[1] + (start_time*(HOUR_HEIGHT/4))-2) + 'px';
+		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-2) + 'px';
 
-		var pos_relative = findMouse(event)[1] - findPos(new_event)[1];
-		if (pos_relative < 0)
-			return;
-		pos_relative = Math.ceil((pos_relative + 2)/(HOUR_HEIGHT/4));
-		new_event.style.height = ((pos_relative*(HOUR_HEIGHT/4))-2) + 'px';
-
-		var start_time = Math.floor((findPos(new_event)[1] - (findPos(day)[1]-1))/(HOUR_HEIGHT/4));
-		var display = start_time + pos_relative;
-		var display2 = (display%4)*15;
-		if (display2 == '0')
-			display2 = '00';
-		var display3 = Math.floor(display/4)+START_HOUR;
-		if (display3 > 23)
-			display3 -= 24;
-		document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + display3 + ':' + display2;
+// 		var start_time = Math.floor((findPos(new_event)[1] - (findPos(day)[1]-1))/(HOUR_HEIGHT/4));
+		var start_display2 = (start_time%4)*15;
+		if (start_display2 == '0')
+			start_display2 = '00';
+		var start_display3 = Math.floor(start_time/4)+START_HOUR;
+		if (start_display3 > 23)
+			start_display3 -= 24;
+		document.getElementById('cal_new_event_start').innerHTML = 'Start: ' + start_display3 + ':' + start_display2;
+		
+		var end_display2 = (end_time%4)*15;
+		if (end_display2 == '0')
+			end_display2 = '00';
+		var end_display3 = Math.floor(end_time/4)+START_HOUR;
+		if (end_display3 > 23)
+			end_display3 -= 24;
+		document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + end_display3 + ':' + end_display2;
 
 		document.getElementById('cal_new_event_start').focus();
 	}
@@ -602,6 +649,10 @@ function moveDay (day, event) {
 
 function unclickDay(day,event) {
 	CREATE_EVENT = false;
+	var new_event = document.getElementById('cal_new_event');
+	if (new_event != null && !DESELECTING_EVENT) {
+		new_event.style.display	= 'block';
+	}
 	document.getElementById('cal_new_event_start').focus();
 }
 
@@ -840,6 +891,9 @@ if (isset($ForwardUrl)) {
 <?php foreach ($Days as $date => $day) { ?>
 		<td id="cal_day_<?php echo($date); ?>_before" class="cal_day_counts"></td>
 <?php } ?>
+	</tr>
+	<tr>
+		<td id="debug_dump"></td>
 	</tr>
 
 	<!-- Main Calendar Display -->
