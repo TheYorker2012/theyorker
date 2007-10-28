@@ -163,10 +163,6 @@ class CalendarSourceFacebook extends CalendarSource
 							continue;
 						}
 					}
-					/*echo '<pre align="left">';
-					print_r($event);
-					print_r($members);
-					echo '</pre>';*/
 					
 					$event_obj = & $Data->NewEvent();
 					$occurrence = & $Data->NewOccurrence($event_obj);

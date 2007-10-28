@@ -48,6 +48,7 @@ $CI = & get_instance();
 					echo('<strong>'.$Occurrence->State.'</strong>');
 				}
 				if (!$Squash) {
+					/*
 					if ('owned' === $Occurrence->Event->UserStatus) {
 						$links = array();
 						if ($Occurrence->UserHasPermission('publish')) {
@@ -72,6 +73,7 @@ $CI = & get_instance();
 						}
 						echo(' ('.implode(', ', $links).')');
 					}
+					*/
 					echo('<br />');
 					if (!empty($Occurrence->LocationDescription)) {
 						echo(htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));

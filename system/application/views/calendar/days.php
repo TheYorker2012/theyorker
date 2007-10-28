@@ -10,6 +10,31 @@ if (!isset($Path)) {
 	);
 }
 $squash = (count($Days) > 3);
+
+
+
+$show_attendence = !$squash;
+$attendence_actions = ($show_attendence
+	? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+	: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
+);
+$attend_state_images = array(
+	'yes' => array(
+		'/images/prototype/calendar/filter_rsvp_unselect.gif',
+		'/images/prototype/calendar/filter_rsvp_select.gif',
+		'attend',
+	),
+	'maybe' => array(
+		'/images/prototype/calendar/filter_visible_unselect.png',
+		'/images/prototype/calendar/filter_visible_select.png',
+		'maybe attend',
+	),
+	'no' => array(
+		'/images/prototype/calendar/filter_hidden_unselect.gif',
+		'/images/prototype/calendar/filter_hidden_select.gif',
+		'do not attend',
+	),
+);
 ?>
 
 
@@ -59,7 +84,28 @@ foreach ($Occurrences as $event_info) {
 	if ($event_info->DisplayOnCalendar) {
 		if ($event_info->TimeAssociated) { ?>
 EVENT_CACHE[EVENT_COUNT] = new Array();
-EVENT_CACHE[EVENT_COUNT][0]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][0]	= '<?php
+	if ($event_info->UserHasPermission('set_attend') &&
+		$event_info->State == 'published')
+	{
+		echo('<div class="cal_event_heading_box">');
+		$attendence_writeable = $event_info->Event->Source->IsSupported('attend');
+		foreach (array('yes','maybe','no') as $attend_state) {
+			$in_state = ($attend_state == $event_info->UserAttending);
+			if (!$in_state && $attendence_writeable) {
+				echo('<a href="'.
+						site_url($Path->OccurrenceAttend($event_info, $attend_state)).$CI->uri->uri_string().
+						'">');
+			}
+			echo('<img src="'.$attend_state_images[$attend_state][$in_state?1:0].'" alt="'.$attend_state_images[$attend_state][2].'" />');
+			if (!$in_state && $attendence_writeable) {
+				echo('</a>');
+			}
+		}
+		echo('</div>');
+	}
+	echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); 
+	?>';
 EVENT_CACHE[EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
 EVENT_CACHE[EVENT_COUNT][2]	= '<?php echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8'))); ?>';
 EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
@@ -156,7 +202,7 @@ function drawCalendar () {
 		var clash_pos = new Array();
 		var clash_count = 0;
 		var clash_width = TEMP_CACHE[i][8];
-		for (j=i+1; j<temp_count; j++) {
+		for (var j=i+1; j<temp_count; j++) {
 			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) || // start of j during i
 				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) || // end of j during i
 				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5])))  // j encompases i
@@ -180,7 +226,7 @@ function drawCalendar () {
 			TEMP_CACHE[i][7] = current_pos;
 			while (in_array(current_pos++, clash_pos)) { current_pos++; }
 		}
-		for (j=0; j<clash_count; j++) {
+		for (var j=0; j<clash_count; j++) {
 			TEMP_CACHE[clashes[j]][8] = clash_width;
 			if (TEMP_CACHE[clashes[j]][7] == -1) {
 				TEMP_CACHE[clashes[j]][7] = current_pos;
@@ -201,6 +247,7 @@ function drawCalendar () {
 			TEMP_CACHE[i][0],
 			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
 			TEMP_CACHE[i][2],
+			TEMP_CACHE[i][3],
 			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][9]).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
 			TEMP_CACHE[i][7],
@@ -275,7 +322,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 	new_event.style.left	= start_left + 'px';
 	new_event.style.height	= ((HOUR_HEIGHT/2)-2) + 'px';
 	new_event.style.width	= (duration_width-2) + 'px';
-	new_event.onclick		= function(){ alert('You clicked on this event!'); };
+// 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
 
 	new_event.appendChild(event_title);
 
@@ -285,7 +332,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 		MAX_ALL_DAY = height;
 }
 
-function drawEvent(parent, id, category, link, title, content_time, content_location, start_hour, duration, left, width) {
+function drawEvent(parent, id, category, link, title, content_time, content_location, content_description, start_hour, duration, left, width) {
 	var p_ele = document.getElementById(parent);
 	if (p_ele == null)
 		return;
@@ -318,7 +365,7 @@ function drawEvent(parent, id, category, link, title, content_time, content_loca
 	new_event.className		= 'cal_event cal_category_' + category;
 	new_event.style.left	= findPos(p_ele)[0] + (left*(width+2+5)) + 'px';
 	new_event.style.width	= width + 'px';
-	new_event.onclick		= function(){ alert('You clicked on this event!'); };
+// 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
 
 	if ((start_hour+duration) >= (END_HOUR+1)) {
 		duration = (END_HOUR+1) - start_hour;
@@ -356,6 +403,10 @@ function drawEvent(parent, id, category, link, title, content_time, content_loca
 		var event_content2		= document.createElement('div');
 		event_content2.className= 'cal_event_info';
 		event_content2.appendChild(event_content_i);
+		if (content_description != '') {
+			event_content2.innerHTML	+= "<br />"+content_description;
+// 			event_content2.appendChild(document.createTextNode(content_description));
+		}
 
 		new_event.appendChild(event_title);
 		new_event.appendChild(event_content);
@@ -677,6 +728,15 @@ table#calendar_view div.cal_event div.cal_event_heading {
 	padding: 0 2px;
 }
 
+table#calendar_view div.cal_event div.cal_event_heading div.cal_event_heading_box {
+	float: right;
+	clear: none;
+}
+table#calendar_view div.cal_event div.cal_event_heading div.cal_event_heading_box img {
+	width: 12px;
+	height: 12px;
+}
+
 table#calendar_view div.cal_event div.cal_event_heading a {
 	color: #fff;
 }
@@ -788,14 +848,38 @@ if (isset($ForwardUrl)) {
 		<td id="calendar_time"></td>
 
 		<!-- Day Columns -->
-<?php foreach ($Days as $date => $day) { ?>
+<?php
+	foreach ($Days as $date => $day) { ?>
 		<td id="cal_day_<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
 <?php	foreach ($day['events'] as $time => $ocs) {
 			foreach ($ocs as $event_info) {
 				if (($event_info->DisplayOnCalendar) && ($event_info->TimeAssociated)) {
 ?>
-			<div class="cal_event cal_event_nojs cal_category_<?php echo($event_info->Event->Category); ?>" onclick="alert('You clicked on this event!');">
+			<div class="cal_event cal_event_nojs cal_category_<?php echo($event_info->Event->Category); ?>"<?php /* onclick="alert('You clicked on this event!');"*/ ?>>
 				<div class="cal_event_heading">
+					<?php
+					if ($event_info->UserHasPermission('set_attend') &&
+						$event_info->State == 'published')
+					{
+					?><div class="cal_event_heading_box">
+					<?php
+						$attendence_writeable = $event_info->Event->Source->IsSupported('attend');
+						foreach (array('yes','maybe','no') as $attend_state) {
+							$in_state = ($attend_state == $event_info->UserAttending);
+							if (!$in_state && $attendence_writeable) {
+								echo('<a href="'.
+										site_url($Path->OccurrenceAttend($event_info, $attend_state)).$CI->uri->uri_string().
+										'">');
+							}
+							echo('<img src="'.$attend_state_images[$attend_state][$in_state?1:0].'" alt="'.$attend_state_images[$attend_state][2].'" />');
+							if (!$in_state && $attendence_writeable) {
+								echo('</a>');
+							}
+						}
+					?></div>
+					<?php
+					}
+					?>
 					<a href="<?php echo(site_url(
 									$Path->OccurrenceInfo($event_info).
 									$CI->uri->uri_string())); ?>">
@@ -806,7 +890,10 @@ if (isset($ForwardUrl)) {
 					<?php echo($event_info->StartTime->Format('H:i') . ' - ' . $event_info->EndTime->Format('H:i')); ?>
 				</div>
 				<div class="cal_event_info">
-					<i><?php echo(js_nl2br(htmlentities($event_info->LocationDescription, ENT_QUOTES, 'UTF-8'))); ?></i>
+					<i><?php echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8'))); ?></i>
+					<?php if (!$squash && !empty($event_info->Event->Description)) {
+						echo('<br />'.htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'));
+					} ?>
 				</div>
 			</div>
 <?php			}
@@ -843,7 +930,7 @@ if (isset($ForwardUrl)) {
 
 
 
-
+<?php /* ?>
 
 
 <div class="BlueBox">
@@ -930,3 +1017,4 @@ echo('</table>');
 //print_r($Occurrences);
 //print('</pre>');
 ?>
+<?php //*/ ?>
