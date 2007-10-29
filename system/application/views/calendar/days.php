@@ -50,7 +50,7 @@ function js_nl2br ($string) {
 ?>
 
 <script type="text/javascript">
-var HOUR_HEIGHT = 42;
+var HOUR_HEIGHT = <?php echo(HOUR_HEIGHT); ?>;
 var COL_WIDTH = 88;
 var MAX_ALL_DAY = 0;
 var START_HOUR = 8;
@@ -58,12 +58,14 @@ var END_HOUR = 23;
 var MAX_START_HOUR = 0;
 var MAX_END_HOUR = 29;
 var CREATE_EVENT = false;
+var CREATE_EVENT_MOVE = false;
 var DESELECTING_EVENT = false;
 var FIRST_DAY = 0;
 var DAYS = new Array();
 var CREATE_EVENT_DAY = null;
 var CREATE_EVENT_START_TIME = 0;
 var CREATE_EVENT_END_TIME = 0;
+var CREATE_EVENT_MOVE_GRAB = 0;
 <?php foreach ($Days as $date => $day) { ?>
 if (FIRST_DAY == 0) {
 	FIRST_DAY = new Date();
@@ -536,22 +538,61 @@ function removeChildrenFromNode(node) {
 	}
 }
 
+function updateNewEventTimes(start_time, end_time) {
+	var start_display2 = (start_time%4)*15;
+	if (start_display2 == '0')
+		start_display2 = '00';
+	var start_display3 = Math.floor(start_time/4);
+	if (start_display3 > 23)
+		start_display3 -= 24;
+	document.getElementById('cal_new_event_start').innerHTML = 'Start: ' + start_display3 + ':' + start_display2;
+	
+	var end_display2 = (end_time%4)*15;
+	if (end_display2 == '0')
+		end_display2 = '00';
+	var end_display3 = Math.floor(end_time/4);
+	if (end_display3 > 23)
+		end_display3 -= 24;
+	document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + end_display3 + ':' + end_display2;
+}
+
 function clickDay (day,event) {
 	var new_event = document.getElementById('cal_new_event');
+	
+	// Swap stored start and end time if they're the wrong way
+	if (CREATE_EVENT_END_TIME < CREATE_EVENT_START_TIME) {
+		var tmp = CREATE_EVENT_END_TIME;
+		CREATE_EVENT_END_TIME = CREATE_EVENT_START_TIME;
+		CREATE_EVENT_START_TIME = tmp;
+	}
 
 	var pos_relative = findMouse(event)[1] - findPos(day)[1];
 	pos_relative = Math.floor((pos_relative - 1 + 2)/(HOUR_HEIGHT/4));
 	
 	DESELECTING_EVENT = false;
 	if (new_event != null) {
-		DESELECTING_EVENT = new_event.style.display != 'none';
+		DESELECTING_EVENT = new_event.style.display != 'none'; + (START_HOUR/4)
 		if (day != CREATE_EVENT_DAY ||
 			new_event.style.display == 'none' ||
 			pos_relative + (START_HOUR*4) < CREATE_EVENT_START_TIME ||
-			pos_relative + (START_HOUR*4) >= CREATE_EVENT_END_TIME)
+			pos_relative + (START_HOUR*4) > CREATE_EVENT_END_TIME)
 		{
 			new_event.parentNode.removeChild(new_event);
 		} else {
+			var grab_position = findMouse(event)[1] - findPos(new_event)[1];
+			var event_height = (CREATE_EVENT_END_TIME - CREATE_EVENT_START_TIME + 1) * (HOUR_HEIGHT/4);
+			var grab_ratio = grab_position / event_height;
+			if (grab_ratio >= 0.75 && grab_position > event_height-HOUR_HEIGHT/2) {
+				CREATE_EVENT = true;
+			} else if (grab_ratio <= 0.25 && grab_position < HOUR_HEIGHT/2) {
+				var tmp = CREATE_EVENT_END_TIME;
+				CREATE_EVENT_END_TIME = CREATE_EVENT_START_TIME;
+				CREATE_EVENT_START_TIME = tmp;
+				CREATE_EVENT = true;
+			} else {
+				CREATE_EVENT_MOVE = true;
+			}
+			CREATE_EVENT_MOVE_GRAB = grab_position;
 			return true;
 		}
 	}
@@ -565,10 +606,10 @@ function clickDay (day,event) {
 	new_event.className		= 'cal_event cal_category_new_event';
 	new_event.style.display	= 'none';
 	new_event.style.left	= findPos(day)[0] + 'px';
-	new_event.style.top		= findPos(day)[1] + 1 + ((pos_relative*(HOUR_HEIGHT/4))-2) + 'px';
+	new_event.style.top		= findPos(day)[1] + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
 	new_event.style.width	= width + 'px';
 	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
-// 	new_event.onclick		= function(){ alert('CREATE NEW EVENT HERE!'); };
+	new_event.ondblclick	= function(){ confirm('Create a new event here!'); };
 
 	var display					= (pos_relative + (START_HOUR*4));
 	CREATE_EVENT_START_TIME	= display;
@@ -612,48 +653,59 @@ function moveDay (day, event) {
 		var start_time = CREATE_EVENT_START_TIME - (START_HOUR*4);
 		var end_time = findMouse(event)[1] - findPos(day)[1];
 		end_time = Math.floor((end_time - 1 + 2)/(HOUR_HEIGHT/4));
+		CREATE_EVENT_END_TIME = end_time + START_HOUR*4;
 		if (end_time < start_time) {
 			var tmp = start_time;
 			start_time = end_time;
 			end_time = tmp;
 		}
 		end_time++;
-		CREATE_EVENT_END_TIME = end_time + START_HOUR*4;
-		if (end_time - start_time > 1) {
+		if (end_time - start_time > 2) {
 			new_event.style.display	= 'block';
 			DESELECTING_EVENT = false;
 		}
-		new_event.style.top = (findPos(day)[1] + (start_time*(HOUR_HEIGHT/4))-2) + 'px';
+		new_event.style.top = (findPos(day)[1] + (start_time*(HOUR_HEIGHT/4))) + 'px';
 		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-2) + 'px';
 
-// 		var start_time = Math.floor((findPos(new_event)[1] - (findPos(day)[1]-1))/(HOUR_HEIGHT/4));
-		var start_display2 = (start_time%4)*15;
-		if (start_display2 == '0')
-			start_display2 = '00';
-		var start_display3 = Math.floor(start_time/4)+START_HOUR;
-		if (start_display3 > 23)
-			start_display3 -= 24;
-		document.getElementById('cal_new_event_start').innerHTML = 'Start: ' + start_display3 + ':' + start_display2;
-		
-		var end_display2 = (end_time%4)*15;
-		if (end_display2 == '0')
-			end_display2 = '00';
-		var end_display3 = Math.floor(end_time/4)+START_HOUR;
-		if (end_display3 > 23)
-			end_display3 -= 24;
-		document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + end_display3 + ':' + end_display2;
+		updateNewEventTimes(start_time+START_HOUR*4, end_time+START_HOUR*4);
 
 		document.getElementById('cal_new_event_start').focus();
+		
+	} else if (CREATE_EVENT_MOVE) {
+		var new_event = document.getElementById('cal_new_event');
+		if (new_event == null)
+			return;
+		
+		var event_pos = findPos(new_event)[1];
+		var move_position = findMouse(event)[1] - event_pos;
+		move_position -= CREATE_EVENT_MOVE_GRAB;
+		if (move_position > 0) {
+			move_position = Math.floor(move_position / (HOUR_HEIGHT/4));
+		} else {
+			move_position = Math.ceil(move_position / (HOUR_HEIGHT/4));
+		}
+		if (move_position != 0) {
+			CREATE_EVENT_START_TIME += move_position;
+			CREATE_EVENT_END_TIME += move_position;
+			new_event.style.top = (findPos(day)[1] + (CREATE_EVENT_START_TIME-(START_HOUR*4)) * (HOUR_HEIGHT/4)) + "px";
+			
+			updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
+		}
 	}
 }
 
 function unclickDay(day,event) {
-	CREATE_EVENT = false;
-	var new_event = document.getElementById('cal_new_event');
-	if (new_event != null && !DESELECTING_EVENT) {
-		new_event.style.display	= 'block';
+	if (CREATE_EVENT) {
+		CREATE_EVENT = false;
+		var new_event = document.getElementById('cal_new_event');
+		if (new_event != null && !DESELECTING_EVENT) {
+			new_event.style.display	= 'block';
+		}
+		document.getElementById('cal_new_event_start').focus();
 	}
-	document.getElementById('cal_new_event_start').focus();
+	if (CREATE_EVENT_MOVE) {
+		CREATE_EVENT_MOVE = false;
+	}
 }
 
 function in_array(value, a) {
