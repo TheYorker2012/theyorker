@@ -653,6 +653,11 @@ function moveDay (day, event) {
 		var start_time = CREATE_EVENT_START_TIME - (START_HOUR*4);
 		var end_time = findMouse(event)[1] - findPos(day)[1];
 		end_time = Math.floor((end_time - 1 + 2)/(HOUR_HEIGHT/4));
+		if (end_time < 0) {
+			end_time = 0;
+		} else if (end_time > (END_HOUR-START_HOUR+1)*4-1) {
+			end_time = (END_HOUR-START_HOUR+1)*4-1;
+		}
 		CREATE_EVENT_END_TIME = end_time + START_HOUR*4;
 		if (end_time < start_time) {
 			var tmp = start_time;
@@ -685,6 +690,11 @@ function moveDay (day, event) {
 			move_position = Math.ceil(move_position / (HOUR_HEIGHT/4));
 		}
 		if (move_position != 0) {
+			if (CREATE_EVENT_START_TIME + move_position < START_HOUR*4) {
+				move_position = START_HOUR*4 - CREATE_EVENT_START_TIME;
+			} else if (CREATE_EVENT_END_TIME + move_position+1 > (END_HOUR+1)*4) {
+				move_position = (END_HOUR+1)*4 - CREATE_EVENT_END_TIME - 1;
+			}
 			CREATE_EVENT_START_TIME += move_position;
 			CREATE_EVENT_END_TIME += move_position;
 			new_event.style.top = (findPos(day)[1] + (CREATE_EVENT_START_TIME-(START_HOUR*4)) * (HOUR_HEIGHT/4)) + "px";
