@@ -3,6 +3,8 @@
 /**
  * @file views/calendar/days.php
  * @param $Categories Category information.
+ * @param $AllowEventCreate bool Whether creation of events is permitted.
+ * @param $Path string Path information.
  */
 // make sure a few things are defined
 if (!isset($ReadOnly)) {
@@ -16,6 +18,9 @@ if (!isset($Path)) {
 }
 $squash = (count($Days) > 3);
 
+if (!isset($AllowEventCreate)) {
+	$AllowEventCreate = true;
+}
 
 
 $show_attendence = !$squash;
@@ -333,7 +338,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
-	new_event.className		= 'cal_event cal_category_' + category;
+	new_event.className		= 'cal_event new cal_category_' + category;
 	new_event.style.top		= findPos(p_ele)[1] + (height*(HOUR_HEIGHT/2)) + 'px';
 	new_event.style.left	= start_left + 'px';
 	new_event.style.height	= ((HOUR_HEIGHT/2)-2) + 'px';
@@ -555,15 +560,15 @@ function updateNewEventTimes(start_time, end_time) {
 	var start_display3 = Math.floor(start_time/4);
 	if (start_display3 > 23)
 		start_display3 -= 24;
-	document.getElementById('cal_new_event_start').innerHTML = 'Start: ' + start_display3 + ':' + start_display2;
-	
 	var end_display2 = (end_time%4)*15;
 	if (end_display2 == '0')
 		end_display2 = '00';
 	var end_display3 = Math.floor(end_time/4);
 	if (end_display3 > 23)
 		end_display3 -= 24;
-	document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + end_display3 + ':' + end_display2;
+	document.getElementById('cal_new_event_times').innerHTML =
+		start_display3 + ':' + start_display2 + " - " +
+		end_display3 + ':' + end_display2;
 }
 
 function showCreateBox(new_event) {
@@ -620,6 +625,36 @@ function toggleCreateBox(new_event)
 	}
 }
 
+function setCreateBoxSummary(new_summary)
+{
+	if (new_summary == '') {
+		new_summary = 'New event';
+	}
+	var new_event_heading	= document.getElementById('cal_new_event_heading');
+	if (new_event_heading.firstChild) {
+		new_event_heading.removeChild(new_event_heading.firstChild);
+	}
+	new_event_heading.appendChild(document.createTextNode(new_summary));
+}
+function setCreateBoxCategory(new_category)
+{
+	var category_name	= document.getElementById('evad_category_op_'+new_category);
+	if (category_name) {
+		category_name		= category_name.innerHTML;
+		var new_event		= document.getElementById('cal_new_event');
+		new_event.className	= "cal_event new cal_category_"+category_name;
+	}
+}
+
+function setCreateBoxLocation(new_location)
+{
+	var new_event_location	= document.getElementById('cal_new_event_location');
+	if (new_event_location.firstChild) {
+		new_event_location.removeChild(new_event_location.firstChild);
+	}
+	new_event_location.appendChild(document.createTextNode(new_location));
+}
+
 function clickDay (day,event) {
 	var new_event = document.getElementById('cal_new_event');
 	
@@ -635,7 +670,7 @@ function clickDay (day,event) {
 	
 	DESELECTING_EVENT = false;
 	if (new_event != null) {
-		DESELECTING_EVENT = new_event.style.display != 'none'; + (START_HOUR/4)
+		DESELECTING_EVENT = new_event.style.display != 'none';
 		if (day != CREATE_EVENT_DAY ||
 			new_event.style.display == 'none' ||
 			pos_relative + (START_HOUR*4) < CREATE_EVENT_START_TIME ||
@@ -669,7 +704,6 @@ function clickDay (day,event) {
 
 	new_event 				= document.createElement('div');
 	new_event.id			= 'cal_new_event';
-	new_event.className		= 'cal_event cal_category_new_event';
 	new_event.style.display	= 'none';
 	new_event.style.left	= findPos(day)[0] + 'px';
 	new_event.style.top		= findPos(day)[1] + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
@@ -677,6 +711,13 @@ function clickDay (day,event) {
 	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
 	new_event.style.cursor	= 'move';
 	new_event.ondblclick	= function(){ return showCreateBox(this); };
+
+	var heading				= document.createElement('a');
+	heading.id				= 'cal_new_event_heading';
+	
+	var heading_div			= document.createElement('div');
+	heading_div.className		= 'cal_event_heading';
+	heading_div.appendChild(heading);
 
 	var display					= (pos_relative + (START_HOUR*4));
 	CREATE_EVENT_START_TIME	= display;
@@ -687,11 +728,6 @@ function clickDay (day,event) {
 	var display3 = Math.floor(display/4);
 	if (display3 > 23)
 		display3 -= 24;
-		
-	var start_time			= document.createElement('div');
-	start_time.id			= 'cal_new_event_start';
-	start_time.appendChild(document.createTextNode('Start: ' + display3 + ':' + display2));
-
 	var end_display2 = (CREATE_EVENT_END_TIME%4)*15;
 	if (end_display2 == '0')
 		end_display2 = '00';
@@ -699,16 +735,31 @@ function clickDay (day,event) {
 	if (end_display3 > 23)
 		end_display3 -= 24;
 	
-	var end_time			= document.createElement('div');
-	end_time.id				= 'cal_new_event_end';
-	end_time.appendChild(document.createTextNode('Finish: ' + end_display3 + ':' + end_display2));
+	var times				= document.createElement('div');
+	times.id				= 'cal_new_event_times';
+	times.className			= 'cal_event_info';
+	times.appendChild(document.createTextNode(
+		display3 + ':' + display2 + " - " + end_display3 + ':' + end_display2));
 	
-	--CREATE_EVENT_END_TIME;
-
-	new_event.appendChild(start_time);
-	new_event.appendChild(end_time);
-// 	day.insertBefore(new_event, day.firstChild);
+// 	times.appendChild(start_time);
+// 	times.appendChild(end_time);
+	
+	var location_name		= document.createElement('i');
+	location_name.id		= 'cal_new_event_location';
+	
+	var info				= document.createElement('div');
+	info.className			= 'cal_event_info';
+	info.id					= 'cal_new_event_info';
+	info.appendChild(location_name);
+	
+	new_event.appendChild(heading_div);
+	new_event.appendChild(times);
+	new_event.appendChild(info);
+	
 	day.appendChild(new_event);
+	setCreateBoxSummary(document.getElementById('evad_summary').value);
+	setCreateBoxCategory(document.getElementById('evad_category').value);
+	setCreateBoxLocation(document.getElementById('evad_location').value);
 	CREATE_EVENT = true;
 }
 
@@ -744,7 +795,7 @@ function moveDay (day, event) {
 		updateNewEventTimes(start_time+START_HOUR*4, end_time+START_HOUR*4);
 		updateCreateBox(new_event);
 
-		document.getElementById('cal_new_event_start').focus();
+		document.getElementById('cal_new_event_times').focus();
 		
 	} else if (CREATE_EVENT_MOVE) {
 		var new_event = document.getElementById('cal_new_event');
@@ -786,7 +837,7 @@ function unclickDay(day,event) {
 			new_event.style.display	= 'block';
 			updateCreateBox(new_event);
 		}
-		document.getElementById('cal_new_event_start').focus();
+		document.getElementById('cal_new_event_times').focus();
 	}
 	if (CREATE_EVENT_MOVE) {
 		CREATE_EVENT_MOVE = false;
@@ -904,6 +955,10 @@ table#calendar_view td.calendar_day div.cal_event {
 	margin: 0 2px;
 	padding: 0;
 	-moz-opacity:0.8;
+}
+
+table#calendar_view td.calendar_day div.cal_event.new {
+	border: 2px dashed red;
 }
 
 table#calendar_view td.calendar_day div.cal_event_nojs {
@@ -1056,7 +1111,7 @@ if (isset($ForwardUrl)) {
 		<!-- Day Columns -->
 <?php
 	foreach ($Days as $date => $day) { ?>
-		<td id="cal_day_<?php echo($date); ?>" name="<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
+		<td id="cal_day_<?php echo($date); ?>" name="<?php echo($date); ?>" class="calendar_day"<?php if ($AllowEventCreate) { ?> onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);"<?php } ?>>
 <?php	foreach ($day['events'] as $time => $ocs) {
 			foreach ($ocs as $event_info) {
 				if (($event_info->DisplayOnCalendar) && ($event_info->TimeAssociated)) {
@@ -1123,22 +1178,23 @@ if (isset($ForwardUrl)) {
 <?php } ?>
 	</tr>
 </table>
+<?php if ($AllowEventCreate) { ?>
 	<div id="cal_new_event_box" class="cal_new_event_box" style="display:none;">
 		<h2>Create new event</h2>
-		<form class="form" method="post" action="<?php echo(site_url(get_instance()->uri->uri_string())); ?>">
+		<form class="form" method="post" action="<?php echo(site_url($Path->EventCreateQuickRaw(0)).get_instance()->uri->uri_string()); ?>">
 			<fieldset>
 				<input type="hidden" id="evad_date"  name="evad_date" value="" />
 				<input type="hidden" id="evad_start" name="evad_start" value="" />
 				<input type="hidden" id="evad_end"   name="evad_end"   value="" />
 				
 				<label for="evad_summary">Summary</label>
-				<input id="evad_summary" name="evad_summary" type="text" value="" />
+				<input id="evad_summary" name="evad_summary" type="text" value="" onchange="setCreateBoxSummary(this.value);" />
 				
 				<label for="evad_category">Category</label>
-				<select id="evad_category" name="evad_category">
+				<select id="evad_category" name="evad_category" onchange="setCreateBoxCategory(this.value);">
 				<?php
 				foreach ($Categories as $key => $category) {
-					echo('<option value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
+					echo('<option id="evad_category_op_'.$category['id'].'" value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
 					echo($category['name']);
 					echo('</option>');
 				}
@@ -1146,12 +1202,13 @@ if (isset($ForwardUrl)) {
 				</select>
 				
 				<label for="evad_location">Location</label>
-				<input id="evad_location" name="evad_location" type="text" value="" />
+				<input id="evad_location" name="evad_location" type="text" value="" onchange="setCreateBoxLocation(this.value);" />
 				
 				<input class="button" type="submit" name="evad_create" value="Create" />
 			</fieldset>
 		</form>
 	</div>
+<?php } ?>
 </div>
 
 
