@@ -602,6 +602,102 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->mPaths->SetCalendarMode('range');
 		$this->SetupCategories();
 		
+		// check for post data from mini creater
+		$input = array();
+		if (isset($_POST['evad_create'])) {
+			$input_valid = true;
+			
+			$source = & $this->mMainSource->GetSource(0);
+			if (!$source->IsSupported('create')) {
+				// Create isn't supported with this source
+				$this->messages->AddMessage('error', 'You cannot create events in this calendar. You may have to be logged in.');
+				$input_valid = false;
+			}
+			
+			// Get more post data
+			$input['evad_summary'] = $this->input->post('evad_summary');
+			if (false === $input['evad_summary']) {
+				$input['evad_summary'] = '';
+			}
+			if (strlen($input['evad_summary']) <= 3 or strlen($input['evad_summary']) >= 256) {
+				$input_valid = false;
+				$this->messages->AddMessage('error', 'Event summary is too long or too short.');
+			}
+			
+			$input_category = $this->input->post('evad_category');
+			if (false !== $input_category) {
+				$input['evad_category'] = $input_category;
+			}
+			$input_location = $this->input->post('evad_location');
+			if (false !== $input_location) {
+				$input['evad_location'] = $input_location;
+				if (strlen($input['evad_location']) > 50) {
+					$input_valid = false;
+					$this->messages->AddMessage('error', 'Event location is too long.');
+				}
+			}
+			$input_date = $this->input->post('evad_date');
+			$input_start = $this->input->post('evad_start');
+			$input_end = $this->input->post('evad_end');
+			if (false === $input_date || false === $input_start || false === $input_end) {
+				$this->messages->AddMessage('error', 'Missing event time information.');
+				$input_valid = false;
+			} else {
+				if (!is_numeric($input_date)) {
+					$this->messages->AddMessage('error', 'Invalid date');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_start) || $input_start < 0 || $input_start > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid start time');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_end) || $input_end < 0 || $input_end > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid end time');
+					$input_valid = false;
+				}
+				if ($input_valid) {
+					$starthour = (int)($input_start / 60);
+					$startminute = (int)($input_start % 60);
+					$start = strtotime($input_date.' '.sprintf("%02d%02d", $starthour, $startminute).'00');
+					
+					$endhour = (int)($input_end / 60);
+					$endminute = (int)($input_end % 60);
+					$end = strtotime($input_date.' '.sprintf("%02d%02d", $endhour, $endminute).'00');
+					
+					if ($start >= $end) {
+						$this->messages->AddMessage('error', 'Event must not end before it starts');
+						$input_valid = false;
+					}
+					if ($start < strtotime('today-1month')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+					if ($end > strtotime('today+2year')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+				}
+			}
+			
+			if ($input_valid) {
+				$event_info = array(
+					'name' => $input['evad_summary'],
+					'category' => $input['evad_category'],
+					'recur' => new RecurrenceSet(),
+				);
+				if (isset($input['evad_location'])) {
+					$event_info['location_name'] = $input['evad_location'];
+				}
+				
+				$event_info['recur']->SetStartEnd($start, $end);
+				$messages = $source->CreateEvent($event_info, $event_id);
+				$this->messages->AddMessages($messages);
+				if (!isset($messages['error'])) {
+					$this->messages->AddMessage('success', 'Event created successfully');
+				}
+			}
+		}
+		
 		$date_range = array_key_exists('Range', $this->mData)
 					? $this->mData['Range']
 					: $this->mDefaultRange;

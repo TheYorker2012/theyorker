@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file views/calendar/days.php
+ * @param $Categories Category information.
+ */
 // make sure a few things are defined
 if (!isset($ReadOnly)) {
 	$ReadOnly = true;
@@ -59,6 +64,7 @@ var MAX_START_HOUR = 0;
 var MAX_END_HOUR = 29;
 var CREATE_EVENT = false;
 var CREATE_EVENT_MOVE = false;
+var CREATE_EVENT_MOVED = false;
 var DESELECTING_EVENT = false;
 var FIRST_DAY = 0;
 var DAYS = new Array();
@@ -260,6 +266,10 @@ function drawCalendar () {
 			TEMP_CACHE[i][8]
 		);
 	}
+	
+	// current selection
+	removeCreateBox();
+	
 	return false;
 }
 
@@ -556,6 +566,60 @@ function updateNewEventTimes(start_time, end_time) {
 	document.getElementById('cal_new_event_end').innerHTML = 'Finish: ' + end_display3 + ':' + end_display2;
 }
 
+function showCreateBox(new_event) {
+	// If existing, just update it
+	var new_event_box	= document.getElementById('cal_new_event_box');
+	
+	var new_event_pos			= findPos(new_event);
+	var new_event_parent_pos	= findPos(new_event.parentNode);
+	
+	new_event_box.style.display	= 'block';
+	updateCreateBox(new_event);
+}
+
+function updateCreateBox(new_event) {
+	// If not existing don't do anything
+	var new_event_box	= document.getElementById('cal_new_event_box');
+	if (new_event_box.style.display != "none") {
+		var new_event_pos			= findPos(new_event);
+		var new_event_parent_pos	= findPos(new_event.parentNode);
+	
+		new_event_box.style.left	= (new_event_pos[0]+50) + 'px';
+		new_event_box.style.top		= (new_event_pos[1]+30) + 'px';
+	}
+	// update the time fields
+	var evad_date	= document.getElementById('evad_date');
+	var evad_start	= document.getElementById('evad_start');
+	var evad_end	= document.getElementById('evad_end');
+	
+	// Swap stored start and end time if they're the wrong way
+	var start = CREATE_EVENT_START_TIME;
+	var end = CREATE_EVENT_END_TIME;
+	if (end < start) {
+		start = CREATE_EVENT_END_TIME;
+		end = CREATE_EVENT_START_TIME;
+	}
+	evad_date.value = new_event.parentNode.attributes.getNamedItem('name').value;
+	evad_start.value = start*15;
+	evad_end.value = (end+1)*15;
+}
+
+function removeCreateBox()
+{
+	var new_event_box	= document.getElementById('cal_new_event_box');
+	new_event_box.style.display	= 'none';
+}
+
+function toggleCreateBox(new_event)
+{
+	var new_event_box	= document.getElementById('cal_new_event_box');
+	if (new_event_box.style.display == 'none') {
+		showCreateBox(new_event);
+	} else {
+		new_event_box.style.display	= 'none';
+	}
+}
+
 function clickDay (day,event) {
 	var new_event = document.getElementById('cal_new_event');
 	
@@ -577,6 +641,7 @@ function clickDay (day,event) {
 			pos_relative + (START_HOUR*4) < CREATE_EVENT_START_TIME ||
 			pos_relative + (START_HOUR*4) > CREATE_EVENT_END_TIME)
 		{
+			removeCreateBox();
 			new_event.parentNode.removeChild(new_event);
 		} else {
 			var grab_position = findMouse(event)[1] - findPos(new_event)[1];
@@ -592,6 +657,7 @@ function clickDay (day,event) {
 			} else {
 				CREATE_EVENT_MOVE = true;
 			}
+			CREATE_EVENT_MOVED = false;
 			CREATE_EVENT_MOVE_GRAB = grab_position;
 			return true;
 		}
@@ -609,7 +675,8 @@ function clickDay (day,event) {
 	new_event.style.top		= findPos(day)[1] + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
 	new_event.style.width	= width + 'px';
 	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
-	new_event.ondblclick	= function(){ confirm('Create a new event here!'); };
+	new_event.style.cursor	= 'move';
+	new_event.ondblclick	= function(){ return showCreateBox(this); };
 
 	var display					= (pos_relative + (START_HOUR*4));
 	CREATE_EVENT_START_TIME	= display;
@@ -635,6 +702,8 @@ function clickDay (day,event) {
 	var end_time			= document.createElement('div');
 	end_time.id				= 'cal_new_event_end';
 	end_time.appendChild(document.createTextNode('Finish: ' + end_display3 + ':' + end_display2));
+	
+	--CREATE_EVENT_END_TIME;
 
 	new_event.appendChild(start_time);
 	new_event.appendChild(end_time);
@@ -673,6 +742,7 @@ function moveDay (day, event) {
 		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-2) + 'px';
 
 		updateNewEventTimes(start_time+START_HOUR*4, end_time+START_HOUR*4);
+		updateCreateBox(new_event);
 
 		document.getElementById('cal_new_event_start').focus();
 		
@@ -695,26 +765,39 @@ function moveDay (day, event) {
 			} else if (CREATE_EVENT_END_TIME + move_position+1 > (END_HOUR+1)*4) {
 				move_position = (END_HOUR+1)*4 - CREATE_EVENT_END_TIME - 1;
 			}
-			CREATE_EVENT_START_TIME += move_position;
-			CREATE_EVENT_END_TIME += move_position;
-			new_event.style.top = (findPos(day)[1] + (CREATE_EVENT_START_TIME-(START_HOUR*4)) * (HOUR_HEIGHT/4)) + "px";
-			
-			updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
+			if (move_position != 0) {
+				CREATE_EVENT_MOVED = true;
+				CREATE_EVENT_START_TIME += move_position;
+				CREATE_EVENT_END_TIME += move_position;
+				new_event.style.top = (findPos(day)[1] + (CREATE_EVENT_START_TIME-(START_HOUR*4)) * (HOUR_HEIGHT/4)) + "px";
+				
+				updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
+				updateCreateBox(new_event);
+			}
 		}
 	}
 }
 
 function unclickDay(day,event) {
+	var new_event = document.getElementById('cal_new_event');
 	if (CREATE_EVENT) {
 		CREATE_EVENT = false;
-		var new_event = document.getElementById('cal_new_event');
 		if (new_event != null && !DESELECTING_EVENT) {
 			new_event.style.display	= 'block';
+			updateCreateBox(new_event);
 		}
 		document.getElementById('cal_new_event_start').focus();
 	}
 	if (CREATE_EVENT_MOVE) {
 		CREATE_EVENT_MOVE = false;
+		if (new_event) {
+			if (!CREATE_EVENT_MOVED) {
+				// click
+				toggleCreateBox(new_event);
+			} else {
+				updateCreateBox(new_event);
+			}
+		}
 	}
 }
 
@@ -874,6 +957,16 @@ table#calendar_view div.cal_category_new_event input {
 	background-color: #d4f4fd;
 }
 
+div.cal_new_event_box {
+	border: 1px #20C1F0 solid;
+	background-color: #FFFFFF;
+	position: absolute;
+	-moz-opacity:0.9;
+}
+div.cal_new_event_box h2 {
+	margin: 2px 4px;
+}
+
 <?php foreach ($Categories as $Name => $Settings) { ?>
 table#calendar_view div.cal_category_<?php echo($Name); ?> {
 	border: 1px #<?php echo($Settings['border_colour']); ?> solid;
@@ -954,9 +1047,6 @@ if (isset($ForwardUrl)) {
 		<td id="cal_day_<?php echo($date); ?>_before" class="cal_day_counts"></td>
 <?php } ?>
 	</tr>
-	<tr>
-		<td id="debug_dump"></td>
-	</tr>
 
 	<!-- Main Calendar Display -->
 	<tr>
@@ -966,7 +1056,7 @@ if (isset($ForwardUrl)) {
 		<!-- Day Columns -->
 <?php
 	foreach ($Days as $date => $day) { ?>
-		<td id="cal_day_<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
+		<td id="cal_day_<?php echo($date); ?>" name="<?php echo($date); ?>" class="calendar_day" onmousedown="clickDay(this,event);" onmouseup="unclickDay(this,event);" onmousemove="moveDay(this,event);">
 <?php	foreach ($day['events'] as $time => $ocs) {
 			foreach ($ocs as $event_info) {
 				if (($event_info->DisplayOnCalendar) && ($event_info->TimeAssociated)) {
@@ -1033,7 +1123,35 @@ if (isset($ForwardUrl)) {
 <?php } ?>
 	</tr>
 </table>
-
+	<div id="cal_new_event_box" class="cal_new_event_box" style="display:none;">
+		<h2>Create new event</h2>
+		<form class="form" method="post" action="<?php echo(site_url(get_instance()->uri->uri_string())); ?>">
+			<fieldset>
+				<input type="hidden" id="evad_date"  name="evad_date" value="" />
+				<input type="hidden" id="evad_start" name="evad_start" value="" />
+				<input type="hidden" id="evad_end"   name="evad_end"   value="" />
+				
+				<label for="evad_summary">Summary</label>
+				<input id="evad_summary" name="evad_summary" type="text" value="" />
+				
+				<label for="evad_category">Category</label>
+				<select id="evad_category" name="evad_category">
+				<?php
+				foreach ($Categories as $key => $category) {
+					echo('<option value="'.$category['id'].'"'.($category['id'] == $EventInfo['category'] ? ' selected="selected"':'').'>');
+					echo($category['name']);
+					echo('</option>');
+				}
+				?>
+				</select>
+				
+				<label for="evad_location">Location</label>
+				<input id="evad_location" name="evad_location" type="text" value="" />
+				
+				<input class="button" type="submit" name="evad_create" value="Create" />
+			</fieldset>
+		</form>
+	</div>
 </div>
 
 
