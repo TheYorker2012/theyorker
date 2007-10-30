@@ -1244,10 +1244,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		
 		$this->SetupTabs('', $start);
 
-		$this->main_frame->SetExtraHead(
-				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
-				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
-		);
+		$this->main_frame->IncludeCss('stylesheets/calendar.css');
+		$this->main_frame->IncludeJs('javascript/calendar_edit.js');
+		
 		$this->main_frame->SetContent(
 			new FramesView('calendar/event_edit', $data)
 		);
@@ -1621,10 +1620,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'source' => $this->mSource->GetSourceName(),
 				'event' => $event->Name,
 			));
-			$this->main_frame->SetExtraHead(
-				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
-				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
-			);
+			
+			$this->main_frame->IncludeCss('stylesheets/calendar.css');
+			$this->main_frame->IncludeJs('javascript/calendar_edit.js');
+			
 			$this->main_frame->SetContent(
 				new FramesView('calendar/event_edit', $data)
 			);
@@ -2221,7 +2220,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			);
 			// Then the attendance filters
 			$filters['hidden'] = array(
-				'name'			=> 'not attending',
+				'name'			=> 'filter not attending',
 				'field'			=> 'visibility',
 				'value'			=> 'no',
 				'selected'		=> $Sources->GroupEnabled('hide'),
@@ -2232,7 +2231,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
 			);
 			$filters['visible'] = array(
-				'name'			=> 'maybe attending',
+				'name'			=> 'filter maybe attending',
 				'field'			=> 'visibility',
 				'value'			=> 'maybe',
 				'selected'		=> $Sources->GroupEnabled('show'),
@@ -2243,7 +2242,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
 			);
 			$filters['rsvp'] = array(
-				'name'			=> 'attending',
+				'name'			=> 'filter attending',
 				'field'			=> 'visibility',
 				'value'			=> 'yes',
 				'selected'		=> $Sources->GroupEnabled('rsvp'),
