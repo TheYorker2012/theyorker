@@ -748,5 +748,5 @@ function removeEventListener(event) {
 
 onLoadFunctions.push(drawCalendar);
 window.onresize = drawCalendar;
-var window_resize = addEventListener(window, "resize", drawCalendar);
+// var window_resize = addEventListener(window, "resize", drawCalendar);
 
