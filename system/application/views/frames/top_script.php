@@ -17,8 +17,10 @@
 
 	<!-- BEGIN 'head' tag items from controlling script -->
 	<?php 
-	foreach($content['head'] as $item) {
-		$item->Load();
+	if (isset($content['head'])) {
+		foreach($content['head'] as $item) {
+			$item->Load();
+		}
 	}
 	?>
 	<!-- END 'head' tag items from controlling script -->
