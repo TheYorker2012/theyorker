@@ -99,6 +99,24 @@ class Frame_public extends FrameNavbar
 		}
 		$this->mDataArray['description'] .= $Description;
 	}
+	
+	/// Include a JS (javascript) file.
+	/**
+	 * @param $JsFile string Javascript source file, not site_url'd.
+	 */
+	function IncludeJs($JsFile)
+	{
+		$this->AddExtraHead('<script src="'.site_url($JsFile).'" type="text/javascript"></script>');
+	}
+	
+	/// Include a CSS (cascading stylesheets) file.
+	/**
+	 * @param $CssFile string CSS source file, not site_url'd.
+	 */
+	function IncludeCss($CssFile)
+	{
+		$this->AddExtraHead('<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" />');
+	}
 
 	/**
 	 * @brief Add extra code to go in the page header.

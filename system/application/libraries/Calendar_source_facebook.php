@@ -146,19 +146,19 @@ class CalendarSourceFacebook extends CalendarSource
 					
 					// get the list of members, so we can see if the user is attending.
 					$members = $CI->facebook->Client->events_getMembers($event['eid']);
-					$attending = NULL;
+					$attending = '';
 					if (is_array($members['attending']) && in_array($CI->facebook->Uid, $members['attending'])) {
-						$attending = TRUE;
+						$attending = 'yes';
 						if (!$this->GroupEnabled('rsvp')) {
 							continue;
 						}
 					} elseif (is_array($members['declined']) && in_array($CI->facebook->Uid, $members['declined'])) {
-						$attending = FALSE;
+						$attending = 'no';
 						if (!$this->GroupEnabled('hide')) {
 							continue;
 						}
 					} else {
-						$attending = NULL;
+						$attending = 'maybe';
 						if (!$this->GroupEnabled('show')) {
 							continue;
 						}
@@ -177,7 +177,7 @@ class CalendarSourceFacebook extends CalendarSource
 					}
 					
 					if (array_key_exists($event['event_type'], $event_type_translation)) {
-						$event_obj->Category = $event_type_translation[$event['event_type']];
+						$event_obj->Category = ucfirst($event_type_translation[$event['event_type']]);
 					} else {
 						$event_obj->Category = 'Facebook';
 					}
