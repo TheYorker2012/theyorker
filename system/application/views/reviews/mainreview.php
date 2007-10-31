@@ -20,7 +20,19 @@
 	<h2>Tips</h2>
 	<div class="Entry">
 			<?php if(strlen(trim($yorker_recommendation)) > 0) { ?><b>We Recommend:</b>  <?php echo(htmlspecialchars($yorker_recommendation)); ?><br /><?php } ?>
-			<?php if(strlen(trim($average_price)) > 0) { ?><b>Average Drink Price:</b> <?php echo(htmlspecialchars($average_price)); ?><br /><?php } ?>
+<?php 
+	switch ($content_type) {
+		case 'food': 
+			$avg_price_text = 'Meal ';
+			break;
+		case 'drink':
+			$avg_price_text = 'Drink ';
+			break;
+	}
+	if (strlen(trim($average_price)) > 0) {
+		echo('			<b>Average '.$avg_price_text.'Price:</b>'.htmlspecialchars($average_price).'<br />'."\n");
+	}
+?>
 	</div>
 	<?php } ?>
 </div>
@@ -96,3 +108,9 @@ foreach($article as $a) {
 	?>
 
 </div>
+
+<pre>
+<?php
+print_r($data);
+?>
+</pre>

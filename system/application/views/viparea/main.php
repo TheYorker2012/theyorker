@@ -9,7 +9,7 @@
 	}
 	else {
 		echo('		<p>'."\n");
-		echo('			You have no dedicated rep, so our pr officer '.$rep['name'].' is looking after you.'."\n");
+		echo('			You have no dedicated rep, so our pr officers '.$rep['name'].' are looking after you.'."\n");
 		echo('		</p>'."\n");
 	}
 ?>
