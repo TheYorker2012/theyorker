@@ -112,12 +112,16 @@ class Facebook_ticker
 			}
 		}
 
+		//$this->CI->load->library('academic_calendar');
+
 		$content = '';
 		foreach ($articles as $a) {
-            $reporters = array();
-			foreach ($a['reporters'] as $r)
-				$reporters[] = $r['name'];
-			$reporters = implode(', ', $reporters);
+            //$reporters = array();
+			//foreach ($a['reporters'] as $r)
+			//	$reporters[] = $r['name'];
+			//$reporters = implode(', ', $reporters);
+			//$published_date = $this->CI->academic_calendar->Timestamp($a['date']);
+			//$article_date = $published_date->Format('l') . ', Week ' . $published_date->AcademicWeek() . ' ' . $published_date->Format('Y');
 
 			$content .= '<div style="clear:both">
 							<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '">
@@ -129,7 +133,7 @@ class Facebook_ticker
 								</span>
 								<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/' . $a['id'] . '"><b>' . $a['heading'] . '</b></a>
 								<br />
-								<i>by ' . $reporters . '</i>
+								<a href="http://www.theyorker.co.uk/news/' . $a['type_codename'] . '/">' . $a['type_name'] . '</a>
 							</div>
 						</div>';
 		}
