@@ -124,16 +124,22 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
-			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
+			if (empty($league['image_id'])) {
+				$has_image = false;
+				$image_path = '';
+			}
+			else {
+				$has_image = true;
+				$image_path = '/image/'.$league['image_type_codename'].'/'.$league['image_id'];
+			}
 			$leagues[] = array(
 				'has_image' => $has_image,
-				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
+				'image_path'=> $image_path,
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
 				);
 		}
-
 		//Pass tabledata straight to view it is in the proper format
 		$data['league_data'] = $leagues;
 
@@ -204,10 +210,17 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
-			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
+			if (empty($league['image_id'])) {
+				$has_image = false;
+				$image_path = '';
+			}
+			else {
+				$has_image = true;
+				$image_path = '/image/'.$league['image_type_codename'].'/'.$league['image_id'];
+			}
 			$leagues[] = array(
 				'has_image' => $has_image,
-				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
+				'image_path'=> $image_path,
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
@@ -380,10 +393,17 @@ class Reviews extends Controller
 		$leagues = array();
 		foreach ($league_data as &$league)
 		{
-			if(empty($league['image_id'])){$has_image=false;}else{$has_image=true;}
+			if (empty($league['image_id'])) {
+				$has_image = false;
+				$image_path = '';
+			}
+			else {
+				$has_image = true;
+				$image_path = '/image/'.$league['image_type_codename'].'/'.$league['image_id'];
+			}
 			$leagues[] = array(
 				'has_image' => $has_image,
-				'image_path'=> '/images/'.$league['image_type_codename'].'/'.$league['image_id'],
+				'image_path'=> $image_path,
 				'league_name'=>$league['league_name'],
 				'league_size'=>$league['league_size'],
 				'league_codename'=>$league['league_codename']
