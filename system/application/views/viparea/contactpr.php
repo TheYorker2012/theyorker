@@ -28,7 +28,7 @@
 	else {
 ?>
 		<p>
-			You have no dedicated rep, so our pr officer <?php echo($rep['name']); ?> is looking after you.
+			You have no dedicated rep, so our pr officers <?php echo($rep['name']); ?> are looking after you.
 		</p>
 <?php 
 	}

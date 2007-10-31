@@ -10,7 +10,7 @@ $config['static_web_address'] = 'http://static.theyorker.co.uk';
 
 $config['editor_email_address'] = 'editor@theyorker.co.uk';
 $config['webmaster_email_address'] = 'webmaster@theyorker.co.uk';
-$config['pr_officer_email_address'] = 'lorn_mcvean@theyorker.co.uk';
-$config['pr_officer_name'] = 'Lorn McVean';//temp hack
+$config['pr_officer_email_address'] = 'publicrelations@theyorker.co.uk';
+$config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 
 ?>
