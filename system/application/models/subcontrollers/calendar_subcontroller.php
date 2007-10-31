@@ -729,7 +729,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$days->SetRangeFilter(NULL !== $Filter ? '/'.$Filter : '');
 		$days->SetStartEnd($start->Timestamp(), $end->Timestamp());
 		$days->SetCategories($this->mCategories);
-		
+		$days->EnableCreate(
+			!empty($create_sources)
+		);
 		
 // 		$todo = new CalendarViewTodoList();
 // 		$todo->SetCalendarData($calendar_data);
@@ -787,6 +789,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$days->SetRangeFormat($Format);
 		$days->SetRangeFilter(NULL !== $Filter ? '/'.$Filter : '');
 		$days->SetCategories($this->mCategories);
+		$days->EnableCreate(
+			isset($this->mPermissions['create']) &&
+			$sources->GetSource(0)->IsSupported('create')
+		);
 		
 		$data = array(
 			'Filters'	=> $this->GetFilters($sources),
@@ -984,11 +990,21 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				if ($input_valid) {
 					$starthour = (int)($input_start / 60);
 					$startminute = (int)($input_start % 60);
-					$start = strtotime($input_date.' '.sprintf("%02d%02d", $starthour, $startminute).'00');
+					$start = strtotime("$input_date 000000");
+					if ($starthour >= 24) {
+						$start = strtotime('+1day', $start);
+						$starthour -= 24;
+					}
+					$start = strtotime(date('Ymd', $start).' '.sprintf("%02d%02d", $starthour, $startminute).'00');
 					
 					$endhour = (int)($input_end / 60);
 					$endminute = (int)($input_end % 60);
-					$end = strtotime($input_date.' '.sprintf("%02d%02d", $endhour, $endminute).'00');
+					$end = strtotime("$input_date 000000");
+					if ($endhour >= 24) {
+						$end = strtotime('+1day', $end);
+						$endhour -= 24;
+					}
+					$end = strtotime(date('Ymd', $end).' '.sprintf("%02d%02d", $endhour, $endminute).'00');
 					
 					if ($start >= $end) {
 						$this->messages->AddMessage('error', 'Event must not end before it starts');
@@ -1748,7 +1764,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$this->ErrorNotAccessible($tail);
 		} else {
 			$event = $events[0];
-			if ($event->ReadOnly || 'owned' !== $event->UserStatus) {
+			if ($event->ReadOnly || 'owner' !== $event->UserStatus) {
 				// event is read only to the current user.
 				$this->ErrorNotModifiable($tail);
 			} else {

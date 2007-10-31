@@ -334,10 +334,10 @@ class CalendarSourceYorker extends CalendarSource
 			}
 			
 			// Adjust the events user status if necessary.
-			if ($row['owned'] && $events[$event_id]->UserStatus !== 'owned') {
-				$events[$event_id]->UserStatus = 'owned';
+			if ($row['owned'] && $events[$event_id]->UserStatus !== 'owner') {
+				$events[$event_id]->UserStatus = 'owner';
 			} elseif ($row['subscribed'] && $events[$event_id]->UserStatus === 'none') {
-				$events[$event_id]->UserStatus = 'subscribed';
+				$events[$event_id]->UserStatus = 'subscriber';
 			}
 			
 			// Create new organisation if necessary.

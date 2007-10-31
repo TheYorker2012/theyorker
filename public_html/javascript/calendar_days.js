@@ -10,6 +10,12 @@
 //  * redrawing calendar
 //  * selections for new events
 
+// add a number of seconds to a date then offsets by timezone change.
+function dateChange(date, milliseconds)
+{
+	var new_date = new Date(Number(date) + milliseconds);
+	return new Date(Number(new_date) + (new_date.getTimezoneOffset()-date.getTimezoneOffset())*60000);
+}
 
 function drawCalendar () {
 	// Reset event counters
@@ -33,7 +39,8 @@ function drawCalendar () {
 			ALL_EVENT_CACHE[i][6],
 			ALL_EVENT_CACHE[i][0],
 			Number(((eventStartDate.getTime() - FIRST_DAY.getTime())/(1000*60*60)).toFixed(2)),
-			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2))
+			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
+			ALL_EVENT_CACHE[i][7]
 		);
 	}
 
@@ -48,29 +55,9 @@ function drawCalendar () {
 	var TEMP_CACHE = new Array();
 	var temp_count = 0;
 	for (var i=0; i<EVENT_COUNT; i++) {
-		var eventStartDate = new Date(EVENT_CACHE[i][4]*1000);
-		var eventEndDate = new Date(EVENT_CACHE[i][5]*1000);
 		TEMP_CACHE[temp_count] = new Array();
 		TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
 		temp_count++;
-		/* Display on previous day too*/
-		if (eventStartDate.getHours() <= (MAX_END_HOUR-24)) {
-			TEMP_CACHE[temp_count] = new Array();
-			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
-			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) - 86400;
-			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) - 86400;
-			TEMP_CACHE[temp_count][9] = 24;
-			temp_count++;
-		}
-		/* Display on next day too */
-		if ((((eventEndDate.getTime()-eventStartDate.getTime())/3600000)+eventStartDate.getHours()+(eventStartDate.getMinutes()/60)) > 24) {
-			TEMP_CACHE[temp_count] = new Array();
-			TEMP_CACHE[temp_count] = EVENT_CACHE[i].slice(0);
-			TEMP_CACHE[temp_count][4] = Number(TEMP_CACHE[temp_count][4]) + 86400;
-			TEMP_CACHE[temp_count][5] = Number(TEMP_CACHE[temp_count][5]) + 86400;
-			TEMP_CACHE[temp_count][9] = -24;
-			temp_count++;
-		}
 	}
 
 	/* Determine Event Clashes */
@@ -78,38 +65,62 @@ function drawCalendar () {
 		var clashes = new Array();
 		var clash_pos = new Array();
 		var clash_count = 0;
-		var clash_width = TEMP_CACHE[i][8];
+		var clash_width = TEMP_CACHE[i][9];
 		for (var j=i+1; j<temp_count; j++) {
 			if (((TEMP_CACHE[j][4] >= TEMP_CACHE[i][4]) && (TEMP_CACHE[j][4] < TEMP_CACHE[i][5])) || // start of j during i
 				((TEMP_CACHE[j][5] > TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] <= TEMP_CACHE[i][5])) || // end of j during i
 				((TEMP_CACHE[j][4] < TEMP_CACHE[i][4]) && (TEMP_CACHE[j][5] > TEMP_CACHE[i][5])))  // j encompases i
 			{
 				clashes[clash_count] = j;
-				if (TEMP_CACHE[j][7] != -1)
-					clash_pos[clash_pos.length] = TEMP_CACHE[j][7];
-				if (TEMP_CACHE[j][8] > clash_width)
-					clash_width = TEMP_CACHE[j][8];
+				if (TEMP_CACHE[j][8] != -1)
+					clash_pos[clash_pos.length] = TEMP_CACHE[j][8];
+				if (TEMP_CACHE[j][9] > clash_width)
+					clash_width = TEMP_CACHE[j][9];
 				clash_count++;
 			}
 		}
-		if (TEMP_CACHE[i][7] != -1)
-			clash_pos[clash_pos.length] = TEMP_CACHE[i][7];
+		if (TEMP_CACHE[i][8] != -1)
+			clash_pos[clash_pos.length] = TEMP_CACHE[i][8];
 		if ((clash_count+1) > clash_width)
 			clash_width = clash_count + 1;
 		var current_pos = 0;
 		while (in_array(current_pos, clash_pos)) { current_pos++; }
-		TEMP_CACHE[i][8] = clash_width;
-		if (TEMP_CACHE[i][7] == -1) {
-			TEMP_CACHE[i][7] = current_pos;
+		TEMP_CACHE[i][9] = clash_width;
+		if (TEMP_CACHE[i][8] == -1) {
+			TEMP_CACHE[i][8] = current_pos;
 			while (in_array(current_pos++, clash_pos)) { current_pos++; }
 		}
 		for (var j=0; j<clash_count; j++) {
-			TEMP_CACHE[clashes[j]][8] = clash_width;
-			if (TEMP_CACHE[clashes[j]][7] == -1) {
-				TEMP_CACHE[clashes[j]][7] = current_pos;
+			TEMP_CACHE[clashes[j]][9] = clash_width;
+			if (TEMP_CACHE[clashes[j]][8] == -1) {
+				TEMP_CACHE[clashes[j]][8] = current_pos;
 				while (in_array(current_pos++, clash_pos)) { current_pos++; }
 			}
 
+		}
+	}
+	
+	var temp_count_2 = temp_count;
+	for (var i=0; i<temp_count_2; i++) {
+		var eventStartDate = new Date(TEMP_CACHE[i][4]*1000);
+		var eventEndDate = new Date(TEMP_CACHE[i][5]*1000);
+		/* Display on previous day too*/
+		if (eventStartDate.getHours() <= (MAX_END_HOUR-24)) {
+			TEMP_CACHE[temp_count] = new Array();
+			TEMP_CACHE[temp_count] = TEMP_CACHE[i].slice(0);
+			TEMP_CACHE[temp_count][4] = Number(dateChange(eventStartDate, -86400000))/1000;
+			TEMP_CACHE[temp_count][5] = Number(dateChange(eventEndDate, -86400000))/1000;
+			TEMP_CACHE[temp_count][10] = 24;
+			temp_count++;
+		}
+		/* Display on next day too */
+		if ((((eventEndDate.getTime()-eventStartDate.getTime())/3600000)+eventStartDate.getHours()+(eventStartDate.getMinutes()/60)) > 24) {
+			TEMP_CACHE[temp_count] = new Array();
+			TEMP_CACHE[temp_count] = TEMP_CACHE[i].slice(0);
+			TEMP_CACHE[temp_count][4] = Number(dateChange(eventStartDate, 86400000))/1000;
+			TEMP_CACHE[temp_count][5] = Number(dateChange(eventEndDate, 86400000))/1000;
+			TEMP_CACHE[temp_count][10] = -24;
+			temp_count++;
 		}
 	}
 
@@ -125,10 +136,11 @@ function drawCalendar () {
 			zeroTime(eventStartDate.getHours())+':'+zeroTime(eventStartDate.getMinutes())+' - '+zeroTime(eventEndDate.getHours())+':'+zeroTime(eventEndDate.getMinutes()),
 			TEMP_CACHE[i][2],
 			TEMP_CACHE[i][3],
-			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][9]).toFixed(2)),
+			Number((eventStartDate.getHours()+(eventStartDate.getMinutes()/60)+TEMP_CACHE[i][10]).toFixed(2)),
 			Number(((eventEndDate.getTime() - eventStartDate.getTime())/(1000*60*60)).toFixed(2)),
-			TEMP_CACHE[i][7],
-			TEMP_CACHE[i][8]
+			TEMP_CACHE[i][8],
+			TEMP_CACHE[i][9],
+			TEMP_CACHE[i][7]
 		);
 	}
 	
@@ -138,7 +150,7 @@ function drawCalendar () {
 	return false;
 }
 
-function drawAllDayEvent (id, category, link, title, start_hour, duration, height) {
+function drawAllDayEvent (id, category, link, title, start_hour, duration, height, classNames) {
 	var p_ele = document.getElementById('calendar_all_day_events');
 	if (p_ele == null)
 		return;
@@ -198,7 +210,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
-	new_event.className		= 'cal_event new cal_category_' + category;
+	new_event.className		= 'cal_event new cal_category_' + category + (classNames != '' ? ' '+classNames : '');
 	new_event.style.top		= findPos(p_ele)[1] + (height*(HOUR_HEIGHT/2)) + 'px';
 	new_event.style.left	= start_left + 'px';
 	new_event.style.height	= ((HOUR_HEIGHT/2)-2) + 'px';
@@ -213,7 +225,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 		MAX_ALL_DAY = height;
 }
 
-function drawEvent(parent, id, category, link, title, content_time, content_location, content_description, start_hour, duration, left, width) {
+function drawEvent(parent, id, category, link, title, content_time, content_location, content_description, start_hour, duration, left, width, classNames) {
 	var p_ele = document.getElementById(parent);
 	if (p_ele == null)
 		return;
@@ -243,7 +255,7 @@ function drawEvent(parent, id, category, link, title, content_time, content_loca
 
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
-	new_event.className		= 'cal_event cal_category_' + category;
+	new_event.className		= 'cal_event cal_category_' + category + (classNames != '' ? ' '+classNames : '');
 	new_event.style.left	= findPos(p_ele)[0] + (left*(width+2+5)) + 'px';
 	new_event.style.width	= width + 'px';
 // 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
@@ -566,9 +578,9 @@ function clickDay (day,event) {
 	new_event.id			= 'cal_new_event';
 	new_event.style.display	= 'none';
 	new_event.style.left	= findPos(day)[0] + 'px';
-	new_event.style.top		= findPos(day)[1] + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
-	new_event.style.width	= width + 'px';
-	new_event.style.height	= ((duration*HOUR_HEIGHT)-2) + 'px';
+	new_event.style.top		= findPos(day)[1] - 1 + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
+	new_event.style.width	= width-2 + 'px';
+	new_event.style.height	= ((duration*HOUR_HEIGHT)-4) + 'px';
 	new_event.style.cursor	= 'move';
 	new_event.ondblclick	= function(){ return showCreateBox(this); };
 
@@ -646,8 +658,8 @@ function moveDay (day, event) {
 			new_event.style.display	= 'block';
 			DESELECTING_EVENT = false;
 		}
-		new_event.style.top = (findPos(day)[1] + (start_time*(HOUR_HEIGHT/4))) + 'px';
-		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-2) + 'px';
+		new_event.style.top = (findPos(day)[1] - 1 + (start_time*(HOUR_HEIGHT/4))) + 'px';
+		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-4) + 'px';
 
 		updateNewEventTimes(start_time+START_HOUR*4, end_time+START_HOUR*4);
 		updateCreateBox(new_event);
