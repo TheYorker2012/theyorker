@@ -27,7 +27,7 @@ class Article_model extends Model
 							business_card_groups
 				WHERE		business_card_user_entity_id = ?
 				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
-				AND			business_card_groups.business_card_group_organisation_id IS NULL
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
 				AND			business_cards.business_card_deleted = 0';
 		$query = $this->db->query($sql, array($user_id));
 		$result = array();

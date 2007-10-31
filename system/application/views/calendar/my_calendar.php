@@ -49,7 +49,7 @@
 				if (array_key_exists('link', $filter)) {
 					echo('<a class="CalendarButtons" href="'.$filter['link'].'">');
 				}
-				echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'" />');
+				echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'" title="'.$filter['name'].'" />');
 				if (array_key_exists('link', $filter)) {
 					echo('</a>');
 				}

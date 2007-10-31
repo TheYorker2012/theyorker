@@ -15,7 +15,12 @@
 	include('maps.php');
 	?>
 
-
 	<!-- BEGIN 'head' tag items from controlling script -->
-	<?php if (isset($extra_head)) { echo($extra_head."\n"); }; ?>
+	<?php 
+	if (isset($content['head'])) {
+		foreach($content['head'] as $item) {
+			$item->Load();
+		}
+	}
+	?>
 	<!-- END 'head' tag items from controlling script -->

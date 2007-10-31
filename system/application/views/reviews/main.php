@@ -3,17 +3,18 @@
 //If there are some leagues print em
 if (!empty($league_data)){
 	echo ('	<h2 class="first">'.$leagues_header.'</h2>'."\n");
-	echo ('	<div class="Puffer">'."\n");
 	foreach ($league_data as $league_entry) {
+		echo ('	<div class="Puffer">'."\n");
 		if($league_entry['has_image']){
 			//There is a puffer image, so use it
-		echo '		<img src=\'' . $league_entry['league_image_path'] . '\' alt=\'' . $league_entry['league_name'] . '\' title=\'' . $league_entry['league_name'] . '\' />';
-		}else{
-			//There is no puffer image, just put a text link
-		echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
+			echo '		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.$league_entry['league_name'].'" title="'.$league_entry['league_name'].'" /></a>';
 		}
+		else {
+			//There is no puffer image, just put a text link
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
+		}
+		echo ('	</div>'."\n");
 	}
-	echo ('	</div>'."\n");
 }
 ?>
 </div>

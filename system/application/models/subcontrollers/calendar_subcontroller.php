@@ -147,6 +147,18 @@ class CalendarPaths
 		return $this->EventCreateRaw($Source->GetSourceId(), $Range);
 	}
 	
+	/// Get the event creation path.
+	function EventCreateQuickRaw($SourceId)
+	{
+		return $this->mPath . "/src/$SourceId/qcreate/";
+	}
+	
+	/// Get the event creation path.
+	function EventCreateQuick($Source)
+	{
+		return $this->EventCreateQuickRaw($Source->GetSourceId(), $Range);
+	}
+	
 	/// Get the event information path.
 	function EventInfo($Event, $range = NULL, $filter = NULL)
 	{
@@ -469,6 +481,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						'' => 'index',
 						'index' => 'src_source_index',
 						'create' => 'src_source_create',
+						'qcreate' => 'src_source_create_quick',
 						'event' => array(
 							'*' => array(
 								'_store' => 'EventId',
@@ -902,6 +915,121 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
+	function src_source_create_quick()
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		if (!isset($this->mPermissions['create'])) {
+			return show_404();
+		}
+		
+		// Validate the source
+		if (!$this->_GetSource()) {
+			return;
+		}
+		
+		// check for post data from mini creater
+		$input = array();
+		if (isset($_POST['evad_create'])) {
+			$input_valid = true;
+			
+			$source = & $this->mMainSource->GetSource(0);
+			if (!$source->IsSupported('create')) {
+				// Create isn't supported with this source
+				$this->messages->AddMessage('error', 'You cannot create events in this calendar. You may have to be logged in.');
+				$input_valid = false;
+			}
+			
+			// Get more post data
+			$input['evad_summary'] = $this->input->post('evad_summary');
+			if (false === $input['evad_summary']) {
+				$input['evad_summary'] = '';
+			}
+			if (strlen($input['evad_summary']) <= 3 or strlen($input['evad_summary']) >= 256) {
+				$input_valid = false;
+				$this->messages->AddMessage('error', 'Event summary is too long or too short.');
+			}
+			
+			$input_category = $this->input->post('evad_category');
+			if (false !== $input_category) {
+				$input['evad_category'] = $input_category;
+			}
+			$input_location = $this->input->post('evad_location');
+			if (false !== $input_location) {
+				$input['evad_location'] = $input_location;
+				if (strlen($input['evad_location']) > 50) {
+					$input_valid = false;
+					$this->messages->AddMessage('error', 'Event location is too long.');
+				}
+			}
+			$input_date = $this->input->post('evad_date');
+			$input_start = $this->input->post('evad_start');
+			$input_end = $this->input->post('evad_end');
+			if (false === $input_date || false === $input_start || false === $input_end) {
+				$this->messages->AddMessage('error', 'Missing event time information.');
+				$input_valid = false;
+			} else {
+				if (!is_numeric($input_date)) {
+					$this->messages->AddMessage('error', 'Invalid date');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_start) || $input_start < 0 || $input_start > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid start time');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_end) || $input_end < 0 || $input_end > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid end time');
+					$input_valid = false;
+				}
+				if ($input_valid) {
+					$starthour = (int)($input_start / 60);
+					$startminute = (int)($input_start % 60);
+					$start = strtotime($input_date.' '.sprintf("%02d%02d", $starthour, $startminute).'00');
+					
+					$endhour = (int)($input_end / 60);
+					$endminute = (int)($input_end % 60);
+					$end = strtotime($input_date.' '.sprintf("%02d%02d", $endhour, $endminute).'00');
+					
+					if ($start >= $end) {
+						$this->messages->AddMessage('error', 'Event must not end before it starts');
+						$input_valid = false;
+					}
+					if ($start < strtotime('today-1month')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+					if ($end > strtotime('today+2year')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+				}
+			}
+			
+			if ($input_valid) {
+				$event_info = array(
+					'name' => $input['evad_summary'],
+					'category' => $input['evad_category'],
+					'recur' => new RecurrenceSet(),
+				);
+				if (isset($input['evad_location'])) {
+					$event_info['location_name'] = $input['evad_location'];
+				}
+				
+				$event_info['recur']->SetStartEnd($start, $end);
+				$messages = $source->CreateEvent($event_info, $event_id);
+				$this->messages->AddMessages($messages);
+				if (!isset($messages['error'])) {
+					$this->messages->AddMessage('success', 'Event created successfully');
+				}
+			}
+		}
+		
+		// Get the redirect url tail
+		$args = func_get_args();
+		$tail = implode('/', $args);
+		redirect($tail);
+	}
+	
 	function src_source_create($range = NULL)
 	{
 		if (!CheckPermissions($this->mPermission)) return;
@@ -1116,10 +1244,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		
 		$this->SetupTabs('', $start);
 
-		$this->main_frame->SetExtraHead(
-				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
-				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
-		);
+		$this->main_frame->IncludeCss('stylesheets/calendar.css');
+		$this->main_frame->IncludeJs('javascript/calendar_edit.js');
+		
 		$this->main_frame->SetContent(
 			new FramesView('calendar/event_edit', $data)
 		);
@@ -1493,10 +1620,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'source' => $this->mSource->GetSourceName(),
 				'event' => $event->Name,
 			));
-			$this->main_frame->SetExtraHead(
-				'<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />'."\n".
-				'<script type="text/javascript" src="/javascript/calendar_edit.js"></script>'."\n"
-			);
+			
+			$this->main_frame->IncludeCss('stylesheets/calendar.css');
+			$this->main_frame->IncludeJs('javascript/calendar_edit.js');
+			
 			$this->main_frame->SetContent(
 				new FramesView('calendar/event_edit', $data)
 			);
@@ -2093,7 +2220,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			);
 			// Then the attendance filters
 			$filters['hidden'] = array(
-				'name'			=> 'not attending',
+				'name'			=> 'filter not attending',
 				'field'			=> 'visibility',
 				'value'			=> 'no',
 				'selected'		=> $Sources->GroupEnabled('hide'),
@@ -2104,7 +2231,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'declined')),
 			);
 			$filters['visible'] = array(
-				'name'			=> 'maybe attending',
+				'name'			=> 'filter maybe attending',
 				'field'			=> 'visibility',
 				'value'			=> 'maybe',
 				'selected'		=> $Sources->GroupEnabled('show'),
@@ -2115,7 +2242,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'att', 'no-maybe')),
 			);
 			$filters['rsvp'] = array(
-				'name'			=> 'attending',
+				'name'			=> 'filter attending',
 				'field'			=> 'visibility',
 				'value'			=> 'yes',
 				'selected'		=> $Sources->GroupEnabled('rsvp'),

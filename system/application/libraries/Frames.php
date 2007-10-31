@@ -176,6 +176,11 @@ class FramesFrame extends FramesView
 	{
 		$this->mDataArray['content'] = func_get_args();
 	}
+
+	function AppendContent(&$SubView, $Index)
+	{
+		$this->mDataArray['content'][$Index][] = $SubView;
+	}
 	
 	/// Set a specific content slot to a simple view.
 	/**

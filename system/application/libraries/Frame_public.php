@@ -100,13 +100,50 @@ class Frame_public extends FrameNavbar
 		$this->mDataArray['description'] .= $Description;
 	}
 	
+	/// Include a JS (javascript) file.
+	/**
+	 * @param $JsFile string Javascript source file, not site_url'd.
+	 */
+	function IncludeJs($JsFile)
+	{
+		$this->AddExtraHead('<script src="'.site_url($JsFile).'" type="text/javascript"></script>');
+	}
+	
+	/// Include a CSS (cascading stylesheets) file.
+	/**
+	 * @param $CssFile string CSS source file, not site_url'd.
+	 */
+	function IncludeCss($CssFile)
+	{
+		$this->AddExtraHead('<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" />');
+	}
+
+	/**
+	 * @brief Add extra code to go in the page header.
+	 * @param $literal string Extra code to go in the page header.
+	 */
+	function AddExtraHead($literal)
+	{
+		$this->AddExtraHeadView(new SimpleView($literal));
+	}
+
+	/**
+	 * @brief Add an extra view to go in the page header.
+	 * @param $view view Extra view to go in the page header.
+	 */
+	function AddExtraHeadView($view)
+	{
+		$this->AppendContent($view, 'head');
+	}
+	
 	/**
 	 * @brief Set the extra code to go in the page header.
 	 * @param $ExtraHead string Extra code to go in the page header.
+	 * @deprecated use AddExtraHead instead.  
 	 */
 	function SetExtraHead($ExtraHead)
 	{
-		$this->SetData('extra_head', $ExtraHead);
+		$this->AddExtraHead($ExtraHead);
 	}
 
 	/**

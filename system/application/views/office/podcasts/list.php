@@ -7,30 +7,45 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-	<h2>podcasts</h2>
-	<div class="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th style="width:70%;">
-						Name
-					</th>
-					<th style="width:30%;text-align:right;">
-						Date
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						Yorker Artscast Demo - Monday 8th October 2007
-					</td>
-					<td>
-						11/05/07 @ 14:19
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+		<h2>podcasts</h2>
+		<div class="ArticleBox">
+			<table>
+				<thead>
+					<tr>
+						<th style="width:85%;">
+							Title
+						</th>
+						<th style="width:15%;text-align:right;">
+							Is Live
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+	foreach ($podcasts as $podcast) {
+		$podcast['is_live'] ? $is_live = "Yes" : $is_live = "No";
+?>
+					<tr>
+						<td>
+							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.$podcast['name'].'</a>'); ?>
+						</td>
+						<td style="text-align:right;">
+							<?php echo($is_live); ?>
+						</td>
+					</tr>
+<?php
+	}
+?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
+
+<?php
+
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+
+?>
