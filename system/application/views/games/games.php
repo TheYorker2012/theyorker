@@ -17,7 +17,7 @@
 					echo('</tr><tr>');
 					$column = 0;
 				}
-				echo('<td><a href=/games/view/'.$game_id.'>');
+				echo('<td><a href="/games/view/'.$game_id.'">');
 				echo($game['image']);
 				echo('</a></td>');
 				$column = $column +1;

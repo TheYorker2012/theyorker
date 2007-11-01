@@ -19,7 +19,7 @@ if (!isset($Path)) {
 $squash = (count($Days) > 3);
 
 if (!isset($AllowEventCreate)) {
-	$AllowEventCreate = true;
+	$AllowEventCreate = false;
 }
 
 
@@ -45,6 +45,23 @@ $attend_state_images = array(
 		'do not attend',
 	),
 );
+
+function GetEventClassNames($event_info)
+{
+	$names = array();
+	if ($event_info->UserAttending == 'yes') {
+		$names[] = 'attend';
+	} elseif ($event_info->UserAttending == 'no') {
+		$names[] = 'noattend';
+	}
+	if ($event_info->Event->UserStatus == 'owner' &&
+		$event_info->State == 'draft' &&
+		!$event_info->UserHasPermission('publish'))
+	{
+		$names[] = 'personal';
+	}
+	return $names;
+}
 ?>
 
 
@@ -131,9 +148,10 @@ EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>
 EVENT_CACHE[EVENT_COUNT][6]	= '<?php echo(site_url(
 										$Path->OccurrenceInfo($event_info).
 										$CI->uri->uri_string())); ?>';
-EVENT_CACHE[EVENT_COUNT][7]	= -1;
-EVENT_CACHE[EVENT_COUNT][8]	= 1;
-EVENT_CACHE[EVENT_COUNT][9]	= 0;
+EVENT_CACHE[EVENT_COUNT][7]	= '<?php echo(implode(' ', GetEventClassNames($event_info))); ?>';
+EVENT_CACHE[EVENT_COUNT][8]	= -1;
+EVENT_CACHE[EVENT_COUNT][9]	= 1;
+EVENT_CACHE[EVENT_COUNT][10]	= 0;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
@@ -146,6 +164,7 @@ ALL_EVENT_CACHE[ALL_EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestam
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][6]	= '<?php echo(site_url(
 												$Path->OccurrenceInfo($event_info).
 												$CI->uri->uri_string())); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][7]	= '<?php echo(implode(' ', GetEventClassNames($event_info))); ?>';
 ALL_EVENT_COUNT++;
 <?php	}
 	}
@@ -217,7 +236,19 @@ table#calendar_view td.calendar_day div.cal_event {
 }
 
 table#calendar_view td.calendar_day div.cal_event.new {
-	border: 2px dashed red;
+	border: 2px dashed #808080;
+}
+
+table#calendar_view td.calendar_day div.cal_event.personal {
+	border: 1px dotted #FF0000;
+}
+
+table#calendar_view td.calendar_day div.cal_event.attend {
+	border: 2px dashed #FF0000;
+}
+
+table#calendar_view td.calendar_day div.cal_event.noattend {
+	border: 2px dashed #808080;
 }
 
 table#calendar_view td.calendar_day div.cal_event_nojs {
@@ -376,7 +407,13 @@ if (isset($ForwardUrl)) {
 			foreach ($ocs as $event_info) {
 				if (($event_info->DisplayOnCalendar) && ($event_info->TimeAssociated)) {
 ?>
-			<div class="cal_event cal_event_nojs cal_category_<?php echo($event_info->Event->Category); ?>"<?php /* onclick="alert('You clicked on this event!');"*/ ?>>
+			<div class="cal_event cal_event_nojs cal_category_<?php
+				echo($event_info->Event->Category);
+				$classNames = implode(' ', GetEventClassNames($event_info));
+				if ($classNames != '') {
+					echo(" $classNames");
+				}
+				?>"<?php /* onclick="alert('You clicked on this event!');"*/ ?>>
 				<div class="cal_event_heading">
 					<?php
 					if ($event_info->UserHasPermission('set_attend') &&

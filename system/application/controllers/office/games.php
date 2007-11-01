@@ -28,8 +28,8 @@ class Games extends Controller
 		if (!CheckPermissions('office')) return;
 
 		$this->load->library('xajax');
-		$this->xajax->registerFunction(array("toggle_activation", &$this, "toggle_activation"));
-		$this->xajax->registerFunction(array("del_game", &$this, "del_game"));
+		$this->xajax->registerFunction(array("toggle_activation", &$this, "_toggle_activation"));
+		$this->xajax->registerFunction(array("del_game", &$this, "_del_game"));
 
 		$this->xajax->processRequests();
 
@@ -79,7 +79,7 @@ class Games extends Controller
 
 	}	
 	
-		function toggle_activation($game_id)
+		function _toggle_activation($game_id)
 		{
 			$activation_state = $this->games_model->toggle_activation($game_id);
 			$objResponse = new xajaxResponse();
@@ -92,7 +92,7 @@ class Games extends Controller
 			return $objResponse;
 		}
 	
-		function del_game($game_id)
+		function _del_game($game_id)
 		{
 			$objResponse = new xajaxResponse();
 			if($this->games_model->Del_Game($game_id))

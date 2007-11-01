@@ -28,8 +28,6 @@ class Podcasts extends Controller
 	function edit($id)
 	{
 		if (!CheckPermissions('office')) return;
-		
-		$this->messages->AddDumpMessage('POST', $_POST);
 
 		$this->pages_model->SetPageCode('office_podcasts_edit');
 		$this->load->model('podcasts_model');

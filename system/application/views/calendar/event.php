@@ -64,12 +64,12 @@ $CI = & get_instance();
 				echo('<p>');
 				if ('published' === $Occurrence->State ||
 					'cancelled' === $Occurrence->State ||
-					'owned' === $Event->UserStatus)	
+					'owner' === $Event->UserStatus)	
 				{
 					echo('<strong>'.$Occurrence->State.'</strong>');
 				}
 				/*
-				if ('owned' === $Event->UserStatus) {
+				if ('owner' === $Event->UserStatus) {
 					$links = array();
 					if ($Occurrence->UserHasPermission('publish')) {
 						$links[] = '<a href="'.

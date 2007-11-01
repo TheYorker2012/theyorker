@@ -43,13 +43,13 @@ $CI = & get_instance();
 				}
 				if ('published' === $Occurrence->State ||
 					'cancelled' === $Occurrence->State ||
-					'owned' === $Occurrence->Event->UserStatus)	
+					'owner' === $Occurrence->Event->UserStatus)	
 				{
 					echo('<strong>'.$Occurrence->State.'</strong>');
 				}
 				if (!$Squash) {
 					/*
-					if ('owned' === $Occurrence->Event->UserStatus) {
+					if ('owner' === $Occurrence->Event->UserStatus) {
 						$links = array();
 						if ($Occurrence->UserHasPermission('publish')) {
 							$links[] = '<a href="'.

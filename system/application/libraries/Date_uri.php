@@ -69,12 +69,18 @@ class Date_uri
 	private $mMonths;
 	/// Array of accepted terms mapping onto term numbers.
 	private $mTerms;
+	/// Array of special weeks mapping onto term week numbers.
+	private $mTermWeeks;
 	/// Array of accepted days mapping onto day numbers (1-7, mon-sun).
 	private $mDays;
+	
+	/// Bool Enable to use dynamic regex, display regex, and output results of regex.
+	private $mDebug = FALSE;
 	
 	/// Default constructor
 	function __construct()
 	{
+		$today = Academic_time::NewToday();
 		$this->mMonths = array(
 				'jan'=>1, 'feb'=>2, 'mar'=>3,
 				'apr'=>4, 'may'=>5, 'jun'=>6,
@@ -89,12 +95,20 @@ class Date_uri
 				'au'=>0, 'ch'=>1, 'sp'=>2, 'ea'=>3, 'su'=>4, 'hol'=>5,
 				'autumn'=>0, 'christmas'=>1, 'xmas'   =>1, 'spring'=>2,
 				'easter'=>3, 'summer'   =>4, 'holiday'=>5,
+				// special
+				'thisterm'=> $today->AcademicTerm(),
+			);
+		$this->mTermWeeks = array(
+				// special
+				'thisweek'=> $today->AcademicWeek(),
 			);
 		$this->mDays = array(
 				'mon'=>1, 'tue'=>2, 'wed'=>3, 'thu'=>4,
 				'fri'=>5, 'sat'=>6, 'sun'=>7,
 				'monday'=>1, 'tuesday'=>2,  'wednesday'=>3, 'thursday'=>4,
 				'friday'=>5, 'saturday'=>6, 'sunday'=>7,
+				// special
+				'thisday' => $today->DayOfWeek(1)+1,
 			);
 	}
 	
@@ -105,13 +119,14 @@ class Date_uri
 	private function GetRegex($AllowRange = TRUE)
 	{
 		// Set to true when editing the regex (not using cached regex)
-		if (FALSE) {
+		if ($this->mDebug) {
 			// months: keys of $this->mMonths
 			// terms: keys of $this->mTerms
 			// days: keys of $this->mDays
 			
 			$re_months = implode('|',array_keys($this->mMonths));
 			$re_terms = implode('|',array_keys($this->mTerms));
+			$re_termweeks = implode('|',array_keys($this->mTermWeeks));
 			$re_days = implode('|',array_keys($this->mDays));
 			
 			// relative_bases: today, tomorrow etc.
@@ -126,7 +141,10 @@ class Date_uri
 			
 			$re_dayofmonth = '[1-9]|1\d|2\d|3[01]';
 			$re_year = '\d{4}';
-			$re_week = '\d\d?';
+			$re_week = '-?\d\d?';
+			if (!empty($re_termweeks)) {
+				$re_week .= "|$re_termweeks";
+			}
 			
 			// academic:  [(year)-](term)[-(week)[-(day)]]
 			// gregorian: [(year)-](month)[-(date)]
@@ -169,13 +187,14 @@ class Date_uri
 			
 			if (TRUE) {
 				// Echo the regular expression
-				echo '<h2>Debug output<h2><pre>';
-				echo '			if ($AllowRange) {'."\n";
-				echo '				return \''.$multiple_regex."';\n";
-				echo '			} else {'."\n";
-				echo '				return \''.$single_regex."';\n";
-				echo '			}'."\n";
-				echo '</pre><h2>End of Debug output</h2>';
+				echo '<h2>Dynamic Date Regex</h2><div><form><fieldset><textarea cols="100" rows="10">';
+				echo htmlentities(
+					'			if ($AllowRange) {'."\n".
+					'				return \''.$multiple_regex."';\n".
+					'			} else {'."\n".
+					'				return \''.$single_regex."';\n".
+					'			}', ENT_QUOTES, 'utf-8');
+				echo '</textarea></fieldset></form></div>';
 			}
 			
 			return ($AllowRange
@@ -183,11 +202,13 @@ class Date_uri
 					: $single_regex);
 			
 		} else {
+			// <GENERATED DATE REGEX>
 			if ($AllowRange) {
-				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<week>\d\d?)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))(:((?P<end_ac>((?P<end_ac_year>\d{4})-)?(?P<end_ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<end_week>\d\d?)(-(?P<end_day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<end_greg>((?P<end_year>\d{4})-)?(?P<end_month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<end_dom>[1-9]|1\d|2\d|3[01]))?)|(?P<end_rel>(?P<end_base>now|today|yesterday|tomorrow)|((?P<end_offset>-?\d+)(?P<end_offset_unit>days?|weeks?|months?|years?)))))?$/i';
+				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday|thisterm)(-(?P<week>-?\d\d?|thisweek)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|thisday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))(:((?P<end_ac>((?P<end_ac_year>\d{4})-)?(?P<end_ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday|thisterm)(-(?P<end_week>-?\d\d?|thisweek)(-(?P<end_day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|thisday))?)?)|(?P<end_greg>((?P<end_year>\d{4})-)?(?P<end_month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<end_dom>[1-9]|1\d|2\d|3[01]))?)|(?P<end_rel>(?P<end_base>now|today|yesterday|tomorrow)|((?P<end_offset>-?\d+)(?P<end_offset_unit>days?|weeks?|months?|years?)))))?$/i';
 			} else {
-				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday)(-(?P<week>\d\d?)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))$/i';
+				return '/^((?P<start_ac>((?P<ac_year>\d{4})-)?(?P<ac_term>au|ch|sp|ea|su|hol|autumn|christmas|xmas|spring|easter|summer|holiday|thisterm)(-(?P<week>-?\d\d?|thisweek)(-(?P<day>mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|thisday))?)?)|(?P<start_greg>((?P<year>\d{4})-)?(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)(-?(?P<dom>[1-9]|1\d|2\d|3[01]))?)|(?P<start_rel>(?P<base>now|today|yesterday|tomorrow)|((?P<offset>-?\d+)(?P<offset_unit>days?|weeks?|months?|years?))))$/i';
 			}
+			// </GENERATED DATE REGEX>
 		}
 	}
 	
@@ -225,6 +246,10 @@ class Date_uri
 		} else {
 			$result_had_week = TRUE;
 			$duration = 'week';
+			// Special weeks
+			if (isset($this->mTermWeeks[$Week])) {
+				$Week = $this->mTermWeeks[$Week];
+			}
 		}
 		if (empty($Day)) {
 			$Day = 1;
@@ -351,9 +376,10 @@ class Date_uri
 		$valid = (preg_match($regex,$UriSegment, $results) > 0);
 		if ($valid) {
 			
-			if (FALSE) {
-				echo '<br/><br/>Result of regular expression process:<br/>'.
-					str_replace("\n","<br/>\n",var_export($results,true));
+			if ($this->mDebug) {
+				echo '<p>Result of regular expression process:<br/>'.
+					str_replace("\n","<br/>\n",var_export($results,true).
+					'</p>');
 			}
 			
 			

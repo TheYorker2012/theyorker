@@ -96,6 +96,15 @@ abstract class CalendarView extends FramesView
 		$this->mRangeFilter = $Filter;
 	}
 	
+	/// Set whether creation of new events is enabled.
+	/**
+	 * @param $AllowCreate bool Whether to allow creation of new events.
+	 */
+	function EnableCreate($AllowCreate = true)
+	{
+		$this->SetData('AllowEventCreate', $AllowCreate);
+	}
+	
 	/// Generate a range url.
 	/**
 	 * @param $Start Academic_time
