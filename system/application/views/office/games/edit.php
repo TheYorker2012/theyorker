@@ -19,7 +19,8 @@
 	
 	function numbers_only(event)
 	{
-		event = (event) ? event : window.event; 		var charCode = (event.which) ? event.which : event.keyCode;	
+		event = (event) ? event : window.event;
+ 		var charCode = (event.which) ? event.which : event.keyCode;	
  		return !(charCode > 31 && (charCode < 48 || charCode > 57));
 	}
 	
@@ -34,7 +35,7 @@
 <div id="MainColumn">
 	<form name='edit_game_form' id='edit_game_form' action='<?php echo $_SERVER["REQUEST_URI"]; ?>' method='post' class='form' >
 		<div class="BlueBox">
-			&nbsp
+			&nbsp;
 			<fieldset>
 				<label for='game_title_field'>Title:</label>
 				<input
@@ -45,10 +46,10 @@
 					size='30' />
 				<br />
 			</fieldset>
-		&nbsp
+		&nbsp;
 		</div>
 		<div class="BlueBox">
-			<div Style="float:left; margin: 5px"><?php echo($game['image']);?></div>
+			<div style="float:left; margin: 5px"><?php echo($game['image']);?></div>
 			Image add/change bit here!
 			<fieldset>
 				<label for='game_image_id_field'>Image ID:</label>
@@ -57,12 +58,12 @@
 					id='game_image_id_field'
 					value='<?php echo($game['image_id']); ?>'
 					size='5'
-					disabled />
+					disabled="disabled" />
 			</fieldset>
 
 		</div>
 		<div class="BlueBox">
-			&nbsp
+			&nbsp;
 			<fieldset>
 			
 				<label for='game_filename_field'>Filename:</label>
@@ -71,7 +72,7 @@
 					id='game_filename_field'
 					value='<?php echo($game['filename']); ?>'
 					size='30'
-					disabled />
+					disabled="disabled" />
 				<br />
 				
 				<label for='game_width_field'>Width:</label>
@@ -104,13 +105,20 @@
 	</form>
 </div>
 
-<div class="BlueBox" style="display:NONE" id="game_box">
+<div class="BlueBox" style="display:none" id="game_box">
 	<object id ="game_object"
 		width="<?php echo($game['width']); ?>"
-		height="<?php echo($game['height']); ?>"		classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"		codebase="http://fpdownload.macromedia.com/pub/				shockwave/cabs/flash/swflash.cab#version=8,0,0,0">			<param name="movie" value="<?php echo($game['pathname']); ?>" />			<embed 
+		height="<?php echo($game['height']); ?>"
+		classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+		codebase="http://fpdownload.macromedia.com/pub/
+				shockwave/cabs/flash/swflash.cab#version=8,0,0,0">
+			<param name="movie" value="<?php echo($game['pathname']); ?>" />
+			<embed 
 				id ="game_embed"
 				src="<?php echo($game['pathname']); ?>"
 				width="<?php echo($game['width']); ?>"
-				height="<?php echo($game['height']); ?>"			  	type="application/x-shockwave-flash"
-			  	pluginspage="http://www.macromedia.com/go/getflashplayer" />	</object>
+				height="<?php echo($game['height']); ?>"
+			  	type="application/x-shockwave-flash"
+			  	pluginspage="http://www.macromedia.com/go/getflashplayer" />
+	</object>
 </div>
