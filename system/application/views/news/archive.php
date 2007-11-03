@@ -25,8 +25,35 @@ function printarticlelink($article) {
 <div id="RightColumn">
 	<h2 class="first">What is this?</h2>
 	The news archive contains a list of every single article published on The Yorker in chronological order.
-	<br /><br />
-	In the near future you will be able to provide criterion to search this list by, so please check back soon.
+
+	<h2>Search</h2>
+	<form action="/news/archive/" method="post">
+		<label for="archive_section">Section:</label>
+		<select name="archive_section" id="archive_section" size="1">
+			<option value="all">All</option>
+<?php foreach ($sections as $section) { ?>
+			<option value="<?php echo($section['id']); ?>"<?php
+	if ((isset($filters['section'])) && ($filters['section'] == $section['id'])) {
+		echo(' selected="selected"');
+	} ?>><?php echo($section['name']); ?></option>
+<?php } ?>
+		</select>
+
+		<label for="archive_reporter">Reporter:</label>
+		<select name="archive_reporter" id="archive_reporter" size="1">
+			<option value="all">All</option>
+<?php foreach ($reporters as $reporter) { ?>
+			<option value="<?php echo($reporter['id']); ?>"<?php
+	if ((isset($filters['reporter'])) && ($filters['reporter'] == $reporter['id'])) {
+		echo(' selected="selected"');
+	} ?>><?php echo($reporter['name']); ?></option>
+<?php } ?>
+		</select>
+
+        <br style="clear:both" />
+        <br style="clear:both" />
+		<input type="submit" name="archive_search" id="archive_search" value="Find Articles" />
+	</form>
 </div>
 
 <div id="MainColumn">

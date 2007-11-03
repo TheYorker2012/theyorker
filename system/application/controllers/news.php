@@ -189,7 +189,20 @@ class News extends Controller {
 	{
 		if (!CheckPermissions('public')) return;
 
-		/// Check for search filters
+		// Check for search filters to be applied in POST
+		$post_url = array();
+		if (is_numeric($this->input->post('archive_reporter'))) {
+			$post_url[] = 'reporter';
+			$post_url[] = $this->input->post('archive_reporter');
+		}
+		if (is_numeric($this->input->post('archive_section'))) {
+			$post_url[] = 'section';
+			$post_url[] = $this->input->post('archive_section');
+		}
+		if (count($post_url) > 0)
+			redirect('/news/archive/' . implode('/', $post_url));
+
+		/// Check for search filters in URL
 		$filters = $this->uri->uri_to_assoc();
 		if (isset($filters['reporter'])) {
 			if (!is_numeric($filters['reporter'])) {
@@ -212,11 +225,19 @@ class News extends Controller {
 				}
 			}
 		}
+
 		// Convert filters to format required by news model
 		$archive_filters = array();
 		foreach ($filters as $field => $value) {
 			$archive_filters[] = array($field, $value);
 		}
+
+		// Get data for search criteria options
+		$this->load->model('requests_model');
+		$this->load->model('businesscards_model');
+		$data['sections'] = $this->requests_model->getBoxes();
+		$data['reporters'] = $this->businesscards_model->GetBylines();
+		$data['filters'] = &$filters;
 
 		/// Pagination
 		$this->load->library('pagination');

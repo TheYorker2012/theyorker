@@ -601,30 +601,18 @@ class Businesscards_model extends Model
 	 */
 	function GetBylines()
 	{
-		$sql =
-			'SELECT'.
-			' business_cards.business_card_user_entity_id,'.
-			' business_cards.business_card_id,'.
-			' business_cards.business_card_name '.
-			'FROM business_cards '.
-			'INNER JOIN business_card_groups '.
-			' ON business_card_groups.business_card_group_id = business_cards.business_card_business_card_group_id '.
-			'WHERE business_cards.business_card_deleted = 0 '.
-			'AND business_card_groups.business_card_group_organisation_entity_id IS NULL '.
-			'ORDER BY business_cards.business_card_name';
+		$sql = 'SELECT		business_cards.business_card_user_entity_id AS user_id,
+							business_cards.business_card_id AS id,
+							business_cards.business_card_name AS name
+				FROM		business_cards,
+							business_card_groups
+				WHERE		business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
+				AND			business_cards.business_card_deleted = 0
+				AND			business_cards.business_card_approved = 1
+				ORDER BY	business_cards.business_card_name ASC';
 		$query = $this->db->query($sql);
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach($query->result() as $row)
-			{
-				$result_item['user_id'] = $row->business_card_user_entity_id;
-				$result_item['id'] = $row->business_card_id;
-				$result_item['name'] = $row->business_card_name;
-				$result[] = $result_item;
-			}			
-		}
-		return $result;
+		return $query->result_array();
 	}
 }
 
