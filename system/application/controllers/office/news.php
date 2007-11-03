@@ -254,7 +254,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -348,7 +348,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -501,7 +501,7 @@ class News extends Controller
 			array('action' => 'Edit', 'type' => $data['status'])
 		);
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -713,7 +713,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -813,7 +813,7 @@ class News extends Controller
 
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/publish', $data);
-			$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+			$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 			// Set page title & load main frame with view
 			$this->main_frame->SetTitleParameters(
 				array('title' => $data['article']['request_title'])
