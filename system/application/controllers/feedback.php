@@ -52,7 +52,7 @@ class Feedback extends Controller {
 			if ($antispam === '' && !preg_match('/viagra|phentermine|orgasm|<\/a>|<a\s+href/i', $feedback_text)) {
 				$this->feedback_model->AddNewFeedback($page_title,
 					$author_name, $author_email,
-					$rating, $feedback_text);
+					$rating, $feedback_text, 'http://'.$_SERVER['SERVER_NAME'].$redirect_path);
 	
 					$to = $this->pages_model->GetPropertyText('feedback_email', true);
 					$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
@@ -72,6 +72,7 @@ Platform: '.$this->agent->platform().'
 }
 $message .='
 Page Title: '.$page_title.'
+Page URL: http://'.$_SERVER['SERVER_NAME'].$redirect_path.'
 
 Rating: '.$rating.'
 
