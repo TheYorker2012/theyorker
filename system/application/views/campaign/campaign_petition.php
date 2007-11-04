@@ -56,6 +56,7 @@ if ($user != FALSE) {
 	</div>
 
 <?php
+/*
 if(count($article['related_articles']) > 0) {
 	echo('	<h2>'.$sidebar_related['title'].'/h2>'."\n");
 	echo('	<div class="Entry">'."\n");
@@ -67,6 +68,7 @@ if(count($article['related_articles']) > 0) {
 	echo('		</ul>'."\n");
 	echo('	</div>'."\n");
 }
+*/
 ?>
 
 <?php
