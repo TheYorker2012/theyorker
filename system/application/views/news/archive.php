@@ -7,7 +7,7 @@ function printarticlelink($article) {
 	echo('		<div class="ArticleEntry">'."\n");
 	echo('			<h3 class="Headline">'."\n");
 	echo('				<a href="/news/'.$article['type_codename'].'/'.$article['id'].'">'."\n");
-	echo('					'.$article['heading']."\n");
+	echo('					'.htmlentities($article['heading'], ENT_QUOTES, 'UTF-8')."\n");
 	echo('				</a>'."\n");
 	echo('			</h3>'."\n");
 	echo('			<div class="Section" style="float:right;">'.$article['type_name'].'</div>'."\n");
@@ -17,7 +17,7 @@ function printarticlelink($article) {
 		echo('				<a href="/news/archive/reporter/'.$reporter['id'].'/">'.$reporter['name'].'</a>'."\n");
 	echo('			</div>'."\n");
 	echo('		</div>'."\n");
-	echo('		<p>'.$article['blurb'].'</p>'."\n");
+	echo('		<p>'.htmlentities($article['blurb'], ENT_QUOTES, 'UTF-8').'</p>'."\n");
 	echo('	</div>'."\n");
 }
 ?>
@@ -77,51 +77,3 @@ function printarticlelink($article) {
 		<div style="clear:both"></div>
 	</div>
 </div>
-
-
-
-<!--
-	<div class="BlueBox">
-		<h2>search archive</h2>
-		<form id="archive_search" action="news/archive" method="post">
-			<fieldset>
-				<label for="a_category">Category:</label>
-					<select name="a_category" id="a_category" size="1">
-						<option value="" selected="selected">&nbsp;</option>
-						<option value="Campus News">Campus News</option>
-						<option value="Features">Features</option>
-						<option value="Lifestyle">Lifestyle</option>
-					</select><br />
-	
-				<label for="a_reporter">Reporter:</label>
-					<select name="a_reporter" id="a_reporter" size="1">
-						<option value="" selected="selected">&nbsp;</option>
-						<option value="Dan Ashby">Dan Ashby</option>
-						<option value="Nick Evans">Nick Evans</option>
-						<option value="Chris Travis">Chris Travis</option>
-						<option value="John Doe">John Doe</option>
-						<option value="Jane Doe">Jane Doe</option>
-						<option value="Alan Smith">Alan Smith</option>
-						<option value="Danielle Gerrard">Danielle Gerrard</option>
-					</select><br />
-	
-				<label for="a_subject">Subject:</label>
-					<select name="a_subject" id="a_subject" size="1">
-						<option value="" selected="selected">&nbsp;</option>
-						<option value="Event">Event</option>
-						<option value="Christmas">Christmas</option>
-						<option value="Easter">Easter</option>
-						<option value="Police">Police</option>
-						<option value="Vanbrugh">Vanbrugh</option>
-						<option value="Football">Football</option>
-					</select><br />
-	
-				<label for="a_text">Text:</label>
-					<input type="text" name="a_text" id="a_text" value="" /><br />
-			</fieldset>
-			<fieldset>
-				<input type="submit" name="r_submit" value="Search" class="button" />
-			</fieldset>
-		</form>
-	</div>
--->
