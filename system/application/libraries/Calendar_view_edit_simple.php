@@ -165,7 +165,6 @@ class CalendarViewEditSimpleValidate
 		);
 		list($data['Start'], $data['End']) = $this->mRset->GetStartEnd();
 		
-		header('content-type: text/xml');
 		get_instance()->load->view('calendar/simple_recur_xml.php', $data);
 	}
 }

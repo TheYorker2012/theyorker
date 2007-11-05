@@ -18,12 +18,28 @@ class Pages_model extends Model
 	///	then type
 	protected $mProperties;
 	
+	/// bool Whether to allow inline edits of page properties.
+	/**
+	 * @invariant $mInlineEditMode => user.type==editor && user.level==office
+	 */
+	protected $mInlineEditMode = false;
+	
 	/// Primary constructor.
 	function __construct()
 	{
+		parent::Model();
 		$this->mPageCode = FALSE;
 		$this->mPageInfo = array();
 		$this->mProperties = array();
+		$inline_edit_allowed_in_office_types = array('High'=>true,'Admin'=>true);
+		$this->mInlineEditMode = $this->user_auth->isLoggedIn &&
+			isset($inline_edit_allowed_in_office_types[$this->user_auth->officeType]);
+	}
+	
+	/// Get whether inline edit mode is on.
+	function GetInlineEditMode()
+	{
+		return $this->mInlineEditMode;
 	}
 	
 	/// Set the page code.
@@ -98,36 +114,96 @@ class Pages_model extends Model
 	 *	- string Page code of page to get property from.
 	 *	- TRUE Get page property from global properties.
 	 *	- FALSE Current page code specified using SetPageCode.
-	 * @param $Default string Default string.
+	 * @param $DefaultToNull bool Whether to default to NULL if there is no property.
+	 * @param $Replacements array[replace => with] Replacements to make in the wikitext.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $Default = '')
+	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Replacements = array())
 	{
-		$cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache');
-		if (FALSE === $cache) {
+		if ($this->mInlineEditMode || FALSE === ($cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache'))) {
 			// No cache, see if the wikitext is there
 			$wikitext = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext');
 			if (FALSE === $wikitext) {
-				return $Default;
+				if ($DefaultToNull) {
+					return NULL;
+				} else {
+					$wikitext_cached = '';
+				}
 			} else {
 				// Build the cache
 				$this->load->library('wikiparser');
 				
-				$cached_wikitext = $this->wikiparser->parse($wikitext['text']."\n");
+				$cached_wikitext = $this->wikiparser->parse($wikitext['text']);
 				if (get_magic_quotes_gpc()) {
 					// If magic quotes are on, code igniter doesn't escape
 					$cached_wikitext = addslashes($cached_wikitext);
 				}
 				// Save the cache back to the database
 				$cache = array('text' => $cached_wikitext);
-				$this->InsertProperty($PageCode,
-						$PropertyLabel, 'wikitext_cache', $cache);
-				return $cached_wikitext;
+				if (!$this->mInlineEditMode) {
+					$this->InsertProperty($PageCode,
+							$PropertyLabel, 'wikitext_cache', $cache);
+				}
+				$wikitext_cached = $cached_wikitext;
 			}
 		} else {
 			// Use the cache
-			return $cache['text'];
+			$wikitext_cached = $cache['text'];
+		}
+		
+		// Replace special values
+		if (empty($Replacements)) {
+			$replaced_wikitext = $wikitext_cached;
+		} else {
+			$replaced_wikitext = str_replace(
+				array_keys($Replacements),
+				array_values($Replacements),
+				$wikitext_cached
+			);
+		}
+		
+		if (!$this->mInlineEditMode) {
+			return $replaced_wikitext;
+		} else {
+			if (FALSE === $PageCode) {
+				$PageCode = $this->mPageCode;
+			}
+			if (TRUE === $PageCode) {
+				$page_link = site_url('admin/pages/common');
+				$PageCode = '_common';
+			} else {
+				$page_link = site_url("admin/pages/page/edit/$PageCode");
+			}
+			$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+			$this->main_frame->IncludeJs('javascript/ppedit_inline.js');
+			static $edit_counter = 0;
+			++$edit_counter;
+			$output = '';
+			$output .= '<div style="display: block;margin:0px;">';
+			$output .= " <div style=\"background-color:lightblue;border:1px solid blue;\">";
+			$output .= "  <div style=\"background-color:#8080FF;color:white;\" onclick=\"return PPEditToggle($edit_counter);\">$PageCode::<strong>$PropertyLabel</strong></div>";
+			$output .= "  <div id=\"ppedit_wikitext_$edit_counter\" style=\"display:none;\">";
+			$output .= '   <form>';
+			$output .= '    <p>';
+			$output .= "     <strong>warning</strong>: <em>This property belongs to the page type <strong><a href=\"$page_link\">$PageCode</a></strong>. Other parts of the site other than this page may use this page type. Changes will take place immediately after saving.</em>";
+			$output .= '    </p>';
+			$output .= '    <fieldset>';
+			$output .= "     <textarea id=\"ppedit_wikitext_value_$edit_counter\" cols=\"40\" rows=\"10\">".htmlentities($wikitext['text'], ENT_QUOTES, 'utf-8').'</textarea>';
+			$output .= '    </fieldset>';
+			$output .= '    <fieldset>';
+			$output .= "     <input class=\"button\" type=\"button\" value=\"save\" onclick=\"return PPEditSubmitWikitext($edit_counter,'$PageCode','$PropertyLabel','wikitext','save');\"/>";
+			$output .= "     <input class=\"button\" type=\"button\" value=\"preview\" onclick=\"return PPEditSubmitWikitext($edit_counter,'$PageCode','$PropertyLabel','wikitext','preview');\"/>";
+			$output .= '     <input class="button" type="reset" value="reset" />';
+			$output .= '    </fieldset>';
+			$output .= '   </form>';
+			$output .= '   Preview:';
+			$output .= "   <div id=\"pp_wikitext_preview_$edit_counter\" style=\"border:1px dashed blue; margin: 3px; background-color:white;\">$wikitext_cached</div>";
+			$output .= '  </div>';
+			$output .= ' </div>';
+			$output .= " <div id=\"pp_wikitext_$edit_counter\" style=\"border:1px dashed blue;\">$replaced_wikitext</div>";
+			$output .= '</div>';
+			return $output;
 		}
 	}
 	
@@ -144,15 +220,11 @@ class Pages_model extends Model
 	 */
 	function GetPropertyMessage($PropertyLabel, $PageCode = FALSE, $DefaultClass = 'information')
 	{
-		$message_text = $this->GetPropertyWikitext($PropertyLabel, $PageCode, FALSE);
-		if (FALSE !== $message_text) {
-			return array(
-				'class' => $this->GetPropertyText($PropertyLabel, $PageCode, $DefaultClass),
-				'text' => $message_text,
-			);
-		} else {
-			return FALSE;
-		}
+		$message_text = $this->GetPropertyWikitext($PropertyLabel, $PageCode);
+		return array(
+			'class' => $this->GetPropertyText($PropertyLabel, $PageCode, $DefaultClass),
+			'text' => $message_text,
+		);
 	}
 	
 	/// Get a specific array property associated with the page.
@@ -243,7 +315,10 @@ class Pages_model extends Model
 									$indexing['post'];
 					$value = FALSE;
 					if ($field_info[1] === 'wikitext') {
-						$value = $this->GetPropertyWikitext($field_name, $PageCode, FALSE);
+						$value = $this->GetPropertyWikitext($field_name, $PageCode, TRUE);
+						if (NULL === $value) {
+							$value = FALSE;
+						}
 					}
 					if ($field_info[1] === 'text') {
 						$value = $this->GetPropertyText($field_name, $PageCode, FALSE);
@@ -436,6 +511,7 @@ class Pages_model extends Model
 	 * @param $PropertyLabel string Label of property.
 	 * @param $PropertyType string Name of the property type.
 	 * @param $Property array Property object.
+	 * @return bool Whether any properties were created.
 	 */
 	function InsertProperty($PageCode, $PropertyLabel, $PropertyType, $Property)
 	{
@@ -454,20 +530,20 @@ class Pages_model extends Model
 				page_property_text)
 			SELECT
 				property_types.property_type_id,';
-		if (FALSE === $PageCode) {
+		if (TRUE === $PageCode) {
 			$sql .= 'NULL,';
 		} else {
 			$sql .= 'pages.page_id,';
 		}
 		$sql .= '?, ? FROM ';
 		$bind_data = array($PropertyLabel, $Property['text']);
-		if (FALSE !== $PageCode) {
+		if (TRUE !== $PageCode) {
 			$sql .= 'pages,';
 		}
 		$sql .=
 			'	property_types
 			WHERE ';
-		if (FALSE !== $PageCode) {
+		if (TRUE !== $PageCode) {
 			$sql .= 'pages.page_codename=? AND ';
 			$bind_data[] = $PageCode;
 		}

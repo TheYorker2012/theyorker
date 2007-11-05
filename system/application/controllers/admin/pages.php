@@ -107,10 +107,8 @@ class Pages extends Controller
 				unset($data['pages'][0]);
 			}
 			
-			$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
-			if (NULL !== $main_text) {
-				$data['main_text'] = $main_text;
-			}
+			$main_text = $this->pages_model->GetPropertyWikitext('main_text');
+			$data['main_text'] = $main_text;
 			
 			$data['permissions'] = $this->mPermissions;
 			$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
@@ -221,10 +219,8 @@ class Pages extends Controller
 			}
 		}
 		
-		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
-		if (NULL !== $main_text) {
-			$Data['main_text'] = $main_text;
-		}
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text');
+		$Data['main_text'] = $main_text;
 		return $Data;
 	}
 	
@@ -467,14 +463,10 @@ class Pages extends Controller
 				}
 			}
 		}
-		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
-		if (NULL !== $main_text) {
-			$data['main_text'] = $main_text;
-		}
-		$page_help = $this->pages_model->GetPropertyWikitext('special:help',$page_code, NULL);
-		if (NULL !== $page_help) {
-			$data['page_help'] = $page_help;
-		}
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['main_text'] = $main_text;
+		$page_help = $this->pages_model->GetPropertyWikitext('special:help',$page_code);
+		$data['page_help'] = $page_help;
 		return $data;
 	}
 	
@@ -512,10 +504,8 @@ class Pages extends Controller
 				redirect('admin/pages');
 			}
 		}
-		$main_text = $this->pages_model->GetPropertyWikitext('main_text',FALSE, NULL);
-		if (NULL !== $main_text) {
-			$data['main_text'] = $main_text;
-		}
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['main_text'] = $main_text;
 		return $data;
 	}
 	
@@ -705,6 +695,58 @@ class Pages extends Controller
 				) );
 		}
 		$this->main_frame->Load();
+	}
+	
+	/// Post->XML function to make inline page property edits.
+	function inlineedit()
+	{
+		$this->load->model('user_auth');
+		$this->load->model('pages_model');
+		$data = array();
+		if (!$this->pages_model->GetInlineEditMode()) {
+			// Not enough permissions
+			$data['Fail'] = true;
+			$data['Saved'] = false;
+			$data['Preview'] = NULL;
+		} else {
+			$input_data = array();
+			foreach (array('action','pageid','property','type','text') as $field) {
+				if (isset($_GET[$field])) {
+					$input_data[$field] = $_GET[$field];
+				} else {
+					// Don't bother outputting anything, insufficient data.
+					return;
+				}
+			}
+			if ($input_data['pageid'] == '_common') {
+				$input_data['pageid'] = TRUE;
+			}
+			
+			$data['Fail'] = false;
+			$data['Saved'] = false;
+			$data['Preview'] = NULL;
+			switch ($input_data['action']) {
+				case 'preview':
+				case 'save':
+					if ($input_data['type'] == 'wikitext') {
+						$this->load->library('wikiparser');
+						$data['Preview'] = $this->wikiparser->parse($input_data['text']);
+					}
+					if ($input_data['action'] == 'save') {
+						if ($this->pages_model->InsertProperty($input_data['pageid'], $input_data['property'], $input_data['type'],
+								array('text' => $input_data['text'])
+							))
+						{
+							$data['Saved'] = true;
+						}
+					}
+					break;
+				default:
+					// Don't bother outputting anything, invalid action.
+					return;
+			};
+		}
+		$this->load->view('admin/pages_inlineedit_xml', $data);
 	}
 	
 }

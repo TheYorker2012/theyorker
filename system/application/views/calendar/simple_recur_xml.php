@@ -7,6 +7,7 @@
  * @param $End     End time.
  * @param $Results Results structure.
  */
+header('content-type: text/xml');
 ?><<?php ?>?xml version="1.0" encoding="UTF-8"?><?php
 ?><recur_validation valid="1"><?php
 	foreach ($Errors as $error) {

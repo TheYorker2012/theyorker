@@ -53,6 +53,8 @@ class Frame_public extends FrameNavbar
 	private $mHttpHeader = NULL;
 	/// enable adverts for the public frame
 	protected $mHasAdverts = TRUE;
+	/// array of JS modules included.
+	protected $mJsModules = array();
 	
 	/**
 	 * @brief Default constructor.
@@ -106,7 +108,10 @@ class Frame_public extends FrameNavbar
 	 */
 	function IncludeJs($JsFile)
 	{
-		$this->AddExtraHead('<script src="'.site_url($JsFile).'" type="text/javascript"></script>');
+		if (!isset($this->mJsModules[$JsFile])) {
+			$this->AddExtraHead('<script src="'.site_url($JsFile).'" type="text/javascript"></script>');
+			$this->mJsModules[$JsFile] = true;
+		}
 	}
 	
 	/// Include a CSS (cascading stylesheets) file.
