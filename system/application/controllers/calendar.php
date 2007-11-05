@@ -27,6 +27,8 @@ class Calendar extends controller
 		$this->load->model('subcontrollers/calendar_subcontroller');
 		$this->calendar_subcontroller->_SetDefault('index');
 		$this->calendar_subcontroller->_AddPermission('create', 'edit', 'index');
+		$sources = & $this->calendar_subcontroller->GetSources();
+		$sources->DisableGroup('inactive');
 		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	

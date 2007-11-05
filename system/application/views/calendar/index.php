@@ -16,7 +16,7 @@ $first_h2 = ' class="first"';
 	<h2<?php echo($first_h2); $first_h2=''; ?>>Notifications</h2>
 		<div>
 			<div id="calnot_none" style="display:<?php echo(
-				(!isset($Notifications) | empty($NotNotifications))
+				(!isset($Notifications) || empty($Notifications))
 					? 'block'
 					: 'none');
 				?>">
