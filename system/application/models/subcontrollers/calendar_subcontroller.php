@@ -1261,6 +1261,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->SetupTabs('', $start);
 
 		$this->main_frame->IncludeCss('stylesheets/calendar.css');
+		$this->main_frame->IncludeJs('javascript/simple_ajax.js');
 		$this->main_frame->IncludeJs('javascript/calendar_edit.js');
 		
 		$this->main_frame->SetContent(
@@ -1638,6 +1639,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			));
 			
 			$this->main_frame->IncludeCss('stylesheets/calendar.css');
+			$this->main_frame->IncludeJs('javascript/simple_ajax.js');
 			$this->main_frame->IncludeJs('javascript/calendar_edit.js');
 			
 			$this->main_frame->SetContent(

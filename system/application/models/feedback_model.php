@@ -16,7 +16,7 @@ class Feedback_model extends Model
 	}
 
 	function AddNewFeedback($page_name, $author_name, $author_email, 
-				$rating, $comment)
+				$rating, $comment, $page_url)
 	{
 		$sql = 'INSERT INTO feedback_entries (
 				feedback_entry_page_name,
@@ -24,10 +24,11 @@ class Feedback_model extends Model
 				feedback_entry_author_email,
 				feedback_entry_rating,
 				feedback_entry_comment,
+				feedback_entry_page_url,
 				feedback_entry_timestamp)
-			VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)';
+			VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)';
 		$this->db->query($sql, array($page_name, $author_name,
-				$author_email, $rating, $comment));
+				$author_email, $rating, $comment, $page_url));
 	}
 
 	/// Get number of outstanding feedback comments
@@ -50,6 +51,7 @@ class Feedback_model extends Model
 				 feedback_entry_author_email AS email,
 				 feedback_entry_rating AS rating,
 				 feedback_entry_comment AS comment,
+				 feedback_entry_page_url AS page_url,
 				 DATE_FORMAT(feedback_entry_timestamp, \'%a, %D %b %y @ %H:%i\') AS time
 				FROM feedback_entries
 				WHERE feedback_entry_deleted = ?

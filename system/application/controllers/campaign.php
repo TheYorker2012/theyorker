@@ -103,12 +103,7 @@ class Campaign extends Controller {
 				'title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE));
 			$data['sidebar_petition'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_petition_title'),
-				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text'));
-			$data['sidebar_sign'] = array(
-				'title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),
-				'new_text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_new_text'),
-				'withdraw_text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_withdraw_text'),
-				'not_logged_in'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_not_logged_in'));
+				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text',FALSE, FALSE,array('%%count%%' => $data['campaign']['signatures'])));
 			$data['sidebar_more'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_more_title',TRUE),
 				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_more_text',TRUE));
@@ -129,8 +124,14 @@ class Campaign extends Controller {
 			{
 				$data['user'] = FALSE;
 			}
+			$name_replacer = array('%%name%%' => $data['user']['firstname'].' '.$data['user']['surname']);
+			$data['sidebar_sign'] = array(
+				'title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),
+				'new_text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_new_text', FALSE,FALSE,$name_replacer),
+				'withdraw_text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_withdraw_text',FALSE,FALSE,$name_replacer),
+				'not_logged_in'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_not_logged_in'));
 			
-			$data['sections']['progress_reports']['totalcount'] = $this->progressreports_model->GetCharityCampaignProgressReportCount($campaign_id, false);	
+			$data['sections']['progress_reports']['totalcount'] = $this->progressreports_model->GetCharityCampaignProgressReportCount($campaign_id, false);
 	
 			$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports($campaign_id, true, false);
 			if (count($pr_temp) > 0)
@@ -187,11 +188,23 @@ class Campaign extends Controller {
 					$data['preview_mode'] = FALSE;
 				}
 				$data['selected_campaign'] = $campaign_id;
+				if ($this->user_auth->isLoggedIn == TRUE)
+				{
+					$data['user']['id'] = $this->user_auth->entityId;
+					$data['user']['firstname'] = $this->user_auth->firstname;
+					$data['user']['surname'] = $this->user_auth->surname;
+					$data['user']['vote_id'] = $this->campaign_model->GetUserVoteSignature($data['user']['id']);
+				}
+				else
+				{
+					$data['user'] = FALSE;
+				}
+				$name_replacer = array('%%name%%' => $data['user']['firstname'].' '.$data['user']['surname']);
 				$data['sidebar_vote'] = array(
 					'title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),
-					'newvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_new_text'),
-					'changevote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_change_text'),
-					'withdrawvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_withdraw_text'),
+					'newvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_new_text', false,false,$name_replacer),
+					'changevote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_change_text', false,false,$name_replacer),
+					'withdrawvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_withdraw_text', false,false,$name_replacer),
 					'not_logged_in'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_not_logged_in'));
 				$data['sidebar_other_campaigns'] = array(
 					'title'=>$this->pages_model->GetPropertyText('sidebar_other_campaigns_title'));
@@ -204,17 +217,6 @@ class Campaign extends Controller {
 					'title'=>$this->pages_model->GetPropertyText('sidebar_external_title',TRUE));
 				$data['comments'] = array(
 					'title'=>$this->pages_model->GetPropertyText('section_comments_title',TRUE));
-				if ($this->user_auth->isLoggedIn == TRUE)
-				{
-					$data['user']['id'] = $this->user_auth->entityId;
-					$data['user']['firstname'] = $this->user_auth->firstname;
-					$data['user']['surname'] = $this->user_auth->surname;
-					$data['user']['vote_id'] = $this->campaign_model->GetUserVoteSignature($data['user']['id']);
-				}
-				else
-				{
-					$data['user'] = FALSE;
-				}
 				$data['parameters']['campaign'] = $campaign_id;
 	
 				// Set up the public frame

@@ -254,7 +254,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -312,7 +312,7 @@ class News extends Controller
 				}
 				$article_id = $this->requests_model->CreateRequest('request',$this->input->post('r_box'),$this->input->post('r_title'),$this->input->post('r_brief'),$this->user_auth->entityId,$deadline);
 
-				$byline = $this->article_model->GetReporterByline($this->user_auth_entityId);
+				$byline = $this->article_model->GetReporterByline($this->user_auth->entityId);
 				$this->requests_model->AddUserToRequest($article_id, $this->user_auth->entityId, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
 				$this->requests_model->AcceptRequest($article_id, $this->user_auth->entityId);
 				$accept_data = array(
@@ -348,7 +348,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -501,7 +501,7 @@ class News extends Controller
 			array('action' => 'Edit', 'type' => $data['status'])
 		);
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -713,7 +713,7 @@ class News extends Controller
 		);
 
 		/// Load main frame
-		$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 		$this->main_frame->Load();
 	}
 
@@ -813,7 +813,7 @@ class News extends Controller
 
 			// Set up the main frame
 			$this->main_frame->SetContentSimple('office/news/publish', $data);
-			$this->main_frame->SetData('extra_head', '<style type="text/css">@import url("/stylesheets/calendar_select.css");</style>');
+			$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
 			// Set page title & load main frame with view
 			$this->main_frame->SetTitleParameters(
 				array('title' => $data['article']['request_title'])
@@ -1078,13 +1078,13 @@ class News extends Controller
 		}
 		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
 			if (is_numeric($revision)) {
-				$headline = htmlentities($this->input->xss_clean($headline), ENT_QUOTES, 'UTF-8');
-				$subheadline = htmlentities($this->input->xss_clean($subheadline), ENT_QUOTES, 'UTF-8');
-				$subtext = htmlentities($this->input->xss_clean($subtext), ENT_QUOTES, 'UTF-8');
-				$blurb = htmlentities($this->input->xss_clean($blurb), ENT_QUOTES, 'UTF-8');
+				$headline = $this->input->xss_clean($headline);
+				$subheadline = $this->input->xss_clean($subheadline);
+				$subtext = $this->input->xss_clean($subtext);
+				$blurb = $this->input->xss_clean($blurb);
 				$wiki = $this->input->xss_clean($wiki);
-				$fact_heading = htmlentities($this->input->xss_clean($fact_heading), ENT_QUOTES, 'UTF-8');
-				$fact_text = htmlentities($this->input->xss_clean($fact_text), ENT_QUOTES, 'UTF-8');
+				$fact_heading = $this->input->xss_clean($fact_heading);
+				$fact_text = $this->input->xss_clean($fact_text);
 				$revision = $this->article_model->GetArticleRevisionToEdit($article_id, $this->user_auth->entityId, $revision);
 				$wiki_cache = '';
 //				if ($create_cache) {

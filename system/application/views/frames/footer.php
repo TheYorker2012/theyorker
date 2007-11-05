@@ -29,7 +29,7 @@
 				</div>
 				<label for="a_feedbacktext">Your Comments: </label>
 					<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
-				<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo str_replace("'", "", $head_title); } ?>" />
+				<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo htmlentities($head_title, ENT_QUOTES, 'UTF-8'); } ?>" />
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
 			</fieldset>
 			<fieldset>

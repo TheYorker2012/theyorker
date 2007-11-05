@@ -5,7 +5,7 @@
 if ($user == TRUE) {
 	$name = htmlentities($user['firstname'].' '.$user['surname']);
 	if ($user['vote_id'] == FALSE) {
-		echo('		'.str_replace('%%name%%', $name, $sidebar_vote['newvote']));
+		echo('		'.$sidebar_vote['newvote']);
 ?>
 		<form id="voteform" action="/campaign/castvote" method="post">
 			<fieldset>
@@ -23,7 +23,7 @@ if ($user == TRUE) {
 		</form>
 <?php
 	} elseif ($user['vote_id'] == $parameters['campaign']) {
-		echo('		'.str_replace('%%name%%', $name, $sidebar_vote['withdrawvote']));
+		echo('		'.$sidebar_vote['withdrawvote']);
 ?>
 		<form id="withdrawform" action="/campaign/withdrawvote" method="post">
 			<fieldset>
@@ -34,7 +34,7 @@ if ($user == TRUE) {
 		</form>
 <?php
 	} else {
-		echo('		'.str_replace('%%name%%', $name, $sidebar_vote['changevote']));
+		echo('		'.$sidebar_vote['changevote']);
 ?>
 		<form id="voteform" action="/campaign/castvote" method="POST" class="form">
 			<fieldset>

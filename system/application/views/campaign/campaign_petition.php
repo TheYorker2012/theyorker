@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first"><?php echo($sidebar_petition['title']); ?></h2>
 	<div class="Entry">
-		<?php echo(str_replace('%%count%%', $campaign['signatures'], $sidebar_petition['text'])); ?>
+		<?php echo($sidebar_petition['text']); ?>
 
 	</div>
 
@@ -11,7 +11,7 @@
 if ($user != FALSE) {
 	if ($user['vote_id'] == FALSE) {
 		echo('		');
-		echo(str_replace('%%name%%', $user['firstname'].' '.$user['surname'], $sidebar_sign['new_text']));
+		echo($sidebar_sign['new_text']);
 		echo("\n");
 ?>
 		<form name="sign" action="/campaign/signpetition" method="post">
@@ -31,7 +31,7 @@ if ($user != FALSE) {
 <?php
 	} else {
 		echo('		');
-		echo(str_replace('%%name%%', $user['firstname'].' '.$user['surname'], $sidebar_sign['withdraw_text']));
+		echo($sidebar_sign['withdraw_text']);
 		echo("\n");
 ?>
 		<form name="sign" action="/campaign/withdrawsignature" method="post">
@@ -56,6 +56,7 @@ if ($user != FALSE) {
 	</div>
 
 <?php
+/*
 if(count($article['related_articles']) > 0) {
 	echo('	<h2>'.$sidebar_related['title'].'/h2>'."\n");
 	echo('	<div class="Entry">'."\n");
@@ -67,6 +68,7 @@ if(count($article['related_articles']) > 0) {
 	echo('		</ul>'."\n");
 	echo('	</div>'."\n");
 }
+*/
 ?>
 
 <?php

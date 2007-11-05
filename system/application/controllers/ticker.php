@@ -153,6 +153,7 @@ class Ticker extends Controller {
 	{
 		if ($user = $this->facebook_ticker->Authenticate()) {
 			$data['selected_tab'] = 'invite';
+			$data['app_users'] = $this->facebook_ticker->client->friends_getAppUsers();
 			$this->facebook_ticker->CanvasPage('facebook/ticker/invite', $data);
 		}
 	}
