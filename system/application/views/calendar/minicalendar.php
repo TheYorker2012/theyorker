@@ -4,6 +4,7 @@
  * @param $Links array[Ymd => url] Date organised structure of links.
  * @param $ClassNames array[Ymd => array[classname]] Class names per day.
  * @param $WeekStart int First day of week, 0:sunday, 1:monday...
+ * @param $Legend array[description => styles] Legend information.
  */
 if (!isset($WeekStart) || NULL === $WeekStart) {
 	$WeekStart = 0;
@@ -11,6 +12,16 @@ if (!isset($WeekStart) || NULL === $WeekStart) {
 ?>
 <table class="recur-cal<?php if (isset($Onclick) && NULL !== $Onclick) echo(' allclick'); ?>">
 <?php
+	// Legend
+	if (isset($Legend) && is_array($Legend) && !empty($Legend)) {
+		echo('<tr><th colspan="8" class="term">Legend</th></tr>');
+		foreach ($Legend as $legend_info) {
+			list($classes_array, $description) = $legend_info;
+			$classnames = join(' ',$classes_array);
+			echo("<tr><th /><td colspan=\"7\" class=\"$classnames\">$description</td></tr>");
+		}
+	}
+
 	$day_of_week_headings = array('S','M','T','W','T','F','S');
 	$term_date_alteration = '4days';
 	$today = Academic_time::NewToday();

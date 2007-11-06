@@ -22,20 +22,39 @@ $CI = & get_instance();
 	<?php
 	$links = array();
 	$class_names = array();
+	$mini_legend = array();
+	$legend_data = array(
+		'dra' => array(0, '<a>&nbsp;Personal or Draft&nbsp;</a>'),
+		'pub' => array(1, '<a>&nbsp;Published&nbsp;</a>'),
+		'can' => array(2, '<a>&nbsp;Cancelled&nbsp;</a>'),
+	);
 	foreach ($Event->Occurrences as &$occurrence) {
 		$date_id = $occurrence->StartTime->Format('Ymd');
 		$links[$date_id] =
 			site_url($Path->OccurrenceInfo($occurrence)).$FailRedirect;
-		$class_names[$date_id][] = substr($occurrence->State, 0, 3);
+		$classname = substr($occurrence->State, 0, 3);
+		$class_names[$date_id][] = $classname;
+		// Add the legend item for this class if it isn't there yet.
+		if (isset($legend_data[$classname]) &&
+			!isset($mini_legend[$legend_data[$classname][0]]))
+		{
+			$mini_legend[$legend_data[$classname][0]] = array(
+				array($classname),
+				$legend_data[$classname][1],
+			);
+		}
 	}
 	if (NULL !== $Occurrence) {
 		$class_names[$Occurrence->StartTime->Format('Ymd')][] = 'cur';
 	}
+	// Sort the legend by the (numeric) key.
+	ksort($mini_legend);
 	get_instance()->load->view('calendar/minicalendar', array(
-		'Links' => $links,
-		'ClassNames' => $class_names,
-		'WeekStart' => NULL,
-		'Onclick' => NULL,
+		'Links'			=> $links,
+		'ClassNames'	=> $class_names,
+		'WeekStart'		=> NULL,
+		'Onclick'		=> NULL,
+		'Legend'		=> $mini_legend
 	));
 	?>
 </div>

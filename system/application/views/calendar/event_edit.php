@@ -241,6 +241,12 @@ $CI = & get_instance();
 				'WeekStart' => NULL,
 				'Onclick' => 'MiniTog',
 				'ClassNames' => NULL,
+				'Legend' => array(
+					array(array('sel','sta'), 'Start occurrence'),
+					array(array('sel'), 'Recurrence'),
+					array(array('inc'), 'Explicit recurrence'),
+					array(array('exc'), 'Excluded recurrence'),
+				),
 			));
 			?>
 		</div>
