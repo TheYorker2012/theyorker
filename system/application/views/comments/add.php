@@ -111,7 +111,7 @@
 				?>
 				</select> */ ?>
 
-				<div id="SmileySelect" style="position:absolute;width:225px;height:290px;z-index:0;display:none;border:1px #999 solid;background-color:#fff;top:0px;left:0px;">
+				<div id="SmileySelect" style="position:absolute;width:225px;z-index:0;display:none;border:1px #999 solid;background-color:#fff;top:0px;left:0px;">
 					<?php echo $SmileyTable; ?>
 					<input type="button" class="button" name="Close" value="Close" onclick="return displayObject('SmileySelect',false);" />
 					<div style="clear:both"></div>
