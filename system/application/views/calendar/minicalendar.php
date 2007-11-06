@@ -7,7 +7,7 @@
  * @param $Legend array[description => styles] Legend information.
  */
 if (!isset($WeekStart) || NULL === $WeekStart) {
-	$WeekStart = 0;
+	$WeekStart = 1;
 }
 ?>
 <table class="recur-cal<?php if (isset($Onclick) && NULL !== $Onclick) echo(' allclick'); ?>">
