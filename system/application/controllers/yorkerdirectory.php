@@ -31,7 +31,7 @@ class Yorkerdirectory extends Controller
 
 	/// Set up the directory frame
 	/**
-	 * @param $OrganisationData Organisation data array.
+	 * @param $DirectoryEntry Organisation data array.
 	 * @pre @a $OrganisationData is valid organisation array.
 	 * @post Frame_directory frame is loaded and ready to use.
 	 */
@@ -39,7 +39,7 @@ class Yorkerdirectory extends Controller
 	{
 		$this->load->library('frame_directory');
 		$data = $this->organisations->_GetOrgData($DirectoryEntry);
-		$navbar = $this->main_frame->GetNavbar();
+		$navbar = $this->main_frame->GetNavbar('directory');
 		$navbar->AddItem('about', 'About',
 				'/directory/'.$DirectoryEntry);
 		$navbar->AddItem('notices', 'Notices',
@@ -54,6 +54,14 @@ class Yorkerdirectory extends Controller
 					'/directory/'.$DirectoryEntry.'/reviews');
 		}
 	}
+	
+	/// Set up the index navigation bar.
+	private function _SetupIndexNavbar()
+	{
+		$navbar = $this->main_frame->GetNavbar('directory_index');
+		$navbar->AddItem('list', 'List', '/directory');
+		$navbar->AddItem('map', 'Map', '/directory/map');
+	}
 
 	/// Directory index page.
 	/**
@@ -66,10 +74,8 @@ class Yorkerdirectory extends Controller
 
 		$this->pages_model->SetPageCode('directory_index');
 
-		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('list', 'List', '/directory');
-		$navbar->AddItem('map', 'Map', '/directory/map');
-		$this->main_frame->SetPage('list');
+		$this->_SetupIndexNavbar();
+		$this->main_frame->SetPage('list', 'directory_index');
 
 		$data = array();
 
@@ -112,10 +118,8 @@ class Yorkerdirectory extends Controller
 
 		$this->pages_model->SetPageCode('directory_map');
 
-		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('list', 'List', '/directory');
-		$navbar->AddItem('map', 'Map', '/directory/map');
-		$this->main_frame->SetPage('map');
+		$this->_SetupIndexNavbar();
+		$this->main_frame->SetPage('map', 'directory_index');
 
 		$data = array();
 
@@ -197,7 +201,7 @@ class Yorkerdirectory extends Controller
 // 			$this->messages->AddDumpMessage('results', $result);
 
 			// Set up the directory frame to use the directory events view
-			$this->main_frame->SetPage('about');
+			$this->main_frame->SetPage('about', 'directory');
 			$this->frame_directory->SetOrganisation($data['organisation']);
 			$this->frame_directory->SetContentSimple($subpageview, $data);
 
@@ -256,7 +260,7 @@ class Yorkerdirectory extends Controller
 			$data['teams_tree'] = &$top_team;
 			$data['notices'] = &$notices;
 
-			$this->main_frame->SetPage('notices');
+			$this->main_frame->SetPage('notices', 'directory');
 			$this->main_frame->SetContentSimple('directory/directory_notices', $data);
 
 			$this->main_frame->SetTitleParameters(
@@ -280,6 +284,8 @@ class Yorkerdirectory extends Controller
 		// Set up the filter
 		$data = $this->organisations->_GetOrgData($organisation);
 		if (!empty($data)) {
+			$this->_SetupOrganisationFrame($organisation);
+			$this->main_frame->SetPage('calendar', 'directory');
 			$this->calendar_subcontroller->SetRangePageCode('directory_calendar');
 			$this->calendar_subcontroller->UseStreams(array(
 				(int)$data['organisation']['id'] => array(
@@ -430,7 +436,7 @@ EXTRAHEAD;
 			}
 
 			// Set up the directory frame to use the messages frame
-			$this->main_frame->SetPage('calendar');
+			$this->main_frame->SetPage('calendar', 'directory');
 			$this->frame_directory->SetOrganisation($data['organisation']);
 			$this->frame_directory->SetContent($calendar_view);
 
@@ -480,7 +486,7 @@ EXTRAHEAD;
 			$directory_view = $this->frames->view('directory/directory_view_reviews', $data);
 
 			// Set up the directory frame to use the directory events view
-			$this->main_frame->SetPage('reviews');
+			$this->main_frame->SetPage('reviews', 'directory');
 			$this->frame_directory->SetOrganisation($data['organisation']);
 			$this->frame_directory->SetContent($directory_view);
 
@@ -545,7 +551,7 @@ EXTRAHEAD;
 			$directory_view = $this->frames->view('directory/directory_view_members', $data);
 
 			// Set up the directory frame to use the directory events view
-			$this->main_frame->SetPage('members');
+			$this->main_frame->SetPage('members', 'directory');
 			$this->frame_directory->SetOrganisation($data['organisation']);
 			$this->frame_directory->SetContent($directory_view);
 

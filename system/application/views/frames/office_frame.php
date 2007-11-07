@@ -241,8 +241,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<div style="float: right; width: 650px; padding: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 5px; background-color: #fff;">
 	<?php
 		// Navigation bar
-		if (isset($content['navbar']))
+		if (isset($content['navbars']) && is_array($content['navbars'])) {
+			foreach ($content['navbars'] as $navbar) {
+				$navbar->Load();
+			}
+		} elseif (isset($content['navbar'])) {
 			$content['navbar']->Load();
+		}
 
 		// Display each message
 		foreach ($messages as $message) {
