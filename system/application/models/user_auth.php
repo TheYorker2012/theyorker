@@ -278,15 +278,16 @@ class User_auth extends model {
 			// Create a (badly salted) hash
 			$hash = sha1($row->entity_salt.$password);
 
-			if ($newpass)
+			if ($newpass) {
 				$success = $row->entity_pwreset == $password;
 				if ($success) {
 					// Prevent the password reset link working again
 					$sql = 'UPDATE entities SET entity_pwreset = NULL WHERE entity_id = ?';
 					$this->db->query($sql, array($row->entity_id));
 				}
-			else
+			} else {
 				$success = $hash == $row->entity_password;
+			}
 
 			if ($success) {
 				// The hashes match, login
