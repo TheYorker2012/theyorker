@@ -280,6 +280,11 @@ class User_auth extends model {
 
 			if ($newpass)
 				$success = $row->entity_pwreset == $password;
+				if ($success) {
+					// Prevent the password reset link working again
+					$sql = 'UPDATE entities SET entity_pwreset = NULL WHERE entity_id = ?';
+					$this->db->query($sql, array($row->entity_id));
+				}
 			else
 				$success = $hash == $row->entity_password;
 
