@@ -802,7 +802,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		);
 		
 		$this->SetupTabs('days', $start, $Filter);
-		$this->load->library('view_checklist.php');
 		
 		return new FramesView('calendar/my_calendar', $data);
 	}
