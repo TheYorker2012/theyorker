@@ -7,6 +7,7 @@ class Time_format
 	public $TimeFormat = 'g:i a';
 	/// Date format to use.
 	public $DateFormat = 'l, jS F Y';
+	public $ShortDateFormat = 'D, jS M Y';
 	
 	/// Default constructor.
 	function __construct()
@@ -24,13 +25,13 @@ class Time_format
 	 *	- '%T' is replaced with the time in the user preferences format.
 	 *	- '%D' is replaced with teh date in the user preferences format.
 	 */
-	function date($format, $timestamp = NULL)
+	function date($format, $timestamp = NULL, $short_date = false)
 	{
 		if (NULL == $timestamp) {
 			$timestamp = time();
 		}
 		$format = str_replace('%T', $this->TimeFormat, $format);
-		$format = str_replace('%D', $this->DateFormat, $format);
+		$format = str_replace('%D', ($short_date) ? $this->ShortDateFormat : $this->DateFormat, $format);
 		return date($format, $timestamp);
 	}
 };

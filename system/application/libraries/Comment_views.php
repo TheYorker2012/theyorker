@@ -288,11 +288,13 @@ class CommentViewList extends FramesView
 		$CI = & get_instance();
 		
 		// comment postprocessing for list
+		$comment_order = 1;
 		foreach ($this->mComments as $key => $comment) {
 			if (NULL === $comment['author']) {
 				$this->mComments[$key]['author'] = 'Anonymous';
 			}
-			$this->mComments[$key]['post_time'] = $CI->time_format->date('%D %T', $comment['post_time']);
+			$this->mComments[$key]['post_time'] = $CI->time_format->date('%D %T', $comment['post_time'], true);
+			$this->mComments[$key]['comment_order_num'] = $comment_order++;
 		}
 	}
 	
@@ -351,7 +353,7 @@ class Comment_views
 	protected $mUriPrefix;
 	/// string Postfix to uri (after included comment number).
 	protected $mUriPostfix;
-	
+
 	/// Default constructor.
 	function __construct()
 	{
@@ -399,7 +401,7 @@ class Comment_views
 		// set which page of comments to show
 		$comment_view_list->SetMaxPerPage($MaxPerPage);
 		$comment_view_list->SetIncludedComment($CommentInclude);
-		
+
 		// overall layout
 		$data = array(
 			'CommentThread' => & $comment_view_thread,
