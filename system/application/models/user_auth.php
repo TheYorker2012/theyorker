@@ -321,6 +321,9 @@ class User_auth extends model {
 			$query = $this->db->query($sql, array($entityId, $email));
 			$new = true;
 			$nick = '';
+			// Copy subscriptions of default user.
+			$this->load->model('prefs_model');
+			$this->prefs_model->initialiseSubscriptions($entityId);
 		} else {
 			$row = $query->row();
 			$entityId = $row->entity_id;
