@@ -197,7 +197,8 @@ class Prefs_model extends Model {
 	/// Duplicate the subscriptions of user 0.
 	/**
 	 * Copy (replace) various fields from the subscriptions of user 0 into the current user.
-	 * @note Does not copy vip status, paid status, or deleted subscriptions.
+	 * @note Does not copy vip status, paid status
+	 * @note Only copy membership subscriptions
 	 * @param $UserId int Entity idea of user.
 	 * @return int The number of rows affected.
 	 */
@@ -221,8 +222,10 @@ class Prefs_model extends Model {
 				subscription_user_confirmed,
 				subscription_organisation_confirmed
 		FROM	subscriptions
-		WHERE	subscription_deleted = 0 AND
-				subscription_user_entity_id = 0
+		WHERE	(	subscription_user_confirmed
+				OR	subscription_organisation_confirmed)
+			AND	subscription_deleted = 0
+			AND	subscription_user_entity_id = 0
 			';
 		$query = $this->db->query($sql);
 		return $this->db->affected_rows();
