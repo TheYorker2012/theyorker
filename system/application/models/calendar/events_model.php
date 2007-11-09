@@ -22,8 +22,7 @@ class EventOccurrenceQuery
 	/// Produce an SQL expression for all and only public events.
 	function ExpressionPublic()
 	{
-		return	'(	event_occurrences.event_occurrence_state = \'published\'
-				OR	event_occurrences.event_occurrence_state = \'cancelled\')';
+		return	'(event_occurrences.event_occurrence_state IN (\'published\',\'cancelled\'))';
 	}
 
 	/// Produce an SQL expression for all and only owned events.
@@ -65,9 +64,9 @@ class EventOccurrenceQuery
 		return	'(	events.event_organiser_entity_id = ' . $EntityId . '
 				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
 					AND	event_entities.event_entity_confirmed = 1
-					AND	(	event_entities.event_entity_relationship = \'own\'
-						OR	event_entities.event_entity_relationship = \'subscribe\'))
-				OR	subscriptions.subscription_user_entity_id = ' . $EntityId . '
+					AND	(	event_entities.event_entity_relationship IN (\'own\',\'subscribe\')))
+				OR	(	subscriptions.subscription_user_entity_id = ' . $EntityId . '
+					AND	'.$this->ExpressionPublic().')
 				OR '.$this->ExpressionVisibilityRsvp().')';
 	}
 

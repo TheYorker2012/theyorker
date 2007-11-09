@@ -489,7 +489,7 @@ class Account extends controller
 
 			// Check existence of password fields.
 			if (empty($old_password)) {
-				$validation_errors[] = 'You must enter your current password. If you\'ve lost this you\'ll need to <a href="account/password/reset">reset</a> it first.';
+				$validation_errors[] = 'You must enter your current password. If you\'ve lost this you\'ll need to <a href="'.site_url('account/password/reset').'">reset</a> it first.';
 			}
 			if (empty($new_password)) {
 				$validation_errors[] = 'You must enter your new password.';

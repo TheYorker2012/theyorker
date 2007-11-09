@@ -64,6 +64,7 @@ $smileys = array(
 	':exclaim:'		=>	array('exclaim.gif',		'19',	'19',	'excaim'),
 	':question:'	=>	array('question.gif',		'19',	'19',	'question'),
 	// From kopete MSN theme msn7_transparent
+	/* // Removed until we can make some original replacements.
 	'(Y)'			=>	array('thumbs_up.gif',		'19',	'19',	'thumbs up'),
 	'(y)'			=>	array('thumbs_up.gif',		'19',	'19',	'thumbs up'),
 	'(N)'			=>	array('thumbs_down.gif',	'19',	'19',	'thumbs down'),
@@ -97,6 +98,7 @@ $smileys = array(
 	'(f)'			=>	array('rose.gif',			'19',	'19',	'rose'),
 	'(W)'			=>	array('wilted_rose.gif',	'19',	'19',	'wilted rose'),
 	'(w)'			=>	array('wilted_rose.gif',	'19',	'19',	'wilted rose'),
+	*/
 
 );
 

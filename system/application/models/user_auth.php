@@ -278,10 +278,16 @@ class User_auth extends model {
 			// Create a (badly salted) hash
 			$hash = sha1($row->entity_salt.$password);
 
-			if ($newpass)
+			if ($newpass) {
 				$success = $row->entity_pwreset == $password;
-			else
+				if ($success) {
+					// Prevent the password reset link working again
+					$sql = 'UPDATE entities SET entity_pwreset = NULL WHERE entity_id = ?';
+					$this->db->query($sql, array($row->entity_id));
+				}
+			} else {
 				$success = $hash == $row->entity_password;
+			}
 
 			if ($success) {
 				// The hashes match, login
@@ -321,6 +327,9 @@ class User_auth extends model {
 			$query = $this->db->query($sql, array($entityId, $email));
 			$new = true;
 			$nick = '';
+			// Copy subscriptions of default user.
+			$this->load->model('prefs_model');
+			$this->prefs_model->initialiseSubscriptions($entityId);
 		} else {
 			$row = $query->row();
 			$entityId = $row->entity_id;

@@ -1365,6 +1365,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			}
 			$this->SetupTabs('', $link_time);
 			
+			$this->main_frame->IncludeCss('stylesheets/calendar.css');
 			$this->main_frame->SetContent(
 				new FramesView('calendar/event', $data)
 			);
@@ -1965,7 +1966,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->mMainSource->DisableGroup('owned');
 		$this->mMainSource->DisableGroup('private');
 		$this->mMainSource->EnableGroup('active');
-		$this->mMainSource->DisableGroup('inactive');
+		$this->mMainSource->EnableGroup('inactive');
 		$this->mMainSource->EnableGroup('hide');
 		$this->mMainSource->EnableGroup('show');
 		$this->mMainSource->EnableGroup('rsvp');
@@ -1977,6 +1978,16 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$this->mMainSource->GetSource(0)->IncludeStream($entity_id, TRUE);
 			$this->mStreams[$entity_id] = $stream_info;
 		}
+	}
+	
+	/// Get the main calendar source.
+	/**
+	 * @return &CalendarSources Main calendar source.
+	 */
+	function GetSources()
+	{
+		$this->_SetupMyCalendar();
+		return $this->mMainSource;
 	}
 	
 	/// Subscribe to a given stream and bounce back.
@@ -2073,7 +2084,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	protected function SetupTabs($SelectedPage, $Start, $Filter = NULL)
 	{
 		if ($this->mTabs) {
-			$navbar = $this->main_frame->GetNavbar();
+			$navbar = $this->main_frame->GetNavbar('calendar');
 			if (NULL === $Filter) {
 				$Filter = '/';
 			} else {
@@ -2113,7 +2124,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				);
 			//}
 			}
-			$this->main_frame->SetPage($SelectedPage);
+			$this->main_frame->SetPage($SelectedPage, 'calendar');
 		}
 	}
 	

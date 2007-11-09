@@ -163,20 +163,25 @@ if (isset($medium_type)) { ?>
 
 <!-- BEGIN generated content -->
 <?php
-				// TODO: check this works properly
+	// TODO: check this works properly
 
-				// Navigation bar
-				if (isset($content['navbar']))
-					$content['navbar']->Load();
+	// Navigation bar
+	if (isset($content['navbars']) && is_array($content['navbars'])) {
+		foreach ($content['navbars'] as $navbar) {
+			$navbar->Load();
+		}
+	} elseif (isset($content['navbar'])) {
+		$content['navbar']->Load();
+	}
 
-				// Display each message
-				foreach ($messages as $message) {
-					// Display the message
-					$message->Load();
-				}
+	// Display each message
+	foreach ($messages as $message) {
+		// Display the message
+		$message->Load();
+	}
 
-				// Display the main content
-				$content[0]->Load();
+	// Display the main content
+	$content[0]->Load();
 ?>
 <!-- END generated content -->
 

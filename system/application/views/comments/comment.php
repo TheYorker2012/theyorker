@@ -53,7 +53,7 @@ if (!function_exists('star_rating')) {
 		} ?>
 	</div>
 	<div style="background-color:<?php echo ($Comment['author'] == 'Anonymous') ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
-		<b><?php echo($Comment['author']); ?></b> - <?php echo($Comment['post_time']); ?>
+		#<?php echo($Comment['comment_order_num'] . ' <b>' . $Comment['author']); ?></b> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
 	echo($Comment['xhtml']);

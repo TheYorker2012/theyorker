@@ -235,7 +235,20 @@ $CI = & get_instance();
 			</div>
 		</div>
 		<div id="recurrences_preview_test">
-			<?php get_instance()->load->view('calendar/minicalendar', array('Onclick' => 'MiniTog')); ?>
+			<?php
+			get_instance()->load->view('calendar/minicalendar', array(
+				'Links' => NULL,
+				'WeekStart' => NULL,
+				'Onclick' => 'MiniTog',
+				'ClassNames' => NULL,
+				'Legend' => array(
+					array(array('sel','sta'), 'Start occurrence'),
+					array(array('sel'), 'Recurrence'),
+					array(array('inc'), 'Explicit recurrence'),
+					array(array('exc'), 'Excluded recurrence'),
+				),
+			));
+			?>
 		</div>
 	</div>
 </div>

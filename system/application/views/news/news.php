@@ -118,6 +118,13 @@ foreach ($main_article['related_articles'] as $related)
         <?php echo($main_article['text']); ?>
 
 		<div style="text-align: right">
+<?php if ($article_type == 'podcasts') { ?>
+			<span style="float:left">
+				<a href="itpc://<?php echo($this->config->item('podcast_rss_feed')); ?>">
+					<img src="/images/prototype/news/itunes_subscribe.gif" alt="Subscribe to The Yorker Artscast via iTunes" title="Subscribe to The Yorker Artscast via iTunes" />
+				</a>
+			</span>
+<?php } ?>
 			<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
 		</div>
 

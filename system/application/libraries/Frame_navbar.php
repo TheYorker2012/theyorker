@@ -38,19 +38,53 @@ class FrameNavbar extends FramesFrame
 	/// Set the page in use (determines the navigation bar highlighting).
 	/**
 	 * @param $Page string Page name.
+	 * @param $Name int Optional identifier.
 	 */
-	function SetPage($Page)
+	function SetPage($Page, $Name = NULL)
 	{
-		$this->CheckNavbar();
-		$this->mDataArray['content']['navbar']->SetSelected($Page);
+		if (NULL === $Name) {
+			$this->CheckNavbar();
+			$this->mDataArray['content']['navbar']->SetSelected($Page);
+		} elseif (isset($this->mDataArray['content']['navbars'][$Name])) {
+			$this->mDataArray['content']['navbars'][$Name]->SetSelected($Page);
+		}
 	}
 	
 	/// Get the navbar
-	function GetNavbar()
+	/**
+	 * @param $Name int Optional identifier.
+	 * @return NavigationBar The navbar object.
+	 * @note if the navbar does not exist it is created.
+	 */
+	function GetNavbar($Name = NULL)
 	{
-		$this->CheckNavbar();
-		return $this->mDataArray['content']['navbar'];
+		if (NULL === $Name) {
+			$this->CheckNavbar();
+			return $this->mDataArray['content']['navbar'];
+		} elseif (isset($this->mDataArray['content']['navbars'][$Name])) {
+			return $this->mDataArray['content']['navbars'][$Name];
+		} else {
+			return $this->AppendNewNavbar($Name);
+		}
 	}
+	
+	/// Create a new navbar and append to navbar list.
+	/**
+	 * @param $Name int Optional identifier.
+	 *	If @a $Name is unspecified, the next available integer id will be used.
+	 * @return NavigationBar The navbar object
+	 */
+	function AppendNewNavbar($Name = NULL)
+	{
+		$new_navbar = new NavigationBar();
+		if (NULL === $Name) {
+			$this->mDataArray['content']['navbars'][] = & $new_navbar;
+		} else {
+			$this->mDataArray['content']['navbars'][$Name] = & $new_navbar;
+		}
+		return $new_navbar;
+	}
+	
 }
 
 class Frame_navbar

@@ -163,7 +163,7 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 	var p_day = document.getElementById('cal_day_'+DAYS[start_day]);
 	if (p_day == null)
 		return;
-	start_left = start_left + findPos(p_day)[0];
+	start_left = start_left;// + findPos(p_day)[0];
 	while (start_hour >= 24) {
 		start_day++;
 		start_hour = start_hour - 24;
@@ -211,9 +211,10 @@ function drawAllDayEvent (id, category, link, title, start_hour, duration, heigh
 	var new_event 			= document.createElement('div');
 	new_event.id			= 'cal_event_' + id;
 	new_event.className		= 'cal_event new cal_category_' + category + (classNames != '' ? ' '+classNames : '');
-	new_event.style.top		= findPos(p_ele)[1] + (height*(HOUR_HEIGHT/2)) + 'px';
+	new_event.style.position= 'relative';
+	new_event.style.top		= '0%';//findPos(p_ele)[1] + (height*(HOUR_HEIGHT/2)) + 'px';
 	new_event.style.left	= start_left + 'px';
-	new_event.style.height	= ((HOUR_HEIGHT/2)-2) + 'px';
+	new_event.style.height	= '100%';//((HOUR_HEIGHT/2)-2) + 'px';
 	new_event.style.width	= (duration_width-2) + 'px';
 // 	new_event.onclick		= function(){ alert('You clicked on this event!'); };
 
@@ -747,15 +748,6 @@ function addEventListener(instance, eventName, listener) {
 		name: eventName,
 		listener: listenerFn
 	};
-}
-
-function removeEventListener(event) {
-	var instance = event.instance;
-	if (instance.removeEventListener) {
-		instance.removeEventListener(event.name, event.listener, false);
-	} else if (instance.detachEvent) {
-		instance.detachEvent("on" + event.name, event.listener);
-	}
 }
 
 onLoadFunctions.push(drawCalendar);

@@ -456,7 +456,7 @@ class CalendarSourceYorker extends CalendarSource
 				}
 			}
 		}
-		// Include rsvp'ed events even if inactive if off.
+		// Include rsvp'ed events even if inactive is off.
 		if (!$this->mGroups['inactive'] && $this->mGroups['rsvp']) {
 			$state_predicates[] = $this->mQuery->ExpressionVisibilityRsvp();
 		}

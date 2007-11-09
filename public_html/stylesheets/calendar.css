@@ -264,10 +264,16 @@ table.recur-cal th.term {
 
 table.recur-cal td {
 	background-color: #FFFCBA;
+}
+table.recur-cal.allclick td {
 	cursor: pointer;
 }
 table.recur-cal td.we {
 	background-color: #EFECAA;
+}
+table.recur-cal td a {
+	color: #000000;
+	font-weight: bold;
 }
 
 table.recur-cal td.ev {
@@ -344,6 +350,33 @@ table.recur-cal td.tod {
 }
 table.recur-cal td.exi {
 	font-weight: bold;
+}
+
+
+table.recur-cal td.dra,
+table.recur-cal td.dra.pa,
+table.recur-cal td.dra.we,
+table.recur-cal td.dra.ev {
+	background-color: #00F000;
+}
+table.recur-cal td.pub,
+table.recur-cal td.pub.pa,
+table.recur-cal td.pub.we,
+table.recur-cal td.pub.ev {
+	background-color: #20C1F0;
+}
+table.recur-cal td.can,
+table.recur-cal td.can.pa,
+table.recur-cal td.can.we,
+table.recur-cal td.can.ev {
+	background-color: #FF4040;
+	text-decoration: line-through;
+}
+table.recur-cal td.cur,
+table.recur-cal td.cur.pa,
+table.recur-cal td.cur.we,
+table.recur-cal td.cur.ev {
+	border: 2px solid #000000;
 }
 
 /* for include exclude dates */
