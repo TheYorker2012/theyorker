@@ -57,9 +57,9 @@
 </div>
 
 <?php
-
+/*
 echo '<div class="BlueBox"><pre>';
 echo print_r($data);
 echo '</pre></div>';
-
+*/
 ?>
