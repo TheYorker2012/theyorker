@@ -129,7 +129,16 @@ function print_middle_box($title,$article_array){
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+			if ($banner['link'] != "")
+			{
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else
+			{
+				echo($banner['image']."\n");
+			}
+		?>
 	</div>
 
 	<div class="BlueBox">

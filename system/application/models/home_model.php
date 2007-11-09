@@ -82,7 +82,7 @@ class Home_Model extends Model {
 		//Get image id(s) from homepage_banners table with content_type id
 		//Use image id(s) to get all image information
 		//Take the one with the current date (if there is one)
-		$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type
+		$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type, homepage_banners.homepage_banner_link as link
 		FROM images
 		INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
 		INNER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
@@ -93,7 +93,7 @@ class Home_Model extends Model {
 		//Update current homepage if there is no result
 		if($query->num_rows() == 0){
 			//Find the oldest homepage image
-			$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type
+			$sql = 'SELECT images.image_id AS id, image_types.image_type_codename AS type, homepage_banners.homepage_banner_link as link
 			FROM images
 			INNER JOIN image_types ON image_types.image_type_id = images.image_image_type_id 
 			INNER JOIN homepage_banners ON images.image_id = homepage_banners.homepage_banner_image_id 
@@ -113,7 +113,11 @@ class Home_Model extends Model {
 		if($query->num_rows() > 0){
 			$id = $query->row()->id;
 			$type = $query->row()->type;
-			return $this->image->getImage($id,$type);
+			$link = $query->row()->link;
+			return array(
+					'image'=>$this->image->getImage($id,$type),
+					'link'=>$link,
+					);
 		}else{
 			//no homepage found!!
 			return "";

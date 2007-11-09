@@ -8,7 +8,16 @@
 </div>
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+			if ($banner['link'] != "")
+			{
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else
+			{
+				echo($banner['image']."\n");
+			}
+		?>
 	</div>
 	<?php
 	$this->homepage_boxes->print_box_with_picture_list($main_articles,$latest_heading,'news');

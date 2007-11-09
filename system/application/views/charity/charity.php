@@ -48,7 +48,16 @@ if (count($sections['article']['links']) > 0) {
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+			if ($banner['link'] != "")
+			{
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else
+			{
+				echo($banner['image']."\n");
+			}
+		?>
 	</div>
 	<div class="BlueBox">
 		<h2><?php echo($sections['article']['heading']); ?></h2>

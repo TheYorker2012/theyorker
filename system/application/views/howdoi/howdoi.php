@@ -25,7 +25,16 @@ foreach ($categories as $category) {
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+			if ($banner['link'] != "")
+			{
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else
+			{
+				echo($banner['image']."\n");
+			}
+		?>
 	</div>
 	<div class="BlueBox">
 	<h2><?php echo($section_howdoi['title']); ?></h2>

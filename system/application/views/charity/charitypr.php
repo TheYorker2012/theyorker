@@ -7,7 +7,16 @@
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+			if ($banner['link'] != "")
+			{
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else
+			{
+				echo($banner['image']."\n");
+			}
+		?>
 	</div>
 	<?php
 	if (isset($sections['progress_reports']['entries']))
