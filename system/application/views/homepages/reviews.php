@@ -8,7 +8,7 @@
 </div>
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php //echo($banner) ?>
+		<?php //$this->homepage_boxes->print_homepage_banner($banner); ?>
 	</div>
 	<?php
 	//$this->homepage_boxes->print_box_with_picture_list($main_articles,$latest_heading,'news');

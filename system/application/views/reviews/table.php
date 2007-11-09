@@ -21,14 +21,7 @@ if (!empty($league_data)){
 <div id="MainColumn">
 	<div id="HomeBanner">
 		<?php 
-			if ($banner['link'] != "")
-			{
-				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
-			}
-			else
-			{
-				echo($banner['image']."\n");
-			}
+		$this->load->library('Homepage_boxes');
 		?>
 	</div>
 	<div class="BlueBox">

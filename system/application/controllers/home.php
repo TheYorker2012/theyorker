@@ -18,6 +18,7 @@ class Home extends Controller {
 		$this->load->model('Home_Model');
 		$this->load->model('Links_Model');
 		$this->load->model('Home_Hack_Model');
+		$this->load->library('Homepage_boxes');
 	}
 
 	/**
