@@ -13,6 +13,7 @@ class Facebook_ticker
 	public $fb_config;
 	public $facebook;
 	public $client;
+	private $image_list;
 
 	/**
 	 * @brief Default Constructor
@@ -93,6 +94,7 @@ class Facebook_ticker
 	function TickerHTML ()
 	{
 		$article_cache = array();
+		$this->image_list = array();
 		$this->CI->load->model('facebookticker_model');
 		$content_types = $this->CI->facebookticker_model->GetContentTypeArticleCount();
 		foreach ($content_types as $type) {
@@ -116,6 +118,7 @@ class Facebook_ticker
 
 		$content = '';
 		foreach ($articles as $a) {
+			$this->image_list[] = 'http://www.theyorker.co.uk/photos/small/' . $a['photo_id'];
             //$reporters = array();
 			//foreach ($a['reporters'] as $r)
 			//	$reporters[] = $r['name'];
@@ -141,12 +144,21 @@ class Facebook_ticker
 
 	}
 
+	function RefreshImageCache ()
+	{
+		if (count($this->image_list) == 0)
+			$this->TickerHTML();
+		foreach ($this->image_list as $image)
+			$this->client->fbml_refreshImgSrc($image);
+	}
+
 	function TickerUpdate ()
 	{
 		$content = $this->TickerHTML();
 		$this->facebook->set_user($this->fb_config['ticker']['user_id'], $this->fb_config['ticker']['session_key'], NULL);
 		if ($this->client->fbml_setRefHandle('global_news_large', $content)) {
 			if ($this->client->fbml_setRefHandle('global_news_small', $content)) {
+				$this->RefreshImageCache();
 				return true;
 			}
 		}
