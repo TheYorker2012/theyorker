@@ -118,7 +118,8 @@ class Home extends Controller {
 			'uninews' => array(),
 			'sport' => array(),
 			'features' => array(),
-			'arts' => array()
+			'arts' => array(),
+			'videocasts' => array()
 		);
 
 		// Get the article ids of all articles to be displayed
