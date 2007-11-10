@@ -39,14 +39,21 @@ a:hover {
 	text-decoration: underline;
 }
 
-ul {
-	list-style-image: url('/images/prototype/homepage/arrow.png');
+ul, ol {
 	list-style-position: inside;
 	padding-left: 0;
-	margin-left: 0;
 }
 
-li {
+ul ul, ul ol, ol ul, ol ol {
+	padding-left: 3em;
+}
+
+ul {
+	list-style-image: url('/images/prototype/homepage/arrow.png');
+}
+
+ol {
+	list-style-image: none;
 }
 
 /* Form formatting */
