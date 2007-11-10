@@ -153,7 +153,7 @@ class Organisation extends controller
 								$this->load->model('prefs_model');
 
 								if ($data['office']) {
-									$this->main_frame->AddMessage('success','The suggestion has been submitted.');
+									$this->main_frame->AddMessage('success','Thank you for your suggestion. We will follow this up shortly.');
 								} elseif ($data['is_connected'] != 'No') {
 									$this->prefs_model->addSubscription ($this->user_auth->entityId, $newOrgId);
 									$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$newOrgId);
