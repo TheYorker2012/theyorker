@@ -108,14 +108,18 @@ if (isset($medium_type)) { ?>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
 					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/comment/">News Comment</a></li>
-					<!--<li><a href="/news/national/">UK &amp; World News</a></li>-->
+					<?php /*
+					<li><a href="/news/national/">UK &amp; World News</a></li>
+					*/ ?>
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
 					<li><a href="/arts/">Arts</a></li>
 					<li><a href="/news/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
-					<!--<li><a href="/reviews/culture">Culture</a></li>-->
+					<?php /*
+					<li><a href="/reviews/culture">Culture</a></li>
+					*/ ?>
 					<li><a href="/news/videocasts">Videocasts</a></li>
 					<li><a href="/campaign/">Campaigns</a></li>
 					<li><a href="/news/archive/">News Archive</a></li>
@@ -124,14 +128,16 @@ if (isset($medium_type)) { ?>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
 					<li><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<!--<li><a href="/games/">Games Zone</a></li>-->
+					<?php /*
+					<li><a href="/games/">Games Zone</a></li>
+					*/ ?>
 				</ul>
-				<!--
+				<?php /*
 				<ul>
 					<li class="first"><a href="/viparea/">Enter VIP Area</a></li>
 					<li><a href="/office/">Enter Office</a></li>
 				</ul>
-				-->
+				*/ ?>
 				<?php
 				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
 					echo('<ul>');

@@ -209,10 +209,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>
-		</div><!--
+		</div>
+		<?php /*
 		<div class='officenavigation_item'>
 			<a href='/office/packages/' onclick="alert('Coming soon...'); return false;">Packages</a>
-		</div>-->
+		</div>
+		*/ ?>
 		
 		<div class='officenavigation_title'>
 			Photos
