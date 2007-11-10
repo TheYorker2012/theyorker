@@ -116,6 +116,9 @@ function print_middle_box($title,$article_array){
 	</div>
 	-->
 
+<?php
+if ($weather_forecast != null) {
+?>
 	<h2>York Weather</h2>
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
@@ -125,6 +128,9 @@ function print_middle_box($title,$article_array){
 	<div class="Entry">
 		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
 	</div>
+<?php
+}
+?>
 </div>
 
 <div id="MainColumn">

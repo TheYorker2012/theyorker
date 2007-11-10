@@ -28,39 +28,43 @@ class Home_Model extends Model {
 		//If 0 rows returned then get up to date weather
 		if ($query->num_rows() == 0) {
 			//Get the rss feed
-			$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
-			$response = file_get_contents($weather_data);
-			$weather = new simplexmlelement($response);
-			$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
-			$weather_forecast = $weather->xpath('//channel/item/data:forecast');
-			//Generate the html to be displayed
-			$html = '<table id="weather">';
-			$html .= '	<tr><td align="center">';
-			$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
-			$html .= '	</td>';
-			$html .= '	<td align="center">';
-			$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
-			$html .= '	</td></tr>';
-			$html .= '	<tr><td align="center">';
-			$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'" />';
-			$html .= '	</td>';
-			$html .= '	<td align="center">';
-			$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[1]->attributes()->code.'.gif" title="'.$weather_forecast[1]->attributes()->text.'" alt="'.$weather_forecast[1]->attributes()->text.'" />';
-			$html .= '	</td></tr>';
-			$html .= '	<tr><td align="center">';
-			$html .= '		'.$weather_forecast[0]->attributes()->low.'&#176;C - '.$weather_forecast[0]->attributes()->high.'&#176;C';
-			$html .= '	</td>';
-			$html .= '	<td align="center">';
-			$html .= '		'.$weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
-			$html .= '	</td></tr>';
-			$html .= '</table>';
-			//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
-			//Delete the old weather forecast
-			$sql = 'DELETE FROM weather_cache';
-			$query = $this->db->query($sql);
-			//Add the new weather forecast
-			$sql = 'INSERT INTO weather_cache(weather_cache_html) VALUES (?)';
-			$query = $this->db->query($sql,array($html));
+			try {
+				$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
+				$response = file_get_contents($weather_data);
+				$weather = new simplexmlelement($response);
+				$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
+				$weather_forecast = $weather->xpath('//channel/item/data:forecast');
+				//Generate the html to be displayed
+				$html = '<table id="weather">';
+				$html .= '	<tr><td align="center">';
+				$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
+				$html .= '	</td>';
+				$html .= '	<td align="center">';
+				$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
+				$html .= '	</td></tr>';
+				$html .= '	<tr><td align="center">';
+				$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[0]->attributes()->code.'.gif" title="'.$weather_forecast[0]->attributes()->text.'" alt="'.$weather_forecast[0]->attributes()->text.'" />';
+				$html .= '	</td>';
+				$html .= '	<td align="center">';
+				$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.$weather_forecast[1]->attributes()->code.'.gif" title="'.$weather_forecast[1]->attributes()->text.'" alt="'.$weather_forecast[1]->attributes()->text.'" />';
+				$html .= '	</td></tr>';
+				$html .= '	<tr><td align="center">';
+				$html .= '		'.$weather_forecast[0]->attributes()->low.'&#176;C - '.$weather_forecast[0]->attributes()->high.'&#176;C';
+				$html .= '	</td>';
+				$html .= '	<td align="center">';
+				$html .= '		'.$weather_forecast[1]->attributes()->low.'&#176;C - '.$weather_forecast[1]->attributes()->high.'&#176;C';
+				$html .= '	</td></tr>';
+				$html .= '</table>';
+				//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
+				//Delete the old weather forecast
+				$sql = 'DELETE FROM weather_cache';
+				$query = $this->db->query($sql);
+				//Add the new weather forecast
+				$sql = 'INSERT INTO weather_cache(weather_cache_html) VALUES (?)';
+				$query = $this->db->query($sql,array($html));
+			} catch (Exception $e) {
+				$html = null;
+			}
 			//Return the new html
 			return $html;
 		} else {
