@@ -7,6 +7,8 @@ class Howdoi extends Controller {
 	function __construct()
 	{
 		parent::Controller();
+		
+		$this->load->library('Homepage_boxes');
 	}
 
 	function index()

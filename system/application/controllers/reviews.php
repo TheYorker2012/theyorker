@@ -23,14 +23,13 @@ class Reviews extends Controller
 		$this->load->helper('form');
 		$this->load->helper('url');
 		$this->load->library('image');
+		$this->load->library('Homepage_boxes');
 
 		//Load page model
-		$this->load->model('pages_model');
 		$this->load->model('Home_Model');
 
 		//Load reviews model
 		$this->load->model('Review_model');
-
 	}
 
 	/// Remap function ALWAYS CALLED

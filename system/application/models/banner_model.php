@@ -105,10 +105,15 @@ class Banner_Model extends Model {
 	 * Returns the banner_id, banner_text, banner_author and banner_last_displayed_timestamp in an array.
 	 */
 	function GetBanner($banner_id) {
-		$sql = 'SELECT image_id as banner_id, image_title as banner_title, IF( DATE(image_last_displayed_timestamp) >= CURRENT_DATE(), image_last_displayed_timestamp, null) as banner_last_displayed_timestamp
-			FROM images
-			WHERE image_id = ?';
-		$query = $this->db->query($sql, array($banner_id));
+		$sql = 'SELECT 	image_id as banner_id, 
+						image_title as banner_title, 
+						IF( DATE(image_last_displayed_timestamp) >= CURRENT_DATE(), image_last_displayed_timestamp, null) as banner_last_displayed_timestamp,
+						homepage_banner_link as link
+				FROM images
+				INNER JOIN homepage_banners
+				ON homepage_banner_image_id = ?
+				WHERE image_id = ?';
+		$query = $this->db->query($sql, array($banner_id, $banner_id));
 		return $query->row();
 	}
 	
@@ -132,19 +137,23 @@ class Banner_Model extends Model {
 	 * Function to update a particular banner.
 	 * Returns the the number of rows affected.
 	 */
-	function UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp = null) {
+	function UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp = null, $banner_link = '') {
 			$sql = 'UPDATE images
 				SET image_title = ?
 				'.($banner_last_displayed_timestamp != null ? ', image_last_displayed_timestamp = ?' : '/* ? */').'
 				WHERE image_id = ?';
 			$update = $this->db->query($sql,array($banner_title, $banner_last_displayed_timestamp, $banner_id));
+			$sql = 'UPDATE homepage_banners
+				SET homepage_banner_link = ?
+				WHERE homepage_banner_image_id = ?';
+			$update = $this->db->query($sql,array($banner_link, $banner_id));
 		return true;
 	}
 	
 	//Creates a link so image will be in the pool to display on that homepage (images can be on multiple homepages)
 	//@param $image_id - Id of image to use.
 	//@param $homepage_id (optional) - Id from content_types of that homepage, default is the main homepage.
-	function LinkImageToHomepage($image_id,$homepage_id='')
+	function LinkImageToHomepage($image_id,$homepage_id='',$banner_link='')
 	{
 		if($homepage_id==''){
 			$sql='SELECT content_types.content_type_id 
@@ -152,8 +161,8 @@ class Banner_Model extends Model {
 			$query = $this->db->query($sql,array('home'));
 			$homepage_id = $query->row()->content_type_id;
 		}
-		$sql='INSERT INTO homepage_banners (homepage_banner_image_id, homepage_banner_content_type_id) VALUES ( ?, ?)';
-		$query = $this->db->query($sql,array($image_id,$homepage_id));
+		$sql='INSERT INTO homepage_banners (homepage_banner_image_id, homepage_banner_content_type_id, homepage_banner_link) VALUES ( ?, ?, ?)';
+		$query = $this->db->query($sql,array($image_id,$homepage_id,$banner_link));
 	}
 	
 	//Deletes a link so image will no longer be in the pool to display on that homepage (images can be on multiple homepages)

@@ -7,7 +7,9 @@
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+		$this->homepage_boxes->print_homepage_banner($banner);
+		?>
 	</div>
 	<div class="BlueBox">
 		<h2><?php echo($sections['no_charity']['title']); ?></h2>

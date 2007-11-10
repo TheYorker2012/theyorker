@@ -116,6 +116,9 @@ function print_middle_box($title,$article_array){
 	</div>
 	-->
 
+<?php
+if ($weather_forecast != null) {
+?>
 	<h2>York Weather</h2>
 	<div class="Entry">
 		<?php echo($weather_forecast);?>
@@ -125,30 +128,27 @@ function print_middle_box($title,$article_array){
 	<div class="Entry">
 		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
 	</div>
+<?php
+}
+?>
 </div>
 
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php echo($banner) ?>
+		<?php 
+		$this->homepage_boxes->print_homepage_banner($banner);
+		?>
 	</div>
 
-	<div class="BlueBox">
-		<?php print_box($articles['uninews'],'latest news','news') ?>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['uninews'],'latest news','news'); ?>
+	
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news'); ?>
+	
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['arts'],'latest arts','news'); ?>
 
-	<div class="BlueBox">
-		<h2><?php echo('and today...')?></h2>
-		<div class="LeftNewsBox NewsBox">
-			<?php print_middle_box('IN FEATURES',$articles['features']) ?>
-		</div>
-		<div class="RightNewsBox NewsBox">
-			<?php print_middle_box('IN ARTS',$articles['arts']) ?>
-		</div>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['sport'],'latest sport','news'); ?>
 
-	<div class="BlueBox">
-		<?php print_box($articles['sport'],'latest sport','news') ?>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','videocasts'); ?>
 
 	<div class="BlueBox">
 		<h2>latest comments</h2>

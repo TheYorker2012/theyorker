@@ -54,6 +54,7 @@ class Banners extends Controller
 		if (!CheckPermissions('editor')) return;
 
 		$banner_title = htmlentities($this->input->post('banner_title'), ENT_NOQUOTES, 'UTF-8');
+		$banner_link = htmlentities($this->input->post('banner_link'), ENT_NOQUOTES, 'UTF-8');
 		$banner_scheduled = htmlentities($this->input->post('banner_scheduled'), ENT_NOQUOTES, 'UTF-8');
 		$banner_schedule_date = htmlentities($this->input->post('banner_schedule_date'), ENT_NOQUOTES, 'UTF-8');
 		$new_homepage_id = htmlentities($this->input->post('banner_homepage'), ENT_NOQUOTES, 'UTF-8');
@@ -77,11 +78,11 @@ class Banners extends Controller
 					//remove old homepage
 					$this->Banner_Model->DeleteImageHomepageLink($banner_id, $old_homepage_id);
 					//create new one
-					$this->Banner_Model->LinkImageToHomepage($banner_id, $new_homepage_id);
+					$this->Banner_Model->LinkImageToHomepage($banner_id, $new_homepage_id, $banner_link);
 				}
 				//Update banner
-				$this->Banner_Model->UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp);
-				$this->messages->AddMessage('success', 'Banner update successfully');
+				$this->Banner_Model->UpdateBanner($banner_id, $banner_title, $banner_last_displayed_timestamp, $banner_link);
+				$this->messages->AddMessage('success', 'Banner updated successfully');
 			} else {
 				$this->messages->AddMessage('error', 'Banner update failed, you need to include a title.');
 			}

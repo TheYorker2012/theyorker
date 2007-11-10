@@ -15,6 +15,9 @@
 				<label for='banner_title'>Title:</label>
 				<textarea id='banner_title' name='banner_title' cols="30" rows="2"><?php echo $banner->banner_title; ?></textarea>
 				<br />
+				<label for='banner_link'>Link:</label>
+				<input type='text' id='banner_link' name='banner_link' size="35" value="<?php echo $banner->link; ?>" />
+				<br />
 			<?php if($banner->banner_last_displayed_timestamp != null) { ?>
 				<input type='hidden' id='banner_scheduled' name='banner_scheduled' value='1'/>
 				<div id="banner_schedule_date_div">
@@ -52,3 +55,11 @@
 		</form>
 	</div>
 </div>
+
+<?php
+/*
+echo '<div class="BlueBox"><pre>';
+echo print_r($data);
+echo '</pre></div>';
+*/
+?>
