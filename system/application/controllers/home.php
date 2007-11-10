@@ -126,8 +126,9 @@ class Home extends Controller {
 			array(
 				'uninews' => 3,
 				'sport' => 3,
-				'features' => 2,
-				'arts' => 2
+				'features' => 1,
+				'arts' => 1,
+				'videocasts' => 1,
 			)
 		);
 		//$this->messages->AddDumpMessage('ids',$article_all_ids);
@@ -145,6 +146,12 @@ class Home extends Controller {
 			$article_summary_ids[] = $article_all_ids['uninews'][0];
 		if (count($article_all_ids['sport']) > 0)
 			$article_summary_ids[] = $article_all_ids['sport'][0];
+		if (count($article_all_ids['features']) > 0)
+			$article_summary_ids[] = $article_all_ids['features'][0];
+		if (count($article_all_ids['arts']) > 0)
+			$article_summary_ids[] = $article_all_ids['arts'][0];
+		if (count($article_all_ids['videocasts']) > 0)
+			$article_summary_ids[] = $article_all_ids['videocasts'][0];
 
 		// Get the article summaries, create html for image tags
 		$article_summaries = $this->Home_Hack_Model->getArticleSummaries($article_summary_ids, '%W, %D %M %Y');

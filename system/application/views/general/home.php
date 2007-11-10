@@ -134,23 +134,15 @@ function print_middle_box($title,$article_array){
 		?>
 	</div>
 
-	<div class="BlueBox">
-		<?php print_box($articles['uninews'],'latest news','news') ?>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['uninews'],'latest news','news'); ?>
+	
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news'); ?>
+	
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['arts'],'latest arts','news'); ?>
 
-	<div class="BlueBox">
-		<h2><?php echo('and today...')?></h2>
-		<div class="LeftNewsBox NewsBox">
-			<?php print_middle_box('IN FEATURES',$articles['features']) ?>
-		</div>
-		<div class="RightNewsBox NewsBox">
-			<?php print_middle_box('IN ARTS',$articles['arts']) ?>
-		</div>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['sport'],'latest sport','news'); ?>
 
-	<div class="BlueBox">
-		<?php print_box($articles['sport'],'latest sport','news') ?>
-	</div>
+	<?php $this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','videocasts'); ?>
 
 	<div class="BlueBox">
 		<h2>latest comments</h2>
