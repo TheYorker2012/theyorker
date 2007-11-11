@@ -170,7 +170,16 @@ if (isset($medium_type)) { ?>
 
 		<div id="MainBodyPane">
 			<h1 id="PageTitle">
-				<?php if(isset($body_title)) { echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n"; } else { echo 'no pagename'."\n"; } ?>
+				<?php
+				if(isset($body_title)) {
+					echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+				} else {
+					echo 'no pagename'."\n";
+				}
+				if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
+					echo("<a href=\"$paged_edit_url\">[edit]</a>");
+				}
+				?>
 			</h1>
 
 <!-- BEGIN generated content -->

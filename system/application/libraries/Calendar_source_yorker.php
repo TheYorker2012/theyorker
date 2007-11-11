@@ -126,7 +126,8 @@ class CalendarSourceYorker extends CalendarSource
 				'('.$this->mQuery->ExpressionOwned().
 				' OR '.$this->mQuery->ExpressionSubscribed().
 				' OR '.$this->mQuery->ExpressionPublic().')'.
-				' AND events.event_id = '.$CI->db->escape($Event)
+				' AND events.event_id = '.$CI->db->escape($Event).
+				' AND event_occurrences.event_occurrence_state NOT IN ("deleted")'
 			)
 		);
 	}
@@ -379,7 +380,11 @@ class CalendarSourceYorker extends CalendarSource
 			ON	subscriptions.subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
 			AND	subscriptions.subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
-			AND	subscriptions.subscription_calendar = TRUE
+		LEFT JOIN subscriptions AS default_subscriptions
+			ON	default_subscriptions.subscription_organisation_entity_id
+					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
+			AND	default_subscriptions.subscription_user_entity_id	= 0
+			AND	default_subscriptions.subscription_calendar = TRUE
 		LEFT JOIN event_occurrence_users
 			ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 					= event_occurrences.event_occurrence_id

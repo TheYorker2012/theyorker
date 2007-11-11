@@ -250,6 +250,13 @@ h1#PageTitle {
 	height: auto;
 }
 
+/* For page title edit link in editor mode */
+h1#PageTitle a {
+	color: white;
+	text-transform: none;
+	font-size: 10pt;
+}
+
 /* Formatting for the (optional) bar on the right */
 div#RightColumn {
 	float: right;

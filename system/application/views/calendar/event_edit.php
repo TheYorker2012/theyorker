@@ -32,8 +32,8 @@ if (!is_array($SimpleRecur)) {
 
 $confirm_types = array(
 	'cancel'  => array(
-		'description' => 'This occurrence is currently published and will be cancelled.',
-		'descriptions' => 'These occurrences are currently published and will be cancelled.',
+		'description' => 'This occurrence will be cancelled.',
+		'descriptions' => 'These occurrences will be cancelled.',
 	),
 	'delete'  => array(
 		'description' => 'This occurrence will be deleted.',
@@ -52,14 +52,16 @@ $confirm_types = array(
 	'create' => array(
 		'description' => 'This occurrence will be created.',
 		'descriptions' => 'These occurrences will be created.',
-		'description_pub' => 'This occurrence will be created. You can publish it now if you wish by selecting it.',
-		'descriptions_pub' => 'These occurrences will be created. You can publish some now if you wish by selecting them.',
+		'description_pub' => 'This occurrence will be created. You can stop it from being published by deselecting it.',
+		'descriptions_pub' => 'These occurrences will be created. You can stop some from being published by deselecting them.',
 		'checkbox' => 'publish',
+		'default_checkbox' => true,
 	),
 	'draft' => array(
-		'description' => 'This occurrence is a draft. You can publish it now if you wish by selecting it.',
-		'descriptions' => 'These occurrences are drafts. You can publish some now if you wish by selecting them.',
+		'description' => 'This occurrence is unpublished. You can publish it now if you wish by selecting it.',
+		'descriptions' => 'These occurrences are unpublished. You can publish some now if you wish by selecting them.',
 		'checkbox' => 'publish',
+		'default_checkbox' => false,
 	),
 );
 
@@ -242,10 +244,10 @@ $CI = & get_instance();
 				'Onclick' => 'MiniTog',
 				'ClassNames' => NULL,
 				'Legend' => array(
-					array(array('sel','sta'), 'Start occurrence'),
-					array(array('sel'), 'Recurrence'),
-					array(array('inc'), 'Explicit recurrence'),
-					array(array('exc'), 'Excluded recurrence'),
+					array(array('sel','sta'), 'first event'),
+					array(array('sel'), 'recurrence'),
+					array(array('inc'), 'extra date'),
+					array(array('exc'), 'excluded date'),
 				),
 			));
 			?>
@@ -258,7 +260,7 @@ $CI = & get_instance();
 			<?php
 	if (isset($Confirms)) { ?>
 			<div id="confirm_changes_div" class="BlueBox">
-				<h2>Confirm changes</h2>
+				<h2>confirm dates</h2>
 	<?php if (count($Confirms) == 1 && isset($Confirms['draft'])) { ?>
 				<p>	This event has one or more draft occurrences which are not
 					publicly visible. You can publish some of them now if you
@@ -298,7 +300,10 @@ $CI = & get_instance();
 	// Show a checkbox if necessary
 	if ($show_checkbox) {
 		$selected = '';
-		if (isset($Confirm[$class.'_'.$confirm_types[$class]['checkbox']][$confirm_occ['day']])) {
+		$checked = (NULL !== $Confirm)
+			?	isset($Confirm[$class.'_'.$confirm_types[$class]['checkbox']][$confirm_occ['day']])
+			:	(isset($confirm_types[$class]['default_checkbox']) && $confirm_types[$class]['default_checkbox']);
+		if ($checked) {
 			$selected = ' checked="checked"';
 		}
 		$checkbox_id = 'eved_confirm_'.$class.'_'.$confirm_types[$class]['checkbox'].'_'.$confirm_occ['day'];
@@ -345,7 +350,7 @@ $CI = & get_instance();
 				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
 ?>				<input type="hidden" id="<?php echo('eved_'.$key); ?>" name="<?php echo('eved_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
 				<?php } ?>
-				<h2>Event</h2>
+				<h2>event</h2>
 				<fieldset>
 					<label for="eved_summary">Summary</label>
 					<input type="text" id="eved_summary" name="eved_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
@@ -370,7 +375,7 @@ $CI = & get_instance();
 				</fieldset>
 			</div>
 			<div class="BlueBox">
-				<h2>Dates and Times</h2>
+				<h2>dates and times</h2>
 				<p>Set the date and time of the first occurrence of this event:</p>
 				<fieldset>
 					<label for="eved_timeassociated">Time Associated</label>
@@ -396,7 +401,7 @@ $CI = & get_instance();
 				</fieldset>
 
 				<div id="eved_recurrence_div" style="display: block">
-					<h2>Recurrence</h2>
+					<h2>recurrence</h2>
 					<p>Set a recurrence rule to determine when the event is repeated.</p>
 					<div id="recur_use_minical_nonjs" style="display:block"><p>Remember to select <em>Use Recurrence</em> above to use this section.</p></div>
 					<div id="recur_use_minical_js" style="display:none"><p>Use the calendar on the right of this page to see a preview of when occurrences will be.</p></div>
@@ -662,7 +667,7 @@ $CI = & get_instance();
 				</div>
 				
 				<?php if (1) { ?>
-					<h2>Extra Dates</h2>
+					<h2>extra dates</h2>
 					<p>Set the dates of any other occurrences of the event below.</p>
 					<div id="incex_jsonly" style="display:none">
 						<p><em>Tip: You can click on the calendar in the sidebar to specify dates.</em></p>
@@ -748,7 +753,7 @@ $CI = & get_instance();
 		<?php
 		// Attendee list
 		if (isset($Attendees) && !empty($Attendees)) {
-			echo('<h2>Attendees</h2>');
+			echo('<h2>attendees</h2>');
 			echo('<ul>');
 			foreach (array(true,false) as $friend) {
 				foreach ($Attendees as $attendee) {

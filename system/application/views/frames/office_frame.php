@@ -83,7 +83,16 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		</form>
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
-				<?php if(isset($body_title)) { echo htmlentities($body_title, ENT_QUOTES, 'utf-8'); } else { echo 'no pagename'; } ?>
+			<?php
+			if(isset($body_title)) {
+				echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+			} else {
+				echo 'no pagename'."\n";
+			}
+			if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
+				echo("<a href=\"$paged_edit_url\">[edit]</a>");
+			}
+			?>
 		</div>
 	</div>
 	<br style="clear: both;" />

@@ -221,6 +221,10 @@ a.CalendarFilter {
 	padding-left: 10px;
 	padding-right: 10px;
 	border: 1px #999 solid;
+	color: white;
+}
+a.CalendarFilter.Deselected {
+	color: #999;
 }
 
 a.CalendarButtons {

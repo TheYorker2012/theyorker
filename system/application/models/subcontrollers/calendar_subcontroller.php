@@ -2236,7 +2236,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'selected'		=> $Sources->CategoryEnabled($category['name']),
 				'description'	=> $category['name'],
 				'display'		=> 'block',
-				'colour'		=> $category['colour'],
+				'colour'		=> $category['heading_colour'],
 				'link'			=> $this->GenFilterUrl($this->AlteredFilter($Filter, 'cat', 'no-'.$category['name'])),
 			);
 		}
