@@ -347,39 +347,68 @@ table.recur-cal td.sel.sta.ev {
 	background-color: #FF6A00;
 }
 
-
-
+/* today */
 table.recur-cal td.tod {
 	border: 2px solid #808080;
 }
+/* existing events */
 table.recur-cal td.exi {
 	font-weight: bold;
 }
 
-
+/* draft events */
 table.recur-cal td.dra,
-table.recur-cal td.dra.pa,
-table.recur-cal td.dra.we,
-table.recur-cal td.dra.ev {
+table.recur-cal td.dra.pa {
 	background-color: #00F000;
 }
+table.recur-cal td.dra.ev,
+table.recur-cal td.dra.pa.ev,
+table.recur-cal td.dra.pa.we,
+table.recur-cal td.dra.we {
+	background-color: #00D000;
+}
+table.recur-cal td.dra.pa.we.ev,
+table.recur-cal td.dra.we.ev {
+	background-color: #00B000;
+}
+
+/* published events */
 table.recur-cal td.pub,
-table.recur-cal td.pub.pa,
-table.recur-cal td.pub.we,
-table.recur-cal td.pub.ev {
+table.recur-cal td.pub.pa {
 	background-color: #20C1F0;
 }
-table.recur-cal td.can,
-table.recur-cal td.can.pa,
-table.recur-cal td.can.we,
-table.recur-cal td.can.ev {
-	background-color: #FF4040;
+table.recur-cal td.pub.ev,
+table.recur-cal td.pub.pa.ev,
+table.recur-cal td.pub.pa.we,
+table.recur-cal td.pub.we {
+	background-color: #10B1E0;
+}
+table.recur-cal td.pub.pa.we.ev,
+table.recur-cal td.pub.we.ev {
+	background-color: #10A1D0;
+}
+
+/* cancelled events */
+table.recur-cal td.can {
 	text-decoration: line-through;
 }
-table.recur-cal td.cur,
-table.recur-cal td.cur.pa,
-table.recur-cal td.cur.we,
-table.recur-cal td.cur.ev {
+table.recur-cal td.can,
+table.recur-cal td.can.pa {
+	background-color: #FF4040;
+}
+table.recur-cal td.can.ev,
+table.recur-cal td.can.pa.ev,
+table.recur-cal td.can.pa.we,
+table.recur-cal td.can.we {
+	background-color: #EE3838;
+}
+table.recur-cal td.can.pa.we.ev,
+table.recur-cal td.can.we.ev {
+	background-color: #EE3030;
+}
+
+/* currrently selected date */
+table.recur-cal td.cur {
 	border: 2px solid #000000;
 }
 
