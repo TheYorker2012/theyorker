@@ -159,5 +159,16 @@ class Homepage_boxes
 			}
 		}
 	}
+	
+	function print_homepage_banner($banner){
+		if (isset($banner['image']) && $banner['link']) {
+			if ($banner['link'] != "") {
+				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
+			}
+			else {
+				echo($banner['image']."\n");
+			}
+		}
+	}
 }
 ?>

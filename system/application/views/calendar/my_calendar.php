@@ -33,7 +33,11 @@
 		switch ($filter['display']) {
 			case 'block':
 				// Change colour to that of the category, only if selected
-				echo('<a class="CalendarFilter"');
+				$classes = array('CalendarFilter');
+				if (!$filter['selected']) {
+					$classes[] = 'Deselected';
+				}
+				echo('<a class="'.implode(' ',$classes).'"');
 				if ($filter['selected']) {
 					echo(' style="background-color:#'.$filter['colour'].';"');
 				}

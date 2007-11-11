@@ -61,7 +61,7 @@ function _render_vip_image($status, $org_id) {
 						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_calendar']); ?> <?php echo _render_bool_image($subscription['subscription_todo']); ?></td>
 						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_email']); ?></td>
 						<td style="text-align:center;"><?php echo _render_vip_image($subscription['vip_status'], $subscription['org_id']); ?></td>
-					</tr>					
+					</tr>
 					<?php
 					}
 					?>

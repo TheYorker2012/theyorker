@@ -945,16 +945,18 @@ class Members extends Controller
 				foreach($selected_members as $member) {
 					$member_emails[] = $this->members_model->GetMemberEmail($member);
 				}
-				$to = implode(',', $member_emails);
 				$from = $this->members_model->GetMemberEmail($this->user_auth->entityId);
 				$from = VipOrganisationName().' <'.$from.'>';
 				//try to send the email, report fail if error occurs
 				try {
 					yorkermail(
-						$to,
+						array(),
 						$_POST['a_subject'],
 						$_POST['a_content'],
-						$from);
+						$from,
+						array(),
+						$member_emails
+					);
 					$this->messages->AddMessage('success', 'The email has been sent.');
 				}
 				catch (Exception $e) {

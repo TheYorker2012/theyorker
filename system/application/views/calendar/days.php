@@ -17,6 +17,7 @@ if (!isset($Path)) {
 	);
 }
 $squash = (count($Days) > 3);
+$display_attendence_links = !$squash;
 
 if (!isset($AllowEventCreate)) {
 	$AllowEventCreate = false;
@@ -88,7 +89,7 @@ function GetEventClassNames($event_info)
 $HourHeight = 42;
 
 function js_nl2br ($string) {
-	return str_replace(array("\r\n", "\r", "\n"), "&lt;br /&gt;", $string);
+	return str_replace(array("\r\n", "\r", "\n"), '<br />', $string);
 }
 ?>
 
@@ -132,7 +133,8 @@ foreach ($Occurrences as $event_info) {
 		if ($event_info->TimeAssociated) { ?>
 EVENT_CACHE[EVENT_COUNT] = new Array();
 EVENT_CACHE[EVENT_COUNT][0]	= '<?php
-	if ($event_info->UserHasPermission('set_attend') &&
+	if ($display_attendence_links &&
+		$event_info->UserHasPermission('set_attend') &&
 		in_array($event_info->State, array('published', 'cancelled')))
 	{
 		echo('<div class="cal_event_heading_box">');
@@ -461,7 +463,8 @@ if (isset($ForwardUrl)) {
 				?>"<?php /* onclick="alert('You clicked on this event!');"*/ ?>>
 				<div class="cal_event_heading">
 					<?php
-					if ($event_info->UserHasPermission('set_attend') &&
+					if ($display_attendence_links &&
+						$event_info->UserHasPermission('set_attend') &&
 						in_array($event_info->State, array('published', 'cancelled')))
 					{
 					?><div class="cal_event_heading_box">
@@ -506,7 +509,7 @@ if (isset($ForwardUrl)) {
 	}
 ?></i>
 					<?php if (!$squash && !empty($event_info->Event->Description)) {
-						echo('<br />'.htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'));
+						echo('<br />'.js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8')));
 					} ?>
 				</div>
 			</div>

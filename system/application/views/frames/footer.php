@@ -4,7 +4,7 @@
 		<form id="feedback_form" action="<?php echo site_url('feedback/'); ?>" method="post" class="form">
 			<fieldset>
 				<h2>Feedback</h2>
-				<!-- <br /> tags necessary for correct rendering in text based browsers -->
+				<!-- &lt;br /&gt; tags necessary for correct rendering in text based browsers -->
 				<label for="a_authorname">Your Name: </label>
 					<input type="text" name="a_authorname" id="a_authorname" size="40" value="" /><br />
 				<label for="a_authoremail">Your E-mail: </label>

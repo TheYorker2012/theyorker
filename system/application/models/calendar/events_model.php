@@ -56,6 +56,12 @@ class EventOccurrenceQuery
 	}
 
 	/// Produce an SQL expression for all and only subscribed events.
+	/**
+	 * @note Left joined to default_subscriptions
+	 *	on subscription user = 0, organisation matches event, subscription_calendar
+	 * @note Left joined to subscriptions
+	 *	on user matches, organisation matches event, either value of subscription_calendar.
+	 */
 	function ExpressionSubscribed($EntityId = FALSE)
 	{
 		if (FALSE === $EntityId) {
@@ -65,7 +71,10 @@ class EventOccurrenceQuery
 				OR	(	event_entities.event_entity_entity_id = ' . $EntityId . '
 					AND	event_entities.event_entity_confirmed = 1
 					AND	(	event_entities.event_entity_relationship IN (\'own\',\'subscribe\')))
-				OR	(	subscriptions.subscription_user_entity_id = ' . $EntityId . '
+				OR	(	IF(	subscriptions.subscription_user_entity_id IS NOT NULL,
+							subscriptions.subscription_calendar,
+							default_subscriptions.subscription_calendar IS NOT NULL
+								AND default_subscriptions.subscription_calendar)
 					AND	'.$this->ExpressionPublic().')
 				OR '.$this->ExpressionVisibilityRsvp().')';
 	}

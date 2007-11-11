@@ -39,14 +39,21 @@ a:hover {
 	text-decoration: underline;
 }
 
-ul {
-	list-style-image: url('/images/prototype/homepage/arrow.png');
+ul, ol {
 	list-style-position: inside;
 	padding-left: 0;
-	margin-left: 0;
 }
 
-li {
+ul ul, ul ol, ol ul, ol ol {
+	padding-left: 3em;
+}
+
+ul {
+	list-style-image: url('/images/prototype/homepage/arrow.png');
+}
+
+ol {
+	list-style-image: none;
 }
 
 /* Form formatting */
@@ -241,6 +248,13 @@ h1#PageTitle {
 
 	/* Required only when other stylesheets are included */
 	height: auto;
+}
+
+/* For page title edit link in editor mode */
+h1#PageTitle a {
+	color: white;
+	text-transform: none;
+	font-size: 10pt;
 }
 
 /* Formatting for the (optional) bar on the right */
