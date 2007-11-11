@@ -485,7 +485,9 @@ function updateCreateBox(new_event) {
 function removeCreateBox()
 {
 	var new_event_box	= document.getElementById('cal_new_event_box');
-	new_event_box.style.display	= 'none';
+	if (new_event_box) {
+		new_event_box.style.display	= 'none';
+	}
 }
 
 function toggleCreateBox(new_event)

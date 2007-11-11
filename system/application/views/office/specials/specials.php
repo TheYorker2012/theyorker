@@ -12,24 +12,28 @@
 			<table>
 				<thead>
 					<tr>
-						<th>Section</th><th>Title</th><th>Change</th>
+						<th>Section</th>
+						<th>Title</th>
+						<th>Option</th>
 					</tr>
 				</thead>
-			<?php
-			foreach($main_articles as $article_section){
-				echo('<tr>');
-				echo('<td>'.$article_section['name'].'</td>');
-				if(empty($article_section['featured_article'])){
-					echo('<td><span class="red">Empty</span></td>');
-				}else{
-					echo('<td><a href="/news/'.$article_section['featured_article']['article_type'].'/'.$article_section['featured_article']['id'].'">');
-					echo($article_section['featured_article']['heading']);
-					echo('</a></td>');
-				}
-				echo('<td><a href="/office/specials/edit/'.$article_section['id'].'">Change</a>');
-				echo('</tr>');
-			}
-			?>
+				<tbody>
+<?php
+	foreach($main_articles as $article_section){
+		echo('					<tr>'."\n");
+		echo('						<td>'.$article_section['name'].'</td>'."\n");
+		if(empty($article_section['featured_article'])){
+			echo('						<td><span class="red">Empty</span></td>'."\n");
+		}else{
+			echo('						<td><a href="/news/'.$article_section['featured_article']['article_type'].'/'.$article_section['featured_article']['id'].'">');
+			echo($article_section['featured_article']['heading']);
+			echo('</a></td>'."\n");
+		}
+		echo('						<td><a href="/office/specials/edit/'.$article_section['id'].'">Change</a></td>'."\n");
+		echo('					</tr>'."\n");
+	}
+?>
+				</tbody>
 			</table>
 	</div>
 </div>

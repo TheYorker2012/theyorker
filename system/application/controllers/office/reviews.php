@@ -454,7 +454,7 @@ class Reviews extends Controller
 		if(empty($_POST['league_id'])){
 			$this->messages->AddMessage('error','No league was selected to add.');
 		}else{
-			$this->leagues_model->AddToLeague($league_id, $organisation_id);
+			$this->leagues_model->AddToLeague($_POST['league_id'], $organisation_id);
 		}
 		redirect('/office/reviews/'.$_POST['organisation_name'].'/'.$_POST['context_type'].'/leagues');
 	}
