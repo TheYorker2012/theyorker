@@ -12,7 +12,7 @@
 $first_h2 = ' class="first"';
 ?>
 <div id="RightColumn">
-	<?php if (true or isset($Notifications) && !empty($Notifications)) { ?>
+	<?php if (isset($Notifications) && NULL !== $Notifications) { ?>
 	<h2<?php echo($first_h2); $first_h2=''; ?>>Notifications</h2>
 		<div>
 			<div id="calnot_none" style="display:<?php echo(
