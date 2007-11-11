@@ -597,6 +597,9 @@ class Pages_model extends Model
 		if (NULL === $titles[1]) {
 			$titles[1] = $titles[0];
 		}
+		if ($this->mInlineEditMode) {
+			$titles['edit_url'] = site_url("admin/pages/page/edit/$PageCode");
+		}
 		if (empty($Parameters)) {
 			return $titles;
 		} else {
