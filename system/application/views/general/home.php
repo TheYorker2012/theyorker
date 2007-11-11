@@ -93,7 +93,7 @@ if ($weather_forecast != null) {
 		if($special['lifestyle']['show']) $this->homepage_boxes->print_specials_box($special['lifestyle']['title'],$special['lifestyle']['data']);
 		$this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news');
 		$this->homepage_boxes->print_box_with_picture_list($articles['arts'],'latest arts','news');
-		if($special['lifestyle']['show']) $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']);
+		if($special['blogs']['show']) $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']);
 		$this->homepage_boxes->print_box_with_picture_list($articles['sport'],'latest sport','news');
 		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','videocasts');
 	?>
