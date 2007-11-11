@@ -1,67 +1,15 @@
 <?php
-//Note this can all be got from the Homepage_boxes library.
-function get_link_ref($article,$prefix){
-	return 'href="/'.$prefix.'/'.$article['article_type'].'/'.$article['id'].'"';
-};
-
-function print_comment ($comment) {
-	if ($comment['comment_anonymous']) {
-		echo('			<li class="anonymous">'."\n");
-		echo('				<i>Anonymous</i>'."\n");
-	} else {
-		echo('			<li>'."\n");
-		echo('				<i>' . $comment['user_firstname'] . ' ' . $comment['user_surname'] . '</i>'."\n");
-	}
-	echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '#CommentItem' . $comment['comment_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
-	echo('			</li>'."\n");
-}
-
-function print_small_story($class, $article, $prefix) {
-	echo('	<div class="'.$class.' NewsBox">'."\n");
-	echo('		<a class="NewsImgSmall" '.get_link_ref($article,$prefix).'>'."\n");
-	echo('			'.$article['photo_xhtml']."\n").'';
-	echo('		</a>'."\n");
-	echo('		<p class="More">'."\n");
-	echo('			<a '.get_link_ref($article,$prefix).'>'."\n");
-	echo('				'.$article['heading']."\n");
-	echo('			</a>'."\n");
-	echo('		</p>'."\n");
-	echo('	</div>');
-}
-
-function print_box($articles,$heading,$prefix){
-	if (count($articles) != 0) {
-		echo('  <h2>'.$heading.'</h2>'."\n");
-		echo('  <div class="NewsBox">'."\n");
-		echo('          <a class="NewsImg"'.get_link_ref($articles[0],$prefix).'>'."\n");
-		echo('                  '.$articles[0]['photo_xhtml']."\n").'';
-		echo('          </a>'."\n");
-		echo('          <h3 class="Headline"><a '.get_link_ref($articles[0],$prefix).'>'.$articles[0]['heading'].'</a></h3>'."\n");
-		echo('          <div class="Date">'.$articles[0]['date'].'</div>'."\n");
-		echo('		<p class="More">'.$articles[0]['blurb'].'</p>'."\n");
-		echo('	</div>'."\n");
-		if (count($articles) > 1) {
-			echo('	<div class="LineContainer"></div>'."\n");
-			print_small_story('LeftNewsBox', $articles[1], $prefix);
-			if (count($articles) > 2)
-				print_small_story('RightNewsBox', $articles[2], $prefix);
+	function print_comment ($comment) {
+		if ($comment['comment_anonymous']) {
+			echo('			<li class="anonymous">'."\n");
+			echo('				<i>Anonymous</i>'."\n");
+		} else {
+			echo('			<li>'."\n");
+			echo('				<i>' . $comment['user_firstname'] . ' ' . $comment['user_surname'] . '</i>'."\n");
 		}
+		echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '#CommentItem' . $comment['comment_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
+		echo('			</li>'."\n");
 	}
-
-};
-
-function print_middle_box($title,$article_array){
-	echo('  <h4>'.$title.'</h4>'."\n");
-	if (count($article_array) > 0) {
-		echo('  <ul class="TitleList">'."\n");
-		foreach ($article_array as $article) {
-			echo('          <li><a href="/news/'.$article['article_type'].'/'.$article['id'].'" >'."\n");
-			echo('                  '.$article['heading']."\n");
-			echo('          </a></li>'."\n");
-		}
-		echo('  </ul>'."\n");
-	}
-};
 ?>
 
 <div id="RightColumn">
