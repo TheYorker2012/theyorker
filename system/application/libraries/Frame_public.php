@@ -220,6 +220,13 @@ class Frame_public extends FrameNavbar
 			if (!$title_set) {
 				$this->SetData('head_title', $titles[0]);
 				$this->SetData('body_title', $titles[1]);
+				if (isset($titles['edit_url'])) {
+					$this->SetData('paged_edit_url', $titles['edit_url']);
+				} else {
+					$this->SetData('paged_edit_url', NULL);
+				}
+			} else {
+				$this->SetData('paged_edit_url', NULL);
 			}
 			$this->AddDescription($CI->pages_model->GetDescription());
 			$this->AddKeywords($CI->pages_model->GetKeywords());
