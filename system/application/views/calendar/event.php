@@ -24,9 +24,9 @@ $CI = & get_instance();
 	$class_names = array();
 	$mini_legend = array();
 	$legend_data = array(
-		'dra' => array(0, '<a>&nbsp;Personal or Draft&nbsp;</a>'),
-		'pub' => array(1, '<a>&nbsp;Published&nbsp;</a>'),
-		'can' => array(2, '<a>&nbsp;Cancelled&nbsp;</a>'),
+		'dra' => array(0, '<a>&nbsp;personal&nbsp;</a>'),
+		'pub' => array(1, '<a>&nbsp;published&nbsp;</a>'),
+		'can' => array(2, '<a>&nbsp;cancelled&nbsp;</a>'),
 	);
 	foreach ($Event->Occurrences as &$occurrence) {
 		$date_id = $occurrence->StartTime->Format('Ymd');
@@ -200,7 +200,7 @@ $CI = & get_instance();
 				<?php
 				// Attendee list
 				if (isset($Attendees) && !empty($Attendees)) {
-					echo('<h2>Attendees</h2>');
+					echo('<h2>attendees</h2>');
 					echo('<ul>');
 					foreach (array(true,false) as $friend) {
 						foreach ($Attendees as $attendee) {

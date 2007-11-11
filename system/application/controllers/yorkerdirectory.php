@@ -287,6 +287,7 @@ class Yorkerdirectory extends Controller
 			$this->_SetupOrganisationFrame($organisation);
 			$this->main_frame->SetPage('calendar', 'directory');
 			$this->calendar_subcontroller->SetRangePageCode('directory_calendar');
+			// restrict to this organisation
 			$this->calendar_subcontroller->UseStreams(array(
 				(int)$data['organisation']['id'] => array(
 					'subscribed' => isset($data['organisation']['subscription']) && $data['organisation']['subscription']['calendar'],
@@ -294,6 +295,9 @@ class Yorkerdirectory extends Controller
 					'short_name' => $organisation,
 				)
 			));
+			// disable cancelled events
+			$sources = & $this->calendar_subcontroller->GetSources();
+			$sources->DisableGroup('inactive');
 			
 			$args = func_get_args();
 			array_shift($args);
