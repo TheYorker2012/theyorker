@@ -598,7 +598,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'IntroHtml' => $this->pages_model->GetPropertyWikitext('intro'),
 			'RightbarHtml' => $this->pages_model->GetPropertyWikitext('rightbar'),
 			'Paths' => $this->mPaths,
+			// Not supported in 1.1.1
+			/*
 			'Notifications' => Calendar_notifications::GetNotifications($this->mPaths),
+			*/
+			'Notifications' => NULL,
 		);
 		$this->main_frame->SetContentSimple('calendar/index', $data);
 		

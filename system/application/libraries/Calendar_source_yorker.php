@@ -329,8 +329,11 @@ class CalendarSourceYorker extends CalendarSource
 							break;
 					};
 				} elseif ($CI->events_model->IsNormalUser()) {
+					// not supported in 1.1.1
+					/*
 					$occurrence->UserPermissions[] = 'attend';
 					$occurrence->UserPermissions[] = 'set_attend';
+					*/
 				}
 			}
 			
