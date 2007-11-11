@@ -805,7 +805,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'Path' => $this->mPaths,
 		);
 		
-		$this->SetupTabs('days', $start, $Filter);
+		if ($now->Timestamp() >= $start->Timestamp() &&
+			$now->Timestamp() < $end->Timestamp())
+		{
+			$focus = $now->Midnight();
+		} else {
+			$focus = $start;
+		}
+		$this->SetupTabs('days', $focus, $Filter);
 		
 		return new FramesView('calendar/my_calendar', $data);
 	}
@@ -849,7 +856,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'Path' => $this->mPaths,
 		);
 		
-		$this->SetupTabs('weeks', $start, $Filter);
+		if ($now->Timestamp() >= $start->Timestamp() &&
+			$now->Timestamp() < $end->Timestamp())
+		{
+			$focus = $now->Midnight();
+		} else {
+			$focus = $start;
+		}
+		$this->SetupTabs('weeks', $focus, $Filter);
 		
 		return new FramesView('calendar/my_calendar', $data);
 	}

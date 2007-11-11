@@ -17,6 +17,7 @@ class Home extends Controller {
 		$this->load->model('News_model');
 		$this->load->model('Home_Model');
 		$this->load->model('Links_Model');
+		$this->load->model('Article_Model');
 		$this->load->model('Home_Hack_Model');
 		$this->load->library('Homepage_boxes');
 	}
@@ -197,6 +198,20 @@ class Home extends Controller {
 
 		//Obtain banner
 		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
+		
+		//Obtain specials
+		$specials_types = $this->Article_Model->getMainArticleTypes();
+		foreach ($specials_types as $special){
+			$special_id = $this->News_model->GetLatestFeaturedId($special['codename']);
+			$data['special'][$special['codename']]['title'] = $special['name'];
+			if(!empty($special_id)) {
+				$data['special'][$special['codename']]['show'] = true;
+				$data['special'][$special['codename']]['data'] = $this->News_model->GetSummaryArticle($special_id);
+			}
+			else {
+				$data['special'][$special['codename']]['show'] = false;
+			}
+		}
 
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();

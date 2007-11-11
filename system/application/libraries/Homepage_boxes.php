@@ -128,9 +128,9 @@ class Homepage_boxes
 		echo('</div>');
 	}
 	
-	//Prints a middle sized puffer box for featured articles/specials
-	//Make sure you use summery article, to get the article_type_name and the subheading!!
-	function print_puffer_box($title, $article){
+	//Prints a middle sized specials box for featured articles/specials
+	//Make sure you use summary article, to get the article_type_name and the subheading!!
+	function print_specials_box($title, $article){
 		echo('<div class="BlueBox PufferBox">'."\n");
 		echo('	<a class="PufferImg" href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
 		echo('		'.$article['photo_xhtml']."\n");
