@@ -328,7 +328,7 @@ class CalendarSourceYorker extends CalendarSource
 							$occurrence->UserPermissions[] = 'postpone';
 							break;
 					};
-				} elseif ($CI->events_model->IsNormalUser()) {
+				} elseif ($this->IsSupported('attend') && $CI->events_model->IsNormalUser()) {
 					$occurrence->UserPermissions[] = 'attend';
 					$occurrence->UserPermissions[] = 'set_attend';
 				}
