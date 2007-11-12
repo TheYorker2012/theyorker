@@ -49,7 +49,10 @@ class CalendarSourceYorker extends CalendarSource
 		if ($CI->events_model->IsVip()) {
 			$this->mCapabilities[] = 'publish';
 		}
+		// attendence is disabled in 1.1.1
+		/*
 		$this->mCapabilities[] = 'attend';
+		*/
 		
 		$this->mGroups['streams'] = FALSE;
 	}
@@ -328,12 +331,9 @@ class CalendarSourceYorker extends CalendarSource
 							$occurrence->UserPermissions[] = 'postpone';
 							break;
 					};
-				} elseif ($CI->events_model->IsNormalUser()) {
-					// not supported in 1.1.1
-					/*
+				} elseif ($this->IsSupported('attend') && $CI->events_model->IsNormalUser()) {
 					$occurrence->UserPermissions[] = 'attend';
 					$occurrence->UserPermissions[] = 'set_attend';
-					*/
 				}
 			}
 			
