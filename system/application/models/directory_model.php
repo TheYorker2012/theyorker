@@ -175,7 +175,10 @@ class Directory_model extends Model {
 		if ($this->user_auth->isLoggedIn) {
 			$sql .= ',(subscription_user_confirmed AND subscription_organisation_confirmed) AS subscription_member,'.
 					'subscription_user_confirmed AS subscription_membership_requested,'.
-					'subscription_calendar AS subscription_calendar ';
+					'IF(	event_subscriptions.event_subscription_user_entity_id IS NOT NULL,
+							event_subscriptions.event_subscription_calendar,
+							default_event_subscription.event_subscription_calendar IS NOT NULL
+								AND default_event_subscription.event_subscription_calendar) AS subscription_calendar ';
 		}
 		$sql.= 'FROM organisations '.
 			// Get organisation type, but make sure the type allows directory entries.
@@ -198,6 +201,10 @@ class Directory_model extends Model {
 			$entity_id = $this->user_auth->entityId;
 			$sql .= ' LEFT JOIN subscriptions ON subscription_organisation_entity_id=organisation_entity_id AND '.
 					'subscription_user_entity_id = '.$this->db->escape($entity_id);
+			$sql .= ' LEFT JOIN event_subscriptions ON event_subscription_organisation_entity_id = organisation_entity_id AND '.
+					'event_subscription_user_entity_id = '.$this->db->escape($entity_id);
+			$sql .= ' LEFT JOIN event_subscriptions AS default_event_subscription ON default_event_subscription.event_subscription_organisation_entity_id = organisation_entity_id AND '.
+					'default_event_subscription.event_subscription_user_entity_id = 0';
 		}
 		$sql .= ' LEFT JOIN locations '.
 			' ON locations.location_id'.

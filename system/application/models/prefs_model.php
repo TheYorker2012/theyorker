@@ -209,16 +209,12 @@ class Prefs_model extends Model {
 				subscription_organisation_entity_id,
 				subscription_user_entity_id,
 				subscription_email,
-				subscription_calendar,
-				subscription_todo,
 				subscription_user_confirmed,
 				subscription_organisation_confirmed
 		)
 		SELECT	subscription_organisation_entity_id,
 				'.$this->db->escape($UserId).',
 				subscription_email,
-				subscription_calendar,
-				subscription_todo,
 				subscription_user_confirmed,
 				subscription_organisation_confirmed
 		FROM	subscriptions
@@ -242,19 +238,19 @@ class Prefs_model extends Model {
 	{
 		$sets = array();
 		if (is_bool($calendar)) {
-			$sets[] = 'subscription_calendar='.$this->db->escape($calendar);
+			$sets[] = 'event_subscription_calendar='.$this->db->escape($calendar);
 		}
 		if (is_bool($todo)) {
-			$sets[] = 'subscription_todo='.$this->db->escape($todo);
+			$sets[] = 'event_subscription_todo='.$this->db->escape($todo);
 		}
 		if (!empty($sets)) {
 			$imploded_sets = implode(',', $sets);
 			$sql =
-				'INSERT INTO subscriptions SET '.
-					'subscription_organisation_entity_id = (
+				'INSERT INTO event_subscriptions SET '.
+					'event_subscription_organisation_entity_id = (
 						SELECT organisation_entity_id FROM organisations 
 						WHERE organisation_directory_entry_name='.$this->db->escape($org_name).'),'.
-					'subscription_user_entity_id = '.$this->db->escape($user_id).','.
+					'event_subscription_user_entity_id = '.$this->db->escape($user_id).','.
 					$imploded_sets.
 				" ON DUPLICATE KEY UPDATE $imploded_sets";
 			$this->db->query($sql);
@@ -348,10 +344,22 @@ class Prefs_model extends Model {
 					subscriptions.subscription_organisation_entity_id		AS org_id,
 					subscriptions.subscription_email						AS subscription_email,
 					subscriptions.subscription_paid							AS subscription_paid,
-					subscriptions.subscription_calendar						AS subscription_calendar,
-					subscriptions.subscription_todo							AS subscription_todo,
+					IF(	event_subscriptions.event_subscription_user_entity_id IS NOT NULL,
+							event_subscriptions.event_subscription_calendar,
+							default_event_subscription.event_subscription_calendar IS NOT NULL
+								AND default_event_subscription.event_subscription_calendar) 		AS subscription_calendar,
+					IF(	event_subscriptions.event_subscription_user_entity_id IS NOT NULL,
+							event_subscriptions.event_subscription_todo,
+							default_event_subscription.event_subscription_todo IS NOT NULL
+								AND default_event_subscription.event_subscription_todo)				AS subscription_todo,
 					subscriptions.subscription_vip_status					AS vip_status
-					FROM subscriptions
+		FROM subscriptions
+		LEFT JOIN	event_subscriptions
+			ON		event_subscriptions.event_subscription_organisation_entity_id	= subscription_organisation_entity_id
+				AND	event_subscriptions.event_subscription_user_entity_id			= subscription_user_entity_id
+		LEFT JOIN	event_subscriptions AS default_event_subscription
+			ON		default_event_subscription.event_subscription_organisation_entity_id	= subscription_organisation_entity_id
+				AND	default_event_subscription.event_subscription_user_entity_id			= 0
 		INNER JOIN	organisations
 			ON		subscriptions.subscription_organisation_entity_id = organisations.organisation_entity_id
 		INNER JOIN	organisation_types

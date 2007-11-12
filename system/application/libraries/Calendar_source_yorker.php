@@ -376,15 +376,15 @@ class CalendarSourceYorker extends CalendarSource
 		LEFT JOIN organisations
 			ON	organisations.organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
-		LEFT JOIN subscriptions
-			ON	subscriptions.subscription_organisation_entity_id
+		LEFT JOIN event_subscriptions
+			ON	event_subscriptions.event_subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
-			AND	subscriptions.subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
-		LEFT JOIN subscriptions AS default_subscriptions
-			ON	default_subscriptions.subscription_organisation_entity_id
+			AND	event_subscriptions.event_subscription_user_entity_id	= '.$this->mQuery->GetEntityId().'
+		LEFT JOIN event_subscriptions AS default_event_subscription
+			ON	default_event_subscription.event_subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
-			AND	default_subscriptions.subscription_user_entity_id	= 0
-			AND	default_subscriptions.subscription_calendar = TRUE
+			AND	default_event_subscription.event_subscription_user_entity_id	= 0
+			AND	default_event_subscription.event_subscription_calendar = TRUE
 		LEFT JOIN event_occurrence_users
 			ON	event_occurrence_users.event_occurrence_user_event_occurrence_id
 					= event_occurrences.event_occurrence_id
