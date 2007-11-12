@@ -684,11 +684,9 @@ class Pr_model extends Model {
 				$sql = 'INSERT INTO subscriptions(
 									subscription_organisation_entity_id,
 									subscription_user_entity_id,
-									subscription_calendar,
-									subscription_todo,
 									subscription_pr_rep,
 									subscription_pr_rep_chosen)
-						VALUES (?,?,0,0,1,"choosing")';
+						VALUES (?,?,1,"choosing")';
 				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
 			}
 		}
@@ -766,11 +764,9 @@ class Pr_model extends Model {
 				$sql = 'INSERT INTO subscriptions(
 									subscription_organisation_entity_id,
 									subscription_user_entity_id,
-									subscription_calendar,
-									subscription_todo,
 									subscription_pr_rep,
 									subscription_pr_rep_chosen)
-						VALUES (?,?,0,0,1,"suggestion")';
+						VALUES (?,?,1,"suggestion")';
 				$this->db->query($sql,array($row1->organisation_entity_id, $user_id));
 			}
 		}

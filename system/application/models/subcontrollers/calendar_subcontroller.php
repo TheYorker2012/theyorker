@@ -1113,7 +1113,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		{
 			$rset_arr = $_POST[$prefix.'_recur_simple'];
 			$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
-				isset($_POST[$prefix.'_timeassociated']) && $_POST[$prefix.'_timeassociated'],
+				!(isset($_POST[$prefix.'_allday']) && $_POST[$prefix.'_allday']),
 				$_POST[$prefix.'_start'],
 				$_POST[$prefix.'_duration'],
 				$_POST[$prefix.'_recur_simple'],
@@ -1171,7 +1171,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$this->messages->AddMessage('error', 'Event location is too long.');
 				}
 			}
-			$input['time_associated'] = ($this->input->post($prefix.'_timeassociated') !== false);
+			$input['time_associated'] = ($this->input->post($prefix.'_allday') === false);
 			
 			// at this point $start and $end are still plain timestamps
 			$input['recur'] = $rset;
@@ -1235,7 +1235,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'description' => $input['description'],
 			'location' => $input['location_name'],
 			'category' => $input['category'],
-			'timeassociated' => $input['time_associated'],
+			'allday' => !$input['time_associated'],
 			'start' => array(
 				'monthday' => $start->DayOfMonth(),
 				'month' => $start->Month(),
@@ -1479,7 +1479,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			{
 				$rset_arr = $_POST[$prefix.'_recur_simple'];
 				$rset = Calendar_view_edit_simple::validate_recurrence_set_data(
-					isset($_POST[$prefix.'_timeassociated']) && $_POST[$prefix.'_timeassociated'],
+					!(isset($_POST[$prefix.'_allday']) && $_POST[$prefix.'_allday']),
 					$_POST[$prefix.'_start'],
 					$_POST[$prefix.'_duration'],
 					$_POST[$prefix.'_recur_simple'],
@@ -1540,7 +1540,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						$this->messages->AddMessage('error', 'Event location is too long.');
 					}
 				}
-				$input['time_associated'] = ($this->input->post($prefix.'_timeassociated') !== false);
+				$input['time_associated'] = ($this->input->post($prefix.'_allday') === false);
 				
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
@@ -1609,7 +1609,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'description' => $input['description'],
 				'location' => $input['location_name'],
 				'category' => $input['category'],
-				'timeassociated' => $input['time_associated'],
+				'allday' => !$input['time_associated'],
 				'start' => array(
 					'monthday' => $start->DayOfMonth(),
 					'month' => $start->Month(),

@@ -90,7 +90,7 @@ class CalendarViewEditSimple extends FramesView
 			'description' => '',
 			'location' => '',
 			'category' => '',
-			'timeassociated' => true,
+			'allday' => false,
 			'start' => array(
 				'monthday' => $start->DayOfMonth(),
 				'month' => $start->Month(),
@@ -138,7 +138,7 @@ class CalendarViewEditSimpleValidate
 				isset($data[$prefix.'_start']) and
 				isset($data[$prefix.'_duration']))
 			{
-				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(isset($data[$prefix.'_timeassociated']) && $data[$prefix.'_timeassociated'], $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $data[$prefix.'_inex'], $this->mErrors);
+				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(!(isset($data[$prefix.'_allday']) && $data[$prefix.'_allday']), $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $data[$prefix.'_inex'], $this->mErrors);
 				
 				$this->mResults = $this->mRset->Resolve(strtotime('-1month'), strtotime('1year'));
 			} else {

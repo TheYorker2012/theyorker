@@ -90,11 +90,11 @@ function SimpleCheckboxChange(checkbox, affected1, affected2)
 {
 	var repeat_input = document.getElementById(checkbox);
 	if (repeat_input.checked) {
-		document.getElementById(affected1).style.display = "block";
-		document.getElementById(affected2).style.display = "block";
-	} else {
 		document.getElementById(affected1).style.display = "none";
 		document.getElementById(affected2).style.display = "none";
+	} else {
+		document.getElementById(affected1).style.display = "block";
+		document.getElementById(affected2).style.display = "block";
 	}
 }
 
@@ -122,8 +122,8 @@ function UpdateRecurCalPreviewLoad()
 	var url = url_ajax_recur_validate;
 	var post = {};
 	post['prefix'] = "eved";
-	if (document.getElementById('eved_timeassociated').checked) {
-		post['eved_timeassociated']  = "on";
+	if (document.getElementById('eved_allday').checked) {
+		post['eved_allday']  = "on";
 	}
 	post['eved_start[monthday]'] = document.getElementById('eved_start_monthday').value;
 	post['eved_start[month]']    = document.getElementById('eved_start_month').value;
@@ -486,7 +486,7 @@ function calendarEdit_onLoad()
 	
 	CalSimpleFreqChange();
 	MainRecurrenceToggle();
-	SimpleCheckboxChange('eved_timeassociated', 'eved_start_time', 'eved_duration_time_div');
+	SimpleCheckboxChange('eved_allday', 'eved_start_time', 'eved_duration_time_div');
 	
 	// Need to get info from data inserted by php.
 	// inex dates - look in children of eved_inex_list

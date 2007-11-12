@@ -378,8 +378,8 @@ $CI = & get_instance();
 				<h2>dates and times</h2>
 				<p>Set the date and time of the first occurrence of this event:</p>
 				<fieldset>
-					<label for="eved_timeassociated">Time Associated</label>
-					<input type="checkbox" onchange="SimpleCheckboxChange('eved_timeassociated', 'eved_start_time', 'eved_duration_time_div');" id="eved_timeassociated" name="eved_timeassociated"<?php if ($EventInfo['timeassociated']) { ?>  checked="checked"<?php } ?> />
+					<label for="eved_allday">Full day event</label>
+					<input type="checkbox" onchange="SimpleCheckboxChange('eved_allday', 'eved_start_time', 'eved_duration_time_div');" id="eved_allday" name="eved_allday"<?php if ($EventInfo['allday']) { ?>  checked="checked"<?php } ?> />
 					
 					<label for="eved_start_monthday">Starts on</label>
 					<?php
