@@ -161,8 +161,8 @@ class Homepage_boxes
 	}
 	
 	function print_homepage_banner($banner){
-		if (isset($banner['image']) && $banner['link']) {
-			if ($banner['link'] != "") {
+		if (isset($banner['image']) && $banner['image']) {
+			if (isset($banner['link']) && $banner['link']) {
 				echo('<a href="'.$banner['link'].'">'.$banner['image'].'</a>'."\n");
 			}
 			else {
