@@ -42,17 +42,23 @@ class Yorkerdirectory extends Controller
 		$navbar = $this->main_frame->GetNavbar('directory');
 		$navbar->AddItem('about', 'About',
 				'/directory/'.$DirectoryEntry);
-		/*$navbar->AddItem('notices', 'Notices',
-				'/directory/'.$DirectoryEntry.'/notices');*/
-		/*$navbar->AddItem('calendar', 'Calendar',
-				'/directory/'.$DirectoryEntry.'/calendar');*/
+		// disabled in 1.1.1
+		/*
+		$navbar->AddItem('notices', 'Notices',
+				'/directory/'.$DirectoryEntry.'/notices');
+		*/
+		$navbar->AddItem('calendar', 'Calendar',
+				'/directory/'.$DirectoryEntry.'/calendar');
 		$navbar->AddItem('members', 'Members',
 				'/directory/'.$DirectoryEntry.'/members');
-		/*if($data['organisation']['type'] == 'Societies')
+		// disabled in 1.1.1
+		/*
+		if($data['organisation']['type'] == 'Societies')
 		{
 			$navbar->AddItem('reviews', 'Reviews',
 					'/directory/'.$DirectoryEntry.'/reviews');
-		}*/
+		}
+		*/
 	}
 	
 	/// Set up the index navigation bar.
