@@ -49,7 +49,9 @@ class CalendarSourceYorker extends CalendarSource
 		if ($CI->events_model->IsVip()) {
 			$this->mCapabilities[] = 'publish';
 		}
-		$this->mCapabilities[] = 'attend';
+		if ($CI->events_model->IsNormalUser()) {
+			$this->mCapabilities[] = 'attend';
+		}
 		
 		$this->mGroups['streams'] = FALSE;
 	}

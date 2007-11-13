@@ -80,6 +80,13 @@ class CalendarPaths
 		return $this->mPath . '/notification';
 	}
 	
+	/// Get subscrptions tab path.
+	function Subscriptions()
+	{
+		$path = $this->mPath . '/subscriptions';
+		return $path;
+	}
+	
 	/// Get the range path.
 	function Range($range = NULL, $filter = NULL)
 	{
@@ -471,6 +478,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						),
 					),
 				),
+			),
+			'subscriptions' => array(
+				'' => 'index',
+				'index' => 'subscriptions_index',
 			),
 			'src' => array(
 				'' => 'index',
@@ -908,6 +919,30 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->SetupTabs('agenda', new Academic_time(time()), $filter);
 		
 		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		$this->main_frame->Load();
+	}
+	
+	/// Subscriptions index page.
+	function subscriptions_index()
+	{
+		if (!isset($this->mPermissions['subscriptions'])) {
+			show_404();
+		}
+		// This is a special case.
+		// It does not use the calendar backend.
+		if (!CheckPermissions('student')) return;
+		
+		$this->pages_model->SetPageCode('calendar_subscriptions_index');
+		
+		$data = array(
+			'Wikitexts' => array(
+				'intro' => $this->pages_model->GetPropertyWikitext('intro'),
+				'help_main' => $this->pages_model->GetPropertyWikitext('help_main'),
+			),
+		);
+		
+		$this->SetupTabs('subscriptions', new Academic_time(time()));
+		$this->main_frame->SetContentSimple('calendar/subscriptions_index', $data);
 		$this->main_frame->Load();
 	}
 	
@@ -2137,6 +2172,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					))
 				);
 			//}
+			}
+			if (isset($this->mPermissions['subscriptions'])) {
+				$navbar->AddItem('subscriptions', 'Subscriptions',
+					site_url($this->mPaths->Subscriptions())
+				);
 			}
 			$this->main_frame->SetPage($SelectedPage, 'calendar');
 		}
