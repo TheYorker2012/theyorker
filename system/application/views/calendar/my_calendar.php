@@ -63,13 +63,24 @@
 	
 	?>
 <div style="clear: both;"></div>
-<div style="width:100%;">
-<?php
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td><?php
 if (isset($RangeDescription)) { 
-	echo('<h4>'.$RangeDescription.'</h4>');
+	echo('<strong>'.$RangeDescription.'</strong>');
 }
-?>
-</div>
+?></td>
+		<td>
+		<?php if (!empty($CreateSources)) { ?>
+			<ul>
+				<?php foreach ($CreateSources as $source) { ?>
+					<li><a href="<?php echo(site_url($Path->EventCreate($source)).get_instance()->uri->uri_string()); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
+				<?php } ?>
+			</ul>
+		<?php } ?>
+		</td>
+	</tr>
+</table>
 <div style="width:100%;">
 <?php
 if (isset($streams)) {

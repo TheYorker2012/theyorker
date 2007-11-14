@@ -698,6 +698,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
+	function GetCreateSources(&$sources)
+	{
+		$create_sources = array();
+		if (isset($this->mPermissions['create'])) {
+			foreach ($sources->GetSources() as $source) {
+				if ($source->IsSupported('create')) {
+					$create_sources[] = $source;
+				}
+			}
+		}
+		return $create_sources;
+	}
+	
 	function GetDay(&$sources, $DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
 	{
 		$range = $this->date_uri->ReadUri($DateRange, TRUE);
@@ -715,14 +728,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->ReadFilter($sources, $Filter);
 // 		$sources->EnableGroup('todo');
 		
-		$create_sources = array();
-		if (isset($this->mPermissions['create'])) {
-			foreach ($sources->GetSources() as $source) {
-				if ($source->IsSupported('create')) {
-					$create_sources[] = $source;
-				}
-			}
-		}
+		$create_sources = $this->GetCreateSources($sources);
 		
 		$calendar_data = new CalendarData();
 		
@@ -785,6 +791,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$sources->SetRange($start->Timestamp(), $stretch_end->Timestamp());
 		$this->ReadFilter($sources, $Filter);
 		
+		$create_sources = $this->GetCreateSources($sources);
+		
 		$calendar_data = new CalendarData();
 		
 		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
@@ -810,6 +818,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'ViewMode'	=> $days,
 			'RangeDescription' => $range['description'],
 			'Path' => $this->mPaths,
+			'CreateSources'	=> $create_sources,
 		);
 		
 		if ($now->Timestamp() >= $start->Timestamp() &&
@@ -840,6 +849,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
 		$this->ReadFilter($sources, $Filter);
 		
+		$create_sources = $this->GetCreateSources($sources);
+		
 		$calendar_data = new CalendarData();
 		
 		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
@@ -861,6 +872,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'ViewMode'	=> $weeks,
 			'RangeDescription' => $range['description'],
 			'Path' => $this->mPaths,
+			'CreateSources'	=> $create_sources,
 		);
 		
 		if ($now->Timestamp() >= $start->Timestamp() &&
