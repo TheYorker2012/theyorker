@@ -220,6 +220,7 @@ a.CalendarFilter {
 	text-align: center;
 	padding-left: 10px;
 	padding-right: 10px;
+	margin-right: 10px;
 	border: 1px #999 solid;
 	color: white;
 }
@@ -229,9 +230,19 @@ a.CalendarFilter.Deselected {
 
 a.CalendarButtons {
 	float: right;
-	padding-right: 10px;
-	margin-left: 0;
-	margin-right: 0;
+	margin-left: 10px;
+}
+
+table#cal_toolbox_info {
+	margin: 0px 0px 0px 0px;
+	padding: 10px;
+	border: none;
+	padding-bottom: 0px;
+}
+
+table#cal_toolbox_info ul {
+	margin: 0px;
+	text-align: right;
 }
 
 div.TodoBox {
