@@ -23,7 +23,7 @@ class Lifestyle extends Controller
 		$data['latest_heading'] = $this->pages_model->GetPropertyText('latest_heading');
 		$data['more_heading'] = $this->pages_model->GetPropertyText('more_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
-		$data['featured_puffer_title'] = $this->pages_model->GetPropertyText('featured_puffer_title',TRUE);
+		//$data['featured_puffer_title'] = $this->pages_model->GetPropertyText('featured_puffer_title',TRUE);
 		
 		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_articles');//Max number of main articles to show
 		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_articles');//Max number of more articles to show
@@ -80,12 +80,14 @@ class Lifestyle extends Controller
 		$featured_puffer_id = $this->News_model->GetLatestFeaturedId($homepage_article_type);
 		
 		//get and article summery for the article id.
+		/*
 		if(!empty($featured_puffer_id)){
 			$data['show_featured_puffer'] = true;
 			$data['featured_puffer'] = $this->News_model->GetSummaryArticle($featured_puffer_id);
 		}else{
 			$data['show_featured_puffer'] = false;
 		}
+		*/
 		
 		//Move article information into send data
 		$data['main_articles'] = $main_article_summarys;//list of main article summaryss
