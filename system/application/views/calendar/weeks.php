@@ -182,6 +182,7 @@ table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_headin
 
 </style>
 
+<div class="BlueBox">
 <?php
 
 echo('<div align="center">');
@@ -242,3 +243,4 @@ foreach ($Weeks as $key => $week) {
 echo('</table>');
 
 ?>
+</div>
