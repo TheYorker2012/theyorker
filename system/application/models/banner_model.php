@@ -150,6 +150,23 @@ class Banner_Model extends Model {
 		return true;
 	}
 	
+	/*
+	 * Returns true if the given image id has an entry in homepage banners.
+	 */
+	function HasHomepageEntry($image_id)
+	{
+		$sql = 'SELECT	homepage_banner_image_id
+				FROM	homepage_banners
+				WHERE	homepage_banner_image_id = ?';
+		$query = $this->db->query($sql,array($image_id));
+		if ($query->num_rows() == 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	//Creates a link so image will be in the pool to display on that homepage (images can be on multiple homepages)
 	//@param $image_id - Id of image to use.
 	//@param $homepage_id (optional) - Id from content_types of that homepage, default is the main homepage.
