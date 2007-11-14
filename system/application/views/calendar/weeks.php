@@ -15,7 +15,7 @@ echo('</div>');
 $squash = count($Days) > 3;
 
 echo('<table id="calviewCalTable" border="0" cellpadding="0" cellspacing="0" width="100%">');
-$last_term = -1;
+$last_term = $Weeks[count($Weeks)-1]['start']->AcademicTerm();
 foreach ($Weeks as $key => $week) {
 	if ($last_term !== $week['start']->AcademicTerm()) {
 		echo('<tr><td colspan="'.(count($week['days'])+1).'"><h2>');
