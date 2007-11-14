@@ -554,15 +554,22 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	
 	/// Add an allowed permission.
 	/**
-	 * @param $Permission string Allowed action.
-	 * @pre is_string(@a $Permission,..).
+	 * @param $Permission string/array Allowed action(s).
+	 * @pre foreach argument Z : is_string(Z) || (is_array(Z) && forall(Z, is_string))
 	 */
 	function _AddPermission($Permission)
 	{
 		// Initialise
 		foreach (func_get_args() as $val) {
-			assert('is_string($val)');
-			$this->mPermissions[$val] = true;
+			if (is_array($val)) {
+				foreach ($val as $subval) {
+					assert('is_string($subval)');
+					$this->mPermissions[$subval] = true;
+				}
+			} else {
+				assert('is_string($val)');
+				$this->mPermissions[$val] = true;
+			}
 		}
 	}
 	
