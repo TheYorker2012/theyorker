@@ -37,10 +37,17 @@ class Banners extends Controller
 		if (!CheckPermissions('editor')) return;
 		$this->pages_model->SetPageCode('office_banners');
 		$data = array();
+		
+		//make sure a banner entry exists, so the image shows and gets related to the link
+		if (!$this->Banner_Model->HasHomepageEntry($banner_id)) {
+			$this->Banner_Model->LinkImageToHomepage($banner_id);
+		}
+		
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');	
 		$data['banner'] = $this->Banner_Model->GetBanner($banner_id);
 		$data['current_homepage_id'] = $this->Banner_Model->GetBannersHomepageId($banner_id);
 		$data['homepages'] = $this->Article_model->getMainArticleTypes(true);
+
 		$this->load->library('image');
 		$this->main_frame->SetContentSimple('office/banners/banner_edit', $data);
 

@@ -80,6 +80,13 @@ class CalendarPaths
 		return $this->mPath . '/notification';
 	}
 	
+	/// Get subscrptions tab path.
+	function Subscriptions()
+	{
+		$path = $this->mPath . '/subscriptions';
+		return $path;
+	}
+	
 	/// Get the range path.
 	function Range($range = NULL, $filter = NULL)
 	{
@@ -472,6 +479,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					),
 				),
 			),
+			'subscriptions' => array(
+				'' => 'index',
+				'index' => 'subscriptions_index',
+			),
 			'src' => array(
 				'' => 'index',
 				'index' => 'src_index',
@@ -691,6 +702,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
+	function GetCreateSources(&$sources)
+	{
+		$create_sources = array();
+		if (isset($this->mPermissions['create'])) {
+			foreach ($sources->GetSources() as $source) {
+				if ($source->IsSupported('create')) {
+					$create_sources[] = $source;
+				}
+			}
+		}
+		return $create_sources;
+	}
+	
 	function GetDay(&$sources, $DateRange = NULL, $Filter = NULL, $Format = 'ac:re')
 	{
 		$range = $this->date_uri->ReadUri($DateRange, TRUE);
@@ -708,14 +732,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->ReadFilter($sources, $Filter);
 // 		$sources->EnableGroup('todo');
 		
-		$create_sources = array();
-		if (isset($this->mPermissions['create'])) {
-			foreach ($sources->GetSources() as $source) {
-				if ($source->IsSupported('create')) {
-					$create_sources[] = $source;
-				}
-			}
-		}
+		$create_sources = $this->GetCreateSources($sources);
 		
 		$calendar_data = new CalendarData();
 		
@@ -778,6 +795,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$sources->SetRange($start->Timestamp(), $stretch_end->Timestamp());
 		$this->ReadFilter($sources, $Filter);
 		
+		$create_sources = $this->GetCreateSources($sources);
+		
 		$calendar_data = new CalendarData();
 		
 		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
@@ -803,6 +822,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'ViewMode'	=> $days,
 			'RangeDescription' => $range['description'],
 			'Path' => $this->mPaths,
+			'CreateSources'	=> $create_sources,
 		);
 		
 		if ($now->Timestamp() >= $start->Timestamp() &&
@@ -833,6 +853,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
 		$this->ReadFilter($sources, $Filter);
 		
+		$create_sources = $this->GetCreateSources($sources);
+		
 		$calendar_data = new CalendarData();
 		
 		$this->messages->AddMessages($sources->FetchEvents($calendar_data));
@@ -854,6 +876,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'ViewMode'	=> $weeks,
 			'RangeDescription' => $range['description'],
 			'Path' => $this->mPaths,
+			'CreateSources'	=> $create_sources,
 		);
 		
 		if ($now->Timestamp() >= $start->Timestamp() &&
@@ -912,6 +935,30 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->SetupTabs('agenda', new Academic_time(time()), $filter);
 		
 		$this->main_frame->SetContentSimple('calendar/my_calendar', $data);
+		$this->main_frame->Load();
+	}
+	
+	/// Subscriptions index page.
+	function subscriptions_index()
+	{
+		if (!isset($this->mPermissions['subscriptions'])) {
+			show_404();
+		}
+		// This is a special case.
+		// It does not use the calendar backend.
+		if (!CheckPermissions('student')) return;
+		
+		$this->pages_model->SetPageCode('calendar_subscriptions_index');
+		
+		$data = array(
+			'Wikitexts' => array(
+				'intro' => $this->pages_model->GetPropertyWikitext('intro'),
+				'help_main' => $this->pages_model->GetPropertyWikitext('help_main'),
+			),
+		);
+		
+		$this->SetupTabs('subscriptions', new Academic_time(time()));
+		$this->main_frame->SetContentSimple('calendar/subscriptions_index', $data);
 		$this->main_frame->Load();
 	}
 	
@@ -2141,6 +2188,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					))
 				);
 			//}
+			}
+			if (isset($this->mPermissions['subscriptions'])) {
+				$navbar->AddItem('subscriptions', 'Subscriptions',
+					site_url($this->mPaths->Subscriptions())
+				);
 			}
 			$this->main_frame->SetPage($SelectedPage, 'calendar');
 		}

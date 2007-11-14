@@ -51,7 +51,9 @@ class CalendarSourceYorker extends CalendarSource
 		}
 		// attendence is disabled in 1.1.1
 		/*
-		$this->mCapabilities[] = 'attend';
+		if ($CI->events_model->IsNormalUser()) {
+			$this->mCapabilities[] = 'attend';
+		}
 		*/
 		
 		$this->mGroups['streams'] = FALSE;
