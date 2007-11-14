@@ -44,10 +44,6 @@ table#calendar_view td#calendar_time div {
 
 table#calendar_view td.calendar_day {
 	border: 1px #999 solid;
-	background-image: url('/images/prototype/calendar/grid2.gif');
-	background-position: top left;
-	height: <?php echo(24*$HourHeight); ?>px;
-	width: <?php echo(floor(100/7)); ?>%;
 	vertical-align: top;
 	padding: 0;
 }
@@ -56,7 +52,7 @@ table#calendar_view td.calendar_day div.cal_event {
 	overflow: hidden;
 	position: absolute;
 	width: auto;
-	margin: 0 2px;
+	margin: 0 1px;
 	padding: 0;
 	-moz-opacity:0.8;
 }
