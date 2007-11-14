@@ -28,6 +28,9 @@
 ?>
 
 <div class="BlueBox">
+<table id="cal_toolbox_info" width="100%">
+	<tr>
+		<td colspan="2">
 	<?php
 	foreach ($Filters as $id => $filter) {
 		switch ($filter['display']) {
@@ -62,8 +65,8 @@
 	}
 	
 	?>
-<div style="clear: both;"></div>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		</td>
+	</tr>
 	<tr>
 		<td><?php
 if (isset($RangeDescription)) { 

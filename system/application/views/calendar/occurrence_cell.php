@@ -33,7 +33,7 @@ $CI = & get_instance();
 		<?php
 		if ($Occurrence->TimeAssociated) {
 			echo($Occurrence->StartTime->Format('%T'));
-			echo('-');
+			echo(' - ');
 			echo($Occurrence->EndTime->Format('%T'));
 			echo('<br />');
 		}
