@@ -120,7 +120,9 @@ class Home extends Controller {
 			'sport' => array(),
 			'features' => array(),
 			'arts' => array(),
-			'videocasts' => array()
+			'videocasts' => array(),
+			'lifestyle' => array(),
+			'blogs' => array()
 		);
 
 		// Get the article ids of all articles to be displayed
@@ -131,6 +133,8 @@ class Home extends Controller {
 				'features' => 1,
 				'arts' => 1,
 				'videocasts' => 1,
+				'lifestyle' => 1,
+				'blogs' => 1,
 			)
 		);
 		//$this->messages->AddDumpMessage('ids',$article_all_ids);
@@ -200,6 +204,23 @@ class Home extends Controller {
 		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
 		
 		//Obtain specials
+		//list here the specials to get, along with their title
+		$specials = array(
+			array('lifestyle','Latest Lifestyle'),
+			array('blogs','Latest Blog'),
+			);
+		//foreach type given setup the data, assumes [0] is has a small image and heading
+		foreach ($specials as $special) {
+			$data['special'][$special[0]]['title'] = $special[1];
+			if (isset($data['articles'][$special[0]][0])) {
+				$data['special'][$special[0]]['show'] = true;
+				$data['special'][$special[0]]['data'] = $data['articles'][$special[0]][0];
+			}
+			else {
+				$data['special'][$special[0]]['show'] = true;
+			}
+		}
+		/* this is the old method, getting articles set using specials
 		$specials_types = $this->Article_Model->getMainArticleTypes();
 		foreach ($specials_types as $special){
 			$special_id = $this->News_model->GetLatestFeaturedId($special['codename']);
@@ -211,7 +232,7 @@ class Home extends Controller {
 			else {
 				$data['special'][$special['codename']]['show'] = false;
 			}
-		}
+		}*/
 
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
