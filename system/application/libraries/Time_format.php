@@ -4,7 +4,7 @@
 class Time_format
 {
 	/// Time format to use.
-	public $TimeFormat = 'g:i a';
+	public $TimeFormat = 'g:ia';
 	/// Date format to use.
 	public $DateFormat = 'l, jS F Y';
 	public $ShortDateFormat = 'D, jS M Y';
