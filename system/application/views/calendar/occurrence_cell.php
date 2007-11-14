@@ -13,136 +13,135 @@
 
 $CI = & get_instance();
 ?>
-<div id="ev_15" class="calviewIndEventBox2" style="width: 100%;<?php
+<div id="ev_15" class="cal_event cal_event_nojs<?php
 	$cat = $Occurrence->Event->Category;
 	if (array_key_exists($cat, $Categories)) {
-		if (array_key_exists('colour', $Categories[$cat])) {
-			echo(' background-color:#'.$Categories[$cat]['colour'].';');
-		}
+		echo(" cal_category_$cat");
 	}
 ?>">
-	<div style="padding: 2px;font-size: small;">
+	<?php
+	echo('<div class="cal_event_heading"><a href="'.
+		site_url(
+			$Path->OccurrenceInfo($Occurrence).
+			$CI->uri->uri_string().'">'.
+			htmlentities($Occurrence->Event->Name, ENT_QUOTES, 'utf-8')
+		).
+		'</a></div>'
+	);
+	?>
+	<div class="cal_event_info" id="ev_es_%%refid%%">
 		<?php
-		echo('<span><a href="'.
-			site_url(
-				$Path->OccurrenceInfo($Occurrence).
-				$CI->uri->uri_string().'">'.
-				htmlentities($Occurrence->Event->Name, ENT_QUOTES, 'utf-8')
-			).
-			'</a></span>'
-		);
+		if ($Occurrence->TimeAssociated) {
+			echo($Occurrence->StartTime->Format('%T'));
+			echo('-');
+			echo($Occurrence->EndTime->Format('%T'));
+			echo('<br />');
+		}
 		?>
-		<div class="calviewExpandedSmall" id="ev_es_%%refid%%" style="margin-top: 2px;">
-			<div>
-				<?php
-				if ($Occurrence->TimeAssociated) {
-					echo($Occurrence->StartTime->Format('%T'));
-					echo('-');
-					echo($Occurrence->EndTime->Format('%T'));
-					echo('<br />');
+	</div>
+	<div class="cal_event_info"><?php
+		/*
+		if ('published' === $Occurrence->State ||
+			'cancelled' === $Occurrence->State ||
+			'owner' === $Occurrence->Event->UserStatus)	
+		{
+			echo('<strong>'.$Occurrence->State.'</strong>');
+		}
+		*/
+		if (!$Squash) {
+			/*
+			if ('owner' === $Occurrence->Event->UserStatus) {
+				$links = array();
+				if ($Occurrence->UserHasPermission('publish')) {
+					$links[] = '<a href="'.
+						site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
+						'">publish</a>';
 				}
-				if ('published' === $Occurrence->State ||
-					'cancelled' === $Occurrence->State ||
-					'owner' === $Occurrence->Event->UserStatus)	
-				{
-					echo('<strong>'.$Occurrence->State.'</strong>');
+				if ($Occurrence->UserHasPermission('delete')) {
+					$links[] = '<a href="'.
+						site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
+						'">delete</a>';
 				}
-				if (!$Squash) {
-					/*
-					if ('owner' === $Occurrence->Event->UserStatus) {
-						$links = array();
-						if ($Occurrence->UserHasPermission('publish')) {
-							$links[] = '<a href="'.
-								site_url($Path->OccurrencePublish($Occurrence).$CI->uri->uri_string()).
-								'">publish</a>';
-						}
-						if ($Occurrence->UserHasPermission('delete')) {
-							$links[] = '<a href="'.
-								site_url($Path->OccurrenceDelete($Occurrence).$FailRedirect).
-								'">delete</a>';
-						}
-						if ($Occurrence->UserHasPermission('cancel')) {
-							$links[] = '<a href="'.
-								site_url($Path->OccurrenceCancel($Occurrence).$CI->uri->uri_string()).
-								'">cancel</a>';
-						}
-						if ($Occurrence->UserHasPermission('postpone')) {
-							$links[] = '<a href="'.
-								site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
-								'">postpone</a>';
-						}
-						echo(' ('.implode(', ', $links).')');
-					}
-					*/
-					echo('<br />');
-					if (!empty($Occurrence->LocationDescription)) {
-						echo(htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
-						echo('<br />');
-					}
-					echo('<i>');
-					echo($Occurrence->Event->GetDescriptionHtml());
-					echo('</i>');
+				if ($Occurrence->UserHasPermission('cancel')) {
+					$links[] = '<a href="'.
+						site_url($Path->OccurrenceCancel($Occurrence).$CI->uri->uri_string()).
+						'">cancel</a>';
 				}
-				$show_attendence = !$Squash;
-				$attendence_actions = ($show_attendence
-					? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
-					: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
-				);
-				if ($Occurrence->UserHasPermission('set_attend') &&
-					$Occurrence->State == 'published' /*&&
-					$Occurrence->EndTime->Timestamp() > time()*/)
-				{
-					echo('<br />');
-					if (!$show_attendence) {
-						echo('attend:');
-					}
-					if ('no' === $Occurrence->UserAttending) {
-						if ($show_attendence) {
-							echo('not attending');
-						}
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
-								'">'.$attendence_actions['yes'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
-								'">'.$attendence_actions['maybe'].'</a>)');
-						}
-					} elseif ('yes' === $Occurrence->UserAttending) {
-						if ($show_attendence) {
-							echo('attending');
-						}
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
-								'">'.$attendence_actions['maybe'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
-								'">'.$attendence_actions['no'].'</a>)');
-						}
-					} elseif ('maybe' === $Occurrence->UserAttending) {
-						if ($show_attendence) {
-							echo('maybe attending');
-						}
-						if ($Occurrence->Event->Source->IsSupported('attend')) {
-							echo(' (<a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
-								'">'.$attendence_actions['yes'].'</a>');
-							echo(', <a href="'.
-								site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
-								'">'.$attendence_actions['no'].'</a>)');
-						}
-					}
+				if ($Occurrence->UserHasPermission('postpone')) {
+					$links[] = '<a href="'.
+						site_url($Path->OccurrencePostpone($Occurrence).$CI->uri->uri_string()).
+						'">postpone</a>';
 				}
-				
-				if (!$Squash) {
-					if (NULL !== $Occurrence->Event->Image) {
-						echo('<br />');
-						echo('<img src="'.$Occurrence->Event->Image.'" />');
-					}
+				echo(' ('.implode(', ', $links).')');
+			}
+			*/
+			echo('<br />');
+			if (!empty($Occurrence->LocationDescription)) {
+				echo(htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
+				echo('<br />');
+			}
+			echo('<i>');
+			echo($Occurrence->Event->GetDescriptionHtml());
+			echo('</i>');
+		}
+		$show_attendence = !$Squash;
+		$attendence_actions = ($show_attendence
+			? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+			: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
+		);
+		if ($Occurrence->UserHasPermission('set_attend') &&
+			$Occurrence->State == 'published' /*&&
+			$Occurrence->EndTime->Timestamp() > time()*/)
+		{
+			echo('<br />');
+			if (!$show_attendence) {
+				echo('attend:');
+			}
+			if ('no' === $Occurrence->UserAttending) {
+				if ($show_attendence) {
+					echo('not attending');
 				}
-				?>
-			</div>
-		</div>
+				if ($Occurrence->Event->Source->IsSupported('attend')) {
+					echo(' (<a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+						'">'.$attendence_actions['yes'].'</a>');
+					echo(', <a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+						'">'.$attendence_actions['maybe'].'</a>)');
+				}
+			} elseif ('yes' === $Occurrence->UserAttending) {
+				if ($show_attendence) {
+					echo('attending');
+				}
+				if ($Occurrence->Event->Source->IsSupported('attend')) {
+					echo(' (<a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'maybe')).$CI->uri->uri_string().
+						'">'.$attendence_actions['maybe'].'</a>');
+					echo(', <a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+						'">'.$attendence_actions['no'].'</a>)');
+				}
+			} elseif ('maybe' === $Occurrence->UserAttending) {
+				if ($show_attendence) {
+					echo('maybe attending');
+				}
+				if ($Occurrence->Event->Source->IsSupported('attend')) {
+					echo(' (<a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'yes')).$CI->uri->uri_string().
+						'">'.$attendence_actions['yes'].'</a>');
+					echo(', <a href="'.
+						site_url($Path->OccurrenceAttend($Occurrence,'no')).$CI->uri->uri_string().
+						'">'.$attendence_actions['no'].'</a>)');
+				}
+			}
+		}
+		
+		if (!$Squash) {
+			if (NULL !== $Occurrence->Event->Image) {
+				echo('<br />');
+				echo('<img src="'.$Occurrence->Event->Image.'" />');
+			}
+		}
+		?>
 	</div>
 </div>

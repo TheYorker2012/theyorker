@@ -25,10 +25,23 @@ class Calendar extends controller
 	function _remap()
 	{
 		$this->load->model('subcontrollers/calendar_subcontroller');
+		
 		$this->calendar_subcontroller->_SetDefault('index');
-		$this->calendar_subcontroller->_AddPermission('create', 'edit', 'index', 'subscriptions');
+		
+		$permissions = array(
+			'create', // Creation of new events
+			'edit',   // Editing of owned events
+			'index',  // Index (summary) page
+		);
+		/// @todo subscriptions tab is disabled in 1.1.1
+		/*
+		$permissions[] = 'subscriptions';
+		*/
+		$this->calendar_subcontroller->_AddPermission($permissions);
+		
 		$sources = & $this->calendar_subcontroller->GetSources();
 		$sources->DisableGroup('inactive');
+		
 		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	

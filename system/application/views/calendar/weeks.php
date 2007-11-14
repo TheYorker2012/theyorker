@@ -1,3 +1,187 @@
+<style type="text/css">
+table#calendar_view {
+	border-collapse: collapse;
+	margin: 0;
+}
+
+table#calendar_view th {
+	text-align: center;
+}
+
+table#calendar_view td#calendar_all_day_events {
+	border: 1px #999 solid;
+	height: <?php echo($HourHeight/2); ?>px;
+}
+
+table#calendar_view td#calendar_time_up {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+table#calendar_view td#calendar_time_down {
+	text-align: center;
+	vertical-align: top;
+}
+
+table#calendar_view td.cal_day_counts {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+table#calendar_view td.cal_day_counts2 {
+	text-align: center;
+	vertical-align: top;
+}
+
+table#calendar_view td#calendar_time {
+	vertical-align: top;
+}
+
+table#calendar_view td#calendar_time div {
+	height: <?php echo($HourHeight); ?>px;
+	text-align: right;
+}
+
+table#calendar_view td.calendar_day {
+	border: 1px #999 solid;
+	background-image: url('/images/prototype/calendar/grid2.gif');
+	background-position: top left;
+	height: <?php echo(24*$HourHeight); ?>px;
+	width: <?php echo(floor(100/7)); ?>%;
+	vertical-align: top;
+	padding: 0;
+}
+
+table#calendar_view td.calendar_day div.cal_event {
+	overflow: hidden;
+	position: absolute;
+	width: auto;
+	margin: 0 2px;
+	padding: 0;
+	-moz-opacity:0.8;
+}
+
+table#calendar_view td#calendar_all_day_events div.cal_event {
+	overflow: hidden;
+	position: absolute;
+	width: auto;
+	margin: 0 0 2px 0;
+	padding: 0;
+	-moz-opacity:0.8;
+}
+
+table#calendar_view div.cal_event div.cal_event_heading {
+	padding: 0 2px;
+}
+
+table#calendar_view div.cal_event div.cal_event_heading div.cal_event_heading_box {
+	float: right;
+	clear: none;
+}
+table#calendar_view div.cal_event div.cal_event_heading div.cal_event_heading_box img {
+	width: 12px;
+	height: 12px;
+}
+
+table#calendar_view div.cal_event div.cal_event_heading a {
+	color: #fff;
+}
+
+table#calendar_view div.cal_event div.cal_event_heading a:hover {
+	text-decoration: none;
+}
+
+table#calendar_view div.cal_category_new_event {
+	border: 1px #20C1F0 solid;
+	background-color: #a9ecff;
+}
+
+table#calendar_view div.cal_category_new_event div {
+	text-align: right;
+	font-size: x-small;
+}
+
+table#calendar_view div.cal_category_new_event input {
+	width: 80%;
+	border: 1px #20C1F0 solid;
+	background-color: #d4f4fd;
+}
+
+div.cal_new_event_box {
+	border: 1px #20C1F0 solid;
+	background-color: #FFFFFF;
+	position: absolute;
+	-moz-opacity:0.9;
+}
+div.cal_new_event_box h2 {
+	margin: 2px 4px;
+}
+
+table#calendar_view div.cal_event div.cal_event_info {
+	font-size: x-small;
+	padding: 0 2px;
+}
+
+table#calendar_view div.cal_event_split_top {
+	border-top: 0;
+}
+
+table#calendar_view div.cal_event_split_bottom {
+	border-bottom: 0;
+}
+
+<?php foreach ($Categories as $Name => $Settings) { ?>
+table#calendar_view div.cal_category_<?php echo($Name); ?> {
+	border: 1px #<?php echo($Settings['border_colour']); ?> solid;
+	background-color: #<?php echo($Settings['colour']); ?>;
+	background-position: bottom right;
+	background-repeat: no-repeat;
+	<?php if ($Settings['image'] !== NULL) { ?>
+	background-image: url('<?php echo($Settings['image']); ?>');
+	<?php } ?>
+}
+
+table#calendar_view div.cal_category_<?php echo($Name); ?> div.cal_event_heading {
+	background-color: #<?php echo($Settings['heading_colour']); ?>;
+}
+<?php } ?>
+
+
+table#calendar_view td.calendar_day div.cal_event.new {
+	border: 2px dashed #00FF00;
+}
+
+table#calendar_view td.calendar_day div.cal_event.personal {
+	border: 1px dotted #FF0000;
+}
+
+table#calendar_view td.calendar_day div.cal_event.attend {
+	border: 2px dashed #FF0000;
+}
+
+table#calendar_view td.calendar_day div.cal_event.noattend {
+	border: 2px dashed #808080;
+}
+
+table#calendar_view td.calendar_day div.cal_event_nojs {
+	position: static;
+	margin-bottom: 2px;
+}
+/*
+table#calendar_view td.calendar_day div.cal_event.attend.cancelled {
+	border: 2px solid #FF0000;
+}
+*/
+table#calendar_view td.calendar_day div.cal_event.draft {
+	border: 2px dashed #808080;
+}
+table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_heading {
+	background-color: black;
+	color: white;
+}
+
+</style>
+
 <?php
 
 echo('<div align="center">');
@@ -14,7 +198,7 @@ echo('</div>');
 
 $squash = count($Days) > 3;
 
-echo('<table id="calviewCalTable" border="0" cellpadding="0" cellspacing="0" width="100%">');
+echo('<table id="calendar_view" border="0" cellpadding="0" cellspacing="0" width="100%">');
 $last_term = $Weeks[count($Weeks)-1]['start']->AcademicTerm();
 foreach ($Weeks as $key => $week) {
 	if ($last_term !== $week['start']->AcademicTerm()) {
@@ -28,9 +212,9 @@ foreach ($Weeks as $key => $week) {
 	echo('<tr>');
 	echo('<th></th>');
 	foreach ($week['days'] as $date => $day) {
-		echo('<th class="calviewCalHeadingCell">');
+		echo('<th>');
 		echo('<a href="'.$day['link'].'">');
-		echo($day['date']->Format('l'));
+		echo($day['date']->Format('D'));
 		echo('<br />');
 		echo($day['date']->Format('jS M'));
 		echo('</a>');
@@ -40,7 +224,7 @@ foreach ($Weeks as $key => $week) {
 	echo('<th><a href="'.$week['link'].'">'.$week['start']->AcademicWeek().'</a></th>');
 	foreach ($week['days'] as $date => $day) {
 		$times = $day['events'];
-		echo('<td><a href="'.$day['link'].'">');
+		echo('<td class="calendar_day"><a href="'.$day['link'].'">');
 		foreach ($times as $time => $ocs) {
 			foreach ($ocs as $occurrence) {
 				$CI->load->view('calendar/occurrence_cell', array(

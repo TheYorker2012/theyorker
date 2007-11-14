@@ -236,13 +236,16 @@ class Calendar_view_edit_simple
 			} else {
 				$result['range_method'] = 'noend';
 			}
+			$by_fields = array();
+			foreach ($fields as $field => $dummy) {
+				if (substr($field, 0, 2) === 'by') {
+					$by_fields[$field] = $dummy;
+				}
+			}
 			$match = true;
 			if ('daily' === $freq) {
-				foreach ($fields as $field => $dummy) {
-					if (substr($field, 0, 2) === 'by') {
-						$match = false;
-						break;
-					}
+				if (!empty($by_fields)) {
+					$match = false;
 				}
 			} elseif ('weekly' === $freq) {
 				foreach ($fields as $field => $dummy) {
@@ -377,9 +380,18 @@ class Calendar_view_edit_simple
 					$match = false;
 				}
 			} elseif ('yearly' === $freq) {
-				if (isset($fields['bymonthday']) && isset($fields['bymonth'])) {
-					$monthdays = $rrule->GetByMonthDay();
-					$months = $rrule->GetByMonth();
+				if (empty($by_fields) ||
+					(isset($fields['bymonthday']) && isset($fields['bymonth'])))
+				{
+					list($start_date) = $recur->GetStartEnd();
+					$start_date = new Academic_time($start_date);
+					if (empty($by_fields)) {
+						$monthdays = array($start_date->DayOfMonth());
+						$months = array($start_date->Month());
+					} else {
+						$monthdays = $rrule->GetByMonthDay();
+						$months = $rrule->GetByMonth();
+					}
 					if (count($monthdays) === 1 && count($months) === 1) {
 						foreach ($fields as $field => $dummy) {
 							if (substr($field, 0, 2) === 'by' && $field !== 'bymonthday' && $field !== 'bymonth') {
