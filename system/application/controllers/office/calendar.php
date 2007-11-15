@@ -12,12 +12,22 @@ class Calendar extends controller
 	
 	function _remap()
 	{
+		if (!CheckPermissions('vip+pr')) return;
 		$this->load->model('subcontrollers/calendar_subcontroller');
 		$this->calendar_subcontroller->_SetDefault('index');
 		$this->calendar_subcontroller->_SetPermission('vip+pr');
 		$this->calendar_subcontroller->_AddPermission('create', 'edit', 'index');
 		$this->calendar_subcontroller->SetIndexPageCode('viparea_calendar_index');
 		$this->calendar_subcontroller->SetRangePageCode('viparea_calendar');
+		
+		$sources = & $this->calendar_subcontroller->GetSources();
+		$sources->DisableGroup('subscribed');
+		$sources->EnableGroup('owned');
+		$sources->EnableGroup('private');
+		$sources->EnableGroup('active');
+		$sources->EnableGroup('inactive');
+		$sources->EnableGroup('show');
+		
 		$this->calendar_subcontroller->_map(func_get_args());
 	}
 	
