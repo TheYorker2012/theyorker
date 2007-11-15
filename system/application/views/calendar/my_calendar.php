@@ -88,10 +88,12 @@ if (isset($RangeDescription)) {
 <?php
 if (isset($streams)) {
 	foreach ($streams as $id => $stream) {
-		if ($stream['subscribed']) {
-			echo($Path->OrganisationUnsubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
-		} else {
-			echo($Path->OrganisationSubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
+		if (isset($stream['subscribed'])) {
+			if ($stream['subscribed']) {
+				echo($Path->OrganisationUnsubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
+			} else {
+				echo($Path->OrganisationSubscribeLink($stream['name'], $stream['short_name'], 'calendar'));
+			}
 		}
 	}
 }
