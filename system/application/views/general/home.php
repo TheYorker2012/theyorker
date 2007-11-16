@@ -52,17 +52,16 @@
 		</p>
 	</div>
 
-	<!--
 	<h2>Upcoming Events</h2>
 	<div class="Entry">
 		<?php $events->Load(); ?>
 	</div>
-
+	<?php /*
 	<h2>To Do</h2>
 	<div class="Entry">
 		<?php $todo->Load(); ?>
 	</div>
-	-->
+	*/ ?>
 
 <?php
 if ($weather_forecast != null) {

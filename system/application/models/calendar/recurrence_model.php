@@ -1265,6 +1265,16 @@ class RecurrenceSet
 	/// array[CalendarRecurRule] Recurrence rules to exclude.
 	protected $mExRules = array();
 	
+	/// Clear the recurrence so that no occurrences will be generated.
+	function ClearRecurrence()
+	{
+		$this->mRDates = array();
+		$this->mRRules = array();
+		$this->mExDates = array();
+		$this->mExRules = array();
+		$this->AddExDates(array(date('Ymd',$this->mStart) => array(NULL => NULL)));
+	}
+	
 	/// Find whether the start occurrence has been set yet.
 	/**
 	 * @return bool Whether @a $mStart has been set yet.
@@ -1873,7 +1883,7 @@ class Recurrence_model extends model
 				if (!array_key_exists($start_date, $exclude_ranges)) {
 					$exclude_ranges[$start_date] = array();
 				}
-				$exclude_ranges[$start_date][$start_time] = FALSE;
+				$exclude_ranges[$start_date][$start_time] = NULL;
 			}
 		}
 		

@@ -29,7 +29,7 @@ $CI = & get_instance();
 		'</a></div>'
 	);
 	?>
-	<div class="cal_event_info" id="ev_es_%%refid%%">
+	<div class="cal_event_info">
 		<?php
 		if ($Occurrence->TimeAssociated) {
 			echo($Occurrence->StartTime->Format('%T'));

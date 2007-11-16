@@ -140,7 +140,7 @@ class CalendarViewEditSimpleValidate
 			{
 				$this->mRset = Calendar_view_edit_simple::validate_recurrence_set_data(!(isset($data[$prefix.'_allday']) && $data[$prefix.'_allday']), $data[$prefix.'_start'], $data[$prefix.'_duration'], $data[$prefix.'_recur_simple'], $data[$prefix.'_inex'], $this->mErrors);
 				
-				$this->mResults = $this->mRset->Resolve(strtotime('-1month'), strtotime('1year'));
+				$this->mResults = $this->mRset->Resolve(strtotime('-1year'), strtotime('1year'));
 			} else {
 				$this->mErrors[] = array('field' => '', 'text' => 'No simple recurrence data.');
 			}

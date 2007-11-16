@@ -268,8 +268,8 @@ $CI = & get_instance();
 	<?php } elseif (!$Create) { ?>
 				<p>	The following changes will be made to your event. Please
 					confirm that they are correct. <p>
-				<p>	<em>Occurrences which are in the past will
-					<strong>not</strong> be altered.</em> </p>
+<?php /*				<p>	<em>Occurrences which are in the past will
+					<strong>not</strong> be altered.</em> </p>	*/ ?>
 	<?php } else { ?>
 				<p>	The following changes will be made to your new event. Please
 					confirm that they are correct. <p>
@@ -731,7 +731,7 @@ $CI = & get_instance();
 								) ?></div>
 								<fieldset class="delete">
 									<input type="hidden" name="eved_inex[<?php echo($inexes.']['.$date); ?>]" value="<?php echo($date); ?>" />
-									<input class="button" type="submit" name="eved_inex[<?php echo($inex); ?>_remove_btns][<?php echo($date); ?>]" value="Delete" onclick="return RemoveInexDate('<?php echo($inex); ?>','<?php echo($date); ?>');" />
+									<input class="button" type="submit" name="eved_inex[<?php echo($inex); ?>_remove_btns][<?php echo($date); ?>]" value="Delete" onclick="return RemoveInexDate('<?php echo(substr($inex,0,2)); ?>','<?php echo($date); ?>');" />
 								</fieldset>
 							</div>
 									<?php

@@ -75,8 +75,9 @@ class Home extends Controller {
 		$EventsView->SetCalendarData($calendar_data);
 		//$EventsView->SetStartEnd($start->Timestamp(), $end->Timestamp());
 
-		$TodoView = new CalendarViewTodoList();
-		$TodoView->SetCalendarData($calendar_data);
+		$TodoView = NULL;
+// 		$TodoView = new CalendarViewTodoList();
+// 		$TodoView->SetCalendarData($calendar_data);
 		return array($EventsView, $TodoView);
 	}
 	

@@ -188,7 +188,24 @@ $CI = & get_instance();
 					echo('<img src="'.$Event->Image.'" />');
 				}
 				echo('</p>');
-				?>
+				if (NULL === $Occurrence) {
+					$delete_action = $Path->EventEdit($Event);
+				} else {
+					$delete_action = $Path->OccurrenceEdit($Occurrence);
+				}
+				if (!$Event->ReadOnly) { ?>
+				<form class="form" method="post" action="<?php echo(site_url($delete_action).$FailRedirect); ?>">
+					<fieldset>
+						<?php if (count($Event->Occurrences) > 1) { ?>
+						<input class="button" type="submit" name="evview_delete_all" value="Delete All" />
+						<?php if (NULL !== $Occurrence) {
+						?><input class="button" type="submit" name="evview_delete" value="Delete This" />
+						<?php } } else { ?>
+						<input class="button" type="submit" name="evview_delete_all" value="Delete" />
+						<?php }?>
+					</fieldset>
+				</form>
+				<?php } ?>
 				<form class="form" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 					<fieldset>
 						<input class="button" type="submit" name="evview_return" value="Return" />

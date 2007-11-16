@@ -16,18 +16,30 @@
 /// Upcoming calendar view class.
 class CalendarViewUpcoming extends CalendarView
 {
+	/// CalendarPath Paths object.
+	private $Paths;
+
 	/// Default constructor.
 	function __construct()
 	{
 		parent::__construct('calendar/upcoming');
 		
 		$this->SetData('MiniMode', FALSE);
+		
+		get_instance()->load->model('subcontrollers/calendar_subcontroller');
+		$this->Paths = new CalendarPaths();
+		$this->SetPath('calendar');
 	}
 	
 	/// Whether to use mini mode.
 	function SetMiniMode($Mini = TRUE)
 	{
 		$this->SetData('MiniMode', $Mini);
+	}
+	
+	/// Set the path to the calendar
+	function SetPath($Path) {
+		$this->Paths->SetPath($Path);
 	}
 	
 	/// Process the calendar data to produce view data.
@@ -45,6 +57,7 @@ class CalendarViewUpcoming extends CalendarView
 		
 		$this->SetData('Occurrences', $occurrences);
 		$this->SetData('Events', $events);
+		$this->SetData('Path', $this->Paths);
 	}
 }
 

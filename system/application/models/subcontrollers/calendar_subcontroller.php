@@ -897,6 +897,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	/// Display agenda.
 	function agenda()
 	{
+		if (!isset($this->mPermissions['agenda'])) {
+			show_404();
+		}
 		if (!CheckPermissions($this->mPermission)) return;
 		
 		$this->_SetupMyCalendar();
@@ -933,6 +936,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$data = array(
 			'Filters'	=> $this->GetFilters($this->mMainSource),
 			'ViewMode'	=> $agenda,
+			'Path'		=> $this->mPaths,
 		);
 		
 		$this->SetupTabs('agenda', new Academic_time(time()), $filter);
@@ -1520,6 +1524,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			
 			$input_summary = $this->input->post($prefix.'_summary');
 			$errors = array();
+			$process_input = false;
 			
 			// Read the recurrence data
 			if (isset($_POST[$prefix.'_recur_simple']) and
@@ -1540,6 +1545,17 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			/// @todo Fix that the new rset doesn't have the same rrule ids, so theres a deletion/insertion instead of update.
 			if (!isset($rset_arr)) {
 				$rset = $event->GetRecurrenceSet();
+				if (isset($_POST['evview_delete']) && NULL !== $found_occurrence) {
+					$rset->AddExDates(array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL)));
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				} elseif (isset($_POST['evview_delete_all'])) {
+					$rset->ClearRecurrence();
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				}
 				$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 			}
 			// Always fill in the inex info again, ignoring input from form.
@@ -1562,6 +1578,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$confirm_list = NULL;
 			if (false !== $input_summary) {
 				$input_valid = true;
+				$process_input = true;
 				
 				// Get more post data
 				$input['name'] = $input_summary;
@@ -1591,7 +1608,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					}
 				}
 				$input['time_associated'] = ($this->input->post($prefix.'_allday') === false);
-				
+			}
+			if ($process_input) {
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
 				
@@ -2182,15 +2200,13 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$Filter
 				))
 			);
-			if (false) {
-			//if (is_string($this->mAgenda)) {
+			if (isset($this->mPermissions['agenda'])) {
 				$navbar->AddItem('agenda', 'Agenda',
 					site_url($this->mPaths->Agenda(
 						$Start->Year().'-'.strtolower($Start->Format('M')).'-'.$Start->DayOfMonth(),
 						$Filter
 					))
 				);
-			//}
 			}
 			if (isset($this->mPermissions['subscriptions'])) {
 				$navbar->AddItem('subscriptions', 'Subscriptions',

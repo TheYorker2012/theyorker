@@ -809,6 +809,14 @@ class Academic_time
 						0 => mktime(0,0,0, 10, 8, 2012),
 						2 => mktime(0,0,0,  1, 9, 2013),
 						4 => mktime(0,0,0,  4,23, 2013));
+			} elseif ($AcademicYear >= 1970 && $AcademicYear < 2037) {
+				// Mostly unknown:
+				$start = new Academic_time(mktime(0,0,0, 10, 8, $AcademicYear));
+				$start = $start->BackToMonday();
+				$year_data['term_start'] = array(
+						0 => $start->Timestamp(),
+						2 => $start->Adjust('+13weeks')->Timestamp(),
+						4 => $start->Adjust('+28weeks')->Timestamp());
 			} else {
 				// The year in question is invalid
 				// (cause it ain't yet implemented)
