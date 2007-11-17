@@ -89,7 +89,17 @@ $months = array(
 $now_year = (int)date('Y');
 
 /// Echo a simple gregorian date selector.
-function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear, $onchange = NULL)
+/**
+ * @param $id             string
+ * @param $name           string
+ * @param $default        ?timestamp
+ * @param $minyear        int
+ * @param $maxyear        int
+ * @param $onchange       javascript Change of monthday, month, year event.
+ * @param $on_time_change javascript Change of time event.
+ */
+function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear,
+								$onchange = NULL, $on_time_change = NULL)
 {
 	global $nth_set;
 	global $months;
@@ -146,7 +156,8 @@ function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear, $onchan
 		list($default_hour, $default_minute) = split(':', $default['time']);
 		$default_minute -= $default_minute % 15;
 		$timeFormat24 = get_instance()->user_auth->timeFormat == 24;
-		?><select id="<?php echo($id); ?>_time" name="<?php echo($name); ?>[time]">
+		?><input id="<?php echo($id); ?>_time_mem" type="hidden" value="<?php echo("$default_hour:$default_minute"); ?>"/>
+		<select<?php if (NULL !== $on_time_change) { echo(" onchange=\"$on_time_change\""); } ?> id="<?php echo($id); ?>_time" name="<?php echo($name); ?>[time]">
 		<?php
 			for ($hour = 0; $hour < 24; ++$hour) {
 				for ($minute = 0; $minute < 60; $minute += 15) {
@@ -393,7 +404,8 @@ $CI = & get_instance();
 						$EventInfo['start'],
 						$now_year,
 						$now_year+5,
-						'UpdateRecurCalPreviewLoad();');
+						'UpdateRecurCalPreviewLoad();',
+						"StartTimeChange(this, 'eved_start_time_mem', 'eved_duration_time');");
 					?>
 					<?php
 					DurationSelector(
