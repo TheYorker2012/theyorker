@@ -18,6 +18,7 @@
  * @param $Confirm array Previous post data.
  * @param $CanPublish bool Whether the user can publish this event.
  * @param $Create bool whether the event is new.
+ * @param $SuccessRedirect bool,NULL Redirect to tail after success.
  *
  * @todo Send information about what fields have changed, and only send the deltas
  */
@@ -347,6 +348,9 @@ $CI = & get_instance();
 			<div id="main_edit_divs" style="display:<?php echo(isset($Confirms) ? 'none' : 'block'); ?>;">
 			<div class="BlueBox">
 				<input type="hidden" id="prefix" name="prefix" value="eved" />
+<?php			if (isset($SuccessRedirect) && $SuccessRedirect) {
+?>				<input type="hidden" id="<?php echo('eved_success_redirect'); ?>" name="<?php echo('eved_success_redirect'); ?>" value="on" /><?php
+				} ?>
 				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
 ?>				<input type="hidden" id="<?php echo('eved_'.$key); ?>" name="<?php echo('eved_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
 				<?php } ?>

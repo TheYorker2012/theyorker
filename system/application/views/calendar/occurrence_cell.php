@@ -18,6 +18,9 @@ $CI = & get_instance();
 	if (array_key_exists($cat, $Categories)) {
 		echo(" cal_category_$cat");
 	}
+	if ($Occurrence->State == 'cancelled') {
+		echo(" cancelled");
+	}
 ?>">
 	<?php
 	echo('<div class="cal_event_heading"><a href="'.

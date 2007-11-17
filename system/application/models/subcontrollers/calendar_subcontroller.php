@@ -157,7 +157,7 @@ class CalendarPaths
 	/// Get the event creation path.
 	function EventCreateQuickRaw($SourceId)
 	{
-		return $this->mPath . "/src/$SourceId/qcreate/";
+		return $this->EventCreateRaw($SourceId);
 	}
 	
 	/// Get the event creation path.
@@ -492,7 +492,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						'' => 'index',
 						'index' => 'src_source_index',
 						'create' => 'src_source_create',
-						'qcreate' => 'src_source_create_quick',
 						'event' => array(
 							'*' => array(
 								'_store' => 'EventId',
@@ -1082,7 +1081,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						$this->messages->AddMessage('error', 'Event must not end before it starts');
 						$input_valid = false;
 					}
-					if ($start < strtotime('today-1month')) {
+					if ($start < strtotime('today-1year')) {
 						$this->messages->AddMessage('error', 'Event out of range');
 						$input_valid = false;
 					}
@@ -1142,6 +1141,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$args = func_get_args();
 		array_shift($args);
 		$tail = implode('/', $args);
+		// Whether to redirect to tail on success
+		$success_redirect_to_tail = false;
+		if (isset($_POST['eved_success_redirect'])) {
+			$success_redirect_to_tail = true;
+		}
 		
 		if (!$this->mSource->IsSupported('create')) {
 			// Create isn't supported with this source
@@ -1150,8 +1154,84 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			return;
 		}
 		
-		// Get the buttons from post data
 		$prefix = 'eved';
+		// Default start and end
+		$start = strtotime('tomorrow+12hours');
+		$end = strtotime('tomorrow+13hours');
+		
+		// check for post data from mini creater
+		// this simply sets the _POST data so it can be analysed as if clicked save
+		$input = array();
+		if (isset($_POST['evad_create'])) {
+			$input_valid = true;
+
+			// Transfer post data
+			@$_POST[$prefix.'_summary'] = $_POST['evad_summary'];
+			@$_POST[$prefix.'_category'] = $_POST['evad_category'];
+			@$_POST[$prefix.'_location'] = $_POST['evad_location'];
+			@$_POST[$prefix.'_description'] = $_POST['evad_description'];
+			
+			$input_date = $this->input->post('evad_date');
+			$input_start = $this->input->post('evad_start');
+			$input_end = $this->input->post('evad_end');
+			if (false === $input_date || false === $input_start || false === $input_end) {
+				$this->messages->AddMessage('error', 'Missing event time information.');
+				$input_valid = false;
+			} else {
+				if (!is_numeric($input_date)) {
+					$this->messages->AddMessage('error', 'Invalid date');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_start) || $input_start < 0 || $input_start > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid start time');
+					$input_valid = false;
+				}
+				if (!is_numeric($input_end) || $input_end < 0 || $input_end > 48*60) {
+					$this->messages->AddMessage('error', 'Invalid end time');
+					$input_valid = false;
+				}
+				if ($input_valid) {
+					$starthour = (int)($input_start / 60);
+					$startminute = (int)($input_start % 60);
+					$start = strtotime("$input_date 000000");
+					if ($starthour >= 24) {
+						$start = strtotime('+1day', $start);
+						$starthour -= 24;
+					}
+					$start = strtotime(date('Ymd', $start).' '.sprintf("%02d%02d", $starthour, $startminute).'00');
+					
+					$endhour = (int)($input_end / 60);
+					$endminute = (int)($input_end % 60);
+					$end = strtotime("$input_date 000000");
+					if ($endhour >= 24) {
+						$end = strtotime('+1day', $end);
+						$endhour -= 24;
+					}
+					$end = strtotime(date('Ymd', $end).' '.sprintf("%02d%02d", $endhour, $endminute).'00');
+					
+					if ($start >= $end) {
+						$this->messages->AddMessage('error', 'Event must not end before it starts');
+						$input_valid = false;
+					}
+					if ($start < strtotime('today-1year')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+					if ($end > strtotime('today+2year')) {
+						$this->messages->AddMessage('error', 'Event out of range');
+						$input_valid = false;
+					}
+				}
+			}
+			
+			if ($input_valid) {
+				$_POST[$prefix.'_save'] = 'save';
+				$start_end_predefined = true;
+				$success_redirect_to_tail = true;
+			}
+		}
+		
+		// Get the buttons from post data
 		if (isset($_POST[$prefix.'_return'])) {
 			// REDIRECT
 			return redirect($tail);
@@ -1177,7 +1257,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		// Fill it in if none supplied
 		if (!isset($rset_arr)) {
 			$rset = new RecurrenceSet();
-			$rset->SetStartEnd(strtotime('tomorrow+12hours'), strtotime('tomorrow+13hours'));
+			$rset->SetStartEnd($start, $end);
 			$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 		}
 		// Always fill in the inex info again, ignoring input from form.
@@ -1275,7 +1355,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 							}
 							$this->messages->Addmessage($message_type, "$published out of $desired occurrences were published.");
 						}
-						return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+						if ($success_redirect_to_tail) {
+							return redirect($tail);
+						} else {
+							return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+						}
 					}
 				}
 			}
@@ -1317,6 +1401,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'Help' => $help_xhtml,
 			'CanPublish' => $this->mMainSource->IsSupported('publish'),
 			'Create' => true,
+			'SuccessRedirect' => $success_redirect_to_tail,
 		);
 		if (is_array($confirm_list)) {
 			$data['Confirms'] = $confirm_list;
@@ -1475,6 +1560,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$args = func_get_args();
 		$tail = implode('/', $args);
 		
+		$get_action = '';
+		if (isset($_GET['action'])) {
+			$get_action = $_GET['action'];
+		}
+		
 		// Fetch the specified event
 		$calendar_data = new CalendarData();
 		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
@@ -1545,19 +1635,23 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			/// @todo Fix that the new rset doesn't have the same rrule ids, so theres a deletion/insertion instead of update.
 			if (!isset($rset_arr)) {
 				$rset = $event->GetRecurrenceSet();
-				if (isset($_POST['evview_delete']) && NULL !== $found_occurrence) {
+				if ((isset($_POST['evview_delete']) || 'delete' == $get_action) &&
+					NULL !== $found_occurrence)
+				{
 					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
 					$rset->RemoveRDates($inex_date);
 					$rset->AddExDates($inex_date);
 					$process_input = true;
 					$_POST[$prefix.'_save'] = true;
 					$input_valid = true;
-				} elseif (isset($_POST['evview_delete_all'])) {
+				} elseif (	isset($_POST['evview_delete_all']) || 'delete_all' == $get_action) {
 					$rset->ClearRecurrence();
 					$process_input = true;
 					$_POST[$prefix.'_save'] = true;
 					$input_valid = true;
-				} elseif (isset($_POST['evview_restore']) && NULL !== $found_occurrence) {
+				} elseif (	(isset($_POST['evview_restore']) || 'restore' == $get_action) &&
+							NULL !== $found_occurrence)
+				{
 					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
 					$rset->RemoveExDates($inex_date);
 					$rset->AddRDates($inex_date);
@@ -1714,6 +1808,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'Help' => $help_xhtml,
 				'CanPublish' => $this->mMainSource->IsSupported('publish'),
 				'Create' => false,
+				'SuccessRedirect' => false,
 			);
 			if (is_array($confirm_list)) {
 				$data['Confirms'] = $confirm_list;
