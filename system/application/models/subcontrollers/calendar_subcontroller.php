@@ -1546,12 +1546,21 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			if (!isset($rset_arr)) {
 				$rset = $event->GetRecurrenceSet();
 				if (isset($_POST['evview_delete']) && NULL !== $found_occurrence) {
-					$rset->AddExDates(array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL)));
+					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
+					$rset->RemoveRDates($inex_date);
+					$rset->AddExDates($inex_date);
 					$process_input = true;
 					$_POST[$prefix.'_save'] = true;
 					$input_valid = true;
 				} elseif (isset($_POST['evview_delete_all'])) {
 					$rset->ClearRecurrence();
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				} elseif (isset($_POST['evview_restore']) && NULL !== $found_occurrence) {
+					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
+					$rset->RemoveExDates($inex_date);
+					$rset->AddRDates($inex_date);
 					$process_input = true;
 					$_POST[$prefix.'_save'] = true;
 					$input_valid = true;
@@ -1624,6 +1633,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						}
 					}
 					if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
+						if (NULL === $confirm_list) {
+							$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+						}
 						// Make the change
 						$messages = $this->mMainSource->AmmendEvent($event, $input);
 						
@@ -1636,9 +1648,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 							$publish_occurrences = array();
 							foreach (array('create','draft') as $namespace) {
 								if (isset($_POST[$prefix.'_confirm'][$namespace.'_publish'])) {
-									if (NULL === $confirm_list) {
-										$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
-									}
 									foreach ($_POST[$prefix.'_confirm'][$namespace.'_publish'] as $day => $dummy) {
 										if (isset($confirm_list[$namespace][$day])) {
 											$publish_occurrences[] = $confirm_list[$namespace][$day]['start_time'];

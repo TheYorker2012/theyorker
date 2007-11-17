@@ -1447,6 +1447,24 @@ class RecurrenceSet
 		$this->mExDates = self::UnionDates($this->mExDates, $ExDates);
 	}
 	
+	/// Remove recurring dates.
+	/**
+	 * @param $RDates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}] ] Dates to include.
+	 */
+	function RemoveRDates($RDates)
+	{
+		$this->mRDates = self::ExcludeDates($this->mRDates, $RDates);
+	}
+	
+	/// Remove exclusion dates.
+	/**
+	 * @param $ExDates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}] ] Dates to exclude.
+	 */
+	function RemoveExDates($ExDates)
+	{
+		$this->mExDates = self::ExcludeDates($this->mExDates, $ExDates);
+	}
+	
 	/// Add recurrence rules.
 	/**
 	 * @param $RRules array[CalendarRecurRule],CalendarRecurRule Recurrence rule(s).

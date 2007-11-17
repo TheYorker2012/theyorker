@@ -196,13 +196,24 @@ $CI = & get_instance();
 				if (!$Event->ReadOnly) { ?>
 				<form class="form" method="post" action="<?php echo(site_url($delete_action).$FailRedirect); ?>">
 					<fieldset>
-						<?php if (count($Event->Occurrences) > 1) { ?>
-						<input class="button" type="submit" name="evview_delete_all" value="Delete All" />
-						<?php if (NULL !== $Occurrence) {
-						?><input class="button" type="submit" name="evview_delete" value="Delete This" />
-						<?php } } else { ?>
-						<input class="button" type="submit" name="evview_delete_all" value="Delete" />
-						<?php }?>
+				<?php	if (count($Event->Occurrences) > 1) { ?>
+				<input class="button" type="submit" name="evview_delete_all" value="Delete All" />
+				<?php
+							if (NULL !== $Occurrence) {
+								if ($Occurrence->State != 'cancelled') {
+				?><input class="button" type="submit" name="evview_delete" value="Delete This" />
+				<?php			} else {
+				?><input class="button" type="submit" name="evview_restore" value="Restore This" />
+				<?php			}
+							}
+						} elseif (NULL !== $Occurrence) { ?>
+				<?php		if ($Occurrence->State != 'cancelled') {
+				?><input class="button" type="submit" name="evview_delete" value="Delete" />
+				<?php		} else {
+				?><input class="button" type="submit" name="evview_restore" value="Restore" />
+				<?php		}
+						}
+						?>
 					</fieldset>
 				</form>
 				<?php } ?>
