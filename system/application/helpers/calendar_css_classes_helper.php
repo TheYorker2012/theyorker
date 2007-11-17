@@ -36,5 +36,34 @@ function CalCssGetDateClasses(& $day_start, $day_of_week, $past = NULL)
 	return $classes_list;
 }
 
+/// Get the styles associated with an event occurrence
+function CalCssGetEventClasses(&$event_info)
+{
+	$names = array();
+	if ($event_info->UserAttending == 'yes') {
+		$names[] = 'attend';
+	} elseif ($event_info->UserAttending == 'no') {
+		$names[] = 'noattend';
+	}
+	if ($event_info->Event->UserStatus == 'owner' &&
+		$event_info->State == 'draft')
+	{
+		if (!$event_info->UserHasPermission('publish')) {
+			$names[] = 'personal';
+		} else {
+			$names[] = 'draft';
+		}
+	}
+	if ($event_info->State == 'cancelled') {
+		$names[] = 'cancelled';
+	}
+	return $names;
+}
+
+// Change new lines into <br />
+function js_nl2br ($string) {
+	return str_replace(array("\r\n", "\r", "\n"), '<br />', $string);
+}
+
 
 ?>

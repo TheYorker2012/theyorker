@@ -7,6 +7,9 @@
  * @param $Path CalendarPaths object
  */
 
+// Load the calendar css helper
+get_instance()->load->helper('calendar_css_classes');
+
 ?>
 <style type="text/css">
 table#calendar_view {

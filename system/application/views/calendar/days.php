@@ -57,28 +57,9 @@ $attend_state_images = array(
 	),
 );
 
-function GetEventClassNames($event_info)
-{
-	$names = array();
-	if ($event_info->UserAttending == 'yes') {
-		$names[] = 'attend';
-	} elseif ($event_info->UserAttending == 'no') {
-		$names[] = 'noattend';
-	}
-	if ($event_info->Event->UserStatus == 'owner' &&
-		$event_info->State == 'draft')
-	{
-		if (!$event_info->UserHasPermission('publish')) {
-			$names[] = 'personal';
-		} else {
-			$names[] = 'draft';
-		}
-	}
-	if ($event_info->State == 'cancelled') {
-		$names[] = 'cancelled';
-	}
-	return $names;
-}
+// Load the calendar css helper
+get_instance()->load->helper('calendar_css_classes');
+
 ?>
 
 
@@ -87,10 +68,6 @@ function GetEventClassNames($event_info)
 
 <?php
 $HourHeight = 42;
-
-function js_nl2br ($string) {
-	return str_replace(array("\r\n", "\r", "\n"), '<br />', $string);
-}
 ?>
 
 <script type="text/javascript">
@@ -176,7 +153,7 @@ EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>
 EVENT_CACHE[EVENT_COUNT][6]	= '<?php echo(site_url(
 										$Path->OccurrenceInfo($event_info).
 										$CI->uri->uri_string())); ?>';
-EVENT_CACHE[EVENT_COUNT][7]	= '<?php echo(implode(' ', GetEventClassNames($event_info))); ?>';
+EVENT_CACHE[EVENT_COUNT][7]	= '<?php echo(implode(' ', CalCssGetEventClasses($event_info))); ?>';
 EVENT_CACHE[EVENT_COUNT][8]	= -1;
 EVENT_CACHE[EVENT_COUNT][9]	= 1;
 EVENT_CACHE[EVENT_COUNT][10]	= 0;
@@ -198,7 +175,7 @@ ALL_EVENT_CACHE[ALL_EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestam
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][6]	= '<?php echo(site_url(
 												$Path->OccurrenceInfo($event_info).
 												$CI->uri->uri_string())); ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT][7]	= '<?php echo(implode(' ', GetEventClassNames($event_info))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][7]	= '<?php echo(implode(' ', CalCssGetEventClasses($event_info))); ?>';
 ALL_EVENT_COUNT++;
 <?php	}
 	}
@@ -456,7 +433,7 @@ if (isset($ForwardUrl)) {
 ?>
 			<div class="cal_event cal_event_nojs cal_category_<?php
 				echo($event_info->Event->Category);
-				$classNames = implode(' ', GetEventClassNames($event_info));
+				$classNames = implode(' ', CalCssGetEventClasses($event_info));
 				if ($classNames != '') {
 					echo(" $classNames");
 				}
