@@ -34,7 +34,6 @@ class Calendar extends controller
 			'index',  // Index (summary) page
 		);
 		$permissions[] = 'subscriptions';
-		$permissions[] = 'agenda';
 		$this->calendar_subcontroller->_AddPermission($permissions);
 		
 		$sources = & $this->calendar_subcontroller->GetSources();

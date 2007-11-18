@@ -97,7 +97,11 @@ foreach ($special_names as $date => $name) {
 		}
 		echo('</table>');
 	} else {
-		echo('<p>You have no events '.$lowername.'</p>');
+		$more = '';
+		if ($lowername == 'today') {
+			$more = ' more';
+		}
+		echo("<p>You have no$more events $lowername</p>");
 	}
 	echo('</div><a class="RightColumnAction" href="'.site_url($Path->Range($lowername)).'">Go to '.$lowername.'</a>');
 	echo('</div>');

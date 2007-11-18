@@ -661,7 +661,7 @@ function moveDay (day, event) {
 			new_event.style.display	= 'block';
 			DESELECTING_EVENT = false;
 		}
-		new_event.style.top = (findPos(day)[1] - 1 + (start_time*(HOUR_HEIGHT/4))) + 'px';
+		new_event.style.top = (findPos(day)[1] + (start_time*(HOUR_HEIGHT/4))) + 'px';
 		new_event.style.height = (((end_time-start_time)*(HOUR_HEIGHT/4))-4) + 'px';
 
 		updateNewEventTimes(start_time+START_HOUR*4, end_time+START_HOUR*4);
