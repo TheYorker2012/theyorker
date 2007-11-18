@@ -1,3 +1,15 @@
+<?php
+
+/**
+ * @file views/calendar/weeks.php
+ * @brief For term (more than one week) view.
+ * @author James Hogan (jh559)
+ */
+
+// Load the calendar css helper
+get_instance()->load->helper('calendar_css_classes');
+
+?>
 <style type="text/css">
 table#calendar_view {
 	border-collapse: collapse;
@@ -43,9 +55,11 @@ table#calendar_view td#calendar_time div {
 }
 
 table#calendar_view td.calendar_day {
-	border: 1px #999 solid;
 	vertical-align: top;
 	padding: 0;
+}
+table td.calendar_day {
+	border: 1px #999 solid;
 }
 
 table#calendar_view td.calendar_day div.cal_event {
@@ -195,7 +209,7 @@ echo('</div>');
 
 $squash = count($Days) > 3;
 
-echo('<table id="calendar_view" border="0" cellpadding="0" cellspacing="0" width="100%">');
+echo('<table id="calendar_view" class="recur-cal" border="0" cellpadding="0" cellspacing="0" width="100%">');
 $last_term = $Weeks[count($Weeks)-1]['start']->AcademicTerm();
 foreach ($Weeks as $key => $week) {
 	if ($last_term !== $week['start']->AcademicTerm()) {
@@ -221,7 +235,10 @@ foreach ($Weeks as $key => $week) {
 	echo('<th><a href="'.$week['link'].'">'.$week['start']->AcademicWeek().'</a></th>');
 	foreach ($week['days'] as $date => $day) {
 		$times = $day['events'];
-		echo('<td class="calendar_day"><a href="'.$day['link'].'">');
+		$classes_list = CalCssGetDateClasses($day['date'], $day['date']->DayOfWeek(), true);
+		$classes_list[] = 'calendar_day';
+		$classes = implode(' ',$classes_list);
+		echo('<td class="'.$classes.'"><a href="'.$day['link'].'">');
 		foreach ($times as $time => $ocs) {
 			foreach ($ocs as $occurrence) {
 				$CI->load->view('calendar/occurrence_cell', array(

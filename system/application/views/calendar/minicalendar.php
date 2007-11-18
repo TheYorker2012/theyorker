@@ -6,11 +6,15 @@
  * @param $WeekStart int First day of week, 0:sunday, 1:monday...
  * @param $Legend array[description => styles] Legend information.
  */
+
+// Load the calendar css helper
+get_instance()->load->helper('calendar_css_classes');
+
 if (!isset($WeekStart) || NULL === $WeekStart) {
 	$WeekStart = 1;
 }
 ?>
-<table class="recur-cal<?php if (isset($Onclick) && NULL !== $Onclick) echo(' allclick'); ?>">
+<table class="recur-cal cal-text<?php if (isset($Onclick) && NULL !== $Onclick) echo(' allclick'); ?>">
 <?php
 	// Legend
 	if (isset($Legend) && is_array($Legend) && !empty($Legend)) {
@@ -50,19 +54,7 @@ if (!isset($WeekStart) || NULL === $WeekStart) {
 			$day_of_month = $day_start->DayOfMonth();
 			$month = $day_start->Month();
 			$cell_id = $day_start->Format('Ymd');
-			$classes_list = array();
-			if ($cell_id == $today_id) {
-				$classes_list[] = 'tod';
-			}
-			if ($month % 2 == 0) {
-				$classes_list[] = 'ev';
-			}
-			if (($WeekStart+$day_counter+6)%7>4) {
-				$classes_list[] = 'we';
-			}
-			if ($day_start->Timestamp() < $today->Timestamp()) {
-				$classes_list[] = 'pa';
-			}
+			$classes_list = CalCssGetDateClasses($day_start, $WeekStart+$day_counter);
 			if (isset($ClassNames[$cell_id])) {
 				$classes_list = array_merge($classes_list, $ClassNames[$cell_id]);
 			}

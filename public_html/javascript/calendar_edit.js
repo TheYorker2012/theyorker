@@ -115,6 +115,42 @@ function MainRecurrenceToggle()
 	UpdateRecurCalPreviewLoad();
 }
 
+// turn \d{1,2}:\d{1,2} into number of minutes past midnight
+function TimeToMinutes(time)
+{
+	var hours   = Number(time.replace(/^(\d{1,2}):\d{1,2}$/, "$1"));
+	var minutes = Number(time.replace(/^\d{1,2}:(\d{1,2})$/, "$1"));
+	return hours*60 + minutes;
+}
+
+// turn number of seconds past midnight into \d{1,2}:\d{1,2}
+function MinutesToTime(minutes)
+{
+	var hours = Math.floor(minutes / 60);
+	var mins = minutes % 60;
+	return hours + ':' + mins;
+}
+
+/// Move the end time to maintain the duration
+function StartTimeChange(start, memory_name, end_name)
+{
+	var memory = document.getElementById(memory_name);
+	var end = document.getElementById(end_name);
+	if (memory && end) {
+		var original_start = TimeToMinutes(memory.value);
+		var new_start = TimeToMinutes(start.value);
+		var original_end = TimeToMinutes(end.value);
+		var offset = new_start - original_start;
+		var new_end = original_end + offset;
+		new_end = new_end % (24*60);
+		if (new_end < 0) {
+			new_end += 24*60;
+		}
+		end.value = MinutesToTime(new_end);
+		memory.value = start.value;
+	}
+}
+
 /// Update the recurrence calendar preview by AJAX
 function UpdateRecurCalPreviewLoad()
 {

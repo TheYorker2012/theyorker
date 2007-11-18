@@ -157,7 +157,7 @@ class CalendarPaths
 	/// Get the event creation path.
 	function EventCreateQuickRaw($SourceId)
 	{
-		return $this->mPath . "/src/$SourceId/qcreate/";
+		return $this->EventCreateRaw($SourceId);
 	}
 	
 	/// Get the event creation path.
@@ -492,7 +492,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						'' => 'index',
 						'index' => 'src_source_index',
 						'create' => 'src_source_create',
-						'qcreate' => 'src_source_create_quick',
 						'event' => array(
 							'*' => array(
 								'_store' => 'EventId',
@@ -901,6 +900,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	/// Display agenda.
 	function agenda()
 	{
+		if (!isset($this->mPermissions['agenda'])) {
+			show_404();
+		}
 		if (!CheckPermissions($this->mPermission)) return;
 		
 		$this->_SetupMyCalendar();
@@ -937,6 +939,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$data = array(
 			'Filters'	=> $this->GetFilters($this->mMainSource),
 			'ViewMode'	=> $agenda,
+			'Path'		=> $this->mPaths,
 		);
 		
 		$this->SetupTabs('agenda', new Academic_time(time()), $filter);
@@ -993,7 +996,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->main_frame->Load();
 	}
 	
-	function src_source_create_quick()
+	function src_source_create($range = NULL)
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
@@ -1006,40 +1009,47 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			return;
 		}
 		
+		$this->load->library('calendar_view_edit_simple');
+		
+		$this->pages_model->SetPageCode('calendar_new_event');
+		$this->main_frame->SetTitleParameters(array(
+			'source' => $this->mSource->GetSourceName(),
+		));
+		
+		// Get the redirect url tail
+		$args = func_get_args();
+		array_shift($args);
+		$tail = implode('/', $args);
+		// Whether to redirect to tail on success
+		$success_redirect_to_tail = false;
+		if (isset($_POST['eved_success_redirect'])) {
+			$success_redirect_to_tail = true;
+		}
+		
+		if (!$this->mSource->IsSupported('create')) {
+			// Create isn't supported with this source
+			$this->ErrorNotCreateable($tail);
+			$this->main_frame->Load();
+			return;
+		}
+		
+		$prefix = 'eved';
+		// Default start and end
+		$start = strtotime('tomorrow+12hours');
+		$end = strtotime('tomorrow+13hours');
+		
 		// check for post data from mini creater
+		// this simply sets the _POST data so it can be analysed as if clicked save
 		$input = array();
 		if (isset($_POST['evad_create'])) {
 			$input_valid = true;
+
+			// Transfer post data
+			@$_POST[$prefix.'_summary'] = $_POST['evad_summary'];
+			@$_POST[$prefix.'_category'] = $_POST['evad_category'];
+			@$_POST[$prefix.'_location'] = $_POST['evad_location'];
+			@$_POST[$prefix.'_description'] = $_POST['evad_description'];
 			
-			$source = & $this->mMainSource->GetSource(0);
-			if (!$source->IsSupported('create')) {
-				// Create isn't supported with this source
-				$this->messages->AddMessage('error', 'You cannot create events in this calendar. You may have to be logged in.');
-				$input_valid = false;
-			}
-			
-			// Get more post data
-			$input['evad_summary'] = $this->input->post('evad_summary');
-			if (false === $input['evad_summary']) {
-				$input['evad_summary'] = '';
-			}
-			if (strlen($input['evad_summary']) <= 3 or strlen($input['evad_summary']) >= 256) {
-				$input_valid = false;
-				$this->messages->AddMessage('error', 'Event summary is too long or too short.');
-			}
-			
-			$input_category = $this->input->post('evad_category');
-			if (false !== $input_category) {
-				$input['evad_category'] = $input_category;
-			}
-			$input_location = $this->input->post('evad_location');
-			if (false !== $input_location) {
-				$input['evad_location'] = $input_location;
-				if (strlen($input['evad_location']) > 50) {
-					$input_valid = false;
-					$this->messages->AddMessage('error', 'Event location is too long.');
-				}
-			}
 			$input_date = $this->input->post('evad_date');
 			$input_start = $this->input->post('evad_start');
 			$input_end = $this->input->post('evad_end');
@@ -1082,7 +1092,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						$this->messages->AddMessage('error', 'Event must not end before it starts');
 						$input_valid = false;
 					}
-					if ($start < strtotime('today-1month')) {
+					if ($start < strtotime('today-1year')) {
 						$this->messages->AddMessage('error', 'Event out of range');
 						$input_valid = false;
 					}
@@ -1094,64 +1104,13 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			}
 			
 			if ($input_valid) {
-				$event_info = array(
-					'name' => $input['evad_summary'],
-					'category' => $input['evad_category'],
-					'recur' => new RecurrenceSet(),
-				);
-				if (isset($input['evad_location'])) {
-					$event_info['location_name'] = $input['evad_location'];
-				}
-				
-				$event_info['recur']->SetStartEnd($start, $end);
-				$messages = $source->CreateEvent($event_info, $event_id);
-				$this->messages->AddMessages($messages);
-				if (!isset($messages['error'])) {
-					$this->messages->AddMessage('success', 'Event created successfully');
-				}
+				$_POST[$prefix.'_save'] = 'save';
+				$start_end_predefined = true;
+				$success_redirect_to_tail = true;
 			}
 		}
 		
-		// Get the redirect url tail
-		$args = func_get_args();
-		$tail = implode('/', $args);
-		redirect($tail);
-	}
-	
-	function src_source_create($range = NULL)
-	{
-		if (!CheckPermissions($this->mPermission)) return;
-		
-		if (!isset($this->mPermissions['create'])) {
-			return show_404();
-		}
-		
-		// Validate the source
-		if (!$this->_GetSource()) {
-			return;
-		}
-		
-		$this->load->library('calendar_view_edit_simple');
-		
-		$this->pages_model->SetPageCode('calendar_new_event');
-		$this->main_frame->SetTitleParameters(array(
-			'source' => $this->mSource->GetSourceName(),
-		));
-		
-		// Get the redirect url tail
-		$args = func_get_args();
-		array_shift($args);
-		$tail = implode('/', $args);
-		
-		if (!$this->mSource->IsSupported('create')) {
-			// Create isn't supported with this source
-			$this->ErrorNotCreateable($tail);
-			$this->main_frame->Load();
-			return;
-		}
-		
 		// Get the buttons from post data
-		$prefix = 'eved';
 		if (isset($_POST[$prefix.'_return'])) {
 			// REDIRECT
 			return redirect($tail);
@@ -1177,7 +1136,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		// Fill it in if none supplied
 		if (!isset($rset_arr)) {
 			$rset = new RecurrenceSet();
-			$rset->SetStartEnd(strtotime('tomorrow+12hours'), strtotime('tomorrow+13hours'));
+			$rset->SetStartEnd($start, $end);
 			$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 		}
 		// Always fill in the inex info again, ignoring input from form.
@@ -1275,7 +1234,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 							}
 							$this->messages->Addmessage($message_type, "$published out of $desired occurrences were published.");
 						}
-						return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+						if ($success_redirect_to_tail) {
+							return redirect($tail);
+						} else {
+							return redirect($this->mPaths->Range(date('Y-M-j', $start)));
+						}
 					}
 				}
 			}
@@ -1317,6 +1280,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'Help' => $help_xhtml,
 			'CanPublish' => $this->mMainSource->IsSupported('publish'),
 			'Create' => true,
+			'SuccessRedirect' => $success_redirect_to_tail,
 		);
 		if (is_array($confirm_list)) {
 			$data['Confirms'] = $confirm_list;
@@ -1475,6 +1439,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$args = func_get_args();
 		$tail = implode('/', $args);
 		
+		$get_action = '';
+		if (isset($_GET['action'])) {
+			$get_action = $_GET['action'];
+		}
+		
 		// Fetch the specified event
 		$calendar_data = new CalendarData();
 		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
@@ -1524,6 +1493,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			
 			$input_summary = $this->input->post($prefix.'_summary');
 			$errors = array();
+			$process_input = false;
 			
 			// Read the recurrence data
 			if (isset($_POST[$prefix.'_recur_simple']) and
@@ -1544,6 +1514,30 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			/// @todo Fix that the new rset doesn't have the same rrule ids, so theres a deletion/insertion instead of update.
 			if (!isset($rset_arr)) {
 				$rset = $event->GetRecurrenceSet();
+				if ((isset($_POST['evview_delete']) || 'delete' == $get_action) &&
+					NULL !== $found_occurrence)
+				{
+					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
+					$rset->RemoveRDates($inex_date);
+					$rset->AddExDates($inex_date);
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				} elseif (	isset($_POST['evview_delete_all']) || 'delete_all' == $get_action) {
+					$rset->ClearRecurrence();
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				} elseif (	(isset($_POST['evview_restore']) || 'restore' == $get_action) &&
+							NULL !== $found_occurrence)
+				{
+					$inex_date = array($found_occurrence->StartTime->Format('Ymd') => array(NULL => NULL));
+					$rset->RemoveExDates($inex_date);
+					$rset->AddRDates($inex_date);
+					$process_input = true;
+					$_POST[$prefix.'_save'] = true;
+					$input_valid = true;
+				}
 				$rset_arr = Calendar_view_edit_simple::transform_recur_for_view($rset, $errors);
 			}
 			// Always fill in the inex info again, ignoring input from form.
@@ -1566,6 +1560,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$confirm_list = NULL;
 			if (false !== $input_summary) {
 				$input_valid = true;
+				$process_input = true;
 				
 				// Get more post data
 				$input['name'] = $input_summary;
@@ -1595,7 +1590,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					}
 				}
 				$input['time_associated'] = ($this->input->post($prefix.'_allday') === false);
-				
+			}
+			if ($process_input) {
 				// at this point $start and $end are still plain timestamps
 				$input['recur'] = $rset;
 				
@@ -1610,6 +1606,9 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 						}
 					}
 					if (isset($_POST[$prefix.'_confirm']['confirm_btn'])) {
+						if (NULL === $confirm_list) {
+							$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
+						}
 						// Make the change
 						$messages = $this->mMainSource->AmmendEvent($event, $input);
 						
@@ -1622,9 +1621,6 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 							$publish_occurrences = array();
 							foreach (array('create','draft') as $namespace) {
 								if (isset($_POST[$prefix.'_confirm'][$namespace.'_publish'])) {
-									if (NULL === $confirm_list) {
-										$confirm_list = $this->mMainSource->GetEventRecurChanges($event, $rset);
-									}
 									foreach ($_POST[$prefix.'_confirm'][$namespace.'_publish'] as $day => $dummy) {
 										if (isset($confirm_list[$namespace][$day])) {
 											$publish_occurrences[] = $confirm_list[$namespace][$day]['start_time'];
@@ -1691,6 +1687,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'Help' => $help_xhtml,
 				'CanPublish' => $this->mMainSource->IsSupported('publish'),
 				'Create' => false,
+				'SuccessRedirect' => false,
 			);
 			if (is_array($confirm_list)) {
 				$data['Confirms'] = $confirm_list;
@@ -2186,15 +2183,13 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					$Filter
 				))
 			);
-			if (false) {
-			//if (is_string($this->mAgenda)) {
+			if (isset($this->mPermissions['agenda'])) {
 				$navbar->AddItem('agenda', 'Agenda',
 					site_url($this->mPaths->Agenda(
 						$Start->Year().'-'.strtolower($Start->Format('M')).'-'.$Start->DayOfMonth(),
 						$Filter
 					))
 				);
-			//}
 			}
 			if (isset($this->mPermissions['subscriptions'])) {
 				$navbar->AddItem('subscriptions', 'Subscriptions',

@@ -1192,7 +1192,7 @@ class Events_model extends Model
 		}
 
 		// Range to generate occurrences within
-		$generate_min = strtotime('today-1month');
+		$generate_min = strtotime('today-1year');
 		$generate_until = strtotime('today+2year');
 
 		// Generate
@@ -1694,7 +1694,7 @@ class Events_model extends Model
 	function ResolveRecurrenceSetOccurrences($EventId, & $RSet)
 	{
 		list($start) = $RSet->GetStartEnd();
-		$range_start = strtotime('today-1month');
+		$range_start = strtotime('today-1year');
 		$range_end = strtotime('today+2years');
 		
 		// Get all occurrences of the event

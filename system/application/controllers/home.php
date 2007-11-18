@@ -59,7 +59,13 @@ class Home extends Controller {
 		$end = $now->Midnight()->Adjust('+2day');
 
 		$sources = new CalendarSourceMyCalendar();
-		$sources->EnableGroup('todo');
+		// lets be explicit just in case:
+		$sources->EnableGroup('owned');
+		$sources->EnableGroup('subscribed');
+		$sources->EnableGroup('private');
+		$sources->EnableGroup('active');
+		$sources->DisableGroup('inactive');
+		
 		$sources->SetRange($start->Timestamp(), $end->Timestamp());
 		$sources->SetTodoRange(time(), time());
 
@@ -75,8 +81,9 @@ class Home extends Controller {
 		$EventsView->SetCalendarData($calendar_data);
 		//$EventsView->SetStartEnd($start->Timestamp(), $end->Timestamp());
 
-		$TodoView = new CalendarViewTodoList();
-		$TodoView->SetCalendarData($calendar_data);
+		$TodoView = NULL;
+// 		$TodoView = new CalendarViewTodoList();
+// 		$TodoView->SetCalendarData($calendar_data);
 		return array($EventsView, $TodoView);
 	}
 	

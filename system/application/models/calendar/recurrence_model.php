@@ -1265,6 +1265,16 @@ class RecurrenceSet
 	/// array[CalendarRecurRule] Recurrence rules to exclude.
 	protected $mExRules = array();
 	
+	/// Clear the recurrence so that no occurrences will be generated.
+	function ClearRecurrence()
+	{
+		$this->mRDates = array();
+		$this->mRRules = array();
+		$this->mExDates = array();
+		$this->mExRules = array();
+		$this->AddExDates(array(date('Ymd',$this->mStart) => array(NULL => NULL)));
+	}
+	
 	/// Find whether the start occurrence has been set yet.
 	/**
 	 * @return bool Whether @a $mStart has been set yet.
@@ -1435,6 +1445,24 @@ class RecurrenceSet
 	function AddExDates($ExDates)
 	{
 		$this->mExDates = self::UnionDates($this->mExDates, $ExDates);
+	}
+	
+	/// Remove recurring dates.
+	/**
+	 * @param $RDates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}] ] Dates to include.
+	 */
+	function RemoveRDates($RDates)
+	{
+		$this->mRDates = self::ExcludeDates($this->mRDates, $RDates);
+	}
+	
+	/// Remove exclusion dates.
+	/**
+	 * @param $ExDates array['YYYYMMDD' => array[{'HHMMSS',NULL} => {duration,NULL}] ] Dates to exclude.
+	 */
+	function RemoveExDates($ExDates)
+	{
+		$this->mExDates = self::ExcludeDates($this->mExDates, $ExDates);
 	}
 	
 	/// Add recurrence rules.
@@ -1873,7 +1901,7 @@ class Recurrence_model extends model
 				if (!array_key_exists($start_date, $exclude_ranges)) {
 					$exclude_ranges[$start_date] = array();
 				}
-				$exclude_ranges[$start_date][$start_time] = FALSE;
+				$exclude_ranges[$start_date][$start_time] = NULL;
 			}
 		}
 		

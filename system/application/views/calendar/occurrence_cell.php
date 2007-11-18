@@ -12,12 +12,14 @@
  */
 
 $CI = & get_instance();
+
 ?>
 <div id="ev_15" class="cal_event cal_event_nojs<?php
 	$cat = $Occurrence->Event->Category;
 	if (array_key_exists($cat, $Categories)) {
 		echo(" cal_category_$cat");
 	}
+	echo(' '.implode(' ', CalCssGetEventClasses($Occurrence)));
 ?>">
 	<?php
 	echo('<div class="cal_event_heading"><a href="'.
@@ -29,7 +31,7 @@ $CI = & get_instance();
 		'</a></div>'
 	);
 	?>
-	<div class="cal_event_info" id="ev_es_%%refid%%">
+	<div class="cal_event_info">
 		<?php
 		if ($Occurrence->TimeAssociated) {
 			echo($Occurrence->StartTime->Format('%T'));
@@ -39,15 +41,14 @@ $CI = & get_instance();
 		}
 		?>
 	</div>
-	<div class="cal_event_info"><?php
-		/*
-		if ('published' === $Occurrence->State ||
-			'cancelled' === $Occurrence->State ||
-			'owner' === $Occurrence->Event->UserStatus)	
-		{
-			echo('<strong>'.$Occurrence->State.'</strong>');
-		}
-		*/
+	<div class="cal_event_info">
+		<i><?php
+	if ($Occurrence->State == 'cancelled') {
+		echo('Cancelled');
+	} else {
+		echo(js_nl2br(htmlentities($Occurrence->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+	}
+?></i><?php
 		if (!$Squash) {
 			/*
 			if ('owner' === $Occurrence->Event->UserStatus) {
@@ -75,11 +76,6 @@ $CI = & get_instance();
 				echo(' ('.implode(', ', $links).')');
 			}
 			*/
-			echo('<br />');
-			if (!empty($Occurrence->LocationDescription)) {
-				echo(htmlentities($Occurrence->LocationDescription, ENT_QUOTES, 'utf-8'));
-				echo('<br />');
-			}
 			echo('<i>');
 			echo($Occurrence->Event->GetDescriptionHtml());
 			echo('</i>');

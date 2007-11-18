@@ -259,7 +259,7 @@ fieldset.inline-checks label {
 }
 
 /* for minicalendar (recurrence preview) */
-table.recur-cal {
+table.recur-cal.cal-text {
 	text-align: center;
 	width: 100%;
 	border: 1px solid #A0A0A0;
@@ -286,7 +286,7 @@ table.recur-cal.allclick td {
 table.recur-cal td.we {
 	background-color: #EFECAA;
 }
-table.recur-cal td a {
+table.recur-cal.cal-text td a {
 	color: #000000;
 	font-weight: bold;
 }
@@ -332,8 +332,14 @@ table.recur-cal td.exc.ev.we
 {					/*#FFFCBA*/
 	border: none;
 	background-color: #F0D1A0;
+}
+table.recur-cal.cal-text td.exc,
+table.recur-cal.cal-text td.exc.we,
+table.recur-cal.cal-text td.exc.ev,
+table.recur-cal.cal-text td.exc.ev.we
+{
 	text-decoration: line-through;
-}	
+}
 
 table.recur-cal td.inc {
 	border: 1px solid #404040;
