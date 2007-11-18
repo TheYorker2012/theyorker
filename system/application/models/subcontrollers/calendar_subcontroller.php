@@ -1327,6 +1327,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		// Get the redirect url tail
 		$args = func_get_args();
 		$tail = implode('/', $args);
+		$recently_updated = isset($_SESSION['calendar']['modded'][$event_id]);
+		if ($recently_updated) {
+			// event recently modified by user
+			unset($_SESSION['calendar']['modded'][$event_id]);
+		}
 		if (array_key_exists(0, $events)) {
 			$event = $events[0];
 		
@@ -1402,6 +1407,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				new FramesView('calendar/event', $data)
 			);
 			
+		} elseif ($recently_updated) {
+			redirect($tail);
 		} else {
 			$this->ErrorNotAccessible($tail);
 		}
@@ -1634,6 +1641,11 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 								}
 								$this->messages->Addmessage($message_type, "$published out of $desired occurrences were published.");
 							}
+							
+							// changes have been made including possible deletion.
+							// if the redirection results in event not found, we
+							// want it to redirect straight back to the tail.
+							$_SESSION['calendar']['modded'][$event_id] = 1;
 							
 							// REDIRECT
 							if ($occurrence_specified) {

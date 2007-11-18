@@ -589,7 +589,7 @@ function clickDay (day,event) {
 	new_event.style.top		= findPos(day)[1] - 1 + ((pos_relative*(HOUR_HEIGHT/4))) + 'px';
 	new_event.style.width	= width-2 + 'px';
 	new_event.style.height	= ((duration*HOUR_HEIGHT)-4) + 'px';
-	new_event.style.cursor	= 'move';
+	new_event.style.cursor	= 's-resize';
 	new_event.ondblclick	= function(){ return showCreateBox(this); };
 
 	var heading				= document.createElement('a');
