@@ -530,15 +530,20 @@ function setCreateBoxLocation(new_location)
 	new_event_location.appendChild(document.createTextNode(new_location));
 }
 
-function clickDay (day,event) {
-	var new_event = document.getElementById('cal_new_event');
-	
-	// Swap stored start and end time if they're the wrong way
+// Swap stored start and end time if they're the wrong way
+function reorder_start_end()
+{
 	if (CREATE_EVENT_END_TIME < CREATE_EVENT_START_TIME) {
 		var tmp = CREATE_EVENT_END_TIME;
 		CREATE_EVENT_END_TIME = CREATE_EVENT_START_TIME;
 		CREATE_EVENT_START_TIME = tmp;
 	}
+}
+
+function clickDay (day,event) {
+	var new_event = document.getElementById('cal_new_event');
+	
+	reorder_start_end();
 
 	var pos_relative = findMouse(event)[1] - findPos(day)[1];
 	pos_relative = Math.floor((pos_relative - 1 + 2)/(HOUR_HEIGHT/4));
@@ -636,12 +641,10 @@ function clickDay (day,event) {
 }
 
 function moveDay (day, event) {
+	var new_event = document.getElementById('cal_new_event');
+	if (new_event == null)
+		return;
 	if (CREATE_EVENT) {
-		var new_event = document.getElementById('cal_new_event');
-		if (new_event == null)
-			return;
-		
-		
 		var start_time = CREATE_EVENT_START_TIME - (START_HOUR*4);
 		var end_time = findMouse(event)[1] - findPos(day)[1];
 		end_time = Math.floor((end_time - 1 + 2)/(HOUR_HEIGHT/4));
@@ -670,10 +673,6 @@ function moveDay (day, event) {
 		document.getElementById('cal_new_event_times').focus();
 		
 	} else if (CREATE_EVENT_MOVE) {
-		var new_event = document.getElementById('cal_new_event');
-		if (new_event == null)
-			return;
-		
 		var event_pos = findPos(new_event)[1];
 		var move_position = findMouse(event)[1] - event_pos;
 		move_position -= CREATE_EVENT_MOVE_GRAB;
@@ -697,6 +696,19 @@ function moveDay (day, event) {
 				updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
 				updateCreateBox(new_event);
 			}
+		}
+	} else {
+		reorder_start_end();
+		
+		var grab_position = findMouse(event)[1] - findPos(new_event)[1];
+		var event_height = (CREATE_EVENT_END_TIME - CREATE_EVENT_START_TIME + 1) * (HOUR_HEIGHT/4);
+		var grab_ratio = grab_position / event_height;
+		if (grab_ratio >= 0.75 && grab_position > event_height-HOUR_HEIGHT/2) {
+			new_event.style.cursor	= 's-resize';
+		} else if (grab_ratio <= 0.25 && grab_position < HOUR_HEIGHT/2) {
+			new_event.style.cursor	= 'n-resize';
+		} else {
+			new_event.style.cursor	= 'move';
 		}
 	}
 }
