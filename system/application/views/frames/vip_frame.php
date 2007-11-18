@@ -93,8 +93,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</ul>
 				<ul>
 					<li class="first"><a href="<?php echo vip_url('directory/information'); ?>">Directory Entry</a></li>
-					<li><a href="<?php echo(vip_url('calendar')); ?>">Manage Events</a></li>
 					<?php /*
+					<li><a href="<?php echo(vip_url('calendar')); ?>">Manage Events</a></li>
 					<li><a href="<?php echo vip_url('notices'); ?>">Manage Notices</a></li>
 					*/ ?>
 					<li><a href="<?php echo vip_url('members'); ?>">Manage Members</a></li>
