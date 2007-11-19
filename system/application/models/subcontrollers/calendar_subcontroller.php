@@ -978,7 +978,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		foreach ($sources as $source) {
 			
 		}
-		
+		redirect($this->mPaths->Index());
 		$this->main_frame->SetContentSimple('calendar/sources');
 		$this->main_frame->Load();
 	}
@@ -988,6 +988,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		if (!CheckPermissions($this->mPermission)) return;
 		
+		redirect($this->mPaths->Index());
 		$this->main_frame->SetContentSimple('calendar/source');
 		$this->main_frame->Load();
 	}
