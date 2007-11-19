@@ -648,7 +648,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	SetupMainFrame($Permission, FALSE);
 
 	if (!$access_allowed && $LoadMainFrame) {
-		$CI->pages_model->SetPageCode('error:permissions');
+		$CI->load->library('Custom_pages');
+		$page = new CustomPageView('error:permissions');
+		$CI->main_frame->SetContent($page);
 		$CI->main_frame->Load();
 	}
 
