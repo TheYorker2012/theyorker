@@ -226,10 +226,18 @@ class News extends Controller {
 			}
 		}
 
+		$data['offset'] = 0;
+		$base_url = array();
 		// Convert filters to format required by news model
 		$archive_filters = array();
 		foreach ($filters as $field => $value) {
-			$archive_filters[] = array($field, $value);
+			if ($field == 'page') {
+				$data['offset'] = (!is_numeric($value)) ? 0 : $value;
+			} else {
+				$base_url[] = $field;
+				$base_url[] = $value;
+				$archive_filters[] = array($field, $value);
+			}
 		}
 
 		// Get data for search criteria options
@@ -241,7 +249,7 @@ class News extends Controller {
 
 		/// Pagination
 		$this->load->library('pagination');
-		$config['base_url'] = base_url().'news/archive/';
+		$config['base_url'] = base_url() . 'news/archive/' . implode('/', $base_url) . '/page';
 		$config['total_rows'] = $this->News_model->GetArchive('count', $archive_filters)->count;
 		$config['per_page'] = 10;
 		$config['num_links'] = 2;
@@ -259,12 +267,9 @@ class News extends Controller {
 		$config['cur_tag_close'] = '</span>';
 		$config['num_tag_open'] = '<span>';
 		$config['num_tag_close'] = '</span>';
+		if ($data['offset'] > 0)
+			$config['uri_segment'] = $this->uri->total_segments();
 		$this->pagination->initialize($config);
-
-		$data['offset'] = $this->uri->segment(3,0);
-		if (!is_numeric($data['offset'])) {
-			$data['offset'] = 0;
-		}
 
 		/// Get all past articles
 		$data['articles'] = $this->News_model->GetArchive('search', $archive_filters, $data['offset'], $config['per_page']);
