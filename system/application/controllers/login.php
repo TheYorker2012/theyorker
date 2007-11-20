@@ -32,6 +32,17 @@ class Login extends Controller
 		$password = $this->input->post('newpassword');
 		$password2 = $this->input->post('confirmnewpassword');
 
+		if (is_string($password)) {
+			if (!CheckPermissions('student')) return;
+
+			if ($password == $password2) {
+				$this->user_auth->setPassword($password);
+				redirect('/register');
+			} else {
+				get_instance()->messages->AddMessage('error','<p>Passwords do not match.</p>');
+			}
+		}
+
 		if (!CheckPermissions('public')) return;
 
 		$this->pages_model->SetPageCode('account_password_new');
@@ -41,15 +52,6 @@ class Login extends Controller
 		} catch (Exception $e) {
 			get_instance()->messages->AddMessage('error','<p>'.$e->getMessage().'</p>');
 			redirect('/account/password/register');
-		}
-
-		if (is_string($password)) {
-			if ($password == $password2) {
-				$this->user_auth->setPassword($password);
-				redirect('/register');
-			} else {
-				get_instance()->messages->AddMessage('error','<p>Passwords do not match.</p>');
-			}
 		}
 
 		$this->main_frame->SetContentSimple('account/newpass', array());
