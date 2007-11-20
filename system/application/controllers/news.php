@@ -301,18 +301,8 @@ class News extends Controller {
 		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
 		$data['rss_width'] = '126';
 		$data['rss_height'] = '126';
-		$data['rss_email_ed'] = 'no-reply@theyorker.co.uk';
-		$data['rss_email_web'] = 'no-reply@theyorker.co.uk';
-
-		/// Get latest article ids
-		//$latest_article_ids = $this->News_model->GetLatestId('uninews',9);
-
-		/// Get preview data for articles
-		//$data['rss_items'] = array();
-		//foreach ($latest_article_ids as $id)
-		//{
-    	//	array_push($data['rss_items'], $this->News_model->GetSummaryArticle($id));
-		//}
+		$data['rss_email_ed'] = 'no-reply@theyorker.co.uk (The Yorker)';
+		$data['rss_email_web'] = 'webmaster@theyorker.co.uk (Webmaster)';
 
 		/// Create RSS Feed for all sections
 		$data['rss_items'] = $this->News_model->GetArchive('search', array(), 0, 20);
