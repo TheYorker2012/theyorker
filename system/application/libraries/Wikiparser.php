@@ -89,15 +89,15 @@ class Wikiparser {
 
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
-				'pull_quote' => '<blockquote>
+				'pull_quote' => array('<blockquote>
 <div>
 <img src="/images/prototype/news/quote_open.png" alt="Quote" title="Quote" />
 {{1}}
 <img src="/images/prototype/news/quote_close.png" alt="Quote" title="Quote" />
 <br /><span class="author">{{2}}</span>
-</div></blockquote>',
-				'frame' => '<div class="BlueBox"><h4>{{1}}</h4>{{2}}</div>',
-				'br' => '<br />',
+</div></blockquote>', true),
+				'frame' => array('<div class="BlueBox"><h4>{{1}}</h4>{{2}}</div>', true),
+				'br' => array('<br />', false),
 			);
 		$this->newline_mode = '';
 		$this->enable_headings = true;
@@ -553,12 +553,16 @@ if (hasReqestedVersion) {
 	function handle_variable($matches) {
 		$this->template_elements = explode('|',$matches[2]);
 		if (array_key_exists($this->template_elements[0], $this->templates)) {
-			$replacement = $this->templates[$this->template_elements[0]];
+			list($replacement, $block) = $this->templates[$this->template_elements[0]];
 			$replacement = preg_replace_callback(
 					'/\{\{(\d+)\}\}/i',
 					array(&$this,'handle_template_parameter'),
 					$replacement);
-			return $replacement;
+			if (!$block) {
+				return $replacement;
+			} else {
+				return $this->end_paragraph().$replacement;
+			}
 		} else {
 			switch($this->template_elements[0]) {
 				case 'CURRENTMONTH': return date('m');
