@@ -33,6 +33,7 @@
 		
 		<p>	Sorry, but you need a Java 1.1.x enabled browser to use this IRC client.</p>
 	</applet>
-	
+</div>
+<div class="BlueBox">
 	<?php echo($IrcHelp); ?>
 </div>
