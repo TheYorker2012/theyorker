@@ -103,6 +103,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/'>Office Home</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/irc'>Office Chat</a>
+		</div>
 
 <?php
 	//editor and admins only
