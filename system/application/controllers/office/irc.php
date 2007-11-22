@@ -1,6 +1,9 @@
 <?php
 
 /// IRC controller
+/**
+ * @author James Hogan (jh559)
+ */
 class Irc extends Controller
 {
 	/// Main index page
