@@ -1,0 +1,81 @@
+/* Styles for the web IRC client in the office */
+/* Author: James Hogan */
+
+div.irc_channel {
+	padding: 0px;
+}
+
+div.irc_messages {
+	overflow-y: scroll;
+	border:1px solid #000;
+	height:20em;
+}
+
+div.irc_messages div.irc_message {
+}
+div.irc_messages div.irc_message div.irc_message_time {
+	display: inline;
+	color: #888;
+}
+div.irc_messages div.irc_message div.irc_message_sender {
+	display: inline;
+	color: #080;
+}
+div.irc_messages div.irc_message div.irc_message_content {
+	display: inline;
+}
+div.irc_messages div.irc_message.notice div.irc_message_content {
+	color: #880;
+}
+div.irc_messages div.irc_message.action div.irc_message_sender,
+div.irc_messages div.irc_message.action div.irc_message_content {
+	color: #00F;
+}
+div.irc_messages div.irc_message.channel div.irc_message_sender,
+div.irc_messages div.irc_message.channel div.irc_message_content {
+	color: #808;
+}
+
+div.irc_messages div.irc_message.highlighted div.irc_message_content,
+div.irc_messages div.irc_message.action.highlighted div.irc_message_content {
+	color: #F00;
+}
+
+div.irc_peers {
+	overflow-y: scroll;
+	border:1px solid #000;
+	height:20em;
+}
+
+ul.irc_channels {
+	border-bottom: 1px solid #888;
+	display: block;
+	overflow: none;
+	width: 100%;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	margin: 0em 0em;
+}
+ul.irc_channels li {
+	border: 1px solid #888;
+	overflow: none;
+	height: 1.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	margin: 0px;
+	margin-left: 5px;
+	margin-bottom: -1px;
+	display: inline;
+	cursor: pointer;
+}
+ul.irc_channels li.selected {
+	font-weight: bold;
+}
+ul.irc_channels li.updated {
+	color: #00F;
+}
+ul.irc_channels li.highlighted,
+ul.irc_channels li.updated.highlighted {
+	color: #F00;
+}
