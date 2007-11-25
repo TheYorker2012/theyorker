@@ -94,7 +94,7 @@ if ($weather_forecast != null) {
 		$this->homepage_boxes->print_box_with_picture_list($articles['sport'],'latest sport','news');
 		if($special['blogs']['show']) { $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']); }
 		$this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news');
-		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','videocasts');
+		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','news');
 	?>
 
 	<div class="BlueBox">

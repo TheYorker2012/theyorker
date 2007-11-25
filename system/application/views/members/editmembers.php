@@ -64,7 +64,6 @@
 				<input name='member_cmd' type='submit' value='<?php echo $membership['cmd_action']; ?>' class='button' onclick="<?php echo $membership['cmd_js']; ?>"/>
 				<div style="clear: both;"></div>
 			</fieldset>
-			<?php if ('manage' !== VipMode()) { ?>
 			<fieldset>
 				<?php if (isset($membership['vip_requested']) && $membership['vip_requested']) {	?>
 					<p>This user has <b>requested</b> to become a VIP. Please decide whether or not this user should be allowed VIP access:</p>
@@ -79,7 +78,6 @@
 				<?php }	?>
 				<div style="clear: both;"></div>
 			</fieldset>
-			<?php } ?>
 			<?php if (isset($membership['byline_reset']) && $membership['byline_reset']) {	?>
 			<fieldset>
 				<p>This user does not have a byline. This means that the user will be <b>unable to write articles</b> in the office. To give this user the default byline, click below:</p>

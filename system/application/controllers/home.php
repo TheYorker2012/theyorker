@@ -224,7 +224,7 @@ class Home extends Controller {
 				$data['special'][$special[0]]['data'] = $data['articles'][$special[0]][0];
 			}
 			else {
-				$data['special'][$special[0]]['show'] = true;
+				$data['special'][$special[0]]['show'] = false;
 			}
 		}
 		/* this is the old method, getting articles set using specials

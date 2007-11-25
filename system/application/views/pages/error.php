@@ -1,7 +1,11 @@
 <?php
 /**
  * @file views/pages/error.php
+ * @author James Hogan (jh559)
  * @brief Simple view for displaying an error and back button.
+ *
+ * These are designed for when the user doesn't have permission to see some page.
+ * It can provide an optional login button if the user is not already logged in.
  */
 ?>
 <div class="BlueBox">

@@ -432,35 +432,20 @@ class News_model extends Model
 		    $row = $query->row();
 		    $result['heading'] = $row->article_content_heading;
 		}
-		$sql = 'SELECT article_writers.article_writer_user_entity_id
-			FROM article_writers
-			WHERE (article_writers.article_writer_article_id = ?
-			AND article_writers.article_writer_status = "accepted"
-			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
-
-			LIMIT 0,10';
+		$sql = 'SELECT		business_cards.business_card_name AS name,
+							business_cards.business_card_id AS id
+				FROM		article_writers
+				INNER JOIN	business_cards
+					ON		article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+				INNER JOIN	business_card_groups
+					ON	(	business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+						AND	business_card_groups.business_card_group_organisation_entity_id IS NULL
+						)
+				WHERE		article_writers.article_writer_article_id = ?
+				AND			article_writers.article_writer_status = "accepted"
+				AND			article_writer_editor_accepted_user_entity_id IS NOT NULL';
 		$query = $this->db->query($sql, array($id));
-		if ($query->num_rows() > 0)
-		{
-		    $authors = array();
-		    foreach ($query->result() as $row)
-			{
-				$sql = 'SELECT	business_cards.business_card_name,
-								business_cards.business_card_id
-						FROM	business_cards
-						WHERE	(business_cards.business_card_user_entity_id = ?)';
-				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-				if ($author_query->num_rows() > 0)
-				{
-					$author_row = $author_query->row();
-					$authors[] = array(
-						'name' => $author_row->business_card_name,
-						'id' => $author_row->business_card_id
-					);
-				}
-			}
-			$result['authors'] = $authors;
-		}
+		$result['authors'] = $query->result_array();
 		return $result;
 	}
 
@@ -522,34 +507,20 @@ class News_model extends Model
 		    $result['heading'] = $row->article_content_heading;
 		    $result['blurb'] = $row->article_content_blurb;
 		}
-		$sql = 'SELECT article_writers.article_writer_user_entity_id
-			FROM article_writers
-			WHERE (article_writers.article_writer_article_id = ?
-			AND article_writers.article_writer_status = "accepted"
-			AND article_writer_editor_accepted_user_entity_id IS NOT NULL)
-			LIMIT 0,10';
-		$query = $this->db->query($sql,array($id));
-		if ($query->num_rows() > 0)
-		{
-		    $authors = array();
-		    foreach ($query->result() as $row)
-			{
-				$sql = 'SELECT	business_cards.business_card_name,
-								business_cards.business_card_id
-						FROM	business_cards
-						WHERE	(business_cards.business_card_user_entity_id = ?)';
-				$author_query = $this->db->query($sql,array($row->article_writer_user_entity_id));
-				if ($author_query->num_rows() > 0)
-				{
-					$author_row = $author_query->row();
-					$authors[] = array(
-						'name' => $author_row->business_card_name,
-						'id' => $author_row->business_card_id
-					);
-				}
-			}
-			$result['authors'] = $authors;
-		}
+		$sql = 'SELECT		business_cards.business_card_name AS name,
+							business_cards.business_card_id AS id
+				FROM		article_writers
+				INNER JOIN	business_cards
+					ON		article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+				INNER JOIN	business_card_groups
+					ON	(	business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+						AND	business_card_groups.business_card_group_organisation_entity_id IS NULL
+						)
+				WHERE		article_writers.article_writer_article_id = ?
+				AND			article_writers.article_writer_status = "accepted"
+				AND			article_writer_editor_accepted_user_entity_id IS NOT NULL';
+		$query = $this->db->query($sql, array($id));
+		$result['authors'] = $query->result_array();
 
 		if($request_primary_thumbnail) {
 			$sql = 'SELECT	photo_requests.photo_request_chosen_photo_id	as photo_id,
@@ -620,24 +591,20 @@ class News_model extends Model
 		$result['text'] = $row->article_content_wikitext_cache;
 		$result['blurb'] = $row->article_content_blurb;
 
-		$sql = 'SELECT article_writers.article_writer_byline_business_card_id,
-				business_cards.business_card_name
-			FROM article_writers, business_cards
-			WHERE article_writers.article_writer_article_id = ?
-			AND article_writers.article_writer_status = "accepted"
-			AND article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
-			AND article_writers.article_writer_user_entity_id = business_cards.business_card_user_entity_id
-			LIMIT 0,10';
-		$query = $this->db->query($sql,array($id));
-	    $authors = array();
-	    foreach ($query->result() as $row)
-		{
-			$authors[] = array(
-				'id' => $row->article_writer_byline_business_card_id,
-				'name' => $row->business_card_name
-			);
-		}
-		$result['authors'] = $authors;
+		$sql = 'SELECT		business_cards.business_card_name AS name,
+							business_cards.business_card_id AS id
+				FROM		article_writers
+				INNER JOIN	business_cards
+					ON		article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+				INNER JOIN	business_card_groups
+					ON	(	business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+						AND	business_card_groups.business_card_group_organisation_entity_id IS NULL
+						)
+				WHERE		article_writers.article_writer_article_id = ?
+				AND			article_writers.article_writer_status = "accepted"
+				AND			article_writer_editor_accepted_user_entity_id IS NOT NULL';
+		$query = $this->db->query($sql, array($id));
+		$result['authors'] = $query->result_array();
 
 		$sql = 'SELECT fact_boxes.fact_box_wikitext_cache, fact_boxes.fact_box_title
 			FROM fact_boxes
@@ -814,22 +781,20 @@ class News_model extends Model
 			$result = $query->row();
 		} elseif ($query->num_rows() > 0) {
 			foreach ($query->result_array() as $article) {
-				$article['reporters'] = array();
-				$sql = 'SELECT		article_writers.article_writer_byline_business_card_id,
-									business_cards.business_card_name
-						FROM		article_writers,
-									business_cards
+				$sql = 'SELECT		business_cards.business_card_name AS name,
+									business_cards.business_card_id AS id
+						FROM		article_writers
+						INNER JOIN	business_cards
+							ON		article_writers.article_writer_byline_business_card_id = business_cards.business_card_id
+						INNER JOIN	business_card_groups
+							ON	(	business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+								AND	business_card_groups.business_card_group_organisation_entity_id IS NULL
+								)
 						WHERE		article_writers.article_writer_article_id = ?
 						AND			article_writers.article_writer_status = "accepted"
-						AND			article_writers.article_writer_editor_accepted_user_entity_id IS NOT NULL
-						AND			business_cards.business_card_id = article_writers.article_writer_byline_business_card_id';
-				$query = $this->db->query($sql,array($article['id']));
-				foreach ($query->result() as $row) {
-					$article['reporters'][] = array(
-						'name'	=>	$row->business_card_name,
-						'id'	=>	$row->article_writer_byline_business_card_id
-					);
-				}
+						AND			article_writer_editor_accepted_user_entity_id IS NOT NULL';
+				$query = $this->db->query($sql, array($article['id']));
+				$article['reporters'] = $query->result_array();
 				$result[] = $article;
 			}
 		}

@@ -3,6 +3,15 @@
 		<h4>What's this?</h4>
 		<p><?php echo $main_text; ?></p>
 	<?php } ?>
+	<h4>Inline edit mode</h4>
+	<?php echo($inline_edit_text); ?>
+	<ul>
+		<li><?php if ($this->pages_model->GetInlineEditMode()) {
+			echo('<a href="'.site_url('admin/pages/inline/off').$this->uri->uri_string().'">Disable inline edit mode</a>');
+		} else {
+			echo('<a href="'.site_url('admin/pages/inline/on').$this->uri->uri_string().'">Enable inline edit mode</a>');
+		} ?></li>
+	</ul>
 </div>
 
 <div class='blue_box'>

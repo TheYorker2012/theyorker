@@ -480,6 +480,16 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 		);
 		$admin_door_open_action = $office_door_open_action;
 
+		// check permissions to access this organisation
+		$manage_accessible = FALSE;
+		$vip_organisations = $CI->user_auth->getOrganisationLogins();
+		foreach ($vip_organisations as $organisation) {
+			if ($organisation['organisation_directory_entry_name'] == $company_short_name) {
+				$manage_accessible = TRUE;
+				break;
+			}
+		}
+		
 		// Refine further
 		if ($user_level === 'office') {
 			$action_levels = array(
@@ -500,7 +510,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'office'		=> TRUE,
 				'pr'			=> TRUE,
 				'editor'		=> TRUE,
-				'manage'		=> TRUE,
+				'manage'		=> $manage_accessible,
 				'admin'			=> FALSE,
 			);
 		} elseif ($user_level === 'admin') {
@@ -511,7 +521,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 				'office'		=> TRUE,
 				'pr'			=> TRUE,
 				'editor'		=> TRUE,
-				'manage'		=> TRUE,
+				'manage'		=> $manage_accessible,
 				'admin'			=> TRUE,
 			);
 		}
@@ -611,7 +621,7 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 			}
 		} else {
 			// Anything else is disallow
-			$CI->messages->AddMessage('warning', 'You do not have '.$Permission.' privilages required!');
+			$CI->messages->AddMessage('warning', 'You do not have the '.$Permission.' privilages required!');
 			//redirect('');
 		}
 
@@ -638,6 +648,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	SetupMainFrame($Permission, FALSE);
 
 	if (!$access_allowed && $LoadMainFrame) {
+		$CI->load->library('Custom_pages');
+		$page = new CustomPageView('error:permissions');
+		$CI->main_frame->SetContent($page);
 		$CI->main_frame->Load();
 	}
 

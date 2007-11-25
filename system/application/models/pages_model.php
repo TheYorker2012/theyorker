@@ -20,8 +20,11 @@ class Pages_model extends Model
 	
 	/// bool Whether to allow inline edits of page properties.
 	/**
-	 * @invariant $mInlineEditMode => user.type==editor && user.level==office
+	 * @invariant $mInlineEditAllowed => user.type==editor && user.level==office
 	 */
+	protected $mInlineEditAllowed = false;
+	
+	/// bool Whether inline edit mode is currently enabled.
 	protected $mInlineEditMode = false;
 	
 	/// Primary constructor.
@@ -32,13 +35,42 @@ class Pages_model extends Model
 		$this->mPageInfo = array();
 		$this->mProperties = array();
 		$inline_edit_allowed_in_office_types = array('High'=>true,'Admin'=>true);
-		$this->mInlineEditMode = $this->user_auth->isLoggedIn &&
+		$this->mInlineEditAllowed = $this->user_auth->isLoggedIn &&
 			isset($inline_edit_allowed_in_office_types[$this->user_auth->officeType]);
+		if (isset($_SESSION['inline_edit'])) {
+			if ($this->mInlineEditAllowed) {
+				$this->mInlineEditMode = true;
+			} else {
+				unset($_SESSION['inline_edit']);
+			}
+		}
 	}
 	
 	/// Get whether inline edit mode is on.
 	function GetInlineEditMode()
 	{
+		return $this->mInlineEditMode;
+	}
+	
+	/// Try to enable/disable inline edit mode.
+	/**
+	 * @param $Enable bool Inline edit mode on.
+	 */
+	function SetInlineEditMode($Enable)
+	{
+		if ($this->mInlineEditMode != $Enable) {
+			if ($Enable) {
+				if ($this->mInlineEditAllowed) {
+					$this->mInlineEditMode = true;
+					$_SESSION['inline_edit'] = true;
+				}
+			} else {
+				$this->mInlineEditMode = false;
+				if (isset($_SESSION['inline_edit'])) {
+					unset($_SESSION['inline_edit']);
+				}
+			}
+		}
 		return $this->mInlineEditMode;
 	}
 	
@@ -185,6 +217,7 @@ class Pages_model extends Model
 			$output .= "  <div style=\"background-color:#8080FF;color:white;\" onclick=\"return PPEditToggle($edit_counter);\">$PageCode::<strong>$PropertyLabel</strong></div>";
 			$output .= "  <div id=\"ppedit_wikitext_$edit_counter\" style=\"display:none;\">";
 			$output .= '   <form>';
+			$output .= '    <ul><li><a href="'.site_url('admin/pages/inline/off').$this->uri->uri_string().'">Disable inline edit mode</a></li></ul>';
 			$output .= '    <p>';
 			$output .= "     <strong>warning</strong>: <em>This property belongs to the page type <strong><a href=\"$page_link\">$PageCode</a></strong>. Other parts of the site other than this page may use this page type. Changes will take place immediately after saving.</em>";
 			$output .= '    </p>';

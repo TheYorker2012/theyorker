@@ -32,7 +32,7 @@ foreach ($rss_items as $item) {
 	}
 	echo substr($temp_reporters, 0, -2) . ')</author>
 		<link>http://www.theyorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
-		<description>' . html_entity_decode($item['blurb'],ENT_QUOTES,'UTF-8') . '</description>
+		<description><![CDATA[' . html_entity_decode($item['blurb'],ENT_QUOTES,'UTF-8') . ']]></description>
 		<pubDate>' . date('r',$item['date']) . '</pubDate>
 		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
 		</item>';

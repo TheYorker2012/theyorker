@@ -109,6 +109,8 @@ class Pages extends Controller
 			
 			$main_text = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['main_text'] = $main_text;
+			$inline_edit_text = $this->pages_model->GetPropertyWikitext('inline_edit_text');
+			$data['inline_edit_text'] = $inline_edit_text;
 			
 			$data['permissions'] = $this->mPermissions;
 			$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
@@ -509,6 +511,35 @@ class Pages extends Controller
 		return $data;
 	}
 	
+	/// Enable / disable inline edit mode.
+	function inline($change = NULL)
+	{
+		$valid_changes = array('on' => true, 'off' => false);
+		if (!isset($valid_changes[$change])) {
+			show_404();
+		}
+		if (!CheckPermissions('office')) return;
+		
+		// Get redirection tail
+		$args = func_get_args();
+		array_shift($args);
+		$tail = implode('/', $args);
+		
+		// Make the change
+		$change_to = $valid_changes[$change];
+		$new_inline = $this->pages_model->SetInlineEditMode($change_to);
+		if ($new_inline) {
+			$this->messages->AddMessage('success', 'Inline edit mode enabled');
+		} elseif ($change_to) {
+			$this->messages->AddMessage('error',   'Inline edit mode could not be enabled');
+		} else {
+			$this->messages->AddMessage('success', 'Inline edit mode disabled');
+		}
+		
+		// Redirect
+		redirect($tail);
+	}
+	
 	/// Function for administrating common properties (global scope)
 	/**
 	 */
@@ -738,6 +769,14 @@ class Pages extends Controller
 							))
 						{
 							$data['Saved'] = true;
+						}
+						if ($input_data['type'] == 'wikitext') {
+							if ($this->pages_model->InsertProperty($input_data['pageid'], $input_data['property'], 'wikitext_cache',
+								array('text' => $data['Preview'])
+								))
+							{
+								$data['Saved'] = true;
+							}
 						}
 					}
 					break;
