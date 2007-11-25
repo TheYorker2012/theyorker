@@ -770,6 +770,14 @@ class Pages extends Controller
 						{
 							$data['Saved'] = true;
 						}
+						if ($input_data['type'] == 'wikitext') {
+							if ($this->pages_model->InsertProperty($input_data['pageid'], $input_data['property'], 'wikitext_cache',
+								array('text' => $data['Preview'])
+								))
+							{
+								$data['Saved'] = true;
+							}
+						}
 					}
 					break;
 				default:
