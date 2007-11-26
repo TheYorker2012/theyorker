@@ -156,7 +156,7 @@ function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear,
 		list($default_hour, $default_minute) = split(':', $default['time']);
 		$default_minute -= $default_minute % 15;
 		$timeFormat24 = get_instance()->user_auth->timeFormat == 24;
-		?><input id="<?php echo($id); ?>_time_mem" type="hidden" value="<?php echo("$default_hour:$default_minute"); ?>"/>
+		?>
 		<select<?php if (NULL !== $on_time_change) { echo(" onchange=\"$on_time_change\""); } ?> id="<?php echo($id); ?>_time" name="<?php echo($name); ?>[time]">
 		<?php
 			for ($hour = 0; $hour < 24; ++$hour) {
@@ -182,7 +182,7 @@ function DateSelectorGregorian($id, $name, $default, $minyear, $maxyear,
 }
 
 /// Echo a simple duration selector.
-function DurationSelector($name, $default)
+function DurationSelector($name, $default, $start_time = '0:0')
 {
 	?><label for="<?php echo($name); ?>_days">End</label><select id="<?php echo($name); ?>_days" name="<?php echo($name); ?>[days]">
 <?php
@@ -198,26 +198,28 @@ function DurationSelector($name, $default)
 	if (isset($default['time'])) {
 		list($default_hour, $default_minute) = split(':', $default['time']);
 		$default_minute -= $default_minute % 15;
+		list($default_start_hour, $default_start_minute) = split(':', $start_time);
+		$default_start_minute = $default_start_hour*60 + $default_start_minute;
 		$timeFormat24 = get_instance()->user_auth->timeFormat == 24;
 		?><div id="<?php echo($name); ?>_time_div" style="display:inline"><label for="<?php echo($name); ?>_time">At</label>
 		<select id="<?php echo($name); ?>_time" name="<?php echo($name); ?>[time]">
 		<?php
-			for ($hour = 0; $hour < 24; ++$hour) {
-				for ($minute = 0; $minute < 60; $minute += 15) {
-					echo("<option value=\"$hour:$minute\"");
-					if ($default_hour == $hour and
-						$default_minute == $minute)
-					{
-						echo(' selected="selected"');
-					}
-					echo('>');
-					if ($timeFormat24) {
-						echo(sprintf('%02d:%02d', $hour, $minute));
-					} else {
-						echo(sprintf('%d:%02d %s', (($hour+11)%12)+1, $minute, $hour >= 12 ? 'pm' : 'am'));
-					}
-					echo('</option>');
+			for ($minute_counter = $default_start_minute; $minute_counter < $default_start_minute + 60*24; $minute_counter += 15) {
+				$hour = (int)($minute_counter / 60) % 24;
+				$minute = $minute_counter % 60;
+				echo("<option value=\"$hour:$minute\"");
+				if ($default_hour == $hour and
+					$default_minute == $minute)
+				{
+					echo(' selected="selected"');
 				}
+				echo('>');
+				if ($timeFormat24) {
+					echo(sprintf('%02d:%02d', $hour, $minute));
+				} else {
+					echo(sprintf('%d:%02d %s', (($hour+11)%12)+1, $minute, $hour >= 12 ? 'pm' : 'am'));
+				}
+				echo('</option>');
 			}
 		?>
 		</select></div><?php
@@ -405,12 +407,13 @@ $CI = & get_instance();
 						$now_year,
 						$now_year+5,
 						'UpdateRecurCalPreviewLoad();',
-						"StartTimeChange(this, 'eved_start_time_mem', 'eved_duration_time');");
+						"StartTimeChange(this, 'eved_duration_time');");
 					?>
 					<?php
 					DurationSelector(
 						'eved_duration',
-						$EventInfo['duration']);
+						$EventInfo['duration'],
+						$EventInfo['start']['time']);
 					?>
 					<label for="eved_recur_simple_enable">Use Recurrence</label>
 					<input type="checkbox" onchange="MainRecurrenceToggle()" id="eved_recur_simple_enable" name="eved_recur_simple[enable]"<?php if (isset($SimpleRecur['enable'])) { ?>  checked="checked"<?php } ?> />

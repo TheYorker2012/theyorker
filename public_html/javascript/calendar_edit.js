@@ -131,24 +131,53 @@ function MinutesToTime(minutes)
 	return hours + ':' + mins;
 }
 
-/// Move the end time to maintain the duration
-function StartTimeChange(start, memory_name, end_name)
+// Cycle the options in a select so that first_value is first.
+function CycleSelect(select, first_value, first)
 {
-	var memory = document.getElementById(memory_name);
-	var end = document.getElementById(end_name);
-	if (memory && end) {
-		var original_start = TimeToMinutes(memory.value);
-		var new_start = TimeToMinutes(start.value);
-		var original_end = TimeToMinutes(end.value);
-		var offset = new_start - original_start;
-		var new_end = original_end + offset;
-		new_end = new_end % (24*60);
-		if (new_end < 0) {
-			new_end += 24*60;
+	var options = select.getElementsByTagName('option');
+	var first_index = -1;
+	var old_end_index = -1;
+	
+	// Check that first_value exists
+	// Also find which one end selected (assume they're at regular intervals)
+	var finish = 0;
+	for (var i = 0; i < options.length && finish <2; ++i) {
+		if (options[i].value == first_value) {
+			first_index = i;
+			++finish;
 		}
-		end.value = MinutesToTime(new_end);
-		memory.value = start.value;
+		if (options[i].value == select.value) {
+			old_end_index = i;
+			++finish;
+		}
 	}
+	// Only reorder if first_value exists and not already in correct order
+	if (first_index > 0) {
+		// Each time, remove and reappend the first option
+		for (var i = 0; i < first_index; ++i) {
+			var first = options[0];
+			select.removeChild(first);
+			select.appendChild(first);
+		}
+		// If we know which end was selected, use the same index
+		if (old_end_index>=0) {
+			options = select.getElementsByTagName('option');
+			for (var i = 0; i < options.length; ++i) {
+				if (i == old_end_index) {
+					select.value = options[i].value;
+					break;
+				}
+			}
+		}
+	}
+}
+
+/// Move the end time to maintain the duration
+function StartTimeChange(start, end_name)
+{
+	var end = document.getElementById(end_name);
+	
+	CycleSelect(end, start.value, true);
 }
 
 /// Update the recurrence calendar preview by AJAX
@@ -523,6 +552,10 @@ function calendarEdit_onLoad()
 	CalSimpleFreqChange();
 	MainRecurrenceToggle();
 	SimpleCheckboxChange('eved_allday', 'eved_start_time', 'eved_duration_time_div');
+	
+	var start_time = document.getElementById('eved_start_time');
+	var end_time = document.getElementById('eved_duration_time');
+	CycleSelect(end_time, start_time.value, true);
 	
 	// Need to get info from data inserted by php.
 	// inex dates - look in children of eved_inex_list
