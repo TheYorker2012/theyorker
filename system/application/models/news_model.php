@@ -262,7 +262,7 @@ class News_model extends Model
 	 * @param $number is the max number of 'article_id' to return
 	 * @return An array of Article IDs in decending order by publish date.
 	 */
-	function GetLatestId($type, $number, $remove_featured=true)
+	function GetLatestId($type, $number, $number_offset=0, $remove_featured=true)
 	//Returns the '$number' most recent article ID of type '$type'
 	//Ordered by 'most recent'.
 	{
@@ -310,7 +310,8 @@ class News_model extends Model
 			$sql .= ') ';
 		}
 		$sql .= 'ORDER BY articles.article_publish_date DESC
-				LIMIT 0, ?';
+				LIMIT ?, ?';
+		$types[] = $number_offset;
 		$types[] = $number;
 		$query = $this->db->query($sql,$types);
 		$result = array();

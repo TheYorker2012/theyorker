@@ -68,94 +68,13 @@ class Reviews extends Controller
 	{
 		redirect('/reviews/food'); //Send them to the food page instead
 	}
-
-	/// Main context frontpage
+	
+	//Frontpage is now a special version of the table.
 	function _main($content_type)
 	{
-		if (!CheckPermissions('public')) return;
-		
-		//Obtain banner for homepage
-		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($content_type);
-		
-		//Pass content_type to view
-	
-		$main_review = $this->Review_model->GetFrontPageReview($content_type);
-		$data['content_type'] = $main_review['content_type_name'];
-
-		//Set page code
-		$this->pages_model->SetPageCode('review_main');
-		$data['page_header'] = $this->pages_model->GetPropertyText('header_'.$content_type);
-		$data['main_review_header'] = $this->pages_model->GetPropertyText('main_review_header');
-		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
-		$data['page_about'] = $this->pages_model->GetPropertyWikiText('about_'.$content_type);
-
-		$this->main_frame->SetTitleParameters(array(
-			'content_type' => $data['content_type']
-		));
-
-		/// If there are no reviews for this particular section then show a page anyway
-		if ($main_review != null) {
-			$this->load->model('slideshow');
-			$slideshow_array = $this->slideshow->getPhotos($main_review['organisation_entity_id']);
-			$slideshow = array();
-
-			$this->load->library('image');
-			foreach ($slideshow_array->result() as $slide){
-				$slideshow[] = array(
-					'title' => $slide->photo_title,
-					'id' => $slide->photo_id,
-					'url' => $this->image->getPhotoURL($slide->photo_id, 'slideshow')
-				);
-			}
-			$main_review['slideshow'] = $slideshow;
-		}
-
-		$data['main_review'] = $main_review;
-
-		//Get data for the links to the table page
-		$tabledata = $this->Review_model->GetTags($content_type);
-
-		//Pass tabledata straight to view it is in the proper format
-		$data['table_data'] = $tabledata;
-
-		//Get league data
-		$league_data = $this->Review_model->GetLeagueDetails($content_type);
-		$leagues = array();
-		foreach ($league_data as &$league)
-		{
-			if (empty($league['image_id'])) {
-				$has_image = false;
-				$image_path = '';
-			}
-			else {
-				$has_image = true;
-				$image_path = '/image/'.$league['image_type_codename'].'/'.$league['image_id'];
-			}
-			$leagues[] = array(
-				'has_image' => $has_image,
-				'image_path'=> $image_path,
-				'league_name'=>$league['league_name'],
-				'league_size'=>$league['league_size'],
-				'league_codename'=>$league['league_codename']
-				);
-		}
-		//Pass tabledata straight to view it is in the proper format
-		$data['league_data'] = $leagues;
-
-		$this->main_frame->SetExtraHead('
-		<script type="text/javascript" src="/javascript/prototype.js"></script>
-		<script type="text/javascript" src="/javascript/scriptaculous.js"></script>
-		<script src="/javascript/slideshow_new.js" type="text/javascript"></script>
-		');
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('reviews/main',$data);
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
+		$this->table($content_type,'star');
 	}
-
+	
 	/// Review page
 	function _review($content_type, $organisation_name, $IncludedComment = 0)
 	{
@@ -174,20 +93,20 @@ class Reviews extends Controller
 					$item_filter_by = FALSE,
 					$where_equal_to = FALSE)
 	{
-		//Load slideshow model
+		////////////LOAD MODELS
 		$this->load->model('slideshow');
 
 		//POST data set overwrites uri data
-		if (isset($_POST['content_type'])) $item_filter_by = $_POST['content_type'];
+		if (isset($_POST['content_type'])) $content_type = $_POST['content_type'];
+		if (isset($_POST['sorted_by'])) $sorted_by = $_POST['sorted_by'];
 		if (isset($_POST['item_filter_by'])) $item_filter_by = $_POST['item_filter_by'];
 		if (isset($_POST['where_equal_to'])) $where_equal_to = $_POST['where_equal_to'];
-		if (isset($_POST['sorted_by'])) $where_equal_to = $_POST['sorted_by'];
 
 		//For next page so we remember the options given
+		$data['content_type'] = $content_type;
+		$data['sorted_by'] = $sorted_by;
 		$data['item_filter_by'] = $item_filter_by;
 		$data['where_equal_to'] = $where_equal_to;
-		$data['sorted_by'] = $sorted_by;
-		$data['content_type'] = $content_type;
 
 		if (!CheckPermissions('public')) return;
 		//Obtain banner for homepage
@@ -204,7 +123,7 @@ class Reviews extends Controller
 		$data['leagues_header'] = $this->pages_model->GetPropertyText('leagues_header');
 		$data['page_about'] = $this->pages_model->GetPropertyWikiText('about_'.$content_type);
 		
-		//Get league data
+		///////////GET LEAGUES
 		$league_data = $this->Review_model->GetLeagueDetails($content_type);
 		$leagues = array();
 		foreach ($league_data as &$league)
@@ -228,10 +147,8 @@ class Reviews extends Controller
 		//Pass tabledata straight to view it is in the proper format
 		$data['league_data'] = $leagues;
 		
+		//GET REVIEWS FOR TABLE
 		$database_result = $this->Review_model->GetTableReview($content_type,$sorted_by, $item_filter_by,$where_equal_to);
-
-		$columns = array(0);
-		$entries = array();
 
 		//Get data for the links to the table page
 		$tabledata = $this->Review_model->GetTags($content_type);
@@ -251,27 +168,25 @@ class Reviews extends Controller
 			$data['review_tags'] = $database_result[0]['tag_groups'];
 
 			$this->load->library('image');
-
+			$entries = array();//Array that the table reviews are loaded into
+			
 			//For each row in the table
 			for($reviewno = 0; $reviewno < count($database_result); $reviewno++)
 			{
 				if (isset($database_result[$reviewno]['organisation_name']))
 				{
-				//surely this should be in the model
+					//surely this should be in the model
 					$entries[$reviewno]['review_title'] = $database_result[$reviewno]['organisation_name'];
 					$entries[$reviewno]['review_id'] = $database_result[$reviewno]['organisation_entity_id'];
-					$entries[$reviewno]['review_website'] = $database_result[$reviewno]['organisation_content_url'];
 					$entries[$reviewno]['review_rating'] = $database_result[$reviewno]['review_context_content_rating'];
 					$entries[$reviewno]['review_blurb'] = $database_result[$reviewno]['review_context_content_blurb'];
-					$entries[$reviewno]['review_quote'] = $database_result[$reviewno]['review_context_content_quote'];
-					$entries[$reviewno]['review_user_rating'] = intval($database_result[$reviewno]['average_user_rating']);
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$content_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 
 					//get the slideshow images for the review item
-					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']); //$content_type, true);
+					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']);
 					if($slideshow_array->num_rows() > 0)
 					{
-						$entries[$reviewno]['review_image'] = $this->image->getPhotoURL($slideshow_array->row()->photo_id, 'slideshow');
+						$entries[$reviewno]['review_image'] = $this->image->getThumb($slideshow_array->row()->photo_id, 'small');
 					}
 
 					//Change scope of $tagbox
@@ -287,22 +202,14 @@ class Reviews extends Controller
 						{
 							$tagbox[$data['review_tags'][$tagno]] = $database_result[$reviewno]['tags'][$tag_group_name];
 						}
-						else //Else pass a empty array - Changed a array containing 'n/a'
-						{
-							//Hide the n/a as they serves no purpose... good work frank. nse500
-							//-> to clarify:
-							//"well done for making it so i only need to comment out one line to turn off the whole na thing, saves me alot of work :-)"
-							//$tagbox[$data['review_tags'][$tagno]] = array('n/a');
-						}
 					}
 					$entries[$reviewno]['tagbox'] = $tagbox;
 				}
 			}
-
 			$data['entries'] = $entries;
-
 		}
 		
+		//Load extra css and frame
 		$this->main_frame->SetExtraCss('/stylesheets/home.css');
 		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
