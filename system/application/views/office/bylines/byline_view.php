@@ -28,12 +28,15 @@
 				echo($byline_info['user_firstname'] . ' ' . $byline_info['user_surname']);
 			} ?>
 		</a>
-		<b>Team:</b> <?php echo($byline_info['business_card_group_name']); ?>
+		<b>Team:</b>
+		<a href="/office/bylines/view_team/<?php echo($byline_info['business_card_business_card_group_id']); ?>">
+			<?php echo($byline_info['business_card_group_name']); ?>
+		</a>
 		<b>Status:</b> <?php echo(($byline_info['business_card_approved']) ? '<span style="color:darkgreen">Approved</span>' : '<span style="color:red">Pending</span>'); ?>
 		<br />
 		<b>Display:</b> <?php echo(date('d/m/y', $byline_info['business_card_start_date']) . ' - ' . date('d/m/y', $byline_info['business_card_end_date'])); ?>
 		<br />
-		<?php if ($byline_info['business_card_about_us']) echo('<span style="color:red"><b>ABOUT US PAGE ONLY</b></span>'); ?>
+		<?php if ($byline_info['business_card_about_us']) echo('<span style="color:red"><b>ABOUT US PAGE</b></span>'); ?>
 		<div class="clear"></div>
 	</div>
 
@@ -114,7 +117,7 @@
 <?php } ?>
 				</select>
 				<br />
-				<label for="aboutus">About Us Only?</label>
+				<label for="aboutus">Show in About Us?</label>
 				<input type="checkbox" name="aboutus" id="aboutus" value="yes"<?php if ($this->validation->aboutus) { echo(' checked="checked"'); } ?> />
 				<br />
 				<input type="submit" name="edit_byline" id="edit_byline" value="Update Byline" class="button" />
