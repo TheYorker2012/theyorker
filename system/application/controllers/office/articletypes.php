@@ -62,6 +62,7 @@ class Articletypes extends Controller
 		$this->pages_model->SetPageCode('office_articletypes');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 		$data['sub_articles'] = $this->Article_model->getAllSubArticleTypes();
+		$data['shelved_sub_articles'] = $this->Article_model->getAllSubArticleTypes(true);
 		
 		$this->main_frame->SetContentSimple('office/articles/sub_article_types', $data);
 		// Load the public frame view (which will load the content view)
@@ -147,7 +148,8 @@ class Articletypes extends Controller
 			}else{
 				//create article type
 				if(empty($_POST['article_type_archive'])){$archive=0;}else{$archive=1;}
-				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],$archive,$_POST['article_type_blurb']);
+				if(empty($_POST['article_type_shelved'])){$shelved=0;}else{$shelved=1;}
+				$this->Article_model->updateArticleSubType($_POST['article_type_id'],$codename,$_POST['article_type_name'],$_POST['article_type_parent'],$archive,$shelved,$_POST['article_type_blurb']);
 				$this->messages->AddMessage('success','Article type updated.');
 				redirect('/office/articletypes');
 			}
@@ -169,6 +171,7 @@ class Articletypes extends Controller
 				'article_type_name' => $articletype['name'],
 				'article_type_parent' => $articletype['parent_id'],
 				'article_type_archive' => $articletype['archive'],
+				'article_type_shelved' => $articletype['shelved'],
 				'article_type_blurb' => $articletype['blurb']
 			);
 		}
