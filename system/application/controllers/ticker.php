@@ -173,7 +173,7 @@ class Ticker extends Controller {
 			$title_data = '{"link":"' . $article_link . '"}';
 			$body_data = '{"headline":"' . addslashes($article['heading']) . '","blurb":"' . addslashes(substr($article['blurb'], 0, 185 - strlen($article['heading']))) . '"}';
 
-			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($user, $title, $title_data, $body, $body_data, '', $photo, $article_link)) {
+			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($this->facebook_ticker->facebook->get_loggedin_user(), $title, $title_data, $body, $body_data, '', $photo, $article_link)) {
 				$_SESSION['fbticker_messages'][] = array('success', 'The requested article was posted on your feed.');
 			} else {
 				// Error posting article to facebook
