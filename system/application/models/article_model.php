@@ -655,14 +655,16 @@ class Article_model extends Model
 	*@return image_codename(image_type_codename),name(content_type_name)]
 	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
 	**/
-	function getAllSubArticleTypes ()
+	function getAllSubArticleTypes ($get_shelved_articles=false)
 	{
 		$result = array();
+		if($get_shelved_articles){$shelved=1;}else{$shelved=0;}
 		$sql = 'SELECT  child.content_type_id,
 						child.content_type_codename,
 						child.content_type_blurb,
 						child.content_type_name,
 						child.content_type_archive,
+						child.content_type_shelved,
 						parent.content_type_name AS parent_name,
 						parent.content_type_codename AS parent_codename,
 						image_id, image_file_extension,
@@ -674,9 +676,10 @@ class Article_model extends Model
 			ON      child.content_type_image_id = image_id
 			LEFT OUTER JOIN      image_types
 			ON      image_image_type_id = image_type_id
-			WHERE     parent.content_type_has_children = 1
+			WHERE     parent.content_type_has_children = 1 
+			AND child.content_type_shelved = ? 
 			ORDER BY        parent.content_type_name ASC,  child.content_type_section_order ASC';
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql, array($shelved));
 		if ($query->num_rows() > 0)
 		{
 			foreach($query->result() as $row)
@@ -688,6 +691,7 @@ class Article_model extends Model
 					'parent_name' => $row->parent_name,
 					'parent_codename' => $row->parent_codename,
 					'in_archive' => $row->content_type_archive,
+					'shelved' => $row->content_type_shelved,
 					'blurb' => $row->content_type_blurb,
 					'image' => $row->image_id,
 					'image_title' => $row->image_title,
@@ -746,8 +750,9 @@ class Article_model extends Model
 	//@param $name - string name
 	//@param $parent_id - id of parent content_type
 	//@param $archive (0,1) if articlesubtype is shown in the archive
+	//@param $shelved (0,1) if articlesubtype is shown in the archive but not in puffers
 	//@param $blurb - String, description
-	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$blurb)
+	function updateArticleSubType($id,$codename,$name,$parent_id,$archive,$shelved,$blurb)
 	{
 		//Update type
 		$sql = 'UPDATE content_types SET 
@@ -755,10 +760,11 @@ class Article_model extends Model
 		content_types.content_type_name = ?, 
 		content_types.content_type_parent_content_type_id = ?, 
 		content_types.content_type_archive = ?, 
+		content_types.content_type_shelved = ?, 
 		content_types.content_type_blurb = ? 
 		WHERE content_types.content_type_id = ? 
 		LIMIT 1';
-		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$blurb,$id));
+		$this->db->query($sql, array($codename,$name,$parent_id,$archive,$shelved,$blurb,$id));
 	}
 	
 	function updateArticleSubTypeImage($id,$image_id)
@@ -804,6 +810,7 @@ class Article_model extends Model
 				 content_types.content_type_name AS name,
 				 content_types.content_type_section AS section,
 				 content_types.content_type_archive AS archive,
+				 content_types.content_type_shelved AS shelved,
 				 content_types.content_type_blurb AS blurb,
 				 content_types.content_type_section_order AS section_order ,
 				 content_types.content_type_image_id AS image_id,

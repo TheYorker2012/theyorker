@@ -13,6 +13,16 @@ class Sport extends Controller
 		$this->load->library('Homepage_boxes');
 	}
 	
+	private function getNumberOfType($articles,$type_codename)
+	{
+		$count=0;
+		foreach ($articles as $article)
+		{
+			if($article['article_type']==$type_codename){$count++;}
+		}
+		return $count;
+	}
+	
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
@@ -54,14 +64,13 @@ class Sport extends Controller
 		$articles_summarys = array();
 		foreach ($more_article_types as $an_article){
 			//Get article id's for that article type up to limit of $more_articles_num
-			$articles_ids[$article_index] = $this->News_model->GetLatestId($an_article['codename'],$more_articles_num);
+			//with an offset of $offset to prevent picking up duplicate articles.
+			$offset = $this->getNumberOfType($main_article_summarys,$an_article['codename']);
+			$articles_ids[$article_index] = $this->News_model->GetLatestId($an_article['codename'],$more_articles_num,$offset);
 				//for the new article type found get a simple article for each of the ids found.
 				for ($index = 0; $index <= ($more_articles_num-1) && $index < count($articles_ids[$article_index]); $index++) {
-					//check the article hasnt already been used as a main article
-					$found_article = array_search($articles_ids[$article_index][$index], $main_article_ids);
-					if($found_article === FALSE){
-						$articles_summarys[$article_index][] = $this->News_model->GetSimpleArticle($articles_ids[$article_index][$index], "Left");
-					}
+					//no need to check that the ids havent been used, due to the offset.
+					$articles_summarys[$article_index][] = $this->News_model->GetSimpleArticle($articles_ids[$article_index][$index], "Left");
 				}
 			$article_index++;
 		}

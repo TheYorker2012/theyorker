@@ -250,8 +250,9 @@ class Businesscards_model extends Model
 
 	/**
 	 *	@brief	Get all the current byline teams
+	 *	@param	$year - The year to find active bylines for
 	 */
-	function GetBylineTeams ()
+	function GetBylineTeams ($year = NULL)
 	{
 		$sql = 'SELECT		business_card_groups.business_card_group_id,
 							business_card_groups.business_card_group_name,
@@ -267,7 +268,26 @@ class Businesscards_model extends Model
 					WHERE		business_cards.business_card_business_card_group_id = ?
 					AND			business_cards.business_card_deleted = 0
 					AND			business_cards.business_card_approved = 1';
-			$query = $this->db->query($sql, array($r['business_card_group_id']));
+			$criteria = array($r['business_card_group_id']);
+			if ($year !== NULL) {
+				$sql .= '
+					AND			business_cards.business_card_about_us = 1
+					AND			business_cards.business_card_user_entity_id IS NOT NULL
+					AND	(	(	business_cards.business_card_start_date >= ?
+							AND	business_cards.business_card_start_date <= ?
+							)
+						OR	(	business_cards.business_card_end_date >= ?
+							AND	business_cards.business_card_end_date <= ?
+							)
+						OR	(	business_cards.business_card_start_date < ?
+							AND	business_cards.business_card_end_date > ?
+							)
+						)';
+				$start_date = $year . '-10-01';
+				$end_date = ($year+1) . '-09-30';
+				$criteria = array_merge($criteria, array($start_date, $end_date, $start_date, $end_date, $start_date, $end_date));
+			}
+			$query = $this->db->query($sql, $criteria);
 			$result2 = $query->row_array();
 			$r['business_card_group_count'] = $result2['group_count'];
 		}
@@ -284,7 +304,8 @@ class Businesscards_model extends Model
 		return $query->row_array();
 	}
 
-	function GetTeamBylines ($team_id)
+	//	@param	$year - The year to find active bylines for
+	function GetTeamBylines ($team_id, $year = NULL)
 	{
 		$sql = 'SELECT		business_cards.business_card_id,
 							business_cards.business_card_user_entity_id,
@@ -312,9 +333,30 @@ class Businesscards_model extends Model
 				WHERE		business_card_groups.business_card_group_organisation_entity_id IS NULL
 				AND			business_card_groups.business_card_group_id = ?
 				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
-				AND			business_cards.business_card_deleted = 0
+				AND			business_cards.business_card_deleted = 0';
+		$criteria = array($team_id);
+		if ($year !== NULL) {
+			$sql .= '
+				AND			business_cards.business_card_approved = 1
+				AND			business_cards.business_card_about_us = 1
+				AND			business_cards.business_card_user_entity_id IS NOT NULL
+				AND	(	(	business_cards.business_card_start_date >= ?
+						AND	business_cards.business_card_start_date <= ?
+						)
+					OR	(	business_cards.business_card_end_date >= ?
+						AND	business_cards.business_card_end_date <= ?
+						)
+					OR	(	business_cards.business_card_start_date < ?
+						AND	business_cards.business_card_end_date > ?
+						)
+					)';
+			$start_date = $year . '-10-01';
+			$end_date = ($year+1) . '-09-30';
+			$criteria = array_merge($criteria, array($start_date, $end_date, $start_date, $end_date, $start_date, $end_date));
+		}
+		$sql .= '
 				ORDER BY	business_cards.business_card_order ASC';
-		$query = $this->db->query($sql, array($team_id));
+		$query = $this->db->query($sql, $criteria);
 		return $query->result_array();
 	}
 

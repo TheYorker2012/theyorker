@@ -219,9 +219,10 @@ class News_model extends Model
 	*@return image_codename(image_type_codename),name(content_type_name)]
 	*@note use LEFT OUTER on last to joins to allow for children that dont have images.
 	**/
-	function getSubArticleTypes ($main_type)
+	function getSubArticleTypes ($main_type, $include_shelved=false)
 	{
 		$result = array();
+		
 		$sql = 'SELECT  child.content_type_id, child.content_type_codename, child.content_type_blurb,
 		        	child.content_type_name, image_id, image_file_extension,
 			        image_type_codename, image_title
@@ -232,8 +233,9 @@ class News_model extends Model
 			ON      child.content_type_image_id = image_id
 			LEFT OUTER JOIN      image_types
 			ON      image_image_type_id = image_type_id
-			WHERE   parent.content_type_codename = ?
-			AND     parent.content_type_has_children = 1
+			WHERE   parent.content_type_codename = ? ';
+			if($include_shelved==false) { $sql .='AND		child.content_type_shelved = 0 ';}
+			$sql .='AND     parent.content_type_has_children = 1
 			ORDER BY        child.content_type_section_order ASC';
 		$query = $this->db->query($sql,array($main_type));
 		if ($query->num_rows() > 0)
@@ -262,7 +264,7 @@ class News_model extends Model
 	 * @param $number is the max number of 'article_id' to return
 	 * @return An array of Article IDs in decending order by publish date.
 	 */
-	function GetLatestId($type, $number, $remove_featured=true)
+	function GetLatestId($type, $number, $number_offset=0, $remove_featured=true)
 	//Returns the '$number' most recent article ID of type '$type'
 	//Ordered by 'most recent'.
 	{
@@ -310,7 +312,8 @@ class News_model extends Model
 			$sql .= ') ';
 		}
 		$sql .= 'ORDER BY articles.article_publish_date DESC
-				LIMIT 0, ?';
+				LIMIT ?, ?';
+		$types[] = $number_offset;
 		$types[] = $number;
 		$query = $this->db->query($sql,$types);
 		$result = array();

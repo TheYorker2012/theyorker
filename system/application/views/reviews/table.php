@@ -22,12 +22,13 @@ if (!empty($league_data)){
 	<div id="HomeBanner">
 		<?php 
 		$this->load->library('Homepage_boxes');
+		$this->homepage_boxes->print_homepage_banner($banner);
 		?>
 	</div>
 	<div class="BlueBox">
 		<h2><?php echo($page_header) ?></h2>
 		<?php echo($page_about) ?>
-		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
+		<form name="reviews" action="/reviews/table/<?php echo $content_type; ?>/star" method="post">
 			<div style="float: left; width: 75%">
 				<table>
 					<tr>
@@ -147,8 +148,6 @@ if (!empty($league_data)){
 				<tr>
 					<td valign="top">
 						<font size="+1"><strong><a href="<?php echo($entry['review_table_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
-						<br />
-						<span style="color: #999999; font-size: 0.9em;" ><a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
 					<td width="126" align="center">
 						<?php
@@ -157,19 +156,17 @@ if (!empty($league_data)){
 						$empty = 5 - $whole - $part;
 						for($i=0;$i<$whole;$i++)
 						{
-							echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
+							echo '<img src="/images/prototype/reviews/star.png" width="18" alt="*" title="*" />';
 						}
 						if ($part == 1)
 						{
-							echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
+							echo '<img src="/images/prototype/reviews/halfstar.png" width="18" alt="-" title="-" />';
 						}
 						for($i=0;$i<$empty;$i++)
 						{
-							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
+							echo '<img src="/images/prototype/reviews/emptystar.png" width="18" alt=" " title=" " />';
 						}
-
 						?>
-						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
 					</td>
 				</tr>
 				</tbody>
@@ -186,7 +183,7 @@ if (!empty($league_data)){
 				?>
 				<tr>
 					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['review_image']); ?>" width="144" height="116"/>
+						<?php echo($entry['review_image']); ?>
 					</td>
 					<td width="80%" valign="top">
 						<?php echo($entry['review_blurb']); ?>
@@ -207,41 +204,22 @@ if (!empty($league_data)){
 				?>
 				<tr>
 					<td colspan="2">
-						<table border="0" width="100%">
-						<tr>
-							<?php
-							foreach($entry['tagbox'] as $tag => $values ) {
-								echo('<td width="25% valign="top">');
-								echo('<strong>'.$tag.':</strong><br />');
-								echo(implode(' / ', $values).'</td>');
-							}
-							?>
-						</tr>
-						</table>
+						<div style="font-size: 0.9em;">
+						<?php
+						foreach($entry['tagbox'] as $tag => $values ) {
+							echo('<strong>'.$tag.': </strong> ');
+							echo(implode(' / ', $values).'<br />');
+						}
+						?>
+						</div>
 					</td>
 				</tr>
-				<?php
-				if($entry['review_quote'] != "")
-				{
-				?>
-				<tr>
-					<td align="left" colspan="2">
-						<img src="/images/prototype/news/quote_open.png" alt="oquote" />
-						<?php echo($entry['review_quote']); ?>
-						<img src="/images/prototype/news/quote_close.png" alt="oquote" />
-					</td>
-				</tr>
-				<?php
-				}
-				?>
 				</tbody>
 				</table>
 			</td>
 		</tr>
 		<?php
-
 		}
-
 		?>
 		</tbody>
 		</table>

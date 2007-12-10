@@ -27,7 +27,7 @@ if (!empty($league_data)){
 	<div class="BlueBox">
 		<h2><?php echo($page_header) ?></h2>
 		<?php echo($page_about) ?>
-		<form name="reviews" action="/reviews/table/<?php echo($this->uri->segment(2)); ?>/star" method="post">
+		<form name="reviews" action="/reviews/table/<?php echo $content_type; ?>/star" method="post">
 			<div style="float: left; width: 75%">
 				<table>
 					<tr>
