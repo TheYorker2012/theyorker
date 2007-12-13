@@ -39,11 +39,11 @@ class DataSettings
    
     $sql = "SELECT * FROM $tablename";
 
-    $query = this->db->query($sql);
+    $query = $this->db->query($sql);
    
     if ($query->num_rows()>0)
     {
-      $rows = $query->resul_array();
+      $rows = $query->result_array();
       foreach ($rows as $row)
       {
         $this->values[$row[$this->fkey]] = $row[$this->fvalue];

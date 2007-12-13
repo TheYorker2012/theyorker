@@ -309,7 +309,7 @@ class Image_upload {
 			              'x'         => $x,
 			              'y'         => $y,
 			              'mime'      => $data['file_type'],);
-			$id = $this->ci->image->add('photo', &$newImage, $info);
+			$id = $this->ci->image->add('photo', $newImage, $info);
 			if ($id === false) {
 				return false;
 			} else {
