@@ -13,9 +13,16 @@ sub new
 	return $self;
 }
 
+# Help information
+sub printInformation
+{
+	my ($self) = @_;
+	print "\tThis simply runs the PHP syntax checker on all PHP files\n";
+}
+
 sub runTest
 {
-	my ($self, $ci_root, $file) = @_;
+	my ($self, $ci_root, $file, $configuration) = @_;
 	
 	if ($file =~ /\.php$/) {
 		my $stdout = `php --syntax-check "$file"`;

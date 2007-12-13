@@ -113,7 +113,7 @@ sub printInformation
 # Main test function
 sub runTest
 {
-	my ($self, $ci_root, $file) = @_;
+	my ($self, $ci_root, $file, $configuration) = @_;
 	
 	if ($file =~ /\.php$/) {
 		# Look for CI loads

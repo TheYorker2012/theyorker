@@ -7,6 +7,7 @@ use warnings;
 my $all_tests = {
 	php_syntax      => "Perform a syntax check of all php files.",
 	php_dependency  => "Perform a CI dependency check on php files.",
+	php_csi         => "Perform a a coding standards inspection on all php files.",
 	js_warnings     => "Show warnings for potential JS problems.",
 };
 
@@ -17,7 +18,8 @@ my $all_test_sets = {
 	#         ],
 	php    => [ "All PHP tests.",
 	            [ 'php_syntax',
-	              'php_dependency' ],
+	              'php_dependency',
+	              'php_csi', ],
 	            [  ],
 	          ],
 	js     => [ "All Javascript tests.",
@@ -34,7 +36,7 @@ sub print_usage
 {
 	print "Usage:\n";
 	print "  ./analyser.pl\n";
-	print "    <code_igniter_root>\n";
+	print "    <branch>\n";
 	print "    [-h|--help]               Show this help screen.\n";
 	print "    [-l|--list-sets]          List test sets.\n";
 	print "    [-L|--list-tests]         List tests.\n";
@@ -42,6 +44,7 @@ sub print_usage
 	print "    [-a|--all]                Run all tests.\n";
 	print "    [-t|--test=<test>]        Specify a test to run.\n";
 	print "    [-s|--set=<testset>]      Specify a test set to run.\n";
+	print "    {-c|--config key[=val]}   Specify a custom option.\n";
 	print "    [<<files>>]               Specify files.\n";
 	return shift;
 }
@@ -55,6 +58,7 @@ sub main
 	my $opt_all = 0;
 	my @opt_tests;
 	my @opt_sets;
+	my @opt_configs;
 
 	if (!GetOptions('h|help'        => \$opt_help,
 	                'l|list-sets'   => \$opt_list_sets,
@@ -62,7 +66,8 @@ sub main
 	                'i|information' => \$opt_information,
 	                'a|all'         => \$opt_all,
 	                't|test=s'      => \@opt_tests,
-	                's|set=s'       => \@opt_sets))
+	                's|set=s'       => \@opt_sets,
+	                'c|config=s'    => \@opt_configs,))
 	{
 		exit print_usage 1;
 	}
@@ -92,25 +97,27 @@ sub main
 	
 	my $done_something = $opt_list_sets || $opt_list_tests;
 	
-	my $ci_root;
-	if (!@ARGV) {
-		if ($done_something) {
-			exit 0;
+	my $branch_path;
+	if (!$opt_information) {
+		if (!@ARGV) {
+			if ($done_something) {
+				exit 0;
+			}
+			else {
+				print STDERR "Please specify the CI path\n";
+				exit print_usage 0;
+			}
 		}
 		else {
-			print STDERR "Please specify the CI path\n";
-			exit print_usage 0;
+			$branch_path = shift @ARGV;
 		}
-	}
-	else {
-		$ci_root = shift @ARGV;
-	}
 
-	# CI root directory must exist
-	$ci_root =~ s/^(.*[^\/])\/*$/$1/;
-	if (!-d $ci_root) {
-		print STDERR "CI root directory \"$ci_root\" must exist\n";
-		exit print_usage 1;
+		# CI root directory must exist
+		$branch_path =~ s/^(.*[^\/])\/*$/$1/;
+		if (!-d $branch_path) {
+			print STDERR "Branch path \"$branch_path\" doesn't exist\n";
+			exit print_usage 1;
+		}
 	}
 
 	my $fail = 0;
@@ -171,13 +178,23 @@ sub main
 	
 	# Perform the tests.
 	if (!$fail) {
+		# Read config options
+		my $configuration = {};
+		foreach my $config (@opt_configs) {
+			if ($config =~ /([^=]*)=(.*)/) {
+				$configuration->{$1} = $2;
+			} else {
+				$configuration->{$config} = 1;
+			}
+		}
+		
 		# Get files if they weren't specified
 		my @files_to_analyse;
 		if (@ARGV) {
 			@files_to_analyse = @ARGV;
 		}
-		else {
-			@files_to_analyse = `find "$ci_root"`;
+		elsif (!$opt_information) {
+			@files_to_analyse = `find "$branch_path"`;
 			foreach my $filename (@files_to_analyse) {
 				chomp($filename);
 			}
@@ -189,12 +206,15 @@ sub main
 			if ($opt_information) {
 				print "Information about test \"$test_id\":\n";
 				$test_mod->printInformation;
+				print "\n";
 			}
 			else {
 				print "**************** $test_id ****************\n\n";
-				foreach my $file (@files_to_analyse) {
-					if ($test_mod->runTest($ci_root, $file)) {
-						$fail = 1;
+				if (!$test_mod->validateConfiguration($configuration)) {
+					foreach my $file (@files_to_analyse) {
+						if ($test_mod->runTest($branch_path, $file, $configuration)) {
+							$fail = 1;
+						}
 					}
 				}
 				print "\n";

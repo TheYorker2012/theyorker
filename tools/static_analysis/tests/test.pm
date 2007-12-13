@@ -17,8 +17,14 @@ sub printInformation
 
 sub runTest
 {
-	my ($self, $ci_root, $file) = @_;
+	my ($self, $ci_root, $file, $configuration) = @_;
 	
+	return 0;
+}
+
+sub validateConfiguration
+{
+	my ($self, $configuration) = @_;
 	return 0;
 }
 

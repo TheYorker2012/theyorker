@@ -1,4 +1,4 @@
-package js_warnings;
+package php_csi;
 
 use test;
 
@@ -17,26 +17,40 @@ sub new
 sub printInformation
 {
 	my ($self) = @_;
-	print "\tThis test checks various files for potential mistakes.\n";
-	print "\tThis includes:\n";
-	print "\t\tChecking certain non-php files for erronous php tags\n";
+	print "\tThis is the PHP Coding Standards Inspection script\n";
+	print "\t\tDetects PHP short tags\n";
+}
+
+sub validateConfiguration
+{
+	my ($self, $configuration) = @_;
+	
+	my $fail = 0;
+	
+	if (defined $configuration->{'php_csi:autofix'}) {
+		print STDERR "Autofix not implemented\n";
+		$fail = 1;
+	}
+	
+	return $fail;
 }
 
 sub runTest
 {
 	my ($self, $ci_root, $file, $configuration) = @_;
 	
-	if ($file =~ /\.(?:js|css)$/) {
-		# Look for php tags not in quotes
+	if ($file =~ /\.php$/) {
 		my $fildes;
 		my $fail = 0;
 		if (open($fildes, "<$file")) {
 			my $lineno = 1;
 			while (my $line = <$fildes>) {
-				if ($line =~ /<\?/) {
+				# PHP short tags
+				if ($line =~ /<\?(...)?/ && (!defined $1 || $1 ne 'php')) {
 					$fail = 1;
-					$self->printError($file, $lineno, "Warning: PHP tags found in non PHP file");
+					$self->printError($file, $lineno, "Short PHP tags are not permitted");
 				}
+				
 				
 				++$lineno;
 			}
