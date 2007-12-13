@@ -108,8 +108,8 @@ class objField {
     }
     
     //load needed helpers 
-    if (!isset($this->ci->load->helpers['form_helper'])) {
-      $this->ci->load->helper('form_helper');
+    if (!isset($this->ci->load->helpers['form'])) {
+      $this->ci->load->helper('form');
     }
     if (!isset($this->ci->load->helpers['url'])) { 
       $this->ci->load->helper('url');

@@ -682,7 +682,7 @@ class Comments_model extends model
 		static $stuff_loaded = FALSE;
 		if (!$stuff_loaded) {
 			$this->load->library('comments_parser');
-			$this->load->helper('wikitext_smiley_helper');
+			$this->load->helper('wikitext_smiley');
 			$stuff_loaded = TRUE;
 		}
 		$Wikitext = wikitext_parse_smileys($Wikitext);

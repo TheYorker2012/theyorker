@@ -113,7 +113,7 @@ class Pages extends Controller
 			$data['inline_edit_text'] = $inline_edit_text;
 			
 			$data['permissions'] = $this->mPermissions;
-			$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
+			$this->main_frame->SetContentSimple('admin/pages_index', $data);
 		}
 		$this->main_frame->Load();
 	}
@@ -565,7 +565,7 @@ class Pages extends Controller
 			$this->pages_model->SetPageCode('admin_pages_common');
 			$this_uri = '/admin/pages/common';
 			$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
-			$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+			$this->main_frame->SetContentSimple('admin/pages_page', $data);
 		}
 		$this->main_frame->Load();
 		
@@ -612,7 +612,7 @@ class Pages extends Controller
 						$data = $this->_NewPage($data,
 										'/admin/pages/page/new',
 										'/admin/pages/page/edit/');
-						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					}
 					break;
 					
@@ -620,7 +620,7 @@ class Pages extends Controller
 					$this->pages_model->SetPageCode('admin_pages_page_edit');
 					$this_uri = '/admin/pages/page/edit/';
 					$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
-					$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+					$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					break;
 					
 				case 'delete':
@@ -628,7 +628,7 @@ class Pages extends Controller
 					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
 						$this_uri = '/admin/pages/page/delete/';
 						$data = $this->_DeletePage($data, $PageCode, $this_uri);
-						$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
 					}
 					break;
 					
@@ -687,7 +687,7 @@ class Pages extends Controller
 										'/admin/pages/custom/new',
 										'/admin/pages/custom/edit/',
 										'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					}
 					break;
 					
@@ -704,7 +704,7 @@ class Pages extends Controller
 							),
 							'custom:'
 						);
-					$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+					$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					break;
 					
 				case 'delete':
@@ -712,7 +712,7 @@ class Pages extends Controller
 					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
 						$this_uri = '/admin/pages/custom/delete/';
 						$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
 					}
 					break;
 					

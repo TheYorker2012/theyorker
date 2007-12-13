@@ -80,15 +80,15 @@ class DataForm{
 		
     //load needed helpers 
     if (!isset($this->ci->load->helpers['form_helper'])) { 
-      $this->ci->load->helper('form_helper');
+      $this->ci->load->helper('form');
     }
     if (!isset($this->ci->load->helpers['url_helper'])) { 
  
-      $this->ci->load->helper('url_helper');
+      $this->ci->load->helper('url');
     }
     
     if (!isset($process_uri)){
-       //prendere l'ultimo segmento.. e se è process.. non aggiungere "/process" al corrente uri_string
+       //prendere l'ultimo segmento.. e se ï¿½ process.. non aggiungere "/process" al corrente uri_string
       $this->_process_uri = $this->uri->uri_string()."/process";
     } else {
       $this->_process_uri = $process_uri;
