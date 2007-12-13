@@ -17,6 +17,6 @@
     the pre_process function <em>remove_rel_toany_article()</em> remove all relations (of other articles) with it.<br/>
     <br/>
     <div class="note">
-    <?=$content?> 
+    <?php echo $content?> 
     </div>
   </div>

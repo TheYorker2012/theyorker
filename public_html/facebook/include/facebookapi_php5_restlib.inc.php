@@ -77,7 +77,7 @@ function toggleDisplay(id, type) {
   return false;
 }
 </script>
-<?
+<?php
     }
   }
 

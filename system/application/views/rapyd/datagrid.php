@@ -3,6 +3,6 @@
 
     <h2>DataGrid</h2>
 
-    <?=$grid?>
+    <?php echo $grid?>
        
   </div>

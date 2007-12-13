@@ -3,6 +3,6 @@
 
     <h2>DataObject</h2>
     
-    Title: <?=$title?> <br />
-    Author: <?=$author?>
+    Title: <?php echo $title?> <br />
+    Author: <?php echo $author?>
   </div>

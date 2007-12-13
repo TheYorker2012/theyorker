@@ -3,7 +3,7 @@
 		<h2>What's this?</h2>
 		This information will allow us to personalise your experience of our site, and will allow you to use our facilities to communicate with any societies that you are a member of.
 	</div>
-	<? } ?>
+	<?php } ?>
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
 			<h2>About You</h2>
@@ -84,11 +84,11 @@ foreach ($years as $year) {
 			</div>
 		<?php if(!$in_wizard) { ?>
 		 	<input type='submit' name='submit' id='submit' value='Save' class='button' />
-		<? } ?>
+		<?php } ?>
 			</div>
 		<?php if($in_wizard) { ?>
 		<div>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
 		</div>
-		<? } ?>
+		<?php } ?>
 	</form>

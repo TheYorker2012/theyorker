@@ -3,6 +3,6 @@
 
     <h2>DataTable</h2>
 
-    <?=$table?>
+    <?php echo $table?>
        
   </div>

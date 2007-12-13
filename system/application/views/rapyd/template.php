@@ -24,7 +24,7 @@ p {	padding: 2px 0 5px;	margin: 0;}
 .note hr { border: none 0; border-bottom: 1px solid #D9D900; height:1px;}
 </style>
 
-<?=$rapyd_head?>
+<?php echo $rapyd_head?>
 </head>
 <body>
 
@@ -77,11 +77,11 @@ p {	padding: 2px 0 5px;	margin: 0;}
     
 		<div class="right">
 
-      <?=$content?>
+      <?php echo $content?>
       
       <div class="line"></div>
       
-      <div class="code"><?=$code?></div>
+      <div class="code"><?php echo $code?></div>
 
 		</div>
     

@@ -3,6 +3,6 @@
 
     <h2>Filtered Grid (DataFilter+DataGrid)</h2>
 
-    <?=$crud?>
+    <?php echo $crud?>
        
   </div>

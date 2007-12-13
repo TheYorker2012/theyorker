@@ -276,5 +276,5 @@ foreach ($ThumbDetails->result() as $Single) {
 <div class="BlueBox">
 	<h2>finished</h2>
 	<p>If you have thumbnailed all photos, click the button below:</p>
-	<p><input type="button" onclick="if (canReturn()) window.location='<?=$returnPath?>';" value="Finish" /></p>
+	<p><input type="button" onclick="if (canReturn()) window.location='<?php echo $returnPath?>';" value="Finish" /></p>
 </div>

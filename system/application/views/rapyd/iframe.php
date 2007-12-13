@@ -2,7 +2,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 <title>iframe</title>
-<?=$head?>
+<?php echo $head?>
 <script language="javascript" type="text/javascript">
 function autofit_iframe(id){
  if(document.getElementById) {
@@ -13,8 +13,8 @@ function autofit_iframe(id){
 </script>
 </head>
 
-<body bgcolor="#F9F9F9" onload="<?=$onload?>">
-<?=$content?>
+<body bgcolor="#F9F9F9" onload="<?php echo $onload?>">
+<?php echo $content?>
 
 </body>
 </html>

@@ -186,7 +186,7 @@
 <?php if (count($photo_requests) > 0) {
 	foreach ($photo_requests as $request) { ?>
 				<div style="margin-bottom:5px;">
-					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?=$this->image->getThumb($request['chosen_photo'], 'small', array('style' => 'float: left; margin-right: 5px;'))?></a>
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo $this->image->getThumb($request['chosen_photo'], 'small', array('style' => 'float: left; margin-right: 5px;'))?></a>
 					<b>Photo <?php echo($request['photo_number']); ?></b>
 					<?php if ($article['photo_main'] == $request['photo_number']) { echo('(M)'); } ?>
 					<?php if ($article['photo_thumbnail'] == $request['photo_number']) { echo('(T)'); } ?>

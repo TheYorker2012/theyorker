@@ -3,12 +3,12 @@
 
     <h2>DataForm</h2>
 
-    <div style="color:#FF66FF"><?=$form_status?></div>
+    <div style="color:#FF66FF"><?php echo $form_status?></div>
     
 		<br />
 		
     <div>
-    <?=$form?>
+    <?php echo $form?>
     </div>
  
   </div>

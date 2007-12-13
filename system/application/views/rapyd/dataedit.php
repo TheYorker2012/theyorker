@@ -3,6 +3,6 @@
 
     <h2>DataEdit</h2>
 
-    <?=$edit?>
+    <?php echo $edit?>
        
   </div>
