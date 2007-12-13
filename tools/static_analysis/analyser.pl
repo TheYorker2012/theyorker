@@ -104,7 +104,7 @@ sub main
 				exit 0;
 			}
 			else {
-				print STDERR "Please specify the CI path\n";
+				print STDERR "Please specify the branch path\n";
 				exit print_usage 0;
 			}
 		}
@@ -112,7 +112,7 @@ sub main
 			$branch_path = shift @ARGV;
 		}
 
-		# CI root directory must exist
+		# branch path directory must exist
 		$branch_path =~ s/^(.*[^\/])\/*$/$1/;
 		if (!-d $branch_path) {
 			print STDERR "Branch path \"$branch_path\" doesn't exist\n";

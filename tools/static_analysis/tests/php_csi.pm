@@ -10,6 +10,9 @@ sub new
 	my $proto = shift;
 	my $class = ref($proto) || $proto;
 	my $self = $proto->SUPER::new($proto);
+	
+	$self->{autofix} = 0;
+	
 	return $self;
 }
 
@@ -19,6 +22,8 @@ sub printInformation
 	my ($self) = @_;
 	print "\tThis is the PHP Coding Standards Inspection script\n";
 	print "\t\tDetects PHP short tags\n";
+	print "\tConfig options (use -c or --config)\n";
+	print "\t\tphp_csi:autofix     Automatically fix CSI problems where possible\n";
 }
 
 sub validateConfiguration
@@ -28,8 +33,7 @@ sub validateConfiguration
 	my $fail = 0;
 	
 	if (defined $configuration->{'php_csi:autofix'}) {
-		print STDERR "Autofix not implemented\n";
-		$fail = 1;
+		$self->{autofix} = 1;
 	}
 	
 	return $fail;
@@ -43,18 +47,38 @@ sub runTest
 		my $fildes;
 		my $fail = 0;
 		if (open($fildes, "<$file")) {
+			# Load in the entire file
+			my @lines = <$fildes>;
+			close $fildes;
+			my $modified = 0;
+			
+			# Do checks, potentially modify the memory copy
 			my $lineno = 1;
-			while (my $line = <$fildes>) {
+			foreach my $line (@lines) {
 				# PHP short tags
-				if ($line =~ /<\?(...)?/ && (!defined $1 || $1 ne 'php')) {
+				if ($line =~ /<\?=?[\s>\$]/) {
 					$fail = 1;
-					$self->printError($file, $lineno, "Short PHP tags are not permitted");
+					if ($self->{autofix}) {
+						$line =~ s/<\?=\s*/<?php echo /g;
+						$line =~ s/<\?([\s])/<?php$1/g;
+						$modified = 1;
+						$self->printError($file, $lineno, "Short PHP tags are not permitted. FIXED");
+					} else {
+						$self->printError($file, $lineno, "Short PHP tags are not permitted");
+					}
 				}
 				
 				
 				++$lineno;
 			}
-			close($fildes);
+			
+			# If modificiations have been made, write them to the file
+			if ($modified) {
+				if (open($fildes, ">$file")) {
+					print $fildes join('', @lines);
+					close($fildes);
+				}
+			}
 		}
 		return $fail;
 	}
