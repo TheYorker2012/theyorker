@@ -28,7 +28,7 @@ my $all_test_sets = {
 
 use Getopt::Long;
 use FindBin qw($Bin);
-use lib "$Bin/mod";
+use lib "$Bin/tests";
 
 sub print_usage
 {
@@ -206,3 +206,4 @@ sub main
 }
 
 main;
+
