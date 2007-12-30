@@ -39,7 +39,7 @@ sub print_usage
 	print "    <branch>\n";
 	print "    [-h|--help]               Show this help screen.\n";
 	print "    [-l|--list-sets]          List test sets.\n";
-	print "    [-L|--list-tests]         List tests.\n";
+	print "    [-m|--list-tests]         List tests.\n";
 	print "    [-i|--information]        Show info about the specified tests.\n";
 	print "    [-a|--all]                Run all tests.\n";
 	print "    [-t|--test=<test>]        Specify a test to run.\n";
