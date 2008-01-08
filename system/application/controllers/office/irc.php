@@ -21,6 +21,31 @@ class Irc extends Controller
 		$this->office();
 	}
 	
+	function free()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$RequiredReferer = 'http://trunk.yorker.albanarts.com/office/irc';
+		$RequiredReferer = NULL;
+		
+		if ($RequiredReferer != NULL &&
+			(!isset($_SERVER['HTTP_REFERER']) ||
+			 $_SERVER['HTTP_REFERER'] != $RequiredReferer))
+		{
+			show_404();
+		}
+		
+		if (!isset($_GET['username']) || !isset($_GET['fullname'])) {
+			show_404();
+		}
+		
+		$data = array(
+			'Username' => $_GET['username'],
+			'Fullname' => $_GET['fullname'],
+		);
+		$this->load->view('office/irc/embedded', $data);
+	}
+	
 	/// Office IRC
 	function office()
 	{
@@ -36,6 +61,7 @@ class Irc extends Controller
 		$data = array(
 			'Help' => $this->pages_model->GetPropertyWikitext("help_main"),
 			'IrcHelp' => $this->pages_model->GetPropertyWikitext("irc_help"),
+			'Embed' => true,
 		);
 		$this->main_frame->IncludeJs('/javascript/irc.js');
 		$this->main_frame->IncludeJs('/javascript/simple_ajax.js');
@@ -75,9 +101,21 @@ class Irc extends Controller
 	/**
 	 * @todo Handle when not logged in nicely
 	 */
-	function ajax()
+	function ajax($variation = NULL)
 	{
-		if (!CheckPermissions('office', false)) return;
+		if ('embeddedlive' === $variation) {
+			if (!CheckPermissions('public', false)) return;
+			if (!isset($_GET['username']) || !isset($_GET['fullname'])) {
+				show_404();
+			}
+			$username = $_GET['username'];
+			$fullname = $_GET['fullname'];
+		} else {
+			if (!CheckPermissions('office', false)) return;
+			$username = $this->user_auth->username;
+			$fullname = $this->user_auth->firstname.' '.$this->user_auth->surname;
+		}
+		$nick = str_replace(' ', '', $fullname);
 		
 		if (isset($_GET['cmd'])) {
 			
@@ -103,9 +141,6 @@ class Irc extends Controller
 					$server = new IrcClientManager('irc.afsmg.co.uk');
 					
 					// Use the user's username, and fullnames in irc names
-					$username = $this->user_auth->username;
-					$fullname = $this->user_auth->firstname.' '.$this->user_auth->surname;
-					$nick = str_replace(' ', '', $fullname);
 					$server->Login($username, $nick, $fullname);
 					
 					// Connect to the office channel by default, not the dev one

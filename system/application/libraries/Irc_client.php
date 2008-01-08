@@ -247,7 +247,7 @@ class IrcClientManager
 				
 				// In response to LINKS message
 				case IRC_RPL_LINKS:
-				case IRC_RPL_ENDOFLINGS:
+				case IRC_RPL_ENDOFLINKS:
 					break;
 			}
 			

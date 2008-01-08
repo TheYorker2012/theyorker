@@ -10,6 +10,7 @@
 
 // The URL for irc ajax
 var irc_ajax_url = '/office/irc/ajax';
+var defaultdata = {};
 
 // List of screen names (Channel names etc)
 var irc_screen_list = [];
@@ -239,7 +240,7 @@ function irc_send_msg(id)
 	var message = message_box.value;
 	if (message != '') {
 		message_box.value = '';
-		var post = {};
+		var post = defaultdata;
 		post['cmd'] = 'msg';
 		post['msg'] = message;
 		post['channel'] = irc_screen_list[id];
@@ -251,7 +252,7 @@ function irc_send_msg(id)
 // Join an IRC channel
 function irc_join_channel(channel)
 {
-	var post = {};
+	var post = defaultdata;
 	post['cmd'] = 'join';
 	post['channel'] = channel;
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ajax_callback);
@@ -261,7 +262,7 @@ function irc_join_channel(channel)
 // Ping the web server so it doesn't close our connection
 function irc_ping()
 {
-	var post = {};
+	var post = defaultdata;
 	post['cmd'] = 'ping';
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ping_ajax_callback);
 	ajax.doGet();
@@ -428,7 +429,7 @@ function irc_ajax_callback(responseXML)
 function irc_connect()
 {
 	// Start the irc client manager
-	var post = {};
+	var post = defaultdata;
 	post['cmd'] = 'connect';
 	// This query will remain open as long as the IRC client is connected.
 	var ajax = new AJAXInteraction(irc_ajax_url, post,
@@ -449,7 +450,7 @@ function irc_connect()
 // Send disconnection request and remove all screens
 function irc_disconnect()
 {
-	var post = {};
+	var post = defaultdata;
 	post['cmd'] = 'disconnect';
 	var ajax = new AJAXInteraction(irc_ajax_url, post,
 		function () {
@@ -474,4 +475,4 @@ function irc_onLoad()
 }
 
 // Register onLoad function
-onLoadFunctions.push(irc_onLoad);
+// onLoadFunctions.push(irc_onLoad);
