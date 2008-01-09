@@ -155,6 +155,7 @@ class IrcClientManager
 				'received' => time(),
 			);
 			$msg_words = preg_split('/ +/', $rest);
+			$ignore = false;
 			switch ($action) {
 				case 'PRIVMSG':
 					$message['content'] = substr($rest,1);
@@ -249,6 +250,12 @@ class IrcClientManager
 				case IRC_RPL_LINKS:
 				case IRC_RPL_ENDOFLINKS:
 					break;
+				
+				case IRC_RPL_MOTDSTART:
+				case IRC_RPL_MOTD:
+				case IRC_RPL_ENDOFMOTD:
+					$ignore = true;
+					break;
 			}
 			
 			// Translate numeric reply codes
@@ -257,8 +264,10 @@ class IrcClientManager
 				$message['type'] = $IrcReplyCodes[$message['type']];
 			}
 			
-			// Add to messages
-			$messages[] = $message;
+			if (!$ignore) {
+				// Add to messages
+				$messages[] = $message;
+			}
 		}
 	}
 	
