@@ -70,7 +70,7 @@ function irc_new_screen(name)
 	// tab close button
 	if (true) {
 		var tab_close = document.createElement('img');
-		tab_close.src = "/images/icons/delete12.png";
+		tab_close.src = "/images/icons/delete8.png";
 		tab_close.alt = "close channel";
 		tab_close.onclick = function () {
 			var screen_id = irc_get_screen(name);
