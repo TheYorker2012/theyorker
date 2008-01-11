@@ -164,10 +164,20 @@ class IrcClientManager
 					
 				case 'PART':
 					$message['content'] = " has left this channel ($message[address])";
+					$message['names'][] = array(
+						'_tag' => 'name',
+						'_attr' => array('mode' => 'part'),
+						'nick' => $message['sender'],
+					);
 					break;
 					
 				case 'JOIN':
 					$message['content'] = " has joined this channel ($message[address])";
+					$message['names'][] = array(
+						'_tag' => 'name',
+						'_attr' => array('mode' => 'join'),
+						'nick' => $message['sender'],
+					);
 					break;
 					
 				case 'QUIT':
@@ -201,9 +211,15 @@ class IrcClientManager
 				
 				// In response to TOPIC message
 				case IRC_RPL_CHANNELMODEIS:
+					break;
 				case IRC_RPL_NOTOPIC:
 				case IRC_RPL_TOPIC:
 					$message['channel'] = $msg_words[0];
+					$message['topic'] = substr(implode(' ', array_slice($msg_words, 1)), 1);
+					break;
+				case 'TOPIC':
+					$message['topic'] = substr($rest,1);
+					$message['content'] = " set the channel topic to \"$message[topic]\"";
 					break;
 				
 				// In response to INVITE message
@@ -238,7 +254,13 @@ class IrcClientManager
 									$nick = substr($nick, 1);
 									break;
 							}
-							$message['names'][] = array('_tag' => 'name', 'nick' => $nick);
+							$message['names'][] = array(
+								'_tag' => 'name',
+								'nick' => $nick,
+							);
+						}
+						if (isset($message['names'])) {
+							$message['names']['_attr']['replace'] = 'yes';
 						}
 					}
 					break;

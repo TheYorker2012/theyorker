@@ -12,21 +12,32 @@ $simple_fields = array(
 	'to',
 	'content',
 	'names',
+	'topic',
 	'channel',
 );
 
 function write_xml($subtags, $label = NULL)
 {
 	if (NULL !== $label) {
-		echo("<$label>");
+		$attributes = '';
+		if (is_array($subtags) && isset($subtags['_attr']) && is_array($subtags['_attr'])) {
+			foreach ($subtags['_attr'] as $attribute => $value) {
+				$attributes .= " $attribute=\"".htmlentities($value, ENT_QUOTES, 'UTF-8').'"';
+			}
+		}
+		echo("<$label$attributes>");
 	}
 	if (is_array($subtags)) {
 		foreach ($subtags as $tag => $content) {
 			if (substr($tag, 0, 1) == '_') {
 				continue;
 			}
-			if (is_numeric($tag) && isset($content['_tag'])) {
-				$tag = $content['_tag'];
+			if (is_numeric($tag)) {
+				if (isset($content['_tag'])) {
+					$tag = $content['_tag'];
+				} else {
+					$tag = NULL;
+				}
 			}
 			write_xml($content, $tag);
 		}

@@ -47,6 +47,14 @@ div.irc_peers {
 	height:20em;
 }
 
+div.irc_peers a {
+	cursor: pointer;
+}
+
+div.irc_topic {
+	border: 1px solid black;
+}
+
 ul.irc_channels {
 	border-bottom: 1px solid #888;
 	display: block;
