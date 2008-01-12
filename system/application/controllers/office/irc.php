@@ -63,9 +63,6 @@ class Irc extends Controller
 			'IrcHelp' => $this->pages_model->GetPropertyWikitext("irc_help"),
 			'Embed' => true,
 		);
-		$this->main_frame->IncludeJs('/javascript/irc.js');
-		$this->main_frame->IncludeJs('/javascript/simple_ajax.js');
-		$this->main_frame->IncludeCss('/stylesheets/irc.css');
 		$this->main_frame->SetContentSimple('office/irc/irc', $data);
 		$this->main_frame->Load();
 	}
