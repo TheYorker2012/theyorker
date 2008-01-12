@@ -1,9 +1,7 @@
 <?php
 error_reporting(E_ALL);
 
-if (!isset($time)) {
-	$time = microtime();
-}
+$start_time = microtime(TRUE);
 
 define('BASEPATH', '../system/');
 define('APPPATH', '../system/application/');
@@ -17,7 +15,7 @@ require_once BASEPATH.'codeigniter/CodeIgniter'.EXT;
 $headers = headers_list();
 foreach ($headers as $header) {
 	if (strpos($header, 'Content-type: text/html') !== FALSE) {
-		echo('<!-- Rendered in '.(microtime() - $time).' seconds -->');
+		echo('<!-- Rendered in '.(microtime(TRUE) - $start_time).' seconds -->');
 		break;
 	}
 }
