@@ -41,9 +41,9 @@ class Login extends Controller
 			} else {
 				get_instance()->messages->AddMessage('error','<p>Passwords do not match.</p>');
 			}
+		} else {
+			if (!CheckPermissions('public')) return;
 		}
-
-		if (!CheckPermissions('public')) return;
 
 		$this->pages_model->SetPageCode('account_password_new');
 
