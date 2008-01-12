@@ -40,7 +40,6 @@
 				<label for="type_id">Page type</label>
 				<select name="type_id">
 					<?php
-					var_dump($page_type);
 						foreach($page_types as $k => $page_type) {
 							echo('<option value ="'.$k.'"');
 							if ($k == $type_id) {
