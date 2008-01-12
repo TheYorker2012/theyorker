@@ -162,7 +162,6 @@ class CI_Exceptions {
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		echo $buffer;
-		var_dump(debug_backtrace());
 	}
 
 
