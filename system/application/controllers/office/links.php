@@ -129,7 +129,7 @@ class Links extends Controller
 
 				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
 
-				redirect('/office/links')
+				redirect('/office/links');
 			}
 		} elseif($this->input->post('lurl') && !$this->input->post('lname')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
