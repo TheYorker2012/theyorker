@@ -1,145 +1,19 @@
-<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
-/**
- * Code Igniter
- *
- * An open source application development framework for PHP 4.3.2 or newer
- *
- * @package		CodeIgniter
- * @author		Rick Ellis
- * @copyright	Copyright (c) 2006, pMachine, Inc.
- * @license		http://www.codeignitor.com/user_guide/license.html
- * @link		http://www.codeigniter.com
- * @since		Version 1.0
- * @filesource
- */
+<?php
 
-// ------------------------------------------------------------------------
-
-/**
- * System Front Controller
- *
- * Loads the base classes and executes the request.
- *
- * @package		CodeIgniter
- * @subpackage	codeigniter
- * @category	Front-controller
- * @author		Rick Ellis
- * @link		http://www.codeigniter.com/user_guide/
- */
-
-// CI Version
-define('APPVER',	'1.5.2');
-
-/*
- * ------------------------------------------------------
- *  Load the global functions
- * ------------------------------------------------------
- */
+define('APPVER', '0.1');
 require(BASEPATH.'codeigniter/Common'.EXT);
 
-/*
- * ------------------------------------------------------
- *  Define a custom error handler so we can log PHP errors
- * ------------------------------------------------------
- */
 set_error_handler('_exception_handler');
 set_magic_quotes_runtime(0); // Kill magic quotes
 
-/*
- * ------------------------------------------------------
- *  Start the timer... tick tock tick tock...
- * ------------------------------------------------------
- */
-
-$BM =& load_class('Benchmark');
-$BM->mark('total_execution_time_start');
-$BM->mark('loading_time_base_classes_start');
-
-/*
- * ------------------------------------------------------
- *  Instantiate the hooks class
- * ------------------------------------------------------
- */
-
-$EXT =& load_class('Hooks');
-
-/*
- * ------------------------------------------------------
- *  Is there a "pre_system" hook?
- * ------------------------------------------------------
- */
-$EXT->_call_hook('pre_system');
-
-/*
- * ------------------------------------------------------
- *  Instantiate the base classes
- * ------------------------------------------------------
- */
-
-$CFG =& load_class('Config');
 $RTR =& load_class('Router');
-$OUT =& load_class('Output');
 
-/*
- * ------------------------------------------------------
- *	Is there a valid cache file?  If so, we're done...
- * ------------------------------------------------------
- */
+require(BASEPATH.'codeigniter/Base5'.EXT);
 
-if ($EXT->_call_hook('cache_override') === FALSE)
-{
-	if ($OUT->_display_cache($CFG, $RTR) == TRUE)
-	{
-		exit;
-	}
-}
-
-/*
- * ------------------------------------------------------
- *  Load the remaining base classes
- * ------------------------------------------------------
- */
-
-$IN		=& load_class('Input');
-$URI	=& load_class('URI');
-$LANG	=& load_class('Language');
-
-/*
- * ------------------------------------------------------
- *  Load the app controller and local controller
- * ------------------------------------------------------
- *
- *  Note: Due to the poor object handling in PHP 4 we'll
- *  conditionally load different versions of the base
- *  class.  Retaining PHP 4 compatibility requires a bit of a hack.
- *
- *  Note: The Loader class needs to be included first
- *
- */
-if (floor(phpversion()) < 5)
-{
-	load_class('Loader', FALSE);
-	require(BASEPATH.'codeigniter/Base4'.EXT);
-}
-else
-{
-	require(BASEPATH.'codeigniter/Base5'.EXT);
-}
-
-// Load the base controller class
 load_class('Controller', FALSE);
 
 // Load the local application controller
-// Note: The Router class automatically validates the controller path.  If this include fails it 
-// means that the default controller in the Routes.php file is not resolving to something valid.
-if ( ! include(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().EXT))
-{
-	show_error('Unable to load your default controller.  Please make sure the controller specified in your Routes.php file is valid.');
-}
-
-// Set a mark point for benchmarking
-$BM->mark('loading_time_base_classes_end');
-
+include(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().EXT);
 
 /*
  * ------------------------------------------------------
@@ -153,7 +27,6 @@ $BM->mark('loading_time_base_classes_end');
 $class  = $RTR->fetch_class();
 $method = $RTR->fetch_method();
 
-
 if ( ! class_exists($class)
 	OR $method == 'controller'
 	OR substr($method, 0, 1) == '_'
@@ -165,95 +38,28 @@ if ( ! class_exists($class)
 
 /*
  * ------------------------------------------------------
- *  Is there a "pre_controller" hook?
- * ------------------------------------------------------
- */
-$EXT->_call_hook('pre_controller');
-
-/*
- * ------------------------------------------------------
  *  Instantiate the controller and call requested method
  * ------------------------------------------------------
  */
 
-// Mark a start point so we can benchmark the controller
-$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_start');
-
 // Instantiate the Controller
 $CI = new $class();
 
-// Is this a scaffolding request?
-if ($RTR->scaffolding_request === TRUE)
+// Is there a "remap" function?
+if (method_exists($CI, '_remap'))
 {
-	if ($EXT->_call_hook('scaffolding_override') === FALSE)
-	{
-		$CI->_ci_scaffolding();
-	}
+	call_user_func_array(array(&$CI, '_remap'), array_slice($RTR->rsegments, 1));
 }
 else
 {
-	/*
-	 * ------------------------------------------------------
-	 *  Is there a "post_controller_constructor" hook?
-	 * ------------------------------------------------------
-	 */
-	$EXT->_call_hook('post_controller_constructor');
-	
-	// Is there a "remap" function?
-	if (method_exists($CI, '_remap'))
+	if ( ! method_exists($CI, $method))
 	{
-		call_user_func_array(array(&$CI, '_remap'), array_slice($RTR->rsegments, 1));
+		show_404();
 	}
-	else
-	{
-		if ( ! method_exists($CI, $method))
-		{
-			show_404();
-		}
 
-		// Call the requested method.
-		// Any URI segments present (besides the class/function) will be passed to the method for convenience		
-		call_user_func_array(array(&$CI, $method), array_slice($RTR->rsegments, 2));
-	}
+	// Call the requested method.
+	// Any URI segments present (besides the class/function) will be passed to the method for convenience		
+	call_user_func_array(array(&$CI, $method), array_slice($RTR->rsegments, 2));
 }
-
-// Mark a benchmark end point
-$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_end');
-
-/*
- * ------------------------------------------------------
- *  Is there a "post_controller" hook?
- * ------------------------------------------------------
- */
-$EXT->_call_hook('post_controller');
-
-/*
- * ------------------------------------------------------
- *  Send the final rendered output to the browser
- * ------------------------------------------------------
- */
-
-if ($EXT->_call_hook('display_override') === FALSE)
-{
-	$OUT->_display();
-}
-
-/*
- * ------------------------------------------------------
- *  Is there a "post_system" hook?
- * ------------------------------------------------------
- */
-$EXT->_call_hook('post_system');
-
-/*
- * ------------------------------------------------------
- *  Close the DB connection if one exists
- * ------------------------------------------------------
- */
-if (class_exists('CI_DB') AND isset($CI->db))
-{
-	$CI->db->close();
-}
-
 
 ?>

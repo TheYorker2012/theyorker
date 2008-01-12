@@ -102,20 +102,9 @@ function &get_config()
 {
 	static $main_conf;
 		
-	if ( ! isset($main_conf))
+	if (!isset($main_conf))
 	{
-		if ( ! file_exists(APPPATH.'config/config'.EXT))
-		{
-			exit('The configuration file config'.EXT.' does not exist.');
-		}
-		
 		require(APPPATH.'config/config'.EXT);
-		
-		if ( ! isset($config) OR ! is_array($config))
-		{
-			exit('Your config file does not appear to be formatted correctly.');
-		}
-
 		$main_conf[0] =& $config;
 	}
 	return $main_conf[0];
@@ -129,20 +118,12 @@ function &get_config()
 */
 function config_item($item)
 {
-	static $config_item = array();
-
-	if ( ! isset($config_item[$item]))
-	{
-		$config =& get_config();
-		
-		if ( ! isset($config[$item]))
-		{
-			return FALSE;
-		}
-		$config_item[$item] = $config[$item];
+	$config = get_config();
+	if (isset($config[$item])) {
+		return $config[$item];
+	} else {
+		return FALSE;
 	}
-
-	return $config_item[$item];
 }
 
 
@@ -199,9 +180,7 @@ function log_message($level = 'error', $message, $php_error = FALSE)
 	
 	$config =& get_config();
 	if ($config['log_threshold'] == 0)
-	{
 		return;
-	}
 
 	$LOG =& load_class('Log');	
 	$LOG->write_log($level, $message, $php_error);
@@ -223,30 +202,16 @@ function log_message($level = 'error', $message, $php_error = FALSE)
 */
 function _exception_handler($severity, $message, $filepath, $line)
 {	
-	 // We don't bother with "strict" notices since they will fill up
-	 // the log file with information that isn't normally very
-	 // helpful.  For example, if you are running PHP 5 and you
-	 // use version 4 style class functions (without prefixes
-	 // like "public", "private", etc.) you'll get notices telling
-	 // you that these have been deprecated.
-	
 	if ($severity == E_STRICT)
-	{
 		return;
-	}
 
 	$error =& load_class('Exceptions');
 
-	// Should we display the error?
-	// We'll get the current error_reporting level and add its bits
-	// with the severity bits to find out.
-	
 	if (($severity & error_reporting()) == $severity)
 	{
 		$error->show_php_error($severity, $message, $filepath, $line);
 	}
 	
-	// Should we log the error?  No?  We're done...
 	$config =& get_config();
 	if ($config['log_threshold'] == 0)
 	{
@@ -255,6 +220,5 @@ function _exception_handler($severity, $message, $filepath, $line)
 
 	$error->log_exception($severity, $message, $filepath, $line);
 }
-
 
 ?>

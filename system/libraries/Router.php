@@ -165,17 +165,8 @@ class CI_Router {
 		
 		if (isset($segments[1]))
 		{
-			// A scaffolding request. No funny business with the URL
-			if ($this->routes['scaffolding_trigger'] == $segments[1] AND $segments[1] != '_ci_scaffolding')
-			{
-				$this->scaffolding_request = TRUE;
-				unset($this->routes['scaffolding_trigger']);
-			}
-			else
-			{
-				// A standard method request
-				$this->set_method($segments[1]);
-			}
+			// A standard method request
+			$this->set_method($segments[1]);
 		}
 		
 		// Update our "routed" segment array to contain the segments.

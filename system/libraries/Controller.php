@@ -62,10 +62,7 @@ class Controller extends CI_Base {
 		// run as one big super object.
 		$classes = array(
 							'config'	=> 'Config',
-							'input'		=> 'Input',
-							'benchmark'	=> 'Benchmark',
 							'uri'		=> 'URI',
-							'output'	=> 'Output',
 							'lang'		=> 'Language'
 							);
 		
@@ -74,41 +71,9 @@ class Controller extends CI_Base {
 			$this->$var =& load_class($class);
 		}
 
-		// In PHP 5 the Loader class is run as a discreet
-		// class.  In PHP 4 it extends the Controller
-		if (floor(phpversion()) >= 5)
-		{
-			$this->load =& load_class('Loader');
-			$this->load->_ci_autoloader();
-		}
-		else
-		{
-			$this->_ci_autoloader();
-		}
+		$this->load =& load_class('Loader');
+		$this->load->_ci_autoloader();
 	}
-	
-	// --------------------------------------------------------------------
-	
-	/**
-	 * Run Scaffolding
-	 *
-	 * @access	private
-	 * @return	void
-	 */	
-	function _ci_scaffolding()
-	{
-		if ($this->_ci_scaffolding === FALSE OR $this->_ci_scaff_table === FALSE)
-		{
-			show_404('Scaffolding unavailable');
-		}
-		
-		$method = ( ! in_array($this->uri->segment(3), array('add', 'insert', 'edit', 'update', 'view', 'delete', 'do_delete'), TRUE)) ? 'view' : $this->uri->segment(3);
-		
-		require_once(BASEPATH.'scaffolding/Scaffolding'.EXT);
-		$scaff = new Scaffolding($this->_ci_scaff_table);
-		$scaff->$method();
-	}
-
 
 }
 // END _Controller class
