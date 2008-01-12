@@ -34,12 +34,11 @@ class CI_Router {
 	var $rsegments		= array();
 	var $routes 		= array();
 	var $error_routes	= array();
-	var $class			= '';
-	var $method			= 'index';
+	var $class		= '';
+	var $method		= 'index';
 	var $directory		= '';
 	var $uri_protocol 	= 'auto';
 	var $default_controller;
-	var $scaffolding_request = FALSE; // Must be set to FALSE
 	
 	/**
 	 * Constructor

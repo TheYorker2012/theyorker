@@ -1,14 +1,10 @@
 <?php
-
-define('APPVER', '0.1');
 require(BASEPATH.'codeigniter/Common'.EXT);
 
 set_error_handler('_exception_handler');
 set_magic_quotes_runtime(0); // Kill magic quotes
 
 $RTR =& load_class('Router');
-
-require(BASEPATH.'codeigniter/Base5'.EXT);
 
 load_class('Controller', FALSE);
 

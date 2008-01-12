@@ -39,7 +39,7 @@ class CI_Loader {
 	var $_ci_helpers		= array();
 	var $_ci_plugins		= array();
 	var $_ci_scripts		= array();
-	var $_ci_varmap			= array('unit_test' => 'unit', 'user_agent' => 'agent');
+	var $_ci_varmap			= array('user_agent' => 'agent');
 	
 
 	/**
