@@ -354,7 +354,24 @@ function irc_peers_remove(id, nick)
 	// remove if exists
 	if (old_peer) {
 		nicklist.removeChild(old_peer);
+		return true;
+	} else {
+		return false;
 	}
+}
+
+// A given nick has quit, part from all channels
+function irc_peers_remove_quit(nick)
+{
+	var chans = [];
+	for (var i = 0; i < irc_screen_list.length; ++i) {
+		if (irc_screen_list[i] != null) {
+			if (irc_peers_remove(i, nick)) {
+				chans[chans.length] = i;
+			}
+		}
+	}
+	return chans;
 }
 
 // Set the local topic of a screen
@@ -429,6 +446,11 @@ function irc_ajax_callback(responseXML)
 					var sender_prefix = '<';
 					var sender_postfix = '>';
 					var show_type = false;
+					
+					var time = irc_xml_get_item(messages[msgid], 'time');
+					var sender = irc_xml_get_item(messages[msgid], 'sender');
+					var channels = [];
+					
 					if (type == 'NOTICE') {
 						new_message.className += ' notice';
 					}
@@ -446,6 +468,9 @@ function irc_ajax_callback(responseXML)
 						new_message.className += ' channel';
 						sender_prefix = '<--- ';
 						sender_postfix = '';
+						if (sender) {
+							channels = irc_peers_remove_quit(sender);
+						}
 					}
 					else if (type == 'TOPIC') {
 						new_message.className += ' channel';
@@ -469,7 +494,6 @@ function irc_ajax_callback(responseXML)
 						}
 					}
 					
-					var time = irc_xml_get_item(messages[msgid], 'time');
 					if (time) {
 						var new_time = document.createElement('div');
 						new_time.className='irc_message_time';
@@ -478,7 +502,6 @@ function irc_ajax_callback(responseXML)
 						new_message.appendChild(document.createTextNode(' '));
 					}
 					
-					var sender = irc_xml_get_item(messages[msgid], 'sender');
 					if (sender) {
 						var new_sender = document.createElement('div');
 						new_sender.className='irc_message_sender';
@@ -503,23 +526,36 @@ function irc_ajax_callback(responseXML)
 						new_message.appendChild(document.createTextNode(' '));
 					}
 					
-					var channel = irc_xml_get_item(messages[msgid], 'channel');
-					var id = irc_get_new_screen('server');
-					if (channel) {
-						id = irc_get_new_screen(channel);
+					if (!channels.length) {
+						var channel = irc_xml_get_item(messages[msgid], 'channel');
+						var id = irc_get_new_screen('server');
+						if (channel) {
+							id = irc_get_new_screen(channel);
+						}
+						channels[channels.length] = id;
 					}
-					var messages_div = document.getElementById('irc_channel_'+id+'_messages');
-					messages_div.appendChild(new_message);
 					
-					// Highlight / update channel
-					if (id != irc_current_screen) {
-						var screen_tab = document.getElementById('irc_channel_tab_'+id);
-						if (screen_tab) {
-							if (CssCheck(new_message, 'highlighted')) {
-								CssAdd(screen_tab, 'highlighted');
-							}
-							if (CssCheck(new_message, 'privmsg')) {
-								CssAdd(screen_tab, 'updated');
+					var firstChan = true;
+					for (var i = 0; i < channels.length; ++i) {
+						var id = channels[i];
+						
+						var messages_div = document.getElementById('irc_channel_'+id+'_messages');
+						if (firstChan) {
+							messages_div.appendChild(new_message);
+							firstChan = false;
+						} else {
+							messages_div.appendChild(new_message.cloneNode(true));
+						}
+						// Highlight / update channel
+						if (id != irc_current_screen) {
+							var screen_tab = document.getElementById('irc_channel_tab_'+id);
+							if (screen_tab) {
+								if (CssCheck(new_message, 'highlighted')) {
+									CssAdd(screen_tab, 'highlighted');
+								}
+								if (CssCheck(new_message, 'privmsg')) {
+									CssAdd(screen_tab, 'updated');
+								}
 							}
 						}
 					}
