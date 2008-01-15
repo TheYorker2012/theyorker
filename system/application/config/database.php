@@ -33,10 +33,10 @@
 
 $active_group = "default";
 
-$db['default']['hostname'] = "72.36.234.210";
+$db['default']['hostname'] = "localhost";
 $db['default']['username'] = "yorkerremote";
 $db['default']['password'] = "df97nvc02d90dg";
-$db['default']['database'] = "yorkerremote";
+$db['default']['database'] = "yorker_yorker";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['active_r'] = TRUE;

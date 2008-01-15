@@ -52,8 +52,12 @@ if (isset($medium_type)) { ?>
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
+		<div id="TopBanner">
+			<h1 id="TopBannerName">
+				<a href="/"><img src="/images/prototype/new_home/header.jpg" width="485" height="93" alt="The Yorker" /></a>
+			</h1>
+		</div>
 		<div id="HeaderMenu">
-			<span style="color: #999999; font-size: 0.9em">
 			<?php
 			// Set by GenerateToplinks in mainframe_helper
 			if (isset($toplinks)) {
@@ -66,24 +70,18 @@ if (isset($medium_type)) { ?>
 				}
 			}
 			?>
-			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> | 
+			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> |
 			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
 			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
-			</span>
 		</div>
-
-		<div id="TopBanner">
-			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
-			</h1>
-			<div id="TopBannerPictures">
-				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
-				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
-				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
-			</div>
+		<div id="TopBannerPictures">
+			<img src="/images/prototype/new_home/man1.png" alt="News" />
+			<img src="/images/prototype/new_home/man2.png" alt="Calendar" />
+			<img src="/images/prototype/new_home/man3.png" alt="Reviews" />
 		</div>
+		<div style="clear:both"></div>
 	</div>
 
 	<div id="Page">

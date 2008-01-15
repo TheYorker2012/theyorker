@@ -115,18 +115,26 @@ blockquote {
 /* Make sure page in in center for IE6 */
 body {
 	text-align: center;
+	margin: 0;
 }
 
 /* Create Header, Body and Footer sections */
-div#Header, div#Page, div#Footer {
+div#Page, div#Footer {
 	/* Remove next line for variable width */
-	width: 760px;
+	width: 984px;
 
 	margin-left: auto;
 	margin-right: auto;
 	clear: both;
 	text-align: left;
 	padding: 0;
+}
+
+div#Header {
+	background: url('/images/prototype/new_home/header_bg2.jpg');
+	background-repeat: repeat-x;
+	color: #fff;
+	text-align: left;
 }
 
 /* Create Navigation and Main areas in Body */
@@ -141,23 +149,27 @@ div#MainBodyPane {
 
 /* Formatting for links right at the top of the page */
 div#HeaderMenu {
-	text-align: right;
+	text-align: left;
+	font-size: 0.9em;
 }
 
+div#HeaderMenu a {
+	color: #fff;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in the banner at the top of the page               *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 div#TopBanner {
-	background-image: url(/images/prototype/header/homepage_bk.gif);
-	background-repeat: repeat-x;
+	width: 50%;
 	float: left;
-	width: 100%;
+	text-align: right;
+	background: url('/images/prototype/new_home/header_bg.jpg');
+	background-repeat: repeat-x;
 }
 
 h1#TopBannerName {
-	float: left;
 	margin: 0;
 
 	/* Required only when other stylesheets are included */

@@ -81,11 +81,249 @@ if ($weather_forecast != null) {
 </div>
 
 <div id="MainColumn">
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;text-align:center;">
+		<img src="/images/prototype/new_home/picoftheday.jpg" alt="Central Hall by Chris Travis" title="Central Hall by Chris Travis" />
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:458px;height:150px;float:left;text-align:center;margin-right:10px;position:relative;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST UNI NEWS
+			</div>
+			<div style="font-size:11pt;padding:3px 5px;background-color:#FE6A00;color:#fff;font-weight:bold;position:absolute;bottom:0;right:0;">
+				News in Brief: Ftr price-rise
+			</div>
+			<a href="/news/uninews/1063">
+				<img src="/images/prototype/new_home/news1.jpg" alt="" />
+			</a>
+		</div>
+		<div style="width:146px;height:150px;float:left;">
+			<!--<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/uninews/1063">News in Brief: Ftr price-rise</a></h3>-->
+			<div style="padding:0;margin:0;" class="Date">Saturday, 12th January 2008</div>
+			<p style="padding-top:0;margin-top:0;" class="More">First York have raised prices on the number 4 route from the University to York city centre to &pound;1.80 for a single and &pound;2.90 for a return journey.</p>
+			<div style="clear:both;"></div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:458px;height:150px;float:left;text-align:center;margin-right:10px;position:relative;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST FEATURE
+			</div>
+			<div style="font-size:11pt;padding:3px 5px;background-color:#FE6A00;color:#fff;font-weight:bold;position:absolute;bottom:0;right:0;">
+				My Crisis Christmas :  Volunteering with the homeless
+			</div>
+			<a href="/news/features/1049">
+				<img src="/images/prototype/new_home/news2.jpg" alt="" />
+			</a>
+		</div>
+		<div style="width:146px;height:150px;float:left;">
+			<!--<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/uninews/1049">Volunteering with the homeless</a></h3>-->
+			<div style="padding:0;margin:0;" class="Date">Wednesday, 9th January 2008</div>
+			<p style="padding-top:0;margin-top:0;" class="More">This Christmas I decided to do something positive for the homeless and for myself - by trading in the traditional festivities to volunteer for Crisis, a charity for homeless people.</p>
+			<div style="clear:both;"></div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:302px;float:left;text-align:center;margin-right:6px;position:relative;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST ARTS
+			</div>
+			<a href="/news/artsweek/1096">
+				<img src="/images/prototype/new_home/halfnews1.jpg" alt="" />
+			</a>
+			<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/artsweek/1096">Artsweek 2: Ballads, Greece, Paintings and Gene Kelly.</a></h3>
+			<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
+			<p style="padding-top:0;margin-top:0;" class="More">Artsweek presents everything you need to get out and about in the world of the arts in week 2.</p>
+		</div>
+		<div style="width:302px;float:left;text-align:center;position:relative;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST SPORTS
+			</div>
+			<a href="/news/football/1069">
+				<img src="/images/prototype/new_home/halfnews2.jpg" alt="" />
+			</a>
+			<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/football/1069">Alcuin 1sts win college football title</a></h3>
+			<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
+			<p style="padding-top:0;margin-top:0;" class="More">A strong Alcuin side were crowned college first team champions last term, albeit in circumstances that left no one happy.</p>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews1.jpg');position:relative;border:1px #20C1F0 solid;margin-right:10px;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1062" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+    				Vision editor: "If stays same we may not survive"
+				</a>
+			</div>
+		</div>
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews2.jpg');position:relative;border:1px #20C1F0 solid;margin-right:10px;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1066" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+					DNA match jails student's attacker
+				</a>
+			</div>
+		</div>
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews3.jpg');position:relative;border:1px #20C1F0 solid;margin-right:10px;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1079" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+					Tree planted to remember lost student
+				</a>
+			</div>
+		</div>
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews4.jpg');position:relative;border:1px #20C1F0 solid;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1054" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+					YUSU say no: campus lottery faces the guillotine
+				</a>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:302px;float:left;margin-right:6px;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;margin-bottom:5px;">
+				LATEST LIFESTYLE
+			</div>
+			<div>
+				<a href="/news/getaway/1089">
+					<img src="/photos/small/1064" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Oxford: dreaming spires, amongst other things
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/freshchef/1082">
+					<img src="/photos/small/1063" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					A penny saved...
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/lifesaver/1053">
+					<img src="/photos/small/1046" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Keep fit the WAG way
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/thelook/1060">
+					<img src="/photos/small/1048" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Fashion resolutions for 2008
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div style="width:302px;float:left;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;margin-bottom:5px;">
+				LATEST VIDEOCASTS
+			</div>
+			<div>
+				<a href="/news/videocasts/999">
+					<img src="/photos/small/1032" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Talking shop with Ramsey Street's Harold Bishop
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/videocasts/924">
+					<img src="/photos/small/937" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Student scam victim speaks out
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/videocasts/858">
+					<img src="/photos/small/810" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					NUS convince students to stay
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+			<div>
+				<a href="/news/videocasts/574">
+					<img src="/photos/small/544" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					Videocasts: Coming Soon
+				</a>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:302px;height:100px;float:left;text-align:center;margin-right:10px;position:relative;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				FOOD REVIEW: AKBARS
+			</div>
+			<div style="font-size:11pt;padding:3px 5px;background-color:#FE6A00;color:#fff;font-weight:bold;position:absolute;bottom:0;right:0;">
+				"Best Indian in Yorkshire"
+			</div>
+			<a href="/reviews/food/akbars">
+				<img src="/images/prototype/new_home/halfpuffer1.jpg" alt="" />
+			</a>
+		</div>
+		<div style="width:302px;height:100px;float:left;text-align:center;position:relative;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST BLOG
+			</div>
+			<div style="font-size:11pt;padding:3px 5px;background-color:#FE6A00;color:#fff;font-weight:bold;position:absolute;bottom:0;right:0;">
+				Screw democracy - the Raid must go on
+			</div>
+			<a href="/news/campusnews/1072">
+				<img src="/images/prototype/new_home/halfpuffer2.jpg" alt="" />
+			</a>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:458px;float:left;margin-right:6px;position:relative;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				LATEST COMMENTS
+			</div>
+			<img src="/images/prototype/new_home/comments.jpg" alt="" />
+			<ul class="comments" style="margin:0 5px;">
+				<?php foreach ($latest_comments as $comment) print_comment($comment); ?>
+			</ul>
+		</div>
+		<div style="width:146px;float:left;position:relative;border:1px #20C1F0 solid;">
+			<div style="font-size:13pt;padding:3px 5px;background-color:#20C1F0;color:#fff;font-weight:bold;position:absolute;top:0;left:0;">
+				RSS FEEDS
+			</div>
+			<a href="/news/rss/">
+				<img src="/images/prototype/new_home/feeds.jpg" alt="" />
+			</a>
+			<ul style="margin:0 5px;">
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">All Articles</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Uni News</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Features</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Arts</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Sport</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Lifestyle</a></li>
+				<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Comments</a></li>
+			</ul>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+	<br style="clear:both" /><br style="clear:both" /><br style="clear:both" /><br style="clear:both" />
+	<br style="clear:both" /><br style="clear:both" /><br style="clear:both" /><br style="clear:both" />
+	<br style="clear:both" /><br style="clear:both" /><br style="clear:both" /><br style="clear:both" />
+	<br style="clear:both" /><br style="clear:both" /><br style="clear:both" /><br style="clear:both" />
+
+<!--
 	<div id="HomeBanner">
-		<?php 
+		<?php
 		$this->homepage_boxes->print_homepage_banner($banner);
 		?>
 	</div>
+-->
 
 	<?php 
 		$this->homepage_boxes->print_box_with_picture_list($articles['uninews'],'latest news','news');
