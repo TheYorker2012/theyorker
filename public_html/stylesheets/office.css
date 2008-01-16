@@ -1,0 +1,26 @@
+body {
+	margin: 5px;
+}
+
+/* Formatting for the navigation on the left */
+div#NavigationMenu ul {
+	display: block;
+	list-style: none outside none;
+	margin: 0 0 0 0;
+	padding: 0;
+	border-top: 0;
+}
+
+div#NavigationMenu ul.first {
+	border-top: 0;
+}
+
+div#NavigationMenu ul li {
+	border-top: 1px solid #ccc;
+	padding: 3px 0px 3px 4px;
+}
+
+div#NavigationMenu ul li.first {
+	border-top: 0;
+	font-weight: bold;
+}
