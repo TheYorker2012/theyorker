@@ -36,7 +36,8 @@ if (isset($medium_type)) { ?>
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
-
+	<link href="/stylesheets/home_new.css" rel="stylesheet" type="text/css" />
+	
 	<?php
 	if (isset($extra_css)) {
 		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
@@ -54,7 +55,7 @@ if (isset($medium_type)) { ?>
 	<div id="Header">
 		<div id="TopBanner">
 			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/new_home/header.jpg" width="485" height="93" alt="The Yorker" /></a>
+				<a href="/"><img src="/images/prototype/new_home/header.jpg" alt="The Yorker" /></a>
 			</h1>
 		</div>
 		<div id="HeaderMenu">

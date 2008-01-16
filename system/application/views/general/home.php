@@ -98,11 +98,10 @@ if ($weather_forecast != null) {
 				<img src="/images/prototype/new_home/news1.jpg" alt="" />
 			</a>
 		</div>
-		<div style="width:146px;height:150px;float:left;">
+		<div style="width:146px;float:left;">
 			<!--<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/uninews/1063">News in Brief: Ftr price-rise</a></h3>-->
 			<div style="padding:0;margin:0;" class="Date">Saturday, 12th January 2008</div>
 			<p style="padding-top:0;margin-top:0;" class="More">First York have raised prices on the number 4 route from the University to York city centre to &pound;1.80 for a single and &pound;2.90 for a return journey.</p>
-			<div style="clear:both;"></div>
 		</div>
 		<div style="clear:both;"></div>
 	</div>
@@ -119,11 +118,10 @@ if ($weather_forecast != null) {
 				<img src="/images/prototype/new_home/news2.jpg" alt="" />
 			</a>
 		</div>
-		<div style="width:146px;height:150px;float:left;">
+		<div style="width:146px;float:left;">
 			<!--<h3 style="padding:0;margin:0;" class="Headline"><a href="/news/uninews/1049">Volunteering with the homeless</a></h3>-->
 			<div style="padding:0;margin:0;" class="Date">Wednesday, 9th January 2008</div>
 			<p style="padding-top:0;margin-top:0;" class="More">This Christmas I decided to do something positive for the homeless and for myself - by trading in the traditional festivities to volunteer for Crisis, a charity for homeless people.</p>
-			<div style="clear:both;"></div>
 		</div>
 		<div style="clear:both;"></div>
 	</div>

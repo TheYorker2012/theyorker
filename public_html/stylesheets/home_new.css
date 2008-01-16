@@ -1,0 +1,27 @@
+body {
+	margin: 0;
+}
+
+div#Header {
+	background: url('/images/prototype/new_home/header_bg2.jpg');
+	background-repeat: repeat-x;
+	color: #fff;
+	text-align: left;
+}
+
+div#HeaderMenu {
+	text-align: left;
+	font-size: 0.9em;
+}
+
+div#HeaderMenu a {
+	color: #fff;
+}
+
+h1#TopBannerName {
+	float: none;
+}
+
+div#TopBanner {
+	background-image: url('/images/prototype/new_home/header_bg.jpg');
+}
