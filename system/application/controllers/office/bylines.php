@@ -69,6 +69,7 @@ class Bylines extends Controller
 				$data['user_id'] = $user_id;
 				$this->load->library('image');
 				foreach ($data['bylines'] as &$byline) {
+					$byline['archive_link'] = true;
 					if ($byline['business_card_image_id'] === NULL) {
 						$byline['business_card_image_href'] = '';
 					} else {
