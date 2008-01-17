@@ -183,12 +183,51 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 					</td>
 					<td>
 <?php 
-		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['firstname'].'</a>'."\n");
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">');
+		//Work out if the names should be colourised (if they are writers and have written articles)
+		if(empty($membership['article_count']) || $membership['article_count']==0){
+			$span_colour = '';
+			$span_colour_end = '';
+		} else {
+			if($membership['article_count']>=40){
+			$span_colour = '<span style="color:#FF0000">';
+			}
+			if($membership['article_count']>=20 && $membership['article_count']<40){
+			$span_colour = '<span style="color:#FF6600">';
+			}
+			if($membership['article_count']>=10 && $membership['article_count']<20){
+			$span_colour = '<span style="color:#009900">';
+			}
+			if($membership['article_count']>=5 && $membership['article_count']<10){
+			$span_colour = '<span style="color:#9900CC">';
+			}
+			if($membership['article_count']>=1 && $membership['article_count']<5){
+			$span_colour = '<span style="color:#3366FF">';
+			}
+			$span_colour_end = '</span>';
+			
+			echo ('</span>');
+		}
+		
+		
+		echo $span_colour;
+		if(empty($membership['firstname'])){echo("???");}else{echo $membership['firstname'];}
+		echo $span_colour_end;
+		echo('</a>'."\n");
 ?>
 					</td>
 					<td>
 <?php 
-		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['surname'].'</a>'."\n");
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">');
+		echo $span_colour;
+		if(empty($membership['surname'])){echo("???");}else{echo $membership['surname'];}
+		
+		//This would put the number of articles after the surname in brackets, not enough room so left out, maybe use when we go wide.
+		//if(!empty($membership['article_count']) && $membership['article_count']>0){
+		//echo(' ('.$membership['article_count'].')');
+		//}
+		echo $span_colour_end;
+		echo('</a>'."\n");
 ?>
 					</td>
 					<td>
