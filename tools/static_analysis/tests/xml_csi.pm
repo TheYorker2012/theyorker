@@ -41,13 +41,11 @@ sub runTest
 			my $lineno = 1;
 			foreach my $line (@lines) {
 				# Single quote tag attributes
-				if ($line =~ /^([^']*('([^']|\\')*'))*[^']*<(\w+)(\s+\w+\s*=\s*"[^"]*")*\s+\w+\s*=\s*'[^']*'/) {
+				if ($line =~ /^(?:[^']*(?:'(?:[^']|\\')*'))*[^']*<(\w+)(?:\s+\w+\s*=\s*"[^"]*")*\s+\w+\s*=\s*'[^']*'/) {
 					$fail = 1;
 					$self->printError($file, $lineno, "Single quote tag attributes are not permitted (in tag $1)");
 # 					$self->printError($file, $lineno, "$line");
 				}
-				# Find attributes with spaces on either side of =
-# 				if ($line =~ /^([^']*('([^']|\\')*'))*[^']*<(\w+)(\s+\w+\s*=\s*"[^"]*")*\s+'[^']*'/) {
 				
 				++$lineno;
 			}
