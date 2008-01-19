@@ -341,7 +341,7 @@ class Account extends controller
 	 */
 	function personal()
 	{
-		// TODO: Check if this is the first time they've logged in or not
+		/// @TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
 
 		/// Get custom page content
