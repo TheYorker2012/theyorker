@@ -133,6 +133,27 @@ class Pages extends Controller
 		return $result;
 	}
 	
+	/// Validates a page codename.
+	/**
+	 * @param $Codename string The new codename.
+	 * @param $Prefix   string The prefix for the codename.
+	 * @return bool Whether the codename is valid and unused.
+	 */
+	private function _ValidatePageCodename($Codename, $Prefix = '')
+	{
+		// Validate codename, must be non empty, and consist only of word characters
+		if (!preg_match('/^\w+$/', $Codename)) {
+			$this->messages->AddMessage('error','Your specified codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" contained invalid characters. Please use alphanumeric characters only.');
+			return FALSE;
+		}
+		// Check if new codename is in use
+		elseif (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$Codename)) {
+			$this->messages->AddMessage('error','A page with the codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" already exists. Please choose another.');
+			return FALSE;
+		}
+		return TRUE;
+	}
+	
 	/// Setup the data array for the view for creating a new page.
 	/**
 	 * @param $Data array Data used for setting up the page.
@@ -175,10 +196,9 @@ class Pages extends Controller
 			
 			// Validate and check permissions
 			if ($this->_CheckViewPermissions('custom_new','You do not have permission to create a new page')) {
-				// Check if new codename is in use
 				$Data['codename'] = $input['codename'];
-				if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-					$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+				// Check the codename is valid
+				if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
 					$save_failed = TRUE;
 				}
 			} else {
@@ -338,10 +358,9 @@ class Pages extends Controller
 					// Validate and check permissions
 					if ($input['codename'] != $data['codename']) {
 						if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
-							// Check if new codename is in use
 							$data['codename'] = $input['codename'];
-							if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-								$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+							// Check the codename is valid
+							if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
 								$save_failed = TRUE;
 							}
 						} else {

@@ -5,37 +5,37 @@
 	<?php } ?>
 	<?php if (isset($page_help)) { ?>
 		<h4>Helper</h4>
-		<?php echo $page_help; ?>
+		<?php echo($page_help); ?>
 	<?php } ?>
 </div>
 <?php if ($show_details) { ?>
 	<div class="blue_box">
 		<h2>Page Details</h2>
-		<form name="page_form" action="<?php echo $target; ?>" method="POST" class="form">
+		<form name="page_form" action="<?php echo($target); ?>" method="POST" class="form">
 			<fieldset>
 				<label for="codename">Codename:</label>
 				<input name="codename" size="35" value=<?php
 					echo '"';
-					if (!empty($codename)) { echo $codename; }
+					if (!empty($codename)) { echo(htmlentities($codename, ENT_QUOTES, 'utf-8')); }
 					echo '"';
-					if (!$permissions['rename']) { echo ' READONLY'; }
+					if (!$permissions['rename']) { echo(' READONLY'); }
 					?>>
 				<br />
 				<label id="title_label" for="title">Header Title:</label>
-				<input name="head_title" size="35" value="<?php if (!empty($head_title)) { echo htmlentities($head_title, ENT_QUOTES, 'UTF-8');} ?>" />
+				<input name="head_title" size="35" value="<?php if (!empty($head_title)) { echo(htmlentities($head_title, ENT_QUOTES, 'UTF-8'));} ?>" />
 				<label for="title_separate">Separate header and body titles</label>
 				<input type="checkbox" name="title_separate"<?=($title_separate ? ' checked="checked"' : '')?> />
 				<div id="separate_title">
 					<label for="body_title">Body Title:</label>
-					<input name="body_title" size="35" value="<?php if (!empty($body_title)) { echo htmlentities($body_title, ENT_QUOTES, 'UTF-8');} ?>" />
+					<input name="body_title" size="35" value="<?php if (!empty($body_title)) { echo(htmlentities($body_title, ENT_QUOTES, 'UTF-8'));} ?>" />
 				</div>
 				
 				<br />
 				<label for="description">Description</label>
-				<input name="description" size="35" value="<?php if (!empty($description)) { echo htmlentities($description, ENT_QUOTES, 'UTF-8');} ?>" />
+				<input name="description" size="35" value="<?php if (!empty($description)) { echo(htmlentities($description, ENT_QUOTES, 'UTF-8'));} ?>" />
 				<br />
 				<label for="keywords">Keywords</label>
-				<input name="keywords" size="35" value="<?php if (!empty($keywords)) { echo htmlentities($keywords, ENT_QUOTES, 'UTF-8');} ?>" />
+				<input name="keywords" size="35" value="<?php if (!empty($keywords)) { echo(htmlentities($keywords, ENT_QUOTES, 'UTF-8'));} ?>" />
 				<br />
 				<label for="type_id">Page type</label>
 				<select name="type_id">
@@ -63,21 +63,21 @@ if (!empty($properties) || $permissions['prop_add']) {
 
 <div class="blue_box">
 	<h2>Page Properties</h2>
-	<form name="property_edit_form" action="<?php echo $target; ?>" method="POST" class="form">
+	<form name="property_edit_form" action="<?php echo($target); ?>" method="POST" class="form">
 		<fieldset>
 			<?php
 			foreach ($properties as $property) {
 			?>
 				<p style="font-size:small;">
-					<b>Property Name : </b><?php echo htmlentities($property['label'], ENT_QUOTES, 'UTF-8');?><br />
-					<b>Property Type : </b><?php echo htmlentities($property['type'], ENT_QUOTES, 'UTF-8');?><br />
+					<b>Property Name : </b><?php echo(htmlentities($property['label'], ENT_QUOTES, 'UTF-8'));?><br />
+					<b>Property Type : </b><?php echo(htmlentities($property['type'], ENT_QUOTES, 'UTF-8'));?><br />
 					<?php if ($permissions['prop_delete']) { ?>
-						<input type="checkbox" name="delete-<?php echo $property['id'];?>"> Delete this property
+						<input type="checkbox" name="delete-<?php echo($property['id']);?>"> Delete this property
 					<?php } ?>
 				</p>
-				<input type="hidden" name="label-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['label'], ENT_QUOTES, 'UTF-8');?>">
-				<input type="hidden" name="type-<?php echo $property['id'];?>" value="<?php echo htmlentities($property['type'], ENT_QUOTES, 'UTF-8');?>">
-				<textarea name="<?php echo $property['id'];?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo htmlentities($property['text'], ENT_QUOTES, 'UTF-8');?></textarea>
+				<input type="hidden" name="label-<?php echo($property['id']);?>" value="<?php echo(htmlentities($property['label'], ENT_QUOTES, 'UTF-8'));?>">
+				<input type="hidden" name="type-<?php echo($property['id']);?>" value="<?php echo(htmlentities($property['type'], ENT_QUOTES, 'UTF-8'));?>">
+				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(htmlentities($property['text'], ENT_QUOTES, 'UTF-8'));?></textarea>
 				<br />
 			<?php
 			}
@@ -118,7 +118,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 ?>
 <?php /*
 <h2>Add a page property</h2>
-<form name="property_form" action="<?php echo $target; ?>" method="POST" class="form">
+<form name="property_form" action="<?php echo($target); ?>" method="POST" class="form">
 	<fieldset>
 		<label for="properties_name">Property name</label>
 		<input size="35" name="properties_name">
