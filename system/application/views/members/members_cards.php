@@ -11,7 +11,7 @@ if (empty($business_cards)) {
 	<p>
 		No matching business cards found.
 	</p>
-<?
+<?php
 } else {
 	foreach ($business_cards as $business_card) {
 		$this->load->view('directory/business_card', array(

@@ -1,6 +1,11 @@
 /* Styles for the web IRC client in the office */
 /* Author: James Hogan */
 
+div.irc_error {
+	border: 1px solid black;
+	background: #FFA860;
+}
+
 div.irc_channel {
 	padding: 0px;
 }
@@ -45,6 +50,14 @@ div.irc_peers {
 	overflow-y: scroll;
 	border:1px solid #000;
 	height:20em;
+}
+
+div.irc_peers a {
+	cursor: pointer;
+}
+
+div.irc_topic {
+	border: 1px solid black;
 }
 
 ul.irc_channels {

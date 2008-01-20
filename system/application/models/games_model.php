@@ -190,6 +190,7 @@
 		function Edit_Game_Get($game_id)
 		{
 			$sql = '	SELECT	game_title,
+								game_activated,
 								game_filename,
 								game_width,
 								game_height,
@@ -203,6 +204,7 @@
 				$row = $query->row();
 				$result = array(
 					'title'		=> $row->game_title,
+					'activated'	=> ($row->game_activated == 1),
 					'filename'	=> $row->game_filename,
 					'width'		=> $row->game_width,
 					'height'	=> $row->game_height,
@@ -221,15 +223,38 @@
 		 *  @param argument4 int: new height of game
 		 *  @return bool: true on success
 		 */	
-		function Edit_Game_Update($game_id, $title, $width, $height)
+		function Edit_Game_Update($game_id, $title, $width, $height,$activated)
 		{
 			$sql = '	UPDATE	games
 						SET		game_title = ?,
 								game_width = ?,
-								game_height = ?
+								game_height = ?,
+								game_activated = ?
 						WHERE	game_id = ?';
-			return $this->db->query($sql,array($title,$width,$height,$game_id));
+			return $this->db->query($sql,array(
+				$title,
+				$width,
+				$height,
+				($activated ? 1 : 0),
+				$game_id));
 						
+		}
+		
+		function Get_Image_Id($game_id)
+		{
+			$sql = '	SELECT	game_image_id
+						FROM	games
+						WHERE	game_id = ?';
+			$query = $this->db->query($sql,array($game_id));
+			return $query->row()->game_image_id;
+		}
+	
+		function Set_Image_Id($game_id, $image_id)
+		{
+			$sql = '	UPDATE	games
+						SET		game_image_id = ?
+						WHERE	game_id = ?';
+			return $this->db->query($sql,array($image_id,$game_id));
 		}
 	}
 ?>

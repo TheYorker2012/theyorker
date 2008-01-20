@@ -666,31 +666,6 @@ class CI_Validation {
 	// --------------------------------------------------------------------
 	
 	/**
-	 * Prep URL
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */	
-	function prep_url($str = '')
-	{
-		if ($str == 'http://' OR $str == '')
-		{
-			$_POST[$this->_current_field] = '';
-			return;
-		}
-		
-		if (substr($str, 0, 7) != 'http://' && substr($str, 0, 8) != 'https://')
-		{
-			$str = 'http://'.$str;
-		}
-		
-		$_POST[$this->_current_field] = $str;
-	}
-	
-	// --------------------------------------------------------------------
-	
-	/**
 	 * Strip Image Tags
 	 *
 	 * @access	public

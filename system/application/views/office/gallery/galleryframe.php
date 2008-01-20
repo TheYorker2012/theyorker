@@ -35,14 +35,14 @@
 			<select name="tag">
 				<option value="null" selected></option>
 				<?php if ($tags->num_rows() > 0) foreach($tags->result() as $tag):?>
-				<option value="<?=$tag->tag_id?>"><?=$tag->tag_name?></option>
+				<option value="<?php echo $tag->tag_id?>"><?php echo $tag->tag_name?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			Show only photographers:<br />
 			<select name="photographer">
 				<option value="null" selected></option>
 				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person):?>
-				<option value="<?=$person->user_entity_id?>"><?=$person->user_firstname?> <?=$person->user_surname?></option>
+				<option value="<?php echo $person->user_entity_id?>"><?php echo $person->user_firstname?> <?php echo $person->user_surname?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			</fieldset>

@@ -33,7 +33,7 @@
 	<td><?php echo ($article['is_accepted'] ? '<img src="/images/prototype/news/accepted.gif" title="Accepted" alt="Accepted" />' : ($article['is_requested'] ? '<img src="/images/prototype/news/requested.gif" title="Requested" alt="Requested" />' : '<img src="/images/prototype/news/unassigned.png" title="Unassigned" alt="Unassigned" />') ); ?></td>
 	</tr>
 
-	<? } ?>
+	<?php } ?>
 	</table>
 
 </div>

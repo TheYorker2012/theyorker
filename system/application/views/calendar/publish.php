@@ -29,11 +29,11 @@
 		<p><?php echo(htmlentities($Event->Description, ENT_QUOTES, 'utf-8')); ?></p>
 		<?php if (count($Event->Occurrences) > 1) { ?>
 			<p>The event occurs at these times:</p>
-		<? } else { ?>
+		<?php } else { ?>
 			<p>The event occurs at:</p>
 		<?php } ?>
 		<ul>
-		<?
+		<?php
 		foreach ($Event->Occurrences as $occurrence) {
 			?>
 			<li>

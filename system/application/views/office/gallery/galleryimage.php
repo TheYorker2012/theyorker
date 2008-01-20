@@ -3,13 +3,13 @@
 	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
 		<fieldset>
 			<label for="title">Title: </label>
-				<input type="text" name="title" value="<?=$photoDetails->photo_title?>" /><br />
+				<input type="text" name="title" value="<?php echo $photoDetails->photo_title?>" /><br />
 			<label for="date">Date: </label>
-				<input type="date" name="date" value="<?=$photoDetails->photo_timestamp?>" /><br />
+				<input type="date" name="date" value="<?php echo $photoDetails->photo_timestamp?>" /><br />
 			<label for="photographer">Photographer: </label>
 				<select name="photographer">
 					<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person): ?>
-					<option value="<?=$person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?=$person->user_firstname.' '.$person->user_surname?></option>
+					<option value="<?php echo $person->user_entity_id?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo 'selected';?>><?php echo $person->user_firstname.' '.$person->user_surname?></option>
 					<?php endforeach;?>
 				</select><br />
 			<input type="hidden" name="tags" id="tags" />
@@ -28,7 +28,7 @@
 					<div style="overflow-y: auto;overflow-x: hidden;">
 						<ul id="ctags" style="height:250px;width:190px;list-style: none outside none;">
 							<?php if ($photoTag->num_rows() > 0) foreach ($photoTag->result() as $tag):?>
-							<li name="list_<?=$tag->tag_name?>" id="<?=$tag->tag_name?>"><a onClick="deleteTag('<?=$tag->tag_name?>')"><img src="/images/icons/delete.png" alt="Remove" title="Remove" /> <?=$tag->tag_name?></a></li>
+							<li name="list_<?php echo $tag->tag_name?>" id="<?php echo $tag->tag_name?>"><a onClick="deleteTag('<?php echo $tag->tag_name?>')"><img src="/images/icons/delete.png" alt="Remove" title="Remove" /> <?php echo $tag->tag_name?></a></li>
 							<?php endforeach;?>
 						</ul>
 					</div>
@@ -46,8 +46,8 @@
 <div class="grey_box">
 	<h2>previews</h2>
 	<?php foreach($type as $image):?>
-	<?=$image->image_type_name?> (<?=$image->image_type_width?>x<?=$image->image_type_height?>)<br />
-	<?=$this->image->getThumb($photoDetails->photo_id, $image->image_type_codename)?><br /><br />
+	<?php echo $image->image_type_name?> (<?php echo $image->image_type_width?>x<?php echo $image->image_type_height?>)<br />
+	<?php echo $this->image->getThumb($photoDetails->photo_id, $image->image_type_codename)?><br /><br />
 	<?php endforeach;?>
 	Full Size<br />
 	<a href="<?=site_url('photos/full/'.$photoDetails->photo_id)?>">Click here to view</a><br /><br />

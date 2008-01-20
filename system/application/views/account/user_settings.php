@@ -3,23 +3,23 @@
 		<h2>What's this?</h2>
 		This information will allow us to personalise your experience of our site, and will allow you to use our facilities to communicate with any societies that you are a member of.
 	</div>
-	<? } ?>
+	<?php } ?>
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
 			<h2>About You</h2>
 			<p>Please enter your name:</p>
 			<fieldset>
 				<label for="fname">Forename: </label>
-				<input type="text" id="fname" name="fname" value="<?php echo(htmlentities($this->validation->fname)); ?>" />
+				<input type="text" id="fname" name="fname" value="<?php echo($this->validation->fname); ?>" />
 				<br />
 				<label for="sname">Surname: </label>
-				<input type="text" id="sname" name="sname" value="<?php echo(htmlentities($this->validation->sname)); ?>" />
+				<input type="text" id="sname" name="sname" value="<?php echo($this->validation->sname); ?>" />
 				<br />
 			</fieldset>
 			<p>To allow us to personalise your experience of our site, please tell us more about yourself:</p>
 			<fieldset>
 				<label for="nick">Nickname: </label>
-				<input type="text" id="nick" name="nick" value="<?php echo(htmlentities($this->validation->nick)); ?>" />
+				<input type="text" id="nick" name="nick" value="<?php echo($this->validation->nick); ?>" />
 				<br />
 				<span class="label">Gender: </span>
 				<label class="radio" for="genderm">Male</label>
@@ -37,7 +37,7 @@ foreach ($colleges as $college) {
 	if ($college['college_id'] == $this->validation->college) {
 		echo( ' selected="selected"');
 	}
-	echo('>'.htmlentities($college['college_name']).'</option>'."\n");
+	echo('>'.htmlentities($college['college_name'],ENT_QUOTES,'UTF-8').'</option>'."\n");
 }
 ?>
 				</select>
@@ -84,11 +84,11 @@ foreach ($years as $year) {
 			</div>
 		<?php if(!$in_wizard) { ?>
 		 	<input type='submit' name='submit' id='submit' value='Save' class='button' />
-		<? } ?>
+		<?php } ?>
 			</div>
 		<?php if($in_wizard) { ?>
 		<div>
 		 	<input type='submit' name='submit' id='submit' value='Next >' class='button' />
 		</div>
-		<? } ?>
+		<?php } ?>
 	</form>

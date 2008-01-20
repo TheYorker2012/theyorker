@@ -7,6 +7,9 @@
  * @see helpers/irc_defines_helper.php
  */
 
+/// This uses the IPC library.
+get_instance()->load->library('ipc');
+
 /// An irc client object which persistently serves other scripts.
 class IrcClientManager
 {
@@ -16,14 +19,14 @@ class IrcClientManager
 	/// float Session poll interval in milliseconds.
 	protected $PollInterval = 200;
 	
-	/// float Timeout in milliseconds.
-	protected $Timeout = 30000;
-	
-	/// float The time we've slept for overall in milliseconds.
-	protected $SleepTime = 0;
+	/// float Timeout in seconds.
+	protected $Timeout = 30;
 	
 	/// file Socket file descriptor for connection to server.
-	protected $Socket = NULL;
+	protected $ServerSocket = NULL;
+	
+	/// IpcServer Client requests socket.
+	protected $ClientRequests = NULL;
 	
 	/// string Buffer from server.
 	protected $Buffer = '';
@@ -43,12 +46,18 @@ class IrcClientManager
 	{
 		get_instance()->load->helper('irc_defines');
 		
-		$this->Socket = fsockopen($Server, $Port);
-		if (false === $this->Socket) {
-			$this->Socket = NULL;
+		$this->ServerSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		$connected = @socket_connect($this->ServerSocket, $Server, $Port);
+		socket_set_nonblock($this->ServerSocket);
+		if (!$connected) {
+			$this->ServerSocket = NULL;
 		} else {
-			$_SESSION[self::$SessionName]['connected'] = 1;
-			stream_set_blocking($this->Socket, 0);
+			$this->ClientRequests = new IpcServer(Ipc::GenSockName('theyorkerirc'), session_id());
+			if ($this->ClientRequests->Ready()) {
+				$_SESSION[self::$SessionName]['connected'] = 1;
+			} else {
+				unset($_SESSION[self::$SessionName]['connected']);
+			}
 		}
 	}
 	
@@ -63,7 +72,7 @@ class IrcClientManager
 	{
 		$finished = false;
 		while (!$finished) {
-			$data = fgets($this->Socket, 128);
+			$data = socket_read($this->ServerSocket, 128);
 			if (empty($data)) {
 				$finished = true;
 			} else {
@@ -85,7 +94,7 @@ class IrcClientManager
 	/// Login.
 	function Login($user, $nick, $name)
 	{
-		if (NULL === $this->Socket) {
+		if (NULL === $this->ServerSocket) {
 			return;
 		}
 		
@@ -103,11 +112,16 @@ class IrcClientManager
 	
 	function Quit($message)
 	{
-		if (NULL === $this->Socket) {
+		if (NULL === $this->ServerSocket) {
 			return;
 		}
 		$this->SendLine("QUIT :$message\n");
 		unset($_SESSION[self::$SessionName]['connected']);
+	}
+	
+	function Join($channel)
+	{
+		$this->JoinList[] = $channel;
 	}
 	
 	static function ProcessPrivMsg(& $Message)
@@ -148,13 +162,16 @@ class IrcClientManager
 			$message = array(
 				'type' => $action,
 				'sender' => $from[0],
-				'address' => $from[1],
 				'to' => $to,
 				'channel' => $channel,
 				'content' => $rest,
 				'received' => time(),
 			);
+			if (isset($from[1])) {
+				$message['address'] = $from[1];
+			}
 			$msg_words = preg_split('/ +/', $rest);
+			$ignore = false;
 			switch ($action) {
 				case 'PRIVMSG':
 					$message['content'] = substr($rest,1);
@@ -163,10 +180,20 @@ class IrcClientManager
 					
 				case 'PART':
 					$message['content'] = " has left this channel ($message[address])";
+					$message['names'][] = array(
+						'_tag' => 'name',
+						'_attr' => array('mode' => 'part'),
+						'nick' => $message['sender'],
+					);
 					break;
 					
 				case 'JOIN':
 					$message['content'] = " has joined this channel ($message[address])";
+					$message['names'][] = array(
+						'_tag' => 'name',
+						'_attr' => array('mode' => 'join'),
+						'nick' => $message['sender'],
+					);
 					break;
 					
 				case 'QUIT':
@@ -200,9 +227,15 @@ class IrcClientManager
 				
 				// In response to TOPIC message
 				case IRC_RPL_CHANNELMODEIS:
+					break;
 				case IRC_RPL_NOTOPIC:
 				case IRC_RPL_TOPIC:
 					$message['channel'] = $msg_words[0];
+					$message['topic'] = substr(implode(' ', array_slice($msg_words, 1)), 1);
+					break;
+				case 'TOPIC':
+					$message['topic'] = substr($rest,1);
+					$message['content'] = " set the channel topic to \"$message[topic]\"";
 					break;
 				
 				// In response to INVITE message
@@ -237,7 +270,13 @@ class IrcClientManager
 									$nick = substr($nick, 1);
 									break;
 							}
-							$message['names'][] = array('_tag' => 'name', 'nick' => $nick);
+							$message['names'][] = array(
+								'_tag' => 'name',
+								'nick' => $nick,
+							);
+						}
+						if (isset($message['names'])) {
+							$message['names']['_attr']['replace'] = 'yes';
 						}
 					}
 					break;
@@ -247,7 +286,13 @@ class IrcClientManager
 				
 				// In response to LINKS message
 				case IRC_RPL_LINKS:
-				case IRC_RPL_ENDOFLINGS:
+				case IRC_RPL_ENDOFLINKS:
+					break;
+				
+				case IRC_RPL_MOTDSTART:
+				case IRC_RPL_MOTD:
+				case IRC_RPL_ENDOFMOTD:
+					$ignore = true;
 					break;
 			}
 			
@@ -257,65 +302,116 @@ class IrcClientManager
 				$message['type'] = $IrcReplyCodes[$message['type']];
 			}
 			
-			// Add to messages
-			$messages[] = $message;
+			if (!$ignore) {
+				// Add to messages
+				$messages[] = $message;
+			}
 		}
 	}
 	
 	/// Start listening to session data
 	function listen()
 	{
-		if (NULL === $this->Socket) {
+		if (NULL === $this->ServerSocket) {
 			return;
 		}
 		
 		// Continue without php timeout
+		session_commit();
 		set_time_limit(0);
 		
-		session_commit();
-		$timeout = $this->Timeout;
-		while ($timeout > 0) {
-			$messages = array();
-			// handle data from server
-			while (NULL !== ($line = $this->GetSocketLine())) {
-				// Get rid of trailing whitespace
-				preg_match('/^(.*[^\s])\s*$/', $line, $matches);
-				$line = $matches[1];
-				
-				$words = explode(' ', $line);
-				if ($words[0] == 'PING') {
-					$this->SendLine("PONG ".$words[1]."\n");
-					if (!$this->JoinReady) {
-						$this->JoinReady = true;
-					}
-				} elseif ($words[0] == 'NOTICE') {
-					// Get the rest minus the beginning :
-					$rest = implode(' ', array_slice($words, 2));
-					$messages[] = array(
-						'type' => 'NOTICE',
-						'to' => $words[1],
-						'content' => $rest,
-						'received' => time(),
-					);
+		$messages = array();
+		
+		$client_connections = array();
+		$latest_ping_client = NULL;
+		$continue_main_loop = true;
+		$timeout = strtotime('+10seconds');
+		while ($continue_main_loop) {
+			// try and dispatch any messages
+			while ($latest_ping_client && !empty($messages)) {
+				$next_message = $messages[0];
+				if ($latest_ping_client->PutData($next_message)) {
+					array_shift($messages);
 				} else {
-					self::ProcessMessage($line, $messages);
+					$latest_ping_client->Close();
+					foreach ($client_connections as $key => $connection) {
+						if ($latest_ping_client === $connection) {
+							unset($client_connections[$key]);
+							break;
+						}
+					}
+					// Await next ping
+					$latest_ping_client = NULL;
+					break;
 				}
 			}
 			
-			session_start();
-			if (isset($_SESSION[self::$SessionName])) {
-				$session = & $_SESSION[self::$SessionName];
-				
-				foreach ($messages as $message) {
-					$session['messages'][] = $message;
+			$read_sockets = array();
+			$read_sockets[] = $this->ServerSocket;
+			$read_sockets[] = $this->ClientRequests->Socket();
+			foreach ($client_connections as $client) {
+				if ($client->Ready()) {
+					$read_sockets[] = $client->Socket();
 				}
-				if (isset($session['requests']) && !empty($session['requests'])) {
-					$timeout = $this->Timeout;
-					
-					// Serve request
-					while (!empty($session['requests'])) {
-						$request = $session['requests'][0];
-						array_shift($session['requests']);
+			}
+			// Don't exceed timeout
+			if (time() > $timeout) {
+				break;
+			}
+			// Wait for data from one of the sockets
+			if (1 > socket_select(
+					$read_sockets,
+					$write_sockets = array(),
+					$exception_sockets = array(),
+					5
+				))
+			{
+				continue;
+			}
+			
+			// handle data from server
+			foreach ($read_sockets as $socket) {
+				if ($socket == $this->ServerSocket) {
+					while (NULL !== ($line = $this->GetSocketLine())) {
+						// Get rid of trailing whitespace
+						preg_match('/^(.*[^\s])\s*$/', $line, $matches);
+						$line = $matches[1];
+						
+						$words = explode(' ', $line);
+						if ($words[0] == 'PING') {
+							$this->SendLine("PONG ".$words[1]."\n");
+							if (!$this->JoinReady) {
+								$this->JoinReady = true;
+							}
+						} elseif ($words[0] == 'NOTICE') {
+							// Get the rest minus the beginning :
+							$rest = implode(' ', array_slice($words, 2));
+							$messages[] = array(
+								'type' => 'NOTICE',
+								'to' => $words[1],
+								'content' => $rest,
+								'received' => time(),
+							);
+						} else {
+							self::ProcessMessage($line, $messages);
+						}
+					}
+				}
+				elseif ($socket == $this->ClientRequests->Socket()) {
+					$new_connection = $this->ClientRequests->Accept();
+					$client_connections[] = $new_connection;
+				}
+				else {
+					$client_key = NULL;
+					foreach ($client_connections as $key => $connection) {
+						if ($connection->socket() == $socket) {
+							$client_key = $key;
+							break;
+						}
+					}
+					$ipc_client = & $client_connections[$client_key];
+					if (is_array($request = $ipc_client->GetData())) {
+						$close_connection = true;
 						switch ($request['type']) {
 							case 'join':
 								$this->JoinList[] = $request['channels'];
@@ -330,38 +426,60 @@ class IrcClientManager
 								break;
 								
 							case 'disconnect':
-								$timeout = 0;
+								$continue_main_loop = false;
 								break;
+							
+							case 'ping':
+								// Start using this connection for outgoing messages
+								$latest_ping_client = $new_connection;
+								$close_connection = false;
+								$timeout = strtotime('+30seconds');
+								break;
+							
+							case 'unping':
+								// End using this connection for outgoing messages
+								$latest_ping_client = NULL;
+						}
+						if ($close_connection) {
+							$ipc_client->Close();
+							unset($client_connections[$client_key]);
 						}
 					}
 				}
 			}
-			session_commit();
 			
 			while ($this->JoinReady && !empty($this->JoinList)) {
 				$this->SendLine('JOIN '.$this->JoinList[0]."\n");
 				array_shift($this->JoinList);
 			}
 			
-			// Wait for a small period of time
-			usleep($this->PollInterval*1000);
-			$this->SleepTime += $this->PollInterval;
-			$timeout -= $this->PollInterval;
-			
 			if (!$this->JoinReady && $this->PollInterval > 1000) {
 				$this->JoinReady = true;
 			}
 		}
 		
+		// If a pinger is connected, signal it to give up
+		if ($latest_ping_client !== null) {
+			$latest_ping_client->PutData(array('_sig' => 'disconnect'));
+		}
+		
+		// Close client connections
+		$this->ClientRequests->Close();
+		foreach ($client_connections as $connection) {
+			$connection->Close();
+		}
+		// Quit IRC
 		$this->Quit('The Yorker\'s AJAX IRC Client');
-		fclose($this->Socket);
-		$this->Socket = NULL;
+		
+		// Close socket
+		socket_close($this->ServerSocket);
+		$this->ServerSocket = NULL;
 	}
 	
 	/// Send a line to the server
 	protected function SendLine($line)
 	{
-		fputs($this->Socket,$line);
+		socket_write($this->ServerSocket, $line);
 	}
 }
 
@@ -371,28 +489,68 @@ class IrcClientManager
  */
 class Irc_client
 {
+	/// IpcClient object.
+	protected $connection = NULL;
+	
+	/// Default constructor.
+	function __construct()
+	{
+	}
+	
+	/// Attached to manager script.
+	function Attach()
+	{
+		if (NULL === $this->connection) {
+			$this->connection = new IpcClient(Ipc::GenSockName('theyorkerirc'), session_id());
+			if (!$this->connection->Ready()) {
+				$this->connection = NULL;
+			}
+		}
+	}
+	
+	/// Find whether connected to manager.
+	function Attached()
+	{
+		return NULL !== $this->connection;
+	}
+	
 	/// Join channels using session.
 	function Join($Channels)
 	{
-		$_SESSION[IrcClientManager::$SessionName]['requests'][] = array(
+		return $this->connection->PutData(array(
 			'type' => 'join',
 			'channels' => $Channels,
-		);
+		));
 	}
 	/// Part channels using session.
 	function Part($Channels)
 	{
-		$_SESSION[IrcClientManager::$SessionName]['requests'][] = array(
+		return $this->connection->PutData(array(
 			'type' => 'part',
 			'channels' => $Channels,
-		);
+		));
+	}
+	
+	function Nick($NewNick)
+	{
+		return $this->connection->PutData(array(
+			'type' => 'nick',
+			'nick' => $NewNick,
+		));
 	}
 	
 	function Ping()
 	{
-		$_SESSION[IrcClientManager::$SessionName]['requests'][] = array(
+		return $this->connection->PutData(array(
 			'type' => 'ping',
-		);
+		));
+	}
+	
+	function Unping()
+	{
+		return $this->connection->PutData(array(
+			'type' => 'unping',
+		));
 	}
 	
 	/// Interpret a query in a channel.
@@ -419,6 +577,17 @@ class Irc_client
 					}
 					return NULL;
 					
+				case 'nick':
+					/// @todo handle /nick
+					return array(
+						'type' => 'NOTICE',
+						'to' => $_SESSION[IrcClientManager::$SessionName]['user'],
+						'channel' => $Channel,
+						'content' => "/nick not yet supported",
+						'received' => time(),
+					);
+					return NULL;
+					
 				default:
 					return array(
 						'type' => 'NOTICE',
@@ -435,29 +604,33 @@ class Irc_client
 	/// Post a message to a channel.
 	function PostChannelMessage($Channel, $Msg)
 	{
-		$_SESSION[IrcClientManager::$SessionName]['requests'][] = array(
+		$success = $this->connection->PutData(array(
 			'type' => 'post',
 			'to' => $Channel,
 			'message' => $Msg,
-		);
-		$message = array(
-			'type' => 'PRIVMSG',
-			'sender' => $_SESSION[IrcClientManager::$SessionName]['nick'],
-			'to' => $Channel,
-			'channel' => $Channel,
-			'content' => $Msg,
-			'received' => time(),
-		);
-		IrcClientManager::ProcessPrivMsg($message);
-		return $message;
+		));
+		if (!$success) {
+			return false;
+		} else {
+			$message = array(
+				'type' => 'PRIVMSG',
+				'sender' => $_SESSION[IrcClientManager::$SessionName]['nick'],
+				'to' => $Channel,
+				'channel' => $Channel,
+				'content' => $Msg,
+				'received' => time(),
+			);
+			IrcClientManager::ProcessPrivMsg($message);
+			return $message;
+		}
 	}
 	
 	/// Disconnect.
 	function Disconnect()
 	{
-		$_SESSION[IrcClientManager::$SessionName]['requests'][] = array(
+		return $this->connection->PutData(array(
 			'type' => 'disconnect',
-		);
+		));
 	}
 	
 	/// Forcefully disconnect.
@@ -488,22 +661,32 @@ class Irc_client
 	/// Wait up to $MaxWait milliseconds for new messages.
 	function WaitForMessages($MaxWait = 5000)
 	{
-		$timeout = $MaxWait;
-		$interval = 200;
-		// release the session, and wait for some time for new messages before returning.
+		if (NULL === $this->connection) {
+			return NULL;
+		}
 		$messages = array();
-		while (empty($messages) && $timeout > 0) {
-			while (NULL !== ($message = $this->GetMessage())) {
-				$messages[] = $message;
-			}
-			if (empty($messages)) {
-				session_commit();
-				usleep($interval*1000);
-				session_start();
-				$timeout -= $interval;
+		$seconds = 1;
+		$useconds = 0;
+		while ($MaxWait > 0)
+		{
+			$ready = socket_select($rd = array($this->connection->Socket()), $wr=array(),$ex=array($this->connection->Socket()),
+							$seconds, $useconds) > 0;
+			$MaxWait -= $seconds*1000;
+			if ($ready) {
+				$message = $this->connection->GetData();
+				if (is_array($message)) {
+					// The manager is telling us to disconnect:
+					if (isset($message['_sig']) && $message['_sig'] == 'disconnect') {
+						return $messages;
+					}
+					$messages[] = $message;
+				}
+				$seconds = 0;
+				$useconds = 15;
+			} elseif (!$seconds) {
+				break;
 			}
 		}
-		
 		return $messages;
 	}
 	

@@ -34,12 +34,11 @@ class CI_Router {
 	var $rsegments		= array();
 	var $routes 		= array();
 	var $error_routes	= array();
-	var $class			= '';
-	var $method			= 'index';
+	var $class		= '';
+	var $method		= 'index';
 	var $directory		= '';
 	var $uri_protocol 	= 'auto';
 	var $default_controller;
-	var $scaffolding_request = FALSE; // Must be set to FALSE
 	
 	/**
 	 * Constructor
@@ -165,17 +164,8 @@ class CI_Router {
 		
 		if (isset($segments[1]))
 		{
-			// A scaffolding request. No funny business with the URL
-			if ($this->routes['scaffolding_trigger'] == $segments[1] AND $segments[1] != '_ci_scaffolding')
-			{
-				$this->scaffolding_request = TRUE;
-				unset($this->routes['scaffolding_trigger']);
-			}
-			else
-			{
-				// A standard method request
-				$this->set_method($segments[1]);
-			}
+			// A standard method request
+			$this->set_method($segments[1]);
 		}
 		
 		// Update our "routed" segment array to contain the segments.

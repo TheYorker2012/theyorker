@@ -9,7 +9,7 @@
 		If you choose not select a reporter here then the request will remain <b>unassigned</b> until a reporter is selected. The request will appear on the content schedule.
 	</div>
 
-	<form name='new_request' id='new_request' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form'>
+	<form name='new_request' id='new_request' action='<?php echo $this->uri->uri_string(); ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>

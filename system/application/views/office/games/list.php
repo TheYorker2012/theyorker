@@ -17,10 +17,10 @@
 	<h4><?php echo($section_games_list_actions_title); ?></h4>
 	<form name='add_game_form' id='add_game_form' action='/office/games/add' method='post' class='form' enctype="multipart/form-data">
 		<fieldset>
-			<input type="file" name="new_game_file_field" />
+			<!--<input type="file" name="new_game_file_field" /> -->
 			<br />
 			<!-- some clever code needs to replace the following, but depending on how the file is handled server side as to best way! -->
-			<input type="submit" name="submit" value="Add">
+			<!-- <input type="submit" name="submit" value="Add"> -->
 		</fieldset>
 	</form>
 
@@ -79,7 +79,9 @@
 							echo('<td> '.$game['date_added'].'</td>');
 							echo('<td>'.$game['play_count'].'</td>');
 							echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
-							echo('<td><a href="#" onclick="del_game('.$game_id.')">Del</a></td>');
+							echo('<td>');
+							// echo('<a href="#" onclick="del_game('.$game_id.')">Del</a>');
+							echo('</td>');
 							echo('</tr>');
 							$alternate == 1 ? $alternate = 2 : $alternate = 1;
 	

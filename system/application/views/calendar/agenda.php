@@ -197,7 +197,7 @@ table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_headin
 if (!empty($Occurrences)) {
 	?>
 	<table id="calendar_view" border="0" cellpadding="0" cellspacing="0" width="100%">
-	<?
+	<?php
 	$sorted_occurrences = array();
 	foreach ($Occurrences as $key => $occurrence) {
 		$sorted_occurrences[$occurrence->StartTime->Timestamp()][] = & $Occurrences[$key];

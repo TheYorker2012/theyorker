@@ -128,7 +128,7 @@ if (isset($medium_type)) { ?>
 					<?php /*
 					<li><a href="/campaign/">Campaigns</a></li>
 					*/ ?>
-					<li><a href="/news/archive/">News Archive</a></li>
+					<li><a href="/news/archive/">Archive</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/charity/">Our Charity</a></li>

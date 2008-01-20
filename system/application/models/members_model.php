@@ -551,6 +551,18 @@ class Members_model extends Model {
 	return $query->num_rows();
 	}
 	
+	function GetNumberOfArticlesByUser($UserID){
+	$sql = 'SELECT
+			COUNT(articles.article_id) as article_count
+			FROM article_writers
+			INNER JOIN articles ON
+			articles.article_id = article_writers.article_writer_article_id
+			WHERE articles.article_deleted=0 AND articles.article_live_content_id IS NOT NULL AND
+			article_writers.article_writer_user_entity_id=?';
+		$query = $this->db->query($sql, $UserID);
+		return $query->row()->article_count;
+	}
+	
 	function GetJoinTimeOfLatestMember($OrgId){
 	$sql = '
 			SELECT MAX(subscriptions.subscription_timestamp)
