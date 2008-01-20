@@ -42,23 +42,21 @@ class CI_Log {
 	 */
 	function CI_Log()
 	{
-		$config =& get_config();
-		
-		$this->log_path = ($config['log_path'] != '') ? $config['log_path'] : BASEPATH.'logs/';
+		$this->log_path = (config_item('log_path') != '') ? config_item('log_path') : BASEPATH.'logs/';
 		
 		if ( ! is_dir($this->log_path) OR ! is_writable($this->log_path))
 		{
 			$this->_enabled = FALSE;
 		}
 		
-		if (is_numeric($config['log_threshold']))
+		if (is_numeric(config_item('log_threshold')))
 		{
-			$this->_threshold = $config['log_threshold'];
+			$this->_threshold = config_item('log_threshold');
 		}
 			
-		if ($config['log_date_format'] != '')
+		if (config_item('log_date_format') != '')
 		{
-			$this->_date_fmt = $config['log_date_format'];
+			$this->_date_fmt = config_item('log_date_format');
 		}
 	}
 	

@@ -30,6 +30,12 @@
 */
 function &load_class($class, $instantiate = TRUE)
 {
+
+	if (strtolower($class) == 'config') {
+		require_once(BASEPATH.'libraries/Config.php');
+		return CI_Config::get_instance();
+	}
+
 	static $objects = array();
 
 	// Does the class exist?  If so, we're done...
@@ -37,7 +43,7 @@ function &load_class($class, $instantiate = TRUE)
 	{
 		return $objects[$class];
 	}
-			
+
 	// If the requested class does not exist in the application/libraries
 	// folder we'll load the native class from the system/libraries folder.	
 	if (file_exists(APPPATH.'libraries/'.config_item('subclass_prefix').$class.EXT))
@@ -79,40 +85,9 @@ function &load_class($class, $instantiate = TRUE)
 	return $objects[$class];
 }
 
-/**
-* Loads the main config.php file
-*
-* @access	private
-* @return	array
-*/
-function &get_config()
-{
-	static $main_conf;
-		
-	if (!isset($main_conf))
-	{
-		require(APPPATH.'config/config'.EXT);
-		$main_conf[0] =& $config;
-	}
-	return $main_conf[0];
+function config_item($item) {
+	return load_class('config')->item($item);
 }
-
-/**
-* Gets a config item
-*
-* @access	public
-* @return	mixed
-*/
-function config_item($item)
-{
-	$config =& get_config();
-	if (isset($config[$item])) {
-		return $config[$item];
-	} else {
-		return FALSE;
-	}
-}
-
 
 /**
 * Error Handler
@@ -165,8 +140,7 @@ function log_message($level = 'error', $message, $php_error = FALSE)
 {
 	static $LOG;
 	
-	$config =& get_config();
-	if ($config['log_threshold'] == 0)
+	if (config_item('log_threshold') == 0)
 		return;
 
 	$LOG =& load_class('Log');	
@@ -199,8 +173,7 @@ function _exception_handler($severity, $message, $filepath, $line)
 		$error->show_php_error($severity, $message, $filepath, $line);
 	}
 	
-	$config =& get_config();
-	if ($config['log_threshold'] == 0)
+	if (config_item('log_threshold') == 0)
 	{
 		return;
 	}

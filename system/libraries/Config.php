@@ -1,4 +1,4 @@
-<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
  * Code Igniter
  *
@@ -27,25 +27,23 @@
  * @link		http://www.codeigniter.com/user_guide/libraries/config.html
  */
 class CI_Config {
+	private static $instance = null;
+
+	private function __construct() {
+		$this->load('config');
+	}
+
+	private function __clone() {}
+
+	public static function &get_instance() {
+		if (self::$instance === null)
+			self::$instance = new self();
+
+		return self::$instance;
+	}
 
 	var $config = array();
 	var $is_loaded = array();
-
-	/**
-	 * Constructor
-	 *
-	 * Sets the $config data from the primary config.php file as a class variable
-	 *
-	 * @access   public
-	 * @param   string	the config file name
-	 * @param   boolean  if configuration values should be loaded into their own section
-	 * @param   boolean  true if errors should just return false, false if an error message should be displayed
-	 * @return  boolean  if the file was successfully loaded or not
-	 */
-	function CI_Config()
-	{
-		$this->config =& get_config();
-	}  	
   	
 	// --------------------------------------------------------------------
 
@@ -78,8 +76,6 @@ class CI_Config {
 	 *
 	 * @access	public
 	 * @param	string	the config item name
-	 * @param	string	the index name
-	 * @param	bool
 	 * @return	string
 	 */		
 	function item($item)
@@ -97,7 +93,6 @@ class CI_Config {
 	 *
 	 * @access	public
 	 * @param	string	the config item name
-	 * @param	bool
 	 * @return	string
 	 */		
 	function slash_item($item)
@@ -146,36 +141,6 @@ class CI_Config {
 	                return $this->slash_item('base_url').$this->slash_item('index_page').preg_replace("|^/*(.+?)/*$|", "\\1", $uri).$suffix;
 	        }
 	}
-	
-	// --------------------------------------------------------------------
-
-	/**
-	 * System URL
-	 *
-	 * @access	public
-	 * @return	string
-	 */		
-	function system_url()
-	{
-		$x = explode("/", preg_replace("|/*(.+?)/*$|", "\\1", BASEPATH));
-		return $this->slash_item('base_url').end($x).'/';
-	}
-  	
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set a config file item
-	 *
-	 * @access	public
-	 * @param	string	the config item key
-	 * @param	string	the config item value
-	 * @return	void
-	 */		
-	function set_item($item, $value)
-	{
-		$this->config[$item] = $value;
-	}
-
 }
 
 // END CI_Config class
