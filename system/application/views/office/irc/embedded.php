@@ -26,6 +26,7 @@
 			<input class="button" type="button" onclick="irc_disconnect()" value="Disconnect" />
 			<input class="button" type="button" onclick="irc_connect()" value="Connect" />
 		</fieldset>
+		<div id="irc_error_msg" style="display:none;" class="irc_error"></div>
 		<div style="display:block;">
 			<ul id="irc_channel_tabs" class="irc_channels">
 			</ul>

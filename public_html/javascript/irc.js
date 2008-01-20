@@ -53,6 +53,26 @@ function CssCheck(o,c1)
 	return new RegExp('\\b'+c1+'\\b').test(o.className);
 }
 
+// Set the error message.
+function irc_error(msg)
+{
+	var err = document.getElementById('irc_error_msg');
+	
+	while (err.childNodes.length > 0) {
+		err.removeChild(err.firstChild);
+	}
+	err.appendChild(document.createTextNode(msg));
+	err.style.display = 'block';
+}
+
+// Clear the error message
+function irc_clear_error()
+{
+	var err = document.getElementById('irc_error_msg');
+	
+	err.style.display = 'none';
+}
+
 // Create a new tab and return id
 function irc_new_screen(name)
 {
@@ -429,6 +449,7 @@ function irc_xml_get_item(container, name)
 function irc_ajax_callback(responseXML)
 {
 	if (responseXML) {
+		irc_handle_ajax_errors(responseXML, false);
 		var messages = responseXML.getElementsByTagName('msg');
 		if (messages.length > 0) {
 			for (var msgid = 0; msgid < messages.length; ++msgid) {
@@ -606,6 +627,29 @@ function irc_ajax_callback(responseXML)
 	}
 }
 
+// Handle errors returned by ajax
+function irc_handle_ajax_errors(responseXML, clear)
+{
+	var errors = responseXML.getElementsByTagName('error');
+	var errormsg = '';
+	for (var i = 0; i < errors.length; ++i) {
+		var code = errors[i].attributes.getNamedItem('code');
+		var retry = errors[i].attributes.getNamedItem('code');
+		// Show error message
+		errormsg = errors[i].firstChild.nodeValue;
+	}
+	if (errormsg != '') {
+		irc_error(errormsg);
+		if (irc_connected) {
+			irc_disconnect();
+		}
+		return true;
+	} else if (clear) {
+		irc_clear_error();
+		return false;
+	}
+}
+
 // Send a connection request
 function irc_connect()
 {
@@ -617,18 +661,20 @@ function irc_connect()
 	post['cmd'] = 'connect';
 	// This query will remain open as long as the IRC client is connected.
 	var ajax = new AJAXInteraction(irc_ajax_url, post,
-		function () {
-			if (irc_connected) {
-				irc_disconnect();
+		function (responseXML) {
+			if (responseXML) {
+				if (!irc_handle_ajax_errors(responseXML, true)) {
+					irc_connected = true;
+					// Start pinging after connection
+					if (!irc_pinging) {
+						irc_ping();
+						irc_pinging = true;
+					}
+				}
 			}
 		} );
+	irc_clear_error();
 	ajax.doGet();
-	
-	irc_connected = true;
-	if (!irc_pinging) {
-		irc_ping();
-		irc_pinging = true;
-	}
 }
 
 // Send disconnection request and remove all screens
@@ -650,9 +696,9 @@ function irc_disconnect()
 			irc_next_screen_id = 0;
 			irc_open_screens = 0;
 			irc_current_screen = null;
-			irc_connected = false;
 		} );
 	ajax.doGet();
+	irc_connected = false;
 }
 
 /// Main onLoad function
