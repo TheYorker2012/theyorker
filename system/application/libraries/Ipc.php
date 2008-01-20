@@ -126,8 +126,8 @@ class IpcClient
 				$size -= $length;
 			}
 		}
-		$block = unserialize($data_block);
-		if (!isset($block[0])) {
+		$block = @ unserialize($data_block);
+		if (!is_array($block) || !isset($block[0])) {
 			// all received should have a data block
 			return false;
 		}
