@@ -142,7 +142,7 @@ class Irc extends Controller
 					
 					// Output empty XML document and close the connection with
 					// the browser
-					ob_end_clean();
+					@ ob_end_clean();
 					header('content-type: text/xml');
 					header("Connection: close");
 					ignore_user_abort();
