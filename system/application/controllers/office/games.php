@@ -71,6 +71,11 @@ class Games extends Controller
 				
 		$data['games'] = $this->games_model->GetFullList($data['offset'],$config['per_page']);
 		
+		if($number == 0){
+			$data['incomplete_games'] = $this->games_model->Get_Incomplete();
+		}else{ $data['incomplete_games'] = 0; }
+		
+		
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		
 		$this->main_frame->SetContentSimple('office/games/list',$data);

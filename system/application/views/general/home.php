@@ -26,6 +26,25 @@
 ?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
+	
+<?php 
+
+	if ($poll)
+	{
+		if ($this->user_auth->isLoggedIn)
+		{
+			if ($poll['user_voted'])
+				$this->polls_view->print_sidebar_poll_no_voting($poll['info'], $poll['choices']);
+			else
+				$this->polls_view->print_sidebar_poll_voting($poll['info'], $poll['choices']);
+		}
+		else
+		{
+			$this->polls_view->print_sidebar_poll_login_to_vote($poll['info']);
+		}
+	}
+	
+?>
 
 	<h2>Search the Web</h2>
 	<div class="Entry">

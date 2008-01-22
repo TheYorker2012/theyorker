@@ -1,5 +1,10 @@
 <?php
 /**
+ * @file views/comments/comment.php
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ * @author Chris Travis
+ * @brief An individual comment
+ *
  * @param $Comment array Comment.
  * @param $ListNumber int Comment number.
  * @param $ReportUrlPrefix string Url for reporting (prepended)
@@ -39,21 +44,35 @@ if (!function_exists('star_rating')) {
 	}
 }
 
+$show_as_deleted = $Comment['deleted'] && (!isset($Mode) || ($Mode != 'mod' && $Mode != 'debug'));
+$anonymous = ($Comment['author'] == 'Anonymous');
+
+if ($show_as_deleted) {
+	$Comment['author'] = '<em>comment removed</em>';
+	$Comment['xhtml'] = '';
+} else {
+	$Comment['author'] = '<b>'.$Comment['author'].'</b>';
+}
+
 ?>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($Comment['author'] == 'Anonymous') { echo(' style="border-color:#999;"'); } ?>>
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
 	<div style="float:right;margin:0.2em 0.5em;text-align:right">
-		<?php if ($Comment['author'] == 'Anonymous') { ?>
-		<img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" />
-		<?php } else { ?>
-		<img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" />
-		<?php } ?>
-		<?php if (NULL !== $Comment['rating']) {
+		<?php
+		if (!$show_as_deleted) {
+			if ($anonymous) {
+				?><img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" /><?php
+			} else {
+				?><img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" /><?php
+			}
+		}
+		?>
+		<?php if (!$show_as_deleted && NULL !== $Comment['rating']) {
 			echo('<br />' . star_rating($Comment['rating']));
 		} ?>
 	</div>
-	<div style="background-color:<?php echo ($Comment['author'] == 'Anonymous') ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
-		#<?php echo($Comment['comment_order_num'] . ' <b>' . $Comment['author']); ?></b> - <?php echo($Comment['post_time']); ?>
+	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
+		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $Comment['author']); ?> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
 	echo($Comment['xhtml']);
@@ -79,7 +98,7 @@ if (!function_exists('star_rating')) {
 			</div>
 			<pre><?php echo(htmlentities($Comment['wikitext'])); ?></pre>
 <?php	}
-	} else {
+	} else if (!$show_as_deleted) {
 		// Only show 'report abuse' link if 'no_report' index isn't set
 		if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
 			// Don't provide a working 'report abuse' link if only showing a comment preview
@@ -90,7 +109,9 @@ if (!function_exists('star_rating')) {
 			}
 			echo('<p style="font-size:x-small;"><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
 		}
-	} ?>
-
-	<div style="clear:both"></div>
+	}
+	if (!$show_as_deleted) {
+		?><div style="clear:both"></div><?php
+	}
+	?>
 </div>
