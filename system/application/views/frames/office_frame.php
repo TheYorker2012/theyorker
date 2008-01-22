@@ -151,6 +151,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/advertising'>Advertising</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/polls'>Polls</a>
+		</div>
 <?php
 	}
 ?>
