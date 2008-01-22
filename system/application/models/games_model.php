@@ -170,7 +170,23 @@
 		 */	
 		function Del_Game($game_id)
 		{
-			return true;
+			$sql = '	DELETE FROM games
+						where	game_id=?';
+			return $this->db->query($sql,array($game_id));			
+		}
+		
+		function Get_Filename($game_id)
+		{
+			$sql = '	SELECT	game_filename
+						FROM	games
+						WHERE	game_id=?';
+			$query = $this->db->query($sql,array($game_id));
+			if ($query->num_rows() >0)
+			{
+				return $query->row()->game_filename;
+			}else{
+				return 0;
+			}
 		}
 		
 		/**
@@ -258,9 +274,9 @@
 						FROM		games
 						WHERE		game_width < 10
 							OR		game_height < 10
-							OR		game_title = NULL
+							OR		game_title IS NULL
 							OR		game_title = ""
-							OR		game_image_id = NULL';
+							OR		game_image_id IS NULL';
 			$query = $this->db->query($sql);
 			if ($query->num_rows() > 0)
 			{
@@ -276,6 +292,22 @@
 				$result = 0;
 			}
 			return $result;
+		}
+		
+		function Add_Game($filename)
+		{
+			$sql = '	INSERT INTO games
+						(game_filename,game_date_added)
+						VALUES (?,UNIX_TIMESTAMP())';
+			$this->db->query($sql,array($filename));
+			$sql = '	SELECT	game_id
+						FROM	games
+						WHERE	game_filename=?';
+			$query = $this->db->query($sql,array($filename));
+			if ($query->num_rows() >0)
+			{
+				return $query->row()->game_id;
+			}else{ return 0;}
 		}
 		
 	}

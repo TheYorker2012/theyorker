@@ -29,8 +29,6 @@ class Games extends Controller
 
 		$this->load->library('xajax');
 		$this->xajax->registerFunction(array("toggle_activation", &$this, "_toggle_activation"));
-		$this->xajax->registerFunction(array("del_game", &$this, "_del_game"));
-
 		$this->xajax->processRequests();
 
 		$this->pages_model->SetPageCode('office_games_list');
@@ -98,29 +96,88 @@ class Games extends Controller
 			return $objResponse;
 		}
 	
-		function _del_game($game_id)
+		function del_game($game_id)
 		{
-			$objResponse = new xajaxResponse();
-			if($this->games_model->Del_Game($game_id))
+			if (!CheckPermissions('office')) return;
+			$conn_id = ftp_connect($this->config->item('static_ftp_address'));
+			if (
+				(!$conn_id) ||
+				(!(ftp_login(
+					$conn_id,
+					$this->config->item('static_ftp_username'),
+					$this->config->item('static_ftp_password')
+					))))
 				{
-					/** @TODO: delete file */
-					$objResponse->addAssign("row_".$game_id,"style.display","NONE");
+					$this->main_frame->AddMessage('error','FTP Connection Failed.');
+				}elseif (!(ftp_delete(
+					$conn_id,
+					'games/'.$this->games_model->Get_Filename($game_id)
+					)))
+				{
+					$this->main_frame->AddMessage('error','File Deletion Failed.');
+				}else{
+					$this->main_frame->AddMessage('success','Game Deleted.');
 				}
-			return $objResponse;
+			
+			ftp_close($conn_id);
+			
+			$this->games_model->Del_Game($game_id);
+			
+			redirect('office/games');
 		}
 		
-		function Add()
+		function add()
 		{
-			if(!isset($_FILES['new_game_file_field']))
+			if(!isset($_FILES['add_game_file']))
 			{
 				redirect('office/games');
 			}
 			if (!CheckPermissions('office')) return;
 			
-			///Add file uploading bit ere
+			$conn_id = ftp_connect($this->config->item('static_ftp_address'));
+			if ((!$conn_id) ||
+				(!(ftp_login(
+					$conn_id,
+					$this->config->item('static_ftp_username'),
+					$this->config->item('static_ftp_password')
+					))))
+				{
+					$this->main_frame->AddMessage('error','FTP Connection Failed.');
+					ftp_close($conn_id);
+					redirect('office/games');
+				}
+			$mode = ftp_pasv($conn_id, TRUE);
+			$list = ftp_nlist($conn_id,"games");
+			$name = $_FILES['add_game_file']['name'];
+			if (!(is_array($list)))
+			{
+					$this->main_frame->AddMessage('error','FTP List Failed.');
+					ftp_close($conn_id);			
+					redirect('office/games');
+			}
+
+			while (in_array($name,$list))
+			{
+				$name = rand(0,9).$name;
+			}
+			if (!(ftp_put(
+					$conn_id,
+					'games/'.$name,
+					$_FILES['add_game_file']['tmp_name'],
+					FTP_BINARY)))
+				{
+					$this->main_frame->AddMessage('error','FTP Upload Failed.');
+					ftp_close($conn_id);
+					redirect('office/games');
+				}
 			
-			$game_id = 1; /// Temp, should be assigned new number
-			
+			$game_id = $this->games_model->Add_Game($name);
+			ftp_close($conn_id);
+			if ($game_id ==0)
+			{
+					$this->main_frame->AddMessage('error','Game Add Failed.');				
+					redirect('office/games');
+			}								
 			$this->main_frame->AddMessage('success','File Uploaded Successfully. Please complete the rest of the required information below.');
 			redirect('office/games/edit/'.$game_id);
 		}

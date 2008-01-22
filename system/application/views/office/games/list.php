@@ -34,7 +34,7 @@
 			echo('<td>'.$game['play_count'].'</td>');
 			echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
 			echo('<td>');
-			// echo('<a href="#" onclick="del_game('.$game_id.')">Del</a>');
+			echo('<a href="/office/games/del_game/'.$game_id.'" onclick="return check_delete(\''.$game['title'].'\');">Del</a>');
 			echo('</td>');
 			echo('</tr>');
 			$alternate==1 ? $alternate = 2 : $alternate = 1;
@@ -42,49 +42,73 @@
 		echo('</tbody></table>');
 	}
 ?>
-
 <script type="text/javascript">
-	function del_game(id)
+
+	function add()
 	{
-		if(confirm("Are you sure you want to delete this game?"))
-		{
-			xajax_del_game(id);
-		}
-		return false;
+		document.getElementById('add_game').style.display="";
+		document.getElementById('list_box').style.display="none";
+		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="none";');} ?>
+	}
+	
+	function hide_add()
+	{
+		document.getElementById('add_game').style.display="none";
+		document.getElementById('list_box').style.display="";
+		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="";');} ?>
+	}
+	
+	function check_delete(title)
+	{
+		return window.confirm("Are you sure you want to delete the game '"+title+"'?  This action cannot be undone.");
 	}
 	
 </script>
-
-
 
 <div class="RightToolbar">
 	<h4><?php echo($section_games_list_page_info_title); ?></h4>
 	<?php echo($section_games_list_page_info_text); ?>
 	<h4><?php echo($section_games_list_actions_title); ?></h4>
-	<form name='add_game_form' id='add_game_form' action='/office/games/add' method='post' class='form' enctype="multipart/form-data">
-		<fieldset>
-			<!--<input type="file" name="new_game_file_field" /> -->
-			<br />
-			<!-- some clever code needs to replace the following, but depending on how the file is handled server side as to best way! -->
-			<!-- <input type="submit" name="submit" value="Add"> -->
-		</fieldset>
-	</form>
-
+		<a href="#" onclick="add();return false;">Add</a>
 </div>
 
 <div id="MainColumn">
+
+	<div id="add_game" class="BlueBox"  style="Display:none">
+	Choose a file to upload below.  The maximum file size is 2Mb.  Please be patient as the upload may take some time to complete.
+		<form 
+			name="add_game_form"
+			id="add_game_form"
+			action="/office/games/add"
+			method="post" 
+			class="form"
+			enctype="multipart/form-data">
+			<fieldset>
+				<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+				<label for="add_game_file">Upload File:</label>
+				<input
+					type="file"
+					name="add_game_file"
+					id="add_game_file"
+					size='20' />
+				<input type='submit' name='submit' id='submit' value='Add' class='button' />
+			</fieldset>
+			<a href="#" onclick="hide_add()">Hide</a>
+
+		</form>
+	</div>
 	
 	<?php
 		if($incomplete_games != 0)
 		{
-			echo('<div class="BlueBox"><div class="ArticleBox">');
+			echo('<div class="BlueBox" id="incomplete_box"><div class="ArticleBox">');
 			echo('<h2>Incomplete Game Entries</h2>');
 			Make_Game_Table($incomplete_games);
 			echo('</div></div>');
 		}
 	?>
 	
-	<div class="BlueBox">
+	<div class="BlueBox" id="list_box">
 		<?php echo($this->pagination->create_links()); ?>
 		<div>
 			Viewing
