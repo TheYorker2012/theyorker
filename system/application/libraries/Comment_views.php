@@ -395,7 +395,7 @@ class Comment_views
 		$comment_view_add->CheckPost();
 		$comment_view_thread->CheckPost();
 		
-		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'visible');
+		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'all');
 		$comment_view_list->SetComments($comments);
 		
 		// set which page of comments to show
