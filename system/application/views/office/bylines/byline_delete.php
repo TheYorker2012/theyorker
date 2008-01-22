@@ -20,7 +20,7 @@
 		<br />
 		<b>Display:</b> <?php echo(date('d/m/y', $byline_info['business_card_start_date']) . ' - ' . date('d/m/y', $byline_info['business_card_end_date'])); ?>
 		<br />
-		<?php if ($byline_info['business_card_about_us']) echo('<span style="color:red"><b>ABOUT US PAGE ONLY</b></span>'); ?>
+		<?php if ($byline_info['business_card_about_us']) echo('<span style="color:red"><b>ABOUT US PAGE</b></span>'); ?>
 		<div class="clear"></div>
 	</div>
 

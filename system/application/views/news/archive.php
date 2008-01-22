@@ -63,7 +63,7 @@ function printarticlelink($article) {
 	<?php if (isset($byline_info)) $this->load->view('/office/bylines/byline', $byline_info); ?>
 
 	<div class="BlueBox">
-		<h2>news archive</h2>
+		<h2>archive</h2>
 
 		<?php echo($this->pagination->create_links()); ?>
 		<div>Viewing <?php echo((($total == 0) ? '0' : ($offset + 1)) . ' - ' . ((($offset + 10) <= $total) ? ($offset + 10) : $total) . ' of ' . $total . ' articles'); ?></div>

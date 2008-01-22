@@ -54,6 +54,12 @@
 				<?php echo($business_card_postal_address); ?>
 				<br />
 			<?php } ?>
+			<?php if ($archive_link) { ?>
+				<a href="http://www.theyorker.co.uk/news/archive/reporter/<?php echo($business_card_id); ?>/">
+					<img src="http://www.theyorker.co.uk/images/icons/book_open.png" alt="Archive" title="Archive" />
+					View articles I have written
+				</a>
+			<?php } ?>
 		</div>
 
 	</div>

@@ -293,17 +293,17 @@ class Account extends controller
 						//Take link image id and associate it with the link
 						$this->Links_Model->ReplaceImage($newId, $this->user_auth->entityId, $chosenImageID);
 						$this->messages->AddMessage('success', 'Link added successfully.');
-						redirect('/account/links', 'location');
+						redirect('/account/links');
 					} elseif ($this->input->post('image_pick') == 'custom') {
 						$_SESSION['img'] = array();
 						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$newId, array('link'), false);
 					} else {
 						$this->messages->AddMessage('error', 'Please select either a custom or gallery image.');
-						redirect('/account/customlink', 'location');
+						redirect('/account/customlink');
 					}
 				} else if($this->input->post('lurl')) {
 					$this->messages->AddMessage('error', 'Please enter a name for your link.');
-					redirect('/account/customlink', 'location');
+					redirect('/account/customlink');
 				}
 		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
@@ -311,12 +311,12 @@ class Account extends controller
 						if ($newImage['codename'] == 'link') {
 							$this->Links_Model->ReplaceImage($id, $this->user_auth->entityId, $newImage['list']);
 							$this->messages->AddMessage('success', 'Link added successfully.');
-							redirect('/account/links', 'location');
+							redirect('/account/links');
 							break;
 						}
 					}
 					$this->messages->AddMessage('error', 'The link image was not added.');
-					redirect('/account/customlink', 'location');
+					redirect('/account/customlink');
 				}
 		} else {
 			$data = array();
@@ -341,7 +341,7 @@ class Account extends controller
 	 */
 	function personal()
 	{
-		// TODO: Check if this is the first time they've logged in or not
+		/// @TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
 
 		/// Get custom page content

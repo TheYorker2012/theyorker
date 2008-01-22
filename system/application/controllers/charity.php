@@ -50,7 +50,7 @@ class Charity extends Controller {
 			$data['sections']['no_charity'] = array('title'=>$this->pages_model->GetPropertyText('body_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('body_text',FALSE));
 			
 			// Set up the public frame
-			$this->main_frame->SetContentSimple('charity/nocharity.php', $data);
+			$this->main_frame->SetContentSimple('charity/nocharity', $data);
 
 			// Load the public frame view (which will load the content view)
 			$this->main_frame->Load();
@@ -120,7 +120,7 @@ class Charity extends Controller {
 			
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['charity']['name']));
-		$this->main_frame->SetContentSimple('charity/charitypr.php', $data);
+		$this->main_frame->SetContentSimple('charity/charitypr', $data);
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

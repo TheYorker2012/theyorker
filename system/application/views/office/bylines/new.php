@@ -82,7 +82,7 @@
 <?php } ?>
 				</select>
 				<br />
-				<label for="aboutus">About Us Only?</label>
+				<label for="aboutus">Show in About Us?</label>
 				<input type="checkbox" name="aboutus" id="aboutus" value="yes"<?php if ($this->validation->aboutus) { echo(' checked="checked"'); } ?> />
 				<br />
 <?php if ($this->access == 'editor') { ?>

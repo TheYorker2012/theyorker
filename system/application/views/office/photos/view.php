@@ -144,16 +144,16 @@ if ($status == 'unassigned') {
 			<h2>Your Suggestions</h2>
 			<fieldset>
 				<?php for($i=0; $i < count($suggestion); $i++) { ?>
-					<h3><?=$i+1?>:</h3>
-					<label for="imgid_<?=$i?>_img">Photo</label>
-					<?=$this->image->getThumb($suggestion[$i], 'medium')?>
+					<h3><?php echo $i+1?>:</h3>
+					<label for="imgid_<?php echo $i?>_img">Photo</label>
+					<?php echo $this->image->getThumb($suggestion[$i], 'medium')?>
 					<br />
-					<label for="imgid_<?=$i?>_comment">Comment:</label>
-					<textarea name="imgid_<?=$i?>_comment"></textarea>
+					<label for="imgid_<?php echo $i?>_comment">Comment:</label>
+					<textarea name="imgid_<?php echo $i?>_comment"></textarea>
 					<br />
-					<label for="imgid_<?=$i?>_allow">Suggest:</label>
-					<input name="imgid_<?=$i?>_allow" type="checkbox" value="y" checked="checked" />
-					<input type="hidden" name="imgid_<?=$i?>_number" value="<?=$suggestion[$i]?>" />
+					<label for="imgid_<?php echo $i?>_allow">Suggest:</label>
+					<input name="imgid_<?php echo $i?>_allow" type="checkbox" value="y" checked="checked" />
+					<input type="hidden" name="imgid_<?php echo $i?>_number" value="<?php echo $suggestion[$i]?>" />
 				<?php } ?>
 				<input type="hidden" name="imgid_number" value="<?=count($suggestion)?>" />
 				<input type="submit" name="r_suggest" value="Suggest" class="button" />
@@ -167,7 +167,7 @@ if ($status == 'unassigned') {
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>
-			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><?=$this->image->getThumb($chosen_photo, 'medium')?></a><br />
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><?php echo $this->image->getThumb($chosen_photo, 'medium')?></a><br />
 			<?php echo($title); ?>
 		</div>
 <?php } ?>

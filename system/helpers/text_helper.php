@@ -285,7 +285,7 @@ function highlight_code($str)
 	$str = preg_replace("#//tempend.+#is", "</span>\n</code>", $str);
 	
 	// Replace our markers back to PHP tags.
-	$str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?
+	$str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?php
 				
 	return $str;
 }

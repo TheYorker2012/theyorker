@@ -61,7 +61,7 @@ if (isset($failure) && $failure) {
 	}
 	if (isset($previous_post_data)) {
 ?>
-			<input type="hidden" name="previous_post_data" id="previous_post_data" value="<? echo htmlspecialchars($previous_post_data); ?>" />
+			<input type="hidden" name="previous_post_data" id="previous_post_data" value="<?php echo htmlspecialchars($previous_post_data); ?>" />
 <?php
 	}
 ?>

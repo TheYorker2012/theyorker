@@ -54,13 +54,13 @@ define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
 					foreach ($resultGroup->result() as $article) {
 						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.$article->heading.'</a> - '.$article->blurb.'</li>';
 					}
-					echo '</ul>'
+					echo '</ul>';
 					break;
 				case "wiki":
 					if (count($resultGroup) == 0) break;
 					echo '<h3>Yorkipedia Pages</h3><ul>';
 					foreach ($resultGroup as $page) {
-						echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.$page.'</a></li>'
+						echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.$page.'</a></li>';
 					}
 					echo '</ul>';
 					break;

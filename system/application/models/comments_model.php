@@ -361,7 +361,7 @@ class Comments_model extends model
 	/**
 	 * @param $ThreadId int    Thread identifier.
 	 * @param $Subset   string Subset identifier.
-	 *	- 'visible'  Publicly visible comments (default).
+	 *	- 'visible'  Publicly visible comments.
 	 *	- 'all'      All comments.
 	 *	- 'reported' Reported comments.
 	 * @param $Conditions array[string] Extra SQL conditions.
@@ -376,7 +376,7 @@ class Comments_model extends model
 	 *	- 'author_id' (id, NULL if anonymous)
 	 *	- 'author' (name, NULL if anonymous)
 	 */
-	function GetCommentsByThreadId($ThreadId, $Subset = 'visible', $Conditions = array())
+	function GetCommentsByThreadId($ThreadId, $Subset, $Conditions = array())
 	{
 		static $preset_conditions = array(
 			'visible' => array(
@@ -682,7 +682,7 @@ class Comments_model extends model
 		static $stuff_loaded = FALSE;
 		if (!$stuff_loaded) {
 			$this->load->library('comments_parser');
-			$this->load->helper('wikitext_smiley_helper');
+			$this->load->helper('wikitext_smiley');
 			$stuff_loaded = TRUE;
 		}
 		$Wikitext = wikitext_parse_smileys($Wikitext);

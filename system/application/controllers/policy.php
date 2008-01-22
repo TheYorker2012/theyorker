@@ -42,7 +42,7 @@ class Policy extends Controller
 			$data['textblocks'][] = array(
 				'shorttitle'	=> str_replace(' ','_',$block['title']),
 				'blurb'			=> $block['blurb'],
-				'image'			=> $this->image->getThumb($block['image'], 'medium'),
+				'image'			=> strlen($block['image']) ? $this->image->getThumb($block['image'], 'medium') : NULL,
 			);
 		}
 		

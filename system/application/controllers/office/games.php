@@ -71,6 +71,11 @@ class Games extends Controller
 				
 		$data['games'] = $this->games_model->GetFullList($data['offset'],$config['per_page']);
 		
+		if($number == 0){
+			$data['incomplete_games'] = $this->games_model->Get_Incomplete();
+		}else{ $data['incomplete_games'] = 0; }
+		
+		
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		
 		$this->main_frame->SetContentSimple('office/games/list',$data);
@@ -81,6 +86,7 @@ class Games extends Controller
 	
 		function _toggle_activation($game_id)
 		{
+			$result = $this->games_model->Edit_Game_Get($game_id);
 			$activation_state = $this->games_model->toggle_activation($game_id);
 			$objResponse = new xajaxResponse();
 			$objResponse->addAssign(
@@ -140,13 +146,14 @@ class Games extends Controller
 			if (
 				isset($_POST['game_title_field']) &&
 				isset($_POST['game_width_field']) &&
-				isset($_POST['game_height_field']) )
+				isset($_POST['game_height_field']))
 			{
 				if($this->games_model->Edit_Game_Update(
 						$game_id,
 						$_POST['game_title_field'],
 						$_POST['game_width_field'],
-						$_POST['game_height_field']))
+						$_POST['game_height_field'],
+						isset($_POST['game_activated_field'])))
 				{
 					$this->main_frame->AddMessage('success','Changes saved!',FALSE);
 				} else {
@@ -158,13 +165,51 @@ class Games extends Controller
 			$data['game']['pathname'] = $this->config->item('static_web_address').'/games/'.$data['game']['filename'];
 			$data['game']['image'] = $this->image->getImage(
 								$data['game']['image_id'],
-								'medium',
+								'gamethumb',
 								array('title' => $data['game']['title']));
 			$data['game_id'] = $game_id;
 			
 			$this->main_frame->SetContentSimple('office/games/edit',$data);
 			$this->main_frame->Load();
 		}
+
+		function changeimage($game_id)
+		{
+			if (!CheckPermissions('editor')) return;
+			$this->load->library('image_upload');
+			$this->image_upload->automatic(
+				'/office/games/storechangedimage/'.$game_id, 
+				array('gamethumb'),
+				false,
+				false);
 		}
+		function storechangedimage($game_id)
+		{
+			if (!CheckPermissions('office')) return;
+			if(!empty($_SESSION['img'])){
+				foreach ($_SESSION['img'] as $Image) {
+					$image_id='';
+					if(empty($Image['list'])){
+						//There is no id to use, upload must have failed
+						//Clear image session so they can try again
+						unset($_SESSION['img']);
+						redirect('/office/games/changeimage/'.$game_id);
+					}else{
+						$this->load->library('image');
+						$this->image->delete('image',$this->games_model->Get_Image_Id($game_id));
+						$this->games_model->Set_Image_Id($game_id,$Image['list']);
+						//redirect back to the edit page where you started
+						redirect('/office/games/edit/'.$game_id);
+					}
+					//Image session no longer needed
+					unset($_SESSION['img']);
+				}
+			}else{
+				//session is empty, try getting image again
+				redirect('/office/games/changeimage/'.$game_id);
+			}
+		}
+
+	}
 		
 ?>

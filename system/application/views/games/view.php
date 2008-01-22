@@ -16,4 +16,10 @@
 			pluginspage="http://www.macromedia.com/go/getflashplayer"
 		/>
 	</object>
+	
+	<div style="text-align:center">
+		<a href="/games/">
+			Back to Game Zone
+		</a>
+	</div>
 </div>

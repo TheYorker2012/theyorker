@@ -274,7 +274,7 @@ class Campaign extends Controller {
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['campaign']['name']));
-		$this->main_frame->SetContentSimple('campaign/campaign_pr.php', $data);
+		$this->main_frame->SetContentSimple('campaign/campaign_pr', $data);
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

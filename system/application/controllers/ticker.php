@@ -163,16 +163,18 @@ class Ticker extends Controller {
 		if ($user = $this->facebook_ticker->Authenticate()) {
 			$article = $this->news_model->GetSummaryArticle($article_id);
 
-			$article_headline = $article['heading'];
 			$article_link = 'http://www.theyorker.co.uk/news/' . $article['article_type'] . '/' . $article['id'] . '/';
-			$article_blurb = $article['blurb'];
 			$photo = 'http://www.theyorker.co.uk/photos/small/' . $article['photo_id'] . '/';
 
-			$title = '{actor} has just written an article on <a href="' . $article_link . '">The Yorker</a>.';
-			$body = '<b>' . $article_headline . '</b> <i>' . $article_blurb;
-			$body = substr($body, 0, 193) . '...</i>';
+			$title = '{actor} has just written an article on <a href="{link}">The Yorker</a>.';
+			$body = '<b>{headline}</b> <i>{blurb}</i>';
 
-			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($user, $title, '', $body, '', '', $photo, $article_link)) {
+			/** @note	Facebook limits the body to 200 chars */
+			$blurb_length = ((185 - strlen($article['heading'])) < 0) ? 0 : 185 - strlen($article['heading']);
+			$title_data = '{"link":"' . $article_link . '"}';
+			$body_data = '{"headline":"' . addslashes($article['heading']) . '","blurb":"' . addslashes(substr($article['blurb'], 0, $blurb_length)) . '"}';
+
+			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($this->facebook_ticker->facebook->get_loggedin_user(), $title, $title_data, $body, $body_data, '', $photo, $article_link)) {
 				$_SESSION['fbticker_messages'][] = array('success', 'The requested article was posted on your feed.');
 			} else {
 				// Error posting article to facebook

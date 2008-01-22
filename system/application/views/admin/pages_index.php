@@ -22,15 +22,16 @@
 <?php } ?>
 <p><?php
 foreach ($custom as $page) {
-	echo '<a href="/pages/'.$page['codename'].'">';
-	echo $page['codename'];
-	echo '</a>';
-	echo ' (';
-	echo '<a href="/admin/pages/custom/edit/'.$page['codename'].'">';
-	echo 'edit';
-	echo '</a>';
+	$escaped_codename = htmlentities($page['codename'],ENT_QUOTES,'utf-8');
+	echo('<a href="/pages/'.$escaped_codename.'">');
+	echo($escaped_codename);
+	echo('</a>');
+	echo(' (');
+	echo('<a href="/admin/pages/custom/edit/'.$escaped_codename.'">');
+	echo('edit');
+	echo('</a>');
 	if ($permissions['custom_delete']) {
-		echo ', <a href="/admin/pages/custom/delete/'.$page['codename'].'">delete</a>';
+		echo ', <a href="/admin/pages/custom/delete/'.$escaped_codename.'">delete</a>';
 	}
 	echo ')';
 	echo '<br />';
@@ -49,16 +50,17 @@ foreach ($custom as $page) {
 
 <p><?php
 foreach ($pages as $page) {
-	echo $page['codename'];
-	echo ' (';
-	echo '<a href="/admin/pages/page/edit/'.$page['codename'].'">';
-	echo 'edit';
-	echo '</a>';
+	$escaped_codename = htmlentities($page['codename'],ENT_QUOTES,'utf-8');
+	echo($escaped_codename);
+	echo(' (');
+	echo('<a href="/admin/pages/page/edit/'.$escaped_codename.'">');
+	echo('edit');
+	echo('</a>');
 	if ($permissions['page_delete']) {
-		echo ', <a href="/admin/pages/page/delete/'.$page['codename'].'">delete</a>';
+		echo(', <a href="/admin/pages/page/delete/'.$escaped_codename.'">delete</a>');
 	}
-	echo ')';
-	echo '<br />';
+	echo(')');
+	echo('<br />');
 }
 ?></p>
 </div>

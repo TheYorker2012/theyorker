@@ -73,10 +73,14 @@ class CI_DB_driver {
 	 *
 	 * @param mixed. Can be an array or a DSN string
 	 */	
-	function CI_DB_driver($params)
+	function __construct($params)
 	{
 		$this->initialize($params);
 		log_message('debug', 'Database Driver Class Initialized');
+	}
+
+	function __destruct() {
+		$this->close();
 	}
 	
 	// --------------------------------------------------------------------

@@ -85,13 +85,13 @@ class Image_upload {
 			if (isset($title) && strlen($title) > 0) {
 				if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
 					$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
-					redirect($returnPath, 'location');
+					redirect($returnPath);
 				} else {
 					$data[] = $this->ci->upload->data();
 
 					if (!$data[$x - 1]['is_image']) {
 						$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
-						redirect($returnPath, 'location');
+						redirect($returnPath);
 					} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
 						// fix for Microsoft's Stupidity
 						if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
@@ -104,7 +104,7 @@ class Image_upload {
 					} elseif($this->ci->input->post('destination') == 1) {
 						//redirect back home
 						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
-						redirect($returnPath, 'location');
+						redirect($returnPath);
 					} else {
 						//just display error
 						$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
@@ -164,7 +164,7 @@ class Image_upload {
 		$result = $this->ci->db->query($sql, array($selectedThumb[3]));
 		if($result->num_rows() != 1) {
 			$this->ci->user_auth->logout();
-			redirect('/', 'location');
+			redirect('/');
 			//TODO add some kind of logging
 			exit;
 		}
@@ -309,7 +309,7 @@ class Image_upload {
 			              'x'         => $x,
 			              'y'         => $y,
 			              'mime'      => $data['file_type'],);
-			$id = $this->ci->image->add('photo', &$newImage, $info);
+			$id = $this->ci->image->add('photo', $newImage, $info);
 			if ($id === false) {
 				return false;
 			} else {
