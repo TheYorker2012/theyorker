@@ -191,7 +191,7 @@ class CommentViewAdd extends FramesView
 						if (NULL === $preview['author']) {
 							$preview['author'] = 'Anonymous';
 						}
-						$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time']);
+						$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time'], true);
 					} else {
 						$CI->messages->AddMessage('error', 'Comment preview could not be created');
 					}

@@ -45,6 +45,7 @@ if (!function_exists('star_rating')) {
 }
 
 $show_as_deleted = $Comment['deleted'] && (!isset($Mode) || ($Mode != 'mod' && $Mode != 'debug'));
+$anonymous = ($Comment['author'] == 'Anonymous');
 
 if ($show_as_deleted) {
 	$Comment['author'] = '<em>comment removed</em>';
@@ -55,11 +56,11 @@ if ($show_as_deleted) {
 
 ?>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($Comment['author'] == 'Anonymous') { echo(' style="border-color:#999;"'); } ?>>
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
 	<div style="float:right;margin:0.2em 0.5em;text-align:right">
 		<?php
 		if (!$show_as_deleted) {
-			if ($Comment['author'] == 'Anonymous') {
+			if ($anonymous) {
 				?><img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" /><?php
 			} else {
 				?><img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" /><?php
@@ -70,7 +71,7 @@ if ($show_as_deleted) {
 			echo('<br />' . star_rating($Comment['rating']));
 		} ?>
 	</div>
-	<div style="background-color:<?php echo ($Comment['author'] == 'Anonymous') ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
+	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
 		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $Comment['author']); ?> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
