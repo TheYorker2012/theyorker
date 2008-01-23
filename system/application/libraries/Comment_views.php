@@ -408,10 +408,21 @@ class Comment_views
 			'CommentAdd'    => & $comment_view_add,
 			'CommentList'   => & $comment_view_list,
 		);
-		
+
 		return new FramesView('comments/standard', $data);
 	}
-	
+
+	function GetLatestComments($MaxComments = 10, $MaxPerPage = 20)
+	{
+		$CI = & get_instance();
+		$comments = $CI->comments_model->GetLatestComments($MaxComments);
+		$data = array(
+			'comments'			=>	$comments,
+			'comments_per_page'	=>	$MaxPerPage
+		);
+		return new FramesView('comments/latest_box', $data);
+	}
+
 	/// Generate a uri for a given included comment number.
 	function GenUri($IncludeComment)
 	{

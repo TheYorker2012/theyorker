@@ -356,7 +356,46 @@ class Comments_model extends model
 			return $comments[0];
 		}
 	}
-	
+
+	/// Return the latest comments
+	/**
+	 *	@param	$NumToGet	int	Number of comments to return
+	 *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
+	 */
+	function GetLatestComments($NumToGet = 10)
+	{
+		$sql = 'SELECT	comments.comment_id,
+						comments.comment_anonymous,
+						users.user_firstname,
+						users.user_surname,
+						articles.article_id,
+						content_types.content_type_codename,
+						article_contents.article_content_heading,
+					(	SELECT		COUNT(*)
+						FROM		comments AS article_comments
+						WHERE		article_comments.comment_comment_thread_id = articles.article_public_comment_thread_id
+						AND			article_comments.comment_post_time <= comments.comment_post_time
+					)	AS article_comment_count
+				FROM	articles,
+						comments,
+						users,
+						article_contents,
+						content_types
+				WHERE	comments.comment_deleted = 0
+				AND		comments.comment_comment_thread_id = articles.article_public_comment_thread_id
+				AND		articles.article_publish_date < CURRENT_TIMESTAMP
+				AND		articles.article_pulled = 0
+				AND		articles.article_deleted = 0
+				AND		articles.article_live_content_id IS NOT NULL
+				AND		articles.article_live_content_id = article_contents.article_content_id
+				AND		articles.article_content_type_id = content_types.content_type_id
+				AND		comments.comment_author_entity_id = users.user_entity_id
+				ORDER BY comments.comment_post_time DESC
+				LIMIT	0, ?';
+		$query = $this->db->query($sql, array($NumToGet));
+		return $query->result_array();
+	}
+
 	/// Get comments by the thread's id
 	/**
 	 * @param $ThreadId int    Thread identifier.

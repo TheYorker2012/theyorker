@@ -25,25 +25,6 @@ class Home extends Controller {
 	}
 
 	/**
- 	 * Displays prototype homepage, in the prototype student frame
-	 */
-	function pagelist()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('general/list', $data);
-		$this->main_frame->SetTitle('List');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
-	/**
 	 * @return array(Todays events view, Todo view).
 	 */
 	private function _GetMiniCalendars()
@@ -219,7 +200,8 @@ class Home extends Controller {
 		}
 
 		// Get latest comments made on articles
-		$data['latest_comments'] = $this->Home_Hack_Model->getLatestComments();
+		$this->load->library('comment_views');
+		$data['latest_comments'] = $this->comment_views->GetLatestComments();
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
