@@ -57,7 +57,10 @@ class News extends Controller {
 		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
 		if ($article_id === NULL && isset($latest_article_ids[0]) && is_numeric($latest_article_ids[0])) {
 			// Redirect to the first article so that google doesn't index the blank url.
-			redirect('news/'.$article_type.'/'.$latest_article_ids[0]);
+			/// @todo Handle blogs redirection properly
+			if ($article_type != 'blogs') {
+				redirect('news/'.$article_type.'/'.$latest_article_ids[0]);
+			}
 		}
 		
 		if ($type_info['parent_id'] != NULL) {
