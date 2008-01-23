@@ -507,3 +507,103 @@ div#confirm_changes_div div.move {
 div#confirm_changes_div div.draft {
 	background-color: #F0F0F0;
 }
+
+/* Calendar term and week selector */
+ul.cal_term_select {
+	border-bottom: 1px solid #888;
+	display: block;
+	float: left;
+	width: 100%;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	margin: 0em 0em;
+}
+ul.cal_term_select li {
+	border: 1px solid #888;
+	float: left;
+	height: 1.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	margin: 0px;
+	margin-left: 5px;
+	margin-bottom: -1px;
+	display: inline;
+}
+ul.cal_term_select li a {
+	display:block;
+	text-align: center;
+}
+ul.cal_term_select li.selected {
+	font-weight: bold;
+}
+ul.cal_term_select li.selected.term {
+	border-bottom: 1px solid #FD8;
+}
+ul.cal_term_select li.selected.holiday {
+	border-bottom: 1px solid #CCC;
+}
+
+ul.cal_term_select li.year {
+	border: none;
+}
+ul.cal_term_select li.term {
+	background-color: #FF8;
+}
+ul.cal_term_select li.term.selected {
+	background-color: #FD8;
+}
+ul.cal_term_select li.holiday {
+	background-color: #DDD;
+}
+ul.cal_term_select li.holiday.selected {
+	background-color: #CCC;
+}
+/* div.cal_term_select a. */
+ul.cal_week_select {
+	border: 1px solid #888;
+	border-top: none;
+	text-align: center;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	display: block;
+	float: left;
+	width: 98%;
+	margin: 0em 0em 0.5em;
+	padding: 1%;
+}
+ul.cal_week_select.term {
+	background-color: #FD8;
+}
+ul.cal_week_select.holiday {
+	background-color: #CCC;
+}
+ul.cal_week_select li {
+	border: 1px solid #888;
+	float: left;
+	height: 1.5em;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	margin-left: 2px;
+	margin-right: 2px;
+	min-width: 2em;
+}
+
+ul.cal_week_select li.selected {
+	font-weight: bold;
+}
+
+ul.cal_week_select.term li {
+	background-color: #FFA;
+}
+ul.cal_week_select.holiday li {
+	background-color: #EEE;
+}
+
+ul.cal_week_select.term li.selected {
+	background-color: #FF8;
+}
+ul.cal_week_select.holiday li.selected {
+	background-color: #DDD;
+}

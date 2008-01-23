@@ -60,13 +60,7 @@ $attend_state_images = array(
 // Load the calendar css helper
 get_instance()->load->helper('calendar_css_classes');
 
-?>
 
-
-
-
-
-<?php
 $HourHeight = 42;
 ?>
 
@@ -382,6 +376,18 @@ if (isset($ForwardUrl)) {
 }
 ?>
 </div>
+
+<?php
+// Term / week selector
+$days_keys = array_keys($Days);
+$start_day = $Days[$days_keys[0]]['date'];
+$end_day = $Days[$days_keys[count($days_keys)-1]]['date'];
+$this->load->view('calendar/term_selector', array(
+	'Start' => $start_day,
+	'End'   => $end_day,
+	'Path'  => $Path,
+));
+?>
 
 <table id="calendar_view">
 	<!-- Day Headings -->

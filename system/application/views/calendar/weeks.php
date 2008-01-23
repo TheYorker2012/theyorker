@@ -20,11 +20,6 @@ table#calendar_view th {
 	text-align: center;
 }
 
-table#calendar_view td#calendar_all_day_events {
-	border: 1px #999 solid;
-	height: <?php echo($HourHeight/2); ?>px;
-}
-
 table#calendar_view td#calendar_time_up {
 	text-align: center;
 	vertical-align: bottom;
@@ -43,15 +38,6 @@ table#calendar_view td.cal_day_counts {
 table#calendar_view td.cal_day_counts2 {
 	text-align: center;
 	vertical-align: top;
-}
-
-table#calendar_view td#calendar_time {
-	vertical-align: top;
-}
-
-table#calendar_view td#calendar_time div {
-	height: <?php echo($HourHeight); ?>px;
-	text-align: right;
 }
 
 table#calendar_view td.calendar_day {
@@ -206,11 +192,23 @@ if (isset($ForwardUrl)) {
 	echo('<a href="'.$ForwardUrl.'"><img src="/images/prototype/calendar/forward.gif" alt="Forward" /></a> ');
 }
 echo('</div>');
+?>
+<?php
+
+// Term / week selector
+$start_week = $Weeks[0]['start'];
+$end_week = $Weeks[count($Weeks)-1]['start'];
+$this->load->view('calendar/term_selector', array(
+	'Start' => $start_week,
+	'End'   => $end_week,
+	'Path'  => $Path,
+));
+
 
 $squash = count($Days) > 3;
 
 echo('<table id="calendar_view" class="recur-cal" border="0" cellpadding="0" cellspacing="0" width="100%">');
-$last_term = $Weeks[count($Weeks)-1]['start']->AcademicTerm();
+$last_term = $end_week->AcademicTerm();
 foreach ($Weeks as $key => $week) {
 	if ($last_term !== $week['start']->AcademicTerm()) {
 		echo('<tr><td colspan="'.(count($week['days'])+1).'"><h2>');
