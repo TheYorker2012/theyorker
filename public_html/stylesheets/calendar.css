@@ -509,6 +509,15 @@ div#confirm_changes_div div.draft {
 }
 
 /* Calendar term and week selector */
+div.cal_term_week_clear {
+	clear:both;
+	display:block;
+	height:0em;
+	overflow:hidden;
+	margin: 0;
+	padding: 0;
+}
+
 ul.cal_term_select {
 	border-bottom: 1px solid #888;
 	display: block;
@@ -570,7 +579,7 @@ ul.cal_week_select {
 	display: block;
 	float: left;
 	width: 98%;
-	margin: 0em 0em 0.5em;
+	margin: 0em;
 	padding: 1%;
 }
 ul.cal_week_select.term {
@@ -592,6 +601,9 @@ ul.cal_week_select li {
 
 ul.cal_week_select li.selected {
 	font-weight: bold;
+}
+ul.cal_week_select li.thisweek {
+	border: 1px solid black;
 }
 
 ul.cal_week_select.term li {
