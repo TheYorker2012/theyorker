@@ -26,12 +26,14 @@ class Calendar extends controller
 	{
 		$this->load->model('subcontrollers/calendar_subcontroller');
 		
-		$this->calendar_subcontroller->_SetDefault('index');
+		$this->calendar_subcontroller->_SetDefault('view');
 		
 		$permissions = array(
 			'create', // Creation of new events
 			'edit',   // Editing of owned events
+			/*
 			'index',  // Index (summary) page
+			*/
 		);
 		$permissions[] = 'subscriptions';
 		$this->calendar_subcontroller->_AddPermission($permissions);
