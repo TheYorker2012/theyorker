@@ -721,6 +721,7 @@ function unclickDay(day,event) {
 			new_event.style.display	= 'block';
 			updateCreateBox(new_event);
 			document.getElementById('cal_new_event_times').focus();
+			showCreateBox(new_event);
 		}
 	}
 	if (CREATE_EVENT_MOVE) {
