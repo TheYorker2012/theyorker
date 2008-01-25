@@ -719,9 +719,11 @@ function unclickDay(day,event) {
 		CREATE_EVENT = false;
 		if (new_event != null && !DESELECTING_EVENT) {
 			new_event.style.display	= 'block';
-			updateCreateBox(new_event);
+			showCreateBox(new_event); // calls updateCreateBox
+			// This is necessary on firefox to allow it to be dragged and not
+			// selected.
+			// On konqueror this fails, but not badly.
 			document.getElementById('cal_new_event_times').focus();
-			showCreateBox(new_event);
 		}
 	}
 	if (CREATE_EVENT_MOVE) {
