@@ -61,13 +61,7 @@ class Leagues extends Controller
 		//Get page properties information
 		$this->pages_model->SetPageCode('office_leagues');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
-		$leagues = $this->Leagues_model->getAllLeagues();
-		$index=0;
-		foreach ($leagues as $league){
-			$data['leagues'][$index] = $league;
-			$data['leagues'][$index]['current_size'] = $this->Leagues_model->GetCurrentSizeOfLeague($league['id']);
-			$index++;
-		}
+		$data['leagues'] = $this->Leagues_model->getAllLeagues();
 		
 		$this->main_frame->SetContentSimple('office/leagues/leagues', $data);
 		// Load the public frame view (which will load the content view)
