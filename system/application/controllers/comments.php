@@ -28,21 +28,31 @@ class Comments extends Controller
 		}
 		if (!CheckPermissions('public')) return;
 		
-		$this->load->model('comments_model');
-		
 		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 4));
 		
-		if (isset($_POST['comment_report_confirm'])) {
-			// The user has confirmed, report the comment.
-			$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
-			if ($result) {
-				$this->messages->AddMessage('success', 'Comment has been reported.');
-			} else {
-				$this->messages->AddMessage('error', 'Comment could not be reported.');
-			}
-			redirect($redirect_to);
+		// Confirm the reporting with the user.
+		$this->pages_model->SetPageCode('comment_report');
+		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to)) return;
+		
+		// The user has confirmed, report the comment.
+		$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
+		if ($result) {
+			$this->messages->AddMessage('success', 'Comment has been reported.');
+		} else {
+			$this->messages->AddMessage('error', 'Comment could not be reported.');
+		}
+		redirect($redirect_to);
+	}
+	
+	/// Confirms a comment action with the user and returns true when ready.
+	function _ConfirmCommentAction($CommentId, $redirect_to)
+	{
+		$this->load->model('comments_model');
+		
+		if (isset($_POST['comment_confirm_confirm'])) {
+			return true;
 			
-		} elseif (isset($_POST['comment_report_cancel'])) {
+		} elseif (isset($_POST['comment_confirm_cancel'])) {
 			// The user has cancelled, return to the previous page.
 			$this->messages->AddMessage('information', 'Comment has not been reported.');
 			redirect($redirect_to);
@@ -50,31 +60,88 @@ class Comments extends Controller
 		} else {
 			// The user has not confirmed or cancelled, ask for confirmation.
 			$this->load->library('comment_views');
-			$conditions = array('comments.comment_id = '.(int)$CommentId);
-			$comments = $this->comments_model->GetCommentsByThreadId((int)$ThreadId, 'visible', $conditions);
-			if (empty($comments)) {
+			$comment = $this->comments_model->GetCommentByCommentId((int)$CommentId, 'visible');
+			if (NULL === $comment) {
 				// The comment isn't visible or doesn't exist.
 				$this->messages->AddMessage('error', 'The specified comment could not be found.');
 				redirect($redirect_to);
 			} else {
 				// Ask the user for confirmation.
 				// Mark no_report on the comments so no report link
-				foreach ($comments as $key => $comment) {
-					$comments[$key]['no_report'] = true;
-				}
-				$this->pages_model->SetPageCode('comment_report');
+				$comment['no_links'] = true;
 				
 				$data = array();
-				$data['maintext'] = $this->pages_model->GetPropertyWikitext('main');
-				$data['culprit'] = new CommentViewList();
-				$data['target'] = $this->uri->uri_string().'#comments';
+				$data['MainText'] = $this->pages_model->GetPropertyWikitext('main');
+				$data['Action']   = $this->pages_model->GetPropertyText('action');
+				$data['Culprit']  = new CommentViewList();
+				$data['Target']   = $this->uri->uri_string().'#comments';
 				
-				$data['culprit']->SetComments($comments);
+				$data['Culprit']->SetComments(array($comment));
 				
-				$this->main_frame->SetContentSimple('comments/report', $data);
+				$this->main_frame->SetContentSimple('comments/confirm', $data);
 				$this->main_frame->Load();
 			}
 		}
+		return false;
+	}
+	
+	/// Decide on whether the user should be able to edit a comment.
+	/**
+	 * This function allows an owner of a comment or a moderator to edit.
+	 */
+	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment)
+	{
+		if (!is_numeric($CommentId)) {
+			return show_404();
+		}
+		if (!CheckPermissions('student')) return;
+		
+		$this->load->model('comments_model');
+		
+		$has_permission = false;
+		
+		// The user has not edited or cancelled, ask for confirmation.
+		$this->load->library('comment_views');
+		$comment = $this->comments_model->GetCommentByCommentId((int)$CommentId, 'visible');
+		if (NULL === $comment) {
+			// The comment isn't visible or doesn't exist.
+			$this->messages->AddMessage('error', 'The specified comment could not be found.');
+			redirect($redirect_to);
+		} elseif (!$comment['owned']) {
+			// The comment doesn't belong to this user, go to the office
+			if (!CheckPermissions('moderator')) return;
+			$has_permission = true;
+		} else {
+			$has_permission = true;
+		}
+		
+		if (!$has_permission) {
+			// The user doesn't have permission, return to the previous page.
+			$this->messages->AddMessage('error', 'You do not have permission to edit the specified comment.');
+			redirect($redirect_to);
+		}
+		
+		return $has_permission;
+	}
+	
+	/// Edit the specified comment.
+	function edit($CommentId = NULL)
+	{
+		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 3));
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment)) return;
+		
+		$this->load->library('comment_views');
+		$main_view = new CommentViewAdd($comment['thread_id']);
+		
+		// Do the main processing if any post data
+		$main_view->SetExistingComment($comment);
+		if ($main_view->CheckPost()) {
+			redirect($redirect_to);
+		}
+		// Display the page.
+		$this->pages_model->SetPageCode('comment_edit');
+		$this->main_frame->SetContent($main_view);
+		$this->main_frame->Load();
 	}
 	
 	/// Delete the specified comment.
@@ -83,15 +150,12 @@ class Comments extends Controller
 	 */
 	function delete($CommentId = NULL)
 	{
-		if (!is_numeric($CommentId)) {
-			return show_404();
-		}
-		$CommentId = (int)$CommentId;
-		if ($CommentId < 1) {
-			return show_404();
-		}
-		
-		if (!CheckPermissions('moderator')) return;
+		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 3));
+		// Ensure we have privilages
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment)) return;
+		// Confirm with the user
+		$this->pages_model->SetPageCode('comment_delete');
+		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to)) return;
 		
 		$this->load->model('comments_model');
 		$result = $this->comments_model->DeleteComment($CommentId);
@@ -101,7 +165,7 @@ class Comments extends Controller
 			$this->messages->AddMessage('error', 'Comment could not be deleted');
 		}
 		
-		redirect(implode('/', array_slice($this->uri->rsegment_array(), 3)));
+		redirect($redirect_to);
 	}
 	
 	/// Undelete the specified comment.

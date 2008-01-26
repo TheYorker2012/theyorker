@@ -58,9 +58,14 @@ class Moderator extends controller
 		if ('reported' === $Comment) {
 			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'reported');
 		} elseif ('deleted' === $Comment) {
-			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array('comments.comment_deleted=TRUE'));
+			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array(
+				'comments.comment_deleted = TRUE',
+				'(comments.comment_deleted_entity_id IS NULL OR comments.comment_deleted_entity_id != comments.comment_author_entity_id)',
+			));
 		} elseif ('good' === $Comment) {
-			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array('comments.comment_good=TRUE'));
+			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array(
+				'comments.comment_good=TRUE',
+			));
 		}
 		
 		// send the data to the views

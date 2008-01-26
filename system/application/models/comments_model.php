@@ -455,12 +455,14 @@ class Comments_model extends model
 			UNIX_TIMESTAMP(comments.comment_post_time) AS post_time,
 			comments.comment_reported_count AS reported_count,
 			comments.comment_deleted AS deleted,
+			UNIX_TIMESTAMP(comments.comment_deleted_time) AS deleted_time,
+			comments.comment_deleted_entity_id AS deleted_entity_id,
+			IF (deleted_users.user_entity_id IS NOT NULL,
+				CONCAT(deleted_users.user_firstname," ",deleted_users.user_surname),
+				NULL) AS deleted_name,
 			comments.comment_good AS good,
 			comment_ratings.comment_rating_value AS rating,
-			IF (comments.comment_anonymous = TRUE
-					AND thread.comment_thread_allow_anonymous_comments = TRUE,
-				NULL,
-				comments.comment_author_entity_id) AS author_id,
+			comments.comment_author_entity_id AS author_id,
 			IF (comments.comment_anonymous = TRUE
 					AND thread.comment_thread_allow_anonymous_comments = TRUE,
 				NULL,
@@ -468,10 +470,14 @@ class Comments_model extends model
 					CONCAT(users.user_firstname," ",users.user_surname),
 					IF (organisations.organisation_entity_id IS NOT NULL,
 						organisations.organisation_name,
-						NULL))) AS author
+						NULL))) AS author,
+			UNIX_TIMESTAMP(edits.comment_edit_timestamp) AS edit_time,
+			(edits.comment_edit_author_entity_id = comments.comment_author_entity_id) AS edit_by_author
 		FROM comments
 		INNER JOIN comment_threads AS thread
-			ON comments.comment_comment_thread_id = thread.comment_thread_id
+			ON	comments.comment_comment_thread_id = thread.comment_thread_id
+		LEFT JOIN comment_edits AS edits
+			ON	comments.comment_id = edits.comment_edit_comment_id
 		LEFT JOIN comment_ratings
 			ON	comment_ratings.comment_rating_comment_thread_id = comments.comment_comment_thread_id
 			AND	comment_ratings.comment_rating_author_entity_id = comments.comment_author_entity_id
@@ -481,8 +487,10 @@ class Comments_model extends model
 		LEFT JOIN organisations
 			ON	NOT comments.comment_anonymous
 			AND	organisations.organisation_entity_id = comments.comment_author_entity_id
+		LEFT JOIN users AS deleted_users
+			ON	deleted_users.user_entity_id = comments.comment_deleted_entity_id
 		WHERE '.implode(' AND ',$conditions).'
-		ORDER BY '.$sort_field;
+		ORDER BY '.$sort_field.', edits.comment_edit_timestamp ASC';
 		
 		$query = $this->db->query($sql);
 		$comments = $query->result_array();
@@ -538,6 +546,7 @@ class Comments_model extends model
 			'rating' => NULL,
 			'author_id' => $Comment['anonymous'] ? NULL : $Comment['author_id'],
 			'author' => $Comment['anonymous'] ? NULL : $identities[$Comment['author_id']],
+			'edits' => array(),
 		);
 	}
 	
@@ -586,6 +595,38 @@ class Comments_model extends model
 		$sql = 'INSERT INTO comments SET '.implode(',', $setters);
 		$this->db->query($sql);
 		return $this->db->affected_rows();
+	}
+	
+	/// Modify the wikitext of a comment.
+	function EditCommentContent($CommentId, $NewWikitext)
+	{
+		// First add an event_edit with old wikitext, then change comment content
+		$escaped_comment_id = $this->db->escape($CommentId);
+		$escaped_entity_id = $this->db->escape($this->user_auth->entityId);
+		$escaped_wikitext = $this->db->escape($NewWikitext);
+		$escaped_xhtml = $this->db->escape($this->ParseCommentWikitext($NewWikitext));
+		
+		$this->db->query(
+			'INSERT INTO comment_edits ('.
+			'	comment_edit_comment_id,'.
+			'	comment_edit_author_entity_id,'.
+			'	comment_edit_previous_wikitext'.
+			') '.
+			'SELECT '.
+			'	comment_id,'.
+			'	'.$escaped_entity_id.','.
+			'	comment_content_wikitext '.
+			'FROM comments '.
+			'WHERE comment_id='.$escaped_comment_id
+		);
+		$affected_rows = $this->db->affected_rows();
+		$this->db->query(
+			'UPDATE comments '.
+			'SET comment_content_wikitext='.$escaped_wikitext.','.
+			'	comment_content_xhtml='.$escaped_xhtml.' '.
+			'WHERE comment_id='.$escaped_comment_id
+		);
+		return $affected_rows + $this->db->affected_rows();
 	}
 	
 	/// Report a comment to the moderators.
@@ -637,7 +678,9 @@ class Comments_model extends model
 		assert('is_int($CommentId)');
 		$sql = '
 		UPDATE comments
-		SET comments.comment_deleted = '.($Deleted?'TRUE':'FALSE').'
+		SET	comments.comment_deleted = '.($Deleted?'TRUE':'FALSE').',
+			comments.comment_deleted_time = NOW(),
+			comments.comment_deleted_entity_id = '.$this->db->escape($this->user_auth->entityId).'
 		WHERE	comments.comment_id = "'.$CommentId.'"';
 		$this->db->query($sql);
 		return $this->db->affected_rows();
@@ -665,22 +708,50 @@ class Comments_model extends model
 	function PostprocessComments($Comments)
 	{
 		$identities = $this->GetAvailableIdentities();
+		$comment_index = array();
+		$result_comments = array();
 		foreach ($Comments as $key => $comment) {
-			if (NULL === $comment['xhtml']) {
-				// uncached
-				$xhtml = $this->ParseCommentWikitext($comment['wikitext']);
-				$Comments[$key]['xhtml'] = $xhtml;
+			$comment_id = (int)$comment['comment_id'];
+			if (isset($comment_index[$comment_id])) {
+				$new_comment = & $comment_index[$comment_id];
+			} else {
+				$new_comment = $comment;
+				$comment_index[$comment_id] = & $new_comment;
+				$result_comments[] = & $new_comment;
 				
-				// try updating the cache
-				$cache_sql = '
-				UPDATE comments
-				SET comments.comment_content_xhtml = '.$this->db->escape($xhtml).'
-				WHERE comments.comment_id = '.$comment['comment_id'];
-				$this->db->query($cache_sql);
+				if (NULL === $new_comment['xhtml']) {
+					// uncached
+					$xhtml = $this->ParseCommentWikitext($new_comment['wikitext']);
+					$new_comment[$key]['xhtml'] = $xhtml;
+					
+					// try updating the cache
+					$cache_sql = '
+					UPDATE comments
+					SET comments.comment_content_xhtml = '.$this->db->escape($xhtml).'
+					WHERE comments.comment_id = '.$new_comment['comment_id'];
+					$this->db->query($cache_sql);
+				}
+				$new_comment['owned'] = isset($identities[$comment['author_id']]);
+				$new_comment['deleted_by_owner'] = (NULL !== $comment['deleted_entity_id']) && ($comment['deleted_entity_id'] == $comment['author_id']);
+				
+				$new_comment['edits'] = array();
 			}
-			$Comments[$key]['owned'] = array_key_exists($comment['author_id'], $identities);
+			
+			if (!$new_comment['deleted'] && NULL != $comment['edit_time']) {
+				$new_comment['edits'][] = array(
+					'edit_time' => $comment['edit_time'],
+					'by_author' => $comment['edit_by_author'],
+				);
+			}
+			
+			// Clear any temp edit stuff
+			unset($new_comment['edit_time']);
+			unset($new_comment['edit_by_author']);
+			
+			// This is a reference to a shared object
+			unset($new_comment);
 		}
-		return $Comments;
+		return $result_comments;
 	}
 	
 	/// Get an array of identities that comments can be posted from.

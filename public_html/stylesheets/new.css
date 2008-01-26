@@ -627,3 +627,12 @@ a.fb_share_button:hover {
 	background: #3b5998 url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS for Comments and Ratings                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul.comment_edit li {
+	color: #444;
+	font-style: italic;
+	font-size: x-small;
+}

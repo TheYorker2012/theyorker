@@ -7,6 +7,8 @@
  *
  * @param $Comment array Comment.
  * @param $ListNumber int Comment number.
+ * @param $EditUrlPrefix string Url for editing (prepended)
+ * @param $EditUrlPostfix string Url for editing (appended)
  * @param $ReportUrlPrefix string Url for reporting (prepended)
  * @param $ReportUrlPostfix string Url for reporting (appended)
  * @param $DeleteUrlPrefix string Url for deleting (prepended)
@@ -50,8 +52,17 @@ $anonymous = ($Comment['author'] == 'Anonymous');
 if ($show_as_deleted) {
 	$Comment['author'] = '<em>comment removed</em>';
 	$Comment['xhtml'] = '';
+	$Comment['edits'] = array();
 } else {
 	$Comment['author'] = '<b>'.$Comment['author'].'</b>';
+}
+if ($Comment['deleted']) {
+	$Comment['edits'][] = array(
+		'action' => 'del',
+		'edit_time' => $Comment['deleted_time'],
+		'by_author' => $Comment['deleted_by_owner'],
+		'name'      => $Comment['deleted_name'],
+	);
 }
 
 ?>
@@ -75,6 +86,30 @@ if ($show_as_deleted) {
 		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $Comment['author']); ?> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
+	if (!empty($Comment['edits'])) {
+		echo('<ul class="comment_edit">');
+		foreach ($Comment['edits'] as $edit) {
+			echo('<li>');
+			if (NULL !== $edit['edit_time']) {
+				echo($edit['edit_time'].' - ');
+			}
+			if (isset($edit['action'])) {
+				if ($edit['action'] == 'del') {
+					echo('Deleted');
+				} else {
+					echo('Edited');
+				}
+			} else {
+				echo('Edited');
+			}
+			echo(' by '.($edit['by_author'] ? 'the author' : 'a moderator'));
+			if (!$edit['by_author'] && isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && isset($edit['name']) && NULL !== $edit['name']) {
+				echo(' ('.$edit['name'].')');
+			}
+			echo('</li>');
+		}
+		echo('</ul>');
+	}
 	echo($Comment['xhtml']);
 	if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Comment['comment_id'])) {
 		$abuse_links = array();
@@ -99,15 +134,25 @@ if ($show_as_deleted) {
 			<pre><?php echo(htmlentities($Comment['wikitext'])); ?></pre>
 <?php	}
 	} else if (!$show_as_deleted) {
+		$links = array();
+		if ($Comment['owned']) {
+			$links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="Edit Comment" title="Delete Comment" /> Edit Comment</a>';
+			$links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="Delete Comment" title="Delete Comment" /> Delete Comment</a>';
+		}
 		// Only show 'report abuse' link if 'no_report' index isn't set
-		if (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
+		elseif (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
 			// Don't provide a working 'report abuse' link if only showing a comment preview
-			if (is_numeric($Comment['comment_id'])) {
+			if (!isset($Comment['preview'])) {
 				$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
 			} else {
 				$report_link = '';
 			}
-			echo('<p style="font-size:x-small;"><a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a></p>');
+			$links[] = '<a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a>';
+		}
+		if (!empty($links) && !isset($Comment['no_links'])) {
+			echo('<p style="font-size:x-small;">');
+			echo(implode('&nbsp;&nbsp;&nbsp;&nbsp;', $links));
+			echo('</p>');
 		}
 	}
 	if (!$show_as_deleted) {

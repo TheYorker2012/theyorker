@@ -15,6 +15,8 @@
  * @param $DefaultIdentity int Index of default identity.
  * @param $DefaultAnonymous bool Whether anonymous by default.
  * @param $DefaultContent string Default wikitext.
+ * @param $ShowCancelButton bool Whether to show a cancelation option.
+ * @param $AlreadyExists bool Whether the comment already exists.
  */
 
 ?>
@@ -97,7 +99,7 @@
 			echo '</div>';
 		}
 		?>
-		<h2>Add Comment</h2>
+		<h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2>
 		<form class="form" id="CommentAdd" method="post" action="<?php echo $FormTarget; ?>">
 			<fieldset>
 				<?php /*
@@ -122,10 +124,13 @@
 					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo ' checked="checked"'; ?> />
 				<?php } ?>
 
-				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo $DefaultContent; ?></textarea>
+				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(htmlentities($DefaultContent, ENT_QUOTES, 'UTF-8')); ?></textarea>
 
 				<label><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></label>
-
+				
+				<?php if ($ShowCancelButton) { ?>
+				<input type="submit" class="button" name="CommentAddCancel"  value="Cancel" />
+				<?php } ?>
 				<input type="submit" class="button" name="CommentAddPreview" value="Preview" />
 				<input type="submit" class="button" name="CommentAddSubmit" value="Submit" />
 			</fieldset>
