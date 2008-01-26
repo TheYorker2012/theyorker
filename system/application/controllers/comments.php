@@ -158,7 +158,7 @@ class Comments extends Controller
 		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to)) return;
 		
 		$this->load->model('comments_model');
-		$result = $this->comments_model->DeleteComment($CommentId);
+		$result = $this->comments_model->DeleteComment((int)$CommentId);
 		if ($result > 0) {
 			$this->messages->AddMessage('success', 'Comment deleted');
 		} else {
@@ -185,7 +185,7 @@ class Comments extends Controller
 		if (!CheckPermissions('moderator')) return;
 		
 		$this->load->model('comments_model');
-		$result = $this->comments_model->DeleteComment($CommentId, FALSE);
+		$result = $this->comments_model->DeleteComment((int)$CommentId, FALSE);
 		if ($result > 0) {
 			$this->messages->AddMessage('success', 'Comment undeleted');
 		} else {
