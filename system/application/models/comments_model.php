@@ -600,12 +600,12 @@ class Comments_model extends model
 	/// Modify the wikitext of a comment.
 	function EditCommentContent($CommentId, $NewWikitext)
 	{
-		// First add an event_edit with old wikitext, then change comment content
 		$escaped_comment_id = $this->db->escape($CommentId);
 		$escaped_entity_id = $this->db->escape($this->user_auth->entityId);
 		$escaped_wikitext = $this->db->escape($NewWikitext);
 		$escaped_xhtml = $this->db->escape($this->ParseCommentWikitext($NewWikitext));
 		
+		// First add an event_edit with old wikitext
 		$this->db->query(
 			'INSERT INTO comment_edits ('.
 			'	comment_edit_comment_id,'.
@@ -620,10 +620,12 @@ class Comments_model extends model
 			'WHERE comment_id='.$escaped_comment_id
 		);
 		$affected_rows = $this->db->affected_rows();
+		// now change comment content and clear good flag as it may not be good anymore
 		$this->db->query(
 			'UPDATE comments '.
 			'SET comment_content_wikitext='.$escaped_wikitext.','.
-			'	comment_content_xhtml='.$escaped_xhtml.' '.
+			'	comment_content_xhtml='.$escaped_xhtml.', '.
+			'	comment_good=0 '.
 			'WHERE comment_id='.$escaped_comment_id
 		);
 		return $affected_rows + $this->db->affected_rows();
