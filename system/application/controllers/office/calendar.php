@@ -14,9 +14,9 @@ class Calendar extends controller
 	{
 		if (!CheckPermissions('vip+pr')) return;
 		$this->load->model('subcontrollers/calendar_subcontroller');
-		$this->calendar_subcontroller->_SetDefault('index');
+		$this->calendar_subcontroller->_SetDefault('view');
 		$this->calendar_subcontroller->_SetPermission('vip+pr');
-		$this->calendar_subcontroller->_AddPermission('create', 'edit', 'index');
+		$this->calendar_subcontroller->_AddPermission('create', 'edit');
 		$this->calendar_subcontroller->SetIndexPageCode('viparea_calendar_index');
 		$this->calendar_subcontroller->SetRangePageCode('viparea_calendar');
 		
@@ -25,7 +25,7 @@ class Calendar extends controller
 		$sources->EnableGroup('owned');
 		$sources->EnableGroup('private');
 		$sources->EnableGroup('active');
-		$sources->EnableGroup('inactive');
+		$sources->DisableGroup('inactive');
 		$sources->EnableGroup('show');
 		
 		$this->calendar_subcontroller->_map(func_get_args());
