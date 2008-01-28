@@ -30,7 +30,7 @@
 			}
 			echo('" /></a></td>');
 			echo('<td style="padding-right:5px">'.$game['title'].'</td>');
-			echo('<td> '.$game['date_added'].'</td>');
+			echo('<td style="padding-right:5px"> '.$game['date_added'].'</td>');
 			echo('<td>'.$game['play_count'].'</td>');
 			echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
 			echo('<td>');
@@ -48,6 +48,7 @@
 	{
 		document.getElementById('add_game').style.display="";
 		document.getElementById('list_box').style.display="none";
+		document.getElementById('add_entry').style.display="none";
 		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="none";');} ?>
 	}
 	
@@ -56,6 +57,32 @@
 		document.getElementById('add_game').style.display="none";
 		document.getElementById('list_box').style.display="";
 		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="";');} ?>
+	}
+	
+	function add_entry()
+	{
+		xajax_list_ftp();
+		document.getElementById('list_box').style.display="none";
+		document.getElementById('add_game').style.display="none";
+		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="none";');} ?>
+		document.getElementById('add_entry').style.display="";
+	}
+	
+	function hide_add_entry()
+	{		
+		document.getElementById('add_entry').style.display="none";
+		document.getElementById('list_box').style.display="";
+		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="";');} ?>
+	}
+	
+	function list_response()
+	{
+		for (var i=0;i<arguments.length; i++)
+		{
+			document.add_entry_form.add_entry_file.options[document.add_entry_form.add_entry_file.options.length] = new Option(arguments[i],arguments[i]);
+		}
+		document.getElementById('add_entry_wait').style.display="none";
+		document.getElementById('add_entry_form_box').style.display="";
 	}
 	
 	function check_delete(title)
@@ -69,7 +96,10 @@
 	<h4><?php echo($section_games_list_page_info_title); ?></h4>
 	<?php echo($section_games_list_page_info_text); ?>
 	<h4><?php echo($section_games_list_actions_title); ?></h4>
-		<a href="#" onclick="add();return false;">Add</a>
+		<ul>
+			<li><a href="#" onclick="add();return false;">Add</a></li>
+			<li><a href="#" onclick="add_entry();return false;">Add Entry</a></li>
+		</ul>
 </div>
 
 <div id="MainColumn">
@@ -93,9 +123,31 @@
 					size='20' />
 				<input type='submit' name='submit' id='submit' value='Add' class='button' />
 			</fieldset>
-			<a href="#" onclick="hide_add()">Hide</a>
-
 		</form>
+		<a href="#" onclick="hide_add();return false;">Hide</a>
+	</div>
+	
+	<div id="add_entry" class="BlueBox" style="Display:none">
+		<div id="add_entry_wait">
+			Please Wait... connecting to FTP share...
+		</div>
+		<div id="add_entry_form_box" style="Display:none">
+			Select the game file from the list below to add it to the system.
+			<form 
+				name="add_entry_form"
+				id="add_entry_form"
+				action="/office/games/add_entry"
+				method="post"
+				class="form">
+				<fieldset>
+					<label for="add_entry_file">File:</label>
+					<select name="add_entry_file">
+					</select>
+					<input type='submit' name='entry_submit' id='entry_submit' value='Add' class='button' />
+				</fieldset>
+			</form>
+		</div>
+		<a href="#" onclick="hide_add_entry();return false;">Hide</a>
 	</div>
 	
 	<?php

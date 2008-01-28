@@ -310,5 +310,21 @@
 			}else{ return 0;}
 		}
 		
+		function Get_Fnames()
+		{
+			$sql = '	SELECT	game_filename
+						FROM	games';
+			$query = $this->db->query($sql);
+			if ($query->num_rows() >0)
+			{
+				foreach ($query->result() as $row)
+				{
+					$result[] = $row->game_filename;
+				}
+			}else{ return 0;}
+			return $result;
+		}
+		
 	}
+	
 ?>
