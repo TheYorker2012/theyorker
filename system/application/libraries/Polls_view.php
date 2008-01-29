@@ -12,7 +12,7 @@ class Polls_view
 		echo('	<form class="form" action="'.$_SERVER['REQUEST_URI'].'" method="post">'."\n");
 		echo('  	<div class="Entry">'."\n");
 		echo('		<fieldset>'."\n");
-		echo('		'.$poll_data['question'].' ('.$poll_option_data['vote_count'].' votes)'."\n");
+		echo('			'.$poll_data['question'].' ('.$poll_option_data['vote_count'].' votes)'."\n");
 		if (count($poll_option_data['choices']) > 0) {
 			foreach ($poll_option_data['choices'] as $choice) {
 				if ($poll_option_data['vote_count'] > 0)
@@ -23,13 +23,16 @@ class Polls_view
 				{
 					$percentage = 0;
 				}
-				echo('		<input type="radio" id="poll_vote" name="poll_vote" value="'.$choice['id'].'">'.$choice['name'].' - '.$percentage.'%<br />'."\n");
+				echo('		<label>'."\n");
+				echo('			<input class="checkbox" type="radio" name="poll_vote" value="'.$choice['id'].'" />'."\n");
+				echo('			'.$choice['name'].' - '.$percentage.'%'."\n");
+				echo('		</label>'."\n");
 			}
 		}
 		echo('		</fieldset>'."\n");
 		echo('		<fieldset>'."\n");
-		echo('			<input type="submit" name="submit_vote" value="Vote" />'."\n");
-		echo('			<input type="submit" name="submit_no_vote" value="Show Results" />'."\n");
+		echo('			<input class="button" type="submit" name="submit_no_vote" value="Results" />'."\n");
+		echo('			<input class="button" type="submit" name="submit_vote" value="Vote" />'."\n");
 		echo('		</fieldset>'."\n");
 		echo('  	</div>'."\n");
 		echo('  </form>'."\n");
@@ -40,6 +43,7 @@ class Polls_view
 		echo('  	<div class="Entry">'."\n");
 		echo('		'.$poll_data['question'].' ('.$poll_option_data['vote_count'].' votes)'."\n");
 		if (count($poll_option_data['choices']) > 0) {
+			echo('		<ul>'."\n");
 			foreach ($poll_option_data['choices'] as $choice) {
 				if ($poll_option_data['vote_count'] > 0)
 				{
@@ -49,8 +53,9 @@ class Polls_view
 				{
 					$percentage = 0;
 				}
-				echo('		'.$choice['name'].' - '.$percentage.'%<br />'."\n");
+				echo('			<li>'.$choice['name'].' - '.$percentage.'%</li>'."\n");
 			}
+			echo('		</ul>'."\n");
 		}
 		echo('  	</div>'."\n");
 	}
