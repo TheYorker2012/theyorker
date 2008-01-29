@@ -303,8 +303,9 @@ div#RightColumn fieldset.inline input {
 }
 
 div#RightColumn input.button {
-	width: 30%;
+	width: 35%;
 	float: right;
+	margin-left: 0.5em;
 }
 
 div#RightColumn input.checkbox {
@@ -314,6 +315,7 @@ div#RightColumn input.checkbox {
 div#RightColumn fieldset.inline input.button {
 	float: none;
 	width: 30%;
+	margin: 0;
 }
 
 div#RightColumn div.Entry {

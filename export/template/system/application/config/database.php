@@ -35,7 +35,7 @@ $active_group = "default";
 
 $db['default']['hostname'] = "localhost";
 $db['default']['username'] = "yorker_web";
-$db['default']['password'] = "database password goes here";
+$db['default']['password'] = "df97nvc02d90dg";
 $db['default']['database'] = "yorker_yorker";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
