@@ -59,12 +59,16 @@ class League extends Controller
 		//Get page properties information
 		$this->pages_model->SetPageCode('office_league');
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
+		$data['suggestion_information'] = $this->pages_model->GetPropertyWikiText('suggestion_information');
 		
 		//Get information
 		$league = $this->Leagues_model->getLeagueInformation($id);
 		$data['venues_limit'] = $league['size'];
 		
 		$data['venues'] = $this->Leagues_model->GetBasicVenuesFromLeague($id);
+		
+		$data['suggestions'] = $this->Leagues_model->GetLeagueVenueSuggestions($id);
+		$data['league_id'] = $id;
 		
 		$this->main_frame->SetTitleParameters(array('league_name' => $league['name']));
 		$this->main_frame->SetContentSimple('office/leagues/league_contents', $data);
