@@ -1,17 +1,3 @@
-<?php
-	function print_comment ($comment) {
-		if ($comment['comment_anonymous']) {
-			echo('			<li class="anonymous">'."\n");
-			echo('				<i>Anonymous</i>'."\n");
-		} else {
-			echo('			<li>'."\n");
-			echo('				<i>' . $comment['user_firstname'] . ' ' . $comment['user_surname'] . '</i>'."\n");
-		}
-		echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id'] . '#CommentItem' . $comment['comment_id'] . '">' . $comment['article_content_heading'] . '</a>'."\n");
-		echo('			</li>'."\n");
-	}
-?>
-
 <div id="RightColumn">
 	<h2 class="first">My Links</h2>
 	<div class="Entry">
@@ -26,6 +12,25 @@
 ?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
+	
+<?php 
+
+	if ($poll)
+	{
+		if ($this->user_auth->isLoggedIn)
+		{
+			if ($poll['user_voted'])
+				$this->polls_view->print_sidebar_poll_no_voting($poll['info'], $poll['choices']);
+			else
+				$this->polls_view->print_sidebar_poll_voting($poll['info'], $poll['choices']);
+		}
+		else
+		{
+			$this->polls_view->print_sidebar_poll_login_to_vote($poll['info']);
+		}
+	}
+	
+?>
 
 	<h2>Search the Web</h2>
 	<div class="Entry">
@@ -95,14 +100,8 @@ if ($weather_forecast != null) {
 		if($special['blogs']['show']) { $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']); }
 		$this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news');
 		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','news');
+		$latest_comments->Load();
 	?>
-
-	<div class="BlueBox">
-		<h2>latest comments</h2>
-		<ul class="comments">
-			<?php foreach ($latest_comments as $comment) print_comment($comment); ?>
-		</ul>
-	</div>
 </div>
 
 <?php
