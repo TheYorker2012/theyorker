@@ -14,12 +14,12 @@
 	</script>
 
 	<div class="BlueBox">
-		<h2><?php echo $heading; ?></h2>
+		<h2><?php echo htmlentities($heading); ?></h2>
 		<?php echo $intro; ?>
 	</div>
 
 	<div class="BlueBox" style="width: 49%;">
-		<h2><?php echo($friendly_name); ?></h2>
+		<h2><?php echo htmlentities($friendly_name); ?></h2>
 
 		<div id='subscription_container'>
 			<?php foreach ($organisations as $soc) {
