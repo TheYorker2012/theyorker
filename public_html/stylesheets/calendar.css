@@ -619,3 +619,11 @@ ul.cal_week_select.term li.selected {
 ul.cal_week_select.holiday li.selected {
 	background-color: #DDD;
 }
+
+/* Calendar subscriptions */
+table.calsub_orglist tr td {
+	background-color: #F4F4F4;
+}
+table.calsub_orglist tr.unmatch td {
+	background-color: white;
+}

@@ -2701,7 +2701,75 @@ END';
 		/// @todo Implement.
 	}
 
-
+	/// Get a list of organisations with calendars
+	function GetSubscriptionOrganisations()
+	{
+		$user_entity_id = $this->db->escape($this->user_auth->entityId);
+		$calendar_subscribed =
+		'	IF(	user_subscriptions.event_subscription_calendar IS NULL,'.
+		'		default_subscriptions.event_subscription_calendar,'.
+		'		user_subscriptions.event_subscription_calendar)';
+		$sql =
+		'	SELECT'.
+		'		organisation_entity_id AS id,'.
+		'		organisation_name AS name,'.
+		'		organisation_directory_entry_name AS shortname,'.
+		'		organisation_show_in_directory AS show_in_directory,'.
+		'		organisation_parent_organisation_entity_id AS parent_id,'.
+		'		subscription_user_confirmed AS member,'.
+		'		'.$calendar_subscribed.' AS calendar'.
+		'	FROM organisations'.
+		'	INNER JOIN organisation_types'.
+		'		ON organisation_types.organisation_type_id'.
+		'			= organisations.organisation_organisation_type_id'.
+		'	LEFT JOIN subscriptions'.
+		'		ON	subscription_organisation_entity_id = organisation_entity_id'.
+		'		AND	subscription_user_entity_id = '.$user_entity_id.
+		'		AND	subscription_user_confirmed = TRUE'.
+		'		AND	subscription_organisation_confirmed = TRUE'.
+		'		AND	subscription_deleted = FALSE'.
+		'	LEFT JOIN event_subscriptions AS user_subscriptions'.
+		'		ON	user_subscriptions.event_subscription_organisation_entity_id = organisation_entity_id'.
+		'		AND	user_subscriptions.event_subscription_user_entity_id = '.$user_entity_id.
+		'	LEFT JOIN event_subscriptions AS default_subscriptions'.
+		'		ON	default_subscriptions.event_subscription_organisation_entity_id = organisation_entity_id'.
+		'		AND	default_subscriptions.event_subscription_user_entity_id = 0'.
+		'	WHERE	organisation_events = TRUE'.
+		'		AND	organisation_deleted = FALSE'.
+		'	ORDER BY '.$calendar_subscribed.' DESC, organisation_name ASC';
+		$query = $this->db->query($sql);
+		// Index organisations
+		$all_results = array();
+		foreach ($query->result_array() as $organisation) {
+			$organisation['member']   = (NULL !== $organisation['member'] && $organisation['member']);
+			$organisation['calendar'] = (NULL !== $organisation['calendar'] && $organisation['calendar']);
+			$all_results[(int)$organisation['id']] = $organisation;
+		}
+		// Sort out teams
+		$top_orgs = array();
+		foreach ($all_results as &$organisation) {
+			// Check we have the parent as well
+			$parent_id = $organisation['parent_id'];
+			if (is_numeric($parent_id)) {
+				$parent_id = (int)$parent_id;
+				if (!isset($all_results[$parent_id])) {
+					$parent_id = NULL;
+				}
+			}
+			else {
+				$parent_id = NULL;
+			}
+			// Link parent to this
+			if (NULL !== $parent_id) {
+				$all_results[$parent_id]['teams'][] = &$organisation;
+			}
+			// Otherwise add to top orgs
+			else {
+				$top_orgs[] = &$organisation;
+			}
+		}
+		return $top_orgs;
+	}
 }
 
 ?>

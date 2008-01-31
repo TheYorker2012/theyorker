@@ -955,15 +955,19 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		if (!CheckPermissions('student')) return;
 		
 		$this->pages_model->SetPageCode('calendar_subscriptions_index');
+		$this->load->model('calendar/events_model');
 		
 		$data = array(
 			'Wikitexts' => array(
 				'intro' => $this->pages_model->GetPropertyWikitext('intro'),
 				'help_main' => $this->pages_model->GetPropertyWikitext('help_main'),
 			),
+			'Organisations' => $this->events_model->GetSubscriptionOrganisations(),
 		);
 		
 		$this->SetupTabs('subscriptions', new Academic_time(time()));
+		$this->main_frame->IncludeJs('javascript/calendar_subscriptions.js');
+		$this->main_frame->IncludeCss('stylesheets/calendar.css');
 		$this->main_frame->SetContentSimple('calendar/subscriptions_index', $data);
 		$this->main_frame->Load();
 	}
