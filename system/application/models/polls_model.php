@@ -315,9 +315,10 @@ class Polls_model extends Model
 				ORDER BY poll_choice_name ASC';
 		$query = $this->db->query($sql,array($poll_id));
 		$result = array();
+		$vote_count = 0;
+		$result['choices'] = array();
 		if ($query->num_rows() > 0)
 		{
-			$vote_count = 0;
 			foreach ($query->result() as $row)
 			{
 				$result_item['id'] = $row->poll_choice_id;
@@ -333,8 +334,8 @@ class Polls_model extends Model
 				$result['choices'][] = $result_item;
 				$vote_count += $row->option_vote_count;
 			}
-			$result['vote_count'] = $vote_count;
 		}
+		$result['vote_count'] = $vote_count;
 		return $result;
 	}
 	
