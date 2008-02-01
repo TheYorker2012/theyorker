@@ -2714,7 +2714,7 @@ END';
 		'		organisation_entity_id AS id,'.
 		'		organisation_name AS name,'.
 		'		organisation_directory_entry_name AS shortname,'.
-		'		organisation_show_in_directory AS show_in_directory,'.
+		'		(organisation_show_in_directory = TRUE AND organisation_live_content_id IS NOT NULL) AS show_in_directory,'.
 		'		organisation_parent_organisation_entity_id AS parent_id,'.
 		'		subscription_user_confirmed AS member,'.
 		'		'.$calendar_subscribed.' AS calendar'.

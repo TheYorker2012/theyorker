@@ -53,7 +53,7 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 			}
 			echo('</td>'."\n");
 		}
-		echo("\t".'<td><img src="/images/prototype/news/'.($org['member'] ? 'accepted.gif' : 'declined.gif').'" alt="'.($org['member'] ? 'Yes' : 'No').'" /></td>'."\n");
+		echo("\t".'<td><img src="/images/'.($org['member'] ? 'icons/user.png' : 'icons/user_gray.png').'" title="'.($org['member'] ? 'You are a member of ' : 'You are not a member of ').htmlentities($org['name'], ENT_QUOTES, 'UTF-8').'" alt="'.($org['member'] ? 'Yes' : 'No').'" /></td>'."\n");
 		{
 			echo("\t".'<td><a href="');
 			if ($org['calendar']) {
@@ -62,7 +62,7 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 				echo(site_url($Path->OrganisationSubscribe($org['shortname'], 'calendar')));
 			}
 			echo(get_instance()->uri->uri_string().'">');
-			echo('<img src="/images/prototype/news/'.($org['calendar'] ? 'accepted.gif' : 'declined.gif').'" alt="'.($org['calendar'] ? 'Yes' : 'No').'" />');
+			echo('<img src="/images/'.($org['calendar'] ? 'icons/date.png' : 'prototype/news/declined.gif').'" title="'.($org['calendar'] ? 'Click to unsubscribe from ' : 'Click to subscribe to ').htmlentities($org['name'], ENT_QUOTES, 'UTF-8').'"  alt="('.($org['calendar'] ? 'yes' : 'no').')" />');
 			echo('</a></td>'."\n");
 			echo('</tr>'."\n");
 		}
@@ -111,11 +111,11 @@ calsub_orgs = {
 	<h2 class="first">What&apos;s this?</h2>
 	<?php if (isset($Wikitexts['help_main'])) { echo($Wikitexts['help_main']); } ?>
 	
-	<h2>Filter</h2>
+	<h2>Search</h2>
 	<div>
 		<form>
 			<fieldset>
-				<label for="org_filter">Search</label>
+				<label for="org_filter">Name</label>
 				<input type="text" id="org_filter" value="" onkeyup="calsub_filter_orgs();" />
 				
 				<label for="org_filter_member">Membership</label>
@@ -143,9 +143,9 @@ calsub_orgs = {
 		<div>
 			<table class="calsub_orglist">
 				<tr>
-					<th colspan="2">Organisation</th>
-					<th>Member</th>
-					<th>Calendar</th>
+					<th colspan="2" width="80%">organisation</th>
+					<th width="10%">member</th>
+					<th width="10%">subscribed</th>
 				</tr>
 <?php	addSubscriptionOrganisationRows($Organisations, $Path);	?>
 			</table>
