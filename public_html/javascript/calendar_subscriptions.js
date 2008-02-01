@@ -52,6 +52,9 @@ function calsub_filter_orgs(input)
 		var searchtext = filter.value.toLowerCase();
 		var member   = (filter_member.value   != '0') ? (filter_member.value   == 'yes') : null;
 		var calendar = (filter_calendar.value != '0') ? (filter_calendar.value == 'yes') : null;
+		if (searchtext == '' && member == null && calendar == null) {
+			calendar = true;
+		}
 		for (var shortname in calsub_orgs) {
 			var visibility = (undefined != force_visibility[shortname]);
 			var matched = false;

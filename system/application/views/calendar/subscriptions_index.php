@@ -115,14 +115,16 @@ calsub_orgs = {
 	<div>
 		<form>
 			<fieldset>
-				<label for="org_filter">Filter</label>
+				<label for="org_filter">Search</label>
 				<input type="text" id="org_filter" value="" onkeyup="calsub_filter_orgs();" />
+				
 				<label for="org_filter_member">Membership</label>
 				<select id="org_filter_member" onchange="calsub_filter_orgs();">
 					<option value="0"></option>
 					<option value="yes">Member</option>
 					<option value="no">Not member</option>
 				</select>
+				
 				<label for="org_filter_calendar">Subscription</label>
 				<select id="org_filter_calendar" onchange="calsub_filter_orgs();">
 					<option value="0"></option>
@@ -150,3 +152,6 @@ calsub_orgs = {
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+calsub_filter_orgs();
+</script>
