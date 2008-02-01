@@ -379,7 +379,7 @@ class Wikiparser {
 			$params = array('src', 'http://www.youtube.com/v/' . $href,
 					'width', '340',
 					'height', '280');
-			$output = get_inline_flash_code($params);
+			$output = $this->get_inline_flash_code($params);
 
 			if ($this->in_paragraph) {
 				// divs aren't allowed in paragraphs, so close and reopen
@@ -392,7 +392,7 @@ class Wikiparser {
 					'height', '280',
 					'allowfullscreen', 'true',
 					'flashvars', 'height=340&width=280&file=' . $href . '&backcolor=0xFF6A00&frontcolor=0xFFFFFF&lightcolor=0x000000&screencolor=0xFFFFFF&overstretch=true&showdownload=true');
-			$output = get_inline_flash_code($params);
+			$output = $this->get_inline_flash_code($params);
 			if ($this->in_paragraph) {
 				// divs aren't allowed in paragraphs, so close and reopen
 				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
