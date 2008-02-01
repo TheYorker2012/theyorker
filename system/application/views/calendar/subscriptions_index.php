@@ -14,6 +14,7 @@
  *  - member
  *  - calendar
  *  - teams
+ * @param $Path calendarPaths object
  */
 
 /// Format a javascript string.
@@ -29,7 +30,7 @@ function jsString($string)
 }
 
 /// Render rows in the subscriptions table for organisations.
-function addSubscriptionOrganisationRows(& $orgs, $depth = 0)
+function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 {
 	static $depth_indicator = array(
 		'&nbsp;+-',
@@ -53,11 +54,21 @@ function addSubscriptionOrganisationRows(& $orgs, $depth = 0)
 			echo('</td>'."\n");
 		}
 		echo("\t".'<td><img src="/images/prototype/news/'.($org['member'] ? 'accepted.gif' : 'declined.gif').'" alt="'.($org['member'] ? 'Yes' : 'No').'" /></td>'."\n");
-		echo("\t".'<td><img src="/images/prototype/news/'.($org['calendar'] ? 'accepted.gif' : 'declined.gif').'" alt="'.($org['calendar'] ? 'Yes' : 'No').'" /></td>'."\n");
-		echo('</tr>'."\n");
+		{
+			echo("\t".'<td><a href="');
+			if ($org['calendar']) {
+				echo(site_url($Path->OrganisationUnsubscribe($org['shortname'], 'calendar')));
+			} else {
+				echo(site_url($Path->OrganisationSubscribe($org['shortname'], 'calendar')));
+			}
+			echo(get_instance()->uri->uri_string().'">');
+			echo('<img src="/images/prototype/news/'.($org['calendar'] ? 'accepted.gif' : 'declined.gif').'" alt="'.($org['calendar'] ? 'Yes' : 'No').'" />');
+			echo('</a></td>'."\n");
+			echo('</tr>'."\n");
+		}
 		// Add rows for any child orgs
 		if (isset($org['teams'])) {
-			addSubscriptionOrganisationRows($org['teams'], $depth + 1);
+			addSubscriptionOrganisationRows($org['teams'], $Path, $depth + 1);
 		}
 	}
 }
@@ -134,7 +145,7 @@ calsub_orgs = {
 					<th>Member</th>
 					<th>Calendar</th>
 				</tr>
-<?php	addSubscriptionOrganisationRows($Organisations);	?>
+<?php	addSubscriptionOrganisationRows($Organisations, $Path);	?>
 			</table>
 		</div>
 	</div>

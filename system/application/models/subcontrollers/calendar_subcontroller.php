@@ -963,6 +963,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				'help_main' => $this->pages_model->GetPropertyWikitext('help_main'),
 			),
 			'Organisations' => $this->events_model->GetSubscriptionOrganisations(),
+			'Path' => $this->mPaths,
 		);
 		
 		$this->SetupTabs('subscriptions', new Academic_time(time()));
@@ -2076,8 +2077,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	function subscribe_stream($organisation, $mode)
 	{
 		$this->load->model('calendar/events_model');
+		$this->load->model('prefs_model');
+		if (!CheckPermissions('student')) return;
+		
 		if ($this->events_model->IsNormalUser()) {
-			$this->load->model('prefs_model');
 			$result = $this->prefs_model->setCalendarSubscriptionByOrgName(
 				$this->events_model->GetActiveEntityId(),
 				$organisation,
@@ -2103,8 +2106,10 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	function unsubscribe_stream($organisation, $mode)
 	{
 		$this->load->model('calendar/events_model');
+		$this->load->model('prefs_model');
+		if (!CheckPermissions('student')) return;
+		
 		if ($this->events_model->IsNormalUser()) {
-			$this->load->model('prefs_model');
 			$result = $this->prefs_model->setCalendarSubscriptionByOrgName(
 				$this->events_model->GetActiveEntityId(),
 				$organisation,
