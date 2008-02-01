@@ -326,8 +326,7 @@ class Polls_model extends Model
 				$sql = 'SELECT	count(poll_vote_poll_id) as option_vote_count
 						FROM	poll_votes
 						WHERE	poll_vote_poll_id = ?
-						AND		poll_vote_poll_choice_id = ?
-						AND		poll_vote_no_vote = 0';
+						AND		poll_vote_poll_choice_id = ?';
 				$query = $this->db->query($sql,array($poll_id, $row->poll_choice_id));
 				$row = $query->row();
 				$result_item['votes'] = $row->option_vote_count;
@@ -380,28 +379,10 @@ class Polls_model extends Model
 					poll_votes (
 						poll_vote_poll_id,
 						poll_vote_user_id,
-						poll_vote_poll_choice_id,
-						poll_vote_no_vote
+						poll_vote_poll_choice_id
 						)
-				VALUES (?, ?, ?, 0)';
+				VALUES (?, ?, ?)';
 		$this->db->query($sql,array($poll_id, $user_id, $choice_id));
-		return true;
-	}
-	
-	/*
-	* this function sets a user's vote for a option
-	*/
-	function SetUserPollNoVote($poll_id, $user_id)
-	{
-		$sql = 'INSERT INTO
-					poll_votes (
-						poll_vote_poll_id,
-						poll_vote_user_id,
-						poll_vote_poll_choice_id,
-						poll_vote_no_vote
-						)
-				VALUES (?, ?, ?, 1)';
-		$this->db->query($sql,array($poll_id, $user_id, NULL));
 		return true;
 	}
 	

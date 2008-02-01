@@ -94,6 +94,7 @@ class Home extends Controller {
 		//poll handling
 		$poll_id = $this->polls_model->GetDisplayedPoll();
 		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);
+		$poll_show_results = false;
 		if ($poll_id && !$user_voted)
 		{
 			if (isset($_POST['submit_vote'])) {
@@ -111,9 +112,11 @@ class Home extends Controller {
 					}
 				}
 			}
-			else if (isset($_POST['submit_no_vote'])) {
-				$this->polls_model->SetUserPollNoVote($poll_id, $this->user_auth->entityId);
+			elseif (isset($_POST['submit_results'])) {
+				$poll_show_results = true;
 			}
+		} else {
+			$poll_show_results = true;
 		}
 		
 		if ('fbml' === OutputMode()) {
@@ -259,6 +262,7 @@ class Home extends Controller {
 			$data['poll']['info'] = $this->polls_model->GetPollDetails($poll_id);
 			$data['poll']['choices'] = $this->polls_model->GetPollChoiceVotes($poll_id);
 			$data['poll']['user_voted'] = $user_voted;
+			$data['poll']['show_results'] = $poll_show_results;
 		}
 		else
 		{

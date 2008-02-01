@@ -7,31 +7,45 @@
  
 class Polls_view
 {
-	function print_sidebar_poll_voting($poll_data, $poll_option_data) {
+	function print_sidebar_poll_voting($poll_data, $poll_option_data, $show_results) {
 		echo('  <h2>Poll</h2>'."\n");
 		echo('	<form class="form" action="'.$_SERVER['REQUEST_URI'].'" method="post">'."\n");
 		echo('  	<div class="Entry">'."\n");
 		echo('		<fieldset>'."\n");
-		echo('			'.htmlentities($poll_data['question'], ENT_QUOTES, 'UTF-8').' ('.$poll_option_data['vote_count'].' votes)'."\n");
+		echo('			'.htmlentities($poll_data['question'], ENT_QUOTES, 'UTF-8'));
+		if ($show_results) {
+			echo(' ('.$poll_option_data['vote_count'].' votes)');
+		}
+		echo("\n");
 		if (count($poll_option_data['choices']) > 0) {
 			foreach ($poll_option_data['choices'] as $choice) {
-				if ($poll_option_data['vote_count'] > 0)
+				if ($show_results)
 				{
-					$percentage = round($choice['votes']/$poll_option_data['vote_count']*100);
+					if ($poll_option_data['vote_count'] > 0)
+					{
+						$percentage = round($choice['votes']/$poll_option_data['vote_count']*100);
+					}
+					else
+					{
+						$percentage = 0;
+					}
+					$percentage = ' - '.$percentage.'%';
 				}
 				else
 				{
-					$percentage = 0;
+					$percentage = '';
 				}
 				echo('		<label>'."\n");
 				echo('			<input class="checkbox" type="radio" name="poll_vote" value="'.$choice['id'].'" />'."\n");
-				echo('			'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').' - '.$percentage.'%'."\n");
+				echo('			'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').$percentage."\n");
 				echo('		</label>'."\n");
 			}
 		}
 		echo('		</fieldset>'."\n");
 		echo('		<fieldset>'."\n");
-		echo('			<input class="button" type="submit" name="submit_no_vote" value="Results" />'."\n");
+		if (!$show_results) {
+			echo('			<input class="button" type="submit" name="submit_results" value="Results" />'."\n");
+		}
 		echo('			<input class="button" type="submit" name="submit_vote" value="Vote" />'."\n");
 		echo('		</fieldset>'."\n");
 		echo('  	</div>'."\n");
@@ -53,7 +67,8 @@ class Polls_view
 				{
 					$percentage = 0;
 				}
-				echo('			<li>'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').' - '.$percentage.'%</li>'."\n");
+				$percentage = ' - '.$percentage.'%';
+				echo('			<li>'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').$percentage.'</li>'."\n");
 			}
 			echo('		</ul>'."\n");
 		}

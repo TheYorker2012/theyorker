@@ -22,7 +22,7 @@
 			if ($poll['user_voted'])
 				$this->polls_view->print_sidebar_poll_no_voting($poll['info'], $poll['choices']);
 			else
-				$this->polls_view->print_sidebar_poll_voting($poll['info'], $poll['choices']);
+				$this->polls_view->print_sidebar_poll_voting($poll['info'], $poll['choices'], $poll['show_results']);
 		}
 		else
 		{
