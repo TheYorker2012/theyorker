@@ -17,7 +17,7 @@
 ?>
 		<label for="filterCheck<?php echo($idPostfix); ?>">
 			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo($org_type['id']); ?>" checked="checked" />
-			<?php echo($org_type['name'].' ('.$org_type['quantity'].')')?>
+			<?php echo(xml_escape($org_type['name']).' ('.$org_type['quantity'].')')?>
 		</label>
 <?php
 		$idPostfix++;
@@ -37,7 +37,7 @@
 	<div id="DirectoryMain" class="BlueBox">
 		<div style="display: none" id="LetterJump">
 		</div>
-		<div id="NotFound" style="<?php if (sizeof($organisations)>0) echo 'display: none;'?>">
+		<div id="NotFound" style="<?php if (sizeof($organisations)>0) echo('display: none;'); ?>">
 			<?php if (sizeof($organisations)>0) { ?>
 			<h3>No results found</h3>
 			<p>Try a simpler search, different keywords, or include more filters.</p>
@@ -64,13 +64,13 @@ foreach($organisations as $organisation) {
 
 	echo('		<div id="'.$organisation['shortname'].'">'."\n");
 	echo('			<h3>'."\n");
-	echo('				<a href="/'.$organisation['link'].'">'.$organisation['name'].'</a>'."\n");
+	echo('				<a href="/'.xml_escape($organisation['link']).'">'.xml_escape($organisation['name']).'</a>'."\n");
 	/*echo('				<span>('.$organisation['type'].')</span>'."\n");*/
 	echo('			</h3>'."\n");
-	echo('			<div class="Date">'.$organisation['type'].'</div>'."\n");
+	echo('			<div class="Date">'.xml_escape($organisation['type']).'</div>'."\n");
 	if($organisation['shortdescription'] != '') {
 		echo('			<div>'."\n");
-		echo('				'.$organisation['shortdescription']."\n");
+		echo('				'.xml_escape($organisation['shortdescription'])."\n");
 		echo('			</div>'."\n");
 	}
 	echo('		</div>'."\n");

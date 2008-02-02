@@ -22,8 +22,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			function onLoadHandler()
 			{
 				irc_ajax_url = "/office/irc/ajax/embeddedlive";
-				defaultdata['username'] = "<?php echo(str_replace('"','\"',$Username)); ?>";
-				defaultdata['fullname'] = "<?php echo(str_replace('"','\"',$Fullname)); ?>";
+				defaultdata['username'] = <?php echo(js_literalise($Username)); ?>;
+				defaultdata['fullname'] = <?php echo(js_literalise($Fullname)); ?>;
 			}
 		</script>
 	</head>

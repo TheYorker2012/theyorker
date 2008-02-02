@@ -47,8 +47,8 @@
 			echo('			<hr />'."\n");
 		}
 		if ($revison['deleted']){echo('<span class="red">'."\n");}
-			echo('Created : '.$revison['timestamp'].'<br />'."\n");
-			echo('Author : '.$revison['author'].'<br />'."\n");
+			echo('Created : '.xml_escape($revison['timestamp']).'<br />'."\n");
+			echo('Author : '.xml_escape($revison['author']).'<br />'."\n");
 			if ($organisation['revision_id'] == $revison['id']) {
 				echo(' <b>(Editing)</b>'."\n");
 			} else {
@@ -88,8 +88,8 @@
 		<h2>about</h2>
 		<div id="name_details">
 		<p>
-			Organisation name : <strong><?php echo $organisation['name']; ?></strong><br />
-			Organisation type : <strong><?php echo $organisation['type']; ?></strong><br />
+			Organisation name : <strong><?php echo(xml_escape($organisation['name'])); ?></strong><br />
+			Organisation type : <strong><?php echo(xml_escape($organisation['type'])); ?></strong><br />
 		</p>
 <?php
 if (PermissionsSubset('pr', GetUserLevel())) {
@@ -104,7 +104,7 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 			<form id="org_name" action="<?php echo(vip_url('directory/information/changename')); ?>" method="post">
 				<fieldset>
 					<label for="organisation_name">Name:</label>
-						<input type="text" name="organisation_name" id="organisation_name" value="<?php echo($organisation['name']); ?>"/>
+						<input type="text" name="organisation_name" id="organisation_name" value="<?php echo(xml_escape($organisation['name'])); ?>"/>
 					<label for="organisation_type">Type:</label>
 					<select name="organisation_type" id="organisation_type" size="1">
 						<?php
@@ -113,7 +113,7 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 								if ($organisation['type'] == $type['organisation_type_name']) {
 									echo('selected="selected"');
 								}
-								echo('>'.$type['organisation_type_name'].'</option>');
+								echo('>'.xml_escape($type['organisation_type_name']).'</option>');
 							}
 						?>
 					</select><br />
@@ -128,7 +128,7 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 ?>
 		</div>
 		<fieldset>
-			<textarea cols="42" rows="7" name="description"><?php echo($organisation['description']); ?></textarea>
+			<textarea cols="42" rows="7" name="description"><?php echo(xml_escape($organisation['description'])); ?></textarea>
 		</fieldset>
 	</div>
 
@@ -136,28 +136,28 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 		<h2>details</h2>
 		<fieldset>
 			<label for="email_address">Email Address:</label>
-			<input type="text" name="email_address" id="email_address" value="<?php echo($organisation['email_address']); ?>"/>
+			<input type="text" name="email_address" id="email_address" value="<?php echo(xml_escape($organisation['email_address'])); ?>"/>
 
 			<label for="url">Website:</label>
-			<input type="text" name="url" id="url" value="<?php echo($organisation['website']); ?>"/>
+			<input type="text" name="url" id="url" value="<?php echo(xml_escape($organisation['website'])); ?>"/>
 
 			<label for="postal_address">Postal Address:</label>
-			<textarea name="postal_address" id="postal_address" rows="5" cols="18"><?php echo($organisation['postal_address']); ?></textarea>
+			<textarea name="postal_address" id="postal_address" rows="5" cols="18"><?php echo(xml_escape($organisation['postal_address'])); ?></textarea>
 
 			<label for="postcode">Postcode:</label>
-			<input type="text" name="postcode" id="postcode" value="<?php echo($organisation['postcode']); ?>"/>
+			<input type="text" name="postcode" id="postcode" value="<?php echo(xml_escape($organisation['postcode'])); ?>"/>
 
 			<label for="opening_hours">Opening Times:</label>
-			<textarea name="opening_hours" id="opening_hours" rows="5" cols="18"><?php echo($organisation['open_times']); ?></textarea>
+			<textarea name="opening_hours" id="opening_hours" rows="5" cols="18"><?php echo(xml_escape($organisation['open_times'])); ?></textarea>
 
 			<label for="phone_internal">Phone Internal:</label>
-			<input type="text" name="phone_internal" id="phone_internal" value="<?php echo($organisation['phone_internal']); ?>" />
+			<input type="text" name="phone_internal" id="phone_internal" value="<?php echo(xml_escape($organisation['phone_internal'])); ?>" />
 
 			<label for="phone_external">Phone External:</label>
-			<input type="text" name="phone_external" id="phone_external" value="<?php echo($organisation['phone_external']); ?>" />
+			<input type="text" name="phone_external" id="phone_external" value="<?php echo(xml_escape($organisation['phone_external'])); ?>" />
 
 			<label for="fax_number">Fax Number:</label>
-			<input type="text" name="fax_number" id="fax_number" value="<?php echo($organisation['fax_number']); ?>" />
+			<input type="text" name="fax_number" id="fax_number" value="<?php echo(xml_escape($organisation['fax_number'])); ?>" />
 
 		</fieldset>
 		<fieldset>
@@ -167,10 +167,3 @@ if (PermissionsSubset('pr', GetUserLevel())) {
 	</form>
 </div>
 
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

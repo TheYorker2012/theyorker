@@ -124,7 +124,7 @@
 					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo ' checked="checked"'; ?> />
 				<?php } ?>
 
-				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(htmlentities($DefaultContent, ENT_QUOTES, 'UTF-8')); ?></textarea>
+				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
 
 				<label><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></label>
 				

@@ -12,7 +12,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo htmlspecialchars($head_title);
 		} else {
 			echo 'no pagename';
 		}
@@ -85,7 +85,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
 			<?php
 			if(isset($body_title)) {
-				echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+				echo xml_escape($body_title)."\n";
 			} else {
 				echo 'no pagename'."\n";
 			}

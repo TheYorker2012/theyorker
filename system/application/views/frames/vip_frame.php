@@ -13,7 +13,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo htmlspecialchars($head_title);
 		} else {
 			echo 'no pagename';
 		}
@@ -123,7 +123,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<h1 id="PageTitle">
 				<?php
 				if(isset($body_title)) {
-					echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+					echo xml_escape($body_title)."\n";
 				} else {
 					echo 'no pagename'."\n";
 				}

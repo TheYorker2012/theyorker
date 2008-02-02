@@ -7,7 +7,7 @@ function printarticlelink($article) {
 	echo('		<div class="ArticleEntry">'."\n");
 	echo('			<h3 class="Headline">'."\n");
 	echo('				<a href="/news/'.$article['type_codename'].'/'.$article['id'].'">'."\n");
-	echo('					'.htmlentities($article['heading'], ENT_QUOTES, 'UTF-8')."\n");
+	echo('					'.xml_escape($article['heading'])."\n");
 	echo('				</a>'."\n");
 	echo('			</h3>'."\n");
 	echo('			<div class="Section" style="float:right;">'.$article['type_name'].'</div>'."\n");
@@ -17,7 +17,7 @@ function printarticlelink($article) {
 		echo('				<a href="/news/archive/reporter/'.$reporter['id'].'/">'.$reporter['name'].'</a>'."\n");
 	echo('			</div>'."\n");
 	echo('		</div>'."\n");
-	echo('		<p>'.htmlentities($article['blurb'], ENT_QUOTES, 'UTF-8').'</p>'."\n");
+	echo('		<p>'.xml_escape($article['blurb']).'</p>'."\n");
 	echo('	</div>'."\n");
 }
 ?>

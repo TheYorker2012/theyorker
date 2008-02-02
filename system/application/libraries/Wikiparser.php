@@ -106,8 +106,8 @@ class Wikiparser {
 		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
 		$this->entities = array(
-			'\'' => htmlentities('\'', ENT_QUOTES, 'UTF-8'),
-			'"'  => htmlentities('"',  ENT_QUOTES, 'UTF-8'),
+			'\'' => xml_escape('\''),
+			'"'  => xml_escape('"'),
 		);
 	}
 
@@ -375,7 +375,7 @@ class Wikiparser {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
-			//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
+			//$href = xml_escape($href);
 			$params = array('src', 'http://www.youtube.com/v/' . $href,
 					'width', '340',
 					'height', '280');
@@ -424,9 +424,9 @@ class Wikiparser {
 			substr($href, 0, 1) !== '/')
 		{
 			return $matches[0];
-			//return htmlentities($matches[0], ENT_QUOTES, 'UTF-8');
+			//return xml_escape($matches[0]);
 		}
-		//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
+		//$href = xml_escape($href);
 		if (array_key_exists(4,$matches)) {
 			// implicit mailto
 			$href = 'Mailto:'.$matches[4];
@@ -473,7 +473,7 @@ class Wikiparser {
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen(html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8'));
+		$amount = strlen(html_entity_decode($matches[1]));
 		return $this->emphasize($amount);
 
 	}
@@ -629,7 +629,7 @@ class Wikiparser {
 		$line = rtrim($line);
 
 		// escape some symbols
-		$line = htmlentities($line, ENT_QUOTES, 'UTF-8');
+		$line = xml_escape($line);
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
 		foreach ($line_regexes as $func=>$regex) {

@@ -5,37 +5,38 @@
 	<script type='text/javascript'>
 	var societies = Array();
 	<?php foreach ($organisations as $soc) { ?>
-	societies['<?php echo $soc['id']; ?>'] = Array();
-	societies['<?php echo $soc['id']; ?>']['name'] = '<?php echo str_replace("'", "\'", $soc['name']); ?>';
-	societies['<?php echo $soc['id']; ?>']['directory'] = '<?php echo str_replace("'", "\'", $soc['directory']); ?>';
-	societies['<?php echo $soc['id']; ?>']['url'] = '<?php echo str_replace("'", "\'", $soc['url']); ?>';
+	societies['<?php echo($soc['id']); ?>'] = <?php echo(js_literalise(array(
+		'name'      => $soc['name'],
+		'directory' => $soc['directory'],
+		'url'       => $soc['url'],
+	))); ?>;
 	<?php } ?>
 	var subscription_type = '<?php echo($type); ?>';
 	</script>
 
 	<div class="BlueBox">
-		<h2><?php echo htmlentities($heading); ?></h2>
-		<?php echo $intro; ?>
+		<h2><?php echo(xml_escape($heading)); ?></h2>
+		<?php echo($intro); ?>
 	</div>
 
 	<div class="BlueBox" style="width: 49%;">
-		<h2><?php echo htmlentities($friendly_name); ?></h2>
+		<h2><?php echo(xml_escape($friendly_name)); ?></h2>
 
 		<div id='subscription_container'>
 			<?php foreach ($organisations as $soc) {
-				echo '<div id=\'soc' . $soc['id'] . '\' class=\'';
+				echo('<div id=\'soc' . $soc['id'] . '\' class=\'');
 				if (array_search($soc['id'],$organisation_subscriptions) !== FALSE) {
-					echo 'selected';
+					echo('selected');
 				} else {
-					echo 'unselected';
+					echo('unselected');
 				}
-				echo '\'><a href=\'/register/' . $type . '/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . $soc['name'] . '</a></div>';
+				echo('\'><a href=\'/register/' . $type . '/' . $soc['id']. '/\' onclick="return get_info(\'' . $soc['id'] . '\');">' . xml_escape($soc['name']) . '</a></div>');
 			} ?>
 		</div>
 		<!--
 		<select name='society' id='society' size='10' onChange='get_info(this);' style='width: 200px;'>
 			<?php foreach ($organisations as $soc) { ?>
-			<option value='<?php echo $soc['id']; ?>'><?php echo $soc['name']; ?></option>
+			<option value='<?php echo($soc['id']); ?>'><?php echo(xml_escape($soc['name'])); ?></option>
 			<?php } ?>
 		</select>
 		-->

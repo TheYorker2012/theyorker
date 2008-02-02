@@ -30,7 +30,7 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/polls/edit/'.$poll['id'].'">'.htmlentities($poll['question'], ENT_QUOTES, 'UTF-8').'</a>'."\n");
+		echo('						<a href="/office/polls/edit/'.$poll['id'].'">'.xml_escape($poll['question']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td style="text-align:right;">'."\n");
 		$poll['is_running'] ? $result = "Yes" : $result = "No" ;

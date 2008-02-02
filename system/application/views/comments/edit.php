@@ -95,7 +95,7 @@
 				<div style="clear:both"></div>
 			</div>
 
-			<textarea name="CommentEditContent" id="CommentEditContent" cols="40" rows="4"><?php echo(htmlentities($DefaultContent, ENT_QUOTES, 'UTF-8')); ?></textarea>
+			<textarea name="CommentEditContent" id="CommentEditContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
 
 			<label><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></label>
 
