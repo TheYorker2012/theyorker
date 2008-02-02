@@ -41,7 +41,7 @@ class NotificationCancelledEvent extends Notification
 			$CI = & get_instance();
 			$this->SetData('Custom',
 				'<p>Summary: <strong><a href="'.site_url($Extra['link']). $CI->uri->uri_string().'">'.
-				htmlentities($Extra['name'], ENT_QUOTES, 'utf-8').'</a></strong><br />'.
+				xml_escape($Extra['name']).'</a></strong><br />'.
 				'<div class="Date" style="display:inline;">'.$when.'</div></p>'
 			);
 		}

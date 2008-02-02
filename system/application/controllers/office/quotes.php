@@ -64,10 +64,10 @@ class Quotes extends Controller
 			redirect('/office/quotes');
 		}
 
-		$quote_text = htmlentities($this->input->post('quote_text'), ENT_NOQUOTES, 'UTF-8');
-		$quote_author = htmlentities($this->input->post('quote_author'), ENT_NOQUOTES, 'UTF-8');
-		$quote_scheduled = htmlentities($this->input->post('quote_scheduled'), ENT_NOQUOTES, 'UTF-8');
-		$quote_schedule_date = htmlentities($this->input->post('quote_schedule_date'), ENT_NOQUOTES, 'UTF-8');
+		$quote_text = xml_escape($this->input->post('quote_text'), ENT_NOQUOTES, 'UTF-8');
+		$quote_author = xml_escape($this->input->post('quote_author'), ENT_NOQUOTES, 'UTF-8');
+		$quote_scheduled = xml_escape($this->input->post('quote_scheduled'), ENT_NOQUOTES, 'UTF-8');
+		$quote_schedule_date = xml_escape($this->input->post('quote_schedule_date'), ENT_NOQUOTES, 'UTF-8');
 
 		$quote_last_displayed_timestamp = ($quote_scheduled ? $quote_schedule_date : null);
 

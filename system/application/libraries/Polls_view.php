@@ -12,7 +12,7 @@ class Polls_view
 		echo('	<form class="form" action="'.$_SERVER['REQUEST_URI'].'" method="post">'."\n");
 		echo('  	<div class="Entry">'."\n");
 		echo('		<fieldset>'."\n");
-		echo('			'.htmlentities($poll_data['question'], ENT_QUOTES, 'UTF-8'));
+		echo('			'.xml_escape($poll_data['question']));
 		if ($show_results) {
 			echo(' ('.$poll_option_data['vote_count'].' votes)');
 		}
@@ -37,7 +37,7 @@ class Polls_view
 				}
 				echo('		<label>'."\n");
 				echo('			<input class="checkbox" type="radio" name="poll_vote" value="'.$choice['id'].'" />'."\n");
-				echo('			'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').$percentage."\n");
+				echo('			'.xml_escape($choice['name']).$percentage."\n");
 				echo('		</label>'."\n");
 			}
 		}
@@ -55,7 +55,7 @@ class Polls_view
 	function print_sidebar_poll_no_voting($poll_data, $poll_option_data) {
 		echo('  <h2>Poll</h2>'."\n");
 		echo('  	<div class="Entry">'."\n");
-		echo('		'.htmlentities($poll_data['question'], ENT_QUOTES, 'UTF-8').' ('.$poll_option_data['vote_count'].' votes)'."\n");
+		echo('		'.xml_escape($poll_data['question']).' ('.$poll_option_data['vote_count'].' votes)'."\n");
 		if (count($poll_option_data['choices']) > 0) {
 			echo('		<ul>'."\n");
 			foreach ($poll_option_data['choices'] as $choice) {
@@ -68,7 +68,7 @@ class Polls_view
 					$percentage = 0;
 				}
 				$percentage = ' - '.$percentage.'%';
-				echo('			<li>'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').$percentage.'</li>'."\n");
+				echo('			<li>'.xml_escape($choice['name']).$percentage.'</li>'."\n");
 			}
 			echo('		</ul>'."\n");
 		}
@@ -78,7 +78,7 @@ class Polls_view
 	function print_sidebar_poll_login_to_vote($poll_data) {
 		echo('  <h2>Poll</h2>'."\n");
 		echo('  <div class="Entry">'."\n");
-		echo('		'.htmlentities($poll_data['question'], ENT_QUOTES, 'UTF-8')."\n");
+		echo('		'.xml_escape($poll_data['question'])."\n");
 		echo('  </div>'."\n");
 		echo('  <div class="Entry">'."\n");
 		echo('		You must login to vote.'."\n");

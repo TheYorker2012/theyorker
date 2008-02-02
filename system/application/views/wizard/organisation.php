@@ -110,7 +110,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 			<?php
 			$list_data = array();
 			foreach($organisations as $organisation)
@@ -151,7 +151,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 			<?php PrintTextBox('a_name', 'Organisation Name: ', $session_var); ?>
 			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
 			<?php PrintTextBox('a_phone_number_address', 'Email Address: ', $session_var); ?>
@@ -177,7 +177,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 			<?php PrintTextArea('a_address', 'Address: ', $session_var); ?>
 			<?php PrintTextBox('a_postcode', 'Postcode: ', $session_var); ?>
 			<?php PrintTextBox('a_opening_times', 'Opening Times: ', $session_var); ?>
@@ -223,7 +223,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 		</fieldset>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
@@ -275,7 +275,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 		</fieldset>
 		<div id="googlemaps" style="height: 300px"></div>
 		<noscript>
@@ -301,7 +301,7 @@ function addstrike($text)
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
 			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo xml_escape(serialize($_SESSION[$session_var])); ?>" />
 			<label for="username">Name: </label><span id="username"><?php echo $username; ?></span>
 	<?php if ($is_connected != 'No' && !$office) {
 				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);

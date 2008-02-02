@@ -131,7 +131,7 @@ if ($Comment['deleted']) {
 			<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0">
 				<b>DEBUG: Comment Source</b>
 			</div>
-			<pre><?php echo(htmlentities($Comment['wikitext'])); ?></pre>
+			<pre><?php echo(xml_escape($Comment['wikitext'])); ?></pre>
 <?php	}
 	} else if (!$show_as_deleted) {
 		$links = array();

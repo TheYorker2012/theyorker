@@ -37,7 +37,7 @@ foreach ($colleges as $college) {
 	if ($college['college_id'] == $this->validation->college) {
 		echo( ' selected="selected"');
 	}
-	echo('>'.htmlentities($college['college_name'],ENT_QUOTES,'UTF-8').'</option>'."\n");
+	echo('>'.xml_escape($college['college_name']).'</option>'."\n");
 }
 ?>
 				</select>

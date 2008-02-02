@@ -1800,7 +1800,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				$messages = $this->mSource->AttendingOccurrence($occurrence->SourceOccurrenceId, $new_attend);
 				if (!isset($messages['error']) || !empty($messages['error'])) {
 					$this->messages->AddMessage('success',
-						'Your attendance to &quot;'.htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8')."&quot; has been changed to $new_attendence.");
+						'Your attendance to &quot;'.xml_escape($occurrence->Event->Name)."&quot; has been changed to $new_attendence.");
 				}
 			} else {
 				$this->messages->AddMessage('error', 'You cannot set an attendance on this event.');

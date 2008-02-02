@@ -218,9 +218,9 @@ if (!empty($Occurrences)) {
 		));
 // 		echo($occurrence->StartTime->Format('%T'));
 // 		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-// 		echo(htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8'));
+// 		echo(xml_escape($occurrence->Event->Name));
 // 		if (!empty($occurrence->LocationDescription)) {
-// 			echo(' ('.htmlentities($occurrence->LocationDescription, ENT_QUOTES, 'utf-8').')');
+// 			echo(' ('.xml_escape($occurrence->LocationDescription).')');
 // 		}
 		echo('</td></tr>');
 	}

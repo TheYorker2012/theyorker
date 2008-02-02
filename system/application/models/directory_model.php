@@ -471,15 +471,15 @@ class Directory_model extends Model {
 		}
 		$query = $this->db->query($sql, array(
 			$EntityId,
-			htmlentities($Data['description'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['postal_address'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['postcode'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['phone_external'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['phone_internal'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['fax_number'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['email_address'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['url'], ENT_QUOTES, 'UTF-8'),
-			htmlentities($Data['opening_hours'], ENT_QUOTES, 'UTF-8'),
+			xml_escape($Data['description']),
+			xml_escape($Data['postal_address']),
+			xml_escape($Data['postcode']),
+			xml_escape($Data['phone_external']),
+			xml_escape($Data['phone_internal']),
+			xml_escape($Data['fax_number']),
+			xml_escape($Data['email_address']),
+			xml_escape($Data['url']),
+			xml_escape($Data['opening_hours']),
 			$DirectoryEntryName));
 		//return ($this->db->affected_rows() > 0);
 		return $this->db->insert_id();

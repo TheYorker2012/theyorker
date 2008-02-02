@@ -188,12 +188,12 @@ class Date_uri
 			if (TRUE) {
 				// Echo the regular expression
 				echo '<h2>Dynamic Date Regex</h2><div><form><fieldset><textarea cols="100" rows="10">';
-				echo htmlentities(
+				echo xml_escape(
 					'			if ($AllowRange) {'."\n".
 					'				return \''.$multiple_regex."';\n".
 					'			} else {'."\n".
 					'				return \''.$single_regex."';\n".
-					'			}', ENT_QUOTES, 'utf-8');
+					'			}');
 				echo '</textarea></fieldset></form></div>';
 			}
 			

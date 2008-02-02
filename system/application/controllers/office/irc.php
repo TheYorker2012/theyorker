@@ -223,7 +223,7 @@ class Irc extends Controller
 					}
 					
 					if (is_array($new_message)) {
-						$new_message['content'] = $this->_autolinkify(htmlentities($new_message['content'], ENT_QUOTES, 'utf-8'));
+						$new_message['content'] = $this->_autolinkify(xml_escape($new_message['content']));
 						$data['Messages'][] = $new_message;
 					}
 					if (/*$this->irc_client->Attached() &&*/ $get_messages) {
@@ -231,7 +231,7 @@ class Irc extends Controller
 						$messages = $this->irc_client->WaitForMessages(20*1000);
 						if (is_array($messages)) {
 							foreach ($messages as $message) {
-								$message['content'] = $this->_autolinkify(htmlentities($message['content'], ENT_QUOTES, 'utf-8'));
+								$message['content'] = $this->_autolinkify(xml_escape($message['content']));
 								$data['Messages'][] = $message;
 							}
 						}

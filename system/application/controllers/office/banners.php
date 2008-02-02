@@ -60,11 +60,11 @@ class Banners extends Controller
 		//has user got access to office
 		if (!CheckPermissions('editor')) return;
 
-		$banner_title = htmlentities($this->input->post('banner_title'), ENT_NOQUOTES, 'UTF-8');
-		$banner_link = htmlentities($this->input->post('banner_link'), ENT_NOQUOTES, 'UTF-8');
-		$banner_scheduled = htmlentities($this->input->post('banner_scheduled'), ENT_NOQUOTES, 'UTF-8');
-		$banner_schedule_date = htmlentities($this->input->post('banner_schedule_date'), ENT_NOQUOTES, 'UTF-8');
-		$new_homepage_id = htmlentities($this->input->post('banner_homepage'), ENT_NOQUOTES, 'UTF-8');
+		$banner_title = xml_escape($this->input->post('banner_title'), ENT_NOQUOTES, 'UTF-8');
+		$banner_link = xml_escape($this->input->post('banner_link'), ENT_NOQUOTES, 'UTF-8');
+		$banner_scheduled = xml_escape($this->input->post('banner_scheduled'), ENT_NOQUOTES, 'UTF-8');
+		$banner_schedule_date = xml_escape($this->input->post('banner_schedule_date'), ENT_NOQUOTES, 'UTF-8');
+		$new_homepage_id = xml_escape($this->input->post('banner_homepage'), ENT_NOQUOTES, 'UTF-8');
 		$old_homepage_id = $this->Banner_Model->GetBannersHomepageId($banner_id);
 
 		$delete = ($this->input->post('name_delete_button') == 'Delete');

@@ -3,7 +3,7 @@
 	<div class="Entry">
 <?php
 if ($user == TRUE) {
-	$name = htmlentities($user['firstname'].' '.$user['surname']);
+	$name = xml_escape($user['firstname'].' '.$user['surname']);
 	if ($user['vote_id'] == FALSE) {
 		echo('		'.$sidebar_vote['newvote']);
 ?>
