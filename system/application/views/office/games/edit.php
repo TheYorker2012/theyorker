@@ -57,7 +57,7 @@
 					type='checkbox'
 					name='game_activated_field'
 					id='game_activated_field'
-					<? if($game['activated']){echo('CHECKED');} ?> />
+					<?php if($game['activated']){echo('CHECKED');} ?> />
 				<br />
 			</fieldset>
 		&nbsp;
