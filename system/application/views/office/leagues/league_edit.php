@@ -19,12 +19,18 @@
 			<?php } ?>
 		</ul>
 	</div>
+	<h2>Related Actions</h2>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/league/edit/<?php echo $league_id; ?>">Edit league's content.</a></li>
+			<li><a href="/office/reviewtags">Create/Edit Tags.</a></li>
+		</ul>
+	</div>
 </div>
 <div id="MainColumn">
-
-	<div class="BlueBox">
-		<h2>edit league</h2>
-		<form method="post" action="/office/leagues/edit/<?php echo $league_form['league_id']; ?>">
+	<form method="post" action="/office/leagues/edit/<?php echo $league_form['league_id']; ?>">
+		<div class="BlueBox">
+			<h2>edit league</h2>
 			<fieldset>
 				<label for="league_name">Name:</label>
 				<input type="text" name="league_name" value="<?php
@@ -52,11 +58,39 @@
 				if(!empty($league_form['league_size'])){echo $league_form['league_size'];}
 				?>" />
 			</fieldset>
-
+		</div>
+		<div class="BlueBox">
+			<h2>current tags</h2>
+			<?php echo $tags_current_text; ?>
 			<fieldset>
-				<input name="league_edit" type="submit" value="Edit" class="button" />
+				<select size="5" name="current_tags[]" style="float: none; width: 350px;" multiple>
+				<?php
+				foreach ($current_tags as $tag)
+				{
+					echo '				<option value="'.$tag['tag_id'].'">'.$tag['tag_group_name'].' -> '.$tag['tag_name'].'</option>'."\n";
+				}
+				?>
+				</select>
 			</fieldset>
-		</form>
-	</div>
+		</div>
+		<div class="BlueBox">
+			<h2>new tags</h2>
+			<?php echo $tags_new_text; ?>
+			<fieldset>
+				<select size="8" name="new_tags[]" style="float: none;  width: 350px;" multiple>
+				<?php
+				foreach ($new_tags as $tag)
+				{
+					echo '				<option value="'.$tag['tag_id'].'">'.$tag['tag_group_name'].' -> '.$tag['tag_name'].'</option>'."\n";
+				}
+				?>
+				</select>
+			</fieldset>
+			
+			<fieldset>
+				<input name="league_edit" type="submit" value="Update League" class="button" />
+			</fieldset>
+		</div>
+	</form>
 	<a href='/office/leagues'>Go Back</a>
 </div>
