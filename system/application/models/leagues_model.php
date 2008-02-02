@@ -387,6 +387,92 @@ class Leagues_model extends Model
 		}
 	}
 	
+	function GetLeagueVenueSuggestions($league_id){
+		$sql='
+		SELECT
+		    tags.tag_id,
+		    tags.tag_name,
+		    tag_groups.tag_group_id,
+		    tag_groups.tag_group_name,
+		    organisations.organisation_entity_id as venue_id,
+		    organisations.organisation_directory_entry_name as venue_shortname,
+		    organisations.organisation_name as venue_name,
+			content_types.content_type_name as section_name,
+			content_types.content_type_codename as section_codename
+		FROM `league_tags`
+		INNER JOIN `leagues` ON `league_tags`.`league_tag_league_id` = `leagues`.`league_id`
+		INNER JOIN `tags` ON `league_tags`.`league_tag_tag_id` = `tags`.`tag_id`
+		INNER JOIN `tag_groups` ON `tags`.`tag_tag_group_id` = `tag_groups`.`tag_group_id`
+		INNER JOIN `organisation_tags` ON `league_tags`.`league_tag_tag_id` = `organisation_tags`.`organisation_tag_tag_id`
+		INNER JOIN `organisations` ON `organisation_tags`.`organisation_tag_organisation_entity_id` = `organisations`.`organisation_entity_id`
+		INNER JOIN `content_types` ON `leagues`.`league_content_type_id` = `content_types`.`content_type_id`
+		INNER JOIN `review_contexts` ON
+		    `organisations`.`organisation_entity_id` = `review_contexts`.`review_context_organisation_entity_id` AND
+		    `review_contexts`.`review_context_content_type_id` = `leagues`.`league_content_type_id`
+		WHERE `league_tag_league_id` = ?
+		AND review_contexts.review_context_live_content_id IS NOT NULL
+		AND review_contexts.review_context_deleted = 0
+		AND review_contexts.review_context_content_type_id = leagues.league_content_type_id
+		ORDER BY venue_name ASC
+		';
+		$query = $this->db->query($sql,array($league_id));
+		
+		//The results are a list that can contain duplicate venues because they have more than one tag in common. (duplicates are grouped together)
+		//This will push the duplicates into one row and the tags into an array
+		$previous_venue_id = null;
+		$result_positon = 0;
+		$result = array();
+		foreach ( $query->result_array() as $venue){
+			if($previous_venue_id == $venue['venue_id'] && !$already_in_league){
+				//found duplicate, dont copy venue information again, just tag information
+				$result[$result_positon]["tags"][] = 
+					array(
+						"tag_id" => $venue["tag_id"],
+						"tag_name" => $venue["tag_name"],
+						"tag_group_id" => $venue["tag_group_id"],
+						"tag_group_name" => $venue["tag_group_name"],
+					);
+			}else{
+				//Check that the suggested venue for the league is not currently in the league already!
+				$current_venues = self::GetBasicVenuesFromLeague($league_id);
+				$already_in_league = false;
+				foreach ($current_venues as $current_venue){
+					if($current_venue['id']==$venue['venue_id']) $already_in_league = true;
+				}
+				if(!$already_in_league)
+				{
+					//no duplicate of this venue has been found and it is not currently in the league, therefore a new position in the array should be made
+					if(!empty($previous_venue_id)) $result_positon++;
+					$result[] = 
+					array (
+						"venue_id" => $venue["venue_id"],
+						"venue_shortname" => $venue["venue_shortname"],
+						"venue_name" => $venue["venue_name"],
+						"section_codename" => $venue["section_codename"],
+						"tags" => array
+								(
+									0 => array
+										(
+											"tag_id" => $venue["tag_id"],
+											"tag_name" => $venue["tag_name"],
+											"tag_group_id" => $venue["tag_group_id"],
+											"tag_group_name" => $venue["tag_group_name"]
+										)
+								)
+					);
+				}
+			}
+			$previous_venue_id = $venue['venue_id'];
+		}
+		
+		function compare_tag_count($a, $b) { 
+			if(count($a['tags']) == count($b['tags'])) return 0;
+			return (count($a['tags']) < count($b['tags'])) ? 1 : -1;
+		}
+		usort($result, 'compare_tag_count');
+		return $result;
+	}
+	
 	function DoesLeaguePositionExist($league_id, $order_number)
 	{
 		$sql = '

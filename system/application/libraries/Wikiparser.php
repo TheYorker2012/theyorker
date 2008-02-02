@@ -53,6 +53,7 @@ class Wikiparser {
 	protected $newline_mode;
 	protected $enable_headings;
 	protected $enable_youtube;
+	protected $enable_mediaplayer;
 	protected $enable_quickquotes;
 	protected $entities;
 
@@ -102,6 +103,7 @@ class Wikiparser {
 		$this->newline_mode = '';
 		$this->enable_headings = true;
 		$this->enable_youtube = true;
+		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
 		$this->entities = array(
 			'\'' => htmlentities('\'', ENT_QUOTES, 'UTF-8'),
@@ -374,49 +376,23 @@ class Wikiparser {
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
 			//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
-			$output = '
-<div style="text-align:center;">
-<script type="text/javascript">
-<!--
-// Version check based upon the values entered above in "Globals"
-var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+			$params = array('src', 'http://www.youtube.com/v/' . $href,
+					'width', '340',
+					'height', '280');
+			$output = $this->get_inline_flash_code($params);
 
-// Check to see if the version meets the requirements for playback
-if (hasReqestedVersion) {
-	// if we\'ve detected an acceptable version
-	// embed the Flash Content SWF when all tests are passed
-	AC_FL_RunContent(
-				"src", "http://www.youtube.com/v/'.$href.'",
-				"width", "340",
-				"height", "280",
-				"align", "center",
-				"id", "movie",
-				"quality", "high",
-				"bgcolor", "#FFFFFF",
-				"name", "movie",
-				"allowScriptAccess","sameDomain",
-				"type", "application/x-shockwave-flash",
-				"codebase", "http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab",
-				"pluginspage", "http://www.adobe.com/go/getflashplayer"
-	);
-} else {  // flash is too old or we can\'t detect the plugin
-	var alternateContent = \'<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />\'
-	+ "<b>YouTube Video Clip</b><br /><br /> "
-	+ "This content requires the Adobe Flash Player 9. "
-	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
-	+ "</div>";
-	document.write(alternateContent);  // insert non-flash content
-}
-// -->
-</script>
-<noscript>
-	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
-	<b>YouTube Video Clip</b><br /><br />
-  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
-  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
-  	</div>
-</noscript>
-</div>';
+			if ($this->in_paragraph) {
+				// divs aren't allowed in paragraphs, so close and reopen
+				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
+			}
+			return $output;
+		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
+			$params = array('src', '/flash/mediaplayer.swf',
+					'width', '340',
+					'height', '280',
+					'allowfullscreen', 'true',
+					'flashvars', 'height=340&width=280&file=' . $href . '&backcolor=0xFF6A00&frontcolor=0xFFFFFF&lightcolor=0x000000&screencolor=0xFFFFFF&overstretch=true&showdownload=true');
+			$output = $this->get_inline_flash_code($params);
 			if ($this->in_paragraph) {
 				// divs aren't allowed in paragraphs, so close and reopen
 				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
@@ -810,6 +786,62 @@ Done.
 
 	function handle_restore_nowiki($matches) {
 		return $this->nowikis[$this->nextnowiki++];
+	}
+
+	/**
+	 *	@brief	Return inline JS to detect Flash Version and generate embed tags (used by MediaPlayer and YouTube)
+	 *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
+	 *	@date	01/02/2008
+	 *	@param	$params - array containing all the parameters that should be passed to flash movie
+	 */
+	function get_inline_flash_code ($params) {
+		$default_params = array(
+			'align', 'center',
+			'id', 'movie',
+			'quality', 'high',
+			'bgcolor', '#FFFFFF',
+			'name', 'movie',
+			'allowScriptAccess', 'sameDomain',
+			'type', 'application/x-shockwave-flash',
+			'codebase', 'http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab',
+			'pluginspace', 'http://www.adobe.com/go/getflashplayer'
+		);
+		$params = array_merge($default_params, $params);
+		foreach ($params as &$param) {
+			$param = '"' . $param . '"';
+		}
+		$params = implode(',', $params);
+		$output = '
+<div style="text-align:center;">
+<script type="text/javascript">
+<!--
+// Version check based upon the values entered above in "Globals"
+var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+// Check to see if the version meets the requirements for playback
+if (hasReqestedVersion) {
+	// if we\'ve detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(' . $params . ');
+} else {  // flash is too old or we can\'t detect the plugin
+	var alternateContent = \'<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />\'
+	+ "<b>Flash Video Clip</b><br /><br /> "
+	+ "This content requires the Adobe Flash Player 9. "
+	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
+	+ "</div>";
+	document.write(alternateContent);  // insert non-flash content
+}
+// -->
+</script>
+<noscript>
+	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
+	<b>Flash Video Clip</b><br /><br />
+  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
+  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+  	</div>
+</noscript>
+</div>';
+		return $output;
 	}
 }
 ?>

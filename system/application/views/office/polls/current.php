@@ -17,9 +17,9 @@
 	foreach ($running_poll_list as $poll)
 	{
 		if($poll['is_displayed'])
-			echo('				<option value="'.$poll['id'].'" selected="selected">'.$poll['question'].'</option>'."\n");
+			echo('				<option value="'.$poll['id'].'" selected="selected">'.htmlentities($poll['question'], ENT_QUOTES, 'UTF-8').'</option>'."\n");
 		else
-			echo('				<option value="'.$poll['id'].'">'.$poll['question'].'</option>'."\n");
+			echo('				<option value="'.$poll['id'].'">'.htmlentities($poll['question'], ENT_QUOTES, 'UTF-8').'</option>'."\n");
 	}
 ?>
 			</select>

@@ -18,9 +18,9 @@
 		$choice_count++;
 ?>
 <?php echo('			<label for="poll_choice_name['.$choice['id'].']">Choice #'.$choice_count.': </label>'."\n"); ?>
-<?php echo('			<input type="text" id="poll_choice_name['.$choice['id'].']" name="poll_choice_name['.$choice['id'].']" value="'.$choice['name'].'" style="width: 250px" />'."\n"); ?>
+<?php echo('			<input type="text" id="poll_choice_name['.$choice['id'].']" name="poll_choice_name['.$choice['id'].']" value="'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').'" style="width: 250px" />'."\n"); ?>
 <?php echo('			<label for="poll_choice_delete['.$choice['id'].']">Delete: </label>'."\n"); ?>
-<?php echo('			<input type="checkbox" id="poll_choice_delete['.$choice['id'].']" name="poll_choice_delete['.$choice['id'].']" value="'.$choice['name'].'" style="width: 250px" />'."\n"); ?>
+<?php echo('			<input type="checkbox" id="poll_choice_delete['.$choice['id'].']" name="poll_choice_delete['.$choice['id'].']" value="'.htmlentities($choice['name'], ENT_QUOTES, 'UTF-8').'" style="width: 250px" />'."\n"); ?>
 <?php echo('			<br /><br />'."\n"); ?>
 <?php
 	}
