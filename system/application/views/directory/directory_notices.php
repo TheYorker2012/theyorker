@@ -3,25 +3,25 @@
 	function DoTeam($team, $in_list = TRUE)
 	{
 		if ($in_list) {
-			echo '<LI>';
+			echo('<li>');
 		}
 		if (isset($team['notices'])) {
-			echo '<a href="">';
+			echo('<a href="">');
 		}
-		echo $team['name'];
+		echo(xml_escape($team['name']));
 		if (isset($team['notices'])) {
-			echo ' ('.count($team['notices']).' notices)';
-			echo '</a>';
+			echo(' ('.count($team['notices']).' notices)');
+			echo('</a>');
 		}
 		if (!empty($team['subteams'])) {
-			echo '<UL>';
+			echo('<ul>');
 			foreach ($team['subteams'] as $subteam) {
 				DoTeam($subteam);
 			}
-			echo '</UL>';
+			echo('</ul>');
 		}
 		if ($in_list) {
-			echo '</LI>';
+			echo('</li>');
 		}
 		return count($team['subteams']);
 	}
@@ -35,15 +35,15 @@
 		// Draw the tree of teams
 		foreach ($teams['subteams'] as $team) {
 			if (!DoTeam($team, FALSE)) {
-				echo '<br />';
+				echo('<br />');
 			}
 		}
 	}
 ?>
 
-<PRE>$organisation=<?php var_dump($organisation); ?></PRE>
-<PRE>$teams=<?php var_dump($teams); ?></PRE>
-<PRE>$notices=<?php var_dump($notices); ?></PRE>
+<pre>$organisation=<?php var_dump($organisation); ?></pre>
+<pre>$teams=<?php var_dump($teams); ?></pre>
+<pre>$notices=<?php var_dump($notices); ?></pre>
 */
 ?>
 
@@ -58,17 +58,18 @@
 foreach($notices as $notice) {
 ?>
 	<div class="BlueBox">
-		<h2><?php echo(htmlspecialchars($notice['notice_subject'])); ?></h2>
-		<div class="Date"><?php echo(htmlspecialchars($notice['notice_updated'])); ?></div>
+		<h2><?php echo(xml_escape($notice['notice_subject'])); ?></h2>
+		<div class="Date"><?php echo(xml_escape($notice['notice_updated'])); ?></div>
 		<div class="Author">
 <?php
 	$recpts = array();
-	foreach($notice['recipients'] as $recpt) 
-		$recpts[] = htmlspecialchars($teams_all[$recpt]['name']);
+	foreach($notice['recipients'] as $recpt) {
+		$recpts[] = xml_escape($teams_all[$recpt]['name']);
+	}
 	echo(implode(', ', $recpts));
 ?>
 		</div>
-		<div>
+		<div><?php /* notice_content_cache is xhtml */ ?>
 			<?php echo('<p>'.$notice['notice_content_cache'].'</p>'); ?>
 		</div>
 	</div>
