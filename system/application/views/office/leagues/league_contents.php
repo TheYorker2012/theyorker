@@ -3,6 +3,10 @@
 	<div class="Entry">
 		<?php echo $page_information; ?>
 	</div>
+	<h2>Related Actions</h2>
+	<ul>
+		<li><a href="/office/leagues/edit/<?php echo $league_id; ?>">Edit this league</a></li>
+	</ul>
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
@@ -35,6 +39,36 @@
 				echo('>Remove</a></td>'."\n");
 				echo('	</tr>'."\n");
 				$index++;
+			}
+			?>
+		</table>
+	</div>
+	<div class="BlueBox">
+	<h2>suggested venues</h2>
+	<?php echo $suggestion_information; //echo print_r($suggestions);
+	?>
+		<table>
+			<thead>
+				<tr>
+					<th>Venue Name</th><th>Tags</th><th>Add</th>
+				</tr>
+			</thead>
+			<?php
+			foreach($suggestions as $suggestion){
+				echo('	<tr>'."\n");
+				echo('		<td>'."\n");
+				echo('			<a href="/office/reviews/'.$suggestion['venue_shortname'].'/'.$suggestion['section_codename'].'/review">'.$suggestion['venue_name'].'</a>'."\n");
+				echo('		</td>'."\n");
+				echo('		<td>'."\n");
+				$count=0;
+				foreach ($suggestion['tags'] as $tag){
+					if($count>0) echo ", ";
+					echo "'".$tag['tag_name']."'";
+					$count++;
+				}
+				echo('		</td>'."\n");
+				echo('		<td><a href="/office/league/add/'.$league_id.'/'.$suggestion['venue_id'].'" >Add</a></td>'."\n");
+				echo('	</tr>'."\n");
 			}
 			?>
 		</table>

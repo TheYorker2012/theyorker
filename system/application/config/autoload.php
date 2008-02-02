@@ -79,16 +79,4 @@ $autoload['plugin'] = array();
 
 $autoload['config'] = array('yorker');
 
-
-/*
-| -------------------------------------------------------------------
-|  Auto-load Core Libraries
-| -------------------------------------------------------------------
-|
-| DEPRECATED:  Use $autoload['libraries'] above instead.
-|
-*/
-// $autoload['core'] = array();
-
-
 ?>

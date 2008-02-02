@@ -151,6 +151,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/advertising'>Advertising</a>
 		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/polls'>Polls</a>
+		</div>
 <?php
 	}
 ?>
@@ -220,7 +223,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/games/' onclick="alert('Coming soon...'); return false;">Game Zone</a>
+			<a href='/office/games/'>Game Zone</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>

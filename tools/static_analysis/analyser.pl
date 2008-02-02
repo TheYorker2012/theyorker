@@ -7,7 +7,8 @@ use warnings;
 my $all_tests = {
 	php_syntax      => "Perform a syntax check of all php files.",
 	php_dependency  => "Perform a CI dependency check on php files.",
-	php_csi         => "Perform a a coding standards inspection on all php files.",
+	php_csi         => "Perform a coding standards inspection on all php files.",
+	xml_csi         => "Perform an XML coding standards inspection on all php files.",
 	js_warnings     => "Show warnings for potential JS problems.",
 };
 
@@ -19,7 +20,8 @@ my $all_test_sets = {
 	php    => [ "All PHP tests.",
 	            [ 'php_syntax',
 	              'php_dependency',
-	              'php_csi', ],
+	              'php_csi', 
+	              'xml_csi', ],
 	            [  ],
 	          ],
 	js     => [ "All Javascript tests.",

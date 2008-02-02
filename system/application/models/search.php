@@ -119,7 +119,7 @@ QUERY;
 			}
 			$sql.= 'FALSE) ';
 			$sql.= ordering_addition($ordering);
-			$sql.= "LIMIT $offset, $limit";
+			$sql.= 'LIMIT '.$offset.', '.$limit;
 			$result['articles'] = $this->db->query($sql, array($string, $string));
 		}
 		if ($filter & FILTER_YORK) {
