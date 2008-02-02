@@ -33,6 +33,17 @@ function js_literalise($value)
 	elseif (null === $value) {
 		return 'null';
 	}
+	elseif (is_array($value)) {
+		// represent arrays as hashes
+		$result = '{';
+		$comma = '';
+		foreach ($value as $key => $item) {
+			$result .= $comma.js_literalise($key).':'.js_literalise($item);
+			$comma = ',';
+		}
+		$result .= '}';
+		return $result;
+	}
 	else {
 		return '"'.str_replace(
 			array('"',  '<?'),

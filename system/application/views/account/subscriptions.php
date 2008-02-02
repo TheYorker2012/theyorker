@@ -5,10 +5,11 @@
 	<script type='text/javascript'>
 	var societies = Array();
 	<?php foreach ($organisations as $soc) { ?>
-	societies['<?php echo($soc['id']); ?>'] = Array();
-	societies['<?php echo($soc['id']); ?>']['name'] = '<?php echo(js_literalise($soc['name'])); ?>';
-	societies['<?php echo($soc['id']); ?>']['directory'] = '<?php echo(js_literalise($soc['directory'])); ?>';
-	societies['<?php echo($soc['id']); ?>']['url'] = '<?php echo(js_literalise($soc['url'])); ?>';
+	societies['<?php echo($soc['id']); ?>'] = <?php echo(js_literalise(array(
+		'name'      => $soc['name'],
+		'directory' => $soc['directory'],
+		'url'       => $soc['url'],
+	))); ?>;
 	<?php } ?>
 	var subscription_type = '<?php echo($type); ?>';
 	</script>
