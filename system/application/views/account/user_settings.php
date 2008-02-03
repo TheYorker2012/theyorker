@@ -59,10 +59,10 @@ foreach ($years as $year) {
 				<label for="time">Time Format:</label>
 				<select name="time" id="time">
 					<option value="12"<?php
-						if ($this->validation->time == '12') { echo ' selected="selected"'; }
+						if ($this->validation->time == '12') { echo(' selected="selected"'); }
 					?>>12hr</option>
 					<option value="24"<?php
-						if ($this->validation->time == '24') { echo ' selected="selected"'; }
+						if ($this->validation->time == '24') { echo(' selected="selected"'); }
 					?>>24hr</option>
 				</select>
 				<br />

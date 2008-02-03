@@ -56,8 +56,8 @@ function select_image(id) {
 			<?php if($gallery_images->num_rows() > 0) {
 				foreach ($gallery_images->result() as $image) {?>
 				<div style="display:inline;padding: 10px;">
-					<a href="#" onclick="return select_image(<?php echo $image->image_id?>);">
-					<?php echo $this->image->getImage($image->image_id, $image->image_image_type_id)?>
+					<a href="#" onclick="return select_image(<?php echo($image->image_id); ?>);">
+					<?php echo($this->image->getImage($image->image_id, $image->image_image_type_id)); ?>
 					</a>
 				</div>
 				<?php } ?>

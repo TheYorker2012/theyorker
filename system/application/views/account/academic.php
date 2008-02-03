@@ -17,8 +17,8 @@
 	</script>
 	
 	<div class='blue_box' style='width: auto;'>
-		<h2><?php echo $heading; ?></h2>
-		<?php echo $intro; ?>
+		<h2><?php echo($heading); ?></h2>
+		<?php echo($intro); ?>
 	</div>
 
 	<div style='float: left; width: 320px;'>
@@ -27,7 +27,7 @@
 			<select name='course' id='course' size='1' onChange='get_modules(this);'>
 				<option value='' selected='selected'></option>
 			<?php foreach ($courses as $course) { ?>
-				<option value='<?php echo $course['department_id']; ?>'><?php echo $course['department_name']; ?></option>
+				<option value='<?php echo($course['department_id']); ?>'><?php echo(xml_escape($course['department_name'])); ?></option>
 			<?php } ?>
 			</select>
 		</div>
@@ -41,7 +41,7 @@
 		<div id='current_modules' style='font-size: small;'>
 			<ul>
 			<?php foreach ($current as $module) { ?>
-				<li><?php echo $module['module_name']; ?></li>
+				<li><?php echo(xml_escape($module['module_name'])); ?></li>
 			<?php } ?>
 			</ul?
 		</div>

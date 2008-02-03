@@ -78,7 +78,7 @@ if ($weather_forecast != null) {
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
-		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
+		"<?php echo(xml_escape($quote->quote_text));?>" - <b><?php echo(xml_escape($quote->quote_author));?></b>
 	</div>
 <?php
 }

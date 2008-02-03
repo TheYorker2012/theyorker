@@ -560,7 +560,6 @@ class Wikiparser {
 
 	function handle_symbols($matches)
 	{
-		//echo var_dump($matches);
 		if ($matches[1] == '&') {
 			return '&amp;';
 		} elseif ($matches[0] == '<') {
