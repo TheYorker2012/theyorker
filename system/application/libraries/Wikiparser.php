@@ -494,9 +494,8 @@ class Wikiparser {
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen(html_entity_decode($matches[1]));
+		$amount = strlen(xml_unescape($matches[1]));
 		return $this->emphasize($amount);
-
 	}
 
 	/**
