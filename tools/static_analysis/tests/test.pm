@@ -31,7 +31,7 @@ sub validateConfiguration
 sub printError
 {
 	my ($self, $file, $line, $error) = @_;
-	print STDERR "$file\t: $line\t- $error\n";
+	print "$file\t: $line\t- $error\n";
 }
 
 1;
