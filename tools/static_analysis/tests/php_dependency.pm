@@ -127,7 +127,7 @@ sub runTest
 				my $module;
 				if ($file =~ /system\/application\//) {
 					# Debug stuff that should not be committed
-					if ($file =~ /(var_dump|AddDumpMessage)\s*\(/) {
+					if ($file =~ /(var_dump|print_r|AddDumpMessage)\s*\(/) {
 						$self->printError($file, $lineno, "Use of debug function '$1'");
 					}
 					# Stuff that should only be inside views

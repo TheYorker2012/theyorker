@@ -1,7 +1,7 @@
 <?php
 	function PrintSectionTableContents($header_name, $data)
 	{
-		echo '	<b>'.$header_name.'</b>';
+		echo '	<b>'.xml_escape($header_name).'</b>';
 		echo('	<div class="ArticleBox">'."\n");
 		echo('		<table>'."\n");
 		echo('			<thead>'."\n");
@@ -24,10 +24,10 @@
 			$dateformatted = date('d/m/y @ H:i', $section['publish']);
 			echo('				<tr class="tr'.$alternate.'">'."\n");
 			echo('					<td>'."\n");
-			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.$section['heading'].'</a>'."\n");
+			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.xml_escape($section['heading']).'</a>'."\n");
 			echo('					</td>'."\n");
 			echo('					<td>'."\n");
-			echo('						'.$section['user_firstname'].' '.$section['user_surname']."\n");
+			echo('						'.xml_escape($section['user_firstname'].' '.$section['user_surname'])."\n");
 			echo('					</td>'."\n");
 			echo('					<td style="text-align:right;">'."\n");
 			echo('						'.$dateformatted."\n");
@@ -48,7 +48,7 @@
 		echo '<h4>Write Requests</h4>';
 		foreach ($user['writer']['requested'] as $requested)
 		{
-			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.$requested['title'].'</a><br />';
+			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.xml_escape($requested['title']).'</a><br />';
 		}
 		echo '<br />';
 	}
@@ -57,7 +57,7 @@
 		echo '<h4>Accepted Requests</h4>';
 		foreach ($user['writer']['accepted'] as $accepted)
 		{
-			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.$accepted['title'].'</a><br />';
+			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.xml_escape($accepted['title']).'</a><br />';
 		}
 		echo '<br />';
 	}
@@ -107,7 +107,7 @@
 				$hr_first = TRUE;
 			else
 				echo '<hr />';
-			echo '<h5>'.$category['name'].'</h5>';
+			echo '<h5>'.xml_escape($category['name']).'</h5>';
 			$br_first = FALSE; //no br is drawn after the category name
 			if (count($category['unpublished']) > 0)
 			{
@@ -126,10 +126,3 @@
 	echo '</div>';
 ?>
 
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
-?>

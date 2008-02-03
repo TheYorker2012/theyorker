@@ -43,7 +43,7 @@
 			<?php foreach ($current as $module) { ?>
 				<li><?php echo(xml_escape($module['module_name'])); ?></li>
 			<?php } ?>
-			</ul?
+			</ul>
 		</div>
 	</div>
 

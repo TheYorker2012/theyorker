@@ -8,7 +8,7 @@
 		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-				<label for="r_submit_edit">'.$category['name'].'</label>
+				<label for="r_submit_edit">'.xml_escape($category['name']).'</label>
 				<input type="hidden" name="r_categoryid" id="r_categoryid" value="'.$category_id.'" />
 				<input type="submit" name="r_submit_delete" id="r_submit_delete" value="Delete" class="button" />
 				<input type="submit" name="r_submit_edit" id="r_submit_edit" value="Edit" class="button" />
@@ -43,7 +43,7 @@ echo '<div class="blue_box">
 		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-				<label for="r_submit_edit">'.$category['name'].'</label>
+				<label for="r_submit_edit">'.xml_escape($category['name']).'</label>
 				<input type="hidden" name="r_sectionorder" id="r_sectionorder" value="'.$category['section_order'].'" />';
 				if ($category['section_order'] != 1)
 					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />';
@@ -60,11 +60,3 @@ echo '<div class="blue_box">
 	?>
 
 </div>
-
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
-?>

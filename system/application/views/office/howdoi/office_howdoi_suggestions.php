@@ -43,7 +43,7 @@
 			$first = TRUE;
 		else
 			echo('	<hr />'."\n");
-		echo('	<h5>'.$category['name'].'</h5>'."\n");
+		echo('	<h5>'.xml_escape($category['name']).'</h5>'."\n");
 		
 		if (count($category['suggestions']) > 0)
 		{
@@ -69,10 +69,10 @@
 				$dateformatted = date('d/m/y @ H:i', $suggestion['created']);
 				echo('				<tr class="tr'.$alternate.'">'."\n");
 				echo('					<td>'."\n");
-				echo('						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">'.$suggestion['title'].'</a>'."\n");
+				echo('						<a href="/office/howdoi/editquestion/'.$suggestion['id'].'">'.xml_escape($suggestion['title']).'</a>'."\n");
 				echo('					</td>'."\n");
 				echo('					<td>'."\n");
-				echo('						'.$suggestion['username']."\n");
+				echo('						'.xml_escape($suggestion['username'])."\n");
 				echo('					</td>'."\n");
 				echo('					<td style="text-align:right;">'."\n");
 				echo('						'.$dateformatted."\n");
@@ -103,7 +103,7 @@
 			<select name="a_category" >';
 			foreach ($categories as $category_id => $category)
 			{
-				echo '<option value="'.$category['codename'].'">'.$category['name'].'</option>';
+				echo '<option value="'.xml_escape($category['codename']).'">'.xml_escape($category['name']).'</option>';
 			}
 			echo '</select>
 			<input type="submit" class="button" value="Ask" name="r_submit_ask" />

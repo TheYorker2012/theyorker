@@ -37,7 +37,7 @@ class Image {
 		}
 		$tagInner = '';
 		$data['alt'] = $data['title'];
-		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
+		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.xml_escape($value).'" ';
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.' />';
 	}
 

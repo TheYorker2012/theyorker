@@ -41,7 +41,7 @@
 					else
 						echo '<hr>';
 					$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-					echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>';
+					echo '<a href="/office/howdoi/editquestion/'.$parameters['article_id'].'/'.$revision['id'].'">"'.xml_escape($revision['title']).'"</a>';
 					if ($revision['id'] == $article['header']['live_content'])
 					{
 						echo '<br /><span class="orange">(Published';
@@ -51,7 +51,7 @@
 					}
 					elseif ($revision['id'] == $article['displayrevision']['id'])
 						echo '<br /><span class="orange">(Displayed)</span>';
-					echo '<br />by '.$revision['username'].'<br />on '.$dateformatted;
+					echo '<br />by '.xml_escape($revision['username']).'<br />on '.$dateformatted;
 				}
 			}
 			else
@@ -66,8 +66,8 @@ if ($article['header']['status'] == 'suggestion')
 {
 	echo '<div class="blue_box">';
 	echo '<h2>suggestion info</h2>';
-	echo '<b>Title: </b>'.$article['header']['requesttitle'].'<br />
-			<b>Description: </b>'.$article['header']['requestdescription'].'<br />
+	echo '<b>Title: </b>'.xml_escape($article['header']['requesttitle']).'<br />
+			<b>Description: </b>'.xml_escape($article['header']['requestdescription']).'<br />
 			</div>';
 }
 ?>
@@ -77,8 +77,8 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 {
 	echo '<div class="blue_box">';
 	echo '<h2>request info</h2>';
-	echo '<b>Title: </b>'.$article['header']['requesttitle'].'<br />
-		<b>Description: </b>'.$article['header']['requestdescription'].'<br />';
+	echo '<b>Title: </b>'.xml_escape($article['header']['requesttitle']).'<br />
+		<b>Description: </b>'.xml_escape($article['header']['requestdescription']).'<br />';
 	if ($user['officetype'] != 'Low')
 	{
 		echo '<a href="/office/howdoi/editrequest/'.$parameters['article_id'].'">[modify and assign]</a>';
@@ -93,7 +93,7 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 			<label for="a_question">Question:</label>
 			<input type="text" name="a_question" value="';
 			if ($article['displayrevision'] != FALSE)
-				echo $article['displayrevision']['heading'];
+				echo xml_escape($article['displayrevision']['heading']);
 			echo '" /><br />
 			<label for="a_answer">Answer:</label>';
 			if ($article['displayrevision'] != FALSE)
@@ -112,7 +112,7 @@ if ($article['header']['status'] == 'pulled')
 {
 	echo '<div class="grey_box">
 	<h2>pulled question</h2>
-		<b>Question:</b> '.$article['displayrevision']['heading'].'<br />
+		<b>Question:</b> '.xml_escape($article['displayrevision']['heading']).'<br />
 		<b>Answer:</b> '.$article['displayrevision']['wikitext'].'<br />
 	</div>';
 }
@@ -136,10 +136,10 @@ if ($user['officetype'] != 'Low')
 					<select name="a_category">';
 					foreach ($categories as $category_id => $category)
 					{
-						echo '<option value="'.$category['codename'].'"';
+						echo '<option value="'.xml_escape($category['codename']).'"';
 						if ($category_id == $article['header']['content_type'])
 							echo ' selected';
-						echo '>'.$category['name'].'</option>';
+						echo '>'.xml_escape($category['name']).'</option>';
 						//echo '<option selected>Opening Times</option>';
 					}
 					echo '</select><br />
@@ -215,7 +215,7 @@ if ($user['officetype'] != 'Low')
 						echo '<option value="'.$category_id.'"';
 						if ($category_id == $article['header']['content_type'])
 							echo ' selected';
-						echo '>'.$category['name'].'</option>';
+						echo '>'.xml_escape($category['name']).'</option>';
 					}
 					echo '</select><br />
 					<input type="submit" value="Set Category" class="button" name="r_submit_category" />

@@ -8,7 +8,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <head>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
 <?php if (isset($head_title)) { ?>
-	<meta name="title" content="<?php echo htmlspecialchars($head_title); ?> - The Yorker" />
+	<meta name="title" content="<?php echo(xml_escape($head_title)); ?> - The Yorker" />
 <?php }
 if (isset($main_image)) { ?>
 	<link rel="image_src" href="http://<?php echo($_SERVER['SERVER_NAME'].$main_image); ?>" />
@@ -17,16 +17,16 @@ if (isset($main_image)) { ?>
 if (isset($medium_type)) { ?>
 	<meta name="medium" content="<?php echo($medium_type); ?>" />
 <?php } ?>
-	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
-	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
+	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
+	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
 	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
 
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title);
+			echo(xml_escape($head_title));
 		} else {
-			echo 'no pagename';
+			echo('no pagename');
 		}
 	?> - The Yorker</title>
 
@@ -59,9 +59,9 @@ if (isset($medium_type)) { ?>
 			if (isset($toplinks)) {
 				foreach ($toplinks as $link) {
 					if (is_string($link)) {
-						echo '<span style="color: #000000;">'.$link.'</span> | ';
+						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
 					} elseif (is_array($link)) {
-						echo '<a href="'.$link[1].'">'.$link[0].'</a> | ';
+						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
 					}
 				}
 			}
@@ -142,9 +142,9 @@ if (isset($medium_type)) { ?>
 					foreach ($extra_menu_buttons as $key => $button) {
 						echo('<li'.(!$key ? ' class="first"':'').'>');
 						if (is_string($button)) {
-							echo($button);
+							echo(xml_escape($button));
 						} else {
-							echo('<a href="'.$button[1].'">'.$button[0].'</a>');
+							echo('<a href="'.$button[1].'">'.xml_escape($button[0]).'</a>');
 						}
 						echo('</li>');
 					}
@@ -155,7 +155,7 @@ if (isset($medium_type)) { ?>
 
 <?php
 	if (isset($advert) && !empty($advert['image_id']) && !empty($advert['url'])) {
-		echo('			<a href="'.$advert['url'].'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 40px;" alt="'.$advert['alt'].'" title="'.$advert['alt'].'" /></a>'."\n");
+		echo('			<a href="'.xml_escape($advert['url']).'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 40px;" alt="'.xml_escape($advert['alt']).'" title="'.xml_escape($advert['alt']).'" /></a>'."\n");
 	}
 ?>
 		</div>
@@ -169,7 +169,7 @@ if (isset($medium_type)) { ?>
 					echo 'no pagename'."\n";
 				}
 				if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-					echo("<a href=\"$paged_edit_url\">[edit]</a>");
+					echo('<a href="'.$paged_edit_url.'">[edit]</a>');
 				}
 				?>
 			</h1>

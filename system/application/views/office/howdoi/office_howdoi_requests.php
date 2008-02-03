@@ -5,7 +5,7 @@
 		echo '<h4>Write Requests</h4>';
 		foreach ($user['writer']['requested'] as $requested)
 		{
-			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.$requested['title'].'</a><br />';
+			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.xml_escape($requested['title']).'</a><br />';
 		}
 		echo '<br />';
 	}
@@ -14,7 +14,7 @@
 		echo '<h4>Accepted Requests</h4>';
 		foreach ($user['writer']['accepted'] as $accepted)
 		{
-			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.$accepted['title'].'</a><br />';
+			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.xml_escape($accepted['title']).'</a><br />';
 		}
 		echo '<br />';
 	}
@@ -62,7 +62,7 @@
 			$first = TRUE;
 		else
 			echo('	<hr />'."\n");
-		echo('	<h5>'.$category['name'].'</h5>'."\n");
+		echo('	<h5>'.xml_escape($category['name']).'</h5>'."\n");
 		if (count($category['requests']) > 0)
 		{
 			echo('	<div class="ArticleBox">'."\n");
@@ -87,12 +87,12 @@
 				$dateformatted = date('d/m/y @ H:i', $request['created']);
 				echo('				<tr class="tr'.$alternate.'">'."\n");
 				echo('					<td>'."\n");
-				echo('						<a href="/office/howdoi/editquestion/'.$request['id'].'">'.$request['title'].'</a>'."\n");
+				echo('						<a href="/office/howdoi/editquestion/'.$request['id'].'">'.xml_escape($request['title']).'</a>'."\n");
 				echo('					</td>'."\n");
 				echo('					<td>'."\n");
 				foreach ($request['reporters'] as $key => $reporter)
 				{
-					echo('						'.$reporter['name']."\n");
+					echo('						'.xml_escape($reporter['name'])."\n");
 					echo('						<br />'."\n");
 				}
 				echo('					</td>'."\n");
@@ -126,7 +126,7 @@ if ($user['officetype'] != 'Low')
 				<select name="a_category">';
 				foreach ($categories as $category_id => $category)
 				{
-					echo '<option value="'.$category['codename'].'">'.$category['name'].'</option>';
+					echo '<option value="'.xml_escape($category['codename']).'">'.xml_escape($category['name']).'</option>';
 				}
 				echo '</select>
 				<label for="a_deadline">Deadline (yy-mm-dd h:m):</label>
@@ -136,12 +136,4 @@ if ($user['officetype'] != 'Low')
 		</form>
 	</div>';
 }
-?>
-
-<?php
-/*
-echo '<pre>';
-echo print_r($data);
-echo '</pre>';
-*/
 ?>

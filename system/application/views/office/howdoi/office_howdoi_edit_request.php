@@ -12,32 +12,32 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 	echo '<h2>request info</h2>';
 	if ($user['officetype'] == 'Low')
 	{
-		echo '<b>Title: </b>'.$article['header']['requesttitle'].'<br />
-			<b>Description: </b>'.$article['header']['requestdescription'].'<br />
+		echo '<b>Title: </b>'.xml_escape($article['header']['requesttitle']).'<br />
+			<b>Description: </b>'.xml_escape($article['header']['requestdescription']).'<br />
 			</div>';
 	}
 	else
 	{
 		echo '<form class="form" action="/office/howdoi/questionmodify" method="post" >
 				<fieldset>
-					<input type="hidden" name="r_status" value="'.$article['header']['status'].'" >
+					<input type="hidden" name="r_status" value="'.xml_escape($article['header']['status']).'" >
 					<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 					<input type="hidden" name="r_articleid" value="'.$parameters['article_id'].'" >
 					<label for"a_title">Title:</label>
-					<input type="text" name="a_title" value="'.$article['header']['requesttitle'].'" />
+					<input type="text" name="a_title" value="'.xml_escape($article['header']['requesttitle']).'" />
 					<label for="a_category">Category:</label>
 					<select name="a_category">';
 					foreach ($categories as $category_id => $category)
 					{
-						echo '<option value="'.$category['codename'].'"';
+						echo '<option value="'.xml_escape($category['codename']).'"';
 						if ($category_id == $article['header']['content_type'])
 							echo ' selected';
-						echo '>'.$category['name'].'</option>';
+						echo '>'.xml_escape($category['name']).'</option>';
 						//echo '<option selected>Opening Times</option>';
 					}
 					echo '</select><br />
 					<label for"a_description">Description:</label>
-					<textarea name="a_description" rows="5" cols="30" />'.$article['header']['requestdescription'].'</textarea>
+					<textarea name="a_description" rows="5" cols="30" />'.xml_escape($article['header']['requestdescription']).'</textarea>
 					<input type="submit" value="Modify" class="button" name="r_submit_modify" />
 				</fieldset>
 			</form>
@@ -53,8 +53,8 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 		foreach ($writers['article'] as $writer)
 		{
 			echo '<tr>
-					<td>'.$writer['name'].'</td>
-					<td>'.$writer['status'].'</td>
+					<td>'.xml_escape($writer['name']).'</td>
+					<td>'.xml_escape($writer['status']).'</td>
 					<td>
 						<form class="form" action="/office/howdoi/writermodify" method="post" ><fieldset>
 							<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
@@ -76,7 +76,7 @@ if (($article['header']['status'] == 'request') or ($article['header']['status']
 						<select name="a_addwriter">';
 			foreach ($writers['available'] as $writer)
 			{
-				echo '<option value="'.$writer['id'].'">'.$writer['name'].'</option>';
+				echo '<option value="'.$writer['id'].'">'.xml_escape($writer['name']).'</option>';
 			}
 			echo '</select>
 						<input type="submit" value="Add" class="button" name="r_submit_add" />
