@@ -87,9 +87,7 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 
 	<div class="blue_box">
 		<h2>from the editor</h2>
-		<p>
-			<?php echo(xml_escape($main_text)); ?>
-		</p>
+		<?php echo($main_text); ?>
 	</div>
 
 	<div class="BlueBox" style="width:auto">
