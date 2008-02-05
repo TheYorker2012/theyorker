@@ -60,11 +60,11 @@ class Banners extends Controller
 		//has user got access to office
 		if (!CheckPermissions('editor')) return;
 
-		$banner_title = xml_escape($this->input->post('banner_title'));
-		$banner_link = xml_escape($this->input->post('banner_link'));
-		$banner_scheduled = xml_escape($this->input->post('banner_scheduled'));
-		$banner_schedule_date = xml_escape($this->input->post('banner_schedule_date'));
-		$new_homepage_id = xml_escape($this->input->post('banner_homepage'));
+		$banner_title = $this->input->post('banner_title');
+		$banner_link = $this->input->post('banner_link');
+		$banner_scheduled = $this->input->post('banner_scheduled');
+		$banner_schedule_date = $this->input->post('banner_schedule_date');
+		$new_homepage_id = $this->input->post('banner_homepage');
 		$old_homepage_id = $this->Banner_Model->GetBannersHomepageId($banner_id);
 
 		$delete = ($this->input->post('name_delete_button') == 'Delete');
