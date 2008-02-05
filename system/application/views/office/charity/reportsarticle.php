@@ -31,7 +31,7 @@
 			}
 			elseif ($revision['id'] == $article['displayrevision']['id'])
 				echo('		<br /><span class="orange">(Displayed)</span>'."\n");
-			echo('		<br />by '.$revision['username']."\n");
+			echo('		<br />by '.xml_escape($revision['username'])."\n");
 		}
 	}
 	else
@@ -51,7 +51,7 @@
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_report">Report:</label>'."\n");
 	if ($parameters['revision_id'] != NULL)
-		echo('			<textarea name="a_report" rows="10" cols="56">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n");
+		echo('			<textarea name="a_report" rows="10" cols="56">'.xml_escape($article['displayrevision']['wikitext']).'</textarea><br />'."\n");
 	else
 		echo('			<textarea name="a_report" rows="10" cols="56"></textarea><br />'."\n");
 	echo('		</fieldset>'."\n");

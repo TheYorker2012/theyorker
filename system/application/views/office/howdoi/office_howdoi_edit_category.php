@@ -12,7 +12,7 @@
 	</div>
 </div>
 <?php
-echo '<div class="grey_box">
+echo('<div class="grey_box">
 	<h2>edit category</h2>
 	<form class="form" action="/office/howdoi/categorymodify" method="post" >
 		<fieldset>
@@ -27,5 +27,5 @@ echo '<div class="grey_box">
 			<input type="submit" class="button" value="Save" name="r_submit_save" />
 		</fieldset>
 	</form>
-</div>';
+</div>');
 ?>

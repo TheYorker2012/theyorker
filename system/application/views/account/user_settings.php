@@ -10,16 +10,16 @@
 			<p>Please enter your name:</p>
 			<fieldset>
 				<label for="fname">Forename: </label>
-				<input type="text" id="fname" name="fname" value="<?php echo($this->validation->fname); ?>" />
+				<input type="text" id="fname" name="fname" value="<?php echo(xml_escape($this->validation->fname)); ?>" />
 				<br />
 				<label for="sname">Surname: </label>
-				<input type="text" id="sname" name="sname" value="<?php echo($this->validation->sname); ?>" />
+				<input type="text" id="sname" name="sname" value="<?php echo(xml_escape($this->validation->sname)); ?>" />
 				<br />
 			</fieldset>
 			<p>To allow us to personalise your experience of our site, please tell us more about yourself:</p>
 			<fieldset>
 				<label for="nick">Nickname: </label>
-				<input type="text" id="nick" name="nick" value="<?php echo($this->validation->nick); ?>" />
+				<input type="text" id="nick" name="nick" value="<?php echo(xml_escape($this->validation->nick)); ?>" />
 				<br />
 				<span class="label">Gender: </span>
 				<label class="radio" for="genderm">Male</label>

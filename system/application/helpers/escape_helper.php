@@ -46,8 +46,8 @@ function js_literalise($value)
 	}
 	else {
 		return '\''.str_replace(
-			array('\'',  '<?'),
-			array('\\\'', '<"+"?'),
+			array('\'',  '<?',       ']]>'),
+			array('\\\'', '<\'+\'?', ']\'+\']>'),
 			$value
 		).'\'';
 	}

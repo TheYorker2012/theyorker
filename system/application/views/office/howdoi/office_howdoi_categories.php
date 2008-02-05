@@ -5,7 +5,7 @@
 <?php
 	foreach ($categories as $category_id => $category)
 	{
-		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
+		echo('<form class="form" action="/office/howdoi/categorymodify" method="post" >
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 				<label for="r_submit_edit">'.xml_escape($category['name']).'</label>
@@ -14,13 +14,13 @@
 				<input type="submit" name="r_submit_edit" id="r_submit_edit" value="Edit" class="button" />
 			</fieldset>
 			</form>
-			<br />';
+			<br />');
 	}
 ?>
 </div>
 
 <?php
-echo '<div class="blue_box">
+echo('<div class="blue_box">
 	<h2>add category</h2>
 	<form class="form" action="/office/howdoi/categorymodify" method="post" >
 		<fieldset>
@@ -30,7 +30,7 @@ echo '<div class="blue_box">
 			<input type="submit" name="r_submit_add" id="r_submit_add" class="button" value="Create" />
 		</fieldset>
 	</form>
-</div>';
+</div>');
 ?>
 
 <div class="blue_box">
@@ -40,22 +40,22 @@ echo '<div class="blue_box">
 	$category_count = count($categories);
 	foreach ($categories as $category_id => $category)
 	{
-		echo '<form class="form" action="/office/howdoi/categorymodify" method="post" >
+		echo('<form class="form" action="/office/howdoi/categorymodify" method="post" >
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
 				<label for="r_submit_edit">'.xml_escape($category['name']).'</label>
-				<input type="hidden" name="r_sectionorder" id="r_sectionorder" value="'.$category['section_order'].'" />';
-				if ($category['section_order'] != 1)
-					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />';
-				else
-					echo '<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="disabled_button" disabled />';
-				if ($category['section_order'] != $category_count)
-					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="button" />';
-				else
-					echo '<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="disabled_button" disabled />';
-			echo '</fieldset>
+				<input type="hidden" name="r_sectionorder" id="r_sectionorder" value="'.$category['section_order'].'" />');
+		if ($category['section_order'] != 1)
+			echo('<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="button" />');
+		else
+			echo('<input type="submit" name="r_submit_up" id="r_submit_up" value="Move Up" class="disabled_button" disabled />');
+		if ($category['section_order'] != $category_count)
+			echo('<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="button" />');
+		else
+			echo('<input type="submit" name="r_submit_down" id="r_submit_down" value="Move Down" class="disabled_button" disabled />');
+		echo('</fieldset>
 			</form>
-			<br />';
+			<br />');
 	}
 	?>
 
