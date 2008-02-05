@@ -33,14 +33,14 @@
 				<label for="member_status">Status:</label>
 				<table id="a_send_to" style="padding: 5px;">
 					<tbody>
-<?php if (isset($membership['vip']) && $membership['vip']) { ?>
+					<?php if (isset($membership['vip']) && $membership['vip']) { ?>
 						<tr>
 							<td>
 								VIP
 								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo(xml_escape($membership['firstname'].' '.$membership['surname'])); ?>&quot; of &quot;<?php echo($membership['organisation_name']); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
 							</td>
 						</tr>
-<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
+					<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
 						<tr>
 							<td>
 								Requested
@@ -48,17 +48,17 @@
 								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo(xml_escape($membership['firstname'].' '.$membership['surname'])); ?>&quot; of &quot;<?php echo(xml_escape($membership['organisation_name'])); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
 							</td>
 						</tr>
-<?php } ?>
+					<?php } ?>
 					</tbody>
 				</table>
 				<label for="member_org_name">Name:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_name" id="member_org_name" value="<?php echo(xml_escape($membership['organisation_name'])); ?>" />
 				<label for="member_org_name">Position:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_position" id="member_org_position" value="<?php echo(xml_escape($membership['position'])); ?>" />
-				<!--
+				<?php /*
 				<label for="member_paid">Paid:</label>
-				<input style="border: 0px;" type="checkbox" name="member_paid" value="1" <?php //if($membership['paid']) { echo('checked="checked"'); } ?> />
-				-->
+				<input style="border: 0px;" type="checkbox" name="member_paid" value="1" <?php if($membership['paid']) { echo('checked="checked"'); } ?> />
+				*/ ?>
 			</fieldset>
 		</form>
 	</div>

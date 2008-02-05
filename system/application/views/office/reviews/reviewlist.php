@@ -1,7 +1,7 @@
 <div class="RightToolbar">
 	<h4 class="first">Page Information</h4>
 	<div class="Entry">
-		<?php echo $page_information; ?>
+		<?php echo($page_information); ?>
 	</div>
 	<h4>Actions</h4>
 	<div class="Entry">
@@ -49,41 +49,43 @@
 				echo('			<tr>'."\n");
 			}
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
-			echo(htmlspecialchars($organisation['name']));
+			echo(xml_escape($organisation['name']));
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
-			if(htmlspecialchars($organisation['info_complete'])){
+			if($organisation['info_complete']){
 				echo("<img src='/images/prototype/members/confirmed.png'>");
 			}else{
 				echo("<img src='/images/prototype/members/no9.png'>");
 			}
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/review">');
-			if(htmlspecialchars($organisation['review_count'])==0){
+			if($organisation['review_count'] == 0){
 				echo("<img src='/images/prototype/members/no9.png'>");
 			}else{
-				echo $organisation['review_count'];
+				echo($organisation['review_count']);
 			}
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/review">');
-			if(htmlspecialchars($organisation['review_count'])>0) {echo(htmlspecialchars($organisation['date_of_last_review']));}
+			if($organisation['review_count'] > 0) {
+				echo(xml_escape($organisation['date_of_last_review']));
+			}
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/tags">');
-			if(htmlspecialchars($organisation['number_of_tags'])==0){
+			if($organisation['number_of_tags'] == 0){
 				echo("<img src='/images/prototype/members/no9.png'>");
 			}else{
-				echo htmlspecialchars($organisation['number_of_tags']);
+				echo(xml_escape($organisation['number_of_tags']));
 			}
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/leagues">');
-			if(htmlspecialchars($organisation['number_of_leagues'])==0){
+			if($organisation['number_of_leagues']==0){
 				echo("<img src='/images/prototype/members/no9.png'>");
 			}else{
-				echo htmlspecialchars($organisation['number_of_leagues']);
+				echo(xml_escape($organisation['number_of_leagues']));
 			}
 			echo('</a></td>'."\n");
 			echo('				<td><a href="/office/reviews/'.$organisation['shortname'].'/'.$content_type_codename.'/information">');
-			echo htmlspecialchars($organisation['assigned_user_name']);
+			echo(xml_escape($organisation['assigned_user_name']));
 			echo('</a></td>'."\n");
 			echo('			</tr>'."\n");
 		}

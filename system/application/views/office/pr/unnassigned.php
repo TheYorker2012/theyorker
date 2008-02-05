@@ -33,7 +33,7 @@
 		$no_reps = TRUE;
 		while (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
 		{
-			echo('						'.xml_escape(reps[$while_reps]['user_firstname'].' '.$reps[$while_reps]['user_surname']));
+			echo('						'.xml_escape($reps[$while_reps]['user_firstname'].' '.$reps[$while_reps]['user_surname']));
 			$while_reps++;
 			if (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
 			{

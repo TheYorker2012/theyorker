@@ -10,7 +10,7 @@ function SortLink($filter, $sort_fields, $field, $title)
 	echo('<a href="' . $filter['base'] . '/'.
 		((isset($sort_fields[$field]) && $sort_fields[$field])
 			? 'desc' : 'asc').'/'.$field . '">');
-	echo($title);
+	echo(xml_escape($title));
 	//if ($filter['last_sort'] === $field) {
 		if (isset($sort_fields[$field]) && $sort_fields[$field]) {
 			echo('<img src="/images/prototype/members/sortasc.png" alt="sorted ascending" />');
@@ -31,7 +31,7 @@ function SortLink($filter, $sort_fields, $field, $title)
 	</div>
 	<h2>What's this?</h2>
 	<div class="Entry">
-		<?php echo $main_text; ?>
+		<?php echo($main_text); ?>
 	</div>
 	<h2>Search</h2>
 	<div class="Entry">
@@ -84,9 +84,7 @@ function SortLink($filter, $sort_fields, $field, $title)
 							No Matching Entries
 						</td>
 					</tr>
-<?php
-		foreach ($members as $membership) {
-?>
+				<?php foreach ($members as $membership) { ?>
 					<tr id="userid<?php echo($membership['user_id']); ?>">
 						<td align="center">
 							<input type="checkbox" name="members_selected[]" value="user<?php echo($membership['user_id']); ?>" id="user<?php echo($membership['user_id']); ?>" />
@@ -98,28 +96,28 @@ function SortLink($filter, $sort_fields, $field, $title)
 							<a href="<?php echo('/office/vipmanager/info/'.$membership['organisation_entity_id'].'/'.$membership['user_id']); ?>"><?php echo(xml_escape($membership['surname'])); ?></a>
 						</td>
 						<td>
-<?php if (NULL !== $membership['email']) { ?>
+						<?php if (NULL !== $membership['email']) { ?>
 							<a href="mailto:<?php echo(xml_escape($membership['email']));?>@york.ac.uk"><?php echo(xml_escape($membership['username'])); ?></a>
-<?php } else {?>
+						<?php } else {?>
 							<?php echo(xml_escape($membership['username'])); ?>
-<?php } ?>
+						<?php } ?>
 						</td>
 						<td>
 							<a href="/office/reviews/<?php echo($membership['organisation_codename']); ?>"><?php echo(xml_escape($membership['organisation_name'])); ?></a>
 						</td>
 						<td align="center">
-<?php if (isset($membership['vip']) && $membership['vip']) { ?>
+						<?php if (isset($membership['vip']) && $membership['vip']) { ?>
 							<div style="display: none;">vip</div>
 							<img src="/images/prototype/members/vip.png" alt="VIP" title="VIP" />
-<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
+						<?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
 							<div style="display: none;">requested</div>
 							<img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access: Click to Promote" title="Requested VIP Access: Click to Promote" />
-<?php } else { ?>
+						<?php } else { ?>
 							<div style="display: none;">novip</div>
-<?php } ?>
+						<?php } ?>
 						</td>
 					</tr>
-<?php } ?>
+				<?php } ?>
 				</tbody>
 			</table>
 		</form>

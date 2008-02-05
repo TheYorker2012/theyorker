@@ -7,10 +7,10 @@
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo $crawl_title; ?></h2><img alt="Wasted Man" style="float: right" src="<?php echo $crawl_image; ?>" />
-		<p><?php echo $crawl_rating; ?></p>
-		<p><strong><?php echo $crawl_blurb; ?></strong></p>
-		<p><?php echo $crawl_content; ?></p>
+		<h2><?php echo(xml_escape($crawl_title)); ?></h2><img alt="Wasted Man" style="float: right" src="<?php echo(xml_escape($crawl_image)); ?>" />
+		<p><?php echo(xml_escape($crawl_rating)); ?></p>
+		<p><strong><?php echo(xml_escape($crawl_blurb)); ?></strong></p>
+		<p><?php echo(xml_escape($crawl_content)); ?></p>
 	</div>
 	<div class="BlueBox">
 		<h2>Author Reviews</h2>
