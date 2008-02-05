@@ -25,7 +25,7 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/summaryrep/'.$rep['user_id'].'">'.$rep['user_firstname'].' '.$rep['user_surname'].'</a>'."\n");
+		echo('						<a href="/office/pr/summaryrep/'.$rep['user_id'].'">'.xml_escape($rep['user_firstname'].' '.$rep['user_surname']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						10%'."\n");
@@ -38,11 +38,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

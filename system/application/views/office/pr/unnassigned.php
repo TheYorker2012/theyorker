@@ -26,14 +26,14 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
+		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.xml_escape($org['org_name']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		//make sure it stays within the array then if parent id matches current org id
 		$no_reps = TRUE;
 		while (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
 		{
-			echo('						'.$reps[$while_reps]['user_firstname'].' '.$reps[$while_reps]['user_surname']);
+			echo('						'.xml_escape(reps[$while_reps]['user_firstname'].' '.$reps[$while_reps]['user_surname']));
 			$while_reps++;
 			if (($while_reps < count($reps)) && ($reps[$while_reps]['org_id'] == $org['org_id']))
 			{
@@ -57,11 +57,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

@@ -71,11 +71,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-	echo('<div class="blue_box"><pre>');
-	print_r($data);
-	echo('</pre></div>');
-*/
-?>

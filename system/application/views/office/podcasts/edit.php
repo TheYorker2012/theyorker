@@ -11,12 +11,12 @@
 		<form class="form" action="<?php echo($target); ?>" method="post" enctype="multipart/form-data">
 			<fieldset>
 				<label for="a_name">Name: </label>
-				<input type="text" name="a_name" size="60" value="<?php echo($podcast['name']); ?>" />
+				<input type="text" name="a_name" size="60" value="<?php echo(xml_escape($podcast['name'])); ?>" />
 				<label for="a_description">Description: </label>
-				<textarea name="a_description" rows="5" cols="55"><?php echo($podcast['description']); ?></textarea>
+				<textarea name="a_description" rows="5" cols="55"><?php echo(xml_escape($podcast['description'])); ?></textarea>
 			</fieldset>
 			<br />
-			<b>Current File</b>: <a href="<?php echo($this->config->item('static_web_address')); ?>/podcasts/<?php echo($podcast['file']); ?>"><?php echo($podcast['file']); ?></a>
+			<b>Current File</b>: <a href="<?php echo(xml_escape($this->config->item('static_web_address'))); ?>/podcasts/<?php echo(xml_escape($podcast['file'])); ?>"><?php echo(xml_escape($podcast['file'])); ?></a>
 			<br />
 			<b>File Size</b>: <?php echo($podcast['file_size']); ?>
 			<br />
@@ -43,11 +43,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-echo '<div class="BlueBox"><pre>';
-echo print_r($data);
-echo '</pre></div>';
-*/
-?>
