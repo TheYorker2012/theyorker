@@ -57,7 +57,10 @@
 					type="checkbox"
 					name="game_activated_field"
 					id="game_activated_field"
-					<?php if($game['activated']) { echo('checked="checked"'); } ?> />
+					<?php
+					if($game['activated']) { echo('checked="checked"' ); }
+					if(!$is_editor) { echo('disabled="disabled"'); }
+					?> />
 				<br />
 			</fieldset>
 		&nbsp;

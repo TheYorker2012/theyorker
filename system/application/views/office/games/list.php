@@ -1,5 +1,5 @@
 <?php
-	function Make_Game_Table($game_array)
+	function Make_Game_Table($game_array,$is_editor)
 	{
 		echo('<table><thead><tr>
 				<th></th>
@@ -11,15 +11,18 @@
 				</tr></thead><tbody>');
 
 		$alternate=1;
+		
 		foreach ($game_array as $game_id=>$game)
 		{
-			echo('<tr id="row_'.$game_id.'" class="tr'.$alternate.'">');
-			echo('
-				<td width="14px">
+			echo('	<tr id="row_'.$game_id.'" class="tr'.$alternate.'">
+					<td width="14px">');
+			if ($is_editor)
+			{echo('
 				<a
 					href="#"
-					onclick="xajax_toggle_activation('.$game_id.')">
-						<img
+					onclick="xajax_toggle_activation('.$game_id.')">');}
+					
+			echo('		<img
 							id="activation_'.$game_id.'"
 							src="');
 			if($game['activated'])
@@ -28,8 +31,8 @@
 			}else{
 				echo('/images/prototype/news/delete.gif');
 			}
-			echo('" /></a></td>');
-			echo('<td style="padding-right:5px">'.xml_escape($game['title']).'</td>');
+			echo('" />'.($is_editor ? '</a>' : "").'</td>');
+			echo('<td style="padding-right:5px">'.(strlen($game['title'])>0 ? xml_escape($game['title']) : '<em>&lt;No Name&gt;</em>').'</td>');
 			echo('<td style="padding-right:5px"> '.$game['date_added'].'</td>');
 			echo('<td>'.$game['play_count'].'</td>');
 			echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
@@ -65,7 +68,10 @@
 	
 	function add_entry()
 	{
-		xajax_list_ftp();
+		if (document.getElementById('add_entry').style.display!="")
+		{
+			xajax_list_ftp();
+		}
 		document.getElementById('list_box').style.display="none";
 		document.getElementById('add_game').style.display="none";
 		document.getElementById('add_entry').style.display="";
@@ -162,8 +168,8 @@
 		if($incomplete_games != 0)
 		{
 			echo('<div class="BlueBox" id="incomplete_box"><div class="ArticleBox">');
-			echo('<h2>Incomplete Game Entries</h2>');
-			Make_Game_Table($incomplete_games);
+			echo('<h2>'.$section_games_list_incomplete_title.'</h2>');
+			Make_Game_Table($incomplete_games,$is_editor);
 			echo('</div></div>');
 		}
 	?>
@@ -184,7 +190,7 @@
 		<div style="border-bottom:1px #999 solid;clear:both"></div>
 		
 		<div class="ArticleBox">
-			<?php Make_Game_Table($games); ?>
+			<?php Make_Game_Table($games,$is_editor); ?>
 		</div>
 		
 		<?php echo($this->pagination->create_links()); ?>

@@ -49,7 +49,7 @@ class Moderator extends controller
 		
 		$this->load->library('comment_views');
 		
-		$this->comment_views->SetUri('/office/moderator/comment/'.$Comment);
+		$this->comment_views->SetUri('/office/moderator/comment/'.$Comment.'/');
 		
 		// create the views
 		$comment_view_list   = new CommentViewList();
