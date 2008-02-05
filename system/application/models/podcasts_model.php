@@ -39,4 +39,34 @@ class Podcasts_model extends Model
 		return $query->result_array();
 	}
 
+	function Add_Entry($filename,$size)
+	{
+		$sql = '	INSERT INTO podcasts
+					(podcast_file,podcast_file_size,podcast_timestamp)
+					VALUES (?,?,UNIX_TIMESTAMP())';
+		$this->db->query($sql,array($filename,$size));
+		$sql = '	SELECT	podcast_id
+					FROM	podcasts
+					WHERE	podcast_file=?';
+		$query = $this->db->query($sql,array($filename));
+		if ($query->num_rows() >0)
+		{
+			return $query->row()->podcast_id;
+		}else{ return 0;}
+	}
+
+	function Get_Fnames()
+	{
+		$sql = '	SELECT	podcast_file
+					FROM	podcasts';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() >0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result[] = $row->podcast_file;
+			}
+		}else{ return 0;}
+		return $result;
+	}
 }
