@@ -103,7 +103,7 @@ class Lifestyle extends Controller
 		$data['more_article_types'] = $more_article_types;//list of article types for a category list box.
 		
 		// Set up the public frame
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
 		$this->main_frame->SetContentSimple('homepages/'.$homepage_article_type, $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

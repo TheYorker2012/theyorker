@@ -14,7 +14,7 @@ class Campaign extends Controller {
 		$this->load->model('news_model','news_model');
 		$this->load->model('progressreports_model','progressreports_model');
 	
-		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
+		$this->main_frame->IncludeCss('stylesheets/campaign.css');
 
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
 		//if petition preview set campaign id

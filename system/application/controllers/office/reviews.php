@@ -579,7 +579,7 @@ class Reviews extends Controller
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
 			$this->main_frame->SetPage('photos');
-			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->main_frame->IncludeJs('javascript/clone.js');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
@@ -697,7 +697,7 @@ class Reviews extends Controller
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 
-		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -868,7 +868,7 @@ class Reviews extends Controller
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
 
-		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(

@@ -203,9 +203,8 @@ class Gallery extends Controller {
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script>';
-		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		$this->main_frame->SetContent($gallery_frame);
 		$this->main_frame->SetTitle('Photo Details');
 
@@ -268,9 +267,11 @@ class Gallery extends Controller {
 		$data[] = $output;
 
 		$this->main_frame->SetTitle('Photo Recropper');
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
-		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+		$this->main_frame->IncludeCss('stylesheets/cropper.css');
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');
+		$this->main_frame->IncludeJs('javascript/cropper.js');
 		$this->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => '/office/gallery/show/'.$Photo->photo_id, 'data' => $data, 'noforcesave' => true,  'ThumbDetails' => &$thumbDetails, 'type' => true));
 		$this->main_frame->Load();
 	}
