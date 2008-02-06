@@ -597,7 +597,7 @@ class Wikiparser {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
-// 			$first_characters .= '\{';
+			$first_characters .= '\{';
 		}
 		
 		$line_regexes = array();
