@@ -24,11 +24,7 @@
 			foreach($leagues as $league){
 				echo('<tr>');
 				echo('<td>');
-				if($league['current_size'] > 0){
-					echo('<a href="/office/league/edit/'.$league['id'].'">'.xml_escape($league['name']).'</a>');
-				}else{
-					echo(xml_escape($league['name']));
-				}
+				echo('<a href="/office/league/edit/'.$league['id'].'">'.xml_escape($league['name']).'</a>');
 				echo('</td>');
 				echo('<td>'.xml_escape($league['section_name']).'</td>');
 				echo('<td align="center">');

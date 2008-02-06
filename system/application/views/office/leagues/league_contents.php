@@ -38,7 +38,7 @@
 				echo("			<a href='/office/league/movedown/".$venue['league_id']."/".$venue['id']."'><img src='/images/prototype/members/sortasc.png'></a>"."\n");
 				echo('		</td>'."\n");
 				echo('		<td><a href="/office/league/delete/'.$venue['league_id'].'/'.$venue['id'].'" ');
-				echo('onclick="return(confirm ('.xml_escape(js_literalise('Are you sure you want to remove '.$venue['name'].' from this league?')).'));');
+				echo('onclick="return(confirm ('.xml_escape(js_literalise('Are you sure you want to remove '.$venue['name'].' from this league?')).'));"');
 				echo('>Remove</a></td>'."\n");
 				echo('	</tr>'."\n");
 				++$index;
