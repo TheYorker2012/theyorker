@@ -10,7 +10,7 @@
 <div id="RightColumn">
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">
-		<?php echo $main_text; ?>
+		<?php echo($main_text); ?>
 	</div>
 </div>
 
@@ -21,7 +21,7 @@
 	if ($rep['has_rep'] == true) {
 ?>
 		<p>
-			Your rep is: <?php echo($rep['firstname'].' '.$rep['surname']); ?><br />
+			Your rep is: <?php echo(xml_escape($rep['firstname'].' '.$rep['surname'])); ?><br />
 		</p>
 <?php 
 	}
@@ -42,11 +42,11 @@
 			<fieldset>
 				<label for="a_subject">Subject: </label>
 <?php
-	echo('				<input type="text" id="a_subject" name="a_subject" style="width: 357px" value="'.$subject.'" />'."\n");
+	echo('				<input type="text" id="a_subject" name="a_subject" style="width: 357px" value="'.xml_escape($subject).'" />'."\n");
 ?>
 				<label for="a_content">Message:</label>
 <?php
-	echo('				<textarea name="a_content" id="a_content" rows="10" cols="42">'.$content.'</textarea>'."\n");
+	echo('				<textarea name="a_content" id="a_content" rows="10" cols="42">'.xml_escape($content).'</textarea>'."\n");
 ?>
 			</fieldset>
 			<fieldset>
@@ -55,11 +55,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

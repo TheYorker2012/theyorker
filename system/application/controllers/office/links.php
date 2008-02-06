@@ -163,7 +163,7 @@ class Links extends Controller
 			redirect('/office/links');
 		}
 
-		$link_name = xml_escape($this->input->post('link_name'));
+		$link_name = $this->input->post('link_name');
 		$link_url = $this->input->post('link_url');
 		$delete = ($this->input->post('name_delete_button') == 'Delete');
 

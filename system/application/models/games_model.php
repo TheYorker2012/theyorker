@@ -276,8 +276,7 @@
 							OR		game_height < 10
 							OR		game_title IS NULL
 							OR		game_title = ""
-							OR		game_image_id IS NULL
-							OR		game_activated = 0';
+							OR		game_image_id IS NULL';
 			$query = $this->db->query($sql);
 			if ($query->num_rows() > 0)
 			{

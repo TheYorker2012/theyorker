@@ -17,16 +17,6 @@ function xml_escape($text)
 	return htmlentities($text, ENT_QUOTES, 'utf-8');
 }
 
-/// HtmlEntityDecode shortcut.
-/**
- * @param $xml string The xml to decode.
- * @return string @a $xml with xml entities decoded using html_entity_decode.
- */
-function xml_unescape($xml)
-{
-	return html_entity_decode($xml, ENT_QUOTES, 'utf-8');
-}
-
 /// Literalise a php value into javascript.
 /**
  * @param $value string,int,bool,null The value to literalise.
@@ -55,11 +45,11 @@ function js_literalise($value)
 		return $result;
 	}
 	else {
-		return '"'.str_replace(
-			array('"',  '<?'),
-			array('\"', '<"+"?'),
+		return '\''.str_replace(
+			array('\'',  '<?',       ']]>'),
+			array('\\\'', '<\'+\'?', ']\'+\']>'),
 			$value
-		).'"';
+		).'\'';
 	}
 }
 

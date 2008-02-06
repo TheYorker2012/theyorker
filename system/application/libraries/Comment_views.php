@@ -139,7 +139,7 @@ class CommentViewAdd extends FramesView
 		$this->SetData('DefaultContent', '');
 		$this->SetData('Preview', NULL);
 		$this->SetData('ShowCancelButton', false);
-		$this->SetData('AlreadyExists', true);
+		$this->SetData('AlreadyExists', false);
 	}
 	
 	/// Set an existing comment to edit.
@@ -148,6 +148,7 @@ class CommentViewAdd extends FramesView
 		$this->SetData('ShowCancelButton', true);
 		$this->mExistingComment = $Comment;
 		$this->SetData('DefaultContent', $Comment['wikitext']);
+		$this->SetData('AlreadyExists', true);
 	}
 	
 	/// Set the thread data from the model.

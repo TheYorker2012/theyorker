@@ -24,7 +24,7 @@
 			echo('<li>'."\n");
 		}
 		echo('<input type="checkbox" name="filter_team_'.$team['id'].'" value="'.$team['id'].'" />'."\n");
-		echo('<a href="'.vip_url('members/teams/'.$team['id']).'">'.$team['name'].'</a>'."\n");
+		echo('<a href="'.vip_url('members/teams/'.$team['id']).'">'.xml_escape($team['name']).'</a>'."\n");
 		if (!empty($team['subteams'])) {
 			echo('<ul>'."\n");
 			foreach ($team['subteams'] as $subteam) {
@@ -35,7 +35,7 @@
 		if ($in_list) {
 			echo('</li>'."\n");
 		}
-				echo('<br /><br />'."\n");
+		echo('<br /><br />'."\n");
 		return count($team['subteams']);
 	}
 	
@@ -50,11 +50,3 @@
 ?>
 <?php $this->load->view('members/members_list');?>
 <a href='<?php echo vip_url('members/list'); ?>'>Back to Member Management.</a>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

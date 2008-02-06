@@ -25,7 +25,7 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/advertising/view/'.$advert['id'].'">'.$advert['name'].'</a> <a href="/office/advertising/edit/'.$advert['id'].'">[edit]</a>'."\n");
+		echo('						<a href="/office/advertising/view/'.$advert['id'].'">'.xml_escape($advert['name']).'</a> <a href="/office/advertising/edit/'.$advert['id'].'">[edit]</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		if ($advert['current_views'] == $advert['max_views']) {
@@ -37,11 +37,11 @@
 		}
 		echo('					</td>'."\n");
 		echo('					<td style="text-align:right;">'."\n");
-		$advert['is_live'] ? $result = "Yes" : $result = "No" ;
-		echo('						'.$result."\n");
+		$result_xml = ($advert['is_live'] ? 'Yes' : 'No');
+		echo('						'.$result_xml."\n");
 		echo('					</td>'."\n");
 		echo('				</tr>'."\n");
-		$alternate == 1 ? $alternate = 2 : $alternate = 1;
+		$alternate = ($alternate == 1 ? 2 : 1);
 	}
 ?>
 			</tbody>
@@ -61,11 +61,3 @@
 		</fieldset>
 	</form>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

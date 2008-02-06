@@ -1,4 +1,5 @@
 <script type="text/javascript">
+// <![CDATA[
 	function advancedFilters() {
 		var element;
 		var element_show;
@@ -17,6 +18,7 @@
 			element_hide.style.display = 'none';
 		}
 	}
+// ]]>
 </script>
 
 <div id="RightColumn">
@@ -101,11 +103,3 @@
 <div id="MainColumn">
 <?php $this->load->view('members/members_list');?>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

@@ -1,7 +1,7 @@
 <div id="Footer">
 	<a id="ShowFeedback" href="#FeedbackForm" onclick="showFeedback();">Please give feedback about this page</a>
 	<div id="FeedbackForm" style="display: none;">
-		<form id="feedback_form" action="<?php echo site_url('feedback/'); ?>" method="post" class="form">
+		<form id="feedback_form" action="<?php echo(site_url('feedback/')); ?>" method="post" class="form">
 			<fieldset>
 				<h2>Feedback</h2>
 				<!-- &lt;br /&gt; tags necessary for correct rendering in text based browsers -->
@@ -20,7 +20,7 @@
 					</select><br />
 				<?php if (isset($this->feedback_article_heading)) { ?>
 				<label for="a_articleheading">Article: </label>
-					<input type="text" name="a_articleheading" id="a_articleheading" size="40" value="<?php echo $this->feedback_article_heading; ?>" /><br />
+					<input type="text" name="a_articleheading" id="a_articleheading" size="40" value="<?php echo(xml_escape($this->feedback_article_heading)); ?>" /><br />
 				<?php } ?>
 				<label for="a_browser_info">Include Browser Information<br />(To help diagnose a fault): </label>
 					<input type="checkbox" name="a_browser_info" id="a_browser_info" value="1" checked="checked" /><br />
@@ -29,8 +29,8 @@
 				</div>
 				<label for="a_feedbacktext">Your Comments: </label>
 					<textarea name="a_feedbacktext" id="a_feedbacktext" rows="6" cols="40" ></textarea>
-				<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo xml_escape($head_title); } ?>" />
-				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value='<?php echo $_SERVER['REQUEST_URI']; ?>' />
+				<input type="hidden" name="a_pagetitle" id="a_pagetitle" value="<?php if(isset($head_title)) { echo(xml_escape($head_title)); } ?>" />
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
 			</fieldset>
 			<fieldset>
 				<input class="button" type="submit" name="r_submit" id="r_submit" value="Submit" />

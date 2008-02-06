@@ -12,10 +12,10 @@
 			<?php if (($byline_info['user_firstname'] == NULL) && ($byline_info['user_surname'] == NULL)) {
 				echo('GLOBAL');
 			} else {
-				echo($byline_info['user_firstname'] . ' ' . $byline_info['user_surname']);
+				echo(xml_escape($byline_info['user_firstname'] . ' ' . $byline_info['user_surname']));
 			} ?>
 		</a>
-		<b>Team:</b> <?php echo($byline_info['business_card_group_name']); ?>
+		<b>Team:</b> <?php echo(xml_escape($byline_info['business_card_group_name'])); ?>
 		<b>Status:</b> <?php echo(($byline_info['business_card_approved']) ? '<span style="color:darkgreen">Approved</span>' : '<span style="color:red">Pending</span>'); ?>
 		<br />
 		<b>Display:</b> <?php echo(date('d/m/y', $byline_info['business_card_start_date']) . ' - ' . date('d/m/y', $byline_info['business_card_end_date'])); ?>

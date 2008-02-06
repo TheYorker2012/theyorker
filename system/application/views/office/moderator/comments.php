@@ -2,6 +2,8 @@
 /**
  * @file views/office/moderator/comments.php
  * @brief View for lists of comments in moderator section of office.
+ *
+ * @param $Title string Title for page.
  */
 ?>
 
@@ -18,13 +20,13 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo($Title); ?></h2>
+		<h2><?php echo(xml_escape($Title)); ?></h2>
 		<?php
 		// Show message that no comments were found.
 		if ($Comments->EmptyComments()) {
 			?>
 			<div>
-				<h3>No <?php echo($Title); ?></h3>
+				<h3>No <?php echo(xml_escape($Title)); ?></h3>
 				<p>No comments match the search criteria.</p>
 			</div>
 			<?php

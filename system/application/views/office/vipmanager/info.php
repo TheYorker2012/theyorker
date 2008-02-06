@@ -10,19 +10,19 @@
 		<form class="form">
 			<fieldset>
 				<label for="member_name">Name:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_name" id="member_name" value="<?php echo($membership['firstname']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_name" id="member_name" value="<?php echo(xml_escape($membership['firstname'])); ?>" />
 				<label for="member_surname">Surname:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_surname" value="<?php echo($membership['surname']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_surname" value="<?php echo(xml_escape($membership['surname'])); ?>" />
 				<label for="member_nick">Nickname:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_nick" value="<?php echo($membership['nickname']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_nick" value="<?php echo(xml_escape($membership['nickname'])); ?>" />
 				<label for="member_email">Email:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_email" value="<?php echo($membership['email']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_email" value="<?php echo(xml_escape($membership['email'])); ?>" />
 				<label for="member_email">Phone:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_phone" value="<?php echo(xml_escape($membership['phone_number'])); ?>" />
 				<label for="member_gender">Gender:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_gender" value="<?php echo($membership['gender']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_gender" value="<?php echo(xml_escape($membership['gender'])); ?>" />
 				<label for="member_enrol_year">Enrolled Year:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_enrol_year" value="<?php echo($membership['enrol_year']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_enrol_year" value="<?php echo(xml_escape($membership['enrol_year'])); ?>" />
 			</fieldset>
 		</form>
 	</div>
@@ -37,22 +37,22 @@
 						<tr>
 							<td>
 								VIP
-								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo($membership['firstname']); ?> <?php echo($membership['surname']); ?>&quot; of &quot;<?php echo($membership['organisation_name']); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
+								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo(xml_escape($membership['firstname'].' '.$membership['surname'])); ?>&quot; of &quot;<?php echo($membership['organisation_name']); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
 							</td>
 						</tr>
 <?php } elseif (isset($membership['vip_requested']) && $membership['vip_requested']) { ?>
 						<tr>
 							<td>
 								Requested
-								<small><a href="/office/vipmanager/promote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to promote &quot;<?php echo($membership['firstname']); ?> <?php echo($membership['surname']); ?>&quot; of &quot;<?php echo($membership['organisation_name']); ?>&quot; to VIP status?');"><img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access: Click to Promote" title="Requested VIP Access: Click to Promote" /></a></small>
-								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo($membership['firstname']); ?> <?php echo($membership['surname']); ?>&quot; of &quot;<?php echo($membership['organisation_name']); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
+								<small><a href="/office/vipmanager/promote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to promote &quot;<?php echo(xml_escape($membership['firstname'].' '.$membership['surname'])); ?>&quot; of &quot;<?php echo(xml_escape($membership['organisation_name'])); ?>&quot; to VIP status?');"><img src="/images/prototype/members/vip_requested.png" alt="Requested VIP Access: Click to Promote" title="Requested VIP Access: Click to Promote" /></a></small>
+								<small><a href="/office/vipmanager/demote/<?php echo($membership['user_id']); ?>/<?php echo($membership['organisation_entity_id']); ?>" onclick="return confirm('Are you sure you want to DEMOTE &quot;<?php echo(xml_escape($membership['firstname'].' '.$membership['surname'])); ?>&quot; of &quot;<?php echo(xml_escape($membership['organisation_name'])); ?>&quot;? No confirmation e-mail will be sent, and the member will be silently rejected. He will have to reapply for VIP status if you cock this up.');"><img src="/images/prototype/members/no9.png" alt="DEMOTE Member" title="DEMOTE Member" /></a></small>
 							</td>
 						</tr>
 <?php } ?>
 					</tbody>
 				</table>
 				<label for="member_org_name">Name:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_name" id="member_org_name" value="<?php echo($membership['organisation_name']); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_name" id="member_org_name" value="<?php echo(xml_escape($membership['organisation_name'])); ?>" />
 				<label for="member_org_name">Position:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_position" id="member_org_position" value="<?php echo(xml_escape($membership['position'])); ?>" />
 				<!--
@@ -63,11 +63,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

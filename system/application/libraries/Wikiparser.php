@@ -348,7 +348,7 @@ class Wikiparser {
 				break;
 			case 'centre':
 				$imagetag =
-					'<div style="text-align: center;">'.$imagetag.'<br />'.$title.'</div>';
+					'<div style="text-align: center;">'.$title.'<br />'.$title.'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
@@ -494,8 +494,9 @@ class Wikiparser {
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen(xml_unescape($matches[1]));
+		$amount = strlen(html_entity_decode($matches[1]));
 		return $this->emphasize($amount);
+
 	}
 
 	/**
@@ -580,7 +581,6 @@ class Wikiparser {
 
 	function handle_symbols($matches)
 	{
-		//echo var_dump($matches);
 		if ($matches[1] == '&') {
 			return '&amp;';
 		} elseif ($matches[0] == '<') {

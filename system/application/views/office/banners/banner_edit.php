@@ -1,22 +1,22 @@
 <div class='RightToolbar'>
 	<h4 class="first">Information</h4>
 	<div class="Entry">
-		<?php echo $page_information; ?>
+		<?php echo($page_information); ?>
 	</div>
 </div>
 <div class='blue_box'>
 	<h2>edit banner</h2>
 	<div name='banner_details_form' id='banner_details_form'>
-		<form name='banner_form' action='/office/banners/update/<?php echo $banner->banner_id; ?>' method='POST' class='form'>
+		<form name='banner_form' action='/office/banners/update/<?php echo($banner->banner_id); ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='banner_image'>Banner:</label>
-				<?php echo $this->image->getImage($banner->banner_id, 'banner'); ?>
+				<?php echo($this->image->getImage($banner->banner_id, 'banner')); ?>
 				<br />
 				<label for='banner_title'>Title:</label>
-				<textarea id='banner_title' name='banner_title' cols="30" rows="2"><?php echo $banner->banner_title; ?></textarea>
+				<textarea id='banner_title' name='banner_title' cols="30" rows="2"><?php echo(xml_escape($banner->banner_title)); ?></textarea>
 				<br />
 				<label for='banner_link'>Link:</label>
-				<input type='text' id='banner_link' name='banner_link' size="35" value="<?php echo $banner->link; ?>" />
+				<input type='text' id='banner_link' name='banner_link' size="35" value="<?php echo(xml_escape($banner->link)); ?>" />
 				<br />
 			<?php if($banner->banner_last_displayed_timestamp != null) { ?>
 				<input type='hidden' id='banner_scheduled' name='banner_scheduled' value='1'/>
@@ -30,11 +30,12 @@
 					echo ('					<option value="'.$homepage['id'].'"');
 						if(!empty($current_homepage_id))
 						{
-							if ($homepage['id']==$current_homepage_id)
-							{echo ' selected="selected"';}
+							if ($homepage['id']==$current_homepage_id) {
+								echo ' selected="selected"';
+							}
 						}
 						echo ('>'."\n");
-						echo ('						'.$homepage['name']."\n");
+						echo ('						'.xml_escape($homepage['name'])."\n");
 						echo ('					</option>'."\n");
 				}
 				?>
@@ -45,7 +46,7 @@
 				<div id="banner_schedule_date_div" style="display: none;">
 			<?php } ?>
 					<label for='banner_schedule_date'>Schedule Date:</label>
-					<input type='text' id='banner_schedule_date' name='banner_schedule_date' value='<?php echo ($banner->banner_last_displayed_timestamp ? $banner->banner_last_displayed_timestamp : ''); ?>'/>
+					<input type='text' id='banner_schedule_date' name='banner_schedule_date' value='<?php echo($banner->banner_last_displayed_timestamp ? $banner->banner_last_displayed_timestamp : ''); ?>'/>
 					<br />
 				</div>
 				<input name='name_cancel_button' type='button' onClick="document.location='/office/banners/';" value='Cancel' class='button' />
@@ -55,11 +56,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-echo '<div class="BlueBox"><pre>';
-echo print_r($data);
-echo '</pre></div>';
-*/
-?>

@@ -16,6 +16,7 @@ if (!function_exists('star_rating_large')) {
 		$xhtml = '';
 		$star_count = 0;
 		$rating_left = $rating;
+		$text = xml_escape($text);
 	
 		while ($rating_left >= 2) {
 			$xhtml .= '<img src="/images/prototype/reviews/star.png" alt="'.$text.' Rating: '.$rating.'" title="'.$text.' Rating: '.$rating.'" />';
@@ -51,7 +52,7 @@ if ($Thread['allow_ratings']) {
 			echo('<p>You have not yet rated this page</p>');
 		}
 		?>
-		<form class="form" method="post" accept="<?php echo $RatingTarget; ?>">
+		<form class="form" method="post" accept="<?php echo($RatingTarget); ?>">
 			<fieldset>
 				<label for="UserRatingValue">Your rating:</label>
 				<select name="UserRatingValue">
