@@ -37,13 +37,13 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/summaryorg/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
+		echo('						<a href="/office/pr/summaryorg/'.$org['org_dir_entry_name'].'">'.xml_escape($org['org_name']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						'.$org['org_priority']."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
-		echo('						'.$org['user_firstname'].' '.$org['user_surname']."\n");
+		echo('						'.xml_escape($org['user_firstname'].' '.$org['user_surname'])."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						100%'."\n");
@@ -56,11 +56,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

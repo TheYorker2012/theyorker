@@ -59,13 +59,19 @@ class Reviews extends Controller
 	}
 
 	/// Reviews Overview Page
-	function overview($organisation)
+	function overview($organisation = NULL)
 	{
+		if (NULL === $organisation) {
+			show_404();
+		}
 		if (!CheckPermissions('office')) return;
 
 		$this->pages_model->SetPageCode('office_reviews_overview');
 
 		$data = $this->organisations->_GetOrgData($organisation);
+		if (empty($data)) {
+			show_404();
+		}
 
 		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
@@ -363,12 +369,14 @@ class Reviews extends Controller
 			$this->load->model('requests_model');
 			$this->load->model('article_model');
 			$temp_reviews = $this->review_model->GetOrgReviews($ContextType, $data['organisation']['id']);
-			foreach($temp_reviews as $review)
-			{
-				$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
-				$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
-				$temp['article']['id'] = $review['id'];
-				$data['reviews'][] = $temp;
+			if (is_array($temp_reviews)) {
+				foreach($temp_reviews as $review)
+				{
+					$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
+					$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
+					$temp['article']['id'] = $review['id'];
+					$data['reviews'][] = $temp;
+				}
 			}
 
 			// Set up the public frame

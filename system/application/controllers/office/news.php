@@ -25,6 +25,28 @@ class News extends Controller
 	}
 
 	/**
+	 *	@brief	Determines which function is used depending on url
+	 */
+	function _remap($method = 'uninews')
+	{
+		$type_info = $this->news_model->getArticleTypeInformation($method);
+		/// If url is a type then load box view
+		if (count($type_info) > 0) {
+			$this->index($type_info);
+		/// If numeric then its an article
+		} elseif (is_numeric($method)) {
+			$this->article($method);
+		/// Matches: /request
+		} elseif ((method_exists($this, $method)) && ($method != 'index')) {
+			$this->$method();
+		/// Default behaviour: display uninews box
+		} else {
+			/// @TODO: Get logged in user's yorker journalist team and display that box
+			$this->index($this->news_model->getArticleTypeInformation('uninews'));
+		}
+	}
+
+	/**
 	 *	@brief	Shows the scheduled and live (published within the last 7 days) articles on the site.
 	 */
 	function scheduledlive()
@@ -56,28 +78,6 @@ class News extends Controller
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('office/news/content_schedule', $data);
 		$this->main_frame->Load();
-	}
-
-	/**
-	 *	@brief	Determines which function is used depending on url
-	 */
-	function _remap($method)
-	{
-		$type_info = $this->news_model->getArticleTypeInformation($method);
-		/// If url is a type then load box view
-		if (count($type_info) > 0) {
-			$this->index($type_info);
-		/// If numeric then its an article
-		} elseif (is_numeric($method)) {
-			$this->article($method);
-		/// Matches: /request
-		} elseif ((method_exists($this, $method)) && ($method != 'index')) {
-			$this->$method();
-		/// Default behaviour: display uninews box
-		} else {
-			/// @TODO: Get logged in user's yorker journalist team and display that box
-			$this->index($this->news_model->getArticleTypeInformation('uninews'));
-		}
 	}
 
 

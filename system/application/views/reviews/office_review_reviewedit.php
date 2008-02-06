@@ -1,37 +1,37 @@
 <div class="RightToolbar">
 	<h4 class="first">Page Information</h4>
-		<p>
-			<?php echo $page_information; ?>
-		</p>
+		<?php echo($page_information); ?>
 	<?php
-		echo '<h4>Revisions (Latest First)</h4>
-		<div class="Entry">';
-			if (count($article['revisions']) > 0)
-			{
-				$first_hr = FALSE;
-				foreach ($article['revisions'] as $revision)
-				{
-					if ($first_hr == FALSE)
-						$first_hr = TRUE;
-					else
-						echo '<hr>';
-					$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-					echo '<a href="/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>';
-					if ($revision['id'] == $article['header']['live_content'])
-					{
-						echo '<br /><span class="orange">(Published';
-						if ($revision['id'] == $article['displayrevision']['id'])
-							echo ', Displayed';
-						echo ')</span>';
-					}
-					elseif ($revision['id'] == $article['displayrevision']['id'])
-						echo '<br /><span class="orange">(Displayed)</span>';
-					echo '<br />by '.$revision['username'].'<br />';
+		echo('<h4>Revisions (Latest First)</h4>
+			<div class="Entry">');
+		if (count($article['revisions']) > 0)
+		{
+			$first_hr = FALSE;
+			foreach ($article['revisions'] as $revision) {
+				if ($first_hr == FALSE) {
+					$first_hr = TRUE;
+				} else {
+					echo('<hr>');
 				}
+				$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
+				echo('<a href="/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>');
+				if ($revision['id'] == $article['header']['live_content']) {
+					echo('<br /><span class="orange">(Published');
+					if ($revision['id'] == $article['displayrevision']['id']) {
+						echo(', Displayed');
+					}
+					echo(')</span>');
+				}
+				elseif ($revision['id'] == $article['displayrevision']['id']) {
+					echo('<br /><span class="orange">(Displayed)</span>');
+				}
+				echo('<br />by '.xml_escape($revision['username']).'<br />');
 			}
-			else
-				echo 'No Revisions ... Yet.';
-		echo '</div>';
+		}
+		else {
+			echo('No Revisions exist yet.');
+		}
+		echo('</div>');
 	?>
 </div>
 <div id="MainColumn">
@@ -41,10 +41,11 @@
 			<fieldset>
 				<div id="toolbar"></div>
 				<?php
-				if ($article['displayrevision'] != FALSE)
-					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
-				else
+				if ($article['displayrevision'] != FALSE) {
+					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.xml_escape($article['displayrevision']['wikitext']).'</textarea><br />';
+				} else {
 					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
+				}
 				?>
 			</fieldset>
 			<fieldset>
@@ -53,9 +54,11 @@
 		</form>
 	</div>
 	<script type="text/javascript">
+	// <![CDATA[
 		mwSetupToolbar('toolbar','review', false);
+	// ]]>
 	</script>
-<!--
+<?php /*
 <div class="grey_box">
 	<h2>change author</h2>
 	<form class="form" action="<?php echo($this_url); ?>" method="POST">
@@ -66,7 +69,7 @@
 				<?php
 				foreach ($bylines['generic'] as $option)
 				{
-					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
+					echo '<option value="'.$option['id'].'">'.xml_escape($option['name']).'</option>';
 				}
 				?>
 				</optgroup>
@@ -74,7 +77,7 @@
 				<?php
 				foreach ($bylines['user'] as $option)
 				{
-					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
+					echo '<option value="'.$option['id'].'">'.xml_escape($option['name']).'</option>';
 				}
 				?>
 				</optgroup>
@@ -85,7 +88,7 @@
 		</fieldset>
 	</form>
 </div>
--->
+*/ ?>
 <?php
 if ($user['officetype'] != 'Low')
 {

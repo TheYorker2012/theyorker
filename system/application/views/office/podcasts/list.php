@@ -87,7 +87,7 @@
 ?>
 					<tr>
 						<td>
-							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.$name.'</a>'); ?>
+							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.xml_escape($name).'</a>'); ?>
 						</td>
 						<td style="text-align:right;padding-right:5px;">
 							<?php echo($is_live); ?>

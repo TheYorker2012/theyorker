@@ -32,12 +32,12 @@
 				echo('/images/prototype/news/delete.gif');
 			}
 			echo('" />'.($is_editor ? '</a>' : "").'</td>');
-			echo('<td style="padding-right:5px">'.(strlen($game['title'])>0 ? $game['title'] : '<em>&lt;No Name&gt;</em>').'</td>');
+			echo('<td style="padding-right:5px">'.(strlen($game['title'])>0 ? xml_escape($game['title']) : '<em>&lt;No Name&gt;</em>').'</td>');
 			echo('<td style="padding-right:5px"> '.$game['date_added'].'</td>');
 			echo('<td>'.$game['play_count'].'</td>');
 			echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
 			echo('<td>');
-			echo('<a href="/office/games/del_game/'.$game_id.'" onclick="return check_delete(\''.$game['title'].'\');">Del</a>');
+			echo('<a href="/office/games/del_game/'.$game_id.'" onclick="return check_delete(\''.xml_escape($game['title']).'\');">Del</a>');
 			echo('</td>');
 			echo('</tr>');
 			$alternate==1 ? $alternate = 2 : $alternate = 1;
@@ -46,20 +46,24 @@
 	}
 ?>
 <script type="text/javascript">
-
+// <![CDATA[
 	function add()
 	{
 		document.getElementById('add_game').style.display="";
 		document.getElementById('list_box').style.display="none";
 		document.getElementById('add_entry').style.display="none";
-		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="none";');} ?>
+		<?php if($incomplete_games != 0) { ?>
+		document.getElementById('incomplete_box').style.display="none";'
+		<?php } ?>
 	}
 	
 	function hide_add()
 	{
 		document.getElementById('add_game').style.display="none";
 		document.getElementById('list_box').style.display="";
-		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="";');} ?>
+<?php if($incomplete_games != 0) { ?>
+		document.getElementById('incomplete_box').style.display="";
+<?php } ?>
 	}
 	
 	function add_entry()
@@ -70,15 +74,19 @@
 		}
 		document.getElementById('list_box').style.display="none";
 		document.getElementById('add_game').style.display="none";
-		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="none";');} ?>
 		document.getElementById('add_entry').style.display="";
+<?php if($incomplete_games != 0) { ?>
+		document.getElementById('incomplete_box').style.display="none";
+<?php } ?>
 	}
 	
 	function hide_add_entry()
 	{		
 		document.getElementById('add_entry').style.display="none";
 		document.getElementById('list_box').style.display="";
-		<?php if($incomplete_games !=0){echo('document.getElementById("incomplete_box").style.display="";');} ?>
+<?php if($incomplete_games != 0) { ?>
+		document.getElementById("incomplete_box").style.display="";
+<?php } ?>
 	}
 	
 	function list_response()
@@ -95,13 +103,13 @@
 	{
 		return window.confirm("Are you sure you want to delete the game '"+title+"'?  This action cannot be undone.");
 	}
-	
+// ]]>
 </script>
 
 <div class="RightToolbar">
-	<h4><?php echo($section_games_list_page_info_title); ?></h4>
+	<h4><?php echo(xml_escape($section_games_list_page_info_title)); ?></h4>
 	<?php echo($section_games_list_page_info_text); ?>
-	<h4><?php echo($section_games_list_actions_title); ?></h4>
+	<h4><?php echo(xml_escape($section_games_list_actions_title)); ?></h4>
 		<ul>
 			<li><a href="#" onclick="add();return false;">Add</a></li>
 			<li><a href="#" onclick="add_entry();return false;">Add Entry</a></li>

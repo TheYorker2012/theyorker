@@ -5,12 +5,12 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo($team_info['business_card_group_name']); ?></h2>
+		<h2><?php echo(xml_escape($team_info['business_card_group_name'])); ?></h2>
 
 		<form action="/office/bylines/view_team/<?php echo($team_info['business_card_group_id']); ?>/" method="post">
 			<fieldset>
 				<label for="team_name">Team Name:</label>
-				<input type="text" name="team_name" id="team_name" value="<?php echo($team_info['business_card_group_name']); ?>" />
+				<input type="text" name="team_name" id="team_name" value="<?php echo(xml_escape($team_info['business_card_group_name'])); ?>" />
 				<input type="submit" name="rename_team" id="rename_team" value="Rename" class="button" />
 			</fieldset>
 		</form>
@@ -41,7 +41,7 @@
 			<?php if (($byline['user_firstname'] == NULL) && ($byline['user_surname'] == NULL)) {
 				echo('GLOBAL');
 			} else {
-				echo($byline['user_firstname'] . ' ' . $byline['user_surname']);
+				echo(xml_escape($byline['user_firstname'] . ' ' . $byline['user_surname']));
 			} ?>
 		</a>
 		<b>Status:</b> <?php echo(($byline['business_card_approved']) ? '<span style="color:darkgreen">Approved</span>' : '<span style="color:red">Pending</span>'); ?>

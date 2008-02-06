@@ -7,10 +7,8 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 
 <div class='RightToolbar'>
 	<h4>Page Information</h4>
-	<div class="Entry">	
-		<p>
-			<?php echo $page_information; ?>
-		</p>
+	<div class="Entry">
+		<?php echo($page_information); ?>
 	</div>
 	<h4>Revisions</h4>
 	<div class="Entry">
@@ -20,14 +18,18 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 		$new_revisions_present = false;
 		foreach($revisions as $the_revision) {
 			echo('<li>');
-			if ($the_revision['deleted']){echo('<span class="red">');}
-			echo('Author : '.$the_revision['author'].'<br />');
+			if ($the_revision['deleted']) {
+				echo('<span class="red">');
+			}
+			echo('Author : '.xml_escape($the_revision['author']).'<br />');
 			echo('Created : '.date('d/m/Y H:i', (int)$the_revision['timestamp']).'<br />');
 			if ($main_revision['content_id'] == $the_revision['id']) {
 				echo(' <b>(Editing)</b>');
 			} else {
 				echo(' <a href="'.$reviews_information_url.'/view');
-				if ($the_revision['deleted']){echo('all');}
+				if ($the_revision['deleted']) {
+					echo('all');
+				}
 				echo('/'.$the_revision['id'].'">Edit</a>');
 			}
 			echo(' <a href="'.$reviews_information_url.'/preview/'.$the_revision['id'].'">Preview');
@@ -44,7 +46,9 @@ $reviews_information_url = site_url('office/reviews/'.$organisation['shortname']
 					$new_revisions_present=true;
 				}
 			}
-			if ($the_revision['deleted']){echo('</span>');}
+			if ($the_revision['deleted']) {
+				echo('</span>');
+			}
 			echo('</li>');
 		}?>
 		</ol>
@@ -69,7 +73,7 @@ if(!empty($reviews)){
 		//print_r($review);
 		if (!empty($review['writers'][0]) && empty($review['article']['live_content'])){
 			echo('				<li><a href="/office/reviews/'.$organisation['shortname'].'/'.$context_type.'/review');
-			echo('">'.$review['writers'][0]['name'].' '.$review['article']['created'].'</a></li>'."\n");
+			echo('">'.xml_escape($review['writers'][0]['name']).' '.xml_escape($review['article']['created']).'</a></li>'."\n");
 		}
 	}
 	echo('			</ul>'."\n");
@@ -89,9 +93,9 @@ if($new_revisions_present){
 	<form id='reviewinfo' name='reviewinfo' action='/office/reviews/<?php echo($organisation['shortname']); ?>/<?php echo($context_type); ?>' method='POST' class='form'>
 	<div class='blue_box'>
 		<h2>objective blurb</h2>
-		You are currently editing <span class="orange"><?php echo($organisation['name']); ?></span><br />
+		You are currently editing <span class="orange"><?php echo(xml_escape($organisation['name'])); ?></span><br />
 		<fieldset>
-			<textarea name='reviewinfo_about' cols='48' rows='10'><?php echo($main_revision['content_blurb']); ?></textarea>
+			<textarea name='reviewinfo_about' cols='48' rows='10'><?php echo(xml_escape($main_revision['content_blurb'])); ?></textarea>
 		</fieldset>
 	</div>
 	<div class='grey_box'>
@@ -103,28 +107,30 @@ if($new_revisions_present){
 			for ($rating = 0; $rating <= 10; $rating++)
 			{
 	    		echo('<option');
-	    		if ($rating == $main_revision['content_rating']) echo(' selected');
+	    		if ($rating == $main_revision['content_rating']) {
+	    			echo(' selected');
+				}
 	    		echo(' value="'.$rating.'">'.($rating / 2).'</option>');
 			}
 			?>
 			</select>
 			<br />
 			<label for='reviewinfo_quote'>Summary Quote:</label>
-			<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo($main_revision['content_quote']); ?></textarea>
+			<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo(xml_escape($main_revision['content_quote'])); ?></textarea>
 			<br />
 			<label for='reviewinfo_recommended'>Recommended Item:</label>
-			<input type='text' name='reviewinfo_recommended' style='width: 220px;' value='<?php echo($main_revision['recommended_item']); ?>'/>
+			<input type='text' name='reviewinfo_recommended' style='width: 220px;' value='<?php echo(xml_escape($main_revision['recommended_item'])); ?>'/>
 			<br />
 			<label for='reviewinfo_average_price'>Average Price:</label>
-			<input type='text' name='reviewinfo_average_price' style='width: 220px;' value='<?php echo($main_revision['average_price']); ?>'/>
+			<input type='text' name='reviewinfo_average_price' style='width: 220px;' value='<?php echo(xml_escape($main_revision['average_price'])); ?>'/>
 			<br />
 			<label for='reviewinfo_serving_hours'>Serving Hours:</label>
-			<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo($main_revision['serving_times']); ?></textarea>
+			<textarea name='reviewinfo_serving_hours' cols='25' rows='4'><?php echo(xml_escape($main_revision['serving_times'])); ?></textarea>
 			<br />
 			
 			<label for='reviewinfo_submitbutton'></label>
 			<input type='submit' name='submitbutton' value='Create new revision' class='button' />
 		</fieldset>
 	</div>
-	<a href="/office/reviewlist/<?php echo $context_type; ?>">Back to the attention list</a>
+	<a href="/office/reviewlist/<?php echo($context_type); ?>">Back to the attention list</a>
 </div>

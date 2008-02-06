@@ -11,9 +11,9 @@
 		<form class="form" action="<?php echo($target); ?>" method="post" enctype="multipart/form-data">
 			<fieldset>
 				<label for="a_name">Name: </label>
-					<input type="text" name="a_name" size="31" value="<?php echo($podcast['name']); ?>" />
+					<input type="text" name="a_name" size="31" value="<?php echo(xml_escape($podcast['name'])); ?>" />
 				<label for="a_description">Description: </label>
-					<textarea name="a_description" rows="7" cols="33"><?php echo($podcast['description']); ?></textarea>
+					<textarea name="a_description" rows="7" cols="33"><?php echo(xml_escape($podcast['description'])); ?></textarea>
 				<label for="file_address">File Address:</label>
 					<input	
 						type="text"
@@ -23,7 +23,7 @@
 						value="<?php echo(
 									$this->config->item('static_web_address').
 									'/podcasts/'.
-									$podcast['file']); ?>">
+									xml_escape($podcast['file'])); ?>">
 				<label for="file_size">File Size:</label>
 					<input	
 						type="text"
@@ -40,7 +40,7 @@
 						<a href="<?php echo(
 								$this->config->item('static_web_address').
 								'/podcasts/'.
-								$podcast['file']); ?>">Play</a>
+								xml_escape($podcast['file'])); ?>">Play</a>
 					</div>
 					<input type="submit" class="button" value="Save" name="r_submit_save" />
 				</div>

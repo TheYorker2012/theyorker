@@ -67,7 +67,7 @@ class Facebook
 		$this->Disable();
 		$CI = & get_instance();
 		$CI->messages->AddMessage('information',
-			'You have logged out of facebook (reason: '.$E->getMessage().')'.
+			'You have logged out of facebook (reason: '.xml_escape($E->getMessage()).')'.
 			HtmlButtonLink(site_url('login/facebook'.$CI->uri->uri_string()),'Log back in')
 		);
 	}

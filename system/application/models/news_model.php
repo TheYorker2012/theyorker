@@ -115,7 +115,7 @@ class News_model extends Model
 
 			GROUP_CONCAT(DISTINCT CONCAT(users.user_firstname," ",users.user_surname)
 				 ORDER BY users.user_surname
-				 SEPARATOR ", <br />") as authors,
+				 SEPARATOR ",\n") as authors,
 
 			CONCAT(editors.user_firstname," ",editors.user_surname) as editor,
 

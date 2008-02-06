@@ -55,11 +55,11 @@ function js_literalise($value)
 		return $result;
 	}
 	else {
-		return '"'.str_replace(
-			array('"',  '<?'),
-			array('\"', '<"+"?'),
+		return '\''.str_replace(
+			array('\'',  '<?',       ']]>'),
+			array('\\\'', '<\'+\'?', ']\'+\']>'),
 			$value
-		).'"';
+		).'\'';
 	}
 }
 
