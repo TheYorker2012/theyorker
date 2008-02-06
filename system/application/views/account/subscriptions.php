@@ -3,6 +3,7 @@
 	<script type="text/javascript" src="/javascript/slideshow_new.js"></script>
 	<script type="text/javascript" src="/javascript/subscriptions.js"></script>
 	<script type="text/javascript">
+	// <![CDATA[
 	var societies = Array();
 	<?php foreach ($organisations as $soc) { ?>
 	societies['<?php echo($soc['id']); ?>'] = <?php echo(js_literalise(array(
@@ -12,6 +13,7 @@
 	))); ?>;
 	<?php } ?>
 	var subscription_type = <?php echo(js_literalise($type)); ?>;
+	// ]]>
 	</script>
 
 	<div class="BlueBox">
