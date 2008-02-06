@@ -114,6 +114,27 @@ class Pages_model extends Model
 		}
 	}
 	
+	/// Get a specific xhtml property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyXhtml($PropertyLabel, $PageCode = FALSE, $Default = '')
+	{
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			return $value['text'];
+		}
+	}
+	
 	/// Get a specific integer property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
@@ -183,6 +204,9 @@ class Pages_model extends Model
 			// Use the cache
 			$wikitext_cached = $cache['text'];
 		}
+		// Postprocess the cache
+		$this->load->library('xml_processor');
+		$wikitext_cached = $this->xml_processor->Process($wikitext_cached);
 		
 		// Replace special values
 		if (empty($Replacements)) {

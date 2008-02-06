@@ -597,7 +597,7 @@ class Wikiparser {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
-			$first_characters .= '\{';
+// 			$first_characters .= '\{';
 		}
 		
 		$line_regexes = array();
@@ -835,7 +835,7 @@ Done.
 		$output = '
 <div style="text-align:center;">
 <script type="text/javascript">
-<!--
+// <![CDATA[
 // Version check based upon the values entered above in "Globals"
 var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
 
@@ -852,7 +852,7 @@ if (hasReqestedVersion) {
 	+ "</div>";
 	document.write(alternateContent);  // insert non-flash content
 }
-// -->
+// ]]>
 </script>
 <noscript>
 	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
@@ -865,4 +865,5 @@ if (hasReqestedVersion) {
 		return $output;
 	}
 }
+
 ?>
