@@ -25,38 +25,22 @@
  * @link		http://www.codeigniter.com/user_guide/libraries/exceptions.html
  */
 class CI_Exceptions {
-	var $action;
-	var $severity;
-	var $message;
-	var $filename;
-	var $line;
-	var $ob_level;
+	private static $levels = array(
+		E_ERROR			=> 'Error',
+		E_WARNING		=> 'Warning',
+		E_PARSE			=> 'Parsing Error',
+		E_NOTICE		=> 'Notice',
+		E_CORE_ERROR		=> 'Core Error',
+		E_CORE_WARNING		=> 'Core Warning',
+		E_COMPILE_ERROR		=> 'Compile Error',
+		E_COMPILE_WARNING	=> 'Compile Warning',
+		E_USER_ERROR		=> 'User Error',
+		E_USER_WARNING		=> 'User Warning',
+		E_USER_NOTICE		=> 'User Notice',
+		E_STRICT		=> 'Runtime Notice'
+	);
 
-	var $levels = array(
-						E_ERROR				=>	'Error',
-						E_WARNING			=>	'Warning',
-						E_PARSE				=>	'Parsing Error',
-						E_NOTICE			=>	'Notice',
-						E_CORE_ERROR		=>	'Core Error',
-						E_CORE_WARNING		=>	'Core Warning',
-						E_COMPILE_ERROR		=>	'Compile Error',
-						E_COMPILE_WARNING	=>	'Compile Warning',
-						E_USER_ERROR		=>	'User Error',
-						E_USER_WARNING		=>	'User Warning',
-						E_USER_NOTICE		=>	'User Notice',
-						E_STRICT			=>	'Runtime Notice'
-					);
-
-
-	/**
-	 * Constructor
-	 *
-	 */	
-	function CI_Exceptions()
-	{
-		$this->ob_level = ob_get_level();
-		// Note:  Do not log messages from this constructor.
-	}
+	private function __construct() { }
   	
 	// --------------------------------------------------------------------
 
@@ -72,9 +56,9 @@ class CI_Exceptions {
 	 * @param	string	the error line number
 	 * @return	string
 	 */
-	function log_exception($severity, $message, $filepath, $line)
+	public static function log_exception($severity, $message, $filepath, $line)
 	{	
-		$severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
+		$severity = ( ! isset(self::$levels[$severity])) ? $severity : self::$levels[$severity];
 		
 		log_message('error', 'Severity: '.$severity.'  --> '.$message. ' '.$filepath.' '.$line, TRUE);
 	}
@@ -88,13 +72,13 @@ class CI_Exceptions {
 	 * @param	string
 	 * @return	string
 	 */
-	function show_404($page = '')
+	public static function show_404($page = '')
 	{	
 		$heading = "404 Page Not Found";
 		$message = "The page you requested was not found.";
 
 		log_message('error', '404 Page Not Found --> '.$page);
-		echo $this->show_error($heading, $message, 'error_404');
+		echo self::show_error($heading, $message, 'error_404');
 		exit;
 	}
   	
@@ -113,14 +97,10 @@ class CI_Exceptions {
 	 * @param	string	the template name
 	 * @return	string
 	 */
-	function show_error($heading, $message, $template = 'error_general')
+	public static function show_error($heading, $message, $template = 'error_general')
 	{
 		$message = '<p>'.implode('</p><p>', ( ! is_array($message)) ? array($message) : $message).'</p>';
 
-		if (ob_get_level() > $this->ob_level + 1)
-		{
-			ob_end_flush();	
-		}
 		ob_start();
 		include(APPPATH.'errors/'.$template.EXT);
 		$buffer = ob_get_contents();
@@ -140,9 +120,9 @@ class CI_Exceptions {
 	 * @param	string	the error line number
 	 * @return	string
 	 */
-	function show_php_error($severity, $message, $filepath, $line)
+	public static function show_php_error($severity, $message, $filepath, $line)
 	{	
-		$severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
+		$severity = ( ! isset(self::$levels[$severity])) ? $severity : self::$levels[$severity];
 	
 		$filepath = str_replace("\\", "/", $filepath);
 		
@@ -153,10 +133,6 @@ class CI_Exceptions {
 			$filepath = $x[count($x)-2].'/'.end($x);
 		}
 		
-		if (ob_get_level() > $this->ob_level + 1)
-		{
-			ob_end_flush();	
-		}
 		ob_start();
 		include(APPPATH.'errors/error_php'.EXT);
 		$buffer = ob_get_contents();

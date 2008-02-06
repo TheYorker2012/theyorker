@@ -1056,13 +1056,7 @@ class CI_DB_driver {
 			$message = ( ! is_array($error)) ? array(str_replace('%s', $swap, $LANG->line($error))) : $error;
 		}
 
-		if ( ! class_exists('CI_Exceptions'))
-		{
-			include(BASEPATH.'libraries/Exceptions'.EXT);
-		}
-		
-		$error = new CI_Exceptions();
-		echo $error->show_error('An Error Was Encountered', $message, 'error_db');
+		show_error('An Error Was Encountered', $message, 'error_db');
 		exit;
 	}
 	

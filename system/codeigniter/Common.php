@@ -103,8 +103,7 @@ function config_item($item) {
 */
 function show_error($message)
 {
-	$error =& load_class('Exceptions');
-	echo $error->show_error('An Error Was Encountered', $message);
+	echo(CI_Exceptions::show_error('An Error Was Encountered', $message));
 	exit;
 }
 
@@ -121,8 +120,7 @@ function show_error($message)
 */
 function show_404($page = '')
 {
-	$error =& load_class('Exceptions');
-	$error->show_404($page);
+	CI_Exceptions::show_404($page);
 	exit;
 }
 
@@ -166,11 +164,9 @@ function _exception_handler($severity, $message, $filepath, $line)
 	if ($severity == E_STRICT)
 		return;
 
-	$error =& load_class('Exceptions');
-
 	if (($severity & error_reporting()) == $severity)
 	{
-		$error->show_php_error($severity, $message, $filepath, $line);
+		CI_Exceptions::show_php_error($severity, $message, $filepath, $line);
 	}
 	
 	if (config_item('log_threshold') == 0)
@@ -178,7 +174,7 @@ function _exception_handler($severity, $message, $filepath, $line)
 		return;
 	}
 
-	$error->log_exception($severity, $message, $filepath, $line);
+	CI_Exceptions::log_exception($severity, $message, $filepath, $line);
 }
 
 ?>

@@ -1,5 +1,6 @@
 <?php
 require(BASEPATH.'codeigniter/Common'.EXT);
+include(BASEPATH.'libraries/Exceptions'.EXT);
 
 set_error_handler('_exception_handler');
 set_magic_quotes_runtime(0); // Kill magic quotes
