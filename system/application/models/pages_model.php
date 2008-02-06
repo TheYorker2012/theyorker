@@ -222,7 +222,7 @@ class Pages_model extends Model
 			$output .= "     <strong>warning</strong>: <em>This property belongs to the page type <strong><a href=\"$page_link\">$PageCode</a></strong>. Other parts of the site other than this page may use this page type. Changes will take place immediately after saving.</em>";
 			$output .= '    </p>';
 			$output .= '    <fieldset>';
-			$output .= "     <textarea id=\"ppedit_wikitext_value_$edit_counter\" cols=\"40\" rows=\"10\">".htmlentities($wikitext['text'], ENT_QUOTES, 'utf-8').'</textarea>';
+			$output .= "     <textarea id=\"ppedit_wikitext_value_$edit_counter\" cols=\"40\" rows=\"10\">".xml_escape($wikitext['text']).'</textarea>';
 			$output .= '    </fieldset>';
 			$output .= '    <fieldset>';
 			$output .= "     <input class=\"button\" type=\"button\" value=\"save\" onclick=\"return PPEditSubmitWikitext($edit_counter,'$PageCode','$PropertyLabel','wikitext','save');\"/>";

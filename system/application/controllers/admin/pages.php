@@ -143,12 +143,12 @@ class Pages extends Controller
 	{
 		// Validate codename, must be non empty, and consist only of word characters
 		if (!preg_match('/^\w+$/', $Codename)) {
-			$this->messages->AddMessage('error','Your specified codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" contained invalid characters. Please use alphanumeric characters only.');
+			$this->messages->AddMessage('error','Your specified codename "'.xml_escape($Codename).'" contained invalid characters. Please use alphanumeric characters only.');
 			return FALSE;
 		}
 		// Check if new codename is in use
 		elseif (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$Codename)) {
-			$this->messages->AddMessage('error','A page with the codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" already exists. Please choose another.');
+			$this->messages->AddMessage('error','A page with the codename "'.xml_escape($Codename).'" already exists. Please choose another.');
 			return FALSE;
 		}
 		return TRUE;

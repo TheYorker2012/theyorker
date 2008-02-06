@@ -53,6 +53,7 @@ class Wikiparser {
 	protected $newline_mode;
 	protected $enable_headings;
 	protected $enable_youtube;
+	protected $enable_mediaplayer;
 	protected $enable_quickquotes;
 	protected $entities;
 
@@ -102,10 +103,11 @@ class Wikiparser {
 		$this->newline_mode = '';
 		$this->enable_headings = true;
 		$this->enable_youtube = true;
+		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
 		$this->entities = array(
-			'\'' => htmlentities('\'', ENT_QUOTES, 'UTF-8'),
-			'"'  => htmlentities('"',  ENT_QUOTES, 'UTF-8'),
+			'\'' => xml_escape('\''),
+			'"'  => xml_escape('"'),
 		);
 	}
 
@@ -346,7 +348,7 @@ class Wikiparser {
 				break;
 			case 'centre':
 				$imagetag =
-					'<div style="text-align: center;">'.$title.'<br />'.$title.'</div>';
+					'<div style="text-align: center;">'.$imagetag.'<br />'.$title.'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
@@ -373,50 +375,45 @@ class Wikiparser {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
-			//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
-			$output = '
-<div style="text-align:center;">
-<script type="text/javascript">
-<!--
-// Version check based upon the values entered above in "Globals"
-var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+			//$href = xml_escape($href);
+			$params = array('src', 'http://www.youtube.com/v/' . $href,
+					'width', '340',
+					'height', '280');
+			$output = $this->get_inline_flash_code($params);
 
-// Check to see if the version meets the requirements for playback
-if (hasReqestedVersion) {
-	// if we\'ve detected an acceptable version
-	// embed the Flash Content SWF when all tests are passed
-	AC_FL_RunContent(
-				"src", "http://www.youtube.com/v/'.$href.'",
-				"width", "340",
-				"height", "280",
-				"align", "center",
-				"id", "movie",
-				"quality", "high",
-				"bgcolor", "#FFFFFF",
-				"name", "movie",
-				"allowScriptAccess","sameDomain",
-				"type", "application/x-shockwave-flash",
-				"codebase", "http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab",
-				"pluginspage", "http://www.adobe.com/go/getflashplayer"
-	);
-} else {  // flash is too old or we can\'t detect the plugin
-	var alternateContent = \'<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />\'
-	+ "<b>YouTube Video Clip</b><br /><br /> "
-	+ "This content requires the Adobe Flash Player 9. "
-	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
-	+ "</div>";
-	document.write(alternateContent);  // insert non-flash content
-}
-// -->
-</script>
-<noscript>
-	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
-	<b>YouTube Video Clip</b><br /><br />
-  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
-  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
-  	</div>
-</noscript>
-</div>';
+			if ($this->in_paragraph) {
+				// divs aren't allowed in paragraphs, so close and reopen
+				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
+			}
+			return $output;
+		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
+			static $mediaplayer_count = 0;
+			$mediaplayer_count++;
+			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 280;
+			$output = '
+				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
+					<div style="border: 1px solid #999999;">
+						<b>Flash Video/Audio Player</b><br /><br />
+						This content requires Adobe Flash Player 8.
+						<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+					</div>
+				</div>
+				<script type="text/javascript">
+				var so = new SWFObject("/flash/mediaplayer.swf","mp' . $mediaplayer_count . '","340","' . $control_height . '","8");
+				so.addParam("allowscriptaccess","samedomain");
+				so.addParam("allowfullscreen","true");
+				so.addVariable("height","' . $control_height . '");
+				so.addVariable("width","340");
+				so.addVariable("file","' . $href . '");
+				so.addVariable("backcolor","0xFF6A00");
+				so.addVariable("frontcolor","0xFFFFFF");
+				so.addVariable("lightcolor","0x000000");
+				so.addVariable("screencolor","0xFFFFFF");
+				so.addVariable("logo","/images/prototype/news/video_overlay_icon.png");
+				so.addVariable("overstretch","true");
+				so.addVariable("showdownload","true");
+				so.write("mp' . $mediaplayer_count . '_container");
+				</script>';
 			if ($this->in_paragraph) {
 				// divs aren't allowed in paragraphs, so close and reopen
 				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
@@ -448,9 +445,9 @@ if (hasReqestedVersion) {
 			substr($href, 0, 1) !== '/')
 		{
 			return $matches[0];
-			//return htmlentities($matches[0], ENT_QUOTES, 'UTF-8');
+			//return xml_escape($matches[0]);
 		}
-		//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
+		//$href = xml_escape($href);
 		if (array_key_exists(4,$matches)) {
 			// implicit mailto
 			$href = 'Mailto:'.$matches[4];
@@ -497,9 +494,8 @@ if (hasReqestedVersion) {
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen(html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8'));
+		$amount = strlen(xml_unescape($matches[1]));
 		return $this->emphasize($amount);
-
 	}
 
 	/**
@@ -653,7 +649,7 @@ if (hasReqestedVersion) {
 		$line = rtrim($line);
 
 		// escape some symbols
-		$line = htmlentities($line, ENT_QUOTES, 'UTF-8');
+		$line = xml_escape($line);
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
 		foreach ($line_regexes as $func=>$regex) {
@@ -810,6 +806,64 @@ Done.
 
 	function handle_restore_nowiki($matches) {
 		return $this->nowikis[$this->nextnowiki++];
+	}
+
+	/**
+	 *	@brief	Return inline JS to detect Flash Version and generate embed tags (used by MediaPlayer and YouTube)
+	 *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
+	 *	@date	01/02/2008
+	 *	@param	$params - array containing all the parameters that should be passed to flash movie
+	 */
+	function get_inline_flash_code ($params) {
+		static $player_count = 0;
+		$player_count++;
+		$default_params = array(
+			'align', 'center',
+			'id', 'movie' . $player_count,
+			'quality', 'high',
+			'bgcolor', '#FFFFFF',
+			'name', 'movie' . $player_count,
+			'allowScriptAccess', 'sameDomain',
+			'type', 'application/x-shockwave-flash',
+			'codebase', 'http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab',
+			'pluginspace', 'http://www.adobe.com/go/getflashplayer'
+		);
+		$params = array_merge($default_params, $params);
+		foreach ($params as &$param) {
+			$param = '"' . $param . '"';
+		}
+		$params = implode(',', $params);
+		$output = '
+<div style="text-align:center;">
+<script type="text/javascript">
+<!--
+// Version check based upon the values entered above in "Globals"
+var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+// Check to see if the version meets the requirements for playback
+if (hasReqestedVersion) {
+	// if we\'ve detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(' . $params . ');
+} else {  // flash is too old or we can\'t detect the plugin
+	var alternateContent = \'<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />\'
+	+ "<b>Flash Video Clip</b><br /><br /> "
+	+ "This content requires the Adobe Flash Player 9. "
+	+ "<a href=http://www.adobe.com/go/getflash/>Get Flash</a>"
+	+ "</div>";
+	document.write(alternateContent);  // insert non-flash content
+}
+// -->
+</script>
+<noscript>
+	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
+	<b>Flash Video Clip</b><br /><br />
+  	This content requires the Adobe Flash Player 9 and a browser with JavaScript enabled.
+  	<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+  	</div>
+</noscript>
+</div>';
+		return $output;
 	}
 }
 ?>

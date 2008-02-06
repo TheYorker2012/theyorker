@@ -25,7 +25,7 @@ $html .= '<fieldset>';
 $html .= '<input type="hidden" name="refer" value="'.$CI->uri->uri_string()."\" />\n";
 $html .= "<input type=\"hidden\" name=\"calnot[type]\" value=\"$Type[id]\" />\n";
 foreach ($Keys as $key => $value) {
-	$value = htmlentities($value, ENT_QUOTES, 'utf-8');
+	$value = xml_escape($value);
 	$html .= "<input type=\"hidden\" name=\"calnot[keys][$key]\" value=\"$value\" />\n";
 }
 foreach ($Type['actions'] as $action => $description) {

@@ -9,7 +9,7 @@
 	}
 	else {
 		echo('		<p>'."\n");
-		echo('			You have no dedicated rep, so our pr officers '.htmlentities($rep['name']).' are looking after you.'."\n");
+		echo('			You have no dedicated rep, so our pr officers '.xml_escape($rep['name']).' are looking after you.'."\n");
 		echo('		</p>'."\n");
 	}
 ?>

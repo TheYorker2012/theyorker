@@ -34,7 +34,7 @@ class Games extends Controller {
 		{
 			// Get image xhtml
 			$data['games'][$game_id]['image'] =
-				$this->image->getImage($game['image_id'], 'small',  array('title' => $game['title']));
+				$this->image->getImage($game['image_id'], 'gamethumb',  array('title' => $game['title']));
 		}
 				
 		// Set up the public frame

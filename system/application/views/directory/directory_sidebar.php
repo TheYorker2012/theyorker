@@ -17,7 +17,7 @@
 ?>
 		<label for="filterCheck<?php echo($idPostfix); ?>">
 			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo($org_type['id']); ?>" checked="checked" class="checkbox"/>
-			<?php echo($org_type['name'].' ('.$org_type['quantity'].')')?>
+			<?php echo(xml_escape($org_type['name']).' ('.$org_type['quantity'].')')?>
 		</label>
 <?php
 		$idPostfix++;

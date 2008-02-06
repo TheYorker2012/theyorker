@@ -18,7 +18,7 @@
 				<label for="member_email">Email:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_email" value="<?php echo($membership['email']); ?>" />
 				<label for="member_email">Phone:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_phone" value="<?php echo(htmlentities($membership['phone_number'])); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_phone" value="<?php echo(xml_escape($membership['phone_number'])); ?>" />
 				<label for="member_gender">Gender:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_gender" value="<?php echo($membership['gender']); ?>" />
 				<label for="member_enrol_year">Enrolled Year:</label>
@@ -54,7 +54,7 @@
 				<label for="member_org_name">Name:</label>
 				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_name" id="member_org_name" value="<?php echo($membership['organisation_name']); ?>" />
 				<label for="member_org_name">Position:</label>
-				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_position" id="member_org_position" value="<?php echo(htmlentities($membership['position'])); ?>" />
+				<input style="border: 0px;" type="text" readonly="readonly" name="member_org_position" id="member_org_position" value="<?php echo(xml_escape($membership['position'])); ?>" />
 				<!--
 				<label for="member_paid">Paid:</label>
 				<input style="border: 0px;" type="checkbox" name="member_paid" value="1" <?php //if($membership['paid']) { echo('checked="checked"'); } ?> />

@@ -9,7 +9,7 @@ function printarticlelink($article) {
 	}
 	echo('		<h3 class="Headline">'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('				'.htmlentities($article['heading'], ENT_QUOTES, 'UTF-8')."\n");
+	echo('				'.xml_escape($article['heading'])."\n");
 	echo('			</a>'."\n");
 	echo('		</h3>'."\n");
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
@@ -21,7 +21,7 @@ function printarticlelink($article) {
 		echo('		</div>'."\n");
 	}
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
-		echo('		<p>'.htmlentities($article['blurb'], ENT_QUOTES, 'UTF-8').'</p>'."\n");
+		echo('		<p>'.xml_escape($article['blurb']).'</p>'."\n");
 	}
 	echo('	</div>'."\n");
 }
@@ -94,11 +94,11 @@ foreach ($main_article['related_articles'] as $related)
 ?>
 </div>
 
-<?php $this->feedback_article_heading = htmlentities($main_article['heading'], ENT_QUOTES, 'UTF-8'); ?>
+<?php $this->feedback_article_heading = xml_escape($main_article['heading']); ?>
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2 class="Headline"><?php echo htmlentities($main_article['heading'], ENT_QUOTES, 'UTF-8'); ?></h2>
+		<h2 class="Headline"><?php echo xml_escape($main_article['heading']); ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
 			<div style="float:right;margin-top:0;line-height:95%;width:180px;">
 				<?php echo($main_article['primary_photo_xhtml']); ?><br />
@@ -112,7 +112,7 @@ foreach ($main_article['related_articles'] as $related)
 <?php } ?>
 		</div>
 <?php if ($main_article['subtext'] != '') { ?>
-		<div class="SubText"><?php echo(htmlentities($main_article['subtext'], ENT_QUOTES, 'UTF-8')); ?></div>
+		<div class="SubText"><?php echo(xml_escape($main_article['subtext'])); ?></div>
 <?php } ?>
 
         <?php echo($main_article['text']); ?>

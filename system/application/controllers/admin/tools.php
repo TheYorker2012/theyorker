@@ -200,6 +200,98 @@ class Tools extends controller
 		$this->main_frame->SetTitle('Wikitext Preview');
 		$this->main_frame->SetContentSimple('admin/tools/wikitext', $data);
 	}
+	
+	/// Perform tests on the branch.
+	function test($Tool = 'index')
+	{
+		if (!CheckPermissions('admin')) return;
+		
+		static $valid_tools = array('index', 'static');
+		if (in_array($Tool, $valid_tools)) {
+			$function_name = '_test_'.$Tool;
+			$args = func_get_args();
+			array_shift($args);
+			call_user_func_array(array(&$this, $function_name), $args);
+		} else {
+			show_404();
+		}
+	}
+	
+	/// Test index.
+	function _test_index()
+	{
+		$data = array();
+		$this->pages_model->SetPageCode('admin_tools_test_index');
+		$this->main_frame->SetContentSimple('admin/tools/test/index', $data);
+		$this->main_frame->load();
+	}
+	
+	/// Static analysis tests.
+	function _test_static($mode = null)
+	{
+		$analyser_program = '../tools/static_analysis/analyser.pl';
+		$root_directory   = '..';
+		if (null !== $mode) {
+			if ('text' == $mode || 'ajax' == $mode) {
+				$text = '';
+				$tests = $_GET['tests'];
+				if (false !== $tests) {
+					if (preg_match('/^\w+(,\w+)*$/', $tests)) {
+						$tests = explode(',', $tests);
+						$command = $analyser_program.' '.$root_directory;
+						foreach ($tests as $test) {
+							$command .= ' -t '.$test;
+						}
+						$text = `$command 2>&1`;
+					}
+				}
+				if ('text' == $mode) {
+					$data = array(
+						'Text' => '',
+					);
+					$main_view = new FramesView('general/text', $data);
+				}
+				else {
+					$data = array(
+						'RootTag' => array(
+							'_tag' => 'result',
+						),
+					);
+					foreach (explode("\n", $text) as $line) {
+						$data['RootTag'][] = array(
+							'_tag' => 'line',
+							$line,
+						);
+					}
+					$main_view = new FramesView('general/xml', $data);
+				}
+				$main_view->Load();
+			}
+			else {
+				show_404();
+			}
+		}
+		else {
+			$data = array(
+				'Tests' => array(),
+				'TestSets' => array(),
+			);
+			
+			$lines = `$analyser_program -m`;
+			$lines = explode("\n", $lines);
+			foreach ($lines as $line) {
+				if (preg_match('/^\t(.*)\t(.*)$/', $line, $matches)) {
+					$data['Tests'][$matches[1]] = $matches[2];
+				}
+			}
+			
+			$this->pages_model->SetPageCode('admin_tools_test_static');
+			$this->main_frame->IncludeJs('/javascript/admin/static_analysis.js');
+			$this->main_frame->IncludeJs('/javascript/simple_ajax.js');
+			$this->main_frame->SetContentSimple('admin/tools/test/static', $data);
+			$this->main_frame->load();
+		}
+	}
 }
 
 ?>

@@ -205,8 +205,6 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 			$span_colour = '<span style="color:#3366FF">';
 			}
 			$span_colour_end = '</span>';
-			
-			echo ('</span>');
 		}
 		
 		

@@ -26,7 +26,7 @@ $CI = & get_instance();
 		site_url(
 			$Path->OccurrenceInfo($Occurrence).
 			$CI->uri->uri_string().'">'.
-			htmlentities($Occurrence->Event->Name, ENT_QUOTES, 'utf-8')
+			xml_escape($Occurrence->Event->Name)
 		).
 		'</a></div>'
 	);
@@ -46,7 +46,7 @@ $CI = & get_instance();
 	if ($Occurrence->State == 'cancelled') {
 		echo('Cancelled');
 	} else {
-		echo(js_nl2br(htmlentities($Occurrence->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+		echo(js_nl2br(xml_escape($Occurrence->GetLocationDescription())));
 	}
 ?></i><?php
 		if (!$Squash) {

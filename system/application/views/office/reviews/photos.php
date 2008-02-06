@@ -6,14 +6,16 @@
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
+	<h2>Current Images</h2>
+		<?php if(count($images->result())==0){ echo'<p>This venue has no images</p>';} ?>
 		<?php foreach( $images->result() as $image ) { ?>
 		<?php echo $this->image->getThumb($image->photo_id, 'slideshow')?>
-		<br />
-		<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/up', 'move up')?> |
-		<?=anchor('office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/down', 'move down')?> |
+		<p>
+		<?php echo '<a href="office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/up">move up</a>'; ?> |
+		<?php echo '<a href="office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/move/'.$image->photo_id.'/down">move down</a>'; ?> |
 		<a href="/office/reviews/<?php echo $organisation['shortname']?>/<?php echo $ContextType?>/photos/delete/<?php echo $image->photo_id?>" onClick="return confirm('Are you sure you want to delete this photo?');">delete</a>
-		<br />
 		<?php } ?>
+		</p>
 	</div>
 
 	<?php

@@ -8,7 +8,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <head>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
 <?php if (isset($head_title)) { ?>
-	<meta name="title" content="<?php echo htmlspecialchars($head_title); ?>" />
+	<meta name="title" content="<?php echo htmlspecialchars($head_title); ?> - The Yorker" />
 <?php }
 if (isset($main_image)) { ?>
 	<link rel="image_src" href="http://<?php echo($_SERVER['SERVER_NAME'].$main_image); ?>" />
@@ -24,7 +24,7 @@ if (isset($medium_type)) { ?>
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo htmlspecialchars($head_title);
 		} else {
 			echo 'no pagename';
 		}
@@ -128,9 +128,7 @@ if (isset($medium_type)) { ?>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
 					<li><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<?php /*
 					<li><a href="/games/">Games Zone</a></li>
-					*/ ?>
 				</ul>
 				<?php /*
 				<ul>
@@ -166,7 +164,7 @@ if (isset($medium_type)) { ?>
 			<h1 id="PageTitle">
 				<?php
 				if(isset($body_title)) {
-					echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+					echo xml_escape($body_title)."\n";
 				} else {
 					echo 'no pagename'."\n";
 				}

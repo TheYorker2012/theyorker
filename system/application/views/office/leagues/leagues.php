@@ -17,7 +17,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Name</th><th>Parent</th><th>Image</th><th>Size</th><th>Order</th><th>Edit</th><th>Del</th>
+					<th>Name</th><th>Parent</th><th align="center">Image</th><th align="center">Size</th><th align="center">Tags</th><th>Order</th><th>Edit</th><th>Del</th>
 				</tr>
 			</thead>
 			<?php
@@ -31,14 +31,21 @@
 				}
 				echo('</td>');
 				echo('<td>'.$league['section_name'].'</td>');
-				echo('<td>');
+				echo('<td align="center">');
 				if($league['image_id']==NULL){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
 				echo('</td>');
-				echo('<td>');
-				if($league['current_size'] > $league['size']){
+				echo('<td align="center">');
+				if($league['current_size'] > $league['size'] || $league['current_size']==0){
 					echo('<span class="red">'.$league['current_size'].'/'.$league['size'].'</span>');
 				}else{
 					echo($league['current_size'].'/'.$league['size']);
+				}
+				echo('</td>');
+				echo('<td align="center">');
+				if($league['number_of_tags']>0){
+					echo $league['number_of_tags'];
+				}else{
+					echo('<span class="red">'.$league['number_of_tags'].'</span>');
 				}
 				echo('</td>');
 				echo('<td>');

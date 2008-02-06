@@ -24,7 +24,7 @@ echo '<?xml version=\'1.0\' ?>
 
 foreach ($rss_items as $item) {
 	echo '<item>
-		<title>(' . $item['type_name'] . ') ' . html_entity_decode($item['heading'],ENT_QUOTES,'UTF-8') . '</title>
+		<title>(' . $item['type_name'] . ') ' . html_entity_decode($item['heading']) . '</title>
 		<author>' . $rss_email_ed . ' (';
 	$temp_reporters = '';
 	foreach ($item['reporters'] as $reporter) {
@@ -32,7 +32,7 @@ foreach ($rss_items as $item) {
 	}
 	echo substr($temp_reporters, 0, -2) . ')</author>
 		<link>http://www.theyorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
-		<description><![CDATA[' . html_entity_decode($item['blurb'],ENT_QUOTES,'UTF-8') . ']]></description>
+		<description><![CDATA[' . html_entity_decode($item['blurb']) . ']]></description>
 		<pubDate>' . date('r',$item['date']) . '</pubDate>
 		<guid isPermaLink=\'true\'>http://www.theyorker.co.uk/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
 		</item>';
