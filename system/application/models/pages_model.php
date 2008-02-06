@@ -122,16 +122,19 @@ class Pages_model extends Model
 	 *	- TRUE Get page property from global properties.
 	 *	- FALSE Current page code specified using SetPageCode.
 	 * @param $Default string Default string.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyXhtml($PropertyLabel, $PageCode = FALSE, $Default = '')
+	function GetPropertyXhtml($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
 	{
 		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
 		if (FALSE === $value) {
 			return $Default;
 		} else {
-			return $value['text'];
+			// Postprocess the xhtml
+			$this->load->library('xml_processor');
+			return $this->xml_processor->Process($value['text'], $Arguments);
 		}
 	}
 	
@@ -168,11 +171,11 @@ class Pages_model extends Model
 	 *	- TRUE Get page property from global properties.
 	 *	- FALSE Current page code specified using SetPageCode.
 	 * @param $DefaultToNull bool Whether to default to NULL if there is no property.
-	 * @param $Replacements array[replace => with] Replacements to make in the wikitext.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Replacements = array())
+	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Arguments = array())
 	{
 		if ($this->mInlineEditMode || FALSE === ($cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache'))) {
 			// No cache, see if the wikitext is there
@@ -206,15 +209,15 @@ class Pages_model extends Model
 		}
 		// Postprocess the cache
 		$this->load->library('xml_processor');
-		$wikitext_cached = $this->xml_processor->Process($wikitext_cached);
+		$wikitext_cached = $this->xml_processor->Process($wikitext_cached, $Arguments);
 		
 		// Replace special values
-		if (empty($Replacements)) {
+		if (empty($Arguments)) {
 			$replaced_wikitext = $wikitext_cached;
 		} else {
 			$replaced_wikitext = str_replace(
-				array_keys($Replacements),
-				array_values($Replacements),
+				array_keys($Arguments),
+				array_values($Arguments),
 				$wikitext_cached
 			);
 		}
