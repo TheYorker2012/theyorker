@@ -1,10 +1,10 @@
 <div id="RightColumn">
-	<h2 class="first"><?php echo(xml_escape($sections['sidebar_about']['title'])); ?></h2>
+	<h2 class="first"><?php echo($sections['sidebar_about']['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sections['sidebar_about']['text']); ?>
 	</div>
 
-	<h2><?php echo(xml_escape($sections['sidebar_help']['title'])); ?></h2>
+	<h2><?php echo($sections['sidebar_help']['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sections['sidebar_help']['text']); ?>
 	</div>
@@ -12,13 +12,13 @@
 <?php
 if (count($sections['article']['related_articles']) > 0) {
 ?>
-	<h2><?php echo(xml_escape($sections['sidebar_related']['title'])); ?></h2>
+	<h2><?php echo($sections['sidebar_related']['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
 	foreach ($sections['article']['related_articles'] as $related_articles) {
 		echo('			');
-		echo('<li><a href="/news/uninews/'.$related_articles['id'].'">'.xml_escape($related_articles['heading']).'</a></li>'."\n");
+		echo('<li><a href="/news/uninews/'.$related_articles['id'].'">'.$related_articles['heading'].'</a></li>'."\n");
 	}
 ?>
 		</ul>
@@ -30,13 +30,13 @@ if (count($sections['article']['related_articles']) > 0) {
 <?php
 if (count($sections['article']['links']) > 0) {
 ?>
-	<h2><?php echo(xml_escape($sections['sidebar_external']['title'])); ?></h2>
+	<h2><?php echo($sections['sidebar_external']['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
 	foreach ($sections['article']['links'] as $link) {
 		echo('			');
-		echo('<li><a href="'.xml_escape($link['url']).'" target="_blank">'.xml_escape($link['name']).'</a></li>'."\n");
+		echo('<li><a href="'.$link['url'].'" target="_blank">'.$link['name'].'</a></li>'."\n");
 	}
 ?>
 		</ul>
@@ -53,12 +53,12 @@ if (count($sections['article']['links']) > 0) {
 		?>
 	</div>
 	<div class="BlueBox">
-		<h2><?php echo(xml_escape($sections['article']['heading'])); ?></h2>
+		<h2><?php echo($sections['article']['heading']); ?></h2>
 		<?php echo($sections['article']['text']); ?>
 	</div>
 
 	<div class="BlueBox">
-		<h2><?php echo(xml_escape($sections['funding']['title'])); ?></h2>
+		<h2><?php echo($sections['funding']['title']); ?></h2>
 		<div class="Entry">
 			<?php echo($sections['funding']['text']); ?>
 		</div>
@@ -79,9 +79,9 @@ if (count($sections['article']['links']) > 0) {
 <?php
 if (isset($sections['progress_reports']['entries'])) {
 	echo('	<div class="BlueBox">'."\n");
-	echo('		<h2>'.xml_escape($sections['progress_reports']['title']).'</h2>'."\n");
+	echo('		<h2>'.$sections['progress_reports']['title'].'</h2>'."\n");
 	foreach ($sections['progress_reports']['entries'] as $pr_entry) {
-		echo('		<h3>'.xml_escape($pr_entry['date']).'</h3>'."\n");
+		echo('		<h3>'.$pr_entry['date'].'</h3>'."\n");
 		echo($pr_entry['text']."\n");
 	}
 	if ($sections['progress_reports']['totalcount'] > 3)
@@ -91,3 +91,11 @@ if (isset($sections['progress_reports']['entries'])) {
 ?>
 
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

@@ -32,7 +32,7 @@
 				else
 					echo('		<hr />'."\n");
 				$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-				echo('		<a href="/office/charity/editarticle/'.$parameters['charity_id'].'/'.$revision['id'].'">"'.xml_escape($revision['title']).'"</a>'."\n");
+				echo('		<a href="/office/charity/editarticle/'.$parameters['charity_id'].'/'.$revision['id'].'">"'.$revision['title'].'"</a>'."\n");
 				if ($revision['id'] == $article['header']['live_content'])
 				{
 					echo('		<br /><span class="orange">(Published');
@@ -42,7 +42,7 @@
 				}
 				elseif ($revision['id'] == $article['displayrevision']['id'])
 					echo('		<br /><span class="orange">(Displayed)</span>'."\n");
-				echo('		<br />by '.xml_escape($revision['username']).'<br />on '.$dateformatted."\n");
+				echo('		<br />by '.$revision['username'].'<br />on '.$dateformatted."\n");
 			}
 		}
 		else
@@ -53,8 +53,8 @@
 
 <div class="blue_box">
 	<h2>request info</h2>
-	<b>Title: </b><?php echo(xml_escape($article['header']['requesttitle'])); ?><br />
-	<b>Description: </b><?php echo(xml_escape($article['header']['requestdescription'])); ?><br />
+	<b>Title: </b><?php echo $article['header']['requesttitle']; ?><br />
+	<b>Description: </b><?php echo $article['header']['requestdescription']; ?><br />
 <?php
 	if ($user['officetype'] != 'Low')
 	{
@@ -70,9 +70,9 @@
 			<?php echo('<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			<?php echo('<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n"); ?>
 			<label for="a_heading">Heading:</label>
-			<?php echo('<input type="text" name="a_heading" id="a_heading" size="60" value="'.xml_escape($article['displayrevision']['heading']).'" /><br />'."\n"); ?>
+			<?php echo('<input type="text" name="a_heading" id="a_heading" size="60" value="'.$article['displayrevision']['heading'].'" /><br />'."\n"); ?>
 			<label for="a_content">Description:</label>
-			<?php echo('<textarea name="a_content" id="a_content" rows="10" cols="56">'.xml_escape($article['displayrevision']['wikitext']).'</textarea><br />'."\n"); ?>
+			<?php echo('<textarea name="a_content" id="a_content" rows="10" cols="56">'.$article['displayrevision']['wikitext'].'</textarea><br />'."\n"); ?>
 		</fieldset>
 		<fieldset>
 			<input type="submit" value="Save" class="button" name="r_submit_article_save" />
@@ -112,4 +112,12 @@
 			echo('</div>'."\n");
 		}
 	}
+?>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
 ?>

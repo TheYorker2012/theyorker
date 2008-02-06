@@ -10,7 +10,7 @@ class Image {
 
 	public function getPhoto($photoID) {
 		$data = $this->get($photoID, 'photos');
-		return '<img src="/photos/full/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.xml_escape($data['title']).'" title="'.xml_escape($data['title']).'" />';
+		return '<img src="/photos/full/'.$photoID.'" height="'.$data['height'].'" width="'.$data['width'].'" alt="'.$data['title'].'" title="'.$data['title'].'" />';
 	}
 
 	public function getThumb($photoID, $type, $viewLarge = false, $extraTags = array(), $extraArguments = array()) {
@@ -21,7 +21,7 @@ class Image {
 			unset($data['photo_gallery']);
 			unset($data['photo_deleted']);
 		}
-		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.xml_escape($value).'" ';
+		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
 		$tag = '<img src="/photos/'.$type.'/'.$photoID.'" '.$tagInner.' />';
 		if ($viewLarge) $tag = '<a href="/photos/full/'.$photoID.'">'.$tag.'</a>';
 		return $tag;
@@ -37,7 +37,7 @@ class Image {
 		}
 		$tagInner = '';
 		$data['alt'] = $data['title'];
-		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.xml_escape($value).'" ';
+		foreach (array_merge($data, $extraTags) as $name => $value) $tagInner.= $name.'="'.$value.'" ';
 		return '<img src="/image/'.$type.'/'.$imageID.'" '.$tagInner.' />';
 	}
 

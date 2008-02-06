@@ -24,7 +24,7 @@
 	</div>
 	<div class="ReviewInfoRight">
 		<h3>Cost:</h3>
-		Â£12
+		£12
 		<h3>List of Pubs</h3>
 		<ul>
 			<li><?php echo $pub_list[0]; ?>

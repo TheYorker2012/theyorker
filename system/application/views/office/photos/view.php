@@ -1,9 +1,6 @@
 <?php
 function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 {
-	$name = xml_escape($name);
-	$title = xml_escape($title);
-	$value = xml_escape($value);
 	if ($type != 'submit') {
 	   echo('<label for="'.$name.'">'.$title.':</label>');
 	}
@@ -82,7 +79,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
 					<a href="/office/news/<?php echo($article_id); ?>">
-						<?php echo(xml_escape($article_title)); ?>
+						<?php echo($article_title); ?>
 					</a>
 				</div>
 				<br />
@@ -90,31 +87,31 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 				<div id='r_date' style='float: left; margin: 5px 10px;'><?php echo(date('d/m/y @ H:i',$time)); ?></div>
 				<br />
 				<label for='r_user'>Requested By:</label>
-				<div id='r_user' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($reporter_name)); ?></div>
+				<div id='r_user' style='float: left; margin: 5px 10px;'><?php echo($reporter_name); ?></div>
 				<br />
 				<label for='r_assigned'>Assigned to:</label>
 				<div id='r_assigned' style='float: left; margin: 5px 10px;'>
 <?php if ($assigned_status == 'unassigned') {
 	echo('Unassigned');
 } else {
-	echo(xml_escape($assigned_name) . ' (' . xml_escape($assigned_status) . ')');
+	echo($assigned_name . ' (' . $assigned_status . ')');
 } ?>
 				</div>
 <?php
 $assign_text = '';
-$other_input_xml = '';
+$other_input = '';
 
-$select_users_xml = '<br /><label for="r_assignuser">&nbsp;</label>
+$select_users = '<br /><label for="r_assignuser">&nbsp;</label>
 <select name="r_assignuser" id="r_assignuser" size="">';
 foreach ($photographers as $user) {
-	$select_users_xml .= '	<option value="'.$user['id'].'">'.xml_escape($user['name']).'</option>';
+	$select_users .= '	<option value="'.$user['id'].'">'.$user['name'].'</option>';
 }
-$select_users_xml .= '	</select>';
+$select_users .= '	</select>';
 
 if ($status == 'unassigned') {
 	if ($user_level == 'editor') {
 		$assign_text = 'Assign';
-		$other_input_xml = $select_users_xml;
+		$other_input = $select_users;
 	} else {
 		$assign_text = 'Assign Me';
 	}
@@ -123,19 +120,19 @@ if ($status == 'unassigned') {
 		$assign_text = 'Unassign Me';
 		if ($assigned_status == 'requested') {
 			$assign_text = 'Accept';
-			$other_input_xml = '<br /><input type="submit" name="r_decline" value="Decline" class="button" />';
+			$other_input = '<br /><input type="submit" name="r_decline" value="Decline" class="button" />';
 		}
 	} elseif ($user_level == 'editor') {
 		$assign_text = 'Unassign';
 	}
 }
 ?>
-				<?php echo($other_input_xml); ?>
-				<?php if ($assign_text != '') { ?><input type="submit" name="r_assign" value="<?php echo(xml_escape($assign_text)); ?>" class="button" /><?php } ?>
+				<?php echo($other_input); ?>
+				<?php if ($assign_text != '') { ?><input type="submit" name="r_assign" value="<?php echo($assign_text); ?>" class="button" /><?php } ?>
 				<br />
 <?php if ($editor_id !== NULL) { ?>
 				<label for="r_reviewed">Reviewed by:</label>
-				<div id='r_reviewed' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($editor_name)); ?></div>
+				<div id='r_reviewed' style='float: left; margin: 5px 10px;'><?php echo($editor_name); ?></div>
 				<br />
 <?php } ?>
 			</fieldset>
@@ -147,18 +144,18 @@ if ($status == 'unassigned') {
 			<h2>Your Suggestions</h2>
 			<fieldset>
 				<?php for($i=0; $i < count($suggestion); $i++) { ?>
-					<h3><?php echo($i+1); ?>:</h3>
-					<label for="imgid_<?php echo($i); ?>_img">Photo</label>
-					<?php echo($this->image->getThumb($suggestion[$i], 'medium')); ?>
+					<h3><?php echo $i+1?>:</h3>
+					<label for="imgid_<?php echo $i?>_img">Photo</label>
+					<?php echo $this->image->getThumb($suggestion[$i], 'medium')?>
 					<br />
-					<label for="imgid_<?php echo($i); ?>_comment">Comment:</label>
-					<textarea name="imgid_<?php echo($i); ?>_comment"></textarea>
+					<label for="imgid_<?php echo $i?>_comment">Comment:</label>
+					<textarea name="imgid_<?php echo $i?>_comment"></textarea>
 					<br />
-					<label for="imgid_<?php echo($i); ?>_allow">Suggest:</label>
-					<input name="imgid_<?php echo($i); ?>_allow" type="checkbox" value="y" checked="checked" />
-					<input type="hidden" name="imgid_<?php echo $i?>_number" value="<?php echo($suggestion[$i]); ?>" />
+					<label for="imgid_<?php echo $i?>_allow">Suggest:</label>
+					<input name="imgid_<?php echo $i?>_allow" type="checkbox" value="y" checked="checked" />
+					<input type="hidden" name="imgid_<?php echo $i?>_number" value="<?php echo $suggestion[$i]?>" />
 				<?php } ?>
-				<input type="hidden" name="imgid_number" value="<?php echo(count($suggestion))?>" />
+				<input type="hidden" name="imgid_number" value="<?=count($suggestion)?>" />
 				<input type="submit" name="r_suggest" value="Suggest" class="button" />
 				<br />
 			</fieldset>
@@ -170,8 +167,8 @@ if ($status == 'unassigned') {
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>
-			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><?php echo($this->image->getThumb($chosen_photo, 'medium')); ?></a><br />
-			<?php echo(xml_escape($title)); ?>
+			<a href="/office/gallery/show/<?php echo($chosen_photo); ?>"><?php echo $this->image->getThumb($chosen_photo, 'medium')?></a><br />
+			<?php echo($title); ?>
 		</div>
 <?php } ?>
 		<div class="blue_box">
@@ -193,7 +190,7 @@ foreach ($photos as $photo) {
 	if (($request_editable) && (($user_level == 'editor') || ($photo['user_id'] == $this->user_auth->entityId))) {
 		echo('					<a href=""><img src="/images/prototype/news/delete.gif" alt="Delete" title="Delete" class="delete_icon" /></a>');
 	}
-	echo('					' . xml_escape($photo['user_name']) . '<br />');
+	echo('					' . $photo['user_name'] . '<br />');
 	echo('					' . date('d/m/y @ H:i',$photo['time']) . '');
 	if ($status == 'ready') {
 		echo('					<br /><a href="/office/photos/view/'.$id.'/select/'.$photo['id'].'">Select this Photo</a>');

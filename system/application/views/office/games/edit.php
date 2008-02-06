@@ -1,5 +1,5 @@
 <script type="text/javascript">
-// <![CDATA[
+	
 	function show_game()
 	{
 		document.getElementById('game_box').style.display = '';
@@ -32,32 +32,33 @@
  		var charCode = (event.which) ? event.which : event.keyCode;	
  		return !(charCode > 31 && (charCode < 48 || charCode > 57));
 	}
-// ]]>
+		
 </script>
 
 <div class="RightToolbar">
-	<h4><?php echo(xml_escape($section_games_edit_page_info_title)); ?></h4>
+	<h4><?php echo($section_games_edit_page_info_title); ?></h4>
 	<?php echo($section_games_edit_page_info_text); ?>
 </div>
 <div id="MainColumn">
-	<form name="edit_game_form" id="edit_game_form" action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post" class="form" >
+	<form name='edit_game_form' id='edit_game_form' action='<?php echo $_SERVER["REQUEST_URI"]; ?>' method='post' class='form' >
 		<div class="BlueBox">
 			&nbsp;
 			<fieldset>
-				<label for="game_title_field">Title:</label>
+				<label for='game_title_field'>Title:</label>
 				<input
-					type="text"
-					name="game_title_field"
-					id="game_title_field"
-					value="<?php echo(xml_escape($game['title'])); ?>"
-					size="30" />
+					type='text'
+					name='game_title_field'
+					id='game_title_field'
+					value='<?php echo($game['title']); ?>'
+					size='30' />
 				
-				<label for="game_activated_field">Activated:</label>
+				<label for='game_activated_field'>Activated:</label>
 				<input
-					type="checkbox"
-					name="game_activated_field"
-					id="game_activated_field"
-					<?php if($game['activated']) { echo('checked="checked"'); } ?> />
+					type='checkbox'
+					name='game_activated_field'
+					id='game_activated_field'
+					<?php if($game['activated']){echo('CHECKED');} 
+					if(!$is_editor){echo('disabled="disabled"');} ?> />
 				<br />
 			</fieldset>
 		&nbsp;
@@ -72,37 +73,37 @@
 			&nbsp;
 			<fieldset>
 			
-				<label for="game_filename_field">Filename:</label>
+				<label for='game_filename_field'>Filename:</label>
 				<input
-					name="game_filename_field"
-					id="game_filename_field"
-					value="<?php echo(xml_escape($game['filename'])); ?>"
-					size="30"
+					name='game_filename_field'
+					id='game_filename_field'
+					value='<?php echo($game['filename']); ?>'
+					size='30'
 					disabled="disabled" />
 				<br />
 				
-				<label for="game_width_field">Width:</label>
+				<label for='game_width_field'>Width:</label>
 				<input
-					type="text"
-					name="game_width_field"
-					id="game_width_field"
-					value="<?php echo($game['width']); ?>"
-					size="3"
-					maxlength="3"
-					onchange="change_width()"
-					onkeypress="return numbers_only(event);" />
+					type='text'
+					name='game_width_field'
+					id='game_width_field'
+					value='<?php echo($game['width']); ?>'
+					size='3'
+					maxlength='3'
+					onchange='change_width()'
+					onkeypress='return numbers_only(event);' />
 				<br />
 				
-				<label for="game_height_field">Height:</label>
+				<label for='game_height_field'>Height:</label>
 				<input
-					type="text"
-					name="game_height_field"
-					id="game_height_field"
-					value="<?php echo($game['height']); ?>"
-					size="3"
-					maxlength="3"
-					onchange="change_height()"
-					onkeypress="return numbers_only(event);" />
+					type='text'
+					name='game_height_field'
+					id='game_height_field'
+					value='<?php echo($game['height']); ?>'
+					size='3'
+					maxlength='3'
+					onchange='change_height()'
+					onkeypress='return numbers_only(event);' />
 				<br />
 			</fieldset>
 			<div id="show_link">
@@ -113,7 +114,7 @@
 			</div>
 		</div>
 			<div style="float:left; margin: 5px"><a href="/office/games">Return to games</a></div>
-			<input type="submit" name="submit" id="submit" value="Save" class="button" />
+			<input type='submit' name='submit' id='submit' value='Save' class='button' />
 	</form>
 </div>
 
@@ -124,10 +125,10 @@
 		classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
 		codebase="http://fpdownload.macromedia.com/pub/
 				shockwave/cabs/flash/swflash.cab#version=8,0,0,0">
-			<param name="movie" value="<?php echo(xml_escape($game['pathname'])); ?>" />
+			<param name="movie" value="<?php echo($game['pathname']); ?>" />
 			<embed 
 				id ="game_embed"
-				src="<?php echo(xml_escape($game['pathname'])); ?>"
+				src="<?php echo($game['pathname']); ?>"
 				width="<?php echo($game['width']); ?>"
 				height="<?php echo($game['height']); ?>"
 			  	type="application/x-shockwave-flash"

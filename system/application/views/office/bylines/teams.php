@@ -18,7 +18,7 @@
 			<tr>
 				<td>
 					<a href="/office/bylines/view_team/<?php echo($team['business_card_group_id']); ?>/">
-						<?php echo(xml_escape($team['business_card_group_name'])); ?>
+						<?php echo($team['business_card_group_name']); ?>
 					</a>
 				</td>
 				<td><?php echo($team['business_card_group_count']); ?></td>

@@ -1,20 +1,20 @@
 <div id="RightColumn">
 	<h2 class="first">Information</h2>
 	<div class="Entry">
-		<?php echo($page_information); ?>
+		<?php echo $page_information; ?>
 	</div>
 	<h2>Current Image</h2>
 	<div class="Entry" align='center'>
 		<p>
-			<?php echo($image); ?>
+			<?php echo $image; ?>
 		</p>
 	</div>
 	<h2>Image Options</h2>
 	<div class="Entry">
 		<ul>
-			<li><a href="/office/leagues/changeimage/<?php echo($league_form['league_id']); ?>">Change/Add Image</a></li>
+			<li><a href="/office/leagues/changeimage/<?php echo $league_form['league_id']; ?>">Change/Add Image</a></li>
 			<?php if($has_image){?>
-			<li><a href="/office/leagues/deleteimage/<?php echo($league_form['league_id']);
+			<li><a href="/office/leagues/deleteimage/<?php echo $league_form['league_id'];
 			?>" onclick="return(confirm ('Are you sure you want to remove this image?'));" >Delete Image</a></li>
 			<?php } ?>
 		</ul>
@@ -22,21 +22,19 @@
 	<h2>Related Actions</h2>
 	<div class="Entry">
 		<ul>
-			<li><a href="/office/league/edit/<?php echo($league_id); ?>">Edit league's content.</a></li>
+			<li><a href="/office/league/edit/<?php echo $league_id; ?>">Edit league's content.</a></li>
 			<li><a href="/office/reviewtags">Create/Edit Tags.</a></li>
 		</ul>
 	</div>
 </div>
 <div id="MainColumn">
-	<form method="post" action="/office/leagues/edit/<?php echo($league_form['league_id']); ?>">
+	<form method="post" action="/office/leagues/edit/<?php echo $league_form['league_id']; ?>">
 		<div class="BlueBox">
 			<h2>edit league</h2>
 			<fieldset>
 				<label for="league_name">Name:</label>
 				<input type="text" name="league_name" value="<?php
-				if(!empty($league_form['league_name'])) {
-					echo(xml_escape($league_form['league_name']));
-				}
+				if(!empty($league_form['league_name'])){echo $league_form['league_name'];}
 				?>" />
 				<input type="hidden" name="league_id" value="<?php echo $league_form['league_id']; ?>">
 				<label for="league_type">League Type:</label>
@@ -46,21 +44,18 @@
 					<option value="<?php echo $league_type['id'] ?>"
 					<?php if(!empty($league_form['league_type']))
 							{
-								if ($league_type['id']==$league_form['league_type']) {
-									echo 'selected="selected"';
-								}
+								if ($league_type['id']==$league_form['league_type'])
+								{echo 'selected="selected"';}
 							}
 						?>
 						>
-						<?php echo(xml_escape($league_type['name'])); ?></option>
+						<?php echo $league_type['name'] ?></option>
 					<?php
 				}
 				?></select>
 				<label for="league_size">League Size:</label>
 				<input type="text" name="league_size" value="<?php
-				if(!empty($league_form['league_size'])) {
-					echo $league_form['league_size'];
-				}
+				if(!empty($league_form['league_size'])){echo $league_form['league_size'];}
 				?>" />
 			</fieldset>
 		</div>
@@ -72,7 +67,7 @@
 				<?php
 				foreach ($current_tags as $tag)
 				{
-					echo '				<option value="'.$tag['tag_id'].'">'.xml_escape($tag['tag_group_name']).' -> '.xml_escape($tag['tag_name']).'</option>'."\n";
+					echo '				<option value="'.$tag['tag_id'].'">'.$tag['tag_group_name'].' -> '.$tag['tag_name'].'</option>'."\n";
 				}
 				?>
 				</select>
@@ -80,13 +75,13 @@
 		</div>
 		<div class="BlueBox">
 			<h2>new tags</h2>
-			<?php echo($tags_new_text); ?>
+			<?php echo $tags_new_text; ?>
 			<fieldset>
 				<select size="8" name="new_tags[]" style="float: none;  width: 350px;" multiple>
 				<?php
 				foreach ($new_tags as $tag)
 				{
-					echo '				<option value="'.$tag['tag_id'].'">'.xml_escape($tag['tag_group_name']).' -> '.xml_escape($tag['tag_name']).'</option>'."\n";
+					echo '				<option value="'.$tag['tag_id'].'">'.$tag['tag_group_name'].' -> '.$tag['tag_name'].'</option>'."\n";
 				}
 				?>
 				</select>

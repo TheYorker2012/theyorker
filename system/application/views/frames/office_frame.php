@@ -6,15 +6,15 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
-	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
+	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
+	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo(xml_escape($head_title));
+			echo htmlspecialchars($head_title);
 		} else {
-			echo('no pagename');
+			echo 'no pagename';
 		}
 	?></title>
 
@@ -49,9 +49,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		if (isset($toplinks)) {
 			foreach ($toplinks as $link) {
 				if (is_string($link)) {
-					echo(xml_escape($link).' | ');
+					echo $link.' | ';
 				} elseif (is_array($link)) {
-					echo('<a class="HeaderLinks" href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
+					echo '<a class="HeaderLinks" href="'.$link[1].'">'.$link[0].'</a> | ';
 				}
 			}
 		}
@@ -85,12 +85,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
 			<?php
 			if(isset($body_title)) {
-				echo(xml_escape($body_title)."\n");
+				echo xml_escape($body_title)."\n";
 			} else {
-				echo('no pagename'."\n");
+				echo 'no pagename'."\n";
 			}
 			if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-				echo('<a href="'.$paged_edit_url.'">[edit]</a>');
+				echo("<a href=\"$paged_edit_url\">[edit]</a>");
 			}
 			?>
 		</div>

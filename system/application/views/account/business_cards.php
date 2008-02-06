@@ -1,6 +1,6 @@
 <div id="RightColumn">
 	<h2 class="first">Whats This?</h2>
-	<p><?php echo($bcards_about); ?></p>
+	<p><?php echo $bcards_about; ?></p>
 </div>
 
 <div id="MainColumn">
@@ -14,7 +14,7 @@
 		<?php
 		} else {
 			foreach ($cards as $business_card) {
-			echo "<h4>Card for ".xml_escape($business_card['organisation'])."</h4>";
+			echo "<h4>Card for ".$business_card['organisation']."</h4>";
 				$this->load->view('directory/business_card',array(
 					'business_card' => $business_card,
 					'editmode' => true,

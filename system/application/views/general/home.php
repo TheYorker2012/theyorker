@@ -3,9 +3,8 @@
 	<div class="Entry">
 <?php 	if ($link->num_rows() > 0)
 	{
-	/// @todo FIXME data from database should be processed in the model
 	foreach($link->result() as $picture){
-		echo('	<a href="'.$picture->link_url.'" target="_blank">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => xml_escape($picture->link_name), 'alt' => xml_escape($picture->link_name))).'</a>'."\n");
+		echo('	<a href="'.$picture->link_url.'" target="_blank">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => $picture->link_name, 'alt' => $picture->link_name)).'</a>'."\n");
 		}
 	} else {
 		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
@@ -79,7 +78,7 @@ if ($weather_forecast != null) {
 
 	<h2>Quote of the Day</h2>
 	<div class="Entry">
-		"<?php echo(xml_escape($quote->quote_text));?>" - <b><?php echo(xml_escape($quote->quote_author));?></b>
+		"<?php echo $quote->quote_text;?>" - <b><?php echo $quote->quote_author;?></b>
 	</div>
 <?php
 }
@@ -104,3 +103,11 @@ if ($weather_forecast != null) {
 		$latest_comments->Load();
 	?>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

@@ -24,15 +24,15 @@
 		<fieldset>
 			<label for="advert_name">Name: </label>
 <?php
-	echo('			<input type="text" id="advert_name" name="advert_name" value="'.xml_escape($advert['name']).'" style="width: 250px" />'."\n");
+	echo('			<input type="text" id="advert_name" name="advert_name" value="'.$advert['name'].'" style="width: 250px" />'."\n");
 ?>
 			<label for="advert_name">Target Web Address: </label>
 <?php
-	echo('			<input type="text" id="advert_url" name="advert_url" value="'.xml_escape($advert['url']).'" style="width: 250px" />'."\n");
+	echo('			<input type="text" id="advert_url" name="advert_url" value="'.$advert['url'].'" style="width: 250px" />'."\n");
 ?>
 			<label for="advert_alt">Image Hover Text: </label>
 <?php
-	echo('			<input type="text" id="advert_alt" name="advert_alt" value="'.xml_escape($advert['alt']).'" style="width: 250px" />'."\n");
+	echo('			<input type="text" id="advert_alt" name="advert_alt" value="'.$advert['alt'].'" style="width: 250px" />'."\n");
 ?>
 			<label for="advert_image">Max Views: </label>
 <?php
@@ -103,3 +103,11 @@
 		</fieldset>
 	</form>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

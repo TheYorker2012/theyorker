@@ -24,9 +24,9 @@
 		$num = ++$key;
 		echo('			<input type="hidden" name="a_id_'.$num.'" value="'.$link['id'].'" />'."\n");
 		echo('			<label for="a_name_'.$num.'">Name '.$num.':</label>'."\n");
-		echo('			<input type="text" name="a_name_'.$num.'" size="30" value="'.xml_escape($link['name']).'" />'."\n");
+		echo('			<input type="text" name="a_name_'.$num.'" size="30" value="'.$link['name'].'" />'."\n");
 		echo('			<label for="a_url_'.$num.'">Address '.$num.':</label>'."\n");
-		echo('			<input type="text" name="a_url_'.$num.'" size="30" value="'.xml_escape($link['url']).'" />'."\n");
+		echo('			<input type="text" name="a_url_'.$num.'" size="30" value="'.$link['url'].'" />'."\n");
 		echo('			<label for="a_delete_'.$num.'">Delete</label>'."\n");
 		echo('			<input type="checkbox" name="a_delete_'.$num.'" />'."\n");
 		echo('			<br /><br />');

@@ -19,9 +19,9 @@
 	foreach ($charities as $charity)
 	{
 		if($charity['iscurrent'])
-			echo('				<option value="'.$charity['id'].'" selected="selected">'.xml_escape($charity['name']).'</option>'."\n");
+			echo('				<option value="'.$charity['id'].'" selected="selected">'.$charity['name'].'</option>'."\n");
 		else
-			echo('				<option value="'.$charity['id'].'">'.xml_escape($charity['name']).'</option>'."\n");
+			echo('				<option value="'.$charity['id'].'">'.$charity['name'].'</option>'."\n");
 	}
 ?>
 			</select>
@@ -31,3 +31,11 @@
 		</fieldset>
 	</form>
 </div>
+
+<?php
+/*
+echo '<div class="BlueBox"><pre>';
+echo print_r($data);
+echo '</pre></div>';
+*/
+?>

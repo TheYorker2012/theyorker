@@ -1,5 +1,4 @@
 <script type="text/javascript">
-// <![CDATA[
 	function addNameToSend() {
 		var table_element;
 		var list_element;
@@ -24,13 +23,12 @@
 		table_element.style.display = 'none';
 		checkbox_element.checked = false;
 	}
-// ]]>
 </script>
 
 <div id="RightColumn">
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">
-		<?php echo($main_text); ?>
+		<?php echo $main_text; ?>
 	</div>
 </div>
 
@@ -59,7 +57,7 @@
 		else {
 			echo('							<input type="checkbox" name="cb['.$member['id'].']" id="cb_'.$member['id'].'" style="display: none;" />'."\n");
 		}
-		echo('							'.xml_escape($member['name']).' ('.xml_escape($member['email']).') <small><a href="#" onclick="removeNameFromSend('.$member['id'].');">(remove)</a></small>'."\n");
+		echo('							'.$member['name'].' ('.$member['email'].') <small><a href="#" onclick="removeNameFromSend('.$member['id'].');">(remove)</a></small>'."\n");
 		echo('						</td>'."\n");
 		echo('					</tr>'."\n");
 	}
@@ -70,18 +68,18 @@
 				<select id="a_add_member" style="width: 200px;">
 <?php
 	foreach ($members as $member) {
-		echo('					<option value="'.$member['id'].'">'.xml_escape($member['name']).' ('.xml_escape($member['email']).')</option>'."\n");
+		echo('					<option value="'.$member['id'].'">'.$member['name'].' ('.$member['email'].')</option>'."\n");
 	}
 ?>
 				</select>
 				<input type="button" id="r_submit_add_member" value="Add" onclick="addNameToSend()" />
 				<label for="a_subject">Subject:</label>
 <?php
-	echo('				<input type="text" name="a_subject" id="a_subject" style="width: 357px;" value="'.xml_escape($subject).'" />'."\n");
+	echo('				<input type="text" name="a_subject" id="a_subject" style="width: 357px;" value="'.$subject.'" />'."\n");
 ?>
 				<label for="a_content">Message:</label>
 <?php
-	echo('				<textarea name="a_content" id="a_content" rows="10" cols="42">'.xml_escape($content).'</textarea>'."\n");
+	echo('				<textarea name="a_content" id="a_content" rows="10" cols="42">'.$content.'</textarea>'."\n");
 ?>
 			</fieldset>
 			<fieldset>
@@ -90,3 +88,11 @@
 		</form>
 	</div>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

@@ -88,14 +88,14 @@ class Account extends controller
 		} elseif ($this->input->post('v_apply') == 'Apply') {
 			/// Process form submission
 			$this->load->model('members_model');
-			$position = $this->input->post('v_position');
-			$phone = $this->input->post('v_phone');
+			$position = xml_escape($this->input->post('v_position'));
+			$phone = xml_escape($this->input->post('v_phone'));
 			if ($position == '') {
 				$this->messages->AddMessage('error', 'Please make sure you specify your position in the organisation before submitting the application.');
 			} else {
 				$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$org_id);
 				$this->prefs_model->vipApplication ($this->user_auth->entityId,$org_id,$position,$phone);
-				$this->messages->AddMessage('success', 'Your application to become VIP for ' . xml_escape($data['org_name']['name']) . ' has been successfully recieved.');
+				$this->messages->AddMessage('success', 'Your application to become VIP for ' . $data['org_name']['name'] . ' has been successfully recieved.');
 				redirect('/account');
 			}
 		}

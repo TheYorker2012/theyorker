@@ -3,10 +3,10 @@
 	$first = true;
 	foreach ($rightbar as $entry) {
 		if ($first) {
-			echo('	<h2 class="first">'.xml_escape($entry['title']).'</h2>'."\n");
+			echo('	<h2 class="first">'.$entry['title'].'</h2>'."\n");
 			$first = false;
 		} else {
-			echo('	<h2>'.xml_escape($entry['title']).'</h2>'."\n");
+			echo('	<h2>'.$entry['title'].'</h2>'."\n");
 		}
 		echo('	<div class="Entry">'."\n");
 		echo('		'.$entry['text']);
@@ -17,10 +17,10 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo xml_escape($title); ?></h2>
+		<h2><?php echo $title; ?></h2>
 <?php
 if (isset($failure) && $failure) {
-	echo($failure_text);
+	echo $failure_text;
 } else {
 	if (isset($login_message)) {
 		echo('		'.$login_message."\n");
@@ -30,7 +30,7 @@ if (isset($failure) && $failure) {
 <?php 
 	if (isset($login_id)) {
 ?>
-			<input type="hidden" name="login_id" value="<?php echo($login_id); ?>" />
+			<input type="hidden" name="login_id" value="<?php echo $login_id; ?>" />
 <?php
 	} 
 	if (isset($usernames)) {
@@ -38,7 +38,7 @@ if (isset($failure) && $failure) {
 		<label for="username">Select Organisation:</label>
 			<select name="username" id="username">
 			<?php foreach ($usernames as $id => $name) { ?>
-				<option value="<?php echo($id); ?>"<?php if (isset($default_username) && $id==$default_username) { echo(' selected="selected"'); } ?>><?php echo(xml_escape($name)); ?></option>
+				<option value="<?php echo $id; ?>"<?php if (isset($default_username) && $id==$default_username) { echo ' selected="selected"'; } ?>><?php echo $name; ?></option>
 			<?php } ?>
 			</select>
 			<br />
@@ -46,7 +46,7 @@ if (isset($failure) && $failure) {
 	} elseif (isset($username)) { 
 ?>
 			<label for="username">Username: </label>
-			<input name="username" id="username" value="<?php echo(xml_escape($username)); ?>" /><br />
+			<input name="username" id="username" value="<?php echo $username; ?>" /><br />
 <?php
 	}
 ?>
@@ -56,19 +56,18 @@ if (isset($failure) && $failure) {
 	if (isset($keep_login)) {
 ?>
 			<label for="keep_login">Remember me: </label>
-			<input type="checkbox" name="keep_login" id="keep_login" <?php if ($keep_login) echo('checked="checked" '); ?>/><br />
+			<input type="checkbox" name="keep_login" id="keep_login" <?php if ($keep_login) echo 'checked="checked" '; ?>/><br />
 <?php
 	}
 	if (isset($previous_post_data)) {
 ?>
-			<input type="hidden" name="previous_post_data" id="previous_post_data" value="<?php echo(xml_escape($previous_post_data)); ?>" />
+			<input type="hidden" name="previous_post_data" id="previous_post_data" value="<?php echo htmlspecialchars($previous_post_data); ?>" />
 <?php
 	}
 ?>
 			<input type="submit" class="button" name="login_button" value="Login" />
 		</fieldset></form>
 		<script type="text/javascript">
-		// <![CDATA[
 		var element = document.getElementById('password');
 		if (element) {
 			element.focus();
@@ -77,7 +76,6 @@ if (isset($failure) && $failure) {
 		if (element) {
 			element.focus();
 		}
-		// ]]>s
 		</script>
 <?php
 }

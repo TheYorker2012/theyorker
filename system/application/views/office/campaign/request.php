@@ -19,9 +19,9 @@
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<label for="a_title">Title:</label>'."\n");
-	echo('			<input type="text" name="a_title" size="30" value="'.xml_escape($article['header']['requesttitle']).'" />'."\n");
+	echo('			<input type="text" name="a_title" size="30" value="'.$article['header']['requesttitle'].'" />'."\n");
 	echo('			<label for="a_description">Description:</label>'."\n");
-	echo('			<textarea name="a_description" rows="10" cols="56" />'.xml_escape($article['header']['requestdescription']).'</textarea><br />'."\n");
+	echo('			<textarea name="a_description" rows="10" cols="56" />'.$article['header']['requestdescription'].'</textarea><br />'."\n");
 	echo('		</fieldset>'."\n");
 	echo('		<fieldset>'."\n");
 	echo('			<input type="submit" value="Save" class="button" name="r_submit_save_request" />'."\n");

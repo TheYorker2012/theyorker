@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
 	<h4>What's this?</h4>
 	<p>
-		<?php echo($main_text); ?>
+		<?php echo $main_text; ?>
 	</p>
 </div>
 <div style="width: 420px; margin: 0px; padding-right: 3px; ">

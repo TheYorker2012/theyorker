@@ -4,7 +4,7 @@
 <?php
 	if ($rep['has_rep'] == true) {
 		echo('		<p>'."\n");
-		echo('			Your rep is: '.xml_escape($rep['firstname'].' '.$rep['surname'])."\n");
+		echo('			Your rep is: '.$rep['firstname'].' '.$rep['surname']."\n");
 		echo('		</p>'."\n");
 	}
 	else {

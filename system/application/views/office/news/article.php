@@ -1,5 +1,4 @@
 	<script type='text/javascript'>
-	// <![CDATA[
 	var articleRevision = 0;
 	var timers = new Array();
 	timers['Headline'] = 0;
@@ -98,7 +97,7 @@
 		document.getElementById('save_load2').className = 'ajax_loading hide';
 		if (preview) {
 			document.getElementById('preview_load').className = 'ajax_loading show';
-			window.location = <?php echo(js_literalise('/office/news/preview/'.$article['id'].'/'.$article['box_codename'].'/')); ?> + articleRevision;
+			window.location = '/office/news/preview/<?php echo $article['id']; ?>/<?php echo $article['box_codename']; ?>/' + articleRevision;
 		} else if (functionQueue != '') {
 			eval(functionQueue + '();');
 			functionQueue = '';
@@ -177,7 +176,6 @@
 	imageObj = new Image();
 	imageObj.src = '/images/prototype/prefs/loading.gif';
 	imageObj.src = '/images/prototype/prefs/yorker-bg.png';
-	// ]]>
 	</script>
 
 	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
@@ -193,12 +191,12 @@
 					<?php if ($article['photo_main'] == $request['photo_number']) { echo('(M)'); } ?>
 					<?php if ($article['photo_thumbnail'] == $request['photo_number']) { echo('(T)'); } ?>
 					<br />
-					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo($request['title']=='' ? 'No Title' : xml_escape($request['title'])); ?></a><br />
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo(($request['title']=='' ? 'No Title' : $request['title'])); ?></a><br />
 					<span style="font-size:x-small;">
 						<?php echo(date('d/m/y @ H:i', $request['time'])); ?><br />
-						[ <a onclick="insertImageTag('content', <?php echo(xml_escape(js_literalise($request['photo_number']))); ?>);return false;" href="#">Insert</a> ]
-						<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto(<?php echo(xml_escape(js_literalise($request['photo_number']))); ?>,'main');return false;">Main</a> ]<?php } ?>
-						<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto(<?php echo(xml_escape(js_literalise($request['photo_number']))); ?>,'thumbnail');return false;">Thumbnail</a> ]<?php } ?>
+						[ <a onclick="insertImageTag('content', '<?php echo($request['photo_number']); ?>');return false;" href="#">Insert</a> ]
+						<?php if ($article['photo_main'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto('<?php echo($request['photo_number']); ?>','main');return false;">Main</a> ]<?php } ?>
+						<?php if ($article['photo_thumbnail'] != $request['photo_number']) { ?> [ <a href="#" onclick="updatePhoto('<?php echo($request['photo_number']); ?>','thumbnail');return false;">Thumbnail</a> ]<?php } ?>
 					</span>
 					<br class="clear" />
 				</div>
@@ -214,7 +212,7 @@
 
 			<h4>Article Status</h4>
 			<div id="revision_status">
-				You are editing revision <b><?php echo($revision['id']); ?></b> which was last saved <b><?php echo(date('D jS F Y @ H:i:s',$revision['last_edit'])); ?></b>
+				You are editing revision <b><?php echo $revision['id']; ?></b> which was last saved <b><?php echo date('D jS F Y @ H:i:s',$revision['last_edit']); ?></b>
 			</div><br />
 			<div id="save_load" class="ajax_loading hide">
 				<img src="/images/prototype/prefs/loading.gif" alt="Saving" title="Saving" /> Auto Saving...
@@ -245,33 +243,33 @@
 
 		<div id="content_request">
 			<div class="blue_box">
-				<h2><?php echo(xml_escape($request_heading)); ?></h2>
+				<h2><?php echo $request_heading; ?></h2>
 				<fieldset>
 					<label for="title">Title:</label>
-					<div id="title" class="info"><?php echo(xml_escape($article['request_title'])); ?></div>
+					<div id="title" class="info"><?php echo $article['request_title']; ?></div>
 					<br />
 					<label for="description">Description:</label>
-					<div id="description" class="info"><?php echo(nl2br(xml_escape($article['request_description']))); ?></div>
+					<div id="description" class="info"><?php echo nl2br($article['request_description']); ?></div>
 					<br />
 					<label for="box">Section:</label>
-					<div id="box" class="info"><?php echo(xml_escape($article['box_name'])); ?></div>
+					<div id="box" class="info"><?php echo $article['box_name']; ?></div>
 					<br />
 					<label for="created">Created:</label>
 					<div id="created" class="info"><?php echo(date('D jS F Y @ H:i',$article['date_created'])); ?></div>
 					<br />
 					<label for="suggest">Suggested by:</label>
-					<div id="suggest" class="info"><?php echo(xml_escape($article['suggest_name'])); ?></div>
+					<div id="suggest" class="info"><?php echo $article['suggest_name']; ?></div>
 					<br />
 					<label for="deadline">Deadline:</label>
 					<div id="deadline" class="info"><?php if ($article['date_deadline'] == 0) { echo 'None'; } else { echo(date('D jS F Y @ H:i',$article['date_deadline'])); } ?></div>
 					<br />
 					<label for="editor">Editor:</label>
-					<div id="editor" class="info"><?php echo(xml_escape($article['editor_name'])); ?></div>
+					<div id="editor" class="info"><?php echo $article['editor_name']; ?></div>
 					<br />
 					<label for="reporters">Reporters:</label>
 					<div id="reporters" class="info">
 					<?php foreach ($article['reporters'] as $reporter) {
-						echo (xml_escape($reporter['name']) . ' (' . xml_escape($reporter['status']) . ')<br />');
+						echo ($reporter['name'] . ' (' . $reporter['status'] . ')<br />');
 					} ?>
 					</div>
 					<br />
@@ -292,26 +290,54 @@
 				<h2>main article body...</h2>
 				<fieldset>
 					<label for="headline">Headline:</label>
-					<input type="text" name="headline" id="headline" value="<?php echo(xml_escape($revision['headline'])); ?>" size="30" onkeyup="articleContentUpdate('Headline');" />
+					<input type="text" name="headline" id="headline" value="<?php echo $revision['headline']; ?>" size="30" onkeyup="articleContentUpdate('Headline');" />
 					<br />
 					<label for="subheadline">Sub-Headline:</label>
-					<input type="text" name="subheadline" id="subheadline" value="<?php echo(xml_escape($revision['subheadline'])); ?>" size="30" onkeyup="articleContentUpdate('Subheadline');" />
+					<input type="text" name="subheadline" id="subheadline" value="<?php echo $revision['subheadline']; ?>" size="30" onkeyup="articleContentUpdate('Subheadline');" />
 					<br />
 					<label for="subtext" class="full">Introduction Paragraph</label>
-					<textarea name="subtext" id="subtext" class="full" rows="2" onkeyup="articleContentUpdate('Subtext');"><?php echo(xml_escape($revision['subtext'])); ?></textarea>
+					<textarea name="subtext" id="subtext" class="full" rows="2" onkeyup="articleContentUpdate('Subtext');"><?php echo $revision['subtext']; ?></textarea>
 					<br />
 					<label for="blurb" class="full" onkeyup="articleContentUpdate('Blurb');">Blurb</label>
-					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo(xml_escape($revision['blurb'])); ?></textarea>
+					<textarea name="blurb" id="blurb" class="full" rows="2"><?php echo $revision['blurb']; ?></textarea>
 					<br />
 					<label for="content" class="full">Main Article Content</label>
 					<div id="toolbar"></div>
-					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo(xml_escape($revision['text'])); ?></textarea>
+					<textarea name="content" id="content" class="full" rows="18" onkeyup="articleContentUpdate('content');"><?php echo $revision['text']; ?></textarea>
 					<br />
 				</fieldset>
 			</div>
 		</div>
 
 		<div id="content_comments" class="hide" style="width:422px;">
+			<?php /*<div class="blue_box">
+				<h2>comments...</h2>
+				<div id="comment_load" class="ajax_loading hide">
+					<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Saving new comment...
+				</div>
+				<fieldset id="comment_form">
+					<label for="new_comment" class="full">Add New Comment</label>
+					<textarea name="new_comment" id="new_comment" class="full"></textarea>
+					<br />
+				 	<input type="button" name="add_comment" id="add_comment" value="Add Comment" class="button" onclick="addComment();" />
+				</fieldset>
+				<br />
+				<div id="comment_container">
+				<?php foreach ($comments as $comment) { ?>
+					<div class="feedback">
+						<div class="top">
+							<span class="right">
+								<?php echo (date('D jS F Y @ H:i', $comment['time'])); ?>
+							</span>
+							<?php echo $comment['name']; ?>
+						</div>
+						<div class="main">
+							<?php echo nl2br($comment['text']); ?>
+						</div>
+					</div>
+				<?php } ?>
+				</div>
+			</div> */ ?>
 			<?php
 			// Comments if they're included
 			if (isset($comments) && NULL !== $comments) {
@@ -329,7 +355,7 @@
 						<span class="right">
 							<?php echo (date('D jS F Y @ H:i', $rev['updated'])); ?>
 						</span>
-						<?php echo ('<b>#' . $rev['id'] . '</b> - ' . xml_escape($rev['username'])); ?>
+						<?php echo ('<b>#' . $rev['id'] . '</b> - ' . $rev['username']); ?>
 					</div>
 				<?php } ?>
 				</div>
@@ -353,10 +379,10 @@
 				<div id="factbox_container"<?php if (!isset($revision['fact_box'])) { echo ' class="hide"'; } ?>>
 					<fieldset>
 						<label for="factbox_heading">Factbox Heading:</label>
-						<input type="text" name="factbox_heading" id="factbox_heading" value="<?php if (isset($revision['fact_box'])) { echo(xml_escape($revision['fact_box']['title'])); } ?>" size="30"  onkeyup="articleContentUpdate('Factbox');" />
+						<input type="text" name="factbox_heading" id="factbox_heading" value="<?php if (isset($revision['fact_box'])) { echo $revision['fact_box']['title']; } ?>" size="30"  onkeyup="articleContentUpdate('Factbox');" />
 						<br />
 						<label for="factbox" class="full">Factbox Content</label>
-						<textarea name="factbox" id="factbox" class="full" rows="18"  onkeyup="articleContentUpdate('Factbox');"><?php if (isset($revision['fact_box'])) { echo(xml_escape($revision['fact_box']['text'])); } ?></textarea>
+						<textarea name="factbox" id="factbox" class="full" rows="18"  onkeyup="articleContentUpdate('Factbox');"><?php if (isset($revision['fact_box'])) { echo $revision['fact_box']['text']; } ?></textarea>
 						<br />
 						<input type="button" name="remove_factbox" id="remove_factbox" class="button" value="Delete Fact Box" onclick="deleteFactbox();" />
 					</fieldset>
@@ -366,7 +392,5 @@
 	</form>
 
 	<script type="text/javascript">
-	// <![CDATA[
 		mwSetupToolbar('toolbar','content', false);
-	// ]]>
 	</script>

@@ -708,12 +708,10 @@ function GetRedirectData()
 /// Return an html button link
 function HtmlButtonLink($Link, $Caption)
 {
-	return
-		'<form action="'.xml_escape($Link).'" method="post" class="form">'.
-			'<div>'.
-				'<input type="submit" class="button" value="'.xml_escape($Caption).'" />'.
-			'</div>'.
-		'</form>';
+	return '
+<form action="'.$Link.'" method="post" class="form">
+	<input type="submit" class="button" value="'.$Caption.'" />
+</form>';
 }
 
 /// Handles the login view.

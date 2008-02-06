@@ -2,22 +2,22 @@
 define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
 ?>
 	<?php if (isset($articles) and $articles->num_rows() > 0) { foreach($articles->result() as $link) {
-		echo '<li><a href="/news/'.$link->category.'/'.$link->id.'">'.xml_escape($link->title).'</a></li>';
+		echo '<li><a href="/news/'.$link->category.'/'.$link->id.'">'.$link->title.'</a></li>';
 	}} else {
 		echo '<li>None Found</li>';
 	}?>
 	<?php if (isset($directory) and $directory->num_rows() > 0) { foreach($directory->result() as $entry) {
-		echo '<li><a href="/directory/'.$entry->link.'">'.xml_escape($entry->title).'</a></li>';
+		echo '<li><a href="/directory/'.$entry->link.'">'.$entry->title.'</a></li>';
 	}} else {
 		echo '<li>None Found</li>';
 	}?></ul>
 	<?php if (isset($events) & count($events)>0) { foreach ($events as $event) {
-		echo '<li><a href="/calendar/event/'.$event['EventId'].'/'.$event['SourceEventId'].'/">'.xml_escape($event['Name']).'</a></li>';
+		echo '<li><a href="/calendar/event/'.$event['EventId'].'/'.$event['SourceEventId'].'/">'.$event['Name'].'</a></li>';
 	}} else {
 		echo '<li>No results found</li>';
 	}?>
 	<?php if (isset($wiki)) { foreach($wiki as $page) {
-		echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.xml_escape($page).'</a></li>';
+		echo '<li><a href="'.ADDR_YORKIPEDIA.$page.'">'.$page.'</a></li>';
 	}} else {
 		echo '<li>No results found</li>';
 	}?>
@@ -52,7 +52,7 @@ define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
 					if (count($resultGroup->result()) == 0) break;
 					echo '<h3>Articles</h3><ul>';
 					foreach ($resultGroup->result() as $article) {
-						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.xml_escape($article->heading).'</a> - '.$article->blurb.'</li>';
+						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.$article->heading.'</a> - '.$article->blurb.'</li>';
 					}
 					echo '</ul>';
 					break;
@@ -60,7 +60,7 @@ define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
 					if (count($resultGroup) == 0) break;
 					echo '<h3>Yorkipedia Pages</h3><ul>';
 					foreach ($resultGroup as $page) {
-						echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.xml_escape($page).'</a></li>';
+						echo '<li><a href="'.ADDR_YORKIPEDIA.urlencode($page).'">'.$page.'</a></li>';
 					}
 					echo '</ul>';
 					break;
@@ -68,7 +68,7 @@ define("ADDR_YORKIPEDIA", "http://yorkipedia.theyorker.co.uk/index.php?title=");
 					if (count($resultGroup->result()) == 0) break;
 					echo '<h3>Organisations in the directory</h3><ul>';
 					foreach ($resultGroup->result() as $article) {
-						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.xml_escape($article->heading).'</a> - '.$article->blurb.'</li>';
+						echo '<li><a href="/news/'.$article->type_codename.'/'.$article->id.'">'.$article->heading.'</a> - '.$article->blurb.'</li>';
 					}
 					break;
 				case "events":

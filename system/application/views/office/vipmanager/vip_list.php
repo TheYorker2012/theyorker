@@ -92,20 +92,20 @@ function SortLink($filter, $sort_fields, $field, $title)
 							<input type="checkbox" name="members_selected[]" value="user<?php echo($membership['user_id']); ?>" id="user<?php echo($membership['user_id']); ?>" />
 						</td>
 						<td>
-							<a href="<?php echo('/office/vipmanager/info/'.$membership['organisation_entity_id'].'/'.$membership['user_id']); ?>"><?php echo(xml_escape($membership['firstname'])); ?></a>
+							<a href="<?php echo('/office/vipmanager/info/'.$membership['organisation_entity_id'].'/'.$membership['user_id']); ?>"><?php echo($membership['firstname']); ?></a>
 						</td>
 						<td>
-							<a href="<?php echo('/office/vipmanager/info/'.$membership['organisation_entity_id'].'/'.$membership['user_id']); ?>"><?php echo(xml_escape($membership['surname'])); ?></a>
+							<a href="<?php echo('/office/vipmanager/info/'.$membership['organisation_entity_id'].'/'.$membership['user_id']); ?>"><?php echo($membership['surname']); ?></a>
 						</td>
 						<td>
 <?php if (NULL !== $membership['email']) { ?>
-							<a href="mailto:<?php echo(xml_escape($membership['email']));?>@york.ac.uk"><?php echo(xml_escape($membership['username'])); ?></a>
+							<a href="mailto:<?php echo($membership['email']);?>@york.ac.uk"><?php echo($membership['username']); ?></a>
 <?php } else {?>
-							<?php echo(xml_escape($membership['username'])); ?>
+							<?php echo($membership['username']); ?>
 <?php } ?>
 						</td>
 						<td>
-							<a href="/office/reviews/<?php echo($membership['organisation_codename']); ?>"><?php echo(xml_escape($membership['organisation_name'])); ?></a>
+							<a href="/office/reviews/<?php echo($membership['organisation_codename']); ?>"><?php echo($membership['organisation_name']); ?></a>
 						</td>
 						<td align="center">
 <?php if (isset($membership['vip']) && $membership['vip']) { ?>
@@ -126,3 +126,10 @@ function SortLink($filter, $sort_fields, $field, $title)
 	</div>
 </div>
 
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

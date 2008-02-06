@@ -64,10 +64,10 @@ class Quotes extends Controller
 			redirect('/office/quotes');
 		}
 
-		$quote_text = $this->input->post('quote_text');
-		$quote_author = $this->input->post('quote_author');
-		$quote_scheduled = $this->input->post('quote_scheduled');
-		$quote_schedule_date = $this->input->post('quote_schedule_date');
+		$quote_text = xml_escape($this->input->post('quote_text'));
+		$quote_author = xml_escape($this->input->post('quote_author'));
+		$quote_scheduled = xml_escape($this->input->post('quote_scheduled'));
+		$quote_schedule_date = xml_escape($this->input->post('quote_schedule_date'));
 
 		$quote_last_displayed_timestamp = ($quote_scheduled ? $quote_schedule_date : null);
 

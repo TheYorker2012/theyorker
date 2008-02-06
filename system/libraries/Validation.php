@@ -33,6 +33,7 @@ class CI_Validation {
 	var $_fields			= array();
 	var $_error_messages	= array();
 	var $_current_field  	= '';
+	var $_safe_form_data 	= FALSE;
 	var $_error_prefix		= '<p>';
 	var $_error_suffix		= '</p>';
 
@@ -86,7 +87,7 @@ class CI_Validation {
 			
 		foreach($this->_fields as $key => $val)
 		{		
-			$this->$key = ( ! isset($_POST[$key]) OR is_array($_POST[$key])) ? '' : $_POST[$key];
+			$this->$key = ( ! isset($_POST[$key]) OR is_array($_POST[$key])) ? '' : $this->prep_for_form($_POST[$key]);
 			
 			$error = $key.'_error';
 			if ( ! isset($this->$error))
@@ -345,6 +346,10 @@ class CI_Validation {
 		 * might now be different then the corresponding class
 		 * variables so we'll set them anew.
 		 */	
+		if ($total_errors > 0)
+		{
+			$this->_safe_form_data = TRUE;
+		}
 		
 		$this->set_fields();
 
@@ -634,6 +639,28 @@ class CI_Validation {
 		{
 			return ' checked="checked"';
 		}
+	}
+	
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Prep data for form
+	 *
+	 * This function allows HTML to be safely shown in a form.
+	 * Special characters are converted.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	string
+	 */
+	function prep_for_form($str = '')
+	{
+		if ($this->_safe_form_data == FALSE OR $str == '')
+		{
+			return $str;
+		}
+
+		return str_replace(array("'", '"', '<', '>'), array("&#39;", "&quot;", '&lt;', '&gt;'), stripslashes($str));
 	}
 	
 	// --------------------------------------------------------------------

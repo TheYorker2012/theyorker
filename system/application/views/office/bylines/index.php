@@ -8,7 +8,7 @@
 		<h2><?php echo((($user_info['user_firstname'] == NULL) && ($user_info['user_surname'] == NULL)) ? 'global' : 'user'); ?> bylines</h2>
 
 		<div>
-			The following list of bylines are those belonging to <b><?php echo((($user_info['user_firstname'] == NULL) && ($user_info['user_surname'] == NULL)) ? 'EVERYONE' : xml_escape($user_info['user_firstname'] . ' ' . $user_info['user_surname'])); ?></b>.
+			The following list of bylines are those belonging to <b><?php echo((($user_info['user_firstname'] == NULL) && ($user_info['user_surname'] == NULL)) ? 'EVERYONE' : $user_info['user_firstname'] . ' ' . $user_info['user_surname']); ?></b>.
 		</div>
 	</div>
 
@@ -33,7 +33,7 @@
 <?php } ?>
 		</span>
 
-		<b>Team:</b> <?php echo(xml_escape($byline['business_card_group_name'])); ?>
+		<b>Team:</b> <?php echo($byline['business_card_group_name']); ?>
 		<b>Status:</b> <?php echo(($byline['business_card_approved']) ? '<span style="color:darkgreen">Approved</span>' : '<span style="color:red">Pending</span>'); ?>
 		<br />
 		<b>Display:</b> <?php echo(date('d/m/y', $byline['business_card_start_date']) . ' - ' . date('d/m/y', $byline['business_card_end_date'])); ?>

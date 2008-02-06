@@ -55,12 +55,12 @@ function _render_vip_image($status, $org_id) {
 					foreach ($Subscriptions as $subscription) {
 					?>
 					<tr>
-						<td><?php echo(xml_escape($subscription['organisation_name'])); ?></td>
-						<td><?php echo(xml_escape($subscription['organisation_type_name'])); ?></td>
-						<td style="text-align:center;"><?php echo(_render_bool_image($subscription['subscription_paid'])); ?></td>
-						<td style="text-align:center;"><?php echo(_render_bool_image($subscription['subscription_calendar'])); ?> <?php echo(_render_bool_image($subscription['subscription_todo'])); ?></td>
-						<td style="text-align:center;"><?php echo(_render_bool_image($subscription['subscription_email'])); ?></td>
-						<td style="text-align:center;"><?php echo(_render_vip_image($subscription['vip_status'], $subscription['org_id'])); ?></td>
+						<td><?php echo($subscription['organisation_name']); ?></td>
+						<td><?php echo($subscription['organisation_type_name']); ?></td>
+						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_paid']); ?></td>
+						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_calendar']); ?> <?php echo _render_bool_image($subscription['subscription_todo']); ?></td>
+						<td style="text-align:center;"><?php echo _render_bool_image($subscription['subscription_email']); ?></td>
+						<td style="text-align:center;"><?php echo _render_vip_image($subscription['vip_status'], $subscription['org_id']); ?></td>
 					</tr>
 					<?php
 					}

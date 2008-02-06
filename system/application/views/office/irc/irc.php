@@ -21,7 +21,7 @@ $url = 'http://trunk.dev.theyorker.co.uk/office/irc/free'.
 	<?php echo($Help); ?>
 	
 	<?php if ($Embed) { ?>
-	<iframe src="<?php echo(xml_escape($url)); ?>"
+	<iframe src="<?php echo($url); ?>"
 			height="420" width="620"
 			frameborder="0" scrolling="no">
 		Your browser needs to support iFrames to use this webchat.

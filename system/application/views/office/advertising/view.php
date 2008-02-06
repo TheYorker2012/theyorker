@@ -23,7 +23,7 @@
 									<b>Name:</b>
 								</td>
 								<td style="width: 70%">
-									<?php echo(xml_escape($advert['name'])); ?>
+									<?php echo($advert['name']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -31,7 +31,7 @@
 									<b>Target Web Address:</b>
 								</td>
 								<td>
-									<?php echo(xml_escape($advert['url'])); ?>
+									<?php echo($advert['url']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -39,7 +39,7 @@
 									<b>Image Hover Text:</b>
 								</td>
 								<td>
-									<?php echo(xml_escape($advert['alt'])); ?>
+									<?php echo($advert['alt']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -47,7 +47,7 @@
 									<b>Is Live:</b>
 								</td>
 								<td>
-									<?php echo($advert['is_live'] ? 'Yes' : 'No'); ?>
+									<?php $advert['is_live'] ? $result = "Yes" : $result = "No" ; echo($result); ?>
 								</td>
 							</tr>
 							<tr>
@@ -105,3 +105,11 @@
 		</tbody>
 	</table>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

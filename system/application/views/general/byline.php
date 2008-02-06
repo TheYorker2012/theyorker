@@ -5,7 +5,7 @@ foreach ($reporters as $reporter) {
 }
 
 foreach ($reporters as $reporter) {
-	echo('		<span class="Name">'.xml_escape($reporter['name']).'</span><br />'."\n");
+	echo('		<span class="Name">'.$reporter['name'].'</span><br />'."\n");
 }
 
 echo('		<div class="Date">'.$article_date.'</div>'."\n");

@@ -26,15 +26,15 @@ function PrintRequestList ($data, $AssignedColumn = FALSE) {
 				echo('class="tr2"');
 			}
 			echo('>'."\n");
-			echo('						<td><a href="/office/photos/view/' . $row['id'] . '/"><img src="/images/prototype/news/photo-small.gif" alt="Photo Request" title="Photo Request" /> ' . xml_escape($row['title']) . '</a></td>'."\n");
+			echo('						<td><a href="/office/photos/view/' . $row['id'] . '/"><img src="/images/prototype/news/photo-small.gif" alt="Photo Request" title="Photo Request" /> ' . $row['title'] . '</a></td>'."\n");
 			echo('						<td>');
 			if ($row['user_name'] != '') {
-				echo('<img src="/images/prototype/news/person.gif" alt="Photographer" title="Photographer" /> '.xml_escape($row['user_name']));
+				echo('<img src="/images/prototype/news/person.gif" alt="Photographer" title="Photographer" /> '.$row['user_name']);
 			}
 			echo('</td>'."\n");
 			echo('						<td>');
 			if ($row['user_status'] != '') {
-				echo('<img src="/images/prototype/news/' . xml_escape($row['user_status']) . '.gif" alt="' . xml_escape($row['user_status']) . '" title="' . xml_escape($row['user_status']) . '" /> ' . xml_escape($row['user_status']));
+				echo('<img src="/images/prototype/news/' . $row['user_status'] . '.gif" alt="' . $row['user_status'] . '" title="' . $row['user_status'] . '" /> ' . $row['user_status']);
 			}
 			echo('</td>');
 			echo('						<td>' . date('d/m/y @ H:i', $row['time']) . '</td>'."\n");

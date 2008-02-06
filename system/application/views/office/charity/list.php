@@ -18,7 +18,7 @@
 	foreach ($charities as $charity)
 	{
 		echo('				<tr>'."\n");
-		echo('					<td><a href="/office/charity/editinfo/'.$charity['id'].'">'.xml_escape($charity['name']).'</a></td>'."\n");
+		echo('					<td><a href="/office/charity/editinfo/'.$charity['id'].'">'.$charity['name'].'</a></td>'."\n");
 		if ($charity['iscurrent'] == 1)
 			echo('					<td>yes</td>'."\n");
 		else
@@ -30,3 +30,11 @@
 		</table>
 	</div>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

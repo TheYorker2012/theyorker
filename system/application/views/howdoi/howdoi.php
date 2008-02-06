@@ -1,7 +1,6 @@
 <div id="RightColumn">
-	<h2 class="first"><?php echo(xml_escape($sidebar_ask['title'])); ?></h2>
+	<h2 class="first"><?php echo($sidebar_ask['title']); ?></h2>
 	<div class="Entry">
-	<?php /** @todo FIXME call this text_xml or something */ ?>
 		<?php echo($sidebar_ask['text']); ?>
 		<form action="/howdoi/ask" method="post" >
 			<fieldset>
@@ -12,12 +11,12 @@
 		</form>
 	</div>
 
-	<h2><?php echo(xml_escape($sidebar_question_categories['title'])); ?></h2>
+	<h2><?php echo($sidebar_question_categories['title']); ?></h2>
 	<div class="Entry">
 		<ul>
 <?php
 foreach ($categories as $category) {
-	echo('			<li><a href="/howdoi/'.xml_escape($category['codename']).'">'.xml_escape($category['name']).'</a></li>');
+	echo('			<li><a href="/howdoi/'.$category['codename'].'">'.$category['name'].'</a></li>');
 }
 ?>
 		</ul>
@@ -31,22 +30,21 @@ foreach ($categories as $category) {
 		?>
 	</div>
 	<div class="BlueBox">
-	<h2><?php echo(xml_escape($section_howdoi['title'])); ?></h2>
-	<?php /** @todo FIXME call this text_xml or something */ ?>
+	<h2><?php echo($section_howdoi['title']); ?></h2>
 	<?php echo($section_howdoi['text']); ?>
 	</div>
 
 	<div class="BlueBox">
 <?php
-echo('		<h2>'.xml_escape($question_categories['title']).'</h2>'."\n");
+echo('		<h2>'.$question_categories['title'].'</h2>'."\n");
 foreach ($categories as $key => $category) {
 	//echo '<h5><a href="'.$category['codename'].'/">'.$category['name'].'</a><br /></h5>';
-	echo('		<h3>'.xml_escape($category['name']).'</h3>'."\n");
+	echo('		<h3>'.$category['name'].'</h3>'."\n");
 	if (count($categories[$key]['articles']) > 0) {
 		echo('		<ul>'."\n");
 		foreach ($categories[$key]['articles'] as $articles) {
 			echo('			');
-			echo('<li><a href="/howdoi/'.xml_escape($category['codename']).'#q'.$articles['id'].'">'.xml_escape($articles['heading']).'</a></li>'."\n");
+			echo('<li><a href="/howdoi/'.$category['codename'].'#q'.$articles['id'].'">'.$articles['heading'].'</a></li>'."\n");
 		}
 		echo('		</ul>'."\n");
 	}

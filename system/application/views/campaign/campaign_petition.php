@@ -1,11 +1,11 @@
 <div id="RightColumn">
-	<h2 class="first"><?php echo(xml_escape($sidebar_petition['title'])); ?></h2>
+	<h2 class="first"><?php echo($sidebar_petition['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_petition['text']); ?>
 
 	</div>
 
-	<h2><?php echo(xml_escape($sidebar_sign['title'])); ?></h2>
+	<h2><?php echo($sidebar_sign['title']); ?></h2>
 	<div class="Entry">
 <?php
 if ($user != FALSE) {
@@ -50,7 +50,7 @@ if ($user != FALSE) {
 ?>
 	</div>
 
-	<h2><?php echo(xml_escape($sidebar_more['title'])); ?></h2>
+	<h2><?php echo($sidebar_more['title']); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_more['text']); ?>
 	</div>
@@ -73,12 +73,12 @@ if(count($article['related_articles']) > 0) {
 
 <?php
 if(count($article['links']) > 0) {
-	echo('	<h2>'.xml_escape($sidebar_external['title']).'</h2>'."\n");
+	echo('	<h2>'.$sidebar_external['title'].'</h2>'."\n");
 	echo('	<div class="Entry">'."\n");
 	echo('		<ul>'."\n");
 	foreach ($article['links'] as $link) {
 		echo('		');
-		echo('<li><a href="'.xml_escape($link['url']).'" target="_blank">'.xml_escape($link['name']).'</a></li>'."\n");
+		echo('<li><a href="'.$link['url'].'" target="_blank">'.$link['name'].'</a></li>'."\n");
 	}
 	echo('		</ul>'."\n");
 	echo('	</div>'."\n");
@@ -88,21 +88,21 @@ if(count($article['links']) > 0) {
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo(xml_escape($our_campaign['title'])); ?></h2>
+		<h2><?php echo($our_campaign['title']); ?></h2>
 		<?php echo($article['text']); ?>
 	</div>
 
 <?php
 foreach ($article['fact_boxes'] as $fact_box) {
 	echo('	<div class="BlueBox">'."\n");
-	echo('		<h2>'.xml_escape($fact_box['title']).'</h2>'."\n");
+	echo('		<h2>'.$fact_box['title'].'</h2>'."\n");
 	echo($fact_box['wikitext']);
 	echo('	</div>'."\n");
 }
 
 if (isset($sections['progress_reports']['entries'])) {
 	echo('	<div class="BlueBox">'."\n");
-	echo('		<h2>'.xml_escape($progress_reports['title']).'</h2>'."\n");
+	echo('		<h2>'.$progress_reports['title'].'</h2>'."\n");
 	foreach ($sections['progress_reports']['entries'] as $pr_entry)
 	{
 		echo('		<h3>'.$pr_entry['date'].'</h3>'."\n");
@@ -132,8 +132,16 @@ if (isset($sections['progress_reports']['entries'])) {
 	echo('	</div>'."\n");
 	
 	echo('	<div class="BlueBox">'."\n");
-	echo('		<h2>'.xml_escape($comments['title']).'</h2>');
+	echo('		<h2>'.$comments['title'].'</h2>');
 	echo('	</div>'."\n");
 }
 ?>
 </div>
+
+<?php
+/*
+echo('<div class="BlueBox"><pre>');
+print_r($data);
+echo('</pre></div>');
+*/
+?>

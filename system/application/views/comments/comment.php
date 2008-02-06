@@ -49,14 +49,12 @@ if (!function_exists('star_rating')) {
 $show_as_deleted = $Comment['deleted'] && (!isset($Mode) || ($Mode != 'mod' && $Mode != 'debug'));
 $anonymous = ($Comment['author'] == 'Anonymous');
 
-$author_xml = xml_escape($Comment['author']);
-
 if ($show_as_deleted) {
-	$author_xml = '<em>comment removed</em>';
+	$Comment['author'] = '<em>comment removed</em>';
 	$Comment['xhtml'] = '';
 	$Comment['edits'] = array();
 } else {
-	$author_xml = '<b>'.$author_xml.'</b>';
+	$Comment['author'] = '<b>'.$Comment['author'].'</b>';
 }
 if ($Comment['deleted']) {
 	$Comment['edits'][] = array(
@@ -85,7 +83,7 @@ if ($Comment['deleted']) {
 		} ?>
 	</div>
 	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
-		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?> - <?php echo($Comment['post_time']); ?>
+		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $Comment['author']); ?> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
 	if (!empty($Comment['edits'])) {
@@ -106,7 +104,7 @@ if ($Comment['deleted']) {
 			}
 			echo(' by '.($edit['by_author'] ? 'the author' : 'a moderator'));
 			if (!$edit['by_author'] && isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && isset($edit['name']) && NULL !== $edit['name']) {
-				echo(' ('.xml_escape($edit['name']).')');
+				echo(' ('.$edit['name'].')');
 			}
 			echo('</li>');
 		}

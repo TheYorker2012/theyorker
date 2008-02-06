@@ -32,10 +32,10 @@
 			<?php if (($byline['user_firstname'] == NULL) && ($byline['user_surname'] == NULL)) {
 				echo('GLOBAL');
 			} else {
-				echo(xml_escape($byline['user_firstname'] . ' ' . $byline['user_surname']));
+				echo($byline['user_firstname'] . ' ' . $byline['user_surname']);
 			} ?>
 		</a>
-		<b>Team:</b> <?php echo(xml_escape($byline['business_card_group_name'])); ?>
+		<b>Team:</b> <?php echo($byline['business_card_group_name']); ?>
 		<br />
 		<b>Display:</b> <?php echo(date('d/m/y', $byline['business_card_start_date']) . ' - ' . date('d/m/y', $byline['business_card_end_date'])); ?>
 		<br />

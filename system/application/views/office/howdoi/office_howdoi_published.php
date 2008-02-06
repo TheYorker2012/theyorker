@@ -1,7 +1,7 @@
 <?php
 	function PrintSectionTableContents($header_name, $data)
 	{
-		echo('	<b>'.xml_escape($header_name).'</b>');
+		echo '	<b>'.$header_name.'</b>';
 		echo('	<div class="ArticleBox">'."\n");
 		echo('		<table>'."\n");
 		echo('			<thead>'."\n");
@@ -24,10 +24,10 @@
 			$dateformatted = date('d/m/y @ H:i', $section['publish']);
 			echo('				<tr class="tr'.$alternate.'">'."\n");
 			echo('					<td>'."\n");
-			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.xml_escape($section['heading']).'</a>'."\n");
+			echo('						<a href="/office/howdoi/editquestion/'.$section['id'].'">'.$section['heading'].'</a>'."\n");
 			echo('					</td>'."\n");
 			echo('					<td>'."\n");
-			echo('						'.xml_escape($section['user_firstname'].' '.$section['user_surname'])."\n");
+			echo('						'.$section['user_firstname'].' '.$section['user_surname']."\n");
 			echo('					</td>'."\n");
 			echo('					<td style="text-align:right;">'."\n");
 			echo('						'.$dateformatted."\n");
@@ -45,60 +45,60 @@
 	<?php
 	if (count($user['writer']['requested']) > 0)
 	{
-		echo('<h4>Write Requests</h4>');
+		echo '<h4>Write Requests</h4>';
 		foreach ($user['writer']['requested'] as $requested)
 		{
-			echo('<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.xml_escape($requested['title']).'</a><br />');
+			echo '<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.$requested['title'].'</a><br />';
 		}
-		echo('<br />');
+		echo '<br />';
 	}
 	if (count($user['writer']['accepted']) > 0)
 	{
-		echo('<h4>Accepted Requests</h4>');
+		echo '<h4>Accepted Requests</h4>';
 		foreach ($user['writer']['accepted'] as $accepted)
 		{
-			echo('<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.xml_escape($accepted['title']).'</a><br />');
+			echo '<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.$accepted['title'].'</a><br />';
 		}
-		echo('<br />');
+		echo '<br />';
 	}
 	echo '<h4>Areas for Attention</h4>
 	<div class="Entry">';
 		if ($status_count['unpublished'] > 0)
 		{
-			echo('<div class="information_box">');
+			echo '<div class="information_box">';
 			if ($status_count['unpublished'] == 1)
-				echo('There is <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Question</a> that is waiting to be published.');
+				echo 'There is <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Question</a> that is waiting to be published.';
 			else
-				echo('There are <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Questions</a> that are waiting to be published.');
-			echo('</div>');
+				echo 'There are <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Questions</a> that are waiting to be published.';
+			echo '</div>';
 		}
 		if ($status_count['requests'] > 0)
 		{
-			echo('<div class="information_box">');
+			echo '<div class="information_box">';
 			if ($status_count['requests'] == 1)
-				echo('There is <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Request</a> that requires an answer.');
+				echo 'There is <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Request</a> that requires an answer.';
 			else
-				echo('There are <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> that require answers.');
-			echo('</div>');
+				echo 'There are <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> that require answers.';
+			echo '</div>';
 		}
 		if ($status_count['suggestions'] > 0)
 		{
-			echo('<div class="information_box">');
+			echo '<div class="information_box">';
 			if ($status_count['suggestions'] == 1)
-				echo('There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.');
+				echo 'There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.';
 			else
-				echo('There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.');
-			echo('</div>');
+				echo 'There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.';
+			echo '</div>';
 		}
 
-	echo('</div>');
+	echo '</div>';
 	?>
 </div>
 
 <?php
 	$hr_first = FALSE; //no hr is drawn at the top but between categories
-	echo('<div class="blue_box">');
-  	echo('<h2>All Questions</h2>');
+	echo '<div class="blue_box">';
+  	echo '<h2>All Questions</h2>';
 	if (count($categories) > 0)
 	{
 		foreach ($categories as $category)
@@ -106,8 +106,8 @@
 			if ($hr_first == FALSE)
 				$hr_first = TRUE;
 			else
-				echo('<hr />');
-			echo('<h5>'.xml_escape($category['name']).'</h5>');
+				echo '<hr />';
+			echo '<h5>'.$category['name'].'</h5>';
 			$br_first = FALSE; //no br is drawn after the category name
 			if (count($category['unpublished']) > 0)
 			{
@@ -123,6 +123,13 @@
 			}
 		}
 	}
-	echo('</div>');
+	echo '</div>';
 ?>
 
+<?php
+/*
+echo '<pre>';
+echo print_r($data);
+echo '</pre>';
+*/
+?>

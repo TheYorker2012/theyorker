@@ -3,53 +3,53 @@
 	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
 	<div class='RightToolbar'>
-		<h4><?php echo(xml_escape($heading)); ?></h4>
-		<?php echo($intro); ?>
+		<h4><?php echo $heading; ?></h4>
+		<?php echo $intro; ?>
 		<h4>Unassigned Requests</h4>
 		If you choose not select a reporter here then the request will remain <b>unassigned</b> until a reporter is selected. The request will appear on the content schedule.
 	</div>
 
-	<form name='new_request' id='new_request' action='<?php echo($this->uri->uri_string()); ?>' method='post' class='form'>
+	<form name='new_request' id='new_request' action='<?php echo $this->uri->uri_string(); ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<?php if ($edit_enable) { ?>
-					<input type='text' name='r_title' id='r_title' value='<?php echo(xml_escape($this->validation->r_title)); ?>' size='30' />
+					<input type='text' name='r_title' id='r_title' value='<?php echo $this->validation->r_title; ?>' size='30' />
 				<?php } else { ?>
-					<div id='r_title' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($this->validation->r_title)); ?></div>
+					<div id='r_title' style='float: left; margin: 5px 10px;'><?php echo $this->validation->r_title; ?></div>
 				<?php } ?>
 				<br />
 				<label for='r_brief'>Brief:</label>
 				<?php if ($edit_enable) { ?>
-					<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo(xml_escape($this->validation->r_brief)); ?></textarea>
+					<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo $this->validation->r_brief; ?></textarea>
 				<?php } else { ?>
-					<div id='r_brief' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($this->validation->r_brief)); ?></div>
+					<div id='r_brief' style='float: left; margin: 5px 10px;'><?php echo $this->validation->r_brief; ?></div>
 				<?php } ?>
 				<br />
 				<label for='r_suggest'>Suggested by:</label>
 				<div id='r_suggest' style='float: left; margin: 5px 10px;'>
 				<?php if ($status == 'suggestion') {
-					echo(xml_escape($article['username']));
+					echo $article['username'];
 				} elseif ($status == 'request') {
-					echo(xml_escape($article['suggestionusername']));
+					echo $article['suggestionusername'];
 				} ?>
 				</div>
 			    <br />
 				<?php if ($status == 'request') { ?>
 					<label for='r_editor'>Editor:</label>
-					<div id='r_editor' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($article['editorname'])); ?></div>
+					<div id='r_editor' style='float: left; margin: 5px 10px;'><?php echo $article['editorname']; ?></div>
 				    <br />
 				<?php } ?>
 				<?php if ($status == 'suggestion') { ?>
 					<label for='r_created'>Created:</label>
-					<div id='r_created' style='float: left; margin: 5px 10px;'><?php echo(date('D jS F Y @ H:i:s',$article['created'])); ?></div>
+					<div id='r_created' style='float: left; margin: 5px 10px;'><?php echo date('D jS F Y @ H:i:s',$article['created']); ?></div>
 				    <br />
 				<?php } ?>
 				<?php if (($user_level == 'editor') || ($status == 'request')) { ?>
 					<label for='deadline_trigger'>Deadline:</label>
-					<div id='r_deadline_show' style='float: left; margin: 5px 10px;'><?php if ($this->validation->r_deadline != '') { echo(date('D j M, Y @ H:i',$this->validation->r_deadline)); } else { echo('None'); } ?></div>
+					<div id='r_deadline_show' style='float: left; margin: 5px 10px;'><?php if ($this->validation->r_deadline != '') { echo date('D j M, Y @ H:i',$this->validation->r_deadline); } else { echo 'None'; } ?></div>
 					<?php if ($edit_enable) { ?>
-						<input type='hidden' name='r_deadline' id='r_deadline' value='<?php echo(xml_escape($this->validation->r_deadline)); ?>' />
+						<input type='hidden' name='r_deadline' id='r_deadline' value='<?php echo($this->validation->r_deadline); ?>' />
 						<br />
 						<button id='deadline_trigger' style='margin: 0 0 5px 125px;'>Select</button>
 					<?php } ?>
@@ -59,15 +59,15 @@
 				<?php if ($edit_enable) { ?>
 					<select name='r_box' id='r_box' size='1'>
 					<?php foreach ($boxes as $box) {
-						echo('<option value=\'' . $box['code'] . '\'');
+						echo '<option value=\'' . $box['code'] . '\'';
 						if ($box['name'] == $this->validation->r_box) {
-							echo(' selected=\'selected\'');
+							echo ' selected=\'selected\'';
 						}
-						echo('>' . xml_escape($box['name']) . '</option>');
+						echo '>' . $box['name'] . '</option>';
 					} ?>
 					</select>
 				<?php } else { ?>
-					<div id='r_box' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($article['box_name'])); ?></div>
+					<div id='r_box' style='float: left; margin: 5px 10px;'><?php echo $article['box_name']; ?></div>
 				<?php } ?>
 		  		<br />
 				<?php if (($user_level == 'editor') || ($status == 'request')) { ?>
@@ -81,18 +81,18 @@
 								array_push($reporters_array, $reporter['id']);
 							}
 							foreach ($reporters as $reporter) {
-								echo('<option value=\'' . $reporter['id'] . '\'');
+								echo '<option value=\'' . $reporter['id'] . '\'';
 								if (($status == 'request') && (array_search($reporter['id'], $reporters_array) !== FALSE)) {
-									echo('selected=\'selected\'');
+									echo 'selected=\'selected\'';
 								}
-								echo('>' . xml_escape($reporter['firstname'] . ' ' . $reporter['surname']) . '</option>');
+								echo '>' . $reporter['firstname'] . ' ' . $reporter['surname'] . '</option>';
 							} ?>
 						</select>
 						<i>Hold down Ctrl to select more than one.</i>
 					<?php } else { ?>
 						<div id='r_reporter' style='float: left; margin: 5px 10px;'>
 						<?php foreach ($assigned_reporters as $reporter) {
-							echo(xml_escape($reporter['name']) . ' (' . xml_escape($reporter['status']) . ') <br />');
+							echo $reporter['name'] . ' (' . $reporter['status'] . ') <br />';
 						} ?>
 						</div>
 					<?php } ?>
@@ -121,7 +121,6 @@
 	</form>
 	<?php if (($edit_enable) && ($user_level == 'editor')) { ?>
 		<script type='text/javascript'>
-		// <![CDATA[
 		Calendar.setup(
 			{
 				inputField	: 'r_deadline',
@@ -132,14 +131,13 @@
 				singleClick	: false,
 				firstDay	: 1,
 				<?php if ($status == 'request') { ?>
-				date		: <?php echo(js_literalise($this->validation->r_deadline)); ?>,
+				date		: '<?php echo $this->validation->r_deadline; ?>',
 				<?php } ?>
 				weekNumbers	: false,
-				range		: [<?php echo((date('Y') . ',' . (date('Y') + 1))); ?>],
+				range		: [<?php echo (date('Y') . ',' . (date('Y') + 1)); ?>],
 				showsTime	: true,
 				timeFormat	: '24'
 			}
 		);
-		// ]]>
 		</script>
 	<?php } ?>
