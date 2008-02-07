@@ -310,9 +310,31 @@ class Pr_model extends Model {
 		return $query->result_array();
 	}
 	
+	//returns 1 if the user is assigned to the given venue and context, 0 otherwise.
+	function IsUserAssignedToReviewVenue($content_type_codename, $org_short_name, $user_id=null){
+		$sql = '
+		SELECT COUNT(*) as user_has_venue
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		WHERE review_contexts.review_context_assigned_user_entity_id ';
+		if(empty($user_id)){
+			$sql .= 'IS NULL AND content_types.content_type_codename=? 
+			AND organisations.organisation_directory_entry_name=?';
+			$query = $this->db->query($sql, array($content_type_codename, $org_short_name));
+		}else{
+			$sql .= '=? AND content_types.content_type_codename=? 
+			AND organisations.organisation_directory_entry_name=?';
+			$query = $this->db->query($sql, array($user_id, $content_type_codename, $org_short_name));
+		}
+		return $query->row()->user_has_venue;
+	}
+	
 	//Overwrites any assigned user to the provided user id, if no user id is given the assigned user will be removed.
-	function AssignReviewVenueToUser($org_id, $user_id="", $content_type_id){
-		if($user_id==""){
+	function AssignReviewVenueToUser($org_id, $content_type_id, $user_id=0){
+		if($user_id==0){
 			$sql = 'UPDATE	review_contexts
 						SET		review_contexts.review_context_assigned_user_entity_id = NULL
 						WHERE	review_contexts.review_context_organisation_entity_id = ? AND review_context_content_type_id=? LIMIT 1';
