@@ -517,18 +517,25 @@ class CI_DB_driver {
 			$binds = array($binds);
 		}
 		
-		$segments = explode($this->bind_marker, $sql);
+		// Get the sql segments around the bind markers
+		$expected_segments = count($binds)+1;
+		$segments = explode($this->bind_marker, $sql, $expected_segments);
 		
-		// Build up the query, appending alternating binds and segments
-		$result = array_shift($segments);
-		foreach ($segments as $segment)
+		// Check for expected number of segments
+		assert('count($segments) == $expected_segments');
+		
+		// Its not the end of the world if there are too many bind values
+		if ($expected_segments > count($segments)) {
+			$binds = array_slice($binds, 0, count($segments)-1);
+		}
+		
+		// Construct the binded query
+		$result = $segments[0];
+		$i = 0;
+		foreach ($binds as $bind)
 		{
-			if (!empty($binds)) {
-				$result .= $this->escape(array_shift($binds));
-			} else {
-				$result .= $this->bind_marker;
-			}
-			$result .= $segment;
+			$result .= $this->escape($bind);
+			$result .= $segments[++$i];
 		}
 
 		return $result;
