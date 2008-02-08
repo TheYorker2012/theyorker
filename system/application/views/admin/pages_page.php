@@ -1,7 +1,23 @@
+<?php
+/**
+ * @file views/admin/pages_page.php
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ */
+
+$property_types = array(
+	'text' => 'Text',
+	'wikitext' => 'Wikitext',
+	'xhtml' => 'XHTML Block (advanced users only)',
+	'xhtml_inline' => 'Inline XHTML (advanced users only)',
+);
+
+?>
 <div class="RightToolbar">
 	<?php if (isset($main_text)) { ?>
 		<h4>What's this?</h4>
-		<p><?php echo $main_text; ?></p>
+		<p><a href="/admin/pages">Back to Pages Administration</a></p>
+		<p><?php echo($main_text); ?></p>
 	<?php } ?>
 	<?php if (isset($page_help)) { ?>
 		<h4>Helper</h4>
@@ -16,9 +32,13 @@
 				<label for="codename">Codename:</label>
 				<input name="codename" size="35" value=<?php
 					echo '"';
-					if (!empty($codename)) { echo(xml_escape($codename)); }
+					if (!empty($codename)) {
+						echo(xml_escape($codename));
+					}
 					echo '"';
-					if (!$permissions['rename']) { echo(' READONLY'); }
+					if (!$permissions['rename']) {
+						echo(' readonly="readonly"');
+					}
 					?>>
 				<br />
 				<label id="title_label" for="title">Header Title:</label>
@@ -70,7 +90,11 @@ if (!empty($properties) || $permissions['prop_add']) {
 			?>
 				<p style="font-size:small;">
 					<b>Property Name : </b><?php echo(xml_escape($property['label']));?><br />
-					<b>Property Type : </b><?php echo(xml_escape($property['type']));?><br />
+					<b>Property Type : </b><?php
+						echo(xml_escape(isset($property_types[$property['type']])
+								? $property_types[$property['type']]
+								: $property['type']));
+					?><br />
 					<?php if ($permissions['prop_delete']) { ?>
 						<input type="checkbox" name="delete-<?php echo($property['id']);?>"> Delete this property
 					<?php } ?>
@@ -89,21 +113,21 @@ if (!empty($properties) || $permissions['prop_add']) {
 			// See public_html/javascript/clone.js
 			?>
 			<div id="source" style="display:none">
-				<b>Property Name : </b><input name="label-newprop" value=""><br />
-				<b>Property Type : </b>
+				<label>Property Name : <input name="label-newprop" value=""></label>
+				<label>Property Type : 
 					<select name="type-newprop">
-						<option value ="text">Text</option>
-						<option value ="wikitext">Wikitext</option>
-						<option value ="xhtml">XHTML</option>
-					</select><br />
+<?php foreach ($property_types as $code => $name) { ?>
+						<option value="<?php echo(xml_escape($code)); ?>"><?php echo(xml_escape($name)); ?></option>
+<?php } ?>
+					</select></label>
 				<textarea name="newprop" class="full" rows="10"></textarea>
 				<br />
 			</div>
 			<?php
-			// New properties are put here (destionation div)
+			// New properties are put here (destination div)
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
-			<input type="button" class="button" onClick="AddClones()" value="Add Property"/>
+			<input type="button" class="button" onClick="AddClone('source', 'destination')" value="Add Property"/>
 			<?php }
 			if ($permissions['prop_edit']) {
 				?>
@@ -116,23 +140,3 @@ if (!empty($properties) || $permissions['prop_add']) {
 <?php
 }
 ?>
-<?php /*
-<h2>Add a page property</h2>
-<form name="property_form" action="<?php echo($target); ?>" method="POST" class="form">
-	<fieldset>
-		<label for="properties_name">Property name</label>
-		<input size="35" name="properties_name">
-		<br />
-		<label for="properties_type">Property type</label>
-		<input type="radio" name="properties_type" value="text"> Text 
-		<input type="radio" name="properties_type" value="wikitext"> WikiText 
-		<input type="radio" name="properties_type" value="image"> Image
-		<br />
-		<label for="properties_value">Property value</label>
-		<textarea name="properties_value" class="full" rows="10"></textarea>
-	</fieldset>
-	<fieldset>
-		<input type="submit" class="button" name="property_button" value="Add">
-	</fieldset>
-</form> */ ?>
-<a href="/admin/pages">Back to Pages Administration</a>

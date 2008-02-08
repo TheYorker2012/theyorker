@@ -126,9 +126,45 @@ class Pages_model extends Model
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyXhtml($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
+	function GetPropertyXhtmlInline($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
+	{
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml_inline');
+		if (FALSE === $value) {
+			$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
+			if (FALSE !== $value) {
+				$value['text'] = '</p>'.$value['text'].'<p>';
+			}
+		}
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			// Postprocess the xhtml
+			$this->load->library('xml_processor');
+			return $this->xml_processor->Process($value['text'], $Arguments);
+		}
+	}
+	
+	/// Get a specific xhtml property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyXhtmlBlock($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
 	{
 		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
+		if (FALSE === $value) {
+			$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml_inline');
+			if (FALSE !== $value) {
+				$value['text'] = '<p>'.$value['text'].'</p>';
+			}
+		}
 		if (FALSE === $value) {
 			return $Default;
 		} else {
