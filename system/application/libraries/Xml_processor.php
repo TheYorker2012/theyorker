@@ -28,17 +28,18 @@ class Xml_processor
 		$result = $matches[0];
 		$inside = $matches[1];
 		// Get the label and arguments
-		if (preg_match('/^([^|]*)(\|(.*))?$/i', $inside, $namespace_matches)) {
-			$label = $namespace_matches[1];
+		if (preg_match('/^\s*([^|]*)\s*(\|((\s|.)*))?/', $inside, $namespace_matches)) {
+			$label = trim($namespace_matches[1]);
 			$arguments = $this->arguments;
 			if (isset($namespace_matches[2])) {
 				$args_str = $namespace_matches[3];
 				$argc = 1;
 				foreach (explode('|',$args_str) as $arg) {
+					$arg = trim($arg);
 					$arguments[$argc] = $arg;
 					if (false !== ($pos = strpos($arg, '='))) {
-						$key = substr($arg, 0, $pos);
-						$arg = substr($arg, $pos+1);
+						$key = trim(substr($arg, 0, $pos));
+						$arg = trim(substr($arg, $pos+1));
 						$arguments[$key] = $arg;
 					}
 					++$argc;
