@@ -517,17 +517,21 @@ class CI_DB_driver {
 			$binds = array($binds);
 		}
 		
-		foreach ($binds as $val)
+		$segments = explode($this->bind_marker, $sql);
+		
+		// Build up the query, appending alternating binds and segments
+		$result = array_shift($segments);
+		foreach ($segments as $segment)
 		{
-			$val = $this->escape($val);
-					
-			// Just in case the replacement string contains the bind
-			// character we'll temporarily replace it with a marker
-			$val = str_replace($this->bind_marker, '{%bind_marker%}', $val);
-			$sql = preg_replace("#".preg_quote($this->bind_marker, '#')."#", str_replace('$', '\$', $val), $sql, 1);
+			if (!empty($binds)) {
+				$result .= $this->escape(array_shift($binds));
+			} else {
+				$result .= $this->bind_marker;
+			}
+			$result .= $segment;
 		}
 
-		return str_replace('{%bind_marker%}', $this->bind_marker, $sql);		
+		return $result;
 	}
 	
 	// --------------------------------------------------------------------
