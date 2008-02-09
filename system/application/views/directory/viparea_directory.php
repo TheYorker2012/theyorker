@@ -16,7 +16,7 @@
 	foreach ($organisation_types as $org_type) {
 ?>
 		<label for="filterCheck<?php echo($idPostfix); ?>">
-			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo($org_type['id']); ?>" checked="checked" />
+			<input id="filterCheck<?php echo($idPostfix); ?>" onclick="searchDirectory();" type="checkbox" name="<?php echo(xml_escape($org_type['id'])); ?>" checked="checked" />
 			<?php echo(xml_escape($org_type['name']).' ('.$org_type['quantity'].')')?>
 		</label>
 <?php
