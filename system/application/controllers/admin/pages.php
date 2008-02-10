@@ -576,7 +576,7 @@ class Pages extends Controller
 		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
 		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
 		
-		$this->main_frame->IncludeJs('javascript/clone.js');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -620,7 +620,7 @@ class Pages extends Controller
 		$PageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->IncludeJs('javascript/clone.js');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -694,7 +694,7 @@ class Pages extends Controller
 		$CustomPageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->IncludeJs('javascript/clone.js');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;

@@ -114,6 +114,70 @@ class Pages_model extends Model
 		}
 	}
 	
+	/// Get a specific xhtml property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyXhtmlInline($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
+	{
+		$inline = true;
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml_inline');
+		if (FALSE === $value) {
+			$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
+			if (FALSE !== $value) {
+				$inline = false;
+				$value['text'] = '</p>'.$value['text'].'<p>';
+			}
+		}
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			// Postprocess the xhtml
+			$this->load->library('xml_processor');
+			return $this->xml_processor->Process($value['text'], $Arguments);
+		}
+	}
+	
+	/// Get a specific xhtml property associated with the page.
+	/**
+	 * @param $PropertyLabel string Label of desired property.
+	 * @param $PageCode
+	 *	- string Page code of page to get property from.
+	 *	- TRUE Get page property from global properties.
+	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Default string Default string.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
+	 * @return string Property value or $Default if it doesn't exist.
+	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
+	 */
+	function GetPropertyXhtmlBlock($PropertyLabel, $PageCode = FALSE, $Default = '', $Arguments = array())
+	{
+		$inline = false;
+		$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml');
+		if (FALSE === $value) {
+			$value = $this->GetRawProperty($PageCode, $PropertyLabel, 'xhtml_inline');
+			if (FALSE !== $value) {
+				$inline = true;
+				$value['text'] = '<p>'.$value['text'].'</p>';
+			}
+		}
+		if (FALSE === $value) {
+			return $Default;
+		} else {
+			// Postprocess the xhtml
+			$this->load->library('xml_processor');
+			return $this->xml_processor->Process($value['text'], $Arguments);
+		}
+	}
+	
 	/// Get a specific integer property associated with the page.
 	/**
 	 * @param $PropertyLabel string Label of desired property.
@@ -147,11 +211,11 @@ class Pages_model extends Model
 	 *	- TRUE Get page property from global properties.
 	 *	- FALSE Current page code specified using SetPageCode.
 	 * @param $DefaultToNull bool Whether to default to NULL if there is no property.
-	 * @param $Replacements array[replace => with] Replacements to make in the wikitext.
+	 * @param $Arguments array[replace => with] $Arguments to make in the wikitext.
 	 * @return string Property value or $Default if it doesn't exist.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Replacements = array())
+	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Scope = array())
 	{
 		if ($this->mInlineEditMode || FALSE === ($cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache'))) {
 			// No cache, see if the wikitext is there
@@ -183,20 +247,12 @@ class Pages_model extends Model
 			// Use the cache
 			$wikitext_cached = $cache['text'];
 		}
-		
-		// Replace special values
-		if (empty($Replacements)) {
-			$replaced_wikitext = $wikitext_cached;
-		} else {
-			$replaced_wikitext = str_replace(
-				array_keys($Replacements),
-				array_values($Replacements),
-				$wikitext_cached
-			);
-		}
+		// Postprocess the cache
+		$this->load->library('xml_processor');
+		$wikitext_cached = $this->xml_processor->Process($wikitext_cached, $Scope);
 		
 		if (!$this->mInlineEditMode) {
-			return $replaced_wikitext;
+			return $wikitext_cached;
 		} else {
 			if (FALSE === $PageCode) {
 				$PageCode = $this->mPageCode;
@@ -234,7 +290,7 @@ class Pages_model extends Model
 			$output .= "   <div id=\"pp_wikitext_preview_$edit_counter\" style=\"border:1px dashed blue; margin: 3px; background-color:white;\">$wikitext_cached</div>";
 			$output .= '  </div>';
 			$output .= ' </div>';
-			$output .= " <div id=\"pp_wikitext_$edit_counter\" style=\"border:1px dashed blue;\">$replaced_wikitext</div>";
+			$output .= " <div id=\"pp_wikitext_$edit_counter\" style=\"border:1px dashed blue;\">$wikitext_cached</div>";
 			$output .= '</div>';
 			return $output;
 		}
