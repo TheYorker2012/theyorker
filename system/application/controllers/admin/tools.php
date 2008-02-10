@@ -26,11 +26,14 @@ class Tools extends controller
 	function database($Tool = 'index', $Param1 = NULL)
 	{
 		if (!CheckPermissions('admin')) return;
-		static $valid_tools = array('reset','triggers');
+		static $valid_tools = array(
+			'reset',
+			'triggers',
+			'unescape',
+		);
 		if (in_array($Tool, $valid_tools)) {
 			$function_name = '_database_'.$Tool;
 			$this->$function_name($Param1);
-			$this->main_frame->load();
 		} else {
 			show_404();
 		}
@@ -131,6 +134,125 @@ class Tools extends controller
 		
 		$this->main_frame->Load();
 	}
+	
+	/// Unescape various fields in the database
+	function _database_unescape()
+	{
+		static $unescape_data = array(
+			'quotes' => array(
+				'keys' => array(
+					'quote_id',
+				),
+				'cols' => array(
+					'quote_text',
+					'quote_author',
+				),
+			),
+			'article_contents' => array(
+				'keys' => array(
+					'article_content_id',
+				),
+				'cols' => array(
+					'article_content_heading',
+					'article_content_subheading',
+					'article_content_subtext',
+					'article_content_blurb',
+				),
+			),
+			'subscriptions' => array(
+				'keys' => array(
+					'subscription_organisation_entity_id',
+					'subscription_user_entity_id',
+				),
+				'cols' => array(
+					'subscription_user_position',
+				),
+			),
+			'users' => array(
+				'keys' => array(
+					'user_entity_id',
+				),
+				'cols' => array(
+					'user_contact_phone_number',
+				),
+			),
+			'organisation_contents' => array(
+				'keys' => array(
+					'organisation_content_id',
+				),
+				'cols' => array(
+					'organisation_content_description',
+					'organisation_content_postal_address',
+					'organisation_content_postcode',
+					'organisation_content_phone_external',
+					'organisation_content_phone_internal',
+					'organisation_content_fax_number',
+					'organisation_content_email_address',
+					'organisation_content_url',
+					'organisation_content_opening_hours',
+				),
+			),
+		);
+		if (false !== $this->input->post('go_unescape')) {
+			$make_changes = (false !== $this->input->post('confirm_changes'));
+			echo('Starting unescaping of database fields<br />');
+			
+			foreach ($unescape_data as $table => $data) {
+				list($keys, $cols) = array($data['keys'], $data['cols']);
+				
+				echo('Unescaping table `'.xml_escape($table).'`<br /><ul>');
+				
+				// Get the rows from the database first
+				$this->db->select(array_merge($keys, $cols));
+				$this->db->from($table);
+				$query = $this->db->get();
+				$result_data = array();
+				foreach ($query->result_array() as $row) {
+					$changes = array();
+					$key_values = array();
+					foreach ($keys as $key) {
+						$key_values[$key] = $row[$key];
+					}
+					foreach ($cols as $col) {
+						if (is_string($row[$col]) && $row[$col] != xml_unescape($row[$col])) {
+							$need_updating = true;
+							echo('<li>"'.xml_escape($row[$col]).'"<ul><li>"'.$row[$col].'"</li></ul></li>');
+							$changes[$col] = xml_unescape($row[$col]);
+						}
+					}
+					if (!empty($changes) && $make_changes) {
+						$this->db->where($key_values);
+						$this->db->update($table, $changes);
+					}
+				}
+				
+				echo('</ul>');
+			}
+			
+			if ($make_changes) {
+				echo('Unescaping completed (<a href="'.site_url('admin').'">Return to admin</a>)<br />');
+			}
+			else {
+				echo('<form action="'.site_url($this->uri->uri_string()).'" method="post"><label><input type="checkbox" name="confirm_changes" />Confirm changes</label><br /><input type="submit" name="go_unescape" value="Unescape now" /></form>');
+			}
+		}
+		else {
+			$update_list = '<ul>';
+			foreach ($unescape_data as $table => $data) {
+				$update_list .= '<li>'.xml_escape('table `'.$table.'` (keys: `'.implode('`, `', $data['keys']).'`).');
+				$update_list .= '<ul>';
+				foreach ($data['cols'] as $col) {
+					$update_list .= '<li>'.xml_escape('`'.$table.'`.`'.$col.'`').'</li>';
+				}
+				$update_list .= '</ul>';
+				$update_list .= '</li>';
+			}
+			$update_list .= '</ul>';
+			$this->messages->AddMessage('warning', '<p>To unescape the following fields in the database, make sure you are sure and know what you are doing first. The following fields will be unescaped:</p> '.$update_list.'<p>If you are sure click here:</p><form action="'.site_url($this->uri->uri_string()).'" method="post"><input type="submit" name="go_unescape" value="Next Stage" /></form>');
+			$this->main_frame->Load();
+		}
+	}
+
 	
 	/// Handle the wiktiext tools
 	function wikitext($Tool = 'test')
