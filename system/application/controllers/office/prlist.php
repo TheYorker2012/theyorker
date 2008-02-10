@@ -98,8 +98,8 @@ class Prlist extends Controller
 		$this->main_frame->SetContent($directory_view);
 
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');
-		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
+		$this->main_frame->IncludeJs('javascript/directory.js');
+		$this->main_frame->IncludeCss('stylesheets/directory.css');
 
 		// Load the public frame view
 		$this->main_frame->Load();

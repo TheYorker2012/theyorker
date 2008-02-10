@@ -408,8 +408,8 @@ class Tools extends controller
 			}
 			
 			$this->pages_model->SetPageCode('admin_tools_test_static');
-			$this->main_frame->IncludeJs('/javascript/admin/static_analysis.js');
-			$this->main_frame->IncludeJs('/javascript/simple_ajax.js');
+			$this->main_frame->IncludeJs('javascript/admin/static_analysis.js');
+			$this->main_frame->IncludeJs('javascript/simple_ajax.js');
 			$this->main_frame->SetContentSimple('admin/tools/test/static', $data);
 			$this->main_frame->load();
 		}

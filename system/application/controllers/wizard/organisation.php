@@ -235,7 +235,7 @@ class Organisation extends controller
 			$_SESSION[$data['session_var']]['r_dump'] = NULL;
 
 		// Set up the public frame
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/clone.js');
 		$the_view = $this->frames->view('wizard/organisation', $data);
 		$this->main_frame->SetContent($the_view);
 

@@ -38,12 +38,6 @@ if (isset($medium_type)) { ?>
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
-	if (isset($extra_css)) {
-		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
-	}
-	?>
-
-	<?php
 		// Get common javascript
 		include('top_script.php');
 	?>

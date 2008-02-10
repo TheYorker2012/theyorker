@@ -259,9 +259,9 @@ class Account extends controller
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_links');
 
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
-		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js');
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/links', $data);

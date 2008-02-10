@@ -115,9 +115,8 @@ class Reviewlist extends Controller
 		$this->main_frame->SetContentSimple('office/reviews/reviewlist', $data);
 
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');
-
-		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
+		$this->main_frame->IncludeJs('javascript/directory.js');
+		$this->main_frame->IncludeCss('stylesheets/directory.css');
 
 		// Load the public frame view
 		$this->main_frame->Load();
