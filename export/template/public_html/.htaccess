@@ -3,14 +3,17 @@ AddHandler application/x-httpd-php5 .php
 RewriteEngine on
 RewriteBase /
 
+# Redirect secure pages to https
 RewriteCond %{SERVER_PORT} !^443$
 RewriteCond %{REQUEST_URI} ^/(account|login|register)
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [L,R]
 
+# Redirect other pages to http except those that need to be accessible from both 
 RewriteCond %{SERVER_PORT} ^443$
-RewriteCond %{REQUEST_URI} !^/(index.php|account|login|register|images|stylesheets|javascript)
+RewriteCond %{REQUEST_URI} !^/(index\.php|account|login|register|images|stylesheets|javascript|feedback)
 RewriteRule ^(.*)$ http://%{SERVER_NAME}/$1 [L,R]
 
+# Rewrite URL into index.php for code ignitor
 RewriteCond %{REQUEST_URI} !^/(index\.php|tmp|images|stylesheets|javascript|js|doxygen|facebook|robots\.txt|test)
 RewriteRule ^(.*)$ index.php/$1
 RewriteRule ^index.php//$ index.php [L]
