@@ -141,6 +141,7 @@ class News extends Controller {
 			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
 				$main_article = array(
+					'placeholder'			=>	true,
 					'id'					=>	0,
 					'date'					=>	date('l, jS F Y'),
 					'location'				=>	0,

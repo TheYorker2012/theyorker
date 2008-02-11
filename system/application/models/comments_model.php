@@ -733,7 +733,7 @@ class Comments_model extends model
 					WHERE comments.comment_id = '.$new_comment['comment_id'];
 					$this->db->query($cache_sql);
 				}
-				$new_comment['owned'] = isset($identities[$comment['author_id']]);
+				$new_comment['owned'] = isset($identities[$comment['author_id']]) && $this->config->item('comments_edit');
 				$new_comment['deleted_by_owner'] = (NULL !== $comment['deleted_entity_id']) && ($comment['deleted_entity_id'] == $comment['author_id']);
 				
 				$new_comment['edits'] = array();

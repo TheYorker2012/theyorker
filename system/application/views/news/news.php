@@ -125,7 +125,9 @@ foreach ($main_article['related_articles'] as $related)
 				</a>
 			</span>
 <?php } ?>
+<?php if (!isset($main_article['placeholder']) || !$main_article['placeholder']) { ?>
 			<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
+<?php } ?>
 		</div>
 
 		<?php if (isset($office_preview)) { ?>
