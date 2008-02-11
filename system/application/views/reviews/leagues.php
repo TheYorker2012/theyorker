@@ -10,11 +10,11 @@ if (!empty($league_data)){
 		echo ('	<div class="Puffer">'."\n");
 		if($league_entry['has_image']){
 			//There is a puffer image, so use it
-			echo '		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.$league_entry['league_name'].'" title="'.$league_entry['league_name'].'" /></a>';
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.xml_escape($league_entry['league_name']).'" title="'.xml_escape($league_entry['league_name']).'" /></a>');
 		}
 		else {
 			//There is no puffer image, just put a text link
-			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.xml_escape($league_entry['league_name']).'</a><br />'."\n");
 		}
 		echo ('	</div>'."\n");
 	}
@@ -23,7 +23,7 @@ if (!empty($league_data)){
 </div>
 
 <div id="MainColumn">
-	<div class="BlueBox">		<h2><?php if (isset($league_name) == 1) { echo($league_name); } else { echo('League'); }?></h2>
+	<div class="BlueBox">		<h2><?php if (isset($league_name) == 1) { echo(xml_escape($league_name)); } else { echo('League'); }?></h2>
 		<table border="0" width="97%">
 		<tbody>
 		<?php
@@ -38,7 +38,7 @@ if (!empty($league_data)){
 		</tr>
 		<tr>
 			<td align='center' >
-				<?php echo $empty_league; ?>
+				<?php echo($empty_league); ?>
 			</td>
 		</tr>
 		<?php	
@@ -61,30 +61,29 @@ if (!empty($league_data)){
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><?php echo $count.") "; ?><a href="<?php echo($entry['review_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
+						<font size="+1"><strong><?php echo($count.') '); ?><a href="<?php echo(xml_escape($entry['review_link'])); ?>"><?php echo(xml_escape($entry['review_title'])); ?></a></strong></font>
 						<br />
-						<span style="color: #999999; font-size: 0.9em;" >&nbsp;&nbsp;<a href="<?php echo($entry['review_website']); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
+						<span style="color: #999999; font-size: 0.9em;" >&nbsp;&nbsp;<a href="<?php echo(xml_escape($entry['review_website'])); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
 					<td width="126" align="center">
 						<?php
 						$whole = floor($entry['review_rating'] / 2); 
 						$part = $entry['review_rating'] % 2;
 						$empty = 5 - $whole - $part;
-						for($i=0;$i<$whole;$i++)
-						{
-							echo '<img src="/images/prototype/reviews/star.png" alt="*" title="*" />';
-						}
+						echo(str_repeat('<img src="/images/prototype/reviews/star.png" alt="*" title="*" />', $whole));
 						if ($part == 1)
 						{
-							echo '<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />';
+							echo('<img src="/images/prototype/reviews/halfstar.png" alt="-" title="-" />');
 						}
-						for($i=0;$i<$empty;$i++)
-						{
-							echo '<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />';
-						}
+						echo(str_repeat('<img src="/images/prototype/reviews/emptystar.png" alt=" " title=" " />', $empty));
 						
 						?>
-						<div class="Date" style="font-size: 0.9em;">User Rating: <?php if($entry['review_user_rating'] > 0) {echo($entry['review_user_rating'].'/10');}else{echo('n/a');} ?></div>
+						<div class="Date" style="font-size: 0.9em;">User Rating: <?php
+						if($entry['review_user_rating'] > 0) {
+							echo($entry['review_user_rating'].'/10');
+						} else {
+							echo('n/a');
+						} ?></div>
 					</td>
 				</tr>
 				</tbody>
@@ -101,10 +100,10 @@ if (!empty($league_data)){
 				?>
 				<tr>
 					<td width="20%" valign="top">
-						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo($entry['slideshow'][1]['location']); ?>" width="144" height="116" alt="singer" title="singer" />
+						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo(xml_escape($entry['slideshow'][1]['location'])); ?>" width="144" height="116" alt="singer" title="singer" />
 					</td>
 					<td width="80%" valign="top">
-						<?php echo($entry['review_blurb']); ?>
+						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
 				<?php
@@ -114,7 +113,7 @@ if (!empty($league_data)){
 				?>
 				<tr>
 					<td width="100%" valign="top">
-						<?php echo($entry['review_blurb']); ?>
+						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
 				<?php
@@ -137,12 +136,12 @@ if (!empty($league_data)){
 							foreach($entry['alltags']['tag_group_names'] as $tag_group)
 							{
 								echo('<td width="25% valign="top">');
-								echo('<strong>'.$tag_group.':</strong><br />');
+								echo('<strong>'.xml_escape($tag_group).':</strong><br />');
 								if (isset($entry['tags'][$tag_group]))
 								{
 									foreach($entry['tags'][$tag_group] as $tag)
 									{
-										echo($tag.'<br />');
+										echo(xml_escape($tag).'<br />');
 									}
 								}
 								else
@@ -163,7 +162,7 @@ if (!empty($league_data)){
 				<tr>
 					<td align="left" colspan="2">
 						<img src="/images/prototype/news/quote_open.png" alt="oquote" />
-						<?php echo($entry['review_quote']); ?>
+						<?php echo(xml_escape($entry['review_quote'])); ?>
 						<img src="/images/prototype/news/quote_close.png" alt="oquote" />
 					</td>
 				</tr>
@@ -182,7 +181,7 @@ if (!empty($league_data)){
 		</tbody>
 		</table>
 	</div>
-	<a href="/reviews/<?php echo $content_type; ?>/">Back to <?php echo ucfirst($content_type); ?> Homepage</a>
+	<a href="/reviews/<?php echo($content_type); ?>/">Back to <?php echo(xml_escape(ucfirst($content_type))); ?> Homepage</a>
 </div>
 
 <?php

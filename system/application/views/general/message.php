@@ -11,6 +11,8 @@ elseif ($class === 'success')
 else
 	echo 'information_box"><img src="/images/prototype/homepage/questionmark.png" alt="Question" title="Question"';
 */
+
+/// @todo FIXME call text xml
 ?>
 
 <?php

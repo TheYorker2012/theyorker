@@ -36,7 +36,8 @@ $CI->load->model('pages_model');
  *	
  *	// Set up the public frame
  *	$this->frame_public->SetTitle($page_title);
- *	$this->frame_public->SetExtraHead($extra_head);
+ *	$this->frame_public->IncludeJs('javascript/something.js');
+ *	$this->frame_public->IncludeCss('stylehssets/something.css');
  *	$this->frame_public->SetContent($calendar_view);
  *	
  *	// Load the public frame view (which will load the content view)
@@ -118,9 +119,17 @@ class Frame_public extends FrameNavbar
 	/**
 	 * @param $CssFile string CSS source file, not site_url'd.
 	 */
-	function IncludeCss($CssFile)
+	function IncludeCss($CssFile, $Media = null, $Title = null)
 	{
-		$this->AddExtraHead('<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" />');
+		$style_tag = '<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" ';
+		if (null !== $Title) {
+			$style_tag .= 'title="'.xml_escape($Title).'" ';
+		}
+		if (is_array($Media) && !empty($Media)) {
+			$style_tag .= 'media="'.xml_escape(implode(',',$Media)).'" ';
+		}
+		$style_tag .= '/>';
+		$this->AddExtraHead($style_tag);
 	}
 
 	/**
@@ -149,15 +158,6 @@ class Frame_public extends FrameNavbar
 	function SetExtraHead($ExtraHead)
 	{
 		$this->AddExtraHead($ExtraHead);
-	}
-
-	/**
-	 * @brief Sets an extra stylesheet to include.  
-	 * @param $CssPath string Path to the CSS file to include.  
-	 */
-	function SetExtraCss($CssPath) 
-	{
-		$this->SetData('extra_css', $CssPath);
 	}
 	
 	/// Add a message to the page.

@@ -30,20 +30,20 @@ foreach($organisations as $organisation) {
 
 	echo('		<div id="'.$organisation['shortname'].'">'."\n");
 	echo('			<h3>'."\n");
-	echo('				<a href="/'.$organisation['link'].'">'.$organisation['name'].'</a>'."\n");
+	echo('				<a href="/'.xml_escape($organisation['link']).'">'.xml_escape($organisation['name']).'</a>'."\n");
 	/*echo('				<span>('.$organisation['type'].')</span>'."\n");*/
 	echo('			</h3>'."\n");
-	echo('			<div class="Date">'.$organisation['type'].'</div>'."\n");
+	echo('			<div class="Date">'.xml_escape($organisation['type']).'</div>'."\n");
 	if($organisation['shortdescription'] != '') {
 		echo('			<div>'."\n");
-		echo('				'.$organisation['shortdescription']."\n");
+		echo('				'.xml_escape($organisation['shortdescription'])."\n");
 		echo('			</div>'."\n");
 	}
 	//make sure it stays within the array then if parent id matches current org id
 	while (($while_child_pos < count($children)) && ($children[$while_child_pos]['parent_id'] == $organisation['id']))
 	{
 		echo('			<div>'."\n");
-		echo('				&gt; <a href="/'.$children[$while_child_pos]['link'].'">'.$children[$while_child_pos]['name'].'</a>'."\n");
+		echo('				&gt; <a href="/'.xml_escape($children[$while_child_pos]['link']).'">'.xml_escape($children[$while_child_pos]['name']).'</a>'."\n");
 		echo('			</div>'."\n");
 		$while_child_pos++;
 	}
@@ -52,11 +52,3 @@ foreach($organisations as $organisation) {
 ?>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

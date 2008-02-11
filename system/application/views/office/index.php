@@ -33,16 +33,18 @@ function PrintRequestList ($data) {
 			} else {
 				echo('/office/news/');
 			}
-			echo($row['id'] . '/"><img src="/images/prototype/news/'.$row['type'].'-small.gif" alt="'.$row['type'].' Request" title="'.$row['type'].' Request" /> ' . $row['title'] . '</a></td>'."\n");
-			echo('						<td>' . $row['box'] . '</td>'."\n");
+			$type_xml = xml_escape($row['type']);
+			echo($row['id'] . '/"><img src="/images/prototype/news/'.$type_xml.'-small.gif" alt="'.$type_xml.' Request" title="'.$type_xml.' Request" /> ' . xml_escape($row['title']) . '</a></td>'."\n");
+			echo('						<td>' . xml_escape($row['box']) . '</td>'."\n");
 			echo('						<td>');
 			foreach ($row['reporters'] as $reporter) {
-				echo('<img src="/images/prototype/news/person.gif" alt="Assignee" title="Assignee" /> ' . $reporter['name'] . '<br />');
+				echo('<img src="/images/prototype/news/person.gif" alt="Assignee" title="Assignee" /> ' . xml_escape($reporter['name']) . '<br />');
 			}
 			echo('</td>'."\n");
 			echo('						<td>');
 			foreach ($row['reporters'] as $reporter) {
-				echo('<img src="/images/prototype/news/' . $reporter['status'] . '.gif" alt="' . $reporter['status'] . '" title="' . $reporter['status'] . '" /> ' . $reporter['status'] . '<br />');
+				$status_xml = xml_escape($reporter['status']);
+				echo('<img src="/images/prototype/news/' . $status_xml . '.gif" alt="' . $status_xml . '" title="' . $status_xml . '" /> ' . $status_xml . '<br />');
 			}
 			echo('</td>'."\n");
 			echo('						<td style="text-align:right;');
@@ -74,7 +76,7 @@ function PrintRequestList ($data) {
 <div class='blue_box'>
 	<h2>from the editor</h2>
 	<p>
-		<?php echo $main_text; ?>
+		<?php echo($main_text); ?>
 	</p>
 </div>
 

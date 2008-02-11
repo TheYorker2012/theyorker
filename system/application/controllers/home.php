@@ -272,9 +272,9 @@ class Home extends Controller {
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
 
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-
-		$this->main_frame->SetExtraHead('<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=effects,dragdrop');
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

@@ -115,7 +115,7 @@ class News_model extends Model
 
 			GROUP_CONCAT(DISTINCT CONCAT(users.user_firstname," ",users.user_surname)
 				 ORDER BY users.user_surname
-				 SEPARATOR ", <br />") as authors,
+				 SEPARATOR ",\n") as authors,
 
 			CONCAT(editors.user_firstname," ",editors.user_surname) as editor,
 
@@ -257,6 +257,71 @@ class News_model extends Model
 		return $result;
 	}
 	
+	/// Get enough information to redirect to the default article of a section.
+	/**
+	 * @param $type string content_type_codename of section.
+	 * @return array($content_type_codename, $article_id)
+	 */
+	function GetDefaultArticleInfo($type)
+	{
+		$sql = 'SELECT content_type_id, content_type_has_children
+				FROM content_types
+				WHERE content_type_codename = ?';
+		$query = $this->db->query($sql,array($type));
+		$row = $query->row();
+		if (($query->num_rows() > 0) && ($row->content_type_has_children)) {
+			$sql = 'SELECT content_type_codename
+					FROM content_types
+					WHERE content_type_parent_content_type_id = ?';
+			$query = $this->db->query($sql,array($row->content_type_id));
+			$types = array();
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $row) {
+					$types[] = $row->content_type_codename;
+				}
+			}
+		} else {
+			$types = array($type);
+		}
+
+		$sql = 'SELECT	articles.article_id,
+						content_type_codename
+				FROM articles
+				LEFT JOIN content_types
+				ON (content_types.content_type_id = articles.article_content_type_id)
+				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
+				AND articles.article_live_content_id IS NOT NULL
+				AND	articles.article_deleted = 0 ';
+		$sql .='AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
+		if (!empty($types)) {
+			$sql .= '	AND (';
+			$first = TRUE;
+			foreach ($types as $type) {
+				if (!$first) {
+					$sql .= ' OR ';
+				} else {
+					$first = FALSE;
+				}
+				$sql .= 'content_types.content_type_codename = ?';
+			}
+			$sql .= ') ';
+		}
+		$sql .= 'ORDER BY articles.article_publish_date DESC
+				LIMIT 0, 1';
+		$query = $this->db->query($sql,$types);
+		$results = $query->result_array();
+		if (count($results))
+		{
+			return array(
+				$results[0]['content_type_codename'],
+				$results[0]['article_id']
+			);
+		}
+		else {
+			return array(null, null);
+		}
+	}
+	
 	/**
 	 * Returns an array of the Article IDs that are of a specified type in
 	 * decending order by publish date.
@@ -294,10 +359,10 @@ class News_model extends Model
 				WHERE articles.article_publish_date < CURRENT_TIMESTAMP
 				AND articles.article_live_content_id IS NOT NULL
 				AND	articles.article_deleted = 0 ';
-				if ($remove_featured){
-				$sql .='AND articles.article_featured = 0 ';
-				}
-				$sql .='AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
+		if ($remove_featured){
+			$sql .='AND articles.article_featured = 0 ';
+		}
+		$sql .='AND	articles.article_editor_approved_user_entity_id IS NOT NULL ';
 		if (!empty($types)) {
 			$sql .= '	AND (';
 			$first = TRUE;

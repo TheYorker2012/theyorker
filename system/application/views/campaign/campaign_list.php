@@ -1,10 +1,10 @@
 <div id="RightColumn">
-	<h2 class="first"><?php echo($sidebar_about['title']); ?></h2>
+	<h2 class="first"><?php echo(xml_escape($sidebar_about['title'])); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_about['text']); ?>
 	</div>
 
-	<h2><?php echo($sidebar_how['title']); ?></h2>
+	<h2><?php echo(xml_escape($sidebar_how['title'])); ?></h2>
 	<div class="Entry">
 		<?php echo($sidebar_how['text']); ?>
 	</div>
@@ -12,11 +12,11 @@
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2><?php echo($current_campaigns['title']); ?></h2>
+		<h2><?php echo(xml_escape($current_campaigns['title'])); ?></h2>
 		<?php echo($current_campaigns['text']); ?>
 	</div>
 	<div class="BlueBox">
-		<h2><?php echo($votes['title']); ?></h2>
+		<h2><?php echo(xml_escape($votes['title'])); ?></h2>
 <?php
 echo('		'.$votes['text']);
 foreach ($campaign_list as $key => $campaigns) {
@@ -30,7 +30,7 @@ foreach ($campaign_list as $key => $campaigns) {
 		echo('&nbsp;'.$percentage.'%</div>'."\n");
 	}
 	echo('			</div>'."\n");
-	echo('			<a href="'.site_url('campaign/details/').'/'.$key.'">'.$campaigns['name'].'</a>'."\n");
+	echo('			<a href="'.site_url('campaign/details/').'/'.$key.'">'.xml_escape($campaigns['name']).'</a>'."\n");
 	echo('		</div>'."\n");
 }
 ?>
@@ -39,7 +39,7 @@ foreach ($campaign_list as $key => $campaigns) {
 <?php
 if ($user == TRUE) {
 	echo('	<div class="BlueBox">'."\n");
-	echo('		<h2>'.$vote_campaigns['title'].'</h2>'."\n");
+	echo('		<h2>'.xml_escape($vote_campaigns['title']).'</h2>'."\n");
 	echo('		'.$vote_campaigns['text']);
         foreach ($campaign_list as $key => $campaigns) {
 		if ($user['vote_id'] == $key) {
@@ -47,7 +47,7 @@ if ($user == TRUE) {
 		<form action="/campaign/withdrawvote" method="post" class="voteform">
 			<fieldset>
 				<input type="submit" value="Withdraw Vote" class="button" name="r_castvote" />
-				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo($campaigns['name']) ?></a>
+				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo(xml_escape($campaigns['name'])); ?></a>
 				<input type="hidden" name="a_campaignid" value="<?php echo($key); ?>" />
 				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
 			</fieldset>
@@ -58,7 +58,7 @@ if ($user == TRUE) {
 		<form action="/campaign/castvote" method="post" class="voteform">
 			<fieldset>
 				<input type="submit" value="Vote" class="button" name="r_castvote" />
-				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo($campaigns['name']) ?></a>
+				<a href="<?php echo(site_url('campaign/details/').'/'.$key); ?>"><?php echo(xml_escape($campaigns['name'])); ?></a>
 				<input type="hidden" name="a_campaignid" value="<?php echo($key); ?>" />
 				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
 			</fieldset>

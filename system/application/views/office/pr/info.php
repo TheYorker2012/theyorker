@@ -32,13 +32,13 @@ else if ($status == 'pending')
 	<h2>suggestee information</h2>
 	<div class="Entry">
 <?php
-	echo('		<b>Name:</b> '.$suggestor['name']."\n");
+	echo('		<b>Name:</b> '.xml_escape($suggestor['name'])."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Email:</b> <a href="mailto:'.$suggestor['email'].'">'.$suggestor['email'].'</a>'."\n");
+	echo('		<b>Email:</b> <a href="mailto:'.xml_escape($suggestor['email']).'">'.xml_escape($suggestor['email']).'</a>'."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Position:</b> '.$suggestor['position']."\n");
+	echo('		<b>Position:</b> '.xml_escape($suggestor['position'])."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Notes:</b> '.$suggestor['notes']."\n");
+	echo('		<b>Notes:</b> '.xml_escape($suggestor['notes'])."\n");
 	echo('		<br />'."\n");
 ?>
 	</div>
@@ -53,15 +53,15 @@ else if ($status == 'pending')
 <?php
 	echo('		Please click <a href="/office/pr/org/'.$organisation['shortname'].'/directory/information">here</a> to go to the full directory entry.'."\n");
 	echo('		<br /><br />'."\n");
-	echo('		<b>Name:</b> '.$organisation['name']."\n");
+	echo('		<b>Name:</b> '.xml_escape($organisation['name'])."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Type:</b> '.$organisation['type']."\n");
+	echo('		<b>Type:</b> '.xml_escape($organisation['type'])."\n");
 	echo('		<br /><br />'."\n");
-	echo('		<b>Description:</b> '.$organisation['description']."\n");
+	echo('		<b>Description:</b> '.xml_escape($organisation['description'])."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Website:</b> <a href="'.$organisation['website'].'">'.$organisation['website'].'</a>'."\n");
+	echo('		<b>Website:</b> <a href="'.xml_escape($organisation['website']).'">'.xml_escape($organisation['website']).'</a>'."\n");
 	echo('		<br />'."\n");
-	echo('		<b>Email:</b> <a href="mailto:'.$organisation['email_address'].'">'.$organisation['email_address'].'</a>'."\n");
+	echo('		<b>Email:</b> <a href="mailto:'.xml_escape($organisation['email_address']).'">'.xml_escape($organisation['email_address']).'</a>'."\n");
 	echo('		<br />'."\n");
 ?>
 	</div>
@@ -113,7 +113,7 @@ if ($status == 'suggestion')
 <?php
 	foreach($office_users as $office_user)
 	{
-		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+		echo('					<option value="'.$office_user['id'].'">to '.xml_escape($office_user['firstname'].' '.$office_user['surname']).'</option>'."\n");
 	}
 ?>
 				</optgroup>
@@ -133,15 +133,15 @@ else if ($status == 'unassigned')
 	if ($user['officetype'] != 'Low')
 	{
 ?>
-<!--
+<?php /*
 <div class="blue_box">
 	<h2>options (user request - for testing only)</h2>
 	This is for testing only. It makes a rep request to be the organisations rep
 	<div class="Entry">
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
-<?php //echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
-<?php //echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
+<?php echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n"); ?>
 			</fieldset>
 			<fieldset>
 				<select name="a_assign_to">
@@ -149,7 +149,7 @@ else if ($status == 'unassigned')
 <?php
 	//foreach($office_users as $office_user)
 	//{
-	//	echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+	//	echo('					<option value="'.$office_user['id'].'">to '.xml_escape($office_user['firstname'].' '.$office_user['surname']).'</option>'."\n");
 	//}
 ?>
 				</optgroup>
@@ -160,7 +160,8 @@ else if ($status == 'unassigned')
 			</fieldset>
 		</form>
 	</div>
-</div>-->
+</div>
+*/ ?>
 <div class="blue_box">
 	<h2>options (as an editor)</h2>
 	<div class="Entry">
@@ -192,7 +193,7 @@ if (count($reps) > 0)
 		echo('				<input type="hidden" name="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
 		echo('			</fieldset>'."\n");
 		echo('			<fieldset>'."\n");
-		echo('				<label for="r_submit_accept_rep'.$rep['user_id'].'">'.$rep['user_firstname'].' '.$rep['user_surname'].'</label>'."\n");
+		echo('				<label for="r_submit_accept_rep'.$rep['user_id'].'">'.xml_escape($rep['user_firstname'].' '.$rep['user_surname']).'</label>'."\n");
 		echo('				<input type="submit" value="Accept" class="button" name="r_submit_accept_rep" id="r_submit_accept_rep'.$rep['user_id'].'" />'."\n");
 		echo('				<input type="submit" value="Reject" class="button" name="r_submit_reject_rep" />'."\n");
 		echo('			</fieldset>'."\n");
@@ -218,7 +219,7 @@ if (count($reps) > 0)
 <?php
 	foreach($office_users as $office_user)
 	{
-		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+		echo('					<option value="'.$office_user['id'].'">to '.xml_escape($office_user['firstname'].' '.$office_user['surname']).'</option>'."\n");
 	}
 ?>
 				</optgroup>
@@ -276,7 +277,7 @@ else if ($status == 'pending')
 <div class="blue_box">
 	<h2>options (as an editor)</h2>
 	<div class="Entry">
-<?php echo('		'.$rep['user_firstname'].' '.$rep['user_surname'].' has been asked to look after this organisation'."\n"); ?>
+<?php echo('		'.xml_escape($rep['user_firstname'].' '.$rep['user_surname']).' has been asked to look after this organisation'."\n"); ?>
 		<form class="form" action="/office/pr/modify" method="post">
 			<fieldset>
 <?php echo('				<input type="hidden" name="r_direntryname" value="'.$organisation['shortname'].'" />'."\n"); ?>
@@ -344,12 +345,4 @@ else if ($status == 'assigned')
 </div>
 <?php
 }
-?>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
 ?>

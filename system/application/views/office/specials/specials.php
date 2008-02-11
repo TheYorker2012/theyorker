@@ -3,7 +3,7 @@
 		Information
 	</h2>
 	<div class="Entry">
-	<?php echo $page_information; ?>
+	<?php echo($page_information); ?>
 	</div>
 </div>
 <div id="MainColumn">
@@ -21,12 +21,12 @@
 <?php
 	foreach($main_articles as $article_section){
 		echo('					<tr>'."\n");
-		echo('						<td>'.$article_section['name'].'</td>'."\n");
-		if(empty($article_section['featured_article'])){
+		echo('						<td>'.xml_escape($article_section['name']).'</td>'."\n");
+		if(empty($article_section['featured_article'])) {
 			echo('						<td><span class="red">Empty</span></td>'."\n");
-		}else{
+		} else {
 			echo('						<td><a href="/news/'.$article_section['featured_article']['article_type'].'/'.$article_section['featured_article']['id'].'">');
-			echo($article_section['featured_article']['heading']);
+			echo(xml_escape($article_section['featured_article']['heading']));
 			echo('</a></td>'."\n");
 		}
 		echo('						<td><a href="/office/specials/edit/'.$article_section['id'].'">Change</a></td>'."\n");

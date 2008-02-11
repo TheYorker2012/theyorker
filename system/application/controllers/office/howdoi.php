@@ -534,6 +534,7 @@ class Howdoi extends Controller
 		*/
 		else if (isset($_POST['r_submit_save']))
 		{
+			/// @todo FIXME codename should be valid url segment!
 			$this->howdoi_model->UpdateCategory($_POST['r_categoryid'],
 						$_POST['a_name'],
 						$_POST['a_codename'],

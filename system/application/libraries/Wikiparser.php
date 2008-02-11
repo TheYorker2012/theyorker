@@ -106,8 +106,8 @@ class Wikiparser {
 		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
 		$this->entities = array(
-			'\'' => htmlentities('\'', ENT_QUOTES, 'UTF-8'),
-			'"'  => htmlentities('"',  ENT_QUOTES, 'UTF-8'),
+			'\'' => xml_escape('\''),
+			'"'  => xml_escape('"'),
 		);
 	}
 
@@ -348,7 +348,7 @@ class Wikiparser {
 				break;
 			case 'centre':
 				$imagetag =
-					'<div style="text-align: center;">'.$title.'<br />'.$title.'</div>';
+					'<div style="text-align: center;">'.$imagetag.'<br />'.$title.'</div>';
 				if ($this->in_paragraph) {
 					// divs aren't allowed in paragraphs, so close and reopen
 					$imagetag = $this->emphasize_off()."</p>\n" . $imagetag . "\n<p>";
@@ -375,7 +375,7 @@ class Wikiparser {
 			$reference_wiki = $this->external_wikis[$namespace];
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
-			//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
+			//$href = xml_escape($href);
 			$params = array('src', 'http://www.youtube.com/v/' . $href,
 					'width', '340',
 					'height', '280');
@@ -387,12 +387,33 @@ class Wikiparser {
 			}
 			return $output;
 		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
-			$params = array('src', '/flash/mediaplayer.swf',
-					'width', '340',
-					'height', '280',
-					'allowfullscreen', 'true',
-					'flashvars', 'height=340&width=280&file=' . $href . '&backcolor=0xFF6A00&frontcolor=0xFFFFFF&lightcolor=0x000000&screencolor=0xFFFFFF&overstretch=true&showdownload=true');
-			$output = $this->get_inline_flash_code($params);
+			static $mediaplayer_count = 0;
+			$mediaplayer_count++;
+			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 280;
+			$output = '
+				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
+					<div style="border: 1px solid #999999;">
+						<b>Flash Video/Audio Player</b><br /><br />
+						This content requires Adobe Flash Player 8.
+						<a href="http://www.adobe.com/go/getflash/">Get Flash</a>
+					</div>
+				</div>
+				<script type="text/javascript">
+				var so = new SWFObject("/flash/mediaplayer.swf","mp' . $mediaplayer_count . '","340","' . $control_height . '","8");
+				so.addParam("allowscriptaccess","samedomain");
+				so.addParam("allowfullscreen","true");
+				so.addVariable("height","' . $control_height . '");
+				so.addVariable("width","340");
+				so.addVariable("file","' . $href . '");
+				so.addVariable("backcolor","0xFF6A00");
+				so.addVariable("frontcolor","0xFFFFFF");
+				so.addVariable("lightcolor","0x000000");
+				so.addVariable("screencolor","0xFFFFFF");
+				so.addVariable("logo","/images/prototype/news/video_overlay_icon.png");
+				so.addVariable("overstretch","true");
+				so.addVariable("showdownload","true");
+				so.write("mp' . $mediaplayer_count . '_container");
+				</script>';
 			if ($this->in_paragraph) {
 				// divs aren't allowed in paragraphs, so close and reopen
 				$output = $this->emphasize_off()."</p>\n" . $output . "\n<p>";
@@ -424,9 +445,9 @@ class Wikiparser {
 			substr($href, 0, 1) !== '/')
 		{
 			return $matches[0];
-			//return htmlentities($matches[0], ENT_QUOTES, 'UTF-8');
+			//return xml_escape($matches[0]);
 		}
-		//$href = htmlentities($href, ENT_QUOTES, 'UTF-8');
+		//$href = xml_escape($href);
 		if (array_key_exists(4,$matches)) {
 			// implicit mailto
 			$href = 'Mailto:'.$matches[4];
@@ -473,9 +494,8 @@ class Wikiparser {
 	}
 
 	function handle_emphasize($matches) {
-		$amount = strlen(html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8'));
+		$amount = strlen(xml_unescape($matches[1]));
 		return $this->emphasize($amount);
-
 	}
 
 	/**
@@ -560,7 +580,6 @@ class Wikiparser {
 
 	function handle_symbols($matches)
 	{
-		//echo var_dump($matches);
 		if ($matches[1] == '&') {
 			return '&amp;';
 		} elseif ($matches[0] == '<') {
@@ -578,7 +597,7 @@ class Wikiparser {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
-			$first_characters .= '\{';
+// 			$first_characters .= '\{';
 		}
 		
 		$line_regexes = array();
@@ -629,7 +648,7 @@ class Wikiparser {
 		$line = rtrim($line);
 
 		// escape some symbols
-		$line = htmlentities($line, ENT_QUOTES, 'UTF-8');
+		$line = xml_escape($line);
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
 		foreach ($line_regexes as $func=>$regex) {
@@ -795,12 +814,14 @@ Done.
 	 *	@param	$params - array containing all the parameters that should be passed to flash movie
 	 */
 	function get_inline_flash_code ($params) {
+		static $player_count = 0;
+		$player_count++;
 		$default_params = array(
 			'align', 'center',
-			'id', 'movie',
+			'id', 'movie' . $player_count,
 			'quality', 'high',
 			'bgcolor', '#FFFFFF',
-			'name', 'movie',
+			'name', 'movie' . $player_count,
 			'allowScriptAccess', 'sameDomain',
 			'type', 'application/x-shockwave-flash',
 			'codebase', 'http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab',
@@ -814,7 +835,7 @@ Done.
 		$output = '
 <div style="text-align:center;">
 <script type="text/javascript">
-<!--
+// <![CDATA[
 // Version check based upon the values entered above in "Globals"
 var hasReqestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
 
@@ -831,7 +852,7 @@ if (hasReqestedVersion) {
 	+ "</div>";
 	document.write(alternateContent);  // insert non-flash content
 }
-// -->
+// ]]>
 </script>
 <noscript>
 	<div style="width: 340px; height: 280px; border: 1px solid #999999;"><br />
@@ -844,4 +865,5 @@ if (hasReqestedVersion) {
 		return $output;
 	}
 }
+
 ?>

@@ -50,7 +50,6 @@ class League extends Controller
 	function index(){
 		redirect('/office/leagues');
 	}
-	
 	function edit($id)
 	{
 	
@@ -61,6 +60,26 @@ class League extends Controller
 		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 		$data['suggestion_information'] = $this->pages_model->GetPropertyWikiText('suggestion_information');
 		
+		//Check for post
+		if(!empty($_POST['venue_add'])){
+			$max_venues = $_POST['venue_add_max'];
+			for ($index=0, $count=0;$index<$max_venues;$index++)
+			{
+				if(isset($_POST['venue_add_'.$index]))
+				{
+					//venue exists, so add it.
+					$this->Leagues_model->AddToLeague($id, $_POST['venue_add_'.$index]);
+					$count++;
+				}
+			}
+			if ($count>1) {
+				$this->messages->AddMessage('success',$count.' venues have been added.');
+			} else if ($count=1) {
+				$this->messages->AddMessage('success','The venue has been added.');
+			}
+		}
+		
+		
 		//Get information
 		$league = $this->Leagues_model->getLeagueInformation($id);
 		$data['venues_limit'] = $league['size'];
@@ -70,7 +89,10 @@ class League extends Controller
 		$data['suggestions'] = $this->Leagues_model->GetLeagueVenueSuggestions($id);
 		$data['league_id'] = $id;
 		
-		$this->main_frame->SetTitleParameters(array('league_name' => $league['name']));
+		$this->main_frame->SetTitleParameters(array(
+				'league_name' => $league['name'],
+				'section_name' => $league['section_name']
+				));
 		$this->main_frame->SetContentSimple('office/leagues/league_contents', $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

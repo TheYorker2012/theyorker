@@ -26,9 +26,11 @@ class Games extends Controller
 	{
 
 		if (!CheckPermissions('office')) return;
+		$data['is_editor'] = PermissionsSubset('editor', GetUserLevel());
 
 		$this->load->library('xajax');
-		$this->xajax->registerFunction(array("toggle_activation", &$this, "_toggle_activation"));
+		if ($data['is_editor'])
+		{$this->xajax->registerFunction(array("toggle_activation", &$this, "_toggle_activation"));}
 		$this->xajax->registerFunction(array("list_ftp", &$this, "_list_ftp"));
 		$this->xajax->processRequests();
 
@@ -39,8 +41,10 @@ class Games extends Controller
 				$this->pages_model->GetPropertyWikiText('section_games_list_page_info_text');
 		$data['section_games_list_page_info_title'] =
 				$this->pages_model->GetPropertyText('section_games_list_page_info_title');
+		$data['section_games_list_incomplete_title'] =
+				$this->pages_model->GetPropertyText('section_games_list_incomplete_title');
+				
 		
-
 		/// Pagination
 		$this->load->library('pagination');
 		$config['base_url'] = base_url().'office/games/glist/';
@@ -73,8 +77,7 @@ class Games extends Controller
 		if($number == 0){
 			$data['incomplete_games'] = $this->games_model->Get_Incomplete();
 		}else{ $data['incomplete_games'] = 0; }
-		
-		
+				
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		
 		$this->main_frame->SetContentSimple('office/games/list',$data);
@@ -85,6 +88,7 @@ class Games extends Controller
 	
 	function _toggle_activation($game_id)
 	{
+		if (!PermissionsSubset('editor', GetUserLevel())) {return;}
 		$activation_state = $this->games_model->toggle_activation($game_id);
 		$objResponse = new xajaxResponse();
 		$objResponse->addAssign(
@@ -98,13 +102,10 @@ class Games extends Controller
 
 	function _list_ftp()
 	{
-		$conn_id = ftp_connect($this->config->item('static_ftp_address'));
-		ftp_login($conn_id,
-				$this->config->item('static_ftp_username'),
-				$this->config->item('static_ftp_password'));
-		$mode = ftp_pasv($conn_id, TRUE);
-		$list = ftp_nlist($conn_id,"games");
-		ftp_close($conn_id);
+		$this->load->model('static_ftp_model');
+		$conn_id = $this->static_ftp_model->Connect();
+		$list = $this->static_ftp_model->GetList($conn_id,'games');
+		$this->static_ftp_model->Close($conn_id);
 		$db_list = $this->games_model->Get_Fnames();
 		$arguments = '';
 		foreach ($list as $fname)
@@ -143,30 +144,13 @@ class Games extends Controller
 	function del_game($game_id)
 	{
 		if (!CheckPermissions('office')) return;
-		$conn_id = ftp_connect($this->config->item('static_ftp_address'));
-		if (
-			(!$conn_id) ||
-			(!(ftp_login(
+		$this->load->model('static_ftp_model');
+		$conn_id =$this->static_ftp_model->Connect();
+		$this->static_ftp_model->DeleteFile(
 				$conn_id,
-				$this->config->item('static_ftp_username'),
-				$this->config->item('static_ftp_password')
-				))))
-			{
-				$this->main_frame->AddMessage('error','FTP Connection Failed.');
-			}elseif (!(ftp_delete(
-				$conn_id,
-				'games/'.$this->games_model->Get_Filename($game_id)
-				)))
-			{
-				$this->main_frame->AddMessage('error','File Deletion Failed.');
-			}else{
-				$this->main_frame->AddMessage('success','Game Deleted.');
-			}
-		
-		ftp_close($conn_id);
-		
+				'games/'.$this->games_model->Get_Filename($game_id));
+		$this->static_ftp_model->Close($conn_id);
 		$this->games_model->Del_Game($game_id);
-		
 		redirect('office/games');
 	}
 	
@@ -177,46 +161,15 @@ class Games extends Controller
 			redirect('office/games');
 		}
 		if (!CheckPermissions('office')) return;
-		
-		$conn_id = ftp_connect($this->config->item('static_ftp_address'));
-		if ((!$conn_id) ||
-			(!(ftp_login(
+		$this->load->model('static_ftp_model');
+		$conn_id = $this->static_ftp_model->Connect();
+		$name= $this->static_ftp_model->Upload(
 				$conn_id,
-				$this->config->item('static_ftp_username'),
-				$this->config->item('static_ftp_password')
-				))))
-			{
-				$this->main_frame->AddMessage('error','FTP Connection Failed.');
-				ftp_close($conn_id);
-				redirect('office/games');
-			}
-		$mode = ftp_pasv($conn_id, TRUE);
-		$list = ftp_nlist($conn_id,"games");
-		$name = $_FILES['add_game_file']['name'];
-		if (!(is_array($list)))
-		{
-				$this->main_frame->AddMessage('error','FTP List Failed.');
-				ftp_close($conn_id);			
-				redirect('office/games');
-		}
-
-		while (in_array($name,$list))
-		{
-			$name = rand(0,9).$name;
-		}
-		if (!(ftp_put(
-				$conn_id,
-				'games/'.$name,
+				$_FILES['add_game_file']['name'],
 				$_FILES['add_game_file']['tmp_name'],
-				FTP_BINARY)))
-			{
-				$this->main_frame->AddMessage('error','FTP Upload Failed.');
-				ftp_close($conn_id);
-				redirect('office/games');
-			}
-		
+				'games');
 		$game_id = $this->games_model->Add_Game($name);
-		ftp_close($conn_id);
+		$this->static_ftp_model->Close($conn_id);
 		if ($game_id ==0)
 		{
 				$this->main_frame->AddMessage('error','Game Add Failed.');				
@@ -234,7 +187,8 @@ class Games extends Controller
 		}			
 		
 		if (!CheckPermissions('office')) return;
-
+		
+		$data['is_editor'] = PermissionsSubset('editor', GetUserLevel());
 					
 		$this->pages_model->SetPageCode('office_games_edit');
 		$this->load->library('image');
@@ -254,7 +208,9 @@ class Games extends Controller
 					$_POST['game_title_field'],
 					$_POST['game_width_field'],
 					$_POST['game_height_field'],
-					isset($_POST['game_activated_field'])))
+					(PermissionsSubset('editor', GetUserLevel()) and
+						isset($_POST['game_activated_field']))
+				))
 			{
 				$this->main_frame->AddMessage('success','Changes saved!',FALSE);
 			} else {

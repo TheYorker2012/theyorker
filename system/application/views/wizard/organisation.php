@@ -7,55 +7,58 @@ function PrintRadioList($input_name, $items, $default, $sessionvar)
 {
 	foreach ($items as $key => $item)
 	{
-		echo '<label for="'.$input_name.'_'.$key.'">'.$item.'</label>';
-		echo '<input type="radio" name="'.$input_name.'" id="'.$input_name.'_'.$key.'" value="'.$item.'" ';
-		if (isset($_SESSION[$sessionvar][$input_name]) &&
-			$_SESSION[$sessionvar][$input_name] == $item)
-			echo 'checked="checked" ';
-		if (isset($_SESSION[$sessionvar][$input_name]) == false &&
-			$item == $default)
-		{
-			echo 'checked="checked" ';
+		echo('<label for="'.$input_name.'_'.$key.'">'.xml_escape($item).'</label>');
+		echo('<input type="radio" name="'.$input_name.'" id="'.$input_name.'_'.$key.'" value="'.xml_escape($item).'" ');
+		if (isset($_SESSION[$sessionvar][$input_name])) {
+			if ($_SESSION[$sessionvar][$input_name] == $item) {
+				echo('checked="checked" ');
+			}
+		} else {
+			if ($item == $default) {
+				echo('checked="checked" ');
+			}
 		}
-		echo '/><br />';
+		echo('/><br />');
 	}
 }
 
 function PrintDropDownList($input_name, $label, $items, $default, $sessionvar)
 {
-	echo '<label for="'.$input_name.'">'.$label.'</label>
-			<select name="'.$input_name.'" size="1">';
-				foreach($items as $item){
-					echo "<option value='".$item['value']."' ";
-						if (isset($_SESSION[$sessionvar][$input_name]) &&
-							$_SESSION[$sessionvar][$input_name] == $item['value'])
-							echo 'selected';
-						if (isset($_SESSION[$sessionvar][$input_name]) == false &&
-							$item['value'] == $default)
-						{
-							echo 'selected';
-						}
-					echo ">".$item['name']."</option>";
-				}
-	echo "</select><br />";
+	echo('<label for="'.$input_name.'">'.xml_escape($label).'</label>
+			<select name="'.$input_name.'" size="1">');
+	foreach($items as $item){
+		echo("<option value='".xml_escape($item['value'])."' ");
+		if (isset($_SESSION[$sessionvar][$input_name])) {
+			if ($_SESSION[$sessionvar][$input_name] == $item['value']) {
+				echo('selected="selected" ');
+			}
+		} else {
+			if ($item == $default) {
+				echo('selected="selected" ');
+			}
+		}
+		echo('>'.xml_escape($item['name']).'</option>');
+	}
+	echo('</select><br />');
 }
 
 function PrintTextBox ($input_name, $item, $sessionvar)
 {
-	echo '<label for="'.$input_name.'">'.$item.'</label>';
-	echo '<input type="text" name="'.$input_name.'" id="'.$input_name.'" style="width: 220px;" ';
-	if (isset($_SESSION[$sessionvar][$input_name]))
-		echo 'value="'.$_SESSION[$sessionvar][$input_name].'" ';
-	echo '/>';
+	echo('<label for="'.$input_name.'">'.xml_escape($item).'</label>');
+	echo('<input type="text" name="'.$input_name.'" id="'.$input_name.'" style="width: 220px;" ');
+	if (isset($_SESSION[$sessionvar][$input_name])) {
+		echo('value="'.xml_escape($_SESSION[$sessionvar][$input_name]).'" ');
+	}
+	echo('/>');
 }
 
 function PrintTextArea ($input_name, $item, $sessionvar)
 {
-	echo '<label for="'.$input_name.'">'.$item.'</label>';
-	echo '<textarea name="'.$input_name.'" id="'.$input_name.'" cols="25" rows="5">';
+	echo('<label for="'.$input_name.'">'.$item.'</label>');
+	echo('<textarea name="'.$input_name.'" id="'.$input_name.'" cols="25" rows="5">');
 	if (isset($_SESSION[$sessionvar][$input_name]))
-		echo $_SESSION[$sessionvar][$input_name];
-	echo '</textarea>';
+		echo(xml_escape($_SESSION[$sessionvar][$input_name]));
+	echo('</textarea>');
 }
 
 function addstrong($text)
@@ -80,6 +83,7 @@ function addstrike($text)
 
 		foreach ($headings as $key => &$heading)
 		{
+			$heading = xml_escape($heading);
 			if ($stage == $key)
 				$heading = addstrong($heading);
 			if ($is_connected == 'No' && in_array($key, $stage_list['skip']))
@@ -109,8 +113,8 @@ function addstrike($text)
 <h2>start suggesting</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
 			<?php
 			$list_data = array();
 			foreach($organisations as $organisation)
@@ -150,8 +154,8 @@ function addstrike($text)
 <h2>basic details</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
 			<?php PrintTextBox('a_name', 'Organisation Name: ', $session_var); ?>
 			<?php PrintTextArea('a_description', 'Description: ', $session_var); ?>
 			<?php PrintTextBox('a_phone_number_address', 'Email Address: ', $session_var); ?>
@@ -176,8 +180,8 @@ function addstrike($text)
 <h2>more details</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
 			<?php PrintTextArea('a_address', 'Address: ', $session_var); ?>
 			<?php PrintTextBox('a_postcode', 'Postcode: ', $session_var); ?>
 			<?php PrintTextBox('a_opening_times', 'Opening Times: ', $session_var); ?>
@@ -214,7 +218,7 @@ function addstrike($text)
 		<br />
 		<?=anchor('wizard/organisation/photo/move/'.$img.'/up/', 'move up')?> |
 		<?=anchor('wizard/organisation/photo/move/'.$img.'/down/', 'move down')?> |
-		<a href="/wizard/organisation/photo/delete/<?php echo $img ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
+		<a href="/wizard/organisation/photo/delete/<?php echo($img); ?>" onclick="return confirm('Are you sure you want to delete this photo?');">delete</a>
 		<br />
 	<?php } ?>
 </div>
@@ -222,8 +226,8 @@ function addstrike($text)
 <div class="BlueBox">
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
 		</fieldset>
 		<fieldset>
 			<input type="submit" name="r_submit_finish" value="Finish" class="button" />
@@ -274,8 +278,8 @@ function addstrike($text)
 	<h2>location map</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
 		</fieldset>
 		<div id="googlemaps" style="height: 300px"></div>
 		<noscript>
@@ -300,9 +304,9 @@ function addstrike($text)
 <h2>about you</h2>
 	<form id="orgdetails" action="/wizard/organisation" method="post" class="form">
 		<fieldset>
-			<input type="hidden" name="r_stage" value="<?php echo $stage; ?>" />
-			<input type="hidden" name="r_dump" value="<?php echo htmlentities(serialize($_SESSION[$session_var]), ENT_QUOTES); ?>" />
-			<label for="username">Name: </label><span id="username"><?php echo $username; ?></span>
+			<input type="hidden" name="r_stage" value="<?php echo($stage); ?>" />
+			<input type="hidden" name="r_dump" value="<?php echo(xml_escape(serialize($_SESSION[$session_var]))); ?>" />
+			<label for="username">Name: </label><span id="username"><?php echo(xml_escape($username)); ?></span>
 	<?php if ($is_connected != 'No' && !$office) {
 				 PrintTextBox('a_user_phone_number', 'Phone Number: ', $session_var);
 				 PrintTextBox('a_user_position', 'Position In Organisation: ', $session_var);
@@ -328,11 +332,3 @@ function addstrike($text)
 ?>
 
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

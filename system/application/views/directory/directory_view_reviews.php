@@ -11,7 +11,7 @@
 			foreach ($organisation['reviews_untyped'] as $review) {
 				$author_links = array();
 				foreach ($review['authors'] as $author) {
-					$author_links[] = '<a href="mailto:'.$author['email'].'">'.$author['name'].'</a>';
+					$author_links[] = '<a href="mailto:'.xml_escape($author['email']).'">'.xml_escape($author['name']).'</a>';
 				}
 				$authors = implode(', ', $author_links);
 		?>
@@ -25,10 +25,11 @@
 											<div class='RoundBoxTR'>
 												<div id='BylineText'>
 													Written by<br />
-													<span class='name'><?php echo $authors; ?></span><br />
-													<?php echo $review['publish_date']; ?><br />
+													<span class='name'><?php echo($authors); ?></span><br />
+													<?php echo(xml_escape($review['publish_date'])); ?><br />
 													<span class='links'>
-														<?php echo anchor($review['link'], 'See more...'); ?>
+														<?php /// @todo FIXME does anchor function xml_escape?
+															echo(anchor($review['link'], 'See more...')); ?>
 													</span>
 												</div>
 											</div>
@@ -38,7 +39,7 @@
 							</div>
 						</div>
 					</div>
-					<?php echo $review['content']; ?><br />
+					<?php echo(xml_escape($review['content'])); ?><br />
 				</div>
 	<?php
 		}

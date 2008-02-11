@@ -420,7 +420,7 @@ class Members extends Controller
 		);
 		
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/memberslist.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/memberslist.js');
 		
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);

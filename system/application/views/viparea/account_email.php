@@ -21,7 +21,7 @@
 		<h2>email signature</h2>
 		<form class="form" action="" method="post">
 			<fieldset>
-				<textarea name="email_signature" rows="10" cols="42"><?php echo($signature); ?></textarea>
+				<textarea name="email_signature" rows="10" cols="42"><?php echo(xml_escape($signature)); ?></textarea>
 			</fieldset>
 			<fieldset>
 				<input type="submit" name="save_email_sig" class="button" value="Save" />

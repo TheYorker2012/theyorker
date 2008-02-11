@@ -27,10 +27,10 @@
 		$date_text = date('jS F Y' , time($org['suggested_time']));
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.$org['org_name'].'</a>'."\n");
+		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.xml_escape($org['org_name']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
-		echo('						'.$org['user_name']."\n");
+		echo('						'.xml_escape($org['user_name'])."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						'.$date_text.''."\n");
@@ -44,7 +44,7 @@
 	</div>
 </div>
 
-<!--
+<?php /*
 <div class="BlueBox">
 	<h2>options</h2>
 	<div class="Entry">
@@ -75,12 +75,10 @@
 				<select name="a_assign_to">
 				<optgroup label="Assign To:">
 <?php
-/*
 	foreach($office_users as $office_user)
 	{
-		echo('					<option value="'.$office_user['id'].'">to '.$office_user['firstname'].' '.$office_user['surname'].'</option>'."\n");
+		echo('					<option value="'.$office_user['id'].'">to '.xml_escape($office_user['firstname'].' '.$office_user['surname']).'</option>'."\n");
 	}
-	*/
 ?>
 				</optgroup>
 				</select>
@@ -91,12 +89,4 @@
 		</form>
 	</div>
 </div>
--->
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>
+*/ ?>
