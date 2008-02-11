@@ -318,14 +318,14 @@ class CalendarPaths
 	function OrganisationSubscribeLink($OrgName, $OrgId, $Type)
 	{
 		return '<a href="'.site_url($this->OrganisationSubscribe($OrgId, 'calendar').get_instance()->uri->uri_string()).'">'.
-			"Show $OrgName events in my Personal Calendar</a>";
+			'Show '.xml_escape($OrgName).' events in my Personal Calendar</a>';
 	}
 	
 	/// Get the HTML for a subscribe link.
 	function OrganisationUnsubscribeLink($OrgName, $OrgId, $Type)
 	{
 		return '<a href="'.site_url($this->OrganisationUnsubscribe($OrgId, 'calendar').get_instance()->uri->uri_string()).'">'.
-			"Do not show $OrgName events in my Personal Calendar</a>";
+			'Do not show '.xml_escape($OrgName).' events in my Personal Calendar</a>';
 	}
 }
 

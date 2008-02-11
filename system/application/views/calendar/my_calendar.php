@@ -56,7 +56,7 @@
 				if (array_key_exists('link', $filter)) {
 					echo('<a class="CalendarButtons" href="'.$filter['link'].'">');
 				}
-				echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.$filter['name'].'" title="'.$filter['name'].'" />');
+				echo('<img src="'.$filter[$filter['selected']?'selected_image':'unselected_image'].'" alt="'.xml_escape($filter['name']).'" title="'.xml_escape($filter['name']).'" />');
 				if (array_key_exists('link', $filter)) {
 					echo('</a>');
 				}
@@ -70,14 +70,14 @@
 	<tr>
 		<td><?php
 if (isset($RangeDescription)) { 
-	echo('<strong>'.$RangeDescription.'</strong>');
+	echo('<strong>'.xml_escape($RangeDescription).'</strong>');
 }
 ?></td>
 		<td>
 		<?php if (!empty($CreateSources)) { ?>
 			<ul>
 				<?php foreach ($CreateSources as $source) { ?>
-					<li><a href="<?php echo(site_url($Path->EventCreate($source)).get_instance()->uri->uri_string()); ?>">Add event to <?php echo($source->GetSourceName()); ?> Calendar</a></li>
+					<li><a href="<?php echo(site_url($Path->EventCreate($source)).get_instance()->uri->uri_string()); ?>">Add event to <?php echo(xml_escape($source->GetSourceName())); ?> Calendar</a></li>
 				<?php } ?>
 			</ul>
 		<?php } ?>
