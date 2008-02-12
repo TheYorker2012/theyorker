@@ -104,7 +104,8 @@ if (isset($medium_type)) { ?>
 					<li><a href="/calendar/">My Calendar</a></li>
 					<li><a href="/directory/">Directory</a></li>
 					<li><a href="/shop/">Shop</a></li>
-					<li><a href="/shop/view/tickets/">Tickets</a></li>
+					<li><a href="/shop/testing/">Shop Testing</a></li>
+					<li><a href="/shop/tickets/">Tickets</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>

@@ -12,6 +12,7 @@ class Shop extends Controller {
 		parent::Controller();
 		/// Used in all all page requests
 		$this->load->model('shop_model','shop_model');
+		$this->load->library('image');
 	}
 	
 	/**
@@ -25,15 +26,20 @@ class Shop extends Controller {
 		
 		$data = array();
 		
-		$data['shop'] = 'shop index';
+		$data['categories'] = $this->shop_model->GetCategoryListing();
 				
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('shop/listing', $data);
+		$this->main_frame->SetContentSimple('shop/categories', $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 	
-	function view($category_name)
+	function tickets()
+	{
+		redirect('shop/view/1');
+	}
+	
+	function view($category_id)
 	{
 		if (!CheckPermissions('public')) return;
 		
@@ -41,8 +47,23 @@ class Shop extends Controller {
 		
 		$data = array();
 		
-		$data['shop'] = $this->shop_model->GetEventIDs();
+		$data['items'] = $this->shop_model->GetCategoryItemListing($category_id);
+		$data['category'] = $this->shop_model->GetCategoryInformation($category_id);
+		foreach ($data['items'] as &$item)
+		{
+			$item['event_date_string'] = date('l, jS F Y', $item['event_date']);
+			if ($item['price_range']['min'] == $item['price_range']['max'])
+			{
+				$item['price_string'] = '&pound;'.$item['price_range']['min'];
+			}
+			else
+			{
+				$item['price_string'] = '&pound;'.$item['price_range']['min'].' to '.'&pound;'.$item['price_range']['max'];
+			}
+			//$item['thumb_details'] = $this->image->getThumb($item['thumb_id'], 1);
+		}
 		
+		/*
 		foreach ($data['shop'] as $shops)
 		{
 			$source_id = 0; //events created on the yorker
@@ -51,10 +72,67 @@ class Shop extends Controller {
 			$mMainSource = new CalendarSourceMyCalendar();
 			$calendar_data = new CalendarData();
 			$mMainSource->FetchEvent($calendar_data, $source_id, $shops['id']);
+		}*/
+				
+		// Set up the public frame
+		$this->main_frame->SetContentSimple('shop/items', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	
+	function item($item_id)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$this->pages_model->SetPageCode('shop_item');
+		
+		$data['item'] = $this->shop_model->GetItemInformation($item_id);
+		
+		if ($data['item'] == array())
+		{
+			$this->messages->AddMessage('error', 'The specified item does not exist.');
+			redirect('shop');
+		}
+		
+		$data['item']['event_date_string'] = date('l, jS F Y', $data['item']['event_date']);
+		if ($data['item']['price_range']['min'] == $data['item']['price_range']['max'])
+		{
+			$data['item']['price_string'] = '&pound;'.$data['item']['price_range']['min'];
+		}
+		else
+		{
+			$data['item']['price_string'] = '&pound;'.$data['item']['price_range']['min'].' to '.'&pound;'.$data['item']['price_range']['max'];
+		}
+		$data['item']['customisations'] = $this->shop_model->GetItemCustomisations($item_id);
+		foreach ($data['item']['customisations'] as &$customisation)
+		{
+			$customisation['options'] = $this->shop_model->GetItemCustomisationOptions($customisation['id']);
 		}
 				
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('shop/listing', $data);
+		$this->main_frame->SetContentSimple('shop/item_details', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	
+	function testing()
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$this->pages_model->SetPageCode('shop_testing');
+		
+		$data = array();
+		
+		//$data['categories'] = $this->shop_model->GetCategoryListing();
+		//$data['cat_items'] = $this->shop_model->GetCategoryItemListing(1);
+		//$data['cat_info_id_1'] = $this->shop_model->GetCategoryInformation(1);
+		//$data['item_1_price_range'] = $this->shop_model->GetPriceRange(1);
+		//$data['item_1_info'] = $this->shop_model->GetItemInformation(1);
+		$data['item_1_customisations'] = $this->shop_model->GetItemCustomisations(3);
+		$data['item_1_customisation_options'] = $this->shop_model->GetItemCustomisationOptions(1);
+				
+		// Set up the public frame
+		$this->main_frame->SetContentSimple('shop/testing', $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
