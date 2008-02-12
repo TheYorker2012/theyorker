@@ -12,13 +12,13 @@
 		<p>
 			Use this to invite lots of users by copying in the usernames into this box.
 		</p>
-		<?php echo $what_to_do; ?>
+		<?php echo($what_to_do); ?>
 <?php
 	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="post">'."\n");
 ?>
 			<fieldset>
 				<label for='invite_list'>Invite List:</label>
-				<textarea name="invite_list" rows="10" cols="50"><?php echo $default_list; ?></textarea>
+				<textarea name="invite_list" rows="10" cols="50"><?php echo($default_list); ?></textarea>
 				<input type='submit' class='button' name='members_invite_button' value='Continue'>
 			</fieldset>
 		</form>
@@ -37,9 +37,9 @@
 ?>
 			<fieldset>
 				<label for='invite_list_failures'>List of INCORRECT email addresses:</label>
-				<textarea name="invite_list_failures" rows="10" cols="50"><?php echo(implode("\r", $failures)); ?></textarea>
+				<textarea name="invite_list_failures" rows="10" cols="50"><?php echo(xml_escape(implode("\r", $failures))); ?></textarea>
 				<label for='invite_list_valids'>List of CORRECT email addresses:</label>
-				<textarea name="invite_list_valids" rows="10" cols="50"><?php echo(implode("\r", $valids)); ?></textarea>
+				<textarea name="invite_list_valids" rows="10" cols="50"><?php echo(xml_escape(implode("\r", $valids))); ?></textarea>
 			</fieldset>
 			<fieldset>
 				<input type='submit' class='button' name='members_invite_button' value='Continue'>
@@ -131,12 +131,4 @@
 </div>
 <?php
 	}
-?>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
 ?>

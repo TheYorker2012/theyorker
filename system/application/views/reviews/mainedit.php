@@ -1,5 +1,5 @@
 <div id="ReviewTitle">
-	<h1><img alt="Reviews" src="<?php echo $title_image ?>" /></h1><br />
+	<h1><img alt="Reviews" src="<?php echo(xml_escape($title_image)); ?>" /></h1><br />
 	<h1>Admin Edit Panel</h1>
 </div>
 <table class="ReviewSetBlock">

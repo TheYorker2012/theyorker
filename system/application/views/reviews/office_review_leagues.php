@@ -1,8 +1,6 @@
 <div class='RightToolbar'>
 	<h4>Page Information</h4>
-	<p>
-		<?php echo $page_information; ?>
-	</p>
+	<?php echo($page_information); ?>
 </div>
 <div id="MainColumn">
 	<div class="blue_box">

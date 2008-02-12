@@ -7,15 +7,15 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
-	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
+	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
+	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo(xml_escape($head_title));
 		} else {
-			echo 'no pagename';
+			echo('no pagename');
 		}
 	?></title>
 
@@ -48,9 +48,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			if (isset($toplinks)) {
 				foreach ($toplinks as $link) {
 					if (is_string($link)) {
-						echo '<span style="color: #000000;">'.$link.'</span> | ';
+						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
 					} elseif (is_array($link)) {
-						echo '<a href="'.$link[1].'">'.$link[0].'</a> | ';
+						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
 					}
 				}
 			}
@@ -68,8 +68,8 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			</h1>
 			<div id="TopBannerText">
 				<p>
-					<?php echo $vipinfo['name']; ?><br />
-					<?php echo $vipinfo['organisation']; ?>
+					<?php echo(xml_escape($vipinfo['name'])); ?><br />
+					<?php echo(xml_escape($vipinfo['organisation'])); ?>
 				</p>
 			</div>
 		</div>
@@ -89,17 +89,17 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<div id="NavigationMenu">
 				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
 				<ul class="first">
-					<li class="first"><a href="<?php echo site_url('viparea'); ?>">VIP Area Home</a></li>
+					<li class="first"><a href="<?php echo(site_url('viparea')); ?>">VIP Area Home</a></li>
 				</ul>
 				<ul>
-					<li class="first"><a href="<?php echo vip_url('directory/information'); ?>">Directory Entry</a></li>
-					<li><a href="<?php echo vip_url('calendar'); ?>">Manage Events</a></li>
-					<li><a href="<?php echo vip_url('notices'); ?>">Manage Notices</a></li>
-					<li><a href="<?php echo vip_url('members'); ?>">Manage Members</a></li>
+					<li class="first"><a href="<?php echo(vip_url('directory/information')); ?>">Directory Entry</a></li>
+					<li><a href="<?php echo(vip_url('calendar')); ?>">Manage Events</a></li>
+					<li><a href="<?php echo(vip_url('notices')); ?>">Manage Notices</a></li>
+					<li><a href="<?php echo(vip_url('members')); ?>">Manage Members</a></li>
 				</ul>
 				<ul>
-					<li class="first"><a href="<?php echo vip_url('account'); ?>">Settings</a></li>
-					<li><a href="<?php echo vip_url('contactpr'); ?>">Contact PR Rep</a></li>
+					<li class="first"><a href="<?php echo(vip_url('account')); ?>">Settings</a></li>
+					<li><a href="<?php echo(vip_url('contactpr')); ?>">Contact PR Rep</a></li>
 				</ul>
 				<?php
 				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
@@ -107,9 +107,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					foreach ($extra_menu_buttons as $key => $button) {
 						echo('<li'.(!$key ? ' class="first"':'').'>');
 						if (is_string($button)) {
-							echo($button);
+							echo(xml_escape($button));
 						} else {
-							echo('<a href="'.$button[1].'">'.$button[0].'</a>');
+							echo('<a href="'.xml_escape($button[1]).'">'.xml_escape($button[0]).'</a>');
 						}
 						echo('</li>');
 					}
@@ -123,12 +123,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<h1 id="PageTitle">
 				<?php
 				if(isset($body_title)) {
-					echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+					echo(xml_escape($body_title)."\n");
 				} else {
-					echo 'no pagename'."\n";
+					echo('no pagename'."\n");
 				}
 				if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-					echo("<a href=\"$paged_edit_url\">[edit]</a>");
+					echo('<a href="'.$paged_edit_url.'">[edit]</a>');
 				}
 				?>
 			</h1>

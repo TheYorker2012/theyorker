@@ -17,9 +17,9 @@
 	foreach ($running_poll_list as $poll)
 	{
 		if($poll['is_displayed'])
-			echo('				<option value="'.$poll['id'].'" selected="selected">'.$poll['question'].'</option>'."\n");
+			echo('				<option value="'.$poll['id'].'" selected="selected">'.xml_escape($poll['question']).'</option>'."\n");
 		else
-			echo('				<option value="'.$poll['id'].'">'.$poll['question'].'</option>'."\n");
+			echo('				<option value="'.$poll['id'].'">'.xml_escape($poll['question']).'</option>'."\n");
 	}
 ?>
 			</select>
@@ -40,11 +40,3 @@
 		
 	</form>
 </div>
-
-<?php
-/*
-	echo('<div class="BlueBox"><pre>');
-	print_r($data);
-	echo('</pre></div>');
-*/
-?>

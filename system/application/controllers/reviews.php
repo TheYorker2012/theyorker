@@ -210,8 +210,8 @@ class Reviews extends Controller
 		}
 		
 		//Load extra css and frame
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->IncludeCss('stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();
 	}

@@ -6,7 +6,7 @@
 				<?php $content['week_select']->Load(); ?>
 			</td>
 			<td align="center" valign="top">
-				<P><SMALL><EM>Displaying <?php echo $date_range_description; ?></EM></SMALL></P>
+				<P><SMALL><EM>Displaying <?php echo(xml_escape($date_range_description)); ?></EM></SMALL></P>
 				<?php $content['events_list']->Load(); ?>
 			</td>
 		</tr>

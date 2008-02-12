@@ -143,12 +143,12 @@ class Pages extends Controller
 	{
 		// Validate codename, must be non empty, and consist only of word characters
 		if (!preg_match('/^\w+$/', $Codename)) {
-			$this->messages->AddMessage('error','Your specified codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" contained invalid characters. Please use alphanumeric characters only.');
+			$this->messages->AddMessage('error','Your specified codename "'.xml_escape($Codename).'" contained invalid characters. Please use alphanumeric characters only.');
 			return FALSE;
 		}
 		// Check if new codename is in use
 		elseif (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$Codename)) {
-			$this->messages->AddMessage('error','A page with the codename "'.htmlentities($Codename, ENT_QUOTES, 'utf-8').'" already exists. Please choose another.');
+			$this->messages->AddMessage('error','A page with the codename "'.xml_escape($Codename).'" already exists. Please choose another.');
 			return FALSE;
 		}
 		return TRUE;
@@ -576,7 +576,7 @@ class Pages extends Controller
 		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
 		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -620,7 +620,7 @@ class Pages extends Controller
 		$PageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -694,7 +694,7 @@ class Pages extends Controller
 		$CustomPageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;

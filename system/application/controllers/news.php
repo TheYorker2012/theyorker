@@ -51,14 +51,17 @@ class News extends Controller {
 			$type_info = $this->News_model->getArticleTypeInformation($article_type);
 		}
 		
-		/// Get the latest article ids from the model.
-		// jh559 19th Jan 08: Moved this to happen as soon as possible
-		// this is so if a redirect needs to take place less time is wasted.
-		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
-		if ($article_id === NULL && isset($latest_article_ids[0]) && is_numeric($latest_article_ids[0])) {
-			// Redirect to the first article so that google doesn't index the blank url.
-			redirect('news/'.$article_type.'/'.$latest_article_ids[0]);
+		// The precise article wasn't given so we should show the default.
+		// Redirect to the correct URL so that google doesn't index section pages.
+		// Get a minimum of information so the redirect is fast.
+		if ($article_id === NULL) {
+			list($content_codename, $article_id) = $this->News_model->GetDefaultArticleInfo($article_type);
+			if (is_numeric($article_id)) {
+				redirect('news/'.$content_codename.'/'.$article_id);
+			}
 		}
+		// Get the latest article ids from the model.
+		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
 		
 		if ($type_info['parent_id'] != NULL) {
 			$parent = $this->News_model->getArticleTypeCodename($type_info['parent_id']);
@@ -138,6 +141,7 @@ class News extends Controller {
 			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
 				$main_article = array(
+					'placeholder'			=>	true,
 					'id'					=>	0,
 					'date'					=>	date('l, jS F Y'),
 					'location'				=>	0,
@@ -150,10 +154,10 @@ class News extends Controller {
 					'authors'				=>	array(),
 					'links'					=>	array(),
 					'related_articles'		=>	array(),
-					'fact_boxes'			=>	array()
+					'fact_boxes'			=>	array(),
 				);
 			} else {
-		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+				$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 				/// Check if article requested doesn't exist
 				if ($main_article === NULL) {
 					redirect('/news/'.$article_type);

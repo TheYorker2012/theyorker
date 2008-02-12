@@ -42,7 +42,6 @@ $CI->load->library('frames');
  *	
  *	// Set up the public frame
  *	$this->main_frame->SetTitle($page_title);
- *	$this->main_frame->SetExtraHead($extra_head);
  *	$this->main_frame->SetContent($this->frame_directory);
  *	
  *	// Load the public frame view (which will load the directory frame which

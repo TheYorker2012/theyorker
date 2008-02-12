@@ -18,7 +18,7 @@
 	<div id="Title" align="center">
 		<?php
 			if(isset($body_title)) {
-				echo('<h1 id="PageTitle">'.htmlentities($body_title, ENT_QUOTES, 'utf-8').'</h1>');
+				echo('<h1 id="PageTitle">'.xml_escape($body_title).'</h1>');
 			}
 		?>
 	</div>

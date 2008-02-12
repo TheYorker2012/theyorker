@@ -215,8 +215,11 @@ class Review_model extends Model {
 			'
 			SELECT
 				unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-				users.user_firstname,
-				users.user_surname,
+				user_writers.user_firstname,
+				user_writers.user_surname,
+				user_assigned.user_entity_id as assigned_user_id,
+				user_assigned.user_firstname as assigned_user_firstname,
+				user_assigned.user_surname as assigned_user_surname,
 				review_context_contents.review_context_content_last_author_user_entity_id,
 				review_context_contents.review_context_content_id,
 				review_context_contents.review_context_content_blurb,
@@ -225,36 +228,29 @@ class Review_model extends Model {
 				review_context_contents.review_context_content_recommend_item,
 				review_context_contents.review_context_content_rating,
 				review_context_contents.review_context_content_serving_times
-			FROM
-				review_context_contents
-			INNER JOIN 
-				organisations
-			ON	organisations.organisation_directory_entry_name = ?
-			INNER JOIN 
-				content_types
-			ON	content_types.content_type_codename = ?
-			INNER JOIN 
-				users
-			ON	users.user_entity_id = review_context_contents.review_context_content_last_author_user_entity_id
+			FROM review_context_contents
+			INNER JOIN organisations ON	
+				organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types ON	
+				content_types.content_type_codename = ?
+			INNER JOIN users as user_writers ON	
+				user_writers.user_entity_id = review_context_contents.review_context_content_last_author_user_entity_id
+			INNER JOIN review_contexts
+				ON	review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+				AND	review_contexts.review_context_content_type_id = content_types.content_type_id 
 			';
-		if ($revision_id == FALSE)
-		{
-			$sql .= '
-				INNER JOIN
-					review_contexts
-				ON	review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id
-				AND	review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
-				AND	review_contexts.review_context_content_type_id = content_types.content_type_id';
+		if ($revision_id == FALSE){
+			$sql .= 'AND review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id ';
 		}
 		$sql .= '
+			LEFT JOIN users as user_assigned ON	
+				user_assigned.user_entity_id = review_contexts.review_context_assigned_user_entity_id
 			WHERE 
 				review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
 			AND	review_context_contents.review_context_content_content_type_id = content_types.content_type_id
-			AND	review_context_contents.review_context_content_deleted = 0';
-		if ($revision_id != FALSE)
-		{
-			$sql .= '
-				AND review_context_contents.review_context_content_id = ?';
+			AND	review_context_contents.review_context_content_deleted = 0 ';
+		if ($revision_id != FALSE){
+			$sql .= 'AND review_context_contents.review_context_content_id = ?';
 		}
 		
 		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$revision_id));
@@ -266,6 +262,9 @@ class Review_model extends Model {
 			$result['firstname'] = $row->user_firstname;
 			$result['surname'] = $row->user_surname;
             $result['user_entity_id'] = $row->review_context_content_last_author_user_entity_id;
+			$result['assigned_user_firstname'] = $row->assigned_user_firstname;
+			$result['assigned_user_surname'] = $row->assigned_user_surname;
+            $result['assigned_user_id'] = $row->assigned_user_id;
             $result['content_blurb'] = $row->review_context_content_blurb;
             $result['content_quote'] = $row->review_context_content_quote;
             $result['average_price'] = $row->review_context_content_average_price;

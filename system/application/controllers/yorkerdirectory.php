@@ -104,8 +104,8 @@ class Yorkerdirectory extends Controller
 		$this->main_frame->SetContent($directory_view);
 
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/directory.js" type="text/javascript"></script>');
-		$this->main_frame->SetExtraCss('/stylesheets/directory.css');
+		$this->main_frame->IncludeJs('javascript/directory.js');
+		$this->main_frame->IncludeCss('stylesheets/directory.css');
 
 		// Load the public frame view
 		$this->main_frame->Load();
@@ -349,15 +349,6 @@ class Yorkerdirectory extends Controller
 				$this->load->library('view_calendar_list');
 				$this->load->library('date_uri');
 
-				// Sorry about the clutter, this will be moved in a bit but it isn't
-				// practical to put it in the view
-				$extra_head = <<<EXTRAHEAD
-					<script src="/javascript/prototype.js" type="text/javascript"></script>
-					<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-					<script src="/javascript/calendar.js" type="text/javascript"></script>
-					<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
-EXTRAHEAD;
-
 				$use_default_range = FALSE;
 				if (empty($DateRange)) {
 					// $DateRange Empty
@@ -447,7 +438,6 @@ EXTRAHEAD;
 			// Set up the public frame to use the directory frame
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
-			//$this->main_frame->SetExtraHead($extra_head);
 			$this->main_frame->SetContent($this->frame_directory);
 
 		} else {

@@ -13,7 +13,7 @@
 <?php echo('		<form class="form" action="/office/polls/edit/'.$poll_id.'" method="post">'."\n"); ?>
 		<fieldset>
 			<label for="poll_question">Question: </label>
-<?php echo('			<input type="text" id="poll_question" name="poll_question" value="'.$poll_info['question'].'" style="width: 250px" />'."\n"); ?>
+<?php echo('			<input type="text" id="poll_question" name="poll_question" value="'.xml_escape($poll_info['question']).'" style="width: 250px" />'."\n"); ?>
 		</fieldset>
 		<fieldset>
 			<input type="submit" name="submit_edit_poll" value="Edit" />
@@ -71,11 +71,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-/*
-	echo('<div class="blue_box"><pre>');
-	print_r($data);
-	echo('</pre></div>');
-*/
-?>

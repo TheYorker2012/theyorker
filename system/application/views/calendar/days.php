@@ -26,7 +26,7 @@ if (!isset($AllowEventCreate)) {
 
 $show_attendence = !$squash;
 $attendence_actions = ($show_attendence
-	? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+	? array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend')
 	: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 );
 $attend_state_images = array(
@@ -131,17 +131,17 @@ EVENT_CACHE[EVENT_COUNT][0]	= '<?php
 		}
 		echo('</div>');
 	}
-	echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); 
+	echo(js_nl2br(xml_escape($event_info->Event->Name))); 
 	?>';
 EVENT_CACHE[EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
 EVENT_CACHE[EVENT_COUNT][2]	= '<?php
 	if ($event_info->State == 'cancelled') {
 		echo('Cancelled');
 	} else {
-		echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+		echo(js_nl2br(xml_escape($event_info->GetLocationDescription())));
 	}
 ?>';
-EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
+EVENT_CACHE[EVENT_COUNT][3]	= '<?php echo(js_nl2br(xml_escape($event_info->Event->Description))); ?>';
 EVENT_CACHE[EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
 EVENT_CACHE[EVENT_COUNT][6]	= '<?php echo(site_url(
@@ -154,16 +154,16 @@ EVENT_CACHE[EVENT_COUNT][10]	= 0;
 EVENT_COUNT++;
 <?php	} else { ?>
 ALL_EVENT_CACHE[ALL_EVENT_COUNT] = new Array();
-ALL_EVENT_CACHE[ALL_EVENT_COUNT][0]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][0]	= '<?php echo(js_nl2br(xml_escape($event_info->Event->Name))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][1]	= '<?php echo($event_info->Event->Category); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][2]	= '<?php
 	if ($event_info->State == 'cancelled') {
 		echo('Cancelled');
 	} else {
-		echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+		echo(js_nl2br(xml_escape($event_info->GetLocationDescription())));
 	}
 ?>';
-ALL_EVENT_CACHE[ALL_EVENT_COUNT][3]	= '<?php echo(js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8'))); ?>';
+ALL_EVENT_CACHE[ALL_EVENT_COUNT][3]	= '<?php echo(js_nl2br(xml_escape($event_info->Event->Description))); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][4]	= '<?php echo($event_info->StartTime->Timestamp()); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][5]	= '<?php echo($event_info->EndTime->Timestamp()); ?>';
 ALL_EVENT_CACHE[ALL_EVENT_COUNT][6]	= '<?php echo(site_url(
@@ -477,7 +477,7 @@ $this->load->view('calendar/term_selector', array(
 					<a href="<?php echo(site_url(
 									$Path->OccurrenceInfo($event_info).
 									$CI->uri->uri_string())); ?>">
-						<?php echo(js_nl2br(htmlentities($event_info->Event->Name, ENT_QUOTES, 'UTF-8'))); ?>
+						<?php echo(js_nl2br(xml_escape($event_info->Event->Name))); ?>
 					</a>
 				</div>
 				<div class="cal_event_info">
@@ -488,11 +488,11 @@ $this->load->view('calendar/term_selector', array(
 	if ($event_info->State == 'cancelled') {
 		echo('Cancelled');
 	} else {
-		echo(js_nl2br(htmlentities($event_info->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+		echo(js_nl2br(xml_escape($event_info->GetLocationDescription())));
 	}
 ?></i>
 					<?php if (!$squash && !empty($event_info->Event->Description)) {
-						echo('<br />'.js_nl2br(htmlentities($event_info->Event->Description, ENT_QUOTES, 'UTF-8')));
+						echo('<br />'.js_nl2br(xml_escape($event_info->Event->Description)));
 					} ?>
 				</div>
 			</div>

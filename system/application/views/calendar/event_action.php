@@ -26,8 +26,8 @@ $verb = $Properties['verb']['_text'];
 	<div class="BlueBox">
 		<h2><?php echo($verb); ?> Events</h2>
 		<?php echo($Properties['main']['_wikitext']); ?>
-		<h3><?php echo(htmlentities($Event->Name, ENT_QUOTES, 'utf-8')); ?></h3>
-		<p><?php echo(htmlentities($Event->Description, ENT_QUOTES, 'utf-8')); ?></p>
+		<h3><?php echo(xml_escape($Event->Name)); ?></h3>
+		<p><?php echo(xml_escape($Event->Description)); ?></p>
 		<form class="form" name="<?php echo($FormName); ?>" method="post" action="<?php echo(get_instance()->uri->uri_string()); ?>">
 			<?php
 			if (!empty($Occurrences)) {

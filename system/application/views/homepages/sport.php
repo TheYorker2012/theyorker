@@ -1,6 +1,6 @@
 <div id="RightColumn">
 	<h2 class="first">
-		<?php echo $links_heading; ?>
+		<?php echo(xml_escape($links_heading)); ?>
 	</h2>
 	<div class="Entry">
 		<?php $this->homepage_boxes->print_puffer_column($puffers); ?>

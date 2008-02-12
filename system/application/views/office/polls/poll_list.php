@@ -30,7 +30,7 @@
 	{
 		echo('				<tr class="tr'.$alternate.'">'."\n");
 		echo('					<td>'."\n");
-		echo('						<a href="/office/polls/edit/'.$poll['id'].'">'.$poll['question'].'</a>'."\n");
+		echo('						<a href="/office/polls/edit/'.$poll['id'].'">'.xml_escape($poll['question']).'</a>'."\n");
 		echo('					</td>'."\n");
 		echo('					<td style="text-align:right;">'."\n");
 		$poll['is_running'] ? $result = "Yes" : $result = "No" ;
@@ -48,11 +48,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-/*
-	echo('<div class="BlueBox"><pre>');
-	print_r($data);
-	echo('</pre></div>');
-*/
-?>

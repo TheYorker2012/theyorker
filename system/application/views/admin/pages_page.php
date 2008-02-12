@@ -1,7 +1,23 @@
+<?php
+/**
+ * @file views/admin/pages_page.php
+ * @author James Hogan (jh559@cs.york.ac.uk)
+ *
+ */
+
+$property_types = array(
+	'text' => 'Text',
+	'wikitext' => 'Wikitext',
+	'xhtml' => 'XHTML Block (advanced users only)',
+	'xhtml_inline' => 'Inline XHTML (advanced users only)',
+);
+
+?>
 <div class="RightToolbar">
 	<?php if (isset($main_text)) { ?>
 		<h4>What's this?</h4>
-		<p><?php echo $main_text; ?></p>
+		<p><a href="/admin/pages">Back to Pages Administration</a></p>
+		<p><?php echo($main_text); ?></p>
 	<?php } ?>
 	<?php if (isset($page_help)) { ?>
 		<h4>Helper</h4>
@@ -16,26 +32,30 @@
 				<label for="codename">Codename:</label>
 				<input name="codename" size="35" value=<?php
 					echo '"';
-					if (!empty($codename)) { echo(htmlentities($codename, ENT_QUOTES, 'utf-8')); }
+					if (!empty($codename)) {
+						echo(xml_escape($codename));
+					}
 					echo '"';
-					if (!$permissions['rename']) { echo(' READONLY'); }
+					if (!$permissions['rename']) {
+						echo(' readonly="readonly"');
+					}
 					?>>
 				<br />
 				<label id="title_label" for="title">Header Title:</label>
-				<input name="head_title" size="35" value="<?php if (!empty($head_title)) { echo(htmlentities($head_title, ENT_QUOTES, 'UTF-8'));} ?>" />
+				<input name="head_title" size="35" value="<?php if (!empty($head_title)) { echo(xml_escape($head_title));} ?>" />
 				<label for="title_separate">Separate header and body titles</label>
 				<input type="checkbox" name="title_separate"<?=($title_separate ? ' checked="checked"' : '')?> />
 				<div id="separate_title">
 					<label for="body_title">Body Title:</label>
-					<input name="body_title" size="35" value="<?php if (!empty($body_title)) { echo(htmlentities($body_title, ENT_QUOTES, 'UTF-8'));} ?>" />
+					<input name="body_title" size="35" value="<?php if (!empty($body_title)) { echo(xml_escape($body_title));} ?>" />
 				</div>
 				
 				<br />
 				<label for="description">Description</label>
-				<input name="description" size="35" value="<?php if (!empty($description)) { echo(htmlentities($description, ENT_QUOTES, 'UTF-8'));} ?>" />
+				<input name="description" size="35" value="<?php if (!empty($description)) { echo(xml_escape($description));} ?>" />
 				<br />
 				<label for="keywords">Keywords</label>
-				<input name="keywords" size="35" value="<?php if (!empty($keywords)) { echo(htmlentities($keywords, ENT_QUOTES, 'UTF-8'));} ?>" />
+				<input name="keywords" size="35" value="<?php if (!empty($keywords)) { echo(xml_escape($keywords));} ?>" />
 				<br />
 				<label for="type_id">Page type</label>
 				<select name="type_id">
@@ -45,7 +65,7 @@
 							if ($k == $type_id) {
 								echo(' selected="selected"');
 							}
-							echo('>'.htmlentities($page_type['name'], ENT_QUOTES, 'UTF-8').'</option>');
+							echo('>'.xml_escape($page_type['name']).'</option>');
 						}
 					?>
 				</select><br />
@@ -69,15 +89,19 @@ if (!empty($properties) || $permissions['prop_add']) {
 			foreach ($properties as $property) {
 			?>
 				<p style="font-size:small;">
-					<b>Property Name : </b><?php echo(htmlentities($property['label'], ENT_QUOTES, 'UTF-8'));?><br />
-					<b>Property Type : </b><?php echo(htmlentities($property['type'], ENT_QUOTES, 'UTF-8'));?><br />
+					<b>Property Name : </b><?php echo(xml_escape($property['label']));?><br />
+					<b>Property Type : </b><?php
+						echo(xml_escape(isset($property_types[$property['type']])
+								? $property_types[$property['type']]
+								: $property['type']));
+					?><br />
 					<?php if ($permissions['prop_delete']) { ?>
 						<input type="checkbox" name="delete-<?php echo($property['id']);?>"> Delete this property
 					<?php } ?>
 				</p>
-				<input type="hidden" name="label-<?php echo($property['id']);?>" value="<?php echo(htmlentities($property['label'], ENT_QUOTES, 'UTF-8'));?>">
-				<input type="hidden" name="type-<?php echo($property['id']);?>" value="<?php echo(htmlentities($property['type'], ENT_QUOTES, 'UTF-8'));?>">
-				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(htmlentities($property['text'], ENT_QUOTES, 'UTF-8'));?></textarea>
+				<input type="hidden" name="label-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['label']));?>">
+				<input type="hidden" name="type-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['type']));?>">
+				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(xml_escape($property['text']));?></textarea>
 				<br />
 			<?php
 			}
@@ -89,21 +113,21 @@ if (!empty($properties) || $permissions['prop_add']) {
 			// See public_html/javascript/clone.js
 			?>
 			<div id="source" style="display:none">
-				<b>Property Name : </b><input name="label-newprop" value=""><br />
-				<b>Property Type : </b>
+				<label>Property Name : <input name="label-newprop" value=""></label>
+				<label>Property Type : 
 					<select name="type-newprop">
-						<option value ="text">Text</option>
-						<option value ="wikitext">Wikitext</option>
-						<option value ="xhtml">XHTML</option>
-					</select><br />
+<?php foreach ($property_types as $code => $name) { ?>
+						<option value="<?php echo(xml_escape($code)); ?>"><?php echo(xml_escape($name)); ?></option>
+<?php } ?>
+					</select></label>
 				<textarea name="newprop" class="full" rows="10"></textarea>
 				<br />
 			</div>
 			<?php
-			// New properties are put here (destionation div)
+			// New properties are put here (destination div)
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
-			<input type="button" class="button" onClick="AddClones()" value="Add Property"/>
+			<input type="button" class="button" onClick="AddClone('source', 'destination')" value="Add Property"/>
 			<?php }
 			if ($permissions['prop_edit']) {
 				?>
@@ -116,23 +140,3 @@ if (!empty($properties) || $permissions['prop_add']) {
 <?php
 }
 ?>
-<?php /*
-<h2>Add a page property</h2>
-<form name="property_form" action="<?php echo($target); ?>" method="POST" class="form">
-	<fieldset>
-		<label for="properties_name">Property name</label>
-		<input size="35" name="properties_name">
-		<br />
-		<label for="properties_type">Property type</label>
-		<input type="radio" name="properties_type" value="text"> Text 
-		<input type="radio" name="properties_type" value="wikitext"> WikiText 
-		<input type="radio" name="properties_type" value="image"> Image
-		<br />
-		<label for="properties_value">Property value</label>
-		<textarea name="properties_value" class="full" rows="10"></textarea>
-	</fieldset>
-	<fieldset>
-		<input type="submit" class="button" name="property_button" value="Add">
-	</fieldset>
-</form> */ ?>
-<a href="/admin/pages">Back to Pages Administration</a>

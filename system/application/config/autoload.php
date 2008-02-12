@@ -49,7 +49,7 @@ $autoload['libraries'] = array('database');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url', 'form', 'init', 'permissions', 'mainframe');
+$autoload['helper'] = array('escape', 'url', 'form', 'init', 'permissions', 'mainframe');
 
 
 /*

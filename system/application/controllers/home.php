@@ -25,25 +25,6 @@ class Home extends Controller {
 	}
 
 	/**
- 	 * Displays prototype homepage, in the prototype student frame
-	 */
-	function pagelist()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('general/list', $data);
-		$this->main_frame->SetTitle('List');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
-
-	/**
 	 * @return array(Todays events view, Todo view).
 	 */
 	private function _GetMiniCalendars()
@@ -113,6 +94,7 @@ class Home extends Controller {
 		//poll handling
 		$poll_id = $this->polls_model->GetDisplayedPoll();
 		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);
+		$poll_show_results = false;
 		if ($poll_id && !$user_voted)
 		{
 			if (isset($_POST['submit_vote'])) {
@@ -130,9 +112,11 @@ class Home extends Controller {
 					}
 				}
 			}
-			else if (isset($_POST['submit_no_vote'])) {
-				$this->polls_model->SetUserPollNoVote($poll_id, $this->user_auth->entityId);
+			elseif (isset($_POST['submit_results'])) {
+				$poll_show_results = true;
 			}
+		} else {
+			$poll_show_results = true;
 		}
 		
 		if ('fbml' === OutputMode()) {
@@ -219,7 +203,8 @@ class Home extends Controller {
 		}
 
 		// Get latest comments made on articles
-		$data['latest_comments'] = $this->Home_Hack_Model->getLatestComments();
+		$this->load->library('comment_views');
+		$data['latest_comments'] = $this->comment_views->GetLatestComments();
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
@@ -277,6 +262,7 @@ class Home extends Controller {
 			$data['poll']['info'] = $this->polls_model->GetPollDetails($poll_id);
 			$data['poll']['choices'] = $this->polls_model->GetPollChoiceVotes($poll_id);
 			$data['poll']['user_voted'] = $user_voted;
+			$data['poll']['show_results'] = $poll_show_results;
 		}
 		else
 		{
@@ -286,9 +272,9 @@ class Home extends Controller {
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
 
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-
-		$this->main_frame->SetExtraHead('<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=effects,dragdrop');
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

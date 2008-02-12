@@ -32,7 +32,7 @@ class Pr_model extends Model {
 	}
 
 	///	Return list of all organisations and thier Name of Place, Date of Last Review, Number of Reviews, and Info Complete status
-	function GetReviewContextListFromId($content_type, $urlpath='directory/', $urlpostfix='')
+	function GetReviewContextListFromId($content_type)
 	{
 
 		$sql =
@@ -40,7 +40,6 @@ class Pr_model extends Model {
 		SELECT
 			organisations.organisation_name as name,
 			organisations.organisation_directory_entry_name as shortname,
-			CONCAT(?, organisations.organisation_directory_entry_name, ?) as link,
 			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
 			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
 
@@ -117,16 +116,340 @@ class Pr_model extends Model {
 
 		WHERE organisation_parent_organisation_entity_id IS NULL
 
-		ORDER BY info_complete ASC, 
-		date_of_last_review ASC,
-		number_of_tags ASC,
-		number_of_leagues ASC
+		ORDER BY organisations.organisation_name ASC
 		';
 
-		$query = $this->db->query($sql, array($urlpath, $urlpostfix, $content_type, $content_type, $content_type, $content_type, $content_type) );
+		$query = $this->db->query($sql, array($content_type, $content_type, $content_type, $content_type, $content_type) );
 
 		return $query->result_array();
 
+	}
+	
+	function GetWorstVenuesForInformation($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			review_context_contents.review_context_content_blurb IS NOT NULL as venue_has_blurb,
+			review_context_contents.review_context_content_rating IS NOT NULL as venue_has_rating,
+			review_context_contents.review_context_content_quote IS NOT NULL as venue_has_quote,
+			review_context_contents.review_context_content_average_price IS NOT NULL as venue_has_average_price,
+			review_context_contents.review_context_content_recommend_item IS NOT NULL as venue_has_recommend_item,
+			review_context_contents.review_context_content_serving_times IS NOT NULL as venue_has_serving_times 
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		INNER JOIN review_context_contents ON
+		review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id 
+		LEFT JOIN users ON
+		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=? AND review_contexts.review_context_deleted=0 
+		ORDER BY venue_has_blurb ASC, venue_has_rating ASC, venue_has_quote ASC, venue_has_average_price ASC, venue_has_recommend_item ASC, venue_has_serving_times ASC LIMIT '.$limit;
+		$query = $this->db->query($sql, array($content_type_codename));
+		$result = array();
+		//remove any venues with complete information
+		foreach ($query->result_array() as $venue){
+			if(!$venue['venue_has_blurb'] || !$venue['venue_has_rating'] || !$venue['venue_has_quote'] || !$venue['venue_has_average_price'] || !$venue['venue_has_recommend_item'] || !$venue['venue_has_serving_times']) $result[] = $venue;
+		}
+		return $result;
+	}
+	function GetWorstVenuesForReviews($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			(
+				SELECT MAX(article_publish_date)
+				FROM articles
+				WHERE articles.article_content_type_id = content_types.content_type_id
+				AND articles.article_organisation_entity_id = venue_id
+				AND articles.article_deleted = 0
+				AND articles.article_live_content_id IS NOT NULL
+			) as date_of_last_review,
+			(
+				SELECT COUNT(*)
+				FROM articles
+				WHERE articles.article_content_type_id = content_types.content_type_id
+				AND articles.article_organisation_entity_id = venue_id
+				AND articles.article_deleted = 0
+				AND articles.article_live_content_id IS NOT NULL
+			) as review_count
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		LEFT JOIN users ON
+		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=?  
+		ORDER BY review_count ASC, date_of_last_review ASC, venue_name ASC LIMIT '.$limit;
+		$query = $this->db->query($sql, array($content_type_codename));
+		return $query->result_array();
+	}
+	function GetWorstVenuesForTags($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			(
+			 SELECT COUNT(*)
+			 FROM organisation_tags
+			 INNER JOIN tags ON
+			  organisation_tags.organisation_tag_tag_id = tags.tag_id
+			 LEFT OUTER JOIN tag_groups ON
+			  tags.tag_id = tag_groups.tag_group_id
+			 WHERE organisation_tag_organisation_entity_id = venue_id 
+			 AND (tag_groups.tag_group_content_type_id = content_types.content_type_id OR tag_groups.tag_group_content_type_id IS NULL)
+			) as tags_count
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		LEFT JOIN users ON
+		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=?  
+		ORDER BY tags_count ASC, venue_name ASC LIMIT '.$limit;
+		$query = $this->db->query($sql, array($content_type_codename));
+		return $query->result_array();
+	}
+	function GetWorstVenuesForLeagues($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			review_context_contents.review_context_content_rating as venue_rating,
+			(
+			 SELECT COUNT(*)
+			 FROM league_entries
+			 INNER JOIN leagues ON
+			  league_entries.league_entry_league_id = leagues.league_id
+			 WHERE league_entry_organisation_entity_id = venue_id 
+			 AND leagues.league_content_type_id = content_types.content_type_id 
+			) as leagues_count
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		LEFT JOIN review_context_contents ON
+		review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id 
+		LEFT JOIN users ON
+		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=?  
+		ORDER BY leagues_count ASC, venue_rating DESC, venue_name ASC LIMIT '.$limit;
+		$query = $this->db->query($sql, array($content_type_codename));
+		return $query->result_array();
+	}
+	function GetWorstVenuesForPhotos($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			(
+				SELECT MAX(photos.photo_timestamp)
+				FROM review_context_slideshows
+				INNER JOIN photos ON
+				review_context_slideshows.review_context_slideshow_photo_id = photos.photo_id
+				WHERE review_context_slideshows.review_context_slideshow_content_type_id = content_types.content_type_id
+				AND review_context_slideshows.review_context_slideshow_organisation_entity_id = venue_id
+			) as date_of_last_photo,
+			(
+				SELECT COUNT(*)
+				FROM review_context_slideshows
+				INNER JOIN photos ON
+				review_context_slideshows.review_context_slideshow_photo_id = photos.photo_id
+				WHERE review_context_slideshows.review_context_slideshow_content_type_id = content_types.content_type_id
+				AND review_context_slideshows.review_context_slideshow_organisation_entity_id = venue_id
+				
+			) as photo_count
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		LEFT JOIN users ON
+		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=?  
+		ORDER BY photo_count ASC, date_of_last_photo ASC, venue_name ASC LIMIT '.$limit;
+		$query = $this->db->query($sql, array($content_type_codename));
+		return $query->result_array();
+	}
+	
+	function GetUsersAssignedReviewVenues($user_id, $content_type_codename){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		WHERE review_contexts.review_context_assigned_user_entity_id=? AND content_types.content_type_codename=? 
+		ORDER BY organisations.organisation_name ASC';
+		$query = $this->db->query($sql, array($user_id, $content_type_codename));
+		return $query->result_array();
+	}
+	
+	//returns 1 if the user is assigned to the given venue and context, 0 otherwise.
+	function IsUserAssignedToReviewVenue($content_type_codename, $org_short_name, $user_id=null){
+		$sql = '
+		SELECT COUNT(*) as user_has_venue
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		WHERE review_contexts.review_context_assigned_user_entity_id ';
+		if(empty($user_id)){
+			$sql .= 'IS NULL AND content_types.content_type_codename=? 
+			AND organisations.organisation_directory_entry_name=?';
+			$query = $this->db->query($sql, array($content_type_codename, $org_short_name));
+		}else{
+			$sql .= '=? AND content_types.content_type_codename=? 
+			AND organisations.organisation_directory_entry_name=?';
+			$query = $this->db->query($sql, array($user_id, $content_type_codename, $org_short_name));
+		}
+		return $query->row()->user_has_venue;
+	}
+	
+	//Overwrites any assigned user to the provided user id, if no user id is given the assigned user will be removed.
+	function AssignReviewVenueToUser($org_id, $content_type_id, $user_id=0){
+		if($user_id==0){
+			$sql = 'UPDATE	review_contexts
+						SET		review_contexts.review_context_assigned_user_entity_id = NULL
+						WHERE	review_contexts.review_context_organisation_entity_id = ? AND review_context_content_type_id=? LIMIT 1';
+			$query = $this->db->query($sql, array($org_id, $content_type_id));
+		}else{
+			$sql = 'UPDATE	review_contexts
+						SET		review_contexts.review_context_assigned_user_entity_id = ?
+						WHERE	review_contexts.review_context_organisation_entity_id = ? AND review_context_content_type_id=? LIMIT 1';
+			$query = $this->db->query($sql, array($user_id, $org_id, $content_type_id));
+		}
+	}
+	
+	function GetWaitingVenueInformationRevisions($content_type_codename){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_context_contents.review_context_content_last_author_timestamp as current_revision_timestamp,
+			(
+				SELECT COUNT(*) FROM review_context_contents WHERE 
+				review_context_contents.review_context_content_last_author_timestamp > current_revision_timestamp AND
+				review_context_contents.review_context_content_content_type_id = content_types.content_type_id AND
+				review_context_contents.review_context_content_organisation_entity_id = venue_id AND
+				review_context_contents.review_context_content_deleted = 0
+			) as revisions_waiting
+		FROM review_contexts 
+		INNER JOIN organisations ON
+		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		review_contexts.review_context_content_type_id = content_types.content_type_id
+		INNER JOIN review_context_contents ON
+		review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id
+		WHERE content_types.content_type_codename=?';
+		$query = $this->db->query($sql, array($content_type_codename));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				if($row->revisions_waiting > 0){
+					$result_item['venue_id'] = $row->venue_id;
+					$result_item['venue_shortname'] = $row->venue_shortname;
+					$result_item['venue_name'] = $row->venue_name;
+					$result_item['current_revision_timestamp'] = $row->current_revision_timestamp;
+					$result_item['revisions_waiting'] = $row->revisions_waiting;
+					$result[] = $result_item;
+				}
+			}
+		}
+		return $result;
+	}
+	//This Produces a list of evey waiting review (so there can be multiple per venue) if the review is published it returns how many new revisions are waiting,
+	//if its never been published returns the number of revisions of the review waiting to be published
+	function GetWaitingVenueReviewRevisions($content_type_codename){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			articles.article_id,
+			article_contents.article_content_id as revision_id,
+			article_contents.article_content_last_author_timestamp as current_revision_timestamp,
+			users.user_firstname,
+			users.user_surname,
+			articles.article_live_content_id,
+			(
+				SELECT COUNT(*) FROM article_contents WHERE 
+				article_contents.article_content_article_id = articles.article_id
+			) as revisions,
+			(
+				SELECT COUNT(*) FROM article_contents WHERE 
+				article_contents.article_content_article_id = articles.article_id AND
+				article_contents.article_content_last_author_timestamp > current_revision_timestamp 
+			) as revisions_waiting
+		FROM articles 
+		INNER JOIN users ON
+		articles.article_request_entity_id = users.user_entity_id
+		INNER JOIN organisations ON
+		articles.article_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+		articles.article_content_type_id = content_types.content_type_id
+		LEFT OUTER JOIN article_contents ON
+		articles.article_live_content_id = article_contents.article_content_id
+		WHERE content_types.content_type_codename=? AND articles.article_deleted=0 AND articles.article_pulled=0
+		ORDER BY organisations.organisation_name ASC, users.user_firstname ASC, users.user_surname ASC';
+		$query = $this->db->query($sql, array($content_type_codename));
+		$result = array();
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$result_item['venue_id'] = $row->venue_id;
+				$result_item['venue_shortname'] = $row->venue_shortname;
+				$result_item['venue_name'] = $row->venue_name;
+				$result_item['article_id'] = $row->article_id;
+				$result_item['revision_id'] = $row->revision_id;
+				$result_item['user_name'] = $row->user_firstname." ".$row->user_surname;
+				if(empty($row->revision_id)){
+					$result_item['published']=false;
+					$result_item['revisions_waiting'] = $row->revisions;
+					$result[] = $result_item;
+				}else{
+					$result_item['published']=true;
+					if($row->revisions_waiting>0){
+						$result_item['revisions_waiting'] = $row->revisions_waiting;
+						$result[] = $result_item;
+					}else{
+						//ignore this result, as its been published and has no revisions waiting, its in good order.
+					}
+				}
+				
+			}
+		}
+		return $result;
 	}
 	
 	// gets a list of all organisations which are suggestions for the directory

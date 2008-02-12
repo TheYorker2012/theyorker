@@ -44,7 +44,7 @@ function RenderMenu($DrawMenu)
 	echo '<ul>';
 	foreach ($DrawMenu as $child) {
 		echo '<li>';
-		echo '<a href="'.$child['link'].'">'.$child['name'].' ('.$child['quantity'].')</a>';
+		echo '<a href="'.xml_escape($child['link']).'">'.xml_escape($child['name']).' ('.$child['quantity'].')</a>';
 		if (isset($child['children']) && !empty($child['children'])) {
 			echo RenderMenu($child['children']);
 		}
@@ -64,7 +64,7 @@ function RenderMenu($DrawMenu)
 <div id="MainColumn">
 <div class="BlueBox">
 <?php
-	echo '<h2>'.$Title.'</h2>';
+	echo '<h2>'.xml_escape($Title).'</h2>';
 	
 	// Reset the alternator
 	alternator();
@@ -72,8 +72,8 @@ function RenderMenu($DrawMenu)
 	// Render notices
 	foreach ($Notices as $notice) {
 		echo '
-	<h3>'.$notice['subject'].'</h3>
-	<p>Posted <b>'.$notice['post_time'].'</b> by <a href="'.$notice['from_link'].'">'.$notice['from_name'].'</a></p>
+	<h3>'.xml_escape($notice['subject']).'</h3>
+	<p>Posted <b>'.$notice['post_time'].'</b> by <a href="'.xml_escape($notice['from_link']).'">'.xml_escape($notice['from_name']).'</a></p>
 	'.$notice['body'];
 		if ($notice['delete_link'] !== NULL) {
 			echo '<p><a href="'.$notice['delete_link'].'">delete notice</a></p>';

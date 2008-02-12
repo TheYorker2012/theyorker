@@ -12,6 +12,7 @@ sub new
 	my $self = $proto->SUPER::new($proto);
 	
 	$self->{autofix} = 0;
+	$self->{pedantic} = 0;
 	
 	return $self;
 }
@@ -22,6 +23,22 @@ sub printInformation
 	my ($self) = @_;
 	print "\tThis is the XML Coding Standards Inspection script\n";
 	print "\t\tDetects use of single quotes for attributes\n";
+}
+
+sub validateConfiguration
+{
+	my ($self, $configuration) = @_;
+	
+	my $fail = 0;
+	
+	if (defined $configuration->{'xml_csi:autofix'}) {
+		$self->{autofix} = 1;
+	}
+	if (defined $configuration->{'pedantic'}) {
+		$self->{pedantic} = 1;
+	}
+	
+	return $fail;
 }
 
 sub runTest
@@ -41,10 +58,21 @@ sub runTest
 			my $lineno = 1;
 			foreach my $line (@lines) {
 				# Single quote tag attributes
-				if ($line =~ /^(?:[^']*(?:'(?:[^']|\\')*'))*[^']*<(\w+)(?:\s+\w+\s*=\s*"[^"]*")*\s+\w+\s*=\s*'[^']*'/) {
+				if ($self->{pedantic} && $line =~ /^(?:[^']*(?:'(?:[^']|\\')*'))*[^']*<(\w+)(?:\s+\w+\s*=\s*"[^"]*")*\s+\w+\s*=\s*'[^']*'/) {
 					$fail = 1;
 					$self->printError($file, $lineno, "Single quote tag attributes are not permitted (in tag $1)");
 # 					$self->printError($file, $lineno, "$line");
+				}
+				# &apos; xml entity unknown to internet explorer.
+				if ($line =~ /&apos;/) {
+					$fail = 1;
+					$message = "&apos; entity is not known to Internet Explorer";
+					if ($self->{autofix}) {
+						$modified = 1;
+						$line =~ s/&apos;/&#039;/;
+						$message .= ". FIXED";
+					}
+					$self->printError($file, $lineno, $message);
 				}
 				
 				++$lineno;

@@ -82,7 +82,7 @@ class Organisation extends controller
 			}
 			$data['is_connected'] = $_SESSION['org_wizard']['a_connected'];
 			//$data['post'][$_POST['r_stage']] = $_POST;
-			//$data['post'][$_POST['r_stage']]['prev'] = htmlentities(serialize($_POST), ENT_QUOTES);
+			//$data['post'][$_POST['r_stage']]['prev'] = xml_escape(serialize($_POST));
 			if (isset($_POST['r_submit_finish']))
 				if ($_POST['r_stage'] == $stage_count)
 				{
@@ -235,7 +235,7 @@ class Organisation extends controller
 			$_SESSION[$data['session_var']]['r_dump'] = NULL;
 
 		// Set up the public frame
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/clone.js');
 		$the_view = $this->frames->view('wizard/organisation', $data);
 		$this->main_frame->SetContent($the_view);
 

@@ -1,6 +1,7 @@
  
 <div class='BlueBox'>
-	<h2><?php echo($section_games['title']); ?></h2>
+	<h2><?php echo(xml_escape($section_games['title'])); ?></h2>
+	<?php /** @todo FIXME should be called text_xml */ ?>
 	<p><?php echo($section_games['text']); ?></p>
 </div>
 
