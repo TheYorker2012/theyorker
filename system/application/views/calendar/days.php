@@ -26,7 +26,7 @@ if (!isset($AllowEventCreate)) {
 
 $show_attendence = !$squash;
 $attendence_actions = ($show_attendence
-	? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+	? array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend')
 	: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 );
 $attend_state_images = array(

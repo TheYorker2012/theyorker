@@ -13,7 +13,7 @@
 ?>
 
 <div id='RightColumn'>
-	<h2 class="first">What&apos;s this?</h2>
+	<h2 class="first">What&#039;s this?</h2>
 	<?php if (isset($Wikitexts['help_main'])) { echo($Wikitexts['help_main']); } ?>
 </div>
 

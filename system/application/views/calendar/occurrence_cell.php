@@ -82,7 +82,7 @@ $CI = & get_instance();
 		}
 		$show_attendence = !$Squash;
 		$attendence_actions = ($show_attendence
-			? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+			? array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend')
 			: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 		);
 		if ($Occurrence->UserHasPermission('set_attend') &&

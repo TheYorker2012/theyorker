@@ -147,7 +147,7 @@ $CI = & get_instance();
 					$Occurrence->State == 'published' /*&&
 					$Occurrence->EndTime->Timestamp() > time()*/)
 				{
-					$attendence_actions = array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend');
+					$attendence_actions = array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend');
 					echo('<p>');
 					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');
