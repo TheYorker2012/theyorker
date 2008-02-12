@@ -870,6 +870,7 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
 	        $this->xajax->registerFunction(array('_updatePhoto', &$this, '_updatePhoto'));
 	        $this->xajax->registerFunction(array('_deleteArticle', &$this, '_deleteArticle'));
+	        $this->xajax->registerFunction(array('_getMediaFiles', &$this, '_getMediaFiles'));
 	        $this->xajax->processRequests();
 
 			// Create menu
@@ -942,6 +943,23 @@ class News extends Controller
 		} else {
 			$xajax_response->addAlert('You must be an editor to delete an article!');
 		}
+		return $xajax_response;
+	}
+
+
+	function _getMediaFiles()
+	{
+		$xajax_response = new xajaxResponse();
+		$this->load->model('static_ftp_model');
+		$exts = array('flv', 'mp3');
+		$options = array();
+		foreach ($this->static_ftp_model->GetDirectoryListing($this->config->item('static_local_path') . '/media', '', $exts) as $option) {
+			$options[] = array(
+				$option,
+				$this->config->item('static_web_address') . '/media' . $option
+			);
+		}
+		$xajax_response->addScriptCall('insertMediaPlayerOptions', $options);
 		return $xajax_response;
 	}
 
