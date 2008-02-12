@@ -42,8 +42,8 @@ class Podcasts_model extends Model
 	function Add_Entry($filename,$size)
 	{
 		$sql = '	INSERT INTO podcasts
-					(podcast_file,podcast_file_size,podcast_timestamp)
-					VALUES (?,?,UNIX_TIMESTAMP())';
+					(podcast_file,podcast_file_size)
+					VALUES (?,?)';
 		$this->db->query($sql,array($filename,$size));
 		$sql = '	SELECT	podcast_id
 					FROM	podcasts

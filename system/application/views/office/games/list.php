@@ -5,8 +5,7 @@
 				<th></th>
 				<th width="100%">Title</th>
 				<th>Added</th>
-				<th>Count</th>
-				<th>Edit</th>
+				<th style="padding-right:5px;">Count</th>
 				<th>Del</th>
 				</tr></thead><tbody>');
 
@@ -32,10 +31,9 @@
 				echo('/images/prototype/news/delete.gif');
 			}
 			echo('" />'.($is_editor ? '</a>' : "").'</td>');
-			echo('<td style="padding-right:5px">'.(strlen($game['title'])>0 ? xml_escape($game['title']) : '<em>&lt;No Name&gt;</em>').'</td>');
-			echo('<td style="padding-right:5px"> '.$game['date_added'].'</td>');
-			echo('<td>'.$game['play_count'].'</td>');
-			echo('<td><a href="/office/games/edit/'.$game_id.'">Edit</a></td>');
+			echo('<td style="padding-right:5px"><a href="/office/games/edit/'.$game_id.'">'.(strlen($game['title'])>0 ? xml_escape($game['title']) : '<em>&lt;No Name&gt;</em>').'</a></td>');
+			echo('<td style="padding-right:5px;"> '.$game['date_added'].'</td>');
+			echo('<td style="padding-right:5px;text-align:right;">'.$game['play_count'].'</td>');
 			echo('<td>');
 			echo('<a href="/office/games/del_game/'.$game_id.'" onclick="return check_delete(\''.xml_escape($game['title']).'\');">Del</a>');
 			echo('</td>');
