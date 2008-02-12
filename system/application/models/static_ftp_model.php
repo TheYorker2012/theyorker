@@ -74,7 +74,7 @@ class Static_ftp_model extends Model
 				if (($entry != '.') && ($entry != '..')) {
 					if (is_dir($path . '/' . $entry)) {
 						$dirs[] = $entry;
-					} elseif ((($ext = strrchr($entry, '.')) !== FALSE) && ((count($exts) == 0) || (in_array(substr($ext, 1), $exts)))) {
+					} elseif ((count($exts) == 0) || ((($ext = strrchr($entry, '.')) !== FALSE) && (in_array(substr($ext, 1), $exts)))) {
 						$files[] = $link . '/' . $entry;
 					}
 				}
