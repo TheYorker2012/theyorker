@@ -24,6 +24,6 @@ RewriteCond %{REQUEST_URI} !^/(index\.php|account|login|register|images|styleshe
 RewriteRule ^(.*)$ http://%{SERVER_NAME}/$1 [L,R]
 
 # Rewrite URL into index.php for code ignitor
-RewriteCond %{REQUEST_URI} !^/(index\.php|tmp|images|stylesheets|javascript|js|doxygen|facebook|robots\.txt|test)
+RewriteCond %{REQUEST_URI} !^/(index\.php|tmp|images|stylesheets|javascript|flash|js|doxygen|facebook|robots\.txt|test)
 RewriteRule ^(.*)$ index.php/$1
 RewriteRule ^index.php//$ index.php [L]
