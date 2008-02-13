@@ -5,7 +5,9 @@
 	<div class="Entry">
 		<a href="/office/polls/">Back To Poll List</a>
 	</div>
-<?php $this->polls_view->print_sidebar_poll_no_voting($poll_info, $poll_choice_data); ?>
+	<?php
+		$poll_vote_box->Load();
+	?>
 </div>
 
 <div class="blue_box">
