@@ -107,7 +107,7 @@ if ($this->user_auth->isLoggedIn)
 	}
 }
 
-// Not logged in so can't vote until done sox	
+// Not logged in so can't vote until done so
 else
 { ?>
 	<div class="Entry">
