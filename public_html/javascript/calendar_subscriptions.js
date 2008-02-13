@@ -13,6 +13,7 @@
 // [2] : Teams
 // [3] : subscribed (bool)
 // [4] : calendar subscribed (bool)
+// [5] : element
 
 var calsub_orgs = null;
 
@@ -56,23 +57,30 @@ function calsub_filter_orgs(input)
 			calendar = true;
 		}
 		for (var shortname in calsub_orgs) {
+			org = calsub_orgs[shortname];
 			var visibility = (undefined != force_visibility[shortname]);
 			var matched = false;
 			var match_subscription =
-				(member == null || member == calsub_orgs[shortname][3]) &&
-				(calendar == null || calendar == calsub_orgs[shortname][4]);
+				(member == null || member == org[3]) &&
+				(calendar == null || calendar == org[4]);
 			// No text = no filter
 			if (searchtext == '') {
 				visibility = match_subscription;
 				matched = match_subscription;
 			}
 			// Matching filter?
-			else if (calsub_orgs[shortname][0].toLowerCase().indexOf(searchtext) != -1) {
+			else if (org[0].toLowerCase().indexOf(searchtext) != -1) {
 				visibility = match_subscription;
 				matched = match_subscription;
 			}
 			// Highlight if matched
-			var cur_tr = document.getElementById('calsub_org_'+shortname);
+			if (!org[5]) {
+				org[5] = document.getElementById('calsub_org_'+shortname);
+			}
+			if (!org[5]) {
+				continue;
+			}
+			var cur_tr = org[5];
 			if (cur_tr) {
 				if (matched) {
 					CssRemove(cur_tr, 'unmatch');
@@ -82,19 +90,21 @@ function calsub_filter_orgs(input)
 			}
 			// Make all children visible
 			if (visibility) {
-				for (var index in calsub_orgs[shortname][2]) {
-					force_visibility[calsub_orgs[shortname][2][index]] = true;
+				for (var index in org[2]) {
+					force_visibility[org[2][index]] = true;
 				}
 			}
 			// Make parents visible also
 			var cur_shortname = shortname;
 			while (cur_shortname) {
 				if (visibility || cur_shortname == shortname) {
-					var tr = document.getElementById('calsub_org_'+cur_shortname);
-					if (tr) {
-						tr.style.display = (visibility ? '' : 'none');
+					if (cur_tr) {
+						cur_tr.style.display = (visibility ? '' : 'none');
 					}
 					cur_shortname = calsub_orgs[cur_shortname][1];
+					if (cur_shortname) {
+						cur_tr = calsub_orgs[cur_shortname][5];
+					}
 				} else {
 					break;
 				}

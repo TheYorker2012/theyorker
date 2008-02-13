@@ -17,18 +17,6 @@
  * @param $Path calendarPaths object
  */
 
-/// Format a javascript string.
-function jsString($string)
-{
-	return	'"'.
-			str_replace(
-				array('"',  '</'),
-				array('\"', '<"+"/'),
-				$string
-			).
-			'"';
-}
-
 /// Render rows in the subscriptions table for organisations.
 function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 {
@@ -40,7 +28,7 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 	);
 	foreach ($orgs as & $org) {
 		// Add a row for this org
-		echo('<tr id="calsub_org_'.htmlentities($org['shortname'], ENT_QUOTES, 'UTF-8').'">'."\n");
+		echo('<tr id="calsub_org_'.xml_escape($org['shortname']).'" name="'.xml_escape($org['shortname']).'">'."\n");
 		echo("\t".'<td>'.(isset($depth_indicator[$depth]) ? $depth_indicator[$depth] : '').'</td>'."\n");
 		{
 			echo("\t".'<td>');
@@ -53,7 +41,7 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 			}
 			echo('</td>'."\n");
 		}
-		echo("\t".'<td><img src="/images/'.($org['member'] ? 'icons/user.png' : 'icons/user_gray.png').'" title="'.($org['member'] ? 'You are a member of ' : 'You are not a member of ').htmlentities($org['name'], ENT_QUOTES, 'UTF-8').'" alt="'.($org['member'] ? 'Yes' : 'No').'" /></td>'."\n");
+		echo("\t".'<td><img src="/images/'.($org['member'] ? 'icons/user.png' : 'icons/user_gray.png').'" title="'.($org['member'] ? 'You are a member of ' : 'You are not a member of ').xml_escape($org['name']).'" alt="'.($org['member'] ? 'Yes' : 'No').'" /></td>'."\n");
 		{
 			echo("\t".'<td><a href="');
 			if ($org['calendar']) {
@@ -62,7 +50,7 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 				echo(site_url($Path->OrganisationSubscribe($org['shortname'], 'calendar')));
 			}
 			echo(get_instance()->uri->uri_string().'">');
-			echo('<img src="/images/'.($org['calendar'] ? 'icons/date.png' : 'prototype/news/declined.gif').'" title="'.($org['calendar'] ? 'Click to unsubscribe from ' : 'Click to subscribe to ').htmlentities($org['name'], ENT_QUOTES, 'UTF-8').'"  alt="('.($org['calendar'] ? 'yes' : 'no').')" />');
+			echo('<img src="/images/'.($org['calendar'] ? 'icons/date.png' : 'prototype/news/declined.gif').'" title="'.($org['calendar'] ? 'Click to unsubscribe from ' : 'Click to subscribe to ').xml_escape($org['name']).'"  alt="('.($org['calendar'] ? 'yes' : 'no').')" />');
 			echo('</a></td>'."\n");
 			echo('</tr>'."\n");
 		}
@@ -74,24 +62,26 @@ function addSubscriptionOrganisationRows(& $orgs, & $Path, $depth = 0)
 }
 
 /// Render data in the subscriptions table for javascript.
-function addSubscriptionOrganisationsJsData(& $orgs, $depth = 0, $parent = NULL)
+function addSubscriptionOrganisationsJsData(& $orgs, $depth = 0, $parent = NULL, $main_comma = '')
 {
 	foreach ($orgs as & $org) {
+		echo($main_comma);
+		$main_comma = ",\n";
 		// Add a hash element for this org
-		echo("\t".jsString($org['shortname']).' : [ '.jsString($org['name']).', '.
-				($parent !== NULL ? jsString($parent) : 'null').', '.
+		echo("\t".js_literalise($org['shortname']).' : [ '.js_literalise($org['name']).', '.
+				($parent !== NULL ? js_literalise($parent) : 'null').', '.
 				'[ ');
 		if (isset($org['teams'])) {
 			$comma = '';
 			foreach ($org['teams'] as & $team) {
-				echo($comma.jsString($team['shortname']));
+				echo($comma.js_literalise($team['shortname']));
 				$comma = ', ';
 			}
 		}
-		echo(' ], '.($org['member']?'true':'false').', '.($org['calendar']?'true':'false').' ],'."\n");
+		echo(' ], '.js_literalise($org['member']).', '.js_literalise($org['calendar']).' ]');
 		// Add rows for any child orgs
 		if (isset($org['teams'])) {
-			addSubscriptionOrganisationsJsData($org['teams'], $depth + 1, $org['shortname']);
+			addSubscriptionOrganisationsJsData($org['teams'], $depth + 1, $org['shortname'], $main_comma);
 		}
 	}
 }
