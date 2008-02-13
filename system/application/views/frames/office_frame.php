@@ -136,6 +136,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/admin/pages'>Page Properties</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/stats'>Statistics</a>
 		</div>		
 		<div class='officenavigation_item'>
 			<a href='/office/articletypes'>Article Types</a>
