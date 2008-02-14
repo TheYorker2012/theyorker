@@ -291,13 +291,6 @@ table.recur-cal.cal-text td a {
 	font-weight: bold;
 }
 
-table.recur-cal td.ev {
-	background-color: #FFF980;
-}
-table.recur-cal td.ev.we {
-	background-color: #EFE970;
-}
-
 table.recur-cal td.pa {
 	background-color: #EEEEEE;
 }
@@ -311,32 +304,39 @@ table.recur-cal td.pa.ev.we {
 	background-color: #CACACA;
 }
 
+table.recur-cal td.ev {
+	background-color: #FFF980;
+}
+table.recur-cal td.ev.we {
+	background-color: #EFE970;
+}
+
 table.recur-cal td.sel {
 	border: 1px solid #404040;
 	background-color: #20C1F0;
 }
-table.recur-cal td.sel.we {
+table.recur-cal td.we.sel {
 	background-color: #10B1E0;
 }
-table.recur-cal td.sel.ev {
+table.recur-cal td.ev.sel {
 	background-color: #38A0F0;
 }
-table.recur-cal td.sel.ev.we {
+table.recur-cal td.ev.we.sel {
 	background-color: #2890E0;
 }
 
 table.recur-cal td.exc,
-table.recur-cal td.exc.we,
-table.recur-cal td.exc.ev,
-table.recur-cal td.exc.ev.we
+table.recur-cal td.we.exc,
+table.recur-cal td.ev.exc,
+table.recur-cal td.ev.we.exc
 {					/*#FFFCBA*/
 	border: none;
 	background-color: #F0D1A0;
 }
 table.recur-cal.cal-text td.exc,
-table.recur-cal.cal-text td.exc.we,
-table.recur-cal.cal-text td.exc.ev,
-table.recur-cal.cal-text td.exc.ev.we
+table.recur-cal.cal-text td.we.exc,
+table.recur-cal.cal-text td.ev.exc,
+table.recur-cal.cal-text td.ev.we.exc
 {
 	text-decoration: line-through;
 }
@@ -345,13 +345,13 @@ table.recur-cal td.inc {
 	border: 1px solid #404040;
 	background-color: #40F190;
 }
-table.recur-cal td.inc.we {
+table.recur-cal td.we.inc {
 	background-color: #30E180;
 }
-table.recur-cal td.inc.ev {
+table.recur-cal td.ev.inc {
 	background-color: #58D090;
 }
-table.recur-cal td.inc.ev.we {
+table.recur-cal td.ev.we.inc {
 	background-color: #48C080;
 }
 
@@ -360,7 +360,7 @@ table.recur-cal td.sel.sta {
 	border: 2px solid #000000;
 	background-color: #FF6A00;
 }
-table.recur-cal td.sel.sta.ev {
+table.recur-cal td.ev.sel.sta {
 	background-color: #FF6A00;
 }
 
@@ -375,33 +375,33 @@ table.recur-cal td.exi {
 
 /* draft events */
 table.recur-cal td.dra,
-table.recur-cal td.dra.pa {
+table.recur-cal td.pa.dra {
 	background-color: #00F000;
 }
-table.recur-cal td.dra.ev,
-table.recur-cal td.dra.pa.ev,
-table.recur-cal td.dra.pa.we,
-table.recur-cal td.dra.we {
+table.recur-cal td.ev.dra,
+table.recur-cal td.pa.ev.dra,
+table.recur-cal td.pa.we.dra,
+table.recur-cal td.we.dra {
 	background-color: #00D000;
 }
-table.recur-cal td.dra.pa.we.ev,
-table.recur-cal td.dra.we.ev {
+table.recur-cal td.pa.ev.we.dra,
+table.recur-cal td.ev.we.dra {
 	background-color: #00B000;
 }
 
 /* published events */
 table.recur-cal td.pub,
-table.recur-cal td.pub.pa {
+table.recur-cal td.pa.pub {
 	background-color: #20C1F0;
 }
-table.recur-cal td.pub.ev,
-table.recur-cal td.pub.pa.ev,
-table.recur-cal td.pub.pa.we,
-table.recur-cal td.pub.we {
+table.recur-cal td.ev.pub,
+table.recur-cal td.pa.ev.pub,
+table.recur-cal td.pa.we.pub,
+table.recur-cal td.we.pub {
 	background-color: #10B1E0;
 }
-table.recur-cal td.pub.pa.we.ev,
-table.recur-cal td.pub.we.ev {
+table.recur-cal td.pa.ev.we.pub,
+table.recur-cal td.ev.we.pub {
 	background-color: #10A1D0;
 }
 
@@ -410,17 +410,17 @@ table.recur-cal td.can {
 	text-decoration: line-through;
 }
 table.recur-cal td.can,
-table.recur-cal td.can.pa {
+table.recur-cal td.pa.can {
 	background-color: #FF4040;
 }
-table.recur-cal td.can.ev,
-table.recur-cal td.can.pa.ev,
-table.recur-cal td.can.pa.we,
-table.recur-cal td.can.we {
+table.recur-cal td.ev.can,
+table.recur-cal td.pa.ev.can,
+table.recur-cal td.pa.we.can,
+table.recur-cal td.we.can {
 	background-color: #EE3838;
 }
-table.recur-cal td.can.pa.we.ev,
-table.recur-cal td.can.we.ev {
+table.recur-cal td.pa.ev.we.can,
+table.recur-cal td.ev.we.can {
 	background-color: #EE3030;
 }
 
