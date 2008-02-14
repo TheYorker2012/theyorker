@@ -1,5 +1,8 @@
 package xml_csi;
 
+use strict;
+use warnings;
+
 use test;
 
 use vars qw(@ISA);

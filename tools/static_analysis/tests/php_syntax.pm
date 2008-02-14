@@ -1,5 +1,8 @@
 package php_syntax;
 
+use strict;
+use warnings;
+
 use test;
 
 use vars qw(@ISA);
