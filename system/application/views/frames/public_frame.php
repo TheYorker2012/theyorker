@@ -122,7 +122,7 @@ if (isset($medium_type)) { ?>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
 					<li><a href="/howdoi/">How Do I</a></li>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<li><a href="/games/">Games Zone</a></li>
+					<li><a href="/games/">Game Zone</a></li>
 				</ul>
 				<?php /*
 				<ul>
