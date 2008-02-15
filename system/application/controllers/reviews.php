@@ -56,7 +56,7 @@ class Reviews extends Controller
 				$method = '_review';
 			}
 		}
-
+ 
 		call_user_func_array(array(&$this, $method), array_slice($this->uri->rsegment_array(), $param_start));
 	}
 
