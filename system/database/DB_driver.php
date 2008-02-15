@@ -522,7 +522,13 @@ class CI_DB_driver {
 		$segments = explode($this->bind_marker, $sql, $expected_segments);
 		
 		// Check for expected number of segments
-		assert('count($segments) == $expected_segments');
+		if (count($segments) != $expected_segments) {
+			$backtrace = debug_backtrace();
+			trigger_error('Wrong number of bind arguments supplied to query in function '.xml_escape($backtrace[2]['function']).' at:<br />'.
+				'File: '.xml_escape($backtrace[1]['file']).'<br />'.
+				'Line: '.xml_escape($backtrace[1]['line']),
+				E_USER_ERROR);
+		}
 		
 		// Its not the end of the world if there are too many bind values
 		if ($expected_segments > count($segments)) {
