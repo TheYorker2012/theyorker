@@ -399,7 +399,6 @@ function alterTime (amount) {
 			
 			new_event.style.top = (findPos(new_event)[1] - amount*HOUR_HEIGHT + change*(HOUR_HEIGHT/4)) + 'px';
 			updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
-// 			updateCreateBox(new_event);
 		}
 		drawCalendar();
 	}
