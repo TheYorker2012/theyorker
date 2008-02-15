@@ -430,6 +430,17 @@ class Reviews extends Controller
 				$data['main_revision']['deal'] = '';
 				$data['main_revision']['deal_expires'] = '';
 			}
+			//get reviews for areas for attention 
+			$temp_reviews = $this->review_model->GetOrgReviews($ContextType, $data['organisation']['id']);
+			if (is_array($temp_reviews)) {
+				foreach($temp_reviews as $review)
+				{
+					$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
+					$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
+					$temp['article']['id'] = $review['id'];
+					$data['reviews'][] = $temp;
+				}
+			}
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
 		}
