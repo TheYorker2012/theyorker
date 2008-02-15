@@ -527,7 +527,7 @@ $this->load->view('calendar/term_selector', array(
 				<input type="hidden" id="evad_end"   name="evad_end"   value="" />
 				
 				<label for="evad_summary">Summary</label>
-				<input id="evad_summary" name="evad_summary" type="text" value="" onchange="setCreateBoxSummary(this.value);" />
+				<input id="evad_summary" name="evad_summary" type="text" value="" onkeyup="setCreateBoxSummary(this.value);" />
 				
 				<label for="evad_category">Category</label>
 				<select id="evad_category" name="evad_category" onchange="setCreateBoxCategory(this.value);">
@@ -541,7 +541,7 @@ $this->load->view('calendar/term_selector', array(
 				</select>
 				
 				<label for="evad_location">Location</label>
-				<input id="evad_location" name="evad_location" type="text" value="" onchange="setCreateBoxLocation(this.value);" />
+				<input id="evad_location" name="evad_location" type="text" value="" onkeyup="setCreateBoxLocation(this.value);" />
 				
 				<input class="button" type="submit" name="evad_create" value="Create" />
 			</fieldset>

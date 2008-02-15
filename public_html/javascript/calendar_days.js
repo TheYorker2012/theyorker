@@ -17,7 +17,15 @@ function dateChange(date, milliseconds)
 	return new Date(Number(new_date) + (new_date.getTimezoneOffset()-date.getTimezoneOffset())*60000);
 }
 
-function drawCalendar () {
+function drawCalendar ()
+{
+	// Keep new_event
+	var new_event = document.getElementById('cal_new_event');
+	var new_event_parent;
+	if (new_event) {
+		new_event_parent = new_event.parentNode.id;
+	}
+	
 	// Reset event counters
 	for (var i=0;i<=(DAYS.length-1);i++) {
 		document.getElementById('cal_day_'+DAYS[i]+'_before').innerHTML = '';
@@ -145,7 +153,12 @@ function drawCalendar () {
 	}
 	
 	// current selection
-	removeCreateBox();
+	if (new_event) {
+		new_parent = document.getElementById(new_event_parent);
+		new_parent.appendChild(new_event);
+		new_event.style.left = findPos(new_parent)[0]+'px';
+		updateCreateBox(new_event);
+	}
 	
 	return false;
 }
@@ -372,6 +385,22 @@ function alterTime (amount) {
 	if (((START_HOUR+amount) >= MAX_START_HOUR) && ((END_HOUR+amount) <= MAX_END_HOUR)) {
 		START_HOUR = START_HOUR + amount;
 		END_HOUR = END_HOUR + amount;
+		// Adjust create box
+		var new_event = document.getElementById('cal_new_event');
+		if (new_event) {
+			change = 0;
+			if (CREATE_EVENT_START_TIME < START_HOUR*4) {
+				change = START_HOUR*4 - CREATE_EVENT_START_TIME;
+			} else if ((CREATE_EVENT_END_TIME+1) > (END_HOUR+1)*4) {
+				change = (END_HOUR+1)*4 - (CREATE_EVENT_END_TIME+1);
+			}
+			CREATE_EVENT_START_TIME += change;
+			CREATE_EVENT_END_TIME += change;
+			
+			new_event.style.top = (findPos(new_event)[1] - amount*HOUR_HEIGHT + change*(HOUR_HEIGHT/4)) + 'px';
+			updateNewEventTimes(CREATE_EVENT_START_TIME, CREATE_EVENT_END_TIME+1);
+// 			updateCreateBox(new_event);
+		}
 		drawCalendar();
 	}
 	return false;
@@ -673,8 +702,10 @@ function moveDay (day, event) {
 		document.getElementById('cal_new_event_times').focus();
 		
 	} else if (CREATE_EVENT_MOVE) {
-		var event_pos = findPos(new_event)[1];
-		var move_position = findMouse(event)[1] - event_pos;
+		var event_pos = findPos(new_event);
+		var mouse_pos = findMouse(event);
+		var move_day = mouse_pos[0] - event_pos[0];
+		var move_position = mouse_pos[1] - event_pos[1];
 		move_position -= CREATE_EVENT_MOVE_GRAB;
 		if (move_position > 0) {
 			move_position = Math.floor(move_position / (HOUR_HEIGHT/4));
