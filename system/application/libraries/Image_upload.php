@@ -118,6 +118,7 @@ class Image_upload {
 
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
+		$this->ci->main_frame->AddExtraHead($head);
 		$this->ci->main_frame->IncludeCss('stylesheets/cropper.css');
 		$this->ci->main_frame->IncludeJs('javascript/prototype.js');
 		$this->ci->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');
