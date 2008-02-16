@@ -66,13 +66,24 @@ sub runTest
 					$self->printError($file, $lineno, "Single quote tag attributes are not permitted (in tag $1)");
 # 					$self->printError($file, $lineno, "$line");
 				}
+				# Link to \ should be /
+				if ($line =~ /href="\\"/) {
+					$fail = 1;
+					my $message = "Link to '\\'";
+					if ($self->{autofix}) {
+						$modified = 1;
+						$line =~ s/href="\\"/href="\/"/g;
+						$message .= ". FIXED";
+					}
+					$self->printError($file, $lineno, $message);
+				}
 				# &apos; xml entity unknown to internet explorer.
 				if ($line =~ /&apos;/) {
 					$fail = 1;
-					$message = "&apos; entity is not known to Internet Explorer";
+					my $message = "&apos; entity is not known to Internet Explorer";
 					if ($self->{autofix}) {
 						$modified = 1;
-						$line =~ s/&apos;/&#039;/;
+						$line =~ s/&apos;/&#039;/g;
 						$message .= ". FIXED";
 					}
 					$self->printError($file, $lineno, $message);
