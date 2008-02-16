@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Quick Links</h2>
 	<div class="Entry">
-		<a href="\">Back To Home</a>
+		<a href="/">Back To Home</a>
 	</div>
 </div>
 
