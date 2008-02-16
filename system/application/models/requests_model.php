@@ -807,20 +807,17 @@ class Requests_Model extends Model
 				}
 			}
 
-			$sql = 'SELECT articles.article_id,
-					UNIX_TIMESTAMP(articles.article_created) AS article_created,
-					articles.article_request_title,
-					article_request_entity_id,
-
-					(SELECT business_card_name FROM business_cards, business_card_groups
-					WHERE business_card_user_entity_id = article_request_entity_id
-					AND business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
-					AND business_card_group_organisation_entity_id IS NULL ) AS business_card_name,
-
-					content_types.content_type_name
-
+			$sql = 'SELECT 
+						articles.article_id,
+						UNIX_TIMESTAMP(articles.article_created) AS article_created,
+						articles.article_request_title,
+						article_request_entity_id,
+						users.user_firstname,
+						users.user_surname,
+						content_types.content_type_name
 					FROM content_types, articles
-
+					LEFT JOIN users ON
+						articles.article_request_entity_id = users.user_entity_id
 					WHERE articles.article_suggestion_accepted = 0
 					AND content_types.content_type_id = articles.article_content_type_id
 					AND articles.article_live_content_id IS NULL
@@ -829,7 +826,7 @@ class Requests_Model extends Model
 					AND	(';
 			$sql .= implode(' OR ',$type_sql) . ')';
 			$query = $this->db->query($sql,$type_codenames);
-
+			
 			$result = array();
 			if ($query->num_rows() > 0)
 			{
@@ -840,13 +837,12 @@ class Requests_Model extends Model
 						'title'=>$row->article_request_title,
 						'box'=>$row->content_type_name,
 						'userid'=>$row->article_request_entity_id,
-						'username'=>$row->business_card_name,
+						'username'=>$row->user_firstname.' '.$row->user_firstname,
 						'created'=>$row->article_created
 						);
 					$result[] = $result_item;
 				}
 			}
-
 			return $result;
 		}
 		else
