@@ -9,6 +9,9 @@ use HTML::Entities;
 use Term::ANSIColor;
 use WebService::Validator::HTML::W3C;
 
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+
 use Result;
 use Message;
 
