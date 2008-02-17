@@ -60,6 +60,7 @@ class Reviewlist extends Controller
 		$data['list_text_tags'] = $this->pages_model->GetPropertyWikiText('list_text_tags');
 		$data['list_text_leagues'] = $this->pages_model->GetPropertyWikiText('list_text_leagues');
 		$data['list_text_photos'] = $this->pages_model->GetPropertyWikiText('list_text_photos');
+		$data['list_text_thumbnails'] = $this->pages_model->GetPropertyWikiText('list_text_thumbnails');
 		$data['content_type_codename'] = $content_type_codename;
 		
 		///////////////Get Sidebar data
@@ -78,7 +79,7 @@ class Reviewlist extends Controller
 		$data['tags_venues'] = $this->pr_model->GetWorstVenuesForTags($content_type_codename, 5);
 		$data['leagues_venues'] = $this->pr_model->GetWorstVenuesForLeagues($content_type_codename, 5);
 		$data['photos_venues'] = $this->pr_model->GetWorstVenuesForPhotos($content_type_codename, 5);
-		
+		$data['thumbnails_venues'] = $this->pr_model->GetVenuesWithoutThumbnails($content_type_codename,'small');//no limit, gets all
 		
 		// Set up the public frame to use the directory view
 		$this->main_frame->SetContentSimple('office/reviews/reviewlist_overview', $data);

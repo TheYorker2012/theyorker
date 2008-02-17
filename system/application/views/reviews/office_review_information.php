@@ -7,6 +7,9 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
+	<?php 
+	if (!empty($revisions)){
+	?>
 	<h4>Revisions</h4>
 	<div class="Entry">
 		<ol>
@@ -62,6 +65,9 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 		}
 		?>
 	</div>
+	<?php
+	}
+	?>
 	<h4>Assigned User</h4>
 	<div class="Entry">
 	<?php 
@@ -191,6 +197,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 					$n++;
 				}
 			?>
+			<i>Click To Select Stars</i>
 			<br />
 			<label for='reviewinfo_quote'>Summary Quote:</label>
 			<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo(xml_escape($main_revision['content_quote'])); ?></textarea>

@@ -72,7 +72,7 @@ class Pr_model extends Model {
 			) as number_of_tags,
 			
 			(
-			 SELECT MAX(article_publish_date)
+			 SELECT UNIX_TIMESTAMP(MAX(article_publish_date))
 			 FROM articles
 			 WHERE
 				articles.article_content_type_id = ?
@@ -144,7 +144,7 @@ class Pr_model extends Model {
 		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
 		INNER JOIN content_types ON 
 		review_contexts.review_context_content_type_id = content_types.content_type_id
-		INNER JOIN review_context_contents ON
+		LEFT JOIN review_context_contents ON
 		review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id 
 		LEFT JOIN users ON
 		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
@@ -167,7 +167,7 @@ class Pr_model extends Model {
 			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
 			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
 			(
-				SELECT MAX(article_publish_date)
+				SELECT UNIX_TIMESTAMP(MAX(article_publish_date))
 				FROM articles
 				WHERE articles.article_content_type_id = content_types.content_type_id
 				AND articles.article_organisation_entity_id = venue_id
@@ -189,7 +189,8 @@ class Pr_model extends Model {
 		review_contexts.review_context_content_type_id = content_types.content_type_id
 		LEFT JOIN users ON
 		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
-		WHERE content_types.content_type_codename=?  
+		WHERE content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 		
 		ORDER BY review_count ASC, date_of_last_review ASC, venue_name ASC LIMIT '.$limit;
 		$query = $this->db->query($sql, array($content_type_codename));
 		return $query->result_array();
@@ -219,7 +220,8 @@ class Pr_model extends Model {
 		review_contexts.review_context_content_type_id = content_types.content_type_id
 		LEFT JOIN users ON
 		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
-		WHERE content_types.content_type_codename=?  
+		WHERE content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 		
 		ORDER BY tags_count ASC, venue_name ASC LIMIT '.$limit;
 		$query = $this->db->query($sql, array($content_type_codename));
 		return $query->result_array();
@@ -250,12 +252,28 @@ class Pr_model extends Model {
 		review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id 
 		LEFT JOIN users ON
 		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
-		WHERE content_types.content_type_codename=?  
+		WHERE content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 		
 		ORDER BY leagues_count ASC, venue_rating DESC, venue_name ASC LIMIT '.$limit;
 		$query = $this->db->query($sql, array($content_type_codename));
 		return $query->result_array();
 	}
-	function GetWorstVenuesForPhotos($content_type_codename, $limit){
+	/*
+	* Warning reviews at the moment seems to be using a shared slideshow with the directory even though there is a slideshow table for reviews! Be warned this makes no sense!
+	*
+	* If at some point you want to convert to getting true review slideshows here is some code that might come in handy!
+			(
+				SELECT COUNT(*)
+				FROM review_context_slideshows
+				INNER JOIN photos ON
+				review_context_slideshows.review_context_slideshow_photo_id = photos.photo_id
+				WHERE review_context_slideshows.review_context_slideshow_content_type_id = content_types.content_type_id
+				AND review_context_slideshows.review_context_slideshow_organisation_entity_id = venue_id
+				
+			) as photo_count
+	*/
+	//This returns all venues with no thumbnails. This removes venues with no thumbnails AND no images, because a thumbnail cant be made for it untill it gets an image.
+	function GetVenuesWithoutThumbnails($content_type_codename,$thumbnail_size_codename='small'){
 		$sql = '
 		SELECT 
 			organisations.organisation_entity_id as venue_id,
@@ -264,10 +282,66 @@ class Pr_model extends Model {
 			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
 			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
 			(
-				SELECT MAX(photos.photo_timestamp)
+				SELECT COUNT(*)
+				FROM organisation_slideshows
+				INNER JOIN photos ON
+				organisation_slideshows.organisation_slideshow_photo_id = photos.photo_id
+				WHERE organisation_slideshows.organisation_slideshow_organisation_entity_id = venue_id
+			) as photo_count
+		FROM review_contexts 
+		INNER JOIN organisations ON
+			review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+		INNER JOIN content_types ON 
+			review_contexts.review_context_content_type_id = content_types.content_type_id
+		LEFT JOIN users ON
+			review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 
+		AND NOT EXISTS(
+				SELECT *
+				FROM organisation_slideshows
+				LEFT JOIN photo_thumbs ON
+					organisation_slideshows.organisation_slideshow_photo_id = photo_thumbs.photo_thumbs_photo_id
+				LEFT JOIN image_types ON
+					photo_thumbs.photo_thumbs_image_type_id = image_types.image_type_id
+				WHERE organisation_slideshows.organisation_slideshow_organisation_entity_id = organisation_entity_id
+				AND image_types.image_type_codename = ?
+				AND organisation_slideshows.organisation_slideshow_order = 
+				( 
+					SELECT MIN(os.organisation_slideshow_order)
+					FROM organisation_slideshows AS os
+					WHERE os.organisation_slideshow_organisation_entity_id = organisation_entity_id
+				)
+				LIMIT 1
+			)
+		ORDER BY photo_count DESC, venue_name ASC';
+		$query = $this->db->query($sql, array($content_type_codename,$thumbnail_size_codename));
+		$result = array();
+		if ($query->num_rows() > 0){
+			foreach ($query->result() as $row)
+			{
+				if($row->photo_count > 0){//Prune ones with no images, as a thumbnail cant be made if there is no image!
+					$result_item['venue_id'] = $row->venue_id;
+					$result_item['venue_shortname'] = $row->venue_shortname;
+					$result_item['venue_name'] = $row->venue_name;
+					$result_item['assigned_user_id'] = $row->assigned_user_id;
+					$result_item['assigned_user_name'] = $row->assigned_user_name;
+					$result_item['photo_count'] = $row->photo_count;
+					$result[] = $result_item;
+				}
+			}
+		}
+		return $result;
+	}
+	/*
+	* Warning reviews at the moment seems to be using a shared slideshow with the directory even though there is a slideshow table for reviews! Be warned this makes no sense!
+	*
+	* If at some point you want to convert to getting true review slideshows here is some code that might come in handy!
+			(
+				SELECT UNIX_TIMESTAMP(MAX(photos.photo_timestamp))
 				FROM review_context_slideshows
 				INNER JOIN photos ON
-				review_context_slideshows.review_context_slideshow_photo_id = photos.photo_id
+					review_context_slideshows.review_context_slideshow_photo_id = photos.photo_id
 				WHERE review_context_slideshows.review_context_slideshow_content_type_id = content_types.content_type_id
 				AND review_context_slideshows.review_context_slideshow_organisation_entity_id = venue_id
 			) as date_of_last_photo,
@@ -280,14 +354,38 @@ class Pr_model extends Model {
 				AND review_context_slideshows.review_context_slideshow_organisation_entity_id = venue_id
 				
 			) as photo_count
+	*/
+	function GetWorstVenuesForPhotos($content_type_codename, $limit){
+		$sql = '
+		SELECT 
+			organisations.organisation_entity_id as venue_id,
+			organisations.organisation_directory_entry_name as venue_shortname,
+			organisations.organisation_name as venue_name,
+			review_contexts.review_context_assigned_user_entity_id as assigned_user_id,
+			CONCAT(users.user_firstname, " ", users.user_surname) as assigned_user_name,
+			(
+				SELECT UNIX_TIMESTAMP(MAX(photos.photo_timestamp))
+				FROM organisation_slideshows
+				INNER JOIN photos ON
+					organisation_slideshows.organisation_slideshow_photo_id = photos.photo_id
+				WHERE organisation_slideshows.organisation_slideshow_organisation_entity_id = venue_id
+			) as date_of_last_photo,
+			(
+				SELECT COUNT(*)
+				FROM organisation_slideshows
+				INNER JOIN photos ON
+				organisation_slideshows.organisation_slideshow_photo_id = photos.photo_id
+				WHERE organisation_slideshows.organisation_slideshow_organisation_entity_id = venue_id
+			) as photo_count
 		FROM review_contexts 
 		INNER JOIN organisations ON
-		review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+			review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
 		INNER JOIN content_types ON 
-		review_contexts.review_context_content_type_id = content_types.content_type_id
+			review_contexts.review_context_content_type_id = content_types.content_type_id
 		LEFT JOIN users ON
-		review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
-		WHERE content_types.content_type_codename=?  
+			review_contexts.review_context_assigned_user_entity_id = users.user_entity_id
+		WHERE content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 
 		ORDER BY photo_count ASC, date_of_last_photo ASC, venue_name ASC LIMIT '.$limit;
 		$query = $this->db->query($sql, array($content_type_codename));
 		return $query->result_array();
@@ -305,6 +403,7 @@ class Pr_model extends Model {
 		INNER JOIN content_types ON 
 		review_contexts.review_context_content_type_id = content_types.content_type_id
 		WHERE review_contexts.review_context_assigned_user_entity_id=? AND content_types.content_type_codename=? 
+		AND review_contexts.review_context_deleted=0 
 		ORDER BY organisations.organisation_name ASC';
 		$query = $this->db->query($sql, array($user_id, $content_type_codename));
 		return $query->result_array();

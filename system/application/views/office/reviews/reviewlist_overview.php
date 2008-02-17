@@ -91,301 +91,372 @@
 	<?php if(!empty($information_venues)){ ?>
 	<h2>Information</h2>
 	<?php echo $list_text_information; ?>
-	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-			<tr style="background-color: #eee">
-				<th>
-					Name
-				</th>
-				<th align="center">
-					Blurb
-				</th>
-				<th align="center">
-					Rating
-				</th>
-				<th align="center">
-					Quote
-				</th>
-				<th align="center">
-					Av Price
-				</th>
-				<th align="center">
-					Rec Item
-				</th>
-				<th align="center">
-					Times
-				</th>
-				<th>
-					Assigned
-				</th>
-			</tr>
-		</thead>
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Blurb
+					</th>
+					<th>
+						Rating
+					</th>
+					<th>
+						Quote
+					</th>
+					<th>
+						Av Price
+					</th>
+					<th>
+						Rec Item
+					</th>
+					<th>
+						Times
+					</th>
+					<th>
+						Assigned
+					</th>
+				</tr>
+			</thead>
 <?php
-		foreach($information_venues as $venue) {
-			if($venue['assigned_user_id']==$this->user_auth->entityId){
-				echo('			<tr style="background-color: #CCFFFF">'."\n");
-			}else{
-				echo('			<tr>'."\n");
+			$count=0;
+			foreach($information_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
+				}
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/information">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_blurb'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_rating'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_quote'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_average_price'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_recommend_item'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				if(htmlspecialchars($venue['venue_has_serving_times'])){
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
 			}
-			echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/information">');
-			echo(htmlspecialchars($venue['venue_name']));
-			echo('</a></td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_blurb'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_rating'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_quote'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_average_price'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_recommend_item'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['venue_has_serving_times'])){
-				echo("<img src='/images/prototype/members/confirmed.png'>");
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td>');
-			echo htmlspecialchars($venue['assigned_user_name']);
-			echo('</td>'."\n");
-			echo('			</tr>'."\n");
-		}
-		?>
-	</table>
+			?>
+		</table>
+	</div>
 	<br />
 	<?php } ?>
 	<h2>Reviews</h2>
 	<?php echo $list_text_reviews; ?>
-	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-			<tr style="background-color: #eee">
-				<th>
-					Name
-				</th>
-				<th align="center">
-					Reviews
-				</th>
-				<th align="center">
-					Last Review Date
-				</th>
-				<th>
-					Assigned User
-				</th>
-			</tr>
-		</thead>
-		<?php
-		foreach($reviews_venues as $venue) {
-			if($venue['assigned_user_id']==$this->user_auth->entityId){
-				echo('			<tr style="background-color: #CCFFFF">'."\n");
-			}else{
-				echo('			<tr>'."\n");
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Reviews
+					</th>
+					<th>
+						Last Review
+					</th>
+					<th>
+						Assigned User
+					</th>
+				</tr>
+			</thead>
+			<?php
+			$count=0;
+			foreach($reviews_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
+				}
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/review">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td align="center">');
+				if(htmlspecialchars($venue['review_count'])>0){
+					echo htmlspecialchars($venue['review_count']);
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				if(!empty($venue['date_of_last_review'])){
+					echo htmlspecialchars(date("d/m/y",$venue['date_of_last_review']));
+				}else{
+					echo("&nbsp;");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
 			}
-			echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/review">');
-			echo(htmlspecialchars($venue['venue_name']));
-			echo('</a></td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['review_count'])>0){
-				echo htmlspecialchars($venue['review_count']);
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(!empty($venue['date_of_last_review'])){
-				echo htmlspecialchars($venue['date_of_last_review']);
-			}else{
-				echo("&nbsp;");
-			}
-			echo('</td>'."\n");
-			echo('				<td>');
-			echo htmlspecialchars($venue['assigned_user_name']);
-			echo('</td>'."\n");
-			echo('			</tr>'."\n");
-		}
-		?>
-	</table>
+			?>
+		</table>
+	</div>
 	<br />
 	<h2>Photos</h2>
 	<?php echo $list_text_photos; ?>
-	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-			<tr style="background-color: #eee">
-				<th>
-					Name
-				</th>
-				<th align="center">
-					Photos
-				</th>
-				<th align="center">
-					Last Photo Date
-				</th>
-				<th>
-					Assigned User
-				</th>
-			</tr>
-		</thead>
-		<?php
-		foreach($photos_venues as $venue) {
-			if($venue['assigned_user_id']==$this->user_auth->entityId){
-				echo('			<tr style="background-color: #CCFFFF">'."\n");
-			}else{
-				echo('			<tr>'."\n");
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Photos
+					</th>
+					<th>
+						Last Photo
+					</th>
+					<th>
+						Assigned User
+					</th>
+				</tr>
+			</thead>
+			<?php
+			$count=0;
+			foreach($photos_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
+				}
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/photos">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td align="center">');
+				if(htmlspecialchars($venue['photo_count'])>0){
+					echo htmlspecialchars($venue['photo_count']);
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				if(!empty($venue['date_of_last_photo'])){
+					echo htmlspecialchars(date("d/m/y",$venue['date_of_last_photo']));
+				}else{
+					echo("&nbsp;");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
 			}
-			echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/photos">');
-			echo(htmlspecialchars($venue['venue_name']));
-			echo('</a></td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['photo_count'])>0){
-				echo htmlspecialchars($venue['photo_count']);
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(!empty($venue['date_of_last_photo'])){
-				echo htmlspecialchars($venue['date_of_last_photo']);
-			}else{
-				echo("&nbsp;");
-			}
-			echo('</td>'."\n");
-			echo('				<td>');
-			echo htmlspecialchars($venue['assigned_user_name']);
-			echo('</td>'."\n");
-			echo('			</tr>'."\n");
-		}
-		?>
-	</table>
+			?>
+		</table>
+	</div>
 	<br />
+	<?php if(!empty($thumbnails_venues)){ ?>
+	<h2>Photo Thumbnails</h2>
+	<?php echo $list_text_thumbnails; ?>
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Photos
+					</th>
+					<th>
+						Thumbnail?
+					</th>
+					<th>
+						Assigned User
+					</th>
+				</tr>
+			</thead>
+			<?php
+			$count=0;
+			foreach($thumbnails_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
+				}
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/photos">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td align="center">');
+				if(htmlspecialchars($venue['photo_count'])>0){
+					echo htmlspecialchars($venue['photo_count']);
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td align="center"><img src="/images/prototype/members/no9.png"></td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
+			}
+			?>
+		</table>
+	</div>
+	<br />
+	<?php } ?>
 	<h2>Tags</h2>
 	<?php echo $list_text_tags; ?>
-	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-			<tr style="background-color: #eee">
-				<th>
-					Name
-				</th>
-				<th align="center">
-					Number Of Tags
-				</th>
-				<th>
-					Assigned User
-				</th>
-			</tr>
-		</thead>
-		<?php
-		foreach($tags_venues as $venue) {
-			if($venue['assigned_user_id']==$this->user_auth->entityId){
-				echo('			<tr style="background-color: #CCFFFF">'."\n");
-			}else{
-				echo('			<tr>'."\n");
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Number Of Tags
+					</th>
+					<th>
+						Assigned User
+					</th>
+				</tr>
+			</thead>
+			<?php
+			$count=0;
+			foreach($tags_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
+				}
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/tags">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td align="center">');
+				if(htmlspecialchars($venue['tags_count'])>0){
+					echo htmlspecialchars($venue['tags_count']);
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
 			}
-			echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/tags">');
-			echo(htmlspecialchars($venue['venue_name']));
-			echo('</a></td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['tags_count'])>0){
-				echo htmlspecialchars($venue['tags_count']);
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td>');
-			echo htmlspecialchars($venue['assigned_user_name']);
-			echo('</td>'."\n");
-			echo('			</tr>'."\n");
-		}
-		?>
-	</table>
+			?>
+		</table>
+	</div>
 	<br />
 	<h2>Leagues</h2>
 	<?php echo $list_text_leagues; ?>
-	<table style="border: 1px solid #ccc;" cellspacing="0" cellpadding="2">
-		<thead>
-			<tr style="background-color: #eee">
-				<th>
-					Name
-				</th>
-				<th align="center">
-					Leagues
-				</th>
-				<th align="center">
-					Star Rating
-				</th>
-				<th>
-					Assigned User
-				</th>
-			</tr>
-		</thead>
-		<?php
-		foreach($leagues_venues as $venue) {
-			if($venue['assigned_user_id']==$this->user_auth->entityId){
-				echo('			<tr style="background-color: #CCFFFF">'."\n");
-			}else{
-				echo('			<tr>'."\n");
-			}
-			echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/leagues">');
-			echo(htmlspecialchars($venue['venue_name']));
-			echo('</a></td>'."\n");
-			echo('				<td align="center">');
-			if(htmlspecialchars($venue['leagues_count'])>0){
-				echo htmlspecialchars($venue['leagues_count']);
-			}else{
-				echo("<img src='/images/prototype/members/no9.png'>");
-			}
-			echo('</td>'."\n");
-			echo('				<td align="center">');
-			if(!empty($venue['venue_rating'])){
-				$whole = floor($venue['venue_rating'] / 2);
-				$part = $venue['venue_rating'] % 2;
-				$empty = 5 - $whole - $part;
-				for($i=0;$i<$whole;$i++)
-				{
-					echo '<img src="/images/prototype/reviews/star.png" width="10" alt="*" title="*" />';
+	<div class="ArticleBox">
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Leagues
+					</th>
+					<th>
+						Star Rating
+					</th>
+					<th>
+						Assigned User
+					</th>
+				</tr>
+			</thead>
+			<?php
+			$count=0;
+			foreach($leagues_venues as $venue) {
+				$count++;
+				if($venue['assigned_user_id']==$this->user_auth->entityId){
+					echo('			<tr class="tr'.(($count%2)+1).'" style="background-color: #CCFFFF">'."\n");
+				}else{
+					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
-				if ($part == 1)
-				{
-					echo '<img src="/images/prototype/reviews/halfstar.png" width="10" alt="-" title="-" />';
+				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/leagues">');
+				echo(htmlspecialchars($venue['venue_name']));
+				echo('</a></td>'."\n");
+				echo('				<td align="center">');
+				if(htmlspecialchars($venue['leagues_count'])>0){
+					echo htmlspecialchars($venue['leagues_count']);
+				}else{
+					echo("<img src='/images/prototype/members/no9.png'>");
 				}
-				for($i=0;$i<$empty;$i++)
-				{
-					echo '<img src="/images/prototype/reviews/emptystar.png" width="10" alt=" " title=" " />';
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				if(!empty($venue['venue_rating'])){
+					$whole = floor($venue['venue_rating'] / 2);
+					$part = $venue['venue_rating'] % 2;
+					$empty = 5 - $whole - $part;
+					for($i=0;$i<$whole;$i++)
+					{
+						echo '<img src="/images/prototype/reviews/star.png" width="10" alt="*" title="*" />';
+					}
+					if ($part == 1)
+					{
+						echo '<img src="/images/prototype/reviews/halfstar.png" width="10" alt="-" title="-" />';
+					}
+					for($i=0;$i<$empty;$i++)
+					{
+						echo '<img src="/images/prototype/reviews/emptystar.png" width="10" alt=" " title=" " />';
+					}
+				}else{
+					echo("&nbsp;");
 				}
-			}else{
-				echo("&nbsp;");
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo htmlspecialchars($venue['assigned_user_name']);
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
 			}
-			echo('</td>'."\n");
-			echo('				<td>');
-			echo htmlspecialchars($venue['assigned_user_name']);
-			echo('</td>'."\n");
-			echo('			</tr>'."\n");
-		}
-		?>
-	</table>
+			?>
+		</table>
+	</div>
 </div>
