@@ -41,7 +41,7 @@ class Shop extends Controller {
 	
 	function view($category_id)
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('student')) return;
 		
 		$this->pages_model->SetPageCode('shop');
 		
@@ -82,7 +82,20 @@ class Shop extends Controller {
 	
 	function item($item_id)
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('student')) return;
+		
+		$data['basket'] = $this->_getbasket();
+		
+		if (isset($_POST['r_submit_add']))
+		{
+			$this->messages->AddDumpMessage('post', $_POST);
+			$this->shop_model->AddToBasket(
+				$data['basket']['id'], 
+				$_POST['r_item_id'], 
+				$_POST['a_customisation'], 
+				$_POST['a_quantity']
+				);
+		}
 		
 		$this->pages_model->SetPageCode('shop_item');
 		
@@ -107,6 +120,10 @@ class Shop extends Controller {
 		foreach ($data['item']['customisations'] as &$customisation)
 		{
 			$customisation['options'] = $this->shop_model->GetItemCustomisationOptions($customisation['id']);
+			foreach ($customisation['options'] as &$option)
+			{
+				$option['price_string'] = '&pound;'.number_format($option['price'], 2);
+			}
 		}
 				
 		// Set up the public frame
@@ -117,7 +134,7 @@ class Shop extends Controller {
 	
 	function testing()
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('student')) return;
 		
 		$this->pages_model->SetPageCode('shop_testing');
 		
@@ -135,6 +152,18 @@ class Shop extends Controller {
 		$this->main_frame->SetContentSimple('shop/testing', $data);
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
+	}
+	
+	function _getbasket()
+	{
+		$data['id'] = $this->shop_model->HasCurrentBasket($this->user_auth->entityId);
+		if ($data['id'] == false)
+		{
+			$data['id'] = $this->shop_model->CreateEmptyBasket($this->user_auth->entityId);
+		}
+		$data['items'] = $this->shop_model->GetItemsInBasket($data['id']);
+		
+		return $data;
 	}
 }
 ?>

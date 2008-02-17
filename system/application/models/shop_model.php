@@ -156,5 +156,135 @@ class Shop_model extends Model
 		$query = $this->db->query($sql,array($item_customisation_id));
 		return $query->result_array();
 	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function HasCurrentBasket($user_id)
+	{
+		$sql = 'SELECT	shop_order_id as id
+				FROM	shop_orders
+				WHERE	shop_order_user_entity_id = ?
+				AND		shop_order_google_checkout_order_id IS NULL
+				AND		shop_order_deleted = 0';
+		$query = $this->db->query($sql,array($user_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			return $row->id;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function CreateEmptyBasket($user_id)
+	{
+		$sql = 'INSERT INTO shop_orders (
+					shop_order_user_entity_id,
+					shop_order_price,
+					shop_order_google_checkout_order_id,
+					shop_order_deleted
+				)
+				VALUES (?, 0, NULL, 0)';
+		$this->db->query($sql,array($user_id));
+		return $this->db->insert_id();;
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function GetBasketItems($item_customisation_id)
+	{
+		$sql = 'SELECT	shop_item_customisation_option_id as id,
+						shop_item_customisation_option_name as name,
+						shop_item_customisation_option_price as price
+				FROM	shop_item_customisation_options
+				WHERE	shop_item_customisation_option_deleted = 0
+				AND		shop_item_customisation_option_shop_item_customisation_id = ?
+				ORDER BY shop_item_customisation_option_order ASC';
+		$query = $this->db->query($sql,array($item_customisation_id));
+		return $query->result_array();
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function AddToBasket($basket_id, $item_id, $customisations, $quantity)
+	{
+		$this->db->trans_start();
+		$sql = 'INSERT INTO shop_order_items (
+					shop_order_item_shop_order_id,
+					shop_order_item_shop_item_id,
+					shop_order_item_quantity,
+					shop_order_item_deleted
+				)
+				VALUES (?, ?, ?, 0)';
+		$this->db->query($sql,array($basket_id, $item_id, $quantity));
+		$shop_order_item_id = $this->db->insert_id();
+		foreach($customisations as $customisation_id => $customisation_option_id)
+		{
+			$sql = 'INSERT INTO shop_order_item_customisations (
+						shop_order_item_customisation_shop_order_item_id,
+						shop_order_item_customisation_shop_item_customisation_id,
+						shop_order_item_customisation_shop_item_customisation_option_id
+					)
+					VALUES (?, ?, ?)';
+			$this->db->query($sql,array($shop_order_item_id, $customisation_id, $customisation_option_id));
+		}
+		$this->db->trans_complete();
+		return true;
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function GetItemsInBasket($basket_id)
+	{
+		$sql = 'SELECT	shop_order_item_id as order_item_id,
+						shop_order_item_shop_item_id as item_id,
+						shop_order_item_quantity as quantity,
+						shop_order_item_id as basket_item_id
+				FROM	shop_order_items
+				WHERE	shop_order_item_shop_order_id = ?
+				AND		shop_order_item_deleted = 0';
+		$query = $this->db->query($sql,array($basket_id));
+		$basket_items = $query->result_array();
+		foreach($basket_items as &$basket_item)
+		{
+			$sql = 'SELECT	shop_order_item_customisation_id as order_item_cust_id,
+							shop_order_item_customisation_shop_item_customisation_id as customisation_id,
+							shop_order_item_customisation_shop_item_customisation_option_id as customisation_option_id
+					FROM	shop_order_item_customisations
+					WHERE	shop_order_item_customisation_shop_order_item_id = ?';
+			$query2 = $this->db->query($sql,array($basket_item['order_item_id']));
+			$basket_item['customisations'] = $query2->result_array();
+		}
+		return $basket_items;
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function GeneratePasscode($item_customisation_id)
+	{
+		return 'RI45SDFS3D';
+	}
 
 }
