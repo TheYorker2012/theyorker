@@ -22,9 +22,9 @@ class Shop extends Controller {
 	{
 		if (!CheckPermissions('public')) return;
 		
-		$this->pages_model->SetPageCode('shop');
+		$data['basket'] = $this->_getbasket();
 		
-		$data = array();
+		$this->pages_model->SetPageCode('shop');
 		
 		$data['categories'] = $this->shop_model->GetCategoryListing();
 				
@@ -43,9 +43,9 @@ class Shop extends Controller {
 	{
 		if (!CheckPermissions('student')) return;
 		
-		$this->pages_model->SetPageCode('shop');
+		$data['basket'] = $this->_getbasket();
 		
-		$data = array();
+		$this->pages_model->SetPageCode('shop');
 		
 		$data['items'] = $this->shop_model->GetCategoryItemListing($category_id);
 		$data['category'] = $this->shop_model->GetCategoryInformation($category_id);
@@ -95,6 +95,7 @@ class Shop extends Controller {
 				$_POST['a_customisation'], 
 				$_POST['a_quantity']
 				);
+			$data['basket'] = $this->_getbasket();
 		}
 		
 		$this->pages_model->SetPageCode('shop_item');
@@ -170,12 +171,24 @@ class Shop extends Controller {
 	
 	function _getbasket()
 	{
-		$data['id'] = $this->shop_model->HasCurrentBasket($this->user_auth->entityId);
+		$data = $this->shop_model->HasCurrentBasket($this->user_auth->entityId);
 		if ($data['id'] == false)
 		{
 			$data['id'] = $this->shop_model->CreateEmptyBasket($this->user_auth->entityId);
+			$data['price'] = 0;
 		}
+		$data['price_string'] = '&pound;'.number_format($data['price'], 2);
 		$data['items'] = $this->shop_model->GetItemsInBasket($data['id']);
+		foreach ($data['items'] as &$basket_item)
+		{
+			$cust_array = array();
+			foreach ($basket_item['customisations'] as $basket_item_cust)
+			{
+				$cust_array[] = $basket_item_cust['option_name'];
+			}
+			$basket_item['price_string'] = '&pound;'.number_format($basket_item['price'], 2);
+			$basket_item['cust_string'] = implode(', ', $cust_array);
+		}
 		
 		return $data;
 	}

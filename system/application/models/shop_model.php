@@ -164,7 +164,8 @@ class Shop_model extends Model
 	*/
 	function HasCurrentBasket($user_id)
 	{
-		$sql = 'SELECT	shop_order_id as id
+		$sql = 'SELECT	shop_order_id as id,
+						shop_order_price as price
 				FROM	shop_orders
 				WHERE	shop_order_user_entity_id = ?
 				AND		shop_order_google_checkout_order_id IS NULL
@@ -172,8 +173,7 @@ class Shop_model extends Model
 		$query = $this->db->query($sql,array($user_id));
 		if ($query->num_rows() == 1)
 		{
-			$row = $query->row();
-			return $row->id;
+			return $query->row_array();
 		}
 		else
 		{
@@ -258,8 +258,12 @@ class Shop_model extends Model
 		$sql = 'SELECT	shop_order_item_id as order_item_id,
 						shop_order_item_shop_item_id as item_id,
 						shop_order_item_quantity as quantity,
-						shop_order_item_id as basket_item_id
+						shop_order_item_id as basket_item_id,
+						shop_item_name as item_name,
+						shop_order_item_price as price
 				FROM	shop_order_items
+				JOIN	shop_items
+				ON		shop_item_id = shop_order_item_shop_item_id
 				WHERE	shop_order_item_shop_order_id = ?
 				AND		shop_order_item_deleted = 0';
 		$query = $this->db->query($sql, array($basket_id));
@@ -268,8 +272,11 @@ class Shop_model extends Model
 		{
 			$sql = 'SELECT	shop_order_item_customisation_id as order_item_cust_id,
 							shop_order_item_customisation_shop_item_customisation_id as customisation_id,
-							shop_order_item_customisation_shop_item_customisation_option_id as customisation_option_id
+							shop_order_item_customisation_shop_item_customisation_option_id as customisation_option_id,
+							shop_item_customisation_option_name as option_name
 					FROM	shop_order_item_customisations
+					JOIN	shop_item_customisation_options
+					ON		shop_item_customisation_option_id = shop_order_item_customisation_shop_item_customisation_option_id
 					WHERE	shop_order_item_customisation_shop_order_item_id = ?';
 			$query2 = $this->db->query($sql, array($basket_item['order_item_id']));
 			$basket_item['customisations'] = $query2->result_array();

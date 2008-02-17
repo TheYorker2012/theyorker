@@ -6,17 +6,18 @@
 		<a href="/shop/checkout/">Checkout</a>
 	</div>
 	<h2 class="first">
-		Current Basket (&pound;43.50)
+		Current Basket (<?php echo($basket['price_string']); ?>)
 	</h2>
+<?php
+	foreach ($basket['items'] as $basket_item)
+	{
+?>
 	<div class="Entry">
-		2 x Christmas Club D - Adult (&pound;4.50)
+		<?php echo($basket_item['quantity']); ?> x <?php echo($basket_item['item_name']); ?> - <?php echo($basket_item['cust_string']); ?> (<?php echo($basket_item['price_string']); ?>)
 	</div>
-	<div class="Entry">
-		1 x  Yorker Hoodie - M, Custom Name (&pound;20.00)
-	</div>
-	<div class="Entry">
-		1 x  Yorker Hoodie - XL (&pound;19.00)
-	</div>
+<?php
+	}
+?>
 </div>
 <div id="MainColumn">
 	<div id="HomeBanner">
@@ -104,11 +105,11 @@
 	</div>
 
 <?php
-/*
+
 	echo('<div class="BlueBox"><pre>');
 	print_r($data);
 	echo('</pre></div>');
-*/
+
 ?>
 
 </div>
