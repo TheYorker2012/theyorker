@@ -40,7 +40,7 @@
 	<?php echo($section_games_edit_page_info_text); ?>
 </div>
 <div id="MainColumn">
-	<form name="edit_game_form" id="edit_game_form" action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post" class="form" >
+	<form id="edit_game_form" action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post" class="form" >
 		<div class="BlueBox">
 			&nbsp;
 			<fieldset>

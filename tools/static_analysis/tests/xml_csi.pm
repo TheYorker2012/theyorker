@@ -78,9 +78,10 @@ sub runTest
 					$self->printError($file, $lineno, $message);
 				}
 				# Form with name attribute
-				if ($line =~ /<form(\s+\w+=("[^"]*"|'[^']*'))*\s+name=/) {
+				if ($line =~ /<form(?:\s+\w+=(?:"[^"]*"|'[^']*'))*\s+name=(?:"([^"]*)"|'([^']*)')/) {
 					$fail = 1;
-					$self->printError($file, $lineno, "there is no attribute \"name\" in the form tag");
+					my $value = defined($1) ? $1 : $2;
+					$self->printError($file, $lineno, "there is no attribute \"name\" in the form tag (value given: '$value')");
 				}
 				# &apos; xml entity unknown to internet explorer.
 				if ($line =~ /&apos;/) {

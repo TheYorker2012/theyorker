@@ -1,6 +1,6 @@
 <div class="RightToolbar">
 	<h4>Actions</h4>
-	<form class="form" method="post" name="clearform" action="<?=site_url('office/gallery')?>">
+	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<ul>
 			<input type="hidden" name="clear" value="clear" />

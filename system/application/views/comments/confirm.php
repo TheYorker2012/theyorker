@@ -23,7 +23,7 @@
 		$Culprit->Load();
 	?>
 	<div class="BlueBox">
-		<form class="form" method="post" action="<?php echo($Target); ?>" name="comment_confirm">
+		<form class="form" method="post" action="<?php echo($Target); ?>">
 			<fieldset>
 				<input class="button" type="submit" name="comment_confirm_cancel" value="Cancel" />
 				<input class="button" type="submit" name="comment_confirm_confirm" value="<?php echo($Action); ?>" />

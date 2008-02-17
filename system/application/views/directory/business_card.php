@@ -60,7 +60,7 @@ if ($business_card['image_id'] != NULL) {
 		<?php
 		if (isset($editmode) && $editmode) {
 		?>
-			<form name='member' method='post' action='<?php echo vip_url('directory/contacts/deletecard/'.$business_card['id']); ?>' class='form'>
+			<form method='post' action='<?php echo vip_url('directory/contacts/deletecard/'.$business_card['id']); ?>' class='form'>
 			<fieldset>
 				<?php
 				if($business_card['approved']){

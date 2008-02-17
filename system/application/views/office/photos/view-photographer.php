@@ -19,7 +19,7 @@
 		</ul>
 	</div>
 
-	<form name='edit_request' id='edit_request' action='/office/photos/view/ID' method='post' class='form'>
+	<form id='edit_request' action='/office/photos/view/ID' method='post' class='form'>
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>

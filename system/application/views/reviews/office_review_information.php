@@ -73,7 +73,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 		}
 		echo $assigned_user_editor;
 		?>
-		<form name='assign_user' action='/office/reviews/<?php echo xml_escape($organisation['shortname'].'/'.$context_type.'/information/assign'); ?>' method='POST' class='form'>
+		<form action='/office/reviews/<?php echo xml_escape($organisation['shortname'].'/'.$context_type.'/information/assign'); ?>' method='POST' class='form'>
 			<fieldset>
 			<label for="assign_reporter">Reviewer:</label>
 			<select name="assign_reporter" size="1">
@@ -111,7 +111,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 </div>
 
 <div id="MainColumn">
-	<form id='reviewinfo' name='reviewinfo' action='/office/reviews/<?php echo xml_escape($organisation['shortname']); ?>/<?php echo xml_escape($context_type); ?>' method='POST' class='form'>
+	<form id='reviewinfo' action='/office/reviews/<?php echo xml_escape($organisation['shortname']); ?>/<?php echo xml_escape($context_type); ?>' method='POST' class='form'>
 	<div class='BlueBox'>
 		<h2>objective blurb</h2>
 		<fieldset>

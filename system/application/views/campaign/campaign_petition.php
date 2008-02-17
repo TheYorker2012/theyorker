@@ -14,7 +14,7 @@ if ($user != FALSE) {
 		echo($sidebar_sign['new_text']);
 		echo("\n");
 ?>
-		<form name="sign" action="/campaign/signpetition" method="post">
+		<form action="/campaign/signpetition" method="post">
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
 				<input type="password" name="a_password" />
@@ -34,7 +34,7 @@ if ($user != FALSE) {
 		echo($sidebar_sign['withdraw_text']);
 		echo("\n");
 ?>
-		<form name="sign" action="/campaign/withdrawsignature" method="post">
+		<form action="/campaign/withdrawsignature" method="post">
 			<fieldset>
 				<input type="hidden" name="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
 			</fieldset>

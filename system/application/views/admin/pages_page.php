@@ -27,7 +27,7 @@ $property_types = array(
 <?php if ($show_details) { ?>
 	<div class="blue_box">
 		<h2>Page Details</h2>
-		<form name="page_form" action="<?php echo($target); ?>" method="POST" class="form">
+		<form action="<?php echo($target); ?>" method="POST" class="form">
 			<fieldset>
 				<label for="codename">Codename:</label>
 				<input name="codename" size="35" value=<?php
@@ -83,7 +83,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 
 <div class="blue_box">
 	<h2>Page Properties</h2>
-	<form name="property_edit_form" action="<?php echo($target); ?>" method="POST" class="form">
+	<form action="<?php echo($target); ?>" method="POST" class="form">
 		<fieldset>
 			<?php
 			foreach ($properties as $property) {

@@ -7,7 +7,7 @@
 <div class='blue_box'>
 	<h2>edit quote</h2>
 	<div name='quote_details_form' id='quote_details_form'>
-		<form name='quote_form' action='/office/quotes/update/<?php echo($quote->quote_id); ?>' method='POST' class='form'>
+		<form action='/office/quotes/update/<?php echo($quote->quote_id); ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='quote_text'>Quote:</label>
 				<textarea id='quote_text' name='quote_text' cols="30" rows="6"><?php echo(xml_escape($quote->quote_text)); ?></textarea>
