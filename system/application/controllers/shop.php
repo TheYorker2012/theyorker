@@ -138,7 +138,7 @@ class Shop extends Controller {
 
 		$data = array();
 		
-		$data['items'] = array('one', 'two', 'three');
+		$data['basket'] = $this->_getbasket();
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/checkout', $data);

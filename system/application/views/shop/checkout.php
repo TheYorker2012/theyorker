@@ -9,11 +9,7 @@
 	<div id="HomeBanner">
 	</div>
 	<div class="BlueBox">
-		<h2>Current Basket</h2>
-	</div>
-	<div>
-	<?php foreach ($items as $item) { ?>
-		<p><?php echo $item ?></p>
-	<?php } ?>
+		<h2>Your Basket</h2>
+		<?php print_r($basket); ?>
 	</div>
 </div>
