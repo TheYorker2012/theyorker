@@ -14,7 +14,7 @@
 		foreach ($game_array as $game_id=>$game)
 		{
 			echo('	<tr id="row_'.$game_id.'" class="tr'.$alternate.'">
-					<td width="14px">');
+					<td style="width:14px">');
 			if ($is_editor)
 			{echo('
 				<a

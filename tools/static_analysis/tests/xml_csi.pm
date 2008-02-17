@@ -20,6 +20,12 @@ sub new
 	return $self;
 }
 
+# Commonly used illegal attributes.
+my @illegalAttributes = (
+	[	'form',	'name'	],
+	[	'td',	'width|height'	],
+);
+
 # Help information
 sub printInformation
 {
@@ -77,11 +83,16 @@ sub runTest
 					}
 					$self->printError($file, $lineno, $message);
 				}
-				# Form with name attribute
-				if ($line =~ /<form(?:\s+\w+=(?:"[^"]*"|'[^']*'))*\s+name=(?:"([^"]*)"|'([^']*)')/) {
-					$fail = 1;
-					my $value = defined($1) ? $1 : $2;
-					$self->printError($file, $lineno, "there is no attribute \"name\" in the form tag (value given: '$value')");
+				# Illegal attributes
+				foreach my $illegalInfo (@illegalAttributes) {
+					my ($tag, $attr) = @$illegalInfo;
+					if ($line =~ /<($tag)(?:\s+\w+=(?:"[^"]*"|'[^']*'))*\s+($attr)=(?:"([^"]*)"|'([^']*)')/) {
+						my $tag = $1;
+						my $attr = $2;
+						$fail = 1;
+						my $value = defined($3) ? $3 : $4;
+						$self->printError($file, $lineno, "there is no attribute \"$attr\" in the \"$tag\" tag (value given: '$value')");
+					}
 				}
 				# &apos; xml entity unknown to internet explorer.
 				if ($line =~ /&apos;/) {

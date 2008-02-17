@@ -106,7 +106,7 @@ if (!empty($league_data)){
 			sortbylist.options[index].selected = true;
 			}
 		}
-	// ]]></=sortbylist.options.length;index++){>
+	// ]]>
 	</script>
 	<div class="BlueBox">
 		<table border="0" width="97%">
@@ -156,9 +156,9 @@ if (!empty($league_data)){
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><a href="<?php echo(xml_escape($entry['review_table_link'])); ?>"><?php echo(xml_escape($entry['review_title'])); ?></a></strong></font>
+						<big><strong><a href="<?php echo(xml_escape($entry['review_table_link'])); ?>"><?php echo(xml_escape($entry['review_title'])); ?></a></strong></big>
 					</td>
-					<td width="126" align="center">
+					<td style="width:126px" align="center">
 						<?php
 						$whole = floor($entry['review_rating'] / 2);
 						$part = $entry['review_rating'] % 2;
@@ -185,10 +185,10 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="20%" valign="top">
+					<td style="width:20%" valign="top">
 						<?php echo($entry['review_image']); ?>
 					</td>
-					<td width="80%" valign="top">
+					<td style="width:80%" valign="top">
 						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
@@ -198,7 +198,7 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="100%" valign="top">
+					<td style="width:100%" valign="top">
 						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>

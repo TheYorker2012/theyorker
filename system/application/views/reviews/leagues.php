@@ -65,7 +65,7 @@ if (!empty($league_data)){
 						<br />
 						<span style="color: #999999; font-size: 0.9em;" >&nbsp;&nbsp;<a href="<?php echo(xml_escape($entry['review_website'])); ?>">Website</a><!-- | <a href="#">Map</a>--></span>
 					</td>
-					<td width="126" align="center">
+					<td style="width:126" align="center">
 						<?php
 						$whole = floor($entry['review_rating'] / 2); 
 						$part = $entry['review_rating'] % 2;
@@ -99,10 +99,10 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="20%" valign="top">
+					<td style="width:20%" valign="top">
 						<img style="padding-left: 3px; padding-right: 6px;" src="<?php echo(xml_escape($entry['slideshow'][1]['location'])); ?>" width="144" height="116" alt="singer" title="singer" />
 					</td>
-					<td width="80%" valign="top">
+					<td style="width:80%" valign="top">
 						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
@@ -112,7 +112,7 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="100%" valign="top">
+					<td style="width:100%" valign="top">
 						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
@@ -129,13 +129,13 @@ if (!empty($league_data)){
 							/*
 							foreach($entry['tagbox'] as $tag => $values )
 							{
-								echo('<td width="25% valign="top">');
+								echo('<td style="width:25% valign="top">');
 								echo('<strong>'.$tag.':</strong><br />');
 								echo(implode(' / ', $values).'</td>');
 							}*/
 							foreach($entry['alltags']['tag_group_names'] as $tag_group)
 							{
-								echo('<td width="25% valign="top">');
+								echo('<td style="width:25% valign="top">');
 								echo('<strong>'.xml_escape($tag_group).':</strong><br />');
 								if (isset($entry['tags'][$tag_group]))
 								{

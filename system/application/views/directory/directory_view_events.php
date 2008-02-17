@@ -2,7 +2,7 @@
 <div class="BlueBox">
 	<table>
 		<tr>
-			<td align="center" width="150" valign="top">
+			<td align="center" style="width:150" valign="top">
 				<?php $content['week_select']->Load(); ?>
 			</td>
 			<td align="center" valign="top">
