@@ -63,7 +63,7 @@ $CI = & get_instance();
 	<div class="BlueBox">
 		<?php if (NULL !== $Event) { ?>
 			<h2><?php echo(xml_escape($Event->Name)); ?></h2>
-			<div><p>
+			<div>
 				<?php
 				if (NULL !== $Occurrence) {
 					// date + time
