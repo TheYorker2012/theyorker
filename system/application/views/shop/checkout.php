@@ -11,12 +11,13 @@
 	<div class="BlueBox">
 		<h2>Your Basket</h2>
 		<form method="POST"
-			action="https://checkout.google.com/api/checkout/v2/checkoutForm/Merchant/642636134744714"
+			action="https://sandbox.google.com/checkout/cws/v2/Merchant/642636134744714/checkout"
 			accept-charset="utf-8">
 			<input type="hidden" name="_charset_"/>
 			<?php foreach ($basket['items'] as $i => $item) { ?>
-				<input type="hidden" name="item_name_<?php echo($i); ?>" value="<?php echo($item['details']['name']); ?>"/>
-				<input type="hidden" name="item_description_<?php echo($i); ?>" value="<?php echo($item['details']['description']); ?>"/>
+				<?php $i += 1; /* Google Checkout used 1-based indexing */ ?>
+				<input type="hidden" name="item_name_<?php echo($i); ?>" value="<?php echo(xml_escape($item['details']['name'])); ?>"/>
+				<input type="hidden" name="item_description_<?php echo($i); ?>" value="<?php echo(xml_escape($item['details']['description'])); ?>"/>
 				<input type="hidden" name="item_quantity_<?php echo($i); ?>" value="<?php echo($item['quantity']); ?>"/>
 				<input type="hidden" name="item_price_<?php echo($i); ?>" value="3.99"/>
 				<input type="hidden" name="item_currency_<?php echo($i); ?>" value="GBP"/>
