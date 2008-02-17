@@ -6,12 +6,14 @@
 </div>
 
 <div id="MainColumn">
+	<div id="HomeBanner">
+	</div>
 	<div class="BlueBox">
 		<h2>Current Basket</h2>
 	</div>
 	<div>
 	<?php foreach ($items as $item) { ?>
-		<p><?php echo xml_escape($item) ?></p>
+		<p><?php echo $item ?></p>
 	<?php } ?>
 	</div>
 </div>
