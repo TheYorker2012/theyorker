@@ -14,7 +14,7 @@
 $CI = & get_instance();
 
 ?>
-<div id="ev_15" class="cal_event cal_event_nojs<?php
+<div class="cal_event cal_event_nojs<?php
 	$cat = $Occurrence->Event->Category;
 	if (array_key_exists($cat, $Categories)) {
 		echo(" cal_category_$cat");
