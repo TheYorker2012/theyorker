@@ -1,7 +1,7 @@
 <script type="text/javascript">
 function changeYear () {
 	var newyear = document.getElementById('year_change');
-	window.location = "/about/people/<?php echo($selected_team); ?>/" + newyear.options[newyear.selectedIndex].value + "/";
+	window.location = "/about/theteam/<?php echo($selected_team); ?>/" + newyear.options[newyear.selectedIndex].value + "/";
 }
 </script>
 
@@ -27,7 +27,7 @@ function changeYear () {
 	echo('		<li>'."\n");
 	if ($team['business_card_group_id'] == $selected_team)
 		echo('			<b>'."\n");
-	echo('			<a href="/about/people/' . $team['business_card_group_id'] . '/' . $selected_year . '/">'."\n");
+	echo('			<a href="/about/theteam/' . $team['business_card_group_id'] . '/' . $selected_year . '/">'."\n");
 	echo('				' . $team['business_card_group_name'] . "\n");
 	echo('			</a>'."\n");
 	echo('			(' . $team['business_card_group_count'] . ' ' . (($team['business_card_group_count'] == 1) ? 'person' : 'people') . ')'."\n");

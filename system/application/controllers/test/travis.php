@@ -103,10 +103,10 @@ class Travis extends Controller {
 
 			if ($position == 'bottom') {
 				imagefilledrectangle($img, 0, $img_size[1] - 12, $img_size[0], $img_size[1], $water_mark_bg);
-				imagettftext($img, 8, 0, 5, $img_size[1] - 2, $black, $font, html_entity_decode($caption, ENT_QUOTES, 'UTF-8'));
+				imagettftext($img, 8, 0, 5, $img_size[1] - 2, $black, $font, html_entity_decode($caption));
 			} else {
 				imagefilledrectangle($img, $img_size[0] - 12, 0, $img_size[0], $img_size[1], $water_mark_bg);
-				imagettftext($img, 8, 90, $img_size[0] - 2, $img_size[1] - 5, $black, $font, html_entity_decode($caption, ENT_QUOTES, 'UTF-8'));
+				imagettftext($img, 8, 90, $img_size[0] - 2, $img_size[1] - 5, $black, $font, html_entity_decode($caption));
 			}
 
 		} else {

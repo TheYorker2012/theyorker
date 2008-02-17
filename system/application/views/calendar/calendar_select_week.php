@@ -23,7 +23,7 @@ input:
 <table width="150">
 
 	<tr>
-		<td align="center" height="40" valign="middle">
+		<td align="center" style="height:40" valign="middle">
 			<a href="<?php echo $links['prev_term']; ?>">&lt;&lt;</a>
 			<?php
 				if (!empty($links['this_term']))

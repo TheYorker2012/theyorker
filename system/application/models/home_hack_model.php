@@ -163,37 +163,4 @@ class Home_Hack_Model extends Model {
 		return $query->result_array();
 	}
 
-	/**
-	 *	@brief	Get latest comments across all articles
-	 *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
-	 */
-	function getLatestComments ()
-	{
-		$sql = 'SELECT	comments.comment_id,
-						comments.comment_anonymous,
-						users.user_firstname,
-						users.user_surname,
-						articles.article_id,
-						content_types.content_type_codename,
-						article_contents.article_content_heading
-				FROM	articles,
-						comments,
-						users,
-						article_contents,
-						content_types
-				WHERE	comments.comment_deleted = 0
-				AND		comments.comment_comment_thread_id = articles.article_public_comment_thread_id
-				AND		articles.article_publish_date < CURRENT_TIMESTAMP
-				AND		articles.article_pulled = 0
-				AND		articles.article_deleted = 0
-				AND		articles.article_live_content_id IS NOT NULL
-				AND		articles.article_live_content_id = article_contents.article_content_id
-				AND		articles.article_content_type_id = content_types.content_type_id
-				AND		comments.comment_author_entity_id = users.user_entity_id
-				ORDER BY comments.comment_post_time DESC
-				LIMIT	0, 10';
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
 }

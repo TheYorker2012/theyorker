@@ -365,12 +365,12 @@ $CI = & get_instance();
 ?>				<input type="hidden" id="<?php echo('eved_success_redirect'); ?>" name="<?php echo('eved_success_redirect'); ?>" value="on" /><?php
 				} ?>
 				<?php if (isset($ExtraFormData)) foreach ($ExtraFormData as $key => $value) {
-?>				<input type="hidden" id="<?php echo('eved_'.$key); ?>" name="<?php echo('eved_'.$key); ?>" value="<?php echo(htmlentities($value, ENT_QUOTES, 'utf-8')); ?>" />
+?>				<input type="hidden" id="<?php echo('eved_'.$key); ?>" name="<?php echo('eved_'.$key); ?>" value="<?php echo(xml_escape($value)); ?>" />
 				<?php } ?>
 				<h2>event</h2>
 				<fieldset>
 					<label for="eved_summary">Summary</label>
-					<input type="text" id="eved_summary" name="eved_summary" value="<?php echo(htmlentities($EventInfo['summary'], ENT_QUOTES, 'utf-8')); ?>" />
+					<input type="text" id="eved_summary" name="eved_summary" value="<?php echo(xml_escape($EventInfo['summary'])); ?>" />
 					
 					<label for="eved_category">Category</label>
 					<select id="eved_category" name="eved_category">
@@ -384,10 +384,10 @@ $CI = & get_instance();
 					</select>
 					
 					<label for="eved_location">Location</label>
-					<input type="text" id="eved_location" name="eved_location" value="<?php echo(htmlentities($EventInfo['location'], ENT_QUOTES, 'utf-8')); ?>" />
+					<input type="text" id="eved_location" name="eved_location" value="<?php echo(xml_escape($EventInfo['location'])); ?>" />
 					
 					<label for="eved_description">Description</label>
-					<textarea rows="10" cols="20" id="eved_description" name="eved_description"><?php echo(htmlentities($EventInfo['description'], ENT_QUOTES, 'utf-8')); ?></textarea>
+					<textarea rows="10" cols="20" id="eved_description" name="eved_description"><?php echo(xml_escape($EventInfo['description'])); ?></textarea>
 					
 				</fieldset>
 			</div>

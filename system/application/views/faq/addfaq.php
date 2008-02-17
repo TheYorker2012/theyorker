@@ -1,4 +1,4 @@
-<form name='' id='' action='' method='post' class='form'>
+<form id='' action='' method='post' class='form'>
   <fieldset>
     <legend>Add Faq</legend>
     <label for='q_question'>Question:</label>

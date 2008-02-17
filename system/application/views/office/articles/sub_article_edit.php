@@ -1,20 +1,20 @@
 <div id="RightColumn">
 	<h2 class="first">Information</h2>
 	<div class="Entry">
-		<?php echo $page_information; ?>
+		<?php echo($page_information); ?>
 	</div>
 	<h2>Current Image</h2>
-	<div class="Entry" align='center'>
+	<div class="Entry" style="text-align:center">
 		<p>
-			<?php echo $image; ?>
+			<?php echo($image); ?>
 		</p>
 	</div>
 	<h2>Image Options</h2>
 	<div class="Entry">
 		<ul>
-			<li><a href="/office/articletypes/changeimage/<?php echo $article_type_form['article_type_id']; ?>">Change/Add Image</a></li>
+			<li><a href="/office/articletypes/changeimage/<?php echo($article_type_form['article_type_id']); ?>">Change/Add Image</a></li>
 			<?php if($has_image){?>
-			<li><a href="/office/articletypes/deleteimage/<?php echo $article_type_form['article_type_id'];
+			<li><a href="/office/articletypes/deleteimage/<?php echo($article_type_form['article_type_id']);
 			?>" onclick="return(confirm ('Are you sure you want to remove this image?'));" >Delete Image</a></li>
 			<?php } ?>
 		</ul>
@@ -23,13 +23,15 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>edit subtype</h2>
-		<form method="post" action="/office/articletypes/edit/<?php echo $article_type_form['article_type_id']; ?>">
+		<form method="post" action="/office/articletypes/edit/<?php echo($article_type_form['article_type_id']); ?>">
 			<fieldset>
 				<label for="article_type_name">Name:</label>
-				<input type="text" name="article_type_name" value="
-				<?php if(!empty($article_type_form['article_type_name'])){echo $article_type_form['article_type_name'];} ?>
-				" />
-				<input type="hidden" name="article_type_id" value="<?php echo $article_type_form['article_type_id']; ?>">
+				<input type="text" name="article_type_name"
+					value="<?php
+					if (!empty($article_type_form['article_type_name'])) {
+						echo(xml_escape($article_type_form['article_type_name']));
+					} ?>" />
+				<input type="hidden" name="article_type_id" value="<?php echo($article_type_form['article_type_id']); ?>">
 				<label for="article_type_parent">Parent Type:</label>
 				<select name="article_type_parent">
 				<?php
@@ -39,25 +41,25 @@
 					<?php if(!empty($article_type_form['article_type_parent']))
 							{
 								if ($main_article['id']==$article_type_form['article_type_parent'])
-								{echo 'selected="selected"';}
+								{echo('selected="selected"');}
 							}
 						?>
 						>
-						<?php echo $main_article['name'] ?></option>
+						<?php echo(xml_escape($main_article['name'])); ?></option>
 					<?php
 				}
 				?>
 				</select>
 				<label for="article_type_archive">Archive:</label>
 				<input type="checkbox" name="article_type_archive" value="1" 
-				<?php if(empty($article_type_form) || !empty($article_type_form['article_type_archive'])){echo 'checked';} ?>
+				<?php if(empty($article_type_form) || !empty($article_type_form['article_type_archive'])){echo('checked="checked"');} ?>
 				/>
 				<label for="article_type_shelved">Shelved:</label>
 				<input type="checkbox" name="article_type_shelved" value="1" 
-				<?php if(!empty($article_type_form['article_type_shelved']) && $article_type_form['article_type_shelved']==1){echo 'checked';} ?>
+				<?php if(!empty($article_type_form['article_type_shelved']) && $article_type_form['article_type_shelved']==1){echo('checked="checked"');} ?>
 				/>
 				<label for="article_type_blurb">Blurb:</label>
-				<textarea name="article_type_blurb" cols="26" rows="4"><?php if(!empty($article_type_form['article_type_blurb'])){echo $article_type_form['article_type_blurb'];} ?></textarea>
+				<textarea name="article_type_blurb" cols="26" rows="4"><?php if(!empty($article_type_form['article_type_blurb'])){echo(xml_escape($article_type_form['article_type_blurb']));} ?></textarea>
 			</fieldset>
 
 			<fieldset>

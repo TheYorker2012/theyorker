@@ -1,14 +1,14 @@
 <div class="RightToolbar">
 	<h4>Actions</h4>
-	<form class="form" method="post" name="clearform" action="<?=site_url('office/gallery')?>">
+	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<ul>
 			<input type="hidden" name="clear" value="clear" />
 			<li><a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a></li>
 			<li><a href="<?=site_url('office')?>">Return to the Office</a></li>
 			<?php if($this->uri->segment(4)) {
-				echo '<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>';
-				echo '<li><a href="'.site_url('office/gallery/return').'">Select this Photo</a></li>';
+				echo('<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>');
+				echo('<li><a href="'.site_url('office/gallery/return').'">Select this Photo</a></li>');
 			}?>
 			<li><a href="javascript:document.clearform.submit()">Start a new Search</a></li>
 		</div>
@@ -35,15 +35,15 @@
 			<select name="tag">
 				<option value="null" selected></option>
 				<?php if ($tags->num_rows() > 0) foreach($tags->result() as $tag):?>
-				<option value="<?php echo $tag->tag_id?>"><?php echo $tag->tag_name?></option>
+				<option value="<?php echo $tag->tag_id; ?>"><?php echo(xml_escape($tag->tag_name)); ?></option>
 				<?php endforeach;?>
 			</select><br /><br />
 			Show only photographers:<br />
 			<select name="photographer">
 				<option value="null" selected></option>
-				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person):?>
-				<option value="<?php echo $person->user_entity_id?>"><?php echo $person->user_firstname?> <?php echo $person->user_surname?></option>
-				<?php endforeach;?>
+				<?php if ($photographer->num_rows() > 0) foreach($photographer->result() as $person) { ?>
+				<option value="<?php echo($person->user_entity_id); ?>"><?php echo(xml_escape($person->user_firstname.' '.$person->user_surname)); ?></option>
+				<?php }?>
 			</select><br /><br />
 			</fieldset>
 		</div>
@@ -53,6 +53,6 @@
 		// Load a subview.
 		$content[0]->Load();
 
-		echo $pageNumbers;
+		echo($pageNumbers);
 	?>
 </div>

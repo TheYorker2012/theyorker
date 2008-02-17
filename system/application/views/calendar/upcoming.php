@@ -48,11 +48,11 @@ foreach ($special_names as $date => $name) {
 	$div_id = 'upcoming_'.$lowername;
 
 	echo('<div id="'.$div_id.'"'.($default ? '' : ' style="display: none"').'>');
-	echo('<ul id="SideTabBar">');
+	echo('<ul class="SideTabBar">');
 	foreach ($special_names as $date1 => $name1) {
 		$lowername1 = strtolower($name1);
 		$div_id1 = 'upcoming_'.$lowername1;
-		echo('<li onClick="');
+		echo('<li onclick="');
 		foreach ($special_names as $date2 => $name2) {
 			$lowername2 = strtolower($name2);
 			$div_id2 = 'upcoming_'.$lowername2;
@@ -86,11 +86,11 @@ foreach ($special_names as $date => $name) {
 				if ($time_associative) {
 					echo($occurrence->StartTime->Format('H:i'));
 				}
-				echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
+				echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" alt="&gt;" /></td><td>');
 				echo('<span><a href="' . site_url($Path->OccurrenceInfo($occurrence)) . $CI->uri->uri_string().'">'.
-					htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8').'</a></span>');
+					xml_escape($occurrence->Event->Name).'</a></span>');
 				if (!empty($occurrence->LocationDescription)) {
-					echo(' ('.htmlentities($occurrence->LocationDescription, ENT_QUOTES, 'utf-8').')');
+					echo(' ('.xml_escape($occurrence->LocationDescription).')');
 				}
 				echo('</td></tr>');
 			}

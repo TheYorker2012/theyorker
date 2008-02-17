@@ -15,12 +15,12 @@
 	<?php foreach($articlelist as $article) { ?>
 
 	<tr>
-	<td><?php echo $article['publish_date']; ?></td>
-	<td><?php echo ($article['is_live'] ? 'Live' : 'Waiting'); ?></td>
-	<td><a href="/office/news/<?php echo $article['article_id']; ?>/" title="Edit this article"><?php echo $article['headline']; ?></a></td>
-	<td><?php echo $article['authors']; ?></td>
-	<td><?php echo $article['content_type_name']; ?></td>
-	<td><?php echo $article['updated_date']; ?></td>
+	<td><?php echo($article['publish_date']); ?></td>
+	<td><?php echo(($article['is_live'] ? 'Live' : 'Waiting')); ?></td>
+	<td><a href="/office/news/<?php echo($article['article_id']); ?>/" title="Edit this article"><?php echo(xml_escape($article['headline'])); ?></a></td>
+	<td><?php echo(xml_escape($article['authors'])); ?></td>
+	<td><?php echo(xml_escape($article['content_type_name'])); ?></td>
+	<td><?php echo($article['updated_date']); ?></td>
 	</tr>
 
 	<?php } ?>

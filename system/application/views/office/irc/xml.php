@@ -25,7 +25,7 @@ function write_xml($subtags, $label = NULL)
 		$attributes = '';
 		if (is_array($subtags) && isset($subtags['_attr']) && is_array($subtags['_attr'])) {
 			foreach ($subtags['_attr'] as $attribute => $value) {
-				$attributes .= " $attribute=\"".htmlentities($value, ENT_QUOTES, 'UTF-8').'"';
+				$attributes .= " $attribute=\"".xml_escape($value).'"';
 			}
 		}
 		echo('<'.$label.$attributes.'>');
@@ -45,7 +45,7 @@ function write_xml($subtags, $label = NULL)
 			write_xml($content, $tag);
 		}
 	} else {
-		echo(htmlentities($subtags, ENT_QUOTES, 'utf-8'));
+		echo(xml_escape($subtags));
 	}
 	if (NULL !== $label) {
 		echo('</'.$label.'>');
@@ -61,7 +61,7 @@ function write_xml($subtags, $label = NULL)
 	}
 	if (isset($Messages) && is_array($Messages)) {
 		foreach ($Messages as $message) {
-			echo('<msg type="'.htmlentities($message['type']).'"');
+			echo('<msg type="'.xml_escape($message['type']).'"');
 			if (isset($message['highlight'])) {
 				echo(' highlight="1"');
 			}

@@ -1,5 +1,8 @@
 package js_warnings;
 
+use strict;
+use warnings;
+
 use test;
 
 use vars qw(@ISA);
@@ -32,10 +35,37 @@ sub runTest
 		my $fail = 0;
 		if (open($fildes, "<$file")) {
 			my $lineno = 1;
+			my $in_comment = 0;
 			while (my $line = <$fildes>) {
 				if ($line =~ /<\?/) {
 					$fail = 1;
 					$self->printError($file, $lineno, "Warning: PHP tags found in non PHP file");
+				}
+				
+				my $temp_line = $line;
+				$temp_line =~ s/\/\*(?:\*[^\/]|[^\*])*\*\///g;
+				$temp_line =~ s/'*(?:\\'|[^'])*'//g;
+				$temp_line =~ s/"*(?:\\"|[^"])*"//g;
+				$temp_line =~ s/\/\/.*$//g;
+				# Comment ending in this line
+				if ($in_comment && $temp_line =~/^(?:\*[^\/]|[^\*])*\*\//) {
+					$in_comment = 0;
+					$temp_line =~ s/^(?:\*[^\/]|[^\*])*\*\///;
+				}
+				# Comment to the end of the line
+				elsif (!$in_comment && $temp_line =~/\/\*(?:\*[^\/]|[^\*])*$/) {
+					$in_comment = 1;
+					$temp_line =~ s/\/\*(?:\*[^\/]|[^\*])*$//;
+				}
+				elsif ($in_comment) {
+					$temp_line = '';
+				}
+				if ($temp_line =~ /\W(class)\W/) {
+					if (defined $1) {
+						$fail = 1;
+						$self->printError($file, $lineno, "Warning: class is a reserved word in ecmascript and may cause it to fail in IE");
+						$self->printError($file, $lineno, "line: $line");
+					}
 				}
 				
 				++$lineno;

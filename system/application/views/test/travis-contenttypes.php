@@ -1,4 +1,4 @@
-	<form name="add_type" id="add_type" action="/test/travis/addtype/" method="post">
+	<form id="add_type" action="/test/travis/addtype/" method="post">
 		<div class="blue_box">
 			<fieldset>
 				<label for="c_name">Content type name:</label>

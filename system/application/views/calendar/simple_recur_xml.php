@@ -11,7 +11,7 @@ header('content-type: text/xml');
 ?><<?php ?>?xml version="1.0" encoding="UTF-8"?><?php
 ?><recur_validation valid="1"><?php
 	foreach ($Errors as $error) {
-		echo('<error field="'.$error['field'].'">'.htmlentities($error['text'], ENT_QUOTES, 'UTF-8').'</error>'."");
+		echo('<error field="'.$error['field'].'">'.xml_escape($error['text']).'</error>'."");
 	}
 	$start_Ymd = date('Ymd', $Start);
 	foreach ($Results as $date => $recurrences) {

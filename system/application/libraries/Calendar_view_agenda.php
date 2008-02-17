@@ -23,14 +23,11 @@ class CalendarViewAgenda extends CalendarView
 		
 		$this->SetData('MiniMode', FALSE);
 		
-		$extra_head = <<<EXTRAHEAD
-			<script src="/javascript/prototype.js" type="text/javascript"></script>
-			<script src="/javascript/scriptaculous.js" type="text/javascript"></script>
-			<script src="/javascript/calendar.js" type="text/javascript"></script>
-			<link href="/stylesheets/calendar.css" rel="stylesheet" type="text/css" />
-EXTRAHEAD;
 		$CI = & get_instance();
-		$CI->main_frame->SetExtraHead($extra_head);
+		$CI->main_frame->IncludeJs('javascript/prototype.js');
+		$CI->main_frame->IncludeJs('javascript/scriptaculous.js');
+		$CI->main_frame->IncludeJs('javascript/calendar.js');
+		$CI->main_frame->IncludeCss('stylesheets/calendar.css');
 	}
 	
 	/// Whether to use mini mode.

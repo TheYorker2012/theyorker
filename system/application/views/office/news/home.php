@@ -31,24 +31,27 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 	} else {
 		foreach ($data as $row) {
 			if ($row['title'] == '') {
-				$row['title'] = '<i>no title</i>';
+				$row['title'] = 'no title';
+				$row['title_xml'] = '<i>'.$row['title'].'</i>';
+			} else {
+				$row['title_xml'] = '<i>'.xml_escape($row['title']).'</i>';
 			}
 			echo('					<tr ');
 			if ($RowStyle) {
 				echo('class="tr2"');
 			}
 			echo('>'."\n");
-			echo('						<td><a href="/office/news/' . $row['id'] . '/"><img src="/images/prototype/news/article-small.gif" alt="Article Request" title="Article Request" /> ' . $row['title'] . '</a></td>'."\n");
+			echo('						<td><a href="/office/news/' . $row['id'] . '/"><img src="/images/prototype/news/article-small.gif" alt="Article Request" title="Article Request" /> ' . $row['title_xml'] . '</a></td>'."\n");
 			if ($parent_type) {
-				echo('						<td>' . $row['box'] . '</td>'."\n");
+				echo('						<td>' . xml_escape($row['box']) . '</td>'."\n");
 			}
 			if ($suggestion) {
-				echo('						<td>' . $row['suggester'] . '</td>'."\n");
+				echo('						<td>' . xml_escape($row['suggester']) . '</td>'."\n");
 				echo('						<td style="text-align:right;">' . date('d/m/y @ H:i', $row['created']) . '</td>'."\n");
 			} else {
 				echo('						<td>');
 				foreach ($row['reporters'] as $reporter) {
-					echo('<img src="/images/prototype/news/person.gif" alt="Reporter" title="Reporter" /> ' . $reporter['name'] . '<br />');
+					echo('<img src="/images/prototype/news/person.gif" alt="Reporter" title="Reporter" /> ' . xml_escape($reporter['name']) . '<br />');
 				}
 				echo('</td>'."\n");
 				echo('						<td>');
@@ -73,10 +76,10 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 ?>
 
 <div class="RightToolbar">
-	<h4><?php echo $tasks_heading; ?></h4>
+	<h4><?php echo(xml_escape($tasks_heading)); ?></h4>
 	<div class="Entry">
 		<ul>
-			<li><a href="/office/news/request"><?php echo $tasks['request']; ?></a></li>
+			<li><a href="/office/news/request"><?php echo(xml_escape($tasks['request'])); ?></a></li>
 			<li><a href="/office/news/create">Create New Article</a></li>
 		</ul>
 	</div>
@@ -84,9 +87,7 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 
 	<div class="blue_box">
 		<h2>from the editor</h2>
-		<p>
-			<?php echo $main_text; ?>
-		</p>
+		<?php echo($main_text); ?>
 	</div>
 
 	<div class="BlueBox" style="width:auto">

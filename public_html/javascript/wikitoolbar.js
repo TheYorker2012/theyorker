@@ -68,15 +68,60 @@ function insertYouTube(textarea) {
 		alert('URL Invalid! Please enter a valid YouTube url.');
 		return false;
 	}
-	
+
 	//Get the v string from the url
 	var ytClipId = ytURL.substring(ytURL.indexOf('v=')+2,ytURL.length);
-	
+
 	//Strip out any other parameters if there are any
 	if (ytClipId.indexOf('&')!=-1) ytClipId = ytClipId.substring(0,ytClipId.indexOf('&'));
-	
+
 	//Insert the string into the textarea
 	insertTags('\n\n[[youtube:' + ytClipId + ']]\n\n', '', '', textarea);
+}
+
+function insertMediaPlayer(textarea) {
+	var input = document.getElementById(textarea);
+	var prompt = document.createElement('div');
+	prompt.id = 'mp_prompt';
+	prompt.style.position = 'fixed';
+	prompt.style.top = input.offsetTop + 'px';
+	prompt.style.left = input.offsetLeft + 'px';
+	prompt.style.height = input.offsetHeight + 'px';
+	prompt.style.width = input.offsetWidth + 'px';
+	prompt.style.border = '1px #999 solid';
+	prompt.style.backgroundColor = '#fff';
+	prompt.style.textAlign = 'center';
+	var loader = document.createElement('img');
+	loader.src = '/images/prototype/prefs/loading.gif';
+	prompt.appendChild(loader);
+	prompt.appendChild(document.createTextNode(' Finding all available media files...'));
+	document.getElementById('toolbar').appendChild(prompt);
+	xajax__getMediaFiles();
+}
+
+function insertMediaPlayerOptions (opt) {
+	var prompt = document.getElementById('mp_prompt');
+	prompt.innerHTML = '';
+	prompt.style.textAlign = 'left';
+	for (var opt_index = 0; opt_index < opt.length; opt_index++) {
+		var file_option = document.createElement('div');
+		var file_image = document.createElement('img');
+		file_image.src = '/images/icons/music.png';
+		var file_link = document.createElement('a');
+		file_link.style.cursor = 'pointer';
+		eval("file_link.onclick = function () { insertMediaPlayerLink('content', '" + opt[opt_index][1] + "'); return false; }");
+		file_link.appendChild(document.createTextNode(' ' + opt[opt_index][0]));
+		file_option.appendChild(file_image);
+		file_option.appendChild(file_link);
+		prompt.appendChild(file_option);
+	}
+}
+
+function insertMediaPlayerLink (textarea, file) {
+	//Insert the string into the textarea
+	insertTags('\n\n[[media:' + file + ']]\n\n', '', '', textarea);
+	// Hide media player prompt
+	document.getElementById('toolbar').removeChild(document.getElementById('mp_prompt'));
 }
 
 function mwSetupToolbar(toolbar, textarea, extrabuttons) {
@@ -90,6 +135,7 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	addButton(mwEditButtons,'/images/icons/button_extlink.png','External link (remember http:// prefix)','[',']','http://www.example.com title of link','mw-editbutton-extlink');
 	addButton(mwEditButtons,'/images/icons/button_quote.png','Pull quote','\n"""','""" quote author\n','Quote text.','mw-editbutton-pullquote');
 	addFunction(mwEditButtons,'/images/icons/button_youtube.gif','YouTube Video', insertYouTube ,'mw-editbutton-youtube');
+	addFunction(mwEditButtons,'/images/icons/button_media.png','Media Player', insertMediaPlayer,'mw-editbutton-mediaplayer');
 	addButton(mwEditButtons,'/images/icons/button_headline.png','Heading','\n=== ',' ===\n','Heading text','mw-editbutton-heading');
 
 	if(extrabuttons) {

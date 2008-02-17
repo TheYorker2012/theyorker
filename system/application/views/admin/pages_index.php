@@ -22,7 +22,7 @@
 <?php } ?>
 <p><?php
 foreach ($custom as $page) {
-	$escaped_codename = htmlentities($page['codename'],ENT_QUOTES,'utf-8');
+	$escaped_codename = xml_escape($page['codename']);
 	echo('<a href="/pages/'.$escaped_codename.'">');
 	echo($escaped_codename);
 	echo('</a>');
@@ -50,7 +50,7 @@ foreach ($custom as $page) {
 
 <p><?php
 foreach ($pages as $page) {
-	$escaped_codename = htmlentities($page['codename'],ENT_QUOTES,'utf-8');
+	$escaped_codename = xml_escape($page['codename']);
 	echo($escaped_codename);
 	echo(' (');
 	echo('<a href="/admin/pages/page/edit/'.$escaped_codename.'">');

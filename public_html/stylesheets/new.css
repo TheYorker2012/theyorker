@@ -303,8 +303,9 @@ div#RightColumn fieldset.inline input {
 }
 
 div#RightColumn input.button {
-	width: 30%;
+	width: 35%;
 	float: right;
+	margin-left: 0.5em;
 }
 
 div#RightColumn input.checkbox {
@@ -314,6 +315,7 @@ div#RightColumn input.checkbox {
 div#RightColumn fieldset.inline input.button {
 	float: none;
 	width: 30%;
+	margin: 0;
 }
 
 div#RightColumn div.Entry {
@@ -432,7 +434,7 @@ ul#Navbar li a:hover {
  * CSS used in tab strip on the sidebar of the homepage        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ul#SideTabBar {
+ul.SideTabBar {
 	width: 100%;
 	display: block;
 	text-align: right;
@@ -443,7 +445,7 @@ ul#SideTabBar {
 	font-size: 0.8em;
 }
 
-ul#SideTabBar li {
+ul.SideTabBar li {
 	float: right;
 	text-align: center;
 	margin-right: 0.2em;
@@ -457,12 +459,12 @@ ul#SideTabBar li {
 	color: #999999;
 }
 
-ul#SideTabBar li.current {
+ul.SideTabBar li.current {
 	border-bottom: 1px solid white;
 	font-weight: bold;
 }
 
-ul#SideTabBar li:hover {
+ul.SideTabBar li:hover {
 	font-weight: bold;
 	text-decoration: underline;
 }
@@ -627,3 +629,12 @@ a.fb_share_button:hover {
 	background: #3b5998 url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS for Comments and Ratings                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul.comment_edit li {
+	color: #444;
+	font-style: italic;
+	font-size: x-small;
+}

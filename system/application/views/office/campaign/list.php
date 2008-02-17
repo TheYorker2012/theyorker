@@ -3,7 +3,7 @@
 function print_table($name, $campaign_list)
 {
 	echo('	<div class="blue_box">'."\n");
-	echo('		<h2>'.$name.'</h2>'."\n");
+	echo('		<h2>'.xml_escape($name).'</h2>'."\n");
 	echo('		<table width="90%" cellpadding="3" align="center">'."\n");
 	echo('			<thead>'."\n");
 	echo('				<tr>'."\n");
@@ -15,7 +15,7 @@ function print_table($name, $campaign_list)
 	foreach ($campaign_list as $key => $campaign)
 	{
 		echo('				<tr>'."\n");
-		echo('					<td><a href="/office/campaign/editarticle/'.$key.'">'.$campaign['name'].'</a></td>'."\n");
+		echo('					<td><a href="/office/campaign/editarticle/'.$key.'">'.xml_escape($campaign['name']).'</a></td>'."\n");
 		if ($campaign['has_been_petitioned'] == 1)
 			echo('					<td>yes</td>'."\n");
 		else

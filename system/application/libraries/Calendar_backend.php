@@ -220,7 +220,7 @@ class CalendarEvent
 	{
 		if (NULL === $this->DescriptionHtml) {
 			if (NULL !== $this->Description) {
-				$this->DescriptionHtml = nl2br(htmlentities($this->Description, ENT_QUOTES, 'utf-8'));
+				$this->DescriptionHtml = nl2br(xml_escape($this->Description));
 			} else {
 				$this->DescriptionHtml = '';
 			}

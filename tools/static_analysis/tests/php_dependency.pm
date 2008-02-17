@@ -1,5 +1,8 @@
 package php_dependency;
 
+use strict;
+use warnings;
+
 use test;
 
 use vars qw(@ISA);
@@ -103,6 +106,7 @@ sub printInformation
 {
 	my ($self) = @_;
 	print "\tThis test searches php files for CI load statements.\n";
+	print "\tIt also does checks for certain functions in different areas of CI.\n";
 	print "\tAny attempts to load files that do not exist cause the test to fail.\n";
 	print "\t\n";
 	print "\tThe test supports:\n";
@@ -124,13 +128,28 @@ sub runTest
 			while (my $line = <$fildes>) {
 				my $type;
 				my $module;
-				if ($line =~ /->load->(\w+)\(([^),]*)\)/) {
-					$type = $1;
-					$module = $2;
-				}
-				elsif ($line =~ /->SetContentSimple\(([^),]*)/) {
-					$type = 'view';
-					$module = $1;
+				if ($file =~ /system\/application\//) {
+					# Debug stuff that should not be committed
+					if ($file =~ /(var_dump|print_r|AddDumpMessage)\s*\(/) {
+						$self->printError($file, $lineno, "Use of debug function '$1'");
+					}
+					# Stuff that should only be inside views
+					if ($file !~ /system\/application\/(errors|views)/) {
+						if ($line =~ /(htmlentities|htmlspecialchars|xml_escape)\s*\(/) {
+							$self->printError($file, $lineno, "Use of xml escaping function '$1' in non-view");
+						}
+						if ($line =~ /(echo)[\s\(]/) {
+							$self->printError($file, $lineno, "Use of '$1' in non-view");
+						}
+					}
+					if ($line =~ /->load->(\w+)\(([^),]*)\)/) {
+						$type = $1;
+						$module = $2;
+					}
+					elsif ($line =~ /->SetContentSimple\(([^),]*)/) {
+						$type = 'view';
+						$module = $1;
+					}
 				}
 				if (defined $type && defined $module) {
 					if (defined $load_paths->{$type}) {

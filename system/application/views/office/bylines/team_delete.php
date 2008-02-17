@@ -6,7 +6,7 @@
 <div id="MainColumn">
 
 	<div class="BlueBox">
-		<h2>delete byline team: <?php echo($team_info['business_card_group_name']); ?></h2>
+		<h2>delete byline team: <?php echo(xml_escape($team_info['business_card_group_name'])); ?></h2>
 
 		<div>
 			Are you sure you want to delete this byline team?

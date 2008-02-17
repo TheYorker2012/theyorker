@@ -32,7 +32,7 @@
 			<span class='right'>
 				<?php echo $entry['time']; ?>
 				<?php if ($entry['email'] != '') { ?>
-					<br /><a href='mailto:<?php echo $entry['email']; ?>'><span class='orange'><?php echo htmlentities($entry['email'], ENT_QUOTES, 'utf-8'); ?></span></a>
+					<br /><a href='mailto:<?php echo $entry['email']; ?>'><span class='orange'><?php echo xml_escape($entry['email']); ?></span></a>
 				<?php } ?>
 			</span>
 			<span class='bold'>
@@ -44,7 +44,7 @@
 			<br />- <?php echo $entry['author']; ?>
 		</div>
 		<div id='feedback<?php echo $entry['id']; ?>' class='main'>
-			<?php echo nl2br(htmlentities($entry['comment'], ENT_QUOTES, 'utf-8')); ?>
+			<?php echo nl2br(xml_escape($entry['comment'])); ?>
 			<br />
 			Page URL: <a href="<?php echo($entry['page_url']); ?>"><?php echo($entry['page_url']); ?></a>
 			<div style='text-align: center;'><br />

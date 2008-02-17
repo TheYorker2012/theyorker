@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Information</h2>
 	<div class="Entry">
-		<?php echo $page_information; ?>
+		<?php echo($page_information); ?>
 	</div>
 	<h2>Actions</h2>
 	<div class="Entry">
@@ -21,18 +21,30 @@
 				</tr>
 			</thead>
 			<?php
-			foreach($sub_articles as $sub_article){
+			foreach ($sub_articles as $sub_article) {
 				echo('<tr>');
-				echo('<td><a href="/office/articletypes/edit/'.$sub_article['id'].'">'.$sub_article['name'].'</a></td>');
-				echo('<td>'.$sub_article['parent_name'].'</td>');
+				echo('<td><a href="/office/articletypes/edit/'.$sub_article['id'].'">'.xml_escape($sub_article['name']).'</a></td>');
+				echo('<td>'.xml_escape($sub_article['parent_name']).'</td>');
 				echo('<td>');
-				if($sub_article['image']==NULL){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
+				if ($sub_article['image'] == NULL) {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
-				if($sub_article['in_archive']){echo("<img src='/images/prototype/members/confirmed.png'>");}else{echo("<img src='/images/prototype/members/no9.png'>");}
+				if ($sub_article['in_archive']) {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
-				if($sub_article['blurb']==''){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
+				if ($sub_article['blurb'] == '') {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
 				echo("<a href='/office/articletypes/moveup/".$sub_article['id']."'><img src='/images/prototype/members/sortdesc.png'></a>");
@@ -53,18 +65,30 @@
 				</tr>
 			</thead>
 			<?php
-			foreach($shelved_sub_articles as $sub_article){
+			foreach ($shelved_sub_articles as $sub_article){
 				echo('<tr>');
-				echo('<td><a href="/office/articletypes/edit/'.$sub_article['id'].'">'.$sub_article['name'].'</a></td>');
-				echo('<td>'.$sub_article['parent_name'].'</td>');
+				echo('<td><a href="/office/articletypes/edit/'.$sub_article['id'].'">'.xml_escape($sub_article['name']).'</a></td>');
+				echo('<td>'.xml_escape($sub_article['parent_name']).'</td>');
 				echo('<td>');
-				if($sub_article['image']==NULL){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
+				if ($sub_article['image'] == NULL) {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
-				if($sub_article['in_archive']){echo("<img src='/images/prototype/members/confirmed.png'>");}else{echo("<img src='/images/prototype/members/no9.png'>");}
+				if ($sub_article['in_archive']) {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
-				if($sub_article['blurb']==''){echo("<img src='/images/prototype/members/no9.png'>");}else{echo("<img src='/images/prototype/members/confirmed.png'>");}
+				if ($sub_article['blurb'] == '') {
+					echo("<img src='/images/prototype/members/no9.png'>");
+				} else {
+					echo("<img src='/images/prototype/members/confirmed.png'>");
+				}
 				echo('</td>');
 				echo('<td>');
 				echo("<a href='/office/articletypes/moveup/".$sub_article['id']."'><img src='/images/prototype/members/sortdesc.png'></a>");

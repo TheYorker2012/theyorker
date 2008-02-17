@@ -120,11 +120,9 @@ class Review_views
 		$data['yorker_recommendation']	= $review_database_result['review_context_content_recommend_item'];
 		$data['serving_times']			= $review_database_result['review_context_content_serving_times'];
 
-		$CI->main_frame->SetExtraHead('
-		<script type="text/javascript" src="/javascript/prototype.js"></script>
-		<script type="text/javascript" src="/javascript/scriptaculous.js"></script>
-		<script src="/javascript/slideshow_new.js" type="text/javascript"></script>
-		');
+		$CI->main_frame->IncludeJs('javascript/prototype.js');
+		$CI->main_frame->IncludeJs('javascript/scriptaculous.js');
+		$CI->main_frame->IncludeJs('javascript/slideshow_new.js');
 
 		//Set title parameters
 		$CI->main_frame->SetTitleParameters(array(

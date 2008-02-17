@@ -1,5 +1,8 @@
 package test;
 
+use strict;
+use warnings;
+
 sub new
 {
 	my $proto = shift;
@@ -31,7 +34,7 @@ sub validateConfiguration
 sub printError
 {
 	my ($self, $file, $line, $error) = @_;
-	print STDERR "$file\t: $line\t- $error\n";
+	print "$file\t: $line\t- $error\n";
 }
 
 1;

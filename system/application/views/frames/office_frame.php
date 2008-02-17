@@ -6,15 +6,15 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
-	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
+	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
+	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
 
 	<title>The Yorker - <?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo(xml_escape($head_title));
 		} else {
-			echo 'no pagename';
+			echo('no pagename');
 		}
 	?></title>
 
@@ -41,7 +41,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 
-<div style="width: 100%;" align="center">
+<div style="width: 100%; text-align: center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
 		<?php
@@ -49,9 +49,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		if (isset($toplinks)) {
 			foreach ($toplinks as $link) {
 				if (is_string($link)) {
-					echo $link.' | ';
+					echo(xml_escape($link).' | ');
 				} elseif (is_array($link)) {
-					echo '<a class="HeaderLinks" href="'.$link[1].'">'.$link[0].'</a> | ';
+					echo('<a class="HeaderLinks" href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
 				}
 			}
 		}
@@ -76,7 +76,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 	</div>
 	<div style="background-color: #fff;">
-		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
+		<form action='/search/layout' method='post' style='display:inline; '>
 		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding: 2px; margin: 0px; margin-left: 0px;'>
 			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' />
 			<input type="text" style="float: right; color: #20c1f0; font-size: 12px; width: 100px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
@@ -85,12 +85,12 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div style="float: right; width: 645px; margin-bottom: 0px; background-color: #20c1f0; padding: 3px 0px 3px 5px; color: #fff; font-size: medium; font-weight: bold; height: 18px; " >
 			<?php
 			if(isset($body_title)) {
-				echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
+				echo(xml_escape($body_title)."\n");
 			} else {
-				echo 'no pagename'."\n";
+				echo('no pagename'."\n");
 			}
 			if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-				echo("<a href=\"$paged_edit_url\">[edit]</a>");
+				echo('<a href="'.$paged_edit_url.'">[edit]</a>');
 			}
 			?>
 		</div>
@@ -106,6 +106,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/irc'>Office Chat</a>
 		</div>
+		<div class="officenavigation_item">
+			<a href="/office/bylines/">Manage Bylines</a>
+		</div>
 
 <?php
 	//editor and admins only
@@ -113,11 +116,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 ?>
 		<div class='officenavigation_title'>
 			Admin
-		</div>
-		<div class="officenavigation_item">
-			<a href="/office/bylines/">
-				Manage Bylines
-			</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/manage/members/'>Manage Team</a>
@@ -136,6 +134,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/admin/pages'>Page Properties</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/stats'>Statistics</a>
 		</div>		
 		<div class='officenavigation_item'>
 			<a href='/office/articletypes'>Article Types</a>
@@ -150,6 +151,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/advertising'>Advertising</a>
+		</div>
+		<div class='officenavigation_item'>
+			<a href='/office/polls'>Polls</a>
 		</div>
 <?php
 	}
@@ -220,7 +224,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			<a href='/office/howdoi/'>How Do I</a>
 		</div>
 		<div class='officenavigation_item'>
-			<a href='/office/games/' onclick="alert('Coming soon...'); return false;">Game Zone</a>
+			<a href='/office/games/'>Game Zone</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='http://yorkipedia.theyorker.co.uk'>Yorkipedia</a>

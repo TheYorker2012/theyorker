@@ -14,7 +14,7 @@
 $CI = & get_instance();
 
 ?>
-<div id="ev_15" class="cal_event cal_event_nojs<?php
+<div class="cal_event cal_event_nojs<?php
 	$cat = $Occurrence->Event->Category;
 	if (array_key_exists($cat, $Categories)) {
 		echo(" cal_category_$cat");
@@ -26,7 +26,7 @@ $CI = & get_instance();
 		site_url(
 			$Path->OccurrenceInfo($Occurrence).
 			$CI->uri->uri_string().'">'.
-			htmlentities($Occurrence->Event->Name, ENT_QUOTES, 'utf-8')
+			xml_escape($Occurrence->Event->Name)
 		).
 		'</a></div>'
 	);
@@ -46,7 +46,7 @@ $CI = & get_instance();
 	if ($Occurrence->State == 'cancelled') {
 		echo('Cancelled');
 	} else {
-		echo(js_nl2br(htmlentities($Occurrence->GetLocationDescription(), ENT_QUOTES, 'UTF-8')));
+		echo(js_nl2br(xml_escape($Occurrence->GetLocationDescription())));
 	}
 ?></i><?php
 		if (!$Squash) {
@@ -82,7 +82,7 @@ $CI = & get_instance();
 		}
 		$show_attendence = !$Squash;
 		$attendence_actions = ($show_attendence
-			? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+			? array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend')
 			: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 		);
 		if ($Occurrence->UserHasPermission('set_attend') &&

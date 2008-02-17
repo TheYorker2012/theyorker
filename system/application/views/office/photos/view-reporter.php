@@ -18,25 +18,25 @@
 		</ul>
 	</div>
 
-	<form name='edit_request' id='edit_request' action='/office/photos/view/<?php echo $photoRequest->photo_request_id?>/reporter' method='post' class='form'>
+	<form id='edit_request' action='/office/photos/view/<?php echo($photoRequest->photo_request_id); ?>/reporter' method='post' class='form'>
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>
 				<label for='r_title'>Title:</label>
-				<input type='text' name='r_title' id='r_title' value='<?php echo $photoRequest->photo_request_title?>' size='30' />
+				<input type='text' name='r_title' id='r_title' value='<?php echo(xml_escape($photoRequest->photo_request_title)); ?>' size='30' />
 				<br />
 				<label for='r_brief'>Description:</label>
-				<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo $photoRequest->photo_request_description?></textarea>
+				<textarea name='r_brief' id='r_brief' cols='25' rows='5'><?php echo(xml_escape($photoRequest->photo_request_description)); ?></textarea>
 			    <br />
 				<label for='r_date'>Date Requested:</label>
-				<div id='r_date' style='float: left; margin: 5px 10px;'><?php echo $photoRequest->photo_request_timestamp?></div>
+				<div id='r_date' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($photoRequest->photo_request_timestamp)); ?></div>
 				<br />
 				<label for='r_user'>Requested By:</label>
-				<div id='r_user' style='float: left; margin: 5px 10px;'><?=fullname($photoRequest->photo_request_user_entity_id)?></div>
+				<div id='r_user' style='float: left; margin: 5px 10px;'><?php echo(fullname($photoRequest->photo_request_user_entity_id)); ?></div>
 				<br />
 				<label for="r_article">For Article:</label>
 				<div id="r_article" style="float: left; margin: 5px 10px;">
-					<a href="/office/news/<?php echo $photoRequest->photo_request_article_id?>" target="_blank"><?php echo $article['request_title']?></a>
+					<a href="/office/news/<?php echo($photoRequest->photo_request_article_id)?>" target="_blank"><?php echo(xml_escape($article['request_title'])); ?></a>
 				</div>
 				<br /><!--
 				<label for='r_assigned'>Assigned to:</label>
@@ -53,16 +53,16 @@
 				<?php for($i=0; $i < count($suggestion); $i++) {?>
 				<h3><?php echo $i+1?>:</h3>
 				<label for="imgid_<?php echo $i?>_img">Photo</label>
-				<?php echo $this->image->getThumb($suggestion[$i], 'medium', true)?>
+				<?php echo($this->image->getThumb($suggestion[$i], 'medium', true)); ?>
 				<br />
-				<label for="imgid_<?php echo $i?>_comment">Comment:</label>
-				<textarea name="imgid_<?php echo $i?>_comment"></textarea>
+				<label for="imgid_<?php echo $i; ?>_comment">Comment:</label>
+				<textarea name="imgid_<?php echo $i; ?>_comment"></textarea>
 				<br />
-				<label for="imgid_<?php echo $i?>_allow">Suggest:</label>
-				<input name="imgid_<?php echo $i?>_allow" type="checkbox" value="y" />
-				<input type="hidden" name="imgid_<?php echo $i?>_number" value="<?php echo $suggestion[$i]?>" />
+				<label for="imgid_<?php echo $i; ?>_allow">Suggest:</label>
+				<input name="imgid_<?php echo $i; ?>_allow" type="checkbox" value="y" />
+				<input type="hidden" name="imgid_<?php echo $i; ?>_number" value="<?php echo($suggestion[$i]); ?>" />
 <?php }?>
-				<input type="hidden" name="imgid_number" value="<?=count($suggestion)?>" />
+				<input type="hidden" name="imgid_number" value="<?php echo(count($suggestion)); ?>" />
 				<input type='submit' name='r_assign' value='Suggest' class='button' />
 				<br />
 			</fieldset>
@@ -74,9 +74,9 @@
 			<div id="proposed_photos">
 <?php if($photoRequest->photo_count != 0) foreach ($photos->result() as $preview) {?>
 				<div class="photo_item">
-					<?php echo $this->image->getThumb($preview->photo_request_photo_photo_id, 'medium')?>
-					<?=fullname($preview->photo_request_photo_user_id)?><br />
-					<?php echo $preview->photo_request_photo_date?><br />
+					<?php echo($this->image->getThumb($preview->photo_request_photo_photo_id, 'medium')); ?>
+					<?php echo(fullname($preview->photo_request_photo_user_id)); ?><br />
+					<?php echo($preview->photo_request_photo_date); ?><br />
 				</div>
 <?php }?>
 			</div>
