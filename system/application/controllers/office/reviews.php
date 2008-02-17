@@ -763,7 +763,6 @@ class Reviews extends Controller
 			}else{
 				$revisions_waiting=1;
 			}
-			echo $temp['article']['live_content'].'x'.$this->article_model->GetLatestRevision($review['id']);
 			$temp['article']['revisions_waiting'] = $revisions_waiting;//If the live content id is not the lastet revision there are revisions waiting
 			$data['reviews'][] = $temp;
 		}
@@ -843,7 +842,11 @@ class Reviews extends Controller
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['is_editor'] = CheckPermissions('editor');
+		if($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin'){
+			$data['user']['is_editor'] = true;
+		}else{
+			$data['user']['is_editor'] = false;
+		}
 
 		$writers = $this->requests_model->GetArticleWriters($article_id);
 		$found = false;
@@ -853,7 +856,7 @@ class Reviews extends Controller
 				$found = $data['user']['id'];
 		}
 
-		if ($found == false && $data['user']['officetype'] == 'Low')
+		if ($found == false && !$data['user']['is_editor'])
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
