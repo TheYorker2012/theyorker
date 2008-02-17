@@ -176,6 +176,15 @@ class Tools extends controller
 					'user_contact_phone_number',
 				),
 			),
+			'organisations' => array(
+				'keys' => array(
+					'organisation_entity_id',
+				),
+				'cols' => array(
+					'organisation_name',
+					'organisation_yorkipedia_entry',
+				),
+			),
 			'organisation_contents' => array(
 				'keys' => array(
 					'organisation_content_id',
