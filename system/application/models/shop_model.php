@@ -279,7 +279,7 @@ class Shop_model extends Model
 					FROM	shop_items
 					WHERE	shop_item_id = ?';
 			$query3 = $this->db->query($sql, array($basket_item['item_id']));
-			$basket_item['details'] = $query3->result_array();
+			$basket_item['details'] = $query3->row_array();
 		}
 		return $basket_items;
 	}
