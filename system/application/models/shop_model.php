@@ -262,7 +262,7 @@ class Shop_model extends Model
 				FROM	shop_order_items
 				WHERE	shop_order_item_shop_order_id = ?
 				AND		shop_order_item_deleted = 0';
-		$query = $this->db->query($sql,array($basket_id));
+		$query = $this->db->query($sql, array($basket_id));
 		$basket_items = $query->result_array();
 		foreach($basket_items as &$basket_item)
 		{
@@ -271,8 +271,15 @@ class Shop_model extends Model
 							shop_order_item_customisation_shop_item_customisation_option_id as customisation_option_id
 					FROM	shop_order_item_customisations
 					WHERE	shop_order_item_customisation_shop_order_item_id = ?';
-			$query2 = $this->db->query($sql,array($basket_item['order_item_id']));
+			$query2 = $this->db->query($sql, array($basket_item['order_item_id']));
 			$basket_item['customisations'] = $query2->result_array();
+
+			$sql = 'SELECT	shop_item_name as name,
+							shop_item_description as description,
+					FROM	shop_items
+					WHERE	shop_item_id = ?';
+			$query3 = $this->db->query($sql, array($basket_item['item_id']));
+			$basket_item['details'] = $query3->result_array();
 		}
 		return $basket_items;
 	}
