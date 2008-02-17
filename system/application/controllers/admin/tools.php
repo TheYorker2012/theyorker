@@ -159,6 +159,15 @@ class Tools extends controller
 					'article_content_blurb',
 				),
 			),
+			'links' => array(
+				'keys' => array(
+					'link_id',
+				),
+				'cols' => array(
+					'link_url',
+					'link_name',
+				),
+			),
 			'subscriptions' => array(
 				'keys' => array(
 					'subscription_organisation_entity_id',

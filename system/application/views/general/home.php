@@ -3,12 +3,21 @@
 	<div class="Entry">
 <?php 	if ($link->num_rows() > 0)
 	{
-	/// @todo FIXME data from database should be processed in the model
-	foreach($link->result() as $picture){
-		echo('	<a href="'.$picture->link_url.'" target="_blank">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => xml_escape($picture->link_name), 'alt' => xml_escape($picture->link_name))).'</a>'."\n");
+		/// @todo FIXME data from database should be processed in the model
+		foreach($link->result() as $picture){
+			echo('	<a href="'.xml_escape($picture->link_url).'" target="_blank">'.
+				$this->image->getImage( // getImage does the escaping
+					$picture->link_image_id, 'link',
+					array(
+						'title'	=> $picture->link_name,
+						'alt'	=> $picture->link_name,
+					)
+				).
+				'</a>'."\n"
+			);
 		}
 	} else {
-		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
+// 		<a href="/account/links">You have no links</a>
 	}
 ?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
