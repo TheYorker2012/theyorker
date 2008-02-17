@@ -20,7 +20,7 @@ class Shop extends Controller {
 	 */
 	function index()
 	{
-		if (!CheckPermissions('public')) return;
+		if (!CheckPermissions('student')) return;
 		
 		$data['basket'] = $this->_getbasket();
 		
