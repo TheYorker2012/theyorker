@@ -35,10 +35,10 @@ sub processUrl
 	my ($host, $url, $result, $lineno) = @_;
 	
 	if ($url !~ /^([\w]+):\/\//) {
-		if ($url !~ /^\//) {
+		if ($url !~ /^[\/#]/) {
 			if (defined $result) {
 				my $msg = Message->new($lineno, "Relative href found: $url");
-				$msg->type('error');
+				$msg->type('warning');
 				$result->message($msg);
 			}
 			$url = '';
@@ -68,6 +68,7 @@ sub testUrl
 		my @xhtml = split("\n", $xhtml);
 		my $lineno = 1;
 		foreach my $line (@xhtml) {
+			# Get links
 			my @hrefs = ($line =~ /<a href="([^"]*)">/g);
 			my @links;
 			foreach my $link (@hrefs) {
@@ -80,6 +81,14 @@ sub testUrl
 				}
 			}
 			$result->links(@links);
+			
+			# Get double escapings
+			if ($line =~ /&amp;amp/) {
+				my $msg = Message->new($lineno, "Escaped XML entity");
+				$msg->type('error');
+				$result->message($msg);
+			}
+			
 			++$lineno;
 		}
 		
@@ -154,7 +163,7 @@ sub linkCheck
 				}
 			}
 		}
-		@pendingLinks = keys %newLinks;
+		@pendingLinks = sort keys %newLinks;
 	}
 	
 }

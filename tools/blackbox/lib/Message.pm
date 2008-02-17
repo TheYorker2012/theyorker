@@ -8,6 +8,7 @@ use Term::ANSIColor;
 my %colourMap = (
 	ok => 'green',
 	error => 'red',
+	warning => 'yellow',
 	validation_error => 'magenta',
 	validation_warning => 'cyan',
 );

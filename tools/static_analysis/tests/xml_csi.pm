@@ -77,6 +77,11 @@ sub runTest
 					}
 					$self->printError($file, $lineno, $message);
 				}
+				# Form with name attribute
+				if ($line =~ /<form(\s+\w+=("[^"]*"|'[^']*'))*\s+name=/) {
+					$fail = 1;
+					$self->printError($file, $lineno, "there is no attribute \"name\" in the form tag");
+				}
 				# &apos; xml entity unknown to internet explorer.
 				if ($line =~ /&apos;/) {
 					$fail = 1;
