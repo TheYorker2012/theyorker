@@ -132,6 +132,20 @@ class Shop extends Controller {
 		$this->main_frame->Load();
 	}
 	
+	function checkout()
+	{
+	  if (!CheckPermissions('student')) return;
+	  
+	  $data = array();
+	  
+	  $data['items'] = array('one', 'two', 'three');
+	  
+		// Set up the public frame
+		$this->main_frame->SetContentSimple('shop/checkout', $data);
+		// Load the public frame view (which will load the content view)
+		$this->main_frame->Load();
+	}
+	
 	function testing()
 	{
 		if (!CheckPermissions('student')) return;
