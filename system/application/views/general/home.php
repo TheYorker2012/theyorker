@@ -24,12 +24,12 @@
 	<h2>Search the Web</h2>
 	<div class="Entry">
 		<form method="get" action="http://www.google.co.uk/search" target="_blank">
-			<input type="hidden" name="ie" value="UTF-8" />
-			<input type="hidden" name="oe" value="UTF-8" />
-			<a href="http://www.google.co.uk/" target="_blank">
-				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
-			</a>
 			<fieldset class="inline">
+				<input type="hidden" name="ie" value="UTF-8" />
+				<input type="hidden" name="oe" value="UTF-8" />
+				<a href="http://www.google.co.uk/" target="_blank">
+					<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
+				</a>
 				<input type="text" name="q" value="" />
 				<input type="submit" class="button" name="btnG" value="Search" target="_blank" />
 			</fieldset>
