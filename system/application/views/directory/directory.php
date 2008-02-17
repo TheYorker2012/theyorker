@@ -28,7 +28,7 @@ foreach($organisations as $organisation) {
 		$currentLetter = $thisLetter;
 	}
 
-	echo('		<div id="'.$organisation['shortname'].'">'."\n");
+	echo('		<div id="org_'.$organisation['shortname'].'">'."\n");
 	echo('			<h3>'."\n");
 	echo('				<a href="/'.xml_escape($organisation['link']).'">'.xml_escape($organisation['name']).'</a>'."\n");
 	/*echo('				<span>('.$organisation['type'].')</span>'."\n");*/
