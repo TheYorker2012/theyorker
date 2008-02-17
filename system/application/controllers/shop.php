@@ -134,12 +134,12 @@ class Shop extends Controller {
 	
 	function checkout()
 	{
-	  if (!CheckPermissions('student')) return;
-	  
-	  $data = array();
-	  
-	  $data['items'] = array('one', 'two', 'three');
-	  
+		if (!CheckPermissions('student')) return;
+
+		$data = array();
+		
+		$data['items'] = array('one', 'two', 'three');
+
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/checkout', $data);
 		// Load the public frame view (which will load the content view)

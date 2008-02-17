@@ -8,10 +8,10 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Current Basket</h2>
-  </div>
-  <div>
-    <?php foreach ($items as $item) { ?>
-      <p><?php echo xml_escape($item) ?></p>
-    <?php } ?>
-  </div>
+	</div>
+	<div>
+	<?php foreach ($items as $item) { ?>
+		<p><?php echo xml_escape($item) ?></p>
+	<?php } ?>
+	</div>
 </div>
