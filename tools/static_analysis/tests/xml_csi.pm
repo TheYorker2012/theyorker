@@ -24,6 +24,7 @@ sub new
 my @illegalAttributes = (
 	[	'form',	'name'	],
 	[	'td',	'width|height'	],
+	[	'div',	'align'	],
 );
 
 # Help information

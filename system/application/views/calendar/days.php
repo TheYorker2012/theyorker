@@ -369,7 +369,7 @@ table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_headin
 
 
 <div class="BlueBox">
-<div align="center">
+<div style="text-align:center">
 <?php
 if (isset($BackwardUrl)) {
 	echo('<a href="'.$BackwardUrl.'"><img src="'.site_url('images/prototype/calendar/backward.gif').'" alt="Backward" /></a> ');

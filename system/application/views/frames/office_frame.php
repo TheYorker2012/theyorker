@@ -41,7 +41,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 
-<div style="width: 100%;" align="center">
+<div style="width: 100%; text-align: center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
 		<?php
