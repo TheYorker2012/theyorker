@@ -251,11 +251,11 @@ class Review_model extends Model {
 			AND	review_context_contents.review_context_content_deleted = 0 ';
 		if ($revision_id != FALSE){
 			$sql .= 'AND review_context_contents.review_context_content_id = ?';
-			$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$revision_id));
+			$params = array($organisation_shortname,$content_type_codename,$revision_id);
 		} else {
-			$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename));
+			$params = array($organisation_shortname,$content_type_codename);
 		}
-		
+		$query = $this->db->query($sql, $params);
 		
 		$row = $query->row();
 		if ($query->num_rows() == 1)
@@ -1174,7 +1174,8 @@ function GetTagOrganisation($type,$organisation)
 	//(Detail - Does the first image in the slideshow have a thumbnail of size $thumbnail_size_codename)
 	function DoesThisVenueHaveAThumbnail($org_short_name,$thumbnail_size_codename='small')
 	{
-	$sql = 'SELECT COUNT(*) as thumbnail_exists
+		$sql = '
+			SELECT COUNT(*) as thumbnail_exists
 			FROM organisation_slideshows
 			LEFT JOIN photo_thumbs ON
 				organisation_slideshows.organisation_slideshow_photo_id = photo_thumbs.photo_thumbs_photo_id
@@ -1192,8 +1193,9 @@ function GetTagOrganisation($type,$organisation)
 					WHERE os.organisation_slideshow_organisation_entity_id = organisation_entity_id
 				)
 			LIMIT 1';
-			$query = $this->db->query($sql, array($org_short_name, $thumbnail_size_codename));
-			return $query->row()->thumbnail_exists;//return true if there is, false if there is no thumb
+		$query = $this->db->query($sql, array($org_short_name, $thumbnail_size_codename));
+		//return true if there is, false if there is no thumb
+		return $query->row()->thumbnail_exists;
 	}
 	//Returns a content_type_id from a content_type_codename
 	function GetContentTypeID($codename)

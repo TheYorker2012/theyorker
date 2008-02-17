@@ -12,14 +12,14 @@
 			foreach ($article['revisions'] as $revision) 
 			{
 				$dateformatted = date("d/m/y H:i", $revision['updated']);
-				$edit_link = xml_escape('/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id']);
+				$edit_link_xml = xml_escape('/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id']);
 				echo '			<li>'."\n";
 				echo '				Author : '.xml_escape($revision['username']).'<br />';
 				echo '				Created : '.$dateformatted.'<br />';
 				if ($revision['id'] == $article['displayrevision']['id']){
 					echo '				<b>(Editing)</b>';
 				}else{
-					echo '				<a href='.$edit_link.'>Edit</a>';
+					echo '				<a href='.$edit_link_xml.'>Edit</a>';
 				}
 				if ($revision['id'] == $article['header']['live_content']){
 					echo ' | <span class="orange">(Published)</span><br />';

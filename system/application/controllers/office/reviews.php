@@ -636,7 +636,8 @@ class Reviews extends Controller
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
-			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
+			$images = $this->slideshow->getPhotos($data['organisation']['id']);
+			$data['images'] = $images->result_array();//nasty hack, slideshow shouldnt give out objects!
 			$data['has_thumbnail'] = $this->review_model->DoesThisVenueHaveAThumbnail($organisation,'small');
 
 			// Set up the directory view

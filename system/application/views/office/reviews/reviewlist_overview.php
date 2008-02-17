@@ -131,52 +131,52 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/information">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_blurb'])){
+				if($venue['venue_has_blurb']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_rating'])){
+				if($venue['venue_has_rating']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_quote'])){
+				if($venue['venue_has_quote']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_average_price'])){
+				if($venue['venue_has_average_price']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_recommend_item'])){
+				if($venue['venue_has_recommend_item']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				if(htmlspecialchars($venue['venue_has_serving_times'])){
+				if($venue['venue_has_serving_times']){
 					echo("<img src='/images/prototype/members/confirmed.png'>");
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
@@ -215,24 +215,24 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/review">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td align="center">');
-				if(htmlspecialchars($venue['review_count'])>0){
-					echo htmlspecialchars($venue['review_count']);
+				if($venue['review_count']>0){
+					echo xml_escape($venue['review_count']);
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td align="center">');
 				if(!empty($venue['date_of_last_review'])){
-					echo htmlspecialchars(date("d/m/y",$venue['date_of_last_review']));
+					echo xml_escape(date("d/m/y",$venue['date_of_last_review']));
 				}else{
 					echo("&nbsp;");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
@@ -270,24 +270,24 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/photos">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td align="center">');
-				if(htmlspecialchars($venue['photo_count'])>0){
-					echo htmlspecialchars($venue['photo_count']);
+				if($venue['photo_count']>0){
+					echo xml_escape($venue['photo_count']);
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td align="center">');
 				if(!empty($venue['date_of_last_photo'])){
-					echo htmlspecialchars(date("d/m/y",$venue['date_of_last_photo']));
+					echo xml_escape(date("d/m/y",$venue['date_of_last_photo']));
 				}else{
 					echo("&nbsp;");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
@@ -326,18 +326,18 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/photos">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td align="center">');
-				if(htmlspecialchars($venue['photo_count'])>0){
-					echo htmlspecialchars($venue['photo_count']);
+				if($venue['photo_count']>0){
+					echo xml_escape($venue['photo_count']);
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td align="center"><img src="/images/prototype/members/no9.png"></td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
@@ -373,17 +373,17 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/tags">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td align="center">');
-				if(htmlspecialchars($venue['tags_count'])>0){
-					echo htmlspecialchars($venue['tags_count']);
+				if($venue['tags_count']>0){
+					echo xml_escape($venue['tags_count']);
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
@@ -421,11 +421,11 @@
 					echo('			<tr class="tr'.(($count%2)+1).'">'."\n");
 				}
 				echo('				<td><a href="/office/reviews/'.$venue['venue_shortname'].'/'.$content_type_codename.'/leagues">');
-				echo(htmlspecialchars($venue['venue_name']));
+				echo(xml_escape($venue['venue_name']));
 				echo('</a></td>'."\n");
 				echo('				<td align="center">');
-				if(htmlspecialchars($venue['leagues_count'])>0){
-					echo htmlspecialchars($venue['leagues_count']);
+				if($venue['leagues_count']>0){
+					echo xml_escape($venue['leagues_count']);
 				}else{
 					echo("<img src='/images/prototype/members/no9.png'>");
 				}
@@ -452,7 +452,7 @@
 				}
 				echo('</td>'."\n");
 				echo('				<td>');
-				echo htmlspecialchars($venue['assigned_user_name']);
+				echo xml_escape($venue['assigned_user_name']);
 				echo('</td>'."\n");
 				echo('			</tr>'."\n");
 			}
