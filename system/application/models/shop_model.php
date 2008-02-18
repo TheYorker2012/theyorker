@@ -239,7 +239,7 @@ class Shop_model extends Model
 				$price += $row->price;
 			}
 		}
-		return $price*$quantity;
+		return $price;
 	}
 	
 	/*
@@ -260,7 +260,7 @@ class Shop_model extends Model
 		{
 			foreach ($query->result() as $row)
 			{
-				$price += $row->price;
+				$price += ($row->price * $row->quantity);
 			}
 		}
 		return $price;
@@ -273,30 +273,82 @@ class Shop_model extends Model
 	*/
 	function AddToBasket($basket_id, $item_id, $customisations, $quantity)
 	{
-		$this->db->trans_start();
-		$price = $this->CalculateItemCustPrice($item_id, $customisations, $quantity);
-		//get price per customisations
-		$sql = 'INSERT INTO shop_order_items (
-					shop_order_item_shop_order_id,
-					shop_order_item_shop_item_id,
-					shop_order_item_quantity,
-					shop_order_item_deleted,
-					shop_order_item_price
-				)
-				VALUES (?, ?, ?, 0, ?)';
-		$this->db->query($sql,array($basket_id, $item_id, $quantity, $price));
-		$shop_order_item_id = $this->db->insert_id();
-		foreach($customisations as $customisation_id => $customisation_option_id)
+		//does this item already exist? (so we can increase quantity)
+		$sql = 'SELECT	shop_order_item_id as id,
+						shop_order_item_quantity as quantity
+				FROM	shop_order_items
+				WHERE	shop_order_item_shop_order_id = ?
+				AND		shop_order_item_shop_item_id = ?
+				AND		shop_order_item_deleted = 0';
+		$query1 = $this->db->query($sql,array($basket_id, $item_id));
+		$shop_order_item_id = NULL;
+		foreach($query1->result() as $row1)
 		{
-			$sql = 'INSERT INTO shop_order_item_customisations (
-						shop_order_item_customisation_shop_order_item_id,
-						shop_order_item_customisation_shop_item_customisation_id,
-						shop_order_item_customisation_shop_item_customisation_option_id
-					)
-					VALUES (?, ?, ?)';
-			$this->db->query($sql,array($shop_order_item_id, $customisation_id, $customisation_option_id));
+			$sql = 'SELECT	shop_order_item_customisation_shop_item_customisation_id as customisation_id,
+							shop_order_item_customisation_shop_item_customisation_option_id as customisation_option_id
+					FROM	shop_order_item_customisations
+					WHERE	shop_order_item_customisation_shop_order_item_id = ?';
+			$query2 = $this->db->query($sql,array($row1->id));
+			$item_cust_match = true;
+			foreach($customisations as $customisation_id => $customisation_option_id)
+			{
+				$cust_match = false;
+				foreach($query2->result() as $row2)
+				{
+					if ($row2->customisation_id == $customisation_id &&
+						$row2->customisation_option_id == $customisation_option_id)
+					{
+						$cust_match = true;						
+					}
+				}
+				if (!$cust_match)
+				{
+					$item_cust_match = false;
+				}
+			}
+			if ($item_cust_match)
+			{
+				$shop_order_item_id = $row1->id;
+				$shop_order_item_quantity = $row1->quantity;
+			}
 		}
-		$this->db->trans_complete();
+		//doesn't exist add new
+		if ($shop_order_item_id == NULL)
+		{
+			$this->db->trans_start();
+			$price = $this->CalculateItemCustPrice($item_id, $customisations, $quantity);
+			$sql = 'INSERT INTO shop_order_items (
+						shop_order_item_shop_order_id,
+						shop_order_item_shop_item_id,
+						shop_order_item_quantity,
+						shop_order_item_deleted,
+						shop_order_item_price
+					)
+					VALUES (?, ?, ?, 0, ?)';
+			$this->db->query($sql,array($basket_id, $item_id, $quantity, $price));
+			$shop_order_item_id = $this->db->insert_id();
+			foreach($customisations as $customisation_id => $customisation_option_id)
+			{
+				$sql = 'INSERT INTO shop_order_item_customisations (
+							shop_order_item_customisation_shop_order_item_id,
+							shop_order_item_customisation_shop_item_customisation_id,
+							shop_order_item_customisation_shop_item_customisation_option_id
+						)
+						VALUES (?, ?, ?)';
+				$this->db->query($sql,array($shop_order_item_id, $customisation_id, $customisation_option_id));
+			}
+			$this->db->trans_complete();
+		}
+		//update existing
+		else
+		{
+			$new_quantity = $shop_order_item_quantity + $quantity;
+			$sql = 'UPDATE	shop_order_items
+					SET		shop_order_item_quantity = ?
+					WHERE	shop_order_item_id = ?
+					AND		shop_order_item_deleted = 0';
+			$this->db->query($sql, array($new_quantity, $shop_order_item_id));
+		}
 		$total_price = $this->CalculateBasketPrice($basket_id);
 		$sql = 'UPDATE	shop_orders
 				SET		shop_order_price = ?

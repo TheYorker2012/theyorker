@@ -88,7 +88,7 @@ class Shop extends Controller {
 		
 		if (isset($_POST['r_submit_add']))
 		{
-			$this->messages->AddDumpMessage('post', $_POST);
+			//$this->messages->AddDumpMessage('post', $_POST);
 			$this->shop_model->AddToBasket(
 				$data['basket']['id'], 
 				$_POST['r_item_id'], 

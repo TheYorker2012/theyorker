@@ -6,7 +6,17 @@
 
 	<h2>Current Basket (<?php echo(xml_escape($basket['price_string'])); ?>)</h2>
 <?php
-	foreach ($basket['items'] as $basket_item) {
+	if (count($basket['items']) == 0)
+	{
+?>
+	<div class="Entry">
+		No Items In Basket
+	</div>
+<?php
+	}
+	else
+	{
+		foreach ($basket['items'] as $basket_item) {
 ?>
 	<div class="Entry">
 		<?php echo(xml_escape($basket_item['quantity'])); ?> x
@@ -15,6 +25,7 @@
 		(<?php echo(xml_escape($basket_item['price_string'])); ?>)
 	</div>
 <?php
+		}
 	}
 ?>
 </div>
