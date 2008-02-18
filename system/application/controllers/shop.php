@@ -54,11 +54,11 @@ class Shop extends Controller {
 			$item['event_date_string'] = date('l, jS F Y', $item['event_date']);
 			if ($item['price_range']['min'] == $item['price_range']['max'])
 			{
-				$item['price_string'] = '£'.$item['price_range']['min'];
+				$item['price_string'] = '£'.number_format($item['price_range']['min'], 2);
 			}
 			else
 			{
-				$item['price_string'] = '£'.$item['price_range']['min'].' to '.'£'.$item['price_range']['max'];
+				$item['price_string'] = '£'.number_format($item['price_range']['min'], 2).' to '.'£'.number_format($item['price_range']['max'], 2);
 			}
 			//$item['thumb_details'] = $this->image->getThumb($item['thumb_id'], 1);
 		}
@@ -111,11 +111,11 @@ class Shop extends Controller {
 		$data['item']['event_date_string'] = date('l, jS F Y', $data['item']['event_date']);
 		if ($data['item']['price_range']['min'] == $data['item']['price_range']['max'])
 		{
-			$data['item']['price_string'] = '£'.$data['item']['price_range']['min'];
+			$data['item']['price_string'] = '£'.number_format($data['item']['price_range']['min'], 2);
 		}
 		else
 		{
-			$data['item']['price_string'] = '£'.$data['item']['price_range']['min'].' to '.'£'.$data['item']['price_range']['max'];
+			$data['item']['price_string'] = '£'.number_format($data['item']['price_range']['min'], 2).' to '.'£'.number_format($data['item']['price_range']['max'], 2);
 		}
 		$data['item']['customisations'] = $this->shop_model->GetItemCustomisations($item_id);
 		foreach ($data['item']['customisations'] as &$customisation)

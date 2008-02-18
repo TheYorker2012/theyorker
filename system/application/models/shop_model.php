@@ -107,17 +107,26 @@ class Shop_model extends Model
 	*/
 	function GetItemPriceRange($item_id)
 	{
-		$sql = 'SELECT	max(shop_item_customisation_option_price) as max,
-						min(shop_item_customisation_option_price) as min
-				FROM	shop_item_customisation_options
-				JOIN	shop_item_customisations
-				ON		shop_item_customisation_id = shop_item_customisation_option_shop_item_customisation_id
+		$result['min'] = 0;
+		$result['max'] = 0;
+		$sql = 'SELECT	shop_item_customisation_id as id
+				FROM	shop_item_customisations
 				WHERE	shop_item_customisation_shop_item_id = ?
-				AND		shop_item_customisation_option_deleted = 0
 				AND		shop_item_customisation_deleted = 0';
-		$query = $this->db->query($sql,array($item_id));
-		foreach ($query->row_array() as $key => $price) {
-			$result[$key] = number_format($price, 2);
+		$query1 = $this->db->query($sql,array($item_id));
+		foreach($query1->result() as $row1)
+		{
+			$sql = 'SELECT	max(shop_item_customisation_option_price) as max,
+							min(shop_item_customisation_option_price) as min
+					FROM	shop_item_customisation_options
+					WHERE	shop_item_customisation_option_shop_item_customisation_id = ?
+					AND		shop_item_customisation_option_deleted = 0';
+			$query2 = $this->db->query($sql,array($row1->id));
+			foreach($query2->result() as $row2)
+			{
+				$result['min'] += $row2->min;
+				$result['max'] += $row2->max;
+			}
 		}
 		return $result;
 	}
