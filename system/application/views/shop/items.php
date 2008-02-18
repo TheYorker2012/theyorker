@@ -8,7 +8,7 @@
 ?>
 		<h3><a href="/shop/item/<?php echo(xml_escape($item['id'])); ?>"><?php echo(xml_escape($item['name'])); ?></a></h3>
 <?php
-		include('item_description.php');
+		include('item_blurb.php');
 	}
 ?>
 	</div>
