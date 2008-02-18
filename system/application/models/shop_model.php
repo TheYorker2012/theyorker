@@ -222,17 +222,69 @@ class Shop_model extends Model
 	* @return	- thing 1
 			- thing 2
 	*/
+	function CalculateItemCustPrice($item_id, $customisations, $quantity)
+	{
+		$price = 0;
+		foreach($customisations as $customisation_id => $customisation_option_id)
+		{
+			$sql = 'SELECT	shop_item_customisation_option_price as price
+					FROM	shop_item_customisation_options
+					WHERE	shop_item_customisation_option_id = ?
+					AND		shop_item_customisation_option_shop_item_customisation_id = ?
+					AND		shop_item_customisation_option_deleted = 0';
+			$query = $this->db->query($sql,array($customisation_option_id, $customisation_id));
+			if ($query->num_rows() == 1)
+			{
+				$row = $query->row();
+				$price += $row->price;
+			}
+		}
+		return $price*$quantity;
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function CalculateBasketPrice($basket_id)
+	{
+		$price = 0;
+		$sql = 'SELECT	shop_order_item_price as price,
+						shop_order_item_quantity as quantity
+				FROM	shop_order_items
+				WHERE	shop_order_item_shop_order_id = ?
+				AND		shop_order_item_deleted = 0';
+		$query = $this->db->query($sql,array($basket_id));
+		if ($query->num_rows() > 0)
+		{
+			foreach ($query->result() as $row)
+			{
+				$price += $row->price;
+			}
+		}
+		return $price;
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
 	function AddToBasket($basket_id, $item_id, $customisations, $quantity)
 	{
 		$this->db->trans_start();
+		$price = $this->CalculateItemCustPrice($item_id, $customisations, $quantity);
+		//get price per customisations
 		$sql = 'INSERT INTO shop_order_items (
 					shop_order_item_shop_order_id,
 					shop_order_item_shop_item_id,
 					shop_order_item_quantity,
-					shop_order_item_deleted
+					shop_order_item_deleted,
+					shop_order_item_price
 				)
-				VALUES (?, ?, ?, 0)';
-		$this->db->query($sql,array($basket_id, $item_id, $quantity));
+				VALUES (?, ?, ?, 0, ?)';
+		$this->db->query($sql,array($basket_id, $item_id, $quantity, $price));
 		$shop_order_item_id = $this->db->insert_id();
 		foreach($customisations as $customisation_id => $customisation_option_id)
 		{
@@ -245,6 +297,12 @@ class Shop_model extends Model
 			$this->db->query($sql,array($shop_order_item_id, $customisation_id, $customisation_option_id));
 		}
 		$this->db->trans_complete();
+		$total_price = $this->CalculateBasketPrice($basket_id);
+		$sql = 'UPDATE	shop_orders
+				SET		shop_order_price = ?
+				WHERE	shop_order_id = ?
+				AND		shop_order_deleted = 0';
+		$this->db->query($sql, array($total_price, $basket_id));
 		return true;
 	}
 	

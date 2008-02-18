@@ -54,11 +54,11 @@ class Shop extends Controller {
 			$item['event_date_string'] = date('l, jS F Y', $item['event_date']);
 			if ($item['price_range']['min'] == $item['price_range']['max'])
 			{
-				$item['price_string'] = '&pound;'.$item['price_range']['min'];
+				$item['price_string'] = '£'.$item['price_range']['min'];
 			}
 			else
 			{
-				$item['price_string'] = '&pound;'.$item['price_range']['min'].' to '.'&pound;'.$item['price_range']['max'];
+				$item['price_string'] = '£'.$item['price_range']['min'].' to '.'£'.$item['price_range']['max'];
 			}
 			//$item['thumb_details'] = $this->image->getThumb($item['thumb_id'], 1);
 		}
@@ -111,11 +111,11 @@ class Shop extends Controller {
 		$data['item']['event_date_string'] = date('l, jS F Y', $data['item']['event_date']);
 		if ($data['item']['price_range']['min'] == $data['item']['price_range']['max'])
 		{
-			$data['item']['price_string'] = '&pound;'.$data['item']['price_range']['min'];
+			$data['item']['price_string'] = '£'.$data['item']['price_range']['min'];
 		}
 		else
 		{
-			$data['item']['price_string'] = '&pound;'.$data['item']['price_range']['min'].' to '.'&pound;'.$data['item']['price_range']['max'];
+			$data['item']['price_string'] = '£'.$data['item']['price_range']['min'].' to '.'£'.$data['item']['price_range']['max'];
 		}
 		$data['item']['customisations'] = $this->shop_model->GetItemCustomisations($item_id);
 		foreach ($data['item']['customisations'] as &$customisation)
@@ -123,7 +123,7 @@ class Shop extends Controller {
 			$customisation['options'] = $this->shop_model->GetItemCustomisationOptions($customisation['id']);
 			foreach ($customisation['options'] as &$option)
 			{
-				$option['price_string'] = '&pound;'.number_format($option['price'], 2);
+				$option['price_string'] = '£'.number_format($option['price'], 2);
 			}
 		}
 				
@@ -177,7 +177,7 @@ class Shop extends Controller {
 			$data['id'] = $this->shop_model->CreateEmptyBasket($this->user_auth->entityId);
 			$data['price'] = 0;
 		}
-		$data['price_string'] = '&pound;'.number_format($data['price'], 2);
+		$data['price_string'] = '£'.number_format($data['price'], 2);
 		$data['items'] = $this->shop_model->GetItemsInBasket($data['id']);
 		foreach ($data['items'] as &$basket_item)
 		{
@@ -186,7 +186,7 @@ class Shop extends Controller {
 			{
 				$cust_array[] = $basket_item_cust['option_name'];
 			}
-			$basket_item['price_string'] = '&pound;'.number_format($basket_item['price'], 2);
+			$basket_item['price_string'] = '£'.number_format($basket_item['price'], 2);
 			$basket_item['cust_string'] = implode(', ', $cust_array);
 		}
 		
