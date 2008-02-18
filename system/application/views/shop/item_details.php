@@ -7,11 +7,11 @@
 		?>
 	</div>
 	<div class="BlueBox">
-		<h2><?php echo($item['name']); ?></h2>
+		<h2><?php echo(xml_escape($item['name'])); ?></h2>
 		<?php include('item_description.php'); ?>
 		<form id="add_to_basket_form" method="post" class="form">
 			<fieldset>
-				<input type="hidden" name="r_item_id" id="r_item_id" value="<?php echo($item['id']); ?>" />
+				<input type="hidden" name="r_item_id" id="r_item_id" value="<?php echo(xml_escape($item['id'])); ?>" />
 				<label for="a_quantity">Quantity:</label>
 				<select id="a_quantity" name="a_quantity">
 <?php
@@ -25,12 +25,12 @@ for ($i = 1; $i <= $item['max_per_user']; $i++) {
 <?php
 foreach ($item['customisations'] as $customisation) {
 ?>
-				<label for="a_customisation[<?php echo($customisation['id']); ?>]"><?php echo($customisation['name']); ?>: </label>
-				<select id="a_customisation[<?php echo($customisation['id']); ?>]" name="a_customisation[<?php echo($customisation['id']); ?>]">
+				<label for="a_customisation[<?php echo(xml_escape($customisation['id'])); ?>]"><?php echo(xml_escape($customisation['name'])); ?>: </label>
+				<select id="a_customisation[<?php echo(xml_escape($customisation['id'])); ?>]" name="a_customisation[<?php echo(xml_escape($customisation['id'])); ?>]">
 <?php
 foreach ($customisation['options'] as $option) {
 ?>
-					<option value="<?php echo($option['id']); ?>"><?php echo($option['name']); ?> - <?php echo($option['price_string']); ?></option>
+					<option value="<?php echo(xml_escape($option['id'])); ?>"><?php echo(xml_escape($option['name'])); ?> - <?php echo(xml_escape($option['price_string'])); ?></option>
 <?php
 }
 ?>

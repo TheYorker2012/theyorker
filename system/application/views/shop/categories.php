@@ -7,7 +7,7 @@
 <?php
 	foreach ($categories as $category) {
 ?>
-			<li><a href="/shop/view/<?php echo($category['id']); ?>/"><?php echo($category['name']); ?></a></li>
+			<li><a href="/shop/view/<?php echo(xml_escape($category['id'])); ?>/"><?php echo(xml_escape($category['name'])); ?></a></li>
 <?php
 	}
 ?>
