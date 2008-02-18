@@ -98,6 +98,7 @@ class Shop extends Controller {
 				$_POST['a_customisation'], 
 				$_POST['a_quantity']
 				);
+			$this->messages->AddMessage('success', 'Added item to basket.');
 			$data['basket'] = $this->_getbasket();
 		}
 		
@@ -187,11 +188,17 @@ class Shop extends Controller {
 			if ($action == 'inc')
 			{
 				$this->shop_model->UpdateOrderQuantity($item_order_id, 1, $data['basket']['id']);
+				$this->messages->AddMessage('success', 'Added an item.');
 			}
 			else if ($action == 'dec')
 			{
 				$this->shop_model->UpdateOrderQuantity($item_order_id, -1, $data['basket']['id']);
+				$this->messages->AddMessage('success', 'Remove an item.');
 			}
+		}
+		else
+		{
+			$this->messages->AddMessage('error', 'Can\'t modify item.');
 		}
 		redirect(GetUriTail(4));
 	}

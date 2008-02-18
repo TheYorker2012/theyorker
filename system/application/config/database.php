@@ -39,6 +39,13 @@ $db['default']['hostname'] = "72.36.234.210";
 $db['default']['username'] = "yorkerremote";
 $db['default']['password'] = "df97nvc02d90dg";
 $db['default']['database'] = "yorkerremote";
+// local
+$db['default']['hostname'] = "localhost";
+$db['default']['username'] = "root";
+$db['default']['password'] = "psswrd1!";
+$db['default']['database'] = "yorker_web";
+
+//rest
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['active_r'] = TRUE;
