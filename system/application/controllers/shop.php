@@ -132,6 +132,7 @@ class Shop extends Controller {
 		}
 		
 		$data['uri_trail'] = GetUriTail(0);
+		$data['uri_trail_back'] = GetUriTail(3);
 				
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/item_details', $data);

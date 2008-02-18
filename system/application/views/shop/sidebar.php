@@ -3,6 +3,18 @@
 	<div class="Entry">
 		<a href="/shop/checkout/">Go To Checkout</a>
 	</div>
+	<div class="Entry">
+		<a href="/shop/">Go To Shop Home</a>
+	</div>
+<?php
+	if (isset($uri_trail_back)) {
+?>
+	<div class="Entry">
+		<a href="/<?php echo(xml_escape($uri_trail_back)); ?>">Go To Category Home</a>
+	</div>
+<?php
+	}
+?>
 
 	<h2>Current Basket (<?php echo(xml_escape($basket['price_string'])); ?>)</h2>
 <?php
