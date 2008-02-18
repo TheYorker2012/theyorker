@@ -384,7 +384,9 @@ class Shop_model extends Model
 				JOIN	shop_items
 				ON		shop_item_id = shop_order_item_shop_item_id
 				WHERE	shop_order_item_shop_order_id = ?
-				AND		shop_order_item_deleted = 0';
+				AND		shop_order_item_deleted = 0
+				AND		shop_order_item_quantity > 0
+				ORDER BY item_name ASC';
 		$query = $this->db->query($sql, array($basket_id));
 		$basket_items = $query->result_array();
 		foreach($basket_items as &$basket_item)
@@ -408,6 +410,50 @@ class Shop_model extends Model
 			$basket_item['details'] = $query3->row_array();
 		}
 		return $basket_items;
+	}
+	
+	/*
+	* description
+	* @assumes	- $item_order_id is in the users basket and not anothers
+	* @return	- thing 1
+			- thing 2
+	*/
+	function UpdateOrderQuantity($item_order_id, $quantity_change, $basket_id)
+	{
+		$sql = 'UPDATE	shop_order_items
+				SET		shop_order_item_quantity = (shop_order_item_quantity + ?)
+				WHERE	shop_order_item_id = ?
+				AND		shop_order_item_deleted = 0';
+		$this->db->query($sql, array($quantity_change, $item_order_id));
+		$total_price = $this->CalculateBasketPrice($basket_id);
+		$sql = 'UPDATE	shop_orders
+				SET		shop_order_price = ?
+				WHERE	shop_order_id = ?
+				AND		shop_order_deleted = 0';
+		$this->db->query($sql, array($total_price, $basket_id));
+	}
+	
+	/*
+	* description
+	* @return	- thing 1
+			- thing 2
+	*/
+	function IsItemOrderInBasket($item_order_id, $basket_id)
+	{
+		$sql = 'SELECT	shop_order_item_shop_order_id as basket_id
+				FROM	shop_order_items
+				WHERE	shop_order_item_id = ?
+				AND		shop_order_item_deleted = 0';
+		$query = $this->db->query($sql, array($item_order_id));
+		if ($query->num_rows() == 1)
+		{
+			$row = $query->row();
+			if ($basket_id == $row->basket_id)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/*

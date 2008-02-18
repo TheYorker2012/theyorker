@@ -13,6 +13,7 @@ class Shop extends Controller {
 		/// Used in all all page requests
 		$this->load->model('shop_model','shop_model');
 		$this->load->library('image');
+		$this->load->helper('uri_tail');
 	}
 	
 	/**
@@ -27,6 +28,7 @@ class Shop extends Controller {
 		$this->pages_model->SetPageCode('shop');
 		
 		$data['categories'] = $this->shop_model->GetCategoryListing();
+		$data['uri_trail'] = GetUriTail(0);
 				
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/categories', $data);
@@ -73,6 +75,7 @@ class Shop extends Controller {
 			$calendar_data = new CalendarData();
 			$mMainSource->FetchEvent($calendar_data, $source_id, $shops['id']);
 		}*/
+		$data['uri_trail'] = GetUriTail(0);
 				
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/items', $data);
@@ -126,6 +129,8 @@ class Shop extends Controller {
 				$option['price_string'] = '£'.number_format($option['price'], 2);
 			}
 		}
+		
+		$data['uri_trail'] = GetUriTail(0);
 				
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/item_details', $data);
@@ -140,6 +145,8 @@ class Shop extends Controller {
 		$data = array();
 		
 		$data['basket'] = $this->_getbasket();
+		
+		$data['uri_trail'] = GetUriTail(0);
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/checkout', $data);
@@ -169,6 +176,26 @@ class Shop extends Controller {
 		$this->main_frame->Load();
 	}
 	
+	function itemcount($action, $item_order_id)
+	{
+		if (!CheckPermissions('student')) return;
+		
+		$data['basket'] = $this->_getbasket();
+		
+		if ($this->shop_model->IsItemOrderInBasket($item_order_id, $data['basket']['id']))
+		{
+			if ($action == 'inc')
+			{
+				$this->shop_model->UpdateOrderQuantity($item_order_id, 1, $data['basket']['id']);
+			}
+			else if ($action == 'dec')
+			{
+				$this->shop_model->UpdateOrderQuantity($item_order_id, -1, $data['basket']['id']);
+			}
+		}
+		redirect(GetUriTail(4));
+	}
+	
 	function _getbasket()
 	{
 		$data = $this->shop_model->HasCurrentBasket($this->user_auth->entityId);
@@ -186,6 +213,7 @@ class Shop extends Controller {
 			{
 				$cust_array[] = $basket_item_cust['option_name'];
 			}
+			$basket_item['price'] *= $basket_item['quantity'];
 			$basket_item['price_string'] = '£'.number_format($basket_item['price'], 2);
 			$basket_item['cust_string'] = implode(', ', $cust_array);
 		}

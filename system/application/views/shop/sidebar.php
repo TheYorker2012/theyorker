@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Options</h2>
 	<div class="Entry">
-		<a href="/shop/checkout/">Checkout</a>
+		<a href="/shop/checkout/">Go To Checkout</a>
 	</div>
 
 	<h2>Current Basket (<?php echo(xml_escape($basket['price_string'])); ?>)</h2>
@@ -10,7 +10,7 @@
 	{
 ?>
 	<div class="Entry">
-		No Items In Basket
+		No Items In Basket.
 	</div>
 <?php
 	}
@@ -20,9 +20,11 @@
 ?>
 	<div class="Entry">
 		<?php echo(xml_escape($basket_item['quantity'])); ?> x
-		<?php echo(xml_escape($basket_item['item_name'])); ?> -
+		<a href="/shop/item/<?php echo(xml_escape($basket_item['item_id'])); ?>"><?php echo(xml_escape($basket_item['item_name'])); ?></a> -
 		<?php echo(xml_escape($basket_item['cust_string'])); ?>
 		(<?php echo(xml_escape($basket_item['price_string'])); ?>)
+		<a href="/shop/itemcount/inc/<?php echo(xml_escape($basket_item['order_item_id']).'/'.xml_escape($uri_trail)); ?>">(+)</a>
+		<a href="/shop/itemcount/dec/<?php echo(xml_escape($basket_item['order_item_id']).'/'.xml_escape($uri_trail)); ?>">(-)</a>
 	</div>
 <?php
 		}
