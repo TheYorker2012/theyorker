@@ -28,7 +28,5 @@
 				height="46" width="180"/>
 		</form>
 	</div>
-	<!--
-		<?php print_r($basket); ?>
-	-->
 </div>
+
