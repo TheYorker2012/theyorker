@@ -128,8 +128,12 @@
 
 				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
 
-				<label><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></label>
-				
+				<label style="text-align:center">
+					<a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a>
+					<br />
+					<a href="/pages/commentspolicy">Comments Policy</a>
+				</label>
+
 				<?php if ($ShowCancelButton) { ?>
 				<input type="submit" class="button" name="CommentAddCancel"  value="Cancel" />
 				<?php } ?>
