@@ -379,6 +379,7 @@ class Shop_model extends Model
 						shop_order_item_quantity as quantity,
 						shop_order_item_id as basket_item_id,
 						shop_item_name as item_name,
+						shop_item_description as item_description,
 						shop_order_item_price as price
 				FROM	shop_order_items
 				JOIN	shop_items

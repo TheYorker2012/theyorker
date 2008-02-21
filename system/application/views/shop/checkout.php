@@ -11,8 +11,8 @@
 			<input type="hidden" name="_charset_"/>
 			<?php foreach ($basket['items'] as $i => $item) { ?>
 				<?php $i += 1; /* Google Checkout used 1-based indexing */ ?>
-				<input type="hidden" name="item_name_<?php echo($i); ?>" value="<?php echo(xml_escape($item['details']['name'])); ?>"/>
-				<input type="hidden" name="item_description_<?php echo($i); ?>" value="<?php echo(xml_escape($item['details']['description'])); ?>"/>
+				<input type="hidden" name="item_name_<?php echo($i); ?>" value="<?php echo(xml_escape($item['item_name'])); ?>"/>
+				<input type="hidden" name="item_description_<?php echo($i); ?>" value="<?php echo(xml_escape($item['item_description'])); ?>"/>
 				<input type="hidden" name="item_quantity_<?php echo($i); ?>" value="<?php echo($item['quantity']); ?>"/>
 				<input type="hidden" name="item_price_<?php echo($i); ?>" value="<?php echo($item['item_price']); ?>"/>
 				<input type="hidden" name="item_currency_<?php echo($i); ?>" value="GBP"/>
