@@ -221,7 +221,7 @@ class Shop extends Controller {
 			{
 				$cust_array[] = $basket_item_cust['option_name'];
 			}
-			$basket_item['item_price'] = number_format($basket['price'], 2, '.', '');
+			$basket_item['item_price'] = number_format($basket_item['price'], 2, '.', '');
 			$basket_item['price'] *= $basket_item['quantity'];
 			$basket_item['price_string'] = '£'.number_format($basket_item['price'], 2);
 			$basket_item['cust_string'] = implode(', ', $cust_array);
