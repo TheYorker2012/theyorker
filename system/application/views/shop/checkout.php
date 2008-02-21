@@ -6,7 +6,7 @@
 	<div class="BlueBox">
 		<h2>Your Basket</h2>
 		<form method="POST"
-			action="https://sandbox.google.com/checkout/cws/v2/Merchant/642636134744714/checkout"
+			action="https://sandbox.google.com/checkout/cws/v2/Merchant/572321583992745/checkout"
 			accept-charset="utf-8">
 			<input type="hidden" name="_charset_"/>
 			<?php foreach ($basket['items'] as $i => $item) { ?>
@@ -19,9 +19,14 @@
 				<p><?php echo($item['quantity']); ?> x <?php echo(xml_escape($item['details']['name'])); ?></p>
 			<?php } ?>
 			<input type="image" name="Google Checkout" alt="Fast checkout through Google"
-				src="http://checkout.google.com/buttons/checkout.gif?merchant_id=642636134744714&amp;w=180&amp;h=46&amp;style=white&amp;variant=text&amp;loc=en_GB"
+				src="http://checkout.google.com/buttons/checkout.gif?merchant_id=572321583992745&amp;w=180&amp;h=46&amp;style=white&amp;variant=text&amp;loc=en_GB"
 				height="46" width="180"/>
 		</form>
 	</div>
+	<!--
+		
+		<?php print_r($basket); ?>
+		
+	-->
 </div>
 
