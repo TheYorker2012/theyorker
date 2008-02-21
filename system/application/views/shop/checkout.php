@@ -6,7 +6,7 @@
 	<div class="BlueBox">
 		<h2>Your Basket</h2>
 		<form method="POST"
-			action="https://sandbox.google.com/checkout/cws/v2/Merchant/572321583992745/checkout"
+			action="https://sandbox.google.com/checkout/cws/v2/Merchant/572321583992745/checkoutForm"
 			accept-charset="utf-8">
 			<input type="hidden" name="_charset_"/>
 			<?php foreach ($basket['items'] as $i => $item) { ?>
