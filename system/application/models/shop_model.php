@@ -401,13 +401,6 @@ class Shop_model extends Model
 					WHERE	shop_order_item_customisation_shop_order_item_id = ?';
 			$query2 = $this->db->query($sql, array($basket_item['order_item_id']));
 			$basket_item['customisations'] = $query2->result_array();
-
-			$sql = 'SELECT	shop_item_name as name,
-							shop_item_description as description
-					FROM	shop_items
-					WHERE	shop_item_id = ?';
-			$query3 = $this->db->query($sql, array($basket_item['item_id']));
-			$basket_item['details'] = $query3->row_array();
 		}
 		return $basket_items;
 	}
