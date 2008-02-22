@@ -71,6 +71,14 @@ sub runTest
 					}
 				}
 				
+				# Reference to the site url
+				if ($file !~ /system\/application\/config\//) {
+					if ($line =~ /((?:\w+\.|static\.)?theyorker\.co\.uk)/) {
+						$self->printError($file, $lineno, "Reference to $1 found, the appropriate config option should probably be used instead");
+						$fail = 1;
+					}
+				}
+				
 				
 				++$lineno;
 			}
