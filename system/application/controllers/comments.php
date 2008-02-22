@@ -92,9 +92,10 @@ class Comments extends Controller
 	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment)
 	{
 		if (!is_numeric($CommentId)) {
-			return show_404();
+			show_404();
+			return false;
 		}
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('student')) return false;
 		
 		$this->load->model('comments_model');
 		
@@ -109,7 +110,7 @@ class Comments extends Controller
 			redirect($redirect_to);
 		} elseif (!$comment['owned']) {
 			// The comment doesn't belong to this user, go to the office
-			if (!CheckPermissions('moderator')) return;
+			if (!CheckPermissions('moderator')) return false;
 			$has_permission = true;
 		} else {
 			$has_permission = true;
