@@ -259,14 +259,16 @@ class Home extends Controller {
 		// Poll data
 		if ($poll_id)
 		{
-			$data['poll']['info'] = $this->polls_model->GetPollDetails($poll_id);
-			$data['poll']['choices'] = $this->polls_model->GetPollChoiceVotes($poll_id);
-			$data['poll']['user_voted'] = $user_voted;
-			$data['poll']['show_results'] = $poll_show_results;
+			$data['poll_vote_box'] = new PollsVoteBox(
+				$this->polls_model->GetPollDetails($poll_id),
+				$this->polls_model->GetPollChoiceVotes($poll_id),
+				$user_voted,
+				$poll_show_results
+			);
 		}
 		else
 		{
-			$data['poll'] = false;
+			$data['poll_vote_box'] = null;
 		}
 
 		// Set up the public frame

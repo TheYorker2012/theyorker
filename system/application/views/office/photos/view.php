@@ -63,7 +63,7 @@ function printInput ($title, $name,$type,$value,$section,$access,$user_level)
 		<?php echo($help_text); ?>
 	</div>
 
-	<form name='edit_request' id='edit_request' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
+	<form id='edit_request' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<h2>details</h2>
 			<fieldset>
@@ -166,7 +166,7 @@ if ($status == 'unassigned') {
 
 <?php } else { ?>
 	</form>
-	<form name='edit_photos' id='edit_photos' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
+	<form id='edit_photos' action='/office/photos/view/<?php echo($id); ?>' method='post' class='form'>
 <?php if ($status == 'completed') { ?>
 		<div class="blue_box">
 			<h2>chosen photo</h2>

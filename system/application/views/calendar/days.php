@@ -26,7 +26,7 @@ if (!isset($AllowEventCreate)) {
 
 $show_attendence = !$squash;
 $attendence_actions = ($show_attendence
-	? array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend')
+	? array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend')
 	: array('yes' => 'Y', 'no' => 'N', 'maybe' => '?')
 );
 $attend_state_images = array(
@@ -369,7 +369,7 @@ table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_headin
 
 
 <div class="BlueBox">
-<div align="center">
+<div style="text-align:center">
 <?php
 if (isset($BackwardUrl)) {
 	echo('<a href="'.$BackwardUrl.'"><img src="'.site_url('images/prototype/calendar/backward.gif').'" alt="Backward" /></a> ');

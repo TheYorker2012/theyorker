@@ -83,11 +83,11 @@
 <?php
 	foreach ($podcasts as $podcast) {
 		$podcast['is_live'] ? $is_live = "Yes" : $is_live = "No";
-		strlen($podcast['name'])>0 ? $name=$podcast['name'] : $name='<em>No Name</em>';
+		strlen($podcast['name'])>0 ? $name=xml_escape($podcast['name']) : $name='<em>No Name</em>';
 ?>
 					<tr>
 						<td>
-							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.xml_escape($name).'</a>'); ?>
+							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.$name.'</a>'); ?>
 						</td>
 						<td style="text-align:right;padding-right:5px;">
 							<?php echo($is_live); ?>

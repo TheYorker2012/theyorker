@@ -3,45 +3,42 @@
 	<div class="Entry">
 <?php 	if ($link->num_rows() > 0)
 	{
-	/// @todo FIXME data from database should be processed in the model
-	foreach($link->result() as $picture){
-		echo('	<a href="'.$picture->link_url.'" target="_blank">'.$this->image->getImage($picture->link_image_id, 'link', array('title' => xml_escape($picture->link_name), 'alt' => xml_escape($picture->link_name))).'</a>'."\n");
+		/// @todo FIXME data from database should be processed in the model
+		foreach($link->result() as $picture){
+			echo('	<a href="'.xml_escape($picture->link_url).'" target="_blank">'.
+				$this->image->getImage( // getImage does the escaping
+					$picture->link_image_id, 'link',
+					array(
+						'title'	=> $picture->link_name,
+						'alt'	=> $picture->link_name,
+					)
+				).
+				'</a>'."\n"
+			);
 		}
 	} else {
-		echo('	<a href="http://theyorker.co.uk">You have no links :(</a>'."\n");
+// 		<a href="/account/links">You have no links</a>
 	}
 ?>
 		<a class="RightColumnAction"  href="/account/links">Customise</a>
 	</div>
 	
-<?php 
-
-	if ($poll)
+<?php
+	if (null !== $poll_vote_box)
 	{
-		if ($this->user_auth->isLoggedIn)
-		{
-			if ($poll['user_voted'])
-				$this->polls_view->print_sidebar_poll_no_voting($poll['info'], $poll['choices']);
-			else
-				$this->polls_view->print_sidebar_poll_voting($poll['info'], $poll['choices'], $poll['show_results']);
-		}
-		else
-		{
-			$this->polls_view->print_sidebar_poll_login_to_vote($poll['info']);
-		}
+		$poll_vote_box->Load();
 	}
-	
 ?>
 
 	<h2>Search the Web</h2>
 	<div class="Entry">
 		<form method="get" action="http://www.google.co.uk/search" target="_blank">
-			<input type="hidden" name="ie" value="UTF-8" />
-			<input type="hidden" name="oe" value="UTF-8" />
-			<a href="http://www.google.co.uk/" target="_blank">
-				<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
-			</a>
 			<fieldset class="inline">
+				<input type="hidden" name="ie" value="UTF-8" />
+				<input type="hidden" name="oe" value="UTF-8" />
+				<a href="http://www.google.co.uk/" target="_blank">
+					<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
+				</a>
 				<input type="text" name="q" value="" />
 				<input type="submit" class="button" name="btnG" value="Search" target="_blank" />
 			</fieldset>

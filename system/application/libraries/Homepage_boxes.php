@@ -25,7 +25,7 @@ class Homepage_boxes
 			echo('<div class="BlueBox">'."\n");
 			echo('	<h2>'.xml_escape($heading).'</h2>'."\n");
 			echo('	<div class="NewsBox">'."\n");
-			echo('		<a class="NewsImg"'.$this->get_link_ref($articles[0],$prefix).'>'."\n");
+			echo('		<a class="NewsImg" '.$this->get_link_ref($articles[0],$prefix).'>'."\n");
 			echo('			'.$articles[0]['photo_xhtml']."\n");
 			echo('		</a>'."\n");
 			echo('		<h3 class="Headline"><a '.$this->get_link_ref($articles[0],$prefix).'>'.xml_escape($articles[0]['heading']).'</a></h3>'."\n");

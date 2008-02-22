@@ -14,7 +14,7 @@
 		</p>
 		<?php echo($what_to_do); ?>
 <?php
-	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="post">'."\n");
+	echo('		<form class="form" action="'.$target.'" method="post">'."\n");
 ?>
 			<fieldset>
 				<label for='invite_list'>Invite List:</label>
@@ -33,7 +33,7 @@
 		</p>
 		<?php //echo $what_to_do; ?>
 <?php
-	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="post">'."\n");
+	echo('		<form class="form" action="'.$target.'" method="post">'."\n");
 ?>
 			<fieldset>
 				<label for='invite_list_failures'>List of INCORRECT email addresses:</label>
@@ -88,7 +88,7 @@
 			You have entered the following list of emails, please uninvite any you wish not to send an invitation to and then click the Finish button.
 		</p>
 <?php
-	echo('		<form class="form" name="members_invite_form" action="'.$target.'" method="post">'."\n");
+	echo('		<form class="form" action="'.$target.'" method="post">'."\n");
 ?>
 			<fieldset>
 				<div class="ArticleBox">

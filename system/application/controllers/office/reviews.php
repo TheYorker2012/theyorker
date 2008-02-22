@@ -430,8 +430,7 @@ class Reviews extends Controller
 				$data['main_revision']['deal'] = '';
 				$data['main_revision']['deal_expires'] = '';
 			}
-			
-			//get reviews for areas for attention
+			//get reviews for areas for attention 
 			$temp_reviews = $this->review_model->GetOrgReviews($ContextType, $data['organisation']['id']);
 			if (is_array($temp_reviews)) {
 				foreach($temp_reviews as $review)
@@ -442,7 +441,6 @@ class Reviews extends Controller
 					$data['reviews'][] = $temp;
 				}
 			}
-
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
 		}
@@ -585,7 +583,7 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-
+	
 	function photos($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
@@ -609,8 +607,12 @@ class Reviews extends Controller
 			$this->load->library('image');
 			$this->load->library('image_upload');
 			$data['ContextType'] = $ContextType;
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+			$data['thumbnail_text'] = $this->pages_model->GetPropertyWikitext('thumbnail_text');
+			$data['thumbnail_text_none'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_none');
+			$data['thumbnail_text_no_images'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_no_images');
+			
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
@@ -622,7 +624,7 @@ class Reviews extends Controller
 				$this->messages->AddMessage('success', 'Photo Deleted');
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
-				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow'));
+				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow','small'));
 			} elseif (isset($_SESSION['img'])) {
 				foreach ($_SESSION['img'] as $newID) {
 					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
@@ -634,7 +636,9 @@ class Reviews extends Controller
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
-			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
+			$images = $this->slideshow->getPhotos($data['organisation']['id']);
+			$data['images'] = $images->result_array();//nasty hack, slideshow shouldnt give out objects!
+			$data['has_thumbnail'] = $this->review_model->DoesThisVenueHaveAThumbnail($organisation,'small');
 
 			// Set up the directory view
 			$the_view = $this->frames->view('office/reviews/photos', $data);
@@ -710,11 +714,11 @@ class Reviews extends Controller
 			$this->requests_model->CreateArticleRevision(
 				$article_id,
 				$this->user_auth->entityId,
-				'',
+				'Review of '.$data['organisation']['name'],
 				'',
 				'',
 				$_POST['a_review_text'],
-				'');
+				$_POST['a_review_blurb']);
 			//add the selected byline to the review
 			$this->requests_model->AddUserToRequest(
 				$article_id,
@@ -755,6 +759,12 @@ class Reviews extends Controller
 			$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
 			$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
 			$temp['article']['id'] = $review['id'];
+			if($temp['article']['live_content'] == $this->article_model->GetLatestRevision($review['id'])){
+				$revisions_waiting=0;
+			}else{
+				$revisions_waiting=1;
+			}
+			$temp['article']['revisions_waiting'] = $revisions_waiting;//If the live content id is not the lastet revision there are revisions waiting
 			$data['reviews'][] = $temp;
 		}
 
@@ -793,14 +803,12 @@ class Reviews extends Controller
 			$revision_id = $this->requests_model->CreateArticleRevision(
 				$article_id,
 				$this->user_auth->entityId,
-				'',
+				'Review of '.$data['organisation']['name'],
 				'',
 				'',
 				$_POST['a_review_text'],
-				''
-				)
-				;
-					$this->messages->AddMessage('success','New revision created for review.');
+				$_POST['a_review_blurb']);
+			$this->messages->AddMessage('success','New revision created for the review.');
 		}
 		elseif (isset($_POST['r_submit_publish']))
 		{
@@ -835,7 +843,11 @@ class Reviews extends Controller
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
+		if($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin'){
+			$data['user']['is_editor'] = true;
+		}else{
+			$data['user']['is_editor'] = false;
+		}
 
 		$writers = $this->requests_model->GetArticleWriters($article_id);
 		$found = false;
@@ -845,7 +857,7 @@ class Reviews extends Controller
 				$found = $data['user']['id'];
 		}
 
-		if ($found == false && $data['user']['officetype'] == 'Low')
+		if ($found == false && !$data['user']['is_editor'])
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');

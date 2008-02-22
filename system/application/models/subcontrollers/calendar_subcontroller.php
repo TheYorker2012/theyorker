@@ -2084,14 +2084,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				true
 			);
 			if ($result <= 0) {
-				$this->messages->AddMessage('error', 'You could not be subscribed to this organisation&apos;s event stream. You may already be subscribed or the organisation name may be wrong.');
+				$this->messages->AddMessage('error', 'You could not be subscribed to this organisation&#039;s event stream. You may already be subscribed or the organisation name may be wrong.');
 			} else {
-				$this->messages->AddMessage('success', 'You have been successfully subscribed to this organisation&apos;s event stream.');
+				$this->messages->AddMessage('success', 'You have been successfully subscribed to this organisation&#039;s event stream.');
 			}
 		} elseif ($this->events_model->IsVip()) {
-			$this->messages->AddMessage('error', 'You cannot subscribe to an organisation&apos;s event stream as a VIP.');
+			$this->messages->AddMessage('error', 'You cannot subscribe to an organisation&#039;s event stream as a VIP.');
 		} else {
-			$this->messages->AddMessage('error', 'You must be logged in to subscribe to an organisation&apos;s event stream.');
+			$this->messages->AddMessage('error', 'You must be logged in to subscribe to an organisation&#039;s event stream.');
 		}
 		
 		$tail_segments = func_get_args();
@@ -2111,14 +2111,14 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 				false
 			);
 			if ($result <= 0) {
-				$this->messages->AddMessage('error', 'You could not be unsubscribed from this organisation&apos;s event stream. You may already be unsubscribed or the organisation name may be wrong.');
+				$this->messages->AddMessage('error', 'You could not be unsubscribed from this organisation&#039;s event stream. You may already be unsubscribed or the organisation name may be wrong.');
 			} else {
-				$this->messages->AddMessage('success', 'You have been successfully unsubscribed from this organisation&apos;s event stream.');
+				$this->messages->AddMessage('success', 'You have been successfully unsubscribed from this organisation&#039;s event stream.');
 			}
 		} elseif ($this->events_model->IsVip()) {
-			$this->messages->AddMessage('error', 'You cannot unsubscribe from an organisation&apos;s event stream as a VIP.');
+			$this->messages->AddMessage('error', 'You cannot unsubscribe from an organisation&#039;s event stream as a VIP.');
 		} else {
-			$this->messages->AddMessage('error', 'You must be logged in to unsubscribe from an organisation&apos;s event stream.');
+			$this->messages->AddMessage('error', 'You must be logged in to unsubscribe from an organisation&#039;s event stream.');
 		}
 		
 		$tail_segments = func_get_args();
@@ -2135,7 +2135,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		$this->mSource = $this->mMainSource->GetSource($source_id);
 		if (NULL === $this->mSource) {
 			//show_404();
-			$this->messages->AddMessage('error','You don&apos;t have permission to access calendar source #'.$source_id.'.');
+			$this->messages->AddMessage('error','You don&#039;t have permission to access calendar source #'.$source_id.'.');
 			
 			header("HTTP/1.1 404 Not Found");
 			$CI = & get_instance();

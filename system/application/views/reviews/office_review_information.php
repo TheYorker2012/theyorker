@@ -7,6 +7,9 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
+	<?php 
+	if (!empty($revisions)){
+	?>
 	<h4>Revisions</h4>
 	<div class="Entry">
 		<ol>
@@ -62,6 +65,9 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 		}
 		?>
 	</div>
+	<?php
+	}
+	?>
 	<h4>Assigned User</h4>
 	<div class="Entry">
 	<?php 
@@ -73,7 +79,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 		}
 		echo $assigned_user_editor;
 		?>
-		<form name='assign_user' action='/office/reviews/<?php echo xml_escape($organisation['shortname'].'/'.$context_type.'/information/assign'); ?>' method='POST' class='form'>
+		<form action='/office/reviews/<?php echo xml_escape($organisation['shortname'].'/'.$context_type.'/information/assign'); ?>' method='POST' class='form'>
 			<fieldset>
 			<label for="assign_reporter">Reviewer:</label>
 			<select name="assign_reporter" size="1">
@@ -111,7 +117,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 </div>
 
 <div id="MainColumn">
-	<form id='reviewinfo' name='reviewinfo' action='/office/reviews/<?php echo xml_escape($organisation['shortname']); ?>/<?php echo xml_escape($context_type); ?>' method='POST' class='form'>
+	<form id='reviewinfo' action='/office/reviews/<?php echo xml_escape($organisation['shortname']); ?>/<?php echo xml_escape($context_type); ?>' method='POST' class='form'>
 	<div class='BlueBox'>
 		<h2>objective blurb</h2>
 		<fieldset>
@@ -191,6 +197,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 					$n++;
 				}
 			?>
+			<i>Click To Select Stars</i>
 			<br />
 			<label for='reviewinfo_quote'>Summary Quote:</label>
 			<textarea name='reviewinfo_quote' cols='25' rows='4'><?php echo(xml_escape($main_revision['content_quote'])); ?></textarea>

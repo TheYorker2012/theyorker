@@ -6,8 +6,15 @@
  * @brief Library for managing frames and views nicely.
  */
 
+/// The basic interface of a class that can output with Load().
+interface Outputter
+{
+	/// Echo the content.
+	function Load();
+}
+
 /// Simple view buffer.
-class SimpleView
+class SimpleView implements Outputter
 {
 	/// Raw data to output.
 	protected $mContent;
@@ -45,7 +52,7 @@ class SimpleView
  *
  * @see FramesFrame for handling subviews.
  */
-class FramesView
+class FramesView implements Outputter
 {
 	/// array The data array to send to the view.
 	protected $mDataArray;
@@ -111,6 +118,8 @@ class FramesView
 	{
 		if (!empty($this->mViewPath)) {
 			$CI = &get_instance();
+			$this->mDataArray['view'] = & $this;
+			$this->mDataArray['this'] = & $CI;
 			$CI->load->view($this->mViewPath, $this->mDataArray);
 		}
 	}

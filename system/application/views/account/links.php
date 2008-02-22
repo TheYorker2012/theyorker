@@ -74,9 +74,11 @@
 		</fieldset>
 		</form>-->
 		<div style="height:200px;overflow-x: hidden;overflow-y:scroll;overflow:-moz-scrollbars-vertical !important;">
-			<?php foreach ($AllLinks->result() as $option) {?>
-						<a href="<?php site_url('account/links/add/'.$option->link_id)?>"><img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16"></a>
-						<?php echo(xml_escape($option->link_name)); ?> <a href="<?php echo(xml_escape($option->link_url)); ?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a><br />
+			<?php foreach ($AllLinks->result() as $option) { ?>
+				<a href="<?php echo(site_url('account/links/add/'.$option->link_id)); ?>">
+					<img title="Add to Homepage" alt="Add" src="/images/icons/add.png" width="16" height="16">
+				</a>
+				<?php echo(xml_escape($option->link_name)); ?> <a href="<?php echo(xml_escape($option->link_url)); ?>" target="_blank"><img src="/images/icons/link_go.png" alt="Open site" title="Open site" /></a><br />
 			<?php } ?>
 		</div>
 	</div>

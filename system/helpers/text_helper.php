@@ -193,7 +193,7 @@ function entities_to_ascii($str, $all = TRUE)
 
    if ($all)
    {
-	   $str = str_replace(array("&amp;", "&lt;", "&gt;", "&quot;", "&apos;", "&#45;"),
+	   $str = str_replace(array("&amp;", "&lt;", "&gt;", "&quot;", "&#039;", "&#45;"),
 						  array("&","<",">","\"", "'", "-"),
 						  $str);
    }

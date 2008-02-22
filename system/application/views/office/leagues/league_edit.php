@@ -4,7 +4,7 @@
 		<?php echo($page_information); ?>
 	</div>
 	<h2>Current Image</h2>
-	<div class="Entry" align='center'>
+	<div class="Entry" style="text-align:center">
 		<p>
 			<?php echo($image); ?>
 		</p>

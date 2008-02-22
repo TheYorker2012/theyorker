@@ -63,7 +63,7 @@ $CI = & get_instance();
 	<div class="BlueBox">
 		<?php if (NULL !== $Event) { ?>
 			<h2><?php echo(xml_escape($Event->Name)); ?></h2>
-			<div><p>
+			<div>
 				<?php
 				if (NULL !== $Occurrence) {
 					// date + time
@@ -147,7 +147,7 @@ $CI = & get_instance();
 					$Occurrence->State == 'published' /*&&
 					$Occurrence->EndTime->Timestamp() > time()*/)
 				{
-					$attendence_actions = array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend');
+					$attendence_actions = array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend');
 					echo('<p>');
 					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');

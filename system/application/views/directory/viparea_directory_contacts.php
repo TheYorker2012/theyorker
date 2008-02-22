@@ -18,7 +18,7 @@
 	<?php
 	}
 	?>
-	<form name="edit_card" method="post" action="<?php echo($url); ?>" class="form">
+	<form method="post" action="<?php echo($url); ?>" class="form">
 		<fieldset>
 			<label for="card_name">Name:</label>
 			<input type="text" name="card_name" value="<?php if(!empty($card_form['card_name'])){echo(xml_escape($card_form['card_name']));} ?>"/>

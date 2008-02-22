@@ -7,7 +7,7 @@
 ?>
 <div id="RightColumn">
 	<div>
-		<h2 class="first">what&apos;s this?</h2>
+		<h2 class="first">what&#039;s this?</h2>
 		<p>Release tests should be run before updating the live site</p>
 	</div>
 </div>

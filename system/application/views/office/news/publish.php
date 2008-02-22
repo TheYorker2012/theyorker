@@ -24,7 +24,7 @@
 		</div>
 	</form>
 <?php } else { ?>
-	<form name='publish_request' id='publish_request' action='/office/news/<?php echo($article['id']); ?>' method='post' class='form'>
+	<form id='publish_request' action='/office/news/<?php echo($article['id']); ?>' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>

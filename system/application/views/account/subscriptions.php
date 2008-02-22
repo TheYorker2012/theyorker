@@ -67,6 +67,6 @@
 	<form action="<?php echo($button_next); ?>" method="post" class="form">
 		<div style="margin-top: 1em;">
 		 	<input type="submit" name="submit" id="submit" value="Next >" class="button" />
-			<input type="button" name="back" id="back" value="< Back" class="button" onclick="window.location="<?php echo($button_back); ?>"" />
+			<input type="button" name="back" id="back" value="< Back" class="button" onclick="window.location='<?php echo($button_back); ?>'" />
 		</div>
 	</form>

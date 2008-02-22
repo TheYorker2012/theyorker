@@ -52,7 +52,7 @@
 if(empty($organisation['groups'])) {
 ?>
 	<div class="BlueBox">
-		<div align="center">
+		<div style="text-align:center">
 			<b><?php if (isset($no_groups)) echo $no_groups; ?></b>
 		</div>
 	</div>
@@ -60,7 +60,7 @@ if(empty($organisation['groups'])) {
 } else if (empty($organisation['cards'])) {
 ?>
 	<div class="BlueBox">
-		<div align="center">
+		<div style="text-align:center">
 			<b><?php if (isset($no_cards)) echo $no_cards; ?></b>
 		</div>
 	</div>

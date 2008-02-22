@@ -2,7 +2,7 @@
 <div class='BlueBox'>
 	<h2><?php echo(xml_escape($section_games['title'])); ?></h2>
 	<?php /** @todo FIXME should be called text_xml */ ?>
-	<p><?php echo($section_games['text']); ?></p>
+	<?php echo($section_games['text']); ?>
 </div>
 
 <div class='BlueBox'>
@@ -26,4 +26,4 @@
 		?>
 	</tr></table>
 </div>
-<small><?php echo($section_games['footer']); ?></small>
+<?php echo($section_games['footer']); ?>

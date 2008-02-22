@@ -405,6 +405,8 @@ class Wikiparser {
 				so.addVariable("height","' . $control_height . '");
 				so.addVariable("width","340");
 				so.addVariable("file","' . $href . '");
+				so.addVariable("id","' . $href . '");
+				so.addVariable("callback","analytics");
 				so.addVariable("backcolor","0xFF6A00");
 				so.addVariable("frontcolor","0xFFFFFF");
 				so.addVariable("lightcolor","0x000000");

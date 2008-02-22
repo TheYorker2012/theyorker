@@ -110,7 +110,7 @@ if (isset($medium_type)) { ?>
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
 					<li><a href="/arts/">Arts</a></li>
-					<li><a href="/news/blogs/">Blogs</a></li>
+					<li><a href="/blogs/">Blogs</a></li>
 					<li><a href="/reviews/food">Food</a></li>
 					<?php /*
 					<li><a href="/reviews/drink">Drink</a></li>

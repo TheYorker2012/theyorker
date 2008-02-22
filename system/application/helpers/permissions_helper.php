@@ -827,6 +827,10 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 
 				$CI->user_auth->login($username, $password, $keep_login);
 
+				if (($CI->user_auth->firstname == '') && ($CI->user_auth->surname == '')) {
+					$CI->messages->AddMessage('warning', $CI->pages_model->GetPropertyWikiText('login:no_name_set', TRUE));
+				}
+
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{
 					$RedirectDestination = GetDefaultHomepage();

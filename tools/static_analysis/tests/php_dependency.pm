@@ -1,5 +1,8 @@
 package php_dependency;
 
+use strict;
+use warnings;
+
 use test;
 
 use vars qw(@ISA);

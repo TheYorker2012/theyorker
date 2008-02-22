@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<h2 class="first">Browse By</h2>
 	<div class="entry">
-		<form name="reviews" action="#" method="post">
+		<form action="#" method="post">
 			<fieldset>
 				<label for="item_filter_by">Find based on: </label>
 				<select name="item_filter_by">

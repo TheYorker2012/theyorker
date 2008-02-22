@@ -434,7 +434,7 @@ ul#Navbar li a:hover {
  * CSS used in tab strip on the sidebar of the homepage        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ul#SideTabBar {
+ul.SideTabBar {
 	width: 100%;
 	display: block;
 	text-align: right;
@@ -445,7 +445,7 @@ ul#SideTabBar {
 	font-size: 0.8em;
 }
 
-ul#SideTabBar li {
+ul.SideTabBar li {
 	float: right;
 	text-align: center;
 	margin-right: 0.2em;
@@ -459,12 +459,12 @@ ul#SideTabBar li {
 	color: #999999;
 }
 
-ul#SideTabBar li.current {
+ul.SideTabBar li.current {
 	border-bottom: 1px solid white;
 	font-weight: bold;
 }
 
-ul#SideTabBar li:hover {
+ul.SideTabBar li:hover {
 	font-weight: bold;
 	text-decoration: underline;
 }

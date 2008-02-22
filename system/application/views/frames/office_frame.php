@@ -41,7 +41,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 
-<div style="width: 100%;" align="center">
+<div style="width: 100%; text-align: center">
 <div style="width: 780px; text-align: left; background-color: #fff;">
 	<div style="height: 22px; text-align: right;" class="HeaderMenu">
 		<?php
@@ -76,7 +76,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		</div>
 	</div>
 	<div style="background-color: #fff;">
-		<form name='site_search' action='/search/layout' method='post' style='display:inline; '>
+		<form action='/search/layout' method='post' style='display:inline; '>
 		<div style='float: left; width: 120px; font-size: 10px; border: solid 1px #20c1f0; padding: 2px; margin: 0px; margin-left: 0px;'>
 			<img src='/images/prototype/header/search.png' alt='Search' title='Search' style='float: left; padding-top: 1px;' />
 			<input type="text" style="float: right; color: #20c1f0; font-size: 12px; width: 100px; border: 0; margin: 2px 0; padding: 0;" value="Search for..." onFocus="if (this.value==this.defaultValue) this.value=''" onBlur="if (this.value=='') this.value=this.defaultValue" />
@@ -106,6 +106,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		<div class='officenavigation_item'>
 			<a href='/office/irc'>Office Chat</a>
 		</div>
+		<div class="officenavigation_item">
+			<a href="/office/bylines/">Manage Bylines</a>
+		</div>
 
 <?php
 	//editor and admins only
@@ -113,11 +116,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 ?>
 		<div class='officenavigation_title'>
 			Admin
-		</div>
-		<div class="officenavigation_item">
-			<a href="/office/bylines/">
-				Manage Bylines
-			</a>
 		</div>
 		<div class='officenavigation_item'>
 			<a href='/office/manage/members/'>Manage Team</a>

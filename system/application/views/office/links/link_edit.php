@@ -10,7 +10,7 @@
 <div class='blue_box'>
 	<h2>edit link</h2>
 	<div name='link_details_form' id='link_details_form'>
-		<form name='link_form' action='/office/links/update/<?php echo($link->link_id); ?>' method='POST' class='form'>
+		<form action='/office/links/update/<?php echo($link->link_id); ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='link_image'>Link:</label>
 				<?php echo($this->image->getImage($link->link_image_id, 'link')); ?>

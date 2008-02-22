@@ -10,7 +10,7 @@
 		cancelled by an editor at any point.
 	</div>
 
-	<form name='new_request' id='new_request' action='/office/news/create' method='post' class='form'>
+	<form id='new_request' action='/office/news/create' method='post' class='form'>
 		<div class='blue_box'>
 			<fieldset>
 				<label for='r_title'>Title:</label>

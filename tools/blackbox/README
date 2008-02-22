@@ -1,0 +1,40 @@
+The Yorker Blackbox Testing Script
+
+Written by James Hogan <james_hogan@theyorker.co.uk>
+Copyright (C) 2008 The Yorker Ltd.
+
+This program is for testing The Yorker in a blackbox fashion. It
+sends HTTP requests to get pages, performs various checks on them
+and can run them through a local validator.
+
+Due to the link checking nature of this program when the depth is
+set to a non-zero value, this program can generate a lot of traffic.
+It is therefore unadvisable to run this unecessarily on the live
+site until some modifications have been made.
+
+Dependencies
+
+Getopt::Long;
+LWP::UserAgent;
+HTML::Entities;
+Term::ANSIColor;
+WebService::Validator::HTML::W3C;
+
+Usage
+
+./blackbox.pl
+  -h|--host <host>      - Hostname to test
+  {initial paths}       - A set of initial paths to start the test
+  [-d|--depth <depth>]  - Set the maximum depth to search
+  [-v|--validate]       - W3C validation using http://localhost/w3c-validator/check
+
+Examples
+
+To test release.dev.theyorker.co.uk following a maximum path of 2
+links and starting from /calendar:
+
+  ./blackbox.pl --validate --depth=2 --host=release.dev.theyorker.co.uk /calendar
+
+To validate the individual page /charity on the live site:
+
+  ./blackbox.pl --validate --host=www.theyorker.co.uk /charity

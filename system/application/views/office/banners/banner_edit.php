@@ -7,7 +7,7 @@
 <div class='blue_box'>
 	<h2>edit banner</h2>
 	<div name='banner_details_form' id='banner_details_form'>
-		<form name='banner_form' action='/office/banners/update/<?php echo($banner->banner_id); ?>' method='POST' class='form'>
+		<form action='/office/banners/update/<?php echo($banner->banner_id); ?>' method='POST' class='form'>
 			<fieldset>
 				<label for='banner_image'>Banner:</label>
 				<?php echo($this->image->getImage($banner->banner_id, 'banner')); ?>
