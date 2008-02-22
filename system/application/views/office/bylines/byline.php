@@ -54,7 +54,7 @@
 				<?php echo(xml_escape($business_card_postal_address)); ?>
 				<br />
 			<?php } ?>
-			<?php if ($archive_link) { ?>
+			<?php if ((isset($archive_link)) && ($archive_link)) { ?>
 				<a href="<?php echo site_url('news/archive/reporter/' . $business_card_id . '/'); ?>">
 					<img src="<?php echo site_url('images/icons/book_open.png'); ?>" alt="Archive" title="Archive" />
 					View articles I have written
