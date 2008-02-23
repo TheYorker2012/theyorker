@@ -12,7 +12,7 @@ header('content-type: text/xml');
 ?><inline_page_edit permission="<?php echo($Fail ? '0' : '1'); ?>" saved="<?php echo($Saved ? '1' : '0'); ?>"><?php
 if ($Preview !== NULL) {
 	?><preview><?php
-	echo(htmlentities($Preview, ENT_QUOTES, 'utf-8'));
+	echo(xml_escape($Preview));
 	?></preview><?php
 }
 ?></inline_page_edit>

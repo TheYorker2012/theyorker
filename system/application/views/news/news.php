@@ -9,19 +9,19 @@ function printarticlelink($article) {
 	}
 	echo('		<h3 class="Headline">'."\n");
 	echo('			<a href="/news/'.$article['article_type'].'/'.$article['id'].'">'."\n");
-	echo('				'.htmlentities($article['heading'], ENT_QUOTES, 'UTF-8')."\n");
+	echo('				'.xml_escape($article['heading'])."\n");
 	echo('			</a>'."\n");
 	echo('		</h3>'."\n");
 	echo('		<div class="Date">'.$article['date'].'</div>'."\n");
 	echo('		<div class="Author">'."\n");
 	foreach($article['authors'] as $reporter)
-		echo('			<a href="/news/archive/reporter/'.$reporter['id'].'/">'.$reporter['name'].'</a>'."\n");
+		echo('			<a href="/news/archive/reporter/'.$reporter['id'].'/">'.xml_escape($reporter['name']).'</a>'."\n");
 	echo('		</div>'."\n");
 	if (!array_key_exists('blurb', $article)) {
 		echo('		</div>'."\n");
 	}
 	if (array_key_exists('blurb', $article) && $article['blurb'] != '') {
-		echo('		<p>'.htmlentities($article['blurb'], ENT_QUOTES, 'UTF-8').'</p>'."\n");
+		echo('		<p>'.xml_escape($article['blurb']).'</p>'."\n");
 	}
 	echo('	</div>'."\n");
 }
@@ -33,7 +33,7 @@ $first_header = ' class="first"';
 
 // Puffers / Blogs Heading
 if (((isset($blogs)) && (count($blogs) > 0)) || ((isset($puffers)) && (count($puffers) > 0))) {
-	echo('	<h2' . $first_header . '>' . $puffer_heading . '</h2>'."\n");
+	echo('	<h2' . $first_header . '>' . xml_escape($puffer_heading) . '</h2>'."\n");
 	$first_header = '';
 }
 
@@ -42,7 +42,7 @@ if (isset($blogs)) {
 	foreach ($blogs as $blog) {
 		echo '<div class="Puffer">';
 		echo '<a href="/news/' . $blog['codename'] . '">';
-		echo '<img src="' . $blog['image'] . '" alt="' . $blog['image_title'] . '" title="' . $blog['image_title'] . '" style="float:right;" />';
+		echo '<img src="' . xml_escape($blog['image']) . '" alt="' . xml_escape($blog['image_title']) . '" title="' . xml_escape($blog['image_title']) . '" style="float:right;" />';
 		echo $blog['name'];
 		echo '</a><br />';
 		echo $blog['blurb'];
@@ -56,12 +56,12 @@ if (isset($puffers)) {
 			if(!empty($puffer['image_title'])){
 				echo '<div class="Puffer">';
 				echo '<a href="/news/' . $puffer['codename'] . '">';
-				echo '<img src="' . $puffer['image'] . '" alt="' . $puffer['image_title'] . '" title="' . $puffer['image_title'] . '" />';
+				echo '<img src="' . xml_escape($puffer['image']) . '" alt="' . xml_escape($puffer['image_title']) . '" title="' . xml_escape($puffer['image_title']) . '" />';
 				echo '</a></div>';
 			}else{
 				echo '<div class="Puffer">';
 				echo '<a href="/news/' . $puffer['codename'] . '">';
-				echo $puffer['name'];
+				echo xml_escape($puffer['name']);
 				echo '</a></div>';
 			}
 		}
@@ -69,7 +69,7 @@ if (isset($puffers)) {
 
 // Latest Articles Heading
 if (count($news_previews) > 0) {
-	echo('	<h2' . $first_header . '>' . $latest_heading . '</h2>'."\n");
+	echo('	<h2' . $first_header . '>' . xml_escape($latest_heading) . '</h2>'."\n");
 }
 
 // News Previews
@@ -78,7 +78,7 @@ foreach($news_previews as $preview)
 
 // More Articles Heading
 if (count($news_others) > 0)
-	echo('	<h2>'.$other_heading.'</h2>'."\n");
+	echo('	<h2>'.xml_escape($other_heading).'</h2>'."\n");
 
 // Other News
 foreach ($news_others as $other)
@@ -86,7 +86,7 @@ foreach ($news_others as $other)
 
 // Related Articles
 if (count($main_article['related_articles']) > 0)
-	echo('	<h2>'.$related_heading.'</h2>'."\n");
+	echo('	<h2>'.xml_escape($related_heading).'</h2>'."\n");
 
 foreach ($main_article['related_articles'] as $related)
 	printarticlelink($related);
@@ -94,25 +94,25 @@ foreach ($main_article['related_articles'] as $related)
 ?>
 </div>
 
-<?php $this->feedback_article_heading = htmlentities($main_article['heading'], ENT_QUOTES, 'UTF-8'); ?>
+<?php $this->feedback_article_heading = $main_article['heading']; ?>
 
 <div id="MainColumn">
 	<div class="BlueBox">
-		<h2 class="Headline"><?php echo htmlentities($main_article['heading'], ENT_QUOTES, 'UTF-8'); ?></h2>
+		<h2 class="Headline"><?php echo(xml_escape($main_article['heading'])); ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
 			<div style="float:right;margin-top:0;line-height:95%;width:180px;">
 				<?php echo($main_article['primary_photo_xhtml']); ?><br />
-				<?php echo($main_article['primary_photo_caption']); ?>
+				<?php echo(xml_escape($main_article['primary_photo_caption'])); ?>
 			</div>
 		<?php } ?>
 		<div class="Date"><?php echo($main_article['date']); ?></div>
 		<div class="Author">
 <?php foreach($main_article['authors'] as $reporter) { ?>
-			<a href="/news/archive/reporter/<?php echo($reporter['id']); ?>/"><?php echo($reporter['name']); ?></a><br />
+			<a href="/news/archive/reporter/<?php echo($reporter['id']); ?>/"><?php echo(xml_escape($reporter['name'])); ?></a><br />
 <?php } ?>
 		</div>
 <?php if ($main_article['subtext'] != '') { ?>
-		<div class="SubText"><?php echo(htmlentities($main_article['subtext'], ENT_QUOTES, 'UTF-8')); ?></div>
+		<div class="SubText"><?php echo(xml_escape($main_article['subtext'])); ?></div>
 <?php } ?>
 
         <?php echo($main_article['text']); ?>
@@ -125,7 +125,9 @@ foreach ($main_article['related_articles'] as $related)
 				</a>
 			</span>
 <?php } ?>
+<?php if (!isset($main_article['placeholder']) || !$main_article['placeholder']) { ?>
 			<a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a>
+<?php } ?>
 		</div>
 
 		<?php if (isset($office_preview)) { ?>
@@ -134,10 +136,10 @@ foreach ($main_article['related_articles'] as $related)
 	</div>
 	<?php if (count($main_article['links']) > 0) { ?>
 	<div class="BlueBox">
-		<h2><?php echo $links_heading; ?></h2>
+		<h2><?php echo(xml_escape($links_heading)); ?></h2>
 		<ul>
 		<?php foreach ($main_article['links'] as $link) {
-			echo '<li><a href="' . $link['url'] . '">' . $link['name'] . '</a></li>';
+			echo '<li><a href="' . xml_escape($link['url']) . '">' . xml_escape($link['name']) . '</a></li>';
 		} ?>
 		</ul>
 	</div>

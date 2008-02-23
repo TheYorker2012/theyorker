@@ -14,7 +14,7 @@ class Campaign extends Controller {
 		$this->load->model('news_model','news_model');
 		$this->load->model('progressreports_model','progressreports_model');
 	
-		$this->main_frame->SetExtraCss('/stylesheets/campaign.css');
+		$this->main_frame->IncludeCss('stylesheets/campaign.css');
 
 		$campaign_id = $this->campaign_model->GetPetitionStatus();
 		//if petition preview set campaign id
@@ -103,7 +103,7 @@ class Campaign extends Controller {
 				'title'=>$this->pages_model->GetPropertyText('section_progress_reports_title',TRUE));
 			$data['sidebar_petition'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_petition_title'),
-				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text',FALSE, FALSE,array('%%count%%' => $data['campaign']['signatures'])));
+				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_petition_text',FALSE, FALSE, array('count' => array($data['campaign']['signatures'], true))));
 			$data['sidebar_more'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_more_title',TRUE),
 				'text'=>$this->pages_model->GetPropertyWikitext('sidebar_more_text',TRUE));
@@ -124,7 +124,7 @@ class Campaign extends Controller {
 			{
 				$data['user'] = FALSE;
 			}
-			$name_replacer = array('%%name%%' => $data['user']['firstname'].' '.$data['user']['surname']);
+			$name_replacer = array('name' => array(xml_escape($data['user']['firstname'].' '.$data['user']['surname']), true));
 			$data['sidebar_sign'] = array(
 				'title'=>$this->pages_model->GetPropertyText('sidebar_sign_title'),
 				'new_text'=>$this->pages_model->GetPropertyWikitext('sidebar_sign_new_text', FALSE,FALSE,$name_replacer),
@@ -199,7 +199,7 @@ class Campaign extends Controller {
 				{
 					$data['user'] = FALSE;
 				}
-				$name_replacer = array('%%name%%' => $data['user']['firstname'].' '.$data['user']['surname']);
+				$name_replacer = array('name' => array(xml_escape($data['user']['firstname'].' '.$data['user']['surname']), true));
 				$data['sidebar_vote'] = array(
 					'title'=>$this->pages_model->GetPropertyText('sidebar_vote_title'),
 					'newvote'=>$this->pages_model->GetPropertyWikitext('sidebar_vote_new_text', false,false,$name_replacer),
@@ -274,7 +274,7 @@ class Campaign extends Controller {
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name'=>$data['sections']['campaign']['name']));
-		$this->main_frame->SetContentSimple('campaign/campaign_pr.php', $data);
+		$this->main_frame->SetContentSimple('campaign/campaign_pr', $data);
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

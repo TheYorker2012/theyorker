@@ -25,15 +25,15 @@
 			The event can be cancelled however it will still be displayed on people's calendars as a cancelled event.
 			Moving the event will also leave a remnent at the old time stating that the event has been rescheduled.
 		</p>
-		<h3><?php echo(htmlentities($Event->Name, ENT_QUOTES, 'utf-8')); ?></h3>
-		<p><?php echo(htmlentities($Event->Description, ENT_QUOTES, 'utf-8')); ?></p>
+		<h3><?php echo(xml_escape($Event->Name)); ?></h3>
+		<p><?php echo(xml_escape($Event->Description)); ?></p>
 		<?php if (count($Event->Occurrences) > 1) { ?>
 			<p>The event occurs at these times:</p>
-		<? } else { ?>
+		<?php } else { ?>
 			<p>The event occurs at:</p>
 		<?php } ?>
 		<ul>
-		<?
+		<?php
 		foreach ($Event->Occurrences as $occurrence) {
 			?>
 			<li>

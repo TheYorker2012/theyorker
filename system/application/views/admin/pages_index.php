@@ -1,7 +1,7 @@
 <div id="RightColumn">
 	<?php if (isset($main_text)) { ?>
-		<h2 class="first">What's this?</h2>
-		<p><?php echo $main_text; ?></p>
+		<h2 class="first">What&#034;s this?</h2>
+		<?php echo $main_text; ?>
 	<?php } ?>
 	<h2>Inline edit mode</h2>
 	<?php echo($inline_edit_text); ?>
@@ -19,24 +19,24 @@
 		<h2>Custom pages</h2>
 
 <?php if ($permissions['custom_new']) { ?>
-	<p><a href="/admin/pages/custom/new">Create a new custom page</a></p>
+		<p><a href="/admin/pages/custom/new">Create a new custom page</a></p>
 <?php } ?>
 	<p><?php
 	foreach ($custom as $page) {
-		echo '<a href="/pages/'.$page['codename'].'">';
-		echo $page['codename'];
-		echo '</a>';
-		echo ' (';
-		echo '<a href="/admin/pages/custom/edit/'.$page['codename'].'">';
-		echo 'edit';
-		echo '</a>';
+		$escaped_codename = xml_escape($page['codename']);
+		echo('<a href="/pages/'.$escaped_codename.'">');
+		echo($escaped_codename);
+		echo('</a>');
+		echo(' (');
+		echo('<a href="/admin/pages/custom/edit/'.$escaped_codename.'">');
+		echo('edit');
+		echo('</a>');
 		if ($permissions['custom_delete']) {
-			echo ', <a href="/admin/pages/custom/delete/'.$page['codename'].'">delete</a>';
+			echo ', <a href="/admin/pages/custom/delete/'.$escaped_codename.'">delete</a>';
+			echo ')';
+			echo '<br />';
 		}
-		echo ')';
-		echo '<br />';
-	}
-	?></p>
+	} ?></p>
 	</div>
 
 	<div class="BlueBox">
@@ -50,16 +50,17 @@
 
 		<p><?php
 		foreach ($pages as $page) {
-			echo $page['codename'];
-			echo ' (';
-			echo '<a href="/admin/pages/page/edit/'.$page['codename'].'">';
-			echo 'edit';
-			echo '</a>';
+			$escaped_codename = xml_escape($page['codename']);
+			echo($escaped_codename);
+			echo(' (');
+			echo('<a href="/admin/pages/page/edit/'.$escaped_codename.'">');
+			echo('edit');
+			echo('</a>');
 			if ($permissions['page_delete']) {
-				echo ', <a href="/admin/pages/page/delete/'.$page['codename'].'">delete</a>';
+				echo(', <a href="/admin/pages/page/delete/'.$escaped_codename.'">delete</a>');
 			}
-			echo ')';
-			echo '<br />';
+			echo(')');
+			echo('<br />');
 		}
 		?></p>
 	</div>

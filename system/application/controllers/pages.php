@@ -13,7 +13,7 @@ class Pages extends Controller
 	/**
 	 * @param $PageCodeName string Path to custom page (corresponding with codename).
 	 */
-	function _remap($DummyRequired)
+	function _remap()
 	{
 		if (!CheckPermissions('public')) return;
 		

@@ -39,7 +39,7 @@ class CI_Loader {
 	var $_ci_helpers		= array();
 	var $_ci_plugins		= array();
 	var $_ci_scripts		= array();
-	var $_ci_varmap			= array('unit_test' => 'unit', 'user_agent' => 'agent');
+	var $_ci_varmap			= array('user_agent' => 'agent');
 	
 
 	/**
@@ -506,35 +506,6 @@ class CI_Loader {
 	}
 
 	// --------------------------------------------------------------------
-	
-	/**
-	 * Scaffolding Loader
-	 *
-	 * This initializing function works a bit different than the
-	 * others. It doesn't load the class.  Instead, it simply
-	 * sets a flag indicating that scaffolding is allowed to be
-	 * used.  The actual scaffolding function below is
-	 * called by the front controller based on whether the
-	 * second segment of the URL matches the "secret" scaffolding
-	 * word stored in the application/config/routes.php
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	void
-	 */	
-	function scaffolding($table = '')
-	{		
-		if ($table === FALSE)
-		{
-			show_error('You must include the name of the table you would like to access when you initialize scaffolding');
-		}
-		
-		$CI =& get_instance();
-		$CI->_ci_scaffolding = TRUE;
-		$CI->_ci_scaff_table = $table;
-	}
-
-	// --------------------------------------------------------------------
 		
 	/**
 	 * Loader
@@ -601,64 +572,10 @@ class CI_Loader {
 		}
 		extract($this->_ci_cached_vars);
 				
-		/*
-		 * Buffer the output
-		 *
-		 * We buffer the output for two reasons:
-		 * 1. Speed. You get a significant speed boost.
-		 * 2. So that the final rendered template can be
-		 * post-processed by the output class.  Why do we
-		 * need post processing?  For one thing, in order to
-		 * show the elapsed page load time.  Unless we
-		 * can intercept the content right before it's sent to
-		 * the browser and then stop the timer it won't be accurate.
-		 */
-		ob_start();
-				
-		// If the PHP installation does not support short tags we'll
-		// do a little string replacement, changing the short tags
-		// to standard PHP echo statements.
-		
-		if ((bool) @ini_get('short_open_tag') === FALSE AND config_item('rewrite_short_tags') == TRUE)
-		{
-			echo eval('?>'.preg_replace("/;*\s*\?>/", "; ?>", str_replace('<?=', '<?php echo ', file_get_contents($path))).'<?php ');
-		}
-		else
-		{
-			include($path);
-		}
+		include($path);
 		
 		log_message('debug', 'File loaded: '.$path);
 		
-		// Return the file data if requested
-		if ($return === TRUE)
-		{		
-			$buffer = ob_get_contents();
-			@ob_end_clean();
-			return $buffer;
-		}
-
-		/*
-		 * Flush the buffer... or buff the flusher?
-		 *
-		 * In order to permit views to be nested within
-		 * other views, we need to flush the content back out whenever
-		 * we are beyond the first level of output buffering so that
-		 * it can be seen and included properly by the first included
-		 * template and any subsequent ones. Oy!
-		 *
-		 */	
-		if (ob_get_level() > $this->_ci_ob_level + 1)
-		{
-			ob_end_flush();
-		}
-		else
-		{
-			// PHP 4 requires that we use a global
-			global $OUT;
-			$OUT->set_output(ob_get_contents());
-			@ob_end_clean();
-		}
 	}
 
 	// --------------------------------------------------------------------
@@ -843,13 +760,6 @@ class CI_Loader {
 				$autoload['libraries'] = array_diff($autoload['libraries'], array('model'));
 			}
 
-			// Load scaffolding
-			if (in_array('scaffolding', $autoload['libraries']))
-			{
-				$this->scaffolding();
-				$autoload['libraries'] = array_diff($autoload['libraries'], array('scaffolding'));
-			}
-		
 			// Load all other libraries
 			foreach ($autoload['libraries'] as $item)
 			{

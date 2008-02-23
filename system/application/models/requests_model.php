@@ -169,17 +169,6 @@ class Requests_Model extends Model
 		return $result;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	// Retrieve list of all reporters (this includes editors and photographers) that a request can be assigned to
 	function getReporters ()
 	{
@@ -741,18 +730,20 @@ class Requests_Model extends Model
 
 	function GetSuggestedArticle($article_id)
 	{
-		$sql = 'SELECT article_id,
-				 article_request_title,
-				 article_content_type_id,
-				 article_request_description,
-				 UNIX_TIMESTAMP(article_created) as article_created,
-				 article_request_entity_id,
-				 business_card_name,
-				 content_type_name,
-				 content_type_codename
+		$sql = 'SELECT 
+					article_id,
+					article_request_title,
+					article_content_type_id,
+					article_request_description,
+					UNIX_TIMESTAMP(article_created) as article_created,
+					article_request_entity_id,
+					user_firstname,
+					user_surname,
+					content_type_name,
+					content_type_codename
 				FROM content_types, articles
-				JOIN business_cards
-				 ON business_card_user_entity_id = article_request_entity_id
+				LEFT JOIN users ON
+					articles.article_request_entity_id = users.user_entity_id
 				WHERE article_suggestion_accepted = 0
 				AND article_id = ?
 				AND	article_deleted = 0
@@ -770,7 +761,7 @@ class Requests_Model extends Model
 				'box_codename'=>$row->content_type_codename,
 				'box_name'=>$row->content_type_name,
 				'userid'=>$row->article_request_entity_id,
-				'username'=>$row->business_card_name,
+				'username'=>$row->user_firstname.' '.$row->user_surname,
 				'created'=>$row->article_created
 				);
 			return $result;
@@ -807,20 +798,17 @@ class Requests_Model extends Model
 				}
 			}
 
-			$sql = 'SELECT articles.article_id,
-					UNIX_TIMESTAMP(articles.article_created) AS article_created,
-					articles.article_request_title,
-					article_request_entity_id,
-
-					(SELECT business_card_name FROM business_cards, business_card_groups
-					WHERE business_card_user_entity_id = article_request_entity_id
-					AND business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
-					AND business_card_group_organisation_entity_id IS NULL ) AS business_card_name,
-
-					content_types.content_type_name
-
+			$sql = 'SELECT 
+						articles.article_id,
+						UNIX_TIMESTAMP(articles.article_created) AS article_created,
+						articles.article_request_title,
+						article_request_entity_id,
+						users.user_firstname,
+						users.user_surname,
+						content_types.content_type_name
 					FROM content_types, articles
-
+					LEFT JOIN users ON
+						articles.article_request_entity_id = users.user_entity_id
 					WHERE articles.article_suggestion_accepted = 0
 					AND content_types.content_type_id = articles.article_content_type_id
 					AND articles.article_live_content_id IS NULL
@@ -829,7 +817,7 @@ class Requests_Model extends Model
 					AND	(';
 			$sql .= implode(' OR ',$type_sql) . ')';
 			$query = $this->db->query($sql,$type_codenames);
-
+			
 			$result = array();
 			if ($query->num_rows() > 0)
 			{
@@ -840,13 +828,12 @@ class Requests_Model extends Model
 						'title'=>$row->article_request_title,
 						'box'=>$row->content_type_name,
 						'userid'=>$row->article_request_entity_id,
-						'username'=>$row->business_card_name,
+						'username'=>$row->user_firstname.' '.$row->user_firstname,
 						'created'=>$row->article_created
 						);
 					$result[] = $result_item;
 				}
 			}
-
 			return $result;
 		}
 		else
@@ -889,27 +876,16 @@ class Requests_Model extends Model
 
 	function GetArticleWriters($article_id)
 	{
-		$sql = 'SELECT	article_writer_user_entity_id,
-				business_card_name
-			FROM	article_writers
-
-			JOIN	business_cards
-			ON	business_card_user_entity_id = article_writer_user_entity_id
-
+		$sql = '
+			SELECT 
+				article_writer_user_entity_id as id,
+				CONCAT(user_firstname, " ",user_surname) as name
+			FROM article_writers
+			LEFT JOIN users ON 
+				users.user_entity_id = article_writers.article_writer_user_entity_id
 			WHERE	article_writer_article_id = ?';
 		$query = $this->db->query($sql,array($article_id));
-		$result = array();
-		if ($query->num_rows() > 0)
-		{
-			foreach ($query->result() as $row)
-			{
-				$result[] = array(
-					'id'=>$row->article_writer_user_entity_id,
-					'name'=>$row->business_card_name
-					);
-			}
-		}
-		return $result;
+		return $query->result_array();
 	}
 
 	function GetWritersForType($type_codename)
@@ -921,37 +897,21 @@ class Requests_Model extends Model
 		if ($query->num_rows() == 1)
 		{
 			$type_id = $query->row()->content_type_id;
-			$sql = 'SELECT	user_entity_id,
-					business_card_name
-				FROM	content_types
-
-				JOIN	organisations
-				ON	organisation_entity_id = content_type_related_organisation_entity_id
-
-				JOIN	subscriptions
-				ON	subscription_organisation_entity_id = organisation_entity_id
-
-				JOIN	users
-				ON	user_entity_id = subscription_user_entity_id
-
-				JOIN	business_cards
-				ON	business_card_user_entity_id = user_entity_id
-
-				WHERE	content_type_id = ?
-				ORDER BY business_card_name ASC';
+			$sql = '
+				SELECT
+					user_entity_id as id,
+					CONCAT(user_firstname, " ",user_surname) as name
+				FROM content_types
+				JOIN organisations ON
+					organisation_entity_id = content_type_related_organisation_entity_id
+				JOIN subscriptions ON 
+					subscription_organisation_entity_id = organisation_entity_id
+				LEFT JOIN users ON 
+					user_entity_id = subscription_user_entity_id
+				WHERE content_type_id = ?
+				ORDER BY name ASC';
 			$query = $this->db->query($sql,array($type_id));
-			$result = array();
-			if ($query->num_rows() > 0)
-			{
-				foreach ($query->result() as $row)
-				{
-					$result[] = array(
-						'id'=>$row->user_entity_id,
-						'name'=>$row->business_card_name
-						);
-				}
-			}
-			return $result;
+			return $query->result_array();
 		}
 		else
 			return FALSE;

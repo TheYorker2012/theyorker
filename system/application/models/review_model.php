@@ -215,8 +215,11 @@ class Review_model extends Model {
 			'
 			SELECT
 				unix_timestamp(review_context_contents.review_context_content_last_author_timestamp) as timestamp,
-				users.user_firstname,
-				users.user_surname,
+				user_writers.user_firstname,
+				user_writers.user_surname,
+				user_assigned.user_entity_id as assigned_user_id,
+				user_assigned.user_firstname as assigned_user_firstname,
+				user_assigned.user_surname as assigned_user_surname,
 				review_context_contents.review_context_content_last_author_user_entity_id,
 				review_context_contents.review_context_content_id,
 				review_context_contents.review_context_content_blurb,
@@ -225,39 +228,35 @@ class Review_model extends Model {
 				review_context_contents.review_context_content_recommend_item,
 				review_context_contents.review_context_content_rating,
 				review_context_contents.review_context_content_serving_times
-			FROM
-				review_context_contents
-			INNER JOIN 
-				organisations
-			ON	organisations.organisation_directory_entry_name = ?
-			INNER JOIN 
-				content_types
-			ON	content_types.content_type_codename = ?
-			INNER JOIN 
-				users
-			ON	users.user_entity_id = review_context_contents.review_context_content_last_author_user_entity_id
+			FROM review_context_contents
+			INNER JOIN organisations ON	
+				organisations.organisation_directory_entry_name = ?
+			INNER JOIN content_types ON	
+				content_types.content_type_codename = ?
+			INNER JOIN users as user_writers ON	
+				user_writers.user_entity_id = review_context_contents.review_context_content_last_author_user_entity_id
+			INNER JOIN review_contexts
+				ON	review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
+				AND	review_contexts.review_context_content_type_id = content_types.content_type_id 
 			';
-		if ($revision_id == FALSE)
-		{
-			$sql .= '
-				INNER JOIN
-					review_contexts
-				ON	review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id
-				AND	review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
-				AND	review_contexts.review_context_content_type_id = content_types.content_type_id';
+		if ($revision_id == FALSE){
+			$sql .= 'AND review_contexts.review_context_live_content_id = review_context_contents.review_context_content_id ';
 		}
 		$sql .= '
+			LEFT JOIN users as user_assigned ON	
+				user_assigned.user_entity_id = review_contexts.review_context_assigned_user_entity_id
 			WHERE 
 				review_context_contents.review_context_content_organisation_entity_id = organisations.organisation_entity_id
 			AND	review_context_contents.review_context_content_content_type_id = content_types.content_type_id
-			AND	review_context_contents.review_context_content_deleted = 0';
-		if ($revision_id != FALSE)
-		{
-			$sql .= '
-				AND review_context_contents.review_context_content_id = ?';
+			AND	review_context_contents.review_context_content_deleted = 0 ';
+		if ($revision_id != FALSE){
+			$sql .= 'AND review_context_contents.review_context_content_id = ?';
+			$params = array($organisation_shortname,$content_type_codename,$revision_id);
+		} else {
+			$params = array($organisation_shortname,$content_type_codename);
 		}
+		$query = $this->db->query($sql, $params);
 		
-		$query = $this->db->query($sql, array($organisation_shortname,$content_type_codename,$revision_id));
 		$row = $query->row();
 		if ($query->num_rows() == 1)
 		{
@@ -266,6 +265,9 @@ class Review_model extends Model {
 			$result['firstname'] = $row->user_firstname;
 			$result['surname'] = $row->user_surname;
             $result['user_entity_id'] = $row->review_context_content_last_author_user_entity_id;
+			$result['assigned_user_firstname'] = $row->assigned_user_firstname;
+			$result['assigned_user_surname'] = $row->assigned_user_surname;
+            $result['assigned_user_id'] = $row->assigned_user_id;
             $result['content_blurb'] = $row->review_context_content_blurb;
             $result['content_quote'] = $row->review_context_content_quote;
             $result['average_price'] = $row->review_context_content_average_price;
@@ -1002,7 +1004,9 @@ function GetTagOrganisation($type,$organisation)
 				$select_tag_group = ', IF(tg.tag_group_name ='.$this->db->escape($sorted_by).',0,1) AS correct_tag';
 			break;
 		}
-
+		/*
+			This gets thumbnail image from the organisation slideshow table not the reviews slideshow table! This is done everywhere in reviews!
+		*/
 		$sql = '
 			SELECT
 				o.organisation_entity_id,
@@ -1014,6 +1018,13 @@ function GetTagOrganisation($type,$organisation)
 				rcc.review_context_content_rating,
 				rcc.review_context_content_blurb,
 				rcc.review_context_content_quote,
+				(
+					SELECT organisation_slideshow_photo_id 
+					FROM organisation_slideshows 
+					WHERE organisation_slideshow_organisation_entity_id = o.organisation_entity_id
+					ORDER BY organisation_slideshow_order ASC
+					LIMIT 1
+				) as image_id,
 				IF (thread.comment_thread_num_ratings > 0,
 					thread.comment_thread_total_rating / thread.comment_thread_num_ratings,
 					NULL) AS average_user_rating'.
@@ -1158,7 +1169,34 @@ function GetTagOrganisation($type,$organisation)
 
 		return $reviews;
 	}
-
+	
+	//Checks to see if the venue has a thumbnail image that would show up in the reviews list
+	//(Detail - Does the first image in the slideshow have a thumbnail of size $thumbnail_size_codename)
+	function DoesThisVenueHaveAThumbnail($org_short_name,$thumbnail_size_codename='small')
+	{
+		$sql = '
+			SELECT COUNT(*) as thumbnail_exists
+			FROM organisation_slideshows
+			LEFT JOIN photo_thumbs ON
+				organisation_slideshows.organisation_slideshow_photo_id = photo_thumbs.photo_thumbs_photo_id
+			LEFT JOIN image_types ON
+				photo_thumbs.photo_thumbs_image_type_id = image_types.image_type_id
+			INNER JOIN organisations ON
+				organisation_slideshows.organisation_slideshow_organisation_entity_id = organisations.organisation_entity_id
+			WHERE 
+				organisations.organisation_directory_entry_name = ?
+				AND image_types.image_type_codename = ?
+				AND organisation_slideshows.organisation_slideshow_order = 
+				( 
+					SELECT MIN(os.organisation_slideshow_order)
+					FROM organisation_slideshows AS os
+					WHERE os.organisation_slideshow_organisation_entity_id = organisation_entity_id
+				)
+			LIMIT 1';
+		$query = $this->db->query($sql, array($org_short_name, $thumbnail_size_codename));
+		//return true if there is, false if there is no thumb
+		return $query->row()->thumbnail_exists;
+	}
 	//Returns a content_type_id from a content_type_codename
 	function GetContentTypeID($codename)
 	{

@@ -1,4 +1,4 @@
-<form name='' id='' action='' method='post' class='form'>
+<form id='' action='' method='post' class='form'>
   <fieldset>
     <legend>Edit User Details</legend>
     <label for='e_image'>Image Id:</label>

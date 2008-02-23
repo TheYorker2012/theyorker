@@ -15,7 +15,7 @@
 		
 		$CI = & get_instance();
 		if (isset($try_login['_text']) && !$CI->user_auth->isLoggedIn) {
-			echo('<p>You are not currently logged in. '.htmlentities($try_login['_text'],ENT_QUOTES,'UTF-8').'</p>');
+			echo('<p>You are not currently logged in. '.xml_escape($try_login['_text']).'</p>');
 			//echo('<p><a href="'.site_url('login/main'.$this->uri->uri_string()).'">Log in now</a></p>');
 			echo(HtmlButtonLink(site_url('login/main'.$this->uri->uri_string()),'Log in'));
 		}

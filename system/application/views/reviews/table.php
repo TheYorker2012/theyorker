@@ -2,18 +2,18 @@
 <?php
 //If there are some leagues print em
 if (!empty($league_data)){
-	echo ('	<h2 class="first">'.$leagues_header.'</h2>'."\n");
+	echo('	<h2 class="first">'.xml_escape($leagues_header).'</h2>'."\n");
 	foreach ($league_data as $league_entry) {
-		echo ('	<div class="Puffer">'."\n");
+		echo('	<div class="Puffer">'."\n");
 		if($league_entry['has_image']){
 			//There is a puffer image, so use it
-			echo '		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.$league_entry['league_name'].'" title="'.$league_entry['league_name'].'" /></a>';
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.xml_escape($league_entry['image_path']).'" alt="'.xml_escape($league_entry['league_name']).'" title="'.xml_escape($league_entry['league_name']).'" /></a>');
 		}
 		else {
 			//There is no puffer image, just put a text link
-			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.xml_escape($league_entry['league_name']).'</a><br />'."\n");
 		}
-		echo ('	</div>'."\n");
+		echo('	</div>'."\n");
 	}
 }
 ?>
@@ -26,9 +26,9 @@ if (!empty($league_data)){
 		?>
 	</div>
 	<div class="BlueBox">
-		<h2><?php echo($page_header) ?></h2>
+		<h2><?php echo(xml_escape($page_header)) ?></h2>
 		<?php echo($page_about) ?>
-		<form name="reviews" action="/reviews/table/<?php echo $content_type; ?>/star" method="post">
+		<form action="/reviews/table/<?php echo($content_type); ?>/star" method="post">
 			<div style="float: left; width: 75%">
 				<table>
 					<tr>
@@ -40,10 +40,11 @@ if (!empty($league_data)){
 									<?php
 									foreach($table_data['tag_group_names'] as $tag) {
 										echo('					');
-										echo('<option value="'.$tag.'"');
-										if (!empty($item_filter_by) && $tag==$item_filter_by)
-										{echo ' selected="selected"';}
-										echo('>'.$tag.'</option>'."\n");
+										echo('<option value="'.xml_escape($tag).'"');
+										if (!empty($item_filter_by) && $tag==$item_filter_by) {
+											echo ' selected="selected"';
+										}
+										echo('>'.xml_escape($tag).'</option>'."\n");
 									}
 									?>
 								</select>
@@ -69,6 +70,7 @@ if (!empty($league_data)){
 		</form>
 	</div>
 	<script type="text/javascript">
+	// <![CDATA[
 		var filterlist=document.reviews.item_filter_by
 		var sortbylist=document.reviews.where_equal_to
 		/* The following sets the array which links each selection from the first form select with a series of selections
@@ -99,18 +101,25 @@ if (!empty($league_data)){
 		}
 		updatesortby(filterlist.selectedIndex)
 		for (index=0; index<=sortbylist.options.length;index++){
-			if(sortbylist.options[index].value == "<?php if (!empty($where_equal_to)){echo $where_equal_to;}?>")
+			if(sortbylist.options[index].value == <?php echo(js_literalise(!empty($where_equal_to) ? $where_equal_to : '')); ?>)
 			{
 			sortbylist.options[index].selected = true;
 			}
 		}
+	// ]]>
 	</script>
 	<div class="BlueBox">
 		<table border="0" width="97%">
 		<tbody>
 		<tr>
 			<td>
-				<?php if($item_filter_by!='any' && $item_filter_by!='') { echo('Showing results for <b>'.$where_equal_to.'</b> based on <b>'.$item_filter_by.'</b>.'); } else { echo('Showing <b>all entries</b> in the '.$content_type.' guide.'); } ?>
+				<?php
+				if($item_filter_by != 'any' && $item_filter_by != '') {
+					echo('Showing results for <b>'.xml_escape($where_equal_to).'</b> based on <b>'.xml_escape($item_filter_by).'</b>.');
+				} else {
+					echo('Showing <b>all entries</b> in the '.xml_escape($content_type).' guide.');
+				}
+				?>
 			</td>
 		</tr>
 		<?php
@@ -147,25 +156,19 @@ if (!empty($league_data)){
 				<tbody>
 				<tr>
 					<td valign="top">
-						<font size="+1"><strong><a href="<?php echo($entry['review_table_link']); ?>"><?php echo($entry['review_title']); ?></a></strong></font>
+						<big><strong><a href="<?php echo(xml_escape($entry['review_table_link'])); ?>"><?php echo(xml_escape($entry['review_title'])); ?></a></strong></big>
 					</td>
-					<td width="126" align="center">
+					<td style="width:126px" align="center">
 						<?php
 						$whole = floor($entry['review_rating'] / 2);
 						$part = $entry['review_rating'] % 2;
 						$empty = 5 - $whole - $part;
-						for($i=0;$i<$whole;$i++)
-						{
-							echo '<img src="/images/prototype/reviews/star.png" width="18" alt="*" title="*" />';
-						}
+						echo(str_repeat('<img src="/images/prototype/reviews/star.png" width="18" alt="*" title="*" />', $whole));
 						if ($part == 1)
 						{
 							echo '<img src="/images/prototype/reviews/halfstar.png" width="18" alt="-" title="-" />';
 						}
-						for($i=0;$i<$empty;$i++)
-						{
-							echo '<img src="/images/prototype/reviews/emptystar.png" width="18" alt=" " title=" " />';
-						}
+						echo(str_repeat('<img src="/images/prototype/reviews/emptystar.png" width="18" alt=" " title=" " />', $empty));
 						?>
 					</td>
 				</tr>
@@ -182,11 +185,11 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="20%" valign="top">
+					<td style="width:20%" valign="top">
 						<?php echo($entry['review_image']); ?>
 					</td>
-					<td width="80%" valign="top">
-						<?php echo($entry['review_blurb']); ?>
+					<td style="width:80%" valign="top">
+						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
 				<?php
@@ -195,8 +198,8 @@ if (!empty($league_data)){
 				{
 				?>
 				<tr>
-					<td width="100%" valign="top">
-						<?php echo($entry['review_blurb']); ?>
+					<td style="width:100%" valign="top">
+						<?php echo(xml_escape($entry['review_blurb'])); ?>
 					</td>
 				</tr>
 				<?php
@@ -207,8 +210,8 @@ if (!empty($league_data)){
 						<div style="font-size: 0.9em;">
 						<?php
 						foreach($entry['tagbox'] as $tag => $values ) {
-							echo('<strong>'.$tag.': </strong> ');
-							echo(implode(' / ', $values).'<br />');
+							echo('<strong>'.xml_escape($tag).': </strong> ');
+							echo(xml_escape(implode(' / ', $values)).'<br />');
 						}
 						?>
 						</div>

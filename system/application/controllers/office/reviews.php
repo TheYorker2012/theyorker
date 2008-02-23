@@ -59,13 +59,19 @@ class Reviews extends Controller
 	}
 
 	/// Reviews Overview Page
-	function overview($organisation)
+	function overview($organisation = NULL)
 	{
+		if (NULL === $organisation) {
+			show_404();
+		}
 		if (!CheckPermissions('office')) return;
 
 		$this->pages_model->SetPageCode('office_reviews_overview');
 
 		$data = $this->organisations->_GetOrgData($organisation);
+		if (empty($data)) {
+			show_404();
+		}
 
 		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
@@ -162,7 +168,55 @@ class Reviews extends Controller
 			}
 			$action = 'view';
 		}
-
+		
+		if ($action=='assign'){
+			//There are two types of assignment. Url /assign/ where a user assigns themselfs. And by Posting a form, where an editor can assign anyone.
+			$this->load->model('pr_model');
+			$content_type_id = $this->pr_model->GetContentTypeId($ContextType);
+			if(isset($_POST['assign_reporter'])){
+				//There is form post, so treat and check as an editor
+				if($editor_level){
+					if($_POST['assign_reporter']=='unassign'){
+						$this->pr_model->AssignReviewVenueToUser($data['organisation']['id'],$content_type_id);
+						$this->messages->AddMessage('success','The assigned user has been removed.');
+					}else{
+						$user_id = (int) $_POST['assign_reporter'];//check for post
+						$this->pr_model->AssignReviewVenueToUser($data['organisation']['id'],$content_type_id,$user_id);
+						$this->messages->AddMessage('success','The user has been assigned to the venue.');
+					}
+				}else{
+					$this->messages->AddMessage('error','Only aditors can assign someone else to a venue.');
+				}
+			}else{
+				//there is no form post, so assume its a writer wanting to assign themselfs.
+				$user_owns = $this->pr_model->IsUserAssignedToReviewVenue($ContextType, $organisation);
+				if($user_owns){
+					$this->pr_model->AssignReviewVenueToUser($data['organisation']['id'],$content_type_id, $this->user_auth->entityId);
+					$this->messages->AddMessage('success','You have been assigned to this venue.');
+				}else{
+					$this->messages->AddMessage('error','This venue is already assigned to someone else!');
+				}
+			}
+			$revision_id = FALSE;//have used this parameter for user id! Better clear it so other functions dont think i want a revision.
+			$action = 'view';
+		}
+		
+		if($action=='unassign'){
+			//this action is only used by non editors wanting to unassign themselfs. Editors dont unassign people the reassign something to someone (inculding the null person)
+			//Check the user is unassigning themselfs only!
+			$this->load->model('pr_model');
+			$content_type_id = $this->pr_model->GetContentTypeId($ContextType);
+			$user_owns = $this->pr_model->IsUserAssignedToReviewVenue($ContextType, $organisation, $this->user_auth->entityId);
+			if($user_owns){
+				$this->pr_model->AssignReviewVenueToUser($data['organisation']['id'],$content_type_id);
+				$this->messages->AddMessage('success','You have been unassigned from this venue.');
+			}else{
+				$this->messages->AddMessage('error','You can only unassign yourself from a venue.');
+			}
+			$revision_id = FALSE;
+			$action = 'view';
+		}
+		
 		if ($action=='delete') {
 			if ($editor_level) {
 				if (TRUE) {
@@ -265,6 +319,8 @@ class Reviews extends Controller
 		}
 
 		if ('view' === $action) {
+			$this->load->model('requests_model');
+			$this->load->model('article_model');
 			// Insert main text from pages information (sample)
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
@@ -278,6 +334,8 @@ class Reviews extends Controller
 				// Specify validation rules
 				$rules['reviewinfo_about'] = 'trim|required|xss_clean';
 				$rules['reviewinfo_rating'] = 'trim|required|numeric';
+				$rules['reviewinfo_js_rating'] = 'trim|required|numeric';
+				$rules['reviewinfo_use_js_rating'] = 'trim|required|numeric';
 				$rules['reviewinfo_quote'] = 'trim|required|xss_clean';
 				$rules['reviewinfo_recommended'] = 'trim|xss_clean';
 				$rules['reviewinfo_average_price'] = 'trim|xss_clean';
@@ -287,6 +345,8 @@ class Reviews extends Controller
 				// Set field names for displaying in error messages
 				$fields['reviewinfo_about'] = 'blurb';
 				$fields['reviewinfo_rating'] = 'rating';
+				$fields['reviewinfo_js_rating'] = 'js_rating';
+				$fields['reviewinfo_use_js_rating'] = 'use_js_rating';
 				$fields['reviewinfo_quote'] = 'quote';
 				$fields['reviewinfo_recommended'] = 'recommended item';
 				$fields['reviewinfo_average_price'] = 'average price';
@@ -308,6 +368,12 @@ class Reviews extends Controller
 					// If there are no errors, insert data into database
 					if (count($errors) == 0)
 					{
+						//The rating could have come from the nice js or the ugly drop down list, check which was being used.
+						if($this->input->post('reviewinfo_use_js_rating')){
+							$rating = $this->input->post('reviewinfo_js_rating');
+						}else{
+							$rating = $this->input->post('reviewinfo_rating');
+						}
 						if ($this->review_model->SetReviewContextContent(
 							$organisation,
 							$ContextType,
@@ -316,7 +382,7 @@ class Reviews extends Controller
 							$this->input->post('reviewinfo_quote'),
 							$this->input->post('reviewinfo_average_price'),
 							$this->input->post('reviewinfo_recommended'),
-							$this->input->post('reviewinfo_rating'),
+							$rating,
 							$this->input->post('reviewinfo_serving_hours')
 						)) {
 							$this->messages->AddMessage('success','Review information updated.');
@@ -339,9 +405,15 @@ class Reviews extends Controller
 			// Get revision data from model
 			$data['revisions'] = $this->review_model->GetReviewContextContentRevisions($organisation, $ContextType);
 			$data['show_all_revisions'] = $show_all_revisions;
-			$data['show_show_all_revisions_option'] = $editor_level;
 			$data['user_is_editor'] = $editor_level;
-
+			
+			//get assigned user stuff
+			$data['reviewers'] = $this->requests_model->getReporters();
+			
+			$data['assigned_user_you'] = $this->pages_model->GetPropertyWikitext('assigned_user_you');
+			$data['assigned_user_none'] = $this->pages_model->GetPropertyWikitext('assigned_user_none');
+			$data['assigned_user_editor'] = $this->pages_model->GetPropertyWikitext('assigned_user_editor');
+			
 			// Get context contents from model
 			$data['main_revision'] = $this->review_model->GetReviewContextContents($organisation, $ContextType, $revision_id);
 			if ($data['main_revision'] == FALSE)
@@ -358,19 +430,17 @@ class Reviews extends Controller
 				$data['main_revision']['deal'] = '';
 				$data['main_revision']['deal_expires'] = '';
 			}
-			
-			//get reviews for areas for attention
-			$this->load->model('requests_model');
-			$this->load->model('article_model');
+			//get reviews for areas for attention 
 			$temp_reviews = $this->review_model->GetOrgReviews($ContextType, $data['organisation']['id']);
-			foreach($temp_reviews as $review)
-			{
-				$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
-				$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
-				$temp['article']['id'] = $review['id'];
-				$data['reviews'][] = $temp;
+			if (is_array($temp_reviews)) {
+				foreach($temp_reviews as $review)
+				{
+					$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
+					$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
+					$temp['article']['id'] = $review['id'];
+					$data['reviews'][] = $temp;
+				}
 			}
-
 			// Set up the public frame
 			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
 		}
@@ -513,7 +583,7 @@ class Reviews extends Controller
 		// Load the public frame view
 		$this->main_frame->Load();
 	}
-
+	
 	function photos($ContextType, $organisation)
 	{
 		if (!CheckPermissions('office')) return;
@@ -537,8 +607,12 @@ class Reviews extends Controller
 			$this->load->library('image');
 			$this->load->library('image_upload');
 			$data['ContextType'] = $ContextType;
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
+			
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+			$data['thumbnail_text'] = $this->pages_model->GetPropertyWikitext('thumbnail_text');
+			$data['thumbnail_text_none'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_none');
+			$data['thumbnail_text_no_images'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_no_images');
+			
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
 					$this->slideshow->pushUp($photoID, $data['organisation']['id']);
@@ -550,7 +624,7 @@ class Reviews extends Controller
 				$this->messages->AddMessage('success', 'Photo Deleted');
 			} elseif ($action == 'upload') {
 				$this->xajax->processRequests();
-				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow'));
+				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow','small'));
 			} elseif (isset($_SESSION['img'])) {
 				foreach ($_SESSION['img'] as $newID) {
 					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
@@ -562,7 +636,9 @@ class Reviews extends Controller
 			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 			$data['disclaimer_text'] = $this->pages_model->GetPropertyWikitext('disclaimer_text');
 			$data['oraganisation'] = $organisation; // why its spelt wrong? but def don't correct it!
-			$data['images'] = $this->slideshow->getPhotos($data['organisation']['id']);
+			$images = $this->slideshow->getPhotos($data['organisation']['id']);
+			$data['images'] = $images->result_array();//nasty hack, slideshow shouldnt give out objects!
+			$data['has_thumbnail'] = $this->review_model->DoesThisVenueHaveAThumbnail($organisation,'small');
 
 			// Set up the directory view
 			$the_view = $this->frames->view('office/reviews/photos', $data);
@@ -571,7 +647,7 @@ class Reviews extends Controller
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
 			$this->main_frame->SetPage('photos');
-			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->main_frame->IncludeJs('javascript/clone.js');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');
@@ -638,11 +714,11 @@ class Reviews extends Controller
 			$this->requests_model->CreateArticleRevision(
 				$article_id,
 				$this->user_auth->entityId,
-				'',
+				'Review of '.$data['organisation']['name'],
 				'',
 				'',
 				$_POST['a_review_text'],
-				'');
+				$_POST['a_review_blurb']);
 			//add the selected byline to the review
 			$this->requests_model->AddUserToRequest(
 				$article_id,
@@ -683,13 +759,19 @@ class Reviews extends Controller
 			$temp['writers'] = $this->requests_model->GetWritersForArticle($review['id']);
 			$temp['article'] = $this->article_model->GetArticleHeader($review['id']);
 			$temp['article']['id'] = $review['id'];
+			if($temp['article']['live_content'] == $this->article_model->GetLatestRevision($review['id'])){
+				$revisions_waiting=0;
+			}else{
+				$revisions_waiting=1;
+			}
+			$temp['article']['revisions_waiting'] = $revisions_waiting;//If the live content id is not the lastet revision there are revisions waiting
 			$data['reviews'][] = $temp;
 		}
 
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
 
-		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -721,14 +803,12 @@ class Reviews extends Controller
 			$revision_id = $this->requests_model->CreateArticleRevision(
 				$article_id,
 				$this->user_auth->entityId,
-				'',
+				'Review of '.$data['organisation']['name'],
 				'',
 				'',
 				$_POST['a_review_text'],
-				''
-				)
-				;
-					$this->messages->AddMessage('success','New revision created for review.');
+				$_POST['a_review_blurb']);
+			$this->messages->AddMessage('success','New revision created for the review.');
 		}
 		elseif (isset($_POST['r_submit_publish']))
 		{
@@ -763,7 +843,11 @@ class Reviews extends Controller
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
-		$data['user']['officetype'] = $this->user_auth->officeType;
+		if($this->user_auth->officeType=='High' || $this->user_auth->officeType=='Admin'){
+			$data['user']['is_editor'] = true;
+		}else{
+			$data['user']['is_editor'] = false;
+		}
 
 		$writers = $this->requests_model->GetArticleWriters($article_id);
 		$found = false;
@@ -773,7 +857,7 @@ class Reviews extends Controller
 				$found = $data['user']['id'];
 		}
 
-		if ($found == false && $data['user']['officetype'] == 'Low')
+		if ($found == false && !$data['user']['is_editor'])
 		{
 			$this->messages->AddMessage('error','Your are not a writer of this review. Can\'t edit.');
 			redirect('/office/reviews/'.$organisation.'/'.$context_type.'/review');
@@ -860,7 +944,7 @@ class Reviews extends Controller
 		// Set up the view
 		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
 
-		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(

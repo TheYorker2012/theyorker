@@ -169,9 +169,10 @@ class Ticker extends Controller {
 			$title = '{actor} has just written an article on <a href="{link}">The Yorker</a>.';
 			$body = '<b>{headline}</b> <i>{blurb}</i>';
 
-			/* @note	Facebook limits the body to 200 chars */
+			/** @note	Facebook limits the body to 200 chars */
+			$blurb_length = ((185 - strlen($article['heading'])) < 0) ? 0 : 185 - strlen($article['heading']);
 			$title_data = '{"link":"' . $article_link . '"}';
-			$body_data = '{"headline":"' . addslashes($article['heading']) . '","blurb":"' . addslashes(substr($article['blurb'], 0, 185 - strlen($article['heading']))) . '"}';
+			$body_data = '{"headline":"' . addslashes($article['heading']) . '","blurb":"' . addslashes(substr($article['blurb'], 0, $blurb_length)) . '"}';
 
 			if ($this->facebook_ticker->client->feed_publishTemplatizedAction($this->facebook_ticker->facebook->get_loggedin_user(), $title, $title_data, $body, $body_data, '', $photo, $article_link)) {
 				$_SESSION['fbticker_messages'][] = array('success', 'The requested article was posted on your feed.');

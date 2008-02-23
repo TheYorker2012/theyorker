@@ -50,7 +50,7 @@ class Wikitext extends Controller {
 
 		// Set up the public frame
 		$this->main_frame->SetTitle('Wikitext Preview');
-		$this->main_frame->SetExtraHead('<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>');
+		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 		$this->main_frame->SetContentSimple('test/wikitext', $data);
 
 		// Load the public frame view (which will load the content view)

@@ -7,7 +7,7 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<?php foreach( $images->result() as $image ) { ?>
-		<?=$this->image->getThumb($image->photo_id, 'slideshow')?>
+		<?php echo $this->image->getThumb($image->photo_id, 'slideshow')?>
 		<br />
 		<?=anchor('office/reviews/'.$shortname.'/'.$ContextType.'/photos/move/'.$image->photo_id.'/up', 'move up')?> |
 		<?=anchor('office/reviews/'.$shortname.'/'.$ContextType.'/photos/move/'.$image->photo_id.'/down', 'move down')?> |

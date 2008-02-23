@@ -197,7 +197,7 @@ table#calendar_view td.calendar_day div.cal_event.cancelled div.cal_event_headin
 if (!empty($Occurrences)) {
 	?>
 	<table id="calendar_view" border="0" cellpadding="0" cellspacing="0" width="100%">
-	<?
+	<?php
 	$sorted_occurrences = array();
 	foreach ($Occurrences as $key => $occurrence) {
 		$sorted_occurrences[$occurrence->StartTime->Timestamp()][] = & $Occurrences[$key];
@@ -218,9 +218,9 @@ if (!empty($Occurrences)) {
 		));
 // 		echo($occurrence->StartTime->Format('%T'));
 // 		echo('</td><td valign="top"><img src="/images/prototype/homepage/arrow.png" /></td><td>');
-// 		echo(htmlentities($occurrence->Event->Name, ENT_QUOTES, 'utf-8'));
+// 		echo(xml_escape($occurrence->Event->Name));
 // 		if (!empty($occurrence->LocationDescription)) {
-// 			echo(' ('.htmlentities($occurrence->LocationDescription, ENT_QUOTES, 'utf-8').')');
+// 			echo(' ('.xml_escape($occurrence->LocationDescription).')');
 // 		}
 		echo('</td></tr>');
 	}

@@ -62,8 +62,8 @@ $CI = & get_instance();
 <div id="MainColumn">
 	<div class="BlueBox">
 		<?php if (NULL !== $Event) { ?>
-			<h2><?php echo(htmlentities($Event->Name, ENT_QUOTES, 'utf-8')); ?></h2>
-			<div><p>
+			<h2><?php echo(xml_escape($Event->Name)); ?></h2>
+			<div>
 				<?php
 				if (NULL !== $Occurrence) {
 					// date + time
@@ -79,7 +79,7 @@ $CI = & get_instance();
 					echo('<div>');
 					$location = $Occurrence->GetLocationDescription();
 					if (is_string($location) && !empty($location)) {
-						echo('Location: '.htmlentities($location, ENT_QUOTES, 'utf-8'));
+						echo('Location: '.xml_escape($location));
 						echo('<br />');
 					}
 				} else {
@@ -92,7 +92,7 @@ $CI = & get_instance();
 						if ($organisation->InDirectory) {
 							$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
 						}
-						$org_text .= htmlentities($organisation->Name, ENT_QUOTES, 'utf-8');
+						$org_text .= xml_escape($organisation->Name);
 						if ($organisation->InDirectory) {
 							$org_text .= '</a>';
 						}
@@ -147,7 +147,7 @@ $CI = & get_instance();
 					$Occurrence->State == 'published' /*&&
 					$Occurrence->EndTime->Timestamp() > time()*/)
 				{
-					$attendence_actions = array('yes' => 'attend', 'no' => 'don&apos;t attend', 'maybe' => 'maybe attend');
+					$attendence_actions = array('yes' => 'attend', 'no' => 'don&#039;t attend', 'maybe' => 'maybe attend');
 					echo('<p>');
 					if ('no' === $Occurrence->UserAttending) {
 						echo('not attending');
@@ -241,7 +241,7 @@ $CI = & get_instance();
 								if ($linked) {
 									echo('<a href="'.$attendee['link'].'" target="_blank">');
 								}
-								echo(htmlentities($attendee['name'], ENT_QUOTES, 'utf-8'));
+								echo(xml_escape($attendee['name']));
 								if ($linked) {
 									echo('</a>');
 								}

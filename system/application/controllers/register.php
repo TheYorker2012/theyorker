@@ -102,8 +102,8 @@ class Register extends Controller {
 			redirect($data['button_next']);
 		} else {
 			// Set up the public frame
-			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js').
-											'<link href="/stylesheets/account.css" rel="stylesheet" type="text/css" />');
+			$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+			$this->main_frame->IncludeCss('stylesheets/account.css');
 			$this->main_frame->SetTitleParameters(
 				array('section' => $type_info['friendlyname'])
 			);

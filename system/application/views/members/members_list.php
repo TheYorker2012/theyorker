@@ -11,7 +11,7 @@ function EchoOptionTeams($team, $selected, $head, $depth = 0)
 {
 	if ($head) {
 		echo '<option value="'.$team['id'].'"'.(($team['id'] == $selected)?' SELECTED':'').'>'.
-			str_repeat('+ ',$depth).$team['name'].'</option>';
+			str_repeat('+ ',$depth).xml_escape($team['name']).'</option>';
 	}
 	if (!empty($team['subteams'])) {
 		foreach ($team['subteams'] as $subteam) {
@@ -26,7 +26,7 @@ function SortLink($filter, $sort_fields, $field, $title)
 	echo('<a href="' . vip_url($filter['base'] . '/'.
 		((isset($sort_fields[$field]) && $sort_fields[$field])
 			? 'desc' : 'asc').'/'.$field) . '">');
-	echo($title);
+	echo(xml_escape($title));
 	//if ($filter['last_sort'] === $field) {
 		if (isset($sort_fields[$field]) && $sort_fields[$field]) {
 			echo('<img src="/images/prototype/members/sortasc.png" alt="sorted ascending" />');
@@ -50,14 +50,14 @@ function BoolFilterLinks($filter, $field)
 /// Individual filter link for data in cells of table.
 function FilterLinkBool($filter, $field, $value)
 {
-	echo '<a href="' . vip_url($filter['base'] .
-		((!$value)?'/not/':'/') . $field) . '">';
+	echo('<a href="' . vip_url($filter['base'] .
+		((!$value)?'/not/':'/') . $field) . '">');
 	if ($value) {
-		echo '<img src="/images/prototype/members/yes.png" alt="Yes" />';
+		echo('<img src="/images/prototype/members/yes.png" alt="Yes" />');
 	} else {
-		echo '<img src="/images/prototype/members/no.png" alt="No" />';
+		echo('<img src="/images/prototype/members/no.png" alt="No" />');
 	}
-	echo '</a>';
+	echo('</a>');
 }
 
 /// Draw a branch of the tree of teams
@@ -66,7 +66,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 	foreach ($team['subteams'] as $subteam) {
 		echo('<option name="team_'.$subteam['id'].'">'."\n");
 		//echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$indentation);
-		echo($prefix.$path.$subteam['name']."\n");
+		echo(xml_escape($prefix.$path.$subteam['name'])."\n");
 		echo('</option>'."\n");
 		if (!empty($subteam['subteams'])) {
 			EchoTeamFilterOptions($subteam, $prefix, $path.$subteam['name'].'/', $indentation+1);
@@ -78,7 +78,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 
 <div class="BlueBox">
 <?php
-	echo('	<h2>Members of '.$organisation['name'].'</h2>'."\n");
+	echo('	<h2>Members of '.xml_escape($organisation['name']).'</h2>'."\n");
 	echo('	<form id="member_select_form" action="'.$target.'" method="post" class="form">'."\n");
 ?>
 		<p>The following action can be performed on the selected members</p>
@@ -183,21 +183,58 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 					</td>
 					<td>
 <?php 
-		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['firstname'].'</a>'."\n");
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">');
+		//Work out if the names should be colourised (if they are writers and have written articles)
+		if(empty($membership['article_count']) || $membership['article_count']==0){
+			$span_colour = '';
+			$span_colour_end = '';
+		} else {
+			if($membership['article_count']>=40){
+				$span_colour = '<span style="color:#FF0000">';
+			}
+			if($membership['article_count']>=20 && $membership['article_count']<40){
+				$span_colour = '<span style="color:#FF6600">';
+			}
+			if($membership['article_count']>=10 && $membership['article_count']<20){
+				$span_colour = '<span style="color:#009900">';
+			}
+			if($membership['article_count']>=5 && $membership['article_count']<10){
+				$span_colour = '<span style="color:#9900CC">';
+			}
+			if($membership['article_count']>=1 && $membership['article_count']<5){
+				$span_colour = '<span style="color:#3366FF">';
+			}
+			$span_colour_end = '</span>';
+		}
+		
+		
+		echo($span_colour);
+		echo(empty($membership['firstname']) ? '???' : xml_escape($membership['firstname']));
+		echo($span_colour_end);
+		echo('</a>'."\n");
 ?>
 					</td>
 					<td>
 <?php 
-		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">'.$membership['surname'].'</a>'."\n");
+		echo('						<a href="'.vip_url('members/info/'.$membership['user_id']).'">');
+		echo $span_colour;
+		echo(empty($membership['surname']) ? '???' : xml_escape($membership['surname']));
+		
+		//This would put the number of articles after the surname in brackets, not enough room so left out, maybe use when we go wide.
+		//if(!empty($membership['article_count']) && $membership['article_count']>0){
+		//echo(' ('.$membership['article_count'].')');
+		//}
+		echo $span_colour_end;
+		echo('</a>'."\n");
 ?>
 					</td>
 					<td>
 <?php 
 		if (NULL !== $membership['email']) { 
-			echo('						<a href="mailto:'.$membership['email'].'@york.ac.uk">'.$membership['username'].'</a>'."\n");
+			echo('						<a href="mailto:'.xml_escape($membership['email']).'@york.ac.uk">'.xml_escape($membership['username']).'</a>'."\n");
 		}
 		else {
-			echo('						'.$membership['username']."\n");
+			echo('						'.xml_escape($membership['username'])."\n");
 		}
 ?>
 					</td>

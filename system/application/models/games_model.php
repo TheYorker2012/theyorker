@@ -92,7 +92,6 @@
 		function GetFullList($limit=0,$rows=0)
 		{
 			$sql = '	SELECT		game_id,
-									game_image_id,
 									game_title,
 									game_activated,
 									game_play_count,
@@ -104,20 +103,12 @@
 			$query = $this->db->query($sql);
 
 			if ($query->num_rows() > 0)
-			
-			/// Gets image xhtml here, so no manipluation needed in controller - change??
-			$this->load->library('image');
-
 			{
 				foreach ($query->result() as $row)
 				{
 					/// type conversions occur here (i.e. date format, getting image xhtml)
 					/// as result passed straight to view - change?
 					$result[$row->game_id] = array(
-						'image'			=> $this->image->getImage(
-								$row->game_image_id,
-								'medium',
-								array('title' => $row->game_title)),
 						'title'			=> $row->game_title,
 						'play_count'	=> $row->game_play_count,
 						'date_added'	=> date('j/m/y', $row->game_date_added),
@@ -179,7 +170,23 @@
 		 */	
 		function Del_Game($game_id)
 		{
-			return true;
+			$sql = '	DELETE FROM games
+						where	game_id=?';
+			return $this->db->query($sql,array($game_id));			
+		}
+		
+		function Get_Filename($game_id)
+		{
+			$sql = '	SELECT	game_filename
+						FROM	games
+						WHERE	game_id=?';
+			$query = $this->db->query($sql,array($game_id));
+			if ($query->num_rows() >0)
+			{
+				return $query->row()->game_filename;
+			}else{
+				return 0;
+			}
 		}
 		
 		/**
@@ -190,6 +197,7 @@
 		function Edit_Game_Get($game_id)
 		{
 			$sql = '	SELECT	game_title,
+								game_activated,
 								game_filename,
 								game_width,
 								game_height,
@@ -203,6 +211,7 @@
 				$row = $query->row();
 				$result = array(
 					'title'		=> $row->game_title,
+					'activated'	=> ($row->game_activated == 1),
 					'filename'	=> $row->game_filename,
 					'width'		=> $row->game_width,
 					'height'	=> $row->game_height,
@@ -221,15 +230,102 @@
 		 *  @param argument4 int: new height of game
 		 *  @return bool: true on success
 		 */	
-		function Edit_Game_Update($game_id, $title, $width, $height)
+		function Edit_Game_Update($game_id, $title, $width, $height,$activated)
 		{
 			$sql = '	UPDATE	games
 						SET		game_title = ?,
 								game_width = ?,
-								game_height = ?
+								game_height = ?,
+								game_activated = ?
 						WHERE	game_id = ?';
-			return $this->db->query($sql,array($title,$width,$height,$game_id));
+			return $this->db->query($sql,array(
+				$title,
+				$width,
+				$height,
+				($activated ? 1 : 0),
+				$game_id));
 						
 		}
+		
+		function Get_Image_Id($game_id)
+		{
+			$sql = '	SELECT	game_image_id
+						FROM	games
+						WHERE	game_id = ?';
+			$query = $this->db->query($sql,array($game_id));
+			return $query->row()->game_image_id;
+		}
+	
+		function Set_Image_Id($game_id, $image_id)
+		{
+			$sql = '	UPDATE	games
+						SET		game_image_id = ?
+						WHERE	game_id = ?';
+			return $this->db->query($sql,array($image_id,$game_id));
+		}
+	
+		function Get_Incomplete($game_id = -1)
+		{
+			$sql = '	SELECT		game_id,
+									game_title,
+									game_activated,
+									game_play_count,
+									game_date_added
+						FROM		games
+						WHERE		game_width < 10
+							OR		game_height < 10
+							OR		game_title IS NULL
+							OR		game_title = ""
+							OR		game_image_id IS NULL
+							OR		game_activated = 0';
+			$query = $this->db->query($sql);
+			if ($query->num_rows() > 0)
+			{
+				foreach ($query->result() as $row)
+				{
+					$result[$row->game_id] = array(
+						'title'			=> $row->game_title,
+						'play_count'	=> $row->game_play_count,
+						'date_added'	=> date('j/m/y', $row->game_date_added),
+						'activated'		=> ($row->game_activated==1));
+				}
+			}else{
+				$result = 0;
+			}
+			return $result;
+		}
+		
+		function Add_Game($filename)
+		{
+			$sql = '	INSERT INTO games
+						(game_filename,game_date_added)
+						VALUES (?,UNIX_TIMESTAMP())';
+			$this->db->query($sql,array($filename));
+			$sql = '	SELECT	game_id
+						FROM	games
+						WHERE	game_filename=?';
+			$query = $this->db->query($sql,array($filename));
+			if ($query->num_rows() >0)
+			{
+				return $query->row()->game_id;
+			}else{ return 0;}
+		}
+		
+		function Get_Fnames()
+		{
+			$sql = '	SELECT	game_filename
+						FROM	games';
+			$query = $this->db->query($sql);
+			if ($query->num_rows() >0)
+			{
+				foreach ($query->result() as $row)
+				{
+					$result[] = $row->game_filename;
+				}
+			}else{ return 0;}
+			return $result;
+		}
+		
 	}
+	
 ?>

@@ -26,7 +26,6 @@ $smileys = array(
 	':smirk:'		=>	array('smirk.gif',			'19',	'19',	'smirk'),
 	':roll:'		=>	array('rolleyes.gif',		'19',	'19',	'rolleyes'),
 	':-S'			=>	array('confused.gif',		'19',	'19',	'confused'),
-	':S'			=>	array('confused.gif',		'19',	'19',	'confused'),
 	':wow:'			=>	array('surprise.gif',		'19',	'19',	'surprised'),
 	':bug:'			=>	array('bigsurprise.gif',	'19',	'19',	'big surprise'),
 	':-P'			=>	array('tongue_laugh.gif',	'19',	'19',	'tongue laugh'),

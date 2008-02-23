@@ -1,7 +1,7 @@
 <div class='RightToolbar'>
 <h4>What's this?</h4>
 	<p>
-		<?php echo $main_text; ?>
+		<?php echo($main_text); ?>
 		<?php if ($new_mode) { ?>
 		Technical Notes: The organisation short name is generated dynamically from the organisation name when the organisation is first created. A warning is presented if the name already exists (as the organisation may already exist).
 		<?php } else { ?>
@@ -37,11 +37,11 @@
 		<input type='checkbox' name='details_has_events' style='width: 220px;' value=''/>
 		<br />
 		<label for='details_org_type'>Organisation Category:</label>
-		<SELECT name="details_org_type">
+		<select name="details_org_type">
 				<?php foreach ($categories as $category) { ?>
-					<OPTION VALUE="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></OPTION>
+					<option value="<?php echo($category['id']); ?>"><?php echo(xml_escape($category['name'])); ?></option>
 				<?php } ?>
-		</SELECT>
+		</select>
 		<label for='details_button'></label>
 		<input type='submit' name='details_button' value='<?php echo ($new_mode ? 'Create' : 'Update') ?>' class='button' />
 	</fieldset>

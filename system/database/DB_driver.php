@@ -73,10 +73,14 @@ class CI_DB_driver {
 	 *
 	 * @param mixed. Can be an array or a DSN string
 	 */	
-	function CI_DB_driver($params)
+	function __construct($params)
 	{
 		$this->initialize($params);
 		log_message('debug', 'Database Driver Class Initialized');
+	}
+
+	function __destruct() {
+		$this->close();
 	}
 	
 	// --------------------------------------------------------------------
@@ -513,17 +517,34 @@ class CI_DB_driver {
 			$binds = array($binds);
 		}
 		
-		foreach ($binds as $val)
+		// Get the sql segments around the bind markers
+		$expected_segments = count($binds)+1;
+		$segments = explode($this->bind_marker, $sql, $expected_segments);
+		
+		// Check for expected number of segments
+		if (count($segments) != $expected_segments) {
+			$backtrace = debug_backtrace();
+			trigger_error('Wrong number of bind arguments supplied to query in function '.xml_escape($backtrace[2]['function']).' at:<br />'.
+				'File: '.xml_escape($backtrace[1]['file']).'<br />'.
+				'Line: '.xml_escape($backtrace[1]['line']),
+				E_USER_ERROR);
+		}
+		
+		// Its not the end of the world if there are too many bind values
+		if ($expected_segments > count($segments)) {
+			$binds = array_slice($binds, 0, count($segments)-1);
+		}
+		
+		// Construct the binded query
+		$result = $segments[0];
+		$i = 0;
+		foreach ($binds as $bind)
 		{
-			$val = $this->escape($val);
-					
-			// Just in case the replacement string contains the bind
-			// character we'll temporarily replace it with a marker
-			$val = str_replace($this->bind_marker, '{%bind_marker%}', $val);
-			$sql = preg_replace("#".preg_quote($this->bind_marker, '#')."#", str_replace('$', '\$', $val), $sql, 1);
+			$result .= $this->escape($bind);
+			$result .= $segments[++$i];
 		}
 
-		return str_replace('{%bind_marker%}', $this->bind_marker, $sql);		
+		return $result;
 	}
 	
 	// --------------------------------------------------------------------

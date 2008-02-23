@@ -107,13 +107,16 @@ class CommentViewThread extends FramesView
 	}
 }
 
-/// View for adding comments.
+/// View for adding/editing comments.
 class CommentViewAdd extends FramesView
 {
 	/// int Thread id.
 	protected $mThreadId;
 	/// array Thread information.
 	protected $mThread = NULL;
+	
+	/// array Existing comment.
+	protected $mExistingComment = NULL;
 
 	/// Default constructor.
 	function __construct($ThreadId)
@@ -135,6 +138,17 @@ class CommentViewAdd extends FramesView
 		$this->SetData('DefaultAnonymous', FALSE);
 		$this->SetData('DefaultContent', '');
 		$this->SetData('Preview', NULL);
+		$this->SetData('ShowCancelButton', false);
+		$this->SetData('AlreadyExists', false);
+	}
+	
+	/// Set an existing comment to edit.
+	function SetExistingComment($Comment)
+	{
+		$this->SetData('ShowCancelButton', true);
+		$this->mExistingComment = $Comment;
+		$this->SetData('DefaultContent', $Comment['wikitext']);
+		$this->SetData('AlreadyExists', true);
 	}
 	
 	/// Set the thread data from the model.
@@ -148,13 +162,30 @@ class CommentViewAdd extends FramesView
 	
 	/// Check for comment adding post data.
 	/**
-		checks for comment adding
-		checks for preview
+	 *	checks for comment adding
+	 *	checks for preview
 	 * @note Identity is taken from logged in user.
+	 * @return bool Whether to redirect back to referer.
 	 */
 	function CheckPost()
 	{
 		$CI = & get_instance();
+		
+		// If comment exists, initialise preview
+		if (NULL !== $this->mExistingComment) {
+			// if cancel, cancel now
+			if (FALSE !== $CI->input->post('CommentAddCancel')) {
+				return true; // redirect
+			}
+			$preview = $this->mExistingComment;
+			$preview['edits'][] = array(
+				'edit_time' => time(),
+				'by_author' => $this->mExistingComment['owned'],
+			);
+		} else {
+			unset($preview);
+		}
+		
 		// Read comment post data for adder
 		$wikitext = $CI->input->post('CommentAddContent');
 		if ($wikitext !== FALSE) {
@@ -174,11 +205,18 @@ class CommentViewAdd extends FramesView
 			// Check not just whitespace
 			if (preg_match('/^[\t\n ]*$/',$wikitext)) {
 				$CI->messages->AddMessage('error', 'Your comment did not have any content');
+			} elseif (isset($this->mExistingComment) && $wikitext == $this->mExistingComment['wikitext']) {
+				$CI->messages->AddMessage('error', 'Your comment has not changed');
 			} else {
 				$has_preview = (FALSE === $CI->input->post('CommentAddSubmit'));
 				if ($has_preview) {
 					//if (is_int($identity)) {
-						$preview = $CI->comments_model->GetCommentPreview($comment);
+						if (isset($preview)) {
+							$preview['wikitext'] = $wikitext;
+							$preview['xhtml'] = $CI->comments_model->ParseCommentWikitext($wikitext);
+						} else {
+							$preview = $CI->comments_model->GetCommentPreview($comment);
+						}
 						$success = (NULL !== $preview);
 					/*} else {
 						$success = FALSE;
@@ -186,12 +224,6 @@ class CommentViewAdd extends FramesView
 					if ($success) {
 						//$default_identity = $identity;
 						$CI->messages->AddMessage('success', 'Preview created');
-						// Postprocess the preview
-						$preview['owned'] = TRUE;
-						if (NULL === $preview['author']) {
-							$preview['author'] = 'Anonymous';
-						}
-						$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time']);
 					} else {
 						$CI->messages->AddMessage('error', 'Comment preview could not be created');
 					}
@@ -199,22 +231,53 @@ class CommentViewAdd extends FramesView
 					if (!$CI->user_auth->isLoggedIn) {
 						$CI->messages->AddMessage('error', 'Comment could not be added. You must be logged in to post comments.');
 					} else {
-						$success = (/*is_int($identity) &&*/
-							$CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
-						if ($success) {
-							$CI->messages->AddMessage('success', 'Comment added');
-							///@TODO: Make it go to #CommentItem{NewCommentID}
-							redirect($CI->comment_views->GenUri('last'));
+						if (NULL !== $this->mExistingComment) {
+							$success = $CI->comments_model->EditCommentContent($this->mExistingComment['comment_id'], $wikitext);
+							if ($success) {
+								$CI->messages->AddMessage('success', 'Comment edited');
+								return true;
+							} else {
+								// something went wrong, keep track of the data in case shitty browser loses it
+								$preview['wikitext'] = $wikitext;
+								$preview['xhtml'] = $CI->comments_model->ParseCommentWikitext($wikitext);
+								$CI->messages->AddMessage('success', 'Comment could not be edited');
+								return false;
+							}
 						} else {
-							$CI->messages->AddMessage('error', 'Comment could not be added');
+							$success = (/*is_int($identity) &&*/
+								$CI->comments_model->AddCommentByThreadId($this->mThreadId, $comment));
+							if ($success) {
+								$CI->messages->AddMessage('success', 'Comment added');
+								///@TODO: Make it go to #CommentItem{NewCommentID}
+								redirect($CI->comment_views->GenUri('last'));
+							} else {
+								$CI->messages->AddMessage('error', 'Comment could not be added');
+							}
 						}
 					}
 				}
 			}
 		}
 		if (isset($preview)) {
+			// Postprocess the preview
+			$preview['owned'] = false;
+			if (NULL === $preview['author']) {
+				$preview['author'] = 'Anonymous';
+			}
+			$preview['post_time'] = $CI->time_format->date('%D %T', $preview['post_time'], true);
+			if (NULL !== $preview['deleted_time']) {
+				$preview['deleted_time'] = $CI->time_format->date('%D %T', $preview['deleted_time'], true);
+			}
+			foreach ($preview['edits'] as $edit_id => &$edit) {
+				$edit['edit_time'] = $CI->time_format->date('%D %T', $edit['edit_time'], true);
+			}
+			$preview['comment_order_num'] = '';
+			$preview['preview'] = true;
+			$preview['no_links'] = true;
+			
 			$this->SetData('Preview', $preview);
 		}
+		return false;
 	}
 	
 	function Load()
@@ -289,12 +352,18 @@ class CommentViewList extends FramesView
 		
 		// comment postprocessing for list
 		$comment_order = 1;
-		foreach ($this->mComments as $key => $comment) {
+		foreach ($this->mComments as $key => &$comment) {
 			if (NULL === $comment['author']) {
-				$this->mComments[$key]['author'] = 'Anonymous';
+				$comment['author'] = 'Anonymous';
 			}
-			$this->mComments[$key]['post_time'] = $CI->time_format->date('%D %T', $comment['post_time'], true);
-			$this->mComments[$key]['comment_order_num'] = $comment_order++;
+			$comment['post_time'] = $CI->time_format->date('%D %T', $comment['post_time'], true);
+			if (NULL !== $comment['deleted_time']) {
+				$comment['deleted_time'] = $CI->time_format->date('%D %T', $comment['deleted_time'], true);
+			}
+			foreach ($comment['edits'] as $edit_id => &$edit) {
+				$edit['edit_time'] = $CI->time_format->date('%D %T', $edit['edit_time'], true);
+			}
+			$comment['comment_order_num'] = $comment_order++;
 		}
 	}
 	
@@ -334,6 +403,7 @@ class CommentViewList extends FramesView
 		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix() .'#comments');
 		// for subviews (comments)
 		foreach (array(	'Report'	=> 'report',
+						'Edit'		=> 'edit',
 						'Delete'	=> 'delete',
 						'Undelete'	=> 'undelete',
 						'Good'		=> 'flaggood',
@@ -395,7 +465,7 @@ class Comment_views
 		$comment_view_add->CheckPost();
 		$comment_view_thread->CheckPost();
 		
-		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'visible');
+		$comments = $CI->comments_model->GetCommentsByThreadId($thread_id,'all');
 		$comment_view_list->SetComments($comments);
 		
 		// set which page of comments to show
@@ -408,10 +478,21 @@ class Comment_views
 			'CommentAdd'    => & $comment_view_add,
 			'CommentList'   => & $comment_view_list,
 		);
-		
+
 		return new FramesView('comments/standard', $data);
 	}
-	
+
+	function GetLatestComments($MaxComments = 10, $MaxPerPage = 20)
+	{
+		$CI = & get_instance();
+		$comments = $CI->comments_model->GetLatestComments($MaxComments);
+		$data = array(
+			'comments'			=>	$comments,
+			'comments_per_page'	=>	$MaxPerPage
+		);
+		return new FramesView('comments/latest_box', $data);
+	}
+
 	/// Generate a uri for a given included comment number.
 	function GenUri($IncludeComment)
 	{

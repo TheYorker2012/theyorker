@@ -45,7 +45,6 @@ class CI_Config {
 	function CI_Config()
 	{
 		$this->config =& get_config();
-		log_message('debug', "Config Class Initialized");
 	}  	
   	
 	// --------------------------------------------------------------------
@@ -57,55 +56,17 @@ class CI_Config {
 	 * @param	string	the config file name
 	 * @return	boolean	if the file was loaded correctly
 	 */	
-	function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
+	function load($file = '')
 	{
-		$file = ($file == '') ? 'config' : str_replace(EXT, '', $file);
-	
 		if (in_array($file, $this->is_loaded, TRUE))
-		{
 			return TRUE;
-		}
 
-		if ( ! file_exists(APPPATH.'config/'.$file.EXT))
-		{
-			if ($fail_gracefully === TRUE)
-			{
-				return FALSE;
-			}
-			show_error('The configuration file '.$file.EXT.' does not exist.');
-		}
-	
 		include(APPPATH.'config/'.$file.EXT);
-
-		if ( ! isset($config) OR ! is_array($config))
-		{
-			if ($fail_gracefully === TRUE)
-			{
-				return FALSE;
-			}		
-			show_error('Your '.$file.EXT.' file does not appear to contain a valid configuration array.');
-		}
-		
-		if ($use_sections === TRUE)
-		{
-			if (isset($this->config[$file]))
-			{
-				$this->config[$file] = array_merge($this->config[$file], $config);
-			}
-			else
-			{
-				$this->config[$file] = $config;
-			}
-		}
-		else
-		{
-			$this->config = array_merge($this->config, $config);
-		}
-
-		$this->is_loaded[] = $file;
+		$this->config = array_merge($this->config, $config);
 		unset($config);
 
-		log_message('debug', 'Config file loaded: config/'.$file.EXT);
+		$this->is_loaded[] = $file;
+
 		return TRUE;
 	}
   	
@@ -121,33 +82,9 @@ class CI_Config {
 	 * @param	bool
 	 * @return	string
 	 */		
-	function item($item, $index = '')
+	function item($item)
 	{			
-		if ($index == '')
-		{	
-			if ( ! isset($this->config[$item]))
-			{
-				return FALSE;
-			}
-		
-			$pref = $this->config[$item];
-		}
-		else
-		{
-			if ( ! isset($this->config[$index]))
-			{
-				return FALSE;
-			}
-		
-			if ( ! isset($this->config[$index][$item]))
-			{
-				return FALSE;
-			}
-		
-			$pref = $this->config[$index][$item];
-		}
-
-		return $pref;
+		return $this->config[$item];
 	}
   	
   	// --------------------------------------------------------------------
@@ -182,32 +119,32 @@ class CI_Config {
 
 		return $pref;
 	}
-  	
-	// --------------------------------------------------------------------
 
+	// --------------------------------------------------------------------
+	 
 	/**
 	 * Site URL
 	 *
-	 * @access	public
-	 * @param	string	the URI string
-	 * @return	string
-	 */		
+	 * @access      public
+	 * @param       string  the URI string
+	 * @return      string
+	 */
 	function site_url($uri = '')
 	{
-		if (is_array($uri))
-		{
-			$uri = implode('/', $uri);
-		}
-		
-		if ($uri == '')
-		{
-			return $this->slash_item('base_url').$this->item('index_page');
-		}
-		else
-		{
-			$suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');		
-			return $this->slash_item('base_url').$this->slash_item('index_page').preg_replace("|^/*(.+?)/*$|", "\\1", $uri).$suffix;
-		}
+	        if (is_array($uri))
+	        {
+	                $uri = implode('/', $uri);
+	        }
+	
+	        if ($uri == '')
+	        {
+	                return $this->slash_item('base_url').$this->item('index_page');
+	        }
+	        else
+	        {
+	                $suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');
+	                return $this->slash_item('base_url').$this->slash_item('index_page').preg_replace("|^/*(.+?)/*$|", "\\1", $uri).$suffix;
+	        }
 	}
 	
 	// --------------------------------------------------------------------

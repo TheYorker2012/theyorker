@@ -193,7 +193,7 @@ function entities_to_ascii($str, $all = TRUE)
 
    if ($all)
    {
-	   $str = str_replace(array("&amp;", "&lt;", "&gt;", "&quot;", "&apos;", "&#45;"),
+	   $str = str_replace(array("&amp;", "&lt;", "&gt;", "&quot;", "&#039;", "&#45;"),
 						  array("&","<",">","\"", "'", "-"),
 						  $str);
    }
@@ -285,7 +285,7 @@ function highlight_code($str)
 	$str = preg_replace("#//tempend.+#is", "</span>\n</code>", $str);
 	
 	// Replace our markers back to PHP tags.
-	$str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?
+	$str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?php
 				
 	return $str;
 }

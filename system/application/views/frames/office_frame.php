@@ -7,17 +7,17 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="<?php echo htmlspecialchars($description); ?>" />
-	<meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>" />
+	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
+	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
 
-	<title>The Yorker - <?php
+	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
 		if(isset($head_title)) {
-			echo htmlspecialchars($head_title, ENT_QUOTES, 'utf-8');
+			echo(xml_escape($head_title));
 		} else {
-			echo 'no pagename';
+			echo('no pagename');
 		}
-	?></title>
+	?> - The Yorker</title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
 	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
@@ -47,9 +47,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			if (isset($toplinks)) {
 				foreach ($toplinks as $link) {
 					if (is_string($link)) {
-						echo '<span style="color: #000000;">'.$link.'</span> | ';
+						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
 					} elseif (is_array($link)) {
-						echo '<a href="'.$link[1].'">'.$link[0].'</a> | ';
+						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
 					}
 				}
 			}
@@ -65,14 +65,13 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
 			</h1>
 			<div id="TopBannerPictures">
-				<a href="/office">
-					<img src="/images/prototype/new_home/office_header.jpg" alt="Office" />
-				</a>
+				<a href="/office"><img src="/images/prototype/header/office_header.jpg" alt="Office" title="Office" /></a>
+				<a href="/logout/office"><img src="/images/prototype/header/office_header2.jpg" alt="Logout of Office" title="Logout of Office" /></a>
 			</div>
 		</div>
 	</div>
 
-	<div id="Page">
+   	<div id="Page">
 		<div id="NavigationColumn">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
 				<fieldset>
@@ -107,6 +106,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/office/specials/">Special Articles</a></li>
 					<li><a href="/office/ticker/">Facebook Articles</a></li>
 					<li><a href="/office/advertising/">Advertising</a></li>
+					<li><a href="/office/polls/">Polls</a></li>
 				</ul>
 <?php
 	}

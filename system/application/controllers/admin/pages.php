@@ -113,7 +113,7 @@ class Pages extends Controller
 			$data['inline_edit_text'] = $inline_edit_text;
 			
 			$data['permissions'] = $this->mPermissions;
-			$this->main_frame->SetContentSimple('admin/pages_index.php', $data);
+			$this->main_frame->SetContentSimple('admin/pages_index', $data);
 		}
 		$this->main_frame->Load();
 	}
@@ -131,6 +131,27 @@ class Pages extends Controller
 			$result[$k] = $v;
 		}
 		return $result;
+	}
+	
+	/// Validates a page codename.
+	/**
+	 * @param $Codename string The new codename.
+	 * @param $Prefix   string The prefix for the codename.
+	 * @return bool Whether the codename is valid and unused.
+	 */
+	private function _ValidatePageCodename($Codename, $Prefix = '')
+	{
+		// Validate codename, must be non empty, and consist only of word characters
+		if (!preg_match('/^\w+$/', $Codename)) {
+			$this->messages->AddMessage('error','Your specified codename "'.xml_escape($Codename).'" contained invalid characters. Please use alphanumeric characters only.');
+			return FALSE;
+		}
+		// Check if new codename is in use
+		elseif (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$Codename)) {
+			$this->messages->AddMessage('error','A page with the codename "'.xml_escape($Codename).'" already exists. Please choose another.');
+			return FALSE;
+		}
+		return TRUE;
 	}
 	
 	/// Setup the data array for the view for creating a new page.
@@ -175,10 +196,9 @@ class Pages extends Controller
 			
 			// Validate and check permissions
 			if ($this->_CheckViewPermissions('custom_new','You do not have permission to create a new page')) {
-				// Check if new codename is in use
 				$Data['codename'] = $input['codename'];
-				if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-					$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+				// Check the codename is valid
+				if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
 					$save_failed = TRUE;
 				}
 			} else {
@@ -338,10 +358,9 @@ class Pages extends Controller
 					// Validate and check permissions
 					if ($input['codename'] != $data['codename']) {
 						if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
-							// Check if new codename is in use
 							$data['codename'] = $input['codename'];
-							if (FALSE !== $this->pages_model->PageCodeInUse($Prefix.$input['codename'])) {
-								$this->messages->AddMessage('error','A page with the codename "'.$input['codename'].'" already exists. Please choose another.');
+							// Check the codename is valid
+							if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
 								$save_failed = TRUE;
 							}
 						} else {
@@ -557,7 +576,7 @@ class Pages extends Controller
 		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
 		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -565,7 +584,7 @@ class Pages extends Controller
 			$this->pages_model->SetPageCode('admin_pages_common');
 			$this_uri = '/admin/pages/common';
 			$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
-			$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+			$this->main_frame->SetContentSimple('admin/pages_page', $data);
 		}
 		$this->main_frame->Load();
 		
@@ -601,7 +620,7 @@ class Pages extends Controller
 		$PageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -612,7 +631,7 @@ class Pages extends Controller
 						$data = $this->_NewPage($data,
 										'/admin/pages/page/new',
 										'/admin/pages/page/edit/');
-						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					}
 					break;
 					
@@ -620,7 +639,7 @@ class Pages extends Controller
 					$this->pages_model->SetPageCode('admin_pages_page_edit');
 					$this_uri = '/admin/pages/page/edit/';
 					$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
-					$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+					$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					break;
 					
 				case 'delete':
@@ -628,7 +647,7 @@ class Pages extends Controller
 					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
 						$this_uri = '/admin/pages/page/delete/';
 						$data = $this->_DeletePage($data, $PageCode, $this_uri);
-						$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
 					}
 					break;
 					
@@ -675,7 +694,7 @@ class Pages extends Controller
 		$CustomPageCode = implode('/',$segments);
 		// We now have the page code so we can continue.
 		
-		$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/admin/pages.js');
 		if ($this->_CheckViewPermissions()) {
 			$data = array();
 			$data['permissions'] = $this->mPermissions;
@@ -687,7 +706,7 @@ class Pages extends Controller
 										'/admin/pages/custom/new',
 										'/admin/pages/custom/edit/',
 										'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					}
 					break;
 					
@@ -704,7 +723,7 @@ class Pages extends Controller
 							),
 							'custom:'
 						);
-					$this->main_frame->SetContentSimple('admin/pages_page.php', $data);
+					$this->main_frame->SetContentSimple('admin/pages_page', $data);
 					break;
 					
 				case 'delete':
@@ -712,7 +731,7 @@ class Pages extends Controller
 					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
 						$this_uri = '/admin/pages/custom/delete/';
 						$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_delete.php', $data);
+						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
 					}
 					break;
 					

@@ -140,6 +140,13 @@ class Facebook_ticker
 							</div>
 						</div>';
 		}
+		$this->image_list[] = 'http://www.theyorker.co.uk/images/prototype/homepage/arrow.png';
+		$content .= '	<div style="clear:both;text-align:right;">
+							<a href="' . $this->facebook->get_add_url() . '">
+								<img src="http://www.theyorker.co.uk/images/prototype/homepage/arrow.png" alt="Add this news to my profile!" />
+								Add this news to my profile!
+							</a>
+						</div>';
 		return $content;
 
 	}

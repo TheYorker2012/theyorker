@@ -708,10 +708,12 @@ function GetRedirectData()
 /// Return an html button link
 function HtmlButtonLink($Link, $Caption)
 {
-	return '
-<form action="'.$Link.'" method="post" class="form">
-	<input type="submit" class="button" value="'.$Caption.'" />
-</form>';
+	return
+		'<form action="'.xml_escape($Link).'" method="post" class="form">'.
+			'<div>'.
+				'<input type="submit" class="button" value="'.xml_escape($Caption).'" />'.
+			'</div>'.
+		'</form>';
 }
 
 /// Handles the login view.
@@ -824,6 +826,10 @@ function LoginHandler($Level, $RedirectDestination, $Organisation = FALSE)
 				$keep_login = (FALSE !== $CI->input->post('keep_login'));
 
 				$CI->user_auth->login($username, $password, $keep_login);
+
+				if (($CI->user_auth->firstname == '') && ($CI->user_auth->surname == '')) {
+					$CI->messages->AddMessage('warning', $CI->pages_model->GetPropertyWikiText('login:no_name_set', TRUE));
+				}
 
 				if($RedirectDestination == '' || $RedirectDestination == '/')
 				{

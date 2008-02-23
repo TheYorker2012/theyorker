@@ -5,9 +5,9 @@
 	</div>
 	<?php
 		foreach($contacts as $contact){
-			echo('<h2>'.$contact['name'].'</h2>'."\n");
+			echo('<h2>'.xml_escape($contact['name']).'</h2>'."\n");
 			echo('<div class="Entry">'."\n");
-			echo('	<p>'.$contact['description'].'</p>'."\n");
+			echo('	<p>'.xml_escape($contact['description']).'</p>'."\n");
 			echo('</div>'."\n");
 		}
 	?>
@@ -23,7 +23,7 @@
 				<?php
 					//Note plural becomes singular
 					foreach ($contacts as $contact){
-						echo('<option value="'.$contact['id'].'">'.$contact['name'].'</option>'."\n");
+						echo('<option value="'.$contact['id'].'">'.xml_escape($contact['name']).'</option>'."\n");
 					}
 				?>
 				</select>

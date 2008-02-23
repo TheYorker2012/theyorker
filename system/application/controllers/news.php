@@ -18,18 +18,29 @@ class News extends Controller {
 		$this->load->model('News_model');
 	}
 
-	function _remap($method)
+	/// This is the main entry point.
+	/**
+	 * This gets provided with all url segments after /news
+	 */
+	function _remap($method = 'uninews')
 	{
+		$args = func_get_args();
+		# If there are articles in a category by this name, use it.
 		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
-			$this->index($method);
-		} elseif (method_exists($this, $method)) {
-			$this->$method();
-		} else {
+			call_user_func_array(array(&$this, '_article'), $args);
+		}
+		# If theres a function for the given method that isn't protected, use it.
+		elseif (method_exists($this, $method) && substr($method,0,1) != '_') {
+			call_user_func_array(array(&$this, $method), array_slice($args, 1));
+		}
+		# Otherwise not found
+		else {
 			show_404();
 		}
 	}
 
-	function index($article_type = 'uninews', $CommentInclude = 0)
+	/// Display a news article in a given section.
+	function _article($article_type = 'uninews', $article_id = NULL, $CommentInclude = 0)
 	{
 		// Load public view
 		if (!CheckPermissions('public')) return;
@@ -39,6 +50,19 @@ class News extends Controller {
 			$article_type = 'uninews';
 			$type_info = $this->News_model->getArticleTypeInformation($article_type);
 		}
+		
+		// The precise article wasn't given so we should show the default.
+		// Redirect to the correct URL so that google doesn't index section pages.
+		// Get a minimum of information so the redirect is fast.
+		if ($article_id === NULL) {
+			list($content_codename, $article_id) = $this->News_model->GetDefaultArticleInfo($article_type);
+			if (is_numeric($article_id)) {
+				redirect('news/'.$content_codename.'/'.$article_id);
+			}
+		}
+		// Get the latest article ids from the model.
+		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
+		
 		if ($type_info['parent_id'] != NULL) {
 			$parent = $this->News_model->getArticleTypeCodename($type_info['parent_id']);
 			$this->pages_model->SetPageCode('news_' . $parent['content_type_codename']);
@@ -63,8 +87,7 @@ class News extends Controller {
 		$data['related_heading'] = $this->pages_model->GetPropertyText('related_heading');
 		$data['links_heading'] = $this->pages_model->GetPropertyText('links_heading');
 
-		/// Get the latest article ids from the model.
-		$latest_article_ids = $this->News_model->GetLatestId($article_type,8);
+		// $latest_article_ids has already been found above
 		if (($type_info['has_children']) || ($type_info['parent_id'] != NULL)) {
 			$this->load->library('image');
 			if ($type_info['section'] == 'blogs') {
@@ -91,10 +114,10 @@ class News extends Controller {
 		}
 
 		/// Get requested article id if submitted
-		$url_article_id = $this->uri->segment(3);
+		$url_article_id = $article_id;
 		// Check if an article id was requested, if so check that the type of article it corresponds
 		// to is correct for the current news view, otherwise 404 (so that search engines do not index duplicate pages).
-		if ($url_article_id !== FALSE) {
+		if ($url_article_id !== NULL) {
 			if (is_numeric($url_article_id) && $this->News_model->IdIsOfType($url_article_id,$article_type)) {
 				/// Check if requested article is already one of the IDs returned
 				$found_article = array_search($url_article_id, $latest_article_ids);
@@ -118,6 +141,7 @@ class News extends Controller {
 			/// If there are no articles for this particular section then show a page anyway
 			if (count($latest_article_ids) == 0) {
 				$main_article = array(
+					'placeholder'			=>	true,
 					'id'					=>	0,
 					'date'					=>	date('l, jS F Y'),
 					'location'				=>	0,
@@ -125,20 +149,20 @@ class News extends Controller {
 					'heading'				=>	$this->pages_model->GetPropertyText('news:no_articles_heading',TRUE),
 					'subheading'			=>	NULL,
 					'subtext'				=>	NULL,
-					'text'					=>	$this->pages_model->GetPropertyWikiText('news:no_articles_text',TRUE),
+					'text'					=>	$this->pages_model->GetPropertyWikitext('news:no_articles_text',TRUE),
 					'blurb'					=>	NULL,
 					'authors'				=>	array(),
 					'links'					=>	array(),
 					'related_articles'		=>	array(),
-					'fact_boxes'			=>	array()
+					'fact_boxes'			=>	array(),
 				);
 			} else {
-		    	$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
+				$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
 				/// Check if article requested doesn't exist
 				if ($main_article === NULL) {
 					redirect('/news/'.$article_type);
 				}
-		 }
+			}
 		}
 
 		//Set page title to include headline
@@ -159,7 +183,6 @@ class News extends Controller {
 		/// Get comments for article
 		if (is_numeric($main_article['public_thread_id'])) {
 			$this->load->library('comment_views');
-			$CommentInclude = $this->uri->segment(4);
 			if (FALSE === $CommentInclude) {
 				$CommentInclude = NULL;
 			}
@@ -309,37 +332,5 @@ class News extends Controller {
 
 		$this->load->view('news/rss', $data);
 	}
-
-
-    /// test data for use until we can use the database (example national news)
-	private static $national_data = array(
-		array(
-			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/uk/6186194.stm',
-            'image' => '/images/prototype/news/bbc_news.gif',
-            'image_description' => 'Taken from BBC News',
-            'headline' => 'Ex-spy death inquiry stepped up',
-            'writer' => 'Google',
-            'date' => '5th December 2006',
-            'subtext' => 'Police step up inquiries into the death of Russian ex-spy Alexander Litvinenko, with officers due to fly to Moscow.'
-		),
-		array(
-			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/uk_politics/6186348.stm',
-            'image' => '/images/prototype/news/bbc_news.gif',
-            'image_description' => 'Taken from BBC News',
-            'headline' => 'Olympics audio surveillance row',
-            'writer' => 'Google',
-            'date' => '5th December 2006',
-            'subtext' => 'A police plan to use high-powered microphones to help the Olympics 2012 security is opposed by David Blunkett.'
-		),
-		array(
-			'link' => 'http://news.bbc.co.uk/go/rss/-/1/hi/england/dorset/6186284.stm',
-            'image' => '/images/prototype/news/bbc_news.gif',
-            'image_description' => 'Taken from BBC News',
-            'headline' => 'Missing boy search scaled down',
-            'writer' => 'Google',
-            'date' => '5th December 2006',
-            'subtext' => 'The search for a boy who is missing after the rowing boat he stole with a friend capsized is scaled down overnight.'
-		),
-	);
 }
 ?>

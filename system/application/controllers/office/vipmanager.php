@@ -40,7 +40,7 @@ class Vipmanager extends Controller
 		);
 		
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/viplist.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/viplist.js');
 
 		// Set up the content
 		$this->main_frame->SetContentSimple('office/vipmanager/vip_list', $data);

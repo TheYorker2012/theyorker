@@ -129,7 +129,7 @@ class Links extends Controller
 
 				$this->messages->AddMessage('success', 'Image Uploaded Successfully');
 
-				redirect('/office/links', 'location');
+				redirect('/office/links');
 			}
 		} elseif($this->input->post('lurl') && !$this->input->post('lname')) {
 			$this->messages->AddMessage('error', 'Please enter a name for your link.');
@@ -163,7 +163,7 @@ class Links extends Controller
 			redirect('/office/links');
 		}
 
-		$link_name = htmlentities($this->input->post('link_name'), ENT_NOQUOTES, 'UTF-8');
+		$link_name = $this->input->post('link_name');
 		$link_url = $this->input->post('link_url');
 		$delete = ($this->input->post('name_delete_button') == 'Delete');
 

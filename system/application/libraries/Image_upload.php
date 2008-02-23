@@ -24,22 +24,21 @@ class Image_upload {
 	public function uploadForm($multiple = false, $photos = false) {
 		$this->ci->xajax->processRequests();
 		$_SESSION['img'] = array();
-		if ($this->ci->input->post('destination')) return true;
+		if ($this->ci->input->post('destination')) {
+			return true;
+		}
+		$this->ci->main_frame->IncludeJs('javascript/clone.js');
 		if ($multiple && $photos) {
 			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
-			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_photos');
 		} elseif ($multiple) {
 			$this->ci->main_frame->SetTitle('Multiple Image Uploader');
-			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images');
 		} elseif ($photos) {
 			$this->ci->main_frame->SetTitle('Photo Upload');
-			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo');
 		} else {
 			$this->ci->main_frame->SetTitle('Image Upload');
-			$this->ci->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
 			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
 		}
 		$this->ci->main_frame->Load();
@@ -85,13 +84,13 @@ class Image_upload {
 			if (isset($title) && strlen($title) > 0) {
 				if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
 					$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
-					redirect($returnPath, 'location');
+					redirect($returnPath);
 				} else {
 					$data[] = $this->ci->upload->data();
 
 					if (!$data[$x - 1]['is_image']) {
 						$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
-						redirect($returnPath, 'location');
+						redirect($returnPath);
 					} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
 						// fix for Microsoft's Stupidity
 						if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
@@ -104,7 +103,7 @@ class Image_upload {
 					} elseif($this->ci->input->post('destination') == 1) {
 						//redirect back home
 						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
-						redirect($returnPath, 'location');
+						redirect($returnPath);
 					} else {
 						//just display error
 						$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
@@ -119,8 +118,11 @@ class Image_upload {
 
 		$this->ci->main_frame->SetTitle('Photo Uploader');
 		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<link rel="stylesheet" type="text/css" href="/stylesheets/cropper.css" media="all" /><script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=builder,effects,dragdrop" type="text/javascript"></script><script src="/javascript/cropper.js" type="text/javascript"></script>';
-		$this->ci->main_frame->SetExtraHead($head);
+		$this->ci->main_frame->AddExtraHead($head);
+		$this->ci->main_frame->IncludeCss('stylesheets/cropper.css');
+		$this->ci->main_frame->IncludeJs('javascript/prototype.js');
+		$this->ci->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');
+		$this->ci->main_frame->IncludeJs('javascript/cropper.js');
 		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
 		return $this->ci->main_frame->Load();
 	}
@@ -164,7 +166,7 @@ class Image_upload {
 		$result = $this->ci->db->query($sql, array($selectedThumb[3]));
 		if($result->num_rows() != 1) {
 			$this->ci->user_auth->logout();
-			redirect('/', 'location');
+			redirect('/');
 			//TODO add some kind of logging
 			exit;
 		}
@@ -309,7 +311,7 @@ class Image_upload {
 			              'x'         => $x,
 			              'y'         => $y,
 			              'mime'      => $data['file_type'],);
-			$id = $this->ci->image->add('photo', &$newImage, $info);
+			$id = $this->ci->image->add('photo', $newImage, $info);
 			if ($id === false) {
 				return false;
 			} else {

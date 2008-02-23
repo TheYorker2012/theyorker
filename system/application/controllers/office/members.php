@@ -343,6 +343,11 @@ class Members extends Controller
 				$members[(int)$membership['user_id']] = array();
 			}
 			$members[(int)$membership['user_id']][(int)$membership['team_id']] = $membership;
+			
+			//If the organisation is the yorker find out how many articles they have written, if its not the yorker dont look up to save time.
+			if($membership['team_id']==$this->config->item('company_entity_id')){
+				$members[(int)$membership['user_id']][(int)$membership['team_id']]['article_count'] = $this->members_model->GetNumberOfArticlesByUser((int)$membership['user_id']);
+			}
 		}
 
 		foreach ($members as $user_id => $member_teams) {
@@ -372,8 +377,8 @@ class Members extends Controller
 			} else {
 				unset($members[$user_id]);
 			}
+			
 		}
-
 		$this->mMembers = &$members;
 	}
 
@@ -398,6 +403,7 @@ class Members extends Controller
 		$sortdir == 'asc' ? $this->mSortFields[$sorton] = true : $this->mSortFields[$sorton] = false;
 
 		$this->pages_model->SetPageCode('viparea_members_list');
+		
 		$data = array(
 			'main_text'    => $this->pages_model->GetPropertyWikitext('main_text'),
 			'target'       => $this->uri->uri_string(),
@@ -414,7 +420,7 @@ class Members extends Controller
 		);
 		
 		// Include the javascript
-		$this->main_frame->SetExtraHead('<script src="/javascript/memberslist.js" type="text/javascript"></script>');
+		$this->main_frame->IncludeJs('javascript/memberslist.js');
 		
 		// Set up the content
 		$this->main_frame->SetContentSimple('members/members', $data);

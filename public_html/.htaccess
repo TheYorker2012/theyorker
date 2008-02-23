@@ -1,5 +1,9 @@
 <IfModule mod_rewrite.c>
+
 RewriteEngine on
-RewriteCond $1 !^(index\.php|tmp|images|stylesheets|javascript|js|doxygen|facebook|robots\.txt)
+
+# Rewrite URL into index.php for code igniter
+RewriteCond $1 !^(index\.php|tmp|images|stylesheets|javascript|flash|js|doxygen|facebook|robots\.txt)
 RewriteRule ^(.*)$ index.php/$1 [L]
+
 </IfModule>

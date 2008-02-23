@@ -1,7 +1,8 @@
 <div id="RightColumn">
 	<h2 class="first">What's this?</h2>
 	<div class="Entry">
-		<?php if (isset($whats_this)) echo $whats_this; ?>
+		<?php /* $whats_this is xhtml from page property */
+			if (isset($whats_this)) echo $whats_this; ?>
 	</div>
 	
 <?php
@@ -12,12 +13,12 @@
 <?php
 		foreach ($organisation['groups'] as $group) {
 ?>
-			<a href='<?php echo(htmlspecialchars($group['href'])); ?>'>
+			<a href='<?php echo(xml_escape($group['href'])); ?>'>
 				<?php
 				if (isset($business_card_group) && $business_card_group==$group['id']){
 					echo '<b>';
 				}
-				echo(htmlspecialchars($group['name']));
+				echo(xml_escape($group['name']));
 				if (isset($business_card_group) && $business_card_group==$group['id']){
 					echo '</b>';
 				}
@@ -30,20 +31,20 @@
 <?php
 	}
 ?>
-	<!--
+	<?php /*
 	<h2>Facts</h2>
 	<div class="entry">
 	<ul>
-		<li>Number of members : <?php //if (isset($number_of_members)) echo $number_of_members; ?></li>
-		<li>Number of subscriptions : <?php //if (isset($number_of_subscriptions)) echo $number_of_subscriptions; ?></li>
-		<?php //if (isset($number_of_members) && $number_of_members != 0){ ?>
-		<li>Last member joined : <?php //if (isset($last_joined)) echo $last_joined; ?></li>
-		<li>Male:Female ratio : <?php //if (isset($male_female_ratio)) echo $male_female_ratio; ?></li>
+		<li>Number of members : <?php if (isset($number_of_members)) echo($number_of_members); ?></li>
+		<li>Number of subscriptions : <?php if (isset($number_of_subscriptions)) echo($number_of_subscriptions); ?></li>
+		<?php if (isset($number_of_members) && $number_of_members != 0) { ?>
+		<li>Last member joined : <?php if (isset($last_joined)) echo($last_joined); ?></li>
+		<li>Male:Female ratio : <?php if (isset($male_female_ratio)) echo($male_female_ratio); ?></li>
 		<?php //} ?>
 		
 	</ul>
 	</div>
-	-->
+	*/ ?>
 </div>
 
 <div id="MainColumn">
@@ -51,7 +52,7 @@
 if(empty($organisation['groups'])) {
 ?>
 	<div class="BlueBox">
-		<div align="center">
+		<div style="text-align:center">
 			<b><?php if (isset($no_groups)) echo $no_groups; ?></b>
 		</div>
 	</div>
@@ -59,7 +60,7 @@ if(empty($organisation['groups'])) {
 } else if (empty($organisation['cards'])) {
 ?>
 	<div class="BlueBox">
-		<div align="center">
+		<div style="text-align:center">
 			<b><?php if (isset($no_cards)) echo $no_cards; ?></b>
 		</div>
 	</div>

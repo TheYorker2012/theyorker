@@ -180,7 +180,7 @@ function checkedEmails(count) {
 	<img src="/images/prototype/prefs/loading.gif" alt="Checking" title="Checking" /> Checking your e-mail account...
 </div>
 
-<form action="https://webmail1.york.ac.uk/" method="post" name="login" id="webmail">
+<form action="https://webmail1.york.ac.uk/" method="post" id="webmail">
 	<input type="hidden" name="username" id="username" value="" />
 	<input type="hidden" name="password" id="password" value="" />
 	<input type="hidden" name="login" value="Login" />

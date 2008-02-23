@@ -102,10 +102,10 @@ class Notifications
 					if ($notification->ValidAction($action)) {
 						$messages = $notification->PerformAction($action);
 					} else {
-						$messages['error'][] = 'Unrecognised notification action: '.htmlentities($action, ENT_QUOTES, 'utf-8');
+						$messages['error'][] = 'Unrecognised notification action: '.xml_escape($action);
 					}
 				} else {
-					$messages['error'][] = 'Unrecognised notification type: '.htmlentities($type, ENT_QUOTES, 'utf-8');
+					$messages['error'][] = 'Unrecognised notification type: '.xml_escape($type);
 				}
 			}
 		}

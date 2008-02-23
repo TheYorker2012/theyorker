@@ -528,14 +528,14 @@ function ResetMinicalDates()
 	}
 }
 
-function AdjustMinicalDate(date, class)
+function AdjustMinicalDate(date, className)
 {
 	date_cell = document.getElementById('mc'+date);
 	if (date_cell != null) {
 		if (!(date in minical_base_classes)) {
 			minical_base_classes[date] = date_cell.className;
 		}
-		date_cell.className += date_cell.className ? " "+class : class;
+		date_cell.className += date_cell.className ? " "+className : className;
 	}
 }
 

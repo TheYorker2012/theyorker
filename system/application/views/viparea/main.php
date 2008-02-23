@@ -4,12 +4,12 @@
 <?php
 	if ($rep['has_rep'] == true) {
 		echo('		<p>'."\n");
-		echo('			Your rep is: '.$rep['firstname'].' '.$rep['surname']."\n");
+		echo('			Your rep is: '.xml_escape($rep['firstname'].' '.$rep['surname'])."\n");
 		echo('		</p>'."\n");
 	}
 	else {
 		echo('		<p>'."\n");
-		echo('			You have no dedicated rep, so our pr officers '.htmlentities($rep['name']).' are looking after you.'."\n");
+		echo('			You have no dedicated rep, so our pr officers '.xml_escape($rep['name']).' are looking after you.'."\n");
 		echo('		</p>'."\n");
 	}
 ?>

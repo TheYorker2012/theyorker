@@ -88,14 +88,14 @@ class Account extends controller
 		} elseif ($this->input->post('v_apply') == 'Apply') {
 			/// Process form submission
 			$this->load->model('members_model');
-			$position = htmlentities($this->input->post('v_position'), ENT_QUOTES, 'UTF-8');
-			$phone = htmlentities($this->input->post('v_phone'), ENT_QUOTES, 'UTF-8');
+			$position = $this->input->post('v_position');
+			$phone = $this->input->post('v_phone');
 			if ($position == '') {
 				$this->messages->AddMessage('error', 'Please make sure you specify your position in the organisation before submitting the application.');
 			} else {
 				$this->members_model->UpdateVipStatus('requested',$this->user_auth->entityId,$org_id);
 				$this->prefs_model->vipApplication ($this->user_auth->entityId,$org_id,$position,$phone);
-				$this->messages->AddMessage('success', 'Your application to become VIP for ' . $data['org_name']['name'] . ' has been successfully recieved.');
+				$this->messages->AddMessage('success', 'Your application to become VIP for ' . xml_escape($data['org_name']['name']) . ' has been successfully recieved.');
 				redirect('/account');
 			}
 		}
@@ -259,9 +259,9 @@ class Account extends controller
 		/// Get custom page content
 		$this->pages_model->SetPageCode('account_links');
 
-		$head = $this->xajax->getJavascript(null, '/javascript/xajax.js');
-		$head.= '<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js" type="text/javascript"></script>';
-		$this->main_frame->SetExtraHead($head);
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js');
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('account/links', $data);
@@ -293,17 +293,17 @@ class Account extends controller
 						//Take link image id and associate it with the link
 						$this->Links_Model->ReplaceImage($newId, $this->user_auth->entityId, $chosenImageID);
 						$this->messages->AddMessage('success', 'Link added successfully.');
-						redirect('/account/links', 'location');
+						redirect('/account/links');
 					} elseif ($this->input->post('image_pick') == 'custom') {
 						$_SESSION['img'] = array();
 						$this->image_upload->recieveUpload('/account/customlink/addimage/'.$newId, array('link'), false);
 					} else {
 						$this->messages->AddMessage('error', 'Please select either a custom or gallery image.');
-						redirect('/account/customlink', 'location');
+						redirect('/account/customlink');
 					}
 				} else if($this->input->post('lurl')) {
 					$this->messages->AddMessage('error', 'Please enter a name for your link.');
-					redirect('/account/customlink', 'location');
+					redirect('/account/customlink');
 				}
 		} elseif ($action == 'addimage') {
 				if (isset($_SESSION['img'])) {
@@ -311,12 +311,12 @@ class Account extends controller
 						if ($newImage['codename'] == 'link') {
 							$this->Links_Model->ReplaceImage($id, $this->user_auth->entityId, $newImage['list']);
 							$this->messages->AddMessage('success', 'Link added successfully.');
-							redirect('/account/links', 'location');
+							redirect('/account/links');
 							break;
 						}
 					}
 					$this->messages->AddMessage('error', 'The link image was not added.');
-					redirect('/account/customlink', 'location');
+					redirect('/account/customlink');
 				}
 		} else {
 			$data = array();
@@ -341,7 +341,7 @@ class Account extends controller
 	 */
 	function personal()
 	{
-		// TODO: Check if this is the first time they've logged in or not
+		/// @TODO: Check if this is the first time they've logged in or not
 		if (!CheckPermissions('student')) return;
 
 		/// Get custom page content

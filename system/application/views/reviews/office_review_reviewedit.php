@@ -1,37 +1,66 @@
 <div class="RightToolbar">
 	<h4 class="first">Page Information</h4>
-		<p>
-			<?php echo $page_information; ?>
-		</p>
-	<?php
-		echo '<h4>Revisions (Latest First)</h4>
-		<div class="Entry">';
-			if (count($article['revisions']) > 0)
+	<?php 
+	echo($page_information);
+	
+	if (count($article['revisions']) > 0){
+	?>
+	<h4>Revisions</h4>
+	<div class="Entry">
+		<ol>
+		<?php
+			foreach ($article['revisions'] as $revision) 
 			{
-				$first_hr = FALSE;
-				foreach ($article['revisions'] as $revision)
-				{
-					if ($first_hr == FALSE)
-						$first_hr = TRUE;
-					else
-						echo '<hr>';
-					$dateformatted = date('F jS Y', $revision['updated']).' at '.date('g.i A', $revision['updated']);
-					echo '<a href="/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id'].'">'.$dateformatted.'</a>';
-					if ($revision['id'] == $article['header']['live_content'])
-					{
-						echo '<br /><span class="orange">(Published';
-						if ($revision['id'] == $article['displayrevision']['id'])
-							echo ', Displayed';
-						echo ')</span>';
-					}
-					elseif ($revision['id'] == $article['displayrevision']['id'])
-						echo '<br /><span class="orange">(Displayed)</span>';
-					echo '<br />by '.$revision['username'].'<br />';
+				$dateformatted = date("d/m/y H:i", $revision['updated']);
+				$edit_link_xml = xml_escape('/office/reviews/'.$parameters['organisation'].'/'.$parameters['context_type'].'/reviewedit/'.$parameters['article_id'].'/'.$revision['id']);
+				echo '			<li>'."\n";
+				echo '				Author : '.xml_escape($revision['username']).'<br />';
+				echo '				Created : '.$dateformatted.'<br />';
+				if ($revision['id'] == $article['displayrevision']['id']){
+					echo '				<b>(Editing)</b>';
+				}else{
+					echo '				<a href='.$edit_link_xml.'>Edit</a>';
+				}
+				if ($revision['id'] == $article['header']['live_content']){
+					echo ' | <span class="orange">(Published)</span><br />';
 				}
 			}
-			else
-				echo 'No Revisions ... Yet.';
-		echo '</div>';
+		?>
+		</ol>
+	</div>
+	<?php 
+	}
+	if($user['is_editor']){
+	?>
+	<h4>Editor Options</h4>
+	<div class="Entry">
+		<?php
+		//Only show publish button if the revision is not currently the live revision.
+		//If there is no revision show it anyway
+		if($article['header']['live_content']!=$article['displayrevision']['id'])
+		{
+			?>
+		<form class="form" action="<?php echo($this_url); ?>" method="POST">
+			<fieldset>
+				<input type="submit" name="r_submit_publish" class="button" value="Publish This Revision" />
+			</fieldset>
+		</form>
+			<?php
+		}
+		?>
+		<form class="form" action="<?php echo($this_url); ?>" method="POST">
+			<fieldset>
+				<input type="submit" name="r_submit_pull" class="button" value="Pull Review" />
+			</fieldset>
+		</form>
+		<form class="form" action="<?php echo($this_url); ?>" method="POST">
+			<fieldset>
+				<input type="submit" name="r_submit_delete" class="button" value="Delete Review" />
+			</fieldset>
+		</form>
+	</div>
+	<?php
+	}
 	?>
 </div>
 <div id="MainColumn">
@@ -39,91 +68,27 @@
 		<h2>edit review</h2>
 		<form class="form" action="<?php echo($this_url); ?>" method="POST">
 			<fieldset>
+				<label for="a_review_blurb" class="full">Short Review Blurb</label>
+				<textarea name="a_review_blurb" class="full" id="a_review_blurb" cols="50" rows="3"><?php
+				if (!empty($article['displayrevision']['blurb'])) {
+					echo xml_escape($article['displayrevision']['blurb']);
+				}
+				?></textarea>
+				<label for="a_review_text" class="full">Main Review Contents</label>
 				<div id="toolbar"></div>
-				<?php
-				if ($article['displayrevision'] != FALSE)
-					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" />'.$article['displayrevision']['wikitext'].'</textarea><br />';
-				else
-					echo '<textarea name="a_review_text" id="review" rows="10" cols="50" /></textarea><br />';
-				?>
+				<textarea name="a_review_text" class="full" id="review" rows="10" cols="50" /><?php
+				if (!empty($article['displayrevision']['wikitext'])) {
+					echo xml_escape($article['displayrevision']['wikitext']);
+				}
+				?></textarea>
 			</fieldset>
 			<fieldset>
-				<input type="submit" name="r_submit_save" value="Save Revision" />
+				<input type="submit" name="r_submit_save" class="button" value="Create Revision" />
 			</fieldset>
 		</form>
 	</div>
 	<script type="text/javascript">
 		mwSetupToolbar('toolbar','review', false);
 	</script>
-<!--
-<div class="grey_box">
-	<h2>change author</h2>
-	<form class="form" action="<?php echo($this_url); ?>" method="POST">
-		<fieldset>
-			<label for="a_review_author">Author:</label>
-			<select name="a_review_author">
-				<optgroup label="Generic:">
-				<?php
-				foreach ($bylines['generic'] as $option)
-				{
-					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
-				}
-				?>
-				</optgroup>
-				<optgroup label="Personal:">
-				<?php
-				foreach ($bylines['user'] as $option)
-				{
-					echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
-				}
-				?>
-				</optgroup>
-			</select>
-		</fieldset>
-		<fieldset>
-			<input type="submit" name="r_submit_set" value="Set As Author" />
-		</fieldset>
-	</form>
-</div>
--->
-<?php
-if ($user['officetype'] != 'Low')
-{
-?>
-<div class="blue_box">
-	<h2>editor options</h2>
-	If you wish to PUBLISH this review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($this_url); ?>" method="POST">
-		<fieldset>
-			<input type="submit" name="r_submit_publish" value="Publish" />
-		</fieldset>
-	</form>
-	<?php
-	if ($parameters['revision_id'] == $article['header']['live_content'])
-		if ($parameters['revision_id'] == $article['displayrevision']['id'])
-			{
-	?>
-	<br />
-	If you wish to PULL this published review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($this_url); ?>" method="POST">
-		<fieldset>
-			<input type="submit" name="r_submit_pull" value="Pull" />
-		</fieldset>
-	</form>
-	<?php
-			}
-	?>
-	<br />
-	If you wish to DELETE this review, click the button to do so...<br /><br />
-	<form class="form" action="<?php echo($this_url); ?>" method="POST">
-		<fieldset>
-			<input type="submit" name="r_submit_delete" value="Delete" />
-		</fieldset>
-	</form>
-	<br />
-</div>
-<?php
-}
-?>
 <a href="/office/reviews/<?php echo $parameters['organisation']."/".$parameters['context_type']; ?>/review">Back to the reviews list</a>
 </div>

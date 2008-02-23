@@ -237,18 +237,20 @@ class Links_Model extends Model {
 	}
 
 	function AddUserLinks($user, $links) {
-		$first = true;
-		$sql = 'INSERT INTO user_links (user_link_user_entity_id, user_link_link_id, user_link_order) VALUES';
-		for ($i = 0; $i < count($links); $i++) {
-			if (!$first) {
-				$sql.= ',';
-			} else {
-				$first = false;
+		if (!empty($links)) {
+			$first = true;
+			$sql = 'INSERT INTO user_links (user_link_user_entity_id, user_link_link_id, user_link_order) VALUES';
+			for ($i = 0; $i < count($links); $i++) {
+				if (!$first) {
+					$sql.= ',';
+				} else {
+					$first = false;
+				}
+				$sql.= ' ('.(int)$user.', ?, '.$i.')';
 			}
-			$sql.= ' ('.$user.', ?, '.$i.')';
+	
+			return $this->db->query($sql, $links);
 		}
-
-		return $this->db->query($sql, $links);
 	}
 }
 ?>

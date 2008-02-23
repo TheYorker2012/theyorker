@@ -9,9 +9,9 @@
 	<h2>organisation summary</h2>
 	<div class="Entry">
 <?php 
-	echo('		Name: '.$organisation['info']['name']."\n");
+	echo('		Name: '.xml_escape($organisation['info']['name'])."\n");
 	echo('		<br />'."\n");
-	echo('		Rep: '.$organisation['rep']['firstname'].' '.$organisation['rep']['surname']."\n");
+	echo('		Rep: '.xml_escape($organisation['rep']['firstname'].' '.$organisation['rep']['surname'])."\n");
 	echo('		<br />'."\n");
 	echo('		Organisation Rating: ');
 	if ($organisation['score']['score_current'] >= $organisation['score']['score_possible'])
@@ -77,7 +77,7 @@
 	{
 		echo('				<tr class="tr2">'."\n");
 		echo('					<td>'."\n");
-		echo('						'.$row_head['head']['name']."\n");
+		echo('						'.xml_escape($row_head['head']['name'])."\n");
 		echo('					</td>'."\n");
 		echo('					<td>'."\n");
 		echo('						&nbsp;'."\n");
@@ -89,7 +89,7 @@
 			{
 				echo('				<tr class="tr1">'."\n");
 				echo('					<td>'."\n");
-				echo('						&nbsp;&nbsp;&nbsp;&nbsp;<a href="'.$row['link'].'">'.$row['name'].'</a>'."\n");
+				echo('						&nbsp;&nbsp;&nbsp;&nbsp;<a href="'.xml_escape($row['link']).'">'.xml_escape($row['name']).'</a>'."\n");
 				echo('					</td>'."\n");
 				echo('					<td>'."\n");
 				if ($row['score_current'] >= $row['score_possible'])
@@ -110,11 +110,3 @@
 		</table>
 	</div>
 </div>
-
-<?php
-/*
-echo('<div class="BlueBox"><pre>');
-print_r($data);
-echo('</pre></div>');
-*/
-?>

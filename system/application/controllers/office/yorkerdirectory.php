@@ -357,7 +357,7 @@ class Yorkerdirectory extends Controller
 			$this->main_frame->SetTitleParameters(
 					array('organisation' => $data['organisation']['name']));
 			$this->main_frame->SetPage('photos');
-			$this->main_frame->SetExtraHead('<script src="/javascript/clone.js" type="text/javascript"></script>');
+			$this->main_frame->IncludeJs('javascript/clone.js');
 			$this->main_frame->SetContent($the_view);
 		} else {
 			$this->load->library('custom_pages');

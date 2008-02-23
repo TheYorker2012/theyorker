@@ -2,16 +2,16 @@
 <?php
 //If there are some leagues print em
 if (!empty($league_data)){
-	echo ('	<h2 class="first">'.$leagues_header.'</h2>'."\n");
+	echo ('	<h2 class="first">'.xml_escape($leagues_header).'</h2>'."\n");
 	foreach ($league_data as $league_entry) {
 		echo ('	<div class="Puffer">'."\n");
 		if($league_entry['has_image']){
 			//There is a puffer image, so use it
-			echo '		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.$league_entry['league_name'].'" title="'.$league_entry['league_name'].'" /></a>';
+			echo '		<a href="/reviews/leagues/'.$league_entry['league_codename'].'"><img src="'.$league_entry['image_path'].'" alt="'.xml_escape($league_entry['league_name']).'" title="'.xml_escape($league_entry['league_name']).'" /></a>';
 		}
 		else {
 			//There is no puffer image, just put a text link
-			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.$league_entry['league_name'].'</a><br />'."\n");
+			echo('		<a href="/reviews/leagues/'.$league_entry['league_codename'].'">'.xml_escape($league_entry['league_name']).'</a><br />'."\n");
 		}
 		echo ('	</div>'."\n");
 	}
@@ -25,9 +25,9 @@ if (!empty($league_data)){
 		?>
 	</div>
 	<div class="BlueBox">
-		<h2><?php echo($page_header) ?></h2>
-		<?php echo($page_about) ?>
-		<form name="reviews" action="/reviews/table/<?php echo $content_type; ?>/star" method="post">
+		<h2><?php echo(xml_escape($page_header)); ?></h2>
+		<?php echo(xml_escape($page_about)); ?>
+		<form action="/reviews/table/<?php echo($content_type); ?>/star" method="post">
 			<div style="float: left; width: 75%">
 				<table>
 					<tr>
@@ -39,10 +39,11 @@ if (!empty($league_data)){
 									<?php
 									foreach($table_data['tag_group_names'] as $tag) {
 										echo('					');
-										echo('<option value="'.$tag.'"');
-										if (!empty($item_filter_by) && $tag==$item_filter_by)
-										{echo ' selected="selected"';}
-										echo('>'.$tag.'</option>'."\n");
+										echo('<option value="'.xml_escape($tag).'"');
+										if (!empty($item_filter_by) && $tag==$item_filter_by) {
+											echo ' selected="selected"';
+										}
+										echo('>'.xml_escape($tag).'</option>'."\n");
 									}
 									?>
 								</select>
@@ -68,6 +69,7 @@ if (!empty($league_data)){
 		</form>
 	</div>
 	<script type="text/javascript">
+	// <![CDATA[
 		var filterlist=document.reviews.item_filter_by
 		var sortbylist=document.reviews.where_equal_to
 		/* The following sets the array which links each selection from the first form select with a series of selections
@@ -103,6 +105,7 @@ if (!empty($league_data)){
 			sortbylist.options[index].selected = true;
 			}
 		}
+	// ]]>
 	</script>
 <?php if (!isset($main_review)) { ?>
 		<div class="BlueBox">
@@ -113,35 +116,37 @@ if (!empty($league_data)){
 <?php } else { ?>
 		<div class="BlueBox">
 			
-			<h2><?php echo $main_review_header; ?></h2>
-			<?php $this->feedback_article_heading = 'Main Review Page: '.$main_review['organisation_name']; ?>
+			<h2><?php echo(xml_escape($main_review_header)); ?></h2>
+			<?php $this->feedback_article_heading = 'Main Review Page: '.xml_escape($main_review['organisation_name']); ?>
 			<div style="float: right"><a href="<?php echo '/reviews/'.$main_review['content_type_codename'].'/'.$main_review['organisation_directory_entry_name']; ?>"><b>View Guide</b> <img src="/images/icons/book_go.png" /></a></div>
-			<h2 class="Headline"><?php echo $main_review['organisation_name']; ?></h2>
+			<h2 class="Headline"><?php echo(xml_escape($main_review['organisation_name'])); ?></h2>
 			<?php if(count($main_review['slideshow']) > 0) { ?>
 			<div style="float:right;margin-top:0;line-height:95%;">
 				<div id="SlideShow" class="entry">
-					<img src="<?php echo($main_review['slideshow'][0]['url']); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
+					<img src="<?php echo(xml_escape($main_review['slideshow'][0]['url'])); ?>" id="SlideShowImage" alt="Slideshow" title="Slideshow" />
 				</div>
 
 				<script type="text/javascript">
-			<?php foreach ($main_review['slideshow'] as $slide_photo) { ?>
-				Slideshow.add('<?php echo($slide_photo['url']); ?>');
-			<?php } ?>
-				Slideshow.load();
+				// <![CDATA[
+					<?php foreach ($main_review['slideshow'] as $slide_photo) { ?>
+					Slideshow.add(<?php echo(js_literalise($slide_photo['url'])); ?>);
+					<?php } ?>
+					Slideshow.load();
+				// ]]>
 				</script>
 			</div>
 			<?php } ?>
 			<div class="Date"><?php echo($main_review['date']); ?></div>
 			<div class="Author">
 	<?php foreach($main_review['authors'] as $reporter) { ?>
-				<a href="/contact"><?php echo($reporter['name']); ?></a>
+				<a href="/contact"><?php echo(xml_escape($reporter['name'])); ?></a>
 	<?php } ?>
 			</div>
 
 	<?php if ($main_review['quote'] != '') { ?>
 			<div class="SubText">
 				<img src="/images/prototype/news/quote_open.png" />
-				<?php echo($main_review['quote']); ?>
+				<?php echo(xml_escape($main_review['quote'])); ?>
 				<img src="/images/prototype/news/quote_close.png" />
 			</div>
 	<?php } ?>
@@ -167,7 +172,7 @@ if (!empty($league_data)){
 
 			</div>
 
-			<?php echo $main_review['text']; ?>
+			<?php echo(xml_escape($main_review['text'])); ?>
 		</div>
 
 		<?php

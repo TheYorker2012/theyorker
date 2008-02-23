@@ -10,19 +10,24 @@ class About extends Controller
 	{
 		parent::Controller();
 		$this->load->library('image');
-		
+	}
+
+	function _navbar_options ($selected = 'main')
+	{
 		// Create navigation menu
-		if (!CheckPermissions('public')) return;
 		$this->navbar = $this->main_frame->GetNavbar();
 		$this->navbar->AddItem('main', 'Aims', '/about/');
-		$this->navbar->AddItem('people', 'People', '/about/people/');
+		$this->navbar->AddItem('directors', 'Directors', '/about/directors/');
+		$this->navbar->AddItem('people', 'The Team', '/about/theteam/');
+		$this->navbar->SetSelected($selected);
 	}
 
 	/// Main page
 	function index()
 	{
+		if (!CheckPermissions('public')) return;
+
 		$this->pages_model->SetPageCode('about_us');
-		
 		// Get the blocks array from page properties.
 		$blocks = $this->pages_model->GetPropertyArray('blocks', array(
 			// First index is [int]
@@ -58,13 +63,60 @@ class About extends Controller
 		}
 		
 		// Load the main frame
-		$this->navbar->SetSelected('main');
+		$this->_navbar_options('main');
 		$this->main_frame->SetContentSimple('about/about', $data);
 		$this->main_frame->Load();
 	}
 
-	function people ($team_id = NULL, $year = NULL)
+	function directors ()
 	{
+		if (!CheckPermissions('public')) return;
+
+		$this->pages_model->SetPageCode('about_us_directors');
+		// Get the blocks array from page properties.
+		$blocks = $this->pages_model->GetPropertyArray('blocks', array(
+			// First index is [int]
+			array('pre' => '[', 'post' => ']', 'type' => 'int'),
+			// Second index is .string
+			array('pre' => '.', 'type' => 'enum',
+				'enum' => array(
+					array('title',	'text'),
+					array('blurb',	'wikitext'),
+					array('image',	'text'),
+				),
+			),
+		));
+		if (FALSE === $blocks) {
+			$blocks = array();
+		}
+		
+		// Create data array.
+		$data = array();
+		$data['textblocks'] = array();
+
+		// Process page properties.
+		foreach ($blocks as $key => $block) {
+			$curdata = array();
+			$curdata['shorttitle'] = str_replace(' ','_',$block['title']);
+			$curdata['blurb'] = $block['blurb'];
+			if (array_key_exists('image', $block)) {
+				$curdata['image'] = $this->image->getThumb($block['image'], 'medium');
+			} else {
+				$curdata['image'] = null;
+			}
+			$data['textblocks'][] = $curdata;
+		}
+		
+		// Load the main frame
+		$this->_navbar_options('directors');
+		$this->main_frame->SetContentSimple('about/about', $data);
+		$this->main_frame->Load();
+	}
+
+	function theteam ($team_id = NULL, $year = NULL)
+	{
+		if (!CheckPermissions('public')) return;
+
 		// Load model that deals with bylines
 		$this->load->model('businesscards_model');
 
@@ -92,7 +144,7 @@ class About extends Controller
 		}
 
 		// Load the main frame
-		$this->navbar->SetSelected('people');
+		$this->_navbar_options('people');
 		$this->main_frame->SetContentSimple('about/people', $data);
 		$this->main_frame->Load();
 	}

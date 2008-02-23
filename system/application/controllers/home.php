@@ -19,26 +19,9 @@ class Home extends Controller {
 		$this->load->model('Links_Model');
 		$this->load->model('Article_Model');
 		$this->load->model('Home_Hack_Model');
+		$this->load->model('polls_model');
 		$this->load->library('Homepage_boxes');
-	}
-
-	/**
- 	 * Displays prototype homepage, in the prototype student frame
-	 */
-	function pagelist()
-	{
-		if (!CheckPermissions('public')) return;
-
-		$data = array(
-			'test' => 'I set this variable from the controller!',
-		);
-
-		// Set up the public frame
-		$this->main_frame->SetContentSimple('general/list', $data);
-		$this->main_frame->SetTitle('List');
-
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
+		$this->load->library('Polls_view');
 	}
 
 	/**
@@ -107,6 +90,34 @@ class Home extends Controller {
 	{
 		OutputModes(array('xhtml','fbml'));
 		if (!CheckPermissions('public')) return;
+		
+		//poll handling
+		$poll_id = $this->polls_model->GetDisplayedPoll();
+		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);
+		$poll_show_results = false;
+		if ($poll_id && !$user_voted)
+		{
+			if (isset($_POST['submit_vote'])) {
+				if ($this->input->post('poll_vote'))
+				{
+					if ($this->polls_model->IsChoicePartOfPoll($poll_id, $this->input->post('poll_vote')))
+					{
+						$this->polls_model->SetUserPollVote($poll_id, $this->user_auth->entityId, $this->input->post('poll_vote'));
+						$this->messages->AddMessage('success', 'Your vote has been cast.');
+						$user_voted = true;
+					}
+					else
+					{
+						$this->messages->AddMessage('error', 'Invalid option.');
+					}
+				}
+			}
+			elseif (isset($_POST['submit_results'])) {
+				$poll_show_results = true;
+			}
+		} else {
+			$poll_show_results = true;
+		}
 		
 		if ('fbml' === OutputMode()) {
 			return $this->_FacebookHome();
@@ -192,7 +203,8 @@ class Home extends Controller {
 		}
 
 		// Get latest comments made on articles
-		$data['latest_comments'] = $this->Home_Hack_Model->getLatestComments();
+		$this->load->library('comment_views');
+		$data['latest_comments'] = $this->comment_views->GetLatestComments();
 
 		//Obtain Links
 		if ($this->user_auth->isLoggedIn) {
@@ -243,13 +255,28 @@ class Home extends Controller {
 
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
+		
+		// Poll data
+		if ($poll_id)
+		{
+			$data['poll_vote_box'] = new PollsVoteBox(
+				$this->polls_model->GetPollDetails($poll_id),
+				$this->polls_model->GetPollChoiceVotes($poll_id),
+				$user_voted,
+				$poll_show_results
+			);
+		}
+		else
+		{
+			$data['poll_vote_box'] = null;
+		}
 
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('general/home', $data);
 
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-
-		$this->main_frame->SetExtraHead('<script src="/javascript/prototype.js" type="text/javascript"></script><script src="/javascript/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->IncludeJs('javascript/prototype.js');
+		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=effects,dragdrop');
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();

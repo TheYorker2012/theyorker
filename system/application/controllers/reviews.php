@@ -56,7 +56,7 @@ class Reviews extends Controller
 				$method = '_review';
 			}
 		}
-
+ 
 		call_user_func_array(array(&$this, $method), array_slice($this->uri->rsegment_array(), $param_start));
 	}
 
@@ -210,8 +210,8 @@ class Reviews extends Controller
 		}
 		
 		//Load extra css and frame
-		$this->main_frame->SetExtraCss('/stylesheets/home.css');
-		$this->main_frame->SetExtraCss('/stylesheets/reviews.css');
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->IncludeCss('stylesheets/reviews.css');
 		$this->main_frame->SetContentSimple('reviews/table',$data);
 		$this->main_frame->Load();
 	}

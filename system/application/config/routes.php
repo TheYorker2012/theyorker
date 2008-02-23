@@ -31,12 +31,6 @@
 | URI contains no data. In the above example, the "welcome" class
 | would be loaded.
 |
-|	$route['scaffolding_trigger'] = 'scaffolding';
-|
-| This route lets you se t a "secret" word that will trigger the
-| scaffolding feature for added security. Note: Scaffolding must be
-| enabled in the controller in which you intend to use it.
-|
 */
 
 $route['default_controller'] = "home";
@@ -140,8 +134,8 @@ $route['office/pr/org/'.$org_name_regex.'/([^/]*)/([^/]*)/(.*)'] = 'office/$1/$2
 $route['office/pr/(.*)'] = 'office/prindex/$1';
 
 $route['office/reviewlist/('.$org_name_regex.')'] = 'office/reviewlist/attentionlist/$1';
-$route['office/reviewlist/('.$org_name_regex.')/([a-z]+)'] = 'office/reviewlist/$2/$1';
-$route['office/reviewlist/('.$org_name_regex.')/([a-z]+)/([0-9a-z]+)'] = 'office/reviewlist/$2/$1/$3';
+//$route['office/reviewlist/('.$org_name_regex.')/([a-z]+)'] = 'office/reviewlist/$2/$1';
+//$route['office/reviewlist/('.$org_name_regex.')/([a-z]+)/([0-9a-z]+)'] = 'office/reviewlist/$2/$1/$3';
 
 // send tag adding and deleting to the correct place
 $route['office/reviews/addtag'] = 'office/reviews/addtag';
