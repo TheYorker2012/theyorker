@@ -2,10 +2,10 @@
 
 echo('<?xml version="1.0" ?>
 	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-	<atom:link href="' . xml_escape($rss_link) . '" rel="self" type="application/rss+xml" />
 	<channel>
 	<title>The Yorker - ' . xml_escape($rss_title) . '</title>
 	<link>' . xml_escape($rss_link) . '</link>
+	<atom:link href="' . xml_escape($rss_link) . '" rel="self" type="application/rss+xml" />
 	<description>' . xml_escape($rss_desc) . '</description>
 	<language>en-gb</language>
 	<copyright>Copyright 2006-'.date('Y').', The Yorker</copyright>
