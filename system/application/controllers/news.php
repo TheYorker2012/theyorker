@@ -311,26 +311,10 @@ class News extends Controller {
 		$this->main_frame->Load();
 	}
 
-	/// RSS Feed Generation
 	function rss()
 	{
-		header('Content-type: application/rss+xml');
-		$data['rss_title'] = 'News';
-		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
-		$data['rss_desc'] = 'All the news you need to know about from University of York\'s Campus!';
-		$data['rss_category'] = 'News';
-		$data['rss_pubdate'] = date('r');
-		$data['rss_lastbuild'] = date('r');
-		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
-		$data['rss_width'] = '126';
-		$data['rss_height'] = '126';
-		$data['rss_email_ed'] = 'no-reply@theyorker.co.uk (The Yorker)';
-		$data['rss_email_web'] = 'webmaster@theyorker.co.uk (Webmaster)';
-
-		/// Create RSS Feed for all sections
-		$data['rss_items'] = $this->News_model->GetArchive('search', array(), 0, 20);
-
-		$this->load->view('news/rss', $data);
+		/// Redirect to new feeds controller
+		redirect('/feeds/news');
 	}
 }
 ?>
