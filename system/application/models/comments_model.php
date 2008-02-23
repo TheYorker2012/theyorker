@@ -547,6 +547,7 @@ class Comments_model extends model
 			'author_id' => $Comment['anonymous'] ? NULL : $Comment['author_id'],
 			'author' => $Comment['anonymous'] ? NULL : $identities[$Comment['author_id']],
 			'edits' => array(),
+			'deleted_time' => null,
 		);
 	}
 	
