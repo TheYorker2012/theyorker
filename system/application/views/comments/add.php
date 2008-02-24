@@ -17,6 +17,7 @@
  * @param $DefaultContent string Default wikitext.
  * @param $ShowCancelButton bool Whether to show a cancelation option.
  * @param $AlreadyExists bool Whether the comment already exists.
+ * @param $WarningMessageXml string Warning message.
  */
 
 ?>
@@ -130,8 +131,7 @@
 
 				<label style="text-align:center">
 					<a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a>
-					<br />
-					<a href="/pages/commentspolicy">Comments Policy</a>
+					<?php echo($WarningMessageXml); ?>
 				</label>
 
 				<?php if ($ShowCancelButton) { ?>
