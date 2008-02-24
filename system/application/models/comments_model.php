@@ -366,6 +366,8 @@ class Comments_model extends model
 	{
 		$sql = 'SELECT	comments.comment_id,
 						comments.comment_anonymous,
+						UNIX_TIMESTAMP(comments.comment_post_time) AS comment_post_time,
+						comments.comment_content_wikitext,
 						users.user_firstname,
 						users.user_surname,
 						articles.article_id,
@@ -553,6 +555,7 @@ class Comments_model extends model
 			'author_id' => $Comment['anonymous'] ? NULL : $Comment['author_id'],
 			'author' => $Comment['anonymous'] ? NULL : $identities[$Comment['author_id']],
 			'edits' => array(),
+			'deleted_time' => null,
 		);
 	}
 	

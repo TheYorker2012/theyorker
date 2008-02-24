@@ -104,6 +104,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/office/news/scheduledlive/">Change Live Article</a></li>
 					<li><a href="/office/moderator/">Comment Moderation</a></li>
 					<li><a href="/admin/pages/">Page Properties</a></li>
+					<li><a href="/office/stats/">Statistics</a></li>
 					<li><a href="/office/articletypes/">Article Types</a></li>
 					<li><a href="/office/specials/">Special Articles</a></li>
 					<li><a href="/office/ticker/">Facebook Articles</a></li>

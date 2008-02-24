@@ -31,7 +31,7 @@ if (isset($medium_type)) { ?>
 	?> - The Yorker</title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
-	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
 
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
@@ -117,6 +117,7 @@ if (isset($medium_type)) { ?>
 					<li><a href="/news/videocasts">Videocasts</a></li>
 					<li><a href="/campaign/">Campaigns</a></li>
 					<li><a href="/news/archive/">Archive</a></li>
+					<li><a href="/feeds/">Feeds</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
