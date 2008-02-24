@@ -61,7 +61,7 @@ class Charity extends Controller {
 			$data['sections']['funding'] = array(
 				'title'=>$this->pages_model->GetPropertyText('section_funding_title',FALSE),
 				'text'=>$this->pages_model->GetPropertyWikitext('section_funding_text',FALSE,FALSE, array(
-							'target' => array($data['sections']['charity']['target'], true),
+							'target' => $data['sections']['charity']['target'],
 				)),
 			);
 			$data['sections']['sidebar_about'] = array('title'=>$this->pages_model->GetPropertyText('sidebar_about_title',FALSE),'text'=>$this->pages_model->GetPropertyWikitext('sidebar_about_text',FALSE));

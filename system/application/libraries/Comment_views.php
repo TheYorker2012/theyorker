@@ -296,6 +296,23 @@ class CommentViewAdd extends FramesView
 		$this->SetData('ReportUrlPrefix', '/comments/report/');
 		$this->SetData('ReportUrlPostfix', $CI->uri->uri_string());
 		
+		// New comment
+		if (NULL === $this->mExistingComment) {
+			$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_add', '_comments');
+		}
+		else {
+			// Editing own comment
+			if ($this->mExistingComment['owned']) {
+				$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_edit', '_comments');
+			}
+			// Editing another's comment
+			else {
+				$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_moderator', '_comments');
+			}
+		}
+		
+		$this->SetData('WarningMessageXml', $warning_xml);
+		
 		parent::Load();
 	}
 }
@@ -316,6 +333,9 @@ class CommentViewList extends FramesView
 	function __construct()
 	{
 		parent::__construct('templates/list');
+		
+		$config = get_instance()->config->item('comments');
+		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
 	}
 	
 	/// Set the number of a comment to show the page of.

@@ -279,25 +279,36 @@ class Tools extends controller
 		static $valid_tools = array('flush','test');
 		if (in_array($Tool, $valid_tools)) {
 			$function_name = '_wikitext_'.$Tool;
-			$this->$function_name();
-			$this->main_frame->load();
+			$args = func_get_args();
+			array_shift($args);
+			call_user_func_array(array(&$this, $function_name), $args);
 		} else {
 			show_404();
 		}
 	}
 	
 	/// Flush the wikitext caches of various bits of the database.
-	protected function _wikitext_flush()
+	protected function _wikitext_flush($section = null)
 	{
 		static $flush_sections = array(
-			'Comments' => array('comments_model','FlushWikitextCache'),
+			'comments' => array('Comments', 'comments_model','FlushWikitextCache'),
 		);
-		foreach ($flush_sections as $section => $flusher) {
-			$this->load->model($flusher[0]);
-			$affected = $this->$flusher[0]->$flusher[1]();
-			$this->messages->AddMessage('information', $section.': '.$affected.' records have been flushed');
+		
+		if (null === $section) {
+			$this->messages->AddMessage('information', 'No section specified to flush, options are "'.xml_escape(implode('", "', array_keys($flush_sections))).'"');
 		}
-		/// @todo provide a choice of which ones to flush.
+		elseif (isset($flush_sections[$section])) {
+			$flusher = & $flush_sections[$section];
+			list($section_name, $model, $member_function) = $flusher;
+			$this->load->model($model);
+			$affected = $this->$model->$member_function();
+			$this->messages->AddMessage('information', xml_escape($section_name.': '.$affected.' records have been flushed'));
+		}
+		else {
+			$this->messages->AddMessage('error', 'No section called '.xml_escape($section).' is known in the wikitext flushing context');
+		}
+		
+		$this->main_frame->load();
 	}
 	
 	/// Wikitext tester.
@@ -339,6 +350,8 @@ class Tools extends controller
 		// Set up the public frame
 		$this->main_frame->SetTitle('Wikitext Preview');
 		$this->main_frame->SetContentSimple('admin/tools/wikitext', $data);
+		
+		$this->main_frame->load();
 	}
 	
 	/// Perform tests on the branch.

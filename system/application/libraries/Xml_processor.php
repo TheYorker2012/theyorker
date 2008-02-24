@@ -144,6 +144,9 @@ class Xml_processor
 				// If its not a macro, it may be an argument
 				elseif (isset($this->scope[$inside])) {
 					$argument = $this->scope[$inside];
+					if (is_string($argument)) {
+						$argument = array(xml_escape($argument), true);
+					}
 					$result = $this->Process($argument[0], $scope, $argument[1], $was_in_paragraph);
 					if (null === $this->in_quotes && $was_in_paragraph != $argument[1]) {
 						if ($was_in_paragraph) {

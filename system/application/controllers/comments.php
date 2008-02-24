@@ -32,20 +32,24 @@ class Comments extends Controller
 		
 		// Confirm the reporting with the user.
 		$this->pages_model->SetPageCode('comment_report');
-		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to)) return;
+		$property_arguments = array(
+			'verb' => 'report',
+			'verbed' => 'reported',
+		);
+		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to, $property_arguments)) return;
 		
 		// The user has confirmed, report the comment.
 		$result = $this->comments_model->ReportCommentInThread((int)$CommentId, (int)$ThreadId);
 		if ($result) {
-			$this->messages->AddMessage('success', 'Comment has been reported.');
+			$this->messages->AddMessage('success', $this->pages_model->GetPropertyWikitext('msg:success', '_comments', false, $property_arguments));
 		} else {
-			$this->messages->AddMessage('error', 'Comment could not be reported.');
+			$this->messages->AddMessage('error', $this->pages_model->GetPropertyWikitext('msg:fail', '_comments', false, $property_arguments));
 		}
 		redirect($redirect_to);
 	}
 	
 	/// Confirms a comment action with the user and returns true when ready.
-	function _ConfirmCommentAction($CommentId, $redirect_to)
+	function _ConfirmCommentAction($CommentId, $redirect_to, $property_arguments)
 	{
 		$this->load->model('comments_model');
 		
@@ -54,7 +58,7 @@ class Comments extends Controller
 			
 		} elseif (isset($_POST['comment_confirm_cancel'])) {
 			// The user has cancelled, return to the previous page.
-			$this->messages->AddMessage('information', 'Comment has not been reported.');
+			$this->messages->AddMessage('information', $this->pages_model->GetPropertyWikitext('msg:cancel', '_comments', false, $property_arguments));
 			redirect($redirect_to);
 			
 		} else {
@@ -63,7 +67,7 @@ class Comments extends Controller
 			$comment = $this->comments_model->GetCommentByCommentId((int)$CommentId, 'visible');
 			if (NULL === $comment) {
 				// The comment isn't visible or doesn't exist.
-				$this->messages->AddMessage('error', 'The specified comment could not be found.');
+				$this->messages->AddMessage('error', $this->pages_model->GetPropertyWikitext('msg:notfound', '_comments', false, $property_arguments));
 				redirect($redirect_to);
 			} else {
 				// Ask the user for confirmation.
@@ -89,12 +93,13 @@ class Comments extends Controller
 	/**
 	 * This function allows an owner of a comment or a moderator to edit.
 	 */
-	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment)
+	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment, $property_arguments)
 	{
 		if (!is_numeric($CommentId)) {
-			return show_404();
+			show_404();
+			return false;
 		}
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('student')) return false;
 		
 		$this->load->model('comments_model');
 		
@@ -105,11 +110,11 @@ class Comments extends Controller
 		$comment = $this->comments_model->GetCommentByCommentId((int)$CommentId, 'visible');
 		if (NULL === $comment) {
 			// The comment isn't visible or doesn't exist.
-			$this->messages->AddMessage('error', 'The specified comment could not be found.');
+			$this->messages->AddMessage('error', $this->pages_model->GetPropertyWikitext('msg:notfound', '_comments', false, $property_arguments));
 			redirect($redirect_to);
 		} elseif (!$comment['owned']) {
 			// The comment doesn't belong to this user, go to the office
-			if (!CheckPermissions('moderator')) return;
+			if (!CheckPermissions('moderator')) return false;
 			$has_permission = true;
 		} else {
 			$has_permission = true;
@@ -117,7 +122,7 @@ class Comments extends Controller
 		
 		if (!$has_permission) {
 			// The user doesn't have permission, return to the previous page.
-			$this->messages->AddMessage('error', 'You do not have permission to edit the specified comment.');
+			$this->messages->AddMessage('error', $this->pages_model->GetPropertyWikitext('msg:permission', '_comments', false, $property_arguments));
 			redirect($redirect_to);
 		}
 		
@@ -128,7 +133,11 @@ class Comments extends Controller
 	function edit($CommentId = NULL)
 	{
 		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 3));
-		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment)) return;
+		$property_arguments = array(
+			'verb' => 'edit',
+			'verbed' => 'edited',
+		);
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments)) return;
 		
 		$this->load->library('comment_views');
 		$main_view = new CommentViewAdd($comment['thread_id']);
@@ -152,17 +161,21 @@ class Comments extends Controller
 	{
 		$redirect_to = implode('/', array_slice($this->uri->rsegment_array(), 3));
 		// Ensure we have privilages
-		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment)) return;
+		$property_arguments = array(
+			'verb' => 'delete',
+			'verbed' => 'deleted',
+		);
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments)) return;
 		// Confirm with the user
 		$this->pages_model->SetPageCode('comment_delete');
-		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to)) return;
+		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to, $property_arguments)) return;
 		
 		$this->load->model('comments_model');
 		$result = $this->comments_model->DeleteComment((int)$CommentId);
 		if ($result > 0) {
-			$this->messages->AddMessage('success', 'Comment deleted');
+			$this->messages->AddMessage('success', $this->pages_model->GetPropertyWikitext('msg:success', '_comments', false, $property_arguments));
 		} else {
-			$this->messages->AddMessage('error', 'Comment could not be deleted');
+			$this->messages->AddMessage('error', $this->pages_model->GetPropertyWikitext('msg:fail', '_comments', false, $property_arguments));
 		}
 		
 		redirect($redirect_to);
