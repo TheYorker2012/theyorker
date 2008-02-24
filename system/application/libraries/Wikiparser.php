@@ -55,6 +55,7 @@ class Wikiparser {
 	protected $enable_youtube;
 	protected $enable_mediaplayer;
 	protected $enable_quickquotes;
+	protected $enable_ordered_lists;
 	protected $entities;
 
 	protected $list_level_chars;
@@ -105,6 +106,7 @@ class Wikiparser {
 		$this->enable_youtube = true;
 		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
+		$this->enable_ordered_lists = true;
 		$this->entities = array(
 			'\'' => xml_escape('\''),
 			'"'  => xml_escape('"'),
@@ -594,12 +596,17 @@ class Wikiparser {
 	}
 
 	function parse_line($line) {
-		$first_characters = '\s\*\#;\:-';
+		$first_characters = '\s\*;\:-';
+		$list_chars = '\*';
 		if ($this->enable_headings) {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
 // 			$first_characters .= '\{';
+		}
+		if ($this->enable_ordered_lists) {
+			$first_characters .= '\#';
+			$list_chars .= '\#';
 		}
 		
 		$line_regexes = array();
@@ -610,7 +617,7 @@ class Wikiparser {
 		//$line_regexes['preformat'] = '^\s(.*?)$';
 		$line_regexes['definitionlist'] = '^([\;\:])\s*(.*?)$';
 		$line_regexes['newline'] = '^$';
-		$line_regexes['list'] = '^([\*\#]+)\s*(.*?)$';
+		$line_regexes['list'] = '^(['.$list_chars.']+)\s*(.*?)$';
 		if ($this->enable_headings) {
 			$line_regexes['sections'] = '^(={1,6})(.*?)(={1,6})$';
 		}

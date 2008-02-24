@@ -23,6 +23,7 @@ class Comments_parser extends Wikiparser
 		$this->enable_youtube = false;
 		$this->enable_mediaplayer = false;
 		$this->enable_quickquotes = false;
+		$this->enable_ordered_lists = false;
 		unset($this->templates['pull_quote']);
 	}
 }
