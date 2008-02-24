@@ -316,6 +316,9 @@ class CommentViewList extends FramesView
 	function __construct()
 	{
 		parent::__construct('templates/list');
+		
+		$config = get_instance()->config->item('comments');
+		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
 	}
 	
 	/// Set the number of a comment to show the page of.

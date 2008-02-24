@@ -118,6 +118,7 @@ if ($Comment['deleted']) {
 		if ($Comment['deleted']) {
 			$abuse_links[] = '<a href="'.$UndeleteUrlPrefix.$Comment['comment_id'].$UndeleteUrlPostfix.'"><img src="/images/icons/note_go.png" alt="Un-Delete Comment" title="Un-Delete Comment" /> Un-Delete Comment</a>';
 		} else {
+			$abuse_links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="Edit Comment" title="Delete Comment" /> Edit Comment</a>';
 			$abuse_links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="Delete Comment" title="Delete Comment" /> Delete Comment</a>';
 		}
 		if ($Comment['good']) {
@@ -125,10 +126,14 @@ if ($Comment['deleted']) {
 		} else {
 			$abuse_links[] = '<a href="'.$GoodUrlPrefix.$Comment['comment_id'].$GoodUrlPostfix.'"><img src="/images/icons/flag_green.png" alt="Flag as Good" title="Flag as Good" /> Flag as Good</a>';
 		}
-		echo('<ul>');
-		echo('<li>This comment has been reported for abuse '.$Comment['reported_count'].' time(s).</li>');
-		echo('<li>'.implode('&nbsp;&nbsp;&nbsp;&nbsp;',$abuse_links).'</li>');
-		echo('</ul>');
+		echo('<ul><li style="font-size:x-small;">');
+		if ($Comment['reported_count'] != 0) {
+			echo('This comment has been reported as abusive '.$Comment['reported_count'].' time'.($Comment['reported_count'] != 1 ? 's' : '').'.');
+		} else {
+			echo('This comment has not been reported as abusive.');
+		}
+		echo('</li></ul>');
+		echo('<p style="font-size:x-small;">'.implode('&nbsp;&nbsp;&nbsp;&nbsp;',$abuse_links).'</p>');
 		if ($Mode === 'debug') { ?>
 			<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0">
 				<b>DEBUG: Comment Source</b>
