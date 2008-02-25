@@ -261,6 +261,218 @@ class Comments extends Controller
 		
 		redirect(implode('/', array_slice($this->uri->rsegment_array(), 3)));
 	}
+	
+	/// Redirect to the page with a given comment.
+	/**
+	 * @param $CommentId int Id of comment to display page of.
+	 */
+	function thread($CommentId = NULL)
+	{
+		if (!CheckPermissions('public')) return;
+		
+		$debug = false;
+		
+		$comment = NULL;
+		if (is_numeric($CommentId)) {
+			$this->load->model('comments_model');
+			
+			// Find thread information for this comment.
+			$comment = $this->comments_model->GetCommentByCommentId((int)$CommentId, 'all');
+		}
+		
+		if (NULL === $comment) {
+			// The comment doesn't exist or isn't a valid id.
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('comment_notfound','error'));
+			$this->main_frame->Load();
+			$CommentId = NULL;
+		}
+		else {
+			// This array describes how to construct the URL's to a comment
+			// if its thread is in particular areas of the site.
+			$standard_anchor = 'CommentItem'.$CommentId;
+			$thread_source_data = array(
+				// Public article threads.
+				array(
+					'table'  => 'articles',
+					'column' => 'article_public_comment_thread_id',
+					'joins'  => array(
+						array(
+							'table' => 'content_types',
+							'on'    => 'content_type_id = article_content_type_id',
+						),
+					),
+					'uri'    => array(
+						'news',
+						array('field'   => 'content_type_codename'),
+						array('field'   => 'article_id'),
+						array('special' => 'local_comment_id'),
+						'anchor' => $standard_anchor,
+					),
+				),
+				// Private article threads.
+				array(
+					'table'  => 'articles',
+					'column' => 'article_private_comment_thread_id',
+					'joins'  => array(
+					),
+					'uri'    => array(
+						'office',
+						'news',
+						array('field'   => 'article_id'),
+						array('special' => 'local_comment_id'),
+						'anchor' => $standard_anchor,
+					),
+				),
+				// Public review threads.
+				array(
+					'table'  => 'review_contexts',
+					'column' => 'review_context_comment_thread_id',
+					'joins'  => array(
+						array(
+							'table' => 'content_types',
+							'on'    => 'content_type_id = review_context_content_type_id',
+						),
+						array(
+							'table' => 'organisations',
+							'on'    => 'organisation_entity_id = review_context_organisation_entity_id',
+						),
+					),
+					'uri'    => array(
+						'reviews',
+						array('field'   => 'content_type_codename'),
+						array('field'   => 'organisation_directory_entry_name'),
+						array('special' => 'local_comment_id'),
+						'anchor' => $standard_anchor,
+					),
+				),
+				// Private review threads.
+				array(
+					'table'  => 'review_contexts',
+					'column' => 'review_context_office_comment_thread_id',
+					'joins'  => array(
+						array(
+							'table' => 'content_types',
+							'on'    => 'content_type_id = review_context_content_type_id',
+						),
+						array(
+							'table' => 'organisations',
+							'on'    => 'organisation_entity_id = review_context_organisation_entity_id',
+						),
+					),
+					'uri'    => array(
+						'office',
+						'reviews',
+						array('field'   => 'organisation_directory_entry_name'),
+						array('field'   => 'content_type_codename'),
+						'comments',
+						'view',
+						array('special' => 'local_comment_id'),
+						'anchor' => $standard_anchor,
+					),
+				),
+			);
+			// Go through each thread type trying to match with this comment.
+			foreach ($thread_source_data as $data) {
+				$selects = array();
+				foreach ($data['uri'] as $segment) {
+					if (is_array($segment)) {
+						if (isset($segment['field'])) {
+							$selects[] = $segment['field'];
+						}
+					}
+				}
+				
+				$bind = array();
+				$sql = '
+					SELECT
+						'.implode(', ', $selects).'
+					FROM '.$data['table'];
+				foreach ($data['joins'] as $join) {
+					$sql .= '
+					INNER JOIN '.$join['table'].' ON '.$join['on'];
+				}
+				$sql .= '
+					WHERE
+						'.$data['column'].' = ?
+					';
+				$bind[] = (int)$comment['thread_id'];
+				if ($debug) {
+					var_dump($sql, $bind);
+				}
+				$query = $this->db->query($sql, $bind);
+				$results = $query->result_array();
+				
+				$links = array();
+				foreach ($results as $result) {
+					// Construct the uri segments mechanically from the data.
+					$segments = array();
+					foreach ($data['uri'] as $key => $uriSegment) {
+						if (is_int($key)) {
+							if (is_string($uriSegment)) {
+								$segments[] = $uriSegment;
+							}
+							elseif (is_array($uriSegment)) {
+								if (isset($uriSegment['field'])) {
+									$segments[] = $result[$uriSegment['field']];
+								}
+								elseif (isset($uriSegment['special'])) {
+									switch ($uriSegment['special']) {
+									case 'local_comment_id':
+										// Find the local comment id by counting
+										// the number of comments of same thread
+										// which were posted before this one.
+										$query = $this->db->query(
+											'SELECT	COUNT(*) AS count'.
+											' FROM	comments'.
+											' WHERE	comment_comment_thread_id = ?'.
+											' AND	comment_post_time < FROM_UNIXTIME(?)',
+											array(
+												(int)$comment['thread_id'],
+												(int)$comment['post_time'],
+											)
+										);
+										$segments[] = $query->row()->count+1;
+										break;
+									}
+								}
+							}
+						}
+					}
+					
+					// Construct the link
+					$link = implode('/', $segments);
+					if (isset($data['uri']['anchor'])) {
+						$link .= '#'.$data['uri']['anchor'];
+					}
+					$links[] = $link;
+					
+					// Don't bother generating more than one for now.
+					// If a thread is displayed in more than one location,
+					// this could generate multiple links and could be displayed
+					// as a list of links.
+					// It wouldn't be difficult to extract the titles in a
+					// similar way the uris are determined mechanically above.
+					break;
+				}
+				
+				if (count($links)) {
+					if (!$debug) {
+						redirect($links[0]);
+					}
+					else {
+						var_dump($links);
+					}
+					return;
+				}
+			}
+			
+			// The comment was found, but its thread location couldn't be determined.
+			$this->load->library('custom_pages');
+			$this->main_frame->SetContent(new CustomPageView('comment_unthreaded','error'));
+			$this->main_frame->Load();
+		}
+	}
 }
 
 ?>

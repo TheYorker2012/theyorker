@@ -336,12 +336,19 @@ class CommentViewList extends FramesView
 		
 		$config = get_instance()->config->item('comments');
 		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
+		$this->SetData('Threaded', true);
 	}
 	
 	/// Set the number of a comment to show the page of.
 	function SetIncludedComment($Included)
 	{
 		$this->mIncludedComment = $Included;
+	}
+	
+	/// Indicate that this list is not a thread list.
+	function SetUnthreaded()
+	{
+		$this->SetData('Threaded', false);
 	}
 	
 	/// Set the maximum number of comments per page.
@@ -421,6 +428,8 @@ class CommentViewList extends FramesView
 		$this->SetData('IncludedIndex', $this->mIncludedComment);
 		$this->SetData('PageUrlPrefix', $CI->comment_views->GetUriPrefix());
 		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix() .'#comments');
+		$this->SetData('ThreadUrlPrefix', '/comments/thread/');
+		$this->SetData('ThreadUrlPostfix', '');
 		// for subviews (comments)
 		foreach (array(	'Report'	=> 'report',
 						'Edit'		=> 'edit',
