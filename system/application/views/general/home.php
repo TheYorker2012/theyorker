@@ -197,6 +197,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/1064" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Oxford: dreaming spires, amongst other things
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -204,6 +205,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/1063" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					A penny saved...
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -211,6 +213,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/1046" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Keep fit the WAG way
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -218,6 +221,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/1048" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Fashion resolutions for 2008
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 		</div>
@@ -230,6 +234,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/1032" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Talking shop with Ramsey Street's Harold Bishop
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -237,6 +242,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/937" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Student scam victim speaks out
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -244,6 +250,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/810" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					NUS convince students to stay
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 			<div>
@@ -251,6 +258,7 @@ if ($weather_forecast != null) {
 					<img src="/photos/small/544" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 					Videocasts: Coming Soon
 				</a>
+				<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 				<div style="clear:both;"></div>
 			</div>
 		</div>
@@ -290,7 +298,7 @@ if ($weather_forecast != null) {
 			</div>
 			<img src="/images/prototype/new_home/comments.jpg" alt="" />
 			<ul class="comments" style="margin:0 5px;">
-				<?php foreach ($latest_comments as $comment) print_comment($comment); ?>
+				<?php $latest_comments->Load(); ?>
 			</ul>
 		</div>
 		<div style="width:146px;float:left;position:relative;border:1px #20C1F0 solid;">
@@ -334,6 +342,5 @@ if ($weather_forecast != null) {
 		if($special['blogs']['show']) { $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']); }
 		$this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news');
 		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','news');
-		$latest_comments->Load();
 	?>
 </div>

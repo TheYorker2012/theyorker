@@ -21,9 +21,4 @@ function print_comment ($comment, $comments_per_page) {
 
 ?>
 
-	<div class="BlueBox">
-		<h2>latest comments</h2>
-		<ul class="comments">
-			<?php foreach ($comments as $comment) print_comment($comment, $comments_per_page); ?>
-		</ul>
-	</div>
+<?php foreach ($comments as $comment) print_comment($comment, $comments_per_page); ?>

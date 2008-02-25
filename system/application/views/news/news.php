@@ -92,11 +92,69 @@ foreach ($main_article['related_articles'] as $related)
 	printarticlelink($related);
 
 ?>
+	<h2>RSS Feeds</h2>
+	<ul style="margin:0 5px;">
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">All Articles</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Uni News</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Features</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Arts</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Sport</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Lifestyle</a></li>
+		<li style="list-style-image: url('/images/prototype/new_home/feed.gif');"><a href="/news/rss/">Comments</a></li>
+	</ul>
 </div>
 
 <?php $this->feedback_article_heading = $main_article['heading']; ?>
 
-<div id="MainColumn">
+<div style="float:right; margin-right:10px; width:170px;">
+	<img src="/images/prototype/directory/members/no_image.png" alt="Chris Travis" style="float:right" />
+	<div style="padding:0.4em; background-color:#FF6B01; color:#fff; font-weight:bold;">
+		Chris Travis
+	</div>
+	Other articles written by this reporter:
+	<div style="clear:right">
+		<ul>
+			<li><a href="">Week in Pictures: International Week</a></li>
+			<li><a href="">Film Preview: Wings of Desire</a></li>
+			<li><a href="">Lake Bled: Slovenias action adventure destination</a></li>
+			<li><a href="">Lycra at the ready: Ride of the Roses is coming</a></li>
+			<li><a href="">SMACK MY GIMP UP!</a></li>
+		</ul>
+	</div>
+
+	<img src="/images/prototype/directory/members/no_image.png" alt="Richard Ingle" style="float:right" />
+	<div style="padding:0.4em; background-color:#FF6B01; color:#fff; font-weight:bold;">
+		Richard Ingle
+	</div>
+	Other articles written by this reporter:
+	<div style="clear:right">
+		<ul>
+			<li><a href="">Week in Pictures: International Week</a></li>
+			<li><a href="">Film Preview: Wings of Desire</a></li>
+			<li><a href="">Lake Bled: Slovenias action adventure destination</a></li>
+			<li><a href="">Lycra at the ready: Ride of the Roses is coming</a></li>
+			<li><a href="">SMACK MY GIMP UP!</a></li>
+		</ul>
+	</div>
+	
+	<div style="padding:0.4em; background-color:#20C1F0; color:#fff; font-weight:bold;">
+		More of Today's News
+	</div>
+	<div style="clear:left;font-weight:bold;padding-top:5px;">
+		<img src="/photos/small/1067" alt="Article Image" style="float:left" />
+		Taylor drops out of race
+	</div>
+	<div style="clear:left;font-weight:bold;padding-top:5px;">
+		<img src="/photos/small/1066" alt="Article Image" style="float:left" />
+		Ride of the Roses
+	</div>
+   	<div style="clear:left;font-weight:bold;padding-top:5px;">
+		<img src="/photos/small/1068" alt="Article Image" style="float:left" />
+		Bridge Closures
+	</div>
+</div>
+
+<div id="MainColumn" style="margin-right:420px;">
 	<div class="BlueBox">
 		<h2 class="Headline"><?php echo(xml_escape($main_article['heading'])); ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
@@ -144,6 +202,32 @@ foreach ($main_article['related_articles'] as $related)
 		</ul>
 	</div>
 	<?php } ?>
+	
+	<div style="float:left;width:438px;margin-bottom:0.5em;">
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews1.jpg');position:relative;border:1px #20C1F0 solid;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1062" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+    				Vision editor: "If stays same we may not survive"
+				</a>
+			</div>
+		</div>
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews2.jpg');position:relative;border:1px #20C1F0 solid;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1066" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+					DNA match jails student's attacker
+				</a>
+			</div>
+		</div>
+		<div style="width:144px;height:150px;float:left;text-align:center;background:url('/images/prototype/new_home/smallnews3.jpg');position:relative;border:1px #20C1F0 solid;">
+			<div style="background-color:#20C1F0;opacity:0.7;filter:alpha(opacity = 70);bottom:0;left:0;position:absolute;width:100%;">
+				<a href="/news/uninews/1079" style="color:#000;font-weight:bold;opacity:1;filter:alpha(opacity = 100);">
+					Tree planted to remember lost student
+				</a>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
 	<?php
 	// Comments if they're included
 	if (isset($comments) && NULL !== $comments) {
