@@ -24,7 +24,7 @@
 		$publish_date = $new_publish_date;
 	?>
 	<tr>
-	<td style="<?php if($article['overdue']) echo('color: red);');?>"><?php echo($publish_date); ?></td>
+	<td style="<?php if($article['overdue']) echo('color: red;');?>"><?php echo($publish_date); ?></td>
 	<td><?php echo(xml_escape($article['content_type_name'])); ?></td>
 	<td><a href="/office/news/<?php echo($article['article_id']); ?>/" title="Edit this article"><?php echo((strlen($article['headline']) == 0 ? 'No title' : xml_escape($article['headline'] ))); ?></a></td>
 	<td><?php echo(xml_escape($article['editor'])); ?></td>
