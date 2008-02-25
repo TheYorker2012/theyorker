@@ -19,6 +19,9 @@
  * @param $GoodUrlPostfix string Url for gooding (appended)
  * @param $UngoodUrlPrefix string Url for ungooding (prepended)
  * @param $UngoodUrlPostfix string Url for ungooding (appended)
+ * @param $ThreadUrlPrefix string Url for thread (prepended)
+ * @param $ThreadUrlPostfix string Url for thread (appended)
+ * @param $Threaded bool Whether we're part of a thread or just a list of comments.
  * @param $Mode 'mod','debug' Indicates moderator and debug modes
  */
 
@@ -116,16 +119,20 @@ if ($Comment['deleted']) {
 	if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Comment['comment_id'])) {
 		$abuse_links = array();
 		if ($Comment['deleted']) {
-			$abuse_links[] = '<a href="'.$UndeleteUrlPrefix.$Comment['comment_id'].$UndeleteUrlPostfix.'"><img src="/images/icons/note_go.png" alt="Un-Delete Comment" title="Un-Delete Comment" /> Un-Delete Comment</a>';
+			$abuse_links[] = '<a href="'.$UndeleteUrlPrefix.$Comment['comment_id'].$UndeleteUrlPostfix.'"><img src="/images/icons/note_go.png" alt="" title="Un-Delete Comment" /> Un-Delete Comment</a>';
 		} else {
-			$abuse_links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="Edit Comment" title="Delete Comment" /> Edit Comment</a>';
-			$abuse_links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="Delete Comment" title="Delete Comment" /> Delete Comment</a>';
+			$abuse_links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="" title="Delete Comment" /> Edit Comment</a>';
+			$abuse_links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="" title="Delete Comment" /> Delete Comment</a>';
 		}
 		if ($Comment['good']) {
-			$abuse_links[] = '<a href="'.$UngoodUrlPrefix.$Comment['comment_id'].$UngoodUrlPostfix.'"><img src="/images/icons/flag_red.png" alt="Un-Flag as Good" title="Un-Flag as Good" /> Un-Flag as Good</a>';
+			$abuse_links[] = '<a href="'.$UngoodUrlPrefix.$Comment['comment_id'].$UngoodUrlPostfix.'"><img src="/images/icons/flag_red.png" alt="" title="Un-Flag as Good" /> Un-Flag as Good</a>';
 		} else {
-			$abuse_links[] = '<a href="'.$GoodUrlPrefix.$Comment['comment_id'].$GoodUrlPostfix.'"><img src="/images/icons/flag_green.png" alt="Flag as Good" title="Flag as Good" /> Flag as Good</a>';
+			$abuse_links[] = '<a href="'.$GoodUrlPrefix.$Comment['comment_id'].$GoodUrlPostfix.'"><img src="/images/icons/flag_green.png" alt="" title="Flag as Good" /> Flag as Good</a>';
 		}
+		if (!$Threaded) {
+			$abuse_links[] = '<a href="'.$ThreadUrlPrefix.$Comment['comment_id'].$ThreadUrlPostfix.'"><img src="/images/icons/note_go.png" alt="" title="Show this thread" /> Show thread</a>';
+		}
+		
 		echo('<ul><li style="font-size:x-small;">');
 		if ($Comment['reported_count'] != 0) {
 			echo('This comment has been reported as abusive '.$Comment['reported_count'].' time'.($Comment['reported_count'] != 1 ? 's' : '').'.');
@@ -143,8 +150,8 @@ if ($Comment['deleted']) {
 	} else if (!$show_as_deleted) {
 		$links = array();
 		if ($Comment['owned']) {
-			$links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="Edit Comment" title="Delete Comment" /> Edit Comment</a>';
-			$links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="Delete Comment" title="Delete Comment" /> Delete Comment</a>';
+			$links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="" title="Delete Comment" /> Edit Comment</a>';
+			$links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="" title="Delete Comment" /> Delete Comment</a>';
 		}
 		// Only show 'report abuse' link if 'no_report' index isn't set
 		elseif (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
@@ -154,7 +161,7 @@ if ($Comment['deleted']) {
 			} else {
 				$report_link = '';
 			}
-			$links[] = '<a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report Abuse</a>';
+			$links[] = '<a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="" title="Report Abuse" /> Report Abuse</a>';
 		}
 		if (!empty($links) && !isset($Comment['no_links'])) {
 			echo('<p style="font-size:x-small;">');
