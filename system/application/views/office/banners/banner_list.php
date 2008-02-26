@@ -10,38 +10,106 @@
 		</ul>
 	</div>
 </div>
-
-<div class='blue_box'>
-	<h2>homepage banners</h2>
-	<table>
-	<tr>
-		<th>Banner</th>
-		<th>Homepage</th>
-		<th>Schedule</th>
-		<th></th>
-	</tr>
-		<?php foreach($banners as $banner) { ?>
-	<tr>
-	<td><?php echo($this->image->getImage($banner['banner_id'], $banner['banner_type'], array('width' => '196', 'height' => '50'))); ?></td>
-	<td><?php echo(xml_escape($banner['banner_homepage'])); ?></td>
-	<td><?php echo(isset($banner['banner_last_displayed_timestamp']) ? $banner['banner_last_displayed_timestamp'] : 'In Pool'); ?></td>
-	<td><a href="/office/banners/edit/<?php echo($banner['banner_id']); ?>" title="Edit this banner">Edit</a></td>
-	</tr>
+<div id="MainColumn">
+	<div class='BlueBox'>
+		<h2>Scheduled banners</h2>
+		<?php if(!empty($scheduled_banners)){ ?>
+		<table>
+			<tr>
+				<th>Banner</th>
+				<th>Schedule</th>
+				<th>Has Link</th>
+				<th>Edit</th>
+			</tr>
+			<?php 
+			foreach($scheduled_banners as $banner) { 
+				echo('			<tr>'."\n");
+				echo('				<td>');
+				echo($this->image->getImage($banner['banner_id'], $banner['banner_type'], array('width' => '196', 'height' => '50')));
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				//no need to check if there is a current_banner_id, as if there is at least one scheduled banner, there must be an assigned one.
+				if ($banner['banner_id']==$current_banner_id) {
+					echo '<span class="red">Live</span>';
+				} else {
+					echo date("d/m/y",$banner['banner_last_displayed_timestamp']);
+				}
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				if (!empty($banner['banner_link'])) {
+					echo('<img src="/images/prototype/members/confirmed.png" alt="Yes" title="Yes">');
+				} else {
+					echo('<img src="/images/prototype/members/no9.png" alt="No" title="No">');
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo('<a href="/office/banners/edit/'.$banner['banner_id'].'" title="Edit this banner">Edit</a>');
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
+			} 
+			?>
+		</table>
+		<?php 
+		} else {
+			echo($no_banner_wikitext);
+		}
+		?>
+	</div>
+	<?php if(!empty($pooled_banners)){ ?>
+	<div class='BlueBox'>
+		<h2>Pooled banners</h2>
+		<table>
+			<tr>
+				<th>Banner</th>
+				<th>Has Link</th>
+				<th>Edit</th>
+			</tr>
+			<?php 
+			foreach($pooled_banners as $banner) { 
+				echo('			<tr>'."\n");
+				echo('				<td>');
+				echo($this->image->getImage($banner['banner_id'], $banner['banner_type'], array('width' => '196', 'height' => '50')));
+				echo('</td>'."\n");
+				echo('				<td align="center">');
+				if (!empty($banner['banner_link'])) {
+					echo('<img src="/images/prototype/members/confirmed.png" alt="Yes" title="Yes">');
+				} else {
+					echo('<img src="/images/prototype/members/no9.png" alt="No" title="No">');
+				}
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo('<a href="/office/banners/edit/'.$banner['banner_id'].'" title="Edit this banner">Edit</a>');
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
+			} 
+			?>
+		</table>
+	</div>
+	<?php 
+	}
+	if(!empty($unused_banners)){ 
+	?>
+	<div class='BlueBox'>
+		<h2>Unassigned banners</h2>
+		<table>
+		<tr>
+			<th>Banner</th>
+			<th>Edit</th>
+		</tr>
+			<?php 
+			foreach($unused_banners as $banner) { 
+				echo('			<tr>'."\n");
+				echo('				<td>');
+				echo($this->image->getImage($banner['banner_id'], $banner['banner_type'], array('width' => '196', 'height' => '50')));
+				echo('</td>'."\n");
+				echo('				<td>');
+				echo('<a href="/office/banners/edit/'.$banner['banner_id'].'" title="Edit this banner">Edit</a>');
+				echo('</td>'."\n");
+				echo('			</tr>'."\n");
+			} 
+			?>
+		</table>
+	</div>
 	<?php } ?>
-	</table>
-</div>
-<div class='blue_box'>
-	<h2>unassigned banners</h2>
-	<table>
-	<tr>
-		<th>Banner</th>
-		<th></th>
-	</tr>
-		<?php foreach($unused_banners as $unused_banner) { ?>
-	<tr>
-	<td><?php echo($this->image->getImage($unused_banner['banner_id'], $unused_banner['banner_type'], array('width' => '196', 'height' => '50'))); ?></td>
-	<td><a href="/office/banners/edit/<?php echo($unused_banner['banner_id']); ?>" title="Edit this banner">Edit</a></td>
-	</tr>
-	<?php } ?>
-	</table>
+	<a href="/office/banners/" title="Go Back">Back to the homepages list.</a>
 </div>
