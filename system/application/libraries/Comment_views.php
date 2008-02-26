@@ -326,7 +326,7 @@ class CommentViewList extends FramesView
 	protected $mComments = array();
 	
 	/// int Maximum number of comments per page.
-	protected $mMaxPerPage = 20;
+	protected $mMaxPerPage;
 	protected $mPageLinkSpan = 2;
 	
 	/// Default constructor.
@@ -337,6 +337,8 @@ class CommentViewList extends FramesView
 		$config = get_instance()->config->item('comments');
 		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
 		$this->SetData('Threaded', true);
+		
+		$this->mMaxPerPage = $config['max_per_page'];
 	}
 	
 	/// Set the number of a comment to show the page of.
@@ -351,23 +353,13 @@ class CommentViewList extends FramesView
 		$this->SetData('Threaded', false);
 	}
 	
-	/// Set the maximum number of comments per page.
-	/**
-	 * @param $MaxPerPage int Maximum comments displayed per page.
-	 */
-	function SetMaxPerPage($MaxPerPage = 0)
-	{
-		assert('is_int($MaxPerPage)');
-		$this->mMaxPerPage = $MaxPerPage;
-	}
-	
 	/// Set the numer of pages to link to either side of the current page.
 	/**
 	 * @param $PageLinkSpan int Page links either side of current page.
 	 */
 	function SetPageLinkSpan($PageLinkSpan = 0)
 	{
-		assert('is_int($MaxPerPage)');
+		assert('is_int($PageLinkSpan)');
 		$this->mPageLinkSpan = $PageLinkSpan;
 	}
 	
@@ -467,7 +459,7 @@ class Comment_views
 	 * @param $CommentInclude int Number of a comment to include.
 	 * @return FramesView,NULL View class or NULL if unsuccessful
 	 */
-	function CreateStandard($ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
+	function CreateStandard($ThreadId, $CommentInclude = NULL)
 	{
 		// get comments + thread
 		$CI = & get_instance();
@@ -498,7 +490,6 @@ class Comment_views
 		$comment_view_list->SetComments($comments);
 		
 		// set which page of comments to show
-		$comment_view_list->SetMaxPerPage($MaxPerPage);
 		$comment_view_list->SetIncludedComment($CommentInclude);
 
 		// overall layout
@@ -511,13 +502,14 @@ class Comment_views
 		return new FramesView('comments/standard', $data);
 	}
 
-	function GetLatestComments($MaxComments = 10, $MaxPerPage = 20)
+	function GetLatestComments($MaxComments = 10)
 	{
 		$CI = & get_instance();
 		$comments = $CI->comments_model->GetLatestComments($MaxComments);
+		$config = $CI->config->item('comments');
 		$data = array(
 			'comments'			=>	$comments,
-			'comments_per_page'	=>	$MaxPerPage
+			'comments_per_page'	=>	$config['max_per_page'],
 		);
 		return new FramesView('comments/latest_box', $data);
 	}
