@@ -151,6 +151,8 @@ if (isset($medium_type)) { ?>
 <?php
 	if (isset($advert) && !empty($advert['image_id']) && !empty($advert['url'])) {
 		echo('			<a href="'.xml_escape($advert['url']).'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 40px;" alt="'.xml_escape($advert['alt']).'" title="'.xml_escape($advert['alt']).'" /></a>'."\n");
+	} elseif ($this->config->item('enable_adsense')) {
+		$this->load->view('frames/adsense');
 	}
 ?>
 		</div>
