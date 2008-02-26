@@ -272,6 +272,8 @@ class Comments extends Controller
 		
 		$debug = false;
 		
+		$config = $this->config->item('comments');
+		
 		$comment = NULL;
 		if (is_numeric($CommentId)) {
 			$this->load->model('comments_model');
@@ -306,7 +308,7 @@ class Comments extends Controller
 						'news',
 						array('field'   => 'content_type_codename'),
 						array('field'   => 'article_id'),
-						array('special' => 'local_comment_id'),
+						array('special' => 'page_id'),
 						'anchor' => $standard_anchor,
 					),
 				),
@@ -320,7 +322,7 @@ class Comments extends Controller
 						'office',
 						'news',
 						array('field'   => 'article_id'),
-						array('special' => 'local_comment_id'),
+						array('special' => 'page_id'),
 						'anchor' => $standard_anchor,
 					),
 				),
@@ -342,7 +344,7 @@ class Comments extends Controller
 						'reviews',
 						array('field'   => 'content_type_codename'),
 						array('field'   => 'organisation_directory_entry_name'),
-						array('special' => 'local_comment_id'),
+						array('special' => 'page_id'),
 						'anchor' => $standard_anchor,
 					),
 				),
@@ -367,7 +369,7 @@ class Comments extends Controller
 						array('field'   => 'content_type_codename'),
 						'comments',
 						'view',
-						array('special' => 'local_comment_id'),
+						array('special' => 'page_id'),
 						'anchor' => $standard_anchor,
 					),
 				),
@@ -418,7 +420,7 @@ class Comments extends Controller
 								}
 								elseif (isset($uriSegment['special'])) {
 									switch ($uriSegment['special']) {
-									case 'local_comment_id':
+									case 'page_id':
 										// Find the local comment id by counting
 										// the number of comments of same thread
 										// which were posted before this one.
@@ -432,7 +434,10 @@ class Comments extends Controller
 												(int)$comment['post_time'],
 											)
 										);
-										$segments[] = $query->row()->count+1;
+										// Adjust to get the first comment of
+										// the page. This makes the url for a
+										// page of comments unique.
+										$segments[] = floor($query->row()->count / $config['max_per_page']) * $config['max_per_page'] + 1;
 										break;
 									}
 								}

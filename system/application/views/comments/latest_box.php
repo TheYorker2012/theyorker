@@ -15,7 +15,7 @@ function print_comment ($comment, $comments_per_page) {
 		echo('			<li>'."\n");
 		echo('				<i>' . xml_escape($comment['user_firstname'] . ' ' . $comment['user_surname']) . '</i>'."\n");
 	}
-	echo('				on <a href="/news/' . $comment['content_type_codename'] . '/' . $comment['article_id']. '/' . $page . '/#CommentItem' . $comment['comment_id'] . '">' . xml_escape($comment['article_content_heading']) . '</a>'."\n");
+	echo('				on <a href="/comments/thread/' . $comment['comment_id'] . '">' . xml_escape($comment['article_content_heading']) . '</a>'."\n");
 	echo('			</li>'."\n");
 }
 
