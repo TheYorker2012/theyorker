@@ -37,6 +37,18 @@ class Podcasts extends Controller
 		$this->main_frame->Load();
 	}
 	
+	function del($id)
+	{
+		if (!CheckPermissions('office')) return;
+		if($this->podcasts_model->Del($id))
+			{	
+				$this->messages->AddMessage('success', 'Podcast Deleted');
+			}else{
+				$this->messages->AddMessage('error', 'Podcast Not Deleted');
+			}
+		redirect('/office/podcasts/');
+	}
+	
 	function edit($id)
 	{
 		if (!CheckPermissions('office')) return;
@@ -56,9 +68,9 @@ class Podcasts extends Controller
 
 		$data = array(
 			'podcast' => $details,
-			'target' => '/office/podcasts/edit/'.$id,
-			'files' => get_filenames('static/podcasts/'),
-			'files2' => get_filenames('javascript/'),
+//			'target' => '/office/podcasts/edit/'.$id,
+//			'files' => get_filenames('static/podcasts/'),
+//			'files2' => get_filenames('javascript/'),
 			);
 
 		$this->main_frame->SetContentSimple('office/podcasts/edit', $data);
@@ -68,23 +80,20 @@ class Podcasts extends Controller
 
 	function _list_ftp()
 	{
-		$this->load->model('static_ftp_model');
-		$conn_id = $this->static_ftp_model->Connect();
-		$list = $this->static_ftp_model->GetList($conn_id,'podcasts');
-		$this->static_ftp_model->Close($conn_id);
+		$this->load->model('static_model');
+		$list = $this->static_model->GetDirectoryListing(
+				$this->config->item('static_local_path').'/podcasts',
+				'',
+				array('mp3'));
 		$db_list = $this->podcasts_model->Get_Fnames();
 		$arguments = '';
 		foreach ($list as $fname)
 		{
 			if(
-				!stristr($fname,".htm") and
-				($fname[0] !='.') and 
-				!in_array($fname,$db_list) and
-				!stristr($fname,".php") and
-				!stristr($fname,".xml"))
+				!in_array($fname,$db_list) )//and
 			{
 				
-				$arguments = $arguments.',"'.$fname.'"';
+				$arguments = $arguments.',"'.str_replace(array('/','\\'),'',$fname).'"';
 			}
 		}
 		$objResponse = new xajaxResponse();
@@ -100,12 +109,18 @@ class Podcasts extends Controller
 		}
 		if (!CheckPermissions('office')) return;
 		
-		$this->load->model('static_ftp_model');
-		$conn_id = $this->static_ftp_model->Connect();
+		$this->load->model('static_model');
+//		$conn_id = $this->static_ftp_model->Connect();
 		$game_id = $this->podcasts_model->Add_Entry(
 			$_POST['add_entry_file'],
-			ftp_size($conn_id,'podcasts/'.$_POST['add_entry_file']));
-		$this->static_ftp_model->Close($conn_id);
+			$this->static_model->GetFileSize(
+					$this->config->item('static_local_path').
+					'/podcasts/'.
+					$_POST['add_entry_file']));
+//		$this->static_ftp_model->Close($conn_id);
+		$this->static_model->MoveFile(
+			$this->config->item('static_local_path').'/podcasts/'.$_POST['add_entry_file'],
+			$this->config->item('static_local_path').'/media/podcasts/');
 		if ($game_id ==0)
 		{
 				$this->main_frame->AddMessage('error','Podcast Add Failed.');				

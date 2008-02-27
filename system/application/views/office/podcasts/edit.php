@@ -22,7 +22,7 @@
 						readonly="readonly"
 						value="<?php echo(
 									$this->config->item('static_web_address').
-									'/podcasts/'.
+									'/media/podcasts/'.
 									xml_escape($podcast['file'])); ?>">
 				<label for="file_size">File Size:</label>
 					<input	
@@ -39,7 +39,7 @@
 					<div style="float:left; margin: 5px">
 						<a href="<?php echo(
 								$this->config->item('static_web_address').
-								'/podcasts/'.
+								'/media/podcasts/'.
 								xml_escape($podcast['file'])); ?>">Play</a>
 					</div>
 					<input type="submit" class="button" value="Save" name="r_submit_save" />

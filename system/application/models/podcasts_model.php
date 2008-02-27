@@ -69,4 +69,12 @@ class Podcasts_model extends Model
 		}else{ return 0;}
 		return $result;
 	}
+	
+	function Del($id)
+	{
+		$sql = '	UPDATE	podcasts
+					SET		podcasts.podcast_deleted = 1
+					WHERE	podcasts.podcast_id = ?';
+		return $this->db->query($sql,array($id));
+	}
 }
