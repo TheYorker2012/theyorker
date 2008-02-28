@@ -43,6 +43,13 @@ class Stats extends controller
 		//access levels
 		$data['access'] = $this->stats_model->GetNumberOfMembersWithAccess();
 		//signups
+		if((int)date('m')<10){
+			//its before the start of a new accademic year so use last year
+			$acc_year = (int)date('Y') - 1;
+		}else{
+			//its after the start of a new accademic year, use this year.
+			$acc_year = date('Y');
+		}
 		$data['registrations'] = 
 		array(
 			//in the last 24 hours (86400 seconds)
@@ -54,7 +61,7 @@ class Stats extends controller
 			//so far this year
 			'year'			=> $this->stats_model->GetNumberOfSignUps(date('Y-00-00').' 00:00:00'),
 			//so far this accademic year (start of october)
-			'academic_year'	=> $this->stats_model->GetNumberOfSignUps(date('Y-10-00').' 00:00:00')
+			'academic_year'	=> $this->stats_model->GetNumberOfSignUps($acc_year.'-10-00 00:00:00')
 		);
 		
 		//Load view and send data
