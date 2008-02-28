@@ -99,7 +99,7 @@ if ($this->user_auth->isLoggedIn)
 					}
 					?>
 					<input class="button" type="submit" name="submit_vote"
-					       value="Vote" />'
+					       value="Vote" />
 				</fieldset>
 			</div>
 		</form>
