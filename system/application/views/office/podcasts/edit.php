@@ -31,6 +31,13 @@
 						size="10"
 						readonly="readonly"
 						value="<?php echo(round($podcast['file_size']/1048576,1).' MBytes'); ?>">
+				<label for="is_live">Is Live</label>
+					<input
+						type="checkbox"
+						name="is_live"
+						<?php if($podcast['is_live']==1){echo('checked="checked"');} ?>
+						<?php if($podcast['live_can_change']){echo('disabled="disabled"');} ?>>
+						
 				<br />
 				<div style="float:left; margin: 5px;width:150px">
 					<a href="/office/podcasts">Return to Podcasts</a>

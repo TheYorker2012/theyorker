@@ -15,7 +15,8 @@ class Podcasts extends Controller
 		if (!CheckPermissions('office')) return;
 		
 		$this->load->library('xajax');
-		$this->xajax->registerFunction(array("list_ftp", &$this, "_list_ftp"));
+		$this->xajax->registerFunction(array("list_add", &$this, "_list"));
+		$this->xajax->registerFunction(array("toggle_islive", &$this, "_toggle_islive"));
 		$this->xajax->processRequests();
 
 		$this->pages_model->SetPageCode('office_podcasts_list');
@@ -49,12 +50,29 @@ class Podcasts extends Controller
 		redirect('/office/podcasts/');
 	}
 	
-	function edit($id)
+	function edit($id,$new=FALSE)
 	{
 		if (!CheckPermissions('office')) return;
 
 		$this->pages_model->SetPageCode('office_podcasts_edit');
-		$this->load->helper('file');
+//		$this->load->helper('file');
+
+		if (
+			isset($_POST['a_name']) &&
+			isset($_POST['a_description']))
+		{
+			if($this->podcasts_model->Edit_Podcast_Update(
+					$id,
+					$_POST['a_name'],
+					$_POST['a_description'],
+					isset($_POST['is_live'])
+				))
+			{
+				$this->main_frame->AddMessage('success','Changes saved!',FALSE);
+			} else {
+				$this->main_frame->AddMessage('error','Update failed!',FALSE);
+			}
+		}
 
 		$details = $this->podcasts_model->GetPodcastDetails($id);
 		if (!isset($details[0])) {
@@ -65,10 +83,11 @@ class Podcasts extends Controller
 		{
 			$details = $details[0];
 		}
-
+		if($new){$details['is_live']=1;}
+		$details['live_can_change']=$this->podcasts_model->CanLiveChange($id);
 		$data = array(
 			'podcast' => $details,
-//			'target' => '/office/podcasts/edit/'.$id,
+			'target' => '/office/podcasts/edit/'.$id,
 //			'files' => get_filenames('static/podcasts/'),
 //			'files2' => get_filenames('javascript/'),
 			);
@@ -78,7 +97,7 @@ class Podcasts extends Controller
 		$this->main_frame->Load();
 	}
 
-	function _list_ftp()
+	function _list()
 	{
 		$this->load->model('static_model');
 		$list = $this->static_model->GetDirectoryListing(
@@ -89,10 +108,8 @@ class Podcasts extends Controller
 		$arguments = '';
 		foreach ($list as $fname)
 		{
-			if(
-				!in_array($fname,$db_list) )//and
+			if(!in_array($fname,$db_list))
 			{
-				
 				$arguments = $arguments.',"'.str_replace(array('/','\\'),'',$fname).'"';
 			}
 		}
@@ -100,7 +117,15 @@ class Podcasts extends Controller
 		$objResponse->addScript('list_response('.substr($arguments,1).');');
 		return $objResponse;
 	}
-
+	
+	function _toggle_islive($id)
+	{
+		$is_live=$this->podcasts_model->Toggle_Live($id);
+		$objResponse = new xajaxResponse();
+		$objResponse->addAssign('islive_'.$id,'innerHTML',($is_live==1?'Yes':'No'));
+		return $objResponse;
+	}
+	
 	function add_entry()
 	{
 		if(!isset($_POST['add_entry_file']))
@@ -110,24 +135,22 @@ class Podcasts extends Controller
 		if (!CheckPermissions('office')) return;
 		
 		$this->load->model('static_model');
-//		$conn_id = $this->static_ftp_model->Connect();
-		$game_id = $this->podcasts_model->Add_Entry(
+		$podcast_id = $this->podcasts_model->Add_Entry(
 			$_POST['add_entry_file'],
 			$this->static_model->GetFileSize(
 					$this->config->item('static_local_path').
 					'/podcasts/'.
 					$_POST['add_entry_file']));
-//		$this->static_ftp_model->Close($conn_id);
 		$this->static_model->MoveFile(
 			$this->config->item('static_local_path').'/podcasts/'.$_POST['add_entry_file'],
 			$this->config->item('static_local_path').'/media/podcasts/');
-		if ($game_id ==0)
+		if ($podcast_id==0)
 		{
 				$this->main_frame->AddMessage('error','Podcast Add Failed.');				
 				redirect('office/podcasts');
 		}								
 		$this->main_frame->AddMessage('success','Podcast entry added successfully. Please complete the rest of the required information below.');
-		redirect('office/podcasts/edit/'.$game_id);	
+		$this->edit($podcast_id,TRUE);
 	}
 
 }

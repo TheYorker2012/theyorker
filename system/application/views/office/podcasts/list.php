@@ -3,7 +3,7 @@
 	{
 		if (document.getElementById('add_entry').style.display!="")
 		{
-			xajax_list_ftp();
+			xajax_list_add();
 		}
 		document.getElementById('list_box').style.display="none";
 		document.getElementById('add_entry').style.display="";
@@ -42,7 +42,7 @@
 <div id="MainColumn">
 	<div id="add_entry" class="BlueBox" style="Display:none">
 		<div id="add_entry_wait">
-			Please Wait... connecting to FTP share...
+			Please Wait...
 		</div>
 		<div id="add_entry_form_box" style="Display:none">
 			Select the podcasts file from the list below to add it to the system.
@@ -90,7 +90,12 @@
 							<?php echo('<a href="/office/podcasts/edit/'.$podcast['id'].'">'.$name.'</a>'); ?>
 						</td>
 						<td style="text-align:right;padding-right:5px;">
-							<?php echo($is_live); ?>
+							<?php 
+								if(!isset($podcasts[14])|| $podcast['timestamp']>=$podcasts[14]['timestamp'])
+								{
+									echo('<a  href="#" onclick="xajax_toggle_islive('.$podcast['id'].');return false;"><div id="islive_'.$podcast['id'].'">'.$is_live.'</div></a>');
+								}else{
+								echo($is_live);} ?>
 						</td>
 						<td>
 							<a href="/office/podcasts/del/<?php echo($podcast['id']); ?>">Del</a>
