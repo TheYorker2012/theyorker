@@ -15,6 +15,7 @@ class Podcasts_model extends Model
 		$sql = 'SELECT	podcast_id as id,
 						podcast_name as name,
 						podcast_is_live as is_live,
+						podcast_description as description,
 						podcast_timestamp as timestamp
 				FROM	podcasts
 				WHERE	podcasts.podcast_deleted = 0
@@ -25,7 +26,7 @@ class Podcasts_model extends Model
 	
 	function GetPodcastList()
 	{
-		$sql = '	SELECT		podcast_name as title,
+		$sql = 'SELECT		podcast_name as title,
 							podcast_description as description,
 							podcast_file as filename,
 							podcast_file_size as length,
@@ -143,5 +144,14 @@ class Podcasts_model extends Model
 							podcast_is_live=?
 					WHERE	podcast_id=?';
 		return $this->db->query($sql,array($name,$description,($is_live?1:0),$id));
+	}
+	
+	function Change_File($id,$filename,$file_size)
+	{
+		$sql = '	UPDATE	podcasts
+					SET		podcast_file=?,
+							podcast_file_size=?
+					WHERE	podcast_id=?';
+		return $this->db->query($sql,array($filename,$file_size,$id));
 	}
 }

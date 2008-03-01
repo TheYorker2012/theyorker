@@ -91,7 +91,7 @@
 						</td>
 						<td style="text-align:right;padding-right:5px;">
 							<?php 
-								if(!isset($podcasts[14])|| $podcast['timestamp']>=$podcasts[14]['timestamp'])
+								if(strlen($podcast['description'])!=0 &&strlen($podcast['name'])!=0&&(!isset($podcasts[14])|| $podcast['timestamp']>=$podcasts[14]['timestamp']))
 								{
 									echo('<a  href="#" onclick="xajax_toggle_islive('.$podcast['id'].');return false;"><div id="islive_'.$podcast['id'].'">'.$is_live.'</div></a>');
 								}else{

@@ -57,6 +57,12 @@ class Podcasts extends Controller
 		$this->pages_model->SetPageCode('office_podcasts_edit');
 //		$this->load->helper('file');
 
+		$this->load->library('xajax');
+		$this->xajax->registerFunction(array("list_files", &$this, "_list"));
+		$this->xajax->registerFunction(array('change_file', &$this, '_change_file'));
+		$this->xajax->processRequests();
+
+
 		if (
 			isset($_POST['a_name']) &&
 			isset($_POST['a_description']))
@@ -91,6 +97,7 @@ class Podcasts extends Controller
 //			'files' => get_filenames('static/podcasts/'),
 //			'files2' => get_filenames('javascript/'),
 			);
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 
 		$this->main_frame->SetContentSimple('office/podcasts/edit', $data);
 
@@ -115,6 +122,35 @@ class Podcasts extends Controller
 		}
 		$objResponse = new xajaxResponse();
 		$objResponse->addScript('list_response('.substr($arguments,1).');');
+		return $objResponse;
+	}
+	
+	function _change_file($id, $new_file_name)
+	{
+		$this->load->model('static_model');
+		$file_size=$this->static_model->GetFileSize(
+					$this->config->item('static_local_path').
+					'/podcasts/'.
+					$new_file_name);
+		$this->podcasts_model->Change_File(
+				$id, 
+				$new_file_name,
+				$file_size);
+		$this->static_model->MoveFile(
+			$this->config->item('static_local_path').'/podcasts/'.$new_file_name,
+			$this->config->item('static_local_path').'/media/podcasts/');
+		
+		$objResponse = new xajaxResponse();
+		$objResponse->addAssign(
+				'file_address',
+				'value',
+				$this->config->item('static_web_address').
+									'/media/podcasts/'.
+									xml_escape($new_file_name));
+		$objResponse->addAssign(
+				'file_size',
+				'value',
+				round($file_size/1048576,1).' MBytes');
 		return $objResponse;
 	}
 	
