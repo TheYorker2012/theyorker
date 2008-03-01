@@ -317,10 +317,34 @@ class Banner_Model extends Model {
 		$query = $this->db->query($sql,array($image_id,$homepage_id));
 	}
 	//Pools all banners from $section_id apart from $ignore_banner_id with the same date as timestamp
+	//$timestamp is of the format yyyy-mm-dd hh:mm:ss
+	//@note The ignore banner id is optional, but is usefull if you are pooling banners to then schedule one. 
+	//If you are updating one and not changing the timestamp, include it in here to avoid unassigning it then re-assigning it.
 	function PoolAllBannersWithThisDate($timestamp, $section_id, $ignore_banner_id=null)
 	{
-		//@TODO make this function
-		return true;
+		//Just interested in the date of the timestamp
+		$date_timestamp = substr($timestamp,0,10);
+		//Select all the banners with this date for this section
+		$sql = 'SELECT images.image_id
+				FROM images
+				INNER JOIN homepage_banners ON 
+					homepage_banner_image_id = images.image_id
+				WHERE DATE(images.image_last_displayed_timestamp)=? 
+				AND homepage_banners.homepage_banner_content_type_id = ? ';
+		if (!empty($ignore_banner_id)) {
+			$sql .='AND NOT images.image_id=?';
+			$inputs = array($date_timestamp,$section_id,$ignore_banner_id);
+		} else {
+			$inputs = array($date_timestamp,$section_id);
+		}
+		$query = $this->db->query($sql,$inputs);
+		
+		//Force every result back into the pool, (assign it to this time yesterday)
+		foreach($query->result() as $row) {
+			$new_timestamp = date('Y-m-d H:i:s', time() - 86400);
+			$sql = 'UPDATE images SET image_last_displayed_timestamp=? WHERE image_id = ?';
+			$query = $this->db->query($sql,array($new_timestamp,$row->image_id));
+		}
 	}
 	
 	//Deletes all the links to an image (images can be on multiple homepages) to prepare for deleting the image

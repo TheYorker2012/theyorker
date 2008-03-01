@@ -66,7 +66,7 @@
 						<label for='banner_schedule_days_radio'>By Days:</label>
 						<input type="radio" name="banner_schedule_radio" value="days" onclick="SwitchScheduler(1)" checked>
 						<select name="banner_schedule_days" id="banner_schedule_days">
-							<option value="">&nbsp;</option>
+							<option value="-1">&nbsp;</option>
 							<?php
 							if (!empty($banner['banner_last_displayed_timestamp'])) {
 								$days_to_schedule = floor($banner['banner_last_displayed_timestamp'] / 86400) - floor(time() / 86400);

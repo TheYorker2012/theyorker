@@ -99,7 +99,8 @@ class Banners extends Controller
 				//See what method the user is defining the date by
 				if ($banner_scheduled_radio=='days') {
 					//Use $banner_schedule_days, no value implys user has failed to enter anything
-					if (!empty($banner_schedule_days)) {
+					//@note use isset not !empty, as you need to tell apart null and 0.
+					if (isset($banner_schedule_days) && $banner_schedule_days > -1) {
 						//Work out date for addition of X days
 						$update_timestamp = date('Y-m-d H:i:s', time() + ( 86400 * $banner_schedule_days));//Number of seconds in a day (86400)
 					} else {
