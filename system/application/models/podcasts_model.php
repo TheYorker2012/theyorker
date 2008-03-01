@@ -23,6 +23,22 @@ class Podcasts_model extends Model
 		return $query->result_array();
 	}
 	
+	function GetPodcastList()
+	{
+		$sql = '	SELECT		podcast_name as title,
+							podcast_description as description,
+							podcast_file as filename,
+							podcast_file_size as length,
+							UNIX_TIMESTAMP(podcast_timestamp) as date
+				FROM		podcasts
+				WHERE		podcasts.podcast_is_live=1 AND
+							podcasts.podcast_deleted=0
+				ORDER BY	podcast_timestamp DESC
+				LIMIT		15';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}						
+	
 	function GetPodcastDetails($id)
 	{
 		$sql = 'SELECT	podcast_id as id,
