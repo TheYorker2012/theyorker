@@ -80,7 +80,7 @@ class Feeds extends Controller {
 		$data['itunes_owner_email'] = 'podcasts@theyorker.co.uk';
 		$this->load->model('podcasts_model');
 		$data['rss_items'] = $this->podcasts_model->GetPodcastList();
-		$data['rss_pubdate'] = $data['rss_items'][0]['date'];
+		if(isset($data['rss_items'][0])){$data['rss_pubdate'] = $data['rss_items'][0]['date'];}
 		foreach ($data['rss_items'] as &$item)
 		{
 			$item['type']='audio/mpeg';
