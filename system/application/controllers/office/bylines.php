@@ -722,7 +722,7 @@ class Bylines extends Controller
 						$this->main_frame->AddMessage('error', 'You must specify the direction by which you wish to reorder the byline by, please try again.');
 				}
 			}
-			redirect('/office/bylines/view_team/' . $data['byline_info']['business_card_business_card_group_id'] . '/');
+			redirect('/office/bylines/view_team/' . $data['byline_info']['business_card_business_card_group_id'] . '#Byline' . $byline_id);
 		}
 	}
 
