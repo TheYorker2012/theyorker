@@ -92,28 +92,50 @@ if ($Comment['deleted']) {
 	</div>
 <?php
 	if (!empty($Comment['edits'])) {
-		echo('<ul class="comment_edit">');
-		foreach ($Comment['edits'] as $edit) {
-			echo('<li>');
+		// Only show the full list of edits when link is clicked
+		$compressHistory = count($Comment['edits']) > 1;
+		?><ul id="CommentItem<?php echo($Comment['comment_id']); ?>History" class="comment_edit"><?php
+		$messageXml = null;
+		foreach ($Comment['edits'] as $key => $edit) {
+			?><li><?php
+			$messageXml = '';
 			if (NULL !== $edit['edit_time']) {
-				echo($edit['edit_time'].' - ');
+				$messageXml .= $edit['edit_time'].' - ';
 			}
 			if (isset($edit['action'])) {
 				if ($edit['action'] == 'del') {
-					echo('Deleted');
+					$messageXml .= 'Deleted';
 				} else {
-					echo('Edited');
+					$messageXml .= 'Edited';
 				}
 			} else {
-				echo('Edited');
+				$messageXml .= 'Edited';
 			}
-			echo(' by '.($edit['by_author'] ? 'the author' : 'a moderator'));
+			$messageXml .= ' by '.($edit['by_author'] ? 'the author' : 'a moderator');
 			if (!$edit['by_author'] && isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && isset($edit['name']) && NULL !== $edit['name']) {
-				echo(' ('.xml_escape($edit['name']).')');
+				$messageXml .= ' ('.xml_escape($edit['name']).')';
 			}
-			echo('</li>');
+			echo($messageXml);
+			if ($compressHistory && $key == count($Comment['edits'])-1) {
+				?> (<a onclick="document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>History').style.display='none'; document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>ShortHistory').style.display='';">less</a>)<?php
+			}
+			?></li><?php
 		}
-		echo('</ul>');
+		?></ul><?php
+		if ($compressHistory) {
+			?>
+			<ul id="CommentItem<?php echo($Comment['comment_id']); ?>ShortHistory" class="comment_edit" style="display:none;">
+				<li><?php echo($messageXml); ?>
+				(<a onclick="document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>History').style.display=''; document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>ShortHistory').style.display='none';"><?php echo(count($Comment['edits'])-1); ?> more</a>)
+			</li></ul>
+			<script type="text/javascript">
+			// <![CDATA[
+				document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>History').style.display='none';
+				document.getElementById('CommentItem<?php echo($Comment['comment_id']); ?>ShortHistory').style.display='';
+			// ]]>
+			</script>
+			<?php
+		}
 	}
 	echo($Comment['xhtml']);
 	if (isset($Mode) && ($Mode === 'mod' || $Mode === 'debug') && is_numeric($Comment['comment_id'])) {

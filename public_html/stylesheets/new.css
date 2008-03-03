@@ -638,6 +638,9 @@ ul.comment_edit li {
 	font-style: italic;
 	font-size: x-small;
 }
+ul.comment_edit a {
+	cursor:pointer;
+}
 
 div.comment_policy {
 	text-align:center;
