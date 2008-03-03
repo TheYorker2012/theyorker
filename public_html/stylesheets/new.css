@@ -638,3 +638,18 @@ ul.comment_edit li {
 	font-style: italic;
 	font-size: x-small;
 }
+
+div.comment_policy {
+	text-align:center;
+	float:left;
+	width:50%;
+}
+
+div.comment_policy p {
+	margin:0px;
+}
+
+div.comment_add_buttons {
+	float:left;
+	width: 50%;
+}
