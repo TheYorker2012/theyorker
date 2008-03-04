@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="charity">
+	<title>Our Sponsored Charity - %%name%%</title>
+	<about>Charity page
+
+Title parameters:
+* %%name%% - the name of the charity
+	</about>
+	
+	<property type="wikitext" label="section_funding_text">
+		<about>The target amount template.
+
+Parameters:
+* {{target}} - the target amount for this charity
+		</about>
+		<value>
+'''Target''': £{{target}}{{br}}
+		</value>
+	</property>
+	
+	<property type="text" label="section_funding_title">
+		<about>The title of the funding section with the target amount.</about>
+		<value>funding</value>
+	</property>
+	
+	<property type="wikitext" label="section_preports_showmore">
+		<about>Progress reports show more text</about>
+		<value>There are older reports click here to view all progress reports.</value>
+	</property>
+	
+	<property type="text" label="sidebar_about_title">
+		<about>Title of sidebar section</about>
+		<value>About Choosing Charities</value>
+	</property>
+	<property type="wikitext" label="sidebar_about_text">
+		<about>Sidebar text about how we chose a charity etc.</about>
+		<value>
+The yorker changes its charity on an annual basis.
+If you would like to suggest a charity then please email the editor through the contact link at the top.
+Charities are chosen by the executive committee of the yorker, which comprises of all editors, technical directors and administrators.
+		</value>
+	</property>
+	
+	<property type="text" label="sidebar_help_title">
+		<about>Title of sidebar help section</about>
+		<value>What Can You Do To Help</value>
+	</property>
+	<property type="wikitext" label="sidebar_help_text">
+		<about>Help section text in sidebar</about>
+		<value>
+You can help our appeal directly by fundraising yourself.
+All amounts go toward the grand target and both the yorker and the Press welcome any support.
+Sponsor forms can be found [http://www.yorkpress.co.uk/news/campaigns/guardianangels/ here].
+		</value>
+	</property>
+</page>

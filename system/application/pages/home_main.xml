@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="home_main">
+	<title>Home</title>
+	<keywords>theyorker,yorker,york,university,home,news,timetable,events,directory,reviews</keywords>
+	<about>The home page</about>
+	<property type="wikitext" label="welcome_text">
+		<about>The main text, this isn't actually used.</about>
+		<value lang="en">
+Welcome to the yorker experience! Settle in and make this your own home by clicking here. If you&#039;d like to control your homepage then register right away.
+
+That&#039;s it, it&#039;s all yours. If you&#039;re still lost check out the About Us section for more on what we do and why. Stay with us and help us make this a fantastic home.
+		</value>
+	</property>
+	<property type="text" label="welcome_title">
+		<value>the yorker experience begins...</value>
+	</property>
+</page>
