@@ -95,7 +95,7 @@ class Pages extends Controller
 				if ('custom:' == substr($page['page_codename'],0,7)) {
 					$page['codename'] = substr($page['page_codename'],7);
 					$data['custom'][] = $page;
-				} elseif ($page['page_id'] != 0) {
+				} elseif ($page['page_id'] !== 0) {
 					$page['codename'] = $page['page_codename'];
 					$data['pages'][] = $page;
 				} else {
@@ -177,6 +177,7 @@ class Pages extends Controller
 		$Data['description'] = '';
 		$Data['keywords'] = '';
 		$Data['type_id'] = -1;
+		$Data['override'] = true;
 		$Data['properties'] = array();
 		$Data['page_types'] = $this->_GetPageTypes();
 		
@@ -293,51 +294,46 @@ class Pages extends Controller
 				}
 				$data['description'] = $page_info['description'];
 				$data['keywords']    = $page_info['keywords'];
+				$data['override']    = $page_info['override'];
 				$data['type_id']     = (NULL !== $page_info['type_id'] ? (int)$page_info['type_id'] : -1);
 				$data['properties']  = array();
 				$data['page_types']  = $this->_GetPageTypes();
 			} else {
 				$data['target']      = $Target;
+				$data['override']    = true;
 			}
 			
 			// DefaultProperties has default properties (without id's)
 			// page_info['properties'] has current properties (with id's)
-			$data['properties']  = array();
-			$new_id = 0;
-			$properties = array();
-			foreach ($page_info['properties'] as $property) {
-				if ($property['type'] !== 'wikitext_cache') {
-					$key = $property['label'].'|'.$property['type'];
-					$properties[$key] = array(
-							'status'=> 'prop',
-							'id'    => $property['id'],
-							'label' => $property['label'],
-							'type'  => $property['type'],
-							'text'  => $property['text'],
-						);
-				}
-			}
+			$data['properties']  = $page_info['properties'];
 			foreach ($DefaultProperties as $property) {
-				$key = $property['label'].'|'.$property['type'];
-				if (!array_key_exists($key, $properties)) {
-					$properties[$key] = array(
-							'status'=> 'newprop',
-							'id'    => (--$new_id),
-							'label' => $property['label'],
-							'type'  => $property['type'],
-							'text'  => $property['text'],
-						);
+				if (!isset($data['properties'][$property['label']][$property['type']])) {
+					$property['default'] = $property['text'];
+					$property['override'] = null;
+					$data['properties'][$property['label']][$property['type']] = $property;
+				}
+				else {
+					$theProperty = & $data['properties'][$property['label']][$property['type']];
+					if (null !== $theProperty['default']) {
+						$theProperty['default'] = $property['text'];
+					}
+					unset($theProperty);
 				}
 			}
-			$data['properties'] = array();
-			foreach ($properties as $property) {
-				$data['properties'][$property['id']] = array(
-						'id'    => $property['status'].$property['id'],
-						'label' => $property['label'],
-						'type'  => $property['type'],
-						'text'  => $property['text'],
-					);
+			$idCount = 0;
+			foreach ($data['properties'] as $label => &$labelProperty) {
+				foreach ($labelProperty as $type => &$property) {
+					if (null === $property['override']) {
+						$namespace = 'initprop';
+					}
+					else {
+						$namespace = 'prop';
+					}
+					$property['tagName'] = $namespace.'['.$label.']['.$type.']';
+					$property['tagId'] = $namespace.'-'.$label.'-'.$type;
+				}
 			}
+			ksort($data['properties']);
 			
 			if (!$global_scope) {
 				$input['codename']    = $this->input->post('codename');
@@ -394,69 +390,110 @@ class Pages extends Controller
 					if (FALSE === $save_failed) {
 						// Try and save to db
 						$input['codename'] = $Prefix.$input['codename'];
-						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
+						if ($page_info['override']) {
+							$saveResult = $this->pages_model->SaveSpecificPage($page_code, $input);
+						}
+						else {
+							$saveResult = $this->pages_model->CreatePage($input);
+							$data['override'] = $page_info['override'] = true;
+						}
+						if ($saveResult) {
 							$this->messages->AddMessage('success', 'The page was successfully saved');
 							if ($data['codename'] != $page_code) {
 								redirect($Redirect.$data['codename']);
 							}
 						} else {
-							$this->messages->AddMessage('error','The page could not be saved as an internal error occurred');
+							$this->messages->AddMessage('error','The page could not be saved');
 						}
 					}
 				}
 			}
-			if ($Data['permissions']['prop_edit']) {
+			if ($data['permissions']['prop_edit']) {
 				if ($this->input->post('save_properties') !== FALSE) {
 					$changes = 0;
 					$input = array();
 					$input['properties'] = array();
 					$input['property_add'] = array();
-					$input['property_remove'] = array('wikitext_cache' => array());
+					$input['property_remove'] = array();
 					$ignored_new_props = 0;
-					foreach ($_POST as $key => $value) {
-						if (preg_match('/^prop(\d+)$/',$key,$matches)) {
-							$property_id = (int)$matches[1];
-							if (array_key_exists($property_id, $data['properties'])) {
-								if (array_key_exists('delete-'.$key, $_POST)) {
-									// Property needs deleting
-									$input['property_remove'][$data['properties'][$property_id]['type']][] = $data['properties'][$property_id]['label'];
-									if ($data['properties'][$property_id]['type'] === 'wikitext') {
-										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
-										++$changes;
-									}
+					// Completely new properties.
+					if (isset($_POST['newprop_']) && is_array($_POST['newprop_'])) {
+						foreach ($_POST['newprop_'] as $key => $newprop) {
+							if (is_string($newprop) &&
+								isset($_POST['label-newprop_'][$key]) &&
+								isset($_POST['type-newprop_'][$key]))
+							{
+								$label = $_POST['label-newprop_'][$key];
+								$type  = $_POST['type-newprop_'][$key];
+								if (empty($label) && empty($value)) {
+									++$ignored_new_props;
+								}
+								else {
+									// New property
+									$input['property_add'][$label][$type] = array(
+										'text'	=> $newprop,
+									);
 									++$changes;
-								} elseif ($data['properties'][$property_id]['text'] != $value) {
-									// property has been changed
-									$input['properties'][] = array(
-											'id' => $property_id,
-											'text' => $value,
+								}
+							}
+						}
+					}
+					// Properties for which default values have been specified.
+					if (isset($_POST['initprop']) && is_array($_POST['initprop'])) {
+						foreach ($_POST['initprop'] as $label => $labelProperties) {
+							if (is_array($labelProperties)) {
+								foreach ($labelProperties as $type => $property) {
+									if (!isset($_POST['revert-initprop'][$label][$type])) {
+										// New property
+										$input['property_add'][$label][$type] = array(
+											'text'	=> $property,
 										);
-									++$changes;
-									$data['properties'][$property_id]['text'] = $value;
-									if ($data['properties'][$property_id]['type'] === 'wikitext') {
-										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
 										++$changes;
 									}
 								}
 							}
 						}
-						if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
-							$label_key = 'label-'.$key;
-							$type_key = 'type-' .$key;
-							if (	array_key_exists($label_key, $_POST) &&
-									array_key_exists($type_key, $_POST)) {
-								$label = $_POST[$label_key];
-								$type  = $_POST[$type_key];
-								if (empty($label) && empty($value)) {
-									++$ignored_new_props;
-								} else {
-									// New property
-									$input['property_add'][] = array(
-											'label'	=> $label,
-											'type'	=> $type,
-											'text'	=> $value,
-										);
-									++$changes;
+					}
+					// Existing properties.
+					if (isset($_POST['prop']) && is_array($_POST['prop'])) {
+						foreach ($_POST['prop'] as $label => $labelProperties) {
+							if (is_array($labelProperties)) {
+								foreach ($labelProperties as $type => $value) {
+									if (is_string($value) && isset($data['properties'][$label][$type])) {
+										$data_prop = & $data['properties'][$label][$type];
+										if (isset($_POST['delete-prop'][$label][$type]) ||
+											isset($_POST['revert-prop'][$label][$type]))
+										{
+											// Property needs deleting
+											if (!isset($input['property_remove'][$label][$type])) {
+												++$changes;
+												$input['property_remove'][$label][$type] = true;
+											}
+											if ($type === 'wikitext') {
+												if (!isset($input['property_remove'][$label]['wikitext_cache'])) {
+													$input['property_remove'][$label]['wikitext_cache'] = true;
+													++$changes;
+												}
+											}
+											if (null !== $data_prop['default']) {
+												$data_prop['text'] = $data_prop['default'];
+												$data_prop['override'] = null;
+											}
+										}
+										elseif ($data['properties'][$label][$type]['text'] != $value) {
+											// property has been changed
+											$input['properties'][$label][$type]['text'] = $value;
+											$data_prop['text'] = $value;
+											++$changes;
+											if ($type === 'wikitext') {
+												if (!isset($input['property_remove'][$label]['wikitext_cache'])) {
+													$input['property_remove'][$label]['wikitext_cache'] = true;
+													++$changes;
+												}
+											}
+										}
+										unset($data_prop);
+									}
 								}
 							}
 						}
@@ -502,7 +539,7 @@ class Pages extends Controller
 		$data['target'] = $Target.$InputPageCode;
 		if (FALSE === $this->input->post('confirm_delete')) {
 			// Get information about the page so user is informed before confirming.
-			$information = $this->pages_model->GetSpecificPage($Prefix.$InputPageCode, TRUE);
+			$information = $this->pages_model->GetSpecificPage($Prefix.$InputPageCode, true);
 			if (FALSE === $information) {
 				$this->messages->AddMessage('error','Page \'' . $InputPageCode . '\' not found');
 				$data['confirm'] = FALSE;

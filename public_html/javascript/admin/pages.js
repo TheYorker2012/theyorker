@@ -28,7 +28,7 @@ function AddClone(source, destination) {
 	var newClone = document.getElementById(source).cloneNode(true);
 	newClone.id = '';
 	newClone.style.display = 'block';
-	NestedAppendIdsNames(newClone, count);
+	NestedAppendIdsNames(newClone, '_['+count+']');
 	var Spawn = document.getElementById(destination);
 	Spawn.value = count;
 	Spawn.parentNode.insertBefore(newClone, Spawn);

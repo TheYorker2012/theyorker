@@ -473,18 +473,30 @@ ul.SideTabBar li:hover {
  * CSS used in tab strip at top of the page                    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-div.message_error, div.message_warning, div.message_information, div.message_success {
+div.message_error,
+div.message_warning,
+div.message_information,
+div.message_success,
+div.message_help {
 	width: 100%;
 	float: left;
 	border: 1px solid black;
 	margin-bottom: 0.5em;
 }
 
-div.message_error img, div.message_warning img, div.message_information img, div.message_success img {
+div.message_error img,
+div.message_warning img,
+div.message_information img,
+div.message_success img,
+div.message_help img {
 	float: left;
 }
 
-div.message_error > *, div.message_warning > *, div.message_information > *, div.message_success > * {
+div.message_error > *,
+div.message_warning > *,
+div.message_information > *,
+div.message_success > *,
+div.message_help > * {
 	margin: 0.3em;
 }
 

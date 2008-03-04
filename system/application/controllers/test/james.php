@@ -243,6 +243,82 @@ END:VCALENDAR
 		$this->main_frame->SetContentSimple('test/james-eventsearch',$data);
 		$this->main_frame->Load();
 	}
+	
+	
+	function xmlpage($pagecode)
+	{
+		if (!CheckPermissions('admin')) return;
+		
+		$filename = APPPATH."pages/$pagecode.xml";
+		echo($filename.'<br />');
+		
+		
+		$pageStructure = array(
+			'' => array(
+				'PAGE' => 'PAGE',
+			),
+			'PAGE' => array(
+				'attr' => array(
+					'ID' => true,
+				),
+				'children' => array(
+					'TITLE'         => 'PAGE:TITLE',
+					'HEADING'       => 'PAGE:HEADING',
+					'DESCRIPTION'   => 'PAGE:DESCRIPTION',
+					'KEYWORDS'      => 'PAGE:KEYWORDS',
+					'TYPE'          => 'PAGE:TYPE',
+					'ABOUT'         => 'PAGE:ABOUT',
+					'PERMISSION'    => 'PERMISSION',
+					'PROPERTY'      => array('PROPERTY'),
+				),
+			),
+			'PAGE:TYPE' => array(
+				'attr' => array(
+					'CODE'          => 200,
+				),
+			),
+			'PERMISSION' => array(
+				'attr' => array(
+					'LEVEL'         => false,
+					'TYPE'          => 'write',
+				),
+			),
+			'PROPERTY' => array(
+				'attr' => array(
+					'TYPE'          => false,
+					'LABEL'         => false,
+				),
+				'children' => array(
+					'PERMISSION'    => 'PERMISSION',
+					'ABOUT'         => 'PROPERTY:ABOUT',
+					'VALUE'         => 'PROPERTY:VALUE',
+				),
+			),
+			'PROPERTY:VALUE' => array(
+				'attr' => array(
+					'LANG'          => 'en',
+				),
+			),
+		);
+		
+		$this->load->library('xml_reader');
+		
+		$xml = file_get_contents($filename);
+		$pageData = $this->xml_reader->fromXml($pageStructure, $xml);
+		$recreatedXml = $this->xml_reader->toXml($pageStructure, $pageData);
+		$pageData2 = $this->xml_reader->fromXml($pageStructure, $recreatedXml);
+		
+		
+		echo('<pre>');
+		echo(xml_escape($xml));
+		echo(xml_escape(print_r($pageData,true)));
+		echo(xml_escape($recreatedXml));
+		echo(xml_escape(print_r($pageData2,true)));
+		echo('</pre>');
+		assert('print_r($pageData,true) == print_r($pageData2,true)');
+		
+	}
+	
 }
 
 ?>

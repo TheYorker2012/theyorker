@@ -27,9 +27,14 @@ if ('fbml' === OutputMode()) {
 	
 } else {
 	// Normal html message
-	echo('<div class="message_'.$class.'">'."\n");
-	echo('	<img src="/images/prototype/homepage/'.$class.'.png" alt="'.$class.'" width="30" height="30" />'."\n");
-	echo('	'.$text."\n");
-	echo('</div>'."\n");
+	// This uses a table so that the icon appears in its own column.
+	?>
+	<div class="message_<?php echo($class) ?>">
+		<table border="0"><tr>
+			<td><img src="/images/prototype/homepage/<?php echo($class) ?>.png" alt="<?php echo($class) ?>" width="30" height="30" /></td>
+			<td><?php echo($text); ?></td>
+		</tr></table>
+	</div>
+	<?php
 }
 ?>

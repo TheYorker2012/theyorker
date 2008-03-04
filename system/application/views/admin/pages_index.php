@@ -56,8 +56,13 @@ foreach ($pages as $page) {
 	echo('<a href="/admin/pages/page/edit/'.$escaped_codename.'">');
 	echo('edit');
 	echo('</a>');
-	if ($permissions['page_delete']) {
-		echo(', <a href="/admin/pages/page/delete/'.$escaped_codename.'">delete</a>');
+	if ($permissions['page_delete'] && $page['override']) {
+		if (!$page['default']) {
+			echo(', <a href="/admin/pages/page/delete/'.$escaped_codename.'">delete</a>');
+		}
+		else {
+			echo(', <a href="/admin/pages/page/delete/'.$escaped_codename.'">revert</a>');
+		}
 	}
 	echo(')');
 	echo('<br />');

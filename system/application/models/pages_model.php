@@ -12,10 +12,23 @@ class Pages_model extends Model
 	/// array Information about the page indexed by page code.
 	protected $mPageInfo;
 	
-	/// array[string=>PageProperty] Array of page property's
-	///	indexed by page code (where global scope is FALSE)
-	///	then label
-	///	then type
+	/// array XML Data from page directory xml files indexed by PageCode.
+	protected $mXmlPageInfo;
+	
+	/// string Directory where xml page info is stored.
+	protected $pageDirectory;
+	
+	/**
+	 * array[string=>PageProperty] Array of page property's
+	 *  - indexed by page code (where global scope is FALSE)
+	 *  - then label
+	 *  - then type
+	 *  - 'id' => int,null
+	 *  - 'text' => value to be used
+	 *  - 'default' => value from xml
+	 *  - 'override' => value from database
+	 *  - 'about' => about the property
+	 */
 	protected $mProperties;
 	
 	/// bool Whether to allow inline edits of page properties.
@@ -27,12 +40,61 @@ class Pages_model extends Model
 	/// bool Whether inline edit mode is currently enabled.
 	protected $mInlineEditMode = false;
 	
+	static protected $xmlPageStructure = array(
+		'' => array(
+			'PAGE' => 'PAGE',
+		),
+		'PAGE' => array(
+			'attr' => array(
+				'ID' => true,
+			),
+			'children' => array(
+				'TITLE'         => 'PAGE:TITLE',
+				'HEADING'       => 'PAGE:HEADING',
+				'DESCRIPTION'   => 'PAGE:DESCRIPTION',
+				'KEYWORDS'      => 'PAGE:KEYWORDS',
+				'TYPE'          => 'PAGE:TYPE',
+				'ABOUT'         => 'PAGE:ABOUT',
+				'PERMISSION'    => 'PERMISSION',
+				'PROPERTY'      => array('PROPERTY'),
+			),
+		),
+		'PAGE:TYPE' => array(
+			'attr' => array(
+				'CODE'          => 200,
+			),
+		),
+		'PERMISSION' => array(
+			'attr' => array(
+				'LEVEL'         => false,
+				'TYPE'          => 'write',
+			),
+		),
+		'PROPERTY' => array(
+			'attr' => array(
+				'TYPE'          => false,
+				'LABEL'         => false,
+			),
+			'children' => array(
+				'PERMISSION'    => 'PERMISSION',
+				'ABOUT'         => 'PROPERTY:ABOUT',
+				'VALUE'         => 'PROPERTY:VALUE',
+			),
+		),
+		'PROPERTY:VALUE' => array(
+			'attr' => array(
+				'LANG'          => 'en',
+			),
+		),
+	);
+	
 	/// Primary constructor.
 	function __construct()
 	{
 		parent::Model();
 		$this->mPageCode = FALSE;
 		$this->mPageInfo = array();
+		$this->mXmlPageInfo = array();
 		$this->mProperties = array();
 		$inline_edit_allowed_in_office_types = array('High'=>true,'Admin'=>true);
 		$this->mInlineEditAllowed = $this->user_auth->isLoggedIn &&
@@ -44,6 +106,7 @@ class Pages_model extends Model
 				unset($_SESSION['inline_edit']);
 			}
 		}
+		$this->pageDirectory = APPPATH.'pages/';
 	}
 	
 	/// Get whether inline edit mode is on.
@@ -217,7 +280,7 @@ class Pages_model extends Model
 	 */
 	function GetPropertyWikitext($PropertyLabel, $PageCode = FALSE, $DefaultToNull = false, $Scope = array())
 	{
-		if ($this->mInlineEditMode || FALSE === ($cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache'))) {
+		if (true || $this->mInlineEditMode || FALSE === ($cache = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext_cache'))) {
 			// No cache, see if the wikitext is there
 			$wikitext = $this->GetRawProperty($PageCode, $PropertyLabel, 'wikitext');
 			if (FALSE === $wikitext) {
@@ -452,7 +515,7 @@ class Pages_model extends Model
 	 *	- array Property information (if property exists)
 	 *	- FALSE (if property doesn't exist)
 	 */
-	function GetRawProperty($PageCode, $PropertyLabel, $PropertyTypeName = FALSE)
+	function GetRawProperty($PageCode, $PropertyLabel, $PropertyTypeName)
 	{
 		// Higher level function, doesn't care about what extra gets fetched
 		
@@ -468,16 +531,15 @@ class Pages_model extends Model
 		}
 		
 		// Get the properties associated with the page
-		if (!array_key_exists($PageCode, $this->mProperties)) {
+		if (!isset($this->mProperties[$PageCode])) {
 			// Page hasn't got any properties
 			// get them now into $this->mProperties[$PageCode]
-			$this->GetProperties($PageCode, $PropertyLabel);
+			$this->GetProperties($PageCode);
 		}
 		
-		if (	array_key_exists($PageCode, $this->mProperties) &&
-				array_key_exists($PropertyLabel, $this->mProperties[$PageCode])) {
+		if (isset($this->mProperties[$PageCode][$PropertyLabel])) {
 			$property = $this->mProperties[$PageCode][$PropertyLabel];
-			if (FALSE !== $PropertyTypeName && array_key_exists($PropertyTypeName, $property)) {
+			if (isset($property[$PropertyTypeName])) {
 				return $property[$PropertyTypeName];
 			} else {
 				return FALSE;
@@ -533,24 +595,19 @@ class Pages_model extends Model
 	 * @param $MatchLike
 	 *	bool Whether to use SQL LIKE instead of =
 	 */
-	protected function GetProperties($PageCode, $LabelPattern = FALSE, $MatchLike = FALSE)
+	protected function GetProperties($PageCode)
 	{
 		/// @pre (@a $PageCode === -1) OR (is_string(@a $PageCode)))
 		Assert('$PageCode === -1 || is_string($PageCode)');
 		$sql_where = array();
 		if (is_string($PageCode)) {
 			// Specific page
-			$sql_where[] = 'pages.page_codename=\''.$PageCode.'\'';
+			$sql_where[] = 'pages.page_codename='.$this->db->escape($PageCode);
 			
 		} else {
 			// Global
 			$sql_where[] = 'page_properties.page_property_page_id IS NULL';
 			
-			/*if ($MatchLike) {
-				$sql_where[] = 'page_properties.page_property_label LIKE \''.$LabelPattern.'\'';
-			} else {
-				$sql_where[] = 'page_properties.page_property_label=\''.$LabelPattern.'\'';
-			}*/
 		}
 		$sql =
 			'SELECT
@@ -571,6 +628,9 @@ class Pages_model extends Model
 		
 		$results = $query->result_array();
 		
+		// Clear this page's properties ready for reload
+		$this->mProperties[$PageCode] = array();
+		
 		// Go through properties, sorting into $this->mProperties by label
 		foreach ($results as $property) {
 			$property_label = $property['label'];
@@ -586,9 +646,59 @@ class Pages_model extends Model
 				$this->mProperties[$page_code][$property_label] = array();
 			}
 			$this->mProperties[$page_code][$property_label][$property['type']] = array(
-					'text' => $property['text'],
-				);
+				'default' => null,
+				'override' => $property['text'],
+				'text' => $property['text'],
+				'about' => null,
+			);
 		}
+		
+		$xmlData = & $this->RetrieveXmlPage($PageCode);
+		if ($xmlData !== null && isset($xmlData['PAGE']['PROPERTY'])) {
+			foreach ($xmlData['PAGE']['PROPERTY'] as $property) {
+				if (isset($property['VALUE'])) {
+					$property_label = $property['LABEL'];
+					// There are several forms the value may be stored
+					if (is_string($property['VALUE'])) {
+						// plain string
+						$property_value = $property['VALUE'];
+					}
+					elseif (isset($property['VALUE'][0])) {
+						// array (with attributes)
+						$property_value = $property['VALUE'][0];
+					}
+					else {
+						// not specified
+						$property_value = '';
+					}
+					// Also get the about string
+					if (isset($property['ABOUT']) && is_string($property['ABOUT'])) {
+						$property_about = $property['ABOUT'];
+					}
+					else {
+						$property_about = null;
+					}
+					// ensure page exists in properties array
+					if (!isset($this->mProperties[$PageCode])) {
+						$this->mProperties[$PageCode] = array();
+					}
+					$pageProps = & $this->mProperties[$PageCode];
+					// ensure label exists
+					if (!isset($pageProps[$property_label])) {
+						$pageProps[$property_label] = array();
+					}
+					$pagePropsProp = & $pageProps[$property_label];
+					// set extra data
+					$pagePropsProp[$property['TYPE']]['default'] = $property_value;
+					$pagePropsProp[$property['TYPE']]['about'] = $property_about;
+					if (!isset($pagePropsProp[$property['TYPE']]['override'])) {
+						$pagePropsProp[$property['TYPE']]['override'] = null;
+						$pagePropsProp[$property['TYPE']]['text'] = $property_value;
+					}
+				}
+			}
+		}
+		
 	}
 	
 	/// Insert a property
@@ -751,6 +861,7 @@ class Pages_model extends Model
 	 */
 	function GetAllPages()
 	{
+		// From database
 		$this->db->from('pages');
 		$this->db->select(
 			'pages.page_id,'.
@@ -764,7 +875,41 @@ class Pages_model extends Model
 		$this->db->orderby('pages.page_codename');
 		
 		$query = $this->db->get();
-		return $query->result_array();
+		$results = $query->result_array();
+		
+		// Index
+		$indexedResults = array();
+		foreach ($results as $result) {
+			$result['default'] = false;
+			$result['override'] = true;
+			$indexedResults[$result['page_codename']] = $result;
+		}
+		
+		// From XML
+		$unsorted = false;
+		$pageDirectory = opendir($this->pageDirectory);
+		if (false !== $pageDirectory) {
+			while ($entryName = readdir($pageDirectory)) {
+				if (substr($entryName, -4) == '.xml') {
+					$pageCode = substr($entryName, 0, -4);
+					if (!isset($indexedResults[$pageCode])) {
+						$indexedResults[$pageCode] = array(
+							'page_id' => null,
+							'page_codename' => $pageCode,
+							'override' => false,
+						);
+						$unsorted = true;
+					}
+					$indexedResults[$pageCode]['default'] = true;
+				}
+			}
+			closedir($pageDirectory);
+		}
+		
+		// Resort if necessary
+		ksort($indexedResults);
+		
+		return $indexedResults;
 	}
 	
 	/// Get all page types.
@@ -796,23 +941,26 @@ class Pages_model extends Model
 	 * @return array of information about the page or FALSE on failure.
 	 * @post (@a PageCode === FALSE) => (result != FALSE)
 	 */
-	function GetSpecificPage($PageCode, $Properties = FALSE)
+	function GetSpecificPage($PageCode, $Properties = FALSE, $UseXml = true)
 	{
 		$this->db->trans_start();
 		
 		$global_scope = (FALSE === $PageCode);
 		if ($global_scope) {
+			$PageCode = -1;
+		}
+		if ($global_scope) {
 			$Properties = TRUE;
 		} else {
 			$this->db->select(
-				' pages.page_id,'.
-				' pages.page_codename,'.
-				' pages.page_head_title,'.
-				' pages.page_body_title,'.
-				' pages.page_description,'.
-				' pages.page_keywords, '.
-				' pages.page_page_type_id, '.
-				' page_types.page_type_http_header '
+				' pages.page_id						AS page_id,'.
+				' pages.page_codename				AS codename,'.
+				' pages.page_head_title				AS head_title,'.
+				' pages.page_body_title				AS body_title,'.
+				' pages.page_description			AS description,'.
+				' pages.page_keywords				AS keywords,'.
+				' pages.page_page_type_id			AS type_id,'.
+				' page_types.page_type_http_header	AS http_header'
 			);
 			$this->db->from('pages');
 			$this->db->where(array('pages.page_codename' => $PageCode));
@@ -821,55 +969,93 @@ class Pages_model extends Model
 			$results = $query->result_array();
 		}
 		if ($global_scope || count($results) == 1) {
-			$data = array();
 			if (!$global_scope) {
-				$result = $results[0];
-				$data['page_id']      = $result['page_id'];
-				$data['codename']     = $result['page_codename'];
-				$data['head_title']   = $result['page_head_title'];
-				$data['body_title']   = $result['page_body_title'];
-				$data['description']  = $result['page_description'];
-				$data['keywords']     = $result['page_keywords'];
-				$data['type_id']      = $result['page_page_type_id'];
-				$data['http_header']  = $result['page_type_http_header'];
+				$data = $results[0];
 			}
-			if ($Properties) {
-				$sql =
-					'SELECT'.
-					' page_properties.page_property_id,'.
-					' page_properties.page_property_label,'.
-					' page_properties.page_property_text,'.
-					' property_types.property_type_name '.
-					'FROM page_properties '.
-					'INNER JOIN property_types '.
-					' ON page_properties.page_property_property_type_id = property_types.property_type_id '.
-					'WHERE page_properties.page_property_page_id ';
-				if ($global_scope) {
-					$sql .= ' IS NULL';
-					$query_params = array();
-				} else {
-					$sql .= ' = ?';
-					$query_params = array($data['page_id']);
-				}
-				$sql .= ' ORDER BY page_properties.page_property_label, page_properties.page_property_label';
-				$query = $this->db->query($sql,$query_params);
-				$property_results = $query->result_array();
-				$data['properties'] = array();
-				foreach ($property_results as $property) {
-					$data['properties'][] = array(
-						'id'    => $property['page_property_id'],
-						'label' => $property['page_property_label'],
-						'text'  => $property['page_property_text'],
-						'type'  => $property['property_type_name'],
-					);
-				}
+			else {
+				$data = array();
 			}
+			$data['override'] = true;
+			$data['default']  = false;
 		} else {
 			$data = FALSE;
 		}
 		$this->db->trans_complete();
 		
+		if ($UseXml) {
+			$xmlData = & $this->RetrieveXmlPage($PageCode);
+			if ($xmlData === null || !isset($xmlData['PAGE'])) {
+				$UseXml = false;
+			}
+			else {
+				assert('$xmlData[\'PAGE\'][\'ID\'] == $PageCode');
+			}
+		}
+		
+		if ($UseXml && !is_array($data)) {
+			$data = array();
+			$data['codename']    = $PageCode;
+			$data['description'] = null;
+			$data['keywords']    = null;
+			$data['body_title']  = null;
+			$data['http_header'] = null;
+			$data['type_id']     = null;
+			$data['properties']  = array();
+			$data['override']    = false;
+		}
+		
+		if ($Properties && is_array($data)) {
+			$this->GetProperties($PageCode);
+			$data['properties'] = $this->mProperties[$PageCode];
+		}
+		
+		// Get anything else from XML if available
+		if ($UseXml) {
+			$xmlPageInfo = &$xmlData['PAGE'];
+			
+			if (isset($xmlPageInfo['TITLE']) && empty($data['head_title'])) {
+				$data['head_title'] = $xmlPageInfo['TITLE'];
+			}
+			if (isset($xmlPageInfo['HEADING']) && empty($data['body_title'])) {
+				$data['body_title'] = $xmlPageInfo['HEADING'];
+			}
+			if (isset($xmlPageInfo['DESCRIPTION']) && empty($data['description'])) {
+				$data['description'] = $xmlPageInfo['DESCRIPTION'];
+			}
+			if (isset($xmlPageInfo['KEYWORDS']) && empty($data['keywords'])) {
+				$data['keywords'] = $xmlPageInfo['KEYWORDS'];
+			}
+			if (isset($xmlPageInfo['TYPE']['CODE']) && empty($data['type_id'])) {
+				$data['type_id'] = $xmlPageInfo['TYPE']['CODE'];
+			}
+			if (isset($xmlPageInfo['TYPE'][0]) && empty($data['http_header'])) {
+				$data['http_header'] = $xmlPageInfo['TYPE'][0];
+			}
+			$data['default']     = true;
+		}
+		
 		return $data;
+	}
+	
+	/// Retrieve XML page data into the model.
+	function RetrieveXmlPage($PageCode)
+	{
+		if (false === strpos($PageCode, '/')) {
+			if (!isset($this->mXmlPageInfo[$PageCode])) {
+				$filename = $this->pageDirectory.$PageCode.'.xml';
+				if (file_exists($filename)) {
+					$this->load->library('xml_reader');
+					$this->mXmlPageInfo[$PageCode] = $this->xml_reader->fromXml(self::$xmlPageStructure, file_get_contents($filename));
+				}
+				else {
+					return NULL;
+				}
+			}
+			return $this->mXmlPageInfo[$PageCode];
+		}
+		else {
+			return NULL;
+		}
 	}
 	
 	/// Save a specific page
@@ -880,8 +1066,9 @@ class Pages_model extends Model
 	 */
 	function SaveSpecificPage($PageCode, $Data)
 	{
-		$this->db->trans_start();
+		/// @todo Create page if it doesn't exist
 		
+		$success = true;
 		$global_scope = (FALSE === $PageCode);
 		if (!$global_scope) {
 			if (array_key_exists('type_id', $Data) && $Data['type_id'] < 0)
@@ -916,101 +1103,106 @@ class Pages_model extends Model
 				$save_data[] = $PageCode;
 				
 				$this->db->query($sql,$save_data);
+				$success = $success && ($this->db->affected_rows() > 0);
 			}
 		}
-		if (array_key_exists('properties',$Data)) {
-			foreach ($Data['properties'] as $property) {
-				$save_data = array();
-				$sql = 'UPDATE page_properties ';
-				if (!$global_scope) {
-					$sql .= 'INNER JOIN pages
-						ON page_properties.page_property_page_id=pages.page_id ';
-				}
-				$sql .= 'SET page_properties.page_property_text=?
-					WHERE page_properties.page_property_id=? AND ';
-				$save_data[] = $property['text'];
-				$save_data[] = $property['id'];
-				if (!$global_scope) {
-					$sql .= 'pages.page_codename=?;';
-					$save_data[] = $PageCode;
-				} else {
-					$sql .= 'page_properties.page_property_page_id IS NULL';
-				}
-				
-				$this->db->query($sql,$save_data);
-			}
-		}
-		if (array_key_exists('property_add',$Data)) {
-			foreach ($Data['property_add'] as $property) {
-				$text = $property['text'];
-				
-				$save_data = array();
-				$sql = '
-					INSERT INTO page_properties (
-						page_property_property_type_id,
-						page_property_page_id,
-						page_property_label,
-						page_property_text)
-					SELECT
-						property_types.property_type_id,';
-				if (!$global_scope) {
-					$sql .= 'pages.page_id,';
-				} else {
-					$sql .= 'NULL,';
-				}
-				$sql .= '?,	? FROM ';
-				$save_data[] = $property['label'];
-				$save_data[] = $text;
-				if (!$global_scope)
-					$sql .= 'pages,';
-				$sql .= 'property_types WHERE ';
-				if (!$global_scope) {
-					$sql .= 'pages.page_codename=? AND ';
-					$save_data[] = $PageCode;
-				}
-				$sql .= 'property_types.property_type_name=?
-					ON DUPLICATE KEY UPDATE page_property_text=?';
-				$save_data[] = $property['type'];
-				$save_data[] = $text;
-				
-				$query = $this->db->query($sql, $save_data);
-			}
-		}
-		if (array_key_exists('property_remove',$Data)) {
-			foreach ($Data['property_remove'] as $property_type => $labels) {
-				foreach ($labels as $label) {
+		if (isset($Data['properties'])) {
+			foreach ($Data['properties'] as $label => $labelProperties) {
+				foreach ($labelProperties as $type => $property) {
 					$save_data = array();
-					$sql = 'DELETE FROM page_properties
-						USING ';
-					if (!$global_scope)
-						$sql .= 'pages, ';
-					$sql .= 'page_properties, property_types
-WHERE page_properties.page_property_property_type_id=property_types.property_type_id
-	AND property_types.property_type_name=?
-	AND page_properties.page_property_label=?';
-					$save_data[] = $property_type;
-					$save_data[] = $label;
+					$sql = 'UPDATE page_properties
+							INNER JOIN property_types ON property_type_id = page_property_property_type_id
+					';
 					if (!$global_scope) {
-						$sql .= '
-	AND page_properties.page_property_page_id=pages.page_id
-	AND pages.page_codename=?';
+						$sql .= 'INNER JOIN pages
+							ON page_properties.page_property_page_id=pages.page_id ';
+					}
+					$sql .= 'SET page_properties.page_property_text=?
+						WHERE	page_properties.page_property_label=?
+						AND		property_type_name=?';
+					$save_data[] = $property['text'];
+					$save_data[] = $label;
+					$save_data[] = $type;
+					if (!$global_scope) {
+						$sql .= ' AND pages.page_codename=?';
 						$save_data[] = $PageCode;
 					} else {
-						$sql .= '
-	AND page_properties.page_property_page_id IS NULL';
+						$sql .= ' AND page_properties.page_property_page_id IS NULL';
 					}
 					
 					$this->db->query($sql,$save_data);
 				}
 			}
 		}
-		$this->db->trans_complete();
-		
-		if ($this->db->trans_status() === FALSE) {
-			return TRUE;
-		} else {
-			return TRUE;
+		if (isset($Data['property_add'])) {
+			foreach ($Data['property_add'] as $label => $labelProperties) {
+				foreach ($labelProperties as $type => $property) {
+					$text = $property['text'];
+					
+					$save_data = array();
+					$sql = '
+						INSERT INTO page_properties (
+							page_property_property_type_id,
+							page_property_page_id,
+							page_property_label,
+							page_property_text)
+						SELECT
+							property_types.property_type_id,';
+					if (!$global_scope) {
+						$sql .= 'pages.page_id,';
+					} else {
+						$sql .= 'NULL,';
+					}
+					$sql .= '?,	? FROM ';
+					$save_data[] = $label;
+					$save_data[] = $text;
+					if (!$global_scope)
+						$sql .= 'pages,';
+					$sql .= 'property_types WHERE ';
+					if (!$global_scope) {
+						$sql .= 'pages.page_codename=? AND ';
+						$save_data[] = $PageCode;
+					}
+					$sql .= 'property_types.property_type_name=?
+						ON DUPLICATE KEY UPDATE page_property_text=?';
+					$save_data[] = $type;
+					$save_data[] = $text;
+					
+					$query = $this->db->query($sql, $save_data);
+				}
+			}
 		}
+		if (isset($Data['property_remove'])) {
+			foreach ($Data['property_remove'] as $label => $labelProperties) {
+				foreach ($labelProperties as $type => $property) {
+					$delete_data = array();
+					$sql = 'DELETE FROM page_properties
+						USING ';
+					if (!$global_scope) {
+						$sql .= 'pages, ';
+					}
+					$sql .= 'page_properties, property_types
+WHERE page_properties.page_property_property_type_id = property_types.property_type_id
+	AND property_types.property_type_name = ?
+	AND page_properties.page_property_label = ?';
+					$delete_data[] = $type;
+					$delete_data[] = $label;
+					if (!$global_scope) {
+						$sql .= '
+	AND page_properties.page_property_page_id=pages.page_id
+	AND pages.page_codename=?';
+						$delete_data[] = $PageCode;
+					} else {
+						$sql .= '
+	AND page_properties.page_property_page_id IS NULL';
+					}
+					
+					$this->db->query($sql,$delete_data);
+				}
+			}
+		}
+		
+		return $success;
 	}
 	
 	
