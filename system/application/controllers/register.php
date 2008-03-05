@@ -21,7 +21,7 @@ class Register extends Controller {
 	/**
 	 *	@brief	Determines which function is used depending on url
 	 */
-	function _remap($method = 'subscriptions')
+	function _remap($method = 'index')
 	{
 		if (method_exists($this, $method)) {
 			$this->$method();
