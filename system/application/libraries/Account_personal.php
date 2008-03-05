@@ -31,7 +31,7 @@ class Account_personal extends FramesFrame
 		// Validation rules
 		// Username field only appears in registration form
 		if ($in_wizard) {
-			$rules['username'] = 'trim|required|is_string';
+			$rules['username'] = 'trim|required';
 			$fields['username'] = 'username';
 		}
 		$rules['fname'] = 'trim|required|alpha';
@@ -75,28 +75,30 @@ class Account_personal extends FramesFrame
 				// User entity registration validation
 				$username = $CI->validation->username;
 				$valid = false;
-				$email_postfix = $this->config->Item('username_email_postfix');
-				if (preg_match('/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i', $username) == 1) {
-					// We have something that is probably an e-mail address
-					if (substr($username, - strlen($email_postfix)) == $email_postfix) {
-						// This is a york e-mail address, trim the @york.ac.uk from the end
-						$username = substr($username, 0, strlen($username) - strlen($email_postfix));
-					} else {
-						$email = $username;
-						$valid = true;
+				$email_postfix = $CI->config->Item('username_email_postfix');
+				if (is_string($username)) {
+					if (preg_match('/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i', $username) == 1) {
+						// We have something that is probably an e-mail address
+						if (substr($username, - strlen($email_postfix)) == $email_postfix) {
+							// This is a york e-mail address, trim the @york.ac.uk from the end
+							$username = substr($username, 0, strlen($username) - strlen($email_postfix));
+						} else {
+							$email = $username;
+							$valid = true;
+						}
 					}
-				}
-				if (!$valid) {
-					// Not an e-mail address
-					if (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) == 1) {
-						// This is a university login
-						$dnslookuptest = $username . '.imap.york.ac.uk';
-						$valid = (count(dns_get_record($dnslookuptest)) != 0);
-						if (!$valid)
-							array_push($errors, 'The username does not exist. Please enter a valid YorkWeb username.');
-						$email = $username.$this->config->Item('username_email_postfix');
-					} else {
-						array_push($errors, 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456, or an e-mail address.');
+					if (!$valid) {
+						// Not an e-mail address
+						if (preg_match('/^[a-z]{2,4}[0-9]{3}$/i', $username) == 1) {
+							// This is a university login
+							$dnslookuptest = $username . '.imap.york.ac.uk';
+							$valid = (count(dns_get_record($dnslookuptest)) != 0);
+							if (!$valid)
+								array_push($errors, 'The username does not exist. Please enter a valid YorkWeb username.');
+							$email = $username.$CI->config->Item('username_email_postfix');
+						} else {
+							array_push($errors, 'The username does not appear to be of the correct form. Please enter a username, e.g. abc456, or an e-mail address.');
+						}
 					}
 				}
 			}
@@ -106,11 +108,11 @@ class Account_personal extends FramesFrame
 				$user_id = $CI->user_auth->entityId;
 				if ($in_wizard) {
 					try {
-						$user_id = $this->user_auth->register($username, $email);
-						$this->messages->AddMessage('success', 'An e-mail has been sent to '.$email.'. Please click on the link within it to activate your account.');
+						$user_id = $CI->user_auth->register($username, $email);
+						$CI->messages->AddMessage('success', 'An e-mail has been sent to '.$email.'. Please click on the link within it to activate your account.');
 					} catch (Exception $e) {
 						$registration_failed = true;
-						$this->messages->AddMessage('error', $e->getMessage());
+						$CI->messages->AddMessage('error', $e->getMessage());
 					}
 				}
 				if (!isset($registration_failed)) {
