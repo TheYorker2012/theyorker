@@ -85,7 +85,7 @@ if ($weather_forecast != null) {
 
 <div id="MainColumn">
 
-	<div style="float:left;width:614px;margin-bottom:0.5em;text-align:center;">
+	<div id="picoftheday" style="float:left;width:614px;margin-bottom:0.5em;text-align:center;">
 		<img src="/images/prototype/new_home/picoftheday.jpg" alt="Central Hall by Chris Travis" title="Central Hall by Chris Travis" />
 	</div>
 
@@ -107,6 +107,25 @@ if ($weather_forecast != null) {
 			<p style="padding-top:0;margin-top:0;" class="More">First York have raised prices on the number 4 route from the University to York city centre to &pound;1.80 for a single and &pound;2.90 for a return journey.</p>
 		</div>
 		<div style="clear:both;"></div>
+	</div>
+
+   	<div style="float:left;width:614px;margin-bottom:0.5em;">
+		<div style="width:302px;float:left;text-align:center;margin-right:6px;position:relative;border:1px #20C1F0 solid;">
+			<embed type="application/x-shockwave-flash" src="/flash/mediaplayer.swf" id="mp1" name="mp1" quality="high" allowscriptaccess="samedomain" allowfullscreen="true" flashvars="height=248&amp;width=302&amp;file=http://static.theyorker.co.uk/media/videocasts/08_york90_spr07.flv&amp;id=http://static.theyorker.co.uk/media/videocasts/08_york90_spr07.flv&amp;callback=analytics&amp;backcolor=0xFF6A00&amp;frontcolor=0xFFFFFF&amp;lightcolor=0x000000&amp;screencolor=0xFFFFFF&amp;logo=/images/prototype/news/video_overlay_icon.png&amp;overstretch=true&amp;showdownload=true" height="248" width="302">
+		</div>
+		<div style="width:302px;float:left;text-align:center;position:relative;border:1px #20C1F0 solid;">
+			<img src="/images/prototype/new_home/roses2.jpg" alt="Roses" title="Roses" />
+			<div style="font-size:14pt">
+				<span style="color:#3B8538">184</span> vs <span style="color:#EC1B2E">12</span>
+			</div>
+			<table border="0" style="width:100%" cellpadding="0" cellspacing="0">
+			<tr><td style="border-top:1px #20C1F0 solid">Badminton Mens 1sts:</td><td style="border-top:1px #20C1F0 solid"><b>York 5</b> vs 2 Lancaster</td></tr>
+			<tr><td style="border-top:1px #20C1F0 solid">Football Mens 2nds:</td><td style="border-top:1px #20C1F0 solid"><b>York 3</b> vs 0 Lancaster</td></tr>
+			<tr><td style="border-top:1px #20C1F0 solid">Netball Mixed 1sts:</td><td style="border-top:1px #20C1F0 solid">York 1 vs <b>2 Lancaster</b></td></tr>
+			<tr><td style="border-top:1px #20C1F0 solid">Futsal 1sts:</td><td style="border-top:1px #20C1F0 solid"><b>York 2</b> vs 1 Lancaster</td></tr>
+			<tr><td style="border-top:1px #20C1F0 solid">Rugby Mens 3rds:</td><td style="border-top:1px #20C1F0 solid">York 1 vs <b>3 Lancaster</b></td></tr>
+			</table>
+		</div>
 	</div>
 
 	<div style="float:left;width:614px;margin-bottom:0.5em;">

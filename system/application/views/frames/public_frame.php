@@ -72,9 +72,20 @@ if (isset($medium_type)) { ?>
 			<a href="/faq/">FAQs</a>
 		</div>
 		<div id="TopBannerPictures">
-			<img src="/images/prototype/new_home/man1.png" alt="News" />
-			<img src="/images/prototype/new_home/man2.png" alt="Calendar" />
-			<img src="/images/prototype/new_home/man3.png" alt="Reviews" />
+			<div id="bannertop1" onclick="document.getElementById('bannertop2').style.display='block';document.getElementById('bannertop1').style.display='none';">
+				<img src="/images/prototype/new_home/man1.png" alt="News" />
+				<img src="/images/prototype/new_home/man2.png" alt="Calendar" />
+				<img src="/images/prototype/new_home/man3.png" alt="Reviews" />
+			</div>
+			<div id="bannertop2" style="display:none"  onclick="document.getElementById('bannertop3').style.display='block';document.getElementById('bannertop2').style.display='none';">
+				<img src="/images/prototype/new_home/banner_ad.jpg" alt="Banner Advert" style="margin-top:15px" />
+			</div>
+			<div id="bannertop3" style="display:none"  onclick="document.getElementById('bannertop4').style.display='block';document.getElementById('bannertop3').style.display='none';document.getElementById('picoftheday').style.display='none';">
+				<img src="/images/prototype/new_home/banner_ad2.jpg" alt="Banner Advert" style="margin-top:15px" />
+			</div>
+			<div id="bannertop4" style="display:none"  onclick="document.getElementById('bannertop1').style.display='block';document.getElementById('bannertop4').style.display='none';document.getElementById('picoftheday').style.display='block';">
+				<img src="/images/prototype/new_home/new_homepage_banner.png" alt="Banner Advert" />
+			</div>
 		</div>
 		<div style="clear:both"></div>
 	</div>
