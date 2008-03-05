@@ -147,23 +147,25 @@ class Account_personal extends FramesFrame
 		} else {
 			// If there were no errors then this is the first time the form has been loaded
 			// so load default/preset values from db
-			$userInfo = $CI->prefs_model->getUserInfo($CI->user_auth->entityId);
-			$CI->validation->fname = $userInfo['user_firstname'];
-			$CI->validation->sname = $userInfo['user_surname'];
-			$CI->validation->nick = $userInfo['user_nickname'];
-			$CI->validation->gender = $userInfo['user_gender'];
-			$CI->validation->college = $userInfo['user_college'];
-			$CI->validation->year = $userInfo['user_enrolled_year'];
-			$CI->validation->time = $userInfo['user_time_format'];
-			$CI->validation->facebook = $userInfo['user_facebook_enabled'];
-			$CI->validation->storepassword = $userInfo['user_store_password'];
-			/*
-			if ($userInfo['user_email'] != '') {
+			if (is_numeric($CI->user_auth->entityId)) {
+				$userInfo = $CI->prefs_model->getUserInfo($CI->user_auth->entityId);
+				$CI->validation->fname = $userInfo['user_firstname'];
+				$CI->validation->sname = $userInfo['user_surname'];
+				$CI->validation->nick = $userInfo['user_nickname'];
+				$CI->validation->gender = $userInfo['user_gender'];
+				$CI->validation->college = $userInfo['user_college'];
+				$CI->validation->year = $userInfo['user_enrolled_year'];
+				$CI->validation->time = $userInfo['user_time_format'];
 				$CI->validation->facebook = $userInfo['user_facebook_enabled'];
-			} else {
-				$CI->validation->email = $CI->user_auth->username . '@york.ac.uk';
+				$CI->validation->storepassword = $userInfo['user_store_password'];
+				/*
+				if ($userInfo['user_email'] != '') {
+					$CI->validation->facebook = $userInfo['user_facebook_enabled'];
+				} else {
+					$CI->validation->email = $CI->user_auth->username . '@york.ac.uk';
+				}
+				*/
 			}
-			*/
 		}
 
 		$this->SetData('colleges', $CI->prefs_model->GetColleges());
