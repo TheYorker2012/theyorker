@@ -34,6 +34,9 @@ class Register extends Controller {
 	{
 		if (!CheckPermissions('public')) return;
 
+		if (is_numeric($this->user_auth->entityId))
+			redirect('/account/personal');
+
 		$this->load->library('account_personal');
 
 		/// Get changeable page content
@@ -48,7 +51,7 @@ class Register extends Controller {
 
 		/// Set up the main frame
 		$this->main_frame->SetTitleParameters(
-			array('section' => 'General')
+			array('section' => 'Registration')
 		);
 		/// Load the main frame view (which will load the content view)
 		$this->main_frame->SetContentSimple('account/preferences', $data);
