@@ -32,12 +32,13 @@ class Register extends Controller {
 
 	function index()
 	{
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('public')) return;
 
 		$this->load->library('account_personal');
 
 		/// Get changeable page content
 		$this->pages_model->SetPageCode('preferences');
+		$data['email_prompt'] = $this->pages_model->GetPropertyWikitext('email_prompt');
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		$data['bigcontent'] = $this->account_personal;
