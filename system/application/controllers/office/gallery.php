@@ -16,13 +16,14 @@ class Gallery extends Controller {
 		parent::Controller();
 		$this->load->helper(array('url', 'form', 'entity'));
 		$this->load->library('image');
+		$this->load->model('photos_model');
 	}
 
 	function index() {
 		if (!CheckPermissions('office')) return;
 
 		$this->pages_model->SetPageCode('office_gallery');
-		$count = $this->db->get('photos')->num_rows();
+		$count = $this->photos_model->GetPhotoCount();
 		if ($count > PHOTOS_PERPAGE) {
 			$this->load->library('pagination');
 

@@ -5,11 +5,6 @@
  *		@author	Chris Travis (cdt502 - ctravis@gmail.com)
  */
 
-//TODO - prevent errors if no data present -> DONE?
-//		 comment correctly
-//		 article_breaking?
-//		 optimisation
-
 class Photos_model extends Model
 {
 
@@ -18,6 +13,18 @@ class Photos_model extends Model
 		parent::Model();
 	}
 
+
+	function GetPhotoCount ()
+	{
+		$sql = 'SELECT		COUNT(*) as photo_count
+				FROM		photos';
+		$query = $this->db->query($sql);
+		if ($query->num_rows() > 0) {
+			$result = $query->row();
+			return $result->photo_count;
+		}
+		return 0;
+	}
 
 	function GetMyRequests($user_id)
 	{
