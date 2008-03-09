@@ -66,8 +66,25 @@ class Feeds extends Controller {
 
 	function _feed_podcasts()
 	{
-		/// @TODO: dg512 to add podcast RSS feed here
 		header('Content-type: application/rss+xml');
+		$data = $this->_standardfeed();
+		$data['rss_title'] = 'Artscast';
+		$data['rss_desc'] = 'The Yorker\'s Weekly Artscasts.';
+		$data['rss_category'] = 'Arts';
+		$data['rss_itunes_summary'] = 'Yorker Arts';
+		$data['rss_link'] = 'http://www.theyorker.co.uk/arts/';
+		$data['rss_itunes_categories'] = array('Arts','Music');
+		$data['itunes_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-itunes.jpg';
+		$data['itunes_author'] = 'The Yorker Arts Team';
+		$data['itunes_owner'] = 'The Yorker - Artscast';
+		$data['itunes_owner_email'] = 'podcasts@theyorker.co.uk';
+		$this->load->model('podcasts_model');
+		$data['rss_items'] = $this->podcasts_model->GetPodcastList();
+		if(isset($data['rss_items'][0])){$data['rss_pubdate'] = $data['rss_items'][0]['date'];}
+		foreach ($data['rss_items'] as &$item)
+		{
+			$item['type']='audio/mpeg';
+		}		
 		$this->load->view('feeds/podcasts', $data);
 	}
 

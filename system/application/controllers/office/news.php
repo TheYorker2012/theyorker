@@ -950,10 +950,10 @@ class News extends Controller
 	function _getMediaFiles()
 	{
 		$xajax_response = new xajaxResponse();
-		$this->load->model('static_ftp_model');
+		$this->load->model('static_model');
 		$exts = array('flv', 'mp3');
 		$options = array();
-		foreach ($this->static_ftp_model->GetDirectoryListing($this->config->item('static_local_path') . '/media', '', $exts) as $option) {
+		foreach ($this->static_model->GetDirectoryListing($this->config->item('static_local_path') . '/media', '', $exts) as $option) {
 			$options[] = array(
 				$option,
 				$this->config->item('static_web_address') . '/media' . $option

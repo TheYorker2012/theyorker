@@ -28,10 +28,6 @@ class Feedback extends Controller {
 		$article_heading = $this->input->post('a_articleheading');
 		$antispam = $this->input->post('email');
 
-		if($article_heading) {
-			$feedback_text = 'Article: '.$article_heading."\n\n".$feedback_text;
-		}
-
 		$include_browser_info = ($this->input->post('a_browser_info') == '1');
 
 		$this->load->library('user_agent');
@@ -49,15 +45,19 @@ class Feedback extends Controller {
 		}
 
 		if (FALSE !== $feedback_text) {
-			if ($antispam === '' && !preg_match('/viagra|phentermine|orgasm|<\/a>|<a\s+href/i', $feedback_text)) {
-				$this->feedback_model->AddNewFeedback($page_title,
-					$author_name, $author_email,
-					$rating, $feedback_text, 'http://'.$_SERVER['SERVER_NAME'].$redirect_path);
-	
-					$to = $this->pages_model->GetPropertyText('feedback_email', true);
-					$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
-					$subject = "The Yorker: Site Feedback";
-					$message =
+			if ($feedback_text != '') {
+				if($article_heading) {
+					$feedback_text = 'Article: '.$article_heading."\n\n".$feedback_text;
+				}
+				if ($antispam === '' && !preg_match('/viagra|phentermine|orgasm|<\/a>|<a\s+href/i', $feedback_text)) {
+					$this->feedback_model->AddNewFeedback($page_title,
+						$author_name, $author_email,
+						$rating, $feedback_text, 'http://'.$_SERVER['SERVER_NAME'].$redirect_path);
+		
+						$to = $this->pages_model->GetPropertyText('feedback_email', true);
+						$from = (strpos($author_email, '@') ? $author_email : 'noreply@theyorker.co.uk');
+						$subject = "The Yorker: Site Feedback";
+						$message =
 'Name: '.$author_name.'
 Email: '.$author_email.'
 ';
@@ -79,19 +79,23 @@ Rating: '.$rating.'
 '.$feedback_text.'
 ';
 
-				$this->load->helper('yorkermail');
-				try {
-					yorkermail($to,$subject,$message,$from);
-					$this->messages->AddMessage('success',
-						'You have successfully left feedback, thanks for your thoughts.' );
-				} catch (Exception $e) {
+					$this->load->helper('yorkermail');
+					try {
+						yorkermail($to,$subject,$message,$from);
+						$this->messages->AddMessage('success',
+							'You have successfully left feedback, thanks for your thoughts.' );
+					} catch (Exception $e) {
+						$this->messages->AddMessage('error',
+							'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond. '.$e->getMessage() );
+					}
+				} else {
 					$this->messages->AddMessage('error',
-						'You have successfully left feedback, thanks for your thoughts. However there was a problem sending this feedback by e-mail, so we might take a while to respond. '.$e->getMessage() );
+						'Your feedback looks like spam. Please do not include any HTML code.'
+					);
 				}
 			} else {
 				$this->messages->AddMessage('error',
-					'Your feedback looks like spam. Please do not include any HTML code.'
-				);
+					'Please ensure that you have enterred some feedback text before submitting.');
 			}
 		} else {
 			$this->messages->AddMessage('error',

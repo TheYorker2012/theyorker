@@ -7,6 +7,14 @@
 	<form id="general" action="<?php echo($form_action); ?>" method="post">
 		<div class="BlueBox">
 			<h2>About You</h2>
+<?php if ($in_wizard) { ?>
+			<p><?php echo($email_prompt); ?></p>
+			<fieldset>
+				<label for="username">Username: </label>
+				<input type="text" id="username" name="username" value="<?php echo(xml_escape($this->validation->username)); ?>" />
+				<br />
+			</fieldset>
+<?php } ?>
 			<p>Please enter your name:</p>
 			<fieldset>
 				<label for="fname">Forename: </label>

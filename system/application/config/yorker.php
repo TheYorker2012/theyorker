@@ -20,6 +20,7 @@ $config['pr_officer_email_address'] = 'publicrelations@theyorker.co.uk';
 $config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 
 $config['rss_feed_stats'] = false;
+$config['enable_adsense'] = false;
 
 $config['comments'] = array(
 	// Who has permission to edit a comment

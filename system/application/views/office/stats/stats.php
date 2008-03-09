@@ -5,6 +5,7 @@
 	</div>
 	<h2>Registrations</h2>
 	<div class="Entry">
+		<img src="<?php echo xml_escape($signups_img_url); ?>" alt="Recent Signups Cumulative Graph" />
 		<ul>
 			<li><?php echo xml_escape($registrations['day']); ?> in the last day</li>
 			<li><?php echo xml_escape($registrations['week']); ?> in the last week</li>
@@ -13,6 +14,9 @@
 			<li><?php echo xml_escape($registrations['academic_year']); ?> so far this accademic year</li>
 		</ul>
 	</div>
+	<?php
+	//Access levels is being left out for the moment as the admin count isn't implimented and the other figures are a little misleading. This needs work.
+	/*
 	<h2>Access Levels</h2>
 	<div class="Entry">
 		<ul>
@@ -21,13 +25,12 @@
 			<li><?php echo xml_escape($access['vip']); ?> people have vip access</li>
 		</ul>
 	</div>
+	*/
+	?>
 	<h2>User Links</h2>
 	<div class="Entry">
-		<ul>
-			<li>On average users have <?php echo xml_escape(round($member_links['average']));?> links</li>
-			<li><?php echo xml_escape(round(($member_links['average_official']/$member_links['average'])*100)); ?>% on average are official links</li>
-			<li><?php echo xml_escape(round(($member_links['average_unofficial']/$member_links['average'])*100)); ?>% on average are custom links</li>
-		</ul>
+		<img src="<?php echo xml_escape($links_bar_chart_img); ?>" alt="User Links Bar Chart" /><br />
+		<img src="<?php echo xml_escape($official_links_pie_img); ?>" alt="UnOfficial/Official Links Ratio Pie Chart" />
 	</div>
 </div>
 <div id="MainColumn">
@@ -141,6 +144,9 @@
 	</div>
 	<div class="BlueBox">
 		<h2>Comments</h2>
+		<div style="text-align: center;">
+			<img src="<?php echo xml_escape($comments_img_url); ?>" alt="Total Comments Posted Graph" />
+		</div>
 		<h3>Top commenters</h3>
 		<div class="ArticleBox">
 			<table>

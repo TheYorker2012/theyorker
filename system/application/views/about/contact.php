@@ -16,7 +16,7 @@
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Contact Us</h2>
-		<form class="form" action="/contact/sendmail" method="post">
+		<form class="form" action="/about/sendmail" method="post">
 			<fieldset>
 				<label for="recipient"> Contact: </label>
 				<select id="recipient" name="recipient">

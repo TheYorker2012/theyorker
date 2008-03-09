@@ -21,7 +21,7 @@ class Register extends Controller {
 	/**
 	 *	@brief	Determines which function is used depending on url
 	 */
-	function _remap($method = 'subscriptions')
+	function _remap($method = 'index')
 	{
 		if (method_exists($this, $method)) {
 			$this->$method();
@@ -32,12 +32,16 @@ class Register extends Controller {
 
 	function index()
 	{
-		if (!CheckPermissions('student')) return;
+		if (!CheckPermissions('public')) return;
+
+		if (is_numeric($this->user_auth->entityId))
+			redirect('/account/personal');
 
 		$this->load->library('account_personal');
 
 		/// Get changeable page content
 		$this->pages_model->SetPageCode('preferences');
+		$data['email_prompt'] = $this->pages_model->GetPropertyWikitext('email_prompt');
 		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		$data['bigcontent'] = $this->account_personal;
@@ -47,7 +51,7 @@ class Register extends Controller {
 
 		/// Set up the main frame
 		$this->main_frame->SetTitleParameters(
-			array('section' => 'General')
+			array('section' => 'Registration')
 		);
 		/// Load the main frame view (which will load the content view)
 		$this->main_frame->SetContentSimple('account/preferences', $data);

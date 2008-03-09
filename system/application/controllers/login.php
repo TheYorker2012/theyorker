@@ -37,7 +37,7 @@ class Login extends Controller
 
 			if ($password == $password2) {
 				$this->user_auth->setPassword($password);
-				redirect('/register');
+				redirect('/account');
 			} else {
 				get_instance()->messages->AddMessage('error','<p>Passwords do not match.</p>');
 			}
