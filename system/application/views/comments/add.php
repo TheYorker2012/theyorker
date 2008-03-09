@@ -18,11 +18,14 @@
  * @param $ShowCancelButton bool Whether to show a cancelation option.
  * @param $AlreadyExists bool Whether the comment already exists.
  * @param $WarningMessageXml string Warning message.
+ * @param $AgreePolicyMessageXml string Policy acceptance message.
+ * @param $UserAgreedPolicy bool Whether the user has accepted the comment policy.
+ * @param $PolicyNotAgreedXml null,string Policy hasn't been accepted message if needed.
  */
 
 ?>
-<a id="comment_preview"></a>
 <div class="BlueBox" id="SectionCommentAdd">
+	<a id="comment_preview"></a>
 	<?php
 	if (!$LoggedIn) {
 		echo('<h2>Add Comment</h2>');
@@ -105,6 +108,17 @@
 		<h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2>
 		<form class="form" id="CommentAdd" method="post" action="<?php echo($FormTarget); ?>">
 			<fieldset>
+				<?php
+				if (null !== $PolicyNotAgreedXml) {
+					$CI->load->view(
+						'general/message',
+						array(
+							'class' => 'information',
+							'text' => $PolicyNotAgreedXml,
+						)
+					);
+				}
+				?>
 				<?php /*
 				<label for="CommentAddIdentity">Identity</label>
 				<select name="CommentAddIdentity">
@@ -133,8 +147,14 @@
 			</fieldset>
 			
 			<fieldset>
+				<input name="CommentAddPolicyAgree" type="checkbox" <?php if ($UserAgreedPolicy) { ?> checked="checked" <?php } ?> />
+				<?php echo($AgreePolicyMessageXml); ?>
+			</fieldset>
+			
+			<fieldset>
 				<div class="comment_policy">
-					<p><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></p>
+					<p><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">
+						Insert Smiley</a></p>
 					<?php echo($WarningMessageXml); ?>
 				</div>
 				

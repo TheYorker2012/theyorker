@@ -812,6 +812,41 @@ class Comments_model extends model
 		$Wikitext = $this->comments_parser->parse($Wikitext."\n",'comment');
 		return $Wikitext;
 	}
+	
+	/// Get whether the user has already accepted the comment's policy.
+	/**
+	 * @return bool Whether the user has already accepted the comments policy.
+	 */
+	function GetUserAcceptedPolicy()
+	{
+		$query = $this->db->query(
+			'SELECT		user_agreed_comment_policy AS agreed_comment_policy'.
+			'	FROM	users'.
+			'	WHERE	user_entity_id = ?',
+			$this->user_auth->entityId
+		);
+		if ($query->num_rows()) {
+			$results = $query->result_array();
+			return $results[0]['agreed_comment_policy'];
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/// Set whether the user has already accepted the comment's policy.
+	/**
+	 * @param $accepted bool Whether the user has accepted the comments policy.
+	 */
+	function SetUserAcceptedPolicy($accepted)
+	{
+		$query = $this->db->query(
+			'UPDATE		users'.
+			'	SET		user_agreed_comment_policy = ?'.
+			'	WHERE	user_entity_id = ?',
+			array($accepted, $this->user_auth->entityId)
+		);
+	}
 }
 
 ?>

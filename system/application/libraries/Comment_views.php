@@ -140,6 +140,7 @@ class CommentViewAdd extends FramesView
 		$this->SetData('Preview', NULL);
 		$this->SetData('ShowCancelButton', false);
 		$this->SetData('AlreadyExists', false);
+		$this->SetData('PolicyNotAgreedXml', null);
 	}
 	
 	/// Set an existing comment to edit.
@@ -208,7 +209,13 @@ class CommentViewAdd extends FramesView
 			} elseif (isset($this->mExistingComment) && $wikitext == $this->mExistingComment['wikitext']) {
 				$CI->messages->AddMessage('error', 'Your comment has not changed');
 			} else {
-				$has_preview = (FALSE === $CI->input->post('CommentAddSubmit'));
+				$has_preview   = (false === $CI->input->post('CommentAddSubmit'));
+				$agreeToPolicy = (false !== $CI->input->post('CommentAddPolicyAgree'));
+				if (!$agreeToPolicy) {
+					$has_preview = true;
+					$this->SetData('PolicyNotAgreedXml', $CI->pages_model->GetPropertyWikitext('policy_not_agreed','_comments'));
+				}
+				$CI->comments_model->SetUserAcceptedPolicy($agreeToPolicy);
 				if ($has_preview) {
 					//if (is_int($identity)) {
 						if (isset($preview)) {
@@ -310,8 +317,11 @@ class CommentViewAdd extends FramesView
 				$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_moderator', '_comments');
 			}
 		}
+		$agree_policy_xml = $CI->pages_model->GetPropertyWikitext('policy_agree', '_comments');
 		
 		$this->SetData('WarningMessageXml', $warning_xml);
+		$this->SetData('AgreePolicyMessageXml', $agree_policy_xml);
+		$this->SetData('UserAgreedPolicy', $CI->comments_model->GetUserAcceptedPolicy());
 		
 		parent::Load();
 	}
