@@ -466,6 +466,9 @@ class News extends Controller
 							foreach ($this->input->post('r_reporter') as $reporter) {
 								$byline = $this->article_model->GetReporterByline($reporter);
 								$this->requests_model->AddUserToRequest($article_id, $reporter, $this->user_auth->entityId, ((isset($byline['id'])) ? $byline['id'] : NULL));
+								if ($data['live_content'] !== NULL) {
+									$this->requests_model->AcceptRequest($article_id, $reporter);
+								}
 							}
 						}
 						$this->main_frame->AddMessage('success','Request details saved.');
