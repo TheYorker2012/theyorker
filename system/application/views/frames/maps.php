@@ -333,7 +333,7 @@ if ($editable) {
 			var x = tile.x - 65150;
 			var y = tile.y - 42114;
 			if (unitiles[x + '.' + y] === undefined) {
-				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/large/large-' + x + '.' + y + '.png';
+				return 'http://www.theyorker.co.uk/images/maps/data2/large/large-' + x + '.' + y + '.png';
 			}
 		}
 		return G_NORMAL_MAP.getTileLayers()[0].getTileUrl(tile, zoom);
@@ -345,20 +345,20 @@ if ($editable) {
 				var x = tile.x - 65150;
 				var y = tile.y - 42114;
 				if (unitiles[x + '.' + y] === 'part') {
-					return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/large/large-' + x + '.' + y + '.png';
+					return 'http://www.theyorker.co.uk/images/maps/data2/large/large-' + x + '.' + y + '.png';
 				}
 			}
 		} else if (zoom === 16) {
 			if (tile.x >= 32575 && tile.y >= 21057 && tile.x <= 32578 && tile.y <= 21060) {
 				var x = tile.x - 32575;
 				var y = tile.y - 21057;
-				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/small/small-' + x + '.' + y + '.png';
+				return 'http://www.theyorker.co.uk/images/maps/data2/small/small-' + x + '.' + y + '.png';
 			}
 		} else if (zoom === 15) {
 			if (tile.x >= 16287 && tile.y >= 10528 && tile.x <= 16289 && tile.y <= 10530) {
 				var x = tile.x - 16287;
 				var y = tile.y - 10528;
-				return 'http://ado.is-a-geek.net/xmldemo/gmap/data2/xsmall/xsmall-' + x + '.' + y + '.png';
+				return 'http://www.theyorker.co.uk/images/maps/data2/xsmall/xsmall-' + x + '.' + y + '.png';
 			}
 		}
 		return '';
