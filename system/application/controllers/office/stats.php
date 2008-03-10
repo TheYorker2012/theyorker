@@ -12,6 +12,78 @@ class Stats extends controller
 		parent::controller();
 		$this->load->model('stats_model');
 	}
+	//Creates Google Charts Extended Codes for Numbers between $min - $min
+	//This function scales the numbers then converts them into a code for the url
+	private function googlechart_extended_encode($numbers,$min,$max)
+	{
+		$encoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
+		$result_string='';
+		foreach ($numbers as $number) {
+			//Number needs to be translated to a relative position to the maximum number storable ($min+4095)
+			$rel_number = round((($number-$min) / ($max-$min))*4095);
+			$first = floor($rel_number / 64);
+			$second = $rel_number % 64;
+			$result_string .= $encoding[$first].$encoding[$second];
+		}
+		return $result_string;
+	}
+	private function simple_google_dayslinechart($title,$data_array,$x_size,$y_size,$days,$axis_range_rounding)
+	{
+		//Create Google Charts Line Chart showing change over $days Days
+		$chart_max = ceil($data_array[0]/$axis_range_rounding)*$axis_range_rounding;//go to the next $axis_range_rounding multiple
+		$chart_min = floor(end($data_array)/$axis_range_rounding)*$axis_range_rounding;//go to the previous $axis_range_rounding multiple
+		//Encode the days, they are already in the right format of oldest first
+		$encoded_days = $this->googlechart_extended_encode($data_array,$chart_min,$chart_max);
+		$url  ='http://chart.apis.google.com/chart?';
+		$url .='chtt='.$title;//Chart Title
+		$url .='&chs='.$x_size.'x'.$y_size;//Chart size
+		$url .='&cht=lc';//Chart type (Line Chart)
+		$url .='&chxt=x,y';//Include Y and X axis
+		$url .='&chxr=0,0,'.$days.'|1,'.$chart_min.','.$chart_max;//Chart Ranges
+		$url .='&chxl=0:|'.$days.'+days+ago|Today';//Chart Labels
+		$url .='&chd=e:'.$encoded_days;//encoded data
+		return $url;
+	}
+	
+	//Data array is an array of values. Must be in range 0-100
+	private function simple_google_pie_chart($title,$data_array,$label_array,$x_size,$y_size)
+	{
+		//Create Google Charts PieChart
+		$encoded_data = $this->googlechart_extended_encode($data_array,0,100);
+		$url  ='http://chart.apis.google.com/chart?';
+		$url .='chtt='.$title;//Chart Title
+		$url .='&chs='.$x_size.'x'.$y_size;//Chart size
+		$url .='&cht=p3';//Chart type (Pie Chart)
+		$url .='&chd=e:'.$encoded_data;//encoded data
+		$url .='&chl='.implode("|",$label_array);//Chart labels
+		return $url;
+	}
+	
+	private function simple_google_bar_chart($title,$data_array,$label_array,$x_size,$y_size,$axis_range_rounding)
+	{
+		$lowest = $data_array[0];
+		$highest = $data_array[0];
+		foreach($data_array as $data){
+			if($data < $lowest) $lowest=$data;
+			if($data > $highest) $highest=$data;
+		}
+		
+		//Create Google Charts Bar Chart
+		$chart_max = ceil($highest/$axis_range_rounding)*$axis_range_rounding;//go to the next $axis_range_rounding multiple
+		$chart_min = floor($lowest/$axis_range_rounding)*$axis_range_rounding;//go to the previous $axis_range_rounding multiple
+		
+		$encoded_data = $this->googlechart_extended_encode($data_array,$chart_min,$chart_max);
+		$url  ='http://chart.apis.google.com/chart?';
+		$url .='chtt='.$title;//Chart Title
+		$url .='&chs='.$x_size.'x'.$y_size;//Chart size
+		$url .='&cht=bhs';//Chart type (Bar Chart)
+		$url .='&chxt=x,y';
+		$url .='&chd=e:'.$encoded_data;//encoded data
+		$url .='&chxr=0,'.$chart_min.','.$chart_max;//Chart Ranges
+		$url .='&chxl=1:|'.implode("|",$label_array);//Chart labels
+		return $url;
+	}
+	
 	function index ()
 	{
 		/// Make sure users have necessary permissions to view this page
@@ -30,7 +102,6 @@ class Stats extends controller
 		$data['member_colleges'] = $this->stats_model->GetMembersColleges();//array of(`college_name`,`college_id`,`member_count`)
 		$data['member_enrollments'] = $this->stats_model->GetMembersEnrollmentYears();//array of (`enrollment_year`,`member_count`)
 		$data['member_times'] = $this->stats_model->GetMembersTimeFormats();//(`12_hour`,`24_hour`)
-		$data['member_links'] = $this->stats_model->GetAverageNumberOfUserLinks();//(`average`,`average_official`,`average_unofficial`)
 		//subscriptions
 		$data['subscription_average'] = round($this->stats_model->GetAverageNumberOfSubscriptions());//float
 		$data['most_subscribed_orgs'] = $this->stats_model->GetTopSubscribedOrgs(10);// (`organisation_id`,`organisation_name`,`subscription_count`)
@@ -41,7 +112,9 @@ class Stats extends controller
 		$data['comment_top_articles'] = $this->stats_model->GetTopCommentedArticles(10);
 		
 		//access levels
-		$data['access'] = $this->stats_model->GetNumberOfMembersWithAccess();
+		//@note this is being left out untill its improved, the figures like people with admin access isnt used and is confusing.
+		//$data['access'] = $this->stats_model->GetNumberOfMembersWithAccess();
+		
 		//signups
 		if((int)date('m')<10){
 			//its before the start of a new accademic year so use last year
@@ -63,6 +136,26 @@ class Stats extends controller
 			//so far this accademic year (start of october)
 			'academic_year'	=> $this->stats_model->GetNumberOfSignUps($acc_year.'-10-00 00:00:00')
 		);
+		
+		///////Create Graph of Registrations over the last X days.
+		$days=30;
+		$registrations = $this->stats_model->GetCumulativeSignUpsArrayOverLastDays($days,2);
+		$data['signups_img_url'] = $this->simple_google_dayslinechart('Total+Registrations',$registrations,200,125,$days,20);
+		
+		//Create graph of Comments posted over the last X days.
+		$days=30;
+		$comments = $this->stats_model->GetCumulativeCommentsArrayOverLastDays($days,2);
+		$data['comments_img_url'] = $this->simple_google_dayslinechart('Total+Comments+Posted',$comments,300,200,$days,20);
+		
+		
+		$links_data = $this->stats_model->GetNumberOfUsersWithLinksByGroups(6);
+		$links_labels = array('0','1','2','3','4','5','6 plus');
+		$data['links_bar_chart_img'] = $this->simple_google_bar_chart('User+Link+Numbers',$links_data,$links_labels,200,240,10);
+		
+		$links_percent = $this->stats_model->GetLinksPercentages();
+		$pie_data = array($links_percent['official'],$links_percent['unofficial']);
+		$pie_labels = array('Official','Unofficial');
+		$data['official_links_pie_img'] = $this->simple_google_pie_chart('Link+Types',$pie_data,$pie_labels,200,90);
 		
 		//Load view and send data
 		$this->main_frame->SetContentSimple('office/stats/stats', $data);

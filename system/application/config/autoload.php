@@ -77,6 +77,6 @@ $autoload['plugin'] = array();
 |
 */
 
-$autoload['config'] = array('yorker');
+$autoload['config'] = array('yorker', 'yorker_override');
 
 ?>

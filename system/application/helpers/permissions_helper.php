@@ -51,7 +51,8 @@ function PermissionsSubset($Subset, $Superset)
 		'vip'			=> array('student'	=> TRUE),
 		'office'		=> array('student'	=> TRUE),
 		'pr'			=> array('office'	=> TRUE),
-		'editor'		=> array('pr'		=> TRUE),
+		'moderator'		=> array('pr'		=> TRUE),
+		'editor'		=> array('moderator'=> TRUE),
 		'admin'			=> array('editor'	=> TRUE),
 	);
 

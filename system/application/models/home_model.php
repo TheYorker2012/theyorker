@@ -125,6 +125,7 @@ class Home_Model extends Model {
 			$type = $query->row()->type;
 			$link = $query->row()->link;
 			return array(
+					'id'=>$id,
 					'image'=>$this->image->getImage($id,$type),
 					'link'=>$link,
 					);

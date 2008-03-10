@@ -307,7 +307,7 @@ class User_auth extends model {
 		}
 	}
 
-	public function resetpassword($username, $email) {
+	public function register($username, $email) {
 		$sql = 'SELECT entity_id, entity_username, entity_password,
 				entity_salt, user_nickname, user_email
 			FROM entities
@@ -325,8 +325,62 @@ class User_auth extends model {
 			$entityId = $this->db->insert_id();
 			$sql = 'INSERT INTO users (user_entity_id, user_email) VALUES (?, ?)';
 			$query = $this->db->query($sql, array($entityId, $email));
-			$new = true;
 			$nick = '';
+		} else {
+			throw new Exception('This username already exists!');
+		}
+
+		$sql = 'UPDATE
+				entities
+			SET
+				entity_pwreset = ?
+			WHERE
+				entity_id = ?';
+
+		$query = $this->db->query($sql, array($random, $entityId));
+		if ($this->db->affected_rows() == 0) {
+			throw new Exception('Internal error: failed setting passkey');
+		}
+
+		$from = $this->pages_model->GetPropertyText('system_email', true);
+		$subject = $this->pages_model->GetPropertyText('user_password_new_email_subject', true);
+		$body = $this->pages_model->GetPropertyText('user_password_new_email_body', true);
+		$body = str_replace(
+			'%%link%%',
+			'http://www.theyorker.co.uk/login/newpass/'.
+				urlencode($username).'/'.$random,
+			$body
+		);
+		$body = str_replace(
+			'%%nickname%%',
+			$nick,
+			$body
+		);
+
+		$this->load->helper('yorkermail');
+		try {
+			yorkermail($email,$subject,$body,$from);
+		} catch (Exception $e) {
+			throw new Exception('There was a problem sending the confirmation e-mail.');
+		}
+
+		return $entityId;
+	}
+
+	public function resetpassword($username, $email) {
+		$sql = 'SELECT entity_id, entity_username, entity_password,
+				entity_salt, user_nickname, user_email
+			FROM entities
+			INNER JOIN users ON
+				user_entity_id = entity_id
+			WHERE entity_username = ?';
+
+		$query = $this->db->query($sql, array($username));
+		$random = $this->getRandomData();
+
+		// See if we have an entity with this username
+		if ($query->num_rows() == 0) {
+			throw new Exception('Specfied user does not exist!');
 		} else {
 			$row = $query->row();
 			$entityId = $row->entity_id;
@@ -348,18 +402,8 @@ class User_auth extends model {
 		}
 
 		$from = $this->pages_model->GetPropertyText('system_email', true);
-		$subject = $this->pages_model->GetPropertyText(
-			$new ?
-				'user_password_new_email_subject' :
-				'user_password_reset_email_subject',
-			true
-		);
-		$body = $this->pages_model->GetPropertyText(
-			$new ?
-				'user_password_new_email_body' :
-				'user_password_reset_email_body',
-			true
-		);
+		$subject = $this->pages_model->GetPropertyText('user_password_reset_email_subject', true);
+		$body = $this->pages_model->GetPropertyText('user_password_reset_email_body', true);
 		$body = str_replace(
 			'%%link%%',
 			'http://www.theyorker.co.uk/login/newpass/'.
@@ -377,9 +421,8 @@ class User_auth extends model {
 			yorkermail($email,$subject,$body,$from);
 			return true;
 		} catch (Exception $e) {
-			//Do nothing
+			throw new Exception('There was a problem sending the confirmation e-mail.');
 		}
-
 		return false;
 	}
 

@@ -290,11 +290,28 @@ class CommentViewAdd extends FramesView
 		$this->SetData('Thread', $this->mThread);
 		$this->SetData('LoggedIn', $logged_in);
 		$this->SetData('LoginUrl', $login_url.'#comments');
-		$this->SetData('FormTarget', $CI->uri->uri_string().'#comment_preview');
+		$this->SetData('FormTarget', $CI->uri->uri_string().'#SectionCommentAdd');
 		$this->SetData('Identities', $CI->comments_model->GetAvailableIdentities());
 		
 		$this->SetData('ReportUrlPrefix', '/comments/report/');
 		$this->SetData('ReportUrlPostfix', $CI->uri->uri_string());
+		
+		// New comment
+		if (NULL === $this->mExistingComment) {
+			$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_add', '_comments');
+		}
+		else {
+			// Editing own comment
+			if ($this->mExistingComment['owned']) {
+				$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_edit', '_comments');
+			}
+			// Editing another's comment
+			else {
+				$warning_xml = $CI->pages_model->GetPropertyWikitext('policy_warning_moderator', '_comments');
+			}
+		}
+		
+		$this->SetData('WarningMessageXml', $warning_xml);
 		
 		parent::Load();
 	}
@@ -309,13 +326,19 @@ class CommentViewList extends FramesView
 	protected $mComments = array();
 	
 	/// int Maximum number of comments per page.
-	protected $mMaxPerPage = 20;
+	protected $mMaxPerPage;
 	protected $mPageLinkSpan = 2;
 	
 	/// Default constructor.
 	function __construct()
 	{
 		parent::__construct('templates/list');
+		
+		$config = get_instance()->config->item('comments');
+		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
+		$this->SetData('Threaded', true);
+		
+		$this->mMaxPerPage = $config['max_per_page'];
 	}
 	
 	/// Set the number of a comment to show the page of.
@@ -324,14 +347,10 @@ class CommentViewList extends FramesView
 		$this->mIncludedComment = $Included;
 	}
 	
-	/// Set the maximum number of comments per page.
-	/**
-	 * @param $MaxPerPage int Maximum comments displayed per page.
-	 */
-	function SetMaxPerPage($MaxPerPage = 0)
+	/// Indicate that this list is not a thread list.
+	function SetUnthreaded()
 	{
-		assert('is_int($MaxPerPage)');
-		$this->mMaxPerPage = $MaxPerPage;
+		$this->SetData('Threaded', false);
 	}
 	
 	/// Set the numer of pages to link to either side of the current page.
@@ -340,7 +359,7 @@ class CommentViewList extends FramesView
 	 */
 	function SetPageLinkSpan($PageLinkSpan = 0)
 	{
-		assert('is_int($MaxPerPage)');
+		assert('is_int($PageLinkSpan)');
 		$this->mPageLinkSpan = $PageLinkSpan;
 	}
 	
@@ -401,6 +420,8 @@ class CommentViewList extends FramesView
 		$this->SetData('IncludedIndex', $this->mIncludedComment);
 		$this->SetData('PageUrlPrefix', $CI->comment_views->GetUriPrefix());
 		$this->SetData('PageUrlPostfix', $CI->comment_views->GetUriPostfix() .'#comments');
+		$this->SetData('ThreadUrlPrefix', '/comments/thread/');
+		$this->SetData('ThreadUrlPostfix', '');
 		// for subviews (comments)
 		foreach (array(	'Report'	=> 'report',
 						'Edit'		=> 'edit',
@@ -438,7 +459,7 @@ class Comment_views
 	 * @param $CommentInclude int Number of a comment to include.
 	 * @return FramesView,NULL View class or NULL if unsuccessful
 	 */
-	function CreateStandard($ThreadId, $CommentInclude = NULL, $MaxPerPage = 20)
+	function CreateStandard($ThreadId, $CommentInclude = NULL)
 	{
 		// get comments + thread
 		$CI = & get_instance();
@@ -469,7 +490,6 @@ class Comment_views
 		$comment_view_list->SetComments($comments);
 		
 		// set which page of comments to show
-		$comment_view_list->SetMaxPerPage($MaxPerPage);
 		$comment_view_list->SetIncludedComment($CommentInclude);
 
 		// overall layout
@@ -482,13 +502,14 @@ class Comment_views
 		return new FramesView('comments/standard', $data);
 	}
 
-	function GetLatestComments($MaxComments = 10, $MaxPerPage = 20)
+	function GetLatestComments($MaxComments = 10)
 	{
 		$CI = & get_instance();
 		$comments = $CI->comments_model->GetLatestComments($MaxComments);
+		$config = $CI->config->item('comments');
 		$data = array(
 			'comments'			=>	$comments,
-			'comments_per_page'	=>	$MaxPerPage
+			'comments_per_page'	=>	$config['max_per_page'],
 		);
 		return new FramesView('comments/latest_box', $data);
 	}

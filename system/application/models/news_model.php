@@ -196,7 +196,8 @@ class News_model extends Model
 	**/
 	function getArticleTypeInformation ($type)
 	{
-		$sql = 'SELECT content_type_codename AS codename,
+		$sql = 'SELECT content_type_id AS id,
+				 content_type_codename AS codename,
 				 content_type_has_children AS has_children,
 				 content_type_parent_content_type_id AS parent_id,
 				 content_type_name AS name,

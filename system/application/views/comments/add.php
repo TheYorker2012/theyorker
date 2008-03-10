@@ -17,10 +17,11 @@
  * @param $DefaultContent string Default wikitext.
  * @param $ShowCancelButton bool Whether to show a cancelation option.
  * @param $AlreadyExists bool Whether the comment already exists.
+ * @param $WarningMessageXml string Warning message.
  */
 
 ?>
-<a id="comment_preview"></a>
+
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {
@@ -126,19 +127,24 @@
 					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo(' checked="checked"'); ?> />
 				<?php } ?>
 
+				<p>
 				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
-
-				<label style="text-align:center">
-					<a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a>
-					<br />
-					<a href="/pages/commentspolicy">Comments Policy</a>
-				</label>
-
-				<?php if ($ShowCancelButton) { ?>
-				<input type="submit" class="button" name="CommentAddCancel"  value="Cancel" />
-				<?php } ?>
-				<input type="submit" class="button" name="CommentAddPreview" value="Preview" />
-				<input type="submit" class="button" name="CommentAddSubmit" value="Submit" />
+				</p>
+			</fieldset>
+			
+			<fieldset>
+				<div class="comment_policy">
+					<p><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></p>
+					<?php echo($WarningMessageXml); ?>
+				</div>
+				
+				<div class="comment_add_buttons">
+					<?php if ($ShowCancelButton) { ?>
+					<input type="submit" class="button" name="CommentAddCancel"  value="Cancel" />
+					<?php } ?>
+					<input type="submit" class="button" name="CommentAddPreview" value="Preview" />
+					<input type="submit" class="button" name="CommentAddSubmit" value="Submit" />
+				</div>
 			</fieldset>
 		</form>
 	<?php } ?>

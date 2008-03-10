@@ -13,11 +13,23 @@ $config['static_ftp_username'] = 'staticftp';
 $config['static_ftp_password'] = 'yrkrsttc';
 $config['podcast_rss_feed'] = 'static.theyorker.co.uk/podcasts/rss.xml';
 
+$config['no_reply_email_address'] = 'no-reply@theyorker.co.uk';
 $config['editor_email_address'] = 'editor@theyorker.co.uk';
 $config['webmaster_email_address'] = 'webmaster@theyorker.co.uk';
 $config['pr_officer_email_address'] = 'publicrelations@theyorker.co.uk';
 $config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 
-$config['comments_edit'] = true;
+$config['rss_feed_stats'] = false;
+$config['enable_adsense'] = false;
+
+$config['comments'] = array(
+	// Who has permission to edit a comment
+	'edit'  => array(
+		'author'    => true,
+		'moderator' => true,
+	),
+	// Number of comments displayed on a page before a new page is started
+	'max_per_page' => 20,
+);
 
 ?>
