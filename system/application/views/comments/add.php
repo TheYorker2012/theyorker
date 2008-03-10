@@ -21,7 +21,7 @@
  */
 
 ?>
-<a id="comment_preview"></a>
+
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {

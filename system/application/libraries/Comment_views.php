@@ -290,7 +290,7 @@ class CommentViewAdd extends FramesView
 		$this->SetData('Thread', $this->mThread);
 		$this->SetData('LoggedIn', $logged_in);
 		$this->SetData('LoginUrl', $login_url.'#comments');
-		$this->SetData('FormTarget', $CI->uri->uri_string().'#comment_preview');
+		$this->SetData('FormTarget', $CI->uri->uri_string().'#SectionCommentAdd');
 		$this->SetData('Identities', $CI->comments_model->GetAvailableIdentities());
 		
 		$this->SetData('ReportUrlPrefix', '/comments/report/');
