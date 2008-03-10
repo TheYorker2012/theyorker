@@ -61,7 +61,7 @@ class Gallery extends Controller {
 		}
 
 		if (isset($_SESSION['img_search'])) {
-			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->from('photos');
+			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->from('photos')->where('photo_deleted', 0);
 			if ($_SESSION['img_search']) {
 				switch($_SESSION['img_search_by']) {
 					case "date":
@@ -100,8 +100,9 @@ class Gallery extends Controller {
 			$photos = $photos->limit(PHOTOS_PERPAGE, $page)->get();
 		} else {
 			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')
-			                   ->orderby('photo_timestamp', 'desc')
-			                   ->get('photos', PHOTOS_PERPAGE, $page);
+					->where('photo_deleted', 0)
+					->orderby('photo_timestamp', 'desc')
+					->get('photos', PHOTOS_PERPAGE, $page);
 		}
 
 
