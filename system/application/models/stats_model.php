@@ -354,19 +354,15 @@ class Stats_Model extends Model
 			(
 				SELECT COUNT(*)
 				FROM comments
-				WHERE comments.comment_anonymous=1
-				AND comments.comment_author_entity_id = users.user_entity_id
-			) as anonymous_post_count,
-			(
-				SELECT COUNT(*)
-				FROM comments
-				WHERE comments.comment_deleted=1
+				WHERE comments.comment_deleted = 1
+				AND comments.comment_anonymous = 0
 				AND comments.comment_author_entity_id = users.user_entity_id
 			) as deleted_post_count
 		FROM comments
 		INNER JOIN users ON
 		comments.comment_author_entity_id = users.user_entity_id
-		WHERE comments.comment_deleted=0
+		WHERE comments.comment_deleted = 0
+		AND comments.comment_anonymous = 0
 		GROUP BY comment_author_entity_id
 		ORDER BY total_post_count DESC LIMIT ?
 		';
@@ -387,20 +383,15 @@ class Stats_Model extends Model
 			(
 				SELECT COUNT(*)
 				FROM comments
-				WHERE comments.comment_anonymous=1
-				AND comments.comment_deleted=1
-				AND comments.comment_author_entity_id = users.user_entity_id
-			) as anonymous_deleted_post_count,
-			(
-				SELECT COUNT(*)
-				FROM comments
-				WHERE comments.comment_deleted=1
+				WHERE comments.comment_deleted = 1
+				AND comments.comment_anonymous = 0
 				AND comments.comment_author_entity_id = users.user_entity_id
 			) as deleted_post_count
 		FROM comments
 		INNER JOIN users ON
 		comments.comment_author_entity_id = users.user_entity_id
-		WHERE comments.comment_deleted=0
+		WHERE comments.comment_deleted = 0
+		AND comments.comment_anonymous = 0
 		GROUP BY comment_author_entity_id
 		ORDER BY deleted_post_count DESC LIMIT ?
 		';
