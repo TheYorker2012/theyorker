@@ -1,7 +1,7 @@
 <?php
 
 echo('<?xml version="1.0" ?>
-	<rss version="2.0" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	<rss version="2.0" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:atom="http://www.w3.org/2005/Atom"
 		xmlns:cc="http://web.resource.org/cc/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
 	<channel>
 	<title>The Yorker - ' . xml_escape($rss_title) . '</title>
@@ -20,7 +20,7 @@ foreach ($rss_itunes_categories as $category)
 	<pubDate>' . date('r',$rss_pubdate) . '</pubDate>
 	<lastBuildDate>' . xml_escape($rss_lastbuild) . '</lastBuildDate>
 	<docs>http://www.rssboard.org/rss-specification</docs>
-	<itunes:image ref="'.xml_escape($itunes_image).'"/>
+	<itunes:image href="'.xml_escape($itunes_image).'"/>
 	<image>
 		<url>' . xml_escape($rss_image) . '</url>
 		<width>' . $rss_width . '</width>
@@ -45,7 +45,7 @@ foreach ($rss_items as $item) {
 		<itunes:author>'.xml_escape($itunes_author).'</itunes:author>
 		<itunes:explicit>No</itunes:explicit>
 		<itunes:subtitle>'. xml_escape($item['description']) . '</itunes:subtitle>
-		<itunes:summary>'. xml_escape($item['description']) . '</itunes:sumary>
+		<itunes:summary>'. xml_escape($item['description']) . '</itunes:summary>
 		<enclosure url="'.$url.'" length="'.$item['length'].'" type="'.xml_escape($item['type']).'" />
 		<guid isPermaLink="true">'.$url.'</guid>
 		<link>'.$url.'</link>

@@ -72,7 +72,6 @@ class Feeds extends Controller {
 		$data['rss_desc'] = 'The Yorker\'s Weekly Artscasts.';
 		$data['rss_category'] = 'Arts';
 		$data['rss_itunes_summary'] = 'Yorker Arts';
-		$data['rss_link'] = 'http://www.theyorker.co.uk/arts/';
 		$data['rss_itunes_categories'] = array('Arts','Music');
 		$data['itunes_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-itunes.jpg';
 		$data['itunes_author'] = 'The Yorker Arts Team';
@@ -126,12 +125,12 @@ class Feeds extends Controller {
 	{
 		return array(
 			'rss_title'		=>	'Campus News',
-			'rss_link'		=>	site_url($this->uri->uri_string()),
+			'rss_link'		=>	'http://' . $_SERVER['SERVER_NAME'] . $this->uri->uri_string(),
 			'rss_desc'		=>	'All the news you need to know about from University of York\'s Campus!',
 			'rss_category'	=>	'News',
 			'rss_pubdate'	=>	date('r'),
 			'rss_lastbuild'	=>	date('r'),
-			'rss_image'		=>	site_url('images/prototype/news/rss-uninews.jpg'),
+			'rss_image'		=>	'http://' . $_SERVER['SERVER_NAME'] . '/images/prototype/news/rss-uninews.jpg',
 			'rss_width'		=>	'126',
 			'rss_height'	=>	'126',
 			'rss_email_ed'	=>	$this->config->item('editor_email_address') . ' (Editor)',
