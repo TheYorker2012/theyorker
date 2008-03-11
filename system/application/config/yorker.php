@@ -11,7 +11,7 @@ $config['static_web_address'] = 'http://static.theyorker.co.uk';
 $config['static_ftp_address'] = 'theyorker.co.uk';
 $config['static_ftp_username'] = 'staticftp';
 $config['static_ftp_password'] = 'yrkrsttc';
-$config['podcast_rss_feed'] = 'static.theyorker.co.uk/podcasts/rss.xml';
+$config['podcast_rss_feed'] = 'www.theyorker.co.uk/feeds/podcasts';
 
 $config['no_reply_email_address'] = 'no-reply@theyorker.co.uk';
 $config['editor_email_address'] = 'editor@theyorker.co.uk';
