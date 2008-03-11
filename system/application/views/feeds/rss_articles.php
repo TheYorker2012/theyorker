@@ -32,10 +32,10 @@ foreach ($rss_items as $item) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
 	echo(xml_escape(substr($temp_reporters, 0, -2)) . ')</author>
-		<link>' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
+		<link>http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
 		<description><![CDATA[' . xml_escape($item['blurb']) . ']]></description>
 		<pubDate>' . date('r',$item['date']) . '</pubDate>
-		<guid isPermaLink=\'true\'>' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
+		<guid isPermaLink=\'true\'>http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
 		</item>');
 }
 echo('</channel></rss>');

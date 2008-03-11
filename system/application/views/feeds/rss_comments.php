@@ -25,12 +25,12 @@ echo('<?xml version="1.0" ?>
 
 foreach ($rss_items as $item) {
 	if (($item['user_firstname'] == '') && ($item['user_surname'] == '')) {
-		$author = '<no name>';
+		$author = 'no name';
 	} else {
 		$author = ($item['comment_anonymous']) ? 'Anonymous' : $item['user_firstname'] . ' ' . $item['user_surname'];
 	}
 	$page = (floor(($item['article_comment_count'] - 1) / $comments_per_page) * $comments_per_page) + 1;
-	$url = $_SERVER['SERVER_NAME'] . '/news/' . $item['content_type_codename'] . '/' . $item['article_id']. '/' . $page . '/#CommentItem' . $item['comment_id'];
+	$url = 'http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['content_type_codename'] . '/' . $item['article_id']. '/' . $page . '/#CommentItem' . $item['comment_id'];
 	echo('<item>
 		<title>' . xml_escape($author) . ' on ' . xml_escape($item['article_content_heading']) . '</title>
 		<author>' . xml_escape($rss_email_no) . ' (' . xml_escape($author) . ')</author>

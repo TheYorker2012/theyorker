@@ -126,12 +126,12 @@ class Feeds extends Controller {
 	{
 		return array(
 			'rss_title'		=>	'Campus News',
-			'rss_link'		=>	$_SERVER['SERVER_NAME'] . $this->uri->uri_string(),
+			'rss_link'		=>	'http://' . $_SERVER['SERVER_NAME'] . $this->uri->uri_string(),
 			'rss_desc'		=>	'All the news you need to know about from University of York\'s Campus!',
 			'rss_category'	=>	'News',
 			'rss_pubdate'	=>	date('r'),
 			'rss_lastbuild'	=>	date('r'),
-			'rss_image'		=>	$_SERVER['SERVER_NAME'] . '/images/prototype/news/rss-uninews.jpg',
+			'rss_image'		=>	'http://' . $_SERVER['SERVER_NAME'] . '/images/prototype/news/rss-uninews.jpg',
 			'rss_width'		=>	'126',
 			'rss_height'	=>	'126',
 			'rss_email_ed'	=>	$this->config->item('editor_email_address') . ' (Editor)',
