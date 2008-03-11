@@ -91,7 +91,7 @@
 			echo('		</div>'."\n");
 		}
 		?>
-		<h3>Enrolement Years</h3>
+		<h3>Enrolment Years</h3>
 		<?php
 		$total=0;//Work out total from all colleges to get percentages
 		foreach ($member_enrollments as $year){
@@ -154,7 +154,6 @@
 					<tr>
 						<th>&nbsp;</th>
 						<th>Name</th>
-						<th><img alt="Anonymous" src="/images/prototype/homepage/grey_user_small.gif"></th>
 						<th><img alt="As Self" src="/images/prototype/homepage/blue_user_small.gif"></th>
 						<th><img alt="Deleted" src="/images/prototype/members/no9.png"></th>
 						<th>Total</th>
@@ -176,16 +175,13 @@
 				}
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['anonymous_post_count']);
-				echo ('</td>');
-				echo ('<td>');
-				echo xml_escape($commenter['total_post_count'] - $commenter['anonymous_post_count']);
+				echo xml_escape($commenter['total_post_count']);
 				echo ('</td>');
 				echo ('<td>');
 				echo xml_escape($commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['total_post_count']);
+				echo xml_escape($commenter['total_post_count'] + $commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('</tr>'."\n");
 			}
@@ -200,14 +196,7 @@
 						<th>&nbsp;</th>
 						<th>Name</th>
 						<th>
-						<img alt="Anonymous" src="/images/prototype/homepage/grey_user_small.gif">
-						<img alt="Deleted" src="/images/prototype/members/no9.png">
-						</th>
-						<th>
 						<img alt="As Self" src="/images/prototype/homepage/blue_user_small.gif">
-						<img alt="Deleted" src="/images/prototype/members/no9.png">
-						</th>
-						<th>
 						<img alt="Deleted" src="/images/prototype/members/no9.png">
 						</th>
 						<th>Total</th>
@@ -229,12 +218,6 @@
 				}
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['anonymous_deleted_post_count']);
-				echo ('</td>');
-				echo ('<td>');
-				echo xml_escape($commenter['deleted_post_count'] - $commenter['anonymous_deleted_post_count']);
-				echo ('</td>');
-				echo ('<td>');
 				echo xml_escape($commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('<td>');
@@ -245,7 +228,7 @@
 			?>
 			</table>
 		</div>
-		<h3>Most popular articles</h3>
+		<h3>Most commented articles</h3>
 		<div class="ArticleBox">
 			<table>
 				<thead>
