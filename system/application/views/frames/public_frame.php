@@ -19,7 +19,7 @@ if (isset($medium_type)) { ?>
 <?php } ?>
 	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
 	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
-	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
+	<meta name="verify-v1" content="slrlMuizkqTRTqt5W2zF1EZ6nMrwx+/qRmNDJ7xt2m8=" />
 
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
