@@ -76,11 +76,9 @@
 						name="a_description"
 						rows="7"
 						cols="33"
-						onchange="if(podcast_form.a_description.value==null||podcast_form.a_description.value==''){podcast_form.is_live.checked=''}">
-							<?php echo(xml_escape($podcast['description'])); ?>
-					</textarea>
+						onchange="if(podcast_form.a_description.value==null||podcast_form.a_description.value==''){podcast_form.is_live.checked=''}"><?php echo(xml_escape($podcast['description'])); ?></textarea>
 				<label for="file_address">File Address:</label>
-					<input	
+					<input
 						type="text"
 						name="file_address"
 						id="file_address"
@@ -92,7 +90,7 @@
 									xml_escape($podcast['file'])); ?>">
 					<input type="button" class="button" value="Change" name="podcast_change_file_button" onclick="Change_File_Show();return false;">
 				<label for="file_size">File Size:</label>
-					<input	
+					<input
 						type="text"
 						name="file_size"
 						id="file_size"
@@ -106,7 +104,7 @@
 						onclick="return !(podcast_form.a_name.value==null||podcast_form.a_name.value==''||podcast_form.a_description.value==null||podcast_form.a_description.value=='');"
 						<?php if($podcast['is_live']==1){echo('checked="checked"');} ?>
 						<?php if($podcast['live_can_change']){echo('disabled="disabled"');} ?>>
-						
+
 				<br />
 				<div style="float:left; margin: 5px;width:150px">
 					<a href="/office/podcasts">Return to Podcasts</a>

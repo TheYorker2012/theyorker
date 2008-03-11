@@ -72,7 +72,6 @@ class Feeds extends Controller {
 		$data['rss_desc'] = 'The Yorker\'s Weekly Artscasts.';
 		$data['rss_category'] = 'Arts';
 		$data['rss_itunes_summary'] = 'Yorker Arts';
-		$data['rss_link'] = 'http://www.theyorker.co.uk/arts/';
 		$data['rss_itunes_categories'] = array('Arts','Music');
 		$data['itunes_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-itunes.jpg';
 		$data['itunes_author'] = 'The Yorker Arts Team';
