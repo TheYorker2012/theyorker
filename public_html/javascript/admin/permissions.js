@@ -372,8 +372,8 @@ function toggleUserRole(user, role)
 			var newDiv = document.createElement('div');
 			newDiv.setAttribute('name', name);
 			newDiv.className = 'role';
-			newDiv.onmouseover = function() { roleMouseOver(permission); }
-			newDiv.onmouseout  = function() { roleMouseOut(permission);  }
+			newDiv.onmouseover = function() { roleMouseOver(role); }
+			newDiv.onmouseout  = function() { roleMouseOut(role);  }
 			newDiv.appendChild(document.createTextNode(role));
 			userRolesDiv.appendChild(newDiv);
 			userRolesDiv.appendChild(document.createTextNode(' '));
