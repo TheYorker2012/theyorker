@@ -82,6 +82,9 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 		if (undefined == rolePermissions[role]) {
 			rolePermissions[role] = {};
 		}
+		if (undefined == roleUsers[role]) {
+			roleUsers[role] = {};
+		}
 		for (var ind in newRolePermissions[role]) {
 			permission = newRolePermissions[role][ind];
 			if (undefined == permissionRoles[permission]) {
@@ -100,11 +103,10 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 		}
 		for (var ind in newUserRoles[user]) {
 			role = newUserRoles[user][ind];
-			// role may not be assigned to anybody
+			
 			if (undefined == roleUsers[role]) {
 				roleUsers[role] = {};
 			}
-			// irole may not have any permissions
 			if (undefined == rolePermissions[role]) {
 				rolePermissions[role] = {};
 			}
@@ -403,6 +405,9 @@ function createNewRole(roleInput)
 				var newRoleDiv = document.createElement('div');
 				newRoleDiv.id = name;
 				newRoleDiv.className = 'role';
+				if (undefined == implicitRoles[roleName]) {
+					newRoleDiv.className += ' explicit';
+				}
 				{
 					var actionDiv = document.createElement('div');
 					actionDiv.className = 'action';
