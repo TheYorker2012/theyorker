@@ -244,6 +244,40 @@ function OutputMode($Set = NULL)
 	return $output_mode;
 }
 
+/// Check that role permissions are satisfied.
+/**
+ * @param $Permissions array,string Permission(s)
+ * @return bool Whether permission exists.
+ */
+function CheckRolePermissions()
+{
+	$CI = &get_instance();
+	$CI->load->model('permissions_model');
+	
+	$userPermissions = & $CI->permissions_model->getPermissions();
+	$arguments = func_get_args();
+	$missingPermissions = array();
+	foreach ($arguments as $argument) {
+		if (!is_array($argument)) {
+			$argument = array($argument);
+		}
+		foreach ($argument as $permission) {
+			if (!isset($userPermissions[$permission])) {
+				$missingPermissions[] = $permission;
+			}
+		}
+	}
+	if (empty($missingPermissions)) {
+		return true;
+	}
+	else {
+		/// @todo MAKE 403 LOOK NICE
+		$CI->messages->AddMessage('error', 'You do not have the following permission(s): "'.xml_escape(implode('", "', $missingPermissions)).'" that are required to access this page. Please contact a a senior editor if you require more permissions.');
+		$CI->main_frame->Load();
+		return false;
+	}
+}
+
 /// Check the access permissions.
 /**
  * @param $Permission string or array of the following levels (in the order that

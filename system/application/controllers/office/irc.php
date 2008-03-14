@@ -50,6 +50,7 @@ class Irc extends Controller
 	function office()
 	{
 		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('IRC_CHAT')) return;
 		$this->_irc_channel();
 	}
 	
