@@ -254,7 +254,7 @@ function CheckRolePermissions()
 	$CI = &get_instance();
 	$CI->load->model('permissions_model');
 	
-	$userPermissions = & $CI->permissions_model->getPermissions();
+	$userPermissions = & $CI->permissions_model->getUserPermissions();
 	$arguments = func_get_args();
 	$missingPermissions = array();
 	foreach ($arguments as $argument) {

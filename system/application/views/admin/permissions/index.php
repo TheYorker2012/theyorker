@@ -6,62 +6,29 @@
  * @author James Hogan <james_hogan@theyorker.co.uk>
  */
 
-$permissionDescriptions = $this->config->Item('permissions');
+$permissionDescriptions = $this->permissions_model->getAllPermissions();
+$rolePermissions = $this->permissions_model->getAllRolePermissions();
+$implicitRoles = $this->permissions_model->getImplicitRoles();
+list($userRoles, $userNames) = $this->permissions_model->getAllUserRoles();
 
-$rolePermissions = array(
-	'LEVEL_OFFICER' => array(
-		'IRC_CHAT',
-		'SOMETHING_ELSE',
-	),
-	'LEVEL_EDITOR' => array(
-	),
-	'LEVEL_ADMIN' => array(
-	),
-	'MODERATOR' => array(
-		'COMMENT_MODIFY',
-		'COMMENT_DELETE',
-	),
-);
+// Roles might not have permissions
+foreach ($userRoles as $roles) {
+	foreach ($roles as $role) {
+		if (!isset($rolePermissions[$role])) {
+			$rolePermissions[$role] = array();
+		}
+	}
+}
 
-$roleExplicit = array(
-	'LEVEL_OFFICER' => false,
-	'LEVEL_EDITOR'  => false,
-	'LEVEL_ADMIN'   => false,
-);
-
-$userRoles = array(
-	'jh559' => array(
-		'LEVEL_OFFICER',
-		'LEVEL_EDITOR',
-		'LEVEL_ADMIN',
-		'MODERATOR',
-	),
-	'cdt502' => array(
-		'LEVEL_OFFICER',
-		'LEVEL_EDITOR',
-		'LEVEL_ADMIN',
-	),
-	'dta501' => array(
-		'LEVEL_OFFICER',
-		'LEVEL_EDITOR',
-	),
-	'rm500' => array(
-		'LEVEL_OFFICER',
-	),
-);
-
-$userNames = array(
-	'jh559'  => 'James Hogan',
-	'cdt502' => 'Chris Travis',
-	'dta501' => 'Dan Ashby',
-	'rm500'  => 'Richard Mitchell',
-);
 
 ?>
 
 <div class="RightToolbar">
 	<h4>What's this?</h4>
-	<p>nothing</p>
+	<p>Options for saving</p>
+	<p>ajax as you edit</p>
+	<p>storing changes + running through</p>
+	<p>!send the lot and diff with database!</p>
 </div>
 
 <script type="text/javascript">
@@ -70,15 +37,23 @@ $userNames = array(
 	setPermissionData(
 		<?php echo(js_literalise($permissionDescriptions)); ?>,
 		<?php echo(js_literalise($rolePermissions)); ?>,
-		<?php echo(js_literalise($roleExplicit)); ?>,
+		<?php echo(js_literalise($implicitRoles)); ?>,
 		<?php echo(js_literalise($userRoles)); ?>,
 		<?php echo(js_literalise($userNames)); ?>
 	);
 // ]]>
 </script>
 
+<noscript>
+	<div class="blue_box">
+		<h2>Javascript Disabled</h2>
+		<p>Please enable Javascript in your browser to be able to use this interface.</p>
+	</div>
+</noscript>
+
 <div id="permissionsBox" class="grey_box">
 	<h2>Permissions</h2>
+	<hr />
 	<?php foreach ($permissionDescriptions as $permission => $description) { ?>
 	<div	id="permission-<?php echo(xml_escape($permission)); ?>"
 			class="permission"
@@ -106,9 +81,10 @@ $userNames = array(
 <div id="rolesBox" class="grey_box">
 	<h2>Roles</h2>
 	<div id="rolesList">
+		<hr />
 		<?php foreach ($rolePermissions as $role => $permissions) { ?>
 		<div	id="role-<?php echo(xml_escape($role)); ?>"
-				class="role<?php if (!isset($roleExplicit[$role]) || $roleExplicit[$role]) { ?> explicit<?php }?>"
+				class="role<?php if (!isset($implicitRoles[$role])) { ?> explicit<?php }?>"
 			>
 			<div	class="action"
 					onclick="roleSecondary(<?php echo(xml_escape(js_literalise($role))) ?>)"
@@ -149,6 +125,7 @@ $userNames = array(
 
 <div id="usersBox" class="grey_box">
 	<h2>Users</h2>
+	<hr />
 	<?php foreach ($userRoles as $user => $roles) { ?>
 	<div	id="user-<?php echo(xml_escape($user)); ?>"
 			class="user"

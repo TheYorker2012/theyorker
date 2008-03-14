@@ -10,8 +10,8 @@ var permissions = {};
 var permissionRoles = {};
 /// hash Permissions in each role.
 var rolePermissions = {};
-/// hash Role explicitness.
-var roleExplicit = {};
+/// hash Implicit roles.
+var implicitRoles = {};
 /// hash Users playing each role.
 var roleUsers = {};
 /// hash Roles played by each user.
@@ -58,14 +58,15 @@ function CssCheck(o,c1)
 /**
   @param newPermissions     hash  Hash of permissions to descriptions.
   @param newRolePermissions hash  Hash of roles to array of permissions.
+  @param newImplicitRoles   hash  Hash of roles which are implicit.
   @param newUserRoles       hash  Hash of users to array of roles.
   @param newUsers           hash  Hash of users to full names.
  **/
-function setPermissionData(newPermissions, newRolePermissions, newRoleExplicit, newUserRoles, newUsers)
+function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles, newUserRoles, newUsers)
 {
 	// Directly mapped data
 	permissions     = newPermissions;
-	roleExplicit    = newRoleExplicit;
+	implicitRoles   = newImplicitRoles
 	users           = newUsers;
 	
 	// Initialise permissionRoles so all permissions are displayed
@@ -99,8 +100,13 @@ function setPermissionData(newPermissions, newRolePermissions, newRoleExplicit, 
 		}
 		for (var ind in newUserRoles[user]) {
 			role = newUserRoles[user][ind];
+			// role may not be assigned to anybody
 			if (undefined == roleUsers[role]) {
 				roleUsers[role] = {};
+			}
+			// irole may not have any permissions
+			if (undefined == rolePermissions[role]) {
+				rolePermissions[role] = {};
 			}
 			roleUsers[role][user] = true;
 			userRoles[user][role] = true;
@@ -249,7 +255,7 @@ function rolePrimary(role)
 	CssSwap(rolesBox, 'grey_box', 'blue_box');
 	CssAdd(permissionsBox, 'secondary');
 	CssAdd(rolesBox,       'primary');
-	if (undefined == roleExplicit[role] || roleExplicit[role]) {
+	if (undefined == implicitRoles[role]) {
 		CssAdd(usersBox,       'secondary');
 	}
 	
