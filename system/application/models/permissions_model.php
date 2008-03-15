@@ -78,6 +78,7 @@ class permissions_model extends Model
 	 */
 	function getAllPermissions()
 	{
+		$this->load->config('permissions');
 		return $this->config->Item('permissions');
 	}
 	
@@ -185,6 +186,12 @@ class permissions_model extends Model
 		}
 	}
 	
+	/// Remove all role permissions.
+	function clearRolePermissions()
+	{
+		$this->db->query('DELETE FROM role_permissions');
+	}
+	
 	/// Add role permissions.
 	/**
 	 * @param $roles array[role => array[permission]].
@@ -194,20 +201,19 @@ class permissions_model extends Model
 		if (!empty($roles)) {
 			$sql =	'	INSERT INTO role_permissions'.
 					'	(role_permission_role_name, role_permission_permission_name) VALUES';
-			$bind = array();
 			$separator = '';
+			$valid = false;
 			foreach ($roles as $role => $permissions) {
 				if (!empty($permissions)) {
 					foreach ($permissions as $permission) {
-						$sql .= $separator.' (?, ?)';
-						$bind[] = $role;
-						$bind[] = $permission;
+						$sql .= $separator.' ('.$this->db->escape($role).', '.$this->db->escape($permission).')';
 						$separator = ',';
+						$valid = true;
 					}
 				}
 			}
-			if (!empty($bind)) {
-				$this->db->query($sql, $bind);
+			if ($valid) {
+				$this->db->query($sql);
 			}
 		}
 	}

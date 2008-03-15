@@ -4,22 +4,13 @@
  * @file views/admin/permissions/index.php
  * @brief Permissions interface index.
  * @author James Hogan <james_hogan@theyorker.co.uk>
+ *
+ * @param $permissionDescriptions
+ * @param $rolePermissions
+ * @param $implicitRoles
+ * @param $userRoles
+ * @param $userNames
  */
-
-$permissionDescriptions = $this->permissions_model->getAllPermissions();
-$rolePermissions = $this->permissions_model->getAllRolePermissions();
-$implicitRoles = $this->permissions_model->getImplicitRoles();
-list($userRoles, $userNames) = $this->permissions_model->getAllUserRoles();
-
-// Roles might not have permissions
-foreach ($userRoles as $roles) {
-	foreach ($roles as $role) {
-		if (!isset($rolePermissions[$role])) {
-			$rolePermissions[$role] = array();
-		}
-	}
-}
-
 
 ?>
 
@@ -33,7 +24,7 @@ foreach ($userRoles as $roles) {
 	</ul>
 	<p>	Remember that the purpose of roles is to represent groups of users with common sets of permissions.
 		You can create new roles if appropriate using the "New Role" box.</p>
-	<p>Once a permission, role or user is selected you can toggle associated permissions, roles or users by clicking the boxes on the left.</p>
+	<p>	Once a permission, role or user is selected you can toggle associated permissions, roles or users by clicking the boxes on the left.</p>
 	
 	<h4>Save</h4>
 	<form class="form">
@@ -70,8 +61,15 @@ foreach ($userRoles as $roles) {
 	<h2>Permissions</h2>
 	<p>	Permissions represent actions that can be performed.
 		A permission can belong to a role, so that anybody who has the role has the permission.</p>
-	<hr />
-	<?php foreach ($permissionDescriptions as $permission => $description) { ?>
+	<?php
+	$last_prefix = '';
+	foreach ($permissionDescriptions as $permission => $description) {
+		$new_prefix = substr($permission, 0, strpos($permission, '_'));
+		if ($last_prefix != $new_prefix) {
+			?><hr /><?php
+			$last_prefix = $new_prefix;
+		}
+	?>
 	<div	id="permission-<?php echo(xml_escape($permission)); ?>"
 			class="permission"
 		>
@@ -91,8 +89,8 @@ foreach ($userRoles as $roles) {
 			</div>
 		</div>
 	</div>
-	<hr />
 	<?php } ?>
+	<hr />
 </div>
 
 <div id="rolesBox" class="grey_box">
